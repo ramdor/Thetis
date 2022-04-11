@@ -8594,11 +8594,12 @@ namespace Thetis
                     {
                         if (diversity2)
                         {
-                            P1_DDCConfig =
+                            P1_DDCConfig = 2;
                             DDCEnable = DDC0;
                             SyncEnable = DDC1;
                             Rate[0] = rx1_rate;
                             Rate[1] = rx1_rate;
+                            Rate[2] = rx1_rate;
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
@@ -8607,8 +8608,8 @@ namespace Thetis
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
                             SyncEnable = 0;
-                            //Rate[0] = rx1_rate;
-                            //Rate[1] = rx2_rate; 
+                            Rate[0] = rx1_rate;
+                            Rate[1] = rx1_rate; 
                             Rate[2] = rx1_rate;
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
@@ -8621,6 +8622,8 @@ namespace Thetis
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
                             SyncEnable = 0;
+                            Rate[0] = rx1_rate;
+                            Rate[1] = rx1_rate;
                             Rate[2] = rx1_rate;
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
@@ -8654,6 +8657,7 @@ namespace Thetis
                             SyncEnable = DDC1;
                             Rate[0] = rx1_rate;
                             Rate[1] = rx1_rate;
+                            Rate[2] = rx1_rate;
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
