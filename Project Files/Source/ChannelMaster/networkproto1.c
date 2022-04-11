@@ -598,11 +598,7 @@ void WriteMainLoop(char* bufp)
 
 		case 12: // Step ATT control
 			C0 |= 0x16; //C0 0001 011x
-			if (XmitBit)
-				C1 = 0x1F;
-			else
-				C1 = (prn->adc[1].rx_step_attn);
-			C1 |= 0b00100000;
+			C1 = (prn->adc[1].rx_step_attn & 0b00011111) | 0b00100000;
 			C2 = (prn->adc[2].rx_step_attn & 0b00011111) | 0b00100000 |
 				((prn->cw.rev_paddle & 1) << 6);
 
