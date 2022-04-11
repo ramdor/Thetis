@@ -7797,6 +7797,9 @@ namespace Thetis
                         console.SampleRateRX1 = new_rate;
                         console.SampleRateRX2 = new_rate;
 
+                        // set PureSignal sample rate
+                        cmaster.PSrate = new_rate;
+
                         // set protocol_1 network software sample rate
                         NetworkIO.SetDDCRate(0, new_rate);
 
