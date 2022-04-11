@@ -658,11 +658,11 @@ namespace Thetis
                 comboAudioSampleRate1.Items.Add(96000);
             if (!comboAudioSampleRate1.Items.Contains(192000))
                 comboAudioSampleRate1.Items.Add(192000);
+            if (!comboAudioSampleRate1.Items.Contains(384000))
+                comboAudioSampleRate1.Items.Add(384000);
 
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
             {
-                if (!comboAudioSampleRate1.Items.Contains(384000))
-                    comboAudioSampleRate1.Items.Add(384000);
                 if (!comboAudioSampleRate1.Items.Contains(768000))
                     comboAudioSampleRate1.Items.Add(768000);
                 if (!comboAudioSampleRate1.Items.Contains(1536000))
@@ -670,8 +670,6 @@ namespace Thetis
             }
             else
             {
-                if (comboAudioSampleRate1.Items.Contains(384000))
-                    comboAudioSampleRate1.Items.Remove(384000);
                 if (comboAudioSampleRate1.Items.Contains(768000))
                     comboAudioSampleRate1.Items.Remove(768000);
                 if (comboAudioSampleRate1.Items.Contains(1536000))
@@ -688,11 +686,11 @@ namespace Thetis
                 comboAudioSampleRateRX2.Items.Add(96000);
             if (!comboAudioSampleRateRX2.Items.Contains(192000))
                 comboAudioSampleRateRX2.Items.Add(192000);
+            if (!comboAudioSampleRateRX2.Items.Contains(384000))
+                comboAudioSampleRateRX2.Items.Add(384000);
 
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
             {
-                if (!comboAudioSampleRateRX2.Items.Contains(384000))
-                    comboAudioSampleRateRX2.Items.Add(384000);
                 if (!comboAudioSampleRateRX2.Items.Contains(768000))
                     comboAudioSampleRateRX2.Items.Add(768000);
                 if (!comboAudioSampleRateRX2.Items.Contains(1536000))
@@ -700,8 +698,6 @@ namespace Thetis
             }
             else
             {
-                if (comboAudioSampleRateRX2.Items.Contains(384000))
-                    comboAudioSampleRateRX2.Items.Remove(384000);
                 if (comboAudioSampleRateRX2.Items.Contains(768000))
                     comboAudioSampleRateRX2.Items.Remove(768000);
                 if (comboAudioSampleRateRX2.Items.Contains(1536000))
