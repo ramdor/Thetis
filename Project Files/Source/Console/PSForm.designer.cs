@@ -339,6 +339,7 @@
             this.udPSMoxDelay.Name = "udPSMoxDelay";
             this.udPSMoxDelay.Size = new System.Drawing.Size(51, 20);
             this.udPSMoxDelay.TabIndex = 29;
+            this.udPSMoxDelay.TinyStep = false;
             this.udPSMoxDelay.Value = new decimal(new int[] {
             2,
             0,
@@ -378,6 +379,7 @@
             this.udPSPhnum.Name = "udPSPhnum";
             this.udPSPhnum.Size = new System.Drawing.Size(80, 20);
             this.udPSPhnum.TabIndex = 25;
+            this.udPSPhnum.TinyStep = false;
             this.udPSPhnum.Value = new decimal(new int[] {
             150,
             0,
@@ -739,6 +741,7 @@
             this.udPSCalWait.Name = "udPSCalWait";
             this.udPSCalWait.Size = new System.Drawing.Size(51, 20);
             this.udPSCalWait.TabIndex = 16;
+            this.udPSCalWait.TinyStep = false;
             this.udPSCalWait.Value = new decimal(new int[] {
             0,
             0,

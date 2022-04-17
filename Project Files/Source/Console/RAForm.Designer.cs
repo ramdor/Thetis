@@ -349,6 +349,7 @@
             this.manual_xmin.Name = "manual_xmin";
             this.manual_xmin.Size = new System.Drawing.Size(86, 20);
             this.manual_xmin.TabIndex = 10;
+            this.manual_xmin.TinyStep = false;
             this.manual_xmin.Value = new decimal(new int[] {
             0,
             0,
@@ -387,6 +388,7 @@
             this.manual_xmax.Name = "manual_xmax";
             this.manual_xmax.Size = new System.Drawing.Size(86, 20);
             this.manual_xmax.TabIndex = 8;
+            this.manual_xmax.TinyStep = false;
             this.manual_xmax.Value = new decimal(new int[] {
             1000,
             0,
@@ -527,6 +529,7 @@
             this.manual_ymax.Name = "manual_ymax";
             this.manual_ymax.Size = new System.Drawing.Size(86, 20);
             this.manual_ymax.TabIndex = 32;
+            this.manual_ymax.TinyStep = false;
             this.manual_ymax.Value = new decimal(new int[] {
             0,
             0,
@@ -555,6 +558,7 @@
             this.manual_ymin.Name = "manual_ymin";
             this.manual_ymin.Size = new System.Drawing.Size(86, 20);
             this.manual_ymin.TabIndex = 4;
+            this.manual_ymin.TinyStep = false;
             this.manual_ymin.Value = new decimal(new int[] {
             150,
             0,
@@ -694,6 +698,7 @@
             this.numericUpDown_mSec_between_measurements.Size = new System.Drawing.Size(63, 20);
             this.numericUpDown_mSec_between_measurements.TabIndex = 11;
             this.numericUpDown_mSec_between_measurements.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.numericUpDown_mSec_between_measurements.TinyStep = false;
             this.numericUpDown_mSec_between_measurements.Value = new decimal(new int[] {
             50,
             0,
@@ -766,6 +771,7 @@
             this.numericUpDown_measurements_per_point.Size = new System.Drawing.Size(69, 20);
             this.numericUpDown_measurements_per_point.TabIndex = 0;
             this.numericUpDown_measurements_per_point.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.numericUpDown_measurements_per_point.TinyStep = false;
             this.numericUpDown_measurements_per_point.Value = new decimal(new int[] {
             1,
             0,

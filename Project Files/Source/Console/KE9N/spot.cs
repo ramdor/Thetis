@@ -876,6 +876,7 @@ namespace Thetis
             this.udDisplayWWV.Name = "udDisplayWWV";
             this.udDisplayWWV.Size = new System.Drawing.Size(39, 20);
             this.udDisplayWWV.TabIndex = 91;
+            this.udDisplayWWV.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayWWV, "If you check the \"use WWV HF\" Box:\r\nSelect a WWV station with a stron non-fading " +
         "signal.\r\nUsually 10mhz and 15mhz are the cleanest signals\r\n1=2.5mhz \r\n2=5.0mhz\r\n" +
         "3=10.0mhz\r\n4=15.0mhz\r\n\r\n");
@@ -920,6 +921,7 @@ namespace Thetis
             this.numericUpDownTS1.Name = "numericUpDownTS1";
             this.numericUpDownTS1.Size = new System.Drawing.Size(39, 20);
             this.numericUpDownTS1.TabIndex = 88;
+            this.numericUpDownTS1.TinyStep = false;
             this.toolTip1.SetToolTip(this.numericUpDownTS1, "Which Band to Start Slow Beacaon Scan on:\r\n1=14.1mhz\r\n2=18.11mhz\r\n3=21.15mhz\r\n4=2" +
         "4.93mhz\r\n5=28.2mhz\r\n");
             this.numericUpDownTS1.Value = new decimal(new int[] {
@@ -993,6 +995,7 @@ namespace Thetis
             this.udDisplayLong.Name = "udDisplayLong";
             this.udDisplayLong.Size = new System.Drawing.Size(62, 20);
             this.udDisplayLong.TabIndex = 80;
+            this.udDisplayLong.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayLong, "Enter Longitude in deg (-180 to 180) for Beam Heading\r\n- for West of 0 GMT line\r\n" +
         "+ for East of 0 GMT line\r\n\r\nLeft Click on Thetis Display and Hit SHIFT key to \r\n" +
         "toggle Lat/Long map");
@@ -1026,6 +1029,7 @@ namespace Thetis
             this.udDisplayLat.Name = "udDisplayLat";
             this.udDisplayLat.Size = new System.Drawing.Size(58, 20);
             this.udDisplayLat.TabIndex = 79;
+            this.udDisplayLat.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayLat, "Enter Latitude in deg (90 to -90) for Beam Heading\r\n+ for Northern Hemisphere\r\n- " +
         "for Southern Hemisphere\r\n\r\nLeft Click on Thetis Display and Hit SHIFT key to \r\nt" +
         "oggle Lat/Long map");

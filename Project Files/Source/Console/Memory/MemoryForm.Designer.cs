@@ -280,6 +280,7 @@ namespace Thetis
             this.ScheduleDurationTime.Name = "ScheduleDurationTime";
             this.ScheduleDurationTime.Size = new System.Drawing.Size(56, 20);
             this.ScheduleDurationTime.TabIndex = 24;
+            this.ScheduleDurationTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.ScheduleDurationTime, "Duration of Scheduled recording (if Enabled)");
             this.ScheduleDurationTime.Value = new decimal(new int[] {
             30,
@@ -456,6 +457,7 @@ namespace Thetis
             this.ScheduleExtra.Name = "ScheduleExtra";
             this.ScheduleExtra.Size = new System.Drawing.Size(56, 20);
             this.ScheduleExtra.TabIndex = 71;
+            this.ScheduleExtra.TinyStep = false;
             this.ScheduleExtra.Value = new decimal(new int[] {
             30,
             0,

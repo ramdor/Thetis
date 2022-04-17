@@ -393,6 +393,7 @@ namespace Thetis
             this.udPreamp.Name = "udPreamp";
             this.udPreamp.Size = new System.Drawing.Size(40, 20);
             this.udPreamp.TabIndex = 52;
+            this.udPreamp.TinyStep = false;
             this.udPreamp.Value = new decimal(new int[] {
             0,
             0,

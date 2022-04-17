@@ -30,13 +30,13 @@ namespace Thetis.Midi2Cat
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Midi2CatSetupForm));
             this.devicesTabControl = new System.Windows.Forms.TabControl();
             this.saveButton = new System.Windows.Forms.Button();
             this.startupPanel = new System.Windows.Forms.Panel();
             this.progressLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.startTimer = new System.Windows.Forms.Timer(this.components);
+            this.startTimer = new System.Windows.Forms.Timer();
             this.startupPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -110,6 +110,7 @@ namespace Thetis.Midi2Cat
             this.Controls.Add(this.startupPanel);
             this.Controls.Add(this.saveButton);
             this.Controls.Add(this.devicesTabControl);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimizeBox = false;
             this.Name = "Midi2CatSetupForm";
             this.Text = "Midi Controller Setup";

@@ -249,6 +249,7 @@ namespace Thetis
             this.udWaveDitherBits.Name = "udWaveDitherBits";
             this.udWaveDitherBits.Size = new System.Drawing.Size(40, 20);
             this.udWaveDitherBits.TabIndex = 1;
+            this.udWaveDitherBits.TinyStep = false;
             this.udWaveDitherBits.Value = new decimal(new int[] {
             8,
             0,

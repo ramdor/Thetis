@@ -163,6 +163,7 @@ namespace Thetis
             this.udDAY.Name = "udDAY";
             this.udDAY.Size = new System.Drawing.Size(46, 20);
             this.udDAY.TabIndex = 97;
+            this.udDAY.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDAY, "Settings the correct Day of the month uses URSI coefficients\r\nSetting the Day to " +
         "0 uses CCRI coefficients (which are considered to be better)\r\n");
             this.udDAY.Value = new decimal(new int[] {
@@ -194,6 +195,7 @@ namespace Thetis
             this.udWATTS.Name = "udWATTS";
             this.udWATTS.Size = new System.Drawing.Size(59, 20);
             this.udWATTS.TabIndex = 95;
+            this.udWATTS.TinyStep = false;
             this.toolTip1.SetToolTip(this.udWATTS, "Watts 1 to 1500");
             this.udWATTS.Value = new decimal(new int[] {
             100,
@@ -224,6 +226,7 @@ namespace Thetis
             this.udSNR.Name = "udSNR";
             this.udSNR.Size = new System.Drawing.Size(46, 20);
             this.udSNR.TabIndex = 93;
+            this.udSNR.TinyStep = false;
             this.toolTip1.SetToolTip(this.udSNR, "SNR dbm\r\nlower dbm values for CW (45) , higher values for AM (75)");
             this.udSNR.Value = new decimal(new int[] {
             50,
@@ -254,6 +257,7 @@ namespace Thetis
             this.udRCR.Name = "udRCR";
             this.udRCR.Size = new System.Drawing.Size(46, 20);
             this.udRCR.TabIndex = 91;
+            this.udRCR.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRCR, "Required Circuit reliability: default is 90%");
             this.udRCR.Value = new decimal(new int[] {
             89,
@@ -285,6 +289,7 @@ namespace Thetis
             this.udMTA.Name = "udMTA";
             this.udMTA.Size = new System.Drawing.Size(59, 20);
             this.udMTA.TabIndex = 89;
+            this.udMTA.TinyStep = false;
             this.toolTip1.SetToolTip(this.udMTA, "Min Takeoff Angle: default is normally 0.100 up to 3.000\r\n");
             this.udMTA.Value = new decimal(new int[] {
             30,
@@ -315,6 +320,7 @@ namespace Thetis
             this.udSSN.Name = "udSSN";
             this.udSSN.Size = new System.Drawing.Size(46, 20);
             this.udSSN.TabIndex = 88;
+            this.udSSN.TinyStep = false;
             this.toolTip1.SetToolTip(this.udSSN, "Enter the Smoothed Sunspot number based on SFI\r\nThis number is greatly reduced wh" +
         "en the K index rises");
             this.udSSN.Value = new decimal(new int[] {
@@ -346,6 +352,7 @@ namespace Thetis
             this.udMethod.Name = "udMethod";
             this.udMethod.Size = new System.Drawing.Size(46, 20);
             this.udMethod.TabIndex = 80;
+            this.udMethod.TinyStep = false;
             this.toolTip1.SetToolTip(this.udMethod, "Method: Voacap has different computation methods. \r\n30 is normally the default");
             this.udMethod.Value = new decimal(new int[] {
             30,
