@@ -31971,7 +31971,7 @@ namespace Thetis
 
             if (tx) mox = tx;
             double freq = 0.0;
-
+/* // Pavel
             if (tx)                          // change to TX mode
             {
                 DisableAllModes();      //Disallow mode changes in transmit mode               
@@ -31983,7 +31983,7 @@ namespace Thetis
                     EnableAllModes();    //Re-enable mode changes in receive mode                     
                 }
             }
-
+*/
             if (tx)
             {
                 //FM Offsets
