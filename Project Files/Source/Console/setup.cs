@@ -11955,7 +11955,7 @@ namespace Thetis
                 if (console.TwoToneDrivePowerOrigin == DrivePowerSource.FIXED)
                     console.PreviousPWR = console.PWR;
                 // set power
-                int new_pwr = console.SetPowerUsingTargetDBM(out bool bUseConstrain, out double targetdBm, true, true);
+                int new_pwr = console.SetPowerUsingTargetDBM(out bool bUseConstrain, out double targetdBm, true, true, true);
                 //
                 if (console.TwoToneDrivePowerOrigin == DrivePowerSource.FIXED)
                 {

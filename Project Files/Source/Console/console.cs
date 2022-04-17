@@ -32595,7 +32595,7 @@ namespace Thetis
                 if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
                     PreviousPWR = ptbPWR.Value;
                 // set power
-                int new_pwr = SetPowerUsingTargetDBM(out bool bUseConstrain, out double targetdBm, true, true);
+                int new_pwr = SetPowerUsingTargetDBM(out bool bUseConstrain, out double targetdBm, true, true, false);
                 //
                 if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
                 {
@@ -53281,7 +53281,7 @@ namespace Thetis
         private int setPowerFromDriveSlider(out bool bConstrain, bool bAdjustedBySliderControl)
         {
             int nDrv;
-            nDrv = SetPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, false);
+            nDrv = SetPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, false, false);
             bConstrain = bConstrainOut;
             return nDrv;
 
@@ -53329,7 +53329,7 @@ namespace Thetis
         private int setPowerFromTuneSlider(out bool bConstrain, bool bAdjustedBySliderControl)
         {
             int nDrv;
-            nDrv = SetPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, true);
+            nDrv = SetPowerUsingTargetDBM(out bool bConstrainOut, out double targetdBm, true, true, chk2TONE.Checked);
             bConstrain = bConstrainOut;
             return nDrv;
 
@@ -53353,24 +53353,23 @@ namespace Thetis
             //    return (int)ptbTune.Value;
             //}
         }
-        public int SetPowerUsingTargetDBM(out bool bConstrain, out double targetdBm, bool bSetPower, bool bFromTune)
+        public int SetPowerUsingTargetDBM(out bool bConstrain, out double targetdBm, bool bSetPower, bool bFromTune, bool bTwoTone)
         {
             PrettyTrackBar slider = ptbPWR;
             bConstrain = true;
             int new_pwr = 0;
-            //// tx mode
-            int txMode = 0;
+            // tx mode
+            int txMode = 0; // 0 normal, 1 tune, 2 2tone
+
             if (!MOX && !chkTUN.Checked && !chk2TONE.Checked)
             {
                 if (bFromTune)
                 {
-                    if (_tuneDrivePowerSource == DrivePowerSource.TUNE_SLIDER)
+                    if (!bTwoTone)
                         txMode = 1;
-                    else if (_2ToneDrivePowerSource == DrivePowerSource.TUNE_SLIDER)
-                        txMode = 2;
                     else
-                        txMode = 1;
-                }                
+                        txMode = 2;
+                }
             }
             else
             {
