@@ -7,7 +7,7 @@
     <ProjectGuid>{831AEB2F-CA78-4057-85D7-32B4816ED6AE}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>thetis-icon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\thetis-icon.ico</ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>Thetis</AssemblyName>
@@ -327,6 +327,11 @@
     <Compile Include="frmSeqLog.designer.cs">
       <DependentUpon>frmSeqLog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ucInfoBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -347,11 +352,6 @@
     </Compile>
     <Compile Include="N1MM.cs" />
     <Compile Include="NetworkThrottle.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="ShutdownForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -623,7 +623,7 @@
     <Compile Include="xvtr.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Content Include="thetis-icon.ico" />
+    <Content Include="Resources\thetis-icon.ico" />
     <None Include="Resources\thetis-logo1.png" />
     <None Include="Resources\cross_rl.cur" />
     <None Include="Resources\info.png" />
@@ -695,7 +695,6 @@
     <EmbeddedResource Include="frmLog.resx">
       <DependentUpon>frmLog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\picD1orig.png" />
     <None Include="Resources\cpu.png" />
     <EmbeddedResource Include="Resources\picD2.png" />
     <EmbeddedResource Include="Resources\star.png" />
@@ -706,9 +705,7 @@
     <EmbeddedResource Include="KE9N\swl.resx">
       <DependentUpon>swl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\met3.jpg" />
     <EmbeddedResource Include="Resources\picD1.png" />
-    <EmbeddedResource Include="Resources\s-meter-collins3.png" />
     <EmbeddedResource Include="Resources\sun.png" />
     <EmbeddedResource Include="Resources\digital7.ttf" />
     <None Include="Resources\grabbing.cur" />
@@ -749,18 +746,6 @@
       <DependentUpon>FilterForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="images\clock.jpg" />
-    <EmbeddedResource Include="images\demi144-28frs.jpg" />
-    <EmbeddedResource Include="images\flex-5000.jpg" />
-    <EmbeddedResource Include="images\no_hardware.jpg" />
-    <EmbeddedResource Include="images\sdr-1000.jpg" />
-    <EmbeddedResource Include="images\sdr-atu.jpg" />
-    <EmbeddedResource Include="images\sdr-pa100.jpg" />
-    <EmbeddedResource Include="images\sdr-rfe.jpg" />
-    <EmbeddedResource Include="images\sdr-usb.jpg" />
-    <EmbeddedResource Include="images\softrock40.jpg" />
-    <EmbeddedResource Include="images\soundcard.jpg" />
-    <EmbeddedResource Include="images\splash.jpg" />
     <EmbeddedResource Include="InputBox.resx">
       <DependentUpon>InputBox.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -843,11 +828,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Content Include="CAT\CATStructs.xml" />
-    <EmbeddedResource Include="images\flex-3000.jpg" />
-    <Content Include="hpsdr5-64.ico" />
-    <Content Include="images\hpsdr.jpg" />
-    <Content Include="images\openhpsdr4_splash.png" />
-    <Content Include="images\PowerSDR.ico" />
+    <Content Include="Resources\hpsdr5-64.ico" />
     <EmbeddedResource Include="Resources\swiss.ttf" />
     <EmbeddedResource Include="Resources\swissb.ttf" />
     <EmbeddedResource Include="Resources\swissbi.ttf" />
