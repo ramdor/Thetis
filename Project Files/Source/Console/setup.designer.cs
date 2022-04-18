@@ -39863,7 +39863,6 @@
             this.tpTransmit.Controls.Add(this.chkHighlightTXProfileSaveItems);
             this.tpTransmit.Controls.Add(this.chkRestoreVAC2DeviceDetailsFromTXProfile);
             this.tpTransmit.Controls.Add(this.chkRestoreVAC1DeviceDetailsFromTXProfile);
-            this.tpTransmit.Controls.Add(this.btnExportCurrentTXProfile);
             this.tpTransmit.Controls.Add(this.chkLimitExtAmpOnOverload);
             this.tpTransmit.Controls.Add(this.grpDSPSpeechProcessor);
             this.tpTransmit.Controls.Add(this.grpExtTXInhibit);
@@ -39919,11 +39918,11 @@
             // 
             // btnExportCurrentTXProfile
             // 
-            this.btnExportCurrentTXProfile.Location = new System.Drawing.Point(593, 186);
+            this.btnExportCurrentTXProfile.Location = new System.Drawing.Point(54, 48);
             this.btnExportCurrentTXProfile.Name = "btnExportCurrentTXProfile";
-            this.btnExportCurrentTXProfile.Size = new System.Drawing.Size(64, 54);
+            this.btnExportCurrentTXProfile.Size = new System.Drawing.Size(48, 21);
             this.btnExportCurrentTXProfile.TabIndex = 73;
-            this.btnExportCurrentTXProfile.Text = "Export Current Profile";
+            this.btnExportCurrentTXProfile.Text = "Export";
             this.toolTip1.SetToolTip(this.btnExportCurrentTXProfile, "Export the curent profile and save to a file.");
             this.btnExportCurrentTXProfile.UseVisualStyleBackColor = true;
             this.btnExportCurrentTXProfile.Click += new System.EventHandler(this.btnExportCurrentTXProfile_Click);
@@ -40090,9 +40089,9 @@
             this.grpBoxMic.Controls.Add(this.udLineInBoost);
             this.grpBoxMic.Controls.Add(this.chk20dbMicBoost);
             this.grpBoxMic.Controls.Add(this.lblLineInBoost);
-            this.grpBoxMic.Location = new System.Drawing.Point(170, 103);
+            this.grpBoxMic.Location = new System.Drawing.Point(170, 89);
             this.grpBoxMic.Name = "grpBoxMic";
-            this.grpBoxMic.Size = new System.Drawing.Size(189, 137);
+            this.grpBoxMic.Size = new System.Drawing.Size(189, 151);
             this.grpBoxMic.TabIndex = 58;
             this.grpBoxMic.TabStop = false;
             this.grpBoxMic.Text = "Mic";
@@ -40302,7 +40301,7 @@
             this.grpTXProfileDef.Controls.Add(this.lstTXProfileDef);
             this.grpTXProfileDef.Location = new System.Drawing.Point(561, 32);
             this.grpTXProfileDef.Name = "grpTXProfileDef";
-            this.grpTXProfileDef.Size = new System.Drawing.Size(136, 152);
+            this.grpTXProfileDef.Size = new System.Drawing.Size(136, 327);
             this.grpTXProfileDef.TabIndex = 54;
             this.grpTXProfileDef.TabStop = false;
             this.grpTXProfileDef.Text = "Additional TX Profiles";
@@ -40310,7 +40309,7 @@
             // btnTXProfileDefImport
             // 
             this.btnTXProfileDefImport.Image = null;
-            this.btnTXProfileDefImport.Location = new System.Drawing.Point(32, 120);
+            this.btnTXProfileDefImport.Location = new System.Drawing.Point(32, 297);
             this.btnTXProfileDefImport.Name = "btnTXProfileDefImport";
             this.btnTXProfileDefImport.Size = new System.Drawing.Size(64, 24);
             this.btnTXProfileDefImport.TabIndex = 54;
@@ -40322,7 +40321,7 @@
             // 
             this.lstTXProfileDef.Location = new System.Drawing.Point(8, 16);
             this.lstTXProfileDef.Name = "lstTXProfileDef";
-            this.lstTXProfileDef.Size = new System.Drawing.Size(120, 82);
+            this.lstTXProfileDef.Size = new System.Drawing.Size(120, 277);
             this.lstTXProfileDef.TabIndex = 53;
             // 
             // grpTXAM
@@ -40447,9 +40446,10 @@
             this.grpTXProfile.Controls.Add(this.btnTXProfileDelete);
             this.grpTXProfile.Controls.Add(this.btnTXProfileSave);
             this.grpTXProfile.Controls.Add(this.comboTXProfileName);
+            this.grpTXProfile.Controls.Add(this.btnExportCurrentTXProfile);
             this.grpTXProfile.Location = new System.Drawing.Point(8, 8);
             this.grpTXProfile.Name = "grpTXProfile";
-            this.grpTXProfile.Size = new System.Drawing.Size(143, 75);
+            this.grpTXProfile.Size = new System.Drawing.Size(156, 75);
             this.grpTXProfile.TabIndex = 23;
             this.grpTXProfile.TabStop = false;
             this.grpTXProfile.Text = "Profiles";
@@ -40457,7 +40457,7 @@
             // btnTXProfileDelete
             // 
             this.btnTXProfileDelete.Image = null;
-            this.btnTXProfileDelete.Location = new System.Drawing.Point(72, 48);
+            this.btnTXProfileDelete.Location = new System.Drawing.Point(103, 48);
             this.btnTXProfileDelete.Name = "btnTXProfileDelete";
             this.btnTXProfileDelete.Size = new System.Drawing.Size(48, 21);
             this.btnTXProfileDelete.TabIndex = 2;
@@ -40468,7 +40468,7 @@
             // btnTXProfileSave
             // 
             this.btnTXProfileSave.Image = null;
-            this.btnTXProfileSave.Location = new System.Drawing.Point(16, 48);
+            this.btnTXProfileSave.Location = new System.Drawing.Point(5, 48);
             this.btnTXProfileSave.Name = "btnTXProfileSave";
             this.btnTXProfileSave.Size = new System.Drawing.Size(48, 21);
             this.btnTXProfileSave.TabIndex = 1;
@@ -40480,9 +40480,9 @@
             // 
             this.comboTXProfileName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboTXProfileName.DropDownWidth = 104;
-            this.comboTXProfileName.Location = new System.Drawing.Point(16, 24);
+            this.comboTXProfileName.Location = new System.Drawing.Point(6, 24);
             this.comboTXProfileName.Name = "comboTXProfileName";
-            this.comboTXProfileName.Size = new System.Drawing.Size(104, 21);
+            this.comboTXProfileName.Size = new System.Drawing.Size(144, 21);
             this.comboTXProfileName.TabIndex = 0;
             this.toolTip1.SetToolTip(this.comboTXProfileName, "Sets the current Transmit Profile to be used.");
             this.comboTXProfileName.SelectedIndexChanged += new System.EventHandler(this.comboTXProfileName_SelectedIndexChanged);
@@ -40497,7 +40497,7 @@
             this.grpPATune.Controls.Add(this.udTXTunePower);
             this.grpPATune.Location = new System.Drawing.Point(8, 89);
             this.grpPATune.Name = "grpPATune";
-            this.grpPATune.Size = new System.Drawing.Size(143, 151);
+            this.grpPATune.Size = new System.Drawing.Size(156, 151);
             this.grpPATune.TabIndex = 22;
             this.grpPATune.TabStop = false;
             this.grpPATune.Text = "Tune";
