@@ -2785,8 +2785,8 @@
             this.clrbtnBtnSel = new Thetis.ColorButton();
             this.lblAppearanceGenBtnSel = new System.Windows.Forms.LabelTS();
             this.tpAppearanceDisplay = new System.Windows.Forms.TabPage();
-            this.chkFillEnergyView = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS18 = new System.Windows.Forms.GroupBoxTS();
+            this.chkNFShowDecimal = new System.Windows.Forms.CheckBoxTS();
             this.clrbtnNoiseFloor = new Thetis.ColorButton();
             this.udNoiseFloorLineWidth = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS605 = new System.Windows.Forms.LabelTS();
@@ -45220,7 +45220,6 @@
             // tpAppearanceDisplay
             // 
             this.tpAppearanceDisplay.BackColor = System.Drawing.SystemColors.Control;
-            this.tpAppearanceDisplay.Controls.Add(this.chkFillEnergyView);
             this.tpAppearanceDisplay.Controls.Add(this.groupBoxTS18);
             this.tpAppearanceDisplay.Controls.Add(this.chkPanadpatorGradient);
             this.tpAppearanceDisplay.Controls.Add(this.grpPanadaptorGradient);
@@ -45234,21 +45233,9 @@
             this.tpAppearanceDisplay.TabIndex = 1;
             this.tpAppearanceDisplay.Text = "RX Display";
             // 
-            // chkFillEnergyView
-            // 
-            this.chkFillEnergyView.AutoSize = true;
-            this.chkFillEnergyView.Image = null;
-            this.chkFillEnergyView.Location = new System.Drawing.Point(524, 231);
-            this.chkFillEnergyView.Name = "chkFillEnergyView";
-            this.chkFillEnergyView.Size = new System.Drawing.Size(130, 17);
-            this.chkFillEnergyView.TabIndex = 98;
-            this.chkFillEnergyView.Text = "Fill Energy View (WIP)";
-            this.chkFillEnergyView.UseVisualStyleBackColor = true;
-            this.chkFillEnergyView.Visible = false;
-            this.chkFillEnergyView.CheckedChanged += new System.EventHandler(this.chkFillEnergyView_CheckedChanged);
-            // 
             // groupBoxTS18
             // 
+            this.groupBoxTS18.Controls.Add(this.chkNFShowDecimal);
             this.groupBoxTS18.Controls.Add(this.clrbtnNoiseFloor);
             this.groupBoxTS18.Controls.Add(this.udNoiseFloorLineWidth);
             this.groupBoxTS18.Controls.Add(this.labelTS605);
@@ -45256,10 +45243,22 @@
             this.groupBoxTS18.Controls.Add(this.chkNoiseFloorShowDBM);
             this.groupBoxTS18.Location = new System.Drawing.Point(283, 201);
             this.groupBoxTS18.Name = "groupBoxTS18";
-            this.groupBoxTS18.Size = new System.Drawing.Size(169, 97);
+            this.groupBoxTS18.Size = new System.Drawing.Size(254, 97);
             this.groupBoxTS18.TabIndex = 97;
             this.groupBoxTS18.TabStop = false;
             this.groupBoxTS18.Text = "Panadapter Noise Floor";
+            // 
+            // chkNFShowDecimal
+            // 
+            this.chkNFShowDecimal.Image = null;
+            this.chkNFShowDecimal.Location = new System.Drawing.Point(145, 72);
+            this.chkNFShowDecimal.Name = "chkNFShowDecimal";
+            this.chkNFShowDecimal.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkNFShowDecimal.Size = new System.Drawing.Size(96, 18);
+            this.chkNFShowDecimal.TabIndex = 97;
+            this.chkNFShowDecimal.Text = "Show decimal";
+            this.toolTip1.SetToolTip(this.chkNFShowDecimal, "Show the dBm reading and heading line");
+            this.chkNFShowDecimal.CheckedChanged += new System.EventHandler(this.chkNFShowDecimal_CheckedChanged);
             // 
             // clrbtnNoiseFloor
             // 
@@ -56699,7 +56698,6 @@
         private CheckBoxTS chkCFCDisplayAutoScale;
         private LabelTS labelTS607;
         private CheckBoxTS chkShowDisplayDebug;
-        private CheckBoxTS chkFillEnergyView;
         private CheckBoxTS chkCTLimitDragToSpectral;
         private CheckBoxTS chkCTLimitDragMouseOnly;
         private NumericUpDownTS udActivePeakHoldDropRX1;
@@ -56892,5 +56890,6 @@
         private LabelTS labelTS157;
         private LabelTS labelTS156;
         private NumericUpDownTS nudNFshift;
+        private CheckBoxTS chkNFShowDecimal;
     }
 }

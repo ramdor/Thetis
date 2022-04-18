@@ -3445,8 +3445,8 @@ namespace Thetis
         static private SharpDX.Direct2D1.Ellipse m_objEllipse = new SharpDX.Direct2D1.Ellipse(Vector2.Zero, 5f, 5f);
 
         // using -160 instead of -200 as somewhat closer to reality
-        static private float m_dNoiseFloorRX1 = -160; // the NF exposed outside Display
-        static private float m_dNoiseFloorRX2 = -160;
+        static private float m_fNoiseFloorRX1 = -160; // the NF exposed outside Display
+        static private float m_fNoiseFloorRX2 = -160;
         static private bool m_bNoiseFloorGoodRX1 = false; // is the noisefloor good? can be used outside Display
         static private bool m_bNoiseFloorGoodRX2 = false;
 
@@ -3493,7 +3493,7 @@ namespace Thetis
             get
             {
                 m_bNoiseFloorGoodRX1 = false;
-                return m_dNoiseFloorRX1;
+                return m_fNoiseFloorRX1;
             }
         }
         public static float NoiseFloorRX2
@@ -3501,7 +3501,7 @@ namespace Thetis
             get
             {
                 m_bNoiseFloorGoodRX2 = false;
-                return m_dNoiseFloorRX2;
+                return m_fNoiseFloorRX2;
             }
         }
 
@@ -3955,28 +3955,28 @@ namespace Thetis
                         if (!m_bFastAttackNoiseFloorRX1 && !bPreviousRX1)
                         {
                             m_fActiveDisplayOffsetRX1 = fOffset;
-                            m_dNoiseFloorRX1 = m_fLerpAverageRX1 + _NFshiftDBM;
+                            m_fNoiseFloorRX1 = m_fLerpAverageRX1 + _fNFshiftDBM;
                             m_bNoiseFloorGoodRX1 = true;
                         }
 
-                        yPixelLerp = (int)dBToPixel(m_fLerpAverageRX1 + _NFshiftDBM, H);
-                        yPixelActual = (int)dBToPixel(m_fFFTBinAverageRX1 + _NFshiftDBM, H);
+                        yPixelLerp = (int)dBToPixel(m_fLerpAverageRX1 + _fNFshiftDBM, H);
+                        yPixelActual = (int)dBToPixel(m_fFFTBinAverageRX1 + _fNFshiftDBM, H);
 
-                        lerp = m_fLerpAverageRX1 + _NFshiftDBM;
+                        lerp = m_fLerpAverageRX1 + _fNFshiftDBM;
                     }
                     else
                     {
                         if (!m_bFastAttackNoiseFloorRX2 && !bPreviousRX2)
                         {
                             m_fActiveDisplayOffsetRX2 = fOffset;
-                            m_dNoiseFloorRX2 = m_fLerpAverageRX2 + _NFshiftDBM;
+                            m_fNoiseFloorRX2 = m_fLerpAverageRX2 + _fNFshiftDBM;
                             m_bNoiseFloorGoodRX2 = true;
                         }
 
-                        yPixelLerp = (int)dBToRX2Pixel(m_fLerpAverageRX2 + _NFshiftDBM, H);
-                        yPixelActual = (int)dBToRX2Pixel(m_fFFTBinAverageRX2 + _NFshiftDBM, H);
+                        yPixelLerp = (int)dBToRX2Pixel(m_fLerpAverageRX2 + _fNFshiftDBM, H);
+                        yPixelActual = (int)dBToRX2Pixel(m_fFFTBinAverageRX2 + _fNFshiftDBM, H);
 
-                        lerp = m_fLerpAverageRX2 + _NFshiftDBM;
+                        lerp = m_fLerpAverageRX2 + _fNFshiftDBM;
                     }
 
                     if ((rx == 1 && m_bShowRX1NoiseFloor) || (rx == 2 && m_bShowRX2NoiseFloor))
@@ -4005,7 +4005,7 @@ namespace Thetis
                             if (m_bShowNoiseFloorDBM)
                             {
                                 drawLineDX2D(brY, box.X - 3, (int)yPixelActual, box.X - 3, yP, 2); // direction up/down line
-                                drawStringDX2D(lerp.ToString("F0"), fontDX2d_font9b, brY, box.X + box.Width, box.Y - 6);
+                                drawStringDX2D(lerp.ToString(_NFDecimal ? "F1" : "F0"), fontDX2d_font9b, brY, box.X + box.Width, box.Y - 6);
                             }
                             else
                             {
@@ -4084,7 +4084,7 @@ namespace Thetis
 
             return true;
         }
-        private static int _NFshiftDBM = 0;
+        private static int _fNFshiftDBM = 0;
         public static int NFshiftDBM
         {
             get { return NFshiftDBM; }
@@ -4093,7 +4093,7 @@ namespace Thetis
                 int t = value;
                 if (t < -6) t = 6;
                 if (t > 6) t = 6;
-                _NFshiftDBM = t;
+                _fNFshiftDBM = t;
             }
         }
         private static int _NFsensitivity = 3;
@@ -4396,7 +4396,7 @@ namespace Thetis
                             if (!m_bFastAttackNoiseFloorRX1 && !bPreviousRX1)
                             {
                                 m_fActiveDisplayOffsetRX1 = fOffset;
-                                m_dNoiseFloorRX1 = m_fLerpAverageRX1 + _NFshiftDBM;
+                                m_fNoiseFloorRX1 = m_fLerpAverageRX1 + _fNFshiftDBM;
                                 m_bNoiseFloorGoodRX1 = true;
                             }
                         }
@@ -4405,7 +4405,7 @@ namespace Thetis
                             if (!m_bFastAttackNoiseFloorRX2 && !bPreviousRX2)
                             {
                                 m_fActiveDisplayOffsetRX2 = fOffset;
-                                m_dNoiseFloorRX2 = m_fLerpAverageRX2 + _NFshiftDBM;
+                                m_fNoiseFloorRX2 = m_fLerpAverageRX2 + _fNFshiftDBM;
                                 m_bNoiseFloorGoodRX2 = true;
                             }
                         }
@@ -8886,7 +8886,13 @@ namespace Thetis
 
 
         // spot draw2
-       
+
+        private static bool _NFDecimal = false;
+        public static bool NoiseFloorDecimal
+        {
+            get { return _NFDecimal; }
+            set { _NFDecimal = value; }
+        }
 
         private static List<int> _spotLayerRightRX1 = new List<int>();
         private static List<int> _spotLayerRightRX2 = new List<int>();
