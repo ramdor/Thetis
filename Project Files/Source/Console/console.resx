@@ -2785,7 +2785,7 @@
     <value>Off</value>
   </data>
   <data name="btnZeroBeat.Location" type="System.Drawing.Point, System.Drawing">
-    <value>22, 30</value>
+    <value>10, 24</value>
   </data>
   <data name="btnZeroBeat.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -2827,7 +2827,7 @@
     <value>Off</value>
   </data>
   <data name="chkVFOSplit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>22, 7</value>
+    <value>10, 1</value>
   </data>
   <data name="chkVFOSplit.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -2866,7 +2866,7 @@
     <value>Off</value>
   </data>
   <data name="btnRITReset.Location" type="System.Drawing.Point, System.Drawing">
-    <value>52, 83</value>
+    <value>48, 76</value>
   </data>
   <data name="btnRITReset.Size" type="System.Drawing.Size, System.Drawing">
     <value>16, 20</value>
@@ -2902,7 +2902,7 @@
     <value>Off</value>
   </data>
   <data name="btnXITReset.Location" type="System.Drawing.Point, System.Drawing">
-    <value>108, 83</value>
+    <value>110, 76</value>
   </data>
   <data name="btnXITReset.Size" type="System.Drawing.Size, System.Drawing">
     <value>16, 20</value>
@@ -2928,11 +2928,14 @@
   <data name="&gt;&gt;btnXITReset.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
+  <data name="udRIT.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
   <data name="udRIT.Location" type="System.Drawing.Point, System.Drawing">
-    <value>20, 103</value>
+    <value>14, 103</value>
   </data>
   <data name="udRIT.Size" type="System.Drawing.Size, System.Drawing">
-    <value>56, 20</value>
+    <value>50, 20</value>
   </data>
   <data name="udRIT.TabIndex" type="System.Int32, mscorlib">
     <value>35</value>
@@ -2965,7 +2968,7 @@
     <value>Off</value>
   </data>
   <data name="btnIFtoVFO.Location" type="System.Drawing.Point, System.Drawing">
-    <value>22, 53</value>
+    <value>10, 47</value>
   </data>
   <data name="btnIFtoVFO.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -3004,10 +3007,10 @@
     <value>Off</value>
   </data>
   <data name="chkRIT.Location" type="System.Drawing.Point, System.Drawing">
-    <value>20, 83</value>
+    <value>6, 76</value>
   </data>
   <data name="chkRIT.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 20</value>
+    <value>42, 20</value>
   </data>
   <data name="chkRIT.TabIndex" type="System.Int32, mscorlib">
     <value>43</value>
@@ -3046,7 +3049,7 @@
     <value>Off</value>
   </data>
   <data name="btnVFOSwap.Location" type="System.Drawing.Point, System.Drawing">
-    <value>73, 53</value>
+    <value>73, 47</value>
   </data>
   <data name="btnVFOSwap.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -3085,10 +3088,10 @@
     <value>Off</value>
   </data>
   <data name="chkXIT.Location" type="System.Drawing.Point, System.Drawing">
-    <value>76, 83</value>
+    <value>68, 76</value>
   </data>
   <data name="chkXIT.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 20</value>
+    <value>40, 20</value>
   </data>
   <data name="chkXIT.TabIndex" type="System.Int32, mscorlib">
     <value>42</value>
@@ -3127,7 +3130,7 @@
     <value>Off</value>
   </data>
   <data name="btnVFOBtoA.Location" type="System.Drawing.Point, System.Drawing">
-    <value>73, 30</value>
+    <value>73, 24</value>
   </data>
   <data name="btnVFOBtoA.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -3153,11 +3156,14 @@
   <data name="&gt;&gt;btnVFOBtoA.ZOrder" xml:space="preserve">
     <value>11</value>
   </data>
+  <data name="udXIT.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
   <data name="udXIT.Location" type="System.Drawing.Point, System.Drawing">
     <value>76, 103</value>
   </data>
   <data name="udXIT.Size" type="System.Drawing.Size, System.Drawing">
-    <value>56, 20</value>
+    <value>50, 20</value>
   </data>
   <data name="udXIT.TabIndex" type="System.Int32, mscorlib">
     <value>29</value>
@@ -3190,7 +3196,7 @@
     <value>Off</value>
   </data>
   <data name="btnVFOAtoB.Location" type="System.Drawing.Point, System.Drawing">
-    <value>73, 7</value>
+    <value>73, 1</value>
   </data>
   <data name="btnVFOAtoB.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -3670,7 +3676,7 @@
     <value>Off</value>
   </data>
   <data name="chkVAC1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>18, 127</value>
+    <value>12, 129</value>
   </data>
   <data name="chkVAC1.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -7373,7 +7379,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="chkVAC2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>73, 127</value>
+    <value>73, 129</value>
   </data>
   <data name="chkVAC2.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>

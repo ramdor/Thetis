@@ -2065,13 +2065,13 @@
             // udRIT
             // 
             this.udRIT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            resources.ApplyResources(this.udRIT, "udRIT");
             this.udRIT.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.udRIT.Increment = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            resources.ApplyResources(this.udRIT, "udRIT");
             this.udRIT.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -2140,13 +2140,13 @@
             // udXIT
             // 
             this.udXIT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            resources.ApplyResources(this.udXIT, "udXIT");
             this.udXIT.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.udXIT.Increment = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            resources.ApplyResources(this.udXIT, "udXIT");
             this.udXIT.Maximum = new decimal(new int[] {
             99999,
             0,
