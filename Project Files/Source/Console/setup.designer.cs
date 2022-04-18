@@ -3306,6 +3306,8 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.chkAdjustGridMinToNFRX1 = new System.Windows.Forms.CheckBoxTS();
+            this.chkAdjustGridMinToNFRX2 = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -8594,7 +8596,7 @@
             this.groupBoxTS26.Controls.Add(this.nudNFshift);
             this.groupBoxTS26.Controls.Add(this.labelTS155);
             this.groupBoxTS26.Controls.Add(this.nudNFsensitivity);
-            this.groupBoxTS26.Location = new System.Drawing.Point(15, 260);
+            this.groupBoxTS26.Location = new System.Drawing.Point(438, 13);
             this.groupBoxTS26.Name = "groupBoxTS26";
             this.groupBoxTS26.Size = new System.Drawing.Size(166, 84);
             this.groupBoxTS26.TabIndex = 35;
@@ -29855,6 +29857,7 @@
             // 
             // grpDisplaySpectrumGrid
             // 
+            this.grpDisplaySpectrumGrid.Controls.Add(this.chkAdjustGridMinToNFRX1);
             this.grpDisplaySpectrumGrid.Controls.Add(this.label15);
             this.grpDisplaySpectrumGrid.Controls.Add(this.txtDisplayGridBandLevel);
             this.grpDisplaySpectrumGrid.Controls.Add(this.comboDisplayLabelAlign);
@@ -29867,7 +29870,7 @@
             this.grpDisplaySpectrumGrid.Controls.Add(this.lblDisplayGridMax);
             this.grpDisplaySpectrumGrid.Location = new System.Drawing.Point(375, 259);
             this.grpDisplaySpectrumGrid.Name = "grpDisplaySpectrumGrid";
-            this.grpDisplaySpectrumGrid.Size = new System.Drawing.Size(304, 110);
+            this.grpDisplaySpectrumGrid.Size = new System.Drawing.Size(304, 138);
             this.grpDisplaySpectrumGrid.TabIndex = 47;
             this.grpDisplaySpectrumGrid.TabStop = false;
             this.grpDisplaySpectrumGrid.Text = "Spectrum Grid";
@@ -31327,6 +31330,7 @@
             // 
             // grpRX2DisplaySpectrumGrid
             // 
+            this.grpRX2DisplaySpectrumGrid.Controls.Add(this.chkAdjustGridMinToNFRX2);
             this.grpRX2DisplaySpectrumGrid.Controls.Add(this.label16);
             this.grpRX2DisplaySpectrumGrid.Controls.Add(this.txtRX2DisplayGridBandLevel);
             this.grpRX2DisplaySpectrumGrid.Controls.Add(this.comboBoxTS1);
@@ -31339,7 +31343,7 @@
             this.grpRX2DisplaySpectrumGrid.Controls.Add(this.lblRX2DisplayGridMax);
             this.grpRX2DisplaySpectrumGrid.Location = new System.Drawing.Point(375, 259);
             this.grpRX2DisplaySpectrumGrid.Name = "grpRX2DisplaySpectrumGrid";
-            this.grpRX2DisplaySpectrumGrid.Size = new System.Drawing.Size(304, 110);
+            this.grpRX2DisplaySpectrumGrid.Size = new System.Drawing.Size(304, 138);
             this.grpRX2DisplaySpectrumGrid.TabIndex = 49;
             this.grpRX2DisplaySpectrumGrid.TabStop = false;
             this.grpRX2DisplaySpectrumGrid.Text = "Spectrum Grid";
@@ -52518,6 +52522,32 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // chkAdjustGridMinToNFRX1
+            // 
+            this.chkAdjustGridMinToNFRX1.AutoSize = true;
+            this.chkAdjustGridMinToNFRX1.Image = null;
+            this.chkAdjustGridMinToNFRX1.Location = new System.Drawing.Point(15, 115);
+            this.chkAdjustGridMinToNFRX1.Name = "chkAdjustGridMinToNFRX1";
+            this.chkAdjustGridMinToNFRX1.Size = new System.Drawing.Size(225, 17);
+            this.chkAdjustGridMinToNFRX1.TabIndex = 83;
+            this.chkAdjustGridMinToNFRX1.Text = "Adjust Min to Noise Floor - Step (all bands)";
+            this.toolTip1.SetToolTip(this.chkAdjustGridMinToNFRX1, "Keep min adjusted to step size under noise floor");
+            this.chkAdjustGridMinToNFRX1.UseVisualStyleBackColor = true;
+            this.chkAdjustGridMinToNFRX1.CheckedChanged += new System.EventHandler(this.chkAdjustGridMinToNFRX1_CheckedChanged);
+            // 
+            // chkAdjustGridMinToNFRX2
+            // 
+            this.chkAdjustGridMinToNFRX2.AutoSize = true;
+            this.chkAdjustGridMinToNFRX2.Image = null;
+            this.chkAdjustGridMinToNFRX2.Location = new System.Drawing.Point(15, 115);
+            this.chkAdjustGridMinToNFRX2.Name = "chkAdjustGridMinToNFRX2";
+            this.chkAdjustGridMinToNFRX2.Size = new System.Drawing.Size(225, 17);
+            this.chkAdjustGridMinToNFRX2.TabIndex = 85;
+            this.chkAdjustGridMinToNFRX2.Text = "Adjust Min to Noise Floor - Step (all bands)";
+            this.toolTip1.SetToolTip(this.chkAdjustGridMinToNFRX2, "Keep min adjusted to step size under noise floor");
+            this.chkAdjustGridMinToNFRX2.UseVisualStyleBackColor = true;
+            this.chkAdjustGridMinToNFRX2.CheckedChanged += new System.EventHandler(this.chkAdjustGridMinToNFRX2_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -56891,5 +56921,7 @@
         private LabelTS labelTS156;
         private NumericUpDownTS nudNFshift;
         private CheckBoxTS chkNFShowDecimal;
+        private CheckBoxTS chkAdjustGridMinToNFRX1;
+        private CheckBoxTS chkAdjustGridMinToNFRX2;
     }
 }

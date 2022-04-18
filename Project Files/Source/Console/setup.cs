@@ -25055,6 +25055,16 @@ namespace Thetis
         {
             Display.NoiseFloorDecimal = chkNFShowDecimal.Checked;
         }
+
+        private void chkAdjustGridMinToNFRX1_CheckedChanged(object sender, EventArgs e)
+        {
+            console.GridMinFollowsNFRX1 = chkAdjustGridMinToNFRX1.Checked;
+        }
+
+        private void chkAdjustGridMinToNFRX2_CheckedChanged(object sender, EventArgs e)
+        {
+            console.GridMinFollowsNFRX2 = chkAdjustGridMinToNFRX2.Checked;
+        }
     }
 
     #region PADeviceInfo Helper Class

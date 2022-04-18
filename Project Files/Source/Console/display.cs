@@ -3478,12 +3478,12 @@ namespace Thetis
             get { return m_fAttackTimeInMSForRX2; }
             set { m_fAttackTimeInMSForRX2 = value; }
         }
-        public static bool NoiseFloorGoodRX1
+        public static bool IsNoiseFloorGoodRX1
         {
             get { return m_bNoiseFloorGoodRX1; }
             set { }
         }
-        public static bool NoiseFloorGoodRX2
+        public static bool IsNoiseFloorGoodRX2
         {
             get { return m_bNoiseFloorGoodRX2; }
             set { }
@@ -3502,6 +3502,20 @@ namespace Thetis
             {
                 m_bNoiseFloorGoodRX2 = false;
                 return m_fNoiseFloorRX2;
+            }
+        }
+        public static float ActiveNoiseFloorRX1
+        {
+            get
+            {
+                return m_fLerpAverageRX1 + _fNFshiftDBM;
+            }
+        }
+        public static float ActiveNoiseFloorRX2
+        {
+            get
+            {
+                return m_fLerpAverageRX2 + _fNFshiftDBM;
             }
         }
 
@@ -7929,8 +7943,6 @@ namespace Thetis
             int low = 0;								// init limit variables
             int high = 0;
 
-            int center_line_x = (int)(-(double)low / (high - low) * W);
-
             if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
             {
                 low = rx_spectrum_display_low;				// get RX display limits
@@ -7949,6 +7961,8 @@ namespace Thetis
                     high = tx_spectrum_display_high;
                 }
             }
+
+            int center_line_x = (int)(-(double)low / (high - low) * W);
 
             int mid_w = W / 2;
             int[] step_list = { 10, 20, 25, 50 };
@@ -8056,7 +8070,7 @@ namespace Thetis
                         if (y + 9 < H)
                         {
                             if (bottom) drawStringDX2D(label, fontDX2d_font9, m_bDX2_grid_text_brush, x, H + y);
-                            drawStringDX2D(label, fontDX2d_font9, m_bDX2_grid_text_brush, x, y);
+                            else drawStringDX2D(label, fontDX2d_font9, m_bDX2_grid_text_brush, x, y);
                         }
                     }
                 }

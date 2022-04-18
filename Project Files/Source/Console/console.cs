@@ -12102,16 +12102,18 @@ namespace Thetis
 
                 udRX1StepAttData.Value = rx1_attenuator_data;
                 lblAttenLabel.Text = rx1_attenuator_data.ToString() + " dB";
+
                 if (!mox)
                 {
+                    bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
+                    if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX2AttenuatorData != rx1_attenuator_data)
+                    {
+                        if (SetupForm.RX2EnableAtt != SetupForm.HermesEnableAttenuator) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator;
+                        RX2AttenuatorData = rx1_attenuator_data;
+                    }
+
                     update_preamp = true;
                     UpdatePreamps();
-                }
-                bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
-                if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX2AttenuatorData != rx1_attenuator_data)
-                {
-                    if (SetupForm.RX2EnableAtt != SetupForm.HermesEnableAttenuator) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator;
-                    RX2AttenuatorData = rx1_attenuator_data;
                 }
 
                 UpdateRX1DisplayOffsets();
@@ -12257,18 +12259,20 @@ namespace Thetis
 
                 udRX2StepAttData.Value = rx2_attenuator_data;
                 lblRX2AttenLabel.Text = rx2_attenuator_data.ToString() + " dB";
+
                 if (!mox)
                 {
+                    bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
+                    if (((nRX2ADCinUse == nRX1ADCinUse) || bRX1RX2diversity) && RX1AttenuatorData != rx2_attenuator_data)
+                    {
+                        if (SetupForm.HermesEnableAttenuator != SetupForm.RX2EnableAtt) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;
+                        RX1AttenuatorData = rx2_attenuator_data;
+                    }
+
                     update_preamp = true;
                     UpdatePreamps();
                 }
 
-                bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
-                if (((nRX2ADCinUse == nRX1ADCinUse) || bRX1RX2diversity) && RX1AttenuatorData != rx2_attenuator_data)
-                {
-                    if (SetupForm.HermesEnableAttenuator != SetupForm.RX2EnableAtt) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;
-                    RX1AttenuatorData = rx2_attenuator_data;
-                }
                 UpdateRX2DisplayOffsets();
                 ////MW0LGE_21d atten
                 //if (nRX1ADCinUse == nRX2ADCinUse)
@@ -20700,11 +20704,14 @@ namespace Thetis
                         break;
                 }
 
-                bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
-                if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX2PreampMode != rx1_preamp_mode)
+                if (!mox)
                 {
-                    if (SetupForm.RX2EnableAtt != SetupForm.HermesEnableAttenuator) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator;
-                    RX2PreampMode = rx1_preamp_mode;
+                    bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
+                    if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX2PreampMode != rx1_preamp_mode)
+                    {
+                        if (SetupForm.RX2EnableAtt != SetupForm.HermesEnableAttenuator) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator;
+                        RX2PreampMode = rx1_preamp_mode;
+                    }
                 }
 
                 UpdateRX1DisplayOffsets();
@@ -20846,11 +20853,14 @@ namespace Thetis
 
                 rx2_preamp_by_band[(int)rx2_band] = rx2_preamp_mode;
 
-                bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
-                if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX1PreampMode != rx2_preamp_mode)
+                if (!mox)
                 {
-                    if (SetupForm.HermesEnableAttenuator != SetupForm.RX2EnableAtt) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;
-                    RX1PreampMode = rx2_preamp_mode;
+                    bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
+                    if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX1PreampMode != rx2_preamp_mode)
+                    {
+                        if (SetupForm.HermesEnableAttenuator != SetupForm.RX2EnableAtt) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;
+                        RX1PreampMode = rx2_preamp_mode;
+                    }
                 }
 
                 UpdateRX2DisplayOffsets();
@@ -33293,31 +33303,49 @@ namespace Thetis
 
         private void chkVAC1_CheckedChanged(object sender, System.EventArgs e)
         {
-            bool bSync = false;
-            if (!IsSetupFormNull && Common.ShiftKeyDown) //MW0LGE_22b
-            {
-                if(chkVAC2.Checked) chkVAC2.Checked = false;
-                bSync = true;
-            }
+            bool bSync = !IsSetupFormNull && Common.ShiftKeyDown;
 
-            if (!IsSetupFormNull) SetupForm.VACEnable = chkVAC1.Checked;
-            if (chkVAC1.Checked)
+            if (!bSync)
             {
-                chkVAC1.BackColor = button_selected_color;
-
-                if (chkVOX.Checked)
+                if (!IsSetupFormNull) SetupForm.VACEnable = chkVAC1.Checked;
+                if (chkVAC1.Checked)
                 {
-                    chkVOX.Checked = false;
-                    if (!IsSetupFormNull) SetupForm.VOXEnable = chkVOX.Checked;
-                    Audio.VOXActive = false;
-                    chkVOX.BackColor = SystemColors.Control;
-                }
-            }
-            else chkVAC1.BackColor = SystemColors.Control;
+                    chkVAC1.BackColor = button_selected_color;
 
-            if (bSync)
+                    if (chkVOX.Checked)
+                    {
+                        chkVOX.Checked = false;
+                        if (!IsSetupFormNull) SetupForm.VOXEnable = chkVOX.Checked;
+                        Audio.VOXActive = false;
+                        chkVOX.BackColor = SystemColors.Control;
+                    }
+                }
+                else chkVAC1.BackColor = SystemColors.Control;
+            }
+            else //MW0LGE_22b
             {
-                chkVAC2.Checked = chkVAC1.Checked;
+                if (!IsSetupFormNull) SetupForm.VACEnable = chkVAC1.Checked;
+                if (!IsSetupFormNull) SetupForm.VAC2Enable = chkVAC1.Checked;
+
+                if (chkVAC1.Checked)
+                {
+                    chkVAC1.BackColor = button_selected_color;
+                    chkVAC2.BackColor = button_selected_color;
+
+                    if (chkVOX.Checked)
+                    {
+                        chkVOX.Checked = false;
+                        if (!IsSetupFormNull) SetupForm.VOXEnable = chkVOX.Checked;
+                        Audio.VOXActive = false;
+                        chkVOX.BackColor = SystemColors.Control;
+                    }
+                }
+                else
+                {
+                    chkVAC1.BackColor = SystemColors.Control;
+                    chkVAC2.BackColor = SystemColors.Control;
+                }
+
             }
         }
 
@@ -35842,7 +35870,7 @@ namespace Thetis
 
                 bool bOverRX1 = overRX(e.X, e.Y, 1, true);
                 bool bOverRX2 = overRX(e.X, e.Y, 2, true);
-
+                #region Notches
                 //NOTCH MW0LGE
                 bool bDraggingAFilter = rx1_high_filter_drag || rx1_low_filter_drag || rx2_high_filter_drag || rx2_low_filter_drag ||
                     rx1_sub_drag || rx1_whole_filter_drag || rx2_whole_filter_drag || tx_low_filter_drag || tx_high_filter_drag || tx_whole_filter_drag ||
@@ -35987,7 +36015,7 @@ namespace Thetis
                     }
                 }
                 //END NOTCH
-
+                #endregion
                 bool bHighlightNumberScaleRX1 = false;
                 bool bHighlightNumberScaleRX2 = false;
                 int nHighlightedBandStackEntryIndex = -1; // no bandstackoverlay highlighted
@@ -36013,6 +36041,7 @@ namespace Thetis
                             break;
                     }
 
+                    #region BandStackHighlight
                     //BandstackOverlay highlight MW0LGE_21h
                     //only do this if not doing something else
                     if (m_bShowBandStackOverlays && bOverRX1 && !(rx1_sub_drag || bHighlightNumberScaleRX1 || bDraggingAFilter || m_bDraggingNotch || m_bDraggingNotchBW || m_bDraggingPanafallSplit))
@@ -36041,6 +36070,7 @@ namespace Thetis
                         }
                     }
                     //
+                    #endregion
                 }
 
                 if (rx2_enabled && bOverRX2 && !(bHighlightNumberScaleRX2 || bDraggingAFilter || m_bDraggingNotch || m_bDraggingNotchBW || m_bDraggingPanafallSplit))
@@ -36083,6 +36113,7 @@ namespace Thetis
                 }
                 //END SPLITTER DRAG
 
+                #region GridAdjust
                 if (rx1_grid_adjust || rx2_grid_adjust)
                 {
                     if (rx1_grid_adjust)
@@ -36283,11 +36314,17 @@ namespace Thetis
                         }
                     }
                 }
+                #endregion
 
                 //MW0LGE_21k9
                 bool bShowCursorData = false;
                 //
 
+                // TCI SPOTS
+                _highlightedSpot = SpotManager2.HighlightSpot(e.X, e.Y);
+                //
+
+                #region AGC and Filter Dragging
                 switch (Display.CurrentDisplayMode)
                 {
                     case DisplayMode.HISTOGRAM:
@@ -36957,11 +36994,9 @@ namespace Thetis
                         ////txtDisplayCursorFreq.Text = "";
                         break;
                 }
+                #endregion
 
-                // TCI SPOTS
-                _highlightedSpot = SpotManager2.HighlightSpot(e.X, e.Y);
-                //
-
+                #region Cursor and Info bar data
                 //re-implemented cursor info MW0LGE_21k9
                 if (bShowCursorData)
                 {
@@ -37112,7 +37147,9 @@ namespace Thetis
                     infoBar.Left2(0, "");
                     infoBar.Left3(0, "");
                 }
+                #endregion
 
+                #region Dragging
                 if (rx1_spectrum_tune_drag)
                 {
                     if (!mox || (rx2_enabled && chkVFOBTX.Checked))
@@ -37187,6 +37224,7 @@ namespace Thetis
                         VFOBFreq -= delta * 0.0000010;
                     }
                 }
+                #endregion
 
                 // top drag area - this will override hover over filter
                 if (bOverRX2 && e.Y < ((picDisplay.Height / 2) + 15))
@@ -49311,7 +49349,7 @@ namespace Thetis
             if (current_hpsdr_model != HPSDRModel.HPSDR)
                 SetupForm.HermesEnableAttenuator = !SetupForm.HermesEnableAttenuator;
 
-            if (RX1RX2usingSameADC) //MW0LGE_22b
+            if (RX1RX2usingSameADC && !mox) //MW0LGE_22b
                 if (SetupForm.RX2EnableAtt != SetupForm.HermesEnableAttenuator) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator;
         }
 
@@ -49320,7 +49358,7 @@ namespace Thetis
             if (current_hpsdr_model != HPSDRModel.HPSDR)
                 SetupForm.RX2EnableAtt = !SetupForm.RX2EnableAtt;
 
-            if (RX1RX2usingSameADC) //MW0LGE_22b
+            if (RX1RX2usingSameADC && !mox) //MW0LGE_22b
                 if (SetupForm.HermesEnableAttenuator != SetupForm.RX2EnableAtt) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;
         }
 
@@ -52644,15 +52682,44 @@ namespace Thetis
         }
         private float _lastRX1NoiseFloor = -200;
         private float _lastRX2NoiseFloor = -200;
+        private bool _gridMinFollowsNFRX1 = false;
+        private bool _gridMinFollowsNFRX2 = false;
+        public bool GridMinFollowsNFRX1
+        {
+            get { return _gridMinFollowsNFRX1; }
+            set { _gridMinFollowsNFRX1 = value; }
+        }
+        public bool GridMinFollowsNFRX2
+        {
+            get { return _gridMinFollowsNFRX2; }
+            set { _gridMinFollowsNFRX2 = value; }
+        }
         private void tmrAutoAGC_Tick(object sender, EventArgs e)
         {
             if (!chkPower.Checked || mox) return;
 
-            bool bRX1Good = Display.NoiseFloorGoodRX1;
-            bool bRX2Good = Display.NoiseFloorGoodRX2;
-            
+            bool bRX1Good = Display.IsNoiseFloorGoodRX1;
+            bool bRX2Good = Display.IsNoiseFloorGoodRX2;
+
             if (bRX1Good) _lastRX1NoiseFloor = Display.NoiseFloorRX1; // these update noisefloorgoodrx
             if (bRX2Good) _lastRX2NoiseFloor = Display.NoiseFloorRX2;
+
+            //
+            if (!IsSetupFormNull)
+            { 
+                if (GridMinFollowsNFRX1)
+                {
+                    float setPoint = Display.ActiveNoiseFloorRX1 - Display.SpectrumGridStep; // ActiveNoiseFloorRX1 ignores fast attack / good status
+                    if (Math.Abs(SetupForm.DisplayGridMin - setPoint) >= 2) SetupForm.DisplayGridMin = setPoint; // at least 2dB to move
+                }
+
+                if (GridMinFollowsNFRX2)
+                {
+                    float setPoint = Display.ActiveNoiseFloorRX2 - Display.RX2SpectrumGridStep; // ActiveNoiseFloorRX2 ignores fast attack / good status
+                    if (Math.Abs(SetupForm.RX2DisplayGridMin - setPoint) >= 2) SetupForm.RX2DisplayGridMin = setPoint; // at least 2dB to move
+                }
+            }
+            //
 
             if (m_bAutoAGCRX1 && bRX1Good)
             {
