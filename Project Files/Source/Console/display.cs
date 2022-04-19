@@ -281,13 +281,14 @@ namespace Thetis
         public static DisplayMode CurrentDisplayModeBottom {
             get { return current_display_mode_bottom; }
             set {
-                if (value != current_display_mode_bottom) 
+                bool bDifferent = current_display_mode_bottom != value;
+                current_display_mode_bottom = value;
+                if (bDifferent)
                 {
                     clearBuffers(displayTargetWidth, 2);
                     if (value == DisplayMode.PANAFALL || value == DisplayMode.WATERFALL)
                         ResetWaterfallBmp2();
                 }
-                current_display_mode_bottom = value;
             }
         }
 
@@ -1073,18 +1074,19 @@ namespace Thetis
         public static DisplayMode CurrentDisplayMode {
             get { return current_display_mode; }
             set {
-                if(value != current_display_mode)
+                bool bDifferent = current_display_mode != value;
+                current_display_mode = value;
+
+                if (console.PowerOn)
+                    console.pause_DisplayThread = true;
+
+                if (bDifferent)
                 {
                     clearBuffers(displayTargetWidth, 1);
 
                     if (value == DisplayMode.PANAFALL || value == DisplayMode.WATERFALL)
                         ResetWaterfallBmp();
                 }
-
-                current_display_mode = value;
-
-                if (console.PowerOn)
-                    console.pause_DisplayThread = true;
 
                 switch (current_display_mode)
                 {

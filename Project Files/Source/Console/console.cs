@@ -12037,6 +12037,7 @@ namespace Thetis
             }
         }
 
+        private bool _setFromOtherAttenuator = false; // used to prevent other attenuator from re-setting the caller
         private int rx1_attenuator_data = 0;
         public int RX1AttenuatorData
         {
@@ -12077,6 +12078,7 @@ namespace Thetis
                             if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx1_attenuator_data);
                             else if (nRX1ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx1_attenuator_data);
                             else if (nRX1ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx1_attenuator_data);
+                            //Debug.Print("RX1 Atten Set = " + rx1_attenuator_data.ToString());
                         }
                         else
                         {
@@ -12085,6 +12087,7 @@ namespace Thetis
                             if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx1_attenuator_data + 2);
                             else if (nRX1ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx1_attenuator_data + 2);
                             else if (nRX1ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx1_attenuator_data + 2);
+                            //Debug.Print("RX1 Atten Set = " + rx1_attenuator_data.ToString());
                         }
                     }
                     else
@@ -12094,6 +12097,7 @@ namespace Thetis
                         if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx1_attenuator_data);
                         else if (nRX1ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx1_attenuator_data);
                         else if (nRX1ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx1_attenuator_data);
+                        //Debug.Print("RX1 Atten Set = " + rx1_attenuator_data.ToString());
                     }
                 }
 
@@ -12105,11 +12109,16 @@ namespace Thetis
 
                 if (!mox)
                 {
-                    bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
-                    if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX2AttenuatorData != rx1_attenuator_data)
+                    if (!_setFromOtherAttenuator)
                     {
-                        if (SetupForm.RX2EnableAtt != SetupForm.HermesEnableAttenuator) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator;
-                        RX2AttenuatorData = rx1_attenuator_data;
+                        bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
+                        if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX2AttenuatorData != rx1_attenuator_data)
+                        {
+                            _setFromOtherAttenuator = true;
+                            if (SetupForm.RX2EnableAtt != SetupForm.HermesEnableAttenuator) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator;
+                            RX2AttenuatorData = rx1_attenuator_data;
+                            _setFromOtherAttenuator = false;
+                        }
                     }
 
                     update_preamp = true;
@@ -12234,6 +12243,7 @@ namespace Thetis
                             if (nRX2ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx2_attenuator_data);
                             else if (nRX2ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx2_attenuator_data);
                             else if (nRX2ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx2_attenuator_data);
+                            //Debug.Print("RX2 Atten Set = " + rx2_attenuator_data.ToString());
                         }
                         else
                         {
@@ -12242,6 +12252,7 @@ namespace Thetis
                             if (nRX2ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx2_attenuator_data + 2);
                             else if (nRX2ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx2_attenuator_data + 2);
                             else if (nRX2ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx2_attenuator_data + 2);
+                            //Debug.Print("RX2 Atten Set = " + rx2_attenuator_data.ToString());
                         }
                     }
                     else
@@ -12251,6 +12262,7 @@ namespace Thetis
                         if (nRX2ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx2_attenuator_data);
                         else if (nRX2ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx2_attenuator_data);
                         else if (nRX2ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx2_attenuator_data);
+                        //Debug.Print("RX2 Atten Set = " + rx2_attenuator_data.ToString());
                     }
                 }
 
@@ -12262,11 +12274,16 @@ namespace Thetis
 
                 if (!mox)
                 {
-                    bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
-                    if (((nRX2ADCinUse == nRX1ADCinUse) || bRX1RX2diversity) && RX1AttenuatorData != rx2_attenuator_data)
+                    if (!_setFromOtherAttenuator)
                     {
-                        if (SetupForm.HermesEnableAttenuator != SetupForm.RX2EnableAtt) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;
-                        RX1AttenuatorData = rx2_attenuator_data;
+                        bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
+                        if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX1AttenuatorData != rx2_attenuator_data)
+                        {
+                            _setFromOtherAttenuator = true;
+                            if (SetupForm.HermesEnableAttenuator != SetupForm.RX2EnableAtt) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;
+                            RX1AttenuatorData = rx2_attenuator_data;
+                            _setFromOtherAttenuator = false;
+                        }
                     }
 
                     update_preamp = true;
@@ -13352,7 +13369,10 @@ namespace Thetis
             //    case DisplayMode.SPECTRUM:
             //    case DisplayMode.HISTOGRAM:
             //    case DisplayMode.SPECTRASCOPE:
+
             Display.RX1DisplayCalOffset = rx1_display_cal_offset + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
+            //Debug.Print("Display.RX1DisplayCalOffset = " + Display.RX1DisplayCalOffset.ToString());
+
             //        break;
             //    default:
             //        Display.RX1DisplayCalOffset = rx1_display_cal_offset + rx1_path_offset + rx1_xvtr_gain_offset;
@@ -20687,11 +20707,11 @@ namespace Thetis
                         break;
 
                     case PreampMode.HPSDR_MINUS40:
-                        comboPreamp.Text = "-40dB";
+                        comboPreamp.Text = "-40db"; //MW0LGE_22b lower
                         break;
 
                     case PreampMode.HPSDR_MINUS50:
-                        comboPreamp.Text = "-50dB";
+                        comboPreamp.Text = "-50db"; //MW0LGE_22b lower
                         break;
                     case PreampMode.SA_MINUS10:
                         comboPreamp.Text = "-10dB";
@@ -20704,17 +20724,19 @@ namespace Thetis
                         break;
                 }
 
-                if (!mox)
+                if (!mox && !_setFromOtherAttenuator)
                 {
                     bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
                     if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX2PreampMode != rx1_preamp_mode)
                     {
+                        _setFromOtherAttenuator = true;
                         if (SetupForm.RX2EnableAtt != SetupForm.HermesEnableAttenuator) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator;
                         RX2PreampMode = rx1_preamp_mode;
+                        _setFromOtherAttenuator = false;
                     }
                 }
 
-                UpdateRX1DisplayOffsets();
+                // UpdateRX1DisplayOffsets(); //MW0LGE_22b
                 //MW0LGE_21d step atten
                 //if (nRX1ADCinUse == nRX2ADCinUse)
                 //{
@@ -20730,6 +20752,7 @@ namespace Thetis
                     update_preamp = true;
                     UpdatePreamps();
                 }
+                UpdateRX1DisplayOffsets(); //MW0LGE_22b
 
                 if (oldMode != rx1_preamp_mode) PreampModeChangedHandlers?.Invoke(1, oldMode, rx1_preamp_mode);
             }
@@ -20767,19 +20790,19 @@ namespace Thetis
                         rx2_att_value = 10;
                         rx2_preamp = 1;
                         //alex_atten = 1;
-                        comboRX2Preamp.Text = "-10dB";
+                        comboRX2Preamp.Text = "-10db"; //MW0LGE_22b lower
                         break;
                     case PreampMode.HPSDR_MINUS20:
                         rx2_att_value = 20;
                         rx2_preamp = 1;
                         //alex_atten = 2;
-                        comboRX2Preamp.Text = "-20dB";
+                        comboRX2Preamp.Text = "-20db";  //MW0LGE_22b lower
                         break;
                     case PreampMode.HPSDR_MINUS30:
                         rx2_att_value = 30;
                         rx2_preamp = 1;
                         //alex_atten = 3;
-                        comboRX2Preamp.Text = "-30dB";
+                        comboRX2Preamp.Text = "-30db";  //MW0LGE_22b lower
                         break;
                     case PreampMode.SA_MINUS10:
                         rx2_att_value = 10;
@@ -20836,11 +20859,11 @@ namespace Thetis
                 int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
                 int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
 
-                if (current_hpsdr_model == HPSDRModel.ANAN100D ||
+                if (!rx2_step_att_present && (current_hpsdr_model == HPSDRModel.ANAN100D ||  //MW0LGE_22b we dont want to do this if we are using SA
                     current_hpsdr_model == HPSDRModel.ANAN200D ||
                     current_hpsdr_model == HPSDRModel.ORIONMKII ||
                     current_hpsdr_model == HPSDRModel.ANAN7000D ||
-                    current_hpsdr_model == HPSDRModel.ANAN8000D)
+                    current_hpsdr_model == HPSDRModel.ANAN8000D))
                 {
                     //NetworkIO.SetADC2StepAttenData(rx2_att_value);
                     if (nRX2ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx2_att_value);
@@ -20853,13 +20876,15 @@ namespace Thetis
 
                 rx2_preamp_by_band[(int)rx2_band] = rx2_preamp_mode;
 
-                if (!mox)
+                if (!mox && !_setFromOtherAttenuator)
                 {
                     bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
                     if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX1PreampMode != rx2_preamp_mode)
                     {
+                        _setFromOtherAttenuator = true;
                         if (SetupForm.HermesEnableAttenuator != SetupForm.RX2EnableAtt) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;
                         RX1PreampMode = rx2_preamp_mode;
+                        _setFromOtherAttenuator = false;
                     }
                 }
 
@@ -22709,7 +22734,7 @@ namespace Thetis
                         else
                         {
                             sEstimated_passband_noise_power = estimated_passband_noise_power.ToString("N1") + "dBm";
-                            sEstimated_snr = estimated_snr.ToString("N1") + "dBm";
+                            sEstimated_snr = estimated_snr.ToString("N1") + "dB";
                         }
                     }
                 }
@@ -27733,9 +27758,9 @@ namespace Thetis
                 {
                     update_preamp_mutex = true;
 
-                    RX1PreampMode = preamp;
                     SetupForm.HermesEnableAttenuator = old_satt;
                     SetupForm.HermesAttenuatorData = old_satt_data;
+                    RX1PreampMode = preamp;
 
                     if (current_hpsdr_model == HPSDRModel.ANAN100D ||
                         current_hpsdr_model == HPSDRModel.ANAN200D ||
@@ -27743,10 +27768,10 @@ namespace Thetis
                         current_hpsdr_model == HPSDRModel.ANAN7000D ||
                         current_hpsdr_model == HPSDRModel.ANAN8000D)
                     {
-                        RX2PreampMode = rx2_preamp;
-                        // RX2StepAttPresent = old_rx2_satt;
                         SetupForm.RX2EnableAtt = old_rx2_satt;
                         SetupForm.HermesAttenuatorDataRX2 = old_rx2_satt_data; //MW0LGE_21d atten
+                        RX2PreampMode = rx2_preamp;
+                        // RX2StepAttPresent = old_rx2_satt;
                         //RX2ATT = old_rx2_satt_data; MW0LGE_21d atten
                     }
                     update_preamp_mode = false;
@@ -27757,9 +27782,9 @@ namespace Thetis
                 if (update_preamp && !update_preamp_mutex)
                 {
 
-                    preamp = RX1PreampMode;				// save current preamp mode
-                    old_satt_data = SetupForm.HermesAttenuatorData;
                     old_satt = rx1_step_att_present;
+                    old_satt_data = SetupForm.HermesAttenuatorData;
+                    preamp = RX1PreampMode;				// save current preamp mode
 
                     if (current_hpsdr_model == HPSDRModel.ANAN100D ||
                         current_hpsdr_model == HPSDRModel.ANAN200D ||
@@ -27767,12 +27792,11 @@ namespace Thetis
                         current_hpsdr_model == HPSDRModel.ANAN7000D ||
                         current_hpsdr_model == HPSDRModel.ANAN8000D)
                     {
-                        rx2_preamp = RX2PreampMode;
+                        old_rx2_satt = SetupForm.RX2EnableAtt;// RX2StepAttPresent;
                         old_rx2_satt_data = SetupForm.HermesAttenuatorDataRX2;// MW0LGE_21d atten          rx2_attenuator_data;// RX2AttenuatorData;
-                        old_rx2_satt = rx2_step_att_present;// RX2StepAttPresent;
+                        rx2_preamp = RX2PreampMode;
                     }
                     update_preamp = false;
-
                 }
             }
         }
@@ -31034,7 +31058,7 @@ namespace Thetis
                 case "-30dB":
                     mode = PreampMode.SA_MINUS30;
                     break;
-
+                // NOTE: lower case db !!! not a very nice implemention //MW0LGE_22b commented
                 case "-10db":
                     mode = PreampMode.HPSDR_MINUS10;
                     break;
@@ -31098,10 +31122,12 @@ namespace Thetis
                     // comboRX2Preamp.Text = "0dB";
                     break;
                 case "-10dB":
-                    mode = PreampMode.HPSDR_MINUS10;
+                    //mode = PreampMode.HPSDR_MINUS10; //MW0LGE_22b
+                    mode = PreampMode.SA_MINUS10;
                     break;
                 case "-30dB":
-                    mode = PreampMode.HPSDR_MINUS30;
+                    //mode = PreampMode.HPSDR_MINUS30; //MW0LGE_22b
+                    mode = PreampMode.SA_MINUS30;
                     break;
                 default:
                     exit = true;
@@ -49347,19 +49373,19 @@ namespace Thetis
         private void lblPreamp_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (current_hpsdr_model != HPSDRModel.HPSDR)
+            {
                 SetupForm.HermesEnableAttenuator = !SetupForm.HermesEnableAttenuator;
-
-            if (RX1RX2usingSameADC && !mox) //MW0LGE_22b
-                if (SetupForm.RX2EnableAtt != SetupForm.HermesEnableAttenuator) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator;
+                if (RX1RX2usingSameADC) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator; //MW0LGE_22b
+            }
         }
 
         private void lblRX2Preamp_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (current_hpsdr_model != HPSDRModel.HPSDR)
+            {
                 SetupForm.RX2EnableAtt = !SetupForm.RX2EnableAtt;
-
-            if (RX1RX2usingSameADC && !mox) //MW0LGE_22b
-                if (SetupForm.HermesEnableAttenuator != SetupForm.RX2EnableAtt) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;
+                if (RX1RX2usingSameADC) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;//MW0LGE_22b
+            }
         }
 
         private byte n1mm_state = 0;
@@ -52694,6 +52720,19 @@ namespace Thetis
             get { return _gridMinFollowsNFRX2; }
             set { _gridMinFollowsNFRX2 = value; }
         }
+        private float _RX1NFoffsetGridFollow = 5f;
+        private float _RX2NFoffsetGridFollow = 5f;
+        public float RX1NFoffsetGridFollow
+        {
+            get { return _RX1NFoffsetGridFollow; }
+            set { _RX1NFoffsetGridFollow = value; }
+        }
+        public float RX2NFoffsetGridFollow
+        {
+            get { return _RX2NFoffsetGridFollow; }
+            set { _RX2NFoffsetGridFollow = value; }
+        }
+
         private void tmrAutoAGC_Tick(object sender, EventArgs e)
         {
             if (!chkPower.Checked || mox) return;
@@ -52707,15 +52746,24 @@ namespace Thetis
             //
             if (!IsSetupFormNull)
             { 
-                if (GridMinFollowsNFRX1)
+                if (GridMinFollowsNFRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER ||
+                                            Display.CurrentDisplayMode == DisplayMode.SPECTRUM ||
+                                            Display.CurrentDisplayMode == DisplayMode.PANAFALL ||
+                                            Display.CurrentDisplayMode == DisplayMode.PANASCOPE ||
+                                            Display.CurrentDisplayMode == DisplayMode.WATERFALL))
                 {
-                    float setPoint = Display.ActiveNoiseFloorRX1 - Display.SpectrumGridStep; // ActiveNoiseFloorRX1 ignores fast attack / good status
-                    if (Math.Abs(SetupForm.DisplayGridMin - setPoint) >= 2) SetupForm.DisplayGridMin = setPoint; // at least 2dB to move
+                    float setPoint = Display.ActiveNoiseFloorRX1 - _RX1NFoffsetGridFollow; // ActiveNoiseFloorRX1 ignores fast attack / good status
+                    if (Math.Abs(SetupForm.DisplayGridMin - setPoint) >= 2) SetupForm.DisplayGridMin = setPoint;
                 }
 
-                if (GridMinFollowsNFRX2)
+                if (RX2Enabled && GridMinFollowsNFRX2 &&
+                                           (Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER ||
+                                            Display.CurrentDisplayModeBottom == DisplayMode.SPECTRUM ||
+                                            Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL ||
+                                            Display.CurrentDisplayModeBottom == DisplayMode.PANASCOPE ||
+                                            Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL))
                 {
-                    float setPoint = Display.ActiveNoiseFloorRX2 - Display.RX2SpectrumGridStep; // ActiveNoiseFloorRX2 ignores fast attack / good status
+                    float setPoint = Display.ActiveNoiseFloorRX2 - _RX2NFoffsetGridFollow; // ActiveNoiseFloorRX2 ignores fast attack / good status
                     if (Math.Abs(SetupForm.RX2DisplayGridMin - setPoint) >= 2) SetupForm.RX2DisplayGridMin = setPoint; // at least 2dB to move
                 }
             }

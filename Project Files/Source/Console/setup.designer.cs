@@ -1835,6 +1835,8 @@
             this.udDisplayAVTimeWF = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS374 = new System.Windows.Forms.LabelTS();
             this.grpDisplaySpectrumGrid = new System.Windows.Forms.GroupBoxTS();
+            this.nudRX1NFoffsetGridFollow = new System.Windows.Forms.NumericUpDownTS();
+            this.chkAdjustGridMinToNFRX1 = new System.Windows.Forms.CheckBoxTS();
             this.label15 = new System.Windows.Forms.Label();
             this.txtDisplayGridBandLevel = new System.Windows.Forms.TextBox();
             this.comboDisplayLabelAlign = new System.Windows.Forms.ComboBoxTS();
@@ -1931,6 +1933,8 @@
             this.lblRX2DisplayWaterfallHighLevel = new System.Windows.Forms.LabelTS();
             this.udRX2DisplayWaterfallHighLevel = new System.Windows.Forms.NumericUpDownTS();
             this.grpRX2DisplaySpectrumGrid = new System.Windows.Forms.GroupBoxTS();
+            this.nudRX2NFoffsetGridFollow = new System.Windows.Forms.NumericUpDownTS();
+            this.chkAdjustGridMinToNFRX2 = new System.Windows.Forms.CheckBoxTS();
             this.label16 = new System.Windows.Forms.Label();
             this.txtRX2DisplayGridBandLevel = new System.Windows.Forms.TextBox();
             this.comboBoxTS1 = new System.Windows.Forms.ComboBoxTS();
@@ -3306,8 +3310,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.chkAdjustGridMinToNFRX1 = new System.Windows.Forms.CheckBoxTS();
-            this.chkAdjustGridMinToNFRX2 = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -3677,6 +3679,7 @@
             this.grpWaterfallAverage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayAVTimeWF)).BeginInit();
             this.grpDisplaySpectrumGrid.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRX1NFoffsetGridFollow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayGridStep)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayGridMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayGridMax)).BeginInit();
@@ -3703,6 +3706,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayWaterfallLowLevel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayWaterfallHighLevel)).BeginInit();
             this.grpRX2DisplaySpectrumGrid.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRX2NFoffsetGridFollow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayGridStep)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayGridMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayGridMax)).BeginInit();
@@ -29857,6 +29861,7 @@
             // 
             // grpDisplaySpectrumGrid
             // 
+            this.grpDisplaySpectrumGrid.Controls.Add(this.nudRX1NFoffsetGridFollow);
             this.grpDisplaySpectrumGrid.Controls.Add(this.chkAdjustGridMinToNFRX1);
             this.grpDisplaySpectrumGrid.Controls.Add(this.label15);
             this.grpDisplaySpectrumGrid.Controls.Add(this.txtDisplayGridBandLevel);
@@ -29868,12 +29873,56 @@
             this.grpDisplaySpectrumGrid.Controls.Add(this.lblDisplayGridStep);
             this.grpDisplaySpectrumGrid.Controls.Add(this.lblDisplayGridMin);
             this.grpDisplaySpectrumGrid.Controls.Add(this.lblDisplayGridMax);
-            this.grpDisplaySpectrumGrid.Location = new System.Drawing.Point(375, 259);
+            this.grpDisplaySpectrumGrid.Location = new System.Drawing.Point(375, 232);
             this.grpDisplaySpectrumGrid.Name = "grpDisplaySpectrumGrid";
-            this.grpDisplaySpectrumGrid.Size = new System.Drawing.Size(304, 138);
+            this.grpDisplaySpectrumGrid.Size = new System.Drawing.Size(304, 165);
             this.grpDisplaySpectrumGrid.TabIndex = 47;
             this.grpDisplaySpectrumGrid.TabStop = false;
             this.grpDisplaySpectrumGrid.Text = "Spectrum Grid";
+            // 
+            // nudRX1NFoffsetGridFollow
+            // 
+            this.nudRX1NFoffsetGridFollow.DecimalPlaces = 1;
+            this.nudRX1NFoffsetGridFollow.Enabled = false;
+            this.nudRX1NFoffsetGridFollow.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudRX1NFoffsetGridFollow.Location = new System.Drawing.Point(164, 114);
+            this.nudRX1NFoffsetGridFollow.Maximum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.nudRX1NFoffsetGridFollow.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudRX1NFoffsetGridFollow.Name = "nudRX1NFoffsetGridFollow";
+            this.nudRX1NFoffsetGridFollow.Size = new System.Drawing.Size(50, 20);
+            this.nudRX1NFoffsetGridFollow.TabIndex = 84;
+            this.nudRX1NFoffsetGridFollow.TinyStep = false;
+            this.nudRX1NFoffsetGridFollow.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            65536});
+            this.nudRX1NFoffsetGridFollow.ValueChanged += new System.EventHandler(this.nudRX1NFoffsetGridFollow_ValueChanged);
+            // 
+            // chkAdjustGridMinToNFRX1
+            // 
+            this.chkAdjustGridMinToNFRX1.AutoSize = true;
+            this.chkAdjustGridMinToNFRX1.Image = null;
+            this.chkAdjustGridMinToNFRX1.Location = new System.Drawing.Point(15, 115);
+            this.chkAdjustGridMinToNFRX1.Name = "chkAdjustGridMinToNFRX1";
+            this.chkAdjustGridMinToNFRX1.Size = new System.Drawing.Size(143, 17);
+            this.chkAdjustGridMinToNFRX1.TabIndex = 83;
+            this.chkAdjustGridMinToNFRX1.Text = "Adjust Min to Noise Floor";
+            this.toolTip1.SetToolTip(this.chkAdjustGridMinToNFRX1, "Keep min adjusted to Noise Floor");
+            this.chkAdjustGridMinToNFRX1.UseVisualStyleBackColor = true;
+            this.chkAdjustGridMinToNFRX1.CheckedChanged += new System.EventHandler(this.chkAdjustGridMinToNFRX1_CheckedChanged);
             // 
             // label15
             // 
@@ -30320,7 +30369,7 @@
             this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallHighLevel);
             this.grpDisplayWaterfall.Location = new System.Drawing.Point(375, 10);
             this.grpDisplayWaterfall.Name = "grpDisplayWaterfall";
-            this.grpDisplayWaterfall.Size = new System.Drawing.Size(304, 243);
+            this.grpDisplayWaterfall.Size = new System.Drawing.Size(304, 216);
             this.grpDisplayWaterfall.TabIndex = 40;
             this.grpDisplayWaterfall.TabStop = false;
             this.grpDisplayWaterfall.Text = "Waterfall";
@@ -30438,7 +30487,7 @@
             this.clrbtnWaterfallMid.Automatic = "Automatic";
             this.clrbtnWaterfallMid.Color = System.Drawing.Color.Transparent;
             this.clrbtnWaterfallMid.Image = null;
-            this.clrbtnWaterfallMid.Location = new System.Drawing.Point(85, 217);
+            this.clrbtnWaterfallMid.Location = new System.Drawing.Point(80, 208);
             this.clrbtnWaterfallMid.MoreColors = "More Colors...";
             this.clrbtnWaterfallMid.Name = "clrbtnWaterfallMid";
             this.clrbtnWaterfallMid.Size = new System.Drawing.Size(40, 23);
@@ -30467,7 +30516,7 @@
             this.clrbtnWaterfallHigh.Automatic = "Automatic";
             this.clrbtnWaterfallHigh.Color = System.Drawing.Color.Transparent;
             this.clrbtnWaterfallHigh.Image = null;
-            this.clrbtnWaterfallHigh.Location = new System.Drawing.Point(205, 217);
+            this.clrbtnWaterfallHigh.Location = new System.Drawing.Point(200, 208);
             this.clrbtnWaterfallHigh.MoreColors = "More Colors...";
             this.clrbtnWaterfallHigh.Name = "clrbtnWaterfallHigh";
             this.clrbtnWaterfallHigh.Size = new System.Drawing.Size(40, 23);
@@ -30500,7 +30549,7 @@
             // lblDisplayWaterfallMidColor
             // 
             this.lblDisplayWaterfallMidColor.Image = null;
-            this.lblDisplayWaterfallMidColor.Location = new System.Drawing.Point(25, 222);
+            this.lblDisplayWaterfallMidColor.Location = new System.Drawing.Point(20, 213);
             this.lblDisplayWaterfallMidColor.Name = "lblDisplayWaterfallMidColor";
             this.lblDisplayWaterfallMidColor.Size = new System.Drawing.Size(64, 16);
             this.lblDisplayWaterfallMidColor.TabIndex = 76;
@@ -30527,7 +30576,7 @@
             // lblDisplayWaterfallHighColor
             // 
             this.lblDisplayWaterfallHighColor.Image = null;
-            this.lblDisplayWaterfallHighColor.Location = new System.Drawing.Point(136, 222);
+            this.lblDisplayWaterfallHighColor.Location = new System.Drawing.Point(131, 213);
             this.lblDisplayWaterfallHighColor.Name = "lblDisplayWaterfallHighColor";
             this.lblDisplayWaterfallHighColor.Size = new System.Drawing.Size(64, 16);
             this.lblDisplayWaterfallHighColor.TabIndex = 75;
@@ -30963,7 +31012,7 @@
             this.grpRX2DisplayWaterfall.Controls.Add(this.udRX2DisplayWaterfallHighLevel);
             this.grpRX2DisplayWaterfall.Location = new System.Drawing.Point(375, 10);
             this.grpRX2DisplayWaterfall.Name = "grpRX2DisplayWaterfall";
-            this.grpRX2DisplayWaterfall.Size = new System.Drawing.Size(304, 243);
+            this.grpRX2DisplayWaterfall.Size = new System.Drawing.Size(304, 216);
             this.grpRX2DisplayWaterfall.TabIndex = 50;
             this.grpRX2DisplayWaterfall.TabStop = false;
             this.grpRX2DisplayWaterfall.Text = "Waterfall";
@@ -31081,7 +31130,7 @@
             this.clrbtnRX2WaterfallMid.Automatic = "Automatic";
             this.clrbtnRX2WaterfallMid.Color = System.Drawing.Color.Transparent;
             this.clrbtnRX2WaterfallMid.Image = null;
-            this.clrbtnRX2WaterfallMid.Location = new System.Drawing.Point(86, 217);
+            this.clrbtnRX2WaterfallMid.Location = new System.Drawing.Point(86, 207);
             this.clrbtnRX2WaterfallMid.MoreColors = "More Colors...";
             this.clrbtnRX2WaterfallMid.Name = "clrbtnRX2WaterfallMid";
             this.clrbtnRX2WaterfallMid.Size = new System.Drawing.Size(40, 23);
@@ -31110,7 +31159,7 @@
             this.clrbtnRX2WaterfallHigh.Automatic = "Automatic";
             this.clrbtnRX2WaterfallHigh.Color = System.Drawing.Color.Transparent;
             this.clrbtnRX2WaterfallHigh.Image = null;
-            this.clrbtnRX2WaterfallHigh.Location = new System.Drawing.Point(206, 217);
+            this.clrbtnRX2WaterfallHigh.Location = new System.Drawing.Point(206, 207);
             this.clrbtnRX2WaterfallHigh.MoreColors = "More Colors...";
             this.clrbtnRX2WaterfallHigh.Name = "clrbtnRX2WaterfallHigh";
             this.clrbtnRX2WaterfallHigh.Size = new System.Drawing.Size(40, 23);
@@ -31133,7 +31182,7 @@
             // lblRX2DisplayWaterfallMidColor
             // 
             this.lblRX2DisplayWaterfallMidColor.Image = null;
-            this.lblRX2DisplayWaterfallMidColor.Location = new System.Drawing.Point(26, 222);
+            this.lblRX2DisplayWaterfallMidColor.Location = new System.Drawing.Point(26, 212);
             this.lblRX2DisplayWaterfallMidColor.Name = "lblRX2DisplayWaterfallMidColor";
             this.lblRX2DisplayWaterfallMidColor.Size = new System.Drawing.Size(64, 16);
             this.lblRX2DisplayWaterfallMidColor.TabIndex = 76;
@@ -31152,7 +31201,7 @@
             // lblRX2DisplayWaterfallHighColor
             // 
             this.lblRX2DisplayWaterfallHighColor.Image = null;
-            this.lblRX2DisplayWaterfallHighColor.Location = new System.Drawing.Point(136, 222);
+            this.lblRX2DisplayWaterfallHighColor.Location = new System.Drawing.Point(136, 212);
             this.lblRX2DisplayWaterfallHighColor.Name = "lblRX2DisplayWaterfallHighColor";
             this.lblRX2DisplayWaterfallHighColor.Size = new System.Drawing.Size(64, 16);
             this.lblRX2DisplayWaterfallHighColor.TabIndex = 75;
@@ -31330,6 +31379,7 @@
             // 
             // grpRX2DisplaySpectrumGrid
             // 
+            this.grpRX2DisplaySpectrumGrid.Controls.Add(this.nudRX2NFoffsetGridFollow);
             this.grpRX2DisplaySpectrumGrid.Controls.Add(this.chkAdjustGridMinToNFRX2);
             this.grpRX2DisplaySpectrumGrid.Controls.Add(this.label16);
             this.grpRX2DisplaySpectrumGrid.Controls.Add(this.txtRX2DisplayGridBandLevel);
@@ -31341,12 +31391,56 @@
             this.grpRX2DisplaySpectrumGrid.Controls.Add(this.lblRX2DisplayGridStep);
             this.grpRX2DisplaySpectrumGrid.Controls.Add(this.lblRX2DisplayGridMin);
             this.grpRX2DisplaySpectrumGrid.Controls.Add(this.lblRX2DisplayGridMax);
-            this.grpRX2DisplaySpectrumGrid.Location = new System.Drawing.Point(375, 259);
+            this.grpRX2DisplaySpectrumGrid.Location = new System.Drawing.Point(375, 232);
             this.grpRX2DisplaySpectrumGrid.Name = "grpRX2DisplaySpectrumGrid";
-            this.grpRX2DisplaySpectrumGrid.Size = new System.Drawing.Size(304, 138);
+            this.grpRX2DisplaySpectrumGrid.Size = new System.Drawing.Size(304, 165);
             this.grpRX2DisplaySpectrumGrid.TabIndex = 49;
             this.grpRX2DisplaySpectrumGrid.TabStop = false;
             this.grpRX2DisplaySpectrumGrid.Text = "Spectrum Grid";
+            // 
+            // nudRX2NFoffsetGridFollow
+            // 
+            this.nudRX2NFoffsetGridFollow.DecimalPlaces = 1;
+            this.nudRX2NFoffsetGridFollow.Enabled = false;
+            this.nudRX2NFoffsetGridFollow.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudRX2NFoffsetGridFollow.Location = new System.Drawing.Point(164, 114);
+            this.nudRX2NFoffsetGridFollow.Maximum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.nudRX2NFoffsetGridFollow.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudRX2NFoffsetGridFollow.Name = "nudRX2NFoffsetGridFollow";
+            this.nudRX2NFoffsetGridFollow.Size = new System.Drawing.Size(50, 20);
+            this.nudRX2NFoffsetGridFollow.TabIndex = 86;
+            this.nudRX2NFoffsetGridFollow.TinyStep = false;
+            this.nudRX2NFoffsetGridFollow.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            65536});
+            this.nudRX2NFoffsetGridFollow.ValueChanged += new System.EventHandler(this.nudRX2NFoffsetGridFollow_ValueChanged);
+            // 
+            // chkAdjustGridMinToNFRX2
+            // 
+            this.chkAdjustGridMinToNFRX2.AutoSize = true;
+            this.chkAdjustGridMinToNFRX2.Image = null;
+            this.chkAdjustGridMinToNFRX2.Location = new System.Drawing.Point(15, 115);
+            this.chkAdjustGridMinToNFRX2.Name = "chkAdjustGridMinToNFRX2";
+            this.chkAdjustGridMinToNFRX2.Size = new System.Drawing.Size(143, 17);
+            this.chkAdjustGridMinToNFRX2.TabIndex = 85;
+            this.chkAdjustGridMinToNFRX2.Text = "Adjust Min to Noise Floor";
+            this.toolTip1.SetToolTip(this.chkAdjustGridMinToNFRX2, "Keep min adjusted to Noise Floor");
+            this.chkAdjustGridMinToNFRX2.UseVisualStyleBackColor = true;
+            this.chkAdjustGridMinToNFRX2.CheckedChanged += new System.EventHandler(this.chkAdjustGridMinToNFRX2_CheckedChanged);
             // 
             // label16
             // 
@@ -52522,32 +52616,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // chkAdjustGridMinToNFRX1
-            // 
-            this.chkAdjustGridMinToNFRX1.AutoSize = true;
-            this.chkAdjustGridMinToNFRX1.Image = null;
-            this.chkAdjustGridMinToNFRX1.Location = new System.Drawing.Point(15, 115);
-            this.chkAdjustGridMinToNFRX1.Name = "chkAdjustGridMinToNFRX1";
-            this.chkAdjustGridMinToNFRX1.Size = new System.Drawing.Size(225, 17);
-            this.chkAdjustGridMinToNFRX1.TabIndex = 83;
-            this.chkAdjustGridMinToNFRX1.Text = "Adjust Min to Noise Floor - Step (all bands)";
-            this.toolTip1.SetToolTip(this.chkAdjustGridMinToNFRX1, "Keep min adjusted to step size under noise floor");
-            this.chkAdjustGridMinToNFRX1.UseVisualStyleBackColor = true;
-            this.chkAdjustGridMinToNFRX1.CheckedChanged += new System.EventHandler(this.chkAdjustGridMinToNFRX1_CheckedChanged);
-            // 
-            // chkAdjustGridMinToNFRX2
-            // 
-            this.chkAdjustGridMinToNFRX2.AutoSize = true;
-            this.chkAdjustGridMinToNFRX2.Image = null;
-            this.chkAdjustGridMinToNFRX2.Location = new System.Drawing.Point(15, 115);
-            this.chkAdjustGridMinToNFRX2.Name = "chkAdjustGridMinToNFRX2";
-            this.chkAdjustGridMinToNFRX2.Size = new System.Drawing.Size(225, 17);
-            this.chkAdjustGridMinToNFRX2.TabIndex = 85;
-            this.chkAdjustGridMinToNFRX2.Text = "Adjust Min to Noise Floor - Step (all bands)";
-            this.toolTip1.SetToolTip(this.chkAdjustGridMinToNFRX2, "Keep min adjusted to step size under noise floor");
-            this.chkAdjustGridMinToNFRX2.UseVisualStyleBackColor = true;
-            this.chkAdjustGridMinToNFRX2.CheckedChanged += new System.EventHandler(this.chkAdjustGridMinToNFRX2_CheckedChanged);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -53009,6 +53077,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayAVTimeWF)).EndInit();
             this.grpDisplaySpectrumGrid.ResumeLayout(false);
             this.grpDisplaySpectrumGrid.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRX1NFoffsetGridFollow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayGridStep)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayGridMin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayGridMax)).EndInit();
@@ -53042,6 +53111,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayWaterfallHighLevel)).EndInit();
             this.grpRX2DisplaySpectrumGrid.ResumeLayout(false);
             this.grpRX2DisplaySpectrumGrid.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRX2NFoffsetGridFollow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayGridStep)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayGridMin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayGridMax)).EndInit();
@@ -56923,5 +56993,7 @@
         private CheckBoxTS chkNFShowDecimal;
         private CheckBoxTS chkAdjustGridMinToNFRX1;
         private CheckBoxTS chkAdjustGridMinToNFRX2;
+        private NumericUpDownTS nudRX1NFoffsetGridFollow;
+        private NumericUpDownTS nudRX2NFoffsetGridFollow;
     }
 }

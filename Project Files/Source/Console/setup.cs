@@ -25059,11 +25059,23 @@ namespace Thetis
         private void chkAdjustGridMinToNFRX1_CheckedChanged(object sender, EventArgs e)
         {
             console.GridMinFollowsNFRX1 = chkAdjustGridMinToNFRX1.Checked;
+            nudRX1NFoffsetGridFollow.Enabled = chkAdjustGridMinToNFRX1.Checked;
         }
 
         private void chkAdjustGridMinToNFRX2_CheckedChanged(object sender, EventArgs e)
         {
             console.GridMinFollowsNFRX2 = chkAdjustGridMinToNFRX2.Checked;
+            nudRX2NFoffsetGridFollow.Enabled = chkAdjustGridMinToNFRX2.Checked;
+        }
+
+        private void nudRX2NFoffsetGridFollow_ValueChanged(object sender, EventArgs e)
+        {
+            console.RX2NFoffsetGridFollow = (float)nudRX2NFoffsetGridFollow.Value;
+        }
+
+        private void nudRX1NFoffsetGridFollow_ValueChanged(object sender, EventArgs e)
+        {
+            console.RX1NFoffsetGridFollow = (float)nudRX1NFoffsetGridFollow.Value;
         }
     }
 
