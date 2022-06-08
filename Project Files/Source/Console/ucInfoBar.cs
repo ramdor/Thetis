@@ -1086,50 +1086,68 @@ namespace Thetis
             lblPS.Width = halfSpan;
 
             // align left labels
+            if (lblLeft1 != null)
             lblLeft1.Width = _left1Width[_currentFlip];
-            lblLeft2.Width = _left2Width[_currentFlip];
-            lblLeft3.Width = _left3Width[_currentFlip];
+            if (lblLeft2 != null)
+                lblLeft2.Width = _left2Width[_currentFlip];
+            if (lblLeft3 != null)
+                lblLeft3.Width = _left3Width[_currentFlip];
 
-            lblLeft2.Left = lblLeft1.Left + lblLeft1.Width;
-            lblLeft3.Left = lblLeft2.Left + lblLeft2.Width;
+            if (lblLeft2 != null)
+                lblLeft2.Left = lblLeft1.Left + lblLeft1.Width;
+            if (lblLeft3 != null)
+                lblLeft3.Left = lblLeft2.Left + lblLeft2.Width;
 
             // now the right labels
-            lblRight1.Width = _right1Width[_currentFlip];
-            lblRight2.Width = _right2Width[_currentFlip];
-            lblRight3.Width = _right3Width[_currentFlip];
+            if (lblRight1 != null)
+                lblRight1.Width = _right1Width[_currentFlip];
+            if (lblRight2 != null)
+                lblRight2.Width = _right2Width[_currentFlip];
+            if (lblRight3 != null)
+                lblRight3.Width = _right3Width[_currentFlip];
 
-            int shift = lblRight1.Width + lblRight2.Width + lblRight3.Width + 4;
-            lblRight1.Left = lblFB.Left - shift;
-            lblRight2.Left = lblRight1.Left + lblRight1.Width;
-            lblRight3.Left = lblRight1.Left + lblRight1.Width + lblRight2.Width;
+            if (lblRight1 != null && lblRight2 != null && lblRight3 != null)
+            {
+                int shift = lblRight1.Width + lblRight2.Width + lblRight3.Width + 4;
+                lblRight1.Left = lblFB.Left - shift;
+                lblRight2.Left = lblRight1.Left + lblRight1.Width;
+                lblRight3.Left = lblRight1.Left + lblRight1.Width + lblRight2.Width;
+            }
 
             //warning
-            lblWarning.Width = lblSplitter.Left - lblWarning.Left - 4;
+            if (lblWarning != null)
+                lblWarning.Width = lblSplitter.Left - lblWarning.Left - 4;
 
             _useSmallFonts = newSpan <= 180; // if space is too small, use small fonts
 
             if (_useSmallFonts)
             {
-                if (lblPS.Font != _smallFont) lblPS.Font = _smallFont;
-                if (lblFB.Text == "Feedback") lblFB.Text = "FB";
-                if (lblPS.Text == "Correcting") lblPS.Text = "Correct";
+                if (lblPS != null && lblPS.Font != _smallFont) lblPS.Font = _smallFont;
+                if (lblFB != null && lblFB.Text == "Feedback") lblFB.Text = "FB";
+                if (lblPS != null && lblPS.Text == "Correcting") lblPS.Text = "Correct";
             }
             else
             {
-                if (lblPS.Font != _normalFont) lblPS.Font = _normalFont;
-                if (lblFB.Text == "FB") lblFB.Text = "Feedback";
-                if (lblPS.Text == "Correct") lblPS.Text = "Correcting";
+                if (lblPS != null && lblPS.Font != _normalFont) lblPS.Font = _normalFont;
+                if (lblFB != null && lblFB.Text == "FB") lblFB.Text = "Feedback";
+                if (lblPS != null && lblPS.Text == "Correct") lblPS.Text = "Correcting";
             }
 
             // check for overlapping anything on left
-            lblLeft1.Visible = !lblSplitter.Bounds.IntersectsWith(lblLeft1.Bounds);
-            lblLeft2.Visible = lblLeft1.Visible && !lblSplitter.Bounds.IntersectsWith(lblLeft2.Bounds);
-            lblLeft3.Visible = lblLeft2.Visible && !lblSplitter.Bounds.IntersectsWith(lblLeft3.Bounds);
+            if (lblLeft1 != null)
+                lblLeft1.Visible = !lblSplitter.Bounds.IntersectsWith(lblLeft1.Bounds);
+            if (lblLeft2 != null)
+                lblLeft2.Visible = lblLeft1.Visible && !lblSplitter.Bounds.IntersectsWith(lblLeft2.Bounds);
+            if (lblLeft3 != null)
+                lblLeft3.Visible = lblLeft2.Visible && !lblSplitter.Bounds.IntersectsWith(lblLeft3.Bounds);
 
             // check for right hand side overlapping left hand side
-            lblRight1.Visible = !((lblLeft3.Text != "" && lblRight1.Bounds.IntersectsWith(lblLeft3.Bounds)) || (lblLeft2.Text != "" && lblRight1.Bounds.IntersectsWith(lblLeft2.Bounds)) || (lblLeft1.Text != "" && lblRight1.Bounds.IntersectsWith(lblLeft1.Bounds)));
-            lblRight2.Visible = !((lblLeft3.Text != "" && lblRight2.Bounds.IntersectsWith(lblLeft3.Bounds)) || (lblLeft2.Text != "" && lblRight2.Bounds.IntersectsWith(lblLeft2.Bounds)) || (lblLeft1.Text != "" && lblRight2.Bounds.IntersectsWith(lblLeft1.Bounds)));
-            lblRight3.Visible = !((lblLeft3.Text != "" && lblRight3.Bounds.IntersectsWith(lblLeft3.Bounds)) || (lblLeft2.Text != "" && lblRight3.Bounds.IntersectsWith(lblLeft2.Bounds)) || (lblLeft1.Text != "" && lblRight3.Bounds.IntersectsWith(lblLeft1.Bounds)));
+            if (lblLeft1 != null)
+                lblRight1.Visible = !((lblLeft3.Text != "" && lblRight1.Bounds.IntersectsWith(lblLeft3.Bounds)) || (lblLeft2.Text != "" && lblRight1.Bounds.IntersectsWith(lblLeft2.Bounds)) || (lblLeft1.Text != "" && lblRight1.Bounds.IntersectsWith(lblLeft1.Bounds)));
+            if (lblLeft2 != null)
+                lblRight2.Visible = !((lblLeft3.Text != "" && lblRight2.Bounds.IntersectsWith(lblLeft3.Bounds)) || (lblLeft2.Text != "" && lblRight2.Bounds.IntersectsWith(lblLeft2.Bounds)) || (lblLeft1.Text != "" && lblRight2.Bounds.IntersectsWith(lblLeft1.Bounds)));
+            if (lblLeft3 != null)
+                lblRight3.Visible = !((lblLeft3.Text != "" && lblRight3.Bounds.IntersectsWith(lblLeft3.Bounds)) || (lblLeft2.Text != "" && lblRight3.Bounds.IntersectsWith(lblLeft2.Bounds)) || (lblLeft1.Text != "" && lblRight3.Bounds.IntersectsWith(lblLeft1.Bounds)));
         }
         private void lblSplitter_MouseUp(object sender, MouseEventArgs e)
         {
