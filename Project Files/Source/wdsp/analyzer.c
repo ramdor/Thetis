@@ -1362,6 +1362,7 @@ void Spectrum(int disp, int ss, int LO, dINREAL* pI, dINREAL* pQ)
 	dINREAL *Ipointer;
 	dINREAL *Qpointer;
 	DP a = pdisp[disp];
+	if (a == NULL) return; // avoid potential segfault
 	EnterCriticalSection(&a->SetAnalyzerSection);
 	Ipointer = &((a->I_samples[ss][LO])[a->IQin_index[ss][LO]]);
 	Qpointer = &((a->Q_samples[ss][LO])[a->IQin_index[ss][LO]]);
