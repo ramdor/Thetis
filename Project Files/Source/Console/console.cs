@@ -1075,15 +1075,15 @@ namespace Thetis
                 }
                 pause_DisplayThread = false;
 
-                if (USE_MULTIMETERS2)
-                {
-                    DialogResult dr = MessageBox.Show("This version has work in progress multimeters.\n" +
-                        "You will need a Meters folder and associated images in the same folder that the Skins folder resides.\n" +
-                        "See the NOTE: in github for a download link.",
-                                                "MultiMeters2 WIP",
-                                                MessageBoxButtons.OK,
-                                                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                }
+                //if (USE_MULTIMETERS2)
+                //{
+                //    DialogResult dr = MessageBox.Show("This version has work in progress multimeters.\n" +
+                //        "You will need a Meters folder and associated images in the same folder that the Skins folder resides.\n" +
+                //        "See the NOTE: in github for a download link.",
+                //                                "MultiMeters2 WIP",
+                //                                MessageBoxButtons.OK,
+                //                                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                //}
 
                 //autostart?
                 foreach (string s in CmdLineArgs)
