@@ -7349,6 +7349,7 @@
             // 
             // ucDockedMeterRX1
             // 
+            this.ucDockedMeterRX1.AxisLock = Thetis.Axis.NONE;
             this.ucDockedMeterRX1.BackColor = System.Drawing.Color.Black;
             this.ucDockedMeterRX1.Delta = new System.Drawing.Point(0, 0);
             this.ucDockedMeterRX1.DockedLocation = new System.Drawing.Point(0, 0);
@@ -7362,6 +7363,7 @@
             // 
             // ucDockedMeterRX2
             // 
+            this.ucDockedMeterRX2.AxisLock = Thetis.Axis.NONE;
             this.ucDockedMeterRX2.BackColor = System.Drawing.Color.Black;
             this.ucDockedMeterRX2.Delta = new System.Drawing.Point(0, 0);
             this.ucDockedMeterRX2.DockedLocation = new System.Drawing.Point(0, 0);
