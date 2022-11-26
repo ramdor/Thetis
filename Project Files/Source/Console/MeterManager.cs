@@ -1583,7 +1583,7 @@ namespace Thetis
                     img.BottomRight = new PointF(1f, 0.782f);
                     img.Size = new SizeF(1f, 0.782f);
                     img.ZOrder = 0;
-                    img.ImageName = "cross-needle";
+                    img.ImageName = "cross-needle-100";
                     _meterItems.Add(img.ID, img);
 
                     img = new clsImage();
