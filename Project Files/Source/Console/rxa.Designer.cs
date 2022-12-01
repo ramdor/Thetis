@@ -189,6 +189,7 @@
             this.udRXAAGCGain.Name = "udRXAAGCGain";
             this.udRXAAGCGain.Size = new System.Drawing.Size(120, 20);
             this.udRXAAGCGain.TabIndex = 9;
+            this.udRXAAGCGain.TinyStep = false;
             this.udRXAAGCGain.Value = new decimal(new int[] {
             100,
             0,
@@ -237,6 +238,7 @@
             this.udRXAMode.Name = "udRXAMode";
             this.udRXAMode.Size = new System.Drawing.Size(120, 20);
             this.udRXAMode.TabIndex = 6;
+            this.udRXAMode.TinyStep = false;
             this.udRXAMode.Value = new decimal(new int[] {
             1,
             0,
@@ -275,6 +277,7 @@
             this.udRXAVolume.Name = "udRXAVolume";
             this.udRXAVolume.Size = new System.Drawing.Size(120, 20);
             this.udRXAVolume.TabIndex = 4;
+            this.udRXAVolume.TinyStep = false;
             this.udRXAVolume.Value = new decimal(new int[] {
             25,
             0,
@@ -324,6 +327,7 @@
             this.udRXAFreq.Name = "udRXAFreq";
             this.udRXAFreq.Size = new System.Drawing.Size(120, 20);
             this.udRXAFreq.TabIndex = 0;
+            this.udRXAFreq.TinyStep = false;
             this.udRXAFreq.Value = new decimal(new int[] {
             142,
             0,
