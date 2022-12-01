@@ -2479,7 +2479,6 @@
             this.chkHighlightTXProfileSaveItems = new System.Windows.Forms.CheckBoxTS();
             this.chkRestoreVAC2DeviceDetailsFromTXProfile = new System.Windows.Forms.CheckBoxTS();
             this.chkRestoreVAC1DeviceDetailsFromTXProfile = new System.Windows.Forms.CheckBoxTS();
-            this.btnExportCurrentTXProfile = new System.Windows.Forms.Button();
             this.chkLimitExtAmpOnOverload = new System.Windows.Forms.CheckBoxTS();
             this.grpDSPSpeechProcessor = new System.Windows.Forms.GroupBoxTS();
             this.chkDSPCESSB = new System.Windows.Forms.CheckBoxTS();
@@ -2517,6 +2516,7 @@
             this.btnTXProfileDelete = new System.Windows.Forms.ButtonTS();
             this.btnTXProfileSave = new System.Windows.Forms.ButtonTS();
             this.comboTXProfileName = new System.Windows.Forms.ComboBoxTS();
+            this.btnExportCurrentTXProfile = new System.Windows.Forms.Button();
             this.grpPATune = new System.Windows.Forms.GroupBoxTS();
             this.radUseFixedDriveTune = new System.Windows.Forms.RadioButtonTS();
             this.radUseDriveSliderTune = new System.Windows.Forms.RadioButtonTS();
@@ -6660,6 +6660,7 @@
             this.chkFirewallCheck.Image = null;
             this.chkFirewallCheck.Location = new System.Drawing.Point(216, 99);
             this.chkFirewallCheck.Name = "chkFirewallCheck";
+            this.chkFirewallCheck.Selectable = true;
             this.chkFirewallCheck.Size = new System.Drawing.Size(98, 33);
             this.chkFirewallCheck.TabIndex = 39;
             this.chkFirewallCheck.Text = "Firewall Check";
@@ -7132,6 +7133,7 @@
             this.btnSetIPAddr.Image = null;
             this.btnSetIPAddr.Location = new System.Drawing.Point(166, 102);
             this.btnSetIPAddr.Name = "btnSetIPAddr";
+            this.btnSetIPAddr.Selectable = true;
             this.btnSetIPAddr.Size = new System.Drawing.Size(60, 20);
             this.btnSetIPAddr.TabIndex = 4;
             this.btnSetIPAddr.Text = "Select IP";
@@ -8841,6 +8843,7 @@
             this.btnQSOTimerPlaySelectedWAV.Image = global::Thetis.Properties.Resources.play;
             this.btnQSOTimerPlaySelectedWAV.Location = new System.Drawing.Point(124, 137);
             this.btnQSOTimerPlaySelectedWAV.Name = "btnQSOTimerPlaySelectedWAV";
+            this.btnQSOTimerPlaySelectedWAV.Selectable = true;
             this.btnQSOTimerPlaySelectedWAV.Size = new System.Drawing.Size(24, 24);
             this.btnQSOTimerPlaySelectedWAV.TabIndex = 9;
             this.toolTip1.SetToolTip(this.btnQSOTimerPlaySelectedWAV, "Test play of the sound you selected");
@@ -8948,6 +8951,7 @@
             this.btnQSOTimerSelectWAV.Image = null;
             this.btnQSOTimerSelectWAV.Location = new System.Drawing.Point(46, 137);
             this.btnQSOTimerSelectWAV.Name = "btnQSOTimerSelectWAV";
+            this.btnQSOTimerSelectWAV.Selectable = true;
             this.btnQSOTimerSelectWAV.Size = new System.Drawing.Size(72, 24);
             this.btnQSOTimerSelectWAV.TabIndex = 4;
             this.btnQSOTimerSelectWAV.Text = "Select...";
@@ -9070,6 +9074,7 @@
             this.btnCalLevel.Image = null;
             this.btnCalLevel.Location = new System.Drawing.Point(29, 69);
             this.btnCalLevel.Name = "btnCalLevel";
+            this.btnCalLevel.Selectable = true;
             this.btnCalLevel.Size = new System.Drawing.Size(75, 23);
             this.btnCalLevel.TabIndex = 13;
             this.btnCalLevel.Text = "Start";
@@ -9503,6 +9508,7 @@
             this.btnGeneralCalLevelStart.Image = null;
             this.btnGeneralCalLevelStart.Location = new System.Drawing.Point(42, 80);
             this.btnGeneralCalLevelStart.Name = "btnGeneralCalLevelStart";
+            this.btnGeneralCalLevelStart.Selectable = true;
             this.btnGeneralCalLevelStart.Size = new System.Drawing.Size(75, 23);
             this.btnGeneralCalLevelStart.TabIndex = 4;
             this.btnGeneralCalLevelStart.Text = "Start";
@@ -9539,6 +9545,7 @@
             this.btnGeneralCalFreqStart.Image = null;
             this.btnGeneralCalFreqStart.Location = new System.Drawing.Point(48, 102);
             this.btnGeneralCalFreqStart.Name = "btnGeneralCalFreqStart";
+            this.btnGeneralCalFreqStart.Selectable = true;
             this.btnGeneralCalFreqStart.Size = new System.Drawing.Size(75, 23);
             this.btnGeneralCalFreqStart.TabIndex = 5;
             this.btnGeneralCalFreqStart.Text = "Start";
@@ -9643,6 +9650,7 @@
             this.btnGeneralCalImageStart.Image = null;
             this.btnGeneralCalImageStart.Location = new System.Drawing.Point(48, 80);
             this.btnGeneralCalImageStart.Name = "btnGeneralCalImageStart";
+            this.btnGeneralCalImageStart.Selectable = true;
             this.btnGeneralCalImageStart.Size = new System.Drawing.Size(75, 23);
             this.btnGeneralCalImageStart.TabIndex = 7;
             this.btnGeneralCalImageStart.Text = "Start";
@@ -10238,6 +10246,7 @@
             this.btnResetP2ADC.Image = null;
             this.btnResetP2ADC.Location = new System.Drawing.Point(627, 95);
             this.btnResetP2ADC.Name = "btnResetP2ADC";
+            this.btnResetP2ADC.Selectable = true;
             this.btnResetP2ADC.Size = new System.Drawing.Size(68, 37);
             this.btnResetP2ADC.TabIndex = 14;
             this.btnResetP2ADC.Text = "Reset To Default";
@@ -10810,6 +10819,7 @@
             this.btnResetP1ADC.Image = null;
             this.btnResetP1ADC.Location = new System.Drawing.Point(627, 290);
             this.btnResetP1ADC.Name = "btnResetP1ADC";
+            this.btnResetP1ADC.Selectable = true;
             this.btnResetP1ADC.Size = new System.Drawing.Size(68, 37);
             this.btnResetP1ADC.TabIndex = 17;
             this.btnResetP1ADC.Text = "Reset to Default";
@@ -14014,6 +14024,7 @@
             this.btnPennyCtrlReset.Image = null;
             this.btnPennyCtrlReset.Location = new System.Drawing.Point(236, 257);
             this.btnPennyCtrlReset.Name = "btnPennyCtrlReset";
+            this.btnPennyCtrlReset.Selectable = true;
             this.btnPennyCtrlReset.Size = new System.Drawing.Size(60, 23);
             this.btnPennyCtrlReset.TabIndex = 4;
             this.btnPennyCtrlReset.Text = "HF Reset";
@@ -16911,6 +16922,7 @@
             this.btnPennyCtrlVHFReset.Image = null;
             this.btnPennyCtrlVHFReset.Location = new System.Drawing.Point(221, 248);
             this.btnPennyCtrlVHFReset.Name = "btnPennyCtrlVHFReset";
+            this.btnPennyCtrlVHFReset.Selectable = true;
             this.btnPennyCtrlVHFReset.Size = new System.Drawing.Size(70, 23);
             this.btnPennyCtrlVHFReset.TabIndex = 7;
             this.btnPennyCtrlVHFReset.Text = "VHF Reset";
@@ -17462,6 +17474,7 @@
             this.btnCtrlSWLReset.Image = null;
             this.btnCtrlSWLReset.Location = new System.Drawing.Point(234, 290);
             this.btnCtrlSWLReset.Name = "btnCtrlSWLReset";
+            this.btnCtrlSWLReset.Selectable = true;
             this.btnCtrlSWLReset.Size = new System.Drawing.Size(62, 23);
             this.btnCtrlSWLReset.TabIndex = 9;
             this.btnCtrlSWLReset.Text = "SWL Reset";
@@ -24189,6 +24202,7 @@
             this.btnAriesErase3.Image = null;
             this.btnAriesErase3.Location = new System.Drawing.Point(280, 119);
             this.btnAriesErase3.Name = "btnAriesErase3";
+            this.btnAriesErase3.Selectable = true;
             this.btnAriesErase3.Size = new System.Drawing.Size(59, 27);
             this.btnAriesErase3.TabIndex = 115;
             this.btnAriesErase3.Text = "Erase";
@@ -24200,6 +24214,7 @@
             this.btnAriesErase2.Image = null;
             this.btnAriesErase2.Location = new System.Drawing.Point(200, 119);
             this.btnAriesErase2.Name = "btnAriesErase2";
+            this.btnAriesErase2.Selectable = true;
             this.btnAriesErase2.Size = new System.Drawing.Size(59, 27);
             this.btnAriesErase2.TabIndex = 114;
             this.btnAriesErase2.Text = "Erase";
@@ -24211,6 +24226,7 @@
             this.btnAriesErase1.Image = null;
             this.btnAriesErase1.Location = new System.Drawing.Point(120, 119);
             this.btnAriesErase1.Name = "btnAriesErase1";
+            this.btnAriesErase1.Selectable = true;
             this.btnAriesErase1.Size = new System.Drawing.Size(59, 27);
             this.btnAriesErase1.TabIndex = 113;
             this.btnAriesErase1.Text = "Erase";
@@ -24405,6 +24421,7 @@
             this.btnGanymedeReset.Image = null;
             this.btnGanymedeReset.Location = new System.Drawing.Point(166, 50);
             this.btnGanymedeReset.Name = "btnGanymedeReset";
+            this.btnGanymedeReset.Selectable = true;
             this.btnGanymedeReset.Size = new System.Drawing.Size(79, 27);
             this.btnGanymedeReset.TabIndex = 4;
             this.btnGanymedeReset.Text = "Reset";
@@ -27129,7 +27146,7 @@
             this.lblAdvancedAudioWarning.Image = null;
             this.lblAdvancedAudioWarning.Location = new System.Drawing.Point(56, 22);
             this.lblAdvancedAudioWarning.Name = "lblAdvancedAudioWarning";
-            this.lblAdvancedAudioWarning.Size = new System.Drawing.Size(593, 16);
+            this.lblAdvancedAudioWarning.Size = new System.Drawing.Size(612, 16);
             this.lblAdvancedAudioWarning.TabIndex = 93;
             this.lblAdvancedAudioWarning.Text = "WARNING: these settings may cause undesirable side effects if changed from defaul" +
     "t";
@@ -27684,6 +27701,7 @@
             this.btnVAC2AdvancedDefault.Image = null;
             this.btnVAC2AdvancedDefault.Location = new System.Drawing.Point(275, 265);
             this.btnVAC2AdvancedDefault.Name = "btnVAC2AdvancedDefault";
+            this.btnVAC2AdvancedDefault.Selectable = true;
             this.btnVAC2AdvancedDefault.Size = new System.Drawing.Size(65, 25);
             this.btnVAC2AdvancedDefault.TabIndex = 5;
             this.btnVAC2AdvancedDefault.Text = "Default";
@@ -28431,6 +28449,7 @@
             this.btnVAC1AdvancedDefault.Image = null;
             this.btnVAC1AdvancedDefault.Location = new System.Drawing.Point(275, 265);
             this.btnVAC1AdvancedDefault.Name = "btnVAC1AdvancedDefault";
+            this.btnVAC1AdvancedDefault.Selectable = true;
             this.btnVAC1AdvancedDefault.Size = new System.Drawing.Size(65, 25);
             this.btnVAC1AdvancedDefault.TabIndex = 5;
             this.btnVAC1AdvancedDefault.Text = "Default";
@@ -30503,6 +30522,7 @@
             this.clrbtnWaterfallMid.Location = new System.Drawing.Point(80, 208);
             this.clrbtnWaterfallMid.MoreColors = "More Colors...";
             this.clrbtnWaterfallMid.Name = "clrbtnWaterfallMid";
+            this.clrbtnWaterfallMid.Selectable = true;
             this.clrbtnWaterfallMid.Size = new System.Drawing.Size(40, 23);
             this.clrbtnWaterfallMid.TabIndex = 78;
             this.toolTip1.SetToolTip(this.clrbtnWaterfallMid, "The mid color used when the signal level is exactly between the low and high leve" +
@@ -30532,6 +30552,7 @@
             this.clrbtnWaterfallHigh.Location = new System.Drawing.Point(200, 208);
             this.clrbtnWaterfallHigh.MoreColors = "More Colors...";
             this.clrbtnWaterfallHigh.Name = "clrbtnWaterfallHigh";
+            this.clrbtnWaterfallHigh.Selectable = true;
             this.clrbtnWaterfallHigh.Size = new System.Drawing.Size(40, 23);
             this.clrbtnWaterfallHigh.TabIndex = 77;
             this.toolTip1.SetToolTip(this.clrbtnWaterfallHigh, "The color to display when the signal level is at or above the high level shown ab" +
@@ -30655,6 +30676,7 @@
             this.clrbtnWaterfallLow.Location = new System.Drawing.Point(200, 16);
             this.clrbtnWaterfallLow.MoreColors = "More Colors...";
             this.clrbtnWaterfallLow.Name = "clrbtnWaterfallLow";
+            this.clrbtnWaterfallLow.Selectable = true;
             this.clrbtnWaterfallLow.Size = new System.Drawing.Size(40, 23);
             this.clrbtnWaterfallLow.TabIndex = 68;
             this.toolTip1.SetToolTip(this.clrbtnWaterfallLow, "The Color to use when the signal level is at or below the low level set above.");
@@ -31146,6 +31168,7 @@
             this.clrbtnRX2WaterfallMid.Location = new System.Drawing.Point(86, 207);
             this.clrbtnRX2WaterfallMid.MoreColors = "More Colors...";
             this.clrbtnRX2WaterfallMid.Name = "clrbtnRX2WaterfallMid";
+            this.clrbtnRX2WaterfallMid.Selectable = true;
             this.clrbtnRX2WaterfallMid.Size = new System.Drawing.Size(40, 23);
             this.clrbtnRX2WaterfallMid.TabIndex = 78;
             this.toolTip1.SetToolTip(this.clrbtnRX2WaterfallMid, "The mid color used when the signal level is exactly between the low and high leve" +
@@ -31175,6 +31198,7 @@
             this.clrbtnRX2WaterfallHigh.Location = new System.Drawing.Point(206, 207);
             this.clrbtnRX2WaterfallHigh.MoreColors = "More Colors...";
             this.clrbtnRX2WaterfallHigh.Name = "clrbtnRX2WaterfallHigh";
+            this.clrbtnRX2WaterfallHigh.Selectable = true;
             this.clrbtnRX2WaterfallHigh.Size = new System.Drawing.Size(40, 23);
             this.clrbtnRX2WaterfallHigh.TabIndex = 77;
             this.toolTip1.SetToolTip(this.clrbtnRX2WaterfallHigh, "The color to display when the signal level is at or above the high level shown ab" +
@@ -31298,6 +31322,7 @@
             this.clrbtnRX2WaterfallLow.Location = new System.Drawing.Point(200, 16);
             this.clrbtnRX2WaterfallLow.MoreColors = "More Colors...";
             this.clrbtnRX2WaterfallLow.Name = "clrbtnRX2WaterfallLow";
+            this.clrbtnRX2WaterfallLow.Selectable = true;
             this.clrbtnRX2WaterfallLow.Size = new System.Drawing.Size(40, 23);
             this.clrbtnRX2WaterfallLow.TabIndex = 68;
             this.toolTip1.SetToolTip(this.clrbtnRX2WaterfallLow, "The Color to use when the signal level is at or below the low level set above.");
@@ -37792,6 +37817,7 @@
             this.btnVFOFreq.Image = null;
             this.btnVFOFreq.Location = new System.Drawing.Point(133, 71);
             this.btnVFOFreq.Name = "btnVFOFreq";
+            this.btnVFOFreq.Selectable = true;
             this.btnVFOFreq.Size = new System.Drawing.Size(58, 23);
             this.btnVFOFreq.TabIndex = 15;
             this.btnVFOFreq.Text = "VFOA";
@@ -37834,6 +37860,7 @@
             this.btnMNFDelete.Image = null;
             this.btnMNFDelete.Location = new System.Drawing.Point(220, 107);
             this.btnMNFDelete.Name = "btnMNFDelete";
+            this.btnMNFDelete.Selectable = true;
             this.btnMNFDelete.Size = new System.Drawing.Size(75, 23);
             this.btnMNFDelete.TabIndex = 12;
             this.btnMNFDelete.Text = "Delete";
@@ -37845,6 +37872,7 @@
             this.btnMNFCancel.Image = null;
             this.btnMNFCancel.Location = new System.Drawing.Point(490, 107);
             this.btnMNFCancel.Name = "btnMNFCancel";
+            this.btnMNFCancel.Selectable = true;
             this.btnMNFCancel.Size = new System.Drawing.Size(75, 23);
             this.btnMNFCancel.TabIndex = 11;
             this.btnMNFCancel.Text = "Cancel";
@@ -37856,6 +37884,7 @@
             this.btnMNFEdit.Image = null;
             this.btnMNFEdit.Location = new System.Drawing.Point(120, 107);
             this.btnMNFEdit.Name = "btnMNFEdit";
+            this.btnMNFEdit.Selectable = true;
             this.btnMNFEdit.Size = new System.Drawing.Size(75, 23);
             this.btnMNFEdit.TabIndex = 10;
             this.btnMNFEdit.Text = "Edit";
@@ -37882,6 +37911,7 @@
             this.btnMNFRun.Image = null;
             this.btnMNFRun.Location = new System.Drawing.Point(490, 10);
             this.btnMNFRun.Name = "btnMNFRun";
+            this.btnMNFRun.Selectable = true;
             this.btnMNFRun.Size = new System.Drawing.Size(75, 23);
             this.btnMNFRun.TabIndex = 8;
             this.btnMNFRun.Text = "OFF";
@@ -37894,6 +37924,7 @@
             this.btnMNFEnter.Image = null;
             this.btnMNFEnter.Location = new System.Drawing.Point(409, 107);
             this.btnMNFEnter.Name = "btnMNFEnter";
+            this.btnMNFEnter.Selectable = true;
             this.btnMNFEnter.Size = new System.Drawing.Size(75, 23);
             this.btnMNFEnter.TabIndex = 7;
             this.btnMNFEnter.Text = "ENTER";
@@ -37905,6 +37936,7 @@
             this.btnMNFAdd.Image = null;
             this.btnMNFAdd.Location = new System.Drawing.Point(20, 107);
             this.btnMNFAdd.Name = "btnMNFAdd";
+            this.btnMNFAdd.Selectable = true;
             this.btnMNFAdd.Size = new System.Drawing.Size(75, 23);
             this.btnMNFAdd.TabIndex = 6;
             this.btnMNFAdd.Text = "Add";
@@ -39974,7 +40006,6 @@
             this.tpTransmit.Controls.Add(this.chkHighlightTXProfileSaveItems);
             this.tpTransmit.Controls.Add(this.chkRestoreVAC2DeviceDetailsFromTXProfile);
             this.tpTransmit.Controls.Add(this.chkRestoreVAC1DeviceDetailsFromTXProfile);
-            this.tpTransmit.Controls.Add(this.btnExportCurrentTXProfile);
             this.tpTransmit.Controls.Add(this.chkLimitExtAmpOnOverload);
             this.tpTransmit.Controls.Add(this.grpDSPSpeechProcessor);
             this.tpTransmit.Controls.Add(this.grpExtTXInhibit);
@@ -40000,64 +40031,51 @@
             // 
             this.chkHighlightTXProfileSaveItems.AutoSize = true;
             this.chkHighlightTXProfileSaveItems.Image = null;
-            this.chkHighlightTXProfileSaveItems.Location = new System.Drawing.Point(23, 402);
+            this.chkHighlightTXProfileSaveItems.Location = new System.Drawing.Point(35, 407);
             this.chkHighlightTXProfileSaveItems.Name = "chkHighlightTXProfileSaveItems";
             this.chkHighlightTXProfileSaveItems.Size = new System.Drawing.Size(175, 17);
-            this.chkHighlightTXProfileSaveItems.TabIndex = 76;
+            this.chkHighlightTXProfileSaveItems.TabIndex = 94;
             this.chkHighlightTXProfileSaveItems.Text = "Hightlight TX Profile Save Items";
             this.chkHighlightTXProfileSaveItems.UseVisualStyleBackColor = true;
-            this.chkHighlightTXProfileSaveItems.CheckedChanged += new System.EventHandler(this.chkHighlightTXProfileSaveItems_CheckedChanged);
             // 
             // chkRestoreVAC2DeviceDetailsFromTXProfile
             // 
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Image = null;
-            this.chkRestoreVAC2DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(23, 284);
+            this.chkRestoreVAC2DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(35, 289);
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Name = "chkRestoreVAC2DeviceDetailsFromTXProfile";
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(321, 18);
-            this.chkRestoreVAC2DeviceDetailsFromTXProfile.TabIndex = 75;
+            this.chkRestoreVAC2DeviceDetailsFromTXProfile.TabIndex = 93;
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Text = "Restore VAC2 device details from TX Profile";
             this.toolTip1.SetToolTip(this.chkRestoreVAC2DeviceDetailsFromTXProfile, "Restore VAC device details that were stored against a TX Profile");
             // 
             // chkRestoreVAC1DeviceDetailsFromTXProfile
             // 
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Image = null;
-            this.chkRestoreVAC1DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(23, 260);
+            this.chkRestoreVAC1DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(35, 265);
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Name = "chkRestoreVAC1DeviceDetailsFromTXProfile";
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(321, 18);
-            this.chkRestoreVAC1DeviceDetailsFromTXProfile.TabIndex = 74;
+            this.chkRestoreVAC1DeviceDetailsFromTXProfile.TabIndex = 92;
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Text = "Restore VAC1 device details from TX Profile";
             this.toolTip1.SetToolTip(this.chkRestoreVAC1DeviceDetailsFromTXProfile, "Restore VAC device details that were stored against a TX Profile");
-            // 
-            // btnExportCurrentTXProfile
-            // 
-            this.btnExportCurrentTXProfile.Location = new System.Drawing.Point(593, 186);
-            this.btnExportCurrentTXProfile.Name = "btnExportCurrentTXProfile";
-            this.btnExportCurrentTXProfile.Size = new System.Drawing.Size(64, 54);
-            this.btnExportCurrentTXProfile.TabIndex = 73;
-            this.btnExportCurrentTXProfile.Text = "Export Current Profile";
-            this.toolTip1.SetToolTip(this.btnExportCurrentTXProfile, "Export the curent profile and save to a file.");
-            this.btnExportCurrentTXProfile.UseVisualStyleBackColor = true;
-            this.btnExportCurrentTXProfile.Click += new System.EventHandler(this.btnExportCurrentTXProfile_Click);
             // 
             // chkLimitExtAmpOnOverload
             // 
             this.chkLimitExtAmpOnOverload.AutoSize = true;
             this.chkLimitExtAmpOnOverload.Image = null;
-            this.chkLimitExtAmpOnOverload.Location = new System.Drawing.Point(382, 338);
+            this.chkLimitExtAmpOnOverload.Location = new System.Drawing.Point(394, 343);
             this.chkLimitExtAmpOnOverload.Name = "chkLimitExtAmpOnOverload";
             this.chkLimitExtAmpOnOverload.Size = new System.Drawing.Size(184, 17);
-            this.chkLimitExtAmpOnOverload.TabIndex = 72;
+            this.chkLimitExtAmpOnOverload.TabIndex = 91;
             this.chkLimitExtAmpOnOverload.Text = "Limit Drive on Ext. Amp. Overload";
             this.chkLimitExtAmpOnOverload.UseVisualStyleBackColor = true;
-            this.chkLimitExtAmpOnOverload.CheckedChanged += new System.EventHandler(this.chkLimitExtAmpOnOverload_CheckedChanged);
             // 
             // grpDSPSpeechProcessor
             // 
             this.grpDSPSpeechProcessor.Controls.Add(this.chkDSPCESSB);
-            this.grpDSPSpeechProcessor.Location = new System.Drawing.Point(376, 241);
+            this.grpDSPSpeechProcessor.Location = new System.Drawing.Point(388, 246);
             this.grpDSPSpeechProcessor.Name = "grpDSPSpeechProcessor";
             this.grpDSPSpeechProcessor.Size = new System.Drawing.Size(179, 48);
-            this.grpDSPSpeechProcessor.TabIndex = 43;
+            this.grpDSPSpeechProcessor.TabIndex = 80;
             this.grpDSPSpeechProcessor.TabStop = false;
             this.grpDSPSpeechProcessor.Text = "Speech Processor";
             // 
@@ -40071,16 +40089,15 @@
             this.chkDSPCESSB.TabIndex = 0;
             this.chkDSPCESSB.Text = "CESSB Overshoot Control";
             this.chkDSPCESSB.UseVisualStyleBackColor = true;
-            this.chkDSPCESSB.CheckedChanged += new System.EventHandler(this.chkDSPCESSB_CheckedChanged);
             // 
             // grpExtTXInhibit
             // 
             this.grpExtTXInhibit.Controls.Add(this.chkTXInhibit);
             this.grpExtTXInhibit.Controls.Add(this.chkTXInhibitSense);
-            this.grpExtTXInhibit.Location = new System.Drawing.Point(375, 154);
+            this.grpExtTXInhibit.Location = new System.Drawing.Point(387, 159);
             this.grpExtTXInhibit.Name = "grpExtTXInhibit";
             this.grpExtTXInhibit.Size = new System.Drawing.Size(180, 72);
-            this.grpExtTXInhibit.TabIndex = 71;
+            this.grpExtTXInhibit.TabIndex = 90;
             this.grpExtTXInhibit.TabStop = false;
             this.grpExtTXInhibit.Text = "External TX Inhibit";
             this.grpExtTXInhibit.Visible = false;
@@ -40094,7 +40111,6 @@
             this.chkTXInhibit.TabIndex = 68;
             this.chkTXInhibit.Text = "Enable TX Inhibit";
             this.toolTip1.SetToolTip(this.chkTXInhibit, "Enables TX Inhibit feature");
-            this.chkTXInhibit.CheckedChanged += new System.EventHandler(this.chkTXInhibit_CheckedChanged);
             // 
             // chkTXInhibitSense
             // 
@@ -40105,26 +40121,24 @@
             this.chkTXInhibitSense.TabIndex = 69;
             this.chkTXInhibitSense.Text = "Rev Input Logic";
             this.toolTip1.SetToolTip(this.chkTXInhibitSense, "High Level on TX Inhibit line = Active");
-            this.chkTXInhibitSense.CheckedChanged += new System.EventHandler(this.chkTXInhibitSense_CheckedChanged);
             // 
             // chkSaveTXProfileOnExit
             // 
             this.chkSaveTXProfileOnExit.Image = null;
-            this.chkSaveTXProfileOnExit.Location = new System.Drawing.Point(23, 319);
+            this.chkSaveTXProfileOnExit.Location = new System.Drawing.Point(35, 324);
             this.chkSaveTXProfileOnExit.Name = "chkSaveTXProfileOnExit";
             this.chkSaveTXProfileOnExit.Size = new System.Drawing.Size(235, 18);
-            this.chkSaveTXProfileOnExit.TabIndex = 67;
+            this.chkSaveTXProfileOnExit.TabIndex = 89;
             this.chkSaveTXProfileOnExit.Text = "Auto Save TX Profile on Thetis close";
             this.toolTip1.SetToolTip(this.chkSaveTXProfileOnExit, "Automatically saves the current TX Profile when Thetis is closed");
-            this.chkSaveTXProfileOnExit.CheckedChanged += new System.EventHandler(this.chkSaveTXProfileOnExit_CheckedChanged);
             // 
             // chkAutoSaveTXProfile
             // 
             this.chkAutoSaveTXProfile.Image = null;
-            this.chkAutoSaveTXProfile.Location = new System.Drawing.Point(23, 343);
+            this.chkAutoSaveTXProfile.Location = new System.Drawing.Point(35, 348);
             this.chkAutoSaveTXProfile.Name = "chkAutoSaveTXProfile";
             this.chkAutoSaveTXProfile.Size = new System.Drawing.Size(189, 18);
-            this.chkAutoSaveTXProfile.TabIndex = 66;
+            this.chkAutoSaveTXProfile.TabIndex = 88;
             this.chkAutoSaveTXProfile.Text = "Auto Save TX Profile on change";
             this.toolTip1.SetToolTip(this.chkAutoSaveTXProfile, "Automatically saves the current TX Profile if another profile is selected");
             // 
@@ -40135,7 +40149,7 @@
             0,
             0,
             0});
-            this.udTXFilterLowSave.Location = new System.Drawing.Point(528, 381);
+            this.udTXFilterLowSave.Location = new System.Drawing.Point(540, 386);
             this.udTXFilterLowSave.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -40148,7 +40162,7 @@
             0});
             this.udTXFilterLowSave.Name = "udTXFilterLowSave";
             this.udTXFilterLowSave.Size = new System.Drawing.Size(56, 20);
-            this.udTXFilterLowSave.TabIndex = 60;
+            this.udTXFilterLowSave.TabIndex = 87;
             this.udTXFilterLowSave.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXFilterLowSave, "Saved Low Frequency TX Filter Cutoff");
             this.udTXFilterLowSave.Value = new decimal(new int[] {
@@ -40165,7 +40179,7 @@
             0,
             0,
             0});
-            this.udTXFilterHighSave.Location = new System.Drawing.Point(466, 381);
+            this.udTXFilterHighSave.Location = new System.Drawing.Point(478, 386);
             this.udTXFilterHighSave.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -40178,7 +40192,7 @@
             0});
             this.udTXFilterHighSave.Name = "udTXFilterHighSave";
             this.udTXFilterHighSave.Size = new System.Drawing.Size(56, 20);
-            this.udTXFilterHighSave.TabIndex = 59;
+            this.udTXFilterHighSave.TabIndex = 86;
             this.udTXFilterHighSave.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXFilterHighSave, "Saved High Frequency TX Filter Cutoff");
             this.udTXFilterHighSave.Value = new decimal(new int[] {
@@ -40201,10 +40215,10 @@
             this.grpBoxMic.Controls.Add(this.udLineInBoost);
             this.grpBoxMic.Controls.Add(this.chk20dbMicBoost);
             this.grpBoxMic.Controls.Add(this.lblLineInBoost);
-            this.grpBoxMic.Location = new System.Drawing.Point(170, 103);
+            this.grpBoxMic.Location = new System.Drawing.Point(182, 94);
             this.grpBoxMic.Name = "grpBoxMic";
-            this.grpBoxMic.Size = new System.Drawing.Size(189, 137);
-            this.grpBoxMic.TabIndex = 58;
+            this.grpBoxMic.Size = new System.Drawing.Size(189, 151);
+            this.grpBoxMic.TabIndex = 85;
             this.grpBoxMic.TabStop = false;
             this.grpBoxMic.Text = "Mic";
             // 
@@ -40239,7 +40253,6 @@
             this.radLineIn.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.toolTip1.SetToolTip(this.radLineIn, "Enables Line Input to Penelope");
             this.radLineIn.UseVisualStyleBackColor = true;
-            this.radLineIn.CheckedChanged += new System.EventHandler(this.radLineIn_CheckedChanged);
             // 
             // radMicIn
             // 
@@ -40254,7 +40267,6 @@
             this.radMicIn.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.toolTip1.SetToolTip(this.radMicIn, "Enable Microphone Input on Penelope");
             this.radMicIn.UseVisualStyleBackColor = true;
-            this.radMicIn.CheckedChanged += new System.EventHandler(this.radMicIn_CheckedChanged);
             // 
             // udMicGainMin
             // 
@@ -40283,8 +40295,6 @@
             0,
             0,
             -2147483648});
-            this.udMicGainMin.ValueChanged += new System.EventHandler(this.udMicGainMin_ValueChanged);
-            this.udMicGainMin.LostFocus += new System.EventHandler(this.udMicGainMin_LostFocus);
             // 
             // udMicGainMax
             // 
@@ -40313,8 +40323,6 @@
             0,
             0,
             0});
-            this.udMicGainMax.ValueChanged += new System.EventHandler(this.udMicGainMax_ValueChanged);
-            this.udMicGainMax.LostFocus += new System.EventHandler(this.udMicGainMax_LostFocus);
             // 
             // labelTS21
             // 
@@ -40367,20 +40375,18 @@
             0,
             0});
             this.udLineInBoost.Visible = false;
-            this.udLineInBoost.ValueChanged += new System.EventHandler(this.udLineInBoost_ValueChanged);
             // 
             // chk20dbMicBoost
             // 
             this.chk20dbMicBoost.Checked = true;
             this.chk20dbMicBoost.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chk20dbMicBoost.Image = null;
-            this.chk20dbMicBoost.Location = new System.Drawing.Point(13, 94);
+            this.chk20dbMicBoost.Location = new System.Drawing.Point(4, 97);
             this.chk20dbMicBoost.Name = "chk20dbMicBoost";
             this.chk20dbMicBoost.Size = new System.Drawing.Size(110, 16);
             this.chk20dbMicBoost.TabIndex = 11;
             this.chk20dbMicBoost.Text = "20dB Mic Boost";
             this.toolTip1.SetToolTip(this.chk20dbMicBoost, "Controls 20dB Hardware Preamp");
-            this.chk20dbMicBoost.CheckedChanged += new System.EventHandler(this.chk20dbMicBoost_CheckedChanged);
             // 
             // lblLineInBoost
             // 
@@ -40399,51 +40405,50 @@
             this.chkTXExpert.Checked = true;
             this.chkTXExpert.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkTXExpert.Image = null;
-            this.chkTXExpert.Location = new System.Drawing.Point(593, 7);
+            this.chkTXExpert.Location = new System.Drawing.Point(605, 12);
             this.chkTXExpert.Name = "chkTXExpert";
             this.chkTXExpert.Size = new System.Drawing.Size(96, 24);
-            this.chkTXExpert.TabIndex = 55;
+            this.chkTXExpert.TabIndex = 84;
             this.chkTXExpert.Text = "More Profiles";
             this.toolTip1.SetToolTip(this.chkTXExpert, "Check to display additional default preset TX Profiles");
-            this.chkTXExpert.CheckedChanged += new System.EventHandler(this.chkTXExpert_CheckedChanged);
             // 
             // grpTXProfileDef
             // 
             this.grpTXProfileDef.Controls.Add(this.btnTXProfileDefImport);
             this.grpTXProfileDef.Controls.Add(this.lstTXProfileDef);
-            this.grpTXProfileDef.Location = new System.Drawing.Point(561, 32);
+            this.grpTXProfileDef.Location = new System.Drawing.Point(573, 37);
             this.grpTXProfileDef.Name = "grpTXProfileDef";
-            this.grpTXProfileDef.Size = new System.Drawing.Size(136, 152);
-            this.grpTXProfileDef.TabIndex = 54;
+            this.grpTXProfileDef.Size = new System.Drawing.Size(136, 327);
+            this.grpTXProfileDef.TabIndex = 83;
             this.grpTXProfileDef.TabStop = false;
             this.grpTXProfileDef.Text = "Additional TX Profiles";
             // 
             // btnTXProfileDefImport
             // 
             this.btnTXProfileDefImport.Image = null;
-            this.btnTXProfileDefImport.Location = new System.Drawing.Point(32, 120);
+            this.btnTXProfileDefImport.Location = new System.Drawing.Point(32, 297);
             this.btnTXProfileDefImport.Name = "btnTXProfileDefImport";
+            this.btnTXProfileDefImport.Selectable = true;
             this.btnTXProfileDefImport.Size = new System.Drawing.Size(64, 24);
             this.btnTXProfileDefImport.TabIndex = 54;
             this.btnTXProfileDefImport.Text = "Include";
             this.toolTip1.SetToolTip(this.btnTXProfileDefImport, "Include the selected profile from the above list into my own list of profiles.");
-            this.btnTXProfileDefImport.Click += new System.EventHandler(this.btnTXProfileDefImport_Click);
             // 
             // lstTXProfileDef
             // 
             this.lstTXProfileDef.Location = new System.Drawing.Point(8, 16);
             this.lstTXProfileDef.Name = "lstTXProfileDef";
-            this.lstTXProfileDef.Size = new System.Drawing.Size(120, 82);
+            this.lstTXProfileDef.Size = new System.Drawing.Size(120, 277);
             this.lstTXProfileDef.TabIndex = 53;
             // 
             // grpTXAM
             // 
             this.grpTXAM.Controls.Add(this.lblTXAMCarrierLevel);
             this.grpTXAM.Controls.Add(this.udTXAMCarrierLevel);
-            this.grpTXAM.Location = new System.Drawing.Point(376, 94);
+            this.grpTXAM.Location = new System.Drawing.Point(388, 99);
             this.grpTXAM.Name = "grpTXAM";
             this.grpTXAM.Size = new System.Drawing.Size(179, 51);
-            this.grpTXAM.TabIndex = 52;
+            this.grpTXAM.TabIndex = 82;
             this.grpTXAM.TabStop = false;
             this.grpTXAM.Text = "AM";
             // 
@@ -40485,18 +40490,16 @@
             0,
             0,
             0});
-            this.udTXAMCarrierLevel.ValueChanged += new System.EventHandler(this.udTXAMCarrierLevel_ValueChanged);
-            this.udTXAMCarrierLevel.LostFocus += new System.EventHandler(this.udTXAMCarrierLevel_LostFocus);
             // 
             // grpTXMonitor
             // 
             this.grpTXMonitor.Controls.Add(this.chkIgnoreMasterAFChangeForMonitor);
             this.grpTXMonitor.Controls.Add(this.lblTXAF);
             this.grpTXMonitor.Controls.Add(this.udTXAF);
-            this.grpTXMonitor.Location = new System.Drawing.Point(375, 8);
+            this.grpTXMonitor.Location = new System.Drawing.Point(387, 13);
             this.grpTXMonitor.Name = "grpTXMonitor";
             this.grpTXMonitor.Size = new System.Drawing.Size(180, 80);
-            this.grpTXMonitor.TabIndex = 51;
+            this.grpTXMonitor.TabIndex = 81;
             this.grpTXMonitor.TabStop = false;
             this.grpTXMonitor.Text = "Monitor";
             // 
@@ -40511,7 +40514,6 @@
             this.chkIgnoreMasterAFChangeForMonitor.Text = "Ignore Master AF Change";
             this.toolTip1.SetToolTip(this.chkIgnoreMasterAFChangeForMonitor, "Changes made to MasterAF when in MOX are not applied to TX AF");
             this.chkIgnoreMasterAFChangeForMonitor.UseVisualStyleBackColor = true;
-            this.chkIgnoreMasterAFChangeForMonitor.CheckedChanged += new System.EventHandler(this.chkIgnoreMasterAFChangeForMonitor_CheckedChanged);
             // 
             // lblTXAF
             // 
@@ -40546,57 +40548,65 @@
             this.udTXAF.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXAF, "AF value to use when in TX mode (with the Delta 44 only).");
             this.udTXAF.Value = new decimal(new int[] {
-            50,
+            20,
             0,
             0,
             0});
-            this.udTXAF.ValueChanged += new System.EventHandler(this.udTXAF_ValueChanged);
-            this.udTXAF.LostFocus += new System.EventHandler(this.udTXAF_LostFocus);
             // 
             // grpTXProfile
             // 
             this.grpTXProfile.Controls.Add(this.btnTXProfileDelete);
             this.grpTXProfile.Controls.Add(this.btnTXProfileSave);
             this.grpTXProfile.Controls.Add(this.comboTXProfileName);
-            this.grpTXProfile.Location = new System.Drawing.Point(8, 8);
+            this.grpTXProfile.Controls.Add(this.btnExportCurrentTXProfile);
+            this.grpTXProfile.Location = new System.Drawing.Point(20, 13);
             this.grpTXProfile.Name = "grpTXProfile";
-            this.grpTXProfile.Size = new System.Drawing.Size(143, 75);
-            this.grpTXProfile.TabIndex = 23;
+            this.grpTXProfile.Size = new System.Drawing.Size(156, 75);
+            this.grpTXProfile.TabIndex = 79;
             this.grpTXProfile.TabStop = false;
             this.grpTXProfile.Text = "Profiles";
             // 
             // btnTXProfileDelete
             // 
             this.btnTXProfileDelete.Image = null;
-            this.btnTXProfileDelete.Location = new System.Drawing.Point(72, 48);
+            this.btnTXProfileDelete.Location = new System.Drawing.Point(103, 48);
             this.btnTXProfileDelete.Name = "btnTXProfileDelete";
+            this.btnTXProfileDelete.Selectable = true;
             this.btnTXProfileDelete.Size = new System.Drawing.Size(48, 21);
             this.btnTXProfileDelete.TabIndex = 2;
             this.btnTXProfileDelete.Text = "Delete";
             this.toolTip1.SetToolTip(this.btnTXProfileDelete, "Click to delete the currently selected TX Profile.");
-            this.btnTXProfileDelete.Click += new System.EventHandler(this.btnTXProfileDelete_Click);
             // 
             // btnTXProfileSave
             // 
             this.btnTXProfileSave.Image = null;
-            this.btnTXProfileSave.Location = new System.Drawing.Point(16, 48);
+            this.btnTXProfileSave.Location = new System.Drawing.Point(5, 48);
             this.btnTXProfileSave.Name = "btnTXProfileSave";
+            this.btnTXProfileSave.Selectable = true;
             this.btnTXProfileSave.Size = new System.Drawing.Size(48, 21);
             this.btnTXProfileSave.TabIndex = 1;
             this.btnTXProfileSave.Text = "Save";
             this.toolTip1.SetToolTip(this.btnTXProfileSave, "Click to save the current settings to a TX Profile.");
-            this.btnTXProfileSave.Click += new System.EventHandler(this.btnTXProfileSave_Click);
             // 
             // comboTXProfileName
             // 
             this.comboTXProfileName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboTXProfileName.DropDownWidth = 104;
-            this.comboTXProfileName.Location = new System.Drawing.Point(16, 24);
+            this.comboTXProfileName.Location = new System.Drawing.Point(6, 24);
             this.comboTXProfileName.Name = "comboTXProfileName";
-            this.comboTXProfileName.Size = new System.Drawing.Size(104, 21);
+            this.comboTXProfileName.Size = new System.Drawing.Size(144, 21);
             this.comboTXProfileName.TabIndex = 0;
             this.toolTip1.SetToolTip(this.comboTXProfileName, "Sets the current Transmit Profile to be used.");
-            this.comboTXProfileName.SelectedIndexChanged += new System.EventHandler(this.comboTXProfileName_SelectedIndexChanged);
+            // 
+            // btnExportCurrentTXProfile
+            // 
+            this.btnExportCurrentTXProfile.Location = new System.Drawing.Point(54, 48);
+            this.btnExportCurrentTXProfile.Name = "btnExportCurrentTXProfile";
+            this.btnExportCurrentTXProfile.Size = new System.Drawing.Size(48, 21);
+            this.btnExportCurrentTXProfile.TabIndex = 73;
+            this.btnExportCurrentTXProfile.Text = "Export";
+            this.toolTip1.SetToolTip(this.btnExportCurrentTXProfile, "Export the curent profile and save to a file.");
+            this.btnExportCurrentTXProfile.UseVisualStyleBackColor = true;
             // 
             // grpPATune
             // 
@@ -40606,10 +40616,10 @@
             this.grpPATune.Controls.Add(this.comboTXTUNMeter);
             this.grpPATune.Controls.Add(this.lblTXTUNMeter);
             this.grpPATune.Controls.Add(this.udTXTunePower);
-            this.grpPATune.Location = new System.Drawing.Point(8, 89);
+            this.grpPATune.Location = new System.Drawing.Point(20, 94);
             this.grpPATune.Name = "grpPATune";
-            this.grpPATune.Size = new System.Drawing.Size(143, 151);
-            this.grpPATune.TabIndex = 22;
+            this.grpPATune.Size = new System.Drawing.Size(156, 151);
+            this.grpPATune.TabIndex = 78;
             this.grpPATune.TabStop = false;
             this.grpPATune.Text = "Tune";
             // 
@@ -40624,7 +40634,6 @@
             this.radUseFixedDriveTune.TabStop = true;
             this.radUseFixedDriveTune.Text = "Use Fixed Drive";
             this.radUseFixedDriveTune.UseVisualStyleBackColor = true;
-            this.radUseFixedDriveTune.CheckedChanged += new System.EventHandler(this.radUseFixedDriveTune_CheckedChanged);
             // 
             // radUseDriveSliderTune
             // 
@@ -40637,7 +40646,6 @@
             this.radUseDriveSliderTune.TabStop = true;
             this.radUseDriveSliderTune.Text = "Use Drive Slider";
             this.radUseDriveSliderTune.UseVisualStyleBackColor = true;
-            this.radUseDriveSliderTune.CheckedChanged += new System.EventHandler(this.radUseDriveSliderTune_CheckedChanged);
             // 
             // radUseTuneSliderTune
             // 
@@ -40650,7 +40658,6 @@
             this.radUseTuneSliderTune.TabStop = true;
             this.radUseTuneSliderTune.Text = "Use Tune Slider";
             this.radUseTuneSliderTune.UseVisualStyleBackColor = true;
-            this.radUseTuneSliderTune.CheckedChanged += new System.EventHandler(this.radUseTuneSliderTune_CheckedChanged);
             // 
             // comboTXTUNMeter
             // 
@@ -40668,7 +40675,6 @@
             this.comboTXTUNMeter.Size = new System.Drawing.Size(73, 21);
             this.comboTXTUNMeter.TabIndex = 9;
             this.toolTip1.SetToolTip(this.comboTXTUNMeter, "Sets the current Transmit Profile to be used.");
-            this.comboTXTUNMeter.SelectedIndexChanged += new System.EventHandler(this.comboTXTUNMeter_SelectedIndexChanged);
             // 
             // lblTXTUNMeter
             // 
@@ -40708,8 +40714,6 @@
             0,
             0,
             0});
-            this.udTXTunePower.ValueChanged += new System.EventHandler(this.udTransmitTunePower_ValueChanged);
-            this.udTXTunePower.LostFocus += new System.EventHandler(this.udTXTunePower_LostFocus);
             // 
             // grpTXFilter
             // 
@@ -40717,10 +40721,10 @@
             this.grpTXFilter.Controls.Add(this.udTXFilterLow);
             this.grpTXFilter.Controls.Add(this.lblTXFilterLow);
             this.grpTXFilter.Controls.Add(this.udTXFilterHigh);
-            this.grpTXFilter.Location = new System.Drawing.Point(170, 8);
+            this.grpTXFilter.Location = new System.Drawing.Point(182, 13);
             this.grpTXFilter.Name = "grpTXFilter";
             this.grpTXFilter.Size = new System.Drawing.Size(128, 75);
-            this.grpTXFilter.TabIndex = 19;
+            this.grpTXFilter.TabIndex = 77;
             this.grpTXFilter.TabStop = false;
             this.grpTXFilter.Text = "Transmit Filter";
             // 
@@ -40761,8 +40765,6 @@
             0,
             0,
             0});
-            this.udTXFilterLow.ValueChanged += new System.EventHandler(this.udTXFilterLow_ValueChanged);
-            this.udTXFilterLow.LostFocus += new System.EventHandler(this.udTXFilterLow_LostFocus);
             // 
             // lblTXFilterLow
             // 
@@ -40801,8 +40803,6 @@
             0,
             0,
             0});
-            this.udTXFilterHigh.ValueChanged += new System.EventHandler(this.udTXFilterHigh_ValueChanged);
-            this.udTXFilterHigh.LostFocus += new System.EventHandler(this.udTXFilterHigh_LostFocus);
             // 
             // tpPowerAmplifier
             // 
@@ -41420,6 +41420,7 @@
             this.btnCopyPAProfile.Image = null;
             this.btnCopyPAProfile.Location = new System.Drawing.Point(319, 27);
             this.btnCopyPAProfile.Name = "btnCopyPAProfile";
+            this.btnCopyPAProfile.Selectable = true;
             this.btnCopyPAProfile.Size = new System.Drawing.Size(65, 23);
             this.btnCopyPAProfile.TabIndex = 166;
             this.btnCopyPAProfile.Text = "Copy";
@@ -41432,6 +41433,7 @@
             this.btnNewPAProfile.Image = null;
             this.btnNewPAProfile.Location = new System.Drawing.Point(177, 27);
             this.btnNewPAProfile.Name = "btnNewPAProfile";
+            this.btnNewPAProfile.Selectable = true;
             this.btnNewPAProfile.Size = new System.Drawing.Size(65, 23);
             this.btnNewPAProfile.TabIndex = 165;
             this.btnNewPAProfile.Text = "New";
@@ -42468,6 +42470,7 @@
             this.btnResetPAProfile.Image = null;
             this.btnResetPAProfile.Location = new System.Drawing.Point(157, 271);
             this.btnResetPAProfile.Name = "btnResetPAProfile";
+            this.btnResetPAProfile.Selectable = true;
             this.btnResetPAProfile.Size = new System.Drawing.Size(90, 52);
             this.btnResetPAProfile.TabIndex = 2;
             this.btnResetPAProfile.Text = "Reset To Defaults";
@@ -42479,6 +42482,7 @@
             this.btnDeletePAProfile.Image = null;
             this.btnDeletePAProfile.Location = new System.Drawing.Point(248, 27);
             this.btnDeletePAProfile.Name = "btnDeletePAProfile";
+            this.btnDeletePAProfile.Selectable = true;
             this.btnDeletePAProfile.Size = new System.Drawing.Size(65, 23);
             this.btnDeletePAProfile.TabIndex = 1;
             this.btnDeletePAProfile.Text = "Delete";
@@ -42547,6 +42551,7 @@
             this.btnPAGainCalibration.Image = null;
             this.btnPAGainCalibration.Location = new System.Drawing.Point(10, 17);
             this.btnPAGainCalibration.Name = "btnPAGainCalibration";
+            this.btnPAGainCalibration.Selectable = true;
             this.btnPAGainCalibration.Size = new System.Drawing.Size(64, 23);
             this.btnPAGainCalibration.TabIndex = 20;
             this.btnPAGainCalibration.Text = "Calibrate";
@@ -42779,6 +42784,7 @@
             this.btnResetWattMeterValues.Image = null;
             this.btnResetWattMeterValues.Location = new System.Drawing.Point(100, 197);
             this.btnResetWattMeterValues.Name = "btnResetWattMeterValues";
+            this.btnResetWattMeterValues.Selectable = true;
             this.btnResetWattMeterValues.Size = new System.Drawing.Size(50, 23);
             this.btnResetWattMeterValues.TabIndex = 6;
             this.btnResetWattMeterValues.Text = "Reset";
@@ -44642,6 +44648,7 @@
             this.btnResetPAValues.Image = null;
             this.btnResetPAValues.Location = new System.Drawing.Point(245, 163);
             this.btnResetPAValues.Name = "btnResetPAValues";
+            this.btnResetPAValues.Selectable = true;
             this.btnResetPAValues.Size = new System.Drawing.Size(50, 23);
             this.btnResetPAValues.TabIndex = 5;
             this.btnResetPAValues.Text = "Reset";
@@ -44924,6 +44931,7 @@
             this.clrbtnSliderLimitBar.Location = new System.Drawing.Point(108, 223);
             this.clrbtnSliderLimitBar.MoreColors = "More Colors...";
             this.clrbtnSliderLimitBar.Name = "clrbtnSliderLimitBar";
+            this.clrbtnSliderLimitBar.Selectable = true;
             this.clrbtnSliderLimitBar.Size = new System.Drawing.Size(40, 23);
             this.clrbtnSliderLimitBar.TabIndex = 90;
             this.toolTip1.SetToolTip(this.clrbtnSliderLimitBar, "Colour of the Limit bar area in the Drive/Tune sliders");
@@ -44950,6 +44958,7 @@
             this.clrbtnStatusBarText.Location = new System.Drawing.Point(78, 52);
             this.clrbtnStatusBarText.MoreColors = "More Colors...";
             this.clrbtnStatusBarText.Name = "clrbtnStatusBarText";
+            this.clrbtnStatusBarText.Selectable = true;
             this.clrbtnStatusBarText.Size = new System.Drawing.Size(40, 23);
             this.clrbtnStatusBarText.TabIndex = 77;
             this.clrbtnStatusBarText.Changed += new System.EventHandler(this.clrbtnStatusBarText_Changed);
@@ -44972,6 +44981,7 @@
             this.clrbtnStatusBarBackground.Location = new System.Drawing.Point(78, 23);
             this.clrbtnStatusBarBackground.MoreColors = "More Colors...";
             this.clrbtnStatusBarBackground.Name = "clrbtnStatusBarBackground";
+            this.clrbtnStatusBarBackground.Selectable = true;
             this.clrbtnStatusBarBackground.Size = new System.Drawing.Size(40, 23);
             this.clrbtnStatusBarBackground.TabIndex = 75;
             this.clrbtnStatusBarBackground.Changed += new System.EventHandler(this.clrbtnStatusBarBackground_Changed);
@@ -45004,6 +45014,7 @@
             this.btnSkinExport.Image = null;
             this.btnSkinExport.Location = new System.Drawing.Point(36, 91);
             this.btnSkinExport.Name = "btnSkinExport";
+            this.btnSkinExport.Selectable = true;
             this.btnSkinExport.Size = new System.Drawing.Size(51, 23);
             this.btnSkinExport.TabIndex = 86;
             this.btnSkinExport.Text = "Export";
@@ -45064,6 +45075,7 @@
             this.clrbtnGenBackground.Location = new System.Drawing.Point(108, 162);
             this.clrbtnGenBackground.MoreColors = "More Colors...";
             this.clrbtnGenBackground.Name = "clrbtnGenBackground";
+            this.clrbtnGenBackground.Selectable = true;
             this.clrbtnGenBackground.Size = new System.Drawing.Size(40, 23);
             this.clrbtnGenBackground.TabIndex = 83;
             this.clrbtnGenBackground.Visible = false;
@@ -45094,6 +45106,7 @@
             this.clrbtnBandBackground.Location = new System.Drawing.Point(88, 120);
             this.clrbtnBandBackground.MoreColors = "More Colors...";
             this.clrbtnBandBackground.Name = "clrbtnBandBackground";
+            this.clrbtnBandBackground.Selectable = true;
             this.clrbtnBandBackground.Size = new System.Drawing.Size(40, 23);
             this.clrbtnBandBackground.TabIndex = 75;
             this.clrbtnBandBackground.Changed += new System.EventHandler(this.clrbtnBandBackground_Changed);
@@ -45115,6 +45128,7 @@
             this.clrbtnBandLight.Location = new System.Drawing.Point(88, 56);
             this.clrbtnBandLight.MoreColors = "More Colors...";
             this.clrbtnBandLight.Name = "clrbtnBandLight";
+            this.clrbtnBandLight.Selectable = true;
             this.clrbtnBandLight.Size = new System.Drawing.Size(40, 23);
             this.clrbtnBandLight.TabIndex = 70;
             this.clrbtnBandLight.Changed += new System.EventHandler(this.clrbtnBandLight_Changed);
@@ -45127,6 +45141,7 @@
             this.clrbtnBandDark.Location = new System.Drawing.Point(88, 24);
             this.clrbtnBandDark.MoreColors = "More Colors...";
             this.clrbtnBandDark.Name = "clrbtnBandDark";
+            this.clrbtnBandDark.Selectable = true;
             this.clrbtnBandDark.Size = new System.Drawing.Size(40, 23);
             this.clrbtnBandDark.TabIndex = 69;
             this.clrbtnBandDark.Changed += new System.EventHandler(this.clrbtnBandDark_Changed);
@@ -45157,6 +45172,7 @@
             this.clrbtnOutOfBand.Location = new System.Drawing.Point(88, 88);
             this.clrbtnOutOfBand.MoreColors = "More Colors...";
             this.clrbtnOutOfBand.Name = "clrbtnOutOfBand";
+            this.clrbtnOutOfBand.Selectable = true;
             this.clrbtnOutOfBand.Size = new System.Drawing.Size(40, 23);
             this.clrbtnOutOfBand.TabIndex = 73;
             this.clrbtnOutOfBand.Changed += new System.EventHandler(this.clrbtnOutOfBand_Changed);
@@ -45198,6 +45214,7 @@
             this.clrbtnInfoButtonsColor.Location = new System.Drawing.Point(88, 189);
             this.clrbtnInfoButtonsColor.MoreColors = "More Colors...";
             this.clrbtnInfoButtonsColor.Name = "clrbtnInfoButtonsColor";
+            this.clrbtnInfoButtonsColor.Selectable = true;
             this.clrbtnInfoButtonsColor.Size = new System.Drawing.Size(40, 23);
             this.clrbtnInfoButtonsColor.TabIndex = 75;
             this.clrbtnInfoButtonsColor.Changed += new System.EventHandler(this.clrbtnInfoButtonsColor_Changed);
@@ -45219,6 +45236,7 @@
             this.clrbtnVFOBackground.Location = new System.Drawing.Point(88, 88);
             this.clrbtnVFOBackground.MoreColors = "More Colors...";
             this.clrbtnVFOBackground.Name = "clrbtnVFOBackground";
+            this.clrbtnVFOBackground.Selectable = true;
             this.clrbtnVFOBackground.Size = new System.Drawing.Size(40, 23);
             this.clrbtnVFOBackground.TabIndex = 73;
             this.clrbtnVFOBackground.Changed += new System.EventHandler(this.clrbtnVFOBackground_Changed);
@@ -45240,6 +45258,7 @@
             this.clrbtnVFOSmallColor.Location = new System.Drawing.Point(88, 152);
             this.clrbtnVFOSmallColor.MoreColors = "More Colors...";
             this.clrbtnVFOSmallColor.Name = "clrbtnVFOSmallColor";
+            this.clrbtnVFOSmallColor.Selectable = true;
             this.clrbtnVFOSmallColor.Size = new System.Drawing.Size(40, 23);
             this.clrbtnVFOSmallColor.TabIndex = 71;
             this.clrbtnVFOSmallColor.Changed += new System.EventHandler(this.clrbtnVFOSmallColor_Changed);
@@ -45273,6 +45292,7 @@
             this.clrbtnVFOLight.Location = new System.Drawing.Point(88, 56);
             this.clrbtnVFOLight.MoreColors = "More Colors...";
             this.clrbtnVFOLight.Name = "clrbtnVFOLight";
+            this.clrbtnVFOLight.Selectable = true;
             this.clrbtnVFOLight.Size = new System.Drawing.Size(40, 23);
             this.clrbtnVFOLight.TabIndex = 68;
             this.clrbtnVFOLight.Changed += new System.EventHandler(this.clrbtnVFOLight_Changed);
@@ -45285,6 +45305,7 @@
             this.clrbtnVFODark.Location = new System.Drawing.Point(88, 24);
             this.clrbtnVFODark.MoreColors = "More Colors...";
             this.clrbtnVFODark.Name = "clrbtnVFODark";
+            this.clrbtnVFODark.Selectable = true;
             this.clrbtnVFODark.Size = new System.Drawing.Size(40, 23);
             this.clrbtnVFODark.TabIndex = 67;
             this.clrbtnVFODark.Changed += new System.EventHandler(this.clrbtnVFODark_Changed);
@@ -45315,6 +45336,7 @@
             this.clrbtnBtnSel.Location = new System.Drawing.Point(108, 127);
             this.clrbtnBtnSel.MoreColors = "More Colors...";
             this.clrbtnBtnSel.Name = "clrbtnBtnSel";
+            this.clrbtnBtnSel.Selectable = true;
             this.clrbtnBtnSel.Size = new System.Drawing.Size(40, 23);
             this.clrbtnBtnSel.TabIndex = 66;
             this.clrbtnBtnSel.Changed += new System.EventHandler(this.clrbtnBtnSel_Changed);
@@ -45379,6 +45401,7 @@
             this.clrbtnNoiseFloor.Location = new System.Drawing.Point(116, 17);
             this.clrbtnNoiseFloor.MoreColors = "More Colors...";
             this.clrbtnNoiseFloor.Name = "clrbtnNoiseFloor";
+            this.clrbtnNoiseFloor.Selectable = true;
             this.clrbtnNoiseFloor.Size = new System.Drawing.Size(40, 23);
             this.clrbtnNoiseFloor.TabIndex = 93;
             this.clrbtnNoiseFloor.Changed += new System.EventHandler(this.clrbtnNoiseFloor_Changed);
@@ -45481,6 +45504,7 @@
             this.btnLoadGradient.Image = null;
             this.btnLoadGradient.Location = new System.Drawing.Point(365, 60);
             this.btnLoadGradient.Name = "btnLoadGradient";
+            this.btnLoadGradient.Selectable = true;
             this.btnLoadGradient.Size = new System.Drawing.Size(31, 23);
             this.btnLoadGradient.TabIndex = 91;
             this.btnLoadGradient.Text = "L";
@@ -45492,6 +45516,7 @@
             this.btnSaveGradient.Image = null;
             this.btnSaveGradient.Location = new System.Drawing.Point(396, 60);
             this.btnSaveGradient.Name = "btnSaveGradient";
+            this.btnSaveGradient.Selectable = true;
             this.btnSaveGradient.Size = new System.Drawing.Size(31, 23);
             this.btnSaveGradient.TabIndex = 90;
             this.btnSaveGradient.Text = "S";
@@ -45514,6 +45539,7 @@
             this.btnDefaultGradient.Image = null;
             this.btnDefaultGradient.Location = new System.Drawing.Point(150, 60);
             this.btnDefaultGradient.Name = "btnDefaultGradient";
+            this.btnDefaultGradient.Selectable = true;
             this.btnDefaultGradient.Size = new System.Drawing.Size(64, 23);
             this.btnDefaultGradient.TabIndex = 88;
             this.btnDefaultGradient.Text = "Default";
@@ -45527,6 +45553,7 @@
             this.clrbtnGripperColour.Location = new System.Drawing.Point(8, 61);
             this.clrbtnGripperColour.MoreColors = "More Colors...";
             this.clrbtnGripperColour.Name = "clrbtnGripperColour";
+            this.clrbtnGripperColour.Selectable = true;
             this.clrbtnGripperColour.Size = new System.Drawing.Size(40, 23);
             this.clrbtnGripperColour.TabIndex = 87;
             this.clrbtnGripperColour.Changed += new System.EventHandler(this.clrbtnGripperColour_Changed);
@@ -45553,6 +45580,7 @@
             this.btnDeleteColourGripper.Image = null;
             this.btnDeleteColourGripper.Location = new System.Drawing.Point(220, 60);
             this.btnDeleteColourGripper.Name = "btnDeleteColourGripper";
+            this.btnDeleteColourGripper.Selectable = true;
             this.btnDeleteColourGripper.Size = new System.Drawing.Size(64, 23);
             this.btnDeleteColourGripper.TabIndex = 86;
             this.btnDeleteColourGripper.Text = "Delete";
@@ -45563,6 +45591,7 @@
             this.btnClearColourGrippers.Image = null;
             this.btnClearColourGrippers.Location = new System.Drawing.Point(289, 60);
             this.btnClearColourGrippers.Name = "btnClearColourGrippers";
+            this.btnClearColourGrippers.Selectable = true;
             this.btnClearColourGrippers.Size = new System.Drawing.Size(64, 23);
             this.btnClearColourGrippers.TabIndex = 24;
             this.btnClearColourGrippers.Text = "Clear";
@@ -45661,6 +45690,7 @@
             this.clrbtnHGridColor.Location = new System.Drawing.Point(82, 104);
             this.clrbtnHGridColor.MoreColors = "More Colors...";
             this.clrbtnHGridColor.Name = "clrbtnHGridColor";
+            this.clrbtnHGridColor.Selectable = true;
             this.clrbtnHGridColor.Size = new System.Drawing.Size(40, 23);
             this.clrbtnHGridColor.TabIndex = 87;
             this.clrbtnHGridColor.Changed += new System.EventHandler(this.clrbtnHGridColor_Changed);
@@ -45719,6 +45749,7 @@
             this.clrbtnGridFine.Location = new System.Drawing.Point(82, 76);
             this.clrbtnGridFine.MoreColors = "More Colors...";
             this.clrbtnGridFine.Name = "clrbtnGridFine";
+            this.clrbtnGridFine.Selectable = true;
             this.clrbtnGridFine.Size = new System.Drawing.Size(40, 23);
             this.clrbtnGridFine.TabIndex = 75;
             this.clrbtnGridFine.Changed += new System.EventHandler(this.clrbtnGridFine_Changed);
@@ -45751,6 +45782,7 @@
             this.clrbtnBackground.Location = new System.Drawing.Point(82, 20);
             this.clrbtnBackground.MoreColors = "More Colors...";
             this.clrbtnBackground.Name = "clrbtnBackground";
+            this.clrbtnBackground.Selectable = true;
             this.clrbtnBackground.Size = new System.Drawing.Size(40, 23);
             this.clrbtnBackground.TabIndex = 68;
             this.clrbtnBackground.Changed += new System.EventHandler(this.clrbtnBackground_Changed);
@@ -45763,6 +45795,7 @@
             this.clrbtnGrid.Location = new System.Drawing.Point(82, 48);
             this.clrbtnGrid.MoreColors = "More Colors...";
             this.clrbtnGrid.Name = "clrbtnGrid";
+            this.clrbtnGrid.Selectable = true;
             this.clrbtnGrid.Size = new System.Drawing.Size(40, 23);
             this.clrbtnGrid.TabIndex = 69;
             this.clrbtnGrid.Changed += new System.EventHandler(this.clrbtnGrid_Changed);
@@ -45785,6 +45818,7 @@
             this.clrbtnZeroLine.Location = new System.Drawing.Point(82, 132);
             this.clrbtnZeroLine.MoreColors = "More Colors...";
             this.clrbtnZeroLine.Name = "clrbtnZeroLine";
+            this.clrbtnZeroLine.Selectable = true;
             this.clrbtnZeroLine.Size = new System.Drawing.Size(40, 23);
             this.clrbtnZeroLine.TabIndex = 70;
             this.clrbtnZeroLine.Changed += new System.EventHandler(this.clrbtnZeroLine_Changed);
@@ -45807,6 +45841,7 @@
             this.clrbtnText.Location = new System.Drawing.Point(82, 160);
             this.clrbtnText.MoreColors = "More Colors...";
             this.clrbtnText.Name = "clrbtnText";
+            this.clrbtnText.Selectable = true;
             this.clrbtnText.Size = new System.Drawing.Size(40, 23);
             this.clrbtnText.TabIndex = 72;
             this.clrbtnText.Changed += new System.EventHandler(this.clrbtnText_Changed);
@@ -45882,6 +45917,7 @@
             this.clrbtnBandstackOverlay.Location = new System.Drawing.Point(130, 304);
             this.clrbtnBandstackOverlay.MoreColors = "More Colors...";
             this.clrbtnBandstackOverlay.Name = "clrbtnBandstackOverlay";
+            this.clrbtnBandstackOverlay.Selectable = true;
             this.clrbtnBandstackOverlay.Size = new System.Drawing.Size(40, 23);
             this.clrbtnBandstackOverlay.TabIndex = 98;
             this.clrbtnBandstackOverlay.Changed += new System.EventHandler(this.clrbtnBandstackOverlay_Changed);
@@ -45941,6 +45977,7 @@
             this.clrbtnDataFill.Location = new System.Drawing.Point(130, 275);
             this.clrbtnDataFill.MoreColors = "More Colors...";
             this.clrbtnDataFill.Name = "clrbtnDataFill";
+            this.clrbtnDataFill.Selectable = true;
             this.clrbtnDataFill.Size = new System.Drawing.Size(40, 23);
             this.clrbtnDataFill.TabIndex = 90;
             this.clrbtnDataFill.Changed += new System.EventHandler(this.clrbtnDataFill_Changed);
@@ -45953,6 +45990,7 @@
             this.clrbtnActiveSpectralPeak.Location = new System.Drawing.Point(130, 190);
             this.clrbtnActiveSpectralPeak.MoreColors = "More Colors...";
             this.clrbtnActiveSpectralPeak.Name = "clrbtnActiveSpectralPeak";
+            this.clrbtnActiveSpectralPeak.Selectable = true;
             this.clrbtnActiveSpectralPeak.Size = new System.Drawing.Size(40, 23);
             this.clrbtnActiveSpectralPeak.TabIndex = 94;
             this.clrbtnActiveSpectralPeak.Changed += new System.EventHandler(this.clrbtnActiveSpectralPeak_Changed);
@@ -46010,6 +46048,7 @@
             this.clrbtnGrayLine.Location = new System.Drawing.Point(130, 160);
             this.clrbtnGrayLine.MoreColors = "More Colors...";
             this.clrbtnGrayLine.Name = "clrbtnGrayLine";
+            this.clrbtnGrayLine.Selectable = true;
             this.clrbtnGrayLine.Size = new System.Drawing.Size(40, 23);
             this.clrbtnGrayLine.TabIndex = 90;
             this.clrbtnGrayLine.Changed += new System.EventHandler(this.clrbtnGrayLine_Changed);
@@ -46055,6 +46094,7 @@
             this.clrbtnSubRXZero.Location = new System.Drawing.Point(130, 131);
             this.clrbtnSubRXZero.MoreColors = "More Colors...";
             this.clrbtnSubRXZero.Name = "clrbtnSubRXZero";
+            this.clrbtnSubRXZero.Selectable = true;
             this.clrbtnSubRXZero.Size = new System.Drawing.Size(40, 23);
             this.clrbtnSubRXZero.TabIndex = 81;
             this.clrbtnSubRXZero.Changed += new System.EventHandler(this.clrbtnSubRXZero_Changed);
@@ -46132,6 +46172,7 @@
             this.clrbtnSubRXFilter.Location = new System.Drawing.Point(130, 103);
             this.clrbtnSubRXFilter.MoreColors = "More Colors...";
             this.clrbtnSubRXFilter.Name = "clrbtnSubRXFilter";
+            this.clrbtnSubRXFilter.Selectable = true;
             this.clrbtnSubRXFilter.Size = new System.Drawing.Size(40, 23);
             this.clrbtnSubRXFilter.TabIndex = 79;
             this.clrbtnSubRXFilter.Changed += new System.EventHandler(this.clrbtnSubRXFilter_Changed);
@@ -46164,6 +46205,7 @@
             this.clrbtnBandEdge.Location = new System.Drawing.Point(130, 75);
             this.clrbtnBandEdge.MoreColors = "More Colors...";
             this.clrbtnBandEdge.Name = "clrbtnBandEdge";
+            this.clrbtnBandEdge.Selectable = true;
             this.clrbtnBandEdge.Size = new System.Drawing.Size(40, 23);
             this.clrbtnBandEdge.TabIndex = 71;
             this.clrbtnBandEdge.Changed += new System.EventHandler(this.clrbtnBandEdge_Changed);
@@ -46186,6 +46228,7 @@
             this.clrbtnDataLine.Location = new System.Drawing.Point(130, 220);
             this.clrbtnDataLine.MoreColors = "More Colors...";
             this.clrbtnDataLine.Name = "clrbtnDataLine";
+            this.clrbtnDataLine.Selectable = true;
             this.clrbtnDataLine.Size = new System.Drawing.Size(40, 23);
             this.clrbtnDataLine.TabIndex = 73;
             this.clrbtnDataLine.Changed += new System.EventHandler(this.clrbtnDataLine_Changed);
@@ -46198,6 +46241,7 @@
             this.clrbtnTXFilter.Location = new System.Drawing.Point(130, 47);
             this.clrbtnTXFilter.MoreColors = "More Colors...";
             this.clrbtnTXFilter.Name = "clrbtnTXFilter";
+            this.clrbtnTXFilter.Selectable = true;
             this.clrbtnTXFilter.Size = new System.Drawing.Size(40, 23);
             this.clrbtnTXFilter.TabIndex = 76;
             this.clrbtnTXFilter.Changed += new System.EventHandler(this.clrbtnTXFilter_Changed);
@@ -46240,6 +46284,7 @@
             this.clrbtnFilter.Location = new System.Drawing.Point(130, 19);
             this.clrbtnFilter.MoreColors = "More Colors...";
             this.clrbtnFilter.Name = "clrbtnFilter";
+            this.clrbtnFilter.Selectable = true;
             this.clrbtnFilter.Size = new System.Drawing.Size(40, 23);
             this.clrbtnFilter.TabIndex = 71;
             this.clrbtnFilter.Changed += new System.EventHandler(this.clrbtnFilter_Changed);
@@ -46265,6 +46310,7 @@
             this.clrbtnPeakBackground.Location = new System.Drawing.Point(80, 56);
             this.clrbtnPeakBackground.MoreColors = "More Colors...";
             this.clrbtnPeakBackground.Name = "clrbtnPeakBackground";
+            this.clrbtnPeakBackground.Selectable = true;
             this.clrbtnPeakBackground.Size = new System.Drawing.Size(40, 23);
             this.clrbtnPeakBackground.TabIndex = 73;
             this.clrbtnPeakBackground.Changed += new System.EventHandler(this.clrbtnPeakBackground_Changed);
@@ -46287,6 +46333,7 @@
             this.clrbtnPeakText.Location = new System.Drawing.Point(80, 24);
             this.clrbtnPeakText.MoreColors = "More Colors...";
             this.clrbtnPeakText.Name = "clrbtnPeakText";
+            this.clrbtnPeakText.Selectable = true;
             this.clrbtnPeakText.Size = new System.Drawing.Size(40, 23);
             this.clrbtnPeakText.TabIndex = 71;
             this.clrbtnPeakText.Changed += new System.EventHandler(this.clrbtnPeakText_Changed);
@@ -46352,6 +46399,7 @@
             this.clrbtnSignalHistoryColour.Location = new System.Drawing.Point(78, 27);
             this.clrbtnSignalHistoryColour.MoreColors = "More Colors...";
             this.clrbtnSignalHistoryColour.Name = "clrbtnSignalHistoryColour";
+            this.clrbtnSignalHistoryColour.Selectable = true;
             this.clrbtnSignalHistoryColour.Size = new System.Drawing.Size(40, 23);
             this.clrbtnSignalHistoryColour.TabIndex = 91;
             this.toolTip1.SetToolTip(this.clrbtnSignalHistoryColour, "The fill colour of the signal history on the multimeter");
@@ -46383,6 +46431,7 @@
             this.clrbtnMeterDigBackground.Location = new System.Drawing.Point(96, 80);
             this.clrbtnMeterDigBackground.MoreColors = "More Colors...";
             this.clrbtnMeterDigBackground.Name = "clrbtnMeterDigBackground";
+            this.clrbtnMeterDigBackground.Selectable = true;
             this.clrbtnMeterDigBackground.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterDigBackground.TabIndex = 84;
             this.clrbtnMeterDigBackground.Changed += new System.EventHandler(this.clrbtnMeterDigBackground_Changed);
@@ -46404,6 +46453,7 @@
             this.clrbtnMeterDigText.Location = new System.Drawing.Point(96, 48);
             this.clrbtnMeterDigText.MoreColors = "More Colors...";
             this.clrbtnMeterDigText.Name = "clrbtnMeterDigText";
+            this.clrbtnMeterDigText.Selectable = true;
             this.clrbtnMeterDigText.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterDigText.TabIndex = 82;
             this.clrbtnMeterDigText.Changed += new System.EventHandler(this.clrbtnMeterDigText_Changed);
@@ -46447,6 +46497,7 @@
             this.clrbtnEdgeIndicator.Location = new System.Drawing.Point(80, 120);
             this.clrbtnEdgeIndicator.MoreColors = "More Colors...";
             this.clrbtnEdgeIndicator.Name = "clrbtnEdgeIndicator";
+            this.clrbtnEdgeIndicator.Selectable = true;
             this.clrbtnEdgeIndicator.Size = new System.Drawing.Size(40, 23);
             this.clrbtnEdgeIndicator.TabIndex = 79;
             this.clrbtnEdgeIndicator.Changed += new System.EventHandler(this.clrbtnEdgeIndicator_Changed);
@@ -46469,6 +46520,7 @@
             this.clrbtnMeterEdgeBackground.Location = new System.Drawing.Point(80, 88);
             this.clrbtnMeterEdgeBackground.MoreColors = "More Colors...";
             this.clrbtnMeterEdgeBackground.Name = "clrbtnMeterEdgeBackground";
+            this.clrbtnMeterEdgeBackground.Selectable = true;
             this.clrbtnMeterEdgeBackground.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterEdgeBackground.TabIndex = 77;
             this.clrbtnMeterEdgeBackground.Changed += new System.EventHandler(this.clrbtnMeterEdgeBackground_Changed);
@@ -46490,6 +46542,7 @@
             this.clrbtnMeterEdgeHigh.Location = new System.Drawing.Point(80, 56);
             this.clrbtnMeterEdgeHigh.MoreColors = "More Colors...";
             this.clrbtnMeterEdgeHigh.Name = "clrbtnMeterEdgeHigh";
+            this.clrbtnMeterEdgeHigh.Selectable = true;
             this.clrbtnMeterEdgeHigh.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterEdgeHigh.TabIndex = 75;
             this.clrbtnMeterEdgeHigh.Changed += new System.EventHandler(this.clrbtnMeterEdgeHigh_Changed);
@@ -46520,6 +46573,7 @@
             this.clrbtnMeterEdgeLow.Location = new System.Drawing.Point(80, 24);
             this.clrbtnMeterEdgeLow.MoreColors = "More Colors...";
             this.clrbtnMeterEdgeLow.Name = "clrbtnMeterEdgeLow";
+            this.clrbtnMeterEdgeLow.Selectable = true;
             this.clrbtnMeterEdgeLow.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterEdgeLow.TabIndex = 74;
             this.clrbtnMeterEdgeLow.Changed += new System.EventHandler(this.clrbtnMeterEdgeLow_Changed);
@@ -46547,6 +46601,7 @@
             this.clrbtnMeterBackground.Location = new System.Drawing.Point(80, 88);
             this.clrbtnMeterBackground.MoreColors = "More Colors...";
             this.clrbtnMeterBackground.Name = "clrbtnMeterBackground";
+            this.clrbtnMeterBackground.Selectable = true;
             this.clrbtnMeterBackground.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterBackground.TabIndex = 77;
             this.clrbtnMeterBackground.Changed += new System.EventHandler(this.clrbtnMeterBackground_Changed);
@@ -46568,6 +46623,7 @@
             this.clrbtnMeterRight.Location = new System.Drawing.Point(80, 56);
             this.clrbtnMeterRight.MoreColors = "More Colors...";
             this.clrbtnMeterRight.Name = "clrbtnMeterRight";
+            this.clrbtnMeterRight.Selectable = true;
             this.clrbtnMeterRight.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterRight.TabIndex = 75;
             this.clrbtnMeterRight.Changed += new System.EventHandler(this.clrbtnMeterRight_Changed);
@@ -46598,6 +46654,7 @@
             this.clrbtnMeterLeft.Location = new System.Drawing.Point(80, 24);
             this.clrbtnMeterLeft.MoreColors = "More Colors...";
             this.clrbtnMeterLeft.Name = "clrbtnMeterLeft";
+            this.clrbtnMeterLeft.Selectable = true;
             this.clrbtnMeterLeft.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterLeft.TabIndex = 74;
             this.clrbtnMeterLeft.Changed += new System.EventHandler(this.clrbtnMeterLeft_Changed);
@@ -46719,6 +46776,7 @@
             this.clrbtnGridTXFilter.Location = new System.Drawing.Point(80, 20);
             this.clrbtnGridTXFilter.MoreColors = "More Colors...";
             this.clrbtnGridTXFilter.Name = "clrbtnGridTXFilter";
+            this.clrbtnGridTXFilter.Selectable = true;
             this.clrbtnGridTXFilter.Size = new System.Drawing.Size(40, 23);
             this.clrbtnGridTXFilter.TabIndex = 71;
             this.clrbtnGridTXFilter.Changed += new System.EventHandler(this.clrbtnGridTXFilter_Changed);
@@ -46741,6 +46799,7 @@
             this.clrbtnTXDataLine.Location = new System.Drawing.Point(80, 50);
             this.clrbtnTXDataLine.MoreColors = "More Colors...";
             this.clrbtnTXDataLine.Name = "clrbtnTXDataLine";
+            this.clrbtnTXDataLine.Selectable = true;
             this.clrbtnTXDataLine.Size = new System.Drawing.Size(40, 23);
             this.clrbtnTXDataLine.TabIndex = 73;
             this.clrbtnTXDataLine.Changed += new System.EventHandler(this.clrbtnTXDataLine_Changed);
@@ -46844,6 +46903,7 @@
             this.clrbtnTXBandEdge.Location = new System.Drawing.Point(82, 200);
             this.clrbtnTXBandEdge.MoreColors = "More Colors...";
             this.clrbtnTXBandEdge.Name = "clrbtnTXBandEdge";
+            this.clrbtnTXBandEdge.Selectable = true;
             this.clrbtnTXBandEdge.Size = new System.Drawing.Size(40, 23);
             this.clrbtnTXBandEdge.TabIndex = 71;
             this.clrbtnTXBandEdge.Changed += new System.EventHandler(this.clrbtnTXBandEdge_Changed);
@@ -46880,6 +46940,7 @@
             this.clrbtnTXHGridColor.Location = new System.Drawing.Point(82, 110);
             this.clrbtnTXHGridColor.MoreColors = "More Colors...";
             this.clrbtnTXHGridColor.Name = "clrbtnTXHGridColor";
+            this.clrbtnTXHGridColor.Selectable = true;
             this.clrbtnTXHGridColor.Size = new System.Drawing.Size(40, 23);
             this.clrbtnTXHGridColor.TabIndex = 87;
             this.clrbtnTXHGridColor.Changed += new System.EventHandler(this.clrbtnTXHGridColor_Changed);
@@ -46938,6 +46999,7 @@
             this.clrbtnTXVGridFine.Location = new System.Drawing.Point(82, 80);
             this.clrbtnTXVGridFine.MoreColors = "More Colors...";
             this.clrbtnTXVGridFine.Name = "clrbtnTXVGridFine";
+            this.clrbtnTXVGridFine.Selectable = true;
             this.clrbtnTXVGridFine.Size = new System.Drawing.Size(40, 23);
             this.clrbtnTXVGridFine.TabIndex = 75;
             this.clrbtnTXVGridFine.Changed += new System.EventHandler(this.clrbtnTXVGridFine_Changed);
@@ -46970,6 +47032,7 @@
             this.clrbtnTXBackground.Location = new System.Drawing.Point(82, 20);
             this.clrbtnTXBackground.MoreColors = "More Colors...";
             this.clrbtnTXBackground.Name = "clrbtnTXBackground";
+            this.clrbtnTXBackground.Selectable = true;
             this.clrbtnTXBackground.Size = new System.Drawing.Size(40, 23);
             this.clrbtnTXBackground.TabIndex = 68;
             this.clrbtnTXBackground.Changed += new System.EventHandler(this.clrbtnTXBackground_Changed);
@@ -46982,6 +47045,7 @@
             this.clrbtnTXVGrid.Location = new System.Drawing.Point(82, 50);
             this.clrbtnTXVGrid.MoreColors = "More Colors...";
             this.clrbtnTXVGrid.Name = "clrbtnTXVGrid";
+            this.clrbtnTXVGrid.Selectable = true;
             this.clrbtnTXVGrid.Size = new System.Drawing.Size(40, 23);
             this.clrbtnTXVGrid.TabIndex = 69;
             this.clrbtnTXVGrid.Changed += new System.EventHandler(this.clrbtnTXVGrid_Changed);
@@ -47004,6 +47068,7 @@
             this.clrbtnTXZeroLine.Location = new System.Drawing.Point(82, 140);
             this.clrbtnTXZeroLine.MoreColors = "More Colors...";
             this.clrbtnTXZeroLine.Name = "clrbtnTXZeroLine";
+            this.clrbtnTXZeroLine.Selectable = true;
             this.clrbtnTXZeroLine.Size = new System.Drawing.Size(40, 23);
             this.clrbtnTXZeroLine.TabIndex = 70;
             this.clrbtnTXZeroLine.Changed += new System.EventHandler(this.clrbtnTXZeroLine_Changed);
@@ -47026,6 +47091,7 @@
             this.clrbtnTXText.Location = new System.Drawing.Point(82, 170);
             this.clrbtnTXText.MoreColors = "More Colors...";
             this.clrbtnTXText.Name = "clrbtnTXText";
+            this.clrbtnTXText.Selectable = true;
             this.clrbtnTXText.Size = new System.Drawing.Size(40, 23);
             this.clrbtnTXText.TabIndex = 72;
             this.clrbtnTXText.Changed += new System.EventHandler(this.clrbtnTXText_Changed);
@@ -48771,6 +48837,7 @@
             this.btnIPv4TCI.Image = null;
             this.btnIPv4TCI.Location = new System.Drawing.Point(219, 54);
             this.btnIPv4TCI.Name = "btnIPv4TCI";
+            this.btnIPv4TCI.Selectable = true;
             this.btnIPv4TCI.Size = new System.Drawing.Size(42, 26);
             this.btnIPv4TCI.TabIndex = 70;
             this.btnIPv4TCI.Text = "IPv4";
@@ -48783,6 +48850,7 @@
             this.btnShowLog.Image = null;
             this.btnShowLog.Location = new System.Drawing.Point(51, 353);
             this.btnShowLog.Name = "btnShowLog";
+            this.btnShowLog.Selectable = true;
             this.btnShowLog.Size = new System.Drawing.Size(82, 26);
             this.btnShowLog.TabIndex = 69;
             this.btnShowLog.Text = "Show Log";
@@ -48810,6 +48878,7 @@
             this.clrbtnOwnCallApearance.Location = new System.Drawing.Point(312, 304);
             this.clrbtnOwnCallApearance.MoreColors = "More Colors...";
             this.clrbtnOwnCallApearance.Name = "clrbtnOwnCallApearance";
+            this.clrbtnOwnCallApearance.Selectable = true;
             this.clrbtnOwnCallApearance.Size = new System.Drawing.Size(40, 23);
             this.clrbtnOwnCallApearance.TabIndex = 67;
             this.toolTip1.SetToolTip(this.clrbtnOwnCallApearance, "The colour of your callsign if it appears as a spot");
@@ -49059,6 +49128,7 @@
             this.btnDefaultBindPortForTCI.Image = null;
             this.btnDefaultBindPortForTCI.Location = new System.Drawing.Point(176, 54);
             this.btnDefaultBindPortForTCI.Name = "btnDefaultBindPortForTCI";
+            this.btnDefaultBindPortForTCI.Selectable = true;
             this.btnDefaultBindPortForTCI.Size = new System.Drawing.Size(37, 26);
             this.btnDefaultBindPortForTCI.TabIndex = 12;
             this.btnDefaultBindPortForTCI.Text = "Def";
@@ -49098,6 +49168,7 @@
             this.btnIPv4TCPCat.Image = null;
             this.btnIPv4TCPCat.Location = new System.Drawing.Point(270, 21);
             this.btnIPv4TCPCat.Name = "btnIPv4TCPCat";
+            this.btnIPv4TCPCat.Selectable = true;
             this.btnIPv4TCPCat.Size = new System.Drawing.Size(42, 26);
             this.btnIPv4TCPCat.TabIndex = 99;
             this.btnIPv4TCPCat.Text = "IPv4";
@@ -49110,6 +49181,7 @@
             this.btnShowTCPIPCatLog.Image = null;
             this.btnShowTCPIPCatLog.Location = new System.Drawing.Point(59, 101);
             this.btnShowTCPIPCatLog.Name = "btnShowTCPIPCatLog";
+            this.btnShowTCPIPCatLog.Selectable = true;
             this.btnShowTCPIPCatLog.Size = new System.Drawing.Size(82, 26);
             this.btnShowTCPIPCatLog.TabIndex = 98;
             this.btnShowTCPIPCatLog.Text = "Show Log";
@@ -49172,6 +49244,7 @@
             this.btnDefaultBindPortForTCPIPCat.Image = null;
             this.btnDefaultBindPortForTCPIPCat.Location = new System.Drawing.Point(227, 21);
             this.btnDefaultBindPortForTCPIPCat.Name = "btnDefaultBindPortForTCPIPCat";
+            this.btnDefaultBindPortForTCPIPCat.Selectable = true;
             this.btnDefaultBindPortForTCPIPCat.Size = new System.Drawing.Size(37, 26);
             this.btnDefaultBindPortForTCPIPCat.TabIndex = 12;
             this.btnDefaultBindPortForTCPIPCat.Text = "Def";
@@ -49214,6 +49287,7 @@
             this.btnIPv4N1MM.Image = null;
             this.btnIPv4N1MM.Location = new System.Drawing.Point(267, 86);
             this.btnIPv4N1MM.Name = "btnIPv4N1MM";
+            this.btnIPv4N1MM.Selectable = true;
             this.btnIPv4N1MM.Size = new System.Drawing.Size(42, 26);
             this.btnIPv4N1MM.TabIndex = 71;
             this.btnIPv4N1MM.Text = "IPv4";
@@ -49226,6 +49300,7 @@
             this.btnN1MMDefault.Image = null;
             this.btnN1MMDefault.Location = new System.Drawing.Point(224, 86);
             this.btnN1MMDefault.Name = "btnN1MMDefault";
+            this.btnN1MMDefault.Selectable = true;
             this.btnN1MMDefault.Size = new System.Drawing.Size(37, 26);
             this.btnN1MMDefault.TabIndex = 10;
             this.btnN1MMDefault.Text = "Def";
@@ -49622,6 +49697,7 @@
             this.btnCATTest.Image = null;
             this.btnCATTest.Location = new System.Drawing.Point(14, 23);
             this.btnCATTest.Name = "btnCATTest";
+            this.btnCATTest.Selectable = true;
             this.btnCATTest.Size = new System.Drawing.Size(77, 40);
             this.btnCATTest.TabIndex = 92;
             this.btnCATTest.Text = "Test CAT Commands";
@@ -49980,6 +50056,7 @@
             this.btnTuneStepChangeLarger2.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.btnTuneStepChangeLarger2.Location = new System.Drawing.Point(112, 60);
             this.btnTuneStepChangeLarger2.Name = "btnTuneStepChangeLarger2";
+            this.btnTuneStepChangeLarger2.Selectable = true;
             this.btnTuneStepChangeLarger2.Size = new System.Drawing.Size(16, 19);
             this.btnTuneStepChangeLarger2.TabIndex = 79;
             this.btnTuneStepChangeLarger2.Text = "+";
@@ -49995,6 +50072,7 @@
             this.btnTuneStepChangeSmaller2.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.btnTuneStepChangeSmaller2.Location = new System.Drawing.Point(50, 59);
             this.btnTuneStepChangeSmaller2.Name = "btnTuneStepChangeSmaller2";
+            this.btnTuneStepChangeSmaller2.Selectable = true;
             this.btnTuneStepChangeSmaller2.Size = new System.Drawing.Size(16, 19);
             this.btnTuneStepChangeSmaller2.TabIndex = 78;
             this.btnTuneStepChangeSmaller2.Text = "-";
@@ -50319,6 +50397,7 @@
             this.buttonAndromeda.Image = null;
             this.buttonAndromeda.Location = new System.Drawing.Point(20, 68);
             this.buttonAndromeda.Name = "buttonAndromeda";
+            this.buttonAndromeda.Selectable = true;
             this.buttonAndromeda.Size = new System.Drawing.Size(91, 30);
             this.buttonAndromeda.TabIndex = 98;
             this.buttonAndromeda.Text = "Edit Controls";
@@ -50399,6 +50478,7 @@
             this.btnShowSeqLog.Image = null;
             this.btnShowSeqLog.Location = new System.Drawing.Point(420, 376);
             this.btnShowSeqLog.Name = "btnShowSeqLog";
+            this.btnShowSeqLog.Selectable = true;
             this.btnShowSeqLog.Size = new System.Drawing.Size(97, 46);
             this.btnShowSeqLog.TabIndex = 92;
             this.btnShowSeqLog.Text = "Show SEQ log";
@@ -51455,6 +51535,7 @@
             this.btnImpulse.Image = null;
             this.btnImpulse.Location = new System.Drawing.Point(16, 24);
             this.btnImpulse.Name = "btnImpulse";
+            this.btnImpulse.Selectable = true;
             this.btnImpulse.Size = new System.Drawing.Size(75, 23);
             this.btnImpulse.TabIndex = 90;
             this.btnImpulse.Text = "Impulse";
@@ -51476,6 +51557,7 @@
             this.btnTestAudioBalStart.Image = null;
             this.btnTestAudioBalStart.Location = new System.Drawing.Point(24, 24);
             this.btnTestAudioBalStart.Name = "btnTestAudioBalStart";
+            this.btnTestAudioBalStart.Selectable = true;
             this.btnTestAudioBalStart.Size = new System.Drawing.Size(75, 23);
             this.btnTestAudioBalStart.TabIndex = 0;
             this.btnTestAudioBalStart.Text = "Start";
@@ -51489,6 +51571,7 @@
             this.btnExportDB.Image = null;
             this.btnExportDB.Location = new System.Drawing.Point(224, 476);
             this.btnExportDB.Name = "btnExportDB";
+            this.btnExportDB.Selectable = true;
             this.btnExportDB.Size = new System.Drawing.Size(112, 23);
             this.btnExportDB.TabIndex = 22;
             this.btnExportDB.Text = "Export Database...";
@@ -51500,6 +51583,7 @@
             this.btnImportDB.Image = null;
             this.btnImportDB.Location = new System.Drawing.Point(108, 476);
             this.btnImportDB.Name = "btnImportDB";
+            this.btnImportDB.Selectable = true;
             this.btnImportDB.Size = new System.Drawing.Size(112, 23);
             this.btnImportDB.TabIndex = 21;
             this.btnImportDB.Text = "Import Database...";
@@ -51511,6 +51595,7 @@
             this.btnResetDB.Image = null;
             this.btnResetDB.Location = new System.Drawing.Point(8, 476);
             this.btnResetDB.Name = "btnResetDB";
+            this.btnResetDB.Selectable = true;
             this.btnResetDB.Size = new System.Drawing.Size(96, 23);
             this.btnResetDB.TabIndex = 20;
             this.btnResetDB.Text = "Reset Database";
@@ -51523,6 +51608,7 @@
             this.btnApply.Image = null;
             this.btnApply.Location = new System.Drawing.Point(640, 476);
             this.btnApply.Name = "btnApply";
+            this.btnApply.Selectable = true;
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 19;
             this.btnApply.Text = "Apply";
@@ -51534,6 +51620,7 @@
             this.btnCancel.Image = null;
             this.btnCancel.Location = new System.Drawing.Point(559, 476);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Selectable = true;
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 18;
             this.btnCancel.Text = "Cancel";
@@ -51545,6 +51632,7 @@
             this.btnOK.Image = null;
             this.btnOK.Location = new System.Drawing.Point(478, 476);
             this.btnOK.Name = "btnOK";
+            this.btnOK.Selectable = true;
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 17;
             this.btnOK.Text = "OK";
@@ -53766,11 +53854,6 @@
         private NumericUpDownTS udDisplayFPS;
         public TabPage tpAudio;
         private TabPage tpTransmit;
-        private NumericUpDownTS udTXFilterHigh;
-        private LabelTS lblTXFilterLow;
-        private LabelTS lblTXFilterHigh;
-        private NumericUpDownTS udTXFilterLow;
-        private GroupBoxTS grpTXFilter;
         private GroupBoxTS grpDisplayPhase;
         private NumericUpDownTS udDisplayPhasePts;
         private GroupBoxTS grpDisplayAverage;
@@ -53844,8 +53927,6 @@
         private NumericUpDownTS udDisplayAVGTime;
         private LabelTS lblDisplayAVGTime;
         private GroupBoxTS grpTestAudioBalance;
-        private GroupBoxTS grpPATune;
-        private NumericUpDownTS udTXTunePower;
         private GroupBoxTS grpDisplayMultimeter;
         private LabelTS lblDisplayMultiPeakHoldTime;
         private NumericUpDownTS udDisplayMultiPeakHoldTime;
@@ -53904,15 +53985,8 @@
         private CheckBoxTS chkAudioLatencyManual2;
         private ComboBoxTS comboCATRigType;
         private LabelTS lblCATRigType;
-        private GroupBoxTS grpTXProfile;
-        private ButtonTS btnTXProfileSave;
-        private ComboBoxTS comboTXProfileName;
-        private ButtonTS btnTXProfileDelete;
         private ButtonTS btnImpulse;
         private NumericUpDownTS udImpulseNum;
-        private GroupBoxTS grpTXMonitor;
-        private LabelTS lblTXAF;
-        private NumericUpDownTS udTXAF;
         private GroupBoxTS grpGeneralModel;
         private TabControl tcGeneral;
         private TabPage tpGeneralHardware;
@@ -53947,9 +54021,6 @@
         private Thetis.ColorButton clrbtnOutOfBand;
         private LabelTS lblOutOfBand;
         private CheckBoxTS chkAudio2Stereo;
-        private GroupBoxTS grpTXAM;
-        private LabelTS lblTXAMCarrierLevel;
-        private NumericUpDownTS udTXAMCarrierLevel;
         private GroupBoxTS grpKeyboardOptions;
         private CheckBoxTS chkOptQuickQSY;
         private CheckBoxTS chkOptAlwaysOnTop;
@@ -54062,8 +54133,6 @@
         private CheckBoxTS chkSigGenRX2;
         private LabelTS lblGenBackground;
         private Thetis.ColorButton clrbtnGenBackground;
-        private ComboBoxTS comboTXTUNMeter;
-        private LabelTS lblTXTUNMeter;
         private ButtonTS btnResetDB;
         private CheckBoxTS chkDisplayMeterShowDecimal;
         private GroupBoxTS grpRTTYOffset;
@@ -54079,10 +54148,6 @@
         private CheckBoxTS chkAudioCorrectIQ;
         private CheckBoxTS chkAudioIQtoVAC;
         private CheckBoxTS chkRX2AutoMuteRX1OnVFOBTX;
-        private ListBox lstTXProfileDef;
-        private GroupBoxTS grpTXProfileDef;
-        private CheckBoxTS chkTXExpert;
-        private ButtonTS btnTXProfileDefImport;
         private CheckBoxTS chkDisplayPanFill;
         private GroupBoxTS grpAppSkins;
         private ComboBoxTS comboAppSkin;
@@ -54432,12 +54497,6 @@
         private NumericUpDownTS udMoxDelay;
         private LabelTS lblRFDelay;
         private NumericUpDownTS udRFDelay;
-        private GroupBoxTS grpBoxMic;
-        private NumericUpDownTS udMicGainMin;
-        private NumericUpDownTS udMicGainMax;
-        private LabelTS labelTS21;
-        private LabelTS labelTS20;
-        private CheckBoxTS chk20dbMicBoost;
         private NumericUpDownTS udTwoToneLevel;
         private LabelTS lblTwoToneLevel;
         private NumericUpDownTS udTXDisplayCalOffset;
@@ -54509,8 +54568,6 @@
         private RadioButtonTS radSpaceBarMicMute;
         private RadioButtonTS radSpaceBarVOX;
         private RadioButtonTS radSpaceBarPTT;
-        private NumericUpDownTS udLineInBoost;
-        private LabelTS lblLineInBoost;
         private GroupBoxTS grpPennyExtCtrlVHF;
         private LabelTS labelTS71;
         private LabelTS labelTS72;
@@ -54870,8 +54927,6 @@
         private System.Windows.Forms.ComboBoxTS comboAudioInput3;
         private System.Windows.Forms.ComboBoxTS comboAudioDriver3;
         public System.Windows.Forms.CheckBoxTS chkVAC2Enable;
-        private System.Windows.Forms.NumericUpDownTS udTXFilterLowSave;
-        private System.Windows.Forms.NumericUpDownTS udTXFilterHighSave;
         private System.Windows.Forms.CheckBoxTS chkFirmwareByp;
         private System.Windows.Forms.GroupBoxTS grpDSPLMSANF2;
         private System.Windows.Forms.LabelTS lblLMSANF2Leak;
@@ -54897,8 +54952,6 @@
         private System.Windows.Forms.RadioButtonTS radANFPreAGC;
         private System.Windows.Forms.CheckBoxTS chkFullDiscovery;
         private System.Windows.Forms.CheckBoxTS chkRxOutOnTx;
-        public System.Windows.Forms.RadioButtonTS radLineIn;
-        public System.Windows.Forms.RadioButtonTS radMicIn;
         private System.Windows.Forms.CheckBoxTS chkSWRProtection;
         private System.Windows.Forms.CheckBoxTS chkATTOnTX;
         private System.Windows.Forms.GroupBoxTS groupBoxTS5;
@@ -54976,8 +55029,6 @@
         private System.Windows.Forms.CheckBoxTS chkApolloFilter;
         private System.Windows.Forms.CheckBoxTS chkApolloTuner;
         private System.Windows.Forms.CheckBoxTS chkRX2BlankDisplayOnVFOATX;
-        private System.Windows.Forms.CheckBoxTS chkSaveTXProfileOnExit;
-        private System.Windows.Forms.CheckBoxTS chkAutoSaveTXProfile;
         private System.Windows.Forms.GroupBoxTS groupBoxTS6;
         private System.Windows.Forms.NumericUpDownTS udRX2FilterDefaultLowCut;
         private System.Windows.Forms.LabelTS labelTS39;
@@ -55324,9 +55375,6 @@
         private System.Windows.Forms.LabelTS labelTS313;
         private System.Windows.Forms.LabelTS labelTS312;
         private System.Windows.Forms.LabelTS labelTS314;
-        private System.Windows.Forms.GroupBoxTS grpExtTXInhibit;
-        private System.Windows.Forms.CheckBoxTS chkTXInhibit;
-        private System.Windows.Forms.CheckBoxTS chkTXInhibitSense;
         private System.Windows.Forms.GroupBoxTS grpPulse;
         private System.Windows.Forms.NumericUpDownTS udTXGenPulseDutyCycle;
         private System.Windows.Forms.LabelTS labelTS316;
@@ -55594,8 +55642,6 @@
         private System.Windows.Forms.LabelTS labelTS329;
         private System.Windows.Forms.LabelTS labelTS328;
         private System.Windows.Forms.CheckBoxTS chkRX1BlankDisplayOnVFOBTX;
-        private System.Windows.Forms.GroupBoxTS grpDSPSpeechProcessor;
-        private System.Windows.Forms.CheckBoxTS chkDSPCESSB;
         private System.Windows.Forms.GroupBoxTS grpAMSQMaxTail;
         private System.Windows.Forms.LabelTS labelTS355;
         private System.Windows.Forms.NumericUpDownTS udRXAMSQMaxTail;
@@ -55618,7 +55664,6 @@
         private System.Windows.Forms.RadioButtonTS radDSPNR2LinearRX2;
         private System.Windows.Forms.RadioButtonTS radDSPNR2GammaRX2;
         private System.Windows.Forms.RadioButtonTS radDSPNR2Gamma;
-        private System.Windows.Forms.CheckBoxTS chkLimitExtAmpOnOverload;
         private System.Windows.Forms.GroupBoxTS grpFocusMaster;
         private System.Windows.Forms.TextBoxTS txtFocusMasterDelay;
         private System.Windows.Forms.LabelTS labelTS359;
@@ -55970,7 +56015,6 @@
         private System.Windows.Forms.RadioButtonTS radTXUSB;
         private System.Windows.Forms.RadioButtonTS radTXLSB;
         private System.Windows.Forms.RadioButtonTS radTXDSB;
-        private System.Windows.Forms.Button btnExportCurrentTXProfile;
         private GroupBoxTS grpVAC1monitor;
         private LabelTS lblVAC1unfl;
         private LabelTS lblVAC1ovfl;
@@ -56481,8 +56525,6 @@
         private LabelTS labelTS18;
         private LabelTS labelTS17;
         private NumericUpDownTS udFreq2Delay;
-        private CheckBoxTS chkRestoreVAC1DeviceDetailsFromTXProfile;
-        private CheckBoxTS chkRestoreVAC2DeviceDetailsFromTXProfile;
         private NumericUpDownTS udActivePeakHoldDurationRX1;
         private LabelTS lblActivePeakHoldRX1;
         private CheckBoxTS chkActivePeakHoldRX1;
@@ -56532,7 +56574,6 @@
         private LabelTS lblRxDDC2;
         private LabelTS lblRxDDC1;
         private LabelTS lblRxDDC0;
-        private CheckBoxTS chkHighlightTXProfileSaveItems;
         private LabelTS lblP2assignment;
         private ButtonTS btnN1MMDefault;
         private GroupBoxTS grpVAC1ResamplerAdvanced;
@@ -56828,7 +56869,6 @@
         private NumericUpDownTS udActivePeakHoldDurationRX2;
         private TabPage tpAudioOptions;
         private CheckBoxTS chkAFSlidersMute;
-        private CheckBoxTS chkIgnoreMasterAFChangeForMonitor;
         private CheckBoxTS chkShowMHzOnCursor;
         private CheckBoxTS chkLimitFilterEdgesToSidebands;
         private NumericUpDownTS udDisplayDecimation;
@@ -56902,11 +56942,6 @@
         private CheckBoxTS chkEmulateSunSDR2Pro;
         private CheckBoxTS chkEmulateExpertSDR3Protocol;
         private CheckBoxTS chkDisableRearSpeakerJacksAudioAmplifier;
-        private LabelTS labelTS617;
-        private LabelTS labelTS616;
-        private RadioButtonTS radUseFixedDriveTune;
-        private RadioButtonTS radUseDriveSliderTune;
-        private RadioButtonTS radUseTuneSliderTune;
         private RadioButtonTS radUseFixedDrive2Tone;
         private RadioButtonTS radUseDriveSlider2Tone;
         private RadioButtonTS radUseTuneSlider2Tone;
@@ -57009,5 +57044,58 @@
         private NumericUpDownTS nudRX1NFoffsetGridFollow;
         private NumericUpDownTS nudRX2NFoffsetGridFollow;
         private Button btnResetLevelCal;
+        private CheckBoxTS chkHighlightTXProfileSaveItems;
+        private CheckBoxTS chkRestoreVAC2DeviceDetailsFromTXProfile;
+        private CheckBoxTS chkRestoreVAC1DeviceDetailsFromTXProfile;
+        private CheckBoxTS chkLimitExtAmpOnOverload;
+        private GroupBoxTS grpDSPSpeechProcessor;
+        private CheckBoxTS chkDSPCESSB;
+        private GroupBoxTS grpExtTXInhibit;
+        private CheckBoxTS chkTXInhibit;
+        private CheckBoxTS chkTXInhibitSense;
+        private CheckBoxTS chkSaveTXProfileOnExit;
+        private CheckBoxTS chkAutoSaveTXProfile;
+        private NumericUpDownTS udTXFilterLowSave;
+        private NumericUpDownTS udTXFilterHighSave;
+        private GroupBoxTS grpBoxMic;
+        private LabelTS labelTS617;
+        private LabelTS labelTS616;
+        public RadioButtonTS radLineIn;
+        public RadioButtonTS radMicIn;
+        private NumericUpDownTS udMicGainMin;
+        private NumericUpDownTS udMicGainMax;
+        private LabelTS labelTS21;
+        private LabelTS labelTS20;
+        private NumericUpDownTS udLineInBoost;
+        private CheckBoxTS chk20dbMicBoost;
+        private LabelTS lblLineInBoost;
+        private CheckBoxTS chkTXExpert;
+        private GroupBoxTS grpTXProfileDef;
+        private ButtonTS btnTXProfileDefImport;
+        private ListBox lstTXProfileDef;
+        private GroupBoxTS grpTXAM;
+        private LabelTS lblTXAMCarrierLevel;
+        private NumericUpDownTS udTXAMCarrierLevel;
+        private GroupBoxTS grpTXMonitor;
+        private CheckBoxTS chkIgnoreMasterAFChangeForMonitor;
+        private LabelTS lblTXAF;
+        private NumericUpDownTS udTXAF;
+        private GroupBoxTS grpTXProfile;
+        private ButtonTS btnTXProfileDelete;
+        private ButtonTS btnTXProfileSave;
+        private ComboBoxTS comboTXProfileName;
+        private Button btnExportCurrentTXProfile;
+        private GroupBoxTS grpPATune;
+        private RadioButtonTS radUseFixedDriveTune;
+        private RadioButtonTS radUseDriveSliderTune;
+        private RadioButtonTS radUseTuneSliderTune;
+        private ComboBoxTS comboTXTUNMeter;
+        private LabelTS lblTXTUNMeter;
+        private NumericUpDownTS udTXTunePower;
+        private GroupBoxTS grpTXFilter;
+        private LabelTS lblTXFilterHigh;
+        private NumericUpDownTS udTXFilterLow;
+        private LabelTS lblTXFilterLow;
+        private NumericUpDownTS udTXFilterHigh;
     }
 }
