@@ -8491,7 +8491,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>277, 71</value>
   </data>
   <data name="udTXFilterHigh.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 20</value>
+    <value>51, 20</value>
   </data>
   <data name="udTXFilterHigh.TabIndex" type="System.Int32, mscorlib">
     <value>117</value>
@@ -14202,7 +14202,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="labelTS4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>274, 53</value>
+    <value>275, 53</value>
   </data>
   <data name="labelTS4.Size" type="System.Drawing.Size, System.Drawing">
     <value>33, 13</value>
@@ -14212,6 +14212,9 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="labelTS4.Text" xml:space="preserve">
     <value>High</value>
+  </data>
+  <data name="labelTS4.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="&gt;&gt;labelTS4.Name" xml:space="preserve">
     <value>labelTS4</value>
