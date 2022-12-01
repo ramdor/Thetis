@@ -723,7 +723,6 @@
     <EmbeddedResource Include="frmLog.resx">
       <DependentUpon>frmLog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\picD1orig.png" />
     <None Include="Resources\cpu.png" />
     <EmbeddedResource Include="Resources\picD2.png" />
     <EmbeddedResource Include="Resources\star.png" />
@@ -734,9 +733,7 @@
     <EmbeddedResource Include="KE9N\swl.resx">
       <DependentUpon>swl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\met3.jpg" />
     <EmbeddedResource Include="Resources\picD1.png" />
-    <EmbeddedResource Include="Resources\s-meter-collins3.png" />
     <EmbeddedResource Include="Resources\sun.png" />
     <EmbeddedResource Include="Resources\digital7.ttf" />
     <None Include="Resources\grabbing.cur" />
@@ -777,18 +774,6 @@
       <DependentUpon>FilterForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="images\clock.jpg" />
-    <EmbeddedResource Include="images\demi144-28frs.jpg" />
-    <EmbeddedResource Include="images\flex-5000.jpg" />
-    <EmbeddedResource Include="images\no_hardware.jpg" />
-    <EmbeddedResource Include="images\sdr-1000.jpg" />
-    <EmbeddedResource Include="images\sdr-atu.jpg" />
-    <EmbeddedResource Include="images\sdr-pa100.jpg" />
-    <EmbeddedResource Include="images\sdr-rfe.jpg" />
-    <EmbeddedResource Include="images\sdr-usb.jpg" />
-    <EmbeddedResource Include="images\softrock40.jpg" />
-    <EmbeddedResource Include="images\soundcard.jpg" />
-    <EmbeddedResource Include="images\splash.jpg" />
     <EmbeddedResource Include="InputBox.resx">
       <DependentUpon>InputBox.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -871,11 +856,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Content Include="CAT\CATStructs.xml" />
-    <EmbeddedResource Include="images\flex-3000.jpg" />
     <Content Include="hpsdr5-64.ico" />
-    <Content Include="images\hpsdr.jpg" />
-    <Content Include="images\openhpsdr4_splash.png" />
-    <Content Include="images\PowerSDR.ico" />
     <EmbeddedResource Include="Resources\swiss.ttf" />
     <EmbeddedResource Include="Resources\swissb.ttf" />
     <EmbeddedResource Include="Resources\swissbi.ttf" />
