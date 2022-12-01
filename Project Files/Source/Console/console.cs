@@ -54298,7 +54298,10 @@ namespace Thetis
             ucDockedMeterRX2.DockedLocation = new Point(0, 0);
 
             setPoisitionOfDockedMeter(ucDockedMeterRX1);
-            setPoisitionOfDockedMeter(ucDockedMeterRX2);
+            setPoisitionOfDockedMeter(ucDockedMeterRX2);  
+
+        
+
         }
     }
 
