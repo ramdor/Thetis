@@ -1,3 +1,6 @@
+Deleted many old unnecessary files from repository. Also removed some old Flex graphics files from the build process.
+
+
 I made some small adjustments of GUI elements.
 
 For example, the "Send Profile" area has been revised. The text field has been enlarged, "Low", "High" arranged accordingly.
@@ -23,6 +26,8 @@ I rearranged various items under Setup>Transmit.
 
 
 ![setup-transmit](https://user-images.githubusercontent.com/27503182/205129762-410d6dad-5e25-482e-9461-f8d10f7a7c76.JPG)
+
+
 
 
 # NOTE
