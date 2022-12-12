@@ -54302,7 +54302,7 @@ namespace Thetis
 
         
 
-        }
+        }        
     }
 
     public class DigiMode

@@ -904,6 +904,7 @@
             this.toolStripStatusLabel_Date = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_LocalTime = new System.Windows.Forms.ToolStripStatusLabel();
             this.tmrAutoAGC = new System.Windows.Forms.Timer(this.components);
+            this.ucDockedMeterRX2 = new Thetis.ucMeter();
             this.buttonTS2 = new System.Windows.Forms.ButtonTS();
             this.ucDockedMeterRX1 = new Thetis.ucMeter();
             this.buttonTS1 = new System.Windows.Forms.ButtonTS();
@@ -934,7 +935,6 @@
             this.btnHidden = new System.Windows.Forms.ButtonTS();
             this.panelOptions = new System.Windows.Forms.PanelTS();
             this.checkBoxTS1 = new System.Windows.Forms.CheckBoxTS();
-            this.ucDockedMeterRX2 = new Thetis.ucMeter();
             this.panelButtonBar = new System.Windows.Forms.PanelTS();
             this.btnAndrBar8 = new System.Windows.Forms.ButtonTS();
             this.btnAndrBar7 = new System.Windows.Forms.ButtonTS();
@@ -3445,6 +3445,7 @@
             // 
             resources.ApplyResources(this.chkVAC2, "chkVAC2");
             this.chkVAC2.FlatAppearance.BorderSize = 0;
+            this.chkVAC2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.chkVAC2.Name = "chkVAC2";
             this.toolTip1.SetToolTip(this.chkVAC2, resources.GetString("chkVAC2.ToolTip"));
             this.chkVAC2.CheckedChanged += new System.EventHandler(this.chkVAC2_CheckedChanged);
@@ -5263,6 +5264,20 @@
             this.tmrAutoAGC.Interval = 500;
             this.tmrAutoAGC.Tick += new System.EventHandler(this.tmrAutoAGC_Tick);
             // 
+            // ucDockedMeterRX2
+            // 
+            this.ucDockedMeterRX2.AxisLock = Thetis.Axis.NONE;
+            this.ucDockedMeterRX2.BackColor = System.Drawing.Color.Black;
+            this.ucDockedMeterRX2.Delta = new System.Drawing.Point(0, 0);
+            this.ucDockedMeterRX2.DockedLocation = new System.Drawing.Point(0, 0);
+            this.ucDockedMeterRX2.DockedSize = new System.Drawing.Size(407, 403);
+            this.ucDockedMeterRX2.Floating = false;
+            resources.ApplyResources(this.ucDockedMeterRX2, "ucDockedMeterRX2");
+            this.ucDockedMeterRX2.Name = "ucDockedMeterRX2";
+            this.ucDockedMeterRX2.RX = 2;
+            this.ucDockedMeterRX2.FloatingDockedClicked += new System.EventHandler(this.ucDockedMeterRX2_FloatingDockedClicked);
+            this.ucDockedMeterRX2.DockedMoved += new System.EventHandler(this.ucDockedMeterRX2_DockedMoved);
+            // 
             // buttonTS2
             // 
             resources.ApplyResources(this.buttonTS2, "buttonTS2");
@@ -5559,20 +5574,6 @@
             this.checkBoxTS1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.checkBoxTS1.Name = "checkBoxTS1";
             this.checkBoxTS1.UseVisualStyleBackColor = false;
-            // 
-            // ucDockedMeterRX2
-            // 
-            this.ucDockedMeterRX2.AxisLock = Thetis.Axis.NONE;
-            this.ucDockedMeterRX2.BackColor = System.Drawing.Color.Black;
-            this.ucDockedMeterRX2.Delta = new System.Drawing.Point(0, 0);
-            this.ucDockedMeterRX2.DockedLocation = new System.Drawing.Point(0, 0);
-            this.ucDockedMeterRX2.DockedSize = new System.Drawing.Size(407, 403);
-            this.ucDockedMeterRX2.Floating = false;
-            resources.ApplyResources(this.ucDockedMeterRX2, "ucDockedMeterRX2");
-            this.ucDockedMeterRX2.Name = "ucDockedMeterRX2";
-            this.ucDockedMeterRX2.RX = 2;
-            this.ucDockedMeterRX2.FloatingDockedClicked += new System.EventHandler(this.ucDockedMeterRX2_FloatingDockedClicked);
-            this.ucDockedMeterRX2.DockedMoved += new System.EventHandler(this.ucDockedMeterRX2_DockedMoved);
             // 
             // panelButtonBar
             // 

@@ -2869,10 +2869,10 @@
     <value>Off</value>
   </data>
   <data name="btnRITReset.Location" type="System.Drawing.Point, System.Drawing">
-    <value>48, 76</value>
+    <value>44, 70</value>
   </data>
   <data name="btnRITReset.Size" type="System.Drawing.Size, System.Drawing">
-    <value>16, 20</value>
+    <value>16, 23</value>
   </data>
   <data name="btnRITReset.TabIndex" type="System.Int32, mscorlib">
     <value>62</value>
@@ -2905,10 +2905,10 @@
     <value>Off</value>
   </data>
   <data name="btnXITReset.Location" type="System.Drawing.Point, System.Drawing">
-    <value>110, 76</value>
+    <value>107, 70</value>
   </data>
   <data name="btnXITReset.Size" type="System.Drawing.Size, System.Drawing">
-    <value>16, 20</value>
+    <value>16, 23</value>
   </data>
   <data name="btnXITReset.TabIndex" type="System.Int32, mscorlib">
     <value>61</value>
@@ -2935,7 +2935,7 @@
     <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="udRIT.Location" type="System.Drawing.Point, System.Drawing">
-    <value>14, 103</value>
+    <value>10, 93</value>
   </data>
   <data name="udRIT.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 20</value>
@@ -3010,10 +3010,10 @@
     <value>Off</value>
   </data>
   <data name="chkRIT.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 76</value>
+    <value>10, 70</value>
   </data>
   <data name="chkRIT.Size" type="System.Drawing.Size, System.Drawing">
-    <value>42, 20</value>
+    <value>35, 23</value>
   </data>
   <data name="chkRIT.TabIndex" type="System.Int32, mscorlib">
     <value>43</value>
@@ -3091,10 +3091,10 @@
     <value>Off</value>
   </data>
   <data name="chkXIT.Location" type="System.Drawing.Point, System.Drawing">
-    <value>68, 76</value>
+    <value>73, 70</value>
   </data>
   <data name="chkXIT.Size" type="System.Drawing.Size, System.Drawing">
-    <value>40, 20</value>
+    <value>35, 23</value>
   </data>
   <data name="chkXIT.TabIndex" type="System.Int32, mscorlib">
     <value>42</value>
@@ -3163,7 +3163,7 @@
     <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="udXIT.Location" type="System.Drawing.Point, System.Drawing">
-    <value>76, 103</value>
+    <value>73, 93</value>
   </data>
   <data name="udXIT.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 20</value>
@@ -3679,7 +3679,7 @@
     <value>Off</value>
   </data>
   <data name="chkVAC1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 129</value>
+    <value>10, 120</value>
   </data>
   <data name="chkVAC1.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -7229,7 +7229,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>NoControl</value>
   </data>
   <data name="chkTNF.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 68</value>
+    <value>9, 70</value>
   </data>
   <data name="chkTNF.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -7268,7 +7268,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="btnTNFAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>60, 69</value>
+    <value>60, 70</value>
   </data>
   <data name="btnTNFAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -7375,6 +7375,9 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
   <data name="chkVAC2.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
   </data>
+  <data name="chkVAC2.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
   <data name="chkVAC2.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -7382,7 +7385,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="chkVAC2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>73, 130</value>
+    <value>73, 120</value>
   </data>
   <data name="chkVAC2.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -7394,7 +7397,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>VAC2</value>
   </data>
   <data name="chkVAC2.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopCenter</value>
+    <value>MiddleCenter</value>
   </data>
   <data name="chkVAC2.ToolTip" xml:space="preserve">
     <value>Enable VAC 2</value>
@@ -10145,6 +10148,27 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <metadata name="tmrAutoAGC.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>589, 54</value>
   </metadata>
+  <data name="ucDockedMeterRX2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>364, 234</value>
+  </data>
+  <data name="ucDockedMeterRX2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>291, 252</value>
+  </data>
+  <data name="ucDockedMeterRX2.TabIndex" type="System.Int32, mscorlib">
+    <value>147</value>
+  </data>
+  <data name="&gt;&gt;ucDockedMeterRX2.Name" xml:space="preserve">
+    <value>ucDockedMeterRX2</value>
+  </data>
+  <data name="&gt;&gt;ucDockedMeterRX2.Type" xml:space="preserve">
+    <value>Thetis.ucMeter, Thetis, Version=2.9.0.7, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ucDockedMeterRX2.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;ucDockedMeterRX2.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
   <data name="buttonTS2.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -11189,27 +11213,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;panelOptions.ZOrder" xml:space="preserve">
     <value>18</value>
   </data>
-  <data name="ucDockedMeterRX2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>364, 234</value>
-  </data>
-  <data name="ucDockedMeterRX2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 252</value>
-  </data>
-  <data name="ucDockedMeterRX2.TabIndex" type="System.Int32, mscorlib">
-    <value>147</value>
-  </data>
-  <data name="&gt;&gt;ucDockedMeterRX2.Name" xml:space="preserve">
-    <value>ucDockedMeterRX2</value>
-  </data>
-  <data name="&gt;&gt;ucDockedMeterRX2.Type" xml:space="preserve">
-    <value>Thetis.ucMeter, Thetis, Version=2.9.0.7, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ucDockedMeterRX2.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;ucDockedMeterRX2.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
   <data name="panelButtonBar.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
@@ -11487,7 +11490,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>1012, 50</value>
   </data>
   <data name="panelButtonBar.TabIndex" type="System.Int32, mscorlib">
-    <value>71</value>
+    <value>149</value>
   </data>
   <data name="panelButtonBar.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
