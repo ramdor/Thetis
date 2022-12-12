@@ -28,41 +28,26 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.picContainer = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.picContainer)).BeginInit();
             this.SuspendLayout();
-            // 
-            // picContainer
-            // 
-            this.picContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.picContainer.Location = new System.Drawing.Point(4, 4);
-            this.picContainer.Name = "picContainer";
-            this.picContainer.Size = new System.Drawing.Size(276, 252);
-            this.picContainer.TabIndex = 0;
-            this.picContainer.TabStop = false;
             // 
             // frmMeterDisplay
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Controls.Add(this.picContainer);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.BackColor = System.Drawing.Color.Black;
+            this.ClientSize = new System.Drawing.Size(200, 200);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(300, 300);
+            this.MinimumSize = new System.Drawing.Size(200, 200);
             this.Name = "frmMeterDisplay";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "RX";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMeterDisplay_FormClosing);
-            ((System.ComponentModel.ISupportInitialize)(this.picContainer)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.PictureBox picContainer;
     }
 }

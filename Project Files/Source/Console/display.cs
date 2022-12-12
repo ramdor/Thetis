@@ -9238,7 +9238,7 @@ namespace Thetis
         }
 
         #region Ukraine
-        private static bool _showFlag = true; // always shown at startup
+        private static bool _showFlag = false; // set to true to always show at startup
         private static DateTime _lastFlagCheck = DateTime.MinValue;
         public static bool FlagShown
         {
@@ -9252,14 +9252,14 @@ namespace Thetis
         private static void ukraineFlag()
         {
             //#UKRAINE
-            if ((DateTime.Now - _lastFlagCheck).TotalMinutes >= 60)
+            if ((DateTime.Now - _lastFlagCheck).TotalMinutes >= 120)
             {
                 _lastFlagCheck = DateTime.Now;
 
                 console.CheckIfRussian();
 
                 if (console.IsRussian)
-                    _showFlag = true; // every hour, replace the flag if russian
+                    _showFlag = true; // every two hours, replace the flag if russian
             }
 
             if (_showFlag)

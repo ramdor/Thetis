@@ -12320,12 +12320,13 @@ namespace Thetis
             string path = console.AppDataPath;
             path = path.Substring(0, path.LastIndexOf("\\"));
             openFileDialog1.InitialDirectory = path;
-            bool ok = false;
-            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            //MW0LGE_[2.9.0.7] changes
+            DialogResult dr = openFileDialog1.ShowDialog();
+            if (dr == System.Windows.Forms.DialogResult.OK)
             {
-                ok = CompleteImport();
+                bool ok = CompleteImport();
+                if (ok) console.Close();  // Save everything 
             }
-            if (ok) console.Close();  // Save everything 
         }
 
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
@@ -12336,19 +12337,20 @@ namespace Thetis
         private bool mergingdb = false;
         private bool CompleteImport()
         {
-            bool success;
-
             //-W2PA Import more carefully, allowing DBs created by previous versions to retain settings and options
-            if (DB.ImportAndMergeDatabase(openFileDialog1.FileName, console.AppDataPath))
-            {
-                MessageBox.Show("Database Imported Successfully. Thetis will now close.\n\nPlease RE-START.");
-                success = true;
-            }
+            //MW0LGE_[2.9.0.7] changed structure slightly
+            bool success = DB.ImportAndMergeDatabase(openFileDialog1.FileName, console.AppDataPath);
+
+            if (success)
+                MessageBox.Show("Database Imported Successfully. Thetis will now close.\n\nPlease RE-START.",
+                            "DB Import",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             else
-            {
-                MessageBox.Show("Database could not be imported. Previous database has been kept.");
-                success = false;
-            }
+                MessageBox.Show("Database could not be imported. Previous database has been kept.",
+                            "DB Import",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
             // Archive old database file write a new one.
             if (success)

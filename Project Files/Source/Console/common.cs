@@ -53,8 +53,16 @@ namespace Thetis
 			return source?.IndexOf(toCheck, comp) >= 0;
 		}
 	}
+    //public static class Extensions
+    //{
+    //    private const double Epsilon = 1e-10;
 
-	public class Common
+    //    public static bool IsZero(this double d)
+    //    {
+    //        return Math.Abs(d) < Epsilon;
+    //    }
+    //}
+    public class Common
 	{
 		private const bool ENABLE_VERSION_TIMEOUT = false;
 		private static DateTime _versionTimeout = new DateTime(2022, 06, 01, 00, 00, 00); // june 1st 2022 00:00:00

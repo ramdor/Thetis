@@ -522,7 +522,23 @@ namespace System.Windows.Forms
 				else base.Width = value;
 			}
 		}
+		private bool _selectable = true;
+		[Browsable(true)]
+		[Category("Action")]
+		[Description("Is able to become selected. False will prevent focus.")]
+		public bool Selectable //MW0LGE_[2.9.0.7]
+        {
+            get { return _selectable; }
+            set
+            {
+				_selectable = value;
 
+				if (base.InvokeRequired)
+					this.Invoke(new Action( () => this.SetStyle(ControlStyles.Selectable, _selectable) ));
+				else
+					this.SetStyle(ControlStyles.Selectable, _selectable);
+            }
+        }
 		#endregion
 
 		#region Functions
