@@ -25137,6 +25137,8 @@ namespace Thetis
             if (dr == DialogResult.Yes)
                 console.ResetLevelCalibration();
         }
+
+        
     }
 
     #region PADeviceInfo Helper Class

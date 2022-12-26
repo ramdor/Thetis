@@ -2513,10 +2513,10 @@
             this.lblTXAF = new System.Windows.Forms.LabelTS();
             this.udTXAF = new System.Windows.Forms.NumericUpDownTS();
             this.grpTXProfile = new System.Windows.Forms.GroupBoxTS();
+            this.btnExportCurrentTXProfile = new System.Windows.Forms.ButtonTS();
             this.btnTXProfileDelete = new System.Windows.Forms.ButtonTS();
             this.btnTXProfileSave = new System.Windows.Forms.ButtonTS();
             this.comboTXProfileName = new System.Windows.Forms.ComboBoxTS();
-            this.btnExportCurrentTXProfile = new System.Windows.Forms.Button();
             this.grpPATune = new System.Windows.Forms.GroupBoxTS();
             this.radUseFixedDriveTune = new System.Windows.Forms.RadioButtonTS();
             this.radUseDriveSliderTune = new System.Windows.Forms.RadioButtonTS();
@@ -27146,7 +27146,7 @@
             this.lblAdvancedAudioWarning.Image = null;
             this.lblAdvancedAudioWarning.Location = new System.Drawing.Point(56, 22);
             this.lblAdvancedAudioWarning.Name = "lblAdvancedAudioWarning";
-            this.lblAdvancedAudioWarning.Size = new System.Drawing.Size(612, 16);
+            this.lblAdvancedAudioWarning.Size = new System.Drawing.Size(593, 16);
             this.lblAdvancedAudioWarning.TabIndex = 93;
             this.lblAdvancedAudioWarning.Text = "WARNING: these settings may cause undesirable side effects if changed from defaul" +
     "t";
@@ -40031,30 +40031,31 @@
             // 
             this.chkHighlightTXProfileSaveItems.AutoSize = true;
             this.chkHighlightTXProfileSaveItems.Image = null;
-            this.chkHighlightTXProfileSaveItems.Location = new System.Drawing.Point(35, 407);
+            this.chkHighlightTXProfileSaveItems.Location = new System.Drawing.Point(23, 402);
             this.chkHighlightTXProfileSaveItems.Name = "chkHighlightTXProfileSaveItems";
             this.chkHighlightTXProfileSaveItems.Size = new System.Drawing.Size(175, 17);
-            this.chkHighlightTXProfileSaveItems.TabIndex = 94;
+            this.chkHighlightTXProfileSaveItems.TabIndex = 76;
             this.chkHighlightTXProfileSaveItems.Text = "Hightlight TX Profile Save Items";
             this.chkHighlightTXProfileSaveItems.UseVisualStyleBackColor = true;
+            this.chkHighlightTXProfileSaveItems.CheckedChanged += new System.EventHandler(this.chkHighlightTXProfileSaveItems_CheckedChanged);
             // 
             // chkRestoreVAC2DeviceDetailsFromTXProfile
             // 
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Image = null;
-            this.chkRestoreVAC2DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(35, 289);
+            this.chkRestoreVAC2DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(23, 284);
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Name = "chkRestoreVAC2DeviceDetailsFromTXProfile";
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(321, 18);
-            this.chkRestoreVAC2DeviceDetailsFromTXProfile.TabIndex = 93;
+            this.chkRestoreVAC2DeviceDetailsFromTXProfile.TabIndex = 75;
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Text = "Restore VAC2 device details from TX Profile";
             this.toolTip1.SetToolTip(this.chkRestoreVAC2DeviceDetailsFromTXProfile, "Restore VAC device details that were stored against a TX Profile");
             // 
             // chkRestoreVAC1DeviceDetailsFromTXProfile
             // 
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Image = null;
-            this.chkRestoreVAC1DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(35, 265);
+            this.chkRestoreVAC1DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(23, 260);
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Name = "chkRestoreVAC1DeviceDetailsFromTXProfile";
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(321, 18);
-            this.chkRestoreVAC1DeviceDetailsFromTXProfile.TabIndex = 92;
+            this.chkRestoreVAC1DeviceDetailsFromTXProfile.TabIndex = 74;
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Text = "Restore VAC1 device details from TX Profile";
             this.toolTip1.SetToolTip(this.chkRestoreVAC1DeviceDetailsFromTXProfile, "Restore VAC device details that were stored against a TX Profile");
             // 
@@ -40062,20 +40063,21 @@
             // 
             this.chkLimitExtAmpOnOverload.AutoSize = true;
             this.chkLimitExtAmpOnOverload.Image = null;
-            this.chkLimitExtAmpOnOverload.Location = new System.Drawing.Point(394, 343);
+            this.chkLimitExtAmpOnOverload.Location = new System.Drawing.Point(382, 338);
             this.chkLimitExtAmpOnOverload.Name = "chkLimitExtAmpOnOverload";
             this.chkLimitExtAmpOnOverload.Size = new System.Drawing.Size(184, 17);
-            this.chkLimitExtAmpOnOverload.TabIndex = 91;
+            this.chkLimitExtAmpOnOverload.TabIndex = 72;
             this.chkLimitExtAmpOnOverload.Text = "Limit Drive on Ext. Amp. Overload";
             this.chkLimitExtAmpOnOverload.UseVisualStyleBackColor = true;
+            this.chkLimitExtAmpOnOverload.CheckedChanged += new System.EventHandler(this.chkLimitExtAmpOnOverload_CheckedChanged);
             // 
             // grpDSPSpeechProcessor
             // 
             this.grpDSPSpeechProcessor.Controls.Add(this.chkDSPCESSB);
-            this.grpDSPSpeechProcessor.Location = new System.Drawing.Point(388, 246);
+            this.grpDSPSpeechProcessor.Location = new System.Drawing.Point(376, 241);
             this.grpDSPSpeechProcessor.Name = "grpDSPSpeechProcessor";
             this.grpDSPSpeechProcessor.Size = new System.Drawing.Size(179, 48);
-            this.grpDSPSpeechProcessor.TabIndex = 80;
+            this.grpDSPSpeechProcessor.TabIndex = 43;
             this.grpDSPSpeechProcessor.TabStop = false;
             this.grpDSPSpeechProcessor.Text = "Speech Processor";
             // 
@@ -40089,15 +40091,16 @@
             this.chkDSPCESSB.TabIndex = 0;
             this.chkDSPCESSB.Text = "CESSB Overshoot Control";
             this.chkDSPCESSB.UseVisualStyleBackColor = true;
+            this.chkDSPCESSB.CheckedChanged += new System.EventHandler(this.chkDSPCESSB_CheckedChanged);
             // 
             // grpExtTXInhibit
             // 
             this.grpExtTXInhibit.Controls.Add(this.chkTXInhibit);
             this.grpExtTXInhibit.Controls.Add(this.chkTXInhibitSense);
-            this.grpExtTXInhibit.Location = new System.Drawing.Point(387, 159);
+            this.grpExtTXInhibit.Location = new System.Drawing.Point(375, 154);
             this.grpExtTXInhibit.Name = "grpExtTXInhibit";
             this.grpExtTXInhibit.Size = new System.Drawing.Size(180, 72);
-            this.grpExtTXInhibit.TabIndex = 90;
+            this.grpExtTXInhibit.TabIndex = 71;
             this.grpExtTXInhibit.TabStop = false;
             this.grpExtTXInhibit.Text = "External TX Inhibit";
             this.grpExtTXInhibit.Visible = false;
@@ -40111,6 +40114,7 @@
             this.chkTXInhibit.TabIndex = 68;
             this.chkTXInhibit.Text = "Enable TX Inhibit";
             this.toolTip1.SetToolTip(this.chkTXInhibit, "Enables TX Inhibit feature");
+            this.chkTXInhibit.CheckedChanged += new System.EventHandler(this.chkTXInhibit_CheckedChanged);
             // 
             // chkTXInhibitSense
             // 
@@ -40121,24 +40125,26 @@
             this.chkTXInhibitSense.TabIndex = 69;
             this.chkTXInhibitSense.Text = "Rev Input Logic";
             this.toolTip1.SetToolTip(this.chkTXInhibitSense, "High Level on TX Inhibit line = Active");
+            this.chkTXInhibitSense.CheckedChanged += new System.EventHandler(this.chkTXInhibitSense_CheckedChanged);
             // 
             // chkSaveTXProfileOnExit
             // 
             this.chkSaveTXProfileOnExit.Image = null;
-            this.chkSaveTXProfileOnExit.Location = new System.Drawing.Point(35, 324);
+            this.chkSaveTXProfileOnExit.Location = new System.Drawing.Point(23, 319);
             this.chkSaveTXProfileOnExit.Name = "chkSaveTXProfileOnExit";
             this.chkSaveTXProfileOnExit.Size = new System.Drawing.Size(235, 18);
-            this.chkSaveTXProfileOnExit.TabIndex = 89;
+            this.chkSaveTXProfileOnExit.TabIndex = 67;
             this.chkSaveTXProfileOnExit.Text = "Auto Save TX Profile on Thetis close";
             this.toolTip1.SetToolTip(this.chkSaveTXProfileOnExit, "Automatically saves the current TX Profile when Thetis is closed");
+            this.chkSaveTXProfileOnExit.CheckedChanged += new System.EventHandler(this.chkSaveTXProfileOnExit_CheckedChanged);
             // 
             // chkAutoSaveTXProfile
             // 
             this.chkAutoSaveTXProfile.Image = null;
-            this.chkAutoSaveTXProfile.Location = new System.Drawing.Point(35, 348);
+            this.chkAutoSaveTXProfile.Location = new System.Drawing.Point(23, 343);
             this.chkAutoSaveTXProfile.Name = "chkAutoSaveTXProfile";
             this.chkAutoSaveTXProfile.Size = new System.Drawing.Size(189, 18);
-            this.chkAutoSaveTXProfile.TabIndex = 88;
+            this.chkAutoSaveTXProfile.TabIndex = 66;
             this.chkAutoSaveTXProfile.Text = "Auto Save TX Profile on change";
             this.toolTip1.SetToolTip(this.chkAutoSaveTXProfile, "Automatically saves the current TX Profile if another profile is selected");
             // 
@@ -40149,7 +40155,7 @@
             0,
             0,
             0});
-            this.udTXFilterLowSave.Location = new System.Drawing.Point(540, 386);
+            this.udTXFilterLowSave.Location = new System.Drawing.Point(528, 381);
             this.udTXFilterLowSave.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -40162,7 +40168,7 @@
             0});
             this.udTXFilterLowSave.Name = "udTXFilterLowSave";
             this.udTXFilterLowSave.Size = new System.Drawing.Size(56, 20);
-            this.udTXFilterLowSave.TabIndex = 87;
+            this.udTXFilterLowSave.TabIndex = 60;
             this.udTXFilterLowSave.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXFilterLowSave, "Saved Low Frequency TX Filter Cutoff");
             this.udTXFilterLowSave.Value = new decimal(new int[] {
@@ -40179,7 +40185,7 @@
             0,
             0,
             0});
-            this.udTXFilterHighSave.Location = new System.Drawing.Point(478, 386);
+            this.udTXFilterHighSave.Location = new System.Drawing.Point(466, 381);
             this.udTXFilterHighSave.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -40192,7 +40198,7 @@
             0});
             this.udTXFilterHighSave.Name = "udTXFilterHighSave";
             this.udTXFilterHighSave.Size = new System.Drawing.Size(56, 20);
-            this.udTXFilterHighSave.TabIndex = 86;
+            this.udTXFilterHighSave.TabIndex = 59;
             this.udTXFilterHighSave.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXFilterHighSave, "Saved High Frequency TX Filter Cutoff");
             this.udTXFilterHighSave.Value = new decimal(new int[] {
@@ -40215,10 +40221,10 @@
             this.grpBoxMic.Controls.Add(this.udLineInBoost);
             this.grpBoxMic.Controls.Add(this.chk20dbMicBoost);
             this.grpBoxMic.Controls.Add(this.lblLineInBoost);
-            this.grpBoxMic.Location = new System.Drawing.Point(182, 94);
+            this.grpBoxMic.Location = new System.Drawing.Point(170, 103);
             this.grpBoxMic.Name = "grpBoxMic";
-            this.grpBoxMic.Size = new System.Drawing.Size(189, 151);
-            this.grpBoxMic.TabIndex = 85;
+            this.grpBoxMic.Size = new System.Drawing.Size(189, 137);
+            this.grpBoxMic.TabIndex = 58;
             this.grpBoxMic.TabStop = false;
             this.grpBoxMic.Text = "Mic";
             // 
@@ -40253,6 +40259,7 @@
             this.radLineIn.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.toolTip1.SetToolTip(this.radLineIn, "Enables Line Input to Penelope");
             this.radLineIn.UseVisualStyleBackColor = true;
+            this.radLineIn.CheckedChanged += new System.EventHandler(this.radLineIn_CheckedChanged);
             // 
             // radMicIn
             // 
@@ -40267,6 +40274,7 @@
             this.radMicIn.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.toolTip1.SetToolTip(this.radMicIn, "Enable Microphone Input on Penelope");
             this.radMicIn.UseVisualStyleBackColor = true;
+            this.radMicIn.CheckedChanged += new System.EventHandler(this.radMicIn_CheckedChanged);
             // 
             // udMicGainMin
             // 
@@ -40295,6 +40303,8 @@
             0,
             0,
             -2147483648});
+            this.udMicGainMin.ValueChanged += new System.EventHandler(this.udMicGainMin_ValueChanged);
+            this.udMicGainMin.LostFocus += new System.EventHandler(this.udMicGainMin_LostFocus);
             // 
             // udMicGainMax
             // 
@@ -40323,6 +40333,8 @@
             0,
             0,
             0});
+            this.udMicGainMax.ValueChanged += new System.EventHandler(this.udMicGainMax_ValueChanged);
+            this.udMicGainMax.LostFocus += new System.EventHandler(this.udMicGainMax_LostFocus);
             // 
             // labelTS21
             // 
@@ -40375,18 +40387,20 @@
             0,
             0});
             this.udLineInBoost.Visible = false;
+            this.udLineInBoost.ValueChanged += new System.EventHandler(this.udLineInBoost_ValueChanged);
             // 
             // chk20dbMicBoost
             // 
             this.chk20dbMicBoost.Checked = true;
             this.chk20dbMicBoost.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chk20dbMicBoost.Image = null;
-            this.chk20dbMicBoost.Location = new System.Drawing.Point(4, 97);
+            this.chk20dbMicBoost.Location = new System.Drawing.Point(13, 94);
             this.chk20dbMicBoost.Name = "chk20dbMicBoost";
             this.chk20dbMicBoost.Size = new System.Drawing.Size(110, 16);
             this.chk20dbMicBoost.TabIndex = 11;
             this.chk20dbMicBoost.Text = "20dB Mic Boost";
             this.toolTip1.SetToolTip(this.chk20dbMicBoost, "Controls 20dB Hardware Preamp");
+            this.chk20dbMicBoost.CheckedChanged += new System.EventHandler(this.chk20dbMicBoost_CheckedChanged);
             // 
             // lblLineInBoost
             // 
@@ -40405,50 +40419,52 @@
             this.chkTXExpert.Checked = true;
             this.chkTXExpert.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkTXExpert.Image = null;
-            this.chkTXExpert.Location = new System.Drawing.Point(605, 12);
+            this.chkTXExpert.Location = new System.Drawing.Point(593, 7);
             this.chkTXExpert.Name = "chkTXExpert";
             this.chkTXExpert.Size = new System.Drawing.Size(96, 24);
-            this.chkTXExpert.TabIndex = 84;
+            this.chkTXExpert.TabIndex = 55;
             this.chkTXExpert.Text = "More Profiles";
             this.toolTip1.SetToolTip(this.chkTXExpert, "Check to display additional default preset TX Profiles");
+            this.chkTXExpert.CheckedChanged += new System.EventHandler(this.chkTXExpert_CheckedChanged);
             // 
             // grpTXProfileDef
             // 
             this.grpTXProfileDef.Controls.Add(this.btnTXProfileDefImport);
             this.grpTXProfileDef.Controls.Add(this.lstTXProfileDef);
-            this.grpTXProfileDef.Location = new System.Drawing.Point(573, 37);
+            this.grpTXProfileDef.Location = new System.Drawing.Point(561, 32);
             this.grpTXProfileDef.Name = "grpTXProfileDef";
-            this.grpTXProfileDef.Size = new System.Drawing.Size(136, 327);
-            this.grpTXProfileDef.TabIndex = 83;
+            this.grpTXProfileDef.Size = new System.Drawing.Size(136, 305);
+            this.grpTXProfileDef.TabIndex = 54;
             this.grpTXProfileDef.TabStop = false;
             this.grpTXProfileDef.Text = "Additional TX Profiles";
             // 
             // btnTXProfileDefImport
             // 
             this.btnTXProfileDefImport.Image = null;
-            this.btnTXProfileDefImport.Location = new System.Drawing.Point(32, 297);
+            this.btnTXProfileDefImport.Location = new System.Drawing.Point(32, 275);
             this.btnTXProfileDefImport.Name = "btnTXProfileDefImport";
             this.btnTXProfileDefImport.Selectable = true;
             this.btnTXProfileDefImport.Size = new System.Drawing.Size(64, 24);
             this.btnTXProfileDefImport.TabIndex = 54;
             this.btnTXProfileDefImport.Text = "Include";
             this.toolTip1.SetToolTip(this.btnTXProfileDefImport, "Include the selected profile from the above list into my own list of profiles.");
+            this.btnTXProfileDefImport.Click += new System.EventHandler(this.btnTXProfileDefImport_Click);
             // 
             // lstTXProfileDef
             // 
             this.lstTXProfileDef.Location = new System.Drawing.Point(8, 16);
             this.lstTXProfileDef.Name = "lstTXProfileDef";
-            this.lstTXProfileDef.Size = new System.Drawing.Size(120, 277);
+            this.lstTXProfileDef.Size = new System.Drawing.Size(120, 251);
             this.lstTXProfileDef.TabIndex = 53;
             // 
             // grpTXAM
             // 
             this.grpTXAM.Controls.Add(this.lblTXAMCarrierLevel);
             this.grpTXAM.Controls.Add(this.udTXAMCarrierLevel);
-            this.grpTXAM.Location = new System.Drawing.Point(388, 99);
+            this.grpTXAM.Location = new System.Drawing.Point(376, 94);
             this.grpTXAM.Name = "grpTXAM";
             this.grpTXAM.Size = new System.Drawing.Size(179, 51);
-            this.grpTXAM.TabIndex = 82;
+            this.grpTXAM.TabIndex = 52;
             this.grpTXAM.TabStop = false;
             this.grpTXAM.Text = "AM";
             // 
@@ -40490,16 +40506,18 @@
             0,
             0,
             0});
+            this.udTXAMCarrierLevel.ValueChanged += new System.EventHandler(this.udTXAMCarrierLevel_ValueChanged);
+            this.udTXAMCarrierLevel.LostFocus += new System.EventHandler(this.udTXAMCarrierLevel_LostFocus);
             // 
             // grpTXMonitor
             // 
             this.grpTXMonitor.Controls.Add(this.chkIgnoreMasterAFChangeForMonitor);
             this.grpTXMonitor.Controls.Add(this.lblTXAF);
             this.grpTXMonitor.Controls.Add(this.udTXAF);
-            this.grpTXMonitor.Location = new System.Drawing.Point(387, 13);
+            this.grpTXMonitor.Location = new System.Drawing.Point(375, 8);
             this.grpTXMonitor.Name = "grpTXMonitor";
             this.grpTXMonitor.Size = new System.Drawing.Size(180, 80);
-            this.grpTXMonitor.TabIndex = 81;
+            this.grpTXMonitor.TabIndex = 51;
             this.grpTXMonitor.TabStop = false;
             this.grpTXMonitor.Text = "Monitor";
             // 
@@ -40514,6 +40532,7 @@
             this.chkIgnoreMasterAFChangeForMonitor.Text = "Ignore Master AF Change";
             this.toolTip1.SetToolTip(this.chkIgnoreMasterAFChangeForMonitor, "Changes made to MasterAF when in MOX are not applied to TX AF");
             this.chkIgnoreMasterAFChangeForMonitor.UseVisualStyleBackColor = true;
+            this.chkIgnoreMasterAFChangeForMonitor.CheckedChanged += new System.EventHandler(this.chkIgnoreMasterAFChangeForMonitor_CheckedChanged);
             // 
             // lblTXAF
             // 
@@ -40548,45 +40567,61 @@
             this.udTXAF.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXAF, "AF value to use when in TX mode (with the Delta 44 only).");
             this.udTXAF.Value = new decimal(new int[] {
-            20,
+            50,
             0,
             0,
             0});
+            this.udTXAF.ValueChanged += new System.EventHandler(this.udTXAF_ValueChanged);
+            this.udTXAF.LostFocus += new System.EventHandler(this.udTXAF_LostFocus);
             // 
             // grpTXProfile
             // 
+            this.grpTXProfile.Controls.Add(this.btnExportCurrentTXProfile);
             this.grpTXProfile.Controls.Add(this.btnTXProfileDelete);
             this.grpTXProfile.Controls.Add(this.btnTXProfileSave);
             this.grpTXProfile.Controls.Add(this.comboTXProfileName);
-            this.grpTXProfile.Controls.Add(this.btnExportCurrentTXProfile);
-            this.grpTXProfile.Location = new System.Drawing.Point(20, 13);
+            this.grpTXProfile.Location = new System.Drawing.Point(8, 8);
             this.grpTXProfile.Name = "grpTXProfile";
-            this.grpTXProfile.Size = new System.Drawing.Size(156, 75);
-            this.grpTXProfile.TabIndex = 79;
+            this.grpTXProfile.Size = new System.Drawing.Size(166, 75);
+            this.grpTXProfile.TabIndex = 23;
             this.grpTXProfile.TabStop = false;
             this.grpTXProfile.Text = "Profiles";
+            // 
+            // btnExportCurrentTXProfile
+            // 
+            this.btnExportCurrentTXProfile.Image = null;
+            this.btnExportCurrentTXProfile.Location = new System.Drawing.Point(58, 48);
+            this.btnExportCurrentTXProfile.Name = "btnExportCurrentTXProfile";
+            this.btnExportCurrentTXProfile.Selectable = true;
+            this.btnExportCurrentTXProfile.Size = new System.Drawing.Size(46, 21);
+            this.btnExportCurrentTXProfile.TabIndex = 77;
+            this.btnExportCurrentTXProfile.Text = "Export";
+            this.toolTip1.SetToolTip(this.btnExportCurrentTXProfile, "Export the curent profile and save to a file.");
+            this.btnExportCurrentTXProfile.Click += new System.EventHandler(this.btnExportCurrentTXProfile_Click);
             // 
             // btnTXProfileDelete
             // 
             this.btnTXProfileDelete.Image = null;
-            this.btnTXProfileDelete.Location = new System.Drawing.Point(103, 48);
+            this.btnTXProfileDelete.Location = new System.Drawing.Point(110, 48);
             this.btnTXProfileDelete.Name = "btnTXProfileDelete";
             this.btnTXProfileDelete.Selectable = true;
-            this.btnTXProfileDelete.Size = new System.Drawing.Size(48, 21);
+            this.btnTXProfileDelete.Size = new System.Drawing.Size(46, 21);
             this.btnTXProfileDelete.TabIndex = 2;
             this.btnTXProfileDelete.Text = "Delete";
             this.toolTip1.SetToolTip(this.btnTXProfileDelete, "Click to delete the currently selected TX Profile.");
+            this.btnTXProfileDelete.Click += new System.EventHandler(this.btnTXProfileDelete_Click);
             // 
             // btnTXProfileSave
             // 
             this.btnTXProfileSave.Image = null;
-            this.btnTXProfileSave.Location = new System.Drawing.Point(5, 48);
+            this.btnTXProfileSave.Location = new System.Drawing.Point(6, 48);
             this.btnTXProfileSave.Name = "btnTXProfileSave";
             this.btnTXProfileSave.Selectable = true;
-            this.btnTXProfileSave.Size = new System.Drawing.Size(48, 21);
+            this.btnTXProfileSave.Size = new System.Drawing.Size(46, 21);
             this.btnTXProfileSave.TabIndex = 1;
             this.btnTXProfileSave.Text = "Save";
             this.toolTip1.SetToolTip(this.btnTXProfileSave, "Click to save the current settings to a TX Profile.");
+            this.btnTXProfileSave.Click += new System.EventHandler(this.btnTXProfileSave_Click);
             // 
             // comboTXProfileName
             // 
@@ -40594,19 +40629,10 @@
             this.comboTXProfileName.DropDownWidth = 104;
             this.comboTXProfileName.Location = new System.Drawing.Point(6, 24);
             this.comboTXProfileName.Name = "comboTXProfileName";
-            this.comboTXProfileName.Size = new System.Drawing.Size(144, 21);
+            this.comboTXProfileName.Size = new System.Drawing.Size(150, 21);
             this.comboTXProfileName.TabIndex = 0;
             this.toolTip1.SetToolTip(this.comboTXProfileName, "Sets the current Transmit Profile to be used.");
-            // 
-            // btnExportCurrentTXProfile
-            // 
-            this.btnExportCurrentTXProfile.Location = new System.Drawing.Point(54, 48);
-            this.btnExportCurrentTXProfile.Name = "btnExportCurrentTXProfile";
-            this.btnExportCurrentTXProfile.Size = new System.Drawing.Size(48, 21);
-            this.btnExportCurrentTXProfile.TabIndex = 73;
-            this.btnExportCurrentTXProfile.Text = "Export";
-            this.toolTip1.SetToolTip(this.btnExportCurrentTXProfile, "Export the curent profile and save to a file.");
-            this.btnExportCurrentTXProfile.UseVisualStyleBackColor = true;
+            this.comboTXProfileName.SelectedIndexChanged += new System.EventHandler(this.comboTXProfileName_SelectedIndexChanged);
             // 
             // grpPATune
             // 
@@ -40616,10 +40642,10 @@
             this.grpPATune.Controls.Add(this.comboTXTUNMeter);
             this.grpPATune.Controls.Add(this.lblTXTUNMeter);
             this.grpPATune.Controls.Add(this.udTXTunePower);
-            this.grpPATune.Location = new System.Drawing.Point(20, 94);
+            this.grpPATune.Location = new System.Drawing.Point(8, 89);
             this.grpPATune.Name = "grpPATune";
-            this.grpPATune.Size = new System.Drawing.Size(156, 151);
-            this.grpPATune.TabIndex = 78;
+            this.grpPATune.Size = new System.Drawing.Size(143, 151);
+            this.grpPATune.TabIndex = 22;
             this.grpPATune.TabStop = false;
             this.grpPATune.Text = "Tune";
             // 
@@ -40634,6 +40660,7 @@
             this.radUseFixedDriveTune.TabStop = true;
             this.radUseFixedDriveTune.Text = "Use Fixed Drive";
             this.radUseFixedDriveTune.UseVisualStyleBackColor = true;
+            this.radUseFixedDriveTune.CheckedChanged += new System.EventHandler(this.radUseFixedDriveTune_CheckedChanged);
             // 
             // radUseDriveSliderTune
             // 
@@ -40646,6 +40673,7 @@
             this.radUseDriveSliderTune.TabStop = true;
             this.radUseDriveSliderTune.Text = "Use Drive Slider";
             this.radUseDriveSliderTune.UseVisualStyleBackColor = true;
+            this.radUseDriveSliderTune.CheckedChanged += new System.EventHandler(this.radUseDriveSliderTune_CheckedChanged);
             // 
             // radUseTuneSliderTune
             // 
@@ -40658,6 +40686,7 @@
             this.radUseTuneSliderTune.TabStop = true;
             this.radUseTuneSliderTune.Text = "Use Tune Slider";
             this.radUseTuneSliderTune.UseVisualStyleBackColor = true;
+            this.radUseTuneSliderTune.CheckedChanged += new System.EventHandler(this.radUseTuneSliderTune_CheckedChanged);
             // 
             // comboTXTUNMeter
             // 
@@ -40675,6 +40704,7 @@
             this.comboTXTUNMeter.Size = new System.Drawing.Size(73, 21);
             this.comboTXTUNMeter.TabIndex = 9;
             this.toolTip1.SetToolTip(this.comboTXTUNMeter, "Sets the current Transmit Profile to be used.");
+            this.comboTXTUNMeter.SelectedIndexChanged += new System.EventHandler(this.comboTXTUNMeter_SelectedIndexChanged);
             // 
             // lblTXTUNMeter
             // 
@@ -40714,6 +40744,8 @@
             0,
             0,
             0});
+            this.udTXTunePower.ValueChanged += new System.EventHandler(this.udTransmitTunePower_ValueChanged);
+            this.udTXTunePower.LostFocus += new System.EventHandler(this.udTXTunePower_LostFocus);
             // 
             // grpTXFilter
             // 
@@ -40721,10 +40753,10 @@
             this.grpTXFilter.Controls.Add(this.udTXFilterLow);
             this.grpTXFilter.Controls.Add(this.lblTXFilterLow);
             this.grpTXFilter.Controls.Add(this.udTXFilterHigh);
-            this.grpTXFilter.Location = new System.Drawing.Point(182, 13);
+            this.grpTXFilter.Location = new System.Drawing.Point(196, 8);
             this.grpTXFilter.Name = "grpTXFilter";
             this.grpTXFilter.Size = new System.Drawing.Size(128, 75);
-            this.grpTXFilter.TabIndex = 77;
+            this.grpTXFilter.TabIndex = 19;
             this.grpTXFilter.TabStop = false;
             this.grpTXFilter.Text = "Transmit Filter";
             // 
@@ -40765,6 +40797,8 @@
             0,
             0,
             0});
+            this.udTXFilterLow.ValueChanged += new System.EventHandler(this.udTXFilterLow_ValueChanged);
+            this.udTXFilterLow.LostFocus += new System.EventHandler(this.udTXFilterLow_LostFocus);
             // 
             // lblTXFilterLow
             // 
@@ -40803,6 +40837,8 @@
             0,
             0,
             0});
+            this.udTXFilterHigh.ValueChanged += new System.EventHandler(this.udTXFilterHigh_ValueChanged);
+            this.udTXFilterHigh.LostFocus += new System.EventHandler(this.udTXFilterHigh_LostFocus);
             // 
             // tpPowerAmplifier
             // 
@@ -53854,6 +53890,11 @@
         private NumericUpDownTS udDisplayFPS;
         public TabPage tpAudio;
         private TabPage tpTransmit;
+        private NumericUpDownTS udTXFilterHigh;
+        private LabelTS lblTXFilterLow;
+        private LabelTS lblTXFilterHigh;
+        private NumericUpDownTS udTXFilterLow;
+        private GroupBoxTS grpTXFilter;
         private GroupBoxTS grpDisplayPhase;
         private NumericUpDownTS udDisplayPhasePts;
         private GroupBoxTS grpDisplayAverage;
@@ -53927,6 +53968,8 @@
         private NumericUpDownTS udDisplayAVGTime;
         private LabelTS lblDisplayAVGTime;
         private GroupBoxTS grpTestAudioBalance;
+        private GroupBoxTS grpPATune;
+        private NumericUpDownTS udTXTunePower;
         private GroupBoxTS grpDisplayMultimeter;
         private LabelTS lblDisplayMultiPeakHoldTime;
         private NumericUpDownTS udDisplayMultiPeakHoldTime;
@@ -53985,8 +54028,15 @@
         private CheckBoxTS chkAudioLatencyManual2;
         private ComboBoxTS comboCATRigType;
         private LabelTS lblCATRigType;
+        private GroupBoxTS grpTXProfile;
+        private ButtonTS btnTXProfileSave;
+        private ComboBoxTS comboTXProfileName;
+        private ButtonTS btnTXProfileDelete;
         private ButtonTS btnImpulse;
         private NumericUpDownTS udImpulseNum;
+        private GroupBoxTS grpTXMonitor;
+        private LabelTS lblTXAF;
+        private NumericUpDownTS udTXAF;
         private GroupBoxTS grpGeneralModel;
         private TabControl tcGeneral;
         private TabPage tpGeneralHardware;
@@ -54021,6 +54071,9 @@
         private Thetis.ColorButton clrbtnOutOfBand;
         private LabelTS lblOutOfBand;
         private CheckBoxTS chkAudio2Stereo;
+        private GroupBoxTS grpTXAM;
+        private LabelTS lblTXAMCarrierLevel;
+        private NumericUpDownTS udTXAMCarrierLevel;
         private GroupBoxTS grpKeyboardOptions;
         private CheckBoxTS chkOptQuickQSY;
         private CheckBoxTS chkOptAlwaysOnTop;
@@ -54133,6 +54186,8 @@
         private CheckBoxTS chkSigGenRX2;
         private LabelTS lblGenBackground;
         private Thetis.ColorButton clrbtnGenBackground;
+        private ComboBoxTS comboTXTUNMeter;
+        private LabelTS lblTXTUNMeter;
         private ButtonTS btnResetDB;
         private CheckBoxTS chkDisplayMeterShowDecimal;
         private GroupBoxTS grpRTTYOffset;
@@ -54148,6 +54203,10 @@
         private CheckBoxTS chkAudioCorrectIQ;
         private CheckBoxTS chkAudioIQtoVAC;
         private CheckBoxTS chkRX2AutoMuteRX1OnVFOBTX;
+        private ListBox lstTXProfileDef;
+        private GroupBoxTS grpTXProfileDef;
+        private CheckBoxTS chkTXExpert;
+        private ButtonTS btnTXProfileDefImport;
         private CheckBoxTS chkDisplayPanFill;
         private GroupBoxTS grpAppSkins;
         private ComboBoxTS comboAppSkin;
@@ -54497,6 +54556,12 @@
         private NumericUpDownTS udMoxDelay;
         private LabelTS lblRFDelay;
         private NumericUpDownTS udRFDelay;
+        private GroupBoxTS grpBoxMic;
+        private NumericUpDownTS udMicGainMin;
+        private NumericUpDownTS udMicGainMax;
+        private LabelTS labelTS21;
+        private LabelTS labelTS20;
+        private CheckBoxTS chk20dbMicBoost;
         private NumericUpDownTS udTwoToneLevel;
         private LabelTS lblTwoToneLevel;
         private NumericUpDownTS udTXDisplayCalOffset;
@@ -54568,6 +54633,8 @@
         private RadioButtonTS radSpaceBarMicMute;
         private RadioButtonTS radSpaceBarVOX;
         private RadioButtonTS radSpaceBarPTT;
+        private NumericUpDownTS udLineInBoost;
+        private LabelTS lblLineInBoost;
         private GroupBoxTS grpPennyExtCtrlVHF;
         private LabelTS labelTS71;
         private LabelTS labelTS72;
@@ -54927,6 +54994,8 @@
         private System.Windows.Forms.ComboBoxTS comboAudioInput3;
         private System.Windows.Forms.ComboBoxTS comboAudioDriver3;
         public System.Windows.Forms.CheckBoxTS chkVAC2Enable;
+        private System.Windows.Forms.NumericUpDownTS udTXFilterLowSave;
+        private System.Windows.Forms.NumericUpDownTS udTXFilterHighSave;
         private System.Windows.Forms.CheckBoxTS chkFirmwareByp;
         private System.Windows.Forms.GroupBoxTS grpDSPLMSANF2;
         private System.Windows.Forms.LabelTS lblLMSANF2Leak;
@@ -54952,6 +55021,8 @@
         private System.Windows.Forms.RadioButtonTS radANFPreAGC;
         private System.Windows.Forms.CheckBoxTS chkFullDiscovery;
         private System.Windows.Forms.CheckBoxTS chkRxOutOnTx;
+        public System.Windows.Forms.RadioButtonTS radLineIn;
+        public System.Windows.Forms.RadioButtonTS radMicIn;
         private System.Windows.Forms.CheckBoxTS chkSWRProtection;
         private System.Windows.Forms.CheckBoxTS chkATTOnTX;
         private System.Windows.Forms.GroupBoxTS groupBoxTS5;
@@ -55029,6 +55100,8 @@
         private System.Windows.Forms.CheckBoxTS chkApolloFilter;
         private System.Windows.Forms.CheckBoxTS chkApolloTuner;
         private System.Windows.Forms.CheckBoxTS chkRX2BlankDisplayOnVFOATX;
+        private System.Windows.Forms.CheckBoxTS chkSaveTXProfileOnExit;
+        private System.Windows.Forms.CheckBoxTS chkAutoSaveTXProfile;
         private System.Windows.Forms.GroupBoxTS groupBoxTS6;
         private System.Windows.Forms.NumericUpDownTS udRX2FilterDefaultLowCut;
         private System.Windows.Forms.LabelTS labelTS39;
@@ -55375,6 +55448,9 @@
         private System.Windows.Forms.LabelTS labelTS313;
         private System.Windows.Forms.LabelTS labelTS312;
         private System.Windows.Forms.LabelTS labelTS314;
+        private System.Windows.Forms.GroupBoxTS grpExtTXInhibit;
+        private System.Windows.Forms.CheckBoxTS chkTXInhibit;
+        private System.Windows.Forms.CheckBoxTS chkTXInhibitSense;
         private System.Windows.Forms.GroupBoxTS grpPulse;
         private System.Windows.Forms.NumericUpDownTS udTXGenPulseDutyCycle;
         private System.Windows.Forms.LabelTS labelTS316;
@@ -55642,6 +55718,8 @@
         private System.Windows.Forms.LabelTS labelTS329;
         private System.Windows.Forms.LabelTS labelTS328;
         private System.Windows.Forms.CheckBoxTS chkRX1BlankDisplayOnVFOBTX;
+        private System.Windows.Forms.GroupBoxTS grpDSPSpeechProcessor;
+        private System.Windows.Forms.CheckBoxTS chkDSPCESSB;
         private System.Windows.Forms.GroupBoxTS grpAMSQMaxTail;
         private System.Windows.Forms.LabelTS labelTS355;
         private System.Windows.Forms.NumericUpDownTS udRXAMSQMaxTail;
@@ -55664,6 +55742,7 @@
         private System.Windows.Forms.RadioButtonTS radDSPNR2LinearRX2;
         private System.Windows.Forms.RadioButtonTS radDSPNR2GammaRX2;
         private System.Windows.Forms.RadioButtonTS radDSPNR2Gamma;
+        private System.Windows.Forms.CheckBoxTS chkLimitExtAmpOnOverload;
         private System.Windows.Forms.GroupBoxTS grpFocusMaster;
         private System.Windows.Forms.TextBoxTS txtFocusMasterDelay;
         private System.Windows.Forms.LabelTS labelTS359;
@@ -56525,6 +56604,8 @@
         private LabelTS labelTS18;
         private LabelTS labelTS17;
         private NumericUpDownTS udFreq2Delay;
+        private CheckBoxTS chkRestoreVAC1DeviceDetailsFromTXProfile;
+        private CheckBoxTS chkRestoreVAC2DeviceDetailsFromTXProfile;
         private NumericUpDownTS udActivePeakHoldDurationRX1;
         private LabelTS lblActivePeakHoldRX1;
         private CheckBoxTS chkActivePeakHoldRX1;
@@ -56574,6 +56655,7 @@
         private LabelTS lblRxDDC2;
         private LabelTS lblRxDDC1;
         private LabelTS lblRxDDC0;
+        private CheckBoxTS chkHighlightTXProfileSaveItems;
         private LabelTS lblP2assignment;
         private ButtonTS btnN1MMDefault;
         private GroupBoxTS grpVAC1ResamplerAdvanced;
@@ -56869,6 +56951,7 @@
         private NumericUpDownTS udActivePeakHoldDurationRX2;
         private TabPage tpAudioOptions;
         private CheckBoxTS chkAFSlidersMute;
+        private CheckBoxTS chkIgnoreMasterAFChangeForMonitor;
         private CheckBoxTS chkShowMHzOnCursor;
         private CheckBoxTS chkLimitFilterEdgesToSidebands;
         private NumericUpDownTS udDisplayDecimation;
@@ -56942,6 +57025,11 @@
         private CheckBoxTS chkEmulateSunSDR2Pro;
         private CheckBoxTS chkEmulateExpertSDR3Protocol;
         private CheckBoxTS chkDisableRearSpeakerJacksAudioAmplifier;
+        private LabelTS labelTS617;
+        private LabelTS labelTS616;
+        private RadioButtonTS radUseFixedDriveTune;
+        private RadioButtonTS radUseDriveSliderTune;
+        private RadioButtonTS radUseTuneSliderTune;
         private RadioButtonTS radUseFixedDrive2Tone;
         private RadioButtonTS radUseDriveSlider2Tone;
         private RadioButtonTS radUseTuneSlider2Tone;
@@ -57044,58 +57132,6 @@
         private NumericUpDownTS nudRX1NFoffsetGridFollow;
         private NumericUpDownTS nudRX2NFoffsetGridFollow;
         private Button btnResetLevelCal;
-        private CheckBoxTS chkHighlightTXProfileSaveItems;
-        private CheckBoxTS chkRestoreVAC2DeviceDetailsFromTXProfile;
-        private CheckBoxTS chkRestoreVAC1DeviceDetailsFromTXProfile;
-        private CheckBoxTS chkLimitExtAmpOnOverload;
-        private GroupBoxTS grpDSPSpeechProcessor;
-        private CheckBoxTS chkDSPCESSB;
-        private GroupBoxTS grpExtTXInhibit;
-        private CheckBoxTS chkTXInhibit;
-        private CheckBoxTS chkTXInhibitSense;
-        private CheckBoxTS chkSaveTXProfileOnExit;
-        private CheckBoxTS chkAutoSaveTXProfile;
-        private NumericUpDownTS udTXFilterLowSave;
-        private NumericUpDownTS udTXFilterHighSave;
-        private GroupBoxTS grpBoxMic;
-        private LabelTS labelTS617;
-        private LabelTS labelTS616;
-        public RadioButtonTS radLineIn;
-        public RadioButtonTS radMicIn;
-        private NumericUpDownTS udMicGainMin;
-        private NumericUpDownTS udMicGainMax;
-        private LabelTS labelTS21;
-        private LabelTS labelTS20;
-        private NumericUpDownTS udLineInBoost;
-        private CheckBoxTS chk20dbMicBoost;
-        private LabelTS lblLineInBoost;
-        private CheckBoxTS chkTXExpert;
-        private GroupBoxTS grpTXProfileDef;
-        private ButtonTS btnTXProfileDefImport;
-        private ListBox lstTXProfileDef;
-        private GroupBoxTS grpTXAM;
-        private LabelTS lblTXAMCarrierLevel;
-        private NumericUpDownTS udTXAMCarrierLevel;
-        private GroupBoxTS grpTXMonitor;
-        private CheckBoxTS chkIgnoreMasterAFChangeForMonitor;
-        private LabelTS lblTXAF;
-        private NumericUpDownTS udTXAF;
-        private GroupBoxTS grpTXProfile;
-        private ButtonTS btnTXProfileDelete;
-        private ButtonTS btnTXProfileSave;
-        private ComboBoxTS comboTXProfileName;
-        private Button btnExportCurrentTXProfile;
-        private GroupBoxTS grpPATune;
-        private RadioButtonTS radUseFixedDriveTune;
-        private RadioButtonTS radUseDriveSliderTune;
-        private RadioButtonTS radUseTuneSliderTune;
-        private ComboBoxTS comboTXTUNMeter;
-        private LabelTS lblTXTUNMeter;
-        private NumericUpDownTS udTXTunePower;
-        private GroupBoxTS grpTXFilter;
-        private LabelTS lblTXFilterHigh;
-        private NumericUpDownTS udTXFilterLow;
-        private LabelTS lblTXFilterLow;
-        private NumericUpDownTS udTXFilterHigh;
+        private ButtonTS btnExportCurrentTXProfile;
     }
 }
