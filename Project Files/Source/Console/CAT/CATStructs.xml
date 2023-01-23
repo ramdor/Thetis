@@ -2844,4 +2844,11 @@
 		<ngetparms>0</ngetparms>
 		<nansparms>0</nansparms>	<!-- Answer is variable length -->		
 	</catstruct>
+	<catstruct code="ZZZW">
+		<desc>Get SwapVFOWheels state</desc>
+		<active>true</active>
+		<nsetparms>1</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>		
+	</catstruct>	
 </catstructs>

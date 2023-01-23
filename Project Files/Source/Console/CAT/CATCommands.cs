@@ -7995,14 +7995,33 @@ namespace Thetis
 			else
 				return parser.Error1;
 		}
-		#endregion Extended CAT Methods ZZR-ZZZ
+		// swap vfo wheels, vfoA becomes vfoB, B becomes A
+        public string ZZZW(string s)
+        {
+			if (console is null || console.Midi2Cat is null) return parser.Error1;
+
+            if (s.Length == parser.nSet && (s == "0" || s == "1"))
+            {
+				console.Midi2Cat.SwapVFOWheelsProperty = (s == "1");
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+				return console.Midi2Cat.SwapVFOWheelsProperty ? "1" : "0";
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+        #endregion Extended CAT Methods ZZR-ZZZ
 
 
-		#region Helper methods
+        #region Helper methods
 
-		#region General Helpers
+        #region General Helpers
 
-		private string AddLeadingZeros(int n)
+        private string AddLeadingZeros(int n)
 		{
 			string num = n.ToString();
 

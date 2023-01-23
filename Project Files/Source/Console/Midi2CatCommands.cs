@@ -1132,6 +1132,12 @@ namespace Thetis
 
         private int msgs_since_reversal = 0;  //-W2PA Used to keep track of rotation and apply MidiMessagesPerTuneStep from console
         private int current_tuning_direction = 0;  // -1 = CCW, 1 = CW -- 0 is uninitialized value
+        private bool _swapVFOWheels = false;
+        public bool SwapVFOWheelsProperty
+        {
+            get { return _swapVFOWheels; }
+            set { _swapVFOWheels = value; }
+        }
 
         //-W2PA  Routine to implement MIDI wheel VFO tuning using the original code from Midi2Cat
         private void ProcessStdMIDIWheelAsVFO(int direction, int step, bool RoundToStepSize, long freq, int mode, string vfo)
@@ -1572,7 +1578,21 @@ namespace Thetis
 
             parser.nGet = 0;
             parser.nSet = 11;
-            long freq = Convert.ToInt64(commands.ZZFA(""));
+            //long freq = Convert.ToInt64(commands.ZZFA(""));
+            //MW0LGE [2.9.0.7]
+            long freq;
+            string sVfo;
+            if (_swapVFOWheels)
+            {
+                sVfo = "b";
+                freq = Convert.ToInt64(commands.ZZFB(""));
+            }
+            else
+            {
+                sVfo = "a";
+                freq = Convert.ToInt64(commands.ZZFA(""));
+            }
+            //
             parser.nAns = 11;
             int mode = Convert.ToInt16(commands.ZZMD(""));
             commands.isMidi = true;
@@ -1581,19 +1601,19 @@ namespace Thetis
             string devName = device.GetDeviceName();
             if (devName == "CMD PL-1")  
             {
-                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "a", "CMD PL-1");
+                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD PL-1");
             }
             else if (devName == "CMD Micro")
             {
-                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "a", "CMD Micro");
+                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD Micro");
             }
             else if (devName.Contains("CMD"))
             {
-                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "a", "CMD");
+                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD");
             }
             else
             {
-                ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "a");  // Original handler
+                ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo);  // Original handler
             }
 
             commands.isMidi = false;
@@ -1750,7 +1770,21 @@ namespace Thetis
                 return;
             int step = StringToFreq(commands.ZZAC(""));
             parser.nSet = 11;
-            long freq = Convert.ToInt64(commands.ZZFB(""));
+            //long freq = Convert.ToInt64(commands.ZZFB(""));
+            //MW0LGE [2.9.0.7]
+            long freq;
+            string sVfo;
+            if (_swapVFOWheels)
+            {
+                sVfo = "a";
+                freq = Convert.ToInt64(commands.ZZFA(""));
+            }
+            else
+            {
+                sVfo = "b";
+                freq = Convert.ToInt64(commands.ZZFB(""));
+            }
+            //
             parser.nAns = 11;
 
             commands.isMidi2 = true;
@@ -1758,19 +1792,19 @@ namespace Thetis
             string devName = device.GetDeviceName();
             if (devName == "CMD PL-1")  //W2PA- Special handling for Behringer 
             {
-                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "b", "CMD PL-1");
+                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD PL-1");
             }
             else if (devName == "CMD Micro")
             {
-                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "b", "CMD Micro");
+                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD Micro");
             }
             else if (devName.Contains("CMD"))
             {
-                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "b", "CMD");
+                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD");
             }
             else
             {
-                ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, "b");
+                ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo);
             }
 
             commands.isMidi2 = false;
@@ -6139,6 +6173,29 @@ namespace Thetis
                 if (autoAGCState == 1)
                 {
                     commands.ZZZR("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+        public CmdState SwapVFOWheels(int msg, MidiDevice device)
+        {
+            // MW0LGE [2.9.0.7]
+            // vfoA becomes vfoB when swapped in ChangeFreqVfoA and ChangeFreqVfoB. It is intended
+            // for use when a midi controller has two wheels, it can also be controlled with cat command ZZZW
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                _swapVFOWheels = !_swapVFOWheels;
+
+                if (_swapVFOWheels)
+                {
+                    return CmdState.On;
+                }
+                else
+                {
                     return CmdState.Off;
                 }
             }

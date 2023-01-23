@@ -355,6 +355,12 @@
             this.chkQSOTimerOnlyDuringMOX = new System.Windows.Forms.CheckBoxTS();
             this.chkQSOTimerEnabled = new System.Windows.Forms.CheckBoxTS();
             this.tpGeneralCalibration = new System.Windows.Forms.TabPage();
+            this.groupBoxTS27 = new System.Windows.Forms.GroupBoxTS();
+            this.btnAmpDefault = new System.Windows.Forms.ButtonTS();
+            this.labelTS159 = new System.Windows.Forms.LabelTS();
+            this.labelTS158 = new System.Windows.Forms.LabelTS();
+            this.udAmpSens = new System.Windows.Forms.NumericUpDownTS();
+            this.udAmpVoff = new System.Windows.Forms.NumericUpDownTS();
             this.panelRX2LevelCal = new System.Windows.Forms.PanelTS();
             this.labelTS135 = new System.Windows.Forms.LabelTS();
             this.udGeneralCalRX2Level = new System.Windows.Forms.NumericUpDownTS();
@@ -2479,6 +2485,7 @@
             this.chkHighlightTXProfileSaveItems = new System.Windows.Forms.CheckBoxTS();
             this.chkRestoreVAC2DeviceDetailsFromTXProfile = new System.Windows.Forms.CheckBoxTS();
             this.chkRestoreVAC1DeviceDetailsFromTXProfile = new System.Windows.Forms.CheckBoxTS();
+            this.btnExportCurrentTXProfile = new System.Windows.Forms.Button();
             this.chkLimitExtAmpOnOverload = new System.Windows.Forms.CheckBoxTS();
             this.grpDSPSpeechProcessor = new System.Windows.Forms.GroupBoxTS();
             this.chkDSPCESSB = new System.Windows.Forms.CheckBoxTS();
@@ -2513,7 +2520,6 @@
             this.lblTXAF = new System.Windows.Forms.LabelTS();
             this.udTXAF = new System.Windows.Forms.NumericUpDownTS();
             this.grpTXProfile = new System.Windows.Forms.GroupBoxTS();
-            this.btnExportCurrentTXProfile = new System.Windows.Forms.ButtonTS();
             this.btnTXProfileDelete = new System.Windows.Forms.ButtonTS();
             this.btnTXProfileSave = new System.Windows.Forms.ButtonTS();
             this.comboTXProfileName = new System.Windows.Forms.ComboBoxTS();
@@ -3415,6 +3421,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerSeconds)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerMinutes)).BeginInit();
             this.tpGeneralCalibration.SuspendLayout();
+            this.groupBoxTS27.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udAmpSens)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAmpVoff)).BeginInit();
             this.panelRX2LevelCal.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Level)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Freq2)).BeginInit();
@@ -6671,7 +6680,7 @@
             // chkNetworkThrottleIndexTweak
             // 
             this.chkNetworkThrottleIndexTweak.Image = null;
-            this.chkNetworkThrottleIndexTweak.Location = new System.Drawing.Point(28, 116);
+            this.chkNetworkThrottleIndexTweak.Location = new System.Drawing.Point(28, 114);
             this.chkNetworkThrottleIndexTweak.Name = "chkNetworkThrottleIndexTweak";
             this.chkNetworkThrottleIndexTweak.Size = new System.Drawing.Size(186, 16);
             this.chkNetworkThrottleIndexTweak.TabIndex = 18;
@@ -9001,6 +9010,7 @@
             // tpGeneralCalibration
             // 
             this.tpGeneralCalibration.BackColor = System.Drawing.SystemColors.Control;
+            this.tpGeneralCalibration.Controls.Add(this.groupBoxTS27);
             this.tpGeneralCalibration.Controls.Add(this.panelRX2LevelCal);
             this.tpGeneralCalibration.Controls.Add(this.grpBoxTXDisplayCal);
             this.tpGeneralCalibration.Controls.Add(this.grpHPSDRFreqCalDbg);
@@ -9014,6 +9024,113 @@
             this.tpGeneralCalibration.TabIndex = 2;
             this.tpGeneralCalibration.Text = "Calibration";
             this.tpGeneralCalibration.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralCalibration_Paint);
+            // 
+            // groupBoxTS27
+            // 
+            this.groupBoxTS27.Controls.Add(this.btnAmpDefault);
+            this.groupBoxTS27.Controls.Add(this.labelTS159);
+            this.groupBoxTS27.Controls.Add(this.labelTS158);
+            this.groupBoxTS27.Controls.Add(this.udAmpSens);
+            this.groupBoxTS27.Controls.Add(this.udAmpVoff);
+            this.groupBoxTS27.Location = new System.Drawing.Point(541, 11);
+            this.groupBoxTS27.Name = "groupBoxTS27";
+            this.groupBoxTS27.Size = new System.Drawing.Size(175, 122);
+            this.groupBoxTS27.TabIndex = 15;
+            this.groupBoxTS27.TabStop = false;
+            this.groupBoxTS27.Text = "Current (A) calculation";
+            // 
+            // btnAmpDefault
+            // 
+            this.btnAmpDefault.Image = null;
+            this.btnAmpDefault.Location = new System.Drawing.Point(60, 86);
+            this.btnAmpDefault.Name = "btnAmpDefault";
+            this.btnAmpDefault.Selectable = true;
+            this.btnAmpDefault.Size = new System.Drawing.Size(75, 23);
+            this.btnAmpDefault.TabIndex = 4;
+            this.btnAmpDefault.Text = "Default";
+            this.toolTip1.SetToolTip(this.btnAmpDefault, "Set volt/sens to defaults (7000dle has unique values)");
+            this.btnAmpDefault.UseVisualStyleBackColor = true;
+            this.btnAmpDefault.Click += new System.EventHandler(this.btnAmpDefault_Click);
+            // 
+            // labelTS159
+            // 
+            this.labelTS159.AutoSize = true;
+            this.labelTS159.Image = null;
+            this.labelTS159.Location = new System.Drawing.Point(28, 54);
+            this.labelTS159.Name = "labelTS159";
+            this.labelTS159.Size = new System.Drawing.Size(57, 13);
+            this.labelTS159.TabIndex = 3;
+            this.labelTS159.Text = "Sensitivity:";
+            // 
+            // labelTS158
+            // 
+            this.labelTS158.AutoSize = true;
+            this.labelTS158.Image = null;
+            this.labelTS158.Location = new System.Drawing.Point(47, 27);
+            this.labelTS158.Name = "labelTS158";
+            this.labelTS158.Size = new System.Drawing.Size(38, 13);
+            this.labelTS158.TabIndex = 2;
+            this.labelTS158.Text = "Offset:";
+            // 
+            // udAmpSens
+            // 
+            this.udAmpSens.DecimalPlaces = 1;
+            this.udAmpSens.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udAmpSens.Location = new System.Drawing.Point(91, 50);
+            this.udAmpSens.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.udAmpSens.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udAmpSens.Name = "udAmpSens";
+            this.udAmpSens.Size = new System.Drawing.Size(67, 20);
+            this.udAmpSens.TabIndex = 1;
+            this.udAmpSens.TinyStep = false;
+            this.udAmpSens.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udAmpSens.ValueChanged += new System.EventHandler(this.udAmpSens_ValueChanged);
+            // 
+            // udAmpVoff
+            // 
+            this.udAmpVoff.DecimalPlaces = 1;
+            this.udAmpVoff.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udAmpVoff.Location = new System.Drawing.Point(91, 24);
+            this.udAmpVoff.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.udAmpVoff.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udAmpVoff.Name = "udAmpVoff";
+            this.udAmpVoff.Size = new System.Drawing.Size(67, 20);
+            this.udAmpVoff.TabIndex = 0;
+            this.udAmpVoff.TinyStep = false;
+            this.udAmpVoff.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udAmpVoff.ValueChanged += new System.EventHandler(this.udAmpVoff_ValueChanged);
             // 
             // panelRX2LevelCal
             // 
@@ -28849,7 +28966,7 @@
             // grpDisplay8000DLE
             // 
             this.grpDisplay8000DLE.Controls.Add(this.chkANAN8000DLEDisplayVoltsAmps);
-            this.grpDisplay8000DLE.Location = new System.Drawing.Point(513, 22);
+            this.grpDisplay8000DLE.Location = new System.Drawing.Point(513, 11);
             this.grpDisplay8000DLE.Name = "grpDisplay8000DLE";
             this.grpDisplay8000DLE.Size = new System.Drawing.Size(200, 47);
             this.grpDisplay8000DLE.TabIndex = 44;
@@ -40006,6 +40123,7 @@
             this.tpTransmit.Controls.Add(this.chkHighlightTXProfileSaveItems);
             this.tpTransmit.Controls.Add(this.chkRestoreVAC2DeviceDetailsFromTXProfile);
             this.tpTransmit.Controls.Add(this.chkRestoreVAC1DeviceDetailsFromTXProfile);
+            this.tpTransmit.Controls.Add(this.btnExportCurrentTXProfile);
             this.tpTransmit.Controls.Add(this.chkLimitExtAmpOnOverload);
             this.tpTransmit.Controls.Add(this.grpDSPSpeechProcessor);
             this.tpTransmit.Controls.Add(this.grpExtTXInhibit);
@@ -40058,6 +40176,16 @@
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.TabIndex = 74;
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Text = "Restore VAC1 device details from TX Profile";
             this.toolTip1.SetToolTip(this.chkRestoreVAC1DeviceDetailsFromTXProfile, "Restore VAC device details that were stored against a TX Profile");
+            // 
+            // btnExportCurrentTXProfile
+            // 
+            this.btnExportCurrentTXProfile.Location = new System.Drawing.Point(58, 47);
+            this.btnExportCurrentTXProfile.Name = "btnExportCurrentTXProfile";
+            this.btnExportCurrentTXProfile.Size = new System.Drawing.Size(46, 21);
+            this.btnExportCurrentTXProfile.TabIndex = 77;
+            this.btnExportCurrentTXProfile.Text = "Export";
+            this.toolTip1.SetToolTip(this.btnExportCurrentTXProfile, "Export the current profile and save to a file.");
+            this.btnExportCurrentTXProfile.Click += new System.EventHandler(this.btnExportCurrentTXProfile_Click);
             // 
             // chkLimitExtAmpOnOverload
             // 
@@ -40419,7 +40547,7 @@
             this.chkTXExpert.Checked = true;
             this.chkTXExpert.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkTXExpert.Image = null;
-            this.chkTXExpert.Location = new System.Drawing.Point(593, 7);
+            this.chkTXExpert.Location = new System.Drawing.Point(607, 7);
             this.chkTXExpert.Name = "chkTXExpert";
             this.chkTXExpert.Size = new System.Drawing.Size(96, 24);
             this.chkTXExpert.TabIndex = 55;
@@ -40431,9 +40559,9 @@
             // 
             this.grpTXProfileDef.Controls.Add(this.btnTXProfileDefImport);
             this.grpTXProfileDef.Controls.Add(this.lstTXProfileDef);
-            this.grpTXProfileDef.Location = new System.Drawing.Point(561, 32);
+            this.grpTXProfileDef.Location = new System.Drawing.Point(584, 32);
             this.grpTXProfileDef.Name = "grpTXProfileDef";
-            this.grpTXProfileDef.Size = new System.Drawing.Size(136, 305);
+            this.grpTXProfileDef.Size = new System.Drawing.Size(136, 343);
             this.grpTXProfileDef.TabIndex = 54;
             this.grpTXProfileDef.TabStop = false;
             this.grpTXProfileDef.Text = "Additional TX Profiles";
@@ -40441,7 +40569,7 @@
             // btnTXProfileDefImport
             // 
             this.btnTXProfileDefImport.Image = null;
-            this.btnTXProfileDefImport.Location = new System.Drawing.Point(32, 275);
+            this.btnTXProfileDefImport.Location = new System.Drawing.Point(33, 301);
             this.btnTXProfileDefImport.Name = "btnTXProfileDefImport";
             this.btnTXProfileDefImport.Selectable = true;
             this.btnTXProfileDefImport.Size = new System.Drawing.Size(64, 24);
@@ -40454,7 +40582,7 @@
             // 
             this.lstTXProfileDef.Location = new System.Drawing.Point(8, 16);
             this.lstTXProfileDef.Name = "lstTXProfileDef";
-            this.lstTXProfileDef.Size = new System.Drawing.Size(120, 251);
+            this.lstTXProfileDef.Size = new System.Drawing.Size(120, 277);
             this.lstTXProfileDef.TabIndex = 53;
             // 
             // grpTXAM
@@ -40582,27 +40710,15 @@
             this.grpTXProfile.Controls.Add(this.comboTXProfileName);
             this.grpTXProfile.Location = new System.Drawing.Point(8, 8);
             this.grpTXProfile.Name = "grpTXProfile";
-            this.grpTXProfile.Size = new System.Drawing.Size(166, 75);
+            this.grpTXProfile.Size = new System.Drawing.Size(163, 75);
             this.grpTXProfile.TabIndex = 23;
             this.grpTXProfile.TabStop = false;
             this.grpTXProfile.Text = "Profiles";
             // 
-            // btnExportCurrentTXProfile
-            // 
-            this.btnExportCurrentTXProfile.Image = null;
-            this.btnExportCurrentTXProfile.Location = new System.Drawing.Point(58, 48);
-            this.btnExportCurrentTXProfile.Name = "btnExportCurrentTXProfile";
-            this.btnExportCurrentTXProfile.Selectable = true;
-            this.btnExportCurrentTXProfile.Size = new System.Drawing.Size(46, 21);
-            this.btnExportCurrentTXProfile.TabIndex = 77;
-            this.btnExportCurrentTXProfile.Text = "Export";
-            this.toolTip1.SetToolTip(this.btnExportCurrentTXProfile, "Export the curent profile and save to a file.");
-            this.btnExportCurrentTXProfile.Click += new System.EventHandler(this.btnExportCurrentTXProfile_Click);
-            // 
             // btnTXProfileDelete
             // 
             this.btnTXProfileDelete.Image = null;
-            this.btnTXProfileDelete.Location = new System.Drawing.Point(110, 48);
+            this.btnTXProfileDelete.Location = new System.Drawing.Point(110, 47);
             this.btnTXProfileDelete.Name = "btnTXProfileDelete";
             this.btnTXProfileDelete.Selectable = true;
             this.btnTXProfileDelete.Size = new System.Drawing.Size(46, 21);
@@ -40614,7 +40730,7 @@
             // btnTXProfileSave
             // 
             this.btnTXProfileSave.Image = null;
-            this.btnTXProfileSave.Location = new System.Drawing.Point(6, 48);
+            this.btnTXProfileSave.Location = new System.Drawing.Point(6, 47);
             this.btnTXProfileSave.Name = "btnTXProfileSave";
             this.btnTXProfileSave.Selectable = true;
             this.btnTXProfileSave.Size = new System.Drawing.Size(46, 21);
@@ -40627,7 +40743,7 @@
             // 
             this.comboTXProfileName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboTXProfileName.DropDownWidth = 104;
-            this.comboTXProfileName.Location = new System.Drawing.Point(6, 24);
+            this.comboTXProfileName.Location = new System.Drawing.Point(6, 20);
             this.comboTXProfileName.Name = "comboTXProfileName";
             this.comboTXProfileName.Size = new System.Drawing.Size(150, 21);
             this.comboTXProfileName.TabIndex = 0;
@@ -40703,7 +40819,7 @@
             this.comboTXTUNMeter.Name = "comboTXTUNMeter";
             this.comboTXTUNMeter.Size = new System.Drawing.Size(73, 21);
             this.comboTXTUNMeter.TabIndex = 9;
-            this.toolTip1.SetToolTip(this.comboTXTUNMeter, "Sets the current Transmit Profile to be used.");
+            this.toolTip1.SetToolTip(this.comboTXTUNMeter, "Sets the desired Meter to be used in Tune");
             this.comboTXTUNMeter.SelectedIndexChanged += new System.EventHandler(this.comboTXTUNMeter_SelectedIndexChanged);
             // 
             // lblTXTUNMeter
@@ -40753,7 +40869,7 @@
             this.grpTXFilter.Controls.Add(this.udTXFilterLow);
             this.grpTXFilter.Controls.Add(this.lblTXFilterLow);
             this.grpTXFilter.Controls.Add(this.udTXFilterHigh);
-            this.grpTXFilter.Location = new System.Drawing.Point(196, 8);
+            this.grpTXFilter.Location = new System.Drawing.Point(181, 8);
             this.grpTXFilter.Name = "grpTXFilter";
             this.grpTXFilter.Size = new System.Drawing.Size(128, 75);
             this.grpTXFilter.TabIndex = 19;
@@ -47334,7 +47450,7 @@
             this.grpBoxSpaceBarPTT.Controls.Add(this.radSpaceBarPTT);
             this.grpBoxSpaceBarPTT.Location = new System.Drawing.Point(525, 8);
             this.grpBoxSpaceBarPTT.Name = "grpBoxSpaceBarPTT";
-            this.grpBoxSpaceBarPTT.Size = new System.Drawing.Size(168, 112);
+            this.grpBoxSpaceBarPTT.Size = new System.Drawing.Size(168, 125);
             this.grpBoxSpaceBarPTT.TabIndex = 41;
             this.grpBoxSpaceBarPTT.TabStop = false;
             this.grpBoxSpaceBarPTT.Text = "SpaceBar Control";
@@ -52818,6 +52934,7 @@
             this.tpGeneral.ResumeLayout(false);
             this.tcGeneral.ResumeLayout(false);
             this.tpGeneralHardware.ResumeLayout(false);
+            this.tpGeneralHardware.PerformLayout();
             this.grpFirmware.ResumeLayout(false);
             this.grpOzyType.ResumeLayout(false);
             this.panelTS7.ResumeLayout(false);
@@ -52890,6 +53007,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerSeconds)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerMinutes)).EndInit();
             this.tpGeneralCalibration.ResumeLayout(false);
+            this.groupBoxTS27.ResumeLayout(false);
+            this.groupBoxTS27.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udAmpSens)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAmpVoff)).EndInit();
             this.panelRX2LevelCal.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Level)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Freq2)).EndInit();
@@ -56094,6 +56215,7 @@
         private System.Windows.Forms.RadioButtonTS radTXUSB;
         private System.Windows.Forms.RadioButtonTS radTXLSB;
         private System.Windows.Forms.RadioButtonTS radTXDSB;
+        private System.Windows.Forms.Button btnExportCurrentTXProfile;
         private GroupBoxTS grpVAC1monitor;
         private LabelTS lblVAC1unfl;
         private LabelTS lblVAC1ovfl;
@@ -57132,6 +57254,11 @@
         private NumericUpDownTS nudRX1NFoffsetGridFollow;
         private NumericUpDownTS nudRX2NFoffsetGridFollow;
         private Button btnResetLevelCal;
-        private ButtonTS btnExportCurrentTXProfile;
+        private GroupBoxTS groupBoxTS27;
+        private ButtonTS btnAmpDefault;
+        private LabelTS labelTS159;
+        private LabelTS labelTS158;
+        private NumericUpDownTS udAmpSens;
+        private NumericUpDownTS udAmpVoff;
     }
 }

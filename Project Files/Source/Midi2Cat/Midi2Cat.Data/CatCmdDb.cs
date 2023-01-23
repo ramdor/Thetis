@@ -495,6 +495,8 @@ namespace Midi2Cat.Data
         RX1AutoAGC = 301,
         [CatCommandAttribute("RX2 Auto AGC compensation", ControlType.Button, true)] // MW0LGE_21k9
         RX2AutoAGC = 302,
+        [CatCommandAttribute("Swap VFO Wheels", ControlType.Button, true)] // MW0LGE [2.9.0.7]
+        SwapVFOWheels = 303,
         [CatCommandAttribute("Toggle Wheel to VFOA/VFOB ", ControlType.Button)]  //-W2PA Added a toggle between A/B for main wheel 
         ToggleVFOWheel = 700
     }

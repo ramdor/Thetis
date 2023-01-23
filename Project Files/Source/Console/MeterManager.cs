@@ -163,14 +163,16 @@ namespace Thetis
                     {
                         List<Reading> readingsUsed = new List<Reading>();
 
-                        kvp.Value.Update(ref readingsUsed);
+                        clsMeter m = kvp.Value;
+
+                        m.Update(ref readingsUsed);
 
                         lock (_readingsLock)
                         {
                             // use/invalidate any readings that have been used, so that they can be updated
                             foreach (Reading rt in readingsUsed)
                             {
-                                _readings[kvp.Value.RX].UseReading(rt);
+                                _readings[m.RX].UseReading(rt);
                             }
                         }
                     }
@@ -182,7 +184,7 @@ namespace Thetis
                 }
             }
         }
-        public static void Init(Console c, Control rx1, Control rx2, string sImagePath = "")
+        public static void Init(Console c, PictureBox rx1, PictureBox rx2, string sImagePath = "")
         {
             _console = c;
             //_mox = _console.MOX;
@@ -198,9 +200,19 @@ namespace Thetis
             addDelegates();
 
             if (rx1 != null)
+            {
                 _rx1Renderer = new DXRenderer(1, rx1, _console, sImagePath);
+                rx1.Parent.Show();
+            }
+
             if (rx2 != null)
+            {
                 _rx2Renderer = new DXRenderer(2, rx2, _console, sImagePath);
+                if (c.RX2Enabled)
+                    rx2.Parent.Show();
+                else
+                    rx2.Parent.Hide();
+            }
 
             _meterThread = new Thread(new ThreadStart(UpdateMeters))
             {
@@ -444,16 +456,25 @@ namespace Thetis
             }
             return updateRate;
         }
+        public static int QuickestUpdateInterval(int rx)
+        {
+            int updateRate = 50;
+
+            foreach (KeyValuePair<string, clsMeter> kvp in _meters.Where(kvp => kvp.Value.RX == rx && kvp.Value.TypeBitField != (int)MeterType.NONE))
+            {
+                int ui = kvp.Value.QuickestUpdateInterval;
+                if (ui < updateRate) updateRate = ui;
+            }
+
+            return updateRate;
+        }
         private static int overallUpdateInterval()
         {
             int updateInterval = 5000;
 
             for (int rx = 1; rx <= 2; rx++)
             {
-                int tmp = QuickestUpdateInterval(rx, false);
-                if (tmp < updateInterval) updateInterval = tmp;
-
-                tmp = QuickestUpdateInterval(rx, true);
+                int tmp = QuickestUpdateInterval(rx);
                 if (tmp < updateInterval) updateInterval = tmp;
             }
 
@@ -1312,7 +1333,7 @@ namespace Thetis
                     ni.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
                     ni.AttackRatio = 0.1f;
                     ni.DecayRatio = 0.05f;
-                    ni.UpdateInterval = 16;
+                    ni.UpdateInterval = 33;
                     ni.HistoryDuration = 4000;
                     ni.ShowHistory = true;
                     ni.Style = clsNeedleItem.NeedleStyle.Line;
@@ -1508,7 +1529,7 @@ namespace Thetis
                     ni.ReadingSource = Reading.PWR;
                     ni.AttackRatio = 0.2f;//0.325f;
                     ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = 16;
+                    ni.UpdateInterval = 33;
                     ni.HistoryDuration = 1000;
                     ni.ShowHistory = true;
                     ni.StrokeWidth = 2.5f;
@@ -1544,7 +1565,7 @@ namespace Thetis
                     ni.ReadingSource = Reading.REVERSE_PWR;
                     ni.AttackRatio = 0.2f;//0.325f;
                     ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = 16;
+                    ni.UpdateInterval = 33;
                     ni.HistoryDuration = 1000;
                     ni.ShowHistory = true;
                     ni.StrokeWidth = 2.5f;
@@ -1621,7 +1642,7 @@ namespace Thetis
                     ni.ReadingSource = Reading.PWR;
                     ni.AttackRatio = 0.2f;//0.325f;
                     ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = 16;
+                    ni.UpdateInterval = 33;
                     ni.HistoryDuration = 1000;
                     ni.ShowHistory = true;
                     ni.Style = clsNeedleItem.NeedleStyle.Line;
@@ -1654,7 +1675,7 @@ namespace Thetis
                     ni.ReadingSource = Reading.SWR;
                     ni.AttackRatio = 0.2f;//0.325f;
                     ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = 16;
+                    ni.UpdateInterval = 33;
                     ni.HistoryDuration = 1000;
                     ni.ShowHistory = true;
                     ni.Style = clsNeedleItem.NeedleStyle.Line;
@@ -1683,7 +1704,7 @@ namespace Thetis
                     ni.ReadingSource = Reading.ALC_G; // alc_comp
                     ni.AttackRatio = 0.2f;//0.325f;
                     ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = 16;
+                    ni.UpdateInterval = 33;
                     ni.HistoryDuration = 1000;
                     ni.ShowHistory = false;
                     ni.Style = clsNeedleItem.NeedleStyle.Line;
@@ -1713,7 +1734,7 @@ namespace Thetis
                     ni.ReadingSource = Reading.ALC_GROUP;
                     ni.AttackRatio = 0.2f;//0.325f;
                     ni.DecayRatio = 0.1f;//0.5f;
-                    ni.UpdateInterval = 16;
+                    ni.UpdateInterval = 33;
                     ni.HistoryDuration = 1000;
                     ni.ShowHistory = false;
                     ni.Style = clsNeedleItem.NeedleStyle.Line;
@@ -1965,7 +1986,7 @@ namespace Thetis
             private bool _bAntiAlias;
             private Vector2 _pixelShift;
             private int _nVBlanks;
-            private Control _displayTarget;
+            private PictureBox _displayTarget;
             private object _DXlock = new object();
             //
             private Dictionary<System.Drawing.Color, SharpDX.Direct2D1.Brush> _DXBrushes;
@@ -1980,7 +2001,7 @@ namespace Thetis
             private int _rx;
             private Console _console;
 
-            public DXRenderer(int rx, Control target, Console c, string sImagePath)
+            public DXRenderer(int rx, PictureBox target, Console c, string sImagePath)
             {
                 _rx = rx;
                 _console = c;
@@ -2401,7 +2422,7 @@ namespace Thetis
                     _nVBlanks = v;
                 }
             }
-            public Control Target
+            public PictureBox Target
             {
                 get { return _displayTarget; }
                 set
@@ -2830,10 +2851,10 @@ namespace Thetis
 
                 string sImage = ipg.ImageName;
 
-                string sKey = sImage + "_" + MeterManager.CurrentPowerRating.ToString();
+                string sKey = sImage + "-" + MeterManager.CurrentPowerRating.ToString();
                 if (_images.ContainsKey(sKey)) sImage = sKey;
 
-                sKey = sImage + "_small";
+                sKey = sImage + "-small";
                 if ((w < 100 || h < 100) && _images.ContainsKey(sKey)) sImage = sKey; // use small version of the image if available
 
                 if (_images.ContainsKey(sImage))

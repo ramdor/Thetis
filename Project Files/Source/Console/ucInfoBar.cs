@@ -68,6 +68,9 @@ namespace Thetis
         private string[] _right2;
         private string[] _right3;
 
+        private string[,] _leftToolTip;
+        private string[,] _rightToolTip;
+
         private int[] _left1BaseWidth;
         private int[] _left2BaseWidth;
         private int[] _left3BaseWidth;
@@ -196,6 +199,9 @@ namespace Thetis
             _right2Width = new int[MAX_FLIP];
             _right3Width = new int[MAX_FLIP];
 
+            _leftToolTip = new string[MAX_FLIP, 3];
+            _rightToolTip = new string[MAX_FLIP, 3];
+
             for (int n=0; n<MAX_FLIP; n++)
             {
                 _left1BaseWidth[n] = lblLeft1.Width;
@@ -211,6 +217,12 @@ namespace Thetis
                 _right1Width[n] = lblRight1.Width;
                 _right2Width[n] = lblRight2.Width;
                 _right3Width[n] = lblRight3.Width;
+
+                for (int i = 0; i < 3; i++)
+                {
+                    _leftToolTip[n, i] = "";
+                    _rightToolTip[n, i] = "";
+                }
             }
 
             // add the actions
@@ -600,13 +612,11 @@ namespace Thetis
             _left1[flipLayer] = value;
 
             if (width == -1)
-            {
                 _left1Width[flipLayer] = _left1BaseWidth[flipLayer];
-            }
             else
-            {
                 _left1Width[flipLayer] = width;
-            }
+
+            if (_currentFlip != flipLayer) return; //MW0LGE [2.9.0.7]
 
             lblLeft1.Text = _left1[_currentFlip];
 
@@ -618,13 +628,11 @@ namespace Thetis
             _left2[flipLayer] = value;
 
             if (width == -1)
-            {
                 _left2Width[flipLayer] = _left2BaseWidth[flipLayer];
-            }
             else
-            {
                 _left2Width[flipLayer] = width;
-            }
+
+            if (_currentFlip != flipLayer) return; //MW0LGE [2.9.0.7]
 
             lblLeft2.Text = _left2[_currentFlip];
 
@@ -636,13 +644,11 @@ namespace Thetis
             _left3[flipLayer] = value;
 
             if (width == -1)
-            {
                 _left3Width[flipLayer] = _left3BaseWidth[flipLayer];
-            }
             else
-            {
                 _left3Width[flipLayer] = width;
-            }
+
+            if (_currentFlip != flipLayer) return; //MW0LGE [2.9.0.7]
 
             lblLeft3.Text = _left3[_currentFlip];
 
@@ -654,15 +660,15 @@ namespace Thetis
             _right1[flipLayer] = value;
 
             if (width == -1)
-            {
                 _right1Width[flipLayer] = _right1BaseWidth[flipLayer];
-            }
             else
-            {
                 _right1Width[flipLayer] = width;
-            }
+
+            if (_currentFlip != flipLayer) return; //MW0LGE [2.9.0.7]
 
             lblRight1.Text = _right1[_currentFlip];
+
+            repositionControls();// MW0LGE [2.9.0.7]
         }
         public void Right2(int flipLayer, string value, int width = -1)
         {
@@ -670,15 +676,15 @@ namespace Thetis
             _right2[flipLayer] = value;
 
             if (width == -1)
-            {
                 _right2Width[flipLayer] = _right2BaseWidth[flipLayer];
-            }
             else
-            {
                 _right2Width[flipLayer] = width;
-            }
+
+            if (_currentFlip != flipLayer) return; //MW0LGE [2.9.0.7]
 
             lblRight2.Text = _right2[_currentFlip];
+
+            repositionControls();// MW0LGE [2.9.0.7]
         }
         public void Right3(int flipLayer, string value, int width = -1)
         {
@@ -686,15 +692,63 @@ namespace Thetis
             _right3[flipLayer] = value;
 
             if (width == -1)
-            {
                 _right3Width[flipLayer] = _right3BaseWidth[flipLayer];
-            }
             else
-            {
                 _right3Width[flipLayer] = width;
-            }
+
+            if (_currentFlip != flipLayer) return; //MW0LGE [2.9.0.7]
 
             lblRight3.Text = _right3[_currentFlip];
+
+            repositionControls();// MW0LGE [2.9.0.7]
+        }
+        public void SetToolTipLeft(int flipLayer, int labelIndex, string text)
+        {
+            if (flipLayer < 0 || flipLayer > MAX_FLIP - 1 || labelIndex < 1 || labelIndex > 3) return;
+
+            LabelTS lbl = null;
+            _leftToolTip[flipLayer, labelIndex - 1] = text;
+
+            switch (labelIndex)
+            {
+                case 1:                   
+                    lbl = lblLeft1;
+                    break;
+                case 2:
+                    lbl = lblLeft2;
+                    break;
+                case 3:
+                    lbl = lblLeft3;
+                    break;
+                default:
+                    break;
+            }
+
+            if (_currentFlip == flipLayer && lbl != null) toolTip1.SetToolTip(lbl, text);
+        }
+        public void SetToolTipRight(int flipLayer, int labelIndex, string text)
+        {
+            if (flipLayer < 0 || flipLayer > MAX_FLIP - 1 || labelIndex < 1 || labelIndex > 3) return;
+
+            LabelTS lbl = null;
+            _rightToolTip[flipLayer, labelIndex - 1] = text;
+
+            switch (labelIndex)
+            {
+                case 1:
+                    lbl = lblRight1;
+                    break;
+                case 2:
+                    lbl = lblRight2;
+                    break;
+                case 3:
+                    lbl = lblRight3;
+                    break;
+                default:
+                    break;
+            }
+
+            if (_currentFlip == flipLayer && lbl != null) toolTip1.SetToolTip(lbl, text);
         }
 
         private bool _bCorrectionsBeingApplied = false;
@@ -860,6 +914,14 @@ namespace Thetis
             lblRight1.Text = _right1[_currentFlip];
             lblRight2.Text = _right2[_currentFlip];
             lblRight3.Text = _right3[_currentFlip];
+
+            //tool tips
+            for (int i = 0; i < 3; i++)
+            {
+                SetToolTipLeft(_currentFlip, i+1, _leftToolTip[_currentFlip, i]);  //+1 as we know them as right1 left1
+                SetToolTipRight(_currentFlip, i+1, _rightToolTip[_currentFlip, i]);
+            }
+            //
 
             repositionControls();
         }
@@ -1074,6 +1136,16 @@ namespace Thetis
         private bool _useSmallFonts = false;
         private void repositionControls()
         {
+            // return if any control is null, this should not happen  // MW0LGE [2.9.0.7]
+            if (lblFB is null || lblPS is null ||
+                lblLeft1 is null || lblLeft2 is null || lblLeft3 is null ||
+                lblRight1 is null || lblRight2 is null || lblRight3 is null ||
+                lblWarning is null || lblSplitter is null)
+            {
+                Debug.WriteLine(">>>>>>>>> REPOS NULL");
+                return;
+            }
+
             int newLeftFB = lblSplitter.Left + lblSplitter.Width;
             int newSpan = this.Width - newLeftFB;
             int halfSpan = (int)Math.Ceiling(newSpan / 2f);

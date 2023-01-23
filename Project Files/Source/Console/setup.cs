@@ -325,6 +325,10 @@ namespace Thetis
 
             selectSkin();
 
+            //MW0LGE [2.9.0.7] setup amp/volts calibration
+            initVoltsAmpsCalibration();
+            //
+
             // display setup
             console.SetupDisplayEngine(false); //MW0LGE_21k9
             //
@@ -9761,7 +9765,7 @@ namespace Thetis
             console.radio.GetDSPTX(0).TXLevelerOn = chkDSPLevelerEnabled.Checked;
 
             //
-            console.SetupInfoBar(ucInfoBar.ActionTypes.Leveler, chkDSPLevelerEnabled.Checked);
+            console.SetupInfoBarButton(ucInfoBar.ActionTypes.Leveler, chkDSPLevelerEnabled.Checked);
         }
 
         #endregion
@@ -13702,7 +13706,7 @@ namespace Thetis
             Display.PanFill = chkDisplayPanFill.Checked;
 
             //
-            console.SetupInfoBar(ucInfoBar.ActionTypes.DisplayFill, Display.PanFill);
+            console.SetupInfoBarButton(ucInfoBar.ActionTypes.DisplayFill, Display.PanFill);
         }
 
         private void chkTXPanFill_CheckedChanged(object sender, System.EventArgs e)
@@ -19242,7 +19246,7 @@ namespace Thetis
             WDSP.SetTXACFCOMPRun(WDSP.id(1, 0), run);
 
             //
-            console.SetupInfoBar(ucInfoBar.ActionTypes.CFC, chkCFCEnable.Checked);
+            console.SetupInfoBarButton(ucInfoBar.ActionTypes.CFC, chkCFCEnable.Checked);
         }
 
         private void setCFCProfile(object sender, EventArgs e)
@@ -19307,7 +19311,7 @@ namespace Thetis
             WDSP.SetTXACFCOMPPeqRun(WDSP.id(1, 0), run);
 
             //
-            console.SetupInfoBar(ucInfoBar.ActionTypes.CFCeq, chkCFCPeqEnable.Checked);
+            console.SetupInfoBarButton(ucInfoBar.ActionTypes.CFCeq, chkCFCPeqEnable.Checked);
         }
 
         private void chkPHROTEnable_CheckedChanged(object sender, EventArgs e)
@@ -20233,7 +20237,7 @@ namespace Thetis
             Display.ShowPeakBlobs = bEnabled;
 
             //
-            console.SetupInfoBar(ucInfoBar.ActionTypes.Blobs, bEnabled);
+            console.SetupInfoBarButton(ucInfoBar.ActionTypes.Blobs, bEnabled);
         }
 
         private void udPeakBlobs_ValueChanged(object sender, EventArgs e)
@@ -21378,7 +21382,7 @@ namespace Thetis
             
             Display.SpectralPeakHoldRX1 = chkActivePeakHoldRX1.Checked;
             //
-            console.SetupInfoBar(ucInfoBar.ActionTypes.ActivePeaks, chkActivePeakHoldRX1.Checked | (console.RX2Enabled && chkActivePeakHoldRX2.Checked));
+            console.SetupInfoBarButton(ucInfoBar.ActionTypes.ActivePeaks, chkActivePeakHoldRX1.Checked | (console.RX2Enabled && chkActivePeakHoldRX2.Checked));
         }
 
         private void udActivePeakHoldDurationRX1_ValueChanged(object sender, EventArgs e)
@@ -21396,7 +21400,7 @@ namespace Thetis
 
             Display.SpectralPeakHoldRX2 = chkActivePeakHoldRX2.Checked;
             //
-            console.SetupInfoBar(ucInfoBar.ActionTypes.ActivePeaks, chkActivePeakHoldRX1.Checked | (console.RX2Enabled && chkActivePeakHoldRX2.Checked));
+            console.SetupInfoBarButton(ucInfoBar.ActionTypes.ActivePeaks, chkActivePeakHoldRX1.Checked | (console.RX2Enabled && chkActivePeakHoldRX2.Checked));
         }
 
         private void udActivePeakHoldDurationRX2_ValueChanged(object sender, EventArgs e)
@@ -23015,7 +23019,7 @@ namespace Thetis
             Display.AlwaysShowCursorInfo = chkShowMHzOnCursor.Checked;
 
             //
-            console.SetupInfoBar(ucInfoBar.ActionTypes.CursorInfo, chkShowMHzOnCursor.Checked);
+            console.SetupInfoBarButton(ucInfoBar.ActionTypes.CursorInfo, chkShowMHzOnCursor.Checked);
         }
 
         private void chkLimitFilterEdgesToSidebands_CheckedChanged(object sender, EventArgs e)
@@ -23238,7 +23242,7 @@ namespace Thetis
             Display.ShowTCISpots = chkShowTCISpots.Checked;
 
             //
-            console.SetupInfoBar(ucInfoBar.ActionTypes.ShowSpots, chkShowTCISpots.Checked/* | console.SpotForm*/);
+            console.SetupInfoBarButton(ucInfoBar.ActionTypes.ShowSpots, chkShowTCISpots.Checked/* | console.SpotForm*/);
         }
         public bool ShowTCISpots
         {
@@ -25139,6 +25143,35 @@ namespace Thetis
         }
 
         
+
+        private bool _bVoffSet = false;
+        private bool _bSensSet = false;
+        private void btnAmpDefault_Click(object sender, EventArgs e)
+        {
+            float voff = 360.0f, sens = 120.0f;
+            if (console.CurrentHPSDRModel == HPSDRModel.ANAN7000D)
+            {
+                voff = 340.0f;
+                sens = 88.0f;
+            }
+
+            udAmpVoff.Value = (decimal)voff;
+            udAmpSens.Value = (decimal)sens;
+        }
+        private void udAmpVoff_ValueChanged(object sender, EventArgs e)
+        {
+            console.AmpVoff = (float)udAmpVoff.Value;
+            _bVoffSet = true;
+        }
+        private void udAmpSens_ValueChanged(object sender, EventArgs e)
+        {
+            console.AmpSens = (float)udAmpSens.Value;
+            _bSensSet = true;
+        }
+        private void initVoltsAmpsCalibration()
+        {
+            if (!_bSensSet || !_bVoffSet) btnAmpDefault_Click(this, EventArgs.Empty);
+        }
     }
 
     #region PADeviceInfo Helper Class

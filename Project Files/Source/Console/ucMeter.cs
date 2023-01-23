@@ -43,6 +43,8 @@ namespace Thetis
             //btnFloat.foc
             //btnFloat.SetStyle(ControlStyles.Selectable, false);
 
+            btnAxis.Hide();
+
             _cursor = Cursor.Current;
             pnlBar.Hide();
             pbGrab.Hide();
@@ -197,6 +199,7 @@ namespace Thetis
             set 
             { 
                 _floating = value;
+                btnAxis.Visible = !_floating;
                 setFloatingDockButton();
             }
         }

@@ -251,6 +251,7 @@
             this.lblPageNo.Size = new System.Drawing.Size(24, 13);
             this.lblPageNo.TabIndex = 43;
             this.lblPageNo.Text = "2/2";
+            this.lblPageNo.Click += new System.EventHandler(this.InfoBar_Click);
             // 
             // ucInfoBar
             // 

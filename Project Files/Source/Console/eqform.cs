@@ -554,7 +554,6 @@ namespace Thetis
             this.btnRXEQReset.Image = null;
             this.btnRXEQReset.Location = new System.Drawing.Point(478, 28);
             this.btnRXEQReset.Name = "btnRXEQReset";
-            this.btnRXEQReset.Selectable = true;
             this.btnRXEQReset.Size = new System.Drawing.Size(42, 20);
             this.btnRXEQReset.TabIndex = 110;
             this.btnRXEQReset.Text = "Reset";
@@ -760,7 +759,6 @@ namespace Thetis
             this.udTXEQ9.Name = "udTXEQ9";
             this.udTXEQ9.Size = new System.Drawing.Size(50, 20);
             this.udTXEQ9.TabIndex = 158;
-            this.udTXEQ9.TinyStep = false;
             this.udTXEQ9.Value = new decimal(new int[] {
             16000,
             0,
@@ -789,7 +787,6 @@ namespace Thetis
             this.udTXEQ8.Name = "udTXEQ8";
             this.udTXEQ8.Size = new System.Drawing.Size(50, 20);
             this.udTXEQ8.TabIndex = 157;
-            this.udTXEQ8.TinyStep = false;
             this.udTXEQ8.Value = new decimal(new int[] {
             8000,
             0,
@@ -818,7 +815,6 @@ namespace Thetis
             this.udTXEQ7.Name = "udTXEQ7";
             this.udTXEQ7.Size = new System.Drawing.Size(50, 20);
             this.udTXEQ7.TabIndex = 156;
-            this.udTXEQ7.TinyStep = false;
             this.udTXEQ7.Value = new decimal(new int[] {
             4000,
             0,
@@ -847,7 +843,6 @@ namespace Thetis
             this.udTXEQ6.Name = "udTXEQ6";
             this.udTXEQ6.Size = new System.Drawing.Size(50, 20);
             this.udTXEQ6.TabIndex = 155;
-            this.udTXEQ6.TinyStep = false;
             this.udTXEQ6.Value = new decimal(new int[] {
             2000,
             0,
@@ -876,7 +871,6 @@ namespace Thetis
             this.udTXEQ5.Name = "udTXEQ5";
             this.udTXEQ5.Size = new System.Drawing.Size(50, 20);
             this.udTXEQ5.TabIndex = 154;
-            this.udTXEQ5.TinyStep = false;
             this.udTXEQ5.Value = new decimal(new int[] {
             1000,
             0,
@@ -905,7 +899,6 @@ namespace Thetis
             this.udTXEQ4.Name = "udTXEQ4";
             this.udTXEQ4.Size = new System.Drawing.Size(50, 20);
             this.udTXEQ4.TabIndex = 153;
-            this.udTXEQ4.TinyStep = false;
             this.udTXEQ4.Value = new decimal(new int[] {
             500,
             0,
@@ -934,7 +927,6 @@ namespace Thetis
             this.udTXEQ3.Name = "udTXEQ3";
             this.udTXEQ3.Size = new System.Drawing.Size(50, 20);
             this.udTXEQ3.TabIndex = 152;
-            this.udTXEQ3.TinyStep = false;
             this.udTXEQ3.Value = new decimal(new int[] {
             250,
             0,
@@ -963,7 +955,6 @@ namespace Thetis
             this.udTXEQ2.Name = "udTXEQ2";
             this.udTXEQ2.Size = new System.Drawing.Size(50, 20);
             this.udTXEQ2.TabIndex = 151;
-            this.udTXEQ2.TinyStep = false;
             this.udTXEQ2.Value = new decimal(new int[] {
             125,
             0,
@@ -992,7 +983,6 @@ namespace Thetis
             this.udTXEQ1.Name = "udTXEQ1";
             this.udTXEQ1.Size = new System.Drawing.Size(50, 20);
             this.udTXEQ1.TabIndex = 150;
-            this.udTXEQ1.TinyStep = false;
             this.udTXEQ1.Value = new decimal(new int[] {
             63,
             0,
@@ -1021,7 +1011,6 @@ namespace Thetis
             this.udTXEQ0.Name = "udTXEQ0";
             this.udTXEQ0.Size = new System.Drawing.Size(50, 20);
             this.udTXEQ0.TabIndex = 149;
-            this.udTXEQ0.TinyStep = false;
             this.udTXEQ0.Value = new decimal(new int[] {
             32,
             0,

@@ -226,7 +226,6 @@ namespace Thetis
             this.btnAdd.Image = null;
             this.btnAdd.Location = new System.Drawing.Point(24, 24);
             this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Selectable = true;
             this.btnAdd.Size = new System.Drawing.Size(48, 23);
             this.btnAdd.TabIndex = 6;
             this.btnAdd.Text = "Add...";
@@ -248,7 +247,6 @@ namespace Thetis
             this.btnRemove.Image = null;
             this.btnRemove.Location = new System.Drawing.Point(80, 24);
             this.btnRemove.Name = "btnRemove";
-            this.btnRemove.Selectable = true;
             this.btnRemove.Size = new System.Drawing.Size(56, 23);
             this.btnRemove.TabIndex = 11;
             this.btnRemove.Text = "Remove";
@@ -395,7 +393,6 @@ namespace Thetis
             this.udPreamp.Name = "udPreamp";
             this.udPreamp.Size = new System.Drawing.Size(40, 20);
             this.udPreamp.TabIndex = 52;
-            this.udPreamp.TinyStep = false;
             this.udPreamp.Value = new decimal(new int[] {
             0,
             0,
@@ -465,7 +462,6 @@ namespace Thetis
             this.btnNext.Image = null;
             this.btnNext.Location = new System.Drawing.Point(232, 56);
             this.btnNext.Name = "btnNext";
-            this.btnNext.Selectable = true;
             this.btnNext.Size = new System.Drawing.Size(40, 23);
             this.btnNext.TabIndex = 8;
             this.btnNext.Text = "Next";
@@ -477,7 +473,6 @@ namespace Thetis
             this.btnPrevious.Image = null;
             this.btnPrevious.Location = new System.Drawing.Point(184, 56);
             this.btnPrevious.Name = "btnPrevious";
-            this.btnPrevious.Selectable = true;
             this.btnPrevious.Size = new System.Drawing.Size(40, 23);
             this.btnPrevious.TabIndex = 7;
             this.btnPrevious.Text = "Prev";
@@ -502,7 +497,6 @@ namespace Thetis
             this.btnStop.Image = null;
             this.btnStop.Location = new System.Drawing.Point(32, 56);
             this.btnStop.Name = "btnStop";
-            this.btnStop.Selectable = true;
             this.btnStop.Size = new System.Drawing.Size(40, 23);
             this.btnStop.TabIndex = 4;
             this.btnStop.Text = "Stop";
