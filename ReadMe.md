@@ -30,6 +30,5 @@ I rearranged various items under Setup>Transmit.
 
 
 
-# NOTE
-My distro is in a state of flux whilst I work on multi-meters, and may not actually build or run as expected. The releases section contains source that will run/compile. I am using this a dumping ground at the moment for a backup in-case something untoward happens.
+
 
