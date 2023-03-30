@@ -563,6 +563,7 @@ namespace Thetis
 
             Display.specready = false;
 
+
             //MW0LGE
             // Problems with CultureInfo.
             // MemoryPanel and Spot system changes CultureInfo on their own threads, problem with this is that the culture change is now not limited just in that thread, if they
@@ -804,7 +805,7 @@ namespace Thetis
 
             InitializeComponent();								// Windows Forms Generated Code
             InitialiseAndromedaMenus();
-
+            this.Visible = false;
             //
             ucQuickRecallPad.console = this;
             Display.console = this;
@@ -1089,6 +1090,27 @@ namespace Thetis
                         autoStartTimer.Enabled = true;
                         break;
                     }
+                }
+
+                this.Opacity = 0;
+                Show();
+                Application.DoEvents();
+                Hide();
+                Application.DoEvents();
+
+                Show();
+                try
+                {
+                    while (Opacity < 1.0)
+                    {
+                        Application.DoEvents();
+                        Thread.Sleep(10);
+                        Opacity += 0.01;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignore
                 }
             }
         }
@@ -52344,7 +52366,7 @@ namespace Thetis
             DataTable multitable = AndromedaSet.Tables["Multifunction Settings"];
             toolStripStatusLabelAndromedaMulti.Text = multitable.Rows[CurrentMultifunctionOption]["Multi Description"].ToString();
 
-            // NOTE: Important if you are ading more items to the status bar
+            // NOTE: Important if you are adding more items to the status bar
             // MW0LGE_21e could not get the designer to keep widths of these
             // so force them here
             toolStripDropDownButton_ScreenSize.Width = 110;
