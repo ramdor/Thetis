@@ -1,0 +1,762 @@
+<?xml version="1.0" standalone="yes"?>
+<NewDataSet>
+  <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+      <xs:complexType>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="SuppressVersion">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="CurrentVersion" type="xs:int" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="portaudio">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="FileName" type="xs:string" default="" />
+                <xs:element name="ErrorCode" type="xs:string" default="" />
+                <xs:element name="Message" type="xs:string" default="" />
+                <xs:element name="CodePrev" type="xs:unsignedInt" default="0" />
+                <xs:element name="CodeCurrent" type="xs:unsignedInt" default="0" />
+                <xs:element name="CodeNext" type="xs:unsignedInt" default="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+      <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//portaudio" />
+        <xs:field xpath="FileName" />
+        <xs:field xpath="ErrorCode" />
+        <xs:field xpath="Message" />
+        <xs:field xpath="CodePrev" />
+        <xs:field xpath="CodeCurrent" />
+        <xs:field xpath="CodeNext" />
+      </xs:unique>
+    </xs:element>
+  </xs:schema>
+  <SuppressVersion>
+    <CurrentVersion>2</CurrentVersion>
+  </SuppressVersion>
+  <portaudio>
+    <FileName>pa_hostapi_skeleton.c</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression 'deviceCount &gt; _' is always false.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>5789201</CodeCurrent>
+    <CodeNext>123</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; waveFormat' buffer is not a multiple of the element size of the type 'WAVEFORMATEX'.</Message>
+    <CodePrev>3733792418</CodePrev>
+    <CodeCurrent>3005433236</CodeCurrent>
+    <CodeNext>0</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; waveFormat' buffer is not a multiple of the element size of the type 'WAVEFORMATEX'.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3310245792</CodeCurrent>
+    <CodeNext>35251</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; waveFormat' buffer is not a multiple of the element size of the type 'WAVEFORMATEX'.</Message>
+    <CodePrev>3733725970</CodePrev>
+    <CodeCurrent>1627058757</CodeCurrent>
+    <CodeNext>1143117632</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V1020</ErrorCode>
+    <Message>The function exited without calling the 'PaUtil_EndBufferProcessing' function. Check lines: _, _.</Message>
+    <CodePrev>123</CodePrev>
+    <CodeCurrent>1614037342</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V1020</ErrorCode>
+    <Message>The function exited without calling the 'PaUtil_EndBufferProcessing' function. Check lines: _, _.</Message>
+    <CodePrev>1583518425</CodePrev>
+    <CodeCurrent>5642053</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_front.c</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression 'inputHostApiIndex != - _' is always true.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2989383413</CodeCurrent>
+    <CodeNext>4082663</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_front.c</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression 'outputHostApiIndex != - _' is always true.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1643011828</CodeCurrent>
+    <CodeNext>8179687</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_front.c</FileName>
+    <ErrorCode>V1048</ErrorCode>
+    <Message>The 'result' variable was assigned the same value.</Message>
+    <CodePrev>1148944085</CodePrev>
+    <CodeCurrent>5751987</CodeCurrent>
+    <CodeNext>24765137</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_process.c</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression 'bp-&gt;hostOutputChannels[_]' is always false.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2759840382</CodeCurrent>
+    <CodeNext>2566411658</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>asiolist.cpp</FileName>
+    <ErrorCode>V668</ErrorCode>
+    <Message>There is no sense in testing the 'lpdrv' pointer against null, as the memory was allocated using the 'new' operator. The exception will be generated in the case of memory allocation error.</Message>
+    <CodePrev>2314103293</CodePrev>
+    <CodeCurrent>45345</CodeCurrent>
+    <CodeNext>1644838034</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_asio.cpp</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression 'blockingState-&gt;stopFlag' is always false.</Message>
+    <CodePrev>2206578048</CodePrev>
+    <CodeCurrent>3502331495</CodeCurrent>
+    <CodeNext>0</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_asio.cpp</FileName>
+    <ErrorCode>V1037</ErrorCode>
+    <Message>Two or more case-branches perform the same actions. Check lines: _, _, _</Message>
+    <CodePrev>1742057623</CodePrev>
+    <CodeCurrent>5871</CodeCurrent>
+    <CodeNext>2337</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_hostapi_skeleton.c</FileName>
+    <ErrorCode>V524</ErrorCode>
+    <Message>It is odd that the body of 'GetStreamWriteAvailable' function is fully equivalent to the body of 'GetStreamReadAvailable' function.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3539284891</CodeCurrent>
+    <CodeNext>123</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V1048</ErrorCode>
+    <Message>Variable was assigned the same value.</Message>
+    <CodePrev>1738965401</CodePrev>
+    <CodeCurrent>2616086495</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V560</ErrorCode>
+    <Message>A part of conditional expression is always false: !params.</Message>
+    <CodePrev>19746067</CodePrev>
+    <CodeCurrent>1135254428</CodeCurrent>
+    <CodeNext>2854871871</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V560</ErrorCode>
+    <Message>A part of conditional expression is always true: pAvRtCreateThreadOrderingGroup.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>239076001</CodeCurrent>
+    <CodeNext>169952818</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V519</ErrorCode>
+    <Message>The 'nFrames' variable is assigned values twice successively. Perhaps this is a mistake. Check lines: _, _.</Message>
+    <CodePrev>1470079418</CodePrev>
+    <CodeCurrent>3501471935</CodeCurrent>
+    <CodeNext>0</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>463499252</CodePrev>
+    <CodeCurrent>123</CodeCurrent>
+    <CodeNext>26511967</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V524</ErrorCode>
+    <Message>It is odd that the body of 'GetStreamWriteAvailable' function is fully equivalent to the body of 'GetStreamReadAvailable' function.</Message>
+    <CodePrev>57671651</CodePrev>
+    <CodeCurrent>3539284891</CodeCurrent>
+    <CodeNext>123</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression 'result == paNoError' is always false.</Message>
+    <CodePrev>11977</CodePrev>
+    <CodeCurrent>1165152165</CodeCurrent>
+    <CodeNext>0</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V560</ErrorCode>
+    <Message>A part of conditional expression is always false: inputParameters.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2909843026</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V560</ErrorCode>
+    <Message>A part of conditional expression is always false: outputParameters.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2909843026</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V560</ErrorCode>
+    <Message>A part of conditional expression is always false: !pSub.</Message>
+    <CodePrev>19746067</CodePrev>
+    <CodeCurrent>1135254428</CodeCurrent>
+    <CodeNext>2854871871</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V1016</ErrorCode>
+    <Message>Expression is always true.</Message>
+    <CodePrev>3615196784</CodePrev>
+    <CodeCurrent>66101145</CodeCurrent>
+    <CodeNext>2951126225</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V1016</ErrorCode>
+    <Message>Expression is always true.</Message>
+    <CodePrev>2927855216</CodePrev>
+    <CodeCurrent>3287326504</CodeCurrent>
+    <CodeNext>2951126225</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V728</ErrorCode>
+    <Message>An excessive check can be simplified. The '(A &amp;&amp; !B) || (!A &amp;&amp; B)' expression is equivalent to the 'bool(A) != bool(B)' expression.</Message>
+    <CodePrev>565704982</CodePrev>
+    <CodeCurrent>2478911368</CodeCurrent>
+    <CodeNext>666272568</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression 'hResult == ((HRESULT) _L)' is always false.</Message>
+    <CodePrev>2418834983</CodePrev>
+    <CodeCurrent>1844830006</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression 'hResult == ((HRESULT) _L)' is always false.</Message>
+    <CodePrev>1474928</CodePrev>
+    <CodeCurrent>1089945398</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression is always false.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3302794857</CodeCurrent>
+    <CodeNext>2149617382</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V1048</ErrorCode>
+    <Message>The 'ret' variable was assigned the same value.</Message>
+    <CodePrev>588</CodePrev>
+    <CodeCurrent>783539</CodeCurrent>
+    <CodeNext>0</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V1048</ErrorCode>
+    <Message>The 'ret' variable was assigned the same value.</Message>
+    <CodePrev>305</CodePrev>
+    <CodeCurrent>783539</CodeCurrent>
+    <CodeNext>0</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wmme.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; waveFormat' buffer is not a multiple of the element size of the type 'WAVEFORMATEX'.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>300774241</CodeCurrent>
+    <CodeNext>2820275</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wmme.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; waveFormat' buffer is not a multiple of the element size of the type 'WAVEFORMATEX'.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>4160964704</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wmme.c</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression 'inputStreamInfo' is always true.</Message>
+    <CodePrev>4141825803</CodePrev>
+    <CodeCurrent>674948531</CodeCurrent>
+    <CodeNext>189336737</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wmme.c</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression 'outputStreamInfo' is always true.</Message>
+    <CodePrev>3223830105</CodePrev>
+    <CodeCurrent>204035377</CodeCurrent>
+    <CodeNext>189336737</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wmme.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; waveFormat' buffer is not a multiple of the element size of the type 'WAVEFORMATEX'.</Message>
+    <CodePrev>4282801914</CodePrev>
+    <CodeCurrent>2050040808</CodeCurrent>
+    <CodeNext>63207306</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wmme.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; waveFormat' buffer is not a multiple of the element size of the type 'WAVEFORMATEX'.</Message>
+    <CodePrev>4085850013</CodePrev>
+    <CodeCurrent>2050040808</CodeCurrent>
+    <CodeNext>63207306</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wmme.c</FileName>
+    <ErrorCode>V1037</ErrorCode>
+    <Message>Two or more case-branches perform the same actions. Check lines: _, _</Message>
+    <CodePrev>901601718</CodePrev>
+    <CodeCurrent>1595012864</CodeCurrent>
+    <CodeNext>2337</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V1032</ErrorCode>
+    <Message>The pointer 'interfaceDetailsArray' is cast to a more strictly aligned pointer type.</Message>
+    <CodePrev>3618508409</CodePrev>
+    <CodeCurrent>3428910576</CodeCurrent>
+    <CodeNext>2552328987</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; wfx' buffer is not a multiple of the element size of the type 'PaWinWaveFormat'.</Message>
+    <CodePrev>2875414712</CodePrev>
+    <CodeCurrent>850209134</CodeCurrent>
+    <CodeNext>2367646316</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; wfx' buffer is not a multiple of the element size of the type 'PaWinWaveFormat'.</Message>
+    <CodePrev>2370236151</CodePrev>
+    <CodeCurrent>1750004715</CodeCurrent>
+    <CodeNext>2367646316</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; wfx' buffer is not a multiple of the element size of the type 'PaWinWaveFormat'.</Message>
+    <CodePrev>1453291962</CodePrev>
+    <CodeCurrent>850209134</CodeCurrent>
+    <CodeNext>2099210848</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; wfx' buffer is not a multiple of the element size of the type 'PaWinWaveFormat'.</Message>
+    <CodePrev>2370236151</CodePrev>
+    <CodeCurrent>1750004715</CodeCurrent>
+    <CodeNext>2099210848</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; wfx' buffer is not a multiple of the element size of the type 'PaWinWaveFormat'.</Message>
+    <CodePrev>21309</CodePrev>
+    <CodeCurrent>850209134</CodeCurrent>
+    <CodeNext>1961419556</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; wfx' buffer is not a multiple of the element size of the type 'PaWinWaveFormat'.</Message>
+    <CodePrev>2370236151</CodePrev>
+    <CodeCurrent>1750004715</CodeCurrent>
+    <CodeNext>1961419556</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; wfx' buffer is not a multiple of the element size of the type 'PaWinWaveFormat'.</Message>
+    <CodePrev>21309</CodePrev>
+    <CodeCurrent>850209134</CodeCurrent>
+    <CodeNext>3925801584</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V641</ErrorCode>
+    <Message>The size of the '&amp; wfx' buffer is not a multiple of the element size of the type 'PaWinWaveFormat'.</Message>
+    <CodePrev>856194423</CodePrev>
+    <CodeCurrent>1750004715</CodeCurrent>
+    <CodeNext>3925801584</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V636</ErrorCode>
+    <Message>The expression was implicitly cast from 'int' type to 'double' type. Consider utilizing an explicit type cast to avoid the loss of a fractional part. An example: double A = (double)(X) / Y;.</Message>
+    <CodePrev>647670093</CodePrev>
+    <CodeCurrent>3667357016</CodeCurrent>
+    <CodeNext>26445</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V636</ErrorCode>
+    <Message>The expression was implicitly cast from 'int' type to 'double' type. Consider utilizing an explicit type cast to avoid the loss of a fractional part. An example: double A = (double)(X) / Y;.</Message>
+    <CodePrev>1295377739</CodePrev>
+    <CodeCurrent>3962142668</CodeCurrent>
+    <CodeNext>26445</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V1048</ErrorCode>
+    <Message>The 'result' variable was assigned the same value.</Message>
+    <CodePrev>645417463</CodePrev>
+    <CodeCurrent>3860893400</CodeCurrent>
+    <CodeNext>35251</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V1048</ErrorCode>
+    <Message>The 'result' variable was assigned the same value.</Message>
+    <CodePrev>1866297203</CodePrev>
+    <CodeCurrent>3860893400</CodeCurrent>
+    <CodeNext>35251</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V1020</ErrorCode>
+    <Message>The function exited without calling the 'PaUtil_EndBufferProcessing' function. Check lines: _, _.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>352987</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V1020</ErrorCode>
+    <Message>The function exited without calling the 'PaUtil_EndBufferProcessing' function. Check lines: _, _.</Message>
+    <CodePrev>22349</CodePrev>
+    <CodeCurrent>352987</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V1048</ErrorCode>
+    <Message>The 'stream-&gt;streamStarted' variable was assigned the same value.</Message>
+    <CodePrev>389247559</CodePrev>
+    <CodeCurrent>778492255</CodeCurrent>
+    <CodeNext>0</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V524</ErrorCode>
+    <Message>It is odd that the body of 'GetStreamWriteAvailable' function is fully equivalent to the body of 'GetStreamReadAvailable' function.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2783602508</CodeCurrent>
+    <CodeNext>1224892567</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V560</ErrorCode>
+    <Message>A part of conditional expression is always false: !handle.</Message>
+    <CodePrev>3696926059</CodePrev>
+    <CodeCurrent>1381955920</CodeCurrent>
+    <CodeNext>267393267</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>asiodrivers.cpp</FileName>
+    <ErrorCode>V526</ErrorCode>
+    <Message>The 'strcmp' function returns _ if corresponding strings are equal. Consider examining the condition for mistakes.</Message>
+    <CodePrev>2768623</CodePrev>
+    <CodeCurrent>403847622</CodeCurrent>
+    <CodeNext>3280283433</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression is always true.</Message>
+    <CodePrev>125</CodePrev>
+    <CodeCurrent>3070258229</CodeCurrent>
+    <CodeNext>123</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V1037</ErrorCode>
+    <Message>Two or more case-branches perform the same actions. Check lines: _, _</Message>
+    <CodePrev>3685534891</CodePrev>
+    <CodeCurrent>1642744772</CodeCurrent>
+    <CodeNext>65848153</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V1037</ErrorCode>
+    <Message>Two or more case-branches perform the same actions. Check lines: _, _</Message>
+    <CodePrev>100</CodePrev>
+    <CodeCurrent>1638550724</CodeCurrent>
+    <CodeNext>3649494355</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V1037</ErrorCode>
+    <Message>Two or more case-branches perform the same actions. Check lines: _, _</Message>
+    <CodePrev>2919057957</CodePrev>
+    <CodeCurrent>2914240677</CodeCurrent>
+    <CodeNext>3064220403</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V1037</ErrorCode>
+    <Message>Two or more case-branches perform the same actions. Check lines: _, _</Message>
+    <CodePrev>123</CodePrev>
+    <CodeCurrent>3178513268</CodeCurrent>
+    <CodeNext>2919057957</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V636</ErrorCode>
+    <Message>The expression was implicitly cast from 'int' type to 'double' type. Consider utilizing an explicit type cast to avoid overflow. An example: double A = (double)(X) * Y;.</Message>
+    <CodePrev>806531480</CodePrev>
+    <CodeCurrent>931602952</CodeCurrent>
+    <CodeNext>4198414173</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression 'result == paNoError' is always true.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2564643193</CodeCurrent>
+    <CodeNext>352987</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_ds.c</FileName>
+    <ErrorCode>V1027</ErrorCode>
+    <Message>Pointer to an object of the 'PaWinWaveFormat' class is cast to unrelated 'tWAVEFORMATEX' class.</Message>
+    <CodePrev>3733792418</CodePrev>
+    <CodeCurrent>3005433236</CodeCurrent>
+    <CodeNext>0</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V524</ErrorCode>
+    <Message>It is odd that the body of '_MixMonoToStereo__TO___' function is fully equivalent to the body of '_MixMonoToStereo__TO_____' function.</Message>
+    <CodePrev>125</CodePrev>
+    <CodeCurrent>1047728468</CodeCurrent>
+    <CodeNext>318101899</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V524</ErrorCode>
+    <Message>It is odd that the body of '_MixMonoToStereo__TO____L' function is fully equivalent to the body of '_MixMonoToStereo__TO______L' function.</Message>
+    <CodePrev>125</CodePrev>
+    <CodeCurrent>4190913276</CodeCurrent>
+    <CodeNext>318101899</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wasapi.c</FileName>
+    <ErrorCode>V524</ErrorCode>
+    <Message>It is odd that the body of 'AbortStream' function is fully equivalent to the body of 'StopStream' function.</Message>
+    <CodePrev>2818572314</CodePrev>
+    <CodeCurrent>881859007</CodeCurrent>
+    <CodeNext>268555</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>portaudio.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>123</CodePrev>
+    <CodeCurrent>3101508157</CodeCurrent>
+    <CodeNext>873116732</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_cpuload.c</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression 'framesProcessed &gt; _' is always true.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2562392569</CodeCurrent>
+    <CodeNext>1067988685</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_converters.c</FileName>
+    <ErrorCode>V525</ErrorCode>
+    <Message>The code contains the collection of similar blocks. Check items 'Zero_', 'Zero_', 'Zero_', 'Zero_', 'Zero_', 'Zero_', 'ZeroU_' in lines _, _, _, _, _, _, _.</Message>
+    <CodePrev>1516004881</CodePrev>
+    <CodeCurrent>4169397909</CodeCurrent>
+    <CodeNext>4102289037</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_converters.c</FileName>
+    <ErrorCode>V1037</ErrorCode>
+    <Message>Two or more case-branches perform the same actions. Check lines: _, _</Message>
+    <CodePrev>4169397909</CodePrev>
+    <CodeCurrent>4102289037</CodeCurrent>
+    <CodeNext>3431199730</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_front.c</FileName>
+    <ErrorCode>V522</ErrorCode>
+    <Message>There might be dereferencing of a potential null pointer.</Message>
+    <CodePrev>572785542</CodePrev>
+    <CodeCurrent>3834733173</CodeCurrent>
+    <CodeNext>1192151717</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_front.c</FileName>
+    <ErrorCode>V522</ErrorCode>
+    <Message>There might be dereferencing of a potential null pointer.</Message>
+    <CodePrev>2720281814</CodePrev>
+    <CodeCurrent>3436313026</CodeCurrent>
+    <CodeNext>2384263845</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>asiolist.h</FileName>
+    <ErrorCode>V1003</ErrorCode>
+    <Message>The macro 'DRVERR_INVALID_PARAM' is a dangerous expression. The expression must be surrounded by parentheses.</Message>
+    <CodePrev>13736</CodePrev>
+    <CodeCurrent>1613681827</CodeCurrent>
+    <CodeNext>787847096</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>asiolist.h</FileName>
+    <ErrorCode>V1003</ErrorCode>
+    <Message>The macro 'DRVERR_DEVICE_ALREADY_OPEN' is a dangerous expression. The expression must be surrounded by parentheses.</Message>
+    <CodePrev>1613681827</CodePrev>
+    <CodeCurrent>787847096</CodeCurrent>
+    <CodeNext>97701794</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>asiolist.h</FileName>
+    <ErrorCode>V1003</ErrorCode>
+    <Message>The macro 'DRVERR_DEVICE_NOT_FOUND' is a dangerous expression. The expression must be surrounded by parentheses.</Message>
+    <CodePrev>787847096</CodePrev>
+    <CodeCurrent>97701794</CodeCurrent>
+    <CodeNext>0</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V636</ErrorCode>
+    <Message>The expression was implicitly cast from 'int' type to 'double' type. Consider utilizing an explicit type cast to avoid overflow. An example: double A = (double)(X) * Y;.</Message>
+    <CodePrev>1614083713</CodePrev>
+    <CodeCurrent>621677604</CodeCurrent>
+    <CodeNext>2555150713</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V1004</ErrorCode>
+    <Message>The 'info.stream-&gt;capture.pPin' pointer was used unsafely after it was verified against nullptr. Check lines: _, _.</Message>
+    <CodePrev>3487638108</CodePrev>
+    <CodeCurrent>1146961205</CodeCurrent>
+    <CodeNext>3579893</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V522</ErrorCode>
+    <Message>There might be dereferencing of a potential null pointer 'info.stream-&gt;render.pPin'.</Message>
+    <CodePrev>3489616164</CodePrev>
+    <CodeCurrent>3890870761</CodeCurrent>
+    <CodeNext>3053</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V547</ErrorCode>
+    <Message>Expression '!stream-&gt;streamActive' is always false.</Message>
+    <CodePrev>125</CodePrev>
+    <CodeCurrent>2614737172</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wmme.c</FileName>
+    <ErrorCode>V1027</ErrorCode>
+    <Message>Pointer to an object of the 'PaWinWaveFormat' class is cast to unrelated 'tWAVEFORMATEX' class.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>300774241</CodeCurrent>
+    <CodeNext>2820275</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wmme.c</FileName>
+    <ErrorCode>V1027</ErrorCode>
+    <Message>Pointer to an object of the 'PaWinWaveFormat' class is cast to unrelated 'tWAVEFORMATEX' class.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>4160964704</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wmme.c</FileName>
+    <ErrorCode>V1027</ErrorCode>
+    <Message>Pointer to an object of the 'PaWinWaveFormat' class is cast to unrelated 'tWAVEFORMATEX' class.</Message>
+    <CodePrev>4282801914</CodePrev>
+    <CodeCurrent>2050040808</CodeCurrent>
+    <CodeNext>63207306</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wmme.c</FileName>
+    <ErrorCode>V1027</ErrorCode>
+    <Message>Pointer to an object of the 'PaWinWaveFormat' class is cast to unrelated 'tWAVEFORMATEX' class.</Message>
+    <CodePrev>4085850013</CodePrev>
+    <CodeCurrent>2050040808</CodeCurrent>
+    <CodeNext>63207306</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_waveformat.c</FileName>
+    <ErrorCode>V1027</ErrorCode>
+    <Message>Pointer to an object of the 'PaWinWaveFormat' class is cast to unrelated 'tWAVEFORMATEX' class.</Message>
+    <CodePrev>123</CodePrev>
+    <CodeCurrent>443625668</CodeCurrent>
+    <CodeNext>1723114884</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks_utils.c</FileName>
+    <ErrorCode>V1027</ErrorCode>
+    <Message>Pointer to an object of the class is cast to unrelated class.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1324749103</CodeCurrent>
+    <CodeNext>0</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks_utils.c</FileName>
+    <ErrorCode>V1027</ErrorCode>
+    <Message>Pointer to an object of the class is cast to unrelated class.</Message>
+    <CodePrev>123</CodePrev>
+    <CodeCurrent>2150432255</CodeCurrent>
+    <CodeNext>0</CodeNext>
+  </portaudio>
+  <portaudio>
+    <FileName>pa_win_wdmks.c</FileName>
+    <ErrorCode>V524</ErrorCode>
+    <Message>It is odd that the body of 'PaPinCaptureSubmitHandler_WaveRTPolled' function is fully equivalent to the body of 'PaPinCaptureSubmitHandler_WaveRTEvent' function.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1244394029</CodeCurrent>
+    <CodeNext>3121633098</CodeNext>
+  </portaudio>
+</NewDataSet>

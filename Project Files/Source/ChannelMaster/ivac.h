@@ -48,17 +48,17 @@ typedef struct _ivac
 	int audio_size;
 	int txmon_size;
 	int vac_size;					// VAC buffer size
-	void *mixer;					// pointer to async audio mixer
+	void* mixer;					// pointer to async audio mixer
 	double* bitbucket;				// dump for un-needed resampler output
 
-	void *rmatchIN;
-	void *rmatchOUT;
+	void* rmatchIN;
+	void* rmatchOUT;
 
 	int INringsize;
 	int OUTringsize;
 
 	PaStreamParameters inParam, outParam;
-	PaStream *Stream;
+	PaStream* Stream;
 
 	int host_api_index;
 	int input_dev_index;
@@ -83,19 +83,29 @@ typedef struct _ivac
 
 	double initial_INvar;			// init the var ratio
 	double initial_OUTvar;			// init the var ratio
-} ivac, *IVAC;
 
-void combinebuff (int n, double* a, double* combined);
-void scalebuff (int n, double* in, double k, double* out);
+	int exclusive; // G7KLJ: Use output device in exclusive mode. Helps low
+	// latency performance
+	HANDLE MMThreadApiHandle; // G7KLJ handle to store state for thread cleanup.
+	// Portaudio works so much better with super-high
+	// thread priority ("Pro Audio")
+	volatile int have_set_thread_priority;
+	double* convbuf;
+	size_t convbuf_size;
+	const PaStreamInfo* streamInfo;
+} ivac, * IVAC;
+
+void combinebuff(int n, double* a, double* combined);
+void scalebuff(int n, double* in, double k, double* out);
 void xvac_out(int id, int nsamples, double* buff);
 
-extern __declspec(dllexport) void *create_resampleV (int samplerate_in, int samplerate_out);
-extern __declspec(dllexport) void xresampleV (double *input, double *output, int numsamps, int *outsamps, void *ptr);
-extern __declspec(dllexport) void destroy_resampleV (/*ResSt*/ void * resst);
-extern __declspec(dllexport) void destroy_ivac (int id);
+extern __declspec(dllexport) void* create_resampleV(int samplerate_in, int samplerate_out);
+extern __declspec(dllexport) void xresampleV(double* input, double* output, int numsamps, int* outsamps, void* ptr);
+extern __declspec(dllexport) void destroy_resampleV(/*ResSt*/ void* resst);
+extern __declspec(dllexport) void destroy_ivac(int id);
 extern __declspec(dllexport) void xvacIN(int id, double* in_tx, int bypass);
 extern __declspec(dllexport) void xvacOUT(int id, int stream, double* data);
-extern __declspec(dllexport) void create_ivac (
+extern __declspec(dllexport) void create_ivac(
 	int id,
 	int run,
 	int iq_type,				// 1 if using raw IQ samples, 0 for audio
@@ -110,14 +120,52 @@ extern __declspec(dllexport) void create_ivac (
 	int audio_size,				// buffer size for RCVR Audio data to VAC
 	int txmon_size,				// buffer size for TX Monitor data to VAC
 	int vac_size				// VAC buffer size
-	);
+);
 
-extern void SetIVACtxmonRate (int id, int rate);
-extern void SetIVACtxmonSize (int id, int size);
-extern __declspec(dllexport) void SetIVACiqSizeAndRate (int id, int size, int rate);
-extern __declspec(dllexport) void SetIVACmicSize (int id, int size);
-extern __declspec(dllexport) void SetIVACmicRate (int id, int rate);
-extern __declspec(dllexport) void SetIVACaudioRate (int id, int rate);
-extern __declspec(dllexport) void SetIVACaudioSize (int id, int size);
 
+
+
+extern void SetIVACtxmonRate(int id, int rate);
+extern void SetIVACtxmonSize(int id, int size);
+extern __declspec(dllexport) void SetIVACiqSizeAndRate(int id, int size, int rate);
+extern __declspec(dllexport) void SetIVACmicSize(int id, int size);
+extern __declspec(dllexport) void SetIVACmicRate(int id, int rate);
+extern __declspec(dllexport) void SetIVACaudioRate(int id, int rate);
+extern __declspec(dllexport) void SetIVACaudioSize(int id, int size);
+
+// This is an independent project of an individual developer. Dear PVS-Studio,
+// please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
+// http://www.viva64.com
+
+// static functions that allow the app to use Float32 inside of PortAudio.
+// Blatantly stolen from pa_converters.c, with modifications. KLJ
+static void Float64_To_Float32(void* destinationBuffer,
+	signed int destinationStride, void* sourceBuffer, signed int sourceStride,
+	unsigned int count) {
+	double* src = (double*)sourceBuffer;
+	float* dest = (float*)destinationBuffer;
+
+	while (count--) {
+		*dest = (float)*src;
+
+		src += sourceStride;
+		dest += destinationStride;
+	}
+}
+
+static void Float32_To_Float64(void* destinationBuffer,
+	signed int destinationStride, void* sourceBuffer, signed int sourceStride,
+	unsigned int count) {
+	float* src = (float*)sourceBuffer;
+	double* dest = (double*)destinationBuffer;
+
+	while (count--) {
+		*dest = *src;
+
+		src += sourceStride;
+		dest += destinationStride;
+	}
+}
 #endif

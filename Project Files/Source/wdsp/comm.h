@@ -18,19 +18,36 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-The author can be reached by email at  
+The author can be reached by email at
 
 warren@wpratt.com
 
 */
 
+#include <float.h> // DBL_EPSILON & friends. G7KLJ
+
+//#include "../ChannelMaster/debug_flags.h"
+
+typedef double SAMPLETYPE;
+
+#ifndef MY_PATIENCE
+#ifdef _DEBUG
+#define MY_PATIENCE FFTW_ESTIMATE
+
+#else
+#define MY_PATIENCE FFTW_PATIENT
+
+#endif
+#endif
+
 #include <Windows.h>
 #include <process.h>
 #include <intrin.h>
 #include <math.h>
-#include <stdint.h>
 #include <time.h>
 #include <avrt.h>
+#include <assert.h>
+#include <stdint.h>
 #include "fftw3.h"
 
 #include "amd.h"
@@ -87,6 +104,52 @@ warren@wpratt.com
 #include "utilities.h"
 #include "varsamp.h"
 #include "wcpAGC.h"
+
+#ifndef PRIO_THRD_DEFINED
+#define PRIO_THRD_DEFINED
+
+static inline HANDLE prioritise_thread_max() {
+
+	DWORD taskIndex = 0;
+	HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
+	if (hTask != 0) {
+
+		BOOL ok = AvSetMmThreadPriority(hTask, AVRT_PRIORITY_CRITICAL);
+		assert(ok);
+
+	}
+	else {
+		// assert("Why did setting thread priority fail?" == 0);
+		const DWORD dw = GetLastError();
+		if (dw == 1552) { // the specified thread is already joining a task
+			// assert(0);
+
+		}
+		else {
+			SetThreadPriority(
+				GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+			fprintf(stderr,
+				"I don't like this, falling back to "
+				"THREAD_PRIORITY_TIME_CRITICAL");
+			fflush(stderr);
+		}
+	}
+	return hTask;
+}
+
+static inline BOOL prioritise_thread_cleanup(HANDLE h) {
+	BOOL ret = AvRevertMmThreadCharacteristics(h);
+	if (ret == 0) {
+		DWORD dw = GetLastError();
+		assert(0);
+		fprintf(stderr,
+			"Failed to clean up thread priority, with error code: %ld\n",
+			(int)dw);
+	}
+
+	return ret;
+}
+#endif
 
 // manage differences among consoles
 #define _Thetis

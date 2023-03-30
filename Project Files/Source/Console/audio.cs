@@ -67,7 +67,7 @@ namespace Thetis
             SILENCE,
         }
 
-        // unsafe private static PA19.PaStreamCallback PAcallbackport = PACallbackPort;
+        // unsafe private static PortAudioForThetis.PaStreamCallback PAcallbackport = PACallbackPort;
 
         // public static int callback_return;
 
@@ -378,7 +378,7 @@ namespace Thetis
                     ivac.SetIVACmon(0, 1);
                     ivac.SetIVACmon(1, 0);
                     ivac.SetIVACmonVol(0, monitor_volume);
-                }                                    
+                }
             }
             else if (mon && !vfob_tx)
             {
@@ -932,14 +932,16 @@ namespace Thetis
         //vac1in
         public static double VAC1FeedbackGainIn
         {
-            set { 
+            set
+            {
                 vac1_feedbackgainIn = value;
                 ivac.SetIVACFeedbackGain(0, 1, vac1_feedbackgainIn);
             }
         }
         public static double VAC1SlewTimeIn
         {
-            set { 
+            set
+            {
                 vac1_slewtimeIn = value;
                 ivac.SetIVACSlewTime(0, 1, vac1_slewtimeIn);
             }
@@ -1000,7 +1002,8 @@ namespace Thetis
         }
         public static bool VAC1ControlFlagIn
         {
-            get {
+            get
+            {
                 int flg;
                 unsafe
                 {
@@ -1013,14 +1016,16 @@ namespace Thetis
         //vac1out
         public static double VAC1FeedbackGainOut
         {
-            set { 
+            set
+            {
                 vac1_feedbackgainOut = value;
                 ivac.SetIVACFeedbackGain(0, 0, vac1_feedbackgainOut);
             }
         }
         public static double VAC1SlewTimeOut
         {
-            set { 
+            set
+            {
                 vac1_slewtimeOut = value;
                 ivac.SetIVACSlewTime(0, 0, vac1_slewtimeOut);
             }
@@ -1095,14 +1100,16 @@ namespace Thetis
         //vac2in
         public static double VAC2FeedbackGainIn
         {
-            set { 
+            set
+            {
                 vac2_feedbackgainIn = value;
                 ivac.SetIVACFeedbackGain(1, 1, vac2_feedbackgainIn);
             }
         }
         public static double VAC2SlewTimeIn
         {
-            set { 
+            set
+            {
                 vac2_slewtimeIn = value;
                 ivac.SetIVACSlewTime(1, 1, vac2_slewtimeIn);
             }
@@ -1175,14 +1182,16 @@ namespace Thetis
         //vac2out
         public static double VAC2FeedbackGainOut
         {
-            set { 
+            set
+            {
                 vac2_feedbackgainOut = value;
                 ivac.SetIVACFeedbackGain(1, 0, vac2_feedbackgainOut);
             }
         }
         public static double VAC2SlewTimeOut
         {
-            set { 
+            set
+            {
                 vac2_slewtimeOut = value;
                 ivac.SetIVACSlewTime(1, 0, vac2_slewtimeOut);
             }
@@ -1386,9 +1395,9 @@ namespace Thetis
         public static ArrayList GetPAHosts() // returns a text list of driver types
         {
             var a = new ArrayList();
-            for (int i = 0; i < PA19.PA_GetHostApiCount(); i++)
+            for (int i = 0; i < PortAudioForThetis.PA_GetHostApiCount(); i++)
             {
-                PA19.PaHostApiInfo info = PA19.PA_GetHostApiInfo(i);
+                PortAudioForThetis.PaHostApiInfo info = PortAudioForThetis.PA_GetHostApiInfo(i);
                 a.Add(info.name);
             }
             a.Add("HPSDR (USB/UDP)");
@@ -1399,17 +1408,17 @@ namespace Thetis
         {
             var a = new ArrayList();
 
-            if (hostIndex >= PA19.PA_GetHostApiCount())
+            if (hostIndex >= PortAudioForThetis.PA_GetHostApiCount())
             {
                 a.Add(new PADeviceInfo("HPSDR (PCM A/D)", 0));
                 return a;
             }
 
-            PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
+            PortAudioForThetis.PaHostApiInfo hostInfo = PortAudioForThetis.PA_GetHostApiInfo(hostIndex);
             for (int i = 0; i < hostInfo.deviceCount; i++)
             {
-                int devIndex = PA19.PA_HostApiDeviceIndexToDeviceIndex(hostIndex, i);
-                PA19.PaDeviceInfo devInfo = PA19.PA_GetDeviceInfo(devIndex);
+                int devIndex = PortAudioForThetis.PA_HostApiDeviceIndexToDeviceIndex(hostIndex, i);
+                PortAudioForThetis.PaDeviceInfo devInfo = PortAudioForThetis.PA_GetDeviceInfo(devIndex);
                 if (devInfo.maxInputChannels > 0)
                 {
                     string name = devInfo.name;
@@ -1432,11 +1441,11 @@ namespace Thetis
 
         public static bool CheckPAInputDevices(int hostIndex, string name)
         {
-            PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
+            PortAudioForThetis.PaHostApiInfo hostInfo = PortAudioForThetis.PA_GetHostApiInfo(hostIndex);
             for (int i = 0; i < hostInfo.deviceCount; i++)
             {
-                int devIndex = PA19.PA_HostApiDeviceIndexToDeviceIndex(hostIndex, i);
-                PA19.PaDeviceInfo devInfo = PA19.PA_GetDeviceInfo(devIndex);
+                int devIndex = PortAudioForThetis.PA_HostApiDeviceIndexToDeviceIndex(hostIndex, i);
+                PortAudioForThetis.PaDeviceInfo devInfo = PortAudioForThetis.PA_GetDeviceInfo(devIndex);
                 if (devInfo.maxInputChannels > 0 && devInfo.name.Contains(name))
                     return true;
             }
@@ -1447,17 +1456,17 @@ namespace Thetis
         {
             var a = new ArrayList();
 
-            if (hostIndex >= PA19.PA_GetHostApiCount())
+            if (hostIndex >= PortAudioForThetis.PA_GetHostApiCount())
             {
                 a.Add(new PADeviceInfo("HPSDR (PWM D/A)", 0));
                 return a;
             }
 
-            PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
+            PortAudioForThetis.PaHostApiInfo hostInfo = PortAudioForThetis.PA_GetHostApiInfo(hostIndex);
             for (int i = 0; i < hostInfo.deviceCount; i++)
             {
-                int devIndex = PA19.PA_HostApiDeviceIndexToDeviceIndex(hostIndex, i);
-                PA19.PaDeviceInfo devInfo = PA19.PA_GetDeviceInfo(devIndex);
+                int devIndex = PortAudioForThetis.PA_HostApiDeviceIndexToDeviceIndex(hostIndex, i);
+                PortAudioForThetis.PaDeviceInfo devInfo = PortAudioForThetis.PA_GetDeviceInfo(devIndex);
                 if (devInfo.maxOutputChannels > 0)
                 {
                     string name = devInfo.name;
@@ -1481,11 +1490,11 @@ namespace Thetis
 
         public static bool CheckPAOutputDevices(int hostIndex, string name)
         {
-            PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
+            PortAudioForThetis.PaHostApiInfo hostInfo = PortAudioForThetis.PA_GetHostApiInfo(hostIndex);
             for (int i = 0; i < hostInfo.deviceCount; i++)
             {
-                int devIndex = PA19.PA_HostApiDeviceIndexToDeviceIndex(hostIndex, i);
-                PA19.PaDeviceInfo devInfo = PA19.PA_GetDeviceInfo(devIndex);
+                int devIndex = PortAudioForThetis.PA_HostApiDeviceIndexToDeviceIndex(hostIndex, i);
+                PortAudioForThetis.PaDeviceInfo devInfo = PortAudioForThetis.PA_GetDeviceInfo(devIndex);
                 if (devInfo.maxOutputChannels > 0 && devInfo.name.Contains(name))
                     return true;
             }
@@ -1577,21 +1586,27 @@ namespace Thetis
         //    return a;
         //}
 
+        public struct VACStatus
+        {
+            public bool state;
+            public String status;
+        };
+        public static VACStatus[] Status = new VACStatus[2];
         public static void EnableVAC1(bool enable)
         {
             bool retval = false;
- 
+
             if (enable)
                 unsafe
                 {
                     int num_chan = 1;
                     int sample_rate = sample_rate2;
                     int block_size = block_size_vac;
-                    double in_latency = vac1_latency_manual ? latency2 / 1000.0 : PA19.PA_GetDeviceInfo(input_dev2).defaultLowInputLatency;
-                    double out_latency = vac1_latency_manual_out ? latency2_out / 1000.0 : PA19.PA_GetDeviceInfo(output_dev2).defaultLowOutputLatency;
-                    double pa_in_latency = vac1_latency_pa_in_manual ? latency_pa_in / 1000.0 : PA19.PA_GetDeviceInfo(input_dev2).defaultLowInputLatency;
-                    double pa_out_latency = vac1_latency_pa_out_manual ? latency_pa_out / 1000.0 : PA19.PA_GetDeviceInfo(output_dev2).defaultLowOutputLatency;
-                  //  double pa_out_latency = vac1_latency_pa_out_manual ? latency_pa_out / 1000.0 : outp_dev2.;
+                    double in_latency = vac1_latency_manual ? latency2 / 1000.0 : PortAudioForThetis.PA_GetDeviceInfo(input_dev2).defaultLowInputLatency;
+                    double out_latency = vac1_latency_manual_out ? latency2_out / 1000.0 : PortAudioForThetis.PA_GetDeviceInfo(output_dev2).defaultLowOutputLatency;
+                    double pa_in_latency = vac1_latency_pa_in_manual ? latency_pa_in / 1000.0 : PortAudioForThetis.PA_GetDeviceInfo(input_dev2).defaultLowInputLatency;
+                    double pa_out_latency = vac1_latency_pa_out_manual ? latency_pa_out / 1000.0 : PortAudioForThetis.PA_GetDeviceInfo(output_dev2).defaultLowOutputLatency;
+                    //  double pa_out_latency = vac1_latency_pa_out_manual ? latency_pa_out / 1000.0 : outp_dev2.;
 
                     if (vac_output_iq)
                     {
@@ -1634,19 +1649,67 @@ namespace Thetis
                     //ivac.SetIVACvar(0, 1, vac1_oldVarIn);
                     ivac.SetIVACinitialVars(0, vac1_oldVarIn, vac1_oldVarOut);
                     //
-
+                    string pa_msg = "";
+                    int return_value = 0;
                     try
                     {
-                        retval = ivac.StartAudioIVAC(0) == 1;
+                        return_value = ivac.StartAudioIVAC(0);
+                        retval = return_value
+                            == Convert.ToInt32(
+                                PortAudioForThetis.PaErrorCode.paNoError);
+
+                        if (!retval)
+                        {
+                            pa_msg
+                            = "\n\nFailed to start VAC. Audio subsystem reports: "
+                            + PortAudioForThetis.PA_GetErrorText(return_value);
+                            var v = PortAudioForThetis.PA_GetLastHostErrorInfo();
+                            if (v.errorText.Length > 0)
+                                pa_msg += "\n\n Api Error: " + v.errorText;
+                        }
+                        if (!retval)
+                        {
+                            Status[0].status = pa_msg;
+                            Status[0].state = false;
+
+                            throw new Exception("VAC audio engine failed to start");
+                        }
                         if (retval && console.PowerOn)
+                        {
                             ivac.SetIVACrun(0, 1);
+                        }
                     }
                     catch (Exception)
                     {
-                        MessageBox.Show("The program is having trouble starting the VAC audio streams.\n" +
-                            "Please examine the VAC related settings on the Setup Form -> Audio Tab and try again.",
-                            "VAC Audio Stream Startup Error",
-                            MessageBoxButtons.OK,
+                        if (return_value != 0)
+                        {
+                            pa_msg
+                                = "\n\nFailed to start VAC. Audio subsystem reports: "
+                                + PortAudioForThetis.PA_GetErrorText(return_value);
+                            var v = PortAudioForThetis.PA_GetLastHostErrorInfo();
+                            if (v.errorText.Length > 0)
+                                pa_msg += "\n\n Api Error: " + v.errorText;
+
+                            if ((PortAudioForThetis.PaErrorCode)(return_value)
+                                == PortAudioForThetis.PaErrorCode
+                                       .paInvalidSampleRate)
+                            {
+                                // pa_msg += "\n" + "Suggested sample rate (for
+                                // input) is: " +
+                                // PortAudioForThetis.PA_GetDeviceInfo(input_dev2).defaultSampleRate
+                                //     + "\n" + "Suggested sample rate (for output)
+                                //     is: " +
+                                //     PortAudioForThetis.PA_GetDeviceInfo(output_dev2).defaultSampleRate;
+                            }
+                        }
+                        Status[0].status = pa_msg;
+                        Status[0].state = false;
+
+                        MessageBox.Show(
+                            "The program is having trouble starting the VAC audio streams.\n"
+                                + "Please examine the VAC related settings on the Setup Form -> Audio Tab and try again."
+                                + pa_msg,
+                            "VAC Audio Stream Startup Error.", MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
                     }
                 }
@@ -1671,10 +1734,10 @@ namespace Thetis
                     int sample_rate = sample_rate3;
                     int block_size = block_size_vac2;
 
-                    double in_latency = vac2_latency_manual ? latency3 / 1000.0 : PA19.PA_GetDeviceInfo(input_dev3).defaultLowInputLatency;
-                    double out_latency = vac2_latency_out_manual ? vac2_latency_out / 1000.0 : PA19.PA_GetDeviceInfo(output_dev3).defaultLowOutputLatency;
-                    double pa_in_latency = vac2_latency_pa_in_manual ? vac2_latency_pa_in / 1000.0 : PA19.PA_GetDeviceInfo(input_dev3).defaultLowInputLatency;
-                    double pa_out_latency = vac2_latency_pa_out_manual ? vac2_latency_pa_out / 1000.0 : PA19.PA_GetDeviceInfo(output_dev3).defaultLowOutputLatency;
+                    double in_latency = vac2_latency_manual ? latency3 / 1000.0 : PortAudioForThetis.PA_GetDeviceInfo(input_dev3).defaultLowInputLatency;
+                    double out_latency = vac2_latency_out_manual ? vac2_latency_out / 1000.0 : PortAudioForThetis.PA_GetDeviceInfo(output_dev3).defaultLowOutputLatency;
+                    double pa_in_latency = vac2_latency_pa_in_manual ? vac2_latency_pa_in / 1000.0 : PortAudioForThetis.PA_GetDeviceInfo(input_dev3).defaultLowInputLatency;
+                    double pa_out_latency = vac2_latency_pa_out_manual ? vac2_latency_pa_out / 1000.0 : PortAudioForThetis.PA_GetDeviceInfo(output_dev3).defaultLowOutputLatency;
 
                     if (vac2_output_iq)
                     {
@@ -1792,7 +1855,7 @@ namespace Thetis
                 WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), true);
                 puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
                 //console.psform.PSdefpeak = "0.2899";
-            }            
+            }
             console.psform.SetDefaultPeaks(NetworkIO.CurrentRadioProtocol != oldProto); // if the procol changed, force it MW0LGE_21k9rc6
 
             c.SetupForm.InitAudioTab();
@@ -1805,26 +1868,26 @@ namespace Thetis
             return retval;
         }
 
-//        private static void PortAudioErrorMessageBox(PaErrorCode error)
- //       {
-//            if (error < PaErrorCode.NoError) throw PortAudioException.GetException(error);
-//             switch (error)
-//             {
-//                 case PaErrorCode.InvalidDevice:
-//                     string s = "Whoops!  Looks like something has gone wrong in the\n" +
-//                         "Audio section.  Go look in the Setup Form -> Audio Tab to\n" +
-//                         "verify the settings there.";
-//                     if (vac_enabled) s += "  Since VAC is enabled, make sure\n" +
-//                          "you look at those settings as well.";
-//                     MessageBox.Show(s, "Audio Subsystem Error: Invalid Device",
-//                         MessageBoxButtons.OK, MessageBoxIcon.Error);
-//                     break;
-//                 default:
-//                     MessageBox.Show(PortAudio.Pa_GetErrorText(error), "PortAudio Error: " + error,
-//                         MessageBoxButtons.OK, MessageBoxIcon.Error);
-//                     break;
-//             }
-//        }
+        //        private static void PortAudioErrorMessageBox(PaErrorCode error)
+        //       {
+        //            if (error < PaErrorCode.NoError) throw PortAudioException.GetException(error);
+        //             switch (error)
+        //             {
+        //                 case PaErrorCode.InvalidDevice:
+        //                     string s = "Whoops!  Looks like something has gone wrong in the\n" +
+        //                         "Audio section.  Go look in the Setup Form -> Audio Tab to\n" +
+        //                         "verify the settings there.";
+        //                     if (vac_enabled) s += "  Since VAC is enabled, make sure\n" +
+        //                          "you look at those settings as well.";
+        //                     MessageBox.Show(s, "Audio Subsystem Error: Invalid Device",
+        //                         MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                     break;
+        //                 default:
+        //                     MessageBox.Show(PortAudio.Pa_GetErrorText(error), "PortAudio Error: " + error,
+        //                         MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                     break;
+        //             }
+        //        }
 
         #endregion
 
@@ -1860,7 +1923,8 @@ namespace Thetis
         private static readonly Object m_objArrayLock = new Object();        //MW0LGE_21k9 lock needed as display can change the size of these arrays, and being in a different thread will cause issues otherwise
         public static float[] ScopeMin
         {
-            set {
+            set
+            {
                 lock (m_objArrayLock)
                 {
                     scope_min = value;
@@ -1878,7 +1942,8 @@ namespace Thetis
 
         public static float[] ScopeMax
         {
-            set {
+            set
+            {
                 lock (m_objArrayLock)
                 {
                     scope_max = value;
@@ -1960,7 +2025,8 @@ namespace Thetis
 
         public static float[] Scope2Max
         {
-            set {
+            set
+            {
                 lock (m_objArrayLock)
                 {
                     scope2_max = value;
@@ -1975,7 +2041,8 @@ namespace Thetis
         }
         public static float[] Scope2Min
         {
-            set {
+            set
+            {
                 lock (m_objArrayLock)
                 {
                     scope2_min = value;

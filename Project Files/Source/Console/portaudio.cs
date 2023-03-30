@@ -43,7 +43,7 @@ using PaStreamCallbackFlags = System.UInt32;
 
 namespace Thetis
 {
-    public class PA19
+    public class PortAudioForThetis
     {
         #region Constants
 
@@ -108,7 +108,7 @@ namespace Thetis
 
             public int structVersion;
             public int type;
-           // [MarshalAs(UnmanagedType.LPStr)]
+            // [MarshalAs(UnmanagedType.LPStr)]
             //public string name;
             private readonly IntPtr _name;
             public int deviceCount;
@@ -132,8 +132,8 @@ namespace Thetis
 
             public int structVersion;
             private IntPtr _name;
-           // [MarshalAs(UnmanagedType.LPStr)]
-           // public string name;
+            // [MarshalAs(UnmanagedType.LPStr)]
+            // public string name;
             public PaHostApiIndex hostApi;
             public int maxInputChannels;
             public int maxOutputChannels;
@@ -175,10 +175,17 @@ namespace Thetis
 
         #region Function Definitions
 
-        [DllImport("PA19.dll")]
+#pragma warning disable CS0414 // The field 'PortAudioForThetis.PaNoError' is
+        // assigned but its value is never used
+        static readonly int PaNoError = 0;
+#pragma warning restore CS0414 // The field 'PortAudioForThetis.PaNoError' is
+        // assigned but its value is never used
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_GetVersion",
+            CallingConvention = CallingConvention.Cdecl)]
         public static extern int PA_GetVersion();
 
-        [DllImport("PA19.dll")]
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_GetVersionText",
+            CallingConvention = CallingConvention.Cdecl)]
         public static extern String PA_GetVersionText();
 
         // note that using the stock source and calling this function
@@ -186,7 +193,8 @@ namespace Thetis
         // reference.  To fix this, I added a single statement in
         // pa_front.c.  The new line 444 is below.
         // case paNoError:                  result = "1"; result = "Success"; break;
-        [DllImport("PA19.dll", EntryPoint = "PA_GetErrorText")]
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_GetErrorText",
+            CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr IntPtr_PA_GetErrorText(PaError error);
 
         public static string PA_GetErrorText(PaError error)
@@ -195,151 +203,82 @@ namespace Thetis
             return Marshal.PtrToStringAnsi(strptr);
         }
 
-        [DllImport("PA19.dll")]
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_Initialize",
+            CallingConvention = CallingConvention.Cdecl)]
         public static extern PaError PA_Initialize();
 
-        [DllImport("PA19.dll")]
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_Terminate",
+            CallingConvention = CallingConvention.Cdecl)]
         public static extern PaError PA_Terminate();
 
-        [DllImport("PA19.dll")]
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_GetHostApiCount",
+            CallingConvention = CallingConvention.Cdecl)]
         public static extern PaHostApiIndex PA_GetHostApiCount();
 
-        [DllImport("PA19.dll")]
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_GetDefaultHostApi",
+            CallingConvention = CallingConvention.Cdecl)]
         public static extern PaHostApiIndex PA_GetDefaultHostApi();
 
-        // Added layer to convert from the struct pointer to a C# 
+        // Added layer to convert from the struct pointer to a C#
         // struct automatically.
-        [DllImport("PA19.dll", EntryPoint = "PA_GetHostApiInfo")]
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_GetHostApiInfo",
+            CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr PA_GetHostApiInfoPtr(int hostId);
         public static PaHostApiInfo PA_GetHostApiInfo(int hostId)
         {
             IntPtr ptr = PA_GetHostApiInfoPtr(hostId);
-            PaHostApiInfo info = (PaHostApiInfo)Marshal.PtrToStructure(ptr, typeof(PaHostApiInfo));
+            PaHostApiInfo info
+                = (PaHostApiInfo)Marshal.PtrToStructure(ptr, typeof(PaHostApiInfo));
             return info;
         }
 
-        [DllImport("PA19.dll")]
-        public static extern PaHostApiIndex PA_HostApiTypeIdToHostApiIndex(PaHostApiTypeId type);
+        [DllImport("PortAudioForCoolSDR.dll",
+            EntryPoint = "Pa_HostApiDeviceIndexToDeviceIndex",
+            CallingConvention = CallingConvention.Cdecl)]
+        public static extern PaDeviceIndex PA_HostApiDeviceIndexToDeviceIndex(
+            int hostAPI, int hostApiDeviceIndex);
 
-        [DllImport("PA19.dll")]
-        public static extern PaDeviceIndex PA_HostApiDeviceIndexToDeviceIndex(int hostAPI, int hostApiDeviceIndex);
-
-        [DllImport("PA19.dll", EntryPoint = "PA_GetLastHostErrorInfo")]
+        [DllImport("PortAudioForCoolSDR.dll",
+            EntryPoint = "Pa_GetLastHostErrorInfo",
+            CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr PA_GetLastHostErrorInfoPtr();
         public static PaHostErrorInfo PA_GetLastHostErrorInfo()
         {
             IntPtr ptr = PA_GetLastHostErrorInfoPtr();
-            PaHostErrorInfo info = (PaHostErrorInfo)Marshal.PtrToStructure(ptr, typeof(PaHostErrorInfo));
+            PaHostErrorInfo info = (PaHostErrorInfo)Marshal.PtrToStructure(
+                ptr, typeof(PaHostErrorInfo));
             return info;
         }
 
-        [DllImport("PA19.dll")]
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_GetDeviceCount",
+            CallingConvention = CallingConvention.Cdecl)]
         public static extern PaDeviceIndex PA_GetDeviceCount();
 
-        [DllImport("PA19.dll")]
-        public static extern PaDeviceIndex PA_GetDefaultInputDevice();
-
-        [DllImport("PA19.dll")]
-        public static extern PaDeviceIndex PA_GetDefaultOutputDevice();
-
-        [DllImport("PA19.dll", EntryPoint = "PA_GetDeviceInfo")]
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_GetDeviceInfo",
+            CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr PA_GetDeviceInfoPtr(int device);
         public static PaDeviceInfo PA_GetDeviceInfo(int device)
         {
             IntPtr ptr = PA_GetDeviceInfoPtr(device);
-            PaDeviceInfo info = (PaDeviceInfo)Marshal.PtrToStructure(ptr, typeof(PaDeviceInfo));
+            PaDeviceInfo info
+                = (PaDeviceInfo)Marshal.PtrToStructure(ptr, typeof(PaDeviceInfo));
             return info;
         }
 
-        [DllImport("PA19.dll")]
-        unsafe public static extern PaError PA_IsFormatSupported(
-            PaStreamParameters* inputParameters,
-            PaStreamParameters* outputParameters,
-            double sampleRate);
-
-        [DllImport("PA19.dll")]
-        unsafe public static extern PaError PA_OpenStream(
-            out void* stream,
-            PaStreamParameters* inputParameters,
-            PaStreamParameters* outputParameters,
-            double sampleRate,
-            uint framesPerBuffer,
-            PaStreamFlags streamFlags,
-            PaStreamCallback streamCallback,
-            int callback_id);       // 0 for callback1, else callback2
-
-        [DllImport("PA19.dll")]
-        unsafe public static extern PaError PA_OpenDefaultStream(
-            out void* stream,
-            int numInputChannels,
-            int numOutputChannels,
-            PaSampleFormat sampleFormat,
-            double sampleRate,
-            uint framesPerBuffer,
-            PaStreamCallback streamCallback,
-            int callback_id);       // 0 for callback1, else callback2
-
-        [DllImport("PA19.dll")]
-        unsafe public static extern PaError PA_CloseStream(void* stream);
-
-        [DllImport("PA19.dll")]
-        unsafe public static extern PaError PA_SetStreamFinishedCallback(
-            void* stream, PaStreamFinishedCallback streamFinishedCallback);
-
-        [DllImport("PA19.dll")]
-        unsafe public static extern PaError PA_StartStream(void* stream);
-
-        [DllImport("PA19.dll")]
-        unsafe public static extern PaError PA_StopStream(void* stream);
-
-        [DllImport("PA19.dll")]
-        unsafe public static extern PaError PA_AbortStream(void* stream);
-
-        [DllImport("PA19.dll")]
-        unsafe public static extern PaError PA_IsStreamStopped(void* stream);
-
-        [DllImport("PA19.dll")]
-        unsafe public static extern PaError PA_IsStreamActive(void* stream);
-
-        [DllImport("PA19.dll", EntryPoint = "PA_GetStreamInfo")]
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_GetStreamInfo",
+            CallingConvention = CallingConvention.Cdecl)]
         unsafe public static extern IntPtr PA_GetStreamInfoPtr(void* stream);
         unsafe public static PaStreamInfo PA_GetStreamInfo(void* stream)
         {
             IntPtr ptr = PA_GetStreamInfoPtr(stream);
-            PaStreamInfo info = (PaStreamInfo)Marshal.PtrToStructure(ptr, typeof(PaStreamInfo));
+            PaStreamInfo info
+                = (PaStreamInfo)Marshal.PtrToStructure(ptr, typeof(PaStreamInfo));
             return info;
         }
 
-        [DllImport("PA19.dll")]
-        unsafe public static extern PaTime PA_GetStreamTime(void* stream);
-
-        [DllImport("PA19.dll")]
-        unsafe public static extern double PA_GetStreamCpuLoad(void* stream);
-
-        // note: These next 4 blocking IO functions are only currently implemented
-        // in MME (not DirectSound or ASIO)
-        [DllImport("PA19.dll")]
-        unsafe public static extern PaError PA_ReadStream(void* stream, void* buffer, uint frames);
-
-        [DllImport("PA19.dll")]
-        unsafe public static extern PaError PA_WriteStream(void* stream, void* buffer, uint frames);
-
-        [DllImport("PA19.dll")]
-        unsafe public static extern int PA_GetStreamReadAvailable(void* stream);
-
-        [DllImport("PA19.dll")]
-        unsafe public static extern int PA_GetStreamWriteAvailable(void* stream);
-
-        [DllImport("PA19.dll")]
-        public static extern PaError PA_GetSampleSize(PaSampleFormat format);
-
-        [DllImport("PA19.dll")]
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_Sleep",
+            CallingConvention = CallingConvention.Cdecl)]
         public static extern void PA_Sleep(int msec);
-
-        unsafe public delegate int PaStreamCallback(void* input, void* output, int frameCount,
-            PaStreamCallbackTimeInfo* timeInfo, int statusFlags, void* userData);
-
-        unsafe public delegate void PaStreamFinishedCallback(void* userData);
 
         #endregion // Function Definitions
     }

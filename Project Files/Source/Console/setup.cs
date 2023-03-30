@@ -75,7 +75,14 @@ namespace Thetis
 
         public Setup(Console c)
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show(exc.Message);
+            }
             console = c;
 
             //
@@ -1072,7 +1079,7 @@ namespace Thetis
                     Audio.GetPAOutputDevices(host_index).Count > 0)
                 {
                     //comboAudioDriver1.Items.Add(new PADeviceInfo(PAHostName, host_index));
-                    if (PAHostName != "Windows WASAPI")
+                    //if (PAHostName != "Windows WASAPI")
                     {
                         comboAudioDriver2.Items.Add(new PADeviceInfo(PAHostName, host_index));
                         comboAudioDriver3.Items.Add(new PADeviceInfo(PAHostName, host_index));
@@ -1206,7 +1213,7 @@ namespace Thetis
             toRemove.Add("txtVAC2OldVarOut");
 
             // multimeter
-            foreach(Control c in grpMultiMeterHolder.Controls)
+            foreach (Control c in grpMultiMeterHolder.Controls)
             {
                 toRemove.Add(c.Name);
             }
@@ -25509,7 +25516,7 @@ namespace Thetis
 
         private void lstMetersAvailable_SelectedIndexChanged(object sender, EventArgs e)
         {
-            btnAddMeterItem.Enabled = lstMetersAvailable.SelectedIndex >= 0;            
+            btnAddMeterItem.Enabled = lstMetersAvailable.SelectedIndex >= 0;
         }
 
         private void lstMetersInUse_SelectedIndexChanged(object sender, EventArgs e)
@@ -25788,7 +25795,7 @@ namespace Thetis
             MeterType mt = meterItemGroupTypefromSelected();
             if (mt == MeterType.NONE) return;
 
-            MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt);                
+            MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt);
             if (igs == null) return;
 
             _ignoreMeterItemChangeEvents = true;
@@ -25880,7 +25887,7 @@ namespace Thetis
                 clrbtnMMTime.Color = igs.MarkerColour;
                 clrbtnMMDate.Color = igs.SubMarkerColour;
                 radMM24Clock.Checked = igs.ShowMarker; // use the show marker bool for this
-                if(!radMM24Clock.Checked && !radMM12Clock.Checked) radMM12Clock.Checked = true;
+                if (!radMM24Clock.Checked && !radMM12Clock.Checked) radMM12Clock.Checked = true;
                 updateTitleControlsClock();
             }
             else
@@ -26234,7 +26241,7 @@ namespace Thetis
             {
                 case MeterType.NONE:
                     grpMeterItemSettings.Enabled = false;
-                    grpMeterItemSettings.Visible = true;                    
+                    grpMeterItemSettings.Visible = true;
                     grpMeterItemClockSettings.Visible = false;
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     break;

@@ -25,6 +25,7 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
+#include <assert.h>
 #include "network.h" 
 #include <Iphlpapi.h>
 
@@ -51,7 +52,7 @@ int initWSA(void) {
 	WORD wVersionRequested = 0x202;
 
 	if (WSAinitialized) {
-		if(WSA_inited) WSACleanup(); // MW0LGE_22b
+		if (WSA_inited) WSACleanup(); // MW0LGE_22b
 	}
 
 	//WSAinitialized = 1;//MW0LGE_22b
@@ -73,7 +74,7 @@ void DeInitMetisSockets() {
 	closesocket(listenSock);
 	listenSock = INVALID_SOCKET;
 	if (WSA_inited) { // MW0LGE_22b
-		WSACleanup(); 
+		WSACleanup();
 		WSA_inited = 0;
 		WSAinitialized = 0;
 	}
@@ -129,7 +130,7 @@ int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol)
 			{
 				printf("socket() still returns wsa not initialised!\n");
 				return 1;
-			}		
+			}
 
 			rc = initWSA();
 			if (rc != 0) {
@@ -143,7 +144,7 @@ int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol)
 		}
 		else if (listenSock == INVALID_SOCKET) {
 			printf("createSocket Error: socket failed %ld\n", WSAGetLastError());
-			if(WSA_inited) WSACleanup(); //MW0LGE_22b
+			if (WSA_inited) WSACleanup(); //MW0LGE_22b
 			return INVALID_SOCKET;
 		}
 		else {
@@ -157,10 +158,10 @@ int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol)
 	fflush(stdout);
 
 	sndbufsize = 0xfa000;
-	setsockopt(listenSock, SOL_SOCKET, SO_SNDBUF, (const char *)&sndbufsize, sizeof(int));	
-	sndbufsize = 0x10000; 
-	setsockopt(listenSock, SOL_SOCKET, SO_RCVBUF, (const char *)&sndbufsize, sizeof(int));
-	
+	setsockopt(listenSock, SOL_SOCKET, SO_SNDBUF, (const char*)&sndbufsize, sizeof(int));
+	sndbufsize = 0x10000;
+	setsockopt(listenSock, SOL_SOCKET, SO_RCVBUF, (const char*)&sndbufsize, sizeof(int));
+
 	DestIp = inet_addr(netaddr);
 
 	if (DestIp != 0) {
@@ -1038,7 +1039,7 @@ void sendOutbound(int id, double* out)
 				double swap;
 				for (i = 0; i < 2 * prn->audio[0].spp; i += 2)
 				{
-					swap       = out[i + 0];
+					swap = out[i + 0];
 					out[i + 0] = out[i + 1];
 					out[i + 1] = swap;
 				}
@@ -1065,9 +1066,9 @@ void sendOutbound(int id, double* out)
 			if (id == 1)	// TX I-Q data arriving
 			{
 				static int ptr = 0;
-				memcpy((void *)(prn->outIQbufp + 720), out, sizeof(complex) * 126);
+				memcpy((void*)(prn->outIQbufp + 720), out, sizeof(complex) * 126);
 				// de-interleave the two sample streams
-				for (int n = 0, i = ptr, j = 256 + ptr, k = 720; n < 63; n++, i+=2, j+=2, k+=4)
+				for (int n = 0, i = ptr, j = 256 + ptr, k = 720; n < 63; n++, i += 2, j += 2, k += 4)
 				{
 					// final location of I-Q data
 					prn->outIQbufp[i + 0] = prn->outIQbufp[k + 0];
@@ -1207,8 +1208,13 @@ int IOThreadStop() {
 	}
 	io_keep_running = 0;  // flag to stop
 
-	WaitForSingleObject(prn->hReadThreadMain, INFINITE);
+	DWORD dw = WaitForSingleObject(prn->hReadThreadMain, 5000);
+	if (dw == WAIT_TIMEOUT) {
+		SetEvent(prn->hDataEvent);
+	}
 
+	dw = WaitForSingleObject(prn->hReadThreadMain, 5000);
+	assert(dw != WAIT_TIMEOUT);
 	CloseHandle(prn->hReadThreadMain);
 	CloseHandle(prn->hReadThreadInitSem);
 	CloseHandle(prn->hWriteThreadMain);

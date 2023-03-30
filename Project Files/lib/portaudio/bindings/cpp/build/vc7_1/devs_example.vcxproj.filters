@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Files">
+      <UniqueIdentifier>{7b5e6b54-5237-4db8-b8bf-9c46f277ad8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="asio">
+      <UniqueIdentifier>{a8e50154-9bd6-4536-b14e-1e4243e0639f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PortAudioFiles">
+      <UniqueIdentifier>{07088b92-a761-4ca7-921c-981ca53ee916}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibFiles">
+      <UniqueIdentifier>{88314a9a-11fc-40ed-b11e-2cd1d22b5d89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibHeaderFiles">
+      <UniqueIdentifier>{6b5e2ca5-ad92-48a4-8f29-6558eb745f7f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\example\devs.cxx">
+      <Filter>Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\common\pa_allocation.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hostapi\asio\pa_asio.cpp">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\common\pa_converters.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\common\pa_cpuload.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\common\pa_dither.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\common\pa_front.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\common\pa_process.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hostapi\skeleton\pa_hostapi_skeleton.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\common\pa_stream.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\common\pa_trace.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hostapi\dsound\pa_win_ds_dynlink.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\os\win\pa_win_hostapis.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\os\win\pa_win_util.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hostapi\wmme\pa_win_wmme.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\os\win\pa_x86_plain_converters.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hostapi\asio\ASIOSDK\common\asio.cpp">
+      <Filter>asio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hostapi\asio\ASIOSDK\host\asiodrivers.cpp">
+      <Filter>asio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hostapi\asio\ASIOSDK\host\pc\asiolist.cpp">
+      <Filter>asio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hostapi\wasapi\pa_win_wasapi.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\os\win\pa_win_waveformat.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\os\win\pa_win_wdmks_utils.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hostapi\wdmks\pa_win_wdmks.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\common\pa_ringbuffer.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\os\win\pa_win_coinitialize.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hostapi\dsound\pa_win_ds.c">
+      <Filter>PortAudioFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\SystemHostApiIterator.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\SystemDeviceIterator.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\System.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\StreamParameters.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\Stream.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\MemFunCallbackStream.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\InterfaceCallbackStream.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\HostApi.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\Exception.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\DirectionSpecificStreamParameters.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\Device.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\CppFunCallbackStream.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\CFunCallbackStream.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\AsioDeviceAdapter.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\BlockingStream.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\CallbackInterface.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\portaudiocpp\CallbackStream.cxx">
+      <Filter>LibFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\example\sine.cxx">
+      <Filter>Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\src\os\win\pa_win_coinitialize.h">
+      <Filter>PortAudioFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\os\win\pa_win_util.h">
+      <Filter>PortAudioFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\os\win\pa_win_wdmks_utils.h">
+      <Filter>PortAudioFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\os\win\pa_x86_plain_converters.h">
+      <Filter>PortAudioFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\AsioDeviceAdapter.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\AutoSystem.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\BlockingStream.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\CallbackInterface.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\CallbackStream.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\CFunCallbackStream.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\CppFunCallbackStream.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\Device.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\DirectionSpecificStreamParameters.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\Exception.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\HostApi.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\InterfaceCallbackStream.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\MemFunCallbackStream.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\PortAudioCpp.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\SampleDataFormat.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\Stream.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\StreamParameters.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\System.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\SystemDeviceIterator.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\portaudiocpp\SystemHostApiIterator.hxx">
+      <Filter>LibHeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\hostapi\asio\asiosdk\host\asiodrivers.h">
+      <Filter>asio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\hostapi\asio\asiosdk\common\asiosys.h">
+      <Filter>asio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\hostapi\asio\asiosdk\common\iasiodrv.h">
+      <Filter>asio</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
