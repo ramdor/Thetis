@@ -9,6 +9,11 @@
 
         // vac 
 
+        // vac 
+        // G7KLJ: Added to get Txmon volume working on VAC
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACMonVolume", CallingConvention = CallingConvention.Cdecl)] // StartAudioVAC()
+        public static extern void SetIVACMonVolume(int id, double volume);
+
         [DllImport("ChannelMaster.dll", EntryPoint = "StartAudioIVAC", CallingConvention = CallingConvention.Cdecl)] // StartAudioVAC()
         public static extern int StartAudioIVAC(int id);
 

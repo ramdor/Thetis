@@ -246,6 +246,20 @@ namespace Thetis
                 {
                     ivac.SetIVACmonVol(0, monitor_volume);
                 }
+
+                // G7KLJ bugfix: tx mon volume was not working on VAC!
+                if (console.VACEnabled)
+                {
+                    if (console.MOX)
+                    {
+                        ivac.SetIVACMonVolume(0, value);
+                    }
+                    else
+                    {
+                        // overall gain:
+                        ivac.SetIVACMonVolume(-1, value);
+                    }
+                }
             }
         }
 
@@ -1277,6 +1291,18 @@ namespace Thetis
                 {
                     cmaster.SetAAudioMixWhat((void*)0, 0, 0, !mute_rx1);
                     cmaster.SetAAudioMixWhat((void*)0, 0, 1, !mute_rx1);
+                    if (console.VACEnabled)
+                    {
+                        if (value)
+                        {
+                            ivac.SetIVACMonVolume(-1, 0);
+                        }
+                        else
+                        {
+
+                            ivac.SetIVACMonVolume(-1, MonitorVolume);
+                        }
+                    }
                 }
             }
         }
