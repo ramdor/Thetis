@@ -261,6 +261,7 @@ namespace Thetis
             }
         }
 
+
         private static AudioState current_audio_state1 = AudioState.DTTSP;
         public static AudioState CurrentAudioState1
         {
@@ -1677,6 +1678,8 @@ namespace Thetis
                         if (retval && console.PowerOn)
                         {
                             ivac.SetIVACrun(0, 1);
+                            Status[0].state = true;
+                            Status[0].status = "OK";
                         }
                     }
                     catch (Exception)
