@@ -2071,7 +2071,7 @@ namespace Thetis
 
             //MW0LGE_21k9 MEMORYLEAK - PerformanceCounter.NextValue() has a memory leak when using process based counter. It is ok with _Total.
             //Hide for now until resolved. m_bShowSystemCPUUsage will always be true as it is not recovered from db at the moment (see GetState)
-            thetisOnlyToolStripMenuItem.Visible = false;
+            // thetisOnlyToolStripMenuItem.Visible = false;
             //
             // KLJ: This is only an _apparent_ leak. The GC does eventually collect, for me, after about 10MB
             // See also notes in: CpuUsage(). You can call the GC manually each time if you need to.
@@ -3566,7 +3566,10 @@ namespace Thetis
                         m_frmSeqLog.StatusBarWarningOnNegativeOnly = bool.Parse(val);
                         break;
                     case "CPU_ShowSystem":
-                        //m_bShowSystemCPUUsage = bool.Parse(val); //MW0LGE_21k9 MEMORYLEAK - commented so it will always be true (memory leak with process based NextValue)
+                        m_bShowSystemCPUUsage = bool.Parse(val); 
+                        // MW0LGE_21k9 MEMORYLEAK - commented so it will always be true (memory leak with process based NextValue)
+                        // KLJ: Not a leak! GC will eventually clean it up, probably when you 
+                        // are in the middle of a DX QSO!
                         break;
                     case "SetupWizard":
                         if (val == "1")

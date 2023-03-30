@@ -111,7 +111,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\ChannelMaster.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\;;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\;;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>wdsp.lib;winmm.lib;pa19.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -136,7 +136,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\ChannelMaster.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(PROJECTDIR)../../lib/portaudio/msvc/$(HPSDR_PLATFORM)/$(Configuration);$(PROJECTDIR)../../build/$(HPSDR_PLATFORM)/$(Configuration)/;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../lib/portaudio/msvc/$(HPSDR_PLATFORM)/$(Configuration);$(PROJECTDIR)../../build/$(HPSDR_PLATFORM)/$(Configuration)/;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>wdsp.lib;winmm.lib;PortAudioForCoolSDR.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -164,7 +164,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\ChannelMaster.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\;;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\;;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>wdsp.lib;winmm.lib;pa19.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
@@ -196,7 +196,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\ChannelMaster.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(PROJECTDIR)../../lib/portaudio/msvc/$(HPSDR_PLATFORM)/$(Configuration);$(PROJECTDIR)../../build/$(HPSDR_PLATFORM)/$(Configuration)/;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../lib/portaudio/msvc/$(HPSDR_PLATFORM)/$(Configuration);$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>wdsp.lib;winmm.lib;PortAudioForCoolSDR.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkErrorReporting>QueueForNextLogin</LinkErrorReporting>
     </Link>
