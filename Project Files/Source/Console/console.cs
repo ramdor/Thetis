@@ -22528,9 +22528,13 @@ namespace Thetis
                     cpu_usage = new PerformanceCounter("Process", "% Processor Time", sInstanceName, sMachineName);
                 }
                 float cpuPerc = cpu_usage.NextValue(); //MW0LGE_21k8 get the next value - prevents status bar showin 0% when swapping from overall to thetis only
+                // throw new Exception("ffs");
             }
-            catch
+            catch (Exception e)
             {
+                Common.LogString("CPU meter failed with: ");
+                Common.LogString(e.ToString());
+                Common.LogException(e);
                 disableCpuUsage();
             }
         }
