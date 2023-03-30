@@ -1,0 +1,13 @@
+Thu Mar 30 14:50:48 2023 +0100 - sjk7: Update ReadMe.md
+Thu Mar 30 14:47:17 2023 +0100 - sjk7: Update ReadMe.md
+Thu Mar 30 13:19:27 2023 +0100 - sjk7: Fixed console not remembering RestoreBounds when saved when Maximized. Richie to check as there is some DropShadow stuff going on there that I have probably broken
+Thu Mar 30 12:51:36 2023 +0100 - sjk7: Some work on threads not exiting in ChannelMaster, leading to refusal of high MM thread priorities
+Thu Mar 30 08:49:16 2023 +0100 - sjk7: THREAD_PRIORITY_TIME_CRITICAL is most appropriate for a fallback thread scheduling
+Thu Mar 30 07:27:05 2023 +0100 - sjk7: Fade-in for main console window
+Thu Mar 30 07:11:57 2023 +0100 - sjk7: Fade-in for main console window
+Thu Mar 30 06:53:38 2023 +0100 - sjk7: Slight startup speed improvement. Make Cpu counters init in a different thread.
+Thu Mar 30 04:56:19 2023 +0100 - sjk7: Audio fails to start gets in a tangle fixed
+Thu Mar 30 04:53:05 2023 +0100 - sjk7: Automated build date for display on the Console window. It's one less thing to forget when making a release!
+Thu Mar 30 04:39:12 2023 +0100 - sjk7: VAC start failure now correctly avoids starting the radio
+Thu Mar 30 03:32:35 2023 +0100 - sjk7: Latest PortAudio, lots of perf improvements to VAC, including Multimedia threading.
+Thu Mar 30 03:25:49 2023 +0100 - sjk7: Added clang-format file
