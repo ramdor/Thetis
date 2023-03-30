@@ -518,10 +518,13 @@ namespace Thetis
             TbDataFillAlpha_Scroll(this, e);
             initializing = false;
 
+            /*/
+            Splash.SetStatus("Initting DSPRX ...");
+            // this is already done in SyncDSP(), so ok to skip this here. KLJ
             for (int i = 0; i < 2; i++)
                 for (int j = 0; j < 2; j++)
                     console.radio.GetDSPRX(i, j).Update = true;
-
+            /*/
             console.DeferUpdateDSP = true;  //MW0LGE_21k9d need to set this again as it gets undone in load txprofile in ForceAllEvents (ForceTXProfile)
             comboDSPPhoneRXBuf_SelectedIndexChanged(this, EventArgs.Empty);
             comboDSPPhoneTXBuf_SelectedIndexChanged(this, EventArgs.Empty);

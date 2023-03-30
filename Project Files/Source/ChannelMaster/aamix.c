@@ -34,7 +34,7 @@ void mix_main(void* pargs) {
     DWORD taskIndex = 0;
     HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
     if (hTask != 0)
-        AvSetMmThreadPriority(hTask, 2);
+        AvSetMmThreadPriority(hTask, AVRT_PRIORITY_CRITICAL);
     else
         SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 

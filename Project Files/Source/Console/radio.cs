@@ -40,64 +40,64 @@ namespace Thetis
 
     #region Radio Class 
     public class Radio
-	{
-		private const int NUM_RX_THREADS = 2;
-		private const int NUM_RX_PER_THREAD = 2;
-		private RadioDSPRX[][] dsp_rx;
-		private RadioDSPTX[] dsp_tx;
+    {
+        private const int NUM_RX_THREADS = 2;
+        private const int NUM_RX_PER_THREAD = 2;
+        private RadioDSPRX[][] dsp_rx;
+        private RadioDSPTX[] dsp_tx;
 
-		public Radio(string datapath)
-		{
+        public Radio(string datapath)
+        {
             RadioDSP.AppDataPath = datapath;
-			RadioDSP.CreateDSP();
+            RadioDSP.CreateDSP();
             Thread.Sleep(100);
 
-			dsp_rx = new RadioDSPRX[NUM_RX_THREADS][];
-			for(int i=0; i<NUM_RX_THREADS; i++)
-			{
-				dsp_rx[i] = new RadioDSPRX[NUM_RX_PER_THREAD];
-				for(int j=0; j<NUM_RX_PER_THREAD; j++)
-					dsp_rx[i][j] = new RadioDSPRX((uint)i*2, (uint)j);
-			}
+            dsp_rx = new RadioDSPRX[NUM_RX_THREADS][];
+            for (int i = 0; i < NUM_RX_THREADS; i++)
+            {
+                dsp_rx[i] = new RadioDSPRX[NUM_RX_PER_THREAD];
+                for (int j = 0; j < NUM_RX_PER_THREAD; j++)
+                    dsp_rx[i][j] = new RadioDSPRX((uint)i * 2, (uint)j);
+            }
 
-			dsp_tx = new RadioDSPTX[1];
-			dsp_tx[0] = new RadioDSPTX(1);
+            dsp_tx = new RadioDSPTX[1];
+            dsp_tx[0] = new RadioDSPTX(1);
 
-			dsp_rx[0][0].Active = true; // enable main RX
-		}
+            dsp_rx[0][0].Active = true; // enable main RX
+        }
 
-		public RadioDSPRX GetDSPRX(int thread, int subrx)
-		{
-			return dsp_rx[thread][subrx];
-		}
+        public RadioDSPRX GetDSPRX(int thread, int subrx)
+        {
+            return dsp_rx[thread][subrx];
+        }
 
-		public RadioDSPTX GetDSPTX(int thread)
-		{
-			return dsp_tx[thread];
-		}
-	}
+        public RadioDSPTX GetDSPTX(int thread)
+        {
+            return dsp_tx[thread];
+        }
+    }
 
-	#endregion
+    #endregion
 
-	#region RadioDSP Class
+    #region RadioDSP Class
 
-	public class RadioDSP
-	{
-		#region Static Properties and Routines
+    public class RadioDSP
+    {
+        #region Static Properties and Routines
 
-		public static void CreateDSP()
-		{
+        public static void CreateDSP()
+        {
             //String app_data_path = "";
             //app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
             //    + "\\OpenHPSDR\\Thetis\\";
             WDSP.WDSPwisdom(app_data_path);
-            cmaster.CMCreateCMaster();            
-		}
+            cmaster.CMCreateCMaster();
+        }
 
-		public static void DestroyDSP()
-		{
+        public static void DestroyDSP()
+        {
             cmaster.DestroyRadio();
-		}
+        }
 
         private static DSPMode rx1_dsp_mode = DSPMode.FIRST;
         public static DSPMode RX1DSPMode
@@ -112,15 +112,15 @@ namespace Thetis
             get { return rx2_dsp_mode; }
             set { rx2_dsp_mode = value; }
         }
-        
+
         private static double sample_rate = 48000.0;
         private static int rx1_dsp_rate = 48000;
         private static int rx2_dsp_rate = 48000;
-		public static double SampleRate
-		{
-			get { return sample_rate; }
-			set 
-			{
+        public static double SampleRate
+        {
+            get { return sample_rate; }
+            set
+            {
                 switch (rx1_dsp_mode)
                 {
                     case DSPMode.FM:
@@ -140,14 +140,14 @@ namespace Thetis
                         rx2_dsp_rate = 48000;
                         break;
                 }
-                
+
                 sample_rate = value;
-				WDSP.SetDSPSamplerate(WDSP.id(0, 0), rx1_dsp_rate);
-				WDSP.SetDSPSamplerate(WDSP.id(0, 1), rx1_dsp_rate);
-				WDSP.SetDSPSamplerate(WDSP.id(2, 0), rx2_dsp_rate);
-				WDSP.SetDSPSamplerate(WDSP.id(2, 1), rx2_dsp_rate);
-			}		
-		}
+                WDSP.SetDSPSamplerate(WDSP.id(0, 0), rx1_dsp_rate);
+                WDSP.SetDSPSamplerate(WDSP.id(0, 1), rx1_dsp_rate);
+                WDSP.SetDSPSamplerate(WDSP.id(2, 0), rx2_dsp_rate);
+                WDSP.SetDSPSamplerate(WDSP.id(2, 1), rx2_dsp_rate);
+            }
+        }
 
         private static string app_data_path = "";
         public static string AppDataPath
@@ -163,16 +163,16 @@ namespace Thetis
     #region RadioDSPRX Class
 
     public class RadioDSPRX
-	{
-		private uint thread;
-		private uint subrx;
+    {
+        private uint thread;
+        private uint subrx;
 
-		public RadioDSPRX(uint t, uint rx)
-		{
-			thread = t;
-			subrx = rx;
-			//DttSP.SetTRX(t, false);
-		}
+        public RadioDSPRX(uint t, uint rx)
+        {
+            thread = t;
+            subrx = rx;
+            //DttSP.SetTRX(t, false);
+        }
 
         public void Copy(RadioDSPRX rx)
         {
@@ -253,49 +253,49 @@ namespace Thetis
             this.RXANR2Position = rx.rx_nr2_position;
         }
 
-		private void SyncAll()
-		{
-			DSPMode = dsp_mode;
+        private void SyncAll()
+        {
+            DSPMode = dsp_mode;
             FilterSize = filter_size;
             FilterType = filter_type;
-			SetRXFilter(rx_filter_low, rx_filter_high);
+            SetRXFilter(rx_filter_low, rx_filter_high);
             NoiseReduction = noise_reduction;
-			SetNRVals(nr_taps, nr_delay, nr_gain, nr_leak);
-			AutoNotchFilter = auto_notch_filter;
-			SetANFVals(anf_taps, anf_delay, anf_gain, anf_leak);
-			RXAGCMode = rx_agc_mode;
-			if(rx_eq_num_bands == 3)
-			{
-				RXEQ10 = rx_eq10;
-				RXEQ3 = rx_eq3;
-			}
-			else
-			{
-				RXEQ3 = rx_eq3;
-				RXEQ10 = rx_eq10;
-			}
-			RXEQOn = rx_eq_on;
-			NBThreshold = nb_threshold;
+            SetNRVals(nr_taps, nr_delay, nr_gain, nr_leak);
+            AutoNotchFilter = auto_notch_filter;
+            SetANFVals(anf_taps, anf_delay, anf_gain, anf_leak);
+            RXAGCMode = rx_agc_mode;
+            if (rx_eq_num_bands == 3)
+            {
+                RXEQ10 = rx_eq10;
+                RXEQ3 = rx_eq3;
+            }
+            else
+            {
+                RXEQ3 = rx_eq3;
+                RXEQ10 = rx_eq10;
+            }
+            RXEQOn = rx_eq_on;
+            NBThreshold = nb_threshold;
             NBTau = nb_tau;
             NBAdvTime = nb_advtime;
             NBHangTime = nb_hangtime;
             NBMode = nb_mode;
-			RXFixedAGC = rx_fixed_agc;
-			RXAGCMaxGain = rx_agc_max_gain;
-			RXAGCDecay = rx_agc_decay;
-			RXAGCHang = rx_agc_hang;
-			RXOutputGain = rx_output_gain;
-			RXAGCSlope = rx_agc_slope;
-			RXAGCHangThreshold = rx_agc_hang_threshold;
-			BinOn = bin_on;
-			RXSquelchThreshold = rx_squelch_threshold;
+            RXFixedAGC = rx_fixed_agc;
+            RXAGCMaxGain = rx_agc_max_gain;
+            RXAGCDecay = rx_agc_decay;
+            RXAGCHang = rx_agc_hang;
+            RXOutputGain = rx_output_gain;
+            RXAGCSlope = rx_agc_slope;
+            RXAGCHangThreshold = rx_agc_hang_threshold;
+            BinOn = bin_on;
+            RXSquelchThreshold = rx_squelch_threshold;
             RXAMSquelchMaxTail = rx_am_squelch_max_tail;
-			RXAMSquelchOn = rx_am_squelch_on;
+            RXAMSquelchOn = rx_am_squelch_on;
             FMSquelchThreshold = fm_squelch_threshold;
             SpectrumPreFilter = spectrum_pre_filter;
-			Active = active;
-			Pan = pan;
-			RXOsc = rx_osc;
+            Active = active;
+            Pan = pan;
+            RXOsc = rx_osc;
             RXFMDeviation = rx_fm_deviation;
             RXFMDETLIMRUN = rx_fm_detector_limiter;
             RXFMDETLIMGAIN = rx_fm_limiter_gain;
@@ -329,52 +329,52 @@ namespace Thetis
             RXANR2Position = rx_nr2_position;
         }
 
-		#region Non-Static Properties & Routines
+        #region Non-Static Properties & Routines
 
-		/// <summary>
-		/// Controls whether updates to following properties call the DSP.  
-		/// Each property uses this value and a copy of the last thing sent to
-		/// the DSP to update in a minimal fashion.
-		/// </summary>
-		private bool update = false;
-		public bool Update
-		{
-			get { return update; }
-			set
-			{
-				update = value;
-				if(value) SyncAll();
-			}
-		}
+        /// <summary>
+        /// Controls whether updates to following properties call the DSP.  
+        /// Each property uses this value and a copy of the last thing sent to
+        /// the DSP to update in a minimal fashion.
+        /// </summary>
+        private bool update = false;
+        public bool Update
+        {
+            get { return update; }
+            set
+            {
+                update = value;
+                if (value) SyncAll();
+            }
+        }
 
-		/// <summary>
-		/// Used to force properties to update even if the DSP copy matches the
-		/// new setting.  Mainly used to resync the DSP after having to rebuild
-		/// when resetting DSP Block Size or Sample Rate.
-		/// </summary>
-		private bool force = false;
-		public bool Force
-		{
-			get { return force; }
-			set { force = value; }
-		}
+        /// <summary>
+        /// Used to force properties to update even if the DSP copy matches the
+        /// new setting.  Mainly used to resync the DSP after having to rebuild
+        /// when resetting DSP Block Size or Sample Rate.
+        /// </summary>
+        private bool force = false;
+        public bool Force
+        {
+            get { return force; }
+            set { force = value; }
+        }
 
-		private int buffer_size_dsp = 64;
-		private int buffer_size = 64;
-		public int BufferSize
-		{
-			get { return buffer_size; }
-			set
-			{
+        private int buffer_size_dsp = 64;
+        private int buffer_size = 64;
+        public int BufferSize
+        {
+            get { return buffer_size; }
+            set
+            {
                 buffer_size = value;
-				if(update)
-				{
-					if(value != buffer_size_dsp || force)
-					{
+                if (update)
+                {
+                    if (value != buffer_size_dsp || force)
+                    {
                         WDSP.SetDSPBuffsize(WDSP.id(thread, subrx), value);
-						buffer_size_dsp = value;
-					}
-				}
+                        buffer_size_dsp = value;
+                    }
+                }
             }
         }
 
@@ -416,298 +416,298 @@ namespace Thetis
             }
         }
 
-		private DSPMode dsp_mode_dsp = DSPMode.USB;
-		private DSPMode dsp_mode = DSPMode.USB;
-		public DSPMode DSPMode
-		{
-			get { return dsp_mode; }
-			set
-			{
-				dsp_mode = value;
-				if(update)
-				{
-					if(value != dsp_mode_dsp || force)
-					{
+        private DSPMode dsp_mode_dsp = DSPMode.USB;
+        private DSPMode dsp_mode = DSPMode.USB;
+        public DSPMode DSPMode
+        {
+            get { return dsp_mode; }
+            set
+            {
+                dsp_mode = value;
+                if (update)
+                {
+                    if (value != dsp_mode_dsp || force)
+                    {
                         WDSP.SetRXAMode(WDSP.id(thread, subrx), value);
-						dsp_mode_dsp = value;
-					}
-				}
-			}
-		}
+                        dsp_mode_dsp = value;
+                    }
+                }
+            }
+        }
 
-		public void SetRXFilter(int low, int high)
-		{
-			rx_filter_low = low;
-			rx_filter_high = high;
-			if(update)
-			{
-				if(low != rx_filter_low_dsp || high != rx_filter_high_dsp || force)
-				{
+        public void SetRXFilter(int low, int high)
+        {
+            rx_filter_low = low;
+            rx_filter_high = high;
+            if (update)
+            {
+                if (low != rx_filter_low_dsp || high != rx_filter_high_dsp || force)
+                {
                     WDSP.RXANBPSetFreqs(WDSP.id(thread, subrx), low, high);
                     WDSP.SetRXABandpassFreqs(WDSP.id(thread, subrx), low, high);
                     WDSP.SetRXASNBAOutputBandwidth(WDSP.id(thread, subrx), low, high);
-					rx_filter_low_dsp = low;
-					rx_filter_high_dsp = high;
-				}
-			}
-		}
+                    rx_filter_low_dsp = low;
+                    rx_filter_high_dsp = high;
+                }
+            }
+        }
 
-		private int rx_filter_low_dsp;
-		private int rx_filter_low;
-		public int RXFilterLow
-		{
-			get { return rx_filter_low; }
-			set 
-			{
-				rx_filter_low = value;
-				if(update)
-				{
-					if(value != rx_filter_low_dsp || force)
-					{
+        private int rx_filter_low_dsp;
+        private int rx_filter_low;
+        public int RXFilterLow
+        {
+            get { return rx_filter_low; }
+            set
+            {
+                rx_filter_low = value;
+                if (update)
+                {
+                    if (value != rx_filter_low_dsp || force)
+                    {
                         WDSP.RXANBPSetFreqs(WDSP.id(thread, subrx), value, rx_filter_high);
                         WDSP.SetRXABandpassFreqs(WDSP.id(thread, subrx), value, rx_filter_high);
                         WDSP.SetRXASNBAOutputBandwidth(WDSP.id(thread, subrx), value, rx_filter_high);
-						rx_filter_low_dsp = value;
-					}
-				}
-			}
-		}
+                        rx_filter_low_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private int rx_filter_high_dsp;
-		private int rx_filter_high;
-		public int RXFilterHigh
-		{
-			get { return rx_filter_high; }
-			set
-			{
-				rx_filter_high = value;
-				if(update)
-				{
-					if(value != rx_filter_high_dsp || force)
-					{
+        private int rx_filter_high_dsp;
+        private int rx_filter_high;
+        public int RXFilterHigh
+        {
+            get { return rx_filter_high; }
+            set
+            {
+                rx_filter_high = value;
+                if (update)
+                {
+                    if (value != rx_filter_high_dsp || force)
+                    {
                         WDSP.RXANBPSetFreqs(WDSP.id(thread, subrx), rx_filter_low, value);
                         WDSP.SetRXABandpassFreqs(WDSP.id(thread, subrx), rx_filter_low, value);
                         WDSP.SetRXASNBAOutputBandwidth(WDSP.id(thread, subrx), rx_filter_low, value);
-						rx_filter_high_dsp = value;
-					}
-				}
-			}
-		}
+                        rx_filter_high_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private bool noise_reduction_dsp = false;
-		private bool noise_reduction = false;
-		public bool NoiseReduction
-		{
-			get { return noise_reduction; }
-			set
-			{
-				noise_reduction = value;
-				if(update)
-				{
-					if(value != noise_reduction_dsp || force)
-					{
+        private bool noise_reduction_dsp = false;
+        private bool noise_reduction = false;
+        public bool NoiseReduction
+        {
+            get { return noise_reduction; }
+            set
+            {
+                noise_reduction = value;
+                if (update)
+                {
+                    if (value != noise_reduction_dsp || force)
+                    {
                         WDSP.SetRXAANRRun(WDSP.id(thread, subrx), value);
-						noise_reduction_dsp = value;
-					}
-				}
-			}
-		}
+                        noise_reduction_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private int nr_taps_dsp = 64;
-		private int nr_taps = 64;
-		private int nr_delay_dsp = 16;
-		private int nr_delay = 16;
+        private int nr_taps_dsp = 64;
+        private int nr_taps = 64;
+        private int nr_delay_dsp = 16;
+        private int nr_delay = 16;
         private double nr_gain_dsp = 16e-4;
         private double nr_gain = 16e-4;
         private double nr_leak_dsp = 10e-7;
         private double nr_leak = 10e-7;
         public void SetNRVals(int taps, int delay, double gain, double leak)
-		{
-			nr_taps = taps;
-			nr_delay = delay;
-			nr_gain = gain;
-			nr_leak = leak;
-			if(update)
-			{
-				if(taps != nr_taps_dsp || delay != nr_delay_dsp ||
-					gain != nr_gain_dsp || leak != nr_leak_dsp || force)
-				{
+        {
+            nr_taps = taps;
+            nr_delay = delay;
+            nr_gain = gain;
+            nr_leak = leak;
+            if (update)
+            {
+                if (taps != nr_taps_dsp || delay != nr_delay_dsp ||
+                    gain != nr_gain_dsp || leak != nr_leak_dsp || force)
+                {
                     WDSP.SetRXAANRVals(WDSP.id(thread, subrx), taps, delay, gain, leak);
-					nr_taps_dsp = taps;
-					nr_delay_dsp = delay;
-					nr_gain_dsp = gain;
-					nr_leak_dsp = leak;
-				}
-			}
-		}
+                    nr_taps_dsp = taps;
+                    nr_delay_dsp = delay;
+                    nr_gain_dsp = gain;
+                    nr_leak_dsp = leak;
+                }
+            }
+        }
 
-		private bool auto_notch_filter_dsp = false;
-		private bool auto_notch_filter = false;
-		public bool AutoNotchFilter
-		{
-			get { return auto_notch_filter; }
-			set 
-			{
-				auto_notch_filter = value;
-				if(update)
-				{
-					if(value != auto_notch_filter_dsp || force)
-					{
+        private bool auto_notch_filter_dsp = false;
+        private bool auto_notch_filter = false;
+        public bool AutoNotchFilter
+        {
+            get { return auto_notch_filter; }
+            set
+            {
+                auto_notch_filter = value;
+                if (update)
+                {
+                    if (value != auto_notch_filter_dsp || force)
+                    {
                         WDSP.SetRXAANFRun(WDSP.id(thread, subrx), value);
-						auto_notch_filter_dsp = value;
-					}
-				}
-			}
-		}
+                        auto_notch_filter_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private int anf_taps_dsp = 64;
-		private int anf_taps = 64;
-		private int anf_delay_dsp = 16;
-		private int anf_delay = 16;
+        private int anf_taps_dsp = 64;
+        private int anf_taps = 64;
+        private int anf_delay_dsp = 16;
+        private int anf_delay = 16;
         private double anf_gain_dsp = 10e-4;
         private double anf_gain = 10e-4;
         private double anf_leak_dsp = 1e-7;
         private double anf_leak = 1e-7;
-		public void SetANFVals(int taps, int delay, double gain, double leak)
-		{
-			anf_taps = taps;
-			anf_delay = delay;
-			anf_gain = gain;
-			anf_leak = leak;
-			if(update)
-			{
-				if(taps != anf_taps_dsp || delay != anf_delay_dsp ||
-					gain != anf_gain_dsp || leak != anf_leak_dsp || force)
-				{
+        public void SetANFVals(int taps, int delay, double gain, double leak)
+        {
+            anf_taps = taps;
+            anf_delay = delay;
+            anf_gain = gain;
+            anf_leak = leak;
+            if (update)
+            {
+                if (taps != anf_taps_dsp || delay != anf_delay_dsp ||
+                    gain != anf_gain_dsp || leak != anf_leak_dsp || force)
+                {
                     WDSP.SetRXAANFVals(WDSP.id(thread, subrx), taps, delay, gain, leak);
-					anf_taps_dsp = taps;
-					anf_delay_dsp = delay;
-					anf_gain_dsp = gain;
-					anf_leak_dsp = leak;
-				}
-			}
-		}
+                    anf_taps_dsp = taps;
+                    anf_delay_dsp = delay;
+                    anf_gain_dsp = gain;
+                    anf_leak_dsp = leak;
+                }
+            }
+        }
 
-		private AGCMode rx_agc_mode_dsp = AGCMode.MED;
-		private AGCMode rx_agc_mode = AGCMode.MED;
-		public AGCMode RXAGCMode
-		{
-			get { return rx_agc_mode; }
-			set
-			{
-				rx_agc_mode = value;
-				if(update)
-				{
-					if(value != rx_agc_mode_dsp || force)
-					{
+        private AGCMode rx_agc_mode_dsp = AGCMode.MED;
+        private AGCMode rx_agc_mode = AGCMode.MED;
+        public AGCMode RXAGCMode
+        {
+            get { return rx_agc_mode; }
+            set
+            {
+                rx_agc_mode = value;
+                if (update)
+                {
+                    if (value != rx_agc_mode_dsp || force)
+                    {
                         WDSP.SetRXAAGCMode(WDSP.id(thread, subrx), value);
-						rx_agc_mode_dsp = value;
-					}
-				}
-			}
-		}
+                        rx_agc_mode_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private int rx_eq_num_bands = 10;
-		public int RXEQNumBands
-		{
-			get { return rx_eq_num_bands; }
-			set { rx_eq_num_bands = value; }
-		}
-        
-		private int[] rx_eq3_dsp = new int[4];
-		private int[] rx_eq3 = new int[4];
-		public int[] RXEQ3
-		{
-			get { return rx_eq3; }
-			set 
-			{
-				for(int i=0; i<rx_eq3.Length && i<value.Length; i++)
-					rx_eq3[i] = value[i];
-				if(update)
-				{
+        private int rx_eq_num_bands = 10;
+        public int RXEQNumBands
+        {
+            get { return rx_eq_num_bands; }
+            set { rx_eq_num_bands = value; }
+        }
+
+        private int[] rx_eq3_dsp = new int[4];
+        private int[] rx_eq3 = new int[4];
+        public int[] RXEQ3
+        {
+            get { return rx_eq3; }
+            set
+            {
+                for (int i = 0; i < rx_eq3.Length && i < value.Length; i++)
+                    rx_eq3[i] = value[i];
+                if (update)
+                {
                     unsafe
                     {
                         fixed (int* ptr = &(rx_eq3[0]))
                             WDSP.SetRXAGrphEQ(WDSP.id(thread, subrx), ptr);
                     }
-						for(int i=0; i<rx_eq3_dsp.Length && i<value.Length; i++)
-							rx_eq3_dsp[i] = value[i];
-				}
-			}
-		}
+                    for (int i = 0; i < rx_eq3_dsp.Length && i < value.Length; i++)
+                        rx_eq3_dsp[i] = value[i];
+                }
+            }
+        }
 
-		private int[] rx_eq10_dsp = new int[11];
-		private int[] rx_eq10 = new int[11];
-		public int[] RXEQ10
-		{
-			get { return rx_eq10; }
-			set 
-			{
-				for(int i=0; i<rx_eq10.Length && i<value.Length; i++)
-					rx_eq10[i] = value[i];
-				if(update)
-				{
+        private int[] rx_eq10_dsp = new int[11];
+        private int[] rx_eq10 = new int[11];
+        public int[] RXEQ10
+        {
+            get { return rx_eq10; }
+            set
+            {
+                for (int i = 0; i < rx_eq10.Length && i < value.Length; i++)
+                    rx_eq10[i] = value[i];
+                if (update)
+                {
                     unsafe
                     {
                         fixed (int* ptr = &(rx_eq10[0]))
                             WDSP.SetRXAGrphEQ10(WDSP.id(thread, subrx), ptr);
                     }
-						for(int i=0; i<rx_eq10_dsp.Length && i<value.Length; i++)
-							rx_eq10_dsp[i] = value[i];
-				}
-			}
-		}
+                    for (int i = 0; i < rx_eq10_dsp.Length && i < value.Length; i++)
+                        rx_eq10_dsp[i] = value[i];
+                }
+            }
+        }
 
-		private bool rx_eq_on_dsp = false;
-		private bool rx_eq_on = false;
-		public bool RXEQOn
-		{
-			get { return rx_eq_on; }
-			set 
-			{
-				rx_eq_on = value;
-				if(update)
-				{
-					if(value != rx_eq_on_dsp || force)
-					{
+        private bool rx_eq_on_dsp = false;
+        private bool rx_eq_on = false;
+        public bool RXEQOn
+        {
+            get { return rx_eq_on; }
+            set
+            {
+                rx_eq_on = value;
+                if (update)
+                {
+                    if (value != rx_eq_on_dsp || force)
+                    {
                         WDSP.SetRXAEQRun(WDSP.id(thread, subrx), value);
-						rx_eq_on_dsp = value;
-					}
-				}
-			}
-		}
+                        rx_eq_on_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private double nb_threshold_dsp = 3.3;
-		private double nb_threshold = 3.3;
-		public double NBThreshold
-		{
-			get { return nb_threshold; }
-			set
-			{
-				nb_threshold = value;
-				if(update)
-				{
-					if(value != nb_threshold_dsp || force)
-					{
+        private double nb_threshold_dsp = 3.3;
+        private double nb_threshold = 3.3;
+        public double NBThreshold
+        {
+            get { return nb_threshold; }
+            set
+            {
+                nb_threshold = value;
+                if (update)
+                {
+                    if (value != nb_threshold_dsp || force)
+                    {
                         if (thread == 0 && subrx == 0)
-                            {
+                        {
                             cmaster.SetRCVRANBThreshold(0, 0, value);
                             cmaster.SetRCVRANBThreshold(2, 0, value);
                             cmaster.SetRCVRANBThreshold(2, 1, value);
                             cmaster.SetRCVRNOBThreshold(0, 0, value);
                             cmaster.SetRCVRNOBThreshold(2, 0, value);
                             cmaster.SetRCVRNOBThreshold(2, 1, value);
-                            }
+                        }
                         else if (thread == 2 && subrx == 0)
                         {
                             cmaster.SetRCVRANBThreshold(0, 1, value);
                             cmaster.SetRCVRNOBThreshold(0, 1, value);
                         }
-						nb_threshold_dsp = value;
-					}
-				}
-			}
-		}
+                        nb_threshold_dsp = value;
+                    }
+                }
+            }
+        }
 
         private double nb_tau_dsp = 0.00005;
         private double nb_tau = 0.00005;
@@ -722,14 +722,14 @@ namespace Thetis
                     if (value != nb_tau_dsp || force)
                     {
                         if (thread == 0 && subrx == 0)
-                            {
+                        {
                             cmaster.SetRCVRANBTau(0, 0, value);
                             cmaster.SetRCVRANBTau(2, 0, value);
                             cmaster.SetRCVRANBTau(2, 1, value);
                             cmaster.SetRCVRNOBTau(0, 0, value);
                             cmaster.SetRCVRNOBTau(2, 0, value);
                             cmaster.SetRCVRNOBTau(2, 1, value);
-                            }
+                        }
                         else if (thread == 2 && subrx == 0)
                         {
                             cmaster.SetRCVRANBTau(0, 1, value);
@@ -754,14 +754,14 @@ namespace Thetis
                     if (value != nb_advtime_dsp || force)
                     {
                         if (thread == 0 && subrx == 0)
-                            {
+                        {
                             cmaster.SetRCVRANBAdvtime(0, 0, value);
                             cmaster.SetRCVRANBAdvtime(2, 0, value);
                             cmaster.SetRCVRANBAdvtime(2, 1, value);
                             cmaster.SetRCVRNOBAdvtime(0, 0, value);
                             cmaster.SetRCVRNOBAdvtime(2, 0, value);
                             cmaster.SetRCVRNOBAdvtime(2, 1, value);
-                            }
+                        }
                         else if (thread == 2 && subrx == 0)
                         {
                             cmaster.SetRCVRANBAdvtime(0, 1, value);
@@ -786,14 +786,14 @@ namespace Thetis
                     if (value != nb_hangtime_dsp || force)
                     {
                         if (thread == 0 && subrx == 0)
-                            {
+                        {
                             cmaster.SetRCVRANBHangtime(0, 0, value);
                             cmaster.SetRCVRANBHangtime(2, 0, value);
                             cmaster.SetRCVRANBHangtime(2, 1, value);
                             cmaster.SetRCVRNOBHangtime(0, 0, value);
                             cmaster.SetRCVRNOBHangtime(2, 0, value);
                             cmaster.SetRCVRNOBHangtime(2, 1, value);
-                            }
+                        }
                         else if (thread == 2 && subrx == 0)
                         {
                             cmaster.SetRCVRANBHangtime(0, 1, value);
@@ -833,157 +833,157 @@ namespace Thetis
             }
         }
 
-		private double rx_fixed_agc_dsp = 20.0;
-		private double rx_fixed_agc = 20.0;
-		public double RXFixedAGC
-		{
-			get { return rx_fixed_agc; }
-			set
-			{
-				rx_fixed_agc = value;
-				if(update)
-				{
-					if(value != rx_fixed_agc_dsp || force)
-					{
+        private double rx_fixed_agc_dsp = 20.0;
+        private double rx_fixed_agc = 20.0;
+        public double RXFixedAGC
+        {
+            get { return rx_fixed_agc; }
+            set
+            {
+                rx_fixed_agc = value;
+                if (update)
+                {
+                    if (value != rx_fixed_agc_dsp || force)
+                    {
                         WDSP.SetRXAAGCFixed(WDSP.id(thread, subrx), value);
-						rx_fixed_agc_dsp = value;
-					}
-				}
-			}
-		}
+                        rx_fixed_agc_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private double rx_agc_max_gain_dsp = 90.0;
-		private double rx_agc_max_gain = 90.0;
-		public double RXAGCMaxGain
-		{
-			get { return rx_agc_max_gain; }
-			set
-			{
-				rx_agc_max_gain = value;
-				if(update)
-				{
-					if(value != rx_agc_max_gain_dsp || force)
-					{
+        private double rx_agc_max_gain_dsp = 90.0;
+        private double rx_agc_max_gain = 90.0;
+        public double RXAGCMaxGain
+        {
+            get { return rx_agc_max_gain; }
+            set
+            {
+                rx_agc_max_gain = value;
+                if (update)
+                {
+                    if (value != rx_agc_max_gain_dsp || force)
+                    {
                         WDSP.SetRXAAGCTop(WDSP.id(thread, subrx), value);
-						rx_agc_max_gain_dsp = value;
-					}
-				}
-			}
-		}
+                        rx_agc_max_gain_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private int rx_agc_decay_dsp = 250;
-		private int rx_agc_decay = 250;
-		public int RXAGCDecay
-		{
-			get { return rx_agc_decay; }
-			set
-			{
-				rx_agc_decay = value;
-				if(update)
-				{
-					if(value != rx_agc_decay_dsp || force)
-					{
+        private int rx_agc_decay_dsp = 250;
+        private int rx_agc_decay = 250;
+        public int RXAGCDecay
+        {
+            get { return rx_agc_decay; }
+            set
+            {
+                rx_agc_decay = value;
+                if (update)
+                {
+                    if (value != rx_agc_decay_dsp || force)
+                    {
                         WDSP.SetRXAAGCDecay(WDSP.id(thread, subrx), value);
-						rx_agc_decay_dsp = value;
-					}
-				}
-			}
-		}
+                        rx_agc_decay_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private int rx_agc_hang_dsp = 250;
-		private int rx_agc_hang = 250;
-		public int RXAGCHang
-		{
-			get { return rx_agc_hang; }
-			set
-			{
-				rx_agc_hang = value;
-				if(update)
-				{
-					if(value != rx_agc_hang_dsp || force)
-					{
+        private int rx_agc_hang_dsp = 250;
+        private int rx_agc_hang = 250;
+        public int RXAGCHang
+        {
+            get { return rx_agc_hang; }
+            set
+            {
+                rx_agc_hang = value;
+                if (update)
+                {
+                    if (value != rx_agc_hang_dsp || force)
+                    {
                         WDSP.SetRXAAGCHang(WDSP.id(thread, subrx), value);
-						rx_agc_hang_dsp = value;
-					}
-				}
-			}
-		}
+                        rx_agc_hang_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private double rx_output_gain_dsp = 1.0;
-		private double rx_output_gain = 1.0;
-		public double RXOutputGain
-		{
-			get { return rx_output_gain; }
-			set
-			{
-				rx_output_gain = value;
-				if(update)
-				{
-					if(value != rx_output_gain_dsp || force)
-					{
+        private double rx_output_gain_dsp = 1.0;
+        private double rx_output_gain = 1.0;
+        public double RXOutputGain
+        {
+            get { return rx_output_gain; }
+            set
+            {
+                rx_output_gain = value;
+                if (update)
+                {
+                    if (value != rx_output_gain_dsp || force)
+                    {
                         WDSP.SetRXAPanelGain1(WDSP.id(thread, subrx), value);
-						rx_output_gain_dsp = value;
-					}
-				}
-			}
-		}
+                        rx_output_gain_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private int rx_agc_slope_dsp = 0;
-		private int rx_agc_slope = 0;
-		public int RXAGCSlope
-		{
-			get { return rx_agc_slope; }
-			set
-			{
-				rx_agc_slope = value;
-				if(update)
-				{
-					if(value != rx_agc_slope_dsp || force)
-					{
+        private int rx_agc_slope_dsp = 0;
+        private int rx_agc_slope = 0;
+        public int RXAGCSlope
+        {
+            get { return rx_agc_slope; }
+            set
+            {
+                rx_agc_slope = value;
+                if (update)
+                {
+                    if (value != rx_agc_slope_dsp || force)
+                    {
                         WDSP.SetRXAAGCSlope(WDSP.id(thread, subrx), value);
-						rx_agc_slope_dsp = value;
-					}
-				}
-			}
-		}
+                        rx_agc_slope_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private int rx_agc_hang_threshold_dsp = 0;
-		private int rx_agc_hang_threshold = 0;
-		public int RXAGCHangThreshold
-		{
-			get { return rx_agc_hang_threshold; }
-			set
-			{
-				rx_agc_hang_threshold = value;
-				if(update)
-				{
-					if(value != rx_agc_hang_threshold_dsp || force)
-					{
+        private int rx_agc_hang_threshold_dsp = 0;
+        private int rx_agc_hang_threshold = 0;
+        public int RXAGCHangThreshold
+        {
+            get { return rx_agc_hang_threshold; }
+            set
+            {
+                rx_agc_hang_threshold = value;
+                if (update)
+                {
+                    if (value != rx_agc_hang_threshold_dsp || force)
+                    {
                         WDSP.SetRXAAGCHangThreshold(WDSP.id(thread, subrx), value);
-						rx_agc_hang_threshold_dsp = value;
-					}
-				}
-			}
-		}
+                        rx_agc_hang_threshold_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private bool bin_on_dsp = false;
-		private bool bin_on = false;
-		public bool BinOn
-		{
-			get { return bin_on; }
-			set
-			{
-				bin_on = value;
-				if(update)
-				{
-					if(value != bin_on_dsp || force)
-					{
+        private bool bin_on_dsp = false;
+        private bool bin_on = false;
+        public bool BinOn
+        {
+            get { return bin_on; }
+            set
+            {
+                bin_on = value;
+                if (update)
+                {
+                    if (value != bin_on_dsp || force)
+                    {
                         WDSP.SetRXAPanelBinaural(WDSP.id(thread, subrx), value);
-						bin_on_dsp = value;
-					}
-				}
-			}
-		}
+                        bin_on_dsp = value;
+                    }
+                }
+            }
+        }
 
         private float rx_squelch_threshold_dsp = -150.0f;
         private float rx_squelch_threshold = -150.0f;
@@ -1024,24 +1024,24 @@ namespace Thetis
         }
 
 
-		private bool rx_am_squelch_on_dsp = false;
-		private bool rx_am_squelch_on = false;
-		public bool RXAMSquelchOn
-		{
-			get { return rx_am_squelch_on; }
-			set
-			{
-				rx_am_squelch_on = value;
-				if(update)
-				{
-					if(value != rx_am_squelch_on_dsp || force)
-					{
+        private bool rx_am_squelch_on_dsp = false;
+        private bool rx_am_squelch_on = false;
+        public bool RXAMSquelchOn
+        {
+            get { return rx_am_squelch_on; }
+            set
+            {
+                rx_am_squelch_on = value;
+                if (update)
+                {
+                    if (value != rx_am_squelch_on_dsp || force)
+                    {
                         WDSP.SetRXAAMSQRun(WDSP.id(thread, subrx), value);
-						rx_am_squelch_on_dsp = value;
-					}
-				}
-			}
-		}
+                        rx_am_squelch_on_dsp = value;
+                    }
+                }
+            }
+        }
 
         private bool rx_fm_squelch_on_dsp = false;
         private bool rx_fm_squelch_on = false;
@@ -1080,81 +1080,81 @@ namespace Thetis
                 }
             }
         }
- 
+
         private bool spectrum_pre_filter_dsp = true;
-		private bool spectrum_pre_filter = true;
-		public bool SpectrumPreFilter
-		{
-			get { return spectrum_pre_filter; }
-			set
-			{
-				spectrum_pre_filter = value;
-				if(update)
-				{
-					if(value != spectrum_pre_filter_dsp || force)
-					{
-						spectrum_pre_filter_dsp = value;
-					}
-				}
-			}
-		}
-
-		private bool active_dsp = false;
-		private bool active = false;
-		public bool Active
-		{
-			get { return active; }
-			set
-			{
-				active = value;
-				if(update)
-				{
-					if(value != active_dsp || force)
-					{
-						active_dsp = value;
-					}
-				}
-			}
-		}
-
-		private float pan_dsp = 0.5f;
-		private float pan = 0.5f;
-		public float Pan
-		{
-			get { return pan; }
-			set
-			{
-				pan = value;
-				if(update)
-				{
-					if(value != pan_dsp || force)
-					{
-                        WDSP.SetRXAPanelPan (WDSP.id(thread, subrx), (double)value);
-						pan_dsp = value;
-					}
-				}
-			}
-		}
-
-		private double rx_osc_dsp = 0.0;
-		private double rx_osc = 0.0;
-		public double RXOsc
-		{
-			get { return rx_osc; }
-			set
-			{
-				rx_osc = value;
-				if(update)
-				{
-					if(value != rx_osc_dsp || force)
-					{
-                        WDSP.SetRXAShiftFreq(WDSP.id(thread, subrx), -value);
-                        WDSP.RXANBPSetShiftFrequency(WDSP.id(thread, subrx), -value);
-						rx_osc_dsp = value;
+        private bool spectrum_pre_filter = true;
+        public bool SpectrumPreFilter
+        {
+            get { return spectrum_pre_filter; }
+            set
+            {
+                spectrum_pre_filter = value;
+                if (update)
+                {
+                    if (value != spectrum_pre_filter_dsp || force)
+                    {
+                        spectrum_pre_filter_dsp = value;
                     }
                 }
-			}
-		}
+            }
+        }
+
+        private bool active_dsp = false;
+        private bool active = false;
+        public bool Active
+        {
+            get { return active; }
+            set
+            {
+                active = value;
+                if (update)
+                {
+                    if (value != active_dsp || force)
+                    {
+                        active_dsp = value;
+                    }
+                }
+            }
+        }
+
+        private float pan_dsp = 0.5f;
+        private float pan = 0.5f;
+        public float Pan
+        {
+            get { return pan; }
+            set
+            {
+                pan = value;
+                if (update)
+                {
+                    if (value != pan_dsp || force)
+                    {
+                        WDSP.SetRXAPanelPan(WDSP.id(thread, subrx), (double)value);
+                        pan_dsp = value;
+                    }
+                }
+            }
+        }
+
+        private double rx_osc_dsp = 0.0;
+        private double rx_osc = 0.0;
+        public double RXOsc
+        {
+            get { return rx_osc; }
+            set
+            {
+                rx_osc = value;
+                if (update)
+                {
+                    if (value != rx_osc_dsp || force)
+                    {
+                        WDSP.SetRXAShiftFreq(WDSP.id(thread, subrx), -value);
+                        WDSP.RXANBPSetShiftFrequency(WDSP.id(thread, subrx), -value);
+                        rx_osc_dsp = value;
+                    }
+                }
+            }
+        }
 
         private double rx_fm_deviation = 5000.0;
         private double rx_fm_deviation_dsp = 5000.0;
@@ -1209,7 +1209,7 @@ namespace Thetis
             {
                 if (freq != notch_freq_dsp[index] || force)
                 {
-                     notch_freq_dsp[index] = freq;
+                    notch_freq_dsp[index] = freq;
                 }
             }
         }
@@ -1233,7 +1233,7 @@ namespace Thetis
             {
                 if (bw != notch_bw_dsp[index] || force)
                 {
-                     notch_bw_dsp[index] = bw;
+                    notch_bw_dsp[index] = bw;
                 }
             }
         }
@@ -1423,7 +1423,7 @@ namespace Thetis
                 {
                     if (value != rx_pregen_run_dsp || force)
                     {
-                        WDSP.SetRXAPreGenRun(WDSP.id(thread,subrx), value);
+                        WDSP.SetRXAPreGenRun(WDSP.id(thread, subrx), value);
                         rx_pregen_run_dsp = value;
                     }
                 }
@@ -1539,7 +1539,7 @@ namespace Thetis
                     {
                         rx_pregen_sweep_freq1_dsp = value;
                         WDSP.SetRXAPreGenSweepFreq(WDSP.id(thread, subrx), rx_pregen_sweep_freq1_dsp, rx_pregen_sweep_freq2_dsp);
-                        
+
                     }
                 }
             }
@@ -1811,49 +1811,49 @@ namespace Thetis
             }
         }
 
-		#endregion
-	}
+        #endregion
+    }
 
-	#endregion
+    #endregion
 
-	#region RadioDSPTX Class
+    #region RadioDSPTX Class
 
-	public class RadioDSPTX
-	{
-		private uint thread;
+    public class RadioDSPTX
+    {
+        private uint thread;
 
-		public RadioDSPTX(uint t)
-		{
-			thread = t;
-		}
+        public RadioDSPTX(uint t)
+        {
+            thread = t;
+        }
 
-		private void SyncAll()
-		{		
-			CurrentDSPMode = current_dsp_mode;
+        private void SyncAll()
+        {
+            CurrentDSPMode = current_dsp_mode;
             SubAMMode = sub_am_mode;
-			SetTXFilter(tx_filter_low, tx_filter_high);
+            SetTXFilter(tx_filter_low, tx_filter_high);
             FilterSize = filter_size;
             FilterType = filter_type;
-			TXOsc = tx_osc;
-			if(tx_eq_num_bands == 3)
-			{
-				TXEQ10 = tx_eq10;
-				TXEQ3 = tx_eq3;				
-			}
-			else
-			{
-				TXEQ3 = tx_eq3;
-				TXEQ10 = tx_eq10;
-			}
-			TXEQOn = tx_eq_on;
-			Notch160 = notch_160;
-			TXAMCarrierLevel = tx_am_carrier_level;
-			TXALCDecay = tx_alc_decay;
-			TXLevelerMaxGain = tx_leveler_max_gain;
-			TXLevelerDecay = tx_leveler_decay;
-			TXLevelerOn = tx_leveler_on;
-			TXCompandOn = tx_compand_on;
-			TXCompandLevel = tx_compand_level;
+            TXOsc = tx_osc;
+            if (tx_eq_num_bands == 3)
+            {
+                TXEQ10 = tx_eq10;
+                TXEQ3 = tx_eq3;
+            }
+            else
+            {
+                TXEQ3 = tx_eq3;
+                TXEQ10 = tx_eq10;
+            }
+            TXEQOn = tx_eq_on;
+            Notch160 = notch_160;
+            TXAMCarrierLevel = tx_am_carrier_level;
+            TXALCDecay = tx_alc_decay;
+            TXLevelerMaxGain = tx_leveler_max_gain;
+            TXLevelerDecay = tx_leveler_decay;
+            TXLevelerOn = tx_leveler_on;
+            TXCompandOn = tx_compand_on;
+            TXCompandLevel = tx_compand_level;
             TXOsctrlOn = tx_osctrl_on;
             CTCSSFreqHz = ctcss_freq_hz;
             TXFMDeviation = tx_fm_deviation;
@@ -1899,58 +1899,58 @@ namespace Thetis
             TXPostGenSweepRate = tx_postgen_sweep_rate;
             PSRunCal = ps_run_cal;
             MicGain = mic_gain;
-		}
+        }
 
-		#region Non-Static Properties & Routines
+        #region Non-Static Properties & Routines
 
-		/// <summary>
-		/// Controls whether updates to following properties call the DSP.  
-		/// Each property uses this value and a copy of the last thing sent to
-		/// the DSP to update in a minimal fashion.
-		/// </summary>
-		private bool update = false;
-		public bool Update
-		{
-			get { return update; }
-			set
-			{
-				update = value;
-				if(value) SyncAll();
-			}
-		}
+        /// <summary>
+        /// Controls whether updates to following properties call the DSP.  
+        /// Each property uses this value and a copy of the last thing sent to
+        /// the DSP to update in a minimal fashion.
+        /// </summary>
+        private bool update = false;
+        public bool Update
+        {
+            get { return update; }
+            set
+            {
+                update = value;
+                if (value) SyncAll();
+            }
+        }
 
-		/// <summary>
-		/// Used to force properties to update even if the DSP copy matches the
-		/// new setting.  Mainly used to resync the DSP after having to rebuild
-		/// when resetting DSP Block Size or Sample Rate.
-		/// </summary>
-		private bool force = false;
-		public bool Force
-		{
-			get { return force; }
-			set { force = value; }
-		}
+        /// <summary>
+        /// Used to force properties to update even if the DSP copy matches the
+        /// new setting.  Mainly used to resync the DSP after having to rebuild
+        /// when resetting DSP Block Size or Sample Rate.
+        /// </summary>
+        private bool force = false;
+        public bool Force
+        {
+            get { return force; }
+            set { force = value; }
+        }
 
-		private int buffer_size_dsp = 64;
-		private int buffer_size = 64;
-		public int BufferSize
-		{
-			get { return buffer_size; }
-			set
-			{				
-				buffer_size = value;
-				if(update)
-				{
-					if(value != buffer_size_dsp || force)
-					{
+        private int buffer_size_dsp = 64;
+        private int buffer_size = 64;
+        public int BufferSize
+        {
+            get { return buffer_size; }
+            set
+            {
+                buffer_size = value;
+                if (update)
+                {
+                    if (value != buffer_size_dsp || force)
+                    {
                         WDSP.SetDSPBuffsize(WDSP.id(thread, 0), value);
                         Audio.console.specRX.GetSpecRX(cmaster.inid(1, 0)).BlockSize = value;
                         Audio.console.specRX.GetSpecRX(cmaster.inid(1, 0)).SampleRate = 96000;
-						buffer_size_dsp = value;
-					}
-				}
-			}
-		}
+                        buffer_size_dsp = value;
+                    }
+                }
+            }
+        }
 
 
         private int filter_size_dsp = 4096;
@@ -1991,18 +1991,18 @@ namespace Thetis
             }
         }
 
-		private DSPMode current_dsp_mode_dsp = DSPMode.USB;
-		private DSPMode current_dsp_mode = DSPMode.USB;
-		public DSPMode CurrentDSPMode
-		{
-			get { return current_dsp_mode; }
-			set
-			{
-				current_dsp_mode = value;
-				if(update)
-				{
-					if(value != current_dsp_mode_dsp || force)
-					{
+        private DSPMode current_dsp_mode_dsp = DSPMode.USB;
+        private DSPMode current_dsp_mode = DSPMode.USB;
+        public DSPMode CurrentDSPMode
+        {
+            get { return current_dsp_mode; }
+            set
+            {
+                current_dsp_mode = value;
+                if (update)
+                {
+                    if (value != current_dsp_mode_dsp || force)
+                    {
                         if (current_dsp_mode == DSPMode.AM || current_dsp_mode == DSPMode.SAM)
                         {
                             switch (sub_am_mode)
@@ -2020,11 +2020,11 @@ namespace Thetis
                         }
                         else
                             WDSP.SetTXAMode(WDSP.id(thread, 0), value);
-						current_dsp_mode_dsp = value;
-					}
-				}
-			}
-		}
+                        current_dsp_mode_dsp = value;
+                    }
+                }
+            }
+        }
 
         private int sub_am_mode_dsp = 0;
         private int sub_am_mode = 0;
@@ -2057,155 +2057,155 @@ namespace Thetis
             }
         }
 
-		public void SetTXFilter(int low, int high)
-		{
-			tx_filter_low = low;
-			tx_filter_high = high;
-			if(update)
-			{
-				if(low != tx_filter_low_dsp || high != tx_filter_high_dsp || force)
-				{
+        public void SetTXFilter(int low, int high)
+        {
+            tx_filter_low = low;
+            tx_filter_high = high;
+            if (update)
+            {
+                if (low != tx_filter_low_dsp || high != tx_filter_high_dsp || force)
+                {
                     WDSP.SetTXABandpassFreqs(WDSP.id(thread, 0), low, high);
-					tx_filter_low_dsp = low;
-					tx_filter_high_dsp = high;
-				}
-			}
-		}
+                    tx_filter_low_dsp = low;
+                    tx_filter_high_dsp = high;
+                }
+            }
+        }
 
-		private int tx_filter_low_dsp;
-		private int tx_filter_low;
-		public int TXFilterLow
-		{
-			get { return tx_filter_low; }
-			set 
-			{
-				tx_filter_low = value;
-				if(update)
-				{
-					if(value != tx_filter_low_dsp || force)
-					{
+        private int tx_filter_low_dsp;
+        private int tx_filter_low;
+        public int TXFilterLow
+        {
+            get { return tx_filter_low; }
+            set
+            {
+                tx_filter_low = value;
+                if (update)
+                {
+                    if (value != tx_filter_low_dsp || force)
+                    {
                         WDSP.SetTXABandpassFreqs(WDSP.id(thread, 0), value, tx_filter_high);
-						tx_filter_low_dsp = value;
-					}
-				}
-			}
-		}
+                        tx_filter_low_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private int tx_filter_high_dsp;
-		private int tx_filter_high;
-		public int TXFilterHigh
-		{
-			get { return tx_filter_high; }
-			set
-			{
-				tx_filter_high = value;
-				if(update)
-				{
-					if(value != tx_filter_high_dsp || force)
-					{
+        private int tx_filter_high_dsp;
+        private int tx_filter_high;
+        public int TXFilterHigh
+        {
+            get { return tx_filter_high; }
+            set
+            {
+                tx_filter_high = value;
+                if (update)
+                {
+                    if (value != tx_filter_high_dsp || force)
+                    {
                         WDSP.SetTXABandpassFreqs(WDSP.id(thread, 0), tx_filter_low, value);
-						tx_filter_high_dsp = value;
-					}
-				}
-			}
-		}
+                        tx_filter_high_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private double tx_osc_dsp = 0.0f;
-		private double tx_osc = 0.0;
-		public double TXOsc
-		{
-			get { return tx_osc; }
-			set 
-			{
-				tx_osc = value;
-				if(update)
-				{
-					if(value != tx_osc_dsp || force)
-					{
-						//DttSP.SetTXOsc(thread, value);    // NOT USED!
-						tx_osc_dsp = value;
-					}
-				}
-			}
-		}
+        private double tx_osc_dsp = 0.0f;
+        private double tx_osc = 0.0;
+        public double TXOsc
+        {
+            get { return tx_osc; }
+            set
+            {
+                tx_osc = value;
+                if (update)
+                {
+                    if (value != tx_osc_dsp || force)
+                    {
+                        //DttSP.SetTXOsc(thread, value);    // NOT USED!
+                        tx_osc_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private int tx_eq_num_bands = 3;
-		public int TXEQNumBands
-		{
-			get { return tx_eq_num_bands; }
-			set { tx_eq_num_bands = value; }
-		}
+        private int tx_eq_num_bands = 3;
+        public int TXEQNumBands
+        {
+            get { return tx_eq_num_bands; }
+            set { tx_eq_num_bands = value; }
+        }
 
-		private int[] tx_eq3_dsp = new int[4];
-		private int[] tx_eq3 = new int[4];
-		public int[] TXEQ3
-		{
-			get { return tx_eq3; }
-			set
-			{
-				for(int i=0; i<tx_eq3.Length && i<value.Length; i++)
-					tx_eq3[i] = value[i];
-				if(update)
-				{
-						for(int i=0; i<tx_eq3_dsp.Length && i<value.Length; i++)
-							tx_eq3_dsp[i] = value[i];
-				}
-			}
-		}
+        private int[] tx_eq3_dsp = new int[4];
+        private int[] tx_eq3 = new int[4];
+        public int[] TXEQ3
+        {
+            get { return tx_eq3; }
+            set
+            {
+                for (int i = 0; i < tx_eq3.Length && i < value.Length; i++)
+                    tx_eq3[i] = value[i];
+                if (update)
+                {
+                    for (int i = 0; i < tx_eq3_dsp.Length && i < value.Length; i++)
+                        tx_eq3_dsp[i] = value[i];
+                }
+            }
+        }
 
-		private int[] tx_eq10_dsp = new int[11];
-		private int[] tx_eq10 = new int[11];
-		public int[] TXEQ10
-		{
-			get { return tx_eq10; }
-			set
-			{
-				for(int i=0; i<tx_eq10.Length && i<value.Length; i++)
-					tx_eq10[i] = value[i];
-				if(update)
-				{
-					for(int i=0; i<tx_eq10_dsp.Length && i<value.Length; i++)
-						tx_eq10_dsp[i] = value[i];
-				}
-			}
-		}
+        private int[] tx_eq10_dsp = new int[11];
+        private int[] tx_eq10 = new int[11];
+        public int[] TXEQ10
+        {
+            get { return tx_eq10; }
+            set
+            {
+                for (int i = 0; i < tx_eq10.Length && i < value.Length; i++)
+                    tx_eq10[i] = value[i];
+                if (update)
+                {
+                    for (int i = 0; i < tx_eq10_dsp.Length && i < value.Length; i++)
+                        tx_eq10_dsp[i] = value[i];
+                }
+            }
+        }
 
-		private bool tx_eq_on_dsp = false;
-		private bool tx_eq_on = false;
-		public bool TXEQOn
-		{
-			get { return tx_eq_on; }
-			set
-			{
-				tx_eq_on = value;
-				if(update)
-				{
-					if(value != tx_eq_on_dsp || force)
-					{
+        private bool tx_eq_on_dsp = false;
+        private bool tx_eq_on = false;
+        public bool TXEQOn
+        {
+            get { return tx_eq_on; }
+            set
+            {
+                tx_eq_on = value;
+                if (update)
+                {
+                    if (value != tx_eq_on_dsp || force)
+                    {
                         WDSP.SetTXAEQRun(WDSP.id(thread, 0), value);
-						tx_eq_on_dsp = value;
-					}
-				}
-			}
-		}
+                        tx_eq_on_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private bool notch_160_dsp = false;
-		private bool notch_160 = false;
-		public bool Notch160
-		{
-			get { return notch_160; }
-			set
-			{
-				notch_160 = value;
-				if(update)
-				{
-					if(value != notch_160_dsp || force)
-					{
-						notch_160_dsp = value;
-					}
-				}
-			}
-		}
+        private bool notch_160_dsp = false;
+        private bool notch_160 = false;
+        public bool Notch160
+        {
+            get { return notch_160; }
+            set
+            {
+                notch_160 = value;
+                if (update)
+                {
+                    if (value != notch_160_dsp || force)
+                    {
+                        notch_160_dsp = value;
+                    }
+                }
+            }
+        }
 
         private double tx_fm_deviation = 5000.0;
         private double tx_fm_deviation_dsp = 5000.0;
@@ -2267,141 +2267,141 @@ namespace Thetis
             }
         }
 
-		private double tx_am_carrier_level_dsp = 0.4;
-		private double tx_am_carrier_level = 0.4;
-		public double TXAMCarrierLevel
-		{
-			get { return tx_am_carrier_level; }
-			set 
-			{
-				tx_am_carrier_level = value;
-				if(update)
-				{
-					if(value != tx_am_carrier_level_dsp || force)
-					{
+        private double tx_am_carrier_level_dsp = 0.4;
+        private double tx_am_carrier_level = 0.4;
+        public double TXAMCarrierLevel
+        {
+            get { return tx_am_carrier_level; }
+            set
+            {
+                tx_am_carrier_level = value;
+                if (update)
+                {
+                    if (value != tx_am_carrier_level_dsp || force)
+                    {
                         WDSP.SetTXAAMCarrierLevel(WDSP.id(thread, 0), value);
-						tx_am_carrier_level_dsp = value;
-					}
-				}
-			}
-		}
+                        tx_am_carrier_level_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private int tx_alc_decay_dsp = 10;
-		private int tx_alc_decay = 10;
-		public int TXALCDecay
-		{
-			get { return tx_alc_decay; }
-			set
-			{
-				tx_alc_decay = value;
-				if(update)
-				{
-					if(value != tx_alc_decay_dsp || force)
-					{
+        private int tx_alc_decay_dsp = 10;
+        private int tx_alc_decay = 10;
+        public int TXALCDecay
+        {
+            get { return tx_alc_decay; }
+            set
+            {
+                tx_alc_decay = value;
+                if (update)
+                {
+                    if (value != tx_alc_decay_dsp || force)
+                    {
                         WDSP.SetTXAALCDecay(WDSP.id(thread, 0), value);
-						tx_alc_decay_dsp = value;
-					}
-				}
-			}
-		}
+                        tx_alc_decay_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private double tx_leveler_max_gain_dsp = 15.0;
-		private double tx_leveler_max_gain = 15.0;
-		public double TXLevelerMaxGain
-		{
-			get { return tx_leveler_max_gain; }
-			set
-			{
-				tx_leveler_max_gain = value;
-				if(update)
-				{
-					if(value != tx_leveler_max_gain_dsp || force)
-					{
+        private double tx_leveler_max_gain_dsp = 15.0;
+        private double tx_leveler_max_gain = 15.0;
+        public double TXLevelerMaxGain
+        {
+            get { return tx_leveler_max_gain; }
+            set
+            {
+                tx_leveler_max_gain = value;
+                if (update)
+                {
+                    if (value != tx_leveler_max_gain_dsp || force)
+                    {
                         WDSP.SetTXALevelerTop(WDSP.id(thread, 0), value);
-						tx_leveler_max_gain_dsp = value;
-					}
-				}
-			}
-		}
+                        tx_leveler_max_gain_dsp = value;
+                    }
+                }
+            }
+        }
 
 
-		private int tx_leveler_decay_dsp = 100;
-		private int tx_leveler_decay = 100;
-		public int TXLevelerDecay
-		{
-			get { return tx_leveler_decay; }
-			set
-			{
-				tx_leveler_decay = value;
-				if(update)
-				{
-					if(value != tx_leveler_decay_dsp || force)
-					{
+        private int tx_leveler_decay_dsp = 100;
+        private int tx_leveler_decay = 100;
+        public int TXLevelerDecay
+        {
+            get { return tx_leveler_decay; }
+            set
+            {
+                tx_leveler_decay = value;
+                if (update)
+                {
+                    if (value != tx_leveler_decay_dsp || force)
+                    {
                         WDSP.SetTXALevelerDecay(WDSP.id(thread, 0), value);
-						tx_leveler_decay_dsp = value;
-					}
-				}
-			}
-		}
+                        tx_leveler_decay_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private bool tx_leveler_on_dsp = true;
-		private bool tx_leveler_on = true;
-		public bool TXLevelerOn
-		{
-			get { return tx_leveler_on; }
-			set
-			{
-				tx_leveler_on = value;
-				if(update)
-				{
-					if(value != tx_leveler_on_dsp || force)
-					{
+        private bool tx_leveler_on_dsp = true;
+        private bool tx_leveler_on = true;
+        public bool TXLevelerOn
+        {
+            get { return tx_leveler_on; }
+            set
+            {
+                tx_leveler_on = value;
+                if (update)
+                {
+                    if (value != tx_leveler_on_dsp || force)
+                    {
                         WDSP.SetTXALevelerSt(WDSP.id(thread, 0), value);
-						tx_leveler_on_dsp = value;
-					}
-				}
-			}
-		}
+                        tx_leveler_on_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private bool tx_compand_on_dsp = false;
-		private bool tx_compand_on = false;
-		public bool TXCompandOn
-		{
-			get { return tx_compand_on; }
-			set
-			{
-				tx_compand_on = value;
+        private bool tx_compand_on_dsp = false;
+        private bool tx_compand_on = false;
+        public bool TXCompandOn
+        {
+            get { return tx_compand_on; }
+            set
+            {
+                tx_compand_on = value;
 
-				if(update)
-				{
-					if(value != tx_compand_on_dsp || force)
-					{
+                if (update)
+                {
+                    if (value != tx_compand_on_dsp || force)
+                    {
                         WDSP.SetTXACompressorRun(WDSP.id(thread, 0), value);
-						tx_compand_on_dsp = value;
-					}
-				}
-			}
-		}
+                        tx_compand_on_dsp = value;
+                    }
+                }
+            }
+        }
 
-		private double tx_compand_level_dsp = 0.1;
-		private double tx_compand_level = 0.1;
-		public double TXCompandLevel
-		{
-			get { return tx_compand_level; }
-			set
-			{
-				tx_compand_level = value;
+        private double tx_compand_level_dsp = 0.1;
+        private double tx_compand_level = 0.1;
+        public double TXCompandLevel
+        {
+            get { return tx_compand_level; }
+            set
+            {
+                tx_compand_level = value;
 
-				if(update)
-				{
-					if(value != tx_compand_level_dsp || force)
-					{
+                if (update)
+                {
+                    if (value != tx_compand_level_dsp || force)
+                    {
                         WDSP.SetTXACompressorGain(WDSP.id(thread, 0), value);
-						tx_compand_level_dsp = value;
-					}
-				}
-			}
-		}
+                        tx_compand_level_dsp = value;
+                    }
+                }
+            }
+        }
 
         private bool tx_osctrl_on_dsp = false;
         private bool tx_osctrl_on = false;
@@ -3214,11 +3214,11 @@ namespace Thetis
                 }
             }
         }
-		
-		#endregion
-	}
 
-	#endregion
+        #endregion
+    }
+
+    #endregion
 
     class MNotchDB
     {
@@ -3317,7 +3317,7 @@ namespace Thetis
                     if (((n.FCenter + n.FWidth / 2) >= min) && ((n.FCenter - n.FWidth / 2) <= max))
                     {
                         l.Add(n);
-                    }                        
+                    }
                 }
 
                 return l;

@@ -89,11 +89,11 @@ void destroy_obbuffs(int id) {
     if (h) {
         signalWakeup();
         if (a->obThread) {
-            #ifndef NDEBUG
+#ifndef NDEBUG
             DWORD timeout = 200000;
-            #else
+#else
             DWORD timeout = 20000;
-            #endif
+#endif
             DWORD dw = WaitForSingleObject(a->obThread, timeout);
             assert(dw != WAIT_TIMEOUT);
         }
@@ -171,7 +171,7 @@ void ob_main(void* pargs) {
     DWORD taskIndex = 0;
     HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
     if (hTask != 0)
-        AvSetMmThreadPriority(hTask, 2);
+        AvSetMmThreadPriority(hTask, AVRT_PRIORITY_CRITICAL);
     else
         SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 

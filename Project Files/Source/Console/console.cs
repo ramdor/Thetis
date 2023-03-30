@@ -2585,8 +2585,12 @@ namespace Thetis
             //band_60m_register = channels_60m.Count; MW0LGE_21d BandStack2
         }
 
+        // KLJ: AFAIK, this is _only_ called from Console's constructor
+        private int SyncDSPCount = 0;
         private void SyncDSP()
         {
+            SyncDSPCount++;
+            Debug.Assert(SyncDSPCount == 1); // KLJ: broke my assumption, no real serious issue, except startup time may be affected.
             for (int i = 0; i < 2; i++)
             {
                 for (int j = 0; j < 2; j++)
@@ -45594,12 +45598,15 @@ namespace Thetis
             {
                 bool bDoUpdate = m_bDeferUpdateDSP && !value; // was defered and not now, so we call UpdateDSP
                 m_bDeferUpdateDSP = value;
-                if (bDoUpdate) UpdateDSP();
+                if (bDoUpdate)
+                {
+                    UpdateDSP();
+                }
             }
         }
         private void UpdateDSP()
         {
-            if (m_bDeferUpdateDSP) return; //MW0LGE_21k9d
+            if (DeferUpdateDSP) return; //MW0LGE_21k9d
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
