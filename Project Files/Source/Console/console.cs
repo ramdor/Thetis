@@ -3229,7 +3229,11 @@ namespace Thetis
                 r.Width -= ds.Width;
                 r.Height -= ds.Height;
             }
+            else
+            {
 
+            }
+            r = this.RestoreBounds; // KLJ: does this fix not remembering restore bounds?
             a.Add("console_top/" + r.Top.ToString());		// save form positions
             a.Add("console_left/" + r.Left.ToString());
             a.Add("console_width/" + r.Width.ToString());
