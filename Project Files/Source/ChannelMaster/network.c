@@ -29,6 +29,7 @@
 
 #include <assert.h>
 #include "network.h"
+#include "obbuffs.h"
 #include <Iphlpapi.h>
 
 #pragma comment(lib, "IPHLPAPI.lib")
@@ -46,6 +47,14 @@ int rx_samples_buf = 0;
 int rxreads_buf = 0;
 int rxreads_buf_after = 0;
 int rxreads_bf = 0;
+
+// KLJ:
+// Used to wake up the network threads so they can be destroyed.
+void signalWakeup() {
+    ReleaseSemaphore(prn->hobbuffsRun[0], 1, 0);
+    ReleaseSemaphore(prn->hobbuffsRun[1], 1, 0);
+    SetEvent(prn->hsendEventHandles[0]);
+}
 
 int WSA_inited = 0; // MW0LGE_22b moved here
 
@@ -509,8 +518,11 @@ void ReadThreadMainLoop() {
                         prn->pll_locked = prn->ReadBufp[0] & 0x10; // MW0LGE_21d
 
                         // Byte 1 - Bit [0] - ADC0  Overload 1 = active, 0 =
-                        // inactive 		   Bit [1] - ADC1  Overload 1 = active, 0 =
-                        //inactive
+                        // inactive 		   Bit [1] - ADC1  Overload 1 =
+                        // active,
+                        // 0
+                        // =
+                        // inactive
                         //          Bit [2] - ADC2  Overload 1 = active, 0 =
                         //          inactive  * ADC2-7 set to 0 for Angelia Bit
                         //          [3] - ADC3  Overload 1 = active, 0 =
@@ -1024,7 +1036,7 @@ void CmdTx() { // port 1026
         sendPacket(listenSock, packetbuf, sizeof(packetbuf), 1026);
 }
 
-void sendOutbound(int id, double* out) {
+int sendOutbound(int id, double* out, OBB a) {
     int i;
     short temp;
     int itemp;
@@ -1093,7 +1105,17 @@ void sendOutbound(int id, double* out) {
                     // complete.
                     ReleaseSemaphore(prn->hsendIQSem, 1, 0);
                     // wait to refill 'outIQbuffp' until the packet is sent
-                    WaitForSingleObject(prn->hobbuffsRun[0], INFINITE);
+
+                    while (1) {
+                        DWORD dw
+                            = WaitForSingleObject(prn->hobbuffsRun[0], 500);
+                        if (!_InterlockedAnd(&a->run, 1)) {
+                            return -1; // KLJ exit asap if done
+                        }
+                        if (dw != WAIT_TIMEOUT) {
+                            break;
+                        }
+                    }
                 }
             } else // RX L-R data arriving
             {
@@ -1101,21 +1123,51 @@ void sendOutbound(int id, double* out) {
                 // release semaphore indicating L-R data ready
                 ReleaseSemaphore(prn->hsendLRSem, 1, 0);
                 // wait to refill 'outLRbufp' until the packet is sent
-                WaitForSingleObject(prn->hobbuffsRun[1], INFINITE);
+                while (1) {
+                    DWORD dw = WaitForSingleObject(prn->hobbuffsRun[1], 500);
+                    if (!_InterlockedAnd(&a->run, 1)) {
+                        return -1; // KLJ exit asap if done
+                    }
+                    if (dw != WAIT_TIMEOUT) {
+                        break;
+                    }
+                }
+                if (!_InterlockedAnd(&a->run, 1)) {
+                    return -1; // KLJ exit asap if done
+                }
             }
         } else // eer/etr is NOT running
         {
             if (id == 1) {
                 memcpy(prn->outIQbufp, out, sizeof(complex) * 126);
                 ReleaseSemaphore(prn->hsendIQSem, 1, 0);
-                WaitForSingleObject(prn->hobbuffsRun[0], INFINITE);
+                while (1) {
+                    DWORD dw = WaitForSingleObject(prn->hobbuffsRun[0], 500);
+                    if (!_InterlockedAnd(&a->run, 1)) {
+                        return -1; // KLJ exit asap if done
+                    }
+                    if (dw != WAIT_TIMEOUT) {
+                        break;
+                    }
+                }
+
             } else {
                 memcpy(prn->outLRbufp, out, sizeof(complex) * 126);
                 ReleaseSemaphore(prn->hsendLRSem, 1, 0);
-                WaitForSingleObject(prn->hobbuffsRun[1], INFINITE);
+                while (1) {
+                    DWORD dw = WaitForSingleObject(prn->hobbuffsRun[1], 500);
+                    if (!_InterlockedAnd(&a->run, 1)) {
+                        return -1; // KLJ exit asap if done
+                    }
+                    if (dw != WAIT_TIMEOUT) {
+                        break;
+                    }
+                }
             }
         }
     }
+
+    return 0;
 }
 
 void WriteUDPFrame(int id, char* bufp, int buflen) {

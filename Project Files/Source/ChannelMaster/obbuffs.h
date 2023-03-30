@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-The author can be reached by email at  
+The author can be reached by email at
 
 warren@wpratt.com
 
@@ -33,49 +33,59 @@ warren@wpratt.com
 #include "cmUtilities.h"
 
 typedef double complex[2];
-#define PORT							__declspec( dllexport )
-#define numRings						(16)
-#define obMAXSIZE						(360)
+#ifndef PORT
+#define PORT __declspec(dllexport)
+#endif
+#define numRings (16)
+#define obMAXSIZE (360)
 
 #ifndef _obbuffs_h
 #define _obbuffs_h
 
-#define OBB_MULT						(2)
-typedef struct _obb
-{
-	int   id;
-	int   max_in_size;							// max input number of complex samples
-	int   r1_outsize;							// number of complex samples taken out of the ring for processing 
+#define OBB_MULT (2)
+typedef struct _obb {
+    int id;
+    int max_in_size; // max input number of complex samples
+    int r1_outsize; // number of complex samples taken out of the ring for
+                    // processing
 
-	int   r1_size;							// size of a single maximum sized transfer
-	int   r1_active_buffsize;				// size of ring (in complex samples)
-	
-	double* r1_baseptr;							// pointer to ring
-	int   r1_inidx;								// in 'double', actual index into the buffer is 2 times this
-	int   r1_outidx;							// in 'double', actual index into the buffer is 2 times this
-	int   r1_unqueuedsamps;						// number of input samples not yet queued/released for execution
-	volatile long run;							// when 1, thread loops; when 0, thread terminates
-	volatile long accept;						// flag indicating whether accepting input data
-	HANDLE Sem_BuffReady;						// count = number of output-sized buffers queued for processing
-	CRITICAL_SECTION csOUT;						// used to block output while parameters are updated or buffers flushed
-	CRITICAL_SECTION csIN;						// used to block input while parameters are updated or buffers flushed
-	double* out;
+    int r1_size; // size of a single maximum sized transfer
+    int r1_active_buffsize; // size of ring (in complex samples)
+
+    double* r1_baseptr; // pointer to ring
+    int r1_inidx; // in 'double', actual index into the buffer is 2 times this
+    int r1_outidx; // in 'double', actual index into the buffer is 2 times this
+    int r1_unqueuedsamps; // number of input samples not yet queued/released for
+                          // execution
+    volatile long run; // when 1, thread loops; when 0, thread terminates
+    volatile long accept; // flag indicating whether accepting input data
+    HANDLE Sem_BuffReady; // count = number of output-sized buffers queued for
+                          // processing
+    CRITICAL_SECTION csOUT; // used to block output while parameters are updated
+                            // or buffers flushed
+    CRITICAL_SECTION csIN; // used to block input while parameters are updated
+                           // or buffers flushed
+    double* out;
+    HANDLE obThread;
+    long obThreadId;
 } obb, *OBB;
 
-extern void create_obbuffs (int id, int accept, int max_insize, int outsize);
+extern void create_obbuffs(int id, int accept, int max_insize, int outsize);
 
-extern void destroy_obbuffs (int id);
+extern void destroy_obbuffs(int id);
 
-extern void flush_obbuffs (int id);
+extern void flush_obbuffs(int id);
 
-extern __declspec (dllexport) void OutBound (int id, int nsamples, double* in);
+extern __declspec(dllexport) void OutBound(int id, int nsamples, double* in);
 
-extern void obdata (int id, double* out);
+extern void obdata(int id, double* out);
 
-extern void ob_main (void *pargs);
+extern void ob_main(void* pargs);
 
-extern void SetOBRingOutsize (int id, int size);
+extern void SetOBRingOutsize(int id, int size);
 
-extern void sendOutbound (int id, double* out);
+extern int sendOutbound(int id, double* out, OBB a);
+
+extern void signalWakeup();
 
 #endif

@@ -1,2 +1,1 @@
-U:\WelshMeters\Thetis-2.9.0\Project Files\Source\build\x64\Debug\PortAudioForCoolSDR.dll
 U:\Wales\Thetis-2.9.0\Project Files\Source\build\x64\Debug\PortAudioForCoolSDR.dll

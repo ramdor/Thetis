@@ -26,6 +26,9 @@ warren@wpratt.com
 
 #include "obbuffs.h"
 
+#include <assert.h>
+#include <stdio.h>
+
 struct _obpointers {
     OBB pcbuff[numRings];
     OBB pdbuff[numRings];
@@ -33,12 +36,15 @@ struct _obpointers {
     OBB pfbuff[numRings];
 } obp;
 
-void start_obthread(int id) {
-    HANDLE handle = (HANDLE)_beginthread(ob_main, 0, (void*)(ptrdiff_t)id);
-    // SetThreadPriority(handle, THREAD_PRIORITY_HIGHEST);
+HANDLE start_obthread(int id) {
+    return (HANDLE)_beginthread(ob_main, 0, (void*)(ptrdiff_t)id);
 }
 
 void create_obbuffs(int id, int accept, int max_insize, int outsize) {
+    // KLJ
+    if (obp.pcbuff[id]) {
+        destroy_obbuffs(id);
+    }
     OBB a = (OBB)calloc(1, sizeof(obb));
     obp.pcbuff[id] = obp.pdbuff[id] = obp.pebuff[id] = obp.pfbuff[id] = a;
     a->id = id;
@@ -59,7 +65,8 @@ void create_obbuffs(int id, int accept, int max_insize, int outsize) {
     InitializeCriticalSectionAndSpinCount(&a->csIN, 2500);
     InitializeCriticalSectionAndSpinCount(&a->csOUT, 2500);
     a->out = (double*)calloc(obMAXSIZE, sizeof(complex));
-    start_obthread(id);
+    a->obThreadId = 0;
+    a->obThread = start_obthread(id);
 }
 
 void destroy_obbuffs(int id) {
@@ -72,7 +79,32 @@ void destroy_obbuffs(int id) {
     InterlockedBitTestAndReset(&a->run, 0);
     ReleaseSemaphore(a->Sem_BuffReady, 1, 0);
     LeaveCriticalSection(&a->csOUT);
-    Sleep(2);
+
+    // KLJ: does this confirm the thread is still alive?
+    // Yep, because it's possible that the thread has exited
+    // already when we set the semaphore above
+    int h = GetThreadId(a->obThread);
+
+    DWORD t1 = timeGetTime();
+    if (h) {
+        signalWakeup();
+        if (a->obThread) {
+            #ifndef NDEBUG
+            DWORD timeout = 200000;
+            #else
+            DWORD timeout = 20000;
+            #endif
+            DWORD dw = WaitForSingleObject(a->obThread, timeout);
+            assert(dw != WAIT_TIMEOUT);
+        }
+    } else {
+        // he already died
+        printf("Thread already gone, nothing to do here\n");
+    }
+    DWORD t2 = timeGetTime();
+    fprintf(stdout, "Took %ld ms to kill the thread\n", (int)(t2 - t1));
+    fflush(stdout);
+
     DeleteCriticalSection(&a->csOUT);
     DeleteCriticalSection(&a->csIN);
     CloseHandle(a->Sem_BuffReady);
@@ -143,18 +175,28 @@ void ob_main(void* pargs) {
     else
         SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 
-    int id = (int)pargs;
+    int id = (int)(intptr_t)pargs;
     OBB a = obp.pdbuff[id];
+    a->obThreadId = GetThreadId(GetCurrentThread());
 
     while (_InterlockedAnd(&a->run, 1)) {
         WaitForSingleObject(a->Sem_BuffReady, INFINITE);
+        if (!_InterlockedAnd(&a->run, 1)) {
+            break; // KLJ exit asap if done
+        }
         EnterCriticalSection(&a->csOUT);
         LeaveCriticalSection(&a->csOUT);
         obdata(id, a->out);
-        sendOutbound(id, a->out);
+        if (sendOutbound(id, a->out, a) < 0) {
+            assert(!_InterlockedAnd(&a->run, 1));
+            break;
+        }
         // if (id == 0) WriteAudio(15.0, 48000, 126, a->out, 3);
     }
-    _endthread();
+
+    if (hTask) {
+        AvRevertMmThreadCharacteristics(hTask);
+    }
 }
 
 void SetOBRingOutsize(int id, int size) {
@@ -167,10 +209,19 @@ void SetOBRingOutsize(int id, int size) {
     ReleaseSemaphore(a->Sem_BuffReady, 1, 0);
     LeaveCriticalSection(&a->csOUT);
     Sleep(2);
+    // KLJ:
+    if (a->obThread) {
+        DWORD dw = WaitForSingleObject(a->obThread, 3000);
+        assert(dw != WAIT_TIMEOUT);
+    }
+
     flush_obbuffs(id);
     a->r1_outsize = size;
     InterlockedBitTestAndSet(&a->run, 0);
-    start_obthread(id);
+
+    if (a->obThread == 0) {
+        a->obThread = start_obthread(id);
+    }
     LeaveCriticalSection(&a->csIN);
     InterlockedBitTestAndSet(&a->accept, 0);
 }

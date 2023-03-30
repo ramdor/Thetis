@@ -106,7 +106,7 @@ namespace Thetis
         private Thread rx2_sql_update_thread;				// polls the RX2 signal strength
         private Thread vox_update_thread;					// polls the mic input
         private Thread noise_gate_update_thread;			// polls the mic input during TX
-        public bool pause_DisplayThread = true;             // MW0LGE_21d initally paused
+        public volatile bool pause_DisplayThread = true;             // MW0LGE_21d initally paused
         private bool calibration_running = false;
         private bool displaydidit = false;
         public Mutex calibration_mutex = new Mutex();
@@ -30449,6 +30449,7 @@ namespace Thetis
         private byte[] id_bytes = new byte[1];
         private void chkPower_CheckedChanged(object sender, System.EventArgs e)
         {
+            pause_DisplayThread = true;
             if (chkPower.Checked)
             {
                 chkPower.BackColor = button_selected_color;
@@ -30479,6 +30480,7 @@ namespace Thetis
 
                 txtVFOAFreq_LostFocus(this, EventArgs.Empty);
                 comboDisplayMode_SelectedIndexChanged(this, EventArgs.Empty);
+                pause_DisplayThread = true; // ffs, overridden by above
                 // wjt added 
                 if (PTTBitBangEnabled && serialPTT == null) // we are enabled but don't have port object 
                 {
@@ -30496,6 +30498,7 @@ namespace Thetis
                     {
 
                         chkPower.Checked = false;
+                        pause_DisplayThread = false;
                         return;
                     }
                 }
@@ -30506,6 +30509,7 @@ namespace Thetis
                     {
 
                         chkPower.Checked = false;
+                        pause_DisplayThread = false;
                         return;
                     }
                 }
@@ -30521,6 +30525,7 @@ namespace Thetis
                 if (!Audio.Start())   // starts JanusAudio running
                 {
                     chkPower.Checked = false;
+                    pause_DisplayThread = false;
                     return;
                 }
 
@@ -30867,6 +30872,10 @@ namespace Thetis
             panelVFOAHover.Invalidate();
             panelVFOBHover.Invalidate();
 
+            if (chkPower.Checked)
+            {
+                pause_DisplayThread = false;
+            }
             //MW0LGE_21d6
             //only here will we have a valid on or valid off
             if (m_bOldPower != chkPower.Checked)

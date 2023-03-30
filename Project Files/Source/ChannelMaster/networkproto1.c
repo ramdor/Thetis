@@ -738,6 +738,9 @@ DWORD WINAPI sendProtocol1Samples(LPVOID n) {
 
     while (io_keep_running != 0) {
         WaitForMultipleObjects(2, prn->hsendEventHandles, TRUE, INFINITE);
+        if (!io_keep_running) {
+            break;
+        }
         // if ((nddc == 2) || (nddc == 4))
         if (pcm->xmtr[0].peer->run && XmitBit) {
             // if eer/etr mode and transmitting, overwrite LR data with EER data
@@ -771,6 +774,11 @@ DWORD WINAPI sendProtocol1Samples(LPVOID n) {
                         = (char)(temp & 0xff);
                 }
         WriteMainLoop(prn->OutBufp);
+    }
+
+    
+    if (hTask) {
+        AvRevertMmThreadCharacteristics(hTask);
     }
     return 0;
 }
