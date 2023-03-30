@@ -77,6 +77,7 @@
             this.lblPS.Text = "Pure Signal2";
             this.lblPS.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.toolTip1.SetToolTip(this.lblPS, "PS2 is correcting if \'Correct\' is shown");
+            this.lblPS.Click += new System.EventHandler(this.lblPS_Click);
             // 
             // chkButton2
             // 

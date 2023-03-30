@@ -984,7 +984,7 @@ namespace Thetis
 
             if (resetForAutoMerge)
             {
-                MessageBox.Show("Please RE-START now.", "Note", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                MessageBox.Show("Please RE-START Thetis once you have closed this window.", "Note", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
             else
             {
@@ -2051,10 +2051,18 @@ namespace Thetis
             //Hide for now until resolved. m_bShowSystemCPUUsage will always be true as it is not recovered from db at the moment (see GetState)
             thetisOnlyToolStripMenuItem.Visible = false;
             //
+            // KLJ: This is only an _apparent_ leak. The GC does eventually collect, for me, after about 10MB
+            // See also notes in: CpuUsage(). You can call the GC manually each time if you need to.
 
             CalcDisplayFreq();
             CalcRX2DisplayFreq();
-            CpuUsage(m_bShowSystemCPUUsage);
+            // G7KLJ: this is incredibly slow and affects start-up time dramatically
+            new Thread(() =>
+            {
+                CpuUsage(m_bShowSystemCPUUsage, true);
+            })
+            { IsBackground = true }.Start();
+
 
             tune_step_index--;					// Setup wheel tuning
             ChangeTuneStepUp();
@@ -22429,10 +22437,14 @@ namespace Thetis
 
         private bool m_bShowSystemCPUUsage = true;
         public PerformanceCounter cpu_usage = null;
-        private void CpuUsage(bool bGetOverallCpuUsage = true)
+        private void CpuUsage(bool bGetOverallCpuUsage = true, bool initting = false)
         {
             try
             {
+                if (!initting && cpu_usage == null)
+                {
+                    return;
+                }
                 string sMachineName = System.Environment.MachineName;
 
                 //MW0LGE_21k9 updated to get actual process name used by perf counter
@@ -29013,6 +29025,7 @@ namespace Thetis
                     float cpuPerc = cpu_usage.NextValue();
                     if (!m_bShowSystemCPUUsage) cpuPerc /= Environment.ProcessorCount;
                     toolStripDropDownButton_CPU.Text = String.Format("{0:##0}%", cpuPerc);
+                    // GC.Collect(); // KLJ Enable this if you don't like memory gradually increasing. The GC does eventually collect it.
                 }
                 else
                 {
@@ -31455,6 +31468,7 @@ namespace Thetis
             if (infoBar != null)
                 infoBar.ShutDown();
 
+
             //this.Hide(); 
             // Audio.callback_return = 2;
             CATEnabled = false;
@@ -31534,6 +31548,14 @@ namespace Thetis
             //cmaster.close_rxa();
 
             DumpCap.StopDumpcap();
+
+
+            if (cpu_usage != null)
+            {
+                cpu_usage.Close();
+                cpu_usage.Dispose(); //MW0LGE_21k8
+                cpu_usage = null;
+            }
 
             this.Hide();
             frmShutDownForm.Close(); // last thing to get rid of
@@ -54643,6 +54665,16 @@ namespace Thetis
         {
             ivac.resetIVACdiags(1, 0);
             ivac.resetIVACdiags(1, 1);
+        }
+
+        private void infoBar_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Console_VisibleChanged(object sender, EventArgs e)
+        {
+
         }
 
         //private object _passbandSpectrum = new object();

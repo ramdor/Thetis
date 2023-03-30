@@ -12401,7 +12401,7 @@ namespace Thetis
             bool success = DB.ImportAndMergeDatabase(openFileDialog1.FileName, console.AppDataPath);
 
             if (success)
-                MessageBox.Show("Database Imported Successfully. Thetis will now close.\n\nPlease RE-START.",
+                MessageBox.Show("Database Imported Successfully. Thetis will now close.\n\nPlease RE-START Thetis once you have closed this window.",
                             "DB Import",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);

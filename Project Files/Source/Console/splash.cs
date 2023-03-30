@@ -39,80 +39,80 @@ using Microsoft.Win32;
 
 namespace Thetis
 {
-	public class Splash : System.Windows.Forms.Form
-	{
+    public class Splash : System.Windows.Forms.Form
+    {
         //MW0LGE
         [DllImport("user32.dll")]
         static extern bool InvalidateRect(IntPtr hWnd, IntPtr lpRect, bool bErase);
 
-		#region Variable Declarations
+        #region Variable Declarations
 
-		// Threading
-		static Splash ms_frmSplash = null;
-		static Thread ms_oThread = null;
+        // Threading
+        static Splash ms_frmSplash = null;
+        static Thread ms_oThread = null;
 
-		// Fade in and out.
-		private double m_dblOpacityIncrement = .07;
-		private double m_dblOpacityDecrement = .035;
-		private const int TIMER_INTERVAL = 50;
+        // Fade in and out.
+        private double m_dblOpacityIncrement = .07;
+        private double m_dblOpacityDecrement = .035;
+        private const int TIMER_INTERVAL = 50;
 
-		// Status and progress bar
-		private string m_sStatus;
-		private double m_dblCompletionFraction = 0;
-		private Rectangle m_rProgress;
+        // Status and progress bar
+        private string m_sStatus;
+        private double m_dblCompletionFraction = 0;
+        private Rectangle m_rProgress;
 
-		// Progress smoothing
-		private double m_dblLastCompletionFraction = 0.0;
-		private double m_dblPBIncrementPerTimerInterval = .015;
+        // Progress smoothing
+        private double m_dblLastCompletionFraction = 0.0;
+        private double m_dblPBIncrementPerTimerInterval = .015;
 
-		// Self-calibration support
-		private bool m_bFirstLaunch = false;
-		private DateTime m_dtStart;
-		private bool m_bDTSet = false;
-		private int m_iIndex = 1;
-		private int m_iActualTicks = 0;
-		private ArrayList m_alPreviousCompletionFraction;
-		private ArrayList m_alActualTimes = new ArrayList();
-		private const string REG_KEY_INITIALIZATION = "Initialization";
-		private const string REGVALUE_PB_MILISECOND_INCREMENT = "Increment";
-		private const string REGVALUE_PB_PERCENTS = "Percents";
-		private System.Windows.Forms.LabelTS lblTimeRemaining;
-		private System.Windows.Forms.Timer timer1;
-		private System.Windows.Forms.LabelTS lblStatus;
-		private System.Windows.Forms.Panel pnlStatus;
+        // Self-calibration support
+        private bool m_bFirstLaunch = false;
+        private DateTime m_dtStart;
+        private bool m_bDTSet = false;
+        private int m_iIndex = 1;
+        private int m_iActualTicks = 0;
+        private ArrayList m_alPreviousCompletionFraction;
+        private ArrayList m_alActualTimes = new ArrayList();
+        private const string REG_KEY_INITIALIZATION = "Initialization";
+        private const string REGVALUE_PB_MILISECOND_INCREMENT = "Increment";
+        private const string REGVALUE_PB_PERCENTS = "Percents";
+        private System.Windows.Forms.LabelTS lblTimeRemaining;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.LabelTS lblStatus;
+        private System.Windows.Forms.Panel pnlStatus;
         private System.ComponentModel.IContainer components;
-		#endregion
+        #endregion
 
-		#region Constructor and Destructor
+        #region Constructor and Destructor
 
-		public Splash()
-		{
-			InitializeComponent();
-			this.Opacity = .00;
-			timer1.Interval = TIMER_INTERVAL;
-			timer1.Start();
-			this.ClientSize = this.BackgroundImage.Size;
-			this.ShowInTaskbar = false;
-		}
+        public Splash()
+        {
+            InitializeComponent();
+            this.Opacity = .00;
+            timer1.Interval = TIMER_INTERVAL;
+            timer1.Start();
+            this.ClientSize = this.BackgroundImage.Size;
+            this.ShowInTaskbar = false;
+        }
 
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose(disposing);
+        }
 
-		#endregion
+        #endregion
 
-		#region Windows Form Designer generated code
+        #region Windows Form Designer generated code
 
-		private void InitializeComponent()
-		{
+        private void InitializeComponent()
+        {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Splash));
             this.pnlStatus = new System.Windows.Forms.Panel();
@@ -175,220 +175,220 @@ namespace Thetis
             this.Load += new System.EventHandler(this.Splash_Load);
             this.ResumeLayout(false);
 
-		}
-		#endregion
-	
-		#region Static Methods
-		// ************* Static Methods *************** //
+        }
+        #endregion
 
-		// A static method to create the thread and 
-		// launch the SplashScreen.
-		static public void ShowSplashScreen()
-		{
-			// Make sure it is only launched once.
-			if( ms_frmSplash != null )
-				return;
-			ms_oThread = new Thread(new ThreadStart(ShowForm))
-			{
-				IsBackground = true,
-				Name = "Splash Screen Thread"
-			};
-			ms_oThread.Start();
-		}
+        #region Static Methods
+        // ************* Static Methods *************** //
 
-		// A property returning the splash screen instance
-		static public Splash SplashForm 
-		{
-			get
-			{
-				return ms_frmSplash;
-			} 
-		}
+        // A static method to create the thread and 
+        // launch the SplashScreen.
+        static public void ShowSplashScreen()
+        {
+            // Make sure it is only launched once.
+            if (ms_frmSplash != null)
+                return;
+            ms_oThread = new Thread(new ThreadStart(ShowForm))
+            {
+                IsBackground = true,
+                Name = "Splash Screen Thread"
+            };
+            ms_oThread.Start();
+        }
 
-		// A private entry point for the thread.
-		static private void ShowForm()
-		{
-			ms_frmSplash = new Splash();
+        // A property returning the splash screen instance
+        static public Splash SplashForm
+        {
+            get
+            {
+                return ms_frmSplash;
+            }
+        }
+
+        // A private entry point for the thread.
+        static private void ShowForm()
+        {
+            ms_frmSplash = new Splash();
             Control.CheckForIllegalCrossThreadCalls = false;
-			Application.Run(ms_frmSplash);
-		}
+            Application.Run(ms_frmSplash);
+        }
 
-		// A static method to close the SplashScreen
-		static public void CloseForm()
-		{
-			if( ms_frmSplash != null && ms_frmSplash.IsDisposed == false )
-			{
-				// Make it start going away.
-				ms_frmSplash.m_dblOpacityIncrement = - 
-					ms_frmSplash.m_dblOpacityDecrement;
-			}
-			//Application.Exit();
-			ms_oThread = null;  // we do not need these any more.
-			ms_frmSplash = null;
-		}
+        // A static method to close the SplashScreen
+        static public void CloseForm()
+        {
+            if (ms_frmSplash != null && ms_frmSplash.IsDisposed == false)
+            {
+                // Make it start going away.
+                ms_frmSplash.m_dblOpacityIncrement = -
+                    ms_frmSplash.m_dblOpacityDecrement;
+            }
+            //Application.Exit();
+            ms_oThread = null;  // we do not need these any more.
+            ms_frmSplash = null;
+        }
 
-		static public void HideForm()
-		{
-			if(ms_frmSplash != null && ms_frmSplash.IsDisposed == false)
-				ms_frmSplash.Hide();
-		}
+        static public void HideForm()
+        {
+            if (ms_frmSplash != null && ms_frmSplash.IsDisposed == false)
+                ms_frmSplash.Hide();
+        }
 
-		static public void UnHideForm()
-		{
-			if(ms_frmSplash != null && ms_frmSplash.IsDisposed == false)
-				ms_frmSplash.Show();
-		}
+        static public void UnHideForm()
+        {
+            if (ms_frmSplash != null && ms_frmSplash.IsDisposed == false)
+                ms_frmSplash.Show();
+        }
 
-		// A static method to set the status and update the reference.
-		static public void SetStatus(string newStatus)
-		{
-			SetStatus(newStatus, true);
-		}
-    
-		// A static method to set the status and optionally update the reference.
-		// This is useful if you are in a section of code that has a variable
-		// set of status string updates.  In that case, don't set the reference.
-		static public void SetStatus(string newStatus, bool setReference)
-		{
-			if( ms_frmSplash == null )
-				return;
-			ms_frmSplash.m_sStatus = newStatus;
-			if( setReference )
-				ms_frmSplash.SetReferenceInternal();
-		}
+        // A static method to set the status and update the reference.
+        static public void SetStatus(string newStatus)
+        {
+            SetStatus(newStatus, true);
+        }
 
-		// Static method called from the initializing application to 
-		// give the splash screen reference points.  Not needed if
-		// you are using a lot of status strings.
-		static public void SetReferencePoint()
-		{
-			if( ms_frmSplash == null )
-				return;
-			ms_frmSplash.SetReferenceInternal();
+        // A static method to set the status and optionally update the reference.
+        // This is useful if you are in a section of code that has a variable
+        // set of status string updates.  In that case, don't set the reference.
+        static public void SetStatus(string newStatus, bool setReference)
+        {
+            if (ms_frmSplash == null)
+                return;
+            ms_frmSplash.m_sStatus = newStatus;
+            if (setReference)
+                ms_frmSplash.SetReferenceInternal();
+        }
 
-		}
+        // Static method called from the initializing application to 
+        // give the splash screen reference points.  Not needed if
+        // you are using a lot of status strings.
+        static public void SetReferencePoint()
+        {
+            if (ms_frmSplash == null)
+                return;
+            ms_frmSplash.SetReferenceInternal();
 
-		// ************ Private methods ************
+        }
 
-		// Internal method for setting reference points.
-		private void SetReferenceInternal()
-		{
-			if( m_bDTSet == false )
-			{
-				m_bDTSet = true;
-				m_dtStart = DateTime.Now;
-				ReadIncrements();
-			}
-			double dblMilliseconds = ElapsedMilliSeconds();
-			m_alActualTimes.Add(dblMilliseconds);
-			m_dblLastCompletionFraction = m_dblCompletionFraction;
-			if( m_alPreviousCompletionFraction != null 
-				&& m_iIndex < m_alPreviousCompletionFraction.Count )
-				m_dblCompletionFraction = 
-					(double)m_alPreviousCompletionFraction[m_iIndex++];
-			else
-				m_dblCompletionFraction = ( m_iIndex > 0 )? 1: 0;
-		}
+        // ************ Private methods ************
 
-		// Utility function to return elapsed Milliseconds since the 
-		// SplashScreen was launched.
-		private double ElapsedMilliSeconds()
-		{
-			TimeSpan ts = DateTime.Now - m_dtStart;
-			return ts.TotalMilliseconds;
-		}
+        // Internal method for setting reference points.
+        private void SetReferenceInternal()
+        {
+            if (m_bDTSet == false)
+            {
+                m_bDTSet = true;
+                m_dtStart = DateTime.Now;
+                ReadIncrements();
+            }
+            double dblMilliseconds = ElapsedMilliSeconds();
+            m_alActualTimes.Add(dblMilliseconds);
+            m_dblLastCompletionFraction = m_dblCompletionFraction;
+            if (m_alPreviousCompletionFraction != null
+                && m_iIndex < m_alPreviousCompletionFraction.Count)
+                m_dblCompletionFraction =
+                    (double)m_alPreviousCompletionFraction[m_iIndex++];
+            else
+                m_dblCompletionFraction = (m_iIndex > 0) ? 1 : 0;
+        }
 
-		// Function to read the checkpoint intervals 
-		// from the previous invocation of the
-		// splashscreen from the registry.
-		private void ReadIncrements()
-		{
-			string sPBIncrementPerTimerInterval = 
-				RegistryAccess.GetStringRegistryValue( 
-				REGVALUE_PB_MILISECOND_INCREMENT, "0.0015");
-			double dblResult;
+        // Utility function to return elapsed Milliseconds since the 
+        // SplashScreen was launched.
+        private double ElapsedMilliSeconds()
+        {
+            TimeSpan ts = DateTime.Now - m_dtStart;
+            return ts.TotalMilliseconds;
+        }
 
-			if( Double.TryParse(sPBIncrementPerTimerInterval, 
-				System.Globalization.NumberStyles.Float,
-				System.Globalization.NumberFormatInfo.InvariantInfo, 
-				out dblResult))
-				m_dblPBIncrementPerTimerInterval = dblResult;
-			else
-				m_dblPBIncrementPerTimerInterval = .0015;
+        // Function to read the checkpoint intervals 
+        // from the previous invocation of the
+        // splashscreen from the registry.
+        private void ReadIncrements()
+        {
+            string sPBIncrementPerTimerInterval =
+                RegistryAccess.GetStringRegistryValue(
+                REGVALUE_PB_MILISECOND_INCREMENT, "0.0015");
+            double dblResult;
 
-			string sPBPreviousPctComplete = RegistryAccess.GetStringRegistryValue(
-				REGVALUE_PB_PERCENTS, "" );
+            if (Double.TryParse(sPBIncrementPerTimerInterval,
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.NumberFormatInfo.InvariantInfo,
+                out dblResult))
+                m_dblPBIncrementPerTimerInterval = dblResult;
+            else
+                m_dblPBIncrementPerTimerInterval = .0015;
 
-			if( sPBPreviousPctComplete != "" )
-			{
-				string [] aTimes = sPBPreviousPctComplete.Split(null);
-				m_alPreviousCompletionFraction = new ArrayList();
+            string sPBPreviousPctComplete = RegistryAccess.GetStringRegistryValue(
+                REGVALUE_PB_PERCENTS, "");
 
-				for(int i = 0; i < aTimes.Length; i++ )
-				{
-					double dblVal;
-					if( Double.TryParse(aTimes[i],
-						System.Globalization.NumberStyles.Float, 
-						System.Globalization.NumberFormatInfo.InvariantInfo, 
-						out dblVal) )
-						m_alPreviousCompletionFraction.Add(dblVal);
-					else
-						m_alPreviousCompletionFraction.Add(1.0);
-				}
-			}
-			else
-			{
-				m_bFirstLaunch = true;
-				lblTimeRemaining.Text = "";
-			}      
-		}
+            if (sPBPreviousPctComplete != "")
+            {
+                string[] aTimes = sPBPreviousPctComplete.Split(null);
+                m_alPreviousCompletionFraction = new ArrayList();
 
-		// Method to store the intervals (in percent complete)
-		// from the current invocation of
-		// the splash screen to the registry.
-		private void StoreIncrements()
-		{
-			string sPercent = "";
-			double dblElapsedMilliseconds = ElapsedMilliSeconds();
-			for( int i = 0; i < m_alActualTimes.Count; i++ )
-				sPercent += ((double)m_alActualTimes[i]/
-					dblElapsedMilliseconds).ToString("0.####",
-					System.Globalization.NumberFormatInfo.InvariantInfo) + " ";
+                for (int i = 0; i < aTimes.Length; i++)
+                {
+                    double dblVal;
+                    if (Double.TryParse(aTimes[i],
+                        System.Globalization.NumberStyles.Float,
+                        System.Globalization.NumberFormatInfo.InvariantInfo,
+                        out dblVal))
+                        m_alPreviousCompletionFraction.Add(dblVal);
+                    else
+                        m_alPreviousCompletionFraction.Add(1.0);
+                }
+            }
+            else
+            {
+                m_bFirstLaunch = true;
+                lblTimeRemaining.Text = "";
+            }
+        }
 
-			RegistryAccess.SetStringRegistryValue( 
-				REGVALUE_PB_PERCENTS, sPercent );
+        // Method to store the intervals (in percent complete)
+        // from the current invocation of
+        // the splash screen to the registry.
+        private void StoreIncrements()
+        {
+            string sPercent = "";
+            double dblElapsedMilliseconds = ElapsedMilliSeconds();
+            for (int i = 0; i < m_alActualTimes.Count; i++)
+                sPercent += ((double)m_alActualTimes[i] /
+                    dblElapsedMilliseconds).ToString("0.####",
+                    System.Globalization.NumberFormatInfo.InvariantInfo) + " ";
 
-			m_dblPBIncrementPerTimerInterval = 1.0/(double)m_iActualTicks;
-			RegistryAccess.SetStringRegistryValue( 
-				REGVALUE_PB_MILISECOND_INCREMENT, 
-				m_dblPBIncrementPerTimerInterval.ToString("#.000000",
-				System.Globalization.NumberFormatInfo.InvariantInfo));
-		}
+            RegistryAccess.SetStringRegistryValue(
+                REGVALUE_PB_PERCENTS, sPercent);
 
-		#endregion
+            m_dblPBIncrementPerTimerInterval = 1.0 / (double)m_iActualTicks;
+            RegistryAccess.SetStringRegistryValue(
+                REGVALUE_PB_MILISECOND_INCREMENT,
+                m_dblPBIncrementPerTimerInterval.ToString("#.000000",
+                System.Globalization.NumberFormatInfo.InvariantInfo));
+        }
 
-		#region Event Handlers
+        #endregion
 
-		//********* Event Handlers ************
+        #region Event Handlers
 
-		// Tick Event handler for the Timer control.  
-		// Handle fade in and fade out.  Also
-		// handle the smoothed progress bar.
-		private void timer1_Tick(object sender, System.EventArgs e)
-		{
-			lblStatus.Text = m_sStatus;
+        //********* Event Handlers ************
 
-			if( m_dblOpacityIncrement > 0 )
-			{
-				m_iActualTicks++;
-				if( this.Opacity < 1 )
-					this.Opacity += m_dblOpacityIncrement;
-			}
-			else
-			{
-				if( this.Opacity > 0 )
-					this.Opacity += m_dblOpacityIncrement;
-				else
+        // Tick Event handler for the Timer control.  
+        // Handle fade in and fade out.  Also
+        // handle the smoothed progress bar.
+        private void timer1_Tick(object sender, System.EventArgs e)
+        {
+            lblStatus.Text = m_sStatus;
+
+            if (m_dblOpacityIncrement > 0)
+            {
+                m_iActualTicks++;
+                if (this.Opacity < 1)
+                    this.Opacity += m_dblOpacityIncrement;
+            }
+            else
+            {
+                if (this.Opacity > 0)
+                    this.Opacity += m_dblOpacityIncrement;
+                else
                 {
                     StoreIncrements();
                     this.Close();
@@ -411,59 +411,59 @@ namespace Thetis
                     //});
                 }
             }
-            if ( m_bFirstLaunch == false && m_dblLastCompletionFraction 
-				< m_dblCompletionFraction )
-			{
-				m_dblLastCompletionFraction += m_dblPBIncrementPerTimerInterval;
-				int width = (int)Math.Floor(
-					pnlStatus.ClientRectangle.Width * m_dblLastCompletionFraction);
-				int height = pnlStatus.ClientRectangle.Height;
-				int x = pnlStatus.ClientRectangle.X;
-				int y = pnlStatus.ClientRectangle.Y;
-				if( width > 0 && height > 0 )
-				{
-					m_rProgress = new Rectangle( x, y, width, height);
+            if (m_bFirstLaunch == false && m_dblLastCompletionFraction
+                < m_dblCompletionFraction)
+            {
+                m_dblLastCompletionFraction += m_dblPBIncrementPerTimerInterval;
+                int width = (int)Math.Floor(
+                    pnlStatus.ClientRectangle.Width * m_dblLastCompletionFraction);
+                int height = pnlStatus.ClientRectangle.Height;
+                int x = pnlStatus.ClientRectangle.X;
+                int y = pnlStatus.ClientRectangle.Y;
+                if (width > 0 && height > 0)
+                {
+                    m_rProgress = new Rectangle(x, y, width, height);
                     //MW0LGE pnlStatus.Invalidate(m_rProgress);
                     // this call supresses background draw, which was causing the flicker
                     // annoying that c# invalidate does not have this option.
-                    if(pnlStatus!=null && !pnlStatus.IsDisposed)InvalidateRect(pnlStatus.Handle, IntPtr.Zero, false);
+                    if (pnlStatus != null && !pnlStatus.IsDisposed) InvalidateRect(pnlStatus.Handle, IntPtr.Zero, false);
 
-					int iSecondsLeft = 1 + (int)(TIMER_INTERVAL * 
-						((1.0 - m_dblLastCompletionFraction)/
-						m_dblPBIncrementPerTimerInterval)) / 1000;
-					if( iSecondsLeft == 1 )
-						lblTimeRemaining.Text = string.Format( "1 second");
-					else
-						lblTimeRemaining.Text = string.Format( "{0} seconds", 
-							iSecondsLeft);
-				}
-			}
+                    int iSecondsLeft = 1 + (int)(TIMER_INTERVAL *
+                        ((1.0 - m_dblLastCompletionFraction) /
+                        m_dblPBIncrementPerTimerInterval)) / 1000;
+                    if (iSecondsLeft == 1)
+                        lblTimeRemaining.Text = string.Format("1 second");
+                    else
+                        lblTimeRemaining.Text = string.Format("{0} seconds",
+                            iSecondsLeft);
+                }
+            }
 
-		}
+        }
 
-		// Paint the portion of the panel invalidated during the tick event.
-		private void pnlStatus_Paint(object sender, 
-			System.Windows.Forms.PaintEventArgs e)
-		{
-			if( m_bFirstLaunch == false && e.ClipRectangle.Width > 0 
-				&& m_iActualTicks > 1 )
-			{
-				LinearGradientBrush brBackground = 
-					new LinearGradientBrush(m_rProgress, 
-					Color.FromArgb(100, 100, 100),
-					Color.FromArgb(130, 255, 130), 
-					LinearGradientMode.Horizontal);
-				e.Graphics.FillRectangle(brBackground, m_rProgress);
-			}
-		}
+        // Paint the portion of the panel invalidated during the tick event.
+        private void pnlStatus_Paint(object sender,
+            System.Windows.Forms.PaintEventArgs e)
+        {
+            if (m_bFirstLaunch == false && e.ClipRectangle.Width > 0
+                && m_iActualTicks > 1)
+            {
+                LinearGradientBrush brBackground =
+                    new LinearGradientBrush(m_rProgress,
+                    Color.FromArgb(100, 100, 100),
+                    Color.FromArgb(130, 255, 130),
+                    LinearGradientMode.Horizontal);
+                e.Graphics.FillRectangle(brBackground, m_rProgress);
+            }
+        }
 
-		// Close the form if they double click on it.
-		private void SplashScreen_DoubleClick(object sender, System.EventArgs e)
-		{
-			CloseForm();
-		}
+        // Close the form if they double click on it.
+        private void SplashScreen_DoubleClick(object sender, System.EventArgs e)
+        {
+            CloseForm();
+        }
 
-		#endregion
+        #endregion
 
         private void Splash_Load(object sender, EventArgs e)
         {
@@ -475,57 +475,57 @@ namespace Thetis
 
     /// A class for managing registry access.
     public class RegistryAccess
-	{
-		private const string SOFTWARE_KEY = "Software";
-		private const string COMPANY_NAME = "OpenHPSDR";
-		private const string APPLICATION_NAME = "Thetis";
+    {
+        private const string SOFTWARE_KEY = "Software";
+        private const string COMPANY_NAME = "OpenHPSDR";
+        private const string APPLICATION_NAME = "Thetis";
 
-		// Method for retrieving a Registry Value.
-		static public string GetStringRegistryValue(string key, 
-			string defaultValue)
-		{
-			RegistryKey rkCompany;
-			RegistryKey rkApplication;
+        // Method for retrieving a Registry Value.
+        static public string GetStringRegistryValue(string key,
+            string defaultValue)
+        {
+            RegistryKey rkCompany;
+            RegistryKey rkApplication;
 
-			rkCompany = Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY, 
-				false).OpenSubKey(COMPANY_NAME, false);
-			if( rkCompany != null )
-			{
-				rkApplication = rkCompany.OpenSubKey(APPLICATION_NAME, true);
-				if( rkApplication != null )
-				{
-					foreach(string sKey in rkApplication.GetValueNames())
-					{
-						if( sKey == key )
-						{
-							return (string)rkApplication.GetValue(sKey);
-						}
-					}
-				}
-			}
-			return defaultValue;
-		}
+            rkCompany = Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY,
+                false).OpenSubKey(COMPANY_NAME, false);
+            if (rkCompany != null)
+            {
+                rkApplication = rkCompany.OpenSubKey(APPLICATION_NAME, true);
+                if (rkApplication != null)
+                {
+                    foreach (string sKey in rkApplication.GetValueNames())
+                    {
+                        if (sKey == key)
+                        {
+                            return (string)rkApplication.GetValue(sKey);
+                        }
+                    }
+                }
+            }
+            return defaultValue;
+        }
 
-		// Method for storing a Registry Value.
-		static public void SetStringRegistryValue(string key, 
-			string stringValue)
-		{
-			RegistryKey rkSoftware;
-			RegistryKey rkCompany;
-			RegistryKey rkApplication;
+        // Method for storing a Registry Value.
+        static public void SetStringRegistryValue(string key,
+            string stringValue)
+        {
+            RegistryKey rkSoftware;
+            RegistryKey rkCompany;
+            RegistryKey rkApplication;
 
-			rkSoftware = Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY, true);
-			rkCompany = rkSoftware.CreateSubKey(COMPANY_NAME);
-			if( rkCompany != null )
-			{
-				rkApplication = rkCompany.CreateSubKey(APPLICATION_NAME);
-				if( rkApplication != null )
-				{
-					rkApplication.SetValue(key, stringValue);
-				}
-			}
-		}
-	}
+            rkSoftware = Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY, true);
+            rkCompany = rkSoftware.CreateSubKey(COMPANY_NAME);
+            if (rkCompany != null)
+            {
+                rkApplication = rkCompany.CreateSubKey(APPLICATION_NAME);
+                if (rkApplication != null)
+                {
+                    rkApplication.SetValue(key, stringValue);
+                }
+            }
+        }
+    }
 
-	#endregion
+    #endregion
 }

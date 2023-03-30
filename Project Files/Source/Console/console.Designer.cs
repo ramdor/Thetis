@@ -6573,6 +6573,7 @@
             this.infoBar.Button2MouseDown += new System.EventHandler<Thetis.ucInfoBar.InfoBarAction>(this.infoBar_Button2MouseDown);
             this.infoBar.SwapRedBlueChanged += new System.EventHandler(this.infoBar_SwapRedBlueChanged);
             this.infoBar.HideFeedbackChanged += new System.EventHandler(this.infoBar_HideFeedbackChanged);
+            this.infoBar.Load += new System.EventHandler(this.infoBar_Load);
             // 
             // lblDisplayZoom
             // 
@@ -7460,6 +7461,7 @@
             this.Closing += new System.ComponentModel.CancelEventHandler(this.Console_Closing);
             this.Deactivate += new System.EventHandler(this.Console_Deactivate);
             this.Shown += new System.EventHandler(this.Console_Shown);
+            this.VisibleChanged += new System.EventHandler(this.Console_VisibleChanged);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Console_KeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Console_KeyPress);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Console_KeyUp);
