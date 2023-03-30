@@ -4,6 +4,8 @@ G7KLJ tentative Release v.2.9.0 April 30th, 2022
 Download installer at:
 http://audioenhancedps.co.uk/Thetis.zip
 
+(Please ignore any warnings about not being downloaded securely -- I dont have https on that server)
+
 
 # Latest Release v2.9.0 April 03, 2022
 
