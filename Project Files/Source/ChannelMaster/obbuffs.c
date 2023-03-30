@@ -141,7 +141,7 @@ void ob_main(void* pargs) {
     if (hTask != 0)
         AvSetMmThreadPriority(hTask, 2);
     else
-        SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
+        SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 
     int id = (int)pargs;
     OBB a = obp.pdbuff[id];
