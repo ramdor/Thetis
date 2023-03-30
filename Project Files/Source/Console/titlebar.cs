@@ -28,14 +28,43 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Reflection;
 
 namespace Thetis
 {
     class TitleBar
     {
+
+        public static DateTime GetLinkerTime(Assembly assembly, TimeZoneInfo target = null)
+        {
+            var filePath = assembly.Location;
+            const int c_PeHeaderOffset = 60;
+            const int c_LinkerTimestampOffset = 8;
+
+            var buffer = new byte[2048];
+
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                stream.Read(buffer, 0, 2048);
+
+            var offset = BitConverter.ToInt32(buffer, c_PeHeaderOffset);
+            var secondsSince1970 = BitConverter.ToInt32(buffer, offset + c_LinkerTimestampOffset);
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            var linkTimeUtc = epoch.AddSeconds(secondsSince1970);
+
+            var tz = target ?? TimeZoneInfo.Local;
+            var localTime = TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tz);
+
+            return localTime;
+        }
+        public static DateTime AppBuildDate()
+        {
+            return GetLinkerTime(Assembly.GetExecutingAssembly());
+        }
         public const string BUILD_NAME = "MW0LGE pre-release";
-        public const string BUILD_DATE = "(4/23/22)<FW>"; //MW0LGE_21g <FW> gets replaced in BasicTitle (console.cs) with firmware version
+        public const string BUILD_DATE = "<FW>"; //MW0LGE_21g <FW> gets replaced in BasicTitle (console.cs) with firmware version
 
         public static string GetString()
         {
@@ -46,9 +75,9 @@ namespace Thetis
             string s = "Thetis";
 
             string sBits = Common.Is64Bit ? " x64" : " x86";
-
+            var sDate = AppBuildDate().Date.ToString("dd/MM/yyyy", new CultureInfo("en-GB"));
             s += " v" + version + sBits;
-            if (BUILD_DATE != "") s += " " + BUILD_DATE;
+            if (BUILD_DATE != "") s += " (" + sDate + ")" + BUILD_DATE;
             if (BUILD_NAME != "") s += " " + BUILD_NAME;
 
             return s;
