@@ -1,3 +1,10 @@
+Fri Mar 31 11:23:03 2023 +0100 - sjk7: Fix: master volume not working on VAC1. Mute button not working on VAC1.
+Thu Mar 30 20:04:38 2023 +0100 - BRUNO: Reinstate cpu monitor
+Thu Mar 30 19:08:35 2023 +0100 - sjk7: tx mon volume was not working on VAC and mute button not working on VAC
+Thu Mar 30 18:46:33 2023 +0100 - sjk7: Log error if cpu monitor fails to create
+Thu Mar 30 18:34:46 2023 +0100 - sjk7: AVRT_PRIORITY_CRITICAL is the correct ultra-thread priority
+Thu Mar 30 16:19:07 2023 +0100 - sjk7: Added G7KLJChangelog.txt
+Thu Mar 30 15:37:16 2023 +0100 - sjk7: Added G7KLJChangelog.txt
 Thu Mar 30 14:50:48 2023 +0100 - sjk7: Update ReadMe.md
 Thu Mar 30 14:47:17 2023 +0100 - sjk7: Update ReadMe.md
 Thu Mar 30 13:19:27 2023 +0100 - sjk7: Fixed console not remembering RestoreBounds when saved when Maximized. Richie to check as there is some DropShadow stuff going on there that I have probably broken
