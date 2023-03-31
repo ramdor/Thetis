@@ -102,6 +102,16 @@ PORT void create_ivac(int id, int run,
     pvac[id] = a;
 }
 
+PORT void SetIVACExclusive(int id, int excl) {
+    IVAC a = pvac[id];
+    a->exclusive = excl;
+}
+
+PORT int GetIVACExclusive(int id) {
+    IVAC a = pvac[id];
+    return a->exclusive;
+}
+
 PORT void SetIVACMonVolume(int id, double vol) {
 
     if (id == -1) {
@@ -304,33 +314,31 @@ PORT int StartAudioIVAC(int id) {
     member of PaStreamParameters::hostApiSpecificStreamInfo structure.
     /*/
     const PaHostApiInfo* hinf = Pa_GetHostApiInfo(a->host_api_index);
-    PaWasapiStreamInfo w = {0};
-    PaWinWDMKSInfo x = {0};
-    // FIXME: There is a possibilty that w and x do not live long enough!
-    // they should be in the a-> struct, probably.
+    PaWasapiStreamInfo* pw = &a->w;
+    PaWinWDMKSInfo* px = &a->x;
 
     if (hinf->type == paWASAPI) {
 
-        w.threadPriority = eThreadPriorityProAudio;
+        pw->threadPriority = eThreadPriorityProAudio;
         if (a->exclusive) {
-            w.flags = (paWinWasapiExclusive | paWinWasapiThreadPriority);
+            pw->flags = (paWinWasapiExclusive | paWinWasapiThreadPriority);
         }
 
-        w.hostApiType = paWASAPI;
-        w.size = sizeof(PaWasapiStreamInfo);
-        w.version = 1;
+        pw->hostApiType = paWASAPI;
+        pw->size = sizeof(PaWasapiStreamInfo);
+        pw->version = 1;
 
-        a->inParam.hostApiSpecificStreamInfo = &w;
-        a->outParam.hostApiSpecificStreamInfo = &w;
+        a->inParam.hostApiSpecificStreamInfo = &a->w;
+        a->outParam.hostApiSpecificStreamInfo = &a->w;
 
     } else if (hinf->type == paWDMKS) {
 
-        x.version = 1;
-        x.hostApiType = paWDMKS;
-        x.size = sizeof(PaWinWDMKSInfo);
-        x.flags = paWinWDMKSOverrideFramesize;
-        a->inParam.hostApiSpecificStreamInfo = &x;
-        a->outParam.hostApiSpecificStreamInfo = &x;
+        px->version = 1;
+        px->hostApiType = paWDMKS;
+        px->size = sizeof(PaWinWDMKSInfo);
+        px->flags = paWinWDMKSOverrideFramesize;
+        a->inParam.hostApiSpecificStreamInfo = &a->x;
+        a->outParam.hostApiSpecificStreamInfo = &a->x;
 
     } else {
         a->inParam.hostApiSpecificStreamInfo = NULL;

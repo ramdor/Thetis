@@ -47,6 +47,16 @@ namespace Thetis
         // Thetis Specific Variables
         // ======================================================
 
+        public static void EnableVAC1Exclusive(bool ex)
+        {
+            ivac.SetIVACExclusive(0, ex ? 1 : 0);
+        }
+
+        public static bool GetVAC1Exclusive()
+        {
+            return ivac.GetIVACExclusive(0) != 0;
+        }
+
         public enum AudioState
         {
             DTTSP = 0,
@@ -1291,6 +1301,7 @@ namespace Thetis
                 {
                     cmaster.SetAAudioMixWhat((void*)0, 0, 0, !mute_rx1);
                     cmaster.SetAAudioMixWhat((void*)0, 0, 1, !mute_rx1);
+                    /*/
                     if (console.VACEnabled)
                     {
                         if (value)
@@ -1303,6 +1314,7 @@ namespace Thetis
                             ivac.SetIVACMonVolume(-1, MonitorVolume);
                         }
                     }
+                    /*/
                 }
             }
         }

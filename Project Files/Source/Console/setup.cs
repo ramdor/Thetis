@@ -71,6 +71,102 @@ namespace Thetis
         private bool m_bShown = false; // used by the selective restore system to know accurate window state
         #endregion
 
+        public struct vacinfo
+        {
+            public string api;
+            public string input;
+            public string output;
+            public bool exclusive;
+        };
+
+        public enum ApplyVACFlags
+        {
+            API = 1,
+            Input = 2,
+            Output = 4,
+            Excl = 8,
+            All = API | Input | Output | Excl
+
+        }
+        ;
+
+        public vacinfo currentVacSettings()
+        {
+            vacinfo ret = new vacinfo { };
+            ret.api = comboAudioDriver2.Text;
+            ret.input = comboAudioInput2.Text;
+            ret.output = comboAudioOutput2.Text;
+            ret.exclusive = chkExclusive.Checked;
+            return ret;
+        }
+
+        public void applyVACSettings(
+            vacinfo info, ApplyVACFlags flags = ApplyVACFlags.All)
+        {
+            try
+            {
+                var idx = -1;
+
+                if (flags.HasFlag(ApplyVACFlags.API))
+                {
+                    idx = comboAudioDriver2.FindString(info.api);
+                    if (idx >= 0)
+                    {
+                        comboAudioDriver2.Text = info.api;
+                        comboAudioDriver2.SelectedIndex = idx;
+                    }
+                    else
+                    {
+                        comboAudioDriver2.SelectedIndex = 0;
+                    }
+                }
+
+                if (flags.HasFlag(ApplyVACFlags.Input))
+                {
+                    idx = comboAudioInput2.FindString(info.input);
+                    if (idx >= 0)
+                    {
+                        comboAudioInput2.Text = info.input;
+                        comboAudioInput2.SelectedIndex = idx;
+                    }
+                    else
+                    {
+                        comboAudioInput2.SelectedIndex = 0;
+                    }
+                }
+
+                if (flags.HasFlag(ApplyVACFlags.Output))
+                {
+                    idx = comboAudioOutput2.FindString(info.output);
+                    if (idx >= 0)
+                    {
+                        comboAudioOutput2.Text = info.output;
+                        comboAudioOutput2.SelectedIndex = idx;
+                    }
+                    else
+                    {
+                        comboAudioOutput2.SelectedIndex = 0;
+                    }
+                }
+
+                if (flags.HasFlag(ApplyVACFlags.Excl))
+                {
+                    chkExclusive.Checked = info.exclusive;
+                }
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(
+                    "Something went wrong when attempting to restore current settings\n\n"
+                        + e.ToString(),
+                    "Re-Applying current VAC settings Failed", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        public bool VAC1isExclusive() { return chkExclusive.Checked; }
+
         #region Constructor and Destructor
 
         public Setup(Console c)
@@ -4433,18 +4529,19 @@ namespace Thetis
                 if (chkAudioEnableVAC.Checked)
                 {
                     grpAudioDetails2.Enabled = !mox;
-                    grpAudioBuffer2.Enabled = !mox;
+                    // grpAudioBuffer2.Enabled = !mox;
                     grpAudioLatency2.Enabled = !mox;
-                    grpAudioSampleRate2.Enabled = !mox;
+                    // grpAudioSampleRate2.Enabled = !mox;
                     grpAudio2Stereo.Enabled = !mox;
                     grpVAC1ResamplerAdvanced.Enabled = !mox;
+
                 }
                 else
                 {
                     grpAudioDetails2.Enabled = true;
-                    grpAudioBuffer2.Enabled = true;
+                    // grpAudioBuffer2.Enabled = true;
                     grpAudioLatency2.Enabled = true;
-                    grpAudioSampleRate2.Enabled = true;
+                    // grpAudioSampleRate2.Enabled = true;
                     grpAudio2Stereo.Enabled = true;
                     grpVAC1ResamplerAdvanced.Enabled = true;
                 }
@@ -8105,12 +8202,15 @@ namespace Thetis
 
             console.BlockSize2 = new_size;
 
+
             if (power && chkAudioEnableVAC.Checked && old_size != new_size)
             {
                 // console.PowerOn = true;
-                //Thread.Sleep(100);
+                // Thread.Sleep(100);
                 Audio.VACEnabled = chkAudioEnableVAC.Checked;
             }
+
+            Audio.EnableVAC1Exclusive(chkExclusive.Checked);
         }
 
         private void comboAudioBuffer3_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -26449,6 +26549,26 @@ namespace Thetis
                 bPaste = true;
 
             return bPaste;
+        }
+
+        private void chkExclusive_CheckedChanged(object sender, EventArgs e)
+        {
+            bool newval = chkExclusive.Checked;
+            bool oldval = ivac.GetIVACExclusive(0) != 0;
+
+            if (newval != oldval)
+            {
+                if (console.PowerOn && chkAudioEnableVAC.Checked && !initializing)
+                {
+                    // console.PowerOn = false;
+                    // Thread.Sleep(100);
+                    Audio.EnableVAC1(false);
+                }
+                ivac.SetIVACExclusive(0, newval ? 1 : 0);
+            }
+
+            if (initializing) return;
+            if (console.PowerOn) Audio.EnableVAC1(true);
         }
     }
 

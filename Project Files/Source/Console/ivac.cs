@@ -9,6 +9,12 @@
 
         // vac 
 
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACExclusive", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetIVACExclusive(int id, int e); // KLJ
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "GetIVACExclusive", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetIVACExclusive(int id); // KLJ
+
         // vac 
         // G7KLJ: Added to get Txmon volume working on VAC
         [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACMonVolume", CallingConvention = CallingConvention.Cdecl)] // StartAudioVAC()

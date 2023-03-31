@@ -1526,6 +1526,17 @@
             this.tpAudio = new System.Windows.Forms.TabPage();
             this.tcAudio = new System.Windows.Forms.TabControl();
             this.tpVAC = new System.Windows.Forms.TabPage();
+            this.grpAudioVACAutoEnable = new System.Windows.Forms.GroupBoxTS();
+            this.chkAudioVACAutoEnable = new System.Windows.Forms.CheckBoxTS();
+            this.lblSampleRate = new System.Windows.Forms.Label();
+            this.lblBuffer = new System.Windows.Forms.Label();
+            this.grpAudioVACGain = new System.Windows.Forms.GroupBoxTS();
+            this.lblAudioVACGainTX = new System.Windows.Forms.LabelTS();
+            this.udAudioVACGainTX = new System.Windows.Forms.NumericUpDownTS();
+            this.lblAudioVACGainRX = new System.Windows.Forms.LabelTS();
+            this.udAudioVACGainRX = new System.Windows.Forms.NumericUpDownTS();
+            this.grpAudio2Stereo = new System.Windows.Forms.GroupBoxTS();
+            this.chkAudio2Stereo = new System.Windows.Forms.CheckBoxTS();
             this.chkVAC1WillMute = new System.Windows.Forms.CheckBoxTS();
             this.chkVAC1GrapherAuto = new System.Windows.Forms.CheckBoxTS();
             this.udVAC1GrapherSwing = new System.Windows.Forms.NumericUpDownTS();
@@ -1573,15 +1584,6 @@
             this.chkAudioIQtoVAC = new System.Windows.Forms.CheckBoxTS();
             this.chkVACCombine = new System.Windows.Forms.CheckBoxTS();
             this.chkVACAllowBypass = new System.Windows.Forms.CheckBoxTS();
-            this.grpAudioVACAutoEnable = new System.Windows.Forms.GroupBoxTS();
-            this.chkAudioVACAutoEnable = new System.Windows.Forms.CheckBoxTS();
-            this.grpAudioVACGain = new System.Windows.Forms.GroupBoxTS();
-            this.lblAudioVACGainTX = new System.Windows.Forms.LabelTS();
-            this.udAudioVACGainTX = new System.Windows.Forms.NumericUpDownTS();
-            this.lblAudioVACGainRX = new System.Windows.Forms.LabelTS();
-            this.udAudioVACGainRX = new System.Windows.Forms.NumericUpDownTS();
-            this.grpAudio2Stereo = new System.Windows.Forms.GroupBoxTS();
-            this.chkAudio2Stereo = new System.Windows.Forms.CheckBoxTS();
             this.grpAudioLatency2 = new System.Windows.Forms.GroupBoxTS();
             this.labelTS364 = new System.Windows.Forms.LabelTS();
             this.labelTS365 = new System.Windows.Forms.LabelTS();
@@ -1597,11 +1599,10 @@
             this.udAudioLatency2_Out = new System.Windows.Forms.NumericUpDownTS();
             this.chkAudioLatencyManual2 = new System.Windows.Forms.CheckBoxTS();
             this.udAudioLatency2 = new System.Windows.Forms.NumericUpDownTS();
-            this.grpAudioSampleRate2 = new System.Windows.Forms.GroupBoxTS();
-            this.comboAudioSampleRate2 = new System.Windows.Forms.ComboBoxTS();
-            this.grpAudioBuffer2 = new System.Windows.Forms.GroupBoxTS();
-            this.comboAudioBuffer2 = new System.Windows.Forms.ComboBoxTS();
             this.grpAudioDetails2 = new System.Windows.Forms.GroupBoxTS();
+            this.comboAudioSampleRate2 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAudioBuffer2 = new System.Windows.Forms.ComboBoxTS();
+            this.chkExclusive = new System.Windows.Forms.CheckBox();
             this.lblAudioOutput2 = new System.Windows.Forms.LabelTS();
             this.comboAudioOutput2 = new System.Windows.Forms.ComboBoxTS();
             this.lblAudioInput2 = new System.Windows.Forms.LabelTS();
@@ -3697,23 +3698,21 @@
             this.tpAudio.SuspendLayout();
             this.tcAudio.SuspendLayout();
             this.tpVAC.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udVAC1GrapherSwing)).BeginInit();
-            this.grpVAC1monitor.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udVAC1_Force2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udVAC1_Force)).BeginInit();
-            this.grpDirectIQOutput.SuspendLayout();
             this.grpAudioVACAutoEnable.SuspendLayout();
             this.grpAudioVACGain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAudioVACGainTX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAudioVACGainRX)).BeginInit();
             this.grpAudio2Stereo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udVAC1GrapherSwing)).BeginInit();
+            this.grpVAC1monitor.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udVAC1_Force2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udVAC1_Force)).BeginInit();
+            this.grpDirectIQOutput.SuspendLayout();
             this.grpAudioLatency2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAudioLatencyPAOut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAudioLatencyPAIn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAudioLatency2_Out)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAudioLatency2)).BeginInit();
-            this.grpAudioSampleRate2.SuspendLayout();
-            this.grpAudioBuffer2.SuspendLayout();
             this.grpAudioDetails2.SuspendLayout();
             this.tpVAC2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC2GrapherSwing)).BeginInit();
@@ -25017,6 +25016,11 @@
             // 
             // tpVAC
             // 
+            this.tpVAC.Controls.Add(this.grpAudioVACAutoEnable);
+            this.tpVAC.Controls.Add(this.lblSampleRate);
+            this.tpVAC.Controls.Add(this.lblBuffer);
+            this.tpVAC.Controls.Add(this.grpAudioVACGain);
+            this.tpVAC.Controls.Add(this.grpAudio2Stereo);
             this.tpVAC.Controls.Add(this.chkVAC1WillMute);
             this.tpVAC.Controls.Add(this.chkVAC1GrapherAuto);
             this.tpVAC.Controls.Add(this.udVAC1GrapherSwing);
@@ -25029,12 +25033,7 @@
             this.tpVAC.Controls.Add(this.grpDirectIQOutput);
             this.tpVAC.Controls.Add(this.chkVACCombine);
             this.tpVAC.Controls.Add(this.chkVACAllowBypass);
-            this.tpVAC.Controls.Add(this.grpAudioVACAutoEnable);
-            this.tpVAC.Controls.Add(this.grpAudioVACGain);
-            this.tpVAC.Controls.Add(this.grpAudio2Stereo);
             this.tpVAC.Controls.Add(this.grpAudioLatency2);
-            this.tpVAC.Controls.Add(this.grpAudioSampleRate2);
-            this.tpVAC.Controls.Add(this.grpAudioBuffer2);
             this.tpVAC.Controls.Add(this.grpAudioDetails2);
             this.tpVAC.Controls.Add(this.chkAudioEnableVAC);
             this.tpVAC.Location = new System.Drawing.Point(4, 22);
@@ -25043,11 +25042,167 @@
             this.tpVAC.TabIndex = 1;
             this.tpVAC.Text = "VAC 1";
             // 
+            // grpAudioVACAutoEnable
+            // 
+            this.grpAudioVACAutoEnable.Controls.Add(this.chkAudioVACAutoEnable);
+            this.grpAudioVACAutoEnable.Location = new System.Drawing.Point(227, 209);
+            this.grpAudioVACAutoEnable.Name = "grpAudioVACAutoEnable";
+            this.grpAudioVACAutoEnable.Size = new System.Drawing.Size(194, 63);
+            this.grpAudioVACAutoEnable.TabIndex = 74;
+            this.grpAudioVACAutoEnable.TabStop = false;
+            this.grpAudioVACAutoEnable.Text = "Auto Enable";
+            // 
+            // chkAudioVACAutoEnable
+            // 
+            this.chkAudioVACAutoEnable.Image = null;
+            this.chkAudioVACAutoEnable.Location = new System.Drawing.Point(16, 16);
+            this.chkAudioVACAutoEnable.Name = "chkAudioVACAutoEnable";
+            this.chkAudioVACAutoEnable.Size = new System.Drawing.Size(186, 36);
+            this.chkAudioVACAutoEnable.TabIndex = 0;
+            this.chkAudioVACAutoEnable.Text = "Enable for Digital modes, Disable for all others";
+            this.toolTip1.SetToolTip(this.chkAudioVACAutoEnable, "Click this button to automatically enable VAC when in Digital modes (DIGL, DIGU, " +
+        "DRM)");
+            this.chkAudioVACAutoEnable.CheckedChanged += new System.EventHandler(this.chkAudioVACAutoEnable_CheckedChanged);
+            // 
+            // lblSampleRate
+            // 
+            this.lblSampleRate.AutoSize = true;
+            this.lblSampleRate.Location = new System.Drawing.Point(292, 20);
+            this.lblSampleRate.Name = "lblSampleRate";
+            this.lblSampleRate.Size = new System.Drawing.Size(65, 13);
+            this.lblSampleRate.TabIndex = 91;
+            this.lblSampleRate.Text = "SampleRate";
+            // 
+            // lblBuffer
+            // 
+            this.lblBuffer.AutoSize = true;
+            this.lblBuffer.Location = new System.Drawing.Point(231, 20);
+            this.lblBuffer.Name = "lblBuffer";
+            this.lblBuffer.Size = new System.Drawing.Size(58, 13);
+            this.lblBuffer.TabIndex = 90;
+            this.lblBuffer.Text = "Buffer Size";
+            // 
+            // grpAudioVACGain
+            // 
+            this.grpAudioVACGain.Controls.Add(this.lblAudioVACGainTX);
+            this.grpAudioVACGain.Controls.Add(this.udAudioVACGainTX);
+            this.grpAudioVACGain.Controls.Add(this.lblAudioVACGainRX);
+            this.grpAudioVACGain.Controls.Add(this.udAudioVACGainRX);
+            this.grpAudioVACGain.Location = new System.Drawing.Point(370, 12);
+            this.grpAudioVACGain.Name = "grpAudioVACGain";
+            this.grpAudioVACGain.Size = new System.Drawing.Size(96, 72);
+            this.grpAudioVACGain.TabIndex = 72;
+            this.grpAudioVACGain.TabStop = false;
+            this.grpAudioVACGain.Text = "Gain (dB)";
+            // 
+            // lblAudioVACGainTX
+            // 
+            this.lblAudioVACGainTX.Image = null;
+            this.lblAudioVACGainTX.Location = new System.Drawing.Point(16, 42);
+            this.lblAudioVACGainTX.Name = "lblAudioVACGainTX";
+            this.lblAudioVACGainTX.Size = new System.Drawing.Size(32, 16);
+            this.lblAudioVACGainTX.TabIndex = 39;
+            this.lblAudioVACGainTX.Text = "TX:";
+            // 
+            // udAudioVACGainTX
+            // 
+            this.udAudioVACGainTX.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udAudioVACGainTX.Location = new System.Drawing.Point(48, 42);
+            this.udAudioVACGainTX.Maximum = new decimal(new int[] {
+            40,
+            0,
+            0,
+            0});
+            this.udAudioVACGainTX.Minimum = new decimal(new int[] {
+            40,
+            0,
+            0,
+            -2147483648});
+            this.udAudioVACGainTX.Name = "udAudioVACGainTX";
+            this.udAudioVACGainTX.Size = new System.Drawing.Size(40, 20);
+            this.udAudioVACGainTX.TabIndex = 38;
+            this.udAudioVACGainTX.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udAudioVACGainTX, "Controls the gain on the audio coming from third party applications.");
+            this.udAudioVACGainTX.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udAudioVACGainTX.ValueChanged += new System.EventHandler(this.udAudioVACGainTX_ValueChanged);
+            this.udAudioVACGainTX.LostFocus += new System.EventHandler(this.udAudioVACGainTX_LostFocus);
+            // 
+            // lblAudioVACGainRX
+            // 
+            this.lblAudioVACGainRX.Image = null;
+            this.lblAudioVACGainRX.Location = new System.Drawing.Point(16, 19);
+            this.lblAudioVACGainRX.Name = "lblAudioVACGainRX";
+            this.lblAudioVACGainRX.Size = new System.Drawing.Size(24, 16);
+            this.lblAudioVACGainRX.TabIndex = 37;
+            this.lblAudioVACGainRX.Text = "RX:";
+            // 
+            // udAudioVACGainRX
+            // 
+            this.udAudioVACGainRX.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udAudioVACGainRX.Location = new System.Drawing.Point(48, 19);
+            this.udAudioVACGainRX.Maximum = new decimal(new int[] {
+            40,
+            0,
+            0,
+            0});
+            this.udAudioVACGainRX.Minimum = new decimal(new int[] {
+            40,
+            0,
+            0,
+            -2147483648});
+            this.udAudioVACGainRX.Name = "udAudioVACGainRX";
+            this.udAudioVACGainRX.Size = new System.Drawing.Size(40, 20);
+            this.udAudioVACGainRX.TabIndex = 36;
+            this.udAudioVACGainRX.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udAudioVACGainRX, "Controls the gain applied to the RX audio before it is sent to the third party ap" +
+        "plication.");
+            this.udAudioVACGainRX.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udAudioVACGainRX.ValueChanged += new System.EventHandler(this.udAudioVACGainRX_ValueChanged);
+            this.udAudioVACGainRX.LostFocus += new System.EventHandler(this.udAudioVACGainRX_LostFocus);
+            // 
+            // grpAudio2Stereo
+            // 
+            this.grpAudio2Stereo.Controls.Add(this.chkAudio2Stereo);
+            this.grpAudio2Stereo.Location = new System.Drawing.Point(370, 93);
+            this.grpAudio2Stereo.Name = "grpAudio2Stereo";
+            this.grpAudio2Stereo.Size = new System.Drawing.Size(96, 39);
+            this.grpAudio2Stereo.TabIndex = 71;
+            this.grpAudio2Stereo.TabStop = false;
+            this.grpAudio2Stereo.Text = "Mono/Stereo";
+            // 
+            // chkAudio2Stereo
+            // 
+            this.chkAudio2Stereo.Image = null;
+            this.chkAudio2Stereo.Location = new System.Drawing.Point(16, 16);
+            this.chkAudio2Stereo.Name = "chkAudio2Stereo";
+            this.chkAudio2Stereo.Size = new System.Drawing.Size(64, 16);
+            this.chkAudio2Stereo.TabIndex = 0;
+            this.chkAudio2Stereo.Text = "Stereo";
+            this.toolTip1.SetToolTip(this.chkAudio2Stereo, "Click this button if the third party software will open the Virtual Audio Cable i" +
+        "n 2 channel (stereo) mode.");
+            this.chkAudio2Stereo.CheckedChanged += new System.EventHandler(this.chkAudio2Stereo_CheckedChanged);
+            // 
             // chkVAC1WillMute
             // 
             this.chkVAC1WillMute.AutoSize = true;
             this.chkVAC1WillMute.Image = null;
-            this.chkVAC1WillMute.Location = new System.Drawing.Point(249, 234);
+            this.chkVAC1WillMute.Location = new System.Drawing.Point(303, 187);
             this.chkVAC1WillMute.Name = "chkVAC1WillMute";
             this.chkVAC1WillMute.Size = new System.Drawing.Size(117, 17);
             this.chkVAC1WillMute.TabIndex = 89;
@@ -25133,9 +25288,9 @@
             // chkBypassVACPlayingRecording
             // 
             this.chkBypassVACPlayingRecording.Image = null;
-            this.chkBypassVACPlayingRecording.Location = new System.Drawing.Point(249, 200);
+            this.chkBypassVACPlayingRecording.Location = new System.Drawing.Point(19, 213);
             this.chkBypassVACPlayingRecording.Name = "chkBypassVACPlayingRecording";
-            this.chkBypassVACPlayingRecording.Size = new System.Drawing.Size(271, 16);
+            this.chkBypassVACPlayingRecording.Size = new System.Drawing.Size(205, 23);
             this.chkBypassVACPlayingRecording.TabIndex = 84;
             this.chkBypassVACPlayingRecording.Text = "Bypass VAC for recording playback";
             this.toolTip1.SetToolTip(this.chkBypassVACPlayingRecording, "If you are using VAC enable this to be able to play recordings");
@@ -25616,9 +25771,9 @@
             // chkMOXAllowBypass
             // 
             this.chkMOXAllowBypass.Image = null;
-            this.chkMOXAllowBypass.Location = new System.Drawing.Point(249, 180);
+            this.chkMOXAllowBypass.Location = new System.Drawing.Point(19, 190);
             this.chkMOXAllowBypass.Name = "chkMOXAllowBypass";
-            this.chkMOXAllowBypass.Size = new System.Drawing.Size(271, 16);
+            this.chkMOXAllowBypass.Size = new System.Drawing.Size(245, 23);
             this.chkMOXAllowBypass.TabIndex = 82;
             this.chkMOXAllowBypass.Text = "Allow MOX to override/bypass VAC for Phone";
             this.toolTip1.SetToolTip(this.chkMOXAllowBypass, "Using the MOX control will override the PTT input to allow for easy phone operati" +
@@ -25628,9 +25783,9 @@
             // chkSPACEAllowBypass
             // 
             this.chkSPACEAllowBypass.Image = null;
-            this.chkSPACEAllowBypass.Location = new System.Drawing.Point(249, 160);
+            this.chkSPACEAllowBypass.Location = new System.Drawing.Point(19, 167);
             this.chkSPACEAllowBypass.Name = "chkSPACEAllowBypass";
-            this.chkSPACEAllowBypass.Size = new System.Drawing.Size(271, 16);
+            this.chkSPACEAllowBypass.Size = new System.Drawing.Size(271, 23);
             this.chkSPACEAllowBypass.TabIndex = 81;
             this.chkSPACEAllowBypass.Text = "Allow SPACE to override/bypass VAC for Phone";
             this.toolTip1.SetToolTip(this.chkSPACEAllowBypass, "Using theSPACE BAR will override the PTT input to allow for easy phone operation " +
@@ -25686,9 +25841,9 @@
             // 
             this.chkVACCombine.Enabled = false;
             this.chkVACCombine.Image = null;
-            this.chkVACCombine.Location = new System.Drawing.Point(24, 200);
+            this.chkVACCombine.Location = new System.Drawing.Point(19, 236);
             this.chkVACCombine.Name = "chkVACCombine";
-            this.chkVACCombine.Size = new System.Drawing.Size(117, 40);
+            this.chkVACCombine.Size = new System.Drawing.Size(172, 23);
             this.chkVACCombine.TabIndex = 76;
             this.chkVACCombine.Text = "Combine VAC Input Channels";
             this.toolTip1.SetToolTip(this.chkVACCombine, "When this feature is enabled, the left and right VAC channels are combined into t" +
@@ -25700,152 +25855,14 @@
             this.chkVACAllowBypass.Checked = true;
             this.chkVACAllowBypass.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkVACAllowBypass.Image = null;
-            this.chkVACAllowBypass.Location = new System.Drawing.Point(249, 140);
+            this.chkVACAllowBypass.Location = new System.Drawing.Point(303, 160);
             this.chkVACAllowBypass.Name = "chkVACAllowBypass";
-            this.chkVACAllowBypass.Size = new System.Drawing.Size(271, 16);
+            this.chkVACAllowBypass.Size = new System.Drawing.Size(241, 16);
             this.chkVACAllowBypass.TabIndex = 75;
             this.chkVACAllowBypass.Text = "Allow PTT to override/bypass VAC for Phone";
             this.toolTip1.SetToolTip(this.chkVACAllowBypass, "Using the hardware PTT inputs will override the PTT input to allow for easy phone" +
         " operation while VAC is enabled.");
             this.chkVACAllowBypass.CheckedChanged += new System.EventHandler(this.chkVACAllowBypass_CheckedChanged);
-            // 
-            // grpAudioVACAutoEnable
-            // 
-            this.grpAudioVACAutoEnable.Controls.Add(this.chkAudioVACAutoEnable);
-            this.grpAudioVACAutoEnable.Location = new System.Drawing.Point(8, 138);
-            this.grpAudioVACAutoEnable.Name = "grpAudioVACAutoEnable";
-            this.grpAudioVACAutoEnable.Size = new System.Drawing.Size(224, 56);
-            this.grpAudioVACAutoEnable.TabIndex = 74;
-            this.grpAudioVACAutoEnable.TabStop = false;
-            this.grpAudioVACAutoEnable.Text = "Auto Enable";
-            // 
-            // chkAudioVACAutoEnable
-            // 
-            this.chkAudioVACAutoEnable.Image = null;
-            this.chkAudioVACAutoEnable.Location = new System.Drawing.Point(16, 16);
-            this.chkAudioVACAutoEnable.Name = "chkAudioVACAutoEnable";
-            this.chkAudioVACAutoEnable.Size = new System.Drawing.Size(200, 32);
-            this.chkAudioVACAutoEnable.TabIndex = 0;
-            this.chkAudioVACAutoEnable.Text = "Enable for Digital modes, Disable for all others";
-            this.toolTip1.SetToolTip(this.chkAudioVACAutoEnable, "Click this button to automatically enable VAC when in Digital modes (DIGL, DIGU, " +
-        "DRM)");
-            this.chkAudioVACAutoEnable.CheckedChanged += new System.EventHandler(this.chkAudioVACAutoEnable_CheckedChanged);
-            // 
-            // grpAudioVACGain
-            // 
-            this.grpAudioVACGain.Controls.Add(this.lblAudioVACGainTX);
-            this.grpAudioVACGain.Controls.Add(this.udAudioVACGainTX);
-            this.grpAudioVACGain.Controls.Add(this.lblAudioVACGainRX);
-            this.grpAudioVACGain.Controls.Add(this.udAudioVACGainRX);
-            this.grpAudioVACGain.Location = new System.Drawing.Point(406, 12);
-            this.grpAudioVACGain.Name = "grpAudioVACGain";
-            this.grpAudioVACGain.Size = new System.Drawing.Size(96, 72);
-            this.grpAudioVACGain.TabIndex = 72;
-            this.grpAudioVACGain.TabStop = false;
-            this.grpAudioVACGain.Text = "Gain (dB)";
-            // 
-            // lblAudioVACGainTX
-            // 
-            this.lblAudioVACGainTX.Image = null;
-            this.lblAudioVACGainTX.Location = new System.Drawing.Point(16, 42);
-            this.lblAudioVACGainTX.Name = "lblAudioVACGainTX";
-            this.lblAudioVACGainTX.Size = new System.Drawing.Size(32, 16);
-            this.lblAudioVACGainTX.TabIndex = 39;
-            this.lblAudioVACGainTX.Text = "TX:";
-            // 
-            // udAudioVACGainTX
-            // 
-            this.udAudioVACGainTX.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udAudioVACGainTX.Location = new System.Drawing.Point(48, 42);
-            this.udAudioVACGainTX.Maximum = new decimal(new int[] {
-            40,
-            0,
-            0,
-            0});
-            this.udAudioVACGainTX.Minimum = new decimal(new int[] {
-            40,
-            0,
-            0,
-            -2147483648});
-            this.udAudioVACGainTX.Name = "udAudioVACGainTX";
-            this.udAudioVACGainTX.Size = new System.Drawing.Size(40, 20);
-            this.udAudioVACGainTX.TabIndex = 38;
-            this.udAudioVACGainTX.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udAudioVACGainTX, "Controls the gain on the audio coming from third party applications.");
-            this.udAudioVACGainTX.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udAudioVACGainTX.ValueChanged += new System.EventHandler(this.udAudioVACGainTX_ValueChanged);
-            this.udAudioVACGainTX.LostFocus += new System.EventHandler(this.udAudioVACGainTX_LostFocus);
-            // 
-            // lblAudioVACGainRX
-            // 
-            this.lblAudioVACGainRX.Image = null;
-            this.lblAudioVACGainRX.Location = new System.Drawing.Point(16, 19);
-            this.lblAudioVACGainRX.Name = "lblAudioVACGainRX";
-            this.lblAudioVACGainRX.Size = new System.Drawing.Size(24, 16);
-            this.lblAudioVACGainRX.TabIndex = 37;
-            this.lblAudioVACGainRX.Text = "RX:";
-            // 
-            // udAudioVACGainRX
-            // 
-            this.udAudioVACGainRX.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udAudioVACGainRX.Location = new System.Drawing.Point(48, 19);
-            this.udAudioVACGainRX.Maximum = new decimal(new int[] {
-            40,
-            0,
-            0,
-            0});
-            this.udAudioVACGainRX.Minimum = new decimal(new int[] {
-            40,
-            0,
-            0,
-            -2147483648});
-            this.udAudioVACGainRX.Name = "udAudioVACGainRX";
-            this.udAudioVACGainRX.Size = new System.Drawing.Size(40, 20);
-            this.udAudioVACGainRX.TabIndex = 36;
-            this.udAudioVACGainRX.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udAudioVACGainRX, "Controls the gain applied to the RX audio before it is sent to the third party ap" +
-        "plication.");
-            this.udAudioVACGainRX.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udAudioVACGainRX.ValueChanged += new System.EventHandler(this.udAudioVACGainRX_ValueChanged);
-            this.udAudioVACGainRX.LostFocus += new System.EventHandler(this.udAudioVACGainRX_LostFocus);
-            // 
-            // grpAudio2Stereo
-            // 
-            this.grpAudio2Stereo.Controls.Add(this.chkAudio2Stereo);
-            this.grpAudio2Stereo.Location = new System.Drawing.Point(406, 86);
-            this.grpAudio2Stereo.Name = "grpAudio2Stereo";
-            this.grpAudio2Stereo.Size = new System.Drawing.Size(96, 39);
-            this.grpAudio2Stereo.TabIndex = 71;
-            this.grpAudio2Stereo.TabStop = false;
-            this.grpAudio2Stereo.Text = "Mono/Stereo";
-            // 
-            // chkAudio2Stereo
-            // 
-            this.chkAudio2Stereo.Image = null;
-            this.chkAudio2Stereo.Location = new System.Drawing.Point(16, 16);
-            this.chkAudio2Stereo.Name = "chkAudio2Stereo";
-            this.chkAudio2Stereo.Size = new System.Drawing.Size(64, 16);
-            this.chkAudio2Stereo.TabIndex = 0;
-            this.chkAudio2Stereo.Text = "Stereo";
-            this.toolTip1.SetToolTip(this.chkAudio2Stereo, "Click this button if the third party software will open the Virtual Audio Cable i" +
-        "n 2 channel (stereo) mode.");
-            this.chkAudio2Stereo.CheckedChanged += new System.EventHandler(this.chkAudio2Stereo_CheckedChanged);
             // 
             // grpAudioLatency2
             // 
@@ -26091,15 +26108,23 @@
             this.udAudioLatency2.ValueChanged += new System.EventHandler(this.udAudioLatency2_ValueChanged);
             this.udAudioLatency2.LostFocus += new System.EventHandler(this.udAudioLatency2_LostFocus);
             // 
-            // grpAudioSampleRate2
+            // grpAudioDetails2
             // 
-            this.grpAudioSampleRate2.Controls.Add(this.comboAudioSampleRate2);
-            this.grpAudioSampleRate2.Location = new System.Drawing.Point(274, 64);
-            this.grpAudioSampleRate2.Name = "grpAudioSampleRate2";
-            this.grpAudioSampleRate2.Size = new System.Drawing.Size(96, 56);
-            this.grpAudioSampleRate2.TabIndex = 66;
-            this.grpAudioSampleRate2.TabStop = false;
-            this.grpAudioSampleRate2.Text = "Sample Rate";
+            this.grpAudioDetails2.Controls.Add(this.comboAudioSampleRate2);
+            this.grpAudioDetails2.Controls.Add(this.comboAudioBuffer2);
+            this.grpAudioDetails2.Controls.Add(this.chkExclusive);
+            this.grpAudioDetails2.Controls.Add(this.lblAudioOutput2);
+            this.grpAudioDetails2.Controls.Add(this.comboAudioOutput2);
+            this.grpAudioDetails2.Controls.Add(this.lblAudioInput2);
+            this.grpAudioDetails2.Controls.Add(this.lblAudioDriver2);
+            this.grpAudioDetails2.Controls.Add(this.comboAudioInput2);
+            this.grpAudioDetails2.Controls.Add(this.comboAudioDriver2);
+            this.grpAudioDetails2.Location = new System.Drawing.Point(9, 36);
+            this.grpAudioDetails2.Name = "grpAudioDetails2";
+            this.grpAudioDetails2.Size = new System.Drawing.Size(354, 116);
+            this.grpAudioDetails2.TabIndex = 35;
+            this.grpAudioDetails2.TabStop = false;
+            this.grpAudioDetails2.Text = "Virtual Audio Cable Setup";
             // 
             // comboAudioSampleRate2
             // 
@@ -26116,22 +26141,12 @@
             "48000",
             "96000",
             "192000"});
-            this.comboAudioSampleRate2.Location = new System.Drawing.Point(16, 24);
+            this.comboAudioSampleRate2.Location = new System.Drawing.Point(284, 17);
             this.comboAudioSampleRate2.Name = "comboAudioSampleRate2";
             this.comboAudioSampleRate2.Size = new System.Drawing.Size(64, 21);
             this.comboAudioSampleRate2.TabIndex = 60;
             this.toolTip1.SetToolTip(this.comboAudioSampleRate2, "Samples per second.  Set to match the third party software program.");
             this.comboAudioSampleRate2.SelectedIndexChanged += new System.EventHandler(this.comboAudioSampleRate2_SelectedIndexChanged);
-            // 
-            // grpAudioBuffer2
-            // 
-            this.grpAudioBuffer2.Controls.Add(this.comboAudioBuffer2);
-            this.grpAudioBuffer2.Location = new System.Drawing.Point(274, 6);
-            this.grpAudioBuffer2.Name = "grpAudioBuffer2";
-            this.grpAudioBuffer2.Size = new System.Drawing.Size(96, 56);
-            this.grpAudioBuffer2.TabIndex = 65;
-            this.grpAudioBuffer2.TabStop = false;
-            this.grpAudioBuffer2.Text = "Buffer Size";
             // 
             // comboAudioBuffer2
             // 
@@ -26144,27 +26159,23 @@
             "512",
             "1024",
             "2048"});
-            this.comboAudioBuffer2.Location = new System.Drawing.Point(16, 24);
+            this.comboAudioBuffer2.Location = new System.Drawing.Point(222, 17);
             this.comboAudioBuffer2.Name = "comboAudioBuffer2";
             this.comboAudioBuffer2.Size = new System.Drawing.Size(56, 21);
             this.comboAudioBuffer2.TabIndex = 58;
             this.toolTip1.SetToolTip(this.comboAudioBuffer2, "Samples per buffer.");
             this.comboAudioBuffer2.SelectedIndexChanged += new System.EventHandler(this.comboAudioBuffer2_SelectedIndexChanged);
             // 
-            // grpAudioDetails2
+            // chkExclusive
             // 
-            this.grpAudioDetails2.Controls.Add(this.lblAudioOutput2);
-            this.grpAudioDetails2.Controls.Add(this.comboAudioOutput2);
-            this.grpAudioDetails2.Controls.Add(this.lblAudioInput2);
-            this.grpAudioDetails2.Controls.Add(this.lblAudioDriver2);
-            this.grpAudioDetails2.Controls.Add(this.comboAudioInput2);
-            this.grpAudioDetails2.Controls.Add(this.comboAudioDriver2);
-            this.grpAudioDetails2.Location = new System.Drawing.Point(8, 28);
-            this.grpAudioDetails2.Name = "grpAudioDetails2";
-            this.grpAudioDetails2.Size = new System.Drawing.Size(224, 100);
-            this.grpAudioDetails2.TabIndex = 35;
-            this.grpAudioDetails2.TabStop = false;
-            this.grpAudioDetails2.Text = "Virtual Audio Cable Setup";
+            this.chkExclusive.AutoSize = true;
+            this.chkExclusive.Location = new System.Drawing.Point(56, 95);
+            this.chkExclusive.Name = "chkExclusive";
+            this.chkExclusive.Size = new System.Drawing.Size(142, 17);
+            this.chkExclusive.TabIndex = 36;
+            this.chkExclusive.Text = "Use Devices &Exclusively";
+            this.chkExclusive.UseVisualStyleBackColor = true;
+            this.chkExclusive.CheckedChanged += new System.EventHandler(this.chkExclusive_CheckedChanged);
             // 
             // lblAudioOutput2
             // 
@@ -26183,7 +26194,7 @@
             this.comboAudioOutput2.ItemHeight = 13;
             this.comboAudioOutput2.Location = new System.Drawing.Point(56, 70);
             this.comboAudioOutput2.Name = "comboAudioOutput2";
-            this.comboAudioOutput2.Size = new System.Drawing.Size(160, 21);
+            this.comboAudioOutput2.Size = new System.Drawing.Size(290, 21);
             this.comboAudioOutput2.TabIndex = 34;
             this.toolTip1.SetToolTip(this.comboAudioOutput2, "Output Audio Device");
             this.comboAudioOutput2.SelectedIndexChanged += new System.EventHandler(this.comboAudioOutput2_SelectedIndexChanged);
@@ -26213,7 +26224,7 @@
             this.comboAudioInput2.ItemHeight = 13;
             this.comboAudioInput2.Location = new System.Drawing.Point(56, 44);
             this.comboAudioInput2.Name = "comboAudioInput2";
-            this.comboAudioInput2.Size = new System.Drawing.Size(160, 21);
+            this.comboAudioInput2.Size = new System.Drawing.Size(290, 21);
             this.comboAudioInput2.TabIndex = 28;
             this.toolTip1.SetToolTip(this.comboAudioInput2, "Input Audio Device");
             this.comboAudioInput2.SelectedIndexChanged += new System.EventHandler(this.comboAudioInput2_SelectedIndexChanged);
@@ -26233,7 +26244,7 @@
             // chkAudioEnableVAC
             // 
             this.chkAudioEnableVAC.Image = null;
-            this.chkAudioEnableVAC.Location = new System.Drawing.Point(16, 4);
+            this.chkAudioEnableVAC.Location = new System.Drawing.Point(19, 9);
             this.chkAudioEnableVAC.Name = "chkAudioEnableVAC";
             this.chkAudioEnableVAC.Size = new System.Drawing.Size(99, 24);
             this.chkAudioEnableVAC.TabIndex = 25;
@@ -55040,26 +55051,25 @@
             this.tcAudio.ResumeLayout(false);
             this.tpVAC.ResumeLayout(false);
             this.tpVAC.PerformLayout();
+            this.grpAudioVACAutoEnable.ResumeLayout(false);
+            this.grpAudioVACGain.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.udAudioVACGainTX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAudioVACGainRX)).EndInit();
+            this.grpAudio2Stereo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1GrapherSwing)).EndInit();
             this.grpVAC1monitor.ResumeLayout(false);
             this.grpVAC1monitor.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1_Force2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1_Force)).EndInit();
             this.grpDirectIQOutput.ResumeLayout(false);
-            this.grpAudioVACAutoEnable.ResumeLayout(false);
-            this.grpAudioVACGain.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.udAudioVACGainTX)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAudioVACGainRX)).EndInit();
-            this.grpAudio2Stereo.ResumeLayout(false);
             this.grpAudioLatency2.ResumeLayout(false);
             this.grpAudioLatency2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAudioLatencyPAOut)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAudioLatencyPAIn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAudioLatency2_Out)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAudioLatency2)).EndInit();
-            this.grpAudioSampleRate2.ResumeLayout(false);
-            this.grpAudioBuffer2.ResumeLayout(false);
             this.grpAudioDetails2.ResumeLayout(false);
+            this.grpAudioDetails2.PerformLayout();
             this.tpVAC2.ResumeLayout(false);
             this.tpVAC2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC2GrapherSwing)).EndInit();
@@ -55996,8 +56006,6 @@
         private NumericUpDownTS udAudioLatency2;
         private ComboBoxTS comboAudioBuffer2;
         private ComboBoxTS comboAudioSampleRate2;
-        private GroupBoxTS grpAudioBuffer2;
-        private GroupBoxTS grpAudioSampleRate2;
         private GroupBoxTS grpAudioLatency2;
         private CheckBoxTS chkAudioLatencyManual2;
         private ComboBoxTS comboCATRigType;
@@ -58357,7 +58365,7 @@
         private LabelTS lblLED02;
         private LabelTS lblLED01;
         private Timer timer_LED_Mirror;
-	private CheckBoxTS chkVAC2onSplit;
+        private CheckBoxTS chkVAC2onSplit;
         private TabPage tpDSPVOXDE;
         private GroupBoxTS grpSCF;
         private LabelTS lblSCFHighCut;
@@ -59231,5 +59239,8 @@
         private PictureBox pictureBox1;
         private ButtonTS btnMeterCopySettings;
         private ButtonTS btnMeterPasteSettings;
+        private Label lblSampleRate;
+        private Label lblBuffer;
+        private CheckBox chkExclusive;
     }
 }

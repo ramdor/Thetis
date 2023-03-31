@@ -30,104 +30,105 @@ warren@wpratt.com
 
 #include "ring.h"
 #include "portaudio.h"
+#include "pa_win_wdmks.h"
+#include "pa_win_wasapi.h"
 
-#define MAX_EXT_VACS			(16)
+#define MAX_EXT_VACS (16)
 
-typedef struct _ivac
-{
-	int run;
-	int iq_type;					// 1 if using raw IQ data; 0 for audio
-	int stereo;						// 1 for stereo; 0 otherwise
-	int iq_rate;
-	int mic_rate;
-	int audio_rate;
-	int txmon_rate;
-	int vac_rate;					// VAC sample rate
-	int mic_size;
-	int iq_size;
-	int audio_size;
-	int txmon_size;
-	int vac_size;					// VAC buffer size
-	void* mixer;					// pointer to async audio mixer
-	double* bitbucket;				// dump for un-needed resampler output
+typedef struct _ivac {
+    int run;
+    int iq_type; // 1 if using raw IQ data; 0 for audio
+    int stereo; // 1 for stereo; 0 otherwise
+    int iq_rate;
+    int mic_rate;
+    int audio_rate;
+    int txmon_rate;
+    int vac_rate; // VAC sample rate
+    int mic_size;
+    int iq_size;
+    int audio_size;
+    int txmon_size;
+    int vac_size; // VAC buffer size
+    void* mixer; // pointer to async audio mixer
+    double* bitbucket; // dump for un-needed resampler output
 
-	void* rmatchIN;
-	void* rmatchOUT;
+    void* rmatchIN;
+    void* rmatchOUT;
 
-	int INringsize;
-	int OUTringsize;
+    int INringsize;
+    int OUTringsize;
 
-	PaStreamParameters inParam, outParam;
-	PaStream* Stream;
+    PaStreamParameters inParam, outParam;
+    PaStream* Stream;
 
-	int host_api_index;
-	int input_dev_index;
-	int output_dev_index;
-	int num_channels;
-	double in_latency;
-	double out_latency;
-	double pa_in_latency;
-	double pa_out_latency;
-	int vox;
-	int mox;
-	int mon;
-	int vac_bypass;
-	int vac_combine_input;
-	double vac_preamp;
-	double vac_rx_scale;
-	double vac_mon_scale;		// MW0LGE_21k9d the volume level of the vac mon
-	int INforce;				// force var ratio for rmatchIN
-	double INfvar;				// var value when forced for rmatchIN
-	int OUTforce;				// force var ratio for rmatchOUT
-	double OUTfvar;				// var value when forced for rmatchOUT
+    int host_api_index;
+    int input_dev_index;
+    int output_dev_index;
+    int num_channels;
+    double in_latency;
+    double out_latency;
+    double pa_in_latency;
+    double pa_out_latency;
+    int vox;
+    int mox;
+    int mon;
+    int vac_bypass;
+    int vac_combine_input;
+    double vac_preamp;
+    double vac_rx_scale;
+    double vac_mon_scale; // MW0LGE_21k9d the volume level of the vac mon
+    int INforce; // force var ratio for rmatchIN
+    double INfvar; // var value when forced for rmatchIN
+    int OUTforce; // force var ratio for rmatchOUT
+    double OUTfvar; // var value when forced for rmatchOUT
 
-	double initial_INvar;			// init the var ratio
-	double initial_OUTvar;			// init the var ratio
+    double initial_INvar; // init the var ratio
+    double initial_OUTvar; // init the var ratio
 
-	int exclusive; // G7KLJ: Use output device in exclusive mode. Helps low
-	// latency performance
-	HANDLE MMThreadApiHandle; // G7KLJ handle to store state for thread cleanup.
-	// Portaudio works so much better with super-high
-	// thread priority ("Pro Audio")
-	volatile int have_set_thread_priority;
-	double* convbuf;
-	size_t convbuf_size;
-	const PaStreamInfo* streamInfo;
-} ivac, * IVAC;
+    int exclusive; // G7KLJ: Use output device in exclusive mode. Helps low
+    // latency performance
+    HANDLE MMThreadApiHandle; // G7KLJ handle to store state for thread cleanup.
+    // Portaudio works so much better with super-high
+    // thread priority ("Pro Audio")
+    volatile int have_set_thread_priority;
+    double* convbuf;
+    size_t convbuf_size;
+    const PaStreamInfo* streamInfo;
+    struct PaWasapiStreamInfo w;
+    struct PaWinWDMKSInfo x;
+} ivac, *IVAC;
 
 void combinebuff(int n, double* a, double* combined);
 void scalebuff(int n, double* in, double k, double* out);
 void xvac_out(int id, int nsamples, double* buff);
 
-extern __declspec(dllexport) void* create_resampleV(int samplerate_in, int samplerate_out);
-extern __declspec(dllexport) void xresampleV(double* input, double* output, int numsamps, int* outsamps, void* ptr);
+extern __declspec(dllexport) void* create_resampleV(
+    int samplerate_in, int samplerate_out);
+extern __declspec(dllexport) void xresampleV(
+    double* input, double* output, int numsamps, int* outsamps, void* ptr);
 extern __declspec(dllexport) void destroy_resampleV(/*ResSt*/ void* resst);
 extern __declspec(dllexport) void destroy_ivac(int id);
 extern __declspec(dllexport) void xvacIN(int id, double* in_tx, int bypass);
 extern __declspec(dllexport) void xvacOUT(int id, int stream, double* data);
-extern __declspec(dllexport) void create_ivac(
-	int id,
-	int run,
-	int iq_type,				// 1 if using raw IQ samples, 0 for audio
-	int stereo,					// 1 for stereo, 0 otherwise
-	int iq_rate,				// sample rate of RX I-Q data
-	int mic_rate,				// sample rate of data from VAC to TX MIC input
-	int audio_rate,				// sample rate of data from RCVR Audio data to VAC
-	int txmon_rate,				// sample rate of data from TX Monitor to VAC
-	int vac_rate,				// VAC sample rate
-	int mic_size,				// buffer size for data from VAC to TX MIC input
-	int iq_size,				// buffer size for RCVR IQ data to VAC
-	int audio_size,				// buffer size for RCVR Audio data to VAC
-	int txmon_size,				// buffer size for TX Monitor data to VAC
-	int vac_size				// VAC buffer size
+extern __declspec(dllexport) void create_ivac(int id, int run,
+    int iq_type, // 1 if using raw IQ samples, 0 for audio
+    int stereo, // 1 for stereo, 0 otherwise
+    int iq_rate, // sample rate of RX I-Q data
+    int mic_rate, // sample rate of data from VAC to TX MIC input
+    int audio_rate, // sample rate of data from RCVR Audio data to VAC
+    int txmon_rate, // sample rate of data from TX Monitor to VAC
+    int vac_rate, // VAC sample rate
+    int mic_size, // buffer size for data from VAC to TX MIC input
+    int iq_size, // buffer size for RCVR IQ data to VAC
+    int audio_size, // buffer size for RCVR Audio data to VAC
+    int txmon_size, // buffer size for TX Monitor data to VAC
+    int vac_size // VAC buffer size
 );
-
-
-
 
 extern void SetIVACtxmonRate(int id, int rate);
 extern void SetIVACtxmonSize(int id, int size);
-extern __declspec(dllexport) void SetIVACiqSizeAndRate(int id, int size, int rate);
+extern __declspec(dllexport) void SetIVACiqSizeAndRate(
+    int id, int size, int rate);
 extern __declspec(dllexport) void SetIVACmicSize(int id, int size);
 extern __declspec(dllexport) void SetIVACmicRate(int id, int rate);
 extern __declspec(dllexport) void SetIVACaudioRate(int id, int rate);
@@ -142,30 +143,30 @@ extern __declspec(dllexport) void SetIVACaudioSize(int id, int size);
 // static functions that allow the app to use Float32 inside of PortAudio.
 // Blatantly stolen from pa_converters.c, with modifications. KLJ
 static void Float64_To_Float32(void* destinationBuffer,
-	signed int destinationStride, void* sourceBuffer, signed int sourceStride,
-	unsigned int count) {
-	double* src = (double*)sourceBuffer;
-	float* dest = (float*)destinationBuffer;
+    signed int destinationStride, void* sourceBuffer, signed int sourceStride,
+    unsigned int count) {
+    double* src = (double*)sourceBuffer;
+    float* dest = (float*)destinationBuffer;
 
-	while (count--) {
-		*dest = (float)*src;
+    while (count--) {
+        *dest = (float)*src;
 
-		src += sourceStride;
-		dest += destinationStride;
-	}
+        src += sourceStride;
+        dest += destinationStride;
+    }
 }
 
 static void Float32_To_Float64(void* destinationBuffer,
-	signed int destinationStride, void* sourceBuffer, signed int sourceStride,
-	unsigned int count) {
-	float* src = (float*)sourceBuffer;
-	double* dest = (double*)destinationBuffer;
+    signed int destinationStride, void* sourceBuffer, signed int sourceStride,
+    unsigned int count) {
+    float* src = (float*)sourceBuffer;
+    double* dest = (double*)destinationBuffer;
 
-	while (count--) {
-		*dest = *src;
+    while (count--) {
+        *dest = *src;
 
-		src += sourceStride;
-		dest += destinationStride;
-	}
+        src += sourceStride;
+        dest += destinationStride;
+    }
 }
 #endif
