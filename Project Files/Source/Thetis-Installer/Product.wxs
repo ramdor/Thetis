@@ -367,7 +367,9 @@
 			Impersonate="yes" Execute="deferred" ExeCommand="[SystemFolder]cmd.exe /C start OpenHPSDR_Skins.exe &amp; exit"
 					  Return="check"/>
 
-		<Binary Id="InstallMeterSkins" SourceFile="U:\Wales\MeterSkinInstaller\MeterSkinInstaller\bin\Release\MeterSkinInstaller.exe" />
+
+
+		<Binary Id="InstallMeterSkins" SourceFile="$(var.FilesPath)MeterSkinInstaller.exe" />
 		<CustomAction Id="InstallMeterSkins_CA" BinaryKey="InstallMeterSkins"
 			Impersonate="yes" Execute="deferred" ExeCommand="[SystemFolder]cmd.exe /C start MeterSkinInstaller.exe"
 					  Return="check"/>
