@@ -556,7 +556,7 @@ namespace Thetis
         // ======================================================
         // Constructor and Destructor
         // ======================================================
-
+        internal bool m_waiting_for_portaudio = true; // KLJ
         public Console(string[] args)
         {
             //CheckIfRussian(); //#UKRAINE
@@ -871,13 +871,28 @@ namespace Thetis
                     RX2Enabled = false;
             }
 
+
+            // KLJ: Kick this off as early as possible to avoid waiting for it later.
+            m_waiting_for_portaudio = true;
+            new Thread(() =>
+            {
+
+                PortAudioForThetis.PA_Initialize();
+                m_waiting_for_portaudio = false;
+            })
+            {
+                IsBackground = true,
+                ApartmentState = ApartmentState.STA // no ASIO devices without Apartment state
+            }.Start();
+
             Splash.SetStatus("Initializing Radio");				// Set progress point
             radio = new Radio(AppDataPath);					    // Initialize the Radio processor   INIT_SLOW
             specRX = new SpecRX();
             Display.specready = true;
 
             Splash.SetStatus("Initializing PortAudio");			// Set progress point
-            PortAudioForThetis.PA_Initialize();                               // Initialize the audio interface
+            // PortAudioForThetis.PA_Initialize();                               // Initialize the audio interface
+            // KLJ moved to different thread to speed start-up
 
             break_in_timer = new HiPerfTimer();
 
@@ -931,39 +946,6 @@ namespace Thetis
                 SaveState();
             }
 
-            //MW0LGE_22b not actually needed as done just below in else section of resetForAutoMerge if statement
-            //also note, RX2DisplayCalOffset was not being done here anyway
-            //if (rx1_meter_cal_offset == 0.0f)
-            //{
-            //    switch (current_hpsdr_model)
-            //    {
-            //        case HPSDRModel.ORIONMKII:
-            //        case HPSDRModel.ANAN7000D:
-            //        case HPSDRModel.ANAN8000D:
-            //            rx1_meter_cal_offset = 4.841644f;
-            //            rx2_meter_cal_offset = 4.841644f;
-            //            break;
-            //        default:
-            //            rx1_meter_cal_offset = -2.44f;
-            //            rx2_meter_cal_offset = -2.44f;
-            //            break;
-            //    }
-            //}
-
-            //if (rx1_display_cal_offset == 0.0f)
-            //{
-            //    switch (current_hpsdr_model)
-            //    {
-            //        case HPSDRModel.ORIONMKII:
-            //        case HPSDRModel.ANAN7000D:
-            //        case HPSDRModel.ANAN8000D:
-            //            RX1DisplayCalOffset = 5.259f;
-            //            break;
-            //        default:
-            //            RX1DisplayCalOffset = -2.1f;
-            //            break;
-            //    }
-            //}
 
             initializing = false;
 
@@ -3566,7 +3548,7 @@ namespace Thetis
                         m_frmSeqLog.StatusBarWarningOnNegativeOnly = bool.Parse(val);
                         break;
                     case "CPU_ShowSystem":
-                        m_bShowSystemCPUUsage = bool.Parse(val); 
+                        m_bShowSystemCPUUsage = bool.Parse(val);
                         // MW0LGE_21k9 MEMORYLEAK - commented so it will always be true (memory leak with process based NextValue)
                         // KLJ: Not a leak! GC will eventually clean it up, probably when you 
                         // are in the middle of a DX QSO!

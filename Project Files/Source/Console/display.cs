@@ -6658,7 +6658,7 @@ namespace Thetis
                 _Use = bUse;
                 _widthHz = nWidthHz;
             }
-        }        
+        }
         private static List<clsNotchCoords> handleNotches(int rx, bool bottom, int cwSideToneShift, int Low, int High, int nVerticalShift, int top, int width, int W, int H, bool bDraw)//, int expandHz = 0)
         {
             long rf_freq = vfoa_hz;
@@ -6684,7 +6684,7 @@ namespace Thetis
                 int notch_left_x;
                 int notch_right_x;
 
-                
+
                 if (bDraw)
                 {
                     notch_centre_x = (int)((float)((n.FCenter) - rf_freq - Low - rit) / width * W);
@@ -6988,7 +6988,7 @@ namespace Thetis
             #region Tx filter and tx lines
 
             //MW0LGE_21k8 reworked
-            if ((rx==1 && rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU) || (rx == 2 && rx2_dsp_mode != DSPMode.CWL && rx2_dsp_mode != DSPMode.CWU)) //MW0LGE [2.9.0.7] +rx2
+            if ((rx == 1 && rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU) || (rx == 2 && rx2_dsp_mode != DSPMode.CWL && rx2_dsp_mode != DSPMode.CWU)) //MW0LGE [2.9.0.7] +rx2
             {
                 if ((bIsWaterfall && m_bShowTXFilterOnRXWaterfall/*m_bShowTXFilterOnWaterfall*/) || !bIsWaterfall)
                 {

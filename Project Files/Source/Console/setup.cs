@@ -88,6 +88,7 @@ namespace Thetis
             //
             addDelegates();
 
+
             // timeout stuff
             lblTimeout.Visible = Common.IsTimeOutEnabled;
             lblShowTimeoutText.Visible = Common.IsTimeOutEnabled;
@@ -127,6 +128,17 @@ namespace Thetis
             labelSavingLoading.Visible = false;// MW0LGE gets shown/hidden by save/cancel/apply
 
             // GetMixerDevices();
+            Thetis.Splash.SetStatus("Loading Audio Host APIs ...");
+
+            int slept = 0;
+            while (c.m_waiting_for_portaudio)
+            {
+                if (slept == 0)
+                    Splash.SetStatus("Please wait while PortAudio initialises ...");
+                Thread.Sleep(20);
+                slept += 20;
+            }
+
             GetHosts();
             InitAlexAntTables();
 
