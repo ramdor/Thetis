@@ -11,3 +11,6 @@ Project Files/lib/WinFormsUI/obj
 Project Files/Source/.vs
 Project Files/Source/Thetis-Installer/obj
 Project Files/Source/Thetis-Installer/bin
+*.pdb
+*.pch
+*.ipch
