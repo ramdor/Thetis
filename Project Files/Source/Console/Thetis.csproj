@@ -118,6 +118,7 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <Prefer32Bit>false</Prefer32Bit>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>..\..\bin\x86\Release\</OutputPath>
@@ -229,7 +230,9 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -275,6 +278,7 @@
     <Compile Include="CAT\TCPIPcatServer.cs" />
     <Compile Include="Channel.cs" />
     <Compile Include="clsBandStackManager.cs" />
+    <Compile Include="display.cs" />
     <Compile Include="Firewall.cs" />
     <Compile Include="cmaster.cs" />
     <Compile Include="Andromeda\displaysettingsform.cs">
@@ -425,9 +429,9 @@
     <Compile Include="database.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="display.cs">
+    <Content Include="displayPeteLikes.txt">
       <SubType>Code</SubType>
-    </Compile>
+    </Content>
     <Compile Include="DiversityForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -501,9 +505,7 @@
     <Compile Include="KE9N\scan.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="KE9N\stack.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="KE9N\stack.cs" />
     <Compile Include="KE9N\swl.cs">
       <SubType>Form</SubType>
     </Compile>

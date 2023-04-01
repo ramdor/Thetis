@@ -336,7 +336,7 @@ PORT int StartAudioIVAC(int id) {
         px->version = 1;
         px->hostApiType = paWDMKS;
         px->size = sizeof(PaWinWDMKSInfo);
-        px->flags = paWinWDMKSOverrideFramesize;
+        // px->flags = paWinWDMKSOverrideFramesize;
         a->inParam.hostApiSpecificStreamInfo = &a->x;
         a->outParam.hostApiSpecificStreamInfo = &a->x;
 

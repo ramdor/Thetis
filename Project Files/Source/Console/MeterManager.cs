@@ -297,7 +297,7 @@ namespace Thetis
                 }
 
                 // this is due to new versions requiring more and more settings
-                if(bOk && tmp.Length >= 33)
+                if (bOk && tmp.Length >= 33)
                 {
                     if (bOk) bOk = float.TryParse(tmp[32], out tmpFloat); if (bOk) { _eyeBezelScale = tmpFloat; }
                 }
@@ -305,7 +305,7 @@ namespace Thetis
                 {
                     if (bOk) tmpColour = Common.ColourFromString(tmp[33]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _powerScaleColour = tmpColour; }
                 }
-                if(bOk && tmp.Length >= 35)
+                if (bOk && tmp.Length >= 35)
                 {
                     if (bOk) bOk = int.TryParse(tmp[34], out tmpInt); if (bOk) { _ignoreHistoryDuration = tmpInt; }
                 }
@@ -451,7 +451,7 @@ namespace Thetis
                 //case MeterType.HISTORY: return 2;
                 case MeterType.VFO_DISPLAY: return 2;
                 case MeterType.CLOCK: return 2;
-                //case MeterType.SPECTRUM: return 2;
+                    //case MeterType.SPECTRUM: return 2;
             }
 
             return 0;
@@ -690,7 +690,8 @@ namespace Thetis
         }
         public static void ContainerBorder(string sId, bool border)
         {
-            lock (_metersLock) {
+            lock (_metersLock)
+            {
                 if (_lstUCMeters == null) return;
                 if (!_lstUCMeters.ContainsKey(sId)) return;
 
@@ -1147,7 +1148,7 @@ namespace Thetis
                 {
                     clsMeter m = ms.Value;
 
-                    if(newMox && !oldMox)
+                    if (newMox && !oldMox)
                         // now tx from rx
                         m.ZeroOut(true, false); // reset rx readings
                     else if (!newMox && oldMox)
@@ -1168,8 +1169,8 @@ namespace Thetis
 
                 int nWatts = 500;
 
-                if (_alexPresent && 
-                    ((_currentHPSDRmodel == HPSDRModel.ORIONMKII || _currentHPSDRmodel == HPSDRModel.ANAN8000D) 
+                if (_alexPresent &&
+                    ((_currentHPSDRmodel == HPSDRModel.ORIONMKII || _currentHPSDRmodel == HPSDRModel.ANAN8000D)
                     && _transverterIndex < 0))
                 {
                     nWatts = 200;
@@ -1194,7 +1195,7 @@ namespace Thetis
                 {
                     nWatts = 1;
                 }
-                
+
                 return nWatts;
             }
         }
@@ -1304,7 +1305,7 @@ namespace Thetis
                     }
                 }
                 setReading(rx, Reading.VOLTS, ref readings);
-                setReading(rx, Reading.AMPS, ref readings);    
+                setReading(rx, Reading.AMPS, ref readings);
             }
         }
         public static bool RequiresUpdate(int rx, Reading rt)
@@ -1426,7 +1427,7 @@ namespace Thetis
         }
         public static int TotalMeterContainers
         {
-            get 
+            get
             {
                 lock (_metersLock)
                 {
@@ -1709,7 +1710,7 @@ namespace Thetis
         }
         public static Dictionary<string, ucMeter> MeterContainers
         {
-            get 
+            get
             {
                 lock (_metersLock)
                 {
@@ -1840,7 +1841,7 @@ namespace Thetis
                 if (_percCache.ContainsKey(pc._value)) return;
                 if (_percCache.Count > 1000) _percCache.Remove(_percCache.Keys.First());
 
-                _percCache.Add(pc._value,pc);
+                _percCache.Add(pc._value, pc);
             }
             public clsPercCache GetPerc(float value)
             {
@@ -1851,8 +1852,9 @@ namespace Thetis
             {
                 return _percCache.ContainsKey(value);
             }
-            public string ID { 
-                get { return _sId; } 
+            public string ID
+            {
+                get { return _sId; }
                 set { _sId = value; }
             }
             public string ParentID
@@ -1880,9 +1882,11 @@ namespace Thetis
                 get { return _bFadeOnTx; }
                 set { _bFadeOnTx = value; }
             }
-            public PointF TopLeft {
+            public PointF TopLeft
+            {
                 get { return _topLeft; }
-                set { 
+                set
+                {
                     _topLeft = value;
                     _displayTopLeft = new PointF(_topLeft.X, _topLeft.Y);
                 }
@@ -1895,7 +1899,7 @@ namespace Thetis
             public SizeF Size
             {
                 get { return _size; }
-                set 
+                set
                 { _size = value; }
             }
             public int DisplayGroup
@@ -1920,7 +1924,8 @@ namespace Thetis
             public float AttackRatio
             {
                 get { return _attackRatio; }
-                set {
+                set
+                {
                     _attackRatio = value;
                     if (_attackRatio < 0) _attackRatio = 0;
                     if (_attackRatio > 1f) _attackRatio = 1f;
@@ -2035,7 +2040,7 @@ namespace Thetis
             {
                 get { return _scaleCalibration; }
                 set { }
-            }            
+            }
             public bool OnlyWhenTX
             {
                 get { return _bOnlyWhenTx; }
@@ -2053,11 +2058,12 @@ namespace Thetis
             public virtual bool TryParse(string val)
             {
                 return false;
-            }            
+            }
             public float MaxPower
             {
                 get { return _maxPower; }
-                set {                    
+                set
+                {
                     _maxPower = value;
                     if (_maxPower < 0.1f) _maxPower = CurrentPowerRating; // incase of 0 recovery from db
                 }
@@ -2110,12 +2116,12 @@ namespace Thetis
                     Size.Height.ToString("f4") + "|" +
                     MeterType.ToString() + "|" +
                     Order.ToString();
-                    //ZOrder.ToString() + "|" +
-                    //UpdateInterval.ToString() + "|" +
-                    //AttackRatio.ToString("f4") + "|" +
-                    //DecayRatio.ToString("f4") + "|" +
-                    //HistoryColour.ToString() + "|" +
-                    //ReadingSource.ToString();
+                //ZOrder.ToString() + "|" +
+                //UpdateInterval.ToString() + "|" +
+                //AttackRatio.ToString("f4") + "|" +
+                //DecayRatio.ToString("f4") + "|" +
+                //HistoryColour.ToString() + "|" +
+                //ReadingSource.ToString();
 
                 return sRet;
             }
@@ -2174,7 +2180,7 @@ namespace Thetis
                 get { return _button; }
                 set { _button = value; }
             }
-            public int GotoGroup 
+            public int GotoGroup
             {
                 get { return _gotoGroup; }
                 set { _gotoGroup = value; }
@@ -2224,7 +2230,7 @@ namespace Thetis
             {
                 get { return _colour; }
                 set
-                { 
+                {
                     _colour = value;
                 }
             }
@@ -2551,7 +2557,7 @@ namespace Thetis
                 _fontColorLow = System.Drawing.Color.White;
                 _fontColorHigh = System.Drawing.Color.Red;
                 _fontColourMeterType = System.Drawing.Color.DarkGray;
-                _fontSize = 20f;               
+                _fontSize = 20f;
 
                 ItemType = MeterItemType.H_SCALE;
                 ReadingSource = Reading.NONE;
@@ -2559,7 +2565,7 @@ namespace Thetis
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
                 StoreSettings = false;
-            }           
+            }
             public System.Drawing.Color LowColour
             {
                 get { return _lowColour; }
@@ -2604,7 +2610,7 @@ namespace Thetis
             {
                 get { return _showType; }
                 set { _showType = value; }
-            }  
+            }
             public bool ShowMarkers
             {
                 get { return _showMarkers; }
@@ -2621,11 +2627,11 @@ namespace Thetis
                     TopLeft.Y.ToString("f4") + "|" +
                     Size.Width.ToString("f4") + "|" +
                     Size.Height.ToString("f4");
-                    //
+                //
 
 
                 return sRet;
-            }            
+            }
         }
         internal class clsNeedleScalePwrItem : clsMeterItem
         {
@@ -2679,7 +2685,7 @@ namespace Thetis
                 _needleOffset.X = 0f;
                 _needleOffset.Y = 0.5f;
                 _darkMode = false;
-            }            
+            }
             public System.Drawing.Color LowColour
             {
                 get { return _lowColour; }
@@ -2813,7 +2819,7 @@ namespace Thetis
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
                 StoreSettings = false;
-            }           
+            }
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
                 // get latest reading
@@ -3221,7 +3227,7 @@ namespace Thetis
                 _peakHold = false;
                 _showMarker = true;
                 _highPoint = PointF.Empty;
-                
+
                 _units = Units.DBM;
 
                 _scaleCalibration = new Dictionary<float, PointF>();
@@ -3237,7 +3243,7 @@ namespace Thetis
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
                 StoreSettings = false;
-            }            
+            }
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
                 // get latest reading
@@ -3797,7 +3803,7 @@ namespace Thetis
                 DecayRatio = 0.2f;
                 StoreSettings = false;
                 _peakNeedleFadeIn = 0;
-            }           
+            }
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
                 // get latest reading
@@ -3806,7 +3812,7 @@ namespace Thetis
                 lock (_historyLock)
                 {
                     if (reading > Value)
-                       Value = (reading * AttackRatio) + (Value * (1f - AttackRatio));
+                        Value = (reading * AttackRatio) + (Value * (1f - AttackRatio));
                     else
                         Value = (reading * DecayRatio) + (Value * (1f - DecayRatio));
 
@@ -3904,7 +3910,7 @@ namespace Thetis
                 {
                     lock (_historyLock)
                     {
-                        if(_history.Count == 0) return Value;
+                        if (_history.Count == 0) return Value;
                         return _history.Min();
                     }
                 }
@@ -3968,7 +3974,8 @@ namespace Thetis
             public int PeakNeedleShadowFade
             {
                 get { return _peakNeedleFadeIn; }
-                set {
+                set
+                {
                     _peakNeedleFadeIn = value;
                     if (_peakNeedleFadeIn > 12) _peakNeedleFadeIn = 12;
                     if (_peakNeedleFadeIn < 0) _peakNeedleFadeIn = 0;
@@ -3976,7 +3983,7 @@ namespace Thetis
             }
             public override bool ZeroOut(out float value)
             {
-                if(_scaleCalibration != null || _scaleCalibration.Count > 0)
+                if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
                     value = _scaleCalibration.First().Key;
                     return true;
@@ -4007,7 +4014,7 @@ namespace Thetis
                 ReadingSource = Reading.NONE;
                 UpdateInterval = int.MaxValue; // very slow update
                 StoreSettings = false;
-            }            
+            }
             private void updateReadingText(float reading)
             {
                 switch (_sText)
@@ -4044,15 +4051,15 @@ namespace Thetis
                 get
                 {
                     string sText = _sText;
-                    switch(_sText)
-                    { 
+                    switch (_sText)
+                    {
                         case "%valueWithType%":
                         case "%value%":
                             sText = _readingText;
-                        break; 
+                            break;
                     }
 
-                    return sText; 
+                    return sText;
                 }
                 set { _sText = value; }
             }
@@ -4084,7 +4091,8 @@ namespace Thetis
             public override float Value
             {
                 get { return base.Value; }
-                set { 
+                set
+                {
                     base.Value = value;
                     updateReadingText(value);
                 }
@@ -4109,7 +4117,7 @@ namespace Thetis
         {
             // the single meter, that may contain many bars/labels/analog/images/etc
             private string _sId;
-            private string _name;            
+            private string _name;
             private int _rx;
 
             private float _XRatio; // 0-1
@@ -4189,23 +4197,23 @@ namespace Thetis
                     //case MeterType.HISTORY: AddHistory(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.VFO_DISPLAY: AddVFODisplay(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.CLOCK: AddClock(nDelay, 0, out bBottom, restoreIg); break;
-                    //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
+                        //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
             }
 
             #region meterDefs
             public string AddSMeterBarSignal(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
-            { 
+            {
                 return addSMeterBar(nMSupdate, Reading.SIGNAL_STRENGTH, fTop, out fBottom, restoreIg);
             }
             public string AddSMeterBarSignalAvg(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 return addSMeterBar(nMSupdate, Reading.AVG_SIGNAL_STRENGTH, fTop, out fBottom, restoreIg);
             }
-            private string addSMeterBar(int nMSupdate, Reading reading, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            private string addSMeterBar(int nMSupdate, Reading reading, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -4276,13 +4284,13 @@ namespace Thetis
                 addMeterItem(ig);
 
                 return cb.ID;
-            }            
+            }
             private string AddSMeterBarText(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
                 if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
-                
+
                 clsSolidColour sc;
                 sc = new clsSolidColour();
                 sc.ParentID = ig.ID;
@@ -4334,11 +4342,11 @@ namespace Thetis
 
                 return cst.ID;
             }
-            
-            public string AddADCBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+
+            public string AddADCBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -4417,10 +4425,10 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddPBSNRBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddPBSNRBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -4484,10 +4492,10 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddAGCGainBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddAGCGainBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -4542,10 +4550,10 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddAGCBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddAGCBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -4626,10 +4634,10 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddMagicEye(int nMSupdate, float fTop, out float fBottom, float fSize,  clsItemGroup restoreIg = null)
+            public string AddMagicEye(int nMSupdate, float fTop, out float fBottom, float fSize, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsMagicEyeItem me = new clsMagicEyeItem();
@@ -4668,10 +4676,10 @@ namespace Thetis
 
                 return me.ID;
             }
-            public string AddAnanMM(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddAnanMM(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 //anan multi meter
@@ -5013,10 +5021,10 @@ namespace Thetis
 
                 return ni.ID;
             }
-            public string AddCrossNeedle(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddCrossNeedle(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsNeedleItem ni = new clsNeedleItem();
@@ -5195,10 +5203,10 @@ namespace Thetis
 
                 return ni.ID;
             }
-            public string AddMicBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddMicBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -5276,10 +5284,10 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddEQBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddEQBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -5356,10 +5364,10 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddLevelerBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddLevelerBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -5436,10 +5444,10 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddLevelerGainBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddLevelerGainBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -5493,10 +5501,10 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddALCBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddALCBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -5573,10 +5581,10 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddALCGainBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddALCGainBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -5630,10 +5638,10 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddALCGroupBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddALCGroupBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -5687,10 +5695,10 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddCFCBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddCFCBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -5795,7 +5803,7 @@ namespace Thetis
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.Value = cb.ScaleCalibration.First().Key;
                 cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
-                addMeterItem(cb);               
+                addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
                 cs.ParentID = ig.ID;
@@ -5825,10 +5833,10 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddCompBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddCompBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -5905,18 +5913,18 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddPWRBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddPWRBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 return AddPWRBar(nMSupdate, fTop, out fBottom, Reading.PWR, restoreIg);
             }
-            public string AddREVPWRBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddREVPWRBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 return AddPWRBar(nMSupdate, fTop, out fBottom, Reading.REVERSE_PWR, restoreIg);
             }
-            public string AddPWRBar(int nMSupdate, float fTop, out float fBottom, Reading reading,  clsItemGroup restoreIg = null)
+            public string AddPWRBar(int nMSupdate, float fTop, out float fBottom, Reading reading, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -5956,15 +5964,15 @@ namespace Thetis
                 //            cb.ScaleCalibration.Add(240, new PointF(0.99f, 0));
                 //        }
                 //        break;
-                    //case 100:
-                    //    {
-                            cb.ScaleCalibration.Add(0, new PointF(0, 0));
-                            cb.ScaleCalibration.Add(5, new PointF(0.1875f, 0));
-                            cb.ScaleCalibration.Add(10, new PointF(0.375f, 0));
-                            cb.ScaleCalibration.Add(50, new PointF(0.5625f, 0));
-                            cb.ScaleCalibration.Add(100, new PointF(0.75f, 0));
-                            cb.ScaleCalibration.Add(120, new PointF(0.99f, 0));
-                    //    }
+                //case 100:
+                //    {
+                cb.ScaleCalibration.Add(0, new PointF(0, 0));
+                cb.ScaleCalibration.Add(5, new PointF(0.1875f, 0));
+                cb.ScaleCalibration.Add(10, new PointF(0.375f, 0));
+                cb.ScaleCalibration.Add(50, new PointF(0.5625f, 0));
+                cb.ScaleCalibration.Add(100, new PointF(0.75f, 0));
+                cb.ScaleCalibration.Add(120, new PointF(0.99f, 0));
+                //    }
                 //        break;
                 //    case 30:
                 //        {
@@ -6037,10 +6045,10 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddSWRBar(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
+            public string AddSWRBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
-                if(restoreIg != null) ig.ID = restoreIg.ID;
+                if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
                 clsBarItem cb = new clsBarItem();
@@ -6326,8 +6334,8 @@ namespace Thetis
             public bool TryParse(string str)
             {
                 bool bOk = false;
-                int rx=0, displaygroup=0;
-                float xRatio=0, yRatio=0, fPadX=0, fPadY=0, fHeight=0;
+                int rx = 0, displaygroup = 0;
+                float xRatio = 0, yRatio = 0, fPadX = 0, fPadY = 0, fHeight = 0;
 
                 if (str != "")
                 {
@@ -6398,30 +6406,32 @@ namespace Thetis
                     if (_meterItems == null) return;
 
                     //special for ananMM
-                    if(mt == MeterType.ANANMM)
+                    if (mt == MeterType.ANANMM)
                     {
                         RemoveDisplayGroup("ALL");
                         RemoveDisplayGroup("PWR/SWR");
                         RemoveDisplayGroup("Comp");
-                        RemoveDisplayGroup("ALC"); 
+                        RemoveDisplayGroup("ALC");
                         RemoveDisplayGroup("Volts/Amps");
                     }
                     //
                     Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    foreach(KeyValuePair<string, clsMeterItem> kvp in items)
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
                     {
                         int nOrder = -1;
 
                         clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null && ig.MeterType == mt) {
+                        if (ig != null && ig.MeterType == mt)
+                        {
                             nOrder = ig.Order;
                             removeMeterItem(ig.ID, false);
                         }
 
-                        if(nOrder >= 0)
+                        if (nOrder >= 0)
                         {
                             Dictionary<string, clsMeterItem> tmpItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                            foreach(KeyValuePair<string, clsMeterItem> tmpKvp in tmpItems){
+                            foreach (KeyValuePair<string, clsMeterItem> tmpKvp in tmpItems)
+                            {
                                 clsItemGroup tmpIg = tmpKvp.Value as clsItemGroup;
                                 if (tmpIg != null && tmpIg.Order > nOrder)
                                     tmpIg.Order--;
@@ -6435,7 +6445,7 @@ namespace Thetis
             public bool HasMeterType(MeterType mt)
             {
                 lock (_meterItemLock)
-                { 
+                {
                     if (_meterItems == null) return false;
 
                     //IEnumerable<KeyValuePair<string, clsMeterItem>> items = _meterItems.Where(o => o.Value.ItemType == MeterItemType.ITEM_GROUP);
@@ -6488,7 +6498,7 @@ namespace Thetis
                                         if (fLargest != ig.Size.Width)
                                         {
                                             ig.TopLeft = new PointF(0.5f - (fLargest / 2f), _fPadY - (_fHeight * 0.75f));
-                                            ig.Size = new SizeF(fLargest, ig.TopLeft.Y + fLargest);                                           
+                                            ig.Size = new SizeF(fLargest, ig.TopLeft.Y + fLargest);
                                         }
 
                                         bRebuild = true; // alwayys cause a rebuild as we relocate the eye + image each time
@@ -6560,7 +6570,7 @@ namespace Thetis
                                                 //bi.PeakHold = igs.PeakHold;
                                                 //bi.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
                                                 ni.Shadow = igs.Shadow;
-                                                if (mt == MeterType.ANANMM) 
+                                                if (mt == MeterType.ANANMM)
                                                 {
                                                     if (ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH || ni.ReadingSource == Reading.SIGNAL_STRENGTH)
                                                     {
@@ -6568,7 +6578,7 @@ namespace Thetis
                                                         ni.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
                                                         ni.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
                                                     }
-                                                    else if(ni.ReadingSource == Reading.PWR)
+                                                    else if (ni.ReadingSource == Reading.PWR)
                                                     {
                                                         ni.PeakHold = igs.PeakHold;
                                                         ni.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
@@ -6611,7 +6621,7 @@ namespace Thetis
 
                                             image.FadeOnRx = igs.FadeOnRx;
                                             image.FadeOnTx = igs.FadeOnTx;
-                                            if(image.Primary) image.DarkMode = igs.DarkMode;
+                                            if (image.Primary) image.DarkMode = igs.DarkMode;
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
                                         {
@@ -6813,7 +6823,7 @@ namespace Thetis
                                                 bi.ColourHigh = igs.SegmentedSolidHighColour;
                                                 bi.ShowPeakValue = igs.PeakValue;
                                                 bi.PeakValueColour = igs.PeakValueColour;
-                                                bi.Unit = igs.Unit;                                                
+                                                bi.Unit = igs.Unit;
                                             }
                                             else
                                             {
@@ -6850,7 +6860,7 @@ namespace Thetis
                                             scaleItem.FontColourType = igs.TitleColor;
                                             scaleItem.FontColourLow = igs.LowColor;
                                             scaleItem.FontColourHigh = igs.HighColor;
-                                            if(scaleItem.ReadingSource == Reading.PWR || scaleItem.ReadingSource == Reading.REVERSE_PWR) scaleItem.MaxPower = igs.MaxPower;
+                                            if (scaleItem.ReadingSource == Reading.PWR || scaleItem.ReadingSource == Reading.REVERSE_PWR) scaleItem.MaxPower = igs.MaxPower;
                                         }
                                     }
                                     break;
@@ -6911,7 +6921,7 @@ namespace Thetis
                                             //igs.PeakHoldMarkerColor = bi.PeakHoldMarkerColour;
                                             igs.MarkerColour = magicEye.Colour;
                                             igs.EyeScale = magicEye.Size.Height;
-                                            
+
                                             igs.Average = magicEye.ReadingSource == Reading.AVG_SIGNAL_STRENGTH;
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> img in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.IMAGE))
@@ -6954,7 +6964,8 @@ namespace Thetis
                                                 //igs.PeakHoldMarkerColor = bi.PeakHoldMarkerColour;
                                                 igs.Shadow = ni.Shadow;
                                                 igs.MarkerColour = ni.Colour;
-                                                if (mt == MeterType.ANANMM) {
+                                                if (mt == MeterType.ANANMM)
+                                                {
                                                     if (ni.ReadingSource == Reading.SIGNAL_STRENGTH || ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
                                                     {
                                                         igs.PeakHold = ni.PeakHold;
@@ -7133,12 +7144,12 @@ namespace Thetis
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
                                         // a bar can be up to 2 hbars (peak/av), back colour, and scale
 
-                                        foreach(KeyValuePair<string, clsMeterItem> hbar in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.H_BAR))
+                                        foreach (KeyValuePair<string, clsMeterItem> hbar in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.H_BAR))
                                         {
                                             clsBarItem bi = hbar.Value as clsBarItem;
                                             if (bi == null) continue;
 
-                                            if(bi.Primary)
+                                            if (bi.Primary)
                                             {
                                                 //primary bar, as has been added first
                                                 igs.UpdateInterval = bi.UpdateInterval;
@@ -7171,7 +7182,7 @@ namespace Thetis
                                                 igs.SubMarkerColour = bi.MarkerColour;
                                                 igs.ShowSubMarker = bi.ShowMarker;
                                                 igs.SubIndicators = true;
-                                            }                                            
+                                            }
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
                                         {
@@ -7287,7 +7298,7 @@ namespace Thetis
                 bool bRet = false;
                 foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems)
                 {
-                    if(kvp.Value.ReadingSource == reading)
+                    if (kvp.Value.ReadingSource == reading)
                     {
                         bRet = true;
                         break;
@@ -7502,10 +7513,10 @@ namespace Thetis
 
             public float XRatio { get { return _XRatio; } set { _XRatio = value; } }
             public float YRatio { get { return _YRatio; } set { _YRatio = value; } }
-            public string Name { get { return _name; } set { _name = value; } }            
+            public string Name { get { return _name; } set { _name = value; } }
             public string ID
-            { 
-                get { return _sId; } 
+            {
+                get { return _sId; }
                 set { _sId = value; }
             }
             public int RX { get { return _rx; } set { _rx = value; } }
@@ -7514,13 +7525,13 @@ namespace Thetis
                 lock (_meterItemLock)
                 {
                     int updateInterval = int.MaxValue;
-                    foreach (var kvp in _meterItems.Where(o => (o.Value.ItemType == clsMeterItem.MeterItemType.NEEDLE || 
+                    foreach (var kvp in _meterItems.Where(o => (o.Value.ItemType == clsMeterItem.MeterItemType.NEEDLE ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.H_BAR ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.MAGIC_EYE ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.CLOCK ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.SIGNAL_TEXT_DISPLAY// ||
-                                                                //o.Value.ItemType == clsMeterItem.MeterItemType.SPECTRUM
+                                                                                                                                  //o.Value.ItemType == clsMeterItem.MeterItemType.SPECTRUM
                                                                 /*o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY*/) &&
                                                                 (((mox && o.Value.OnlyWhenTX) || (!mox && o.Value.OnlyWhenRX)) || (!o.Value.OnlyWhenTX && !o.Value.OnlyWhenRX))))
                     {
@@ -7561,7 +7572,8 @@ namespace Thetis
             }
             public Dictionary<string, clsMeterItem> SortedMeterItemsForZOrder
             {
-                get {
+                get
+                {
                     lock (_meterItemLock)
                     {
                         return _sortedMeterItemsForZOrder;
@@ -7763,7 +7775,7 @@ namespace Thetis
 
                 _backgroundColour = System.Drawing.Color.Black;
                 _backColour = convertColour(_backgroundColour);
-                
+
                 _images = new Dictionary<string, SharpDX.Direct2D1.Bitmap>();
 
                 _fLastTime = _objFrameStartTimer.ElapsedMsec;
@@ -7799,7 +7811,7 @@ namespace Thetis
             public System.Drawing.Color BackgroundColour
             {
                 get { return _backgroundColour; }
-                set 
+                set
                 {
                     _backgroundColour = value;
                     _backColour = convertColour(_backgroundColour);
@@ -7814,7 +7826,7 @@ namespace Thetis
 
                 if (System.IO.Directory.Exists(sImagePath))
                 {
-                    for(int n = 0;n < _imageFileNames.Length;n++)
+                    for (int n = 0; n < _imageFileNames.Length; n++)
                     {
                         string sFileName = sImagePath + _imageFileNames[n];
 
@@ -7871,9 +7883,9 @@ namespace Thetis
             {
                 //D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT 32u32
                 //NOTE: can not be used with FlipDiscard atm unfortunately
-                for (int n = 32; n>0; n /= 2)
+                for (int n = 32; n > 0; n /= 2)
                 {
-                    if(_device.CheckMultisampleQualityLevels(Format.B8G8R8A8_UNorm, n) > 0)
+                    if (_device.CheckMultisampleQualityLevels(Format.B8G8R8A8_UNorm, n) > 0)
                     {
                         return n;
                     }
@@ -7983,7 +7995,8 @@ namespace Thetis
                     bool bFlipPresent = false;
                     if (factory4 != null)
                     {
-                        /*if (!_bUseLegacyBuffers)*/ bFlipPresent = true;
+                        /*if (!_bUseLegacyBuffers)*/
+                        bFlipPresent = true;
                         Utilities.Dispose(ref factory4);
                         factory4 = null;
                     }
@@ -8000,7 +8013,7 @@ namespace Thetis
                                                                new Rational(60, 1)/*console.DisplayFPS, 1)*/, Format.B8G8R8A8_UNorm);
                     md.ScanlineOrdering = DisplayModeScanlineOrder.Progressive;
                     md.Scaling = DisplayModeScaling.Centered;
-                    
+
                     SwapChainDescription desc = new SwapChainDescription()
                     {
                         BufferCount = _nBufferCount,
@@ -8019,10 +8032,10 @@ namespace Thetis
                     _swapChain1 = _swapChain.QueryInterface<SwapChain1>();
 
                     _factory = new SharpDX.Direct2D1.Factory(FactoryType.SingleThreaded, DebugLevel.None);
-                    
+
                     _surface = _swapChain1.GetBackBuffer<Surface>(0);
 
-                    RenderTargetProperties rtp = new RenderTargetProperties(new SharpDX.Direct2D1.PixelFormat(_swapChain.Description.ModeDescription.Format, _ALPHA_MODE));                    
+                    RenderTargetProperties rtp = new RenderTargetProperties(new SharpDX.Direct2D1.PixelFormat(_swapChain.Description.ModeDescription.Format, _ALPHA_MODE));
                     _renderTarget = new RenderTarget(_factory, _surface, rtp);
 
                     if (debug == DeviceCreationFlags.Debug)
@@ -8163,7 +8176,7 @@ namespace Thetis
 
                                 // background for entire form/area?
                                 _renderTarget.Clear(_backColour);
-                                
+
                                 nSleepTime = drawMeters();
 
                                 if (_highlightEdge)
@@ -8205,7 +8218,7 @@ namespace Thetis
                         {
                             if (nSleepTime == int.MaxValue) nSleepTime = 250;
                             Thread.Sleep(nSleepTime);
-                        }                            
+                        }
                         else
                             Thread.Sleep(250); // if not visible, sleep for quarter second
                     }
@@ -8361,12 +8374,12 @@ namespace Thetis
 
                     SharpDX.DirectWrite.TextFormat tf = new SharpDX.DirectWrite.TextFormat(_fontFactory, sFontFamily, fontWeight, fontStyle, (emSize / 72) * _renderTarget.DotsPerInch.Width);
                     tf.WordWrapping = SharpDX.DirectWrite.WordWrapping.NoWrap;
-                    if(bAlignRight)
+                    if (bAlignRight)
                         tf.TextAlignment = SharpDX.DirectWrite.TextAlignment.Trailing;
 
                     _textFormats.Add(sKey, tf);
 
-                    return tf;                    
+                    return tf;
                 }
                 catch { }
 
@@ -8565,7 +8578,7 @@ namespace Thetis
                 // calculate how big the string would be @ emSize pt
                 SharpDX.DirectWrite.TextFormat tf = new SharpDX.DirectWrite.TextFormat(_fontFactory, sFontFamily, fontWeight, fontStyle, emSize);
                 tf.WordWrapping = SharpDX.DirectWrite.WordWrapping.NoWrap;
-                
+
                 SharpDX.DirectWrite.TextLayout layout = new SharpDX.DirectWrite.TextLayout(_fontFactory, sText, tf, float.MaxValue, float.MaxValue);
                 float width = layout.Metrics.Width;
                 float height = layout.Metrics.Height;
@@ -8829,7 +8842,7 @@ namespace Thetis
                     SizeF szTextSize;
 
                     if (scale.ShowType)
-                    {                        
+                    {
                         string sText = MeterManager.ReadingName(scale.ReadingSource);
                         szTextSize = measureString(sText, scale.FontFamily, scale.FntStyle, fontSizeEmScaled);
                         SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x + (w * 0.5f) - (szTextSize.Width / 2f), y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
@@ -8856,7 +8869,7 @@ namespace Thetis
                         case Reading.SIGNAL_STRENGTH:
                         case Reading.AVG_SIGNAL_STRENGTH:
                             {
-                                generalScale(x,y,w,h, scale, 6, 3, -1, 60, 2, 20, fLineBaseY, fontSizeEmScaled, nFade, 0.5f, true, true);
+                                generalScale(x, y, w, h, scale, 6, 3, -1, 60, 2, 20, fLineBaseY, fontSizeEmScaled, nFade, 0.5f, true, true);
                             }
                             break;
                         case Reading.ADC_PK:
@@ -9104,7 +9117,7 @@ namespace Thetis
                         case Reading.LVL_G:
                         case Reading.CFC_G:
                             {
-                                generalScale(x, y, w, h, scale, 5, 1, 0, 25, 5, 5, fLineBaseY, fontSizeEmScaled, nFade, -1, true);                                
+                                generalScale(x, y, w, h, scale, 5, 1, 0, 25, 5, 5, fLineBaseY, fontSizeEmScaled, nFade, -1, true);
                             }
                             break;
                         default:
@@ -9132,7 +9145,7 @@ namespace Thetis
                     newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
 
                     float fBottomY = y + h;
-                    float xCentreLine = x + (w * 0.5f);                    
+                    float xCentreLine = x + (w * 0.5f);
 
                     switch (scale.ReadingSource)
                     {
@@ -9192,7 +9205,7 @@ namespace Thetis
                                     if (scale.ShowMarkers)
                                     {
                                         startPoint.X = xCentreLine - (w * 0.1f);
-                                        startPoint.Y = fBottomY -  ((h * 0.5f) + (i * spacing) - (spacing * 0.5f)); // - half a space to shift left between longer ticks
+                                        startPoint.Y = fBottomY - ((h * 0.5f) + (i * spacing) - (spacing * 0.5f)); // - half a space to shift left between longer ticks
                                         endPoint.X = xCentreLine + (w * 0.1f);
                                         endPoint.Y = startPoint.Y;
 
@@ -9218,7 +9231,7 @@ namespace Thetis
                     }
                 }
             }
-            private void generalScale(float x,float y,float w,float h,clsScaleItem scale, int lowLongTicks, int highLongTicks, int lowStartNumner, int highEndNumber, int lowIncrement, int highIngrement, float fLineBaseY, float newSize, int nFade, float centrePerc = -1, bool addTrailingPlus = false, bool addAllTrailingPlus = false)
+            private void generalScale(float x, float y, float w, float h, clsScaleItem scale, int lowLongTicks, int highLongTicks, int lowStartNumner, int highEndNumber, int lowIncrement, int highIngrement, float fLineBaseY, float newSize, int nFade, float centrePerc = -1, bool addTrailingPlus = false, bool addAllTrailingPlus = false)
             {
                 float lowToHighPoint = (float)(lowLongTicks - 1) / (float)(lowLongTicks + highLongTicks - 1);
 
@@ -9273,7 +9286,7 @@ namespace Thetis
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (szTextSize.Width / 2f), endPoint.Y - szTextSize.Height, szTextSize.Width, szTextSize.Height);
                     _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.FntStyle), txtrect, fontLowColour);
                 }
-                
+
                 // markers high
                 float lowSpacing = spacing;
                 spacing = (/*(w * 0.3333f)*/(w - (lowSpacing * (float)(lowLongTicks - 1))) - (w * 0.01f)) / (float)highLongTicks; // - w*0.01f as we only draw the line up to w*0.99f
@@ -9283,7 +9296,7 @@ namespace Thetis
                     //short ticks
                     if (scale.ShowMarkers)
                     {
-                        startPoint.X = x + /*(w * 0.6666f)*/(lowSpacing * (float)(lowLongTicks-1)) + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
+                        startPoint.X = x + /*(w * 0.6666f)*/(lowSpacing * (float)(lowLongTicks - 1)) + (i * spacing) - (spacing * 0.5f); // - half a space to shift left between longer ticks
                         endPoint.X = startPoint.X;
                         endPoint.Y = fLineBaseY - (h * 0.15f);
 
@@ -9399,7 +9412,7 @@ namespace Thetis
                     // fully open
                     _renderTarget.FillEllipse(eyeElipse, getDXBrushForColour(dimmedEye, nFade));
 
-                    if (percX >= 1f) 
+                    if (percX >= 1f)
                     {
                         // handle overlap by drawing a segment
                         float fRemaining = percX - 1f;
@@ -9629,7 +9642,7 @@ namespace Thetis
                 }
 
                 int segmentBlockSize = 7;
-                int segmentStep = 9;                
+                int segmentStep = 9;
                 float fHighXPosTransition = float.MaxValue;
                 float fBarHeight = h * 0.85f; // same as base line % in render scale
 
@@ -9656,7 +9669,7 @@ namespace Thetis
                 SharpDX.Direct2D1.Brush peakValueColour = getDXBrushForColour(cbi.PeakValueColour, nFade);
 
                 if (cbi.ShowHistory)
-                {                   
+                {
                     switch (cbi.Style)
                     {
                         case clsBarItem.BarStyle.None:
@@ -9702,7 +9715,7 @@ namespace Thetis
 
                             _renderTarget.FillRectangle(barRect, colour);
 
-                            if(fEnd < xPos) // the area in the high range
+                            if (fEnd < xPos) // the area in the high range
                             {
                                 // complete the bar
                                 barRect = new SharpDX.RectangleF(fEnd, y, xPos - fEnd, fBarHeight);
@@ -9748,7 +9761,7 @@ namespace Thetis
                             if (xPos > fHighXPosTransition) // the area in the high range
                             {
                                 // sliver to complete block at high transition
-                                if(i < fEnd)
+                                if (i < fEnd)
                                 {
                                     barRect = new SharpDX.RectangleF(fEnd, y, i + segmentBlockSize - fEnd, fBarHeight);
                                     _renderTarget.FillRectangle(barRect, colourHigh);
@@ -9801,7 +9814,7 @@ namespace Thetis
                             sText = cbi.Value.ToString("f1") + MeterManager.ReadingUnits(cbi.ReadingSource);
                             break;
                     }
-                
+
                     SizeF szTextSize = measureString(sText, cbi.FontFamily, cbi.FntStyle, fontSizeEmScaled);
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
                     _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle), txtrect, markerColour);
@@ -10037,7 +10050,7 @@ namespace Thetis
 
                 // frequency
                 plotText("VFO A", x + (w * 0.01f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
-                if(m.RX == 1 && m.RX2Enabled && (m.MultiRxEnabled || m.Split))
+                if (m.RX == 1 && m.RX2Enabled && (m.MultiRxEnabled || m.Split))
                 {
                     // vfoa sub
                     plotText("VFO Sub", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
@@ -10106,7 +10119,7 @@ namespace Thetis
                 bool bRxB = !m.MOX && (m.MultiRxEnabled || (m.RX2Enabled && m.RX == 2));
                 bool bTxB = m.MOX && bCanVfoBTx;
 
-               
+
                 // tx/rx box colours
                 System.Drawing.Color cRx = vfo.RxColour;
                 System.Drawing.Color cDimRx = System.Drawing.Color.FromArgb((int)(cRx.R * 0.6f), (int)(cRx.G * 0.6f), (int)(cRx.B * 0.6f));
@@ -10127,7 +10140,7 @@ namespace Thetis
                 boxColour = bCanVfoATx ? cDimTx : cDimerTx;
                 _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoAFade));
                 txtColour = bTxA ? cTx : System.Drawing.Color.Black;
-                plotText("TX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);                
+                plotText("TX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);
 
 
                 //rx box vfoB
@@ -10229,7 +10242,7 @@ namespace Thetis
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
                 int nFade = 255;
-                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;              
+                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
 
                 float fontSizeEmScaled;
                 SizeF szTextSize;
@@ -10367,9 +10380,9 @@ namespace Thetis
                 if (MeterManager.ContainsBitmap(sKey)) sImage = sKey;
 
                 float fDiag = (float)Math.Sqrt((w * w) + (h * h));
-                if(fDiag <= 450)
+                if (fDiag <= 450)
                     sKey = sImage + "-small";
-                else if(fDiag >= 1200)
+                else if (fDiag >= 1200)
                     sKey = sImage + "-large";
 
                 if (MeterManager.ContainsBitmap(sKey)) sImage = sKey; // with size
@@ -10399,7 +10412,7 @@ namespace Thetis
                     float im_w = b.Size.Width;
                     float im_h = b.Size.Height;
 
-                    if (w > h) 
+                    if (w > h)
                         imgRect.Height = imgRect.Width * (im_h / im_w);
                     else
                         imgRect.Width = imgRect.Height * (im_w / im_h);
@@ -10468,14 +10481,14 @@ namespace Thetis
                 }
 
                 float eX, eY, dX, dY;
-                float endMaxX = 0 , endMaxY = 0;
+                float endMaxX = 0, endMaxY = 0;
 
                 if (ni.ShowHistory || ni.Setup || ni.PeakHold)
                 {
                     float valueMin;
                     float valueMax;
 
-                    if (ni.Setup) 
+                    if (ni.Setup)
                     {
                         KeyValuePair<float, PointF> kvp;
                         kvp = ni.ScaleCalibration.OrderBy(p => p.Key).First();
@@ -10580,7 +10593,7 @@ namespace Thetis
                 {
                     //float fSmallestDimension = w < h ? w : h;
                     //fScale = fSmallestDimension / 200f;
-                    float fDiag = (float)Math.Sqrt((w*w) + (h*h));
+                    float fDiag = (float)Math.Sqrt((w * w) + (h * h));
                     fScale = fDiag / 450f;
                 }
                 float fStrokeWidth = ni.StrokeWidth * fScale;
@@ -10604,7 +10617,7 @@ namespace Thetis
                             _renderTarget.DrawLine(new SharpDX.Vector2(tmpStartX, tmpStartY), new SharpDX.Vector2(tmpEndX, tmpEndY), getDXBrushForColour(System.Drawing.Color.Black, (int)ni.PeakNeedleShadowFade), fTotalWidth - fReduce);
                         }
 
-                        if (Math.Abs(endX - endMaxX) > fStrokeWidth) 
+                        if (Math.Abs(endX - endMaxX) > fStrokeWidth)
                             ni.PeakNeedleShadowFade += 1;
                         else
                             ni.PeakNeedleShadowFade -= 1;
@@ -10624,7 +10637,7 @@ namespace Thetis
                     float tmpEndX = endX + fShift;
                     float tmpEndY = endY + (fStrokeWidth * 1.5f);
 
-                    for (int n = 0; n<8; n++) 
+                    for (int n = 0; n < 8; n++)
                     {
                         float fReduce = (n / 7f) * fTotalWidth;
                         _renderTarget.DrawLine(new SharpDX.Vector2(tmpStartX, tmpStartY), new SharpDX.Vector2(tmpEndX, tmpEndY), getDXBrushForColour(System.Drawing.Color.Black, 12), fTotalWidth - fReduce);
@@ -10709,7 +10722,7 @@ namespace Thetis
 
                 clsMeterItem.clsPercCache pc = mi.GetPerc(value);
                 if (pc != null)
-                {                    
+                {
                     percX = pc._percX;
                     percY = pc._percY;
                     min = pc._min;
@@ -10802,11 +10815,14 @@ namespace Thetis
                     min = new PointF(minX, minY);
                     max = new PointF(maxX, maxY);
 
-                    pc = new clsMeterItem.clsPercCache() { _value = value,
-                                                            _percX = percX,
-                                                            _percY = percY,
-                                                            _min = min,
-                                                            _max = max };
+                    pc = new clsMeterItem.clsPercCache()
+                    {
+                        _value = value,
+                        _percX = percX,
+                        _percY = percY,
+                        _min = min,
+                        _max = max
+                    };
                     mi.AddPerc(pc);
                 }
             }
@@ -11002,7 +11018,7 @@ namespace Thetis
             //    // 5. Otherwise, the two line segments are not parallel but do not intersect.
             //    return false;
             //}
-        }        
+        }
         #endregion
     }
 }
