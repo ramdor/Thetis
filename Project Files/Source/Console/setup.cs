@@ -8808,7 +8808,7 @@ private void udDisplayAVGTime_ValueChanged(object sender, System.EventArgs e) {
     double display_time = 1 / (double)udDisplayFPS.Value;
     int buffersToAvg
         = (int)((float)udDisplayAVGTime.Value * 0.001 / display_time);
-    // Display.DisplayAvgBlocks = (int)Math.Max(2, buffersToAvg);  //MW0LGE not
+    // Display.DisplayAvgBlocks = (int)Math.Max(2, buffersToAvg); // MW0LGE not
     // needed
 }
 
@@ -11078,7 +11078,7 @@ public void initCATandPTTprops() {
     console.CATDataBits = int.Parse((string)comboCATdatabits.SelectedItem);
     console.CATStopBits
         = SDRSerialPort.StringToStopBits((string)comboCATstopbits.SelectedItem);
-    console.CATEnabled = chkCATEnable.Checked;
+    console.CATEnabled = chkCATEnable.Checked && chkCATEnable.Enabled;
 
     // make sure the enabled state of bitbang ptt is correct
     if (chkCATPTT_RTS.Checked || chkCATPTT_DTR.Checked) {
@@ -11095,7 +11095,7 @@ public void initCATandPTTprops() {
     console.CAT2DataBits = int.Parse((string)comboCAT2databits.SelectedItem);
     console.CAT2StopBits = SDRSerialPort.StringToStopBits(
         (string)comboCAT2stopbits.SelectedItem);
-    console.CAT2Enabled = chkCAT2Enable.Checked;
+    console.CAT2Enabled = chkCAT2Enable.Checked && chkCAT2Enable.Enabled;
 
     if (comboCAT3Port.Text.StartsWith("COM"))
         console.CAT3Port = Int32.Parse(comboCAT3Port.Text.Substring(3));
