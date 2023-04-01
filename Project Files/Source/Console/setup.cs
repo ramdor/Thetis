@@ -152,6 +152,7 @@ public partial class Setup : Form {
     public Setup(Console c) {
         try {
             InitializeComponent();
+                this.Owner = c;
         } catch (Exception exc) {
             MessageBox.Show(exc.Message);
         }
