@@ -7503,6 +7503,9 @@ private void comboAudioDriver2_SelectedIndexChanged(
     string new_driver_name
         = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Name;
 
+            chkExclusive.Visible = new_driver_name.Contains("WASAPI") || new_driver_name.Contains("WDM-KS");
+  
+
     console.AudioDriverIndex2 = new_driver;
     Audio.Host2 = new_driver;
     GetDevices2();
