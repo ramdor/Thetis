@@ -3436,6 +3436,10 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.grpInfo = new System.Windows.Forms.GroupBoxTS();
+            this.lblDBTitle = new System.Windows.Forms.LabelTS();
+            this.lblDataBase = new System.Windows.Forms.LabelTS();
+            this.labelTS161 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4345,6 +4349,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
+            this.grpInfo.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -6691,6 +6696,7 @@
             // tpGeneralHardware
             // 
             this.tpGeneralHardware.BackColor = System.Drawing.SystemColors.Control;
+            this.tpGeneralHardware.Controls.Add(this.grpInfo);
             this.tpGeneralHardware.Controls.Add(this.pictureBox1);
             this.tpGeneralHardware.Controls.Add(this.chkSupportUkraine);
             this.tpGeneralHardware.Controls.Add(this.lblTimeout);
@@ -27514,7 +27520,7 @@
             this.lblAdvancedAudioWarning.Image = null;
             this.lblAdvancedAudioWarning.Location = new System.Drawing.Point(56, 22);
             this.lblAdvancedAudioWarning.Name = "lblAdvancedAudioWarning";
-            this.lblAdvancedAudioWarning.Size = new System.Drawing.Size(593, 16);
+            this.lblAdvancedAudioWarning.Size = new System.Drawing.Size(594, 16);
             this.lblAdvancedAudioWarning.TabIndex = 93;
             this.lblAdvancedAudioWarning.Text = "WARNING: these settings may cause undesirable side effects if changed from defaul" +
     "t";
@@ -54712,6 +54718,52 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // grpInfo
+            // 
+            this.grpInfo.Controls.Add(this.labelTS161);
+            this.grpInfo.Controls.Add(this.lblDataBase);
+            this.grpInfo.Controls.Add(this.lblDBTitle);
+            this.grpInfo.Location = new System.Drawing.Point(28, 226);
+            this.grpInfo.Name = "grpInfo";
+            this.grpInfo.Size = new System.Drawing.Size(348, 100);
+            this.grpInfo.TabIndex = 41;
+            this.grpInfo.TabStop = false;
+            this.grpInfo.Text = "General Information:";
+            // 
+            // lblDBTitle
+            // 
+            this.lblDBTitle.AutoSize = true;
+            this.lblDBTitle.Image = null;
+            this.lblDBTitle.Location = new System.Drawing.Point(9, 31);
+            this.lblDBTitle.Name = "lblDBTitle";
+            this.lblDBTitle.Size = new System.Drawing.Size(84, 13);
+            this.lblDBTitle.TabIndex = 0;
+            this.lblDBTitle.Text = "Using database:";
+            // 
+            // lblDataBase
+            // 
+            this.lblDataBase.AutoSize = true;
+            this.lblDataBase.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDataBase.Image = null;
+            this.lblDataBase.Location = new System.Drawing.Point(97, 31);
+            this.lblDataBase.MaximumSize = new System.Drawing.Size(230, 150);
+            this.lblDataBase.Name = "lblDataBase";
+            this.lblDataBase.Size = new System.Drawing.Size(229, 39);
+            this.lblDataBase.TabIndex = 1;
+            this.lblDataBase.Text = "C:\\<yourusername>\\AppData\\Local\\Roaming\\OPENHPSDR\\Thetis\\MyOverlyLongDatabaseName" +
+    ".xml";
+            this.lblDataBase.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lblDataBase_MouseUp);
+            // 
+            // labelTS161
+            // 
+            this.labelTS161.AutoSize = true;
+            this.labelTS161.Image = null;
+            this.labelTS161.Location = new System.Drawing.Point(97, 78);
+            this.labelTS161.Name = "labelTS161";
+            this.labelTS161.Size = new System.Drawing.Size(207, 13);
+            this.labelTS161.TabIndex = 2;
+            this.labelTS161.Text = "(Right-click to copy to Windows Clipboard)";
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -55804,6 +55856,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
+            this.grpInfo.ResumeLayout(false);
+            this.grpInfo.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -59242,5 +59296,9 @@
         private Label lblSampleRate;
         private Label lblBuffer;
         private CheckBox chkExclusive;
+        private GroupBoxTS grpInfo;
+        private LabelTS labelTS161;
+        private LabelTS lblDataBase;
+        private LabelTS lblDBTitle;
     }
 }
