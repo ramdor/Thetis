@@ -964,10 +964,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\portaudio\build\msvc\portaudio.vcxproj">
-      <Project>{0a18a071-125e-442f-aff7-a3f68abecf99}</Project>
-      <Name>PortAudioForCoolSDR</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ChannelMaster\ChannelMaster.vcxproj">
       <Project>{8e5759ea-1d4e-46da-9b3c-3577a98301c1}</Project>
       <Name>ChannelMaster</Name>

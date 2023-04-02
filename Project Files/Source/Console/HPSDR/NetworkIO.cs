@@ -91,7 +91,7 @@ partial class NetworkIO {
 
         try {
             addr = Dns.GetHostAddresses(Dns.GetHostName());
-        } catch (SocketException e) {
+        } catch (SocketException) {
             Win32.WSAData data = new Win32.WSAData();
             int result = 0;
 
@@ -229,9 +229,9 @@ partial class NetworkIO {
             // be kind: they may have selected the wrong protocol
             // KLJ
             if (RadioProtocolSelected == RadioProtocol.ETH)
-                    RadioProtocolSelected = RadioProtocol.USB;
+                RadioProtocolSelected = RadioProtocol.USB;
             else
-                    RadioProtocolSelected = RadioProtocol.ETH;
+                RadioProtocolSelected = RadioProtocol.ETH;
 
             foreach (IPAddress ipa in addrList) {
                 if (DiscoverRadioOnPort(ref hpsdrd, ipa, null)) {
