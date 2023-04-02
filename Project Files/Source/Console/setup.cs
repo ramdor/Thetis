@@ -152,7 +152,7 @@ public partial class Setup : Form {
     public Setup(Console c) {
         try {
             InitializeComponent();
-                this.Owner = c;
+            this.Owner = c;
         } catch (Exception exc) {
             MessageBox.Show(exc.Message);
         }
@@ -7504,8 +7504,8 @@ private void comboAudioDriver2_SelectedIndexChanged(
     string new_driver_name
         = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Name;
 
-            chkExclusive.Visible = new_driver_name.Contains("WASAPI") || new_driver_name.Contains("WDM-KS");
-  
+    chkExclusive.Visible = new_driver_name.Contains("WASAPI")
+        || new_driver_name.Contains("WDM-KS");
 
     console.AudioDriverIndex2 = new_driver;
     Audio.Host2 = new_driver;
@@ -20367,7 +20367,8 @@ public enum SetupTab {
     DISPGEN_Tab,
     DISPRX1_Tab,
     DISPRX2_Tab,
-    SpotTCI
+    SpotTCI,
+    NewMetersTab
 }
 public void ShowSetupTab(SetupTab eTab) {
     Show();
@@ -20448,6 +20449,10 @@ public void ShowSetupTab(SetupTab eTab) {
         case SetupTab.SpotTCI:
             TabSetup.SelectedIndex = 8; // cat
             TabCAT.SelectedIndex = 2; // user
+            break;
+        case SetupTab.NewMetersTab:
+            TabSetup.SelectedIndex = 6; // tcAppearance
+            this.tcAppearance.SelectedIndex = 3;
             break;
     }
 }
@@ -25109,6 +25114,47 @@ private void lblDataBase_MouseUp(object sender, MouseEventArgs e) {
                 lblDataBase.Text + "\n\nSuccessfully copied to clipboard");
         }
     }
+}
+
+private bool rx1_av_check_changing = false;
+private bool rx2_av_check_changing = false;
+
+private void chkAveraging_CheckedChanged(object sender, EventArgs e) {
+
+    if (rx1_av_check_changing) {
+        return;
+    }
+    rx1_av_check_changing = true;
+    DisplayAveraging = chkAveraging.Checked;
+    rx1_av_check_changing = false;
+}
+
+bool avg_busy = false;
+public bool DisplayAveraging {
+    get => chkAveraging.Checked;
+    set {
+        if (avg_busy) return;
+        avg_busy = true;
+        chkAveraging.Checked = value;
+        chkAveragingRX2.Checked = value;
+        console.DisplayAVG = chkAveraging.Checked;
+
+        grpDisplayAverage.Enabled = chkAveraging.Checked;
+        grpRX2DisplayAverage.Enabled = chkAveraging.Checked;
+        grpRX2DisplayAveraging.Enabled = chkAveraging.Checked;
+        grpWaterfallAverage.Enabled = chkAveraging.Checked;
+        grpRX2DisplayWaterfall.Enabled = chkAveraging.Checked;
+        avg_busy = false;
+    }
+}
+
+private void chkAveragingRX2_CheckedChanged(object sender, EventArgs e) {
+    if (rx2_av_check_changing) {
+        return;
+    }
+    rx2_av_check_changing = true;
+    DisplayAveraging = chkAveragingRX2.Checked;
+    rx2_av_check_changing = false;
 }
 }
 

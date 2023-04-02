@@ -174,8 +174,10 @@
             this.picContainer.Size = new System.Drawing.Size(400, 400);
             this.picContainer.TabIndex = 1;
             this.picContainer.TabStop = false;
+            this.picContainer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picContainer_MouseDown);
             this.picContainer.MouseLeave += new System.EventHandler(this.picContainer_MouseLeave);
             this.picContainer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picContainer_MouseMove);
+            this.picContainer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picContainer_MouseUp);
             // 
             // ucMeter
             // 

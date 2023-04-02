@@ -41,9 +41,9 @@ public class ScanControl : Form {
         = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic)
         + "\\Thetis";
 
-    private System.Windows.Forms.OpenFileDialog openFileDialog1;
-    private System.Windows.Forms.GroupBoxTS grpPlayback;
-    private System.Windows.Forms.GroupBox grpPlaylist;
+    // private System.Windows.Forms.OpenFileDialog openFileDialog1;
+    // private System.Windows.Forms.GroupBoxTS grpPlayback;
+    // private System.Windows.Forms.GroupBox grpPlaylist;
     private Button button1;
     private Button button2;
     private Button button3;

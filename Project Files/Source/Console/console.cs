@@ -18888,9 +18888,27 @@ public int TXAF {
             }
 }
 
+bool avg_busy = false;
+bool set_avg_busy = false;
 public bool DisplayAVG {
             get { return chkDisplayAVG.Checked; }
-            set { chkDisplayAVG.Checked = value; }
+            set {
+            try {
+                if (avg_busy) {
+                    return;
+                }
+                set_avg_busy = true;
+                avg_busy = true;
+                chkDisplayAVG.Checked = value;
+                this.SetupForm.DisplayAveraging = value;
+            } catch {
+
+            } finally {
+                if (set_avg_busy) {
+                    avg_busy = false;
+                }
+            }
+            }
 }
 
 private double break_in_delay = 300;
@@ -31361,6 +31379,7 @@ private void chkDisplayAVG_CheckedChanged(object sender, System.EventArgs e) {
             chkDisplayAVG.BackColor = SystemColors.Control;
             }
             RX1AVGToolStripMenuItem.Checked = chkDisplayAVG.Checked;
+            this.SetupForm.DisplayAveraging = chkDisplayAVG.Checked;
 }
 
 private void chkDisplayPeak_CheckedChanged(object sender, System.EventArgs e) {

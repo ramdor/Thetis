@@ -1065,42 +1065,44 @@ namespace Thetis
 
     #region WaveThing
 
-    unsafe static class WaveThing
-    {
-        #region createStuff
+    unsafe static class WaveThing {
+#region createStuff
 
-        // declare a delegate of the correct form for the createWavePlayer method
+        // declare a delegate of the correct form for the createWavePlayer
+        // method
         unsafe public delegate void createWplay(int id);
 
         // assign the function to an instance of the delegate
         unsafe private static createWplay cwpDel = createWavePlayer;
 
         // define the method to send the createWavePlayer function pointer
-        [DllImport("ChannelMaster.dll", EntryPoint = "SendCBCreateWPlay", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendCBCreateWPlay",
+            CallingConvention = CallingConvention.Cdecl)]
         unsafe public static extern void SendCBCreateWPlay(createWplay del);
 
         unsafe public delegate void createWrecord(int id);
         unsafe private static createWrecord cwrDel = createWaveRecorder;
 
-        [DllImport("ChannelMaster.dll", EntryPoint = "SendCBCreateWRecord", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendCBCreateWRecord",
+            CallingConvention = CallingConvention.Cdecl)]
         unsafe public static extern void SendCBCreateWRecord(createWrecord del);
 
-        unsafe public static void initWaves()
-        {
+        unsafe public static void initWaves() {
             // send pointer to createWavePlayer function
             SendCBCreateWPlay(cwpDel);
             SendCBCreateWRecord(cwrDel);
         }
 
-        #endregion
+#endregion
 
-        #region playerStuff
+#region playerStuff
 
         // declare a delegate of the correct form for the player method
         unsafe public delegate void WPlay(int state, double* data);
 
         // define the method to send the player function pointer
-        [DllImport("ChannelMaster.dll", EntryPoint = "SendCBWavePlayer", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendCBWavePlayer",
+            CallingConvention = CallingConvention.Cdecl)]
         unsafe public static extern void SendCBWavePlayer(int id, WPlay del);
 
         // maximum number of wave players
@@ -1110,10 +1112,10 @@ namespace Thetis
         // initialize an array for pointers to the wave player method instances
         static WPlay[] pplay = new WPlay[nplayers];
         // initialize an array for the wave_file_readers
-        public static WaveFileReader1[] wave_file_reader = new WaveFileReader1[nplayers];
+        public static WaveFileReader1[] wave_file_reader
+            = new WaveFileReader1[nplayers];
 
-        unsafe public static void createWavePlayer(int id)
-        {
+        unsafe public static void createWavePlayer(int id) {
             // create a wave player instance
             wplayer[id] = new PlayWave();
             // store the pointer to the wave player instance
@@ -1122,55 +1124,54 @@ namespace Thetis
             SendCBWavePlayer(id, pplay[id]);
             // tell the waveplayer its ID
             wplayer[id].ID = id;
-            // NOTE:  the wave_file_reader instance gets created in OpenWaveFile(filename, id)
+            // NOTE:  the wave_file_reader instance gets created in
+            // OpenWaveFile(filename, id)
         }
 
-        #endregion
+#endregion
 
-        #region recorderStuff
+#region recorderStuff
 
         unsafe public delegate void WRecord(int state, int pos, double* data);
 
-        [DllImport("ChannelMaster", EntryPoint = "SendCBWaveRecorder", CallingConvention = CallingConvention.Cdecl)]
-        unsafe public static extern void SendCBWaveRecorder(int id, WRecord del);
+        [DllImport("ChannelMaster", EntryPoint = "SendCBWaveRecorder",
+            CallingConvention = CallingConvention.Cdecl)]
+        unsafe public static extern void SendCBWaveRecorder(
+            int id, WRecord del);
 
         const int nrecorders = 16;
         public static RecordWave[] wrecorder = new RecordWave[nrecorders];
         static WRecord[] precord = new WRecord[nrecorders];
-        public static WaveFileWriter[] wave_file_writer = new WaveFileWriter[nrecorders];
+        public static WaveFileWriter[] wave_file_writer
+            = new WaveFileWriter[nrecorders];
 
-        unsafe public static void createWaveRecorder(int id)
-        {
+        unsafe public static void createWaveRecorder(int id) {
             wrecorder[id] = new RecordWave();
             precord[id] = new WRecord(wrecorder[id].wrecord);
             SendCBWaveRecorder(id, precord[id]);
             wrecorder[id].ID = id;
         }
 
-        #endregion
+#endregion
     }
 
-    #region PlayWave Class
+#region PlayWave Class
 
-    unsafe class PlayWave
-    {
+    unsafe class PlayWave {
         private int id = 0;
-        public int ID
-        {
+        public int ID {
             get { return id; }
             set { id = value; }
         }
 
         private bool run = false;
-        public bool Run
-        {
+        public bool Run {
             get { return run; }
             set { run = value; }
         }
 
         private int condx = 0;
-        public int Condx
-        {
+        public int Condx {
             get { return condx; }
             set { condx = value; }
         }
@@ -1180,17 +1181,15 @@ namespace Thetis
         float[] left = new float[2048];
         float[] right = new float[2048];
 
-        unsafe public void wplay(int state, double* data)
-        {
-            if (run && (condx == state))
-            {
-                if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1)
-                {
-                    int size = 2048;    // could check actual size, depending upon MOX
-                    fixed (float* pleft = &left[0])
-                    fixed (float* pright = &right[0])
-                    {
-                        WaveThing.wave_file_reader[id].GetPlayBuffer(pleft, pright);
+        unsafe public void wplay(int state, double* data) {
+            if (run && (condx == state)) {
+                if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1) {
+                    int size
+                        = 2048; // could check actual size, depending upon MOX
+                    fixed(float* pleft = &left[0])
+                        fixed(float* pright = &right[0]) {
+                        WaveThing.wave_file_reader[id].GetPlayBuffer(
+                            pleft, pright);
                         swizzle(size, pleft, pright, data);
                     }
                     System.Threading.Interlocked.Exchange(ref busy, 0);
@@ -1198,54 +1197,47 @@ namespace Thetis
             }
         }
 
-        unsafe private static void swizzle(int n, float* I, float* Q, double* C)
-        {
+        unsafe private static void swizzle(
+            int n, float* I, float* Q, double* C) {
             int i;
-            for (i = 0; i < n; i++)
-            {
+            for (i = 0; i < n; i++) {
                 C[2 * i + 0] = (double)I[i];
                 C[2 * i + 1] = (double)Q[i];
             }
         }
     }
 
-    #endregion
+#endregion
 
-    #region RecordWave Class
+#region RecordWave Class
 
-    unsafe class RecordWave
-    {
+    unsafe class RecordWave {
         private int id = 0;
-        public int ID
-        {
+        public int ID {
             get { return id; }
             set { id = value; }
         }
 
         private bool run = false;
-        public bool Run
-        {
+        public bool Run {
             get { return run; }
             set { run = value; }
         }
 
         private int condx = 0;
-        public int Condx
-        {
+        public int Condx {
             get { return condx; }
             set { condx = value; }
         }
 
         private bool rxpre = false;
-        public bool RxPre
-        {
+        public bool RxPre {
             get { return rxpre; }
             set { rxpre = value; }
         }
 
         private bool txpre = true;
-        public bool TxPre
-        {
+        public bool TxPre {
             get { return txpre; }
             set { txpre = value; }
         }
@@ -1257,78 +1249,131 @@ namespace Thetis
         float[] ltemp = new float[2048];
         float[] rtemp = new float[2048];
         // 'wrecord()' is called by ChannelMaster.dll
-        unsafe public void wrecord(int state, int pos, double* data)
-        {
-            if (run && (condx == state))    // if run && (!MOX and calling with receive data, or, MOX and calling with transmit data)
+        unsafe public void wrecord(int state, int pos, double* data) {
+            if (run
+                && (condx
+                    == state)) // if run && (!MOX and calling with receive data,
+                               // or, MOX and calling with transmit data)
             {
-                if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1)
-                {
-                    fixed (float* pleft  = &left[0], pright = &right[0], pltemp = &ltemp[0], prtemp = &rtemp[0])
-                    {
-                        if (pos == 0)   // calling from the "pre" location
+                if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1) {
+                    fixed(float* pleft = &left[0], pright = &right[0],
+                        pltemp = &ltemp[0], prtemp = &rtemp[0]) {
+                        if (pos == 0) // calling from the "pre" location
                         {
-                            if ((state == 0) && rxpre)  // getting receive data and want receive data for 'pre' position
+                            if ((state == 0)
+                                && rxpre) // getting receive data and want
+                                          // receive data for 'pre' position
                             {
-                                int rcvr_inrate = cmaster.GetInputRate(0, id);  // could just read these from WaveThing.wave_file_writer[id]
-                                int rcvr_insize = cmaster.GetBuffSize(rcvr_inrate);
+                                int rcvr_inrate = cmaster.GetInputRate(
+                                    0, id); // could just read these from
+                                            // WaveThing.wave_file_writer[id]
+                                int rcvr_insize
+                                    = cmaster.GetBuffSize(rcvr_inrate);
                                 deswizzle(rcvr_insize, data, pleft, pright);
-                                if (WaveThing.wave_file_writer[id].BaseRate != rcvr_inrate)
-                                {
+                                if (WaveThing.wave_file_writer[id].BaseRate
+                                    != rcvr_inrate) {
                                     int outsamps;
-                                    WDSP.xresampleFV(pleft,  pltemp, rcvr_insize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampL);
-                                    WDSP.xresampleFV(pright, prtemp, rcvr_insize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampR);
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
-                                }
-                                else
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, rcvr_insize);
+                                    WDSP.xresampleFV(pleft, pltemp, rcvr_insize,
+                                        &outsamps,
+                                        WaveThing.wave_file_writer[id]
+                                            .RcvrResampL);
+                                    WDSP.xresampleFV(pright, prtemp,
+                                        rcvr_insize, &outsamps,
+                                        WaveThing.wave_file_writer[id]
+                                            .RcvrResampR);
+                                    WaveThing.wave_file_writer[id]
+                                        .AddWriteBuffer(
+                                            pltemp, prtemp, outsamps);
+                                } else
+                                    WaveThing.wave_file_writer[id]
+                                        .AddWriteBuffer(
+                                            pleft, pright, rcvr_insize);
                             }
-                            if ((state == 1) && txpre)  // getting transmit data and want transmit data for 'pre' position
+                            if ((state == 1)
+                                && txpre) // getting transmit data and want
+                                          // transmit data for 'pre' position
                             {
                                 int xmtr_inrate = cmaster.GetInputRate(1, 0);
-                                int xmtr_insize = cmaster.GetBuffSize(xmtr_inrate);
+                                int xmtr_insize
+                                    = cmaster.GetBuffSize(xmtr_inrate);
                                 deswizzle(xmtr_insize, data, pleft, pright);
-                                if (WaveThing.wave_file_writer[id].BaseRate != xmtr_inrate)
-                                {
+                                if (WaveThing.wave_file_writer[id].BaseRate
+                                    != xmtr_inrate) {
                                     int outsamps;
-                                    WDSP.xresampleFV(pleft,  pltemp, xmtr_insize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampL);
-                                    WDSP.xresampleFV(pright, prtemp, xmtr_insize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampR);
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
-                                }
-                                else
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, xmtr_insize);
+                                    WDSP.xresampleFV(pleft, pltemp, xmtr_insize,
+                                        &outsamps,
+                                        WaveThing.wave_file_writer[id]
+                                            .XmtrResampL);
+                                    WDSP.xresampleFV(pright, prtemp,
+                                        xmtr_insize, &outsamps,
+                                        WaveThing.wave_file_writer[id]
+                                            .XmtrResampR);
+                                    WaveThing.wave_file_writer[id]
+                                        .AddWriteBuffer(
+                                            pltemp, prtemp, outsamps);
+                                } else
+                                    WaveThing.wave_file_writer[id]
+                                        .AddWriteBuffer(
+                                            pleft, pright, xmtr_insize);
                             }
                         }
-                        if (pos == 1)   // calling from "post" location
+                        if (pos == 1) // calling from "post" location
                         {
-                            if ((state == 0) && !rxpre) // getting receive data and want receive data for 'post' position
+                            if ((state == 0)
+                                && !rxpre) // getting receive data and want
+                                           // receive data for 'post' position
                             {
-                                int rcvr_outrate = cmaster.GetChannelOutputRate(0, id);
-                                int rcvr_outsize = cmaster.GetBuffSize(rcvr_outrate);
+                                int rcvr_outrate
+                                    = cmaster.GetChannelOutputRate(0, id);
+                                int rcvr_outsize
+                                    = cmaster.GetBuffSize(rcvr_outrate);
                                 deswizzle(rcvr_outsize, data, pleft, pright);
-                                if (WaveThing.wave_file_writer[id].BaseRate != rcvr_outrate)
-                                {
+                                if (WaveThing.wave_file_writer[id].BaseRate
+                                    != rcvr_outrate) {
                                     int outsamps;
-                                    WDSP.xresampleFV(pleft,  pltemp, rcvr_outsize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampL);
-                                    WDSP.xresampleFV(pright, prtemp, rcvr_outsize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampR);
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
-                                }
-                                else
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, rcvr_outsize);
+                                    WDSP.xresampleFV(pleft, pltemp,
+                                        rcvr_outsize, &outsamps,
+                                        WaveThing.wave_file_writer[id]
+                                            .RcvrResampL);
+                                    WDSP.xresampleFV(pright, prtemp,
+                                        rcvr_outsize, &outsamps,
+                                        WaveThing.wave_file_writer[id]
+                                            .RcvrResampR);
+                                    WaveThing.wave_file_writer[id]
+                                        .AddWriteBuffer(
+                                            pltemp, prtemp, outsamps);
+                                } else
+                                    WaveThing.wave_file_writer[id]
+                                        .AddWriteBuffer(
+                                            pleft, pright, rcvr_outsize);
                             }
-                            if ((state == 1) && !txpre) // getting transmit data and want transmit data for 'post' position
+                            if ((state == 1)
+                                && !txpre) // getting transmit data and want
+                                           // transmit data for 'post' position
                             {
-                                int xmtr_outrate = cmaster.GetChannelOutputRate(1, 0);
-                                int xmtr_outsize = cmaster.GetBuffSize(xmtr_outrate);
+                                int xmtr_outrate
+                                    = cmaster.GetChannelOutputRate(1, 0);
+                                int xmtr_outsize
+                                    = cmaster.GetBuffSize(xmtr_outrate);
                                 deswizzle(xmtr_outsize, data, pleft, pright);
-                                if (WaveThing.wave_file_writer[id].BaseRate != xmtr_outrate)
-                                {
+                                if (WaveThing.wave_file_writer[id].BaseRate
+                                    != xmtr_outrate) {
                                     int outsamps;
-                                    WDSP.xresampleFV(pleft,  pltemp, xmtr_outsize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampL);
-                                    WDSP.xresampleFV(pright, prtemp, xmtr_outsize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampR);
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
-                                }
-                                else
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, xmtr_outsize);
+                                    WDSP.xresampleFV(pleft, pltemp,
+                                        xmtr_outsize, &outsamps,
+                                        WaveThing.wave_file_writer[id]
+                                            .XmtrResampL);
+                                    WDSP.xresampleFV(pright, prtemp,
+                                        xmtr_outsize, &outsamps,
+                                        WaveThing.wave_file_writer[id]
+                                            .XmtrResampR);
+                                    WaveThing.wave_file_writer[id]
+                                        .AddWriteBuffer(
+                                            pltemp, prtemp, outsamps);
+                                } else
+                                    WaveThing.wave_file_writer[id]
+                                        .AddWriteBuffer(
+                                            pleft, pright, xmtr_outsize);
                             }
                         }
                     }
@@ -1337,86 +1382,75 @@ namespace Thetis
             }
         }
 
-        unsafe private static void deswizzle(int n, double* C, float* I, float* Q)
-        {
+        unsafe private static void deswizzle(
+            int n, double* C, float* I, float* Q) {
             int i;
-            for (i = 0; i < n; i++)
-            {
+            for (i = 0; i < n; i++) {
                 I[i] = (float)C[2 * i + 0];
                 Q[i] = (float)C[2 * i + 1];
             }
         }
     }
 
-    #endregion
+#endregion
 
-    #endregion
+#endregion
 
-    #region Scope
+#region Scope
 
-    unsafe static class Scope
-    {
+    unsafe static class Scope {
         unsafe public delegate void createscope(int id);
         unsafe private static createscope cscDel = createScope;
 
-        [DllImport("ChannelMaster.dll", EntryPoint = "SendCBCreateScope", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendCBCreateScope",
+            CallingConvention = CallingConvention.Cdecl)]
         unsafe public static extern void SendCBCreateScope(createscope del);
-        
+
         unsafe public delegate void Xscope(int state, double* data);
 
-        [DllImport("ChannelMaster.dll", EntryPoint = "SendCBScope", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("ChannelMaster.dll", EntryPoint = "SendCBScope",
+            CallingConvention = CallingConvention.Cdecl)]
         unsafe public static extern void SendCBScope(int id, Xscope del);
 
         const int nscopes = 16;
         public static DoScope[] dscope = new DoScope[nscopes];
         static Xscope[] pscope = new Xscope[nscopes];
-        
-        unsafe public static void createScope(int id)
-        {
+
+        unsafe public static void createScope(int id) {
             dscope[id] = new DoScope();
             pscope[id] = new Xscope(dscope[id].xscope);
             SendCBScope(id, pscope[id]);
-            // Note:  This is set up to handle multiple scopes.  However, at present
-            // there is only one instance of DoScope() and DoScope2().
+            // Note:  This is set up to handle multiple scopes.  However, at
+            // present there is only one instance of DoScope() and DoScope2().
         }
 
-        unsafe public static void initScope()
-        {
-            SendCBCreateScope(cscDel);
-        }
+        unsafe public static void initScope() { SendCBCreateScope(cscDel); }
     }
 
-    unsafe class DoScope
-    {
+    unsafe class DoScope {
         float[] left = new float[2048];
         float[] right = new float[2048];
-        
+
         int busy = 0;
 
         private bool run = false;
-        public bool Run
-        {
+        public bool Run {
             get { return run; }
             set { run = value; }
         }
 
         private int condx = 0;
-        public int Condx
-        {
+        public int Condx {
             get { return condx; }
             set { condx = value; }
         }
-        
-        unsafe public void xscope(int state, double* data)
-        {
-            if (run && (condx == state))
-            {
-                if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1)
-                {
+
+        unsafe public void xscope(int state, double* data) {
+            if (run && (condx == state)) {
+                if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1) {
                     int size = Audio.OutCount;
-                    fixed (float* pleft = &left[0])
-                    fixed (float* pright = &right[0])
-                    {
+                    fixed(float* pleft = &left[0])
+                        fixed(float* pright = &right[0]) {
                         deswizzle(size, data, pleft, pright);
                         Audio.DoScope(pleft, size);
                         Audio.DoScope2(pright, size);
@@ -1426,11 +1460,10 @@ namespace Thetis
             }
         }
 
-        unsafe private static void deswizzle(int n, double* C, float* I, float* Q)
-        {
+        unsafe private static void deswizzle(
+            int n, double* C, float* I, float* Q) {
             int i;
-            for (i = 0; i < n; i++)
-            {
+            for (i = 0; i < n; i++) {
                 I[i] = (float)C[2 * i + 0];
                 Q[i] = (float)C[2 * i + 1];
             }
@@ -1439,4 +1472,4 @@ namespace Thetis
 
 #endregion
 
-}
+    }

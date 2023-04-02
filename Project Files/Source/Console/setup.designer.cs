@@ -1,14 +1,11 @@
-﻿namespace Thetis
-{
-    using System.Windows.Forms;
+﻿namespace Thetis {
+using System.Windows.Forms;
 
-    partial class Setup
-    {
+partial class Setup {
 
-        #region Windows Form Designer generated code
+#region Windows Form Designer generated code
 
-        private void InitializeComponent()
-        {
+    private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.TabPage tpAlexAntCtrl;
             System.Windows.Forms.NumericUpDownTS numericUpDownTS3;
@@ -201,6 +198,10 @@
             this.tpGeneral = new System.Windows.Forms.TabPage();
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
+            this.grpInfo = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS161 = new System.Windows.Forms.LabelTS();
+            this.lblDataBase = new System.Windows.Forms.LabelTS();
+            this.lblDBTitle = new System.Windows.Forms.LabelTS();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.chkSupportUkraine = new System.Windows.Forms.CheckBoxTS();
             this.lblTimeout = new System.Windows.Forms.LabelTS();
@@ -1526,6 +1527,7 @@
             this.tpAudio = new System.Windows.Forms.TabPage();
             this.tcAudio = new System.Windows.Forms.TabControl();
             this.tpVAC = new System.Windows.Forms.TabPage();
+            this.labelTS178 = new System.Windows.Forms.LabelTS();
             this.grpAudioVACAutoEnable = new System.Windows.Forms.GroupBoxTS();
             this.chkAudioVACAutoEnable = new System.Windows.Forms.CheckBoxTS();
             this.lblSampleRate = new System.Windows.Forms.Label();
@@ -1836,6 +1838,7 @@
             this.udDisplayFPS = new System.Windows.Forms.NumericUpDownTS();
             this.lblDisplayFPS = new System.Windows.Forms.LabelTS();
             this.tpDisplayTop = new System.Windows.Forms.TabPage();
+            this.chkAveraging = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS21 = new System.Windows.Forms.GroupBoxTS();
             this.chkFillActivePeakHoldRX1 = new System.Windows.Forms.CheckBoxTS();
             this.udActivePeakHoldDropRX1 = new System.Windows.Forms.NumericUpDownTS();
@@ -1910,6 +1913,7 @@
             this.lblDisplayWaterfallHighLevel = new System.Windows.Forms.LabelTS();
             this.udDisplayWaterfallHighLevel = new System.Windows.Forms.NumericUpDownTS();
             this.tpDisplayBottom = new System.Windows.Forms.TabPage();
+            this.chkAveragingRX2 = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS20 = new System.Windows.Forms.GroupBoxTS();
             this.chkFillActivePeakHoldRX2 = new System.Windows.Forms.CheckBoxTS();
             this.udActivePeakHoldDropRX2 = new System.Windows.Forms.NumericUpDownTS();
@@ -3436,10 +3440,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.grpInfo = new System.Windows.Forms.GroupBoxTS();
-            this.lblDBTitle = new System.Windows.Forms.LabelTS();
-            this.lblDataBase = new System.Windows.Forms.LabelTS();
-            this.labelTS161 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -3486,6 +3486,7 @@
             this.tpGeneral.SuspendLayout();
             this.tcGeneral.SuspendLayout();
             this.tpGeneralHardware.SuspendLayout();
+            this.grpInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpFirmware.SuspendLayout();
             this.grpOzyType.SuspendLayout();
@@ -4349,7 +4350,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
-            this.grpInfo.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -4396,7 +4396,7 @@
             this.chkEnableXVTRHF.Image = null;
             this.chkEnableXVTRHF.Location = new System.Drawing.Point(528, 334);
             this.chkEnableXVTRHF.Name = "chkEnableXVTRHF";
-            this.chkEnableXVTRHF.Size = new System.Drawing.Size(108, 17);
+            this.chkEnableXVTRHF.Size = new System.Drawing.Size(107, 17);
             this.chkEnableXVTRHF.TabIndex = 19;
             this.chkEnableXVTRHF.Text = "Enable XVTR HF";
             this.toolTip1.SetToolTip(this.chkEnableXVTRHF, "Enables the XVTR T/R relay on HF");
@@ -4425,7 +4425,7 @@
             this.chkDisableRXOut.Image = null;
             this.chkDisableRXOut.Location = new System.Drawing.Point(160, 289);
             this.chkDisableRXOut.Name = "chkDisableRXOut";
-            this.chkDisableRXOut.Size = new System.Drawing.Size(106, 17);
+            this.chkDisableRXOut.Size = new System.Drawing.Size(102, 17);
             this.chkDisableRXOut.TabIndex = 15;
             this.chkDisableRXOut.Text = "Disable BYPASS";
             this.toolTip1.SetToolTip(this.chkDisableRXOut, "Disables BYPASS and ANT ports for use with Ext1,2,XVTR with new PA board.");
@@ -4438,7 +4438,7 @@
             this.chkEXT2OutOnTx.Image = null;
             this.chkEXT2OutOnTx.Location = new System.Drawing.Point(528, 244);
             this.chkEXT2OutOnTx.Name = "chkEXT2OutOnTx";
-            this.chkEXT2OutOnTx.Size = new System.Drawing.Size(94, 17);
+            this.chkEXT2OutOnTx.Size = new System.Drawing.Size(92, 17);
             this.chkEXT2OutOnTx.TabIndex = 13;
             this.chkEXT2OutOnTx.Text = "RX 1 IN on Tx";
             this.toolTip1.SetToolTip(this.chkEXT2OutOnTx, "Enable RX 1 IN on Alex or Ext 2 on ANAN during transmit.");
@@ -4451,7 +4451,7 @@
             this.chkEXT1OutOnTx.Image = null;
             this.chkEXT1OutOnTx.Location = new System.Drawing.Point(528, 264);
             this.chkEXT1OutOnTx.Name = "chkEXT1OutOnTx";
-            this.chkEXT1OutOnTx.Size = new System.Drawing.Size(94, 17);
+            this.chkEXT1OutOnTx.Size = new System.Drawing.Size(92, 17);
             this.chkEXT1OutOnTx.TabIndex = 10;
             this.chkEXT1OutOnTx.Text = "RX 2 IN on Tx";
             this.toolTip1.SetToolTip(this.chkEXT1OutOnTx, "Enable RX 2 IN on Alex or Ext 1 on ANAN during transmit.");
@@ -4464,7 +4464,7 @@
             this.labelATTOnTX.Image = null;
             this.labelATTOnTX.Location = new System.Drawing.Point(525, 158);
             this.labelATTOnTX.Name = "labelATTOnTX";
-            this.labelATTOnTX.Size = new System.Drawing.Size(31, 13);
+            this.labelATTOnTX.Size = new System.Drawing.Size(28, 13);
             this.labelATTOnTX.TabIndex = 9;
             this.labelATTOnTX.Text = "ATT:";
             this.labelATTOnTX.Visible = false;
@@ -4488,7 +4488,7 @@
             0,
             0});
             this.udATTOnTX.Name = "udATTOnTX";
-            this.udATTOnTX.Size = new System.Drawing.Size(37, 20);
+            this.udATTOnTX.Size = new System.Drawing.Size(37, 22);
             this.udATTOnTX.TabIndex = 8;
             this.udATTOnTX.TinyStep = false;
             this.udATTOnTX.Value = new decimal(new int[] {
@@ -4505,7 +4505,7 @@
             this.chkHFTRRelay.Image = null;
             this.chkHFTRRelay.Location = new System.Drawing.Point(528, 289);
             this.chkHFTRRelay.Name = "chkHFTRRelay";
-            this.chkHFTRRelay.Size = new System.Drawing.Size(95, 17);
+            this.chkHFTRRelay.Size = new System.Drawing.Size(96, 17);
             this.chkHFTRRelay.TabIndex = 7;
             this.chkHFTRRelay.Text = "Disable HF PA";
             this.toolTip1.SetToolTip(this.chkHFTRRelay, "Disables HF PA.");
@@ -4545,7 +4545,7 @@
             this.chkSWRProtection.Image = null;
             this.chkSWRProtection.Location = new System.Drawing.Point(24, 21);
             this.chkSWRProtection.Name = "chkSWRProtection";
-            this.chkSWRProtection.Size = new System.Drawing.Size(110, 17);
+            this.chkSWRProtection.Size = new System.Drawing.Size(117, 17);
             this.chkSWRProtection.TabIndex = 3;
             this.chkSWRProtection.Text = "Enable Protection";
             this.toolTip1.SetToolTip(this.chkSWRProtection, "Disables SWR Protection.");
@@ -4560,7 +4560,7 @@
             this.chkATTOnTX.Image = null;
             this.chkATTOnTX.Location = new System.Drawing.Point(528, 133);
             this.chkATTOnTX.Name = "chkATTOnTX";
-            this.chkATTOnTX.Size = new System.Drawing.Size(77, 17);
+            this.chkATTOnTX.Size = new System.Drawing.Size(74, 17);
             this.chkATTOnTX.TabIndex = 4;
             this.chkATTOnTX.Text = "ATT on Tx";
             this.toolTip1.SetToolTip(this.chkATTOnTX, "Enables Attenuator on Mercury during Transmit.");
@@ -4573,7 +4573,7 @@
             this.chkRxOutOnTx.Image = null;
             this.chkRxOutOnTx.Location = new System.Drawing.Point(528, 224);
             this.chkRxOutOnTx.Name = "chkRxOutOnTx";
-            this.chkRxOutOnTx.Size = new System.Drawing.Size(98, 17);
+            this.chkRxOutOnTx.Size = new System.Drawing.Size(100, 17);
             this.chkRxOutOnTx.TabIndex = 2;
             this.chkRxOutOnTx.Text = "Rx 1 Out on Tx";
             this.toolTip1.SetToolTip(this.chkRxOutOnTx, "Enable Rx 1 Out on Alex or ByPass on ANAN during transmit.");
@@ -5386,7 +5386,7 @@
             this.labelTS257.Image = null;
             this.labelTS257.Location = new System.Drawing.Point(18, 220);
             this.labelTS257.Name = "labelTS257";
-            this.labelTS257.Size = new System.Drawing.Size(58, 13);
+            this.labelTS257.Size = new System.Drawing.Size(59, 13);
             this.labelTS257.TabIndex = 238;
             this.labelTS257.Text = "Do Not TX";
             // 
@@ -6662,7 +6662,7 @@
             this.tcSetup.Location = new System.Drawing.Point(8, 8);
             this.tcSetup.Name = "tcSetup";
             this.tcSetup.SelectedIndex = 0;
-            this.tcSetup.Size = new System.Drawing.Size(736, 462);
+            this.tcSetup.Size = new System.Drawing.Size(736, 494);
             this.tcSetup.TabIndex = 16;
             // 
             // tpGeneral
@@ -6670,7 +6670,7 @@
             this.tpGeneral.Controls.Add(this.tcGeneral);
             this.tpGeneral.Location = new System.Drawing.Point(4, 22);
             this.tpGeneral.Name = "tpGeneral";
-            this.tpGeneral.Size = new System.Drawing.Size(728, 436);
+            this.tpGeneral.Size = new System.Drawing.Size(728, 468);
             this.tpGeneral.TabIndex = 3;
             this.tpGeneral.Text = "General";
             // 
@@ -6715,6 +6715,52 @@
             this.tpGeneralHardware.Text = "H/W Select";
             this.tpGeneralHardware.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralHardware_Paint);
             // 
+            // grpInfo
+            // 
+            this.grpInfo.Controls.Add(this.labelTS161);
+            this.grpInfo.Controls.Add(this.lblDataBase);
+            this.grpInfo.Controls.Add(this.lblDBTitle);
+            this.grpInfo.Location = new System.Drawing.Point(28, 226);
+            this.grpInfo.Name = "grpInfo";
+            this.grpInfo.Size = new System.Drawing.Size(348, 100);
+            this.grpInfo.TabIndex = 41;
+            this.grpInfo.TabStop = false;
+            this.grpInfo.Text = "General Information:";
+            // 
+            // labelTS161
+            // 
+            this.labelTS161.AutoSize = true;
+            this.labelTS161.Image = null;
+            this.labelTS161.Location = new System.Drawing.Point(97, 78);
+            this.labelTS161.Name = "labelTS161";
+            this.labelTS161.Size = new System.Drawing.Size(228, 13);
+            this.labelTS161.TabIndex = 2;
+            this.labelTS161.Text = "(Right-click to copy to Windows Clipboard)";
+            // 
+            // lblDataBase
+            // 
+            this.lblDataBase.AutoSize = true;
+            this.lblDataBase.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDataBase.Image = null;
+            this.lblDataBase.Location = new System.Drawing.Point(97, 31);
+            this.lblDataBase.MaximumSize = new System.Drawing.Size(230, 150);
+            this.lblDataBase.Name = "lblDataBase";
+            this.lblDataBase.Size = new System.Drawing.Size(229, 39);
+            this.lblDataBase.TabIndex = 1;
+            this.lblDataBase.Text = "C:\\<yourusername>\\AppData\\Local\\Roaming\\OPENHPSDR\\Thetis\\MyOverlyLongDatabaseName" +
+    ".xml";
+            this.lblDataBase.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lblDataBase_MouseUp);
+            // 
+            // lblDBTitle
+            // 
+            this.lblDBTitle.AutoSize = true;
+            this.lblDBTitle.Image = null;
+            this.lblDBTitle.Location = new System.Drawing.Point(9, 31);
+            this.lblDBTitle.Name = "lblDBTitle";
+            this.lblDBTitle.Size = new System.Drawing.Size(90, 13);
+            this.lblDBTitle.TabIndex = 0;
+            this.lblDBTitle.Text = "Using database:";
+            // 
             // pictureBox1
             // 
             this.pictureBox1.Image = global::Thetis.Properties.Resources.ukraine_flag;
@@ -6732,7 +6778,7 @@
             this.chkSupportUkraine.Image = null;
             this.chkSupportUkraine.Location = new System.Drawing.Point(66, 377);
             this.chkSupportUkraine.Name = "chkSupportUkraine";
-            this.chkSupportUkraine.Size = new System.Drawing.Size(103, 17);
+            this.chkSupportUkraine.Size = new System.Drawing.Size(111, 17);
             this.chkSupportUkraine.TabIndex = 39;
             this.chkSupportUkraine.Text = "Support Ukraine";
             this.toolTip1.SetToolTip(this.chkSupportUkraine, "RIP Ivan UR8GX");
@@ -6955,7 +7001,7 @@
             0,
             0});
             this.udStaticIP16.Name = "udStaticIP16";
-            this.udStaticIP16.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP16.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP16.TabIndex = 19;
             this.udStaticIP16.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP16.TinyStep = false;
@@ -6984,7 +7030,7 @@
             0,
             0});
             this.udStaticIP15.Name = "udStaticIP15";
-            this.udStaticIP15.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP15.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP15.TabIndex = 18;
             this.udStaticIP15.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP15.TinyStep = false;
@@ -7013,7 +7059,7 @@
             0,
             0});
             this.udStaticIP14.Name = "udStaticIP14";
-            this.udStaticIP14.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP14.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP14.TabIndex = 17;
             this.udStaticIP14.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP14.TinyStep = false;
@@ -7042,7 +7088,7 @@
             0,
             0});
             this.udStaticIP13.Name = "udStaticIP13";
-            this.udStaticIP13.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP13.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP13.TabIndex = 16;
             this.udStaticIP13.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP13.TinyStep = false;
@@ -7081,7 +7127,7 @@
             0,
             0});
             this.udStaticIP12.Name = "udStaticIP12";
-            this.udStaticIP12.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP12.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP12.TabIndex = 14;
             this.udStaticIP12.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP12.TinyStep = false;
@@ -7110,7 +7156,7 @@
             0,
             0});
             this.udStaticIP11.Name = "udStaticIP11";
-            this.udStaticIP11.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP11.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP11.TabIndex = 13;
             this.udStaticIP11.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP11.TinyStep = false;
@@ -7139,7 +7185,7 @@
             0,
             0});
             this.udStaticIP10.Name = "udStaticIP10";
-            this.udStaticIP10.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP10.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP10.TabIndex = 12;
             this.udStaticIP10.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP10.TinyStep = false;
@@ -7168,7 +7214,7 @@
             0,
             0});
             this.udStaticIP9.Name = "udStaticIP9";
-            this.udStaticIP9.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP9.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP9.TabIndex = 11;
             this.udStaticIP9.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP9.TinyStep = false;
@@ -7220,7 +7266,7 @@
             0,
             0});
             this.udStaticIP8.Name = "udStaticIP8";
-            this.udStaticIP8.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP8.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP8.TabIndex = 8;
             this.udStaticIP8.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP8.TinyStep = false;
@@ -7249,7 +7295,7 @@
             0,
             0});
             this.udStaticIP7.Name = "udStaticIP7";
-            this.udStaticIP7.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP7.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP7.TabIndex = 7;
             this.udStaticIP7.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP7.TinyStep = false;
@@ -7278,7 +7324,7 @@
             0,
             0});
             this.udStaticIP6.Name = "udStaticIP6";
-            this.udStaticIP6.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP6.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP6.TabIndex = 6;
             this.udStaticIP6.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP6.TinyStep = false;
@@ -7307,7 +7353,7 @@
             0,
             0});
             this.udStaticIP5.Name = "udStaticIP5";
-            this.udStaticIP5.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP5.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP5.TabIndex = 5;
             this.udStaticIP5.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP5.TinyStep = false;
@@ -7348,7 +7394,7 @@
             0,
             0});
             this.udStaticIP4.Name = "udStaticIP4";
-            this.udStaticIP4.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP4.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP4.TabIndex = 3;
             this.udStaticIP4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP4.TinyStep = false;
@@ -7377,7 +7423,7 @@
             0,
             0});
             this.udStaticIP3.Name = "udStaticIP3";
-            this.udStaticIP3.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP3.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP3.TabIndex = 2;
             this.udStaticIP3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP3.TinyStep = false;
@@ -7406,7 +7452,7 @@
             0,
             0});
             this.udStaticIP2.Name = "udStaticIP2";
-            this.udStaticIP2.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP2.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP2.TabIndex = 1;
             this.udStaticIP2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP2.TinyStep = false;
@@ -7435,7 +7481,7 @@
             0,
             0});
             this.udStaticIP1.Name = "udStaticIP1";
-            this.udStaticIP1.Size = new System.Drawing.Size(42, 20);
+            this.udStaticIP1.Size = new System.Drawing.Size(42, 22);
             this.udStaticIP1.TabIndex = 0;
             this.udStaticIP1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udStaticIP1.TinyStep = false;
@@ -7504,7 +7550,7 @@
             this.chkExtended.Image = null;
             this.chkExtended.Location = new System.Drawing.Point(12, 52);
             this.chkExtended.Name = "chkExtended";
-            this.chkExtended.Size = new System.Drawing.Size(71, 17);
+            this.chkExtended.Size = new System.Drawing.Size(74, 17);
             this.chkExtended.TabIndex = 1;
             this.chkExtended.Text = "Extended";
             this.toolTip1.SetToolTip(this.chkExtended, "Enable extended TX (out of band)");
@@ -7667,7 +7713,7 @@
             this.chkApolloPresent.Image = null;
             this.chkApolloPresent.Location = new System.Drawing.Point(25, 100);
             this.chkApolloPresent.Name = "chkApolloPresent";
-            this.chkApolloPresent.Size = new System.Drawing.Size(55, 17);
+            this.chkApolloPresent.Size = new System.Drawing.Size(60, 17);
             this.chkApolloPresent.TabIndex = 7;
             this.chkApolloPresent.Text = "Apollo";
             this.chkApolloPresent.UseVisualStyleBackColor = true;
@@ -7682,7 +7728,7 @@
             this.chkPennyLane.Image = null;
             this.chkPennyLane.Location = new System.Drawing.Point(25, 60);
             this.chkPennyLane.Name = "chkPennyLane";
-            this.chkPennyLane.Size = new System.Drawing.Size(80, 17);
+            this.chkPennyLane.Size = new System.Drawing.Size(81, 17);
             this.chkPennyLane.TabIndex = 6;
             this.chkPennyLane.Text = "PennyLane";
             this.chkPennyLane.UseVisualStyleBackColor = true;
@@ -7697,7 +7743,7 @@
             this.chkAlexPresent.Image = null;
             this.chkAlexPresent.Location = new System.Drawing.Point(25, 80);
             this.chkAlexPresent.Name = "chkAlexPresent";
-            this.chkAlexPresent.Size = new System.Drawing.Size(46, 17);
+            this.chkAlexPresent.Size = new System.Drawing.Size(47, 17);
             this.chkAlexPresent.TabIndex = 3;
             this.chkAlexPresent.Text = "Alex";
             this.chkAlexPresent.UseVisualStyleBackColor = true;
@@ -7711,7 +7757,7 @@
             this.chkMercuryPresent.Image = null;
             this.chkMercuryPresent.Location = new System.Drawing.Point(25, 20);
             this.chkMercuryPresent.Name = "chkMercuryPresent";
-            this.chkMercuryPresent.Size = new System.Drawing.Size(64, 17);
+            this.chkMercuryPresent.Size = new System.Drawing.Size(67, 17);
             this.chkMercuryPresent.TabIndex = 0;
             this.chkMercuryPresent.Text = "Mercury";
             this.chkMercuryPresent.UseVisualStyleBackColor = true;
@@ -7724,7 +7770,7 @@
             this.chkPennyPresent.Image = null;
             this.chkPennyPresent.Location = new System.Drawing.Point(25, 40);
             this.chkPennyPresent.Name = "chkPennyPresent";
-            this.chkPennyPresent.Size = new System.Drawing.Size(71, 17);
+            this.chkPennyPresent.Size = new System.Drawing.Size(74, 17);
             this.chkPennyPresent.TabIndex = 1;
             this.chkPennyPresent.Text = "Penelope";
             this.chkPennyPresent.UseVisualStyleBackColor = true;
@@ -7764,7 +7810,7 @@
             this.radOrionPTTOn.Image = null;
             this.radOrionPTTOn.Location = new System.Drawing.Point(49, 2);
             this.radOrionPTTOn.Name = "radOrionPTTOn";
-            this.radOrionPTTOn.Size = new System.Drawing.Size(39, 17);
+            this.radOrionPTTOn.Size = new System.Drawing.Size(41, 17);
             this.radOrionPTTOn.TabIndex = 1;
             this.radOrionPTTOn.TabStop = true;
             this.radOrionPTTOn.Text = "On";
@@ -7776,7 +7822,7 @@
             this.radOrionPTTOff.Image = null;
             this.radOrionPTTOff.Location = new System.Drawing.Point(3, 2);
             this.radOrionPTTOff.Name = "radOrionPTTOff";
-            this.radOrionPTTOff.Size = new System.Drawing.Size(39, 17);
+            this.radOrionPTTOff.Size = new System.Drawing.Size(42, 17);
             this.radOrionPTTOff.TabIndex = 0;
             this.radOrionPTTOff.Text = "Off";
             this.radOrionPTTOff.UseVisualStyleBackColor = true;
@@ -7788,7 +7834,7 @@
             this.lblOrionPTT.Image = null;
             this.lblOrionPTT.Location = new System.Drawing.Point(9, 79);
             this.lblOrionPTT.Name = "lblOrionPTT";
-            this.lblOrionPTT.Size = new System.Drawing.Size(28, 13);
+            this.lblOrionPTT.Size = new System.Drawing.Size(25, 13);
             this.lblOrionPTT.TabIndex = 4;
             this.lblOrionPTT.Text = "PTT";
             // 
@@ -7809,7 +7855,7 @@
             this.radOrionBiasOn.Image = null;
             this.radOrionBiasOn.Location = new System.Drawing.Point(49, 2);
             this.radOrionBiasOn.Name = "radOrionBiasOn";
-            this.radOrionBiasOn.Size = new System.Drawing.Size(39, 17);
+            this.radOrionBiasOn.Size = new System.Drawing.Size(41, 17);
             this.radOrionBiasOn.TabIndex = 1;
             this.radOrionBiasOn.TabStop = true;
             this.radOrionBiasOn.Text = "On";
@@ -7823,7 +7869,7 @@
             this.radOrionBiasOff.Image = null;
             this.radOrionBiasOff.Location = new System.Drawing.Point(3, 2);
             this.radOrionBiasOff.Name = "radOrionBiasOff";
-            this.radOrionBiasOff.Size = new System.Drawing.Size(39, 17);
+            this.radOrionBiasOff.Size = new System.Drawing.Size(42, 17);
             this.radOrionBiasOff.TabIndex = 0;
             this.radOrionBiasOff.TabStop = true;
             this.radOrionBiasOff.Text = "Off";
@@ -7856,7 +7902,7 @@
             this.radOrionMicRing.Image = null;
             this.radOrionMicRing.Location = new System.Drawing.Point(49, 2);
             this.radOrionMicRing.Name = "radOrionMicRing";
-            this.radOrionMicRing.Size = new System.Drawing.Size(47, 17);
+            this.radOrionMicRing.Size = new System.Drawing.Size(49, 17);
             this.radOrionMicRing.TabIndex = 1;
             this.radOrionMicRing.TabStop = true;
             this.radOrionMicRing.Text = "Ring";
@@ -7869,7 +7915,7 @@
             this.radOrionMicTip.Image = null;
             this.radOrionMicTip.Location = new System.Drawing.Point(3, 2);
             this.radOrionMicTip.Name = "radOrionMicTip";
-            this.radOrionMicTip.Size = new System.Drawing.Size(40, 17);
+            this.radOrionMicTip.Size = new System.Drawing.Size(41, 17);
             this.radOrionMicTip.TabIndex = 0;
             this.radOrionMicTip.TabStop = true;
             this.radOrionMicTip.Text = "Tip";
@@ -7882,7 +7928,7 @@
             this.lblOrionMic.Image = null;
             this.lblOrionMic.Location = new System.Drawing.Point(10, 26);
             this.lblOrionMic.Name = "lblOrionMic";
-            this.lblOrionMic.Size = new System.Drawing.Size(24, 13);
+            this.lblOrionMic.Size = new System.Drawing.Size(25, 13);
             this.lblOrionMic.TabIndex = 0;
             this.lblOrionMic.Text = "Mic";
             // 
@@ -8003,7 +8049,7 @@
             0,
             0});
             this.udSpaceMoxDelay.Name = "udSpaceMoxDelay";
-            this.udSpaceMoxDelay.Size = new System.Drawing.Size(48, 20);
+            this.udSpaceMoxDelay.Size = new System.Drawing.Size(48, 22);
             this.udSpaceMoxDelay.TabIndex = 28;
             this.udSpaceMoxDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udSpaceMoxDelay, "Sets the Hang time in mS.");
@@ -8044,7 +8090,7 @@
             0,
             0});
             this.udRFDelay.Name = "udRFDelay";
-            this.udRFDelay.Size = new System.Drawing.Size(48, 20);
+            this.udRFDelay.Size = new System.Drawing.Size(48, 22);
             this.udRFDelay.TabIndex = 22;
             this.udRFDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRFDelay, "Sets the Delay period to wait after TX before RF output except CW mode.");
@@ -8076,7 +8122,7 @@
             0,
             0});
             this.udMoxDelay.Name = "udMoxDelay";
-            this.udMoxDelay.Size = new System.Drawing.Size(48, 20);
+            this.udMoxDelay.Size = new System.Drawing.Size(48, 22);
             this.udMoxDelay.TabIndex = 20;
             this.udMoxDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udMoxDelay, "Sets the delay between carrier removal and PTT drops.");
@@ -8118,7 +8164,7 @@
             0,
             0});
             this.udGenPTTOutDelay.Name = "udGenPTTOutDelay";
-            this.udGenPTTOutDelay.Size = new System.Drawing.Size(48, 20);
+            this.udGenPTTOutDelay.Size = new System.Drawing.Size(48, 22);
             this.udGenPTTOutDelay.TabIndex = 17;
             this.udGenPTTOutDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udGenPTTOutDelay, "Delay between PTT Out drops to RX On.");
@@ -8229,7 +8275,7 @@
             0,
             0});
             this.udHermesStepAttenuatorDataRX2.Name = "udHermesStepAttenuatorDataRX2";
-            this.udHermesStepAttenuatorDataRX2.Size = new System.Drawing.Size(55, 20);
+            this.udHermesStepAttenuatorDataRX2.Size = new System.Drawing.Size(55, 22);
             this.udHermesStepAttenuatorDataRX2.TabIndex = 5;
             this.udHermesStepAttenuatorDataRX2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.udHermesStepAttenuatorDataRX2.TinyStep = false;
@@ -8270,7 +8316,7 @@
             0,
             0});
             this.udHermesStepAttenuatorData.Name = "udHermesStepAttenuatorData";
-            this.udHermesStepAttenuatorData.Size = new System.Drawing.Size(55, 20);
+            this.udHermesStepAttenuatorData.Size = new System.Drawing.Size(55, 22);
             this.udHermesStepAttenuatorData.TabIndex = 3;
             this.udHermesStepAttenuatorData.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.udHermesStepAttenuatorData.TinyStep = false;
@@ -8311,7 +8357,7 @@
             this.labelTS322.Image = null;
             this.labelTS322.Location = new System.Drawing.Point(16, 22);
             this.labelTS322.Name = "labelTS322";
-            this.labelTS322.Size = new System.Drawing.Size(66, 13);
+            this.labelTS322.Size = new System.Drawing.Size(67, 13);
             this.labelTS322.TabIndex = 38;
             this.labelTS322.Text = "Key-Up (mS)";
             // 
@@ -8321,7 +8367,7 @@
             this.labelTS325.Image = null;
             this.labelTS325.Location = new System.Drawing.Point(3, 52);
             this.labelTS325.Name = "labelTS325";
-            this.labelTS325.Size = new System.Drawing.Size(80, 13);
+            this.labelTS325.Size = new System.Drawing.Size(83, 13);
             this.labelTS325.TabIndex = 31;
             this.labelTS325.Text = "Key-Down (mS)";
             // 
@@ -8344,7 +8390,7 @@
             0,
             0});
             this.udCWKeyUpDelay.Name = "udCWKeyUpDelay";
-            this.udCWKeyUpDelay.Size = new System.Drawing.Size(48, 20);
+            this.udCWKeyUpDelay.Size = new System.Drawing.Size(48, 22);
             this.udCWKeyUpDelay.TabIndex = 37;
             this.udCWKeyUpDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udCWKeyUpDelay, "Sets the delay between carrier removal and PTT Out drops.");
@@ -8374,7 +8420,7 @@
             0,
             0});
             this.udHWKeyDownDelay.Name = "udHWKeyDownDelay";
-            this.udHWKeyDownDelay.Size = new System.Drawing.Size(48, 20);
+            this.udHWKeyDownDelay.Size = new System.Drawing.Size(48, 22);
             this.udHWKeyDownDelay.TabIndex = 36;
             this.udHWKeyDownDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udHWKeyDownDelay, "Sets the Delay period to wait after Key-Down before RF output in CW mode.");
@@ -8400,7 +8446,7 @@
             this.txtGenCustomTitle.Location = new System.Drawing.Point(16, 24);
             this.txtGenCustomTitle.MaxLength = 50;
             this.txtGenCustomTitle.Name = "txtGenCustomTitle";
-            this.txtGenCustomTitle.Size = new System.Drawing.Size(137, 20);
+            this.txtGenCustomTitle.Size = new System.Drawing.Size(137, 22);
             this.txtGenCustomTitle.TabIndex = 0;
             this.txtGenCustomTitle.TextChanged += new System.EventHandler(this.txtGenCustomTitle_TextChanged);
             // 
@@ -8440,7 +8486,7 @@
             this.chkCTUNignore0beat.Image = null;
             this.chkCTUNignore0beat.Location = new System.Drawing.Point(145, 59);
             this.chkCTUNignore0beat.Name = "chkCTUNignore0beat";
-            this.chkCTUNignore0beat.Size = new System.Drawing.Size(104, 17);
+            this.chkCTUNignore0beat.Size = new System.Drawing.Size(107, 17);
             this.chkCTUNignore0beat.TabIndex = 20;
             this.chkCTUNignore0beat.Text = "CTUN no 0 beat";
             this.toolTip1.SetToolTip(this.chkCTUNignore0beat, "When CTUN is on, and you click/drag inside a filter, the 0 beat will not be moved" +
@@ -8455,7 +8501,7 @@
             this.chkZTBstoreLock.Image = null;
             this.chkZTBstoreLock.Location = new System.Drawing.Point(162, 40);
             this.chkZTBstoreLock.Name = "chkZTBstoreLock";
-            this.chkZTBstoreLock.Size = new System.Drawing.Size(50, 17);
+            this.chkZTBstoreLock.Size = new System.Drawing.Size(49, 17);
             this.chkZTBstoreLock.TabIndex = 19;
             this.chkZTBstoreLock.Text = "Lock";
             this.toolTip1.SetToolTip(this.chkZTBstoreLock, "Prevent right click store");
@@ -8468,7 +8514,7 @@
             this.chkZTBIsRecallStore.Image = null;
             this.chkZTBIsRecallStore.Location = new System.Drawing.Point(145, 20);
             this.chkZTBIsRecallStore.Name = "chkZTBIsRecallStore";
-            this.chkZTBIsRecallStore.Size = new System.Drawing.Size(120, 17);
+            this.chkZTBIsRecallStore.Size = new System.Drawing.Size(119, 17);
             this.chkZTBIsRecallStore.TabIndex = 18;
             this.chkZTBIsRecallStore.Text = "ZTB is Recall/Store";
             this.toolTip1.SetToolTip(this.chkZTBIsRecallStore, "The zoom to band button changes to recall/store. Left to recall, right to store, " +
@@ -8533,7 +8579,7 @@
             this.chkReverseShiftZoomModifier.Image = null;
             this.chkReverseShiftZoomModifier.Location = new System.Drawing.Point(34, 302);
             this.chkReverseShiftZoomModifier.Name = "chkReverseShiftZoomModifier";
-            this.chkReverseShiftZoomModifier.Size = new System.Drawing.Size(66, 17);
+            this.chkReverseShiftZoomModifier.Size = new System.Drawing.Size(65, 17);
             this.chkReverseShiftZoomModifier.TabIndex = 13;
             this.chkReverseShiftZoomModifier.Text = "Reverse";
             this.toolTip1.SetToolTip(this.chkReverseShiftZoomModifier, "Reverse the action, shift will casue zoom to  recentre");
@@ -8729,7 +8775,7 @@
             0,
             0});
             this.udOptClickTuneOffsetDIGL.Name = "udOptClickTuneOffsetDIGL";
-            this.udOptClickTuneOffsetDIGL.Size = new System.Drawing.Size(56, 20);
+            this.udOptClickTuneOffsetDIGL.Size = new System.Drawing.Size(56, 22);
             this.udOptClickTuneOffsetDIGL.TabIndex = 11;
             this.udOptClickTuneOffsetDIGL.TinyStep = false;
             this.toolTip1.SetToolTip(this.udOptClickTuneOffsetDIGL, "Determines the frequency offset for click tuning and ");
@@ -8770,7 +8816,7 @@
             0,
             0});
             this.udOptClickTuneOffsetDIGU.Name = "udOptClickTuneOffsetDIGU";
-            this.udOptClickTuneOffsetDIGU.Size = new System.Drawing.Size(56, 20);
+            this.udOptClickTuneOffsetDIGU.Size = new System.Drawing.Size(56, 22);
             this.udOptClickTuneOffsetDIGU.TabIndex = 0;
             this.udOptClickTuneOffsetDIGU.TinyStep = false;
             this.toolTip1.SetToolTip(this.udOptClickTuneOffsetDIGU, "Determines the frequency offset for click tuning and ");
@@ -8869,7 +8915,7 @@
             this.labelTS157.Image = null;
             this.labelTS157.Location = new System.Drawing.Point(123, 49);
             this.labelTS157.Name = "labelTS157";
-            this.labelTS157.Size = new System.Drawing.Size(28, 13);
+            this.labelTS157.Size = new System.Drawing.Size(29, 13);
             this.labelTS157.TabIndex = 12;
             this.labelTS157.Text = "dBm";
             // 
@@ -8879,7 +8925,7 @@
             this.labelTS156.Image = null;
             this.labelTS156.Location = new System.Drawing.Point(38, 49);
             this.labelTS156.Name = "labelTS156";
-            this.labelTS156.Size = new System.Drawing.Size(26, 13);
+            this.labelTS156.Size = new System.Drawing.Size(30, 13);
             this.labelTS156.TabIndex = 11;
             this.labelTS156.Text = "shift";
             this.toolTip1.SetToolTip(this.labelTS156, "All band shift to the NF");
@@ -8904,7 +8950,7 @@
             0,
             -2147483648});
             this.nudNFshift.Name = "nudNFshift";
-            this.nudNFshift.Size = new System.Drawing.Size(47, 20);
+            this.nudNFshift.Size = new System.Drawing.Size(47, 22);
             this.nudNFshift.TabIndex = 10;
             this.nudNFshift.TinyStep = false;
             this.toolTip1.SetToolTip(this.nudNFshift, "Default 0. Apply a shift.");
@@ -8921,7 +8967,7 @@
             this.labelTS155.Image = null;
             this.labelTS155.Location = new System.Drawing.Point(12, 23);
             this.labelTS155.Name = "labelTS155";
-            this.labelTS155.Size = new System.Drawing.Size(52, 13);
+            this.labelTS155.Size = new System.Drawing.Size(57, 13);
             this.labelTS155.TabIndex = 9;
             this.labelTS155.Text = "sensitivity";
             // 
@@ -8944,7 +8990,7 @@
             0,
             0});
             this.nudNFsensitivity.Name = "nudNFsensitivity";
-            this.nudNFsensitivity.Size = new System.Drawing.Size(47, 20);
+            this.nudNFsensitivity.Size = new System.Drawing.Size(47, 22);
             this.nudNFsensitivity.TabIndex = 0;
             this.nudNFsensitivity.TinyStep = false;
             this.toolTip1.SetToolTip(this.nudNFsensitivity, "Default 6. A low value will find very small areas of noise floor. Low values will" +
@@ -8975,7 +9021,7 @@
             this.chkUseSUnitsForPBNPPBSNR.Image = null;
             this.chkUseSUnitsForPBNPPBSNR.Location = new System.Drawing.Point(18, 92);
             this.chkUseSUnitsForPBNPPBSNR.Name = "chkUseSUnitsForPBNPPBSNR";
-            this.chkUseSUnitsForPBNPPBSNR.Size = new System.Drawing.Size(167, 17);
+            this.chkUseSUnitsForPBNPPBSNR.Size = new System.Drawing.Size(165, 17);
             this.chkUseSUnitsForPBNPPBSNR.TabIndex = 3;
             this.chkUseSUnitsForPBNPPBSNR.Text = "PBNP and PBSNR as S-Units";
             this.toolTip1.SetToolTip(this.chkUseSUnitsForPBNPPBSNR, "Use S-Units for Estimated Passband Noise Power and Estimated Passband SNR");
@@ -8988,7 +9034,7 @@
             this.chkIgnoreSeqErrors.Image = null;
             this.chkIgnoreSeqErrors.Location = new System.Drawing.Point(18, 69);
             this.chkIgnoreSeqErrors.Name = "chkIgnoreSeqErrors";
-            this.chkIgnoreSeqErrors.Size = new System.Drawing.Size(110, 17);
+            this.chkIgnoreSeqErrors.Size = new System.Drawing.Size(116, 17);
             this.chkIgnoreSeqErrors.TabIndex = 2;
             this.chkIgnoreSeqErrors.Text = "Ignore SEQ errors";
             this.toolTip1.SetToolTip(this.chkIgnoreSeqErrors, "Ignore any SEQ errors. Will not show red seq warnings.");
@@ -9001,7 +9047,7 @@
             this.chkHideFeebackLevel.Image = null;
             this.chkHideFeebackLevel.Location = new System.Drawing.Point(18, 46);
             this.chkHideFeebackLevel.Name = "chkHideFeebackLevel";
-            this.chkHideFeebackLevel.Size = new System.Drawing.Size(159, 17);
+            this.chkHideFeebackLevel.Size = new System.Drawing.Size(169, 17);
             this.chkHideFeebackLevel.TabIndex = 1;
             this.chkHideFeebackLevel.Text = "Hide feedback level number";
             this.toolTip1.SetToolTip(this.chkHideFeebackLevel, "Hide the feedback level from the info bar");
@@ -9014,7 +9060,7 @@
             this.chkSwapREDBluePSAColours.Image = null;
             this.chkSwapREDBluePSAColours.Location = new System.Drawing.Point(18, 23);
             this.chkSwapREDBluePSAColours.Name = "chkSwapREDBluePSAColours";
-            this.chkSwapREDBluePSAColours.Size = new System.Drawing.Size(184, 17);
+            this.chkSwapREDBluePSAColours.Size = new System.Drawing.Size(192, 17);
             this.chkSwapREDBluePSAColours.TabIndex = 0;
             this.chkSwapREDBluePSAColours.Text = "Swap red and blue PS-A feeback";
             this.toolTip1.SetToolTip(this.chkSwapREDBluePSAColours, "Swap the red/blue colours used in the feedback level");
@@ -9037,7 +9083,7 @@
             this.chkUseOutlinedCross.Image = null;
             this.chkUseOutlinedCross.Location = new System.Drawing.Point(10, 29);
             this.chkUseOutlinedCross.Name = "chkUseOutlinedCross";
-            this.chkUseOutlinedCross.Size = new System.Drawing.Size(134, 17);
+            this.chkUseOutlinedCross.Size = new System.Drawing.Size(147, 17);
             this.chkUseOutlinedCross.TabIndex = 34;
             this.chkUseOutlinedCross.Text = "Cross cursor is outlined";
             this.toolTip1.SetToolTip(this.chkUseOutlinedCross, "Use an outlined cross for the mouse cursor if it is flickering/vanishing");
@@ -9071,7 +9117,7 @@
             this.chkQSOTimerFlashTimerIfResetOnExpiry.Image = null;
             this.chkQSOTimerFlashTimerIfResetOnExpiry.Location = new System.Drawing.Point(35, 92);
             this.chkQSOTimerFlashTimerIfResetOnExpiry.Name = "chkQSOTimerFlashTimerIfResetOnExpiry";
-            this.chkQSOTimerFlashTimerIfResetOnExpiry.Size = new System.Drawing.Size(112, 17);
+            this.chkQSOTimerFlashTimerIfResetOnExpiry.Size = new System.Drawing.Size(123, 17);
             this.chkQSOTimerFlashTimerIfResetOnExpiry.TabIndex = 11;
             this.chkQSOTimerFlashTimerIfResetOnExpiry.Text = "Flash continuation";
             this.toolTip1.SetToolTip(this.chkQSOTimerFlashTimerIfResetOnExpiry, "Flash the timer on the status bar after an automatic reset. Left click to stop fl" +
@@ -9085,7 +9131,7 @@
             this.chkQSOTimerResetOnExpiry.Image = null;
             this.chkQSOTimerResetOnExpiry.Location = new System.Drawing.Point(17, 69);
             this.chkQSOTimerResetOnExpiry.Name = "chkQSOTimerResetOnExpiry";
-            this.chkQSOTimerResetOnExpiry.Size = new System.Drawing.Size(99, 17);
+            this.chkQSOTimerResetOnExpiry.Size = new System.Drawing.Size(104, 17);
             this.chkQSOTimerResetOnExpiry.TabIndex = 10;
             this.chkQSOTimerResetOnExpiry.Text = "Reset on expiry";
             this.toolTip1.SetToolTip(this.chkQSOTimerResetOnExpiry, "The timer resets on expiry");
@@ -9110,7 +9156,7 @@
             this.chkQSOTimerPlaySoundOnExpiry.Image = null;
             this.chkQSOTimerPlaySoundOnExpiry.Location = new System.Drawing.Point(17, 115);
             this.chkQSOTimerPlaySoundOnExpiry.Name = "chkQSOTimerPlaySoundOnExpiry";
-            this.chkQSOTimerPlaySoundOnExpiry.Size = new System.Drawing.Size(123, 17);
+            this.chkQSOTimerPlaySoundOnExpiry.Size = new System.Drawing.Size(132, 17);
             this.chkQSOTimerPlaySoundOnExpiry.TabIndex = 3;
             this.chkQSOTimerPlaySoundOnExpiry.Text = "Play sound on expiry";
             this.toolTip1.SetToolTip(this.chkQSOTimerPlaySoundOnExpiry, "Play sound to default sound device when timer expires (only plays once each time " +
@@ -9124,7 +9170,7 @@
             this.lblQSOTimerSecs.Image = null;
             this.lblQSOTimerSecs.Location = new System.Drawing.Point(73, 200);
             this.lblQSOTimerSecs.Name = "lblQSOTimerSecs";
-            this.lblQSOTimerSecs.Size = new System.Drawing.Size(29, 13);
+            this.lblQSOTimerSecs.Size = new System.Drawing.Size(28, 13);
             this.lblQSOTimerSecs.TabIndex = 8;
             this.lblQSOTimerSecs.Text = "secs";
             // 
@@ -9134,7 +9180,7 @@
             this.lblQSOTimerMins.Image = null;
             this.lblQSOTimerMins.Location = new System.Drawing.Point(27, 199);
             this.lblQSOTimerMins.Name = "lblQSOTimerMins";
-            this.lblQSOTimerMins.Size = new System.Drawing.Size(28, 13);
+            this.lblQSOTimerMins.Size = new System.Drawing.Size(31, 13);
             this.lblQSOTimerMins.TabIndex = 7;
             this.lblQSOTimerMins.Text = "mins";
             // 
@@ -9157,7 +9203,7 @@
             0,
             0});
             this.udQSOTimerSeconds.Name = "udQSOTimerSeconds";
-            this.udQSOTimerSeconds.Size = new System.Drawing.Size(40, 20);
+            this.udQSOTimerSeconds.Size = new System.Drawing.Size(40, 22);
             this.udQSOTimerSeconds.TabIndex = 6;
             this.udQSOTimerSeconds.TinyStep = false;
             this.toolTip1.SetToolTip(this.udQSOTimerSeconds, "The minutes and seconds before the timer expires. Sound may play, and timer will " +
@@ -9188,7 +9234,7 @@
             0,
             0});
             this.udQSOTimerMinutes.Name = "udQSOTimerMinutes";
-            this.udQSOTimerMinutes.Size = new System.Drawing.Size(40, 20);
+            this.udQSOTimerMinutes.Size = new System.Drawing.Size(40, 22);
             this.udQSOTimerMinutes.TabIndex = 5;
             this.udQSOTimerMinutes.TinyStep = false;
             this.toolTip1.SetToolTip(this.udQSOTimerMinutes, "The minutes and seconds before the timer expires. Sound may play, and timer will " +
@@ -9219,7 +9265,7 @@
             this.chkQSOTimerResetOnMOX.Image = null;
             this.chkQSOTimerResetOnMOX.Location = new System.Drawing.Point(17, 46);
             this.chkQSOTimerResetOnMOX.Name = "chkQSOTimerResetOnMOX";
-            this.chkQSOTimerResetOnMOX.Size = new System.Drawing.Size(96, 17);
+            this.chkQSOTimerResetOnMOX.Size = new System.Drawing.Size(99, 17);
             this.chkQSOTimerResetOnMOX.TabIndex = 2;
             this.chkQSOTimerResetOnMOX.Text = "Reset on MOX";
             this.toolTip1.SetToolTip(this.chkQSOTimerResetOnMOX, "Reset the timer on every MOX");
@@ -9232,7 +9278,7 @@
             this.chkQSOTimerOnlyDuringMOX.Image = null;
             this.chkQSOTimerOnlyDuringMOX.Location = new System.Drawing.Point(17, 23);
             this.chkQSOTimerOnlyDuringMOX.Name = "chkQSOTimerOnlyDuringMOX";
-            this.chkQSOTimerOnlyDuringMOX.Size = new System.Drawing.Size(106, 17);
+            this.chkQSOTimerOnlyDuringMOX.Size = new System.Drawing.Size(116, 17);
             this.chkQSOTimerOnlyDuringMOX.TabIndex = 1;
             this.chkQSOTimerOnlyDuringMOX.Text = "Only during MOX";
             this.toolTip1.SetToolTip(this.chkQSOTimerOnlyDuringMOX, "Only count when in MOX/tx state. NOTE: left click to start/stop is prevented");
@@ -9245,7 +9291,7 @@
             this.chkQSOTimerEnabled.Image = null;
             this.chkQSOTimerEnabled.Location = new System.Drawing.Point(70, 0);
             this.chkQSOTimerEnabled.Name = "chkQSOTimerEnabled";
-            this.chkQSOTimerEnabled.Size = new System.Drawing.Size(65, 17);
+            this.chkQSOTimerEnabled.Size = new System.Drawing.Size(68, 17);
             this.chkQSOTimerEnabled.TabIndex = 0;
             this.chkQSOTimerEnabled.Text = "Enabled";
             this.toolTip1.SetToolTip(this.chkQSOTimerEnabled, "Enable to use the QSO timer which is shown on the status bar");
@@ -9303,7 +9349,7 @@
             this.labelTS159.Image = null;
             this.labelTS159.Location = new System.Drawing.Point(28, 54);
             this.labelTS159.Name = "labelTS159";
-            this.labelTS159.Size = new System.Drawing.Size(57, 13);
+            this.labelTS159.Size = new System.Drawing.Size(61, 13);
             this.labelTS159.TabIndex = 3;
             this.labelTS159.Text = "Sensitivity:";
             // 
@@ -9313,7 +9359,7 @@
             this.labelTS158.Image = null;
             this.labelTS158.Location = new System.Drawing.Point(47, 27);
             this.labelTS158.Name = "labelTS158";
-            this.labelTS158.Size = new System.Drawing.Size(38, 13);
+            this.labelTS158.Size = new System.Drawing.Size(42, 13);
             this.labelTS158.TabIndex = 2;
             this.labelTS158.Text = "Offset:";
             // 
@@ -9337,7 +9383,7 @@
             0,
             0});
             this.udAmpSens.Name = "udAmpSens";
-            this.udAmpSens.Size = new System.Drawing.Size(67, 20);
+            this.udAmpSens.Size = new System.Drawing.Size(67, 22);
             this.udAmpSens.TabIndex = 1;
             this.udAmpSens.TinyStep = false;
             this.udAmpSens.Value = new decimal(new int[] {
@@ -9367,7 +9413,7 @@
             0,
             0});
             this.udAmpVoff.Name = "udAmpVoff";
-            this.udAmpVoff.Size = new System.Drawing.Size(67, 20);
+            this.udAmpVoff.Size = new System.Drawing.Size(67, 22);
             this.udAmpVoff.TabIndex = 0;
             this.udAmpVoff.TinyStep = false;
             this.udAmpVoff.Value = new decimal(new int[] {
@@ -9421,7 +9467,7 @@
             -2147483648});
             this.udGeneralCalRX2Level.Name = "udGeneralCalRX2Level";
             this.udGeneralCalRX2Level.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.udGeneralCalRX2Level.Size = new System.Drawing.Size(50, 20);
+            this.udGeneralCalRX2Level.Size = new System.Drawing.Size(50, 22);
             this.udGeneralCalRX2Level.TabIndex = 12;
             this.udGeneralCalRX2Level.TinyStep = false;
             this.toolTip1.SetToolTip(this.udGeneralCalRX2Level, "Level calibration reference level");
@@ -9464,7 +9510,7 @@
             0,
             0});
             this.udGeneralCalRX2Freq2.Name = "udGeneralCalRX2Freq2";
-            this.udGeneralCalRX2Freq2.Size = new System.Drawing.Size(75, 20);
+            this.udGeneralCalRX2Freq2.Size = new System.Drawing.Size(75, 22);
             this.udGeneralCalRX2Freq2.TabIndex = 10;
             this.udGeneralCalRX2Freq2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udGeneralCalRX2Freq2, "Level calibration reference frequency");
@@ -9525,7 +9571,7 @@
             0,
             -2147483648});
             this.udTXDisplayCalOffset.Name = "udTXDisplayCalOffset";
-            this.udTXDisplayCalOffset.Size = new System.Drawing.Size(50, 20);
+            this.udTXDisplayCalOffset.Size = new System.Drawing.Size(50, 22);
             this.udTXDisplayCalOffset.TabIndex = 12;
             this.udTXDisplayCalOffset.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXDisplayCalOffset, "Level TX Display Offset");
@@ -9583,7 +9629,7 @@
             0,
             0});
             this.udHPSDRFreqCorrectFactor10MHz.Name = "udHPSDRFreqCorrectFactor10MHz";
-            this.udHPSDRFreqCorrectFactor10MHz.Size = new System.Drawing.Size(84, 20);
+            this.udHPSDRFreqCorrectFactor10MHz.Size = new System.Drawing.Size(84, 22);
             this.udHPSDRFreqCorrectFactor10MHz.TabIndex = 4;
             this.udHPSDRFreqCorrectFactor10MHz.TinyStep = false;
             this.toolTip1.SetToolTip(this.udHPSDRFreqCorrectFactor10MHz, "Frequency calibration reference frequency when the 10MHz ref is selected");
@@ -9600,7 +9646,7 @@
             this.chkUsing10MHzRef.Image = null;
             this.chkUsing10MHzRef.Location = new System.Drawing.Point(15, 110);
             this.chkUsing10MHzRef.Name = "chkUsing10MHzRef";
-            this.chkUsing10MHzRef.Size = new System.Drawing.Size(122, 17);
+            this.chkUsing10MHzRef.Size = new System.Drawing.Size(129, 17);
             this.chkUsing10MHzRef.TabIndex = 3;
             this.chkUsing10MHzRef.Text = "Using ext 10MHz ref";
             this.toolTip1.SetToolTip(this.chkUsing10MHzRef, "With this checked, the radio the correction factor below will be used instead");
@@ -9638,7 +9684,7 @@
             0,
             0});
             this.udHPSDRFreqCorrectFactor.Name = "udHPSDRFreqCorrectFactor";
-            this.udHPSDRFreqCorrectFactor.Size = new System.Drawing.Size(84, 20);
+            this.udHPSDRFreqCorrectFactor.Size = new System.Drawing.Size(84, 22);
             this.udHPSDRFreqCorrectFactor.TabIndex = 1;
             this.udHPSDRFreqCorrectFactor.TinyStep = false;
             this.toolTip1.SetToolTip(this.udHPSDRFreqCorrectFactor, "Frequency calibration reference frequency");
@@ -9655,7 +9701,7 @@
             this.labelTS10.Image = null;
             this.labelTS10.Location = new System.Drawing.Point(12, 25);
             this.labelTS10.Name = "labelTS10";
-            this.labelTS10.Size = new System.Drawing.Size(88, 13);
+            this.labelTS10.Size = new System.Drawing.Size(96, 13);
             this.labelTS10.TabIndex = 0;
             this.labelTS10.Text = "Correction Factor";
             // 
@@ -9720,7 +9766,7 @@
             0});
             this.ud6mRx2LNAGainOffset.Name = "ud6mRx2LNAGainOffset";
             this.ud6mRx2LNAGainOffset.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.ud6mRx2LNAGainOffset.Size = new System.Drawing.Size(50, 20);
+            this.ud6mRx2LNAGainOffset.Size = new System.Drawing.Size(50, 22);
             this.ud6mRx2LNAGainOffset.TabIndex = 18;
             this.ud6mRx2LNAGainOffset.TinyStep = false;
             this.toolTip1.SetToolTip(this.ud6mRx2LNAGainOffset, "6m LNA gain offset for meter calibration");
@@ -9762,7 +9808,7 @@
             0});
             this.ud6mLNAGainOffset.Name = "ud6mLNAGainOffset";
             this.ud6mLNAGainOffset.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.ud6mLNAGainOffset.Size = new System.Drawing.Size(50, 20);
+            this.ud6mLNAGainOffset.Size = new System.Drawing.Size(50, 22);
             this.ud6mLNAGainOffset.TabIndex = 14;
             this.ud6mLNAGainOffset.TinyStep = false;
             this.toolTip1.SetToolTip(this.ud6mLNAGainOffset, "6m LNA gain offset for meter calibration");
@@ -9803,7 +9849,7 @@
             -2147483648});
             this.udGeneralCalLevel.Name = "udGeneralCalLevel";
             this.udGeneralCalLevel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.udGeneralCalLevel.Size = new System.Drawing.Size(50, 20);
+            this.udGeneralCalLevel.Size = new System.Drawing.Size(50, 22);
             this.udGeneralCalLevel.TabIndex = 3;
             this.udGeneralCalLevel.TinyStep = false;
             this.toolTip1.SetToolTip(this.udGeneralCalLevel, "Level calibration reference level");
@@ -9834,7 +9880,7 @@
             0,
             0});
             this.udGeneralCalFreq2.Name = "udGeneralCalFreq2";
-            this.udGeneralCalFreq2.Size = new System.Drawing.Size(75, 20);
+            this.udGeneralCalFreq2.Size = new System.Drawing.Size(75, 22);
             this.udGeneralCalFreq2.TabIndex = 1;
             this.udGeneralCalFreq2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udGeneralCalFreq2, "Level calibration reference frequency");
@@ -9934,7 +9980,7 @@
             0,
             0});
             this.udGeneralCalFreq1.Name = "udGeneralCalFreq1";
-            this.udGeneralCalFreq1.Size = new System.Drawing.Size(75, 20);
+            this.udGeneralCalFreq1.Size = new System.Drawing.Size(75, 22);
             this.udGeneralCalFreq1.TabIndex = 1;
             this.udGeneralCalFreq1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udGeneralCalFreq1, "Frequency calibration reference frequency");
@@ -9987,7 +10033,7 @@
             0,
             0});
             this.udGeneralCalFreq3.Name = "udGeneralCalFreq3";
-            this.udGeneralCalFreq3.Size = new System.Drawing.Size(75, 20);
+            this.udGeneralCalFreq3.Size = new System.Drawing.Size(75, 22);
             this.udGeneralCalFreq3.TabIndex = 1;
             this.udGeneralCalFreq3.TinyStep = false;
             this.toolTip1.SetToolTip(this.udGeneralCalFreq3, "RX Image calibration reference frequency");
@@ -10038,7 +10084,7 @@
             this.chkLimitFilterEdgesToSidebands.Image = null;
             this.chkLimitFilterEdgesToSidebands.Location = new System.Drawing.Point(27, 185);
             this.chkLimitFilterEdgesToSidebands.Name = "chkLimitFilterEdgesToSidebands";
-            this.chkLimitFilterEdgesToSidebands.Size = new System.Drawing.Size(164, 17);
+            this.chkLimitFilterEdgesToSidebands.Size = new System.Drawing.Size(181, 17);
             this.chkLimitFilterEdgesToSidebands.TabIndex = 31;
             this.chkLimitFilterEdgesToSidebands.Text = "Limit filter edges to sidebands";
             this.toolTip1.SetToolTip(this.chkLimitFilterEdgesToSidebands, "Prevents crossing the 0 point with certain filters");
@@ -10082,7 +10128,7 @@
             0,
             0});
             this.udRX2FilterDefaultLowCut.Name = "udRX2FilterDefaultLowCut";
-            this.udRX2FilterDefaultLowCut.Size = new System.Drawing.Size(48, 20);
+            this.udRX2FilterDefaultLowCut.Size = new System.Drawing.Size(48, 22);
             this.udRX2FilterDefaultLowCut.TabIndex = 17;
             this.udRX2FilterDefaultLowCut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2FilterDefaultLowCut, "Sets the default low cut filter for filter changes");
@@ -10121,7 +10167,7 @@
             0,
             0});
             this.udRX2OptMaxFilterShift.Name = "udRX2OptMaxFilterShift";
-            this.udRX2OptMaxFilterShift.Size = new System.Drawing.Size(48, 20);
+            this.udRX2OptMaxFilterShift.Size = new System.Drawing.Size(48, 22);
             this.udRX2OptMaxFilterShift.TabIndex = 13;
             this.udRX2OptMaxFilterShift.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2OptMaxFilterShift, "Sets the maximum amount for the Shift control.  Set lower for finer resolution co" +
@@ -10187,7 +10233,7 @@
             0,
             0});
             this.udRX2OptMaxFilterWidth.Name = "udRX2OptMaxFilterWidth";
-            this.udRX2OptMaxFilterWidth.Size = new System.Drawing.Size(48, 20);
+            this.udRX2OptMaxFilterWidth.Size = new System.Drawing.Size(48, 22);
             this.udRX2OptMaxFilterWidth.TabIndex = 0;
             this.udRX2OptMaxFilterWidth.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2OptMaxFilterWidth, "Wets the maximum filter bandwidth");
@@ -10257,7 +10303,7 @@
             0,
             0});
             this.udFilterDefaultLowCut.Name = "udFilterDefaultLowCut";
-            this.udFilterDefaultLowCut.Size = new System.Drawing.Size(48, 20);
+            this.udFilterDefaultLowCut.Size = new System.Drawing.Size(48, 22);
             this.udFilterDefaultLowCut.TabIndex = 17;
             this.udFilterDefaultLowCut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udFilterDefaultLowCut, "Sets the default low cut filter for filter changes");
@@ -10297,7 +10343,7 @@
             0,
             0});
             this.udOptMaxFilterShift.Name = "udOptMaxFilterShift";
-            this.udOptMaxFilterShift.Size = new System.Drawing.Size(48, 20);
+            this.udOptMaxFilterShift.Size = new System.Drawing.Size(48, 22);
             this.udOptMaxFilterShift.TabIndex = 13;
             this.udOptMaxFilterShift.TinyStep = false;
             this.toolTip1.SetToolTip(this.udOptMaxFilterShift, "Sets the maximum amount for the Shift control.  Set lower for finer resolution co" +
@@ -10362,7 +10408,7 @@
             0,
             0});
             this.udOptMaxFilterWidth.Name = "udOptMaxFilterWidth";
-            this.udOptMaxFilterWidth.Size = new System.Drawing.Size(48, 20);
+            this.udOptMaxFilterWidth.Size = new System.Drawing.Size(48, 22);
             this.udOptMaxFilterWidth.TabIndex = 0;
             this.udOptMaxFilterWidth.TinyStep = false;
             this.toolTip1.SetToolTip(this.udOptMaxFilterWidth, "Wets the maximum filter bandwidth");
@@ -11346,7 +11392,7 @@
             this.labelTS577.Image = null;
             this.labelTS577.Location = new System.Drawing.Point(5, 207);
             this.labelTS577.Name = "labelTS577";
-            this.labelTS577.Size = new System.Drawing.Size(31, 13);
+            this.labelTS577.Size = new System.Drawing.Size(32, 13);
             this.labelTS577.TabIndex = 46;
             this.labelTS577.Text = "Pin 7";
             // 
@@ -11356,7 +11402,7 @@
             this.labelTS582.Image = null;
             this.labelTS582.Location = new System.Drawing.Point(5, 180);
             this.labelTS582.Name = "labelTS582";
-            this.labelTS582.Size = new System.Drawing.Size(31, 13);
+            this.labelTS582.Size = new System.Drawing.Size(32, 13);
             this.labelTS582.TabIndex = 45;
             this.labelTS582.Text = "Pin 6";
             // 
@@ -11366,7 +11412,7 @@
             this.labelTS583.Image = null;
             this.labelTS583.Location = new System.Drawing.Point(5, 153);
             this.labelTS583.Name = "labelTS583";
-            this.labelTS583.Size = new System.Drawing.Size(31, 13);
+            this.labelTS583.Size = new System.Drawing.Size(32, 13);
             this.labelTS583.TabIndex = 44;
             this.labelTS583.Text = "Pin 5";
             // 
@@ -11376,7 +11422,7 @@
             this.labelTS584.Image = null;
             this.labelTS584.Location = new System.Drawing.Point(5, 126);
             this.labelTS584.Name = "labelTS584";
-            this.labelTS584.Size = new System.Drawing.Size(31, 13);
+            this.labelTS584.Size = new System.Drawing.Size(32, 13);
             this.labelTS584.TabIndex = 43;
             this.labelTS584.Text = "Pin 4";
             // 
@@ -11386,7 +11432,7 @@
             this.labelTS585.Image = null;
             this.labelTS585.Location = new System.Drawing.Point(5, 99);
             this.labelTS585.Name = "labelTS585";
-            this.labelTS585.Size = new System.Drawing.Size(31, 13);
+            this.labelTS585.Size = new System.Drawing.Size(32, 13);
             this.labelTS585.TabIndex = 42;
             this.labelTS585.Text = "Pin 3";
             // 
@@ -11396,7 +11442,7 @@
             this.labelTS586.Image = null;
             this.labelTS586.Location = new System.Drawing.Point(5, 72);
             this.labelTS586.Name = "labelTS586";
-            this.labelTS586.Size = new System.Drawing.Size(31, 13);
+            this.labelTS586.Size = new System.Drawing.Size(32, 13);
             this.labelTS586.TabIndex = 41;
             this.labelTS586.Text = "Pin 2";
             // 
@@ -11406,7 +11452,7 @@
             this.labelTS587.Image = null;
             this.labelTS587.Location = new System.Drawing.Point(5, 45);
             this.labelTS587.Name = "labelTS587";
-            this.labelTS587.Size = new System.Drawing.Size(31, 13);
+            this.labelTS587.Size = new System.Drawing.Size(32, 13);
             this.labelTS587.TabIndex = 40;
             this.labelTS587.Text = "Pin 1";
             // 
@@ -11429,7 +11475,7 @@
             this.labelTS578.Image = null;
             this.labelTS578.Location = new System.Drawing.Point(39, 25);
             this.labelTS578.Name = "labelTS578";
-            this.labelTS578.Size = new System.Drawing.Size(22, 13);
+            this.labelTS578.Size = new System.Drawing.Size(20, 13);
             this.labelTS578.TabIndex = 32;
             this.labelTS578.Text = "RX";
             // 
@@ -11530,7 +11576,7 @@
             this.labelTS516.Image = null;
             this.labelTS516.Location = new System.Drawing.Point(79, 25);
             this.labelTS516.Name = "labelTS516";
-            this.labelTS516.Size = new System.Drawing.Size(21, 13);
+            this.labelTS516.Size = new System.Drawing.Size(19, 13);
             this.labelTS516.TabIndex = 13;
             this.labelTS516.Text = "TX";
             // 
@@ -11618,7 +11664,7 @@
             this.chkAllowHotSwitching.Image = null;
             this.chkAllowHotSwitching.Location = new System.Drawing.Point(582, 352);
             this.chkAllowHotSwitching.Name = "chkAllowHotSwitching";
-            this.chkAllowHotSwitching.Size = new System.Drawing.Size(120, 17);
+            this.chkAllowHotSwitching.Size = new System.Drawing.Size(131, 17);
             this.chkAllowHotSwitching.TabIndex = 13;
             this.chkAllowHotSwitching.Text = "Allow Hot Switching";
             this.toolTip1.SetToolTip(this.chkAllowHotSwitching, "WIth this enabled, xPA button on console, and TX pins will be able to be \'chcked\'" +
@@ -11769,7 +11815,7 @@
             this.labelTS552.Image = null;
             this.labelTS552.Location = new System.Drawing.Point(13, 198);
             this.labelTS552.Name = "labelTS552";
-            this.labelTS552.Size = new System.Drawing.Size(31, 13);
+            this.labelTS552.Size = new System.Drawing.Size(32, 13);
             this.labelTS552.TabIndex = 23;
             this.labelTS552.Text = "Pin 7";
             // 
@@ -11797,7 +11843,7 @@
             this.labelTS553.Image = null;
             this.labelTS553.Location = new System.Drawing.Point(13, 171);
             this.labelTS553.Name = "labelTS553";
-            this.labelTS553.Size = new System.Drawing.Size(31, 13);
+            this.labelTS553.Size = new System.Drawing.Size(32, 13);
             this.labelTS553.TabIndex = 21;
             this.labelTS553.Text = "Pin 6";
             // 
@@ -11825,7 +11871,7 @@
             this.labelTS554.Image = null;
             this.labelTS554.Location = new System.Drawing.Point(13, 144);
             this.labelTS554.Name = "labelTS554";
-            this.labelTS554.Size = new System.Drawing.Size(31, 13);
+            this.labelTS554.Size = new System.Drawing.Size(32, 13);
             this.labelTS554.TabIndex = 19;
             this.labelTS554.Text = "Pin 5";
             // 
@@ -11853,7 +11899,7 @@
             this.labelTS550.Image = null;
             this.labelTS550.Location = new System.Drawing.Point(13, 117);
             this.labelTS550.Name = "labelTS550";
-            this.labelTS550.Size = new System.Drawing.Size(31, 13);
+            this.labelTS550.Size = new System.Drawing.Size(32, 13);
             this.labelTS550.TabIndex = 17;
             this.labelTS550.Text = "Pin 4";
             // 
@@ -11881,7 +11927,7 @@
             this.labelTS551.Image = null;
             this.labelTS551.Location = new System.Drawing.Point(13, 90);
             this.labelTS551.Name = "labelTS551";
-            this.labelTS551.Size = new System.Drawing.Size(31, 13);
+            this.labelTS551.Size = new System.Drawing.Size(32, 13);
             this.labelTS551.TabIndex = 15;
             this.labelTS551.Text = "Pin 3";
             // 
@@ -11909,7 +11955,7 @@
             this.labelTS549.Image = null;
             this.labelTS549.Location = new System.Drawing.Point(13, 63);
             this.labelTS549.Name = "labelTS549";
-            this.labelTS549.Size = new System.Drawing.Size(31, 13);
+            this.labelTS549.Size = new System.Drawing.Size(32, 13);
             this.labelTS549.TabIndex = 13;
             this.labelTS549.Text = "Pin 2";
             // 
@@ -11937,7 +11983,7 @@
             this.labelTS548.Image = null;
             this.labelTS548.Location = new System.Drawing.Point(13, 36);
             this.labelTS548.Name = "labelTS548";
-            this.labelTS548.Size = new System.Drawing.Size(31, 13);
+            this.labelTS548.Size = new System.Drawing.Size(32, 13);
             this.labelTS548.TabIndex = 0;
             this.labelTS548.Text = "Pin 1";
             // 
@@ -11959,7 +12005,7 @@
             this.radSplitPins3x4.Image = null;
             this.radSplitPins3x4.Location = new System.Drawing.Point(93, 41);
             this.radSplitPins3x4.Name = "radSplitPins3x4";
-            this.radSplitPins3x4.Size = new System.Drawing.Size(65, 17);
+            this.radSplitPins3x4.Size = new System.Drawing.Size(68, 17);
             this.radSplitPins3x4.TabIndex = 11;
             this.radSplitPins3x4.Text = "3x4 Split";
             this.toolTip1.SetToolTip(this.radSplitPins3x4, "Use Pins 1-3 for VFOA, 4-7 for VFOB");
@@ -11973,7 +12019,7 @@
             this.radSplitPins4x3.Image = null;
             this.radSplitPins4x3.Location = new System.Drawing.Point(93, 18);
             this.radSplitPins4x3.Name = "radSplitPins4x3";
-            this.radSplitPins4x3.Size = new System.Drawing.Size(65, 17);
+            this.radSplitPins4x3.Size = new System.Drawing.Size(68, 17);
             this.radSplitPins4x3.TabIndex = 11;
             this.radSplitPins4x3.TabStop = true;
             this.radSplitPins4x3.Text = "4x3 Split";
@@ -11987,7 +12033,7 @@
             this.chkSplitPins.Image = null;
             this.chkSplitPins.Location = new System.Drawing.Point(9, 19);
             this.chkSplitPins.Name = "chkSplitPins";
-            this.chkSplitPins.Size = new System.Drawing.Size(59, 17);
+            this.chkSplitPins.Size = new System.Drawing.Size(61, 17);
             this.chkSplitPins.TabIndex = 9;
             this.chkSplitPins.Text = "Enable";
             this.toolTip1.SetToolTip(this.chkSplitPins, "Enable Split Pins feature");
@@ -14446,7 +14492,7 @@
             this.labelTS588.Image = null;
             this.labelTS588.Location = new System.Drawing.Point(5, 207);
             this.labelTS588.Name = "labelTS588";
-            this.labelTS588.Size = new System.Drawing.Size(31, 13);
+            this.labelTS588.Size = new System.Drawing.Size(32, 13);
             this.labelTS588.TabIndex = 46;
             this.labelTS588.Text = "Pin 7";
             // 
@@ -14456,7 +14502,7 @@
             this.labelTS589.Image = null;
             this.labelTS589.Location = new System.Drawing.Point(5, 180);
             this.labelTS589.Name = "labelTS589";
-            this.labelTS589.Size = new System.Drawing.Size(31, 13);
+            this.labelTS589.Size = new System.Drawing.Size(32, 13);
             this.labelTS589.TabIndex = 45;
             this.labelTS589.Text = "Pin 6";
             // 
@@ -14466,7 +14512,7 @@
             this.labelTS590.Image = null;
             this.labelTS590.Location = new System.Drawing.Point(5, 153);
             this.labelTS590.Name = "labelTS590";
-            this.labelTS590.Size = new System.Drawing.Size(31, 13);
+            this.labelTS590.Size = new System.Drawing.Size(32, 13);
             this.labelTS590.TabIndex = 44;
             this.labelTS590.Text = "Pin 5";
             // 
@@ -14476,7 +14522,7 @@
             this.labelTS591.Image = null;
             this.labelTS591.Location = new System.Drawing.Point(5, 126);
             this.labelTS591.Name = "labelTS591";
-            this.labelTS591.Size = new System.Drawing.Size(31, 13);
+            this.labelTS591.Size = new System.Drawing.Size(32, 13);
             this.labelTS591.TabIndex = 43;
             this.labelTS591.Text = "Pin 4";
             // 
@@ -14486,7 +14532,7 @@
             this.labelTS592.Image = null;
             this.labelTS592.Location = new System.Drawing.Point(5, 99);
             this.labelTS592.Name = "labelTS592";
-            this.labelTS592.Size = new System.Drawing.Size(31, 13);
+            this.labelTS592.Size = new System.Drawing.Size(32, 13);
             this.labelTS592.TabIndex = 42;
             this.labelTS592.Text = "Pin 3";
             // 
@@ -14496,7 +14542,7 @@
             this.labelTS593.Image = null;
             this.labelTS593.Location = new System.Drawing.Point(5, 72);
             this.labelTS593.Name = "labelTS593";
-            this.labelTS593.Size = new System.Drawing.Size(31, 13);
+            this.labelTS593.Size = new System.Drawing.Size(32, 13);
             this.labelTS593.TabIndex = 41;
             this.labelTS593.Text = "Pin 2";
             // 
@@ -14506,7 +14552,7 @@
             this.labelTS594.Image = null;
             this.labelTS594.Location = new System.Drawing.Point(5, 45);
             this.labelTS594.Name = "labelTS594";
-            this.labelTS594.Size = new System.Drawing.Size(31, 13);
+            this.labelTS594.Size = new System.Drawing.Size(32, 13);
             this.labelTS594.TabIndex = 40;
             this.labelTS594.Text = "Pin 1";
             // 
@@ -14555,7 +14601,7 @@
             this.labelTS579.Image = null;
             this.labelTS579.Location = new System.Drawing.Point(39, 25);
             this.labelTS579.Name = "labelTS579";
-            this.labelTS579.Size = new System.Drawing.Size(22, 13);
+            this.labelTS579.Size = new System.Drawing.Size(20, 13);
             this.labelTS579.TabIndex = 32;
             this.labelTS579.Text = "RX";
             // 
@@ -14708,7 +14754,7 @@
             this.labelTS580.Image = null;
             this.labelTS580.Location = new System.Drawing.Point(79, 25);
             this.labelTS580.Name = "labelTS580";
-            this.labelTS580.Size = new System.Drawing.Size(21, 13);
+            this.labelTS580.Size = new System.Drawing.Size(19, 13);
             this.labelTS580.TabIndex = 13;
             this.labelTS580.Text = "TX";
             // 
@@ -14759,7 +14805,7 @@
             this.labelTS555.Image = null;
             this.labelTS555.Location = new System.Drawing.Point(13, 198);
             this.labelTS555.Name = "labelTS555";
-            this.labelTS555.Size = new System.Drawing.Size(31, 13);
+            this.labelTS555.Size = new System.Drawing.Size(32, 13);
             this.labelTS555.TabIndex = 23;
             this.labelTS555.Text = "Pin 7";
             // 
@@ -14787,7 +14833,7 @@
             this.labelTS556.Image = null;
             this.labelTS556.Location = new System.Drawing.Point(13, 171);
             this.labelTS556.Name = "labelTS556";
-            this.labelTS556.Size = new System.Drawing.Size(31, 13);
+            this.labelTS556.Size = new System.Drawing.Size(32, 13);
             this.labelTS556.TabIndex = 21;
             this.labelTS556.Text = "Pin 6";
             // 
@@ -14815,7 +14861,7 @@
             this.labelTS557.Image = null;
             this.labelTS557.Location = new System.Drawing.Point(13, 144);
             this.labelTS557.Name = "labelTS557";
-            this.labelTS557.Size = new System.Drawing.Size(31, 13);
+            this.labelTS557.Size = new System.Drawing.Size(32, 13);
             this.labelTS557.TabIndex = 19;
             this.labelTS557.Text = "Pin 5";
             // 
@@ -14843,7 +14889,7 @@
             this.labelTS558.Image = null;
             this.labelTS558.Location = new System.Drawing.Point(13, 117);
             this.labelTS558.Name = "labelTS558";
-            this.labelTS558.Size = new System.Drawing.Size(31, 13);
+            this.labelTS558.Size = new System.Drawing.Size(32, 13);
             this.labelTS558.TabIndex = 17;
             this.labelTS558.Text = "Pin 4";
             // 
@@ -14871,7 +14917,7 @@
             this.labelTS559.Image = null;
             this.labelTS559.Location = new System.Drawing.Point(13, 90);
             this.labelTS559.Name = "labelTS559";
-            this.labelTS559.Size = new System.Drawing.Size(31, 13);
+            this.labelTS559.Size = new System.Drawing.Size(32, 13);
             this.labelTS559.TabIndex = 15;
             this.labelTS559.Text = "Pin 3";
             // 
@@ -14899,7 +14945,7 @@
             this.labelTS560.Image = null;
             this.labelTS560.Location = new System.Drawing.Point(13, 63);
             this.labelTS560.Name = "labelTS560";
-            this.labelTS560.Size = new System.Drawing.Size(31, 13);
+            this.labelTS560.Size = new System.Drawing.Size(32, 13);
             this.labelTS560.TabIndex = 13;
             this.labelTS560.Text = "Pin 2";
             // 
@@ -14927,7 +14973,7 @@
             this.labelTS561.Image = null;
             this.labelTS561.Location = new System.Drawing.Point(13, 36);
             this.labelTS561.Name = "labelTS561";
-            this.labelTS561.Size = new System.Drawing.Size(31, 13);
+            this.labelTS561.Size = new System.Drawing.Size(32, 13);
             this.labelTS561.TabIndex = 0;
             this.labelTS561.Text = "Pin 1";
             // 
@@ -17344,7 +17390,7 @@
             this.labelTS595.Image = null;
             this.labelTS595.Location = new System.Drawing.Point(5, 207);
             this.labelTS595.Name = "labelTS595";
-            this.labelTS595.Size = new System.Drawing.Size(31, 13);
+            this.labelTS595.Size = new System.Drawing.Size(32, 13);
             this.labelTS595.TabIndex = 46;
             this.labelTS595.Text = "Pin 7";
             // 
@@ -17354,7 +17400,7 @@
             this.labelTS596.Image = null;
             this.labelTS596.Location = new System.Drawing.Point(5, 180);
             this.labelTS596.Name = "labelTS596";
-            this.labelTS596.Size = new System.Drawing.Size(31, 13);
+            this.labelTS596.Size = new System.Drawing.Size(32, 13);
             this.labelTS596.TabIndex = 45;
             this.labelTS596.Text = "Pin 6";
             // 
@@ -17364,7 +17410,7 @@
             this.labelTS597.Image = null;
             this.labelTS597.Location = new System.Drawing.Point(5, 153);
             this.labelTS597.Name = "labelTS597";
-            this.labelTS597.Size = new System.Drawing.Size(31, 13);
+            this.labelTS597.Size = new System.Drawing.Size(32, 13);
             this.labelTS597.TabIndex = 44;
             this.labelTS597.Text = "Pin 5";
             // 
@@ -17374,7 +17420,7 @@
             this.labelTS598.Image = null;
             this.labelTS598.Location = new System.Drawing.Point(5, 126);
             this.labelTS598.Name = "labelTS598";
-            this.labelTS598.Size = new System.Drawing.Size(31, 13);
+            this.labelTS598.Size = new System.Drawing.Size(32, 13);
             this.labelTS598.TabIndex = 43;
             this.labelTS598.Text = "Pin 4";
             // 
@@ -17384,7 +17430,7 @@
             this.labelTS599.Image = null;
             this.labelTS599.Location = new System.Drawing.Point(5, 99);
             this.labelTS599.Name = "labelTS599";
-            this.labelTS599.Size = new System.Drawing.Size(31, 13);
+            this.labelTS599.Size = new System.Drawing.Size(32, 13);
             this.labelTS599.TabIndex = 42;
             this.labelTS599.Text = "Pin 3";
             // 
@@ -17394,7 +17440,7 @@
             this.labelTS600.Image = null;
             this.labelTS600.Location = new System.Drawing.Point(5, 72);
             this.labelTS600.Name = "labelTS600";
-            this.labelTS600.Size = new System.Drawing.Size(31, 13);
+            this.labelTS600.Size = new System.Drawing.Size(32, 13);
             this.labelTS600.TabIndex = 41;
             this.labelTS600.Text = "Pin 2";
             // 
@@ -17404,7 +17450,7 @@
             this.labelTS601.Image = null;
             this.labelTS601.Location = new System.Drawing.Point(5, 45);
             this.labelTS601.Name = "labelTS601";
-            this.labelTS601.Size = new System.Drawing.Size(31, 13);
+            this.labelTS601.Size = new System.Drawing.Size(32, 13);
             this.labelTS601.TabIndex = 40;
             this.labelTS601.Text = "Pin 1";
             // 
@@ -17453,7 +17499,7 @@
             this.labelTS576.Image = null;
             this.labelTS576.Location = new System.Drawing.Point(39, 25);
             this.labelTS576.Name = "labelTS576";
-            this.labelTS576.Size = new System.Drawing.Size(22, 13);
+            this.labelTS576.Size = new System.Drawing.Size(20, 13);
             this.labelTS576.TabIndex = 32;
             this.labelTS576.Text = "RX";
             // 
@@ -17606,7 +17652,7 @@
             this.labelTS581.Image = null;
             this.labelTS581.Location = new System.Drawing.Point(79, 25);
             this.labelTS581.Name = "labelTS581";
-            this.labelTS581.Size = new System.Drawing.Size(21, 13);
+            this.labelTS581.Size = new System.Drawing.Size(19, 13);
             this.labelTS581.TabIndex = 13;
             this.labelTS581.Text = "TX";
             // 
@@ -17657,7 +17703,7 @@
             this.labelTS562.Image = null;
             this.labelTS562.Location = new System.Drawing.Point(13, 198);
             this.labelTS562.Name = "labelTS562";
-            this.labelTS562.Size = new System.Drawing.Size(31, 13);
+            this.labelTS562.Size = new System.Drawing.Size(32, 13);
             this.labelTS562.TabIndex = 23;
             this.labelTS562.Text = "Pin 7";
             // 
@@ -17685,7 +17731,7 @@
             this.labelTS563.Image = null;
             this.labelTS563.Location = new System.Drawing.Point(13, 171);
             this.labelTS563.Name = "labelTS563";
-            this.labelTS563.Size = new System.Drawing.Size(31, 13);
+            this.labelTS563.Size = new System.Drawing.Size(32, 13);
             this.labelTS563.TabIndex = 21;
             this.labelTS563.Text = "Pin 6";
             // 
@@ -17713,7 +17759,7 @@
             this.labelTS564.Image = null;
             this.labelTS564.Location = new System.Drawing.Point(13, 144);
             this.labelTS564.Name = "labelTS564";
-            this.labelTS564.Size = new System.Drawing.Size(31, 13);
+            this.labelTS564.Size = new System.Drawing.Size(32, 13);
             this.labelTS564.TabIndex = 19;
             this.labelTS564.Text = "Pin 5";
             // 
@@ -17741,7 +17787,7 @@
             this.labelTS565.Image = null;
             this.labelTS565.Location = new System.Drawing.Point(13, 117);
             this.labelTS565.Name = "labelTS565";
-            this.labelTS565.Size = new System.Drawing.Size(31, 13);
+            this.labelTS565.Size = new System.Drawing.Size(32, 13);
             this.labelTS565.TabIndex = 17;
             this.labelTS565.Text = "Pin 4";
             // 
@@ -17769,7 +17815,7 @@
             this.labelTS566.Image = null;
             this.labelTS566.Location = new System.Drawing.Point(13, 90);
             this.labelTS566.Name = "labelTS566";
-            this.labelTS566.Size = new System.Drawing.Size(31, 13);
+            this.labelTS566.Size = new System.Drawing.Size(32, 13);
             this.labelTS566.TabIndex = 15;
             this.labelTS566.Text = "Pin 3";
             // 
@@ -17797,7 +17843,7 @@
             this.labelTS567.Image = null;
             this.labelTS567.Location = new System.Drawing.Point(13, 63);
             this.labelTS567.Name = "labelTS567";
-            this.labelTS567.Size = new System.Drawing.Size(31, 13);
+            this.labelTS567.Size = new System.Drawing.Size(32, 13);
             this.labelTS567.TabIndex = 13;
             this.labelTS567.Text = "Pin 2";
             // 
@@ -17825,7 +17871,7 @@
             this.labelTS568.Image = null;
             this.labelTS568.Location = new System.Drawing.Point(13, 36);
             this.labelTS568.Name = "labelTS568";
-            this.labelTS568.Size = new System.Drawing.Size(31, 13);
+            this.labelTS568.Size = new System.Drawing.Size(32, 13);
             this.labelTS568.TabIndex = 0;
             this.labelTS568.Text = "Pin 1";
             // 
@@ -20813,7 +20859,7 @@
             this.chkFirmwareByp.Image = null;
             this.chkFirmwareByp.Location = new System.Drawing.Point(11, 122);
             this.chkFirmwareByp.Name = "chkFirmwareByp";
-            this.chkFirmwareByp.Size = new System.Drawing.Size(139, 17);
+            this.chkFirmwareByp.Size = new System.Drawing.Size(144, 17);
             this.chkFirmwareByp.TabIndex = 5;
             this.chkFirmwareByp.Text = "Bypass Firmware Check";
             this.chkFirmwareByp.UseVisualStyleBackColor = true;
@@ -20902,7 +20948,7 @@
             0,
             131072});
             this.udMaxFreq.Name = "udMaxFreq";
-            this.udMaxFreq.Size = new System.Drawing.Size(60, 20);
+            this.udMaxFreq.Size = new System.Drawing.Size(60, 22);
             this.udMaxFreq.TabIndex = 3;
             this.udMaxFreq.TinyStep = false;
             this.udMaxFreq.Value = new decimal(new int[] {
@@ -21033,7 +21079,7 @@
             this.chkLPFBypass.Image = null;
             this.chkLPFBypass.Location = new System.Drawing.Point(365, 217);
             this.chkLPFBypass.Name = "chkLPFBypass";
-            this.chkLPFBypass.Size = new System.Drawing.Size(113, 17);
+            this.chkLPFBypass.Size = new System.Drawing.Size(111, 17);
             this.chkLPFBypass.TabIndex = 112;
             this.chkLPFBypass.Text = "6m/ByPass on RX";
             this.toolTip1.SetToolTip(this.chkLPFBypass, "Selects the 6m LPF during receive reguardless of frequency.");
@@ -21264,7 +21310,7 @@
             0,
             393216});
             this.udAlex10mLPFEnd.Name = "udAlex10mLPFEnd";
-            this.udAlex10mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex10mLPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex10mLPFEnd.TabIndex = 24;
             this.udAlex10mLPFEnd.TinyStep = false;
             this.udAlex10mLPFEnd.Value = new decimal(new int[] {
@@ -21294,7 +21340,7 @@
             0,
             0});
             this.udAlex10mLPFStart.Name = "udAlex10mLPFStart";
-            this.udAlex10mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex10mLPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex10mLPFStart.TabIndex = 23;
             this.udAlex10mLPFStart.TinyStep = false;
             this.udAlex10mLPFStart.Value = new decimal(new int[] {
@@ -21324,7 +21370,7 @@
             0,
             393216});
             this.udAlex6mLPFEnd.Name = "udAlex6mLPFEnd";
-            this.udAlex6mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex6mLPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex6mLPFEnd.TabIndex = 22;
             this.udAlex6mLPFEnd.TinyStep = false;
             this.udAlex6mLPFEnd.Value = new decimal(new int[] {
@@ -21353,7 +21399,7 @@
             0,
             0});
             this.udAlex6mLPFStart.Name = "udAlex6mLPFStart";
-            this.udAlex6mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex6mLPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex6mLPFStart.TabIndex = 21;
             this.udAlex6mLPFStart.TinyStep = false;
             this.udAlex6mLPFStart.Value = new decimal(new int[] {
@@ -21383,7 +21429,7 @@
             0,
             0});
             this.udAlex20mLPFStart.Name = "udAlex20mLPFStart";
-            this.udAlex20mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex20mLPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex20mLPFStart.TabIndex = 20;
             this.udAlex20mLPFStart.TinyStep = false;
             this.udAlex20mLPFStart.Value = new decimal(new int[] {
@@ -21413,7 +21459,7 @@
             0,
             65536});
             this.udAlex15mLPFStart.Name = "udAlex15mLPFStart";
-            this.udAlex15mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex15mLPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex15mLPFStart.TabIndex = 19;
             this.udAlex15mLPFStart.TinyStep = false;
             this.udAlex15mLPFStart.Value = new decimal(new int[] {
@@ -21443,7 +21489,7 @@
             0,
             393216});
             this.udAlex20mLPFEnd.Name = "udAlex20mLPFEnd";
-            this.udAlex20mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex20mLPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex20mLPFEnd.TabIndex = 18;
             this.udAlex20mLPFEnd.TinyStep = false;
             this.udAlex20mLPFEnd.Value = new decimal(new int[] {
@@ -21473,7 +21519,7 @@
             0,
             393216});
             this.udAlex15mLPFEnd.Name = "udAlex15mLPFEnd";
-            this.udAlex15mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex15mLPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex15mLPFEnd.TabIndex = 17;
             this.udAlex15mLPFEnd.TinyStep = false;
             this.udAlex15mLPFEnd.Value = new decimal(new int[] {
@@ -21503,7 +21549,7 @@
             0,
             393216});
             this.udAlex40mLPFEnd.Name = "udAlex40mLPFEnd";
-            this.udAlex40mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex40mLPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex40mLPFEnd.TabIndex = 16;
             this.udAlex40mLPFEnd.TinyStep = false;
             this.udAlex40mLPFEnd.Value = new decimal(new int[] {
@@ -21533,7 +21579,7 @@
             0,
             0});
             this.udAlex40mLPFStart.Name = "udAlex40mLPFStart";
-            this.udAlex40mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex40mLPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex40mLPFStart.TabIndex = 15;
             this.udAlex40mLPFStart.TinyStep = false;
             this.udAlex40mLPFStart.Value = new decimal(new int[] {
@@ -21563,7 +21609,7 @@
             0,
             0});
             this.udAlex80mLPFEnd.Name = "udAlex80mLPFEnd";
-            this.udAlex80mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex80mLPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex80mLPFEnd.TabIndex = 14;
             this.udAlex80mLPFEnd.TinyStep = false;
             this.udAlex80mLPFEnd.Value = new decimal(new int[] {
@@ -21593,7 +21639,7 @@
             0,
             65536});
             this.udAlex80mLPFStart.Name = "udAlex80mLPFStart";
-            this.udAlex80mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex80mLPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex80mLPFStart.TabIndex = 13;
             this.udAlex80mLPFStart.TinyStep = false;
             this.udAlex80mLPFStart.Value = new decimal(new int[] {
@@ -21623,7 +21669,7 @@
             0,
             65536});
             this.udAlex160mLPFEnd.Name = "udAlex160mLPFEnd";
-            this.udAlex160mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex160mLPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex160mLPFEnd.TabIndex = 12;
             this.udAlex160mLPFEnd.TinyStep = false;
             this.udAlex160mLPFEnd.Value = new decimal(new int[] {
@@ -21653,7 +21699,7 @@
             0,
             0});
             this.udAlex160mLPFStart.Name = "udAlex160mLPFStart";
-            this.udAlex160mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex160mLPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex160mLPFStart.TabIndex = 11;
             this.udAlex160mLPFStart.TinyStep = false;
             this.udAlex160mLPFStart.Value = new decimal(new int[] {
@@ -21724,7 +21770,7 @@
             this.chkDisable6mLNAonTX.Image = null;
             this.chkDisable6mLNAonTX.Location = new System.Drawing.Point(63, 208);
             this.chkDisable6mLNAonTX.Name = "chkDisable6mLNAonTX";
-            this.chkDisable6mLNAonTX.Size = new System.Drawing.Size(40, 17);
+            this.chkDisable6mLNAonTX.Size = new System.Drawing.Size(38, 17);
             this.chkDisable6mLNAonTX.TabIndex = 110;
             this.chkDisable6mLNAonTX.Text = "TX";
             this.chkDisable6mLNAonTX.UseVisualStyleBackColor = true;
@@ -21736,7 +21782,7 @@
             this.chkDisable6mLNAonRX.Image = null;
             this.chkDisable6mLNAonRX.Location = new System.Drawing.Point(16, 208);
             this.chkDisable6mLNAonRX.Name = "chkDisable6mLNAonRX";
-            this.chkDisable6mLNAonRX.Size = new System.Drawing.Size(41, 17);
+            this.chkDisable6mLNAonRX.Size = new System.Drawing.Size(39, 17);
             this.chkDisable6mLNAonRX.TabIndex = 109;
             this.chkDisable6mLNAonRX.Text = "RX";
             this.chkDisable6mLNAonRX.UseVisualStyleBackColor = true;
@@ -21748,7 +21794,7 @@
             this.chkDisableHPFonTX.Image = null;
             this.chkDisableHPFonTX.Location = new System.Drawing.Point(140, 213);
             this.chkDisableHPFonTX.Name = "chkDisableHPFonTX";
-            this.chkDisableHPFonTX.Size = new System.Drawing.Size(117, 17);
+            this.chkDisableHPFonTX.Size = new System.Drawing.Size(114, 17);
             this.chkDisableHPFonTX.TabIndex = 108;
             this.chkDisableHPFonTX.Text = "HPF ByPass on TX";
             this.toolTip1.SetToolTip(this.chkDisableHPFonTX, "ByPasses HPF during TX.");
@@ -21797,7 +21843,7 @@
             0,
             0});
             this.udAlex1_5HPFStart.Name = "udAlex1_5HPFStart";
-            this.udAlex1_5HPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex1_5HPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex1_5HPFStart.TabIndex = 1;
             this.udAlex1_5HPFStart.TinyStep = false;
             this.udAlex1_5HPFStart.Value = new decimal(new int[] {
@@ -21838,7 +21884,7 @@
             0,
             65536});
             this.udAlex1_5HPFEnd.Name = "udAlex1_5HPFEnd";
-            this.udAlex1_5HPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex1_5HPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex1_5HPFEnd.TabIndex = 2;
             this.udAlex1_5HPFEnd.TinyStep = false;
             this.udAlex1_5HPFEnd.Value = new decimal(new int[] {
@@ -21879,7 +21925,7 @@
             0,
             0});
             this.udAlex6_5HPFStart.Name = "udAlex6_5HPFStart";
-            this.udAlex6_5HPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex6_5HPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex6_5HPFStart.TabIndex = 3;
             this.udAlex6_5HPFStart.TinyStep = false;
             this.udAlex6_5HPFStart.Value = new decimal(new int[] {
@@ -21920,7 +21966,7 @@
             0,
             0});
             this.udAlex6_5HPFEnd.Name = "udAlex6_5HPFEnd";
-            this.udAlex6_5HPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex6_5HPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex6_5HPFEnd.TabIndex = 4;
             this.udAlex6_5HPFEnd.TinyStep = false;
             this.udAlex6_5HPFEnd.Value = new decimal(new int[] {
@@ -21961,7 +22007,7 @@
             0,
             0});
             this.udAlex9_5HPFStart.Name = "udAlex9_5HPFStart";
-            this.udAlex9_5HPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex9_5HPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex9_5HPFStart.TabIndex = 5;
             this.udAlex9_5HPFStart.TinyStep = false;
             this.udAlex9_5HPFStart.Value = new decimal(new int[] {
@@ -22002,7 +22048,7 @@
             0,
             0});
             this.udAlex9_5HPFEnd.Name = "udAlex9_5HPFEnd";
-            this.udAlex9_5HPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex9_5HPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex9_5HPFEnd.TabIndex = 6;
             this.udAlex9_5HPFEnd.TinyStep = false;
             this.udAlex9_5HPFEnd.Value = new decimal(new int[] {
@@ -22032,7 +22078,7 @@
             0,
             0});
             this.udAlex20HPFEnd.Name = "udAlex20HPFEnd";
-            this.udAlex20HPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex20HPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex20HPFEnd.TabIndex = 7;
             this.udAlex20HPFEnd.TinyStep = false;
             this.udAlex20HPFEnd.Value = new decimal(new int[] {
@@ -22062,7 +22108,7 @@
             0,
             65536});
             this.udAlex13HPFEnd.Name = "udAlex13HPFEnd";
-            this.udAlex13HPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex13HPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex13HPFEnd.TabIndex = 8;
             this.udAlex13HPFEnd.TinyStep = false;
             this.udAlex13HPFEnd.Value = new decimal(new int[] {
@@ -22092,7 +22138,7 @@
             0,
             0});
             this.udAlex20HPFStart.Name = "udAlex20HPFStart";
-            this.udAlex20HPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex20HPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex20HPFStart.TabIndex = 9;
             this.udAlex20HPFStart.TinyStep = false;
             this.udAlex20HPFStart.Value = new decimal(new int[] {
@@ -22241,7 +22287,7 @@
             0,
             0});
             this.udAlex13HPFStart.Name = "udAlex13HPFStart";
-            this.udAlex13HPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex13HPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex13HPFStart.TabIndex = 10;
             this.udAlex13HPFStart.TinyStep = false;
             this.udAlex13HPFStart.Value = new decimal(new int[] {
@@ -22293,7 +22339,7 @@
             0,
             0});
             this.udAlex6BPFStart.Name = "udAlex6BPFStart";
-            this.udAlex6BPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex6BPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex6BPFStart.TabIndex = 83;
             this.udAlex6BPFStart.TinyStep = false;
             this.udAlex6BPFStart.Value = new decimal(new int[] {
@@ -22334,7 +22380,7 @@
             0,
             393216});
             this.udAlex6BPFEnd.Name = "udAlex6BPFEnd";
-            this.udAlex6BPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex6BPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex6BPFEnd.TabIndex = 82;
             this.udAlex6BPFEnd.TinyStep = false;
             this.udAlex6BPFEnd.Value = new decimal(new int[] {
@@ -22361,7 +22407,7 @@
             this.chkAlexHPFBypass.Image = null;
             this.chkAlexHPFBypass.Location = new System.Drawing.Point(140, 185);
             this.chkAlexHPFBypass.Name = "chkAlexHPFBypass";
-            this.chkAlexHPFBypass.Size = new System.Drawing.Size(127, 17);
+            this.chkAlexHPFBypass.Size = new System.Drawing.Size(124, 17);
             this.chkAlexHPFBypass.TabIndex = 81;
             this.chkAlexHPFBypass.Text = "ByPass/55 MHz HPF";
             this.chkAlexHPFBypass.UseVisualStyleBackColor = true;
@@ -22491,7 +22537,7 @@
             0,
             0});
             this.ud1_5BPF1Start.Name = "ud1_5BPF1Start";
-            this.ud1_5BPF1Start.Size = new System.Drawing.Size(75, 20);
+            this.ud1_5BPF1Start.Size = new System.Drawing.Size(75, 22);
             this.ud1_5BPF1Start.TabIndex = 1;
             this.ud1_5BPF1Start.TinyStep = false;
             this.ud1_5BPF1Start.Value = new decimal(new int[] {
@@ -22532,7 +22578,7 @@
             0,
             65536});
             this.ud1_5BPF1End.Name = "ud1_5BPF1End";
-            this.ud1_5BPF1End.Size = new System.Drawing.Size(75, 20);
+            this.ud1_5BPF1End.Size = new System.Drawing.Size(75, 22);
             this.ud1_5BPF1End.TabIndex = 2;
             this.ud1_5BPF1End.TinyStep = false;
             this.ud1_5BPF1End.Value = new decimal(new int[] {
@@ -22573,7 +22619,7 @@
             0,
             0});
             this.ud6_5BPF1Start.Name = "ud6_5BPF1Start";
-            this.ud6_5BPF1Start.Size = new System.Drawing.Size(75, 20);
+            this.ud6_5BPF1Start.Size = new System.Drawing.Size(75, 22);
             this.ud6_5BPF1Start.TabIndex = 3;
             this.ud6_5BPF1Start.TinyStep = false;
             this.ud6_5BPF1Start.Value = new decimal(new int[] {
@@ -22614,7 +22660,7 @@
             0,
             0});
             this.ud6_5BPF1End.Name = "ud6_5BPF1End";
-            this.ud6_5BPF1End.Size = new System.Drawing.Size(75, 20);
+            this.ud6_5BPF1End.Size = new System.Drawing.Size(75, 22);
             this.ud6_5BPF1End.TabIndex = 4;
             this.ud6_5BPF1End.TinyStep = false;
             this.ud6_5BPF1End.Value = new decimal(new int[] {
@@ -22655,7 +22701,7 @@
             0,
             0});
             this.ud9_5BPF1Start.Name = "ud9_5BPF1Start";
-            this.ud9_5BPF1Start.Size = new System.Drawing.Size(75, 20);
+            this.ud9_5BPF1Start.Size = new System.Drawing.Size(75, 22);
             this.ud9_5BPF1Start.TabIndex = 5;
             this.ud9_5BPF1Start.TinyStep = false;
             this.ud9_5BPF1Start.Value = new decimal(new int[] {
@@ -22696,7 +22742,7 @@
             0,
             0});
             this.ud9_5BPF1End.Name = "ud9_5BPF1End";
-            this.ud9_5BPF1End.Size = new System.Drawing.Size(75, 20);
+            this.ud9_5BPF1End.Size = new System.Drawing.Size(75, 22);
             this.ud9_5BPF1End.TabIndex = 6;
             this.ud9_5BPF1End.TinyStep = false;
             this.ud9_5BPF1End.Value = new decimal(new int[] {
@@ -22726,7 +22772,7 @@
             0,
             0});
             this.ud20BPF1End.Name = "ud20BPF1End";
-            this.ud20BPF1End.Size = new System.Drawing.Size(75, 20);
+            this.ud20BPF1End.Size = new System.Drawing.Size(75, 22);
             this.ud20BPF1End.TabIndex = 7;
             this.ud20BPF1End.TinyStep = false;
             this.ud20BPF1End.Value = new decimal(new int[] {
@@ -22756,7 +22802,7 @@
             0,
             0});
             this.ud13BPF1End.Name = "ud13BPF1End";
-            this.ud13BPF1End.Size = new System.Drawing.Size(75, 20);
+            this.ud13BPF1End.Size = new System.Drawing.Size(75, 22);
             this.ud13BPF1End.TabIndex = 8;
             this.ud13BPF1End.TinyStep = false;
             this.ud13BPF1End.Value = new decimal(new int[] {
@@ -22786,7 +22832,7 @@
             0,
             0});
             this.ud20BPF1Start.Name = "ud20BPF1Start";
-            this.ud20BPF1Start.Size = new System.Drawing.Size(75, 20);
+            this.ud20BPF1Start.Size = new System.Drawing.Size(75, 22);
             this.ud20BPF1Start.TabIndex = 9;
             this.ud20BPF1Start.TinyStep = false;
             this.ud20BPF1Start.Value = new decimal(new int[] {
@@ -22935,7 +22981,7 @@
             0,
             0});
             this.ud13BPF1Start.Name = "ud13BPF1Start";
-            this.ud13BPF1Start.Size = new System.Drawing.Size(75, 20);
+            this.ud13BPF1Start.Size = new System.Drawing.Size(75, 22);
             this.ud13BPF1Start.TabIndex = 10;
             this.ud13BPF1Start.TinyStep = false;
             this.ud13BPF1Start.Value = new decimal(new int[] {
@@ -22976,7 +23022,7 @@
             0,
             0});
             this.ud6BPF1Start.Name = "ud6BPF1Start";
-            this.ud6BPF1Start.Size = new System.Drawing.Size(75, 20);
+            this.ud6BPF1Start.Size = new System.Drawing.Size(75, 22);
             this.ud6BPF1Start.TabIndex = 83;
             this.ud6BPF1Start.TinyStep = false;
             this.ud6BPF1Start.Value = new decimal(new int[] {
@@ -23017,7 +23063,7 @@
             0,
             0});
             this.ud6BPF1End.Name = "ud6BPF1End";
-            this.ud6BPF1End.Size = new System.Drawing.Size(75, 20);
+            this.ud6BPF1End.Size = new System.Drawing.Size(75, 22);
             this.ud6BPF1End.TabIndex = 82;
             this.ud6BPF1End.TinyStep = false;
             this.ud6BPF1End.Value = new decimal(new int[] {
@@ -23291,7 +23337,7 @@
             0,
             0});
             this.udAlex2160mLPFStart.Name = "udAlex2160mLPFStart";
-            this.udAlex2160mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex2160mLPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex2160mLPFStart.TabIndex = 172;
             this.udAlex2160mLPFStart.TinyStep = false;
             this.udAlex2160mLPFStart.Value = new decimal(new int[] {
@@ -23320,7 +23366,7 @@
             0,
             0});
             this.udAlex2160mLPFEnd.Name = "udAlex2160mLPFEnd";
-            this.udAlex2160mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex2160mLPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex2160mLPFEnd.TabIndex = 173;
             this.udAlex2160mLPFEnd.TinyStep = false;
             this.udAlex2160mLPFEnd.Value = new decimal(new int[] {
@@ -23349,7 +23395,7 @@
             0,
             0});
             this.udAlex280mLPFStart.Name = "udAlex280mLPFStart";
-            this.udAlex280mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex280mLPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex280mLPFStart.TabIndex = 174;
             this.udAlex280mLPFStart.TinyStep = false;
             this.udAlex280mLPFStart.Value = new decimal(new int[] {
@@ -23378,7 +23424,7 @@
             0,
             0});
             this.udAlex280mLPFEnd.Name = "udAlex280mLPFEnd";
-            this.udAlex280mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex280mLPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex280mLPFEnd.TabIndex = 175;
             this.udAlex280mLPFEnd.TinyStep = false;
             this.udAlex280mLPFEnd.Value = new decimal(new int[] {
@@ -23407,7 +23453,7 @@
             0,
             0});
             this.udAlex240mLPFStart.Name = "udAlex240mLPFStart";
-            this.udAlex240mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex240mLPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex240mLPFStart.TabIndex = 176;
             this.udAlex240mLPFStart.TinyStep = false;
             this.udAlex240mLPFStart.Value = new decimal(new int[] {
@@ -23436,7 +23482,7 @@
             0,
             0});
             this.udAlex240mLPFEnd.Name = "udAlex240mLPFEnd";
-            this.udAlex240mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex240mLPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex240mLPFEnd.TabIndex = 177;
             this.udAlex240mLPFEnd.TinyStep = false;
             this.udAlex240mLPFEnd.Value = new decimal(new int[] {
@@ -23465,7 +23511,7 @@
             0,
             0});
             this.udAlex215mLPFEnd.Name = "udAlex215mLPFEnd";
-            this.udAlex215mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex215mLPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex215mLPFEnd.TabIndex = 178;
             this.udAlex215mLPFEnd.TinyStep = false;
             this.udAlex215mLPFEnd.Value = new decimal(new int[] {
@@ -23494,7 +23540,7 @@
             0,
             0});
             this.udAlex220mLPFEnd.Name = "udAlex220mLPFEnd";
-            this.udAlex220mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex220mLPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex220mLPFEnd.TabIndex = 179;
             this.udAlex220mLPFEnd.TinyStep = false;
             this.udAlex220mLPFEnd.Value = new decimal(new int[] {
@@ -23523,7 +23569,7 @@
             0,
             0});
             this.udAlex215mLPFStart.Name = "udAlex215mLPFStart";
-            this.udAlex215mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex215mLPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex215mLPFStart.TabIndex = 180;
             this.udAlex215mLPFStart.TinyStep = false;
             this.udAlex215mLPFStart.Value = new decimal(new int[] {
@@ -23552,7 +23598,7 @@
             0,
             0});
             this.udAlex220mLPFStart.Name = "udAlex220mLPFStart";
-            this.udAlex220mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex220mLPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex220mLPFStart.TabIndex = 181;
             this.udAlex220mLPFStart.TinyStep = false;
             this.udAlex220mLPFStart.Value = new decimal(new int[] {
@@ -23581,7 +23627,7 @@
             0,
             0});
             this.udAlex26mLPFStart.Name = "udAlex26mLPFStart";
-            this.udAlex26mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex26mLPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex26mLPFStart.TabIndex = 182;
             this.udAlex26mLPFStart.TinyStep = false;
             this.udAlex26mLPFStart.Value = new decimal(new int[] {
@@ -23610,7 +23656,7 @@
             0,
             0});
             this.udAlex26mLPFEnd.Name = "udAlex26mLPFEnd";
-            this.udAlex26mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex26mLPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex26mLPFEnd.TabIndex = 183;
             this.udAlex26mLPFEnd.TinyStep = false;
             this.udAlex26mLPFEnd.Value = new decimal(new int[] {
@@ -23639,7 +23685,7 @@
             0,
             0});
             this.udAlex210mLPFStart.Name = "udAlex210mLPFStart";
-            this.udAlex210mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex210mLPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex210mLPFStart.TabIndex = 184;
             this.udAlex210mLPFStart.TinyStep = false;
             this.udAlex210mLPFStart.Value = new decimal(new int[] {
@@ -23668,7 +23714,7 @@
             0,
             0});
             this.udAlex210mLPFEnd.Name = "udAlex210mLPFEnd";
-            this.udAlex210mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex210mLPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex210mLPFEnd.TabIndex = 185;
             this.udAlex210mLPFEnd.TinyStep = false;
             this.udAlex210mLPFEnd.Value = new decimal(new int[] {
@@ -23978,7 +24024,7 @@
             0,
             0});
             this.udAlex26BPFStart.Name = "udAlex26BPFStart";
-            this.udAlex26BPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex26BPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex26BPFStart.TabIndex = 202;
             this.udAlex26BPFStart.TinyStep = false;
             this.udAlex26BPFStart.Value = new decimal(new int[] {
@@ -24008,7 +24054,7 @@
             0,
             0});
             this.udAlex26BPFEnd.Name = "udAlex26BPFEnd";
-            this.udAlex26BPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex26BPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex26BPFEnd.TabIndex = 201;
             this.udAlex26BPFEnd.TinyStep = false;
             this.udAlex26BPFEnd.Value = new decimal(new int[] {
@@ -24024,7 +24070,7 @@
             this.chkAlex2HPFBypass.Image = null;
             this.chkAlex2HPFBypass.Location = new System.Drawing.Point(140, 188);
             this.chkAlex2HPFBypass.Name = "chkAlex2HPFBypass";
-            this.chkAlex2HPFBypass.Size = new System.Drawing.Size(126, 17);
+            this.chkAlex2HPFBypass.Size = new System.Drawing.Size(122, 17);
             this.chkAlex2HPFBypass.TabIndex = 200;
             this.chkAlex2HPFBypass.Text = "ByPass/55 MHz BPF";
             this.chkAlex2HPFBypass.UseVisualStyleBackColor = true;
@@ -24116,7 +24162,7 @@
             0,
             0});
             this.udAlex213HPFStart.Name = "udAlex213HPFStart";
-            this.udAlex213HPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex213HPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex213HPFStart.TabIndex = 171;
             this.udAlex213HPFStart.TinyStep = false;
             this.udAlex213HPFStart.Value = new decimal(new int[] {
@@ -24146,7 +24192,7 @@
             0,
             0});
             this.udAlex220HPFStart.Name = "udAlex220HPFStart";
-            this.udAlex220HPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex220HPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex220HPFStart.TabIndex = 170;
             this.udAlex220HPFStart.TinyStep = false;
             this.udAlex220HPFStart.Value = new decimal(new int[] {
@@ -24176,7 +24222,7 @@
             0,
             0});
             this.udAlex213HPFEnd.Name = "udAlex213HPFEnd";
-            this.udAlex213HPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex213HPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex213HPFEnd.TabIndex = 169;
             this.udAlex213HPFEnd.TinyStep = false;
             this.udAlex213HPFEnd.Value = new decimal(new int[] {
@@ -24206,7 +24252,7 @@
             0,
             0});
             this.udAlex220HPFEnd.Name = "udAlex220HPFEnd";
-            this.udAlex220HPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex220HPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex220HPFEnd.TabIndex = 168;
             this.udAlex220HPFEnd.TinyStep = false;
             this.udAlex220HPFEnd.Value = new decimal(new int[] {
@@ -24236,7 +24282,7 @@
             0,
             0});
             this.udAlex29_5HPFEnd.Name = "udAlex29_5HPFEnd";
-            this.udAlex29_5HPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex29_5HPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex29_5HPFEnd.TabIndex = 167;
             this.udAlex29_5HPFEnd.TinyStep = false;
             this.udAlex29_5HPFEnd.Value = new decimal(new int[] {
@@ -24266,7 +24312,7 @@
             0,
             0});
             this.udAlex29_5HPFStart.Name = "udAlex29_5HPFStart";
-            this.udAlex29_5HPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex29_5HPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex29_5HPFStart.TabIndex = 166;
             this.udAlex29_5HPFStart.TinyStep = false;
             this.udAlex29_5HPFStart.Value = new decimal(new int[] {
@@ -24296,7 +24342,7 @@
             0,
             0});
             this.udAlex26_5HPFEnd.Name = "udAlex26_5HPFEnd";
-            this.udAlex26_5HPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex26_5HPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex26_5HPFEnd.TabIndex = 165;
             this.udAlex26_5HPFEnd.TinyStep = false;
             this.udAlex26_5HPFEnd.Value = new decimal(new int[] {
@@ -24326,7 +24372,7 @@
             0,
             0});
             this.udAlex26_5HPFStart.Name = "udAlex26_5HPFStart";
-            this.udAlex26_5HPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex26_5HPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex26_5HPFStart.TabIndex = 164;
             this.udAlex26_5HPFStart.TinyStep = false;
             this.udAlex26_5HPFStart.Value = new decimal(new int[] {
@@ -24356,7 +24402,7 @@
             0,
             65536});
             this.udAlex21_5HPFEnd.Name = "udAlex21_5HPFEnd";
-            this.udAlex21_5HPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex21_5HPFEnd.Size = new System.Drawing.Size(75, 22);
             this.udAlex21_5HPFEnd.TabIndex = 163;
             this.udAlex21_5HPFEnd.TinyStep = false;
             this.udAlex21_5HPFEnd.Value = new decimal(new int[] {
@@ -24386,7 +24432,7 @@
             0,
             0});
             this.udAlex21_5HPFStart.Name = "udAlex21_5HPFStart";
-            this.udAlex21_5HPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex21_5HPFStart.Size = new System.Drawing.Size(75, 22);
             this.udAlex21_5HPFStart.TabIndex = 162;
             this.udAlex21_5HPFStart.TinyStep = false;
             this.udAlex21_5HPFStart.Value = new decimal(new int[] {
@@ -24446,7 +24492,7 @@
             this.chkApolloFilter.Image = null;
             this.chkApolloFilter.Location = new System.Drawing.Point(16, 29);
             this.chkApolloFilter.Name = "chkApolloFilter";
-            this.chkApolloFilter.Size = new System.Drawing.Size(89, 17);
+            this.chkApolloFilter.Size = new System.Drawing.Size(95, 17);
             this.chkApolloFilter.TabIndex = 0;
             this.chkApolloFilter.Text = "Enable Filters";
             this.toolTip1.SetToolTip(this.chkApolloFilter, "Enables the LPF on Apollo");
@@ -24459,7 +24505,7 @@
             this.chkApolloTuner.Image = null;
             this.chkApolloTuner.Location = new System.Drawing.Point(16, 61);
             this.chkApolloTuner.Name = "chkApolloTuner";
-            this.chkApolloTuner.Size = new System.Drawing.Size(90, 17);
+            this.chkApolloTuner.Size = new System.Drawing.Size(94, 17);
             this.chkApolloTuner.TabIndex = 1;
             this.chkApolloTuner.Text = "Enable Tuner";
             this.toolTip1.SetToolTip(this.chkApolloTuner, "Enables Apollo ATU");
@@ -24512,7 +24558,7 @@
             this.checkAriesStandalone.Image = null;
             this.checkAriesStandalone.Location = new System.Drawing.Point(443, 125);
             this.checkAriesStandalone.Name = "checkAriesStandalone";
-            this.checkAriesStandalone.Size = new System.Drawing.Size(105, 17);
+            this.checkAriesStandalone.Size = new System.Drawing.Size(108, 17);
             this.checkAriesStandalone.TabIndex = 120;
             this.checkAriesStandalone.Text = "Standalone ATU";
             this.checkAriesStandalone.UseVisualStyleBackColor = true;
@@ -24524,7 +24570,7 @@
             this.checkEnableAriesQuickTune.Image = null;
             this.checkEnableAriesQuickTune.Location = new System.Drawing.Point(443, 91);
             this.checkEnableAriesQuickTune.Name = "checkEnableAriesQuickTune";
-            this.checkEnableAriesQuickTune.Size = new System.Drawing.Size(110, 17);
+            this.checkEnableAriesQuickTune.Size = new System.Drawing.Size(116, 17);
             this.checkEnableAriesQuickTune.TabIndex = 119;
             this.checkEnableAriesQuickTune.Text = "Allow Quick Tune";
             this.checkEnableAriesQuickTune.UseVisualStyleBackColor = true;
@@ -24546,7 +24592,7 @@
             this.labelTS529.Image = null;
             this.labelTS529.Location = new System.Drawing.Point(23, 170);
             this.labelTS529.Name = "labelTS529";
-            this.labelTS529.Size = new System.Drawing.Size(87, 13);
+            this.labelTS529.Size = new System.Drawing.Size(95, 13);
             this.labelTS529.TabIndex = 117;
             this.labelTS529.Text = "Firmware Version";
             // 
@@ -24601,7 +24647,7 @@
             this.labelTS527.Image = null;
             this.labelTS527.Location = new System.Drawing.Point(23, 126);
             this.labelTS527.Name = "labelTS527";
-            this.labelTS527.Size = new System.Drawing.Size(84, 13);
+            this.labelTS527.Size = new System.Drawing.Size(93, 13);
             this.labelTS527.TabIndex = 112;
             this.labelTS527.Text = "Stored Solutions";
             // 
@@ -24644,7 +24690,7 @@
             this.labelTS526.Image = null;
             this.labelTS526.Location = new System.Drawing.Point(23, 73);
             this.labelTS526.Name = "labelTS526";
-            this.labelTS526.Size = new System.Drawing.Size(71, 13);
+            this.labelTS526.Size = new System.Drawing.Size(72, 13);
             this.labelTS526.TabIndex = 108;
             this.labelTS526.Text = "ATU Enabled";
             // 
@@ -24684,7 +24730,7 @@
             this.labelTS522.Image = null;
             this.labelTS522.Location = new System.Drawing.Point(23, 30);
             this.labelTS522.Name = "labelTS522";
-            this.labelTS522.Size = new System.Drawing.Size(47, 13);
+            this.labelTS522.Size = new System.Drawing.Size(51, 13);
             this.labelTS522.TabIndex = 104;
             this.labelTS522.Text = "Antenna";
             // 
@@ -24814,7 +24860,7 @@
             this.lblGanymedeFWVersion.Image = null;
             this.lblGanymedeFWVersion.Location = new System.Drawing.Point(6, 93);
             this.lblGanymedeFWVersion.Name = "lblGanymedeFWVersion";
-            this.lblGanymedeFWVersion.Size = new System.Drawing.Size(87, 13);
+            this.lblGanymedeFWVersion.Size = new System.Drawing.Size(95, 13);
             this.lblGanymedeFWVersion.TabIndex = 1;
             this.lblGanymedeFWVersion.Text = "Firmware Version";
             // 
@@ -24824,7 +24870,7 @@
             this.lblAmpStatus.Image = null;
             this.lblAmpStatus.Location = new System.Drawing.Point(6, 26);
             this.lblAmpStatus.Name = "lblAmpStatus";
-            this.lblAmpStatus.Size = new System.Drawing.Size(79, 13);
+            this.lblAmpStatus.Size = new System.Drawing.Size(88, 13);
             this.lblAmpStatus.TabIndex = 0;
             this.lblAmpStatus.Text = "Amplifier Status";
             // 
@@ -24923,7 +24969,7 @@
             this.txtDeviceHID_hidden.Location = new System.Drawing.Point(246, 139);
             this.txtDeviceHID_hidden.Name = "txtDeviceHID_hidden";
             this.txtDeviceHID_hidden.ReadOnly = true;
-            this.txtDeviceHID_hidden.Size = new System.Drawing.Size(64, 20);
+            this.txtDeviceHID_hidden.Size = new System.Drawing.Size(64, 22);
             this.txtDeviceHID_hidden.TabIndex = 7;
             this.txtDeviceHID_hidden.Visible = false;
             this.txtDeviceHID_hidden.TextChanged += new System.EventHandler(this.TxtDeviceHID_hidden_TextChanged);
@@ -24955,7 +25001,7 @@
             this.chkWheelOnlyAdjustsVFO.Image = null;
             this.chkWheelOnlyAdjustsVFO.Location = new System.Drawing.Point(38, 144);
             this.chkWheelOnlyAdjustsVFO.Name = "chkWheelOnlyAdjustsVFO";
-            this.chkWheelOnlyAdjustsVFO.Size = new System.Drawing.Size(139, 17);
+            this.chkWheelOnlyAdjustsVFO.Size = new System.Drawing.Size(149, 17);
             this.chkWheelOnlyAdjustsVFO.TabIndex = 4;
             this.chkWheelOnlyAdjustsVFO.Text = "Wheel only adjusts VFO";
             this.toolTip1.SetToolTip(this.chkWheelOnlyAdjustsVFO, "Prevent wheel from adjusting any other slider/control");
@@ -24968,7 +25014,7 @@
             this.chkGlobalListenForMouseWheel.Image = null;
             this.chkGlobalListenForMouseWheel.Location = new System.Drawing.Point(38, 121);
             this.chkGlobalListenForMouseWheel.Name = "chkGlobalListenForMouseWheel";
-            this.chkGlobalListenForMouseWheel.Size = new System.Drawing.Size(194, 17);
+            this.chkGlobalListenForMouseWheel.Size = new System.Drawing.Size(211, 17);
             this.chkGlobalListenForMouseWheel.TabIndex = 2;
             this.chkGlobalListenForMouseWheel.Text = "Listen for wheel when no app focus";
             this.toolTip1.SetToolTip(this.chkGlobalListenForMouseWheel, "Listen globally to windows for mouse wheel");
@@ -24992,7 +25038,7 @@
             this.chkAlsoUseSpecificMouseWheel.Image = null;
             this.chkAlsoUseSpecificMouseWheel.Location = new System.Drawing.Point(16, 38);
             this.chkAlsoUseSpecificMouseWheel.Name = "chkAlsoUseSpecificMouseWheel";
-            this.chkAlsoUseSpecificMouseWheel.Size = new System.Drawing.Size(240, 17);
+            this.chkAlsoUseSpecificMouseWheel.Size = new System.Drawing.Size(259, 17);
             this.chkAlsoUseSpecificMouseWheel.TabIndex = 0;
             this.chkAlsoUseSpecificMouseWheel.Text = "Also use specific mouse wheel for VFO adjust";
             this.toolTip1.SetToolTip(this.chkAlsoUseSpecificMouseWheel, "Use another mouse device to control VFO");
@@ -25004,7 +25050,7 @@
             this.tpAudio.Controls.Add(this.tcAudio);
             this.tpAudio.Location = new System.Drawing.Point(4, 22);
             this.tpAudio.Name = "tpAudio";
-            this.tpAudio.Size = new System.Drawing.Size(728, 436);
+            this.tpAudio.Size = new System.Drawing.Size(728, 468);
             this.tpAudio.TabIndex = 0;
             this.tpAudio.Text = "Audio";
             // 
@@ -25017,11 +25063,12 @@
             this.tcAudio.Location = new System.Drawing.Point(0, 0);
             this.tcAudio.Name = "tcAudio";
             this.tcAudio.SelectedIndex = 0;
-            this.tcAudio.Size = new System.Drawing.Size(720, 430);
+            this.tcAudio.Size = new System.Drawing.Size(720, 465);
             this.tcAudio.TabIndex = 35;
             // 
             // tpVAC
             // 
+            this.tpVAC.Controls.Add(this.labelTS178);
             this.tpVAC.Controls.Add(this.grpAudioVACAutoEnable);
             this.tpVAC.Controls.Add(this.lblSampleRate);
             this.tpVAC.Controls.Add(this.lblBuffer);
@@ -25042,16 +25089,27 @@
             this.tpVAC.Controls.Add(this.grpAudioLatency2);
             this.tpVAC.Controls.Add(this.grpAudioDetails2);
             this.tpVAC.Controls.Add(this.chkAudioEnableVAC);
+            this.tpVAC.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tpVAC.Location = new System.Drawing.Point(4, 22);
             this.tpVAC.Name = "tpVAC";
-            this.tpVAC.Size = new System.Drawing.Size(712, 404);
+            this.tpVAC.Size = new System.Drawing.Size(712, 439);
             this.tpVAC.TabIndex = 1;
             this.tpVAC.Text = "VAC 1";
+            // 
+            // labelTS178
+            // 
+            this.labelTS178.AutoSize = true;
+            this.labelTS178.Image = null;
+            this.labelTS178.Location = new System.Drawing.Point(525, 286);
+            this.labelTS178.Name = "labelTS178";
+            this.labelTS178.Size = new System.Drawing.Size(97, 13);
+            this.labelTS178.TabIndex = 92;
+            this.labelTS178.Text = "VAC Graph Swing";
             // 
             // grpAudioVACAutoEnable
             // 
             this.grpAudioVACAutoEnable.Controls.Add(this.chkAudioVACAutoEnable);
-            this.grpAudioVACAutoEnable.Location = new System.Drawing.Point(227, 209);
+            this.grpAudioVACAutoEnable.Location = new System.Drawing.Point(219, 243);
             this.grpAudioVACAutoEnable.Name = "grpAudioVACAutoEnable";
             this.grpAudioVACAutoEnable.Size = new System.Drawing.Size(194, 63);
             this.grpAudioVACAutoEnable.TabIndex = 74;
@@ -25075,7 +25133,7 @@
             this.lblSampleRate.AutoSize = true;
             this.lblSampleRate.Location = new System.Drawing.Point(292, 20);
             this.lblSampleRate.Name = "lblSampleRate";
-            this.lblSampleRate.Size = new System.Drawing.Size(65, 13);
+            this.lblSampleRate.Size = new System.Drawing.Size(67, 13);
             this.lblSampleRate.TabIndex = 91;
             this.lblSampleRate.Text = "SampleRate";
             // 
@@ -25084,7 +25142,7 @@
             this.lblBuffer.AutoSize = true;
             this.lblBuffer.Location = new System.Drawing.Point(231, 20);
             this.lblBuffer.Name = "lblBuffer";
-            this.lblBuffer.Size = new System.Drawing.Size(58, 13);
+            this.lblBuffer.Size = new System.Drawing.Size(61, 13);
             this.lblBuffer.TabIndex = 90;
             this.lblBuffer.Text = "Buffer Size";
             // 
@@ -25129,7 +25187,7 @@
             0,
             -2147483648});
             this.udAudioVACGainTX.Name = "udAudioVACGainTX";
-            this.udAudioVACGainTX.Size = new System.Drawing.Size(40, 20);
+            this.udAudioVACGainTX.Size = new System.Drawing.Size(40, 22);
             this.udAudioVACGainTX.TabIndex = 38;
             this.udAudioVACGainTX.TinyStep = false;
             this.toolTip1.SetToolTip(this.udAudioVACGainTX, "Controls the gain on the audio coming from third party applications.");
@@ -25169,7 +25227,7 @@
             0,
             -2147483648});
             this.udAudioVACGainRX.Name = "udAudioVACGainRX";
-            this.udAudioVACGainRX.Size = new System.Drawing.Size(40, 20);
+            this.udAudioVACGainRX.Size = new System.Drawing.Size(40, 22);
             this.udAudioVACGainRX.TabIndex = 36;
             this.udAudioVACGainRX.TinyStep = false;
             this.toolTip1.SetToolTip(this.udAudioVACGainRX, "Controls the gain applied to the RX audio before it is sent to the third party ap" +
@@ -25208,9 +25266,9 @@
             // 
             this.chkVAC1WillMute.AutoSize = true;
             this.chkVAC1WillMute.Image = null;
-            this.chkVAC1WillMute.Location = new System.Drawing.Point(303, 187);
+            this.chkVAC1WillMute.Location = new System.Drawing.Point(303, 213);
             this.chkVAC1WillMute.Name = "chkVAC1WillMute";
-            this.chkVAC1WillMute.Size = new System.Drawing.Size(117, 17);
+            this.chkVAC1WillMute.Size = new System.Drawing.Size(126, 17);
             this.chkVAC1WillMute.TabIndex = 89;
             this.chkVAC1WillMute.Text = "Mute will mute VAC";
             this.chkVAC1WillMute.UseVisualStyleBackColor = true;
@@ -25220,12 +25278,12 @@
             // 
             this.chkVAC1GrapherAuto.AutoSize = true;
             this.chkVAC1GrapherAuto.Image = null;
-            this.chkVAC1GrapherAuto.Location = new System.Drawing.Point(418, 250);
+            this.chkVAC1GrapherAuto.Location = new System.Drawing.Point(410, 285);
             this.chkVAC1GrapherAuto.Name = "chkVAC1GrapherAuto";
             this.chkVAC1GrapherAuto.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.chkVAC1GrapherAuto.Size = new System.Drawing.Size(48, 17);
+            this.chkVAC1GrapherAuto.Size = new System.Drawing.Size(109, 17);
             this.chkVAC1GrapherAuto.TabIndex = 88;
-            this.chkVAC1GrapherAuto.Text = "Auto";
+            this.chkVAC1GrapherAuto.Text = "VAC Graph Auto";
             this.toolTip1.SetToolTip(this.chkVAC1GrapherAuto, "Auto scale the Min/Max around the 0 point");
             this.chkVAC1GrapherAuto.UseVisualStyleBackColor = true;
             this.chkVAC1GrapherAuto.CheckedChanged += new System.EventHandler(this.chkVAC1GrapherAuto_CheckedChanged);
@@ -25238,7 +25296,7 @@
             0,
             0,
             327680});
-            this.udVAC1GrapherSwing.Location = new System.Drawing.Point(472, 249);
+            this.udVAC1GrapherSwing.Location = new System.Drawing.Point(623, 284);
             this.udVAC1GrapherSwing.Maximum = new decimal(new int[] {
             4,
             0,
@@ -25250,7 +25308,7 @@
             0,
             393216});
             this.udVAC1GrapherSwing.Name = "udVAC1GrapherSwing";
-            this.udVAC1GrapherSwing.Size = new System.Drawing.Size(72, 20);
+            this.udVAC1GrapherSwing.Size = new System.Drawing.Size(72, 22);
             this.udVAC1GrapherSwing.TabIndex = 87;
             this.udVAC1GrapherSwing.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1GrapherSwing, "Min/Max above the 0 point");
@@ -25267,7 +25325,7 @@
             this.ucVAC1VARGrapherIn.BackColor = System.Drawing.Color.Black;
             this.ucVAC1VARGrapherIn.Caption = "In";
             this.ucVAC1VARGrapherIn.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ucVAC1VARGrapherIn.Location = new System.Drawing.Point(428, 338);
+            this.ucVAC1VARGrapherIn.Location = new System.Drawing.Point(429, 373);
             this.ucVAC1VARGrapherIn.Margin = new System.Windows.Forms.Padding(2);
             this.ucVAC1VARGrapherIn.MaxPoints = 272;
             this.ucVAC1VARGrapherIn.Name = "ucVAC1VARGrapherIn";
@@ -25282,7 +25340,7 @@
             this.ucVAC1VARGrapherOut.BackColor = System.Drawing.Color.Black;
             this.ucVAC1VARGrapherOut.Caption = "Out";
             this.ucVAC1VARGrapherOut.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ucVAC1VARGrapherOut.Location = new System.Drawing.Point(428, 275);
+            this.ucVAC1VARGrapherOut.Location = new System.Drawing.Point(429, 310);
             this.ucVAC1VARGrapherOut.Margin = new System.Windows.Forms.Padding(2);
             this.ucVAC1VARGrapherOut.MaxPoints = 272;
             this.ucVAC1VARGrapherOut.Name = "ucVAC1VARGrapherOut";
@@ -25294,9 +25352,9 @@
             // chkBypassVACPlayingRecording
             // 
             this.chkBypassVACPlayingRecording.Image = null;
-            this.chkBypassVACPlayingRecording.Location = new System.Drawing.Point(19, 213);
+            this.chkBypassVACPlayingRecording.Location = new System.Drawing.Point(19, 234);
             this.chkBypassVACPlayingRecording.Name = "chkBypassVACPlayingRecording";
-            this.chkBypassVACPlayingRecording.Size = new System.Drawing.Size(205, 23);
+            this.chkBypassVACPlayingRecording.Size = new System.Drawing.Size(205, 17);
             this.chkBypassVACPlayingRecording.TabIndex = 84;
             this.chkBypassVACPlayingRecording.Text = "Bypass VAC for recording playback";
             this.toolTip1.SetToolTip(this.chkBypassVACPlayingRecording, "If you are using VAC enable this to be able to play recordings");
@@ -25337,7 +25395,7 @@
             this.grpVAC1monitor.Controls.Add(this.lblVAC1ovfl);
             this.grpVAC1monitor.Controls.Add(this.lblVAC1underflows);
             this.grpVAC1monitor.Controls.Add(this.lblVAC1overflows);
-            this.grpVAC1monitor.Location = new System.Drawing.Point(8, 268);
+            this.grpVAC1monitor.Location = new System.Drawing.Point(9, 303);
             this.grpVAC1monitor.Name = "grpVAC1monitor";
             this.grpVAC1monitor.Size = new System.Drawing.Size(413, 133);
             this.grpVAC1monitor.TabIndex = 83;
@@ -25392,7 +25450,7 @@
             this.lblVAC1RingP2.Image = null;
             this.lblVAC1RingP2.Location = new System.Drawing.Point(231, 113);
             this.lblVAC1RingP2.Name = "lblVAC1RingP2";
-            this.lblVAC1RingP2.Size = new System.Drawing.Size(59, 13);
+            this.lblVAC1RingP2.Size = new System.Drawing.Size(64, 13);
             this.lblVAC1RingP2.TabIndex = 30;
             this.lblVAC1RingP2.Text = "RingBuff %";
             // 
@@ -25416,7 +25474,7 @@
             this.lblVAC1RingP1.Image = null;
             this.lblVAC1RingP1.Location = new System.Drawing.Point(8, 113);
             this.lblVAC1RingP1.Name = "lblVAC1RingP1";
-            this.lblVAC1RingP1.Size = new System.Drawing.Size(59, 13);
+            this.lblVAC1RingP1.Size = new System.Drawing.Size(64, 13);
             this.lblVAC1RingP1.TabIndex = 28;
             this.lblVAC1RingP1.Text = "RingBuff %";
             // 
@@ -25426,7 +25484,7 @@
             this.labelTS97.Image = null;
             this.labelTS97.Location = new System.Drawing.Point(336, 95);
             this.labelTS97.Name = "labelTS97";
-            this.labelTS97.Size = new System.Drawing.Size(16, 13);
+            this.labelTS97.Size = new System.Drawing.Size(18, 13);
             this.labelTS97.TabIndex = 27;
             this.labelTS97.Text = "of";
             // 
@@ -25464,7 +25522,7 @@
             this.labelTS101.Image = null;
             this.labelTS101.Location = new System.Drawing.Point(113, 95);
             this.labelTS101.Name = "labelTS101";
-            this.labelTS101.Size = new System.Drawing.Size(16, 13);
+            this.labelTS101.Size = new System.Drawing.Size(18, 13);
             this.labelTS101.TabIndex = 24;
             this.labelTS101.Text = "of";
             // 
@@ -25488,7 +25546,7 @@
             this.lblVAC1Ring2.Image = null;
             this.lblVAC1Ring2.Location = new System.Drawing.Point(231, 95);
             this.lblVAC1Ring2.Name = "lblVAC1Ring2";
-            this.lblVAC1Ring2.Size = new System.Drawing.Size(57, 13);
+            this.lblVAC1Ring2.Size = new System.Drawing.Size(62, 13);
             this.lblVAC1Ring2.TabIndex = 20;
             this.lblVAC1Ring2.Text = "RingBuffer";
             // 
@@ -25512,7 +25570,7 @@
             this.lblVAC1Ring1.Image = null;
             this.lblVAC1Ring1.Location = new System.Drawing.Point(8, 95);
             this.lblVAC1Ring1.Name = "lblVAC1Ring1";
-            this.lblVAC1Ring1.Size = new System.Drawing.Size(57, 13);
+            this.lblVAC1Ring1.Size = new System.Drawing.Size(62, 13);
             this.lblVAC1Ring1.TabIndex = 18;
             this.lblVAC1Ring1.Text = "RingBuffer";
             // 
@@ -25536,7 +25594,7 @@
             0,
             131072});
             this.udVAC1_Force2.Name = "udVAC1_Force2";
-            this.udVAC1_Force2.Size = new System.Drawing.Size(72, 20);
+            this.udVAC1_Force2.Size = new System.Drawing.Size(72, 22);
             this.udVAC1_Force2.TabIndex = 17;
             this.udVAC1_Force2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1_Force2, "Rate conversion ratio imposed when \"Force\" is checked");
@@ -25553,7 +25611,7 @@
             this.chkVAC1_Force2.Image = null;
             this.chkVAC1_Force2.Location = new System.Drawing.Point(332, 21);
             this.chkVAC1_Force2.Name = "chkVAC1_Force2";
-            this.chkVAC1_Force2.Size = new System.Drawing.Size(53, 17);
+            this.chkVAC1_Force2.Size = new System.Drawing.Size(54, 17);
             this.chkVAC1_Force2.TabIndex = 16;
             this.chkVAC1_Force2.Text = "Force";
             this.toolTip1.SetToolTip(this.chkVAC1_Force2, "Disable resampler matching loop and force to ratio setting below");
@@ -25566,7 +25624,7 @@
             this.lblVAC1_FROMVAC.Image = null;
             this.lblVAC1_FROMVAC.Location = new System.Drawing.Point(229, 19);
             this.lblVAC1_FROMVAC.Name = "lblVAC1_FROMVAC";
-            this.lblVAC1_FROMVAC.Size = new System.Drawing.Size(83, 13);
+            this.lblVAC1_FROMVAC.Size = new System.Drawing.Size(84, 13);
             this.lblVAC1_FROMVAC.TabIndex = 15;
             this.lblVAC1_FROMVAC.Text = "FROM VAC: (In)";
             this.toolTip1.SetToolTip(this.lblVAC1_FROMVAC, "Transmit audio stream");
@@ -25591,7 +25649,7 @@
             this.lblVAC1VarRatio2.Image = null;
             this.lblVAC1VarRatio2.Location = new System.Drawing.Point(231, 76);
             this.lblVAC1VarRatio2.Name = "lblVAC1VarRatio2";
-            this.lblVAC1VarRatio2.Size = new System.Drawing.Size(51, 13);
+            this.lblVAC1VarRatio2.Size = new System.Drawing.Size(53, 13);
             this.lblVAC1VarRatio2.TabIndex = 13;
             this.lblVAC1VarRatio2.Text = "Var Ratio";
             // 
@@ -25604,7 +25662,7 @@
             this.lblVAC1unfl2.Image = null;
             this.lblVAC1unfl2.Location = new System.Drawing.Point(295, 57);
             this.lblVAC1unfl2.Name = "lblVAC1unfl2";
-            this.lblVAC1unfl2.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC1unfl2.Size = new System.Drawing.Size(30, 15);
             this.lblVAC1unfl2.TabIndex = 12;
             this.lblVAC1unfl2.Text = "unfl";
             this.toolTip1.SetToolTip(this.lblVAC1unfl2, "Ringbuffer underflow counter (click to reset)");
@@ -25619,7 +25677,7 @@
             this.lblVAC1ovfl2.Image = null;
             this.lblVAC1ovfl2.Location = new System.Drawing.Point(295, 38);
             this.lblVAC1ovfl2.Name = "lblVAC1ovfl2";
-            this.lblVAC1ovfl2.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC1ovfl2.Size = new System.Drawing.Size(28, 15);
             this.lblVAC1ovfl2.TabIndex = 11;
             this.lblVAC1ovfl2.Text = "ovfl";
             this.toolTip1.SetToolTip(this.lblVAC1ovfl2, "Ringbuffer overflow counter (click to reset)");
@@ -25631,7 +25689,7 @@
             this.lblVAC1underflows2.Image = null;
             this.lblVAC1underflows2.Location = new System.Drawing.Point(229, 57);
             this.lblVAC1underflows2.Name = "lblVAC1underflows2";
-            this.lblVAC1underflows2.Size = new System.Drawing.Size(60, 13);
+            this.lblVAC1underflows2.Size = new System.Drawing.Size(67, 13);
             this.lblVAC1underflows2.TabIndex = 10;
             this.lblVAC1underflows2.Text = "Underflows";
             // 
@@ -25641,7 +25699,7 @@
             this.lblVAC1overflows2.Image = null;
             this.lblVAC1overflows2.Location = new System.Drawing.Point(229, 38);
             this.lblVAC1overflows2.Name = "lblVAC1overflows2";
-            this.lblVAC1overflows2.Size = new System.Drawing.Size(54, 13);
+            this.lblVAC1overflows2.Size = new System.Drawing.Size(59, 13);
             this.lblVAC1overflows2.TabIndex = 9;
             this.lblVAC1overflows2.Text = "Overflows";
             // 
@@ -25665,7 +25723,7 @@
             0,
             131072});
             this.udVAC1_Force.Name = "udVAC1_Force";
-            this.udVAC1_Force.Size = new System.Drawing.Size(72, 20);
+            this.udVAC1_Force.Size = new System.Drawing.Size(72, 22);
             this.udVAC1_Force.TabIndex = 8;
             this.udVAC1_Force.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1_Force, "Rate conversion ratio imposed when \"Force\" is checked");
@@ -25682,7 +25740,7 @@
             this.chkVAC1_Force.Image = null;
             this.chkVAC1_Force.Location = new System.Drawing.Point(109, 21);
             this.chkVAC1_Force.Name = "chkVAC1_Force";
-            this.chkVAC1_Force.Size = new System.Drawing.Size(53, 17);
+            this.chkVAC1_Force.Size = new System.Drawing.Size(54, 17);
             this.chkVAC1_Force.TabIndex = 7;
             this.chkVAC1_Force.Text = "Force";
             this.toolTip1.SetToolTip(this.chkVAC1_Force, "Disable resampler matching loop and force to ratio setting below");
@@ -25695,7 +25753,7 @@
             this.lblVAC1_TOVAC.Image = null;
             this.lblVAC1_TOVAC.Location = new System.Drawing.Point(6, 19);
             this.lblVAC1_TOVAC.Name = "lblVAC1_TOVAC";
-            this.lblVAC1_TOVAC.Size = new System.Drawing.Size(75, 13);
+            this.lblVAC1_TOVAC.Size = new System.Drawing.Size(76, 13);
             this.lblVAC1_TOVAC.TabIndex = 6;
             this.lblVAC1_TOVAC.Text = "TO VAC: (Out)";
             this.toolTip1.SetToolTip(this.lblVAC1_TOVAC, "Receive audio stream");
@@ -25720,7 +25778,7 @@
             this.lblVAC1varratio.Image = null;
             this.lblVAC1varratio.Location = new System.Drawing.Point(8, 76);
             this.lblVAC1varratio.Name = "lblVAC1varratio";
-            this.lblVAC1varratio.Size = new System.Drawing.Size(51, 13);
+            this.lblVAC1varratio.Size = new System.Drawing.Size(53, 13);
             this.lblVAC1varratio.TabIndex = 4;
             this.lblVAC1varratio.Text = "Var Ratio";
             // 
@@ -25733,7 +25791,7 @@
             this.lblVAC1unfl.Image = null;
             this.lblVAC1unfl.Location = new System.Drawing.Point(72, 57);
             this.lblVAC1unfl.Name = "lblVAC1unfl";
-            this.lblVAC1unfl.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC1unfl.Size = new System.Drawing.Size(30, 15);
             this.lblVAC1unfl.TabIndex = 3;
             this.lblVAC1unfl.Text = "unfl";
             this.toolTip1.SetToolTip(this.lblVAC1unfl, "Ringbuffer underflow counter (click to reset)");
@@ -25748,7 +25806,7 @@
             this.lblVAC1ovfl.Image = null;
             this.lblVAC1ovfl.Location = new System.Drawing.Point(72, 38);
             this.lblVAC1ovfl.Name = "lblVAC1ovfl";
-            this.lblVAC1ovfl.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC1ovfl.Size = new System.Drawing.Size(28, 15);
             this.lblVAC1ovfl.TabIndex = 2;
             this.lblVAC1ovfl.Text = "ovfl";
             this.toolTip1.SetToolTip(this.lblVAC1ovfl, "Ringbuffer overflow counter (click to reset)");
@@ -25760,7 +25818,7 @@
             this.lblVAC1underflows.Image = null;
             this.lblVAC1underflows.Location = new System.Drawing.Point(6, 57);
             this.lblVAC1underflows.Name = "lblVAC1underflows";
-            this.lblVAC1underflows.Size = new System.Drawing.Size(60, 13);
+            this.lblVAC1underflows.Size = new System.Drawing.Size(67, 13);
             this.lblVAC1underflows.TabIndex = 1;
             this.lblVAC1underflows.Text = "Underflows";
             // 
@@ -25770,16 +25828,16 @@
             this.lblVAC1overflows.Image = null;
             this.lblVAC1overflows.Location = new System.Drawing.Point(6, 38);
             this.lblVAC1overflows.Name = "lblVAC1overflows";
-            this.lblVAC1overflows.Size = new System.Drawing.Size(54, 13);
+            this.lblVAC1overflows.Size = new System.Drawing.Size(59, 13);
             this.lblVAC1overflows.TabIndex = 0;
             this.lblVAC1overflows.Text = "Overflows";
             // 
             // chkMOXAllowBypass
             // 
             this.chkMOXAllowBypass.Image = null;
-            this.chkMOXAllowBypass.Location = new System.Drawing.Point(19, 190);
+            this.chkMOXAllowBypass.Location = new System.Drawing.Point(19, 196);
             this.chkMOXAllowBypass.Name = "chkMOXAllowBypass";
-            this.chkMOXAllowBypass.Size = new System.Drawing.Size(245, 23);
+            this.chkMOXAllowBypass.Size = new System.Drawing.Size(245, 17);
             this.chkMOXAllowBypass.TabIndex = 82;
             this.chkMOXAllowBypass.Text = "Allow MOX to override/bypass VAC for Phone";
             this.toolTip1.SetToolTip(this.chkMOXAllowBypass, "Using the MOX control will override the PTT input to allow for easy phone operati" +
@@ -25789,9 +25847,9 @@
             // chkSPACEAllowBypass
             // 
             this.chkSPACEAllowBypass.Image = null;
-            this.chkSPACEAllowBypass.Location = new System.Drawing.Point(19, 167);
+            this.chkSPACEAllowBypass.Location = new System.Drawing.Point(18, 158);
             this.chkSPACEAllowBypass.Name = "chkSPACEAllowBypass";
-            this.chkSPACEAllowBypass.Size = new System.Drawing.Size(271, 23);
+            this.chkSPACEAllowBypass.Size = new System.Drawing.Size(269, 17);
             this.chkSPACEAllowBypass.TabIndex = 81;
             this.chkSPACEAllowBypass.Text = "Allow SPACE to override/bypass VAC for Phone";
             this.toolTip1.SetToolTip(this.chkSPACEAllowBypass, "Using theSPACE BAR will override the PTT input to allow for easy phone operation " +
@@ -25847,9 +25905,9 @@
             // 
             this.chkVACCombine.Enabled = false;
             this.chkVACCombine.Image = null;
-            this.chkVACCombine.Location = new System.Drawing.Point(19, 236);
+            this.chkVACCombine.Location = new System.Drawing.Point(18, 272);
             this.chkVACCombine.Name = "chkVACCombine";
-            this.chkVACCombine.Size = new System.Drawing.Size(172, 23);
+            this.chkVACCombine.Size = new System.Drawing.Size(172, 17);
             this.chkVACCombine.TabIndex = 76;
             this.chkVACCombine.Text = "Combine VAC Input Channels";
             this.toolTip1.SetToolTip(this.chkVACCombine, "When this feature is enabled, the left and right VAC channels are combined into t" +
@@ -25863,7 +25921,7 @@
             this.chkVACAllowBypass.Image = null;
             this.chkVACAllowBypass.Location = new System.Drawing.Point(303, 160);
             this.chkVACAllowBypass.Name = "chkVACAllowBypass";
-            this.chkVACAllowBypass.Size = new System.Drawing.Size(241, 16);
+            this.chkVACAllowBypass.Size = new System.Drawing.Size(241, 33);
             this.chkVACAllowBypass.TabIndex = 75;
             this.chkVACAllowBypass.Text = "Allow PTT to override/bypass VAC for Phone";
             this.toolTip1.SetToolTip(this.chkVACAllowBypass, "Using the hardware PTT inputs will override the PTT input to allow for easy phone" +
@@ -25899,7 +25957,7 @@
             this.labelTS364.Image = null;
             this.labelTS364.Location = new System.Drawing.Point(78, 105);
             this.labelTS364.Name = "labelTS364";
-            this.labelTS364.Size = new System.Drawing.Size(27, 13);
+            this.labelTS364.Size = new System.Drawing.Size(30, 13);
             this.labelTS364.TabIndex = 48;
             this.labelTS364.Text = "Out:";
             // 
@@ -25909,7 +25967,7 @@
             this.labelTS365.Image = null;
             this.labelTS365.Location = new System.Drawing.Point(5, 105);
             this.labelTS365.Name = "labelTS365";
-            this.labelTS365.Size = new System.Drawing.Size(19, 13);
+            this.labelTS365.Size = new System.Drawing.Size(20, 13);
             this.labelTS365.TabIndex = 47;
             this.labelTS365.Text = "In:";
             // 
@@ -25943,7 +26001,7 @@
             0,
             0});
             this.udAudioLatencyPAOut.Name = "udAudioLatencyPAOut";
-            this.udAudioLatencyPAOut.Size = new System.Drawing.Size(40, 20);
+            this.udAudioLatencyPAOut.Size = new System.Drawing.Size(40, 22);
             this.udAudioLatencyPAOut.TabIndex = 45;
             this.udAudioLatencyPAOut.TinyStep = false;
             this.udAudioLatencyPAOut.Value = new decimal(new int[] {
@@ -25983,7 +26041,7 @@
             0,
             0});
             this.udAudioLatencyPAIn.Name = "udAudioLatencyPAIn";
-            this.udAudioLatencyPAIn.Size = new System.Drawing.Size(40, 20);
+            this.udAudioLatencyPAIn.Size = new System.Drawing.Size(40, 22);
             this.udAudioLatencyPAIn.TabIndex = 44;
             this.udAudioLatencyPAIn.TinyStep = false;
             this.udAudioLatencyPAIn.Value = new decimal(new int[] {
@@ -25999,7 +26057,7 @@
             this.labelTS363.Image = null;
             this.labelTS363.Location = new System.Drawing.Point(45, 87);
             this.labelTS363.Name = "labelTS363";
-            this.labelTS363.Size = new System.Drawing.Size(53, 13);
+            this.labelTS363.Size = new System.Drawing.Size(59, 13);
             this.labelTS363.TabIndex = 42;
             this.labelTS363.Text = "PortAudio";
             // 
@@ -26009,7 +26067,7 @@
             this.labelTS362.Image = null;
             this.labelTS362.Location = new System.Drawing.Point(45, 16);
             this.labelTS362.Name = "labelTS362";
-            this.labelTS362.Size = new System.Drawing.Size(57, 13);
+            this.labelTS362.Size = new System.Drawing.Size(62, 13);
             this.labelTS362.TabIndex = 41;
             this.labelTS362.Text = "RingBuffer";
             // 
@@ -26019,7 +26077,7 @@
             this.labelTS361.Image = null;
             this.labelTS361.Location = new System.Drawing.Point(78, 37);
             this.labelTS361.Name = "labelTS361";
-            this.labelTS361.Size = new System.Drawing.Size(27, 13);
+            this.labelTS361.Size = new System.Drawing.Size(30, 13);
             this.labelTS361.TabIndex = 40;
             this.labelTS361.Text = "Out:";
             // 
@@ -26029,7 +26087,7 @@
             this.labelTS360.Image = null;
             this.labelTS360.Location = new System.Drawing.Point(5, 37);
             this.labelTS360.Name = "labelTS360";
-            this.labelTS360.Size = new System.Drawing.Size(19, 13);
+            this.labelTS360.Size = new System.Drawing.Size(20, 13);
             this.labelTS360.TabIndex = 39;
             this.labelTS360.Text = "In:";
             // 
@@ -26063,7 +26121,7 @@
             0,
             0});
             this.udAudioLatency2_Out.Name = "udAudioLatency2_Out";
-            this.udAudioLatency2_Out.Size = new System.Drawing.Size(40, 20);
+            this.udAudioLatency2_Out.Size = new System.Drawing.Size(40, 22);
             this.udAudioLatency2_Out.TabIndex = 37;
             this.udAudioLatency2_Out.TinyStep = false;
             this.udAudioLatency2_Out.Value = new decimal(new int[] {
@@ -26103,7 +26161,7 @@
             0,
             0});
             this.udAudioLatency2.Name = "udAudioLatency2";
-            this.udAudioLatency2.Size = new System.Drawing.Size(40, 20);
+            this.udAudioLatency2.Size = new System.Drawing.Size(40, 22);
             this.udAudioLatency2.TabIndex = 36;
             this.udAudioLatency2.TinyStep = false;
             this.udAudioLatency2.Value = new decimal(new int[] {
@@ -26282,7 +26340,7 @@
             this.tpVAC2.Location = new System.Drawing.Point(4, 22);
             this.tpVAC2.Name = "tpVAC2";
             this.tpVAC2.Padding = new System.Windows.Forms.Padding(3);
-            this.tpVAC2.Size = new System.Drawing.Size(712, 404);
+            this.tpVAC2.Size = new System.Drawing.Size(712, 439);
             this.tpVAC2.TabIndex = 2;
             this.tpVAC2.Text = "VAC 2";
             // 
@@ -26292,7 +26350,7 @@
             this.chkVAC2WillMute.Image = null;
             this.chkVAC2WillMute.Location = new System.Drawing.Point(249, 234);
             this.chkVAC2WillMute.Name = "chkVAC2WillMute";
-            this.chkVAC2WillMute.Size = new System.Drawing.Size(117, 17);
+            this.chkVAC2WillMute.Size = new System.Drawing.Size(126, 17);
             this.chkVAC2WillMute.TabIndex = 96;
             this.chkVAC2WillMute.Text = "Mute will mute VAC";
             this.chkVAC2WillMute.UseVisualStyleBackColor = true;
@@ -26305,7 +26363,7 @@
             this.chkVAC2GrapherAuto.Location = new System.Drawing.Point(418, 250);
             this.chkVAC2GrapherAuto.Name = "chkVAC2GrapherAuto";
             this.chkVAC2GrapherAuto.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.chkVAC2GrapherAuto.Size = new System.Drawing.Size(48, 17);
+            this.chkVAC2GrapherAuto.Size = new System.Drawing.Size(51, 17);
             this.chkVAC2GrapherAuto.TabIndex = 95;
             this.chkVAC2GrapherAuto.Text = "Auto";
             this.toolTip1.SetToolTip(this.chkVAC2GrapherAuto, "Auto scale the Min/Max around the 0 point");
@@ -26332,7 +26390,7 @@
             0,
             393216});
             this.udVAC2GrapherSwing.Name = "udVAC2GrapherSwing";
-            this.udVAC2GrapherSwing.Size = new System.Drawing.Size(72, 20);
+            this.udVAC2GrapherSwing.Size = new System.Drawing.Size(72, 22);
             this.udVAC2GrapherSwing.TabIndex = 94;
             this.udVAC2GrapherSwing.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC2GrapherSwing, "Min/Max above the 0 point");
@@ -26475,7 +26533,7 @@
             this.lblVAC2RingP2.Image = null;
             this.lblVAC2RingP2.Location = new System.Drawing.Point(231, 113);
             this.lblVAC2RingP2.Name = "lblVAC2RingP2";
-            this.lblVAC2RingP2.Size = new System.Drawing.Size(59, 13);
+            this.lblVAC2RingP2.Size = new System.Drawing.Size(64, 13);
             this.lblVAC2RingP2.TabIndex = 44;
             this.lblVAC2RingP2.Text = "RingBuff %";
             // 
@@ -26499,7 +26557,7 @@
             this.lblVAC2RingP1.Image = null;
             this.lblVAC2RingP1.Location = new System.Drawing.Point(8, 113);
             this.lblVAC2RingP1.Name = "lblVAC2RingP1";
-            this.lblVAC2RingP1.Size = new System.Drawing.Size(59, 13);
+            this.lblVAC2RingP1.Size = new System.Drawing.Size(64, 13);
             this.lblVAC2RingP1.TabIndex = 42;
             this.lblVAC2RingP1.Text = "RingBuff %";
             // 
@@ -26509,7 +26567,7 @@
             this.labelTS531.Image = null;
             this.labelTS531.Location = new System.Drawing.Point(336, 95);
             this.labelTS531.Name = "labelTS531";
-            this.labelTS531.Size = new System.Drawing.Size(16, 13);
+            this.labelTS531.Size = new System.Drawing.Size(18, 13);
             this.labelTS531.TabIndex = 41;
             this.labelTS531.Text = "of";
             // 
@@ -26547,7 +26605,7 @@
             this.labelTS534.Image = null;
             this.labelTS534.Location = new System.Drawing.Point(113, 95);
             this.labelTS534.Name = "labelTS534";
-            this.labelTS534.Size = new System.Drawing.Size(16, 13);
+            this.labelTS534.Size = new System.Drawing.Size(18, 13);
             this.labelTS534.TabIndex = 38;
             this.labelTS534.Text = "of";
             // 
@@ -26571,7 +26629,7 @@
             this.lblVAC2Ring2.Image = null;
             this.lblVAC2Ring2.Location = new System.Drawing.Point(231, 95);
             this.lblVAC2Ring2.Name = "lblVAC2Ring2";
-            this.lblVAC2Ring2.Size = new System.Drawing.Size(57, 13);
+            this.lblVAC2Ring2.Size = new System.Drawing.Size(62, 13);
             this.lblVAC2Ring2.TabIndex = 36;
             this.lblVAC2Ring2.Text = "RingBuffer";
             // 
@@ -26595,7 +26653,7 @@
             this.lblVAC2Ring1.Image = null;
             this.lblVAC2Ring1.Location = new System.Drawing.Point(8, 95);
             this.lblVAC2Ring1.Name = "lblVAC2Ring1";
-            this.lblVAC2Ring1.Size = new System.Drawing.Size(57, 13);
+            this.lblVAC2Ring1.Size = new System.Drawing.Size(62, 13);
             this.lblVAC2Ring1.TabIndex = 34;
             this.lblVAC2Ring1.Text = "RingBuffer";
             // 
@@ -26619,7 +26677,7 @@
             0,
             131072});
             this.udVAC2_Force2.Name = "udVAC2_Force2";
-            this.udVAC2_Force2.Size = new System.Drawing.Size(72, 20);
+            this.udVAC2_Force2.Size = new System.Drawing.Size(72, 22);
             this.udVAC2_Force2.TabIndex = 17;
             this.udVAC2_Force2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC2_Force2, "Rate conversion ratio imposed when \"Force\" is checked");
@@ -26636,7 +26694,7 @@
             this.chkVAC2_Force2.Image = null;
             this.chkVAC2_Force2.Location = new System.Drawing.Point(332, 21);
             this.chkVAC2_Force2.Name = "chkVAC2_Force2";
-            this.chkVAC2_Force2.Size = new System.Drawing.Size(53, 17);
+            this.chkVAC2_Force2.Size = new System.Drawing.Size(54, 17);
             this.chkVAC2_Force2.TabIndex = 16;
             this.chkVAC2_Force2.Text = "Force";
             this.toolTip1.SetToolTip(this.chkVAC2_Force2, "Disable resampler matching loop and force to ratio setting below");
@@ -26649,7 +26707,7 @@
             this.lblVAC2_FROMVAC.Image = null;
             this.lblVAC2_FROMVAC.Location = new System.Drawing.Point(229, 19);
             this.lblVAC2_FROMVAC.Name = "lblVAC2_FROMVAC";
-            this.lblVAC2_FROMVAC.Size = new System.Drawing.Size(83, 13);
+            this.lblVAC2_FROMVAC.Size = new System.Drawing.Size(84, 13);
             this.lblVAC2_FROMVAC.TabIndex = 15;
             this.lblVAC2_FROMVAC.Text = "FROM VAC: (In)";
             this.toolTip1.SetToolTip(this.lblVAC2_FROMVAC, "Transmit audio stream");
@@ -26674,7 +26732,7 @@
             this.lblVAC2varratio2.Image = null;
             this.lblVAC2varratio2.Location = new System.Drawing.Point(231, 76);
             this.lblVAC2varratio2.Name = "lblVAC2varratio2";
-            this.lblVAC2varratio2.Size = new System.Drawing.Size(51, 13);
+            this.lblVAC2varratio2.Size = new System.Drawing.Size(53, 13);
             this.lblVAC2varratio2.TabIndex = 13;
             this.lblVAC2varratio2.Text = "Var Ratio";
             // 
@@ -26687,7 +26745,7 @@
             this.lblVAC2unfl2.Image = null;
             this.lblVAC2unfl2.Location = new System.Drawing.Point(295, 57);
             this.lblVAC2unfl2.Name = "lblVAC2unfl2";
-            this.lblVAC2unfl2.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC2unfl2.Size = new System.Drawing.Size(30, 15);
             this.lblVAC2unfl2.TabIndex = 12;
             this.lblVAC2unfl2.Text = "unfl";
             this.toolTip1.SetToolTip(this.lblVAC2unfl2, "Ringbuffer underflow counter (click to reset)");
@@ -26702,7 +26760,7 @@
             this.lblVAC2ovfl2.Image = null;
             this.lblVAC2ovfl2.Location = new System.Drawing.Point(295, 38);
             this.lblVAC2ovfl2.Name = "lblVAC2ovfl2";
-            this.lblVAC2ovfl2.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC2ovfl2.Size = new System.Drawing.Size(28, 15);
             this.lblVAC2ovfl2.TabIndex = 11;
             this.lblVAC2ovfl2.Text = "ovfl";
             this.toolTip1.SetToolTip(this.lblVAC2ovfl2, "Ringbuffer overflow counter (click to reset)");
@@ -26714,7 +26772,7 @@
             this.lblVAC2underflows2.Image = null;
             this.lblVAC2underflows2.Location = new System.Drawing.Point(229, 57);
             this.lblVAC2underflows2.Name = "lblVAC2underflows2";
-            this.lblVAC2underflows2.Size = new System.Drawing.Size(60, 13);
+            this.lblVAC2underflows2.Size = new System.Drawing.Size(67, 13);
             this.lblVAC2underflows2.TabIndex = 10;
             this.lblVAC2underflows2.Text = "Underflows";
             // 
@@ -26724,7 +26782,7 @@
             this.lblVAC2overflows2.Image = null;
             this.lblVAC2overflows2.Location = new System.Drawing.Point(229, 38);
             this.lblVAC2overflows2.Name = "lblVAC2overflows2";
-            this.lblVAC2overflows2.Size = new System.Drawing.Size(54, 13);
+            this.lblVAC2overflows2.Size = new System.Drawing.Size(59, 13);
             this.lblVAC2overflows2.TabIndex = 9;
             this.lblVAC2overflows2.Text = "Overflows";
             // 
@@ -26748,7 +26806,7 @@
             0,
             131072});
             this.udVAC2_Force.Name = "udVAC2_Force";
-            this.udVAC2_Force.Size = new System.Drawing.Size(72, 20);
+            this.udVAC2_Force.Size = new System.Drawing.Size(72, 22);
             this.udVAC2_Force.TabIndex = 8;
             this.udVAC2_Force.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC2_Force, "Rate conversion ratio imposed when \"Force\" is checked");
@@ -26765,7 +26823,7 @@
             this.chkVAC2_Force.Image = null;
             this.chkVAC2_Force.Location = new System.Drawing.Point(109, 21);
             this.chkVAC2_Force.Name = "chkVAC2_Force";
-            this.chkVAC2_Force.Size = new System.Drawing.Size(53, 17);
+            this.chkVAC2_Force.Size = new System.Drawing.Size(54, 17);
             this.chkVAC2_Force.TabIndex = 7;
             this.chkVAC2_Force.Text = "Force";
             this.toolTip1.SetToolTip(this.chkVAC2_Force, "Disable resampler matching loop and force to ratio setting below");
@@ -26778,7 +26836,7 @@
             this.lblVAC2_TOVAC.Image = null;
             this.lblVAC2_TOVAC.Location = new System.Drawing.Point(6, 19);
             this.lblVAC2_TOVAC.Name = "lblVAC2_TOVAC";
-            this.lblVAC2_TOVAC.Size = new System.Drawing.Size(75, 13);
+            this.lblVAC2_TOVAC.Size = new System.Drawing.Size(76, 13);
             this.lblVAC2_TOVAC.TabIndex = 6;
             this.lblVAC2_TOVAC.Text = "TO VAC: (Out)";
             this.toolTip1.SetToolTip(this.lblVAC2_TOVAC, "Receive audio stream");
@@ -26803,7 +26861,7 @@
             this.lblVAC2varratio.Image = null;
             this.lblVAC2varratio.Location = new System.Drawing.Point(8, 76);
             this.lblVAC2varratio.Name = "lblVAC2varratio";
-            this.lblVAC2varratio.Size = new System.Drawing.Size(51, 13);
+            this.lblVAC2varratio.Size = new System.Drawing.Size(53, 13);
             this.lblVAC2varratio.TabIndex = 4;
             this.lblVAC2varratio.Text = "Var Ratio";
             // 
@@ -26816,7 +26874,7 @@
             this.lblVAC2unfl.Image = null;
             this.lblVAC2unfl.Location = new System.Drawing.Point(72, 57);
             this.lblVAC2unfl.Name = "lblVAC2unfl";
-            this.lblVAC2unfl.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC2unfl.Size = new System.Drawing.Size(30, 15);
             this.lblVAC2unfl.TabIndex = 3;
             this.lblVAC2unfl.Text = "unfl";
             this.toolTip1.SetToolTip(this.lblVAC2unfl, "Ringbuffer underflow counter (click to reset)");
@@ -26831,7 +26889,7 @@
             this.lblVAC2ovfl.Image = null;
             this.lblVAC2ovfl.Location = new System.Drawing.Point(72, 38);
             this.lblVAC2ovfl.Name = "lblVAC2ovfl";
-            this.lblVAC2ovfl.Size = new System.Drawing.Size(26, 15);
+            this.lblVAC2ovfl.Size = new System.Drawing.Size(28, 15);
             this.lblVAC2ovfl.TabIndex = 2;
             this.lblVAC2ovfl.Text = "ovfl";
             this.toolTip1.SetToolTip(this.lblVAC2ovfl, "Ringbuffer overflow counter (click to reset)");
@@ -26843,7 +26901,7 @@
             this.lblVAC2underflows.Image = null;
             this.lblVAC2underflows.Location = new System.Drawing.Point(6, 57);
             this.lblVAC2underflows.Name = "lblVAC2underflows";
-            this.lblVAC2underflows.Size = new System.Drawing.Size(60, 13);
+            this.lblVAC2underflows.Size = new System.Drawing.Size(67, 13);
             this.lblVAC2underflows.TabIndex = 1;
             this.lblVAC2underflows.Text = "Underflows";
             // 
@@ -26853,7 +26911,7 @@
             this.lblVAC2overflows.Image = null;
             this.lblVAC2overflows.Location = new System.Drawing.Point(6, 38);
             this.lblVAC2overflows.Name = "lblVAC2overflows";
-            this.lblVAC2overflows.Size = new System.Drawing.Size(54, 13);
+            this.lblVAC2overflows.Size = new System.Drawing.Size(59, 13);
             this.lblVAC2overflows.TabIndex = 0;
             this.lblVAC2overflows.Text = "Overflows";
             // 
@@ -26980,7 +27038,7 @@
             0,
             -2147483648});
             this.udVAC2GainTX.Name = "udVAC2GainTX";
-            this.udVAC2GainTX.Size = new System.Drawing.Size(40, 20);
+            this.udVAC2GainTX.Size = new System.Drawing.Size(40, 22);
             this.udVAC2GainTX.TabIndex = 38;
             this.udVAC2GainTX.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC2GainTX, "Controls the gain on the audio coming from third party applications.");
@@ -27019,7 +27077,7 @@
             0,
             -2147483648});
             this.udVAC2GainRX.Name = "udVAC2GainRX";
-            this.udVAC2GainRX.Size = new System.Drawing.Size(40, 20);
+            this.udVAC2GainRX.Size = new System.Drawing.Size(40, 22);
             this.udVAC2GainRX.TabIndex = 36;
             this.udVAC2GainRX.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC2GainRX, "Controls the gain applied to the RX audio before it is sent to the third party ap" +
@@ -27082,7 +27140,7 @@
             this.labelTS369.Image = null;
             this.labelTS369.Location = new System.Drawing.Point(78, 105);
             this.labelTS369.Name = "labelTS369";
-            this.labelTS369.Size = new System.Drawing.Size(27, 13);
+            this.labelTS369.Size = new System.Drawing.Size(30, 13);
             this.labelTS369.TabIndex = 55;
             this.labelTS369.Text = "Out:";
             // 
@@ -27092,7 +27150,7 @@
             this.labelTS370.Image = null;
             this.labelTS370.Location = new System.Drawing.Point(5, 105);
             this.labelTS370.Name = "labelTS370";
-            this.labelTS370.Size = new System.Drawing.Size(19, 13);
+            this.labelTS370.Size = new System.Drawing.Size(20, 13);
             this.labelTS370.TabIndex = 54;
             this.labelTS370.Text = "In:";
             // 
@@ -27126,7 +27184,7 @@
             0,
             0});
             this.udVAC2LatencyPAOut.Name = "udVAC2LatencyPAOut";
-            this.udVAC2LatencyPAOut.Size = new System.Drawing.Size(40, 20);
+            this.udVAC2LatencyPAOut.Size = new System.Drawing.Size(40, 22);
             this.udVAC2LatencyPAOut.TabIndex = 52;
             this.udVAC2LatencyPAOut.TinyStep = false;
             this.udVAC2LatencyPAOut.Value = new decimal(new int[] {
@@ -27166,7 +27224,7 @@
             0,
             0});
             this.udVAC2LatencyPAIn.Name = "udVAC2LatencyPAIn";
-            this.udVAC2LatencyPAIn.Size = new System.Drawing.Size(40, 20);
+            this.udVAC2LatencyPAIn.Size = new System.Drawing.Size(40, 22);
             this.udVAC2LatencyPAIn.TabIndex = 51;
             this.udVAC2LatencyPAIn.TinyStep = false;
             this.udVAC2LatencyPAIn.Value = new decimal(new int[] {
@@ -27182,7 +27240,7 @@
             this.labelTS371.Image = null;
             this.labelTS371.Location = new System.Drawing.Point(45, 87);
             this.labelTS371.Name = "labelTS371";
-            this.labelTS371.Size = new System.Drawing.Size(53, 13);
+            this.labelTS371.Size = new System.Drawing.Size(59, 13);
             this.labelTS371.TabIndex = 49;
             this.labelTS371.Text = "PortAudio";
             // 
@@ -27216,7 +27274,7 @@
             0,
             0});
             this.udVAC2LatencyOut.Name = "udVAC2LatencyOut";
-            this.udVAC2LatencyOut.Size = new System.Drawing.Size(40, 20);
+            this.udVAC2LatencyOut.Size = new System.Drawing.Size(40, 22);
             this.udVAC2LatencyOut.TabIndex = 45;
             this.udVAC2LatencyOut.TinyStep = false;
             this.udVAC2LatencyOut.Value = new decimal(new int[] {
@@ -27232,7 +27290,7 @@
             this.labelTS368.Image = null;
             this.labelTS368.Location = new System.Drawing.Point(78, 37);
             this.labelTS368.Name = "labelTS368";
-            this.labelTS368.Size = new System.Drawing.Size(27, 13);
+            this.labelTS368.Size = new System.Drawing.Size(30, 13);
             this.labelTS368.TabIndex = 44;
             this.labelTS368.Text = "Out:";
             // 
@@ -27242,7 +27300,7 @@
             this.labelTS367.Image = null;
             this.labelTS367.Location = new System.Drawing.Point(5, 37);
             this.labelTS367.Name = "labelTS367";
-            this.labelTS367.Size = new System.Drawing.Size(19, 13);
+            this.labelTS367.Size = new System.Drawing.Size(20, 13);
             this.labelTS367.TabIndex = 43;
             this.labelTS367.Text = "In:";
             // 
@@ -27252,7 +27310,7 @@
             this.labelTS366.Image = null;
             this.labelTS366.Location = new System.Drawing.Point(45, 16);
             this.labelTS366.Name = "labelTS366";
-            this.labelTS366.Size = new System.Drawing.Size(57, 13);
+            this.labelTS366.Size = new System.Drawing.Size(62, 13);
             this.labelTS366.TabIndex = 42;
             this.labelTS366.Text = "RingBuffer";
             // 
@@ -27286,7 +27344,7 @@
             0,
             0});
             this.udVAC2Latency.Name = "udVAC2Latency";
-            this.udVAC2Latency.Size = new System.Drawing.Size(40, 20);
+            this.udVAC2Latency.Size = new System.Drawing.Size(40, 22);
             this.udVAC2Latency.TabIndex = 36;
             this.udVAC2Latency.TinyStep = false;
             this.udVAC2Latency.Value = new decimal(new int[] {
@@ -27456,7 +27514,7 @@
             this.tpAudioOptions.Location = new System.Drawing.Point(4, 22);
             this.tpAudioOptions.Name = "tpAudioOptions";
             this.tpAudioOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tpAudioOptions.Size = new System.Drawing.Size(712, 404);
+            this.tpAudioOptions.Size = new System.Drawing.Size(712, 439);
             this.tpAudioOptions.TabIndex = 4;
             this.tpAudioOptions.Text = "Options";
             // 
@@ -27466,7 +27524,7 @@
             this.chkDisableRearSpeakerJacksAudioAmplifier.Image = null;
             this.chkDisableRearSpeakerJacksAudioAmplifier.Location = new System.Drawing.Point(20, 80);
             this.chkDisableRearSpeakerJacksAudioAmplifier.Name = "chkDisableRearSpeakerJacksAudioAmplifier";
-            this.chkDisableRearSpeakerJacksAudioAmplifier.Size = new System.Drawing.Size(239, 17);
+            this.chkDisableRearSpeakerJacksAudioAmplifier.Size = new System.Drawing.Size(258, 17);
             this.chkDisableRearSpeakerJacksAudioAmplifier.TabIndex = 2;
             this.chkDisableRearSpeakerJacksAudioAmplifier.Text = "Disable audio amplifier (rear speaker sockets)";
             this.toolTip1.SetToolTip(this.chkDisableRearSpeakerJacksAudioAmplifier, "Disable the internal audio amplifer. This is only available on 7000/8000\'s");
@@ -27479,7 +27537,7 @@
             this.chkNoFadeOverUnderWarning.Image = null;
             this.chkNoFadeOverUnderWarning.Location = new System.Drawing.Point(19, 42);
             this.chkNoFadeOverUnderWarning.Name = "chkNoFadeOverUnderWarning";
-            this.chkNoFadeOverUnderWarning.Size = new System.Drawing.Size(184, 17);
+            this.chkNoFadeOverUnderWarning.Size = new System.Drawing.Size(198, 17);
             this.chkNoFadeOverUnderWarning.TabIndex = 1;
             this.chkNoFadeOverUnderWarning.Text = "Overflow/Underflow click to clear";
             this.toolTip1.SetToolTip(this.chkNoFadeOverUnderWarning, "You will need to click to clear any overflow / underflow VAC warning on the main " +
@@ -27493,7 +27551,7 @@
             this.chkAFSlidersMute.Image = null;
             this.chkAFSlidersMute.Location = new System.Drawing.Point(19, 19);
             this.chkAFSlidersMute.Name = "chkAFSlidersMute";
-            this.chkAFSlidersMute.Size = new System.Drawing.Size(125, 17);
+            this.chkAFSlidersMute.Size = new System.Drawing.Size(133, 17);
             this.chkAFSlidersMute.TabIndex = 0;
             this.chkAFSlidersMute.Text = "RX AF slider un-mute";
             this.toolTip1.SetToolTip(this.chkAFSlidersMute, "Moving AF sliders will un-mute");
@@ -27509,7 +27567,7 @@
             this.tpAdvancedAudio.Location = new System.Drawing.Point(4, 22);
             this.tpAdvancedAudio.Name = "tpAdvancedAudio";
             this.tpAdvancedAudio.Padding = new System.Windows.Forms.Padding(3);
-            this.tpAdvancedAudio.Size = new System.Drawing.Size(712, 404);
+            this.tpAdvancedAudio.Size = new System.Drawing.Size(712, 439);
             this.tpAdvancedAudio.TabIndex = 3;
             this.tpAdvancedAudio.Text = "Advanced";
             // 
@@ -27572,7 +27630,7 @@
             this.chkVAC2OldVarOut.Image = null;
             this.chkVAC2OldVarOut.Location = new System.Drawing.Point(202, 223);
             this.chkVAC2OldVarOut.Name = "chkVAC2OldVarOut";
-            this.chkVAC2OldVarOut.Size = new System.Drawing.Size(67, 17);
+            this.chkVAC2OldVarOut.Size = new System.Drawing.Size(68, 17);
             this.chkVAC2OldVarOut.TabIndex = 100;
             this.chkVAC2OldVarOut.Text = "Old VAR";
             this.chkVAC2OldVarOut.UseVisualStyleBackColor = true;
@@ -27584,7 +27642,7 @@
             this.chkVAC2OldVarIn.Image = null;
             this.chkVAC2OldVarIn.Location = new System.Drawing.Point(114, 223);
             this.chkVAC2OldVarIn.Name = "chkVAC2OldVarIn";
-            this.chkVAC2OldVarIn.Size = new System.Drawing.Size(67, 17);
+            this.chkVAC2OldVarIn.Size = new System.Drawing.Size(68, 17);
             this.chkVAC2OldVarIn.TabIndex = 99;
             this.chkVAC2OldVarIn.Text = "Old VAR";
             this.chkVAC2OldVarIn.UseVisualStyleBackColor = true;
@@ -27596,7 +27654,7 @@
             this.txtVAC2OldVarOut.Location = new System.Drawing.Point(202, 246);
             this.txtVAC2OldVarOut.Name = "txtVAC2OldVarOut";
             this.txtVAC2OldVarOut.ReadOnly = true;
-            this.txtVAC2OldVarOut.Size = new System.Drawing.Size(67, 20);
+            this.txtVAC2OldVarOut.Size = new System.Drawing.Size(67, 22);
             this.txtVAC2OldVarOut.TabIndex = 98;
             this.txtVAC2OldVarOut.Text = "1.000000";
             this.txtVAC2OldVarOut.TextChanged += new System.EventHandler(this.txtVAC2OldVarOut_TextChanged);
@@ -27607,7 +27665,7 @@
             this.txtVAC2OldVarIn.Location = new System.Drawing.Point(113, 246);
             this.txtVAC2OldVarIn.Name = "txtVAC2OldVarIn";
             this.txtVAC2OldVarIn.ReadOnly = true;
-            this.txtVAC2OldVarIn.Size = new System.Drawing.Size(67, 20);
+            this.txtVAC2OldVarIn.Size = new System.Drawing.Size(67, 22);
             this.txtVAC2OldVarIn.TabIndex = 97;
             this.txtVAC2OldVarIn.Text = "1.000000";
             this.txtVAC2OldVarIn.TextChanged += new System.EventHandler(this.txtVAC2OldVarIn_TextChanged);
@@ -27618,7 +27676,7 @@
             this.labelTS540.Image = null;
             this.labelTS540.Location = new System.Drawing.Point(290, 173);
             this.labelTS540.Name = "labelTS540";
-            this.labelTS540.Size = new System.Drawing.Size(33, 13);
+            this.labelTS540.Size = new System.Drawing.Size(36, 13);
             this.labelTS540.TabIndex = 96;
             this.labelTS540.Text = "pow2";
             // 
@@ -27628,7 +27686,7 @@
             this.labelTS541.Image = null;
             this.labelTS541.Location = new System.Drawing.Point(290, 121);
             this.labelTS541.Name = "labelTS541";
-            this.labelTS541.Size = new System.Drawing.Size(33, 13);
+            this.labelTS541.Size = new System.Drawing.Size(36, 13);
             this.labelTS541.TabIndex = 95;
             this.labelTS541.Text = "pow2";
             // 
@@ -27651,7 +27709,7 @@
             0,
             0});
             this.udVAC2FFMinOut.Name = "udVAC2FFMinOut";
-            this.udVAC2FFMinOut.Size = new System.Drawing.Size(84, 20);
+            this.udVAC2FFMinOut.Size = new System.Drawing.Size(84, 22);
             this.udVAC2FFMinOut.TabIndex = 94;
             this.udVAC2FFMinOut.TinyStep = false;
             this.udVAC2FFMinOut.Value = new decimal(new int[] {
@@ -27680,7 +27738,7 @@
             0,
             0});
             this.udVAC2FFMinIn.Name = "udVAC2FFMinIn";
-            this.udVAC2FFMinIn.Size = new System.Drawing.Size(84, 20);
+            this.udVAC2FFMinIn.Size = new System.Drawing.Size(84, 22);
             this.udVAC2FFMinIn.TabIndex = 93;
             this.udVAC2FFMinIn.TinyStep = false;
             this.udVAC2FFMinIn.Value = new decimal(new int[] {
@@ -27696,7 +27754,7 @@
             this.labelTS542.Image = null;
             this.labelTS542.Location = new System.Drawing.Point(14, 147);
             this.labelTS542.Name = "labelTS542";
-            this.labelTS542.Size = new System.Drawing.Size(93, 13);
+            this.labelTS542.Size = new System.Drawing.Size(99, 13);
             this.labelTS542.TabIndex = 92;
             this.labelTS542.Text = "FF Moving Av Min";
             this.labelTS542.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -27720,7 +27778,7 @@
             0,
             0});
             this.udVAC2PropMaxOut.Name = "udVAC2PropMaxOut";
-            this.udVAC2PropMaxOut.Size = new System.Drawing.Size(84, 20);
+            this.udVAC2PropMaxOut.Size = new System.Drawing.Size(84, 22);
             this.udVAC2PropMaxOut.TabIndex = 91;
             this.udVAC2PropMaxOut.TinyStep = false;
             this.udVAC2PropMaxOut.Value = new decimal(new int[] {
@@ -27749,7 +27807,7 @@
             0,
             0});
             this.udVAC2PropMaxIn.Name = "udVAC2PropMaxIn";
-            this.udVAC2PropMaxIn.Size = new System.Drawing.Size(84, 20);
+            this.udVAC2PropMaxIn.Size = new System.Drawing.Size(84, 22);
             this.udVAC2PropMaxIn.TabIndex = 90;
             this.udVAC2PropMaxIn.TinyStep = false;
             this.udVAC2PropMaxIn.Value = new decimal(new int[] {
@@ -27765,7 +27823,7 @@
             this.labelTS543.Image = null;
             this.labelTS543.Location = new System.Drawing.Point(4, 121);
             this.labelTS543.Name = "labelTS543";
-            this.labelTS543.Size = new System.Drawing.Size(103, 13);
+            this.labelTS543.Size = new System.Drawing.Size(107, 13);
             this.labelTS543.TabIndex = 89;
             this.labelTS543.Text = "Prop Feedback Max";
             this.labelTS543.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -27776,7 +27834,7 @@
             this.labelTS544.Image = null;
             this.labelTS544.Location = new System.Drawing.Point(4, 223);
             this.labelTS544.Name = "labelTS544";
-            this.labelTS544.Size = new System.Drawing.Size(103, 13);
+            this.labelTS544.Size = new System.Drawing.Size(106, 13);
             this.labelTS544.TabIndex = 88;
             this.labelTS544.Text = "On VAC Enable Use";
             this.labelTS544.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -27801,7 +27859,7 @@
             0,
             0});
             this.udVAC2FFAlphaOut.Name = "udVAC2FFAlphaOut";
-            this.udVAC2FFAlphaOut.Size = new System.Drawing.Size(84, 20);
+            this.udVAC2FFAlphaOut.Size = new System.Drawing.Size(84, 22);
             this.udVAC2FFAlphaOut.TabIndex = 87;
             this.udVAC2FFAlphaOut.TinyStep = false;
             this.udVAC2FFAlphaOut.Value = new decimal(new int[] {
@@ -27831,7 +27889,7 @@
             0,
             0});
             this.udVAC2FFAlphaIn.Name = "udVAC2FFAlphaIn";
-            this.udVAC2FFAlphaIn.Size = new System.Drawing.Size(84, 20);
+            this.udVAC2FFAlphaIn.Size = new System.Drawing.Size(84, 22);
             this.udVAC2FFAlphaIn.TabIndex = 86;
             this.udVAC2FFAlphaIn.TinyStep = false;
             this.udVAC2FFAlphaIn.Value = new decimal(new int[] {
@@ -27860,7 +27918,7 @@
             0,
             0});
             this.udVAC2FFMaxOut.Name = "udVAC2FFMaxOut";
-            this.udVAC2FFMaxOut.Size = new System.Drawing.Size(84, 20);
+            this.udVAC2FFMaxOut.Size = new System.Drawing.Size(84, 22);
             this.udVAC2FFMaxOut.TabIndex = 85;
             this.udVAC2FFMaxOut.TinyStep = false;
             this.udVAC2FFMaxOut.Value = new decimal(new int[] {
@@ -27889,7 +27947,7 @@
             0,
             0});
             this.udVAC2FFMaxIn.Name = "udVAC2FFMaxIn";
-            this.udVAC2FFMaxIn.Size = new System.Drawing.Size(84, 20);
+            this.udVAC2FFMaxIn.Size = new System.Drawing.Size(84, 22);
             this.udVAC2FFMaxIn.TabIndex = 84;
             this.udVAC2FFMaxIn.TinyStep = false;
             this.udVAC2FFMaxIn.Value = new decimal(new int[] {
@@ -27905,7 +27963,7 @@
             this.labelTS545.Image = null;
             this.labelTS545.Location = new System.Drawing.Point(57, 199);
             this.labelTS545.Name = "labelTS545";
-            this.labelTS545.Size = new System.Drawing.Size(49, 13);
+            this.labelTS545.Size = new System.Drawing.Size(52, 13);
             this.labelTS545.TabIndex = 83;
             this.labelTS545.Text = "FF Alpha";
             this.labelTS545.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -27929,7 +27987,7 @@
             0,
             0});
             this.udVAC2PropMinOut.Name = "udVAC2PropMinOut";
-            this.udVAC2PropMinOut.Size = new System.Drawing.Size(84, 20);
+            this.udVAC2PropMinOut.Size = new System.Drawing.Size(84, 22);
             this.udVAC2PropMinOut.TabIndex = 82;
             this.udVAC2PropMinOut.TinyStep = false;
             this.udVAC2PropMinOut.Value = new decimal(new int[] {
@@ -27945,7 +28003,7 @@
             this.labelTS546.Image = null;
             this.labelTS546.Location = new System.Drawing.Point(13, 173);
             this.labelTS546.Name = "labelTS546";
-            this.labelTS546.Size = new System.Drawing.Size(96, 13);
+            this.labelTS546.Size = new System.Drawing.Size(100, 13);
             this.labelTS546.TabIndex = 81;
             this.labelTS546.Text = "FF Moving Av Max";
             this.labelTS546.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -27969,7 +28027,7 @@
             0,
             0});
             this.udVAC2PropMinIn.Name = "udVAC2PropMinIn";
-            this.udVAC2PropMinIn.Size = new System.Drawing.Size(84, 20);
+            this.udVAC2PropMinIn.Size = new System.Drawing.Size(84, 22);
             this.udVAC2PropMinIn.TabIndex = 80;
             this.udVAC2PropMinIn.TinyStep = false;
             this.udVAC2PropMinIn.Value = new decimal(new int[] {
@@ -27985,7 +28043,7 @@
             this.labelTS547.Image = null;
             this.labelTS547.Location = new System.Drawing.Point(7, 95);
             this.labelTS547.Name = "labelTS547";
-            this.labelTS547.Size = new System.Drawing.Size(100, 13);
+            this.labelTS547.Size = new System.Drawing.Size(106, 13);
             this.labelTS547.TabIndex = 79;
             this.labelTS547.Text = "Prop Feedback Min";
             this.labelTS547.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -28010,7 +28068,7 @@
             0,
             0});
             this.udVAC2SlewTimeOut.Name = "udVAC2SlewTimeOut";
-            this.udVAC2SlewTimeOut.Size = new System.Drawing.Size(84, 20);
+            this.udVAC2SlewTimeOut.Size = new System.Drawing.Size(84, 22);
             this.udVAC2SlewTimeOut.TabIndex = 48;
             this.udVAC2SlewTimeOut.TinyStep = false;
             this.udVAC2SlewTimeOut.Value = new decimal(new int[] {
@@ -28050,7 +28108,7 @@
             0,
             524288});
             this.udVAC2FeedbackGainOut.Name = "udVAC2FeedbackGainOut";
-            this.udVAC2FeedbackGainOut.Size = new System.Drawing.Size(84, 20);
+            this.udVAC2FeedbackGainOut.Size = new System.Drawing.Size(84, 22);
             this.udVAC2FeedbackGainOut.TabIndex = 47;
             this.udVAC2FeedbackGainOut.TinyStep = false;
             this.udVAC2FeedbackGainOut.Value = new decimal(new int[] {
@@ -28089,7 +28147,7 @@
             this.labelTS530.Image = null;
             this.labelTS530.Location = new System.Drawing.Point(293, 71);
             this.labelTS530.Name = "labelTS530";
-            this.labelTS530.Size = new System.Drawing.Size(29, 13);
+            this.labelTS530.Size = new System.Drawing.Size(28, 13);
             this.labelTS530.TabIndex = 61;
             this.labelTS530.Text = "secs";
             // 
@@ -28113,7 +28171,7 @@
             0,
             0});
             this.udVAC2SlewTimeIn.Name = "udVAC2SlewTimeIn";
-            this.udVAC2SlewTimeIn.Size = new System.Drawing.Size(84, 20);
+            this.udVAC2SlewTimeIn.Size = new System.Drawing.Size(84, 22);
             this.udVAC2SlewTimeIn.TabIndex = 3;
             this.udVAC2SlewTimeIn.TinyStep = false;
             this.udVAC2SlewTimeIn.Value = new decimal(new int[] {
@@ -28129,7 +28187,7 @@
             this.labelTS537.Image = null;
             this.labelTS537.Location = new System.Drawing.Point(50, 71);
             this.labelTS537.Name = "labelTS537";
-            this.labelTS537.Size = new System.Drawing.Size(56, 13);
+            this.labelTS537.Size = new System.Drawing.Size(58, 13);
             this.labelTS537.TabIndex = 60;
             this.labelTS537.Text = "Slew Time";
             this.labelTS537.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -28154,7 +28212,7 @@
             0,
             524288});
             this.udVAC2FeedbackGainIn.Name = "udVAC2FeedbackGainIn";
-            this.udVAC2FeedbackGainIn.Size = new System.Drawing.Size(84, 20);
+            this.udVAC2FeedbackGainIn.Size = new System.Drawing.Size(84, 22);
             this.udVAC2FeedbackGainIn.TabIndex = 2;
             this.udVAC2FeedbackGainIn.TinyStep = false;
             this.udVAC2FeedbackGainIn.Value = new decimal(new int[] {
@@ -28170,7 +28228,7 @@
             this.labelTS538.Image = null;
             this.labelTS538.Location = new System.Drawing.Point(26, 45);
             this.labelTS538.Name = "labelTS538";
-            this.labelTS538.Size = new System.Drawing.Size(80, 13);
+            this.labelTS538.Size = new System.Drawing.Size(83, 13);
             this.labelTS538.TabIndex = 59;
             this.labelTS538.Text = "Feedback Gain";
             this.labelTS538.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -28229,7 +28287,7 @@
             this.chkVAC1OldVarOut.Image = null;
             this.chkVAC1OldVarOut.Location = new System.Drawing.Point(202, 223);
             this.chkVAC1OldVarOut.Name = "chkVAC1OldVarOut";
-            this.chkVAC1OldVarOut.Size = new System.Drawing.Size(67, 17);
+            this.chkVAC1OldVarOut.Size = new System.Drawing.Size(68, 17);
             this.chkVAC1OldVarOut.TabIndex = 78;
             this.chkVAC1OldVarOut.Text = "Old VAR";
             this.toolTip1.SetToolTip(this.chkVAC1OldVarOut, "VAC1 initialise the ring with previous calculated VAR ratio");
@@ -28242,7 +28300,7 @@
             this.chkVAC1OldVarIn.Image = null;
             this.chkVAC1OldVarIn.Location = new System.Drawing.Point(114, 223);
             this.chkVAC1OldVarIn.Name = "chkVAC1OldVarIn";
-            this.chkVAC1OldVarIn.Size = new System.Drawing.Size(67, 17);
+            this.chkVAC1OldVarIn.Size = new System.Drawing.Size(68, 17);
             this.chkVAC1OldVarIn.TabIndex = 77;
             this.chkVAC1OldVarIn.Text = "Old VAR";
             this.toolTip1.SetToolTip(this.chkVAC1OldVarIn, "VAC1 initialise the ring with previous calculated VAR ratio");
@@ -28255,7 +28313,7 @@
             this.txtVAC1OldVarOut.Location = new System.Drawing.Point(202, 246);
             this.txtVAC1OldVarOut.Name = "txtVAC1OldVarOut";
             this.txtVAC1OldVarOut.ReadOnly = true;
-            this.txtVAC1OldVarOut.Size = new System.Drawing.Size(67, 20);
+            this.txtVAC1OldVarOut.Size = new System.Drawing.Size(67, 22);
             this.txtVAC1OldVarOut.TabIndex = 76;
             this.txtVAC1OldVarOut.Text = "1.000000";
             this.txtVAC1OldVarOut.TextChanged += new System.EventHandler(this.txtVAC1OldVarOut_TextChanged);
@@ -28266,7 +28324,7 @@
             this.txtVAC1OldVarIn.Location = new System.Drawing.Point(113, 246);
             this.txtVAC1OldVarIn.Name = "txtVAC1OldVarIn";
             this.txtVAC1OldVarIn.ReadOnly = true;
-            this.txtVAC1OldVarIn.Size = new System.Drawing.Size(67, 20);
+            this.txtVAC1OldVarIn.Size = new System.Drawing.Size(67, 22);
             this.txtVAC1OldVarIn.TabIndex = 76;
             this.txtVAC1OldVarIn.Text = "1.000000";
             this.txtVAC1OldVarIn.TextChanged += new System.EventHandler(this.txtVAC1OldVarIn_TextChanged);
@@ -28277,7 +28335,7 @@
             this.labelTS539.Image = null;
             this.labelTS539.Location = new System.Drawing.Point(290, 173);
             this.labelTS539.Name = "labelTS539";
-            this.labelTS539.Size = new System.Drawing.Size(33, 13);
+            this.labelTS539.Size = new System.Drawing.Size(36, 13);
             this.labelTS539.TabIndex = 73;
             this.labelTS539.Text = "pow2";
             // 
@@ -28287,7 +28345,7 @@
             this.labelTS103.Image = null;
             this.labelTS103.Location = new System.Drawing.Point(290, 121);
             this.labelTS103.Name = "labelTS103";
-            this.labelTS103.Size = new System.Drawing.Size(33, 13);
+            this.labelTS103.Size = new System.Drawing.Size(36, 13);
             this.labelTS103.TabIndex = 72;
             this.labelTS103.Text = "pow2";
             // 
@@ -28360,7 +28418,7 @@
             0,
             0});
             this.udVAC1FFMinOut.Name = "udVAC1FFMinOut";
-            this.udVAC1FFMinOut.Size = new System.Drawing.Size(84, 20);
+            this.udVAC1FFMinOut.Size = new System.Drawing.Size(84, 22);
             this.udVAC1FFMinOut.TabIndex = 66;
             this.udVAC1FFMinOut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FFMinOut, "VAC1 Feed-forward minimum");
@@ -28390,7 +28448,7 @@
             0,
             0});
             this.udVAC1FFMinIn.Name = "udVAC1FFMinIn";
-            this.udVAC1FFMinIn.Size = new System.Drawing.Size(84, 20);
+            this.udVAC1FFMinIn.Size = new System.Drawing.Size(84, 22);
             this.udVAC1FFMinIn.TabIndex = 65;
             this.udVAC1FFMinIn.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FFMinIn, "VAC1 Feed-forward minumum");
@@ -28407,7 +28465,7 @@
             this.labelTS102.Image = null;
             this.labelTS102.Location = new System.Drawing.Point(14, 147);
             this.labelTS102.Name = "labelTS102";
-            this.labelTS102.Size = new System.Drawing.Size(93, 13);
+            this.labelTS102.Size = new System.Drawing.Size(99, 13);
             this.labelTS102.TabIndex = 64;
             this.labelTS102.Text = "FF Moving Av Min";
             this.labelTS102.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -28431,7 +28489,7 @@
             0,
             0});
             this.udVAC1PropMaxOut.Name = "udVAC1PropMaxOut";
-            this.udVAC1PropMaxOut.Size = new System.Drawing.Size(84, 20);
+            this.udVAC1PropMaxOut.Size = new System.Drawing.Size(84, 22);
             this.udVAC1PropMaxOut.TabIndex = 63;
             this.udVAC1PropMaxOut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1PropMaxOut, "VAC1 proportional maximum");
@@ -28461,7 +28519,7 @@
             0,
             0});
             this.udVAC1PropMaxIn.Name = "udVAC1PropMaxIn";
-            this.udVAC1PropMaxIn.Size = new System.Drawing.Size(84, 20);
+            this.udVAC1PropMaxIn.Size = new System.Drawing.Size(84, 22);
             this.udVAC1PropMaxIn.TabIndex = 62;
             this.udVAC1PropMaxIn.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1PropMaxIn, "VAC1 proportional maximum");
@@ -28478,7 +28536,7 @@
             this.labelTS100.Image = null;
             this.labelTS100.Location = new System.Drawing.Point(4, 121);
             this.labelTS100.Name = "labelTS100";
-            this.labelTS100.Size = new System.Drawing.Size(103, 13);
+            this.labelTS100.Size = new System.Drawing.Size(107, 13);
             this.labelTS100.TabIndex = 61;
             this.labelTS100.Text = "Prop Feedback Max";
             this.labelTS100.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -28489,7 +28547,7 @@
             this.labelTS94.Image = null;
             this.labelTS94.Location = new System.Drawing.Point(4, 223);
             this.labelTS94.Name = "labelTS94";
-            this.labelTS94.Size = new System.Drawing.Size(103, 13);
+            this.labelTS94.Size = new System.Drawing.Size(106, 13);
             this.labelTS94.TabIndex = 60;
             this.labelTS94.Text = "On VAC Enable Use";
             this.labelTS94.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -28534,7 +28592,7 @@
             0,
             0});
             this.udVAC1FFAlphaOut.Name = "udVAC1FFAlphaOut";
-            this.udVAC1FFAlphaOut.Size = new System.Drawing.Size(84, 20);
+            this.udVAC1FFAlphaOut.Size = new System.Drawing.Size(84, 22);
             this.udVAC1FFAlphaOut.TabIndex = 55;
             this.udVAC1FFAlphaOut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FFAlphaOut, "VAC1 Feed-forward smoothing");
@@ -28565,7 +28623,7 @@
             0,
             0});
             this.udVAC1FFAlphaIn.Name = "udVAC1FFAlphaIn";
-            this.udVAC1FFAlphaIn.Size = new System.Drawing.Size(84, 20);
+            this.udVAC1FFAlphaIn.Size = new System.Drawing.Size(84, 22);
             this.udVAC1FFAlphaIn.TabIndex = 54;
             this.udVAC1FFAlphaIn.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FFAlphaIn, "VAC1 Feed-forward smoothing");
@@ -28595,7 +28653,7 @@
             0,
             0});
             this.udVAC1FFMaxOut.Name = "udVAC1FFMaxOut";
-            this.udVAC1FFMaxOut.Size = new System.Drawing.Size(84, 20);
+            this.udVAC1FFMaxOut.Size = new System.Drawing.Size(84, 22);
             this.udVAC1FFMaxOut.TabIndex = 52;
             this.udVAC1FFMaxOut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FFMaxOut, "VAC1 Feed-forward maximum");
@@ -28625,7 +28683,7 @@
             0,
             0});
             this.udVAC1FFMaxIn.Name = "udVAC1FFMaxIn";
-            this.udVAC1FFMaxIn.Size = new System.Drawing.Size(84, 20);
+            this.udVAC1FFMaxIn.Size = new System.Drawing.Size(84, 22);
             this.udVAC1FFMaxIn.TabIndex = 50;
             this.udVAC1FFMaxIn.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FFMaxIn, "VAC1 Feed-forward maximum");
@@ -28642,7 +28700,7 @@
             this.labelTS536.Image = null;
             this.labelTS536.Location = new System.Drawing.Point(57, 199);
             this.labelTS536.Name = "labelTS536";
-            this.labelTS536.Size = new System.Drawing.Size(49, 13);
+            this.labelTS536.Size = new System.Drawing.Size(52, 13);
             this.labelTS536.TabIndex = 49;
             this.labelTS536.Text = "FF Alpha";
             this.labelTS536.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -28666,7 +28724,7 @@
             0,
             0});
             this.udVAC1PropMinOut.Name = "udVAC1PropMinOut";
-            this.udVAC1PropMinOut.Size = new System.Drawing.Size(84, 20);
+            this.udVAC1PropMinOut.Size = new System.Drawing.Size(84, 22);
             this.udVAC1PropMinOut.TabIndex = 48;
             this.udVAC1PropMinOut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1PropMinOut, "VAC1 proportional minimum");
@@ -28683,7 +28741,7 @@
             this.labelTS535.Image = null;
             this.labelTS535.Location = new System.Drawing.Point(13, 173);
             this.labelTS535.Name = "labelTS535";
-            this.labelTS535.Size = new System.Drawing.Size(96, 13);
+            this.labelTS535.Size = new System.Drawing.Size(100, 13);
             this.labelTS535.TabIndex = 47;
             this.labelTS535.Text = "FF Moving Av Max";
             this.labelTS535.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -28707,7 +28765,7 @@
             0,
             0});
             this.udVAC1PropMinIn.Name = "udVAC1PropMinIn";
-            this.udVAC1PropMinIn.Size = new System.Drawing.Size(84, 20);
+            this.udVAC1PropMinIn.Size = new System.Drawing.Size(84, 22);
             this.udVAC1PropMinIn.TabIndex = 46;
             this.udVAC1PropMinIn.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1PropMinIn, "VAC1 proportional minimum");
@@ -28724,7 +28782,7 @@
             this.labelTS533.Image = null;
             this.labelTS533.Location = new System.Drawing.Point(7, 95);
             this.labelTS533.Name = "labelTS533";
-            this.labelTS533.Size = new System.Drawing.Size(100, 13);
+            this.labelTS533.Size = new System.Drawing.Size(106, 13);
             this.labelTS533.TabIndex = 45;
             this.labelTS533.Text = "Prop Feedback Min";
             this.labelTS533.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -28749,7 +28807,7 @@
             0,
             0});
             this.udVAC1SlewTimeOut.Name = "udVAC1SlewTimeOut";
-            this.udVAC1SlewTimeOut.Size = new System.Drawing.Size(84, 20);
+            this.udVAC1SlewTimeOut.Size = new System.Drawing.Size(84, 22);
             this.udVAC1SlewTimeOut.TabIndex = 43;
             this.udVAC1SlewTimeOut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1SlewTimeOut, "VAC1 resampler slew time in seconds");
@@ -28780,7 +28838,7 @@
             0,
             524288});
             this.udVAC1FeedbackGainOut.Name = "udVAC1FeedbackGainOut";
-            this.udVAC1FeedbackGainOut.Size = new System.Drawing.Size(84, 20);
+            this.udVAC1FeedbackGainOut.Size = new System.Drawing.Size(84, 22);
             this.udVAC1FeedbackGainOut.TabIndex = 42;
             this.udVAC1FeedbackGainOut.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FeedbackGainOut, "VAC1 resampler proportional feedback gain");
@@ -28830,7 +28888,7 @@
             this.labelTS93.Image = null;
             this.labelTS93.Location = new System.Drawing.Point(290, 71);
             this.labelTS93.Name = "labelTS93";
-            this.labelTS93.Size = new System.Drawing.Size(29, 13);
+            this.labelTS93.Size = new System.Drawing.Size(28, 13);
             this.labelTS93.TabIndex = 4;
             this.labelTS93.Text = "secs";
             // 
@@ -28854,7 +28912,7 @@
             0,
             0});
             this.udVAC1SlewTimeIn.Name = "udVAC1SlewTimeIn";
-            this.udVAC1SlewTimeIn.Size = new System.Drawing.Size(84, 20);
+            this.udVAC1SlewTimeIn.Size = new System.Drawing.Size(84, 22);
             this.udVAC1SlewTimeIn.TabIndex = 3;
             this.udVAC1SlewTimeIn.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1SlewTimeIn, "VAC1 resampler slew time in seconds");
@@ -28885,7 +28943,7 @@
             0,
             524288});
             this.udVAC1FeedbackGainIn.Name = "udVAC1FeedbackGainIn";
-            this.udVAC1FeedbackGainIn.Size = new System.Drawing.Size(84, 20);
+            this.udVAC1FeedbackGainIn.Size = new System.Drawing.Size(84, 22);
             this.udVAC1FeedbackGainIn.TabIndex = 2;
             this.udVAC1FeedbackGainIn.TinyStep = false;
             this.toolTip1.SetToolTip(this.udVAC1FeedbackGainIn, "VAC1 resampler proportional feedback gain");
@@ -28902,7 +28960,7 @@
             this.labelTS54.Image = null;
             this.labelTS54.Location = new System.Drawing.Point(51, 71);
             this.labelTS54.Name = "labelTS54";
-            this.labelTS54.Size = new System.Drawing.Size(56, 13);
+            this.labelTS54.Size = new System.Drawing.Size(58, 13);
             this.labelTS54.TabIndex = 1;
             this.labelTS54.Text = "Slew Time";
             this.labelTS54.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -28913,7 +28971,7 @@
             this.labelTS53.Image = null;
             this.labelTS53.Location = new System.Drawing.Point(27, 45);
             this.labelTS53.Name = "labelTS53";
-            this.labelTS53.Size = new System.Drawing.Size(80, 13);
+            this.labelTS53.Size = new System.Drawing.Size(83, 13);
             this.labelTS53.TabIndex = 0;
             this.labelTS53.Text = "Feedback Gain";
             this.labelTS53.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -28923,7 +28981,7 @@
             this.tpDisplay.Controls.Add(this.tcDisplay);
             this.tpDisplay.Location = new System.Drawing.Point(4, 22);
             this.tpDisplay.Name = "tpDisplay";
-            this.tpDisplay.Size = new System.Drawing.Size(728, 436);
+            this.tpDisplay.Size = new System.Drawing.Size(728, 468);
             this.tpDisplay.TabIndex = 2;
             this.tpDisplay.Text = "Display";
             // 
@@ -28936,7 +28994,7 @@
             this.tcDisplay.Location = new System.Drawing.Point(3, 4);
             this.tcDisplay.Name = "tcDisplay";
             this.tcDisplay.SelectedIndex = 0;
-            this.tcDisplay.Size = new System.Drawing.Size(729, 429);
+            this.tcDisplay.Size = new System.Drawing.Size(729, 461);
             this.tcDisplay.TabIndex = 0;
             // 
             // tpDisplayGeneral
@@ -28954,7 +29012,7 @@
             this.tpDisplayGeneral.Location = new System.Drawing.Point(4, 22);
             this.tpDisplayGeneral.Name = "tpDisplayGeneral";
             this.tpDisplayGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tpDisplayGeneral.Size = new System.Drawing.Size(721, 403);
+            this.tpDisplayGeneral.Size = new System.Drawing.Size(721, 435);
             this.tpDisplayGeneral.TabIndex = 0;
             this.tpDisplayGeneral.Text = "General";
             // 
@@ -29035,7 +29093,7 @@
             0,
             0});
             this.udPeakBlobDropDBMs.Name = "udPeakBlobDropDBMs";
-            this.udPeakBlobDropDBMs.Size = new System.Drawing.Size(48, 20);
+            this.udPeakBlobDropDBMs.Size = new System.Drawing.Size(48, 22);
             this.udPeakBlobDropDBMs.TabIndex = 70;
             this.udPeakBlobDropDBMs.TinyStep = false;
             this.toolTip1.SetToolTip(this.udPeakBlobDropDBMs, "The speed of the drop in dBm per second");
@@ -29062,7 +29120,7 @@
             this.chkPeakHoldDrop.Image = null;
             this.chkPeakHoldDrop.Location = new System.Drawing.Point(207, 47);
             this.chkPeakHoldDrop.Name = "chkPeakHoldDrop";
-            this.chkPeakHoldDrop.Size = new System.Drawing.Size(49, 17);
+            this.chkPeakHoldDrop.Size = new System.Drawing.Size(52, 17);
             this.chkPeakHoldDrop.TabIndex = 6;
             this.chkPeakHoldDrop.Text = "Drop";
             this.toolTip1.SetToolTip(this.chkPeakHoldDrop, "Peak blobs, if held, drop at the end of the hold time");
@@ -29075,7 +29133,7 @@
             this.lblBlobMS.Image = null;
             this.lblBlobMS.Location = new System.Drawing.Point(163, 50);
             this.lblBlobMS.Name = "lblBlobMS";
-            this.lblBlobMS.Size = new System.Drawing.Size(26, 13);
+            this.lblBlobMS.Size = new System.Drawing.Size(27, 13);
             this.lblBlobMS.TabIndex = 5;
             this.lblBlobMS.Text = "(ms)";
             // 
@@ -29098,7 +29156,7 @@
             0,
             0});
             this.udBlobPeakHoldMS.Name = "udBlobPeakHoldMS";
-            this.udBlobPeakHoldMS.Size = new System.Drawing.Size(56, 20);
+            this.udBlobPeakHoldMS.Size = new System.Drawing.Size(56, 22);
             this.udBlobPeakHoldMS.TabIndex = 4;
             this.udBlobPeakHoldMS.TinyStep = false;
             this.toolTip1.SetToolTip(this.udBlobPeakHoldMS, "Controls how long the peak blobs are shown/held for");
@@ -29115,7 +29173,7 @@
             this.chkBlobPeakHold.Image = null;
             this.chkBlobPeakHold.Location = new System.Drawing.Point(13, 49);
             this.chkBlobPeakHold.Name = "chkBlobPeakHold";
-            this.chkBlobPeakHold.Size = new System.Drawing.Size(76, 17);
+            this.chkBlobPeakHold.Size = new System.Drawing.Size(78, 17);
             this.chkBlobPeakHold.TabIndex = 3;
             this.chkBlobPeakHold.Text = "Peak Hold";
             this.chkBlobPeakHold.UseVisualStyleBackColor = true;
@@ -29127,7 +29185,7 @@
             this.chkPeakBlobInsideFilterOnly.Image = null;
             this.chkPeakBlobInsideFilterOnly.Location = new System.Drawing.Point(207, 20);
             this.chkPeakBlobInsideFilterOnly.Name = "chkPeakBlobInsideFilterOnly";
-            this.chkPeakBlobInsideFilterOnly.Size = new System.Drawing.Size(103, 17);
+            this.chkPeakBlobInsideFilterOnly.Size = new System.Drawing.Size(113, 17);
             this.chkPeakBlobInsideFilterOnly.TabIndex = 2;
             this.chkPeakBlobInsideFilterOnly.Text = "Only Inside Filter";
             this.toolTip1.SetToolTip(this.chkPeakBlobInsideFilterOnly, "Only recalculate if inside the passband");
@@ -29153,7 +29211,7 @@
             0,
             0});
             this.udPeakBlobs.Name = "udPeakBlobs";
-            this.udPeakBlobs.Size = new System.Drawing.Size(42, 20);
+            this.udPeakBlobs.Size = new System.Drawing.Size(42, 22);
             this.udPeakBlobs.TabIndex = 1;
             this.udPeakBlobs.TinyStep = false;
             this.udPeakBlobs.Value = new decimal(new int[] {
@@ -29169,7 +29227,7 @@
             this.chkPeakBlobsEnabled.Image = null;
             this.chkPeakBlobsEnabled.Location = new System.Drawing.Point(13, 22);
             this.chkPeakBlobsEnabled.Name = "chkPeakBlobsEnabled";
-            this.chkPeakBlobsEnabled.Size = new System.Drawing.Size(65, 17);
+            this.chkPeakBlobsEnabled.Size = new System.Drawing.Size(68, 17);
             this.chkPeakBlobsEnabled.TabIndex = 0;
             this.chkPeakBlobsEnabled.Text = "Enabled";
             this.chkPeakBlobsEnabled.UseVisualStyleBackColor = true;
@@ -29192,7 +29250,7 @@
             this.chkShowMHzOnCursor.Image = null;
             this.chkShowMHzOnCursor.Location = new System.Drawing.Point(10, 42);
             this.chkShowMHzOnCursor.Name = "chkShowMHzOnCursor";
-            this.chkShowMHzOnCursor.Size = new System.Drawing.Size(168, 17);
+            this.chkShowMHzOnCursor.Size = new System.Drawing.Size(187, 17);
             this.chkShowMHzOnCursor.TabIndex = 2;
             this.chkShowMHzOnCursor.Text = "Show additional info on cursor";
             this.toolTip1.SetToolTip(this.chkShowMHzOnCursor, "Show MHz,  dBm/sec info, filter edges and other info  on the cursor (hold shift t" +
@@ -29206,7 +29264,7 @@
             this.chkSmallModeFilteronVFOs.Image = null;
             this.chkSmallModeFilteronVFOs.Location = new System.Drawing.Point(10, 19);
             this.chkSmallModeFilteronVFOs.Name = "chkSmallModeFilteronVFOs";
-            this.chkSmallModeFilteronVFOs.Size = new System.Drawing.Size(148, 17);
+            this.chkSmallModeFilteronVFOs.Size = new System.Drawing.Size(160, 17);
             this.chkSmallModeFilteronVFOs.TabIndex = 1;
             this.chkSmallModeFilteronVFOs.Text = "Small mode/filter on VFOs";
             this.toolTip1.SetToolTip(this.chkSmallModeFilteronVFOs, "Show small labels in the VFO boxes when in expanded display");
@@ -29231,7 +29289,7 @@
             this.chkANAN8000DLEDisplayVoltsAmps.Image = null;
             this.chkANAN8000DLEDisplayVoltsAmps.Location = new System.Drawing.Point(10, 19);
             this.chkANAN8000DLEDisplayVoltsAmps.Name = "chkANAN8000DLEDisplayVoltsAmps";
-            this.chkANAN8000DLEDisplayVoltsAmps.Size = new System.Drawing.Size(110, 17);
+            this.chkANAN8000DLEDisplayVoltsAmps.Size = new System.Drawing.Size(115, 17);
             this.chkANAN8000DLEDisplayVoltsAmps.TabIndex = 41;
             this.chkANAN8000DLEDisplayVoltsAmps.Text = "Show Volts/Amps";
             this.toolTip1.SetToolTip(this.chkANAN8000DLEDisplayVoltsAmps, "Check to show detailed meter info");
@@ -29258,7 +29316,7 @@
             this.chkLegacyDXBuffers.Image = null;
             this.chkLegacyDXBuffers.Location = new System.Drawing.Point(7, 145);
             this.chkLegacyDXBuffers.Name = "chkLegacyDXBuffers";
-            this.chkLegacyDXBuffers.Size = new System.Drawing.Size(114, 17);
+            this.chkLegacyDXBuffers.Size = new System.Drawing.Size(117, 17);
             this.chkLegacyDXBuffers.TabIndex = 51;
             this.chkLegacyDXBuffers.Text = "Legacy DX buffers";
             this.toolTip1.SetToolTip(this.chkLegacyDXBuffers, "Try this if you are having flickering curssors or other display issues");
@@ -29272,7 +29330,7 @@
             this.chkVSyncDX.Image = null;
             this.chkVSyncDX.Location = new System.Drawing.Point(7, 105);
             this.chkVSyncDX.Name = "chkVSyncDX";
-            this.chkVSyncDX.Size = new System.Drawing.Size(57, 17);
+            this.chkVSyncDX.Size = new System.Drawing.Size(56, 17);
             this.chkVSyncDX.TabIndex = 50;
             this.chkVSyncDX.Text = "VSync";
             this.toolTip1.SetToolTip(this.chkVSyncDX, "1 frame Vertical Sync when in DirectX only");
@@ -29285,7 +29343,7 @@
             this.chkAccurateFrameTiming.Image = null;
             this.chkAccurateFrameTiming.Location = new System.Drawing.Point(7, 168);
             this.chkAccurateFrameTiming.Name = "chkAccurateFrameTiming";
-            this.chkAccurateFrameTiming.Size = new System.Drawing.Size(128, 17);
+            this.chkAccurateFrameTiming.Size = new System.Drawing.Size(138, 17);
             this.chkAccurateFrameTiming.TabIndex = 49;
             this.chkAccurateFrameTiming.Text = "Accurate frame timing";
             this.toolTip1.SetToolTip(this.chkAccurateFrameTiming, "Use accurate frame timing but could impact performance");
@@ -29298,7 +29356,7 @@
             this.chkAntiAlias.Image = null;
             this.chkAntiAlias.Location = new System.Drawing.Point(7, 82);
             this.chkAntiAlias.Name = "chkAntiAlias";
-            this.chkAntiAlias.Size = new System.Drawing.Size(80, 17);
+            this.chkAntiAlias.Size = new System.Drawing.Size(87, 17);
             this.chkAntiAlias.TabIndex = 48;
             this.chkAntiAlias.Text = "Anti-aliased";
             this.toolTip1.SetToolTip(this.chkAntiAlias, "Enable anti-aliasing. Will allow sub pixel lines in DirectX and remove all the ja" +
@@ -29368,7 +29426,7 @@
             this.lblSignalHistoryDurationMS.Image = null;
             this.lblSignalHistoryDurationMS.Location = new System.Drawing.Point(350, 42);
             this.lblSignalHistoryDurationMS.Name = "lblSignalHistoryDurationMS";
-            this.lblSignalHistoryDurationMS.Size = new System.Drawing.Size(26, 13);
+            this.lblSignalHistoryDurationMS.Size = new System.Drawing.Size(27, 13);
             this.lblSignalHistoryDurationMS.TabIndex = 47;
             this.lblSignalHistoryDurationMS.Text = "(ms)";
             // 
@@ -29391,7 +29449,7 @@
             0,
             0});
             this.udSignalHistoryDuration.Name = "udSignalHistoryDuration";
-            this.udSignalHistoryDuration.Size = new System.Drawing.Size(48, 20);
+            this.udSignalHistoryDuration.Size = new System.Drawing.Size(48, 22);
             this.udSignalHistoryDuration.TabIndex = 46;
             this.udSignalHistoryDuration.TinyStep = false;
             this.toolTip1.SetToolTip(this.udSignalHistoryDuration, "Length of time history is recorded over");
@@ -29408,7 +29466,7 @@
             this.chkSignalHistory.Image = null;
             this.chkSignalHistory.Location = new System.Drawing.Point(200, 39);
             this.chkSignalHistory.Name = "chkSignalHistory";
-            this.chkSignalHistory.Size = new System.Drawing.Size(90, 17);
+            this.chkSignalHistory.Size = new System.Drawing.Size(97, 17);
             this.chkSignalHistory.TabIndex = 45;
             this.chkSignalHistory.Text = "Signal History";
             this.toolTip1.SetToolTip(this.chkSignalHistory, "Show a history of SMeter reading on the SMeter");
@@ -29421,7 +29479,7 @@
             this.radUV.Image = null;
             this.radUV.Location = new System.Drawing.Point(200, 112);
             this.radUV.Name = "radUV";
-            this.radUV.Size = new System.Drawing.Size(63, 17);
+            this.radUV.Size = new System.Drawing.Size(66, 17);
             this.radUV.TabIndex = 44;
             this.radUV.TabStop = true;
             this.radUV.Text = "uV (rms)";
@@ -29434,7 +29492,7 @@
             this.radDBM.Image = null;
             this.radDBM.Location = new System.Drawing.Point(200, 88);
             this.radDBM.Name = "radDBM";
-            this.radDBM.Size = new System.Drawing.Size(46, 17);
+            this.radDBM.Size = new System.Drawing.Size(47, 17);
             this.radDBM.TabIndex = 43;
             this.radDBM.TabStop = true;
             this.radDBM.Text = "dBm";
@@ -29447,7 +29505,7 @@
             this.radSReading.Image = null;
             this.radSReading.Location = new System.Drawing.Point(200, 67);
             this.radSReading.Name = "radSReading";
-            this.radSReading.Size = new System.Drawing.Size(75, 17);
+            this.radSReading.Size = new System.Drawing.Size(77, 17);
             this.radSReading.TabIndex = 42;
             this.radSReading.TabStop = true;
             this.radSReading.Text = "S Reading";
@@ -29484,7 +29542,7 @@
             0,
             0});
             this.udMeterDigitalDelay.Name = "udMeterDigitalDelay";
-            this.udMeterDigitalDelay.Size = new System.Drawing.Size(56, 20);
+            this.udMeterDigitalDelay.Size = new System.Drawing.Size(56, 22);
             this.udMeterDigitalDelay.TabIndex = 36;
             this.udMeterDigitalDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udMeterDigitalDelay, "Digital (text) Multimeter Refresh Rate.");
@@ -29523,7 +29581,7 @@
             0,
             0});
             this.udDisplayMeterAvg.Name = "udDisplayMeterAvg";
-            this.udDisplayMeterAvg.Size = new System.Drawing.Size(56, 20);
+            this.udDisplayMeterAvg.Size = new System.Drawing.Size(56, 22);
             this.udDisplayMeterAvg.TabIndex = 8;
             this.udDisplayMeterAvg.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayMeterAvg, "Controls the length of time to average for the meter.");
@@ -29564,7 +29622,7 @@
             0,
             0});
             this.udDisplayMultiTextHoldTime.Name = "udDisplayMultiTextHoldTime";
-            this.udDisplayMultiTextHoldTime.Size = new System.Drawing.Size(56, 20);
+            this.udDisplayMultiTextHoldTime.Size = new System.Drawing.Size(56, 22);
             this.udDisplayMultiTextHoldTime.TabIndex = 4;
             this.udDisplayMultiTextHoldTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayMultiTextHoldTime, "Controls how long the meter will hold the digital peak value when in the Peak Pow" +
@@ -29605,7 +29663,7 @@
             0,
             0});
             this.udDisplayMultiPeakHoldTime.Name = "udDisplayMultiPeakHoldTime";
-            this.udDisplayMultiPeakHoldTime.Size = new System.Drawing.Size(56, 20);
+            this.udDisplayMultiPeakHoldTime.Size = new System.Drawing.Size(56, 22);
             this.udDisplayMultiPeakHoldTime.TabIndex = 1;
             this.udDisplayMultiPeakHoldTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayMultiPeakHoldTime, "Controls how long the analog peak red line will be held on the multimeter.");
@@ -29645,7 +29703,7 @@
             0,
             0});
             this.udDisplayMeterDelay.Name = "udDisplayMeterDelay";
-            this.udDisplayMeterDelay.Size = new System.Drawing.Size(56, 20);
+            this.udDisplayMeterDelay.Size = new System.Drawing.Size(56, 22);
             this.udDisplayMeterDelay.TabIndex = 34;
             this.udDisplayMeterDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayMeterDelay, "Analog Multimeter Refresh Rate.");
@@ -29696,7 +29754,7 @@
             0,
             0});
             this.udDisplayScopeTime.Name = "udDisplayScopeTime";
-            this.udDisplayScopeTime.Size = new System.Drawing.Size(64, 20);
+            this.udDisplayScopeTime.Size = new System.Drawing.Size(64, 22);
             this.udDisplayScopeTime.TabIndex = 0;
             this.udDisplayScopeTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayScopeTime, "Amount of time to display across the width of the scope display window.");
@@ -29737,7 +29795,7 @@
             this.chkShowPhaseAngularMean.Image = null;
             this.chkShowPhaseAngularMean.Location = new System.Drawing.Point(127, 44);
             this.chkShowPhaseAngularMean.Name = "chkShowPhaseAngularMean";
-            this.chkShowPhaseAngularMean.Size = new System.Drawing.Size(53, 17);
+            this.chkShowPhaseAngularMean.Size = new System.Drawing.Size(55, 17);
             this.chkShowPhaseAngularMean.TabIndex = 4;
             this.chkShowPhaseAngularMean.Text = "Mean";
             this.toolTip1.SetToolTip(this.chkShowPhaseAngularMean, "Show the anular mean line on the phase display");
@@ -29772,7 +29830,7 @@
             0,
             0});
             this.udDisplayPhasePtSize.Name = "udDisplayPhasePtSize";
-            this.udDisplayPhasePtSize.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayPhasePtSize.Size = new System.Drawing.Size(48, 22);
             this.udDisplayPhasePtSize.TabIndex = 2;
             this.udDisplayPhasePtSize.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayPhasePtSize, "Size of points to display in Phase Mode.");
@@ -29811,7 +29869,7 @@
             0,
             0});
             this.udDisplayPhasePts.Name = "udDisplayPhasePts";
-            this.udDisplayPhasePts.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayPhasePts.Size = new System.Drawing.Size(48, 22);
             this.udDisplayPhasePts.TabIndex = 0;
             this.udDisplayPhasePts.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayPhasePts, "Number of points to display in Phase Mode.");
@@ -29869,7 +29927,7 @@
             0,
             0});
             this.udDisplayDecimation.Name = "udDisplayDecimation";
-            this.udDisplayDecimation.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayDecimation.Size = new System.Drawing.Size(48, 22);
             this.udDisplayDecimation.TabIndex = 95;
             this.udDisplayDecimation.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayDecimation, "Display decimation. Higher the number, the lower the resolution.");
@@ -29910,7 +29968,7 @@
             0,
             0});
             this.udDisplayCPUMeter.Name = "udDisplayCPUMeter";
-            this.udDisplayCPUMeter.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayCPUMeter.Size = new System.Drawing.Size(48, 22);
             this.udDisplayCPUMeter.TabIndex = 38;
             this.udDisplayCPUMeter.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayCPUMeter, "CPU Meter Refresh Rate.");
@@ -29950,7 +30008,7 @@
             0,
             0});
             this.udDisplayPeakText.Name = "udDisplayPeakText";
-            this.udDisplayPeakText.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayPeakText.Size = new System.Drawing.Size(48, 22);
             this.udDisplayPeakText.TabIndex = 36;
             this.udDisplayPeakText.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayPeakText, "Peak Text Refresh Rate.");
@@ -29990,7 +30048,7 @@
             0,
             0});
             this.udDisplayFPS.Name = "udDisplayFPS";
-            this.udDisplayFPS.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayFPS.Size = new System.Drawing.Size(48, 22);
             this.udDisplayFPS.TabIndex = 32;
             this.udDisplayFPS.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayFPS, "Frames Per Second (approximate)");
@@ -30014,6 +30072,7 @@
             // tpDisplayTop
             // 
             this.tpDisplayTop.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDisplayTop.Controls.Add(this.chkAveraging);
             this.tpDisplayTop.Controls.Add(this.groupBoxTS21);
             this.tpDisplayTop.Controls.Add(this.grpWaterfallAverage);
             this.tpDisplayTop.Controls.Add(this.grpDisplaySpectrumGrid);
@@ -30023,10 +30082,22 @@
             this.tpDisplayTop.Location = new System.Drawing.Point(4, 22);
             this.tpDisplayTop.Name = "tpDisplayTop";
             this.tpDisplayTop.Padding = new System.Windows.Forms.Padding(3);
-            this.tpDisplayTop.Size = new System.Drawing.Size(721, 403);
+            this.tpDisplayTop.Size = new System.Drawing.Size(721, 435);
             this.tpDisplayTop.TabIndex = 1;
             this.tpDisplayTop.Text = " RX 1";
             this.toolTip1.SetToolTip(this.tpDisplayTop, "Normalize to One Hz Bandwidth for Average & Sample Detectors");
+            // 
+            // chkAveraging
+            // 
+            this.chkAveraging.AutoSize = true;
+            this.chkAveraging.Image = null;
+            this.chkAveraging.Location = new System.Drawing.Point(19, 155);
+            this.chkAveraging.Name = "chkAveraging";
+            this.chkAveraging.Size = new System.Drawing.Size(116, 17);
+            this.chkAveraging.TabIndex = 83;
+            this.chkAveraging.Text = "Enable Averaging";
+            this.chkAveraging.UseVisualStyleBackColor = true;
+            this.chkAveraging.CheckedChanged += new System.EventHandler(this.chkAveraging_CheckedChanged);
             // 
             // groupBoxTS21
             // 
@@ -30036,7 +30107,7 @@
             this.groupBoxTS21.Controls.Add(this.lblActivePeakHoldDropRX1);
             this.groupBoxTS21.Controls.Add(this.lblActivePeakHoldRX1);
             this.groupBoxTS21.Controls.Add(this.udActivePeakHoldDurationRX1);
-            this.groupBoxTS21.Location = new System.Drawing.Point(165, 293);
+            this.groupBoxTS21.Location = new System.Drawing.Point(165, 325);
             this.groupBoxTS21.Name = "groupBoxTS21";
             this.groupBoxTS21.Size = new System.Drawing.Size(161, 104);
             this.groupBoxTS21.TabIndex = 82;
@@ -30048,7 +30119,7 @@
             this.chkFillActivePeakHoldRX1.Image = null;
             this.chkFillActivePeakHoldRX1.Location = new System.Drawing.Point(100, 73);
             this.chkFillActivePeakHoldRX1.Name = "chkFillActivePeakHoldRX1";
-            this.chkFillActivePeakHoldRX1.Size = new System.Drawing.Size(38, 17);
+            this.chkFillActivePeakHoldRX1.Size = new System.Drawing.Size(41, 17);
             this.chkFillActivePeakHoldRX1.TabIndex = 75;
             this.chkFillActivePeakHoldRX1.Text = "Fill";
             this.toolTip1.SetToolTip(this.chkFillActivePeakHoldRX1, "Fill the peak hold area");
@@ -30075,7 +30146,7 @@
             0,
             0});
             this.udActivePeakHoldDropRX1.Name = "udActivePeakHoldDropRX1";
-            this.udActivePeakHoldDropRX1.Size = new System.Drawing.Size(48, 20);
+            this.udActivePeakHoldDropRX1.Size = new System.Drawing.Size(48, 22);
             this.udActivePeakHoldDropRX1.TabIndex = 68;
             this.udActivePeakHoldDropRX1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDropRX1, "The speed of the drop in dBm per second");
@@ -30094,7 +30165,7 @@
             this.chkActivePeakHoldRX1.Image = null;
             this.chkActivePeakHoldRX1.Location = new System.Drawing.Point(9, 0);
             this.chkActivePeakHoldRX1.Name = "chkActivePeakHoldRX1";
-            this.chkActivePeakHoldRX1.Size = new System.Drawing.Size(109, 17);
+            this.chkActivePeakHoldRX1.Size = new System.Drawing.Size(111, 17);
             this.chkActivePeakHoldRX1.TabIndex = 65;
             this.chkActivePeakHoldRX1.Text = "Active Peak Hold";
             this.chkActivePeakHoldRX1.UseVisualStyleBackColor = true;
@@ -30139,7 +30210,7 @@
             0,
             0});
             this.udActivePeakHoldDurationRX1.Name = "udActivePeakHoldDurationRX1";
-            this.udActivePeakHoldDurationRX1.Size = new System.Drawing.Size(48, 20);
+            this.udActivePeakHoldDurationRX1.Size = new System.Drawing.Size(48, 22);
             this.udActivePeakHoldDurationRX1.TabIndex = 66;
             this.udActivePeakHoldDurationRX1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDurationRX1, "How long to hold the peaks");
@@ -30158,7 +30229,8 @@
             this.grpWaterfallAverage.Controls.Add(this.comboDispWFDetector);
             this.grpWaterfallAverage.Controls.Add(this.udDisplayAVTimeWF);
             this.grpWaterfallAverage.Controls.Add(this.labelTS374);
-            this.grpWaterfallAverage.Location = new System.Drawing.Point(165, 146);
+            this.grpWaterfallAverage.Enabled = false;
+            this.grpWaterfallAverage.Location = new System.Drawing.Point(165, 178);
             this.grpWaterfallAverage.Name = "grpWaterfallAverage";
             this.grpWaterfallAverage.Size = new System.Drawing.Size(123, 141);
             this.grpWaterfallAverage.TabIndex = 80;
@@ -30171,7 +30243,7 @@
             this.labelTS372.Image = null;
             this.labelTS372.Location = new System.Drawing.Point(10, 67);
             this.labelTS372.Name = "labelTS372";
-            this.labelTS372.Size = new System.Drawing.Size(58, 13);
+            this.labelTS372.Size = new System.Drawing.Size(62, 13);
             this.labelTS372.TabIndex = 59;
             this.labelTS372.Text = "Averaging:";
             // 
@@ -30200,7 +30272,7 @@
             this.labelTS373.Image = null;
             this.labelTS373.Location = new System.Drawing.Point(10, 19);
             this.labelTS373.Name = "labelTS373";
-            this.labelTS373.Size = new System.Drawing.Size(51, 13);
+            this.labelTS373.Size = new System.Drawing.Size(54, 13);
             this.labelTS373.TabIndex = 57;
             this.labelTS373.Text = "Detector:";
             // 
@@ -30238,7 +30310,7 @@
             0,
             0});
             this.udDisplayAVTimeWF.Name = "udDisplayAVTimeWF";
-            this.udDisplayAVTimeWF.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayAVTimeWF.Size = new System.Drawing.Size(48, 22);
             this.udDisplayAVTimeWF.TabIndex = 2;
             this.udDisplayAVTimeWF.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayAVTimeWF, "When averaging, use this number of buffers to calculate the average.");
@@ -30274,7 +30346,7 @@
             this.grpDisplaySpectrumGrid.Controls.Add(this.lblDisplayGridStep);
             this.grpDisplaySpectrumGrid.Controls.Add(this.lblDisplayGridMin);
             this.grpDisplaySpectrumGrid.Controls.Add(this.lblDisplayGridMax);
-            this.grpDisplaySpectrumGrid.Location = new System.Drawing.Point(375, 232);
+            this.grpDisplaySpectrumGrid.Location = new System.Drawing.Point(375, 267);
             this.grpDisplaySpectrumGrid.Name = "grpDisplaySpectrumGrid";
             this.grpDisplaySpectrumGrid.Size = new System.Drawing.Size(304, 165);
             this.grpDisplaySpectrumGrid.TabIndex = 47;
@@ -30286,7 +30358,7 @@
             this.label14.AutoSize = true;
             this.label14.Location = new System.Drawing.Point(220, 115);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(57, 13);
+            this.label14.Size = new System.Drawing.Size(62, 13);
             this.label14.TabIndex = 86;
             this.label14.Text = "dBm offset";
             this.toolTip1.SetToolTip(this.label14, "Display Grid levels can be set by band. ");
@@ -30297,7 +30369,7 @@
             this.chkMaintainNFAdjustDeltaRX1.Image = null;
             this.chkMaintainNFAdjustDeltaRX1.Location = new System.Drawing.Point(165, 140);
             this.chkMaintainNFAdjustDeltaRX1.Name = "chkMaintainNFAdjustDeltaRX1";
-            this.chkMaintainNFAdjustDeltaRX1.Size = new System.Drawing.Size(92, 17);
+            this.chkMaintainNFAdjustDeltaRX1.Size = new System.Drawing.Size(101, 17);
             this.chkMaintainNFAdjustDeltaRX1.TabIndex = 85;
             this.chkMaintainNFAdjustDeltaRX1.Text = "Maintain delta";
             this.toolTip1.SetToolTip(this.chkMaintainNFAdjustDeltaRX1, "If min is adjusted, max will be changed by same adjustment");
@@ -30325,7 +30397,7 @@
             0,
             0});
             this.nudRX1NFoffsetGridFollow.Name = "nudRX1NFoffsetGridFollow";
-            this.nudRX1NFoffsetGridFollow.Size = new System.Drawing.Size(50, 20);
+            this.nudRX1NFoffsetGridFollow.Size = new System.Drawing.Size(50, 22);
             this.nudRX1NFoffsetGridFollow.TabIndex = 84;
             this.nudRX1NFoffsetGridFollow.TinyStep = false;
             this.nudRX1NFoffsetGridFollow.Value = new decimal(new int[] {
@@ -30341,7 +30413,7 @@
             this.chkAdjustGridMinToNFRX1.Image = null;
             this.chkAdjustGridMinToNFRX1.Location = new System.Drawing.Point(15, 115);
             this.chkAdjustGridMinToNFRX1.Name = "chkAdjustGridMinToNFRX1";
-            this.chkAdjustGridMinToNFRX1.Size = new System.Drawing.Size(143, 17);
+            this.chkAdjustGridMinToNFRX1.Size = new System.Drawing.Size(158, 17);
             this.chkAdjustGridMinToNFRX1.TabIndex = 83;
             this.chkAdjustGridMinToNFRX1.Text = "Adjust Min to Noise Floor";
             this.toolTip1.SetToolTip(this.chkAdjustGridMinToNFRX1, "Keep min adjusted to Noise Floor");
@@ -30353,7 +30425,7 @@
             this.label15.AutoSize = true;
             this.label15.Location = new System.Drawing.Point(6, 84);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(129, 13);
+            this.label15.Size = new System.Drawing.Size(135, 13);
             this.label15.TabIndex = 82;
             this.label15.Text = "Band for Max/Min Levels:";
             this.toolTip1.SetToolTip(this.label15, "Display Grid levels can be set by band. ");
@@ -30363,7 +30435,7 @@
             this.txtDisplayGridBandLevel.Location = new System.Drawing.Point(146, 80);
             this.txtDisplayGridBandLevel.Name = "txtDisplayGridBandLevel";
             this.txtDisplayGridBandLevel.ReadOnly = true;
-            this.txtDisplayGridBandLevel.Size = new System.Drawing.Size(94, 20);
+            this.txtDisplayGridBandLevel.Size = new System.Drawing.Size(94, 22);
             this.txtDisplayGridBandLevel.TabIndex = 81;
             this.txtDisplayGridBandLevel.Text = "Current Band";
             this.toolTip1.SetToolTip(this.txtDisplayGridBandLevel, "Current RX1 band selected for setting Display Grid level settings");
@@ -30413,7 +30485,7 @@
             0,
             0});
             this.udDisplayGridStep.Name = "udDisplayGridStep";
-            this.udDisplayGridStep.Size = new System.Drawing.Size(56, 20);
+            this.udDisplayGridStep.Size = new System.Drawing.Size(56, 22);
             this.udDisplayGridStep.TabIndex = 25;
             this.udDisplayGridStep.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayGridStep, "Horizontal Grid Step Size in dB.");
@@ -30444,7 +30516,7 @@
             0,
             -2147483648});
             this.udDisplayGridMin.Name = "udDisplayGridMin";
-            this.udDisplayGridMin.Size = new System.Drawing.Size(56, 20);
+            this.udDisplayGridMin.Size = new System.Drawing.Size(56, 22);
             this.udDisplayGridMin.TabIndex = 24;
             this.udDisplayGridMin.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayGridMin, "Signal Level at bottom of display in dB.");
@@ -30475,7 +30547,7 @@
             0,
             -2147483648});
             this.udDisplayGridMax.Name = "udDisplayGridMax";
-            this.udDisplayGridMax.Size = new System.Drawing.Size(56, 20);
+            this.udDisplayGridMax.Size = new System.Drawing.Size(56, 22);
             this.udDisplayGridMax.TabIndex = 23;
             this.udDisplayGridMax.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayGridMax, "Signal level at top of display in dB.");
@@ -30524,7 +30596,8 @@
             this.grpDisplayAverage.Controls.Add(this.comboDispPanDetector);
             this.grpDisplayAverage.Controls.Add(this.udDisplayAVGTime);
             this.grpDisplayAverage.Controls.Add(this.lblDisplayAVGTime);
-            this.grpDisplayAverage.Location = new System.Drawing.Point(6, 146);
+            this.grpDisplayAverage.Enabled = false;
+            this.grpDisplayAverage.Location = new System.Drawing.Point(6, 178);
             this.grpDisplayAverage.Name = "grpDisplayAverage";
             this.grpDisplayAverage.Size = new System.Drawing.Size(153, 251);
             this.grpDisplayAverage.TabIndex = 38;
@@ -30539,7 +30612,7 @@
             this.chkDispNormalize.Image = null;
             this.chkDispNormalize.Location = new System.Drawing.Point(6, 147);
             this.chkDispNormalize.Name = "chkDispNormalize";
-            this.chkDispNormalize.Size = new System.Drawing.Size(112, 17);
+            this.chkDispNormalize.Size = new System.Drawing.Size(108, 17);
             this.chkDispNormalize.TabIndex = 64;
             this.chkDispNormalize.Text = "1 Hz BW: Av / Sa";
             this.chkDispNormalize.UseVisualStyleBackColor = true;
@@ -30551,7 +30624,7 @@
             this.chkShowRX1NoiseFloor.Image = null;
             this.chkShowRX1NoiseFloor.Location = new System.Drawing.Point(6, 170);
             this.chkShowRX1NoiseFloor.Name = "chkShowRX1NoiseFloor";
-            this.chkShowRX1NoiseFloor.Size = new System.Drawing.Size(109, 17);
+            this.chkShowRX1NoiseFloor.Size = new System.Drawing.Size(117, 17);
             this.chkShowRX1NoiseFloor.TabIndex = 81;
             this.chkShowRX1NoiseFloor.Text = "Show Noise Floor";
             this.toolTip1.SetToolTip(this.chkShowRX1NoiseFloor, "Show the noise floor line on the panadaptor");
@@ -30564,7 +30637,7 @@
             this.lblDispAv.Image = null;
             this.lblDispAv.Location = new System.Drawing.Point(10, 67);
             this.lblDispAv.Name = "lblDispAv";
-            this.lblDispAv.Size = new System.Drawing.Size(58, 13);
+            this.lblDispAv.Size = new System.Drawing.Size(62, 13);
             this.lblDispAv.TabIndex = 63;
             this.lblDispAv.Text = "Averaging:";
             // 
@@ -30593,7 +30666,7 @@
             this.lblDispDet.Image = null;
             this.lblDispDet.Location = new System.Drawing.Point(10, 19);
             this.lblDispDet.Name = "lblDispDet";
-            this.lblDispDet.Size = new System.Drawing.Size(51, 13);
+            this.lblDispDet.Size = new System.Drawing.Size(54, 13);
             this.lblDispDet.TabIndex = 61;
             this.lblDispDet.Text = "Detector:";
             // 
@@ -30632,7 +30705,7 @@
             0,
             0});
             this.udDisplayAVGTime.Name = "udDisplayAVGTime";
-            this.udDisplayAVGTime.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayAVGTime.Size = new System.Drawing.Size(48, 22);
             this.udDisplayAVGTime.TabIndex = 2;
             this.udDisplayAVGTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayAVGTime, "When averaging, use this number of buffers to calculate the average.");
@@ -30694,7 +30767,7 @@
             this.labelTS147.Image = null;
             this.labelTS147.Location = new System.Drawing.Point(6, 101);
             this.labelTS147.Name = "labelTS147";
-            this.labelTS147.Size = new System.Drawing.Size(46, 13);
+            this.labelTS147.Size = new System.Drawing.Size(51, 13);
             this.labelTS147.TabIndex = 54;
             this.labelTS147.Text = "Window";
             // 
@@ -30704,7 +30777,7 @@
             this.labelTS146.Image = null;
             this.labelTS146.Location = new System.Drawing.Point(227, 41);
             this.labelTS146.Name = "labelTS146";
-            this.labelTS146.Size = new System.Drawing.Size(27, 13);
+            this.labelTS146.Size = new System.Drawing.Size(28, 13);
             this.labelTS146.TabIndex = 53;
             this.labelTS146.Text = "Max";
             // 
@@ -30714,7 +30787,7 @@
             this.labelTS145.Image = null;
             this.labelTS145.Location = new System.Drawing.Point(6, 41);
             this.labelTS145.Name = "labelTS145";
-            this.labelTS145.Size = new System.Drawing.Size(24, 13);
+            this.labelTS145.Size = new System.Drawing.Size(27, 13);
             this.labelTS145.TabIndex = 52;
             this.labelTS145.Text = "Min";
             // 
@@ -30737,7 +30810,7 @@
             this.labelTS142.Image = null;
             this.labelTS142.Location = new System.Drawing.Point(6, 79);
             this.labelTS142.Name = "labelTS142";
-            this.labelTS142.Size = new System.Drawing.Size(75, 13);
+            this.labelTS142.Size = new System.Drawing.Size(80, 13);
             this.labelTS142.TabIndex = 50;
             this.labelTS142.Text = "Bin Width (Hz)";
             // 
@@ -30793,7 +30866,7 @@
             this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallHighLevel);
             this.grpDisplayWaterfall.Location = new System.Drawing.Point(375, 10);
             this.grpDisplayWaterfall.Name = "grpDisplayWaterfall";
-            this.grpDisplayWaterfall.Size = new System.Drawing.Size(304, 216);
+            this.grpDisplayWaterfall.Size = new System.Drawing.Size(304, 251);
             this.grpDisplayWaterfall.TabIndex = 40;
             this.grpDisplayWaterfall.TabStop = false;
             this.grpDisplayWaterfall.Text = "Waterfall";
@@ -30804,7 +30877,7 @@
             this.chkWaterfallUseNFForAGCRX1.Image = null;
             this.chkWaterfallUseNFForAGCRX1.Location = new System.Drawing.Point(139, 93);
             this.chkWaterfallUseNFForAGCRX1.Name = "chkWaterfallUseNFForAGCRX1";
-            this.chkWaterfallUseNFForAGCRX1.Size = new System.Drawing.Size(149, 17);
+            this.chkWaterfallUseNFForAGCRX1.Size = new System.Drawing.Size(163, 17);
             this.chkWaterfallUseNFForAGCRX1.TabIndex = 92;
             this.chkWaterfallUseNFForAGCRX1.Text = "Noise Floor Compensation";
             this.toolTip1.SetToolTip(this.chkWaterfallUseNFForAGCRX1, "Use the noise floor to control the AGC Low Level");
@@ -30840,7 +30913,7 @@
             0,
             -2147483648});
             this.udWaterfallAGCOffsetRX1.Name = "udWaterfallAGCOffsetRX1";
-            this.udWaterfallAGCOffsetRX1.Size = new System.Drawing.Size(48, 20);
+            this.udWaterfallAGCOffsetRX1.Size = new System.Drawing.Size(48, 22);
             this.udWaterfallAGCOffsetRX1.TabIndex = 90;
             this.udWaterfallAGCOffsetRX1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udWaterfallAGCOffsetRX1, "Apply dBm offset if using AGC");
@@ -30857,7 +30930,7 @@
             this.labelTS91.Image = null;
             this.labelTS91.Location = new System.Drawing.Point(38, 182);
             this.labelTS91.Name = "labelTS91";
-            this.labelTS91.Size = new System.Drawing.Size(46, 13);
+            this.labelTS91.Size = new System.Drawing.Size(49, 13);
             this.labelTS91.TabIndex = 81;
             this.labelTS91.Text = "Opacity:";
             // 
@@ -30879,7 +30952,7 @@
             this.labelTS519.Image = null;
             this.labelTS519.Location = new System.Drawing.Point(148, 124);
             this.labelTS519.Name = "labelTS519";
-            this.labelTS519.Size = new System.Drawing.Size(33, 13);
+            this.labelTS519.Size = new System.Drawing.Size(36, 13);
             this.labelTS519.TabIndex = 84;
             this.labelTS519.Text = "frame";
             // 
@@ -30889,7 +30962,7 @@
             this.lblRX1WaterFallCalulatedDelayMS.Image = null;
             this.lblRX1WaterFallCalulatedDelayMS.Location = new System.Drawing.Point(187, 124);
             this.lblRX1WaterFallCalulatedDelayMS.Name = "lblRX1WaterFallCalulatedDelayMS";
-            this.lblRX1WaterFallCalulatedDelayMS.Size = new System.Drawing.Size(44, 13);
+            this.lblRX1WaterFallCalulatedDelayMS.Size = new System.Drawing.Size(45, 13);
             this.lblRX1WaterFallCalulatedDelayMS.TabIndex = 83;
             this.lblRX1WaterFallCalulatedDelayMS.Text = "0.00 ms";
             // 
@@ -30899,7 +30972,7 @@
             this.chkWaterfallUseRX1SpectrumMinMax.Image = null;
             this.chkWaterfallUseRX1SpectrumMinMax.Location = new System.Drawing.Point(139, 70);
             this.chkWaterfallUseRX1SpectrumMinMax.Name = "chkWaterfallUseRX1SpectrumMinMax";
-            this.chkWaterfallUseRX1SpectrumMinMax.Size = new System.Drawing.Size(118, 17);
+            this.chkWaterfallUseRX1SpectrumMinMax.Size = new System.Drawing.Size(120, 17);
             this.chkWaterfallUseRX1SpectrumMinMax.TabIndex = 82;
             this.chkWaterfallUseRX1SpectrumMinMax.Text = "Use Spec Min/Max";
             this.toolTip1.SetToolTip(this.chkWaterfallUseRX1SpectrumMinMax, "Spectrum Grid min/max used for low and high level");
@@ -30929,7 +31002,7 @@
             this.chkRX1WaterfallAGC.Image = null;
             this.chkRX1WaterfallAGC.Location = new System.Drawing.Point(139, 47);
             this.chkRX1WaterfallAGC.Name = "chkRX1WaterfallAGC";
-            this.chkRX1WaterfallAGC.Size = new System.Drawing.Size(93, 17);
+            this.chkRX1WaterfallAGC.Size = new System.Drawing.Size(98, 17);
             this.chkRX1WaterfallAGC.TabIndex = 81;
             this.chkRX1WaterfallAGC.Text = "Waterfall AGC";
             this.toolTip1.SetToolTip(this.chkRX1WaterfallAGC, "Automatically calculates Low Level Threshold for Waterfall.");
@@ -30956,7 +31029,7 @@
             this.lblWaterfallLevels.AutoSize = true;
             this.lblWaterfallLevels.Location = new System.Drawing.Point(8, 159);
             this.lblWaterfallLevels.Name = "lblWaterfallLevels";
-            this.lblWaterfallLevels.Size = new System.Drawing.Size(134, 13);
+            this.lblWaterfallLevels.Size = new System.Drawing.Size(140, 13);
             this.lblWaterfallLevels.TabIndex = 80;
             this.lblWaterfallLevels.Text = "Band for Low/High Levels:";
             this.toolTip1.SetToolTip(this.lblWaterfallLevels, "Waterfall Low/High levels can be set by band.  RX2 bands inherit RX1 band\'s Water" +
@@ -30967,7 +31040,7 @@
             this.txtWaterFallBandLevel.Location = new System.Drawing.Point(155, 156);
             this.txtWaterFallBandLevel.Name = "txtWaterFallBandLevel";
             this.txtWaterFallBandLevel.ReadOnly = true;
-            this.txtWaterFallBandLevel.Size = new System.Drawing.Size(94, 20);
+            this.txtWaterFallBandLevel.Size = new System.Drawing.Size(94, 22);
             this.txtWaterFallBandLevel.TabIndex = 79;
             this.txtWaterFallBandLevel.Text = "Current Band";
             this.toolTip1.SetToolTip(this.txtWaterFallBandLevel, "Current RX1 band selected for setting Waterfall Low/High level settings");
@@ -31013,7 +31086,7 @@
             this.label11.AutoSize = true;
             this.label11.Location = new System.Drawing.Point(8, 98);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(40, 13);
+            this.label11.Size = new System.Drawing.Size(42, 13);
             this.label11.TabIndex = 73;
             this.label11.Text = "Palette";
             this.toolTip1.SetToolTip(this.label11, "Color sheme");
@@ -31037,7 +31110,7 @@
             0,
             0});
             this.udDisplayWaterfallUpdatePeriod.Name = "udDisplayWaterfallUpdatePeriod";
-            this.udDisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(48, 22);
             this.udDisplayWaterfallUpdatePeriod.TabIndex = 71;
             this.udDisplayWaterfallUpdatePeriod.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayWaterfallUpdatePeriod, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
@@ -31111,7 +31184,7 @@
             0,
             -2147483648});
             this.udDisplayWaterfallLowLevel.Name = "udDisplayWaterfallLowLevel";
-            this.udDisplayWaterfallLowLevel.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayWaterfallLowLevel.Size = new System.Drawing.Size(48, 22);
             this.udDisplayWaterfallLowLevel.TabIndex = 2;
             this.udDisplayWaterfallLowLevel.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayWaterfallLowLevel, "Waterfall Low Signal - Show Low Color below this value (gradient in between).");
@@ -31151,7 +31224,7 @@
             0,
             -2147483648});
             this.udDisplayWaterfallHighLevel.Name = "udDisplayWaterfallHighLevel";
-            this.udDisplayWaterfallHighLevel.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayWaterfallHighLevel.Size = new System.Drawing.Size(48, 22);
             this.udDisplayWaterfallHighLevel.TabIndex = 0;
             this.udDisplayWaterfallHighLevel.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayWaterfallHighLevel, "Waterfall High Signal - Show High Color above this value (gradient in between).");
@@ -31166,6 +31239,7 @@
             // tpDisplayBottom
             // 
             this.tpDisplayBottom.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDisplayBottom.Controls.Add(this.chkAveragingRX2);
             this.tpDisplayBottom.Controls.Add(this.groupBoxTS20);
             this.tpDisplayBottom.Controls.Add(this.grpRX2DisplayAveraging);
             this.tpDisplayBottom.Controls.Add(this.grpRX2DisplayWaterfall);
@@ -31175,9 +31249,21 @@
             this.tpDisplayBottom.Location = new System.Drawing.Point(4, 22);
             this.tpDisplayBottom.Name = "tpDisplayBottom";
             this.tpDisplayBottom.Padding = new System.Windows.Forms.Padding(3);
-            this.tpDisplayBottom.Size = new System.Drawing.Size(721, 403);
+            this.tpDisplayBottom.Size = new System.Drawing.Size(721, 435);
             this.tpDisplayBottom.TabIndex = 2;
             this.tpDisplayBottom.Text = " RX 2";
+            // 
+            // chkAveragingRX2
+            // 
+            this.chkAveragingRX2.AutoSize = true;
+            this.chkAveragingRX2.Image = null;
+            this.chkAveragingRX2.Location = new System.Drawing.Point(15, 142);
+            this.chkAveragingRX2.Name = "chkAveragingRX2";
+            this.chkAveragingRX2.Size = new System.Drawing.Size(116, 17);
+            this.chkAveragingRX2.TabIndex = 84;
+            this.chkAveragingRX2.Text = "Enable Averaging";
+            this.chkAveragingRX2.UseVisualStyleBackColor = true;
+            this.chkAveragingRX2.CheckedChanged += new System.EventHandler(this.chkAveragingRX2_CheckedChanged);
             // 
             // groupBoxTS20
             // 
@@ -31187,7 +31273,7 @@
             this.groupBoxTS20.Controls.Add(this.lblActivePeakHoldDropRX2);
             this.groupBoxTS20.Controls.Add(this.lblActivePeakHoldRX2);
             this.groupBoxTS20.Controls.Add(this.udActivePeakHoldDurationRX2);
-            this.groupBoxTS20.Location = new System.Drawing.Point(165, 293);
+            this.groupBoxTS20.Location = new System.Drawing.Point(165, 312);
             this.groupBoxTS20.Name = "groupBoxTS20";
             this.groupBoxTS20.Size = new System.Drawing.Size(161, 104);
             this.groupBoxTS20.TabIndex = 83;
@@ -31199,7 +31285,7 @@
             this.chkFillActivePeakHoldRX2.Image = null;
             this.chkFillActivePeakHoldRX2.Location = new System.Drawing.Point(100, 73);
             this.chkFillActivePeakHoldRX2.Name = "chkFillActivePeakHoldRX2";
-            this.chkFillActivePeakHoldRX2.Size = new System.Drawing.Size(38, 17);
+            this.chkFillActivePeakHoldRX2.Size = new System.Drawing.Size(41, 17);
             this.chkFillActivePeakHoldRX2.TabIndex = 74;
             this.chkFillActivePeakHoldRX2.Text = "Fill";
             this.toolTip1.SetToolTip(this.chkFillActivePeakHoldRX2, "Fill the peak hold area");
@@ -31226,7 +31312,7 @@
             0,
             0});
             this.udActivePeakHoldDropRX2.Name = "udActivePeakHoldDropRX2";
-            this.udActivePeakHoldDropRX2.Size = new System.Drawing.Size(48, 20);
+            this.udActivePeakHoldDropRX2.Size = new System.Drawing.Size(48, 22);
             this.udActivePeakHoldDropRX2.TabIndex = 72;
             this.udActivePeakHoldDropRX2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDropRX2, "The speed of the drop in dBm per second");
@@ -31245,7 +31331,7 @@
             this.chkActivePeakHoldRX2.Image = null;
             this.chkActivePeakHoldRX2.Location = new System.Drawing.Point(9, 0);
             this.chkActivePeakHoldRX2.Name = "chkActivePeakHoldRX2";
-            this.chkActivePeakHoldRX2.Size = new System.Drawing.Size(109, 17);
+            this.chkActivePeakHoldRX2.Size = new System.Drawing.Size(111, 17);
             this.chkActivePeakHoldRX2.TabIndex = 69;
             this.chkActivePeakHoldRX2.Text = "Active Peak Hold";
             this.toolTip1.SetToolTip(this.chkActivePeakHoldRX2, "Actively peak hold the panadaptor display");
@@ -31291,7 +31377,7 @@
             0,
             0});
             this.udActivePeakHoldDurationRX2.Name = "udActivePeakHoldDurationRX2";
-            this.udActivePeakHoldDurationRX2.Size = new System.Drawing.Size(48, 20);
+            this.udActivePeakHoldDurationRX2.Size = new System.Drawing.Size(48, 22);
             this.udActivePeakHoldDurationRX2.TabIndex = 70;
             this.udActivePeakHoldDurationRX2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDurationRX2, "How long to hold the peaks");
@@ -31310,7 +31396,7 @@
             this.grpRX2DisplayAveraging.Controls.Add(this.comboRX2DispWFDetector);
             this.grpRX2DisplayAveraging.Controls.Add(this.udRX2DisplayWFAVTime);
             this.grpRX2DisplayAveraging.Controls.Add(this.labelTS377);
-            this.grpRX2DisplayAveraging.Location = new System.Drawing.Point(165, 146);
+            this.grpRX2DisplayAveraging.Location = new System.Drawing.Point(165, 165);
             this.grpRX2DisplayAveraging.Name = "grpRX2DisplayAveraging";
             this.grpRX2DisplayAveraging.Size = new System.Drawing.Size(123, 141);
             this.grpRX2DisplayAveraging.TabIndex = 80;
@@ -31323,7 +31409,7 @@
             this.labelTS375.Image = null;
             this.labelTS375.Location = new System.Drawing.Point(10, 67);
             this.labelTS375.Name = "labelTS375";
-            this.labelTS375.Size = new System.Drawing.Size(58, 13);
+            this.labelTS375.Size = new System.Drawing.Size(62, 13);
             this.labelTS375.TabIndex = 63;
             this.labelTS375.Text = "Averaging:";
             // 
@@ -31352,7 +31438,7 @@
             this.labelTS376.Image = null;
             this.labelTS376.Location = new System.Drawing.Point(10, 19);
             this.labelTS376.Name = "labelTS376";
-            this.labelTS376.Size = new System.Drawing.Size(51, 13);
+            this.labelTS376.Size = new System.Drawing.Size(54, 13);
             this.labelTS376.TabIndex = 61;
             this.labelTS376.Text = "Detector:";
             // 
@@ -31390,7 +31476,7 @@
             0,
             0});
             this.udRX2DisplayWFAVTime.Name = "udRX2DisplayWFAVTime";
-            this.udRX2DisplayWFAVTime.Size = new System.Drawing.Size(48, 20);
+            this.udRX2DisplayWFAVTime.Size = new System.Drawing.Size(48, 22);
             this.udRX2DisplayWFAVTime.TabIndex = 2;
             this.udRX2DisplayWFAVTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayWFAVTime, "When averaging, use this number of buffers to calculate the average.");
@@ -31450,7 +31536,7 @@
             this.chkWaterfallUseNFForAGCRX2.Image = null;
             this.chkWaterfallUseNFForAGCRX2.Location = new System.Drawing.Point(139, 93);
             this.chkWaterfallUseNFForAGCRX2.Name = "chkWaterfallUseNFForAGCRX2";
-            this.chkWaterfallUseNFForAGCRX2.Size = new System.Drawing.Size(149, 17);
+            this.chkWaterfallUseNFForAGCRX2.Size = new System.Drawing.Size(163, 17);
             this.chkWaterfallUseNFForAGCRX2.TabIndex = 95;
             this.chkWaterfallUseNFForAGCRX2.Text = "Noise Floor Compensation";
             this.toolTip1.SetToolTip(this.chkWaterfallUseNFForAGCRX2, "Use the noise floor to control the AGC Low Level");
@@ -31486,7 +31572,7 @@
             0,
             -2147483648});
             this.udWaterfallAGCOffsetRX2.Name = "udWaterfallAGCOffsetRX2";
-            this.udWaterfallAGCOffsetRX2.Size = new System.Drawing.Size(48, 20);
+            this.udWaterfallAGCOffsetRX2.Size = new System.Drawing.Size(48, 22);
             this.udWaterfallAGCOffsetRX2.TabIndex = 93;
             this.udWaterfallAGCOffsetRX2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udWaterfallAGCOffsetRX2, "Apply dBm offset if using AGC");
@@ -31503,7 +31589,7 @@
             this.labelTS92.Image = null;
             this.labelTS92.Location = new System.Drawing.Point(38, 182);
             this.labelTS92.Name = "labelTS92";
-            this.labelTS92.Size = new System.Drawing.Size(46, 13);
+            this.labelTS92.Size = new System.Drawing.Size(49, 13);
             this.labelTS92.TabIndex = 90;
             this.labelTS92.Text = "Opacity:";
             // 
@@ -31525,7 +31611,7 @@
             this.labelTS520.Image = null;
             this.labelTS520.Location = new System.Drawing.Point(148, 124);
             this.labelTS520.Name = "labelTS520";
-            this.labelTS520.Size = new System.Drawing.Size(33, 13);
+            this.labelTS520.Size = new System.Drawing.Size(36, 13);
             this.labelTS520.TabIndex = 85;
             this.labelTS520.Text = "frame";
             // 
@@ -31535,7 +31621,7 @@
             this.lblRX2WaterFallCalulatedDelayMS.Image = null;
             this.lblRX2WaterFallCalulatedDelayMS.Location = new System.Drawing.Point(187, 124);
             this.lblRX2WaterFallCalulatedDelayMS.Name = "lblRX2WaterFallCalulatedDelayMS";
-            this.lblRX2WaterFallCalulatedDelayMS.Size = new System.Drawing.Size(44, 13);
+            this.lblRX2WaterFallCalulatedDelayMS.Size = new System.Drawing.Size(45, 13);
             this.lblRX2WaterFallCalulatedDelayMS.TabIndex = 84;
             this.lblRX2WaterFallCalulatedDelayMS.Text = "0.00 ms";
             // 
@@ -31545,7 +31631,7 @@
             this.chkWaterfallUseRX2SpectrumMinMax.Image = null;
             this.chkWaterfallUseRX2SpectrumMinMax.Location = new System.Drawing.Point(139, 70);
             this.chkWaterfallUseRX2SpectrumMinMax.Name = "chkWaterfallUseRX2SpectrumMinMax";
-            this.chkWaterfallUseRX2SpectrumMinMax.Size = new System.Drawing.Size(118, 17);
+            this.chkWaterfallUseRX2SpectrumMinMax.Size = new System.Drawing.Size(120, 17);
             this.chkWaterfallUseRX2SpectrumMinMax.TabIndex = 83;
             this.chkWaterfallUseRX2SpectrumMinMax.Text = "Use Spec Min/Max";
             this.toolTip1.SetToolTip(this.chkWaterfallUseRX2SpectrumMinMax, "Spectrum Grid min/max used for low and high level");
@@ -31575,7 +31661,7 @@
             this.chkRX2WaterfallAGC.Image = null;
             this.chkRX2WaterfallAGC.Location = new System.Drawing.Point(139, 47);
             this.chkRX2WaterfallAGC.Name = "chkRX2WaterfallAGC";
-            this.chkRX2WaterfallAGC.Size = new System.Drawing.Size(93, 17);
+            this.chkRX2WaterfallAGC.Size = new System.Drawing.Size(98, 17);
             this.chkRX2WaterfallAGC.TabIndex = 82;
             this.chkRX2WaterfallAGC.Text = "Waterfall AGC";
             this.toolTip1.SetToolTip(this.chkRX2WaterfallAGC, "Automatically calculates Low Level Threshold for Waterfall.");
@@ -31602,7 +31688,7 @@
             this.lblRX2WaterfallLevels.AutoSize = true;
             this.lblRX2WaterfallLevels.Location = new System.Drawing.Point(8, 159);
             this.lblRX2WaterfallLevels.Name = "lblRX2WaterfallLevels";
-            this.lblRX2WaterfallLevels.Size = new System.Drawing.Size(134, 13);
+            this.lblRX2WaterfallLevels.Size = new System.Drawing.Size(140, 13);
             this.lblRX2WaterfallLevels.TabIndex = 80;
             this.lblRX2WaterfallLevels.Text = "Band for Low/High Levels:";
             this.toolTip1.SetToolTip(this.lblRX2WaterfallLevels, "Waterfall Low/High levels can be set by band.  RX2 bands inherit RX1 band\'s Water" +
@@ -31622,7 +31708,7 @@
             this.txtRX2WaterFallBandLevel.Location = new System.Drawing.Point(155, 156);
             this.txtRX2WaterFallBandLevel.Name = "txtRX2WaterFallBandLevel";
             this.txtRX2WaterFallBandLevel.ReadOnly = true;
-            this.txtRX2WaterFallBandLevel.Size = new System.Drawing.Size(94, 20);
+            this.txtRX2WaterFallBandLevel.Size = new System.Drawing.Size(94, 22);
             this.txtRX2WaterFallBandLevel.TabIndex = 79;
             this.txtRX2WaterFallBandLevel.Text = "Current Band";
             this.toolTip1.SetToolTip(this.txtRX2WaterFallBandLevel, "Current RX1 band selected for setting Waterfall Low/High level settings");
@@ -31659,7 +31745,7 @@
             this.label21.AutoSize = true;
             this.label21.Location = new System.Drawing.Point(8, 98);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(40, 13);
+            this.label21.Size = new System.Drawing.Size(42, 13);
             this.label21.TabIndex = 73;
             this.label21.Text = "Palette";
             this.toolTip1.SetToolTip(this.label21, "Color sheme");
@@ -31683,7 +31769,7 @@
             0,
             0});
             this.udRX2DisplayWaterfallUpdatePeriod.Name = "udRX2DisplayWaterfallUpdatePeriod";
-            this.udRX2DisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(48, 20);
+            this.udRX2DisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(48, 22);
             this.udRX2DisplayWaterfallUpdatePeriod.TabIndex = 71;
             this.udRX2DisplayWaterfallUpdatePeriod.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayWaterfallUpdatePeriod, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
@@ -31757,7 +31843,7 @@
             0,
             -2147483648});
             this.udRX2DisplayWaterfallLowLevel.Name = "udRX2DisplayWaterfallLowLevel";
-            this.udRX2DisplayWaterfallLowLevel.Size = new System.Drawing.Size(48, 20);
+            this.udRX2DisplayWaterfallLowLevel.Size = new System.Drawing.Size(48, 22);
             this.udRX2DisplayWaterfallLowLevel.TabIndex = 2;
             this.udRX2DisplayWaterfallLowLevel.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayWaterfallLowLevel, "Waterfall Low Signal - Show Low Color below this value (gradient in between).");
@@ -31796,7 +31882,7 @@
             0,
             -2147483648});
             this.udRX2DisplayWaterfallHighLevel.Name = "udRX2DisplayWaterfallHighLevel";
-            this.udRX2DisplayWaterfallHighLevel.Size = new System.Drawing.Size(48, 20);
+            this.udRX2DisplayWaterfallHighLevel.Size = new System.Drawing.Size(48, 22);
             this.udRX2DisplayWaterfallHighLevel.TabIndex = 0;
             this.udRX2DisplayWaterfallHighLevel.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayWaterfallHighLevel, "Waterfall High Signal - Show High Color above this value (gradient in between).");
@@ -31835,7 +31921,7 @@
             this.label20.AutoSize = true;
             this.label20.Location = new System.Drawing.Point(220, 115);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(57, 13);
+            this.label20.Size = new System.Drawing.Size(62, 13);
             this.label20.TabIndex = 88;
             this.label20.Text = "dBm offset";
             this.toolTip1.SetToolTip(this.label20, "Display Grid levels can be set by band. ");
@@ -31846,7 +31932,7 @@
             this.chkMaintainNFAdjustDeltaRX2.Image = null;
             this.chkMaintainNFAdjustDeltaRX2.Location = new System.Drawing.Point(165, 140);
             this.chkMaintainNFAdjustDeltaRX2.Name = "chkMaintainNFAdjustDeltaRX2";
-            this.chkMaintainNFAdjustDeltaRX2.Size = new System.Drawing.Size(92, 17);
+            this.chkMaintainNFAdjustDeltaRX2.Size = new System.Drawing.Size(101, 17);
             this.chkMaintainNFAdjustDeltaRX2.TabIndex = 87;
             this.chkMaintainNFAdjustDeltaRX2.Text = "Maintain delta";
             this.toolTip1.SetToolTip(this.chkMaintainNFAdjustDeltaRX2, "If min is adjusted, max will be changed by same adjustment");
@@ -31874,7 +31960,7 @@
             0,
             0});
             this.nudRX2NFoffsetGridFollow.Name = "nudRX2NFoffsetGridFollow";
-            this.nudRX2NFoffsetGridFollow.Size = new System.Drawing.Size(50, 20);
+            this.nudRX2NFoffsetGridFollow.Size = new System.Drawing.Size(50, 22);
             this.nudRX2NFoffsetGridFollow.TabIndex = 86;
             this.nudRX2NFoffsetGridFollow.TinyStep = false;
             this.nudRX2NFoffsetGridFollow.Value = new decimal(new int[] {
@@ -31890,7 +31976,7 @@
             this.chkAdjustGridMinToNFRX2.Image = null;
             this.chkAdjustGridMinToNFRX2.Location = new System.Drawing.Point(15, 115);
             this.chkAdjustGridMinToNFRX2.Name = "chkAdjustGridMinToNFRX2";
-            this.chkAdjustGridMinToNFRX2.Size = new System.Drawing.Size(143, 17);
+            this.chkAdjustGridMinToNFRX2.Size = new System.Drawing.Size(158, 17);
             this.chkAdjustGridMinToNFRX2.TabIndex = 85;
             this.chkAdjustGridMinToNFRX2.Text = "Adjust Min to Noise Floor";
             this.toolTip1.SetToolTip(this.chkAdjustGridMinToNFRX2, "Keep min adjusted to Noise Floor");
@@ -31902,7 +31988,7 @@
             this.label16.AutoSize = true;
             this.label16.Location = new System.Drawing.Point(6, 84);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(129, 13);
+            this.label16.Size = new System.Drawing.Size(135, 13);
             this.label16.TabIndex = 84;
             this.label16.Text = "Band for Max/Min Levels:";
             this.toolTip1.SetToolTip(this.label16, "Display Grid levels can be set by band. ");
@@ -31912,7 +31998,7 @@
             this.txtRX2DisplayGridBandLevel.Location = new System.Drawing.Point(146, 80);
             this.txtRX2DisplayGridBandLevel.Name = "txtRX2DisplayGridBandLevel";
             this.txtRX2DisplayGridBandLevel.ReadOnly = true;
-            this.txtRX2DisplayGridBandLevel.Size = new System.Drawing.Size(94, 20);
+            this.txtRX2DisplayGridBandLevel.Size = new System.Drawing.Size(94, 22);
             this.txtRX2DisplayGridBandLevel.TabIndex = 83;
             this.txtRX2DisplayGridBandLevel.Text = "Current Band";
             this.toolTip1.SetToolTip(this.txtRX2DisplayGridBandLevel, "Current RX1 band selected for setting Display Grid level settings");
@@ -31963,7 +32049,7 @@
             0,
             0});
             this.udRX2DisplayGridStep.Name = "udRX2DisplayGridStep";
-            this.udRX2DisplayGridStep.Size = new System.Drawing.Size(56, 20);
+            this.udRX2DisplayGridStep.Size = new System.Drawing.Size(56, 22);
             this.udRX2DisplayGridStep.TabIndex = 25;
             this.udRX2DisplayGridStep.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayGridStep, "Horizontal Grid Step Size in dB.");
@@ -31993,7 +32079,7 @@
             0,
             -2147483648});
             this.udRX2DisplayGridMin.Name = "udRX2DisplayGridMin";
-            this.udRX2DisplayGridMin.Size = new System.Drawing.Size(56, 20);
+            this.udRX2DisplayGridMin.Size = new System.Drawing.Size(56, 22);
             this.udRX2DisplayGridMin.TabIndex = 24;
             this.udRX2DisplayGridMin.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayGridMin, "Signal Level at bottom of display in dB.");
@@ -32023,7 +32109,7 @@
             0,
             -2147483648});
             this.udRX2DisplayGridMax.Name = "udRX2DisplayGridMax";
-            this.udRX2DisplayGridMax.Size = new System.Drawing.Size(56, 20);
+            this.udRX2DisplayGridMax.Size = new System.Drawing.Size(56, 22);
             this.udRX2DisplayGridMax.TabIndex = 23;
             this.udRX2DisplayGridMax.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayGridMax, "Signal level at top of display in dB.");
@@ -32071,7 +32157,7 @@
             this.grpRX2DisplayAverage.Controls.Add(this.comboRX2DispPanDetector);
             this.grpRX2DisplayAverage.Controls.Add(this.udRX2DisplayAVGTime);
             this.grpRX2DisplayAverage.Controls.Add(this.labelTS143);
-            this.grpRX2DisplayAverage.Location = new System.Drawing.Point(6, 146);
+            this.grpRX2DisplayAverage.Location = new System.Drawing.Point(6, 165);
             this.grpRX2DisplayAverage.Name = "grpRX2DisplayAverage";
             this.grpRX2DisplayAverage.Size = new System.Drawing.Size(153, 251);
             this.grpRX2DisplayAverage.TabIndex = 47;
@@ -32086,7 +32172,7 @@
             this.chkDispRX2Normalize.Image = null;
             this.chkDispRX2Normalize.Location = new System.Drawing.Point(6, 147);
             this.chkDispRX2Normalize.Name = "chkDispRX2Normalize";
-            this.chkDispRX2Normalize.Size = new System.Drawing.Size(112, 17);
+            this.chkDispRX2Normalize.Size = new System.Drawing.Size(108, 17);
             this.chkDispRX2Normalize.TabIndex = 68;
             this.chkDispRX2Normalize.Text = "1 Hz BW: Av / Sa";
             this.chkDispRX2Normalize.UseVisualStyleBackColor = true;
@@ -32098,7 +32184,7 @@
             this.chkShowRX2NoiseFloor.Image = null;
             this.chkShowRX2NoiseFloor.Location = new System.Drawing.Point(6, 170);
             this.chkShowRX2NoiseFloor.Name = "chkShowRX2NoiseFloor";
-            this.chkShowRX2NoiseFloor.Size = new System.Drawing.Size(109, 17);
+            this.chkShowRX2NoiseFloor.Size = new System.Drawing.Size(117, 17);
             this.chkShowRX2NoiseFloor.TabIndex = 82;
             this.chkShowRX2NoiseFloor.Text = "Show Noise Floor";
             this.toolTip1.SetToolTip(this.chkShowRX2NoiseFloor, "Show the noise floor line on the panadaptor");
@@ -32111,7 +32197,7 @@
             this.lblRX2PanAv.Image = null;
             this.lblRX2PanAv.Location = new System.Drawing.Point(10, 67);
             this.lblRX2PanAv.Name = "lblRX2PanAv";
-            this.lblRX2PanAv.Size = new System.Drawing.Size(58, 13);
+            this.lblRX2PanAv.Size = new System.Drawing.Size(62, 13);
             this.lblRX2PanAv.TabIndex = 67;
             this.lblRX2PanAv.Text = "Averaging:";
             // 
@@ -32140,7 +32226,7 @@
             this.lblRX2PanDet.Image = null;
             this.lblRX2PanDet.Location = new System.Drawing.Point(10, 19);
             this.lblRX2PanDet.Name = "lblRX2PanDet";
-            this.lblRX2PanDet.Size = new System.Drawing.Size(51, 13);
+            this.lblRX2PanDet.Size = new System.Drawing.Size(54, 13);
             this.lblRX2PanDet.TabIndex = 65;
             this.lblRX2PanDet.Text = "Detector:";
             // 
@@ -32179,7 +32265,7 @@
             0,
             0});
             this.udRX2DisplayAVGTime.Name = "udRX2DisplayAVGTime";
-            this.udRX2DisplayAVGTime.Size = new System.Drawing.Size(48, 20);
+            this.udRX2DisplayAVGTime.Size = new System.Drawing.Size(48, 22);
             this.udRX2DisplayAVGTime.TabIndex = 2;
             this.udRX2DisplayAVGTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2DisplayAVGTime, "When averaging, use this number of buffers to calculate the average.");
@@ -32240,7 +32326,7 @@
             this.labelTS150.Image = null;
             this.labelTS150.Location = new System.Drawing.Point(6, 101);
             this.labelTS150.Name = "labelTS150";
-            this.labelTS150.Size = new System.Drawing.Size(46, 13);
+            this.labelTS150.Size = new System.Drawing.Size(51, 13);
             this.labelTS150.TabIndex = 56;
             this.labelTS150.Text = "Window";
             // 
@@ -32250,7 +32336,7 @@
             this.labelTS149.Image = null;
             this.labelTS149.Location = new System.Drawing.Point(227, 41);
             this.labelTS149.Name = "labelTS149";
-            this.labelTS149.Size = new System.Drawing.Size(27, 13);
+            this.labelTS149.Size = new System.Drawing.Size(28, 13);
             this.labelTS149.TabIndex = 53;
             this.labelTS149.Text = "Max";
             // 
@@ -32260,7 +32346,7 @@
             this.labelTS148.Image = null;
             this.labelTS148.Location = new System.Drawing.Point(6, 41);
             this.labelTS148.Name = "labelTS148";
-            this.labelTS148.Size = new System.Drawing.Size(24, 13);
+            this.labelTS148.Size = new System.Drawing.Size(27, 13);
             this.labelTS148.TabIndex = 52;
             this.labelTS148.Text = "Min";
             // 
@@ -32283,7 +32369,7 @@
             this.labelTS140.Image = null;
             this.labelTS140.Location = new System.Drawing.Point(6, 79);
             this.labelTS140.Name = "labelTS140";
-            this.labelTS140.Size = new System.Drawing.Size(75, 13);
+            this.labelTS140.Size = new System.Drawing.Size(80, 13);
             this.labelTS140.TabIndex = 50;
             this.labelTS140.Text = "Bin Width (Hz)";
             // 
@@ -32320,7 +32406,7 @@
             this.tpDisplayTransmit.Controls.Add(this.grpTXSpectrumGrid);
             this.tpDisplayTransmit.Location = new System.Drawing.Point(4, 22);
             this.tpDisplayTransmit.Name = "tpDisplayTransmit";
-            this.tpDisplayTransmit.Size = new System.Drawing.Size(721, 403);
+            this.tpDisplayTransmit.Size = new System.Drawing.Size(721, 435);
             this.tpDisplayTransmit.TabIndex = 3;
             this.tpDisplayTransmit.Text = "  TX";
             // 
@@ -32359,7 +32445,7 @@
             0,
             -2147483648});
             this.udTXWFAmpMin.Name = "udTXWFAmpMin";
-            this.udTXWFAmpMin.Size = new System.Drawing.Size(45, 20);
+            this.udTXWFAmpMin.Size = new System.Drawing.Size(45, 22);
             this.udTXWFAmpMin.TabIndex = 29;
             this.udTXWFAmpMin.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXWFAmpMin, "Waterfall Low Signal - Show Low Color below this value (gradient in between).");
@@ -32390,7 +32476,7 @@
             0,
             -2147483648});
             this.udTXWFAmpMax.Name = "udTXWFAmpMax";
-            this.udTXWFAmpMax.Size = new System.Drawing.Size(44, 20);
+            this.udTXWFAmpMax.Size = new System.Drawing.Size(44, 22);
             this.udTXWFAmpMax.TabIndex = 28;
             this.udTXWFAmpMax.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXWFAmpMax, "Waterfall High Signal - Show High Color above this value (gradient in between).");
@@ -32442,7 +32528,7 @@
             this.labelTS384.Image = null;
             this.labelTS384.Location = new System.Drawing.Point(10, 67);
             this.labelTS384.Name = "labelTS384";
-            this.labelTS384.Size = new System.Drawing.Size(58, 13);
+            this.labelTS384.Size = new System.Drawing.Size(62, 13);
             this.labelTS384.TabIndex = 63;
             this.labelTS384.Text = "Averaging:";
             // 
@@ -32471,7 +32557,7 @@
             this.labelTS387.Image = null;
             this.labelTS387.Location = new System.Drawing.Point(10, 19);
             this.labelTS387.Name = "labelTS387";
-            this.labelTS387.Size = new System.Drawing.Size(51, 13);
+            this.labelTS387.Size = new System.Drawing.Size(54, 13);
             this.labelTS387.TabIndex = 61;
             this.labelTS387.Text = "Detector:";
             // 
@@ -32509,7 +32595,7 @@
             0,
             0});
             this.udTXDisplayAVTime.Name = "udTXDisplayAVTime";
-            this.udTXDisplayAVTime.Size = new System.Drawing.Size(48, 20);
+            this.udTXDisplayAVTime.Size = new System.Drawing.Size(48, 22);
             this.udTXDisplayAVTime.TabIndex = 2;
             this.udTXDisplayAVTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXDisplayAVTime, "When averaging, use this number of buffers to calculate the average.");
@@ -32570,7 +32656,7 @@
             this.labelTS381.Image = null;
             this.labelTS381.Location = new System.Drawing.Point(6, 101);
             this.labelTS381.Name = "labelTS381";
-            this.labelTS381.Size = new System.Drawing.Size(46, 13);
+            this.labelTS381.Size = new System.Drawing.Size(51, 13);
             this.labelTS381.TabIndex = 56;
             this.labelTS381.Text = "Window";
             // 
@@ -32580,7 +32666,7 @@
             this.labelTS382.Image = null;
             this.labelTS382.Location = new System.Drawing.Point(227, 41);
             this.labelTS382.Name = "labelTS382";
-            this.labelTS382.Size = new System.Drawing.Size(27, 13);
+            this.labelTS382.Size = new System.Drawing.Size(28, 13);
             this.labelTS382.TabIndex = 53;
             this.labelTS382.Text = "Max";
             // 
@@ -32590,7 +32676,7 @@
             this.labelTS383.Image = null;
             this.labelTS383.Location = new System.Drawing.Point(6, 41);
             this.labelTS383.Name = "labelTS383";
-            this.labelTS383.Size = new System.Drawing.Size(24, 13);
+            this.labelTS383.Size = new System.Drawing.Size(27, 13);
             this.labelTS383.TabIndex = 52;
             this.labelTS383.Text = "Min";
             // 
@@ -32613,7 +32699,7 @@
             this.labelTS385.Image = null;
             this.labelTS385.Location = new System.Drawing.Point(6, 79);
             this.labelTS385.Name = "labelTS385";
-            this.labelTS385.Size = new System.Drawing.Size(75, 13);
+            this.labelTS385.Size = new System.Drawing.Size(80, 13);
             this.labelTS385.TabIndex = 50;
             this.labelTS385.Text = "Bin Width (Hz)";
             // 
@@ -32664,7 +32750,7 @@
             this.chkDispTXNormalize.Image = null;
             this.chkDispTXNormalize.Location = new System.Drawing.Point(6, 147);
             this.chkDispTXNormalize.Name = "chkDispTXNormalize";
-            this.chkDispTXNormalize.Size = new System.Drawing.Size(112, 17);
+            this.chkDispTXNormalize.Size = new System.Drawing.Size(108, 17);
             this.chkDispTXNormalize.TabIndex = 68;
             this.chkDispTXNormalize.Text = "1 Hz BW: Av / Sa";
             this.chkDispTXNormalize.UseVisualStyleBackColor = true;
@@ -32676,7 +32762,7 @@
             this.labelTS378.Image = null;
             this.labelTS378.Location = new System.Drawing.Point(10, 67);
             this.labelTS378.Name = "labelTS378";
-            this.labelTS378.Size = new System.Drawing.Size(58, 13);
+            this.labelTS378.Size = new System.Drawing.Size(62, 13);
             this.labelTS378.TabIndex = 67;
             this.labelTS378.Text = "Averaging:";
             // 
@@ -32705,7 +32791,7 @@
             this.labelTS379.Image = null;
             this.labelTS379.Location = new System.Drawing.Point(10, 19);
             this.labelTS379.Name = "labelTS379";
-            this.labelTS379.Size = new System.Drawing.Size(51, 13);
+            this.labelTS379.Size = new System.Drawing.Size(54, 13);
             this.labelTS379.TabIndex = 65;
             this.labelTS379.Text = "Detector:";
             // 
@@ -32744,7 +32830,7 @@
             0,
             0});
             this.udTXDisplayAVGTime.Name = "udTXDisplayAVGTime";
-            this.udTXDisplayAVGTime.Size = new System.Drawing.Size(48, 20);
+            this.udTXDisplayAVGTime.Size = new System.Drawing.Size(48, 22);
             this.udTXDisplayAVGTime.TabIndex = 2;
             this.udTXDisplayAVGTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXDisplayAVGTime, "When averaging, use this number of buffers to calculate the average.");
@@ -32855,7 +32941,7 @@
             0,
             0});
             this.udTXGridStep.Name = "udTXGridStep";
-            this.udTXGridStep.Size = new System.Drawing.Size(56, 20);
+            this.udTXGridStep.Size = new System.Drawing.Size(56, 22);
             this.udTXGridStep.TabIndex = 25;
             this.udTXGridStep.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGridStep, "Horizontal Grid Step Size in dB.");
@@ -32885,7 +32971,7 @@
             0,
             -2147483648});
             this.udTXGridMin.Name = "udTXGridMin";
-            this.udTXGridMin.Size = new System.Drawing.Size(56, 20);
+            this.udTXGridMin.Size = new System.Drawing.Size(56, 22);
             this.udTXGridMin.TabIndex = 24;
             this.udTXGridMin.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGridMin, "Signal Level at bottom of display in dB.");
@@ -32916,7 +33002,7 @@
             0,
             -2147483648});
             this.udTXGridMax.Name = "udTXGridMax";
-            this.udTXGridMax.Size = new System.Drawing.Size(56, 20);
+            this.udTXGridMax.Size = new System.Drawing.Size(56, 22);
             this.udTXGridMax.TabIndex = 23;
             this.udTXGridMax.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGridMax, "Signal level at top of display in dB.");
@@ -32960,7 +33046,7 @@
             this.tpDSP.Controls.Add(this.tcDSP);
             this.tpDSP.Location = new System.Drawing.Point(4, 22);
             this.tpDSP.Name = "tpDSP";
-            this.tpDSP.Size = new System.Drawing.Size(728, 436);
+            this.tpDSP.Size = new System.Drawing.Size(728, 468);
             this.tpDSP.TabIndex = 1;
             this.tpDSP.Text = "DSP";
             // 
@@ -33071,7 +33157,7 @@
             this.labelTS610.Image = null;
             this.labelTS610.Location = new System.Drawing.Point(459, 357);
             this.labelTS610.Name = "labelTS610";
-            this.labelTS610.Size = new System.Drawing.Size(135, 13);
+            this.labelTS610.Size = new System.Drawing.Size(143, 13);
             this.labelTS610.TabIndex = 48;
             this.labelTS610.Text = "Time to make last change :";
             // 
@@ -34050,7 +34136,7 @@
             0,
             0});
             this.udDSPCWPitch.Name = "udDSPCWPitch";
-            this.udDSPCWPitch.Size = new System.Drawing.Size(48, 20);
+            this.udDSPCWPitch.Size = new System.Drawing.Size(48, 22);
             this.udDSPCWPitch.TabIndex = 7;
             this.udDSPCWPitch.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPCWPitch, "Selects the preferred CW tone frequency.");
@@ -34098,7 +34184,7 @@
             0,
             0});
             this.udCWKeyerWeight.Name = "udCWKeyerWeight";
-            this.udCWKeyerWeight.Size = new System.Drawing.Size(40, 20);
+            this.udCWKeyerWeight.Size = new System.Drawing.Size(40, 22);
             this.udCWKeyerWeight.TabIndex = 40;
             this.udCWKeyerWeight.TinyStep = false;
             this.toolTip1.SetToolTip(this.udCWKeyerWeight, "Sets the weight of the tones when sending Iambic.");
@@ -34255,7 +34341,7 @@
             0,
             0});
             this.udCWBreakInDelay.Name = "udCWBreakInDelay";
-            this.udCWBreakInDelay.Size = new System.Drawing.Size(48, 20);
+            this.udCWBreakInDelay.Size = new System.Drawing.Size(48, 22);
             this.udCWBreakInDelay.TabIndex = 35;
             this.udCWBreakInDelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udCWBreakInDelay, "Amount of time to stay in TX after the last detected CW signal.");
@@ -34317,7 +34403,7 @@
             0,
             0});
             this.udNoiseFloorAttackRX2.Name = "udNoiseFloorAttackRX2";
-            this.udNoiseFloorAttackRX2.Size = new System.Drawing.Size(58, 20);
+            this.udNoiseFloorAttackRX2.Size = new System.Drawing.Size(58, 22);
             this.udNoiseFloorAttackRX2.TabIndex = 137;
             this.udNoiseFloorAttackRX2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udNoiseFloorAttackRX2, "Time it takes to reach the noise floor");
@@ -34357,7 +34443,7 @@
             0,
             0});
             this.udNoiseFloorAttackRX1.Name = "udNoiseFloorAttackRX1";
-            this.udNoiseFloorAttackRX1.Size = new System.Drawing.Size(58, 20);
+            this.udNoiseFloorAttackRX1.Size = new System.Drawing.Size(58, 22);
             this.udNoiseFloorAttackRX1.TabIndex = 135;
             this.udNoiseFloorAttackRX1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udNoiseFloorAttackRX1, "Time it takes to reach the noise floor");
@@ -34397,7 +34483,7 @@
             0,
             -2147483648});
             this.udRX2AutoAGCOffset.Name = "udRX2AutoAGCOffset";
-            this.udRX2AutoAGCOffset.Size = new System.Drawing.Size(40, 20);
+            this.udRX2AutoAGCOffset.Size = new System.Drawing.Size(40, 22);
             this.udRX2AutoAGCOffset.TabIndex = 133;
             this.udRX2AutoAGCOffset.TinyStep = false;
             this.udRX2AutoAGCOffset.Value = new decimal(new int[] {
@@ -34437,7 +34523,7 @@
             0,
             -2147483648});
             this.udRX1AutoAGCOffset.Name = "udRX1AutoAGCOffset";
-            this.udRX1AutoAGCOffset.Size = new System.Drawing.Size(40, 20);
+            this.udRX1AutoAGCOffset.Size = new System.Drawing.Size(40, 22);
             this.udRX1AutoAGCOffset.TabIndex = 130;
             this.udRX1AutoAGCOffset.TinyStep = false;
             this.udRX1AutoAGCOffset.Value = new decimal(new int[] {
@@ -34453,7 +34539,7 @@
             this.chkAutoAGCRX2.Image = null;
             this.chkAutoAGCRX2.Location = new System.Drawing.Point(16, 55);
             this.chkAutoAGCRX2.Name = "chkAutoAGCRX2";
-            this.chkAutoAGCRX2.Size = new System.Drawing.Size(201, 17);
+            this.chkAutoAGCRX2.Size = new System.Drawing.Size(211, 17);
             this.chkAutoAGCRX2.TabIndex = 131;
             this.chkAutoAGCRX2.Text = "Auto AGC RX2 (requires pana/water)";
             this.chkAutoAGCRX2.UseVisualStyleBackColor = true;
@@ -34465,7 +34551,7 @@
             this.chkAutoAGCRX1.Image = null;
             this.chkAutoAGCRX1.Location = new System.Drawing.Point(16, 32);
             this.chkAutoAGCRX1.Name = "chkAutoAGCRX1";
-            this.chkAutoAGCRX1.Size = new System.Drawing.Size(201, 17);
+            this.chkAutoAGCRX1.Size = new System.Drawing.Size(211, 17);
             this.chkAutoAGCRX1.TabIndex = 130;
             this.chkAutoAGCRX1.Text = "Auto AGC RX1 (requires pana/water)";
             this.chkAutoAGCRX1.UseVisualStyleBackColor = true;
@@ -34536,7 +34622,7 @@
             0,
             0});
             this.udDSPLevelerHangTime.Name = "udDSPLevelerHangTime";
-            this.udDSPLevelerHangTime.Size = new System.Drawing.Size(48, 20);
+            this.udDSPLevelerHangTime.Size = new System.Drawing.Size(48, 22);
             this.udDSPLevelerHangTime.TabIndex = 15;
             this.udDSPLevelerHangTime.TinyStep = false;
             this.udDSPLevelerHangTime.Value = new decimal(new int[] {
@@ -34576,7 +34662,7 @@
             0,
             0});
             this.udDSPLevelerThreshold.Name = "udDSPLevelerThreshold";
-            this.udDSPLevelerThreshold.Size = new System.Drawing.Size(40, 20);
+            this.udDSPLevelerThreshold.Size = new System.Drawing.Size(40, 22);
             this.udDSPLevelerThreshold.TabIndex = 6;
             this.udDSPLevelerThreshold.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPLevelerThreshold, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
@@ -34609,7 +34695,7 @@
             0,
             0});
             this.udDSPLevelerSlope.Name = "udDSPLevelerSlope";
-            this.udDSPLevelerSlope.Size = new System.Drawing.Size(40, 20);
+            this.udDSPLevelerSlope.Size = new System.Drawing.Size(40, 22);
             this.udDSPLevelerSlope.TabIndex = 13;
             this.udDSPLevelerSlope.TinyStep = false;
             this.udDSPLevelerSlope.Value = new decimal(new int[] {
@@ -34639,7 +34725,7 @@
             0,
             0});
             this.udDSPLevelerDecay.Name = "udDSPLevelerDecay";
-            this.udDSPLevelerDecay.Size = new System.Drawing.Size(48, 20);
+            this.udDSPLevelerDecay.Size = new System.Drawing.Size(48, 22);
             this.udDSPLevelerDecay.TabIndex = 12;
             this.udDSPLevelerDecay.TinyStep = false;
             this.udDSPLevelerDecay.Value = new decimal(new int[] {
@@ -34681,7 +34767,7 @@
             0,
             0});
             this.udDSPLevelerAttack.Name = "udDSPLevelerAttack";
-            this.udDSPLevelerAttack.Size = new System.Drawing.Size(40, 20);
+            this.udDSPLevelerAttack.Size = new System.Drawing.Size(40, 22);
             this.udDSPLevelerAttack.TabIndex = 10;
             this.udDSPLevelerAttack.TinyStep = false;
             this.udDSPLevelerAttack.Value = new decimal(new int[] {
@@ -34797,7 +34883,7 @@
             0,
             0});
             this.udDSPALCHangTime.Name = "udDSPALCHangTime";
-            this.udDSPALCHangTime.Size = new System.Drawing.Size(48, 20);
+            this.udDSPALCHangTime.Size = new System.Drawing.Size(48, 22);
             this.udDSPALCHangTime.TabIndex = 17;
             this.udDSPALCHangTime.TinyStep = false;
             this.udDSPALCHangTime.Value = new decimal(new int[] {
@@ -34837,7 +34923,7 @@
             0,
             0});
             this.udDSPALCMaximumGain.Name = "udDSPALCMaximumGain";
-            this.udDSPALCMaximumGain.Size = new System.Drawing.Size(48, 20);
+            this.udDSPALCMaximumGain.Size = new System.Drawing.Size(48, 22);
             this.udDSPALCMaximumGain.TabIndex = 6;
             this.udDSPALCMaximumGain.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPALCMaximumGain, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
@@ -34870,7 +34956,7 @@
             0,
             0});
             this.udDSPALCSlope.Name = "udDSPALCSlope";
-            this.udDSPALCSlope.Size = new System.Drawing.Size(40, 20);
+            this.udDSPALCSlope.Size = new System.Drawing.Size(40, 22);
             this.udDSPALCSlope.TabIndex = 13;
             this.udDSPALCSlope.TinyStep = false;
             this.udDSPALCSlope.Value = new decimal(new int[] {
@@ -34900,7 +34986,7 @@
             0,
             0});
             this.udDSPALCDecay.Name = "udDSPALCDecay";
-            this.udDSPALCDecay.Size = new System.Drawing.Size(48, 20);
+            this.udDSPALCDecay.Size = new System.Drawing.Size(48, 22);
             this.udDSPALCDecay.TabIndex = 12;
             this.udDSPALCDecay.TinyStep = false;
             this.udDSPALCDecay.Value = new decimal(new int[] {
@@ -34941,7 +35027,7 @@
             0,
             0});
             this.udDSPALCAttack.Name = "udDSPALCAttack";
-            this.udDSPALCAttack.Size = new System.Drawing.Size(40, 20);
+            this.udDSPALCAttack.Size = new System.Drawing.Size(40, 22);
             this.udDSPALCAttack.TabIndex = 10;
             this.udDSPALCAttack.TinyStep = false;
             this.udDSPALCAttack.Value = new decimal(new int[] {
@@ -35187,7 +35273,7 @@
             0,
             0});
             this.udDSPAGCRX2HangTime.Name = "udDSPAGCRX2HangTime";
-            this.udDSPAGCRX2HangTime.Size = new System.Drawing.Size(48, 20);
+            this.udDSPAGCRX2HangTime.Size = new System.Drawing.Size(48, 22);
             this.udDSPAGCRX2HangTime.TabIndex = 54;
             this.udDSPAGCRX2HangTime.TinyStep = false;
             this.udDSPAGCRX2HangTime.Value = new decimal(new int[] {
@@ -35217,7 +35303,7 @@
             0,
             0});
             this.udDSPAGCRX2Decay.Name = "udDSPAGCRX2Decay";
-            this.udDSPAGCRX2Decay.Size = new System.Drawing.Size(48, 20);
+            this.udDSPAGCRX2Decay.Size = new System.Drawing.Size(48, 22);
             this.udDSPAGCRX2Decay.TabIndex = 53;
             this.udDSPAGCRX2Decay.TinyStep = false;
             this.udDSPAGCRX2Decay.Value = new decimal(new int[] {
@@ -35247,7 +35333,7 @@
             0,
             0});
             this.udDSPAGCRX2Attack.Name = "udDSPAGCRX2Attack";
-            this.udDSPAGCRX2Attack.Size = new System.Drawing.Size(40, 20);
+            this.udDSPAGCRX2Attack.Size = new System.Drawing.Size(40, 22);
             this.udDSPAGCRX2Attack.TabIndex = 52;
             this.udDSPAGCRX2Attack.TinyStep = false;
             this.udDSPAGCRX2Attack.Value = new decimal(new int[] {
@@ -35276,7 +35362,7 @@
             0,
             0});
             this.udDSPAGCRX2Slope.Name = "udDSPAGCRX2Slope";
-            this.udDSPAGCRX2Slope.Size = new System.Drawing.Size(40, 20);
+            this.udDSPAGCRX2Slope.Size = new System.Drawing.Size(40, 22);
             this.udDSPAGCRX2Slope.TabIndex = 51;
             this.udDSPAGCRX2Slope.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udDSPAGCRX2Slope.TinyStep = false;
@@ -35319,7 +35405,7 @@
             0,
             -2147483648});
             this.udDSPAGCRX2MaxGaindB.Name = "udDSPAGCRX2MaxGaindB";
-            this.udDSPAGCRX2MaxGaindB.Size = new System.Drawing.Size(48, 20);
+            this.udDSPAGCRX2MaxGaindB.Size = new System.Drawing.Size(48, 22);
             this.udDSPAGCRX2MaxGaindB.TabIndex = 49;
             this.udDSPAGCRX2MaxGaindB.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPAGCRX2MaxGaindB, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
@@ -35350,7 +35436,7 @@
             0,
             -2147483648});
             this.udDSPAGCRX2FixedGaindB.Name = "udDSPAGCRX2FixedGaindB";
-            this.udDSPAGCRX2FixedGaindB.Size = new System.Drawing.Size(40, 20);
+            this.udDSPAGCRX2FixedGaindB.Size = new System.Drawing.Size(40, 22);
             this.udDSPAGCRX2FixedGaindB.TabIndex = 48;
             this.udDSPAGCRX2FixedGaindB.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPAGCRX2FixedGaindB, "When you choose Fixed AGC on the front panel, this number is used to multiply the" +
@@ -35413,7 +35499,7 @@
             0,
             0});
             this.udDSPAGCHangTime.Name = "udDSPAGCHangTime";
-            this.udDSPAGCHangTime.Size = new System.Drawing.Size(48, 20);
+            this.udDSPAGCHangTime.Size = new System.Drawing.Size(48, 22);
             this.udDSPAGCHangTime.TabIndex = 44;
             this.udDSPAGCHangTime.TinyStep = false;
             this.udDSPAGCHangTime.Value = new decimal(new int[] {
@@ -35443,7 +35529,7 @@
             0,
             -2147483648});
             this.udDSPAGCMaxGaindB.Name = "udDSPAGCMaxGaindB";
-            this.udDSPAGCMaxGaindB.Size = new System.Drawing.Size(48, 20);
+            this.udDSPAGCMaxGaindB.Size = new System.Drawing.Size(48, 22);
             this.udDSPAGCMaxGaindB.TabIndex = 6;
             this.udDSPAGCMaxGaindB.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPAGCMaxGaindB, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
@@ -35475,7 +35561,7 @@
             0,
             0});
             this.udDSPAGCSlope.Name = "udDSPAGCSlope";
-            this.udDSPAGCSlope.Size = new System.Drawing.Size(40, 20);
+            this.udDSPAGCSlope.Size = new System.Drawing.Size(40, 22);
             this.udDSPAGCSlope.TabIndex = 13;
             this.udDSPAGCSlope.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udDSPAGCSlope.TinyStep = false;
@@ -35507,7 +35593,7 @@
             0,
             0});
             this.udDSPAGCDecay.Name = "udDSPAGCDecay";
-            this.udDSPAGCDecay.Size = new System.Drawing.Size(48, 20);
+            this.udDSPAGCDecay.Size = new System.Drawing.Size(48, 22);
             this.udDSPAGCDecay.TabIndex = 12;
             this.udDSPAGCDecay.TinyStep = false;
             this.udDSPAGCDecay.Value = new decimal(new int[] {
@@ -35547,7 +35633,7 @@
             0,
             0});
             this.udDSPAGCAttack.Name = "udDSPAGCAttack";
-            this.udDSPAGCAttack.Size = new System.Drawing.Size(40, 20);
+            this.udDSPAGCAttack.Size = new System.Drawing.Size(40, 22);
             this.udDSPAGCAttack.TabIndex = 10;
             this.udDSPAGCAttack.TinyStep = false;
             this.udDSPAGCAttack.Value = new decimal(new int[] {
@@ -35605,7 +35691,7 @@
             0,
             -2147483648});
             this.udDSPAGCFixedGaindB.Name = "udDSPAGCFixedGaindB";
-            this.udDSPAGCFixedGaindB.Size = new System.Drawing.Size(40, 20);
+            this.udDSPAGCFixedGaindB.Size = new System.Drawing.Size(40, 22);
             this.udDSPAGCFixedGaindB.TabIndex = 4;
             this.udDSPAGCFixedGaindB.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPAGCFixedGaindB, "When you choose Fixed AGC on the front panel, this number is used to multiply the" +
@@ -35671,7 +35757,7 @@
             this.radTXUSB.Image = null;
             this.radTXUSB.Location = new System.Drawing.Point(6, 65);
             this.radTXUSB.Name = "radTXUSB";
-            this.radTXUSB.Size = new System.Drawing.Size(47, 17);
+            this.radTXUSB.Size = new System.Drawing.Size(45, 17);
             this.radTXUSB.TabIndex = 2;
             this.radTXUSB.Text = "USB";
             this.radTXUSB.UseVisualStyleBackColor = true;
@@ -35683,7 +35769,7 @@
             this.radTXLSB.Image = null;
             this.radTXLSB.Location = new System.Drawing.Point(6, 42);
             this.radTXLSB.Name = "radTXLSB";
-            this.radTXLSB.Size = new System.Drawing.Size(45, 17);
+            this.radTXLSB.Size = new System.Drawing.Size(42, 17);
             this.radTXLSB.TabIndex = 1;
             this.radTXLSB.Text = "LSB";
             this.radTXLSB.UseVisualStyleBackColor = true;
@@ -35696,7 +35782,7 @@
             this.radTXDSB.Image = null;
             this.radTXDSB.Location = new System.Drawing.Point(6, 19);
             this.radTXDSB.Name = "radTXDSB";
-            this.radTXDSB.Size = new System.Drawing.Size(73, 17);
+            this.radTXDSB.Size = new System.Drawing.Size(70, 17);
             this.radTXDSB.TabIndex = 0;
             this.radTXDSB.TabStop = true;
             this.radTXDSB.Text = "LSB+USB";
@@ -35720,7 +35806,7 @@
             this.labelTS355.Image = null;
             this.labelTS355.Location = new System.Drawing.Point(13, 39);
             this.labelTS355.Name = "labelTS355";
-            this.labelTS355.Size = new System.Drawing.Size(43, 13);
+            this.labelTS355.Size = new System.Drawing.Size(46, 13);
             this.labelTS355.TabIndex = 1;
             this.labelTS355.Text = "Length:";
             // 
@@ -35744,7 +35830,7 @@
             0,
             0});
             this.udRXAMSQMaxTail.Name = "udRXAMSQMaxTail";
-            this.udRXAMSQMaxTail.Size = new System.Drawing.Size(38, 20);
+            this.udRXAMSQMaxTail.Size = new System.Drawing.Size(38, 22);
             this.udRXAMSQMaxTail.TabIndex = 0;
             this.udRXAMSQMaxTail.TinyStep = false;
             this.udRXAMSQMaxTail.Value = new decimal(new int[] {
@@ -35788,7 +35874,7 @@
             this.chkLevelFades.Image = null;
             this.chkLevelFades.Location = new System.Drawing.Point(16, 21);
             this.chkLevelFades.Name = "chkLevelFades";
-            this.chkLevelFades.Size = new System.Drawing.Size(88, 17);
+            this.chkLevelFades.Size = new System.Drawing.Size(89, 17);
             this.chkLevelFades.TabIndex = 1;
             this.chkLevelFades.Text = "Fade Leveler";
             this.chkLevelFades.UseVisualStyleBackColor = true;
@@ -35812,7 +35898,7 @@
             this.radUSB.Image = null;
             this.radUSB.Location = new System.Drawing.Point(174, 17);
             this.radUSB.Name = "radUSB";
-            this.radUSB.Size = new System.Drawing.Size(47, 17);
+            this.radUSB.Size = new System.Drawing.Size(45, 17);
             this.radUSB.TabIndex = 2;
             this.radUSB.Text = "USB";
             this.radUSB.UseVisualStyleBackColor = true;
@@ -35824,7 +35910,7 @@
             this.radLSB.Image = null;
             this.radLSB.Location = new System.Drawing.Point(95, 17);
             this.radLSB.Name = "radLSB";
-            this.radLSB.Size = new System.Drawing.Size(45, 17);
+            this.radLSB.Size = new System.Drawing.Size(42, 17);
             this.radLSB.TabIndex = 1;
             this.radLSB.Text = "LSB";
             this.radLSB.UseVisualStyleBackColor = true;
@@ -35837,7 +35923,7 @@
             this.radLSBUSB.Image = null;
             this.radLSBUSB.Location = new System.Drawing.Point(10, 17);
             this.radLSBUSB.Name = "radLSBUSB";
-            this.radLSBUSB.Size = new System.Drawing.Size(73, 17);
+            this.radLSBUSB.Size = new System.Drawing.Size(70, 17);
             this.radLSBUSB.TabIndex = 0;
             this.radLSBUSB.TabStop = true;
             this.radLSBUSB.Text = "LSB+USB";
@@ -35878,7 +35964,7 @@
             this.chkRX2LevelFades.Image = null;
             this.chkRX2LevelFades.Location = new System.Drawing.Point(16, 21);
             this.chkRX2LevelFades.Name = "chkRX2LevelFades";
-            this.chkRX2LevelFades.Size = new System.Drawing.Size(88, 17);
+            this.chkRX2LevelFades.Size = new System.Drawing.Size(89, 17);
             this.chkRX2LevelFades.TabIndex = 1;
             this.chkRX2LevelFades.Text = "Fade Leveler";
             this.chkRX2LevelFades.UseVisualStyleBackColor = true;
@@ -35902,7 +35988,7 @@
             this.radRX2USB.Image = null;
             this.radRX2USB.Location = new System.Drawing.Point(174, 17);
             this.radRX2USB.Name = "radRX2USB";
-            this.radRX2USB.Size = new System.Drawing.Size(47, 17);
+            this.radRX2USB.Size = new System.Drawing.Size(45, 17);
             this.radRX2USB.TabIndex = 2;
             this.radRX2USB.Text = "USB";
             this.radRX2USB.UseVisualStyleBackColor = true;
@@ -35914,7 +36000,7 @@
             this.radRX2LSB.Image = null;
             this.radRX2LSB.Location = new System.Drawing.Point(95, 17);
             this.radRX2LSB.Name = "radRX2LSB";
-            this.radRX2LSB.Size = new System.Drawing.Size(45, 17);
+            this.radRX2LSB.Size = new System.Drawing.Size(42, 17);
             this.radRX2LSB.TabIndex = 1;
             this.radRX2LSB.Text = "LSB";
             this.radRX2LSB.UseVisualStyleBackColor = true;
@@ -35927,7 +36013,7 @@
             this.radRX2LSBUSB.Image = null;
             this.radRX2LSBUSB.Location = new System.Drawing.Point(10, 17);
             this.radRX2LSBUSB.Name = "radRX2LSBUSB";
-            this.radRX2LSBUSB.Size = new System.Drawing.Size(73, 17);
+            this.radRX2LSBUSB.Size = new System.Drawing.Size(70, 17);
             this.radRX2LSBUSB.TabIndex = 0;
             this.radRX2LSBUSB.TabStop = true;
             this.radRX2LSBUSB.Text = "LSB+USB";
@@ -35989,7 +36075,7 @@
             this.lblFMDetLimGain.Image = null;
             this.lblFMDetLimGain.Location = new System.Drawing.Point(7, 104);
             this.lblFMDetLimGain.Name = "lblFMDetLimGain";
-            this.lblFMDetLimGain.Size = new System.Drawing.Size(62, 13);
+            this.lblFMDetLimGain.Size = new System.Drawing.Size(68, 13);
             this.lblFMDetLimGain.TabIndex = 52;
             this.lblFMDetLimGain.Text = "Limiter Gain";
             // 
@@ -36014,7 +36100,7 @@
             this.chkFMDetLimON.Image = null;
             this.chkFMDetLimON.Location = new System.Drawing.Point(7, 81);
             this.chkFMDetLimON.Name = "chkFMDetLimON";
-            this.chkFMDetLimON.Size = new System.Drawing.Size(100, 17);
+            this.chkFMDetLimON.Size = new System.Drawing.Size(105, 17);
             this.chkFMDetLimON.TabIndex = 1;
             this.chkFMDetLimON.Text = "Limiter ON/OFF";
             this.chkFMDetLimON.UseVisualStyleBackColor = true;
@@ -36028,7 +36114,7 @@
             this.chkRemoveTone.Image = null;
             this.chkRemoveTone.Location = new System.Drawing.Point(6, 27);
             this.chkRemoveTone.Name = "chkRemoveTone";
-            this.chkRemoveTone.Size = new System.Drawing.Size(132, 17);
+            this.chkRemoveTone.Size = new System.Drawing.Size(128, 17);
             this.chkRemoveTone.TabIndex = 0;
             this.chkRemoveTone.Text = "Remove CTCSS Tone";
             this.chkRemoveTone.UseVisualStyleBackColor = true;
@@ -36050,7 +36136,7 @@
             this.chkEmphPos.Image = null;
             this.chkEmphPos.Location = new System.Drawing.Point(6, 27);
             this.chkEmphPos.Name = "chkEmphPos";
-            this.chkEmphPos.Size = new System.Drawing.Size(167, 17);
+            this.chkEmphPos.Size = new System.Drawing.Size(180, 17);
             this.chkEmphPos.TabIndex = 0;
             this.chkEmphPos.Text = "Pre-emphasize Before Limiting";
             this.chkEmphPos.UseVisualStyleBackColor = true;
@@ -36093,7 +36179,7 @@
             this.labelDSPRX2DollyF1.Image = null;
             this.labelDSPRX2DollyF1.Location = new System.Drawing.Point(208, 20);
             this.labelDSPRX2DollyF1.Name = "labelDSPRX2DollyF1";
-            this.labelDSPRX2DollyF1.Size = new System.Drawing.Size(38, 13);
+            this.labelDSPRX2DollyF1.Size = new System.Drawing.Size(39, 13);
             this.labelDSPRX2DollyF1.TabIndex = 5;
             this.labelDSPRX2DollyF1.Text = "f1 (Hz)";
             // 
@@ -36103,7 +36189,7 @@
             this.labelDSPRX2DollyF0.Image = null;
             this.labelDSPRX2DollyF0.Location = new System.Drawing.Point(90, 20);
             this.labelDSPRX2DollyF0.Name = "labelDSPRX2DollyF0";
-            this.labelDSPRX2DollyF0.Size = new System.Drawing.Size(38, 13);
+            this.labelDSPRX2DollyF0.Size = new System.Drawing.Size(39, 13);
             this.labelDSPRX2DollyF0.TabIndex = 4;
             this.labelDSPRX2DollyF0.Text = "f0 (Hz)";
             // 
@@ -36126,7 +36212,7 @@
             0,
             0});
             this.udDSPRX2DollyF1.Name = "udDSPRX2DollyF1";
-            this.udDSPRX2DollyF1.Size = new System.Drawing.Size(50, 20);
+            this.udDSPRX2DollyF1.Size = new System.Drawing.Size(50, 22);
             this.udDSPRX2DollyF1.TabIndex = 3;
             this.udDSPRX2DollyF1.TinyStep = false;
             this.udDSPRX2DollyF1.Value = new decimal(new int[] {
@@ -36155,7 +36241,7 @@
             0,
             0});
             this.udDSPRX2DollyF0.Name = "udDSPRX2DollyF0";
-            this.udDSPRX2DollyF0.Size = new System.Drawing.Size(50, 20);
+            this.udDSPRX2DollyF0.Size = new System.Drawing.Size(50, 22);
             this.udDSPRX2DollyF0.TabIndex = 2;
             this.udDSPRX2DollyF0.TinyStep = false;
             this.udDSPRX2DollyF0.Value = new decimal(new int[] {
@@ -36171,7 +36257,7 @@
             this.chkDSPRX2DollyEnable.Image = null;
             this.chkDSPRX2DollyEnable.Location = new System.Drawing.Point(6, 19);
             this.chkDSPRX2DollyEnable.Name = "chkDSPRX2DollyEnable";
-            this.chkDSPRX2DollyEnable.Size = new System.Drawing.Size(59, 17);
+            this.chkDSPRX2DollyEnable.Size = new System.Drawing.Size(61, 17);
             this.chkDSPRX2DollyEnable.TabIndex = 1;
             this.chkDSPRX2DollyEnable.Text = "Enable";
             this.chkDSPRX2DollyEnable.UseVisualStyleBackColor = true;
@@ -36197,7 +36283,7 @@
             this.labelDSPRX1SubDollyF1.Image = null;
             this.labelDSPRX1SubDollyF1.Location = new System.Drawing.Point(208, 20);
             this.labelDSPRX1SubDollyF1.Name = "labelDSPRX1SubDollyF1";
-            this.labelDSPRX1SubDollyF1.Size = new System.Drawing.Size(38, 13);
+            this.labelDSPRX1SubDollyF1.Size = new System.Drawing.Size(39, 13);
             this.labelDSPRX1SubDollyF1.TabIndex = 5;
             this.labelDSPRX1SubDollyF1.Text = "f1 (Hz)";
             // 
@@ -36207,7 +36293,7 @@
             this.labelDSPRX1SubDollyF0.Image = null;
             this.labelDSPRX1SubDollyF0.Location = new System.Drawing.Point(90, 20);
             this.labelDSPRX1SubDollyF0.Name = "labelDSPRX1SubDollyF0";
-            this.labelDSPRX1SubDollyF0.Size = new System.Drawing.Size(38, 13);
+            this.labelDSPRX1SubDollyF0.Size = new System.Drawing.Size(39, 13);
             this.labelDSPRX1SubDollyF0.TabIndex = 4;
             this.labelDSPRX1SubDollyF0.Text = "f0 (Hz)";
             // 
@@ -36230,7 +36316,7 @@
             0,
             0});
             this.udDSPRX1SubDollyF1.Name = "udDSPRX1SubDollyF1";
-            this.udDSPRX1SubDollyF1.Size = new System.Drawing.Size(50, 20);
+            this.udDSPRX1SubDollyF1.Size = new System.Drawing.Size(50, 22);
             this.udDSPRX1SubDollyF1.TabIndex = 3;
             this.udDSPRX1SubDollyF1.TinyStep = false;
             this.udDSPRX1SubDollyF1.Value = new decimal(new int[] {
@@ -36259,7 +36345,7 @@
             0,
             0});
             this.udDSPRX1SubDollyF0.Name = "udDSPRX1SubDollyF0";
-            this.udDSPRX1SubDollyF0.Size = new System.Drawing.Size(50, 20);
+            this.udDSPRX1SubDollyF0.Size = new System.Drawing.Size(50, 22);
             this.udDSPRX1SubDollyF0.TabIndex = 2;
             this.udDSPRX1SubDollyF0.TinyStep = false;
             this.udDSPRX1SubDollyF0.Value = new decimal(new int[] {
@@ -36275,7 +36361,7 @@
             this.chkDSPRX1SubDollyEnable.Image = null;
             this.chkDSPRX1SubDollyEnable.Location = new System.Drawing.Point(6, 19);
             this.chkDSPRX1SubDollyEnable.Name = "chkDSPRX1SubDollyEnable";
-            this.chkDSPRX1SubDollyEnable.Size = new System.Drawing.Size(59, 17);
+            this.chkDSPRX1SubDollyEnable.Size = new System.Drawing.Size(61, 17);
             this.chkDSPRX1SubDollyEnable.TabIndex = 1;
             this.chkDSPRX1SubDollyEnable.Text = "Enable";
             this.chkDSPRX1SubDollyEnable.UseVisualStyleBackColor = true;
@@ -36301,7 +36387,7 @@
             this.labelDSPRX1DollyF1.Image = null;
             this.labelDSPRX1DollyF1.Location = new System.Drawing.Point(208, 20);
             this.labelDSPRX1DollyF1.Name = "labelDSPRX1DollyF1";
-            this.labelDSPRX1DollyF1.Size = new System.Drawing.Size(38, 13);
+            this.labelDSPRX1DollyF1.Size = new System.Drawing.Size(39, 13);
             this.labelDSPRX1DollyF1.TabIndex = 5;
             this.labelDSPRX1DollyF1.Text = "f1 (Hz)";
             // 
@@ -36311,7 +36397,7 @@
             this.labelDSPRX1DollyF0.Image = null;
             this.labelDSPRX1DollyF0.Location = new System.Drawing.Point(90, 20);
             this.labelDSPRX1DollyF0.Name = "labelDSPRX1DollyF0";
-            this.labelDSPRX1DollyF0.Size = new System.Drawing.Size(38, 13);
+            this.labelDSPRX1DollyF0.Size = new System.Drawing.Size(39, 13);
             this.labelDSPRX1DollyF0.TabIndex = 4;
             this.labelDSPRX1DollyF0.Text = "f0 (Hz)";
             // 
@@ -36334,7 +36420,7 @@
             0,
             0});
             this.udDSPRX1DollyF1.Name = "udDSPRX1DollyF1";
-            this.udDSPRX1DollyF1.Size = new System.Drawing.Size(50, 20);
+            this.udDSPRX1DollyF1.Size = new System.Drawing.Size(50, 22);
             this.udDSPRX1DollyF1.TabIndex = 3;
             this.udDSPRX1DollyF1.TinyStep = false;
             this.udDSPRX1DollyF1.Value = new decimal(new int[] {
@@ -36363,7 +36449,7 @@
             0,
             0});
             this.udDSPRX1DollyF0.Name = "udDSPRX1DollyF0";
-            this.udDSPRX1DollyF0.Size = new System.Drawing.Size(50, 20);
+            this.udDSPRX1DollyF0.Size = new System.Drawing.Size(50, 22);
             this.udDSPRX1DollyF0.TabIndex = 2;
             this.udDSPRX1DollyF0.TinyStep = false;
             this.udDSPRX1DollyF0.Value = new decimal(new int[] {
@@ -36379,7 +36465,7 @@
             this.chkDSPRX1DollyEnable.Image = null;
             this.chkDSPRX1DollyEnable.Location = new System.Drawing.Point(6, 19);
             this.chkDSPRX1DollyEnable.Name = "chkDSPRX1DollyEnable";
-            this.chkDSPRX1DollyEnable.Size = new System.Drawing.Size(59, 17);
+            this.chkDSPRX1DollyEnable.Size = new System.Drawing.Size(61, 17);
             this.chkDSPRX1DollyEnable.TabIndex = 1;
             this.chkDSPRX1DollyEnable.Text = "Enable";
             this.chkDSPRX1DollyEnable.UseVisualStyleBackColor = true;
@@ -36404,7 +36490,7 @@
             this.radDSPRX1APFControls.Image = null;
             this.radDSPRX1APFControls.Location = new System.Drawing.Point(7, 19);
             this.radDSPRX1APFControls.Name = "radDSPRX1APFControls";
-            this.radDSPRX1APFControls.Size = new System.Drawing.Size(46, 17);
+            this.radDSPRX1APFControls.Size = new System.Drawing.Size(44, 17);
             this.radDSPRX1APFControls.TabIndex = 50;
             this.radDSPRX1APFControls.TabStop = true;
             this.radDSPRX1APFControls.Text = "RX1";
@@ -36417,7 +36503,7 @@
             this.radDSPRX2APFControls.Image = null;
             this.radDSPRX2APFControls.Location = new System.Drawing.Point(134, 19);
             this.radDSPRX2APFControls.Name = "radDSPRX2APFControls";
-            this.radDSPRX2APFControls.Size = new System.Drawing.Size(46, 17);
+            this.radDSPRX2APFControls.Size = new System.Drawing.Size(44, 17);
             this.radDSPRX2APFControls.TabIndex = 52;
             this.radDSPRX2APFControls.Text = "RX2";
             this.radDSPRX2APFControls.UseVisualStyleBackColor = true;
@@ -36429,7 +36515,7 @@
             this.radDSPRX1subAPFControls.Image = null;
             this.radDSPRX1subAPFControls.Location = new System.Drawing.Point(59, 19);
             this.radDSPRX1subAPFControls.Name = "radDSPRX1subAPFControls";
-            this.radDSPRX1subAPFControls.Size = new System.Drawing.Size(68, 17);
+            this.radDSPRX1subAPFControls.Size = new System.Drawing.Size(67, 17);
             this.radDSPRX1subAPFControls.TabIndex = 51;
             this.radDSPRX1subAPFControls.Text = "RX1 Sub";
             this.radDSPRX1subAPFControls.UseVisualStyleBackColor = true;
@@ -36531,7 +36617,7 @@
             this.labelRX2APFBW.Image = null;
             this.labelRX2APFBW.Location = new System.Drawing.Point(5, 78);
             this.labelRX2APFBW.Name = "labelRX2APFBW";
-            this.labelRX2APFBW.Size = new System.Drawing.Size(25, 13);
+            this.labelRX2APFBW.Size = new System.Drawing.Size(24, 13);
             this.labelRX2APFBW.TabIndex = 54;
             this.labelRX2APFBW.Text = "BW";
             // 
@@ -36541,7 +36627,7 @@
             this.labelRX2APFTune.Image = null;
             this.labelRX2APFTune.Location = new System.Drawing.Point(5, 46);
             this.labelRX2APFTune.Name = "labelRX2APFTune";
-            this.labelRX2APFTune.Size = new System.Drawing.Size(32, 13);
+            this.labelRX2APFTune.Size = new System.Drawing.Size(33, 13);
             this.labelRX2APFTune.TabIndex = 53;
             this.labelRX2APFTune.Text = "Tune";
             // 
@@ -36590,7 +36676,7 @@
             this.chkDSPRX2APFEnable.Image = null;
             this.chkDSPRX2APFEnable.Location = new System.Drawing.Point(8, 13);
             this.chkDSPRX2APFEnable.Name = "chkDSPRX2APFEnable";
-            this.chkDSPRX2APFEnable.Size = new System.Drawing.Size(59, 17);
+            this.chkDSPRX2APFEnable.Size = new System.Drawing.Size(61, 17);
             this.chkDSPRX2APFEnable.TabIndex = 0;
             this.chkDSPRX2APFEnable.Text = "Enable";
             this.chkDSPRX2APFEnable.UseVisualStyleBackColor = true;
@@ -36692,7 +36778,7 @@
             this.labelRX1subAPFBW.Image = null;
             this.labelRX1subAPFBW.Location = new System.Drawing.Point(5, 78);
             this.labelRX1subAPFBW.Name = "labelRX1subAPFBW";
-            this.labelRX1subAPFBW.Size = new System.Drawing.Size(25, 13);
+            this.labelRX1subAPFBW.Size = new System.Drawing.Size(24, 13);
             this.labelRX1subAPFBW.TabIndex = 54;
             this.labelRX1subAPFBW.Text = "BW";
             // 
@@ -36702,7 +36788,7 @@
             this.labelRX1subAPFTune.Image = null;
             this.labelRX1subAPFTune.Location = new System.Drawing.Point(5, 46);
             this.labelRX1subAPFTune.Name = "labelRX1subAPFTune";
-            this.labelRX1subAPFTune.Size = new System.Drawing.Size(32, 13);
+            this.labelRX1subAPFTune.Size = new System.Drawing.Size(33, 13);
             this.labelRX1subAPFTune.TabIndex = 53;
             this.labelRX1subAPFTune.Text = "Tune";
             // 
@@ -36751,7 +36837,7 @@
             this.chkDSPRX1subAPFEnable.Image = null;
             this.chkDSPRX1subAPFEnable.Location = new System.Drawing.Point(8, 13);
             this.chkDSPRX1subAPFEnable.Name = "chkDSPRX1subAPFEnable";
-            this.chkDSPRX1subAPFEnable.Size = new System.Drawing.Size(59, 17);
+            this.chkDSPRX1subAPFEnable.Size = new System.Drawing.Size(61, 17);
             this.chkDSPRX1subAPFEnable.TabIndex = 0;
             this.chkDSPRX1subAPFEnable.Text = "Enable";
             this.chkDSPRX1subAPFEnable.UseVisualStyleBackColor = true;
@@ -36853,7 +36939,7 @@
             this.labelRX1APFBW.Image = null;
             this.labelRX1APFBW.Location = new System.Drawing.Point(5, 78);
             this.labelRX1APFBW.Name = "labelRX1APFBW";
-            this.labelRX1APFBW.Size = new System.Drawing.Size(25, 13);
+            this.labelRX1APFBW.Size = new System.Drawing.Size(24, 13);
             this.labelRX1APFBW.TabIndex = 54;
             this.labelRX1APFBW.Text = "BW";
             // 
@@ -36863,7 +36949,7 @@
             this.labelRX1APFTune.Image = null;
             this.labelRX1APFTune.Location = new System.Drawing.Point(5, 46);
             this.labelRX1APFTune.Name = "labelRX1APFTune";
-            this.labelRX1APFTune.Size = new System.Drawing.Size(32, 13);
+            this.labelRX1APFTune.Size = new System.Drawing.Size(33, 13);
             this.labelRX1APFTune.TabIndex = 53;
             this.labelRX1APFTune.Text = "Tune";
             // 
@@ -36912,7 +36998,7 @@
             this.chkDSPRX1APFEnable.Image = null;
             this.chkDSPRX1APFEnable.Location = new System.Drawing.Point(8, 13);
             this.chkDSPRX1APFEnable.Name = "chkDSPRX1APFEnable";
-            this.chkDSPRX1APFEnable.Size = new System.Drawing.Size(59, 17);
+            this.chkDSPRX1APFEnable.Size = new System.Drawing.Size(61, 17);
             this.chkDSPRX1APFEnable.TabIndex = 0;
             this.chkDSPRX1APFEnable.Text = "Enable";
             this.chkDSPRX1APFEnable.UseVisualStyleBackColor = true;
@@ -36971,7 +37057,7 @@
             0,
             0});
             this.udDSPEERpwmMin.Name = "udDSPEERpwmMin";
-            this.udDSPEERpwmMin.Size = new System.Drawing.Size(61, 20);
+            this.udDSPEERpwmMin.Size = new System.Drawing.Size(61, 22);
             this.udDSPEERpwmMin.TabIndex = 7;
             this.udDSPEERpwmMin.TinyStep = false;
             this.udDSPEERpwmMin.Value = new decimal(new int[] {
@@ -37000,7 +37086,7 @@
             0,
             0});
             this.udDSPEERpwmMax.Name = "udDSPEERpwmMax";
-            this.udDSPEERpwmMax.Size = new System.Drawing.Size(61, 20);
+            this.udDSPEERpwmMax.Size = new System.Drawing.Size(61, 22);
             this.udDSPEERpwmMax.TabIndex = 6;
             this.udDSPEERpwmMax.TinyStep = false;
             this.udDSPEERpwmMax.Value = new decimal(new int[] {
@@ -37016,7 +37102,7 @@
             this.labelTS329.Image = null;
             this.labelTS329.Location = new System.Drawing.Point(13, 65);
             this.labelTS329.Name = "labelTS329";
-            this.labelTS329.Size = new System.Drawing.Size(96, 13);
+            this.labelTS329.Size = new System.Drawing.Size(104, 13);
             this.labelTS329.TabIndex = 1;
             this.labelTS329.Text = "Minimum (0 - 1023)";
             // 
@@ -37026,7 +37112,7 @@
             this.labelTS328.Image = null;
             this.labelTS328.Location = new System.Drawing.Point(13, 25);
             this.labelTS328.Name = "labelTS328";
-            this.labelTS328.Size = new System.Drawing.Size(99, 13);
+            this.labelTS328.Size = new System.Drawing.Size(105, 13);
             this.labelTS328.TabIndex = 0;
             this.labelTS328.Text = "Maximum (0 - 1023)";
             // 
@@ -37038,7 +37124,7 @@
             this.chkDSPEERRunDelays.Image = null;
             this.chkDSPEERRunDelays.Location = new System.Drawing.Point(18, 123);
             this.chkDSPEERRunDelays.Name = "chkDSPEERRunDelays";
-            this.chkDSPEERRunDelays.Size = new System.Drawing.Size(80, 17);
+            this.chkDSPEERRunDelays.Size = new System.Drawing.Size(81, 17);
             this.chkDSPEERRunDelays.TabIndex = 10;
             this.chkDSPEERRunDelays.Text = "Use Delays";
             this.chkDSPEERRunDelays.UseVisualStyleBackColor = true;
@@ -37050,7 +37136,7 @@
             this.labelTS327.Image = null;
             this.labelTS327.Location = new System.Drawing.Point(15, 280);
             this.labelTS327.Name = "labelTS327";
-            this.labelTS327.Size = new System.Drawing.Size(87, 13);
+            this.labelTS327.Size = new System.Drawing.Size(89, 13);
             this.labelTS327.TabIndex = 9;
             this.labelTS327.Text = "Phase Delay (us)";
             // 
@@ -37074,7 +37160,7 @@
             0,
             0});
             this.udDSPEERpdelay.Name = "udDSPEERpdelay";
-            this.udDSPEERpdelay.Size = new System.Drawing.Size(61, 20);
+            this.udDSPEERpdelay.Size = new System.Drawing.Size(61, 22);
             this.udDSPEERpdelay.TabIndex = 8;
             this.udDSPEERpdelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPEERpdelay, "Sets software delay of the phase signal.");
@@ -37093,7 +37179,7 @@
             this.chkDSPEERamIQ.Image = null;
             this.chkDSPEERamIQ.Location = new System.Drawing.Point(18, 88);
             this.chkDSPEERamIQ.Name = "chkDSPEERamIQ";
-            this.chkDSPEERamIQ.Size = new System.Drawing.Size(133, 17);
+            this.chkDSPEERamIQ.Size = new System.Drawing.Size(146, 17);
             this.chkDSPEERamIQ.TabIndex = 7;
             this.chkDSPEERamIQ.Text = "Amplitude Modulate IQ";
             this.toolTip1.SetToolTip(this.chkDSPEERamIQ, "Turns on amplitude modulation of I&Q -- if off, they contain only phase.");
@@ -37106,7 +37192,7 @@
             this.labelTS320.Image = null;
             this.labelTS320.Location = new System.Drawing.Point(15, 198);
             this.labelTS320.Name = "labelTS320";
-            this.labelTS320.Size = new System.Drawing.Size(76, 13);
+            this.labelTS320.Size = new System.Drawing.Size(77, 13);
             this.labelTS320.TabIndex = 6;
             this.labelTS320.Text = "Env Delay (us)";
             // 
@@ -37130,7 +37216,7 @@
             0,
             0});
             this.udDSPEERmdelay.Name = "udDSPEERmdelay";
-            this.udDSPEERmdelay.Size = new System.Drawing.Size(61, 20);
+            this.udDSPEERmdelay.Size = new System.Drawing.Size(61, 22);
             this.udDSPEERmdelay.TabIndex = 5;
             this.udDSPEERmdelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPEERmdelay, "Sets software delay of the magnitude (envelope) signal.");
@@ -37147,7 +37233,7 @@
             this.labelTS319.Image = null;
             this.labelTS319.Location = new System.Drawing.Point(15, 239);
             this.labelTS319.Name = "labelTS319";
-            this.labelTS319.Size = new System.Drawing.Size(62, 13);
+            this.labelTS319.Size = new System.Drawing.Size(64, 13);
             this.labelTS319.TabIndex = 4;
             this.labelTS319.Text = "Phase Gain";
             // 
@@ -37171,7 +37257,7 @@
             0,
             0});
             this.udDSPEERpgain.Name = "udDSPEERpgain";
-            this.udDSPEERpgain.Size = new System.Drawing.Size(61, 20);
+            this.udDSPEERpgain.Size = new System.Drawing.Size(61, 22);
             this.udDSPEERpgain.TabIndex = 3;
             this.udDSPEERpgain.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPEERpgain, "Sets maximum level of the I & Q signals.");
@@ -37188,7 +37274,7 @@
             this.labelTS318.Image = null;
             this.labelTS318.Location = new System.Drawing.Point(15, 158);
             this.labelTS318.Name = "labelTS318";
-            this.labelTS318.Size = new System.Drawing.Size(51, 13);
+            this.labelTS318.Size = new System.Drawing.Size(52, 13);
             this.labelTS318.TabIndex = 2;
             this.labelTS318.Text = "Env Gain";
             // 
@@ -37212,7 +37298,7 @@
             0,
             0});
             this.udDSPEERmgain.Name = "udDSPEERmgain";
-            this.udDSPEERmgain.Size = new System.Drawing.Size(61, 20);
+            this.udDSPEERmgain.Size = new System.Drawing.Size(61, 22);
             this.udDSPEERmgain.TabIndex = 1;
             this.udDSPEERmgain.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPEERmgain, "Sets maximum level of the magnitude (envelope) signal.");
@@ -37229,7 +37315,7 @@
             this.chkDSPEERon.Image = null;
             this.chkDSPEERon.Location = new System.Drawing.Point(18, 23);
             this.chkDSPEERon.Name = "chkDSPEERon";
-            this.chkDSPEERon.Size = new System.Drawing.Size(132, 17);
+            this.chkDSPEERon.Size = new System.Drawing.Size(137, 17);
             this.chkDSPEERon.TabIndex = 0;
             this.chkDSPEERon.Text = "Transmit in EER Mode";
             this.toolTip1.SetToolTip(this.chkDSPEERon, "Turns on EER Mode for transmit.");
@@ -37311,7 +37397,7 @@
             this.chkDSPNR2AERX2.Image = null;
             this.chkDSPNR2AERX2.Location = new System.Drawing.Point(12, 225);
             this.chkDSPNR2AERX2.Name = "chkDSPNR2AERX2";
-            this.chkDSPNR2AERX2.Size = new System.Drawing.Size(65, 17);
+            this.chkDSPNR2AERX2.Size = new System.Drawing.Size(68, 17);
             this.chkDSPNR2AERX2.TabIndex = 1;
             this.chkDSPNR2AERX2.Text = "AE Filter";
             this.chkDSPNR2AERX2.UseVisualStyleBackColor = true;
@@ -37336,7 +37422,7 @@
             this.radDSPNR2GammaRX2.Image = null;
             this.radDSPNR2GammaRX2.Location = new System.Drawing.Point(6, 67);
             this.radDSPNR2GammaRX2.Name = "radDSPNR2GammaRX2";
-            this.radDSPNR2GammaRX2.Size = new System.Drawing.Size(61, 17);
+            this.radDSPNR2GammaRX2.Size = new System.Drawing.Size(63, 17);
             this.radDSPNR2GammaRX2.TabIndex = 2;
             this.radDSPNR2GammaRX2.TabStop = true;
             this.radDSPNR2GammaRX2.Text = "Gamma";
@@ -37349,7 +37435,7 @@
             this.radDSPNR2LogRX2.Image = null;
             this.radDSPNR2LogRX2.Location = new System.Drawing.Point(7, 42);
             this.radDSPNR2LogRX2.Name = "radDSPNR2LogRX2";
-            this.radDSPNR2LogRX2.Size = new System.Drawing.Size(43, 17);
+            this.radDSPNR2LogRX2.Size = new System.Drawing.Size(44, 17);
             this.radDSPNR2LogRX2.TabIndex = 1;
             this.radDSPNR2LogRX2.Text = "Log";
             this.radDSPNR2LogRX2.UseVisualStyleBackColor = true;
@@ -37361,7 +37447,7 @@
             this.radDSPNR2LinearRX2.Image = null;
             this.radDSPNR2LinearRX2.Location = new System.Drawing.Point(7, 17);
             this.radDSPNR2LinearRX2.Name = "radDSPNR2LinearRX2";
-            this.radDSPNR2LinearRX2.Size = new System.Drawing.Size(54, 17);
+            this.radDSPNR2LinearRX2.Size = new System.Drawing.Size(56, 17);
             this.radDSPNR2LinearRX2.TabIndex = 0;
             this.radDSPNR2LinearRX2.Text = "Linear";
             this.radDSPNR2LinearRX2.UseVisualStyleBackColor = true;
@@ -37385,7 +37471,7 @@
             this.radANF2PreAGC.Image = null;
             this.radANF2PreAGC.Location = new System.Drawing.Point(6, 43);
             this.radANF2PreAGC.Name = "radANF2PreAGC";
-            this.radANF2PreAGC.Size = new System.Drawing.Size(66, 17);
+            this.radANF2PreAGC.Size = new System.Drawing.Size(67, 17);
             this.radANF2PreAGC.TabIndex = 12;
             this.radANF2PreAGC.TabStop = true;
             this.radANF2PreAGC.Text = "Pre-AGC";
@@ -37398,7 +37484,7 @@
             this.radANFPostAGC2.Image = null;
             this.radANFPostAGC2.Location = new System.Drawing.Point(6, 66);
             this.radANFPostAGC2.Name = "radANFPostAGC2";
-            this.radANFPostAGC2.Size = new System.Drawing.Size(71, 17);
+            this.radANFPostAGC2.Size = new System.Drawing.Size(73, 17);
             this.radANFPostAGC2.TabIndex = 13;
             this.radANFPostAGC2.Text = "Post-AGC";
             this.radANFPostAGC2.UseVisualStyleBackColor = true;
@@ -37460,7 +37546,7 @@
             this.chkDSPNR2AE.Image = null;
             this.chkDSPNR2AE.Location = new System.Drawing.Point(12, 225);
             this.chkDSPNR2AE.Name = "chkDSPNR2AE";
-            this.chkDSPNR2AE.Size = new System.Drawing.Size(65, 17);
+            this.chkDSPNR2AE.Size = new System.Drawing.Size(68, 17);
             this.chkDSPNR2AE.TabIndex = 1;
             this.chkDSPNR2AE.Text = "AE Filter";
             this.chkDSPNR2AE.UseVisualStyleBackColor = true;
@@ -37485,7 +37571,7 @@
             this.radDSPNR2Gamma.Image = null;
             this.radDSPNR2Gamma.Location = new System.Drawing.Point(7, 67);
             this.radDSPNR2Gamma.Name = "radDSPNR2Gamma";
-            this.radDSPNR2Gamma.Size = new System.Drawing.Size(61, 17);
+            this.radDSPNR2Gamma.Size = new System.Drawing.Size(63, 17);
             this.radDSPNR2Gamma.TabIndex = 2;
             this.radDSPNR2Gamma.TabStop = true;
             this.radDSPNR2Gamma.Text = "Gamma";
@@ -37498,7 +37584,7 @@
             this.radDSPNR2Log.Image = null;
             this.radDSPNR2Log.Location = new System.Drawing.Point(7, 42);
             this.radDSPNR2Log.Name = "radDSPNR2Log";
-            this.radDSPNR2Log.Size = new System.Drawing.Size(43, 17);
+            this.radDSPNR2Log.Size = new System.Drawing.Size(44, 17);
             this.radDSPNR2Log.TabIndex = 1;
             this.radDSPNR2Log.Text = "Log";
             this.radDSPNR2Log.UseVisualStyleBackColor = true;
@@ -37510,7 +37596,7 @@
             this.radDSPNR2Linear.Image = null;
             this.radDSPNR2Linear.Location = new System.Drawing.Point(7, 17);
             this.radDSPNR2Linear.Name = "radDSPNR2Linear";
-            this.radDSPNR2Linear.Size = new System.Drawing.Size(54, 17);
+            this.radDSPNR2Linear.Size = new System.Drawing.Size(56, 17);
             this.radDSPNR2Linear.TabIndex = 0;
             this.radDSPNR2Linear.Text = "Linear";
             this.radDSPNR2Linear.UseVisualStyleBackColor = true;
@@ -37561,7 +37647,7 @@
             0,
             0});
             this.udLMSNRLeak.Name = "udLMSNRLeak";
-            this.udLMSNRLeak.Size = new System.Drawing.Size(48, 20);
+            this.udLMSNRLeak.Size = new System.Drawing.Size(48, 22);
             this.udLMSNRLeak.TabIndex = 10;
             this.udLMSNRLeak.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNRLeak, "Determines the adaptation rate of the filter.");
@@ -37600,7 +37686,7 @@
             0,
             0});
             this.udLMSNRgain.Name = "udLMSNRgain";
-            this.udLMSNRgain.Size = new System.Drawing.Size(48, 20);
+            this.udLMSNRgain.Size = new System.Drawing.Size(48, 22);
             this.udLMSNRgain.TabIndex = 7;
             this.udLMSNRgain.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNRgain, "Determines the adaptation rate of the filter.");
@@ -37631,7 +37717,7 @@
             0,
             0});
             this.udLMSNRdelay.Name = "udLMSNRdelay";
-            this.udLMSNRdelay.Size = new System.Drawing.Size(48, 20);
+            this.udLMSNRdelay.Size = new System.Drawing.Size(48, 22);
             this.udLMSNRdelay.TabIndex = 6;
             this.udLMSNRdelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNRdelay, "Determines how far back you look in the signal before you begin to compute a cohe" +
@@ -37672,7 +37758,7 @@
             0,
             0});
             this.udLMSNRtaps.Name = "udLMSNRtaps";
-            this.udLMSNRtaps.Size = new System.Drawing.Size(48, 20);
+            this.udLMSNRtaps.Size = new System.Drawing.Size(48, 22);
             this.udLMSNRtaps.TabIndex = 5;
             this.udLMSNRtaps.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNRtaps, "Determines the length of the NR computed filter.  ");
@@ -37711,7 +37797,7 @@
             this.radANFPreAGC.Image = null;
             this.radANFPreAGC.Location = new System.Drawing.Point(6, 42);
             this.radANFPreAGC.Name = "radANFPreAGC";
-            this.radANFPreAGC.Size = new System.Drawing.Size(66, 17);
+            this.radANFPreAGC.Size = new System.Drawing.Size(67, 17);
             this.radANFPreAGC.TabIndex = 10;
             this.radANFPreAGC.TabStop = true;
             this.radANFPreAGC.Text = "Pre-AGC";
@@ -37724,7 +37810,7 @@
             this.radANFPostAGC.Image = null;
             this.radANFPostAGC.Location = new System.Drawing.Point(6, 65);
             this.radANFPostAGC.Name = "radANFPostAGC";
-            this.radANFPostAGC.Size = new System.Drawing.Size(71, 17);
+            this.radANFPostAGC.Size = new System.Drawing.Size(73, 17);
             this.radANFPostAGC.TabIndex = 11;
             this.radANFPostAGC.Text = "Post-AGC";
             this.radANFPostAGC.UseVisualStyleBackColor = true;
@@ -37774,7 +37860,7 @@
             0,
             0});
             this.udLMSANFLeak.Name = "udLMSANFLeak";
-            this.udLMSANFLeak.Size = new System.Drawing.Size(48, 20);
+            this.udLMSANFLeak.Size = new System.Drawing.Size(48, 22);
             this.udLMSANFLeak.TabIndex = 8;
             this.udLMSANFLeak.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANFLeak, "Determines the adaptation rate of the filter.");
@@ -37813,7 +37899,7 @@
             0,
             0});
             this.udLMSANFgain.Name = "udLMSANFgain";
-            this.udLMSANFgain.Size = new System.Drawing.Size(48, 20);
+            this.udLMSANFgain.Size = new System.Drawing.Size(48, 22);
             this.udLMSANFgain.TabIndex = 3;
             this.udLMSANFgain.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANFgain, "Determines the adaptation rate of the filter.");
@@ -37853,7 +37939,7 @@
             0,
             0});
             this.udLMSANFdelay.Name = "udLMSANFdelay";
-            this.udLMSANFdelay.Size = new System.Drawing.Size(48, 20);
+            this.udLMSANFdelay.Size = new System.Drawing.Size(48, 22);
             this.udLMSANFdelay.TabIndex = 2;
             this.udLMSANFdelay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANFdelay, "Determines how far back you look in the signal before you begin to compute a canc" +
@@ -37894,7 +37980,7 @@
             0,
             0});
             this.udLMSANFtaps.Name = "udLMSANFtaps";
-            this.udLMSANFtaps.Size = new System.Drawing.Size(48, 20);
+            this.udLMSANFtaps.Size = new System.Drawing.Size(48, 22);
             this.udLMSANFtaps.TabIndex = 1;
             this.udLMSANFtaps.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANFtaps, "Determines the length of the computed notch filter.");
@@ -37951,7 +38037,7 @@
             0,
             0});
             this.udLMSANF2Leak.Name = "udLMSANF2Leak";
-            this.udLMSANF2Leak.Size = new System.Drawing.Size(48, 20);
+            this.udLMSANF2Leak.Size = new System.Drawing.Size(48, 22);
             this.udLMSANF2Leak.TabIndex = 8;
             this.udLMSANF2Leak.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANF2Leak, "Determines the adaptation rate of the filter.");
@@ -37990,7 +38076,7 @@
             0,
             0});
             this.udLMSANF2gain.Name = "udLMSANF2gain";
-            this.udLMSANF2gain.Size = new System.Drawing.Size(48, 20);
+            this.udLMSANF2gain.Size = new System.Drawing.Size(48, 22);
             this.udLMSANF2gain.TabIndex = 3;
             this.udLMSANF2gain.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANF2gain, "Determines the adaptation rate of the filter.");
@@ -38029,7 +38115,7 @@
             0,
             0});
             this.udLMSANF2delay.Name = "udLMSANF2delay";
-            this.udLMSANF2delay.Size = new System.Drawing.Size(48, 20);
+            this.udLMSANF2delay.Size = new System.Drawing.Size(48, 22);
             this.udLMSANF2delay.TabIndex = 2;
             this.udLMSANF2delay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANF2delay, "Determines how far back you look in the signal before you begin to compute a canc" +
@@ -38069,7 +38155,7 @@
             0,
             0});
             this.udLMSANF2taps.Name = "udLMSANF2taps";
-            this.udLMSANF2taps.Size = new System.Drawing.Size(48, 20);
+            this.udLMSANF2taps.Size = new System.Drawing.Size(48, 22);
             this.udLMSANF2taps.TabIndex = 1;
             this.udLMSANF2taps.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSANF2taps, "Determines the length of the computed notch filter.");
@@ -38125,7 +38211,7 @@
             0,
             0});
             this.udLMSNR2Leak.Name = "udLMSNR2Leak";
-            this.udLMSNR2Leak.Size = new System.Drawing.Size(48, 20);
+            this.udLMSNR2Leak.Size = new System.Drawing.Size(48, 22);
             this.udLMSNR2Leak.TabIndex = 10;
             this.udLMSNR2Leak.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNR2Leak, "Determines the adaptation rate of the filter.");
@@ -38164,7 +38250,7 @@
             0,
             0});
             this.udLMSNR2gain.Name = "udLMSNR2gain";
-            this.udLMSNR2gain.Size = new System.Drawing.Size(48, 20);
+            this.udLMSNR2gain.Size = new System.Drawing.Size(48, 22);
             this.udLMSNR2gain.TabIndex = 7;
             this.udLMSNR2gain.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNR2gain, "Determines the adaptation rate of the filter.");
@@ -38194,7 +38280,7 @@
             0,
             0});
             this.udLMSNR2delay.Name = "udLMSNR2delay";
-            this.udLMSNR2delay.Size = new System.Drawing.Size(48, 20);
+            this.udLMSNR2delay.Size = new System.Drawing.Size(48, 22);
             this.udLMSNR2delay.TabIndex = 6;
             this.udLMSNR2delay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNR2delay, "Determines how far back you look in the signal before you begin to compute a cohe" +
@@ -38234,7 +38320,7 @@
             0,
             0});
             this.udLMSNR2taps.Name = "udLMSNR2taps";
-            this.udLMSNR2taps.Size = new System.Drawing.Size(48, 20);
+            this.udLMSNR2taps.Size = new System.Drawing.Size(48, 22);
             this.udLMSNR2taps.TabIndex = 5;
             this.udLMSNR2taps.TinyStep = false;
             this.toolTip1.SetToolTip(this.udLMSNR2taps, "Determines the length of the NR computed filter.  ");
@@ -38297,7 +38383,7 @@
             this.chkVisualNotch.Image = null;
             this.chkVisualNotch.Location = new System.Drawing.Point(20, 185);
             this.chkVisualNotch.Name = "chkVisualNotch";
-            this.chkVisualNotch.Size = new System.Drawing.Size(444, 17);
+            this.chkVisualNotch.Size = new System.Drawing.Size(485, 17);
             this.chkVisualNotch.TabIndex = 16;
             this.chkVisualNotch.Text = "Visual approximation of notch (NOTE: this is not 100% representation of the activ" +
     "e notch)";
@@ -38341,7 +38427,7 @@
             this.chkMNFAutoIncrease.Image = null;
             this.chkMNFAutoIncrease.Location = new System.Drawing.Point(20, 147);
             this.chkMNFAutoIncrease.Name = "chkMNFAutoIncrease";
-            this.chkMNFAutoIncrease.Size = new System.Drawing.Size(322, 17);
+            this.chkMNFAutoIncrease.Size = new System.Drawing.Size(349, 17);
             this.chkMNFAutoIncrease.TabIndex = 13;
             this.chkMNFAutoIncrease.Text = "Auto-Increase width (if needed) to achieve >100dB attenuation";
             this.chkMNFAutoIncrease.UseVisualStyleBackColor = true;
@@ -38442,7 +38528,7 @@
             this.lblMNFWidth.Image = null;
             this.lblMNFWidth.Location = new System.Drawing.Point(294, 26);
             this.lblMNFWidth.Name = "lblMNFWidth";
-            this.lblMNFWidth.Size = new System.Drawing.Size(57, 13);
+            this.lblMNFWidth.Size = new System.Drawing.Size(61, 13);
             this.lblMNFWidth.TabIndex = 5;
             this.lblMNFWidth.Text = "Width (Hz)";
             // 
@@ -38452,7 +38538,7 @@
             this.lblMNFFreq.Image = null;
             this.lblMNFFreq.Location = new System.Drawing.Point(132, 26);
             this.lblMNFFreq.Name = "lblMNFFreq";
-            this.lblMNFFreq.Size = new System.Drawing.Size(120, 13);
+            this.lblMNFFreq.Size = new System.Drawing.Size(128, 13);
             this.lblMNFFreq.TabIndex = 4;
             this.lblMNFFreq.Text = "Center Frequency (Mhz)";
             // 
@@ -38462,7 +38548,7 @@
             this.lblMNFName.Image = null;
             this.lblMNFName.Location = new System.Drawing.Point(6, 26);
             this.lblMNFName.Name = "lblMNFName";
-            this.lblMNFName.Size = new System.Drawing.Size(46, 13);
+            this.lblMNFName.Size = new System.Drawing.Size(48, 13);
             this.lblMNFName.TabIndex = 3;
             this.lblMNFName.Text = "Notch #";
             // 
@@ -38486,7 +38572,7 @@
             0,
             0});
             this.udMNFWidth.Name = "udMNFWidth";
-            this.udMNFWidth.Size = new System.Drawing.Size(75, 20);
+            this.udMNFWidth.Size = new System.Drawing.Size(75, 22);
             this.udMNFWidth.TabIndex = 2;
             this.udMNFWidth.TinyStep = false;
             this.udMNFWidth.Value = new decimal(new int[] {
@@ -38516,7 +38602,7 @@
             0,
             0});
             this.udMNFFreq.Name = "udMNFFreq";
-            this.udMNFFreq.Size = new System.Drawing.Size(120, 20);
+            this.udMNFFreq.Size = new System.Drawing.Size(120, 22);
             this.udMNFFreq.TabIndex = 1;
             this.udMNFFreq.TinyStep = false;
             this.udMNFFreq.Value = new decimal(new int[] {
@@ -38544,7 +38630,7 @@
             0,
             0});
             this.udMNFNotch.Name = "udMNFNotch";
-            this.udMNFNotch.Size = new System.Drawing.Size(75, 20);
+            this.udMNFNotch.Size = new System.Drawing.Size(75, 22);
             this.udMNFNotch.TabIndex = 0;
             this.udMNFNotch.TinyStep = false;
             this.udMNFNotch.Value = new decimal(new int[] {
@@ -38599,7 +38685,7 @@
             0,
             65536});
             this.udDSPSNBThresh2.Name = "udDSPSNBThresh2";
-            this.udDSPSNBThresh2.Size = new System.Drawing.Size(56, 20);
+            this.udDSPSNBThresh2.Size = new System.Drawing.Size(56, 22);
             this.udDSPSNBThresh2.TabIndex = 12;
             this.udDSPSNBThresh2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPSNBThresh2, "Controls the detection threshold for impulse noise.  ");
@@ -38639,7 +38725,7 @@
             0,
             65536});
             this.udDSPSNBThresh1.Name = "udDSPSNBThresh1";
-            this.udDSPSNBThresh1.Size = new System.Drawing.Size(56, 20);
+            this.udDSPSNBThresh1.Size = new System.Drawing.Size(56, 22);
             this.udDSPSNBThresh1.TabIndex = 10;
             this.udDSPSNBThresh1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPSNBThresh1, "Controls the detection threshold for impulse noise.  ");
@@ -38711,7 +38797,7 @@
             this.labelTS154.Image = null;
             this.labelTS154.Location = new System.Drawing.Point(6, 58);
             this.labelTS154.Name = "labelTS154";
-            this.labelTS154.Size = new System.Drawing.Size(65, 13);
+            this.labelTS154.Size = new System.Drawing.Size(64, 13);
             this.labelTS154.TabIndex = 16;
             this.labelTS154.Text = "TIMES (ms):";
             // 
@@ -38735,7 +38821,7 @@
             0,
             131072});
             this.udDSPNBLag.Name = "udDSPNBLag";
-            this.udDSPNBLag.Size = new System.Drawing.Size(64, 20);
+            this.udDSPNBLag.Size = new System.Drawing.Size(64, 22);
             this.udDSPNBLag.TabIndex = 14;
             this.udDSPNBLag.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPNBLag, "Controls the detection threshold for impulse noise.  ");
@@ -38775,7 +38861,7 @@
             0,
             131072});
             this.udDSPNBLead.Name = "udDSPNBLead";
-            this.udDSPNBLead.Size = new System.Drawing.Size(64, 20);
+            this.udDSPNBLead.Size = new System.Drawing.Size(64, 22);
             this.udDSPNBLead.TabIndex = 12;
             this.udDSPNBLead.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPNBLead, "Controls the detection threshold for impulse noise.  ");
@@ -38815,7 +38901,7 @@
             0,
             131072});
             this.udDSPNBTransition.Name = "udDSPNBTransition";
-            this.udDSPNBTransition.Size = new System.Drawing.Size(64, 20);
+            this.udDSPNBTransition.Size = new System.Drawing.Size(64, 22);
             this.udDSPNBTransition.TabIndex = 10;
             this.udDSPNBTransition.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPNBTransition, "Controls the detection threshold for impulse noise.  ");
@@ -38854,7 +38940,7 @@
             0,
             0});
             this.udDSPNB.Name = "udDSPNB";
-            this.udDSPNB.Size = new System.Drawing.Size(40, 20);
+            this.udDSPNB.Size = new System.Drawing.Size(40, 22);
             this.udDSPNB.TabIndex = 0;
             this.udDSPNB.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDSPNB, "Controls the detection threshold for impulse noise.  ");
@@ -38910,7 +38996,7 @@
             this.chkAntiVoxSource.Image = null;
             this.chkAntiVoxSource.Location = new System.Drawing.Point(6, 41);
             this.chkAntiVoxSource.Name = "chkAntiVoxSource";
-            this.chkAntiVoxSource.Size = new System.Drawing.Size(99, 17);
+            this.chkAntiVoxSource.Size = new System.Drawing.Size(102, 17);
             this.chkAntiVoxSource.TabIndex = 20;
             this.chkAntiVoxSource.Text = "Use VAC Audio";
             this.chkAntiVoxSource.UseVisualStyleBackColor = true;
@@ -38935,7 +39021,7 @@
             0,
             0});
             this.udAntiVoxTau.Name = "udAntiVoxTau";
-            this.udAntiVoxTau.Size = new System.Drawing.Size(56, 20);
+            this.udAntiVoxTau.Size = new System.Drawing.Size(56, 22);
             this.udAntiVoxTau.TabIndex = 19;
             this.udAntiVoxTau.TinyStep = false;
             this.udAntiVoxTau.Value = new decimal(new int[] {
@@ -38975,7 +39061,7 @@
             0,
             -2147483648});
             this.udAntiVoxGain.Name = "udAntiVoxGain";
-            this.udAntiVoxGain.Size = new System.Drawing.Size(56, 20);
+            this.udAntiVoxGain.Size = new System.Drawing.Size(56, 22);
             this.udAntiVoxGain.TabIndex = 17;
             this.udAntiVoxGain.TinyStep = false;
             this.udAntiVoxGain.Value = new decimal(new int[] {
@@ -38991,7 +39077,7 @@
             this.lblAntiVoxGain.Image = null;
             this.lblAntiVoxGain.Location = new System.Drawing.Point(6, 73);
             this.lblAntiVoxGain.Name = "lblAntiVoxGain";
-            this.lblAntiVoxGain.Size = new System.Drawing.Size(51, 13);
+            this.lblAntiVoxGain.Size = new System.Drawing.Size(53, 13);
             this.lblAntiVoxGain.TabIndex = 16;
             this.lblAntiVoxGain.Text = "Gain (dB)";
             // 
@@ -39001,7 +39087,7 @@
             this.chkAntiVoxEnable.Image = null;
             this.chkAntiVoxEnable.Location = new System.Drawing.Point(6, 19);
             this.chkAntiVoxEnable.Name = "chkAntiVoxEnable";
-            this.chkAntiVoxEnable.Size = new System.Drawing.Size(105, 17);
+            this.chkAntiVoxEnable.Size = new System.Drawing.Size(111, 17);
             this.chkAntiVoxEnable.TabIndex = 0;
             this.chkAntiVoxEnable.Text = "Anti-VOX Enable";
             this.chkAntiVoxEnable.UseVisualStyleBackColor = true;
@@ -39038,7 +39124,7 @@
             0,
             0});
             this.udDEXPLookAhead.Name = "udDEXPLookAhead";
-            this.udDEXPLookAhead.Size = new System.Drawing.Size(57, 20);
+            this.udDEXPLookAhead.Size = new System.Drawing.Size(57, 22);
             this.udDEXPLookAhead.TabIndex = 2;
             this.udDEXPLookAhead.TinyStep = false;
             this.udDEXPLookAhead.Value = new decimal(new int[] {
@@ -39054,7 +39140,7 @@
             this.lblDEXPAudioLookAhead.Image = null;
             this.lblDEXPAudioLookAhead.Location = new System.Drawing.Point(3, 48);
             this.lblDEXPAudioLookAhead.Name = "lblDEXPAudioLookAhead";
-            this.lblDEXPAudioLookAhead.Size = new System.Drawing.Size(87, 13);
+            this.lblDEXPAudioLookAhead.Size = new System.Drawing.Size(91, 13);
             this.lblDEXPAudioLookAhead.TabIndex = 1;
             this.lblDEXPAudioLookAhead.Text = "Look Ahead (ms)";
             // 
@@ -39066,7 +39152,7 @@
             this.chkDEXPLookAheadEnable.Image = null;
             this.chkDEXPLookAheadEnable.Location = new System.Drawing.Point(6, 19);
             this.chkDEXPLookAheadEnable.Name = "chkDEXPLookAheadEnable";
-            this.chkDEXPLookAheadEnable.Size = new System.Drawing.Size(59, 17);
+            this.chkDEXPLookAheadEnable.Size = new System.Drawing.Size(61, 17);
             this.chkDEXPLookAheadEnable.TabIndex = 0;
             this.chkDEXPLookAheadEnable.Text = "Enable";
             this.chkDEXPLookAheadEnable.UseVisualStyleBackColor = true;
@@ -39117,7 +39203,7 @@
             0,
             0});
             this.udDEXPHysteresisRatio.Name = "udDEXPHysteresisRatio";
-            this.udDEXPHysteresisRatio.Size = new System.Drawing.Size(56, 20);
+            this.udDEXPHysteresisRatio.Size = new System.Drawing.Size(56, 22);
             this.udDEXPHysteresisRatio.TabIndex = 16;
             this.udDEXPHysteresisRatio.TinyStep = false;
             this.udDEXPHysteresisRatio.Value = new decimal(new int[] {
@@ -39147,7 +39233,7 @@
             0,
             0});
             this.udDEXPExpansionRatio.Name = "udDEXPExpansionRatio";
-            this.udDEXPExpansionRatio.Size = new System.Drawing.Size(56, 20);
+            this.udDEXPExpansionRatio.Size = new System.Drawing.Size(56, 22);
             this.udDEXPExpansionRatio.TabIndex = 15;
             this.udDEXPExpansionRatio.TinyStep = false;
             this.udDEXPExpansionRatio.Value = new decimal(new int[] {
@@ -39176,7 +39262,7 @@
             0,
             -2147418112});
             this.udDEXPThreshold.Name = "udDEXPThreshold";
-            this.udDEXPThreshold.Size = new System.Drawing.Size(56, 20);
+            this.udDEXPThreshold.Size = new System.Drawing.Size(56, 22);
             this.udDEXPThreshold.TabIndex = 14;
             this.udDEXPThreshold.TinyStep = false;
             this.udDEXPThreshold.Value = new decimal(new int[] {
@@ -39192,7 +39278,7 @@
             this.lblDEXPThreshold.Image = null;
             this.lblDEXPThreshold.Location = new System.Drawing.Point(143, 20);
             this.lblDEXPThreshold.Name = "lblDEXPThreshold";
-            this.lblDEXPThreshold.Size = new System.Drawing.Size(83, 13);
+            this.lblDEXPThreshold.Size = new System.Drawing.Size(88, 13);
             this.lblDEXPThreshold.TabIndex = 13;
             this.lblDEXPThreshold.Text = "Threshold (dBV)";
             // 
@@ -39202,7 +39288,7 @@
             this.lblDEXPHystRatio.Image = null;
             this.lblDEXPHystRatio.Location = new System.Drawing.Point(154, 102);
             this.lblDEXPHystRatio.Name = "lblDEXPHystRatio";
-            this.lblDEXPHystRatio.Size = new System.Drawing.Size(78, 13);
+            this.lblDEXPHystRatio.Size = new System.Drawing.Size(81, 13);
             this.lblDEXPHystRatio.TabIndex = 12;
             this.lblDEXPHystRatio.Text = "Hyst.Ratio (dB)";
             // 
@@ -39212,7 +39298,7 @@
             this.lblDEXPExpRatio.Image = null;
             this.lblDEXPExpRatio.Location = new System.Drawing.Point(154, 76);
             this.lblDEXPExpRatio.Name = "lblDEXPExpRatio";
-            this.lblDEXPExpRatio.Size = new System.Drawing.Size(78, 13);
+            this.lblDEXPExpRatio.Size = new System.Drawing.Size(80, 13);
             this.lblDEXPExpRatio.TabIndex = 11;
             this.lblDEXPExpRatio.Text = "Exp. Ratio (dB)";
             // 
@@ -39235,7 +39321,7 @@
             0,
             0});
             this.udDEXPRelease.Name = "udDEXPRelease";
-            this.udDEXPRelease.Size = new System.Drawing.Size(57, 20);
+            this.udDEXPRelease.Size = new System.Drawing.Size(57, 22);
             this.udDEXPRelease.TabIndex = 10;
             this.udDEXPRelease.TinyStep = false;
             this.udDEXPRelease.Value = new decimal(new int[] {
@@ -39264,7 +39350,7 @@
             0,
             0});
             this.udDEXPHold.Name = "udDEXPHold";
-            this.udDEXPHold.Size = new System.Drawing.Size(57, 20);
+            this.udDEXPHold.Size = new System.Drawing.Size(57, 22);
             this.udDEXPHold.TabIndex = 9;
             this.udDEXPHold.TinyStep = false;
             this.udDEXPHold.Value = new decimal(new int[] {
@@ -39293,7 +39379,7 @@
             0,
             0});
             this.udDEXPAttack.Name = "udDEXPAttack";
-            this.udDEXPAttack.Size = new System.Drawing.Size(57, 20);
+            this.udDEXPAttack.Size = new System.Drawing.Size(57, 22);
             this.udDEXPAttack.TabIndex = 8;
             this.udDEXPAttack.TinyStep = false;
             this.udDEXPAttack.Value = new decimal(new int[] {
@@ -39309,7 +39395,7 @@
             this.chkVOXEnable.Image = null;
             this.chkVOXEnable.Location = new System.Drawing.Point(6, 19);
             this.chkVOXEnable.Name = "chkVOXEnable";
-            this.chkVOXEnable.Size = new System.Drawing.Size(84, 17);
+            this.chkVOXEnable.Size = new System.Drawing.Size(86, 17);
             this.chkVOXEnable.TabIndex = 7;
             this.chkVOXEnable.Text = "Enable VOX";
             this.chkVOXEnable.UseVisualStyleBackColor = true;
@@ -39334,7 +39420,7 @@
             0,
             0});
             this.udDEXPDetTau.Name = "udDEXPDetTau";
-            this.udDEXPDetTau.Size = new System.Drawing.Size(57, 20);
+            this.udDEXPDetTau.Size = new System.Drawing.Size(57, 22);
             this.udDEXPDetTau.TabIndex = 6;
             this.udDEXPDetTau.TinyStep = false;
             this.udDEXPDetTau.Value = new decimal(new int[] {
@@ -39350,7 +39436,7 @@
             this.lblDEXPRelease.Image = null;
             this.lblDEXPRelease.Location = new System.Drawing.Point(6, 128);
             this.lblDEXPRelease.Name = "lblDEXPRelease";
-            this.lblDEXPRelease.Size = new System.Drawing.Size(68, 13);
+            this.lblDEXPRelease.Size = new System.Drawing.Size(69, 13);
             this.lblDEXPRelease.TabIndex = 5;
             this.lblDEXPRelease.Text = "Release (ms)";
             // 
@@ -39360,7 +39446,7 @@
             this.lblDEXPHold.Image = null;
             this.lblDEXPHold.Location = new System.Drawing.Point(6, 102);
             this.lblDEXPHold.Name = "lblDEXPHold";
-            this.lblDEXPHold.Size = new System.Drawing.Size(51, 13);
+            this.lblDEXPHold.Size = new System.Drawing.Size(55, 13);
             this.lblDEXPHold.TabIndex = 4;
             this.lblDEXPHold.Text = "Hold (ms)";
             // 
@@ -39370,7 +39456,7 @@
             this.lblDEXPAttack.Image = null;
             this.lblDEXPAttack.Location = new System.Drawing.Point(6, 76);
             this.lblDEXPAttack.Name = "lblDEXPAttack";
-            this.lblDEXPAttack.Size = new System.Drawing.Size(60, 13);
+            this.lblDEXPAttack.Size = new System.Drawing.Size(62, 13);
             this.lblDEXPAttack.TabIndex = 3;
             this.lblDEXPAttack.Text = "Attack (ms)";
             // 
@@ -39380,7 +39466,7 @@
             this.lblDetTau.Image = null;
             this.lblDetTau.Location = new System.Drawing.Point(152, 128);
             this.lblDetTau.Name = "lblDetTau";
-            this.lblDetTau.Size = new System.Drawing.Size(68, 13);
+            this.lblDetTau.Size = new System.Drawing.Size(69, 13);
             this.lblDetTau.TabIndex = 2;
             this.lblDetTau.Text = "Det.Tau (ms)";
             // 
@@ -39390,7 +39476,7 @@
             this.chkDEXPEnable.Image = null;
             this.chkDEXPEnable.Location = new System.Drawing.Point(6, 42);
             this.chkDEXPEnable.Name = "chkDEXPEnable";
-            this.chkDEXPEnable.Size = new System.Drawing.Size(91, 17);
+            this.chkDEXPEnable.Size = new System.Drawing.Size(90, 17);
             this.chkDEXPEnable.TabIndex = 1;
             this.chkDEXPEnable.Text = "Enable DEXP";
             this.chkDEXPEnable.UseVisualStyleBackColor = true;
@@ -39416,7 +39502,7 @@
             this.lblSCFHighCut.Image = null;
             this.lblSCFHighCut.Location = new System.Drawing.Point(76, 46);
             this.lblSCFHighCut.Name = "lblSCFHighCut";
-            this.lblSCFHighCut.Size = new System.Drawing.Size(70, 13);
+            this.lblSCFHighCut.Size = new System.Drawing.Size(75, 13);
             this.lblSCFHighCut.TabIndex = 4;
             this.lblSCFHighCut.Text = "High Cut (Hz)";
             // 
@@ -39426,7 +39512,7 @@
             this.lblSCFLowCut.Image = null;
             this.lblSCFLowCut.Location = new System.Drawing.Point(76, 20);
             this.lblSCFLowCut.Name = "lblSCFLowCut";
-            this.lblSCFLowCut.Size = new System.Drawing.Size(71, 13);
+            this.lblSCFLowCut.Size = new System.Drawing.Size(74, 13);
             this.lblSCFLowCut.TabIndex = 3;
             this.lblSCFLowCut.Text = "Low  Cut (Hz)";
             // 
@@ -39449,7 +39535,7 @@
             0,
             0});
             this.udSCFHighCut.Name = "udSCFHighCut";
-            this.udSCFHighCut.Size = new System.Drawing.Size(55, 20);
+            this.udSCFHighCut.Size = new System.Drawing.Size(55, 22);
             this.udSCFHighCut.TabIndex = 2;
             this.udSCFHighCut.TinyStep = false;
             this.udSCFHighCut.Value = new decimal(new int[] {
@@ -39478,7 +39564,7 @@
             0,
             0});
             this.udSCFLowCut.Name = "udSCFLowCut";
-            this.udSCFLowCut.Size = new System.Drawing.Size(55, 20);
+            this.udSCFLowCut.Size = new System.Drawing.Size(55, 22);
             this.udSCFLowCut.TabIndex = 1;
             this.udSCFLowCut.TinyStep = false;
             this.udSCFLowCut.Value = new decimal(new int[] {
@@ -39496,7 +39582,7 @@
             this.chkSCFEnable.Image = null;
             this.chkSCFEnable.Location = new System.Drawing.Point(6, 19);
             this.chkSCFEnable.Name = "chkSCFEnable";
-            this.chkSCFEnable.Size = new System.Drawing.Size(59, 17);
+            this.chkSCFEnable.Size = new System.Drawing.Size(61, 17);
             this.chkSCFEnable.TabIndex = 0;
             this.chkSCFEnable.Text = "Enable";
             this.chkSCFEnable.UseVisualStyleBackColor = true;
@@ -39571,7 +39657,7 @@
             this.labelTS607.Image = null;
             this.labelTS607.Location = new System.Drawing.Point(620, 52);
             this.labelTS607.Name = "labelTS607";
-            this.labelTS607.Size = new System.Drawing.Size(13, 13);
+            this.labelTS607.Size = new System.Drawing.Size(15, 13);
             this.labelTS607.TabIndex = 179;
             this.labelTS607.Text = "±";
             // 
@@ -39604,7 +39690,7 @@
             0,
             0});
             this.udCFCPicDBPerLine.Name = "udCFCPicDBPerLine";
-            this.udCFCPicDBPerLine.Size = new System.Drawing.Size(46, 20);
+            this.udCFCPicDBPerLine.Size = new System.Drawing.Size(46, 22);
             this.udCFCPicDBPerLine.TabIndex = 177;
             this.udCFCPicDBPerLine.TinyStep = false;
             this.udCFCPicDBPerLine.Value = new decimal(new int[] {
@@ -39620,7 +39706,7 @@
             this.chkCFCDisplayAutoScale.Image = null;
             this.chkCFCDisplayAutoScale.Location = new System.Drawing.Point(578, 27);
             this.chkCFCDisplayAutoScale.Name = "chkCFCDisplayAutoScale";
-            this.chkCFCDisplayAutoScale.Size = new System.Drawing.Size(133, 17);
+            this.chkCFCDisplayAutoScale.Size = new System.Drawing.Size(137, 17);
             this.chkCFCDisplayAutoScale.TabIndex = 176;
             this.chkCFCDisplayAutoScale.Text = "Auto Scale (10dB/line)";
             this.chkCFCDisplayAutoScale.UseVisualStyleBackColor = true;
@@ -39727,7 +39813,7 @@
             0,
             0});
             this.udPHROTStages.Name = "udPHROTStages";
-            this.udPHROTStages.Size = new System.Drawing.Size(58, 20);
+            this.udPHROTStages.Size = new System.Drawing.Size(58, 22);
             this.udPHROTStages.TabIndex = 155;
             this.udPHROTStages.TinyStep = false;
             this.udPHROTStages.Value = new decimal(new int[] {
@@ -39767,7 +39853,7 @@
             0,
             0});
             this.udPhRotFreq.Name = "udPhRotFreq";
-            this.udPhRotFreq.Size = new System.Drawing.Size(58, 20);
+            this.udPhRotFreq.Size = new System.Drawing.Size(58, 22);
             this.udPhRotFreq.TabIndex = 153;
             this.udPhRotFreq.TinyStep = false;
             this.udPhRotFreq.Value = new decimal(new int[] {
@@ -39783,7 +39869,7 @@
             this.chkPHROTEnable.Image = null;
             this.chkPHROTEnable.Location = new System.Drawing.Point(6, 19);
             this.chkPHROTEnable.Name = "chkPHROTEnable";
-            this.chkPHROTEnable.Size = new System.Drawing.Size(59, 17);
+            this.chkPHROTEnable.Size = new System.Drawing.Size(61, 17);
             this.chkPHROTEnable.TabIndex = 152;
             this.chkPHROTEnable.Text = "Enable";
             this.chkPHROTEnable.UseVisualStyleBackColor = true;
@@ -39795,7 +39881,7 @@
             this.chkCFCPeqEnable.Image = null;
             this.chkCFCPeqEnable.Location = new System.Drawing.Point(14, 39);
             this.chkCFCPeqEnable.Name = "chkCFCPeqEnable";
-            this.chkCFCPeqEnable.Size = new System.Drawing.Size(124, 17);
+            this.chkCFCPeqEnable.Size = new System.Drawing.Size(127, 17);
             this.chkCFCPeqEnable.TabIndex = 169;
             this.chkCFCPeqEnable.Text = "Post-CFC EQ Enable";
             this.chkCFCPeqEnable.UseVisualStyleBackColor = true;
@@ -40024,7 +40110,7 @@
             this.chkCFCEnable.Image = null;
             this.chkCFCEnable.Location = new System.Drawing.Point(14, 16);
             this.chkCFCEnable.Name = "chkCFCEnable";
-            this.chkCFCEnable.Size = new System.Drawing.Size(82, 17);
+            this.chkCFCEnable.Size = new System.Drawing.Size(84, 17);
             this.chkCFCEnable.TabIndex = 149;
             this.chkCFCEnable.Text = "CFC Enable";
             this.chkCFCEnable.UseVisualStyleBackColor = true;
@@ -40071,7 +40157,7 @@
             0,
             0});
             this.udCFC9.Name = "udCFC9";
-            this.udCFC9.Size = new System.Drawing.Size(50, 20);
+            this.udCFC9.Size = new System.Drawing.Size(50, 22);
             this.udCFC9.TabIndex = 146;
             this.udCFC9.TinyStep = false;
             this.udCFC9.Value = new decimal(new int[] {
@@ -40100,7 +40186,7 @@
             0,
             0});
             this.udCFC8.Name = "udCFC8";
-            this.udCFC8.Size = new System.Drawing.Size(50, 20);
+            this.udCFC8.Size = new System.Drawing.Size(50, 22);
             this.udCFC8.TabIndex = 145;
             this.udCFC8.TinyStep = false;
             this.udCFC8.Value = new decimal(new int[] {
@@ -40129,7 +40215,7 @@
             0,
             0});
             this.udCFC7.Name = "udCFC7";
-            this.udCFC7.Size = new System.Drawing.Size(50, 20);
+            this.udCFC7.Size = new System.Drawing.Size(50, 22);
             this.udCFC7.TabIndex = 144;
             this.udCFC7.TinyStep = false;
             this.udCFC7.Value = new decimal(new int[] {
@@ -40158,7 +40244,7 @@
             0,
             0});
             this.udCFC6.Name = "udCFC6";
-            this.udCFC6.Size = new System.Drawing.Size(50, 20);
+            this.udCFC6.Size = new System.Drawing.Size(50, 22);
             this.udCFC6.TabIndex = 143;
             this.udCFC6.TinyStep = false;
             this.udCFC6.Value = new decimal(new int[] {
@@ -40187,7 +40273,7 @@
             0,
             0});
             this.udCFC5.Name = "udCFC5";
-            this.udCFC5.Size = new System.Drawing.Size(50, 20);
+            this.udCFC5.Size = new System.Drawing.Size(50, 22);
             this.udCFC5.TabIndex = 142;
             this.udCFC5.TinyStep = false;
             this.udCFC5.Value = new decimal(new int[] {
@@ -40216,7 +40302,7 @@
             0,
             0});
             this.udCFC4.Name = "udCFC4";
-            this.udCFC4.Size = new System.Drawing.Size(50, 20);
+            this.udCFC4.Size = new System.Drawing.Size(50, 22);
             this.udCFC4.TabIndex = 141;
             this.udCFC4.TinyStep = false;
             this.udCFC4.Value = new decimal(new int[] {
@@ -40245,7 +40331,7 @@
             0,
             0});
             this.udCFC3.Name = "udCFC3";
-            this.udCFC3.Size = new System.Drawing.Size(50, 20);
+            this.udCFC3.Size = new System.Drawing.Size(50, 22);
             this.udCFC3.TabIndex = 140;
             this.udCFC3.TinyStep = false;
             this.udCFC3.Value = new decimal(new int[] {
@@ -40274,7 +40360,7 @@
             0,
             0});
             this.udCFC2.Name = "udCFC2";
-            this.udCFC2.Size = new System.Drawing.Size(50, 20);
+            this.udCFC2.Size = new System.Drawing.Size(50, 22);
             this.udCFC2.TabIndex = 139;
             this.udCFC2.TinyStep = false;
             this.udCFC2.Value = new decimal(new int[] {
@@ -40303,7 +40389,7 @@
             0,
             0});
             this.udCFC1.Name = "udCFC1";
-            this.udCFC1.Size = new System.Drawing.Size(50, 20);
+            this.udCFC1.Size = new System.Drawing.Size(50, 22);
             this.udCFC1.TabIndex = 138;
             this.udCFC1.TinyStep = false;
             this.udCFC1.Value = new decimal(new int[] {
@@ -40332,7 +40418,7 @@
             0,
             0});
             this.udCFC0.Name = "udCFC0";
-            this.udCFC0.Size = new System.Drawing.Size(50, 20);
+            this.udCFC0.Size = new System.Drawing.Size(50, 22);
             this.udCFC0.TabIndex = 137;
             this.udCFC0.TinyStep = false;
             this.udCFC0.Value = new decimal(new int[] {
@@ -40517,7 +40603,7 @@
             this.tpTransmit.Controls.Add(this.grpTXFilter);
             this.tpTransmit.Location = new System.Drawing.Point(4, 22);
             this.tpTransmit.Name = "tpTransmit";
-            this.tpTransmit.Size = new System.Drawing.Size(728, 436);
+            this.tpTransmit.Size = new System.Drawing.Size(728, 468);
             this.tpTransmit.TabIndex = 5;
             this.tpTransmit.Text = "Transmit";
             // 
@@ -40527,7 +40613,7 @@
             this.chkHighlightTXProfileSaveItems.Image = null;
             this.chkHighlightTXProfileSaveItems.Location = new System.Drawing.Point(23, 402);
             this.chkHighlightTXProfileSaveItems.Name = "chkHighlightTXProfileSaveItems";
-            this.chkHighlightTXProfileSaveItems.Size = new System.Drawing.Size(175, 17);
+            this.chkHighlightTXProfileSaveItems.Size = new System.Drawing.Size(186, 17);
             this.chkHighlightTXProfileSaveItems.TabIndex = 76;
             this.chkHighlightTXProfileSaveItems.Text = "Hightlight TX Profile Save Items";
             this.chkHighlightTXProfileSaveItems.UseVisualStyleBackColor = true;
@@ -40570,7 +40656,7 @@
             this.chkLimitExtAmpOnOverload.Image = null;
             this.chkLimitExtAmpOnOverload.Location = new System.Drawing.Point(382, 338);
             this.chkLimitExtAmpOnOverload.Name = "chkLimitExtAmpOnOverload";
-            this.chkLimitExtAmpOnOverload.Size = new System.Drawing.Size(184, 17);
+            this.chkLimitExtAmpOnOverload.Size = new System.Drawing.Size(196, 17);
             this.chkLimitExtAmpOnOverload.TabIndex = 72;
             this.chkLimitExtAmpOnOverload.Text = "Limit Drive on Ext. Amp. Overload";
             this.chkLimitExtAmpOnOverload.UseVisualStyleBackColor = true;
@@ -40592,7 +40678,7 @@
             this.chkDSPCESSB.Image = null;
             this.chkDSPCESSB.Location = new System.Drawing.Point(7, 20);
             this.chkDSPCESSB.Name = "chkDSPCESSB";
-            this.chkDSPCESSB.Size = new System.Drawing.Size(149, 17);
+            this.chkDSPCESSB.Size = new System.Drawing.Size(156, 17);
             this.chkDSPCESSB.TabIndex = 0;
             this.chkDSPCESSB.Text = "CESSB Overshoot Control";
             this.chkDSPCESSB.UseVisualStyleBackColor = true;
@@ -40672,7 +40758,7 @@
             0,
             0});
             this.udTXFilterLowSave.Name = "udTXFilterLowSave";
-            this.udTXFilterLowSave.Size = new System.Drawing.Size(56, 20);
+            this.udTXFilterLowSave.Size = new System.Drawing.Size(56, 22);
             this.udTXFilterLowSave.TabIndex = 60;
             this.udTXFilterLowSave.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXFilterLowSave, "Saved Low Frequency TX Filter Cutoff");
@@ -40702,7 +40788,7 @@
             0,
             0});
             this.udTXFilterHighSave.Name = "udTXFilterHighSave";
-            this.udTXFilterHighSave.Size = new System.Drawing.Size(56, 20);
+            this.udTXFilterHighSave.Size = new System.Drawing.Size(56, 22);
             this.udTXFilterHighSave.TabIndex = 59;
             this.udTXFilterHighSave.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXFilterHighSave, "Saved High Frequency TX Filter Cutoff");
@@ -40739,7 +40825,7 @@
             this.labelTS617.Image = null;
             this.labelTS617.Location = new System.Drawing.Point(124, 16);
             this.labelTS617.Name = "labelTS617";
-            this.labelTS617.Size = new System.Drawing.Size(41, 13);
+            this.labelTS617.Size = new System.Drawing.Size(42, 13);
             this.labelTS617.TabIndex = 15;
             this.labelTS617.Text = "Source";
             // 
@@ -40749,7 +40835,7 @@
             this.labelTS616.Image = null;
             this.labelTS616.Location = new System.Drawing.Point(53, 16);
             this.labelTS616.Name = "labelTS616";
-            this.labelTS616.Size = new System.Drawing.Size(29, 13);
+            this.labelTS616.Size = new System.Drawing.Size(31, 13);
             this.labelTS616.TabIndex = 14;
             this.labelTS616.Text = "Gain";
             // 
@@ -40800,7 +40886,7 @@
             0,
             -2147483648});
             this.udMicGainMin.Name = "udMicGainMin";
-            this.udMicGainMin.Size = new System.Drawing.Size(40, 20);
+            this.udMicGainMin.Size = new System.Drawing.Size(40, 22);
             this.udMicGainMin.TabIndex = 10;
             this.udMicGainMin.TinyStep = false;
             this.udMicGainMin.Value = new decimal(new int[] {
@@ -40830,7 +40916,7 @@
             0,
             0});
             this.udMicGainMax.Name = "udMicGainMax";
-            this.udMicGainMax.Size = new System.Drawing.Size(40, 20);
+            this.udMicGainMax.Size = new System.Drawing.Size(40, 22);
             this.udMicGainMax.TabIndex = 9;
             this.udMicGainMax.TinyStep = false;
             this.udMicGainMax.Value = new decimal(new int[] {
@@ -40882,7 +40968,7 @@
             -2147418112});
             this.udLineInBoost.Name = "udLineInBoost";
             this.udLineInBoost.ReadOnly = true;
-            this.udLineInBoost.Size = new System.Drawing.Size(48, 20);
+            this.udLineInBoost.Size = new System.Drawing.Size(48, 22);
             this.udLineInBoost.TabIndex = 10;
             this.udLineInBoost.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udLineInBoost.TinyStep = false;
@@ -41002,7 +41088,7 @@
             0,
             0});
             this.udTXAMCarrierLevel.Name = "udTXAMCarrierLevel";
-            this.udTXAMCarrierLevel.Size = new System.Drawing.Size(56, 20);
+            this.udTXAMCarrierLevel.Size = new System.Drawing.Size(56, 22);
             this.udTXAMCarrierLevel.TabIndex = 4;
             this.udTXAMCarrierLevel.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXAMCarrierLevel, "Adjusts the carrier level on AM (pecentage of full 1/4 carrier) .");
@@ -41032,7 +41118,7 @@
             this.chkIgnoreMasterAFChangeForMonitor.Image = null;
             this.chkIgnoreMasterAFChangeForMonitor.Location = new System.Drawing.Point(13, 52);
             this.chkIgnoreMasterAFChangeForMonitor.Name = "chkIgnoreMasterAFChangeForMonitor";
-            this.chkIgnoreMasterAFChangeForMonitor.Size = new System.Drawing.Size(147, 17);
+            this.chkIgnoreMasterAFChangeForMonitor.Size = new System.Drawing.Size(157, 17);
             this.chkIgnoreMasterAFChangeForMonitor.TabIndex = 6;
             this.chkIgnoreMasterAFChangeForMonitor.Text = "Ignore Master AF Change";
             this.toolTip1.SetToolTip(this.chkIgnoreMasterAFChangeForMonitor, "Changes made to MasterAF when in MOX are not applied to TX AF");
@@ -41067,7 +41153,7 @@
             0,
             0});
             this.udTXAF.Name = "udTXAF";
-            this.udTXAF.Size = new System.Drawing.Size(48, 20);
+            this.udTXAF.Size = new System.Drawing.Size(48, 22);
             this.udTXAF.TabIndex = 4;
             this.udTXAF.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXAF, "AF value to use when in TX mode (with the Delta 44 only).");
@@ -41147,7 +41233,7 @@
             this.radUseFixedDriveTune.Image = null;
             this.radUseFixedDriveTune.Location = new System.Drawing.Point(17, 96);
             this.radUseFixedDriveTune.Name = "radUseFixedDriveTune";
-            this.radUseFixedDriveTune.Size = new System.Drawing.Size(100, 17);
+            this.radUseFixedDriveTune.Size = new System.Drawing.Size(103, 17);
             this.radUseFixedDriveTune.TabIndex = 12;
             this.radUseFixedDriveTune.TabStop = true;
             this.radUseFixedDriveTune.Text = "Use Fixed Drive";
@@ -41160,7 +41246,7 @@
             this.radUseDriveSliderTune.Image = null;
             this.radUseDriveSliderTune.Location = new System.Drawing.Point(17, 50);
             this.radUseDriveSliderTune.Name = "radUseDriveSliderTune";
-            this.radUseDriveSliderTune.Size = new System.Drawing.Size(101, 17);
+            this.radUseDriveSliderTune.Size = new System.Drawing.Size(105, 17);
             this.radUseDriveSliderTune.TabIndex = 11;
             this.radUseDriveSliderTune.TabStop = true;
             this.radUseDriveSliderTune.Text = "Use Drive Slider";
@@ -41173,7 +41259,7 @@
             this.radUseTuneSliderTune.Image = null;
             this.radUseTuneSliderTune.Location = new System.Drawing.Point(17, 73);
             this.radUseTuneSliderTune.Name = "radUseTuneSliderTune";
-            this.radUseTuneSliderTune.Size = new System.Drawing.Size(101, 17);
+            this.radUseTuneSliderTune.Size = new System.Drawing.Size(105, 17);
             this.radUseTuneSliderTune.TabIndex = 10;
             this.radUseTuneSliderTune.TabStop = true;
             this.radUseTuneSliderTune.Text = "Use Tune Slider";
@@ -41227,7 +41313,7 @@
             0,
             0});
             this.udTXTunePower.Name = "udTXTunePower";
-            this.udTXTunePower.Size = new System.Drawing.Size(48, 20);
+            this.udTXTunePower.Size = new System.Drawing.Size(48, 22);
             this.udTXTunePower.TabIndex = 4;
             this.udTXTunePower.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXTunePower, "Power used when using the TUN button on the front panel.");
@@ -41280,7 +41366,7 @@
             0,
             0});
             this.udTXFilterLow.Name = "udTXFilterLow";
-            this.udTXFilterLow.Size = new System.Drawing.Size(56, 20);
+            this.udTXFilterLow.Size = new System.Drawing.Size(56, 22);
             this.udTXFilterLow.TabIndex = 2;
             this.udTXFilterLow.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXFilterLow, "Low Frequency TX Filter Cutoff");
@@ -41320,7 +41406,7 @@
             0,
             0});
             this.udTXFilterHigh.Name = "udTXFilterHigh";
-            this.udTXFilterHigh.Size = new System.Drawing.Size(56, 20);
+            this.udTXFilterHigh.Size = new System.Drawing.Size(56, 22);
             this.udTXFilterHigh.TabIndex = 0;
             this.udTXFilterHigh.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXFilterHigh, "High Frequency TX Filter Cutoff");
@@ -41337,7 +41423,7 @@
             this.tpPowerAmplifier.Controls.Add(this.tcPowerAmplifier);
             this.tpPowerAmplifier.Location = new System.Drawing.Point(4, 22);
             this.tpPowerAmplifier.Name = "tpPowerAmplifier";
-            this.tpPowerAmplifier.Size = new System.Drawing.Size(728, 436);
+            this.tpPowerAmplifier.Size = new System.Drawing.Size(728, 468);
             this.tpPowerAmplifier.TabIndex = 8;
             this.tpPowerAmplifier.Text = "PA Settings";
             // 
@@ -41371,7 +41457,7 @@
             this.chkPANewCal.Image = null;
             this.chkPANewCal.Location = new System.Drawing.Point(580, 331);
             this.chkPANewCal.Name = "chkPANewCal";
-            this.chkPANewCal.Size = new System.Drawing.Size(63, 17);
+            this.chkPANewCal.Size = new System.Drawing.Size(65, 17);
             this.chkPANewCal.TabIndex = 120;
             this.chkPANewCal.Text = "NewCal";
             this.chkPANewCal.UseVisualStyleBackColor = true;
@@ -41477,7 +41563,7 @@
             this.labelTS165.Image = null;
             this.labelTS165.Location = new System.Drawing.Point(206, 34);
             this.labelTS165.Name = "labelTS165";
-            this.labelTS165.Size = new System.Drawing.Size(32, 13);
+            this.labelTS165.Size = new System.Drawing.Size(35, 13);
             this.labelTS165.TabIndex = 126;
             this.labelTS165.Text = "watts";
             // 
@@ -41502,7 +41588,7 @@
             0,
             0});
             this.nudMaxPowerForBandPA.Name = "nudMaxPowerForBandPA";
-            this.nudMaxPowerForBandPA.Size = new System.Drawing.Size(61, 20);
+            this.nudMaxPowerForBandPA.Size = new System.Drawing.Size(61, 22);
             this.nudMaxPowerForBandPA.TabIndex = 125;
             this.nudMaxPowerForBandPA.TinyStep = true;
             this.toolTip1.SetToolTip(this.nudMaxPowerForBandPA, "If this is non zero, it can be used for the Drive/Tune sliders");
@@ -41693,7 +41779,7 @@
             0,
             -2147483648});
             this.nudAdjustGain90.Name = "nudAdjustGain90";
-            this.nudAdjustGain90.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain90.Size = new System.Drawing.Size(48, 22);
             this.nudAdjustGain90.TabIndex = 124;
             this.nudAdjustGain90.TinyStep = true;
             this.nudAdjustGain90.Value = new decimal(new int[] {
@@ -41723,7 +41809,7 @@
             0,
             -2147483648});
             this.nudAdjustGain80.Name = "nudAdjustGain80";
-            this.nudAdjustGain80.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain80.Size = new System.Drawing.Size(48, 22);
             this.nudAdjustGain80.TabIndex = 123;
             this.nudAdjustGain80.TinyStep = true;
             this.nudAdjustGain80.Value = new decimal(new int[] {
@@ -41753,7 +41839,7 @@
             0,
             -2147483648});
             this.nudAdjustGain70.Name = "nudAdjustGain70";
-            this.nudAdjustGain70.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain70.Size = new System.Drawing.Size(48, 22);
             this.nudAdjustGain70.TabIndex = 122;
             this.nudAdjustGain70.TinyStep = true;
             this.nudAdjustGain70.Value = new decimal(new int[] {
@@ -41783,7 +41869,7 @@
             0,
             -2147483648});
             this.nudAdjustGain60.Name = "nudAdjustGain60";
-            this.nudAdjustGain60.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain60.Size = new System.Drawing.Size(48, 22);
             this.nudAdjustGain60.TabIndex = 121;
             this.nudAdjustGain60.TinyStep = true;
             this.nudAdjustGain60.Value = new decimal(new int[] {
@@ -41813,7 +41899,7 @@
             0,
             -2147483648});
             this.nudAdjustGain50.Name = "nudAdjustGain50";
-            this.nudAdjustGain50.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain50.Size = new System.Drawing.Size(48, 22);
             this.nudAdjustGain50.TabIndex = 120;
             this.nudAdjustGain50.TinyStep = true;
             this.nudAdjustGain50.Value = new decimal(new int[] {
@@ -41843,7 +41929,7 @@
             0,
             -2147483648});
             this.nudAdjustGain40.Name = "nudAdjustGain40";
-            this.nudAdjustGain40.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain40.Size = new System.Drawing.Size(48, 22);
             this.nudAdjustGain40.TabIndex = 119;
             this.nudAdjustGain40.TinyStep = true;
             this.nudAdjustGain40.Value = new decimal(new int[] {
@@ -41873,7 +41959,7 @@
             0,
             -2147483648});
             this.nudAdjustGain30.Name = "nudAdjustGain30";
-            this.nudAdjustGain30.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain30.Size = new System.Drawing.Size(48, 22);
             this.nudAdjustGain30.TabIndex = 118;
             this.nudAdjustGain30.TinyStep = true;
             this.nudAdjustGain30.Value = new decimal(new int[] {
@@ -41903,7 +41989,7 @@
             0,
             -2147483648});
             this.nudAdjustGain20.Name = "nudAdjustGain20";
-            this.nudAdjustGain20.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain20.Size = new System.Drawing.Size(48, 22);
             this.nudAdjustGain20.TabIndex = 117;
             this.nudAdjustGain20.TinyStep = true;
             this.nudAdjustGain20.Value = new decimal(new int[] {
@@ -41933,7 +42019,7 @@
             0,
             -2147483648});
             this.nudAdjustGain10.Name = "nudAdjustGain10";
-            this.nudAdjustGain10.Size = new System.Drawing.Size(48, 20);
+            this.nudAdjustGain10.Size = new System.Drawing.Size(48, 22);
             this.nudAdjustGain10.TabIndex = 116;
             this.nudAdjustGain10.TinyStep = true;
             this.nudAdjustGain10.Value = new decimal(new int[] {
@@ -41999,7 +42085,7 @@
             0,
             65536});
             this.nudVHF13.Name = "nudVHF13";
-            this.nudVHF13.Size = new System.Drawing.Size(48, 20);
+            this.nudVHF13.Size = new System.Drawing.Size(48, 22);
             this.nudVHF13.TabIndex = 163;
             this.nudVHF13.TinyStep = true;
             this.nudVHF13.Value = new decimal(new int[] {
@@ -42040,7 +42126,7 @@
             0,
             65536});
             this.nudVHF12.Name = "nudVHF12";
-            this.nudVHF12.Size = new System.Drawing.Size(48, 20);
+            this.nudVHF12.Size = new System.Drawing.Size(48, 22);
             this.nudVHF12.TabIndex = 161;
             this.nudVHF12.TinyStep = true;
             this.nudVHF12.Value = new decimal(new int[] {
@@ -42081,7 +42167,7 @@
             0,
             65536});
             this.nudVHF11.Name = "nudVHF11";
-            this.nudVHF11.Size = new System.Drawing.Size(48, 20);
+            this.nudVHF11.Size = new System.Drawing.Size(48, 22);
             this.nudVHF11.TabIndex = 159;
             this.nudVHF11.TinyStep = true;
             this.nudVHF11.Value = new decimal(new int[] {
@@ -42122,7 +42208,7 @@
             0,
             65536});
             this.nudVHF10.Name = "nudVHF10";
-            this.nudVHF10.Size = new System.Drawing.Size(48, 20);
+            this.nudVHF10.Size = new System.Drawing.Size(48, 22);
             this.nudVHF10.TabIndex = 157;
             this.nudVHF10.TinyStep = true;
             this.nudVHF10.Value = new decimal(new int[] {
@@ -42163,7 +42249,7 @@
             0,
             65536});
             this.nudVHF9.Name = "nudVHF9";
-            this.nudVHF9.Size = new System.Drawing.Size(48, 20);
+            this.nudVHF9.Size = new System.Drawing.Size(48, 22);
             this.nudVHF9.TabIndex = 155;
             this.nudVHF9.TinyStep = true;
             this.nudVHF9.Value = new decimal(new int[] {
@@ -42204,7 +42290,7 @@
             0,
             65536});
             this.nudVHF8.Name = "nudVHF8";
-            this.nudVHF8.Size = new System.Drawing.Size(48, 20);
+            this.nudVHF8.Size = new System.Drawing.Size(48, 22);
             this.nudVHF8.TabIndex = 153;
             this.nudVHF8.TinyStep = true;
             this.nudVHF8.Value = new decimal(new int[] {
@@ -42245,7 +42331,7 @@
             0,
             65536});
             this.nudVHF7.Name = "nudVHF7";
-            this.nudVHF7.Size = new System.Drawing.Size(48, 20);
+            this.nudVHF7.Size = new System.Drawing.Size(48, 22);
             this.nudVHF7.TabIndex = 151;
             this.nudVHF7.TinyStep = true;
             this.nudVHF7.Value = new decimal(new int[] {
@@ -42286,7 +42372,7 @@
             0,
             65536});
             this.nudVHF6.Name = "nudVHF6";
-            this.nudVHF6.Size = new System.Drawing.Size(48, 20);
+            this.nudVHF6.Size = new System.Drawing.Size(48, 22);
             this.nudVHF6.TabIndex = 149;
             this.nudVHF6.TinyStep = true;
             this.nudVHF6.Value = new decimal(new int[] {
@@ -42327,7 +42413,7 @@
             0,
             65536});
             this.nudVHF5.Name = "nudVHF5";
-            this.nudVHF5.Size = new System.Drawing.Size(48, 20);
+            this.nudVHF5.Size = new System.Drawing.Size(48, 22);
             this.nudVHF5.TabIndex = 147;
             this.nudVHF5.TinyStep = true;
             this.nudVHF5.Value = new decimal(new int[] {
@@ -42368,7 +42454,7 @@
             0,
             65536});
             this.nudVHF4.Name = "nudVHF4";
-            this.nudVHF4.Size = new System.Drawing.Size(48, 20);
+            this.nudVHF4.Size = new System.Drawing.Size(48, 22);
             this.nudVHF4.TabIndex = 145;
             this.nudVHF4.TinyStep = true;
             this.nudVHF4.Value = new decimal(new int[] {
@@ -42409,7 +42495,7 @@
             0,
             65536});
             this.nudVHF3.Name = "nudVHF3";
-            this.nudVHF3.Size = new System.Drawing.Size(48, 20);
+            this.nudVHF3.Size = new System.Drawing.Size(48, 22);
             this.nudVHF3.TabIndex = 143;
             this.nudVHF3.TinyStep = true;
             this.nudVHF3.Value = new decimal(new int[] {
@@ -42450,7 +42536,7 @@
             0,
             65536});
             this.nudVHF2.Name = "nudVHF2";
-            this.nudVHF2.Size = new System.Drawing.Size(48, 20);
+            this.nudVHF2.Size = new System.Drawing.Size(48, 22);
             this.nudVHF2.TabIndex = 141;
             this.nudVHF2.TinyStep = true;
             this.nudVHF2.Value = new decimal(new int[] {
@@ -42491,7 +42577,7 @@
             0,
             65536});
             this.nudVHF1.Name = "nudVHF1";
-            this.nudVHF1.Size = new System.Drawing.Size(48, 20);
+            this.nudVHF1.Size = new System.Drawing.Size(48, 22);
             this.nudVHF1.TabIndex = 139;
             this.nudVHF1.TinyStep = true;
             this.nudVHF1.Value = new decimal(new int[] {
@@ -42532,7 +42618,7 @@
             0,
             65536});
             this.nudVHF0.Name = "nudVHF0";
-            this.nudVHF0.Size = new System.Drawing.Size(48, 20);
+            this.nudVHF0.Size = new System.Drawing.Size(48, 22);
             this.nudVHF0.TabIndex = 137;
             this.nudVHF0.TinyStep = true;
             this.nudVHF0.Value = new decimal(new int[] {
@@ -42562,7 +42648,7 @@
             0,
             65536});
             this.nud6M.Name = "nud6M";
-            this.nud6M.Size = new System.Drawing.Size(48, 20);
+            this.nud6M.Size = new System.Drawing.Size(48, 22);
             this.nud6M.TabIndex = 136;
             this.nud6M.TinyStep = true;
             this.nud6M.Value = new decimal(new int[] {
@@ -42614,7 +42700,7 @@
             0,
             65536});
             this.nud10M.Name = "nud10M";
-            this.nud10M.Size = new System.Drawing.Size(48, 20);
+            this.nud10M.Size = new System.Drawing.Size(48, 22);
             this.nud10M.TabIndex = 133;
             this.nud10M.TinyStep = true;
             this.nud10M.Value = new decimal(new int[] {
@@ -42655,7 +42741,7 @@
             0,
             65536});
             this.nud12M.Name = "nud12M";
-            this.nud12M.Size = new System.Drawing.Size(48, 20);
+            this.nud12M.Size = new System.Drawing.Size(48, 22);
             this.nud12M.TabIndex = 131;
             this.nud12M.TinyStep = true;
             this.nud12M.Value = new decimal(new int[] {
@@ -42696,7 +42782,7 @@
             0,
             65536});
             this.nud15M.Name = "nud15M";
-            this.nud15M.Size = new System.Drawing.Size(48, 20);
+            this.nud15M.Size = new System.Drawing.Size(48, 22);
             this.nud15M.TabIndex = 129;
             this.nud15M.TinyStep = true;
             this.nud15M.Value = new decimal(new int[] {
@@ -42737,7 +42823,7 @@
             0,
             65536});
             this.nud17M.Name = "nud17M";
-            this.nud17M.Size = new System.Drawing.Size(48, 20);
+            this.nud17M.Size = new System.Drawing.Size(48, 22);
             this.nud17M.TabIndex = 127;
             this.nud17M.TinyStep = true;
             this.nud17M.Value = new decimal(new int[] {
@@ -42778,7 +42864,7 @@
             0,
             65536});
             this.nud20M.Name = "nud20M";
-            this.nud20M.Size = new System.Drawing.Size(48, 20);
+            this.nud20M.Size = new System.Drawing.Size(48, 22);
             this.nud20M.TabIndex = 125;
             this.nud20M.TinyStep = true;
             this.nud20M.Value = new decimal(new int[] {
@@ -42819,7 +42905,7 @@
             0,
             65536});
             this.nud30M.Name = "nud30M";
-            this.nud30M.Size = new System.Drawing.Size(48, 20);
+            this.nud30M.Size = new System.Drawing.Size(48, 22);
             this.nud30M.TabIndex = 123;
             this.nud30M.TinyStep = true;
             this.nud30M.Value = new decimal(new int[] {
@@ -42860,7 +42946,7 @@
             0,
             65536});
             this.nud40M.Name = "nud40M";
-            this.nud40M.Size = new System.Drawing.Size(48, 20);
+            this.nud40M.Size = new System.Drawing.Size(48, 22);
             this.nud40M.TabIndex = 121;
             this.nud40M.TinyStep = true;
             this.nud40M.Value = new decimal(new int[] {
@@ -42901,7 +42987,7 @@
             0,
             65536});
             this.nud60M.Name = "nud60M";
-            this.nud60M.Size = new System.Drawing.Size(48, 20);
+            this.nud60M.Size = new System.Drawing.Size(48, 22);
             this.nud60M.TabIndex = 119;
             this.nud60M.TinyStep = true;
             this.nud60M.Value = new decimal(new int[] {
@@ -42942,7 +43028,7 @@
             0,
             65536});
             this.nud80M.Name = "nud80M";
-            this.nud80M.Size = new System.Drawing.Size(48, 20);
+            this.nud80M.Size = new System.Drawing.Size(48, 22);
             this.nud80M.TabIndex = 117;
             this.nud80M.TinyStep = true;
             this.nud80M.Value = new decimal(new int[] {
@@ -42983,7 +43069,7 @@
             0,
             65536});
             this.nud160M.Name = "nud160M";
-            this.nud160M.Size = new System.Drawing.Size(48, 20);
+            this.nud160M.Size = new System.Drawing.Size(48, 22);
             this.nud160M.TabIndex = 115;
             this.nud160M.TinyStep = true;
             this.nud160M.Value = new decimal(new int[] {
@@ -43115,7 +43201,7 @@
             0,
             0});
             this.udPACalPower.Name = "udPACalPower";
-            this.udPACalPower.Size = new System.Drawing.Size(50, 20);
+            this.udPACalPower.Size = new System.Drawing.Size(50, 22);
             this.udPACalPower.TabIndex = 35;
             this.udPACalPower.TinyStep = false;
             this.udPACalPower.Value = new decimal(new int[] {
@@ -43340,7 +43426,7 @@
             0,
             0});
             this.ud10PA1W.Name = "ud10PA1W";
-            this.ud10PA1W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA1W.Size = new System.Drawing.Size(48, 22);
             this.ud10PA1W.TabIndex = 87;
             this.ud10PA1W.TinyStep = false;
             this.ud10PA1W.Value = new decimal(new int[] {
@@ -43369,7 +43455,7 @@
             0,
             0});
             this.ud10PA10W.Name = "ud10PA10W";
-            this.ud10PA10W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA10W.Size = new System.Drawing.Size(48, 22);
             this.ud10PA10W.TabIndex = 105;
             this.ud10PA10W.TinyStep = false;
             this.ud10PA10W.Value = new decimal(new int[] {
@@ -43420,7 +43506,7 @@
             0,
             0});
             this.ud10PA9W.Name = "ud10PA9W";
-            this.ud10PA9W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA9W.Size = new System.Drawing.Size(48, 22);
             this.ud10PA9W.TabIndex = 103;
             this.ud10PA9W.TinyStep = false;
             this.ud10PA9W.Value = new decimal(new int[] {
@@ -43472,7 +43558,7 @@
             0,
             0});
             this.ud10PA11W.Name = "ud10PA11W";
-            this.ud10PA11W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA11W.Size = new System.Drawing.Size(48, 22);
             this.ud10PA11W.TabIndex = 108;
             this.ud10PA11W.TinyStep = false;
             this.ud10PA11W.Value = new decimal(new int[] {
@@ -43501,7 +43587,7 @@
             0,
             0});
             this.ud10PA8W.Name = "ud10PA8W";
-            this.ud10PA8W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA8W.Size = new System.Drawing.Size(48, 22);
             this.ud10PA8W.TabIndex = 101;
             this.ud10PA8W.TinyStep = false;
             this.ud10PA8W.Value = new decimal(new int[] {
@@ -43530,7 +43616,7 @@
             0,
             0});
             this.ud10PA12W.Name = "ud10PA12W";
-            this.ud10PA12W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA12W.Size = new System.Drawing.Size(48, 22);
             this.ud10PA12W.TabIndex = 109;
             this.ud10PA12W.TinyStep = false;
             this.ud10PA12W.Value = new decimal(new int[] {
@@ -43582,7 +43668,7 @@
             0,
             0});
             this.ud10PA7W.Name = "ud10PA7W";
-            this.ud10PA7W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA7W.Size = new System.Drawing.Size(48, 22);
             this.ud10PA7W.TabIndex = 99;
             this.ud10PA7W.TinyStep = false;
             this.ud10PA7W.Value = new decimal(new int[] {
@@ -43611,7 +43697,7 @@
             0,
             0});
             this.ud10PA13W.Name = "ud10PA13W";
-            this.ud10PA13W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA13W.Size = new System.Drawing.Size(48, 22);
             this.ud10PA13W.TabIndex = 111;
             this.ud10PA13W.TinyStep = false;
             this.ud10PA13W.Value = new decimal(new int[] {
@@ -43674,7 +43760,7 @@
             0,
             0});
             this.ud10PA6W.Name = "ud10PA6W";
-            this.ud10PA6W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA6W.Size = new System.Drawing.Size(48, 22);
             this.ud10PA6W.TabIndex = 97;
             this.ud10PA6W.TinyStep = false;
             this.ud10PA6W.Value = new decimal(new int[] {
@@ -43703,7 +43789,7 @@
             0,
             0});
             this.ud10PA14W.Name = "ud10PA14W";
-            this.ud10PA14W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA14W.Size = new System.Drawing.Size(48, 22);
             this.ud10PA14W.TabIndex = 113;
             this.ud10PA14W.TinyStep = false;
             this.ud10PA14W.Value = new decimal(new int[] {
@@ -43743,7 +43829,7 @@
             0,
             0});
             this.ud10PA2W.Name = "ud10PA2W";
-            this.ud10PA2W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA2W.Size = new System.Drawing.Size(48, 22);
             this.ud10PA2W.TabIndex = 89;
             this.ud10PA2W.TinyStep = false;
             this.ud10PA2W.Value = new decimal(new int[] {
@@ -43784,7 +43870,7 @@
             0,
             0});
             this.ud10PA5W.Name = "ud10PA5W";
-            this.ud10PA5W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA5W.Size = new System.Drawing.Size(48, 22);
             this.ud10PA5W.TabIndex = 95;
             this.ud10PA5W.TinyStep = false;
             this.ud10PA5W.Value = new decimal(new int[] {
@@ -43835,7 +43921,7 @@
             0,
             0});
             this.ud10PA4W.Name = "ud10PA4W";
-            this.ud10PA4W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA4W.Size = new System.Drawing.Size(48, 22);
             this.ud10PA4W.TabIndex = 93;
             this.ud10PA4W.TinyStep = false;
             this.ud10PA4W.Value = new decimal(new int[] {
@@ -43864,7 +43950,7 @@
             0,
             0});
             this.ud10PA3W.Name = "ud10PA3W";
-            this.ud10PA3W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA3W.Size = new System.Drawing.Size(48, 22);
             this.ud10PA3W.TabIndex = 91;
             this.ud10PA3W.TinyStep = false;
             this.ud10PA3W.Value = new decimal(new int[] {
@@ -43941,7 +44027,7 @@
             0,
             0});
             this.ud100PA10W.Name = "ud100PA10W";
-            this.ud100PA10W.Size = new System.Drawing.Size(48, 20);
+            this.ud100PA10W.Size = new System.Drawing.Size(48, 22);
             this.ud100PA10W.TabIndex = 87;
             this.ud100PA10W.TinyStep = false;
             this.ud100PA10W.Value = new decimal(new int[] {
@@ -43970,7 +44056,7 @@
             0,
             0});
             this.ud100PA100W.Name = "ud100PA100W";
-            this.ud100PA100W.Size = new System.Drawing.Size(48, 20);
+            this.ud100PA100W.Size = new System.Drawing.Size(48, 22);
             this.ud100PA100W.TabIndex = 105;
             this.ud100PA100W.TinyStep = false;
             this.ud100PA100W.Value = new decimal(new int[] {
@@ -44021,7 +44107,7 @@
             0,
             0});
             this.ud100PA90W.Name = "ud100PA90W";
-            this.ud100PA90W.Size = new System.Drawing.Size(48, 20);
+            this.ud100PA90W.Size = new System.Drawing.Size(48, 22);
             this.ud100PA90W.TabIndex = 103;
             this.ud100PA90W.TinyStep = false;
             this.ud100PA90W.Value = new decimal(new int[] {
@@ -44073,7 +44159,7 @@
             0,
             0});
             this.ud100PA110W.Name = "ud100PA110W";
-            this.ud100PA110W.Size = new System.Drawing.Size(48, 20);
+            this.ud100PA110W.Size = new System.Drawing.Size(48, 22);
             this.ud100PA110W.TabIndex = 108;
             this.ud100PA110W.TinyStep = false;
             this.ud100PA110W.Value = new decimal(new int[] {
@@ -44103,7 +44189,7 @@
             0,
             0});
             this.ud100PA80W.Name = "ud100PA80W";
-            this.ud100PA80W.Size = new System.Drawing.Size(48, 20);
+            this.ud100PA80W.Size = new System.Drawing.Size(48, 22);
             this.ud100PA80W.TabIndex = 101;
             this.ud100PA80W.TinyStep = false;
             this.ud100PA80W.Value = new decimal(new int[] {
@@ -44132,7 +44218,7 @@
             0,
             0});
             this.ud100PA120W.Name = "ud100PA120W";
-            this.ud100PA120W.Size = new System.Drawing.Size(48, 20);
+            this.ud100PA120W.Size = new System.Drawing.Size(48, 22);
             this.ud100PA120W.TabIndex = 109;
             this.ud100PA120W.TinyStep = false;
             this.ud100PA120W.Value = new decimal(new int[] {
@@ -44185,7 +44271,7 @@
             0,
             0});
             this.ud100PA70W.Name = "ud100PA70W";
-            this.ud100PA70W.Size = new System.Drawing.Size(48, 20);
+            this.ud100PA70W.Size = new System.Drawing.Size(48, 22);
             this.ud100PA70W.TabIndex = 99;
             this.ud100PA70W.TinyStep = false;
             this.ud100PA70W.Value = new decimal(new int[] {
@@ -44214,7 +44300,7 @@
             0,
             0});
             this.ud100PA130W.Name = "ud100PA130W";
-            this.ud100PA130W.Size = new System.Drawing.Size(48, 20);
+            this.ud100PA130W.Size = new System.Drawing.Size(48, 22);
             this.ud100PA130W.TabIndex = 111;
             this.ud100PA130W.TinyStep = false;
             this.ud100PA130W.Value = new decimal(new int[] {
@@ -44278,7 +44364,7 @@
             0,
             0});
             this.ud100PA60W.Name = "ud100PA60W";
-            this.ud100PA60W.Size = new System.Drawing.Size(48, 20);
+            this.ud100PA60W.Size = new System.Drawing.Size(48, 22);
             this.ud100PA60W.TabIndex = 97;
             this.ud100PA60W.TinyStep = false;
             this.ud100PA60W.Value = new decimal(new int[] {
@@ -44307,7 +44393,7 @@
             0,
             0});
             this.ud100PA140W.Name = "ud100PA140W";
-            this.ud100PA140W.Size = new System.Drawing.Size(48, 20);
+            this.ud100PA140W.Size = new System.Drawing.Size(48, 22);
             this.ud100PA140W.TabIndex = 113;
             this.ud100PA140W.TinyStep = false;
             this.ud100PA140W.Value = new decimal(new int[] {
@@ -44348,7 +44434,7 @@
             0,
             0});
             this.ud100PA20W.Name = "ud100PA20W";
-            this.ud100PA20W.Size = new System.Drawing.Size(48, 20);
+            this.ud100PA20W.Size = new System.Drawing.Size(48, 22);
             this.ud100PA20W.TabIndex = 89;
             this.ud100PA20W.TinyStep = false;
             this.ud100PA20W.Value = new decimal(new int[] {
@@ -44389,7 +44475,7 @@
             0,
             0});
             this.ud100PA50W.Name = "ud100PA50W";
-            this.ud100PA50W.Size = new System.Drawing.Size(48, 20);
+            this.ud100PA50W.Size = new System.Drawing.Size(48, 22);
             this.ud100PA50W.TabIndex = 95;
             this.ud100PA50W.TinyStep = false;
             this.ud100PA50W.Value = new decimal(new int[] {
@@ -44440,7 +44526,7 @@
             0,
             0});
             this.ud100PA40W.Name = "ud100PA40W";
-            this.ud100PA40W.Size = new System.Drawing.Size(48, 20);
+            this.ud100PA40W.Size = new System.Drawing.Size(48, 22);
             this.ud100PA40W.TabIndex = 93;
             this.ud100PA40W.TinyStep = false;
             this.ud100PA40W.Value = new decimal(new int[] {
@@ -44469,7 +44555,7 @@
             0,
             0});
             this.ud100PA30W.Name = "ud100PA30W";
-            this.ud100PA30W.Size = new System.Drawing.Size(48, 20);
+            this.ud100PA30W.Size = new System.Drawing.Size(48, 22);
             this.ud100PA30W.TabIndex = 91;
             this.ud100PA30W.TinyStep = false;
             this.ud100PA30W.Value = new decimal(new int[] {
@@ -44546,7 +44632,7 @@
             0,
             0});
             this.ud200PA20W.Name = "ud200PA20W";
-            this.ud200PA20W.Size = new System.Drawing.Size(48, 20);
+            this.ud200PA20W.Size = new System.Drawing.Size(48, 22);
             this.ud200PA20W.TabIndex = 87;
             this.ud200PA20W.TinyStep = false;
             this.ud200PA20W.Value = new decimal(new int[] {
@@ -44575,7 +44661,7 @@
             0,
             0});
             this.ud200PA200W.Name = "ud200PA200W";
-            this.ud200PA200W.Size = new System.Drawing.Size(48, 20);
+            this.ud200PA200W.Size = new System.Drawing.Size(48, 22);
             this.ud200PA200W.TabIndex = 105;
             this.ud200PA200W.TinyStep = false;
             this.ud200PA200W.Value = new decimal(new int[] {
@@ -44626,7 +44712,7 @@
             0,
             0});
             this.ud200PA180W.Name = "ud200PA180W";
-            this.ud200PA180W.Size = new System.Drawing.Size(48, 20);
+            this.ud200PA180W.Size = new System.Drawing.Size(48, 22);
             this.ud200PA180W.TabIndex = 103;
             this.ud200PA180W.TinyStep = false;
             this.ud200PA180W.Value = new decimal(new int[] {
@@ -44678,7 +44764,7 @@
             0,
             0});
             this.ud200PA220W.Name = "ud200PA220W";
-            this.ud200PA220W.Size = new System.Drawing.Size(48, 20);
+            this.ud200PA220W.Size = new System.Drawing.Size(48, 22);
             this.ud200PA220W.TabIndex = 108;
             this.ud200PA220W.TinyStep = false;
             this.ud200PA220W.Value = new decimal(new int[] {
@@ -44708,7 +44794,7 @@
             0,
             0});
             this.ud200PA160W.Name = "ud200PA160W";
-            this.ud200PA160W.Size = new System.Drawing.Size(48, 20);
+            this.ud200PA160W.Size = new System.Drawing.Size(48, 22);
             this.ud200PA160W.TabIndex = 101;
             this.ud200PA160W.TinyStep = false;
             this.ud200PA160W.Value = new decimal(new int[] {
@@ -44737,7 +44823,7 @@
             0,
             0});
             this.ud200PA240W.Name = "ud200PA240W";
-            this.ud200PA240W.Size = new System.Drawing.Size(48, 20);
+            this.ud200PA240W.Size = new System.Drawing.Size(48, 22);
             this.ud200PA240W.TabIndex = 109;
             this.ud200PA240W.TinyStep = false;
             this.ud200PA240W.Value = new decimal(new int[] {
@@ -44790,7 +44876,7 @@
             0,
             0});
             this.ud200PA140W.Name = "ud200PA140W";
-            this.ud200PA140W.Size = new System.Drawing.Size(48, 20);
+            this.ud200PA140W.Size = new System.Drawing.Size(48, 22);
             this.ud200PA140W.TabIndex = 99;
             this.ud200PA140W.TinyStep = false;
             this.ud200PA140W.Value = new decimal(new int[] {
@@ -44819,7 +44905,7 @@
             0,
             0});
             this.ud200PA260W.Name = "ud200PA260W";
-            this.ud200PA260W.Size = new System.Drawing.Size(48, 20);
+            this.ud200PA260W.Size = new System.Drawing.Size(48, 22);
             this.ud200PA260W.TabIndex = 111;
             this.ud200PA260W.TinyStep = false;
             this.ud200PA260W.Value = new decimal(new int[] {
@@ -44883,7 +44969,7 @@
             0,
             0});
             this.ud200PA120W.Name = "ud200PA120W";
-            this.ud200PA120W.Size = new System.Drawing.Size(48, 20);
+            this.ud200PA120W.Size = new System.Drawing.Size(48, 22);
             this.ud200PA120W.TabIndex = 97;
             this.ud200PA120W.TinyStep = false;
             this.ud200PA120W.Value = new decimal(new int[] {
@@ -44912,7 +44998,7 @@
             0,
             0});
             this.ud200PA280W.Name = "ud200PA280W";
-            this.ud200PA280W.Size = new System.Drawing.Size(48, 20);
+            this.ud200PA280W.Size = new System.Drawing.Size(48, 22);
             this.ud200PA280W.TabIndex = 113;
             this.ud200PA280W.TinyStep = false;
             this.ud200PA280W.Value = new decimal(new int[] {
@@ -44953,7 +45039,7 @@
             0,
             0});
             this.ud200PA40W.Name = "ud200PA40W";
-            this.ud200PA40W.Size = new System.Drawing.Size(48, 20);
+            this.ud200PA40W.Size = new System.Drawing.Size(48, 22);
             this.ud200PA40W.TabIndex = 89;
             this.ud200PA40W.TinyStep = false;
             this.ud200PA40W.Value = new decimal(new int[] {
@@ -44994,7 +45080,7 @@
             0,
             0});
             this.ud200PA100W.Name = "ud200PA100W";
-            this.ud200PA100W.Size = new System.Drawing.Size(48, 20);
+            this.ud200PA100W.Size = new System.Drawing.Size(48, 22);
             this.ud200PA100W.TabIndex = 95;
             this.ud200PA100W.TinyStep = false;
             this.ud200PA100W.Value = new decimal(new int[] {
@@ -45045,7 +45131,7 @@
             0,
             0});
             this.ud200PA80W.Name = "ud200PA80W";
-            this.ud200PA80W.Size = new System.Drawing.Size(48, 20);
+            this.ud200PA80W.Size = new System.Drawing.Size(48, 22);
             this.ud200PA80W.TabIndex = 93;
             this.ud200PA80W.TinyStep = false;
             this.ud200PA80W.Value = new decimal(new int[] {
@@ -45074,7 +45160,7 @@
             0,
             0});
             this.ud200PA60W.Name = "ud200PA60W";
-            this.ud200PA60W.Size = new System.Drawing.Size(48, 20);
+            this.ud200PA60W.Size = new System.Drawing.Size(48, 22);
             this.ud200PA60W.TabIndex = 91;
             this.ud200PA60W.TinyStep = false;
             this.ud200PA60W.Value = new decimal(new int[] {
@@ -45391,7 +45477,7 @@
             this.chkPAValues.Image = null;
             this.chkPAValues.Location = new System.Drawing.Point(569, 216);
             this.chkPAValues.Name = "chkPAValues";
-            this.chkPAValues.Size = new System.Drawing.Size(66, 23);
+            this.chkPAValues.Size = new System.Drawing.Size(65, 23);
             this.chkPAValues.TabIndex = 1;
             this.chkPAValues.Text = "PA Values";
             this.toolTip1.SetToolTip(this.chkPAValues, "Show PA power and voltage.");
@@ -45403,7 +45489,7 @@
             this.tpAppearance.Controls.Add(this.tcAppearance);
             this.tpAppearance.Location = new System.Drawing.Point(4, 22);
             this.tpAppearance.Name = "tpAppearance";
-            this.tpAppearance.Size = new System.Drawing.Size(728, 436);
+            this.tpAppearance.Size = new System.Drawing.Size(728, 468);
             this.tpAppearance.TabIndex = 6;
             this.tpAppearance.Text = "Appearance";
             // 
@@ -45531,7 +45617,7 @@
             this.chkEnableLEDFont.Image = null;
             this.chkEnableLEDFont.Location = new System.Drawing.Point(616, 27);
             this.chkEnableLEDFont.Name = "chkEnableLEDFont";
-            this.chkEnableLEDFont.Size = new System.Drawing.Size(71, 17);
+            this.chkEnableLEDFont.Size = new System.Drawing.Size(72, 17);
             this.chkEnableLEDFont.TabIndex = 88;
             this.chkEnableLEDFont.Text = "LED Font";
             this.toolTip1.SetToolTip(this.chkEnableLEDFont, "Use 7-segment LED fonts for VFO and Meter displays.");
@@ -45568,7 +45654,7 @@
             this.chkDisablePicDisplayBackgroundImage.Image = null;
             this.chkDisablePicDisplayBackgroundImage.Location = new System.Drawing.Point(6, 48);
             this.chkDisablePicDisplayBackgroundImage.Name = "chkDisablePicDisplayBackgroundImage";
-            this.chkDisablePicDisplayBackgroundImage.Size = new System.Drawing.Size(112, 17);
+            this.chkDisablePicDisplayBackgroundImage.Size = new System.Drawing.Size(119, 17);
             this.chkDisablePicDisplayBackgroundImage.TabIndex = 90;
             this.chkDisablePicDisplayBackgroundImage.Text = "Disable picDisplay";
             this.toolTip1.SetToolTip(this.chkDisablePicDisplayBackgroundImage, "Disables picDisplay background image on pana/waterfall");
@@ -45955,7 +46041,7 @@
             0,
             0});
             this.udNoiseFloorLineWidth.Name = "udNoiseFloorLineWidth";
-            this.udNoiseFloorLineWidth.Size = new System.Drawing.Size(40, 20);
+            this.udNoiseFloorLineWidth.Size = new System.Drawing.Size(40, 22);
             this.udNoiseFloorLineWidth.TabIndex = 95;
             this.udNoiseFloorLineWidth.TinyStep = false;
             this.udNoiseFloorLineWidth.Value = new decimal(new int[] {
@@ -46144,7 +46230,7 @@
             this.chkShowTXFilterOnRXWaterfall.Image = null;
             this.chkShowTXFilterOnRXWaterfall.Location = new System.Drawing.Point(6, 65);
             this.chkShowTXFilterOnRXWaterfall.Name = "chkShowTXFilterOnRXWaterfall";
-            this.chkShowTXFilterOnRXWaterfall.Size = new System.Drawing.Size(95, 17);
+            this.chkShowTXFilterOnRXWaterfall.Size = new System.Drawing.Size(99, 17);
             this.chkShowTXFilterOnRXWaterfall.TabIndex = 2;
             this.chkShowTXFilterOnRXWaterfall.Text = "Show TX Filter";
             this.chkShowTXFilterOnRXWaterfall.UseVisualStyleBackColor = true;
@@ -46156,7 +46242,7 @@
             this.chkShowRXZeroLineOnWaterfall.Image = null;
             this.chkShowRXZeroLineOnWaterfall.Location = new System.Drawing.Point(6, 42);
             this.chkShowRXZeroLineOnWaterfall.Name = "chkShowRXZeroLineOnWaterfall";
-            this.chkShowRXZeroLineOnWaterfall.Size = new System.Drawing.Size(101, 17);
+            this.chkShowRXZeroLineOnWaterfall.Size = new System.Drawing.Size(105, 17);
             this.chkShowRXZeroLineOnWaterfall.TabIndex = 1;
             this.chkShowRXZeroLineOnWaterfall.Text = "Show Zero Line";
             this.chkShowRXZeroLineOnWaterfall.UseVisualStyleBackColor = true;
@@ -46168,7 +46254,7 @@
             this.chkShowRXFilterOnWaterfall.Image = null;
             this.chkShowRXFilterOnWaterfall.Location = new System.Drawing.Point(6, 19);
             this.chkShowRXFilterOnWaterfall.Name = "chkShowRXFilterOnWaterfall";
-            this.chkShowRXFilterOnWaterfall.Size = new System.Drawing.Size(78, 17);
+            this.chkShowRXFilterOnWaterfall.Size = new System.Drawing.Size(84, 17);
             this.chkShowRXFilterOnWaterfall.TabIndex = 0;
             this.chkShowRXFilterOnWaterfall.Text = "Show Filter";
             this.chkShowRXFilterOnWaterfall.UseVisualStyleBackColor = true;
@@ -46550,7 +46636,7 @@
             this.chkShowZeroLine.Image = null;
             this.chkShowZeroLine.Location = new System.Drawing.Point(23, 363);
             this.chkShowZeroLine.Name = "chkShowZeroLine";
-            this.chkShowZeroLine.Size = new System.Drawing.Size(101, 17);
+            this.chkShowZeroLine.Size = new System.Drawing.Size(105, 17);
             this.chkShowZeroLine.TabIndex = 84;
             this.chkShowZeroLine.Text = "Show Zero Line";
             this.chkShowZeroLine.UseVisualStyleBackColor = true;
@@ -46682,7 +46768,7 @@
             0,
             0});
             this.udDisplayLineWidth.Name = "udDisplayLineWidth";
-            this.udDisplayLineWidth.Size = new System.Drawing.Size(40, 20);
+            this.udDisplayLineWidth.Size = new System.Drawing.Size(40, 22);
             this.udDisplayLineWidth.TabIndex = 42;
             this.udDisplayLineWidth.TinyStep = false;
             this.udDisplayLineWidth.Value = new decimal(new int[] {
@@ -47308,7 +47394,7 @@
             this.labelTS177.Image = null;
             this.labelTS177.Location = new System.Drawing.Point(65, 64);
             this.labelTS177.Name = "labelTS177";
-            this.labelTS177.Size = new System.Drawing.Size(32, 13);
+            this.labelTS177.Size = new System.Drawing.Size(34, 13);
             this.labelTS177.TabIndex = 129;
             this.labelTS177.Text = "Titles";
             // 
@@ -47318,7 +47404,7 @@
             this.labelTS176.Image = null;
             this.labelTS176.Location = new System.Drawing.Point(31, 35);
             this.labelTS176.Name = "labelTS176";
-            this.labelTS176.Size = new System.Drawing.Size(68, 13);
+            this.labelTS176.Size = new System.Drawing.Size(72, 13);
             this.labelTS176.TabIndex = 128;
             this.labelTS176.Text = "Background:";
             // 
@@ -47343,7 +47429,7 @@
             this.labelTS175.Image = null;
             this.labelTS175.Location = new System.Drawing.Point(40, 93);
             this.labelTS175.Name = "labelTS175";
-            this.labelTS175.Size = new System.Drawing.Size(60, 13);
+            this.labelTS175.Size = new System.Drawing.Size(63, 13);
             this.labelTS175.TabIndex = 126;
             this.labelTS175.Text = "Frequency:";
             // 
@@ -47368,7 +47454,7 @@
             this.labelTS174.Image = null;
             this.labelTS174.Location = new System.Drawing.Point(69, 264);
             this.labelTS174.Name = "labelTS174";
-            this.labelTS174.Size = new System.Drawing.Size(35, 13);
+            this.labelTS174.Size = new System.Drawing.Size(36, 13);
             this.labelTS174.TabIndex = 124;
             this.labelTS174.Text = "Band:";
             // 
@@ -47393,7 +47479,7 @@
             this.labelTS173.Image = null;
             this.labelTS173.Location = new System.Drawing.Point(69, 235);
             this.labelTS173.Name = "labelTS173";
-            this.labelTS173.Size = new System.Drawing.Size(32, 13);
+            this.labelTS173.Size = new System.Drawing.Size(36, 13);
             this.labelTS173.TabIndex = 122;
             this.labelTS173.Text = "Filter:";
             // 
@@ -47418,7 +47504,7 @@
             this.labelTS172.Image = null;
             this.labelTS172.Location = new System.Drawing.Point(73, 205);
             this.labelTS172.Name = "labelTS172";
-            this.labelTS172.Size = new System.Drawing.Size(24, 13);
+            this.labelTS172.Size = new System.Drawing.Size(22, 13);
             this.labelTS172.TabIndex = 120;
             this.labelTS172.Text = "TX:";
             // 
@@ -47443,7 +47529,7 @@
             this.labelTS171.Image = null;
             this.labelTS171.Location = new System.Drawing.Point(73, 176);
             this.labelTS171.Name = "labelTS171";
-            this.labelTS171.Size = new System.Drawing.Size(25, 13);
+            this.labelTS171.Size = new System.Drawing.Size(23, 13);
             this.labelTS171.TabIndex = 118;
             this.labelTS171.Text = "RX:";
             // 
@@ -47468,7 +47554,7 @@
             this.labelTS170.Image = null;
             this.labelTS170.Location = new System.Drawing.Point(169, 147);
             this.labelTS170.Name = "labelTS170";
-            this.labelTS170.Size = new System.Drawing.Size(30, 13);
+            this.labelTS170.Size = new System.Drawing.Size(33, 13);
             this.labelTS170.TabIndex = 116;
             this.labelTS170.Text = "Split:";
             // 
@@ -47493,7 +47579,7 @@
             this.labelTS163.Image = null;
             this.labelTS163.Location = new System.Drawing.Point(44, 147);
             this.labelTS163.Name = "labelTS163";
-            this.labelTS163.Size = new System.Drawing.Size(58, 13);
+            this.labelTS163.Size = new System.Drawing.Size(59, 13);
             this.labelTS163.TabIndex = 114;
             this.labelTS163.Text = "Split Back:";
             // 
@@ -47518,7 +47604,7 @@
             this.labelTS166.Image = null;
             this.labelTS166.Location = new System.Drawing.Point(66, 123);
             this.labelTS166.Name = "labelTS166";
-            this.labelTS166.Size = new System.Drawing.Size(37, 13);
+            this.labelTS166.Size = new System.Drawing.Size(40, 13);
             this.labelTS166.TabIndex = 112;
             this.labelTS166.Text = "Mode:";
             // 
@@ -47578,7 +47664,7 @@
             this.lblMMClockBackground.Image = null;
             this.lblMMClockBackground.Location = new System.Drawing.Point(32, 58);
             this.lblMMClockBackground.Name = "lblMMClockBackground";
-            this.lblMMClockBackground.Size = new System.Drawing.Size(68, 13);
+            this.lblMMClockBackground.Size = new System.Drawing.Size(72, 13);
             this.lblMMClockBackground.TabIndex = 116;
             this.lblMMClockBackground.Text = "Background:";
             // 
@@ -47603,7 +47689,7 @@
             this.labelTS164.Image = null;
             this.labelTS164.Location = new System.Drawing.Point(66, 147);
             this.labelTS164.Name = "labelTS164";
-            this.labelTS164.Size = new System.Drawing.Size(33, 13);
+            this.labelTS164.Size = new System.Drawing.Size(34, 13);
             this.labelTS164.TabIndex = 114;
             this.labelTS164.Text = "Date:";
             // 
@@ -47628,7 +47714,7 @@
             this.labelTS162.Image = null;
             this.labelTS162.Location = new System.Drawing.Point(66, 123);
             this.labelTS162.Name = "labelTS162";
-            this.labelTS162.Size = new System.Drawing.Size(33, 13);
+            this.labelTS162.Size = new System.Drawing.Size(34, 13);
             this.labelTS162.TabIndex = 112;
             this.labelTS162.Text = "Time:";
             // 
@@ -47668,7 +47754,7 @@
             this.chkMMClockTitle.Image = null;
             this.chkMMClockTitle.Location = new System.Drawing.Point(24, 89);
             this.chkMMClockTitle.Name = "chkMMClockTitle";
-            this.chkMMClockTitle.Size = new System.Drawing.Size(76, 17);
+            this.chkMMClockTitle.Size = new System.Drawing.Size(81, 17);
             this.chkMMClockTitle.TabIndex = 109;
             this.chkMMClockTitle.Text = "Meter Title";
             this.toolTip1.SetToolTip(this.chkMMClockTitle, "Show meter title");
@@ -47681,7 +47767,7 @@
             this.radMM24Clock.Image = null;
             this.radMM24Clock.Location = new System.Drawing.Point(192, 67);
             this.radMM24Clock.Name = "radMM24Clock";
-            this.radMM24Clock.Size = new System.Drawing.Size(49, 17);
+            this.radMM24Clock.Size = new System.Drawing.Size(51, 17);
             this.radMM24Clock.TabIndex = 1;
             this.radMM24Clock.TabStop = true;
             this.radMM24Clock.Text = "24 hr";
@@ -47695,7 +47781,7 @@
             this.radMM12Clock.Image = null;
             this.radMM12Clock.Location = new System.Drawing.Point(192, 48);
             this.radMM12Clock.Name = "radMM12Clock";
-            this.radMM12Clock.Size = new System.Drawing.Size(49, 17);
+            this.radMM12Clock.Size = new System.Drawing.Size(51, 17);
             this.radMM12Clock.TabIndex = 0;
             this.radMM12Clock.TabStop = true;
             this.radMM12Clock.Text = "12 hr";
@@ -47709,7 +47795,7 @@
             this.lblMMContainerBackground.Image = null;
             this.lblMMContainerBackground.Location = new System.Drawing.Point(170, 61);
             this.lblMMContainerBackground.Name = "lblMMContainerBackground";
-            this.lblMMContainerBackground.Size = new System.Drawing.Size(41, 13);
+            this.lblMMContainerBackground.Size = new System.Drawing.Size(40, 13);
             this.lblMMContainerBackground.TabIndex = 99;
             this.lblMMContainerBackground.Text = "Backg:";
             // 
@@ -47734,7 +47820,7 @@
             this.chkContainerBorder.Location = new System.Drawing.Point(100, 83);
             this.chkContainerBorder.Name = "chkContainerBorder";
             this.chkContainerBorder.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.chkContainerBorder.Size = new System.Drawing.Size(57, 17);
+            this.chkContainerBorder.Size = new System.Drawing.Size(60, 17);
             this.chkContainerBorder.TabIndex = 97;
             this.chkContainerBorder.Text = "Border";
             this.toolTip1.SetToolTip(this.chkContainerBorder, "Container has a border");
@@ -47819,7 +47905,7 @@
             0,
             0});
             this.nudMeterItemIgnoreHistoryDuration.Name = "nudMeterItemIgnoreHistoryDuration";
-            this.nudMeterItemIgnoreHistoryDuration.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemIgnoreHistoryDuration.Size = new System.Drawing.Size(56, 22);
             this.nudMeterItemIgnoreHistoryDuration.TabIndex = 127;
             this.nudMeterItemIgnoreHistoryDuration.TinyStep = false;
             this.toolTip1.SetToolTip(this.nudMeterItemIgnoreHistoryDuration, "When rx/tx transition or band change let meters settle before gathering history/p" +
@@ -47875,7 +47961,7 @@
             0,
             131072});
             this.nudMeterItemEyeBezelScale.Name = "nudMeterItemEyeBezelScale";
-            this.nudMeterItemEyeBezelScale.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemEyeBezelScale.Size = new System.Drawing.Size(56, 22);
             this.nudMeterItemEyeBezelScale.TabIndex = 124;
             this.nudMeterItemEyeBezelScale.TinyStep = false;
             this.toolTip1.SetToolTip(this.nudMeterItemEyeBezelScale, "Size of the eye bezel, 1.0 is full width of container");
@@ -47902,7 +47988,7 @@
             this.chkMeterItemShowSubIndicator.Image = null;
             this.chkMeterItemShowSubIndicator.Location = new System.Drawing.Point(264, 108);
             this.chkMeterItemShowSubIndicator.Name = "chkMeterItemShowSubIndicator";
-            this.chkMeterItemShowSubIndicator.Size = new System.Drawing.Size(53, 17);
+            this.chkMeterItemShowSubIndicator.Size = new System.Drawing.Size(55, 17);
             this.chkMeterItemShowSubIndicator.TabIndex = 122;
             this.chkMeterItemShowSubIndicator.Text = "Show";
             this.toolTip1.SetToolTip(this.chkMeterItemShowSubIndicator, "Show sub indicators");
@@ -47915,7 +48001,7 @@
             this.lblMMIndicatorSub.Image = null;
             this.lblMMIndicatorSub.Location = new System.Drawing.Point(182, 109);
             this.lblMMIndicatorSub.Name = "lblMMIndicatorSub";
-            this.lblMMIndicatorSub.Size = new System.Drawing.Size(40, 13);
+            this.lblMMIndicatorSub.Size = new System.Drawing.Size(41, 13);
             this.lblMMIndicatorSub.TabIndex = 121;
             this.lblMMIndicatorSub.Text = "Sub(s):";
             // 
@@ -47940,7 +48026,7 @@
             this.chkMeterItemShowIndicator.Image = null;
             this.chkMeterItemShowIndicator.Location = new System.Drawing.Point(128, 107);
             this.chkMeterItemShowIndicator.Name = "chkMeterItemShowIndicator";
-            this.chkMeterItemShowIndicator.Size = new System.Drawing.Size(53, 17);
+            this.chkMeterItemShowIndicator.Size = new System.Drawing.Size(55, 17);
             this.chkMeterItemShowIndicator.TabIndex = 119;
             this.chkMeterItemShowIndicator.Text = "Show";
             this.toolTip1.SetToolTip(this.chkMeterItemShowIndicator, "Show the indicator line on horizontal bar meters");
@@ -47953,7 +48039,7 @@
             this.lblMMsegSolHigh.Image = null;
             this.lblMMsegSolHigh.Location = new System.Drawing.Point(145, 212);
             this.lblMMsegSolHigh.Name = "lblMMsegSolHigh";
-            this.lblMMsegSolHigh.Size = new System.Drawing.Size(27, 13);
+            this.lblMMsegSolHigh.Size = new System.Drawing.Size(31, 13);
             this.lblMMsegSolHigh.TabIndex = 118;
             this.lblMMsegSolHigh.Text = "high";
             // 
@@ -47963,7 +48049,7 @@
             this.lblMMsegSolLow.Image = null;
             this.lblMMsegSolLow.Location = new System.Drawing.Point(104, 212);
             this.lblMMsegSolLow.Name = "lblMMsegSolLow";
-            this.lblMMsegSolLow.Size = new System.Drawing.Size(23, 13);
+            this.lblMMsegSolLow.Size = new System.Drawing.Size(26, 13);
             this.lblMMsegSolLow.TabIndex = 117;
             this.lblMMsegSolLow.Text = "low";
             // 
@@ -47988,7 +48074,7 @@
             this.chkMeterItemSolid.Image = null;
             this.chkMeterItemSolid.Location = new System.Drawing.Point(18, 236);
             this.chkMeterItemSolid.Name = "chkMeterItemSolid";
-            this.chkMeterItemSolid.Size = new System.Drawing.Size(49, 17);
+            this.chkMeterItemSolid.Size = new System.Drawing.Size(52, 17);
             this.chkMeterItemSolid.TabIndex = 115;
             this.chkMeterItemSolid.Text = "Solid";
             this.toolTip1.SetToolTip(this.chkMeterItemSolid, "Solid bar");
@@ -48015,7 +48101,7 @@
             0,
             65536});
             this.nudMeterItemsPowerLimit.Name = "nudMeterItemsPowerLimit";
-            this.nudMeterItemsPowerLimit.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemsPowerLimit.Size = new System.Drawing.Size(56, 22);
             this.nudMeterItemsPowerLimit.TabIndex = 114;
             this.nudMeterItemsPowerLimit.TinyStep = false;
             this.toolTip1.SetToolTip(this.nudMeterItemsPowerLimit, "Power limit of scale");
@@ -48042,7 +48128,7 @@
             this.chkMeterItemDarkMode.Image = null;
             this.chkMeterItemDarkMode.Location = new System.Drawing.Point(197, 310);
             this.chkMeterItemDarkMode.Name = "chkMeterItemDarkMode";
-            this.chkMeterItemDarkMode.Size = new System.Drawing.Size(79, 17);
+            this.chkMeterItemDarkMode.Size = new System.Drawing.Size(83, 17);
             this.chkMeterItemDarkMode.TabIndex = 112;
             this.chkMeterItemDarkMode.Text = "Dark Mode";
             this.chkMeterItemDarkMode.UseVisualStyleBackColor = true;
@@ -48054,7 +48140,7 @@
             this.chkMeterItemSignalAverage.Image = null;
             this.chkMeterItemSignalAverage.Location = new System.Drawing.Point(197, 287);
             this.chkMeterItemSignalAverage.Name = "chkMeterItemSignalAverage";
-            this.chkMeterItemSignalAverage.Size = new System.Drawing.Size(98, 17);
+            this.chkMeterItemSignalAverage.Size = new System.Drawing.Size(102, 17);
             this.chkMeterItemSignalAverage.TabIndex = 111;
             this.chkMeterItemSignalAverage.Text = "Signal Average";
             this.toolTip1.SetToolTip(this.chkMeterItemSignalAverage, "Use sig average instead of sig");
@@ -48081,7 +48167,7 @@
             0,
             131072});
             this.nudMeterItemEyeScale.Name = "nudMeterItemEyeScale";
-            this.nudMeterItemEyeScale.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemEyeScale.Size = new System.Drawing.Size(56, 22);
             this.nudMeterItemEyeScale.TabIndex = 110;
             this.nudMeterItemEyeScale.TinyStep = false;
             this.toolTip1.SetToolTip(this.nudMeterItemEyeScale, "Size of the eye, 1.0 is full width of container");
@@ -48167,7 +48253,7 @@
             0,
             0});
             this.nudMeterItemDecayRate.Name = "nudMeterItemDecayRate";
-            this.nudMeterItemDecayRate.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemDecayRate.Size = new System.Drawing.Size(56, 22);
             this.nudMeterItemDecayRate.TabIndex = 105;
             this.nudMeterItemDecayRate.TinyStep = false;
             this.toolTip1.SetToolTip(this.nudMeterItemDecayRate, "The \'speed of fall\' to the new value if below current");
@@ -48208,7 +48294,7 @@
             0,
             0});
             this.nudMeterItemAttackRate.Name = "nudMeterItemAttackRate";
-            this.nudMeterItemAttackRate.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemAttackRate.Size = new System.Drawing.Size(56, 22);
             this.nudMeterItemAttackRate.TabIndex = 103;
             this.nudMeterItemAttackRate.TinyStep = false;
             this.toolTip1.SetToolTip(this.nudMeterItemAttackRate, "The \'speed of rise\' to the new value if above current");
@@ -48248,7 +48334,7 @@
             0,
             0});
             this.nudMeterItemUpdateRate.Name = "nudMeterItemUpdateRate";
-            this.nudMeterItemUpdateRate.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemUpdateRate.Size = new System.Drawing.Size(56, 22);
             this.nudMeterItemUpdateRate.TabIndex = 101;
             this.nudMeterItemUpdateRate.TinyStep = false;
             this.toolTip1.SetToolTip(this.nudMeterItemUpdateRate, "Reading update and is related to screen update");
@@ -48300,7 +48386,7 @@
             0,
             0});
             this.nudMeterItemHistoryDuration.Name = "nudMeterItemHistoryDuration";
-            this.nudMeterItemHistoryDuration.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemHistoryDuration.Size = new System.Drawing.Size(56, 22);
             this.nudMeterItemHistoryDuration.TabIndex = 98;
             this.nudMeterItemHistoryDuration.TinyStep = false;
             this.toolTip1.SetToolTip(this.nudMeterItemHistoryDuration, "History duration for history display and peak hold");
@@ -48340,7 +48426,7 @@
             this.chkMeterItemTitle.Image = null;
             this.chkMeterItemTitle.Location = new System.Drawing.Point(18, 259);
             this.chkMeterItemTitle.Name = "chkMeterItemTitle";
-            this.chkMeterItemTitle.Size = new System.Drawing.Size(76, 17);
+            this.chkMeterItemTitle.Size = new System.Drawing.Size(81, 17);
             this.chkMeterItemTitle.TabIndex = 95;
             this.chkMeterItemTitle.Text = "Meter Title";
             this.toolTip1.SetToolTip(this.chkMeterItemTitle, "Show meter title");
@@ -48353,7 +48439,7 @@
             this.chkMeterItemSegmented.Image = null;
             this.chkMeterItemSegmented.Location = new System.Drawing.Point(18, 217);
             this.chkMeterItemSegmented.Name = "chkMeterItemSegmented";
-            this.chkMeterItemSegmented.Size = new System.Drawing.Size(80, 17);
+            this.chkMeterItemSegmented.Size = new System.Drawing.Size(84, 17);
             this.chkMeterItemSegmented.TabIndex = 94;
             this.chkMeterItemSegmented.Text = "Segmented";
             this.toolTip1.SetToolTip(this.chkMeterItemSegmented, "Segmented bar");
@@ -48366,7 +48452,7 @@
             this.lblMMBackground.Image = null;
             this.lblMMBackground.Location = new System.Drawing.Point(194, 22);
             this.lblMMBackground.Name = "lblMMBackground";
-            this.lblMMBackground.Size = new System.Drawing.Size(68, 13);
+            this.lblMMBackground.Size = new System.Drawing.Size(72, 13);
             this.lblMMBackground.TabIndex = 93;
             this.lblMMBackground.Text = "Background:";
             // 
@@ -48419,7 +48505,7 @@
             this.lblMMIndicator.Image = null;
             this.lblMMIndicator.Location = new System.Drawing.Point(26, 108);
             this.lblMMIndicator.Name = "lblMMIndicator";
-            this.lblMMIndicator.Size = new System.Drawing.Size(51, 13);
+            this.lblMMIndicator.Size = new System.Drawing.Size(56, 13);
             this.lblMMIndicator.TabIndex = 81;
             this.lblMMIndicator.Text = "Indicator:";
             // 
@@ -48444,7 +48530,7 @@
             this.lblMMHigh.Image = null;
             this.lblMMHigh.Location = new System.Drawing.Point(126, 79);
             this.lblMMHigh.Name = "lblMMHigh";
-            this.lblMMHigh.Size = new System.Drawing.Size(32, 13);
+            this.lblMMHigh.Size = new System.Drawing.Size(35, 13);
             this.lblMMHigh.TabIndex = 79;
             this.lblMMHigh.Text = "High:";
             // 
@@ -48454,7 +48540,7 @@
             this.lblMMLow.Image = null;
             this.lblMMLow.Location = new System.Drawing.Point(47, 79);
             this.lblMMLow.Name = "lblMMLow";
-            this.lblMMLow.Size = new System.Drawing.Size(30, 13);
+            this.lblMMLow.Size = new System.Drawing.Size(31, 13);
             this.lblMMLow.TabIndex = 78;
             this.lblMMLow.Text = "Low:";
             // 
@@ -48492,7 +48578,7 @@
             this.chkMeterItemShadow.Image = null;
             this.chkMeterItemShadow.Location = new System.Drawing.Point(18, 194);
             this.chkMeterItemShadow.Name = "chkMeterItemShadow";
-            this.chkMeterItemShadow.Size = new System.Drawing.Size(65, 17);
+            this.chkMeterItemShadow.Size = new System.Drawing.Size(68, 17);
             this.chkMeterItemShadow.TabIndex = 4;
             this.chkMeterItemShadow.Text = "Shadow";
             this.toolTip1.SetToolTip(this.chkMeterItemShadow, "Show shadow on needles");
@@ -48505,7 +48591,7 @@
             this.chkMeterItemPeakHold.Image = null;
             this.chkMeterItemPeakHold.Location = new System.Drawing.Point(197, 236);
             this.chkMeterItemPeakHold.Name = "chkMeterItemPeakHold";
-            this.chkMeterItemPeakHold.Size = new System.Drawing.Size(106, 17);
+            this.chkMeterItemPeakHold.Size = new System.Drawing.Size(110, 17);
             this.chkMeterItemPeakHold.TabIndex = 3;
             this.chkMeterItemPeakHold.Text = "Show Peak Hold";
             this.chkMeterItemPeakHold.UseVisualStyleBackColor = true;
@@ -48517,7 +48603,7 @@
             this.chkMeterItemHistory.Image = null;
             this.chkMeterItemHistory.Location = new System.Drawing.Point(197, 189);
             this.chkMeterItemHistory.Name = "chkMeterItemHistory";
-            this.chkMeterItemHistory.Size = new System.Drawing.Size(88, 17);
+            this.chkMeterItemHistory.Size = new System.Drawing.Size(94, 17);
             this.chkMeterItemHistory.TabIndex = 2;
             this.chkMeterItemHistory.Text = "Show History";
             this.chkMeterItemHistory.UseVisualStyleBackColor = true;
@@ -48529,7 +48615,7 @@
             this.chkMeterItemFadeOnTx.Image = null;
             this.chkMeterItemFadeOnTx.Location = new System.Drawing.Point(18, 171);
             this.chkMeterItemFadeOnTx.Name = "chkMeterItemFadeOnTx";
-            this.chkMeterItemFadeOnTx.Size = new System.Drawing.Size(82, 17);
+            this.chkMeterItemFadeOnTx.Size = new System.Drawing.Size(83, 17);
             this.chkMeterItemFadeOnTx.TabIndex = 1;
             this.chkMeterItemFadeOnTx.Text = "Fade on TX";
             this.chkMeterItemFadeOnTx.UseVisualStyleBackColor = true;
@@ -48541,7 +48627,7 @@
             this.chkMeterItemFadeOnRx.Image = null;
             this.chkMeterItemFadeOnRx.Location = new System.Drawing.Point(18, 148);
             this.chkMeterItemFadeOnRx.Name = "chkMeterItemFadeOnRx";
-            this.chkMeterItemFadeOnRx.Size = new System.Drawing.Size(83, 17);
+            this.chkMeterItemFadeOnRx.Size = new System.Drawing.Size(84, 17);
             this.chkMeterItemFadeOnRx.TabIndex = 0;
             this.chkMeterItemFadeOnRx.Text = "Fade on RX";
             this.chkMeterItemFadeOnRx.UseVisualStyleBackColor = true;
@@ -48626,7 +48712,7 @@
             this.chkContainerHighlight.Location = new System.Drawing.Point(90, 60);
             this.chkContainerHighlight.Name = "chkContainerHighlight";
             this.chkContainerHighlight.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.chkContainerHighlight.Size = new System.Drawing.Size(67, 17);
+            this.chkContainerHighlight.Size = new System.Drawing.Size(75, 17);
             this.chkContainerHighlight.TabIndex = 89;
             this.chkContainerHighlight.Text = "Highlight";
             this.toolTip1.SetToolTip(this.chkContainerHighlight, "Highlight selected container");
@@ -48713,7 +48799,7 @@
             this.chkShowTXZeroLineOnWaterfall.Image = null;
             this.chkShowTXZeroLineOnWaterfall.Location = new System.Drawing.Point(6, 42);
             this.chkShowTXZeroLineOnWaterfall.Name = "chkShowTXZeroLineOnWaterfall";
-            this.chkShowTXZeroLineOnWaterfall.Size = new System.Drawing.Size(101, 17);
+            this.chkShowTXZeroLineOnWaterfall.Size = new System.Drawing.Size(105, 17);
             this.chkShowTXZeroLineOnWaterfall.TabIndex = 1;
             this.chkShowTXZeroLineOnWaterfall.Text = "Show Zero Line";
             this.chkShowTXZeroLineOnWaterfall.UseVisualStyleBackColor = true;
@@ -48725,7 +48811,7 @@
             this.chkShowTXFilterOnWaterfall.Image = null;
             this.chkShowTXFilterOnWaterfall.Location = new System.Drawing.Point(6, 19);
             this.chkShowTXFilterOnWaterfall.Name = "chkShowTXFilterOnWaterfall";
-            this.chkShowTXFilterOnWaterfall.Size = new System.Drawing.Size(78, 17);
+            this.chkShowTXFilterOnWaterfall.Size = new System.Drawing.Size(84, 17);
             this.chkShowTXFilterOnWaterfall.TabIndex = 0;
             this.chkShowTXFilterOnWaterfall.Text = "Show Filter";
             this.chkShowTXFilterOnWaterfall.UseVisualStyleBackColor = true;
@@ -48834,7 +48920,7 @@
             0,
             65536});
             this.udTXLineWidth.Name = "udTXLineWidth";
-            this.udTXLineWidth.Size = new System.Drawing.Size(40, 20);
+            this.udTXLineWidth.Size = new System.Drawing.Size(40, 22);
             this.udTXLineWidth.TabIndex = 42;
             this.udTXLineWidth.TinyStep = false;
             this.udTXLineWidth.Value = new decimal(new int[] {
@@ -49125,7 +49211,7 @@
             this.txtCollapsedHeight.Location = new System.Drawing.Point(530, 15);
             this.txtCollapsedHeight.MaxLength = 50;
             this.txtCollapsedHeight.Name = "txtCollapsedHeight";
-            this.txtCollapsedHeight.Size = new System.Drawing.Size(37, 20);
+            this.txtCollapsedHeight.Size = new System.Drawing.Size(37, 22);
             this.txtCollapsedHeight.TabIndex = 15;
             this.txtCollapsedHeight.Text = "0";
             this.txtCollapsedHeight.Visible = false;
@@ -49135,7 +49221,7 @@
             this.txtCollapsedWidth.Location = new System.Drawing.Point(487, 15);
             this.txtCollapsedWidth.MaxLength = 50;
             this.txtCollapsedWidth.Name = "txtCollapsedWidth";
-            this.txtCollapsedWidth.Size = new System.Drawing.Size(37, 20);
+            this.txtCollapsedWidth.Size = new System.Drawing.Size(37, 22);
             this.txtCollapsedWidth.TabIndex = 14;
             this.txtCollapsedWidth.Text = "0";
             this.txtCollapsedWidth.Visible = false;
@@ -49160,7 +49246,7 @@
             this.chkShowAndromedaBar.Image = null;
             this.chkShowAndromedaBar.Location = new System.Drawing.Point(6, 111);
             this.chkShowAndromedaBar.Name = "chkShowAndromedaBar";
-            this.chkShowAndromedaBar.Size = new System.Drawing.Size(119, 17);
+            this.chkShowAndromedaBar.Size = new System.Drawing.Size(129, 17);
             this.chkShowAndromedaBar.TabIndex = 16;
             this.chkShowAndromedaBar.Text = "Andromeda Buttons";
             this.chkShowAndromedaBar.UseVisualStyleBackColor = true;
@@ -49172,7 +49258,7 @@
             this.chkShowAndromedaTop.Image = null;
             this.chkShowAndromedaTop.Location = new System.Drawing.Point(6, 88);
             this.chkShowAndromedaTop.Name = "chkShowAndromedaTop";
-            this.chkShowAndromedaTop.Size = new System.Drawing.Size(102, 17);
+            this.chkShowAndromedaTop.Size = new System.Drawing.Size(108, 17);
             this.chkShowAndromedaTop.TabIndex = 15;
             this.chkShowAndromedaTop.Text = "Andromeda Top";
             this.chkShowAndromedaTop.UseVisualStyleBackColor = true;
@@ -49186,7 +49272,7 @@
             this.chkShowModeControls.Image = null;
             this.chkShowModeControls.Location = new System.Drawing.Point(6, 65);
             this.chkShowModeControls.Name = "chkShowModeControls";
-            this.chkShowModeControls.Size = new System.Drawing.Size(94, 17);
+            this.chkShowModeControls.Size = new System.Drawing.Size(103, 17);
             this.chkShowModeControls.TabIndex = 14;
             this.chkShowModeControls.Text = "Mode Controls";
             this.chkShowModeControls.UseVisualStyleBackColor = true;
@@ -49200,7 +49286,7 @@
             this.chkShowBandControls.Image = null;
             this.chkShowBandControls.Location = new System.Drawing.Point(6, 42);
             this.chkShowBandControls.Name = "chkShowBandControls";
-            this.chkShowBandControls.Size = new System.Drawing.Size(92, 17);
+            this.chkShowBandControls.Size = new System.Drawing.Size(99, 17);
             this.chkShowBandControls.TabIndex = 11;
             this.chkShowBandControls.Text = "Band Controls";
             this.chkShowBandControls.UseVisualStyleBackColor = true;
@@ -49214,7 +49300,7 @@
             this.chkShowTopControls.Image = null;
             this.chkShowTopControls.Location = new System.Drawing.Point(6, 19);
             this.chkShowTopControls.Name = "chkShowTopControls";
-            this.chkShowTopControls.Size = new System.Drawing.Size(86, 17);
+            this.chkShowTopControls.Size = new System.Drawing.Size(92, 17);
             this.chkShowTopControls.TabIndex = 10;
             this.chkShowTopControls.Text = "Top Controls";
             this.chkShowTopControls.UseVisualStyleBackColor = true;
@@ -49234,7 +49320,7 @@
             this.tpKeyboard.Controls.Add(this.grpKBCW);
             this.tpKeyboard.Location = new System.Drawing.Point(4, 22);
             this.tpKeyboard.Name = "tpKeyboard";
-            this.tpKeyboard.Size = new System.Drawing.Size(728, 436);
+            this.tpKeyboard.Size = new System.Drawing.Size(728, 468);
             this.tpKeyboard.TabIndex = 4;
             this.tpKeyboard.Text = "Keyboard";
             // 
@@ -49310,7 +49396,7 @@
             this.radSpaceBarLastBtn.Image = null;
             this.radSpaceBarLastBtn.Location = new System.Drawing.Point(6, 20);
             this.radSpaceBarLastBtn.Name = "radSpaceBarLastBtn";
-            this.radSpaceBarLastBtn.Size = new System.Drawing.Size(102, 17);
+            this.radSpaceBarLastBtn.Size = new System.Drawing.Size(105, 17);
             this.radSpaceBarLastBtn.TabIndex = 44;
             this.radSpaceBarLastBtn.Text = "Last Btn Clicked";
             this.toolTip1.SetToolTip(this.radSpaceBarLastBtn, "SpaceBar selects the Last Button Clicked");
@@ -49323,7 +49409,7 @@
             this.radSpaceBarMicMute.Image = null;
             this.radSpaceBarMicMute.Location = new System.Drawing.Point(6, 80);
             this.radSpaceBarMicMute.Name = "radSpaceBarMicMute";
-            this.radSpaceBarMicMute.Size = new System.Drawing.Size(69, 17);
+            this.radSpaceBarMicMute.Size = new System.Drawing.Size(73, 17);
             this.radSpaceBarMicMute.TabIndex = 43;
             this.radSpaceBarMicMute.Text = "Mic Mute";
             this.toolTip1.SetToolTip(this.radSpaceBarMicMute, "SpaceBar Controls Mic Mute");
@@ -49350,7 +49436,7 @@
             this.radSpaceBarPTT.Image = null;
             this.radSpaceBarPTT.Location = new System.Drawing.Point(6, 40);
             this.radSpaceBarPTT.Name = "radSpaceBarPTT";
-            this.radSpaceBarPTT.Size = new System.Drawing.Size(75, 17);
+            this.radSpaceBarPTT.Size = new System.Drawing.Size(72, 17);
             this.radSpaceBarPTT.TabIndex = 41;
             this.radSpaceBarPTT.TabStop = true;
             this.radSpaceBarPTT.Text = "PTT/MOX";
@@ -50015,7 +50101,7 @@
             this.tpCATControl.Controls.Add(this.tcCAT);
             this.tpCATControl.Location = new System.Drawing.Point(4, 22);
             this.tpCATControl.Name = "tpCATControl";
-            this.tpCATControl.Size = new System.Drawing.Size(728, 436);
+            this.tpCATControl.Size = new System.Drawing.Size(728, 468);
             this.tpCATControl.TabIndex = 10;
             this.tpCATControl.Text = "Serial/Network/Midi CAT";
             // 
@@ -50813,7 +50899,7 @@
             this.chkEmulateExpertSDR3Protocol.Image = null;
             this.chkEmulateExpertSDR3Protocol.Location = new System.Drawing.Point(22, 181);
             this.chkEmulateExpertSDR3Protocol.Name = "chkEmulateExpertSDR3Protocol";
-            this.chkEmulateExpertSDR3Protocol.Size = new System.Drawing.Size(167, 17);
+            this.chkEmulateExpertSDR3Protocol.Size = new System.Drawing.Size(176, 17);
             this.chkEmulateExpertSDR3Protocol.TabIndex = 72;
             this.chkEmulateExpertSDR3Protocol.Text = "Emulate ExpertSDR3 protocol";
             this.toolTip1.SetToolTip(this.chkEmulateExpertSDR3Protocol, "Causes the TCI protocol message to send \'ExpertSDR3\' instead of \'Thetis\'");
@@ -50826,7 +50912,7 @@
             this.chkEmulateSunSDR2Pro.Image = null;
             this.chkEmulateSunSDR2Pro.Location = new System.Drawing.Point(22, 204);
             this.chkEmulateSunSDR2Pro.Name = "chkEmulateSunSDR2Pro";
-            this.chkEmulateSunSDR2Pro.Size = new System.Drawing.Size(166, 17);
+            this.chkEmulateSunSDR2Pro.Size = new System.Drawing.Size(169, 17);
             this.chkEmulateSunSDR2Pro.TabIndex = 71;
             this.chkEmulateSunSDR2Pro.Text = "Emulate SunSDR2Pro device";
             this.toolTip1.SetToolTip(this.chkEmulateSunSDR2Pro, "Causes the TCI device message to send \'SunSDR2PRO\' instead of Anan model");
@@ -50864,7 +50950,7 @@
             this.chkCWLUbecomesCW.Image = null;
             this.chkCWLUbecomesCW.Location = new System.Drawing.Point(22, 158);
             this.chkCWLUbecomesCW.Name = "chkCWLUbecomesCW";
-            this.chkCWLUbecomesCW.Size = new System.Drawing.Size(172, 17);
+            this.chkCWLUbecomesCW.Size = new System.Drawing.Size(175, 17);
             this.chkCWLUbecomesCW.TabIndex = 68;
             this.chkCWLUbecomesCW.Text = "CWL/CWU becomes CW (out)";
             this.toolTip1.SetToolTip(this.chkCWLUbecomesCW, "CWL or CWU converts into CW in the outbound mode message");
@@ -50889,7 +50975,7 @@
             // 
             this.txtOwnCallsign.Location = new System.Drawing.Point(206, 304);
             this.txtOwnCallsign.Name = "txtOwnCallsign";
-            this.txtOwnCallsign.Size = new System.Drawing.Size(100, 20);
+            this.txtOwnCallsign.Size = new System.Drawing.Size(100, 22);
             this.txtOwnCallsign.TabIndex = 28;
             this.toolTip1.SetToolTip(this.txtOwnCallsign, "Your callsign");
             this.txtOwnCallsign.TextChanged += new System.EventHandler(this.txtOwnCallsign_TextChanged);
@@ -50900,7 +50986,7 @@
             this.chkSpotOwnCallAppearance.Image = null;
             this.chkSpotOwnCallAppearance.Location = new System.Drawing.Point(72, 306);
             this.chkSpotOwnCallAppearance.Name = "chkSpotOwnCallAppearance";
-            this.chkSpotOwnCallAppearance.Size = new System.Drawing.Size(129, 17);
+            this.chkSpotOwnCallAppearance.Size = new System.Drawing.Size(137, 17);
             this.chkSpotOwnCallAppearance.TabIndex = 27;
             this.chkSpotOwnCallAppearance.Text = "Own Call Appearance";
             this.toolTip1.SetToolTip(this.chkSpotOwnCallAppearance, "Change the colour of your callsign if it appears as a spot");
@@ -50913,7 +50999,7 @@
             this.chkShowTCISpots.Image = null;
             this.chkShowTCISpots.Location = new System.Drawing.Point(22, 227);
             this.chkShowTCISpots.Name = "chkShowTCISpots";
-            this.chkShowTCISpots.Size = new System.Drawing.Size(103, 17);
+            this.chkShowTCISpots.Size = new System.Drawing.Size(105, 17);
             this.chkShowTCISpots.TabIndex = 26;
             this.chkShowTCISpots.Text = "Show TCI Spots";
             this.toolTip1.SetToolTip(this.chkShowTCISpots, "Show spots that are sent via TCI");
@@ -50926,7 +51012,7 @@
             this.labelTS615.Image = null;
             this.labelTS615.Location = new System.Drawing.Point(181, 280);
             this.labelTS615.Name = "labelTS615";
-            this.labelTS615.Size = new System.Drawing.Size(28, 13);
+            this.labelTS615.Size = new System.Drawing.Size(31, 13);
             this.labelTS615.TabIndex = 25;
             this.labelTS615.Text = "mins";
             // 
@@ -50949,7 +51035,7 @@
             0,
             0});
             this.udTCISpotLifetime.Name = "udTCISpotLifetime";
-            this.udTCISpotLifetime.Size = new System.Drawing.Size(58, 20);
+            this.udTCISpotLifetime.Size = new System.Drawing.Size(58, 22);
             this.udTCISpotLifetime.TabIndex = 24;
             this.udTCISpotLifetime.TinyStep = false;
             this.udTCISpotLifetime.Value = new decimal(new int[] {
@@ -50978,7 +51064,7 @@
             0,
             0});
             this.udMaxTCISpots.Name = "udMaxTCISpots";
-            this.udMaxTCISpots.Size = new System.Drawing.Size(58, 20);
+            this.udMaxTCISpots.Size = new System.Drawing.Size(58, 22);
             this.udMaxTCISpots.TabIndex = 23;
             this.udMaxTCISpots.TinyStep = false;
             this.udMaxTCISpots.Value = new decimal(new int[] {
@@ -50994,7 +51080,7 @@
             this.labelTS614.Image = null;
             this.labelTS614.Location = new System.Drawing.Point(37, 280);
             this.labelTS614.Name = "labelTS614";
-            this.labelTS614.Size = new System.Drawing.Size(74, 13);
+            this.labelTS614.Size = new System.Drawing.Size(80, 13);
             this.labelTS614.TabIndex = 22;
             this.labelTS614.Text = "Spot Lifetime :";
             // 
@@ -51004,7 +51090,7 @@
             this.labelTS613.Image = null;
             this.labelTS613.Location = new System.Drawing.Point(48, 254);
             this.labelTS613.Name = "labelTS613";
-            this.labelTS613.Size = new System.Drawing.Size(63, 13);
+            this.labelTS613.Size = new System.Drawing.Size(66, 13);
             this.labelTS613.TabIndex = 21;
             this.labelTS613.Text = "Max Spots :";
             // 
@@ -51014,7 +51100,7 @@
             this.chkTCIsendInitialStateOnConnect.Image = null;
             this.chkTCIsendInitialStateOnConnect.Location = new System.Drawing.Point(22, 91);
             this.chkTCIsendInitialStateOnConnect.Name = "chkTCIsendInitialStateOnConnect";
-            this.chkTCIsendInitialStateOnConnect.Size = new System.Drawing.Size(208, 17);
+            this.chkTCIsendInitialStateOnConnect.Size = new System.Drawing.Size(225, 17);
             this.chkTCIsendInitialStateOnConnect.TabIndex = 20;
             this.chkTCIsendInitialStateOnConnect.Text = "Send initial VFO state on connect (out)";
             this.toolTip1.SetToolTip(this.chkTCIsendInitialStateOnConnect, "Send initial VFO state on connect");
@@ -51027,7 +51113,7 @@
             this.chkUseRX1vfoaForRX2vfoa.Image = null;
             this.chkUseRX1vfoaForRX2vfoa.Location = new System.Drawing.Point(22, 114);
             this.chkUseRX1vfoaForRX2vfoa.Name = "chkUseRX1vfoaForRX2vfoa";
-            this.chkUseRX1vfoaForRX2vfoa.Size = new System.Drawing.Size(206, 17);
+            this.chkUseRX1vfoaForRX2vfoa.Size = new System.Drawing.Size(214, 17);
             this.chkUseRX1vfoaForRX2vfoa.TabIndex = 19;
             this.chkUseRX1vfoaForRX2vfoa.Text = "Use RX1 VFOa for RX2 VFOa (in+out)";
             this.toolTip1.SetToolTip(this.chkUseRX1vfoaForRX2vfoa, "Thetis does not have VFOa for RX2. Use RX1 VFOa for RX2 VFOa");
@@ -51040,7 +51126,7 @@
             this.chkCopyRX2VFObToVFOa.Image = null;
             this.chkCopyRX2VFObToVFOa.Location = new System.Drawing.Point(22, 135);
             this.chkCopyRX2VFObToVFOa.Name = "chkCopyRX2VFObToVFOa";
-            this.chkCopyRX2VFObToVFOa.Size = new System.Drawing.Size(215, 17);
+            this.chkCopyRX2VFObToVFOa.Size = new System.Drawing.Size(223, 17);
             this.chkCopyRX2VFObToVFOa.TabIndex = 18;
             this.chkCopyRX2VFObToVFOa.Text = "Duplicate RX2 VFOb to RX2 VFOa (out)";
             this.toolTip1.SetToolTip(this.chkCopyRX2VFObToVFOa, "Thetis does not have VFOa for RX2. This option will duplicate vfob to vfoa");
@@ -51053,7 +51139,7 @@
             this.labelTS611.Image = null;
             this.labelTS611.Location = new System.Drawing.Point(9, 61);
             this.labelTS611.Name = "labelTS611";
-            this.labelTS611.Size = new System.Drawing.Size(76, 13);
+            this.labelTS611.Size = new System.Drawing.Size(80, 13);
             this.labelTS611.TabIndex = 17;
             this.labelTS611.Text = "Rate Limit (ms)";
             // 
@@ -51076,7 +51162,7 @@
             0,
             0});
             this.udTCIRateLimit.Name = "udTCIRateLimit";
-            this.udTCIRateLimit.Size = new System.Drawing.Size(62, 20);
+            this.udTCIRateLimit.Size = new System.Drawing.Size(62, 22);
             this.udTCIRateLimit.TabIndex = 16;
             this.udTCIRateLimit.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTCIRateLimit, "The maximum rate VFO/IF/DDS messages can be sent to clients");
@@ -51106,7 +51192,7 @@
             this.labelTS612.Image = null;
             this.labelTS612.Location = new System.Drawing.Point(19, 36);
             this.labelTS612.Name = "labelTS612";
-            this.labelTS612.Size = new System.Drawing.Size(63, 13);
+            this.labelTS612.Size = new System.Drawing.Size(66, 13);
             this.labelTS612.TabIndex = 14;
             this.labelTS612.Text = "Bind IP:Port";
             // 
@@ -51141,7 +51227,7 @@
             // 
             this.txtTCIServerBindIPPort.Location = new System.Drawing.Point(91, 33);
             this.txtTCIServerBindIPPort.Name = "txtTCIServerBindIPPort";
-            this.txtTCIServerBindIPPort.Size = new System.Drawing.Size(122, 20);
+            this.txtTCIServerBindIPPort.Size = new System.Drawing.Size(122, 22);
             this.txtTCIServerBindIPPort.TabIndex = 11;
             this.txtTCIServerBindIPPort.Text = "127.0.0.1:50001";
             this.toolTip1.SetToolTip(this.txtTCIServerBindIPPort, "The bind IP and the port that the server uses to listen on");
@@ -51195,7 +51281,7 @@
             this.chkWelcomeMessageTCPIPCat.Image = null;
             this.chkWelcomeMessageTCPIPCat.Location = new System.Drawing.Point(28, 55);
             this.chkWelcomeMessageTCPIPCat.Name = "chkWelcomeMessageTCPIPCat";
-            this.chkWelcomeMessageTCPIPCat.Size = new System.Drawing.Size(173, 17);
+            this.chkWelcomeMessageTCPIPCat.Size = new System.Drawing.Size(184, 17);
             this.chkWelcomeMessageTCPIPCat.TabIndex = 16;
             this.chkWelcomeMessageTCPIPCat.Text = "Send version on client connect";
             this.toolTip1.SetToolTip(this.chkWelcomeMessageTCPIPCat, "Instantly send a version message to the client on connect (semi colon terminated)" +
@@ -51222,7 +51308,7 @@
             this.labelTS609.Image = null;
             this.labelTS609.Location = new System.Drawing.Point(19, 28);
             this.labelTS609.Name = "labelTS609";
-            this.labelTS609.Size = new System.Drawing.Size(63, 13);
+            this.labelTS609.Size = new System.Drawing.Size(66, 13);
             this.labelTS609.TabIndex = 14;
             this.labelTS609.Text = "Bind IP:Port";
             // 
@@ -51257,7 +51343,7 @@
             // 
             this.txtTCPIPCATServerBindIPPort.Location = new System.Drawing.Point(91, 25);
             this.txtTCPIPCATServerBindIPPort.Name = "txtTCPIPCATServerBindIPPort";
-            this.txtTCPIPCATServerBindIPPort.Size = new System.Drawing.Size(122, 20);
+            this.txtTCPIPCATServerBindIPPort.Size = new System.Drawing.Size(122, 22);
             this.txtTCPIPCATServerBindIPPort.TabIndex = 11;
             this.txtTCPIPCATServerBindIPPort.Text = "127.0.0.1:13013";
             this.toolTip1.SetToolTip(this.txtTCPIPCATServerBindIPPort, "The bind IP and the port that the server uses to listen on");
@@ -51314,7 +51400,7 @@
             this.labelTS90.Image = null;
             this.labelTS90.Location = new System.Drawing.Point(32, 117);
             this.labelTS90.Name = "labelTS90";
-            this.labelTS90.Size = new System.Drawing.Size(61, 13);
+            this.labelTS90.Size = new System.Drawing.Size(62, 13);
             this.labelTS90.TabIndex = 9;
             this.labelTS90.Text = "Send Rate:";
             // 
@@ -51337,7 +51423,7 @@
             0,
             0});
             this.udN1MMSendRate.Name = "udN1MMSendRate";
-            this.udN1MMSendRate.Size = new System.Drawing.Size(49, 20);
+            this.udN1MMSendRate.Size = new System.Drawing.Size(49, 22);
             this.udN1MMSendRate.TabIndex = 7;
             this.udN1MMSendRate.TinyStep = false;
             this.udN1MMSendRate.Value = new decimal(new int[] {
@@ -51353,7 +51439,7 @@
             this.labelTS89.Image = null;
             this.labelTS89.Location = new System.Drawing.Point(197, 13);
             this.labelTS89.Name = "labelTS89";
-            this.labelTS89.Size = new System.Drawing.Size(56, 13);
+            this.labelTS89.Size = new System.Drawing.Size(59, 13);
             this.labelTS89.TabIndex = 6;
             this.labelTS89.Text = "dB scaling";
             // 
@@ -51377,7 +51463,7 @@
             0,
             131072});
             this.udN1MMRX2Scaling.Name = "udN1MMRX2Scaling";
-            this.udN1MMRX2Scaling.Size = new System.Drawing.Size(58, 20);
+            this.udN1MMRX2Scaling.Size = new System.Drawing.Size(58, 22);
             this.udN1MMRX2Scaling.TabIndex = 5;
             this.udN1MMRX2Scaling.TinyStep = false;
             this.udN1MMRX2Scaling.Value = new decimal(new int[] {
@@ -51407,7 +51493,7 @@
             0,
             131072});
             this.udN1MMRX1Scaling.Name = "udN1MMRX1Scaling";
-            this.udN1MMRX1Scaling.Size = new System.Drawing.Size(58, 20);
+            this.udN1MMRX1Scaling.Size = new System.Drawing.Size(58, 22);
             this.udN1MMRX1Scaling.TabIndex = 4;
             this.udN1MMRX1Scaling.TinyStep = false;
             this.udN1MMRX1Scaling.Value = new decimal(new int[] {
@@ -51423,7 +51509,7 @@
             this.labelTS19.Image = null;
             this.labelTS19.Location = new System.Drawing.Point(20, 92);
             this.labelTS19.Name = "labelTS19";
-            this.labelTS19.Size = new System.Drawing.Size(73, 13);
+            this.labelTS19.Size = new System.Drawing.Size(75, 13);
             this.labelTS19.TabIndex = 3;
             this.labelTS19.Text = "Send UDP to:";
             // 
@@ -51431,7 +51517,7 @@
             // 
             this.txtN1MMSendTo.Location = new System.Drawing.Point(98, 89);
             this.txtN1MMSendTo.Name = "txtN1MMSendTo";
-            this.txtN1MMSendTo.Size = new System.Drawing.Size(122, 20);
+            this.txtN1MMSendTo.Size = new System.Drawing.Size(122, 22);
             this.txtN1MMSendTo.TabIndex = 2;
             this.txtN1MMSendTo.Text = "127.0.0.1:13064";
             this.txtN1MMSendTo.TextChanged += new System.EventHandler(this.txtN1MMSendTo_TextChanged);
@@ -51504,7 +51590,7 @@
             0,
             0});
             this.udUpdatesPerStepMin.Name = "udUpdatesPerStepMin";
-            this.udUpdatesPerStepMin.Size = new System.Drawing.Size(31, 20);
+            this.udUpdatesPerStepMin.Size = new System.Drawing.Size(31, 22);
             this.udUpdatesPerStepMin.TabIndex = 112;
             this.udUpdatesPerStepMin.TinyStep = false;
             this.toolTip1.SetToolTip(this.udUpdatesPerStepMin, "Minimum number of MIDI wheel updates required to produce one frequency step - det" +
@@ -51522,7 +51608,7 @@
             this.labelTS511.Image = null;
             this.labelTS511.Location = new System.Drawing.Point(176, 33);
             this.labelTS511.Name = "labelTS511";
-            this.labelTS511.Size = new System.Drawing.Size(130, 13);
+            this.labelTS511.Size = new System.Drawing.Size(138, 13);
             this.labelTS511.TabIndex = 108;
             this.labelTS511.Text = "MIDI Wheel updates/step";
             // 
@@ -51532,7 +51618,7 @@
             this.labelTS512.Image = null;
             this.labelTS512.Location = new System.Drawing.Point(253, 76);
             this.labelTS512.Name = "labelTS512";
-            this.labelTS512.Size = new System.Drawing.Size(27, 13);
+            this.labelTS512.Size = new System.Drawing.Size(28, 13);
             this.labelTS512.TabIndex = 110;
             this.labelTS512.Text = "Max";
             // 
@@ -51542,7 +51628,7 @@
             this.labelTS515.Image = null;
             this.labelTS515.Location = new System.Drawing.Point(196, 76);
             this.labelTS515.Name = "labelTS515";
-            this.labelTS515.Size = new System.Drawing.Size(24, 13);
+            this.labelTS515.Size = new System.Drawing.Size(27, 13);
             this.labelTS515.TabIndex = 111;
             this.labelTS515.Text = "Min";
             // 
@@ -51565,7 +51651,7 @@
             0,
             0});
             this.udUpdatesPerStepMax.Name = "udUpdatesPerStepMax";
-            this.udUpdatesPerStepMax.Size = new System.Drawing.Size(34, 20);
+            this.udUpdatesPerStepMax.Size = new System.Drawing.Size(34, 22);
             this.udUpdatesPerStepMax.TabIndex = 109;
             this.udUpdatesPerStepMax.TinyStep = false;
             this.toolTip1.SetToolTip(this.udUpdatesPerStepMax, "Maximum number of MIDI wheel updates required to produce one frequency step - det" +
@@ -51634,7 +51720,7 @@
             this.chkRecenterOnZZFx.Image = null;
             this.chkRecenterOnZZFx.Location = new System.Drawing.Point(12, 19);
             this.chkRecenterOnZZFx.Name = "chkRecenterOnZZFx";
-            this.chkRecenterOnZZFx.Size = new System.Drawing.Size(130, 17);
+            this.chkRecenterOnZZFx.Size = new System.Drawing.Size(136, 17);
             this.chkRecenterOnZZFx.TabIndex = 107;
             this.chkRecenterOnZZFx.Text = "Always recenter VFOs";
             this.chkRecenterOnZZFx.UseVisualStyleBackColor = true;
@@ -51665,7 +51751,7 @@
             // 
             this.txtZZSN.Location = new System.Drawing.Point(51, 105);
             this.txtZZSN.Name = "txtZZSN";
-            this.txtZZSN.Size = new System.Drawing.Size(65, 20);
+            this.txtZZSN.Size = new System.Drawing.Size(65, 22);
             this.txtZZSN.TabIndex = 99;
             this.txtZZSN.Text = "0000-0000";
             this.txtZZSN.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -51677,7 +51763,7 @@
             this.labelTS323.Image = null;
             this.labelTS323.Location = new System.Drawing.Point(9, 108);
             this.labelTS323.Name = "labelTS323";
-            this.labelTS323.Size = new System.Drawing.Size(39, 13);
+            this.labelTS323.Size = new System.Drawing.Size(36, 13);
             this.labelTS323.TabIndex = 100;
             this.labelTS323.Text = "ZZSN:";
             // 
@@ -51782,7 +51868,7 @@
             0,
             -2147483648});
             this.udRTTYU.Name = "udRTTYU";
-            this.udRTTYU.Size = new System.Drawing.Size(48, 20);
+            this.udRTTYU.Size = new System.Drawing.Size(48, 22);
             this.udRTTYU.TabIndex = 99;
             this.udRTTYU.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRTTYU, "Sets the DIGU frequency offset");
@@ -51812,7 +51898,7 @@
             0,
             -2147483648});
             this.udRTTYL.Name = "udRTTYL";
-            this.udRTTYL.Size = new System.Drawing.Size(48, 20);
+            this.udRTTYL.Size = new System.Drawing.Size(48, 22);
             this.udRTTYL.TabIndex = 98;
             this.udRTTYL.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRTTYL, "Sets the DIGL frequency offset");
@@ -51927,7 +52013,7 @@
             0,
             0});
             this.udHttpRefresh.Name = "udHttpRefresh";
-            this.udHttpRefresh.Size = new System.Drawing.Size(75, 20);
+            this.udHttpRefresh.Size = new System.Drawing.Size(75, 22);
             this.udHttpRefresh.TabIndex = 12;
             this.udHttpRefresh.TinyStep = false;
             this.toolTip1.SetToolTip(this.udHttpRefresh, resources.GetString("udHttpRefresh.ToolTip"));
@@ -51942,7 +52028,7 @@
             this.txtHttpPass.Location = new System.Drawing.Point(112, 165);
             this.txtHttpPass.MaxLength = 50;
             this.txtHttpPass.Name = "txtHttpPass";
-            this.txtHttpPass.Size = new System.Drawing.Size(90, 20);
+            this.txtHttpPass.Size = new System.Drawing.Size(90, 22);
             this.txtHttpPass.TabIndex = 11;
             this.txtHttpPass.Text = "powersdr";
             this.toolTip1.SetToolTip(this.txtHttpPass, "Select Password to login with Remotely");
@@ -51953,7 +52039,7 @@
             this.txtHttpUser.Location = new System.Drawing.Point(7, 164);
             this.txtHttpUser.MaxLength = 50;
             this.txtHttpUser.Name = "txtHttpUser";
-            this.txtHttpUser.Size = new System.Drawing.Size(90, 20);
+            this.txtHttpUser.Size = new System.Drawing.Size(90, 22);
             this.txtHttpUser.TabIndex = 10;
             this.txtHttpUser.Text = "powersdr";
             this.toolTip1.SetToolTip(this.txtHttpUser, "User Name to login with Remotely");
@@ -52006,7 +52092,7 @@
             0,
             0});
             this.udHttpPort.Name = "udHttpPort";
-            this.udHttpPort.Size = new System.Drawing.Size(54, 20);
+            this.udHttpPort.Size = new System.Drawing.Size(54, 22);
             this.udHttpPort.TabIndex = 7;
             this.udHttpPort.TinyStep = false;
             this.toolTip1.SetToolTip(this.udHttpPort, resources.GetString("udHttpPort.ToolTip"));
@@ -52143,7 +52229,7 @@
             0,
             0});
             this.udSpeedPM.Name = "udSpeedPM";
-            this.udSpeedPM.Size = new System.Drawing.Size(54, 20);
+            this.udSpeedPM.Size = new System.Drawing.Size(54, 22);
             this.udSpeedPM.TabIndex = 4;
             this.udSpeedPM.TinyStep = false;
             this.toolTip1.SetToolTip(this.udSpeedPM, "Speed of Freq Change");
@@ -52174,7 +52260,7 @@
             // 
             this.txtFocusMasterDelay.Location = new System.Drawing.Point(184, 42);
             this.txtFocusMasterDelay.Name = "txtFocusMasterDelay";
-            this.txtFocusMasterDelay.Size = new System.Drawing.Size(40, 20);
+            this.txtFocusMasterDelay.Size = new System.Drawing.Size(40, 22);
             this.txtFocusMasterDelay.TabIndex = 106;
             this.txtFocusMasterDelay.Text = "2000";
             this.txtFocusMasterDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -52186,7 +52272,7 @@
             this.labelTS359.Image = null;
             this.labelTS359.Location = new System.Drawing.Point(126, 45);
             this.labelTS359.Name = "labelTS359";
-            this.labelTS359.Size = new System.Drawing.Size(58, 13);
+            this.labelTS359.Size = new System.Drawing.Size(59, 13);
             this.labelTS359.TabIndex = 105;
             this.labelTS359.Text = "Delay (mS)";
             // 
@@ -52196,7 +52282,7 @@
             this.labelTS358.Image = null;
             this.labelTS358.Location = new System.Drawing.Point(5, 71);
             this.labelTS358.Name = "labelTS358";
-            this.labelTS358.Size = new System.Drawing.Size(69, 13);
+            this.labelTS358.Size = new System.Drawing.Size(76, 13);
             this.labelTS358.TabIndex = 104;
             this.labelTS358.Text = "Window Title";
             // 
@@ -52206,7 +52292,7 @@
             this.labelTS357.Image = null;
             this.labelTS357.Location = new System.Drawing.Point(6, 45);
             this.labelTS357.Name = "labelTS357";
-            this.labelTS357.Size = new System.Drawing.Size(61, 13);
+            this.labelTS357.Size = new System.Drawing.Size(65, 13);
             this.labelTS357.TabIndex = 104;
             this.labelTS357.Text = "N1MM Port";
             // 
@@ -52216,7 +52302,7 @@
             this.labelTS356.Image = null;
             this.labelTS356.Location = new System.Drawing.Point(5, 18);
             this.labelTS356.Name = "labelTS356";
-            this.labelTS356.Size = new System.Drawing.Size(34, 13);
+            this.labelTS356.Size = new System.Drawing.Size(37, 13);
             this.labelTS356.TabIndex = 104;
             this.labelTS356.Text = "Mode";
             // 
@@ -52224,7 +52310,7 @@
             // 
             this.txtFocusMasterWinTitle.Location = new System.Drawing.Point(76, 68);
             this.txtFocusMasterWinTitle.Name = "txtFocusMasterWinTitle";
-            this.txtFocusMasterWinTitle.Size = new System.Drawing.Size(224, 20);
+            this.txtFocusMasterWinTitle.Size = new System.Drawing.Size(224, 22);
             this.txtFocusMasterWinTitle.TabIndex = 104;
             this.txtFocusMasterWinTitle.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFocusMasterWinTitle_KeyDown);
             // 
@@ -52232,7 +52318,7 @@
             // 
             this.txtFocusMasterUDPPort.Location = new System.Drawing.Point(72, 42);
             this.txtFocusMasterUDPPort.Name = "txtFocusMasterUDPPort";
-            this.txtFocusMasterUDPPort.Size = new System.Drawing.Size(48, 20);
+            this.txtFocusMasterUDPPort.Size = new System.Drawing.Size(48, 22);
             this.txtFocusMasterUDPPort.TabIndex = 104;
             this.txtFocusMasterUDPPort.Text = "12060";
             this.txtFocusMasterUDPPort.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -52286,7 +52372,7 @@
             this.chkAndrStickyMenus.Image = null;
             this.chkAndrStickyMenus.Location = new System.Drawing.Point(27, 161);
             this.chkAndrStickyMenus.Name = "chkAndrStickyMenus";
-            this.chkAndrStickyMenus.Size = new System.Drawing.Size(104, 17);
+            this.chkAndrStickyMenus.Size = new System.Drawing.Size(107, 17);
             this.chkAndrStickyMenus.TabIndex = 6;
             this.chkAndrStickyMenus.Text = "Sticky Menu Bar";
             this.chkAndrStickyMenus.UseVisualStyleBackColor = true;
@@ -52298,7 +52384,7 @@
             this.chkAndrStickyShift.Image = null;
             this.chkAndrStickyShift.Location = new System.Drawing.Point(27, 138);
             this.chkAndrStickyShift.Name = "chkAndrStickyShift";
-            this.chkAndrStickyShift.Size = new System.Drawing.Size(113, 17);
+            this.chkAndrStickyShift.Size = new System.Drawing.Size(120, 17);
             this.chkAndrStickyShift.TabIndex = 5;
             this.chkAndrStickyShift.Text = "Sticky Shift Button";
             this.chkAndrStickyShift.UseVisualStyleBackColor = true;
@@ -52310,7 +52396,7 @@
             this.chkAndrBandBtnDefault.Image = null;
             this.chkAndrBandBtnDefault.Location = new System.Drawing.Point(27, 115);
             this.chkAndrBandBtnDefault.Name = "chkAndrBandBtnDefault";
-            this.chkAndrBandBtnDefault.Size = new System.Drawing.Size(202, 17);
+            this.chkAndrBandBtnDefault.Size = new System.Drawing.Size(224, 17);
             this.chkAndrBandBtnDefault.TabIndex = 4;
             this.chkAndrBandBtnDefault.Text = "Dual function buttons default to Band";
             this.chkAndrBandBtnDefault.UseVisualStyleBackColor = true;
@@ -52322,7 +52408,7 @@
             this.chkAndrFastStepTune.Image = null;
             this.chkAndrFastStepTune.Location = new System.Drawing.Point(27, 23);
             this.chkAndrFastStepTune.Name = "chkAndrFastStepTune";
-            this.chkAndrFastStepTune.Size = new System.Drawing.Size(110, 17);
+            this.chkAndrFastStepTune.Size = new System.Drawing.Size(119, 17);
             this.chkAndrFastStepTune.TabIndex = 3;
             this.chkAndrFastStepTune.Text = "Allow Fast Tuning";
             this.chkAndrFastStepTune.UseVisualStyleBackColor = true;
@@ -52333,7 +52419,7 @@
             this.chkAndrDiversityLandscape.Image = null;
             this.chkAndrDiversityLandscape.Location = new System.Drawing.Point(27, 92);
             this.chkAndrDiversityLandscape.Name = "chkAndrDiversityLandscape";
-            this.chkAndrDiversityLandscape.Size = new System.Drawing.Size(183, 17);
+            this.chkAndrDiversityLandscape.Size = new System.Drawing.Size(194, 17);
             this.chkAndrDiversityLandscape.TabIndex = 2;
             this.chkAndrDiversityLandscape.Text = "Diversity Form Landscape Format";
             this.chkAndrDiversityLandscape.UseVisualStyleBackColor = true;
@@ -52344,7 +52430,7 @@
             this.chkAndrDiversityAutoshow.Image = null;
             this.chkAndrDiversityAutoshow.Location = new System.Drawing.Point(27, 69);
             this.chkAndrDiversityAutoshow.Name = "chkAndrDiversityAutoshow";
-            this.chkAndrDiversityAutoshow.Size = new System.Drawing.Size(174, 17);
+            this.chkAndrDiversityAutoshow.Size = new System.Drawing.Size(186, 17);
             this.chkAndrDiversityAutoshow.TabIndex = 1;
             this.chkAndrDiversityAutoshow.Text = "Diversity Form Auto Show/Hide";
             this.chkAndrDiversityAutoshow.UseVisualStyleBackColor = true;
@@ -52355,7 +52441,7 @@
             this.chkAndrGainAutoshow.Image = null;
             this.chkAndrGainAutoshow.Location = new System.Drawing.Point(27, 46);
             this.chkAndrGainAutoshow.Name = "chkAndrGainAutoshow";
-            this.chkAndrGainAutoshow.Size = new System.Drawing.Size(156, 17);
+            this.chkAndrGainAutoshow.Size = new System.Drawing.Size(167, 17);
             this.chkAndrGainAutoshow.TabIndex = 0;
             this.chkAndrGainAutoshow.Text = "Gain Form Auto Show/Hide";
             this.chkAndrGainAutoshow.UseVisualStyleBackColor = true;
@@ -52381,7 +52467,7 @@
             this.labelTS528.Image = null;
             this.labelTS528.Location = new System.Drawing.Point(6, 129);
             this.labelTS528.Name = "labelTS528";
-            this.labelTS528.Size = new System.Drawing.Size(87, 13);
+            this.labelTS528.Size = new System.Drawing.Size(95, 13);
             this.labelTS528.TabIndex = 118;
             this.labelTS528.Text = "Firmware Version";
             // 
@@ -52447,7 +52533,7 @@
             this.tpTests.Controls.Add(this.grpTestAudioBalance);
             this.tpTests.Location = new System.Drawing.Point(4, 22);
             this.tpTests.Name = "tpTests";
-            this.tpTests.Size = new System.Drawing.Size(728, 436);
+            this.tpTests.Size = new System.Drawing.Size(728, 468);
             this.tpTests.TabIndex = 7;
             this.tpTests.Text = "Tests";
             // 
@@ -52550,7 +52636,7 @@
             0,
             262144});
             this.udTXGenPulseTransition.Name = "udTXGenPulseTransition";
-            this.udTXGenPulseTransition.Size = new System.Drawing.Size(56, 20);
+            this.udTXGenPulseTransition.Size = new System.Drawing.Size(56, 22);
             this.udTXGenPulseTransition.TabIndex = 115;
             this.udTXGenPulseTransition.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenPulseTransition, "Tone Frequency.");
@@ -52590,7 +52676,7 @@
             0,
             131072});
             this.udTXGenPulseDutyCycle.Name = "udTXGenPulseDutyCycle";
-            this.udTXGenPulseDutyCycle.Size = new System.Drawing.Size(56, 20);
+            this.udTXGenPulseDutyCycle.Size = new System.Drawing.Size(56, 22);
             this.udTXGenPulseDutyCycle.TabIndex = 113;
             this.udTXGenPulseDutyCycle.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenPulseDutyCycle, "Tone Frequency.");
@@ -52630,7 +52716,7 @@
             0,
             65536});
             this.udTXGenPulseFreq.Name = "udTXGenPulseFreq";
-            this.udTXGenPulseFreq.Size = new System.Drawing.Size(56, 20);
+            this.udTXGenPulseFreq.Size = new System.Drawing.Size(56, 22);
             this.udTXGenPulseFreq.TabIndex = 111;
             this.udTXGenPulseFreq.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenPulseFreq, "Tone Frequency.");
@@ -52704,7 +52790,7 @@
             0,
             0});
             this.udTXGenSweepRate.Name = "udTXGenSweepRate";
-            this.udTXGenSweepRate.Size = new System.Drawing.Size(56, 20);
+            this.udTXGenSweepRate.Size = new System.Drawing.Size(56, 22);
             this.udTXGenSweepRate.TabIndex = 89;
             this.udTXGenSweepRate.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenSweepRate, "See the Sweep Button to the right.");
@@ -52743,7 +52829,7 @@
             0,
             0});
             this.udTXGenSweepHigh.Name = "udTXGenSweepHigh";
-            this.udTXGenSweepHigh.Size = new System.Drawing.Size(56, 20);
+            this.udTXGenSweepHigh.Size = new System.Drawing.Size(56, 22);
             this.udTXGenSweepHigh.TabIndex = 87;
             this.udTXGenSweepHigh.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenSweepHigh, "See the Sweep Button to the right.");
@@ -52782,7 +52868,7 @@
             0,
             0});
             this.udTXGenSweepLow.Name = "udTXGenSweepLow";
-            this.udTXGenSweepLow.Size = new System.Drawing.Size(56, 20);
+            this.udTXGenSweepLow.Size = new System.Drawing.Size(56, 22);
             this.udTXGenSweepLow.TabIndex = 85;
             this.udTXGenSweepLow.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenSweepLow, "See the Sweep Button to the right.");
@@ -52812,7 +52898,7 @@
             0,
             0});
             this.udTXGenFreq.Name = "udTXGenFreq";
-            this.udTXGenFreq.Size = new System.Drawing.Size(56, 20);
+            this.udTXGenFreq.Size = new System.Drawing.Size(56, 22);
             this.udTXGenFreq.TabIndex = 109;
             this.udTXGenFreq.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenFreq, "Tone Frequency.");
@@ -52852,7 +52938,7 @@
             0,
             -2147352576});
             this.udTXGenScale.Name = "udTXGenScale";
-            this.udTXGenScale.Size = new System.Drawing.Size(56, 20);
+            this.udTXGenScale.Size = new System.Drawing.Size(56, 22);
             this.udTXGenScale.TabIndex = 102;
             this.udTXGenScale.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTXGenScale, "Sets the amplitude of the signal (typically between 0 and 1.0)");
@@ -52986,7 +53072,7 @@
             0,
             0});
             this.udRXGenSweepRate.Name = "udRXGenSweepRate";
-            this.udRXGenSweepRate.Size = new System.Drawing.Size(56, 20);
+            this.udRXGenSweepRate.Size = new System.Drawing.Size(56, 22);
             this.udRXGenSweepRate.TabIndex = 89;
             this.udRXGenSweepRate.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRXGenSweepRate, "See the Sweep Button to the right.");
@@ -53025,7 +53111,7 @@
             0,
             -2147483648});
             this.udRXGenSweepHigh.Name = "udRXGenSweepHigh";
-            this.udRXGenSweepHigh.Size = new System.Drawing.Size(56, 20);
+            this.udRXGenSweepHigh.Size = new System.Drawing.Size(56, 22);
             this.udRXGenSweepHigh.TabIndex = 87;
             this.udRXGenSweepHigh.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRXGenSweepHigh, "See the Sweep Button to the right.");
@@ -53064,7 +53150,7 @@
             0,
             -2147483648});
             this.udRXGenSweepLow.Name = "udRXGenSweepLow";
-            this.udRXGenSweepLow.Size = new System.Drawing.Size(56, 20);
+            this.udRXGenSweepLow.Size = new System.Drawing.Size(56, 22);
             this.udRXGenSweepLow.TabIndex = 85;
             this.udRXGenSweepLow.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRXGenSweepLow, "See the Sweep Button to the right.");
@@ -53094,7 +53180,7 @@
             0,
             -2147483648});
             this.udRXGenFreq.Name = "udRXGenFreq";
-            this.udRXGenFreq.Size = new System.Drawing.Size(56, 20);
+            this.udRXGenFreq.Size = new System.Drawing.Size(56, 22);
             this.udRXGenFreq.TabIndex = 114;
             this.udRXGenFreq.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRXGenFreq, "Tone Frequency.");
@@ -53134,7 +53220,7 @@
             0,
             -2147352576});
             this.udRXGenScale.Name = "udRXGenScale";
-            this.udRXGenScale.Size = new System.Drawing.Size(56, 20);
+            this.udRXGenScale.Size = new System.Drawing.Size(56, 22);
             this.udRXGenScale.TabIndex = 112;
             this.udRXGenScale.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRXGenScale, "Sets the amplitude of the signal (typically between 0 and 1.0)");
@@ -53221,7 +53307,7 @@
             this.radUseFixedDrive2Tone.Image = null;
             this.radUseFixedDrive2Tone.Location = new System.Drawing.Point(25, 198);
             this.radUseFixedDrive2Tone.Name = "radUseFixedDrive2Tone";
-            this.radUseFixedDrive2Tone.Size = new System.Drawing.Size(100, 17);
+            this.radUseFixedDrive2Tone.Size = new System.Drawing.Size(103, 17);
             this.radUseFixedDrive2Tone.TabIndex = 125;
             this.radUseFixedDrive2Tone.TabStop = true;
             this.radUseFixedDrive2Tone.Text = "Use Fixed Drive";
@@ -53234,7 +53320,7 @@
             this.radUseDriveSlider2Tone.Image = null;
             this.radUseDriveSlider2Tone.Location = new System.Drawing.Point(25, 152);
             this.radUseDriveSlider2Tone.Name = "radUseDriveSlider2Tone";
-            this.radUseDriveSlider2Tone.Size = new System.Drawing.Size(101, 17);
+            this.radUseDriveSlider2Tone.Size = new System.Drawing.Size(105, 17);
             this.radUseDriveSlider2Tone.TabIndex = 124;
             this.radUseDriveSlider2Tone.TabStop = true;
             this.radUseDriveSlider2Tone.Text = "Use Drive Slider";
@@ -53247,7 +53333,7 @@
             this.radUseTuneSlider2Tone.Image = null;
             this.radUseTuneSlider2Tone.Location = new System.Drawing.Point(25, 175);
             this.radUseTuneSlider2Tone.Name = "radUseTuneSlider2Tone";
-            this.radUseTuneSlider2Tone.Size = new System.Drawing.Size(101, 17);
+            this.radUseTuneSlider2Tone.Size = new System.Drawing.Size(105, 17);
             this.radUseTuneSlider2Tone.TabIndex = 123;
             this.radUseTuneSlider2Tone.TabStop = true;
             this.radUseTuneSlider2Tone.Text = "Use Tune Slider";
@@ -53292,7 +53378,7 @@
             0,
             0});
             this.udFreq2Delay.Name = "udFreq2Delay";
-            this.udFreq2Delay.Size = new System.Drawing.Size(56, 20);
+            this.udFreq2Delay.Size = new System.Drawing.Size(56, 22);
             this.udFreq2Delay.TabIndex = 120;
             this.udFreq2Delay.TinyStep = false;
             this.toolTip1.SetToolTip(this.udFreq2Delay, "Applies a wait delay before Freq#2 is enabled");
@@ -53321,7 +53407,7 @@
             this.chkInvertTones.Image = null;
             this.chkInvertTones.Location = new System.Drawing.Point(13, 247);
             this.chkInvertTones.Name = "chkInvertTones";
-            this.chkInvertTones.Size = new System.Drawing.Size(119, 17);
+            this.chkInvertTones.Size = new System.Drawing.Size(125, 17);
             this.chkInvertTones.TabIndex = 97;
             this.chkInvertTones.Text = "Invert for LS Modes";
             this.chkInvertTones.UseVisualStyleBackColor = true;
@@ -53356,7 +53442,7 @@
             0,
             -2147483648});
             this.udTwoToneLevel.Name = "udTwoToneLevel";
-            this.udTwoToneLevel.Size = new System.Drawing.Size(56, 20);
+            this.udTwoToneLevel.Size = new System.Drawing.Size(56, 22);
             this.udTwoToneLevel.TabIndex = 95;
             this.udTwoToneLevel.TinyStep = false;
             this.toolTip1.SetToolTip(this.udTwoToneLevel, "Sets the amplitude of the two tone test.");
@@ -53396,7 +53482,7 @@
             0,
             -2147483648});
             this.udTestIMDFreq2.Name = "udTestIMDFreq2";
-            this.udTestIMDFreq2.Size = new System.Drawing.Size(56, 20);
+            this.udTestIMDFreq2.Size = new System.Drawing.Size(56, 22);
             this.udTestIMDFreq2.TabIndex = 87;
             this.udTestIMDFreq2.TinyStep = false;
             this.udTestIMDFreq2.Value = new decimal(new int[] {
@@ -53425,7 +53511,7 @@
             0,
             0});
             this.udTestIMDPower.Name = "udTestIMDPower";
-            this.udTestIMDPower.Size = new System.Drawing.Size(56, 20);
+            this.udTestIMDPower.Size = new System.Drawing.Size(56, 22);
             this.udTestIMDPower.TabIndex = 85;
             this.udTestIMDPower.TinyStep = false;
             this.udTestIMDPower.Value = new decimal(new int[] {
@@ -53477,7 +53563,7 @@
             0,
             -2147483648});
             this.udTestIMDFreq1.Name = "udTestIMDFreq1";
-            this.udTestIMDFreq1.Size = new System.Drawing.Size(56, 20);
+            this.udTestIMDFreq1.Size = new System.Drawing.Size(56, 22);
             this.udTestIMDFreq1.TabIndex = 82;
             this.udTestIMDFreq1.TinyStep = false;
             this.udTestIMDFreq1.Value = new decimal(new int[] {
@@ -53520,7 +53606,7 @@
             0,
             0});
             this.udImpulseNum.Name = "udImpulseNum";
-            this.udImpulseNum.Size = new System.Drawing.Size(40, 20);
+            this.udImpulseNum.Size = new System.Drawing.Size(40, 22);
             this.udImpulseNum.TabIndex = 92;
             this.udImpulseNum.TinyStep = false;
             this.udImpulseNum.Value = new decimal(new int[] {
@@ -53569,8 +53655,9 @@
             // 
             // btnExportDB
             // 
+            this.btnExportDB.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnExportDB.Image = null;
-            this.btnExportDB.Location = new System.Drawing.Point(224, 476);
+            this.btnExportDB.Location = new System.Drawing.Point(223, 508);
             this.btnExportDB.Name = "btnExportDB";
             this.btnExportDB.Selectable = true;
             this.btnExportDB.Size = new System.Drawing.Size(112, 23);
@@ -53581,8 +53668,9 @@
             // 
             // btnImportDB
             // 
+            this.btnImportDB.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnImportDB.Image = null;
-            this.btnImportDB.Location = new System.Drawing.Point(108, 476);
+            this.btnImportDB.Location = new System.Drawing.Point(107, 508);
             this.btnImportDB.Name = "btnImportDB";
             this.btnImportDB.Selectable = true;
             this.btnImportDB.Size = new System.Drawing.Size(112, 23);
@@ -53593,8 +53681,9 @@
             // 
             // btnResetDB
             // 
+            this.btnResetDB.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnResetDB.Image = null;
-            this.btnResetDB.Location = new System.Drawing.Point(8, 476);
+            this.btnResetDB.Location = new System.Drawing.Point(7, 508);
             this.btnResetDB.Name = "btnResetDB";
             this.btnResetDB.Selectable = true;
             this.btnResetDB.Size = new System.Drawing.Size(96, 23);
@@ -53606,8 +53695,9 @@
             // 
             // btnApply
             // 
+            this.btnApply.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnApply.Image = null;
-            this.btnApply.Location = new System.Drawing.Point(640, 476);
+            this.btnApply.Location = new System.Drawing.Point(639, 508);
             this.btnApply.Name = "btnApply";
             this.btnApply.Selectable = true;
             this.btnApply.Size = new System.Drawing.Size(75, 23);
@@ -53618,8 +53708,9 @@
             // 
             // btnCancel
             // 
+            this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnCancel.Image = null;
-            this.btnCancel.Location = new System.Drawing.Point(559, 476);
+            this.btnCancel.Location = new System.Drawing.Point(558, 508);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Selectable = true;
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -53630,8 +53721,9 @@
             // 
             // btnOK
             // 
+            this.btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnOK.Image = null;
-            this.btnOK.Location = new System.Drawing.Point(478, 476);
+            this.btnOK.Location = new System.Drawing.Point(477, 508);
             this.btnOK.Name = "btnOK";
             this.btnOK.Selectable = true;
             this.btnOK.Size = new System.Drawing.Size(75, 23);
@@ -53688,10 +53780,11 @@
             // 
             // labelSavingLoading
             // 
+            this.labelSavingLoading.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.labelSavingLoading.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelSavingLoading.ForeColor = System.Drawing.Color.Red;
             this.labelSavingLoading.Image = null;
-            this.labelSavingLoading.Location = new System.Drawing.Point(615, 498);
+            this.labelSavingLoading.Location = new System.Drawing.Point(614, 530);
             this.labelSavingLoading.Name = "labelSavingLoading";
             this.labelSavingLoading.Size = new System.Drawing.Size(100, 10);
             this.labelSavingLoading.TabIndex = 23;
@@ -54718,57 +54811,11 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // grpInfo
-            // 
-            this.grpInfo.Controls.Add(this.labelTS161);
-            this.grpInfo.Controls.Add(this.lblDataBase);
-            this.grpInfo.Controls.Add(this.lblDBTitle);
-            this.grpInfo.Location = new System.Drawing.Point(28, 226);
-            this.grpInfo.Name = "grpInfo";
-            this.grpInfo.Size = new System.Drawing.Size(348, 100);
-            this.grpInfo.TabIndex = 41;
-            this.grpInfo.TabStop = false;
-            this.grpInfo.Text = "General Information:";
-            // 
-            // lblDBTitle
-            // 
-            this.lblDBTitle.AutoSize = true;
-            this.lblDBTitle.Image = null;
-            this.lblDBTitle.Location = new System.Drawing.Point(9, 31);
-            this.lblDBTitle.Name = "lblDBTitle";
-            this.lblDBTitle.Size = new System.Drawing.Size(84, 13);
-            this.lblDBTitle.TabIndex = 0;
-            this.lblDBTitle.Text = "Using database:";
-            // 
-            // lblDataBase
-            // 
-            this.lblDataBase.AutoSize = true;
-            this.lblDataBase.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDataBase.Image = null;
-            this.lblDataBase.Location = new System.Drawing.Point(97, 31);
-            this.lblDataBase.MaximumSize = new System.Drawing.Size(230, 150);
-            this.lblDataBase.Name = "lblDataBase";
-            this.lblDataBase.Size = new System.Drawing.Size(229, 39);
-            this.lblDataBase.TabIndex = 1;
-            this.lblDataBase.Text = "C:\\<yourusername>\\AppData\\Local\\Roaming\\OPENHPSDR\\Thetis\\MyOverlyLongDatabaseName" +
-    ".xml";
-            this.lblDataBase.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lblDataBase_MouseUp);
-            // 
-            // labelTS161
-            // 
-            this.labelTS161.AutoSize = true;
-            this.labelTS161.Image = null;
-            this.labelTS161.Location = new System.Drawing.Point(97, 78);
-            this.labelTS161.Name = "labelTS161";
-            this.labelTS161.Size = new System.Drawing.Size(207, 13);
-            this.labelTS161.TabIndex = 2;
-            this.labelTS161.Text = "(Right-click to copy to Windows Clipboard)";
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(744, 511);
+            this.ClientSize = new System.Drawing.Size(744, 547);
             this.Controls.Add(this.labelSavingLoading);
             this.Controls.Add(this.btnExportDB);
             this.Controls.Add(this.btnImportDB);
@@ -54778,11 +54825,12 @@
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.tcSetup);
             this.DoubleBuffered = true;
+            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(760, 550);
+            this.MaximumSize = new System.Drawing.Size(760, 600);
             this.MinimumSize = new System.Drawing.Size(760, 550);
             this.Name = "Setup";
             this.Text = "Setup";
@@ -54831,6 +54879,8 @@
             this.tcGeneral.ResumeLayout(false);
             this.tpGeneralHardware.ResumeLayout(false);
             this.tpGeneralHardware.PerformLayout();
+            this.grpInfo.ResumeLayout(false);
+            this.grpInfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.grpFirmware.ResumeLayout(false);
             this.grpOzyType.ResumeLayout(false);
@@ -55222,6 +55272,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayPeakText)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayFPS)).EndInit();
             this.tpDisplayTop.ResumeLayout(false);
+            this.tpDisplayTop.PerformLayout();
             this.groupBoxTS21.ResumeLayout(false);
             this.groupBoxTS21.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDropRX1)).EndInit();
@@ -55249,6 +55300,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallLowLevel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallHighLevel)).EndInit();
             this.tpDisplayBottom.ResumeLayout(false);
+            this.tpDisplayBottom.PerformLayout();
             this.groupBoxTS20.ResumeLayout(false);
             this.groupBoxTS20.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDropRX2)).EndInit();
@@ -55856,3449 +55908,3447 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
-            this.grpInfo.ResumeLayout(false);
-            this.grpInfo.PerformLayout();
             this.ResumeLayout(false);
 
-        }
-        #endregion
+    }
+#endregion
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (components != null)
-                {
-                    components.Dispose();
-                }
+    protected override void Dispose(bool disposing) {
+        if (disposing) {
+            if (components != null) {
+                components.Dispose();
             }
-            base.Dispose(disposing);
         }
+        base.Dispose(disposing);
+    }
 
-
-        private TabPage tpDSP;
-        private TabPage tpDisplay;
-        private TabPage tpGeneral;
-        private ButtonTS btnOK;
-        private ButtonTS btnCancel;
-        private ButtonTS btnApply;
-        public TabControl tcSetup;
-        private TabPage tpKeyboard;
-        private LabelTS lblKBTuneDown;
-        private LabelTS lblKBTuneUp;
-        private ComboBoxTS comboKBTuneDown1;
-        private ComboBoxTS comboKBTuneDown3;
-        private ComboBoxTS comboKBTuneDown2;
-        private ComboBoxTS comboKBTuneUp1;
-        private ComboBoxTS comboKBTuneUp2;
-        private ComboBoxTS comboKBTuneUp3;
-        private ComboBoxTS comboKBTuneUp4;
-        private ComboBoxTS comboKBTuneDown4;
-        private ComboBoxTS comboKBTuneUp5;
-        private ComboBoxTS comboKBTuneDown5;
-        private ComboBoxTS comboKBTuneDown6;
-        private ComboBoxTS comboKBTuneUp7;
-        private ComboBoxTS comboKBTuneDown7;
-        private ComboBoxTS comboKBTuneUp6;
-        private GroupBoxTS grpKBTune;
-        private LabelTS lblKBTuneDigit;
-        private LabelTS lblKBTune7;
-        private LabelTS lblKBTune6;
-        private LabelTS lblKBTune5;
-        private LabelTS lblKBTune4;
-        private LabelTS lblKBTune3;
-        private LabelTS lblKBTune2;
-        private LabelTS lblKBTune1;
-        private GroupBoxTS grpKBBand;
-        private LabelTS lblKBBandUp;
-        private LabelTS lblKBBandDown;
-        private GroupBoxTS grpKBFilter;
-        private LabelTS lblKBFilterUp;
-        private LabelTS lblKBFilterDown;
-        private GroupBoxTS grpKBMode;
-        private LabelTS lblKBModeUp;
-        private LabelTS lblKBModeDown;
-        private ComboBoxTS comboKBBandUp;
-        private ComboBoxTS comboKBBandDown;
-        private ComboBoxTS comboKBFilterUp;
-        private ComboBoxTS comboKBFilterDown;
-        private ComboBoxTS comboKBModeUp;
-        private ComboBoxTS comboKBModeDown;
-        private LabelTS lblDisplayFPS;
-        private NumericUpDownTS udDisplayFPS;
-        public TabPage tpAudio;
-        private TabPage tpTransmit;
-        private NumericUpDownTS udTXFilterHigh;
-        private LabelTS lblTXFilterLow;
-        private LabelTS lblTXFilterHigh;
-        private NumericUpDownTS udTXFilterLow;
-        private GroupBoxTS grpTXFilter;
-        private GroupBoxTS grpDisplayPhase;
-        private NumericUpDownTS udDisplayPhasePts;
-        private GroupBoxTS grpDisplayAverage;
-        private LabelTS lblDisplayPhasePts;
-        private GroupBoxTS grpGeneralCalibration;
-        private LabelTS lblGeneralCalFrequency;
-        private LabelTS lblGeneralCalLevel;
-        private NumericUpDownTS udGeneralCalLevel;
-        private GroupBoxTS grpDisplayRefreshRates;
-        private LabelTS lblDisplayMeterDelay;
-        private NumericUpDownTS udDisplayMeterDelay;
-        private TabPage tpAppearance;
-        private LabelTS lblDisplayFilterColor;
-        private LabelTS lblDisplayLineWidth;
-        private NumericUpDownTS udDisplayLineWidth;
-        private LabelTS lblDisplayDataLineColor;
-        private LabelTS lblDisplayTextColor;
-        private LabelTS lblDisplayZeroLineColor;
-        private LabelTS lblDisplayGridColor;
-        private LabelTS lblDisplayBackgroundColor;
-        private GroupBoxTS grpAppearanceMeter;
-        private LabelTS lblAppearanceMeterRight;
-        private LabelTS lblAppearanceMeterLeft;
-        private LabelTS lblAppearanceGenBtnSel;
-        private GroupBoxTS grpGeneralOptions;
-        private CheckBoxTS chkGeneralDisablePTT;
-        private LabelTS lblDisplayPeakText;
-        private NumericUpDownTS udDisplayPeakText;
-        private NumericUpDownTS udDisplayCPUMeter;
-        private LabelTS lblDisplayCPUMeter;
-        private GroupBoxTS grpDisplayWaterfall;
-        public NumericUpDownTS udDisplayWaterfallHighLevel;
-        private LabelTS lblDisplayWaterfallHighLevel;
-        private LabelTS lblDisplayWaterfallLowLevel;
-        public NumericUpDownTS udDisplayWaterfallLowLevel;
-        private LabelTS lblDisplayWaterfallLowColor;
-        private ButtonTS btnGeneralCalLevelStart;
-        private ButtonTS btnGeneralCalFreqStart;
-        private ButtonTS btnGeneralCalImageStart;
-        private LabelTS lblBandLight;
-        private LabelTS lblBandDark;
-        private LabelTS lblPeakText;
-        private ButtonTS btnImportDB;
-        private OpenFileDialog openFileDialog1;
-        private TabPage tpTests;
-        private TabPage tpPowerAmplifier;
-        private ToolTip toolTip1;
-        private ButtonTS btnPAGainCalibration;
-        private ComboBoxTS comboGeneralProcessPriority;
-        private GroupBoxTS grpGeneralProcessPriority;
-        private GroupBoxTS grpTestTXIMD;
-        private ColorButton clrbtnBtnSel;
-        private ColorButton clrbtnVFODark;
-        private ColorButton clrbtnVFOLight;
-        private ColorButton clrbtnBandDark;
-        private ColorButton clrbtnBandLight;
-        private ColorButton clrbtnPeakText;
-        private ColorButton clrbtnBackground;
-        private ColorButton clrbtnGrid;
-        private ColorButton clrbtnZeroLine;
-        private ColorButton clrbtnFilter;
-        public ColorButton clrbtnText;
-        private ColorButton clrbtnDataLine;
-        private ColorButton clrbtnMeterLeft;
-        private ColorButton clrbtnMeterRight;
-        private ColorButton clrbtnWaterfallLow;
-        private NumericUpDownTS udTestIMDPower;
-        private NumericUpDownTS udTestIMDFreq1;
-        private NumericUpDownTS udTestIMDFreq2;
-        private ButtonTS btnTestAudioBalStart;
-        private NumericUpDownTS udDisplayAVGTime;
-        private LabelTS lblDisplayAVGTime;
-        private GroupBoxTS grpTestAudioBalance;
-        private GroupBoxTS grpPATune;
-        private NumericUpDownTS udTXTunePower;
-        private GroupBoxTS grpDisplayMultimeter;
-        private LabelTS lblDisplayMultiPeakHoldTime;
-        private NumericUpDownTS udDisplayMultiPeakHoldTime;
-        private NumericUpDownTS udDisplayMultiTextHoldTime;
-        private LabelTS lblDisplayMeterTextHoldTime;
-        private CheckBoxTS chkGeneralRXOnly;
-        private LabelTS lblTestToneFreq2;
-        private LabelTS lblTestToneFreq1;
-        private TabPage tpCATControl;
-        private GroupBoxTS grpPTTBitBang;
-        private LabelTS lblCATPTTPort;
-        private CheckBoxTS chkCATPTT_RTS;
-        private CheckBoxTS chkCATPTT_DTR;
-        private GroupBoxTS grpCatControlBox;
-        private ComboBoxTS comboCATbaud;
-        private LabelTS lblCATBaud;
-        private CheckBoxTS chkCATEnable;
-        private LabelTS lblCATParity;
-        private LabelTS lblCATData;
-        private LabelTS lblCATStop;
-        private ComboBoxTS comboCATparity;
-        private ComboBoxTS comboCATdatabits;
-        private ComboBoxTS comboCATstopbits;
-        private GroupBoxTS grpKBCW;
-        private LabelTS lblKBCWDot;
-        private LabelTS lblKBCWDash;
-        private ComboBoxTS comboKBCWDot;
-        private ComboBoxTS comboKBCWDash;
-        private GroupBoxTS grpKBRIT;
-        private LabelTS lblKBRitUp;
-        private LabelTS lblKBRITDown;
-        private ComboBoxTS comboKBRITUp;
-        private ComboBoxTS comboKBRITDown;
-        private GroupBoxTS grpKBXIT;
-        private LabelTS lblKBXITUp;
-        private LabelTS lblKBXITDown;
-        private ComboBoxTS comboKBXITUp;
-        private ComboBoxTS comboKBXITDown;
-        private ButtonTS btnCATTest;
-        private TabControl tcAudio;
-        public ComboBoxTS comboAudioSampleRate1;
-        private GroupBoxTS grpAudioSampleRate1;
-        private GroupBoxTS grpAudioDetails2;
-        public LabelTS lblAudioOutput2;
-        private ComboBoxTS comboAudioOutput2;
-        public LabelTS lblAudioInput2;
-        public LabelTS lblAudioDriver2;
-        private ComboBoxTS comboAudioInput2;
-        private ComboBoxTS comboAudioDriver2;
-        private NumericUpDownTS udAudioLatency2;
-        private ComboBoxTS comboAudioBuffer2;
-        private ComboBoxTS comboAudioSampleRate2;
-        private GroupBoxTS grpAudioLatency2;
-        private CheckBoxTS chkAudioLatencyManual2;
-        private ComboBoxTS comboCATRigType;
-        private LabelTS lblCATRigType;
-        private GroupBoxTS grpTXProfile;
-        private ButtonTS btnTXProfileSave;
-        private ComboBoxTS comboTXProfileName;
-        private ButtonTS btnTXProfileDelete;
-        private ButtonTS btnImpulse;
-        private NumericUpDownTS udImpulseNum;
-        private GroupBoxTS grpTXMonitor;
-        private LabelTS lblTXAF;
-        private NumericUpDownTS udTXAF;
-        private GroupBoxTS grpGeneralModel;
-        private TabControl tcGeneral;
-        private TabPage tpGeneralHardware;
-        private TabPage tpGeneralOptions;
-        private TabPage tpGeneralCalibration;
-        private NumericUpDownTS udGeneralCalFreq1;
-        private NumericUpDownTS udGeneralCalFreq3;
-        private NumericUpDownTS udGeneralCalFreq2;
-        private TabPage tpVAC;
-        public CheckBoxTS chkAudioEnableVAC;
-        private GroupBoxTS grpAudio2Stereo;
-        private GroupBoxTS grpBoxTS1;
-        private LabelTS lblCATPort;
-        private ComboBoxTS comboCATPort;
-        private ComboBoxTS comboCATPTTPort;
-        private CheckBoxTS chkCATPTTEnabled;
-        private GroupBoxTS grpAudioVACGain;
-        private NumericUpDownTS udAudioVACGainRX;
-        public LabelTS lblAudioVACGainRX;
-        public LabelTS lblAudioVACGainTX;
-        private NumericUpDownTS udAudioVACGainTX;
-        private GroupBoxTS grpGenTuningOptions;
-        private GroupBoxTS grpAudioVACAutoEnable;
-        private CheckBoxTS chkAudioVACAutoEnable;
-        private GroupBoxTS grpImpulseTest;
-        private GroupBoxTS grpDisplayScopeMode;
-        private NumericUpDownTS udDisplayScopeTime;
-        private LabelTS lblDisplayScopeTime;
-        private NumericUpDownTS udDisplayMeterAvg;
-        private LabelTS lblDisplayMeterAvg;
-        private GroupBoxTS grpDisplayDriverEngine;
-        private Thetis.ColorButton clrbtnOutOfBand;
-        private LabelTS lblOutOfBand;
-        private CheckBoxTS chkAudio2Stereo;
-        private GroupBoxTS grpTXAM;
-        private LabelTS lblTXAMCarrierLevel;
-        private NumericUpDownTS udTXAMCarrierLevel;
-        private GroupBoxTS grpKeyboardOptions;
-        private CheckBoxTS chkOptQuickQSY;
-        private CheckBoxTS chkOptAlwaysOnTop;
-        private NumericUpDownTS udOptClickTuneOffsetDIGL;
-        private NumericUpDownTS udOptClickTuneOffsetDIGU;
-        private LabelTS lblOptClickTuneDIGL;
-        private LabelTS lblOptClickTuneDIGU;
-        private GroupBoxTS grpOptFilterControls;
-        private LabelTS lblOptMaxFilter;
-        private NumericUpDownTS udOptMaxFilterWidth;
-        private LabelTS lblOptWidthSliderMode;
-        private ComboBoxTS comboOptFilterWidthMode;
-        private NumericUpDownTS udOptMaxFilterShift;
-        private LabelTS lblOptMaxFilterShift;
-        private CheckBoxTS chkOptFilterSaveChanges;
-        private CheckBoxTS chkOptEnableKBShortcuts;
-        private TabControl tcAppearance;
-        private TabPage tpAppearanceGeneral;
-        private TabPage tpAppearanceDisplay;
-        private TabPage tpAppearanceMeter;
-        private GroupBoxTS grpAppearanceVFO;
-        private LabelTS lblVFOPowerOn;
-        private LabelTS lblVFOPowerOff;
-        private GroupBoxTS grpAppearanceBand;
-        private TabPage tpFilters;
-        private LabelTS lblDefaultLowCut;
-        private NumericUpDownTS udFilterDefaultLowCut;
-        private CheckBoxTS chkVFOSmallLSD;
-        private Thetis.ColorButton clrbtnVFOSmallColor;
-        private Thetis.ColorButton clrbtnBandBackground;
-        private LabelTS lblBandBackground;
-        private Thetis.ColorButton clrbtnVFOBackground;
-        private LabelTS lblVFOBackground;
-        private GroupBoxTS grpDisplayPeakCursor;
-        private Thetis.ColorButton clrbtnPeakBackground;
-        private LabelTS lblPeakBackground;
-        private Thetis.ColorButton clrbtnMeterBackground;
-        private LabelTS lblMeterBackground;
-        private Thetis.ColorButton clrbtnTXFilter;
-        private GroupBoxTS grpAppPanadapter;
-        private Thetis.ColorButton clrbtnBandEdge;
-        private LabelTS lblBandEdge;
-        private CheckBoxTS chkShowFreqOffset;
-        public ComboBoxTS comboMeterType;
-        private Thetis.ColorButton clrbtnMeterEdgeBackground;
-        private Thetis.ColorButton clrbtnMeterEdgeHigh;
-        private Thetis.ColorButton clrbtnMeterEdgeLow;
-        private GroupBoxTS grpGenCalRXImage;
-        private LabelTS lblGenCalRXImageFreq;
-        private GroupBoxTS grpGenCalLevel;
-        private LabelTS lblGenCalLevelFreq;
-        private LabelTS lblVFOSmallColor;
-        private LabelTS lblTXFilterColor;
-        private LabelTS lblMeterType;
-        private CheckBoxTS chkTestIMD;
-        private GroupBoxTS grpMeterEdge;
-        private LabelTS lblMeterEdgeBackground;
-        private LabelTS lblMeterEdgeHigh;
-        private LabelTS lblMeterEdgeLow;
-        private Thetis.ColorButton clrbtnEdgeIndicator;
-        private LabelTS labelTS1;
-        private LabelTS lblMeterDigitalText;
-        private Thetis.ColorButton clrbtnMeterDigText;
-        private LabelTS labelTS2;
-        private Thetis.ColorButton clrbtnMeterDigBackground;
-        private Thetis.ColorButton clrbtnSubRXFilter;
-        private LabelTS lblSubRXFilterColor;
-        private Thetis.ColorButton clrbtnSubRXZero;
-        private LabelTS lblSubRXZeroLine;
-        private GroupBoxTS grpOptMisc;
-        private CheckBoxTS chkDisableToolTips;
-        private NumericUpDownTS udDisplayWaterfallUpdatePeriod;
-        private LabelTS lblDisplayWaterfallUpdatePeriod;
-        private CheckBoxTS chkSnapClickTune;
-        private RadioButtonTS radPACalAllBands;
-        private CheckBoxTS chkPA160;
-        private CheckBoxTS chkPA80;
-        private CheckBoxTS chkPA60;
-        private CheckBoxTS chkPA40;
-        private CheckBoxTS chkPA30;
-        private CheckBoxTS chkPA20;
-        private CheckBoxTS chkPA17;
-        private CheckBoxTS chkPA15;
-        private CheckBoxTS chkPA12;
-        private CheckBoxTS chkPA10;
-        private RadioButtonTS radPACalSelBands;
-        private NumericUpDownTS udPACalPower;
-        private CheckBoxTS chkZeroBeatRIT;
-        private LabelTS lblPACalTarget;
-        private ComboBoxTS cmboSigGenRXMode;
-        private LabelTS lblSigGenRXMode;
-        private GroupBoxTS grpSigGenReceive;
-        private GroupBoxTS grpSigGenTransmit;
-        private LabelTS lblSigGenTXMode;
-        private ComboBoxTS cmboSigGenTXMode;
-        private NumericUpDownTS udMeterDigitalDelay;
-        private LabelTS lblMultimeterDigitalDelay;
-        private CheckBoxTS chkPA6;
-        private CheckBoxTS chkMouseTuneStep;
-        private CheckBoxTS chkCalExpert;
-        private CheckBoxTS chkGenAllModeMicPTT;
-        private CheckBoxTS chkDigUIsUSB;
-        private GroupBoxTS grpGenCustomTitleText;
-        private TextBoxTS txtGenCustomTitle;
-        private CheckBoxTS chkKWAI;
-        private CheckBoxTS chkSplitOff;
-        private CheckBoxTS chkEnableRFEPATR;
-        private CheckBoxTS chkVACAllowBypass;
-        private CheckBoxTS chkVACCombine;
-        private CheckBoxTS chkSigGenRX2;
-        private LabelTS lblGenBackground;
-        private Thetis.ColorButton clrbtnGenBackground;
-        private ComboBoxTS comboTXTUNMeter;
-        private LabelTS lblTXTUNMeter;
-        private ButtonTS btnResetDB;
-        private CheckBoxTS chkDisplayMeterShowDecimal;
-        private GroupBoxTS grpRTTYOffset;
-        private CheckBoxTS chkRTTYOffsetEnableA;
-        private CheckBoxTS chkRTTYOffsetEnableB;
-        private NumericUpDownTS udRTTYL;
-        private NumericUpDownTS udRTTYU;
-        private LabelTS labelTS3;
-        private LabelTS labelTS4;
-        private TabPage tpRX2;
-        private CheckBoxTS chkRX2AutoMuteTX;
-        private GroupBoxTS grpDirectIQOutput;
-        private CheckBoxTS chkAudioCorrectIQ;
-        private CheckBoxTS chkAudioIQtoVAC;
-        private CheckBoxTS chkRX2AutoMuteRX1OnVFOBTX;
-        private ListBox lstTXProfileDef;
-        private GroupBoxTS grpTXProfileDef;
-        private CheckBoxTS chkTXExpert;
-        private ButtonTS btnTXProfileDefImport;
-        private CheckBoxTS chkDisplayPanFill;
-        private GroupBoxTS grpAppSkins;
-        private ComboBoxTS comboAppSkin;
-        private ButtonTS btnSkinExport;
-        private CheckBoxTS chkAudioRX2toVAC;
-        private TabPage tpGeneralNavigation;
-        private TrackBarTS tbRX1FilterAlpha;
-        private TrackBarTS tbMultiRXFilterAlpha;
-        private CheckBoxTS chkWheelTuneVFOB;
-        private ButtonTS btnExportDB;
-        private SaveFileDialog saveFileDialog1;
-        private CheckBoxTS chkAlexPresent;
-        private CheckBoxTS chkPennyPresent;
-        private CheckBoxTS chkMercuryPresent;
-        private GroupBoxTS grpHPSDRFreqCalDbg;
-        private LabelTS labelTS10;
-        private NumericUpDownTS udHPSDRFreqCorrectFactor;
-        private Button btnHPSDRFreqCalReset;
-        private TabPage tpPennyCtrl;
-        private TabPage tpHPSDR;
-        private TabPage tpAlexControl;
-        private GroupBoxTS grpPennyExtCtrl;
-        private LabelTS lblHFTxControl;
-        private LabelTS lblHFRxControl;
-        private LabelTS labelTS43;
-        private LabelTS labelTS23;
-        private LabelTS labelTS24;
-        private LabelTS labelTS25;
-        private LabelTS labelTS26;
-        private LabelTS labelTS27;
-        private LabelTS labelTS42;
-        private LabelTS labelTS44;
-        private LabelTS labelTS45;
-        private LabelTS labelTS46;
-        private LabelTS labelTS47;
-        private LabelTS labelTS48;
-        private LabelTS labelTS49;
-        private LabelTS labelTS51;
-        private LabelTS labelTS40;
-        private CheckBoxTS chkPenOCrcv1601;
-        private CheckBoxTS chkPenOCxmit1607;
-        private CheckBoxTS chkPenOCxmit1606;
-        private CheckBoxTS chkPenOCxmit1605;
-        private CheckBoxTS chkPenOCxmit1604;
-        private CheckBoxTS chkPenOCxmit1603;
-        private CheckBoxTS chkPenOCxmit1602;
-        private CheckBoxTS chkPenOCxmit1601;
-        private CheckBoxTS chkPenOCrcv1607;
-        private CheckBoxTS chkPenOCrcv1606;
-        private CheckBoxTS chkPenOCrcv1605;
-        private CheckBoxTS chkPenOCrcv1604;
-        private CheckBoxTS chkPenOCrcv1603;
-        private CheckBoxTS chkPenOCrcv1602;
-        private CheckBoxTS chkPenOCxmit807;
-        private CheckBoxTS chkPenOCxmit806;
-        private CheckBoxTS chkPenOCxmit805;
-        private CheckBoxTS chkPenOCxmit804;
-        private CheckBoxTS chkPenOCxmit803;
-        private CheckBoxTS chkPenOCxmit802;
-        private CheckBoxTS chkPenOCxmit801;
-        private CheckBoxTS chkPenOCrcv807;
-        private CheckBoxTS chkPenOCrcv806;
-        private CheckBoxTS chkPenOCrcv805;
-        private CheckBoxTS chkPenOCrcv804;
-        private CheckBoxTS chkPenOCrcv803;
-        private CheckBoxTS chkPenOCrcv802;
-        private CheckBoxTS chkPenOCrcv801;
-        private CheckBoxTS chkPenOCxmit207;
-        private CheckBoxTS chkPenOCxmit206;
-        private CheckBoxTS chkPenOCxmit205;
-        private CheckBoxTS chkPenOCxmit204;
-        private CheckBoxTS chkPenOCxmit203;
-        private CheckBoxTS chkPenOCxmit202;
-        private CheckBoxTS chkPenOCxmit201;
-        private CheckBoxTS chkPenOCrcv207;
-        private CheckBoxTS chkPenOCrcv206;
-        private CheckBoxTS chkPenOCrcv205;
-        private CheckBoxTS chkPenOCrcv204;
-        private CheckBoxTS chkPenOCrcv203;
-        private CheckBoxTS chkPenOCrcv202;
-        private CheckBoxTS chkPenOCrcv201;
-        private CheckBoxTS chkPenOCxmit307;
-        private CheckBoxTS chkPenOCxmit306;
-        private CheckBoxTS chkPenOCxmit305;
-        private CheckBoxTS chkPenOCxmit304;
-        private CheckBoxTS chkPenOCxmit303;
-        private CheckBoxTS chkPenOCxmit302;
-        private CheckBoxTS chkPenOCxmit301;
-        private CheckBoxTS chkPenOCrcv307;
-        private CheckBoxTS chkPenOCrcv306;
-        private CheckBoxTS chkPenOCrcv305;
-        private CheckBoxTS chkPenOCrcv304;
-        private CheckBoxTS chkPenOCrcv303;
-        private CheckBoxTS chkPenOCrcv302;
-        private CheckBoxTS chkPenOCrcv301;
-        private CheckBoxTS chkPenOCxmit407;
-        private CheckBoxTS chkPenOCxmit406;
-        private CheckBoxTS chkPenOCxmit405;
-        private CheckBoxTS chkPenOCxmit404;
-        private CheckBoxTS chkPenOCxmit403;
-        private CheckBoxTS chkPenOCxmit402;
-        private CheckBoxTS chkPenOCxmit401;
-        private CheckBoxTS chkPenOCrcv407;
-        private CheckBoxTS chkPenOCrcv406;
-        private CheckBoxTS chkPenOCrcv405;
-        private CheckBoxTS chkPenOCrcv404;
-        private CheckBoxTS chkPenOCrcv403;
-        private CheckBoxTS chkPenOCrcv402;
-        private CheckBoxTS chkPenOCrcv401;
-        private CheckBoxTS chkPenOCxmit607;
-        private CheckBoxTS chkPenOCxmit606;
-        private CheckBoxTS chkPenOCxmit605;
-        private CheckBoxTS chkPenOCxmit604;
-        private CheckBoxTS chkPenOCxmit603;
-        private CheckBoxTS chkPenOCxmit602;
-        private CheckBoxTS chkPenOCxmit601;
-        private CheckBoxTS chkPenOCrcv607;
-        private CheckBoxTS chkPenOCrcv606;
-        private CheckBoxTS chkPenOCrcv605;
-        private CheckBoxTS chkPenOCrcv604;
-        private CheckBoxTS chkPenOCrcv603;
-        private CheckBoxTS chkPenOCrcv602;
-        private CheckBoxTS chkPenOCrcv601;
-        private CheckBoxTS chkPenOCxmit27;
-        private CheckBoxTS chkPenOCxmit26;
-        private CheckBoxTS chkPenOCxmit25;
-        private CheckBoxTS chkPenOCxmit24;
-        private CheckBoxTS chkPenOCxmit23;
-        private CheckBoxTS chkPenOCxmit22;
-        private CheckBoxTS chkPenOCxmit21;
-        private CheckBoxTS chkPenOCrcv27;
-        private CheckBoxTS chkPenOCrcv26;
-        private CheckBoxTS chkPenOCrcv25;
-        private CheckBoxTS chkPenOCrcv24;
-        private CheckBoxTS chkPenOCrcv23;
-        private CheckBoxTS chkPenOCrcv22;
-        private CheckBoxTS chkPenOCrcv21;
-        private CheckBoxTS chkPenOCxmit67;
-        private CheckBoxTS chkPenOCxmit66;
-        private CheckBoxTS chkPenOCxmit65;
-        private CheckBoxTS chkPenOCxmit64;
-        private CheckBoxTS chkPenOCxmit63;
-        private CheckBoxTS chkPenOCxmit62;
-        private CheckBoxTS chkPenOCxmit61;
-        private CheckBoxTS chkPenOCrcv67;
-        private CheckBoxTS chkPenOCrcv66;
-        private CheckBoxTS chkPenOCrcv65;
-        private CheckBoxTS chkPenOCrcv64;
-        private CheckBoxTS chkPenOCrcv63;
-        private CheckBoxTS chkPenOCrcv62;
-        private CheckBoxTS chkPenOCrcv61;
-        private CheckBoxTS chkPenOCxmit107;
-        private CheckBoxTS chkPenOCxmit106;
-        private CheckBoxTS chkPenOCxmit105;
-        private CheckBoxTS chkPenOCxmit104;
-        private CheckBoxTS chkPenOCxmit103;
-        private CheckBoxTS chkPenOCxmit102;
-        private CheckBoxTS chkPenOCxmit101;
-        private CheckBoxTS chkPenOCrcv107;
-        private CheckBoxTS chkPenOCrcv106;
-        private CheckBoxTS chkPenOCrcv105;
-        private CheckBoxTS chkPenOCrcv104;
-        private CheckBoxTS chkPenOCrcv103;
-        private CheckBoxTS chkPenOCrcv102;
-        private CheckBoxTS chkPenOCrcv101;
-        private CheckBoxTS chkPenOCxmit127;
-        private CheckBoxTS chkPenOCxmit126;
-        private CheckBoxTS chkPenOCxmit125;
-        private CheckBoxTS chkPenOCxmit124;
-        private CheckBoxTS chkPenOCxmit123;
-        private CheckBoxTS chkPenOCxmit122;
-        private CheckBoxTS chkPenOCxmit121;
-        private CheckBoxTS chkPenOCrcv127;
-        private CheckBoxTS chkPenOCrcv126;
-        private CheckBoxTS chkPenOCrcv125;
-        private CheckBoxTS chkPenOCrcv124;
-        private CheckBoxTS chkPenOCrcv123;
-        private CheckBoxTS chkPenOCrcv122;
-        private CheckBoxTS chkPenOCrcv121;
-        private CheckBoxTS chkPenOCxmit157;
-        private CheckBoxTS chkPenOCxmit156;
-        private CheckBoxTS chkPenOCxmit155;
-        private CheckBoxTS chkPenOCxmit154;
-        private CheckBoxTS chkPenOCxmit153;
-        private CheckBoxTS chkPenOCxmit152;
-        private CheckBoxTS chkPenOCxmit151;
-        private CheckBoxTS chkPenOCrcv157;
-        private CheckBoxTS chkPenOCrcv156;
-        private CheckBoxTS chkPenOCrcv155;
-        private CheckBoxTS chkPenOCrcv154;
-        private CheckBoxTS chkPenOCrcv153;
-        private CheckBoxTS chkPenOCrcv152;
-        private CheckBoxTS chkPenOCrcv151;
-        private CheckBoxTS chkPenOCxmit177;
-        private CheckBoxTS chkPenOCxmit176;
-        private CheckBoxTS chkPenOCxmit175;
-        private CheckBoxTS chkPenOCxmit174;
-        private CheckBoxTS chkPenOCxmit173;
-        private CheckBoxTS chkPenOCxmit172;
-        private CheckBoxTS chkPenOCxmit171;
-        private CheckBoxTS chkPenOCrcv177;
-        private CheckBoxTS chkPenOCrcv176;
-        private CheckBoxTS chkPenOCrcv175;
-        private CheckBoxTS chkPenOCrcv174;
-        private CheckBoxTS chkPenOCrcv173;
-        private CheckBoxTS chkPenOCrcv172;
-        private CheckBoxTS chkPenOCrcv171;
-        private LabelTS labelTS28;
-        private LabelTS labelTS29;
-        private LabelTS labelTS30;
-        private LabelTS labelTS31;
-        private LabelTS labelTS32;
-        private LabelTS labelTS33;
-        private LabelTS labelTS34;
-        private LabelTS labelTS35;
-        private LabelTS labelTS36;
-        private LabelTS labelTS37;
-        private LabelTS labelTS38;
-        private LabelTS labelTS41;
-        private CheckBoxTS chkPennyExtCtrl;
-        private GroupBoxTS groupBoxRXOptions;
-        private CheckBoxTS chkMercRandom;
-        private CheckBoxTS chkMercDither;
-        private NumericUpDownTS udMaxFreq;
-        private LabelTS labelTS57;
-        private GroupBoxTS grpVersion;
-        private LabelTS lblPenelopeFWVer;
-        private LabelTS lblMercuryFWVer;
-        private LabelTS lblOzyFWVer;
-        private LabelTS lblOzyFX2;
-        private GroupBoxTS grpAlexAntCtrl;
-        private CheckBoxTS chkAlex160XV;
-        private CheckBoxTS chkAlex160R2;
-        private CheckBoxTS chkAlex160R1;
-        private RadioButtonTS radAlexR3_160;
-        private RadioButtonTS radAlexR2_160;
-        private RadioButtonTS radAlexR1_160;
-        private PanelTS panel1;
-        private CheckBoxTS chkAlex12XV;
-        private CheckBoxTS chkAlex12R2;
-        private CheckBoxTS chkAlex12R1;
-        private CheckBoxTS chkAlex15XV;
-        private CheckBoxTS chkAlex15R2;
-        private CheckBoxTS chkAlex15R1;
-        private CheckBoxTS chkAlex17XV;
-        private CheckBoxTS chkAlex17R2;
-        private CheckBoxTS chkAlex17R1;
-        private CheckBoxTS chkAlex20XV;
-        private CheckBoxTS chkAlex20R2;
-        private CheckBoxTS chkAlex20R1;
-        private CheckBoxTS chkAlex30XV;
-        private CheckBoxTS chkAlex30R2;
-        private CheckBoxTS chkAlex30R1;
-        private CheckBoxTS chkAlex40XV;
-        private CheckBoxTS chkAlex40R2;
-        private CheckBoxTS chkAlex40R1;
-        private CheckBoxTS chkAlex60XV;
-        private CheckBoxTS chkAlex60R2;
-        private CheckBoxTS chkAlex60R1;
-        private CheckBoxTS chkAlex80XV;
-        private CheckBoxTS chkAlex80R2;
-        private CheckBoxTS chkAlex80R1;
-        private CheckBoxTS chkAlex6XV;
-        private CheckBoxTS chkAlex6R2;
-        private CheckBoxTS chkAlex6R1;
-        private CheckBoxTS chkAlex10XV;
-        private CheckBoxTS chkAlex10R2;
-        private CheckBoxTS chkAlex10R1;
-        private PanelTS panel10;
-        private RadioButtonTS radAlexR2_10;
-        private RadioButtonTS radAlexR1_10;
-        private RadioButtonTS radAlexR3_10;
-        private PanelTS panel8;
-        private PanelTS panel9;
-        private RadioButtonTS radAlexR2_12;
-        private RadioButtonTS radAlexR1_12;
-        private RadioButtonTS radAlexR3_12;
-        private RadioButtonTS radAlexR2_15;
-        private RadioButtonTS radAlexR1_15;
-        private RadioButtonTS radAlexR3_15;
-        private PanelTS panel7;
-        private RadioButtonTS radAlexR2_17;
-        private RadioButtonTS radAlexR1_17;
-        private RadioButtonTS radAlexR3_17;
-        private PanelTS panel6;
-        private RadioButtonTS radAlexR2_20;
-        private RadioButtonTS radAlexR1_20;
-        private RadioButtonTS radAlexR3_20;
-        private PanelTS panel5;
-        private RadioButtonTS radAlexR2_30;
-        private RadioButtonTS radAlexR1_30;
-        private RadioButtonTS radAlexR3_30;
-        private PanelTS panel4;
-        private RadioButtonTS radAlexR2_40;
-        private RadioButtonTS radAlexR1_40;
-        private RadioButtonTS radAlexR3_40;
-        private PanelTS panel3;
-        private RadioButtonTS radAlexR2_60;
-        private RadioButtonTS radAlexR1_60;
-        private RadioButtonTS radAlexR3_60;
-        private PanelTS panel2;
-        private RadioButtonTS radAlexR2_80;
-        private RadioButtonTS radAlexR1_80;
-        private RadioButtonTS radAlexR3_80;
-        private PanelTS panel11;
-        private RadioButtonTS radAlexR2_6;
-        private RadioButtonTS radAlexR1_6;
-        private RadioButtonTS radAlexR3_6;
-        private LabelTS label12;
-        private LabelTS labelTS5;
-        private LabelTS labelTS6;
-        private LabelTS labelTS7;
-        private LabelTS label17;
-        private LabelTS label18;
-        private LabelTS label19;
-        private LabelTS labelTS11;
-        private LabelTS labelTS12;
-        private LabelTS labelTS13;
-        private LabelTS labelTS14;
-        private LabelTS labelTS56;
-        private LabelTS labelTS22;
-        private LabelTS label4;
-        private LabelTS label3;
-        private LabelTS label2;
-        private LabelTS label7;
-        private LabelTS label6;
-        private LabelTS label5;
-        private LabelTS labelRXAntControl;
-        private CheckBoxTS chkAlexAntCtrl;
-        private GroupBoxTS groupBoxHPSDRHW;
-        private CheckBoxTS chkHERCULES;
-        private ButtonTS btnPennyCtrlReset;
-        private GroupBoxTS grpFRSRegion;
-        public ComboBoxTS comboFRSRegion;
-        private GroupBoxTS grpOzyType;
-        private GroupBoxTS grpMetisAddr;
-        private LabelTS lblMetisIP;
-        private LabelTS lblMetisMAC;
-        private LabelTS labelTS9;
-        private LabelTS labelTS16;
-        private CheckBoxTS chkPennyLane;
-        private LabelTS lblPTTOutDelay;
-        private NumericUpDownTS udGenPTTOutDelay;
-        private GroupBoxTS grpDiagInfo;
-        private LabelTS lblSyncData;
-        private LabelTS lblMoxDelay;
-        private NumericUpDownTS udMoxDelay;
-        private LabelTS lblRFDelay;
-        private NumericUpDownTS udRFDelay;
-        private GroupBoxTS grpBoxMic;
-        private NumericUpDownTS udMicGainMin;
-        private NumericUpDownTS udMicGainMax;
-        private LabelTS labelTS21;
-        private LabelTS labelTS20;
-        private CheckBoxTS chk20dbMicBoost;
-        private NumericUpDownTS udTwoToneLevel;
-        private LabelTS lblTwoToneLevel;
-        private NumericUpDownTS udTXDisplayCalOffset;
-        private GroupBoxTS grpBoxTXDisplayCal;
-        private GroupBoxTS grpAppGrid;
-        private ColorButton clrbtnGridFine;
-        private LabelTS lblGridFine;
-        private TrackBarTS tbGridFineAlpha;
-        private TrackBarTS tbGridCourseAlpha;
-        private TrackBarTS tbBackgroundAlpha;
-        private TrackBarTS tbHGridColorAlpha;
-        private ColorButton clrbtnHGridColor;
-        private LabelTS lblHGrid;
-        public CheckBoxTS chkGridControl;
-        private TabPage tcAppearanceTXDisplay;
-        private GroupBoxTS groupBoxTS3;
-        private CheckBoxTS chkTXGridControl;
-        private TrackBarTS tbTXFilterAlpha;
-        private ColorButton clrbtnTXBandEdge;
-        private LabelTS lblTXBandEdge;
-        private LabelTS lblDispTXFilterColor;
-        private ColorButton clrbtnGridTXFilter;
-        private GroupBoxTS groupBoxTS2;
-        private TrackBarTS tbTXHGridColorAlpha;
-        private ColorButton clrbtnTXHGridColor;
-        private LabelTS lblTXHGridColor;
-        private TrackBarTS tbTXVGridFineAlpha;
-        private TrackBarTS tbTXVGridCourseAlpha;
-        private TrackBarTS tbTXBackgroundAlpha;
-        private ColorButton clrbtnTXVGridFine;
-        private LabelTS lblTXVGridFine;
-        private LabelTS lblTXVGridColor;
-        private ColorButton clrbtnTXBackground;
-        private NumericUpDownTS udTXLineWidth;
-        private ColorButton clrbtnTXVGrid;
-        private LabelTS lblTXLineWidth;
-        private LabelTS lblTXBackgroundColor;
-        private ColorButton clrbtnTXDataLine;
-        private ColorButton clrbtnTXZeroLine;
-        private LabelTS lblTXDataLineColor;
-        private LabelTS lblTXZeroLineColor;
-        private ColorButton clrbtnTXText;
-        private LabelTS lblTXTextColor;
-        private GroupBoxTS grpTXSpectrumGrid;
-        private CheckBoxTS chkTXPanFill;
-        private ComboBoxTS comboTXLabelAlign;
-        private LabelTS lblTXAlign;
-        private NumericUpDownTS udTXGridStep;
-        private NumericUpDownTS udTXGridMin;
-        private NumericUpDownTS udTXGridMax;
-        private LabelTS lblTXGridStep;
-        private LabelTS lblTXGridMin;
-        private LabelTS lblTXGridMax;
-        private TrackBarTS tbTXTextAlpha;
-        private TrackBarTS tbTXZeroLineAlpha;
-        private LabelTS labelTS55;
-        private TabPage tpAppearanceCollapsible;
-        private TextBoxTS txtCollapsedHeight;
-        private TextBoxTS txtCollapsedWidth;
-        private GroupBox grpBoxCollapsible;
-        public CheckBoxTS chkShowModeControls;
-        public CheckBoxTS chkShowBandControls;
-        public CheckBoxTS chkShowTopControls;
-        private GroupBoxTS grpBoxSpaceBarPTT;
-        private TrackBarTS tbMeterEdgeBackgroundAlpha;
-        private ColorButton clrbtnInfoButtonsColor;
-        private LabelTS labelTS58;
-        private RadioButtonTS radSpaceBarLastBtn;
-        private RadioButtonTS radSpaceBarMicMute;
-        private RadioButtonTS radSpaceBarVOX;
-        private RadioButtonTS radSpaceBarPTT;
-        private NumericUpDownTS udLineInBoost;
-        private LabelTS lblLineInBoost;
-        private GroupBoxTS grpPennyExtCtrlVHF;
-        private LabelTS labelTS71;
-        private LabelTS labelTS72;
-        private LabelTS labelTS73;
-        private LabelTS labelTS74;
-        private LabelTS labelTS75;
-        private LabelTS labelTS76;
-        private LabelTS labelTS77;
-        private LabelTS labelTS78;
-        private LabelTS labelTS79;
-        private LabelTS labelTS80;
-        private LabelTS labelTS81;
-        private LabelTS labelTS82;
-        private LabelTS labelTS83;
-        private LabelTS labelTS84;
-        private LabelTS labelTS85;
-        private LabelTS lblVHFTxControl;
-        private LabelTS lblVHFRxControl;
-        private LabelTS labelTS59;
-        private LabelTS labelTS60;
-        private LabelTS labelTS61;
-        private LabelTS labelTS62;
-        private LabelTS labelTS63;
-        private LabelTS labelTS64;
-        private LabelTS labelTS65;
-        private LabelTS labelTS66;
-        private LabelTS labelTS67;
-        private LabelTS labelTS68;
-        private LabelTS labelTS69;
-        private LabelTS labelTS70;
-        private CheckBoxTS chkPenOCxmitVHF117;
-        private CheckBoxTS chkPenOCxmitVHF116;
-        private CheckBoxTS chkPenOCxmitVHF115;
-        private CheckBoxTS chkPenOCxmitVHF114;
-        private CheckBoxTS chkPenOCxmitVHF113;
-        private CheckBoxTS chkPenOCxmitVHF112;
-        private CheckBoxTS chkPenOCxmitVHF111;
-        private CheckBoxTS chkPenOCrcvVHF117;
-        private CheckBoxTS chkPenOCrcvVHF116;
-        private CheckBoxTS chkPenOCrcvVHF115;
-        private CheckBoxTS chkPenOCrcvVHF114;
-        private CheckBoxTS chkPenOCrcvVHF113;
-        private CheckBoxTS chkPenOCrcvVHF112;
-        private CheckBoxTS chkPenOCrcvVHF111;
-        private CheckBoxTS chkPenOCxmitVHF107;
-        private CheckBoxTS chkPenOCxmitVHF106;
-        private CheckBoxTS chkPenOCxmitVHF105;
-        private CheckBoxTS chkPenOCxmitVHF104;
-        private CheckBoxTS chkPenOCxmitVHF103;
-        private CheckBoxTS chkPenOCxmitVHF102;
-        private CheckBoxTS chkPenOCxmitVHF101;
-        private CheckBoxTS chkPenOCrcvVHF107;
-        private CheckBoxTS chkPenOCrcvVHF106;
-        private CheckBoxTS chkPenOCrcvVHF105;
-        private CheckBoxTS chkPenOCrcvVHF104;
-        private CheckBoxTS chkPenOCrcvVHF103;
-        private CheckBoxTS chkPenOCrcvVHF102;
-        private CheckBoxTS chkPenOCrcvVHF101;
-        private CheckBoxTS chkPenOCxmitVHF97;
-        private CheckBoxTS chkPenOCxmitVHF96;
-        private CheckBoxTS chkPenOCxmitVHF95;
-        private CheckBoxTS chkPenOCxmitVHF94;
-        private CheckBoxTS chkPenOCxmitVHF93;
-        private CheckBoxTS chkPenOCxmitVHF92;
-        private CheckBoxTS chkPenOCxmitVHF91;
-        private CheckBoxTS chkPenOCrcvVHF97;
-        private CheckBoxTS chkPenOCrcvVHF96;
-        private CheckBoxTS chkPenOCrcvVHF95;
-        private CheckBoxTS chkPenOCrcvVHF94;
-        private CheckBoxTS chkPenOCrcvVHF93;
-        private CheckBoxTS chkPenOCrcvVHF92;
-        private CheckBoxTS chkPenOCrcvVHF91;
-        private CheckBoxTS chkPenOCxmitVHF87;
-        private CheckBoxTS chkPenOCxmitVHF86;
-        private CheckBoxTS chkPenOCxmitVHF85;
-        private CheckBoxTS chkPenOCxmitVHF84;
-        private CheckBoxTS chkPenOCxmitVHF83;
-        private CheckBoxTS chkPenOCxmitVHF82;
-        private CheckBoxTS chkPenOCxmitVHF81;
-        private CheckBoxTS chkPenOCrcvVHF87;
-        private CheckBoxTS chkPenOCrcvVHF86;
-        private CheckBoxTS chkPenOCrcvVHF85;
-        private CheckBoxTS chkPenOCrcvVHF84;
-        private CheckBoxTS chkPenOCrcvVHF83;
-        private CheckBoxTS chkPenOCrcvVHF82;
-        private CheckBoxTS chkPenOCrcvVHF81;
-        private CheckBoxTS chkPenOCxmitVHF77;
-        private CheckBoxTS chkPenOCxmitVHF76;
-        private CheckBoxTS chkPenOCxmitVHF75;
-        private CheckBoxTS chkPenOCxmitVHF74;
-        private CheckBoxTS chkPenOCxmitVHF73;
-        private CheckBoxTS chkPenOCxmitVHF72;
-        private CheckBoxTS chkPenOCxmitVHF71;
-        private CheckBoxTS chkPenOCrcvVHF77;
-        private CheckBoxTS chkPenOCrcvVHF76;
-        private CheckBoxTS chkPenOCrcvVHF75;
-        private CheckBoxTS chkPenOCrcvVHF74;
-        private CheckBoxTS chkPenOCrcvVHF73;
-        private CheckBoxTS chkPenOCrcvVHF72;
-        private CheckBoxTS chkPenOCrcvVHF71;
-        private CheckBoxTS chkPenOCxmitVHF67;
-        private CheckBoxTS chkPenOCxmitVHF66;
-        private CheckBoxTS chkPenOCxmitVHF65;
-        private CheckBoxTS chkPenOCxmitVHF64;
-        private CheckBoxTS chkPenOCxmitVHF63;
-        private CheckBoxTS chkPenOCxmitVHF62;
-        private CheckBoxTS chkPenOCxmitVHF61;
-        private CheckBoxTS chkPenOCrcvVHF67;
-        private CheckBoxTS chkPenOCrcvVHF66;
-        private CheckBoxTS chkPenOCrcvVHF65;
-        private CheckBoxTS chkPenOCrcvVHF64;
-        private CheckBoxTS chkPenOCrcvVHF63;
-        private CheckBoxTS chkPenOCrcvVHF62;
-        private CheckBoxTS chkPenOCrcvVHF61;
-        private CheckBoxTS chkPenOCxmitVHF57;
-        private CheckBoxTS chkPenOCxmitVHF56;
-        private CheckBoxTS chkPenOCxmitVHF55;
-        private CheckBoxTS chkPenOCxmitVHF54;
-        private CheckBoxTS chkPenOCxmitVHF53;
-        private CheckBoxTS chkPenOCxmitVHF52;
-        private CheckBoxTS chkPenOCxmitVHF51;
-        private CheckBoxTS chkPenOCrcvVHF57;
-        private CheckBoxTS chkPenOCrcvVHF56;
-        private CheckBoxTS chkPenOCrcvVHF55;
-        private CheckBoxTS chkPenOCrcvVHF54;
-        private CheckBoxTS chkPenOCrcvVHF53;
-        private CheckBoxTS chkPenOCrcvVHF52;
-        private CheckBoxTS chkPenOCrcvVHF51;
-        private CheckBoxTS chkPenOCxmitVHF47;
-        private CheckBoxTS chkPenOCxmitVHF46;
-        private CheckBoxTS chkPenOCxmitVHF45;
-        private CheckBoxTS chkPenOCxmitVHF44;
-        private CheckBoxTS chkPenOCxmitVHF43;
-        private CheckBoxTS chkPenOCxmitVHF42;
-        private CheckBoxTS chkPenOCxmitVHF41;
-        private CheckBoxTS chkPenOCrcvVHF47;
-        private CheckBoxTS chkPenOCrcvVHF46;
-        private CheckBoxTS chkPenOCrcvVHF45;
-        private CheckBoxTS chkPenOCrcvVHF44;
-        private CheckBoxTS chkPenOCrcvVHF43;
-        private CheckBoxTS chkPenOCrcvVHF42;
-        private CheckBoxTS chkPenOCrcvVHF41;
-        private CheckBoxTS chkPenOCxmitVHF37;
-        private CheckBoxTS chkPenOCxmitVHF36;
-        private CheckBoxTS chkPenOCxmitVHF35;
-        private CheckBoxTS chkPenOCxmitVHF34;
-        private CheckBoxTS chkPenOCxmitVHF33;
-        private CheckBoxTS chkPenOCxmitVHF32;
-        private CheckBoxTS chkPenOCxmitVHF31;
-        private CheckBoxTS chkPenOCrcvVHF37;
-        private CheckBoxTS chkPenOCrcvVHF36;
-        private CheckBoxTS chkPenOCrcvVHF35;
-        private CheckBoxTS chkPenOCrcvVHF34;
-        private CheckBoxTS chkPenOCrcvVHF33;
-        private CheckBoxTS chkPenOCrcvVHF32;
-        private CheckBoxTS chkPenOCrcvVHF31;
-        private CheckBoxTS chkPenOCxmitVHF27;
-        private CheckBoxTS chkPenOCxmitVHF26;
-        private CheckBoxTS chkPenOCxmitVHF25;
-        private CheckBoxTS chkPenOCxmitVHF24;
-        private CheckBoxTS chkPenOCxmitVHF23;
-        private CheckBoxTS chkPenOCxmitVHF22;
-        private CheckBoxTS chkPenOCxmitVHF21;
-        private CheckBoxTS chkPenOCrcvVHF27;
-        private CheckBoxTS chkPenOCrcvVHF26;
-        private CheckBoxTS chkPenOCrcvVHF25;
-        private CheckBoxTS chkPenOCrcvVHF24;
-        private CheckBoxTS chkPenOCrcvVHF23;
-        private CheckBoxTS chkPenOCrcvVHF22;
-        private CheckBoxTS chkPenOCrcvVHF21;
-        private CheckBoxTS chkPenOCxmitVHF17;
-        private CheckBoxTS chkPenOCxmitVHF16;
-        private CheckBoxTS chkPenOCxmitVHF15;
-        private CheckBoxTS chkPenOCxmitVHF14;
-        private CheckBoxTS chkPenOCxmitVHF13;
-        private CheckBoxTS chkPenOCxmitVHF12;
-        private CheckBoxTS chkPenOCxmitVHF11;
-        private CheckBoxTS chkPenOCrcvVHF17;
-        private CheckBoxTS chkPenOCrcvVHF16;
-        private CheckBoxTS chkPenOCrcvVHF15;
-        private CheckBoxTS chkPenOCrcvVHF14;
-        private CheckBoxTS chkPenOCrcvVHF13;
-        private CheckBoxTS chkPenOCrcvVHF12;
-        private CheckBoxTS chkPenOCrcvVHF11;
-        private CheckBoxTS chkPenOCxmitVHF07;
-        private CheckBoxTS chkPenOCxmitVHF06;
-        private CheckBoxTS chkPenOCxmitVHF05;
-        private CheckBoxTS chkPenOCxmitVHF04;
-        private CheckBoxTS chkPenOCxmitVHF03;
-        private CheckBoxTS chkPenOCxmitVHF02;
-        private CheckBoxTS chkPenOCxmitVHF01;
-        private CheckBoxTS chkPenOCrcvVHF07;
-        private CheckBoxTS chkPenOCrcvVHF06;
-        private CheckBoxTS chkPenOCrcvVHF05;
-        private CheckBoxTS chkPenOCrcvVHF04;
-        private CheckBoxTS chkPenOCrcvVHF03;
-        private CheckBoxTS chkPenOCrcvVHF02;
-        private CheckBoxTS chkPenOCrcvVHF01;
-        private ButtonTS btnPennyCtrlVHFReset;
-        private CheckBoxTS chkShowCTHLine;
-        private CheckBoxTS chkClickTuneFilter;
-        private Label label11;
-        private ComboBoxTS comboColorPalette;
-        private ColorButton clrbtnWaterfallMid;
-        private ColorButton clrbtnWaterfallHigh;
-        private LabelTS lblDisplayWaterfallMidColor;
-        private LabelTS lblDisplayWaterfallHighColor;
-        private LabelTS lblMetisBoardID;
-        private LabelTS labelTS88;
-        private LabelTS lblMetisCodeVersion;
-        private LabelTS lblMetisVer;
-        private TabControl tcAlexControl;
-        private TabPage tpAlexFilterControl;
-        public NumericUpDownTS udAlex10mLPFEnd;
-        public NumericUpDownTS udAlex10mLPFStart;
-        public NumericUpDownTS udAlex6mLPFEnd;
-        public NumericUpDownTS udAlex6mLPFStart;
-        public NumericUpDownTS udAlex20mLPFStart;
-        public NumericUpDownTS udAlex15mLPFStart;
-        public NumericUpDownTS udAlex20mLPFEnd;
-        public NumericUpDownTS udAlex15mLPFEnd;
-        public NumericUpDownTS udAlex40mLPFEnd;
-        public NumericUpDownTS udAlex40mLPFStart;
-        public NumericUpDownTS udAlex80mLPFEnd;
-        public NumericUpDownTS udAlex80mLPFStart;
-        public NumericUpDownTS udAlex160mLPFEnd;
-        public NumericUpDownTS udAlex160mLPFStart;
-        public NumericUpDownTS udAlex13HPFStart;
-        public NumericUpDownTS udAlex20HPFStart;
-        public NumericUpDownTS udAlex13HPFEnd;
-        public NumericUpDownTS udAlex20HPFEnd;
-        public NumericUpDownTS udAlex9_5HPFEnd;
-        public NumericUpDownTS udAlex9_5HPFStart;
-        public NumericUpDownTS udAlex6_5HPFEnd;
-        public NumericUpDownTS udAlex6_5HPFStart;
-        public NumericUpDownTS udAlex1_5HPFEnd;
-        public NumericUpDownTS udAlex1_5HPFStart;
-        private NumericUpDownTS numericUpDownTS5;
-        private NumericUpDownTS numericUpDownTS7;
-        private NumericUpDownTS numericUpDownTS8;
-        private PanelTS panelTS2;
-        private RadioButtonTS radioButtonTS1;
-        private RadioButtonTS radioButtonTS2;
-        private NumericUpDownTS numericUpDownTS11;
-        private NumericUpDownTS numericUpDownTS13;
-        private NumericUpDownTS numericUpDownTS14;
-        private PanelTS panelTS3;
-        private RadioButtonTS radioButtonTS3;
-        private RadioButtonTS radioButtonTS4;
-        private LabelTS labelTS117;
-        private LabelTS labelAlex1FilterHPF;
-        private LabelTS labelTS126;
-        private LabelTS labelTS125;
-        private LabelTS labelTS124;
-        private LabelTS labelTS123;
-        private LabelTS labelTS122;
-        private LabelTS labelTS121;
-        private LabelTS labelTS120;
-        private LabelTS labelTS118;
-        private LabelTS labelTS119;
-        private NumericUpDownTS numericUpDownTS1;
-        private NumericUpDownTS numericUpDownTS2;
-        private NumericUpDownTS numericUpDownTS15;
-        private NumericUpDownTS numericUpDownTS16;
-        private NumericUpDownTS numericUpDownTS17;
-        private NumericUpDownTS numericUpDownTS18;
-        private NumericUpDownTS numericUpDownTS19;
-        private NumericUpDownTS numericUpDownTS20;
-        private NumericUpDownTS numericUpDownTS21;
-        private NumericUpDownTS numericUpDownTS22;
-        private NumericUpDownTS numericUpDownTS23;
-        private NumericUpDownTS numericUpDownTS24;
-        private NumericUpDownTS numericUpDownTS25;
-        private NumericUpDownTS numericUpDownTS26;
-        private NumericUpDownTS numericUpDownTS27;
-        private NumericUpDownTS numericUpDownTS28;
-        private NumericUpDownTS numericUpDownTS29;
-        private NumericUpDownTS numericUpDownTS30;
-        private NumericUpDownTS numericUpDownTS31;
-        private NumericUpDownTS numericUpDownTS32;
-        private NumericUpDownTS numericUpDownTS33;
-        private NumericUpDownTS numericUpDownTS34;
-        private NumericUpDownTS numericUpDownTS35;
-        private NumericUpDownTS numericUpDownTS36;
-        private PanelTS panelTS4;
-        private RadioButtonTS radioButtonTS5;
-        private RadioButtonTS radioButtonTS6;
-        private LabelTS labelTS131;
-        private LabelTS labelTS130;
-        private LabelTS labelTS129;
-        private LabelTS labelTS128;
-        private LabelTS labelTS127;
-        private CheckBoxTS chkAlexHPFBypass;
-        private LabelTS labelTS132;
-        public NumericUpDownTS udAlex6BPFStart;
-        public NumericUpDownTS udAlex6BPFEnd;
-        private PanelTS panelTS5;
-        public RadioButtonTS rad1_5HPFled;
-        public RadioButtonTS rad6_5HPFled;
-        public RadioButtonTS rad9_5HPFled;
-        public RadioButtonTS rad13HPFled;
-        public RadioButtonTS rad20HPFled;
-        public RadioButtonTS rad6BPFled;
-        public RadioButtonTS radBPHPFled;
-        private PanelTS panelTS6;
-        public RadioButtonTS rad6LPFled;
-        public RadioButtonTS rad80LPFled;
-        public RadioButtonTS rad40LPFled;
-        public RadioButtonTS rad20LPFled;
-        public RadioButtonTS rad15LPFled;
-        public RadioButtonTS rad10LPFled;
-        public RadioButtonTS rad160LPFled;
-        private LabelTS labelTS134;
-        private LabelTS labelAlexFilterActive;
-        public CheckBoxTS chkAlex20BPHPF;
-        public CheckBoxTS chkAlex6_5BPHPF;
-        public CheckBoxTS chkAlex9_5BPHPF;
-        public CheckBoxTS chkAlex6BPHPF;
-        public CheckBoxTS chkAlex13BPHPF;
-        public CheckBoxTS chkAlex1_5BPHPF;
-        private NumericUpDownTS udGeneralCalRX2Level;
-        private NumericUpDownTS udGeneralCalRX2Freq2;
-        private LabelTS labelTS135;
-        private LabelTS labelTS136;
-        private ButtonTS btnCalLevel;
-        private LabelTS lblMercury2FWVer;
-        private PanelTS panelRX2LevelCal;
-        private System.ComponentModel.IContainer components;
-        private Midi2Cat.Midi2CatSetupForm ConfigMidi2Cat;
-        private System.Windows.Forms.TabPage tpVAC2;
-        private System.Windows.Forms.GroupBoxTS grpVAC2DirectIQ;
-        private System.Windows.Forms.CheckBoxTS chkVAC2UseRX2;
-        private System.Windows.Forms.CheckBoxTS chkVAC2DirectIQCal;
-        private System.Windows.Forms.CheckBoxTS chkVAC2DirectIQ;
-        private System.Windows.Forms.CheckBoxTS chkVAC2Combine;
-        private System.Windows.Forms.GroupBoxTS grpVAC2AutoEnable;
-        private System.Windows.Forms.CheckBoxTS chkVAC2AutoEnable;
-        private System.Windows.Forms.GroupBoxTS grpVAC2Gain;
-        public System.Windows.Forms.LabelTS lblVAC2GainTX;
-        private System.Windows.Forms.NumericUpDownTS udVAC2GainTX;
-        public System.Windows.Forms.LabelTS lblVAC2GainRX;
-        private System.Windows.Forms.NumericUpDownTS udVAC2GainRX;
-        private System.Windows.Forms.GroupBoxTS grpAudioStereo3;
-        private System.Windows.Forms.CheckBoxTS chkAudioStereo3;
-        private System.Windows.Forms.GroupBoxTS grpVAC2LatencyManual;
-        private System.Windows.Forms.CheckBoxTS chkVAC2LatencyManual;
-        private System.Windows.Forms.NumericUpDownTS udVAC2Latency;
-        private System.Windows.Forms.GroupBoxTS grpAudioSampleRate3;
-        private System.Windows.Forms.ComboBoxTS comboAudioSampleRate3;
-        private System.Windows.Forms.GroupBoxTS grpAudioBuffer3;
-        private System.Windows.Forms.ComboBoxTS comboAudioBuffer3;
-        private System.Windows.Forms.GroupBoxTS grpAudioDetails3;
-        public System.Windows.Forms.LabelTS lblAudioOutput3;
-        private System.Windows.Forms.ComboBoxTS comboAudioOutput3;
-        public System.Windows.Forms.LabelTS lblAudioInput3;
-        public System.Windows.Forms.LabelTS lblAudioDriver3;
-        private System.Windows.Forms.ComboBoxTS comboAudioInput3;
-        private System.Windows.Forms.ComboBoxTS comboAudioDriver3;
-        public System.Windows.Forms.CheckBoxTS chkVAC2Enable;
-        private System.Windows.Forms.NumericUpDownTS udTXFilterLowSave;
-        private System.Windows.Forms.NumericUpDownTS udTXFilterHighSave;
-        private System.Windows.Forms.CheckBoxTS chkFirmwareByp;
-        private System.Windows.Forms.GroupBoxTS grpDSPLMSANF2;
-        private System.Windows.Forms.LabelTS lblLMSANF2Leak;
-        private System.Windows.Forms.NumericUpDownTS udLMSANF2Leak;
-        private System.Windows.Forms.LabelTS lblLMSANF2gain;
-        private System.Windows.Forms.NumericUpDownTS udLMSANF2gain;
-        private System.Windows.Forms.LabelTS lblLMSANF2delay;
-        private System.Windows.Forms.NumericUpDownTS udLMSANF2delay;
-        private System.Windows.Forms.LabelTS lblLMSANF2Taps;
-        private System.Windows.Forms.NumericUpDownTS udLMSANF2taps;
-        private System.Windows.Forms.GroupBoxTS grpDSPLMSNR2;
-        private System.Windows.Forms.LabelTS lblLMSNR2Leak;
-        private System.Windows.Forms.NumericUpDownTS udLMSNR2Leak;
-        private System.Windows.Forms.LabelTS lblLMSNR2gain;
-        private System.Windows.Forms.NumericUpDownTS udLMSNR2gain;
-        private System.Windows.Forms.NumericUpDownTS udLMSNR2delay;
-        private System.Windows.Forms.LabelTS lblLMSNR2delay;
-        private System.Windows.Forms.NumericUpDownTS udLMSNR2taps;
-        private System.Windows.Forms.LabelTS lblLMSNR2taps;
-        private System.Windows.Forms.RadioButtonTS radANFPostAGC2;
-        private System.Windows.Forms.RadioButtonTS radANF2PreAGC;
-        private System.Windows.Forms.RadioButtonTS radANFPostAGC;
-        private System.Windows.Forms.RadioButtonTS radANFPreAGC;
-        private System.Windows.Forms.CheckBoxTS chkFullDiscovery;
-        private System.Windows.Forms.CheckBoxTS chkRxOutOnTx;
-        public System.Windows.Forms.RadioButtonTS radLineIn;
-        public System.Windows.Forms.RadioButtonTS radMicIn;
-        private System.Windows.Forms.CheckBoxTS chkSWRProtection;
-        private System.Windows.Forms.CheckBoxTS chkATTOnTX;
-        private System.Windows.Forms.GroupBoxTS groupBoxTS5;
-        private System.Windows.Forms.GroupBoxTS groupBoxTS4;
-        private System.Windows.Forms.TabPage tpAlex2FilterControl;
-        public System.Windows.Forms.CheckBoxTS chkAlex220BPHPF;
-        public System.Windows.Forms.CheckBoxTS chkAlex26_5BPHPF;
-        public System.Windows.Forms.CheckBoxTS chkAlex29_5BPHPF;
-        public System.Windows.Forms.CheckBoxTS chkAlex26BPHPF;
-        public System.Windows.Forms.CheckBoxTS chkAlex213BPHPF;
-        public System.Windows.Forms.CheckBoxTS chkAlex21_5BPHPF;
-        private System.Windows.Forms.LabelTS lblAlex2ByPass;
-        private System.Windows.Forms.LabelTS lblAlex2Active;
-        private System.Windows.Forms.PanelTS panelAlex2LPFActive;
-        public System.Windows.Forms.RadioButtonTS radAlex26LPFled;
-        public System.Windows.Forms.RadioButtonTS radAlex2160LPFled;
-        public System.Windows.Forms.RadioButtonTS radAlex280LPFled;
-        public System.Windows.Forms.RadioButtonTS radAlex240LPFled;
-        public System.Windows.Forms.RadioButtonTS radAlex220LPFled;
-        public System.Windows.Forms.RadioButtonTS radAlex215LPFled;
-        public System.Windows.Forms.RadioButtonTS radAlex210LPFled;
-        private System.Windows.Forms.PanelTS panelAlex2HPFActive;
-        public System.Windows.Forms.RadioButtonTS radAlex2BPHPFled;
-        public System.Windows.Forms.RadioButtonTS radAlex21_5HPFled;
-        public System.Windows.Forms.RadioButtonTS radAlex26_5HPFled;
-        public System.Windows.Forms.RadioButtonTS radAlex29_5HPFled;
-        public System.Windows.Forms.RadioButtonTS radAlex213HPFled;
-        public System.Windows.Forms.RadioButtonTS radAlex220HPFled;
-        public System.Windows.Forms.RadioButtonTS radAlex26BPFled;
-        private System.Windows.Forms.LabelTS lblAlex2HPF6m;
-        public System.Windows.Forms.NumericUpDownTS udAlex26BPFStart;
-        public System.Windows.Forms.NumericUpDownTS udAlex26BPFEnd;
-        private System.Windows.Forms.CheckBoxTS chkAlex2HPFBypass;
-        private System.Windows.Forms.LabelTS lblAlex2HPF15MHz;
-        private System.Windows.Forms.LabelTS lblAlex2HPF65MHz;
-        private System.Windows.Forms.LabelTS lblAlex2HPF95MHz;
-        private System.Windows.Forms.LabelTS lblAlex2HPF13MHz;
-        private System.Windows.Forms.LabelTS lblAlex2HPF20MHz;
-        private System.Windows.Forms.LabelTS lblAlex2LPF160m;
-        private System.Windows.Forms.LabelTS lblAlex2LPF80m;
-        private System.Windows.Forms.LabelTS lblAlex2LPF60m;
-        private System.Windows.Forms.LabelTS lblAlex2LPF30m;
-        private System.Windows.Forms.LabelTS lblAlex2LPF17m;
-        private System.Windows.Forms.LabelTS lblAlex2LPF12m;
-        private System.Windows.Forms.LabelTS lblAlex2LPF6m;
-        private System.Windows.Forms.LabelTS lblAlex2LPF;
-        private System.Windows.Forms.LabelTS lblAlex2HPF;
-        public System.Windows.Forms.NumericUpDownTS udAlex210mLPFEnd;
-        public System.Windows.Forms.NumericUpDownTS udAlex210mLPFStart;
-        public System.Windows.Forms.NumericUpDownTS udAlex26mLPFEnd;
-        public System.Windows.Forms.NumericUpDownTS udAlex26mLPFStart;
-        public System.Windows.Forms.NumericUpDownTS udAlex220mLPFStart;
-        public System.Windows.Forms.NumericUpDownTS udAlex215mLPFStart;
-        public System.Windows.Forms.NumericUpDownTS udAlex220mLPFEnd;
-        public System.Windows.Forms.NumericUpDownTS udAlex215mLPFEnd;
-        public System.Windows.Forms.NumericUpDownTS udAlex240mLPFEnd;
-        public System.Windows.Forms.NumericUpDownTS udAlex240mLPFStart;
-        public System.Windows.Forms.NumericUpDownTS udAlex280mLPFEnd;
-        public System.Windows.Forms.NumericUpDownTS udAlex280mLPFStart;
-        public System.Windows.Forms.NumericUpDownTS udAlex2160mLPFEnd;
-        public System.Windows.Forms.NumericUpDownTS udAlex2160mLPFStart;
-        public System.Windows.Forms.NumericUpDownTS udAlex213HPFStart;
-        public System.Windows.Forms.NumericUpDownTS udAlex220HPFStart;
-        public System.Windows.Forms.NumericUpDownTS udAlex213HPFEnd;
-        public System.Windows.Forms.NumericUpDownTS udAlex220HPFEnd;
-        public System.Windows.Forms.NumericUpDownTS udAlex29_5HPFEnd;
-        public System.Windows.Forms.NumericUpDownTS udAlex29_5HPFStart;
-        public System.Windows.Forms.NumericUpDownTS udAlex26_5HPFEnd;
-        public System.Windows.Forms.NumericUpDownTS udAlex26_5HPFStart;
-        public System.Windows.Forms.NumericUpDownTS udAlex21_5HPFEnd;
-        public System.Windows.Forms.NumericUpDownTS udAlex21_5HPFStart;
-        private System.Windows.Forms.CheckBoxTS chkApolloPresent;
-        private System.Windows.Forms.TabPage tpApolloControl;
-        private System.Windows.Forms.GroupBoxTS grpApolloCtrl;
-        private System.Windows.Forms.CheckBoxTS chkApolloFilter;
-        private System.Windows.Forms.CheckBoxTS chkApolloTuner;
-        private System.Windows.Forms.CheckBoxTS chkRX2BlankDisplayOnVFOATX;
-        private System.Windows.Forms.CheckBoxTS chkSaveTXProfileOnExit;
-        private System.Windows.Forms.CheckBoxTS chkAutoSaveTXProfile;
-        private System.Windows.Forms.GroupBoxTS groupBoxTS6;
-        private System.Windows.Forms.NumericUpDownTS udRX2FilterDefaultLowCut;
-        private System.Windows.Forms.LabelTS labelTS39;
-        private System.Windows.Forms.NumericUpDownTS udRX2OptMaxFilterShift;
-        private System.Windows.Forms.LabelTS labelTS50;
-        private System.Windows.Forms.ComboBoxTS comboRX2OptFilterWidthMode;
-        private System.Windows.Forms.LabelTS labelTS86;
-        private System.Windows.Forms.NumericUpDownTS udRX2OptMaxFilterWidth;
-        private System.Windows.Forms.LabelTS labelTS87;
-        private System.Windows.Forms.CheckBoxTS checkBoxTS2;
-        private System.Windows.Forms.TabPage tpDSPAMSAM;
-        private System.Windows.Forms.GroupBoxTS grpAMSAM;
-        private System.Windows.Forms.CheckBoxTS chkLevelFades;
-        private System.Windows.Forms.GroupBoxTS grpAMSBSEL;
-        private System.Windows.Forms.RadioButtonTS radUSB;
-        private System.Windows.Forms.RadioButtonTS radLSB;
-        private System.Windows.Forms.RadioButtonTS radLSBUSB;
-        private System.Windows.Forms.GroupBoxTS grpRX2AMSAM;
-        private System.Windows.Forms.CheckBoxTS chkRX2LevelFades;
-        private System.Windows.Forms.GroupBoxTS grpRX2AMSBSEL;
-        private System.Windows.Forms.RadioButtonTS radRX2USB;
-        private System.Windows.Forms.RadioButtonTS radRX2LSB;
-        private System.Windows.Forms.RadioButtonTS radRX2LSBUSB;
-        private System.Windows.Forms.PanelTS panelAutoPACalibrate;
-        private System.Windows.Forms.GroupBoxTS grpHermesStepAttenuator;
-        private System.Windows.Forms.CheckBoxTS chkHermesStepAttenuator;
-        private System.Windows.Forms.NumericUpDownTS udHermesStepAttenuatorData;
-        private System.Windows.Forms.PanelTS panelAlexTXAntControl;
-        private System.Windows.Forms.LabelTS labelTS104;
-        private System.Windows.Forms.LabelTS labelTS105;
-        private System.Windows.Forms.LabelTS labelTS106;
-        private System.Windows.Forms.LabelTS labelTS107;
-        private System.Windows.Forms.LabelTS labelTS108;
-        private System.Windows.Forms.LabelTS labelTS109;
-        private System.Windows.Forms.LabelTS labelTS110;
-        private System.Windows.Forms.LabelTS labelTS111;
-        private System.Windows.Forms.LabelTS labelTS112;
-        private System.Windows.Forms.LabelTS labelTS113;
-        private System.Windows.Forms.LabelTS labelTS114;
-        private System.Windows.Forms.LabelTS labelTS115;
-        private System.Windows.Forms.LabelTS label10;
-        private System.Windows.Forms.LabelTS label9;
-        private System.Windows.Forms.LabelTS label8;
-        private System.Windows.Forms.LabelTS labelTS15;
-        private System.Windows.Forms.PanelTS panel23;
-        private System.Windows.Forms.RadioButtonTS radAlexT2_6;
-        private System.Windows.Forms.RadioButtonTS radAlexT1_6;
-        private System.Windows.Forms.RadioButtonTS radAlexT3_6;
-        private System.Windows.Forms.PanelTS panel22;
-        private System.Windows.Forms.RadioButtonTS radAlexT2_10;
-        private System.Windows.Forms.RadioButtonTS radAlexT1_10;
-        private System.Windows.Forms.RadioButtonTS radAlexT3_10;
-        private System.Windows.Forms.PanelTS panel21;
-        private System.Windows.Forms.RadioButtonTS radAlexT2_12;
-        private System.Windows.Forms.RadioButtonTS radAlexT1_12;
-        private System.Windows.Forms.RadioButtonTS radAlexT3_12;
-        private System.Windows.Forms.PanelTS panel20;
-        private System.Windows.Forms.RadioButtonTS radAlexT2_15;
-        private System.Windows.Forms.RadioButtonTS radAlexT1_15;
-        private System.Windows.Forms.RadioButtonTS radAlexT3_15;
-        private System.Windows.Forms.PanelTS panel19;
-        private System.Windows.Forms.RadioButtonTS radAlexT2_17;
-        private System.Windows.Forms.RadioButtonTS radAlexT1_17;
-        private System.Windows.Forms.RadioButtonTS radAlexT3_17;
-        private System.Windows.Forms.PanelTS panel18;
-        private System.Windows.Forms.RadioButtonTS radAlexT2_20;
-        private System.Windows.Forms.RadioButtonTS radAlexT1_20;
-        private System.Windows.Forms.RadioButtonTS radAlexT3_20;
-        private System.Windows.Forms.PanelTS panel17;
-        private System.Windows.Forms.RadioButtonTS radAlexT2_30;
-        private System.Windows.Forms.RadioButtonTS radAlexT1_30;
-        private System.Windows.Forms.RadioButtonTS radAlexT3_30;
-        private System.Windows.Forms.PanelTS panel16;
-        private System.Windows.Forms.RadioButtonTS radAlexT2_40;
-        private System.Windows.Forms.RadioButtonTS radAlexT1_40;
-        private System.Windows.Forms.RadioButtonTS radAlexT3_40;
-        private System.Windows.Forms.PanelTS panel15;
-        private System.Windows.Forms.RadioButtonTS radAlexT2_60;
-        private System.Windows.Forms.RadioButtonTS radAlexT1_60;
-        private System.Windows.Forms.RadioButtonTS radAlexT3_60;
-        private System.Windows.Forms.PanelTS panel14;
-        private System.Windows.Forms.RadioButtonTS radAlexT2_80;
-        private System.Windows.Forms.RadioButtonTS radAlexT1_80;
-        private System.Windows.Forms.RadioButtonTS radAlexT3_80;
-        private System.Windows.Forms.PanelTS panel13;
-        private System.Windows.Forms.RadioButtonTS radAlexT2_160;
-        private System.Windows.Forms.RadioButtonTS radAlexT1_160;
-        private System.Windows.Forms.RadioButtonTS radAlexT3_160;
-        private System.Windows.Forms.PanelTS panelAlexRXAntControl;
-        private System.Windows.Forms.PanelTS panelAlexRXXVRTControl;
-        private System.Windows.Forms.PanelTS panelAlex1HPFControl;
-        private System.Windows.Forms.GroupBoxTS grpSWRProtectionControl;
-        private System.Windows.Forms.CheckBoxTS chkSWRTuneProtection;
-        private System.Windows.Forms.GroupBoxTS grpDisplayRX1Pan;
-        private System.Windows.Forms.LabelTS labelTS139;
-        public System.Windows.Forms.TrackBarTS tbDisplayFFTSize;
-        private System.Windows.Forms.LabelTS lblDisplayBinWidth;
-        private System.Windows.Forms.LabelTS labelTS142;
-        private System.Windows.Forms.TabControl tcDisplay;
-        private System.Windows.Forms.TabPage tpDisplayGeneral;
-        private System.Windows.Forms.TabPage tpDisplayTop;
-        private System.Windows.Forms.TabPage tpDisplayBottom;
-        private System.Windows.Forms.GroupBoxTS grpRX2DisplayAverage;
-        private System.Windows.Forms.NumericUpDownTS udRX2DisplayAVGTime;
-        private System.Windows.Forms.LabelTS labelTS143;
-        private System.Windows.Forms.GroupBoxTS grpDisplayRX2Pan;
-        private System.Windows.Forms.LabelTS lblRX2DisplayBinWidth;
-        private System.Windows.Forms.LabelTS labelTS140;
-        private System.Windows.Forms.LabelTS labelTS141;
-        public System.Windows.Forms.TrackBarTS tbRX2DisplayFFTSize;
-        private System.Windows.Forms.GroupBoxTS grpRX2DisplaySpectrumGrid;
-        private System.Windows.Forms.ComboBoxTS comboBoxTS1;
-        private System.Windows.Forms.LabelTS labelTS133;
-        private System.Windows.Forms.NumericUpDownTS udRX2DisplayGridStep;
-        private System.Windows.Forms.NumericUpDownTS udRX2DisplayGridMin;
-        private System.Windows.Forms.NumericUpDownTS udRX2DisplayGridMax;
-        private System.Windows.Forms.LabelTS lblRX2DisplayGridStep;
-        private System.Windows.Forms.LabelTS lblRX2DisplayGridMin;
-        private System.Windows.Forms.LabelTS lblRX2DisplayGridMax;
-        private System.Windows.Forms.CheckBoxTS chkHFTRRelay;
-        private System.Windows.Forms.GroupBoxTS grpDisplaySpectrumGrid;
-        private System.Windows.Forms.ComboBoxTS comboDisplayLabelAlign;
-        private System.Windows.Forms.LabelTS lblDisplayAlign;
-        private System.Windows.Forms.NumericUpDownTS udDisplayGridStep;
-        private System.Windows.Forms.NumericUpDownTS udDisplayGridMin;
-        private System.Windows.Forms.NumericUpDownTS udDisplayGridMax;
-        private System.Windows.Forms.LabelTS lblDisplayGridStep;
-        private System.Windows.Forms.LabelTS lblDisplayGridMin;
-        private System.Windows.Forms.LabelTS lblDisplayGridMax;
-        private System.Windows.Forms.LabelTS labelTS146;
-        private System.Windows.Forms.LabelTS labelTS145;
-        private System.Windows.Forms.ComboBoxTS comboDispWinType;
-        private System.Windows.Forms.LabelTS labelTS147;
-        private System.Windows.Forms.TabPage tpDisplayTransmit;
-        private System.Windows.Forms.ComboBoxTS comboRX2DispWinType;
-        private System.Windows.Forms.LabelTS labelTS150;
-        private System.Windows.Forms.LabelTS labelTS149;
-        private System.Windows.Forms.LabelTS labelTS148;
-        private System.Windows.Forms.LabelTS labelTS154;
-        private System.Windows.Forms.NumericUpDownTS udDSPNBLag;
-        private System.Windows.Forms.LabelTS labelTS153;
-        private System.Windows.Forms.NumericUpDownTS udDSPNBLead;
-        private System.Windows.Forms.LabelTS labelTS152;
-        private System.Windows.Forms.NumericUpDownTS udDSPNBTransition;
-        private System.Windows.Forms.LabelTS labelTS151;
-        private System.Windows.Forms.CheckBoxTS chkMOXAllowBypass;
-        private System.Windows.Forms.CheckBoxTS chkSPACEAllowBypass;
-        private System.Windows.Forms.TextBoxTS textBoxTS1;
-        private System.Windows.Forms.CheckBoxTS chkCBlock;
-        private System.Windows.Forms.CheckBoxTS chkRX2CBlock;
-        private System.Windows.Forms.TabControl tcCAT;
-        private System.Windows.Forms.TabPage tpCAToptions;
-        private System.Windows.Forms.PanelTS panelTS7;
-        private System.Windows.Forms.ButtonTS btnSetIPAddr;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP4;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP3;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP2;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP1;
-        private System.Windows.Forms.CheckBoxTS chkEnableStaticIP;
-        private System.Windows.Forms.RadioButtonTS radStaticIP2;
-        private System.Windows.Forms.RadioButtonTS radStaticIP1;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP8;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP7;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP6;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP5;
-        private System.Windows.Forms.RadioButtonTS radStaticIP4;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP16;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP15;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP14;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP13;
-        private System.Windows.Forms.RadioButtonTS radStaticIP3;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP12;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP11;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP10;
-        private System.Windows.Forms.NumericUpDownTS udStaticIP9;
-        public System.Windows.Forms.CheckBoxTS chkBypassANANPASettings;
-        private System.Windows.Forms.CheckBoxTS chkAutoPACalibrate;
-        private System.Windows.Forms.Label lblWaterfallLevels;
-        private System.Windows.Forms.TextBox txtWaterFallBandLevel;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.TextBox txtDisplayGridBandLevel;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.TextBox txtRX2DisplayGridBandLevel;
-        private System.Windows.Forms.GroupBoxTS grpRX2DisplayWaterfall;
-        private System.Windows.Forms.Label lblRX2WaterfallLevels;
-        private System.Windows.Forms.TextBox txtRX2WaterFallBandLevel;
-        private ColorButton clrbtnRX2WaterfallMid;
-        private ColorButton clrbtnRX2WaterfallHigh;
-        private System.Windows.Forms.LabelTS lblRX2DisplayWaterfallMidColor;
-        private System.Windows.Forms.LabelTS lblRX2DisplayWaterfallHighColor;
-        private System.Windows.Forms.ComboBoxTS comboRX2ColorPalette;
-        private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.NumericUpDownTS udRX2DisplayWaterfallUpdatePeriod;
-        private System.Windows.Forms.LabelTS lblRX2DisplayWaterfallUpdatePeriod;
-        private ColorButton clrbtnRX2WaterfallLow;
-        private System.Windows.Forms.LabelTS lblRX2DisplayWaterfallLowColor;
-        private System.Windows.Forms.LabelTS lblRX2DisplayWaterfallLowLevel;
-        private System.Windows.Forms.NumericUpDownTS udRX2DisplayWaterfallLowLevel;
-        private System.Windows.Forms.LabelTS lblRX2DisplayWaterfallHighLevel;
-        private System.Windows.Forms.NumericUpDownTS udRX2DisplayWaterfallHighLevel;
-        private System.Windows.Forms.CheckBoxTS chkRX1WaterfallAGC;
-        private System.Windows.Forms.CheckBoxTS chkRX2WaterfallAGC;
-        private System.Windows.Forms.NumericUpDownTS udATTOnTX;
-        private System.Windows.Forms.LabelTS labelATTOnTX;
-        private System.Windows.Forms.NumericUpDownTS ud100PA110W;
-        private System.Windows.Forms.LabelTS label100PA110W;
-        private System.Windows.Forms.LabelTS label100PA100W;
-        private System.Windows.Forms.NumericUpDownTS ud100PA100W;
-        private System.Windows.Forms.LabelTS label100PA90W;
-        private System.Windows.Forms.NumericUpDownTS ud100PA90W;
-        private System.Windows.Forms.LabelTS label100PA80W;
-        private System.Windows.Forms.NumericUpDownTS ud100PA80W;
-        private System.Windows.Forms.LabelTS label100PA70W;
-        private System.Windows.Forms.NumericUpDownTS ud100PA70W;
-        private System.Windows.Forms.LabelTS label100PA60W;
-        private System.Windows.Forms.NumericUpDownTS ud100PA60W;
-        private System.Windows.Forms.LabelTS label100PA50W;
-        private System.Windows.Forms.NumericUpDownTS ud100PA50W;
-        private System.Windows.Forms.LabelTS label100PA40W;
-        private System.Windows.Forms.NumericUpDownTS ud100PA40W;
-        private System.Windows.Forms.LabelTS label100PA30W;
-        private System.Windows.Forms.NumericUpDownTS ud100PA30W;
-        private System.Windows.Forms.LabelTS label100PA20W;
-        private System.Windows.Forms.NumericUpDownTS ud100PA20W;
-        private System.Windows.Forms.LabelTS label100PA10W;
-        private System.Windows.Forms.NumericUpDownTS ud100PA10W;
-        private System.Windows.Forms.LabelTS label100PA130W;
-        private System.Windows.Forms.NumericUpDownTS ud100PA130W;
-        private System.Windows.Forms.LabelTS label100PA120W;
-        private System.Windows.Forms.NumericUpDownTS ud100PA120W;
-        private System.Windows.Forms.LabelTS label100PA140W;
-        private System.Windows.Forms.NumericUpDownTS ud100PA140W;
-        private System.Windows.Forms.LabelTS labelTS275;
-        public System.Windows.Forms.TextBoxTS textDriveFwdADCValue;
-        private System.Windows.Forms.LabelTS labelTS269;
-        private System.Windows.Forms.LabelTS labelTS270;
-        private System.Windows.Forms.LabelTS labelTS271;
-        public System.Windows.Forms.TextBoxTS textRevVoltage;
-        public System.Windows.Forms.TextBoxTS textFwdVoltage;
-        public System.Windows.Forms.TextBoxTS textFwdADCValue;
-        private System.Windows.Forms.LabelTS labelTS272;
-        private System.Windows.Forms.LabelTS labelTS273;
-        private System.Windows.Forms.LabelTS labelTS274;
-        public System.Windows.Forms.TextBoxTS textPARevPower;
-        public System.Windows.Forms.TextBoxTS textDrivePower;
-        public System.Windows.Forms.TextBoxTS textPAFwdPower;
-        private System.Windows.Forms.LabelTS labelTS276;
-        public System.Windows.Forms.TextBoxTS textRevADCValue;
-        private System.Windows.Forms.TabControl tcPowerAmplifier;
-        private System.Windows.Forms.TabPage tpGainByBand;
-        private System.Windows.Forms.TabPage tpWattMeter;
-        private System.Windows.Forms.PanelTS panelPAValues;
-        private System.Windows.Forms.CheckBoxTS chkPAValues;
-        private System.Windows.Forms.GroupBox grp100WattMeterTrim;
-        private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.LabelTS labelTS254;
-        public System.Windows.Forms.TextBoxTS textDCVolts;
-        private System.Windows.Forms.ButtonTS btnResetPAValues;
-        private System.Windows.Forms.ButtonTS btnResetWattMeterValues;
-        private System.Windows.Forms.TabPage tpCATSerialPorts;
-        private System.Windows.Forms.GroupBoxTS grpCat4ControlBox;
-        private System.Windows.Forms.ComboBoxTS comboCAT4Port;
-        private System.Windows.Forms.ComboBoxTS comboCAT4baud;
-        private System.Windows.Forms.LabelTS lblCAT4Baud;
-        private System.Windows.Forms.LabelTS lblCAT4Port;
-        private System.Windows.Forms.CheckBoxTS chkCAT4Enable;
-        private System.Windows.Forms.LabelTS lblCAT4Parity;
-        private System.Windows.Forms.LabelTS lblCAT4Data;
-        private System.Windows.Forms.LabelTS lblCAT4Stop;
-        private System.Windows.Forms.ComboBoxTS comboCAT4parity;
-        private System.Windows.Forms.ComboBoxTS comboCAT4databits;
-        private System.Windows.Forms.ComboBoxTS comboCAT4stopbits;
-        private System.Windows.Forms.GroupBoxTS grpCat3ControlBox;
-        private System.Windows.Forms.ComboBoxTS comboCAT3Port;
-        private System.Windows.Forms.ComboBoxTS comboCAT3baud;
-        private System.Windows.Forms.LabelTS lblCAT3Baud;
-        private System.Windows.Forms.LabelTS lblCAT3Port;
-        private System.Windows.Forms.CheckBoxTS chkCAT3Enable;
-        private System.Windows.Forms.LabelTS lblCAT3Parity;
-        private System.Windows.Forms.LabelTS lblCAT3Data;
-        private System.Windows.Forms.LabelTS lblCAT3Stop;
-        private System.Windows.Forms.ComboBoxTS comboCAT3parity;
-        private System.Windows.Forms.ComboBoxTS comboCAT3databits;
-        private System.Windows.Forms.ComboBoxTS comboCAT3stopbits;
-        private System.Windows.Forms.GroupBoxTS grpCat2ControlBox;
-        private System.Windows.Forms.ComboBoxTS comboCAT2Port;
-        private System.Windows.Forms.ComboBoxTS comboCAT2baud;
-        private System.Windows.Forms.LabelTS lblCAT2Baud;
-        private System.Windows.Forms.LabelTS lblCAT2Port;
-        private System.Windows.Forms.CheckBoxTS chkCAT2Enable;
-        private System.Windows.Forms.LabelTS lblCAT2Parity;
-        private System.Windows.Forms.LabelTS lblCAT2Data;
-        private System.Windows.Forms.LabelTS lblCAT2Stop;
-        private System.Windows.Forms.ComboBoxTS comboCAT2parity;
-        private System.Windows.Forms.ComboBoxTS comboCAT2databits;
-        private System.Windows.Forms.ComboBoxTS comboCAT2stopbits;
-        private System.Windows.Forms.TextBoxTS txtCAT4;
-        private System.Windows.Forms.TextBoxTS txtCAT3;
-        private System.Windows.Forms.TextBoxTS txtCAT2;
-        private System.Windows.Forms.CheckBoxTS chkRX2StepAtt;
-        private System.Windows.Forms.GroupBoxTS grpGeneralHardwareORION;
-        private System.Windows.Forms.PanelTS panelOrionPTT;
-        private System.Windows.Forms.RadioButtonTS radOrionPTTOn;
-        private System.Windows.Forms.RadioButtonTS radOrionPTTOff;
-        private System.Windows.Forms.LabelTS lblOrionPTT;
-        private System.Windows.Forms.PanelTS panelOrionBias;
-        private System.Windows.Forms.RadioButtonTS radOrionBiasOn;
-        private System.Windows.Forms.RadioButtonTS radOrionBiasOff;
-        private System.Windows.Forms.LabelTS lblOrionBias;
-        private System.Windows.Forms.PanelTS panelOrionMic;
-        private System.Windows.Forms.RadioButtonTS radOrionMicRing;
-        private System.Windows.Forms.RadioButtonTS radOrionMicTip;
-        private System.Windows.Forms.LabelTS lblOrionMic;
-        private System.Windows.Forms.LabelTS labelTS144;
-        private System.Windows.Forms.LabelTS labelTS302;
-        private System.Windows.Forms.ComboBoxTS comboDSPTxWindow;
-        private System.Windows.Forms.ComboBoxTS comboDSPRxWindow;
-        private System.Windows.Forms.CheckBoxTS chkInvertTones;
-        private System.Windows.Forms.CheckBoxTS chkEXT1OutOnTx;
-        private System.Windows.Forms.CheckBoxTS chkEXT2OutOnTx;
-        private System.Windows.Forms.NumericUpDownTS udTXGenScale;
-        private System.Windows.Forms.LabelTS labelTS303;
-        private System.Windows.Forms.NumericUpDownTS udTXGenFreq;
-        private System.Windows.Forms.LabelTS labelTS304;
-        private System.Windows.Forms.GroupBoxTS grpTXGenSweep;
-        private System.Windows.Forms.LabelTS labelTS306;
-        private System.Windows.Forms.NumericUpDownTS udTXGenSweepRate;
-        private System.Windows.Forms.LabelTS labelTS305;
-        private System.Windows.Forms.NumericUpDownTS udTXGenSweepHigh;
-        private System.Windows.Forms.LabelTS labelTS52;
-        private System.Windows.Forms.NumericUpDownTS udTXGenSweepLow;
-        private System.Windows.Forms.GroupBoxTS grpRXGenSweep;
-        private System.Windows.Forms.LabelTS labelTS307;
-        private System.Windows.Forms.NumericUpDownTS udRXGenSweepRate;
-        private System.Windows.Forms.LabelTS labelTS308;
-        private System.Windows.Forms.NumericUpDownTS udRXGenSweepHigh;
-        private System.Windows.Forms.LabelTS labelTS309;
-        private System.Windows.Forms.NumericUpDownTS udRXGenSweepLow;
-        private System.Windows.Forms.NumericUpDownTS udRXGenFreq;
-        private System.Windows.Forms.LabelTS labelTS310;
-        private System.Windows.Forms.NumericUpDownTS udRXGenScale;
-        private System.Windows.Forms.LabelTS labelTS311;
-        private System.Windows.Forms.CheckBoxTS chkSigGenRX1;
-        private System.Windows.Forms.LabelTS labelTS313;
-        private System.Windows.Forms.LabelTS labelTS312;
-        private System.Windows.Forms.LabelTS labelTS314;
-        private System.Windows.Forms.GroupBoxTS grpExtTXInhibit;
-        private System.Windows.Forms.CheckBoxTS chkTXInhibit;
-        private System.Windows.Forms.CheckBoxTS chkTXInhibitSense;
-        private System.Windows.Forms.GroupBoxTS grpPulse;
-        private System.Windows.Forms.NumericUpDownTS udTXGenPulseDutyCycle;
-        private System.Windows.Forms.LabelTS labelTS316;
-        private System.Windows.Forms.NumericUpDownTS udTXGenPulseFreq;
-        private System.Windows.Forms.LabelTS labelTS315;
-        private System.Windows.Forms.NumericUpDownTS udTXGenPulseTransition;
-        private System.Windows.Forms.LabelTS labelTS317;
-        private System.Windows.Forms.TabPage tpDSPFM;
-        private System.Windows.Forms.GroupBoxTS grpFMTX;
-        private System.Windows.Forms.CheckBoxTS chkEmphPos;
-        private System.Windows.Forms.GroupBoxTS grpFMRX;
-        private System.Windows.Forms.CheckBoxTS chkRemoveTone;
-        private System.Windows.Forms.TabPage tpDSPEER;
-        private System.Windows.Forms.LabelTS labelTS320;
-        private System.Windows.Forms.NumericUpDownTS udDSPEERmdelay;
-        private System.Windows.Forms.LabelTS labelTS319;
-        private System.Windows.Forms.NumericUpDownTS udDSPEERpgain;
-        private System.Windows.Forms.LabelTS labelTS318;
-        private System.Windows.Forms.NumericUpDownTS udDSPEERmgain;
-        private System.Windows.Forms.CheckBoxTS chkDSPEERon;
-        private System.Windows.Forms.LabelTS labelTS321;
-        public System.Windows.Forms.CheckBoxTS chkDisable6mLNAonTX;
-        public System.Windows.Forms.CheckBoxTS chkDisable6mLNAonRX;
-        private System.Windows.Forms.CheckBoxTS chkDisableHPFonTX;
-        public System.Windows.Forms.RadioButtonTS radDHPFTXled;
-        private System.Windows.Forms.NumericUpDownTS udHWKeyDownDelay;
-        private System.Windows.Forms.LabelTS labelTS325;
-        private System.Windows.Forms.GroupBoxTS grpDDC6ADC;
-        private System.Windows.Forms.RadioButtonTS radDDC6ADC2;
-        private System.Windows.Forms.RadioButtonTS radDDC6ADC1;
-        private System.Windows.Forms.RadioButtonTS radDDC6ADC0;
-        private System.Windows.Forms.GroupBoxTS grpDDC5ADC;
-        private System.Windows.Forms.RadioButtonTS radDDC5ADC2;
-        private System.Windows.Forms.RadioButtonTS radDDC5ADC1;
-        private System.Windows.Forms.RadioButtonTS radDDC5ADC0;
-        private System.Windows.Forms.GroupBoxTS grpDDC4ADC;
-        private System.Windows.Forms.RadioButtonTS radDDC4ADC2;
-        private System.Windows.Forms.RadioButtonTS radDDC4ADC1;
-        private System.Windows.Forms.RadioButtonTS radDDC4ADC0;
-        private System.Windows.Forms.GroupBoxTS grpDDC3ADC;
-        private System.Windows.Forms.RadioButtonTS radDDC3ADC2;
-        private System.Windows.Forms.RadioButtonTS radDDC3ADC1;
-        private System.Windows.Forms.RadioButtonTS radDDC3ADC0;
-        private System.Windows.Forms.GroupBoxTS grpDDC2ADC;
-        private System.Windows.Forms.RadioButtonTS radDDC2ADC2;
-        private System.Windows.Forms.RadioButtonTS radDDC2ADC1;
-        private System.Windows.Forms.RadioButtonTS radDDC2ADC0;
-        private System.Windows.Forms.GroupBoxTS grpDDC1ADC;
-        private System.Windows.Forms.RadioButtonTS radDDC1ADC2;
-        private System.Windows.Forms.RadioButtonTS radDDC1ADC1;
-        private System.Windows.Forms.RadioButtonTS radDDC1ADC0;
-        private System.Windows.Forms.GroupBoxTS grpDDC0ADC;
-        private System.Windows.Forms.RadioButtonTS radDDC0ADC2;
-        private System.Windows.Forms.RadioButtonTS radDDC0ADC1;
-        private System.Windows.Forms.RadioButtonTS radDDC0ADC0;
-        private System.Windows.Forms.LabelTS labelTS322;
-        private System.Windows.Forms.NumericUpDownTS udCWKeyUpDelay;
-        private System.Windows.Forms.GroupBoxTS grpCWDelay;
-        private System.Windows.Forms.CheckBoxTS chkDSPEERamIQ;
-        private System.Windows.Forms.LabelTS labelTS326;
-        private System.Windows.Forms.ComboBoxTS comboDSPNOBmode;
-        private System.Windows.Forms.CheckBoxTS chkClickTuneDrag;
-        private System.Windows.Forms.TextBoxTS txtZZSN;
-        private System.Windows.Forms.LabelTS labelTS323;
-        private System.Windows.Forms.NumericUpDownTS ud6mLNAGainOffset;
-        private System.Windows.Forms.LabelTS labelTS324;
-        private System.Windows.Forms.GroupBoxTS grpAudioSampleRateRX2;
-        private System.Windows.Forms.ComboBoxTS comboAudioSampleRateRX2;
-        private System.Windows.Forms.TabControl tcDSP;
-        private System.Windows.Forms.TabPage tpDSPOptions;
-        private System.Windows.Forms.CheckBoxTS chkDSPTXMeterPeak;
-        private System.Windows.Forms.GroupBoxTS grpDSPBufferSize;
-        private System.Windows.Forms.GroupBoxTS grpDSPBufDig;
-        private System.Windows.Forms.ComboBoxTS comboDSPDigTXBuf;
-        private System.Windows.Forms.LabelTS lblDSPDigBufferRX;
-        private System.Windows.Forms.ComboBoxTS comboDSPDigRXBuf;
-        private System.Windows.Forms.LabelTS lblDSPDigBufferTX;
-        private System.Windows.Forms.GroupBoxTS grpDSPBufCW;
-        private System.Windows.Forms.LabelTS lblDSPCWBufferRX;
-        private System.Windows.Forms.ComboBoxTS comboDSPCWRXBuf;
-        private System.Windows.Forms.GroupBoxTS grpDSPBufPhone;
-        private System.Windows.Forms.ComboBoxTS comboDSPPhoneTXBuf;
-        private System.Windows.Forms.LabelTS lblDSPPhoneBufferRX;
-        private System.Windows.Forms.ComboBoxTS comboDSPPhoneRXBuf;
-        private System.Windows.Forms.LabelTS lblDSPPhoneBufferTX;
-        private System.Windows.Forms.GroupBoxTS grpDSPNB;
-        private System.Windows.Forms.NumericUpDownTS udDSPNB;
-        private System.Windows.Forms.LabelTS lblDSPNBThreshold;
-        private System.Windows.Forms.GroupBoxTS grpDSPLMSNR;
-        private System.Windows.Forms.LabelTS lblLMSNRLeak;
-        private System.Windows.Forms.NumericUpDownTS udLMSNRLeak;
-        private System.Windows.Forms.LabelTS lblLMSNRgain;
-        private System.Windows.Forms.NumericUpDownTS udLMSNRgain;
-        private System.Windows.Forms.NumericUpDownTS udLMSNRdelay;
-        private System.Windows.Forms.LabelTS lblLMSNRdelay;
-        private System.Windows.Forms.NumericUpDownTS udLMSNRtaps;
-        private System.Windows.Forms.LabelTS lblLMSNRtaps;
-        private System.Windows.Forms.GroupBoxTS grpDSPLMSANF;
-        private System.Windows.Forms.LabelTS lblLMSANFLeak;
-        private System.Windows.Forms.NumericUpDownTS udLMSANFLeak;
-        private System.Windows.Forms.LabelTS lblLMSANFgain;
-        private System.Windows.Forms.NumericUpDownTS udLMSANFgain;
-        private System.Windows.Forms.LabelTS lblLMSANFdelay;
-        private System.Windows.Forms.NumericUpDownTS udLMSANFdelay;
-        private System.Windows.Forms.LabelTS lblLMSANFTaps;
-        private System.Windows.Forms.NumericUpDownTS udLMSANFtaps;
-        private System.Windows.Forms.GroupBoxTS grpDSPWintype;
-        private System.Windows.Forms.TabPage tpDSPKeyer;
-        private System.Windows.Forms.CheckBoxTS chkCWDisableUI;
-        private System.Windows.Forms.GroupBoxTS grpKeyerConnections;
-        private System.Windows.Forms.ComboBoxTS comboKeyerConnKeyLine;
-        private System.Windows.Forms.ComboBoxTS comboKeyerConnSecondary;
-        private System.Windows.Forms.LabelTS lblKeyerConnSecondary;
-        private System.Windows.Forms.LabelTS lblKeyerConnKeyLine;
-        private System.Windows.Forms.ComboBoxTS comboKeyerConnPTTLine;
-        private System.Windows.Forms.LabelTS lblKeyerConnPrimary;
-        private System.Windows.Forms.LabelTS lblKeyerConnPTTLine;
-        private System.Windows.Forms.ComboBoxTS comboKeyerConnPrimary;
-        private System.Windows.Forms.GroupBoxTS grpDSPCWPitch;
-        private System.Windows.Forms.LabelTS lblDSPCWPitchFreq;
-        private System.Windows.Forms.NumericUpDownTS udDSPCWPitch;
-        private System.Windows.Forms.GroupBoxTS grpDSPKeyerOptions;
-        private System.Windows.Forms.NumericUpDownTS udCWKeyerWeight;
-        private System.Windows.Forms.CheckBoxTS chkDSPKeyerSidetone;
-        private System.Windows.Forms.CheckBoxTS chkStrictCharSpacing;
-        private System.Windows.Forms.CheckBoxTS chkCWKeyerMode;
-        private System.Windows.Forms.CheckBoxTS chkCWKeyerRevPdl;
-        private System.Windows.Forms.LabelTS lblCWWeight;
-        private System.Windows.Forms.CheckBoxTS chkCWKeyerIambic;
-        private System.Windows.Forms.CheckBoxTS chkCWAutoSwitchMode;
-        private System.Windows.Forms.GroupBoxTS grpDSPKeyerSemiBreakIn;
-        private System.Windows.Forms.CheckBoxTS chkCWBreakInEnabled;
-        private System.Windows.Forms.LabelTS lblCWBreakInDelay;
-        private System.Windows.Forms.NumericUpDownTS udCWBreakInDelay;
-        private System.Windows.Forms.TabPage tpDSPAGCALC;
-        private System.Windows.Forms.CheckBoxTS chkRX2HangSpectrumLine;
-        private System.Windows.Forms.CheckBoxTS chkDisplayRX2HangLine;
-        private System.Windows.Forms.CheckBoxTS chkRX2GainSpectrumLine;
-        private System.Windows.Forms.CheckBoxTS chkDisplayRX2GainLine;
-        private System.Windows.Forms.GroupBoxTS grpDSPLeveler;
-        private System.Windows.Forms.CheckBoxTS chkDSPLevelerEnabled;
-        private System.Windows.Forms.LabelTS lblDSPLevelerHangThreshold;
-        private System.Windows.Forms.NumericUpDownTS udDSPLevelerHangTime;
-        private System.Windows.Forms.LabelTS lblDSPLevelerHangTime;
-        private System.Windows.Forms.NumericUpDownTS udDSPLevelerThreshold;
-        private System.Windows.Forms.NumericUpDownTS udDSPLevelerSlope;
-        private System.Windows.Forms.NumericUpDownTS udDSPLevelerDecay;
-        private System.Windows.Forms.LabelTS lblDSPLevelerSlope;
-        private System.Windows.Forms.NumericUpDownTS udDSPLevelerAttack;
-        private System.Windows.Forms.LabelTS lblDSPLevelerDecay;
-        private System.Windows.Forms.LabelTS lblDSPLevelerAttack;
-        private System.Windows.Forms.LabelTS lblDSPLevelerThreshold;
-        private System.Windows.Forms.TrackBarTS tbDSPLevelerHangThreshold;
-        private System.Windows.Forms.GroupBoxTS grpDSPALC;
-        private System.Windows.Forms.LabelTS lblDSPALCHangThreshold;
-        private System.Windows.Forms.TrackBarTS tbDSPALCHangThreshold;
-        private System.Windows.Forms.NumericUpDownTS udDSPALCHangTime;
-        private System.Windows.Forms.LabelTS lblDSPALCHangTime;
-        private System.Windows.Forms.NumericUpDownTS udDSPALCMaximumGain;
-        private System.Windows.Forms.NumericUpDownTS udDSPALCSlope;
-        private System.Windows.Forms.NumericUpDownTS udDSPALCDecay;
-        private System.Windows.Forms.LabelTS lblDSPALCSlope;
-        private System.Windows.Forms.NumericUpDownTS udDSPALCAttack;
-        private System.Windows.Forms.LabelTS lblDSPALCDecay;
-        private System.Windows.Forms.LabelTS lblDSPALCAttack;
-        private System.Windows.Forms.LabelTS lblDSPALCThreshold;
-        private System.Windows.Forms.GroupBoxTS grpDSPAGC;
-        private System.Windows.Forms.CheckBoxTS chkAGCHangSpectrumLine;
-        private System.Windows.Forms.CheckBoxTS chkAGCDisplayHangLine;
-        private System.Windows.Forms.CheckBoxTS chkSpectrumLine;
-        private System.Windows.Forms.CheckBoxTS chkShowAGC;
-        private System.Windows.Forms.LabelTS labelTS138;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label lblRX1Vol;
-        private System.Windows.Forms.LabelTS labelTS137;
-        private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2HangTime;
-        private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2Decay;
-        private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2Attack;
-        private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2Slope;
-        public System.Windows.Forms.TrackBarTS tbDSPAGCRX2HangThreshold;
-        private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2MaxGaindB;
-        private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2FixedGaindB;
-        public System.Windows.Forms.TrackBarTS tbDSPAGCHangThreshold;
-        private System.Windows.Forms.LabelTS lblDSPAGCHangThreshold;
-        private System.Windows.Forms.LabelTS lblDSPAGCHangTime;
-        private System.Windows.Forms.NumericUpDownTS udDSPAGCHangTime;
-        private System.Windows.Forms.NumericUpDownTS udDSPAGCMaxGaindB;
-        private System.Windows.Forms.NumericUpDownTS udDSPAGCSlope;
-        private System.Windows.Forms.NumericUpDownTS udDSPAGCDecay;
-        private System.Windows.Forms.LabelTS lblDSPAGCSlope;
-        private System.Windows.Forms.NumericUpDownTS udDSPAGCAttack;
-        private System.Windows.Forms.LabelTS lblDSPAGCDecay;
-        private System.Windows.Forms.LabelTS lblDSPAGCAttack;
-        private System.Windows.Forms.LabelTS lblDSPAGCMaxGain;
-        private System.Windows.Forms.NumericUpDownTS udDSPAGCFixedGaindB;
-        private System.Windows.Forms.LabelTS lblDSPAGCFixed;
-        private System.Windows.Forms.TabPage tpDSPAudio;
-        private System.Windows.Forms.GroupBoxTS grpDSPAudRX1APF;
-        private System.Windows.Forms.LabelTS labelRX1APFBWR;
-        private System.Windows.Forms.LabelTS labelRX1APFBWL;
-        private System.Windows.Forms.LabelTS labelRX1APFTuneR;
-        private System.Windows.Forms.LabelTS labelRX1APFtuneL;
-        private System.Windows.Forms.LabelTS labelRX1APFTuneC;
-        private System.Windows.Forms.LabelTS labelRX1APFBW;
-        private System.Windows.Forms.LabelTS labelRX1APFTune;
-        private System.Windows.Forms.TrackBarTS tbRX1APFBW;
-        private System.Windows.Forms.TrackBarTS tbRX1APFTune;
-        private System.Windows.Forms.LabelTS labelRX1APFGain;
-        private System.Windows.Forms.CheckBoxTS chkDSPRX1APFEnable;
-        private System.Windows.Forms.GroupBoxTS grpDSPAudRX2APF;
-        private System.Windows.Forms.LabelTS labelRX2APFBWR;
-        private System.Windows.Forms.LabelTS labelRX2APFBWL;
-        private System.Windows.Forms.LabelTS labelRX2APFTuneR;
-        private System.Windows.Forms.LabelTS labelRX2APFTuneL;
-        private System.Windows.Forms.LabelTS labelRX2APFTuneC;
-        private System.Windows.Forms.LabelTS labelRX2APFBW;
-        private System.Windows.Forms.LabelTS labelRX2APFTune;
-        private System.Windows.Forms.TrackBarTS tbRX2APFBW;
-        private System.Windows.Forms.TrackBarTS tbRX2APFTune;
-        private System.Windows.Forms.LabelTS labelRX2APFGain;
-        private System.Windows.Forms.CheckBoxTS chkDSPRX2APFEnable;
-        private System.Windows.Forms.GroupBoxTS grpDSPAudRX1subAPF;
-        private System.Windows.Forms.LabelTS labelRX1subAPFBWR;
-        private System.Windows.Forms.LabelTS labelRX1subAPFBWL;
-        private System.Windows.Forms.LabelTS labelRX1subAPFTuneR;
-        private System.Windows.Forms.LabelTS labelRX1subAPFTuneL;
-        private System.Windows.Forms.LabelTS labelRX1subAPFTuneC;
-        private System.Windows.Forms.LabelTS labelRX1subAPFBW;
-        private System.Windows.Forms.LabelTS labelRX1subAPFTune;
-        private System.Windows.Forms.TrackBarTS tbRX1subAPFBW;
-        private System.Windows.Forms.TrackBarTS tbRX1subAPFTune;
-        private System.Windows.Forms.LabelTS labelRX1subAPFGain;
-        private System.Windows.Forms.CheckBoxTS chkDSPRX1subAPFEnable;
-        private System.Windows.Forms.GroupBoxTS grpDSPAudAPFControls;
-        private System.Windows.Forms.TrackBarTS tbDSPAudRX2APFGain;
-        private System.Windows.Forms.TrackBarTS tbDSPAudRX1subAPFGain;
-        private System.Windows.Forms.TrackBarTS tbDSPAudRX1APFGain;
-        private System.Windows.Forms.GroupBoxTS grpDSPAudRX1Dolly;
-        private System.Windows.Forms.NumericUpDownTS udDSPRX1DollyF0;
-        private System.Windows.Forms.CheckBoxTS chkDSPRX1DollyEnable;
-        private System.Windows.Forms.LabelTS labelDSPRX1DollyF1;
-        private System.Windows.Forms.LabelTS labelDSPRX1DollyF0;
-        private System.Windows.Forms.NumericUpDownTS udDSPRX1DollyF1;
-        private System.Windows.Forms.GroupBoxTS grpDSPAudRX1SubDolly;
-        private System.Windows.Forms.LabelTS labelDSPRX1SubDollyF1;
-        private System.Windows.Forms.LabelTS labelDSPRX1SubDollyF0;
-        private System.Windows.Forms.NumericUpDownTS udDSPRX1SubDollyF1;
-        private System.Windows.Forms.NumericUpDownTS udDSPRX1SubDollyF0;
-        private System.Windows.Forms.CheckBoxTS chkDSPRX1SubDollyEnable;
-        private System.Windows.Forms.GroupBoxTS grpDSPAudRX2Dolly;
-        private System.Windows.Forms.LabelTS labelDSPRX2DollyF1;
-        private System.Windows.Forms.LabelTS labelDSPRX2DollyF0;
-        private System.Windows.Forms.NumericUpDownTS udDSPRX2DollyF1;
-        private System.Windows.Forms.NumericUpDownTS udDSPRX2DollyF0;
-        private System.Windows.Forms.CheckBoxTS chkDSPRX2DollyEnable;
-        private System.Windows.Forms.RadioButtonTS radDSPRX2APFControls;
-        private System.Windows.Forms.RadioButtonTS radDSPRX1subAPFControls;
-        private System.Windows.Forms.RadioButtonTS radDSPRX1APFControls;
-        private System.Windows.Forms.LabelTS labelTS327;
-        private System.Windows.Forms.NumericUpDownTS udDSPEERpdelay;
-        private System.Windows.Forms.CheckBoxTS chkDSPEERRunDelays;
-        private System.Windows.Forms.GroupBoxTS grpDSPEERpwm;
-        private System.Windows.Forms.NumericUpDownTS udDSPEERpwmMin;
-        private System.Windows.Forms.NumericUpDownTS udDSPEERpwmMax;
-        private System.Windows.Forms.LabelTS labelTS329;
-        private System.Windows.Forms.LabelTS labelTS328;
-        private System.Windows.Forms.CheckBoxTS chkRX1BlankDisplayOnVFOBTX;
-        private System.Windows.Forms.GroupBoxTS grpDSPSpeechProcessor;
-        private System.Windows.Forms.CheckBoxTS chkDSPCESSB;
-        private System.Windows.Forms.GroupBoxTS grpAMSQMaxTail;
-        private System.Windows.Forms.LabelTS labelTS355;
-        private System.Windows.Forms.NumericUpDownTS udRXAMSQMaxTail;
-        private System.Windows.Forms.TabPage tpDSPNR;
-        private System.Windows.Forms.GroupBoxTS grpDSPNR2;
-        private System.Windows.Forms.GroupBoxTS grpDSPGainMethod;
-        private System.Windows.Forms.RadioButtonTS radDSPNR2Log;
-        private System.Windows.Forms.RadioButtonTS radDSPNR2Linear;
-        private System.Windows.Forms.GroupBoxTS grpDSPNR2NPEMethod;
-        private System.Windows.Forms.RadioButtonTS radDSPNR2MMSE;
-        private System.Windows.Forms.RadioButtonTS radDSPNR2OSMS;
-        private System.Windows.Forms.CheckBoxTS chkDSPNR2AE;
-        private System.Windows.Forms.GroupBoxTS grpDSPNR2RX2;
-        private System.Windows.Forms.GroupBoxTS grpDSPNR2NPEMethodRX2;
-        private System.Windows.Forms.RadioButtonTS radDSPNR2MMSERX2;
-        private System.Windows.Forms.RadioButtonTS radDSPNR2OSMSRX2;
-        private System.Windows.Forms.CheckBoxTS chkDSPNR2AERX2;
-        private System.Windows.Forms.GroupBoxTS grpDSPGainMethodRX2;
-        private System.Windows.Forms.RadioButtonTS radDSPNR2LogRX2;
-        private System.Windows.Forms.RadioButtonTS radDSPNR2LinearRX2;
-        private System.Windows.Forms.RadioButtonTS radDSPNR2GammaRX2;
-        private System.Windows.Forms.RadioButtonTS radDSPNR2Gamma;
-        private System.Windows.Forms.CheckBoxTS chkLimitExtAmpOnOverload;
-        private System.Windows.Forms.GroupBoxTS grpFocusMaster;
-        private System.Windows.Forms.TextBoxTS txtFocusMasterDelay;
-        private System.Windows.Forms.LabelTS labelTS359;
-        private System.Windows.Forms.LabelTS labelTS358;
-        private System.Windows.Forms.LabelTS labelTS357;
-        private System.Windows.Forms.LabelTS labelTS356;
-        private System.Windows.Forms.TextBoxTS txtFocusMasterWinTitle;
-        private System.Windows.Forms.TextBoxTS txtFocusMasterUDPPort;
-        private System.Windows.Forms.ComboBoxTS comboFocusMasterMode;
-        private System.Windows.Forms.CheckBoxTS chkEnableLEDFont;
-        private System.Windows.Forms.CheckBoxTS chkDisableRXOut;
-        private System.Windows.Forms.CheckBoxTS chkSplitPins;
-        private System.Windows.Forms.TabPage tpDSPMNF;
-        private System.Windows.Forms.GroupBoxTS grpDSPMNF;
-        private System.Windows.Forms.CheckBoxTS chkMNFAutoIncrease;
-        private System.Windows.Forms.ButtonTS btnMNFDelete;
-        private System.Windows.Forms.ButtonTS btnMNFCancel;
-        private System.Windows.Forms.ButtonTS btnMNFEdit;
-        private System.Windows.Forms.CheckBoxTS chkMNFActive;
-        private System.Windows.Forms.ButtonTS btnMNFRun;
-        private System.Windows.Forms.ButtonTS btnMNFEnter;
-        private System.Windows.Forms.ButtonTS btnMNFAdd;
-        private System.Windows.Forms.LabelTS lblMNFWidth;
-        private System.Windows.Forms.LabelTS lblMNFFreq;
-        private System.Windows.Forms.LabelTS lblMNFName;
-        private System.Windows.Forms.NumericUpDownTS udMNFWidth;
-        private System.Windows.Forms.NumericUpDownTS udMNFFreq;
-        private System.Windows.Forms.NumericUpDownTS udMNFNotch;
-        private System.Windows.Forms.CheckBoxTS chkMNFRun;
-        private System.Windows.Forms.ButtonTS btnVFOFreq;
-        private System.Windows.Forms.LabelTS labelTS361;
-        private System.Windows.Forms.LabelTS labelTS360;
-        private System.Windows.Forms.CheckBoxTS chkAudioLatencyManual2_Out;
-        private System.Windows.Forms.NumericUpDownTS udAudioLatency2_Out;
-        private System.Windows.Forms.CheckBoxTS chkNetworkWDT;
-        private System.Windows.Forms.LabelTS labelTS364;
-        private System.Windows.Forms.LabelTS labelTS365;
-        private System.Windows.Forms.CheckBoxTS chkAudioLatencyPAOutManual;
-        private System.Windows.Forms.NumericUpDownTS udAudioLatencyPAOut;
-        private System.Windows.Forms.CheckBoxTS chkAudioLatencyPAInManual;
-        private System.Windows.Forms.NumericUpDownTS udAudioLatencyPAIn;
-        private System.Windows.Forms.LabelTS labelTS363;
-        private System.Windows.Forms.LabelTS labelTS362;
-        private System.Windows.Forms.LabelTS labelTS369;
-        private System.Windows.Forms.LabelTS labelTS370;
-        private System.Windows.Forms.CheckBoxTS chkVAC2LatencyPAOutManual;
-        private System.Windows.Forms.NumericUpDownTS udVAC2LatencyPAOut;
-        private System.Windows.Forms.CheckBoxTS chkVAC2LatencyPAInManual;
-        private System.Windows.Forms.NumericUpDownTS udVAC2LatencyPAIn;
-        private System.Windows.Forms.LabelTS labelTS371;
-        private System.Windows.Forms.CheckBoxTS chkVAC2LatencyOutManual;
-        private System.Windows.Forms.NumericUpDownTS udVAC2LatencyOut;
-        private System.Windows.Forms.LabelTS labelTS368;
-        private System.Windows.Forms.LabelTS labelTS367;
-        private System.Windows.Forms.LabelTS labelTS366;
-        private System.Windows.Forms.LabelTS lblDispAv;
-        private System.Windows.Forms.ComboBoxTS comboDispPanAveraging;
-        private System.Windows.Forms.LabelTS lblDispDet;
-        private System.Windows.Forms.ComboBoxTS comboDispPanDetector;
-        private System.Windows.Forms.GroupBoxTS grpWaterfallAverage;
-        private System.Windows.Forms.LabelTS labelTS372;
-        private System.Windows.Forms.ComboBoxTS comboDispWFAveraging;
-        private System.Windows.Forms.LabelTS labelTS373;
-        private System.Windows.Forms.ComboBoxTS comboDispWFDetector;
-        private System.Windows.Forms.NumericUpDownTS udDisplayAVTimeWF;
-        private System.Windows.Forms.LabelTS labelTS374;
-        private System.Windows.Forms.GroupBoxTS grpRX2DisplayAveraging;
-        private System.Windows.Forms.LabelTS labelTS375;
-        private System.Windows.Forms.ComboBoxTS comboRX2DispWFAveraging;
-        private System.Windows.Forms.LabelTS labelTS376;
-        private System.Windows.Forms.ComboBoxTS comboRX2DispWFDetector;
-        private System.Windows.Forms.NumericUpDownTS udRX2DisplayWFAVTime;
-        private System.Windows.Forms.LabelTS labelTS377;
-        private System.Windows.Forms.LabelTS lblRX2PanAv;
-        private System.Windows.Forms.ComboBoxTS comboRX2DispPanAveraging;
-        private System.Windows.Forms.LabelTS lblRX2PanDet;
-        private System.Windows.Forms.ComboBoxTS comboRX2DispPanDetector;
-        private System.Windows.Forms.CheckBoxTS chkDispNormalize;
-        private System.Windows.Forms.CheckBoxTS chkDispRX2Normalize;
-        private System.Windows.Forms.GroupBoxTS groupBoxTS7;
-        private System.Windows.Forms.CheckBoxTS chkDispTXNormalize;
-        private System.Windows.Forms.LabelTS labelTS378;
-        private System.Windows.Forms.ComboBoxTS comboTXDispPanAveraging;
-        private System.Windows.Forms.LabelTS labelTS379;
-        private System.Windows.Forms.ComboBoxTS comboTXDispPanDetector;
-        private System.Windows.Forms.NumericUpDownTS udTXDisplayAVGTime;
-        private System.Windows.Forms.LabelTS labelTS380;
-        private System.Windows.Forms.GroupBoxTS groupBoxTS8;
-        private System.Windows.Forms.ComboBoxTS comboTXDispWinType;
-        private System.Windows.Forms.LabelTS labelTS381;
-        private System.Windows.Forms.LabelTS labelTS382;
-        private System.Windows.Forms.LabelTS labelTS383;
-        private System.Windows.Forms.LabelTS lblTXDispBinWidth;
-        private System.Windows.Forms.LabelTS labelTS385;
-        private System.Windows.Forms.LabelTS labelTS386;
-        public System.Windows.Forms.TrackBarTS tbTXDisplayFFTSize;
-        private System.Windows.Forms.GroupBoxTS groupBoxTS9;
-        private System.Windows.Forms.LabelTS labelTS384;
-        private System.Windows.Forms.ComboBoxTS comboTXDispWFAveraging;
-        private System.Windows.Forms.LabelTS labelTS387;
-        private System.Windows.Forms.ComboBoxTS comboTXDispWFDetector;
-        private System.Windows.Forms.NumericUpDownTS udTXDisplayAVTime;
-        private System.Windows.Forms.LabelTS labelTS388;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnConfigure;
-        private System.Windows.Forms.GroupBoxTS grpKBPTT;
-        private System.Windows.Forms.LabelTS labelTS389;
-        private System.Windows.Forms.LabelTS labelTS390;
-        private System.Windows.Forms.ComboBoxTS comboKBPTTTx;
-        private System.Windows.Forms.ComboBoxTS comboKBPTTRx;
-        private System.Windows.Forms.GroupBoxTS grpDSPFilterType;
-        private System.Windows.Forms.GroupBoxTS grpDSPFiltTypeFM;
-        private System.Windows.Forms.ComboBoxTS comboDSPFMTXFiltType;
-        private System.Windows.Forms.LabelTS labelTS391;
-        private System.Windows.Forms.ComboBoxTS comboDSPFMRXFiltType;
-        private System.Windows.Forms.LabelTS labelTS392;
-        private System.Windows.Forms.GroupBoxTS grpDSPFiltTypeDig;
-        private System.Windows.Forms.ComboBoxTS comboDSPDigTXFiltType;
-        private System.Windows.Forms.LabelTS labelTS393;
-        private System.Windows.Forms.ComboBoxTS comboDSPDigRXFiltType;
-        private System.Windows.Forms.LabelTS labelTS394;
-        private System.Windows.Forms.GroupBoxTS grpDSPFiltTypeCW;
-        private System.Windows.Forms.LabelTS labelTS395;
-        private System.Windows.Forms.ComboBoxTS comboDSPCWRXFiltType;
-        private System.Windows.Forms.GroupBoxTS grpDSPFiltTypePhone;
-        private System.Windows.Forms.ComboBoxTS comboDSPPhoneTXFiltType;
-        private System.Windows.Forms.LabelTS labelTS396;
-        private System.Windows.Forms.ComboBoxTS comboDSPPhoneRXFiltType;
-        private System.Windows.Forms.LabelTS labelTS397;
-        private System.Windows.Forms.GroupBoxTS grpDSPFilterSize;
-        private System.Windows.Forms.GroupBoxTS grpDSPFiltSizeFM;
-        private System.Windows.Forms.ComboBoxTS comboDSPFMTXFiltSize;
-        private System.Windows.Forms.LabelTS labelTS398;
-        private System.Windows.Forms.ComboBoxTS comboDSPFMRXFiltSize;
-        private System.Windows.Forms.LabelTS labelTS399;
-        private System.Windows.Forms.GroupBoxTS grpDSPFiltSizeDig;
-        private System.Windows.Forms.ComboBoxTS comboDSPDigTXFiltSize;
-        private System.Windows.Forms.LabelTS labelTS400;
-        private System.Windows.Forms.ComboBoxTS comboDSPDigRXFiltSize;
-        private System.Windows.Forms.LabelTS labelTS401;
-        private System.Windows.Forms.GroupBoxTS grpDSPFiltSizeCW;
-        private System.Windows.Forms.LabelTS labelTS402;
-        private System.Windows.Forms.ComboBoxTS comboDSPCWRXFiltSize;
-        private System.Windows.Forms.GroupBoxTS grpDSPFiltSizePhone;
-        private System.Windows.Forms.ComboBoxTS comboDSPPhoneTXFiltSize;
-        private System.Windows.Forms.LabelTS labelTS403;
-        private System.Windows.Forms.ComboBoxTS comboDSPPhoneRXFiltSize;
-        private System.Windows.Forms.LabelTS labelTS404;
-        private System.Windows.Forms.GroupBoxTS grpDSPBufFM;
-        private System.Windows.Forms.ComboBoxTS comboDSPFMTXBuf;
-        private System.Windows.Forms.LabelTS labelTS405;
-        private System.Windows.Forms.ComboBoxTS comboDSPFMRXBuf;
-        private System.Windows.Forms.LabelTS labelTS406;
-        private System.Windows.Forms.TabPage tpDSPNB;
-        private System.Windows.Forms.GroupBoxTS grpDSPSNB;
-        private System.Windows.Forms.NumericUpDownTS udDSPSNBThresh2;
-        private System.Windows.Forms.LabelTS lblDSPSNBThresh2;
-        private System.Windows.Forms.NumericUpDownTS udDSPSNBThresh1;
-        private System.Windows.Forms.LabelTS lblDSPSNBThresh1;
-        private PanelTS panelAlex2LPFControl;
-        private GroupBoxTS groupBoxTS1;
-        private RadioButtonTS radSplitPins3x4;
-        private RadioButtonTS radSplitPins4x3;
-        private CheckBoxTS chkBPF2Gnd;
-        private PanelTS panelBPFControl;
-        private LabelTS labelTS116;
-        private LabelTS labelTS457;
-        private CheckBoxTS chkBPF1_20BP;
-        private NumericUpDownTS ud1_5BPF1Start;
-        private CheckBoxTS chkBPF1_6_5BP;
-        private NumericUpDownTS ud1_5BPF1End;
-        private CheckBoxTS chkBPF1_9_5BP;
-        private NumericUpDownTS ud6_5BPF1Start;
-        private CheckBoxTS chkBPF1_6BP;
-        private NumericUpDownTS ud6_5BPF1End;
-        private CheckBoxTS chkBPF1_13BP;
-        private NumericUpDownTS ud9_5BPF1Start;
-        private CheckBoxTS chkBPF1_1_5BP;
-        private NumericUpDownTS ud9_5BPF1End;
-        private NumericUpDownTS ud20BPF1End;
-        private NumericUpDownTS ud13BPF1End;
-        private NumericUpDownTS ud20BPF1Start;
-        private PanelTS panelTS8;
-        private RadioButtonTS radBPF1BPTXled;
-        private RadioButtonTS radBPBPF1led;
-        private RadioButtonTS rad1_5BPF1led;
-        private RadioButtonTS rad6_5BPF1led;
-        private RadioButtonTS rad9_5BPF1led;
-        private RadioButtonTS rad13BPF1led;
-        private RadioButtonTS rad20BPF1led;
-        private RadioButtonTS rad6BPF1led;
-        private NumericUpDownTS ud13BPF1Start;
-        private LabelTS labelTS458;
-        private LabelTS labelBPF1;
-        private NumericUpDownTS ud6BPF1Start;
-        private LabelTS labelTS460;
-        private NumericUpDownTS ud6BPF1End;
-        private LabelTS labelTS461;
-        private LabelTS labelTS462;
-        private LabelTS labelTS463;
-        private LabelTS labelTS464;
-        public TrackBarTS tbGrayLineAlpha;
-        private ColorButton clrbtnGrayLine;
-        private LabelTS labelgrayline;
-        private CheckBoxTS chkWheelReverse;
-        private System.Windows.Forms.GroupBoxTS grpDisplay8000DLE;
-        private System.Windows.Forms.CheckBoxTS chkANAN8000DLEDisplayVoltsAmps;
-        private NumericUpDownTS ud6mRx2LNAGainOffset;
-        private LabelTS lblRx26mLNA;
-        private TabPage tpTCITCPIPN1MM;
-        public GroupBoxTS groupBoxTS10;
-        private ButtonTS btnTuneStepChangeLarger2;
-        private ButtonTS btnTuneStepChangeSmaller2;
-        public TextBoxTS txtWheelTune2;
-        public CheckBoxTS chkBoxIND;
-        private LabelTS labelTS469;
-        public CheckBoxTS chkBoxPM;
-        public NumericUpDownTS udSpeedPM;
-        private GroupBox groupBox2;
-        private LabelTS labelTS459;
-        public CheckBoxTS chkBoxHttp2;
-        private LabelTS labelTS465;
-        public NumericUpDownTS udHttpRefresh;
-        public TextBoxTS txtHttpPass;
-        public TextBoxTS txtHttpUser;
-        private LabelTS labelTS466;
-        private LabelTS labelTS467;
-        private LabelTS labelTS468;
-        public NumericUpDownTS udHttpPort;
-        public CheckBoxTS chkBoxHTTP;
-        private GroupBox grp200WattMeterTrim;
-        private NumericUpDownTS ud200PA20W;
-        private NumericUpDownTS ud200PA200W;
-        private LabelTS label200PA180W;
-        private LabelTS label200PA200W;
-        private NumericUpDownTS ud200PA180W;
-        private LabelTS label200PA220W;
-        private LabelTS label200PA160W;
-        private NumericUpDownTS ud200PA220W;
-        private NumericUpDownTS ud200PA160W;
-        private NumericUpDownTS ud200PA240W;
-        private LabelTS label200PA140W;
-        private LabelTS label200PA240W;
-        private NumericUpDownTS ud200PA140W;
-        private NumericUpDownTS ud200PA260W;
-        private LabelTS label200PA120W;
-        private LabelTS label200PA20W;
-        private LabelTS label200PA260W;
-        private NumericUpDownTS ud200PA120W;
-        private NumericUpDownTS ud200PA280W;
-        private LabelTS label200PA100W;
-        private NumericUpDownTS ud200PA40W;
-        private LabelTS label200PA280W;
-        private NumericUpDownTS ud200PA100W;
-        private LabelTS label200PA40W;
-        private LabelTS label200PA80W;
-        private NumericUpDownTS ud200PA80W;
-        private NumericUpDownTS ud200PA60W;
-        private LabelTS label200PA60W;
-        private GroupBox grp10WattMeterTrim;
-        private NumericUpDownTS ud10PA1W;
-        private NumericUpDownTS ud10PA10W;
-        private LabelTS label10PA9W;
-        private LabelTS label10PA10W;
-        private NumericUpDownTS ud10PA9W;
-        private LabelTS label10PA11W;
-        private LabelTS label10PA8W;
-        private NumericUpDownTS ud10PA11W;
-        private NumericUpDownTS ud10PA8W;
-        private NumericUpDownTS ud10PA12W;
-        private LabelTS label10PA7W;
-        private LabelTS label10PA12W;
-        private NumericUpDownTS ud10PA7W;
-        private NumericUpDownTS ud10PA13W;
-        private LabelTS label10PA6W;
-        private LabelTS label10PA1W;
-        private LabelTS label10PA13W;
-        private NumericUpDownTS ud10PA6W;
-        private NumericUpDownTS ud10PA14W;
-        private LabelTS label10PA5W;
-        private NumericUpDownTS ud10PA2W;
-        private LabelTS label10PA14W;
-        private NumericUpDownTS ud10PA5W;
-        private LabelTS label10PA2W;
-        private LabelTS label10PA4W;
-        private NumericUpDownTS ud10PA4W;
-        private NumericUpDownTS ud10PA3W;
-        private LabelTS label10PA3W;
-        public TextBoxTS textSWR;
-        private LabelTS labelTS256;
-        public TextBoxTS textCaldFwdPower;
-        private LabelTS labelTS255;
-        private TabPage tpDSPCFC;
-        private LabelTS lblCFCPEG;
-        private LabelTS lblCFCPEG15;
-        private LabelTS lblCFCPEG0;
-        private TrackBarTS tbCFCPEQGAIN;
-        private GroupBoxTS grpPhRot;
-        private LabelTS lblPHROTStages;
-        private NumericUpDownTS udPHROTStages;
-        private LabelTS lblPHROTFreq;
-        private NumericUpDownTS udPhRotFreq;
-        private CheckBoxTS chkPHROTEnable;
-        private CheckBoxTS chkCFCPeqEnable;
-        private LabelTS lblCFCPRECOMP;
-        private LabelTS lblCFCPC15;
-        private LabelTS lblCFCPC0;
-        private TrackBarTS tbCFCPRECOMP;
-        private LabelTS lblCFCEQPOST;
-        private LabelTS lblCFCEQ10dB;
-        private LabelTS lblCFCEQ0dB;
-        private TrackBarTS tbCFCEQ9;
-        private TrackBarTS tbCFCEQ6;
-        private TrackBarTS tbCFCEQ7;
-        private TrackBarTS tbCFCEQ8;
-        private TrackBarTS tbCFCEQ3;
-        private TrackBarTS tbCFCEQ4;
-        private TrackBarTS tbCFCEQ5;
-        private TrackBarTS tbCFCEQ0;
-        private TrackBarTS tbCFCEQ1;
-        private TrackBarTS tbCFCEQ2;
-        private CheckBoxTS chkCFCEnable;
-        private LabelTS lblCFCFreq;
-        private LabelTS lblCFCComp;
-        private NumericUpDownTS udCFC9;
-        private NumericUpDownTS udCFC8;
-        private NumericUpDownTS udCFC7;
-        private NumericUpDownTS udCFC6;
-        private NumericUpDownTS udCFC5;
-        private NumericUpDownTS udCFC4;
-        private NumericUpDownTS udCFC3;
-        private NumericUpDownTS udCFC2;
-        private NumericUpDownTS udCFC1;
-        private NumericUpDownTS udCFC0;
-        private LabelTS lblCFC15dB;
-        private LabelTS lblCFC0dB;
-        private TrackBarTS tbCFC9;
-        private TrackBarTS tbCFC6;
-        private TrackBarTS tbCFC7;
-        private TrackBarTS tbCFC8;
-        private TrackBarTS tbCFC3;
-        private TrackBarTS tbCFC4;
-        private TrackBarTS tbCFC5;
-        private TrackBarTS tbCFC0;
-        private TrackBarTS tbCFC1;
-        private TrackBarTS tbCFC2;
-        private CheckBoxTS chkEnableXVTRHF;
-        private System.Windows.Forms.GroupBoxTS grpAMTX;
-        private System.Windows.Forms.RadioButtonTS radTXUSB;
-        private System.Windows.Forms.RadioButtonTS radTXLSB;
-        private System.Windows.Forms.RadioButtonTS radTXDSB;
-        private System.Windows.Forms.Button btnExportCurrentTXProfile;
-        private GroupBoxTS grpVAC1monitor;
-        private LabelTS lblVAC1unfl;
-        private LabelTS lblVAC1ovfl;
-        private LabelTS lblVAC1underflows;
-        private LabelTS lblVAC1overflows;
-        private Timer timer_VAC_Monitor;
-        private LabelTS lblVAC1var;
-        private LabelTS lblVAC1varratio;
-        private LabelTS lblVAC1_TOVAC;
-        private NumericUpDownTS udVAC1_Force;
-        private CheckBoxTS chkVAC1_Force;
-        private NumericUpDownTS udVAC1_Force2;
-        private CheckBoxTS chkVAC1_Force2;
-        private LabelTS lblVAC1_FROMVAC;
-        private LabelTS lblVAC1var2;
-        private LabelTS lblVAC1VarRatio2;
-        private LabelTS lblVAC1unfl2;
-        private LabelTS lblVAC1ovfl2;
-        private LabelTS lblVAC1underflows2;
-        private LabelTS lblVAC1overflows2;
-        private GroupBoxTS grpVAC2monitor;
-        private NumericUpDownTS udVAC2_Force2;
-        private CheckBoxTS chkVAC2_Force2;
-        private LabelTS lblVAC2_FROMVAC;
-        private LabelTS lblVAC2var2;
-        private LabelTS lblVAC2varratio2;
-        private LabelTS lblVAC2unfl2;
-        private LabelTS lblVAC2ovfl2;
-        private LabelTS lblVAC2underflows2;
-        private LabelTS lblVAC2overflows2;
-        private NumericUpDownTS udVAC2_Force;
-        private CheckBoxTS chkVAC2_Force;
-        private LabelTS lblVAC2_TOVAC;
-        private LabelTS lblVAC2var;
-        private LabelTS lblVAC2varratio;
-        private LabelTS lblVAC2unfl;
-        private LabelTS lblVAC2ovfl;
-        private LabelTS lblVAC2underflows;
-        private LabelTS lblVAC2overflows;
-        private CheckBoxTS chkBlockTxAnt3;
-        private CheckBoxTS chkBlockTxAnt2;
-        private LabelTS labelTS257;
-        private CheckBoxTS chkLPFBypass;
-        private TabControl grpTransmitPinActionSWL;
-        private TabPage tpOCHFControl;
-        private TabPage tbOCVHFControl;
-        private TabPage tpOCSWLControl;
-        private GroupBoxTS grpExtCtrlSWL;
-        private LabelTS labelTS484;
-        private LabelTS labelTS485;
-        private LabelTS labelTS486;
-        private LabelTS labelTS487;
-        private LabelTS labelTS488;
-        private LabelTS labelTS489;
-        private LabelTS labelTS490;
-        private LabelTS labelTS491;
-        private LabelTS labelTS492;
-        private LabelTS labelTS493;
-        private LabelTS labelTS494;
-        private LabelTS labelTS495;
-        private CheckBoxTS chkOCxmit147;
-        private CheckBoxTS chkOCxmit146;
-        private CheckBoxTS chkOCxmit145;
-        private CheckBoxTS chkOCxmit144;
-        private CheckBoxTS chkOCxmit143;
-        private CheckBoxTS chkOCxmit142;
-        private CheckBoxTS chkOCxmit141;
-        private CheckBoxTS chkOCrcv147;
-        private CheckBoxTS chkOCrcv146;
-        private CheckBoxTS chkOCrcv145;
-        private CheckBoxTS chkOCrcv144;
-        private CheckBoxTS chkOCrcv143;
-        private CheckBoxTS chkOCrcv142;
-        private CheckBoxTS chkOCrcv141;
-        private CheckBoxTS chkOCxmit167;
-        private CheckBoxTS chkOCxmit166;
-        private CheckBoxTS chkOCxmit165;
-        private CheckBoxTS chkOCxmit164;
-        private CheckBoxTS chkOCxmit163;
-        private CheckBoxTS chkOCxmit162;
-        private CheckBoxTS chkOCxmit161;
-        private CheckBoxTS chkOCrcv167;
-        private CheckBoxTS chkOCrcv166;
-        private CheckBoxTS chkOCrcv165;
-        private CheckBoxTS chkOCrcv164;
-        private CheckBoxTS chkOCrcv163;
-        private CheckBoxTS chkOCrcv162;
-        private CheckBoxTS chkOCrcv161;
-        private CheckBoxTS chkOCxmit197;
-        private CheckBoxTS chkOCxmit196;
-        private CheckBoxTS chkOCxmit195;
-        private CheckBoxTS chkOCxmit194;
-        private CheckBoxTS chkOCxmit193;
-        private CheckBoxTS chkOCxmit192;
-        private CheckBoxTS chkOCxmit191;
-        private CheckBoxTS chkOCrcv197;
-        private CheckBoxTS chkOCrcv196;
-        private CheckBoxTS chkOCrcv195;
-        private CheckBoxTS chkOCrcv194;
-        private CheckBoxTS chkOCrcv193;
-        private CheckBoxTS chkOCrcv192;
-        private CheckBoxTS chkOCrcv191;
-        private CheckBoxTS chkOCxmit227;
-        private CheckBoxTS chkOCxmit226;
-        private CheckBoxTS chkOCxmit225;
-        private CheckBoxTS chkOCxmit224;
-        private CheckBoxTS chkOCxmit223;
-        private CheckBoxTS chkOCxmit222;
-        private CheckBoxTS chkOCxmit221;
-        private CheckBoxTS chkOCrcv227;
-        private CheckBoxTS chkOCrcv226;
-        private CheckBoxTS chkOCrcv225;
-        private CheckBoxTS chkOCrcv224;
-        private CheckBoxTS chkOCrcv223;
-        private CheckBoxTS chkOCrcv222;
-        private CheckBoxTS chkOCrcv221;
-        private CheckBoxTS chkOCxmit257;
-        private CheckBoxTS chkOCxmit256;
-        private CheckBoxTS chkOCxmit255;
-        private CheckBoxTS chkOCxmit254;
-        private CheckBoxTS chkOCxmit253;
-        private CheckBoxTS chkOCxmit252;
-        private CheckBoxTS chkOCxmit251;
-        private CheckBoxTS chkOCrcv257;
-        private CheckBoxTS chkOCrcv256;
-        private CheckBoxTS chkOCrcv255;
-        private CheckBoxTS chkOCrcv254;
-        private CheckBoxTS chkOCrcv253;
-        private CheckBoxTS chkOCrcv252;
-        private CheckBoxTS chkOCrcv251;
-        private CheckBoxTS chkOCxmit317;
-        private CheckBoxTS chkOCxmit316;
-        private CheckBoxTS chkOCxmit315;
-        private CheckBoxTS chkOCxmit314;
-        private CheckBoxTS chkOCxmit313;
-        private CheckBoxTS chkOCxmit312;
-        private CheckBoxTS chkOCxmit311;
-        private CheckBoxTS chkOCrcv317;
-        private CheckBoxTS chkOCrcv316;
-        private CheckBoxTS chkOCrcv315;
-        private CheckBoxTS chkOCrcv314;
-        private CheckBoxTS chkOCrcv313;
-        private CheckBoxTS chkOCrcv312;
-        private CheckBoxTS chkOCrcv311;
-        private CheckBoxTS chkOCxmit417;
-        private CheckBoxTS chkOCxmit416;
-        private CheckBoxTS chkOCxmit415;
-        private CheckBoxTS chkOCxmit414;
-        private CheckBoxTS chkOCxmit413;
-        private CheckBoxTS chkOCxmit412;
-        private CheckBoxTS chkOCxmit411;
-        private CheckBoxTS chkOCrcv417;
-        private CheckBoxTS chkOCrcv416;
-        private CheckBoxTS chkOCrcv415;
-        private CheckBoxTS chkOCrcv414;
-        private CheckBoxTS chkOCrcv413;
-        private CheckBoxTS chkOCrcv412;
-        private CheckBoxTS chkOCrcv411;
-        private CheckBoxTS chkOCxmit497;
-        private CheckBoxTS chkOCxmit496;
-        private CheckBoxTS chkOCxmit495;
-        private CheckBoxTS chkOCxmit494;
-        private CheckBoxTS chkOCxmit493;
-        private CheckBoxTS chkOCxmit492;
-        private CheckBoxTS chkOCxmit491;
-        private CheckBoxTS chkOCrcv497;
-        private CheckBoxTS chkOCrcv496;
-        private CheckBoxTS chkOCrcv495;
-        private CheckBoxTS chkOCrcv494;
-        private CheckBoxTS chkOCrcv493;
-        private CheckBoxTS chkOCrcv492;
-        private CheckBoxTS chkOCrcv491;
-        private CheckBoxTS chkOCxmit617;
-        private CheckBoxTS chkOCxmit616;
-        private CheckBoxTS chkOCxmit615;
-        private CheckBoxTS chkOCxmit614;
-        private CheckBoxTS chkOCxmit613;
-        private CheckBoxTS chkOCxmit612;
-        private CheckBoxTS chkOCxmit611;
-        private CheckBoxTS chkOCrcv617;
-        private CheckBoxTS chkOCrcv616;
-        private CheckBoxTS chkOCrcv615;
-        private CheckBoxTS chkOCrcv614;
-        private CheckBoxTS chkOCrcv613;
-        private CheckBoxTS chkOCrcv612;
-        private CheckBoxTS chkOCrcv611;
-        private CheckBoxTS chkOCxmit907;
-        private CheckBoxTS chkOCxmit906;
-        private CheckBoxTS chkOCxmit905;
-        private CheckBoxTS chkOCxmit904;
-        private CheckBoxTS chkOCxmit903;
-        private CheckBoxTS chkOCxmit902;
-        private CheckBoxTS chkOCxmit901;
-        private CheckBoxTS chkOCrcv907;
-        private CheckBoxTS chkOCrcv906;
-        private CheckBoxTS chkOCrcv905;
-        private CheckBoxTS chkOCrcv904;
-        private CheckBoxTS chkOCrcv903;
-        private CheckBoxTS chkOCrcv902;
-        private CheckBoxTS chkOCrcv901;
-        private CheckBoxTS chkOCxmit1207;
-        private CheckBoxTS chkOCxmit1206;
-        private CheckBoxTS chkOCxmit1205;
-        private CheckBoxTS chkOCxmit1204;
-        private CheckBoxTS chkOCxmit1203;
-        private CheckBoxTS chkOCxmit1202;
-        private CheckBoxTS chkOCxmit1201;
-        private CheckBoxTS chkOCrcv1207;
-        private CheckBoxTS chkOCrcv1206;
-        private CheckBoxTS chkOCrcv1205;
-        private CheckBoxTS chkOCrcv1204;
-        private CheckBoxTS chkOCrcv1203;
-        private CheckBoxTS chkOCrcv1202;
-        private CheckBoxTS chkOCrcv1201;
-        private CheckBoxTS chkOCxmitLMW7;
-        private CheckBoxTS chkOCxmitLMW6;
-        private CheckBoxTS chkOCxmitLMW5;
-        private CheckBoxTS chkOCxmitLMW4;
-        private CheckBoxTS chkOCxmitLMW3;
-        private CheckBoxTS chkOCxmitLMW2;
-        private CheckBoxTS chkOCxmitLMW1;
-        private CheckBoxTS chkOCrcvLMW7;
-        private CheckBoxTS chkOCrcvLMW6;
-        private CheckBoxTS chkOCrcvLMW5;
-        private CheckBoxTS chkOCrcvLMW4;
-        private CheckBoxTS chkOCrcvLMW3;
-        private CheckBoxTS chkOCrcvLMW2;
-        private CheckBoxTS chkOCrcvLMW1;
-        private LabelTS labelTS496;
-        private LabelTS labelTS497;
-        private LabelTS labelTS498;
-        private LabelTS labelTS499;
-        private LabelTS labelTS500;
-        private LabelTS labelTS501;
-        private LabelTS labelTS502;
-        private LabelTS labelTS503;
-        private LabelTS labelTS504;
-        private LabelTS labelTS505;
-        private LabelTS labelTS506;
-        private LabelTS labelTS507;
-        private LabelTS labelTS508;
-        private LabelTS labelTS509;
-        private LabelTS labelTS510;
-        private LabelTS lblSWLTxControl;
-        private LabelTS lblSWLRxControl;
-        private LabelTS labelTS513;
-        private LabelTS labelTS514;
-        private CheckBoxTS chkOCxmit117;
-        private CheckBoxTS chkOCxmit116;
-        private CheckBoxTS chkOCxmit115;
-        private CheckBoxTS chkOCxmit114;
-        private CheckBoxTS chkOCxmit113;
-        private CheckBoxTS chkOCxmit112;
-        private CheckBoxTS chkOCxmit111;
-        private CheckBoxTS chkOCrcv117;
-        private CheckBoxTS chkOCrcv116;
-        private CheckBoxTS chkOCrcv115;
-        private CheckBoxTS chkOCrcv114;
-        private CheckBoxTS chkOCrcv113;
-        private CheckBoxTS chkOCrcv112;
-        private CheckBoxTS chkOCrcv111;
-        private CheckBoxTS chkOCxmit137;
-        private CheckBoxTS chkOCxmit136;
-        private CheckBoxTS chkOCxmit135;
-        private CheckBoxTS chkOCxmit134;
-        private CheckBoxTS chkOCxmit133;
-        private CheckBoxTS chkOCxmit132;
-        private CheckBoxTS chkOCxmit131;
-        private CheckBoxTS chkOCrcv137;
-        private CheckBoxTS chkOCrcv136;
-        private CheckBoxTS chkOCrcv135;
-        private CheckBoxTS chkOCrcv134;
-        private CheckBoxTS chkOCrcv133;
-        private CheckBoxTS chkOCrcv132;
-        private CheckBoxTS chkOCrcv131;
-        private ButtonTS btnCtrlSWLReset;
-        private GroupBoxTS grpLEDMirror;
-        private LabelTS lblLED10;
-        private LabelTS lblLED09;
-        private LabelTS lblLED08;
-        private LabelTS lblLED07;
-        private LabelTS lblLED06;
-        private LabelTS lblLED05;
-        private LabelTS lblLED04;
-        private LabelTS lblLED03;
-        private LabelTS lblLED02;
-        private LabelTS lblLED01;
-        private Timer timer_LED_Mirror;
-        private CheckBoxTS chkVAC2onSplit;
-        private TabPage tpDSPVOXDE;
-        private GroupBoxTS grpSCF;
-        private LabelTS lblSCFHighCut;
-        private LabelTS lblSCFLowCut;
-        private NumericUpDownTS udSCFHighCut;
-        private NumericUpDownTS udSCFLowCut;
-        private CheckBoxTS chkSCFEnable;
-        private GroupBoxTS grpDEXPVOX;
-        private CheckBoxTS chkDEXPEnable;
-        private LabelTS lblDetTau;
-        private NumericUpDownTS udDEXPAttack;
-        private CheckBoxTS chkVOXEnable;
-        private NumericUpDownTS udDEXPDetTau;
-        private LabelTS lblDEXPRelease;
-        private LabelTS lblDEXPHold;
-        private LabelTS lblDEXPAttack;
-        private NumericUpDownTS udDEXPRelease;
-        private NumericUpDownTS udDEXPHold;
-        private LabelTS lblDEXPHystRatio;
-        private LabelTS lblDEXPExpRatio;
-        private LabelTS lblDEXPThreshold;
-        private GroupBoxTS grpDEXPLookAhead;
-        private NumericUpDownTS udDEXPLookAhead;
-        private LabelTS lblDEXPAudioLookAhead;
-        private CheckBoxTS chkDEXPLookAheadEnable;
-        private NumericUpDownTS udDEXPHysteresisRatio;
-        private NumericUpDownTS udDEXPExpansionRatio;
-        private NumericUpDownTS udDEXPThreshold;
-        private GroupBox grpTXWFAmpScale;
-        public NumericUpDownTS udTXWFAmpMin;
-        public NumericUpDownTS udTXWFAmpMax;
-        private LabelTS lblTXWFAmpMin;
-        private LabelTS lblTXWFAmpMax;
-        private LabelTS labelTS511;
-        private NumericUpDownTS udUpdatesPerStepMin;
-        private LabelTS labelTS512;
-        private LabelTS labelTS515;
-        private NumericUpDownTS udUpdatesPerStepMax;
-        private GroupBoxTS grpAntiVOX;
-        private NumericUpDownTS udAntiVoxTau;
-        private LabelTS lblAntiVoxTau;
-        private NumericUpDownTS udAntiVoxGain;
-        private LabelTS lblAntiVoxGain;
-        private CheckBoxTS chkAntiVoxEnable;
-        private CheckBoxTS chkAntiVoxSource;
-        private CheckBoxTS chkShowZeroLine;
-        public CheckBoxTS chkShowAndromedaBar;
-        public CheckBoxTS chkShowAndromedaTop;
-        private LabelTS lblAndromedaVersion;
-        private GroupBoxTS grpAndr;
-        private ComboBoxTS comboAndromedaCATPort;
-        private LabelTS labelTSPort;
-        private CheckBoxTS chkEnableAndromeda;
-        private CheckBoxTS chkDisablePicDisplayBackgroundImage;
-        private ColorButton clrbtnDataFill;
-        private LabelTS lblDisplayDataFill;
-        private TrackBarTS tbDataFillAlpha;
-        private CheckBoxTS chkWheelTunesOutsideSpectral;
-        private GroupBoxTS grpGlobalHIDConrtolOptions;
-        private LabelTS lblDeviceHID;
-        private CheckBoxTS chkWheelOnlyAdjustsVFO;
-        private CheckBoxTS chkGlobalListenForMouseWheel;
-        private ComboBoxTS comboHIDMouseWheel;
-        private CheckBoxTS chkAlsoUseSpecificMouseWheel;
-        private LabelTS lblWheelActive;
-        private TextBoxTS txtDeviceHID_hidden;
-        private Timer timer_RawInputMouseWheel;
-        private GroupBoxTS grpAppRXWaterfall;
-        private CheckBoxTS chkShowRXFilterOnWaterfall;
-        private GroupBoxTS grpAppTXWaterfall;
-        private CheckBoxTS chkShowTXFilterOnWaterfall;
-        private CheckBoxTS chkShowRXZeroLineOnWaterfall;
-        private CheckBoxTS chkShowTXZeroLineOnWaterfall;
-        private CheckBoxTS chkITSync;
-        private ButtonTS buttonAndromeda;
-        private CheckBoxTS chkShowTXFilterOnRXWaterfall;
-        private CheckBoxTS chkZoomShiftModifier;
-        private CheckBoxTS chkReverseShiftZoomModifier;
-        private CheckBoxTS chkExtended;
-        private CheckBoxTS chkWaterfallUseRX1SpectrumMinMax;
-        private CheckBoxTS chkWaterfallUseRX2SpectrumMinMax;
-        private CheckBoxTS chkRecenterOnZZFx;
-        private CheckBoxTS chkShowFPS;
-        private LabelTS labelTS517;
-        private NumericUpDownTS udDisplayPhasePtSize;
-        private GroupBoxTS groupBoxTS11;
-        private CheckBoxTS chkSmallModeFilteronVFOs;
-        private ComboBoxTS comboDisplayThreadPriority;
-        private LabelTS labelSavingLoading;
-        private ButtonTS btnShowSeqLog;
-        private RadioButtonTS radUV;
-        private RadioButtonTS radDBM;
-        private RadioButtonTS radSReading;
-        private CheckBoxTS chkAntiAlias;
-        private GroupBoxTS groupBoxTS12;
-        private ColorButton clrbtnStatusBarText;
-        private LabelTS nlblStatusBarTextColour;
-        private ColorButton clrbtnStatusBarBackground;
-        private LabelTS nlblStatusBarBackground;
-        private CheckBoxTS chkAccurateFrameTiming;
-        private GroupBoxTS groupBoxTS13;
-        private NumericUpDownTS udPeakBlobs;
-        private CheckBoxTS chkPeakBlobsEnabled;
-        private CheckBoxTS chkPeakBlobInsideFilterOnly;
-        private CheckBoxTS chkSignalHistory;
-        private GroupBoxTS groupBoxTS14;
-        private TrackBarTS tbSignalHistoryAlpha;
-        private ColorButton clrbtnSignalHistoryColour;
-        private LabelTS labelTS518;
-        private CheckBoxTS chkVSyncDX;
-        private LabelTS lblBlobMS;
-        private NumericUpDownTS udBlobPeakHoldMS;
-        private CheckBoxTS chkBlobPeakHold;
-        private CheckBoxTS chkPeakHoldDrop;
-        private LabelTS lblRX1WaterFallCalulatedDelayMS;
-        private LabelTS lblRX2WaterFallCalulatedDelayMS;
-        private LabelTS lblSignalHistoryDurationMS;
-        private NumericUpDownTS udSignalHistoryDuration;
-        private LabelTS labelTS519;
-        private LabelTS labelTS520;
-        private NumericUpDownTS udSpaceMoxDelay;
-        private LabelTS labelTS521;
-        private CheckBoxTS chkBypassVACPlayingRecording;
-        private GroupBoxTS grpGanymedeCtrl;
-        private LabelTS lblGanymedeFW;
-        private LabelTS lblGanymedeStatus;
-        private LabelTS lblGanymedeFWVersion;
-        private LabelTS lblAmpStatus;
-        private GroupBoxTS grpAriesCtrl;
-        private LabelTS lblAriesFW;
-        private LabelTS labelTS529;
-        private LabelTS lblAriesEraseStatus;
-        private ButtonTS btnAriesErase3;
-        private ButtonTS btnAriesErase2;
-        private ButtonTS btnAriesErase1;
-        private LabelTS labelTS527;
-        private CheckBoxTS chkAries3;
-        private CheckBoxTS chkAries2;
-        private CheckBoxTS chkAries1;
-        private LabelTS labelTS526;
-        private LabelTS labelTS525;
-        private LabelTS labelTS524;
-        private LabelTS labelTS523;
-        private LabelTS labelTS522;
-        private ComboBoxTS comboAriesCATPort;
-        private LabelTS lblAriesCAT;
-        private CheckBoxTS chkEnableAries;
-        private ComboBoxTS comboGanymedeCATPort;
-        private LabelTS lblGanymedeCAT;
-        private CheckBoxTS chkEnableGanymede;
-        private ButtonTS btnGanymedeReset;
-        private TabControl tpApolloAmp;
-        private TabPage tpApolloApollo;
-        private TabPage tpApolloATU;
-        private TabPage tabPage3;
-        private TabPage tpAndromeda;
-        private GroupBoxTS groupBoxTS15;
-        private ButtonTS btnQSOTimerPlaySelectedWAV;
-        private CheckBoxTS chkQSOTimerPlaySoundOnExpiry;
-        private LabelTS lblQSOTimerSecs;
-        private LabelTS lblQSOTimerMins;
-        private NumericUpDownTS udQSOTimerSeconds;
-        private NumericUpDownTS udQSOTimerMinutes;
-        private ButtonTS btnQSOTimerSelectWAV;
-        private CheckBoxTS chkQSOTimerResetOnMOX;
-        private CheckBoxTS chkQSOTimerOnlyDuringMOX;
-        private CheckBoxTS chkQSOTimerEnabled;
-        private CheckBoxTS chkQSOTimerResetOnExpiry;
-        private CheckBoxTS chkQSOTimerFlashTimerIfResetOnExpiry;
-        private TabControl tcOptions;
-        private TabPage tpOptions1;
-        private TabPage tpOptions2;
-        private ComboBoxTS comboRadioModel;
-        private LabelTS labelTS528;
-        private GroupBoxTS grpAndrOptions;
-        private CheckBoxTS chkAndrGainAutoshow;
-        private CheckBoxTS chkAndrDiversityAutoshow;
-        private CheckBoxTS chkAndrDiversityLandscape;
-        private CheckBoxTS chkAndrFastStepTune;
-        private CheckBoxTS chkRadioProtocolSelect;
-        private ButtonTS btnResetP1ADC;
-        private LabelTS lblP1assignment;
-        private ButtonTS btnResetP2ADC;
-        private GroupBoxTS grpP1DDC6ADC;
-        private RadioButtonTS radP1DDC6ADC2;
-        private RadioButtonTS radP1DDC6ADC1;
-        private RadioButtonTS radP1DDC6ADC0;
-        private GroupBoxTS grpP1DDC5ADC;
-        private RadioButtonTS radP1DDC5ADC2;
-        private RadioButtonTS radP1DDC5ADC1;
-        private RadioButtonTS radP1DDC5ADC0;
-        private GroupBoxTS grpP1DDC4ADC;
-        private RadioButtonTS radP1DDC4ADC2;
-        private RadioButtonTS radP1DDC4ADC1;
-        private RadioButtonTS radP1DDC4ADC0;
-        private GroupBoxTS grpP1DDC3ADC;
-        private RadioButtonTS radP1DDC3ADC2;
-        private RadioButtonTS radP1DDC3ADC1;
-        private RadioButtonTS radP1DDC3ADC0;
-        private GroupBoxTS grpP1DDC2ADC;
-        private RadioButtonTS radP1DDC2ADC2;
-        private RadioButtonTS radP1DDC2ADC1;
-        private RadioButtonTS radP1DDC2ADC0;
-        private GroupBoxTS grpP1DDC1ADC;
-        private RadioButtonTS radP1DDC1ADC2;
-        private RadioButtonTS radP1DDC1ADC1;
-        private RadioButtonTS radP1DDC1ADC0;
-        private GroupBoxTS grpP1DDC0ADC;
-        private RadioButtonTS radP1DDC0ADC2;
-        private RadioButtonTS radP1DDC0ADC1;
-        private RadioButtonTS radP1DDC0ADC0;
-        private TabPage tpADC;
-        private CheckBoxTS checkEnableAriesQuickTune;
-        private CheckBoxTS checkAriesStandalone;
-        private CheckBoxTS chkAndrBandBtnDefault;
-        private CheckBoxTS chkAndrStickyMenus;
-        private CheckBoxTS chkAndrStickyShift;
-        private CheckBoxTS chkIncludeOtherSampleRates;
-        private LabelTS labelTS18;
-        private LabelTS labelTS17;
-        private NumericUpDownTS udFreq2Delay;
-        private CheckBoxTS chkRestoreVAC1DeviceDetailsFromTXProfile;
-        private CheckBoxTS chkRestoreVAC2DeviceDetailsFromTXProfile;
-        private NumericUpDownTS udActivePeakHoldDurationRX1;
-        private LabelTS lblActivePeakHoldRX1;
-        private CheckBoxTS chkActivePeakHoldRX1;
-        public TrackBarTS tbActiveSpectralPeakAlpha;
-        private ColorButton clrbtnActiveSpectralPeak;
-        private LabelTS lblActiveSpectralPeakColour;
-        private ucLGPicker lgLinearGradientRX1;
-        private GroupBoxTS grpPanadaptorGradient;
-        public ColorButton clrbtnGripperColour;
-        private ButtonTS btnDeleteColourGripper;
-        private ButtonTS btnClearColourGrippers;
-        private CheckBoxTS chkPanadpatorGradient;
-        private GroupBoxTS grpSpectralWarningLeds;
-        private CheckBoxTS chkSpecWarningLEDGetPixels;
-        private CheckBoxTS chkSpecWarningLEDRenderDelay;
-        private ButtonTS btnDefaultGradient;
-        private TrackBarTS tbDataLineAlpha;
-        private CheckBoxTS chkVFOSyncLinksCTUN;
-        private GroupBoxTS grpFirmware;
-        private LabelTS lblProtocolInfo;
-        public CheckBoxTS chkDataLineGradient;
-        private LabelTS lblPLLLock;
-        private Timer tmrPLLLockChecker;
-        private LabelTS lblWarningRegionExtended;
-        private PictureBox picWarningRegionExtended;
-        private GroupBoxTS groupBoxTS16;
-        private LabelTS labelTS90;
-        private NumericUpDownTS udN1MMSendRate;
-        private LabelTS labelTS89;
-        private NumericUpDownTS udN1MMRX2Scaling;
-        private NumericUpDownTS udN1MMRX1Scaling;
-        private LabelTS labelTS19;
-        private TextBoxTS txtN1MMSendTo;
-        private CheckBoxTS chkN1MMEnableRX2;
-        private CheckBoxTS chkN1MMEnableRX1;
-        private LabelTS labelTS91;
-        private TrackBarTS tbRX1WaterfallOpacity;
-        private LabelTS labelTS92;
-        private TrackBarTS tbRX2WaterfallOpacity;
-        private NumericUpDownTS udHermesStepAttenuatorDataRX2;
-        private LabelTS lblADCLinked;
-        private CheckBoxTS chkShowControlDebug;
-        private LabelTS lblRxDDC6;
-        private LabelTS lblRxDDC5;
-        private LabelTS lblRxDDC4;
-        private LabelTS lblRxDDC3;
-        private LabelTS lblRxDDC2;
-        private LabelTS lblRxDDC1;
-        private LabelTS lblRxDDC0;
-        private CheckBoxTS chkHighlightTXProfileSaveItems;
-        private LabelTS lblP2assignment;
-        private ButtonTS btnN1MMDefault;
-        private GroupBoxTS grpVAC1ResamplerAdvanced;
-        private ButtonTS btnVAC1AdvancedDefault;
-        private LabelTS labelTS93;
-        private NumericUpDownTS udVAC1SlewTimeIn;
-        private NumericUpDownTS udVAC1FeedbackGainIn;
-        private LabelTS labelTS54;
-        private LabelTS labelTS53;
-        private GroupBoxTS grpVAC2ResamplerAdvanced;
-        private ButtonTS btnVAC2AdvancedDefault;
-        private NumericUpDownTS udVAC2SlewTimeIn;
-        private NumericUpDownTS udVAC2FeedbackGainIn;
-        private PictureBox pbVAC1FeedbackGainInfo;
-        private PictureBox pbVAC1SlewTimeInfo;
-        private LabelTS lblVAC1RingPerc2;
-        private LabelTS lblVAC1RingP2;
-        private LabelTS lblVAC1RingPerc1;
-        private LabelTS lblVAC1RingP1;
-        private LabelTS labelTS97;
-        private LabelTS lblVAC1RingSize2;
-        private LabelTS lblVAC1NRing2;
-        private LabelTS labelTS101;
-        private LabelTS lblVAC1RingSize1;
-        private LabelTS lblVAC1Ring2;
-        private LabelTS lblVAC1NRing1;
-        private LabelTS lblVAC1Ring1;
-        private LabelTS lblVAC1RingPercAV2;
-        private LabelTS lblVAC1RingPercAV1;
-        private LabelTS lblVAC2RingPercAV2;
-        private LabelTS lblVAC2RingPercAV1;
-        private LabelTS lblVAC2RingPerc2;
-        private LabelTS lblVAC2RingP2;
-        private LabelTS lblVAC2RingPerc1;
-        private LabelTS lblVAC2RingP1;
-        private LabelTS labelTS531;
-        private LabelTS lblVAC2RingSize2;
-        private LabelTS lblVAC2NRing2;
-        private LabelTS labelTS534;
-        private LabelTS lblVAC2RingSize1;
-        private LabelTS lblVAC2Ring2;
-        private LabelTS lblVAC2NRing1;
-        private LabelTS lblVAC2Ring1;
-        private CheckBoxTS chkNetworkThrottleIndexTweak;
-        private NumericUpDownTS udVAC1SlewTimeOut;
-        private NumericUpDownTS udVAC1FeedbackGainOut;
-        private NumericUpDownTS udVAC2SlewTimeOut;
-        private NumericUpDownTS udVAC2FeedbackGainOut;
-        private TrackBarTS tbBandstackOverlayAlpha;
-        private ColorButton clrbtnBandstackOverlay;
-        private LabelTS labelTS532;
-        private TabPage tpAdvancedAudio;
-        private LabelTS lblAdvancedAudioWarning;
-        private ucVARGrapher ucVAC1VARGrapherIn;
-        private ucVARGrapher ucVAC1VARGrapherOut;
-        private NumericUpDownTS udVAC1GrapherSwing;
-        private CheckBoxTS chkVAC1GrapherAuto;
-        private CheckBoxTS chkVAC2GrapherAuto;
-        private NumericUpDownTS udVAC2GrapherSwing;
-        private ucVARGrapher ucVAC2VARGrapherIn;
-        private ucVARGrapher ucVAC2VARGrapherOut;
-        private NumericUpDownTS udVAC1FFAlphaIn;
-        private NumericUpDownTS udVAC1FFMaxOut;
-        private NumericUpDownTS udVAC1FFMaxIn;
-        private LabelTS labelTS536;
-        private NumericUpDownTS udVAC1PropMinOut;
-        private LabelTS labelTS535;
-        private NumericUpDownTS udVAC1PropMinIn;
-        private LabelTS labelTS533;
-        private LabelTS labelTS95;
-        private LabelTS labelTS96;
-        private LabelTS labelTS530;
-        private LabelTS labelTS537;
-        private LabelTS labelTS538;
-        private PictureBox pbVAC1FFAlphaInfo;
-        private PictureBox pbVAC1FFMaxInfo;
-        private PictureBox pbVAC1FFMinInfo;
-        private PictureBox pbVAC1PropFeedbackMaxInfo;
-        private PictureBox pbVAC1PropFeedbackMinInfo;
-        private NumericUpDownTS udVAC1FFMinOut;
-        private NumericUpDownTS udVAC1FFMinIn;
-        private LabelTS labelTS102;
-        private NumericUpDownTS udVAC1PropMaxOut;
-        private NumericUpDownTS udVAC1PropMaxIn;
-        private LabelTS labelTS100;
-        private LabelTS labelTS94;
-        private LabelTS labelTS99;
-        private LabelTS labelTS98;
-        private NumericUpDownTS udVAC1FFAlphaOut;
-        private LabelTS labelTS539;
-        private LabelTS labelTS103;
-        private TextBoxTS txtVAC1OldVarOut;
-        private TextBoxTS txtVAC1OldVarIn;
-        private CheckBoxTS chkVAC1OldVarOut;
-        private CheckBoxTS chkVAC1OldVarIn;
-        private CheckBoxTS chkVAC2OldVarOut;
-        private CheckBoxTS chkVAC2OldVarIn;
-        private TextBoxTS txtVAC2OldVarOut;
-        private TextBoxTS txtVAC2OldVarIn;
-        private LabelTS labelTS540;
-        private LabelTS labelTS541;
-        private NumericUpDownTS udVAC2FFMinOut;
-        private NumericUpDownTS udVAC2FFMinIn;
-        private LabelTS labelTS542;
-        private NumericUpDownTS udVAC2PropMaxOut;
-        private NumericUpDownTS udVAC2PropMaxIn;
-        private LabelTS labelTS543;
-        private LabelTS labelTS544;
-        private NumericUpDownTS udVAC2FFAlphaOut;
-        private NumericUpDownTS udVAC2FFAlphaIn;
-        private NumericUpDownTS udVAC2FFMaxOut;
-        private NumericUpDownTS udVAC2FFMaxIn;
-        private LabelTS labelTS545;
-        private NumericUpDownTS udVAC2PropMinOut;
-        private LabelTS labelTS546;
-        private NumericUpDownTS udVAC2PropMinIn;
-        private LabelTS labelTS547;
-        private GroupBoxTS grpTransmitPinActionHF;
-        private ComboBoxTS comboPin1TXActionHF;
-        private LabelTS labelTS548;
-        private ComboBoxTS comboPin7TXActionHF;
-        private LabelTS labelTS552;
-        private ComboBoxTS comboPin6TXActionHF;
-        private LabelTS labelTS553;
-        private ComboBoxTS comboPin5TXActionHF;
-        private LabelTS labelTS554;
-        private ComboBoxTS comboPin4TXActionHF;
-        private LabelTS labelTS550;
-        private ComboBoxTS comboPin3TXActionHF;
-        private LabelTS labelTS551;
-        private ComboBoxTS comboPin2TXActionHF;
-        private LabelTS labelTS549;
-        private GroupBoxTS grpTransmitPinActionVHF;
-        private ComboBoxTS comboPin7TXActionVHF;
-        private LabelTS labelTS555;
-        private ComboBoxTS comboPin6TXActionVHF;
-        private LabelTS labelTS556;
-        private ComboBoxTS comboPin5TXActionVHF;
-        private LabelTS labelTS557;
-        private ComboBoxTS comboPin4TXActionVHF;
-        private LabelTS labelTS558;
-        private ComboBoxTS comboPin3TXActionVHF;
-        private LabelTS labelTS559;
-        private ComboBoxTS comboPin2TXActionVHF;
-        private LabelTS labelTS560;
-        private ComboBoxTS comboPin1TXActionVHF;
-        private LabelTS labelTS561;
-        private GroupBoxTS groupBoxTS19;
-        private ComboBoxTS comboPin7TXActionSWL;
-        private LabelTS labelTS562;
-        private ComboBoxTS comboPin6TXActionSWL;
-        private LabelTS labelTS563;
-        private ComboBoxTS comboPin5TXActionSWL;
-        private LabelTS labelTS564;
-        private ComboBoxTS comboPin4TXActionSWL;
-        private LabelTS labelTS565;
-        private ComboBoxTS comboPin3TXActionSWL;
-        private LabelTS labelTS566;
-        private ComboBoxTS comboPin2TXActionSWL;
-        private LabelTS labelTS567;
-        private ComboBoxTS comboPin1TXActionSWL;
-        private LabelTS labelTS568;
-        private ucOCLedStrip ucOCPinsLedStripHF;
-        private GroupBoxTS grpOCPinState;
-        private LabelTS labelTS569;
-        private LabelTS labelTS570;
-        private LabelTS labelTS571;
-        private LabelTS labelTS572;
-        private LabelTS labelTS573;
-        private LabelTS labelTS574;
-        private LabelTS labelTS575;
-        private CheckBoxTS chkPin7TXPAHF;
-        private CheckBoxTS chkPin6TXPAHF;
-        private CheckBoxTS chkPin5TXPAHF;
-        private CheckBoxTS chkPin4TXPAHF;
-        private CheckBoxTS chkPin3TXPAHF;
-        private CheckBoxTS chkPin2TXPAHF;
-        private LabelTS labelTS516;
-        private CheckBoxTS chkPin1TXPAHF;
-        private CheckBoxTS chkPin7TXPAVHF;
-        private CheckBoxTS chkPin6TXPAVHF;
-        private CheckBoxTS chkPin5TXPAVHF;
-        private CheckBoxTS chkPin4TXPAVHF;
-        private CheckBoxTS chkPin3TXPAVHF;
-        private CheckBoxTS chkPin2TXPAVHF;
-        private CheckBoxTS chkPin1TXPAVHF;
-        private CheckBoxTS chkPin7TXPASWL;
-        private CheckBoxTS chkPin6TXPASWL;
-        private CheckBoxTS chkPin5TXPASWL;
-        private CheckBoxTS chkPin4TXPASWL;
-        private CheckBoxTS chkPin3TXPASWL;
-        private CheckBoxTS chkPin2TXPASWL;
-        private CheckBoxTS chkPin1TXPASWL;
-        private CheckBoxTS chkTuneStepPerModeRX1;
-        private CheckBoxTS chkVAC1WillMute;
-        private CheckBoxTS chkVAC2WillMute;
-        private CheckBoxTS chkAllowHotSwitching;
-        private CheckBoxTS chkShowRX1NoiseFloor;
-        private CheckBoxTS chkShowRX2NoiseFloor;
-        private GroupBoxTS groupBoxTS17;
-        private NumericUpDownTS udRX2AutoAGCOffset;
-        private Label label1;
-        private NumericUpDownTS udRX1AutoAGCOffset;
-        private CheckBoxTS chkAutoAGCRX2;
-        private CheckBoxTS chkAutoAGCRX1;
-        private GroupBoxTS grpExtPAControlHF;
-        private CheckBoxTS chkPin7RXPAHF;
-        private LabelTS labelTS578;
-        private CheckBoxTS chkPin6RXPAHF;
-        private CheckBoxTS chkPin1RXPAHF;
-        private CheckBoxTS chkPin5RXPAHF;
-        private CheckBoxTS chkPin2RXPAHF;
-        private CheckBoxTS chkPin4RXPAHF;
-        private CheckBoxTS chkPin3RXPAHF;
-        private GroupBoxTS grpExtPAControlVHF;
-        private CheckBoxTS chkPin7RXPAVHF;
-        private LabelTS labelTS579;
-        private CheckBoxTS chkPin6RXPAVHF;
-        private CheckBoxTS chkPin1RXPAVHF;
-        private CheckBoxTS chkPin5RXPAVHF;
-        private CheckBoxTS chkPin2RXPAVHF;
-        private CheckBoxTS chkPin4RXPAVHF;
-        private CheckBoxTS chkPin3RXPAVHF;
-        private LabelTS labelTS580;
-        private GroupBoxTS grpExtPAControlSWL;
-        private CheckBoxTS chkPin7RXPASWL;
-        private LabelTS labelTS576;
-        private CheckBoxTS chkPin6RXPASWL;
-        private CheckBoxTS chkPin1RXPASWL;
-        private CheckBoxTS chkPin5RXPASWL;
-        private CheckBoxTS chkPin2RXPASWL;
-        private CheckBoxTS chkPin4RXPASWL;
-        private CheckBoxTS chkPin3RXPASWL;
-        private LabelTS labelTS581;
-        private LabelTS labelTS577;
-        private LabelTS labelTS582;
-        private LabelTS labelTS583;
-        private LabelTS labelTS584;
-        private LabelTS labelTS585;
-        private LabelTS labelTS586;
-        private LabelTS labelTS587;
-        private LabelTS labelTS588;
-        private LabelTS labelTS589;
-        private LabelTS labelTS590;
-        private LabelTS labelTS591;
-        private LabelTS labelTS592;
-        private LabelTS labelTS593;
-        private LabelTS labelTS594;
-        private LabelTS labelTS595;
-        private LabelTS labelTS596;
-        private LabelTS labelTS597;
-        private LabelTS labelTS598;
-        private LabelTS labelTS599;
-        private LabelTS labelTS600;
-        private LabelTS labelTS601;
-        private NumericUpDownTS udNoiseFloorAttackRX1;
-        private LabelTS labelTS602;
-        private NumericUpDownTS udNoiseFloorAttackRX2;
-        private LabelTS labelTS603;
-        private ColorButton clrbtnNoiseFloor;
-        private LabelTS labelTS604;
-        private CheckBoxTS chkNoiseFloorShowDBM;
-        private GroupBoxTS groupBoxTS18;
-        private NumericUpDownTS udNoiseFloorLineWidth;
-        private LabelTS labelTS605;
-        private CheckBoxTS chkWaterfallUseNFForAGCRX1;
-        private LabelTS lblWaterfallAGCOffsetRX1;
-        public NumericUpDownTS udWaterfallAGCOffsetRX1;
-        private CheckBoxTS chkWaterfallUseNFForAGCRX2;
-        private LabelTS lblWaterfallAGCOffsetRX2;
-        public NumericUpDownTS udWaterfallAGCOffsetRX2;
-        private Timer tmrCFCOMPGain;
-        private PictureBox picCFC;
-        private LabelTS labelTS606;
-        private NumericUpDownTS udCFCPicDBPerLine;
-        private CheckBoxTS chkCFCDisplayAutoScale;
-        private LabelTS labelTS607;
-        private CheckBoxTS chkShowDisplayDebug;
-        private CheckBoxTS chkCTLimitDragToSpectral;
-        private CheckBoxTS chkCTLimitDragMouseOnly;
-        private NumericUpDownTS udActivePeakHoldDropRX1;
-        private LabelTS lblActivePeakHoldDropRX1;
-        private NumericUpDownTS udPeakBlobDropDBMs;
-        private LabelTS lblPeakBlobDropDBMs;
-        private GroupBoxTS groupBoxTS21;
-        private CheckBoxTS chkFillActivePeakHoldRX1;
-        private GroupBoxTS groupBoxTS20;
-        private CheckBoxTS chkFillActivePeakHoldRX2;
-        private NumericUpDownTS udActivePeakHoldDropRX2;
-        private CheckBoxTS chkActivePeakHoldRX2;
-        private LabelTS lblActivePeakHoldDropRX2;
-        private LabelTS lblActivePeakHoldRX2;
-        private NumericUpDownTS udActivePeakHoldDurationRX2;
-        private TabPage tpAudioOptions;
-        private CheckBoxTS chkAFSlidersMute;
-        private CheckBoxTS chkIgnoreMasterAFChangeForMonitor;
-        private CheckBoxTS chkShowMHzOnCursor;
-        private CheckBoxTS chkLimitFilterEdgesToSidebands;
-        private NumericUpDownTS udDisplayDecimation;
-        private CheckBoxTS chkShowPhaseAngularMean;
-        private LabelTS labelTS608;
-        private GroupBoxTS grpTCPIPcatServer;
-        private LabelTS labelTS609;
-        private CheckBoxTS chkTCPIPCatServerListening;
-        private ButtonTS btnDefaultBindPortForTCPIPCat;
-        private TextBoxTS txtTCPIPCATServerBindIPPort;
-        private LabelTS lblToggleToUse;
-        private CheckBoxTS chkZTBIsRecallStore;
-        private CheckBoxTS chkZTBstoreLock;
-        private CheckBoxTS chkCTUNignore0beat;
-        private LabelTS lblTimeToMakeDSPChange;
-        private LabelTS labelTS610;
-        private GroupBoxTS grpTCIServer;
-        private LabelTS lblToggleToUseTCI;
-        private LabelTS labelTS612;
-        private CheckBoxTS chkTCIServerListening;
-        private ButtonTS btnDefaultBindPortForTCI;
-        private TextBoxTS txtTCIServerBindIPPort;
-        private LabelTS labelTS611;
-        private NumericUpDownTS udTCIRateLimit;
-        private LabelTS lblWarningBufferType;
-        private LabelTS lblWarningFilterSize;
-        private LabelTS lblWarningBufferSize;
-        private PictureBox pbWarningBufferType;
-        private PictureBox pbWarningFilterSize;
-        private PictureBox pbWarningBufferSize;
-        private CheckBoxTS chkCopyRX2VFObToVFOa;
-        private CheckBoxTS chkUseRX1vfoaForRX2vfoa;
-        private CheckBoxTS chkTCIsendInitialStateOnConnect;
-        private CheckBoxTS chkWelcomeMessageTCPIPCat;
-        private LabelTS labelTS615;
-        private NumericUpDownTS udTCISpotLifetime;
-        private NumericUpDownTS udMaxTCISpots;
-        private LabelTS labelTS614;
-        private LabelTS labelTS613;
-        private CheckBoxTS chkShowTCISpots;
-        private CheckBoxTS chkLegacyDXBuffers;
-        private LabelTS lblTimeout;
-        private LabelTS lblShowTimeoutText;
-        private ColorButton clrbtnOwnCallApearance;
-        private TextBoxTS txtOwnCallsign;
-        private CheckBoxTS chkSpotOwnCallAppearance;
-        private CheckBoxTS chkCWLUbecomesCW;
-        private ButtonTS btnShowLog;
-        private ButtonTS btnShowTCPIPCatLog;
-        private CheckBoxTS chkNoFadeOverUnderWarning;
-        private CheckBoxTS chkUseOutlinedCross;
-        private GroupBoxTS groupBoxTS22;
-        private GroupBoxTS groupBoxTS23;
-        private CheckBoxTS chkHideFeebackLevel;
-        private CheckBoxTS chkSwapREDBluePSAColours;
-        private ButtonTS chkFirewallCheck;
-        private CheckBoxTS chkUsing10MHzRef;
-        private NumericUpDownTS udHPSDRFreqCorrectFactor10MHz;
-        private Button btnHPSDRFreqCalReset10MHz;
-        private ButtonTS btnLoadGradient;
-        private ButtonTS btnSaveGradient;
-        private CheckBoxTS chkIgnoreSeqErrors;
-        private ButtonTS btnIPv4TCI;
-        private ButtonTS btnIPv4N1MM;
-        private ButtonTS btnIPv4TCPCat;
-        private TextBoxTS txtCAT1;
-        private GroupBoxTS groupBoxTS25;
-        private GroupBoxTS groupBoxTS24;
-        private TabPage tpUserInterface;
-        private TabPage tbMIDIcat;
-        private CheckBoxTS chkEmulateSunSDR2Pro;
-        private CheckBoxTS chkEmulateExpertSDR3Protocol;
-        private CheckBoxTS chkDisableRearSpeakerJacksAudioAmplifier;
-        private LabelTS labelTS617;
-        private LabelTS labelTS616;
-        private RadioButtonTS radUseFixedDriveTune;
-        private RadioButtonTS radUseDriveSliderTune;
-        private RadioButtonTS radUseTuneSliderTune;
-        private RadioButtonTS radUseFixedDrive2Tone;
-        private RadioButtonTS radUseDriveSlider2Tone;
-        private RadioButtonTS radUseTuneSlider2Tone;
-        private CheckBoxTS chkLimitPowerCATTCIMsgs;
-        private GroupBoxTS grpGainByBandPA;
-        private LabelTS labelTS618;
-        private NumericUpDownTS nudVHF13;
-        private LabelTS labelTS619;
-        private NumericUpDownTS nudVHF12;
-        private LabelTS labelTS620;
-        private NumericUpDownTS nudVHF11;
-        private LabelTS labelTS621;
-        private NumericUpDownTS nudVHF10;
-        private LabelTS labelTS622;
-        private NumericUpDownTS nudVHF9;
-        private LabelTS labelTS623;
-        private NumericUpDownTS nudVHF8;
-        private LabelTS labelTS624;
-        private NumericUpDownTS nudVHF7;
-        private LabelTS labelTS625;
-        private NumericUpDownTS nudVHF6;
-        private LabelTS labelTS626;
-        private NumericUpDownTS nudVHF5;
-        private LabelTS labelTS627;
-        private NumericUpDownTS nudVHF4;
-        private LabelTS labelTS628;
-        private NumericUpDownTS nudVHF3;
-        private LabelTS labelTS629;
-        private NumericUpDownTS nudVHF2;
-        private LabelTS labelTS630;
-        private NumericUpDownTS nudVHF1;
-        private LabelTS labelTS631;
-        private NumericUpDownTS nudVHF0;
-        private NumericUpDownTS nud6M;
-        private LabelTS labelTS632;
-        private LabelTS labelTS633;
-        private NumericUpDownTS nud10M;
-        private LabelTS labelTS634;
-        private NumericUpDownTS nud12M;
-        private LabelTS labelTS635;
-        private NumericUpDownTS nud15M;
-        private LabelTS labelTS636;
-        private NumericUpDownTS nud17M;
-        private LabelTS labelTS637;
-        private NumericUpDownTS nud20M;
-        private LabelTS labelTS638;
-        private NumericUpDownTS nud30M;
-        private LabelTS labelTS639;
-        private NumericUpDownTS nud40M;
-        private LabelTS labelTS640;
-        private NumericUpDownTS nud60M;
-        private LabelTS labelTS641;
-        private NumericUpDownTS nud80M;
-        private LabelTS labelTS642;
-        private NumericUpDownTS nud160M;
-        private ButtonTS btnResetPAProfile;
-        private ButtonTS btnDeletePAProfile;
-        private ComboBoxTS comboPAProfile;
-        private ButtonTS btnNewPAProfile;
-        private CheckBoxTS chkPANewCal;
-        private ButtonTS btnCopyPAProfile;
-        private PanelTS panelAdjustGain;
-        private LabelTS lblPAAdjust70;
-        private LabelTS lblPAAdjust60;
-        private LabelTS lblPAAdjust50;
-        private LabelTS lblPAAdjust40;
-        private LabelTS lblPAAdjust30;
-        private LabelTS lblPAAdjust20;
-        private LabelTS lblPAAdjust10;
-        private NumericUpDownTS nudAdjustGain90;
-        private NumericUpDownTS nudAdjustGain80;
-        private NumericUpDownTS nudAdjustGain70;
-        private NumericUpDownTS nudAdjustGain60;
-        private NumericUpDownTS nudAdjustGain50;
-        private NumericUpDownTS nudAdjustGain40;
-        private NumericUpDownTS nudAdjustGain30;
-        private NumericUpDownTS nudAdjustGain20;
-        private NumericUpDownTS nudAdjustGain10;
-        private LabelTS lblDriveHeader;
-        private LabelTS lblAdjustBand;
-        private LabelTS lblPAAdjust90;
-        private LabelTS lblPAAdjust80;
-        private PanelTS panelTS1;
-        private CheckBoxTS chkUsePowerOnDrvTunPA;
-        private LabelTS labelTS165;
-        private NumericUpDownTS nudMaxPowerForBandPA;
-        private LabelTS lblMaxPowerForBandPA;
-        private LabelTS labelTS8;
-        private ColorButton clrbtnSliderLimitBar;
-        private CheckBoxTS chkUseSUnitsForPBNPPBSNR;
-        private GroupBoxTS groupBoxTS26;
-        private LabelTS labelTS155;
-        private NumericUpDownTS nudNFsensitivity;
-        private LabelTS labelTS157;
-        private LabelTS labelTS156;
-        private NumericUpDownTS nudNFshift;
-        private CheckBoxTS chkNFShowDecimal;
-        private CheckBoxTS chkAdjustGridMinToNFRX1;
-        private CheckBoxTS chkAdjustGridMinToNFRX2;
-        private NumericUpDownTS nudRX1NFoffsetGridFollow;
-        private NumericUpDownTS nudRX2NFoffsetGridFollow;
-        private Button btnResetLevelCal;
-        private CheckBoxTS chkSupportUkraine;
-        private GroupBoxTS groupBoxTS27;
-        private ButtonTS btnAmpDefault;
-        private LabelTS labelTS159;
-        private LabelTS labelTS158;
-        private NumericUpDownTS udAmpSens;
-        private NumericUpDownTS udAmpVoff;
-        private CheckBoxTS chkFMDetLimON;
-        private LabelTS lblFMLimGain30dB;
-        private LabelTS lblFMLimGain0dB;
-        private LabelTS lblFMDetLimGain;
-        public TrackBarTS tbDSPFMDetLimGain;
-        private CheckBoxTS chkForceATTwhenPSAoff;
-        private CheckBoxTS chkVisualNotch;
-        private ButtonTS btnRX2PBsnr;
-        private ButtonTS btnRX1PBsnr;
-        private LabelTS labelTS160;
-        private ButtonTS btnResetNFShift;
-        private GroupBoxTS grpMultiMeterHolder;
-        private ButtonTS btnAddRX2Container;
-        private ButtonTS btnAddRX1Container;
-        private CheckBoxTS chkContainerHighlight;
-        private ButtonTS btnContainerDelete;
-        private ComboBoxTS comboContainerSelect;
-        private CheckBoxTS chkPreventTXonDifferentBandToRX;
-        private GroupBoxTS grpMeterItemSettings;
-        private ButtonTS btnMeterUp;
-        private ButtonTS btnMeterDown;
-        private ButtonTS btnRemoveMeterItem;
-        private ButtonTS btnAddMeterItem;
-        private ListBox lstMetersInUse;
-        private ListBox lstMetersAvailable;
-        private TabPage tpAppearanceMeter2;
-        private CheckBoxTS chkMeterItemPeakValue;
-        private CheckBoxTS chkMeterItemTitle;
-        private CheckBoxTS chkMeterItemSegmented;
-        private LabelTS lblMMBackground;
-        private ColorButton clrbtnMeterItemHBackground;
-        private ColorButton clrbtnMeterItemHistory;
-        private ColorButton clrbtnMeterItemPeakHold;
-        private LabelTS lblMMIndicator;
-        private ColorButton clrbtnMeterItemIndiciator;
-        private LabelTS lblMMHigh;
-        private LabelTS lblMMLow;
-        private ColorButton clrbtnMeterItemHigh;
-        private ColorButton clrbtnMeterItemLow;
-        private CheckBoxTS chkMeterItemShadow;
-        private CheckBoxTS chkMeterItemPeakHold;
-        private CheckBoxTS chkMeterItemHistory;
-        private CheckBoxTS chkMeterItemFadeOnTx;
-        private CheckBoxTS chkMeterItemFadeOnRx;
-        private NumericUpDownTS nudMeterItemHistoryDuration;
-        private LabelTS lblMMHistory;
-        private TrackBarTS tbMeterItemHistoryAlpha;
-        private NumericUpDownTS nudMeterItemDecayRate;
-        private LabelTS labelTS169;
-        private NumericUpDownTS nudMeterItemAttackRate;
-        private LabelTS labelTS168;
-        private NumericUpDownTS nudMeterItemUpdateRate;
-        private LabelTS labelTS167;
-        private ColorButton clrbtnMeterItemMeterTitle;
-        private ColorButton clrbtnMeterItemPeakValueColour;
-        private ColorButton clrbtnMeterItemSegmentedSolidColourLow;
-        private NumericUpDownTS nudMeterItemEyeScale;
-        private LabelTS lblMMEyeSize;
-        private CheckBoxTS chkMeterItemSignalAverage;
-        private CheckBoxTS chkMeterItemDarkMode;
-        private Label label14;
-        private CheckBoxTS chkMaintainNFAdjustDeltaRX1;
-        private Label label20;
-        private CheckBoxTS chkMaintainNFAdjustDeltaRX2;
-        private CheckBoxTS chkContainerBorder;
-        private LabelTS lblMMContainerBackground;
-        private ColorButton clrbtnContainerBackground;
-        private NumericUpDownTS nudMeterItemsPowerLimit;
-        private LabelTS lblMMPowerLimit;
-        private LabelTS lblMMsegSolHigh;
-        private LabelTS lblMMsegSolLow;
-        private ColorButton clrbtnMeterItemSegmentedSolidColourHigh;
-        private CheckBoxTS chkMeterItemSolid;
-        private CheckBoxTS chkMeterItemShowSubIndicator;
-        private LabelTS lblMMIndicatorSub;
-        private ColorButton clrbtnMeterItemSubIndiciator;
-        private CheckBoxTS chkMeterItemShowIndicator;
-        private GroupBoxTS grpMeterItemClockSettings;
-        private LabelTS labelTS164;
-        private ColorButton clrbtnMMDate;
-        private LabelTS labelTS162;
-        private ColorButton clrbtnMMTime;
-        private ColorButton clrbtnMMClockTitle;
-        private CheckBoxTS chkMMClockTitle;
-        private RadioButtonTS radMM24Clock;
-        private RadioButtonTS radMM12Clock;
-        private GroupBoxTS grpMeterItemVfoDisplaySettings;
-        private LabelTS labelTS176;
-        private ColorButton clrbtnMMVfoDisplayBackground;
-        private LabelTS labelTS175;
-        private ColorButton clrbtnMMVfoDisplayFrequency;
-        private LabelTS labelTS174;
-        private ColorButton clrbtnMMVfoDisplayBand;
-        private LabelTS labelTS173;
-        private ColorButton clrbtnMMVfoDisplayFilter;
-        private LabelTS labelTS172;
-        private ColorButton clrbtnMMVfoDisplayTx;
-        private LabelTS labelTS171;
-        private ColorButton clrbtnMMVfoDisplayRx;
-        private LabelTS labelTS170;
-        private ColorButton clrbtnMMVfoDisplaySplit;
-        private LabelTS labelTS163;
-        private ColorButton clrbtnMMVfoDisplaySplitBack;
-        private LabelTS labelTS166;
-        private ColorButton clrbtnMMVfoDisplayMode;
-        private ColorButton clrbtnMMVfoDisplayTitle;
-        private LabelTS lblMMClockBackground;
-        private ColorButton clrbtnMMClockBackground;
-        private LabelTS labelTS177;
-        private NumericUpDownTS nudMeterItemEyeBezelScale;
-        private LabelTS lblMMEyeBezelSize;
-        private ColorButton clrbtnMeterItemPowerScale;
-        private NumericUpDownTS nudMeterItemIgnoreHistoryDuration;
-        private LabelTS lblMMHistoryIgnore;
-        private PictureBox pictureBox1;
-        private ButtonTS btnMeterCopySettings;
-        private ButtonTS btnMeterPasteSettings;
-        private Label lblSampleRate;
-        private Label lblBuffer;
-        private CheckBox chkExclusive;
-        private GroupBoxTS grpInfo;
-        private LabelTS labelTS161;
-        private LabelTS lblDataBase;
-        private LabelTS lblDBTitle;
+    private TabPage tpDSP;
+    private TabPage tpDisplay;
+    private TabPage tpGeneral;
+    private ButtonTS btnOK;
+    private ButtonTS btnCancel;
+    private ButtonTS btnApply;
+    public TabControl tcSetup;
+    private TabPage tpKeyboard;
+    private LabelTS lblKBTuneDown;
+    private LabelTS lblKBTuneUp;
+    private ComboBoxTS comboKBTuneDown1;
+    private ComboBoxTS comboKBTuneDown3;
+    private ComboBoxTS comboKBTuneDown2;
+    private ComboBoxTS comboKBTuneUp1;
+    private ComboBoxTS comboKBTuneUp2;
+    private ComboBoxTS comboKBTuneUp3;
+    private ComboBoxTS comboKBTuneUp4;
+    private ComboBoxTS comboKBTuneDown4;
+    private ComboBoxTS comboKBTuneUp5;
+    private ComboBoxTS comboKBTuneDown5;
+    private ComboBoxTS comboKBTuneDown6;
+    private ComboBoxTS comboKBTuneUp7;
+    private ComboBoxTS comboKBTuneDown7;
+    private ComboBoxTS comboKBTuneUp6;
+    private GroupBoxTS grpKBTune;
+    private LabelTS lblKBTuneDigit;
+    private LabelTS lblKBTune7;
+    private LabelTS lblKBTune6;
+    private LabelTS lblKBTune5;
+    private LabelTS lblKBTune4;
+    private LabelTS lblKBTune3;
+    private LabelTS lblKBTune2;
+    private LabelTS lblKBTune1;
+    private GroupBoxTS grpKBBand;
+    private LabelTS lblKBBandUp;
+    private LabelTS lblKBBandDown;
+    private GroupBoxTS grpKBFilter;
+    private LabelTS lblKBFilterUp;
+    private LabelTS lblKBFilterDown;
+    private GroupBoxTS grpKBMode;
+    private LabelTS lblKBModeUp;
+    private LabelTS lblKBModeDown;
+    private ComboBoxTS comboKBBandUp;
+    private ComboBoxTS comboKBBandDown;
+    private ComboBoxTS comboKBFilterUp;
+    private ComboBoxTS comboKBFilterDown;
+    private ComboBoxTS comboKBModeUp;
+    private ComboBoxTS comboKBModeDown;
+    private LabelTS lblDisplayFPS;
+    private NumericUpDownTS udDisplayFPS;
+    public TabPage tpAudio;
+    private TabPage tpTransmit;
+    private NumericUpDownTS udTXFilterHigh;
+    private LabelTS lblTXFilterLow;
+    private LabelTS lblTXFilterHigh;
+    private NumericUpDownTS udTXFilterLow;
+    private GroupBoxTS grpTXFilter;
+    private GroupBoxTS grpDisplayPhase;
+    private NumericUpDownTS udDisplayPhasePts;
+    private GroupBoxTS grpDisplayAverage;
+    private LabelTS lblDisplayPhasePts;
+    private GroupBoxTS grpGeneralCalibration;
+    private LabelTS lblGeneralCalFrequency;
+    private LabelTS lblGeneralCalLevel;
+    private NumericUpDownTS udGeneralCalLevel;
+    private GroupBoxTS grpDisplayRefreshRates;
+    private LabelTS lblDisplayMeterDelay;
+    private NumericUpDownTS udDisplayMeterDelay;
+    private TabPage tpAppearance;
+    private LabelTS lblDisplayFilterColor;
+    private LabelTS lblDisplayLineWidth;
+    private NumericUpDownTS udDisplayLineWidth;
+    private LabelTS lblDisplayDataLineColor;
+    private LabelTS lblDisplayTextColor;
+    private LabelTS lblDisplayZeroLineColor;
+    private LabelTS lblDisplayGridColor;
+    private LabelTS lblDisplayBackgroundColor;
+    private GroupBoxTS grpAppearanceMeter;
+    private LabelTS lblAppearanceMeterRight;
+    private LabelTS lblAppearanceMeterLeft;
+    private LabelTS lblAppearanceGenBtnSel;
+    private GroupBoxTS grpGeneralOptions;
+    private CheckBoxTS chkGeneralDisablePTT;
+    private LabelTS lblDisplayPeakText;
+    private NumericUpDownTS udDisplayPeakText;
+    private NumericUpDownTS udDisplayCPUMeter;
+    private LabelTS lblDisplayCPUMeter;
+    private GroupBoxTS grpDisplayWaterfall;
+    public NumericUpDownTS udDisplayWaterfallHighLevel;
+    private LabelTS lblDisplayWaterfallHighLevel;
+    private LabelTS lblDisplayWaterfallLowLevel;
+    public NumericUpDownTS udDisplayWaterfallLowLevel;
+    private LabelTS lblDisplayWaterfallLowColor;
+    private ButtonTS btnGeneralCalLevelStart;
+    private ButtonTS btnGeneralCalFreqStart;
+    private ButtonTS btnGeneralCalImageStart;
+    private LabelTS lblBandLight;
+    private LabelTS lblBandDark;
+    private LabelTS lblPeakText;
+    private ButtonTS btnImportDB;
+    private OpenFileDialog openFileDialog1;
+    private TabPage tpTests;
+    private TabPage tpPowerAmplifier;
+    private ToolTip toolTip1;
+    private ButtonTS btnPAGainCalibration;
+    private ComboBoxTS comboGeneralProcessPriority;
+    private GroupBoxTS grpGeneralProcessPriority;
+    private GroupBoxTS grpTestTXIMD;
+    private ColorButton clrbtnBtnSel;
+    private ColorButton clrbtnVFODark;
+    private ColorButton clrbtnVFOLight;
+    private ColorButton clrbtnBandDark;
+    private ColorButton clrbtnBandLight;
+    private ColorButton clrbtnPeakText;
+    private ColorButton clrbtnBackground;
+    private ColorButton clrbtnGrid;
+    private ColorButton clrbtnZeroLine;
+    private ColorButton clrbtnFilter;
+    public ColorButton clrbtnText;
+    private ColorButton clrbtnDataLine;
+    private ColorButton clrbtnMeterLeft;
+    private ColorButton clrbtnMeterRight;
+    private ColorButton clrbtnWaterfallLow;
+    private NumericUpDownTS udTestIMDPower;
+    private NumericUpDownTS udTestIMDFreq1;
+    private NumericUpDownTS udTestIMDFreq2;
+    private ButtonTS btnTestAudioBalStart;
+    private NumericUpDownTS udDisplayAVGTime;
+    private LabelTS lblDisplayAVGTime;
+    private GroupBoxTS grpTestAudioBalance;
+    private GroupBoxTS grpPATune;
+    private NumericUpDownTS udTXTunePower;
+    private GroupBoxTS grpDisplayMultimeter;
+    private LabelTS lblDisplayMultiPeakHoldTime;
+    private NumericUpDownTS udDisplayMultiPeakHoldTime;
+    private NumericUpDownTS udDisplayMultiTextHoldTime;
+    private LabelTS lblDisplayMeterTextHoldTime;
+    private CheckBoxTS chkGeneralRXOnly;
+    private LabelTS lblTestToneFreq2;
+    private LabelTS lblTestToneFreq1;
+    private TabPage tpCATControl;
+    private GroupBoxTS grpPTTBitBang;
+    private LabelTS lblCATPTTPort;
+    private CheckBoxTS chkCATPTT_RTS;
+    private CheckBoxTS chkCATPTT_DTR;
+    private GroupBoxTS grpCatControlBox;
+    private ComboBoxTS comboCATbaud;
+    private LabelTS lblCATBaud;
+    private CheckBoxTS chkCATEnable;
+    private LabelTS lblCATParity;
+    private LabelTS lblCATData;
+    private LabelTS lblCATStop;
+    private ComboBoxTS comboCATparity;
+    private ComboBoxTS comboCATdatabits;
+    private ComboBoxTS comboCATstopbits;
+    private GroupBoxTS grpKBCW;
+    private LabelTS lblKBCWDot;
+    private LabelTS lblKBCWDash;
+    private ComboBoxTS comboKBCWDot;
+    private ComboBoxTS comboKBCWDash;
+    private GroupBoxTS grpKBRIT;
+    private LabelTS lblKBRitUp;
+    private LabelTS lblKBRITDown;
+    private ComboBoxTS comboKBRITUp;
+    private ComboBoxTS comboKBRITDown;
+    private GroupBoxTS grpKBXIT;
+    private LabelTS lblKBXITUp;
+    private LabelTS lblKBXITDown;
+    private ComboBoxTS comboKBXITUp;
+    private ComboBoxTS comboKBXITDown;
+    private ButtonTS btnCATTest;
+    private TabControl tcAudio;
+    public ComboBoxTS comboAudioSampleRate1;
+    private GroupBoxTS grpAudioSampleRate1;
+    private GroupBoxTS grpAudioDetails2;
+    public LabelTS lblAudioOutput2;
+    private ComboBoxTS comboAudioOutput2;
+    public LabelTS lblAudioInput2;
+    public LabelTS lblAudioDriver2;
+    private ComboBoxTS comboAudioInput2;
+    private ComboBoxTS comboAudioDriver2;
+    private NumericUpDownTS udAudioLatency2;
+    private ComboBoxTS comboAudioBuffer2;
+    private ComboBoxTS comboAudioSampleRate2;
+    private GroupBoxTS grpAudioLatency2;
+    private CheckBoxTS chkAudioLatencyManual2;
+    private ComboBoxTS comboCATRigType;
+    private LabelTS lblCATRigType;
+    private GroupBoxTS grpTXProfile;
+    private ButtonTS btnTXProfileSave;
+    private ComboBoxTS comboTXProfileName;
+    private ButtonTS btnTXProfileDelete;
+    private ButtonTS btnImpulse;
+    private NumericUpDownTS udImpulseNum;
+    private GroupBoxTS grpTXMonitor;
+    private LabelTS lblTXAF;
+    private NumericUpDownTS udTXAF;
+    private GroupBoxTS grpGeneralModel;
+    private TabControl tcGeneral;
+    private TabPage tpGeneralHardware;
+    private TabPage tpGeneralOptions;
+    private TabPage tpGeneralCalibration;
+    private NumericUpDownTS udGeneralCalFreq1;
+    private NumericUpDownTS udGeneralCalFreq3;
+    private NumericUpDownTS udGeneralCalFreq2;
+    private TabPage tpVAC;
+    public CheckBoxTS chkAudioEnableVAC;
+    private GroupBoxTS grpAudio2Stereo;
+    private GroupBoxTS grpBoxTS1;
+    private LabelTS lblCATPort;
+    private ComboBoxTS comboCATPort;
+    private ComboBoxTS comboCATPTTPort;
+    private CheckBoxTS chkCATPTTEnabled;
+    private GroupBoxTS grpAudioVACGain;
+    private NumericUpDownTS udAudioVACGainRX;
+    public LabelTS lblAudioVACGainRX;
+    public LabelTS lblAudioVACGainTX;
+    private NumericUpDownTS udAudioVACGainTX;
+    private GroupBoxTS grpGenTuningOptions;
+    private GroupBoxTS grpAudioVACAutoEnable;
+    private CheckBoxTS chkAudioVACAutoEnable;
+    private GroupBoxTS grpImpulseTest;
+    private GroupBoxTS grpDisplayScopeMode;
+    private NumericUpDownTS udDisplayScopeTime;
+    private LabelTS lblDisplayScopeTime;
+    private NumericUpDownTS udDisplayMeterAvg;
+    private LabelTS lblDisplayMeterAvg;
+    private GroupBoxTS grpDisplayDriverEngine;
+    private Thetis.ColorButton clrbtnOutOfBand;
+    private LabelTS lblOutOfBand;
+    private CheckBoxTS chkAudio2Stereo;
+    private GroupBoxTS grpTXAM;
+    private LabelTS lblTXAMCarrierLevel;
+    private NumericUpDownTS udTXAMCarrierLevel;
+    private GroupBoxTS grpKeyboardOptions;
+    private CheckBoxTS chkOptQuickQSY;
+    private CheckBoxTS chkOptAlwaysOnTop;
+    private NumericUpDownTS udOptClickTuneOffsetDIGL;
+    private NumericUpDownTS udOptClickTuneOffsetDIGU;
+    private LabelTS lblOptClickTuneDIGL;
+    private LabelTS lblOptClickTuneDIGU;
+    private GroupBoxTS grpOptFilterControls;
+    private LabelTS lblOptMaxFilter;
+    private NumericUpDownTS udOptMaxFilterWidth;
+    private LabelTS lblOptWidthSliderMode;
+    private ComboBoxTS comboOptFilterWidthMode;
+    private NumericUpDownTS udOptMaxFilterShift;
+    private LabelTS lblOptMaxFilterShift;
+    private CheckBoxTS chkOptFilterSaveChanges;
+    private CheckBoxTS chkOptEnableKBShortcuts;
+    private TabControl tcAppearance;
+    private TabPage tpAppearanceGeneral;
+    private TabPage tpAppearanceDisplay;
+    private TabPage tpAppearanceMeter;
+    private GroupBoxTS grpAppearanceVFO;
+    private LabelTS lblVFOPowerOn;
+    private LabelTS lblVFOPowerOff;
+    private GroupBoxTS grpAppearanceBand;
+    private TabPage tpFilters;
+    private LabelTS lblDefaultLowCut;
+    private NumericUpDownTS udFilterDefaultLowCut;
+    private CheckBoxTS chkVFOSmallLSD;
+    private Thetis.ColorButton clrbtnVFOSmallColor;
+    private Thetis.ColorButton clrbtnBandBackground;
+    private LabelTS lblBandBackground;
+    private Thetis.ColorButton clrbtnVFOBackground;
+    private LabelTS lblVFOBackground;
+    private GroupBoxTS grpDisplayPeakCursor;
+    private Thetis.ColorButton clrbtnPeakBackground;
+    private LabelTS lblPeakBackground;
+    private Thetis.ColorButton clrbtnMeterBackground;
+    private LabelTS lblMeterBackground;
+    private Thetis.ColorButton clrbtnTXFilter;
+    private GroupBoxTS grpAppPanadapter;
+    private Thetis.ColorButton clrbtnBandEdge;
+    private LabelTS lblBandEdge;
+    private CheckBoxTS chkShowFreqOffset;
+    public ComboBoxTS comboMeterType;
+    private Thetis.ColorButton clrbtnMeterEdgeBackground;
+    private Thetis.ColorButton clrbtnMeterEdgeHigh;
+    private Thetis.ColorButton clrbtnMeterEdgeLow;
+    private GroupBoxTS grpGenCalRXImage;
+    private LabelTS lblGenCalRXImageFreq;
+    private GroupBoxTS grpGenCalLevel;
+    private LabelTS lblGenCalLevelFreq;
+    private LabelTS lblVFOSmallColor;
+    private LabelTS lblTXFilterColor;
+    private LabelTS lblMeterType;
+    private CheckBoxTS chkTestIMD;
+    private GroupBoxTS grpMeterEdge;
+    private LabelTS lblMeterEdgeBackground;
+    private LabelTS lblMeterEdgeHigh;
+    private LabelTS lblMeterEdgeLow;
+    private Thetis.ColorButton clrbtnEdgeIndicator;
+    private LabelTS labelTS1;
+    private LabelTS lblMeterDigitalText;
+    private Thetis.ColorButton clrbtnMeterDigText;
+    private LabelTS labelTS2;
+    private Thetis.ColorButton clrbtnMeterDigBackground;
+    private Thetis.ColorButton clrbtnSubRXFilter;
+    private LabelTS lblSubRXFilterColor;
+    private Thetis.ColorButton clrbtnSubRXZero;
+    private LabelTS lblSubRXZeroLine;
+    private GroupBoxTS grpOptMisc;
+    private CheckBoxTS chkDisableToolTips;
+    private NumericUpDownTS udDisplayWaterfallUpdatePeriod;
+    private LabelTS lblDisplayWaterfallUpdatePeriod;
+    private CheckBoxTS chkSnapClickTune;
+    private RadioButtonTS radPACalAllBands;
+    private CheckBoxTS chkPA160;
+    private CheckBoxTS chkPA80;
+    private CheckBoxTS chkPA60;
+    private CheckBoxTS chkPA40;
+    private CheckBoxTS chkPA30;
+    private CheckBoxTS chkPA20;
+    private CheckBoxTS chkPA17;
+    private CheckBoxTS chkPA15;
+    private CheckBoxTS chkPA12;
+    private CheckBoxTS chkPA10;
+    private RadioButtonTS radPACalSelBands;
+    private NumericUpDownTS udPACalPower;
+    private CheckBoxTS chkZeroBeatRIT;
+    private LabelTS lblPACalTarget;
+    private ComboBoxTS cmboSigGenRXMode;
+    private LabelTS lblSigGenRXMode;
+    private GroupBoxTS grpSigGenReceive;
+    private GroupBoxTS grpSigGenTransmit;
+    private LabelTS lblSigGenTXMode;
+    private ComboBoxTS cmboSigGenTXMode;
+    private NumericUpDownTS udMeterDigitalDelay;
+    private LabelTS lblMultimeterDigitalDelay;
+    private CheckBoxTS chkPA6;
+    private CheckBoxTS chkMouseTuneStep;
+    private CheckBoxTS chkCalExpert;
+    private CheckBoxTS chkGenAllModeMicPTT;
+    private CheckBoxTS chkDigUIsUSB;
+    private GroupBoxTS grpGenCustomTitleText;
+    private TextBoxTS txtGenCustomTitle;
+    private CheckBoxTS chkKWAI;
+    private CheckBoxTS chkSplitOff;
+    private CheckBoxTS chkEnableRFEPATR;
+    private CheckBoxTS chkVACAllowBypass;
+    private CheckBoxTS chkVACCombine;
+    private CheckBoxTS chkSigGenRX2;
+    private LabelTS lblGenBackground;
+    private Thetis.ColorButton clrbtnGenBackground;
+    private ComboBoxTS comboTXTUNMeter;
+    private LabelTS lblTXTUNMeter;
+    private ButtonTS btnResetDB;
+    private CheckBoxTS chkDisplayMeterShowDecimal;
+    private GroupBoxTS grpRTTYOffset;
+    private CheckBoxTS chkRTTYOffsetEnableA;
+    private CheckBoxTS chkRTTYOffsetEnableB;
+    private NumericUpDownTS udRTTYL;
+    private NumericUpDownTS udRTTYU;
+    private LabelTS labelTS3;
+    private LabelTS labelTS4;
+    private TabPage tpRX2;
+    private CheckBoxTS chkRX2AutoMuteTX;
+    private GroupBoxTS grpDirectIQOutput;
+    private CheckBoxTS chkAudioCorrectIQ;
+    private CheckBoxTS chkAudioIQtoVAC;
+    private CheckBoxTS chkRX2AutoMuteRX1OnVFOBTX;
+    private ListBox lstTXProfileDef;
+    private GroupBoxTS grpTXProfileDef;
+    private CheckBoxTS chkTXExpert;
+    private ButtonTS btnTXProfileDefImport;
+    private CheckBoxTS chkDisplayPanFill;
+    private GroupBoxTS grpAppSkins;
+    private ComboBoxTS comboAppSkin;
+    private ButtonTS btnSkinExport;
+    private CheckBoxTS chkAudioRX2toVAC;
+    private TabPage tpGeneralNavigation;
+    private TrackBarTS tbRX1FilterAlpha;
+    private TrackBarTS tbMultiRXFilterAlpha;
+    private CheckBoxTS chkWheelTuneVFOB;
+    private ButtonTS btnExportDB;
+    private SaveFileDialog saveFileDialog1;
+    private CheckBoxTS chkAlexPresent;
+    private CheckBoxTS chkPennyPresent;
+    private CheckBoxTS chkMercuryPresent;
+    private GroupBoxTS grpHPSDRFreqCalDbg;
+    private LabelTS labelTS10;
+    private NumericUpDownTS udHPSDRFreqCorrectFactor;
+    private Button btnHPSDRFreqCalReset;
+    private TabPage tpPennyCtrl;
+    private TabPage tpHPSDR;
+    private TabPage tpAlexControl;
+    private GroupBoxTS grpPennyExtCtrl;
+    private LabelTS lblHFTxControl;
+    private LabelTS lblHFRxControl;
+    private LabelTS labelTS43;
+    private LabelTS labelTS23;
+    private LabelTS labelTS24;
+    private LabelTS labelTS25;
+    private LabelTS labelTS26;
+    private LabelTS labelTS27;
+    private LabelTS labelTS42;
+    private LabelTS labelTS44;
+    private LabelTS labelTS45;
+    private LabelTS labelTS46;
+    private LabelTS labelTS47;
+    private LabelTS labelTS48;
+    private LabelTS labelTS49;
+    private LabelTS labelTS51;
+    private LabelTS labelTS40;
+    private CheckBoxTS chkPenOCrcv1601;
+    private CheckBoxTS chkPenOCxmit1607;
+    private CheckBoxTS chkPenOCxmit1606;
+    private CheckBoxTS chkPenOCxmit1605;
+    private CheckBoxTS chkPenOCxmit1604;
+    private CheckBoxTS chkPenOCxmit1603;
+    private CheckBoxTS chkPenOCxmit1602;
+    private CheckBoxTS chkPenOCxmit1601;
+    private CheckBoxTS chkPenOCrcv1607;
+    private CheckBoxTS chkPenOCrcv1606;
+    private CheckBoxTS chkPenOCrcv1605;
+    private CheckBoxTS chkPenOCrcv1604;
+    private CheckBoxTS chkPenOCrcv1603;
+    private CheckBoxTS chkPenOCrcv1602;
+    private CheckBoxTS chkPenOCxmit807;
+    private CheckBoxTS chkPenOCxmit806;
+    private CheckBoxTS chkPenOCxmit805;
+    private CheckBoxTS chkPenOCxmit804;
+    private CheckBoxTS chkPenOCxmit803;
+    private CheckBoxTS chkPenOCxmit802;
+    private CheckBoxTS chkPenOCxmit801;
+    private CheckBoxTS chkPenOCrcv807;
+    private CheckBoxTS chkPenOCrcv806;
+    private CheckBoxTS chkPenOCrcv805;
+    private CheckBoxTS chkPenOCrcv804;
+    private CheckBoxTS chkPenOCrcv803;
+    private CheckBoxTS chkPenOCrcv802;
+    private CheckBoxTS chkPenOCrcv801;
+    private CheckBoxTS chkPenOCxmit207;
+    private CheckBoxTS chkPenOCxmit206;
+    private CheckBoxTS chkPenOCxmit205;
+    private CheckBoxTS chkPenOCxmit204;
+    private CheckBoxTS chkPenOCxmit203;
+    private CheckBoxTS chkPenOCxmit202;
+    private CheckBoxTS chkPenOCxmit201;
+    private CheckBoxTS chkPenOCrcv207;
+    private CheckBoxTS chkPenOCrcv206;
+    private CheckBoxTS chkPenOCrcv205;
+    private CheckBoxTS chkPenOCrcv204;
+    private CheckBoxTS chkPenOCrcv203;
+    private CheckBoxTS chkPenOCrcv202;
+    private CheckBoxTS chkPenOCrcv201;
+    private CheckBoxTS chkPenOCxmit307;
+    private CheckBoxTS chkPenOCxmit306;
+    private CheckBoxTS chkPenOCxmit305;
+    private CheckBoxTS chkPenOCxmit304;
+    private CheckBoxTS chkPenOCxmit303;
+    private CheckBoxTS chkPenOCxmit302;
+    private CheckBoxTS chkPenOCxmit301;
+    private CheckBoxTS chkPenOCrcv307;
+    private CheckBoxTS chkPenOCrcv306;
+    private CheckBoxTS chkPenOCrcv305;
+    private CheckBoxTS chkPenOCrcv304;
+    private CheckBoxTS chkPenOCrcv303;
+    private CheckBoxTS chkPenOCrcv302;
+    private CheckBoxTS chkPenOCrcv301;
+    private CheckBoxTS chkPenOCxmit407;
+    private CheckBoxTS chkPenOCxmit406;
+    private CheckBoxTS chkPenOCxmit405;
+    private CheckBoxTS chkPenOCxmit404;
+    private CheckBoxTS chkPenOCxmit403;
+    private CheckBoxTS chkPenOCxmit402;
+    private CheckBoxTS chkPenOCxmit401;
+    private CheckBoxTS chkPenOCrcv407;
+    private CheckBoxTS chkPenOCrcv406;
+    private CheckBoxTS chkPenOCrcv405;
+    private CheckBoxTS chkPenOCrcv404;
+    private CheckBoxTS chkPenOCrcv403;
+    private CheckBoxTS chkPenOCrcv402;
+    private CheckBoxTS chkPenOCrcv401;
+    private CheckBoxTS chkPenOCxmit607;
+    private CheckBoxTS chkPenOCxmit606;
+    private CheckBoxTS chkPenOCxmit605;
+    private CheckBoxTS chkPenOCxmit604;
+    private CheckBoxTS chkPenOCxmit603;
+    private CheckBoxTS chkPenOCxmit602;
+    private CheckBoxTS chkPenOCxmit601;
+    private CheckBoxTS chkPenOCrcv607;
+    private CheckBoxTS chkPenOCrcv606;
+    private CheckBoxTS chkPenOCrcv605;
+    private CheckBoxTS chkPenOCrcv604;
+    private CheckBoxTS chkPenOCrcv603;
+    private CheckBoxTS chkPenOCrcv602;
+    private CheckBoxTS chkPenOCrcv601;
+    private CheckBoxTS chkPenOCxmit27;
+    private CheckBoxTS chkPenOCxmit26;
+    private CheckBoxTS chkPenOCxmit25;
+    private CheckBoxTS chkPenOCxmit24;
+    private CheckBoxTS chkPenOCxmit23;
+    private CheckBoxTS chkPenOCxmit22;
+    private CheckBoxTS chkPenOCxmit21;
+    private CheckBoxTS chkPenOCrcv27;
+    private CheckBoxTS chkPenOCrcv26;
+    private CheckBoxTS chkPenOCrcv25;
+    private CheckBoxTS chkPenOCrcv24;
+    private CheckBoxTS chkPenOCrcv23;
+    private CheckBoxTS chkPenOCrcv22;
+    private CheckBoxTS chkPenOCrcv21;
+    private CheckBoxTS chkPenOCxmit67;
+    private CheckBoxTS chkPenOCxmit66;
+    private CheckBoxTS chkPenOCxmit65;
+    private CheckBoxTS chkPenOCxmit64;
+    private CheckBoxTS chkPenOCxmit63;
+    private CheckBoxTS chkPenOCxmit62;
+    private CheckBoxTS chkPenOCxmit61;
+    private CheckBoxTS chkPenOCrcv67;
+    private CheckBoxTS chkPenOCrcv66;
+    private CheckBoxTS chkPenOCrcv65;
+    private CheckBoxTS chkPenOCrcv64;
+    private CheckBoxTS chkPenOCrcv63;
+    private CheckBoxTS chkPenOCrcv62;
+    private CheckBoxTS chkPenOCrcv61;
+    private CheckBoxTS chkPenOCxmit107;
+    private CheckBoxTS chkPenOCxmit106;
+    private CheckBoxTS chkPenOCxmit105;
+    private CheckBoxTS chkPenOCxmit104;
+    private CheckBoxTS chkPenOCxmit103;
+    private CheckBoxTS chkPenOCxmit102;
+    private CheckBoxTS chkPenOCxmit101;
+    private CheckBoxTS chkPenOCrcv107;
+    private CheckBoxTS chkPenOCrcv106;
+    private CheckBoxTS chkPenOCrcv105;
+    private CheckBoxTS chkPenOCrcv104;
+    private CheckBoxTS chkPenOCrcv103;
+    private CheckBoxTS chkPenOCrcv102;
+    private CheckBoxTS chkPenOCrcv101;
+    private CheckBoxTS chkPenOCxmit127;
+    private CheckBoxTS chkPenOCxmit126;
+    private CheckBoxTS chkPenOCxmit125;
+    private CheckBoxTS chkPenOCxmit124;
+    private CheckBoxTS chkPenOCxmit123;
+    private CheckBoxTS chkPenOCxmit122;
+    private CheckBoxTS chkPenOCxmit121;
+    private CheckBoxTS chkPenOCrcv127;
+    private CheckBoxTS chkPenOCrcv126;
+    private CheckBoxTS chkPenOCrcv125;
+    private CheckBoxTS chkPenOCrcv124;
+    private CheckBoxTS chkPenOCrcv123;
+    private CheckBoxTS chkPenOCrcv122;
+    private CheckBoxTS chkPenOCrcv121;
+    private CheckBoxTS chkPenOCxmit157;
+    private CheckBoxTS chkPenOCxmit156;
+    private CheckBoxTS chkPenOCxmit155;
+    private CheckBoxTS chkPenOCxmit154;
+    private CheckBoxTS chkPenOCxmit153;
+    private CheckBoxTS chkPenOCxmit152;
+    private CheckBoxTS chkPenOCxmit151;
+    private CheckBoxTS chkPenOCrcv157;
+    private CheckBoxTS chkPenOCrcv156;
+    private CheckBoxTS chkPenOCrcv155;
+    private CheckBoxTS chkPenOCrcv154;
+    private CheckBoxTS chkPenOCrcv153;
+    private CheckBoxTS chkPenOCrcv152;
+    private CheckBoxTS chkPenOCrcv151;
+    private CheckBoxTS chkPenOCxmit177;
+    private CheckBoxTS chkPenOCxmit176;
+    private CheckBoxTS chkPenOCxmit175;
+    private CheckBoxTS chkPenOCxmit174;
+    private CheckBoxTS chkPenOCxmit173;
+    private CheckBoxTS chkPenOCxmit172;
+    private CheckBoxTS chkPenOCxmit171;
+    private CheckBoxTS chkPenOCrcv177;
+    private CheckBoxTS chkPenOCrcv176;
+    private CheckBoxTS chkPenOCrcv175;
+    private CheckBoxTS chkPenOCrcv174;
+    private CheckBoxTS chkPenOCrcv173;
+    private CheckBoxTS chkPenOCrcv172;
+    private CheckBoxTS chkPenOCrcv171;
+    private LabelTS labelTS28;
+    private LabelTS labelTS29;
+    private LabelTS labelTS30;
+    private LabelTS labelTS31;
+    private LabelTS labelTS32;
+    private LabelTS labelTS33;
+    private LabelTS labelTS34;
+    private LabelTS labelTS35;
+    private LabelTS labelTS36;
+    private LabelTS labelTS37;
+    private LabelTS labelTS38;
+    private LabelTS labelTS41;
+    private CheckBoxTS chkPennyExtCtrl;
+    private GroupBoxTS groupBoxRXOptions;
+    private CheckBoxTS chkMercRandom;
+    private CheckBoxTS chkMercDither;
+    private NumericUpDownTS udMaxFreq;
+    private LabelTS labelTS57;
+    private GroupBoxTS grpVersion;
+    private LabelTS lblPenelopeFWVer;
+    private LabelTS lblMercuryFWVer;
+    private LabelTS lblOzyFWVer;
+    private LabelTS lblOzyFX2;
+    private GroupBoxTS grpAlexAntCtrl;
+    private CheckBoxTS chkAlex160XV;
+    private CheckBoxTS chkAlex160R2;
+    private CheckBoxTS chkAlex160R1;
+    private RadioButtonTS radAlexR3_160;
+    private RadioButtonTS radAlexR2_160;
+    private RadioButtonTS radAlexR1_160;
+    private PanelTS panel1;
+    private CheckBoxTS chkAlex12XV;
+    private CheckBoxTS chkAlex12R2;
+    private CheckBoxTS chkAlex12R1;
+    private CheckBoxTS chkAlex15XV;
+    private CheckBoxTS chkAlex15R2;
+    private CheckBoxTS chkAlex15R1;
+    private CheckBoxTS chkAlex17XV;
+    private CheckBoxTS chkAlex17R2;
+    private CheckBoxTS chkAlex17R1;
+    private CheckBoxTS chkAlex20XV;
+    private CheckBoxTS chkAlex20R2;
+    private CheckBoxTS chkAlex20R1;
+    private CheckBoxTS chkAlex30XV;
+    private CheckBoxTS chkAlex30R2;
+    private CheckBoxTS chkAlex30R1;
+    private CheckBoxTS chkAlex40XV;
+    private CheckBoxTS chkAlex40R2;
+    private CheckBoxTS chkAlex40R1;
+    private CheckBoxTS chkAlex60XV;
+    private CheckBoxTS chkAlex60R2;
+    private CheckBoxTS chkAlex60R1;
+    private CheckBoxTS chkAlex80XV;
+    private CheckBoxTS chkAlex80R2;
+    private CheckBoxTS chkAlex80R1;
+    private CheckBoxTS chkAlex6XV;
+    private CheckBoxTS chkAlex6R2;
+    private CheckBoxTS chkAlex6R1;
+    private CheckBoxTS chkAlex10XV;
+    private CheckBoxTS chkAlex10R2;
+    private CheckBoxTS chkAlex10R1;
+    private PanelTS panel10;
+    private RadioButtonTS radAlexR2_10;
+    private RadioButtonTS radAlexR1_10;
+    private RadioButtonTS radAlexR3_10;
+    private PanelTS panel8;
+    private PanelTS panel9;
+    private RadioButtonTS radAlexR2_12;
+    private RadioButtonTS radAlexR1_12;
+    private RadioButtonTS radAlexR3_12;
+    private RadioButtonTS radAlexR2_15;
+    private RadioButtonTS radAlexR1_15;
+    private RadioButtonTS radAlexR3_15;
+    private PanelTS panel7;
+    private RadioButtonTS radAlexR2_17;
+    private RadioButtonTS radAlexR1_17;
+    private RadioButtonTS radAlexR3_17;
+    private PanelTS panel6;
+    private RadioButtonTS radAlexR2_20;
+    private RadioButtonTS radAlexR1_20;
+    private RadioButtonTS radAlexR3_20;
+    private PanelTS panel5;
+    private RadioButtonTS radAlexR2_30;
+    private RadioButtonTS radAlexR1_30;
+    private RadioButtonTS radAlexR3_30;
+    private PanelTS panel4;
+    private RadioButtonTS radAlexR2_40;
+    private RadioButtonTS radAlexR1_40;
+    private RadioButtonTS radAlexR3_40;
+    private PanelTS panel3;
+    private RadioButtonTS radAlexR2_60;
+    private RadioButtonTS radAlexR1_60;
+    private RadioButtonTS radAlexR3_60;
+    private PanelTS panel2;
+    private RadioButtonTS radAlexR2_80;
+    private RadioButtonTS radAlexR1_80;
+    private RadioButtonTS radAlexR3_80;
+    private PanelTS panel11;
+    private RadioButtonTS radAlexR2_6;
+    private RadioButtonTS radAlexR1_6;
+    private RadioButtonTS radAlexR3_6;
+    private LabelTS label12;
+    private LabelTS labelTS5;
+    private LabelTS labelTS6;
+    private LabelTS labelTS7;
+    private LabelTS label17;
+    private LabelTS label18;
+    private LabelTS label19;
+    private LabelTS labelTS11;
+    private LabelTS labelTS12;
+    private LabelTS labelTS13;
+    private LabelTS labelTS14;
+    private LabelTS labelTS56;
+    private LabelTS labelTS22;
+    private LabelTS label4;
+    private LabelTS label3;
+    private LabelTS label2;
+    private LabelTS label7;
+    private LabelTS label6;
+    private LabelTS label5;
+    private LabelTS labelRXAntControl;
+    private CheckBoxTS chkAlexAntCtrl;
+    private GroupBoxTS groupBoxHPSDRHW;
+    private CheckBoxTS chkHERCULES;
+    private ButtonTS btnPennyCtrlReset;
+    private GroupBoxTS grpFRSRegion;
+    public ComboBoxTS comboFRSRegion;
+    private GroupBoxTS grpOzyType;
+    private GroupBoxTS grpMetisAddr;
+    private LabelTS lblMetisIP;
+    private LabelTS lblMetisMAC;
+    private LabelTS labelTS9;
+    private LabelTS labelTS16;
+    private CheckBoxTS chkPennyLane;
+    private LabelTS lblPTTOutDelay;
+    private NumericUpDownTS udGenPTTOutDelay;
+    private GroupBoxTS grpDiagInfo;
+    private LabelTS lblSyncData;
+    private LabelTS lblMoxDelay;
+    private NumericUpDownTS udMoxDelay;
+    private LabelTS lblRFDelay;
+    private NumericUpDownTS udRFDelay;
+    private GroupBoxTS grpBoxMic;
+    private NumericUpDownTS udMicGainMin;
+    private NumericUpDownTS udMicGainMax;
+    private LabelTS labelTS21;
+    private LabelTS labelTS20;
+    private CheckBoxTS chk20dbMicBoost;
+    private NumericUpDownTS udTwoToneLevel;
+    private LabelTS lblTwoToneLevel;
+    private NumericUpDownTS udTXDisplayCalOffset;
+    private GroupBoxTS grpBoxTXDisplayCal;
+    private GroupBoxTS grpAppGrid;
+    private ColorButton clrbtnGridFine;
+    private LabelTS lblGridFine;
+    private TrackBarTS tbGridFineAlpha;
+    private TrackBarTS tbGridCourseAlpha;
+    private TrackBarTS tbBackgroundAlpha;
+    private TrackBarTS tbHGridColorAlpha;
+    private ColorButton clrbtnHGridColor;
+    private LabelTS lblHGrid;
+    public CheckBoxTS chkGridControl;
+    private TabPage tcAppearanceTXDisplay;
+    private GroupBoxTS groupBoxTS3;
+    private CheckBoxTS chkTXGridControl;
+    private TrackBarTS tbTXFilterAlpha;
+    private ColorButton clrbtnTXBandEdge;
+    private LabelTS lblTXBandEdge;
+    private LabelTS lblDispTXFilterColor;
+    private ColorButton clrbtnGridTXFilter;
+    private GroupBoxTS groupBoxTS2;
+    private TrackBarTS tbTXHGridColorAlpha;
+    private ColorButton clrbtnTXHGridColor;
+    private LabelTS lblTXHGridColor;
+    private TrackBarTS tbTXVGridFineAlpha;
+    private TrackBarTS tbTXVGridCourseAlpha;
+    private TrackBarTS tbTXBackgroundAlpha;
+    private ColorButton clrbtnTXVGridFine;
+    private LabelTS lblTXVGridFine;
+    private LabelTS lblTXVGridColor;
+    private ColorButton clrbtnTXBackground;
+    private NumericUpDownTS udTXLineWidth;
+    private ColorButton clrbtnTXVGrid;
+    private LabelTS lblTXLineWidth;
+    private LabelTS lblTXBackgroundColor;
+    private ColorButton clrbtnTXDataLine;
+    private ColorButton clrbtnTXZeroLine;
+    private LabelTS lblTXDataLineColor;
+    private LabelTS lblTXZeroLineColor;
+    private ColorButton clrbtnTXText;
+    private LabelTS lblTXTextColor;
+    private GroupBoxTS grpTXSpectrumGrid;
+    private CheckBoxTS chkTXPanFill;
+    private ComboBoxTS comboTXLabelAlign;
+    private LabelTS lblTXAlign;
+    private NumericUpDownTS udTXGridStep;
+    private NumericUpDownTS udTXGridMin;
+    private NumericUpDownTS udTXGridMax;
+    private LabelTS lblTXGridStep;
+    private LabelTS lblTXGridMin;
+    private LabelTS lblTXGridMax;
+    private TrackBarTS tbTXTextAlpha;
+    private TrackBarTS tbTXZeroLineAlpha;
+    private LabelTS labelTS55;
+    private TabPage tpAppearanceCollapsible;
+    private TextBoxTS txtCollapsedHeight;
+    private TextBoxTS txtCollapsedWidth;
+    private GroupBox grpBoxCollapsible;
+    public CheckBoxTS chkShowModeControls;
+    public CheckBoxTS chkShowBandControls;
+    public CheckBoxTS chkShowTopControls;
+    private GroupBoxTS grpBoxSpaceBarPTT;
+    private TrackBarTS tbMeterEdgeBackgroundAlpha;
+    private ColorButton clrbtnInfoButtonsColor;
+    private LabelTS labelTS58;
+    private RadioButtonTS radSpaceBarLastBtn;
+    private RadioButtonTS radSpaceBarMicMute;
+    private RadioButtonTS radSpaceBarVOX;
+    private RadioButtonTS radSpaceBarPTT;
+    private NumericUpDownTS udLineInBoost;
+    private LabelTS lblLineInBoost;
+    private GroupBoxTS grpPennyExtCtrlVHF;
+    private LabelTS labelTS71;
+    private LabelTS labelTS72;
+    private LabelTS labelTS73;
+    private LabelTS labelTS74;
+    private LabelTS labelTS75;
+    private LabelTS labelTS76;
+    private LabelTS labelTS77;
+    private LabelTS labelTS78;
+    private LabelTS labelTS79;
+    private LabelTS labelTS80;
+    private LabelTS labelTS81;
+    private LabelTS labelTS82;
+    private LabelTS labelTS83;
+    private LabelTS labelTS84;
+    private LabelTS labelTS85;
+    private LabelTS lblVHFTxControl;
+    private LabelTS lblVHFRxControl;
+    private LabelTS labelTS59;
+    private LabelTS labelTS60;
+    private LabelTS labelTS61;
+    private LabelTS labelTS62;
+    private LabelTS labelTS63;
+    private LabelTS labelTS64;
+    private LabelTS labelTS65;
+    private LabelTS labelTS66;
+    private LabelTS labelTS67;
+    private LabelTS labelTS68;
+    private LabelTS labelTS69;
+    private LabelTS labelTS70;
+    private CheckBoxTS chkPenOCxmitVHF117;
+    private CheckBoxTS chkPenOCxmitVHF116;
+    private CheckBoxTS chkPenOCxmitVHF115;
+    private CheckBoxTS chkPenOCxmitVHF114;
+    private CheckBoxTS chkPenOCxmitVHF113;
+    private CheckBoxTS chkPenOCxmitVHF112;
+    private CheckBoxTS chkPenOCxmitVHF111;
+    private CheckBoxTS chkPenOCrcvVHF117;
+    private CheckBoxTS chkPenOCrcvVHF116;
+    private CheckBoxTS chkPenOCrcvVHF115;
+    private CheckBoxTS chkPenOCrcvVHF114;
+    private CheckBoxTS chkPenOCrcvVHF113;
+    private CheckBoxTS chkPenOCrcvVHF112;
+    private CheckBoxTS chkPenOCrcvVHF111;
+    private CheckBoxTS chkPenOCxmitVHF107;
+    private CheckBoxTS chkPenOCxmitVHF106;
+    private CheckBoxTS chkPenOCxmitVHF105;
+    private CheckBoxTS chkPenOCxmitVHF104;
+    private CheckBoxTS chkPenOCxmitVHF103;
+    private CheckBoxTS chkPenOCxmitVHF102;
+    private CheckBoxTS chkPenOCxmitVHF101;
+    private CheckBoxTS chkPenOCrcvVHF107;
+    private CheckBoxTS chkPenOCrcvVHF106;
+    private CheckBoxTS chkPenOCrcvVHF105;
+    private CheckBoxTS chkPenOCrcvVHF104;
+    private CheckBoxTS chkPenOCrcvVHF103;
+    private CheckBoxTS chkPenOCrcvVHF102;
+    private CheckBoxTS chkPenOCrcvVHF101;
+    private CheckBoxTS chkPenOCxmitVHF97;
+    private CheckBoxTS chkPenOCxmitVHF96;
+    private CheckBoxTS chkPenOCxmitVHF95;
+    private CheckBoxTS chkPenOCxmitVHF94;
+    private CheckBoxTS chkPenOCxmitVHF93;
+    private CheckBoxTS chkPenOCxmitVHF92;
+    private CheckBoxTS chkPenOCxmitVHF91;
+    private CheckBoxTS chkPenOCrcvVHF97;
+    private CheckBoxTS chkPenOCrcvVHF96;
+    private CheckBoxTS chkPenOCrcvVHF95;
+    private CheckBoxTS chkPenOCrcvVHF94;
+    private CheckBoxTS chkPenOCrcvVHF93;
+    private CheckBoxTS chkPenOCrcvVHF92;
+    private CheckBoxTS chkPenOCrcvVHF91;
+    private CheckBoxTS chkPenOCxmitVHF87;
+    private CheckBoxTS chkPenOCxmitVHF86;
+    private CheckBoxTS chkPenOCxmitVHF85;
+    private CheckBoxTS chkPenOCxmitVHF84;
+    private CheckBoxTS chkPenOCxmitVHF83;
+    private CheckBoxTS chkPenOCxmitVHF82;
+    private CheckBoxTS chkPenOCxmitVHF81;
+    private CheckBoxTS chkPenOCrcvVHF87;
+    private CheckBoxTS chkPenOCrcvVHF86;
+    private CheckBoxTS chkPenOCrcvVHF85;
+    private CheckBoxTS chkPenOCrcvVHF84;
+    private CheckBoxTS chkPenOCrcvVHF83;
+    private CheckBoxTS chkPenOCrcvVHF82;
+    private CheckBoxTS chkPenOCrcvVHF81;
+    private CheckBoxTS chkPenOCxmitVHF77;
+    private CheckBoxTS chkPenOCxmitVHF76;
+    private CheckBoxTS chkPenOCxmitVHF75;
+    private CheckBoxTS chkPenOCxmitVHF74;
+    private CheckBoxTS chkPenOCxmitVHF73;
+    private CheckBoxTS chkPenOCxmitVHF72;
+    private CheckBoxTS chkPenOCxmitVHF71;
+    private CheckBoxTS chkPenOCrcvVHF77;
+    private CheckBoxTS chkPenOCrcvVHF76;
+    private CheckBoxTS chkPenOCrcvVHF75;
+    private CheckBoxTS chkPenOCrcvVHF74;
+    private CheckBoxTS chkPenOCrcvVHF73;
+    private CheckBoxTS chkPenOCrcvVHF72;
+    private CheckBoxTS chkPenOCrcvVHF71;
+    private CheckBoxTS chkPenOCxmitVHF67;
+    private CheckBoxTS chkPenOCxmitVHF66;
+    private CheckBoxTS chkPenOCxmitVHF65;
+    private CheckBoxTS chkPenOCxmitVHF64;
+    private CheckBoxTS chkPenOCxmitVHF63;
+    private CheckBoxTS chkPenOCxmitVHF62;
+    private CheckBoxTS chkPenOCxmitVHF61;
+    private CheckBoxTS chkPenOCrcvVHF67;
+    private CheckBoxTS chkPenOCrcvVHF66;
+    private CheckBoxTS chkPenOCrcvVHF65;
+    private CheckBoxTS chkPenOCrcvVHF64;
+    private CheckBoxTS chkPenOCrcvVHF63;
+    private CheckBoxTS chkPenOCrcvVHF62;
+    private CheckBoxTS chkPenOCrcvVHF61;
+    private CheckBoxTS chkPenOCxmitVHF57;
+    private CheckBoxTS chkPenOCxmitVHF56;
+    private CheckBoxTS chkPenOCxmitVHF55;
+    private CheckBoxTS chkPenOCxmitVHF54;
+    private CheckBoxTS chkPenOCxmitVHF53;
+    private CheckBoxTS chkPenOCxmitVHF52;
+    private CheckBoxTS chkPenOCxmitVHF51;
+    private CheckBoxTS chkPenOCrcvVHF57;
+    private CheckBoxTS chkPenOCrcvVHF56;
+    private CheckBoxTS chkPenOCrcvVHF55;
+    private CheckBoxTS chkPenOCrcvVHF54;
+    private CheckBoxTS chkPenOCrcvVHF53;
+    private CheckBoxTS chkPenOCrcvVHF52;
+    private CheckBoxTS chkPenOCrcvVHF51;
+    private CheckBoxTS chkPenOCxmitVHF47;
+    private CheckBoxTS chkPenOCxmitVHF46;
+    private CheckBoxTS chkPenOCxmitVHF45;
+    private CheckBoxTS chkPenOCxmitVHF44;
+    private CheckBoxTS chkPenOCxmitVHF43;
+    private CheckBoxTS chkPenOCxmitVHF42;
+    private CheckBoxTS chkPenOCxmitVHF41;
+    private CheckBoxTS chkPenOCrcvVHF47;
+    private CheckBoxTS chkPenOCrcvVHF46;
+    private CheckBoxTS chkPenOCrcvVHF45;
+    private CheckBoxTS chkPenOCrcvVHF44;
+    private CheckBoxTS chkPenOCrcvVHF43;
+    private CheckBoxTS chkPenOCrcvVHF42;
+    private CheckBoxTS chkPenOCrcvVHF41;
+    private CheckBoxTS chkPenOCxmitVHF37;
+    private CheckBoxTS chkPenOCxmitVHF36;
+    private CheckBoxTS chkPenOCxmitVHF35;
+    private CheckBoxTS chkPenOCxmitVHF34;
+    private CheckBoxTS chkPenOCxmitVHF33;
+    private CheckBoxTS chkPenOCxmitVHF32;
+    private CheckBoxTS chkPenOCxmitVHF31;
+    private CheckBoxTS chkPenOCrcvVHF37;
+    private CheckBoxTS chkPenOCrcvVHF36;
+    private CheckBoxTS chkPenOCrcvVHF35;
+    private CheckBoxTS chkPenOCrcvVHF34;
+    private CheckBoxTS chkPenOCrcvVHF33;
+    private CheckBoxTS chkPenOCrcvVHF32;
+    private CheckBoxTS chkPenOCrcvVHF31;
+    private CheckBoxTS chkPenOCxmitVHF27;
+    private CheckBoxTS chkPenOCxmitVHF26;
+    private CheckBoxTS chkPenOCxmitVHF25;
+    private CheckBoxTS chkPenOCxmitVHF24;
+    private CheckBoxTS chkPenOCxmitVHF23;
+    private CheckBoxTS chkPenOCxmitVHF22;
+    private CheckBoxTS chkPenOCxmitVHF21;
+    private CheckBoxTS chkPenOCrcvVHF27;
+    private CheckBoxTS chkPenOCrcvVHF26;
+    private CheckBoxTS chkPenOCrcvVHF25;
+    private CheckBoxTS chkPenOCrcvVHF24;
+    private CheckBoxTS chkPenOCrcvVHF23;
+    private CheckBoxTS chkPenOCrcvVHF22;
+    private CheckBoxTS chkPenOCrcvVHF21;
+    private CheckBoxTS chkPenOCxmitVHF17;
+    private CheckBoxTS chkPenOCxmitVHF16;
+    private CheckBoxTS chkPenOCxmitVHF15;
+    private CheckBoxTS chkPenOCxmitVHF14;
+    private CheckBoxTS chkPenOCxmitVHF13;
+    private CheckBoxTS chkPenOCxmitVHF12;
+    private CheckBoxTS chkPenOCxmitVHF11;
+    private CheckBoxTS chkPenOCrcvVHF17;
+    private CheckBoxTS chkPenOCrcvVHF16;
+    private CheckBoxTS chkPenOCrcvVHF15;
+    private CheckBoxTS chkPenOCrcvVHF14;
+    private CheckBoxTS chkPenOCrcvVHF13;
+    private CheckBoxTS chkPenOCrcvVHF12;
+    private CheckBoxTS chkPenOCrcvVHF11;
+    private CheckBoxTS chkPenOCxmitVHF07;
+    private CheckBoxTS chkPenOCxmitVHF06;
+    private CheckBoxTS chkPenOCxmitVHF05;
+    private CheckBoxTS chkPenOCxmitVHF04;
+    private CheckBoxTS chkPenOCxmitVHF03;
+    private CheckBoxTS chkPenOCxmitVHF02;
+    private CheckBoxTS chkPenOCxmitVHF01;
+    private CheckBoxTS chkPenOCrcvVHF07;
+    private CheckBoxTS chkPenOCrcvVHF06;
+    private CheckBoxTS chkPenOCrcvVHF05;
+    private CheckBoxTS chkPenOCrcvVHF04;
+    private CheckBoxTS chkPenOCrcvVHF03;
+    private CheckBoxTS chkPenOCrcvVHF02;
+    private CheckBoxTS chkPenOCrcvVHF01;
+    private ButtonTS btnPennyCtrlVHFReset;
+    private CheckBoxTS chkShowCTHLine;
+    private CheckBoxTS chkClickTuneFilter;
+    private Label label11;
+    private ComboBoxTS comboColorPalette;
+    private ColorButton clrbtnWaterfallMid;
+    private ColorButton clrbtnWaterfallHigh;
+    private LabelTS lblDisplayWaterfallMidColor;
+    private LabelTS lblDisplayWaterfallHighColor;
+    private LabelTS lblMetisBoardID;
+    private LabelTS labelTS88;
+    private LabelTS lblMetisCodeVersion;
+    private LabelTS lblMetisVer;
+    private TabControl tcAlexControl;
+    private TabPage tpAlexFilterControl;
+    public NumericUpDownTS udAlex10mLPFEnd;
+    public NumericUpDownTS udAlex10mLPFStart;
+    public NumericUpDownTS udAlex6mLPFEnd;
+    public NumericUpDownTS udAlex6mLPFStart;
+    public NumericUpDownTS udAlex20mLPFStart;
+    public NumericUpDownTS udAlex15mLPFStart;
+    public NumericUpDownTS udAlex20mLPFEnd;
+    public NumericUpDownTS udAlex15mLPFEnd;
+    public NumericUpDownTS udAlex40mLPFEnd;
+    public NumericUpDownTS udAlex40mLPFStart;
+    public NumericUpDownTS udAlex80mLPFEnd;
+    public NumericUpDownTS udAlex80mLPFStart;
+    public NumericUpDownTS udAlex160mLPFEnd;
+    public NumericUpDownTS udAlex160mLPFStart;
+    public NumericUpDownTS udAlex13HPFStart;
+    public NumericUpDownTS udAlex20HPFStart;
+    public NumericUpDownTS udAlex13HPFEnd;
+    public NumericUpDownTS udAlex20HPFEnd;
+    public NumericUpDownTS udAlex9_5HPFEnd;
+    public NumericUpDownTS udAlex9_5HPFStart;
+    public NumericUpDownTS udAlex6_5HPFEnd;
+    public NumericUpDownTS udAlex6_5HPFStart;
+    public NumericUpDownTS udAlex1_5HPFEnd;
+    public NumericUpDownTS udAlex1_5HPFStart;
+    private NumericUpDownTS numericUpDownTS5;
+    private NumericUpDownTS numericUpDownTS7;
+    private NumericUpDownTS numericUpDownTS8;
+    private PanelTS panelTS2;
+    private RadioButtonTS radioButtonTS1;
+    private RadioButtonTS radioButtonTS2;
+    private NumericUpDownTS numericUpDownTS11;
+    private NumericUpDownTS numericUpDownTS13;
+    private NumericUpDownTS numericUpDownTS14;
+    private PanelTS panelTS3;
+    private RadioButtonTS radioButtonTS3;
+    private RadioButtonTS radioButtonTS4;
+    private LabelTS labelTS117;
+    private LabelTS labelAlex1FilterHPF;
+    private LabelTS labelTS126;
+    private LabelTS labelTS125;
+    private LabelTS labelTS124;
+    private LabelTS labelTS123;
+    private LabelTS labelTS122;
+    private LabelTS labelTS121;
+    private LabelTS labelTS120;
+    private LabelTS labelTS118;
+    private LabelTS labelTS119;
+    private NumericUpDownTS numericUpDownTS1;
+    private NumericUpDownTS numericUpDownTS2;
+    private NumericUpDownTS numericUpDownTS15;
+    private NumericUpDownTS numericUpDownTS16;
+    private NumericUpDownTS numericUpDownTS17;
+    private NumericUpDownTS numericUpDownTS18;
+    private NumericUpDownTS numericUpDownTS19;
+    private NumericUpDownTS numericUpDownTS20;
+    private NumericUpDownTS numericUpDownTS21;
+    private NumericUpDownTS numericUpDownTS22;
+    private NumericUpDownTS numericUpDownTS23;
+    private NumericUpDownTS numericUpDownTS24;
+    private NumericUpDownTS numericUpDownTS25;
+    private NumericUpDownTS numericUpDownTS26;
+    private NumericUpDownTS numericUpDownTS27;
+    private NumericUpDownTS numericUpDownTS28;
+    private NumericUpDownTS numericUpDownTS29;
+    private NumericUpDownTS numericUpDownTS30;
+    private NumericUpDownTS numericUpDownTS31;
+    private NumericUpDownTS numericUpDownTS32;
+    private NumericUpDownTS numericUpDownTS33;
+    private NumericUpDownTS numericUpDownTS34;
+    private NumericUpDownTS numericUpDownTS35;
+    private NumericUpDownTS numericUpDownTS36;
+    private PanelTS panelTS4;
+    private RadioButtonTS radioButtonTS5;
+    private RadioButtonTS radioButtonTS6;
+    private LabelTS labelTS131;
+    private LabelTS labelTS130;
+    private LabelTS labelTS129;
+    private LabelTS labelTS128;
+    private LabelTS labelTS127;
+    private CheckBoxTS chkAlexHPFBypass;
+    private LabelTS labelTS132;
+    public NumericUpDownTS udAlex6BPFStart;
+    public NumericUpDownTS udAlex6BPFEnd;
+    private PanelTS panelTS5;
+    public RadioButtonTS rad1_5HPFled;
+    public RadioButtonTS rad6_5HPFled;
+    public RadioButtonTS rad9_5HPFled;
+    public RadioButtonTS rad13HPFled;
+    public RadioButtonTS rad20HPFled;
+    public RadioButtonTS rad6BPFled;
+    public RadioButtonTS radBPHPFled;
+    private PanelTS panelTS6;
+    public RadioButtonTS rad6LPFled;
+    public RadioButtonTS rad80LPFled;
+    public RadioButtonTS rad40LPFled;
+    public RadioButtonTS rad20LPFled;
+    public RadioButtonTS rad15LPFled;
+    public RadioButtonTS rad10LPFled;
+    public RadioButtonTS rad160LPFled;
+    private LabelTS labelTS134;
+    private LabelTS labelAlexFilterActive;
+    public CheckBoxTS chkAlex20BPHPF;
+    public CheckBoxTS chkAlex6_5BPHPF;
+    public CheckBoxTS chkAlex9_5BPHPF;
+    public CheckBoxTS chkAlex6BPHPF;
+    public CheckBoxTS chkAlex13BPHPF;
+    public CheckBoxTS chkAlex1_5BPHPF;
+    private NumericUpDownTS udGeneralCalRX2Level;
+    private NumericUpDownTS udGeneralCalRX2Freq2;
+    private LabelTS labelTS135;
+    private LabelTS labelTS136;
+    private ButtonTS btnCalLevel;
+    private LabelTS lblMercury2FWVer;
+    private PanelTS panelRX2LevelCal;
+    private System.ComponentModel.IContainer components;
+    private Midi2Cat.Midi2CatSetupForm ConfigMidi2Cat;
+    private System.Windows.Forms.TabPage tpVAC2;
+    private System.Windows.Forms.GroupBoxTS grpVAC2DirectIQ;
+    private System.Windows.Forms.CheckBoxTS chkVAC2UseRX2;
+    private System.Windows.Forms.CheckBoxTS chkVAC2DirectIQCal;
+    private System.Windows.Forms.CheckBoxTS chkVAC2DirectIQ;
+    private System.Windows.Forms.CheckBoxTS chkVAC2Combine;
+    private System.Windows.Forms.GroupBoxTS grpVAC2AutoEnable;
+    private System.Windows.Forms.CheckBoxTS chkVAC2AutoEnable;
+    private System.Windows.Forms.GroupBoxTS grpVAC2Gain;
+    public System.Windows.Forms.LabelTS lblVAC2GainTX;
+    private System.Windows.Forms.NumericUpDownTS udVAC2GainTX;
+    public System.Windows.Forms.LabelTS lblVAC2GainRX;
+    private System.Windows.Forms.NumericUpDownTS udVAC2GainRX;
+    private System.Windows.Forms.GroupBoxTS grpAudioStereo3;
+    private System.Windows.Forms.CheckBoxTS chkAudioStereo3;
+    private System.Windows.Forms.GroupBoxTS grpVAC2LatencyManual;
+    private System.Windows.Forms.CheckBoxTS chkVAC2LatencyManual;
+    private System.Windows.Forms.NumericUpDownTS udVAC2Latency;
+    private System.Windows.Forms.GroupBoxTS grpAudioSampleRate3;
+    private System.Windows.Forms.ComboBoxTS comboAudioSampleRate3;
+    private System.Windows.Forms.GroupBoxTS grpAudioBuffer3;
+    private System.Windows.Forms.ComboBoxTS comboAudioBuffer3;
+    private System.Windows.Forms.GroupBoxTS grpAudioDetails3;
+    public System.Windows.Forms.LabelTS lblAudioOutput3;
+    private System.Windows.Forms.ComboBoxTS comboAudioOutput3;
+    public System.Windows.Forms.LabelTS lblAudioInput3;
+    public System.Windows.Forms.LabelTS lblAudioDriver3;
+    private System.Windows.Forms.ComboBoxTS comboAudioInput3;
+    private System.Windows.Forms.ComboBoxTS comboAudioDriver3;
+    public System.Windows.Forms.CheckBoxTS chkVAC2Enable;
+    private System.Windows.Forms.NumericUpDownTS udTXFilterLowSave;
+    private System.Windows.Forms.NumericUpDownTS udTXFilterHighSave;
+    private System.Windows.Forms.CheckBoxTS chkFirmwareByp;
+    private System.Windows.Forms.GroupBoxTS grpDSPLMSANF2;
+    private System.Windows.Forms.LabelTS lblLMSANF2Leak;
+    private System.Windows.Forms.NumericUpDownTS udLMSANF2Leak;
+    private System.Windows.Forms.LabelTS lblLMSANF2gain;
+    private System.Windows.Forms.NumericUpDownTS udLMSANF2gain;
+    private System.Windows.Forms.LabelTS lblLMSANF2delay;
+    private System.Windows.Forms.NumericUpDownTS udLMSANF2delay;
+    private System.Windows.Forms.LabelTS lblLMSANF2Taps;
+    private System.Windows.Forms.NumericUpDownTS udLMSANF2taps;
+    private System.Windows.Forms.GroupBoxTS grpDSPLMSNR2;
+    private System.Windows.Forms.LabelTS lblLMSNR2Leak;
+    private System.Windows.Forms.NumericUpDownTS udLMSNR2Leak;
+    private System.Windows.Forms.LabelTS lblLMSNR2gain;
+    private System.Windows.Forms.NumericUpDownTS udLMSNR2gain;
+    private System.Windows.Forms.NumericUpDownTS udLMSNR2delay;
+    private System.Windows.Forms.LabelTS lblLMSNR2delay;
+    private System.Windows.Forms.NumericUpDownTS udLMSNR2taps;
+    private System.Windows.Forms.LabelTS lblLMSNR2taps;
+    private System.Windows.Forms.RadioButtonTS radANFPostAGC2;
+    private System.Windows.Forms.RadioButtonTS radANF2PreAGC;
+    private System.Windows.Forms.RadioButtonTS radANFPostAGC;
+    private System.Windows.Forms.RadioButtonTS radANFPreAGC;
+    private System.Windows.Forms.CheckBoxTS chkFullDiscovery;
+    private System.Windows.Forms.CheckBoxTS chkRxOutOnTx;
+    public System.Windows.Forms.RadioButtonTS radLineIn;
+    public System.Windows.Forms.RadioButtonTS radMicIn;
+    private System.Windows.Forms.CheckBoxTS chkSWRProtection;
+    private System.Windows.Forms.CheckBoxTS chkATTOnTX;
+    private System.Windows.Forms.GroupBoxTS groupBoxTS5;
+    private System.Windows.Forms.GroupBoxTS groupBoxTS4;
+    private System.Windows.Forms.TabPage tpAlex2FilterControl;
+    public System.Windows.Forms.CheckBoxTS chkAlex220BPHPF;
+    public System.Windows.Forms.CheckBoxTS chkAlex26_5BPHPF;
+    public System.Windows.Forms.CheckBoxTS chkAlex29_5BPHPF;
+    public System.Windows.Forms.CheckBoxTS chkAlex26BPHPF;
+    public System.Windows.Forms.CheckBoxTS chkAlex213BPHPF;
+    public System.Windows.Forms.CheckBoxTS chkAlex21_5BPHPF;
+    private System.Windows.Forms.LabelTS lblAlex2ByPass;
+    private System.Windows.Forms.LabelTS lblAlex2Active;
+    private System.Windows.Forms.PanelTS panelAlex2LPFActive;
+    public System.Windows.Forms.RadioButtonTS radAlex26LPFled;
+    public System.Windows.Forms.RadioButtonTS radAlex2160LPFled;
+    public System.Windows.Forms.RadioButtonTS radAlex280LPFled;
+    public System.Windows.Forms.RadioButtonTS radAlex240LPFled;
+    public System.Windows.Forms.RadioButtonTS radAlex220LPFled;
+    public System.Windows.Forms.RadioButtonTS radAlex215LPFled;
+    public System.Windows.Forms.RadioButtonTS radAlex210LPFled;
+    private System.Windows.Forms.PanelTS panelAlex2HPFActive;
+    public System.Windows.Forms.RadioButtonTS radAlex2BPHPFled;
+    public System.Windows.Forms.RadioButtonTS radAlex21_5HPFled;
+    public System.Windows.Forms.RadioButtonTS radAlex26_5HPFled;
+    public System.Windows.Forms.RadioButtonTS radAlex29_5HPFled;
+    public System.Windows.Forms.RadioButtonTS radAlex213HPFled;
+    public System.Windows.Forms.RadioButtonTS radAlex220HPFled;
+    public System.Windows.Forms.RadioButtonTS radAlex26BPFled;
+    private System.Windows.Forms.LabelTS lblAlex2HPF6m;
+    public System.Windows.Forms.NumericUpDownTS udAlex26BPFStart;
+    public System.Windows.Forms.NumericUpDownTS udAlex26BPFEnd;
+    private System.Windows.Forms.CheckBoxTS chkAlex2HPFBypass;
+    private System.Windows.Forms.LabelTS lblAlex2HPF15MHz;
+    private System.Windows.Forms.LabelTS lblAlex2HPF65MHz;
+    private System.Windows.Forms.LabelTS lblAlex2HPF95MHz;
+    private System.Windows.Forms.LabelTS lblAlex2HPF13MHz;
+    private System.Windows.Forms.LabelTS lblAlex2HPF20MHz;
+    private System.Windows.Forms.LabelTS lblAlex2LPF160m;
+    private System.Windows.Forms.LabelTS lblAlex2LPF80m;
+    private System.Windows.Forms.LabelTS lblAlex2LPF60m;
+    private System.Windows.Forms.LabelTS lblAlex2LPF30m;
+    private System.Windows.Forms.LabelTS lblAlex2LPF17m;
+    private System.Windows.Forms.LabelTS lblAlex2LPF12m;
+    private System.Windows.Forms.LabelTS lblAlex2LPF6m;
+    private System.Windows.Forms.LabelTS lblAlex2LPF;
+    private System.Windows.Forms.LabelTS lblAlex2HPF;
+    public System.Windows.Forms.NumericUpDownTS udAlex210mLPFEnd;
+    public System.Windows.Forms.NumericUpDownTS udAlex210mLPFStart;
+    public System.Windows.Forms.NumericUpDownTS udAlex26mLPFEnd;
+    public System.Windows.Forms.NumericUpDownTS udAlex26mLPFStart;
+    public System.Windows.Forms.NumericUpDownTS udAlex220mLPFStart;
+    public System.Windows.Forms.NumericUpDownTS udAlex215mLPFStart;
+    public System.Windows.Forms.NumericUpDownTS udAlex220mLPFEnd;
+    public System.Windows.Forms.NumericUpDownTS udAlex215mLPFEnd;
+    public System.Windows.Forms.NumericUpDownTS udAlex240mLPFEnd;
+    public System.Windows.Forms.NumericUpDownTS udAlex240mLPFStart;
+    public System.Windows.Forms.NumericUpDownTS udAlex280mLPFEnd;
+    public System.Windows.Forms.NumericUpDownTS udAlex280mLPFStart;
+    public System.Windows.Forms.NumericUpDownTS udAlex2160mLPFEnd;
+    public System.Windows.Forms.NumericUpDownTS udAlex2160mLPFStart;
+    public System.Windows.Forms.NumericUpDownTS udAlex213HPFStart;
+    public System.Windows.Forms.NumericUpDownTS udAlex220HPFStart;
+    public System.Windows.Forms.NumericUpDownTS udAlex213HPFEnd;
+    public System.Windows.Forms.NumericUpDownTS udAlex220HPFEnd;
+    public System.Windows.Forms.NumericUpDownTS udAlex29_5HPFEnd;
+    public System.Windows.Forms.NumericUpDownTS udAlex29_5HPFStart;
+    public System.Windows.Forms.NumericUpDownTS udAlex26_5HPFEnd;
+    public System.Windows.Forms.NumericUpDownTS udAlex26_5HPFStart;
+    public System.Windows.Forms.NumericUpDownTS udAlex21_5HPFEnd;
+    public System.Windows.Forms.NumericUpDownTS udAlex21_5HPFStart;
+    private System.Windows.Forms.CheckBoxTS chkApolloPresent;
+    private System.Windows.Forms.TabPage tpApolloControl;
+    private System.Windows.Forms.GroupBoxTS grpApolloCtrl;
+    private System.Windows.Forms.CheckBoxTS chkApolloFilter;
+    private System.Windows.Forms.CheckBoxTS chkApolloTuner;
+    private System.Windows.Forms.CheckBoxTS chkRX2BlankDisplayOnVFOATX;
+    private System.Windows.Forms.CheckBoxTS chkSaveTXProfileOnExit;
+    private System.Windows.Forms.CheckBoxTS chkAutoSaveTXProfile;
+    private System.Windows.Forms.GroupBoxTS groupBoxTS6;
+    private System.Windows.Forms.NumericUpDownTS udRX2FilterDefaultLowCut;
+    private System.Windows.Forms.LabelTS labelTS39;
+    private System.Windows.Forms.NumericUpDownTS udRX2OptMaxFilterShift;
+    private System.Windows.Forms.LabelTS labelTS50;
+    private System.Windows.Forms.ComboBoxTS comboRX2OptFilterWidthMode;
+    private System.Windows.Forms.LabelTS labelTS86;
+    private System.Windows.Forms.NumericUpDownTS udRX2OptMaxFilterWidth;
+    private System.Windows.Forms.LabelTS labelTS87;
+    private System.Windows.Forms.CheckBoxTS checkBoxTS2;
+    private System.Windows.Forms.TabPage tpDSPAMSAM;
+    private System.Windows.Forms.GroupBoxTS grpAMSAM;
+    private System.Windows.Forms.CheckBoxTS chkLevelFades;
+    private System.Windows.Forms.GroupBoxTS grpAMSBSEL;
+    private System.Windows.Forms.RadioButtonTS radUSB;
+    private System.Windows.Forms.RadioButtonTS radLSB;
+    private System.Windows.Forms.RadioButtonTS radLSBUSB;
+    private System.Windows.Forms.GroupBoxTS grpRX2AMSAM;
+    private System.Windows.Forms.CheckBoxTS chkRX2LevelFades;
+    private System.Windows.Forms.GroupBoxTS grpRX2AMSBSEL;
+    private System.Windows.Forms.RadioButtonTS radRX2USB;
+    private System.Windows.Forms.RadioButtonTS radRX2LSB;
+    private System.Windows.Forms.RadioButtonTS radRX2LSBUSB;
+    private System.Windows.Forms.PanelTS panelAutoPACalibrate;
+    private System.Windows.Forms.GroupBoxTS grpHermesStepAttenuator;
+    private System.Windows.Forms.CheckBoxTS chkHermesStepAttenuator;
+    private System.Windows.Forms.NumericUpDownTS udHermesStepAttenuatorData;
+    private System.Windows.Forms.PanelTS panelAlexTXAntControl;
+    private System.Windows.Forms.LabelTS labelTS104;
+    private System.Windows.Forms.LabelTS labelTS105;
+    private System.Windows.Forms.LabelTS labelTS106;
+    private System.Windows.Forms.LabelTS labelTS107;
+    private System.Windows.Forms.LabelTS labelTS108;
+    private System.Windows.Forms.LabelTS labelTS109;
+    private System.Windows.Forms.LabelTS labelTS110;
+    private System.Windows.Forms.LabelTS labelTS111;
+    private System.Windows.Forms.LabelTS labelTS112;
+    private System.Windows.Forms.LabelTS labelTS113;
+    private System.Windows.Forms.LabelTS labelTS114;
+    private System.Windows.Forms.LabelTS labelTS115;
+    private System.Windows.Forms.LabelTS label10;
+    private System.Windows.Forms.LabelTS label9;
+    private System.Windows.Forms.LabelTS label8;
+    private System.Windows.Forms.LabelTS labelTS15;
+    private System.Windows.Forms.PanelTS panel23;
+    private System.Windows.Forms.RadioButtonTS radAlexT2_6;
+    private System.Windows.Forms.RadioButtonTS radAlexT1_6;
+    private System.Windows.Forms.RadioButtonTS radAlexT3_6;
+    private System.Windows.Forms.PanelTS panel22;
+    private System.Windows.Forms.RadioButtonTS radAlexT2_10;
+    private System.Windows.Forms.RadioButtonTS radAlexT1_10;
+    private System.Windows.Forms.RadioButtonTS radAlexT3_10;
+    private System.Windows.Forms.PanelTS panel21;
+    private System.Windows.Forms.RadioButtonTS radAlexT2_12;
+    private System.Windows.Forms.RadioButtonTS radAlexT1_12;
+    private System.Windows.Forms.RadioButtonTS radAlexT3_12;
+    private System.Windows.Forms.PanelTS panel20;
+    private System.Windows.Forms.RadioButtonTS radAlexT2_15;
+    private System.Windows.Forms.RadioButtonTS radAlexT1_15;
+    private System.Windows.Forms.RadioButtonTS radAlexT3_15;
+    private System.Windows.Forms.PanelTS panel19;
+    private System.Windows.Forms.RadioButtonTS radAlexT2_17;
+    private System.Windows.Forms.RadioButtonTS radAlexT1_17;
+    private System.Windows.Forms.RadioButtonTS radAlexT3_17;
+    private System.Windows.Forms.PanelTS panel18;
+    private System.Windows.Forms.RadioButtonTS radAlexT2_20;
+    private System.Windows.Forms.RadioButtonTS radAlexT1_20;
+    private System.Windows.Forms.RadioButtonTS radAlexT3_20;
+    private System.Windows.Forms.PanelTS panel17;
+    private System.Windows.Forms.RadioButtonTS radAlexT2_30;
+    private System.Windows.Forms.RadioButtonTS radAlexT1_30;
+    private System.Windows.Forms.RadioButtonTS radAlexT3_30;
+    private System.Windows.Forms.PanelTS panel16;
+    private System.Windows.Forms.RadioButtonTS radAlexT2_40;
+    private System.Windows.Forms.RadioButtonTS radAlexT1_40;
+    private System.Windows.Forms.RadioButtonTS radAlexT3_40;
+    private System.Windows.Forms.PanelTS panel15;
+    private System.Windows.Forms.RadioButtonTS radAlexT2_60;
+    private System.Windows.Forms.RadioButtonTS radAlexT1_60;
+    private System.Windows.Forms.RadioButtonTS radAlexT3_60;
+    private System.Windows.Forms.PanelTS panel14;
+    private System.Windows.Forms.RadioButtonTS radAlexT2_80;
+    private System.Windows.Forms.RadioButtonTS radAlexT1_80;
+    private System.Windows.Forms.RadioButtonTS radAlexT3_80;
+    private System.Windows.Forms.PanelTS panel13;
+    private System.Windows.Forms.RadioButtonTS radAlexT2_160;
+    private System.Windows.Forms.RadioButtonTS radAlexT1_160;
+    private System.Windows.Forms.RadioButtonTS radAlexT3_160;
+    private System.Windows.Forms.PanelTS panelAlexRXAntControl;
+    private System.Windows.Forms.PanelTS panelAlexRXXVRTControl;
+    private System.Windows.Forms.PanelTS panelAlex1HPFControl;
+    private System.Windows.Forms.GroupBoxTS grpSWRProtectionControl;
+    private System.Windows.Forms.CheckBoxTS chkSWRTuneProtection;
+    private System.Windows.Forms.GroupBoxTS grpDisplayRX1Pan;
+    private System.Windows.Forms.LabelTS labelTS139;
+    public System.Windows.Forms.TrackBarTS tbDisplayFFTSize;
+    private System.Windows.Forms.LabelTS lblDisplayBinWidth;
+    private System.Windows.Forms.LabelTS labelTS142;
+    private System.Windows.Forms.TabControl tcDisplay;
+    private System.Windows.Forms.TabPage tpDisplayGeneral;
+    private System.Windows.Forms.TabPage tpDisplayTop;
+    private System.Windows.Forms.TabPage tpDisplayBottom;
+    private System.Windows.Forms.GroupBoxTS grpRX2DisplayAverage;
+    private System.Windows.Forms.NumericUpDownTS udRX2DisplayAVGTime;
+    private System.Windows.Forms.LabelTS labelTS143;
+    private System.Windows.Forms.GroupBoxTS grpDisplayRX2Pan;
+    private System.Windows.Forms.LabelTS lblRX2DisplayBinWidth;
+    private System.Windows.Forms.LabelTS labelTS140;
+    private System.Windows.Forms.LabelTS labelTS141;
+    public System.Windows.Forms.TrackBarTS tbRX2DisplayFFTSize;
+    private System.Windows.Forms.GroupBoxTS grpRX2DisplaySpectrumGrid;
+    private System.Windows.Forms.ComboBoxTS comboBoxTS1;
+    private System.Windows.Forms.LabelTS labelTS133;
+    private System.Windows.Forms.NumericUpDownTS udRX2DisplayGridStep;
+    private System.Windows.Forms.NumericUpDownTS udRX2DisplayGridMin;
+    private System.Windows.Forms.NumericUpDownTS udRX2DisplayGridMax;
+    private System.Windows.Forms.LabelTS lblRX2DisplayGridStep;
+    private System.Windows.Forms.LabelTS lblRX2DisplayGridMin;
+    private System.Windows.Forms.LabelTS lblRX2DisplayGridMax;
+    private System.Windows.Forms.CheckBoxTS chkHFTRRelay;
+    private System.Windows.Forms.GroupBoxTS grpDisplaySpectrumGrid;
+    private System.Windows.Forms.ComboBoxTS comboDisplayLabelAlign;
+    private System.Windows.Forms.LabelTS lblDisplayAlign;
+    private System.Windows.Forms.NumericUpDownTS udDisplayGridStep;
+    private System.Windows.Forms.NumericUpDownTS udDisplayGridMin;
+    private System.Windows.Forms.NumericUpDownTS udDisplayGridMax;
+    private System.Windows.Forms.LabelTS lblDisplayGridStep;
+    private System.Windows.Forms.LabelTS lblDisplayGridMin;
+    private System.Windows.Forms.LabelTS lblDisplayGridMax;
+    private System.Windows.Forms.LabelTS labelTS146;
+    private System.Windows.Forms.LabelTS labelTS145;
+    private System.Windows.Forms.ComboBoxTS comboDispWinType;
+    private System.Windows.Forms.LabelTS labelTS147;
+    private System.Windows.Forms.TabPage tpDisplayTransmit;
+    private System.Windows.Forms.ComboBoxTS comboRX2DispWinType;
+    private System.Windows.Forms.LabelTS labelTS150;
+    private System.Windows.Forms.LabelTS labelTS149;
+    private System.Windows.Forms.LabelTS labelTS148;
+    private System.Windows.Forms.LabelTS labelTS154;
+    private System.Windows.Forms.NumericUpDownTS udDSPNBLag;
+    private System.Windows.Forms.LabelTS labelTS153;
+    private System.Windows.Forms.NumericUpDownTS udDSPNBLead;
+    private System.Windows.Forms.LabelTS labelTS152;
+    private System.Windows.Forms.NumericUpDownTS udDSPNBTransition;
+    private System.Windows.Forms.LabelTS labelTS151;
+    private System.Windows.Forms.CheckBoxTS chkMOXAllowBypass;
+    private System.Windows.Forms.CheckBoxTS chkSPACEAllowBypass;
+    private System.Windows.Forms.TextBoxTS textBoxTS1;
+    private System.Windows.Forms.CheckBoxTS chkCBlock;
+    private System.Windows.Forms.CheckBoxTS chkRX2CBlock;
+    private System.Windows.Forms.TabControl tcCAT;
+    private System.Windows.Forms.TabPage tpCAToptions;
+    private System.Windows.Forms.PanelTS panelTS7;
+    private System.Windows.Forms.ButtonTS btnSetIPAddr;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP4;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP3;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP2;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP1;
+    private System.Windows.Forms.CheckBoxTS chkEnableStaticIP;
+    private System.Windows.Forms.RadioButtonTS radStaticIP2;
+    private System.Windows.Forms.RadioButtonTS radStaticIP1;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP8;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP7;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP6;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP5;
+    private System.Windows.Forms.RadioButtonTS radStaticIP4;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP16;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP15;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP14;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP13;
+    private System.Windows.Forms.RadioButtonTS radStaticIP3;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP12;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP11;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP10;
+    private System.Windows.Forms.NumericUpDownTS udStaticIP9;
+    public System.Windows.Forms.CheckBoxTS chkBypassANANPASettings;
+    private System.Windows.Forms.CheckBoxTS chkAutoPACalibrate;
+    private System.Windows.Forms.Label lblWaterfallLevels;
+    private System.Windows.Forms.TextBox txtWaterFallBandLevel;
+    private System.Windows.Forms.Label label15;
+    private System.Windows.Forms.TextBox txtDisplayGridBandLevel;
+    private System.Windows.Forms.Label label16;
+    private System.Windows.Forms.TextBox txtRX2DisplayGridBandLevel;
+    private System.Windows.Forms.GroupBoxTS grpRX2DisplayWaterfall;
+    private System.Windows.Forms.Label lblRX2WaterfallLevels;
+    private System.Windows.Forms.TextBox txtRX2WaterFallBandLevel;
+    private ColorButton clrbtnRX2WaterfallMid;
+    private ColorButton clrbtnRX2WaterfallHigh;
+    private System.Windows.Forms.LabelTS lblRX2DisplayWaterfallMidColor;
+    private System.Windows.Forms.LabelTS lblRX2DisplayWaterfallHighColor;
+    private System.Windows.Forms.ComboBoxTS comboRX2ColorPalette;
+    private System.Windows.Forms.Label label21;
+    private System.Windows.Forms
+        .NumericUpDownTS udRX2DisplayWaterfallUpdatePeriod;
+    private System.Windows.Forms.LabelTS lblRX2DisplayWaterfallUpdatePeriod;
+    private ColorButton clrbtnRX2WaterfallLow;
+    private System.Windows.Forms.LabelTS lblRX2DisplayWaterfallLowColor;
+    private System.Windows.Forms.LabelTS lblRX2DisplayWaterfallLowLevel;
+    private System.Windows.Forms.NumericUpDownTS udRX2DisplayWaterfallLowLevel;
+    private System.Windows.Forms.LabelTS lblRX2DisplayWaterfallHighLevel;
+    private System.Windows.Forms.NumericUpDownTS udRX2DisplayWaterfallHighLevel;
+    private System.Windows.Forms.CheckBoxTS chkRX1WaterfallAGC;
+    private System.Windows.Forms.CheckBoxTS chkRX2WaterfallAGC;
+    private System.Windows.Forms.NumericUpDownTS udATTOnTX;
+    private System.Windows.Forms.LabelTS labelATTOnTX;
+    private System.Windows.Forms.NumericUpDownTS ud100PA110W;
+    private System.Windows.Forms.LabelTS label100PA110W;
+    private System.Windows.Forms.LabelTS label100PA100W;
+    private System.Windows.Forms.NumericUpDownTS ud100PA100W;
+    private System.Windows.Forms.LabelTS label100PA90W;
+    private System.Windows.Forms.NumericUpDownTS ud100PA90W;
+    private System.Windows.Forms.LabelTS label100PA80W;
+    private System.Windows.Forms.NumericUpDownTS ud100PA80W;
+    private System.Windows.Forms.LabelTS label100PA70W;
+    private System.Windows.Forms.NumericUpDownTS ud100PA70W;
+    private System.Windows.Forms.LabelTS label100PA60W;
+    private System.Windows.Forms.NumericUpDownTS ud100PA60W;
+    private System.Windows.Forms.LabelTS label100PA50W;
+    private System.Windows.Forms.NumericUpDownTS ud100PA50W;
+    private System.Windows.Forms.LabelTS label100PA40W;
+    private System.Windows.Forms.NumericUpDownTS ud100PA40W;
+    private System.Windows.Forms.LabelTS label100PA30W;
+    private System.Windows.Forms.NumericUpDownTS ud100PA30W;
+    private System.Windows.Forms.LabelTS label100PA20W;
+    private System.Windows.Forms.NumericUpDownTS ud100PA20W;
+    private System.Windows.Forms.LabelTS label100PA10W;
+    private System.Windows.Forms.NumericUpDownTS ud100PA10W;
+    private System.Windows.Forms.LabelTS label100PA130W;
+    private System.Windows.Forms.NumericUpDownTS ud100PA130W;
+    private System.Windows.Forms.LabelTS label100PA120W;
+    private System.Windows.Forms.NumericUpDownTS ud100PA120W;
+    private System.Windows.Forms.LabelTS label100PA140W;
+    private System.Windows.Forms.NumericUpDownTS ud100PA140W;
+    private System.Windows.Forms.LabelTS labelTS275;
+    public System.Windows.Forms.TextBoxTS textDriveFwdADCValue;
+    private System.Windows.Forms.LabelTS labelTS269;
+    private System.Windows.Forms.LabelTS labelTS270;
+    private System.Windows.Forms.LabelTS labelTS271;
+    public System.Windows.Forms.TextBoxTS textRevVoltage;
+    public System.Windows.Forms.TextBoxTS textFwdVoltage;
+    public System.Windows.Forms.TextBoxTS textFwdADCValue;
+    private System.Windows.Forms.LabelTS labelTS272;
+    private System.Windows.Forms.LabelTS labelTS273;
+    private System.Windows.Forms.LabelTS labelTS274;
+    public System.Windows.Forms.TextBoxTS textPARevPower;
+    public System.Windows.Forms.TextBoxTS textDrivePower;
+    public System.Windows.Forms.TextBoxTS textPAFwdPower;
+    private System.Windows.Forms.LabelTS labelTS276;
+    public System.Windows.Forms.TextBoxTS textRevADCValue;
+    private System.Windows.Forms.TabControl tcPowerAmplifier;
+    private System.Windows.Forms.TabPage tpGainByBand;
+    private System.Windows.Forms.TabPage tpWattMeter;
+    private System.Windows.Forms.PanelTS panelPAValues;
+    private System.Windows.Forms.CheckBoxTS chkPAValues;
+    private System.Windows.Forms.GroupBox grp100WattMeterTrim;
+    private System.Windows.Forms.RichTextBox richTextBox1;
+    private System.Windows.Forms.LabelTS labelTS254;
+    public System.Windows.Forms.TextBoxTS textDCVolts;
+    private System.Windows.Forms.ButtonTS btnResetPAValues;
+    private System.Windows.Forms.ButtonTS btnResetWattMeterValues;
+    private System.Windows.Forms.TabPage tpCATSerialPorts;
+    private System.Windows.Forms.GroupBoxTS grpCat4ControlBox;
+    private System.Windows.Forms.ComboBoxTS comboCAT4Port;
+    private System.Windows.Forms.ComboBoxTS comboCAT4baud;
+    private System.Windows.Forms.LabelTS lblCAT4Baud;
+    private System.Windows.Forms.LabelTS lblCAT4Port;
+    private System.Windows.Forms.CheckBoxTS chkCAT4Enable;
+    private System.Windows.Forms.LabelTS lblCAT4Parity;
+    private System.Windows.Forms.LabelTS lblCAT4Data;
+    private System.Windows.Forms.LabelTS lblCAT4Stop;
+    private System.Windows.Forms.ComboBoxTS comboCAT4parity;
+    private System.Windows.Forms.ComboBoxTS comboCAT4databits;
+    private System.Windows.Forms.ComboBoxTS comboCAT4stopbits;
+    private System.Windows.Forms.GroupBoxTS grpCat3ControlBox;
+    private System.Windows.Forms.ComboBoxTS comboCAT3Port;
+    private System.Windows.Forms.ComboBoxTS comboCAT3baud;
+    private System.Windows.Forms.LabelTS lblCAT3Baud;
+    private System.Windows.Forms.LabelTS lblCAT3Port;
+    private System.Windows.Forms.CheckBoxTS chkCAT3Enable;
+    private System.Windows.Forms.LabelTS lblCAT3Parity;
+    private System.Windows.Forms.LabelTS lblCAT3Data;
+    private System.Windows.Forms.LabelTS lblCAT3Stop;
+    private System.Windows.Forms.ComboBoxTS comboCAT3parity;
+    private System.Windows.Forms.ComboBoxTS comboCAT3databits;
+    private System.Windows.Forms.ComboBoxTS comboCAT3stopbits;
+    private System.Windows.Forms.GroupBoxTS grpCat2ControlBox;
+    private System.Windows.Forms.ComboBoxTS comboCAT2Port;
+    private System.Windows.Forms.ComboBoxTS comboCAT2baud;
+    private System.Windows.Forms.LabelTS lblCAT2Baud;
+    private System.Windows.Forms.LabelTS lblCAT2Port;
+    private System.Windows.Forms.CheckBoxTS chkCAT2Enable;
+    private System.Windows.Forms.LabelTS lblCAT2Parity;
+    private System.Windows.Forms.LabelTS lblCAT2Data;
+    private System.Windows.Forms.LabelTS lblCAT2Stop;
+    private System.Windows.Forms.ComboBoxTS comboCAT2parity;
+    private System.Windows.Forms.ComboBoxTS comboCAT2databits;
+    private System.Windows.Forms.ComboBoxTS comboCAT2stopbits;
+    private System.Windows.Forms.TextBoxTS txtCAT4;
+    private System.Windows.Forms.TextBoxTS txtCAT3;
+    private System.Windows.Forms.TextBoxTS txtCAT2;
+    private System.Windows.Forms.CheckBoxTS chkRX2StepAtt;
+    private System.Windows.Forms.GroupBoxTS grpGeneralHardwareORION;
+    private System.Windows.Forms.PanelTS panelOrionPTT;
+    private System.Windows.Forms.RadioButtonTS radOrionPTTOn;
+    private System.Windows.Forms.RadioButtonTS radOrionPTTOff;
+    private System.Windows.Forms.LabelTS lblOrionPTT;
+    private System.Windows.Forms.PanelTS panelOrionBias;
+    private System.Windows.Forms.RadioButtonTS radOrionBiasOn;
+    private System.Windows.Forms.RadioButtonTS radOrionBiasOff;
+    private System.Windows.Forms.LabelTS lblOrionBias;
+    private System.Windows.Forms.PanelTS panelOrionMic;
+    private System.Windows.Forms.RadioButtonTS radOrionMicRing;
+    private System.Windows.Forms.RadioButtonTS radOrionMicTip;
+    private System.Windows.Forms.LabelTS lblOrionMic;
+    private System.Windows.Forms.LabelTS labelTS144;
+    private System.Windows.Forms.LabelTS labelTS302;
+    private System.Windows.Forms.ComboBoxTS comboDSPTxWindow;
+    private System.Windows.Forms.ComboBoxTS comboDSPRxWindow;
+    private System.Windows.Forms.CheckBoxTS chkInvertTones;
+    private System.Windows.Forms.CheckBoxTS chkEXT1OutOnTx;
+    private System.Windows.Forms.CheckBoxTS chkEXT2OutOnTx;
+    private System.Windows.Forms.NumericUpDownTS udTXGenScale;
+    private System.Windows.Forms.LabelTS labelTS303;
+    private System.Windows.Forms.NumericUpDownTS udTXGenFreq;
+    private System.Windows.Forms.LabelTS labelTS304;
+    private System.Windows.Forms.GroupBoxTS grpTXGenSweep;
+    private System.Windows.Forms.LabelTS labelTS306;
+    private System.Windows.Forms.NumericUpDownTS udTXGenSweepRate;
+    private System.Windows.Forms.LabelTS labelTS305;
+    private System.Windows.Forms.NumericUpDownTS udTXGenSweepHigh;
+    private System.Windows.Forms.LabelTS labelTS52;
+    private System.Windows.Forms.NumericUpDownTS udTXGenSweepLow;
+    private System.Windows.Forms.GroupBoxTS grpRXGenSweep;
+    private System.Windows.Forms.LabelTS labelTS307;
+    private System.Windows.Forms.NumericUpDownTS udRXGenSweepRate;
+    private System.Windows.Forms.LabelTS labelTS308;
+    private System.Windows.Forms.NumericUpDownTS udRXGenSweepHigh;
+    private System.Windows.Forms.LabelTS labelTS309;
+    private System.Windows.Forms.NumericUpDownTS udRXGenSweepLow;
+    private System.Windows.Forms.NumericUpDownTS udRXGenFreq;
+    private System.Windows.Forms.LabelTS labelTS310;
+    private System.Windows.Forms.NumericUpDownTS udRXGenScale;
+    private System.Windows.Forms.LabelTS labelTS311;
+    private System.Windows.Forms.CheckBoxTS chkSigGenRX1;
+    private System.Windows.Forms.LabelTS labelTS313;
+    private System.Windows.Forms.LabelTS labelTS312;
+    private System.Windows.Forms.LabelTS labelTS314;
+    private System.Windows.Forms.GroupBoxTS grpExtTXInhibit;
+    private System.Windows.Forms.CheckBoxTS chkTXInhibit;
+    private System.Windows.Forms.CheckBoxTS chkTXInhibitSense;
+    private System.Windows.Forms.GroupBoxTS grpPulse;
+    private System.Windows.Forms.NumericUpDownTS udTXGenPulseDutyCycle;
+    private System.Windows.Forms.LabelTS labelTS316;
+    private System.Windows.Forms.NumericUpDownTS udTXGenPulseFreq;
+    private System.Windows.Forms.LabelTS labelTS315;
+    private System.Windows.Forms.NumericUpDownTS udTXGenPulseTransition;
+    private System.Windows.Forms.LabelTS labelTS317;
+    private System.Windows.Forms.TabPage tpDSPFM;
+    private System.Windows.Forms.GroupBoxTS grpFMTX;
+    private System.Windows.Forms.CheckBoxTS chkEmphPos;
+    private System.Windows.Forms.GroupBoxTS grpFMRX;
+    private System.Windows.Forms.CheckBoxTS chkRemoveTone;
+    private System.Windows.Forms.TabPage tpDSPEER;
+    private System.Windows.Forms.LabelTS labelTS320;
+    private System.Windows.Forms.NumericUpDownTS udDSPEERmdelay;
+    private System.Windows.Forms.LabelTS labelTS319;
+    private System.Windows.Forms.NumericUpDownTS udDSPEERpgain;
+    private System.Windows.Forms.LabelTS labelTS318;
+    private System.Windows.Forms.NumericUpDownTS udDSPEERmgain;
+    private System.Windows.Forms.CheckBoxTS chkDSPEERon;
+    private System.Windows.Forms.LabelTS labelTS321;
+    public System.Windows.Forms.CheckBoxTS chkDisable6mLNAonTX;
+    public System.Windows.Forms.CheckBoxTS chkDisable6mLNAonRX;
+    private System.Windows.Forms.CheckBoxTS chkDisableHPFonTX;
+    public System.Windows.Forms.RadioButtonTS radDHPFTXled;
+    private System.Windows.Forms.NumericUpDownTS udHWKeyDownDelay;
+    private System.Windows.Forms.LabelTS labelTS325;
+    private System.Windows.Forms.GroupBoxTS grpDDC6ADC;
+    private System.Windows.Forms.RadioButtonTS radDDC6ADC2;
+    private System.Windows.Forms.RadioButtonTS radDDC6ADC1;
+    private System.Windows.Forms.RadioButtonTS radDDC6ADC0;
+    private System.Windows.Forms.GroupBoxTS grpDDC5ADC;
+    private System.Windows.Forms.RadioButtonTS radDDC5ADC2;
+    private System.Windows.Forms.RadioButtonTS radDDC5ADC1;
+    private System.Windows.Forms.RadioButtonTS radDDC5ADC0;
+    private System.Windows.Forms.GroupBoxTS grpDDC4ADC;
+    private System.Windows.Forms.RadioButtonTS radDDC4ADC2;
+    private System.Windows.Forms.RadioButtonTS radDDC4ADC1;
+    private System.Windows.Forms.RadioButtonTS radDDC4ADC0;
+    private System.Windows.Forms.GroupBoxTS grpDDC3ADC;
+    private System.Windows.Forms.RadioButtonTS radDDC3ADC2;
+    private System.Windows.Forms.RadioButtonTS radDDC3ADC1;
+    private System.Windows.Forms.RadioButtonTS radDDC3ADC0;
+    private System.Windows.Forms.GroupBoxTS grpDDC2ADC;
+    private System.Windows.Forms.RadioButtonTS radDDC2ADC2;
+    private System.Windows.Forms.RadioButtonTS radDDC2ADC1;
+    private System.Windows.Forms.RadioButtonTS radDDC2ADC0;
+    private System.Windows.Forms.GroupBoxTS grpDDC1ADC;
+    private System.Windows.Forms.RadioButtonTS radDDC1ADC2;
+    private System.Windows.Forms.RadioButtonTS radDDC1ADC1;
+    private System.Windows.Forms.RadioButtonTS radDDC1ADC0;
+    private System.Windows.Forms.GroupBoxTS grpDDC0ADC;
+    private System.Windows.Forms.RadioButtonTS radDDC0ADC2;
+    private System.Windows.Forms.RadioButtonTS radDDC0ADC1;
+    private System.Windows.Forms.RadioButtonTS radDDC0ADC0;
+    private System.Windows.Forms.LabelTS labelTS322;
+    private System.Windows.Forms.NumericUpDownTS udCWKeyUpDelay;
+    private System.Windows.Forms.GroupBoxTS grpCWDelay;
+    private System.Windows.Forms.CheckBoxTS chkDSPEERamIQ;
+    private System.Windows.Forms.LabelTS labelTS326;
+    private System.Windows.Forms.ComboBoxTS comboDSPNOBmode;
+    private System.Windows.Forms.CheckBoxTS chkClickTuneDrag;
+    private System.Windows.Forms.TextBoxTS txtZZSN;
+    private System.Windows.Forms.LabelTS labelTS323;
+    private System.Windows.Forms.NumericUpDownTS ud6mLNAGainOffset;
+    private System.Windows.Forms.LabelTS labelTS324;
+    private System.Windows.Forms.GroupBoxTS grpAudioSampleRateRX2;
+    private System.Windows.Forms.ComboBoxTS comboAudioSampleRateRX2;
+    private System.Windows.Forms.TabControl tcDSP;
+    private System.Windows.Forms.TabPage tpDSPOptions;
+    private System.Windows.Forms.CheckBoxTS chkDSPTXMeterPeak;
+    private System.Windows.Forms.GroupBoxTS grpDSPBufferSize;
+    private System.Windows.Forms.GroupBoxTS grpDSPBufDig;
+    private System.Windows.Forms.ComboBoxTS comboDSPDigTXBuf;
+    private System.Windows.Forms.LabelTS lblDSPDigBufferRX;
+    private System.Windows.Forms.ComboBoxTS comboDSPDigRXBuf;
+    private System.Windows.Forms.LabelTS lblDSPDigBufferTX;
+    private System.Windows.Forms.GroupBoxTS grpDSPBufCW;
+    private System.Windows.Forms.LabelTS lblDSPCWBufferRX;
+    private System.Windows.Forms.ComboBoxTS comboDSPCWRXBuf;
+    private System.Windows.Forms.GroupBoxTS grpDSPBufPhone;
+    private System.Windows.Forms.ComboBoxTS comboDSPPhoneTXBuf;
+    private System.Windows.Forms.LabelTS lblDSPPhoneBufferRX;
+    private System.Windows.Forms.ComboBoxTS comboDSPPhoneRXBuf;
+    private System.Windows.Forms.LabelTS lblDSPPhoneBufferTX;
+    private System.Windows.Forms.GroupBoxTS grpDSPNB;
+    private System.Windows.Forms.NumericUpDownTS udDSPNB;
+    private System.Windows.Forms.LabelTS lblDSPNBThreshold;
+    private System.Windows.Forms.GroupBoxTS grpDSPLMSNR;
+    private System.Windows.Forms.LabelTS lblLMSNRLeak;
+    private System.Windows.Forms.NumericUpDownTS udLMSNRLeak;
+    private System.Windows.Forms.LabelTS lblLMSNRgain;
+    private System.Windows.Forms.NumericUpDownTS udLMSNRgain;
+    private System.Windows.Forms.NumericUpDownTS udLMSNRdelay;
+    private System.Windows.Forms.LabelTS lblLMSNRdelay;
+    private System.Windows.Forms.NumericUpDownTS udLMSNRtaps;
+    private System.Windows.Forms.LabelTS lblLMSNRtaps;
+    private System.Windows.Forms.GroupBoxTS grpDSPLMSANF;
+    private System.Windows.Forms.LabelTS lblLMSANFLeak;
+    private System.Windows.Forms.NumericUpDownTS udLMSANFLeak;
+    private System.Windows.Forms.LabelTS lblLMSANFgain;
+    private System.Windows.Forms.NumericUpDownTS udLMSANFgain;
+    private System.Windows.Forms.LabelTS lblLMSANFdelay;
+    private System.Windows.Forms.NumericUpDownTS udLMSANFdelay;
+    private System.Windows.Forms.LabelTS lblLMSANFTaps;
+    private System.Windows.Forms.NumericUpDownTS udLMSANFtaps;
+    private System.Windows.Forms.GroupBoxTS grpDSPWintype;
+    private System.Windows.Forms.TabPage tpDSPKeyer;
+    private System.Windows.Forms.CheckBoxTS chkCWDisableUI;
+    private System.Windows.Forms.GroupBoxTS grpKeyerConnections;
+    private System.Windows.Forms.ComboBoxTS comboKeyerConnKeyLine;
+    private System.Windows.Forms.ComboBoxTS comboKeyerConnSecondary;
+    private System.Windows.Forms.LabelTS lblKeyerConnSecondary;
+    private System.Windows.Forms.LabelTS lblKeyerConnKeyLine;
+    private System.Windows.Forms.ComboBoxTS comboKeyerConnPTTLine;
+    private System.Windows.Forms.LabelTS lblKeyerConnPrimary;
+    private System.Windows.Forms.LabelTS lblKeyerConnPTTLine;
+    private System.Windows.Forms.ComboBoxTS comboKeyerConnPrimary;
+    private System.Windows.Forms.GroupBoxTS grpDSPCWPitch;
+    private System.Windows.Forms.LabelTS lblDSPCWPitchFreq;
+    private System.Windows.Forms.NumericUpDownTS udDSPCWPitch;
+    private System.Windows.Forms.GroupBoxTS grpDSPKeyerOptions;
+    private System.Windows.Forms.NumericUpDownTS udCWKeyerWeight;
+    private System.Windows.Forms.CheckBoxTS chkDSPKeyerSidetone;
+    private System.Windows.Forms.CheckBoxTS chkStrictCharSpacing;
+    private System.Windows.Forms.CheckBoxTS chkCWKeyerMode;
+    private System.Windows.Forms.CheckBoxTS chkCWKeyerRevPdl;
+    private System.Windows.Forms.LabelTS lblCWWeight;
+    private System.Windows.Forms.CheckBoxTS chkCWKeyerIambic;
+    private System.Windows.Forms.CheckBoxTS chkCWAutoSwitchMode;
+    private System.Windows.Forms.GroupBoxTS grpDSPKeyerSemiBreakIn;
+    private System.Windows.Forms.CheckBoxTS chkCWBreakInEnabled;
+    private System.Windows.Forms.LabelTS lblCWBreakInDelay;
+    private System.Windows.Forms.NumericUpDownTS udCWBreakInDelay;
+    private System.Windows.Forms.TabPage tpDSPAGCALC;
+    private System.Windows.Forms.CheckBoxTS chkRX2HangSpectrumLine;
+    private System.Windows.Forms.CheckBoxTS chkDisplayRX2HangLine;
+    private System.Windows.Forms.CheckBoxTS chkRX2GainSpectrumLine;
+    private System.Windows.Forms.CheckBoxTS chkDisplayRX2GainLine;
+    private System.Windows.Forms.GroupBoxTS grpDSPLeveler;
+    private System.Windows.Forms.CheckBoxTS chkDSPLevelerEnabled;
+    private System.Windows.Forms.LabelTS lblDSPLevelerHangThreshold;
+    private System.Windows.Forms.NumericUpDownTS udDSPLevelerHangTime;
+    private System.Windows.Forms.LabelTS lblDSPLevelerHangTime;
+    private System.Windows.Forms.NumericUpDownTS udDSPLevelerThreshold;
+    private System.Windows.Forms.NumericUpDownTS udDSPLevelerSlope;
+    private System.Windows.Forms.NumericUpDownTS udDSPLevelerDecay;
+    private System.Windows.Forms.LabelTS lblDSPLevelerSlope;
+    private System.Windows.Forms.NumericUpDownTS udDSPLevelerAttack;
+    private System.Windows.Forms.LabelTS lblDSPLevelerDecay;
+    private System.Windows.Forms.LabelTS lblDSPLevelerAttack;
+    private System.Windows.Forms.LabelTS lblDSPLevelerThreshold;
+    private System.Windows.Forms.TrackBarTS tbDSPLevelerHangThreshold;
+    private System.Windows.Forms.GroupBoxTS grpDSPALC;
+    private System.Windows.Forms.LabelTS lblDSPALCHangThreshold;
+    private System.Windows.Forms.TrackBarTS tbDSPALCHangThreshold;
+    private System.Windows.Forms.NumericUpDownTS udDSPALCHangTime;
+    private System.Windows.Forms.LabelTS lblDSPALCHangTime;
+    private System.Windows.Forms.NumericUpDownTS udDSPALCMaximumGain;
+    private System.Windows.Forms.NumericUpDownTS udDSPALCSlope;
+    private System.Windows.Forms.NumericUpDownTS udDSPALCDecay;
+    private System.Windows.Forms.LabelTS lblDSPALCSlope;
+    private System.Windows.Forms.NumericUpDownTS udDSPALCAttack;
+    private System.Windows.Forms.LabelTS lblDSPALCDecay;
+    private System.Windows.Forms.LabelTS lblDSPALCAttack;
+    private System.Windows.Forms.LabelTS lblDSPALCThreshold;
+    private System.Windows.Forms.GroupBoxTS grpDSPAGC;
+    private System.Windows.Forms.CheckBoxTS chkAGCHangSpectrumLine;
+    private System.Windows.Forms.CheckBoxTS chkAGCDisplayHangLine;
+    private System.Windows.Forms.CheckBoxTS chkSpectrumLine;
+    private System.Windows.Forms.CheckBoxTS chkShowAGC;
+    private System.Windows.Forms.LabelTS labelTS138;
+    private System.Windows.Forms.Label label13;
+    private System.Windows.Forms.Label lblRX1Vol;
+    private System.Windows.Forms.LabelTS labelTS137;
+    private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2HangTime;
+    private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2Decay;
+    private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2Attack;
+    private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2Slope;
+    public System.Windows.Forms.TrackBarTS tbDSPAGCRX2HangThreshold;
+    private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2MaxGaindB;
+    private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2FixedGaindB;
+    public System.Windows.Forms.TrackBarTS tbDSPAGCHangThreshold;
+    private System.Windows.Forms.LabelTS lblDSPAGCHangThreshold;
+    private System.Windows.Forms.LabelTS lblDSPAGCHangTime;
+    private System.Windows.Forms.NumericUpDownTS udDSPAGCHangTime;
+    private System.Windows.Forms.NumericUpDownTS udDSPAGCMaxGaindB;
+    private System.Windows.Forms.NumericUpDownTS udDSPAGCSlope;
+    private System.Windows.Forms.NumericUpDownTS udDSPAGCDecay;
+    private System.Windows.Forms.LabelTS lblDSPAGCSlope;
+    private System.Windows.Forms.NumericUpDownTS udDSPAGCAttack;
+    private System.Windows.Forms.LabelTS lblDSPAGCDecay;
+    private System.Windows.Forms.LabelTS lblDSPAGCAttack;
+    private System.Windows.Forms.LabelTS lblDSPAGCMaxGain;
+    private System.Windows.Forms.NumericUpDownTS udDSPAGCFixedGaindB;
+    private System.Windows.Forms.LabelTS lblDSPAGCFixed;
+    private System.Windows.Forms.TabPage tpDSPAudio;
+    private System.Windows.Forms.GroupBoxTS grpDSPAudRX1APF;
+    private System.Windows.Forms.LabelTS labelRX1APFBWR;
+    private System.Windows.Forms.LabelTS labelRX1APFBWL;
+    private System.Windows.Forms.LabelTS labelRX1APFTuneR;
+    private System.Windows.Forms.LabelTS labelRX1APFtuneL;
+    private System.Windows.Forms.LabelTS labelRX1APFTuneC;
+    private System.Windows.Forms.LabelTS labelRX1APFBW;
+    private System.Windows.Forms.LabelTS labelRX1APFTune;
+    private System.Windows.Forms.TrackBarTS tbRX1APFBW;
+    private System.Windows.Forms.TrackBarTS tbRX1APFTune;
+    private System.Windows.Forms.LabelTS labelRX1APFGain;
+    private System.Windows.Forms.CheckBoxTS chkDSPRX1APFEnable;
+    private System.Windows.Forms.GroupBoxTS grpDSPAudRX2APF;
+    private System.Windows.Forms.LabelTS labelRX2APFBWR;
+    private System.Windows.Forms.LabelTS labelRX2APFBWL;
+    private System.Windows.Forms.LabelTS labelRX2APFTuneR;
+    private System.Windows.Forms.LabelTS labelRX2APFTuneL;
+    private System.Windows.Forms.LabelTS labelRX2APFTuneC;
+    private System.Windows.Forms.LabelTS labelRX2APFBW;
+    private System.Windows.Forms.LabelTS labelRX2APFTune;
+    private System.Windows.Forms.TrackBarTS tbRX2APFBW;
+    private System.Windows.Forms.TrackBarTS tbRX2APFTune;
+    private System.Windows.Forms.LabelTS labelRX2APFGain;
+    private System.Windows.Forms.CheckBoxTS chkDSPRX2APFEnable;
+    private System.Windows.Forms.GroupBoxTS grpDSPAudRX1subAPF;
+    private System.Windows.Forms.LabelTS labelRX1subAPFBWR;
+    private System.Windows.Forms.LabelTS labelRX1subAPFBWL;
+    private System.Windows.Forms.LabelTS labelRX1subAPFTuneR;
+    private System.Windows.Forms.LabelTS labelRX1subAPFTuneL;
+    private System.Windows.Forms.LabelTS labelRX1subAPFTuneC;
+    private System.Windows.Forms.LabelTS labelRX1subAPFBW;
+    private System.Windows.Forms.LabelTS labelRX1subAPFTune;
+    private System.Windows.Forms.TrackBarTS tbRX1subAPFBW;
+    private System.Windows.Forms.TrackBarTS tbRX1subAPFTune;
+    private System.Windows.Forms.LabelTS labelRX1subAPFGain;
+    private System.Windows.Forms.CheckBoxTS chkDSPRX1subAPFEnable;
+    private System.Windows.Forms.GroupBoxTS grpDSPAudAPFControls;
+    private System.Windows.Forms.TrackBarTS tbDSPAudRX2APFGain;
+    private System.Windows.Forms.TrackBarTS tbDSPAudRX1subAPFGain;
+    private System.Windows.Forms.TrackBarTS tbDSPAudRX1APFGain;
+    private System.Windows.Forms.GroupBoxTS grpDSPAudRX1Dolly;
+    private System.Windows.Forms.NumericUpDownTS udDSPRX1DollyF0;
+    private System.Windows.Forms.CheckBoxTS chkDSPRX1DollyEnable;
+    private System.Windows.Forms.LabelTS labelDSPRX1DollyF1;
+    private System.Windows.Forms.LabelTS labelDSPRX1DollyF0;
+    private System.Windows.Forms.NumericUpDownTS udDSPRX1DollyF1;
+    private System.Windows.Forms.GroupBoxTS grpDSPAudRX1SubDolly;
+    private System.Windows.Forms.LabelTS labelDSPRX1SubDollyF1;
+    private System.Windows.Forms.LabelTS labelDSPRX1SubDollyF0;
+    private System.Windows.Forms.NumericUpDownTS udDSPRX1SubDollyF1;
+    private System.Windows.Forms.NumericUpDownTS udDSPRX1SubDollyF0;
+    private System.Windows.Forms.CheckBoxTS chkDSPRX1SubDollyEnable;
+    private System.Windows.Forms.GroupBoxTS grpDSPAudRX2Dolly;
+    private System.Windows.Forms.LabelTS labelDSPRX2DollyF1;
+    private System.Windows.Forms.LabelTS labelDSPRX2DollyF0;
+    private System.Windows.Forms.NumericUpDownTS udDSPRX2DollyF1;
+    private System.Windows.Forms.NumericUpDownTS udDSPRX2DollyF0;
+    private System.Windows.Forms.CheckBoxTS chkDSPRX2DollyEnable;
+    private System.Windows.Forms.RadioButtonTS radDSPRX2APFControls;
+    private System.Windows.Forms.RadioButtonTS radDSPRX1subAPFControls;
+    private System.Windows.Forms.RadioButtonTS radDSPRX1APFControls;
+    private System.Windows.Forms.LabelTS labelTS327;
+    private System.Windows.Forms.NumericUpDownTS udDSPEERpdelay;
+    private System.Windows.Forms.CheckBoxTS chkDSPEERRunDelays;
+    private System.Windows.Forms.GroupBoxTS grpDSPEERpwm;
+    private System.Windows.Forms.NumericUpDownTS udDSPEERpwmMin;
+    private System.Windows.Forms.NumericUpDownTS udDSPEERpwmMax;
+    private System.Windows.Forms.LabelTS labelTS329;
+    private System.Windows.Forms.LabelTS labelTS328;
+    private System.Windows.Forms.CheckBoxTS chkRX1BlankDisplayOnVFOBTX;
+    private System.Windows.Forms.GroupBoxTS grpDSPSpeechProcessor;
+    private System.Windows.Forms.CheckBoxTS chkDSPCESSB;
+    private System.Windows.Forms.GroupBoxTS grpAMSQMaxTail;
+    private System.Windows.Forms.LabelTS labelTS355;
+    private System.Windows.Forms.NumericUpDownTS udRXAMSQMaxTail;
+    private System.Windows.Forms.TabPage tpDSPNR;
+    private System.Windows.Forms.GroupBoxTS grpDSPNR2;
+    private System.Windows.Forms.GroupBoxTS grpDSPGainMethod;
+    private System.Windows.Forms.RadioButtonTS radDSPNR2Log;
+    private System.Windows.Forms.RadioButtonTS radDSPNR2Linear;
+    private System.Windows.Forms.GroupBoxTS grpDSPNR2NPEMethod;
+    private System.Windows.Forms.RadioButtonTS radDSPNR2MMSE;
+    private System.Windows.Forms.RadioButtonTS radDSPNR2OSMS;
+    private System.Windows.Forms.CheckBoxTS chkDSPNR2AE;
+    private System.Windows.Forms.GroupBoxTS grpDSPNR2RX2;
+    private System.Windows.Forms.GroupBoxTS grpDSPNR2NPEMethodRX2;
+    private System.Windows.Forms.RadioButtonTS radDSPNR2MMSERX2;
+    private System.Windows.Forms.RadioButtonTS radDSPNR2OSMSRX2;
+    private System.Windows.Forms.CheckBoxTS chkDSPNR2AERX2;
+    private System.Windows.Forms.GroupBoxTS grpDSPGainMethodRX2;
+    private System.Windows.Forms.RadioButtonTS radDSPNR2LogRX2;
+    private System.Windows.Forms.RadioButtonTS radDSPNR2LinearRX2;
+    private System.Windows.Forms.RadioButtonTS radDSPNR2GammaRX2;
+    private System.Windows.Forms.RadioButtonTS radDSPNR2Gamma;
+    private System.Windows.Forms.CheckBoxTS chkLimitExtAmpOnOverload;
+    private System.Windows.Forms.GroupBoxTS grpFocusMaster;
+    private System.Windows.Forms.TextBoxTS txtFocusMasterDelay;
+    private System.Windows.Forms.LabelTS labelTS359;
+    private System.Windows.Forms.LabelTS labelTS358;
+    private System.Windows.Forms.LabelTS labelTS357;
+    private System.Windows.Forms.LabelTS labelTS356;
+    private System.Windows.Forms.TextBoxTS txtFocusMasterWinTitle;
+    private System.Windows.Forms.TextBoxTS txtFocusMasterUDPPort;
+    private System.Windows.Forms.ComboBoxTS comboFocusMasterMode;
+    private System.Windows.Forms.CheckBoxTS chkEnableLEDFont;
+    private System.Windows.Forms.CheckBoxTS chkDisableRXOut;
+    private System.Windows.Forms.CheckBoxTS chkSplitPins;
+    private System.Windows.Forms.TabPage tpDSPMNF;
+    private System.Windows.Forms.GroupBoxTS grpDSPMNF;
+    private System.Windows.Forms.CheckBoxTS chkMNFAutoIncrease;
+    private System.Windows.Forms.ButtonTS btnMNFDelete;
+    private System.Windows.Forms.ButtonTS btnMNFCancel;
+    private System.Windows.Forms.ButtonTS btnMNFEdit;
+    private System.Windows.Forms.CheckBoxTS chkMNFActive;
+    private System.Windows.Forms.ButtonTS btnMNFRun;
+    private System.Windows.Forms.ButtonTS btnMNFEnter;
+    private System.Windows.Forms.ButtonTS btnMNFAdd;
+    private System.Windows.Forms.LabelTS lblMNFWidth;
+    private System.Windows.Forms.LabelTS lblMNFFreq;
+    private System.Windows.Forms.LabelTS lblMNFName;
+    private System.Windows.Forms.NumericUpDownTS udMNFWidth;
+    private System.Windows.Forms.NumericUpDownTS udMNFFreq;
+    private System.Windows.Forms.NumericUpDownTS udMNFNotch;
+    private System.Windows.Forms.CheckBoxTS chkMNFRun;
+    private System.Windows.Forms.ButtonTS btnVFOFreq;
+    private System.Windows.Forms.LabelTS labelTS361;
+    private System.Windows.Forms.LabelTS labelTS360;
+    private System.Windows.Forms.CheckBoxTS chkAudioLatencyManual2_Out;
+    private System.Windows.Forms.NumericUpDownTS udAudioLatency2_Out;
+    private System.Windows.Forms.CheckBoxTS chkNetworkWDT;
+    private System.Windows.Forms.LabelTS labelTS364;
+    private System.Windows.Forms.LabelTS labelTS365;
+    private System.Windows.Forms.CheckBoxTS chkAudioLatencyPAOutManual;
+    private System.Windows.Forms.NumericUpDownTS udAudioLatencyPAOut;
+    private System.Windows.Forms.CheckBoxTS chkAudioLatencyPAInManual;
+    private System.Windows.Forms.NumericUpDownTS udAudioLatencyPAIn;
+    private System.Windows.Forms.LabelTS labelTS363;
+    private System.Windows.Forms.LabelTS labelTS362;
+    private System.Windows.Forms.LabelTS labelTS369;
+    private System.Windows.Forms.LabelTS labelTS370;
+    private System.Windows.Forms.CheckBoxTS chkVAC2LatencyPAOutManual;
+    private System.Windows.Forms.NumericUpDownTS udVAC2LatencyPAOut;
+    private System.Windows.Forms.CheckBoxTS chkVAC2LatencyPAInManual;
+    private System.Windows.Forms.NumericUpDownTS udVAC2LatencyPAIn;
+    private System.Windows.Forms.LabelTS labelTS371;
+    private System.Windows.Forms.CheckBoxTS chkVAC2LatencyOutManual;
+    private System.Windows.Forms.NumericUpDownTS udVAC2LatencyOut;
+    private System.Windows.Forms.LabelTS labelTS368;
+    private System.Windows.Forms.LabelTS labelTS367;
+    private System.Windows.Forms.LabelTS labelTS366;
+    private System.Windows.Forms.LabelTS lblDispAv;
+    private System.Windows.Forms.ComboBoxTS comboDispPanAveraging;
+    private System.Windows.Forms.LabelTS lblDispDet;
+    private System.Windows.Forms.ComboBoxTS comboDispPanDetector;
+    private System.Windows.Forms.GroupBoxTS grpWaterfallAverage;
+    private System.Windows.Forms.LabelTS labelTS372;
+    private System.Windows.Forms.ComboBoxTS comboDispWFAveraging;
+    private System.Windows.Forms.LabelTS labelTS373;
+    private System.Windows.Forms.ComboBoxTS comboDispWFDetector;
+    private System.Windows.Forms.NumericUpDownTS udDisplayAVTimeWF;
+    private System.Windows.Forms.LabelTS labelTS374;
+    private System.Windows.Forms.GroupBoxTS grpRX2DisplayAveraging;
+    private System.Windows.Forms.LabelTS labelTS375;
+    private System.Windows.Forms.ComboBoxTS comboRX2DispWFAveraging;
+    private System.Windows.Forms.LabelTS labelTS376;
+    private System.Windows.Forms.ComboBoxTS comboRX2DispWFDetector;
+    private System.Windows.Forms.NumericUpDownTS udRX2DisplayWFAVTime;
+    private System.Windows.Forms.LabelTS labelTS377;
+    private System.Windows.Forms.LabelTS lblRX2PanAv;
+    private System.Windows.Forms.ComboBoxTS comboRX2DispPanAveraging;
+    private System.Windows.Forms.LabelTS lblRX2PanDet;
+    private System.Windows.Forms.ComboBoxTS comboRX2DispPanDetector;
+    private System.Windows.Forms.CheckBoxTS chkDispNormalize;
+    private System.Windows.Forms.CheckBoxTS chkDispRX2Normalize;
+    private System.Windows.Forms.GroupBoxTS groupBoxTS7;
+    private System.Windows.Forms.CheckBoxTS chkDispTXNormalize;
+    private System.Windows.Forms.LabelTS labelTS378;
+    private System.Windows.Forms.ComboBoxTS comboTXDispPanAveraging;
+    private System.Windows.Forms.LabelTS labelTS379;
+    private System.Windows.Forms.ComboBoxTS comboTXDispPanDetector;
+    private System.Windows.Forms.NumericUpDownTS udTXDisplayAVGTime;
+    private System.Windows.Forms.LabelTS labelTS380;
+    private System.Windows.Forms.GroupBoxTS groupBoxTS8;
+    private System.Windows.Forms.ComboBoxTS comboTXDispWinType;
+    private System.Windows.Forms.LabelTS labelTS381;
+    private System.Windows.Forms.LabelTS labelTS382;
+    private System.Windows.Forms.LabelTS labelTS383;
+    private System.Windows.Forms.LabelTS lblTXDispBinWidth;
+    private System.Windows.Forms.LabelTS labelTS385;
+    private System.Windows.Forms.LabelTS labelTS386;
+    public System.Windows.Forms.TrackBarTS tbTXDisplayFFTSize;
+    private System.Windows.Forms.GroupBoxTS groupBoxTS9;
+    private System.Windows.Forms.LabelTS labelTS384;
+    private System.Windows.Forms.ComboBoxTS comboTXDispWFAveraging;
+    private System.Windows.Forms.LabelTS labelTS387;
+    private System.Windows.Forms.ComboBoxTS comboTXDispWFDetector;
+    private System.Windows.Forms.NumericUpDownTS udTXDisplayAVTime;
+    private System.Windows.Forms.LabelTS labelTS388;
+    private System.Windows.Forms.GroupBox groupBox1;
+    private System.Windows.Forms.Button btnConfigure;
+    private System.Windows.Forms.GroupBoxTS grpKBPTT;
+    private System.Windows.Forms.LabelTS labelTS389;
+    private System.Windows.Forms.LabelTS labelTS390;
+    private System.Windows.Forms.ComboBoxTS comboKBPTTTx;
+    private System.Windows.Forms.ComboBoxTS comboKBPTTRx;
+    private System.Windows.Forms.GroupBoxTS grpDSPFilterType;
+    private System.Windows.Forms.GroupBoxTS grpDSPFiltTypeFM;
+    private System.Windows.Forms.ComboBoxTS comboDSPFMTXFiltType;
+    private System.Windows.Forms.LabelTS labelTS391;
+    private System.Windows.Forms.ComboBoxTS comboDSPFMRXFiltType;
+    private System.Windows.Forms.LabelTS labelTS392;
+    private System.Windows.Forms.GroupBoxTS grpDSPFiltTypeDig;
+    private System.Windows.Forms.ComboBoxTS comboDSPDigTXFiltType;
+    private System.Windows.Forms.LabelTS labelTS393;
+    private System.Windows.Forms.ComboBoxTS comboDSPDigRXFiltType;
+    private System.Windows.Forms.LabelTS labelTS394;
+    private System.Windows.Forms.GroupBoxTS grpDSPFiltTypeCW;
+    private System.Windows.Forms.LabelTS labelTS395;
+    private System.Windows.Forms.ComboBoxTS comboDSPCWRXFiltType;
+    private System.Windows.Forms.GroupBoxTS grpDSPFiltTypePhone;
+    private System.Windows.Forms.ComboBoxTS comboDSPPhoneTXFiltType;
+    private System.Windows.Forms.LabelTS labelTS396;
+    private System.Windows.Forms.ComboBoxTS comboDSPPhoneRXFiltType;
+    private System.Windows.Forms.LabelTS labelTS397;
+    private System.Windows.Forms.GroupBoxTS grpDSPFilterSize;
+    private System.Windows.Forms.GroupBoxTS grpDSPFiltSizeFM;
+    private System.Windows.Forms.ComboBoxTS comboDSPFMTXFiltSize;
+    private System.Windows.Forms.LabelTS labelTS398;
+    private System.Windows.Forms.ComboBoxTS comboDSPFMRXFiltSize;
+    private System.Windows.Forms.LabelTS labelTS399;
+    private System.Windows.Forms.GroupBoxTS grpDSPFiltSizeDig;
+    private System.Windows.Forms.ComboBoxTS comboDSPDigTXFiltSize;
+    private System.Windows.Forms.LabelTS labelTS400;
+    private System.Windows.Forms.ComboBoxTS comboDSPDigRXFiltSize;
+    private System.Windows.Forms.LabelTS labelTS401;
+    private System.Windows.Forms.GroupBoxTS grpDSPFiltSizeCW;
+    private System.Windows.Forms.LabelTS labelTS402;
+    private System.Windows.Forms.ComboBoxTS comboDSPCWRXFiltSize;
+    private System.Windows.Forms.GroupBoxTS grpDSPFiltSizePhone;
+    private System.Windows.Forms.ComboBoxTS comboDSPPhoneTXFiltSize;
+    private System.Windows.Forms.LabelTS labelTS403;
+    private System.Windows.Forms.ComboBoxTS comboDSPPhoneRXFiltSize;
+    private System.Windows.Forms.LabelTS labelTS404;
+    private System.Windows.Forms.GroupBoxTS grpDSPBufFM;
+    private System.Windows.Forms.ComboBoxTS comboDSPFMTXBuf;
+    private System.Windows.Forms.LabelTS labelTS405;
+    private System.Windows.Forms.ComboBoxTS comboDSPFMRXBuf;
+    private System.Windows.Forms.LabelTS labelTS406;
+    private System.Windows.Forms.TabPage tpDSPNB;
+    private System.Windows.Forms.GroupBoxTS grpDSPSNB;
+    private System.Windows.Forms.NumericUpDownTS udDSPSNBThresh2;
+    private System.Windows.Forms.LabelTS lblDSPSNBThresh2;
+    private System.Windows.Forms.NumericUpDownTS udDSPSNBThresh1;
+    private System.Windows.Forms.LabelTS lblDSPSNBThresh1;
+    private PanelTS panelAlex2LPFControl;
+    private GroupBoxTS groupBoxTS1;
+    private RadioButtonTS radSplitPins3x4;
+    private RadioButtonTS radSplitPins4x3;
+    private CheckBoxTS chkBPF2Gnd;
+    private PanelTS panelBPFControl;
+    private LabelTS labelTS116;
+    private LabelTS labelTS457;
+    private CheckBoxTS chkBPF1_20BP;
+    private NumericUpDownTS ud1_5BPF1Start;
+    private CheckBoxTS chkBPF1_6_5BP;
+    private NumericUpDownTS ud1_5BPF1End;
+    private CheckBoxTS chkBPF1_9_5BP;
+    private NumericUpDownTS ud6_5BPF1Start;
+    private CheckBoxTS chkBPF1_6BP;
+    private NumericUpDownTS ud6_5BPF1End;
+    private CheckBoxTS chkBPF1_13BP;
+    private NumericUpDownTS ud9_5BPF1Start;
+    private CheckBoxTS chkBPF1_1_5BP;
+    private NumericUpDownTS ud9_5BPF1End;
+    private NumericUpDownTS ud20BPF1End;
+    private NumericUpDownTS ud13BPF1End;
+    private NumericUpDownTS ud20BPF1Start;
+    private PanelTS panelTS8;
+    private RadioButtonTS radBPF1BPTXled;
+    private RadioButtonTS radBPBPF1led;
+    private RadioButtonTS rad1_5BPF1led;
+    private RadioButtonTS rad6_5BPF1led;
+    private RadioButtonTS rad9_5BPF1led;
+    private RadioButtonTS rad13BPF1led;
+    private RadioButtonTS rad20BPF1led;
+    private RadioButtonTS rad6BPF1led;
+    private NumericUpDownTS ud13BPF1Start;
+    private LabelTS labelTS458;
+    private LabelTS labelBPF1;
+    private NumericUpDownTS ud6BPF1Start;
+    private LabelTS labelTS460;
+    private NumericUpDownTS ud6BPF1End;
+    private LabelTS labelTS461;
+    private LabelTS labelTS462;
+    private LabelTS labelTS463;
+    private LabelTS labelTS464;
+    public TrackBarTS tbGrayLineAlpha;
+    private ColorButton clrbtnGrayLine;
+    private LabelTS labelgrayline;
+    private CheckBoxTS chkWheelReverse;
+    private System.Windows.Forms.GroupBoxTS grpDisplay8000DLE;
+    private System.Windows.Forms.CheckBoxTS chkANAN8000DLEDisplayVoltsAmps;
+    private NumericUpDownTS ud6mRx2LNAGainOffset;
+    private LabelTS lblRx26mLNA;
+    private TabPage tpTCITCPIPN1MM;
+    public GroupBoxTS groupBoxTS10;
+    private ButtonTS btnTuneStepChangeLarger2;
+    private ButtonTS btnTuneStepChangeSmaller2;
+    public TextBoxTS txtWheelTune2;
+    public CheckBoxTS chkBoxIND;
+    private LabelTS labelTS469;
+    public CheckBoxTS chkBoxPM;
+    public NumericUpDownTS udSpeedPM;
+    private GroupBox groupBox2;
+    private LabelTS labelTS459;
+    public CheckBoxTS chkBoxHttp2;
+    private LabelTS labelTS465;
+    public NumericUpDownTS udHttpRefresh;
+    public TextBoxTS txtHttpPass;
+    public TextBoxTS txtHttpUser;
+    private LabelTS labelTS466;
+    private LabelTS labelTS467;
+    private LabelTS labelTS468;
+    public NumericUpDownTS udHttpPort;
+    public CheckBoxTS chkBoxHTTP;
+    private GroupBox grp200WattMeterTrim;
+    private NumericUpDownTS ud200PA20W;
+    private NumericUpDownTS ud200PA200W;
+    private LabelTS label200PA180W;
+    private LabelTS label200PA200W;
+    private NumericUpDownTS ud200PA180W;
+    private LabelTS label200PA220W;
+    private LabelTS label200PA160W;
+    private NumericUpDownTS ud200PA220W;
+    private NumericUpDownTS ud200PA160W;
+    private NumericUpDownTS ud200PA240W;
+    private LabelTS label200PA140W;
+    private LabelTS label200PA240W;
+    private NumericUpDownTS ud200PA140W;
+    private NumericUpDownTS ud200PA260W;
+    private LabelTS label200PA120W;
+    private LabelTS label200PA20W;
+    private LabelTS label200PA260W;
+    private NumericUpDownTS ud200PA120W;
+    private NumericUpDownTS ud200PA280W;
+    private LabelTS label200PA100W;
+    private NumericUpDownTS ud200PA40W;
+    private LabelTS label200PA280W;
+    private NumericUpDownTS ud200PA100W;
+    private LabelTS label200PA40W;
+    private LabelTS label200PA80W;
+    private NumericUpDownTS ud200PA80W;
+    private NumericUpDownTS ud200PA60W;
+    private LabelTS label200PA60W;
+    private GroupBox grp10WattMeterTrim;
+    private NumericUpDownTS ud10PA1W;
+    private NumericUpDownTS ud10PA10W;
+    private LabelTS label10PA9W;
+    private LabelTS label10PA10W;
+    private NumericUpDownTS ud10PA9W;
+    private LabelTS label10PA11W;
+    private LabelTS label10PA8W;
+    private NumericUpDownTS ud10PA11W;
+    private NumericUpDownTS ud10PA8W;
+    private NumericUpDownTS ud10PA12W;
+    private LabelTS label10PA7W;
+    private LabelTS label10PA12W;
+    private NumericUpDownTS ud10PA7W;
+    private NumericUpDownTS ud10PA13W;
+    private LabelTS label10PA6W;
+    private LabelTS label10PA1W;
+    private LabelTS label10PA13W;
+    private NumericUpDownTS ud10PA6W;
+    private NumericUpDownTS ud10PA14W;
+    private LabelTS label10PA5W;
+    private NumericUpDownTS ud10PA2W;
+    private LabelTS label10PA14W;
+    private NumericUpDownTS ud10PA5W;
+    private LabelTS label10PA2W;
+    private LabelTS label10PA4W;
+    private NumericUpDownTS ud10PA4W;
+    private NumericUpDownTS ud10PA3W;
+    private LabelTS label10PA3W;
+    public TextBoxTS textSWR;
+    private LabelTS labelTS256;
+    public TextBoxTS textCaldFwdPower;
+    private LabelTS labelTS255;
+    private TabPage tpDSPCFC;
+    private LabelTS lblCFCPEG;
+    private LabelTS lblCFCPEG15;
+    private LabelTS lblCFCPEG0;
+    private TrackBarTS tbCFCPEQGAIN;
+    private GroupBoxTS grpPhRot;
+    private LabelTS lblPHROTStages;
+    private NumericUpDownTS udPHROTStages;
+    private LabelTS lblPHROTFreq;
+    private NumericUpDownTS udPhRotFreq;
+    private CheckBoxTS chkPHROTEnable;
+    private CheckBoxTS chkCFCPeqEnable;
+    private LabelTS lblCFCPRECOMP;
+    private LabelTS lblCFCPC15;
+    private LabelTS lblCFCPC0;
+    private TrackBarTS tbCFCPRECOMP;
+    private LabelTS lblCFCEQPOST;
+    private LabelTS lblCFCEQ10dB;
+    private LabelTS lblCFCEQ0dB;
+    private TrackBarTS tbCFCEQ9;
+    private TrackBarTS tbCFCEQ6;
+    private TrackBarTS tbCFCEQ7;
+    private TrackBarTS tbCFCEQ8;
+    private TrackBarTS tbCFCEQ3;
+    private TrackBarTS tbCFCEQ4;
+    private TrackBarTS tbCFCEQ5;
+    private TrackBarTS tbCFCEQ0;
+    private TrackBarTS tbCFCEQ1;
+    private TrackBarTS tbCFCEQ2;
+    private CheckBoxTS chkCFCEnable;
+    private LabelTS lblCFCFreq;
+    private LabelTS lblCFCComp;
+    private NumericUpDownTS udCFC9;
+    private NumericUpDownTS udCFC8;
+    private NumericUpDownTS udCFC7;
+    private NumericUpDownTS udCFC6;
+    private NumericUpDownTS udCFC5;
+    private NumericUpDownTS udCFC4;
+    private NumericUpDownTS udCFC3;
+    private NumericUpDownTS udCFC2;
+    private NumericUpDownTS udCFC1;
+    private NumericUpDownTS udCFC0;
+    private LabelTS lblCFC15dB;
+    private LabelTS lblCFC0dB;
+    private TrackBarTS tbCFC9;
+    private TrackBarTS tbCFC6;
+    private TrackBarTS tbCFC7;
+    private TrackBarTS tbCFC8;
+    private TrackBarTS tbCFC3;
+    private TrackBarTS tbCFC4;
+    private TrackBarTS tbCFC5;
+    private TrackBarTS tbCFC0;
+    private TrackBarTS tbCFC1;
+    private TrackBarTS tbCFC2;
+    private CheckBoxTS chkEnableXVTRHF;
+    private System.Windows.Forms.GroupBoxTS grpAMTX;
+    private System.Windows.Forms.RadioButtonTS radTXUSB;
+    private System.Windows.Forms.RadioButtonTS radTXLSB;
+    private System.Windows.Forms.RadioButtonTS radTXDSB;
+    private System.Windows.Forms.Button btnExportCurrentTXProfile;
+    private GroupBoxTS grpVAC1monitor;
+    private LabelTS lblVAC1unfl;
+    private LabelTS lblVAC1ovfl;
+    private LabelTS lblVAC1underflows;
+    private LabelTS lblVAC1overflows;
+    private Timer timer_VAC_Monitor;
+    private LabelTS lblVAC1var;
+    private LabelTS lblVAC1varratio;
+    private LabelTS lblVAC1_TOVAC;
+    private NumericUpDownTS udVAC1_Force;
+    private CheckBoxTS chkVAC1_Force;
+    private NumericUpDownTS udVAC1_Force2;
+    private CheckBoxTS chkVAC1_Force2;
+    private LabelTS lblVAC1_FROMVAC;
+    private LabelTS lblVAC1var2;
+    private LabelTS lblVAC1VarRatio2;
+    private LabelTS lblVAC1unfl2;
+    private LabelTS lblVAC1ovfl2;
+    private LabelTS lblVAC1underflows2;
+    private LabelTS lblVAC1overflows2;
+    private GroupBoxTS grpVAC2monitor;
+    private NumericUpDownTS udVAC2_Force2;
+    private CheckBoxTS chkVAC2_Force2;
+    private LabelTS lblVAC2_FROMVAC;
+    private LabelTS lblVAC2var2;
+    private LabelTS lblVAC2varratio2;
+    private LabelTS lblVAC2unfl2;
+    private LabelTS lblVAC2ovfl2;
+    private LabelTS lblVAC2underflows2;
+    private LabelTS lblVAC2overflows2;
+    private NumericUpDownTS udVAC2_Force;
+    private CheckBoxTS chkVAC2_Force;
+    private LabelTS lblVAC2_TOVAC;
+    private LabelTS lblVAC2var;
+    private LabelTS lblVAC2varratio;
+    private LabelTS lblVAC2unfl;
+    private LabelTS lblVAC2ovfl;
+    private LabelTS lblVAC2underflows;
+    private LabelTS lblVAC2overflows;
+    private CheckBoxTS chkBlockTxAnt3;
+    private CheckBoxTS chkBlockTxAnt2;
+    private LabelTS labelTS257;
+    private CheckBoxTS chkLPFBypass;
+    private TabControl grpTransmitPinActionSWL;
+    private TabPage tpOCHFControl;
+    private TabPage tbOCVHFControl;
+    private TabPage tpOCSWLControl;
+    private GroupBoxTS grpExtCtrlSWL;
+    private LabelTS labelTS484;
+    private LabelTS labelTS485;
+    private LabelTS labelTS486;
+    private LabelTS labelTS487;
+    private LabelTS labelTS488;
+    private LabelTS labelTS489;
+    private LabelTS labelTS490;
+    private LabelTS labelTS491;
+    private LabelTS labelTS492;
+    private LabelTS labelTS493;
+    private LabelTS labelTS494;
+    private LabelTS labelTS495;
+    private CheckBoxTS chkOCxmit147;
+    private CheckBoxTS chkOCxmit146;
+    private CheckBoxTS chkOCxmit145;
+    private CheckBoxTS chkOCxmit144;
+    private CheckBoxTS chkOCxmit143;
+    private CheckBoxTS chkOCxmit142;
+    private CheckBoxTS chkOCxmit141;
+    private CheckBoxTS chkOCrcv147;
+    private CheckBoxTS chkOCrcv146;
+    private CheckBoxTS chkOCrcv145;
+    private CheckBoxTS chkOCrcv144;
+    private CheckBoxTS chkOCrcv143;
+    private CheckBoxTS chkOCrcv142;
+    private CheckBoxTS chkOCrcv141;
+    private CheckBoxTS chkOCxmit167;
+    private CheckBoxTS chkOCxmit166;
+    private CheckBoxTS chkOCxmit165;
+    private CheckBoxTS chkOCxmit164;
+    private CheckBoxTS chkOCxmit163;
+    private CheckBoxTS chkOCxmit162;
+    private CheckBoxTS chkOCxmit161;
+    private CheckBoxTS chkOCrcv167;
+    private CheckBoxTS chkOCrcv166;
+    private CheckBoxTS chkOCrcv165;
+    private CheckBoxTS chkOCrcv164;
+    private CheckBoxTS chkOCrcv163;
+    private CheckBoxTS chkOCrcv162;
+    private CheckBoxTS chkOCrcv161;
+    private CheckBoxTS chkOCxmit197;
+    private CheckBoxTS chkOCxmit196;
+    private CheckBoxTS chkOCxmit195;
+    private CheckBoxTS chkOCxmit194;
+    private CheckBoxTS chkOCxmit193;
+    private CheckBoxTS chkOCxmit192;
+    private CheckBoxTS chkOCxmit191;
+    private CheckBoxTS chkOCrcv197;
+    private CheckBoxTS chkOCrcv196;
+    private CheckBoxTS chkOCrcv195;
+    private CheckBoxTS chkOCrcv194;
+    private CheckBoxTS chkOCrcv193;
+    private CheckBoxTS chkOCrcv192;
+    private CheckBoxTS chkOCrcv191;
+    private CheckBoxTS chkOCxmit227;
+    private CheckBoxTS chkOCxmit226;
+    private CheckBoxTS chkOCxmit225;
+    private CheckBoxTS chkOCxmit224;
+    private CheckBoxTS chkOCxmit223;
+    private CheckBoxTS chkOCxmit222;
+    private CheckBoxTS chkOCxmit221;
+    private CheckBoxTS chkOCrcv227;
+    private CheckBoxTS chkOCrcv226;
+    private CheckBoxTS chkOCrcv225;
+    private CheckBoxTS chkOCrcv224;
+    private CheckBoxTS chkOCrcv223;
+    private CheckBoxTS chkOCrcv222;
+    private CheckBoxTS chkOCrcv221;
+    private CheckBoxTS chkOCxmit257;
+    private CheckBoxTS chkOCxmit256;
+    private CheckBoxTS chkOCxmit255;
+    private CheckBoxTS chkOCxmit254;
+    private CheckBoxTS chkOCxmit253;
+    private CheckBoxTS chkOCxmit252;
+    private CheckBoxTS chkOCxmit251;
+    private CheckBoxTS chkOCrcv257;
+    private CheckBoxTS chkOCrcv256;
+    private CheckBoxTS chkOCrcv255;
+    private CheckBoxTS chkOCrcv254;
+    private CheckBoxTS chkOCrcv253;
+    private CheckBoxTS chkOCrcv252;
+    private CheckBoxTS chkOCrcv251;
+    private CheckBoxTS chkOCxmit317;
+    private CheckBoxTS chkOCxmit316;
+    private CheckBoxTS chkOCxmit315;
+    private CheckBoxTS chkOCxmit314;
+    private CheckBoxTS chkOCxmit313;
+    private CheckBoxTS chkOCxmit312;
+    private CheckBoxTS chkOCxmit311;
+    private CheckBoxTS chkOCrcv317;
+    private CheckBoxTS chkOCrcv316;
+    private CheckBoxTS chkOCrcv315;
+    private CheckBoxTS chkOCrcv314;
+    private CheckBoxTS chkOCrcv313;
+    private CheckBoxTS chkOCrcv312;
+    private CheckBoxTS chkOCrcv311;
+    private CheckBoxTS chkOCxmit417;
+    private CheckBoxTS chkOCxmit416;
+    private CheckBoxTS chkOCxmit415;
+    private CheckBoxTS chkOCxmit414;
+    private CheckBoxTS chkOCxmit413;
+    private CheckBoxTS chkOCxmit412;
+    private CheckBoxTS chkOCxmit411;
+    private CheckBoxTS chkOCrcv417;
+    private CheckBoxTS chkOCrcv416;
+    private CheckBoxTS chkOCrcv415;
+    private CheckBoxTS chkOCrcv414;
+    private CheckBoxTS chkOCrcv413;
+    private CheckBoxTS chkOCrcv412;
+    private CheckBoxTS chkOCrcv411;
+    private CheckBoxTS chkOCxmit497;
+    private CheckBoxTS chkOCxmit496;
+    private CheckBoxTS chkOCxmit495;
+    private CheckBoxTS chkOCxmit494;
+    private CheckBoxTS chkOCxmit493;
+    private CheckBoxTS chkOCxmit492;
+    private CheckBoxTS chkOCxmit491;
+    private CheckBoxTS chkOCrcv497;
+    private CheckBoxTS chkOCrcv496;
+    private CheckBoxTS chkOCrcv495;
+    private CheckBoxTS chkOCrcv494;
+    private CheckBoxTS chkOCrcv493;
+    private CheckBoxTS chkOCrcv492;
+    private CheckBoxTS chkOCrcv491;
+    private CheckBoxTS chkOCxmit617;
+    private CheckBoxTS chkOCxmit616;
+    private CheckBoxTS chkOCxmit615;
+    private CheckBoxTS chkOCxmit614;
+    private CheckBoxTS chkOCxmit613;
+    private CheckBoxTS chkOCxmit612;
+    private CheckBoxTS chkOCxmit611;
+    private CheckBoxTS chkOCrcv617;
+    private CheckBoxTS chkOCrcv616;
+    private CheckBoxTS chkOCrcv615;
+    private CheckBoxTS chkOCrcv614;
+    private CheckBoxTS chkOCrcv613;
+    private CheckBoxTS chkOCrcv612;
+    private CheckBoxTS chkOCrcv611;
+    private CheckBoxTS chkOCxmit907;
+    private CheckBoxTS chkOCxmit906;
+    private CheckBoxTS chkOCxmit905;
+    private CheckBoxTS chkOCxmit904;
+    private CheckBoxTS chkOCxmit903;
+    private CheckBoxTS chkOCxmit902;
+    private CheckBoxTS chkOCxmit901;
+    private CheckBoxTS chkOCrcv907;
+    private CheckBoxTS chkOCrcv906;
+    private CheckBoxTS chkOCrcv905;
+    private CheckBoxTS chkOCrcv904;
+    private CheckBoxTS chkOCrcv903;
+    private CheckBoxTS chkOCrcv902;
+    private CheckBoxTS chkOCrcv901;
+    private CheckBoxTS chkOCxmit1207;
+    private CheckBoxTS chkOCxmit1206;
+    private CheckBoxTS chkOCxmit1205;
+    private CheckBoxTS chkOCxmit1204;
+    private CheckBoxTS chkOCxmit1203;
+    private CheckBoxTS chkOCxmit1202;
+    private CheckBoxTS chkOCxmit1201;
+    private CheckBoxTS chkOCrcv1207;
+    private CheckBoxTS chkOCrcv1206;
+    private CheckBoxTS chkOCrcv1205;
+    private CheckBoxTS chkOCrcv1204;
+    private CheckBoxTS chkOCrcv1203;
+    private CheckBoxTS chkOCrcv1202;
+    private CheckBoxTS chkOCrcv1201;
+    private CheckBoxTS chkOCxmitLMW7;
+    private CheckBoxTS chkOCxmitLMW6;
+    private CheckBoxTS chkOCxmitLMW5;
+    private CheckBoxTS chkOCxmitLMW4;
+    private CheckBoxTS chkOCxmitLMW3;
+    private CheckBoxTS chkOCxmitLMW2;
+    private CheckBoxTS chkOCxmitLMW1;
+    private CheckBoxTS chkOCrcvLMW7;
+    private CheckBoxTS chkOCrcvLMW6;
+    private CheckBoxTS chkOCrcvLMW5;
+    private CheckBoxTS chkOCrcvLMW4;
+    private CheckBoxTS chkOCrcvLMW3;
+    private CheckBoxTS chkOCrcvLMW2;
+    private CheckBoxTS chkOCrcvLMW1;
+    private LabelTS labelTS496;
+    private LabelTS labelTS497;
+    private LabelTS labelTS498;
+    private LabelTS labelTS499;
+    private LabelTS labelTS500;
+    private LabelTS labelTS501;
+    private LabelTS labelTS502;
+    private LabelTS labelTS503;
+    private LabelTS labelTS504;
+    private LabelTS labelTS505;
+    private LabelTS labelTS506;
+    private LabelTS labelTS507;
+    private LabelTS labelTS508;
+    private LabelTS labelTS509;
+    private LabelTS labelTS510;
+    private LabelTS lblSWLTxControl;
+    private LabelTS lblSWLRxControl;
+    private LabelTS labelTS513;
+    private LabelTS labelTS514;
+    private CheckBoxTS chkOCxmit117;
+    private CheckBoxTS chkOCxmit116;
+    private CheckBoxTS chkOCxmit115;
+    private CheckBoxTS chkOCxmit114;
+    private CheckBoxTS chkOCxmit113;
+    private CheckBoxTS chkOCxmit112;
+    private CheckBoxTS chkOCxmit111;
+    private CheckBoxTS chkOCrcv117;
+    private CheckBoxTS chkOCrcv116;
+    private CheckBoxTS chkOCrcv115;
+    private CheckBoxTS chkOCrcv114;
+    private CheckBoxTS chkOCrcv113;
+    private CheckBoxTS chkOCrcv112;
+    private CheckBoxTS chkOCrcv111;
+    private CheckBoxTS chkOCxmit137;
+    private CheckBoxTS chkOCxmit136;
+    private CheckBoxTS chkOCxmit135;
+    private CheckBoxTS chkOCxmit134;
+    private CheckBoxTS chkOCxmit133;
+    private CheckBoxTS chkOCxmit132;
+    private CheckBoxTS chkOCxmit131;
+    private CheckBoxTS chkOCrcv137;
+    private CheckBoxTS chkOCrcv136;
+    private CheckBoxTS chkOCrcv135;
+    private CheckBoxTS chkOCrcv134;
+    private CheckBoxTS chkOCrcv133;
+    private CheckBoxTS chkOCrcv132;
+    private CheckBoxTS chkOCrcv131;
+    private ButtonTS btnCtrlSWLReset;
+    private GroupBoxTS grpLEDMirror;
+    private LabelTS lblLED10;
+    private LabelTS lblLED09;
+    private LabelTS lblLED08;
+    private LabelTS lblLED07;
+    private LabelTS lblLED06;
+    private LabelTS lblLED05;
+    private LabelTS lblLED04;
+    private LabelTS lblLED03;
+    private LabelTS lblLED02;
+    private LabelTS lblLED01;
+    private Timer timer_LED_Mirror;
+    private CheckBoxTS chkVAC2onSplit;
+    private TabPage tpDSPVOXDE;
+    private GroupBoxTS grpSCF;
+    private LabelTS lblSCFHighCut;
+    private LabelTS lblSCFLowCut;
+    private NumericUpDownTS udSCFHighCut;
+    private NumericUpDownTS udSCFLowCut;
+    private CheckBoxTS chkSCFEnable;
+    private GroupBoxTS grpDEXPVOX;
+    private CheckBoxTS chkDEXPEnable;
+    private LabelTS lblDetTau;
+    private NumericUpDownTS udDEXPAttack;
+    private CheckBoxTS chkVOXEnable;
+    private NumericUpDownTS udDEXPDetTau;
+    private LabelTS lblDEXPRelease;
+    private LabelTS lblDEXPHold;
+    private LabelTS lblDEXPAttack;
+    private NumericUpDownTS udDEXPRelease;
+    private NumericUpDownTS udDEXPHold;
+    private LabelTS lblDEXPHystRatio;
+    private LabelTS lblDEXPExpRatio;
+    private LabelTS lblDEXPThreshold;
+    private GroupBoxTS grpDEXPLookAhead;
+    private NumericUpDownTS udDEXPLookAhead;
+    private LabelTS lblDEXPAudioLookAhead;
+    private CheckBoxTS chkDEXPLookAheadEnable;
+    private NumericUpDownTS udDEXPHysteresisRatio;
+    private NumericUpDownTS udDEXPExpansionRatio;
+    private NumericUpDownTS udDEXPThreshold;
+    private GroupBox grpTXWFAmpScale;
+    public NumericUpDownTS udTXWFAmpMin;
+    public NumericUpDownTS udTXWFAmpMax;
+    private LabelTS lblTXWFAmpMin;
+    private LabelTS lblTXWFAmpMax;
+    private LabelTS labelTS511;
+    private NumericUpDownTS udUpdatesPerStepMin;
+    private LabelTS labelTS512;
+    private LabelTS labelTS515;
+    private NumericUpDownTS udUpdatesPerStepMax;
+    private GroupBoxTS grpAntiVOX;
+    private NumericUpDownTS udAntiVoxTau;
+    private LabelTS lblAntiVoxTau;
+    private NumericUpDownTS udAntiVoxGain;
+    private LabelTS lblAntiVoxGain;
+    private CheckBoxTS chkAntiVoxEnable;
+    private CheckBoxTS chkAntiVoxSource;
+    private CheckBoxTS chkShowZeroLine;
+    public CheckBoxTS chkShowAndromedaBar;
+    public CheckBoxTS chkShowAndromedaTop;
+    private LabelTS lblAndromedaVersion;
+    private GroupBoxTS grpAndr;
+    private ComboBoxTS comboAndromedaCATPort;
+    private LabelTS labelTSPort;
+    private CheckBoxTS chkEnableAndromeda;
+    private CheckBoxTS chkDisablePicDisplayBackgroundImage;
+    private ColorButton clrbtnDataFill;
+    private LabelTS lblDisplayDataFill;
+    private TrackBarTS tbDataFillAlpha;
+    private CheckBoxTS chkWheelTunesOutsideSpectral;
+    private GroupBoxTS grpGlobalHIDConrtolOptions;
+    private LabelTS lblDeviceHID;
+    private CheckBoxTS chkWheelOnlyAdjustsVFO;
+    private CheckBoxTS chkGlobalListenForMouseWheel;
+    private ComboBoxTS comboHIDMouseWheel;
+    private CheckBoxTS chkAlsoUseSpecificMouseWheel;
+    private LabelTS lblWheelActive;
+    private TextBoxTS txtDeviceHID_hidden;
+    private Timer timer_RawInputMouseWheel;
+    private GroupBoxTS grpAppRXWaterfall;
+    private CheckBoxTS chkShowRXFilterOnWaterfall;
+    private GroupBoxTS grpAppTXWaterfall;
+    private CheckBoxTS chkShowTXFilterOnWaterfall;
+    private CheckBoxTS chkShowRXZeroLineOnWaterfall;
+    private CheckBoxTS chkShowTXZeroLineOnWaterfall;
+    private CheckBoxTS chkITSync;
+    private ButtonTS buttonAndromeda;
+    private CheckBoxTS chkShowTXFilterOnRXWaterfall;
+    private CheckBoxTS chkZoomShiftModifier;
+    private CheckBoxTS chkReverseShiftZoomModifier;
+    private CheckBoxTS chkExtended;
+    private CheckBoxTS chkWaterfallUseRX1SpectrumMinMax;
+    private CheckBoxTS chkWaterfallUseRX2SpectrumMinMax;
+    private CheckBoxTS chkRecenterOnZZFx;
+    private CheckBoxTS chkShowFPS;
+    private LabelTS labelTS517;
+    private NumericUpDownTS udDisplayPhasePtSize;
+    private GroupBoxTS groupBoxTS11;
+    private CheckBoxTS chkSmallModeFilteronVFOs;
+    private ComboBoxTS comboDisplayThreadPriority;
+    private LabelTS labelSavingLoading;
+    private ButtonTS btnShowSeqLog;
+    private RadioButtonTS radUV;
+    private RadioButtonTS radDBM;
+    private RadioButtonTS radSReading;
+    private CheckBoxTS chkAntiAlias;
+    private GroupBoxTS groupBoxTS12;
+    private ColorButton clrbtnStatusBarText;
+    private LabelTS nlblStatusBarTextColour;
+    private ColorButton clrbtnStatusBarBackground;
+    private LabelTS nlblStatusBarBackground;
+    private CheckBoxTS chkAccurateFrameTiming;
+    private GroupBoxTS groupBoxTS13;
+    private NumericUpDownTS udPeakBlobs;
+    private CheckBoxTS chkPeakBlobsEnabled;
+    private CheckBoxTS chkPeakBlobInsideFilterOnly;
+    private CheckBoxTS chkSignalHistory;
+    private GroupBoxTS groupBoxTS14;
+    private TrackBarTS tbSignalHistoryAlpha;
+    private ColorButton clrbtnSignalHistoryColour;
+    private LabelTS labelTS518;
+    private CheckBoxTS chkVSyncDX;
+    private LabelTS lblBlobMS;
+    private NumericUpDownTS udBlobPeakHoldMS;
+    private CheckBoxTS chkBlobPeakHold;
+    private CheckBoxTS chkPeakHoldDrop;
+    private LabelTS lblRX1WaterFallCalulatedDelayMS;
+    private LabelTS lblRX2WaterFallCalulatedDelayMS;
+    private LabelTS lblSignalHistoryDurationMS;
+    private NumericUpDownTS udSignalHistoryDuration;
+    private LabelTS labelTS519;
+    private LabelTS labelTS520;
+    private NumericUpDownTS udSpaceMoxDelay;
+    private LabelTS labelTS521;
+    private CheckBoxTS chkBypassVACPlayingRecording;
+    private GroupBoxTS grpGanymedeCtrl;
+    private LabelTS lblGanymedeFW;
+    private LabelTS lblGanymedeStatus;
+    private LabelTS lblGanymedeFWVersion;
+    private LabelTS lblAmpStatus;
+    private GroupBoxTS grpAriesCtrl;
+    private LabelTS lblAriesFW;
+    private LabelTS labelTS529;
+    private LabelTS lblAriesEraseStatus;
+    private ButtonTS btnAriesErase3;
+    private ButtonTS btnAriesErase2;
+    private ButtonTS btnAriesErase1;
+    private LabelTS labelTS527;
+    private CheckBoxTS chkAries3;
+    private CheckBoxTS chkAries2;
+    private CheckBoxTS chkAries1;
+    private LabelTS labelTS526;
+    private LabelTS labelTS525;
+    private LabelTS labelTS524;
+    private LabelTS labelTS523;
+    private LabelTS labelTS522;
+    private ComboBoxTS comboAriesCATPort;
+    private LabelTS lblAriesCAT;
+    private CheckBoxTS chkEnableAries;
+    private ComboBoxTS comboGanymedeCATPort;
+    private LabelTS lblGanymedeCAT;
+    private CheckBoxTS chkEnableGanymede;
+    private ButtonTS btnGanymedeReset;
+    private TabControl tpApolloAmp;
+    private TabPage tpApolloApollo;
+    private TabPage tpApolloATU;
+    private TabPage tabPage3;
+    private TabPage tpAndromeda;
+    private GroupBoxTS groupBoxTS15;
+    private ButtonTS btnQSOTimerPlaySelectedWAV;
+    private CheckBoxTS chkQSOTimerPlaySoundOnExpiry;
+    private LabelTS lblQSOTimerSecs;
+    private LabelTS lblQSOTimerMins;
+    private NumericUpDownTS udQSOTimerSeconds;
+    private NumericUpDownTS udQSOTimerMinutes;
+    private ButtonTS btnQSOTimerSelectWAV;
+    private CheckBoxTS chkQSOTimerResetOnMOX;
+    private CheckBoxTS chkQSOTimerOnlyDuringMOX;
+    private CheckBoxTS chkQSOTimerEnabled;
+    private CheckBoxTS chkQSOTimerResetOnExpiry;
+    private CheckBoxTS chkQSOTimerFlashTimerIfResetOnExpiry;
+    private TabControl tcOptions;
+    private TabPage tpOptions1;
+    private TabPage tpOptions2;
+    private ComboBoxTS comboRadioModel;
+    private LabelTS labelTS528;
+    private GroupBoxTS grpAndrOptions;
+    private CheckBoxTS chkAndrGainAutoshow;
+    private CheckBoxTS chkAndrDiversityAutoshow;
+    private CheckBoxTS chkAndrDiversityLandscape;
+    private CheckBoxTS chkAndrFastStepTune;
+    private CheckBoxTS chkRadioProtocolSelect;
+    private ButtonTS btnResetP1ADC;
+    private LabelTS lblP1assignment;
+    private ButtonTS btnResetP2ADC;
+    private GroupBoxTS grpP1DDC6ADC;
+    private RadioButtonTS radP1DDC6ADC2;
+    private RadioButtonTS radP1DDC6ADC1;
+    private RadioButtonTS radP1DDC6ADC0;
+    private GroupBoxTS grpP1DDC5ADC;
+    private RadioButtonTS radP1DDC5ADC2;
+    private RadioButtonTS radP1DDC5ADC1;
+    private RadioButtonTS radP1DDC5ADC0;
+    private GroupBoxTS grpP1DDC4ADC;
+    private RadioButtonTS radP1DDC4ADC2;
+    private RadioButtonTS radP1DDC4ADC1;
+    private RadioButtonTS radP1DDC4ADC0;
+    private GroupBoxTS grpP1DDC3ADC;
+    private RadioButtonTS radP1DDC3ADC2;
+    private RadioButtonTS radP1DDC3ADC1;
+    private RadioButtonTS radP1DDC3ADC0;
+    private GroupBoxTS grpP1DDC2ADC;
+    private RadioButtonTS radP1DDC2ADC2;
+    private RadioButtonTS radP1DDC2ADC1;
+    private RadioButtonTS radP1DDC2ADC0;
+    private GroupBoxTS grpP1DDC1ADC;
+    private RadioButtonTS radP1DDC1ADC2;
+    private RadioButtonTS radP1DDC1ADC1;
+    private RadioButtonTS radP1DDC1ADC0;
+    private GroupBoxTS grpP1DDC0ADC;
+    private RadioButtonTS radP1DDC0ADC2;
+    private RadioButtonTS radP1DDC0ADC1;
+    private RadioButtonTS radP1DDC0ADC0;
+    private TabPage tpADC;
+    private CheckBoxTS checkEnableAriesQuickTune;
+    private CheckBoxTS checkAriesStandalone;
+    private CheckBoxTS chkAndrBandBtnDefault;
+    private CheckBoxTS chkAndrStickyMenus;
+    private CheckBoxTS chkAndrStickyShift;
+    private CheckBoxTS chkIncludeOtherSampleRates;
+    private LabelTS labelTS18;
+    private LabelTS labelTS17;
+    private NumericUpDownTS udFreq2Delay;
+    private CheckBoxTS chkRestoreVAC1DeviceDetailsFromTXProfile;
+    private CheckBoxTS chkRestoreVAC2DeviceDetailsFromTXProfile;
+    private NumericUpDownTS udActivePeakHoldDurationRX1;
+    private LabelTS lblActivePeakHoldRX1;
+    private CheckBoxTS chkActivePeakHoldRX1;
+    public TrackBarTS tbActiveSpectralPeakAlpha;
+    private ColorButton clrbtnActiveSpectralPeak;
+    private LabelTS lblActiveSpectralPeakColour;
+    private ucLGPicker lgLinearGradientRX1;
+    private GroupBoxTS grpPanadaptorGradient;
+    public ColorButton clrbtnGripperColour;
+    private ButtonTS btnDeleteColourGripper;
+    private ButtonTS btnClearColourGrippers;
+    private CheckBoxTS chkPanadpatorGradient;
+    private GroupBoxTS grpSpectralWarningLeds;
+    private CheckBoxTS chkSpecWarningLEDGetPixels;
+    private CheckBoxTS chkSpecWarningLEDRenderDelay;
+    private ButtonTS btnDefaultGradient;
+    private TrackBarTS tbDataLineAlpha;
+    private CheckBoxTS chkVFOSyncLinksCTUN;
+    private GroupBoxTS grpFirmware;
+    private LabelTS lblProtocolInfo;
+    public CheckBoxTS chkDataLineGradient;
+    private LabelTS lblPLLLock;
+    private Timer tmrPLLLockChecker;
+    private LabelTS lblWarningRegionExtended;
+    private PictureBox picWarningRegionExtended;
+    private GroupBoxTS groupBoxTS16;
+    private LabelTS labelTS90;
+    private NumericUpDownTS udN1MMSendRate;
+    private LabelTS labelTS89;
+    private NumericUpDownTS udN1MMRX2Scaling;
+    private NumericUpDownTS udN1MMRX1Scaling;
+    private LabelTS labelTS19;
+    private TextBoxTS txtN1MMSendTo;
+    private CheckBoxTS chkN1MMEnableRX2;
+    private CheckBoxTS chkN1MMEnableRX1;
+    private LabelTS labelTS91;
+    private TrackBarTS tbRX1WaterfallOpacity;
+    private LabelTS labelTS92;
+    private TrackBarTS tbRX2WaterfallOpacity;
+    private NumericUpDownTS udHermesStepAttenuatorDataRX2;
+    private LabelTS lblADCLinked;
+    private CheckBoxTS chkShowControlDebug;
+    private LabelTS lblRxDDC6;
+    private LabelTS lblRxDDC5;
+    private LabelTS lblRxDDC4;
+    private LabelTS lblRxDDC3;
+    private LabelTS lblRxDDC2;
+    private LabelTS lblRxDDC1;
+    private LabelTS lblRxDDC0;
+    private CheckBoxTS chkHighlightTXProfileSaveItems;
+    private LabelTS lblP2assignment;
+    private ButtonTS btnN1MMDefault;
+    private GroupBoxTS grpVAC1ResamplerAdvanced;
+    private ButtonTS btnVAC1AdvancedDefault;
+    private LabelTS labelTS93;
+    private NumericUpDownTS udVAC1SlewTimeIn;
+    private NumericUpDownTS udVAC1FeedbackGainIn;
+    private LabelTS labelTS54;
+    private LabelTS labelTS53;
+    private GroupBoxTS grpVAC2ResamplerAdvanced;
+    private ButtonTS btnVAC2AdvancedDefault;
+    private NumericUpDownTS udVAC2SlewTimeIn;
+    private NumericUpDownTS udVAC2FeedbackGainIn;
+    private PictureBox pbVAC1FeedbackGainInfo;
+    private PictureBox pbVAC1SlewTimeInfo;
+    private LabelTS lblVAC1RingPerc2;
+    private LabelTS lblVAC1RingP2;
+    private LabelTS lblVAC1RingPerc1;
+    private LabelTS lblVAC1RingP1;
+    private LabelTS labelTS97;
+    private LabelTS lblVAC1RingSize2;
+    private LabelTS lblVAC1NRing2;
+    private LabelTS labelTS101;
+    private LabelTS lblVAC1RingSize1;
+    private LabelTS lblVAC1Ring2;
+    private LabelTS lblVAC1NRing1;
+    private LabelTS lblVAC1Ring1;
+    private LabelTS lblVAC1RingPercAV2;
+    private LabelTS lblVAC1RingPercAV1;
+    private LabelTS lblVAC2RingPercAV2;
+    private LabelTS lblVAC2RingPercAV1;
+    private LabelTS lblVAC2RingPerc2;
+    private LabelTS lblVAC2RingP2;
+    private LabelTS lblVAC2RingPerc1;
+    private LabelTS lblVAC2RingP1;
+    private LabelTS labelTS531;
+    private LabelTS lblVAC2RingSize2;
+    private LabelTS lblVAC2NRing2;
+    private LabelTS labelTS534;
+    private LabelTS lblVAC2RingSize1;
+    private LabelTS lblVAC2Ring2;
+    private LabelTS lblVAC2NRing1;
+    private LabelTS lblVAC2Ring1;
+    private CheckBoxTS chkNetworkThrottleIndexTweak;
+    private NumericUpDownTS udVAC1SlewTimeOut;
+    private NumericUpDownTS udVAC1FeedbackGainOut;
+    private NumericUpDownTS udVAC2SlewTimeOut;
+    private NumericUpDownTS udVAC2FeedbackGainOut;
+    private TrackBarTS tbBandstackOverlayAlpha;
+    private ColorButton clrbtnBandstackOverlay;
+    private LabelTS labelTS532;
+    private TabPage tpAdvancedAudio;
+    private LabelTS lblAdvancedAudioWarning;
+    private ucVARGrapher ucVAC1VARGrapherIn;
+    private ucVARGrapher ucVAC1VARGrapherOut;
+    private NumericUpDownTS udVAC1GrapherSwing;
+    private CheckBoxTS chkVAC1GrapherAuto;
+    private CheckBoxTS chkVAC2GrapherAuto;
+    private NumericUpDownTS udVAC2GrapherSwing;
+    private ucVARGrapher ucVAC2VARGrapherIn;
+    private ucVARGrapher ucVAC2VARGrapherOut;
+    private NumericUpDownTS udVAC1FFAlphaIn;
+    private NumericUpDownTS udVAC1FFMaxOut;
+    private NumericUpDownTS udVAC1FFMaxIn;
+    private LabelTS labelTS536;
+    private NumericUpDownTS udVAC1PropMinOut;
+    private LabelTS labelTS535;
+    private NumericUpDownTS udVAC1PropMinIn;
+    private LabelTS labelTS533;
+    private LabelTS labelTS95;
+    private LabelTS labelTS96;
+    private LabelTS labelTS530;
+    private LabelTS labelTS537;
+    private LabelTS labelTS538;
+    private PictureBox pbVAC1FFAlphaInfo;
+    private PictureBox pbVAC1FFMaxInfo;
+    private PictureBox pbVAC1FFMinInfo;
+    private PictureBox pbVAC1PropFeedbackMaxInfo;
+    private PictureBox pbVAC1PropFeedbackMinInfo;
+    private NumericUpDownTS udVAC1FFMinOut;
+    private NumericUpDownTS udVAC1FFMinIn;
+    private LabelTS labelTS102;
+    private NumericUpDownTS udVAC1PropMaxOut;
+    private NumericUpDownTS udVAC1PropMaxIn;
+    private LabelTS labelTS100;
+    private LabelTS labelTS94;
+    private LabelTS labelTS99;
+    private LabelTS labelTS98;
+    private NumericUpDownTS udVAC1FFAlphaOut;
+    private LabelTS labelTS539;
+    private LabelTS labelTS103;
+    private TextBoxTS txtVAC1OldVarOut;
+    private TextBoxTS txtVAC1OldVarIn;
+    private CheckBoxTS chkVAC1OldVarOut;
+    private CheckBoxTS chkVAC1OldVarIn;
+    private CheckBoxTS chkVAC2OldVarOut;
+    private CheckBoxTS chkVAC2OldVarIn;
+    private TextBoxTS txtVAC2OldVarOut;
+    private TextBoxTS txtVAC2OldVarIn;
+    private LabelTS labelTS540;
+    private LabelTS labelTS541;
+    private NumericUpDownTS udVAC2FFMinOut;
+    private NumericUpDownTS udVAC2FFMinIn;
+    private LabelTS labelTS542;
+    private NumericUpDownTS udVAC2PropMaxOut;
+    private NumericUpDownTS udVAC2PropMaxIn;
+    private LabelTS labelTS543;
+    private LabelTS labelTS544;
+    private NumericUpDownTS udVAC2FFAlphaOut;
+    private NumericUpDownTS udVAC2FFAlphaIn;
+    private NumericUpDownTS udVAC2FFMaxOut;
+    private NumericUpDownTS udVAC2FFMaxIn;
+    private LabelTS labelTS545;
+    private NumericUpDownTS udVAC2PropMinOut;
+    private LabelTS labelTS546;
+    private NumericUpDownTS udVAC2PropMinIn;
+    private LabelTS labelTS547;
+    private GroupBoxTS grpTransmitPinActionHF;
+    private ComboBoxTS comboPin1TXActionHF;
+    private LabelTS labelTS548;
+    private ComboBoxTS comboPin7TXActionHF;
+    private LabelTS labelTS552;
+    private ComboBoxTS comboPin6TXActionHF;
+    private LabelTS labelTS553;
+    private ComboBoxTS comboPin5TXActionHF;
+    private LabelTS labelTS554;
+    private ComboBoxTS comboPin4TXActionHF;
+    private LabelTS labelTS550;
+    private ComboBoxTS comboPin3TXActionHF;
+    private LabelTS labelTS551;
+    private ComboBoxTS comboPin2TXActionHF;
+    private LabelTS labelTS549;
+    private GroupBoxTS grpTransmitPinActionVHF;
+    private ComboBoxTS comboPin7TXActionVHF;
+    private LabelTS labelTS555;
+    private ComboBoxTS comboPin6TXActionVHF;
+    private LabelTS labelTS556;
+    private ComboBoxTS comboPin5TXActionVHF;
+    private LabelTS labelTS557;
+    private ComboBoxTS comboPin4TXActionVHF;
+    private LabelTS labelTS558;
+    private ComboBoxTS comboPin3TXActionVHF;
+    private LabelTS labelTS559;
+    private ComboBoxTS comboPin2TXActionVHF;
+    private LabelTS labelTS560;
+    private ComboBoxTS comboPin1TXActionVHF;
+    private LabelTS labelTS561;
+    private GroupBoxTS groupBoxTS19;
+    private ComboBoxTS comboPin7TXActionSWL;
+    private LabelTS labelTS562;
+    private ComboBoxTS comboPin6TXActionSWL;
+    private LabelTS labelTS563;
+    private ComboBoxTS comboPin5TXActionSWL;
+    private LabelTS labelTS564;
+    private ComboBoxTS comboPin4TXActionSWL;
+    private LabelTS labelTS565;
+    private ComboBoxTS comboPin3TXActionSWL;
+    private LabelTS labelTS566;
+    private ComboBoxTS comboPin2TXActionSWL;
+    private LabelTS labelTS567;
+    private ComboBoxTS comboPin1TXActionSWL;
+    private LabelTS labelTS568;
+    private ucOCLedStrip ucOCPinsLedStripHF;
+    private GroupBoxTS grpOCPinState;
+    private LabelTS labelTS569;
+    private LabelTS labelTS570;
+    private LabelTS labelTS571;
+    private LabelTS labelTS572;
+    private LabelTS labelTS573;
+    private LabelTS labelTS574;
+    private LabelTS labelTS575;
+    private CheckBoxTS chkPin7TXPAHF;
+    private CheckBoxTS chkPin6TXPAHF;
+    private CheckBoxTS chkPin5TXPAHF;
+    private CheckBoxTS chkPin4TXPAHF;
+    private CheckBoxTS chkPin3TXPAHF;
+    private CheckBoxTS chkPin2TXPAHF;
+    private LabelTS labelTS516;
+    private CheckBoxTS chkPin1TXPAHF;
+    private CheckBoxTS chkPin7TXPAVHF;
+    private CheckBoxTS chkPin6TXPAVHF;
+    private CheckBoxTS chkPin5TXPAVHF;
+    private CheckBoxTS chkPin4TXPAVHF;
+    private CheckBoxTS chkPin3TXPAVHF;
+    private CheckBoxTS chkPin2TXPAVHF;
+    private CheckBoxTS chkPin1TXPAVHF;
+    private CheckBoxTS chkPin7TXPASWL;
+    private CheckBoxTS chkPin6TXPASWL;
+    private CheckBoxTS chkPin5TXPASWL;
+    private CheckBoxTS chkPin4TXPASWL;
+    private CheckBoxTS chkPin3TXPASWL;
+    private CheckBoxTS chkPin2TXPASWL;
+    private CheckBoxTS chkPin1TXPASWL;
+    private CheckBoxTS chkTuneStepPerModeRX1;
+    private CheckBoxTS chkVAC1WillMute;
+    private CheckBoxTS chkVAC2WillMute;
+    private CheckBoxTS chkAllowHotSwitching;
+    private CheckBoxTS chkShowRX1NoiseFloor;
+    private CheckBoxTS chkShowRX2NoiseFloor;
+    private GroupBoxTS groupBoxTS17;
+    private NumericUpDownTS udRX2AutoAGCOffset;
+    private Label label1;
+    private NumericUpDownTS udRX1AutoAGCOffset;
+    private CheckBoxTS chkAutoAGCRX2;
+    private CheckBoxTS chkAutoAGCRX1;
+    private GroupBoxTS grpExtPAControlHF;
+    private CheckBoxTS chkPin7RXPAHF;
+    private LabelTS labelTS578;
+    private CheckBoxTS chkPin6RXPAHF;
+    private CheckBoxTS chkPin1RXPAHF;
+    private CheckBoxTS chkPin5RXPAHF;
+    private CheckBoxTS chkPin2RXPAHF;
+    private CheckBoxTS chkPin4RXPAHF;
+    private CheckBoxTS chkPin3RXPAHF;
+    private GroupBoxTS grpExtPAControlVHF;
+    private CheckBoxTS chkPin7RXPAVHF;
+    private LabelTS labelTS579;
+    private CheckBoxTS chkPin6RXPAVHF;
+    private CheckBoxTS chkPin1RXPAVHF;
+    private CheckBoxTS chkPin5RXPAVHF;
+    private CheckBoxTS chkPin2RXPAVHF;
+    private CheckBoxTS chkPin4RXPAVHF;
+    private CheckBoxTS chkPin3RXPAVHF;
+    private LabelTS labelTS580;
+    private GroupBoxTS grpExtPAControlSWL;
+    private CheckBoxTS chkPin7RXPASWL;
+    private LabelTS labelTS576;
+    private CheckBoxTS chkPin6RXPASWL;
+    private CheckBoxTS chkPin1RXPASWL;
+    private CheckBoxTS chkPin5RXPASWL;
+    private CheckBoxTS chkPin2RXPASWL;
+    private CheckBoxTS chkPin4RXPASWL;
+    private CheckBoxTS chkPin3RXPASWL;
+    private LabelTS labelTS581;
+    private LabelTS labelTS577;
+    private LabelTS labelTS582;
+    private LabelTS labelTS583;
+    private LabelTS labelTS584;
+    private LabelTS labelTS585;
+    private LabelTS labelTS586;
+    private LabelTS labelTS587;
+    private LabelTS labelTS588;
+    private LabelTS labelTS589;
+    private LabelTS labelTS590;
+    private LabelTS labelTS591;
+    private LabelTS labelTS592;
+    private LabelTS labelTS593;
+    private LabelTS labelTS594;
+    private LabelTS labelTS595;
+    private LabelTS labelTS596;
+    private LabelTS labelTS597;
+    private LabelTS labelTS598;
+    private LabelTS labelTS599;
+    private LabelTS labelTS600;
+    private LabelTS labelTS601;
+    private NumericUpDownTS udNoiseFloorAttackRX1;
+    private LabelTS labelTS602;
+    private NumericUpDownTS udNoiseFloorAttackRX2;
+    private LabelTS labelTS603;
+    private ColorButton clrbtnNoiseFloor;
+    private LabelTS labelTS604;
+    private CheckBoxTS chkNoiseFloorShowDBM;
+    private GroupBoxTS groupBoxTS18;
+    private NumericUpDownTS udNoiseFloorLineWidth;
+    private LabelTS labelTS605;
+    private CheckBoxTS chkWaterfallUseNFForAGCRX1;
+    private LabelTS lblWaterfallAGCOffsetRX1;
+    public NumericUpDownTS udWaterfallAGCOffsetRX1;
+    private CheckBoxTS chkWaterfallUseNFForAGCRX2;
+    private LabelTS lblWaterfallAGCOffsetRX2;
+    public NumericUpDownTS udWaterfallAGCOffsetRX2;
+    private Timer tmrCFCOMPGain;
+    private PictureBox picCFC;
+    private LabelTS labelTS606;
+    private NumericUpDownTS udCFCPicDBPerLine;
+    private CheckBoxTS chkCFCDisplayAutoScale;
+    private LabelTS labelTS607;
+    private CheckBoxTS chkShowDisplayDebug;
+    private CheckBoxTS chkCTLimitDragToSpectral;
+    private CheckBoxTS chkCTLimitDragMouseOnly;
+    private NumericUpDownTS udActivePeakHoldDropRX1;
+    private LabelTS lblActivePeakHoldDropRX1;
+    private NumericUpDownTS udPeakBlobDropDBMs;
+    private LabelTS lblPeakBlobDropDBMs;
+    private GroupBoxTS groupBoxTS21;
+    private CheckBoxTS chkFillActivePeakHoldRX1;
+    private GroupBoxTS groupBoxTS20;
+    private CheckBoxTS chkFillActivePeakHoldRX2;
+    private NumericUpDownTS udActivePeakHoldDropRX2;
+    private CheckBoxTS chkActivePeakHoldRX2;
+    private LabelTS lblActivePeakHoldDropRX2;
+    private LabelTS lblActivePeakHoldRX2;
+    private NumericUpDownTS udActivePeakHoldDurationRX2;
+    private TabPage tpAudioOptions;
+    private CheckBoxTS chkAFSlidersMute;
+    private CheckBoxTS chkIgnoreMasterAFChangeForMonitor;
+    private CheckBoxTS chkShowMHzOnCursor;
+    private CheckBoxTS chkLimitFilterEdgesToSidebands;
+    private NumericUpDownTS udDisplayDecimation;
+    private CheckBoxTS chkShowPhaseAngularMean;
+    private LabelTS labelTS608;
+    private GroupBoxTS grpTCPIPcatServer;
+    private LabelTS labelTS609;
+    private CheckBoxTS chkTCPIPCatServerListening;
+    private ButtonTS btnDefaultBindPortForTCPIPCat;
+    private TextBoxTS txtTCPIPCATServerBindIPPort;
+    private LabelTS lblToggleToUse;
+    private CheckBoxTS chkZTBIsRecallStore;
+    private CheckBoxTS chkZTBstoreLock;
+    private CheckBoxTS chkCTUNignore0beat;
+    private LabelTS lblTimeToMakeDSPChange;
+    private LabelTS labelTS610;
+    private GroupBoxTS grpTCIServer;
+    private LabelTS lblToggleToUseTCI;
+    private LabelTS labelTS612;
+    private CheckBoxTS chkTCIServerListening;
+    private ButtonTS btnDefaultBindPortForTCI;
+    private TextBoxTS txtTCIServerBindIPPort;
+    private LabelTS labelTS611;
+    private NumericUpDownTS udTCIRateLimit;
+    private LabelTS lblWarningBufferType;
+    private LabelTS lblWarningFilterSize;
+    private LabelTS lblWarningBufferSize;
+    private PictureBox pbWarningBufferType;
+    private PictureBox pbWarningFilterSize;
+    private PictureBox pbWarningBufferSize;
+    private CheckBoxTS chkCopyRX2VFObToVFOa;
+    private CheckBoxTS chkUseRX1vfoaForRX2vfoa;
+    private CheckBoxTS chkTCIsendInitialStateOnConnect;
+    private CheckBoxTS chkWelcomeMessageTCPIPCat;
+    private LabelTS labelTS615;
+    private NumericUpDownTS udTCISpotLifetime;
+    private NumericUpDownTS udMaxTCISpots;
+    private LabelTS labelTS614;
+    private LabelTS labelTS613;
+    private CheckBoxTS chkShowTCISpots;
+    private CheckBoxTS chkLegacyDXBuffers;
+    private LabelTS lblTimeout;
+    private LabelTS lblShowTimeoutText;
+    private ColorButton clrbtnOwnCallApearance;
+    private TextBoxTS txtOwnCallsign;
+    private CheckBoxTS chkSpotOwnCallAppearance;
+    private CheckBoxTS chkCWLUbecomesCW;
+    private ButtonTS btnShowLog;
+    private ButtonTS btnShowTCPIPCatLog;
+    private CheckBoxTS chkNoFadeOverUnderWarning;
+    private CheckBoxTS chkUseOutlinedCross;
+    private GroupBoxTS groupBoxTS22;
+    private GroupBoxTS groupBoxTS23;
+    private CheckBoxTS chkHideFeebackLevel;
+    private CheckBoxTS chkSwapREDBluePSAColours;
+    private ButtonTS chkFirewallCheck;
+    private CheckBoxTS chkUsing10MHzRef;
+    private NumericUpDownTS udHPSDRFreqCorrectFactor10MHz;
+    private Button btnHPSDRFreqCalReset10MHz;
+    private ButtonTS btnLoadGradient;
+    private ButtonTS btnSaveGradient;
+    private CheckBoxTS chkIgnoreSeqErrors;
+    private ButtonTS btnIPv4TCI;
+    private ButtonTS btnIPv4N1MM;
+    private ButtonTS btnIPv4TCPCat;
+    private TextBoxTS txtCAT1;
+    private GroupBoxTS groupBoxTS25;
+    private GroupBoxTS groupBoxTS24;
+    private TabPage tpUserInterface;
+    private TabPage tbMIDIcat;
+    private CheckBoxTS chkEmulateSunSDR2Pro;
+    private CheckBoxTS chkEmulateExpertSDR3Protocol;
+    private CheckBoxTS chkDisableRearSpeakerJacksAudioAmplifier;
+    private LabelTS labelTS617;
+    private LabelTS labelTS616;
+    private RadioButtonTS radUseFixedDriveTune;
+    private RadioButtonTS radUseDriveSliderTune;
+    private RadioButtonTS radUseTuneSliderTune;
+    private RadioButtonTS radUseFixedDrive2Tone;
+    private RadioButtonTS radUseDriveSlider2Tone;
+    private RadioButtonTS radUseTuneSlider2Tone;
+    private CheckBoxTS chkLimitPowerCATTCIMsgs;
+    private GroupBoxTS grpGainByBandPA;
+    private LabelTS labelTS618;
+    private NumericUpDownTS nudVHF13;
+    private LabelTS labelTS619;
+    private NumericUpDownTS nudVHF12;
+    private LabelTS labelTS620;
+    private NumericUpDownTS nudVHF11;
+    private LabelTS labelTS621;
+    private NumericUpDownTS nudVHF10;
+    private LabelTS labelTS622;
+    private NumericUpDownTS nudVHF9;
+    private LabelTS labelTS623;
+    private NumericUpDownTS nudVHF8;
+    private LabelTS labelTS624;
+    private NumericUpDownTS nudVHF7;
+    private LabelTS labelTS625;
+    private NumericUpDownTS nudVHF6;
+    private LabelTS labelTS626;
+    private NumericUpDownTS nudVHF5;
+    private LabelTS labelTS627;
+    private NumericUpDownTS nudVHF4;
+    private LabelTS labelTS628;
+    private NumericUpDownTS nudVHF3;
+    private LabelTS labelTS629;
+    private NumericUpDownTS nudVHF2;
+    private LabelTS labelTS630;
+    private NumericUpDownTS nudVHF1;
+    private LabelTS labelTS631;
+    private NumericUpDownTS nudVHF0;
+    private NumericUpDownTS nud6M;
+    private LabelTS labelTS632;
+    private LabelTS labelTS633;
+    private NumericUpDownTS nud10M;
+    private LabelTS labelTS634;
+    private NumericUpDownTS nud12M;
+    private LabelTS labelTS635;
+    private NumericUpDownTS nud15M;
+    private LabelTS labelTS636;
+    private NumericUpDownTS nud17M;
+    private LabelTS labelTS637;
+    private NumericUpDownTS nud20M;
+    private LabelTS labelTS638;
+    private NumericUpDownTS nud30M;
+    private LabelTS labelTS639;
+    private NumericUpDownTS nud40M;
+    private LabelTS labelTS640;
+    private NumericUpDownTS nud60M;
+    private LabelTS labelTS641;
+    private NumericUpDownTS nud80M;
+    private LabelTS labelTS642;
+    private NumericUpDownTS nud160M;
+    private ButtonTS btnResetPAProfile;
+    private ButtonTS btnDeletePAProfile;
+    private ComboBoxTS comboPAProfile;
+    private ButtonTS btnNewPAProfile;
+    private CheckBoxTS chkPANewCal;
+    private ButtonTS btnCopyPAProfile;
+    private PanelTS panelAdjustGain;
+    private LabelTS lblPAAdjust70;
+    private LabelTS lblPAAdjust60;
+    private LabelTS lblPAAdjust50;
+    private LabelTS lblPAAdjust40;
+    private LabelTS lblPAAdjust30;
+    private LabelTS lblPAAdjust20;
+    private LabelTS lblPAAdjust10;
+    private NumericUpDownTS nudAdjustGain90;
+    private NumericUpDownTS nudAdjustGain80;
+    private NumericUpDownTS nudAdjustGain70;
+    private NumericUpDownTS nudAdjustGain60;
+    private NumericUpDownTS nudAdjustGain50;
+    private NumericUpDownTS nudAdjustGain40;
+    private NumericUpDownTS nudAdjustGain30;
+    private NumericUpDownTS nudAdjustGain20;
+    private NumericUpDownTS nudAdjustGain10;
+    private LabelTS lblDriveHeader;
+    private LabelTS lblAdjustBand;
+    private LabelTS lblPAAdjust90;
+    private LabelTS lblPAAdjust80;
+    private PanelTS panelTS1;
+    private CheckBoxTS chkUsePowerOnDrvTunPA;
+    private LabelTS labelTS165;
+    private NumericUpDownTS nudMaxPowerForBandPA;
+    private LabelTS lblMaxPowerForBandPA;
+    private LabelTS labelTS8;
+    private ColorButton clrbtnSliderLimitBar;
+    private CheckBoxTS chkUseSUnitsForPBNPPBSNR;
+    private GroupBoxTS groupBoxTS26;
+    private LabelTS labelTS155;
+    private NumericUpDownTS nudNFsensitivity;
+    private LabelTS labelTS157;
+    private LabelTS labelTS156;
+    private NumericUpDownTS nudNFshift;
+    private CheckBoxTS chkNFShowDecimal;
+    private CheckBoxTS chkAdjustGridMinToNFRX1;
+    private CheckBoxTS chkAdjustGridMinToNFRX2;
+    private NumericUpDownTS nudRX1NFoffsetGridFollow;
+    private NumericUpDownTS nudRX2NFoffsetGridFollow;
+    private Button btnResetLevelCal;
+    private CheckBoxTS chkSupportUkraine;
+    private GroupBoxTS groupBoxTS27;
+    private ButtonTS btnAmpDefault;
+    private LabelTS labelTS159;
+    private LabelTS labelTS158;
+    private NumericUpDownTS udAmpSens;
+    private NumericUpDownTS udAmpVoff;
+    private CheckBoxTS chkFMDetLimON;
+    private LabelTS lblFMLimGain30dB;
+    private LabelTS lblFMLimGain0dB;
+    private LabelTS lblFMDetLimGain;
+    public TrackBarTS tbDSPFMDetLimGain;
+    private CheckBoxTS chkForceATTwhenPSAoff;
+    private CheckBoxTS chkVisualNotch;
+    private ButtonTS btnRX2PBsnr;
+    private ButtonTS btnRX1PBsnr;
+    private LabelTS labelTS160;
+    private ButtonTS btnResetNFShift;
+    private GroupBoxTS grpMultiMeterHolder;
+    private ButtonTS btnAddRX2Container;
+    private ButtonTS btnAddRX1Container;
+    private CheckBoxTS chkContainerHighlight;
+    private ButtonTS btnContainerDelete;
+    private ComboBoxTS comboContainerSelect;
+    private CheckBoxTS chkPreventTXonDifferentBandToRX;
+    private GroupBoxTS grpMeterItemSettings;
+    private ButtonTS btnMeterUp;
+    private ButtonTS btnMeterDown;
+    private ButtonTS btnRemoveMeterItem;
+    private ButtonTS btnAddMeterItem;
+    private ListBox lstMetersInUse;
+    private ListBox lstMetersAvailable;
+    private TabPage tpAppearanceMeter2;
+    private CheckBoxTS chkMeterItemPeakValue;
+    private CheckBoxTS chkMeterItemTitle;
+    private CheckBoxTS chkMeterItemSegmented;
+    private LabelTS lblMMBackground;
+    private ColorButton clrbtnMeterItemHBackground;
+    private ColorButton clrbtnMeterItemHistory;
+    private ColorButton clrbtnMeterItemPeakHold;
+    private LabelTS lblMMIndicator;
+    private ColorButton clrbtnMeterItemIndiciator;
+    private LabelTS lblMMHigh;
+    private LabelTS lblMMLow;
+    private ColorButton clrbtnMeterItemHigh;
+    private ColorButton clrbtnMeterItemLow;
+    private CheckBoxTS chkMeterItemShadow;
+    private CheckBoxTS chkMeterItemPeakHold;
+    private CheckBoxTS chkMeterItemHistory;
+    private CheckBoxTS chkMeterItemFadeOnTx;
+    private CheckBoxTS chkMeterItemFadeOnRx;
+    private NumericUpDownTS nudMeterItemHistoryDuration;
+    private LabelTS lblMMHistory;
+    private TrackBarTS tbMeterItemHistoryAlpha;
+    private NumericUpDownTS nudMeterItemDecayRate;
+    private LabelTS labelTS169;
+    private NumericUpDownTS nudMeterItemAttackRate;
+    private LabelTS labelTS168;
+    private NumericUpDownTS nudMeterItemUpdateRate;
+    private LabelTS labelTS167;
+    private ColorButton clrbtnMeterItemMeterTitle;
+    private ColorButton clrbtnMeterItemPeakValueColour;
+    private ColorButton clrbtnMeterItemSegmentedSolidColourLow;
+    private NumericUpDownTS nudMeterItemEyeScale;
+    private LabelTS lblMMEyeSize;
+    private CheckBoxTS chkMeterItemSignalAverage;
+    private CheckBoxTS chkMeterItemDarkMode;
+    private Label label14;
+    private CheckBoxTS chkMaintainNFAdjustDeltaRX1;
+    private Label label20;
+    private CheckBoxTS chkMaintainNFAdjustDeltaRX2;
+    private CheckBoxTS chkContainerBorder;
+    private LabelTS lblMMContainerBackground;
+    private ColorButton clrbtnContainerBackground;
+    private NumericUpDownTS nudMeterItemsPowerLimit;
+    private LabelTS lblMMPowerLimit;
+    private LabelTS lblMMsegSolHigh;
+    private LabelTS lblMMsegSolLow;
+    private ColorButton clrbtnMeterItemSegmentedSolidColourHigh;
+    private CheckBoxTS chkMeterItemSolid;
+    private CheckBoxTS chkMeterItemShowSubIndicator;
+    private LabelTS lblMMIndicatorSub;
+    private ColorButton clrbtnMeterItemSubIndiciator;
+    private CheckBoxTS chkMeterItemShowIndicator;
+    private GroupBoxTS grpMeterItemClockSettings;
+    private LabelTS labelTS164;
+    private ColorButton clrbtnMMDate;
+    private LabelTS labelTS162;
+    private ColorButton clrbtnMMTime;
+    private ColorButton clrbtnMMClockTitle;
+    private CheckBoxTS chkMMClockTitle;
+    private RadioButtonTS radMM24Clock;
+    private RadioButtonTS radMM12Clock;
+    private GroupBoxTS grpMeterItemVfoDisplaySettings;
+    private LabelTS labelTS176;
+    private ColorButton clrbtnMMVfoDisplayBackground;
+    private LabelTS labelTS175;
+    private ColorButton clrbtnMMVfoDisplayFrequency;
+    private LabelTS labelTS174;
+    private ColorButton clrbtnMMVfoDisplayBand;
+    private LabelTS labelTS173;
+    private ColorButton clrbtnMMVfoDisplayFilter;
+    private LabelTS labelTS172;
+    private ColorButton clrbtnMMVfoDisplayTx;
+    private LabelTS labelTS171;
+    private ColorButton clrbtnMMVfoDisplayRx;
+    private LabelTS labelTS170;
+    private ColorButton clrbtnMMVfoDisplaySplit;
+    private LabelTS labelTS163;
+    private ColorButton clrbtnMMVfoDisplaySplitBack;
+    private LabelTS labelTS166;
+    private ColorButton clrbtnMMVfoDisplayMode;
+    private ColorButton clrbtnMMVfoDisplayTitle;
+    private LabelTS lblMMClockBackground;
+    private ColorButton clrbtnMMClockBackground;
+    private LabelTS labelTS177;
+    private NumericUpDownTS nudMeterItemEyeBezelScale;
+    private LabelTS lblMMEyeBezelSize;
+    private ColorButton clrbtnMeterItemPowerScale;
+    private NumericUpDownTS nudMeterItemIgnoreHistoryDuration;
+    private LabelTS lblMMHistoryIgnore;
+    private PictureBox pictureBox1;
+    private ButtonTS btnMeterCopySettings;
+    private ButtonTS btnMeterPasteSettings;
+    private Label lblSampleRate;
+    private Label lblBuffer;
+    private CheckBox chkExclusive;
+    private GroupBoxTS grpInfo;
+    private LabelTS labelTS161;
+    private LabelTS lblDataBase;
+    private LabelTS lblDBTitle;
+    private CheckBoxTS chkAveraging;
+        private CheckBoxTS chkAveragingRX2;
+        private LabelTS labelTS178;
     }
 }

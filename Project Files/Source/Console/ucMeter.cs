@@ -640,6 +640,20 @@ namespace Thetis
             if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
                 mouseLeave();
         }
+
+        private void picContainer_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void picContainer_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                Thetis.Audio.console.SetupForm.ShowSetupTab(
+                    Setup.SetupTab.NewMetersTab);
+            }
+        }
     }
 }
 
