@@ -8577,8 +8577,11 @@ namespace Thetis
                 }
                 else //if(rows.Length > 1)	// this should never happen
                 {
-                    MessageBox.Show("Error reading BandInfo table.", "Database Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(
+    "Error reading BandInfo table.",
+    "Database Error: BandInfo", MessageBoxButtons.OK, MessageBoxIcon.Stop,
+    MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
                     outStr = "Error";
                     return false;
                 }

@@ -49,16 +49,16 @@ namespace Thetis
         public static extern void SetXmtrChannelOutrate(int xmtr_id, int rate, bool state);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "getbuffsize", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int GetBuffSize (int rate);
+        public static extern int GetBuffSize(int rate);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "inid", CallingConvention = CallingConvention.Cdecl)]
         public static extern int inid(int stype, int id);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "chid", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int chid (int stream, int subrx);
+        public static extern int chid(int stream, int subrx);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "getInputRate", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int GetInputRate (int stype, int id);
+        public static extern int GetInputRate(int stype, int id);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "getChannelOutputRate", CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetChannelOutputRate(int stype, int id);
@@ -66,7 +66,7 @@ namespace Thetis
         // router
 
         [DllImport("ChannelMaster.dll", EntryPoint = "LoadRouterAll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void LoadRouterAll(void* ptr, int id, int ports, int calls, int varvals, 
+        public static extern void LoadRouterAll(void* ptr, int id, int ports, int calls, int varvals,
             int* nstreams, int* function, int* callid);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "LoadRouterControlBit", CallingConvention = CallingConvention.Cdecl)]
@@ -97,7 +97,7 @@ namespace Thetis
         public static extern void GetDEXPPeakSignal(int id, double* peak);         // called by console.cs
 
         [DllImport("wdsp.dll", EntryPoint = "SetDEXPRun", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetDEXPRun (int id, bool run);
+        public static extern void SetDEXPRun(int id, bool run);
 
         [DllImport("wdsp.dll", EntryPoint = "SetDEXPDetectorTau", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetDEXPDetectorTau(int id, double tau);
@@ -156,10 +156,10 @@ namespace Thetis
         // siphon
 
         [DllImport("wdsp.dll", EntryPoint = "SetSiphonInsize", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetSiphonInsize (int id, int size);
+        public static extern void SetSiphonInsize(int id, int size);
 
         [DllImport("wdsp.dll", EntryPoint = "GetaSipF1EXT", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void GetaSipF1EXT (int id, float* buff, int size);     // called by console.cs
+        public static extern void GetaSipF1EXT(int id, float* buff, int size);     // called by console.cs
 
         // audio mixer
 
@@ -285,12 +285,12 @@ namespace Thetis
         public static bool Mox
         {
             get { return mox; }
-            set         
+            set
             {
                 mox = value;
                 if (mox)
                 {
-                    LoadRouterControlBit((void *)0, 0, 2, 1);
+                    LoadRouterControlBit((void*)0, 0, 2, 1);
                     WaveThing.wplayer[0].Condx = 1;
                     WaveThing.wplayer[1].Condx = 1;
                     WaveThing.wrecorder[0].Condx = 1;
@@ -320,10 +320,10 @@ namespace Thetis
             }
         }
 
-       
+
 
         // number of software receivers
-        private static int cmRCVR = 5;  
+        private static int cmRCVR = 5;
         public static int CMrcvr
         {
             get { return cmRCVR; }
@@ -351,7 +351,7 @@ namespace Thetis
         public static void CMCreateCMaster()
         {
             // set radio structure
-            int[] cmSPC = new int[1] {2};
+            int[] cmSPC = new int[1] { 2 };
             int[] cmInboundSize = new int[8] { 240, 240, 240, 240, 240, 720, 240, 240 };
             fixed (int* pcmSPC = cmSPC, pcmIbSize = cmInboundSize)
                 cmaster.SetRadioStructure(8, cmRCVR, 1, cmSubRCVR, 1, pcmSPC, pcmIbSize, 1536000, 48000, 384000);
@@ -360,14 +360,15 @@ namespace Thetis
             cmaster.SendCallbacks();
 
             // set default rates
-            int[] xcm_inrates = new int[8] {192000, 192000, 192000, 192000, 192000, 48000, 192000, 192000};
+            int[] xcm_inrates = new int[8] { 192000, 192000, 192000, 192000, 192000, 48000, 192000, 192000 };
             int aud_outrate = 48000;
-            int[] rcvr_ch_outrates = new int[5] {48000, 48000, 48000, 48000, 48000};
+            int[] rcvr_ch_outrates = new int[5] { 48000, 48000, 48000, 48000, 48000 };
             int[] xmtr_ch_outrates = new int[1] { 192000 };
             fixed (int* p1 = xcm_inrates, p2 = rcvr_ch_outrates, p3 = xmtr_ch_outrates)
                 cmaster.SetCMDefaultRates(p1, aud_outrate, p2, p3);
 
             // create receivers, transmitters, specials, and buffers
+            Splash.SetStatus("Creating receivers, transmitters and required buffers ...");
             cmaster.CreateRadio();
 
             // get transmitter identifiers
@@ -380,6 +381,7 @@ namespace Thetis
             // setup CFIR to run; it will always be ON with new protocol firmware
             WDSP.SetTXACFIRRun(txch, true);
 
+            Splash.SetStatus("Setting PureSignal basic parameters ...");
             // set PureSignal basic parameters
             // note:  if future models have different settings, these calls could be moved to
             //      CMLoadRouterAll() which is called each time the receiver model changes.
@@ -388,15 +390,18 @@ namespace Thetis
             puresignal.SetPSFeedbackRate(txch, ps_rate);
             puresignal.SetPSHWPeak(txch, 0.2899);
 
+            Splash.SetStatus("Setting up transmitter display ...");
             // setup transmitter display
             WDSP.TXASetSipMode(txch, 1);            // 1=>call the appropriate 'analyzer'
             WDSP.TXASetSipDisplay(txch, txinid);    // disp = txinid = tx stream
 
+            Splash.SetStatus("Making networking available for the radio...");
             NetworkIO.CreateRNet();
-            
+
+            Splash.SetStatus("Creating the main receiver ...");
             cmaster.create_rxa();
 
-           // create_wb();
+            // create_wb();
         }
 
         private static bool ps_loopback = false;
@@ -593,8 +598,8 @@ namespace Thetis
                                 //      respectively, (as well as to PureSignal) when transmitting with PureSignal 
                                 //      Enabled in Setup.
                                 // control bits are { MOX, Diversity_Enabled, PureSignal_Enabled }
-                                int[] Angelia_Function_PSTest = new int[112] 
-                                { 
+                                int[] Angelia_Function_PSTest = new int[112]
+                                {
                                     0, 0, 2, 2, 0, 2, 2, 2,     // Rx0, port 1035, Call 0
                                     0, 0, 0, 0, 0, 2, 0, 2,     // Rx0, port 1035, Call 1
                                     0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036, Call 0
@@ -680,8 +685,8 @@ namespace Thetis
                             case HPSDRModel.ANAN7000D:
                             case HPSDRModel.ANAN8000D:
                                 // control bits are { MOX, Diversity_Enabled, PureSignal_Enabled }
-                                int[] Angelia_Function = new int[56] 
-                                { 
+                                int[] Angelia_Function = new int[56]
+                                {
                                     0, 0, 2, 2, 0, 2, 2, 2,     // Rx0, port 1035
                                     0, 0, 0, 0, 0, 0, 0, 0,     // Rx1, port 1036
                                     1, 1, 0, 0, 1, 1, 0, 1,     // Rx2, port 1037
@@ -749,7 +754,7 @@ namespace Thetis
                     break;
             }
         }
-        
+
         public static void CMSetAntiVoxSourceWhat()
         {
             bool VACEn = Audio.console.VACEnabled;
@@ -762,27 +767,27 @@ namespace Thetis
             {
                 if (VACEn)
                 {
-                    cmaster.SetAntiVOXSourceWhat(0, RX1,  1);
+                    cmaster.SetAntiVOXSourceWhat(0, RX1, 1);
                     cmaster.SetAntiVOXSourceWhat(0, RX1S, 1);
                 }
                 else
                 {
-                    cmaster.SetAntiVOXSourceWhat(0, RX1,  0);
+                    cmaster.SetAntiVOXSourceWhat(0, RX1, 0);
                     cmaster.SetAntiVOXSourceWhat(0, RX1S, 0);
                 }
                 if (VAC2En)
-                    cmaster.SetAntiVOXSourceWhat(0, RX2,  1);
+                    cmaster.SetAntiVOXSourceWhat(0, RX2, 1);
                 else
-                    cmaster.SetAntiVOXSourceWhat(0, RX2,  0);
+                    cmaster.SetAntiVOXSourceWhat(0, RX2, 0);
             }
             else         // use audio going to hardware minus MON
             {
-                cmaster.SetAntiVOXSourceWhat(0, RX1,  1);
+                cmaster.SetAntiVOXSourceWhat(0, RX1, 1);
                 cmaster.SetAntiVOXSourceWhat(0, RX1S, 1);
-                cmaster.SetAntiVOXSourceWhat(0, RX2,  1);
+                cmaster.SetAntiVOXSourceWhat(0, RX2, 1);
             }
         }
-        
+
         public static void CMSetAudioVolume(double volume)
         {
             cmaster.SetAAudioMixVolume((void*)0, 0, volume);
@@ -795,12 +800,12 @@ namespace Thetis
             {
                 case 0:
                     run = Audio.console.specRX.GetSpecRX(0).NBOn;
-                    cmaster.SetRCVRANBRun (0, 0, run);
+                    cmaster.SetRCVRANBRun(0, 0, run);
                     break;
                 case 1:
-                    run =  Audio.console.specRX.GetSpecRX(1).NBOn
+                    run = Audio.console.specRX.GetSpecRX(1).NBOn
                         && Audio.console.RX2Enabled;
-                    cmaster.SetRCVRANBRun (0, 1, run);
+                    cmaster.SetRCVRANBRun(0, 1, run);
                     break;
             }
         }
@@ -815,7 +820,7 @@ namespace Thetis
                     cmaster.SetRCVRNOBRun(0, 0, run);
                     break;
                 case 1:
-                    run =  Audio.console.specRX.GetSpecRX(1).NB2On
+                    run = Audio.console.specRX.GetSpecRX(1).NB2On
                         && Audio.console.RX2Enabled;
                     cmaster.SetRCVRNOBRun(0, 1, run);
                     break;
@@ -828,11 +833,11 @@ namespace Thetis
             switch (id)
             {
                 case 0:
-                    run =  Audio.WavePlayback
+                    run = Audio.WavePlayback
                         && WaveThing.wave_file_reader[0] != null;
                     break;
                 case 1:
-                    run =  Audio.WavePlayback
+                    run = Audio.WavePlayback
                         && WaveThing.wave_file_reader[1] != null
                         && Audio.console.RX2Enabled;
                     break;
@@ -846,7 +851,7 @@ namespace Thetis
             switch (id)
             {
                 case 0:
-                    run =  Audio.WaveRecord
+                    run = Audio.WaveRecord
                         && WaveThing.wave_file_writer[0] != null;
                     break;
                 case 1:
@@ -951,7 +956,7 @@ namespace Thetis
 
         #region callbacks
 
-        
+
         unsafe public static void SendCallbacks()
         {
             SendCBPushVox(0, PushVoxDel);
@@ -972,7 +977,7 @@ namespace Thetis
 
         #region rxa
 
-        private static bool EXPOSE = false; 
+        private static bool EXPOSE = false;
         private static bool EXPOSEwb = true;
         private const int nrxa = 8;
         private static rxa[] rxa = new rxa[nrxa];
@@ -1014,7 +1019,7 @@ namespace Thetis
             {
                 //wideband = new wideband[3];
                 wideband[adc] = new wideband(adc);
-               // wideband[0].Show();
+                // wideband[0].Show();
             }
 
         }
@@ -1033,7 +1038,7 @@ namespace Thetis
         public static void Hidewb(int adc)
         {
             if (wideband[adc] != null)
-            wideband[adc].Hide();           
+                wideband[adc].Hide();
         }
 
         public static void Closewb(int adc)
@@ -1061,12 +1066,13 @@ namespace Thetis
             Audio.VOXActive = (active == 1);
         }
     }
-#endregion
+    #endregion
 
     #region WaveThing
 
-    unsafe static class WaveThing {
-#region createStuff
+    unsafe static class WaveThing
+    {
+        #region createStuff
 
         // declare a delegate of the correct form for the createWavePlayer
         // method
@@ -1087,15 +1093,16 @@ namespace Thetis
             CallingConvention = CallingConvention.Cdecl)]
         unsafe public static extern void SendCBCreateWRecord(createWrecord del);
 
-        unsafe public static void initWaves() {
+        unsafe public static void initWaves()
+        {
             // send pointer to createWavePlayer function
             SendCBCreateWPlay(cwpDel);
             SendCBCreateWRecord(cwrDel);
         }
 
-#endregion
+        #endregion
 
-#region playerStuff
+        #region playerStuff
 
         // declare a delegate of the correct form for the player method
         unsafe public delegate void WPlay(int state, double* data);
@@ -1115,7 +1122,8 @@ namespace Thetis
         public static WaveFileReader1[] wave_file_reader
             = new WaveFileReader1[nplayers];
 
-        unsafe public static void createWavePlayer(int id) {
+        unsafe public static void createWavePlayer(int id)
+        {
             // create a wave player instance
             wplayer[id] = new PlayWave();
             // store the pointer to the wave player instance
@@ -1128,9 +1136,9 @@ namespace Thetis
             // OpenWaveFile(filename, id)
         }
 
-#endregion
+        #endregion
 
-#region recorderStuff
+        #region recorderStuff
 
         unsafe public delegate void WRecord(int state, int pos, double* data);
 
@@ -1145,33 +1153,38 @@ namespace Thetis
         public static WaveFileWriter[] wave_file_writer
             = new WaveFileWriter[nrecorders];
 
-        unsafe public static void createWaveRecorder(int id) {
+        unsafe public static void createWaveRecorder(int id)
+        {
             wrecorder[id] = new RecordWave();
             precord[id] = new WRecord(wrecorder[id].wrecord);
             SendCBWaveRecorder(id, precord[id]);
             wrecorder[id].ID = id;
         }
 
-#endregion
+        #endregion
     }
 
-#region PlayWave Class
+    #region PlayWave Class
 
-    unsafe class PlayWave {
+    unsafe class PlayWave
+    {
         private int id = 0;
-        public int ID {
+        public int ID
+        {
             get { return id; }
             set { id = value; }
         }
 
         private bool run = false;
-        public bool Run {
+        public bool Run
+        {
             get { return run; }
             set { run = value; }
         }
 
         private int condx = 0;
-        public int Condx {
+        public int Condx
+        {
             get { return condx; }
             set { condx = value; }
         }
@@ -1181,13 +1194,17 @@ namespace Thetis
         float[] left = new float[2048];
         float[] right = new float[2048];
 
-        unsafe public void wplay(int state, double* data) {
-            if (run && (condx == state)) {
-                if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1) {
+        unsafe public void wplay(int state, double* data)
+        {
+            if (run && (condx == state))
+            {
+                if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1)
+                {
                     int size
                         = 2048; // could check actual size, depending upon MOX
-                    fixed(float* pleft = &left[0])
-                        fixed(float* pright = &right[0]) {
+                    fixed (float* pleft = &left[0])
+                    fixed (float* pright = &right[0])
+                    {
                         WaveThing.wave_file_reader[id].GetPlayBuffer(
                             pleft, pright);
                         swizzle(size, pleft, pright, data);
@@ -1198,46 +1215,54 @@ namespace Thetis
         }
 
         unsafe private static void swizzle(
-            int n, float* I, float* Q, double* C) {
+            int n, float* I, float* Q, double* C)
+        {
             int i;
-            for (i = 0; i < n; i++) {
+            for (i = 0; i < n; i++)
+            {
                 C[2 * i + 0] = (double)I[i];
                 C[2 * i + 1] = (double)Q[i];
             }
         }
     }
 
-#endregion
+    #endregion
 
-#region RecordWave Class
+    #region RecordWave Class
 
-    unsafe class RecordWave {
+    unsafe class RecordWave
+    {
         private int id = 0;
-        public int ID {
+        public int ID
+        {
             get { return id; }
             set { id = value; }
         }
 
         private bool run = false;
-        public bool Run {
+        public bool Run
+        {
             get { return run; }
             set { run = value; }
         }
 
         private int condx = 0;
-        public int Condx {
+        public int Condx
+        {
             get { return condx; }
             set { condx = value; }
         }
 
         private bool rxpre = false;
-        public bool RxPre {
+        public bool RxPre
+        {
             get { return rxpre; }
             set { rxpre = value; }
         }
 
         private bool txpre = true;
-        public bool TxPre {
+        public bool TxPre
+        {
             get { return txpre; }
             set { txpre = value; }
         }
@@ -1249,15 +1274,18 @@ namespace Thetis
         float[] ltemp = new float[2048];
         float[] rtemp = new float[2048];
         // 'wrecord()' is called by ChannelMaster.dll
-        unsafe public void wrecord(int state, int pos, double* data) {
+        unsafe public void wrecord(int state, int pos, double* data)
+        {
             if (run
                 && (condx
                     == state)) // if run && (!MOX and calling with receive data,
                                // or, MOX and calling with transmit data)
             {
-                if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1) {
-                    fixed(float* pleft = &left[0], pright = &right[0],
-                        pltemp = &ltemp[0], prtemp = &rtemp[0]) {
+                if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1)
+                {
+                    fixed (float* pleft = &left[0], pright = &right[0],
+                        pltemp = &ltemp[0], prtemp = &rtemp[0])
+                    {
                         if (pos == 0) // calling from the "pre" location
                         {
                             if ((state == 0)
@@ -1271,7 +1299,8 @@ namespace Thetis
                                     = cmaster.GetBuffSize(rcvr_inrate);
                                 deswizzle(rcvr_insize, data, pleft, pright);
                                 if (WaveThing.wave_file_writer[id].BaseRate
-                                    != rcvr_inrate) {
+                                    != rcvr_inrate)
+                                {
                                     int outsamps;
                                     WDSP.xresampleFV(pleft, pltemp, rcvr_insize,
                                         &outsamps,
@@ -1284,7 +1313,8 @@ namespace Thetis
                                     WaveThing.wave_file_writer[id]
                                         .AddWriteBuffer(
                                             pltemp, prtemp, outsamps);
-                                } else
+                                }
+                                else
                                     WaveThing.wave_file_writer[id]
                                         .AddWriteBuffer(
                                             pleft, pright, rcvr_insize);
@@ -1298,7 +1328,8 @@ namespace Thetis
                                     = cmaster.GetBuffSize(xmtr_inrate);
                                 deswizzle(xmtr_insize, data, pleft, pright);
                                 if (WaveThing.wave_file_writer[id].BaseRate
-                                    != xmtr_inrate) {
+                                    != xmtr_inrate)
+                                {
                                     int outsamps;
                                     WDSP.xresampleFV(pleft, pltemp, xmtr_insize,
                                         &outsamps,
@@ -1311,7 +1342,8 @@ namespace Thetis
                                     WaveThing.wave_file_writer[id]
                                         .AddWriteBuffer(
                                             pltemp, prtemp, outsamps);
-                                } else
+                                }
+                                else
                                     WaveThing.wave_file_writer[id]
                                         .AddWriteBuffer(
                                             pleft, pright, xmtr_insize);
@@ -1329,7 +1361,8 @@ namespace Thetis
                                     = cmaster.GetBuffSize(rcvr_outrate);
                                 deswizzle(rcvr_outsize, data, pleft, pright);
                                 if (WaveThing.wave_file_writer[id].BaseRate
-                                    != rcvr_outrate) {
+                                    != rcvr_outrate)
+                                {
                                     int outsamps;
                                     WDSP.xresampleFV(pleft, pltemp,
                                         rcvr_outsize, &outsamps,
@@ -1342,7 +1375,8 @@ namespace Thetis
                                     WaveThing.wave_file_writer[id]
                                         .AddWriteBuffer(
                                             pltemp, prtemp, outsamps);
-                                } else
+                                }
+                                else
                                     WaveThing.wave_file_writer[id]
                                         .AddWriteBuffer(
                                             pleft, pright, rcvr_outsize);
@@ -1357,7 +1391,8 @@ namespace Thetis
                                     = cmaster.GetBuffSize(xmtr_outrate);
                                 deswizzle(xmtr_outsize, data, pleft, pright);
                                 if (WaveThing.wave_file_writer[id].BaseRate
-                                    != xmtr_outrate) {
+                                    != xmtr_outrate)
+                                {
                                     int outsamps;
                                     WDSP.xresampleFV(pleft, pltemp,
                                         xmtr_outsize, &outsamps,
@@ -1370,7 +1405,8 @@ namespace Thetis
                                     WaveThing.wave_file_writer[id]
                                         .AddWriteBuffer(
                                             pltemp, prtemp, outsamps);
-                                } else
+                                }
+                                else
                                     WaveThing.wave_file_writer[id]
                                         .AddWriteBuffer(
                                             pleft, pright, xmtr_outsize);
@@ -1383,22 +1419,25 @@ namespace Thetis
         }
 
         unsafe private static void deswizzle(
-            int n, double* C, float* I, float* Q) {
+            int n, double* C, float* I, float* Q)
+        {
             int i;
-            for (i = 0; i < n; i++) {
+            for (i = 0; i < n; i++)
+            {
                 I[i] = (float)C[2 * i + 0];
                 Q[i] = (float)C[2 * i + 1];
             }
         }
     }
 
-#endregion
+    #endregion
 
-#endregion
+    #endregion
 
-#region Scope
+    #region Scope
 
-    unsafe static class Scope {
+    unsafe static class Scope
+    {
         unsafe public delegate void createscope(int id);
         unsafe private static createscope cscDel = createScope;
 
@@ -1416,7 +1455,8 @@ namespace Thetis
         public static DoScope[] dscope = new DoScope[nscopes];
         static Xscope[] pscope = new Xscope[nscopes];
 
-        unsafe public static void createScope(int id) {
+        unsafe public static void createScope(int id)
+        {
             dscope[id] = new DoScope();
             pscope[id] = new Xscope(dscope[id].xscope);
             SendCBScope(id, pscope[id]);
@@ -1427,30 +1467,37 @@ namespace Thetis
         unsafe public static void initScope() { SendCBCreateScope(cscDel); }
     }
 
-    unsafe class DoScope {
+    unsafe class DoScope
+    {
         float[] left = new float[2048];
         float[] right = new float[2048];
 
         int busy = 0;
 
         private bool run = false;
-        public bool Run {
+        public bool Run
+        {
             get { return run; }
             set { run = value; }
         }
 
         private int condx = 0;
-        public int Condx {
+        public int Condx
+        {
             get { return condx; }
             set { condx = value; }
         }
 
-        unsafe public void xscope(int state, double* data) {
-            if (run && (condx == state)) {
-                if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1) {
+        unsafe public void xscope(int state, double* data)
+        {
+            if (run && (condx == state))
+            {
+                if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1)
+                {
                     int size = Audio.OutCount;
-                    fixed(float* pleft = &left[0])
-                        fixed(float* pright = &right[0]) {
+                    fixed (float* pleft = &left[0])
+                    fixed (float* pright = &right[0])
+                    {
                         deswizzle(size, data, pleft, pright);
                         Audio.DoScope(pleft, size);
                         Audio.DoScope2(pright, size);
@@ -1461,15 +1508,17 @@ namespace Thetis
         }
 
         unsafe private static void deswizzle(
-            int n, double* C, float* I, float* Q) {
+            int n, double* C, float* I, float* Q)
+        {
             int i;
-            for (i = 0; i < n; i++) {
+            for (i = 0; i < n; i++)
+            {
                 I[i] = (float)C[2 * i + 0];
                 Q[i] = (float)C[2 * i + 1];
             }
         }
     }
 
-#endregion
+    #endregion
 
-    }
+}

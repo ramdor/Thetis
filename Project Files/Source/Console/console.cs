@@ -598,7 +598,8 @@ namespace Thetis
         // ======================================================
         // Constructor and Destructor
         // ======================================================
-        internal bool m_waiting_for_portaudio = true; // KLJ
+        internal volatile bool m_waiting_for_portaudio = true; // KLJ
+
         public Console(string[] args)
         {
             // CheckIfRussian(); //#UKRAINE
@@ -1002,15 +1003,16 @@ namespace Thetis
                 ApartmentState = ApartmentState.STA // no ASIO devices without Apartment state
             }.Start();
 
-            Splash.SetStatus("Initializing Radio"); // Set progress point
+            Splash.SetStatus("Initializing Radio ..."); // Set progress point
             radio = new Radio(AppDataPath); // Initialize the Radio processor INIT_SLOW
             specRX = new SpecRX();
             Display.specready = true;
 
-            Splash.SetStatus("Initializing PortAudio"); // Set progress point
+            Splash.SetStatus("Initializing PortAudio ..."); // Set progress point
                                                         // PortAudioForThetis.PA_Initialize();                               //
                                                         // Initialize the audio interface KLJ moved to different thread to speed
                                                         // start-up
+
 
             break_in_timer = new HiPerfTimer();
 
@@ -1069,10 +1071,11 @@ namespace Thetis
 
             initializing = false;
 
-            Splash.SetStatus("Setting up DSP"); // Set progress point
+            Splash.SetStatus("Setting up DSP, please be patient ..."); // Set progress point
 
             selectFilters();
             selectModes();
+
 
             SyncDSP(); //   INIT_SLOW
 
@@ -1244,6 +1247,8 @@ namespace Thetis
                 return m_frmSetupForm == null || m_frmSetupForm.IsDisposed;
             }
         }
+
+        private volatile bool setupFormReady = false;
         public Setup SetupForm
         {
             // MW0LGE implement SetupForm as singleton, with some level of thread safety
@@ -1259,8 +1264,10 @@ namespace Thetis
                         m_frmSetupForm = new Setup(this);
                         this.SetupForm.setDBPath(DBFileName);
                     }
-                    return m_frmSetupForm;
+
                 }
+                setupFormReady = true;
+                return m_frmSetupForm; // KLJ moved out of lock
             }
         }
 
@@ -2100,9 +2107,12 @@ namespace Thetis
             Common.RestoreForm(EQForm, "EQForm", false);
 
             XVTRForm = new XVTRForm(this);
+            Splash.SetStatus("Creating wave file support ...");
             WaveForm = new WaveControl(
                 this)
             { StartPosition = FormStartPosition.Manual }; // create Wave form
+
+            Splash.SetStatus("Restoring memory list ...");
 
             MemoryList = MemoryList.Restore();
             MemoryList.CheckVersion();
@@ -2124,6 +2134,7 @@ namespace Thetis
 
             comboFMCTCSS.Text = "100.0";
 
+            Splash.SetStatus("Recalling saved state ...");
             GetState(); // recall saved state
 
             UpdateTXProfile(SetupForm.TXProfile); // now update the combos
@@ -2788,10 +2799,24 @@ namespace Thetis
         private int SyncDSPCount = 0;
         private void SyncDSP()
         {
+
+            int slept = 0;
+            while (!setupFormReady) // deadlock avoidance
+            {
+                Application.DoEvents();
+                Thread.Sleep(100);
+                slept += 100;
+                Debug.Assert(slept < 20000);
+                if (setupFormReady || slept > 30000)
+                {
+                    break;
+                }
+            }
+            Debug.Print("Took " + slept.ToString() + " ms waiting for setupForm to be ready.");
             SyncDSPCount++;
             Debug.Assert(SyncDSPCount
                 == 1); // KLJ: broke my assumption, no real serious issue,
-                       // except startup time may be affected.
+                       // except start up time may be affected.
             for (int i = 0; i < 2; i++)
             {
                 for (int j = 0; j < 2; j++)
@@ -2835,6 +2860,7 @@ namespace Thetis
                 dsp_tx.Update = true;
                 dsp_tx.Force = false;
             }
+            
         }
 
         public bool Force16bitIQ = false;
@@ -3602,6 +3628,7 @@ namespace Thetis
             // ComboBox, NumericUpDown, RadioButton, TextBox, and TrackBar
             // (slider)
 
+            Splash.SetStatus("Restoring settings from database ...");
             string file_name2
                 = AppDataPath + "ke9ns8.dat"; // save data for my mods
 
@@ -34809,7 +34836,10 @@ namespace Thetis
                 chkDisplayAVG.BackColor = SystemColors.Control;
             }
             RX1AVGToolStripMenuItem.Checked = chkDisplayAVG.Checked;
-            this.SetupForm.DisplayAveraging = chkDisplayAVG.Checked;
+            if (this.SetupForm != null)
+            {
+                this.SetupForm.DisplayAveraging = chkDisplayAVG.Checked;
+            }
         }
 
         private void chkDisplayPeak_CheckedChanged(object sender, System.EventArgs e)

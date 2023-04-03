@@ -6,6 +6,7 @@ namespace RawInput_dll
     {
         static internal RegistryKey GetDeviceKey(string device)
         {
+
             var split = device.Substring(4).Split('#');
 
             var classCode = split[0];       // ACPI (Class code)

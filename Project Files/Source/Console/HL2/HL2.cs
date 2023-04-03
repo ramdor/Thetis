@@ -48,8 +48,8 @@ namespace Thetis
             setup.ApolloTuner = true;
             setup.HermesEnableAttenuator = true;
             setup.MaxFreq = 38.8M;
-            setup.RadioSampleRate = 48000;
-            setup.HL2N2ADRFilters();
+            // setup.RadioSampleRate = 48000; // no need for this, HL2 is quite happy @ 192k
+            setup.HL2N2ADRFilters(this);
             setup.HermesLite2 = true;
         }
 

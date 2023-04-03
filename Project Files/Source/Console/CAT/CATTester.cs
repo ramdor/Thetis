@@ -7,57 +7,57 @@ using System.Data;
 
 namespace Thetis
 {
-	/// <summary>
-	/// Summary description for tester.
-	/// </summary>
-	public class CATTester : System.Windows.Forms.Form
-	{
+    /// <summary>
+    /// Summary description for tester.
+    /// </summary>
+    public class CATTester : System.Windows.Forms.Form
+    {
 
-		private System.Windows.Forms.Button btnExit;
-		private System.Windows.Forms.TextBoxTS txtInput;
-		private System.Windows.Forms.TextBoxTS txtResult;
-		private Console console;
-		private CATParser parser;
-		private System.Windows.Forms.LabelTS label1;
-		private System.Windows.Forms.LabelTS label2;
-		private DataSet ds;
-		private System.Windows.Forms.DataGridView dataGrid1;
-		private System.Windows.Forms.Button btnExecute;
+        private System.Windows.Forms.Button btnExit;
+        private System.Windows.Forms.TextBoxTS txtInput;
+        private System.Windows.Forms.TextBoxTS txtResult;
+        private Console console;
+        private CATParser parser;
+        private System.Windows.Forms.LabelTS label1;
+        private System.Windows.Forms.LabelTS label2;
+        private DataSet ds;
+        private System.Windows.Forms.DataGridView dataGrid1;
+        private System.Windows.Forms.Button btnExecute;
 
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.Container components = null;
 
-		public CATTester(Console c)
-	{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
-			console = c;
-			parser = new CATParser(console);
-			ds = new DataSet();
-			Setup();
-		}
+        public CATTester(Console c)
+        {
+            //
+            // Required for Windows Form Designer support
+            //
+            InitializeComponent();
+            console = c;
+            parser = new CATParser(console);
+            ds = new DataSet();
+            Setup();
+        }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose(disposing);
+        }
 
-		private void Setup()
-		{
+        private void Setup()
+        {
             try
             {
                 ds.ReadXml(Application.StartupPath + "\\CATStructs.xml");
@@ -65,22 +65,23 @@ namespace Thetis
             }
             catch
             {
-                MessageBox.Show("Issue loding CATStructs.xml",
-                    "CATStructs",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                MessageBox.Show(
+                    "Issue loading CATStructs.xml",
+                    "Database Error: CATStructs", MessageBoxButtons.OK, MessageBoxIcon.Stop,
+                    MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
 
             txtInput.Focus();
-		}
+        }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        #region Windows Form Designer generated code
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CATTester));
             this.btnExit = new System.Windows.Forms.Button();
             this.txtInput = new System.Windows.Forms.TextBoxTS();
@@ -172,44 +173,44 @@ namespace Thetis
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
-		#endregion
+        }
+        #endregion
 
 
-		private void btnExit_Click(object sender, System.EventArgs e)
-		{
-			Close();
-		}
+        private void btnExit_Click(object sender, System.EventArgs e)
+        {
+            Close();
+        }
 
-		private void txtInput_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
-		{
-			if(e.KeyCode == Keys.Enter)
-			{
-				CheckText();
-			}
-		}
+        private void txtInput_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                CheckText();
+            }
+        }
 
-		private void ExecuteCommand()
-		{
-			string answer = parser.Get(txtInput.Text);
-			txtResult.Text = answer;
-			txtInput.Clear();
-	
-		}
+        private void ExecuteCommand()
+        {
+            string answer = parser.Get(txtInput.Text);
+            txtResult.Text = answer;
+            txtInput.Clear();
 
-		private void btnExecute_Click(object sender, System.EventArgs e)
-		{
-			CheckText();
-		}
+        }
 
-		private void CheckText()
-		{
-			if(!txtInput.Text.EndsWith(";"))
-				txtInput.Text += ";";
-			ExecuteCommand();
-		}
+        private void btnExecute_Click(object sender, System.EventArgs e)
+        {
+            CheckText();
+        }
+
+        private void CheckText()
+        {
+            if (!txtInput.Text.EndsWith(";"))
+                txtInput.Text += ";";
+            ExecuteCommand();
+        }
 
 
 
-	}
+    }
 }

@@ -2510,6 +2510,7 @@
             this.tbCFC1 = new System.Windows.Forms.TrackBarTS();
             this.tbCFC2 = new System.Windows.Forms.TrackBarTS();
             this.tpTransmit = new System.Windows.Forms.TabPage();
+            this.btnTXProfileDefImport = new System.Windows.Forms.ButtonTS();
             this.chkHighlightTXProfileSaveItems = new System.Windows.Forms.CheckBoxTS();
             this.chkRestoreVAC2DeviceDetailsFromTXProfile = new System.Windows.Forms.CheckBoxTS();
             this.chkRestoreVAC1DeviceDetailsFromTXProfile = new System.Windows.Forms.CheckBoxTS();
@@ -2538,7 +2539,6 @@
             this.lblLineInBoost = new System.Windows.Forms.LabelTS();
             this.chkTXExpert = new System.Windows.Forms.CheckBoxTS();
             this.grpTXProfileDef = new System.Windows.Forms.GroupBoxTS();
-            this.btnTXProfileDefImport = new System.Windows.Forms.ButtonTS();
             this.lstTXProfileDef = new System.Windows.Forms.ListBox();
             this.grpTXAM = new System.Windows.Forms.GroupBoxTS();
             this.lblTXAMCarrierLevel = new System.Windows.Forms.LabelTS();
@@ -7724,6 +7724,7 @@
             this.chkN2ADR.Text = "N2ADR Filter Board";
             this.chkN2ADR.UseVisualStyleBackColor = true;
             this.chkN2ADR.Visible = false;
+            this.chkN2ADR.CheckedChanged += new System.EventHandler(this.chkN2ADR_CheckedChanged);
             // 
             // chkHermesLite2
             // 
@@ -30260,9 +30261,9 @@
             this.grpWaterfallAverage.Controls.Add(this.udDisplayAVTimeWF);
             this.grpWaterfallAverage.Controls.Add(this.labelTS374);
             this.grpWaterfallAverage.Enabled = false;
-            this.grpWaterfallAverage.Location = new System.Drawing.Point(165, 178);
+            this.grpWaterfallAverage.Location = new System.Drawing.Point(165, 155);
             this.grpWaterfallAverage.Name = "grpWaterfallAverage";
-            this.grpWaterfallAverage.Size = new System.Drawing.Size(123, 141);
+            this.grpWaterfallAverage.Size = new System.Drawing.Size(123, 164);
             this.grpWaterfallAverage.TabIndex = 80;
             this.grpWaterfallAverage.TabStop = false;
             this.grpWaterfallAverage.Text = "Waterfall";
@@ -30271,7 +30272,7 @@
             // 
             this.labelTS372.AutoSize = true;
             this.labelTS372.Image = null;
-            this.labelTS372.Location = new System.Drawing.Point(10, 67);
+            this.labelTS372.Location = new System.Drawing.Point(9, 71);
             this.labelTS372.Name = "labelTS372";
             this.labelTS372.Size = new System.Drawing.Size(62, 13);
             this.labelTS372.TabIndex = 59;
@@ -30290,7 +30291,7 @@
             "Recursive",
             "Time Window",
             "Log Recursive"});
-            this.comboDispWFAveraging.Location = new System.Drawing.Point(9, 86);
+            this.comboDispWFAveraging.Location = new System.Drawing.Point(6, 95);
             this.comboDispWFAveraging.Name = "comboDispWFAveraging";
             this.comboDispWFAveraging.Size = new System.Drawing.Size(104, 21);
             this.comboDispWFAveraging.TabIndex = 58;
@@ -30315,7 +30316,7 @@
             "Rosenfell",
             "Average",
             "Sample"});
-            this.comboDispWFDetector.Location = new System.Drawing.Point(9, 38);
+            this.comboDispWFDetector.Location = new System.Drawing.Point(9, 42);
             this.comboDispWFDetector.Name = "comboDispWFDetector";
             this.comboDispWFDetector.Size = new System.Drawing.Size(104, 21);
             this.comboDispWFDetector.TabIndex = 56;
@@ -30328,7 +30329,7 @@
             0,
             0,
             0});
-            this.udDisplayAVTimeWF.Location = new System.Drawing.Point(62, 113);
+            this.udDisplayAVTimeWF.Location = new System.Drawing.Point(62, 132);
             this.udDisplayAVTimeWF.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -30354,7 +30355,7 @@
             // labelTS374
             // 
             this.labelTS374.Image = null;
-            this.labelTS374.Location = new System.Drawing.Point(6, 113);
+            this.labelTS374.Location = new System.Drawing.Point(6, 132);
             this.labelTS374.Name = "labelTS374";
             this.labelTS374.Size = new System.Drawing.Size(64, 20);
             this.labelTS374.TabIndex = 3;
@@ -30665,7 +30666,7 @@
             // 
             this.lblDispAv.AutoSize = true;
             this.lblDispAv.Image = null;
-            this.lblDispAv.Location = new System.Drawing.Point(10, 86);
+            this.lblDispAv.Location = new System.Drawing.Point(10, 80);
             this.lblDispAv.Name = "lblDispAv";
             this.lblDispAv.Size = new System.Drawing.Size(62, 13);
             this.lblDispAv.TabIndex = 63;
@@ -30694,7 +30695,7 @@
             // 
             this.lblDispDet.AutoSize = true;
             this.lblDispDet.Image = null;
-            this.lblDispDet.Location = new System.Drawing.Point(10, 29);
+            this.lblDispDet.Location = new System.Drawing.Point(10, 19);
             this.lblDispDet.Name = "lblDispDet";
             this.lblDispDet.Size = new System.Drawing.Size(54, 13);
             this.lblDispDet.TabIndex = 61;
@@ -31426,9 +31427,9 @@
             this.grpRX2DisplayAveraging.Controls.Add(this.comboRX2DispWFDetector);
             this.grpRX2DisplayAveraging.Controls.Add(this.udRX2DisplayWFAVTime);
             this.grpRX2DisplayAveraging.Controls.Add(this.labelTS377);
-            this.grpRX2DisplayAveraging.Location = new System.Drawing.Point(165, 165);
+            this.grpRX2DisplayAveraging.Location = new System.Drawing.Point(165, 140);
             this.grpRX2DisplayAveraging.Name = "grpRX2DisplayAveraging";
-            this.grpRX2DisplayAveraging.Size = new System.Drawing.Size(123, 141);
+            this.grpRX2DisplayAveraging.Size = new System.Drawing.Size(161, 166);
             this.grpRX2DisplayAveraging.TabIndex = 80;
             this.grpRX2DisplayAveraging.TabStop = false;
             this.grpRX2DisplayAveraging.Text = "Waterfall";
@@ -31437,7 +31438,7 @@
             // 
             this.labelTS375.AutoSize = true;
             this.labelTS375.Image = null;
-            this.labelTS375.Location = new System.Drawing.Point(10, 67);
+            this.labelTS375.Location = new System.Drawing.Point(10, 78);
             this.labelTS375.Name = "labelTS375";
             this.labelTS375.Size = new System.Drawing.Size(62, 13);
             this.labelTS375.TabIndex = 63;
@@ -31456,7 +31457,7 @@
             "Recursive",
             "Time Window",
             "Log Recursive"});
-            this.comboRX2DispWFAveraging.Location = new System.Drawing.Point(9, 86);
+            this.comboRX2DispWFAveraging.Location = new System.Drawing.Point(9, 102);
             this.comboRX2DispWFAveraging.Name = "comboRX2DispWFAveraging";
             this.comboRX2DispWFAveraging.Size = new System.Drawing.Size(104, 21);
             this.comboRX2DispWFAveraging.TabIndex = 62;
@@ -31481,7 +31482,7 @@
             "Rosenfell",
             "Average",
             "Sample"});
-            this.comboRX2DispWFDetector.Location = new System.Drawing.Point(9, 38);
+            this.comboRX2DispWFDetector.Location = new System.Drawing.Point(9, 44);
             this.comboRX2DispWFDetector.Name = "comboRX2DispWFDetector";
             this.comboRX2DispWFDetector.Size = new System.Drawing.Size(104, 21);
             this.comboRX2DispWFDetector.TabIndex = 60;
@@ -31494,7 +31495,7 @@
             0,
             0,
             0});
-            this.udRX2DisplayWFAVTime.Location = new System.Drawing.Point(62, 113);
+            this.udRX2DisplayWFAVTime.Location = new System.Drawing.Point(62, 133);
             this.udRX2DisplayWFAVTime.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -31520,7 +31521,7 @@
             // labelTS377
             // 
             this.labelTS377.Image = null;
-            this.labelTS377.Location = new System.Drawing.Point(6, 113);
+            this.labelTS377.Location = new System.Drawing.Point(6, 133);
             this.labelTS377.Name = "labelTS377";
             this.labelTS377.Size = new System.Drawing.Size(64, 23);
             this.labelTS377.TabIndex = 3;
@@ -31941,7 +31942,7 @@
             this.grpRX2DisplaySpectrumGrid.Controls.Add(this.lblRX2DisplayGridMax);
             this.grpRX2DisplaySpectrumGrid.Location = new System.Drawing.Point(375, 232);
             this.grpRX2DisplaySpectrumGrid.Name = "grpRX2DisplaySpectrumGrid";
-            this.grpRX2DisplaySpectrumGrid.Size = new System.Drawing.Size(304, 165);
+            this.grpRX2DisplaySpectrumGrid.Size = new System.Drawing.Size(304, 184);
             this.grpRX2DisplaySpectrumGrid.TabIndex = 49;
             this.grpRX2DisplaySpectrumGrid.TabStop = false;
             this.grpRX2DisplaySpectrumGrid.Text = "Spectrum Grid";
@@ -31949,7 +31950,7 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(220, 115);
+            this.label20.Location = new System.Drawing.Point(236, 116);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(62, 13);
             this.label20.TabIndex = 88;
@@ -31960,7 +31961,7 @@
             // 
             this.chkMaintainNFAdjustDeltaRX2.AutoSize = true;
             this.chkMaintainNFAdjustDeltaRX2.Image = null;
-            this.chkMaintainNFAdjustDeltaRX2.Location = new System.Drawing.Point(165, 140);
+            this.chkMaintainNFAdjustDeltaRX2.Location = new System.Drawing.Point(15, 142);
             this.chkMaintainNFAdjustDeltaRX2.Name = "chkMaintainNFAdjustDeltaRX2";
             this.chkMaintainNFAdjustDeltaRX2.Size = new System.Drawing.Size(101, 17);
             this.chkMaintainNFAdjustDeltaRX2.TabIndex = 87;
@@ -31978,7 +31979,7 @@
             0,
             0,
             0});
-            this.nudRX2NFoffsetGridFollow.Location = new System.Drawing.Point(164, 114);
+            this.nudRX2NFoffsetGridFollow.Location = new System.Drawing.Point(180, 112);
             this.nudRX2NFoffsetGridFollow.Maximum = new decimal(new int[] {
             30,
             0,
@@ -32200,7 +32201,7 @@
             this.chkDispRX2Normalize.Checked = true;
             this.chkDispRX2Normalize.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDispRX2Normalize.Image = null;
-            this.chkDispRX2Normalize.Location = new System.Drawing.Point(6, 147);
+            this.chkDispRX2Normalize.Location = new System.Drawing.Point(9, 185);
             this.chkDispRX2Normalize.Name = "chkDispRX2Normalize";
             this.chkDispRX2Normalize.Size = new System.Drawing.Size(108, 17);
             this.chkDispRX2Normalize.TabIndex = 68;
@@ -32212,7 +32213,7 @@
             // 
             this.chkShowRX2NoiseFloor.AutoSize = true;
             this.chkShowRX2NoiseFloor.Image = null;
-            this.chkShowRX2NoiseFloor.Location = new System.Drawing.Point(6, 170);
+            this.chkShowRX2NoiseFloor.Location = new System.Drawing.Point(9, 208);
             this.chkShowRX2NoiseFloor.Name = "chkShowRX2NoiseFloor";
             this.chkShowRX2NoiseFloor.Size = new System.Drawing.Size(117, 17);
             this.chkShowRX2NoiseFloor.TabIndex = 82;
@@ -32225,7 +32226,7 @@
             // 
             this.lblRX2PanAv.AutoSize = true;
             this.lblRX2PanAv.Image = null;
-            this.lblRX2PanAv.Location = new System.Drawing.Point(10, 67);
+            this.lblRX2PanAv.Location = new System.Drawing.Point(9, 85);
             this.lblRX2PanAv.Name = "lblRX2PanAv";
             this.lblRX2PanAv.Size = new System.Drawing.Size(62, 13);
             this.lblRX2PanAv.TabIndex = 67;
@@ -32244,7 +32245,7 @@
             "Recursive",
             "Time Window",
             "Log Recursive"});
-            this.comboRX2DispPanAveraging.Location = new System.Drawing.Point(9, 86);
+            this.comboRX2DispPanAveraging.Location = new System.Drawing.Point(9, 110);
             this.comboRX2DispPanAveraging.Name = "comboRX2DispPanAveraging";
             this.comboRX2DispPanAveraging.Size = new System.Drawing.Size(104, 21);
             this.comboRX2DispPanAveraging.TabIndex = 66;
@@ -32270,7 +32271,7 @@
             "Average",
             "Sample",
             "RMS"});
-            this.comboRX2DispPanDetector.Location = new System.Drawing.Point(9, 38);
+            this.comboRX2DispPanDetector.Location = new System.Drawing.Point(9, 45);
             this.comboRX2DispPanDetector.Name = "comboRX2DispPanDetector";
             this.comboRX2DispPanDetector.Size = new System.Drawing.Size(104, 21);
             this.comboRX2DispPanDetector.TabIndex = 64;
@@ -32283,7 +32284,7 @@
             0,
             0,
             0});
-            this.udRX2DisplayAVGTime.Location = new System.Drawing.Point(62, 113);
+            this.udRX2DisplayAVGTime.Location = new System.Drawing.Point(65, 151);
             this.udRX2DisplayAVGTime.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -32309,7 +32310,7 @@
             // labelTS143
             // 
             this.labelTS143.Image = null;
-            this.labelTS143.Location = new System.Drawing.Point(6, 113);
+            this.labelTS143.Location = new System.Drawing.Point(9, 151);
             this.labelTS143.Name = "labelTS143";
             this.labelTS143.Size = new System.Drawing.Size(64, 23);
             this.labelTS143.TabIndex = 3;
@@ -40638,6 +40639,18 @@
             this.tpTransmit.TabIndex = 5;
             this.tpTransmit.Text = "Transmit";
             // 
+            // btnTXProfileDefImport
+            // 
+            this.btnTXProfileDefImport.Image = null;
+            this.btnTXProfileDefImport.Location = new System.Drawing.Point(561, 194);
+            this.btnTXProfileDefImport.Name = "btnTXProfileDefImport";
+            this.btnTXProfileDefImport.Selectable = true;
+            this.btnTXProfileDefImport.Size = new System.Drawing.Size(136, 32);
+            this.btnTXProfileDefImport.TabIndex = 54;
+            this.btnTXProfileDefImport.Text = "Import TX Profile ...";
+            this.toolTip1.SetToolTip(this.btnTXProfileDefImport, "Include the selected profile from the above list into my own list of profiles.");
+            this.btnTXProfileDefImport.Click += new System.EventHandler(this.btnTXProfileDefImport_Click);
+            // 
             // chkHighlightTXProfileSaveItems
             // 
             this.chkHighlightTXProfileSaveItems.AutoSize = true;
@@ -41059,18 +41072,6 @@
             this.grpTXProfileDef.TabIndex = 54;
             this.grpTXProfileDef.TabStop = false;
             this.grpTXProfileDef.Text = "Additional TX Profiles";
-            // 
-            // btnTXProfileDefImport
-            // 
-            this.btnTXProfileDefImport.Image = null;
-            this.btnTXProfileDefImport.Location = new System.Drawing.Point(561, 194);
-            this.btnTXProfileDefImport.Name = "btnTXProfileDefImport";
-            this.btnTXProfileDefImport.Selectable = true;
-            this.btnTXProfileDefImport.Size = new System.Drawing.Size(136, 32);
-            this.btnTXProfileDefImport.TabIndex = 54;
-            this.btnTXProfileDefImport.Text = "Import TX Profile ...";
-            this.toolTip1.SetToolTip(this.btnTXProfileDefImport, "Include the selected profile from the above list into my own list of profiles.");
-            this.btnTXProfileDefImport.Click += new System.EventHandler(this.btnTXProfileDefImport_Click);
             // 
             // lstTXProfileDef
             // 
