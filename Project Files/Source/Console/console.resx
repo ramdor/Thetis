@@ -1531,7 +1531,7 @@
     <value>265, 143</value>
   </data>
   <data name="udCWPitch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 20</value>
+    <value>48, 22</value>
   </data>
   <data name="udCWPitch.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -1555,7 +1555,7 @@
     <value>156, 20</value>
   </data>
   <data name="udCWBreakInDelay.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 20</value>
+    <value>48, 22</value>
   </data>
   <data name="udCWBreakInDelay.TabIndex" type="System.Int32, mscorlib">
     <value>35</value>
@@ -1654,7 +1654,7 @@
     <value>107, 75</value>
   </data>
   <data name="udRX2FilterHigh.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 20</value>
+    <value>52, 22</value>
   </data>
   <data name="udRX2FilterHigh.TabIndex" type="System.Int32, mscorlib">
     <value>45</value>
@@ -1681,7 +1681,7 @@
     <value>32, 75</value>
   </data>
   <data name="udRX2FilterLow.Size" type="System.Drawing.Size, System.Drawing">
-    <value>51, 20</value>
+    <value>51, 22</value>
   </data>
   <data name="udRX2FilterLow.TabIndex" type="System.Int32, mscorlib">
     <value>26</value>
@@ -4810,7 +4810,7 @@
     <value>85, 42</value>
   </data>
   <data name="txtMemoryQuick.Size" type="System.Drawing.Size, System.Drawing">
-    <value>72, 20</value>
+    <value>72, 22</value>
   </data>
   <data name="txtMemoryQuick.TabIndex" type="System.Int32, mscorlib">
     <value>74</value>
@@ -6722,7 +6722,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>217, 62</value>
   </data>
   <data name="udFMOffset.Size" type="System.Drawing.Size, System.Drawing">
-    <value>95, 20</value>
+    <value>95, 22</value>
   </data>
   <data name="udFMOffset.TabIndex" type="System.Int32, mscorlib">
     <value>121</value>
@@ -7397,7 +7397,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>56, 294</value>
   </data>
   <data name="udRX1StepAttData.Size" type="System.Drawing.Size, System.Drawing">
-    <value>55, 20</value>
+    <value>55, 22</value>
   </data>
   <data name="udRX1StepAttData.TabIndex" type="System.Int32, mscorlib">
     <value>141</value>
@@ -7451,7 +7451,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>8, 79</value>
   </data>
   <data name="udRX2StepAttData.Size" type="System.Drawing.Size, System.Drawing">
-    <value>55, 20</value>
+    <value>55, 22</value>
   </data>
   <data name="udRX2StepAttData.TabIndex" type="System.Int32, mscorlib">
     <value>142</value>
@@ -14040,7 +14040,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>270, 66</value>
   </data>
   <data name="labelTS4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>29, 13</value>
+    <value>32, 13</value>
   </data>
   <data name="labelTS4.TabIndex" type="System.Int32, mscorlib">
     <value>119</value>
@@ -14073,7 +14073,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>210, 66</value>
   </data>
   <data name="labelTS3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>27, 13</value>
+    <value>28, 13</value>
   </data>
   <data name="labelTS3.TabIndex" type="System.Int32, mscorlib">
     <value>118</value>
@@ -17328,7 +17328,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>86, 527</value>
   </data>
   <data name="nudPwrTemp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>57, 20</value>
+    <value>57, 22</value>
   </data>
   <data name="nudPwrTemp.TabIndex" type="System.Int32, mscorlib">
     <value>146</value>
@@ -17352,7 +17352,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>86, 547</value>
   </data>
   <data name="nudPwrTemp2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>57, 20</value>
+    <value>57, 22</value>
   </data>
   <data name="nudPwrTemp2.TabIndex" type="System.Int32, mscorlib">
     <value>147</value>
@@ -17386,6 +17386,9 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>1018, 721</value>
+  </data>
+  <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 8.25pt</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

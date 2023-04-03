@@ -139,25 +139,27 @@ namespace Thetis
             // lblTimeRemaining
             // 
             this.lblTimeRemaining.BackColor = System.Drawing.Color.Transparent;
+            this.lblTimeRemaining.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTimeRemaining.ForeColor = System.Drawing.Color.White;
             this.lblTimeRemaining.Image = null;
             this.lblTimeRemaining.Location = new System.Drawing.Point(256, 290);
             this.lblTimeRemaining.Name = "lblTimeRemaining";
             this.lblTimeRemaining.Size = new System.Drawing.Size(92, 16);
             this.lblTimeRemaining.TabIndex = 1;
-            this.lblTimeRemaining.Text = "Time";
+            this.lblTimeRemaining.Text = "Starting ...";
             this.lblTimeRemaining.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // lblStatus
             // 
             this.lblStatus.BackColor = System.Drawing.Color.Transparent;
+            this.lblStatus.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatus.ForeColor = System.Drawing.Color.White;
             this.lblStatus.Image = null;
             this.lblStatus.Location = new System.Drawing.Point(12, 252);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(376, 16);
             this.lblStatus.TabIndex = 0;
-            this.lblStatus.Text = "Status";
+            this.lblStatus.Text = "Welcome to Thetis!";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Splash
@@ -167,6 +169,7 @@ namespace Thetis
             this.Controls.Add(this.pnlStatus);
             this.Controls.Add(this.lblTimeRemaining);
             this.Controls.Add(this.lblStatus);
+            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Splash";

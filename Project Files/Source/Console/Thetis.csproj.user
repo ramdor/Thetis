@@ -24,7 +24,7 @@
     </StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
     <StartArguments>
     </StartArguments>
   </PropertyGroup>

@@ -49,7 +49,7 @@
             // 
             this.lblFB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblFB.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.lblFB.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFB.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblFB.ForeColor = System.Drawing.Color.Black;
             this.lblFB.Image = null;
             this.lblFB.Location = new System.Drawing.Point(801, 0);
@@ -66,7 +66,7 @@
             // 
             this.lblPS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblPS.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.lblPS.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPS.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPS.ForeColor = System.Drawing.Color.Black;
             this.lblPS.Image = null;
             this.lblPS.Location = new System.Drawing.Point(845, 0);
@@ -87,7 +87,7 @@
             this.chkButton2.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Gray;
             this.chkButton2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gray;
             this.chkButton2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkButton2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.chkButton2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkButton2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.chkButton2.Image = null;
             this.chkButton2.ImeMode = System.Windows.Forms.ImeMode.Off;
@@ -109,7 +109,7 @@
             this.chkButton1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Gray;
             this.chkButton1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gray;
             this.chkButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.chkButton1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkButton1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.chkButton1.Image = null;
             this.chkButton1.ImeMode = System.Windows.Forms.ImeMode.Off;
@@ -143,7 +143,7 @@
             // lblWarning
             // 
             this.lblWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblWarning.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblWarning.ForeColor = System.Drawing.Color.Red;
             this.lblWarning.Image = null;
             this.lblWarning.Location = new System.Drawing.Point(138, 0);
@@ -244,12 +244,12 @@
             // lblPageNo
             // 
             this.lblPageNo.AutoSize = true;
-            this.lblPageNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPageNo.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPageNo.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.lblPageNo.Image = null;
             this.lblPageNo.Location = new System.Drawing.Point(115, 6);
             this.lblPageNo.Name = "lblPageNo";
-            this.lblPageNo.Size = new System.Drawing.Size(24, 13);
+            this.lblPageNo.Size = new System.Drawing.Size(23, 13);
             this.lblPageNo.TabIndex = 43;
             this.lblPageNo.Text = "2/2";
             this.lblPageNo.Click += new System.EventHandler(this.InfoBar_Click);
@@ -272,6 +272,7 @@
             this.Controls.Add(this.lblPS);
             this.Controls.Add(this.chkButton2);
             this.Controls.Add(this.chkButton1);
+            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "ucInfoBar";
             this.Size = new System.Drawing.Size(889, 24);
             this.Click += new System.EventHandler(this.InfoBar_Click);
