@@ -219,6 +219,19 @@ namespace Thetis
             CallingConvention = CallingConvention.Cdecl)]
         public static extern PaHostApiIndex PA_GetDefaultHostApi();
 
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_GetDefaultInputDevice",
+    CallingConvention = CallingConvention.Cdecl)]
+        public static extern PaHostApiIndex PA_GetDefaultInputDevice();
+
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_GetDefaultOutputDevice",
+CallingConvention = CallingConvention.Cdecl)]
+        public static extern PaHostApiIndex PA_GetDefaultOutputDevice();
+
+        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_IsFormatSupported2",
+CallingConvention = CallingConvention.Cdecl)]
+        public static extern PaError Pa_IsFormatSupported(int hostAPI, double samplerate, int deviceIndexIn,
+    int deviceIndexOut, int channels, PaSampleFormat fmt, int exclusive);
+
         // Added layer to convert from the struct pointer to a C#
         // struct automatically.
         [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_GetHostApiInfo",
