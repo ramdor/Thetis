@@ -199,10 +199,15 @@ namespace Thetis.AudioExtras
         internal List<PaFormat> ListFormats(int hostAPI, string[] deviceNames)
         {
             Debug.Assert(deviceNames.Count() == 2);
-            Debug.Assert(hostAPI > 0);
+            Debug.Assert(hostAPI >= 0);
             var inf = new PortAudioInfo(hostAPI, deviceNames);
             var ret = new List<PaFormat>();
             return ret;
+        }
+
+        static internal int DefaultAPI()
+        {
+            return PortAudioForThetis.PA_GetDefaultHostApi();
         }
     }
 
@@ -213,6 +218,13 @@ namespace Thetis.AudioExtras
         {
 
             var extras = new PortAudioExtras();
+            string[] names = new string[2];
+            names[0] = "Microsoft Sound Mapper - Input";
+            names[1] = "Microsoft Sound Mapper - Input";
+
+            var fmts = extras.ListFormats(PortAudioExtras.DefaultAPI(), names);
+            Debug.Assert(fmts.Count() > 0);
+
             var defs = extras.SaneDefaults();
             Debug.Assert(defs.apiInfo.deviceCount > 0);
             Debug.Assert(!(String.IsNullOrEmpty(defs.deviceNames[0])));

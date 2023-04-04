@@ -171,11 +171,7 @@ namespace Thetis
 
         #region Constructor and Destructor
 
-        internal HL2 Hl2
-        {
-            get;
-            set;
-        }
+        internal HL2 Hl2 { get; set; }
         public Setup(Console c)
         {
             try
@@ -221,8 +217,8 @@ namespace Thetis
             openFileDialog1.InitialDirectory = console.AppDataPath;
 
 #if (!DEBUG)
-            comboGeneralProcessPriority.Items.Remove("Idle");
-            comboGeneralProcessPriority.Items.Remove("Below Normal");
+        comboGeneralProcessPriority.Items.Remove("Idle");
+        comboGeneralProcessPriority.Items.Remove("Below Normal");
 #endif
             initializing = true;
 
@@ -235,7 +231,6 @@ namespace Thetis
 
             labelSavingLoading.Visible
                 = false; // MW0LGE gets shown/hidden by save/cancel/apply
-
 
             // GetMixerDevices();
             Thetis.Splash.SetStatus("Loading Audio Host APIs ...");
@@ -753,9 +748,6 @@ namespace Thetis
 
             // MW0LGE_21h
             updateNetworkThrottleCheckBox();
-
-
-
         }
         private bool _bAddedDelegates = false;
         private void addDelegates()
@@ -1463,8 +1455,8 @@ namespace Thetis
             comboAudioInput2.Items.Clear();
             comboAudioOutput2.Items.Clear();
             int host = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Index;
-            ArrayList a = Audio.GetPAInputDevices(host);
-            foreach (PADeviceInfo p in a) comboAudioInput2.Items.Add(p);
+            var a = Audio.GetPAInputDevices(host);
+            foreach (var p in a) comboAudioInput2.Items.Add(p);
 
             a = Audio.GetPAOutputDevices(host);
             foreach (PADeviceInfo p in a) comboAudioOutput2.Items.Add(p);
@@ -2234,12 +2226,7 @@ namespace Thetis
 
         // KLJ: Added to get fine-grained state when loading
         // so as to avoid things being done over and over.
-        internal SetupState State
-        {
-            get;
-            private set;
-        }
-
+        internal SetupState State { get; private set; }
 
         private void ForceAllEvents()
         {
@@ -2347,9 +2334,11 @@ namespace Thetis
 
                 // Calibration Tab
                 udTXDisplayCalOffset_ValueChanged(this, e);
-                chkUsing10MHzRef_CheckedChanged(this, e); // MW0LGE_21k9rc6
-                                                          // udHPSDRFreqCorrectFactor_ValueChanged(this, e);  //MW0LGE_21k9rc6 now
-                                                          // called in chkUsing10MHzRef_CheckedChanged
+                chkUsing10MHzRef_CheckedChanged(
+                    this, e); // MW0LGE_21k9rc6
+                              // udHPSDRFreqCorrectFactor_ValueChanged(this, e);
+                              // //MW0LGE_21k9rc6 now called in
+                              // chkUsing10MHzRef_CheckedChanged
 
                 // Filter tab
                 udFilterDefaultLowCut_ValueChanged(this, e); // MW0LGE_21d5
@@ -2394,9 +2383,9 @@ namespace Thetis
                 udDisplayWaterfallUpdatePeriod_ValueChanged(this, e);
                 udRX2DisplayWaterfallUpdatePeriod_ValueChanged(this, e);
                 comboTXLabelAlign_SelectedIndexChanged(this, e);
-                // chkWaterfallUseRX1SpectrumMinMax_CheckedChanged(this, e);  //MW0LGE_21a
-                // moved to delayed chkWaterfallUseRX2SpectrumMinMax_CheckedChanged(this,
-                // e);
+                // chkWaterfallUseRX1SpectrumMinMax_CheckedChanged(this, e);
+                // //MW0LGE_21a moved to delayed
+                // chkWaterfallUseRX2SpectrumMinMax_CheckedChanged(this, e);
                 udPeakBlobs_ValueChanged(this, e);
                 chkPeakBlobInsideFilterOnly_CheckedChanged(this, e);
                 chkPeakBlobsEnabled_CheckedChanged(this, e);
@@ -2794,7 +2783,10 @@ namespace Thetis
                 s += e.Message;
                 MessageBox.Show(s);
             }
-            finally { State &= ~SetupState.ForcingEvents; }
+            finally
+            {
+                State &= ~SetupState.ForcingEvents;
+            }
         }
 
         public string[] GetTXProfileStrings()
@@ -14234,24 +14226,25 @@ namespace Thetis
             if (chkCWKeyerMode.Checked)
                 NetworkIO.SetCWKeyerMode(1); // mode b
             else
-                NetworkIO.SetCWKeyerMode(0); // mode a
-                                             // }
-                                             // else
-                                             //{
-                                             //    if (chkCWKeyerIambic.Checked)
-                                             //    {
-                                             //        if (chkCWKeyerMode.Checked)
-                                             //        {
-                                             //            JanusAudio.SetCWKeyerMode(2); // mode b
-                                             //        }
-                                             //        else
-                                             //        {
-                                             //            JanusAudio.SetCWKeyerMode(1); // mode a
-                                             //        }
-                                             //    }
-                                             //    else
-                                             //        JanusAudio.SetCWKeyerMode(0); // straight/bug mode
-                                             //}
+                NetworkIO.SetCWKeyerMode(
+                    0); // mode a
+                        // }
+                        // else
+                        //{
+                        //    if (chkCWKeyerIambic.Checked)
+                        //    {
+                        //        if (chkCWKeyerMode.Checked)
+                        //        {
+                        //            JanusAudio.SetCWKeyerMode(2); // mode b
+                        //        }
+                        //        else
+                        //        {
+                        //            JanusAudio.SetCWKeyerMode(1); // mode a
+                        //        }
+                        //    }
+                        //    else
+                        //        JanusAudio.SetCWKeyerMode(0); // straight/bug mode
+                        //}
         }
 
         private void chkDisableToolTips_CheckedChanged(
@@ -14827,7 +14820,8 @@ namespace Thetis
         {
             if (lstTXProfileDef.SelectedIndex < 0)
             {
-                MessageBox.Show("You need to first select at least one profile in the list above to overwrite with the imported TX profile.");
+                MessageBox.Show(
+                    "You need to first select at least one profile in the list above to overwrite with the imported TX profile.");
                 return;
             }
 
@@ -14897,9 +14891,11 @@ namespace Thetis
                 foreach (char c in invalid)
                 {
                     fileName = fileName.Replace(c.ToString(),
-                        "_"); // Remove profile name chars that are invalid in filenames.
+                        "_"); // Remove profile name chars that are invalid in
+                              // filenames.
                 }
-                this.saveFileDialog1.InitialDirectory = Environment.SpecialFolder.DesktopDirectory.ToString();
+                this.saveFileDialog1.InitialDirectory
+                    = Environment.SpecialFolder.DesktopDirectory.ToString();
                 saveFileDialog1.Title = "Choose where to save your exported TX profile";
                 var result = saveFileDialog1.ShowDialog();
                 if (result != DialogResult.OK) return;
@@ -14912,8 +14908,8 @@ namespace Thetis
                 while (File.Exists(tempFN + ".xml"))
                 {
                     tempFN = fileName
-                        + Convert.ToString(
-                            i); // Get a slightly different file name if it already exists.
+                        + Convert.ToString(i); // Get a slightly different file name if
+                                               // it already exists.
                     i++;
                 }
                 fileName = tempFN + ".xml";
@@ -14943,8 +14939,8 @@ namespace Thetis
                 try
                 {
                     exDS.WriteXml(fileName,
-                        XmlWriteMode
-                            .WriteSchema); // Writing with schema is necessary for import
+                        XmlWriteMode.WriteSchema); // Writing with schema is necessary
+                                                   // for import
                 }
                 catch
                 {
@@ -15277,14 +15273,16 @@ namespace Thetis
             {
                 chkAlexAntCtrl.Enabled = true;
                 chkAlexAntCtrl.Checked = true;
-                grpAlexAntCtrl.Enabled = true; // MW0LGE_21a
-                                               //  if (!chkAlexAntCtrl.Checked)
-                                               //  {
-                                               //    grpAlexAntCtrl.Enabled = false;
-                                               // }
-                                               // MW0LGE_21a console.chkSR.Enabled = true;
-                                               // if (console.RX2PreampPresent && !radGenModelANAN100D.Checked)
-                                               // console.comboRX2Preamp.Visible = false;
+                grpAlexAntCtrl.Enabled
+                    = true; // MW0LGE_21a
+                            //  if (!chkAlexAntCtrl.Checked)
+                            //  {
+                            //    grpAlexAntCtrl.Enabled = false;
+                            // }
+                            // MW0LGE_21a console.chkSR.Enabled = true;
+                            // if (console.RX2PreampPresent &&
+                            // !radGenModelANAN100D.Checked)
+                            // console.comboRX2Preamp.Visible = false;
                 if (chkApolloPresent.Checked) chkApolloPresent.Checked = false;
                 //  if (radGenModelHermes.Checked || radGenModelANAN10.Checked ||
                 //  radGenModelANAN10E.Checked || radGenModelANAN100.Checked ||
@@ -18434,7 +18432,6 @@ namespace Thetis
             chkRX2StepAtt_CheckedChanged(this, EventArgs.Empty);
             udHermesStepAttenuatorDataRX2_ValueChanged(this, EventArgs.Empty);
         }
-
 
         private void chkHermesStepAttenuator_CheckedChanged(
             object sender, EventArgs e)
@@ -22403,13 +22400,13 @@ namespace Thetis
             bool canChooseHermesLite2 = comboRadioModel.Text == "HERMES";
             if (!canChooseHermesLite2)
             {
-                // this to avoid the confusing case where the checkboxes for HL2 are invisible, but selected
+                // this to avoid the confusing case where the checkboxes for HL2 are
+                // invisible, but selected
                 chkN2ADR.Checked = false;
                 chkHermesLite2.Checked = false;
             }
             chkN2ADR.Visible = canChooseHermesLite2;
             chkHermesLite2.Visible = canChooseHermesLite2;
-
 
             switch (txt)
             {
@@ -25783,19 +25780,13 @@ namespace Thetis
         internal bool ApolloFilter
         {
             get { return chkApolloFilter.Checked; }
-            set
-            {
-                chkApolloFilter.Checked = value;
-            }
+            set { chkApolloFilter.Checked = value; }
         }
 
         internal bool ApolloTuner
         {
             get { return chkApolloTuner.Checked; }
-            set
-            {
-                chkApolloTuner.Checked = value;
-            }
+            set { chkApolloTuner.Checked = value; }
         }
 
         internal void setAllHFPAGains(decimal toWhat)
@@ -25810,7 +25801,6 @@ namespace Thetis
             nud15M.Value = toWhat;
             nud10M.Value = toWhat;
             nud30M.Value = toWhat;
-
         }
         private void nudPAProfileGain_ValueChanged(object sender, EventArgs e)
         {
@@ -28481,7 +28471,6 @@ namespace Thetis
             rx2_av_check_changing = false;
         }
 
-
         private bool HL2FiltersBusy = false;
         internal void HL2N2ADRFilters(Object sender)
         {
@@ -28535,7 +28524,9 @@ namespace Thetis
                     chkN2ADR.Checked = true;
                 }
             }
-            catch { }
+            catch
+            {
+            }
             finally
             {
 

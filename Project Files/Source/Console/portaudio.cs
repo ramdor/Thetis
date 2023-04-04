@@ -2,7 +2,7 @@
 // portaudio.cs
 //=================================================================
 // PowerSDR is a C# implementation of a Software Defined Radio.
-// Copyright (C) 2004-2012  FlexRadio Systems 
+// Copyright (C) 2004-2012  FlexRadio Systems
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 // You may contact us via email at: gpl@flexradio.com.
-// Paper mail may be sent to: 
+// Paper mail may be sent to:
 //    FlexRadio Systems
 //    4616 W. Howard Lane  Suite 1-150
 //    Austin, TX 78728
@@ -40,6 +40,8 @@ using PaTime = System.Double;
 using PaSampleFormat = System.UInt32;
 using PaStreamFlags = System.UInt32;
 using PaStreamCallbackFlags = System.UInt32;
+using System.Reflection;
+using System.Xml.Linq;
 
 namespace Thetis
 {
@@ -48,7 +50,8 @@ namespace Thetis
         #region Constants
 
         public const PaDeviceIndex paNoDevice = (PaDeviceIndex)(-1);
-        public const PaDeviceIndex paUseHostApiSpecificDeviceSpecification = (PaDeviceIndex)(-2);
+        public const PaDeviceIndex paUseHostApiSpecificDeviceSpecification
+            = (PaDeviceIndex)(-2);
         public const PaSampleFormat paFloat32 = (PaSampleFormat)0x01;
         public const PaSampleFormat paInt32 = (PaSampleFormat)0x02;
         public const PaSampleFormat paInt24 = (PaSampleFormat)0x04;
@@ -63,13 +66,20 @@ namespace Thetis
         public const PaStreamFlags paClipOff = (PaStreamFlags)0x01;
         public const PaStreamFlags paDitherOff = (PaStreamFlags)0x02;
         public const PaStreamFlags paNeverDropInput = (PaStreamFlags)0x04;
-        public const PaStreamFlags paPrimeOutputBuffersUsingStreamCallback = (PaStreamFlags)0x08;
-        public const PaStreamFlags paPlatformSpecificFlags = (PaStreamFlags)0xFFFF0000;
-        public const PaStreamCallbackFlags paInputUnderflow = (PaStreamCallbackFlags)0x01;
-        public const PaStreamCallbackFlags paInputOverflow = (PaStreamCallbackFlags)0x02;
-        public const PaStreamCallbackFlags paOutputUnderflow = (PaStreamCallbackFlags)0x04;
-        public const PaStreamCallbackFlags paOutputOverflow = (PaStreamCallbackFlags)0x08;
-        public const PaStreamCallbackFlags paPrimingOutput = (PaStreamCallbackFlags)0x10;
+        public const PaStreamFlags paPrimeOutputBuffersUsingStreamCallback
+            = (PaStreamFlags)0x08;
+        public const PaStreamFlags paPlatformSpecificFlags
+            = (PaStreamFlags)0xFFFF0000;
+        public const PaStreamCallbackFlags paInputUnderflow
+            = (PaStreamCallbackFlags)0x01;
+        public const PaStreamCallbackFlags paInputOverflow
+            = (PaStreamCallbackFlags)0x02;
+        public const PaStreamCallbackFlags paOutputUnderflow
+            = (PaStreamCallbackFlags)0x04;
+        public const PaStreamCallbackFlags paOutputOverflow
+            = (PaStreamCallbackFlags)0x08;
+        public const PaStreamCallbackFlags paPrimingOutput
+            = (PaStreamCallbackFlags)0x10;
 
         #endregion
 
@@ -77,25 +87,57 @@ namespace Thetis
 
         public enum PaErrorCode
         {
-            paNoError = 0, paNotInitialized = -10000, paUnanticipatedHostError, paInvalidChannelCount,
-            paInvalidSampleRate, paInvalidDevice, paInvalidFlag, paSampleFormatNotSupported,
-            paBadIODeviceCombination, paInsufficientMemory, paBufferTooBig, paBufferTooSmall,
-            paNullCallback, paBadStreamPtr, paTimedOut, paInternalError,
-            paDeviceUnavailable, paIncompatibleHostApiSpecificStreamInfo, paStreamIsStopped, paStreamIsNotStopped,
-            paInputOverflowed, paOutputUnderflowed, paHostApiNotFound, paInvalidHostApi,
-            paCanNotReadFromACallbackStream, paCanNotWriteToACallbackStream, paCanNotReadFromAnOutputOnlyStream, paCanNotWriteToAnInputOnlyStream,
+            paNoError = 0,
+            paNotInitialized = -10000,
+            paUnanticipatedHostError,
+            paInvalidChannelCount,
+            paInvalidSampleRate,
+            paInvalidDevice,
+            paInvalidFlag,
+            paSampleFormatNotSupported,
+            paBadIODeviceCombination,
+            paInsufficientMemory,
+            paBufferTooBig,
+            paBufferTooSmall,
+            paNullCallback,
+            paBadStreamPtr,
+            paTimedOut,
+            paInternalError,
+            paDeviceUnavailable,
+            paIncompatibleHostApiSpecificStreamInfo,
+            paStreamIsStopped,
+            paStreamIsNotStopped,
+            paInputOverflowed,
+            paOutputUnderflowed,
+            paHostApiNotFound,
+            paInvalidHostApi,
+            paCanNotReadFromACallbackStream,
+            paCanNotWriteToACallbackStream,
+            paCanNotReadFromAnOutputOnlyStream,
+            paCanNotWriteToAnInputOnlyStream,
             paIncompatibleStreamHostApi
         }
 
         public enum PaHostApiTypeId
         {
-            paInDevelopment = 0, paDirectSound = 1, paMME = 2, paASIO = 3,
-            paSoundManager = 4, paCoreAudio = 5, paOSS = 7, paALSA = 8,
-            paAL = 9, paBeOS = 10
+            paInDevelopment = 0,
+            paDirectSound = 1,
+            paMME = 2,
+            paASIO = 3,
+            paSoundManager = 4,
+            paCoreAudio = 5,
+            paOSS = 7,
+            paALSA = 8,
+            paAL = 9,
+            paBeOS = 10
         }
 
         public enum PaStreamCallbackResult
-        { paContinue = 0, paComplete = 1, paAbort = 2 }
+        {
+            paContinue = 0,
+            paComplete = 1,
+            paAbort = 2
+        }
 
         #endregion
 
@@ -104,12 +146,14 @@ namespace Thetis
         [StructLayout(LayoutKind.Sequential)]
         public struct PaHostApiInfo
         {
-            public string name => _name == IntPtr.Zero ? null : Marshal.PtrToStringAnsi(_name);
+            public string name => _name == IntPtr.Zero
+                ? null
+                : Marshal.PtrToStringAnsi(_name);
 
             public int structVersion;
             public int type;
             // [MarshalAs(UnmanagedType.LPStr)]
-            //public string name;
+            // public string name;
             private readonly IntPtr _name;
             public int deviceCount;
             public PaDeviceIndex defaultInputDevice;
@@ -128,7 +172,9 @@ namespace Thetis
         [StructLayout(LayoutKind.Sequential)]
         public struct PaDeviceInfo
         {
-            public string name => _name == IntPtr.Zero ? null : Marshal.PtrToStringAnsi(_name);
+            public string name => _name == IntPtr.Zero
+                ? null
+                : Marshal.PtrToStringAnsi(_name);
 
             public int structVersion;
             private IntPtr _name;
@@ -142,6 +188,51 @@ namespace Thetis
             public PaTime defaultHighInputLatency;
             public PaTime defaultHighOutputLatency;
             public double defaultSampleRate;
+        }
+
+        public struct PaDeviceInfoEx
+        {
+            internal PaDeviceInfoEx(
+                int _index, PaDeviceInfo inf, int apiIndex, int devIndex)
+            {
+                deviceInfo = inf;
+                _name = inf.name;
+                index = _index;
+                APIIndex = apiIndex;
+                DeviceIndex = devIndex;
+            }
+
+            internal PaDeviceInfoEx(String argName, int argIndex)
+            {
+                _name = argName;
+                index = argIndex;
+                DeviceIndex = argIndex;
+                APIIndex = argIndex;
+                deviceInfo = new PaDeviceInfo();
+            }
+
+            private string _name;
+            public PaDeviceInfo deviceInfo;
+            int index;
+            // as given by PA_HostApiDeviceIndexToDeviceIndex()
+            int DeviceIndex;
+            int APIIndex;
+            public string Name
+            {
+                get
+                {
+                    if (String.IsNullOrEmpty(_name))
+                    {
+                        _name = deviceInfo.name;
+                    }
+                    return _name;
+                }
+            }
+
+            public int Index
+            {
+                get { return index; }
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -219,18 +310,21 @@ namespace Thetis
             CallingConvention = CallingConvention.Cdecl)]
         public static extern PaHostApiIndex PA_GetDefaultHostApi();
 
-        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_GetDefaultInputDevice",
-    CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("PortAudioForCoolSDR.dll",
+            EntryPoint = "Pa_GetDefaultInputDevice",
+            CallingConvention = CallingConvention.Cdecl)]
         public static extern PaHostApiIndex PA_GetDefaultInputDevice();
 
-        [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_GetDefaultOutputDevice",
-CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("PortAudioForCoolSDR.dll",
+            EntryPoint = "Pa_GetDefaultOutputDevice",
+            CallingConvention = CallingConvention.Cdecl)]
         public static extern PaHostApiIndex PA_GetDefaultOutputDevice();
 
         [DllImport("PortAudioForCoolSDR.dll", EntryPoint = "Pa_IsFormatSupported2",
-CallingConvention = CallingConvention.Cdecl)]
-        public static extern PaError Pa_IsFormatSupported(int hostAPI, double samplerate, int deviceIndexIn,
-    int deviceIndexOut, int channels, PaSampleFormat fmt, int exclusive);
+            CallingConvention = CallingConvention.Cdecl)]
+        public static extern PaError Pa_IsFormatSupported(int hostAPI,
+            double samplerate, int deviceIndexIn, int deviceIndexOut, int channels,
+            PaSampleFormat fmt, int exclusive);
 
         // Added layer to convert from the struct pointer to a C#
         // struct automatically.

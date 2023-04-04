@@ -967,10 +967,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ChannelMaster\ChannelMaster.vcxproj">
-      <Project>{8e5759ea-1d4e-46da-9b3c-3577a98301c1}</Project>
-      <Name>ChannelMaster</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Midi2Cat\Midi2Cat.csproj">
       <Project>{66ade184-31ba-4f5b-8007-f39ef1b90f95}</Project>
       <Name>Midi2Cat</Name>
