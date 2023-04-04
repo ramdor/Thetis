@@ -65,6 +65,7 @@ namespace Thetis
     using System.Xml.Linq;
     using System.Text.RegularExpressions;
     using System.Collections.Concurrent;
+    using Thetis.AudioExtras;
 
     public partial class Console : Form
     {
@@ -997,6 +998,7 @@ namespace Thetis
 
                 PortAudioForThetis.PA_Initialize();
                 m_waiting_for_portaudio = false;
+                AudioExtras.Tests.TestSaneDefaults();
             })
             {
                 IsBackground = true,
@@ -1008,11 +1010,12 @@ namespace Thetis
             specRX = new SpecRX();
             Display.specready = true;
 
-            Splash.SetStatus("Initializing PortAudio ..."); // Set progress point
-                                                        // PortAudioForThetis.PA_Initialize();                               //
-                                                        // Initialize the audio interface KLJ moved to different thread to speed
-                                                        // start-up
-
+            Splash.SetStatus(
+                "Initializing PortAudio ..."); // Set progress point
+                                               // PortAudioForThetis.PA_Initialize(); //
+                                               // Initialize the audio interface KLJ
+                                               // moved to different thread to speed
+                                               // start-up
 
             break_in_timer = new HiPerfTimer();
 
@@ -1071,11 +1074,11 @@ namespace Thetis
 
             initializing = false;
 
-            Splash.SetStatus("Setting up DSP, please be patient ..."); // Set progress point
+            Splash.SetStatus(
+                "Setting up DSP, please be patient ..."); // Set progress point
 
             selectFilters();
             selectModes();
-
 
             SyncDSP(); //   INIT_SLOW
 
@@ -1264,7 +1267,6 @@ namespace Thetis
                         m_frmSetupForm = new Setup(this);
                         this.SetupForm.setDBPath(DBFileName);
                     }
-
                 }
                 setupFormReady = true;
                 return m_frmSetupForm; // KLJ moved out of lock
@@ -1805,24 +1807,25 @@ namespace Thetis
 
             rx_meter_cal_offset_by_radio = new float[(int)HPSDRModel.LAST];
             rx_display_cal_offset_by_radio = new float[(int)HPSDRModel.LAST];
-            ResetLevelCalibration(true); // MW0LGE_[2.9.0.6] removed code below, call
-                                         // reset so that code is in one place
-                                         // for (int i = 0; i < (int)HPSDRModel.LAST; i++)
-                                         //{
-                                         //     switch ((HPSDRModel)i)
-                                         //     {
-                                         //         case HPSDRModel.ANAN7000D:
-                                         //         case HPSDRModel.ANAN8000D:
-                                         //         case HPSDRModel.ORIONMKII:
-                                         //             rx_meter_cal_offset_by_radio[i] = 4.841644f;
-                                         //             rx_display_cal_offset_by_radio[i] = 5.259f;
-                                         //             break;
-                                         //         default:
-                                         //             rx_meter_cal_offset_by_radio[i] = 0.98f;
-                                         //             rx_display_cal_offset_by_radio[i] = -2.1f;
-                                         //             break;
-                                         //     }
-                                         // }
+            ResetLevelCalibration(
+                true); // MW0LGE_[2.9.0.6] removed code below, call
+                       // reset so that code is in one place
+                       // for (int i = 0; i < (int)HPSDRModel.LAST; i++)
+                       //{
+                       //     switch ((HPSDRModel)i)
+                       //     {
+                       //         case HPSDRModel.ANAN7000D:
+                       //         case HPSDRModel.ANAN8000D:
+                       //         case HPSDRModel.ORIONMKII:
+                       //             rx_meter_cal_offset_by_radio[i] = 4.841644f;
+                       //             rx_display_cal_offset_by_radio[i] = 5.259f;
+                       //             break;
+                       //         default:
+                       //             rx_meter_cal_offset_by_radio[i] = 0.98f;
+                       //             rx_display_cal_offset_by_radio[i] = -2.1f;
+                       //             break;
+                       //     }
+                       // }
 
             ztb_data_by_band = new ztb_data[2][]; // 2 rx
             ztb_data_by_band[0] = new ztb_data[(int)Band.LAST];
@@ -2812,7 +2815,8 @@ namespace Thetis
                     break;
                 }
             }
-            Debug.Print("Took " + slept.ToString() + " ms waiting for setupForm to be ready.");
+            Debug.Print("Took " + slept.ToString()
+                + " ms waiting for setupForm to be ready.");
             SyncDSPCount++;
             Debug.Assert(SyncDSPCount
                 == 1); // KLJ: broke my assumption, no real serious issue,
@@ -2860,7 +2864,6 @@ namespace Thetis
                 dsp_tx.Update = true;
                 dsp_tx.Force = false;
             }
-            
         }
 
         public bool Force16bitIQ = false;
@@ -11288,7 +11291,8 @@ namespace Thetis
                } */
             double cal_range = 20000.0; // look +/- this much from current freq
                                         // to find the calibration signal
-                                        //  double cal_range = (double)(sample_rate1 / 2.0 - 1);
+                                        //  double cal_range =
+                                        //  (double)(sample_rate1 / 2.0 - 1);
             double bin_width = (double)(sample_rate_rx1) / (double)fft_size;
             int offset = (int)(cal_range / bin_width);
             double maxsumsq = double.MinValue;
@@ -12874,10 +12878,11 @@ namespace Thetis
                 bool bOld = click_tune_display;
                 click_tune_display = value;
                 if (bOld != click_tune_display)
-                    CTUNChangedHandlers?.Invoke(
-                        1, bOld, click_tune_display, RX1Band); // MW0LGE_21d
-                                                               // if (!stereo_diversity && value) chkDX.Enabled = false;
-                                                               // //MW0LGE_21a else chkDX.Enabled = true;
+                    CTUNChangedHandlers?.Invoke(1, bOld, click_tune_display,
+                        RX1Band); // MW0LGE_21d
+                                  // if (!stereo_diversity && value) chkDX.Enabled =
+                                  // false;
+                                  // //MW0LGE_21a else chkDX.Enabled = true;
             }
         }
 
@@ -13020,8 +13025,9 @@ namespace Thetis
                     {
                         if (rx1_attenuator_data <= 31)
                         {
-                            NetworkIO.SetAlexAtten(0); // 0dB Alex Attenuator
-                                                       // NetworkIO.SetADC1StepAttenData(rx1_attenuator_data);
+                            NetworkIO.SetAlexAtten(
+                                0); // 0dB Alex Attenuator
+                                    // NetworkIO.SetADC1StepAttenData(rx1_attenuator_data);
                             if (nRX1ADCinUse == 0)
                                 NetworkIO.SetADC1StepAttenData(rx1_attenuator_data);
                             else if (nRX1ADCinUse == 1)
@@ -13033,9 +13039,10 @@ namespace Thetis
                         }
                         else
                         {
-                            NetworkIO.SetAlexAtten(3); // -30dB Alex Attenuator
-                                                       // NetworkIO.SetADC1StepAttenData(rx1_attenuator_data +
-                                                       // 2);
+                            NetworkIO.SetAlexAtten(
+                                3); // -30dB Alex Attenuator
+                                    // NetworkIO.SetADC1StepAttenData(rx1_attenuator_data
+                                    // + 2);
                             if (nRX1ADCinUse == 0)
                                 NetworkIO.SetADC1StepAttenData(
                                     rx1_attenuator_data + 2);
@@ -16927,8 +16934,9 @@ namespace Thetis
             {
                 digu_click_tune_offset = value;
                 Filter filter1 = RX1Filter; // save RX1 filter
-                Filter filter2 = RX2Filter; // save RX2 filter
-                                            // reset preset filter's center frequency - W4TME
+                Filter filter2
+                    = RX2Filter; // save RX2 filter
+                                 // reset preset filter's center frequency - W4TME
 
                 for (Filter f = Filter.F1; f < Filter.LAST; f++)
                 {
@@ -16955,8 +16963,9 @@ namespace Thetis
             {
                 digl_click_tune_offset = value;
                 Filter filter1 = RX1Filter; // save RX1 filter
-                Filter filter2 = RX2Filter; // save RX2 filter
-                                            // reset preset filter's center frequency - W4TME
+                Filter filter2
+                    = RX2Filter; // save RX2 filter
+                                 // reset preset filter's center frequency - W4TME
 
                 for (Filter f = Filter.F1; f < Filter.LAST; f++)
                 {
@@ -37385,19 +37394,19 @@ namespace Thetis
             if (rx2_enabled)
             {
                 if (click_tune_rx2_display && bCanFitInView && (/*(mox && !VFOBTX) ||*/ !mox)
-                                    /*((Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER && mox && !VFOBTX) ||
-                                    (Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && mox && !VFOBTX) ||
-                                    (Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && mox && !VFOBTX) ||
+                                                        /*((Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER && mox && !VFOBTX) ||
+                                                        (Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && mox && !VFOBTX) ||
+                                                        (Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && mox && !VFOBTX) ||
 
-                                    (Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER && !mox) ||
-                                    (Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && !mox) ||
-                                    (Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && !mox)
+                                                        (Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER && !mox) ||
+                                                        (Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && !mox) ||
+                                                        (Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && !mox)
 
-                                    //||
-                                    //(Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER && display_duplex) ||
-                                    //(Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && display_duplex) ||
-                                    //(Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && display_duplex)
-                                    )*/)
+                                                        //||
+                                                        //(Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER && display_duplex) ||
+                                                        //(Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && display_duplex) ||
+                                                        //(Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && display_duplex)
+                                                        )*/)
                 {
                     double rx2_osc = Math.Round(
                         -(/*VFOBFreq*/ freq - CentreRX2Frequency) * 1e6);
@@ -37585,13 +37594,13 @@ namespace Thetis
                     // the passband
                     if (click_tune_rx2_display
                         && (/*(mox && !VFOBTX) ||*/ !mox) /*&&
-           ((Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER &&
+((Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER &&
 mox
 && !VFOBTX) || (Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL &&
 mox && !VFOBTX) || (Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL
 && mox && !VFOBTX) ||
 
-           (Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER &&
+(Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER &&
 !mox)
 || (Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && !mox) ||
 (Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && !mox)
@@ -39382,8 +39391,8 @@ display_duplex)
                                             agc_rx2_thresh_point, size /*4096.0*/,
                                             sample_rate_rx2); // MW0LGE_21k5 was
                                                               // sample_rate_rx1
-                                                              // DttSP.GetRXAGCMaxGain(2, 0,
-                                                              // &agc_rx2_top);
+                                                              // DttSP.GetRXAGCMaxGain(2,
+                                                              // 0, &agc_rx2_top);
                                         WDSP.GetRXAAGCTop(
                                             WDSP.id(2, 0), &agc_rx2_top);
 
@@ -39405,11 +39414,12 @@ display_duplex)
                                                     agc_rx2_top = -20.0;
 
                                                 if (!IsSetupFormNull)
-                                                    SetupForm.AGCRX2FixedGain
-                                                        = (int)
-                                                            agc_rx2_top; // agc_top;
-                                                                         // Debug.WriteLine("agc_db_point3: "
-                                                                         // + agc_db_point);
+                                                    SetupForm.AGCRX2FixedGain = (int)
+                                                        agc_rx2_top; // agc_top;
+                                                                     // Debug.WriteLine("agc_db_point3:
+                                                                     // "
+                                                                     // +
+                                                                     // agc_db_point);
                                                 break;
                                             default:
                                                 if (agc_rx2_top > 120)
@@ -39462,10 +39472,11 @@ display_duplex)
                                                     agc_top = -20.0;
 
                                                 if (!IsSetupFormNull)
-                                                    SetupForm.AGCFixedGain
-                                                        = (int)agc_top; // agc_top;
-                                                                        // Debug.WriteLine("agc_db_point3: "
-                                                                        // + agc_db_point);
+                                                    SetupForm.AGCFixedGain = (int)
+                                                        agc_top; // agc_top;
+                                                                 // Debug.WriteLine("agc_db_point3:
+                                                                 // "
+                                                                 // + agc_db_point);
                                                 break;
                                             default:
                                                 if (agc_top > 120) agc_top = 120;
@@ -39490,8 +39501,8 @@ display_duplex)
                                         agc_hang_point -= (double)
                                             cal_offset; // (double)Display.RX1PreampOffset;
                                                         // agc_hang_point += 120;
-                                                        //  Debug.WriteLine("agc_db_point1: " +
-                                                        //  agc_db_point);
+                                                        //  Debug.WriteLine("agc_db_point1:
+                                                        //  " + agc_db_point);
                                         if (agc_hang_point > 4.0)
                                             agc_hang_point = 4.0;
                                         if (agc_hang_point < -121.0)
@@ -39538,10 +39549,11 @@ display_duplex)
                                         agc_hang_point -= (double)
                                             cal_offset; // (double)Display.RX1PreampOffset;
                                                         // agc_hang_point += 120;
-                                                        //  int agc_slope = radio.GetDSPRX(0,
+                                                        //  int agc_slope =
+                                                        //  radio.GetDSPRX(0,
                                                         //  0).RXAGCSlope / 10;
-                                                        //  Debug.WriteLine("agc_db_point1: " +
-                                                        //  agc_db_point);
+                                                        //  Debug.WriteLine("agc_db_point1:
+                                                        //  " + agc_db_point);
                                         if (agc_hang_point > 4.0)
                                             agc_hang_point = 4.0;
                                         if (agc_hang_point < -121.0)
@@ -39722,7 +39734,7 @@ display_duplex)
                         {
                             if (!rx1_spectrum_tune_drag && !rx2_spectrum_tune_drag
                                 && /*!click_tune_display && !click_tune_rx2_display
-                                  &&*/
+              &&*/
                                 current_click_tune_mode
                                     == ClickTuneMode.Off /* &&
 next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
@@ -46741,8 +46753,11 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
                     old_rx1_display_mode = comboDisplayMode.Text;
                     // UpdateRXADCCtrl();
                     UpdateDDCs(rx2_enabled);
-                    chkDX_CheckedChanged(this, EventArgs.Empty); // stereo_diversity
-                                                                 // comboRX2Preamp_SelectedIndexChanged(this, EventArgs.Empty);
+                    chkDX_CheckedChanged(this,
+                        EventArgs
+                            .Empty); // stereo_diversity
+                                     // comboRX2Preamp_SelectedIndexChanged(this,
+                                     // EventArgs.Empty);
                     if (RX2StepAttPresent)
                         udRX2StepAttData_ValueChanged(this, EventArgs.Empty);
                     else
@@ -48425,9 +48440,10 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
 
                 if (m_bMuteWillMuteVAC2)
                 {
-                    radio.GetDSPRX(1, 0).RXOutputGain = 0.0; // MW0LGE_21j
-                                                             // radio.GetDSPRX(1, 1).RXOutputGain = 0.0; //MW0LGE_21j sub not
-                                                             // used
+                    radio.GetDSPRX(1, 0).RXOutputGain
+                        = 0.0; // MW0LGE_21j
+                               // radio.GetDSPRX(1, 1).RXOutputGain = 0.0;
+                               // //MW0LGE_21j sub not used
                 }
 
                 lblRX2MuteVFOB.Text = "MUTE";
@@ -48436,10 +48452,12 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
             {
                 Audio.MuteRX2 = false;
 
-                radio.GetDSPRX(1, 0).RXOutputGain
-                    = (double)ptbRX2Gain.Value / ptbRX2Gain.Maximum; // MW0LGE_21j
-                                                                     // radio.GetDSPRX(1, 1).RXOutputGain = (double)ptbRX2SubGain.Value /
-                                                                     // ptbRX2SubGain.Maximum; //MW0LGE_21j sub not used
+                radio.GetDSPRX(1, 0).RXOutputGain = (double)ptbRX2Gain.Value
+                    / ptbRX2Gain.Maximum; // MW0LGE_21j
+                                          // radio.GetDSPRX(1, 1).RXOutputGain =
+                                          // (double)ptbRX2SubGain.Value /
+                                          // ptbRX2SubGain.Maximum; //MW0LGE_21j sub
+                                          // not used
 
                 ptbRX2Gain_Scroll(this, EventArgs.Empty);
                 lblRX2MuteVFOB.Text = "";
@@ -52562,9 +52580,11 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
 
                     chkRX2SR.Location
                         = new Point(chkTUN.Location.X - chkRX2SR.Width - 10,
-                            chkTUN.Location.Y); // DUP
-                                                //  chkFWCATU.Location = new Point(chkMOX.Location.X -
-                                                //  chkFWCATU.Width - 10, chkMOX.Location.Y); //CTUN
+                            chkTUN.Location
+                                .Y); // DUP
+                                     //  chkFWCATU.Location = new
+                                     //  Point(chkMOX.Location.X - chkFWCATU.Width -
+                                     //  10, chkMOX.Location.Y); //CTUN
                     chkX2TR.Location
                         = new Point(chkMOX.Location.X - chkX2TR.Width - 10,
                             chkMOX.Location.Y); // RX2 CTUN

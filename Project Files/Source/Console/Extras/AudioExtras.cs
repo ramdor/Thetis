@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using PaSampleFormat = System.UInt32;
 
-namespace Thetis.Extras
+namespace Thetis.AudioExtras
 {
-    internal class Extras { }
+    internal class AudioExtras { }
 
     internal enum PortAudioInfoIndexes { input, output }
 
@@ -18,12 +18,14 @@ namespace Thetis.Extras
         internal PaSampleFormat fmt;
         internal int nch;
         internal int samplerate;
+        internal int exclusive;
 
-        public PaFormat(PaSampleFormat _fmt, int ch, int sr)
+        public PaFormat(PaSampleFormat _fmt, int ch, int sr, int exclusive)
         {
             this.fmt = _fmt;
             this.nch = ch;
             this.samplerate = sr;
+            this.exclusive = exclusive;
         }
     }
 
@@ -45,6 +47,8 @@ namespace Thetis.Extras
             Debug.Assert(deviceIndexes.Count() == 2);
 
             apiInfo = PortAudioForThetis.PA_GetHostApiInfo(hostAPI);
+            apiIndex = hostAPI;
+            apiName = apiInfo.name;
 
             for (int i = 0; i < 2; ++i)
             {
@@ -53,6 +57,8 @@ namespace Thetis.Extras
                     = PortAudioForThetis.PA_GetDeviceInfo(deviceIndexes[i]);
                 deviceNames[i] = deviceInfos[i].name;
             }
+
+            GetSupportedFormats();
         }
 
         public void GetSupportedFormats(uint fmt = PortAudioForThetis.paFloat32,
@@ -72,7 +78,7 @@ namespace Thetis.Extras
                               fmt, exclusive);
                 if (res != PortAudioForThetis.PaErrorCode.paNoError)
                 {
-                    Debug.Print("device supports!");
+                    supportedFormats.Add(new PaFormat(fmt, nch, sr, exclusive));
                 }
                 else
                 {
@@ -96,9 +102,9 @@ namespace Thetis.Extras
         }
     }
 
-#if (DEBUG)
     internal class Tests
     {
+#if (DEBUG)
         public static void TestSaneDefaults()
         {
 
@@ -109,6 +115,9 @@ namespace Thetis.Extras
             Debug.Assert(!(String.IsNullOrEmpty(defs.deviceNames[1])));
             Debug.Assert(defs.supportedFormats.Count() > 0);
         }
-    }
+#else
+    public static void TestSaneDefaults() {}
 #endif
+    }
+
 }

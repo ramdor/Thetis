@@ -280,7 +280,7 @@
     <Compile Include="Channel.cs" />
     <Compile Include="clsBandStackManager.cs" />
     <Compile Include="display.cs" />
-    <Compile Include="Extras\Extras.cs" />
+    <Compile Include="Extras\AudioExtras.cs" />
     <Compile Include="Firewall.cs" />
     <Compile Include="cmaster.cs" />
     <Compile Include="Andromeda\displaysettingsform.cs">
