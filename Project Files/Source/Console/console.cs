@@ -1,6 +1,7 @@
 //=================================================================
 // console.cs
 //=================================================================
+
 // Thetis is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2004-2009  FlexRadio Systems
 // Copyright (C) 2010-2020  Doug Wigley
@@ -37394,19 +37395,19 @@ namespace Thetis
             if (rx2_enabled)
             {
                 if (click_tune_rx2_display && bCanFitInView && (/*(mox && !VFOBTX) ||*/ !mox)
-                                                        /*((Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER && mox && !VFOBTX) ||
-                                                        (Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && mox && !VFOBTX) ||
-                                                        (Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && mox && !VFOBTX) ||
+                                                            /*((Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER && mox && !VFOBTX) ||
+                                                            (Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && mox && !VFOBTX) ||
+                                                            (Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && mox && !VFOBTX) ||
 
-                                                        (Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER && !mox) ||
-                                                        (Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && !mox) ||
-                                                        (Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && !mox)
+                                                            (Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER && !mox) ||
+                                                            (Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && !mox) ||
+                                                            (Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && !mox)
 
-                                                        //||
-                                                        //(Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER && display_duplex) ||
-                                                        //(Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && display_duplex) ||
-                                                        //(Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && display_duplex)
-                                                        )*/)
+                                                            //||
+                                                            //(Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER && display_duplex) ||
+                                                            //(Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && display_duplex) ||
+                                                            //(Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && display_duplex)
+                                                            )*/)
                 {
                     double rx2_osc = Math.Round(
                         -(/*VFOBFreq*/ freq - CentreRX2Frequency) * 1e6);
@@ -39734,7 +39735,7 @@ display_duplex)
                         {
                             if (!rx1_spectrum_tune_drag && !rx2_spectrum_tune_drag
                                 && /*!click_tune_display && !click_tune_rx2_display
-              &&*/
+          &&*/
                                 current_click_tune_mode
                                     == ClickTuneMode.Off /* &&
 next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
