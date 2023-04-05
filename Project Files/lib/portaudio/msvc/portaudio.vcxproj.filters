@@ -2,45 +2,45 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{db7b6e2a-7524-4e2d-a498-b2d5da347536}</UniqueIdentifier>
+      <UniqueIdentifier>{5fd1c3c0-38d3-415d-becf-b250bb9edc6b}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
     </Filter>
     <Filter Include="Source Files\common">
-      <UniqueIdentifier>{f32cfde5-1768-47d1-903d-83c138064946}</UniqueIdentifier>
+      <UniqueIdentifier>{d4235ebf-89fc-42ee-8b6d-c8341e6c9396}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\hostapi">
-      <UniqueIdentifier>{9934ac87-083d-4c7c-b239-c70a30539fb8}</UniqueIdentifier>
+      <UniqueIdentifier>{991c3036-69d3-4d9a-bf67-a805e2adbf48}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\hostapi\ASIO">
-      <UniqueIdentifier>{3c007667-ca94-462f-8b63-3bd897bf1b67}</UniqueIdentifier>
+      <UniqueIdentifier>{a779e818-b2aa-4f0c-bf61-21f4ec0da77e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\hostapi\ASIO\ASIOSDK">
-      <UniqueIdentifier>{aac26c1f-0eeb-4811-9162-00349dd3446a}</UniqueIdentifier>
+      <UniqueIdentifier>{89f85206-e837-4c5c-8865-ea1cc6de1dc0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\hostapi\dsound">
-      <UniqueIdentifier>{8e2e34a3-57f8-4e91-b3ad-8fd591eb97f0}</UniqueIdentifier>
+      <UniqueIdentifier>{110ed5f6-e7e3-46be-8bc3-8c62dded03d6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\hostapi\wmme">
-      <UniqueIdentifier>{5705c585-bbf6-4e54-9684-d1ddb647e821}</UniqueIdentifier>
+      <UniqueIdentifier>{a3b8d54b-0576-4429-9c7e-48953967276a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\hostapi\wasapi">
-      <UniqueIdentifier>{34118ee3-82cc-42f7-8cbd-65930e0a07a4}</UniqueIdentifier>
+      <UniqueIdentifier>{1009cebc-2b28-4dc4-954e-64bd36c81a3b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\hostapi\wdmks">
-      <UniqueIdentifier>{cbd28166-af1c-4265-984e-f4c9b2a02c9b}</UniqueIdentifier>
+      <UniqueIdentifier>{9de11c63-441b-43e3-91f9-689b32cf8ae3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\os">
-      <UniqueIdentifier>{815c4f2f-9a84-4a48-817e-594e464bac13}</UniqueIdentifier>
+      <UniqueIdentifier>{9a3ce578-28af-426b-8ab1-87d009689b86}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\os\win">
-      <UniqueIdentifier>{1be1c57b-6bad-4998-95d6-975023d6ee28}</UniqueIdentifier>
+      <UniqueIdentifier>{8be21e78-fdfd-4f22-b441-998e3ee81519}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
-      <UniqueIdentifier>{ba1d28eb-e8b4-4754-9485-38703001777d}</UniqueIdentifier>
+      <UniqueIdentifier>{14fa020c-dfbd-43ad-9bea-fe3464ded649}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{b28c28ff-1b00-48e4-a365-ac88ec722602}</UniqueIdentifier>
+      <UniqueIdentifier>{447972d8-8523-4fe3-a346-3c7bb3b57ef7}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
     </Filter>
   </ItemGroup>
@@ -145,10 +145,7 @@
     <ClInclude Include="..\include\pa_win_wmme.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\portaudio_meh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\lib\portaudio\include\portaudio.h">
+    <ClInclude Include="..\include\portaudio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

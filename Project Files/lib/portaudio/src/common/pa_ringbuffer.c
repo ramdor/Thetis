@@ -52,9 +52,6 @@
  @ingroup common_src
 */
 
-#pragma warning(                                                               \
-    disable : 26451) // millions of 'cast to an 8 byte value first, etc etc
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -206,7 +203,7 @@ ring_buffer_size_t PaUtil_WriteRingBuffer( PaUtilRingBuffer *rbuf, const void *d
     if( size2 > 0 )
     {
 
-        memcpy( data1, data, (size_t)size1*(size_t)rbuf->elementSizeBytes );
+        memcpy( data1, data, size1*rbuf->elementSizeBytes );
         data = ((char *)data) + size1*rbuf->elementSizeBytes;
         memcpy( data2, data, size2*rbuf->elementSizeBytes );
     }

@@ -93,6 +93,7 @@ PORT void create_ivac(int id, int run,
     a->OUTfvar = 1.0;
     a->initial_INvar = 1.0;
     a->initial_OUTvar = 1.0;
+    a->id = id;
     create_resamps(a);
     {
         int inrate[2] = {a->audio_rate, a->txmon_rate};
@@ -182,27 +183,6 @@ void xvac_out(int id, int nsamples,
     // if (id == 0) WriteAudio (120.0, 48000, a->audio_size, buff, 3);
 }
 
-/*/
-int CallbackIVAC(const void* input,
-    void* output,
-    unsigned long frameCount,
-    const PaStreamCallbackTimeInfo* timeInfo,
-    PaStreamCallbackFlags statusFlags,
-    void* userData)
-{
-
-    int id = (int)userData;		// use 'userData' to pass in the id of this
-VAC IVAC a = pvac[id]; double* out_ptr = (double*)output; double* in_ptr =
-(double*)input; (void)timeInfo; (void)statusFlags;
-
-    if (!a->run) return 0;
-    xrmatchIN(a->rmatchIN, in_ptr);	// MIC data from VAC
-    xrmatchOUT(a->rmatchOUT, out_ptr);	// audio or I-Q data to VAC
-    // if (id == 0)  WriteAudio (120.0, 48000, a->vac_size, out_ptr, 3); //
-    return 0;
-}
-/*/
-
 void StreamFinishedCallback(void* userData) {
 
 #pragma warning(disable : 4311)
@@ -252,6 +232,27 @@ static inline void size_64_bit_buffer(IVAC a, size_t sz_bytes) {
     }
 }
 
+/*/
+int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
+    const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags,
+    void* userData) {
+
+    int id
+        = (int)(ptrdiff_t)userData; // use 'userData' to pass in the id of this
+    IVAC a = pvac[id];
+    double* out_ptr = (double*)output;
+    double* in_ptr = (double*)input;
+    (void)timeInfo;
+    (void)statusFlags;
+
+    if (!a->run) return 0;
+    xrmatchIN(a->rmatchIN, in_ptr); // MIC data from VAC
+    xrmatchOUT(a->rmatchOUT, out_ptr); // audio or I-Q data to VAC
+    // if (id == 0)  WriteAudio (120.0, 48000, a->vac_size, out_ptr, 3); //
+    return 0;
+}
+/*/
+
 FILE* dump = 0;
 
 int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
@@ -259,6 +260,7 @@ int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
     void* userData) {
 
     int id = (int)(ptrdiff_t)userData;
+
     IVAC a = pvac[id];
     const unsigned int dblSz = sizeof(double);
     const unsigned int fltSz = sizeof(float);
@@ -290,7 +292,15 @@ int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
     xrmatchOUT(a->rmatchOUT, a->convbuf); // audio or I-Q data to VAC
     Float64_To_Float32(out_ptr, 1, a->convbuf, 1, frameCount * 2);
 
-    fwrite(out_ptr, sizeof(float), frameCount * a->num_channels, dump);
+    if (a->id == 0) {
+        errno = 0;
+        fwrite(in_ptr, sizeof(float), frameCount * a->num_channels, dump);
+        assert(errno == 0);
+    } else {
+        // what's the id here
+        volatile int myid = a->id;
+        myid = 0;
+    }
 
     return 0;
 }
@@ -316,11 +326,12 @@ PORT int StartAudioIVAC(int id) {
     a->outParam.sampleFormat = paFloat32;
 
     /*/
-       Pa_OpenStream:
+Pa_OpenStream :
 
-        To set desired Share Mode (Exclusive/Shared) you must supply
-        PaWasapiStreamInfo with flags paWinWasapiExclusive set through
-    member of PaStreamParameters::hostApiSpecificStreamInfo structure.
+    To set desired Share
+    Mode(Exclusive / Shared) you must supply PaWasapiStreamInfo with flags
+    paWinWasapiExclusive set through member of
+    PaStreamParameters::hostApiSpecificStreamInfo structure.
     /*/
     const PaHostApiInfo* hinf = Pa_GetHostApiInfo(a->host_api_index);
     PaWasapiStreamInfo* pw = &a->w;

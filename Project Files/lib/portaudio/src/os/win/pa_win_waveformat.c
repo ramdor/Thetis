@@ -39,46 +39,53 @@
 #include <windows.h>
 #include <mmsystem.h>
 #if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
-#include <mmreg.h> /* for WAVEFORMATEX */
+    #include <mmreg.h> /* for WAVEFORMATEX */
 #endif
 
 #include "portaudio.h"
 #include "pa_win_waveformat.h"
 
+
 #if !defined(WAVE_FORMAT_EXTENSIBLE)
-#define WAVE_FORMAT_EXTENSIBLE 0xFFFE
+#define  WAVE_FORMAT_EXTENSIBLE         0xFFFE
 #endif
 
-// NOLINTNEXTLINE
-static GUID pawin_ksDataFormatSubtypeGuidBase = {(USHORT)(WAVE_FORMAT_PCM),
-    0x0000, 0x0010, {0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}};
-// NOLINTNEXTLINE
-int PaWin_SampleFormatToLinearWaveFormatTag(PaSampleFormat sampleFormat) {
-    if (sampleFormat == paFloat32) return PAWIN_WAVE_FORMAT_IEEE_FLOAT;
+
+static GUID pawin_ksDataFormatSubtypeGuidBase =
+    { (USHORT)(WAVE_FORMAT_PCM), 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71 };
+
+
+int PaWin_SampleFormatToLinearWaveFormatTag( PaSampleFormat sampleFormat )
+{
+    if( sampleFormat == paFloat32 )
+        return PAWIN_WAVE_FORMAT_IEEE_FLOAT;
 
     return PAWIN_WAVE_FORMAT_PCM;
 }
 
-void PaWin_InitializeWaveFormatEx(PaWinWaveFormat* waveFormat, int numChannels,
-    PaSampleFormat sampleFormat, int waveFormatTag, double sampleRate) {
-    WAVEFORMATEX* waveFormatEx = (WAVEFORMATEX*)waveFormat;
+
+void PaWin_InitializeWaveFormatEx( PaWinWaveFormat *waveFormat,
+        int numChannels, PaSampleFormat sampleFormat, int waveFormatTag, double sampleRate )
+{
+    WAVEFORMATEX *waveFormatEx = (WAVEFORMATEX*)waveFormat;
     int bytesPerSample = Pa_GetSampleSize(sampleFormat);
     unsigned long bytesPerFrame = numChannels * bytesPerSample;
 
     waveFormatEx->wFormatTag = waveFormatTag;
     waveFormatEx->nChannels = (WORD)numChannels;
     waveFormatEx->nSamplesPerSec = (DWORD)sampleRate;
-    waveFormatEx->nAvgBytesPerSec
-        = waveFormatEx->nSamplesPerSec * bytesPerFrame;
+    waveFormatEx->nAvgBytesPerSec = waveFormatEx->nSamplesPerSec * bytesPerFrame;
     waveFormatEx->nBlockAlign = (WORD)bytesPerFrame;
     waveFormatEx->wBitsPerSample = bytesPerSample * 8;
     waveFormatEx->cbSize = 0;
 }
 
-void PaWin_InitializeWaveFormatExtensible(PaWinWaveFormat* waveFormat,
-    int numChannels, PaSampleFormat sampleFormat, int waveFormatTag,
-    double sampleRate, PaWinWaveFormatChannelMask channelMask) {
-    WAVEFORMATEX* waveFormatEx = (WAVEFORMATEX*)waveFormat;
+
+void PaWin_InitializeWaveFormatExtensible( PaWinWaveFormat *waveFormat,
+        int numChannels, PaSampleFormat sampleFormat, int waveFormatTag, double sampleRate,
+        PaWinWaveFormatChannelMask channelMask )
+{
+    WAVEFORMATEX *waveFormatEx = (WAVEFORMATEX*)waveFormat;
     int bytesPerSample = Pa_GetSampleSize(sampleFormat);
     unsigned long bytesPerFrame = numChannels * bytesPerSample;
     GUID guid;
@@ -86,8 +93,7 @@ void PaWin_InitializeWaveFormatExtensible(PaWinWaveFormat* waveFormat,
     waveFormatEx->wFormatTag = WAVE_FORMAT_EXTENSIBLE;
     waveFormatEx->nChannels = (WORD)numChannels;
     waveFormatEx->nSamplesPerSec = (DWORD)sampleRate;
-    waveFormatEx->nAvgBytesPerSec
-        = waveFormatEx->nSamplesPerSec * bytesPerFrame;
+    waveFormatEx->nAvgBytesPerSec = waveFormatEx->nSamplesPerSec * bytesPerFrame;
     waveFormatEx->nBlockAlign = (WORD)bytesPerFrame;
     waveFormatEx->wBitsPerSample = bytesPerSample * 8;
     waveFormatEx->cbSize = 22;
@@ -95,27 +101,31 @@ void PaWin_InitializeWaveFormatExtensible(PaWinWaveFormat* waveFormat,
     memcpy(&waveFormat->fields[PAWIN_INDEXOF_WVALIDBITSPERSAMPLE],
         &waveFormatEx->wBitsPerSample, sizeof(WORD));
 
-    memcpy(&waveFormat->fields[PAWIN_INDEXOF_DWCHANNELMASK], &channelMask,
-        sizeof(DWORD));
+    memcpy(&waveFormat->fields[PAWIN_INDEXOF_DWCHANNELMASK],
+        &channelMask, sizeof(DWORD));
 
     guid = pawin_ksDataFormatSubtypeGuidBase;
     guid.Data1 = (USHORT)waveFormatTag;
     memcpy(&waveFormat->fields[PAWIN_INDEXOF_SUBFORMAT], &guid, sizeof(GUID));
 }
 
-PaWinWaveFormatChannelMask PaWin_DefaultChannelMask(int numChannels) {
-    switch (numChannels) {
-        case 1: return PAWIN_SPEAKER_MONO;
-        case 2: return PAWIN_SPEAKER_STEREO;
+PaWinWaveFormatChannelMask PaWin_DefaultChannelMask( int numChannels )
+{
+    switch( numChannels ){
+        case 1:
+            return PAWIN_SPEAKER_MONO;
+        case 2:
+            return PAWIN_SPEAKER_STEREO;
         case 3:
-            return PAWIN_SPEAKER_FRONT_LEFT | PAWIN_SPEAKER_FRONT_CENTER
-                | PAWIN_SPEAKER_FRONT_RIGHT;
-        case 4: return PAWIN_SPEAKER_QUAD;
-        case 5: return PAWIN_SPEAKER_QUAD | PAWIN_SPEAKER_FRONT_CENTER;
+            return PAWIN_SPEAKER_FRONT_LEFT | PAWIN_SPEAKER_FRONT_CENTER | PAWIN_SPEAKER_FRONT_RIGHT;
+        case 4:
+            return PAWIN_SPEAKER_QUAD;
+        case 5:
+            return PAWIN_SPEAKER_QUAD | PAWIN_SPEAKER_FRONT_CENTER;
         case 6:
-            /* The meaning of the PAWIN_SPEAKER_5POINT1 flag has changed over
-               time: http://msdn2.microsoft.com/en-us/library/aa474707.aspx We
-               use PAWIN_SPEAKER_5POINT1 (not PAWIN_SPEAKER_5POINT1_SURROUND)
+            /* The meaning of the PAWIN_SPEAKER_5POINT1 flag has changed over time:
+                http://msdn2.microsoft.com/en-us/library/aa474707.aspx
+               We use PAWIN_SPEAKER_5POINT1 (not PAWIN_SPEAKER_5POINT1_SURROUND)
                because on some cards (eg Audigy) PAWIN_SPEAKER_5POINT1_SURROUND
                results in a virtual mixdown placing the rear output in the
                front _and_ rear speakers.
@@ -123,10 +133,8 @@ PaWinWaveFormatChannelMask PaWin_DefaultChannelMask(int numChannels) {
             return PAWIN_SPEAKER_5POINT1;
         /* case 7: */
         case 8:
-            /* RoBi: PAWIN_SPEAKER_7POINT1_SURROUND fits normal surround sound
-               setups better than PAWIN_SPEAKER_7POINT1, f.i. NVidia HDMI Audio
-               output is silent on channels 5&6 with NVidia drivers, and channel
-               7&8 with Microsoft HD Audio driver using PAWIN_SPEAKER_7POINT1.
+            /* RoBi: PAWIN_SPEAKER_7POINT1_SURROUND fits normal surround sound setups better than PAWIN_SPEAKER_7POINT1, f.i. NVidia HDMI Audio
+               output is silent on channels 5&6 with NVidia drivers, and channel 7&8 with Microsoft HD Audio driver using PAWIN_SPEAKER_7POINT1.
                With PAWIN_SPEAKER_7POINT1_SURROUND both setups work OK. */
             return PAWIN_SPEAKER_7POINT1_SURROUND;
     }
@@ -134,15 +142,14 @@ PaWinWaveFormatChannelMask PaWin_DefaultChannelMask(int numChannels) {
     /* Apparently some Audigy drivers will output silence
        if the direct-out constant (0) is used. So this is not ideal.
 
-       RoBi 2012-12-19: Also, NVidia driver seem to output garbage instead.
-       Again not very ideal.
+       RoBi 2012-12-19: Also, NVidia driver seem to output garbage instead. Again not very ideal.
     */
-    return PAWIN_SPEAKER_DIRECTOUT;
+    return  PAWIN_SPEAKER_DIRECTOUT;
 
     /* Note that Alec Rogers proposed the following as an alternate method to
-        generate the default channel mask, however it doesn't seem to be an
-       improvement over the above, since some drivers will matrix outputs
-       mapping to non-present speakers across multiple physical speakers.
+        generate the default channel mask, however it doesn't seem to be an improvement
+        over the above, since some drivers will matrix outputs mapping to non-present
+        speakers across multiple physical speakers.
 
         if(nChannels==1) {
             pwfFormat->dwChannelMask = SPEAKER_FRONT_CENTER;
@@ -150,8 +157,7 @@ PaWinWaveFormatChannelMask PaWin_DefaultChannelMask(int numChannels) {
         else {
             pwfFormat->dwChannelMask = 0;
             for(i=0; i<nChannels; i++)
-                pwfFormat->dwChannelMask = (pwfFormat->dwChannelMask << 1) |
-       0x1;
+                pwfFormat->dwChannelMask = (pwfFormat->dwChannelMask << 1) | 0x1;
         }
     */
 }

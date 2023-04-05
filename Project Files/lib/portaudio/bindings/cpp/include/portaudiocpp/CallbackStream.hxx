@@ -1,8 +1,3 @@
-// This is an independent project of an individual developer. Dear PVS-Studio,
-// please check it.
-
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
-// http://www.viva64.com
 #ifndef INCLUDED_PORTAUDIO_CALLBACKSTREAM_HXX
 #define INCLUDED_PORTAUDIO_CALLBACKSTREAM_HXX
 
@@ -15,24 +10,28 @@
 // ---------------------------------------------------------------------------------------
 
 // Declaration(s):
-namespace portaudio {
+namespace portaudio
+{
 
-//////
-/// @brief Base class for all Streams which use a callback-based mechanism.
-//////
-class CallbackStream : public Stream {
+
+    //////
+    /// @brief Base class for all Streams which use a callback-based mechanism.
+    //////
+    class CallbackStream : public Stream
+    {
     protected:
-    CallbackStream();
-    virtual ~CallbackStream();
+        CallbackStream();
+        virtual ~CallbackStream();
 
     public:
-    // stream info (time-varying)
-    double cpuLoad() const;
+        // stream info (time-varying)
+        double cpuLoad() const;
 
     private:
-    CallbackStream(const CallbackStream&); // non-copyable
-    CallbackStream& operator=(const CallbackStream&); // non-copyable
-};
+        CallbackStream(const CallbackStream &); // non-copyable
+        CallbackStream &operator=(const CallbackStream &); // non-copyable
+    };
+
 
 } // namespace portaudio
 

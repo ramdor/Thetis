@@ -1,9 +1,3 @@
-// This is an independent project of an individual developer. Dear PVS-Studio,
-// please check it.
-
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
-// http://www.viva64.com
-
 #ifndef INCLUDED_PORTAUDIO_HOSTAPI_HXX
 #define INCLUDED_PORTAUDIO_HOSTAPI_HXX
 
@@ -16,60 +10,65 @@
 // ---------------------------------------------------------------------------------------
 
 // Forward declaration(s):
-namespace portaudio {
-class Device;
+namespace portaudio
+{
+    class Device;
 }
 
 // ---------------------------------------------------------------------------------------
 
 // Declaration(s):
-namespace portaudio {
+namespace portaudio
+{
 
-//////
-/// @brief HostApi represents a host API (usually type of driver) in the System.
-///
-/// A single System can support multiple HostApi's each one typically having
-/// a set of Devices using that HostApi (usually driver type). All Devices in
-/// the HostApi can be enumerated and the default input/output Device for this
-/// HostApi can be retrieved.
-//////
-class HostApi {
+
+    //////
+    /// @brief HostApi represents a host API (usually type of driver) in the System.
+    ///
+    /// A single System can support multiple HostApi's each one typically having
+    /// a set of Devices using that HostApi (usually driver type). All Devices in
+    /// the HostApi can be enumerated and the default input/output Device for this
+    /// HostApi can be retrieved.
+    //////
+    class HostApi
+    {
     public:
-    typedef System::DeviceIterator DeviceIterator;
+        typedef System::DeviceIterator DeviceIterator;
 
-    // query info: id, name, numDevices
-    PaHostApiTypeId typeId() const noexcept;
-    PaHostApiIndex index() const;
-    const char* name() const noexcept;
-    size_t deviceCount() const noexcept;
+        // query info: id, name, numDevices
+        PaHostApiTypeId typeId() const;
+        PaHostApiIndex index() const;
+        const char *name() const;
+        int deviceCount() const;
 
-    // iterate devices
-    DeviceIterator devicesBegin() noexcept;
-    DeviceIterator devicesEnd() noexcept;
+        // iterate devices
+        DeviceIterator devicesBegin();
+        DeviceIterator devicesEnd();
 
-    // default devices
-    Device& defaultInputDevice() const noexcept;
-    Device& defaultOutputDevice() const noexcept;
+        // default devices
+        Device &defaultInputDevice() const;
+        Device &defaultOutputDevice() const;
 
-    // comparison operators
-    bool operator==(const HostApi& rhs) const noexcept;
-    bool operator!=(const HostApi& rhs) const noexcept;
-
-    private:
-    const PaHostApiInfo* info_;
-    Device** devices_;
+        // comparison operators
+        bool operator==(const HostApi &rhs) const;
+        bool operator!=(const HostApi &rhs) const;
 
     private:
-    friend class System;
+        const PaHostApiInfo *info_;
+        Device **devices_;
 
-    explicit HostApi(PaHostApiIndex index);
-    ~HostApi();
+    private:
+        friend class System;
 
-    HostApi(const HostApi&); // non-copyable
-    HostApi& operator=(const HostApi&); // non-copyable
-};
+        explicit HostApi(PaHostApiIndex index);
+        ~HostApi();
 
-} // namespace portaudio
+        HostApi(const HostApi &); // non-copyable
+        HostApi &operator=(const HostApi &); // non-copyable
+    };
+
+
+}
 
 // ---------------------------------------------------------------------------------------
 

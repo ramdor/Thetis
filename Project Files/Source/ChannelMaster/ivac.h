@@ -93,6 +93,7 @@ typedef struct _ivac {
     volatile int have_set_thread_priority;
     double* convbuf;
     size_t convbuf_size;
+    int id;
     const PaStreamInfo* streamInfo;
     struct PaWasapiStreamInfo w;
     struct PaWinWDMKSInfo x;

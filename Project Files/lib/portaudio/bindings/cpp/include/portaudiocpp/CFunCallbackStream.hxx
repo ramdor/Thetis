@@ -1,8 +1,3 @@
-// This is an independent project of an individual developer. Dear PVS-Studio,
-// please check it.
-
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
-// http://www.viva64.com
 #ifndef INCLUDED_PORTAUDIO_CFUNCALLBACKSTREAM_HXX
 #define INCLUDED_PORTAUDIO_CFUNCALLBACKSTREAM_HXX
 
@@ -15,38 +10,38 @@
 // ---------------------------------------------------------------------------------------
 
 // Forward declaration(s)
-namespace portaudio {
-class StreamParameters;
+namespace portaudio
+{
+    class StreamParameters;
 }
 
 // ---------------------------------------------------------------------------------------
 
 // Declaration(s):
-namespace portaudio {
-// -----------------------------------------------------------------------------------
+namespace portaudio
+{
+    // -----------------------------------------------------------------------------------
 
-//////
-/// @brief Callback stream using a free function with C linkage. It's important
-/// that the function the passed function pointer points to is declared ``extern
-/// "C"''.
-//////
-class CFunCallbackStream : public CallbackStream {
+    //////
+    /// @brief Callback stream using a free function with C linkage. It's important that the function
+    /// the passed function pointer points to is declared ``extern "C"''.
+    //////
+    class CFunCallbackStream : public CallbackStream
+    {
     public:
-    CFunCallbackStream();
-    CFunCallbackStream(const StreamParameters& parameters,
-        PaStreamCallback* funPtr, void* userData);
-    ~CFunCallbackStream();
+        CFunCallbackStream();
+        CFunCallbackStream(const StreamParameters &parameters, PaStreamCallback *funPtr, void *userData);
+        ~CFunCallbackStream();
 
-    void open(const StreamParameters& parameters, PaStreamCallback* funPtr,
-        void* userData);
+        void open(const StreamParameters &parameters, PaStreamCallback *funPtr, void *userData);
 
     private:
-    CFunCallbackStream(const CFunCallbackStream&); // non-copyable
-    CFunCallbackStream& operator=(const CFunCallbackStream&); // non-copyable
-};
+        CFunCallbackStream(const CFunCallbackStream &); // non-copyable
+        CFunCallbackStream &operator=(const CFunCallbackStream &); // non-copyable
+    };
 
-// -----------------------------------------------------------------------------------
-} // namespace portaudio
+    // -----------------------------------------------------------------------------------
+} // portaudio
 
 // ---------------------------------------------------------------------------------------
 

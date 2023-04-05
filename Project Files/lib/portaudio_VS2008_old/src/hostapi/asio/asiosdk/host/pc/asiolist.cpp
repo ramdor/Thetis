@@ -108,7 +108,7 @@ static void deleteDrvStruct (LPASIODRVSTRUCT lpdrv)
 			iasio = (IASIO *)lpdrv->asiodrv;
 			iasio->Release();
 		}
-		delete lpdrv;
+		delete[] lpdrv;
 	}
 }
 

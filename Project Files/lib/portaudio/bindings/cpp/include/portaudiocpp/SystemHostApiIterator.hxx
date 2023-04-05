@@ -1,9 +1,3 @@
-// This is an independent project of an individual developer. Dear PVS-Studio,
-// please check it.
-
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
-// http://www.viva64.com
-
 #ifndef INCLUDED_PORTAUDIO_SYSTEMHOSTAPIITERATOR_HXX
 #define INCLUDED_PORTAUDIO_SYSTEMHOSTAPIITERATOR_HXX
 
@@ -17,43 +11,48 @@
 // ---------------------------------------------------------------------------------------
 
 // Forward declaration(s):
-namespace portaudio {
-class HostApi;
+namespace portaudio
+{
+    class HostApi;
 }
 
 // ---------------------------------------------------------------------------------------
 
 // Declaration(s):
-namespace portaudio {
+namespace portaudio
+{
 
-//////
-/// @brief Iterator class for iterating through all HostApis in a System.
-///
-/// Compliant with the STL bidirectional iterator concept.
-//////
-class System::HostApiIterator {
+
+    //////
+    /// @brief Iterator class for iterating through all HostApis in a System.
+    ///
+    /// Compliant with the STL bidirectional iterator concept.
+    //////
+    class System::HostApiIterator
+    {
     public:
-    typedef std::bidirectional_iterator_tag iterator_category;
-    typedef Device value_type;
-    typedef ptrdiff_t difference_type;
-    typedef HostApi* pointer;
-    typedef HostApi& reference;
+        typedef std::bidirectional_iterator_tag iterator_category;
+        typedef Device value_type;
+        typedef ptrdiff_t difference_type;
+        typedef HostApi * pointer;
+        typedef HostApi & reference;
 
-    HostApi& operator*() const;
-    HostApi* operator->() const;
+        HostApi &operator*() const;
+        HostApi *operator->() const;
 
-    HostApiIterator& operator++();
-    HostApiIterator operator++(int);
-    HostApiIterator& operator--();
-    HostApiIterator operator--(int);
+        HostApiIterator &operator++();
+        HostApiIterator operator++(int);
+        HostApiIterator &operator--();
+        HostApiIterator operator--(int);
 
-    bool operator==(const HostApiIterator& rhs) const;
-    bool operator!=(const HostApiIterator& rhs) const;
+        bool operator==(const HostApiIterator &rhs) const;
+        bool operator!=(const HostApiIterator &rhs) const;
 
     private:
-    friend class System;
-    HostApi** ptr_;
-};
+        friend class System;
+        HostApi **ptr_;
+    };
+
 
 } // namespace portaudio
 

@@ -1,8 +1,3 @@
-// This is an independent project of an individual developer. Dear PVS-Studio,
-// please check it.
-
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
-// http://www.viva64.com
 #include "portaudiocpp/AsioDeviceAdapter.hxx"
 
 #include "portaudio.h"
@@ -12,62 +7,75 @@
 #include "portaudiocpp/HostApi.hxx"
 #include "portaudiocpp/Exception.hxx"
 
-namespace portaudio {
-AsioDeviceAdapter::AsioDeviceAdapter(Device& device) {
-    if (device.hostApi().typeId() != paASIO)
-        throw PaCppException(PaCppException::UNABLE_TO_ADAPT_DEVICE);
+namespace portaudio
+{
+    AsioDeviceAdapter::AsioDeviceAdapter(Device &device)
+    {
+        if (device.hostApi().typeId() != paASIO)
+            throw PaCppException(PaCppException::UNABLE_TO_ADAPT_DEVICE);
 
-    device_ = &device;
+        device_ = &device;
 
-    PaError err = PaAsio_GetAvailableLatencyValues(device_->index(),
-        &minBufferSize_, &maxBufferSize_, &preferredBufferSize_, &granularity_);
+        PaError err = PaAsio_GetAvailableLatencyValues(device_->index(), &minBufferSize_, &maxBufferSize_,
+            &preferredBufferSize_, &granularity_);
 
-    if (err != paNoError) throw PaException(err);
+        if (err != paNoError)
+            throw PaException(err);
+
+    }
+
+    Device &AsioDeviceAdapter::device()
+    {
+        return *device_;
+    }
+
+    long AsioDeviceAdapter::minBufferSize() const
+    {
+        return minBufferSize_;
+    }
+
+    long AsioDeviceAdapter::maxBufferSize() const
+    {
+        return maxBufferSize_;
+    }
+
+    long AsioDeviceAdapter::preferredBufferSize() const
+    {
+        return preferredBufferSize_;
+    }
+
+    long AsioDeviceAdapter::granularity() const
+    {
+        return granularity_;
+    }
+
+    void AsioDeviceAdapter::showControlPanel(void *systemSpecific)
+    {
+        PaError err = PaAsio_ShowControlPanel(device_->index(), systemSpecific);
+
+        if (err != paNoError)
+            throw PaException(err);
+    }
+
+    const char *AsioDeviceAdapter::inputChannelName(int channelIndex) const
+    {
+        const char *channelName;
+        PaError err = PaAsio_GetInputChannelName(device_->index(), channelIndex, &channelName);
+
+        if (err != paNoError)
+            throw PaException(err);
+
+        return channelName;
+    }
+
+    const char *AsioDeviceAdapter::outputChannelName(int channelIndex) const
+    {
+        const char *channelName;
+        PaError err = PaAsio_GetOutputChannelName(device_->index(), channelIndex, &channelName);
+
+        if (err != paNoError)
+            throw PaException(err);
+
+        return channelName;
+    }
 }
-
-Device& AsioDeviceAdapter::device() {
-    return *device_;
-}
-
-long AsioDeviceAdapter::minBufferSize() const {
-    return minBufferSize_;
-}
-
-long AsioDeviceAdapter::maxBufferSize() const {
-    return maxBufferSize_;
-}
-
-long AsioDeviceAdapter::preferredBufferSize() const {
-    return preferredBufferSize_;
-}
-
-long AsioDeviceAdapter::granularity() const {
-    return granularity_;
-}
-
-void AsioDeviceAdapter::showControlPanel(void* systemSpecific) {
-    PaError err = PaAsio_ShowControlPanel(device_->index(), systemSpecific);
-
-    if (err != paNoError) throw PaException(err);
-}
-
-const char* AsioDeviceAdapter::inputChannelName(int channelIndex) const {
-    const char* channelName;
-    PaError err = PaAsio_GetInputChannelName(
-        device_->index(), channelIndex, &channelName);
-
-    if (err != paNoError) throw PaException(err);
-
-    return channelName;
-}
-
-const char* AsioDeviceAdapter::outputChannelName(int channelIndex) const {
-    const char* channelName;
-    PaError err = PaAsio_GetOutputChannelName(
-        device_->index(), channelIndex, &channelName);
-
-    if (err != paNoError) throw PaException(err);
-
-    return channelName;
-}
-} // namespace portaudio

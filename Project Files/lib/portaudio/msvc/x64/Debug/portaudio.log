@@ -1,3 +1,35 @@
-﻿  portaudio.vcxproj -> U:\hamcode\COOLSDR\PowerSDR-Thetis-G7KLJ\Project Files\lib\portaudio\msvc\x64\Debug\PortAudioForCoolSDR.dll
-  Copying PortAudioForThetis to output directory
-          1 file(s) copied.
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.Cpp.Analysis.props(24,5): warning MSB4211: The property "MsvcAnalysisPluginPath" is being set to a value for the first time, but it was already consumed at "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CodeAnalysis.Extensions.props (33,5)".
+  pa_allocation.c
+  pa_converters.c
+  pa_cpuload.c
+  pa_debugprint.c
+  pa_dither.c
+  pa_front.c
+  pa_process.c
+  pa_ringbuffer.c
+  pa_stream.c
+  pa_trace.c
+  pa_win_ds.c
+  pa_win_ds_dynlink.c
+  pa_hostapi_skeleton.c
+  pa_win_wasapi.c
+  pa_win_wdmks.c
+  pa_win_wmme.c
+  pa_win_coinitialize.c
+  pa_win_hostapis.c
+  pa_win_util.c
+  pa_win_waveformat.c
+  Generating Code...
+  Compiling...
+  pa_win_wdmks_utils.c
+  pa_x86_plain_converters.c
+  Generating Code...
+  asio.cpp
+  asiodrivers.cpp
+  asiolist.cpp
+  pa_asio.cpp
+  Generating Code...
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(1374,5): warning MSB8012: TargetPath(U:\Wales\Thetis-2.9.0\Project Files\Source\x64\Debug\portaudio.dll) does not match the Linker's OutputFile property value (U:\Wales\Thetis-2.9.0\Project Files\Source\x64\Debug\($TargetName)($TargetExt)). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(1376,5): warning MSB8012: TargetName(portaudio) does not match the Linker's OutputFile property value (($TargetName)($TargetExt)). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+     Creating library U:\Wales\Thetis-2.9.0\Project Files\Source\x64\Debug\portaudio.lib and object U:\Wales\Thetis-2.9.0\Project Files\Source\x64\Debug\portaudio.exp
+  portaudio.vcxproj -> U:\Wales\Thetis-2.9.0\Project Files\Source\x64\Debug\portaudio.dll

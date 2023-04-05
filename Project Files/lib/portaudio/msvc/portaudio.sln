@@ -1,11 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.4.33205.214
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "devs_example", "..\bindings\cpp\build\vc7_1\devs_example.vcxproj", "{1B9A038D-80A3-4DBD-9F0D-AF10B49B863A}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "portaudio", "portaudio.vcxproj", "{0A18A071-125E-442F-AFF7-A3F68ABECF99}"
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "portaudio", "portaudio.vcproj", "{0A18A071-125E-442F-AFF7-A3F68ABECF99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,18 +13,6 @@ Global
 		ReleaseMinDependency|x64 = ReleaseMinDependency|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1B9A038D-80A3-4DBD-9F0D-AF10B49B863A}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1B9A038D-80A3-4DBD-9F0D-AF10B49B863A}.Debug|Win32.Build.0 = Debug|Win32
-		{1B9A038D-80A3-4DBD-9F0D-AF10B49B863A}.Debug|x64.ActiveCfg = Debug|x64
-		{1B9A038D-80A3-4DBD-9F0D-AF10B49B863A}.Debug|x64.Build.0 = Debug|x64
-		{1B9A038D-80A3-4DBD-9F0D-AF10B49B863A}.Release|Win32.ActiveCfg = Release|Win32
-		{1B9A038D-80A3-4DBD-9F0D-AF10B49B863A}.Release|Win32.Build.0 = Release|Win32
-		{1B9A038D-80A3-4DBD-9F0D-AF10B49B863A}.Release|x64.ActiveCfg = Release|x64
-		{1B9A038D-80A3-4DBD-9F0D-AF10B49B863A}.Release|x64.Build.0 = Release|x64
-		{1B9A038D-80A3-4DBD-9F0D-AF10B49B863A}.ReleaseMinDependency|Win32.ActiveCfg = Release|Win32
-		{1B9A038D-80A3-4DBD-9F0D-AF10B49B863A}.ReleaseMinDependency|Win32.Build.0 = Release|Win32
-		{1B9A038D-80A3-4DBD-9F0D-AF10B49B863A}.ReleaseMinDependency|x64.ActiveCfg = Release|x64
-		{1B9A038D-80A3-4DBD-9F0D-AF10B49B863A}.ReleaseMinDependency|x64.Build.0 = Release|x64
 		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|Win32.ActiveCfg = Debug|Win32
 		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|Win32.Build.0 = Debug|Win32
 		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|x64.ActiveCfg = Debug|x64
@@ -44,8 +28,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {8BB19D38-9335-48B6-A02C-D6A15944DDC9}
 	EndGlobalSection
 EndGlobal

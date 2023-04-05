@@ -257,6 +257,14 @@
     <ClCompile Include="znob.c" />
     <ClCompile Include="znobII.c" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\portaudio\msvc\portaudio.vcxproj">
+      <Project>{0a18a071-125e-442f-aff7-a3f68abecf99}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\wdsp\wdsp.vcxproj">
+      <Project>{6dbdf457-8e84-4dff-b1e4-a9177d15d89f}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

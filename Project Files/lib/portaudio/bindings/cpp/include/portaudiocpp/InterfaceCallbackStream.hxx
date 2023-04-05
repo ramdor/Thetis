@@ -1,8 +1,3 @@
-// This is an independent project of an individual developer. Dear PVS-Studio,
-// please check it.
-
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
-// http://www.viva64.com
 #ifndef INCLUDED_PORTAUDIO_INTERFACECALLBACKSTREAM_HXX
 #define INCLUDED_PORTAUDIO_INTERFACECALLBACKSTREAM_HXX
 
@@ -15,36 +10,39 @@
 // ---------------------------------------------------------------------------------------
 
 // Forward declaration(s)
-namespace portaudio {
-class StreamParameters;
-class CallbackInterface;
-} // namespace portaudio
+namespace portaudio
+{
+    class StreamParameters;
+    class CallbackInterface;
+}
 
 // ---------------------------------------------------------------------------------------
 
 // Declaration(s):
-namespace portaudio {
+namespace portaudio
+{
 
-//////
-/// @brief Callback stream using an instance of an object that's derived from
-/// the CallbackInterface interface.
-//////
-class InterfaceCallbackStream : public CallbackStream {
+
+    //////
+    /// @brief Callback stream using an instance of an object that's derived from the CallbackInterface
+    /// interface.
+    //////
+    class InterfaceCallbackStream : public CallbackStream
+    {
     public:
-    InterfaceCallbackStream();
-    InterfaceCallbackStream(
-        const StreamParameters& parameters, CallbackInterface& instance);
-    ~InterfaceCallbackStream();
+        InterfaceCallbackStream();
+        InterfaceCallbackStream(const StreamParameters &parameters, CallbackInterface &instance);
+        ~InterfaceCallbackStream();
 
-    void open(const StreamParameters& parameters, CallbackInterface& instance);
+        void open(const StreamParameters &parameters, CallbackInterface &instance);
 
     private:
-    InterfaceCallbackStream(const InterfaceCallbackStream&); // non-copyable
-    InterfaceCallbackStream& operator=(
-        const InterfaceCallbackStream&); // non-copyable
-};
+        InterfaceCallbackStream(const InterfaceCallbackStream &); // non-copyable
+        InterfaceCallbackStream &operator=(const InterfaceCallbackStream &); // non-copyable
+    };
 
-} // namespace portaudio
+
+} // portaudio
 
 // ---------------------------------------------------------------------------------------
 
