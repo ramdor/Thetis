@@ -252,6 +252,8 @@ static inline void size_64_bit_buffer(IVAC a, size_t sz_bytes) {
     }
 }
 
+FILE* dump = 0;
+
 int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
     const PaStreamCallbackTimeInfo* ti, PaStreamCallbackFlags f,
     void* userData) {
@@ -263,6 +265,11 @@ int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
 
     if (a->have_set_thread_priority == -1) {
         make_ivac_thread_max_priority(a);
+    }
+
+    if (dump == 0) {
+        dump = fopen("MyTestRaw.raw", "w+b");
+        assert(dump);
     }
 
     const size_t floatBufferSize = fltSz * frameCount * a->num_channels;
@@ -282,6 +289,8 @@ int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
     xrmatchIN(a->rmatchIN, a->convbuf); // MIC data from VAC
     xrmatchOUT(a->rmatchOUT, a->convbuf); // audio or I-Q data to VAC
     Float64_To_Float32(out_ptr, 1, a->convbuf, 1, frameCount * 2);
+
+    fwrite(out_ptr, sizeof(float), frameCount * a->num_channels, dump);
 
     return 0;
 }

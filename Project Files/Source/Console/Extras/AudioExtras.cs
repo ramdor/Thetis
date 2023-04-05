@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PaSampleFormat = System.UInt32;
+using static Thetis.PortAudioForThetis;
 
 namespace Thetis.AudioExtras
 {
@@ -36,15 +37,15 @@ namespace Thetis.AudioExtras
 
     internal class PortAudioInfo
     {
-        private int[] sampleRates = { 22050, 44100, 48000, 96000, 128000, 192000 };
+        static public int[] sampleRates
+            = { 22050, 44100, 48000, 96000, 128000, 192000 };
         public string[] deviceNames = new string[2];
         public int[] deviceIndexes = new int[2];
-        public PortAudioForThetis.PaDeviceInfo[] deviceInfos
-            = new PortAudioForThetis.PaDeviceInfo[2];
+        public PaDeviceInfo[] deviceInfos = new PaDeviceInfo[2];
         public List<PaFormat> supportedFormats;
         public int apiIndex = -1;
         public string apiName;
-        public PortAudioForThetis.PaHostApiInfo apiInfo;
+        public PaHostApiInfo apiInfo;
 
         public int Device(DeviceIndexes index) { return deviceIndexes[(int)index]; }
 
@@ -75,13 +76,10 @@ namespace Thetis.AudioExtras
         {
             Debug.Assert(hostAPI >= 0);
             Debug.Assert(deviceNames.Count() == 2);
-            var deviceIndexes = FindDeviceIndexes(hostAPI, deviceNames);
+            this.deviceIndexes = FindDeviceIndexes(hostAPI, deviceNames);
         }
 
-        static internal int DeviceCount()
-        {
-            return PortAudioForThetis.PA_GetDeviceCount();
-        }
+        static internal int DeviceCount() { return PA_GetDeviceCount(); }
 
         internal int[] FindDeviceIndexes(int hostAPI, string[] deviceNames)
         {
@@ -91,7 +89,7 @@ namespace Thetis.AudioExtras
             bool got_output = false;
             for (int i = 0; i < cnt; ++i)
             {
-                var inf = PortAudioForThetis.PA_GetDeviceInfo(i);
+                var inf = PA_GetDeviceInfo(i);
                 if (inf.hostApi == hostAPI)
                 {
                     if (inf.maxInputChannels > 0
@@ -131,14 +129,13 @@ namespace Thetis.AudioExtras
             for (int i = 0; i < 2; ++i)
             {
                 this.deviceIndexes[i] = deviceIndexes[i];
-                this.deviceInfos[i]
-                    = PortAudioForThetis.PA_GetDeviceInfo(deviceIndexes[i]);
+                this.deviceInfos[i] = PA_GetDeviceInfo(deviceIndexes[i]);
                 this.deviceNames[i] = deviceInfos[i].name;
             }
         }
 
-        public void GetSupportedFormats(uint fmt = PortAudioForThetis.paFloat32,
-            int nch = 2, int exclusive = 0)
+        public void GetSupportedFormats(
+            uint fmt = paFloat32, int nch = 2, int exclusive = 0)
         {
             Debug.Assert(!string.IsNullOrEmpty(deviceNames[0])
                 && !string.IsNullOrEmpty(deviceNames[1]));
@@ -151,12 +148,10 @@ namespace Thetis.AudioExtras
 
             foreach (var sr in sampleRates)
             {
-                PortAudioForThetis.PaErrorCode res
-                    = (PortAudioForThetis.PaErrorCode)
-                          PortAudioForThetis.Pa_IsFormatSupported(apiIndex,
-                              (double)sr, deviceIndexes[0], deviceIndexes[1], nch,
-                              fmt, exclusive);
-                if (res == PortAudioForThetis.PaErrorCode.paNoError)
+                PaErrorCode res
+                    = (PaErrorCode)Pa_IsFormatSupported(apiIndex, (double)sr,
+                        deviceIndexes[0], deviceIndexes[1], nch, fmt, exclusive);
+                if (res == PaErrorCode.paNoError)
                 {
                     supportedFormats.Add(new PaFormat(
                         fmt, nch, sr, exclusive, apiIndex, deviceIndexes));
@@ -174,10 +169,9 @@ namespace Thetis.AudioExtras
         internal PortAudioInfo SaneDefaults()
         {
             int[] devices = new int[2];
-            devices[0] = PortAudioForThetis.PA_GetDefaultInputDevice();
-            devices[1] = PortAudioForThetis.PA_GetDefaultOutputDevice();
-            PortAudioInfo ret = new PortAudioInfo(
-                PortAudioForThetis.PA_GetDefaultHostApi(), devices);
+            devices[0] = PA_GetDefaultInputDevice();
+            devices[1] = PA_GetDefaultOutputDevice();
+            PortAudioInfo ret = new PortAudioInfo(PA_GetDefaultHostApi(), devices);
 
             return ret;
         }
@@ -196,43 +190,55 @@ namespace Thetis.AudioExtras
             return false;
         }
 
-        internal List<PaFormat> ListFormats(int hostAPI, string[] deviceNames)
+        internal List<PaFormat> ListFormats(
+            int hostAPI, string[] deviceNames, int nch = 2, int exclusive = 0)
         {
             Debug.Assert(deviceNames.Count() == 2);
             Debug.Assert(hostAPI >= 0);
             var inf = new PortAudioInfo(hostAPI, deviceNames);
             var ret = new List<PaFormat>();
+            foreach (var sr in PortAudioInfo.sampleRates)
+            {
+                var rv = (PaErrorCode)Pa_IsFormatSupported(hostAPI, (double)sr,
+                    inf.deviceIndexes[0], inf.deviceIndexes[1], nch, paFloat32,
+                    exclusive);
+
+                if (rv == PaErrorCode.paNoError)
+                {
+                    var f = new PaFormat(
+                        paFloat32, 2, sr, exclusive, hostAPI, inf.deviceIndexes);
+                    ret.Add(f);
+                }
+            }
             return ret;
         }
 
-        static internal int DefaultAPI()
-        {
-            return PortAudioForThetis.PA_GetDefaultHostApi();
-        }
+        static internal int DefaultAPI() { return PA_GetDefaultHostApi(); }
     }
 
     internal class Tests
     {
 
-#if (false)
-    public static void TestSaneDefaults() {
+#if (DEBUG)
+        public static void TestSaneDefaults()
+        {
 
-        var extras = new PortAudioExtras();
-        string[] names = new string[2];
-        names[0] = "Microsoft Sound Mapper - Input";
-        names[1] = "Microsoft Sound Mapper - Input";
+            var extras = new PortAudioExtras();
+            string[] names = new string[2];
+            names[0] = "Microsoft Sound Mapper - Input";
+            names[1] = "Microsoft Sound Mapper - Output";
 
-        var fmts = extras.ListFormats(PortAudioExtras.DefaultAPI(), names);
-        Debug.Assert(fmts.Count() > 0);
+            var fmts = extras.ListFormats(PortAudioExtras.DefaultAPI(), names);
+            Debug.Assert(fmts.Count() > 0);
 
-        var defs = extras.SaneDefaults();
-        Debug.Assert(defs.apiInfo.deviceCount > 0);
-        Debug.Assert(!(String.IsNullOrEmpty(defs.deviceNames[0])));
-        Debug.Assert(!(String.IsNullOrEmpty(defs.deviceNames[1])));
-        Debug.Assert(defs.supportedFormats.Count() > 0);
-    }
+            var defs = extras.SaneDefaults();
+            Debug.Assert(defs.apiInfo.deviceCount > 0);
+            Debug.Assert(!(String.IsNullOrEmpty(defs.deviceNames[0])));
+            Debug.Assert(!(String.IsNullOrEmpty(defs.deviceNames[1])));
+            Debug.Assert(defs.supportedFormats.Count() > 0);
+        }
 #else
-        public static void TestSaneDefaults() { }
+    public static void TestSaneDefaults() {}
 #endif
     }
 }

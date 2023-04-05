@@ -7593,7 +7593,7 @@
             "Region2",
             "Region3",
             "Germany"});
-            this.comboFRSRegion.Location = new System.Drawing.Point(6, 19);
+            this.comboFRSRegion.Location = new System.Drawing.Point(12, 21);
             this.comboFRSRegion.Name = "comboFRSRegion";
             this.comboFRSRegion.Size = new System.Drawing.Size(113, 21);
             this.comboFRSRegion.TabIndex = 0;
@@ -7639,7 +7639,7 @@
             // chkGeneralRXOnly
             // 
             this.chkGeneralRXOnly.Image = null;
-            this.chkGeneralRXOnly.Location = new System.Drawing.Point(26, 60);
+            this.chkGeneralRXOnly.Location = new System.Drawing.Point(11, 60);
             this.chkGeneralRXOnly.Name = "chkGeneralRXOnly";
             this.chkGeneralRXOnly.Size = new System.Drawing.Size(96, 16);
             this.chkGeneralRXOnly.TabIndex = 11;
@@ -26253,7 +26253,8 @@
             "256",
             "512",
             "1024",
-            "2048"});
+            "2048",
+            "4096"});
             this.comboAudioBuffer2.Location = new System.Drawing.Point(222, 17);
             this.comboAudioBuffer2.Name = "comboAudioBuffer2";
             this.comboAudioBuffer2.Size = new System.Drawing.Size(56, 21);
@@ -33618,6 +33619,7 @@
             this.comboDSPPhoneTXFiltSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboDSPPhoneTXFiltSize.DropDownWidth = 64;
             this.comboDSPPhoneTXFiltSize.Items.AddRange(new object[] {
+            "512",
             "1024",
             "2048",
             "4096",
@@ -33646,6 +33648,7 @@
             this.comboDSPPhoneRXFiltSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboDSPPhoneRXFiltSize.DropDownWidth = 64;
             this.comboDSPPhoneRXFiltSize.Items.AddRange(new object[] {
+            "512",
             "1024",
             "2048",
             "4096",
