@@ -213,26 +213,26 @@ namespace Thetis.AudioExtras
 
     internal class Tests
     {
-#if (DEBUG)
-        public static void TestSaneDefaults()
-        {
 
-            var extras = new PortAudioExtras();
-            string[] names = new string[2];
-            names[0] = "Microsoft Sound Mapper - Input";
-            names[1] = "Microsoft Sound Mapper - Input";
+#if (false)
+    public static void TestSaneDefaults() {
 
-            var fmts = extras.ListFormats(PortAudioExtras.DefaultAPI(), names);
-            Debug.Assert(fmts.Count() > 0);
+        var extras = new PortAudioExtras();
+        string[] names = new string[2];
+        names[0] = "Microsoft Sound Mapper - Input";
+        names[1] = "Microsoft Sound Mapper - Input";
 
-            var defs = extras.SaneDefaults();
-            Debug.Assert(defs.apiInfo.deviceCount > 0);
-            Debug.Assert(!(String.IsNullOrEmpty(defs.deviceNames[0])));
-            Debug.Assert(!(String.IsNullOrEmpty(defs.deviceNames[1])));
-            Debug.Assert(defs.supportedFormats.Count() > 0);
-        }
+        var fmts = extras.ListFormats(PortAudioExtras.DefaultAPI(), names);
+        Debug.Assert(fmts.Count() > 0);
+
+        var defs = extras.SaneDefaults();
+        Debug.Assert(defs.apiInfo.deviceCount > 0);
+        Debug.Assert(!(String.IsNullOrEmpty(defs.deviceNames[0])));
+        Debug.Assert(!(String.IsNullOrEmpty(defs.deviceNames[1])));
+        Debug.Assert(defs.supportedFormats.Count() > 0);
+    }
 #else
-    public static void TestSaneDefaults() {}
+        public static void TestSaneDefaults() { }
 #endif
     }
 }

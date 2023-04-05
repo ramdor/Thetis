@@ -233,6 +233,9 @@ namespace Thetis
             {
                 get { return index; }
             }
+
+            // this is what is shown in the VAC combos
+            public override string ToString() { return Name; }
         }
 
         [StructLayout(LayoutKind.Sequential)]

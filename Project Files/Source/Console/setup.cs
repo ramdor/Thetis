@@ -50,6 +50,7 @@ namespace Thetis
     using System.Threading.Tasks;
     using System.Security.Cryptography;
     using System.Xml;
+    using static Thetis.PortAudioForThetis;
 
     public partial class Setup : Form
     {
@@ -249,7 +250,7 @@ namespace Thetis
                 }
             }
 
-            GetHosts();
+            this.GetHosts();
             InitAlexAntTables();
 
             KeyList = new ArrayList();
@@ -1434,19 +1435,15 @@ namespace Thetis
                 if (Audio.GetPAInputDevices(host_index).Count > 0
                     || Audio.GetPAOutputDevices(host_index).Count > 0)
                 {
-                    // comboAudioDriver1.Items.Add(new PADeviceInfo(PAHostName,
-                    // host_index)); if (PAHostName != "Windows WASAPI")
+
                     {
                         comboAudioDriver2.Items.Add(
-                            new PADeviceInfo(PAHostName, host_index));
+                            new PaDeviceInfoEx(PAHostName, host_index));
                         comboAudioDriver3.Items.Add(
-                            new PADeviceInfo(PAHostName, host_index));
+                            new PaDeviceInfoEx(PAHostName, host_index));
                     }
-                    // comboAudioDriver1.Items.Add(new PADeviceInfo(PAHostName,
-                    // host_index)); comboAudioDriver2.Items.Add(new
-                    // PADeviceInfo(PAHostName, host_index));
                 }
-                host_index++; // Increment host index
+                host_index++;
             }
         }
 
@@ -1454,24 +1451,24 @@ namespace Thetis
         {
             comboAudioInput2.Items.Clear();
             comboAudioOutput2.Items.Clear();
-            int host = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Index;
+            int host = ((PaDeviceInfoEx)comboAudioDriver2.SelectedItem).Index;
             var a = Audio.GetPAInputDevices(host);
             foreach (var p in a) comboAudioInput2.Items.Add(p);
 
-            a = Audio.GetPAOutputDevices(host);
-            foreach (PADeviceInfo p in a) comboAudioOutput2.Items.Add(p);
+            var b = Audio.GetPAOutputDevices(host);
+            foreach (var c in b) comboAudioOutput2.Items.Add(c);
         }
 
         private void GetDevices3()
         {
             comboAudioInput3.Items.Clear();
             comboAudioOutput3.Items.Clear();
-            int host = ((PADeviceInfo)comboAudioDriver3.SelectedItem).Index;
-            ArrayList a = Audio.GetPAInputDevices(host);
-            foreach (PADeviceInfo p in a) comboAudioInput3.Items.Add(p);
+            int host = ((PaDeviceInfoEx)comboAudioDriver3.SelectedItem).Index;
+            var a = Audio.GetPAInputDevices(host);
+            foreach (var p in a) comboAudioInput3.Items.Add(p);
 
-            a = Audio.GetPAOutputDevices(host);
-            foreach (PADeviceInfo p in a) comboAudioOutput3.Items.Add(p);
+            var b = Audio.GetPAOutputDevices(host);
+            foreach (var c in b) comboAudioOutput3.Items.Add(c);
         }
 
         private void getControlList(Control c, ref Dictionary<string, Control> a)
@@ -8289,7 +8286,7 @@ namespace Thetis
             if (comboAudioDriver2.SelectedIndex < 0) return;
 
             int old_driver = Audio.Host2;
-            int new_driver = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Index;
+            int new_driver = ((PaDeviceInfoEx)comboAudioDriver2.SelectedItem).Index;
             bool power = console.PowerOn;
 
             if (power && chkAudioEnableVAC.Checked && old_driver != new_driver)
@@ -8300,7 +8297,7 @@ namespace Thetis
             }
 
             string new_driver_name
-                = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Name;
+                = ((PaDeviceInfoEx)comboAudioDriver2.SelectedItem).Name;
 
             chkExclusive.Visible = new_driver_name.Contains("WASAPI")
                 || new_driver_name.Contains("WDM-KS");
@@ -8324,7 +8321,7 @@ namespace Thetis
             if (comboAudioDriver3.SelectedIndex < 0) return;
 
             int old_driver = Audio.Host3;
-            int new_driver = ((PADeviceInfo)comboAudioDriver3.SelectedItem).Index;
+            int new_driver = ((PaDeviceInfoEx)comboAudioDriver3.SelectedItem).Index;
             bool power = console.PowerOn;
 
             if (power && chkVAC2Enable.Checked && old_driver != new_driver)
@@ -8335,7 +8332,7 @@ namespace Thetis
             }
 
             string new_driver_name
-                = ((PADeviceInfo)comboAudioDriver3.SelectedItem).Name;
+                = ((PaDeviceInfoEx)comboAudioDriver3.SelectedItem).Name;
 
             console.AudioDriverIndex3 = new_driver;
             Audio.Host3 = new_driver;
@@ -8357,7 +8354,7 @@ namespace Thetis
             if (comboAudioInput2.SelectedIndex < 0) return;
 
             int old_input = Audio.Input2;
-            int new_input = ((PADeviceInfo)comboAudioInput2.SelectedItem).Index;
+            int new_input = ((PaDeviceInfoEx)comboAudioInput2.SelectedItem).Index;
             bool power = console.PowerOn;
 
             if (power && chkAudioEnableVAC.Checked && old_input != new_input)
@@ -8384,7 +8381,7 @@ namespace Thetis
             if (comboAudioInput3.SelectedIndex < 0) return;
 
             int old_input = Audio.Input3;
-            int new_input = ((PADeviceInfo)comboAudioInput3.SelectedItem).Index;
+            int new_input = ((PaDeviceInfoEx)comboAudioInput3.SelectedItem).Index;
             bool power = console.PowerOn;
 
             if (power && chkVAC2Enable.Checked && old_input != new_input)
@@ -8411,7 +8408,7 @@ namespace Thetis
             if (comboAudioOutput2.SelectedIndex < 0) return;
 
             int old_output = Audio.Output2;
-            int new_output = ((PADeviceInfo)comboAudioOutput2.SelectedItem).Index;
+            int new_output = ((PaDeviceInfoEx)comboAudioOutput2.SelectedItem).Index;
             bool power = console.PowerOn;
             if (power && chkAudioEnableVAC.Checked && old_output != new_output)
             {
@@ -8437,7 +8434,7 @@ namespace Thetis
             if (comboAudioOutput3.SelectedIndex < 0) return;
 
             int old_output = Audio.Output3;
-            int new_output = ((PADeviceInfo)comboAudioOutput3.SelectedItem).Index;
+            int new_output = ((PaDeviceInfoEx)comboAudioOutput3.SelectedItem).Index;
             bool power = console.PowerOn;
             if (power && chkVAC2Enable.Checked && old_output != new_output)
             {
@@ -28593,6 +28590,7 @@ namespace Thetis
         }
     }
 
+    /*/
     #region PADeviceInfo Helper Class
 
     public class PADeviceInfo
@@ -28619,7 +28617,9 @@ namespace Thetis
         public override string ToString() { return _Name; }
     }
 
+
     #endregion
+     /*/
 
     #region 60m Channels Class
 
