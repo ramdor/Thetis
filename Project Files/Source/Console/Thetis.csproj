@@ -280,6 +280,7 @@
     <Compile Include="Channel.cs" />
     <Compile Include="clsBandStackManager.cs" />
     <Compile Include="display.cs" />
+    <Content Include="display.cs.curwales.txt" />
     <Compile Include="Extras\AudioExtras.cs" />
     <Compile Include="Firewall.cs" />
     <Compile Include="cmaster.cs" />
