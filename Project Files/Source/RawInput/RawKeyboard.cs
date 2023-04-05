@@ -93,7 +93,11 @@ namespace RawInput_dll
                             (!String.IsNullOrEmpty(deviceName) && deviceName.Contains("#")))
                         {
                             var deviceDesc = Win32.GetDeviceDescription(deviceName);
-
+                            if (deviceDesc == null)
+                            {
+                                Marshal.FreeHGlobal(pData);
+                                continue;
+                            }
                             var dInfo = new KeyPressEvent
                             {
                                 DeviceName = Marshal.PtrToStringAnsi(pData),

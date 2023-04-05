@@ -231,14 +231,13 @@ static inline void size_64_bit_buffer(IVAC a, size_t sz_bytes) {
         if (a->convbuf) memset(a->convbuf, 0, a->convbuf_size * sizeof(double));
     }
 }
-
 /*/
+// original code without the 32->64 bit conversions:
 int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
     const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags,
     void* userData) {
 
-    int id
-        = (int)(ptrdiff_t)userData; // use 'userData' to pass in the id of this
+    int id = (int)(ptrdiff_t)userData;
     IVAC a = pvac[id];
     double* out_ptr = (double*)output;
     double* in_ptr = (double*)input;
@@ -246,6 +245,7 @@ int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
     (void)statusFlags;
 
     if (!a->run) return 0;
+
     xrmatchIN(a->rmatchIN, in_ptr); // MIC data from VAC
     xrmatchOUT(a->rmatchOUT, out_ptr); // audio or I-Q data to VAC
     // if (id == 0)  WriteAudio (120.0, 48000, a->vac_size, out_ptr, 3); //
@@ -253,7 +253,10 @@ int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
 }
 /*/
 
-FILE* dump = 0;
+#ifdef _DUMP_VAC_AUDIO
+FILE* dumpout = 0;
+FILE* dumpin = 0;
+#endif
 
 int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
     const PaStreamCallbackTimeInfo* ti, PaStreamCallbackFlags f,
@@ -269,14 +272,11 @@ int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
         make_ivac_thread_max_priority(a);
     }
 
-    if (dump == 0) {
-        dump = fopen("MyTestRaw.raw", "w+b");
-        assert(dump);
-    }
+    const int nch = 2; // it would seem the number of portaudio channels is
+                       // always 2, regardless of a->num_channels. // klj
+    const unsigned long floatBufferSize = fltSz * frameCount * nch;
+    const unsigned long dblBufferSize = max(a->INringsize, a->OUTringsize);
 
-    const size_t floatBufferSize = fltSz * frameCount * a->num_channels;
-    const size_t dblBufferSize = max(a->INringsize, a->OUTringsize);
-    // const size_t det = a->
     size_64_bit_buffer(a, dblBufferSize);
 
     float* out_ptr = (float*)output;
@@ -287,23 +287,49 @@ int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
         return 0;
     }
 
-    Float32_To_Float64(a->convbuf, 1, in_ptr, 1, frameCount * 2);
-    xrmatchIN(a->rmatchIN, a->convbuf); // MIC data from VAC
-    xrmatchOUT(a->rmatchOUT, a->convbuf); // audio or I-Q data to VAC
-    Float64_To_Float32(out_ptr, 1, a->convbuf, 1, frameCount * 2);
+#ifdef _DUMP_VAC_AUDIO
 
+    if (dumpin == 0) {
+        dumpin = fopen("MyTestRaw.raw", "w+b");
+        dumpout = fopen("MyTestRawOut.raw", "w+b");
+        assert(dumpin && dumpout);
+    }
     if (a->id == 0) {
         errno = 0;
-        fwrite(in_ptr, sizeof(float), frameCount * a->num_channels, dump);
+        fwrite(in_ptr, sizeof(float), (size_t)(frameCount)*a->num_channels,
+            dumpin);
         assert(errno == 0);
     } else {
         // what's the id here
         volatile int myid = a->id;
         myid = 0;
     }
+#endif
+
+    Float32_To_Float64(a->convbuf, 1, in_ptr, 1, frameCount * 2);
+    xrmatchIN(a->rmatchIN, a->convbuf); // MIC data from VAC
+
+    xrmatchOUT(a->rmatchOUT, a->convbuf); // audio or I-Q data to VAC
+#ifdef _DUMP_VAC_AUDIO
+    if (a->id == 0) {
+        errno = 0;
+        fwrite(a->rmatchOUT, sizeof(double),
+            (size_t)(frameCount)*a->num_channels, dumpout);
+        volatile ffs = errno;
+        assert(ffs == 0);
+    } else {
+        // what's the id here
+        volatile int myid = a->id;
+        myid = 0;
+    }
+#endif
+    Float64_To_Float32(out_ptr, 1, a->convbuf, 1, frameCount * 2);
 
     return 0;
 }
+
+#define IVAC_BAD_INPUT_DEVICE -1
+#define IVAC_BAD_OUTPUT_DEVICE -2
 
 PORT int StartAudioIVAC(int id) {
     IVAC a = pvac[id];
@@ -313,15 +339,28 @@ PORT int StartAudioIVAC(int id) {
     int out_dev = Pa_HostApiDeviceIndexToDeviceIndex(
         a->host_api_index, a->output_dev_index);
 
+    if (in_dev < 0) {
+        return IVAC_BAD_INPUT_DEVICE;
+    }
+
+    if (out_dev < 0) {
+        return IVAC_BAD_INPUT_DEVICE;
+    }
+
     a->inParam.device = in_dev;
-    a->inParam.channelCount = 2;
+    a->inParam.channelCount
+        = 2; // this is always 2, regardless of a->num_channels
     a->inParam.suggestedLatency = a->pa_in_latency;
     a->inParam.sampleFormat = paFloat32; // KLJ: Changed to support audio
                                          // cards, especially loopback
     // devices, more directly
 
+    const PaDeviceInfo* indevInfo = Pa_GetDeviceInfo(in_dev);
+    const PaDeviceInfo* outdevInfo = Pa_GetDeviceInfo(out_dev);
+
     a->outParam.device = out_dev;
-    a->outParam.channelCount = 2;
+    a->outParam.channelCount
+        = 2; // this is always 2, regardless of a->num_channels
     a->outParam.suggestedLatency = a->pa_out_latency;
     a->outParam.sampleFormat = paFloat32;
 

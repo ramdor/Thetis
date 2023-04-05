@@ -1,0 +1,75 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.35.32216.1",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/os/win/pa_x86_plain_converters.c"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "105f11a6913060f650c4441dc82712669d52abe5f30793e2b2b7485262c7637a"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/os/win/pa_x86_plain_converters.h"
+          },
+          "hashes": {
+            "sha-256": "2c711631bed574787b281ad6c56c0257b857a90c740b5f580fc2ee0362845acb"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_converters.h"
+          },
+          "hashes": {
+            "sha-256": "69d71687082ecc319adc5683b09006370905a055e8a391ee426453bd7be345c0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/include/portaudio.h"
+          },
+          "hashes": {
+            "sha-256": "57a561f7da471ee1db43caefd1e1f520fa09a8e90d822cc387cb73e49703a701"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_dither.h"
+          },
+          "hashes": {
+            "sha-256": "08ef2b03a1713d5db40c9519c42a75440f1e6d88ad66a8776f218d98c780f1d5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_types.h"
+          },
+          "hashes": {
+            "sha-256": "1afd2998b6fb4c4a255f9b06d075b478087aea0e88947f813ff2a754ba0c8f3e"
+          }
+        }
+      ]
+    }
+  ]
+}

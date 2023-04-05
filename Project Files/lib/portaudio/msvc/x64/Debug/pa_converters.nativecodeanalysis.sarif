@@ -1,0 +1,665 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 350,
+                  "startColumn": 25,
+                  "endLine": 350,
+                  "endColumn": 32
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Float32_To_Int32",
+                  "decoratedName": "Float32_To_Int32",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 407,
+                  "startColumn": 25,
+                  "endLine": 407,
+                  "endColumn": 32
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Float32_To_Int32_Clip",
+                  "decoratedName": "Float32_To_Int32_Clip",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 479,
+                  "startColumn": 17,
+                  "endLine": 479,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Float32_To_Int24",
+                  "decoratedName": "Float32_To_Int24",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 515,
+                  "startColumn": 17,
+                  "endLine": 515,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Float32_To_Int24_Dither",
+                  "decoratedName": "Float32_To_Int24_Dither",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 535,
+                  "startColumn": 25,
+                  "endLine": 535,
+                  "endColumn": 32
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Float32_To_Int24_Clip",
+                  "decoratedName": "Float32_To_Int24_Clip",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 550,
+                  "startColumn": 17,
+                  "endLine": 550,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Float32_To_Int24_Clip",
+                  "decoratedName": "Float32_To_Int24_Clip",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 587,
+                  "startColumn": 17,
+                  "endLine": 587,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Float32_To_Int24_DitherClip",
+                  "decoratedName": "Float32_To_Int24_DitherClip",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 927,
+                  "startColumn": 17,
+                  "endLine": 927,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Int32_To_Int24",
+                  "decoratedName": "Int32_To_Int24",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 1099,
+                  "startColumn": 16,
+                  "endLine": 1099,
+                  "endColumn": 31
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Int24_To_Float32",
+                  "decoratedName": "Int24_To_Float32",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 1132,
+                  "startColumn": 16,
+                  "endLine": 1132,
+                  "endColumn": 31
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Int24_To_Int32",
+                  "decoratedName": "Int24_To_Int32",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 1166,
+                  "startColumn": 16,
+                  "endLine": 1166,
+                  "endColumn": 31
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Int24_To_Int16",
+                  "decoratedName": "Int24_To_Int16",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 1200,
+                  "startColumn": 17,
+                  "endLine": 1200,
+                  "endColumn": 32
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Int24_To_Int16_Dither",
+                  "decoratedName": "Int24_To_Int16_Dither",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 1230,
+                  "startColumn": 16,
+                  "endLine": 1230,
+                  "endColumn": 31
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Int24_To_Int8",
+                  "decoratedName": "Int24_To_Int8",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 1264,
+                  "startColumn": 16,
+                  "endLine": 1264,
+                  "endColumn": 31
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Int24_To_Int8_Dither",
+                  "decoratedName": "Int24_To_Int8_Dither",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 1294,
+                  "startColumn": 16,
+                  "endLine": 1294,
+                  "endColumn": 31
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Int24_To_UInt8",
+                  "decoratedName": "Int24_To_UInt8",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 1388,
+                  "startColumn": 17,
+                  "endLine": 1388,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Int16_To_Int24",
+                  "decoratedName": "Int16_To_Int24",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 1538,
+                  "startColumn": 17,
+                  "endLine": 1538,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Int8_To_Int24",
+                  "decoratedName": "Int8_To_Int24",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 1648,
+                  "startColumn": 17,
+                  "endLine": 1648,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "UInt8_To_Int24",
+                  "decoratedName": "UInt8_To_Int24",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 1752,
+                  "startColumn": 16,
+                  "endLine": 1752,
+                  "endColumn": 31
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Copy_24_To_24",
+                  "decoratedName": "Copy_24_To_24",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 1753,
+                  "startColumn": 17,
+                  "endLine": 1753,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Copy_24_To_24",
+                  "decoratedName": "Copy_24_To_24",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+                },
+                "region": {
+                  "startLine": 1952,
+                  "startColumn": 17,
+                  "endLine": 1952,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Zero24",
+                  "decoratedName": "Zero24",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.35.32216.1",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_converters.c"
+          },
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "ca09f704d6e6df6fd750b830185e1f313a531dadd681286b9d3ca01744cc049c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_converters.h"
+          },
+          "hashes": {
+            "sha-256": "69d71687082ecc319adc5683b09006370905a055e8a391ee426453bd7be345c0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/include/portaudio.h"
+          },
+          "hashes": {
+            "sha-256": "57a561f7da471ee1db43caefd1e1f520fa09a8e90d822cc387cb73e49703a701"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_dither.h"
+          },
+          "hashes": {
+            "sha-256": "08ef2b03a1713d5db40c9519c42a75440f1e6d88ad66a8776f218d98c780f1d5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_types.h"
+          },
+          "hashes": {
+            "sha-256": "1afd2998b6fb4c4a255f9b06d075b478087aea0e88947f813ff2a754ba0c8f3e"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_endianness.h"
+          },
+          "hashes": {
+            "sha-256": "26d44a59d532654b14c8e63d2902b58148b101f0800a5bc4086637d3196a2af5"
+          }
+        }
+      ]
+    }
+  ]
+}

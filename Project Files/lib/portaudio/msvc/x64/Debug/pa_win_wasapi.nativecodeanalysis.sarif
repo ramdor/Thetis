@@ -1,0 +1,2113 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C6387",
+          "message": {
+            "text": "'Temp_value_#278' could be '0'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 1150,
+                  "startColumn": 22
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "IsWow64",
+                  "decoratedName": "IsWow64",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1141,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1142,
+                            "startColumn": 25
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1144,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1150,
+                            "startColumn": 22
+                          }
+                        },
+                        "message": {
+                          "text": "'<symbol>' receives the Return value from 'GetModuleHandleA' (declared at c:\\program files (x86)\\windows kits\\10\\include\\10.0.19041.0\\um\\libloaderapi.h:260)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1150,
+                            "startColumn": 22
+                          }
+                        },
+                        "message": {
+                          "text": "'Temp_value_#278' should not be NULL, because this is not consistent with the SAL annotation on 'GetProcAddress'"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6387",
+          "message": {
+            "text": "'Temp_value_#294' could be '0'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 1192,
+                  "startColumn": 5,
+                  "endLine": 1192,
+                  "endColumn": 100
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "IsWindowsVersionOrGreater",
+                  "decoratedName": "IsWindowsVersionOrGreater",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1184,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1185,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1187,
+                            "startColumn": 30
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1188,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1189,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1190,
+                            "startColumn": 15
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1192,
+                            "startColumn": 27
+                          }
+                        },
+                        "message": {
+                          "text": "'<symbol>' receives the Return value from 'GetModuleHandleA' (declared at c:\\program files (x86)\\windows kits\\10\\include\\10.0.19041.0\\um\\libloaderapi.h:260)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1192,
+                            "startColumn": 27
+                          }
+                        },
+                        "message": {
+                          "text": "'Temp_value_#294' should not be NULL, because this is not consistent with the SAL annotation on 'GetProcAddress'"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6387",
+          "message": {
+            "text": "'Temp_value_#297' could be '0'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 1193,
+                  "startColumn": 5,
+                  "endLine": 1193,
+                  "endColumn": 96
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "IsWindowsVersionOrGreater",
+                  "decoratedName": "IsWindowsVersionOrGreater",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1184,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1185,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1187,
+                            "startColumn": 30
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1188,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1189,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1190,
+                            "startColumn": 15
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1192,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1193,
+                            "startColumn": 25
+                          }
+                        },
+                        "message": {
+                          "text": "'<symbol>' receives the Return value from 'GetModuleHandleA' (declared at c:\\program files (x86)\\windows kits\\10\\include\\10.0.19041.0\\um\\libloaderapi.h:260)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1193,
+                            "startColumn": 25
+                          }
+                        },
+                        "message": {
+                          "text": "'Temp_value_#297' should not be NULL, because this is not consistent with the SAL annotation on 'GetProcAddress'"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6387",
+          "message": {
+            "text": "'Temp_value_#352' could be '0'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 1233,
+                  "startColumn": 14,
+                  "endLine": 1233,
+                  "endColumn": 115
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "GetWindowsVersion",
+                  "decoratedName": "GetWindowsVersion",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1218,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1220,
+                            "startColumn": 17
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this branch, (assume 'version==WINDOWS_UNKNOWN')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1222,
+                            "startColumn": 15
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1222,
+                            "startColumn": 45
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1222,
+                            "startColumn": 65
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1226,
+                            "startColumn": 26
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1227,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1233,
+                            "startColumn": 112
+                          }
+                        },
+                        "message": {
+                          "text": "'<symbol>' receives the Return value from 'GetModuleHandleA' (declared at c:\\program files (x86)\\windows kits\\10\\include\\10.0.19041.0\\um\\libloaderapi.h:260)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1233,
+                            "startColumn": 112
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '<branch condition>' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1233,
+                            "startColumn": 112
+                          }
+                        },
+                        "message": {
+                          "text": "'Temp_value_#352' should not be NULL, because this is not consistent with the SAL annotation on 'GetProcAddress'"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6387",
+          "message": {
+            "text": "'Temp_value_#357' could be '0'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 1255,
+                  "startColumn": 18,
+                  "endLine": 1255,
+                  "endColumn": 113
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "GetWindowsVersion",
+                  "decoratedName": "GetWindowsVersion",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1218,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1220,
+                            "startColumn": 17
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this branch, (assume 'version==WINDOWS_UNKNOWN')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1222,
+                            "startColumn": 15
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1222,
+                            "startColumn": 45
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1222,
+                            "startColumn": 65
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1226,
+                            "startColumn": 26
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1227,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1233,
+                            "startColumn": 112
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '<branch condition>' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1250,
+                            "startColumn": 28
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this branch, (assume 'dwMajorVersion==4294967295')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1252,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1253,
+                            "startColumn": 29
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1255,
+                            "startColumn": 110
+                          }
+                        },
+                        "message": {
+                          "text": "'<symbol>' receives the Return value from 'GetModuleHandleA' (declared at c:\\program files (x86)\\windows kits\\10\\include\\10.0.19041.0\\um\\libloaderapi.h:260)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1255,
+                            "startColumn": 110
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '<branch condition>' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 1255,
+                            "startColumn": 110
+                          }
+                        },
+                        "message": {
+                          "text": "'Temp_value_#357' should not be NULL, because this is not consistent with the SAL annotation on 'GetProcAddress'"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 1453,
+                  "startColumn": 42,
+                  "endLine": 1453,
+                  "endColumn": 55
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "_MixMonoToStereo_1TO2_24",
+                  "decoratedName": "_MixMonoToStereo_1TO2_24",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 1476,
+                  "startColumn": 42,
+                  "endLine": 1476,
+                  "endColumn": 50
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "_MixMonoToStereo_2TO1_24",
+                  "decoratedName": "_MixMonoToStereo_2TO1_24",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 1510,
+                  "startColumn": 42,
+                  "endLine": 1510,
+                  "endColumn": 50
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "_MixMonoToStereo_2TO1_24_L",
+                  "decoratedName": "_MixMonoToStereo_2TO1_24_L",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6216",
+          "message": {
+            "text": "Compiler-inserted cast between semantically different integral types."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 3000,
+                  "startColumn": 18,
+                  "endLine": 3000,
+                  "endColumn": 19
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "GetAlternativeSampleFormatExclusive",
+                  "decoratedName": "GetAlternativeSampleFormatExclusive",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6217",
+          "message": {
+            "text": "Implicit cast between semantically different integer types.  Consider using SUCCEEDED or FAILED macro instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 3000,
+                  "startColumn": 18,
+                  "endLine": 3000,
+                  "endColumn": 19
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "GetAlternativeSampleFormatExclusive",
+                  "decoratedName": "GetAlternativeSampleFormatExclusive",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6216",
+          "message": {
+            "text": "Compiler-inserted cast between semantically different integral types."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 3063,
+                  "startColumn": 40,
+                  "endLine": 3063,
+                  "endColumn": 41
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "GetClosestFormat",
+                  "decoratedName": "GetClosestFormat",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6217",
+          "message": {
+            "text": "Implicit cast between semantically different integer types.  Consider using SUCCEEDED or FAILED macro instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 3063,
+                  "startColumn": 40,
+                  "endLine": 3063,
+                  "endColumn": 41
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "GetClosestFormat",
+                  "decoratedName": "GetClosestFormat",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 4762,
+                  "startColumn": 31,
+                  "endLine": 4762,
+                  "endColumn": 79
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ReadStream",
+                  "decoratedName": "ReadStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 4940,
+                  "startColumn": 37,
+                  "endLine": 4940,
+                  "endColumn": 91
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "WriteStream",
+                  "decoratedName": "WriteStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6011",
+          "message": {
+            "text": "Dereferencing NULL pointer 'stream->out.monoMixer'. "
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                },
+                "region": {
+                  "startLine": 6532,
+                  "startColumn": 29,
+                  "endLine": 6532,
+                  "endColumn": 88
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ProcThreadPoll",
+                  "decoratedName": "ProcThreadPoll",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6218,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6219,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6220,
+                            "startColumn": 21
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6221,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6222,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6223,
+                            "startColumn": 25
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6224,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6225,
+                            "startColumn": 14
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6226,
+                            "startColumn": 12
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6227,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6228,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6234,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6237,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6241,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6244,
+                            "startColumn": 15
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6247,
+                            "startColumn": 32
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6248,
+                            "startColumn": 32
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6249,
+                            "startColumn": 24
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6250,
+                            "startColumn": 25
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6253,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6256,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6259,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6262,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6264,
+                            "startColumn": 62
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6272,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6276,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6321,
+                            "startColumn": 63
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6329,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6335,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6432,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6434,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6434,
+                            "startColumn": 34
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6434,
+                            "startColumn": 51
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6435,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6435,
+                            "startColumn": 35
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6435,
+                            "startColumn": 51
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6436,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6438,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6445,
+                            "startColumn": 73
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6451,
+                            "startColumn": 29
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6454,
+                            "startColumn": 123
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6464,
+                            "startColumn": 30
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6467,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6470,
+                            "startColumn": 105
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6473,
+                            "startColumn": 37
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6474,
+                            "startColumn": 37
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6477,
+                            "startColumn": 40
+                          }
+                        },
+                        "message": {
+                          "text": "'stream->out.monoMixer' may be NULL (Skip this branch)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6501,
+                            "startColumn": 39
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'stream->in.monoMixer' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6528,
+                            "startColumn": 48
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6531,
+                            "startColumn": 40
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this branch, (assume 'stream->out.monoBuffer')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+                          },
+                          "region": {
+                            "startLine": 6532,
+                            "startColumn": 40
+                          }
+                        },
+                        "message": {
+                          "text": "'stream->out.monoMixer' is dereferenced, but may still be NULL"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.35.32216.1",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wasapi/pa_win_wasapi.c"
+          },
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "b731547a694f1eb8da149d030e20c17dc32bd827ed335cbd8dc14be997e45808"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_util.h"
+          },
+          "hashes": {
+            "sha-256": "7918d32abf1c0d7bf089fa5675c2a6c87eaee93a0449d73fdab5f7253b205ef5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/include/portaudio.h"
+          },
+          "hashes": {
+            "sha-256": "57a561f7da471ee1db43caefd1e1f520fa09a8e90d822cc387cb73e49703a701"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_allocation.h"
+          },
+          "hashes": {
+            "sha-256": "c15b0a49ff95f605be473a7c98e378198f09918fb7f285a387b98d8a9a4dc8e9"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_hostapi.h"
+          },
+          "hashes": {
+            "sha-256": "f1c70af8f18b7e3b0581ddde266fad7e1cf674c744220f6b68ae9b86821d0ee5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_stream.h"
+          },
+          "hashes": {
+            "sha-256": "f1699008e053dc53fc025e3162bfdd0b62ea3978ad591985f230705e9b2de775"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_cpuload.h"
+          },
+          "hashes": {
+            "sha-256": "2347a0ffabbbf99a223c02f55ca68b076aa8dd0052adf40e89526da16be8333a"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_process.h"
+          },
+          "hashes": {
+            "sha-256": "21d24e143c3fa2f6f036ade99057accf287a8d395403c0800023eb616c539b63"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_converters.h"
+          },
+          "hashes": {
+            "sha-256": "69d71687082ecc319adc5683b09006370905a055e8a391ee426453bd7be345c0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_dither.h"
+          },
+          "hashes": {
+            "sha-256": "08ef2b03a1713d5db40c9519c42a75440f1e6d88ad66a8776f218d98c780f1d5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_types.h"
+          },
+          "hashes": {
+            "sha-256": "1afd2998b6fb4c4a255f9b06d075b478087aea0e88947f813ff2a754ba0c8f3e"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/include/pa_win_wasapi.h"
+          },
+          "hashes": {
+            "sha-256": "7f728262764923972091a1e091e30d67104cdc43e209d751b2df5dfd276d2527"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/include/pa_win_waveformat.h"
+          },
+          "hashes": {
+            "sha-256": "48f34500d71049c76dc71ac80a63491b96aec4c5743de627c0af0798be4566f3"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_debugprint.h"
+          },
+          "hashes": {
+            "sha-256": "912a8bdf7302bb86340dc0c200ff8e47d685c2a762d777f03f1c066763a39d38"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_ringbuffer.h"
+          },
+          "hashes": {
+            "sha-256": "01972d2a85e7b8d06887764322e2c941886bea63dd161c9db857bdfb087f2223"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/os/win/pa_win_coinitialize.h"
+          },
+          "hashes": {
+            "sha-256": "9ee3cccb86eb05368ff5dc96d4d209d653d8def95007168c423d5dc7c4cfdab4"
+          }
+        }
+      ]
+    }
+  ]
+}

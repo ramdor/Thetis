@@ -1,0 +1,2799 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C6001",
+          "message": {
+            "text": "Using uninitialized memory 'devicePathSize'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 645,
+                  "startColumn": 56,
+                  "endLine": 645,
+                  "endColumn": 56
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "QueryWaveInKSFilterMaxChannels",
+                  "decoratedName": "QueryWaveInKSFilterMaxChannels",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 634,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 635,
+                            "startColumn": 11
+                          }
+                        },
+                        "message": {
+                          "text": "'devicePathSize' is not initialized"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 636,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 639,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 642,
+                            "startColumn": 45
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '<branch condition>' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 645,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "'devicePathSize' is an In/Out argument to 'PaUtil_AllocateZeroInitializedMemory' (declared at u:\\wales\\thetis-2.9.0\\project files\\lib\\portaudio\\src\\common\\pa_util.h:130)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 645,
+                            "startColumn": 56
+                          }
+                        },
+                        "message": {
+                          "text": "'devicePathSize' is used, but may not have been initialized"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6001",
+          "message": {
+            "text": "Using uninitialized memory 'devicePathSize'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 778,
+                  "startColumn": 56,
+                  "endLine": 778,
+                  "endColumn": 56
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "QueryWaveOutKSFilterMaxChannels",
+                  "decoratedName": "QueryWaveOutKSFilterMaxChannels",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 767,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 768,
+                            "startColumn": 11
+                          }
+                        },
+                        "message": {
+                          "text": "'devicePathSize' is not initialized"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 769,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 772,
+                            "startColumn": 14
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 775,
+                            "startColumn": 45
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '<branch condition>' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 778,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "'devicePathSize' is an In/Out argument to 'PaUtil_AllocateZeroInitializedMemory' (declared at u:\\wales\\thetis-2.9.0\\project files\\lib\\portaudio\\src\\common\\pa_util.h:130)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 778,
+                            "startColumn": 56
+                          }
+                        },
+                        "message": {
+                          "text": "'devicePathSize' is used, but may not have been initialized"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C28159",
+          "message": {
+            "text": "Consider using 'IsWindows*' instead of 'GetVersionExA'. Reason: Deprecated. Use VerifyVersionInfo* or IsWindows* macros from VersionHelpers."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 916,
+                  "startColumn": 5,
+                  "endLine": 916,
+                  "endColumn": 20
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "GetDefaultLatencies",
+                  "decoratedName": "GetDefaultLatencies",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 2349,
+                  "startColumn": 56,
+                  "endLine": 2349,
+                  "endColumn": 104
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "OpenStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 2399,
+                  "startColumn": 57,
+                  "endLine": 2399,
+                  "endColumn": 105
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "OpenStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6001",
+          "message": {
+            "text": "Using uninitialized memory 'framesPerBufferProcessorCall'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 2516,
+                  "startColumn": 21,
+                  "endLine": 2516,
+                  "endColumn": 21
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "OpenStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2308,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2309,
+                            "startColumn": 36
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2310,
+                            "startColumn": 21
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2311,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2312,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2313,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2313,
+                            "startColumn": 43
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2314,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2314,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2315,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2315,
+                            "startColumn": 39
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2316,
+                            "startColumn": 12
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2316,
+                            "startColumn": 35
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2317,
+                            "startColumn": 25
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2317,
+                            "startColumn": 43
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2318,
+                            "startColumn": 32
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2318,
+                            "startColumn": 50
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2319,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2320,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2321,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2322,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2323,
+                            "startColumn": 19
+                          }
+                        },
+                        "message": {
+                          "text": "'framesPerBufferProcessorCall' is not initialized"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2324,
+                            "startColumn": 36
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2325,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2326,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2327,
+                            "startColumn": 36
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2328,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2329,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2330,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2333,
+                            "startColumn": 9
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'inputParameters' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2375,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2376,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2377,
+                            "startColumn": 31
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2378,
+                            "startColumn": 25
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2379,
+                            "startColumn": 31
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2383,
+                            "startColumn": 9
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'outputParameters' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2425,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2426,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2427,
+                            "startColumn": 26
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2428,
+                            "startColumn": 32
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2429,
+                            "startColumn": 32
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2440,
+                            "startColumn": 49
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '<branch condition>' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2446,
+                            "startColumn": 13
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '<branch condition>' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2452,
+                            "startColumn": 12
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2457,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'result!=paNoError' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2460,
+                            "startColumn": 12
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2461,
+                            "startColumn": 9
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '!stream' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2467,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2468,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2470,
+                            "startColumn": 24
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2471,
+                            "startColumn": 30
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2473,
+                            "startColumn": 48
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2475,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2480,
+                            "startColumn": 39
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2482,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2485,
+                            "startColumn": 25
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '<branch condition>' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2500,
+                            "startColumn": 14
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'inputParameters' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2504,
+                            "startColumn": 14
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'outputParameters' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2509,
+                            "startColumn": 35
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2510,
+                            "startColumn": 36
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2512,
+                            "startColumn": 12
+                          }
+                        },
+                        "message": {
+                          "text": "'framesPerBufferProcessorCall' is an In/Out argument to 'PaUtil_InitializeBufferProcessor' (declared at u:\\wales\\thetis-2.9.0\\project files\\lib\\portaudio\\src\\common\\pa_process.h:377)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 2516,
+                            "startColumn": 21
+                          }
+                        },
+                        "message": {
+                          "text": "'framesPerBufferProcessorCall' is used, but may not have been initialized"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 2525,
+                  "startColumn": 17
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "OpenStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 2528,
+                  "startColumn": 17
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "OpenStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 2579,
+                  "startColumn": 59,
+                  "endLine": 2579,
+                  "endColumn": 102
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "OpenStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 2583,
+                  "startColumn": 59,
+                  "endLine": 2583,
+                  "endColumn": 100
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "OpenStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 2997,
+                  "startColumn": 55,
+                  "endLine": 2997,
+                  "endColumn": 93
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ProcessingThreadProc",
+                  "decoratedName": "ProcessingThreadProc",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3000,
+                  "startColumn": 55,
+                  "endLine": 3000,
+                  "endColumn": 71
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ProcessingThreadProc",
+                  "decoratedName": "ProcessingThreadProc",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3024,
+                  "startColumn": 96
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ProcessingThreadProc",
+                  "decoratedName": "ProcessingThreadProc",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3024,
+                  "startColumn": 41,
+                  "endLine": 3024,
+                  "endColumn": 83
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ProcessingThreadProc",
+                  "decoratedName": "ProcessingThreadProc",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3045,
+                  "startColumn": 97
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ProcessingThreadProc",
+                  "decoratedName": "ProcessingThreadProc",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3045,
+                  "startColumn": 41,
+                  "endLine": 3045,
+                  "endColumn": 84
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ProcessingThreadProc",
+                  "decoratedName": "ProcessingThreadProc",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3297,
+                  "startColumn": 89
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "StartStream",
+                  "decoratedName": "StartStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3297,
+                  "startColumn": 33,
+                  "endLine": 3297,
+                  "endColumn": 76
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "StartStream",
+                  "decoratedName": "StartStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3505,
+                  "startColumn": 89
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "StopStream",
+                  "decoratedName": "StopStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3505,
+                  "startColumn": 33,
+                  "endLine": 3505,
+                  "endColumn": 76
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "StopStream",
+                  "decoratedName": "StopStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3725,
+                  "startColumn": 33,
+                  "endLine": 3725,
+                  "endColumn": 81
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ReadStream",
+                  "decoratedName": "ReadStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6386",
+          "message": {
+            "text": "Buffer overrun while writing to 'userBuffer'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3729,
+                  "startColumn": 18,
+                  "endLine": 3729,
+                  "endColumn": 60
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ReadStream",
+                  "decoratedName": "ReadStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3703,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3704,
+                            "startColumn": 21
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3705,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3706,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3707,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3708,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3709,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3710,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3711,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3711,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3713,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3719,
+                            "startColumn": 36
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3725,
+                            "startColumn": 24
+                          }
+                        },
+                        "message": {
+                          "text": "'userBuffer' is a 0 byte array"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3726,
+                            "startColumn": 17
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '!userBuffer' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3728,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3728,
+                            "startColumn": 26
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume '<branch condition>')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3729,
+                            "startColumn": 41
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3728,
+                            "startColumn": 70
+                          }
+                        },
+                        "message": {
+                          "text": "'i' may equal 1"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3728,
+                            "startColumn": 26
+                          }
+                        },
+                        "message": {
+                          "text": "Continue this loop, (assume '<branch condition>')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3729,
+                            "startColumn": 41
+                          }
+                        },
+                        "message": {
+                          "text": "Invalid write to 'userBuffer', (outside its writable range)"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3759,
+                  "startColumn": 88
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ReadStream",
+                  "decoratedName": "ReadStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3759,
+                  "startColumn": 33,
+                  "endLine": 3759,
+                  "endColumn": 75
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ReadStream",
+                  "decoratedName": "ReadStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3831,
+                  "startColumn": 39,
+                  "endLine": 3831,
+                  "endColumn": 87
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "WriteStream",
+                  "decoratedName": "WriteStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6386",
+          "message": {
+            "text": "Buffer overrun while writing to 'userBuffer'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3835,
+                  "startColumn": 18,
+                  "endLine": 3835,
+                  "endColumn": 72
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "WriteStream",
+                  "decoratedName": "WriteStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3808,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3809,
+                            "startColumn": 21
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3810,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3811,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3812,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3813,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3814,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3815,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3816,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3816,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3819,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3825,
+                            "startColumn": 36
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3831,
+                            "startColumn": 24
+                          }
+                        },
+                        "message": {
+                          "text": "'userBuffer' is a 0 byte array"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3832,
+                            "startColumn": 17
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '!userBuffer' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3834,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3834,
+                            "startColumn": 26
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume '<branch condition>')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3835,
+                            "startColumn": 47
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3834,
+                            "startColumn": 71
+                          }
+                        },
+                        "message": {
+                          "text": "'i' may equal 1"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3834,
+                            "startColumn": 26
+                          }
+                        },
+                        "message": {
+                          "text": "Continue this loop, (assume '<branch condition>')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                          },
+                          "region": {
+                            "startLine": 3835,
+                            "startColumn": 47
+                          }
+                        },
+                        "message": {
+                          "text": "Invalid write to 'userBuffer', (outside its writable range)"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3866,
+                  "startColumn": 89
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "WriteStream",
+                  "decoratedName": "WriteStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+                },
+                "region": {
+                  "startLine": 3866,
+                  "startColumn": 33,
+                  "endLine": 3866,
+                  "endColumn": 76
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "WriteStream",
+                  "decoratedName": "WriteStream",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.35.32216.1",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/wmme/pa_win_wmme.c"
+          },
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "c4b79b254d57dc3e95f9e6176f3b4c28ce503444556f7aaad1aca53948beecae"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/include/portaudio.h"
+          },
+          "hashes": {
+            "sha-256": "57a561f7da471ee1db43caefd1e1f520fa09a8e90d822cc387cb73e49703a701"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_trace.h"
+          },
+          "hashes": {
+            "sha-256": "2e9cf799052e88c1573678889e58721f987770a0a35c30914aa96a95d40d5a62"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_util.h"
+          },
+          "hashes": {
+            "sha-256": "7918d32abf1c0d7bf089fa5675c2a6c87eaee93a0449d73fdab5f7253b205ef5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_allocation.h"
+          },
+          "hashes": {
+            "sha-256": "c15b0a49ff95f605be473a7c98e378198f09918fb7f285a387b98d8a9a4dc8e9"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_hostapi.h"
+          },
+          "hashes": {
+            "sha-256": "f1c70af8f18b7e3b0581ddde266fad7e1cf674c744220f6b68ae9b86821d0ee5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_stream.h"
+          },
+          "hashes": {
+            "sha-256": "f1699008e053dc53fc025e3162bfdd0b62ea3978ad591985f230705e9b2de775"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_cpuload.h"
+          },
+          "hashes": {
+            "sha-256": "2347a0ffabbbf99a223c02f55ca68b076aa8dd0052adf40e89526da16be8333a"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_process.h"
+          },
+          "hashes": {
+            "sha-256": "21d24e143c3fa2f6f036ade99057accf287a8d395403c0800023eb616c539b63"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_converters.h"
+          },
+          "hashes": {
+            "sha-256": "69d71687082ecc319adc5683b09006370905a055e8a391ee426453bd7be345c0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_dither.h"
+          },
+          "hashes": {
+            "sha-256": "08ef2b03a1713d5db40c9519c42a75440f1e6d88ad66a8776f218d98c780f1d5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_types.h"
+          },
+          "hashes": {
+            "sha-256": "1afd2998b6fb4c4a255f9b06d075b478087aea0e88947f813ff2a754ba0c8f3e"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_debugprint.h"
+          },
+          "hashes": {
+            "sha-256": "912a8bdf7302bb86340dc0c200ff8e47d685c2a762d777f03f1c066763a39d38"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/include/pa_win_wmme.h"
+          },
+          "hashes": {
+            "sha-256": "a4b25c0f43b8da6a2044eea9c6651535f8465bc3f8c204f30653cda122e8eb30"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/include/pa_win_waveformat.h"
+          },
+          "hashes": {
+            "sha-256": "48f34500d71049c76dc71ac80a63491b96aec4c5743de627c0af0798be4566f3"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/os/win/pa_win_util.h"
+          },
+          "hashes": {
+            "sha-256": "cb0109413fa6ea8810480ebf3a151f39970b5bc9922987c2f77a3a69090c282e"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/os/win/pa_win_wdmks_utils.h"
+          },
+          "hashes": {
+            "sha-256": "b53ccd68ffc2ba8aa43ceecd3fc6233118ece91c49d27b58949a26bbcbae88fa"
+          }
+        }
+      ]
+    }
+  ]
+}

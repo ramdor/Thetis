@@ -1,0 +1,51 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.35.32216.1",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/os/win/pa_win_hostapis.c"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "49a3ae9f0d591c89a17e2597b016136d94d4a980beddb468be73908251fc722c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_hostapi.h"
+          },
+          "hashes": {
+            "sha-256": "f1c70af8f18b7e3b0581ddde266fad7e1cf674c744220f6b68ae9b86821d0ee5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/include/portaudio.h"
+          },
+          "hashes": {
+            "sha-256": "57a561f7da471ee1db43caefd1e1f520fa09a8e90d822cc387cb73e49703a701"
+          }
+        }
+      ]
+    }
+  ]
+}

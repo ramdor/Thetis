@@ -804,19 +804,9 @@ namespace Thetis
             set { vox_active = value; }
         }
 
-        private static int host2 = 0;
-        public static int Host2
-        {
-            get { return host2; }
-            set { host2 = value; }
-        }
 
-        private static int host3 = 0;
-        public static int Host3
-        {
-            get { return host3; }
-            set { host3 = value; }
-        }
+        public static int Host2 { get; set; }
+        public static int Host3 { get; set; }
 
         private static int input_dev2 = 0;
         public static int Input2
@@ -1410,8 +1400,72 @@ namespace Thetis
 
         #region Misc Routines
 
+        public static void PopulateComboAPIs(ComboBox[] cbos) // klj
+        {
+            foreach (ComboBox cb in cbos)
+            {
+                cb.Items.Clear();
+            }
+            int hostIndex = 0;
+            foreach (var host in Audio.HostAPIList)
+            {
+                var inList = Audio.FindDeviceList(hostIndex, Audio.DeviceIO.Input);
+                var outList = Audio.FindDeviceList(hostIndex, Audio.DeviceIO.Output);
+                Debug.Assert(inList.Count > 0 && outList.Count > 0);
+                if (inList.Count > 0 && outList.Count > 0)
+                {
+                    foreach (ComboBox cbo in cbos)
+                    {
+                        cbo.Items.Add(host);
+                    }
+                }
+
+                hostIndex++;
+            }
+        }
+
+        public static void PopulateComboDevices(ComboBox input, ComboBox output, ComboBox api) // KLJ
+        {
+            var API = api.SelectedItem;
+            int host = 0;
+            if (API != null)
+            {
+                var oapi = (PaHostApiInfoEx)API;
+                host = oapi.HostAPIIndex;
+            }
+
+            input.Items.Clear();
+            output.Items.Clear();
+            var a = Audio.FindDeviceList(host, Audio.DeviceIO.Input);
+            input.Items.AddRange(a.Cast<object>().ToArray());
+
+            var b = Audio.FindDeviceList(host, Audio.DeviceIO.Output);
+            output.Items.AddRange(b.Cast<object>().ToArray());
+        }
+
+        // KLJ: Mind your lifetimes! DO NOT call any static functions relating to
+        // audio devices and APIs until you are sure this is complete.
+        // Since PortAudio is not initialised on the main thread, setup in
+        // particular needs to be sure that this is done. See
+        // m_waiting_for_portaudio in console.
+        public static void Populate()
+        {
+            GetPAHosts();
+            foreach (var api in m_HostAPIs)
+            {
+                GetPAInputDevices(api.HostAPIIndex, true);
+            }
+            foreach (var api in m_HostAPIs)
+            {
+                GetPAOutputDevices(api.HostAPIIndex, true);
+            }
+        }
+
         static List<String> m_APIList;
         public static int TimesAPIListCalled = 0;
+        public static List<PaHostApiInfoEx> m_HostAPIs;
+
+        public static List<PaHostApiInfoEx> HostAPIList { get => m_HostAPIs; }
 
         public static List<String> GetPAHosts(
             bool refresh = false) // returns a text list of driver types
@@ -1425,24 +1479,32 @@ namespace Thetis
             else
             {
                 m_APIList = new List<String>();
+                m_HostAPIs = new List<PaHostApiInfoEx>();
                 a = m_APIList;
             }
             for (int i = 0; i < PA_GetHostApiCount(); i++)
             {
                 PaHostApiInfo info = PortAudioForThetis.PA_GetHostApiInfo(i);
                 a.Add(info.name);
+                m_HostAPIs.Add(new PaHostApiInfoEx(info, i));
             }
             // a.Add("HPSDR (USB/UDP)");
             return a;
         }
 
+        public enum DeviceIO
+        {
+            Input,
+            Output
+        }
+
         // Slightly incorrect naming: this thing will create a list if it
         // is missing, and so it guarantees to return a valid list,
         // though it may be empty
-        private static DeviceListType FindDeviceList(int hostIndex, bool isInput)
+        internal static DeviceListType FindDeviceList(int hostIndex, DeviceIO io)
         {
             DeviceCollectionType col = null;
-            if (isInput)
+            if (io == DeviceIO.Input)
             {
                 col = m_PAInputDevices;
                 if (col == null)
@@ -1467,7 +1529,7 @@ namespace Thetis
                 if (col.ContainsKey(hostIndex))
                 {
                     list = col[hostIndex];
-                    if (list == null || list.Count() == 0)
+                    if (list == null)
                     {
                         list = new DeviceListType();
                         col.Add(hostIndex, list);
@@ -1492,13 +1554,13 @@ namespace Thetis
         public static int TimesInputDevsCalled = 0;
 
         public static DeviceListType GetPAInputDevices(
-            int hostIndex, bool refresh = false)
+            int hostAPI, bool refresh = false)
         {
-            Debug.Assert(hostIndex >= 0);
+            Debug.Assert(hostAPI >= 0);
             ++TimesInputDevsCalled;
-            Debug.Assert(hostIndex < PA_GetHostApiCount());
+            Debug.Assert(hostAPI < PA_GetHostApiCount());
 
-            var list = FindDeviceList(hostIndex, true);
+            var list = FindDeviceList(hostAPI, DeviceIO.Input);
             Debug.Assert(list != null);
 
             if (refresh)
@@ -1511,16 +1573,16 @@ namespace Thetis
             }
 
             PortAudioForThetis.PaHostApiInfo hostInfo
-                = PortAudioForThetis.PA_GetHostApiInfo(hostIndex);
+                = PortAudioForThetis.PA_GetHostApiInfo(hostAPI);
             for (int i = 0; i < hostInfo.deviceCount; i++)
             {
                 int devIndex
                     = PortAudioForThetis.PA_HostApiDeviceIndexToDeviceIndex(
-                        hostIndex, i);
+                        hostAPI, i);
                 PortAudioForThetis.PaDeviceInfo devInfo
                     = PortAudioForThetis.PA_GetDeviceInfo(devIndex);
                 var pax = new PortAudioForThetis.PaDeviceInfoEx(
-                    devIndex, devInfo, i, devIndex);
+                    hostAPI, devInfo, i, devIndex);
                 if (devInfo.maxInputChannels > 0)
                 {
                     string name = devInfo.name;
@@ -1534,14 +1596,14 @@ namespace Thetis
         public static int TimesOutputDevsCalled = 0;
 
         public static DeviceListType GetPAOutputDevices(
-            int hostIndex, bool refresh = false)
+            int hostAPI, bool refresh = false)
         {
-            Debug.Assert(hostIndex >= 0);
-            Debug.Assert(hostIndex < PA_GetHostApiCount());
+            Debug.Assert(hostAPI >= 0);
+            Debug.Assert(hostAPI < PA_GetHostApiCount());
 
             ++TimesOutputDevsCalled;
 
-            var list = FindDeviceList(hostIndex, false);
+            var list = FindDeviceList(hostAPI, DeviceIO.Output);
             Debug.Assert(list != null);
 
             if (refresh)
@@ -1554,18 +1616,20 @@ namespace Thetis
             }
 
             PortAudioForThetis.PaHostApiInfo hostInfo
-                = PortAudioForThetis.PA_GetHostApiInfo(hostIndex);
+                = PortAudioForThetis.PA_GetHostApiInfo(hostAPI);
             for (int i = 0; i < hostInfo.deviceCount; i++)
             {
                 int devIndex
                     = PortAudioForThetis.PA_HostApiDeviceIndexToDeviceIndex(
-                        hostIndex, i);
+                        hostAPI, i);
                 PortAudioForThetis.PaDeviceInfo devInfo
                     = PortAudioForThetis.PA_GetDeviceInfo(devIndex);
                 if (devInfo.maxOutputChannels > 0)
                 {
                     string name = devInfo.name;
-                    list.Add(new PaDeviceInfoEx(name, i) /* + " - " + devIndex*/);
+                    list.Add(new PaDeviceInfoEx(i, devInfo, hostAPI, devIndex));
+                    // list.Add(new PaDeviceInfoEx(name, i) /* + " - " +
+                    // devIndex*/);
                 }
             }
 
@@ -1619,17 +1683,17 @@ namespace Thetis
         //    return a;
         //}
 
-        // public static ArrayList GetPAInputDevices(int hostIndex)
+        // public static ArrayList GetPAInputDevices(int hostAPI)
         //{
         //     var a = new ArrayList();
 
-        //    if (hostIndex >= PortAudioHostApi.SupportedHostApis.Count())
+        //    if (hostAPI >= PortAudioHostApi.SupportedHostApis.Count())
         //    {
         //        a.Add(new PADeviceInfo("HPSDR (PCM A/D)", 0));
         //        return a;
         //    }
 
-        //    var hst = PortAudioHostApi.SupportedHostApis.ElementAt(hostIndex);
+        //    var hst = PortAudioHostApi.SupportedHostApis.ElementAt(hostAPI);
         //    int idx = 0;
         //        foreach (var dev in hst.Devices)
         //        {
@@ -1658,17 +1722,17 @@ namespace Thetis
         //    return a;
         //}
 
-        // public static ArrayList GetPAOutputDevices(int hostIndex)
+        // public static ArrayList GetPAOutputDevices(int hostAPI)
         //{
         //     var a = new ArrayList();
 
-        //    if (hostIndex >= PortAudioHostApi.SupportedHostApis.Count())
+        //    if (hostAPI >= PortAudioHostApi.SupportedHostApis.Count())
         //    {
         //        a.Add(new PADeviceInfo("HPSDR (PWM D/A)", 0));
         //        return a;
         //    }
 
-        //    var hst = PortAudioHostApi.SupportedHostApis.ElementAt(hostIndex);
+        //    var hst = PortAudioHostApi.SupportedHostApis.ElementAt(hostAPI);
         //    int idx = 0;
         //        foreach (var dev in hst.Devices)
         //        {
@@ -1703,6 +1767,37 @@ namespace Thetis
             public String status;
         };
         public static VACStatus[] Status = new VACStatus[2];
+
+        struct Latencies
+        {
+            public double inLatency;
+            public double outLatency;
+            public double paInLatency;
+            public double paOutLatency;
+        }
+
+        private static Latencies GetLatencies(int inputDev, int outputDev)
+        {
+            var ret = new Latencies();
+            ret.inLatency = vac1_latency_manual
+                ? latency2 / 1000.0
+                : PortAudioForThetis.PA_GetDeviceInfo(input_dev2)
+                      .defaultLowInputLatency;
+            ret.outLatency = vac1_latency_manual_out
+                ? latency2_out / 1000.0
+                : PortAudioForThetis.PA_GetDeviceInfo(output_dev2)
+                      .defaultLowOutputLatency;
+            ret.paInLatency = vac1_latency_pa_in_manual
+                ? latency_pa_in / 1000.0
+                : PortAudioForThetis.PA_GetDeviceInfo(input_dev2)
+                      .defaultLowInputLatency;
+            ret.paOutLatency = vac1_latency_pa_out_manual
+                ? latency_pa_out / 1000.0
+                : PortAudioForThetis.PA_GetDeviceInfo(output_dev2)
+                      .defaultLowOutputLatency;
+            return ret;
+        }
+
         public static void EnableVAC1(bool enable)
         {
             bool retval = false;
@@ -1712,24 +1807,6 @@ namespace Thetis
                     int num_chan = 1;
                     int sample_rate = sample_rate2;
                     int block_size = block_size_vac;
-                    double in_latency = vac1_latency_manual
-                        ? latency2 / 1000.0
-                        : PortAudioForThetis.PA_GetDeviceInfo(input_dev2)
-                              .defaultLowInputLatency;
-                    double out_latency = vac1_latency_manual_out
-                        ? latency2_out / 1000.0
-                        : PortAudioForThetis.PA_GetDeviceInfo(output_dev2)
-                              .defaultLowOutputLatency;
-                    double pa_in_latency = vac1_latency_pa_in_manual
-                        ? latency_pa_in / 1000.0
-                        : PortAudioForThetis.PA_GetDeviceInfo(input_dev2)
-                              .defaultLowInputLatency;
-                    double pa_out_latency = vac1_latency_pa_out_manual
-                        ? latency_pa_out / 1000.0
-                        : PortAudioForThetis.PA_GetDeviceInfo(output_dev2)
-                              .defaultLowOutputLatency;
-                    //  double pa_out_latency = vac1_latency_pa_out_manual ?
-                    //  latency_pa_out / 1000.0 : outp_dev2.;
 
                     if (vac_output_iq)
                     {
@@ -1741,15 +1818,16 @@ namespace Thetis
                         num_chan = 2;
 
                     VACRBReset = true;
+                    var latencies = GetLatencies(input_dev2, output_dev2);
 
-                    ivac.SetIVAChostAPIindex(0, host2);
+                    ivac.SetIVAChostAPIindex(0, Host2);
                     ivac.SetIVACinputDEVindex(0, input_dev2);
                     ivac.SetIVACoutputDEVindex(0, output_dev2);
                     ivac.SetIVACnumChannels(0, num_chan);
-                    ivac.SetIVACInLatency(0, in_latency, 0);
-                    ivac.SetIVACOutLatency(0, out_latency, 0);
-                    ivac.SetIVACPAInLatency(0, pa_in_latency, 0);
-                    ivac.SetIVACPAOutLatency(0, pa_out_latency, 1);
+                    ivac.SetIVACInLatency(0, latencies.inLatency, 0);
+                    ivac.SetIVACOutLatency(0, latencies.outLatency, 0);
+                    ivac.SetIVACPAInLatency(0, latencies.paInLatency, 0);
+                    ivac.SetIVACPAOutLatency(0, latencies.paOutLatency, 1);
 
                     // MW0LGE_21h
                     ivac.SetIVACFeedbackGain(0, 0, vac1_feedbackgainOut);
@@ -1784,12 +1862,27 @@ namespace Thetis
 
                         if (!retval)
                         {
-                            pa_msg
-                                = "\n\nFailed to start VAC. Audio subsystem reports: "
-                                + PortAudioForThetis.PA_GetErrorText(return_value);
-                            var v = PortAudioForThetis.PA_GetLastHostErrorInfo();
-                            if (v.errorText.Length > 0)
-                                pa_msg += "\n\n Api Error: " + v.errorText;
+                            if (return_value == -1)
+                            {
+                                pa_msg
+                                    = "\n\nFailed to start VAC because the input device is invalid";
+                            }
+                            else if (return_value == -2)
+                            {
+                                pa_msg
+                                    = "\n\nFailed to start VAC because the output device is invalid";
+                            }
+                            else
+                            {
+                                pa_msg
+                                    = "\n\nFailed to start VAC. Audio subsystem reports: "
+                                    + PortAudioForThetis.PA_GetErrorText(
+                                        return_value);
+                                var v
+                                    = PortAudioForThetis.PA_GetLastHostErrorInfo();
+                                if (v.errorText.Length > 0)
+                                    pa_msg += "\n\n Api Error: " + v.errorText;
+                            }
                         }
                         if (!retval)
                         {
@@ -1809,12 +1902,17 @@ namespace Thetis
                     {
                         if (return_value != 0)
                         {
-                            pa_msg
-                                = "\n\nFailed to start VAC. Audio subsystem reports: "
-                                + PortAudioForThetis.PA_GetErrorText(return_value);
-                            var v = PortAudioForThetis.PA_GetLastHostErrorInfo();
-                            if (v.errorText.Length > 0)
-                                pa_msg += "\n\n Api Error: " + v.errorText;
+                            if (pa_msg.Length == 0)
+                            {
+                                pa_msg
+                                    = "\n\nFailed to start VAC. Audio subsystem reports: "
+                                    + PortAudioForThetis.PA_GetErrorText(
+                                        return_value);
+                                var v
+                                    = PortAudioForThetis.PA_GetLastHostErrorInfo();
+                                if (v.errorText.Length > 0)
+                                    pa_msg += "\n\n Api Error: " + v.errorText;
+                            }
 
                             if ((PortAudioForThetis.PaErrorCode)(return_value)
                                 == PortAudioForThetis.PaErrorCode
@@ -1887,7 +1985,7 @@ namespace Thetis
 
                     VAC2RBReset = true;
 
-                    ivac.SetIVAChostAPIindex(1, host3);
+                    ivac.SetIVAChostAPIindex(1, Host3);
                     ivac.SetIVACinputDEVindex(1, input_dev3);
                     ivac.SetIVACoutputDEVindex(1, output_dev3);
                     ivac.SetIVACnumChannels(1, num_chan);
@@ -1999,8 +2097,11 @@ namespace Thetis
                 != oldProto); // if the procol changed, force it
                               // MW0LGE_21k9rc6
 
-            c.SetupForm.InitAudioTab();
-            c.SetupForm.ForceAudioReset();
+            if (oldProto != NetworkIO.CurrentRadioProtocol)
+            {
+                c.SetupForm.InitAudioTab();
+                c.SetupForm.ForceAudioReset();
+            }
             cmaster.PSLoopback = cmaster.PSLoopback;
 
             int result = NetworkIO.StartAudioNative();

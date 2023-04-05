@@ -1,0 +1,277 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_ringbuffer.c"
+                },
+                "region": {
+                  "startLine": 206,
+                  "startColumn": 30,
+                  "endLine": 206,
+                  "endColumn": 42
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "PaUtil_WriteRingBuffer",
+                  "decoratedName": "PaUtil_WriteRingBuffer",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_ringbuffer.c"
+                },
+                "region": {
+                  "startLine": 207,
+                  "startColumn": 33,
+                  "endLine": 207,
+                  "endColumn": 45
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "PaUtil_WriteRingBuffer",
+                  "decoratedName": "PaUtil_WriteRingBuffer",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_ringbuffer.c"
+                },
+                "region": {
+                  "startLine": 208,
+                  "startColumn": 30,
+                  "endLine": 208,
+                  "endColumn": 42
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "PaUtil_WriteRingBuffer",
+                  "decoratedName": "PaUtil_WriteRingBuffer",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_ringbuffer.c"
+                },
+                "region": {
+                  "startLine": 212,
+                  "startColumn": 30,
+                  "endLine": 212,
+                  "endColumn": 42
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "PaUtil_WriteRingBuffer",
+                  "decoratedName": "PaUtil_WriteRingBuffer",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_ringbuffer.c"
+                },
+                "region": {
+                  "startLine": 227,
+                  "startColumn": 30,
+                  "endLine": 227,
+                  "endColumn": 42
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "PaUtil_ReadRingBuffer",
+                  "decoratedName": "PaUtil_ReadRingBuffer",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_ringbuffer.c"
+                },
+                "region": {
+                  "startLine": 228,
+                  "startColumn": 33,
+                  "endLine": 228,
+                  "endColumn": 45
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "PaUtil_ReadRingBuffer",
+                  "decoratedName": "PaUtil_ReadRingBuffer",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_ringbuffer.c"
+                },
+                "region": {
+                  "startLine": 229,
+                  "startColumn": 30,
+                  "endLine": 229,
+                  "endColumn": 42
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "PaUtil_ReadRingBuffer",
+                  "decoratedName": "PaUtil_ReadRingBuffer",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_ringbuffer.c"
+                },
+                "region": {
+                  "startLine": 233,
+                  "startColumn": 30,
+                  "endLine": 233,
+                  "endColumn": 42
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "PaUtil_ReadRingBuffer",
+                  "decoratedName": "PaUtil_ReadRingBuffer",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.35.32216.1",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/common/pa_ringbuffer.c"
+          },
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "43c7aab3c7a86838287e618bd3d6806021bc4eeba8d0b48612bf7963d3dfb3f4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_ringbuffer.h"
+          },
+          "hashes": {
+            "sha-256": "01972d2a85e7b8d06887764322e2c941886bea63dd161c9db857bdfb087f2223"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_memorybarrier.h"
+          },
+          "hashes": {
+            "sha-256": "f7307e64ca13111cbedb07829c4007823f74972493a05549131dc0d1bfb84a7d"
+          }
+        }
+      ]
+    }
+  ]
+}

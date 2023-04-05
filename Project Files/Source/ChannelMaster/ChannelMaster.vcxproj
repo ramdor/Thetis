@@ -36,6 +36,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
+    <EnableASAN>false</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -80,6 +81,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\channelmaster\</IntDir>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -131,13 +133,14 @@
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\ChannelMaster.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../lib/portaudio/msvc/$(HPSDR_PLATFORM)/$(Configuration);$(PROJECTDIR)../../build/$(HPSDR_PLATFORM)/$(Configuration)/;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wdsp.lib;winmm.lib;PortAudioForCoolSDR.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../Source/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../lib/portaudio/msvc/$(HPSDR_PLATFORM)/$(Configuration);$(PROJECTDIR)../../build/$(HPSDR_PLATFORM)/$(Configuration)/;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wdsp.lib;winmm.lib;portaudio.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

@@ -54,7 +54,7 @@ namespace RawInput_dll
         internal const int RI_KEY_BREAK = 0x01;     // Key Up
         internal const int RI_KEY_E0 = 0x02;        // Left version of the key
         internal const int RI_KEY_E1 = 0x04;        // Right version of the key. Only seems to be set for the Pause/Break key.
-        
+
         internal const int VK_CONTROL = 0x11;
         internal const int VK_MENU = 0x12;
         internal const int VK_ZOOM = 0xFB;
@@ -64,12 +64,12 @@ namespace RawInput_dll
         internal const int VK_RCONTROL = 0xA3;
         internal const int VK_LMENU = 0xA4;
         internal const int VK_RMENU = 0xA5;
-        
-        internal const int SC_SHIFT_R = 0x36;     
-        internal const int SC_SHIFT_L = 0x2a;   
-        internal const int RIM_INPUT = 0x00; 
+
+        internal const int SC_SHIFT_R = 0x36;
+        internal const int SC_SHIFT_L = 0x2a;
+        internal const int RIM_INPUT = 0x00;
         // ReSharper restore InconsistentNaming
-        
+
         [DllImport("User32.dll", SetLastError = true)]
         internal static extern int GetRawInputData(IntPtr hRawInput, DataCommand command, [Out] out InputData buffer, [In, Out] ref int size, int cbSizeHeader);
 
@@ -82,13 +82,13 @@ namespace RawInput_dll
         [DllImport("user32.dll")]
         private static extern uint GetRawInputDeviceInfo(IntPtr hDevice, uint command, ref DeviceInfo data, ref uint dataSize);
 
-      
+
         [DllImport("User32.dll", SetLastError = true)]
         internal static extern uint GetRawInputDeviceList(IntPtr pRawInputDeviceList, ref uint numberDevices, uint size);
 
         [DllImport("User32.dll", SetLastError = true)]
         internal static extern bool RegisterRawInputDevices(RawInputDevice[] pRawInputDevice, uint numberDevices, uint size);
-        
+
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, IntPtr notificationFilter, DeviceNotification flags);
 
@@ -126,14 +126,14 @@ namespace RawInput_dll
                     }
 
                     var size = (uint)Marshal.SizeOf(typeof(DeviceInfo));
-                    var di = new DeviceInfo {Size = Marshal.SizeOf(typeof (DeviceInfo))};
-                    
-                    if (GetRawInputDeviceInfo(rid.hDevice, (uint) RawInputDeviceInfo.RIDI_DEVICEINFO, ref di, ref size) <= 0)
+                    var di = new DeviceInfo { Size = Marshal.SizeOf(typeof(DeviceInfo)) };
+
+                    if (GetRawInputDeviceInfo(rid.hDevice, (uint)RawInputDeviceInfo.RIDI_DEVICEINFO, ref di, ref size) <= 0)
                     {
                         sw.WriteLine(Marshal.GetLastWin32Error());
                         return;
                     }
-                   
+
                     var pData = Marshal.AllocHGlobal((int)pcbSize);
                     GetRawInputDeviceInfo(rid.hDevice, RawInputDeviceInfo.RIDI_DEVICENAME, pData, ref pcbSize);
                     var deviceName = Marshal.PtrToStringAnsi(pData);
@@ -194,6 +194,7 @@ namespace RawInput_dll
             try
             {
                 var deviceKey = RegistryAccess.GetDeviceKey(device);
+                if (deviceKey == null) return null;
                 deviceDesc = deviceKey.GetValue("DeviceDesc").ToString();
                 deviceDesc = deviceDesc.Substring(deviceDesc.IndexOf(';') + 1);
             }
@@ -201,7 +202,7 @@ namespace RawInput_dll
             {
                 deviceDesc = "Device is malformed unable to look up in the registry";
             }
-            
+
             //var deviceClass = RegistryAccess.GetClassType(deviceKey.GetValue("ClassGUID").ToString());
             //isKeyboard = deviceClass.ToUpper().Equals( "KEYBOARD" );
 

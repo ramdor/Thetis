@@ -1,0 +1,107 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.35.32216.1",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_front.c"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "6e3d7edf7d80393a0bfce6e692c7c697fa2521f4ca7f154bb5626b05cee0cbf3"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/include/portaudio.h"
+          },
+          "hashes": {
+            "sha-256": "57a561f7da471ee1db43caefd1e1f520fa09a8e90d822cc387cb73e49703a701"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_util.h"
+          },
+          "hashes": {
+            "sha-256": "7918d32abf1c0d7bf089fa5675c2a6c87eaee93a0449d73fdab5f7253b205ef5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_endianness.h"
+          },
+          "hashes": {
+            "sha-256": "26d44a59d532654b14c8e63d2902b58148b101f0800a5bc4086637d3196a2af5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_types.h"
+          },
+          "hashes": {
+            "sha-256": "1afd2998b6fb4c4a255f9b06d075b478087aea0e88947f813ff2a754ba0c8f3e"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_hostapi.h"
+          },
+          "hashes": {
+            "sha-256": "f1c70af8f18b7e3b0581ddde266fad7e1cf674c744220f6b68ae9b86821d0ee5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_stream.h"
+          },
+          "hashes": {
+            "sha-256": "f1699008e053dc53fc025e3162bfdd0b62ea3978ad591985f230705e9b2de775"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_trace.h"
+          },
+          "hashes": {
+            "sha-256": "2e9cf799052e88c1573678889e58721f987770a0a35c30914aa96a95d40d5a62"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_debugprint.h"
+          },
+          "hashes": {
+            "sha-256": "912a8bdf7302bb86340dc0c200ff8e47d685c2a762d777f03f1c066763a39d38"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_gitrevision.h"
+          },
+          "hashes": {
+            "sha-256": "a207c3c4145721e8b78363c03db2d2915484dadf2b36bc00abbd3d4836291d25"
+          }
+        }
+      ]
+    }
+  ]
+}

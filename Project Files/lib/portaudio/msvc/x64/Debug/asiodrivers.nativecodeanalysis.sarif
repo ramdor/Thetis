@@ -1,0 +1,83 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.35.32216.1",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/hostapi/asio/asiosdk/host/asiodrivers.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "be4ee039f1f2fdccbf4dbcab2623c0b9e16a5a2170a5e1f0de9734d868f16360"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/hostapi/asio/asiosdk/host/asiodrivers.h"
+          },
+          "hashes": {
+            "sha-256": "5cf927670e0652aff903bda4681e4de79033601ffc781ec556a07641bd557821"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/hostapi/asio/asiosdk/host/ginclude.h"
+          },
+          "hashes": {
+            "sha-256": "3b5bf699d62291131b84ecb2ea73b444e7e0de8d9f754c30a1e323af129b6762"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/hostapi/asio/asiosdk/host/pc/asiolist.h"
+          },
+          "hashes": {
+            "sha-256": "b72f7ce1355965003d613f8e1dc8a4e0d9c518ab743c7a455df006b6a291d86c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/hostapi/asio/asiosdk/common/iasiodrv.h"
+          },
+          "hashes": {
+            "sha-256": "861f110bc7cf0756ee10e0ea4d57e2964f8d8359cd6c9483d8b47785bcc9e79c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/hostapi/asio/asiosdk/common/asiosys.h"
+          },
+          "hashes": {
+            "sha-256": "00f406f6733b1f1c144c140e9915f3ceaea76598adb7c2b1f2378c343ab00228"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/hostapi/asio/asiosdk/common/asio.h"
+          },
+          "hashes": {
+            "sha-256": "7cdb0743ea61ed9b25dde8d45259440aac07ec16c505694358ee6f5c372565e8"
+          }
+        }
+      ]
+    }
+  ]
+}

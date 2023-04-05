@@ -1,0 +1,2899 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 326,
+                  "startColumn": 34,
+                  "endLine": 326,
+                  "endColumn": 39
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "GetAsioDriverNames",
+                  "decoratedName": "?GetAsioDriverNames@@YAPEAPEADPEAUPaAsioHostApiRepresentation@@PEAUPaUtilAllocationGroup@@J@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 556,
+                  "startColumn": 37,
+                  "endLine": 556,
+                  "endColumn": 43
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ConvertFloat32ToFloat64Swap64",
+                  "decoratedName": "?ConvertFloat32ToFloat64Swap64@@YAXPEAXJJ@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 557,
+                  "startColumn": 40,
+                  "endLine": 557,
+                  "endColumn": 46
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ConvertFloat32ToFloat64Swap64",
+                  "decoratedName": "?ConvertFloat32ToFloat64Swap64@@YAXPEAXJJ@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 578,
+                  "startColumn": 37,
+                  "endLine": 578,
+                  "endColumn": 43
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ConvertFloat32ToFloat64",
+                  "decoratedName": "?ConvertFloat32ToFloat64@@YAXPEAXJJ@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 579,
+                  "startColumn": 40,
+                  "endLine": 579,
+                  "endColumn": 46
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ConvertFloat32ToFloat64",
+                  "decoratedName": "?ConvertFloat32ToFloat64@@YAXPEAXJJ@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 1103,
+                  "startColumn": 25
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "InitPaDeviceInfoFromAsioDriver",
+                  "decoratedName": "?InitPaDeviceInfoFromAsioDriver@@YAHPEAUPaAsioHostApiRepresentation@@PEBDHPEAUPaDeviceInfo@@PEAUPaAsioDeviceInfo@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6001",
+          "message": {
+            "text": "Using uninitialized memory 'asioHostApi'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 1211,
+                  "startColumn": 9,
+                  "endLine": 1211,
+                  "endColumn": 9
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "PaAsio_Initialize",
+                  "decoratedName": "PaAsio_Initialize",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1162,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1163,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1163,
+                            "startColumn": 12
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1164,
+                            "startColumn": 34
+                          }
+                        },
+                        "message": {
+                          "text": "'asioHostApi' is not initialized"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1165,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1166,
+                            "startColumn": 12
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1167,
+                            "startColumn": 17
+                          }
+                        },
+                        "message": {
+                          "text": "'asioHostApi' receives the Return value from 'PaUtil_AllocateZeroInitializedMemory' (declared at u:\\wales\\thetis-2.9.0\\project files\\lib\\portaudio\\src\\common\\pa_util.h:130)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1168,
+                            "startColumn": 9
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '!asioHostApi' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1189,
+                            "startColumn": 12
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1190,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'result!=paNoError' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1195,
+                            "startColumn": 30
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1197,
+                            "startColumn": 30
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1198,
+                            "startColumn": 9
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '!asioHostApi->allocations' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1207,
+                            "startColumn": 34
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1210,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1211,
+                            "startColumn": 34
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1211,
+                            "startColumn": 9
+                          }
+                        },
+                        "message": {
+                          "text": "'asioHostApi' is used, but may not have been initialized"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6387",
+          "message": {
+            "text": "'Temp_value_#245' could be '0'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 1275,
+                  "startColumn": 9,
+                  "endLine": 1275,
+                  "endColumn": 100
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "PaAsio_Initialize",
+                  "decoratedName": "PaAsio_Initialize",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1162,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1163,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1163,
+                            "startColumn": 12
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1164,
+                            "startColumn": 34
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1165,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1166,
+                            "startColumn": 12
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1167,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1168,
+                            "startColumn": 9
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '!asioHostApi' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1189,
+                            "startColumn": 12
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1190,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'result!=paNoError' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1195,
+                            "startColumn": 30
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1197,
+                            "startColumn": 30
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1198,
+                            "startColumn": 9
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '!asioHostApi->allocations' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1207,
+                            "startColumn": 34
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1215,
+                            "startColumn": 34
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'asioHostApi->asioDrivers==0' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1221,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1223,
+                            "startColumn": 33
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1224,
+                            "startColumn": 38
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1226,
+                            "startColumn": 14
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1227,
+                            "startColumn": 36
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1229,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1230,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1231,
+                            "startColumn": 34
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1235,
+                            "startColumn": 37
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1243,
+                            "startColumn": 21
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1246,
+                            "startColumn": 21
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this branch, (assume 'driverCount>0')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1248,
+                            "startColumn": 15
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1249,
+                            "startColumn": 13
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '!names' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1258,
+                            "startColumn": 33
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1260,
+                            "startColumn": 13
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '!((*hostApi))->deviceInfos' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1267,
+                            "startColumn": 25
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1269,
+                            "startColumn": 13
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '!deviceInfoArray' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1275,
+                            "startColumn": 28
+                          }
+                        },
+                        "message": {
+                          "text": "'<symbol>' receives the Return value from 'LoadLibraryA' (declared at c:\\program files (x86)\\windows kits\\10\\include\\10.0.19041.0\\um\\libloaderapi.h:657)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1275,
+                            "startColumn": 28
+                          }
+                        },
+                        "message": {
+                          "text": "'Temp_value_#245' should not be NULL, because this is not consistent with the SAL annotation on 'GetProcAddress'"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6001",
+          "message": {
+            "text": "Using uninitialized memory 'asioDeviceIndex'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 1503,
+                  "startColumn": 93,
+                  "endLine": 1503,
+                  "endColumn": 93
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "IsFormatSupported",
+                  "decoratedName": "?IsFormatSupported@@YAHPEAUPaUtilHostApiRepresentation@@PEBUPaStreamParameters@@1N@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1414,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1415,
+                            "startColumn": 34
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1416,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1417,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1417,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1418,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1418,
+                            "startColumn": 39
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1419,
+                            "startColumn": 19
+                          }
+                        },
+                        "message": {
+                          "text": "'asioDeviceIndex' is not initialized"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1420,
+                            "startColumn": 15
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1422,
+                            "startColumn": 25
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '<branch condition>' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1430,
+                            "startColumn": 9
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'inputParameters' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1455,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1458,
+                            "startColumn": 9
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'outputParameters' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1483,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1491,
+                            "startColumn": 13
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '<branch condition>' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1501,
+                            "startColumn": 42
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this branch, (assume '<branch condition>')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1503,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 1503,
+                            "startColumn": 93
+                          }
+                        },
+                        "message": {
+                          "text": "'asioDeviceIndex' is used, but may not have been initialized"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 1648,
+                  "startColumn": 28,
+                  "endLine": 1648,
+                  "endColumn": 60
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ZeroOutputBuffers",
+                  "decoratedName": "?ZeroOutputBuffers@@YAXPEAUPaAsioStream@@J@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6001",
+          "message": {
+            "text": "Using uninitialized memory 'asioDeviceIndex'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2120,
+                  "startColumn": 89,
+                  "endLine": 2120,
+                  "endColumn": 89
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2002,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2003,
+                            "startColumn": 34
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2004,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2005,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2005,
+                            "startColumn": 41
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2006,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2007,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2007,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2008,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2008,
+                            "startColumn": 39
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2009,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2009,
+                            "startColumn": 43
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2010,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2011,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2012,
+                            "startColumn": 19
+                          }
+                        },
+                        "message": {
+                          "text": "'asioDeviceIndex' is not initialized"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2013,
+                            "startColumn": 15
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2014,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2015,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2016,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2017,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2018,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2019,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2020,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2023,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2025,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2026,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2027,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2028,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2029,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2031,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2032,
+                            "startColumn": 9
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2036,
+                            "startColumn": 42
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '<branch condition>' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2042,
+                            "startColumn": 5
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume '!!((theAsioStream==0))')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2044,
+                            "startColumn": 25
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '<branch condition>' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2055,
+                            "startColumn": 9
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'inputParameters' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2080,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2081,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2082,
+                            "startColumn": 37
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2085,
+                            "startColumn": 9
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'outputParameters' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2110,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2111,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2112,
+                            "startColumn": 38
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2115,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2120,
+                            "startColumn": 12
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                          },
+                          "region": {
+                            "startLine": 2120,
+                            "startColumn": 89
+                          }
+                        },
+                        "message": {
+                          "text": "'asioDeviceIndex' is used, but may not have been initialized"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2213,
+                  "startColumn": 39,
+                  "endLine": 2213,
+                  "endColumn": 59
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2331,
+                  "startColumn": 40,
+                  "endLine": 2331,
+                  "endColumn": 60
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2354,
+                  "startColumn": 34,
+                  "endLine": 2354,
+                  "endColumn": 54
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2567,
+                  "startColumn": 25
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2566,
+                  "startColumn": 25
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2565,
+                  "startColumn": 25
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2658,
+                  "startColumn": 25
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2657,
+                  "startColumn": 25
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2656,
+                  "startColumn": 25
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2713,
+                  "startColumn": 21
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2716,
+                  "startColumn": 21
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2721,
+                  "startColumn": 9,
+                  "endLine": 2721,
+                  "endColumn": 9
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2721,
+                  "startColumn": 9,
+                  "endLine": 2721,
+                  "endColumn": 9
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2728,
+                  "startColumn": 9,
+                  "endLine": 2728,
+                  "endColumn": 9
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 2728,
+                  "startColumn": 9,
+                  "endLine": 2728,
+                  "endColumn": 9
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "OpenStream",
+                  "decoratedName": "?OpenStream@@YAHPEAUPaUtilHostApiRepresentation@@PEAPEAXPEBUPaStreamParameters@@2NKKP6AHPEBXPEAXKPEBUPaStreamCallbackTimeInfo@@K4@Z4@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 3419,
+                  "startColumn": 38,
+                  "endLine": 3419,
+                  "endColumn": 86
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "StopStream",
+                  "decoratedName": "?StopStream@@YAHPEAX@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 3419,
+                  "startColumn": 38,
+                  "endLine": 3419,
+                  "endColumn": 72
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "StopStream",
+                  "decoratedName": "?StopStream@@YAHPEAX@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 3581,
+                  "startColumn": 30,
+                  "endLine": 3581,
+                  "endColumn": 52
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ReadStream",
+                  "decoratedName": "?ReadStream@@YAHPEAX0K@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 3581,
+                  "startColumn": 30,
+                  "endLine": 3581,
+                  "endColumn": 34
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ReadStream",
+                  "decoratedName": "?ReadStream@@YAHPEAX0K@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 3748,
+                  "startColumn": 30,
+                  "endLine": 3748,
+                  "endColumn": 52
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "WriteStream",
+                  "decoratedName": "?WriteStream@@YAHPEAXPEBXK@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+                },
+                "region": {
+                  "startLine": 3748,
+                  "startColumn": 30,
+                  "endLine": 3748,
+                  "endColumn": 34
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "WriteStream",
+                  "decoratedName": "?WriteStream@@YAHPEAXPEBXK@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.35.32216.1",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///U:/Wales/Thetis-2.9.0/Project Files/lib/portaudio/src/hostapi/asio/pa_asio.cpp"
+          },
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "37e5865e1e1d979fa76e5b5f7c39c1206d4917f177694b9cc26e9f2bfa405726"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/include/portaudio.h"
+          },
+          "hashes": {
+            "sha-256": "57a561f7da471ee1db43caefd1e1f520fa09a8e90d822cc387cb73e49703a701"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/include/pa_asio.h"
+          },
+          "hashes": {
+            "sha-256": "3b317176c4e3299521535d13adb8e1993de25aaf9b2b2adef7378c3b42541ad8"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_util.h"
+          },
+          "hashes": {
+            "sha-256": "7918d32abf1c0d7bf089fa5675c2a6c87eaee93a0449d73fdab5f7253b205ef5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_allocation.h"
+          },
+          "hashes": {
+            "sha-256": "c15b0a49ff95f605be473a7c98e378198f09918fb7f285a387b98d8a9a4dc8e9"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_hostapi.h"
+          },
+          "hashes": {
+            "sha-256": "f1c70af8f18b7e3b0581ddde266fad7e1cf674c744220f6b68ae9b86821d0ee5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_stream.h"
+          },
+          "hashes": {
+            "sha-256": "f1699008e053dc53fc025e3162bfdd0b62ea3978ad591985f230705e9b2de775"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_cpuload.h"
+          },
+          "hashes": {
+            "sha-256": "2347a0ffabbbf99a223c02f55ca68b076aa8dd0052adf40e89526da16be8333a"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_process.h"
+          },
+          "hashes": {
+            "sha-256": "21d24e143c3fa2f6f036ade99057accf287a8d395403c0800023eb616c539b63"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_converters.h"
+          },
+          "hashes": {
+            "sha-256": "69d71687082ecc319adc5683b09006370905a055e8a391ee426453bd7be345c0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_dither.h"
+          },
+          "hashes": {
+            "sha-256": "08ef2b03a1713d5db40c9519c42a75440f1e6d88ad66a8776f218d98c780f1d5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_types.h"
+          },
+          "hashes": {
+            "sha-256": "1afd2998b6fb4c4a255f9b06d075b478087aea0e88947f813ff2a754ba0c8f3e"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_debugprint.h"
+          },
+          "hashes": {
+            "sha-256": "912a8bdf7302bb86340dc0c200ff8e47d685c2a762d777f03f1c066763a39d38"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/common/pa_ringbuffer.h"
+          },
+          "hashes": {
+            "sha-256": "01972d2a85e7b8d06887764322e2c941886bea63dd161c9db857bdfb087f2223"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/os/win/pa_win_coinitialize.h"
+          },
+          "hashes": {
+            "sha-256": "9ee3cccb86eb05368ff5dc96d4d209d653d8def95007168c423d5dc7c4cfdab4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/os/win/pa_win_util.h"
+          },
+          "hashes": {
+            "sha-256": "cb0109413fa6ea8810480ebf3a151f39970b5bc9922987c2f77a3a69090c282e"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/hostapi/asio/asiosdk/common/asiosys.h"
+          },
+          "hashes": {
+            "sha-256": "00f406f6733b1f1c144c140e9915f3ceaea76598adb7c2b1f2378c343ab00228"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/hostapi/asio/asiosdk/common/asio.h"
+          },
+          "hashes": {
+            "sha-256": "7cdb0743ea61ed9b25dde8d45259440aac07ec16c505694358ee6f5c372565e8"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/hostapi/asio/asiosdk/host/asiodrivers.h"
+          },
+          "hashes": {
+            "sha-256": "5cf927670e0652aff903bda4681e4de79033601ffc781ec556a07641bd557821"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/hostapi/asio/asiosdk/host/ginclude.h"
+          },
+          "hashes": {
+            "sha-256": "3b5bf699d62291131b84ecb2ea73b444e7e0de8d9f754c30a1e323af129b6762"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/hostapi/asio/asiosdk/host/pc/asiolist.h"
+          },
+          "hashes": {
+            "sha-256": "b72f7ce1355965003d613f8e1dc8a4e0d9c518ab743c7a455df006b6a291d86c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///u:/wales/thetis-2.9.0/project files/lib/portaudio/src/hostapi/asio/iasiothiscallresolver.h"
+          },
+          "hashes": {
+            "sha-256": "4dbb6a06ce6a32be0127b4a01b0bbf75cb449ac7ed445461842e3feec43c986a"
+          }
+        }
+      ]
+    }
+  ]
+}

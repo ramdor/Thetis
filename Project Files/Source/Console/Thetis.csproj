@@ -432,6 +432,18 @@
     <Compile Include="database.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Content Include="..\..\bin\x64\Debug\ChannelMaster.dll">
+      <Link>ChannelMaster.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\bin\x64\Debug\wdsp.dll">
+      <Link>wdsp.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\x64\Debug\portaudio.dll">
+      <Link>portaudio.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="displayPeteLikes.txt">
       <SubType>Code</SubType>
     </Content>
@@ -982,9 +994,9 @@
     <PreBuildEvent>
     </PreBuildEvent>
     <PostBuildEvent>
-			copy /Y "..\..\..\lib\fftw_$(PlatformName)\libfftw3-3.dll" "$(ProjectDir)$(OutDir)";
-			copy /Y "$(ProjectDir)CAT\CATStructs.xml" "$(ProjectDir)$(OutDir)";
-			copy /Y "..\..\..\lib\Thetis-resources\calculus" "$(ProjectDir)$(OutDir)"
+copy /Y "..\..\..\lib\fftw_$(PlatformName)\libfftw3-3.dll" "$(ProjectDir)$(OutDir)";
+copy /Y "$(ProjectDir)CAT\CATStructs.xml" "$(ProjectDir)$(OutDir)";
+copy /Y "..\..\..\lib\Thetis-resources\calculus" "$(ProjectDir)$(OutDir)"
 		</PostBuildEvent>
   </PropertyGroup>
 </Project>

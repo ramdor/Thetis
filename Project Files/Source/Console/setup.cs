@@ -51,6 +51,7 @@ namespace Thetis
     using System.Security.Cryptography;
     using System.Xml;
     using static Thetis.PortAudioForThetis;
+    using Thetis.AudioExtras;
 
     public partial class Setup : Form
     {
@@ -236,19 +237,9 @@ namespace Thetis
             // GetMixerDevices();
             Thetis.Splash.SetStatus("Loading Audio Host APIs ...");
 
-            int slept = 0;
-            while (c.m_waiting_for_portaudio)
-            {
-                if (slept == 0)
-                    Splash.SetStatus("Please wait while PortAudio initialises ...");
-                Thread.Sleep(20);
-                slept += 20;
-                if (slept > 2000)
-                {
-                    MessageBox.Show("Took too long waiting for Portaudio");
-                    break;
-                }
-            }
+            int slept = console.WaitForPortAudio();
+            Debug.Print("Waited " + slept.ToString()
+                + " millis for portaudio to be ready.");
 
             this.GetHosts();
             InitAlexAntTables();
@@ -1429,46 +1420,28 @@ namespace Thetis
             // comboAudioDriver1.Items.Clear();
             comboAudioDriver2.Items.Clear();
             comboAudioDriver3.Items.Clear();
-            int host_index = 0;
-            foreach (string PAHostName in Audio.GetPAHosts())
-            {
-                if (Audio.GetPAInputDevices(host_index).Count > 0
-                    || Audio.GetPAOutputDevices(host_index).Count > 0)
-                {
-
-                    {
-                        comboAudioDriver2.Items.Add(
-                            new PaDeviceInfoEx(PAHostName, host_index));
-                        comboAudioDriver3.Items.Add(
-                            new PaDeviceInfoEx(PAHostName, host_index));
-                    }
-                }
-                host_index++;
-            }
+            int hostIndex = 0;
+            int waited = console.WaitForPortAudio();
+            Debug.Assert(
+                waited == 0); // because we do actually check before GetHosts() is
+                              // called, but, with all this spaghetti code, it's
+                              // likely someone will call us from somewhere else
+                              // during program initialization. KLJ"
+            ComboBox[] cbos = new ComboBox[2];
+            cbos[0] = comboAudioDriver2;
+            cbos[1] = comboAudioDriver3;
+            Audio.PopulateComboAPIs(cbos);
         }
+
 
         private void GetDevices2()
         {
-            comboAudioInput2.Items.Clear();
-            comboAudioOutput2.Items.Clear();
-            int host = ((PaDeviceInfoEx)comboAudioDriver2.SelectedItem).Index;
-            var a = Audio.GetPAInputDevices(host);
-            foreach (var p in a) comboAudioInput2.Items.Add(p);
-
-            var b = Audio.GetPAOutputDevices(host);
-            foreach (var c in b) comboAudioOutput2.Items.Add(c);
+            Audio.PopulateComboDevices(comboAudioInput2, comboAudioOutput2, comboAudioDriver2); // KLJ
         }
 
         private void GetDevices3()
         {
-            comboAudioInput3.Items.Clear();
-            comboAudioOutput3.Items.Clear();
-            int host = ((PaDeviceInfoEx)comboAudioDriver3.SelectedItem).Index;
-            var a = Audio.GetPAInputDevices(host);
-            foreach (var p in a) comboAudioInput3.Items.Add(p);
-
-            var b = Audio.GetPAOutputDevices(host);
-            foreach (var c in b) comboAudioOutput3.Items.Add(c);
+            Audio.PopulateComboDevices(comboAudioInput3, comboAudioOutput3, comboAudioDriver3); // KLJ
         }
 
         private void getControlList(Control c, ref Dictionary<string, Control> a)
@@ -8286,7 +8259,9 @@ namespace Thetis
             if (comboAudioDriver2.SelectedIndex < 0) return;
 
             int old_driver = Audio.Host2;
-            int new_driver = ((PaDeviceInfoEx)comboAudioDriver2.SelectedItem).Index;
+            var hostInfo = (PaHostApiInfoEx)comboAudioDriver2.SelectedItem;
+            string new_driver_name = hostInfo.Name;
+            int new_driver = hostInfo.HostAPIIndex;
             bool power = console.PowerOn;
 
             if (power && chkAudioEnableVAC.Checked && old_driver != new_driver)
@@ -8295,9 +8270,6 @@ namespace Thetis
                 // Thread.Sleep(100);
                 Audio.EnableVAC1(false);
             }
-
-            string new_driver_name
-                = ((PaDeviceInfoEx)comboAudioDriver2.SelectedItem).Name;
 
             chkExclusive.Visible = new_driver_name.Contains("WASAPI")
                 || new_driver_name.Contains("WDM-KS");
@@ -8321,7 +8293,10 @@ namespace Thetis
             if (comboAudioDriver3.SelectedIndex < 0) return;
 
             int old_driver = Audio.Host3;
-            int new_driver = ((PaDeviceInfoEx)comboAudioDriver3.SelectedItem).Index;
+            var newHost = (PaHostApiInfoEx)comboAudioDriver3.SelectedItem;
+            int new_driver = newHost.HostAPIIndex;
+
+            string new_driver_name = newHost.Name;
             bool power = console.PowerOn;
 
             if (power && chkVAC2Enable.Checked && old_driver != new_driver)
@@ -8331,8 +8306,6 @@ namespace Thetis
                 Audio.EnableVAC2(false);
             }
 
-            string new_driver_name
-                = ((PaDeviceInfoEx)comboAudioDriver3.SelectedItem).Name;
 
             console.AudioDriverIndex3 = new_driver;
             Audio.Host3 = new_driver;
@@ -8354,7 +8327,8 @@ namespace Thetis
             if (comboAudioInput2.SelectedIndex < 0) return;
 
             int old_input = Audio.Input2;
-            int new_input = ((PaDeviceInfoEx)comboAudioInput2.SelectedItem).Index;
+            var pax = (PaDeviceInfoEx)comboAudioInput2.SelectedItem;
+            int new_input = pax.HostDeviceIndex;
             bool power = console.PowerOn;
 
             if (power && chkAudioEnableVAC.Checked && old_input != new_input)
@@ -8381,7 +8355,8 @@ namespace Thetis
             if (comboAudioInput3.SelectedIndex < 0) return;
 
             int old_input = Audio.Input3;
-            int new_input = ((PaDeviceInfoEx)comboAudioInput3.SelectedItem).Index;
+            int new_input
+                = ((PaDeviceInfoEx)comboAudioInput3.SelectedItem).HostDeviceIndex;
             bool power = console.PowerOn;
 
             if (power && chkVAC2Enable.Checked && old_input != new_input)
@@ -8408,7 +8383,8 @@ namespace Thetis
             if (comboAudioOutput2.SelectedIndex < 0) return;
 
             int old_output = Audio.Output2;
-            int new_output = ((PaDeviceInfoEx)comboAudioOutput2.SelectedItem).Index;
+            int new_output
+                = ((PaDeviceInfoEx)comboAudioOutput2.SelectedItem).HostDeviceIndex;
             bool power = console.PowerOn;
             if (power && chkAudioEnableVAC.Checked && old_output != new_output)
             {
@@ -8434,7 +8410,8 @@ namespace Thetis
             if (comboAudioOutput3.SelectedIndex < 0) return;
 
             int old_output = Audio.Output3;
-            int new_output = ((PaDeviceInfoEx)comboAudioOutput3.SelectedItem).Index;
+            int new_output
+                = ((PaDeviceInfoEx)comboAudioOutput3.SelectedItem).HostDeviceIndex;
             bool power = console.PowerOn;
             if (power && chkVAC2Enable.Checked && old_output != new_output)
             {
