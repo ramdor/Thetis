@@ -1432,14 +1432,14 @@ namespace Thetis
                 PaHostApiInfo info = PortAudioForThetis.PA_GetHostApiInfo(i);
                 a.Add(info.name);
             }
-            a.Add("HPSDR (USB/UDP)");
+            // a.Add("HPSDR (USB/UDP)");
             return a;
         }
 
         // Slightly incorrect naming: this thing will create a list if it
         // is missing, and so it guarantees to return a valid list,
         // though it may be empty
-        private DeviceListType FindDeviceList(int hostIndex, bool isInput)
+        private static DeviceListType FindDeviceList(int hostIndex, bool isInput)
         {
             DeviceCollectionType col = null;
             if (isInput)
@@ -1477,6 +1477,11 @@ namespace Thetis
                         list = col[hostIndex];
                     }
                 }
+                else
+                {
+                    list = new DeviceListType();
+                    col.Add(hostIndex, list);
+                }
             }
 
             Debug.Assert(list != null);
@@ -1489,29 +1494,20 @@ namespace Thetis
         public static DeviceListType GetPAInputDevices(
             int hostIndex, bool refresh = false)
         {
+            Debug.Assert(hostIndex >= 0);
             ++TimesInputDevsCalled;
-            var a = m_PAInputDevices;
-            bool listExists = false;
-            List<PaDeviceInfoEx> list = FindDeviceList(hostIndex);
+            Debug.Assert(hostIndex < PA_GetHostApiCount());
 
-            if (!refresh && listExists)
+            var list = FindDeviceList(hostIndex, true);
+            Debug.Assert(list != null);
+
+            if (refresh)
             {
-                return list;
+                list.Clear();
             }
             else
             {
-                m_PAInputDevices = new DeviceCollectionType();
-                list = new List<PaDeviceInfoEx>();
-                a = m_PAInputDevices;
-                a.Add(hostIndex, list);
-            }
-
-            if (hostIndex >= PortAudioForThetis.PA_GetHostApiCount())
-            {
-                var pad = new PaDeviceInfoEx("HPSDR (PCM A/D)", 0);
-
-                list.Add(pad);
-                return list;
+                if (list.Count() > 0) return list;
             }
 
             PortAudioForThetis.PaHostApiInfo hostInfo
@@ -1528,22 +1524,6 @@ namespace Thetis
                 if (devInfo.maxInputChannels > 0)
                 {
                     string name = devInfo.name;
-                    int index = name.IndexOf("- ");
-                    if (index > 0)
-                    {
-                        char c = name[index
-                            - 1]; // make sure this is what we're looking for
-                        if (c >= '0' && c <= '9') // it is... remove index
-                        {
-                            int x = name.IndexOf("(");
-                            name = devInfo.name.Substring(0,
-                                x + 1); // grab first part of string including
-                                        // "("
-                            name += devInfo.name.Substring(index + 2,
-                                devInfo.name.Length - index
-                                    - 2); // add end of string;
-                        }
-                    }
                     list.Add(pax /* + " - " + devIndex*/);
                 }
             }
@@ -1553,32 +1533,24 @@ namespace Thetis
         private static DeviceCollectionType m_PAOutputDevices;
         public static int TimesOutputDevsCalled = 0;
 
-        public static DeviceCollectionType GetPAOutputDevices(
+        public static DeviceListType GetPAOutputDevices(
             int hostIndex, bool refresh = false)
         {
-            ++TimesOutputDevsCalled;
-            var a = m_PAOutputDevices;
-            if (a != null)
-            {
-                if (a.ContainsKey(hostIndex))
-                {
-                    list = a[hostIndex];
-                    if (list == null || list.Count() == 0)
-                    {
-                        refresh = true;
-                        listExists = false;
-                    }
-                    else
-                    {
-                        listExists = true;
-                    }
-                }
-            }
+            Debug.Assert(hostIndex >= 0);
+            Debug.Assert(hostIndex < PA_GetHostApiCount());
 
-            if (hostIndex >= PortAudioForThetis.PA_GetHostApiCount())
+            ++TimesOutputDevsCalled;
+
+            var list = FindDeviceList(hostIndex, false);
+            Debug.Assert(list != null);
+
+            if (refresh)
             {
-                a.Add(hostIndex, new PaDeviceInfoEx("HPSDR (PWM D/A)", 0));
-                return a;
+                list.Clear();
+            }
+            else
+            {
+                if (list.Count() > 0) return list;
             }
 
             PortAudioForThetis.PaHostApiInfo hostInfo
@@ -1593,28 +1565,11 @@ namespace Thetis
                 if (devInfo.maxOutputChannels > 0)
                 {
                     string name = devInfo.name;
-                    int index = name.IndexOf("- "); // find case for things like
-                                                    // "Microphone (2- FLEX-1500)"
-                    if (index > 0)
-                    {
-                        char c = name[index - 1]; // make sure this is what
-                                                  // we're looking for
-                        if (c >= '0' && c <= '9') // it is... remove index
-                        {
-                            int x = name.IndexOf("(");
-                            name = devInfo.name.Substring(0,
-                                x + 1); // grab first part of string
-                                        // including "("
-                            name += devInfo.name.Substring(index + 2,
-                                devInfo.name.Length - index
-                                    - 2); // add end of string;
-                        }
-                    }
-                    a.Add(hostIndex,
-                        new PaDeviceInfoEx(name, i) /* + " - " + devIndex*/);
+                    list.Add(new PaDeviceInfoEx(name, i) /* + " - " + devIndex*/);
                 }
             }
-            return a;
+
+            return list;
         }
 
         public static bool CheckPAInputDevices(int hostIndex, string name)
