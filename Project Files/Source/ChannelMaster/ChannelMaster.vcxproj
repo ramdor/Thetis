@@ -29,7 +29,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -73,8 +73,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\</OutDir>
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\channelmaster\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -106,15 +106,16 @@
       <CompileAs>CompileAsC</CompileAs>
       <AdditionalOptions>/D_ATL_XP_TARGETING /FS %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
-      <MinimalRebuild>false</MinimalRebuild>
+      <MinimalRebuild>
+      </MinimalRebuild>
       <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\ChannelMaster.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../lib/portaudio/msvc/$(HPSDR_PLATFORM)/$(Configuration);$(PROJECTDIR)../../build/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../Source\..\build\x86\Debug\;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>PortAudioForCoolSDR.lib;wdsp.lib;winmm.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../Source/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../lib/portaudio/msvc/$(HPSDR_PLATFORM)/$(Configuration);$(PROJECTDIR)../../build/$(HPSDR_PLATFORM)/$(Configuration)/;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration);$(PROJECTDIR)../../Source/$(Platform)/$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>portaudio.lib;wdsp.lib;winmm.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -140,7 +141,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\ChannelMaster.dll</OutputFile>
       <AdditionalLibraryDirectories>$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../Source/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../lib/portaudio/msvc/$(HPSDR_PLATFORM)/$(Configuration);$(PROJECTDIR)../../build/$(HPSDR_PLATFORM)/$(Configuration)/;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wdsp.lib;winmm.lib;portaudio.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wdsp.lib;winmm.lib;portaudio_x64.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

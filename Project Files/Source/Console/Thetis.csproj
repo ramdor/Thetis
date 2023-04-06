@@ -280,6 +280,10 @@
     <Compile Include="Channel.cs" />
     <Compile Include="clsBandStackManager.cs" />
     <Compile Include="display.cs" />
+    <Content Include="..\Win32\Debug\portaudio.dll">
+      <Link>portaudio.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="display.cs.curwales.txt" />
     <Compile Include="Extras\AudioExtras.cs" />
     <Compile Include="Firewall.cs" />
@@ -439,10 +443,6 @@
     </Content>
     <Content Include="..\..\bin\x64\Debug\wdsp.dll">
       <Link>wdsp.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\x64\Debug\portaudio.dll">
-      <Link>portaudio.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="displayPeteLikes.txt">

@@ -106,15 +106,17 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMinDependency|Win32'">
     <OutDir>$(Platform)\$(Configuration)\</OutDir>
@@ -226,8 +228,9 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\src\common;..\include;.\;..\src\os\win;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;PA_ENABLE_DEBUG_OUTPUT;_CRT_SECURE_NO_DEPRECATE;PAWIN_USE_WDMKS_DEVICE_INFO;PA_USE_ASIO=0;PA_USE_DS=0;PA_USE_WMME=1;PA_USE_WASAPI=1;PA_USE_WDMKS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;PA_ENABLE_DEBUG_OUTPUT;_CRT_SECURE_NO_DEPRECATE;PAWIN_USE_WDMKS_DEVICE_INFO;PA_USE_ASIO=1;PA_USE_DS=1;PA_USE_WMME=1;PA_USE_WASAPI=1;PA_USE_WDMKS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>
+      </MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeaderOutputFile>$(Platform)\$(Configuration)/portaudio.pch</PrecompiledHeaderOutputFile>
@@ -243,13 +246,15 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <OutputFile>$(Platform)\$(Configuration)\portaudio_x86.dll</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\portaudio.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(Platform)\$(Configuration)\portaudio_x86.pdb</ProgramDatabaseFile>
-      <ImportLibrary>$(Platform)\$(Configuration)\portaudio_x86.lib</ImportLibrary>
+      <ImportLibrary>
+      </ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
