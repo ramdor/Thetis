@@ -22,25 +22,15 @@
 //=================================================================
 
 using System;
-using System.Diagnostics;
-using System.Drawing;
-
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing.Text;
-using System.Collections;
 using System.ComponentModel;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Threading;
+using System.Diagnostics;
 using System.Windows.Forms;
-using System.Threading.Tasks;
 
 namespace Thetis
 {
     public class SwlControl : System.Windows.Forms.Form
     {
-        
+
         public SpotControl SpotForm;                     // ke9ns add  communications with spot.cs 
         public ScanControl ScanForm;                            // ke9ns add freq Scanner function
 
@@ -61,9 +51,9 @@ namespace Thetis
         private RichTextBox richTextBox2;
         private IContainer components;
 
-     //   public DXMemList dxmemlist;
+        //   public DXMemList dxmemlist;
 
-        
+
 
         #region Constructor and Destructor
 
@@ -74,14 +64,14 @@ namespace Thetis
 
             Common.RestoreForm(this, "SwlForm", true);
 
-         
 
-         //   bandSwlupdate();
+
+            //   bandSwlupdate();
 
 
         } // swlcontrol
 
-       
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -160,7 +150,7 @@ namespace Thetis
             // 
             // richTextBox2
             // 
-            this.richTextBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.richTextBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.richTextBox2.Cursor = System.Windows.Forms.Cursors.Default;
             this.richTextBox2.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -228,7 +218,7 @@ namespace Thetis
         private void SwlControl_Load(object sender, EventArgs e)
         {
             bandSwlupdate();
-          
+
 
         }
 
@@ -236,28 +226,28 @@ namespace Thetis
         //=======================================================================================================================
         private void SwlControl_FormClosing(object sender, FormClosingEventArgs e)
         {
-           
+
             this.Hide();
             e.Cancel = true;
             Common.SaveForm(this, "SwlForm");
-         
+
 
         }
 
         //===================================================================================
         //===================================================================================
         //===================================================================================
-     
+
         int[] swl_index = new int[20000];
-       
+
         public void bandSwlupdate()
         {
 
             int iii = 0;
 
             string bigmessage = null; // full textbox string (combine 1 and 2)
-        
-            Debug.WriteLine("swl index size= "+ SpotControl.SWL_Index1);
+
+            Debug.WriteLine("swl index size= " + SpotControl.SWL_Index1);
 
             richTextBox1.Text = richTextBox1.Text.TrimEnd('\r', '\n');
 
@@ -265,25 +255,25 @@ namespace Thetis
 
             SpotControl.UTCNEW1 = Convert.ToInt16(UTCD.ToString("HHmm")); // convert 24hr UTC to int
 
-         // Debug.WriteLine("Day: " + SpotControl.UTCDD);
-          //  Debug.WriteLine("Day1: " + (byte)UTCD.DayOfWeek);
+            // Debug.WriteLine("Day: " + SpotControl.UTCDD);
+            //  Debug.WriteLine("Day1: " + (byte)UTCD.DayOfWeek);
 
 
             for (int ii = 0; ii < SpotControl.SWL_Index1; ii++) // check all spots to see which ones are on at this particular time and day
             {
-              
+
                 // station check 
                 if ((SpotControl.SWL_Station[ii].IndexOf(richTextBox1.Text, StringComparison.OrdinalIgnoreCase) >= 0) || (richTextBox1.Text == "") || (richTextBox1.Text == " "))
                 {
-                
+
                     // station check days on air and time on air
                     if (
-                        ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && ( ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
-                        ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])) )   
+                        ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
+                        ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
                          )
                     {
 
-                    //    Debug.WriteLine("station found" + SpotControl.SWL_Freq[ii] + " , "+ SpotControl.SWL_Day1[ii]);
+                        //    Debug.WriteLine("station found" + SpotControl.SWL_Freq[ii] + " , "+ SpotControl.SWL_Day1[ii]);
 
 
                         swl_index[iii++] = ii; // keep track of frequencies on at the moment
@@ -423,10 +413,10 @@ namespace Thetis
             Debug.WriteLine("SWL DONE");
 
 
-            
+
             richTextBox2.Text = bigmessage; // update screen
 
-                                       
+
 
 
         } // bandSwlupdate
@@ -440,14 +430,14 @@ namespace Thetis
             this.TopMost = chkAlwaysOnTop.Checked;
         }
 
-      
+
 
 
         public static int RIndex1 = 0;
 
         private void button1_Click(object sender, EventArgs e)
         {
-          
+
             bandSwlupdate();
             richTextBox2.Focus();
         }
@@ -508,7 +498,7 @@ namespace Thetis
 
                     console.VFOAFreq = ((double)SpotControl.SWL_Freq[swl_index[xxx]]) / 1000000.0; // convert to MHZ
 
-                 //   Display.VFOA = ((long)SpotControl.SWL_Freq[swl_index[xxx]]) ; // keep as hz
+                    //   Display.VFOA = ((long)SpotControl.SWL_Freq[swl_index[xxx]]) ; // keep as hz
 
                     if (SpotControl.SWL_Mode[swl_index[xxx]] == "AM") console.RX1DSPMode = DSPMode.SAM;
                     else if (SpotControl.SWL_Mode[swl_index[xxx]] == "SAM") console.RX1DSPMode = DSPMode.SAM;
@@ -534,7 +524,7 @@ namespace Thetis
 
 
 
-          //  button1.Focus();
+            //  button1.Focus();
         }
     } // Swlcontrol
 

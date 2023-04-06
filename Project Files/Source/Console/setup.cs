@@ -1420,7 +1420,7 @@ namespace Thetis
             // comboAudioDriver1.Items.Clear();
             comboAudioDriver2.Items.Clear();
             comboAudioDriver3.Items.Clear();
-            int hostIndex = 0;
+
             int waited = console.WaitForPortAudio();
             Debug.Assert(
                 waited == 0); // because we do actually check before GetHosts() is

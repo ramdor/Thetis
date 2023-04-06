@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Thetis
@@ -1075,9 +1070,9 @@ namespace Thetis
 
 
         // END OF PT DEFINITIONS *****************************************************************************************
-        
-        
-        
+
+
+
         public Path_Illustrator(Console c)
         {
             console = c;
@@ -1177,22 +1172,26 @@ namespace Thetis
                 switch (int_RxAnt_switch)
                 {
                     case 0:
-                    case 1: bool_ANT1 = true;
+                    case 1:
+                        bool_ANT1 = true;
                         bool_ANT2 = false;
                         bool_ANT3 = false;
                         break;
 
-                    case 2: bool_ANT1 = false;
+                    case 2:
+                        bool_ANT1 = false;
                         bool_ANT2 = true;
                         bool_ANT3 = false;
                         break;
 
-                    case 3: bool_ANT1 = false;
+                    case 3:
+                        bool_ANT1 = false;
                         bool_ANT2 = false;
                         bool_ANT3 = true;
                         break;
 
-                    default: bool_ANT1 = true;
+                    default:
+                        bool_ANT1 = true;
                         bool_ANT2 = false;
                         bool_ANT3 = false;
                         break;
@@ -1204,22 +1203,26 @@ namespace Thetis
                 switch (int_TxAnt_switch)
                 {
                     case 0:
-                    case 1: bool_ANT1_TX = true;
+                    case 1:
+                        bool_ANT1_TX = true;
                         bool_ANT2_TX = false;
                         bool_ANT3_TX = false;
                         break;
 
-                    case 2: bool_ANT1_TX = false;
+                    case 2:
+                        bool_ANT1_TX = false;
                         bool_ANT2_TX = true;
                         bool_ANT3_TX = false;
                         break;
 
-                    case 3: bool_ANT1_TX = false;
+                    case 3:
+                        bool_ANT1_TX = false;
                         bool_ANT2_TX = false;
                         bool_ANT3_TX = true;
                         break;
 
-                    default: bool_ANT1_TX = true;
+                    default:
+                        bool_ANT1_TX = true;
                         bool_ANT2_TX = false;
                         bool_ANT3_TX = false;
                         break;
@@ -1244,7 +1247,7 @@ namespace Thetis
                 bool_EXT1 = false;
                 bool_EXT2 = false;
             }
- 
+
             if (RX_ONLY == 1)
             {
                 bool_XVTR = false;
@@ -2606,7 +2609,7 @@ namespace Thetis
         {
             hide_all_labels();
             label_hardware_selected.Text = "Routing for ANAN-100 (PA rev_15/16)";
-            if (bool_XVTR) label_XVTR_VHF.Visible = true; 
+            if (bool_XVTR) label_XVTR_VHF.Visible = true;
             label_ADC0.Visible = true;
             label_ADC0_atten.Visible = true;
             label_SDR_Hardware.Visible = true;
@@ -2871,7 +2874,7 @@ namespace Thetis
                 bool bool_temp = bool_EXT1_on_TX;
                 bool_EXT1_on_TX = bool_EXT2_on_TX;
                 bool_EXT2_on_TX = bool_temp;
- 
+
                 if (!bool_BYPASS_on_TX & !bool_EXT1_on_TX & !bool_EXT2_on_TX) HPF_to_ground(bluePen);
                 if (bool_BYPASS_on_TX)
                 {
@@ -3113,7 +3116,7 @@ namespace Thetis
         {
             hide_all_labels();
             label_hardware_selected.Text = "Routing for ANAN-100, ANAN-100B (PA rev_24)";
-            if (bool_XVTR) label_XVTR_VHF.Visible = true; 
+            if (bool_XVTR) label_XVTR_VHF.Visible = true;
             label_ADC0.Visible = true;
             label_ADC0_atten.Visible = true;
             label_SDR_Hardware.Visible = true;
@@ -3572,7 +3575,7 @@ namespace Thetis
             label_PC.Visible = true;
             label_DSP.Visible = true;
             label_RX1_DISPLAY.Visible = true;
-            if (bool_XVTR) label_XVTR_VHF.Visible = true; 
+            if (bool_XVTR) label_XVTR_VHF.Visible = true;
             label_NOTE.Visible = true;
             label_UNCHECK.Visible = true;
 
@@ -3691,7 +3694,7 @@ namespace Thetis
             if (bool_Rx6_0) ADC0_to_Rx6(bluePen);                       // draw ADC0 out to Rx6 input
             if (bool_Rx6_1) ADC1_to_Rx6(bluePen);                       // draw ADC1 out to Rx6 input
 
-            
+
             if (bool_rx)              // draw the path segments for RECEIVE mode  RX RX RX RX RX RX RX RX RX RX RX RX RX RX RX RX RX RX RX RX RX RX 
             {
                 // show only RX components
@@ -4223,7 +4226,7 @@ namespace Thetis
 
                 if (bool_PureSignal & !bool_duplex & bool_XVTR)
                 {
-                   label_SWR.Visible = false;
+                    label_SWR.Visible = false;
                     label_LPF.Visible = false;
                     label_PA.Visible = false;
                     Rx1_to_DSP(redPen);                        // draw Rx1 out to DSP input 2
@@ -4285,7 +4288,7 @@ namespace Thetis
             label_PC.Visible = true;
             label_DSP.Visible = true;
             label_RX1_DISPLAY.Visible = true;
-            if (bool_XVTR) label_XVTR_VHF.Visible = true; 
+            if (bool_XVTR) label_XVTR_VHF.Visible = true;
             label_NOTE.Visible = true;
             label_UNCHECK.Visible = true;
 

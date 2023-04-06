@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace Thetis
 {
@@ -926,7 +920,7 @@ namespace Thetis
         public static int[] Info = new int[16];
         private static int[] oldInfo = new int[16];
         private static bool _bInvertRedBlue = false;
-        private static bool _validGetInfo = false;
+        //private static bool _validGetInfo = false;
         static puresignal()
         {
             for (int i = 0; i < 16; i++)
@@ -945,7 +939,7 @@ namespace Thetis
             fixed (int* ptr = &(Info[0]))
                 GetPSInfo(txachannel, ptr);
 
-            _validGetInfo = true;
+            //_validGetInfo = true;
         }
         public static bool HasInfoChanged
         {

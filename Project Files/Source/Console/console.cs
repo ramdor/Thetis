@@ -45,6 +45,7 @@ namespace Thetis
     using RawInput_dll;
     using System;
     using System.Collections;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Data;
     using System.Diagnostics;
@@ -64,9 +65,6 @@ namespace Thetis
     using System.Timers;
     using System.Windows.Forms;
     using System.Xml.Linq;
-    using System.Text.RegularExpressions;
-    using System.Collections.Concurrent;
-    using Thetis.AudioExtras;
 
     public partial class Console : Form
     {
@@ -602,6 +600,13 @@ namespace Thetis
         // ======================================================
         internal volatile bool m_waiting_for_portaudio = true; // KLJ
 
+        void InitPortAudio()
+        {
+            PortAudioForThetis.PA_Initialize();
+            Audio.Populate();
+            m_waiting_for_portaudio = false;
+        }
+
         public Console(string[] args)
         {
             // CheckIfRussian(); //#UKRAINE
@@ -994,19 +999,16 @@ namespace Thetis
             // KLJ: Kick this off as early as possible to avoid waiting for it
             // later.
             m_waiting_for_portaudio = true;
-            new Thread(() =>
+            var pat = new Thread(new ThreadStart(InitPortAudio))
             {
-
-                PortAudioForThetis.PA_Initialize();
-                Audio.Populate();
-                m_waiting_for_portaudio = false;
-                // AudioExtras.Tests.TestSaneDefaults();
-            })
-            {
+                Name = "Init PortAudioThread",
+                Priority = ThreadPriority.Highest,
                 IsBackground = true,
-                ApartmentState = ApartmentState.STA // no ASIO devices without Apartment state
-            }.Start();
+                ApartmentState = ApartmentState.STA
 
+            };
+
+            pat.Start();
             Splash.SetStatus("Initializing Radio ..."); // Set progress point
             radio = new Radio(AppDataPath); // Initialize the Radio processor INIT_SLOW
             specRX = new SpecRX();
@@ -2967,8 +2969,8 @@ namespace Thetis
 
             writer2.Write(Display.GrayScale); // color or grayscale watetfall
             writer2.Write(Display.GridOff); // save panadapter grid on/off
-            //  writer2.Write(WaveControl.QAC);                      //
-            //  QUickaudio file #
+                                            //  writer2.Write(WaveControl.QAC);                      //
+                                            //  QUickaudio file #
 
             writer2.Write(SpotControl.nameB); // name for dx spotter
             writer2.Write(SpotControl.callB); // call sign for dx spotter
@@ -3622,8 +3624,8 @@ namespace Thetis
             a.Add("Version/" + this.Text); // save the current version
             a.Add("VersionNumber/"
                 + ver_num); // Thetis version number in a.b.c format
-            // a.Add("RadioType/" + CurrentModel);     // radio model string
-            // (ex. FLEX1500)
+                            // a.Add("RadioType/" + CurrentModel);     // radio model string
+                            // (ex. FLEX1500)
             a.Add("BandTextID/" + current_region); // TURF Region
             a.Add(
                 "Metis_IP_address/" + NetworkIO.HpSdrHwIpAddress.ToString(nfi));
@@ -11188,11 +11190,11 @@ namespace Thetis
                 = new double[fft_size, 2]; // buffer for complex spectrum data
             double[] sum
                 = new double[fft_size]; // buffer for "averaged" spectrum data
-            // const double cal_range = 2500.0;                // look +/- this
-            // much from current freq to find the calibration signal
-            //  double bin_width = (double)(sample_rate1) / (double)fft_size;
-            //  int offset = (int)(cal_range / bin_width);
-            //  double maxsumsq = double.MinValue;
+                                        // const double cal_range = 2500.0;                // look +/- this
+                                        // much from current freq to find the calibration signal
+                                        //  double bin_width = (double)(sample_rate1) / (double)fft_size;
+                                        //  int offset = (int)(cal_range / bin_width);
+                                        //  double maxsumsq = double.MinValue;
 
             int iterations = 20; // number of samples to average
 
@@ -11665,32 +11667,32 @@ namespace Thetis
             comboDisplayMode.Text = display;
             chkRIT.Checked = rit_on; // restore RIT on
             udRIT.Value = rit_val; // restore RIT value
-            // SetupForm.RXOnly = rx_only;						// restore RX
-            // Only
-            //   DisplayAVG = display_avg;							// restore
-            //   AVG value
+                                   // SetupForm.RXOnly = rx_only;						// restore RX
+                                   // Only
+                                   //   DisplayAVG = display_avg;							// restore
+                                   //   AVG value
             RX1PreampMode = preamp; // restore preamp value
             RX2PreampMode = preampRX2; // restore preamp value MW0LGE_[2.9.0.6]
             SetupForm.HermesEnableAttenuator = step_attn;
             SetupForm.RX2EnableAtt = step_attnRX2; // MW0LGE_[2.9.0.6]
-            // RX1Filter = am_filter;							// restore AM
-            // filter
+                                                   // RX1Filter = am_filter;							// restore AM
+                                                   // filter
             RX1DSPMode = dsp_mode; // restore DSP mode
-            // RX1Filter = filter;								// restore
-            // filter
-            //  if (dsp_buf_size != 4096)
-            //  chkPower.Checked = false;						// go to standby
+                                   // RX1Filter = filter;								// restore
+                                   // filter
+                                   //  if (dsp_buf_size != 4096)
+                                   //  chkPower.Checked = false;						// go to standby
             SetupForm.DSPPhoneRXBuffer
                 = dsp_buf_size; // restore DSP Buffer Size
             VFOAFreq = vfoa; // restore vfo frequency
-            // if (dsp_buf_size != 4096)
-            //  {
-            //  Thread.Sleep(2000);
-            //  chkPower.Checked = true;
-            //  }
+                             // if (dsp_buf_size != 4096)
+                             //  {
+                             //  Thread.Sleep(2000);
+                             //  chkPower.Checked = true;
+                             //  }
             CurrentMeterRXMode = rx_meter; // restore RX Meter mode
-            // SetupForm.Polyphase = polyphase;					// restore
-            // polyphase
+                                           // SetupForm.Polyphase = polyphase;					// restore
+                                           // polyphase
 
             //			Debug.WriteLine("multimeter_cal_offset:
             //"+multimeter_cal_offset);
@@ -11758,11 +11760,11 @@ namespace Thetis
             DSPMode dsp2_mode = rx2_dsp_mode; // save current DSP demod mode
 
             RX1DSPMode = DSPMode.DSB; // set mode to DSB
-            // Thread.Sleep(50);
+                                      // Thread.Sleep(50);
             RX2DSPMode = DSPMode.DSB; // set mode to DSB
 
             VFOAFreq = freq; // set VFOA frequency
-            // Thread.Sleep(100);
+                             // Thread.Sleep(100);
             VFOBFreq = freq;
             // Thread.Sleep(100);
 
@@ -11989,15 +11991,15 @@ namespace Thetis
             comboDisplayMode.Text = display;
             chkRIT.Checked = rit_on; // restore RIT on
             udRIT.Value = rit_val; // restore RIT value
-            // SetupForm.RXOnly = rx_only;						// restore RX
-            // Only
+                                   // SetupForm.RXOnly = rx_only;						// restore RX
+                                   // Only
             DisplayAVG = display_avg; // restore AVG value
-            // chkRX1Preamp.Checked = rx1_preamp;					// restore
-            // preamp value
+                                      // chkRX1Preamp.Checked = rx1_preamp;					// restore
+                                      // preamp value
             chkRX2Preamp.Checked = rx2_preamp;
             RX1Filter = rx1_filter; // restore AM filter
             RX1DSPMode = dsp_mode; // restore DSP mode*
-            // Thread.Sleep(50);
+                                   // Thread.Sleep(50);
             RX2Filter = rx2_filter; // restore AM filter
             RX2DSPMode = dsp2_mode; // restore DSP mode
             RX1Filter = filter; // restore filter
@@ -12005,7 +12007,7 @@ namespace Thetis
             SetupForm.DSPPhoneRXBuffer
                 = dsp_buf_size; // restore DSP Buffer Size
             VFOAFreq = vfoa; // restore vfo frequency
-            // Thread.Sleep(100);
+                             // Thread.Sleep(100);
             if (dsp_buf_size != 4096)
             {
                 Thread.Sleep(100);
@@ -20168,7 +20170,7 @@ namespace Thetis
             double swr = 1.0;
             // pa_power_mutex.WaitOne();
             swr = alex_swr; // SWR(pa_fwd_power, pa_rev_power);
-            // pa_power_mutex.ReleaseMutex();
+                            // pa_power_mutex.ReleaseMutex();
             return swr.ToString("f1") + " : 1";
         }
 
@@ -31225,8 +31227,8 @@ namespace Thetis
                   //  ==1))
 
             } // e.control key
-            // MW0LGE else
-            //{
+              // MW0LGE else
+              //{
 
             //    m_bControlKeyDown = 0;
             //}
@@ -33223,7 +33225,7 @@ namespace Thetis
             // MW0LGE_21a un-register delegates
             removeDelegates();
             if (!IsSetupFormNull) SetupForm.RemoveDelegates(); // MW0LGE_22b
-            //
+                                                               //
 
             // MW0LGE
             // Change to check if existing save is happening. Without this
@@ -35909,7 +35911,7 @@ namespace Thetis
                 num_steps = (e.Delta > 0 ? -1 : 1); // 1 per click
             else
                 num_steps = (e.Delta > 0 ? 1 : -1); // 1 per click
-            // int numberToMove = e.Delta / 120;	// 1 per click
+                                                    // int numberToMove = e.Delta / 120;	// 1 per click
 
             // MW0LGE before all, handle the notch size change
             if (SelectedNotch != null && num_steps != 0)
@@ -44208,8 +44210,8 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
             radio.GetDSPRX(0, 0).SetRXFilter(low, high); // select new filters
             udFilterLow.Value = low; // display new low value
             udFilterHigh.Value = high; // display new high value
-            // if (redraw) Display.DrawBackground();			// draw new
-            // background for updated filter values
+                                       // if (redraw) Display.DrawBackground();			// draw new
+                                       // background for updated filter values
 
             // store the last IF Shift applied for use next time
             if (rx1_filter == Filter.VAR1)
@@ -47184,7 +47186,7 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
                 WDSP.SetDSPSamplerate(WDSP.id(2, 0), 48000);
 
             radio.GetDSPRX(1, 0).DSPMode = new_mode; // set new DSP mode
-            // radio.GetDSPRX(1, 1).DSPMode = new_mode;
+                                                     // radio.GetDSPRX(1, 1).DSPMode = new_mode;
 
             if (rx2_enabled)
             {
