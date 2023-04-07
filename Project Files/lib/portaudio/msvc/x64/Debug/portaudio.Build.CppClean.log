@@ -25,10 +25,10 @@ u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\x64\debug\pa_asio.obj
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\x64\debug\asiolist.obj
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\x64\debug\asiodrivers.obj
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\x64\debug\asio.obj
-u:\wales\thetis-2.9.0\project files\source\x64\debug\portaudio.lib
-u:\wales\thetis-2.9.0\project files\source\x64\debug\portaudio.exp
-u:\wales\thetis-2.9.0\project files\source\x64\debug\portaudio.dll
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\x64\debug\portaudio.ilk
+u:\wales\thetis-2.9.0\project files\bin\x64\debug\portaudio.dll
+u:\wales\thetis-2.9.0\project files\bin\x64\debug\portaudio.lib
+u:\wales\thetis-2.9.0\project files\bin\x64\debug\portaudio.exp
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\x64\debug\portaudio.tlog\cl.command.1.tlog
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\x64\debug\portaudio.tlog\cl.read.1.tlog
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\x64\debug\portaudio.tlog\cl.write.1.tlog

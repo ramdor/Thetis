@@ -74,23 +74,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\channelmaster\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\channelmaster\</IntDir>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\channelmaster\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\channelmaster\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -113,8 +113,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\ChannelMaster.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../Source/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../lib/portaudio/msvc/$(HPSDR_PLATFORM)/$(Configuration);$(PROJECTDIR)../../build/$(HPSDR_PLATFORM)/$(Configuration)/;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration);$(PROJECTDIR)../../Source/$(Platform)/$(Configuration)</AdditionalLibraryDirectories>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</AdditionalLibraryDirectories>
       <AdditionalDependencies>portaudio.lib;wdsp.lib;winmm.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -139,9 +139,9 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\ChannelMaster.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../Source/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../lib/portaudio/msvc/$(HPSDR_PLATFORM)/$(Configuration);$(PROJECTDIR)../../build/$(HPSDR_PLATFORM)/$(Configuration)/;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wdsp.lib;winmm.lib;portaudio_x64.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wdsp.lib;winmm.lib;portaudio.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -167,9 +167,9 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\ChannelMaster.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\;;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wdsp.lib;winmm.lib;pa19.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wdsp.lib;winmm.lib;portaudio.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
@@ -199,9 +199,9 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <OutputFile>$(OutDir)$(TargetName).dll</OutputFile>
-      <AdditionalLibraryDirectories>$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(PROJECTDIR)../../lib/portaudio/msvc/$(HPSDR_PLATFORM)/$(Configuration);$(PROJECTDIR)../../Source/build/$(HPSDR_PLATFORM)/$(Configuration)/;$(ProjectDir)../../bin/$(HPSDR_PLATFORM)/$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wdsp.lib;winmm.lib;PortAudioForCoolSDR.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wdsp.lib;winmm.lib;portaudio.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkErrorReporting>QueueForNextLogin</LinkErrorReporting>
     </Link>
     <ProjectReference>

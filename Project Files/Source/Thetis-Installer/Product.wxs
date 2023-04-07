@@ -242,8 +242,8 @@
 			</Component>
 
 			<Component Guid="*">
-				<File Id="PORTAUDIOFORCOOLDSR.DLL"
-					  Source="$(var.FilesPath)PortAudioForCoolSdr.dll"
+				<File Id="portaudiodll"
+					  Source="$(var.FilesPath)portaudio.dll"
 					  KeyPath="yes"
               />
 			</Component>

@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>U:\Wales\Thetis-2.9.0\Project Files\bin\x86\Debug\portaudio.dll</FullPath>
+      <FullPath>U:\Wales\Thetis-2.9.0\Project Files\bin\x86\Release\portaudio.dll</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

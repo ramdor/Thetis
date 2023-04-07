@@ -28,5 +28,5 @@
   asiolist.cpp
   pa_asio.cpp
   Generating Code...
-     Creating library U:\Wales\Thetis-2.9.0\Project Files\Source\..\bin\x64\Debug\portaudio.lib and object U:\Wales\Thetis-2.9.0\Project Files\Source\..\bin\x64\Debug\portaudio.exp
-  portaudio.vcxproj -> U:\Wales\Thetis-2.9.0\Project Files\bin\x64\Debug\portaudio.dll
+     Creating library U:\Wales\Thetis-2.9.0\Project Files\Source\..\bin\x64\Release\portaudio.lib and object U:\Wales\Thetis-2.9.0\Project Files\Source\..\bin\x64\Release\portaudio.exp
+  portaudio.vcxproj -> U:\Wales\Thetis-2.9.0\Project Files\bin\x64\Release\portaudio.dll

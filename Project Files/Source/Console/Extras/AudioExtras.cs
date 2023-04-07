@@ -7,10 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 using PaSampleFormat = System.UInt32;
 using static Thetis.PortAudioForThetis;
+using System.Runtime.InteropServices;
+
+#if (USE_PORTAUDIO_EXTRAS)
+{
 
 namespace Thetis.AudioExtras
 {
-    internal class AudioExtras { }
 
     internal enum DeviceIndexes { input, output }
 
@@ -37,6 +40,13 @@ namespace Thetis.AudioExtras
 
     internal class PortAudioInfo
     {
+
+        [DllImport("Channelmaster.dll", EntryPoint = "IsAudioFormatSupported",
+                CallingConvention = CallingConvention.Cdecl)]
+        public static extern PaErrorCode IsFormatSupported(int hostAPI,
+                double samplerate, int deviceIndexIn, int deviceIndexOut, int channels,
+        PaSampleFormat fmt, int exclusive);
+
         static public int[] sampleRates
             = { 22050, 44100, 48000, 96000, 128000, 192000 };
         public string[] deviceNames = new string[2];
@@ -214,7 +224,7 @@ namespace Thetis.AudioExtras
         }
 
         static internal int DefaultAPI() { return PA_GetDefaultHostApi(); }
-    }
+    } // internal class PortAudioExtras
 
     internal class Tests
     {
@@ -242,3 +252,4 @@ namespace Thetis.AudioExtras
 #endif
     }
 }
+#endif

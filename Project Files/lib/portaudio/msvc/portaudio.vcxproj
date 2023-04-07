@@ -96,35 +96,35 @@
     <_ProjectFileVersion>17.0.33516.290</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMinDependency|Win32'">
-    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMinDependency|x64'">
-    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
@@ -160,11 +160,11 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ksuser.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(Platform)\$(Configuration)\portaudio_x86.dll</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\portaudio.def</ModuleDefinitionFile>
       <ProgramDatabaseFile>$(Platform)\$(Configuration)\portaudio_x86.pdb</ProgramDatabaseFile>
-      <ImportLibrary>$(Platform)\$(Configuration)\portaudio_x86.lib</ImportLibrary>
+      <ImportLibrary>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\portaudio.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Bscmake>
@@ -204,11 +204,11 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ksuser.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(Platform)\$(Configuration)\portaudio_x64.dll</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\portaudio.def</ModuleDefinitionFile>
       <ProgramDatabaseFile>$(Platform)\$(Configuration)/portaudio_x64.pdb</ProgramDatabaseFile>
-      <ImportLibrary>$(Platform)\$(Configuration)/portaudio_x64.lib</ImportLibrary>
+      <ImportLibrary>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\portaudio.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <Bscmake>
@@ -251,8 +251,7 @@
       <ModuleDefinitionFile>.\portaudio.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(Platform)\$(Configuration)\portaudio_x86.pdb</ProgramDatabaseFile>
-      <ImportLibrary>
-      </ImportLibrary>
+      <ImportLibrary>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\portaudio.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
@@ -296,8 +295,7 @@
       <ModuleDefinitionFile>.\portaudio.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDatabaseFile>
-      <ImportLibrary>
-      </ImportLibrary>
+      <ImportLibrary>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\portaudio.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <Bscmake>
@@ -337,11 +335,11 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ksuser.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(Platform)\$(Configuration)\portaudio_x86.dll</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\portaudio.def</ModuleDefinitionFile>
       <ProgramDatabaseFile>$(Platform)\$(Configuration)\portaudio_x86.pdb</ProgramDatabaseFile>
-      <ImportLibrary>$(Platform)\$(Configuration)\portaudio_x86.lib</ImportLibrary>
+      <ImportLibrary>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\portaudio.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Bscmake>
@@ -381,11 +379,11 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ksuser.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(Platform)\$(Configuration)\portaudio_x64.dll</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\portaudio.def</ModuleDefinitionFile>
       <ProgramDatabaseFile>$(Platform)\$(Configuration)/portaudio_x64.pdb</ProgramDatabaseFile>
-      <ImportLibrary>$(Platform)\$(Configuration)/portaudio_x64.lib</ImportLibrary>
+      <ImportLibrary>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\portaudio.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <Bscmake>

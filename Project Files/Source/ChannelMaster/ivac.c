@@ -353,7 +353,7 @@ PORT int StartAudioIVAC(int id) {
     a->inParam.suggestedLatency = a->pa_in_latency;
     a->inParam.sampleFormat = paFloat32; // KLJ: Changed to support audio
                                          // cards, especially loopback
-    // devices, more directly
+                                         // devices, more directly
 
     const PaDeviceInfo* indevInfo = Pa_GetDeviceInfo(in_dev);
     const PaDeviceInfo* outdevInfo = Pa_GetDeviceInfo(out_dev);

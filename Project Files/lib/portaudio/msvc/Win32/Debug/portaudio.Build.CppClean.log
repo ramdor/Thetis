@@ -26,14 +26,11 @@ u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\win32\debug\pa_asio.obj
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\win32\debug\asiolist.obj
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\win32\debug\asiodrivers.obj
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\win32\debug\asio.obj
-u:\wales\thetis-2.9.0\project files\source\win32\debug\portaudio_x86.lib
-u:\wales\thetis-2.9.0\project files\source\win32\debug\portaudio_x86.exp
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\win32\debug\portaudio.ilk
-u:\wales\thetis-2.9.0\project files\source\win32\debug\portaudio.dll
+u:\wales\thetis-2.9.0\project files\bin\x86\debug\portaudio.dll
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\win32\debug\portaudio_x86.pdb
-u:\wales\thetis-2.9.0\project files\source\win32\debug\portaudio.lib
-u:\wales\thetis-2.9.0\project files\source\win32\debug\portaudio.exp
-u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\win32\debug\portaudio_x86.ilk
+u:\wales\thetis-2.9.0\project files\bin\x86\debug\portaudio.lib
+u:\wales\thetis-2.9.0\project files\bin\x86\debug\portaudio.exp
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\win32\debug\portaudio.tlog\cl.command.1.tlog
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\win32\debug\portaudio.tlog\cl.read.1.tlog
 u:\wales\thetis-2.9.0\project files\lib\portaudio\msvc\win32\debug\portaudio.tlog\cl.write.1.tlog

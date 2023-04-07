@@ -90,6 +90,9 @@ namespace Thetis
         Font LEDLFont = null;
         Font LEDSFont = null;
         Font LEDMFont = null;
+#if (USE_PORTAUDIO_EXTRAS)
+        private AudioExtras.PortAudioExtras m_AudioExtras;
+#endif
 
         private bool BadDLL = false;
 
@@ -604,6 +607,12 @@ namespace Thetis
         {
             PortAudioForThetis.PA_Initialize();
             Audio.Populate();
+#if (USE_PORTAUDIO_EXTRAS)
+            m_AudioExtras = new AudioExtras.PortAudioExtras();
+#if (DEBUG)
+            AudioExtras.Tests.TestSaneDefaults();
+#endif
+#endif
             m_waiting_for_portaudio = false;
         }
 
@@ -1004,11 +1013,11 @@ namespace Thetis
                 Name = "Init PortAudioThread",
                 Priority = ThreadPriority.Highest,
                 IsBackground = true,
-                ApartmentState = ApartmentState.STA
 
             };
-
+            pat.SetApartmentState(ApartmentState.STA); // no ASIO devices without this
             pat.Start();
+
             Splash.SetStatus("Initializing Radio ..."); // Set progress point
             radio = new Radio(AppDataPath); // Initialize the Radio processor INIT_SLOW
             specRX = new SpecRX();
@@ -1079,7 +1088,7 @@ namespace Thetis
             initializing = false;
 
             Splash.SetStatus(
-                "Setting up DSP, please be patient ..."); // Set progress point
+                        "Setting up DSP, please be patient ..."); // Set progress point
 
             selectFilters();
             selectModes();
@@ -1093,8 +1102,8 @@ namespace Thetis
             Splash.SetStatus("Finished");
 
             Splash.SplashForm.Owner
-                = this; // So that main form will show/focus when splash disappears
-                        // //MW0LGE_21d done in show above
+                        = this; // So that main form will show/focus when splash disappears
+                                // //MW0LGE_21d done in show above
             Splash.CloseForm(); // End splash screen
 
             if (resetForAutoMerge)

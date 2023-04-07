@@ -51,8 +51,13 @@ namespace Thetis
     using System.Security.Cryptography;
     using System.Xml;
     using static Thetis.PortAudioForThetis;
-    using Thetis.AudioExtras;
 
+#if (USE_PORTAUDIO_EXTRAS)
+{
+    using static Thetis.PortAudioForThetis;
+    using Thetis.AudioExtras;
+    }
+#endif
     public partial class Setup : Form
     {
         private const string s_DEFAULT_GRADIENT
