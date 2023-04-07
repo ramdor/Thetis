@@ -981,7 +981,9 @@ namespace Thetis
         private static bool EXPOSEwb = true;
         private const int nrxa = 8;
         private static rxa[] rxa = new rxa[nrxa];
+
         private static wideband[] wideband = new wideband[3];
+
 
         private static void create_rxa()
         {
@@ -1013,6 +1015,7 @@ namespace Thetis
 
         #region wideband
 
+
         private static void create_wb(int adc)
         {
             if (EXPOSEwb)
@@ -1024,6 +1027,7 @@ namespace Thetis
 
         }
 
+
         public static wideband Getwb(int adc)
         {
             if (wideband[adc] == null || wideband[adc].IsDisposed)
@@ -1034,6 +1038,7 @@ namespace Thetis
 
             return wideband[adc];
         }
+
 
         public static void Hidewb(int adc)
         {
@@ -1052,6 +1057,7 @@ namespace Thetis
             if (wideband[adc] != null)
                 wideband[adc].SaveWideBand();
         }
+
 
         #endregion
 

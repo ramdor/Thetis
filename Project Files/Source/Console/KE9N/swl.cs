@@ -32,7 +32,9 @@ namespace Thetis
     {
 
         public SpotControl SpotForm;                     // ke9ns add  communications with spot.cs 
+#if (USE_SCANNER)
         public ScanControl ScanForm;                            // ke9ns add freq Scanner function
+#endif
 
         public static Console console;   // ke9ns mod  to allow console to pass back values to setup screen
         public Setup setupForm;   // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
@@ -41,7 +43,7 @@ namespace Thetis
         private string wave_folder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\Thetis";
 
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.GroupBoxTS grpPlayback;
+        //private System.Windows.Forms.GroupBoxTS grpPlayback;
         private System.Windows.Forms.GroupBox grpPlaylist;
         private TextBox textBox3;
         private CheckBoxTS chkAlwaysOnTop;
@@ -49,7 +51,7 @@ namespace Thetis
         private RichTextBox richTextBox1;
         private Button button2;
         private RichTextBox richTextBox2;
-        private IContainer components;
+        // private IContainer components;
 
         //   public DXMemList dxmemlist;
 
@@ -76,10 +78,10 @@ namespace Thetis
         {
             if (disposing)
             {
-                if (components != null)
-                {
-                    components.Dispose();
-                }
+                //if (components != null)
+               // {
+               //     components.Dispose();
+               // }
             }
             base.Dispose(disposing);
         }

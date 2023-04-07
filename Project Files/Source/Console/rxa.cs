@@ -21,31 +21,35 @@ namespace Thetis
         private Size console_basis_size = new Size(100, 100);
         private Size gr_display_size_basis = new Size(100, 100);
         private Size pic_display_size_basis = new Size(100, 100);
-       // rxaControls rxControls;
+        // rxaControls rxControls;
 
         public rxa(int i)
         {
             InitializeComponent();
             fwid = i;                                                       // firmware id
             stid = i - 2;                                                   // ChannelMaster stream id
-            chid = 2 * stid;                                                // WDSP channel id
+            chid = 2 * stid;
+#if (USE_PANDISPLAY)// WDSP channel id
             panDisplay.init = true;
             panDisplay.DisplayID = stid;
+#endif
             this.Text = "Using Rx" + fwid.ToString();
             this.Name = "rxa" + fwid.ToString();
             create_rxa();
             Common.RestoreForm(this, this.Name, false);
             ForceRxa();
             console_basis_size = this.Size;
+#if (USE_PANDISPLAY)
             gr_display_size_basis = this.panelPanDisplay.Size;
             pic_display_size_basis = this.panDisplay.Size;
+#endif
 
-          //  rxControls = new rxaControls(fwid);
+            //  rxControls = new rxaControls(fwid);
             //dockPanel.ShowDocumentIcon = false;
             //dockPanel.Theme = vS2012LightTheme1;
-          //  rxControls.Show(dockPanel, DockState.DockRightAutoHide);
+            //  rxControls.Show(dockPanel, DockState.DockRightAutoHide);
             //int width = dockPanel.GetDockWindowSize(DockState.DockRight);
-         }
+        }
 
         private void create_rxa()
         {
@@ -70,14 +74,16 @@ namespace Thetis
             udRXAAGCGain_ValueChanged(this, e);
             udRXAVolume_ValueChanged(this, e);
             udRXAMode_ValueChanged(this, e);
+#if (USE_PANDISPLAY)
             panDisplay.initAnalyzer();
+#endif
             udRXAFreq_ValueChanged(this, e);
-       }
+        }
 
         public long RXFreq
         {
             get { return (long)((double)udRXAFreq.Value * 1e6); }
-            set 
+            set
             {
                 udRXAFreq.Value = (decimal)(value * 1e-6);
             }
@@ -86,7 +92,9 @@ namespace Thetis
         private void udRXAFreq_ValueChanged(object sender, EventArgs e)
         {
             NetworkIO.SetVFOfreq(fwid, NetworkIO.Freq2PW((int)(1000000.0 * (double)udRXAFreq.Value)), 0); // sending phaseword to firmware         
-            panDisplay.VFOHz = RXFreq; 
+#if (USE_PANDISPLAY)
+            panDisplay.VFOHz = RXFreq;
+#endif
         }
 
         private void udRXAAGCGain_ValueChanged(object sender, EventArgs e)
@@ -134,6 +142,7 @@ namespace Thetis
             Common.SaveForm(this, this.Name);
         }
 
+#if (USE_PANDISPLAY)
         public PanDisplay pDisplay
         {
             get { return this.panDisplay; }
@@ -163,6 +172,7 @@ namespace Thetis
             //panDisplay.UpdateGraphicsBuffer();
             //panDisplay.pauseDisplayThread = false;
         }
+#endif
 
         private void rxa_Resize(object sender, EventArgs e)
         {
@@ -180,6 +190,7 @@ namespace Thetis
             int h_delta = this.Width - console_basis_size.Width;
             int v_delta = Math.Max(this.Height - console_basis_size.Height, 0);
 
+#if (USE_PANDISPLAY)
             panDisplay.pauseDisplayThread = true;
             panelPanDisplay.Size = new Size(gr_display_size_basis.Width + h_delta, gr_display_size_basis.Height + v_delta);
             panDisplay.Size = new Size(pic_display_size_basis.Width + h_delta, pic_display_size_basis.Height + v_delta);
@@ -187,6 +198,7 @@ namespace Thetis
             panDisplay.Init();
             panDisplay.UpdateGraphicsBuffer();
             panDisplay.pauseDisplayThread = false;
+#endif
 
         }
 

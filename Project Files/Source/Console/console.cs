@@ -157,7 +157,9 @@ namespace Thetis
         public WaveControl WaveForm;
 
         public SpotControl SpotForm; // ke9ns add DX spotter function
+#if(USE_SCANNER)
         public ScanControl ScanForm; // ke9ns add freq Scanner function
+#endif
 
         public SwlControl SwlForm; // ke9ns add band swl form
 
@@ -940,6 +942,7 @@ namespace Thetis
             InitializeComponent(); // Windows Forms Generated Code
             InitialiseAndromedaMenus();
             this.Visible = false;
+            this.Opacity = 0;
             //
             ucQuickRecallPad.console = this;
             Display.console = this;
@@ -1232,11 +1235,6 @@ namespace Thetis
                 }
 
                 this.Opacity = 0;
-                Show();
-                Application.DoEvents();
-                Hide();
-                Application.DoEvents();
-
                 Show();
                 try
                 {
@@ -19698,7 +19696,7 @@ namespace Thetis
 
                     // ptbRF_Scroll(this, EventArgs.Empty); //MW0LGE_21b scroll done
                     // in assignment of RF above
-
+#if(USE_SCANNER)
                     //================================================================================
                     // ke9ns ADD for use by scanner so it knows which band button
                     // your on currently MW0LGE_21a moved all to scancontrol where
@@ -19706,6 +19704,7 @@ namespace Thetis
                     if (ScanForm != null) ScanForm.BandChanged(rx1_band);
                     //==============================================================
                     // ke9ns end
+#endif
                 }
                 DisplayAriesRXAntenna();
 
@@ -28079,11 +28078,22 @@ namespace Thetis
                 HiPerfTimer objStopWatch = new HiPerfTimer();
                 double fFractionOfMs = 0;
                 double fThreadSleepLate = 0;
-                // uint thread = 0;
-                //			display_running = true;
+#if (DEBUG_RUNDISPLAY_FRAMES)
+                int last_time = 0;
+#endif
 
                 while (m_bDisplayLoopRunning) // true) //(chkPower.Checked)
                 {
+#if (DEBUG_RUNDISPLAY_FRAMES)
+                    if (last_time > 0)
+                    {
+                        int took = timeGetTime() - last_time;
+                        Debug.Print("Time between RunDisplay() iterations: " + took.ToString() + " ms.");
+                        Debug.Print("Frames per second (actual) = " + (1000 / took).ToString());
+
+                    }
+                    last_time = timeGetTime();
+#endif
                     if (m_bEnableDisplayDebug)
                     {
                         Display.DebugText = "chkVFOSplit : "
@@ -28520,25 +28530,6 @@ namespace Thetis
                         }
                     }
 
-                    // if (!MeterManager.SpectrumReady)
-                    //{
-                    //     float[] spec = passbandSpectrum(1);
-                    //     if (spec != null)
-                    //     {
-                    //         int nLength = spec.Length;
-                    //         MeterManager.ResizeSpectrum(nLength);
-
-                    //        fixed (void* srcptr = &spec[0])
-                    //        fixed (void* destptr =
-                    //        &MeterManager.newSpectrumPassband[0])
-                    //            Win32.memcpy(destptr, srcptr, nLength *
-                    //            sizeof(float));
-
-                    //        MeterManager.SpectrumReady = true;
-                    //    }
-                    //}
-
-                    //
                     Display.GetPixelsIssue = bGetPixelIssue;
 
                     // MW0LGE_21k9 always want to run the renderer, as swr warning
@@ -28565,11 +28556,17 @@ namespace Thetis
                     {
                         // wait for the calculated delay
                         objStopWatch.Reset();
+                        int slept = 0;
                         while (objStopWatch.ElapsedMsec <= dly)
                         {
-                            // Thread.Sleep(0);  // hmmm
+
+                            Thread.Sleep(1);  // hmmm. KLJ. CPU Load is properly excessive unless we at least Sleep(0) here.
+                            // we really ought to be giving up our time-slice here, especially if VAC is on
+                            ++slept;
                         }
                         fThreadSleepLate = objStopWatch.ElapsedMsec - dly;
+                        // Debug.Print("RunDisplay() (accurate) slept for " + slept.ToString() + " overshot:" + fThreadSleepLate.ToString());
+
                     }
                     else
                     {
@@ -28580,7 +28577,7 @@ namespace Thetis
 
                         int nWantToWait = (int)dly + nIntegerPart;
                         fThreadSleepLate = 0;
-
+                        int slept = 0;
                         if (nWantToWait > 0)
                         {
                             // time how long we actually sleep for, and use this
@@ -28591,16 +28588,20 @@ namespace Thetis
                                                        // be AT LEAST what we want
                             fThreadSleepLate
                                 = objStopWatch.ElapsedMsec - nWantToWait;
+                            slept += nWantToWait;
+                            // Debug.Print("RunDisplay() (non-accurate) slept for " + slept.ToString());
                         }
                         else if (fFractionOfMs > 0)
                         {
                             objStopWatch.Reset();
                             while (objStopWatch.ElapsedMsec <= fFractionOfMs)
                             {
-                                // Thread.Sleep(0);  // hmmm
+                                Thread.Sleep(0);  // hmmm. KLJ. CPU Load is properly excessive unless we Sleep(0) here.
+                                ++slept;
                             }
                             fFractionOfMs
                                 = objStopWatch.ElapsedMsec - fFractionOfMs;
+                            //Debug.Print("RunDisplay() (non-accurate) yielded " + slept.ToString() + " times.");
                         }
                     }
                 }

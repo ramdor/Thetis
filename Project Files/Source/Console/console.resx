@@ -14037,7 +14037,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="labelTS4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>270, 66</value>
+    <value>270, 64</value>
   </data>
   <data name="labelTS4.Size" type="System.Drawing.Size, System.Drawing">
     <value>32, 13</value>
@@ -14070,7 +14070,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="labelTS3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>210, 66</value>
+    <value>210, 64</value>
   </data>
   <data name="labelTS3.Size" type="System.Drawing.Size, System.Drawing">
     <value>28, 13</value>
@@ -14770,6 +14770,9 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </metadata>
   <data name="infoBar.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left, Right</value>
+  </data>
+  <data name="infoBar.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 8.25pt</value>
   </data>
   <data name="infoBar.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 245</value>

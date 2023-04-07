@@ -1,20 +1,242 @@
-Fri Mar 31 11:23:03 2023 +0100 - sjk7: Fix: master volume not working on VAC1. Mute button not working on VAC1.
-Thu Mar 30 20:04:38 2023 +0100 - BRUNO: Reinstate cpu monitor
-Thu Mar 30 19:08:35 2023 +0100 - sjk7: tx mon volume was not working on VAC and mute button not working on VAC
-Thu Mar 30 18:46:33 2023 +0100 - sjk7: Log error if cpu monitor fails to create
-Thu Mar 30 18:34:46 2023 +0100 - sjk7: AVRT_PRIORITY_CRITICAL is the correct ultra-thread priority
-Thu Mar 30 16:19:07 2023 +0100 - sjk7: Added G7KLJChangelog.txt
-Thu Mar 30 15:37:16 2023 +0100 - sjk7: Added G7KLJChangelog.txt
-Thu Mar 30 14:50:48 2023 +0100 - sjk7: Update ReadMe.md
-Thu Mar 30 14:47:17 2023 +0100 - sjk7: Update ReadMe.md
-Thu Mar 30 13:19:27 2023 +0100 - sjk7: Fixed console not remembering RestoreBounds when saved when Maximized. Richie to check as there is some DropShadow stuff going on there that I have probably broken
-Thu Mar 30 12:51:36 2023 +0100 - sjk7: Some work on threads not exiting in ChannelMaster, leading to refusal of high MM thread priorities
-Thu Mar 30 08:49:16 2023 +0100 - sjk7: THREAD_PRIORITY_TIME_CRITICAL is most appropriate for a fallback thread scheduling
-Thu Mar 30 07:27:05 2023 +0100 - sjk7: Fade-in for main console window
-Thu Mar 30 07:11:57 2023 +0100 - sjk7: Fade-in for main console window
-Thu Mar 30 06:53:38 2023 +0100 - sjk7: Slight startup speed improvement. Make Cpu counters init in a different thread.
-Thu Mar 30 04:56:19 2023 +0100 - sjk7: Audio fails to start gets in a tangle fixed
-Thu Mar 30 04:53:05 2023 +0100 - sjk7: Automated build date for display on the Console window. It's one less thing to forget when making a release!
-Thu Mar 30 04:39:12 2023 +0100 - sjk7: VAC start failure now correctly avoids starting the radio
-Thu Mar 30 03:32:35 2023 +0100 - sjk7: Latest PortAudio, lots of perf improvements to VAC, including Multimedia threading.
-Thu Mar 30 03:25:49 2023 +0100 - sjk7: Added clang-format file
+9e78536 (HEAD -> master, origin/master, origin/HEAD) All seems OK to release
+d28e86f Refactoring Portaudio background thread Init
+3369ca3 Fixed regression where no spectra displayed during tx
+d474b0f Now working with the current release of PortAudio, which has WASAPI loopback support
+3347dc9 Now working with the current release of PortAudio, which has WASAPI loopback support
+7ed483c Part way through adding the REAL portaudio as a dependency with source)
+a86e9f6 Portaudio needs testing
+e6e931e Audio wip. Soundcard selection works again. Yay.
+d7404c5 Audio wip
+ea89988 AudioExtras means we have to lose the PADevice helper in setup.cs. So now lots wip
+969d9c4 AudioExtras wip
+06ecaa9 Modified PortAudio to allow easier checking whether or not a Format is supported for the new AudioExtras class
+0f85d86 Working towards getting sane defaults for VAC
+aea163c Make export TX profile more sane, now with a choice as to where the file that you save goes.
+d3cbd52 TX Profile export and input cleaned up. You can choose the location and filename of the profile now. WIP is setting sane defaults for HL2 users.
+c49d659 New High SWR notification method (needs testing) Make averaging enabled or not more consistent between console and setup
+39855c9 Began decreasing memory footprint (by deleting unused variables) and improve HIGH SWR display to the user(no annoying, and possibly buried) messageboxes.
+c0186ca Added some more files to gitignore
+063b0d1 ChannelMaster not building in bin directory, fixed in x64 Release
+fa2588b Setup form now properly owned by console.
+64ac0db Only show exclusive audio check on VAC1 for appropriate APIs (WASAPI and Kernel streaming
+a8a611c Updated controls
+293e7c0 Made radio connection more user friendly by trying both protocols if the static ip is not set
+519ce13 Confidence push
+d35226f Note: using VS2017 for development (32-bit) as VS 2022 is munching all the cpu and its hard to get stuff done
+5d55325 Display Experiments
+afe244d Widened UI display for soundcards, added exclusive mode for lower VAC latency, undid my mute button fix (because I didn't see the checkbox for it on setup). Master AF now works on VAC1
+24bfc40 PortAudio now initialised not on the main thread. App starts much faster!
+15ab9a5 updated KLJ changelog.txt
+5d34c1a Fix: master volume not working on VAC1. Mute button not working on VAC1.
+84e41d1 Reinstate cpu monitor
+8dbda6c tx mon volume was not working on VAC and mute button not working on VAC
+ec583a9 Log error if cpu monitor fails to create
+e3b415b AVRT_PRIORITY_CRITICAL is the correct ultra-thread priority
+8400e83 Added G7KLJChangelog.txt
+27875bb Added G7KLJChangelog.txt
+797e365 (tag: first) Update ReadMe.md
+2c238a5 Update ReadMe.md
+349643c Fixed console not remembering RestoreBounds when saved when Maximized. Richie to check as there is some DropShadow stuff going on there that I have probably broken
+70dc02b Some work on threads not exiting in ChannelMaster, leading to refusal of high MM thread priorities
+9a26b42 THREAD_PRIORITY_TIME_CRITICAL is most appropriate for a fallback thread scheduling
+5c4ef6b Fade-in for main console window
+a0d39ae Fade-in for main console window
+d2de138 Slight startup speed improvement. Make Cpu counters init in a different thread.
+2f5029b Audio fails to start gets in a tangle fixed
+c8ed16d Automated build date for display on the Console window. It's one less thing to forget when making a release!
+2b3ec84 VAC start failure now correctly avoids starting the radio
+73230a8 Latest PortAudio, lots of perf improvements to VAC, including Multimedia threading.
+21c00d5 Added clang-format file
+11d7a1c (tag: v2.9.0.8pre) Merge pull request #103 from ramdor/mutliMeter
+5679bb8 fix for small vfo text fade rx/tx
+893764c Update ReadMe.md
+46ac846 Merge pull request #102 from ramdor/mutliMeter
+27198f3 version change 2.9.0.8. Fix for disable copy/paste meter settings when no entries/new db
+49df874 copy/paste meter setting
+38575df vfodisplay tidy up with smaller Hz values, signal-text display resizes if peak values turned off, signal-text display S reading now fixed to middle and dbmover is offset. Few bugs fixed with itemgroup size on some meters
+6c16f3d remember UR8GX
+754b661 disabled controls when empty db
+ec4697d added ignore time config
+a0f19dc deadlock issue fixed
+05c066e meter size minimum change, couple of bugs squished. Note, you can not cancel any changes to meter settings to undo them. If anything looks incorrect, then remove/re-add meter item.
+12ef91e smeter text added. Also work on spectral passband view, but commented out for now as threading issues uncovered in wdsp SnapSpectrum. Eye graphics no longer uses -glass tag.
+0af4811 some issues regarding group items resolved. It should import all old settings, except if VFOdisplay has been used. Just remove/re-add. Bezel size config added. VFOdisplay config added.
+70aac96 lots of updates, added vfodisplay and clock. Not possible to do any config for the vfodisplay yet. Clock settings uses new group as a test idea. Clear the values in audio under/over if clicking on the notification icon on console window
+451bc0a just code store, gave up on vfodisplay meter, but will keep code here
+c4e3160 Update ReadMe.md
+bdf3430 Merge pull request #98 from ramdor/mutliMeter
+556399d mid day backup, txt fade fixed, filled and segmented now have colour after the high zone, hbars for pwr/revpwr can have pwr limits set, click for s/dbm/uv, reset history delay now fixed, and values init
+e7e4e60 added customisable power scales for fwd/rev power bars
+da76b08 changes to resetting of values on mox on/off, and band change
+5a50b22 fix container show issue
+34f9f36 Changed dx image loader so that required images are loaded only, not the entire meter skins folder. Now possible to click Signal/AvgSignal bar to swap dbm/sunit/uv.
+25c379b fix issue with bar settings
+3115026 removed the need for scaled images, now cross and ananmm have notion of max power. Please clear out your meters folder, and re-run the skin installer.
+8220ec0 change to new meter name, border and color added for container
+ff5365a last commit of the day
+d28c8f1 min/max delta, dark mode, large image support
+baf3c52 caching for percent calcs, large image support
+a6e50fc fixes, changes, more of that
+0f38242 nightly commit. Settings now saved for meter items. Still to implement the hiding/disabling of controls that do not apply to specific meter type. Font options to implement. Skin options for background images.
+2c46226 history fade issue with fade testing
+e624acc fade test issue
+f2e9dba coloured entries for meter selection, red=tx,green=tx. Highlight switches off when setup closed. 5 digit has used in title of every meter window so that OBS etc can use window name
+f654f48 values are set to lowpoint when switching mox.
+bd6ede7 nightly store, basic adding of meters to containers. Issues: certain values need to drop, such as needles for pwr when coming out of mox. Intial state values for readings, ignore history for 1 second after mox/band change. Issues like that. Lots to do still.
+d0f4279 backup, massive wip, moving towards multiple panels
+f633592 late night backup, changed ADC L and ADC R to ADC_PK and ADC_AV, prevously both L+R were same value. Implemented general scale function, other tweaks
+edb9496 evening backup, vertical meters started
+ddb5059 late night backup. Added pin to top for floating meter window, also fixed the axis lock when docked so doesnt jump to odd positions. Few other fixes here and there.
+02ac0ec late night backup, added normalise PBSNR buttons in setup, copy of spectrum data so that notches do not cause change to noise floor average
+70d4759 Added SNR meter, option to disable notch visuals, some other meter types built and tested, automatic Russian flag stuff disabled
+a042174 fixes for magic eye, notch fix
+2942aba Merge pull request #93 from ramdor/mutliMeter
+b4f743f some meter changes, fix for rx2 with P1 not initialising, visual notch, belts/braces for NotchDB, instant feedback to dragging notches
+f11ccde nightly store, fixes for cw pitch ofset in n1mm + tci, more meter work
+06ca323 more meter work, fixes for cwpitch in TCI and N1MM
+772f5e2 bar meter work
+f14ced5 Merge pull request #86 from ramdor/mutliMeter
+afa9c50 mainly FM changes by Warren, some other general fixes/changes
+7c35243 -fix: catstructs.xml now displayed in cat test window -add: option to swap vfo wheels in midi -add: ZZZW will change the swap wheel state in midi, can also be used to query current state -add: tooltips on page2 infobar values -add: calibration options for AMP calculations added
+bb3fcdb Merge pull request #63 from ramdor/mutliMeter
+02c8a77 Day 1 return -fix: CAT TX will now be turned off if MOX/Power is pressed and system was previously in a MOX/TX state (note: if you manual mox, you will not be able to un PTT via cat) -fix: some additional null checks in ucInfoBar -fix: Tune was not using cw_pitch correctly when in CW. Issue introduced in 21d -add: option to swap vfo wheels in midi -add: Ukraine flag turned off. Now there is a setting option to support Ukraine
+8537ea2 Merge pull request #52 from ramdor/mutliMeter
+25e7f10 docked windows, not finshed yet, more to do, just a backup
+5549f16 Merge pull request #46 from ramdor/mutliMeter
+bda0c97 more meter work
+ebd8751 Update ReadMe.md
+3a6c458 Update ReadMe.md
+d8af145 Merge pull request #45 from ramdor/mutliMeter
+89725df changes for ellipse based needles
+6f69570 Merge pull request #44 from ramdor/mutliMeter
+9e24589 fix for calib level issue, more multimeter work
+c977b0d Merge pull request #43 from ramdor/mutliMeter
+92f1759 wip meters, fix to PA profile when not on ham band, LFMF button fix
+0f6e005 (tag: v2.9.0.6) Merge pull request #39 from ramdor/mutliMeter
+6943dfe [2.9.0.6] - includes fix for Tdrv issue when upgrading
+0aaae43 Merge pull request #38 from ramdor/mutliMeter
+e01f37e 2.9.0.6 pre-release, work to start on multi meters. This includes 'hack' fixes to the width/shift sliders when using mouse. Changes to RX2 level calibration, and reset ability.
+03175ee Merge pull request #36 from ramdor/mutliMeter
+be23736 fix for ATT changing to S-ATT
+4529cab (tag: v2.9.0.5) Merge pull request #35 from ramdor/mutliMeter
+96c5e48 2.9.0.5
+9e2e0bc Merge pull request #33 from ramdor/PowerVsDrive
+aba9519 diveristy menu is green when enabled, changes to GetDCC
+475aea3 Merge pull request #32 from ramdor/PowerVsDrive
+fa65f69 attenuation fixes
+af68f45 Merge pull request #31 from ramdor/PowerVsDrive
+a1e62e5 fix for ATT when rx1 and rx2 adc's are the same. Also wip GridMin to NF
+a8ad0a3 Merge pull request #30 from ramdor/PowerVsDrive
+1b06d50 decimal on NF
+06f385b Merge pull request #29 from ramdor/PowerVsDrive
+f1b8c5d 2tone fix
+7c45804 Merge pull request #28 from ramdor/PowerVsDrive
+cfa8995 attenuator changes
+d246cc5 Merge pull request #27 from ramdor/PowerVsDrive
+307fe01 still WIP
+80ca42d Merge pull request #26 from ramdor/PowerVsDrive
+f9738d6 fixes, resize collapsed view, blob drop enable, NF changes, new info in page2 of info bar, etc.
+cc93596 Merge pull request #25 from ramdor/PowerVsDrive
+ee0a661 PA completed 2
+1376ddd Merge pull request #24 from ramdor/PowerVsDrive
+f1c9ccd adjust sliders only if mox
+d3fcf91 offset system done
+7af9d18 encoding of PA profile name
+abef8ff reset button for PA profiles was not re-enabling after a TX
+f153deb fixes, tidy up
+63f4dab one update for all the number up/down's
+977ce3c PA profile system completed
+59bceb3 Merge pull request #23 from ramdor/subFixVS
+69a3c0d import old PA values
+aa1807d Merge pull request #22 from ramdor/subFixVS
+c28b23a wip PA profiles
+6e73698 Merge pull request #21 from ramdor/revert-20-master
+0844bff Revert "Testing git collab"
+d9f405a after fetch
+38d6edb wip - PA profiles, how will it handle Chris' comment
+58fe7fa Merge pull request #20 from W2PA/master
+4b94911 Testing git collab
+edc3fb4 WSAClearup issue fixed, progress with limit power sliders
+e9c9da1 general backup commit - amplifier, power limit system, fixes for compressed view
+37fbc75 added split to init state of TCI. split needs reworking. Some WIP in network related to audio amp, few other changes. This is pre-tun slider.
+9c33121 expert sdr emulation options
+536dba0 (tag: v2.9.0.4-pre, tag: v2.9.0.4) assembly to 2.9.0.4, changes to ucInfoBar widths, dBHz for RBW and passband, IPv4 helper in setup
+6bfb46c dBHz for bin width, and rx filter width, page2 info bar
+411aea4 log10 might help
+622c06c dBHz in page 2 of info bar, cached colours count in debug
+cc7d66b sample rate check for Display PS-RX and PS-TX spectra
+cd0813b 22b(test) - manifest change, fixes for width/shift sliders
+7d1dd49 Merge branch 'TAPR:master' into master
+fb18301 Update issue templates
+3bd843f Update issue templates
+998504e v2.9.0
+f066c5d added WindowsFirewallHelper.dll into the installer, changed minimum version to 601 from 603
+804128e vs2022 change for x86 wdsp
+a37ab4c (tag: v2.9.0.1) revision number 1 increment
+a4bc1da 22a - changes that didnt make 2.9.0
+49939fc v2.9.0
+04f9648 update for v2.9.0
+ed4c27c (tag: v2.9.0) files cleanup
+3021a9b (tag: v2.8.11) v2.3.11 10-20-2020
+67e9518 Update .gitignore
+24bc167 v2.8.9 10-13-2020
+883ba65 v2.8.9 10-13-2020
+455b63e v2.8.9 10-13-2020
+504b730 (tag: v2.8.9) update file
+10a6a52 update file
+b301855 v2.8.8 10-10-2020
+40281f9 update files
+9c8057f (tag: v2.8.8) v2.8.8 10-10-2020
+86f91df v2.8.7 10-09-2020
+0b0273e Update file
+1d1ab59 v2.8.7 update file
+de63c0f (tag: v2.8.7) v2.8.6
+43419a1 (tag: v2.8.6) update document
+b2a7a41 document add
+78c3a29 Code clean-up
+58b0e2d Code clean-up
+1f5cd93 v2.6.9
+3a6cd5b Update Thetis v2.6.9 Change Log.pdf
+38082c8 Create Thetis v2.6.9 Change Log.pdf
+5905f83 v2.6.9
+759859b (tag: v2.6.9) v2.6.8
+c175e140b v2.6.8
+4b5eba3 update files
+4d34197 update skins
+6b3394f Update ReadMe.md
+b556667 Update ReadMe.md
+ea1c263 v2.6.8
+3a3c821 v2.6.8
+4b9e8db Create Thetis v2.6.8 Change Log.pdf
+a498bfb (tag: v2.6.8) update file
+716f345 (tag: v2.6.7) v2.6.7
+e7cbd1d v2.6.7
+d5c6d32 v2.6.7
+8d480e1 (tag: v2.6.6) update file
+6299b3b Update File
+4b63eac v2.6.6
+f3857d4 v2.6.6
+1300aba v2.6.5
+d8dbb8d (tag: v2.6.5) v2.6.4
+d317a29 v2.6.4
+206c7a3 update file
+4b6f2be v2.6.4
+e6637f6 v2.6.4
+ba0552f file update
+99cb65b v2.6.4
+61ca6d1 (tag: v.2.6.4) v2.6.0
+71780ee (tag: v2.6-beta.0, tag: v2.5-beta.3) v2.5.3
+411ce92 Merge pull request #5 from TAPR/Doug's-Thetis-updates
+e4a4202 v2.5.2
+b1306cd (tag: v2.5-beta.2) Merge pull request #4 from TAPR/Doug's-Thetis-updates
+0f0043d v2.3.11
+07af77f Merge pull request #3 from TAPR/2017-03-13_NR0V
+2d6353a 2017-03-13_NR0V
+b00857a Merge remote-tracking branch 'refs/remotes/origin/revert-1-2017-03-13_PS_Changes'
+1cfce5f Merge remote-tracking branch 'refs/remotes/origin/master' into revert-1-2017-03-13_PS_Changes
+47cbd78 Merge pull request #2 from TAPR/revert-1-2017-03-13_PS_Changes
+2e6087a Revert "2013-03-13 Latest PS Changes"
+4dc86c5 Merge pull request #1 from TAPR/2017-03-13_PS_Changes
+64cd773 2013-03-13 Latest PS Changes
+23be451 (tag: v.2.3.11) delete installers folder
+9181717 2.3.11

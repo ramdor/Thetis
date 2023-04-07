@@ -1,3 +1,4 @@
+
 //=================================================================
 // pandisplay.cs
 //=================================================================
@@ -29,6 +30,7 @@
 //
 // Waterfall AGC Modifications Copyright (C) 2013 Phil Harman (VK6APH)
 //
+#if (USE_PANDISPLAY)
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -6085,3 +6087,4 @@ namespace Thetis
         #endregion
     }
 }
+#endif

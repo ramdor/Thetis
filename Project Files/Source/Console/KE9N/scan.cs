@@ -29,6 +29,7 @@ using System.Windows.Forms;
 
 namespace Thetis
 {
+
     public class ScanControl : Form
     {
         public static Console console; // ke9ns mod  to allow console to pass back
@@ -856,4 +857,7 @@ namespace Thetis
 
     } // scancontrol
 
+
 } // powersdr
+
+
