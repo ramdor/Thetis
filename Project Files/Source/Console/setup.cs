@@ -912,67 +912,116 @@ namespace Thetis
                 radP1DDC6ADC2.Checked = false;
         }
 
+        List<int> getSampleRatesForProtocol() // KLJ
+        {
+            var ret = new List<int>();
+            var common = new List<int>();
+            common.Add(48000);
+            common.Add(96000);
+            common.Add(192000);
+            ret.AddRange(common);
+
+            // only add the higher bitrates if applicable:
+            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH || Hl2.HermesLite2)
+            {
+                ret.Add(384000);
+            }
+
+            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
+            {
+
+                ret.Add(768000);
+                ret.Add(153600);
+            }
+
+            return ret;
+        }
+
+        private bool m_popping_radio_samplerates = false;
+
+        private void initSRCombo(ComboBoxTS cbo, List<string> recoveryList)
+        {
+            bool was_valid_selection = false;
+            int initial_value = 0;
+            if (cbo.SelectedItem != null)
+            {
+                string initially_selected = cbo.SelectedItem.ToString();
+                bool ok = int.TryParse(initially_selected, out initial_value);
+                if (!ok) initial_value = 0;
+            }
+            bool found = false;
+
+            try
+            {
+                m_popping_radio_samplerates = true;
+                var list = getSampleRatesForProtocol();
+                was_valid_selection = list.Contains(initial_value);
+                cbo.Items.Clear();
+                cbo.Items.AddRange(list.Cast<Object>().ToArray());
+
+                if (was_valid_selection)
+                {
+                    int i = 0;
+                    foreach (var n in cbo.Items)
+                    {
+                        if (n.ToString() == initial_value.ToString())
+                        {
+                            cbo.SelectedIndex = i;
+                            found = true;
+                            break;
+                        }
+
+                        ++i;
+                    }
+                }
+                /*/ KLJ: I do not know what this 'needs recovering' is
+                if (needsRecovering(recoveryList, cbo.Name))
+                {
+                    if (cbo.SelectedIndex < 0)
+                        cbo.Text = "192000";
+                }
+                else
+                /*/
+
+                if (!found)
+                {
+                    int i = 0;
+                    foreach (var n in cbo.Items)
+                    {
+                        if (n.ToString() == "192000")
+                        {
+                            m_popping_radio_samplerates = false;
+                            cbo.SelectedIndex = i;
+                            m_popping_radio_samplerates = true;
+                            found = true;
+                            break;
+                        }
+
+                        ++i;
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+                Debug.Assert(false);
+            }
+            finally
+            {
+                // Debug.Assert(found);
+                m_popping_radio_samplerates = false;
+            }
+
+        }
+
         public void InitAudioTab(List<string> recoveryList = null)
         {
-            if (!comboAudioSampleRate1.Items.Contains(96000))
-                comboAudioSampleRate1.Items.Add(96000);
-            if (!comboAudioSampleRate1.Items.Contains(192000))
-                comboAudioSampleRate1.Items.Add(192000);
+            Debug.Assert(recoveryList == null);
+            initSRCombo(comboAudioSampleRate1, recoveryList);
+            initSRCombo(comboAudioSampleRateRX2, recoveryList);
 
-            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
-            {
-                if (!comboAudioSampleRate1.Items.Contains(384000))
-                    comboAudioSampleRate1.Items.Add(384000);
-                if (!comboAudioSampleRate1.Items.Contains(768000))
-                    comboAudioSampleRate1.Items.Add(768000);
-                if (!comboAudioSampleRate1.Items.Contains(1536000))
-                    comboAudioSampleRate1.Items.Add(1536000);
-            }
-            else
-            {
-                if (comboAudioSampleRate1.Items.Contains(384000))
-                    comboAudioSampleRate1.Items.Remove(384000);
-                if (comboAudioSampleRate1.Items.Contains(768000))
-                    comboAudioSampleRate1.Items.Remove(768000);
-                if (comboAudioSampleRate1.Items.Contains(1536000))
-                    comboAudioSampleRate1.Items.Remove(1536000);
-            }
+            Debug.Assert(comboAudioSampleRate1.Items.Count == comboAudioSampleRateRX2.Items.Count);
 
-            if (needsRecovering(recoveryList, "comboAudioSampleRate1"))
-            {
-                if (comboAudioSampleRate1.SelectedIndex < 0)
-                    comboAudioSampleRate1.Text = "192000";
-            }
-
-            if (!comboAudioSampleRateRX2.Items.Contains(96000))
-                comboAudioSampleRateRX2.Items.Add(96000);
-            if (!comboAudioSampleRateRX2.Items.Contains(192000))
-                comboAudioSampleRateRX2.Items.Add(192000);
-
-            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
-            {
-                if (!comboAudioSampleRateRX2.Items.Contains(384000))
-                    comboAudioSampleRateRX2.Items.Add(384000);
-                if (!comboAudioSampleRateRX2.Items.Contains(768000))
-                    comboAudioSampleRateRX2.Items.Add(768000);
-                if (!comboAudioSampleRateRX2.Items.Contains(1536000))
-                    comboAudioSampleRateRX2.Items.Add(1536000);
-            }
-            else
-            {
-                if (comboAudioSampleRateRX2.Items.Contains(384000))
-                    comboAudioSampleRateRX2.Items.Remove(384000);
-                if (comboAudioSampleRateRX2.Items.Contains(768000))
-                    comboAudioSampleRateRX2.Items.Remove(768000);
-                if (comboAudioSampleRateRX2.Items.Contains(1536000))
-                    comboAudioSampleRateRX2.Items.Remove(1536000);
-            }
-
-            if (needsRecovering(recoveryList, "comboAudioSampleRateRX2"))
-            {
-                if (comboAudioSampleRateRX2.SelectedIndex < 0)
-                    comboAudioSampleRateRX2.Text = "192000";
-            }
         }
 
         private void InitAdvancedAudioTab(List<string> recoveryList = null)
@@ -8686,27 +8735,6 @@ namespace Thetis
                 }
             }
 
-            // if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
-            //{
-            //     comboAudioSampleRateRX2.SelectedIndex =
-            //     comboAudioSampleRate1.SelectedIndex; comboAudioSampleRateRX2.Enabled
-            //     = false; comboAudioSampleRateRX2_SelectedIndexChanged(this, e);
-            // }
-            // else
-            //{
-            //     comboAudioSampleRateRX2.Enabled = true;
-            //     comboAudioSampleRateRX2_SelectedIndexChanged(this, e);
-            // }
-
-            // if (console.CurrentHPSDRModel == HPSDRModel.ANAN10E ||
-            //     console.CurrentHPSDRModel == HPSDRModel.ANAN100B)
-            //{
-            //     // if it's a 10E/100B, set RX2 sample_rate equal to RX1 rate
-            //     comboAudioSampleRateRX2.Enabled = false;
-            //     comboAudioSampleRateRX2.SelectedIndex =
-            //     comboAudioSampleRate1.SelectedIndex;
-            //     comboAudioSampleRateRX2_SelectedIndexChanged(this, e);
-            // }
         }
 
         private void comboAudioSampleRateRX2_SelectedIndexChanged(
@@ -28527,7 +28555,9 @@ namespace Thetis
                 if (chkHermesLite2.Checked && canDo != 0)
                 {
                     Hl2.ApplyHL2Defaults();
+
                 }
+                InitAudioTab();
             }
         }
 

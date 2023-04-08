@@ -1022,8 +1022,6 @@
             this.panelModeSpecificPhone = new System.Windows.Forms.PanelTS();
             this.labelTS2 = new System.Windows.Forms.LabelTS();
             this.lblPAProfile = new System.Windows.Forms.LabelTS();
-            this.labelTS4 = new System.Windows.Forms.LabelTS();
-            this.labelTS3 = new System.Windows.Forms.LabelTS();
             this.picNoiseGate = new System.Windows.Forms.PictureBox();
             this.lblNoiseGateVal = new System.Windows.Forms.LabelTS();
             this.ptbNoiseGate = new Thetis.PrettyTrackBar();
@@ -1036,6 +1034,8 @@
             this.ptbMic = new Thetis.PrettyTrackBar();
             this.lblMIC = new System.Windows.Forms.LabelTS();
             this.lblTransmitProfile = new System.Windows.Forms.LabelTS();
+            this.labelTS4 = new System.Windows.Forms.LabelTS();
+            this.labelTS3 = new System.Windows.Forms.LabelTS();
             this.panelModeSpecificDigital = new System.Windows.Forms.PanelTS();
             this.lblVACTXIndicator = new System.Windows.Forms.LabelTS();
             this.lblVACRXIndicator = new System.Windows.Forms.LabelTS();
@@ -6298,8 +6298,6 @@
             this.panelModeSpecificPhone.BackColor = System.Drawing.Color.Transparent;
             this.panelModeSpecificPhone.Controls.Add(this.labelTS2);
             this.panelModeSpecificPhone.Controls.Add(this.lblPAProfile);
-            this.panelModeSpecificPhone.Controls.Add(this.labelTS4);
-            this.panelModeSpecificPhone.Controls.Add(this.labelTS3);
             this.panelModeSpecificPhone.Controls.Add(this.udTXFilterLow);
             this.panelModeSpecificPhone.Controls.Add(this.udTXFilterHigh);
             this.panelModeSpecificPhone.Controls.Add(this.chkMicMute);
@@ -6323,6 +6321,8 @@
             this.panelModeSpecificPhone.Controls.Add(this.chkVOX);
             this.panelModeSpecificPhone.Controls.Add(this.chkNoiseGate);
             this.panelModeSpecificPhone.Controls.Add(this.comboAMTXProfile);
+            this.panelModeSpecificPhone.Controls.Add(this.labelTS4);
+            this.panelModeSpecificPhone.Controls.Add(this.labelTS3);
             this.panelModeSpecificPhone.Name = "panelModeSpecificPhone";
             // 
             // labelTS2
@@ -6336,18 +6336,6 @@
             resources.ApplyResources(this.lblPAProfile, "lblPAProfile");
             this.lblPAProfile.ForeColor = System.Drawing.Color.White;
             this.lblPAProfile.Name = "lblPAProfile";
-            // 
-            // labelTS4
-            // 
-            resources.ApplyResources(this.labelTS4, "labelTS4");
-            this.labelTS4.ForeColor = System.Drawing.Color.White;
-            this.labelTS4.Name = "labelTS4";
-            // 
-            // labelTS3
-            // 
-            resources.ApplyResources(this.labelTS3, "labelTS3");
-            this.labelTS3.ForeColor = System.Drawing.Color.White;
-            this.labelTS3.Name = "labelTS3";
             // 
             // picNoiseGate
             // 
@@ -6472,6 +6460,18 @@
             this.lblTransmitProfile.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.lblTransmitProfile, "lblTransmitProfile");
             this.lblTransmitProfile.Name = "lblTransmitProfile";
+            // 
+            // labelTS4
+            // 
+            resources.ApplyResources(this.labelTS4, "labelTS4");
+            this.labelTS4.ForeColor = System.Drawing.Color.White;
+            this.labelTS4.Name = "labelTS4";
+            // 
+            // labelTS3
+            // 
+            resources.ApplyResources(this.labelTS3, "labelTS3");
+            this.labelTS3.ForeColor = System.Drawing.Color.White;
+            this.labelTS3.Name = "labelTS3";
             // 
             // panelModeSpecificDigital
             // 

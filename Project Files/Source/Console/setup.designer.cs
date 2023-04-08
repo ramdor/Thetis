@@ -20849,7 +20849,7 @@
             this.grpAudioSampleRateRX2.Controls.Add(this.comboAudioSampleRateRX2);
             this.grpAudioSampleRateRX2.Location = new System.Drawing.Point(161, 16);
             this.grpAudioSampleRateRX2.Name = "grpAudioSampleRateRX2";
-            this.grpAudioSampleRateRX2.Size = new System.Drawing.Size(111, 56);
+            this.grpAudioSampleRateRX2.Size = new System.Drawing.Size(135, 56);
             this.grpAudioSampleRateRX2.TabIndex = 52;
             this.grpAudioSampleRateRX2.TabStop = false;
             this.grpAudioSampleRateRX2.Text = "RX2 Sample Rate";
@@ -20862,7 +20862,7 @@
             "48000"});
             this.comboAudioSampleRateRX2.Location = new System.Drawing.Point(16, 24);
             this.comboAudioSampleRateRX2.Name = "comboAudioSampleRateRX2";
-            this.comboAudioSampleRateRX2.Size = new System.Drawing.Size(70, 21);
+            this.comboAudioSampleRateRX2.Size = new System.Drawing.Size(88, 21);
             this.comboAudioSampleRateRX2.TabIndex = 4;
             this.toolTip1.SetToolTip(this.comboAudioSampleRateRX2, "Sample Rate -- Higher sampling rates yield a wider panadapter and less latency at" +
         " a cost of CPU% and filter sharpness");
@@ -21026,7 +21026,7 @@
             this.grpAudioSampleRate1.Controls.Add(this.comboAudioSampleRate1);
             this.grpAudioSampleRate1.Location = new System.Drawing.Point(8, 16);
             this.grpAudioSampleRate1.Name = "grpAudioSampleRate1";
-            this.grpAudioSampleRate1.Size = new System.Drawing.Size(111, 56);
+            this.grpAudioSampleRate1.Size = new System.Drawing.Size(126, 56);
             this.grpAudioSampleRate1.TabIndex = 35;
             this.grpAudioSampleRate1.TabStop = false;
             this.grpAudioSampleRate1.Text = "RX1 Sample Rate";
@@ -21039,7 +21039,7 @@
             "48000"});
             this.comboAudioSampleRate1.Location = new System.Drawing.Point(16, 24);
             this.comboAudioSampleRate1.Name = "comboAudioSampleRate1";
-            this.comboAudioSampleRate1.Size = new System.Drawing.Size(70, 21);
+            this.comboAudioSampleRate1.Size = new System.Drawing.Size(90, 21);
             this.comboAudioSampleRate1.TabIndex = 4;
             this.toolTip1.SetToolTip(this.comboAudioSampleRate1, "Sample Rate -- Higher sampling rates yield a wider panadapter and less latency at" +
         " a cost of CPU% and filter sharpness");
@@ -43451,7 +43451,7 @@
             65536});
             this.ud10PA1W.Location = new System.Drawing.Point(48, 24);
             this.ud10PA1W.Maximum = new decimal(new int[] {
-            150,
+            200,
             0,
             0,
             0});
@@ -43480,7 +43480,7 @@
             65536});
             this.ud10PA10W.Location = new System.Drawing.Point(184, 72);
             this.ud10PA10W.Maximum = new decimal(new int[] {
-            12,
+            200,
             0,
             0,
             0});
@@ -43531,7 +43531,7 @@
             65536});
             this.ud10PA9W.Location = new System.Drawing.Point(184, 48);
             this.ud10PA9W.Maximum = new decimal(new int[] {
-            11,
+            200,
             0,
             0,
             0});
@@ -43583,7 +43583,7 @@
             65536});
             this.ud10PA11W.Location = new System.Drawing.Point(184, 96);
             this.ud10PA11W.Maximum = new decimal(new int[] {
-            13,
+            200,
             0,
             0,
             0});
@@ -43612,7 +43612,7 @@
             65536});
             this.ud10PA8W.Location = new System.Drawing.Point(184, 24);
             this.ud10PA8W.Maximum = new decimal(new int[] {
-            10,
+            200,
             0,
             0,
             0});
@@ -43641,7 +43641,7 @@
             65536});
             this.ud10PA12W.Location = new System.Drawing.Point(184, 120);
             this.ud10PA12W.Maximum = new decimal(new int[] {
-            14,
+            200,
             0,
             0,
             0});
@@ -43693,7 +43693,7 @@
             65536});
             this.ud10PA7W.Location = new System.Drawing.Point(48, 168);
             this.ud10PA7W.Maximum = new decimal(new int[] {
-            10,
+            200,
             0,
             0,
             0});
@@ -43722,7 +43722,7 @@
             65536});
             this.ud10PA13W.Location = new System.Drawing.Point(184, 144);
             this.ud10PA13W.Maximum = new decimal(new int[] {
-            15,
+            200,
             0,
             0,
             0});
@@ -43785,7 +43785,7 @@
             65536});
             this.ud10PA6W.Location = new System.Drawing.Point(48, 144);
             this.ud10PA6W.Maximum = new decimal(new int[] {
-            10,
+            200,
             0,
             0,
             0});
@@ -43814,7 +43814,7 @@
             65536});
             this.ud10PA14W.Location = new System.Drawing.Point(184, 168);
             this.ud10PA14W.Maximum = new decimal(new int[] {
-            16,
+            200,
             0,
             0,
             0});
@@ -43854,7 +43854,7 @@
             65536});
             this.ud10PA2W.Location = new System.Drawing.Point(48, 48);
             this.ud10PA2W.Maximum = new decimal(new int[] {
-            10,
+            200,
             0,
             0,
             0});
@@ -43895,7 +43895,7 @@
             65536});
             this.ud10PA5W.Location = new System.Drawing.Point(48, 120);
             this.ud10PA5W.Maximum = new decimal(new int[] {
-            10,
+            200,
             0,
             0,
             0});
@@ -43946,7 +43946,7 @@
             65536});
             this.ud10PA4W.Location = new System.Drawing.Point(48, 96);
             this.ud10PA4W.Maximum = new decimal(new int[] {
-            10,
+            200,
             0,
             0,
             0});
@@ -43975,7 +43975,7 @@
             65536});
             this.ud10PA3W.Location = new System.Drawing.Point(48, 72);
             this.ud10PA3W.Maximum = new decimal(new int[] {
-            10,
+            200,
             0,
             0,
             0});
@@ -44052,7 +44052,7 @@
             65536});
             this.ud100PA10W.Location = new System.Drawing.Point(48, 24);
             this.ud100PA10W.Maximum = new decimal(new int[] {
-            100,
+            200,
             0,
             0,
             0});
