@@ -1,4 +1,8 @@
-9e78536 (HEAD -> master, origin/master, origin/HEAD) All seems OK to release
+105cb13 (HEAD -> master, origin/master, origin/HEAD) Fixed App hanging on exit when Profiles set to auto-save (Setupform was initializing twice)
+2a38b55 Needed correct PSPeak for HL2
+19dfc5c 1. Fix no TX display when DUP off. 2) Fix high samplerate availability for HL2
+87df421 Working towards a clean compile
+9e78536 All seems OK to release
 d28e86f Refactoring Portaudio background thread Init
 3369ca3 Fixed regression where no spectra displayed during tx
 d474b0f Now working with the current release of PortAudio, which has WASAPI loopback support
