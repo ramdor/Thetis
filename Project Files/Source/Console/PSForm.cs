@@ -441,15 +441,22 @@ namespace Thetis
         }
         public void SetDefaultPeaks(bool bForce)
         {
-            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
+            if (console.SetupForm.Hl2.HermesLite2)
             {
-                //protocol 1
-                PSdefpeak(bForce, 0.4072);
+                PSdefpeak(bForce, 0.2333);
             }
             else
             {
-                //protocol 2
-                PSdefpeak(bForce, 0.2899);
+                if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
+                {
+                    //protocol 1
+                    PSdefpeak(bForce, 0.4072);
+                }
+                else
+                {
+                    //protocol 2
+                    PSdefpeak(bForce, 0.2899);
+                }
             }
         }
         #region PSLoops

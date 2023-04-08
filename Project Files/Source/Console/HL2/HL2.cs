@@ -46,6 +46,7 @@ namespace Thetis
             ApplyHL2PASettings();
             setup.ApolloFilter = true;
             setup.ApolloTuner = true;
+            setup.ApolloPresent = true;
             setup.HermesEnableAttenuator = true;
             setup.MaxFreq = 38.8M;
             // setup.RadioSampleRate = 48000; // no need for this, HL2 is quite happy @ 192k

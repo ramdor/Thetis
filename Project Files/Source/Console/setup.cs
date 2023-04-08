@@ -7732,6 +7732,11 @@ namespace Thetis
         // General Tab Event Handlers
         // ======================================================
 
+        public bool ApolloPresent
+        {
+            get { return chkApolloPresent.Checked; }
+            set { chkApolloPresent.Checked = value; }
+        }
         private void InitHPSDR()
         {
             if (!initializing) AddHPSDRPages();
@@ -28557,6 +28562,7 @@ namespace Thetis
                     Hl2.ApplyHL2Defaults();
 
                 }
+                comboRadioModel_SelectedIndexChanged(null, EventArgs.Empty);
                 InitAudioTab();
             }
         }

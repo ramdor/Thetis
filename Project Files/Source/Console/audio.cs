@@ -2060,7 +2060,14 @@ namespace Thetis
             {
                 console.SampleRateTX = 48000; // set tx audio sampling rate
                 WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), false);
-                puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.4072);
+                if (c.SetupForm.Hl2.HermesLite2)
+                {
+                    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
+                }
+                else
+                {
+                    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.4072);
+                }
                 // console.psform.PSdefpeak = "0.4072"; //MW0LGE_21k9rc5
                 // moved to psform.SetDefaultPeaks()
             }
@@ -2081,6 +2088,7 @@ namespace Thetis
                 c.SetupForm.ForceAudioReset();
             }
             cmaster.PSLoopback = cmaster.PSLoopback;
+
 
             int result = NetworkIO.StartAudioNative();
             if (result == 0) retval = true;
