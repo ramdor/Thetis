@@ -1293,6 +1293,7 @@ namespace Thetis
                     {
                         Debug.Print("New setup form - should happen only once");
                         m_frmSetupForm = new Setup(this);
+                        m_frmSetupForm.AfterConstruct();
                         this.SetupForm.setDBPath(DBFileName);
                     }
                 }
@@ -2931,13 +2932,19 @@ namespace Thetis
 
             if (n1mm_udp_client != null) n1mm_udp_client.Close();
 
+            Debug.Assert(!IsSetupFormNull); // never closes when save tx profile on exit is checked!
             if (SaveTXProfileOnExit == true) // save the tx profile
             {
                 SetupForm.SaveTXProfileData();
             }
 
-            if (!IsSetupFormNull) // make sure Setup form is deallocated
-                SetupForm.Dispose();
+            SetupCanClose = true;
+            if (!IsSetupFormNull)
+            { // make sure Setup form is deallocated
+                m_frmSetupForm.Close();
+                m_frmSetupForm.Dispose();
+                m_frmSetupForm = null;
+            }
 
             if (m_frmCWXForm != null) // make sure CWX form is deallocated
                 m_frmCWXForm.Dispose();
@@ -2950,6 +2957,8 @@ namespace Thetis
             Win32.TimeEndPeriod(1); // return to previous timing precision
             Thread.Sleep(100);
         }
+
+        public bool SetupCanClose { get; set; }
 
         public void SaveState()
         {
@@ -46192,6 +46201,10 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
         protected override void WndProc(ref Message m)
         {
             const int WM_QUERYENDSESSION = 0x0011;
+            const int WM_CLOSE = 0x10;
+            const int WM_SYSCOMMAND = 0x0112;
+            IntPtr SC_CLOSE = (IntPtr)0xF060;
+
             // Listen for operating system messages.
 
             if (m.Msg == WM_QUERYENDSESSION)
@@ -46200,7 +46213,19 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
                 this.Close();
             }
             else
+            {
+
+                if (m.Msg == WM_CLOSE)
+                {
+                    if (OwnedForms.Length > 0)
+                    {
+                        // we'll close SetupForm manually, rather than automagically.
+                        this.RemoveOwnedForm(this.OwnedForms[0]);
+                    }
+                }
+
                 base.WndProc(ref m);
+            }
         }
 
         public void FWCATUBypass()
@@ -58446,6 +58471,11 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
         private void infoBar_Load(object sender, EventArgs e) { }
 
         private void Console_VisibleChanged(object sender, EventArgs e) { }
+
+        private void Console_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SetupForm.Owner = null; // Don't close setup until we are ready!
+        }
 
         // private object _passbandSpectrum = new object();
         // private float[] passbandSpectrum(int rx)

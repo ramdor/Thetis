@@ -7460,6 +7460,7 @@
             this.Activated += new System.EventHandler(this.Console_Activated);
             this.Closing += new System.ComponentModel.CancelEventHandler(this.Console_Closing);
             this.Deactivate += new System.EventHandler(this.Console_Deactivate);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Console_FormClosing);
             this.Shown += new System.EventHandler(this.Console_Shown);
             this.VisibleChanged += new System.EventHandler(this.Console_VisibleChanged);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Console_KeyDown);

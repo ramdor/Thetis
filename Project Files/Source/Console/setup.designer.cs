@@ -54870,6 +54870,8 @@
             this.Name = "Setup";
             this.Text = "Setup";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.Setup_Closing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Setup_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Setup_FormClosed);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Setup_KeyDown);
             tpAlexAntCtrl.ResumeLayout(false);
             tpAlexAntCtrl.PerformLayout();

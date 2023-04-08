@@ -154,6 +154,16 @@ POWER EXCEEDING THE RATING OF YOUR RADIO!
   <data name="lgLinearGradientRX1.EncodedText" xml:space="preserve">
     <value>OXwxfDAuMDAwfC0xNjc3NzIxNnwwfDAuMTI1fC0xNDczNzYzM3wwfDAuMjUwfC0xMjY5ODA1MHwwfDAuMzc1fC0xMDY1ODQ2N3wwfDAuNTAwfC04NjE4ODg0fDB8MC42MjV8LTY1NzkzMDF8MHwwLjc1MHwtNDUzOTcxOHwwfDAuODc1fC0yNTAwMTM1fDF8MS4wMDB8LTF8</value>
   </data>
+  <data name="groupBox2.ToolTip" xml:space="preserve">
+    <value>Allows you to view the Display are of Thetis remotely
+
+To view your Display.
+1) Locate the IP address off your computer (example: 192.168.1.100)
+2) Open your Web browser and type:  http://&lt;your local IP address&gt;:8081
+
+
+</value>
+  </data>
   <data name="udHttpRefresh.ToolTip" xml:space="preserve">
     <value>Select Port# to allow Remote Login by adding the Port# 
 to the end of the URL
@@ -172,18 +182,11 @@ or http://localhost:8081
 But you must also add this port# to your Routers "Port Forward" options
 If Windows Firewall Pops up on the screen, Click on the Allow access.</value>
   </data>
-  <data name="groupBox2.ToolTip" xml:space="preserve">
-    <value>Allows you to view the Display are of Thetis remotely
-
-To view your Display.
-1) Locate the IP address off your computer (example: 192.168.1.100)
-2) Open your Web browser and type:  http://&lt;your local IP address&gt;:8081
-
-
-</value>
-  </data>
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>162, 17</value>
+  </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>302, 17</value>
   </metadata>
   <metadata name="saveFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>516, 17</value>

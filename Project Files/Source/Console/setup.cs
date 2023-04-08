@@ -179,8 +179,12 @@ namespace Thetis
         #region Constructor and Destructor
 
         internal HL2 Hl2 { get; set; }
+
+        private int initCounter = 0;
         public Setup(Console c)
         {
+            Debug.Assert(initCounter == 0);
+            initCounter++;
             try
             {
                 InitializeComponent();
@@ -192,6 +196,18 @@ namespace Thetis
                 MessageBox.Show(exc.Message);
             }
             console = c;
+
+            // KLJ:
+            // most code here moved to afterConstruct, because getOptions() and friends can call the form to load, recursively.
+            // console should therefore call it AFTER he created us
+
+        }
+
+        private int afterConstructCounter = 0;
+        internal void AfterConstruct()
+        {
+            Debug.Assert(afterConstructCounter == 0);
+            afterConstructCounter++;
 
             // KLJ
             this.Hl2 = new HL2(console, this);
@@ -489,8 +505,6 @@ namespace Thetis
 
             // MW0LGE_22b PA Profiles
             initPAProfiles();
-            //
-
             getOptions();
 
             selectSkin();
@@ -746,6 +760,7 @@ namespace Thetis
             // MW0LGE_21h
             updateNetworkThrottleCheckBox();
         }
+
         private bool _bAddedDelegates = false;
         private void addDelegates()
         {
@@ -28605,6 +28620,17 @@ namespace Thetis
                 HL2N2ADRFilters(chkN2ADR);
             }
             chkN2ADRBusy = false;
+        }
+
+        private void Setup_FormClosing(object sender, FormClosingEventArgs e)
+        {
+
+
+        }
+
+        private void Setup_FormClosed(object sender, FormClosedEventArgs e)
+        {
+
         }
     }
 
