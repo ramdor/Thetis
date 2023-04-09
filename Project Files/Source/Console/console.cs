@@ -942,7 +942,7 @@ namespace Thetis
             InitializeComponent(); // Windows Forms Generated Code
             InitialiseAndromedaMenus();
             this.Visible = false;
-            this.Opacity = 0;
+            this.Opacity = 0.01;
             //
             ucQuickRecallPad.console = this;
             Display.console = this;
@@ -1234,8 +1234,12 @@ namespace Thetis
                     }
                 }
 
-                this.Opacity = 0;
+
+                this.Opacity = 0.01;
                 Show();
+                Application.DoEvents();
+                // cannot stop console briefly flickering up here (Even though it is supposed to be transparent). Ideas?
+
                 try
                 {
                     while (Opacity < 1.0)
@@ -1251,6 +1255,10 @@ namespace Thetis
                 }
             }
         }
+
+        private FormWindowState m_wanted_windowstate = FormWindowState.Normal;
+
+
 
         // Wait for the portaudio thread to complete his work,
         // return the number of milliseconds we actually waited
@@ -46217,9 +46225,10 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
 
                 if (m.Msg == WM_CLOSE)
                 {
-                    if (OwnedForms.Length > 0)
+                    while (OwnedForms.Contains(m_frmSetupForm))
                     {
-                        // we'll close SetupForm manually, rather than automagically.
+                        // we'll close SetupForm manually, rather than automagically,
+                        // because we need to save some stuff (perhaps, according to user settings, like auto-save on exit).
                         this.RemoveOwnedForm(this.OwnedForms[0]);
                     }
                 }
@@ -55774,6 +55783,7 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
 
         private void Console_Shown(object sender, EventArgs e)
         {
+            Opacity = 0.01;
             updateResolutionStatusBarText(); // MW0LGE_21b need to call this
                                              // here so that drop shadow sizes
                                              // can be obtained
@@ -58476,6 +58486,15 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
         {
             SetupForm.Owner = null; // Don't close setup until we are ready!
         }
+
+        private void Console_Load(object sender, EventArgs e)
+        {
+
+        }
+
+
+
+
 
         // private object _passbandSpectrum = new object();
         // private float[] passbandSpectrum(int rx)

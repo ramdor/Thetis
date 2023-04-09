@@ -5542,7 +5542,6 @@
             this.panelButtonBar.Controls.Add(this.btnAndrBar2);
             this.panelButtonBar.Controls.Add(this.btnAndrBar1);
             this.panelButtonBar.Name = "panelButtonBar";
-            this.panelButtonBar.Layout += new System.Windows.Forms.LayoutEventHandler(this.panelButtonBar_Layout);
             // 
             // btnAndrBar8
             // 
@@ -7453,16 +7452,16 @@
             this.Controls.Add(this.panelModeSpecificFM);
             this.Controls.Add(this.panelModeSpecificDigital);
             this.Controls.Add(this.panelModeSpecificCW);
-            this.DoubleBuffered = true;
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Console";
+            this.Opacity = 0D;
             this.Activated += new System.EventHandler(this.Console_Activated);
             this.Closing += new System.ComponentModel.CancelEventHandler(this.Console_Closing);
             this.Deactivate += new System.EventHandler(this.Console_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Console_FormClosing);
+            this.Load += new System.EventHandler(this.Console_Load);
             this.Shown += new System.EventHandler(this.Console_Shown);
-            this.VisibleChanged += new System.EventHandler(this.Console_VisibleChanged);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Console_KeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Console_KeyPress);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Console_KeyUp);
