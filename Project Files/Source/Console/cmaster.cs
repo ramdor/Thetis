@@ -343,7 +343,11 @@ namespace Thetis
             set { ps_rate = value; }
         }
 
-        public static RadioProtocol CurrentRadioProtocol { get; set; }
+        public static RadioProtocol CurrentRadioProtocol
+        {
+            get;
+            set;
+        }
         #endregion
 
         #region logic calls
@@ -388,7 +392,7 @@ namespace Thetis
             SetPSRxIdx(0, 0);   // txid = 0, all current models use Stream0 for RX feedback
             SetPSTxIdx(0, 1);   // txid = 0, all current models use Stream1 for TX feedback
             puresignal.SetPSFeedbackRate(txch, ps_rate);
-            puresignal.SetPSHWPeak(txch, 0.2899);
+            puresignal.SetPSHWPeak(txch, 0.23333);
 
             Splash.SetStatus("Setting up transmitter display ...");
             // setup transmitter display

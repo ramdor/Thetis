@@ -415,6 +415,9 @@ namespace Thetis
                         if (c.Name.Equals(name))        // name found
                         {
                             c.Text = val;   // restore value
+                            if (name == "txtPSpeak")
+                                c.Tag = val;
+
                             i = textbox_list.Count + 1;
                         }
                         if (i == textbox_list.Count)

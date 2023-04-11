@@ -281,8 +281,10 @@ namespace Thetis
         {
             //_psdefpeak = value;
             //txtPSpeak.Text = value;
+            double d;
+            bool ok = double.TryParse(txtPSpeak.Text, out d);
 
-            if (bForce || txtPSpeak.Text == "") // MW0LGE_21k9rc6 only reset this if not set to something (ie from recovering the form via constructor)
+            if (bForce || !ok) // MW0LGE_21k9rc6 only reset this if not set to something (ie from recovering the form via constructor)
             {
                 txtPSpeak.Text = value.ToString();
             }
@@ -439,23 +441,27 @@ namespace Thetis
                 _restoreON = true;
             }
         }
+
+        double PS_DEFAULT_PEAKS_HL2 = 0.243290600682013;
+        double PS_DEFAULT_PEAKS_ANAN = 0.4072;
+
         public void SetDefaultPeaks(bool bForce)
         {
             if (console.SetupForm.Hl2.HermesLite2)
             {
-                PSdefpeak(bForce, 0.2333);
+                PSdefpeak(bForce, PS_DEFAULT_PEAKS_HL2);
             }
             else
             {
                 if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
                 {
                     //protocol 1
-                    PSdefpeak(bForce, 0.4072);
+                    PSdefpeak(bForce, PS_DEFAULT_PEAKS_ANAN);
                 }
                 else
                 {
                     //protocol 2
-                    PSdefpeak(bForce, 0.2899);
+                    PSdefpeak(bForce, PS_DEFAULT_PEAKS_HL2);
                 }
             }
         }
@@ -528,6 +534,16 @@ namespace Thetis
                 if (puresignal.HasInfoChanged)
                     console.InfoBarFeedbackLevel(puresignal.FeedbackLevel, puresignal.IsFeedbackLevelOK, puresignal.CorrectionsBeingApplied, puresignal.CalibrationAttemptsChanged, puresignal.FeedbackColourLevel);
             }
+            else
+            {
+                // KLJ: Add code to show some PS acivity if it is on in single cal mode
+                if (puresignal.CorrectionsBeingApplied && this.console.MOX)
+                {
+                    console.InfoBarFeedbackLevel(puresignal.FeedbackLevel, puresignal.IsFeedbackLevelOK, puresignal.CorrectionsBeingApplied, puresignal.CalibrationAttemptsChanged, puresignal.FeedbackColourLevel);
+                }
+            }
+
+
             //
 
             unsafe

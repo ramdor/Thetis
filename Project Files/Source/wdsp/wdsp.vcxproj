@@ -273,6 +273,7 @@
     <ClCompile Include="cblock.c" />
     <ClCompile Include="cfcomp.c" />
     <ClCompile Include="cfir.c" />
+    <ClCompile Include="comm.cpp" />
     <ClCompile Include="compress.c" />
     <ClCompile Include="delay.c" />
     <ClCompile Include="dexp.c" />

@@ -90,6 +90,21 @@ PORT void OpenChannel(int channel, int in_size, int dsp_size,
     ch[channel].tdelaydown = tdelaydown;
     ch[channel].tslewdown = tslewdown;
     ch[channel].bfo = bfo;
+
+    assert(IsPowerOfTwo(dsp_size));
+    // assert(IsPowerOfTwo(dsp_rate));
+    if (output_samplerate == input_samplerate) {
+
+    } else {
+        if (output_samplerate > input_samplerate) {
+            int div = output_samplerate / input_samplerate;
+            assert(IsPowerOfTwo(div));
+        } else {
+            int div = input_samplerate / output_samplerate;
+            assert(IsPowerOfTwo(div));
+        }
+    }
+
     InterlockedBitTestAndReset(&ch[channel].exchange, 0);
     build_channel(channel);
     if (ch[channel].state) {
@@ -163,6 +178,8 @@ PORT void SetInputBuffsize(int channel,
 }
 
 PORT void SetDSPBuffsize(int channel, int dsp_size) {
+
+    assert(IsPowerOfTwo(dsp_size));
     if (dsp_size != ch[channel].dsp_size) {
         int oldstate = SetChannelState(channel, 0, 1);
         pre_main_destroy(channel);

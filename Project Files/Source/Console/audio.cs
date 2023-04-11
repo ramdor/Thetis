@@ -2056,27 +2056,16 @@ namespace Thetis
 
             // add setup calls that are needed to change between P1 & P2
             // before startup
+
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
             {
                 console.SampleRateTX = 48000; // set tx audio sampling rate
                 WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), false);
-                if (c.SetupForm.Hl2.HermesLite2)
-                {
-                    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
-                }
-                else
-                {
-                    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.4072);
-                }
-                // console.psform.PSdefpeak = "0.4072"; //MW0LGE_21k9rc5
-                // moved to psform.SetDefaultPeaks()
             }
             else
             {
                 console.SampleRateTX = 192000;
                 WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), true);
-                puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
-                // console.psform.PSdefpeak = "0.2899";
             }
             console.psform.SetDefaultPeaks(NetworkIO.CurrentRadioProtocol
                 != oldProto); // if the procol changed, force it

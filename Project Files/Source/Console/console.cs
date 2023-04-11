@@ -24077,6 +24077,8 @@ namespace Thetis
                         + rx_dBHz.ToString("N1") + "dBHz)",
                     160);
 
+
+
                 if (!MOX)
                 {
                     infoBar.Right1(1,
@@ -28577,7 +28579,7 @@ namespace Thetis
                         while (objStopWatch.ElapsedMsec <= dly)
                         {
 
-                            Thread.Sleep(1);  // hmmm. KLJ. CPU Load is properly excessive unless we at least Sleep(0) here.
+                            Thread.Sleep((int)(dly / 2.0));  // hmmm. KLJ. CPU Load is properly excessive unless we at least Sleep(0) here.
                             // we really ought to be giving up our time-slice here, especially if VAC is on
                             ++slept;
                         }
@@ -28613,7 +28615,7 @@ namespace Thetis
                             objStopWatch.Reset();
                             while (objStopWatch.ElapsedMsec <= fFractionOfMs)
                             {
-                                Thread.Sleep(0);  // hmmm. KLJ. CPU Load is properly excessive unless we Sleep(0) here.
+                                Thread.Sleep(1);  // hmmm. KLJ. CPU Load is properly excessive unless we Sleep(0) here.
                                 ++slept;
                             }
                             fFractionOfMs

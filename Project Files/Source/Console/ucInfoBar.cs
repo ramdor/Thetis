@@ -51,6 +51,7 @@ namespace Thetis
         private Console _console;
         private bool _mox;
         private bool _psEnabled = false;
+        // private bool _psEnabled = false;
         private System.Timers.Timer _psTimer;
         private System.Timers.Timer _warningTimer;
         private bool _preventClickEvents = false;
@@ -764,15 +765,22 @@ namespace Thetis
             if (_shutDown) return;
 
             _bCalibrationAttemptsChanged = bCalibrationAttemptsChanged;
-
-            if (_bCalibrationAttemptsChanged && _mox)
+            bool single_cal_mode = Thetis.puresignal.CorrectionsBeingApplied;
+            bool show_active = _mox && _bCalibrationAttemptsChanged;
+            if (!show_active)
             {
+                show_active = _mox && single_cal_mode;
+
+            }
+            if (show_active)
+            {
+                _psEnabled = true;
                 _nFeedbackLevel = level;
                 _feedbackColour = feedbackColour;
                 _bCorrectionsBeingApplied = bCorrectionsBeingApplied;
                 _bFeedbackLevelOk = bFeedbackLevelOk;
 
-                updatePSDisplay();
+                updatePSDisplay(_mox && single_cal_mode);
 
                 _psTimer.Start();
             }
@@ -790,17 +798,20 @@ namespace Thetis
             }
         }
 
-        private void updatePSDisplay()
+        private void updatePSDisplay(bool single_cal = false)
         {
             if (!_psEnabled)
             {
                 lblFB.BackColor = Color.FromArgb(255, Color.DimGray);
                 lblPS.BackColor = Color.FromArgb(255, Color.DimGray);
                 _lastColor = Color.DimGray;
-                if (_useSmallFonts)
-                    lblFB.Text = "FB";
-                else
-                    lblFB.Text = "Feedback";
+                if (!single_cal)
+                {
+                    if (_useSmallFonts)
+                        lblFB.Text = "FB";
+                    else
+                        lblFB.Text = "Feedback";
+                }
                 lblPS.Text = "Pure Signal2";
             }
             else
@@ -814,8 +825,17 @@ namespace Thetis
                     }
                     else
                     {
-                        lblPS.Text = "Pure Signal2";
-                        lblPS.BackColor = Color.FromArgb(255, Color.SeaGreen);
+                        if (single_cal)
+                        {
+                            lblPS.Text = "SCal";
+                            //lblPS.BackColor = this._console.psform.
+                            // color is set to feedback color below ... // KLJ
+                        }
+                        else
+                        {
+                            lblPS.Text = "Pure Signal2";
+                            lblPS.BackColor = Color.FromArgb(255, Color.SeaGreen);
+                        }
                     }
 
                     lblFB.BackColor = _feedbackColour;
@@ -823,10 +843,24 @@ namespace Thetis
 
                     if (_hideFeedback || !_bCalibrationAttemptsChanged)
                     {
-                        if (_useSmallFonts)
-                            lblFB.Text = "FB";
+                        if (!single_cal)
+                        {
+                            if (_useSmallFonts)
+                                lblFB.Text = "FB";
+                            else
+                                lblFB.Text = "Feedback";
+                        }
                         else
-                            lblFB.Text = "Feedback";
+                        {
+                            if (_useSmallFonts)
+                            {
+                                lblPS.Text = "S-CAL";
+                            }
+                            else
+                            {
+                                lblPS.Text = "Single CAL";
+                            }
+                        }
                     }
                     else
                     {

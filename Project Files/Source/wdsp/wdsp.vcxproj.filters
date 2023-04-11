@@ -359,5 +359,8 @@
     <ClCompile Include="calculus.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="comm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

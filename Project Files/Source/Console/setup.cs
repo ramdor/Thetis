@@ -23082,6 +23082,12 @@ namespace Thetis
                 case CheckState.Indeterminate:
                     RadioProtocolSelected = RadioProtocol.USB;
                     NetworkIO.RadioProtocolSelected = RadioProtocol.USB;
+                    if (initializing)
+                        NetworkIO.CurrentRadioProtocol = RadioProtocol.USB;
+                    // KLJ: If we don't set Current, then ETH is always assumed
+                    // when we reopen program, and this leads to things like PS SetPk
+                    // to be set to some default value. So we have to assume we can set this
+                    // but only during startup
                     chkRadioProtocolSelect.Text = "Protocol 1";
                     break;
                 case CheckState.Unchecked:

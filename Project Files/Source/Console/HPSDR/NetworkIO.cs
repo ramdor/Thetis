@@ -82,9 +82,18 @@ namespace Thetis
         public static string HpSdrHwIpAddress { get; set; } = "";
         public static string HpSdrHwMacAddress { get; set; } = "";
         public static byte NumRxs { get; set; } = 0;
-        public static RadioProtocol CurrentRadioProtocol { get; set; }
+
+        public static RadioProtocol CurrentRadioProtocol
+        {
+            get;
+            set;
+        }
         = RadioProtocol.ETH;
-        public static RadioProtocol RadioProtocolSelected { get; set; }
+        public static RadioProtocol RadioProtocolSelected
+        {
+            get;
+            set;
+        }
         = RadioProtocol.ETH;
 
         private const int IP_SUCCESS = 0;
