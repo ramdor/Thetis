@@ -765,7 +765,7 @@ namespace Thetis
             if (_shutDown) return;
 
             _bCalibrationAttemptsChanged = bCalibrationAttemptsChanged;
-            bool single_cal_mode = Thetis.puresignal.CorrectionsBeingApplied;
+            bool single_cal_mode = _console.psform.SingleCalActive && _console.psform.PSEnabled;
             bool show_active = _mox && _bCalibrationAttemptsChanged;
             if (!show_active)
             {

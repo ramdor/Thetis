@@ -56,7 +56,7 @@ namespace Thetis
 {
     using static Thetis.PortAudioForThetis;
     using Thetis.AudioExtras;
-    }
+}
 #endif
     public partial class Setup : Form
     {
@@ -198,9 +198,9 @@ namespace Thetis
             console = c;
 
             // KLJ:
-            // most code here moved to afterConstruct, because getOptions() and friends can call the form to load, recursively.
-            // console should therefore call it AFTER he created us
-
+            // most code here moved to afterConstruct, because getOptions() and
+            // friends can call the form to load, recursively. console should
+            // therefore call it AFTER he created us
         }
 
         private int afterConstructCounter = 0;
@@ -937,7 +937,8 @@ namespace Thetis
             ret.AddRange(common);
 
             // only add the higher bitrates if applicable:
-            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH || Hl2.HermesLite2)
+            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH
+                || Hl2.HermesLite2)
             {
                 ret.Add(384000);
             }
@@ -1026,7 +1027,6 @@ namespace Thetis
                 // Debug.Assert(found);
                 m_popping_radio_samplerates = false;
             }
-
         }
 
         public void InitAudioTab(List<string> recoveryList = null)
@@ -1035,8 +1035,8 @@ namespace Thetis
             initSRCombo(comboAudioSampleRate1, recoveryList);
             initSRCombo(comboAudioSampleRateRX2, recoveryList);
 
-            Debug.Assert(comboAudioSampleRate1.Items.Count == comboAudioSampleRateRX2.Items.Count);
-
+            Debug.Assert(comboAudioSampleRate1.Items.Count
+                == comboAudioSampleRateRX2.Items.Count);
         }
 
         private void InitAdvancedAudioTab(List<string> recoveryList = null)
@@ -1502,15 +1502,16 @@ namespace Thetis
             Audio.PopulateComboAPIs(cbos);
         }
 
-
         private void GetDevices2()
         {
-            Audio.PopulateComboDevices(comboAudioInput2, comboAudioOutput2, comboAudioDriver2); // KLJ
+            Audio.PopulateComboDevices(
+                comboAudioInput2, comboAudioOutput2, comboAudioDriver2); // KLJ
         }
 
         private void GetDevices3()
         {
-            Audio.PopulateComboDevices(comboAudioInput3, comboAudioOutput3, comboAudioDriver3); // KLJ
+            Audio.PopulateComboDevices(
+                comboAudioInput3, comboAudioOutput3, comboAudioDriver3); // KLJ
         }
 
         private void getControlList(Control c, ref Dictionary<string, Control> a)
@@ -8380,7 +8381,6 @@ namespace Thetis
                 Audio.EnableVAC2(false);
             }
 
-
             console.AudioDriverIndex3 = new_driver;
             Audio.Host3 = new_driver;
             GetDevices3();
@@ -8754,7 +8754,6 @@ namespace Thetis
                         break;
                 }
             }
-
         }
 
         private void comboAudioSampleRateRX2_SelectedIndexChanged(
@@ -13135,6 +13134,7 @@ namespace Thetis
         private async void chkTestIMD_CheckedChanged(
             object sender, System.EventArgs e)
         {
+            if (initializing) return;
             if (chkTestIMD.Checked)
             {
                 udTestIMDFreq1.Enabled = false;
@@ -23086,8 +23086,8 @@ namespace Thetis
                         NetworkIO.CurrentRadioProtocol = RadioProtocol.USB;
                     // KLJ: If we don't set Current, then ETH is always assumed
                     // when we reopen program, and this leads to things like PS SetPk
-                    // to be set to some default value. So we have to assume we can set this
-                    // but only during startup
+                    // to be set to some default value. So we have to assume we can set
+                    // this but only during startup
                     chkRadioProtocolSelect.Text = "Protocol 1";
                     break;
                 case CheckState.Unchecked:
@@ -28581,7 +28581,6 @@ namespace Thetis
                 if (chkHermesLite2.Checked && canDo != 0)
                 {
                     Hl2.ApplyHL2Defaults();
-
                 }
                 comboRadioModel_SelectedIndexChanged(null, EventArgs.Empty);
                 InitAudioTab();
@@ -28628,16 +28627,9 @@ namespace Thetis
             chkN2ADRBusy = false;
         }
 
-        private void Setup_FormClosing(object sender, FormClosingEventArgs e)
-        {
+        private void Setup_FormClosing(object sender, FormClosingEventArgs e) { }
 
-
-        }
-
-        private void Setup_FormClosed(object sender, FormClosedEventArgs e)
-        {
-
-        }
+        private void Setup_FormClosed(object sender, FormClosedEventArgs e) { }
     }
 
     /*/
