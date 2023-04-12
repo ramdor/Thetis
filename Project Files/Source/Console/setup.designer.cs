@@ -1532,6 +1532,7 @@
             this.tpAudio = new System.Windows.Forms.TabPage();
             this.tcAudio = new System.Windows.Forms.TabControl();
             this.tpVAC = new System.Windows.Forms.TabPage();
+            this.chkMasterVolumeForVAC = new System.Windows.Forms.CheckBoxTS();
             this.lblBuffer = new System.Windows.Forms.Label();
             this.labelTS178 = new System.Windows.Forms.LabelTS();
             this.grpAudioVACAutoEnable = new System.Windows.Forms.GroupBoxTS();
@@ -25120,12 +25121,23 @@
             this.tpVAC.Controls.Add(this.grpAudioLatency2);
             this.tpVAC.Controls.Add(this.grpAudioDetails2);
             this.tpVAC.Controls.Add(this.chkAudioEnableVAC);
+            this.tpVAC.Controls.Add(this.chkMasterVolumeForVAC);
             this.tpVAC.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tpVAC.Location = new System.Drawing.Point(4, 22);
             this.tpVAC.Name = "tpVAC";
             this.tpVAC.Size = new System.Drawing.Size(712, 439);
             this.tpVAC.TabIndex = 1;
             this.tpVAC.Text = "VAC 1";
+            // 
+            // chkMasterVolumeForVAC
+            // 
+            this.chkMasterVolumeForVAC.Image = null;
+            this.chkMasterVolumeForVAC.Location = new System.Drawing.Point(369, 15);
+            this.chkMasterVolumeForVAC.Name = "chkMasterVolumeForVAC";
+            this.chkMasterVolumeForVAC.Size = new System.Drawing.Size(191, 24);
+            this.chkMasterVolumeForVAC.TabIndex = 94;
+            this.chkMasterVolumeForVAC.Text = "Master Volume Controls VAC";
+            this.toolTip1.SetToolTip(this.chkMasterVolumeForVAC, "Enable Virtual Audio Cable Support using the settings on this form.");
             // 
             // lblBuffer
             // 
@@ -59392,5 +59404,6 @@
         private Label lblBuffer;
         private CheckBoxTS chkHermesLite2;
         private CheckBox chkN2ADR;
+        public CheckBoxTS chkMasterVolumeForVAC;
     }
 }

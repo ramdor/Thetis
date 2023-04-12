@@ -1578,6 +1578,9 @@ namespace Thetis
             }
         }
 
+        internal bool MasterVolumeForVac { get => chkMasterVolumeForVAC.Checked; }
+
+
         private bool inBothUpdateAndClick(string s)
         {
             return (
@@ -18449,6 +18452,8 @@ namespace Thetis
             set { lblADCLinked.Visible = value; }
         }
 
+
+
         private void updateConsoleWithAttenuationInfo()
         {
             if (initializing) return;
@@ -28584,6 +28589,7 @@ namespace Thetis
                 }
                 comboRadioModel_SelectedIndexChanged(null, EventArgs.Empty);
                 InitAudioTab();
+                chkMasterVolumeForVAC.Checked = chkHermesLite2.Checked;
             }
         }
 

@@ -1192,7 +1192,7 @@
     <value>TopCenter</value>
   </data>
   <data name="chkFWCATUBypass.ToolTip" xml:space="preserve">
-    <value>Activates PureSignal 2.0 Auto-Calibrate Mode</value>
+    <value>Activates/Deactivates PureSignal 2.0, either (A)uto) or (M)anual (Single) calibration </value>
   </data>
   <data name="&gt;&gt;chkFWCATUBypass.Name" xml:space="preserve">
     <value>chkFWCATUBypass</value>

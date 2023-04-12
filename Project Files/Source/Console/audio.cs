@@ -261,7 +261,8 @@ namespace Thetis
                 }
 
                 // G7KLJ bugfix: tx mon volume was not working on VAC!
-                if (console.VACEnabled)
+                // the check for console.SetupForm.MasterVolumeForVac addresses feature #
+                if (console.VACEnabled && console.SetupForm.MasterVolumeForVac)
                 {
                     if (console.MOX)
                     {

@@ -54953,6 +54953,7 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
             get => chkFWCATUBypass.Text == "PS-M";
             set
             {
+                if (initializing) return;
                 if (value)
                     chkFWCATUBypass.Text = "PS-M";
                 else
@@ -55878,6 +55879,7 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
             toolStripStatusLabel_UTCTime.Width = 100;
             toolStripStatusLabel_Date.Width = 108;
             toolStripStatusLabel_LocalTime.Width = 100;
+            chkFWCATUBypass.Text = "PS-A";
         }
 
         // private bool twoTone = false;
