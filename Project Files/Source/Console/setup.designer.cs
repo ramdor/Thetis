@@ -202,6 +202,7 @@
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
             this.grpInfo = new System.Windows.Forms.GroupBoxTS();
+            this.btnExplorer = new System.Windows.Forms.ButtonTS();
             this.labelTS161 = new System.Windows.Forms.LabelTS();
             this.lblDataBase = new System.Windows.Forms.LabelTS();
             this.lblDBTitle = new System.Windows.Forms.LabelTS();
@@ -3446,6 +3447,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.btnErrorLog = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -6723,15 +6725,29 @@
             // 
             // grpInfo
             // 
+            this.grpInfo.Controls.Add(this.btnErrorLog);
+            this.grpInfo.Controls.Add(this.btnExplorer);
             this.grpInfo.Controls.Add(this.labelTS161);
             this.grpInfo.Controls.Add(this.lblDataBase);
             this.grpInfo.Controls.Add(this.lblDBTitle);
-            this.grpInfo.Location = new System.Drawing.Point(28, 226);
+            this.grpInfo.Location = new System.Drawing.Point(28, 215);
             this.grpInfo.Name = "grpInfo";
-            this.grpInfo.Size = new System.Drawing.Size(348, 100);
+            this.grpInfo.Size = new System.Drawing.Size(348, 129);
             this.grpInfo.TabIndex = 41;
             this.grpInfo.TabStop = false;
             this.grpInfo.Text = "General Information:";
+            // 
+            // btnExplorer
+            // 
+            this.btnExplorer.Image = null;
+            this.btnExplorer.Location = new System.Drawing.Point(11, 68);
+            this.btnExplorer.Name = "btnExplorer";
+            this.btnExplorer.Selectable = true;
+            this.btnExplorer.Size = new System.Drawing.Size(75, 23);
+            this.btnExplorer.TabIndex = 43;
+            this.btnExplorer.Text = "&Open";
+            this.btnExplorer.UseVisualStyleBackColor = true;
+            this.btnExplorer.Click += new System.EventHandler(this.btnExplorer_Click);
             // 
             // labelTS161
             // 
@@ -27622,7 +27638,7 @@
             this.lblAdvancedAudioWarning.Image = null;
             this.lblAdvancedAudioWarning.Location = new System.Drawing.Point(56, 22);
             this.lblAdvancedAudioWarning.Name = "lblAdvancedAudioWarning";
-            this.lblAdvancedAudioWarning.Size = new System.Drawing.Size(593, 16);
+            this.lblAdvancedAudioWarning.Size = new System.Drawing.Size(612, 16);
             this.lblAdvancedAudioWarning.TabIndex = 93;
             this.lblAdvancedAudioWarning.Text = "WARNING: these settings may cause undesirable side effects if changed from defaul" +
     "t";
@@ -54858,6 +54874,18 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // btnErrorLog
+            // 
+            this.btnErrorLog.Image = null;
+            this.btnErrorLog.Location = new System.Drawing.Point(11, 97);
+            this.btnErrorLog.Name = "btnErrorLog";
+            this.btnErrorLog.Selectable = true;
+            this.btnErrorLog.Size = new System.Drawing.Size(130, 23);
+            this.btnErrorLog.TabIndex = 44;
+            this.btnErrorLog.Text = "&View Error Log";
+            this.btnErrorLog.UseVisualStyleBackColor = true;
+            this.btnErrorLog.Click += new System.EventHandler(this.btnErrorLog_Click);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -59404,6 +59432,11 @@
         private Label lblBuffer;
         private CheckBoxTS chkHermesLite2;
         private CheckBox chkN2ADR;
+<<<<<<< HEAD
+        private ButtonTS btnExplorer;
+        private ButtonTS btnErrorLog;
+=======
         public CheckBoxTS chkMasterVolumeForVAC;
+>>>>>>> d03547ad16e81635cd7e84261ab111372f1a5632
     }
 }

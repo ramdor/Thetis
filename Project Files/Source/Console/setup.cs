@@ -51,6 +51,9 @@ namespace Thetis
     using System.Security.Cryptography;
     using System.Xml;
     using static Thetis.PortAudioForThetis;
+    using Thetis.KLJ;
+
+    // using static Thetis.G7KLJ;
 
 #if (USE_PORTAUDIO_EXTRAS)
 {
@@ -13573,9 +13576,15 @@ namespace Thetis
         private void Setup_Closing(
             object sender, System.ComponentModel.CancelEventArgs e)
         {
-            console.SetFocusMaster(true);
-            this.Hide();
-            e.Cancel = true;
+            try
+            {
+                this.Hide();
+                e.Cancel = true;
+                console.SetFocusMaster(true);
+                console.Show();
+                console.WindowState = FormWindowState.Normal;
+            }
+            catch (Exception) { }
         }
 
         private void btnImportDB_Click(object sender, System.EventArgs e)
@@ -28633,9 +28642,39 @@ namespace Thetis
             chkN2ADRBusy = false;
         }
 
+<<<<<<< HEAD
+        private void btnExplorer_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+                string pathOnly = lblDataBase.Text;
+                var found = pathOnly.LastIndexOf("\\");
+                pathOnly = pathOnly.Substring(0, found);
+                Utils.OpenInExplorer(pathOnly);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error opening Data Folder");
+            }
+
+        }
+
+        private void btnErrorLog_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Utils.OpenInExplorer(Common.LogFilePath);
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error opening Error Log");
+            }
+        }
+=======
         private void Setup_FormClosing(object sender, FormClosingEventArgs e) { }
 
         private void Setup_FormClosed(object sender, FormClosedEventArgs e) { }
+>>>>>>> d03547ad16e81635cd7e84261ab111372f1a5632
     }
 
     /*/

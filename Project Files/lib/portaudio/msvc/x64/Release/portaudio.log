@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+﻿  portaudio.vcxproj -> D:\OneDrive\Documents\Software\ANAN\G7KLJ THETIS\NEW_KLJ_WALES\Thetis-2.9.0\Project Files\bin\x64\Release\portaudio.dll
+=======
 ﻿  pa_allocation.c
   pa_converters.c
   pa_cpuload.c
@@ -29,3 +32,4 @@
   Generating code
   Finished generating code
   portaudio.vcxproj -> U:\Wales\Thetis-2.9.0\Project Files\bin\x64\Release\portaudio.dll
+>>>>>>> d03547ad16e81635cd7e84261ab111372f1a5632
