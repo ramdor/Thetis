@@ -13582,7 +13582,7 @@ namespace Thetis
                 e.Cancel = true;
                 console.SetFocusMaster(true);
                 console.Show();
-                console.WindowState = FormWindowState.Normal;
+                // console.WindowState = FormWindowState.Normal;
             }
             catch (Exception) { }
         }
@@ -28641,8 +28641,6 @@ namespace Thetis
             }
             chkN2ADRBusy = false;
         }
-
-<<<<<<< HEAD
         private void btnExplorer_Click(object sender, EventArgs e)
         {
 
@@ -28670,43 +28668,14 @@ namespace Thetis
                 MessageBox.Show(ex.Message, "Error opening Error Log");
             }
         }
-=======
+
         private void Setup_FormClosing(object sender, FormClosingEventArgs e) { }
 
         private void Setup_FormClosed(object sender, FormClosedEventArgs e) { }
->>>>>>> d03547ad16e81635cd7e84261ab111372f1a5632
-    }
 
-    /*/
-    #region PADeviceInfo Helper Class
-
-    public class PADeviceInfo
-    {
-        private string _Name;
-        private int _Index;
-
-        public string Name
-        {
-            get { return _Name; }
-        }
-
-        public int Index
-        {
-            get { return _Index; }
-        }
-
-        public PADeviceInfo(String argName, int argIndex)
-        {
-            _Name = argName;
-            _Index = argIndex;
-        }
-
-        public override string ToString() { return _Name; }
     }
 
 
-    #endregion
-     /*/
 
     #region 60m Channels Class
 

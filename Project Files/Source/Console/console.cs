@@ -2357,6 +2357,8 @@ namespace Thetis
 
             return;
         }
+
+
         #region InfoBar
         // infobar
         private bool _bInfoBarShowSEQErrors = true;
@@ -23114,10 +23116,14 @@ oldZoomSlider != ptbDisplayZoom.Value*/
         private void CpuUsage(
             bool bGetOverallCpuUsage = true, bool initting = false)
         {
+
+            bool error = false;
             try
             {
+                // MessageBox.Show("CpuUsage()");
                 if (!initting && cpu_usage == null)
                 {
+                    // MessageBox.Show("CpuUsage() -- bailed");
                     return;
                 }
                 string sMachineName = System.Environment.MachineName;
@@ -23168,7 +23174,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                                 = !m_bShowSystemCPUUsage;
                         }
                     }
-
+                    // MessageBox.Show("CpuUsage() --making perfcounter (1)");
                     cpu_usage = new PerformanceCounter(
                         "Processor", "% Processor Time", "_Total", sMachineName);
                 }
@@ -23178,6 +23184,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     // required in the calculation as .nextvalue returns a %
                     // compared to a single processor such that over 100% would mean
                     // 100% of a single cpu machine
+                    // MessageBox.Show("CpuUsage() --making perfcounter (2)");
                     cpu_usage = new PerformanceCounter(
                         "Process", "% Processor Time", sInstanceName, sMachineName);
                 }
@@ -23186,14 +23193,34 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                                              // prevents status bar showin 0% when
                                              // swapping from overall to thetis only
                                              // throw new Exception("ffs");
+
+                // MessageBox.Show("CpuUsage() -- done, and cpuPerc == " + cpuPerc.ToString());
             }
             catch (Exception e)
             {
+                error = true;
                 Common.LogString("CPU meter failed with: ");
                 Common.LogString(e.ToString());
-                Common.LogException(e);
+                Common.LogException(e, true);
                 disableCpuUsage();
             }
+            finally
+            {
+                if (!error)
+                {
+                    // KLJ start this here. Before it was started automatically, so if it ticked before
+                    // we had created the thing (rememeber we are on a separate thread here to speed up startup)
+                    // it would then disable the meter. We are sure we are done here, so it should be safe to start
+                    // the timer only when we have completed this task. (As long as the timer does not complain about
+                    // being called from a non-UI thread).
+                    this.Invoke(new Action(() => StartCPUTimer()));
+                }
+            }
+        }
+
+        private void StartCPUTimer()
+        {
+            timer_cpu_meter.Enabled = true;
         }
 
         private void disableCpuUsage()

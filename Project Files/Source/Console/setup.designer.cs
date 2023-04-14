@@ -59432,11 +59432,9 @@
         private Label lblBuffer;
         private CheckBoxTS chkHermesLite2;
         private CheckBox chkN2ADR;
-<<<<<<< HEAD
         private ButtonTS btnExplorer;
         private ButtonTS btnErrorLog;
-=======
         public CheckBoxTS chkMasterVolumeForVAC;
->>>>>>> d03547ad16e81635cd7e84261ab111372f1a5632
+
     }
 }
