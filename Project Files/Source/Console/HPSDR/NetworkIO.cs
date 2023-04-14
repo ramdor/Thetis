@@ -101,6 +101,7 @@ namespace Thetis
         public static int initRadio()
         {
             int rc;
+            LastError = "";
             // System.Console.WriteLine("Static IP: " +
             // Console.getConsole().HPSDRNetworkIPAddr);
             int adapterIndex = adapterSelected - 1;
@@ -326,6 +327,7 @@ namespace Thetis
         private static string fwVersionMsg = null;
 
         public static string getFWVersionErrorMsg() { return fwVersionMsg; }
+        public static string LastError { get; private set; }
 
         public static bool forceFWGood = false;
 
@@ -623,7 +625,7 @@ namespace Thetis
                 byte[] data = new byte[100];
 
                 bool data_available;
-
+     
                 // await possibly multiple replies, if there are multiple radios on
                 // this port, which MIGHT be the 'any' port, 0.0.0.0
                 do
@@ -639,6 +641,7 @@ namespace Thetis
                             ref remoteEP); // recv has number of bytes we received
                                            // string stringData = Encoding.ASCII.GetString(data, 0,
                                            // recv); // use this to print the received data
+
 
                         System.Console.WriteLine("RAW Discovery data = "
                             + BitConverter.ToString(data, 0, recv));
@@ -669,6 +672,7 @@ namespace Thetis
                                 && (data[3] == 0x0) && (data[4] == 0x3)))
                         {
                             System.Console.WriteLine("Radio Busy");
+                            LastError = "Radio seems to be in use";
                             return false;
                         }
 

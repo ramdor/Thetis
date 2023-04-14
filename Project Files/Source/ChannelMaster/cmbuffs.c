@@ -122,7 +122,7 @@ void cmdata(int id, double* out) {
     EnterCriticalSection(&a->csOUT);
     if (!_InterlockedAnd(&a->run, 1)) {
         LeaveCriticalSection(&a->csOUT);
-        _endthread();
+        _endthread(); 
         return; // MW0LGE_21k5
     }
     if (a->r1_outsize > (a->r1_active_buffsize - a->r1_outidx)) {

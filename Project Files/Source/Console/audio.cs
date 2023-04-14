@@ -1921,7 +1921,7 @@ namespace Thetis
                 ivac.SetIVACrun(0, 0);
                 ivac.StopAudioIVAC(0);
 
-                Thread.Sleep(10); // MW0LGE_21k9rc4 prevent exception when
+                Thread.Sleep(100); // MW0LGE_21k9rc4 prevent exception when
                                   // using ASIO
             }
         }
@@ -2047,10 +2047,17 @@ namespace Thetis
                 }
                 else
                 {
-                    MessageBox.Show(
-                        "Error starting SDR hardware, is it connected and powered?",
-                        "Network Error", MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    if (!String.IsNullOrEmpty(NetworkIO.LastError))
+                    {
+                        MessageBox.Show("Unable to connect to the radio: " + NetworkIO.LastError);
+                    }
+                    else
+                    {
+                        MessageBox.Show(
+                            "Error starting SDR hardware, is it connected and powered?",
+                            "Network Error", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
                     return false;
                 }
             }

@@ -52,6 +52,7 @@ namespace Thetis
     using System.Xml;
     using static Thetis.PortAudioForThetis;
     using Thetis.KLJ;
+    using System.Runtime.InteropServices;
 
     // using static Thetis.G7KLJ;
 
@@ -930,7 +931,7 @@ namespace Thetis
                 radP1DDC6ADC2.Checked = false;
         }
 
-        List<int> getSampleRatesForProtocol() // KLJ
+        List<int> getSampleRatesForProtocol(RadioProtocol rp = RadioProtocol.None) // KLJ
         {
             var ret = new List<int>();
             var common = new List<int>();
@@ -938,19 +939,20 @@ namespace Thetis
             common.Add(96000);
             common.Add(192000);
             ret.AddRange(common);
+            var myProto = rp == RadioProtocol.None ? NetworkIO.CurrentRadioProtocol : rp;
 
             // only add the higher bitrates if applicable:
-            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH
+            if (rp == RadioProtocol.ETH
                 || Hl2.HermesLite2)
             {
                 ret.Add(384000);
             }
 
-            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
+            if (rp == RadioProtocol.ETH)
             {
 
-                ret.Add(768000);
-                ret.Add(153600);
+                ret.Add(768000); 
+                ret.Add(1536000);
             }
 
             return ret;
@@ -958,7 +960,7 @@ namespace Thetis
 
         private bool m_popping_radio_samplerates = false;
 
-        private void initSRCombo(ComboBoxTS cbo, List<string> recoveryList)
+        private void initSRCombo(ComboBoxTS cbo, List<string> recoveryList, RadioProtocol rp = RadioProtocol.None)
         {
             bool was_valid_selection = false;
             int initial_value = 0;
@@ -973,7 +975,7 @@ namespace Thetis
             try
             {
                 m_popping_radio_samplerates = true;
-                var list = getSampleRatesForProtocol();
+                var list = getSampleRatesForProtocol(rp);
                 was_valid_selection = list.Contains(initial_value);
                 cbo.Items.Clear();
                 cbo.Items.AddRange(list.Cast<Object>().ToArray());
@@ -1032,11 +1034,11 @@ namespace Thetis
             }
         }
 
-        public void InitAudioTab(List<string> recoveryList = null)
+        public void InitAudioTab(List<string> recoveryList = null, RadioProtocol rp = RadioProtocol.None)
         {
             Debug.Assert(recoveryList == null);
-            initSRCombo(comboAudioSampleRate1, recoveryList);
-            initSRCombo(comboAudioSampleRateRX2, recoveryList);
+            initSRCombo(comboAudioSampleRate1, recoveryList,rp);
+            initSRCombo(comboAudioSampleRateRX2, recoveryList,rp);
 
             Debug.Assert(comboAudioSampleRate1.Items.Count
                 == comboAudioSampleRateRX2.Items.Count);
@@ -8584,9 +8586,9 @@ namespace Thetis
                     case RadioProtocol.ETH:
                         // turn OFF the DSP channels so they get flushed out (must do
                         // while data is flowing to get slew-down and flush)
-                        WDSP.SetChannelState(WDSP.id(0, 1), 0, 0);
+                        WDSP.SetChannelState(WDSP.id(0, 1), 0, 1);
                         WDSP.SetChannelState(WDSP.id(0, 0), 0, 1);
-                        Thread.Sleep(10);
+                        // we don't need to sleep() if dmode is set to 1
 
                         // remove the RX1 main and sub audio streams from the mix set
                         unsafe
@@ -13580,6 +13582,7 @@ namespace Thetis
             {
                 this.Hide();
                 e.Cancel = true;
+                if (console != null && !console.IsDisposed && !console.Disposing)
                 console.SetFocusMaster(true);
                 console.Show();
                 // console.WindowState = FormWindowState.Normal;
@@ -23111,7 +23114,7 @@ namespace Thetis
                     break;
             }
 
-            InitAudioTab();
+            InitAudioTab(null, RadioProtocolSelected);
         }
         public static RadioProtocol RadioProtocolSelected
         {
@@ -28673,6 +28676,10 @@ namespace Thetis
 
         private void Setup_FormClosed(object sender, FormClosedEventArgs e) { }
 
+        private void chkRadioProtocolSelect_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 
 

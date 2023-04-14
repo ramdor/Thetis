@@ -202,6 +202,7 @@
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
             this.grpInfo = new System.Windows.Forms.GroupBoxTS();
+            this.btnErrorLog = new System.Windows.Forms.ButtonTS();
             this.btnExplorer = new System.Windows.Forms.ButtonTS();
             this.labelTS161 = new System.Windows.Forms.LabelTS();
             this.lblDataBase = new System.Windows.Forms.LabelTS();
@@ -1533,7 +1534,6 @@
             this.tpAudio = new System.Windows.Forms.TabPage();
             this.tcAudio = new System.Windows.Forms.TabControl();
             this.tpVAC = new System.Windows.Forms.TabPage();
-            this.chkMasterVolumeForVAC = new System.Windows.Forms.CheckBoxTS();
             this.lblBuffer = new System.Windows.Forms.Label();
             this.labelTS178 = new System.Windows.Forms.LabelTS();
             this.grpAudioVACAutoEnable = new System.Windows.Forms.GroupBoxTS();
@@ -1619,6 +1619,7 @@
             this.comboAudioInput2 = new System.Windows.Forms.ComboBoxTS();
             this.comboAudioDriver2 = new System.Windows.Forms.ComboBoxTS();
             this.chkAudioEnableVAC = new System.Windows.Forms.CheckBoxTS();
+            this.chkMasterVolumeForVAC = new System.Windows.Forms.CheckBoxTS();
             this.tpVAC2 = new System.Windows.Forms.TabPage();
             this.chkVAC2WillMute = new System.Windows.Forms.CheckBoxTS();
             this.chkVAC2GrapherAuto = new System.Windows.Forms.CheckBoxTS();
@@ -3447,7 +3448,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.btnErrorLog = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -6737,6 +6737,18 @@
             this.grpInfo.TabStop = false;
             this.grpInfo.Text = "General Information:";
             // 
+            // btnErrorLog
+            // 
+            this.btnErrorLog.Image = null;
+            this.btnErrorLog.Location = new System.Drawing.Point(11, 97);
+            this.btnErrorLog.Name = "btnErrorLog";
+            this.btnErrorLog.Selectable = true;
+            this.btnErrorLog.Size = new System.Drawing.Size(130, 23);
+            this.btnErrorLog.TabIndex = 44;
+            this.btnErrorLog.Text = "&View Error Log";
+            this.btnErrorLog.UseVisualStyleBackColor = true;
+            this.btnErrorLog.Click += new System.EventHandler(this.btnErrorLog_Click);
+            // 
             // btnExplorer
             // 
             this.btnExplorer.Image = null;
@@ -6949,6 +6961,7 @@
             this.chkRadioProtocolSelect.Text = "Auto Detect Protocol";
             this.chkRadioProtocolSelect.ThreeState = true;
             this.toolTip1.SetToolTip(this.chkRadioProtocolSelect, "Selects Radio Protocol");
+            this.chkRadioProtocolSelect.CheckedChanged += new System.EventHandler(this.chkRadioProtocolSelect_CheckedChanged);
             this.chkRadioProtocolSelect.CheckStateChanged += new System.EventHandler(this.chkRadioProtocolSelect_CheckStateChanged);
             // 
             // chkNetworkWDT
@@ -25145,16 +25158,6 @@
             this.tpVAC.TabIndex = 1;
             this.tpVAC.Text = "VAC 1";
             // 
-            // chkMasterVolumeForVAC
-            // 
-            this.chkMasterVolumeForVAC.Image = null;
-            this.chkMasterVolumeForVAC.Location = new System.Drawing.Point(369, 15);
-            this.chkMasterVolumeForVAC.Name = "chkMasterVolumeForVAC";
-            this.chkMasterVolumeForVAC.Size = new System.Drawing.Size(191, 24);
-            this.chkMasterVolumeForVAC.TabIndex = 94;
-            this.chkMasterVolumeForVAC.Text = "Master Volume Controls VAC";
-            this.toolTip1.SetToolTip(this.chkMasterVolumeForVAC, "Enable Virtual Audio Cable Support using the settings on this form.");
-            // 
             // lblBuffer
             // 
             this.lblBuffer.AutoSize = true;
@@ -26375,6 +26378,16 @@
             this.chkAudioEnableVAC.Text = "Enable VAC 1";
             this.toolTip1.SetToolTip(this.chkAudioEnableVAC, "Enable Virtual Audio Cable Support using the settings on this form.");
             this.chkAudioEnableVAC.CheckedChanged += new System.EventHandler(this.chkAudioEnableVAC_CheckedChanged);
+            // 
+            // chkMasterVolumeForVAC
+            // 
+            this.chkMasterVolumeForVAC.Image = null;
+            this.chkMasterVolumeForVAC.Location = new System.Drawing.Point(369, 15);
+            this.chkMasterVolumeForVAC.Name = "chkMasterVolumeForVAC";
+            this.chkMasterVolumeForVAC.Size = new System.Drawing.Size(191, 24);
+            this.chkMasterVolumeForVAC.TabIndex = 94;
+            this.chkMasterVolumeForVAC.Text = "Master Volume Controls VAC";
+            this.toolTip1.SetToolTip(this.chkMasterVolumeForVAC, "Enable Virtual Audio Cable Support using the settings on this form.");
             // 
             // tpVAC2
             // 
@@ -27638,7 +27651,7 @@
             this.lblAdvancedAudioWarning.Image = null;
             this.lblAdvancedAudioWarning.Location = new System.Drawing.Point(56, 22);
             this.lblAdvancedAudioWarning.Name = "lblAdvancedAudioWarning";
-            this.lblAdvancedAudioWarning.Size = new System.Drawing.Size(612, 16);
+            this.lblAdvancedAudioWarning.Size = new System.Drawing.Size(593, 16);
             this.lblAdvancedAudioWarning.TabIndex = 93;
             this.lblAdvancedAudioWarning.Text = "WARNING: these settings may cause undesirable side effects if changed from defaul" +
     "t";
@@ -54873,18 +54886,6 @@
             this.radioButtonTS6.TabStop = true;
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
-            // 
-            // btnErrorLog
-            // 
-            this.btnErrorLog.Image = null;
-            this.btnErrorLog.Location = new System.Drawing.Point(11, 97);
-            this.btnErrorLog.Name = "btnErrorLog";
-            this.btnErrorLog.Selectable = true;
-            this.btnErrorLog.Size = new System.Drawing.Size(130, 23);
-            this.btnErrorLog.TabIndex = 44;
-            this.btnErrorLog.Text = "&View Error Log";
-            this.btnErrorLog.UseVisualStyleBackColor = true;
-            this.btnErrorLog.Click += new System.EventHandler(this.btnErrorLog_Click);
             // 
             // Setup
             // 
