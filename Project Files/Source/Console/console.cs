@@ -46282,6 +46282,8 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
 
             // Listen for operating system messages.
 
+            // Debug.Print(ivac.GetThreadPriorityFailureCount().ToString());
+
             if (m.Msg == WM_QUERYENDSESSION)
             {
                 chkPower.Checked = false;

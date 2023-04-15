@@ -41,7 +41,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyProduct("Thetis")]
 [assembly: AssemblyCopyright("2022")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]		
+[assembly: AssemblyCulture("")]
 
 //
 // Version information for an assembly consists of the following four values:

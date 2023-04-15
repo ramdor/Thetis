@@ -25,6 +25,11 @@ warren@wpratt.com
 */
 
 #include "cmcomm.h"
+int m_ThreadPrioritySetFailures = 0;
+
+PORT int ThreadPrioritySetFailureCount() {
+    return m_ThreadPrioritySetFailures;
+}
 
 #define MAX_EXT_AAMIX (4) // maximum number of AAMIXs called from outside wdsp
 __declspec(align(16)) AAMIX
@@ -33,10 +38,14 @@ __declspec(align(16)) AAMIX
 void mix_main(void* pargs) {
     DWORD taskIndex = 0;
     HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
-    if (hTask != 0)
+    if (hTask != 0) {
+
         AvSetMmThreadPriority(hTask, AVRT_PRIORITY_CRITICAL);
-    else
+    } else {
+
+        ++m_ThreadPrioritySetFailures;
         SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+    }
 
     AAMIX a = (AAMIX)pargs;
 

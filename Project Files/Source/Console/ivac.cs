@@ -9,6 +9,14 @@
 
         // vac 
 
+        [DllImport("ChannelMaster.dll", EntryPoint = "ThreadPrioritySetFailureCount", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int ThreadPrioritySetFailureCount(); // KLJ
+
+        internal static int GetThreadPriorityFailureCount()
+        {
+            return ThreadPrioritySetFailureCount();
+        }
+
         [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACExclusive", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetIVACExclusive(int id, int e); // KLJ
 

@@ -1922,7 +1922,7 @@ namespace Thetis
                 ivac.StopAudioIVAC(0);
 
                 Thread.Sleep(100); // MW0LGE_21k9rc4 prevent exception when
-                                  // using ASIO
+                                   // using ASIO
             }
         }
 
@@ -2079,10 +2079,11 @@ namespace Thetis
                 != oldProto); // if the procol changed, force it
                               // MW0LGE_21k9rc6
 
-            if (oldProto != NetworkIO.CurrentRadioProtocol)
+            var s = c.SetupForm;
+            if (oldProto != NetworkIO.CurrentRadioProtocol || s.ProtocolInUI != NetworkIO.CurrentRadioProtocol)
             {
-                c.SetupForm.InitAudioTab();
-                c.SetupForm.ForceAudioReset();
+                s.InitAudioTab(null, NetworkIO.CurrentRadioProtocol);
+                s.ForceAudioReset();
             }
             cmaster.PSLoopback = cmaster.PSLoopback;
 

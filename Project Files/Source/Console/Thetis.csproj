@@ -35,6 +35,7 @@
     <TargetZone>LocalIntranet</TargetZone>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
+    <IncrementVersionOnBuild>1.yyyy.Mdd.Hmm</IncrementVersionOnBuild>
     <PublishUrl>C:\Documents and Settings\w5wc\Desktop\PowerSDR 1.19.3\publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>

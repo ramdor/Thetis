@@ -8530,10 +8530,29 @@ namespace Thetis
             // selectedindexchanged]
             //                    [NOTE: this had an impact on SendStopToMetis in
             //                    networkproto1.c   (MW0LGE_21g comment)]
-            m_bForceAudio = true;
-            comboAudioSampleRate1_SelectedIndexChanged(this, EventArgs.Empty);
-            comboAudioSampleRateRX2_SelectedIndexChanged(this, EventArgs.Empty);
+            try
+            {
+                m_bForceAudio = true;
+                comboAudioSampleRate1_SelectedIndexChanged(this, EventArgs.Empty);
+                comboAudioSampleRateRX2_SelectedIndexChanged(this, EventArgs.Empty);
+                m_bIgnoreProtocolCheckChange = true;
+                if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
+                {
+                    chkRadioProtocolSelect.CheckState = CheckState.Indeterminate;
+                    chkRadioProtocolSelect.Text = "Protocol 1";
+                }
+                else if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
+                {
+                    chkRadioProtocolSelect.CheckState = CheckState.Unchecked;
+                    chkRadioProtocolSelect.Text = "Protocol 2";
+                }
+            }
+            catch (Exception e)
+            {
+                Common.LogException(e);
+            }
             m_bForceAudio = false;
+            m_bIgnoreProtocolCheckChange = false;
         }
 
         // access the check box for Andromeda to control variable rate (fast) tuning
@@ -8567,6 +8586,8 @@ namespace Thetis
         }
 
         private bool m_bForceAudio = false;
+
+
 
         private void comboAudioSampleRate1_SelectedIndexChanged(
             object sender, System.EventArgs e)
@@ -23087,9 +23108,16 @@ namespace Thetis
             }
         }
 
+        internal RadioProtocol ProtocolInUI { get; private set; }
+        bool m_bIgnoreProtocolCheckChange = false;
+
         private void chkRadioProtocolSelect_CheckStateChanged(
             object sender, EventArgs e)
         {
+            if (m_bIgnoreProtocolCheckChange && !initializing)
+            {
+                return;
+            }
             switch (chkRadioProtocolSelect.CheckState)
             {
                 case CheckState.Checked:
@@ -23114,7 +23142,7 @@ namespace Thetis
                     chkRadioProtocolSelect.Text = "Protocol 2";
                     break;
             }
-
+            ProtocolInUI = RadioProtocolSelected;
             InitAudioTab(null, RadioProtocolSelected);
         }
         public static RadioProtocol RadioProtocolSelected
