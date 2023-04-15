@@ -1774,9 +1774,16 @@ namespace Thetis
             return ret;
         }
 
+        public enum VACSelection
+        {
+            VAC1,
+            VAC2
+        }
+
         public static void EnableVAC1(bool enable)
         {
             bool retval = false;
+            var index = (int)VACSelection.VAC1;
 
             if (enable) unsafe
                 {
@@ -1862,8 +1869,8 @@ namespace Thetis
                         }
                         if (!retval)
                         {
-                            Status[0].status = pa_msg;
-                            Status[0].state = false;
+                            Status[index].status = pa_msg;
+                            Status[index].state = false;
                             console.SetupForm.ShowSetupTab(Setup.SetupTab.VAC1_Tab);
                             throw new Exception("VAC audio engine failed to start");
 
@@ -1872,8 +1879,8 @@ namespace Thetis
                         if (retval && console.PowerOn)
                         {
                             ivac.SetIVACrun(0, 1);
-                            Status[0].state = true;
-                            Status[0].status = "OK";
+                            Status[index].state = true;
+                            Status[index].status = "OK";
                         }
                     }
                     catch (Exception)
@@ -1905,8 +1912,8 @@ namespace Thetis
                                 //     PortAudioForThetis.PA_GetDeviceInfo(output_dev2).defaultSampleRate;
                             }
                         }
-                        Status[0].status = pa_msg;
-                        Status[0].state = false;
+                        Status[index].status = pa_msg;
+                        Status[index].state = false;
 
                         MessageBox.Show(
                             "The program is having trouble starting the VAC audio streams.\n"
@@ -1929,9 +1936,13 @@ namespace Thetis
         public static void EnableVAC2(bool enable)
         {
             bool retval = false;
+            var index = (int)VACSelection.VAC2;
+
 
             if (enable) unsafe
                 {
+                    Status[index].state = false;
+                    Status[index].status = "Starting";
                     int num_chan = 1;
                     int sample_rate = sample_rate3;
                     int block_size = block_size_vac2;
@@ -1998,23 +2009,35 @@ namespace Thetis
 
                     try
                     {
-                        retval = ivac.StartAudioIVAC(1) == 1;
-                        if (retval && console.PowerOn) ivac.SetIVACrun(1, 1);
+                        int return_value = ivac.StartAudioIVAC(1);
+                        retval = return_value
+                            == Convert.ToInt32(
+                                PortAudioForThetis.PaErrorCode.paNoError);
+                        if (retval && console.PowerOn)
+                        {
+                            ivac.SetIVACrun(1, 1);
+                            Status[index].state = true;
+                            Status[index].status = "OK";
+                        }
 
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         MessageBox.Show(
                             "The program is having trouble starting the VAC audio streams.\n"
-                                + "Please examine the VAC related settings on the Setup Form -> Audio Tab and try again.",
+                                + "Please examine the VAC related settings on the Setup Form -> Audio Tab and try again.\n\n" + ex.Message,
                             "VAC2 Audio Stream Startup Error", MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
+                        Status[index].state = false;
+                        Status[index].status = ex.Message;
                     }
                 }
             else
             {
                 ivac.SetIVACrun(1, 0);
                 ivac.StopAudioIVAC(1);
+                Status[index].state = false;
+                Status[index].status = "";
 
                 Thread.Sleep(10); // MW0LGE_21k9rc4 prevent exception when
                                   // using ASIO
