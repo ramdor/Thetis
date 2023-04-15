@@ -298,7 +298,7 @@ namespace Thetis
         private int last_var1_shift;
         private int last_var2_shift;
 
-        public string[] CmdLineArgs;
+        public string[] CmdLineArgs { get; private set; }
 
         private readonly HiPerfTimer break_in_timer;
         public double avg_vox_pwr = 0.0;
@@ -595,7 +595,8 @@ namespace Thetis
         private RawInput m_objRawinput;
         // ----
         // MW0LGE_21d private bool m_bShiftKeyDown = false;
-        private static System.Timers.Timer autoStartTimer;
+        // klj: no need for a timer here. Just set the AutoStart flag and start the radio at the end of _Shown()
+        // private static autoStartTimer;
         // ----
         #endregion
 
@@ -623,6 +624,8 @@ namespace Thetis
             // CheckIfRussian(); //#UKRAINE
 
             Display.specready = false;
+            theConsole = this; // KLJ. Don't let it be assigned only in the caller: it means that anyone looking for 'theConsole'
+            // (AFAIK, the NetworkIO) will not find us even after Shown() is complete, thus apparently randomly breaking autostart.
 
             // MW0LGE
             //  Problems with CultureInfo.
@@ -1224,18 +1227,7 @@ namespace Thetis
                 }
                 pause_DisplayThread = false;
 
-                // autostart?
-                foreach (string s in CmdLineArgs)
-                {
-                    if (s == "-autostart")
-                    {
-                        autoStartTimer = new System.Timers.Timer(2000);
-                        autoStartTimer.Elapsed += OnAutoStartTimerEvent;
-                        autoStartTimer.AutoReset = false;
-                        autoStartTimer.Enabled = true;
-                        break;
-                    }
-                }
+
 
                 this.Opacity = 0.01;
                 Show();
@@ -1256,6 +1248,8 @@ namespace Thetis
                 {
                     // ignore
                 }
+
+
             }
         }
 
@@ -1361,12 +1355,7 @@ namespace Thetis
             SendMessage(parent.Handle, WM_SETREDRAW, true, 0);
             if (refresh) parent.Refresh();
         }
-        //--
-        private void OnAutoStartTimerEvent(Object source, ElapsedEventArgs e)
-        {
-            // used by autostart command line flags, this event will fire 2 seconds
-            chkPower.Checked = true;
-        }
+
 
         private ThreadPriority m_tpDisplayThreadPriority = ThreadPriority.Normal;
         public ThreadPriority DisplayThreadPriority
@@ -1678,7 +1667,12 @@ namespace Thetis
                         Application.Exit();
                     }
                     else
+                    {
+                        theConsole.HandleAutoStart(); // KLJ moved here to ensure that, if we are going to AutoStart(),
+                        // that we do it after all is first initialised.
                         Application.Run(theConsole);
+
+                    }
                 }
             }
             catch (Exception ex)
@@ -1715,6 +1709,28 @@ namespace Thetis
         // ======================================================
         // Misc Routines
         // ======================================================
+
+
+        private void HandleAutoStart()
+        {
+            try
+            {
+
+                foreach (string s in CmdLineArgs)
+                {
+                    if (s == "-autostart")
+                    {
+                        AutoStart = true;
+                        chkPower.Checked = true;
+                        break;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Common.LogException(e);
+            }
+        }
 
         private bool spec_display = true;
         public bool SpecDisplay
@@ -32168,21 +32184,19 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                                        // aren't needed now
                     if (!Audio.Status[0].state)
                     {
-
                         chkPower.Checked = false;
                         pause_DisplayThread = false;
                         return;
                     }
                 }
+
                 if (vac2_enabled)
                 {
                     VAC2Enabled = true;
                     if (!Audio.Status[1].state)
                     {
-
                         chkPower.Checked = false;
                         pause_DisplayThread = false;
-
                         return;
                     }
                 }
@@ -46253,13 +46267,17 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
 
         private static Console theConsole = null;
 
-        public static Console getConsole() { return theConsole; }
+        public static Console getConsole()
+        {
+            Debug.Assert(theConsole != null); // KLJ: Assert() because it is unlikely the caller is expecting null
+            return theConsole;
+        }
 
         protected override void WndProc(ref Message m)
         {
             const int WM_QUERYENDSESSION = 0x0011;
             const int WM_CLOSE = 0x10;
-            const int WM_SYSCOMMAND = 0x0112;
+            // const int WM_SYSCOMMAND = 0x0112;
             IntPtr SC_CLOSE = (IntPtr)0xF060;
 
             // Listen for operating system messages.
@@ -46274,6 +46292,7 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
 
                 if (m.Msg == WM_CLOSE)
                 {
+                    // Paranoically make sure we do not own setup form here. See below. KLJ.
                     while (OwnedForms.Contains(m_frmSetupForm))
                     {
                         // we'll close SetupForm manually, rather than
@@ -55908,6 +55927,8 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
             toolStripStatusLabel_LocalTime.Width = 100;
             chkFWCATUBypass.Text = "PS-A";
         }
+
+        private static bool AutoStart { get; set; }
 
         // private bool twoTone = false;
         public bool Manual2Tone

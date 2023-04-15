@@ -19,13 +19,12 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <StartWorkingDirectory>
     </StartWorkingDirectory>
-    <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
-    <StartArguments>
-    </StartArguments>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <StartArguments>-autostart</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
-    <StartArguments>autostart</StartArguments>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <StartArguments>-autostart</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>

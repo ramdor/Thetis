@@ -942,16 +942,16 @@ namespace Thetis
             var myProto = rp == RadioProtocol.None ? NetworkIO.CurrentRadioProtocol : rp;
 
             // only add the higher bitrates if applicable:
-            if (rp == RadioProtocol.ETH
+            if (myProto == RadioProtocol.ETH
                 || Hl2.HermesLite2)
             {
                 ret.Add(384000);
             }
 
-            if (rp == RadioProtocol.ETH)
+            if (myProto == RadioProtocol.ETH)
             {
 
-                ret.Add(768000); 
+                ret.Add(768000);
                 ret.Add(1536000);
             }
 
@@ -1037,8 +1037,8 @@ namespace Thetis
         public void InitAudioTab(List<string> recoveryList = null, RadioProtocol rp = RadioProtocol.None)
         {
             Debug.Assert(recoveryList == null);
-            initSRCombo(comboAudioSampleRate1, recoveryList,rp);
-            initSRCombo(comboAudioSampleRateRX2, recoveryList,rp);
+            initSRCombo(comboAudioSampleRate1, recoveryList, rp);
+            initSRCombo(comboAudioSampleRateRX2, recoveryList, rp);
 
             Debug.Assert(comboAudioSampleRate1.Items.Count
                 == comboAudioSampleRateRX2.Items.Count);
@@ -8671,11 +8671,12 @@ namespace Thetis
                     case RadioProtocol.USB:
                         // turn OFF the RX DSP channels so they get flushed out (must do
                         // while data is flowing to get slew-down and flush)
-                        WDSP.SetChannelState(3, 0, 0); // RX2_sub
-                        WDSP.SetChannelState(2, 0, 0); // RX2_main
-                        WDSP.SetChannelState(1, 0, 0); // RX1_sub
+                        WDSP.SetChannelState(3, 0, 1); // RX2_sub
+                        WDSP.SetChannelState(2, 0, 1); // RX2_main
+                        WDSP.SetChannelState(1, 0, 1); // RX1_sub
                         WDSP.SetChannelState(0, 0, 1); // RX1_main
-                        Thread.Sleep(10);
+                        // Thread.Sleep(10); KLJ: no sleep required as dmode is set to 1;
+                        // Set ChannelState() won't return until the slew-down is complete and audio has been stopped.
 
                         // remove the RX1 and RX2 (main and sub) audio streams from the
                         // mix set
@@ -13582,9 +13583,9 @@ namespace Thetis
             {
                 this.Hide();
                 e.Cancel = true;
-                if (console != null && !console.IsDisposed && !console.Disposing)
-                console.SetFocusMaster(true);
-                console.Show();
+                //if (console != null && !console.IsDisposed && !console.Disposing)
+                //console.SetFocusMaster(true);
+                //console.Show();
                 // console.WindowState = FormWindowState.Normal;
             }
             catch (Exception) { }
@@ -28666,7 +28667,8 @@ namespace Thetis
             try
             {
                 Utils.OpenInExplorer(Common.LogFilePath);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error opening Error Log");
             }

@@ -159,7 +159,9 @@ namespace Thetis
 
             if (enableStaticIP)
             {
-                HpSdrHwIpAddress = Console.getConsole().HPSDRNetworkIPAddr;
+                var c = Console.getConsole();
+                var NetIp = c.HPSDRNetworkIPAddr;
+                HpSdrHwIpAddress = NetIp;
 
                 IPAddress remoteIp = IPAddress.Parse(HpSdrHwIpAddress);
                 IPEndPoint remoteEndPoint = new IPEndPoint(remoteIp, 0);
@@ -625,7 +627,7 @@ namespace Thetis
                 byte[] data = new byte[100];
 
                 bool data_available;
-     
+
                 // await possibly multiple replies, if there are multiple radios on
                 // this port, which MIGHT be the 'any' port, 0.0.0.0
                 do

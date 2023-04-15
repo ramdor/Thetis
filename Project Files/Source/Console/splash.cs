@@ -92,7 +92,7 @@ namespace Thetis
             timer1.Interval = TIMER_INTERVAL;
             timer1.Start();
             this.ClientSize = this.BackgroundImage.Size;
-            this.ShowInTaskbar = false;
+            this.ShowInTaskbar = true;
         }
 
         protected override void Dispose(bool disposing)
