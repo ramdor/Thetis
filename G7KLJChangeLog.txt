@@ -1,3 +1,4 @@
+Sat Apr 15 06:54:59 2023 +0100 - sjk7: Hopeful #003 Issue resolved (-autostart not working, thank you, Ernst)
 Fri Apr 14 14:55:56 2023 +0100 - BRUNO: highest sample rate now works. Close #002
 Fri Apr 14 14:54:10 2023 +0100 - BRUNO: Highest sample rate had zero missing on the end, plus the higher bitrates were not showing until the radio actually connected in P2. They now correctly show if you just select P2. But if you set an enormous sample rate on a radio that does not support it, you are on your own. Them's the breaks!
 Fri Apr 14 11:54:05 2023 +0100 - BRUNO: Fixed race condition where cpu info would be disabled before it was ever created on a background thread. I now start the cpu timer via an action from the CPU creation thread. It seems to do other stuff too, like measuring current on some models, so it is enabled unconditionally
