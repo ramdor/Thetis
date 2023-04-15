@@ -1,3 +1,4 @@
+Sat Apr 15 06:57:16 2023 +0100 - sjk7: Hopeful about #002 (high sample rates not working on Anan 7000DLE)
 Sat Apr 15 06:54:59 2023 +0100 - sjk7: Hopeful #003 Issue resolved (-autostart not working, thank you, Ernst)
 Fri Apr 14 14:55:56 2023 +0100 - BRUNO: highest sample rate now works. Close #002
 Fri Apr 14 14:54:10 2023 +0100 - BRUNO: Highest sample rate had zero missing on the end, plus the higher bitrates were not showing until the radio actually connected in P2. They now correctly show if you just select P2. But if you set an enormous sample rate on a radio that does not support it, you are on your own. Them's the breaks!
