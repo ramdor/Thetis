@@ -1,3 +1,6 @@
+Sat Apr 15 11:10:04 2023 +0100 - sjk7: More work on #002 -- Sample rates and what happens when you try to connect to the radio with the wrong protocol. I think now, finally, the UI agrees with either the protocol you have chose, or the one actually used by the radio. Maybe. I did check to make sure that even if you set an invalid sample rate (by say choosing a high P2 sample rate when your radio actually uses P1, a standard, safe radio samplerate is set instead.
+Sat Apr 15 09:23:06 2023 +0100 - sjk7: Trying launcher on installer
+Sat Apr 15 06:57:41 2023 +0100 - sjk7: Hopeful about #001
 Sat Apr 15 06:57:16 2023 +0100 - sjk7: Hopeful about #002 (high sample rates not working on Anan 7000DLE)
 Sat Apr 15 06:54:59 2023 +0100 - sjk7: Hopeful #003 Issue resolved (-autostart not working, thank you, Ernst)
 Fri Apr 14 14:55:56 2023 +0100 - BRUNO: highest sample rate now works. Close #002
