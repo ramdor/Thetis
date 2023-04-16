@@ -1224,7 +1224,6 @@
             // 
             // timer_cpu_meter
             // 
-            this.timer_cpu_meter.Enabled = false;
             this.timer_cpu_meter.Interval = 1000;
             this.timer_cpu_meter.Tick += new System.EventHandler(this.timer_cpu_meter_Tick);
             // 

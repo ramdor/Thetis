@@ -117,11 +117,19 @@ PORT void SetIVACMonVolume(int id, double vol) {
 
     if (id == -1) {
         // overall monitor gain
-        IVAC pa = pvac[0];
-        AAMIX a = (AAMIX)pa->mixer;
-        a->volume = vol;
-        for (int i = 0; i < 32; ++i) {
-            a->tvol[i] = vol * a->vol[i];
+        for (int rx = 0; rx < 2; ++rx) { // do both RX1 and RX2. KLJ.
+            IVAC pa = pvac[rx];
+            if (pa) {
+                AAMIX a = (AAMIX)pa->mixer;
+                if (a) {
+                    EnterCriticalSection(&a->cs_out);
+                    a->volume = vol;
+                    for (int i = 0; i < 32; ++i) {
+                        a->tvol[i] = vol * a->vol[i];
+                    }
+                    LeaveCriticalSection(&a->cs_out);
+                }
+            }
         }
         return;
     }
@@ -129,11 +137,13 @@ PORT void SetIVACMonVolume(int id, double vol) {
     IVAC pa = pvac[id];
     assert(pa->mixer);
     AAMIX a = (AAMIX)pa->mixer;
+    if (a) {
 
-    EnterCriticalSection(&a->cs_out);
-    const int mon_index = 1;
-    a->tvol[mon_index] = vol * a->vol[mon_index];
-    LeaveCriticalSection(&a->cs_out);
+        EnterCriticalSection(&a->cs_out);
+        const int mon_index = 1;
+        a->tvol[mon_index] = vol * a->vol[mon_index];
+        LeaveCriticalSection(&a->cs_out);
+    }
 }
 
 void destroy_resamps(IVAC a) {

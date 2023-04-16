@@ -210,6 +210,7 @@ namespace Thetis
         private int afterConstructCounter = 0;
         internal void AfterConstruct()
         {
+            this.Text = "Setup and Options for Thetis " + Application.ProductVersion;
             Debug.Assert(afterConstructCounter == 0);
             afterConstructCounter++;
 
@@ -28630,7 +28631,8 @@ namespace Thetis
                 }
                 comboRadioModel_SelectedIndexChanged(null, EventArgs.Empty);
                 InitAudioTab();
-                chkMasterVolumeForVAC.Checked = chkHermesLite2.Checked;
+                if (Hl2.HermesLite2)
+                    chkMasterVolumeForVAC.Checked = true;
             }
         }
 

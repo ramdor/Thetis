@@ -262,7 +262,7 @@ namespace Thetis
 
                 // G7KLJ bugfix: tx mon volume was not working on VAC!
                 // the check for console.SetupForm.MasterVolumeForVac addresses feature #
-                if (console.VACEnabled && console.SetupForm.MasterVolumeForVac)
+                if ((console.VACEnabled || console.VAC2Enabled) && console.SetupForm.MasterVolumeForVac)
                 {
                     if (console.MOX)
                     {
@@ -1937,7 +1937,6 @@ namespace Thetis
         {
             bool retval = false;
             var index = (int)VACSelection.VAC2;
-
 
             if (enable) unsafe
                 {

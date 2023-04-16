@@ -26040,7 +26040,7 @@
             this.chkAudioLatencyPAOutManual.Name = "chkAudioLatencyPAOutManual";
             this.chkAudioLatencyPAOutManual.Size = new System.Drawing.Size(64, 16);
             this.chkAudioLatencyPAOutManual.TabIndex = 46;
-            this.chkAudioLatencyPAOutManual.Text = "Manual";
+            this.chkAudioLatencyPAOutManual.Text = "Man";
             this.chkAudioLatencyPAOutManual.CheckedChanged += new System.EventHandler(this.chkAudioLatencyPAOutManual_CheckedChanged);
             // 
             // udAudioLatencyPAOut
@@ -26080,7 +26080,7 @@
             this.chkAudioLatencyPAInManual.Name = "chkAudioLatencyPAInManual";
             this.chkAudioLatencyPAInManual.Size = new System.Drawing.Size(64, 16);
             this.chkAudioLatencyPAInManual.TabIndex = 43;
-            this.chkAudioLatencyPAInManual.Text = "Manual";
+            this.chkAudioLatencyPAInManual.Text = "Man";
             this.chkAudioLatencyPAInManual.CheckedChanged += new System.EventHandler(this.chkAudioLatencyPAInManual_CheckedChanged);
             // 
             // udAudioLatencyPAIn
@@ -26160,7 +26160,7 @@
             this.chkAudioLatencyManual2_Out.Name = "chkAudioLatencyManual2_Out";
             this.chkAudioLatencyManual2_Out.Size = new System.Drawing.Size(64, 16);
             this.chkAudioLatencyManual2_Out.TabIndex = 38;
-            this.chkAudioLatencyManual2_Out.Text = "Manual";
+            this.chkAudioLatencyManual2_Out.Text = "Man";
             this.chkAudioLatencyManual2_Out.CheckedChanged += new System.EventHandler(this.chkAudioLatencyManual2_Out_CheckedChanged);
             // 
             // udAudioLatency2_Out
@@ -26200,7 +26200,7 @@
             this.chkAudioLatencyManual2.Name = "chkAudioLatencyManual2";
             this.chkAudioLatencyManual2.Size = new System.Drawing.Size(64, 16);
             this.chkAudioLatencyManual2.TabIndex = 5;
-            this.chkAudioLatencyManual2.Text = "Manual";
+            this.chkAudioLatencyManual2.Text = "Man";
             this.chkAudioLatencyManual2.CheckedChanged += new System.EventHandler(this.chkAudioLatencyManual2_CheckedChanged);
             // 
             // udAudioLatency2
@@ -26421,7 +26421,7 @@
             // 
             this.chkVAC2WillMute.AutoSize = true;
             this.chkVAC2WillMute.Image = null;
-            this.chkVAC2WillMute.Location = new System.Drawing.Point(249, 234);
+            this.chkVAC2WillMute.Location = new System.Drawing.Point(249, 245);
             this.chkVAC2WillMute.Name = "chkVAC2WillMute";
             this.chkVAC2WillMute.Size = new System.Drawing.Size(126, 17);
             this.chkVAC2WillMute.TabIndex = 96;
@@ -26433,7 +26433,7 @@
             // 
             this.chkVAC2GrapherAuto.AutoSize = true;
             this.chkVAC2GrapherAuto.Image = null;
-            this.chkVAC2GrapherAuto.Location = new System.Drawing.Point(418, 250);
+            this.chkVAC2GrapherAuto.Location = new System.Drawing.Point(437, 291);
             this.chkVAC2GrapherAuto.Name = "chkVAC2GrapherAuto";
             this.chkVAC2GrapherAuto.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.chkVAC2GrapherAuto.Size = new System.Drawing.Size(51, 17);
@@ -26451,7 +26451,7 @@
             0,
             0,
             327680});
-            this.udVAC2GrapherSwing.Location = new System.Drawing.Point(472, 249);
+            this.udVAC2GrapherSwing.Location = new System.Drawing.Point(635, 286);
             this.udVAC2GrapherSwing.Maximum = new decimal(new int[] {
             4,
             0,
@@ -26480,7 +26480,7 @@
             this.ucVAC2VARGrapherIn.BackColor = System.Drawing.Color.Black;
             this.ucVAC2VARGrapherIn.Caption = "In";
             this.ucVAC2VARGrapherIn.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ucVAC2VARGrapherIn.Location = new System.Drawing.Point(428, 338);
+            this.ucVAC2VARGrapherIn.Location = new System.Drawing.Point(437, 376);
             this.ucVAC2VARGrapherIn.Margin = new System.Windows.Forms.Padding(2);
             this.ucVAC2VARGrapherIn.MaxPoints = 272;
             this.ucVAC2VARGrapherIn.Name = "ucVAC2VARGrapherIn";
@@ -26495,7 +26495,7 @@
             this.ucVAC2VARGrapherOut.BackColor = System.Drawing.Color.Black;
             this.ucVAC2VARGrapherOut.Caption = "Out";
             this.ucVAC2VARGrapherOut.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ucVAC2VARGrapherOut.Location = new System.Drawing.Point(428, 275);
+            this.ucVAC2VARGrapherOut.Location = new System.Drawing.Point(437, 313);
             this.ucVAC2VARGrapherOut.Margin = new System.Windows.Forms.Padding(2);
             this.ucVAC2VARGrapherOut.MaxPoints = 272;
             this.ucVAC2VARGrapherOut.Name = "ucVAC2VARGrapherOut";
@@ -26509,7 +26509,7 @@
             this.chkVAC2onSplit.Checked = true;
             this.chkVAC2onSplit.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkVAC2onSplit.Image = null;
-            this.chkVAC2onSplit.Location = new System.Drawing.Point(249, 140);
+            this.chkVAC2onSplit.Location = new System.Drawing.Point(249, 178);
             this.chkVAC2onSplit.Name = "chkVAC2onSplit";
             this.chkVAC2onSplit.Size = new System.Drawing.Size(117, 16);
             this.chkVAC2onSplit.TabIndex = 91;
@@ -26551,7 +26551,7 @@
             this.grpVAC2monitor.Controls.Add(this.lblVAC2ovfl);
             this.grpVAC2monitor.Controls.Add(this.lblVAC2underflows);
             this.grpVAC2monitor.Controls.Add(this.lblVAC2overflows);
-            this.grpVAC2monitor.Location = new System.Drawing.Point(8, 268);
+            this.grpVAC2monitor.Location = new System.Drawing.Point(8, 300);
             this.grpVAC2monitor.Name = "grpVAC2monitor";
             this.grpVAC2monitor.Size = new System.Drawing.Size(413, 133);
             this.grpVAC2monitor.TabIndex = 90;
@@ -26994,7 +26994,7 @@
             this.chkVAC2UseRX2.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkVAC2UseRX2.Enabled = false;
             this.chkVAC2UseRX2.Image = null;
-            this.chkVAC2UseRX2.Location = new System.Drawing.Point(249, 160);
+            this.chkVAC2UseRX2.Location = new System.Drawing.Point(249, 212);
             this.chkVAC2UseRX2.Name = "chkVAC2UseRX2";
             this.chkVAC2UseRX2.Size = new System.Drawing.Size(88, 16);
             this.chkVAC2UseRX2.TabIndex = 2;
@@ -27009,7 +27009,7 @@
             this.grpVAC2DirectIQ.Controls.Add(this.chkVAC2DirectIQ);
             this.grpVAC2DirectIQ.Location = new System.Drawing.Point(550, 12);
             this.grpVAC2DirectIQ.Name = "grpVAC2DirectIQ";
-            this.grpVAC2DirectIQ.Size = new System.Drawing.Size(149, 94);
+            this.grpVAC2DirectIQ.Size = new System.Drawing.Size(149, 73);
             this.grpVAC2DirectIQ.TabIndex = 89;
             this.grpVAC2DirectIQ.TabStop = false;
             this.grpVAC2DirectIQ.Text = "Direct I/Q";
@@ -27031,7 +27031,7 @@
             this.chkVAC2DirectIQ.Image = null;
             this.chkVAC2DirectIQ.Location = new System.Drawing.Point(16, 24);
             this.chkVAC2DirectIQ.Name = "chkVAC2DirectIQ";
-            this.chkVAC2DirectIQ.Size = new System.Drawing.Size(96, 16);
+            this.chkVAC2DirectIQ.Size = new System.Drawing.Size(121, 16);
             this.chkVAC2DirectIQ.TabIndex = 0;
             this.chkVAC2DirectIQ.Text = "Output to VAC";
             this.chkVAC2DirectIQ.CheckedChanged += new System.EventHandler(this.chkVAC2DirectIQ_CheckedChanged);
@@ -27076,7 +27076,7 @@
             this.grpVAC2Gain.Controls.Add(this.udVAC2GainTX);
             this.grpVAC2Gain.Controls.Add(this.lblVAC2GainRX);
             this.grpVAC2Gain.Controls.Add(this.udVAC2GainRX);
-            this.grpVAC2Gain.Location = new System.Drawing.Point(406, 12);
+            this.grpVAC2Gain.Location = new System.Drawing.Point(440, 28);
             this.grpVAC2Gain.Name = "grpVAC2Gain";
             this.grpVAC2Gain.Size = new System.Drawing.Size(96, 72);
             this.grpVAC2Gain.TabIndex = 85;
@@ -27165,7 +27165,7 @@
             // grpAudioStereo3
             // 
             this.grpAudioStereo3.Controls.Add(this.chkAudioStereo3);
-            this.grpAudioStereo3.Location = new System.Drawing.Point(406, 86);
+            this.grpAudioStereo3.Location = new System.Drawing.Point(440, 109);
             this.grpAudioStereo3.Name = "grpAudioStereo3";
             this.grpAudioStereo3.Size = new System.Drawing.Size(96, 39);
             this.grpAudioStereo3.TabIndex = 84;
@@ -27200,9 +27200,9 @@
             this.grpVAC2LatencyManual.Controls.Add(this.labelTS366);
             this.grpVAC2LatencyManual.Controls.Add(this.chkVAC2LatencyManual);
             this.grpVAC2LatencyManual.Controls.Add(this.udVAC2Latency);
-            this.grpVAC2LatencyManual.Location = new System.Drawing.Point(550, 112);
+            this.grpVAC2LatencyManual.Location = new System.Drawing.Point(542, 118);
             this.grpVAC2LatencyManual.Name = "grpVAC2LatencyManual";
-            this.grpVAC2LatencyManual.Size = new System.Drawing.Size(150, 155);
+            this.grpVAC2LatencyManual.Size = new System.Drawing.Size(167, 155);
             this.grpVAC2LatencyManual.TabIndex = 83;
             this.grpVAC2LatencyManual.TabStop = false;
             this.grpVAC2LatencyManual.Text = "Buffer Latency (ms)";
@@ -27230,11 +27230,11 @@
             // chkVAC2LatencyPAOutManual
             // 
             this.chkVAC2LatencyPAOutManual.Image = null;
-            this.chkVAC2LatencyPAOutManual.Location = new System.Drawing.Point(84, 124);
+            this.chkVAC2LatencyPAOutManual.Location = new System.Drawing.Point(81, 131);
             this.chkVAC2LatencyPAOutManual.Name = "chkVAC2LatencyPAOutManual";
             this.chkVAC2LatencyPAOutManual.Size = new System.Drawing.Size(64, 16);
             this.chkVAC2LatencyPAOutManual.TabIndex = 53;
-            this.chkVAC2LatencyPAOutManual.Text = "Manual";
+            this.chkVAC2LatencyPAOutManual.Text = "Man";
             this.chkVAC2LatencyPAOutManual.CheckedChanged += new System.EventHandler(this.chkVAC2LatencyPAOutManual_CheckedChanged);
             // 
             // udVAC2LatencyPAOut
@@ -27270,11 +27270,11 @@
             // chkVAC2LatencyPAInManual
             // 
             this.chkVAC2LatencyPAInManual.Image = null;
-            this.chkVAC2LatencyPAInManual.Location = new System.Drawing.Point(11, 124);
+            this.chkVAC2LatencyPAInManual.Location = new System.Drawing.Point(8, 131);
             this.chkVAC2LatencyPAInManual.Name = "chkVAC2LatencyPAInManual";
             this.chkVAC2LatencyPAInManual.Size = new System.Drawing.Size(64, 16);
             this.chkVAC2LatencyPAInManual.TabIndex = 50;
-            this.chkVAC2LatencyPAInManual.Text = "Manual";
+            this.chkVAC2LatencyPAInManual.Text = "Man";
             this.chkVAC2LatencyPAInManual.CheckedChanged += new System.EventHandler(this.chkVAC2LatencyPAInManual_CheckedChanged);
             // 
             // udVAC2LatencyPAIn
@@ -27320,11 +27320,11 @@
             // chkVAC2LatencyOutManual
             // 
             this.chkVAC2LatencyOutManual.Image = null;
-            this.chkVAC2LatencyOutManual.Location = new System.Drawing.Point(84, 56);
+            this.chkVAC2LatencyOutManual.Location = new System.Drawing.Point(81, 60);
             this.chkVAC2LatencyOutManual.Name = "chkVAC2LatencyOutManual";
             this.chkVAC2LatencyOutManual.Size = new System.Drawing.Size(64, 16);
             this.chkVAC2LatencyOutManual.TabIndex = 46;
-            this.chkVAC2LatencyOutManual.Text = "Manual";
+            this.chkVAC2LatencyOutManual.Text = "Man";
             this.chkVAC2LatencyOutManual.CheckedChanged += new System.EventHandler(this.chkVAC2LatencyOutManual_CheckedChanged);
             // 
             // udVAC2LatencyOut
@@ -27390,11 +27390,11 @@
             // chkVAC2LatencyManual
             // 
             this.chkVAC2LatencyManual.Image = null;
-            this.chkVAC2LatencyManual.Location = new System.Drawing.Point(11, 56);
+            this.chkVAC2LatencyManual.Location = new System.Drawing.Point(8, 60);
             this.chkVAC2LatencyManual.Name = "chkVAC2LatencyManual";
             this.chkVAC2LatencyManual.Size = new System.Drawing.Size(64, 16);
             this.chkVAC2LatencyManual.TabIndex = 5;
-            this.chkVAC2LatencyManual.Text = "Manual";
+            this.chkVAC2LatencyManual.Text = "Man";
             this.chkVAC2LatencyManual.CheckedChanged += new System.EventHandler(this.chkVAC2LatencyManual_CheckedChanged);
             // 
             // udVAC2Latency
@@ -27430,7 +27430,7 @@
             // grpAudioSampleRate3
             // 
             this.grpAudioSampleRate3.Controls.Add(this.comboAudioSampleRate3);
-            this.grpAudioSampleRate3.Location = new System.Drawing.Point(274, 64);
+            this.grpAudioSampleRate3.Location = new System.Drawing.Point(333, 92);
             this.grpAudioSampleRate3.Name = "grpAudioSampleRate3";
             this.grpAudioSampleRate3.Size = new System.Drawing.Size(96, 56);
             this.grpAudioSampleRate3.TabIndex = 82;
@@ -27463,7 +27463,7 @@
             // grpAudioBuffer3
             // 
             this.grpAudioBuffer3.Controls.Add(this.comboAudioBuffer3);
-            this.grpAudioBuffer3.Location = new System.Drawing.Point(274, 6);
+            this.grpAudioBuffer3.Location = new System.Drawing.Point(333, 28);
             this.grpAudioBuffer3.Name = "grpAudioBuffer3";
             this.grpAudioBuffer3.Size = new System.Drawing.Size(96, 56);
             this.grpAudioBuffer3.TabIndex = 81;
@@ -27498,7 +27498,7 @@
             this.grpAudioDetails3.Controls.Add(this.comboAudioDriver3);
             this.grpAudioDetails3.Location = new System.Drawing.Point(8, 28);
             this.grpAudioDetails3.Name = "grpAudioDetails3";
-            this.grpAudioDetails3.Size = new System.Drawing.Size(224, 100);
+            this.grpAudioDetails3.Size = new System.Drawing.Size(319, 100);
             this.grpAudioDetails3.TabIndex = 80;
             this.grpAudioDetails3.TabStop = false;
             this.grpAudioDetails3.Text = "Virtual Audio Cable Setup";
@@ -27520,7 +27520,7 @@
             this.comboAudioOutput3.ItemHeight = 13;
             this.comboAudioOutput3.Location = new System.Drawing.Point(56, 70);
             this.comboAudioOutput3.Name = "comboAudioOutput3";
-            this.comboAudioOutput3.Size = new System.Drawing.Size(160, 21);
+            this.comboAudioOutput3.Size = new System.Drawing.Size(255, 21);
             this.comboAudioOutput3.TabIndex = 34;
             this.toolTip1.SetToolTip(this.comboAudioOutput3, "Output Audio Device");
             this.comboAudioOutput3.SelectedIndexChanged += new System.EventHandler(this.comboAudioOutput3_SelectedIndexChanged);
@@ -27550,7 +27550,7 @@
             this.comboAudioInput3.ItemHeight = 13;
             this.comboAudioInput3.Location = new System.Drawing.Point(56, 44);
             this.comboAudioInput3.Name = "comboAudioInput3";
-            this.comboAudioInput3.Size = new System.Drawing.Size(160, 21);
+            this.comboAudioInput3.Size = new System.Drawing.Size(255, 21);
             this.comboAudioInput3.TabIndex = 28;
             this.toolTip1.SetToolTip(this.comboAudioInput3, "Input Audio Device");
             this.comboAudioInput3.SelectedIndexChanged += new System.EventHandler(this.comboAudioInput3_SelectedIndexChanged);
@@ -27562,7 +27562,7 @@
             this.comboAudioDriver3.ItemHeight = 13;
             this.comboAudioDriver3.Location = new System.Drawing.Point(56, 18);
             this.comboAudioDriver3.Name = "comboAudioDriver3";
-            this.comboAudioDriver3.Size = new System.Drawing.Size(160, 21);
+            this.comboAudioDriver3.Size = new System.Drawing.Size(255, 21);
             this.comboAudioDriver3.TabIndex = 26;
             this.toolTip1.SetToolTip(this.comboAudioDriver3, "Sound Card Driver Selection");
             this.comboAudioDriver3.SelectedIndexChanged += new System.EventHandler(this.comboAudioDriver3_SelectedIndexChanged);

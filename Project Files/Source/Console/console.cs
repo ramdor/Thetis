@@ -33790,6 +33790,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             }
             if (sliderForm != null) sliderForm.MasterAFGain = ptbAF.Value;
         }
+
         private void ptbRF_Scroll(object sender, System.EventArgs e)
         {
             switch (RX1AGCMode)
