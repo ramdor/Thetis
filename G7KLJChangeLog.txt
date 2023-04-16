@@ -1,3 +1,7 @@
+Sun Apr 16 01:03:20 2023 +0100 - sjk7: Regarding #004: Master volume change VAC2 level if the option is set on the VAC1 setup tab. This needs a re-think so that common properties affecting both VAC1 and VAC2 are on a common tab. Since setup.cs is so bloated, the whole VAC thing should be on a separate form? Future ...
+Sun Apr 16 00:01:52 2023 +0100 - sjk7: Close #004 VAC2 was not working. Please note that whilst VAC2 should actually work, all current active development on the VAC side is limited to VAC1, since it avoids duplication of effort. Once VAC1 is proved, the same implementations will be copied to VAC2
+Sat Apr 15 11:14:05 2023 +0100 - sjk7: Update 32 and 64-bit exectables in Releases area
+Sat Apr 15 11:10:50 2023 +0100 - sjk7: Changelog
 Sat Apr 15 11:10:04 2023 +0100 - sjk7: More work on #002 -- Sample rates and what happens when you try to connect to the radio with the wrong protocol. I think now, finally, the UI agrees with either the protocol you have chose, or the one actually used by the radio. Maybe. I did check to make sure that even if you set an invalid sample rate (by say choosing a high P2 sample rate when your radio actually uses P1, a standard, safe radio samplerate is set instead.
 Sat Apr 15 09:23:06 2023 +0100 - sjk7: Trying launcher on installer
 Sat Apr 15 06:57:41 2023 +0100 - sjk7: Hopeful about #001

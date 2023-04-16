@@ -9,7 +9,7 @@
 <?define UpgradeCode = "DEC025E2-4B27-425D-8EFE-AD6F5F780D52"?>
 <?define ProductName = "Thetis (64-bit)" ?>
 <?define ThetisName = "Thetis-x64"?>
-<?define VC142 = "Microsoft_VC142_CRT_x64.msm" ?>
+<?define VC143 = "Microsoft_VC143_CRT_x64.msm" ?>
 <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
 <?define FilesPath = "..\..\Bin\$(var.Platform)\$(var.Configuration)\" ?>
 <?else ?>
@@ -17,7 +17,7 @@
 <?define UpgradeCode = "CE4756C9-3CA7-4A55-8980-7F0A920890DE"?>
 <?define ProductName = "Thetis (32-bit)" ?>
 <?define ThetisName = "Thetis"?>
-<?define VC142 = "Microsoft_VC142_CRT_x86.msm" ?>
+<?define VC143 = "Microsoft_VC143_CRT_x86.msm" ?>
 <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
 <?define FilesPath = "..\..\Bin\$(var.Platform)\$(var.Configuration)\" ?>
 <?endif ?>
@@ -38,9 +38,6 @@
 				 Description="!(loc.ProductDescription)"
 				 Comments="!(loc.Comments) $(var.VersionNumber)"/>
 
-
-
-
 		<!-- Upgrade logic -->
 		<!-- AllowSameVersionUpgrades -> Always upgrade, never allow two versions to be installed next to each other -->
 		<!-- AllowSameVersionUpgrades causes ICE61 which must be ignored -->
@@ -50,27 +47,14 @@
 
 		<MediaTemplate EmbedCab="yes" />
 
-		<!--<Condition Message="OS must be Windows 7 sp1, Windows 8.1 or Windows 10">
-      <![CDATA[Installed OR (VersionNT >= 601)]]>
-    </Condition>-->
-
 		<PropertyRef Id="NETFRAMEWORK45" />
 		<PropertyRef Id="WIX_IS_NETFRAMEWORK_480_OR_LATER_INSTALLED"/>
 
-
-
-		<Condition Message="[ProductName] Requires .NET Framework 4.8.0 or later to be installed. Please install the .NET Framework (from Microsoft) then run this installer again.">
+		<Condition Message="[ProductName] Requires .NET Framework 4.8.0 or later to be installed. Please install the .NET Framework then run this installer again.">
 			<![CDATA[Installed OR WIX_IS_NETFRAMEWORK_480_OR_LATER_INSTALLED]]>
 		</Condition>
 
-		<!-- Abort installation if the .NET Framework 4.8 is not installed -->
-		<!--<Condition Message="This application requires .NET Framework 4.8. Please install the .NET Framework then run this installer again.">
-      <![CDATA[Installed OR WIX_IS_NETFRAMEWORK_48_OR_LATER_INSTALLED]]>
-    </Condition>-->
-
 		<WixVariable Id="WixUILicenseRtf" Value="GNU_GENERAL_PUBLIC_LICENSE.rtf" />
-
-
 
 		<Feature Id="ProductFeature" Title="Thetis" Level="1" ConfigurableDirectory="INSTALLFOLDER">
 			<ComponentGroupRef Id="ProductComponents" />
@@ -78,32 +62,12 @@
 			<ComponentRef Id="DesktopShortcut" />
 		</Feature>
 
-		<Feature Id="VC143Redist" Title="Visual C++ 14.3 (VS2022) Runtime" AllowAdvertise="no" Display="hidden" Level="1">
-			<MergeRef Id="VC142Redist"/>
+		<Feature Id="VC143Redist" Title="Visual C++ 14.3 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+			<MergeRef Id="VC143Redist"/>
 		</Feature>
 
-
-
 		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
-
-		<UI>
-			<UIRef Id='WixUI_Mondo'/>
-			<Publish Dialog="ExitDialog"
-			  Control="Finish"
-			  Event="DoAction"
-			  Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1</Publish>
-		</UI>
-
-
-
-		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Run Thetis Now" />
-		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1"/>
-		<!-- Step 3: Include the custom action -->
-
-		<Property Id="THETIS_INSTALL_LOCATION" Value = "INSTALLFOLDER" />
-		<Property Id="WixShellExecTarget" Value="[$(var.PlatformProgramFilesFolder)]/OpenHPSDR/Thetis/Thetis.exe" />
-		<CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
-
+		<UIRef Id="WixUI_Mondo" />
 
 		<!-- UI customization -->
 		<WixVariable Id="WixUIBannerBmp" Value="binary/hpsdrbanner.bmp"/>
@@ -113,7 +77,6 @@
 		<Icon Id="icon.ico" SourceFile="binary/Thetis.ico" />
 		<Property Id="ARPPRODUCTICON" Value="icon.ico" />
 		<Property Id="ARPNOMODIFY" Value="yes" Secure="yes" />
-
 
 		<!-- 
          Launch conditions
@@ -134,12 +97,7 @@
 		</Condition>
 		<?endif?>
 
-
-
 	</Product>
-
-
-
 
 	<Fragment>
 		<PropertyRef Id="WIXNETFX4RELEASEINSTALLED" />
@@ -151,7 +109,7 @@
 
 	<Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Merge Id="VC142Redist" SourceFile="$(var.VC142)" DiskId="1" Language="0"/>
+			<Merge Id="VC143Redist" SourceFile="$(var.VC143)" DiskId="1" Language="0"/>
 
 			<Directory Id="$(var.PlatformProgramFilesFolder)">
 				<Directory Id="HPSDRFolder" Name="OpenHPSDR">
@@ -237,18 +195,27 @@
 			</Component>
 		</DirectoryRef>
 
-
 		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-			<Component Guid="*">
+
+			<Component Id="fwException" Guid="*" Transitive="yes">
+				<Condition>Privileged</Condition>
 				<File Id="ThetisEXE"
 					  Source="$(var.FilesPath)Thetis.exe"
 					  KeyPath="yes">
-					<fire:FirewallException Id="thetis_$(var.Platform)_private_udp"
-								Name="$(var.ThetisName) v$(var.VersionNumber)"
+					<fire:FirewallException Id="thetis_$(var.Platform)_tcp"
+								Name="$(var.ThetisName) (TCP In)"
+								Description="TCP In-bound Firewall rule for OpenHPSDR SDRs running Thetis"
+								Protocol="tcp"
+								Scope="any"
+								IgnoreFailure="no"
+								Profile="all" />
+
+					<fire:FirewallException Id="thetis_$(var.Platform)_udp"
+								Name="$(var.ThetisName) (UDP In)"
 								Description="UDP In-bound Firewall rule for OpenHPSDR SDRs running Thetis"
 								Protocol="udp"
 								Scope="any"
-								IgnoreFailure="yes"
+								IgnoreFailure="no"
 								Profile="all" />
 				</File>
 			</Component>
@@ -267,13 +234,6 @@
               />
 			</Component>
 
-			<!--<Component Guid="*">
-        <File Id="LibFFTW3F3DLL"
-              Source="$(var.FilesPath)libfftw3f-3.dll"
-              KeyPath="yes"
-              />
-      </Component>-->
-
 			<Component Guid="*">
 				<File Id="LibFFTW33DLL"
 					  Source="$(var.FilesPath)libfftw3-3.dll"
@@ -282,12 +242,11 @@
 			</Component>
 
 			<Component Guid="*">
-				<File Id="PortAudio.dll"
-					  Source="$(var.FilesPath)PortAudio.dll"
+				<File Id="portaudiodll"
+					  Source="$(var.FilesPath)portaudio.dll"
 					  KeyPath="yes"
               />
 			</Component>
-
 
 			<Component Guid="*">
 				<File Id="ChannelMasterDLL"
@@ -361,7 +320,12 @@
 					  KeyPath="yes"
               />
 			</Component>
-
+			<Component Guid="*">
+				<File Id="WindowsFirewallHelperDLL"
+					  Source="$(var.FilesPath)WindowsFirewallHelper.dll"
+					  KeyPath="yes"
+              />
+			</Component>
 			<Component Guid="*">
 				<File Id="PureSignalPDF"
 					  Source="$(var.DocumentationPath)PureSignal.pdf"
@@ -396,7 +360,6 @@
 					  KeyPath="yes"
               />
 			</Component>
-
 		</ComponentGroup>
 
 		<Binary Id="InstallSkins" SourceFile="OpenHPSDR_Skins.exe" />
@@ -405,12 +368,25 @@
 					  Return="check"/>
 
 
+
+		<Binary Id="InstallMeterSkins" SourceFile="$(var.FilesPath)MeterSkinInstaller.exe" />
+		<CustomAction Id="InstallMeterSkins_CA" BinaryKey="InstallMeterSkins"
+			Impersonate="yes" Execute="deferred" ExeCommand="[SystemFolder]cmd.exe /C start MeterSkinInstaller.exe"
+					  Return="check"/>
+
 		<InstallExecuteSequence>
 			<Custom Action='InstallSkins_CA' Before='InstallFinalize'>
 				NOT Installed
 			</Custom>
 		</InstallExecuteSequence>
-		<!--   -->
+
+		<InstallExecuteSequence>
+			<Custom Action='InstallMeterSkins_CA' Before='InstallFinalize'>
+				NOT Installed
+			</Custom>
+		</InstallExecuteSequence>
+
+
 	</Fragment>
 
 </Wix>

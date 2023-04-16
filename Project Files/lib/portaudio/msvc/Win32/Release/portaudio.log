@@ -1,1 +1,40 @@
-﻿  portaudio.vcxproj -> U:\Wales\Thetis-2.9.0\Project Files\bin\x86\Release\portaudio.dll
+﻿  pa_allocation.c
+  pa_converters.c
+  pa_cpuload.c
+  pa_debugprint.c
+  pa_dither.c
+  pa_front.c
+  pa_process.c
+  pa_ringbuffer.c
+  pa_stream.c
+  pa_trace.c
+  pa_win_ds.c
+  pa_win_ds_dynlink.c
+  pa_hostapi_skeleton.c
+  pa_win_wasapi.c
+  pa_win_wdmks.c
+  pa_win_wmme.c
+  pa_win_coinitialize.c
+  pa_win_hostapis.c
+  pa_win_util.c
+  pa_win_waveformat.c
+  Generating Code...
+  --- Analyzing function: TerminateWaveHeaders
+  U:\Wales\Thetis-2.9.0\Project Files\lib\portaudio\src\hostapi\wmme\pa_win_wmme.c(2104) : info C5004: loop unswitched
+  --- Analyzing function: CalculateMaxHostSampleFrameSizeBytes
+  U:\Wales\Thetis-2.9.0\Project Files\lib\portaudio\src\hostapi\wmme\pa_win_wmme.c(1541) : info C5001: loop vectorized
+  --- Analyzing function: InitializeWaveHandles
+  U:\Wales\Thetis-2.9.0\Project Files\lib\portaudio\src\hostapi\wmme\pa_win_wmme.c(1827) : info C5004: loop unswitched
+  --- Analyzing function: AllocateLinks
+  U:\Wales\Thetis-2.9.0\Project Files\lib\portaudio\src\common\pa_allocation.c(91) : info C5001: loop vectorized
+  Compiling...
+  pa_win_wdmks_utils.c
+  pa_x86_plain_converters.c
+  Generating Code...
+  asio.cpp
+  asiodrivers.cpp
+  asiolist.cpp
+  pa_asio.cpp
+  Generating Code...
+     Creating library U:\Wales\Thetis-2.9.0\Project Files\Source\..\bin\x86\Release\portaudio.lib and object U:\Wales\Thetis-2.9.0\Project Files\Source\..\bin\x86\Release\portaudio.exp
+  portaudio.vcxproj -> U:\Wales\Thetis-2.9.0\Project Files\bin\x86\Release\portaudio.dll
