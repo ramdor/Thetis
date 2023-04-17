@@ -2086,7 +2086,6 @@ namespace Thetis
 
             // add setup calls that are needed to change between P1 & P2
             // before startup
-
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
             {
                 console.SampleRateTX = 48000; // set tx audio sampling rate
