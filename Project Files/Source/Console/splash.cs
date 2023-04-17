@@ -199,6 +199,15 @@ namespace Thetis
             ms_oThread.Start();
         }
 
+        public new Form Owner
+        {
+            get => base.Owner;
+            set
+            {
+                base.Owner = value;
+            }
+        }
+
         // A property returning the splash screen instance
         static public Splash SplashForm
         {

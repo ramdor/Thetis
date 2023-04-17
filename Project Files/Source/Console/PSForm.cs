@@ -285,7 +285,6 @@ namespace Thetis
             set { _spi = value; }
         }
 
-        // private string _psdefpeak = "0.2899"; // MW0LGE_21k9rc6 does nothing
         public void PSdefpeak(bool bForce, double value)
         {
             //_psdefpeak = value;
@@ -493,26 +492,21 @@ namespace Thetis
             }
         }
 
-        double PS_DEFAULT_PEAKS_HL2 = 0.243290600682013;
-        double PS_DEFAULT_PEAKS_ANAN = 0.4072;
-
         public void SetDefaultPeaks(bool bForce)
         {
             if (console.SetupForm.Hl2.HermesLite2)
             {
-                PSdefpeak(bForce, PS_DEFAULT_PEAKS_HL2);
+                PSdefpeak(bForce, puresignal.PSPK_FOR_HERMES_LITE);
             }
             else
             {
                 if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
                 {
-                    // protocol 1
-                    PSdefpeak(bForce, PS_DEFAULT_PEAKS_ANAN);
+                    PSdefpeak(bForce, puresignal.PSPK_FOR_PROTO1);
                 }
                 else
                 {
-                    // protocol 2
-                    PSdefpeak(bForce, PS_DEFAULT_PEAKS_HL2);
+                    PSdefpeak(bForce, puresignal.PSPK_FOR_PROTO2);
                 }
             }
         }
@@ -1079,6 +1073,22 @@ namespace Thetis
         public static extern void SetPSIntsAndSpi(int channel, int ints, int spi);
 
         #endregion
+
+        public const double PSPK_FOR_HERMES_LITE = 0.24;
+        public const double PSPK_FOR_PROTO1 = 0.4072;
+        public const double PSPK_FOR_PROTO2 = 0.2899;
+
+        public static double PSDefaultPeakForRadio(RadioProtocol p, bool isHermesLite)
+        {
+            if (isHermesLite)
+            {
+                return PSPK_FOR_HERMES_LITE;
+            }
+            else
+            {
+                return p == RadioProtocol.USB ? PSPK_FOR_PROTO1 : PSPK_FOR_PROTO2;
+            }
+        }
 
         #region public methods
         public static int[] Info = new int[16];

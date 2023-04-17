@@ -389,10 +389,15 @@ namespace Thetis
             // set PureSignal basic parameters
             // note:  if future models have different settings, these calls could be moved to
             //      CMLoadRouterAll() which is called each time the receiver model changes.
+            // KLJ NOTE: ^^ I don't think this is accurate any more. What seems to happen
+            // is that 
+            //           console.psform.SetDefaultPeaks(NetworkIO.CurrentRadioProtocol  != oldProto);
+            // is called whenever the audio starts.
+
             SetPSRxIdx(0, 0);   // txid = 0, all current models use Stream0 for RX feedback
             SetPSTxIdx(0, 1);   // txid = 0, all current models use Stream1 for TX feedback
             puresignal.SetPSFeedbackRate(txch, ps_rate);
-            puresignal.SetPSHWPeak(txch, 0.23333);
+            puresignal.SetPSHWPeak(txch, puresignal.PSPK_FOR_PROTO2);
 
             Splash.SetStatus("Setting up transmitter display ...");
             // setup transmitter display
@@ -757,6 +762,7 @@ namespace Thetis
                     }
                     break;
             }
+
         }
 
         public static void CMSetAntiVoxSourceWhat()

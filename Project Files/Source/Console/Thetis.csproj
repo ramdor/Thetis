@@ -342,7 +342,14 @@
       <DependentUpon>frmSeqLog.cs</DependentUpon>
     </Compile>
     <Compile Include="HL2\HL2.cs" />
+    <Compile Include="KLJ\frmKLJ.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="KLJ\frmKLJ.Designer.cs">
+      <DependentUpon>frmKLJ.cs</DependentUpon>
+    </Compile>
     <Compile Include="KLJ\Utils.cs" />
+    <Compile Include="KLJ\Win32\Controls\IPv4Control.cs" />
     <Compile Include="MeterManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -727,6 +734,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmSeqLog.resx">
       <DependentUpon>frmSeqLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KLJ\frmKLJ.resx">
+      <DependentUpon>frmKLJ.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resource1.resx">
       <Generator>ResXFileCodeGenerator</Generator>

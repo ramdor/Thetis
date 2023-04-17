@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-The author can be reached by email at  
+The author can be reached by email at
 
 warren@wpratt.com
 
@@ -27,108 +27,102 @@ warren@wpratt.com
 #ifndef _gen_h
 #define _gen_h
 
-typedef struct _gen
-{
-	int run;					// run
-	int size;					// number of samples per buffer
-	double* in;					// input buffer (retained in case I want to mix in a generated signal)
-	double* out;				// output buffer
-	double rate;				// sample rate
-	int mode;					
-	struct _tone
-	{
-		double mag;
-		double freq;
-		double phs;
-		double delta;
-		double cosdelta;
-		double sindelta;
-	} tone;
-	struct _tt
-	{
-		double mag1;
-		double mag2;
-		double f1;
-		double f2;
-		double phs1;
-		double phs2;
-		double delta1;
-		double delta2;
-		double cosdelta1;
-		double cosdelta2;
-		double sindelta1;
-		double sindelta2;
-	} tt;
-	struct _noise
-	{
-		double mag;
-	} noise;
-	struct _sweep
-	{
-		double mag;
-		double f1;
-		double f2;
-		double sweeprate;
-		double phs;
-		double dphs;
-		double d2phs;
-		double dphsmax;
-	} sweep;
-	struct _saw
-	{
-		double mag;
-		double f;
-		double period;
-		double delta;
-		double t;
-	} saw;
-	struct _tri
-	{
-		double mag;
-		double f;
-		double period;
-		double half;
-		double delta;
-		double t;
-		double t1;
-	} tri;
-	struct _pulse
-	{
-		double mag;
-		double pf;
-		double pdutycycle;
-		double ptranstime;
-		double* ctrans;
-		int pcount;
-		int pnon;
-		int pntrans;
-		int pnoff;
-		double pperiod;
-		double tf;
-		double tphs;
-		double tdelta;
-		double tcosdelta;
-		double tsindelta;
-		int state;
-	} pulse;
+typedef struct _gen {
+    int run; // run
+    int size; // number of samples per buffer
+    double* in; // input buffer (retained in case I want to mix in a generated
+                // signal)
+    double* out; // output buffer
+    double rate; // sample rate
+    int mode;
+    struct _tone {
+        double mag;
+        double freq;
+        double phs;
+        double delta;
+        double cosdelta;
+        double sindelta;
+    } tone;
+    struct _tt {
+        double mag1;
+        double mag2;
+        double f1;
+        double f2;
+        double phs1;
+        double phs2;
+        double delta1;
+        double delta2;
+        double cosdelta1;
+        double cosdelta2;
+        double sindelta1;
+        double sindelta2;
+    } tt;
+    struct _noise {
+        double mag;
+    } noise;
+    struct _sweep {
+        double mag;
+        double f1;
+        double f2;
+        double sweeprate;
+        double phs;
+        double dphs;
+        double d2phs;
+        double dphsmax;
+    } sweep;
+    struct _saw {
+        double mag;
+        double f;
+        double period;
+        double delta;
+        double t;
+    } saw;
+    struct _tri {
+        double mag;
+        double f;
+        double period;
+        double half;
+        double delta;
+        double t;
+        double t1;
+    } tri;
+    struct _pulse {
+        double mag;
+        double pf;
+        double pdutycycle;
+        double ptranstime;
+        double* ctrans;
+        int pcount;
+        int pnon;
+        int pntrans;
+        int pnoff;
+        double pperiod;
+        double tf;
+        double tphs;
+        double tdelta;
+        double tcosdelta;
+        double tsindelta;
+        int state;
+    } pulse;
 } gen, *GEN;
 
-extern GEN create_gen (int run, int size, double* in, double* out, int rate, int mode);
+extern GEN create_gen(
+    int run, int size, double* in, double* out, int rate, int mode);
 
-extern void destroy_gen (GEN a);
+extern void destroy_gen(GEN a);
 
-extern void flush_gen (GEN a);
+extern void flush_gen(GEN a);
 
-extern void xgen (GEN a);
+extern void xgen(GEN a);
 
-extern void setBuffers_gen (GEN a, double* in, double* out);
+extern void setBuffers_gen(GEN a, double* in, double* out);
 
-extern void setSamplerate_gen (GEN a, int rate);
+extern void setSamplerate_gen(GEN a, int rate);
 
-extern void setSize_gen (GEN a, int size);
+extern void setSize_gen(GEN a, int size);
 
 // TXA Properties
 
-extern __declspec (dllexport) void SetTXAgenRun (int channel, int run);
+extern __declspec(dllexport) void SetTXAgenRun(int channel, int run);
 
 #endif

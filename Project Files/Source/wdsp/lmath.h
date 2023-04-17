@@ -18,19 +18,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-The author can be reached by email at  
+The author can be reached by email at
 
 warren@wpratt.com
 
 */
 
-extern void dR (int n, double* r, double* y);
+extern void dR(int n, double* r, double* y);
 
-extern void trI (
-    int n,
-    double* r,
-    double* B
-    );
+extern void trI(int n, double* r, double* B);
 
 extern void asolve(int xsize, int asize, double* x, double* a);
 

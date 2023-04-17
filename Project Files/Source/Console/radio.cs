@@ -46,10 +46,13 @@ namespace Thetis
         private RadioDSPRX[][] dsp_rx;
         private RadioDSPTX[] dsp_tx;
 
-        public Radio(string datapath)
+        public Console TheConsole { get; private set; }
+
+        public Radio(Console c, string datapath)
         {
+            TheConsole = c;
             RadioDSP.AppDataPath = datapath;
-            RadioDSP.CreateDSP();
+            RadioDSP.CreateDSP(c);
             Thread.Sleep(100);
 
             dsp_rx = new RadioDSPRX[NUM_RX_THREADS][];
@@ -85,7 +88,7 @@ namespace Thetis
     {
         #region Static Properties and Routines
 
-        public static void CreateDSP()
+        public static void CreateDSP(Console c)
         {
             //String app_data_path = "";
             //app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)

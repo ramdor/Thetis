@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-The author can be reached by email at  
+The author can be reached by email at
 
 warren@wpratt.com
 
@@ -27,20 +27,20 @@ warren@wpratt.com
 #ifndef _mainloop_h
 #define _mainloop_h
 
-extern void wdspmain (void *pargs);
+extern void wdspmain(void* pargs);
 
-extern void create_main (int channel);
+extern void create_main(int channel);
 
-extern void destroy_main (int channel);
+extern void destroy_main(int channel);
 
-extern void flush_main (int channel);
+extern void flush_main(int channel);
 
-extern void setInputSamplerate_main (int channel);
+extern void setInputSamplerate_main(int channel);
 
-extern void setOutputSamplerate_main (int channel);
+extern void setOutputSamplerate_main(int channel);
 
-extern void setDSPSamplerate_main (int channel);
+extern void setDSPSamplerate_main(int channel);
 
-extern void setDSPBuffsize_main (int channel);
+extern void setDSPBuffsize_main(int channel);
 
 #endif

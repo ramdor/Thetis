@@ -460,8 +460,8 @@ PORT void SetTXABandpassRun(int channel, int run) {
 //		a->f_low = f_low;
 //		a->f_high = f_high;
 //		impulse = fir_bandpass (a->nc, a->f_low, a->f_high, a->samplerate,
-//a->wintype, 1, a->gain / (double)(2 * a->size)); 		setImpulse_fircore (a->p,
-//impulse, 1); 		_aligned_free (impulse);
+// a->wintype, 1, a->gain / (double)(2 * a->size)); 		setImpulse_fircore
+// (a->p, impulse, 1); 		_aligned_free (impulse);
 //	}
 //	a = txa[channel].bp1.p;
 //	if ((f_low != a->f_low) || (f_high != a->f_high))
@@ -469,8 +469,8 @@ PORT void SetTXABandpassRun(int channel, int run) {
 //		a->f_low = f_low;
 //		a->f_high = f_high;
 //		impulse = fir_bandpass (a->nc, a->f_low, a->f_high, a->samplerate,
-//a->wintype, 1, a->gain / (double)(2 * a->size)); 		setImpulse_fircore (a->p,
-//impulse, 1); 		_aligned_free (impulse);
+// a->wintype, 1, a->gain / (double)(2 * a->size)); 		setImpulse_fircore
+// (a->p, impulse, 1); 		_aligned_free (impulse);
 //	}
 //	a = txa[channel].bp2.p;
 //	if ((f_low != a->f_low) || (f_high != a->f_high))
@@ -478,8 +478,8 @@ PORT void SetTXABandpassRun(int channel, int run) {
 //		a->f_low = f_low;
 //		a->f_high = f_high;
 //		impulse = fir_bandpass (a->nc, a->f_low, a->f_high, a->samplerate,
-//a->wintype, 1, a->gain / (double)(2 * a->size)); 		setImpulse_fircore (a->p,
-//impulse, 1); 		_aligned_free (impulse);
+// a->wintype, 1, a->gain / (double)(2 * a->size)); 		setImpulse_fircore
+// (a->p, impulse, 1); 		_aligned_free (impulse);
 //	}
 // }
 

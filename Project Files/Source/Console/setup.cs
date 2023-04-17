@@ -53,6 +53,7 @@ namespace Thetis
     using static Thetis.PortAudioForThetis;
     using Thetis.KLJ;
     using System.Runtime.InteropServices;
+    using SharpDX.Direct2D1;
 
     // using static Thetis.G7KLJ;
 
@@ -183,6 +184,14 @@ namespace Thetis
         #region Constructor and Destructor
 
         internal HL2 Hl2 { get; set; }
+        private List<RadioButtonTS> m_protoControls = new List<RadioButtonTS>();
+        public RadioButtonTS ProtocolButton(RadioProtocol which)
+        {
+
+            var idx = (int)which;
+            Debug.Assert(idx >= 0 && idx <= (int)RadioProtocol.Auto);
+            return m_protoControls[idx];
+        }
 
         private int initCounter = 0;
         public Setup(Console c)
@@ -193,8 +202,26 @@ namespace Thetis
             {
                 InitializeComponent();
                 this.Owner = c;
+                this.rbP1.CheckedChanged += this.Protocol_CheckedChanged;
+                this.rbP2.CheckedChanged += this.Protocol_CheckedChanged;
+                this.rbPAuto.CheckedChanged += this.Protocol_CheckedChanged;
+                /*/
+                    public enum RadioProtocol
+                    {
+                        USB = 0,  // Protocol USB (P1)
+                        ETH,      // Protocol ETH (P2)
+                        Auto,
+                        None
+                    }
+                /*/
+                m_protoControls.Add(this.rbP1);
+                m_protoControls.Add(this.rbP2);
+                m_protoControls.Add(this.rbPAuto);
 
             }
+
+
+
             catch (Exception exc)
             {
                 MessageBox.Show(exc.Message);
@@ -712,7 +739,7 @@ namespace Thetis
             initializing = false;
 
             /*/
-            Splash.SetStatus("Initting DSPRX ...");
+                Splash.SetStatus("Initting DSPRX ...");
             // this is already done in SyncDSP(), so ok to skip this here. KLJ
             for (int i = 0; i < 2; i++)
                 for (int j = 0; j < 2; j++)
@@ -1850,8 +1877,9 @@ namespace Thetis
             // setup
             a.Add("QSOTimerFilenameWav", console.QSOTimerAudioPlayer.SoundFile);
 
-            a.Add("chkRadioProtocolSelect_checkstate",
-                chkRadioProtocolSelect.CheckState.ToString());
+            // a.Add("chkRadioProtocolSelect_checkstate",
+            //     chkRadioProtocolSelect.CheckState.ToString());
+            a.Add("RadioProtocolSel", this.ProtocolInUIAsInt().ToString());
             a.Add("lgLinearGradientRX1", lgLinearGradientRX1.Text);
 
             // store PA profiles
@@ -1875,6 +1903,7 @@ namespace Thetis
             // DB.WriteCurrentDB(console.DBFileName);//MW0LGE_[2.9.0.7]
             DB.WriteDB(console.DBFileName);
         }
+
 
         private void InitTransmitTab(List<string> recoveryList = null)
         {
@@ -1961,6 +1990,8 @@ namespace Thetis
                 sortedList.Remove(
                     "comboPAProfile"); // this is done after the PA profiles are
                                        // recovered // MW0LGE_22b
+
+            bool hasMoreModernProtocolSaved = sortedList.Contains("RadioProtocolSel");
 
             foreach (string sKey in sortedList)
             {
@@ -2057,13 +2088,38 @@ namespace Thetis
                     }
                     else if (name == "chkRadioProtocolSelect_checkstate")
                     {
-                        chkRadioProtocolSelect.CheckState
-                            = (CheckState)(Enum.Parse(typeof(CheckState), val));
+                        // chkRadioProtocolSelect.CheckState
+                        //   = (CheckState)(Enum.Parse(typeof(CheckState), val));
+                        // Debug.Assert(false);
+                        if (!hasMoreModernProtocolSaved)
+                        {
+                            if (val == "Indeterminate")
+                            {
+                                ProtocolInUI = RadioProtocol.USB;
+                            }
+                            else if (val == "True") ProtocolInUI = RadioProtocol.Auto;
+                            else ProtocolInUI = RadioProtocol.ETH;
+                        }
                     }
                     else if (name.StartsWith("PAProfile_")
                         || name == "PAProfileCount")
                     {
                         // ignore
+                    }
+                    else if (name == "RadioProtocolSel")
+                    {
+
+                        int protoValue = 0;
+                        if (int.TryParse(val, out protoValue))
+                        {
+                            ProtocolInUI = (RadioProtocol)protoValue;
+                        }
+                        else
+                        {
+                            ProtocolInUI = RadioProtocol.ETH;
+                            if (Hl2.HermesLite2)
+                                ProtocolInUI = RadioProtocol.USB;
+                        }
                     }
                     else
                     {
@@ -2297,7 +2353,7 @@ namespace Thetis
                 radOrionMicTip_CheckedChanged(this, e);
                 radOrionBiasOn_CheckedChanged(this, e);
                 chkNetworkWDT_CheckedChanged(this, e);
-                chkRadioProtocolSelect_CheckStateChanged(this, e);
+                Protocol_CheckedChanged(this, e);
                 chkTuneStepPerModeRX1_CheckedChanged(this, e);
                 chkCTUNignore0beat_CheckedChanged(this, e); // MW0LGE_21k9d
 
@@ -8537,6 +8593,8 @@ namespace Thetis
                 comboAudioSampleRate1_SelectedIndexChanged(this, EventArgs.Empty);
                 comboAudioSampleRateRX2_SelectedIndexChanged(this, EventArgs.Empty);
                 m_bIgnoreProtocolCheckChange = true;
+                ProtocolButton(NetworkIO.CurrentRadioProtocol).Checked = true;
+                /*/
                 if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
                 {
                     chkRadioProtocolSelect.CheckState = CheckState.Indeterminate;
@@ -8547,6 +8605,7 @@ namespace Thetis
                     chkRadioProtocolSelect.CheckState = CheckState.Unchecked;
                     chkRadioProtocolSelect.Text = "Protocol 2";
                 }
+                /*/
             }
             catch (Exception e)
             {
@@ -23109,43 +23168,50 @@ namespace Thetis
             }
         }
 
-        internal RadioProtocol ProtocolInUI { get; private set; }
+        internal RadioProtocol ProtocolInUI
+        {
+            get
+            {
+                int i = 0;
+                foreach (var rb in m_protoControls)
+                {
+                    if (rb.Checked)
+                    {
+                        break;
+                    }
+                    ++i;
+                }
+
+                RadioProtocol cur = (RadioProtocol)i;
+                return cur;
+
+            }
+
+            set
+            {
+                int i = (int)value;
+                if (i < 0 || i > (int)RadioProtocol.Auto) i = (int)RadioProtocol.Auto;
+                m_protoControls[i].Checked = true;
+            }
+
+        }
+
+        internal int ProtocolInUIAsInt()
+        {
+            int i = 0;
+            foreach (var rb in m_protoControls)
+            {
+                if (rb.Checked)
+                {
+                    break;
+                }
+                ++i;
+            }
+            return i;
+        }
+
         bool m_bIgnoreProtocolCheckChange = false;
 
-        private void chkRadioProtocolSelect_CheckStateChanged(
-            object sender, EventArgs e)
-        {
-            if (m_bIgnoreProtocolCheckChange && !initializing)
-            {
-                return;
-            }
-            switch (chkRadioProtocolSelect.CheckState)
-            {
-                case CheckState.Checked:
-                    RadioProtocolSelected = RadioProtocol.Auto;
-                    NetworkIO.RadioProtocolSelected = RadioProtocol.Auto;
-                    chkRadioProtocolSelect.Text = "Auto Detect Protocol";
-                    break;
-                case CheckState.Indeterminate:
-                    RadioProtocolSelected = RadioProtocol.USB;
-                    NetworkIO.RadioProtocolSelected = RadioProtocol.USB;
-                    if (initializing)
-                        NetworkIO.CurrentRadioProtocol = RadioProtocol.USB;
-                    // KLJ: If we don't set Current, then ETH is always assumed
-                    // when we reopen program, and this leads to things like PS SetPk
-                    // to be set to some default value. So we have to assume we can set
-                    // this but only during startup
-                    chkRadioProtocolSelect.Text = "Protocol 1";
-                    break;
-                case CheckState.Unchecked:
-                    RadioProtocolSelected = RadioProtocol.ETH;
-                    NetworkIO.RadioProtocolSelected = RadioProtocol.ETH;
-                    chkRadioProtocolSelect.Text = "Protocol 2";
-                    break;
-            }
-            ProtocolInUI = RadioProtocolSelected;
-            InitAudioTab(null, RadioProtocolSelected);
-        }
         public static RadioProtocol RadioProtocolSelected
         {
             get; set;
@@ -28708,8 +28774,48 @@ namespace Thetis
 
         private void Setup_FormClosed(object sender, FormClosedEventArgs e) { }
 
-        private void chkRadioProtocolSelect_CheckedChanged(object sender, EventArgs e)
+        private void Protocol_CheckedChanged(object sender, EventArgs e)
         {
+            try
+            {
+                if (m_bIgnoreProtocolCheckChange && !initializing)
+                {
+                    return;
+                }
+
+                RadioProtocol prot = ProtocolInUI;
+                NetworkIO.RadioProtocolSelected = prot;
+                RadioProtocolSelected = prot;
+                if (prot == RadioProtocol.Auto && initializing)
+                {
+                    if (this.Hl2.HermesLite2)
+                    {
+                        NetworkIO.CurrentRadioProtocol = RadioProtocol.USB;
+                        // KLJ: If we don't set Current, then ETH is always assumed
+                        // when we reopen program, and this leads to things like PS SetPk
+                        // to be set to some default value. So we have to assume we can set
+                        // this but only during startup
+                    }
+                }
+
+                if (sender == null)
+                {
+                    Debug.Assert(initializing);
+                    m_bIgnoreProtocolCheckChange = true;
+                    ProtocolInUI = prot;
+                    m_bIgnoreProtocolCheckChange = false;
+                }
+
+                InitAudioTab(null, prot);
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                if (m_bIgnoreProtocolCheckChange)
+                    m_bIgnoreProtocolCheckChange = false;
+            }
 
         }
     }

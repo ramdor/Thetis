@@ -56,6 +56,7 @@ namespace Thetis
     using System.IO;
     using System.IO.Ports;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Net;
     using System.Net.Sockets;
     using System.Runtime.InteropServices;
@@ -65,6 +66,7 @@ namespace Thetis
     using System.Timers;
     using System.Windows.Forms;
     using System.Xml.Linq;
+
 
     public partial class Console : Form
     {
@@ -567,6 +569,64 @@ namespace Thetis
         private Thread multimeter2_thread_rx1;
         private Thread multimeter2_thread_rx2;
 
+        private volatile bool m_waiting_for_dsp = true;
+
+        void InitDSP()
+        {
+            try
+            {
+                selectFilters();
+                selectModes();
+
+                SyncDSP(); //   INIT_SLOW
+
+                specRX.GetSpecRX(0).Update = true;
+                specRX.GetSpecRX(1).Update = true;
+                specRX.GetSpecRX(cmaster.inid(1, 0)).Update = true;
+            }
+            catch (Exception e)
+            {
+                Common.LogException(e);
+            }
+            finally
+            {
+                m_waiting_for_dsp = false;
+            }
+        }
+
+        void StartMakingDSP()
+        {
+            m_waiting_for_dsp = true;
+
+            Splash.SetStatus("Setting up DSP, please be patient ..."); // Set progress point
+
+            var t = new Thread(new ThreadStart(InitDSP))
+            {
+                Name = "Init DSP Thread",
+                Priority = ThreadPriority.Highest,
+                IsBackground = true,
+
+            };
+            t.Start();
+
+        }
+
+        void WaitForDSP()
+        {
+            int slept = 0;
+            while (m_waiting_for_dsp)
+            {
+                Thread.Sleep(10);
+                slept += 10;
+                Debug.Assert(slept < 10000);
+                if (slept > 10000)
+                    break;
+
+                Splash.SetStatus("Still waiting for DSP ...");
+
+            }
+        }
+
         public CWX CWXForm
         {
             // implemented so that the creation of the form happens in a single
@@ -1025,9 +1085,10 @@ namespace Thetis
                 ApartmentState.STA); // no ASIO devices without this
             pat.Start();
 
+            StartMakingDSP();
+
             Splash.SetStatus("Initializing Radio ..."); // Set progress point
-            radio = new Radio(
-                AppDataPath); // Initialize the Radio processor INIT_SLOW
+            radio = new Radio(this, AppDataPath); // Initialize the Radio processor INIT_SLOW
             specRX = new SpecRX();
             Display.specready = true;
 
@@ -1095,24 +1156,12 @@ namespace Thetis
             }
 
             initializing = false;
-
-            Splash.SetStatus(
-                "Setting up DSP, please be patient ..."); // Set progress point
-
-            selectFilters();
-            selectModes();
-
-            SyncDSP(); //   INIT_SLOW
-
-            specRX.GetSpecRX(0).Update = true;
-            specRX.GetSpecRX(1).Update = true;
-            specRX.GetSpecRX(cmaster.inid(1, 0)).Update = true;
-
             Splash.SetStatus("Finished");
 
-            Splash.SplashForm.Owner
-                = this; // So that main form will show/focus when splash disappears
-                        // //MW0LGE_21d done in show above
+            // KLJ: I wonder if this contributes to the start-up flicker I see, before the main console fades in?
+            //Splash.SplashForm.Owner
+            //    = this; // So that main form will show/focus when splash disappears
+            // //MW0LGE_21d done in show above
             Splash.CloseForm(); // End splash screen
 
             if (resetForAutoMerge)
@@ -1293,8 +1342,10 @@ namespace Thetis
             {
                 lock (m_objSetupFormLocker)
                 {
+
                     if (IsSetupFormNull)
                     {
+                        Debug.Assert(CreatingSetup); // if this Assert()s, you probably have a bug, since Setup is supposed to be created from a specific place!
                         Debug.Print("New setup form - should happen only once");
                         m_frmSetupForm = new Setup(this);
                         m_frmSetupForm.AfterConstruct();
@@ -1554,6 +1605,11 @@ namespace Thetis
         [STAThread]
         static void Main(string[] args)
         {
+
+            //var myf = new Thetis.KLJ.frmKLJ();
+            //Application.Run(myf);
+            //return;
+
             Application.ThreadException
                 += new ThreadExceptionEventHandler(Application_ThreadException);
             AppDomain.CurrentDomain.UnhandledException
@@ -1846,6 +1902,8 @@ namespace Thetis
             toolStripStatusLabel_SeqWarning.Visible = false;
             NetworkIO.clearSnapshots();
         }
+
+        public bool CreatingSetup { get; set; }
 
         private void InitConsole()
         {
@@ -2159,13 +2217,17 @@ namespace Thetis
             httpFile = new Http(this); // ke9ns add
             httpServer = new HttpServer(this); // rn3kk add
 
+
+            CreatingSetup = true;
             // ***** THIS IS WHERE SETUP FORM IS CREATED
             SetupForm.StartPosition
                 = FormStartPosition.Manual; // first use of singleton will create
-                                            // Setup form       INIT_SLOW
+                                            // Setup form. KLJ uses CreatingSetup to assert() this is true.
+            CreatingSetup = false;
 
             BuildTXProfileCombos(); // MW0LGE_21k9rc4b build them, so that GetState
                                     // can apply the combobox text
+
 
             Common.RestoreForm(EQForm, "EQForm", false);
 
@@ -43715,6 +43777,7 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
             tbFilterWidthScroll_newMode(); // wjt
 
             // Display.DrawBackground();
+            WaitForDSP(); // we NEED the DSP to be ready here ...
 
             UpdateDSP();
             // UpdateDSPBufTX();
