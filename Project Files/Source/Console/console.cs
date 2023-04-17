@@ -102,7 +102,7 @@ namespace Thetis
         private DigiMode rx1dm;
         private DigiMode rx2dm;
 
-        public Radio radio;
+        public Radio radio { get; private set; }
         public SpecRX specRX;
         public Midi2CatCommands Midi2Cat;
         private System.Timers.Timer n1mm_delay; // timer for setting delay on focus
@@ -598,7 +598,7 @@ namespace Thetis
         void StartMakingDSP()
         {
             m_waiting_for_dsp = true;
-            Splash.SetStatus("Kicking off DSP initialisation, please be patient ..."); // Set progress point
+            Splash.SetStatus("Kicking off DSP initialisation ..."); // Set progress point
 
             var t = new Thread(new ThreadStart(InitDSP))
             {
@@ -611,20 +611,36 @@ namespace Thetis
 
         }
 
-        void WaitForDSP()
+        void WaitForDSP(string info = "Still waiting for DSP ...")
         {
             int slept = 0;
             while (m_waiting_for_dsp)
             {
+                if (slept == 0)
+                {
+                    Splash.SetStatus(info);
+                }
                 Thread.Sleep(10);
                 slept += 10;
                 Debug.Assert(slept < 10000);
                 if (slept > 10000)
                     break;
 
-                Splash.SetStatus("Still waiting for DSP ...");
+                if (slept > 1000 && slept % 1000 == 0)
+                    Splash.SetStatus("Still waiting for DSP ...");
 
             }
+
+            Debug.Print("Waited " + slept.ToString() + " ms for the DSP to be ready.");
+        }
+
+        internal void DoWaitForDSP(string info)
+        {
+            if (!String.IsNullOrEmpty(info))
+            {
+                Splash.SetStatus(info);
+            }
+            WaitForDSP(info);
         }
 
         public CWX CWXForm
@@ -999,7 +1015,8 @@ namespace Thetis
             }
 
             CmdLineArgs = args;
-            Splash.ShowSplashScreen(); // Start splash screen
+            Splash.ShowSplashScreen(this); // Start splash screen
+
             Splash.SetStatus("Initializing Components"); // Set progress point
 
             InitializeComponent(); // Windows Forms Generated Code
@@ -1057,7 +1074,13 @@ namespace Thetis
             Splash.SetStatus("Initializing Database"); // Set progress point
             DB.Init(); // Initialize the database
 
+            Splash.SetStatus("Initializing Radio ..."); // Set progress point
+            radio = new Radio(this, AppDataPath); // Initialize the Radio processor INIT_SLOW
+            specRX = new SpecRX();
+
             Splash.SetStatus("Initializing Hardware"); // Set progress point
+
+            StartMakingDSP(); // we need radio before we can start making DSP()
             InitCTCSS();
 
             bool RX2Enabled = false;
@@ -1085,11 +1108,9 @@ namespace Thetis
                 ApartmentState.STA); // no ASIO devices without this
             pat.Start();
 
-            StartMakingDSP();
 
-            Splash.SetStatus("Initializing Radio ..."); // Set progress point
-            radio = new Radio(this, AppDataPath); // Initialize the Radio processor INIT_SLOW
-            specRX = new SpecRX();
+
+
             Display.specready = true;
 
             Splash.SetStatus(
@@ -1280,7 +1301,7 @@ namespace Thetis
 
                 this.Opacity = 0.01;
                 Show();
-                Application.DoEvents();
+                // Application.DoEvents();
                 // cannot stop console briefly flickering up here (Even though it is
                 // supposed to be transparent). Ideas?
 
@@ -1302,7 +1323,23 @@ namespace Thetis
             }
         }
 
-        private FormWindowState m_wanted_windowstate = FormWindowState.Normal;
+        public new void Show()
+        {
+            base.Show();
+        }
+
+        public new bool Visible
+        {
+            get
+            {
+                return base.Visible;
+            }
+            set
+            {
+                base.Visible = value;
+            }
+        }
+
 
         // Wait for the portaudio thread to complete his work,
         // return the number of milliseconds we actually waited
@@ -1350,9 +1387,10 @@ namespace Thetis
                         m_frmSetupForm = new Setup(this);
                         m_frmSetupForm.AfterConstruct();
                         this.SetupForm.setDBPath(DBFileName);
+                        setupFormReady = true;
                     }
                 }
-                setupFormReady = true;
+
                 return m_frmSetupForm; // KLJ moved out of lock
             }
         }
@@ -2931,20 +2969,6 @@ namespace Thetis
         private void SyncDSP()
         {
 
-            int slept = 0;
-            while (!setupFormReady) // deadlock avoidance
-            {
-                Application.DoEvents();
-                Thread.Sleep(100);
-                slept += 100;
-                Debug.Assert(slept < 20000);
-                if (setupFormReady || slept > 30000)
-                {
-                    break;
-                }
-            }
-            Debug.Print("Took " + slept.ToString()
-                + " ms waiting for setupForm to be ready.");
             SyncDSPCount++;
             Debug.Assert(
                 SyncDSPCount == 1); // KLJ: broke my assumption, no real serious
@@ -2970,7 +2994,7 @@ namespace Thetis
                 dsp_tx.Force = false;
             }
 
-            SetupForm.UpdateTXDisplayFFT();
+
 
             for (int i = 0; i < 2; i++)
             {
@@ -55965,6 +55989,7 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
         private void Console_Shown(object sender, EventArgs e)
         {
             Opacity = 0.01;
+
             updateResolutionStatusBarText(); // MW0LGE_21b need to call this
                                              // here so that drop shadow sizes
                                              // can be obtained

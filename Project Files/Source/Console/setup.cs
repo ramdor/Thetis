@@ -100,9 +100,7 @@ namespace Thetis
             Output = 4,
             Excl = 8,
             All = API | Input | Output | Excl
-
-        }
-        ;
+        };
 
         public vacinfo currentVacSettings()
         {
@@ -237,9 +235,15 @@ namespace Thetis
         private int afterConstructCounter = 0;
         internal void AfterConstruct()
         {
+
             this.Text = "Setup and Options for Thetis " + Application.ProductVersion;
             Debug.Assert(afterConstructCounter == 0);
             afterConstructCounter++;
+            lblDBInfo.MouseUp += lblDataBase_MouseUp; // so it doesn't matter _which_ one you right-click
+
+
+            Display.Target = console.picDisplay;
+            console.DoWaitForDSP("getOptions() needs to wait for DSP setup ..."); //
 
             // KLJ
             this.Hl2 = new HL2(console, this);
@@ -272,8 +276,8 @@ namespace Thetis
             openFileDialog1.InitialDirectory = console.AppDataPath;
 
 #if (!DEBUG)
-        comboGeneralProcessPriority.Items.Remove("Idle");
-        comboGeneralProcessPriority.Items.Remove("Below Normal");
+            comboGeneralProcessPriority.Items.Remove("Idle");
+            comboGeneralProcessPriority.Items.Remove("Below Normal");
 #endif
             initializing = true;
 
@@ -288,7 +292,7 @@ namespace Thetis
                 = false; // MW0LGE gets shown/hidden by save/cancel/apply
 
             // GetMixerDevices();
-            Thetis.Splash.SetStatus("Loading Audio Host APIs ...");
+            Thetis.Splash.SetStatus("Loading Audio Hosts ...");
 
             int slept = console.WaitForPortAudio();
             Debug.Print("Waited " + slept.ToString()
@@ -537,6 +541,9 @@ namespace Thetis
 
             // MW0LGE_22b PA Profiles
             initPAProfiles();
+            // display setup
+            console.SetupDisplayEngine(false); // MW0LGE_21k9
+                                               //
             getOptions();
 
             selectSkin();
@@ -547,9 +554,7 @@ namespace Thetis
             initVoltsAmpsCalibration();
             //
 
-            // display setup
-            console.SetupDisplayEngine(false); // MW0LGE_21k9
-                                               //
+
 
             // MW0LGE_21j
             console.RepositionExternalPAButton(CheckForAnyExternalPACheckBoxes());
@@ -973,7 +978,7 @@ namespace Thetis
             if (myProto == RadioProtocol.ETH
                 || Hl2.HermesLite2)
             {
-                ret.Add(384000);
+                // ret.Add(384000); <-- PS breaks on the HL1 with this
             }
 
             if (myProto == RadioProtocol.ETH)
@@ -1953,6 +1958,8 @@ namespace Thetis
         }
         private void getOptions(List<string> recoveryList = null)
         {
+
+
             // MW0LGE_21d
             // if a list of control names is provided, only those will be recovered from
             // the database mostly used when cancelling the setup form
@@ -2661,6 +2668,8 @@ namespace Thetis
                 chkLimitExtAmpOnOverload_CheckedChanged(this, e);
                 chkBPF2Gnd_CheckedChanged(this, e);
                 chkSaveTXProfileOnExit_CheckedChanged(this, e);
+
+                UpdateTXDisplayFFT();
                 ForceTXProfileUpdate();
 
                 // Keyboard Tab
@@ -11202,6 +11211,8 @@ namespace Thetis
             comboDSPDigRXFiltType.Text = (string)dr["Digi_RX_DSP_Filter_Type"];
             comboDSPDigTXFiltType.Text = (string)dr["Digi_TX_DSP_Filter_Type"];
             comboDSPCWRXFiltType.Text = (string)dr["CW_RX_DSP_Filter_Type"];
+
+
             if (!initializing)
                 console.DeferUpdateDSP = false; // MW0LGE_21k9d  we dont want to undo
                                                 // this if we are initalising
@@ -23077,7 +23088,8 @@ namespace Thetis
             DISPRX1_Tab,
             DISPRX2_Tab,
             SpotTCI,
-            NewMetersTab
+            NewMetersTab,
+            RadioTab
         }
         public void ShowSetupTab(SetupTab eTab)
         {
@@ -23087,6 +23099,11 @@ namespace Thetis
 
             switch (eTab)
             {
+
+                case SetupTab.RadioTab:
+                    TabSetup.SelectedIndex = 0;
+                    TabGeneral.SelectedIndex = 0;
+                    break;
                 case SetupTab.ALCAGC_Tab:
                     TabSetup.SelectedIndex = 3;
                     TabDSP.SelectedIndex = 2; // select AGC/ALC tab
@@ -28696,7 +28713,7 @@ namespace Thetis
                     Hl2.ApplyHL2Defaults();
                 }
                 comboRadioModel_SelectedIndexChanged(null, EventArgs.Empty);
-                InitAudioTab();
+                InitAudioTab(null, RadioProtocol.USB);
                 if (Hl2.HermesLite2)
                     chkMasterVolumeForVAC.Checked = true;
             }
@@ -28817,6 +28834,17 @@ namespace Thetis
                     m_bIgnoreProtocolCheckChange = false;
             }
 
+        }
+
+        private void btnRadioSampleRateInfo_Click(object sender, EventArgs e)
+        {
+            pnlRadioSamplerateInfo.Visible = true;
+            pnlRadioSamplerateInfo.BringToFront();
+        }
+
+        private void btnRadioSettings_Click(object sender, EventArgs e)
+        {
+            this.ShowSetupTab(SetupTab.RadioTab);
         }
     }
 

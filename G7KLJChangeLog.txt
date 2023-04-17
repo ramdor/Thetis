@@ -1,3 +1,8 @@
+Mon Apr 17 21:28:25 2023 +0100 - sjk7: Parallelising CreateDSP(), as much as possible consistent with sanity, has shaved a couple seconds more from startup time.
+Mon Apr 17 21:26:41 2023 +0100 - sjk7: Added correct defaults for PureSignal2 SetPeak values. These are not quite what I thought they were, closes #009
+Mon Apr 17 21:24:02 2023 +0100 - sjk7: Added correct defaults for PureSignal2 SetPeak values. These are not quite what I thought they were
+Mon Apr 17 21:18:41 2023 +0100 - sjk7: Change confusing tri-state Protocol Selection checkbox with the more appropriate radio buttons. This was creating confusion, for example #005
+Sun Apr 16 02:24:47 2023 +0100 - sjk7: Changelog updated
 Sun Apr 16 01:03:20 2023 +0100 - sjk7: Regarding #004: Master volume change VAC2 level if the option is set on the VAC1 setup tab. This needs a re-think so that common properties affecting both VAC1 and VAC2 are on a common tab. Since setup.cs is so bloated, the whole VAC thing should be on a separate form? Future ...
 Sun Apr 16 00:01:52 2023 +0100 - sjk7: Close #004 VAC2 was not working. Please note that whilst VAC2 should actually work, all current active development on the VAC side is limited to VAC1, since it avoids duplication of effort. Once VAC1 is proved, the same implementations will be copied to VAC2
 Sat Apr 15 11:14:05 2023 +0100 - sjk7: Update 32 and 64-bit exectables in Releases area

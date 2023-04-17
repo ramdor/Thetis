@@ -183,11 +183,12 @@ namespace Thetis
 
         #region Static Methods
         // ************* Static Methods *************** //
-
+        private static Form OwnerForm;
         // A static method to create the thread and 
         // launch the SplashScreen.
-        static public void ShowSplashScreen()
+        static public void ShowSplashScreen(Form Owner)
         {
+            OwnerForm = Owner;
             // Make sure it is only launched once.
             if (ms_frmSplash != null)
                 return;
@@ -220,8 +221,9 @@ namespace Thetis
         // A private entry point for the thread.
         static private void ShowForm()
         {
-            ms_frmSplash = new Splash();
             Control.CheckForIllegalCrossThreadCalls = false;
+            ms_frmSplash = new Splash();
+
             Application.Run(ms_frmSplash);
         }
 

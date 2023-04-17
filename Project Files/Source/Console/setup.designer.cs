@@ -204,7 +204,7 @@
             this.grpInfo = new System.Windows.Forms.GroupBoxTS();
             this.btnErrorLog = new System.Windows.Forms.ButtonTS();
             this.btnExplorer = new System.Windows.Forms.ButtonTS();
-            this.labelTS161 = new System.Windows.Forms.LabelTS();
+            this.lblDBInfo = new System.Windows.Forms.LabelTS();
             this.lblDataBase = new System.Windows.Forms.LabelTS();
             this.lblDBTitle = new System.Windows.Forms.LabelTS();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -1273,6 +1273,13 @@
             this.lblSWLTxControl = new System.Windows.Forms.LabelTS();
             this.lblSWLRxControl = new System.Windows.Forms.LabelTS();
             this.tpHPSDR = new System.Windows.Forms.TabPage();
+            this.pnlRadioSamplerateInfo = new System.Windows.Forms.Panel();
+            this.btnRadioSettings = new System.Windows.Forms.ButtonTS();
+            this.label24 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.lblRadioSamplerateInfo = new System.Windows.Forms.Label();
+            this.btnRadioSampleRateInfo = new System.Windows.Forms.Button();
             this.chkIncludeOtherSampleRates = new System.Windows.Forms.CheckBoxTS();
             this.grpLEDMirror = new System.Windows.Forms.GroupBoxTS();
             this.lblLED10 = new System.Windows.Forms.LabelTS();
@@ -3619,6 +3626,7 @@
             this.groupBoxTS19.SuspendLayout();
             this.grpExtCtrlSWL.SuspendLayout();
             this.tpHPSDR.SuspendLayout();
+            this.pnlRadioSamplerateInfo.SuspendLayout();
             this.grpLEDMirror.SuspendLayout();
             this.grpAudioSampleRateRX2.SuspendLayout();
             this.grpVersion.SuspendLayout();
@@ -6702,7 +6710,7 @@
             this.tcGeneral.Location = new System.Drawing.Point(0, 0);
             this.tcGeneral.Name = "tcGeneral";
             this.tcGeneral.SelectedIndex = 0;
-            this.tcGeneral.Size = new System.Drawing.Size(732, 436);
+            this.tcGeneral.Size = new System.Drawing.Size(732, 465);
             this.tcGeneral.TabIndex = 26;
             // 
             // tpGeneralHardware
@@ -6722,7 +6730,7 @@
             this.tpGeneralHardware.Controls.Add(this.grpGeneralHardwareORION);
             this.tpGeneralHardware.Location = new System.Drawing.Point(4, 22);
             this.tpGeneralHardware.Name = "tpGeneralHardware";
-            this.tpGeneralHardware.Size = new System.Drawing.Size(724, 410);
+            this.tpGeneralHardware.Size = new System.Drawing.Size(724, 439);
             this.tpGeneralHardware.TabIndex = 0;
             this.tpGeneralHardware.Text = "H/W Select";
             this.tpGeneralHardware.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralHardware_Paint);
@@ -6731,7 +6739,7 @@
             // 
             this.grpInfo.Controls.Add(this.btnErrorLog);
             this.grpInfo.Controls.Add(this.btnExplorer);
-            this.grpInfo.Controls.Add(this.labelTS161);
+            this.grpInfo.Controls.Add(this.lblDBInfo);
             this.grpInfo.Controls.Add(this.lblDataBase);
             this.grpInfo.Controls.Add(this.lblDBTitle);
             this.grpInfo.Location = new System.Drawing.Point(28, 215);
@@ -6765,15 +6773,15 @@
             this.btnExplorer.UseVisualStyleBackColor = true;
             this.btnExplorer.Click += new System.EventHandler(this.btnExplorer_Click);
             // 
-            // labelTS161
+            // lblDBInfo
             // 
-            this.labelTS161.AutoSize = true;
-            this.labelTS161.Image = null;
-            this.labelTS161.Location = new System.Drawing.Point(97, 78);
-            this.labelTS161.Name = "labelTS161";
-            this.labelTS161.Size = new System.Drawing.Size(228, 13);
-            this.labelTS161.TabIndex = 2;
-            this.labelTS161.Text = "(Right-click to copy to Windows Clipboard)";
+            this.lblDBInfo.AutoSize = true;
+            this.lblDBInfo.Image = null;
+            this.lblDBInfo.Location = new System.Drawing.Point(97, 78);
+            this.lblDBInfo.Name = "lblDBInfo";
+            this.lblDBInfo.Size = new System.Drawing.Size(228, 13);
+            this.lblDBInfo.TabIndex = 2;
+            this.lblDBInfo.Text = "(Right-click to copy to Windows Clipboard)";
             // 
             // lblDataBase
             // 
@@ -6802,7 +6810,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = global::Thetis.Properties.Resources.ukraine_flag;
-            this.pictureBox1.Location = new System.Drawing.Point(16, 372);
+            this.pictureBox1.Location = new System.Drawing.Point(25, 398);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(44, 28);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -6814,7 +6822,7 @@
             // 
             this.chkSupportUkraine.AutoSize = true;
             this.chkSupportUkraine.Image = null;
-            this.chkSupportUkraine.Location = new System.Drawing.Point(66, 377);
+            this.chkSupportUkraine.Location = new System.Drawing.Point(72, 409);
             this.chkSupportUkraine.Name = "chkSupportUkraine";
             this.chkSupportUkraine.Size = new System.Drawing.Size(111, 17);
             this.chkSupportUkraine.TabIndex = 39;
@@ -6826,7 +6834,7 @@
             // lblTimeout
             // 
             this.lblTimeout.Image = null;
-            this.lblTimeout.Location = new System.Drawing.Point(272, 349);
+            this.lblTimeout.Location = new System.Drawing.Point(286, 359);
             this.lblTimeout.Name = "lblTimeout";
             this.lblTimeout.Size = new System.Drawing.Size(87, 13);
             this.lblTimeout.TabIndex = 38;
@@ -6835,7 +6843,7 @@
             // lblShowTimeoutText
             // 
             this.lblShowTimeoutText.Image = null;
-            this.lblShowTimeoutText.Location = new System.Drawing.Point(13, 349);
+            this.lblShowTimeoutText.Location = new System.Drawing.Point(27, 359);
             this.lblShowTimeoutText.Name = "lblShowTimeoutText";
             this.lblShowTimeoutText.Size = new System.Drawing.Size(253, 13);
             this.lblShowTimeoutText.TabIndex = 37;
@@ -8036,7 +8044,7 @@
             this.tpGeneralOptions.Controls.Add(this.tcOptions);
             this.tpGeneralOptions.Location = new System.Drawing.Point(4, 22);
             this.tpGeneralOptions.Name = "tpGeneralOptions";
-            this.tpGeneralOptions.Size = new System.Drawing.Size(724, 410);
+            this.tpGeneralOptions.Size = new System.Drawing.Size(724, 439);
             this.tpGeneralOptions.TabIndex = 1;
             this.tpGeneralOptions.Text = "Options";
             // 
@@ -8048,7 +8056,7 @@
             this.tcOptions.Location = new System.Drawing.Point(0, 0);
             this.tcOptions.Name = "tcOptions";
             this.tcOptions.SelectedIndex = 0;
-            this.tcOptions.Size = new System.Drawing.Size(724, 410);
+            this.tcOptions.Size = new System.Drawing.Size(724, 439);
             this.tcOptions.TabIndex = 0;
             // 
             // tpOptions1
@@ -8064,7 +8072,7 @@
             this.tpOptions1.Location = new System.Drawing.Point(4, 22);
             this.tpOptions1.Name = "tpOptions1";
             this.tpOptions1.Padding = new System.Windows.Forms.Padding(3);
-            this.tpOptions1.Size = new System.Drawing.Size(716, 384);
+            this.tpOptions1.Size = new System.Drawing.Size(716, 413);
             this.tpOptions1.TabIndex = 0;
             this.tpOptions1.Text = "Options-1";
             // 
@@ -8936,7 +8944,7 @@
             this.tpOptions2.Location = new System.Drawing.Point(4, 22);
             this.tpOptions2.Name = "tpOptions2";
             this.tpOptions2.Padding = new System.Windows.Forms.Padding(3);
-            this.tpOptions2.Size = new System.Drawing.Size(716, 384);
+            this.tpOptions2.Size = new System.Drawing.Size(716, 413);
             this.tpOptions2.TabIndex = 1;
             this.tpOptions2.Text = "Options-2";
             // 
@@ -9409,7 +9417,7 @@
             this.tpGeneralCalibration.Controls.Add(this.grpGenCalRXImage);
             this.tpGeneralCalibration.Location = new System.Drawing.Point(4, 22);
             this.tpGeneralCalibration.Name = "tpGeneralCalibration";
-            this.tpGeneralCalibration.Size = new System.Drawing.Size(724, 410);
+            this.tpGeneralCalibration.Size = new System.Drawing.Size(724, 439);
             this.tpGeneralCalibration.TabIndex = 2;
             this.tpGeneralCalibration.Text = "Calibration";
             this.tpGeneralCalibration.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralCalibration_Paint);
@@ -10172,7 +10180,7 @@
             this.tpFilters.Controls.Add(this.grpOptFilterControls);
             this.tpFilters.Location = new System.Drawing.Point(4, 22);
             this.tpFilters.Name = "tpFilters";
-            this.tpFilters.Size = new System.Drawing.Size(724, 410);
+            this.tpFilters.Size = new System.Drawing.Size(724, 439);
             this.tpFilters.TabIndex = 3;
             this.tpFilters.Text = "Filters";
             // 
@@ -10570,7 +10578,7 @@
             this.tpADC.Location = new System.Drawing.Point(4, 22);
             this.tpADC.Name = "tpADC";
             this.tpADC.Padding = new System.Windows.Forms.Padding(3);
-            this.tpADC.Size = new System.Drawing.Size(724, 410);
+            this.tpADC.Size = new System.Drawing.Size(724, 439);
             this.tpADC.TabIndex = 12;
             this.tpADC.Text = "ADC";
             // 
@@ -11416,7 +11424,7 @@
             this.tpPennyCtrl.Location = new System.Drawing.Point(4, 22);
             this.tpPennyCtrl.Name = "tpPennyCtrl";
             this.tpPennyCtrl.Padding = new System.Windows.Forms.Padding(3);
-            this.tpPennyCtrl.Size = new System.Drawing.Size(724, 410);
+            this.tpPennyCtrl.Size = new System.Drawing.Size(724, 439);
             this.tpPennyCtrl.TabIndex = 6;
             this.tpPennyCtrl.Text = "Penny/Hermes Ctrl";
             this.tpPennyCtrl.Paint += new System.Windows.Forms.PaintEventHandler(this.tpPennyCtrl_Paint);
@@ -20695,6 +20703,8 @@
             // tpHPSDR
             // 
             this.tpHPSDR.BackColor = System.Drawing.SystemColors.Control;
+            this.tpHPSDR.Controls.Add(this.pnlRadioSamplerateInfo);
+            this.tpHPSDR.Controls.Add(this.btnRadioSampleRateInfo);
             this.tpHPSDR.Controls.Add(this.chkIncludeOtherSampleRates);
             this.tpHPSDR.Controls.Add(this.grpLEDMirror);
             this.tpHPSDR.Controls.Add(this.grpAudioSampleRateRX2);
@@ -20704,16 +20714,85 @@
             this.tpHPSDR.Location = new System.Drawing.Point(4, 22);
             this.tpHPSDR.Name = "tpHPSDR";
             this.tpHPSDR.Padding = new System.Windows.Forms.Padding(3);
-            this.tpHPSDR.Size = new System.Drawing.Size(724, 410);
+            this.tpHPSDR.Size = new System.Drawing.Size(724, 439);
             this.tpHPSDR.TabIndex = 7;
             this.tpHPSDR.Text = "F/W Set";
             this.toolTip1.SetToolTip(this.tpHPSDR, "Firmware Configuration");
             this.tpHPSDR.Paint += new System.Windows.Forms.PaintEventHandler(this.tpHPSDR_Paint);
             // 
+            // pnlRadioSamplerateInfo
+            // 
+            this.pnlRadioSamplerateInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlRadioSamplerateInfo.Controls.Add(this.btnRadioSettings);
+            this.pnlRadioSamplerateInfo.Controls.Add(this.label24);
+            this.pnlRadioSamplerateInfo.Controls.Add(this.label23);
+            this.pnlRadioSamplerateInfo.Controls.Add(this.label22);
+            this.pnlRadioSamplerateInfo.Controls.Add(this.lblRadioSamplerateInfo);
+            this.pnlRadioSamplerateInfo.Location = new System.Drawing.Point(24, 148);
+            this.pnlRadioSamplerateInfo.Name = "pnlRadioSamplerateInfo";
+            this.pnlRadioSamplerateInfo.Size = new System.Drawing.Size(295, 208);
+            this.pnlRadioSamplerateInfo.TabIndex = 56;
+            this.pnlRadioSamplerateInfo.Visible = false;
+            // 
+            // btnRadioSettings
+            // 
+            this.btnRadioSettings.Image = null;
+            this.btnRadioSettings.Location = new System.Drawing.Point(22, 168);
+            this.btnRadioSettings.Name = "btnRadioSettings";
+            this.btnRadioSettings.Selectable = true;
+            this.btnRadioSettings.Size = new System.Drawing.Size(219, 23);
+            this.btnRadioSettings.TabIndex = 4;
+            this.btnRadioSettings.Text = "Click here to go to these settings";
+            this.btnRadioSettings.UseVisualStyleBackColor = true;
+            this.btnRadioSettings.Click += new System.EventHandler(this.btnRadioSettings_Click);
+            // 
+            // label24
+            // 
+            this.label24.Location = new System.Drawing.Point(19, 131);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(222, 34);
+            this.label24.TabIndex = 3;
+            this.label24.Text = "3) Ensure the specific, correct Protocol is chosen. NOT auto!";
+            // 
+            // label23
+            // 
+            this.label23.Location = new System.Drawing.Point(19, 102);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(222, 23);
+            this.label23.TabIndex = 2;
+            this.label23.Text = "2) Ensure the radio model is set correctly";
+            // 
+            // label22
+            // 
+            this.label22.Location = new System.Drawing.Point(19, 60);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(222, 40);
+            this.label22.TabIndex = 1;
+            this.label22.Text = "1) Switch off the power to your radio in the console";
+            // 
+            // lblRadioSamplerateInfo
+            // 
+            this.lblRadioSamplerateInfo.AutoSize = true;
+            this.lblRadioSamplerateInfo.Location = new System.Drawing.Point(19, 23);
+            this.lblRadioSamplerateInfo.Name = "lblRadioSamplerateInfo";
+            this.lblRadioSamplerateInfo.Size = new System.Drawing.Size(97, 13);
+            this.lblRadioSamplerateInfo.TabIndex = 0;
+            this.lblRadioSamplerateInfo.Text = "You may need to: ";
+            // 
+            // btnRadioSampleRateInfo
+            // 
+            this.btnRadioSampleRateInfo.Location = new System.Drawing.Point(24, 97);
+            this.btnRadioSampleRateInfo.Name = "btnRadioSampleRateInfo";
+            this.btnRadioSampleRateInfo.Size = new System.Drawing.Size(272, 23);
+            this.btnRadioSampleRateInfo.TabIndex = 55;
+            this.btnRadioSampleRateInfo.Text = "Your favourite sample rate missing? (clickme)";
+            this.btnRadioSampleRateInfo.UseVisualStyleBackColor = true;
+            this.btnRadioSampleRateInfo.Click += new System.EventHandler(this.btnRadioSampleRateInfo_Click);
+            // 
             // chkIncludeOtherSampleRates
             // 
             this.chkIncludeOtherSampleRates.Image = null;
-            this.chkIncludeOtherSampleRates.Location = new System.Drawing.Point(92, 88);
+            this.chkIncludeOtherSampleRates.Location = new System.Drawing.Point(24, 382);
             this.chkIncludeOtherSampleRates.Name = "chkIncludeOtherSampleRates";
             this.chkIncludeOtherSampleRates.Size = new System.Drawing.Size(125, 20);
             this.chkIncludeOtherSampleRates.TabIndex = 54;
@@ -21119,7 +21198,7 @@
             this.tpAlexControl.Location = new System.Drawing.Point(4, 22);
             this.tpAlexControl.Name = "tpAlexControl";
             this.tpAlexControl.Padding = new System.Windows.Forms.Padding(3);
-            this.tpAlexControl.Size = new System.Drawing.Size(724, 410);
+            this.tpAlexControl.Size = new System.Drawing.Size(724, 439);
             this.tpAlexControl.TabIndex = 8;
             this.tpAlexControl.Text = "Alex";
             // 
@@ -24547,7 +24626,7 @@
             this.tpApolloControl.Location = new System.Drawing.Point(4, 22);
             this.tpApolloControl.Name = "tpApolloControl";
             this.tpApolloControl.Padding = new System.Windows.Forms.Padding(3);
-            this.tpApolloControl.Size = new System.Drawing.Size(724, 410);
+            this.tpApolloControl.Size = new System.Drawing.Size(724, 439);
             this.tpApolloControl.TabIndex = 10;
             this.tpApolloControl.Text = "Andromeda";
             // 
@@ -24981,7 +25060,7 @@
             this.tpRX2.Controls.Add(this.chkRX2AutoMuteTX);
             this.tpRX2.Location = new System.Drawing.Point(4, 22);
             this.tpRX2.Name = "tpRX2";
-            this.tpRX2.Size = new System.Drawing.Size(724, 410);
+            this.tpRX2.Size = new System.Drawing.Size(724, 439);
             this.tpRX2.TabIndex = 4;
             this.tpRX2.Text = "RX2";
             // 
@@ -25041,7 +25120,7 @@
             this.tpGeneralNavigation.Controls.Add(this.grpGlobalHIDConrtolOptions);
             this.tpGeneralNavigation.Location = new System.Drawing.Point(4, 22);
             this.tpGeneralNavigation.Name = "tpGeneralNavigation";
-            this.tpGeneralNavigation.Size = new System.Drawing.Size(724, 410);
+            this.tpGeneralNavigation.Size = new System.Drawing.Size(724, 439);
             this.tpGeneralNavigation.TabIndex = 5;
             this.tpGeneralNavigation.Text = "Navigation";
             this.toolTip1.SetToolTip(this.tpGeneralNavigation, "Will turn green on mouse wheel");
@@ -55159,6 +55238,8 @@
             this.groupBoxTS19.PerformLayout();
             this.grpExtCtrlSWL.ResumeLayout(false);
             this.tpHPSDR.ResumeLayout(false);
+            this.pnlRadioSamplerateInfo.ResumeLayout(false);
+            this.pnlRadioSamplerateInfo.PerformLayout();
             this.grpLEDMirror.ResumeLayout(false);
             this.grpLEDMirror.PerformLayout();
             this.grpAudioSampleRateRX2.ResumeLayout(false);
@@ -59463,7 +59544,7 @@
         private Label lblSampleRate;
         private CheckBoxTS chkExclusive;
         private GroupBoxTS grpInfo;
-        private LabelTS labelTS161;
+        private LabelTS lblDBInfo;
         private LabelTS lblDataBase;
         private LabelTS lblDBTitle;
         private CheckBoxTS chkAveraging;
@@ -59479,5 +59560,12 @@
         private RadioButtonTS rbPAuto;
         private RadioButtonTS rbP2;
         private RadioButtonTS rbP1;
+        private Panel pnlRadioSamplerateInfo;
+        private ButtonTS btnRadioSettings;
+        private Label label24;
+        private Label label23;
+        private Label label22;
+        private Label lblRadioSamplerateInfo;
+        private Button btnRadioSampleRateInfo;
     }
 }

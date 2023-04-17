@@ -281,7 +281,6 @@
     <Compile Include="Channel.cs" />
     <Compile Include="clsBandStackManager.cs" />
     <Compile Include="display.cs" />
-    <Content Include="display.cs.curwales.txt" />
     <Compile Include="Extras\AudioExtras.cs" />
     <Compile Include="Firewall.cs" />
     <Compile Include="cmaster.cs" />
@@ -442,9 +441,6 @@
     <Compile Include="database.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Content Include="displayPeteLikes.txt">
-      <SubType>Code</SubType>
-    </Content>
     <Compile Include="DiversityForm.cs">
       <SubType>Form</SubType>
     </Compile>
