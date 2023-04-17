@@ -573,6 +573,7 @@ namespace Thetis
 
         void InitDSP()
         {
+
             try
             {
                 selectFilters();
@@ -597,8 +598,7 @@ namespace Thetis
         void StartMakingDSP()
         {
             m_waiting_for_dsp = true;
-
-            Splash.SetStatus("Setting up DSP, please be patient ..."); // Set progress point
+            Splash.SetStatus("Kicking off DSP initialisation, please be patient ..."); // Set progress point
 
             var t = new Thread(new ThreadStart(InitDSP))
             {
