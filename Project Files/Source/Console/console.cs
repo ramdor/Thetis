@@ -5139,6 +5139,17 @@ namespace Thetis
                 }
             }
 
+            // KLJ: Allow record file persistence across restarts:
+            string af_file_name = AppDataPath + "\\SDRQuickAudio.wav";
+            if (File.Exists(af_file_name))
+            {
+                var fi = new FileInfo(af_file_name);
+                if (fi.Length > 1024 * 10)
+                {
+                    ckQuickPlay.Enabled = true;
+                }
+            }
+
             return;
         }
 
@@ -32158,6 +32169,20 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 }
             }
         }
+        private void CheckEnableQuickPlay()
+        {
+            string af_file_name = AppDataPath + "\\SDRQuickAudio.wav";
+            bool en = false;
+            if (File.Exists(af_file_name))
+            {
+                var fi = new FileInfo(af_file_name);
+                if (fi.Length > 1024 * 10)
+                {
+                    en = true;
+                }
+            }
+            ckQuickPlay.Enabled = en;
+        }
 
         private bool DataFlowing = false;
         private byte[] id_bytes = new byte[1];
@@ -32166,6 +32191,8 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             pause_DisplayThread = true;
             if (chkPower.Checked)
             {
+
+                CheckEnableQuickPlay();
                 chkPower.BackColor = button_selected_color;
                 txtVFOAFreq.ForeColor = vfo_text_light_color;
                 txtVFOAMSD.ForeColor = vfo_text_light_color;
