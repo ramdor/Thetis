@@ -241,10 +241,6 @@ namespace Thetis
             afterConstructCounter++;
             lblDBInfo.MouseUp += lblDataBase_MouseUp; // so it doesn't matter _which_ one you right-click
 
-
-            Display.Target = console.picDisplay;
-            console.DoWaitForDSP("getOptions() needs to wait for DSP setup ..."); //
-
             // KLJ
             this.Hl2 = new HL2(console, this);
             //
@@ -14960,20 +14956,23 @@ namespace Thetis
                 return;
             }
 
-            DialogResult result = MessageBox.Show(
-                "Include this Additional TX profile in your profiles list?", "Include?",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show("Include this Additional TX profile in your profiles list?",
+                "Include?",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
 
-            if (result == DialogResult.No) return;
+            if (result == DialogResult.No)
+                return;
 
             string name = lstTXProfileDef.Text;
-            DataRow[] rows = DB.ds.Tables["TxProfileDef"].Select("Name = '"
-                + name.Replace("'", "''") + "'"); // MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = DB.ds.Tables["TxProfileDef"].Select("Name = '" + name.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
             if (rows.Length != 1)
             {
                 MessageBox.Show("Database error reading TXProfileDef Table.",
-                    "Database error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    "Database error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
                 return;
             }
 
@@ -14982,10 +14981,12 @@ namespace Thetis
             {
                 result = MessageBox.Show(
                     "Are you sure you want to overwrite the " + name + " TX Profile?",
-                    "Overwrite Profile?", MessageBoxButtons.YesNo,
+                    "Overwrite Profile?",
+                    MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);
 
-                if (result == DialogResult.No) return;
+                if (result == DialogResult.No)
+                    return;
 
                 foreach (DataRow d in DB.ds.Tables["TxProfile"].Rows)
                 {
@@ -15002,7 +15003,8 @@ namespace Thetis
                 dr["Name"] = name;
             }
 
-            for (int i = 0; i < dr.ItemArray.Length; i++) dr[i] = rows[0][i];
+            for (int i = 0; i < dr.ItemArray.Length; i++)
+                dr[i] = rows[0][i];
 
             if (!comboTXProfileName.Items.Contains(name))
             {
@@ -15014,7 +15016,10 @@ namespace Thetis
             console.UpdateTXProfile(name);
         }
 
+
+
         //-W2PA Export a single TX Profile to send to someone else for importing.
+        /*/
         private void ExportCurrentTxProfile()
         {
             try
@@ -15094,6 +15099,68 @@ namespace Thetis
                 s += e.Message;
                 MessageBox.Show(s);
             }
+        }
+        /*/
+
+        //-W2PA Export a single TX Profile to send to someone else for importing.
+        private void ExportCurrentTxProfile()
+        {
+            string fileName = current_profile;
+
+            string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+            foreach (char c in invalid)
+            {
+                fileName = fileName.Replace(c.ToString(), "_");  // Remove profile name chars that are invalid in filenames.
+            }
+
+            fileName = console.AppDataPath + fileName;
+
+            int i = 1;
+            string tempFN = fileName;
+            while (File.Exists(tempFN + ".xml"))
+            {
+                tempFN = fileName + Convert.ToString(i);  // Get a slightly different file name if it already exists.
+                i++;
+            }
+            fileName = tempFN + ".xml";
+
+            DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow exportRow = null;
+            if (rows.Length > 0)
+            {
+                exportRow = rows[0];
+            }
+            else
+            {
+                MessageBox.Show("Can not locate " + current_profile + ".",  // This should never happen.
+                    "Profile error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
+            DataSet exDS = DB.ds.Clone();
+            DataTable pTable = pTable = DB.ds.Tables["TxProfile"].Clone();
+            pTable.ImportRow(exportRow);
+            exDS.Merge(pTable);
+
+            try
+            {
+                exDS.WriteXml(fileName, XmlWriteMode.WriteSchema); // Writing with schema is necessary for import
+            }
+            catch
+            {
+                MessageBox.Show("Can not write " + fileName + ".",
+                    "Export error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
+            MessageBox.Show("Profile" + current_profile + " has been saved in file " + fileName,
+                    "Done",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
         }
 
         private void Setup_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -28845,6 +28912,11 @@ namespace Thetis
         private void btnRadioSettings_Click(object sender, EventArgs e)
         {
             this.ShowSetupTab(SetupTab.RadioTab);
+        }
+
+        private void buttonTS1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 

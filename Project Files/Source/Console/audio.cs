@@ -329,7 +329,12 @@ namespace Thetis
             }
         }
 
-        public static Console console;
+        // public static Console console;
+        public static Console console
+        {
+            get;
+            set;
+        }
         public static float[] phase_buf_l;
         public static float[] phase_buf_r;
         public static bool phase;

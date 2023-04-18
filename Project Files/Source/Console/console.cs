@@ -569,11 +569,8 @@ namespace Thetis
         private Thread multimeter2_thread_rx1;
         private Thread multimeter2_thread_rx2;
 
-        private volatile bool m_waiting_for_dsp = true;
-
         void InitDSP()
         {
-
             try
             {
                 selectFilters();
@@ -589,58 +586,6 @@ namespace Thetis
             {
                 Common.LogException(e);
             }
-            finally
-            {
-                m_waiting_for_dsp = false;
-            }
-        }
-
-        void StartMakingDSP()
-        {
-            m_waiting_for_dsp = true;
-            Splash.SetStatus("Kicking off DSP initialisation ..."); // Set progress point
-
-            var t = new Thread(new ThreadStart(InitDSP))
-            {
-                Name = "Init DSP Thread",
-                Priority = ThreadPriority.Highest,
-                IsBackground = true,
-
-            };
-            t.Start();
-
-        }
-
-        void WaitForDSP(string info = "Still waiting for DSP ...")
-        {
-            int slept = 0;
-            while (m_waiting_for_dsp)
-            {
-                if (slept == 0)
-                {
-                    Splash.SetStatus(info);
-                }
-                Thread.Sleep(10);
-                slept += 10;
-                Debug.Assert(slept < 10000);
-                if (slept > 10000)
-                    break;
-
-                if (slept > 1000 && slept % 1000 == 0)
-                    Splash.SetStatus("Still waiting for DSP ...");
-
-            }
-
-            Debug.Print("Waited " + slept.ToString() + " ms for the DSP to be ready.");
-        }
-
-        internal void DoWaitForDSP(string info)
-        {
-            if (!String.IsNullOrEmpty(info))
-            {
-                Splash.SetStatus(info);
-            }
-            WaitForDSP(info);
         }
 
         public CWX CWXForm
@@ -803,7 +748,7 @@ namespace Thetis
             }
 
 #if (DEBUG)
-            AppDataPath += "Debug\\";
+            //AppDataPath += "Debug\\";
 #endif
             if (!Directory.Exists(AppDataPath))
                 Directory.CreateDirectory(AppDataPath);
@@ -1003,7 +948,7 @@ namespace Thetis
                                 MessageBox.Show(sForced
                                         + "Your database file is from a different version.\nMerging it into a new database will now be attempted.\n\n"
                                         + "First your old database will be saved in DB_Archive folder,\nand a database reset will happen.\n\n"
-                                        + "Please RE-START when the reset finishes.",
+                                        + "Please RE-START the app when the reset finishes.",
                                     "Note", MessageBoxButtons.OK,
                                     MessageBoxIcon.Exclamation,
                                     MessageBoxDefaultButton.Button1,
@@ -1079,9 +1024,8 @@ namespace Thetis
             specRX = new SpecRX();
 
             Splash.SetStatus("Initializing Hardware"); // Set progress point
-
-            StartMakingDSP(); // we need radio before we can start making DSP()
             InitCTCSS();
+
 
             bool RX2Enabled = false;
             if (File.Exists(db_file_name))
@@ -1107,8 +1051,6 @@ namespace Thetis
             pat.SetApartmentState(
                 ApartmentState.STA); // no ASIO devices without this
             pat.Start();
-
-
 
 
             Display.specready = true;
@@ -1177,6 +1119,10 @@ namespace Thetis
             }
 
             initializing = false;
+
+            Splash.SetStatus("Initialising DSP, this may take a while ...");
+            InitDSP();
+
             Splash.SetStatus("Finished");
 
             // KLJ: I wonder if this contributes to the start-up flicker I see, before the main console fades in?
@@ -43800,11 +43746,7 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
 
             tbFilterWidthScroll_newMode(); // wjt
 
-            // Display.DrawBackground();
-            WaitForDSP(); // we NEED the DSP to be ready here ...
-
             UpdateDSP();
-            // UpdateDSPBufTX();
 
             txtVFOAFreq_LostFocus(this, EventArgs.Empty);
             ptbPWR_Scroll(this, EventArgs.Empty);

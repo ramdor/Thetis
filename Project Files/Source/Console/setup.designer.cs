@@ -2523,11 +2523,9 @@
             this.tbCFC1 = new System.Windows.Forms.TrackBarTS();
             this.tbCFC2 = new System.Windows.Forms.TrackBarTS();
             this.tpTransmit = new System.Windows.Forms.TabPage();
-            this.btnTXProfileDefImport = new System.Windows.Forms.ButtonTS();
             this.chkHighlightTXProfileSaveItems = new System.Windows.Forms.CheckBoxTS();
             this.chkRestoreVAC2DeviceDetailsFromTXProfile = new System.Windows.Forms.CheckBoxTS();
             this.chkRestoreVAC1DeviceDetailsFromTXProfile = new System.Windows.Forms.CheckBoxTS();
-            this.btnExportCurrentTXProfile = new System.Windows.Forms.Button();
             this.chkLimitExtAmpOnOverload = new System.Windows.Forms.CheckBoxTS();
             this.grpDSPSpeechProcessor = new System.Windows.Forms.GroupBoxTS();
             this.chkDSPCESSB = new System.Windows.Forms.CheckBoxTS();
@@ -2552,6 +2550,7 @@
             this.lblLineInBoost = new System.Windows.Forms.LabelTS();
             this.chkTXExpert = new System.Windows.Forms.CheckBoxTS();
             this.grpTXProfileDef = new System.Windows.Forms.GroupBoxTS();
+            this.btnTXProfileDefImport = new System.Windows.Forms.ButtonTS();
             this.lstTXProfileDef = new System.Windows.Forms.ListBox();
             this.grpTXAM = new System.Windows.Forms.GroupBoxTS();
             this.lblTXAMCarrierLevel = new System.Windows.Forms.LabelTS();
@@ -2563,6 +2562,7 @@
             this.grpTXProfile = new System.Windows.Forms.GroupBoxTS();
             this.btnTXProfileDelete = new System.Windows.Forms.ButtonTS();
             this.btnTXProfileSave = new System.Windows.Forms.ButtonTS();
+            this.btnExportCurrentTXProfile = new System.Windows.Forms.Button();
             this.comboTXProfileName = new System.Windows.Forms.ComboBoxTS();
             this.grpPATune = new System.Windows.Forms.GroupBoxTS();
             this.radUseFixedDriveTune = new System.Windows.Forms.RadioButtonTS();
@@ -3458,6 +3458,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.button1 = new System.Windows.Forms.Button();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -40774,11 +40775,9 @@
             // 
             // tpTransmit
             // 
-            this.tpTransmit.Controls.Add(this.btnTXProfileDefImport);
             this.tpTransmit.Controls.Add(this.chkHighlightTXProfileSaveItems);
             this.tpTransmit.Controls.Add(this.chkRestoreVAC2DeviceDetailsFromTXProfile);
             this.tpTransmit.Controls.Add(this.chkRestoreVAC1DeviceDetailsFromTXProfile);
-            this.tpTransmit.Controls.Add(this.btnExportCurrentTXProfile);
             this.tpTransmit.Controls.Add(this.chkLimitExtAmpOnOverload);
             this.tpTransmit.Controls.Add(this.grpDSPSpeechProcessor);
             this.tpTransmit.Controls.Add(this.grpExtTXInhibit);
@@ -40800,23 +40799,11 @@
             this.tpTransmit.TabIndex = 5;
             this.tpTransmit.Text = "Transmit";
             // 
-            // btnTXProfileDefImport
-            // 
-            this.btnTXProfileDefImport.Image = null;
-            this.btnTXProfileDefImport.Location = new System.Drawing.Point(561, 194);
-            this.btnTXProfileDefImport.Name = "btnTXProfileDefImport";
-            this.btnTXProfileDefImport.Selectable = true;
-            this.btnTXProfileDefImport.Size = new System.Drawing.Size(136, 32);
-            this.btnTXProfileDefImport.TabIndex = 54;
-            this.btnTXProfileDefImport.Text = "Import TX Profile ...";
-            this.toolTip1.SetToolTip(this.btnTXProfileDefImport, "Include the selected profile from the above list into my own list of profiles.");
-            this.btnTXProfileDefImport.Click += new System.EventHandler(this.btnTXProfileDefImport_Click);
-            // 
             // chkHighlightTXProfileSaveItems
             // 
             this.chkHighlightTXProfileSaveItems.AutoSize = true;
             this.chkHighlightTXProfileSaveItems.Image = null;
-            this.chkHighlightTXProfileSaveItems.Location = new System.Drawing.Point(23, 402);
+            this.chkHighlightTXProfileSaveItems.Location = new System.Drawing.Point(24, 434);
             this.chkHighlightTXProfileSaveItems.Name = "chkHighlightTXProfileSaveItems";
             this.chkHighlightTXProfileSaveItems.Size = new System.Drawing.Size(186, 17);
             this.chkHighlightTXProfileSaveItems.TabIndex = 76;
@@ -40827,7 +40814,7 @@
             // chkRestoreVAC2DeviceDetailsFromTXProfile
             // 
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Image = null;
-            this.chkRestoreVAC2DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(23, 284);
+            this.chkRestoreVAC2DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(24, 316);
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Name = "chkRestoreVAC2DeviceDetailsFromTXProfile";
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(321, 18);
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.TabIndex = 75;
@@ -40837,24 +40824,12 @@
             // chkRestoreVAC1DeviceDetailsFromTXProfile
             // 
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Image = null;
-            this.chkRestoreVAC1DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(23, 260);
+            this.chkRestoreVAC1DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(24, 292);
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Name = "chkRestoreVAC1DeviceDetailsFromTXProfile";
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(321, 18);
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.TabIndex = 74;
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Text = "Restore VAC1 device details from TX Profile";
             this.toolTip1.SetToolTip(this.chkRestoreVAC1DeviceDetailsFromTXProfile, "Restore VAC device details that were stored against a TX Profile");
-            // 
-            // btnExportCurrentTXProfile
-            // 
-            this.btnExportCurrentTXProfile.AutoSize = true;
-            this.btnExportCurrentTXProfile.Location = new System.Drawing.Point(561, 151);
-            this.btnExportCurrentTXProfile.Name = "btnExportCurrentTXProfile";
-            this.btnExportCurrentTXProfile.Size = new System.Drawing.Size(136, 32);
-            this.btnExportCurrentTXProfile.TabIndex = 73;
-            this.btnExportCurrentTXProfile.Text = "Export Current Profile";
-            this.toolTip1.SetToolTip(this.btnExportCurrentTXProfile, "Export the curent profile and save to a file.");
-            this.btnExportCurrentTXProfile.UseVisualStyleBackColor = true;
-            this.btnExportCurrentTXProfile.Click += new System.EventHandler(this.btnExportCurrentTXProfile_Click);
             // 
             // chkLimitExtAmpOnOverload
             // 
@@ -40927,7 +40902,7 @@
             // chkSaveTXProfileOnExit
             // 
             this.chkSaveTXProfileOnExit.Image = null;
-            this.chkSaveTXProfileOnExit.Location = new System.Drawing.Point(23, 319);
+            this.chkSaveTXProfileOnExit.Location = new System.Drawing.Point(24, 351);
             this.chkSaveTXProfileOnExit.Name = "chkSaveTXProfileOnExit";
             this.chkSaveTXProfileOnExit.Size = new System.Drawing.Size(235, 18);
             this.chkSaveTXProfileOnExit.TabIndex = 67;
@@ -40938,7 +40913,7 @@
             // chkAutoSaveTXProfile
             // 
             this.chkAutoSaveTXProfile.Image = null;
-            this.chkAutoSaveTXProfile.Location = new System.Drawing.Point(23, 343);
+            this.chkAutoSaveTXProfile.Location = new System.Drawing.Point(24, 375);
             this.chkAutoSaveTXProfile.Name = "chkAutoSaveTXProfile";
             this.chkAutoSaveTXProfile.Size = new System.Drawing.Size(189, 18);
             this.chkAutoSaveTXProfile.TabIndex = 66;
@@ -41018,7 +40993,7 @@
             this.grpBoxMic.Controls.Add(this.udLineInBoost);
             this.grpBoxMic.Controls.Add(this.chk20dbMicBoost);
             this.grpBoxMic.Controls.Add(this.lblLineInBoost);
-            this.grpBoxMic.Location = new System.Drawing.Point(170, 103);
+            this.grpBoxMic.Location = new System.Drawing.Point(164, 127);
             this.grpBoxMic.Name = "grpBoxMic";
             this.grpBoxMic.Size = new System.Drawing.Size(189, 137);
             this.grpBoxMic.TabIndex = 58;
@@ -41216,29 +41191,42 @@
             this.chkTXExpert.Checked = true;
             this.chkTXExpert.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkTXExpert.Image = null;
-            this.chkTXExpert.Location = new System.Drawing.Point(593, 7);
+            this.chkTXExpert.Location = new System.Drawing.Point(569, 8);
             this.chkTXExpert.Name = "chkTXExpert";
-            this.chkTXExpert.Size = new System.Drawing.Size(96, 24);
+            this.chkTXExpert.Size = new System.Drawing.Size(151, 24);
             this.chkTXExpert.TabIndex = 55;
-            this.chkTXExpert.Text = "More Profiles";
+            this.chkTXExpert.Text = "Show More Profiles";
             this.toolTip1.SetToolTip(this.chkTXExpert, "Check to display additional default preset TX Profiles");
             this.chkTXExpert.CheckedChanged += new System.EventHandler(this.chkTXExpert_CheckedChanged);
             // 
             // grpTXProfileDef
             // 
+            this.grpTXProfileDef.Controls.Add(this.btnTXProfileDefImport);
             this.grpTXProfileDef.Controls.Add(this.lstTXProfileDef);
             this.grpTXProfileDef.Location = new System.Drawing.Point(561, 32);
             this.grpTXProfileDef.Name = "grpTXProfileDef";
-            this.grpTXProfileDef.Size = new System.Drawing.Size(136, 113);
+            this.grpTXProfileDef.Size = new System.Drawing.Size(159, 257);
             this.grpTXProfileDef.TabIndex = 54;
             this.grpTXProfileDef.TabStop = false;
             this.grpTXProfileDef.Text = "Additional TX Profiles";
+            // 
+            // btnTXProfileDefImport
+            // 
+            this.btnTXProfileDefImport.Image = null;
+            this.btnTXProfileDefImport.Location = new System.Drawing.Point(8, 214);
+            this.btnTXProfileDefImport.Name = "btnTXProfileDefImport";
+            this.btnTXProfileDefImport.Selectable = true;
+            this.btnTXProfileDefImport.Size = new System.Drawing.Size(120, 28);
+            this.btnTXProfileDefImport.TabIndex = 54;
+            this.btnTXProfileDefImport.Text = "&Import Selected";
+            this.toolTip1.SetToolTip(this.btnTXProfileDefImport, "Include the selected profile from the above list into my own list of profiles.");
+            this.btnTXProfileDefImport.Click += new System.EventHandler(this.btnTXProfileDefImport_Click);
             // 
             // lstTXProfileDef
             // 
             this.lstTXProfileDef.Location = new System.Drawing.Point(8, 16);
             this.lstTXProfileDef.Name = "lstTXProfileDef";
-            this.lstTXProfileDef.Size = new System.Drawing.Size(120, 82);
+            this.lstTXProfileDef.Size = new System.Drawing.Size(145, 186);
             this.lstTXProfileDef.TabIndex = 53;
             // 
             // grpTXAM
@@ -41360,12 +41348,14 @@
             // 
             // grpTXProfile
             // 
+            this.grpTXProfile.Controls.Add(this.button1);
             this.grpTXProfile.Controls.Add(this.btnTXProfileDelete);
             this.grpTXProfile.Controls.Add(this.btnTXProfileSave);
+            this.grpTXProfile.Controls.Add(this.btnExportCurrentTXProfile);
             this.grpTXProfile.Controls.Add(this.comboTXProfileName);
             this.grpTXProfile.Location = new System.Drawing.Point(8, 8);
             this.grpTXProfile.Name = "grpTXProfile";
-            this.grpTXProfile.Size = new System.Drawing.Size(143, 75);
+            this.grpTXProfile.Size = new System.Drawing.Size(212, 109);
             this.grpTXProfile.TabIndex = 23;
             this.grpTXProfile.TabStop = false;
             this.grpTXProfile.Text = "Profiles";
@@ -41373,7 +41363,7 @@
             // btnTXProfileDelete
             // 
             this.btnTXProfileDelete.Image = null;
-            this.btnTXProfileDelete.Location = new System.Drawing.Point(72, 48);
+            this.btnTXProfileDelete.Location = new System.Drawing.Point(151, 50);
             this.btnTXProfileDelete.Name = "btnTXProfileDelete";
             this.btnTXProfileDelete.Selectable = true;
             this.btnTXProfileDelete.Size = new System.Drawing.Size(48, 21);
@@ -41385,7 +41375,7 @@
             // btnTXProfileSave
             // 
             this.btnTXProfileSave.Image = null;
-            this.btnTXProfileSave.Location = new System.Drawing.Point(16, 48);
+            this.btnTXProfileSave.Location = new System.Drawing.Point(16, 50);
             this.btnTXProfileSave.Name = "btnTXProfileSave";
             this.btnTXProfileSave.Selectable = true;
             this.btnTXProfileSave.Size = new System.Drawing.Size(48, 21);
@@ -41394,13 +41384,25 @@
             this.toolTip1.SetToolTip(this.btnTXProfileSave, "Click to save the current settings to a TX Profile.");
             this.btnTXProfileSave.Click += new System.EventHandler(this.btnTXProfileSave_Click);
             // 
+            // btnExportCurrentTXProfile
+            // 
+            this.btnExportCurrentTXProfile.AutoSize = true;
+            this.btnExportCurrentTXProfile.Location = new System.Drawing.Point(16, 78);
+            this.btnExportCurrentTXProfile.Name = "btnExportCurrentTXProfile";
+            this.btnExportCurrentTXProfile.Size = new System.Drawing.Size(50, 23);
+            this.btnExportCurrentTXProfile.TabIndex = 73;
+            this.btnExportCurrentTXProfile.Text = "&Export";
+            this.toolTip1.SetToolTip(this.btnExportCurrentTXProfile, "Export the curent profile and save to a file.");
+            this.btnExportCurrentTXProfile.UseVisualStyleBackColor = true;
+            this.btnExportCurrentTXProfile.Click += new System.EventHandler(this.btnExportCurrentTXProfile_Click);
+            // 
             // comboTXProfileName
             // 
             this.comboTXProfileName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboTXProfileName.DropDownWidth = 104;
-            this.comboTXProfileName.Location = new System.Drawing.Point(16, 24);
+            this.comboTXProfileName.Location = new System.Drawing.Point(16, 19);
             this.comboTXProfileName.Name = "comboTXProfileName";
-            this.comboTXProfileName.Size = new System.Drawing.Size(104, 21);
+            this.comboTXProfileName.Size = new System.Drawing.Size(183, 21);
             this.comboTXProfileName.TabIndex = 0;
             this.toolTip1.SetToolTip(this.comboTXProfileName, "Sets the current Transmit Profile to be used.");
             this.comboTXProfileName.SelectedIndexChanged += new System.EventHandler(this.comboTXProfileName_SelectedIndexChanged);
@@ -41413,7 +41415,7 @@
             this.grpPATune.Controls.Add(this.comboTXTUNMeter);
             this.grpPATune.Controls.Add(this.lblTXTUNMeter);
             this.grpPATune.Controls.Add(this.udTXTunePower);
-            this.grpPATune.Location = new System.Drawing.Point(8, 89);
+            this.grpPATune.Location = new System.Drawing.Point(8, 127);
             this.grpPATune.Name = "grpPATune";
             this.grpPATune.Size = new System.Drawing.Size(143, 151);
             this.grpPATune.TabIndex = 22;
@@ -41524,7 +41526,7 @@
             this.grpTXFilter.Controls.Add(this.udTXFilterLow);
             this.grpTXFilter.Controls.Add(this.lblTXFilterLow);
             this.grpTXFilter.Controls.Add(this.udTXFilterHigh);
-            this.grpTXFilter.Location = new System.Drawing.Point(170, 8);
+            this.grpTXFilter.Location = new System.Drawing.Point(241, 13);
             this.grpTXFilter.Name = "grpTXFilter";
             this.grpTXFilter.Size = new System.Drawing.Size(128, 75);
             this.grpTXFilter.TabIndex = 19;
@@ -55004,6 +55006,18 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // button1
+            // 
+            this.button1.AutoSize = true;
+            this.button1.Location = new System.Drawing.Point(123, 80);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(76, 23);
+            this.button1.TabIndex = 74;
+            this.button1.Text = "Export to ...";
+            this.toolTip1.SetToolTip(this.button1, "Export the curent profile and save to a file.");
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -55804,6 +55818,7 @@
             this.grpTXMonitor.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTXAF)).EndInit();
             this.grpTXProfile.ResumeLayout(false);
+            this.grpTXProfile.PerformLayout();
             this.grpPATune.ResumeLayout(false);
             this.grpPATune.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTXTunePower)).EndInit();
@@ -58379,7 +58394,6 @@
         private System.Windows.Forms.RadioButtonTS radTXUSB;
         private System.Windows.Forms.RadioButtonTS radTXLSB;
         private System.Windows.Forms.RadioButtonTS radTXDSB;
-        private System.Windows.Forms.Button btnExportCurrentTXProfile;
         private GroupBoxTS grpVAC1monitor;
         private LabelTS lblVAC1unfl;
         private LabelTS lblVAC1ovfl;
@@ -59567,5 +59581,7 @@
         private Label label22;
         private Label lblRadioSamplerateInfo;
         private Button btnRadioSampleRateInfo;
+        private Button btnExportCurrentTXProfile;
+        private Button button1;
     }
 }
