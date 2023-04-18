@@ -1274,13 +1274,14 @@
             this.lblSWLRxControl = new System.Windows.Forms.LabelTS();
             this.tpHPSDR = new System.Windows.Forms.TabPage();
             this.pnlRadioSamplerateInfo = new System.Windows.Forms.Panel();
+            this.label25 = new System.Windows.Forms.Label();
             this.btnRadioSettings = new System.Windows.Forms.ButtonTS();
+            this.chkIncludeOtherSampleRates = new System.Windows.Forms.CheckBoxTS();
             this.label24 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.lblRadioSamplerateInfo = new System.Windows.Forms.Label();
             this.btnRadioSampleRateInfo = new System.Windows.Forms.Button();
-            this.chkIncludeOtherSampleRates = new System.Windows.Forms.CheckBoxTS();
             this.grpLEDMirror = new System.Windows.Forms.GroupBoxTS();
             this.lblLED10 = new System.Windows.Forms.LabelTS();
             this.lblLED09 = new System.Windows.Forms.LabelTS();
@@ -2560,6 +2561,7 @@
             this.lblTXAF = new System.Windows.Forms.LabelTS();
             this.udTXAF = new System.Windows.Forms.NumericUpDownTS();
             this.grpTXProfile = new System.Windows.Forms.GroupBoxTS();
+            this.button1 = new System.Windows.Forms.Button();
             this.btnTXProfileDelete = new System.Windows.Forms.ButtonTS();
             this.btnTXProfileSave = new System.Windows.Forms.ButtonTS();
             this.btnExportCurrentTXProfile = new System.Windows.Forms.Button();
@@ -3458,7 +3460,9 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.button1 = new System.Windows.Forms.Button();
+            this.pnlRXSRWarn = new System.Windows.Forms.Panel();
+            this.lblRadioSamplerateWarn = new System.Windows.Forms.Label();
+            this.pbRXSRWarn = new System.Windows.Forms.PictureBox();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4371,6 +4375,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
+            this.pnlRXSRWarn.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRXSRWarn)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -6823,7 +6829,7 @@
             // 
             this.chkSupportUkraine.AutoSize = true;
             this.chkSupportUkraine.Image = null;
-            this.chkSupportUkraine.Location = new System.Drawing.Point(72, 409);
+            this.chkSupportUkraine.Location = new System.Drawing.Point(91, 409);
             this.chkSupportUkraine.Name = "chkSupportUkraine";
             this.chkSupportUkraine.Size = new System.Drawing.Size(111, 17);
             this.chkSupportUkraine.TabIndex = 39;
@@ -20704,6 +20710,7 @@
             // tpHPSDR
             // 
             this.tpHPSDR.BackColor = System.Drawing.SystemColors.Control;
+            this.tpHPSDR.Controls.Add(this.pnlRXSRWarn);
             this.tpHPSDR.Controls.Add(this.pnlRadioSamplerateInfo);
             this.tpHPSDR.Controls.Add(this.btnRadioSampleRateInfo);
             this.tpHPSDR.Controls.Add(this.chkIncludeOtherSampleRates);
@@ -20724,6 +20731,7 @@
             // pnlRadioSamplerateInfo
             // 
             this.pnlRadioSamplerateInfo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlRadioSamplerateInfo.Controls.Add(this.label25);
             this.pnlRadioSamplerateInfo.Controls.Add(this.btnRadioSettings);
             this.pnlRadioSamplerateInfo.Controls.Add(this.label24);
             this.pnlRadioSamplerateInfo.Controls.Add(this.label23);
@@ -20731,9 +20739,17 @@
             this.pnlRadioSamplerateInfo.Controls.Add(this.lblRadioSamplerateInfo);
             this.pnlRadioSamplerateInfo.Location = new System.Drawing.Point(24, 148);
             this.pnlRadioSamplerateInfo.Name = "pnlRadioSamplerateInfo";
-            this.pnlRadioSamplerateInfo.Size = new System.Drawing.Size(295, 208);
+            this.pnlRadioSamplerateInfo.Size = new System.Drawing.Size(295, 229);
             this.pnlRadioSamplerateInfo.TabIndex = 56;
             this.pnlRadioSamplerateInfo.Visible = false;
+            // 
+            // label25
+            // 
+            this.label25.Location = new System.Drawing.Point(19, 203);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(114, 21);
+            this.label25.TabIndex = 5;
+            this.label25.Text = "4) Tick this box:";
             // 
             // btnRadioSettings
             // 
@@ -20746,6 +20762,17 @@
             this.btnRadioSettings.Text = "Click here to go to these settings";
             this.btnRadioSettings.UseVisualStyleBackColor = true;
             this.btnRadioSettings.Click += new System.EventHandler(this.btnRadioSettings_Click);
+            // 
+            // chkIncludeOtherSampleRates
+            // 
+            this.chkIncludeOtherSampleRates.Image = null;
+            this.chkIncludeOtherSampleRates.Location = new System.Drawing.Point(47, 383);
+            this.chkIncludeOtherSampleRates.Name = "chkIncludeOtherSampleRates";
+            this.chkIncludeOtherSampleRates.Size = new System.Drawing.Size(218, 20);
+            this.chkIncludeOtherSampleRates.TabIndex = 54;
+            this.chkIncludeOtherSampleRates.Text = "Show all sample rates";
+            this.chkIncludeOtherSampleRates.UseVisualStyleBackColor = true;
+            this.chkIncludeOtherSampleRates.CheckedChanged += new System.EventHandler(this.chkIncludeOtherSampleRates_CheckedChanged);
             // 
             // label24
             // 
@@ -20782,25 +20809,13 @@
             // 
             // btnRadioSampleRateInfo
             // 
-            this.btnRadioSampleRateInfo.Location = new System.Drawing.Point(24, 97);
+            this.btnRadioSampleRateInfo.Location = new System.Drawing.Point(33, 119);
             this.btnRadioSampleRateInfo.Name = "btnRadioSampleRateInfo";
             this.btnRadioSampleRateInfo.Size = new System.Drawing.Size(272, 23);
             this.btnRadioSampleRateInfo.TabIndex = 55;
             this.btnRadioSampleRateInfo.Text = "Your favourite sample rate missing? (clickme)";
             this.btnRadioSampleRateInfo.UseVisualStyleBackColor = true;
             this.btnRadioSampleRateInfo.Click += new System.EventHandler(this.btnRadioSampleRateInfo_Click);
-            // 
-            // chkIncludeOtherSampleRates
-            // 
-            this.chkIncludeOtherSampleRates.Image = null;
-            this.chkIncludeOtherSampleRates.Location = new System.Drawing.Point(24, 382);
-            this.chkIncludeOtherSampleRates.Name = "chkIncludeOtherSampleRates";
-            this.chkIncludeOtherSampleRates.Size = new System.Drawing.Size(125, 20);
-            this.chkIncludeOtherSampleRates.TabIndex = 54;
-            this.chkIncludeOtherSampleRates.Text = "Include other rates";
-            this.chkIncludeOtherSampleRates.UseVisualStyleBackColor = true;
-            this.chkIncludeOtherSampleRates.Visible = false;
-            this.chkIncludeOtherSampleRates.CheckedChanged += new System.EventHandler(this.chkIncludeOtherSampleRates_CheckedChanged);
             // 
             // grpLEDMirror
             // 
@@ -21171,7 +21186,7 @@
             // grpAudioSampleRate1
             // 
             this.grpAudioSampleRate1.Controls.Add(this.comboAudioSampleRate1);
-            this.grpAudioSampleRate1.Location = new System.Drawing.Point(8, 16);
+            this.grpAudioSampleRate1.Location = new System.Drawing.Point(32, 16);
             this.grpAudioSampleRate1.Name = "grpAudioSampleRate1";
             this.grpAudioSampleRate1.Size = new System.Drawing.Size(126, 56);
             this.grpAudioSampleRate1.TabIndex = 35;
@@ -41360,6 +41375,18 @@
             this.grpTXProfile.TabStop = false;
             this.grpTXProfile.Text = "Profiles";
             // 
+            // button1
+            // 
+            this.button1.AutoSize = true;
+            this.button1.Location = new System.Drawing.Point(123, 80);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(76, 23);
+            this.button1.TabIndex = 74;
+            this.button1.Text = "Export to ...";
+            this.toolTip1.SetToolTip(this.button1, "Export the curent profile and save to a file.");
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
+            // 
             // btnTXProfileDelete
             // 
             this.btnTXProfileDelete.Image = null;
@@ -55006,17 +55033,33 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // pnlRXSRWarn
             // 
-            this.button1.AutoSize = true;
-            this.button1.Location = new System.Drawing.Point(123, 80);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(76, 23);
-            this.button1.TabIndex = 74;
-            this.button1.Text = "Export to ...";
-            this.toolTip1.SetToolTip(this.button1, "Export the curent profile and save to a file.");
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
+            this.pnlRXSRWarn.Controls.Add(this.lblRadioSamplerateWarn);
+            this.pnlRXSRWarn.Controls.Add(this.pbRXSRWarn);
+            this.pnlRXSRWarn.Location = new System.Drawing.Point(33, 78);
+            this.pnlRXSRWarn.Name = "pnlRXSRWarn";
+            this.pnlRXSRWarn.Size = new System.Drawing.Size(263, 35);
+            this.pnlRXSRWarn.TabIndex = 57;
+            // 
+            // lblRadioSamplerateWarn
+            // 
+            this.lblRadioSamplerateWarn.AutoSize = true;
+            this.lblRadioSamplerateWarn.Location = new System.Drawing.Point(35, 9);
+            this.lblRadioSamplerateWarn.Name = "lblRadioSamplerateWarn";
+            this.lblRadioSamplerateWarn.Size = new System.Drawing.Size(216, 13);
+            this.lblRadioSamplerateWarn.TabIndex = 60;
+            this.lblRadioSamplerateWarn.Text = "Using custom sample rates can crash me!";
+            // 
+            // pbRXSRWarn
+            // 
+            this.pbRXSRWarn.Image = global::Thetis.Properties.Resources.warning4;
+            this.pbRXSRWarn.Location = new System.Drawing.Point(11, 9);
+            this.pbRXSRWarn.Name = "pbRXSRWarn";
+            this.pbRXSRWarn.Size = new System.Drawing.Size(18, 16);
+            this.pbRXSRWarn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pbRXSRWarn.TabIndex = 59;
+            this.pbRXSRWarn.TabStop = false;
             // 
             // Setup
             // 
@@ -56122,6 +56165,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
+            this.pnlRXSRWarn.ResumeLayout(false);
+            this.pnlRXSRWarn.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRXSRWarn)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -59583,5 +59629,9 @@
         private Button btnRadioSampleRateInfo;
         private Button btnExportCurrentTXProfile;
         private Button button1;
+        private Label label25;
+        private Panel pnlRXSRWarn;
+        private Label lblRadioSamplerateWarn;
+        private PictureBox pbRXSRWarn;
     }
 }

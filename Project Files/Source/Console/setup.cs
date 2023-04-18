@@ -235,7 +235,7 @@ namespace Thetis
         private int afterConstructCounter = 0;
         internal void AfterConstruct()
         {
-
+            this.pnlRXSRWarn.Visible = false;
             this.Text = "Setup and Options for Thetis " + Application.ProductVersion;
             Debug.Assert(afterConstructCounter == 0);
             afterConstructCounter++;
@@ -972,14 +972,14 @@ namespace Thetis
 
             // only add the higher bitrates if applicable:
             if (myProto == RadioProtocol.ETH
-                || Hl2.HermesLite2)
+                || Hl2.HermesLite2 || chkIncludeOtherSampleRates.Checked)
             {
-                // ret.Add(384000); <-- PS breaks on the HL1 with this
+                ret.Add(384000); // < --PS breaks on the HL1 with this
+
             }
 
-            if (myProto == RadioProtocol.ETH)
+            if (myProto == RadioProtocol.ETH || chkIncludeOtherSampleRates.Checked)
             {
-
                 ret.Add(768000);
                 ret.Add(1536000);
             }
@@ -8652,7 +8652,33 @@ namespace Thetis
 
         private bool m_bForceAudio = false;
 
-
+        private void ShowRXSamplerateWarning(int new_rate)
+        {
+            try
+            {
+                if (new_rate > 192000 && Hl2.HermesLite2)
+                {
+                    lblRadioSamplerateWarn.Text = "Puresignal will not work on HL2 on this SR.";
+                    pnlRXSRWarn.Visible = true;
+                }
+                else
+                {
+                    if (chkIncludeOtherSampleRates.Checked)
+                    {
+                        lblRadioSamplerateWarn.Text = "Some sample rates can crash me!";
+                        pnlRXSRWarn.Visible = true;
+                    }
+                    else
+                    {
+                        pnlRXSRWarn.Visible = false;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Common.LogException(e);
+            }
+        }
 
         private void comboAudioSampleRate1_SelectedIndexChanged(
             object sender, System.EventArgs e)
@@ -8664,6 +8690,8 @@ namespace Thetis
             bool was_enabled
                 = console.RX1Enabled; // true;  ... was set to RX2 for some reason, it
                                       // should be RX1 which always true. MW0LGE_21a
+
+            ShowRXSamplerateWarning(new_rate);
 
             if (new_rate != old_rate || initializing || m_bForceAudio)
             {
@@ -8761,8 +8789,8 @@ namespace Thetis
                         WDSP.SetChannelState(2, 0, 1); // RX2_main
                         WDSP.SetChannelState(1, 0, 1); // RX1_sub
                         WDSP.SetChannelState(0, 0, 1); // RX1_main
-                        // Thread.Sleep(10); KLJ: no sleep required as dmode is set to 1;
-                        // Set ChannelState() won't return until the slew-down is complete and audio has been stopped.
+                                                       // Thread.Sleep(10); KLJ: no sleep required as dmode is set to 1;
+                                                       // Set ChannelState() won't return until the slew-down is complete and audio has been stopped.
 
                         // remove the RX1 and RX2 (main and sub) audio streams from the
                         // mix set
@@ -23385,6 +23413,11 @@ namespace Thetis
             // MW0LGE_21a disabled for now until decision regarding 384k made
             // m_bIncludeOtherSampleRates = chkIncludeOtherSampleRates.Checked;
             // InitAudioTab();
+
+            // KLJ: IN HL2, 384k works but in tx, PureSignal does not work.
+            pnlRXSRWarn.Visible = chkIncludeOtherSampleRates.Checked;
+            InitAudioTab();
+
         }
 
         private void chkActivePeakHoldRX1_CheckedChanged(object sender, EventArgs e)
@@ -28780,9 +28813,12 @@ namespace Thetis
                     Hl2.ApplyHL2Defaults();
                 }
                 comboRadioModel_SelectedIndexChanged(null, EventArgs.Empty);
-                InitAudioTab(null, RadioProtocol.USB);
+
                 if (Hl2.HermesLite2)
+                {
+                    InitAudioTab(null, RadioProtocol.USB);
                     chkMasterVolumeForVAC.Checked = true;
+                }
             }
         }
 
