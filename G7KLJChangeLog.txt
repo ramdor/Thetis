@@ -1,3 +1,9 @@
+Tue Apr 18 05:53:32 2023 +0100 - sjk7: Close #012 -- Broken transmit profile saving repaired
+Tue Apr 18 00:50:45 2023 +0100 - sjk7: Update ReadMe.md
+Tue Apr 18 00:44:52 2023 +0100 - sjk7: Merge branch 'master' of https://github.com/sjk7/Thetis-2.9.0
+Tue Apr 18 00:44:41 2023 +0100 - sjk7: Update ReadMe.md
+Tue Apr 18 00:40:31 2023 +0100 - sjk7: Update ReadMe.md
+Tue Apr 18 00:28:53 2023 +0100 - sjk7: Update ChangeLog
 Mon Apr 17 21:28:25 2023 +0100 - sjk7: Parallelising CreateDSP(), as much as possible consistent with sanity, has shaved a couple seconds more from startup time.
 Mon Apr 17 21:26:41 2023 +0100 - sjk7: Added correct defaults for PureSignal2 SetPeak values. These are not quite what I thought they were, closes #009
 Mon Apr 17 21:24:02 2023 +0100 - sjk7: Added correct defaults for PureSignal2 SetPeak values. These are not quite what I thought they were
