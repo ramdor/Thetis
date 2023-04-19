@@ -3640,6 +3640,7 @@ namespace Thetis
             // MW0LGE_21d drop shadow
             Rectangle r
                 = new Rectangle(this.Left, this.Top, this.Width, this.Height);
+            /*/
             if (this.WindowState == FormWindowState.Maximized)
             {
                 Size ds = DropShadowSize;
@@ -3650,13 +3651,32 @@ namespace Thetis
             }
             else
             {
+
             }
-            r = this.RestoreBounds; // KLJ: does this fix not remembering
-                                    // restore bounds?
-            a.Add("console_top/" + r.Top.ToString()); // save form positions
-            a.Add("console_left/" + r.Left.ToString());
-            a.Add("console_width/" + r.Width.ToString());
-            a.Add("console_height/" + r.Height.ToString());
+            /*/
+
+            if (this.WindowState == FormWindowState.Normal)
+            {
+                // save location normally and size if the state is normal
+                a.Add("console_top/" + r.Top.ToString()); // save form positions
+                a.Add("console_left/" + r.Left.ToString());
+                a.Add("console_width/" + r.Width.ToString());
+                a.Add("console_height/" + r.Height.ToString());
+
+            }
+            else
+            {
+                // save the RestoreBounds if the form is minimized or maximized!
+                r = RestoreBounds;
+                var loc = RestoreBounds.Location;
+
+                a.Add("console_top/" + loc.Y.ToString()); // save form positions
+                a.Add("console_left/" + loc.X.ToString());
+                a.Add("console_width/" + r.Width.ToString());
+                a.Add("console_height/" + r.Height.ToString());
+
+            }
+
             a.Add("console_state/"
                 + ((int)this.WindowState).ToString()); // MW0LGE_21 window state
 
@@ -3905,7 +3925,8 @@ namespace Thetis
                     case "panelBandHF.Visible": // added by w3sz
                         whatisHF = bool.Parse(val); // added by w3sz
                         panelBandHF.Visible = whatisHF; // added by w3sz
-                        if (/*panelBandHF.Visible*/ whatisHF) // added by w3sz
+                        if (/*panelBandHF.Visible*/
+                whatisHF) // added by w3sz
                             btnBandHF_Click(
                                 btnBandHF, EventArgs.Empty); // added by w3sz
                         break; // added by w3sz
@@ -3989,6 +4010,9 @@ namespace Thetis
                         break;
                     case "console_state":
                         m_WindowState = (FormWindowState)int.Parse(val);
+                        if (m_WindowState == FormWindowState.Minimized)
+                            m_WindowState = FormWindowState.Normal; // we never want to start minimized.
+
                         bNeedUpdate = true;
                         break;
                     case "setup_top":
@@ -51782,7 +51806,10 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
             if (bSuspendDraw) SuspendDrawing(this);
 
             // Save expanded display size
-            if (!this.collapsedDisplay) this.expandedSize = this.Size;
+            if (!this.collapsedDisplay)
+            {
+                this.expandedSize = this.Size;
+            }
 
             this.collapseToolStripMenuItem.Text = "Expand";
             this.collapsedDisplay = true;
@@ -52386,9 +52413,11 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
                 panelMode.Hide();
 
             RepositionControlsForCollapsedlDisplay();
-
-            this.Size
-                = new Size(SetupForm.CollapsedWidth, SetupForm.CollapsedHeight);
+            if (!initializing)// KLJ: otherwise overwrites saved size settings.
+            {
+                this.Size
+                    = new Size(SetupForm.CollapsedWidth, SetupForm.CollapsedHeight);
+            }
 
             if (bSuspendDraw) ResumeDrawing(this);
 
