@@ -485,6 +485,7 @@ namespace Thetis
 
         }
 
+        // KLJ: Make splash window moveable with the mouse.
         private void Splash_MouseDown(object sender, MouseEventArgs e)
         {
 

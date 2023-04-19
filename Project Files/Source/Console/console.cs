@@ -5139,18 +5139,16 @@ namespace Thetis
                 }
             }
 
-            // KLJ: Allow record file persistence across restarts:
-            string af_file_name = AppDataPath + "\\SDRQuickAudio.wav";
-            if (File.Exists(af_file_name))
-            {
-                var fi = new FileInfo(af_file_name);
-                if (fi.Length > 1024 * 10)
-                {
-                    ckQuickPlay.Enabled = true;
-                }
-            }
+            AfterGotState();
+
 
             return;
+        }
+
+        private void AfterGotState()
+        {
+            ckQuickPlay.Enabled = false;
+            ckQuickRec.Enabled = false; // KLJ: These are enabled when power comes on
         }
 
         public FilterPreset[] rx1_filters = new FilterPreset[(int)DSPMode.LAST];
@@ -32193,6 +32191,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             {
 
                 CheckEnableQuickPlay();
+                ckQuickRec.Enabled = true;
                 chkPower.BackColor = button_selected_color;
                 txtVFOAFreq.ForeColor = vfo_text_light_color;
                 txtVFOAMSD.ForeColor = vfo_text_light_color;
@@ -32519,6 +32518,8 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             }
             else
             {
+                ckQuickPlay.Enabled = false; // KLJ: we can't play if the radio isn't on, right?
+                ckQuickRec.Enabled = false;
                 DataFlowing = false;
                 SetupForm.TestIMD = false;
                 // cmaster.MONMixState = false;
