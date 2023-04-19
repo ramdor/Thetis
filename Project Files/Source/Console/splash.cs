@@ -176,6 +176,7 @@ namespace Thetis
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Splash";
             this.Load += new System.EventHandler(this.Splash_Load);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Splash_MouseDown);
             this.ResumeLayout(false);
 
         }
@@ -482,6 +483,24 @@ namespace Thetis
         private void Splash_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void Splash_MouseDown(object sender, MouseEventArgs e)
+        {
+
+            if (e.Button == MouseButtons.Left)
+            {
+                // Release the mouse capture started by the mouse down.
+                this.Capture = false; //select control
+
+                // Create and send a WM_NCLBUTTONDOWN message.
+                const int WM_NCLBUTTONDOWN = 0x00A1;
+                const int HTCAPTION = 2;
+                Message msg =
+                    Message.Create(this.Handle, WM_NCLBUTTONDOWN,
+                        new IntPtr(HTCAPTION), IntPtr.Zero);
+                this.DefWndProc(ref msg);
+            }
         }
     }
 
