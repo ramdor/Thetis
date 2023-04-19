@@ -253,6 +253,8 @@ DWORD WINAPI MetisReadThreadMain(LPVOID n) {
     printf("MetisReadThread dies...\n");
     fflush(stdout);
 
+    if (hTask) AvRevertMmThreadCharacteristics(hTask);
+
     return 0;
 }
 
@@ -737,9 +739,16 @@ DWORD WINAPI sendProtocol1Samples(LPVOID n) {
     pbuffs[1] = prn->outIQbufp;
 
     while (io_keep_running != 0) {
-        WaitForMultipleObjects(2, prn->hsendEventHandles, TRUE, INFINITE);
+        // WaitForMultipleObjects(2, prn->hsendEventHandles, TRUE, INFINITE);
+        // KLJ: These threads seem to be hanging around unnecessarily, blocked
+        // on WaitFor... above, whilst io_keep_running was set false long ago.
+        // Therefore:
+        DWORD dw = WaitForMultipleObjects(2, prn->hsendEventHandles, TRUE, 500);
         if (!io_keep_running) {
             break;
+        }
+        if (dw == WAIT_TIMEOUT) {
+            continue;
         }
         // if ((nddc == 2) || (nddc == 4))
         if (pcm->xmtr[0].peer->run && XmitBit) {

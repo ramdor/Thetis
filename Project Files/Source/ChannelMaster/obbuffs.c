@@ -42,9 +42,9 @@ HANDLE start_obthread(int id) {
 
 void create_obbuffs(int id, int accept, int max_insize, int outsize) {
     // KLJ
-    if (obp.pcbuff[id]) {
-        destroy_obbuffs(id);
-    }
+    // if (obp.pcbuff[id]) {
+    //   destroy_obbuffs(id);
+    //}
     OBB a = (OBB)calloc(1, sizeof(obb));
     obp.pcbuff[id] = obp.pdbuff[id] = obp.pebuff[id] = obp.pfbuff[id] = a;
     a->id = id;

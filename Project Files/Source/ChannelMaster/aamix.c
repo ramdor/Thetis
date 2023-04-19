@@ -55,6 +55,10 @@ void mix_main(void* pargs) {
         (*a->Outbound)(a->outbound_id, a->outsize, a->out);
         // WriteAudio (30.0, 48000, a->outsize, a->out, 3);
     }
+
+    if (hTask)
+        AvRevertMmThreadCharacteristics(hTask);
+    
     _endthread();
 }
 

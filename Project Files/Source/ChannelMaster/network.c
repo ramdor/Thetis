@@ -1292,6 +1292,8 @@ DWORD WINAPI ReadThreadMain(LPVOID n) {
     ReadThreadMainLoop();
     IOThreadRunning = 0;
 
+        if (hTask) AvRevertMmThreadCharacteristics(hTask);
+
     return 0;
 }
 

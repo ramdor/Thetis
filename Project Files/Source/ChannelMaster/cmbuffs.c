@@ -155,6 +155,9 @@ void cm_main(void* pargs) {
         cmdata(id, pcm->in[id]);
         xcmaster(id);
     }
+
+        if (hTask) AvRevertMmThreadCharacteristics(hTask);
+
     _endthread();
 }
 

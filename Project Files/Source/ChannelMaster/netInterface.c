@@ -103,6 +103,9 @@ PORT void StopAudio() {
     fflush(stdout);
 
     StopReadThread();
+    // KLJ: See notes in destroy_rnet
+    destroy_obbuffs(0);
+    destroy_obbuffs(1);
 }
 
 int getDDPTTcount = 0;
@@ -1137,8 +1140,11 @@ PORT void destroy_rnet() {
     free(prn);
     _aligned_free(prbpfilter);
     _aligned_free(prbpfilter2);
-    destroy_obbuffs(0);
-    destroy_obbuffs(1);
+    // KLJ: these two calls need moving to StopAudio() because
+    // they are created in StartAudioNative(). Otherwise zombie threads,
+    // which means future calls to multimedia thread scheduling may fail.
+    // destroy_obbuffs(0);
+    // destroy_obbuffs(1);
 }
 
 void PrintTimeHack() {
@@ -1180,7 +1186,6 @@ void UpdateRadioProtocolSampleSize() {
             = RadioProtocol == USB ? 126 : 64; // LR-samples per packet
     }
 
-    
     create_obbuffs(0, 1, 2048,
         prn->audio[0]
             .spp); // rx audio - last parameter is number of samples per packet
