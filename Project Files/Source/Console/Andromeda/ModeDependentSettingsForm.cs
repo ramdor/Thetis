@@ -53,7 +53,11 @@ namespace Thetis
             // Required for Windows Form Designer support
             //
             InitializeComponent();
+            // KLJ: this form should not be TopMost, but should instead be owned by console.
+            // I'm too scared to change it(!) in case it breaks a form lifetime assumption, eg for saving settings.
             console = c;
+            // KLJ: Size and position of this form not being restored when it loads.
+            Common.RestoreForm(this, "BandButtonsPopup", true);
         }
 
         /// <summary>
@@ -89,6 +93,7 @@ namespace Thetis
             this.btnClose.Image = null;
             this.btnClose.Location = new System.Drawing.Point(140, 166);
             this.btnClose.Name = "btnClose";
+            this.btnClose.Selectable = true;
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 0;
             this.btnClose.Text = "Close";
@@ -107,6 +112,7 @@ namespace Thetis
             this.Text = "ModeDependentSettingsForm";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ModeDependentSettingsForm_FormClosing);
+            this.Shown += new System.EventHandler(this.ModeDependentSettingsForm_Shown);
             this.ResumeLayout(false);
 
         }
@@ -123,6 +129,11 @@ namespace Thetis
             this.Hide();
             e.Cancel = true;
             Common.SaveForm(this, "BandButtonsPopup");
+        }
+
+        private void ModeDependentSettingsForm_Shown(object sender, EventArgs e)
+        {
+
         }
     }
 }

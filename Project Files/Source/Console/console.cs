@@ -6618,7 +6618,12 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         panelBandVHF.Visible = false;
                         break;
                     case BandType.HF:
-                        panelBandHF.Visible = true;
+                        // KLJ. careful! Don't get bitten: ShowBandControls is meaningless in full view
+                        if (panelBandHF.Parent == modeDependentSettingsForm)
+                            panelBandHF.Visible = ShowBandControls; // unwanted appearance whn click on console whilst mode Dependent settings form up, and others, are up
+                        else
+                            panelBandHF.Visible = true;
+
                         panelBandGEN.Visible = false;
                         panelBandVHF.Visible = false;
                         break;
@@ -51206,6 +51211,8 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
 
                 if (this.CollapsedDisplay) this.CollapseDisplay(true);
             }
+            get => m_bShowBandControls;
+
         }
 
         private bool m_bShowModeControls = true;
@@ -51221,6 +51228,11 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
                         SetupForm.chkShowAndromedaBar.Checked = false;
 
                 if (this.CollapsedDisplay) this.CollapseDisplay(true);
+            }
+
+            get
+            {
+                return m_bShowModeControls;
             }
         }
 
@@ -51829,6 +51841,7 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
             if (this.showAndromedaButtonBar)
             {
                 statusStripMain.Show();
+                // KLJ: panelButtonBar is the Andromeda button container, by the looks..
                 minWidth = panelButtonBar.Width;
                 minHeight += panelButtonBar.Height;
                 minHeight += statusStripMain.Height;
@@ -52383,6 +52396,9 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
             isexpanded = false;
 
             SelectModeDependentPanel(); // MW0LGE [2.9.0.7] moved here
+
+            if (this.Visible)
+                Debug.Assert(panelMode.Visible == ShowModeControls); // KLJ: this thing appears sometimes when not wanted in Andromeda button bottom mode.
         }
 
         // relocate the controls on the collapsed display
