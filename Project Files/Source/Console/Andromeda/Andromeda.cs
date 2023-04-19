@@ -4054,26 +4054,24 @@ namespace Thetis
         //
         private void SelectModeDependentPanel()
         {
+
             if (iscollapsed && !isexpanded)
             {
                 // MW0LGE [2.9.0.7] in collapsed view, hide them all
-                // https://github.com/ramdor/Thetis-2.9.0/issues/90
+                //https://github.com/ramdor/Thetis-2.9.0/issues/90
+
+                panelModeSpecificPhone.Hide();
+                panelModeSpecificCW.Hide();
+                panelModeSpecificDigital.Hide();
+                panelModeSpecificFM.Hide();
                 if (panelModeSpecificCW.Parent != modeDependentSettingsForm)
                 {
                     // KLJ. Issue:
                     // https://github.com/sjk7/Thetis-2.9.0/issues/18
                     // Pretty sure we don't want to do this when the controls
                     // are sited on the modeDependentsettingsform
-                    panelModeSpecificPhone.Hide();
-                    panelModeSpecificCW.Hide();
-                    panelModeSpecificDigital.Hide();
-                    panelModeSpecificFM.Hide();
+                    return;
                 }
-                else
-                {
-                    ShowModeSpecificFormTitle();
-                }
-                return;
             }
 
             // MW0LGE_21k9d changed to show/hide as it was causing some unexplained
@@ -4123,6 +4121,8 @@ namespace Thetis
                     // panelModeSpecificDigital.BringToFront();
                     break;
             }
+
+            ShowModeSpecificFormTitle();
 
         }
 

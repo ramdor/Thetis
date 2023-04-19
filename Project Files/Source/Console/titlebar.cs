@@ -63,7 +63,7 @@ namespace Thetis
         {
             return GetLinkerTime(Assembly.GetExecutingAssembly());
         }
-        public const string BUILD_NAME = "MW0LGE pre-release";
+        public const string BUILD_NAME = "MW0LGE/G7KLJ pre-release";
         public const string BUILD_DATE = "<FW>"; //MW0LGE_21g <FW> gets replaced in BasicTitle (console.cs) with firmware version
 
         public static string GetString()
