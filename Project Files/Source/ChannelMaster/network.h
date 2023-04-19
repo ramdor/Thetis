@@ -325,13 +325,13 @@ typedef struct _rbpfilter2 // radio band pass filter
 #pragma pack(pop)
 RBPFILTER2 prbpfilter2;
 
-extern __declspec(dllexport) void create_rnet();
-extern __declspec(dllexport) void destroy_rnet();
+PORT void create_rnet();
+PORT void destroy_rnet();
 void WriteUDPFrame(int id, char* bufp, int buflen);
 int sendPacket(SOCKET sock, char* data, int length, int port);
 void CmdGeneral(void);
 void CmdHighPriority(void);
-extern __declspec(dllexport) void CmdRx(void);
+PORT void CmdRx(void);
 void CmdTx(void);
 DWORD WINAPI ReadThreadMain(LPVOID);
 DWORD WINAPI KeepAliveMain(LPVOID);
@@ -344,7 +344,7 @@ void UpdateRadioProtocolSampleSize();
 int IOThreadStop(void);
 int StartReadThread(void);
 void StopReadThread(void);
-__declspec(dllexport) int SendStartToMetis(void);
+PORT int SendStartToMetis(void);
 int io_keep_running;
 int IOThreadRunning; // non zero if IOThread is running
 int XmitBit;
