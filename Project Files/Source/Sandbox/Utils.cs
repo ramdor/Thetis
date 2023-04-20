@@ -20,18 +20,20 @@ namespace Thetis.KLJ
     internal class Utils
     {
 
+
         internal static void PrintZOrder()
         {
             var col = KLJ.Utils.WindowsApi.GetWindowsInOrder();
             Debug.Print("Zorder of windows: \n");
             Debug.Print(col.ToStringExt());
         }
+
         internal static void OpenInExplorer(string path)
         {
             using (Process.Start(path)) { }
         }
 
-        internal static void FadeIn(Form f, int granularity = 30)
+        internal static void FadeIn(Form f, int granularity = 20)
         {
             try
             {
@@ -47,7 +49,7 @@ namespace Thetis.KLJ
             }
             catch (Exception ex)
             {
-                Common.LogException(ex);
+                // Common.LogException(ex);
             }
         }
 

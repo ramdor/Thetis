@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -41,6 +42,7 @@ namespace Sandbox
                 Thread.Sleep(granularity);
                 Application.DoEvents();
             }
+            Thetis.KLJ.Utils.PrintZOrder();
         }
 
         void SomeLongOperation(uint seconds = 2)

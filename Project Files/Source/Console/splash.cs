@@ -175,7 +175,10 @@ namespace Thetis
             this.Name = "Splash";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Splash";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Splash_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Splash_FormClosed);
             this.Load += new System.EventHandler(this.Splash_Load);
+            this.VisibleChanged += new System.EventHandler(this.Splash_VisibleChanged);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Splash_MouseDown);
             this.ResumeLayout(false);
 
@@ -502,6 +505,21 @@ namespace Thetis
                         new IntPtr(HTCAPTION), IntPtr.Zero);
                 this.DefWndProc(ref msg);
             }
+        }
+
+        private void Splash_FormClosing(object sender, FormClosingEventArgs e)
+        {
+
+        }
+
+        private void Splash_FormClosed(object sender, FormClosedEventArgs e)
+        {
+
+        }
+
+        private void Splash_VisibleChanged(object sender, EventArgs e)
+        {
+
         }
     }
 

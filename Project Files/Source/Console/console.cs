@@ -66,6 +66,10 @@ namespace Thetis
     using System.Timers;
     using System.Windows.Forms;
     using System.Xml.Linq;
+    using Thetis.KLJ;
+    using static KLJ.GenericToStringExts;
+
+
 
 
     public partial class Console : Form
@@ -1125,9 +1129,8 @@ namespace Thetis
 
             Splash.SetStatus("Finished");
 
-            // KLJ: I wonder if this contributes to the start-up flicker I see, before the main console fades in?
-            //Splash.SplashForm.Owner
-            //    = this; // So that main form will show/focus when splash disappears
+
+            Splash.SplashForm.Owner = this; // So that main form will show/focus when splash disappears.
             // //MW0LGE_21d done in show above
             Splash.CloseForm(); // End splash screen
 
@@ -1244,14 +1247,13 @@ namespace Thetis
                 pause_DisplayThread = false;
 
                 KLJ.Utils.FadeIn(this);
+                KLJ.Utils.PrintZOrder();
+
+
 
             }
         }
 
-        public new void Show()
-        {
-            base.Show();
-        }
 
         public new bool Visible
         {
@@ -49536,6 +49538,7 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
         // bool set_min_size = false;
         private void Console_Resize(object sender, System.EventArgs e)
         {
+
             updateResolutionStatusBarText();
 
             // this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -49554,44 +49557,7 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
                     return;
             }
 
-            /*if(!done_console_basis)
-            {
-                GrabConsoleSizeBasis();
-                done_console_basis = true;
-                if(dpi > 96)
-                {
-                    ArrayList a = DB.GetVars("State");
-                    foreach(string s in a)
-                    {
-                        string[] vals = s.Split('/');
-                        string name = vals[0];
-                        string val = vals[1];
 
-                        switch(name)
-                        {
-                            case "console_width":
-                                this.Width = int.Parse(val);
-                                break;
-                            case "console_height":
-                                this.Height = int.Parse(val);
-                                break;
-                        }
-                    }
-                }
-            }
-
-            if(!set_min_size)
-            {
-                int W = console_basis_size.Width;
-                int H;
-
-                if(fwc_init && current_model == Model.FLEX5000 &&
-            FWCEEPROM.RX2OK) H = console_basis_size.Height -
-            (panelRX2Filter.Height+8); else H = console_basis_size.Height;
-
-                this.MinimumSize = new Size(W, H);
-                set_min_size = true;
-            }*/
 
             if (this.Width < console_basis_size.Width && !this.collapsedDisplay)
             {
@@ -49630,6 +49596,7 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
                 - console_basis_size.Width; // MW0LGE_[2.9.0.7] might actually
                                             // want to set the globals
             v_delta = Math.Max(this.Height - console_basis_size.Height, 0);
+
 
             if (!IsSetupFormNull)
             {
@@ -55982,6 +55949,7 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
 
         private void Console_Shown(object sender, EventArgs e)
         {
+            // KLJ.Utils.PrintZOrder();
 
             updateResolutionStatusBarText(); // MW0LGE_21b need to call this
                                              // here so that drop shadow sizes
@@ -57532,11 +57500,13 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
 
         private void Console_Activated(object sender, EventArgs e)
         {
+
             ThetisFocusChangedHandlers?.Invoke(true);
         }
 
         private void Console_Deactivate(object sender, EventArgs e)
         {
+
             ThetisFocusChangedHandlers?.Invoke(false);
         }
 
