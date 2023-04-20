@@ -16,7 +16,11 @@ namespace Sandbox
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            var s = new frmSplash();
+
+            s.Show();
+
+            Application.Run(new frmMain(s));
         }
     }
 }

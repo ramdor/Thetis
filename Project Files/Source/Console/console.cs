@@ -967,7 +967,7 @@ namespace Thetis
             InitializeComponent(); // Windows Forms Generated Code
             InitialiseAndromedaMenus();
             this.Visible = false;
-            this.Opacity = 0.01;
+            this.Opacity = 0.0;
             //
             ucQuickRecallPad.console = this;
             Display.console = this;
@@ -1243,28 +1243,7 @@ namespace Thetis
                 }
                 pause_DisplayThread = false;
 
-
-
-                this.Opacity = 0.01;
-                Show();
-                // Application.DoEvents();
-                // cannot stop console briefly flickering up here (Even though it is
-                // supposed to be transparent). Ideas?
-
-                try
-                {
-                    while (Opacity < 1.0)
-                    {
-                        Application.DoEvents();
-                        Thread.Sleep(10);
-                        Opacity += 0.01;
-                    }
-                }
-                catch (Exception)
-                {
-                    // ignore
-                }
-
+                KLJ.Utils.FadeIn(this);
 
             }
         }
@@ -56003,7 +55982,6 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
 
         private void Console_Shown(object sender, EventArgs e)
         {
-            Opacity = 0.01;
 
             updateResolutionStatusBarText(); // MW0LGE_21b need to call this
                                              // here so that drop shadow sizes

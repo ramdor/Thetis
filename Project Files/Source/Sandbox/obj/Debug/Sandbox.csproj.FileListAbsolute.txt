@@ -3,9 +3,10 @@ U:\Wales\Thetis-2.9.0\Project Files\Source\Sandbox\bin\Debug\Sandbox.exe
 U:\Wales\Thetis-2.9.0\Project Files\Source\Sandbox\bin\Debug\Sandbox.pdb
 U:\Wales\Thetis-2.9.0\Project Files\Source\Sandbox\obj\Debug\Sandbox.csproj.AssemblyReference.cache
 U:\Wales\Thetis-2.9.0\Project Files\Source\Sandbox\obj\Debug\Sandbox.csproj.SuggestedBindingRedirects.cache
-U:\Wales\Thetis-2.9.0\Project Files\Source\Sandbox\obj\Debug\Sandbox.Form1.resources
 U:\Wales\Thetis-2.9.0\Project Files\Source\Sandbox\obj\Debug\Sandbox.Properties.Resources.resources
 U:\Wales\Thetis-2.9.0\Project Files\Source\Sandbox\obj\Debug\Sandbox.csproj.GenerateResource.cache
 U:\Wales\Thetis-2.9.0\Project Files\Source\Sandbox\obj\Debug\Sandbox.csproj.CoreCompileInputs.cache
 U:\Wales\Thetis-2.9.0\Project Files\Source\Sandbox\obj\Debug\Sandbox.exe
 U:\Wales\Thetis-2.9.0\Project Files\Source\Sandbox\obj\Debug\Sandbox.pdb
+U:\Wales\Thetis-2.9.0\Project Files\Source\Sandbox\obj\Debug\Sandbox.frmMain.resources
+U:\Wales\Thetis-2.9.0\Project Files\Source\Sandbox\obj\Debug\Sandbox.frmSplash.resources
