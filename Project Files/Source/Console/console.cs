@@ -1249,9 +1249,9 @@ namespace Thetis
                 pause_DisplayThread = false;
 
                 KLJ.Utils.FadeIn(this);
-                KLJ.Utils.PrintZOrder();
-                m_ff = new frmFindInSetup(this);
-                m_ff.Show();
+                // KLJ.Utils.PrintZOrder(); // G7VKK
+                // m_ff = new frmFindInSetup(this); // G7VKK
+                // m_ff.Show(); // G7VKK
 
 
             }
