@@ -67,6 +67,7 @@ namespace Thetis
     using System.Windows.Forms;
     using System.Xml.Linq;
     using Thetis.KLJ;
+    using Thetis.KLJ.Forms;
     using static KLJ.GenericToStringExts;
 
 
@@ -970,6 +971,7 @@ namespace Thetis
 
             InitializeComponent(); // Windows Forms Generated Code
             InitialiseAndromedaMenus();
+
             this.Visible = false;
             this.Opacity = 0.0;
             //
@@ -1248,12 +1250,14 @@ namespace Thetis
 
                 KLJ.Utils.FadeIn(this);
                 KLJ.Utils.PrintZOrder();
-
+                m_ff = new frmFindInSetup(this);
+                m_ff.Show();
 
 
             }
         }
 
+        private frmFindInSetup m_ff;
 
         public new bool Visible
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -17,8 +18,11 @@ namespace Thetis.KLJ
     }
 
 
+
+
     internal class Utils
     {
+
 
 
         internal static void PrintZOrder()
@@ -47,7 +51,7 @@ namespace Thetis.KLJ
                     Application.DoEvents();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Common.LogException(ex);
             }

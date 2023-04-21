@@ -341,6 +341,12 @@
       <DependentUpon>frmSeqLog.cs</DependentUpon>
     </Compile>
     <Compile Include="HL2\HL2.cs" />
+    <Compile Include="KLJ\Forms\frmFindInSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="KLJ\Forms\frmFindInSetup.Designer.cs">
+      <DependentUpon>frmFindInSetup.cs</DependentUpon>
+    </Compile>
     <Compile Include="KLJ\frmKLJ.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -730,6 +736,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmSeqLog.resx">
       <DependentUpon>frmSeqLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KLJ\Forms\frmFindInSetup.resx">
+      <DependentUpon>frmFindInSetup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="KLJ\frmKLJ.resx">
       <DependentUpon>frmKLJ.cs</DependentUpon>
