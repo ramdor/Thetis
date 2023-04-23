@@ -30306,7 +30306,6 @@
             // tpDisplayTop
             // 
             this.tpDisplayTop.BackColor = System.Drawing.SystemColors.Control;
-            this.tpDisplayTop.Controls.Add(this.chkAveraging);
             this.tpDisplayTop.Controls.Add(this.groupBoxTS21);
             this.tpDisplayTop.Controls.Add(this.grpWaterfallAverage);
             this.tpDisplayTop.Controls.Add(this.grpDisplaySpectrumGrid);
@@ -30325,7 +30324,7 @@
             // 
             this.chkAveraging.AutoSize = true;
             this.chkAveraging.Image = null;
-            this.chkAveraging.Location = new System.Drawing.Point(19, 155);
+            this.chkAveraging.Location = new System.Drawing.Point(9, 218);
             this.chkAveraging.Name = "chkAveraging";
             this.chkAveraging.Size = new System.Drawing.Size(116, 17);
             this.chkAveraging.TabIndex = 83;
@@ -30341,7 +30340,7 @@
             this.groupBoxTS21.Controls.Add(this.lblActivePeakHoldDropRX1);
             this.groupBoxTS21.Controls.Add(this.lblActivePeakHoldRX1);
             this.groupBoxTS21.Controls.Add(this.udActivePeakHoldDurationRX1);
-            this.groupBoxTS21.Location = new System.Drawing.Point(165, 325);
+            this.groupBoxTS21.Location = new System.Drawing.Point(165, 312);
             this.groupBoxTS21.Name = "groupBoxTS21";
             this.groupBoxTS21.Size = new System.Drawing.Size(161, 104);
             this.groupBoxTS21.TabIndex = 82;
@@ -30464,9 +30463,9 @@
             this.grpWaterfallAverage.Controls.Add(this.udDisplayAVTimeWF);
             this.grpWaterfallAverage.Controls.Add(this.labelTS374);
             this.grpWaterfallAverage.Enabled = false;
-            this.grpWaterfallAverage.Location = new System.Drawing.Point(165, 155);
+            this.grpWaterfallAverage.Location = new System.Drawing.Point(165, 140);
             this.grpWaterfallAverage.Name = "grpWaterfallAverage";
-            this.grpWaterfallAverage.Size = new System.Drawing.Size(123, 164);
+            this.grpWaterfallAverage.Size = new System.Drawing.Size(161, 166);
             this.grpWaterfallAverage.TabIndex = 80;
             this.grpWaterfallAverage.TabStop = false;
             this.grpWaterfallAverage.Text = "Waterfall";
@@ -30475,7 +30474,7 @@
             // 
             this.labelTS372.AutoSize = true;
             this.labelTS372.Image = null;
-            this.labelTS372.Location = new System.Drawing.Point(9, 71);
+            this.labelTS372.Location = new System.Drawing.Point(10, 78);
             this.labelTS372.Name = "labelTS372";
             this.labelTS372.Size = new System.Drawing.Size(62, 13);
             this.labelTS372.TabIndex = 59;
@@ -30494,7 +30493,7 @@
             "Recursive",
             "Time Window",
             "Log Recursive"});
-            this.comboDispWFAveraging.Location = new System.Drawing.Point(6, 95);
+            this.comboDispWFAveraging.Location = new System.Drawing.Point(9, 102);
             this.comboDispWFAveraging.Name = "comboDispWFAveraging";
             this.comboDispWFAveraging.Size = new System.Drawing.Size(104, 21);
             this.comboDispWFAveraging.TabIndex = 58;
@@ -30519,7 +30518,7 @@
             "Rosenfell",
             "Average",
             "Sample"});
-            this.comboDispWFDetector.Location = new System.Drawing.Point(9, 42);
+            this.comboDispWFDetector.Location = new System.Drawing.Point(9, 44);
             this.comboDispWFDetector.Name = "comboDispWFDetector";
             this.comboDispWFDetector.Size = new System.Drawing.Size(104, 21);
             this.comboDispWFDetector.TabIndex = 56;
@@ -30532,7 +30531,7 @@
             0,
             0,
             0});
-            this.udDisplayAVTimeWF.Location = new System.Drawing.Point(62, 132);
+            this.udDisplayAVTimeWF.Location = new System.Drawing.Point(65, 134);
             this.udDisplayAVTimeWF.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -30558,7 +30557,7 @@
             // labelTS374
             // 
             this.labelTS374.Image = null;
-            this.labelTS374.Location = new System.Drawing.Point(6, 132);
+            this.labelTS374.Location = new System.Drawing.Point(10, 136);
             this.labelTS374.Name = "labelTS374";
             this.labelTS374.Size = new System.Drawing.Size(64, 20);
             this.labelTS374.TabIndex = 3;
@@ -30580,7 +30579,7 @@
             this.grpDisplaySpectrumGrid.Controls.Add(this.lblDisplayGridStep);
             this.grpDisplaySpectrumGrid.Controls.Add(this.lblDisplayGridMin);
             this.grpDisplaySpectrumGrid.Controls.Add(this.lblDisplayGridMax);
-            this.grpDisplaySpectrumGrid.Location = new System.Drawing.Point(375, 267);
+            this.grpDisplaySpectrumGrid.Location = new System.Drawing.Point(375, 232);
             this.grpDisplaySpectrumGrid.Name = "grpDisplaySpectrumGrid";
             this.grpDisplaySpectrumGrid.Size = new System.Drawing.Size(304, 165);
             this.grpDisplaySpectrumGrid.TabIndex = 47;
@@ -30590,7 +30589,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(220, 115);
+            this.label14.Location = new System.Drawing.Point(236, 116);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(62, 13);
             this.label14.TabIndex = 86;
@@ -30601,7 +30600,7 @@
             // 
             this.chkMaintainNFAdjustDeltaRX1.AutoSize = true;
             this.chkMaintainNFAdjustDeltaRX1.Image = null;
-            this.chkMaintainNFAdjustDeltaRX1.Location = new System.Drawing.Point(165, 140);
+            this.chkMaintainNFAdjustDeltaRX1.Location = new System.Drawing.Point(15, 142);
             this.chkMaintainNFAdjustDeltaRX1.Name = "chkMaintainNFAdjustDeltaRX1";
             this.chkMaintainNFAdjustDeltaRX1.Size = new System.Drawing.Size(101, 17);
             this.chkMaintainNFAdjustDeltaRX1.TabIndex = 85;
@@ -30619,7 +30618,7 @@
             0,
             0,
             0});
-            this.nudRX1NFoffsetGridFollow.Location = new System.Drawing.Point(164, 114);
+            this.nudRX1NFoffsetGridFollow.Location = new System.Drawing.Point(180, 112);
             this.nudRX1NFoffsetGridFollow.Maximum = new decimal(new int[] {
             30,
             0,
@@ -30822,6 +30821,7 @@
             // 
             // grpDisplayAverage
             // 
+            this.grpDisplayAverage.Controls.Add(this.chkAveraging);
             this.grpDisplayAverage.Controls.Add(this.chkDispNormalize);
             this.grpDisplayAverage.Controls.Add(this.chkShowRX1NoiseFloor);
             this.grpDisplayAverage.Controls.Add(this.lblDispAv);
@@ -30831,7 +30831,7 @@
             this.grpDisplayAverage.Controls.Add(this.udDisplayAVGTime);
             this.grpDisplayAverage.Controls.Add(this.lblDisplayAVGTime);
             this.grpDisplayAverage.Enabled = false;
-            this.grpDisplayAverage.Location = new System.Drawing.Point(6, 178);
+            this.grpDisplayAverage.Location = new System.Drawing.Point(6, 140);
             this.grpDisplayAverage.Name = "grpDisplayAverage";
             this.grpDisplayAverage.Size = new System.Drawing.Size(153, 251);
             this.grpDisplayAverage.TabIndex = 38;
@@ -30844,7 +30844,7 @@
             this.chkDispNormalize.Checked = true;
             this.chkDispNormalize.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDispNormalize.Image = null;
-            this.chkDispNormalize.Location = new System.Drawing.Point(9, 168);
+            this.chkDispNormalize.Location = new System.Drawing.Point(9, 172);
             this.chkDispNormalize.Name = "chkDispNormalize";
             this.chkDispNormalize.Size = new System.Drawing.Size(108, 17);
             this.chkDispNormalize.TabIndex = 64;
@@ -30855,8 +30855,9 @@
             // chkShowRX1NoiseFloor
             // 
             this.chkShowRX1NoiseFloor.AutoSize = true;
+            this.chkShowRX1NoiseFloor.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.chkShowRX1NoiseFloor.Image = null;
-            this.chkShowRX1NoiseFloor.Location = new System.Drawing.Point(9, 191);
+            this.chkShowRX1NoiseFloor.Location = new System.Drawing.Point(9, 195);
             this.chkShowRX1NoiseFloor.Name = "chkShowRX1NoiseFloor";
             this.chkShowRX1NoiseFloor.Size = new System.Drawing.Size(117, 17);
             this.chkShowRX1NoiseFloor.TabIndex = 81;
@@ -30869,7 +30870,7 @@
             // 
             this.lblDispAv.AutoSize = true;
             this.lblDispAv.Image = null;
-            this.lblDispAv.Location = new System.Drawing.Point(10, 80);
+            this.lblDispAv.Location = new System.Drawing.Point(10, 78);
             this.lblDispAv.Name = "lblDispAv";
             this.lblDispAv.Size = new System.Drawing.Size(62, 13);
             this.lblDispAv.TabIndex = 63;
@@ -30888,7 +30889,7 @@
             "Recursive",
             "Time Window",
             "Log Recursive"});
-            this.comboDispPanAveraging.Location = new System.Drawing.Point(9, 104);
+            this.comboDispPanAveraging.Location = new System.Drawing.Point(9, 102);
             this.comboDispPanAveraging.Name = "comboDispPanAveraging";
             this.comboDispPanAveraging.Size = new System.Drawing.Size(104, 21);
             this.comboDispPanAveraging.TabIndex = 62;
@@ -30927,7 +30928,7 @@
             0,
             0,
             0});
-            this.udDisplayAVGTime.Location = new System.Drawing.Point(62, 133);
+            this.udDisplayAVGTime.Location = new System.Drawing.Point(65, 134);
             this.udDisplayAVGTime.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -30954,7 +30955,7 @@
             // lblDisplayAVGTime
             // 
             this.lblDisplayAVGTime.Image = null;
-            this.lblDisplayAVGTime.Location = new System.Drawing.Point(6, 133);
+            this.lblDisplayAVGTime.Location = new System.Drawing.Point(10, 135);
             this.lblDisplayAVGTime.Name = "lblDisplayAVGTime";
             this.lblDisplayAVGTime.Size = new System.Drawing.Size(64, 20);
             this.lblDisplayAVGTime.TabIndex = 3;
@@ -31100,7 +31101,7 @@
             this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallHighLevel);
             this.grpDisplayWaterfall.Location = new System.Drawing.Point(375, 10);
             this.grpDisplayWaterfall.Name = "grpDisplayWaterfall";
-            this.grpDisplayWaterfall.Size = new System.Drawing.Size(304, 251);
+            this.grpDisplayWaterfall.Size = new System.Drawing.Size(304, 216);
             this.grpDisplayWaterfall.TabIndex = 40;
             this.grpDisplayWaterfall.TabStop = false;
             this.grpDisplayWaterfall.Text = "Waterfall";
@@ -31299,9 +31300,9 @@
             "LinLog",
             "LinRad",
             "LinAuto"});
-            this.comboColorPalette.Location = new System.Drawing.Point(54, 95);
+            this.comboColorPalette.Location = new System.Drawing.Point(49, 95);
             this.comboColorPalette.Name = "comboColorPalette";
-            this.comboColorPalette.Size = new System.Drawing.Size(72, 21);
+            this.comboColorPalette.Size = new System.Drawing.Size(84, 21);
             this.comboColorPalette.TabIndex = 74;
             this.toolTip1.SetToolTip(this.comboColorPalette, "Sets the color sheme");
             this.comboColorPalette.SelectedIndexChanged += new System.EventHandler(this.comboColorPalette_SelectedIndexChanged);
@@ -31473,7 +31474,6 @@
             // tpDisplayBottom
             // 
             this.tpDisplayBottom.BackColor = System.Drawing.SystemColors.Control;
-            this.tpDisplayBottom.Controls.Add(this.chkAveragingRX2);
             this.tpDisplayBottom.Controls.Add(this.groupBoxTS20);
             this.tpDisplayBottom.Controls.Add(this.grpRX2DisplayAveraging);
             this.tpDisplayBottom.Controls.Add(this.grpRX2DisplayWaterfall);
@@ -31491,7 +31491,7 @@
             // 
             this.chkAveragingRX2.AutoSize = true;
             this.chkAveragingRX2.Image = null;
-            this.chkAveragingRX2.Location = new System.Drawing.Point(15, 142);
+            this.chkAveragingRX2.Location = new System.Drawing.Point(9, 218);
             this.chkAveragingRX2.Name = "chkAveragingRX2";
             this.chkAveragingRX2.Size = new System.Drawing.Size(116, 17);
             this.chkAveragingRX2.TabIndex = 84;
@@ -31698,7 +31698,7 @@
             0,
             0,
             0});
-            this.udRX2DisplayWFAVTime.Location = new System.Drawing.Point(62, 133);
+            this.udRX2DisplayWFAVTime.Location = new System.Drawing.Point(65, 134);
             this.udRX2DisplayWFAVTime.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -31724,7 +31724,7 @@
             // labelTS377
             // 
             this.labelTS377.Image = null;
-            this.labelTS377.Location = new System.Drawing.Point(6, 133);
+            this.labelTS377.Location = new System.Drawing.Point(10, 136);
             this.labelTS377.Name = "labelTS377";
             this.labelTS377.Size = new System.Drawing.Size(64, 23);
             this.labelTS377.TabIndex = 3;
@@ -31967,9 +31967,9 @@
             "LinLog",
             "LinRad",
             "LinAuto"});
-            this.comboRX2ColorPalette.Location = new System.Drawing.Point(54, 95);
+            this.comboRX2ColorPalette.Location = new System.Drawing.Point(49, 95);
             this.comboRX2ColorPalette.Name = "comboRX2ColorPalette";
-            this.comboRX2ColorPalette.Size = new System.Drawing.Size(72, 21);
+            this.comboRX2ColorPalette.Size = new System.Drawing.Size(84, 21);
             this.comboRX2ColorPalette.TabIndex = 74;
             this.toolTip1.SetToolTip(this.comboRX2ColorPalette, "Sets the color sheme");
             this.comboRX2ColorPalette.SelectedIndexChanged += new System.EventHandler(this.comboRX2ColorPalette_SelectedIndexChanged);
@@ -32383,6 +32383,7 @@
             // 
             // grpRX2DisplayAverage
             // 
+            this.grpRX2DisplayAverage.Controls.Add(this.chkAveragingRX2);
             this.grpRX2DisplayAverage.Controls.Add(this.chkDispRX2Normalize);
             this.grpRX2DisplayAverage.Controls.Add(this.chkShowRX2NoiseFloor);
             this.grpRX2DisplayAverage.Controls.Add(this.lblRX2PanAv);
@@ -32391,7 +32392,7 @@
             this.grpRX2DisplayAverage.Controls.Add(this.comboRX2DispPanDetector);
             this.grpRX2DisplayAverage.Controls.Add(this.udRX2DisplayAVGTime);
             this.grpRX2DisplayAverage.Controls.Add(this.labelTS143);
-            this.grpRX2DisplayAverage.Location = new System.Drawing.Point(6, 165);
+            this.grpRX2DisplayAverage.Location = new System.Drawing.Point(6, 140);
             this.grpRX2DisplayAverage.Name = "grpRX2DisplayAverage";
             this.grpRX2DisplayAverage.Size = new System.Drawing.Size(153, 251);
             this.grpRX2DisplayAverage.TabIndex = 47;
@@ -32404,7 +32405,7 @@
             this.chkDispRX2Normalize.Checked = true;
             this.chkDispRX2Normalize.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDispRX2Normalize.Image = null;
-            this.chkDispRX2Normalize.Location = new System.Drawing.Point(9, 185);
+            this.chkDispRX2Normalize.Location = new System.Drawing.Point(9, 172);
             this.chkDispRX2Normalize.Name = "chkDispRX2Normalize";
             this.chkDispRX2Normalize.Size = new System.Drawing.Size(108, 17);
             this.chkDispRX2Normalize.TabIndex = 68;
@@ -32416,7 +32417,7 @@
             // 
             this.chkShowRX2NoiseFloor.AutoSize = true;
             this.chkShowRX2NoiseFloor.Image = null;
-            this.chkShowRX2NoiseFloor.Location = new System.Drawing.Point(9, 208);
+            this.chkShowRX2NoiseFloor.Location = new System.Drawing.Point(9, 195);
             this.chkShowRX2NoiseFloor.Name = "chkShowRX2NoiseFloor";
             this.chkShowRX2NoiseFloor.Size = new System.Drawing.Size(117, 17);
             this.chkShowRX2NoiseFloor.TabIndex = 82;
@@ -32429,7 +32430,7 @@
             // 
             this.lblRX2PanAv.AutoSize = true;
             this.lblRX2PanAv.Image = null;
-            this.lblRX2PanAv.Location = new System.Drawing.Point(9, 85);
+            this.lblRX2PanAv.Location = new System.Drawing.Point(10, 78);
             this.lblRX2PanAv.Name = "lblRX2PanAv";
             this.lblRX2PanAv.Size = new System.Drawing.Size(62, 13);
             this.lblRX2PanAv.TabIndex = 67;
@@ -32448,7 +32449,7 @@
             "Recursive",
             "Time Window",
             "Log Recursive"});
-            this.comboRX2DispPanAveraging.Location = new System.Drawing.Point(9, 110);
+            this.comboRX2DispPanAveraging.Location = new System.Drawing.Point(9, 102);
             this.comboRX2DispPanAveraging.Name = "comboRX2DispPanAveraging";
             this.comboRX2DispPanAveraging.Size = new System.Drawing.Size(104, 21);
             this.comboRX2DispPanAveraging.TabIndex = 66;
@@ -32487,7 +32488,7 @@
             0,
             0,
             0});
-            this.udRX2DisplayAVGTime.Location = new System.Drawing.Point(65, 151);
+            this.udRX2DisplayAVGTime.Location = new System.Drawing.Point(65, 134);
             this.udRX2DisplayAVGTime.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -32513,7 +32514,7 @@
             // labelTS143
             // 
             this.labelTS143.Image = null;
-            this.labelTS143.Location = new System.Drawing.Point(9, 151);
+            this.labelTS143.Location = new System.Drawing.Point(10, 135);
             this.labelTS143.Name = "labelTS143";
             this.labelTS143.Size = new System.Drawing.Size(64, 23);
             this.labelTS143.TabIndex = 3;
@@ -32749,9 +32750,9 @@
             this.groupBoxTS9.Controls.Add(this.comboTXDispWFDetector);
             this.groupBoxTS9.Controls.Add(this.udTXDisplayAVTime);
             this.groupBoxTS9.Controls.Add(this.labelTS388);
-            this.groupBoxTS9.Location = new System.Drawing.Point(143, 170);
+            this.groupBoxTS9.Location = new System.Drawing.Point(165, 140);
             this.groupBoxTS9.Name = "groupBoxTS9";
-            this.groupBoxTS9.Size = new System.Drawing.Size(123, 141);
+            this.groupBoxTS9.Size = new System.Drawing.Size(161, 166);
             this.groupBoxTS9.TabIndex = 84;
             this.groupBoxTS9.TabStop = false;
             this.groupBoxTS9.Text = "Waterfall";
@@ -32760,7 +32761,7 @@
             // 
             this.labelTS384.AutoSize = true;
             this.labelTS384.Image = null;
-            this.labelTS384.Location = new System.Drawing.Point(10, 67);
+            this.labelTS384.Location = new System.Drawing.Point(10, 78);
             this.labelTS384.Name = "labelTS384";
             this.labelTS384.Size = new System.Drawing.Size(62, 13);
             this.labelTS384.TabIndex = 63;
@@ -32779,7 +32780,7 @@
             "Recursive",
             "Time Window",
             "Log Recursive"});
-            this.comboTXDispWFAveraging.Location = new System.Drawing.Point(9, 86);
+            this.comboTXDispWFAveraging.Location = new System.Drawing.Point(9, 102);
             this.comboTXDispWFAveraging.Name = "comboTXDispWFAveraging";
             this.comboTXDispWFAveraging.Size = new System.Drawing.Size(104, 21);
             this.comboTXDispWFAveraging.TabIndex = 62;
@@ -32804,7 +32805,7 @@
             "Rosenfell",
             "Average",
             "Sample"});
-            this.comboTXDispWFDetector.Location = new System.Drawing.Point(9, 38);
+            this.comboTXDispWFDetector.Location = new System.Drawing.Point(9, 44);
             this.comboTXDispWFDetector.Name = "comboTXDispWFDetector";
             this.comboTXDispWFDetector.Size = new System.Drawing.Size(104, 21);
             this.comboTXDispWFDetector.TabIndex = 60;
@@ -32817,7 +32818,7 @@
             0,
             0,
             0});
-            this.udTXDisplayAVTime.Location = new System.Drawing.Point(62, 113);
+            this.udTXDisplayAVTime.Location = new System.Drawing.Point(65, 134);
             this.udTXDisplayAVTime.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -32843,7 +32844,7 @@
             // labelTS388
             // 
             this.labelTS388.Image = null;
-            this.labelTS388.Location = new System.Drawing.Point(6, 113);
+            this.labelTS388.Location = new System.Drawing.Point(10, 136);
             this.labelTS388.Name = "labelTS388";
             this.labelTS388.Size = new System.Drawing.Size(64, 23);
             this.labelTS388.TabIndex = 3;
@@ -32969,9 +32970,9 @@
             this.groupBoxTS7.Controls.Add(this.comboTXDispPanDetector);
             this.groupBoxTS7.Controls.Add(this.udTXDisplayAVGTime);
             this.groupBoxTS7.Controls.Add(this.labelTS380);
-            this.groupBoxTS7.Location = new System.Drawing.Point(6, 170);
+            this.groupBoxTS7.Location = new System.Drawing.Point(6, 140);
             this.groupBoxTS7.Name = "groupBoxTS7";
-            this.groupBoxTS7.Size = new System.Drawing.Size(123, 179);
+            this.groupBoxTS7.Size = new System.Drawing.Size(153, 251);
             this.groupBoxTS7.TabIndex = 82;
             this.groupBoxTS7.TabStop = false;
             this.groupBoxTS7.Text = "Panadapter";
@@ -32982,7 +32983,7 @@
             this.chkDispTXNormalize.Checked = true;
             this.chkDispTXNormalize.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDispTXNormalize.Image = null;
-            this.chkDispTXNormalize.Location = new System.Drawing.Point(6, 147);
+            this.chkDispTXNormalize.Location = new System.Drawing.Point(9, 172);
             this.chkDispTXNormalize.Name = "chkDispTXNormalize";
             this.chkDispTXNormalize.Size = new System.Drawing.Size(108, 17);
             this.chkDispTXNormalize.TabIndex = 68;
@@ -32994,7 +32995,7 @@
             // 
             this.labelTS378.AutoSize = true;
             this.labelTS378.Image = null;
-            this.labelTS378.Location = new System.Drawing.Point(10, 67);
+            this.labelTS378.Location = new System.Drawing.Point(10, 78);
             this.labelTS378.Name = "labelTS378";
             this.labelTS378.Size = new System.Drawing.Size(62, 13);
             this.labelTS378.TabIndex = 67;
@@ -33013,7 +33014,7 @@
             "Recursive",
             "Time Window",
             "Log Recursive"});
-            this.comboTXDispPanAveraging.Location = new System.Drawing.Point(9, 86);
+            this.comboTXDispPanAveraging.Location = new System.Drawing.Point(9, 102);
             this.comboTXDispPanAveraging.Name = "comboTXDispPanAveraging";
             this.comboTXDispPanAveraging.Size = new System.Drawing.Size(104, 21);
             this.comboTXDispPanAveraging.TabIndex = 66;
@@ -33039,7 +33040,7 @@
             "Average",
             "Sample",
             "RMS"});
-            this.comboTXDispPanDetector.Location = new System.Drawing.Point(9, 38);
+            this.comboTXDispPanDetector.Location = new System.Drawing.Point(9, 45);
             this.comboTXDispPanDetector.Name = "comboTXDispPanDetector";
             this.comboTXDispPanDetector.Size = new System.Drawing.Size(104, 21);
             this.comboTXDispPanDetector.TabIndex = 64;
@@ -33052,7 +33053,7 @@
             0,
             0,
             0});
-            this.udTXDisplayAVGTime.Location = new System.Drawing.Point(62, 113);
+            this.udTXDisplayAVGTime.Location = new System.Drawing.Point(65, 134);
             this.udTXDisplayAVGTime.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -33078,7 +33079,7 @@
             // labelTS380
             // 
             this.labelTS380.Image = null;
-            this.labelTS380.Location = new System.Drawing.Point(6, 113);
+            this.labelTS380.Location = new System.Drawing.Point(10, 135);
             this.labelTS380.Name = "labelTS380";
             this.labelTS380.Size = new System.Drawing.Size(64, 23);
             this.labelTS380.TabIndex = 3;
@@ -55530,7 +55531,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayPeakText)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayFPS)).EndInit();
             this.tpDisplayTop.ResumeLayout(false);
-            this.tpDisplayTop.PerformLayout();
             this.groupBoxTS21.ResumeLayout(false);
             this.groupBoxTS21.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDropRX1)).EndInit();
@@ -55558,7 +55558,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallLowLevel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallHighLevel)).EndInit();
             this.tpDisplayBottom.ResumeLayout(false);
-            this.tpDisplayBottom.PerformLayout();
             this.groupBoxTS20.ResumeLayout(false);
             this.groupBoxTS20.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDropRX2)).EndInit();
