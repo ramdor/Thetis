@@ -79,7 +79,12 @@ namespace Thetis
         // just so that we can use this without them. Will eventually be removed
         private const bool USE_MULTIMETERS2 = true;
         //
-        volatile public int swr_protected = 0;
+
+        public int TimeWhenBadSWRDetected
+        {
+            get;
+            private set;
+        }
         volatile bool m_bMonTXThreadAlive = false;
 
         private const bool ENABLE_DB_FORCE_UPDATE = true;
@@ -753,7 +758,7 @@ namespace Thetis
             }
 
 #if (DEBUG)
-            //AppDataPath += "Debug\\";
+            AppDataPath += "Debug\\";
 #endif
             if (!Directory.Exists(AppDataPath))
                 Directory.CreateDirectory(AppDataPath);
@@ -1250,8 +1255,8 @@ namespace Thetis
 
                 KLJ.Utils.FadeIn(this);
                 // KLJ.Utils.PrintZOrder(); // G7VKK
-                m_ff = new frmFindInSetup(this); // G7VKK
-                m_ff.Show(); // G7VKK
+                //m_ff = new frmFindInSetup(this); // G7VKK
+                //m_ff.Show(); // G7VKK
 
 
             }
@@ -22287,12 +22292,39 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             t.Enabled = enable;
         }
 
+        public void ComeOutOfTXUrgently()
+        {
+
+            NetworkIO.SendHighPriority(1);
+            WDSP.SetChannelState(WDSP.id(1, 0), 0, 1);  // turn off the transmitter (no action if it's already off)
+
+            if (TimeWhenBadSWRDetected > 0)
+            {
+                var t = timeGetTime() - TimeWhenBadSWRDetected;
+                Debug.Print("SWR protection latency: " + t.ToString() + " ms.");
+            }
+            if (chkTUN.Checked)
+            {
+                chkTUN.Checked = false;
+            }
+            else if (chk2TONE.Checked)
+            {
+                chk2TONE.Checked = false;
+            }
+            else
+            {
+                chkMOX.Checked = false;
+            }
+        }
+
         private volatile bool high_swr = false;
         public bool HighSWR
         {
             get { return high_swr; }
             set
             {
+                if (value)
+                    ComeOutOfTXUrgently();
                 high_swr = value;
                 Display.HighSWR = value;
             }
@@ -23716,7 +23748,10 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             int ooo = 0;
             ooo = NetworkIO.getOOO();
             HaveSync = NetworkIO.getHaveSync();
-            if (HaveSync == 0) chkPower.Checked = false;
+            if (HaveSync == 0)
+            {
+                chkPower.Checked = false;
+            }
 
             int adc_oload_num = NetworkIO.getAndResetADC_Overload();
             bool adc_oload = adc_oload_num > 0;
@@ -27632,7 +27667,12 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         }
                     }
                     // Debug.Print(output);
+                    if (string.IsNullOrEmpty(output))
+                        output = lastMultiText;
+                    Debug.Assert(!string.IsNullOrEmpty(output));
                     txtMultiText.Text = output;
+                    if (!string.IsNullOrEmpty(output))
+                        lastMultiText = output;
                     meter_timer.Start();
                 }
 
@@ -27644,6 +27684,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             }
         }
 
+        private string lastMultiText = "";
         private double rx2_avg_num = Display.CLEAR_FLAG; //- 130.0;
         private void picRX2Meter_Paint(
             object sender, System.Windows.Forms.PaintEventArgs e)
@@ -28895,9 +28936,9 @@ oldZoomSlider != ptbDisplayZoom.Value*/
         private volatile bool meter_data_is_for_rx = true;
         private Object MeterLocker = new object();
 
-        private async void UpdateMultimeter()
+        private void UpdateMultimeter()
         {
-
+            bool should_update_pa_values = false;
             meter_timer.Start();
             while (chkPower.Checked)
             {
@@ -28920,7 +28961,6 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                             if (TimeSinceCameOutOfMox <= 450) // KLJ Avoid S-Meter pegging after tx, especially tuning.
                             {
                                 new_meter_data = -200;
-
                             }
                             else
                             {
@@ -28993,7 +29033,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                             meter_data_is_for_rx = false;
                             MeterTXMode mode = CurrentMeterTXMode;
                             float num = 0f;
-
+                            should_update_pa_values = true;
                             switch (mode)
                             {
                                 case MeterTXMode.MIC:
@@ -29116,28 +29156,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                                     break;
                             }
 
-                            if (pa_values)
-                            {
-                                SetupForm.textDriveFwdADCValue.Text
-                                    = average_drvadc.ToString("f0");
-                                SetupForm.textFwdADCValue.Text
-                                    = average_fwdadc.ToString("f0");
-                                SetupForm.textRevADCValue.Text
-                                    = average_revadc.ToString("f0");
-                                // SetupForm.textFwdVoltage.Text =
-                                // fwd_volts.ToString("f2") + " V";
-                                // SetupForm.textRevVoltage.Text =
-                                // rev_volts.ToString("f2") + " V";
-                                SetupForm.textDrivePower.Text
-                                    = average_drivepwr.ToString("f0") + " mW";
-                                SetupForm.textPAFwdPower.Text
-                                    = alex_fwd.ToString("f1") + " W";
-                                SetupForm.textPARevPower.Text
-                                    = alex_rev.ToString("f1") + " W";
-                                SetupForm.textCaldFwdPower.Text
-                                    = calfwdpower.ToString("f1") + " W";
-                                SetupForm.textSWR.Text = alex_swr.ToString("f2") + ":1";
-                            }
+
                         }
 
 
@@ -29147,9 +29166,35 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     }
 
 
+                    // this must be outside the lock to avoid deadlock on accessing setup
+                    if (pa_values && should_update_pa_values)
+                    {
+                        var setup = m_frmSetupForm; // avoid the lock getting setupform
+                        setup.textDriveFwdADCValue.Text
+                            = average_drvadc.ToString("f0");
+                        setup.textFwdADCValue.Text
+                            = average_fwdadc.ToString("f0");
+                        setup.textRevADCValue.Text
+                            = average_revadc.ToString("f0");
+                        // SetupForm.textFwdVoltage.Text =
+                        // fwd_volts.ToString("f2") + " V";
+                        // SetupForm.textRevVoltage.Text =
+                        // rev_volts.ToString("f2") + " V";
+                        setup.textDrivePower.Text
+                            = average_drivepwr.ToString("f0") + " mW";
+                        setup.textPAFwdPower.Text
+                            = alex_fwd.ToString("f1") + " W";
+                        setup.textPARevPower.Text
+                            = alex_rev.ToString("f1") + " W";
+                        setup.textCaldFwdPower.Text
+                            = calfwdpower.ToString("f1") + " W";
+                        setup.textSWR.Text = alex_swr.ToString("f2") + ":1";
+                    }
+
+
                 }
 
-                await Task.Delay(Math.Min(meter_delay, meter_dig_delay));
+                Thread.Sleep(Math.Min(meter_delay, meter_dig_delay));
             }
         }
 
@@ -30616,7 +30661,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             }
         }
 
-        private async void PollPAPWR()
+        private void PollPAPWR()
         {
             const float alpha = 0.90f;
             float rho = 0;
@@ -30624,13 +30669,13 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             int high_swr_count = 0;
             bool swr_pass = false;
             m_bMonTXThreadAlive = true;
-
+            int sleepTime = 10;
 
             while (chkPower.Checked)
             {
                 if (mox)
                 {
-                    while (pause_DisplayThread)
+                    while (pause_DisplayThread && chkPower.Checked && mox)
                     {
                         lock (MeterLocker)
                         {
@@ -30651,7 +30696,8 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         }
                     }
 
-                    // KLJ NOTE: we can deadlock because the functions may try to update UI via Invoke(), so they must be done outside the loop
+                    // KLJ NOTE: we can deadlock because the functions may try to update UI via Invoke(), so they must be done outside the loop.
+                    // If they used BeginInvoke in the thread safe controls, this would not matter. But that seems a little heavyweight to me.
                     var my_alex_fwd = computeAlexFwdPower(); // high power
                     var my_alex_rev = computeRefPower();
                     float my_drivepwr = 0;
@@ -30672,6 +30718,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                             break;
                     }
 
+                    bool haveHighSWR = false;
                     // KLJ: now locking this thread because otherwise there are problems with the S-Meter when going from rx to tx
                     lock (MeterLocker)
                     {
@@ -30679,12 +30726,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         alex_fwd = my_alex_fwd;
                         alex_rev = my_alex_rev;
                         drivepwr = my_drivepwr;
-
-
                         calfwdpower = my_calfwdpower;
-                        if (calfwdpower > 38)
-                            Debug.Print("Hi pwr");
-
                         average_drivepwr
                             = alpha * average_drivepwr + (1.0f - alpha) * drivepwr;
 
@@ -30712,8 +30754,9 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                             {
                                 swr = 50.0f;
                                 NetworkIO.SWRProtect = 0.01f;
-                                chkMOX.Checked = false;
-                                swr_protected = timeGetTime();
+                                // chkMOX.Checked = false; Nope, can deadlock with _Paint
+                                TimeWhenBadSWRDetected = timeGetTime();
+                                haveHighSWR = true;
 
                                 goto end;
                             }
@@ -30753,22 +30796,30 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                             && !swr_pass)
                         {
                             high_swr_count++;
-                            if (high_swr_count >= 8)
+                            sleepTime = 1;
+                            TimeWhenBadSWRDetected = timeGetTime();
+                            Debug.Print("high_swr_count incremented to: " + high_swr_count.ToString());
+                            if (high_swr_count >= 10)
                             {
-                                high_swr_count = 0;
+
                                 NetworkIO.SWRProtect = (float)(2.0f / (swr + 1.0f));
-                                HighSWR = true;
-                                swr_protected = timeGetTime();
-                                chkMOX.Checked = false;
+                                // TimeWhenBadSWRDetected = timeGetTime();
+                                // careful! This can deadlock with picMultiMeterDigital_Paint, because this and that hold MeterLock.
+                                // This is because setting HighSWR to true calls Invoke() in the 'thread safe' controls.
+                                // Therefore, we do this OUTSIDE the lock
+                                haveHighSWR = true;
+                                high_swr_count = 0;
+
                                 goto end;
                             }
                         }
                         else
                         {
+                            Debug.Print("high_swr_count reset to zero");
                             high_swr_count = 0;
                             NetworkIO.SWRProtect = 1.0f;
                             HighSWR = false;
-                            swr_protected = 0;
+                            TimeWhenBadSWRDetected = 0;
                         }
 
 
@@ -30778,18 +30829,34 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                             alex_swr = 1.0f;
                         else
                             alex_swr = swr;
+                    } //  we give up the lock here
+
+                    if (haveHighSWR)
+                    {
+                        Debug.Print("PollPAPWR calls ComeOutOfTXUrgently via HighSWR");
+                        HighSWR = true;
                     }
+
                 }
                 else if (high_swr)
                 {
+                    sleepTime = 10;
                     lock (MeterLocker)
                     {
                         HighSWR = false;
                     }
                 }
 
+                // 
+                //Thread.Sleep(10);
+                PAPollTimer.Reset();
+                var t1 = timeGetTime();
+                // Thread.Sleep(sleepTime);#
+                ivac.nanosleepms((ulong)(sleepTime / 10));
 
-                await Task.Delay(10);
+                var t2 = timeGetTime();
+                var took = t2 - t1;
+                Debug.Print("Task.Delay() took: " + took.ToString() + " ms.");
             }
 
             m_bMonTXThreadAlive = false;
@@ -30803,6 +30870,30 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             // average_fwdadc = 0;
             //  average_revadc = 0;
         }
+
+        static internal HiPerfTimer paPollTimer;
+        static HiPerfTimer PAPollTimer
+        {
+            get
+            {
+                if (null == paPollTimer)
+                    paPollTimer = new HiPerfTimer();
+                return paPollTimer;
+            }
+            set
+            {
+                paPollTimer = value;
+            }
+        }
+
+
+        static internal Int64 NANOS_IN_MILLI = 1000000;
+
+        static internal Int64 NanoSecsToMillis(Int64 ns)
+        {
+            return ns / NANOS_IN_MILLI;
+        }
+
 
         private double SWRScale(double ref_pow)
         {
@@ -32331,8 +32422,6 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 txtVFOAFreq.ForeColor = vfo_text_light_color;
                 txtVFOAMSD.ForeColor = vfo_text_light_color;
                 txtVFOALSD.ForeColor = small_vfo_color;
-                // cmaster.CMSetAudioMixerRX2();
-                // UpdateRXADCCtrl();
 
                 UpdateDDCs(rx2_enabled);
                 UpdateVFOASub();
@@ -32816,7 +32905,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             if (chkPower.Checked)
             {
                 psform.ForcePS();
-                swr_protected = 0;
+                TimeWhenBadSWRDetected = 0;
             }
 
             // MW0LGE_21d6
@@ -34474,7 +34563,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 UpdateTRXAnt();
             }
         }
-        public int TimeMoxChanged { get; set; }
+        public int TimeMoxEntered { get; set; }
 
         private CheckState NB_CheckState;
         private void UIMOXChangedTrue()
@@ -34515,7 +34604,6 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             SetupForm.MOX = chkMOX.Checked;
             ResetMultiMeterPeak();
             picSquelch.Invalidate();
-            TimeMoxChanged = timeGetTime();
         }
 
         private void UIMOXChangedFalse()
@@ -34567,7 +34655,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
 
             picNoiseGate.Invalidate();
 
-            TimeMoxChanged = timeGetTime();
+            // TimeMoxChanged = timeGetTime();
             /*Thread t = new Thread(new ThreadStart(DelayedDisplayReset));
             t.Name = "Display Reset";
             t.Priority = ThreadPriority.BelowNormal;
@@ -34577,7 +34665,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
 
         // private HiPerfTimer t1 = new HiPerfTimer();
         //  private double timer1 = 0.0;
-        private bool mox = false;
+        private volatile bool mox = false;
         private PreampMode temp_mode = PreampMode.HPSDR_OFF; // HPSDR preamp mode
         private PreampMode temp_mode2 = PreampMode.HPSDR_OFF; // HPSDR preamp mode
         private bool _forceATTwhenPSAoff = true; // MW0LGE [2.9.0.7] added
@@ -34877,6 +34965,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         Thread.Sleep(rf_delay);
                     AudioMOXChanged(tx);    // set MOX in audio.cs - wait 'til here to allow last audio to clear AAMix before changing to MON volume
                     WDSP.SetChannelState(WDSP.id(1, 0), 1, 0);
+                    TimeMoxEntered = timeGetTime();
                 }
                 else
                     AudioMOXChanged(tx);    // set MOX in audio.cs
@@ -58751,6 +58840,11 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
         }
 
         private void Console_Load(object sender, EventArgs e) { }
+
+        private void picDisplay_Click(object sender, EventArgs e)
+        {
+
+        }
 
         // private object _passbandSpectrum = new object();
         // private float[] passbandSpectrum(int rx)

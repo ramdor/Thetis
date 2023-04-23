@@ -103,8 +103,10 @@ void combinebuff(int n, double* a, double* combined);
 void scalebuff(int n, double* in, double k, double* out);
 void xvac_out(int id, int nsamples, double* buff);
 
-extern __declspec(dllexport) void* create_resampleV(
-    int samplerate_in, int samplerate_out);
+PORT int64_t nanosleepms(uint64_t ms);
+PORT int64_t nanosleep(uint64_t ns);
+
+void* create_resampleV(int samplerate_in, int samplerate_out);
 extern __declspec(dllexport) void xresampleV(
     double* input, double* output, int numsamps, int* outsamps, void* ptr);
 extern __declspec(dllexport) void destroy_resampleV(/*ResSt*/ void* resst);

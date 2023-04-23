@@ -29,8 +29,45 @@ warren@wpratt.com
 #include "cmcomm.h"
 #include "pa_win_wasapi.h"
 #include "pa_win_wdmks.h"
+#include "nanotimer.h"
 
 __declspec(align(16)) IVAC pvac[MAX_EXT_VACS];
+
+// KLJ. Let's have some more accurate sleeps.
+// We return a close approximation of how long we slept for, in NANOSECONDS)
+int64_t nanosleep_internal(LONGLONG ns) {
+    int64_t StartTicks = getPerfTicks();
+    /* Declarations */
+    HANDLE timer; /* Timer handle */
+    LARGE_INTEGER li; /* Time defintion */
+    /* Create timer */
+    if (!(timer = CreateWaitableTimer(NULL, TRUE, NULL))) return FALSE;
+    /* Set timer properties */
+    li.QuadPart = -ns;
+    if (!SetWaitableTimer(timer, &li, 0, NULL, NULL, FALSE)) {
+        CloseHandle(timer);
+        return FALSE;
+    }
+    /* Start & wait for timer */
+    WaitForSingleObject(timer, INFINITE);
+    /* Clean resources */
+    CloseHandle(timer);
+    /* Slept without problems */
+    int64_t EndTicks = getPerfTicks();
+    int64_t ticks = EndTicks - StartTicks;
+    return perfTicksToNanos(ticks);
+}
+
+// KLJ
+PORT int64_t nanosleepms(uint64_t ms) {
+    // 1 milliseconds(ms) is equal to 1000000 nanoseconds(ns)
+    static int64_t NANOS_IN_MILLI = 1'000'000;
+    return nanosleep_internal(ms * NANOS_IN_MILLI);
+}
+
+PORT int64_t nanosleep(uint64_t nano_seconds) {
+    return nanosleep_internal(nano_seconds);
+}
 
 void create_resamps(IVAC a) {
     a->MMThreadApiHandle = 0;

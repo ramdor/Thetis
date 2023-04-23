@@ -3446,19 +3446,19 @@ namespace Thetis
                         _bRebuildRX2LinearGradBrush = true;
                     }
 
-                    bool should_show_swr = high_swr;
-                    if (!should_show_swr)
+                    bool should_show_high_swr = high_swr;
+                    if (!should_show_high_swr)
                     {
-                        if (console.swr_protected != 0)
+                        if (console.TimeWhenBadSWRDetected != 0)
                         {
-                            should_show_swr = Thetis.Console.timeGetTime()
-                                    - console.swr_protected
-                                <= 5000;
+                            should_show_high_swr = Thetis.Console.timeGetTime()
+                                    - console.TimeWhenBadSWRDetected
+                                <= ShowHighSWRms;
                         }
                     }
 
                     // HIGH swr display warning
-                    if (should_show_swr)
+                    if (should_show_high_swr)
                     {
 
                         drawStringDX2D(
@@ -3567,6 +3567,7 @@ namespace Thetis
             }
         }
 
+        private static uint ShowHighSWRms = 2000;
         private static int m_nVBlanks = 0;
         public static int VerticalBlanks
         {

@@ -43,6 +43,12 @@
         [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACiqType", CallingConvention = CallingConvention.Cdecl)] // SetVACOutputIQ(int enabled)
         public static extern void SetIVACiqType(int id, int type);
 
+        [DllImport("ChannelMaster.dll", EntryPoint = "nanosleepms", CallingConvention = CallingConvention.Cdecl)] // SetVACOutputIQ(int enabled)
+        public static extern Int64 nanosleepms(UInt64 ms);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "nanosleep", CallingConvention = CallingConvention.Cdecl)] // SetVACOutputIQ(int enabled)
+        public static extern Int64 nanosleep(UInt64 ns);
+
         // [DllImport("wdsp.dll", EntryPoint = "SetIVACmicRate", CallingConvention = CallingConvention.Cdecl)] // SetBlockSize(int size)
         // public static extern void SetIVACmicRate(int id, int rate);
 
