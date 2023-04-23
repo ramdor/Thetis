@@ -45,6 +45,7 @@ using System.Runtime.CompilerServices;
 
 namespace Thetis
 {
+
     // extend contains to be able to ignore case etc MW0LGE
     public static class StringExtensions
     {
@@ -64,6 +65,7 @@ namespace Thetis
     //}
     public class Common
     {
+        public static volatile bool Quitting = false;
         private const bool ENABLE_VERSION_TIMEOUT = false;
         private static DateTime _versionTimeout = new DateTime(2022, 06, 01, 00, 00, 00); // june 1st 2022 00:00:00
         private static bool _bypassTimeout = false;

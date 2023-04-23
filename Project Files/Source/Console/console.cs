@@ -16,7 +16,7 @@
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+// GNU General Public License for more details. 
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
@@ -232,29 +232,29 @@ namespace Thetis
         private bool[] diversity_rx1_ref_by_band;
         private bool[] diversity_rx2_ref_by_band;
 
-        private bool meter_data_ready; // used to synchronize the new DSP data with
-                                       // the multimeter
-        private float new_meter_data; // new data for the multimeter from the DSP
-        private float current_meter_data; // current data for the multimeter
-        private int meter_peak_count; // Counter for peak hold on multimeter
-        private int meter_peak_value; // Value for peak hold on multimeter
-        private float[] meter_text_history; // Array used to output the peak power
-                                            // over a period of time
-        private int meter_text_history_index; // index used with above variable to
-                                              // do peak power
-        private float new_swrmeter_data; // new data for the multimeter from the DSP
-        private float current_swrmeter_data; // current data for the multimeter
+        private volatile bool meter_data_ready; // used to synchronize the new DSP data with
+                                                // the multimeter
+        private volatile float new_meter_data; // new data for the multimeter from the DSP
+        private volatile float current_meter_data; // current data for the multimeter
+        private volatile int meter_peak_count; // Counter for peak hold on multimeter
+        private volatile int meter_peak_value; // Value for peak hold on multimeter
+        private volatile float[] meter_text_history; // Array used to output the peak power
+                                                     // over a period of time
+        private volatile int meter_text_history_index; // index used with above variable to
+                                                       // do peak power
+        private volatile float new_swrmeter_data; // new data for the multimeter from the DSP
+        private volatile float current_swrmeter_data; // current data for the multimeter
 
-        private bool rx2_meter_data_ready; // used to synchronize the new DSP data
-                                           // with the multimeter
-        private float
+        private volatile bool rx2_meter_data_ready; // used to synchronize the new DSP data
+                                                    // with the multimeter
+        private volatile float
             rx2_meter_new_data; // new data for the multimeter from the DSP
-        private float rx2_meter_current_data; // current data for the multimeter
-        private int rx2_meter_peak_count; // Counter for peak hold on multimeter
-        private int rx2_meter_peak_value; // Value for peak hold on multimeter
-        public int pa_fwd_power; // forward power as read by the ADC on the PA
-        public int pa_rev_power; // reverse power as read by the ADC on the PA
-        private bool tuning; // true when the TUN button is active
+        private volatile float rx2_meter_current_data; // current data for the multimeter
+        private volatile int rx2_meter_peak_count; // Counter for peak hold on multimeter
+        private volatile int rx2_meter_peak_value; // Value for peak hold on multimeter
+        public volatile int pa_fwd_power; // forward power as read by the ADC on the PA
+        public volatile int pa_rev_power; // reverse power as read by the ADC on the PA
+        private volatile bool tuning; // true when the TUN button is active
         public float[][] rx1_level_table; // table used to store RX1 Level cal
                                           // settings
         public float[][] rx2_level_table; // table used to store RX2 Level cal
@@ -310,15 +310,15 @@ namespace Thetis
         private readonly HiPerfTimer break_in_timer;
         public double avg_vox_pwr = 0.0;
 
-        public float alex_fwd = 0;
-        public float alex_rev = 0;
-        public float drivepwr = 0.0f;
-        public float calfwdpower = 0.0f;
-        public float alex_swr = 0.0f;
-        private float average_drivepwr = 0.0f;
-        private float average_revadc = 0.0f;
-        private float average_fwdadc = 0.0f;
-        private float average_drvadc = 0.0f;
+        public volatile float alex_fwd = 0;
+        public volatile float alex_rev = 0;
+        public volatile float drivepwr = 0.0f;
+        public volatile float calfwdpower = 0.0f;
+        public volatile float alex_swr = 0.0f;
+        private volatile float average_drivepwr = 0.0f;
+        private volatile float average_revadc = 0.0f;
+        private volatile float average_fwdadc = 0.0f;
+        private volatile float average_drvadc = 0.0f;
 
         private static readonly MemoryStream msgrab
             = new MemoryStream(Properties.Resources.grab);
@@ -1250,8 +1250,8 @@ namespace Thetis
 
                 KLJ.Utils.FadeIn(this);
                 // KLJ.Utils.PrintZOrder(); // G7VKK
-                // m_ff = new frmFindInSetup(this); // G7VKK
-                // m_ff.Show(); // G7VKK
+                m_ff = new frmFindInSetup(this); // G7VKK
+                m_ff.Show(); // G7VKK
 
 
             }
@@ -22287,7 +22287,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             t.Enabled = enable;
         }
 
-        private bool high_swr = false;
+        private volatile bool high_swr = false;
         public bool HighSWR
         {
             get { return high_swr; }
@@ -24600,7 +24600,16 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 bAbove30 = (VFOBFreq >= 30.0); // MW0LGE_21a
             }
 
-            if (!mox || rx == 2) // rx2 can not tx
+            var mymox = mox;
+            if (!mymox)
+            {
+                if (!meter_data_is_for_rx)
+                {
+                    mymox = true; // tx to rx transition
+                }
+            }
+
+            if (!mymox || rx == 2) // rx2 can not tx
             {
                 switch (rxMode)
                 {
@@ -27256,354 +27265,382 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             int pixel_x_swr; // = 0;
             string output = "";
 
-            if (meter_data_ready)
+            lock (MeterLocker) // KLJ. See other places where we lock this. Transitions between rx and tx give racy meter values, and possibly bogus SWR protection without it.
             {
-                current_meter_data = new_meter_data;
-                current_swrmeter_data = new_swrmeter_data;
-                // meter_data_ready = false;  //MW0LGE [2.9.0.7] should not be here
-                // as is done down below after it is consumed
-            }
 
-            if (avg_num
-                == Display.CLEAR_FLAG) // reset average -- just use new value
-            {
-                num = avg_num = current_meter_data;
-                clearRXSignalPixels(1);
-            }
-            else
-            {
-                if (current_meter_data > avg_num)
-                    num = avg_num
-                        = current_meter_data * 0.8 + avg_num * 0.2; // fast rise
+                if (meter_data_ready)
+                {
+                    current_meter_data = new_meter_data;
+                    current_swrmeter_data = new_swrmeter_data;
+                    // meter_data_ready = false;  //MW0LGE [2.9.0.7] should not be here
+                    // as is done down below after it is consumed
+                }
+
+                if (avg_num
+                    == Display.CLEAR_FLAG) // reset average -- just use new value
+                {
+                    num = avg_num = current_meter_data;
+                    clearRXSignalPixels(1);
+                }
                 else
-                    num = avg_num
-                        = current_meter_data * 0.2 + avg_num * 0.8; // slow decay
-            }
+                {
+                    if (current_meter_data > avg_num)
+                        num = avg_num
+                            = current_meter_data * 0.8 + avg_num * 0.2; // fast rise
+                    else
+                        num = avg_num
+                            = current_meter_data * 0.2 + avg_num * 0.8; // slow decay
+                }
 
-            MeterTXMode txMode
-                = chkTUN.Checked ? tune_meter_tx_mode : current_meter_tx_mode;
+                MeterTXMode txMode
+                    = chkTUN.Checked ? tune_meter_tx_mode : current_meter_tx_mode;
 
-            switch (current_meter_display_mode)
-            {
-                case MultiMeterDisplayMode.Original:
-                    #region Original
-                    g.FillRectangle(meter_background_pen.Brush, 0, 0, W, H);
+                var mymox = TimeSinceCameOutOfMox < 800 ? true : mox;
 
-                    getMeterPixelPosAndDrawScales(
-                        1, g, H, W, num, out pixel_x, out pixel_x_swr, 1, false);
+                switch (current_meter_display_mode)
+                {
+                    case MultiMeterDisplayMode.Original:
+                        #region Original
+                        g.FillRectangle(meter_background_pen.Brush, 0, 0, W, H);
 
-                    if ((!mox && current_meter_rx_mode != MeterRXMode.OFF)
-                        || (mox
-                            && !(txMode == MeterTXMode.OFF
-                                || txMode == MeterTXMode.SWR_POWER)))
-                    {
-                        pixel_x = Math.Max(1, pixel_x);
-                        pixel_x = Math.Min(W - 3, pixel_x);
+                        getMeterPixelPosAndDrawScales(
+                            1, g, H, W, num, out pixel_x, out pixel_x_swr, 1, false);
 
-                        if (!mox && num != -200)
-                            storeRX1SignalPixels_X((float)pixel_x / W);
-
-                        using (LinearGradientBrush brush = new LinearGradientBrush(
-                                   new Rectangle(0, 0, pixel_x, H - 10),
-                                   meter_left_color, meter_right_color,
-                                   LinearGradientMode.Horizontal))
-
-                            g.FillRectangle(brush, 0, 0, pixel_x, H - 10);
-
-                        for (int i = 0; i < (W / 8) - 1; i++)
-                            g.DrawLine(meter_background_pen, 8 + i * 8, 0,
-                                8 + i * 8, H - 10);
-
-                        g.DrawLine(Pens.Red, pixel_x, 0, pixel_x, H - 10);
-                        g.FillRectangle(meter_background_pen.Brush, pixel_x + 1, 0,
-                            W - pixel_x, H - 10);
-
-                        if (pixel_x >= meter_peak_value)
+                        if ((!mymox && current_meter_rx_mode != MeterRXMode.OFF)
+                            || (mymox
+                                && !(txMode == MeterTXMode.OFF
+                                    || txMode == MeterTXMode.SWR_POWER)))
                         {
-                            meter_peak_count = 0;
-                            meter_peak_value = pixel_x;
-                        }
-                        else
-                        {
-                            if (meter_peak_count++
-                                >= multimeter_peak_hold_samples)
+                            pixel_x = Math.Max(1, pixel_x);
+                            pixel_x = Math.Min(W - 3, pixel_x);
+
+                            if (!mymox && num != -200)
+                                storeRX1SignalPixels_X((float)pixel_x / W);
+
+                            using (LinearGradientBrush brush = new LinearGradientBrush(
+                                       new Rectangle(0, 0, pixel_x, H - 10),
+                                       meter_left_color, meter_right_color,
+                                       LinearGradientMode.Horizontal))
+
+                                g.FillRectangle(brush, 0, 0, pixel_x, H - 10);
+
+                            for (int i = 0; i < (W / 8) - 1; i++)
+                                g.DrawLine(meter_background_pen, 8 + i * 8, 0,
+                                    8 + i * 8, H - 10);
+
+                            g.DrawLine(Pens.Red, pixel_x, 0, pixel_x, H - 10);
+                            g.FillRectangle(meter_background_pen.Brush, pixel_x + 1, 0,
+                                W - pixel_x, H - 10);
+
+                            if (pixel_x >= meter_peak_value)
                             {
                                 meter_peak_count = 0;
                                 meter_peak_value = pixel_x;
                             }
                             else
                             {
-                                g.DrawLine(Pens.Red, meter_peak_value, 0,
-                                    meter_peak_value, H - 10);
-                                g.DrawLine(Pens.Red, meter_peak_value - 1, 0,
-                                    meter_peak_value - 1, H - 10);
+                                if (meter_peak_count++
+                                    >= multimeter_peak_hold_samples)
+                                {
+                                    meter_peak_count = 0;
+                                    meter_peak_value = pixel_x;
+                                }
+                                else
+                                {
+                                    g.DrawLine(Pens.Red, meter_peak_value, 0,
+                                        meter_peak_value, H - 10);
+                                    g.DrawLine(Pens.Red, meter_peak_value - 1, 0,
+                                        meter_peak_value - 1, H - 10);
+                                }
+                            }
+
+                            if (m_bUseSignalHistory && !mymox
+                                && m_RX1SignalPixels_X.Count > 0)
+                            {
+                                // the history swing
+                                float fMin = m_RX1SignalPixels_X.Min() * W;
+                                float fMax = m_RX1SignalPixels_X.Max() * W;
+                                g.FillRectangle(m_SignalHistoryColourPen.Brush, fMin,
+                                    H - 10, fMax - fMin, 10);
+                                //
                             }
                         }
-
-                        if (m_bUseSignalHistory && !mox
-                            && m_RX1SignalPixels_X.Count > 0)
+                        else if (mymox && txMode == MeterTXMode.SWR_POWER)
                         {
-                            // the history swing
-                            float fMin = m_RX1SignalPixels_X.Min() * W;
-                            float fMax = m_RX1SignalPixels_X.Max() * W;
-                            g.FillRectangle(m_SignalHistoryColourPen.Brush, fMin,
-                                H - 10, fMax - fMin, 10);
-                            //
-                        }
-                    }
-                    else if (mox && txMode == MeterTXMode.SWR_POWER)
-                    {
-                        // MW0LGE to do, just draw lines atm
-                        pixel_x = Math.Max(1, pixel_x);
-                        pixel_x = Math.Min(W - 3, pixel_x);
-                        pixel_x_swr = Math.Max(1, pixel_x_swr);
-                        pixel_x_swr = Math.Min(W - 3, pixel_x_swr);
+                            // MW0LGE to do, just draw lines atm
+                            pixel_x = Math.Max(1, pixel_x);
+                            pixel_x = Math.Min(W - 3, pixel_x);
+                            pixel_x_swr = Math.Max(1, pixel_x_swr);
+                            pixel_x_swr = Math.Min(W - 3, pixel_x_swr);
 
-                        using (LinearGradientBrush brush = new LinearGradientBrush(
-                                   new Rectangle(0, 0, pixel_x_swr, (H / 2) - 8),
-                                   meter_left_color, meter_right_color,
-                                   LinearGradientMode.Horizontal))
-                            g.FillRectangle(brush, 0, 8, pixel_x_swr, (H / 2) - 8);
+                            using (LinearGradientBrush brush = new LinearGradientBrush(
+                                       new Rectangle(0, 0, pixel_x_swr, (H / 2) - 8),
+                                       meter_left_color, meter_right_color,
+                                       LinearGradientMode.Horizontal))
+                                g.FillRectangle(brush, 0, 8, pixel_x_swr, (H / 2) - 8);
 
-                        using (LinearGradientBrush brush = new LinearGradientBrush(
-                                   new Rectangle(0, 0, pixel_x, (H / 2) - 8),
-                                   meter_left_color, meter_right_color,
-                                   LinearGradientMode.Horizontal))
-                            g.FillRectangle(brush, 0, H / 2, pixel_x, (H / 2) - 8);
+                            using (LinearGradientBrush brush = new LinearGradientBrush(
+                                       new Rectangle(0, 0, pixel_x, (H / 2) - 8),
+                                       meter_left_color, meter_right_color,
+                                       LinearGradientMode.Horizontal))
+                                g.FillRectangle(brush, 0, H / 2, pixel_x, (H / 2) - 8);
 
-                        for (int i = 0; i < (W / 8) - 1; i++)
-                        {
-                            g.DrawLine(meter_background_pen, 8 + i * 8, H / 2,
-                                8 + i * 8, H - 8);
-                            g.DrawLine(meter_background_pen, 8 + i * 8, 10,
-                                8 + i * 8, (H / 2) - 8);
-                        }
+                            for (int i = 0; i < (W / 8) - 1; i++)
+                            {
+                                g.DrawLine(meter_background_pen, 8 + i * 8, H / 2,
+                                    8 + i * 8, H - 8);
+                                g.DrawLine(meter_background_pen, 8 + i * 8, 10,
+                                    8 + i * 8, (H / 2) - 8);
+                            }
 
-                        g.DrawLine(Pens.Red, pixel_x, H / 2, pixel_x,
-                            H); // drop down end lines so we can see them
-                        g.DrawLine(Pens.Red, pixel_x_swr, 0, pixel_x_swr, H / 2);
+                            g.DrawLine(Pens.Red, pixel_x, H / 2, pixel_x,
+                                H); // drop down end lines so we can see them
+                            g.DrawLine(Pens.Red, pixel_x_swr, 0, pixel_x_swr, H / 2);
 
-                        g.FillRectangle(meter_background_pen.Brush, pixel_x + 1,
-                            H / 2, W - pixel_x, (H / 2) - 8);
-                        g.FillRectangle(meter_background_pen.Brush, pixel_x_swr + 1,
-                            8, W - pixel_x_swr, (H / 2) - 8);
+                            g.FillRectangle(meter_background_pen.Brush, pixel_x + 1,
+                                H / 2, W - pixel_x, (H / 2) - 8);
+                            g.FillRectangle(meter_background_pen.Brush, pixel_x_swr + 1,
+                                8, W - pixel_x_swr, (H / 2) - 8);
 
-                        if (pixel_x >= meter_peak_value)
-                        {
-                            meter_peak_count = 0;
-                            meter_peak_value = pixel_x;
-                        }
-                        else
-                        {
-                            if (meter_peak_count++
-                                >= multimeter_peak_hold_samples)
+                            if (pixel_x >= meter_peak_value)
                             {
                                 meter_peak_count = 0;
                                 meter_peak_value = pixel_x;
                             }
                             else
                             {
-                                g.DrawLine(Pens.Red, meter_peak_value, H / 2,
-                                    meter_peak_value, H);
-                                g.DrawLine(Pens.Red, meter_peak_value - 1, H / 2,
-                                    meter_peak_value - 1, H);
+                                if (meter_peak_count++
+                                    >= multimeter_peak_hold_samples)
+                                {
+                                    meter_peak_count = 0;
+                                    meter_peak_value = pixel_x;
+                                }
+                                else
+                                {
+                                    g.DrawLine(Pens.Red, meter_peak_value, H / 2,
+                                        meter_peak_value, H);
+                                    g.DrawLine(Pens.Red, meter_peak_value - 1, H / 2,
+                                        meter_peak_value - 1, H);
+                                }
                             }
+
+                            // g.DrawLine(Pens.Red, pixel_x_swr, 0, pixel_x_swr, H / 2);
+                            // g.DrawLine(Pens.Red, pixel_x, H / 2, pixel_x, H);
                         }
-
-                        // g.DrawLine(Pens.Red, pixel_x_swr, 0, pixel_x_swr, H / 2);
-                        // g.DrawLine(Pens.Red, pixel_x, H / 2, pixel_x, H);
-                    }
-                    break;
-                #endregion
-                case MultiMeterDisplayMode.Edge:
-                    #region Edge
-                    g.DrawRectangle(edge_meter_background_pen, 0, 0, W, H);
-
-                    // using (Font f = new Font("Arial", 7.0f, FontStyle.Bold))
-
-                    // MW0LGE moved all code into common function, used by both edge
-                    // and original meter
-                    getMeterPixelPosAndDrawScales(
-                        1, g, H, W, num, out pixel_x, out pixel_x_swr, 12, true);
-                    //-
-
-                    // draw meter movement
-                    if ((!mox && current_meter_rx_mode != MeterRXMode.OFF)
-                        || (mox
-                            && !(txMode == MeterTXMode.OFF
-                                || txMode == MeterTXMode.SWR_POWER)))
-                    {
-                        pixel_x = Math.Max(0, pixel_x);
-                        pixel_x = Math.Min(W - 3, pixel_x);
-
-                        if (!mox && num != -200)
-                            storeRX1SignalPixels_X((float)pixel_x / W);
-
-                        line_dark_pen.Color = Color.FromArgb(
-                            (edge_avg_color.R + edge_meter_background_color.R) / 2,
-                            (edge_avg_color.G + edge_meter_background_color.G) / 2,
-                            (edge_avg_color.B + edge_meter_background_color.B) / 2);
-
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-
-                        if (m_bUseSignalHistory && !mox
-                            && m_RX1SignalPixels_X.Count > 0)
-                        {
-                            // the history swing
-                            float fMin = m_RX1SignalPixels_X.Min() * W;
-                            float fMax = m_RX1SignalPixels_X.Max() * W;
-                            g.FillRectangle(m_SignalHistoryColourPen.Brush, fMin, 0,
-                                fMax - fMin, H);
-                            //
-                        }
-
-                        g.DrawLine(line_dark_pen, pixel_x - 1, 0, pixel_x - 1,
-                            H); // left side
-                        g.DrawLine(line_pen, pixel_x, 0, pixel_x, H); // center line
-                        g.DrawLine(line_dark_pen, pixel_x + 1, 0, pixel_x + 1,
-                            H); // right side
-
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
-                    }
-                    else if (mox && txMode == MeterTXMode.SWR_POWER)
-                    {
-                        pixel_x = Math.Max(0, pixel_x);
-                        pixel_x = Math.Min(W - 3, pixel_x);
-                        pixel_x_swr = Math.Max(0, pixel_x_swr);
-                        pixel_x_swr = Math.Min(W - 3, pixel_x_swr);
-
-                        line_dark_pen.Color = Color.FromArgb(
-                            (edge_avg_color.R + edge_meter_background_color.R) / 2,
-                            (edge_avg_color.G + edge_meter_background_color.G) / 2,
-                            (edge_avg_color.B + edge_meter_background_color.B) / 2);
-
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        if (!mox)
-                        {
-                            g.DrawLine(line_dark_pen, pixel_x - 1, 0, pixel_x - 1,
-                                H); // left side
-                            g.DrawLine(
-                                line_pen, pixel_x, 0, pixel_x, H); // center line
-                            g.DrawLine(line_dark_pen, pixel_x + 1, 0, pixel_x + 1,
-                                H); // right side
-                        }
-                        else
-                        {
-                            g.DrawLine(line_dark_pen, pixel_x - 1, H / 2 + 3,
-                                pixel_x - 1, H); // left side
-                            g.DrawLine(line_pen, pixel_x, H / 2 + 3, pixel_x,
-                                H); // center line
-                            g.DrawLine(line_dark_pen, pixel_x + 1, H / 2 + 3,
-                                pixel_x + 1, H); // right side
-
-                            g.DrawLine(line_dark_pen, pixel_x_swr - 1, 0,
-                                pixel_x_swr - 1, H / 2 - 3); // left side
-                            g.DrawLine(line_pen, pixel_x_swr, 0, pixel_x_swr,
-                                H / 2 - 3); // center line
-                            g.DrawLine(line_dark_pen, pixel_x_swr + 1, 0,
-                                pixel_x_swr + 1, H / 2 - 3); // right side
-                        }
-
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
-                    }
-                    break;
-                #endregion
-                case MultiMeterDisplayMode.Analog:
-                    #region Analog
-
+                        break;
                     #endregion
-                    break;
-            }
+                    case MultiMeterDisplayMode.Edge:
+                        #region Edge
+                        g.DrawRectangle(edge_meter_background_pen, 0, 0, W, H);
 
-            meter_timer.Stop();
+                        // using (Font f = new Font("Arial", 7.0f, FontStyle.Bold))
 
-            string format = "f0";
-            if (meter_detail) format = "f1";
+                        // MW0LGE moved all code into common function, used by both edge
+                        // and original meter
+                        getMeterPixelPosAndDrawScales(
+                            1, g, H, W, num, out pixel_x, out pixel_x_swr, 12, true);
+                        //-
 
-            if (meter_timer.DurationMsec >= meter_dig_delay)
-            {
-                if (!mox)
-                {
-                    switch (current_meter_rx_mode)
-                    {
-                        case MeterRXMode.SIGNAL_STRENGTH:
-                        case MeterRXMode.SIGNAL_AVERAGE:
-                            switch (m_eMeasureMode)
+                        // draw meter movement
+                        if ((!mymox && current_meter_rx_mode != MeterRXMode.OFF)
+                            || (mymox
+                                && !(txMode == MeterTXMode.OFF
+                                    || txMode == MeterTXMode.SWR_POWER)))
+                        {
+                            if (meter_data_is_for_rx)
                             {
-                                case MultiMeterMeasureMode.SMeter:
-                                    // output = getSMeter(1, num);
-                                    output
-                                        = Common.SMeterFromDBM(num, VFOAFreq >= 30);
-                                    break;
-                                case MultiMeterMeasureMode.DBM:
-                                    output = num.ToString(format) + " dBm";
-                                    break;
-                                case MultiMeterMeasureMode.UV:
-                                    if (meter_detail) format = "f2";
-                                    // output = getUVfromDBM(num).ToString(format) +
-                                    // " uV";
-                                    output = Common.UVfromDBM(num).ToString(format)
-                                        + " uV";
-                                    break;
-                            }
-                            break;
-                        case MeterRXMode.ADC_L:
-                        case MeterRXMode.ADC_R:
-                        case MeterRXMode.ADC2_L:
-                        case MeterRXMode.ADC2_R:
-                            output = num.ToString("f1") + " dBFS";
-                            break;
-                        case MeterRXMode.OFF: output = ""; break;
-                    }
-                }
-                else
-                {
-                    // MeterTXMode mode = current_meter_tx_mode;
-                    // if (chkTUN.Checked) mode = tune_meter_tx_mode;
-                    switch (txMode)
-                    {
-                        case MeterTXMode.MIC:
-                        case MeterTXMode.LEVELER:
-                        case MeterTXMode.LVL_G:
-                        case MeterTXMode.EQ:
-                        case MeterTXMode.CFC_PK:
-                        case MeterTXMode.CFC_G:
-                        case MeterTXMode.COMP:
-                        case MeterTXMode.ALC:
-                        case MeterTXMode.ALC_G:
-                        case MeterTXMode.ALC_GROUP:
-                            output = num.ToString(format) + " dB";
-                            break;
-                        case MeterTXMode.FORWARD_POWER:
-                        case MeterTXMode.REVERSE_POWER:
-                        case MeterTXMode.SWR_POWER:
-                            if (current_hpsdr_model == HPSDRModel.ANAN10
-                                || current_hpsdr_model == HPSDRModel.ANAN10E
-                                || apollopresent)
-                                output = num.ToString(format) + " W";
-                            else if (alexpresent || pa_present)
-                                output = num.ToString(format) + " W";
-                            else
-                                output = num.ToString(format) + " mW";
-                            break;
-                        case MeterTXMode.SWR:
-                            output = num.ToString("f1") + " : 1";
-                            break;
-                        case MeterTXMode.OFF: output = ""; break;
-                    }
-                }
-                txtMultiText.Text = output;
-                meter_timer.Start();
-            }
+                                pixel_x = Math.Max(0, pixel_x);
+                                pixel_x = Math.Min(W - 3, pixel_x);
 
-            if (meter_data_ready)
-            {
-                meter_data_ready = false; // We do NOT want to do this before we
-                                          // have consumed it!!!! so do it here.
+                                if (!mymox && num != -200)
+                                {
+                                    if (meter_data_is_for_rx)
+                                        storeRX1SignalPixels_X((float)pixel_x / W);
+                                }
+
+                                line_dark_pen.Color = Color.FromArgb(
+                                    (edge_avg_color.R + edge_meter_background_color.R) / 2,
+                                    (edge_avg_color.G + edge_meter_background_color.G) / 2,
+                                    (edge_avg_color.B + edge_meter_background_color.B) / 2);
+
+                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                                g.SmoothingMode = SmoothingMode.HighQuality;
+
+                                if (m_bUseSignalHistory && !mymox
+                                    && m_RX1SignalPixels_X.Count > 0)
+                                {
+                                    // the history swing
+                                    float fMin = m_RX1SignalPixels_X.Min() * W;
+                                    float fMax = m_RX1SignalPixels_X.Max() * W;
+                                    g.FillRectangle(m_SignalHistoryColourPen.Brush, fMin, 0,
+                                        fMax - fMin, H);
+                                    //
+                                }
+
+
+                                g.DrawLine(line_dark_pen, pixel_x - 1, 0, pixel_x - 1,
+                                    H); // left side
+                                g.DrawLine(line_pen, pixel_x, 0, pixel_x, H); // center line
+                                g.DrawLine(line_dark_pen, pixel_x + 1, 0, pixel_x + 1,
+                                    H); // right side
+
+                                g.InterpolationMode = InterpolationMode.Default;
+                                g.SmoothingMode = SmoothingMode.Default;
+                            }
+
+                        }
+                        else if (mymox && txMode == MeterTXMode.SWR_POWER)
+                        {
+                            pixel_x = Math.Max(0, pixel_x);
+                            pixel_x = Math.Min(W - 3, pixel_x);
+                            pixel_x_swr = Math.Max(0, pixel_x_swr);
+                            pixel_x_swr = Math.Min(W - 3, pixel_x_swr);
+
+                            line_dark_pen.Color = Color.FromArgb(
+                                (edge_avg_color.R + edge_meter_background_color.R) / 2,
+                                (edge_avg_color.G + edge_meter_background_color.G) / 2,
+                                (edge_avg_color.B + edge_meter_background_color.B) / 2);
+
+                            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                            g.SmoothingMode = SmoothingMode.HighQuality;
+                            if (!mymox)
+                            {
+                                g.DrawLine(line_dark_pen, pixel_x - 1, 0, pixel_x - 1,
+                                    H); // left side
+                                g.DrawLine(
+                                    line_pen, pixel_x, 0, pixel_x, H); // center line
+                                g.DrawLine(line_dark_pen, pixel_x + 1, 0, pixel_x + 1,
+                                    H); // right side
+                            }
+                            else
+                            {
+                                g.DrawLine(line_dark_pen, pixel_x - 1, H / 2 + 3,
+                                    pixel_x - 1, H); // left side
+                                g.DrawLine(line_pen, pixel_x, H / 2 + 3, pixel_x,
+                                    H); // center line
+                                g.DrawLine(line_dark_pen, pixel_x + 1, H / 2 + 3,
+                                    pixel_x + 1, H); // right side
+
+                                g.DrawLine(line_dark_pen, pixel_x_swr - 1, 0,
+                                    pixel_x_swr - 1, H / 2 - 3); // left side
+                                g.DrawLine(line_pen, pixel_x_swr, 0, pixel_x_swr,
+                                    H / 2 - 3); // center line
+                                g.DrawLine(line_dark_pen, pixel_x_swr + 1, 0,
+                                    pixel_x_swr + 1, H / 2 - 3); // right side
+                            }
+
+                            g.InterpolationMode = InterpolationMode.Default;
+                            g.SmoothingMode = SmoothingMode.Default;
+                        }
+                        break;
+                    #endregion
+                    case MultiMeterDisplayMode.Analog:
+                        #region Analog
+
+                        #endregion
+                        break;
+                }
+
+                meter_timer.Stop();
+
+                string format = "f0";
+                if (meter_detail) format = "f1";
+
+                if (meter_timer.DurationMsec >= meter_dig_delay)
+                {
+                    if (!mymox)
+                    {
+                        if (meter_data_is_for_rx)
+                        {
+                            switch (current_meter_rx_mode)
+                            {
+
+                                case MeterRXMode.SIGNAL_STRENGTH:
+                                case MeterRXMode.SIGNAL_AVERAGE:
+                                    switch (m_eMeasureMode)
+                                    {
+                                        case MultiMeterMeasureMode.SMeter:
+                                            // output = getSMeter(1, num);
+
+                                            output
+                                                = Common.SMeterFromDBM(num, VFOAFreq >= 30);
+                                            break;
+                                        case MultiMeterMeasureMode.DBM:
+                                            output = num.ToString(format) + " dBm";
+                                            if (num >= -10)
+                                            {
+                                                Debug.Print("Smack!");
+                                            }
+                                            break;
+                                        case MultiMeterMeasureMode.UV:
+                                            if (meter_detail) format = "f2";
+                                            // output = getUVfromDBM(num).ToString(format) +
+                                            // " uV";
+                                            output = Common.UVfromDBM(num).ToString(format)
+                                                + " uV";
+                                            break;
+                                    }
+                                    break;
+                                case MeterRXMode.ADC_L:
+                                case MeterRXMode.ADC_R:
+                                case MeterRXMode.ADC2_L:
+                                case MeterRXMode.ADC2_R:
+                                    output = num.ToString("f1") + " dBFS";
+                                    break;
+                                case MeterRXMode.OFF: output = ""; break;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        if (!meter_data_is_for_rx)
+                        {
+                            // MeterTXMode mode = current_meter_tx_mode;
+                            // if (chkTUN.Checked) mode = tune_meter_tx_mode;
+                            switch (txMode)
+                            {
+                                case MeterTXMode.MIC:
+                                case MeterTXMode.LEVELER:
+                                case MeterTXMode.LVL_G:
+                                case MeterTXMode.EQ:
+                                case MeterTXMode.CFC_PK:
+                                case MeterTXMode.CFC_G:
+                                case MeterTXMode.COMP:
+                                case MeterTXMode.ALC:
+                                case MeterTXMode.ALC_G:
+                                case MeterTXMode.ALC_GROUP:
+                                    output = num.ToString(format) + " dB";
+                                    break;
+                                case MeterTXMode.FORWARD_POWER:
+                                case MeterTXMode.REVERSE_POWER:
+                                case MeterTXMode.SWR_POWER:
+                                    if (current_hpsdr_model == HPSDRModel.ANAN10
+                                        || current_hpsdr_model == HPSDRModel.ANAN10E
+                                        || apollopresent)
+                                        output = num.ToString(format) + " W";
+                                    else if (alexpresent || pa_present)
+                                        output = num.ToString(format) + " W";
+                                    else
+                                        output = num.ToString(format) + " mW";
+                                    break;
+                                case MeterTXMode.SWR:
+                                    output = num.ToString("f1") + " : 1";
+                                    break;
+                                case MeterTXMode.OFF: output = ""; break;
+                            }
+                        }
+                    }
+                    // Debug.Print(output);
+                    txtMultiText.Text = output;
+                    meter_timer.Start();
+                }
+
+                if (meter_data_ready)
+                {
+                    meter_data_ready = false; // We do NOT want to do this before we
+                                              // have consumed it!!!! so do it here.
+                }
             }
         }
 
@@ -28854,169 +28891,206 @@ oldZoomSlider != ptbDisplayZoom.Value*/
         private Dictionary<Reading, float> _RX1MeterValues;
         private Dictionary<Reading, float> _RX2MeterValues;
 
+
+        private volatile bool meter_data_is_for_rx = true;
+        private Object MeterLocker = new object();
+
         private async void UpdateMultimeter()
         {
+
             meter_timer.Start();
             while (chkPower.Checked)
             {
+
+                while (pause_DisplayThread)
+                {
+                    Thread.Sleep(100);
+                    if (Common.Quitting || chkPower.Checked == false)
+                    {
+                        return;
+                    }
+                }
+
                 if (!meter_data_ready)
                 {
-                    if (!mox)
+                    lock (MeterLocker)
                     {
-                        MeterRXMode mode = CurrentMeterRXMode;
-                        float num = 0.0f;
-                        float rx1PreampOffset = 0.0f;
-
-                        if (rx1_step_att_present)
-                            rx1PreampOffset = (float)rx1_attenuator_data;
-                        else
-                            rx1PreampOffset
-                                = rx1_preamp_offset[(int)rx1_preamp_mode];
-
-                        switch (mode)
+                        if (!mox)
                         {
-                            case MeterRXMode.SIGNAL_STRENGTH:
-                                num = WDSP.CalculateRXMeter(
-                                    0, 0, WDSP.MeterType.SIGNAL_STRENGTH);
-                                num = num + rx1_meter_cal_offset + rx1PreampOffset
-                                    + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
+                            if (TimeSinceCameOutOfMox <= 450) // KLJ Avoid S-Meter pegging after tx, especially tuning.
+                            {
+                                new_meter_data = -200;
 
-                                new_meter_data = num;
-                                break;
-                            case MeterRXMode.SIGNAL_AVERAGE:
-                                num = WDSP.CalculateRXMeter(
-                                    0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
-                                num = num + rx1_meter_cal_offset + rx1PreampOffset
-                                    + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
-                                new_meter_data = num;
-                                break;
-                            case MeterRXMode.ADC_L:
-                                num = WDSP.CalculateRXMeter(
-                                    0, 0, WDSP.MeterType.ADC_REAL);
-                                // output = num.ToString("f1")+" dBFS";
-                                new_meter_data = num;
-                                break;
-                            case MeterRXMode.ADC_R:
-                                num = WDSP.CalculateRXMeter(
-                                    0, 0, WDSP.MeterType.ADC_IMAG);
-                                // output = num.ToString("f1")+" dBFS";
-                                new_meter_data = num;
-                                break;
-                            case MeterRXMode.ADC2_L:
-                                num = WDSP.CalculateRXMeter(
-                                    2, 0, WDSP.MeterType.ADC_REAL);
-                                // output = num.ToString("f1")+" dBFS";
-                                new_meter_data = num;
-                                break;
-                            case MeterRXMode.ADC2_R:
-                                num = WDSP.CalculateRXMeter(
-                                    2, 0, WDSP.MeterType.ADC_IMAG);
-                                // output = num.ToString("f1")+" dBFS";
-                                new_meter_data = num;
-                                break;
-                            case MeterRXMode.OFF:
-                                // output = "";
-                                new_meter_data = -200.0f;
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        MeterTXMode mode = CurrentMeterTXMode;
-                        float num = 0f;
+                            }
+                            else
+                            {
+                                MeterRXMode mode = CurrentMeterRXMode;
+                                float num = 0.0f;
+                                float rx1PreampOffset = 0.0f;
 
-                        switch (mode)
-                        {
-                            case MeterTXMode.MIC:
-                                num = (float)Math.Max(-195.0f,
-                                    -WDSP.CalculateTXMeter(
-                                        1, WDSP.MeterType.MIC_PK));
-                                new_meter_data = num;
-                                break;
-                            case MeterTXMode.EQ:
-                                num = (float)Math.Max(-30.0f,
-                                    -WDSP.CalculateTXMeter(
-                                        1, WDSP.MeterType.EQ_PK));
-                                new_meter_data = num;
-                                break;
-                            case MeterTXMode.LEVELER:
-                                num = (float)Math.Max(-30.0f,
-                                    -WDSP.CalculateTXMeter(
-                                        1, WDSP.MeterType.LEVELER_PK));
-                                new_meter_data = num;
-                                break;
-                            case MeterTXMode.LVL_G:
-                                num = (float)Math.Max(0,
-                                    WDSP.CalculateTXMeter(1, WDSP.MeterType.LVL_G));
-                                new_meter_data = num;
-                                break;
-                            case MeterTXMode.CFC_PK:
-                                num = (float)Math.Max(-30.0f,
-                                    -WDSP.CalculateTXMeter(
-                                        1, WDSP.MeterType.CFC_PK));
-                                new_meter_data = num;
-                                break;
-                            case MeterTXMode.CFC_G:
-                                num = (float)Math.Max(0,
-                                    -WDSP.CalculateTXMeter(
-                                        1, WDSP.MeterType.CFC_G));
-                                new_meter_data = num;
-                                break;
-                            case MeterTXMode.COMP:
-                                if (peak_tx_meter)
-                                    num = (float)Math.Max(-30.0f,
-                                        -WDSP.CalculateTXMeter(
-                                            1, WDSP.MeterType.CPDR_PK));
+                                if (rx1_step_att_present)
+                                    rx1PreampOffset = (float)rx1_attenuator_data;
                                 else
-                                    num = (float)Math.Max(-30.0f,
-                                        -WDSP.CalculateTXMeter(
-                                            1, WDSP.MeterType.CPDR));
-                                new_meter_data = num;
-                                break;
-                            case MeterTXMode.ALC:
-                                if (peak_tx_meter)
-                                    num = (float)Math.Max(-30.0f,
-                                        -WDSP.CalculateTXMeter(
-                                            1, WDSP.MeterType.ALC_PK));
-                                else
-                                    num = (float)Math.Max(-30.0f,
-                                        -WDSP.CalculateTXMeter(
-                                            1, WDSP.MeterType.ALC));
-                                new_meter_data = num;
-                                break;
-                            case MeterTXMode.ALC_G:
-                                num = (float)Math.Max(0,
-                                    -WDSP.CalculateTXMeter(
-                                        1, WDSP.MeterType.ALC_G));
-                                new_meter_data = num;
-                                break;
-                            case MeterTXMode.ALC_GROUP: // MW0LGE ALC_GROUP is the
-                                                        // sum of ALC and ALC_G
-                                if (peak_tx_meter)
-                                    num = (float)Math.Max(-30.0f,
-                                        -WDSP.CalculateTXMeter(
-                                            1, WDSP.MeterType.ALC_PK));
-                                else
-                                    num = (float)Math.Max(-30.0f,
-                                        -WDSP.CalculateTXMeter(
-                                            1, WDSP.MeterType.ALC));
+                                    rx1PreampOffset
+                                        = rx1_preamp_offset[(int)rx1_preamp_mode];
 
-                                num += (float)Math.Max(0,
-                                    -WDSP.CalculateTXMeter(
-                                        1, WDSP.MeterType.ALC_G));
-
-                                new_meter_data = num;
-                                break;
-                            case MeterTXMode.FORWARD_POWER:
-                            case MeterTXMode.SWR_POWER:
-                                if (alexpresent || apollopresent)
+                                switch (mode)
                                 {
-                                    if (current_hpsdr_model
-                                        == HPSDRModel.ANAN8000D)
+                                    case MeterRXMode.SIGNAL_STRENGTH:
+                                        num = WDSP.CalculateRXMeter(
+                                            0, 0, WDSP.MeterType.SIGNAL_STRENGTH);
+                                        num = num + rx1_meter_cal_offset + rx1PreampOffset
+                                            + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
+
+                                        new_meter_data = num;
+                                        meter_data_is_for_rx = true;
+                                        break;
+                                    case MeterRXMode.SIGNAL_AVERAGE:
+                                        num = WDSP.CalculateRXMeter(
+                                            0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
+                                        num = num + rx1_meter_cal_offset + rx1PreampOffset
+                                            + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
+                                        new_meter_data = num;
+                                        meter_data_is_for_rx = true;
+                                        break;
+                                    case MeterRXMode.ADC_L:
+                                        num = WDSP.CalculateRXMeter(
+                                            0, 0, WDSP.MeterType.ADC_REAL);
+                                        // output = num.ToString("f1")+" dBFS";
+                                        new_meter_data = num;
+                                        meter_data_is_for_rx = true;
+                                        break;
+                                    case MeterRXMode.ADC_R:
+                                        num = WDSP.CalculateRXMeter(
+                                            0, 0, WDSP.MeterType.ADC_IMAG);
+                                        // output = num.ToString("f1")+" dBFS";
+                                        new_meter_data = num;
+                                        meter_data_is_for_rx = true;
+                                        break;
+                                    case MeterRXMode.ADC2_L:
+                                        num = WDSP.CalculateRXMeter(
+                                            2, 0, WDSP.MeterType.ADC_REAL);
+                                        // output = num.ToString("f1")+" dBFS";
+                                        new_meter_data = num;
+                                        meter_data_is_for_rx = true;
+                                        break;
+                                    case MeterRXMode.ADC2_R:
+                                        num = WDSP.CalculateRXMeter(
+                                            2, 0, WDSP.MeterType.ADC_IMAG);
+                                        // output = num.ToString("f1")+" dBFS";
+                                        new_meter_data = num;
+                                        meter_data_is_for_rx = true;
+                                        break;
+                                    case MeterRXMode.OFF:
+                                        // output = "";
+                                        new_meter_data = -200.0f;
+                                        break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            meter_data_is_for_rx = false;
+                            MeterTXMode mode = CurrentMeterTXMode;
+                            float num = 0f;
+
+                            switch (mode)
+                            {
+                                case MeterTXMode.MIC:
+                                    num = (float)Math.Max(-195.0f,
+                                        -WDSP.CalculateTXMeter(
+                                            1, WDSP.MeterType.MIC_PK));
+                                    new_meter_data = num;
+                                    break;
+                                case MeterTXMode.EQ:
+                                    num = (float)Math.Max(-30.0f,
+                                        -WDSP.CalculateTXMeter(
+                                            1, WDSP.MeterType.EQ_PK));
+                                    new_meter_data = num;
+                                    break;
+                                case MeterTXMode.LEVELER:
+                                    num = (float)Math.Max(-30.0f,
+                                        -WDSP.CalculateTXMeter(
+                                            1, WDSP.MeterType.LEVELER_PK));
+                                    new_meter_data = num;
+                                    break;
+                                case MeterTXMode.LVL_G:
+                                    num = (float)Math.Max(0,
+                                        WDSP.CalculateTXMeter(1, WDSP.MeterType.LVL_G));
+                                    new_meter_data = num;
+                                    break;
+                                case MeterTXMode.CFC_PK:
+                                    num = (float)Math.Max(-30.0f,
+                                        -WDSP.CalculateTXMeter(
+                                            1, WDSP.MeterType.CFC_PK));
+                                    new_meter_data = num;
+                                    break;
+                                case MeterTXMode.CFC_G:
+                                    num = (float)Math.Max(0,
+                                        -WDSP.CalculateTXMeter(
+                                            1, WDSP.MeterType.CFC_G));
+                                    new_meter_data = num;
+                                    break;
+                                case MeterTXMode.COMP:
+                                    if (peak_tx_meter)
+                                        num = (float)Math.Max(-30.0f,
+                                            -WDSP.CalculateTXMeter(
+                                                1, WDSP.MeterType.CPDR_PK));
+                                    else
+                                        num = (float)Math.Max(-30.0f,
+                                            -WDSP.CalculateTXMeter(
+                                                1, WDSP.MeterType.CPDR));
+                                    new_meter_data = num;
+                                    break;
+                                case MeterTXMode.ALC:
+                                    if (peak_tx_meter)
+                                        num = (float)Math.Max(-30.0f,
+                                            -WDSP.CalculateTXMeter(
+                                                1, WDSP.MeterType.ALC_PK));
+                                    else
+                                        num = (float)Math.Max(-30.0f,
+                                            -WDSP.CalculateTXMeter(
+                                                1, WDSP.MeterType.ALC));
+                                    new_meter_data = num;
+                                    break;
+                                case MeterTXMode.ALC_G:
+                                    num = (float)Math.Max(0,
+                                        -WDSP.CalculateTXMeter(
+                                            1, WDSP.MeterType.ALC_G));
+                                    new_meter_data = num;
+                                    break;
+                                case MeterTXMode.ALC_GROUP: // MW0LGE ALC_GROUP is the
+                                                            // sum of ALC and ALC_G
+                                    if (peak_tx_meter)
+                                        num = (float)Math.Max(-30.0f,
+                                            -WDSP.CalculateTXMeter(
+                                                1, WDSP.MeterType.ALC_PK));
+                                    else
+                                        num = (float)Math.Max(-30.0f,
+                                            -WDSP.CalculateTXMeter(
+                                                1, WDSP.MeterType.ALC));
+
+                                    num += (float)Math.Max(0,
+                                        -WDSP.CalculateTXMeter(
+                                            1, WDSP.MeterType.ALC_G));
+
+                                    new_meter_data = num;
+                                    break;
+                                case MeterTXMode.FORWARD_POWER:
+                                case MeterTXMode.SWR_POWER:
+                                    if (alexpresent || apollopresent)
                                     {
-                                        if (tx_xvtr_index >= 0)
+                                        if (current_hpsdr_model
+                                            == HPSDRModel.ANAN8000D)
                                         {
-                                            new_meter_data = drivepwr;
+                                            if (tx_xvtr_index >= 0)
+                                            {
+                                                new_meter_data = drivepwr;
+                                            }
+                                            else
+                                            {
+                                                new_meter_data = calfwdpower;
+                                            }
                                         }
                                         else
                                         {
@@ -29024,54 +29098,55 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                                         }
                                     }
                                     else
+                                        new_meter_data = drivepwr;
+
+                                    if (current_meter_tx_mode == MeterTXMode.SWR_POWER)
+                                        new_swrmeter_data = alex_swr;
+                                    break;
+                                case MeterTXMode.REVERSE_POWER:
+                                    if (alexpresent || apollopresent)
                                     {
-                                        new_meter_data = calfwdpower;
+                                        new_meter_data = (float)alex_rev;
                                     }
-                                }
-                                else
-                                    new_meter_data = drivepwr;
+                                    break;
+                                case MeterTXMode.SWR: new_meter_data = alex_swr; break;
+                                case MeterTXMode.OFF:
+                                    // output = "";
+                                    new_meter_data = -200.0f;
+                                    break;
+                            }
 
-                                if (current_meter_tx_mode == MeterTXMode.SWR_POWER)
-                                    new_swrmeter_data = alex_swr;
-                                break;
-                            case MeterTXMode.REVERSE_POWER:
-                                if (alexpresent || apollopresent)
-                                {
-                                    new_meter_data = (float)alex_rev;
-                                }
-                                break;
-                            case MeterTXMode.SWR: new_meter_data = alex_swr; break;
-                            case MeterTXMode.OFF:
-                                // output = "";
-                                new_meter_data = -200.0f;
-                                break;
+                            if (pa_values)
+                            {
+                                SetupForm.textDriveFwdADCValue.Text
+                                    = average_drvadc.ToString("f0");
+                                SetupForm.textFwdADCValue.Text
+                                    = average_fwdadc.ToString("f0");
+                                SetupForm.textRevADCValue.Text
+                                    = average_revadc.ToString("f0");
+                                // SetupForm.textFwdVoltage.Text =
+                                // fwd_volts.ToString("f2") + " V";
+                                // SetupForm.textRevVoltage.Text =
+                                // rev_volts.ToString("f2") + " V";
+                                SetupForm.textDrivePower.Text
+                                    = average_drivepwr.ToString("f0") + " mW";
+                                SetupForm.textPAFwdPower.Text
+                                    = alex_fwd.ToString("f1") + " W";
+                                SetupForm.textPARevPower.Text
+                                    = alex_rev.ToString("f1") + " W";
+                                SetupForm.textCaldFwdPower.Text
+                                    = calfwdpower.ToString("f1") + " W";
+                                SetupForm.textSWR.Text = alex_swr.ToString("f2") + ":1";
+                            }
                         }
 
-                        if (pa_values)
-                        {
-                            SetupForm.textDriveFwdADCValue.Text
-                                = average_drvadc.ToString("f0");
-                            SetupForm.textFwdADCValue.Text
-                                = average_fwdadc.ToString("f0");
-                            SetupForm.textRevADCValue.Text
-                                = average_revadc.ToString("f0");
-                            // SetupForm.textFwdVoltage.Text =
-                            // fwd_volts.ToString("f2") + " V";
-                            // SetupForm.textRevVoltage.Text =
-                            // rev_volts.ToString("f2") + " V";
-                            SetupForm.textDrivePower.Text
-                                = average_drivepwr.ToString("f0") + " mW";
-                            SetupForm.textPAFwdPower.Text
-                                = alex_fwd.ToString("f1") + " W";
-                            SetupForm.textPARevPower.Text
-                                = alex_rev.ToString("f1") + " W";
-                            SetupForm.textCaldFwdPower.Text
-                                = calfwdpower.ToString("f1") + " W";
-                            SetupForm.textSWR.Text = alex_swr.ToString("f2") + ":1";
-                        }
+
+
+                        meter_data_ready = true;
+                        picMultiMeterDigital.Invalidate();
                     }
-                    meter_data_ready = true;
-                    picMultiMeterDigital.Invalidate();
+
+
                 }
 
                 await Task.Delay(Math.Min(meter_delay, meter_dig_delay));
@@ -29434,7 +29509,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             {
                 average_revadc = alpha * average_revadc + (1.0f - alpha) * adc;
                 // SetupForm.textRevADCValue.Text = adc.ToString();
-                SetupForm.textRevVoltage.Text = volts.ToString("f2") + " V";
+                m_frmSetupForm.textRevVoltage.Text = volts.ToString("f2") + " V";
             }
 
             return watts;
@@ -29507,7 +29582,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 average_fwdadc = alpha * average_fwdadc + (1.0f - alpha) * adc;
                 // SetupForm.textFwdADCValue.Text = adc.ToString();
                 // fwd_volts = volts;
-                SetupForm.textFwdVoltage.Text = volts.ToString("f2") + " V";
+                m_frmSetupForm.textFwdVoltage.Text = volts.ToString("f2") + " V";
             }
             if (watts < 0) watts = 0;
             return watts;
@@ -29524,7 +29599,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     = (float)power_int; // MW0LGE_[2.9.0.7]
             if (PAValues)
             {
-                SetupForm.textDriveFwdADCValue.Text = power_int.ToString();
+                m_frmSetupForm.textDriveFwdADCValue.Text = power_int.ToString();
             }
 
             // SetupForm.txtFwdADCValue.Text = power_int.ToString();
@@ -29586,7 +29661,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     = (float)power_int; // MW0LGE_[2.9.0.7]
             if (PAValues)
             {
-                SetupForm.textDriveFwdADCValue.Text = power_int.ToString();
+                m_frmSetupForm.textDriveFwdADCValue.Text = power_int.ToString();
             }
 
             if (power_int <= 1340)
@@ -29647,7 +29722,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     = (float)power_int; // MW0LGE_[2.9.0.7]
             if (PAValues)
             {
-                SetupForm.textDriveFwdADCValue.Text = power_int.ToString();
+                m_frmSetupForm.textDriveFwdADCValue.Text = power_int.ToString();
             }
 
             if (power_int <= 1340)
@@ -29758,7 +29833,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     = (float)power_int; // MW0LGE_[2.9.0.7]
             if (PAValues)
             {
-                SetupForm.textFwdADCValue.Text = power_int.ToString();
+                m_frmSetupForm.textFwdADCValue.Text = power_int.ToString();
             }
 
             return (float)result;
@@ -30550,125 +30625,171 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             bool swr_pass = false;
             m_bMonTXThreadAlive = true;
 
+
             while (chkPower.Checked)
             {
                 if (mox)
                 {
-                    // computeFwdRevPower(out alex_fwd, out alex_rev);
-                    alex_fwd = computeAlexFwdPower(); // high power
-                    alex_rev = computeRefPower();
+                    while (pause_DisplayThread)
+                    {
+                        lock (MeterLocker)
+                        {
+                            alex_fwd = 0;
+                            alex_rev = 0;
+                            drivepwr = 0;
+                            calfwdpower = 0;
+                            alex_swr = 0;
+                            average_drivepwr = 0;
+                            high_swr_count = 0;
+                            HighSWR = false;
+                        }
+                        Thread.Sleep(50);
+                        if (Common.Quitting || chkPower.Checked == false)
+                        {
+                            m_bMonTXThreadAlive = false;
+                            return;
+                        }
+                    }
+
+                    // KLJ NOTE: we can deadlock because the functions may try to update UI via Invoke(), so they must be done outside the loop
+                    var my_alex_fwd = computeAlexFwdPower(); // high power
+                    var my_alex_rev = computeRefPower();
+                    float my_drivepwr = 0;
+                    float my_calfwdpower = CalibratedPAPower();
 
                     switch (current_hpsdr_model)
                     {
                         case HPSDRModel.ANAN200D:
-                            drivepwr = computeOrionExciterPower();
+                            my_drivepwr = computeOrionExciterPower();
                             break;
                         case HPSDRModel.ORIONMKII:
                         case HPSDRModel.ANAN7000D:
                         case HPSDRModel.ANAN8000D:
-                            drivepwr = computeOrionMkIIExciterPower();
+                            my_drivepwr = computeOrionMkIIExciterPower();
                             break;
                         default:
-                            drivepwr = computeExciterPower(); // low power
+                            my_drivepwr = computeExciterPower(); // low power
                             break;
                     }
 
-                    calfwdpower = CalibratedPAPower();
-                    average_drivepwr
-                        = alpha * average_drivepwr + (1.0f - alpha) * drivepwr;
-
-                    rho = (float)Math.Sqrt(alex_rev / alex_fwd);
-                    if (float.IsNaN(rho) || float.IsInfinity(rho))
-                        swr = 1.0f;
-                    else
-                        swr = (1.0f + rho) / (1.0f - rho);
-
-                    if ((alex_fwd <= 2.0f && alex_rev <= 2.0f) || swr < 1.0f)
-                        swr = 1.0f;
-
-                    if (alexpresent || apollopresent)
+                    // KLJ: now locking this thread because otherwise there are problems with the S-Meter when going from rx to tx
+                    lock (MeterLocker)
                     {
-                        // in following 'if', K2UE recommends not checking open
-                        // antenna for the 8000 model if (swrprotection && alex_fwd
-                        // > 10.0f && (alex_fwd - alex_rev) < 1.0f)
-                        //-W2PA Changed to allow 35w - some amplifier tuners need
-                        // about 30w to reliably start working
-                        if (swrprotection && alex_fwd > 35.0f
-                            && (alex_fwd - alex_rev) < 1.0f
-                            && current_hpsdr_model
-                                != HPSDRModel.ANAN8000D) // open ant condition
+                        // Update these now we have the lock.
+                        alex_fwd = my_alex_fwd;
+                        alex_rev = my_alex_rev;
+                        drivepwr = my_drivepwr;
+
+
+                        calfwdpower = my_calfwdpower;
+                        if (calfwdpower > 38)
+                            Debug.Print("Hi pwr");
+
+                        average_drivepwr
+                            = alpha * average_drivepwr + (1.0f - alpha) * drivepwr;
+
+                        rho = (float)Math.Sqrt(alex_rev / alex_fwd);
+                        if (float.IsNaN(rho) || float.IsInfinity(rho))
+                            swr = 1.0f;
+                        else
+                            swr = (1.0f + rho) / (1.0f - rho);
+
+                        if ((alex_fwd <= 2.0f && alex_rev <= 2.0f) || swr < 1.0f)
+                            swr = 1.0f;
+
+
+                        if (alexpresent || apollopresent)
                         {
-                            swr = 50.0f;
-                            NetworkIO.SWRProtect = 0.01f;
-                            chkMOX.Checked = false;
-                            swr_protected = timeGetTime();
+                            // in following 'if', K2UE recommends not checking open
+                            // antenna for the 8000 model if (swrprotection && alex_fwd
+                            // > 10.0f && (alex_fwd - alex_rev) < 1.0f)
+                            //-W2PA Changed to allow 35w - some amplifier tuners need
+                            // about 30w to reliably start working
+                            if (swrprotection && alex_fwd > 35.0f
+                                && (alex_fwd - alex_rev) < 1.0f
+                                && current_hpsdr_model
+                                    != HPSDRModel.ANAN8000D) // open ant condition
+                            {
+                                swr = 50.0f;
+                                NetworkIO.SWRProtect = 0.01f;
+                                chkMOX.Checked = false;
+                                swr_protected = timeGetTime();
 
-                            goto end;
-                        }
-                    }
-                    else
-                    {
-                        swr = 1.0f;
-                        alex_fwd = 0;
-                        alex_rev = 0;
-                    }
-
-                    if (chkTUN.Checked && disable_swr_on_tune
-                        && (alexpresent || apollopresent))
-                    {
-                        if (alex_fwd >= 1.0f && alex_fwd <= 35.0f
-                            && ptbPWR.Value <= 70)
-                        {
-                            swr_pass = true;
+                                goto end;
+                            }
                         }
                         else
-                            swr_pass = false;
-                    }
+                        {
+                            swr = 1.0f;
+                            alex_fwd = 0;
+                            alex_rev = 0;
+                        }
 
-                    if (tx_xvtr_index >= 0 || hf_tr_relay) swr_pass = true;
 
-                    float alex_fwd_limit = 5.0f;
-                    if (current_hpsdr_model
-                        == HPSDRModel.ANAN8000D) // K2UE idea:  try to determine if
-                                                 // Hi-Z or Lo-Z load
-                        alex_fwd_limit = 2.0f
-                            * (float)ptbPWR.Value; //    by comparing alex_fwd with
-                                                   //    power setting
 
-                    if (swr > 2.0f && alex_fwd > alex_fwd_limit && swrprotection
-                        && !swr_pass)
-                    {
-                        high_swr_count++;
-                        if (high_swr_count >= 4)
+                        if (chkTUN.Checked && disable_swr_on_tune
+                            && (alexpresent || apollopresent))
+                        {
+                            if (alex_fwd >= 1.0f && alex_fwd <= 35.0f
+                                && ptbPWR.Value <= 70)
+                            {
+                                swr_pass = true;
+                            }
+                            else
+                                swr_pass = false;
+                        }
+
+                        if (tx_xvtr_index >= 0 || hf_tr_relay) swr_pass = true;
+
+                        float alex_fwd_limit = 5.0f;
+                        if (current_hpsdr_model
+                            == HPSDRModel.ANAN8000D) // K2UE idea:  try to determine if
+                                                     // Hi-Z or Lo-Z load
+                            alex_fwd_limit = 2.0f
+                                * (float)ptbPWR.Value; //    by comparing alex_fwd with
+                                                       //    power setting_mo
+
+                        if (swr > 2.0f && alex_fwd > alex_fwd_limit && swrprotection
+                            && !swr_pass)
+                        {
+                            high_swr_count++;
+                            if (high_swr_count >= 8)
+                            {
+                                high_swr_count = 0;
+                                NetworkIO.SWRProtect = (float)(2.0f / (swr + 1.0f));
+                                HighSWR = true;
+                                swr_protected = timeGetTime();
+                                chkMOX.Checked = false;
+                                goto end;
+                            }
+                        }
+                        else
                         {
                             high_swr_count = 0;
-                            NetworkIO.SWRProtect = (float)(2.0f / (swr + 1.0f));
-                            HighSWR = true;
-                            swr_protected = timeGetTime();
-
-                            chkMOX.Checked = false;
-                            goto end;
+                            NetworkIO.SWRProtect = 1.0f;
+                            HighSWR = false;
+                            swr_protected = 0;
                         }
-                    }
-                    else
-                    {
-                        high_swr_count = 0;
-                        NetworkIO.SWRProtect = 1.0f;
-                        HighSWR = false;
-                        swr_protected = 0;
-                    }
 
-                end:
-                    swr_pass = false;
-                    if (float.IsNaN(swr) || float.IsInfinity(swr) || swr < 1.0f)
-                        alex_swr = 1.0f;
-                    else
-                        alex_swr = swr;
+
+                    end:
+                        swr_pass = false;
+                        if (float.IsNaN(swr) || float.IsInfinity(swr) || swr < 1.0f)
+                            alex_swr = 1.0f;
+                        else
+                            alex_swr = swr;
+                    }
                 }
                 else if (high_swr)
-                    HighSWR = false;
-                // Thread.Sleep(1);
-                await Task.Delay(1);
+                {
+                    lock (MeterLocker)
+                    {
+                        HighSWR = false;
+                    }
+                }
+
+
+                await Task.Delay(10);
             }
 
             m_bMonTXThreadAlive = false;
@@ -32443,7 +32564,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     Thread.Sleep(1);
                     ctr++;
                     // Debug.Assert(ctr < 500);
-                    if (ctr > 10000) break;
+                    if (ctr > 5000) break;
                 }
 
                 if (poll_pa_pwr_thread == null || !poll_pa_pwr_thread.IsAlive)
@@ -32461,7 +32582,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         Thread.Sleep(1);
                         ctr++;
                         // Debug.Assert(ctr < 500);
-                        if (ctr > 10000) break;
+                        if (ctr > 5000) break;
                     }
                 }
 
@@ -33342,6 +33463,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
         private void Console_Closing(
             object sender, System.ComponentModel.CancelEventArgs e)
         {
+            Common.Quitting = true;
             if (m_tcpTCIServer != null)
             {
                 bool wasRunning = m_tcpTCIServer.IsServerRunning;
@@ -34352,6 +34474,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 UpdateTRXAnt();
             }
         }
+        public int TimeMoxChanged { get; set; }
 
         private CheckState NB_CheckState;
         private void UIMOXChangedTrue()
@@ -34392,6 +34515,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             SetupForm.MOX = chkMOX.Checked;
             ResetMultiMeterPeak();
             picSquelch.Invalidate();
+            TimeMoxChanged = timeGetTime();
         }
 
         private void UIMOXChangedFalse()
@@ -34443,6 +34567,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
 
             picNoiseGate.Invalidate();
 
+            TimeMoxChanged = timeGetTime();
             /*Thread t = new Thread(new ThreadStart(DelayedDisplayReset));
             t.Name = "Display Reset";
             t.Priority = ThreadPriority.BelowNormal;
@@ -34461,13 +34586,24 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             get { return _forceATTwhenPSAoff; }
             set { _forceATTwhenPSAoff = value; }
         }
+        public int TimeWhenCameOutOfMox { get; set; }
+        public int TimeSinceCameOutOfMox
+        {
+            get
+            {
+                if (TimeWhenCameOutOfMox == 0) return int.MaxValue;
+                return timeGetTime() - TimeWhenCameOutOfMox;
+            }
+        }
+
         private void chkMOX_CheckedChanged2(object sender, System.EventArgs e)
         {
-            bool bOldMox
-                = mox; // MW0LGE_21b used for state change delgates at end of fn
+            bool bOldMox = mox; //MW0LGE_21b used for state change delgates at end of fn
+            if (bOldMox && !chkMOX.Checked)
+                TimeWhenCameOutOfMox = timeGetTime();
 
-            MoxPreChangeHandlers?.Invoke(rx2_enabled && VFOBTX ? 2 : 1, mox,
-                chkMOX.Checked); // MW0LGE_21k8
+            Debug.Print("MOx changed started");
+            MoxPreChangeHandlers?.Invoke(rx2_enabled && VFOBTX ? 2 : 1, mox, chkMOX.Checked); // MW0LGE_21k8
 
             NetworkIO.SendHighPriority(1);
             if (rx_only && chkMOX.Checked)
@@ -34476,52 +34612,46 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 return;
             }
 
-            if (chkMOX.Checked)
-            {
-                swr_protected = 0;
-            }
-
-            if (allow_mox_bypass && current_ptt_mode != PTTMode.MIC
-                && current_ptt_mode != PTTMode.SPACE
-                && current_ptt_mode != PTTMode.CAT)
+            pause_DisplayThread = true;
+            if (allow_mox_bypass && current_ptt_mode != PTTMode.MIC &&
+                                    current_ptt_mode != PTTMode.SPACE &&
+                                    current_ptt_mode != PTTMode.CAT)
             {
                 if (chkMOX.Checked)
                 {
-                    if (chkVAC1.Checked) Audio.VACBypass = true;
+                    if (chkVAC1.Checked)
+                        Audio.VACBypass = true;
                 }
                 else
                 {
-                    if (chkVAC1.Checked && Audio.VACBypass) Audio.VACBypass = false;
+                    if (chkVAC1.Checked && Audio.VACBypass)
+                        Audio.VACBypass = false;
                 }
             }
 
             bool tx = chkMOX.Checked;
 
-            if (!tx && CATPTT)
-                CATPTT = false; // MW0LGE [2.9.0.7] we need to abort the CATPTT
-                                // otherwise
-                                //  it will try to PTT again after we stop mox
+            if (!tx && CATPTT) CATPTT = false; //MW0LGE [2.9.0.7] we need to abort the CATPTT otherwise
+                                               // it will try to PTT again after we stop mox
 
             if (tx) mox = tx;
             double freq = 0.0;
-            /*  //MW0LGE [2.9.0.6] removed as peformed in
-            UIMOXChangedTrue/UIMOXChangedFalse if (tx) // change to TX mode
+            /*  //MW0LGE [2.9.0.6] removed as peformed in UIMOXChangedTrue/UIMOXChangedFalse
+            if (tx)                          // change to TX mode
             {
-                DisableAllModes();      //Disallow mode changes in transmit mode
+                DisableAllModes();      //Disallow mode changes in transmit mode               
             }
             else                            // change to RX mode
             {
                 if (!VFOALock)
                 {
-                    EnableAllModes();    //Re-enable mode changes in receive
-            mode
+                    EnableAllModes();    //Re-enable mode changes in receive mode                     
                 }
             }*/
             if (tx)
             {
-                // FM Offsets
-                if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.FM
-                    && current_fm_tx_mode != FMTXMode.Simplex
+                //FM Offsets
+                if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.FM && current_fm_tx_mode != FMTXMode.Simplex
                     && !chkVFOSplit.Checked)
                 {
                     switch (current_fm_tx_mode)
@@ -34548,61 +34678,55 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 else
                     freq = double.Parse(txtVFOAFreq.Text);
 
-                if (chkXIT.Checked) freq += (int)udXIT.Value * 0.000001;
+                if (chkXIT.Checked)
+                    freq += (int)udXIT.Value * 0.000001;
 
                 if (!calibrating)
                 {
-                    // MW0LGE [2.9.0.7]
-                    if (_preventTXonDifferentBandToRXband
-                        && ((!RX2Enabled && VFOBTX && RX1Band != TXBand)
-                            || (RX2Enabled && VFOBTX && RX2Band != TXBand)))
+                    //MW0LGE [2.9.0.7]
+                    if (_preventTXonDifferentBandToRXband && ((!RX2Enabled && VFOBTX && RX1Band != TXBand) || (RX2Enabled && VFOBTX && RX2Band != TXBand)))
                     {
                         // note RX2 enabled with a TXvfoB will always TX
-                        MessageBox.Show(
-                            "Your TX band is different to your RX band and you have selected the option to prevent this.",
-                            "Transmit Error: TX/RX bands different",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error,
-                            MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        MessageBox.Show("Your TX band is different to your RX band and you have selected the option to prevent this.",
+                        "Transmit Error: TX/RX bands different",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
                         chkMOX.Checked = false;
+                        pause_DisplayThread = false;
                         return;
                     }
 
-                    if (tx_band == Band.B60M && current_region == FRSRegion.US
-                        && !extended)
+                    if (tx_band == Band.B60M && current_region == FRSRegion.US && !extended)
                     {
                         switch (radio.GetDSPTX(0).CurrentDSPMode)
                         {
                             case DSPMode.USB:
                             case DSPMode.CWL:
                             case DSPMode.CWU:
-                            case DSPMode.DIGU: break;
+                            case DSPMode.DIGU:
+                                break;
                             default:
-                                MessageBox.Show(rx1_dsp_mode.ToString()
-                                        + " mode is not allowed on 60M band.",
+                                MessageBox.Show(rx1_dsp_mode.ToString() + " mode is not allowed on 60M band.",
                                     "Transmit Error: Mode/Band",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error,
-                                    MessageBoxDefaultButton.Button1,
-                                    Common.MB_TOPMOST);
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                                 chkMOX.Checked = false;
+                                pause_DisplayThread = false;
                                 return;
                         }
                     }
 
-                    if (!CheckValidTXFreq(current_region, freq,
-                            radio.GetDSPTX(0).CurrentDSPMode,
-                            chkTUN.Checked)) // out of band
+                    if (!CheckValidTXFreq(current_region, freq, radio.GetDSPTX(0).CurrentDSPMode, chkTUN.Checked))  // out of band
                     {
-                        if (tx_band == Band.B60M && current_region == FRSRegion.US
-                            && CheckValidTXFreq_Private(current_region, freq)
-                            && !extended)
+                        if (tx_band == Band.B60M && current_region == FRSRegion.US &&
+                            CheckValidTXFreq_Private(current_region, freq) && !extended)
                         {
-                            MessageBox.Show(
-                                "The transmit filter you have selected exceeds the bandwidth\n"
-                                    + "constraints (2.8kHz) for the 60m band in this region.",
-                                "60m Bandwidth", MessageBoxButtons.OK,
-                                MessageBoxIcon.Error,
-                                MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                            MessageBox.Show("The transmit filter you have selected exceeds the bandwidth\n" +
+                                "constraints (2.8kHz) for the 60m band in this region.",
+                                "60m Bandwidth",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                         }
                         else
                         {
@@ -34610,72 +34734,55 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                             {
                                 case DSPMode.CWL:
                                 case DSPMode.CWU:
-                                    MessageBox.Show("The frequency "
-                                            + freq.ToString("f6")
-                                            + "MHz is not within the\n"
-                                            + "Band specifications for your region ("
-                                            + ((int)current_region).ToString()
-                                            + ").",
+                                    MessageBox.Show("The frequency " + freq.ToString("f6") + "MHz is not within the\n" +
+                                        "Band specifications for your region (" + ((int)current_region).ToString() + ").",
                                         "Transmit Error: Out Of Band",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Error,
-                                        MessageBoxDefaultButton.Button1,
-                                        Common.MB_TOPMOST);
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                                     break;
                                 default:
                                     if (!chkTUN.Checked)
                                     {
-                                        MessageBox.Show("The frequency "
-                                                + freq.ToString("f6")
-                                                + "MHz in combination with your TX filter\n"
-                                                + "settings ["
-                                                + Display.TXFilterLow.ToString()
-                                                + ", "
-                                                + Display.TXFilterHigh.ToString()
-                                                + "] are not within the "
-                                                + "Band specifications for your region ("
-                                                + ((int)current_region).ToString()
-                                                + ").",
+                                        MessageBox.Show("The frequency " + freq.ToString("f6") + "MHz in combination with your TX filter\n" +
+                                            "settings [" + Display.TXFilterLow.ToString() + ", " + Display.TXFilterHigh.ToString() + "] are not within the " +
+                                            "Band specifications for your region (" + ((int)current_region).ToString() + ").",
                                             "Transmit Error: Out Of Band",
                                             MessageBoxButtons.OK,
-                                            MessageBoxIcon.Error,
-                                            MessageBoxDefaultButton.Button1,
-                                            Common.MB_TOPMOST);
+                                            MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                                     }
                                     else
                                     {
-                                        MessageBox.Show("The frequency "
-                                                + freq.ToString("f6")
-                                                + "MHz is not within the\n"
-                                                + "Band specifications for your region ("
-                                                + ((int)current_region).ToString()
-                                                + ").",
-                                            "Transmit Error: Out Of Band",
-                                            MessageBoxButtons.OK,
-                                            MessageBoxIcon.Error,
-                                            MessageBoxDefaultButton.Button1,
-                                            Common.MB_TOPMOST);
+                                        MessageBox.Show("The frequency " + freq.ToString("f6") + "MHz is not within the\n" +
+                                               "Band specifications for your region (" + ((int)current_region).ToString() + ").",
+                                               "Transmit Error: Out Of Band",
+                                               MessageBoxButtons.OK,
+                                               MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                                     }
                                     break;
                             }
                         }
                         chkMOX.Checked = false;
+                        pause_DisplayThread = false;
                         return;
                     }
                 }
 
                 switch (rx1_dsp_mode)
                 {
-                    case DSPMode.CWL: freq += (double)cw_pitch * 0.0000010; break;
-                    case DSPMode.CWU: freq -= (double)cw_pitch * 0.0000010; break;
+                    case DSPMode.CWL:
+                        freq += (double)cw_pitch * 0.0000010;
+                        break;
+                    case DSPMode.CWU:
+                        freq -= (double)cw_pitch * 0.0000010;
+                        break;
                 }
             }
             else
             {
                 current_ptt_mode = PTTMode.NONE;
 
-                // Undo FM Offsets
-                if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.FM
-                    && current_fm_tx_mode != FMTXMode.Simplex
+                //Undo FM Offsets
+                if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.FM && current_fm_tx_mode != FMTXMode.Simplex
                     && !chkVFOSplit.Checked)
                 {
                     switch (current_fm_tx_mode)
@@ -34696,30 +34803,16 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 }
             }
 
-            pause_DisplayThread
-                = true; // MW0LGE_21k8 turn display off whilst everything is
-                        // being setup, prevents flashes of pixels etc
-            if (tx) // change to TX mode
+            pause_DisplayThread = true; // MW0LGE_21k8 turn display off whilst everything is being setup, prevents flashes of pixels etc
+            if (tx)                     // change to TX mode
             {
                 //
-                if (!chkTUN.Checked && !chk2TONE.Checked)
-                    ptbPWR_Scroll(
-                        this, EventArgs.Empty); // MW0LGE_22b need this here as we
-                                                // may have adjusted power via tune
-                                                // slider when not in mox
-                                                //
-                if (!full_duplex) // shutdown RX1 and RX2 as appropriate
+                if (!chkTUN.Checked && !chk2TONE.Checked) ptbPWR_Scroll(this, EventArgs.Empty); //MW0LGE_22b need this here as we may have adjusted power via tune slider when not in mox
+                                                                                                //
+                if (!full_duplex)       // shutdown RX1 and RX2 as appropriate
                 {
-                    bool RX1_shutdown = chkVFOATX.Checked
-                        || (chkVFOBTX.Checked && !RX2Enabled) || mute_rx1_on_vfob_tx
-                        || (chkVFOBTX.Checked
-                            && current_hpsdr_model == HPSDRModel.ANAN10E
-                            && psform.PSEnabled);
-                    bool RX2_shutdown = (chkVFOBTX.Checked && RX2Enabled)
-                        || mute_rx2_on_vfoa_tx
-                        || (chkVFOATX.Checked && RX2Enabled
-                            && current_hpsdr_model == HPSDRModel.ANAN10E
-                            && psform.PSEnabled);
+                    bool RX1_shutdown = chkVFOATX.Checked || (chkVFOBTX.Checked && !RX2Enabled) || mute_rx1_on_vfob_tx || (chkVFOBTX.Checked && current_hpsdr_model == HPSDRModel.ANAN10E && psform.PSEnabled);
+                    bool RX2_shutdown = (chkVFOBTX.Checked && RX2Enabled) || mute_rx2_on_vfoa_tx || (chkVFOATX.Checked && RX2Enabled && current_hpsdr_model == HPSDRModel.ANAN10E && psform.PSEnabled);
                     if (RX1_shutdown && !RX2_shutdown)
                     {
                         WDSP.SetChannelState(WDSP.id(0, 1), 0, 0);
@@ -34741,7 +34834,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     {
                         temp_mode = RX1PreampMode;
                         SetupForm.HermesEnableAttenuator = false;
-                        RX1PreampMode = PreampMode.HPSDR_OFF; // set to -20dB
+                        RX1PreampMode = PreampMode.HPSDR_OFF;           // set to -20dB
                         if (rx2_preamp_present)
                         {
                             temp_mode2 = RX2PreampMode;
@@ -34750,66 +34843,55 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     }
                     else
                     {
-                        // if (!chkFWCATUBypass.Checked && // MW0LGE_21k9d changed
-                        // from || to &&
-                        //     (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
-                        //      radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU))
-                        //      SetupForm.ATTOnTX = 31; // reset when PS is OFF or
-                        //      in CW mode
+                        //if (!chkFWCATUBypass.Checked && // MW0LGE_21k9d changed from || to &&
+                        //    (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
+                        //     radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) SetupForm.ATTOnTX = 31; // reset when PS is OFF or in CW mode
 
-                        // MW0LGE [2.9.0.7]
-                        if ((!chkFWCATUBypass.Checked && _forceATTwhenPSAoff)
-                            || (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL
-                                || radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU))
-                            SetupForm.ATTOnTX
-                                = 31; // reset when PS is OFF or in CW mode
+                        //MW0LGE [2.9.0.7]
+                        if ((!chkFWCATUBypass.Checked && _forceATTwhenPSAoff) ||
+                            (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
+                             radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) SetupForm.ATTOnTX = 31; // reset when PS is OFF or in CW mode
 
-                        SetupForm.HermesAttenuatorData
-                            = tx_step_attenuator_by_band[(int)rx1_band];
-                        NetworkIO.SetTxAttenData(
-                            tx_step_attenuator_by_band[(int)rx1_band]);
+                        SetupForm.HermesAttenuatorData = tx_step_attenuator_by_band[(int)rx1_band];
+                        NetworkIO.SetTxAttenData(tx_step_attenuator_by_band[(int)rx1_band]);
                         SetupForm.HermesEnableAttenuator = true;
                         comboRX2Preamp.Enabled = false;
                         udRX2StepAttData.Enabled = false;
                     }
                 }
-                else
-                    NetworkIO.SetTxAttenData(0);
+                else NetworkIO.SetTxAttenData(0);
 
                 UpdateAAudioMixerStates();
                 UpdateDDCs(rx2_enabled);
-                // UpdateRXADCCtrl();
-                HdwMOXChanged(tx, freq); // flip the hardware
+                //UpdateRXADCCtrl();
+                HdwMOXChanged(tx, freq);   // flip the hardware
                 psform.Mox = tx;
-                cmaster.Mox = tx; // loads router bit, among other things
+                cmaster.Mox = tx;          // loads router bit, among other things
 
                 Audio.RX1BlankDisplayTX = blank_rx1_on_vfob_tx;
 
-                if (radio.GetDSPTX(0).CurrentDSPMode != DSPMode.CWL
-                    && radio.GetDSPTX(0).CurrentDSPMode
-                        != DSPMode.CWU) // turn on the transmitter unless in CW mode
+                if (radio.GetDSPTX(0).CurrentDSPMode != DSPMode.CWL &&
+                    radio.GetDSPTX(0).CurrentDSPMode != DSPMode.CWU) // turn on the transmitter unless in CW mode
                 {
-                    if (rf_delay > 0) Thread.Sleep(rf_delay);
-                    AudioMOXChanged(
-                        tx); // set MOX in audio.cs - wait 'til here to allow last
-                             // audio to clear AAMix before changing to MON volume
+                    if (rf_delay > 0)
+                        Thread.Sleep(rf_delay);
+                    AudioMOXChanged(tx);    // set MOX in audio.cs - wait 'til here to allow last audio to clear AAMix before changing to MON volume
                     WDSP.SetChannelState(WDSP.id(1, 0), 1, 0);
                 }
                 else
-                    AudioMOXChanged(tx); // set MOX in audio.cs
+                    AudioMOXChanged(tx);    // set MOX in audio.cs
             }
-            else // change to RX mode
+            else                        // change to RX mode
             {
                 if (space_mox_delay > 0)
                     Thread.Sleep(space_mox_delay); // default 0 // from PSDR MW0LGE
 
                 mox = tx;
                 psform.Mox = tx;
-                WDSP.SetChannelState(WDSP.id(1, 0), 0,
-                    1); // turn off the transmitter (no action if it's already off)
+                WDSP.SetChannelState(WDSP.id(1, 0), 0, 1);  // turn off the transmitter (no action if it's already off)
 
-                if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL
-                    || radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)
+                if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
+                    radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)
                 {
                     if (!cw_fw_keyer && key_up_delay > 0)
                         Thread.Sleep(key_up_delay);
@@ -34817,21 +34899,21 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 else
                 {
                     if (mox_delay > 0)
-                        Thread.Sleep(mox_delay); // default 10, allows in-flight
-                                                 // samples to clear
+                        Thread.Sleep(mox_delay); // default 10, allows in-flight samples to clear
                 }
                 UpdateDDCs(rx2_enabled);
                 UpdateAAudioMixerStates();
-                // UpdateRXADCCtrl();
-                AudioMOXChanged(tx); // set audio.cs to RX
-                HdwMOXChanged(tx, freq); // flip the hardware
-                cmaster.Mox = tx; // loads router bit, among other things
+                //UpdateRXADCCtrl();
+                AudioMOXChanged(tx);    // set audio.cs to RX
+                HdwMOXChanged(tx, freq);// flip the hardware
+                cmaster.Mox = tx;       // loads router bit, among other things
                 if (ptt_out_delay > 0)
-                    Thread.Sleep(ptt_out_delay); // wcp:  added 2018-12-24, time for
-                                                 // HW to switch
-                WDSP.SetChannelState(
-                    WDSP.id(0, 0), 1, 0); // turn on appropriate receivers
-                if (RX2Enabled) WDSP.SetChannelState(WDSP.id(2, 0), 1, 0);
+                    Thread.Sleep(ptt_out_delay);                 //wcp:  added 2018-12-24, time for HW to switch
+
+                // Thread.Sleep(2000);
+                WDSP.SetChannelState(WDSP.id(0, 0), 1, 0);  // turn on appropriate receivers
+                if (RX2Enabled)
+                    WDSP.SetChannelState(WDSP.id(2, 0), 1, 0);
                 if (radio.GetDSPRX(0, 1).Active)
                     WDSP.SetChannelState(WDSP.id(0, 1), 1, 0);
 
@@ -34842,7 +34924,8 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     if (current_hpsdr_model == HPSDRModel.HPSDR)
                     {
                         RX1PreampMode = temp_mode;
-                        if (rx2_preamp_present) RX2PreampMode = temp_mode2;
+                        if (rx2_preamp_present)
+                            RX2PreampMode = temp_mode2;
                     }
                     else
                     {
@@ -34854,8 +34937,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         UpdatePreamps();
                     }
                 }
-                else
-                    NetworkIO.SetTxAttenData(0);
+                else NetworkIO.SetTxAttenData(0);
             }
 
             if (!tx)
@@ -34865,35 +34947,39 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 HighSWR = false;
             }
 
-            if (tx)
-                UIMOXChangedTrue();
-            else
-                UIMOXChangedFalse();
+
+            if (tx) UIMOXChangedTrue();
+            else UIMOXChangedFalse();
             AndromedaIndicatorCheck(EIndicatorActions.eINMOX, false, tx);
 
-            pause_DisplayThread = false; // MW0LGE_21k8 re-enable
+            pause_DisplayThread = false; //MW0LGE_21k8 re-enable
 
-            if (bOldMox != tx)
-                MoxChangeHandlers?.Invoke(
-                    rx2_enabled && VFOBTX ? 2 : 1, bOldMox, tx); // MW0LGE_21a
+
+
+            if (bOldMox != tx) MoxChangeHandlers?.Invoke(rx2_enabled && VFOBTX ? 2 : 1, bOldMox, tx); // MW0LGE_21a
+
+            Debug.Print("Mox changed complete");
         }
 
         private void chkMOX_Click(object sender, System.EventArgs e)
         {
-            if (chkMOX.Checked) // because the CheckedChanged event fires first
+            if (chkMOX.Checked)         // because the CheckedChanged event fires first
             {
                 manual_mox = true;
-                if (cw_fw_keyer
-                    && (RX1DSPMode == DSPMode.CWL || RX1DSPMode == DSPMode.CWU))
+                if (cw_fw_keyer &&
+                   (RX1DSPMode == DSPMode.CWL ||
+                    RX1DSPMode == DSPMode.CWU))
                     NetworkIO.SetPttOut(1);
             }
             else
             {
                 manual_mox = false;
-                if (chkTUN.Checked) chkTUN.Checked = false;
-                if (chk2TONE.Checked) // MW0LGE_21a
+                if (chkTUN.Checked)
+                    chkTUN.Checked = false;
+                if (chk2TONE.Checked) //MW0LGE_21a
                     chk2TONE.Checked = false;
             }
+
         }
 
         private void comboMeterRXMode_SelectedIndexChanged(

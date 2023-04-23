@@ -47,14 +47,8 @@ namespace Thetis.KLJ.Forms
 
         private void btnFind_Click(object sender, EventArgs e)
         {
-            var ctrls = KLJ.Utils.GetAllControls(console.SetupForm);
-            var mylist = new ObjectCollection(listBox1);
-            listBox1.Items.Clear();
-            foreach (var ctrl in ctrls)
-            {
-                mylist.Add(new ControlDetails(ctrl));
-            }
-            this.listBox1.Items.AddRange(mylist);
+            // var ctrls = KLJ.GenericEnumerable.GetAllControls(console.SetupForm);
+            KLJ.Utils.TreeViewFromTabControl(this.Tv, console.SetupForm.tcSetup);
         }
     }
 }
