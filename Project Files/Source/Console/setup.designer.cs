@@ -1860,7 +1860,6 @@
             this.udDisplayFPS = new System.Windows.Forms.NumericUpDownTS();
             this.lblDisplayFPS = new System.Windows.Forms.LabelTS();
             this.tpDisplayTop = new System.Windows.Forms.TabPage();
-            this.chkAveraging = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS21 = new System.Windows.Forms.GroupBoxTS();
             this.chkFillActivePeakHoldRX1 = new System.Windows.Forms.CheckBoxTS();
             this.udActivePeakHoldDropRX1 = new System.Windows.Forms.NumericUpDownTS();
@@ -1891,6 +1890,7 @@
             this.lblDisplayGridMin = new System.Windows.Forms.LabelTS();
             this.lblDisplayGridMax = new System.Windows.Forms.LabelTS();
             this.grpDisplayAverage = new System.Windows.Forms.GroupBoxTS();
+            this.chkAveraging = new System.Windows.Forms.CheckBoxTS();
             this.chkDispNormalize = new System.Windows.Forms.CheckBoxTS();
             this.chkShowRX1NoiseFloor = new System.Windows.Forms.CheckBoxTS();
             this.lblDispAv = new System.Windows.Forms.LabelTS();
@@ -1935,7 +1935,6 @@
             this.lblDisplayWaterfallHighLevel = new System.Windows.Forms.LabelTS();
             this.udDisplayWaterfallHighLevel = new System.Windows.Forms.NumericUpDownTS();
             this.tpDisplayBottom = new System.Windows.Forms.TabPage();
-            this.chkAveragingRX2 = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS20 = new System.Windows.Forms.GroupBoxTS();
             this.chkFillActivePeakHoldRX2 = new System.Windows.Forms.CheckBoxTS();
             this.udActivePeakHoldDropRX2 = new System.Windows.Forms.NumericUpDownTS();
@@ -1992,6 +1991,7 @@
             this.lblRX2DisplayGridMin = new System.Windows.Forms.LabelTS();
             this.lblRX2DisplayGridMax = new System.Windows.Forms.LabelTS();
             this.grpRX2DisplayAverage = new System.Windows.Forms.GroupBoxTS();
+            this.chkAveragingRX2 = new System.Windows.Forms.CheckBoxTS();
             this.chkDispRX2Normalize = new System.Windows.Forms.CheckBoxTS();
             this.chkShowRX2NoiseFloor = new System.Windows.Forms.CheckBoxTS();
             this.lblRX2PanAv = new System.Windows.Forms.LabelTS();
@@ -4421,7 +4421,7 @@
             // 
             this.chkEnableXVTRHF.AutoSize = true;
             this.chkEnableXVTRHF.Image = null;
-            this.chkEnableXVTRHF.Location = new System.Drawing.Point(528, 334);
+            this.chkEnableXVTRHF.Location = new System.Drawing.Point(528, 330);
             this.chkEnableXVTRHF.Name = "chkEnableXVTRHF";
             this.chkEnableXVTRHF.Size = new System.Drawing.Size(107, 17);
             this.chkEnableXVTRHF.TabIndex = 19;
@@ -4436,7 +4436,7 @@
             this.chkBPF2Gnd.Checked = true;
             this.chkBPF2Gnd.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBPF2Gnd.Image = null;
-            this.chkBPF2Gnd.Location = new System.Drawing.Point(528, 312);
+            this.chkBPF2Gnd.Location = new System.Drawing.Point(528, 308);
             this.chkBPF2Gnd.Name = "chkBPF2Gnd";
             this.chkBPF2Gnd.Size = new System.Drawing.Size(105, 17);
             this.chkBPF2Gnd.TabIndex = 16;
@@ -4463,7 +4463,7 @@
             // 
             this.chkEXT2OutOnTx.AutoSize = true;
             this.chkEXT2OutOnTx.Image = null;
-            this.chkEXT2OutOnTx.Location = new System.Drawing.Point(528, 244);
+            this.chkEXT2OutOnTx.Location = new System.Drawing.Point(528, 240);
             this.chkEXT2OutOnTx.Name = "chkEXT2OutOnTx";
             this.chkEXT2OutOnTx.Size = new System.Drawing.Size(92, 17);
             this.chkEXT2OutOnTx.TabIndex = 13;
@@ -4476,7 +4476,7 @@
             // 
             this.chkEXT1OutOnTx.AutoSize = true;
             this.chkEXT1OutOnTx.Image = null;
-            this.chkEXT1OutOnTx.Location = new System.Drawing.Point(528, 264);
+            this.chkEXT1OutOnTx.Location = new System.Drawing.Point(528, 262);
             this.chkEXT1OutOnTx.Name = "chkEXT1OutOnTx";
             this.chkEXT1OutOnTx.Size = new System.Drawing.Size(92, 17);
             this.chkEXT1OutOnTx.TabIndex = 10;
@@ -4530,7 +4530,7 @@
             // 
             this.chkHFTRRelay.AutoSize = true;
             this.chkHFTRRelay.Image = null;
-            this.chkHFTRRelay.Location = new System.Drawing.Point(528, 289);
+            this.chkHFTRRelay.Location = new System.Drawing.Point(528, 284);
             this.chkHFTRRelay.Name = "chkHFTRRelay";
             this.chkHFTRRelay.Size = new System.Drawing.Size(96, 17);
             this.chkHFTRRelay.TabIndex = 7;
@@ -4598,7 +4598,7 @@
             // 
             this.chkRxOutOnTx.AutoSize = true;
             this.chkRxOutOnTx.Image = null;
-            this.chkRxOutOnTx.Location = new System.Drawing.Point(528, 224);
+            this.chkRxOutOnTx.Location = new System.Drawing.Point(528, 218);
             this.chkRxOutOnTx.Name = "chkRxOutOnTx";
             this.chkRxOutOnTx.Size = new System.Drawing.Size(100, 17);
             this.chkRxOutOnTx.TabIndex = 2;
@@ -8989,7 +8989,7 @@
             // labelTS160
             // 
             this.labelTS160.Image = null;
-            this.labelTS160.Location = new System.Drawing.Point(13, 92);
+            this.labelTS160.Location = new System.Drawing.Point(13, 90);
             this.labelTS160.Name = "labelTS160";
             this.labelTS160.Size = new System.Drawing.Size(145, 35);
             this.labelTS160.TabIndex = 15;
@@ -9281,7 +9281,7 @@
             // 
             this.lblQSOTimerSecs.AutoSize = true;
             this.lblQSOTimerSecs.Image = null;
-            this.lblQSOTimerSecs.Location = new System.Drawing.Point(73, 200);
+            this.lblQSOTimerSecs.Location = new System.Drawing.Point(73, 199);
             this.lblQSOTimerSecs.Name = "lblQSOTimerSecs";
             this.lblQSOTimerSecs.Size = new System.Drawing.Size(28, 13);
             this.lblQSOTimerSecs.TabIndex = 8;
@@ -9436,7 +9436,7 @@
             this.groupBoxTS27.Controls.Add(this.labelTS158);
             this.groupBoxTS27.Controls.Add(this.udAmpSens);
             this.groupBoxTS27.Controls.Add(this.udAmpVoff);
-            this.groupBoxTS27.Location = new System.Drawing.Point(541, 11);
+            this.groupBoxTS27.Location = new System.Drawing.Point(541, 8);
             this.groupBoxTS27.Name = "groupBoxTS27";
             this.groupBoxTS27.Size = new System.Drawing.Size(175, 122);
             this.groupBoxTS27.TabIndex = 15;
@@ -10007,12 +10007,12 @@
             // lblGenCalLevelFreq
             // 
             this.lblGenCalLevelFreq.Image = null;
-            this.lblGenCalLevelFreq.Location = new System.Drawing.Point(16, 20);
+            this.lblGenCalLevelFreq.Location = new System.Drawing.Point(16, 24);
             this.lblGenCalLevelFreq.Name = "lblGenCalLevelFreq";
             this.lblGenCalLevelFreq.Size = new System.Drawing.Size(64, 23);
             this.lblGenCalLevelFreq.TabIndex = 0;
             this.lblGenCalLevelFreq.Text = "Frequency:";
-            this.lblGenCalLevelFreq.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblGenCalLevelFreq.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // lblGeneralCalLevel
             // 
@@ -26196,7 +26196,7 @@
             // chkAudioLatencyPAOutManual
             // 
             this.chkAudioLatencyPAOutManual.Image = null;
-            this.chkAudioLatencyPAOutManual.Location = new System.Drawing.Point(84, 124);
+            this.chkAudioLatencyPAOutManual.Location = new System.Drawing.Point(81, 131);
             this.chkAudioLatencyPAOutManual.Name = "chkAudioLatencyPAOutManual";
             this.chkAudioLatencyPAOutManual.Size = new System.Drawing.Size(64, 16);
             this.chkAudioLatencyPAOutManual.TabIndex = 46;
@@ -26236,7 +26236,7 @@
             // chkAudioLatencyPAInManual
             // 
             this.chkAudioLatencyPAInManual.Image = null;
-            this.chkAudioLatencyPAInManual.Location = new System.Drawing.Point(11, 124);
+            this.chkAudioLatencyPAInManual.Location = new System.Drawing.Point(8, 131);
             this.chkAudioLatencyPAInManual.Name = "chkAudioLatencyPAInManual";
             this.chkAudioLatencyPAInManual.Size = new System.Drawing.Size(64, 16);
             this.chkAudioLatencyPAInManual.TabIndex = 43;
@@ -26316,7 +26316,7 @@
             // chkAudioLatencyManual2_Out
             // 
             this.chkAudioLatencyManual2_Out.Image = null;
-            this.chkAudioLatencyManual2_Out.Location = new System.Drawing.Point(84, 56);
+            this.chkAudioLatencyManual2_Out.Location = new System.Drawing.Point(81, 60);
             this.chkAudioLatencyManual2_Out.Name = "chkAudioLatencyManual2_Out";
             this.chkAudioLatencyManual2_Out.Size = new System.Drawing.Size(64, 16);
             this.chkAudioLatencyManual2_Out.TabIndex = 38;
@@ -26356,7 +26356,7 @@
             // chkAudioLatencyManual2
             // 
             this.chkAudioLatencyManual2.Image = null;
-            this.chkAudioLatencyManual2.Location = new System.Drawing.Point(11, 56);
+            this.chkAudioLatencyManual2.Location = new System.Drawing.Point(8, 60);
             this.chkAudioLatencyManual2.Name = "chkAudioLatencyManual2";
             this.chkAudioLatencyManual2.Size = new System.Drawing.Size(64, 16);
             this.chkAudioLatencyManual2.TabIndex = 5;
@@ -26427,7 +26427,7 @@
             "48000",
             "96000",
             "192000"});
-            this.comboAudioSampleRate2.Location = new System.Drawing.Point(284, 17);
+            this.comboAudioSampleRate2.Location = new System.Drawing.Point(284, 18);
             this.comboAudioSampleRate2.Name = "comboAudioSampleRate2";
             this.comboAudioSampleRate2.Size = new System.Drawing.Size(64, 21);
             this.comboAudioSampleRate2.TabIndex = 60;
@@ -26446,7 +26446,7 @@
             "1024",
             "2048",
             "4096"});
-            this.comboAudioBuffer2.Location = new System.Drawing.Point(222, 17);
+            this.comboAudioBuffer2.Location = new System.Drawing.Point(222, 18);
             this.comboAudioBuffer2.Name = "comboAudioBuffer2";
             this.comboAudioBuffer2.Size = new System.Drawing.Size(56, 21);
             this.comboAudioBuffer2.TabIndex = 58;
@@ -26482,7 +26482,7 @@
             this.comboAudioOutput2.ItemHeight = 13;
             this.comboAudioOutput2.Location = new System.Drawing.Point(56, 70);
             this.comboAudioOutput2.Name = "comboAudioOutput2";
-            this.comboAudioOutput2.Size = new System.Drawing.Size(290, 21);
+            this.comboAudioOutput2.Size = new System.Drawing.Size(292, 21);
             this.comboAudioOutput2.TabIndex = 34;
             this.toolTip1.SetToolTip(this.comboAudioOutput2, "Output Audio Device");
             this.comboAudioOutput2.SelectedIndexChanged += new System.EventHandler(this.comboAudioOutput2_SelectedIndexChanged);
@@ -26512,7 +26512,7 @@
             this.comboAudioInput2.ItemHeight = 13;
             this.comboAudioInput2.Location = new System.Drawing.Point(56, 44);
             this.comboAudioInput2.Name = "comboAudioInput2";
-            this.comboAudioInput2.Size = new System.Drawing.Size(290, 21);
+            this.comboAudioInput2.Size = new System.Drawing.Size(292, 21);
             this.comboAudioInput2.TabIndex = 28;
             this.toolTip1.SetToolTip(this.comboAudioInput2, "Input Audio Device");
             this.comboAudioInput2.SelectedIndexChanged += new System.EventHandler(this.comboAudioInput2_SelectedIndexChanged);
@@ -26641,7 +26641,7 @@
             this.ucVAC2VARGrapherIn.BackColor = System.Drawing.Color.Black;
             this.ucVAC2VARGrapherIn.Caption = "In";
             this.ucVAC2VARGrapherIn.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ucVAC2VARGrapherIn.Location = new System.Drawing.Point(437, 376);
+            this.ucVAC2VARGrapherIn.Location = new System.Drawing.Point(429, 373);
             this.ucVAC2VARGrapherIn.Margin = new System.Windows.Forms.Padding(2);
             this.ucVAC2VARGrapherIn.MaxPoints = 272;
             this.ucVAC2VARGrapherIn.Name = "ucVAC2VARGrapherIn";
@@ -26656,7 +26656,7 @@
             this.ucVAC2VARGrapherOut.BackColor = System.Drawing.Color.Black;
             this.ucVAC2VARGrapherOut.Caption = "Out";
             this.ucVAC2VARGrapherOut.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ucVAC2VARGrapherOut.Location = new System.Drawing.Point(437, 313);
+            this.ucVAC2VARGrapherOut.Location = new System.Drawing.Point(429, 310);
             this.ucVAC2VARGrapherOut.Margin = new System.Windows.Forms.Padding(2);
             this.ucVAC2VARGrapherOut.MaxPoints = 272;
             this.ucVAC2VARGrapherOut.Name = "ucVAC2VARGrapherOut";
@@ -26712,7 +26712,7 @@
             this.grpVAC2monitor.Controls.Add(this.lblVAC2ovfl);
             this.grpVAC2monitor.Controls.Add(this.lblVAC2underflows);
             this.grpVAC2monitor.Controls.Add(this.lblVAC2overflows);
-            this.grpVAC2monitor.Location = new System.Drawing.Point(8, 300);
+            this.grpVAC2monitor.Location = new System.Drawing.Point(9, 303);
             this.grpVAC2monitor.Name = "grpVAC2monitor";
             this.grpVAC2monitor.Size = new System.Drawing.Size(413, 133);
             this.grpVAC2monitor.TabIndex = 90;
@@ -27361,9 +27361,9 @@
             this.grpVAC2LatencyManual.Controls.Add(this.labelTS366);
             this.grpVAC2LatencyManual.Controls.Add(this.chkVAC2LatencyManual);
             this.grpVAC2LatencyManual.Controls.Add(this.udVAC2Latency);
-            this.grpVAC2LatencyManual.Location = new System.Drawing.Point(542, 118);
+            this.grpVAC2LatencyManual.Location = new System.Drawing.Point(550, 112);
             this.grpVAC2LatencyManual.Name = "grpVAC2LatencyManual";
-            this.grpVAC2LatencyManual.Size = new System.Drawing.Size(167, 155);
+            this.grpVAC2LatencyManual.Size = new System.Drawing.Size(150, 155);
             this.grpVAC2LatencyManual.TabIndex = 83;
             this.grpVAC2LatencyManual.TabStop = false;
             this.grpVAC2LatencyManual.Text = "Buffer Latency (ms)";
@@ -30320,18 +30320,6 @@
             this.tpDisplayTop.Text = " RX 1";
             this.toolTip1.SetToolTip(this.tpDisplayTop, "Normalize to One Hz Bandwidth for Average & Sample Detectors");
             // 
-            // chkAveraging
-            // 
-            this.chkAveraging.AutoSize = true;
-            this.chkAveraging.Image = null;
-            this.chkAveraging.Location = new System.Drawing.Point(9, 218);
-            this.chkAveraging.Name = "chkAveraging";
-            this.chkAveraging.Size = new System.Drawing.Size(116, 17);
-            this.chkAveraging.TabIndex = 83;
-            this.chkAveraging.Text = "Enable Averaging";
-            this.chkAveraging.UseVisualStyleBackColor = true;
-            this.chkAveraging.CheckedChanged += new System.EventHandler(this.chkAveraging_CheckedChanged);
-            // 
             // groupBoxTS21
             // 
             this.groupBoxTS21.Controls.Add(this.chkFillActivePeakHoldRX1);
@@ -30518,7 +30506,7 @@
             "Rosenfell",
             "Average",
             "Sample"});
-            this.comboDispWFDetector.Location = new System.Drawing.Point(9, 44);
+            this.comboDispWFDetector.Location = new System.Drawing.Point(9, 45);
             this.comboDispWFDetector.Name = "comboDispWFDetector";
             this.comboDispWFDetector.Size = new System.Drawing.Size(104, 21);
             this.comboDispWFDetector.TabIndex = 56;
@@ -30838,6 +30826,18 @@
             this.grpDisplayAverage.TabStop = false;
             this.grpDisplayAverage.Text = "Panadapter";
             // 
+            // chkAveraging
+            // 
+            this.chkAveraging.AutoSize = true;
+            this.chkAveraging.Image = null;
+            this.chkAveraging.Location = new System.Drawing.Point(9, 218);
+            this.chkAveraging.Name = "chkAveraging";
+            this.chkAveraging.Size = new System.Drawing.Size(116, 17);
+            this.chkAveraging.TabIndex = 83;
+            this.chkAveraging.Text = "Enable Averaging";
+            this.chkAveraging.UseVisualStyleBackColor = true;
+            this.chkAveraging.CheckedChanged += new System.EventHandler(this.chkAveraging_CheckedChanged);
+            // 
             // chkDispNormalize
             // 
             this.chkDispNormalize.AutoSize = true;
@@ -31053,7 +31053,7 @@
             // 
             this.labelTS139.AutoSize = true;
             this.labelTS139.Image = null;
-            this.labelTS139.Location = new System.Drawing.Point(118, 13);
+            this.labelTS139.Location = new System.Drawing.Point(115, 12);
             this.labelTS139.Name = "labelTS139";
             this.labelTS139.Size = new System.Drawing.Size(27, 13);
             this.labelTS139.TabIndex = 49;
@@ -31487,18 +31487,6 @@
             this.tpDisplayBottom.TabIndex = 2;
             this.tpDisplayBottom.Text = " RX 2";
             // 
-            // chkAveragingRX2
-            // 
-            this.chkAveragingRX2.AutoSize = true;
-            this.chkAveragingRX2.Image = null;
-            this.chkAveragingRX2.Location = new System.Drawing.Point(9, 218);
-            this.chkAveragingRX2.Name = "chkAveragingRX2";
-            this.chkAveragingRX2.Size = new System.Drawing.Size(116, 17);
-            this.chkAveragingRX2.TabIndex = 84;
-            this.chkAveragingRX2.Text = "Enable Averaging";
-            this.chkAveragingRX2.UseVisualStyleBackColor = true;
-            this.chkAveragingRX2.CheckedChanged += new System.EventHandler(this.chkAveragingRX2_CheckedChanged);
-            // 
             // groupBoxTS20
             // 
             this.groupBoxTS20.Controls.Add(this.chkFillActivePeakHoldRX2);
@@ -31685,7 +31673,7 @@
             "Rosenfell",
             "Average",
             "Sample"});
-            this.comboRX2DispWFDetector.Location = new System.Drawing.Point(9, 44);
+            this.comboRX2DispWFDetector.Location = new System.Drawing.Point(9, 45);
             this.comboRX2DispWFDetector.Name = "comboRX2DispWFDetector";
             this.comboRX2DispWFDetector.Size = new System.Drawing.Size(104, 21);
             this.comboRX2DispWFDetector.TabIndex = 60;
@@ -32399,6 +32387,18 @@
             this.grpRX2DisplayAverage.TabStop = false;
             this.grpRX2DisplayAverage.Text = "Panadapter";
             // 
+            // chkAveragingRX2
+            // 
+            this.chkAveragingRX2.AutoSize = true;
+            this.chkAveragingRX2.Image = null;
+            this.chkAveragingRX2.Location = new System.Drawing.Point(9, 218);
+            this.chkAveragingRX2.Name = "chkAveragingRX2";
+            this.chkAveragingRX2.Size = new System.Drawing.Size(116, 17);
+            this.chkAveragingRX2.TabIndex = 84;
+            this.chkAveragingRX2.Text = "Enable Averaging";
+            this.chkAveragingRX2.UseVisualStyleBackColor = true;
+            this.chkAveragingRX2.CheckedChanged += new System.EventHandler(this.chkAveragingRX2_CheckedChanged);
+            // 
             // chkDispRX2Normalize
             // 
             this.chkDispRX2Normalize.AutoSize = true;
@@ -32612,7 +32612,7 @@
             // 
             this.labelTS141.AutoSize = true;
             this.labelTS141.Image = null;
-            this.labelTS141.Location = new System.Drawing.Point(118, 13);
+            this.labelTS141.Location = new System.Drawing.Point(115, 12);
             this.labelTS141.Name = "labelTS141";
             this.labelTS141.Size = new System.Drawing.Size(27, 13);
             this.labelTS141.TabIndex = 49;
@@ -32942,7 +32942,7 @@
             // 
             this.labelTS386.AutoSize = true;
             this.labelTS386.Image = null;
-            this.labelTS386.Location = new System.Drawing.Point(118, 13);
+            this.labelTS386.Location = new System.Drawing.Point(115, 12);
             this.labelTS386.Name = "labelTS386";
             this.labelTS386.Size = new System.Drawing.Size(27, 13);
             this.labelTS386.TabIndex = 49;
@@ -38762,7 +38762,7 @@
             // 
             this.lblMNFWidth.AutoSize = true;
             this.lblMNFWidth.Image = null;
-            this.lblMNFWidth.Location = new System.Drawing.Point(294, 26);
+            this.lblMNFWidth.Location = new System.Drawing.Point(294, 25);
             this.lblMNFWidth.Name = "lblMNFWidth";
             this.lblMNFWidth.Size = new System.Drawing.Size(61, 13);
             this.lblMNFWidth.TabIndex = 5;
@@ -38772,7 +38772,7 @@
             // 
             this.lblMNFFreq.AutoSize = true;
             this.lblMNFFreq.Image = null;
-            this.lblMNFFreq.Location = new System.Drawing.Point(132, 26);
+            this.lblMNFFreq.Location = new System.Drawing.Point(132, 25);
             this.lblMNFFreq.Name = "lblMNFFreq";
             this.lblMNFFreq.Size = new System.Drawing.Size(128, 13);
             this.lblMNFFreq.TabIndex = 4;
@@ -38782,7 +38782,7 @@
             // 
             this.lblMNFName.AutoSize = true;
             this.lblMNFName.Image = null;
-            this.lblMNFName.Location = new System.Drawing.Point(6, 26);
+            this.lblMNFName.Location = new System.Drawing.Point(6, 25);
             this.lblMNFName.Name = "lblMNFName";
             this.lblMNFName.Size = new System.Drawing.Size(48, 13);
             this.lblMNFName.TabIndex = 3;
@@ -41581,9 +41581,9 @@
             this.grpTXFilter.Controls.Add(this.udTXFilterLow);
             this.grpTXFilter.Controls.Add(this.lblTXFilterLow);
             this.grpTXFilter.Controls.Add(this.udTXFilterHigh);
-            this.grpTXFilter.Location = new System.Drawing.Point(241, 13);
+            this.grpTXFilter.Location = new System.Drawing.Point(241, 8);
             this.grpTXFilter.Name = "grpTXFilter";
-            this.grpTXFilter.Size = new System.Drawing.Size(128, 75);
+            this.grpTXFilter.Size = new System.Drawing.Size(128, 80);
             this.grpTXFilter.TabIndex = 19;
             this.grpTXFilter.TabStop = false;
             this.grpTXFilter.Text = "Transmit Filter";
