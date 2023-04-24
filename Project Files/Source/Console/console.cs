@@ -30799,7 +30799,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                             sleepTime = 1;
                             TimeWhenBadSWRDetected = timeGetTime();
                             Debug.Print("high_swr_count incremented to: " + high_swr_count.ToString());
-                            if (high_swr_count >= 10)
+                            if (high_swr_count >= 4)
                             {
 
                                 NetworkIO.SWRProtect = (float)(2.0f / (swr + 1.0f));
@@ -30815,7 +30815,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         }
                         else
                         {
-                            Debug.Print("high_swr_count reset to zero");
+                            // Debug.Print("high_swr_count reset to zero");
                             high_swr_count = 0;
                             NetworkIO.SWRProtect = 1.0f;
                             HighSWR = false;
@@ -30847,16 +30847,11 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     }
                 }
 
-                // 
-                //Thread.Sleep(10);
-                PAPollTimer.Reset();
-                var t1 = timeGetTime();
-                // Thread.Sleep(sleepTime);#
-                ivac.nanosleepms((ulong)(sleepTime / 10));
 
-                var t2 = timeGetTime();
-                var took = t2 - t1;
-                Debug.Print("Task.Delay() took: " + took.ToString() + " ms.");
+                PAPollTimer.Reset();
+                ivac.nanosleepms((ulong)(sleepTime));
+
+                // Debug.Print("Task.Delay() took: " + took.ToString() + " ms.");
             }
 
             m_bMonTXThreadAlive = false;

@@ -37,6 +37,7 @@ __declspec(align(16)) IVAC pvac[MAX_EXT_VACS];
 // We return a close approximation of how long we slept for, in NANOSECONDS)
 int64_t nanosleep_internal(LONGLONG ns) {
     int64_t StartTicks = getPerfTicks();
+    ns /= 100; // 100 nanoseconds is how it all works
     /* Declarations */
     HANDLE timer; /* Timer handle */
     LARGE_INTEGER li; /* Time defintion */
@@ -48,8 +49,11 @@ int64_t nanosleep_internal(LONGLONG ns) {
         CloseHandle(timer);
         return FALSE;
     }
+    DWORD t1 = timeGetTime();
     /* Start & wait for timer */
     WaitForSingleObject(timer, INFINITE);
+    DWORD t2 = timeGetTime();
+    DWORD took = t2 - t1;
     /* Clean resources */
     CloseHandle(timer);
     /* Slept without problems */
@@ -410,6 +414,11 @@ PORT int StartAudioIVAC(int id) {
         = 2; // this is always 2, regardless of a->num_channels
     a->outParam.suggestedLatency = a->pa_out_latency;
     a->outParam.sampleFormat = paFloat32;
+
+    if (a->inParam.suggestedLatency <= 0)
+        a->inParam.suggestedLatency
+            = 1; // seen a couple issues now the centre around a latency of '0'.
+    if (a->outParam.suggestedLatency <= 0) a->outParam.suggestedLatency = 1;
 
     /*/
 Pa_OpenStream :

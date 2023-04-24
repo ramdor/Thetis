@@ -62,7 +62,7 @@ NANOTIMER_API __int64 perfTicksToNanos(__int64 ticks) {
     if (PerfFreq == 0) {
         return 0;
     }
-    result = (ticks * 1000000000) / PerfFreq;
+    result = (ticks * 1'000'000'000) / PerfFreq;
     return result;
 }
 

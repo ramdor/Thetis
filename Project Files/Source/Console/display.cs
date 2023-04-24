@@ -3460,7 +3460,6 @@ namespace Thetis
                     // HIGH swr display warning
                     if (should_show_high_swr)
                     {
-
                         drawStringDX2D(
                             "High SWR", fontDX2d_font14, m_bDX2_Red, 245, 20);
                         _d2dRenderTarget.DrawRectangle(
