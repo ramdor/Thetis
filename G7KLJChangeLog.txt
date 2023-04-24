@@ -1,3 +1,12 @@
+Mon Apr 24 21:52:06 2023 +0100 - sjk7: Assign ChannelMaster a proper Windows version so the installer understands he must overwrite previous versions. Bump version due to zombie threads fix and aignoring zero-size buffer requests and treating them as 1-byte buffers
+Sun Apr 23 15:21:14 2023 +0100 - sjk7: Metering Racy
+Sun Apr 23 03:25:42 2023 +0100 - sjk7: Fixed racy s-meter/power readings on tx->rx transition. This possibly helps with bogus SWR protection, too
+Fri Apr 21 11:36:28 2023 +0100 - BRUNO: commented out sandbox, G7VKK
+Fri Apr 21 01:03:20 2023 +0100 - sjk7: Saving work, night night
+Thu Apr 20 23:56:04 2023 +0100 - sjk7: Tidy code now that window fades in, as desired.
+Thu Apr 20 11:32:43 2023 +0100 - sjk7: Finally! Console fades in properly. Opacity was 0.01 instead of zero, and this was causing it to flicker up briefly @ startup and this looked 'orrible
+Thu Apr 20 09:06:06 2023 +0100 - sjk7: Added Sandbox project so developers can test new ideas and I am hoping I can use it to see why console is wanky on start-up
+Wed Apr 19 21:43:51 2023 +0100 - sjk7: Changelog
 Wed Apr 19 21:42:46 2023 +0100 - sjk7: Pushes in a twist. This should resolve. Uploaded installer for revision 19.
 Wed Apr 19 21:10:00 2023 +0100 - sjk7: I think finally console restoring size and windowstate correctly, even when collapsed. RestoreBounds is maintained if you close it maximised, and minimise @ start-up is not permitted. Should close #20.
 Wed Apr 19 13:49:45 2023 +0100 - sjk7: Should close #18, Andromeda mode dependent settings bug. Found that form state was not being restored (even though it was being saved) and fixed bug where mode controls suddenly show if you are in Andromeda mode and you click the display. Scared to do any more in case I break stuff!
