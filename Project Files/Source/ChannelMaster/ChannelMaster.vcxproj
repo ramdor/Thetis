@@ -223,6 +223,7 @@
     <ClInclude Include="cmsetup.h" />
     <ClInclude Include="ilv.h" />
     <ClInclude Include="ivac.h" />
+    <ClInclude Include="ivacextras.h" />
     <ClInclude Include="nanotimer.h" />
     <ClInclude Include="network.h" />
     <ClInclude Include="obbuffs.h" />

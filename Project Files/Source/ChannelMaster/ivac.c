@@ -30,6 +30,7 @@ warren@wpratt.com
 #include "pa_win_wasapi.h"
 #include "pa_win_wdmks.h"
 #include "nanotimer.h"
+#include "ivacextras.h"
 
 __declspec(align(16)) IVAC pvac[MAX_EXT_VACS];
 
@@ -271,15 +272,18 @@ int make_ivac_thread_max_priority(IVAC a) {
 static inline void size_64_bit_buffer(IVAC a, size_t sz_bytes) {
     // prepare buffer for conversion, if necessary:
     assert(sz_bytes > 0);
-    size_t tmpsz = sz_bytes * 2; // oversized to avoid re-allocation.
-    if (a->convbuf_size < tmpsz) {
+    size_t tmpsz = sz_bytes * 10; // oversized to avoid re-allocation, when
+                                  // user changes buffer sizes, the least
+                                  // reasonable number of times.
+    const BUFFER_GUARD = 8192;
+    if (a->convbuf_size < sz_bytes + BUFFER_GUARD) {
         if (a->convbuf != 0) {
             free(a->convbuf);
             a->convbuf = 0;
         }
-        a->convbuf = malloc(tmpsz * sizeof(double));
+        a->convbuf = malloc(tmpsz * sizeof(double) + BUFFER_GUARD);
         a->convbuf_size = tmpsz;
-        if (a->convbuf) memset(a->convbuf, 0, a->convbuf_size * sizeof(double));
+        if (a->convbuf) memset(a->convbuf, 0, a->convbuf_size * sizeof(double) + BUFFER_GUARD);
     }
 }
 /*/
@@ -304,77 +308,54 @@ int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
 }
 /*/
 
-#ifdef _DUMP_VAC_AUDIO
-FILE* dumpout = 0;
-FILE* dumpin = 0;
-#endif
-
 int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
     const PaStreamCallbackTimeInfo* ti, PaStreamCallbackFlags f,
     void* userData) {
 
     int id = (int)(ptrdiff_t)userData;
-
     IVAC a = pvac[id];
-    const unsigned int dblSz = sizeof(double);
-    const unsigned int fltSz = sizeof(float);
-
     if (a->have_set_thread_priority == -1) {
         make_ivac_thread_max_priority(a);
     }
 
+    const unsigned int dblSz = sizeof(double);
+    const unsigned int fltSz = sizeof(float);
     const int nch = 2; // it would seem the number of portaudio channels is
                        // always 2, regardless of a->num_channels. // klj
-    const unsigned long floatBufferSize = fltSz * frameCount * nch;
-    const unsigned long dblBufferSize = max(a->INringsize, a->OUTringsize);
 
-    size_64_bit_buffer(a, dblBufferSize);
+    // the total byte count of the input frames
+    const unsigned long floatBufferSizeInBytes = fltSz * frameCount * nch;
+    const unsigned long dblBufferSizeInBytes
+        = max((unsigned int)a->INringsize * sizeof(double),
+            (unsigned int)a->OUTringsize * sizeof(double));
+
+    const unsigned long convBufSizeInBytes = max(dblBufferSizeInBytes,
+        floatBufferSizeInBytes
+            * 2); // *2 because doubles are twice the size of floats.
+    size_64_bit_buffer(a, convBufSizeInBytes);
 
     float* out_ptr = (float*)output;
     float* in_ptr = (float*)input;
+
+    memset(in_ptr, 0, floatBufferSizeInBytes);
+    memset(out_ptr, 0, floatBufferSizeInBytes);
     if (!a->run) {
-        memset(in_ptr, 0, floatBufferSize);
-        memset(out_ptr, 0, floatBufferSize);
         return 0;
     }
-
-#ifdef _DUMP_VAC_AUDIO
-
-    if (dumpin == 0) {
-        dumpin = fopen("MyTestRaw.raw", "w+b");
-        dumpout = fopen("MyTestRawOut.raw", "w+b");
-        assert(dumpin && dumpout);
-    }
-    if (a->id == 0) {
-        errno = 0;
-        fwrite(in_ptr, sizeof(float), (size_t)(frameCount)*a->num_channels,
-            dumpin);
-        assert(errno == 0);
-    } else {
-        // what's the id here
-        volatile int myid = a->id;
-        myid = 0;
-    }
-#endif
-
-    Float32_To_Float64(a->convbuf, 1, in_ptr, 1, frameCount * 2);
+    ////// leaving 32-bit domain ////////
+    Float32_To_Float64(a->convbuf, convBufSizeInBytes, 1, in_ptr,
+        floatBufferSizeInBytes, 1, frameCount * 2);
+    //////////////// all 64-bit here /////////////////////////////////
     xrmatchIN(a->rmatchIN, a->convbuf); // MIC data from VAC
-
     xrmatchOUT(a->rmatchOUT, a->convbuf); // audio or I-Q data to VAC
-#ifdef _DUMP_VAC_AUDIO
-    if (a->id == 0) {
-        errno = 0;
-        fwrite(a->rmatchOUT, sizeof(double),
-            (size_t)(frameCount)*a->num_channels, dumpout);
-        volatile ffs = errno;
-        assert(ffs == 0);
-    } else {
-        // what's the id here
-        volatile int myid = a->id;
-        myid = 0;
-    }
-#endif
-    Float64_To_Float32(out_ptr, 1, a->convbuf, 1, frameCount * 2);
+    //// rate matchers have stuffed their output into our convbuf, so
+    // finally convert it back to 32-bit for the audio device.
+    ////////////////////////////////////////////////////////////////////
+    // we should have at least what we asked for, if not plenty more.
+    assert(a->convbuf_size >= convBufSizeInBytes);
+    ///// leaving 64-bit domain
+    Float64_To_Float32(out_ptr, floatBufferSizeInBytes, 1, a->convbuf,
+        convBufSizeInBytes, 1, frameCount * 2);
 
     return 0;
 }
@@ -462,6 +443,7 @@ Pa_OpenStream :
 
 #pragma warning(disable : 4312)
 
+    puts("Opening stream ...");
     error = Pa_OpenStream(&a->Stream, &a->inParam, &a->outParam, a->vac_rate,
         a->vac_size, // paFramesPerBufferUnspecified,
         0, CallbackIVAC,
@@ -491,6 +473,7 @@ Pa_OpenStream :
 
     if (error != paNoError) return error;
 
+    puts("Starting stream ...");
     error = Pa_StartStream(a->Stream);
 
     if (error != paNoError) return error;
@@ -650,7 +633,9 @@ PORT void SetIVACnumChannels(int id, int n) {
 
 PORT void SetIVACInLatency(int id, double lat, int reset) {
     IVAC a = pvac[id];
-
+    // KLJ: I think this is buggy. If you set a larger
+    // block size after the first initialisation, and the ring size was small,
+    // we get a crash deep in ChannelMaster or WDSP.
     if (a->in_latency != lat) {
         a->in_latency = lat;
         destroy_resamps(a);
@@ -660,9 +645,12 @@ PORT void SetIVACInLatency(int id, double lat, int reset) {
 
 PORT void SetIVACOutLatency(int id, double lat, int reset) {
     IVAC a = pvac[id];
-
+    // KLJ: I think this is buggy. If you set a larger
+    // block size after the first initialisation, and the ring size was small,
+    // we get a crash deep in ChannelMaster or WDSP.
     if (a->out_latency != lat) {
         a->out_latency = lat;
+        create_sync();
         destroy_resamps(a);
         create_resamps(a);
     }

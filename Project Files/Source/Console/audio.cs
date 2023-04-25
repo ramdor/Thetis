@@ -1933,8 +1933,8 @@ namespace Thetis
                 ivac.SetIVACrun(0, 0);
                 ivac.StopAudioIVAC(0);
 
-                Thread.Sleep(100); // MW0LGE_21k9rc4 prevent exception when
-                                   // using ASIO
+                Thread.Sleep(10); // MW0LGE_21k9rc4 prevent exception when
+                                  // using ASIO
             }
         }
 
