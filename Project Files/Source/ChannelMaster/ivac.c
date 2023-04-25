@@ -344,18 +344,19 @@ int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
     if (!a->run) {
         return 0;
     }
-    ////// leaving 32-bit domain ////////
+    ////// leaving 32-bit domain //////////////////////////////////////
     Float32_To_Float64(a->convbuf, convBufSizeInBytes, 1, in_ptr,
         floatBufferSizeInBytes, 1, frameCount * 2);
-    //////////////// all 64-bit here /////////////////////////////////
+    //////////////// all 64-bit here //////////////////////////////////
     xrmatchIN(a->rmatchIN, a->convbuf); // MIC data from VAC
     xrmatchOUT(a->rmatchOUT, a->convbuf); // audio or I-Q data to VAC
     //// rate matchers have stuffed their output into our convbuf, so
     // finally convert it back to 32-bit for the audio device.
-    ////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////
+
     // we should have at least what we asked for, if not plenty more.
     assert(a->convbuf_size >= convBufSizeInBytes);
-    ///// leaving 64-bit domain
+    ///// leaving 64-bit domain ///////////////////////////////////////
     Float64_To_Float32(out_ptr, floatBufferSizeInBytes, 1, a->convbuf,
         convBufSizeInBytes, 1, frameCount * 2);
 
