@@ -283,7 +283,9 @@ static inline void size_64_bit_buffer(IVAC a, size_t sz_bytes) {
         }
         a->convbuf = malloc(tmpsz * sizeof(double) + BUFFER_GUARD);
         a->convbuf_size = tmpsz;
-        if (a->convbuf) memset(a->convbuf, 0, a->convbuf_size * sizeof(double) + BUFFER_GUARD);
+        if (a->convbuf)
+            memset(
+                a->convbuf, 0, a->convbuf_size * sizeof(double) + BUFFER_GUARD);
     }
 }
 /*/
@@ -633,9 +635,6 @@ PORT void SetIVACnumChannels(int id, int n) {
 
 PORT void SetIVACInLatency(int id, double lat, int reset) {
     IVAC a = pvac[id];
-    // KLJ: I think this is buggy. If you set a larger
-    // block size after the first initialisation, and the ring size was small,
-    // we get a crash deep in ChannelMaster or WDSP.
     if (a->in_latency != lat) {
         a->in_latency = lat;
         destroy_resamps(a);
@@ -645,9 +644,6 @@ PORT void SetIVACInLatency(int id, double lat, int reset) {
 
 PORT void SetIVACOutLatency(int id, double lat, int reset) {
     IVAC a = pvac[id];
-    // KLJ: I think this is buggy. If you set a larger
-    // block size after the first initialisation, and the ring size was small,
-    // we get a crash deep in ChannelMaster or WDSP.
     if (a->out_latency != lat) {
         a->out_latency = lat;
         create_sync();
