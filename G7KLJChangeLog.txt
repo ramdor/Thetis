@@ -1,3 +1,5 @@
+Wed Apr 26 05:54:39 2023 +0100 - sjk7: Ampview is required by some users to be 'always on top', so I made it owned by console, rather than making it on top of ALL other windows, andbbreaking the desktop in the process. Also Documentation added in the Documentation/Radio folder for PureSignal feedback studies.
+Tue Apr 25 22:24:28 2023 +0100 - sjk7: Changelog
 Tue Apr 25 22:21:57 2023 +0100 - sjk7: Debug cleanup and bumped CMaster revision
 Tue Apr 25 22:17:41 2023 +0100 - sjk7: Took a looooooooong time to find buffer overruns in ChannelMaster. Fixes and closes #27 and many other weird happenings when changes to VAC are made.
 Tue Apr 25 03:11:10 2023 +0100 - sjk7: Merge pull request #24 from DH1KLM/master
