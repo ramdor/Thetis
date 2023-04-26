@@ -199,6 +199,7 @@
             this.Text = "AmpView 1.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AmpView_FormClosing);
             this.Load += new System.EventHandler(this.AmpView_Load);
+            this.Resize += new System.EventHandler(this.AmpView_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

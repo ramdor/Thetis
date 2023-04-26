@@ -33548,6 +33548,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             object sender, System.ComponentModel.CancelEventArgs e)
         {
             Common.Quitting = true;
+
             if (m_tcpTCIServer != null)
             {
                 bool wasRunning = m_tcpTCIServer.IsServerRunning;
@@ -53881,6 +53882,7 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
             psform.SetupForm(); // EventArgs.Empty); //MW0LGE_21k9d (rc3)
                                 // //MW0LGE_[2.9.0.7]
             psform.Show();
+            psform.WindowState = FormWindowState.Normal; // KLJ
             psform.Focus();
         }
 
@@ -58831,8 +58833,11 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
 
         private void Console_FormClosing(object sender, FormClosingEventArgs e)
         {
+            AppQuitting = true;
             SetupForm.Owner = null; // Don't close setup until we are ready!
         }
+
+        public bool AppQuitting { get; set; }
 
         private void Console_Load(object sender, EventArgs e) { }
 

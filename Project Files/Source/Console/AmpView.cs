@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace Thetis
 {
@@ -15,6 +16,7 @@ namespace Thetis
         private PSForm psform;
         public AmpView(PSForm ps)
         {
+            this.Owner = Audio.console; // KLJ :note the owner is CONSOLE, so it can appear 'on 'top.
             InitializeComponent();
             psform = ps;
         }
@@ -23,14 +25,14 @@ namespace Thetis
         const int max_ints = 16;
         const int max_samps = 4096;
         const int np = 512;
-        double[] x  = new double[max_samps];
+        double[] x = new double[max_samps];
         double[] ym = new double[max_samps];
         double[] yc = new double[max_samps];
         double[] ys = new double[max_samps];
         double[] cm = new double[4 * max_ints];
         double[] cc = new double[4 * max_ints];
         double[] cs = new double[4 * max_ints];
-        double[] t  = new double[max_ints + 1];
+        double[] t = new double[max_ints + 1];
         int skip = 1;
         bool showgain = false;
         private static Object intslock = new Object();
@@ -39,7 +41,7 @@ namespace Thetis
         {
             PSForm.ampv.ClientSize = new System.Drawing.Size(560, 445); //
             Common.RestoreForm(this, "AmpView", false);
-            hx  = GCHandle.Alloc(x,  GCHandleType.Pinned);
+            hx = GCHandle.Alloc(x, GCHandleType.Pinned);
             hym = GCHandle.Alloc(ym, GCHandleType.Pinned);
             hyc = GCHandle.Alloc(yc, GCHandleType.Pinned);
             hys = GCHandle.Alloc(ys, GCHandleType.Pinned);
@@ -69,6 +71,14 @@ namespace Thetis
             chart1.ChartAreas[0].AxisY.TitleForeColor = Color.LightSalmon;
             chart1.ChartAreas[0].AxisY2.Title = "Phase";
             chart1.ChartAreas[0].AxisY2.TitleForeColor = Color.LightSalmon;
+        }
+
+        private void AmpView_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                Debug.Print("minimized");
+            }
         }
 
         private void disp_data()
@@ -143,13 +153,13 @@ namespace Thetis
                 Application.ExitThread();
             }
             disp_setup();
-            puresignal.GetPSDisp(WDSP.id(1, 0), 
+            puresignal.GetPSDisp(WDSP.id(1, 0),
                 hx.AddrOfPinnedObject(),
                 hym.AddrOfPinnedObject(),
                 hyc.AddrOfPinnedObject(),
                 hys.AddrOfPinnedObject(),
-                hcm.AddrOfPinnedObject(), 
-                hcc.AddrOfPinnedObject(), 
+                hcm.AddrOfPinnedObject(),
+                hcc.AddrOfPinnedObject(),
                 hcs.AddrOfPinnedObject());
             lock (intslock)
             {

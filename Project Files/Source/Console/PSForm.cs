@@ -350,10 +350,17 @@ namespace Thetis
         {
             if (ampv != null)
             {
-                _dismissAmpv = true;
-                ampvThread.Join();
-                ampv.Close();
-                ampv = null;
+                if ((e.CloseReason != CloseReason.UserClosing) || Common.Quitting)
+                {
+                    _dismissAmpv = true;
+                    ampvThread.Join();
+                    ampv.Close();
+                    ampv = null;
+                }
+                else
+                {
+                    // leave the ampview on display without the ps form having to be open
+                }
             }
             //_advancedON = true;//MW0LGE_[2.9.0.7]
             // btnPSAdvanced_Click(this, e); //MW0LGE_[2.9.0.7]
@@ -377,6 +384,11 @@ namespace Thetis
                 ampvThread.SetApartmentState(ApartmentState.STA);
                 ampvThread.Name = "Ampv Thread";
                 ampvThread.Start();
+
+            }
+            if (ampv != null && !ampv.IsDisposed)
+            {
+                ampv.Show(Audio.console);
             }
         }
         public bool CanUseAutoCalAsSingle
