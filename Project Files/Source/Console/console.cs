@@ -21622,6 +21622,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             }
         }
 
+        // This means the PA is enabled on HL2
         private bool apollo_tuner_enabled = false;
         public bool ApolloTunerEnabled
         {
@@ -22319,6 +22320,10 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             {
                 chkMOX.Checked = false;
             }
+
+            // KLj: for some reason this leaves us, so the next time we tx into a good load,
+            // we have bugger all power (not agreeing with the power slider)
+            // ptbPWR_Scroll(null, EventArgs.Empty);
         }
 
         private volatile bool high_swr = false;
@@ -22331,6 +22336,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     ComeOutOfTXUrgently();
                 high_swr = value;
                 Display.HighSWR = value;
+                NetworkIO.SWRProtect = 1; // otherwise we are on reduced power forever!
             }
         }
 
@@ -33955,6 +33961,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
 
             int new_pwr = setPowerFromDriveSlider(
                 out bool bUseConstrain, e != EventArgs.Empty);
+
             power_by_band[(int)tx_band] = ptbPWR.Value;
 
             UpdateDriveLabel(lc != null && bUseConstrain, e);
@@ -34010,10 +34017,12 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             //     Audio.RadioVolume = (double)Math.Min((target_volts /
             //     0.8), 1.0);
             // }
-
-            if (sender.GetType() == typeof(PrettyTrackBar))
+            if (sender != null)
             {
-                ptbPWR.Focus();
+                if (sender.GetType() == typeof(PrettyTrackBar))
+                {
+                    ptbPWR.Focus();
+                }
             }
 
             double pct = Convert.ToDouble(new_pwr)
@@ -35413,6 +35422,8 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 // MW0LGE_21k8 moved below mox
                 updateVFOFreqs(chkTUN.Checked, true);
 
+
+
                 current_ptt_mode = PTTMode.MANUAL;
                 manual_mox = true;
 
@@ -35421,8 +35432,9 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         // we switching DB9 pins? 1 & 3 ?
                 NetworkIO.SetUserOut2(1);
 
-                if (apollopresent && apollo_tuner_enabled)
-                    NetworkIO.EnableApolloAutoTune(1);
+                if (apollopresent && apollo_tuner_enabled && !m_frmSetupForm.HermesLite2)
+                    NetworkIO.EnableApolloAutoTune(1); // this makes tun 'dip' momentarily on Hl2
+                return;
             }
             else
             {
