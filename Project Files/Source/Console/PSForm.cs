@@ -866,7 +866,7 @@ namespace Thetis
     unsafe static class puresignal
     {
 
-        static public bool StaticEnabled { get; set; }
+
 
         #region DllImport - Main
 
@@ -944,7 +944,51 @@ namespace Thetis
 
         #endregion
 
+        // what the end-user knows as 'PS-M'
+        public enum StaticCalState
+        {
+            Disabled = 0,
+            Enabled = 2,
+            WaitingForGoodFeedback = 4,
+            HaveGoodFeedback = 8,
+            FullySet = 16
+        }
+
+        public class StaticCal
+        {
+            private float _freq;
+            private StaticCalState _state;
+            private int _feedback_value;
+
+            public void setState(StaticCalState newState)
+            {
+                _state = newState;
+            }
+            public StaticCalState state() { return _state; }
+            public void Reset(bool activate)
+            {
+                _freq = 0;
+                if (activate)
+                {
+                    setState(StaticCalState.Enabled);
+                }
+                else
+                {
+                    setState(StaticCalState.Disabled);
+                }
+            }
+
+            public bool Enabled
+            {
+                get { return (int)_state > 0; }
+            }
+        }
+
+
+
         #region public methods
+
+        public static StaticCal PSMState = new StaticCal();
         public static int[] Info = new int[16];
         private static int[] oldInfo = new int[16];
         private static bool _bInvertRedBlue = false;
@@ -952,6 +996,12 @@ namespace Thetis
         public const double PSPK_FOR_HERMES_LITE = 0.24;
         public const double PSPK_FOR_PROTO1 = 0.4072;
         public const double PSPK_FOR_PROTO2 = 0.2899;
+        static public bool StaticEnabled
+        {
+            get { return PSMState.Enabled; }
+            set { if (value) PSMState.Reset(true); else PSMState.Reset(false); }
+        }
+
         static puresignal()
         {
             for (int i = 0; i < 16; i++)
