@@ -55266,53 +55266,11 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
         private bool ignoreCheck = false;
         private void chkFWCATUBypass_CheckedChanged(object sender, EventArgs e)
         {
-            if (ignoreCheck)
-            {
-                ignoreCheck = false;
-                return;
-            }
+            psform.AutoCalEnabled = chkFWCATUBypass.Checked;
+            AndromedaIndicatorCheck(EIndicatorActions.eINPuresignalEnabled, false, chkFWCATUBypass.Checked);
 
-            bool chk = chkFWCATUBypass.Checked;
-            var txt = chkFWCATUBypass.Text;
-            if (initializing)
-            {
-                psform.AutoCalEnabled = chkFWCATUBypass.Checked;
-
-            }
-            else
-            {
-
-                if (!chk)
-                {
-                    if (txt == "PS-A")
-                    {
-                        chkFWCATUBypass.Text = "PS-M";
-                        psform.ManualCalEnable();
-                        ignoreCheck = true;
-                        chkFWCATUBypass.Checked = true;
-                        ignoreCheck = false;
-                        goto done;
-                    }
-                    else
-                    {
-
-                        psform.TurnOff();
-                        chkFWCATUBypass.Text = "PS-A";
-                    }
-                }
-                else
-                {
-                    psform.AutoCalEnabled = true;
-                    chkFWCATUBypass.Text = "PS-A";
-                }
-            }
-
-        done:
-            AndromedaIndicatorCheck(EIndicatorActions.eINPuresignalEnabled, false,
-                chkFWCATUBypass.Checked);
-
-
-            infoBar.PSAEnabled = psform.AutoCalEnabled || psform.IsSingleCalEnabled;
+            //
+            infoBar.PSAEnabled = psform.AutoCalEnabled;
         }
 
         public bool PureSignalEnabled

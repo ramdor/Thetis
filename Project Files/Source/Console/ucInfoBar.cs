@@ -765,22 +765,15 @@ namespace Thetis
             if (_shutDown) return;
 
             _bCalibrationAttemptsChanged = bCalibrationAttemptsChanged;
-            bool single_cal_mode = _console.psform.SingleCalActive && _console.psform.PSEnabled;
-            bool show_active = _mox && _bCalibrationAttemptsChanged;
-            if (!show_active)
-            {
-                show_active = _mox && single_cal_mode;
 
-            }
-            if (show_active)
+            if (_bCalibrationAttemptsChanged && _mox)
             {
-                _psEnabled = true;
                 _nFeedbackLevel = level;
                 _feedbackColour = feedbackColour;
                 _bCorrectionsBeingApplied = bCorrectionsBeingApplied;
                 _bFeedbackLevelOk = bFeedbackLevelOk;
 
-                updatePSDisplay(_mox && single_cal_mode);
+                updatePSDisplay();
 
                 _psTimer.Start();
             }

@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PSForm));
-            this.chkPSOnTop = new System.Windows.Forms.CheckBoxTS();
             this.lblPSTint = new System.Windows.Forms.LabelTS();
             this.btnPSRestore = new System.Windows.Forms.ButtonTS();
             this.btnPSSave = new System.Windows.Forms.ButtonTS();
@@ -81,31 +81,21 @@
             this.udPSCalWait = new System.Windows.Forms.NumericUpDownTS();
             this.chkQuickAttenuate = new System.Windows.Forms.CheckBoxTS();
             this.chkAdvancedViewHidden = new System.Windows.Forms.CheckBoxTS();
+            this.chkPSManual = new System.Windows.Forms.CheckBoxTS();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.lblPSStatic = new System.Windows.Forms.LabelTS();
             ((System.ComponentModel.ISupportInitialize)(this.udPSMoxDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPSPhnum)).BeginInit();
             this.grpPSInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udPSCalWait)).BeginInit();
             this.SuspendLayout();
             // 
-            // chkPSOnTop
-            // 
-            this.chkPSOnTop.AutoSize = true;
-            this.chkPSOnTop.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.chkPSOnTop.Image = null;
-            this.chkPSOnTop.Location = new System.Drawing.Point(434, 266);
-            this.chkPSOnTop.Name = "chkPSOnTop";
-            this.chkPSOnTop.Size = new System.Drawing.Size(98, 17);
-            this.chkPSOnTop.TabIndex = 48;
-            this.chkPSOnTop.Text = "Always On Top";
-            this.chkPSOnTop.UseVisualStyleBackColor = true;
-            this.chkPSOnTop.CheckedChanged += new System.EventHandler(this.chkPSOnTop_CheckedChanged);
-            // 
             // lblPSTint
             // 
             this.lblPSTint.AutoSize = true;
             this.lblPSTint.ForeColor = System.Drawing.Color.White;
             this.lblPSTint.Image = null;
-            this.lblPSTint.Location = new System.Drawing.Point(431, 130);
+            this.lblPSTint.Location = new System.Drawing.Point(431, 140);
             this.lblPSTint.Name = "lblPSTint";
             this.lblPSTint.Size = new System.Drawing.Size(54, 13);
             this.lblPSTint.TabIndex = 47;
@@ -160,7 +150,7 @@
             "0.5",
             "1.1",
             "2.5"});
-            this.comboPSTint.Location = new System.Drawing.Point(490, 126);
+            this.comboPSTint.Location = new System.Drawing.Point(490, 136);
             this.comboPSTint.Name = "comboPSTint";
             this.comboPSTint.Size = new System.Drawing.Size(57, 21);
             this.comboPSTint.TabIndex = 45;
@@ -172,7 +162,7 @@
             this.chkPSStbl.AutoSize = true;
             this.chkPSStbl.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.chkPSStbl.Image = null;
-            this.chkPSStbl.Location = new System.Drawing.Point(434, 108);
+            this.chkPSStbl.Location = new System.Drawing.Point(498, 113);
             this.chkPSStbl.Name = "chkPSStbl";
             this.chkPSStbl.Size = new System.Drawing.Size(53, 17);
             this.chkPSStbl.TabIndex = 44;
@@ -187,7 +177,7 @@
             this.chkPSMap.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkPSMap.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.chkPSMap.Image = null;
-            this.chkPSMap.Location = new System.Drawing.Point(434, 85);
+            this.chkPSMap.Location = new System.Drawing.Point(498, 90);
             this.chkPSMap.Name = "chkPSMap";
             this.chkPSMap.Size = new System.Drawing.Size(49, 17);
             this.chkPSMap.TabIndex = 43;
@@ -202,7 +192,7 @@
             this.chkPSPin.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkPSPin.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.chkPSPin.Image = null;
-            this.chkPSPin.Location = new System.Drawing.Point(434, 62);
+            this.chkPSPin.Location = new System.Drawing.Point(498, 67);
             this.chkPSPin.Name = "chkPSPin";
             this.chkPSPin.Size = new System.Drawing.Size(44, 17);
             this.chkPSPin.TabIndex = 42;
@@ -784,15 +774,44 @@
             this.chkAdvancedViewHidden.UseVisualStyleBackColor = false;
             this.chkAdvancedViewHidden.Visible = false;
             // 
+            // chkPSManual
+            // 
+            this.chkPSManual.AutoSize = true;
+            this.chkPSManual.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkPSManual.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.chkPSManual.Image = null;
+            this.chkPSManual.Location = new System.Drawing.Point(359, 61);
+            this.chkPSManual.Name = "chkPSManual";
+            this.chkPSManual.Size = new System.Drawing.Size(124, 17);
+            this.chkPSManual.TabIndex = 51;
+            this.chkPSManual.Text = "Enable Static (PS-M)";
+            this.toolTip1.SetToolTip(this.chkPSManual, "This mode is like Single-Cal, but not just for the current transmission.");
+            this.chkPSManual.UseVisualStyleBackColor = true;
+            this.chkPSManual.CheckedChanged += new System.EventHandler(this.chkPSManual_CheckedChanged);
+            // 
+            // lblPSStatic
+            // 
+            this.lblPSStatic.AutoSize = true;
+            this.lblPSStatic.BackColor = System.Drawing.Color.Lime;
+            this.lblPSStatic.Image = null;
+            this.lblPSStatic.Location = new System.Drawing.Point(359, 90);
+            this.lblPSStatic.Name = "lblPSStatic";
+            this.lblPSStatic.Size = new System.Drawing.Size(75, 13);
+            this.lblPSStatic.TabIndex = 52;
+            this.lblPSStatic.Text = "PS-M is active";
+            this.toolTip1.SetToolTip(this.lblPSStatic, "Puresignal parameters are frozen to the last useful value");
+            this.lblPSStatic.Visible = false;
+            // 
             // PSForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(560, 303);
+            this.Controls.Add(this.lblPSStatic);
+            this.Controls.Add(this.chkPSManual);
             this.Controls.Add(this.chkAdvancedViewHidden);
             this.Controls.Add(this.chkQuickAttenuate);
-            this.Controls.Add(this.chkPSOnTop);
             this.Controls.Add(this.lblPSTint);
             this.Controls.Add(this.btnPSRestore);
             this.Controls.Add(this.btnPSSave);
@@ -820,7 +839,6 @@
             this.Controls.Add(this.udPSCalWait);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
             this.Name = "PSForm";
             this.Text = "PureSignal 2.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PSForm_Closing);
@@ -885,9 +903,11 @@
         private System.Windows.Forms.ComboBoxTS comboPSTint;
         private System.Windows.Forms.ButtonTS btnPSAdvanced;
         private System.Windows.Forms.LabelTS lblPSTint;
-        private System.Windows.Forms.CheckBoxTS chkPSOnTop;
         private System.Windows.Forms.CheckBoxTS chkQuickAttenuate;
         private System.Windows.Forms.ButtonTS btnDefaultPeaks;
         private System.Windows.Forms.CheckBoxTS chkAdvancedViewHidden;
+        private System.Windows.Forms.CheckBoxTS chkPSManual;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.LabelTS lblPSStatic;
     }
 }
