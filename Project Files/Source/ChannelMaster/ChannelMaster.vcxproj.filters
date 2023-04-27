@@ -104,9 +104,6 @@
     <ClCompile Include="cmsetup.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ivac.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="pipe.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -159,6 +156,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pro.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ivac.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

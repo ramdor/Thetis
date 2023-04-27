@@ -339,9 +339,9 @@ int CallbackIVAC(const void* input, void* output, unsigned long frameCount,
     float* out_ptr = (float*)output;
     float* in_ptr = (float*)input;
 
+    memset(in_ptr, 0, floatBufferSizeInBytes);
+    memset(out_ptr, 0, floatBufferSizeInBytes);
     if (!a->run) {
-        memset(in_ptr, 0, floatBufferSizeInBytes);
-        memset(out_ptr, 0, floatBufferSizeInBytes);
         return 0;
     }
     ////// leaving 32-bit domain //////////////////////////////////////
