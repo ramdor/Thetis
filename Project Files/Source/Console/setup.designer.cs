@@ -204,7 +204,6 @@
             this.grpInfo = new System.Windows.Forms.GroupBoxTS();
             this.btnErrorLog = new System.Windows.Forms.ButtonTS();
             this.btnExplorer = new System.Windows.Forms.ButtonTS();
-            this.lblDBInfo = new System.Windows.Forms.LabelTS();
             this.lblDataBase = new System.Windows.Forms.LabelTS();
             this.lblDBTitle = new System.Windows.Forms.LabelTS();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -1860,6 +1859,7 @@
             this.udDisplayFPS = new System.Windows.Forms.NumericUpDownTS();
             this.lblDisplayFPS = new System.Windows.Forms.LabelTS();
             this.tpDisplayTop = new System.Windows.Forms.TabPage();
+            this.chkAveraging = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS21 = new System.Windows.Forms.GroupBoxTS();
             this.chkFillActivePeakHoldRX1 = new System.Windows.Forms.CheckBoxTS();
             this.udActivePeakHoldDropRX1 = new System.Windows.Forms.NumericUpDownTS();
@@ -1890,7 +1890,6 @@
             this.lblDisplayGridMin = new System.Windows.Forms.LabelTS();
             this.lblDisplayGridMax = new System.Windows.Forms.LabelTS();
             this.grpDisplayAverage = new System.Windows.Forms.GroupBoxTS();
-            this.chkAveraging = new System.Windows.Forms.CheckBoxTS();
             this.chkDispNormalize = new System.Windows.Forms.CheckBoxTS();
             this.chkShowRX1NoiseFloor = new System.Windows.Forms.CheckBoxTS();
             this.lblDispAv = new System.Windows.Forms.LabelTS();
@@ -1935,6 +1934,7 @@
             this.lblDisplayWaterfallHighLevel = new System.Windows.Forms.LabelTS();
             this.udDisplayWaterfallHighLevel = new System.Windows.Forms.NumericUpDownTS();
             this.tpDisplayBottom = new System.Windows.Forms.TabPage();
+            this.chkAveragingRX2 = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS20 = new System.Windows.Forms.GroupBoxTS();
             this.chkFillActivePeakHoldRX2 = new System.Windows.Forms.CheckBoxTS();
             this.udActivePeakHoldDropRX2 = new System.Windows.Forms.NumericUpDownTS();
@@ -1991,7 +1991,6 @@
             this.lblRX2DisplayGridMin = new System.Windows.Forms.LabelTS();
             this.lblRX2DisplayGridMax = new System.Windows.Forms.LabelTS();
             this.grpRX2DisplayAverage = new System.Windows.Forms.GroupBoxTS();
-            this.chkAveragingRX2 = new System.Windows.Forms.CheckBoxTS();
             this.chkDispRX2Normalize = new System.Windows.Forms.CheckBoxTS();
             this.chkShowRX2NoiseFloor = new System.Windows.Forms.CheckBoxTS();
             this.lblRX2PanAv = new System.Windows.Forms.LabelTS();
@@ -6746,7 +6745,6 @@
             // 
             this.grpInfo.Controls.Add(this.btnErrorLog);
             this.grpInfo.Controls.Add(this.btnExplorer);
-            this.grpInfo.Controls.Add(this.lblDBInfo);
             this.grpInfo.Controls.Add(this.lblDataBase);
             this.grpInfo.Controls.Add(this.lblDBTitle);
             this.grpInfo.Location = new System.Drawing.Point(28, 215);
@@ -6779,16 +6777,6 @@
             this.btnExplorer.Text = "&Open";
             this.btnExplorer.UseVisualStyleBackColor = true;
             this.btnExplorer.Click += new System.EventHandler(this.btnExplorer_Click);
-            // 
-            // lblDBInfo
-            // 
-            this.lblDBInfo.AutoSize = true;
-            this.lblDBInfo.Image = null;
-            this.lblDBInfo.Location = new System.Drawing.Point(97, 78);
-            this.lblDBInfo.Name = "lblDBInfo";
-            this.lblDBInfo.Size = new System.Drawing.Size(228, 13);
-            this.lblDBInfo.TabIndex = 2;
-            this.lblDBInfo.Text = "(Right-click to copy to Windows Clipboard)";
             // 
             // lblDataBase
             // 
@@ -30306,6 +30294,7 @@
             // tpDisplayTop
             // 
             this.tpDisplayTop.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDisplayTop.Controls.Add(this.chkAveraging);
             this.tpDisplayTop.Controls.Add(this.groupBoxTS21);
             this.tpDisplayTop.Controls.Add(this.grpWaterfallAverage);
             this.tpDisplayTop.Controls.Add(this.grpDisplaySpectrumGrid);
@@ -30319,6 +30308,18 @@
             this.tpDisplayTop.TabIndex = 1;
             this.tpDisplayTop.Text = " RX 1";
             this.toolTip1.SetToolTip(this.tpDisplayTop, "Normalize to One Hz Bandwidth for Average & Sample Detectors");
+            // 
+            // chkAveraging
+            // 
+            this.chkAveraging.AutoSize = true;
+            this.chkAveraging.Image = null;
+            this.chkAveraging.Location = new System.Drawing.Point(15, 399);
+            this.chkAveraging.Name = "chkAveraging";
+            this.chkAveraging.Size = new System.Drawing.Size(116, 17);
+            this.chkAveraging.TabIndex = 83;
+            this.chkAveraging.Text = "Enable Averaging";
+            this.chkAveraging.UseVisualStyleBackColor = true;
+            this.chkAveraging.CheckedChanged += new System.EventHandler(this.chkAveraging_CheckedChanged);
             // 
             // groupBoxTS21
             // 
@@ -30809,7 +30810,6 @@
             // 
             // grpDisplayAverage
             // 
-            this.grpDisplayAverage.Controls.Add(this.chkAveraging);
             this.grpDisplayAverage.Controls.Add(this.chkDispNormalize);
             this.grpDisplayAverage.Controls.Add(this.chkShowRX1NoiseFloor);
             this.grpDisplayAverage.Controls.Add(this.lblDispAv);
@@ -30825,18 +30825,6 @@
             this.grpDisplayAverage.TabIndex = 38;
             this.grpDisplayAverage.TabStop = false;
             this.grpDisplayAverage.Text = "Panadapter";
-            // 
-            // chkAveraging
-            // 
-            this.chkAveraging.AutoSize = true;
-            this.chkAveraging.Image = null;
-            this.chkAveraging.Location = new System.Drawing.Point(9, 218);
-            this.chkAveraging.Name = "chkAveraging";
-            this.chkAveraging.Size = new System.Drawing.Size(116, 17);
-            this.chkAveraging.TabIndex = 83;
-            this.chkAveraging.Text = "Enable Averaging";
-            this.chkAveraging.UseVisualStyleBackColor = true;
-            this.chkAveraging.CheckedChanged += new System.EventHandler(this.chkAveraging_CheckedChanged);
             // 
             // chkDispNormalize
             // 
@@ -31474,6 +31462,7 @@
             // tpDisplayBottom
             // 
             this.tpDisplayBottom.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDisplayBottom.Controls.Add(this.chkAveragingRX2);
             this.tpDisplayBottom.Controls.Add(this.groupBoxTS20);
             this.tpDisplayBottom.Controls.Add(this.grpRX2DisplayAveraging);
             this.tpDisplayBottom.Controls.Add(this.grpRX2DisplayWaterfall);
@@ -31486,6 +31475,18 @@
             this.tpDisplayBottom.Size = new System.Drawing.Size(721, 435);
             this.tpDisplayBottom.TabIndex = 2;
             this.tpDisplayBottom.Text = " RX 2";
+            // 
+            // chkAveragingRX2
+            // 
+            this.chkAveragingRX2.AutoSize = true;
+            this.chkAveragingRX2.Image = null;
+            this.chkAveragingRX2.Location = new System.Drawing.Point(15, 399);
+            this.chkAveragingRX2.Name = "chkAveragingRX2";
+            this.chkAveragingRX2.Size = new System.Drawing.Size(116, 17);
+            this.chkAveragingRX2.TabIndex = 85;
+            this.chkAveragingRX2.Text = "Enable Averaging";
+            this.chkAveragingRX2.UseVisualStyleBackColor = true;
+            this.chkAveragingRX2.CheckedChanged += new System.EventHandler(this.chkAveragingRX2_CheckedChanged);
             // 
             // groupBoxTS20
             // 
@@ -32371,7 +32372,6 @@
             // 
             // grpRX2DisplayAverage
             // 
-            this.grpRX2DisplayAverage.Controls.Add(this.chkAveragingRX2);
             this.grpRX2DisplayAverage.Controls.Add(this.chkDispRX2Normalize);
             this.grpRX2DisplayAverage.Controls.Add(this.chkShowRX2NoiseFloor);
             this.grpRX2DisplayAverage.Controls.Add(this.lblRX2PanAv);
@@ -32386,18 +32386,6 @@
             this.grpRX2DisplayAverage.TabIndex = 47;
             this.grpRX2DisplayAverage.TabStop = false;
             this.grpRX2DisplayAverage.Text = "Panadapter";
-            // 
-            // chkAveragingRX2
-            // 
-            this.chkAveragingRX2.AutoSize = true;
-            this.chkAveragingRX2.Image = null;
-            this.chkAveragingRX2.Location = new System.Drawing.Point(9, 218);
-            this.chkAveragingRX2.Name = "chkAveragingRX2";
-            this.chkAveragingRX2.Size = new System.Drawing.Size(116, 17);
-            this.chkAveragingRX2.TabIndex = 84;
-            this.chkAveragingRX2.Text = "Enable Averaging";
-            this.chkAveragingRX2.UseVisualStyleBackColor = true;
-            this.chkAveragingRX2.CheckedChanged += new System.EventHandler(this.chkAveragingRX2_CheckedChanged);
             // 
             // chkDispRX2Normalize
             // 
@@ -55531,6 +55519,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayPeakText)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayFPS)).EndInit();
             this.tpDisplayTop.ResumeLayout(false);
+            this.tpDisplayTop.PerformLayout();
             this.groupBoxTS21.ResumeLayout(false);
             this.groupBoxTS21.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDropRX1)).EndInit();
@@ -55558,6 +55547,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallLowLevel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallHighLevel)).EndInit();
             this.tpDisplayBottom.ResumeLayout(false);
+            this.tpDisplayBottom.PerformLayout();
             this.groupBoxTS20.ResumeLayout(false);
             this.groupBoxTS20.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDropRX2)).EndInit();
@@ -59602,11 +59592,9 @@
         private Label lblSampleRate;
         private CheckBoxTS chkExclusive;
         private GroupBoxTS grpInfo;
-        private LabelTS lblDBInfo;
         private LabelTS lblDataBase;
         private LabelTS lblDBTitle;
         private CheckBoxTS chkAveraging;
-        private CheckBoxTS chkAveragingRX2;
         private LabelTS labelTS178;
         private Label lblBuffer;
         private CheckBoxTS chkHermesLite2;
@@ -59631,5 +59619,6 @@
         private Panel pnlRXSRWarn;
         private Label lblRadioSamplerateWarn;
         private PictureBox pbRXSRWarn;
+        private CheckBoxTS chkAveragingRX2;
     }
 }

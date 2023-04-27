@@ -9230,7 +9230,9 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             if (Display.CurrentDisplayMode != DisplayMode.SPECTRUM
                 && Display.CurrentDisplayMode != DisplayMode.HISTOGRAM
                 && Display.CurrentDisplayMode != DisplayMode.SPECTRASCOPE)
+            {
                 return;
+            }
             int low = 0, high = 0;
             const int extra = 1000;
             const int little_extra = 500;
@@ -9272,7 +9274,9 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             if (Display.CurrentDisplayMode != DisplayMode.SPECTRUM
                 && Display.CurrentDisplayMode != DisplayMode.HISTOGRAM
                 && Display.CurrentDisplayMode != DisplayMode.SPECTRASCOPE)
+            {
                 return;
+            }
 
             int low = 0, high = 0;
             int spec_blocksize = radio.GetDSPTX(0).BufferSize;
@@ -48869,6 +48873,24 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
 
             if (comboRX2DisplayMode.Focused) btnHidden.Focus();
         }
+
+        public bool AveragingOn
+        {
+            get
+            {
+                return chkDisplayAVG.Checked;
+            }
+        }
+
+        // Bring display into sane-land.
+        public void ToggleAverage()
+        {
+            bool orig_state = chkDisplayAVG.Checked;
+            chkDisplayAVG.Checked = !chkDisplayAVG.Checked;
+            chkDisplayAVG.Checked = orig_state;
+        }
+
+
 
         private void chkRX2DisplayAVG_CheckedChanged(
             object sender, System.EventArgs e)

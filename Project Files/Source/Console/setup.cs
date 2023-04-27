@@ -239,7 +239,7 @@ namespace Thetis
             this.Text = "Setup and Options for Thetis " + Application.ProductVersion;
             Debug.Assert(afterConstructCounter == 0);
             afterConstructCounter++;
-            lblDBInfo.MouseUp += lblDataBase_MouseUp; // so it doesn't matter _which_ one you right-click
+            // lblDBInfo.MouseUp += lblDataBase_MouseUp; // so it doesn't matter _which_ one you right-click
 
             // KLJ
             this.Hl2 = new HL2(console, this);
@@ -20909,6 +20909,8 @@ namespace Thetis
                 = comboDispPanAveraging.SelectedIndex;
             console.UpdateRXSpectrumDisplayVars();
             console.UpdateTXSpectrumDisplayVars();
+            console.ToggleAverage();
+
         }
 
         private void comboDispWFAveraging_SelectedIndexChanged(
@@ -20916,6 +20918,7 @@ namespace Thetis
         {
             console.specRX.GetSpecRX(0).AverageModeWF
                 = comboDispWFAveraging.SelectedIndex;
+            console.ToggleAverage();
         }
 
         private void udDisplayAVTimeWF_ValueChanged(object sender, EventArgs e)
@@ -28954,6 +28957,7 @@ namespace Thetis
         {
 
         }
+
     }
 
 
