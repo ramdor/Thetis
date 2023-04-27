@@ -34692,9 +34692,11 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 return timeGetTime() - TimeWhenCameOutOfMox;
             }
         }
+        public int TimeWhenMoxChanged { get; set; }
 
         private void chkMOX_CheckedChanged2(object sender, System.EventArgs e)
         {
+            TimeWhenMoxChanged = timeGetTime();
             bool bOldMox = mox; //MW0LGE_21b used for state change delgates at end of fn
             if (bOldMox && !chkMOX.Checked)
                 TimeWhenCameOutOfMox = timeGetTime();
@@ -34981,6 +34983,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             }
             else                        // change to RX mode
             {
+                HdwMOXChanged(tx, freq);// flip the hardware
                 if (space_mox_delay > 0)
                     Thread.Sleep(space_mox_delay); // default 0 // from PSDR MW0LGE
 
@@ -35001,9 +35004,9 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 }
                 UpdateDDCs(rx2_enabled);
                 UpdateAAudioMixerStates();
-                //UpdateRXADCCtrl();
+
                 AudioMOXChanged(tx);    // set audio.cs to RX
-                HdwMOXChanged(tx, freq);// flip the hardware
+                // HdwMOXChanged(tx, freq);// flip the hardware
                 cmaster.Mox = tx;       // loads router bit, among other things
                 if (ptt_out_delay > 0)
                     Thread.Sleep(ptt_out_delay);                 //wcp:  added 2018-12-24, time for HW to switch

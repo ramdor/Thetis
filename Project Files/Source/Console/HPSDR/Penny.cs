@@ -26,33 +26,36 @@
 
 namespace Thetis
 {
-	using System;
-	/// <summary>
-	/// Summary description for Penny.
-	/// </summary>
-	public class Penny
-	{
-		private static Penny theSingleton = null;
+    using System;
+    using System.Diagnostics;
+    using System.Runtime.CompilerServices;
+
+    /// <summary>
+    /// Summary description for Penny.
+    /// </summary>
+    public class Penny
+    {
+        private static Penny theSingleton = null;
 
         private static object m_objLock = new Object();
 
-		public  static Penny getPenny() 
-		{
+        public static Penny getPenny()
+        {
             //lock ( typeof(Penny) )    // https://bytes.com/topic/c-sharp/answers/249277-dont-lock-type-objects
             lock (m_objLock)
-			{
-				if ( theSingleton == null ) 
-				{ 
-					theSingleton = new Penny(); 
-				} 
-			}
-			return theSingleton; 
-		} 
+            {
+                if (theSingleton == null)
+                {
+                    theSingleton = new Penny();
+                }
+            }
+            return theSingleton;
+        }
 
-		private Penny()
-		{		
-			//init
-			for(int pin=0; pin<7; pin++)
+        private Penny()
+        {
+            //init
+            for (int pin = 0; pin < 7; pin++)
             {
                 for (int group = 0; group < 3; group++)
                 {
@@ -61,14 +64,14 @@ namespace Thetis
                     RXPinPA[group, pin] = false;
                 }
             }
-		}
+        }
 
-		private byte[] TXABitMasks = new byte[41]; //25
-		private byte[] RXABitMasks = new byte[41];
+        private byte[] TXABitMasks = new byte[41]; //25
+        private byte[] RXABitMasks = new byte[41];
         private byte[] TXBBitMasks = new byte[41];
         private byte[] RXBBitMasks = new byte[41];
 
-		private TXPinActions[,] TXPinAction = new TXPinActions[3,7]; // group=0-2, 7 output pins = 0-6
+        private TXPinActions[,] TXPinAction = new TXPinActions[3, 7]; // group=0-2, 7 output pins = 0-6
         private bool[,] TXPinPA = new bool[3, 7]; // group=0-2, 7 output pins = 0-6
         private bool[,] RXPinPA = new bool[3, 7]; // group=0-2, 7 output pins = 0-6
 
@@ -96,25 +99,25 @@ namespace Thetis
             //group 0-2, 0=B160-B2M, 1=VHF0-VHF11, 2=B120-B11
             //pins 1-7
             //action TXPinActions, the action we want if this pin is to change to a high state
-            if (group<0 || group>2 || pin<1 || pin>7 || !(action > TXPinActions.FIRST && action < TXPinActions.LAST)) return;
+            if (group < 0 || group > 2 || pin < 1 || pin > 7 || !(action > TXPinActions.FIRST && action < TXPinActions.LAST)) return;
 
-			TXPinAction[group, pin - 1] = action;
-		}
+            TXPinAction[group, pin - 1] = action;
+        }
 
-		public void setBandABitMask(Band band, byte mask, bool tx) 
-		{ 
-			int idx = (int)band - (int)Band.B160M; 
-			if ( tx ) 
-			{ 
-				TXABitMasks[idx] = mask;
-			} 
-			else 
-			{ 
-				RXABitMasks[idx] = mask;
-			} 
-			return; 
+        public void setBandABitMask(Band band, byte mask, bool tx)
+        {
+            int idx = (int)band - (int)Band.B160M;
+            if (tx)
+            {
+                TXABitMasks[idx] = mask;
+            }
+            else
+            {
+                RXABitMasks[idx] = mask;
+            }
+            return;
 
-		}
+        }
 
         public void setBandBBitMask(Band band, byte mask, bool tx)
         {
@@ -131,8 +134,8 @@ namespace Thetis
 
         }
 
-        public int ExtCtrlEnable(Band band, Band bandb, bool tx, bool enable, bool tune, bool twoTone, bool pa) 
-		{
+        public int ExtCtrlEnable(Band band, Band bandb, bool tx, bool enable, bool tune, bool twoTone, bool pa)
+        {
             int bits;
             if (!enable)
             {
@@ -154,17 +157,17 @@ namespace Thetis
         private int m_nOldBits = -1;
 
         public int UpdateExtCtrl(Band band, Band bandb, bool tx, bool tune, bool twoTone, bool pa)
-		{
+        {
             int idx = (int)band - (int)Band.B160M;
             int idxb = (int)bandb - (int)Band.B160M;
-			int bits;
+            int bits;
 
-			if ( (idx < 0 || idx > 40) || (SplitPins && idxb < 0 || SplitPins && idxb > 40) ) //26
-			{ 
-				bits = 0; 
-			} 
-			else 
-			{
+            if ((idx < 0 || idx > 40) || (SplitPins && idxb < 0 || SplitPins && idxb > 40)) //26
+            {
+                bits = 0;
+            }
+            else
+            {
                 if (SplitPins)
                 {
                     bits = tx ? (TXABitMasks[idx] & RxABitMask) | TXBBitMasks[idxb] : (RXABitMasks[idx] & RxABitMask) | RXBBitMasks[idxb];
@@ -177,7 +180,7 @@ namespace Thetis
                         bits = TXABitMasks[idx];
                     else bits = RXABitMasks[idx];
                 }
-			}
+            }
 
             // adjust for pin action and/or PA
             if (tx)
@@ -192,16 +195,28 @@ namespace Thetis
                 System.Console.WriteLine("Bits: " + bits + " (" + bitsAsString + ") Band: " + (int)band + " BandB: " + (int)bandb + " tx: " + tx + " tune: " + tune + " 2ton: " + twoTone);
 
                 NetworkIO.SetOCBits(bits);
-
+                TimeWhenSetOCBits = Console.timeGetTime();
+                Debug.Print("Time taken to fire OCbits = " + TimeUntilOCBitsSet().ToString());
                 m_nOldBits = bits;
             }
 
             return bits;
-		}
+        }
 
-		private int getGroup(Band b)
+
+        static public int TimeWhenSetOCBits
         {
-			int n = -1;
+            get; set;
+        }
+
+        static public int TimeUntilOCBitsSet()
+        {
+            return TimeWhenSetOCBits - Audio.console.TimeWhenMoxChanged;
+        }
+
+        private int getGroup(Band b)
+        {
+            int n = -1;
 
             switch (b)
             {
@@ -257,7 +272,7 @@ namespace Thetis
                     break;
             }
 
-			return n;
+            return n;
         }
         private int adjustForRX(Band band, Band bandb, int bits, bool tx, bool tune, bool twoTone, bool pa)
         {
@@ -298,13 +313,13 @@ namespace Thetis
         {
             int mask = 0;
 
-			for(int nPin = 0;nPin < 7; nPin++)
+            for (int nPin = 0; nPin < 7; nPin++)
             {
                 int group;
                 if (SplitPins)
                 {
                     // need to find the group that is VFOA/VFOB
-                    if( ((1 << nPin) & RxABitMask) != 0)
+                    if (((1 << nPin) & RxABitMask) != 0)
                         group = getGroup(band);
                     else
                         group = getGroup(bandb);
@@ -356,7 +371,7 @@ namespace Thetis
                 mask |= nBit << nPin;
             }
 
-			return bits & mask;
+            return bits & mask;
         }
-	}
+    }
 }
