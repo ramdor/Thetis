@@ -1,3 +1,11 @@
+Fri Apr 28 05:22:18 2023 +0100 - sjk7: Close #36: All I can do to prevent Ampview from interfering with low latency audio is lower the thread priority of Ampview, which I have done
+Thu Apr 27 23:19:03 2023 +0100 - sjk7: Added some timing code for #19, but I can't see anything amiss
+Thu Apr 27 22:36:23 2023 +0100 - sjk7: Bugs fixed: HL2 power dip just after hit TUN has gone away, and this closes #33 where the PA power was crippled on subsequent transmissions even after a bad SWR condition was detected
+Thu Apr 27 21:46:18 2023 +0100 - sjk7: Bumped ChannelMaster revision
+Thu Apr 27 21:38:51 2023 +0100 - sjk7: Steve is stoopid, left memset() on the vac output, so no audio in txgit add .
+Thu Apr 27 20:33:46 2023 +0100 - sjk7: Re-engineering PS-M so it is available on the console, if enabled in PureSignal. WIP 2. This one compiles
+Thu Apr 27 15:20:18 2023 +0100 - sjk7: Re-engineering PS-M so it is available on the console, if enabled in PureSignal. WIP
+Thu Apr 27 13:50:59 2023 +0100 - sjk7: Changelog
 Thu Apr 27 13:50:08 2023 +0100 - sjk7: Hopefully fix and close #11. Bring display into sanity
 Wed Apr 26 05:55:34 2023 +0100 - sjk7: Changelog closes #30
 Wed Apr 26 05:54:39 2023 +0100 - sjk7: Ampview is required by some users to be 'always on top', so I made it owned by console, rather than making it on top of ALL other windows, andbbreaking the desktop in the process. Also Documentation added in the Documentation/Radio folder for PureSignal feedback studies.
