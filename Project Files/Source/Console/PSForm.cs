@@ -368,6 +368,7 @@ namespace Thetis
                 _dismissAmpv = false;
                 ampvThread = new Thread(RunAmpv);
                 ampvThread.SetApartmentState(ApartmentState.STA);
+                ampvThread.Priority = ThreadPriority.Lowest;
                 ampvThread.Name = "Ampv Thread";
                 ampvThread.Start();
             }

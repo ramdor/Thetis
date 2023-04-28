@@ -77,7 +77,14 @@ namespace Thetis
         {
             if (this.WindowState == FormWindowState.Minimized)
             {
-                Debug.Print("minimized");
+                timer1.Interval = 2000;
+            }
+            else
+            {
+                if (Visible)
+                    timer1.Interval = 100;
+                timer1.Enabled = false;
+                timer1.Enabled = true;
             }
         }
 
@@ -147,11 +154,24 @@ namespace Thetis
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+
             if (psform.DismissAmpv)
             {
                 Common.SaveForm(this, "AmpView");
                 Application.ExitThread();
             }
+            if (this.WindowState == FormWindowState.Minimized || !this.Visible)
+            {
+                if (timer1.Interval != 2000)
+                    timer1.Interval = 2000;
+                return;
+            }
+            else
+            {
+                if (timer1.Interval != 100)
+                    timer1.Interval = 100;
+            }
+
             disp_setup();
             puresignal.GetPSDisp(WDSP.id(1, 0),
                 hx.AddrOfPinnedObject(),
