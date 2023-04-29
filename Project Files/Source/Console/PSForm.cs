@@ -855,7 +855,7 @@ namespace Thetis
 
         private void chkPSManual_CheckedChanged(object sender, EventArgs e)
         {
-            puresignal.StaticEnabled = chkPSStaticHold.Checked;
+            // puresignal.StaticEnabled = chkPSStaticHold.Checked;
         }
 
         private void cbPSManual_CheckedChanged(object sender, EventArgs e)

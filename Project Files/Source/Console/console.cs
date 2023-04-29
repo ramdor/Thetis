@@ -34983,7 +34983,9 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             }
             else                        // change to RX mode
             {
-                HdwMOXChanged(tx, freq);// flip the hardware
+                // HdwMOXChanged(tx, freq);// flip the hardware <-- NO NO NO NO NO NO, Mr.KLJ, you cause://
+                // #RX1 seems to disconnect after transmit but can be reconnected by pushing TUN button. for 7000 users if you do this!
+
                 if (space_mox_delay > 0)
                     Thread.Sleep(space_mox_delay); // default 0 // from PSDR MW0LGE
 
@@ -35006,7 +35008,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 UpdateAAudioMixerStates();
 
                 AudioMOXChanged(tx);    // set audio.cs to RX
-                // HdwMOXChanged(tx, freq);// flip the hardware
+                HdwMOXChanged(tx, freq);// flip the hardware
                 cmaster.Mox = tx;       // loads router bit, among other things
                 if (ptt_out_delay > 0)
                     Thread.Sleep(ptt_out_delay);                 //wcp:  added 2018-12-24, time for HW to switch
