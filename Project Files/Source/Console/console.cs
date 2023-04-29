@@ -55258,26 +55258,6 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
 
         }
 
-        public bool PSManual
-        {
-            get => chkFWCATUBypass.Text == "PS-M";
-            set
-            {
-                if (initializing) return;
-                if (value)
-                    chkFWCATUBypass.Text = "PS-M";
-                else
-                    chkFWCATUBypass.Text = "PS-A";
-
-                if (chkFWCATUBypass.Enabled != value && value)
-                {
-                    ignoreCheck = true;
-                    chkFWCATUBypass.Checked = value;
-                    Debug.Assert(ignoreCheck == false);
-                }
-            }
-        }
-
         private bool ignoreCheck = false;
         private void chkFWCATUBypass_CheckedChanged(object sender, EventArgs e)
         {

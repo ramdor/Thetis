@@ -855,7 +855,7 @@ namespace Thetis
 
         private void chkPSManual_CheckedChanged(object sender, EventArgs e)
         {
-            puresignal.StaticEnabled = chkPSManual.Checked;
+            puresignal.StaticEnabled = chkPSStaticHold.Checked;
         }
 
         private void cbPSManual_CheckedChanged(object sender, EventArgs e)
@@ -945,7 +945,7 @@ namespace Thetis
 
         #endregion
 
-        // what the end-user knows as 'PS-M'
+        /*/
         public enum StaticCalState
         {
             Disabled = 0,
@@ -955,6 +955,7 @@ namespace Thetis
             FullySet = 16
         }
 
+        
         public class StaticCal
         {
             private float _freq;
@@ -984,12 +985,13 @@ namespace Thetis
                 get { return (int)_state > 0; }
             }
         }
+        /*/
 
 
 
         #region public methods
 
-        public static StaticCal PSMState = new StaticCal();
+        // public static StaticCal PSMState = new StaticCal();
         public static int[] Info = new int[16];
         private static int[] oldInfo = new int[16];
         private static bool _bInvertRedBlue = false;
@@ -997,11 +999,13 @@ namespace Thetis
         public const double PSPK_FOR_HERMES_LITE = 0.24;
         public const double PSPK_FOR_PROTO1 = 0.4072;
         public const double PSPK_FOR_PROTO2 = 0.2899;
+        /*/
         static public bool StaticEnabled
         {
             get { return PSMState.Enabled; }
             set { if (value) PSMState.Reset(true); else PSMState.Reset(false); }
         }
+        /*/
 
         static puresignal()
         {

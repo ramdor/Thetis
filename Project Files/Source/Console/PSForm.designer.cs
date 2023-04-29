@@ -81,7 +81,7 @@
             this.udPSCalWait = new System.Windows.Forms.NumericUpDownTS();
             this.chkQuickAttenuate = new System.Windows.Forms.CheckBoxTS();
             this.chkAdvancedViewHidden = new System.Windows.Forms.CheckBoxTS();
-            this.chkPSManual = new System.Windows.Forms.CheckBoxTS();
+            this.chkPSStaticHold = new System.Windows.Forms.CheckBoxTS();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.lblPSStatic = new System.Windows.Forms.LabelTS();
             ((System.ComponentModel.ISupportInitialize)(this.udPSMoxDelay)).BeginInit();
@@ -774,20 +774,20 @@
             this.chkAdvancedViewHidden.UseVisualStyleBackColor = false;
             this.chkAdvancedViewHidden.Visible = false;
             // 
-            // chkPSManual
+            // chkPSStaticHold
             // 
-            this.chkPSManual.AutoSize = true;
-            this.chkPSManual.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkPSManual.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.chkPSManual.Image = null;
-            this.chkPSManual.Location = new System.Drawing.Point(359, 61);
-            this.chkPSManual.Name = "chkPSManual";
-            this.chkPSManual.Size = new System.Drawing.Size(124, 17);
-            this.chkPSManual.TabIndex = 51;
-            this.chkPSManual.Text = "Enable Static (PS-M)";
-            this.toolTip1.SetToolTip(this.chkPSManual, "This mode is like Single-Cal, but not just for the current transmission.");
-            this.chkPSManual.UseVisualStyleBackColor = true;
-            this.chkPSManual.CheckedChanged += new System.EventHandler(this.chkPSManual_CheckedChanged);
+            this.chkPSStaticHold.AutoSize = true;
+            this.chkPSStaticHold.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkPSStaticHold.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.chkPSStaticHold.Image = null;
+            this.chkPSStaticHold.Location = new System.Drawing.Point(359, 61);
+            this.chkPSStaticHold.Name = "chkPSStaticHold";
+            this.chkPSStaticHold.Size = new System.Drawing.Size(114, 17);
+            this.chkPSStaticHold.TabIndex = 51;
+            this.chkPSStaticHold.Text = "Enable Static Hold";
+            this.toolTip1.SetToolTip(this.chkPSStaticHold, "This mode is like Single-Cal, but not just for the current transmission.");
+            this.chkPSStaticHold.UseVisualStyleBackColor = true;
+            this.chkPSStaticHold.CheckedChanged += new System.EventHandler(this.chkPSManual_CheckedChanged);
             // 
             // lblPSStatic
             // 
@@ -796,9 +796,9 @@
             this.lblPSStatic.Image = null;
             this.lblPSStatic.Location = new System.Drawing.Point(359, 90);
             this.lblPSStatic.Name = "lblPSStatic";
-            this.lblPSStatic.Size = new System.Drawing.Size(75, 13);
+            this.lblPSStatic.Size = new System.Drawing.Size(95, 13);
             this.lblPSStatic.TabIndex = 52;
-            this.lblPSStatic.Text = "PS-M is active";
+            this.lblPSStatic.Text = "PS Static Is Active";
             this.toolTip1.SetToolTip(this.lblPSStatic, "Puresignal parameters are frozen to the last useful value");
             this.lblPSStatic.Visible = false;
             // 
@@ -809,7 +809,7 @@
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(560, 303);
             this.Controls.Add(this.lblPSStatic);
-            this.Controls.Add(this.chkPSManual);
+            this.Controls.Add(this.chkPSStaticHold);
             this.Controls.Add(this.chkAdvancedViewHidden);
             this.Controls.Add(this.chkQuickAttenuate);
             this.Controls.Add(this.lblPSTint);
@@ -908,7 +908,7 @@
         private System.Windows.Forms.CheckBoxTS chkQuickAttenuate;
         private System.Windows.Forms.ButtonTS btnDefaultPeaks;
         private System.Windows.Forms.CheckBoxTS chkAdvancedViewHidden;
-        private System.Windows.Forms.CheckBoxTS chkPSManual;
+        private System.Windows.Forms.CheckBoxTS chkPSStaticHold;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.LabelTS lblPSStatic;
     }
