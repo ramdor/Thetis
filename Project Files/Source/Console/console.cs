@@ -27487,51 +27487,49 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         //-
 
                         // draw meter movement
-                        if ((!mymox && current_meter_rx_mode != MeterRXMode.OFF)
-                            || (mymox
-                                && !(txMode == MeterTXMode.OFF
-                                    || txMode == MeterTXMode.SWR_POWER)))
+                        if ((!mymox && current_meter_rx_mode != MeterRXMode.OFF) ||
+                             (mymox && !(txMode == MeterTXMode.OFF || txMode == MeterTXMode.SWR_POWER)))
                         {
-                            if (meter_data_is_for_rx)
+                            // if (meter_data_is_for_rx) // KLJ: WHat was I thinking? Edge meter wont work in TX here !!
+                            // {
+                            pixel_x = Math.Max(0, pixel_x);
+                            pixel_x = Math.Min(W - 3, pixel_x);
+
+                            if (!mymox && num != -200)
                             {
-                                pixel_x = Math.Max(0, pixel_x);
-                                pixel_x = Math.Min(W - 3, pixel_x);
-
-                                if (!mymox && num != -200)
-                                {
-                                    if (meter_data_is_for_rx)
-                                        storeRX1SignalPixels_X((float)pixel_x / W);
-                                }
-
-                                line_dark_pen.Color = Color.FromArgb(
-                                    (edge_avg_color.R + edge_meter_background_color.R) / 2,
-                                    (edge_avg_color.G + edge_meter_background_color.G) / 2,
-                                    (edge_avg_color.B + edge_meter_background_color.B) / 2);
-
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-
-                                if (m_bUseSignalHistory && !mymox
-                                    && m_RX1SignalPixels_X.Count > 0)
-                                {
-                                    // the history swing
-                                    float fMin = m_RX1SignalPixels_X.Min() * W;
-                                    float fMax = m_RX1SignalPixels_X.Max() * W;
-                                    g.FillRectangle(m_SignalHistoryColourPen.Brush, fMin, 0,
-                                        fMax - fMin, H);
-                                    //
-                                }
-
-
-                                g.DrawLine(line_dark_pen, pixel_x - 1, 0, pixel_x - 1,
-                                    H); // left side
-                                g.DrawLine(line_pen, pixel_x, 0, pixel_x, H); // center line
-                                g.DrawLine(line_dark_pen, pixel_x + 1, 0, pixel_x + 1,
-                                    H); // right side
-
-                                g.InterpolationMode = InterpolationMode.Default;
-                                g.SmoothingMode = SmoothingMode.Default;
+                                if (meter_data_is_for_rx)
+                                    storeRX1SignalPixels_X((float)pixel_x / W);
                             }
+
+                            line_dark_pen.Color = Color.FromArgb(
+                                (edge_avg_color.R + edge_meter_background_color.R) / 2,
+                                (edge_avg_color.G + edge_meter_background_color.G) / 2,
+                                (edge_avg_color.B + edge_meter_background_color.B) / 2);
+
+                            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                            g.SmoothingMode = SmoothingMode.HighQuality;
+
+                            if (m_bUseSignalHistory && !mymox
+                                && m_RX1SignalPixels_X.Count > 0)
+                            {
+                                // the history swing
+                                float fMin = m_RX1SignalPixels_X.Min() * W;
+                                float fMax = m_RX1SignalPixels_X.Max() * W;
+                                g.FillRectangle(m_SignalHistoryColourPen.Brush, fMin, 0,
+                                    fMax - fMin, H);
+                                //
+                            }
+
+
+                            g.DrawLine(line_dark_pen, pixel_x - 1, 0, pixel_x - 1,
+                                H); // left side
+                            g.DrawLine(line_pen, pixel_x, 0, pixel_x, H); // center line
+                            g.DrawLine(line_dark_pen, pixel_x + 1, 0, pixel_x + 1,
+                                H); // right side
+
+                            g.InterpolationMode = InterpolationMode.Default;
+                            g.SmoothingMode = SmoothingMode.Default;
+                            //}
 
                         }
                         else if (mymox && txMode == MeterTXMode.SWR_POWER)

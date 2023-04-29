@@ -28,11 +28,11 @@
      Creating library U:\Wales\Thetis-2.9.0\Project Files\Source\..\bin\x64\Release\portaudio.lib and object U:\Wales\Thetis-2.9.0\Project Files\Source\..\bin\x64\Release\portaudio.exp
   Generating code
   
-  --- Analyzing function: TerminateWaveHeaders
-  U:\Wales\Thetis-2.9.0\Project Files\lib\portaudio\src\hostapi\wmme\pa_win_wmme.c(2104) : info C5004: loop unswitched
-  
   --- Analyzing function: AllocateLinks
   U:\Wales\Thetis-2.9.0\Project Files\lib\portaudio\src\common\pa_allocation.c(91) : info C5001: loop vectorized
+  
+  --- Analyzing function: TerminateWaveHeaders
+  U:\Wales\Thetis-2.9.0\Project Files\lib\portaudio\src\hostapi\wmme\pa_win_wmme.c(2104) : info C5004: loop unswitched
   
   --- Analyzing function: CalculateMaxHostSampleFrameSizeBytes
   U:\Wales\Thetis-2.9.0\Project Files\lib\portaudio\src\hostapi\wmme\pa_win_wmme.c(1541) : info C5001: loop vectorized
