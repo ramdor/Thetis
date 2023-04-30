@@ -190,7 +190,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <CompileAs>CompileAsC</CompileAs>
-      <AdditionalOptions>/D_ATL_XP_TARGETING /FS %(AdditionalOptions) /Qpar-report:1 /Qvec-report:1</AdditionalOptions>
+      <AdditionalOptions>/D_ATL_XP_TARGETING /FS %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
       <FloatingPointModel>Fast</FloatingPointModel>

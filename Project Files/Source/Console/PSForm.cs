@@ -996,7 +996,7 @@ namespace Thetis
         private static int[] oldInfo = new int[16];
         private static bool _bInvertRedBlue = false;
         private static bool _validGetInfo = false;
-        public const double PSPK_FOR_HERMES_LITE = 0.24;
+        public const double PSPK_FOR_HERMES_LITE = 0.2348888;
         public const double PSPK_FOR_PROTO1 = 0.4072;
         public const double PSPK_FOR_PROTO2 = 0.2899;
         /*/
