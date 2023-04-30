@@ -1,0 +1,366 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="channel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="comm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="iobuffs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fftw3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TXA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bandpass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="eq.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fir.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="compress.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wcpAGC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ammod.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="meter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fmmod.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RXA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shift.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resample.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="amd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="anf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="anr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cblock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="siphon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="meterlog10.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fmd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fmsq.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="amsq.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="delay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="iqc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="calcc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="patchpanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="slew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fcurve.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nob.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="div.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="analyzer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="emph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="iir.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="eer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nobII.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cfir.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="osctrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="emnr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lmath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nbp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="snb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="firmin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cfcomp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rmatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="varsamp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="icfir.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="syncbuffs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dexp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="calculus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="channel.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="iobuffs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TXA.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fir.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bandpass.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="eq.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utilities.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="compress.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wcpAGC.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ammod.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="meter.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fmmod.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RXA.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="shift.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="resample.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="amd.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="anr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="anf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cblock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="siphon.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="meterlog10.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fmd.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fmsq.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="amsq.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gain.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sender.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="delay.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="iqc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="calcc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gen.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wisdom.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="patchpanel.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="slew.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fcurve.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nob.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="div.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="analyzer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="emph.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="iir.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="eer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nobII.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cfir.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="osctrl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="emnr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lmath.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nbp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="snb.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="firmin.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cfcomp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="version.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rmatch.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="varsamp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="icfir.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="syncbuffs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dexp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="calculus.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="comm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

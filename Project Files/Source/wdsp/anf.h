@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-The author can be reached by email at
+The author can be reached by email at  
 
 warren@wpratt.com
 
@@ -29,65 +29,79 @@ warren@wpratt.com
 
 #define ANF_DLINE_SIZE 2048
 
-typedef struct _anf {
-    int run;
-    int position;
-    int buff_size;
-    double* in_buff;
-    double* out_buff;
-    int dline_size;
-    int mask;
-    int n_taps;
-    int delay;
-    double two_mu;
-    double gamma;
-    double d[ANF_DLINE_SIZE];
-    double w[ANF_DLINE_SIZE];
-    int in_idx;
+typedef struct _anf
+{
+	int run;
+	int position;
+	int buff_size;
+	double *in_buff;
+	double *out_buff;
+	int dline_size;
+	int mask;
+	int n_taps;
+	int delay;
+	double two_mu;
+	double gamma;
+	double d [ANF_DLINE_SIZE];
+	double w [ANF_DLINE_SIZE];
+	int in_idx;
 
-    double lidx;
-    double lidx_min;
-    double lidx_max;
-    double ngamma;
-    double den_mult;
-    double lincr;
-    double ldecr;
+	double lidx;
+	double lidx_min;
+	double lidx_max;
+	double ngamma;
+	double den_mult;
+	double lincr;
+	double ldecr;
 } anf, *ANF;
 
-extern ANF create_anf(int run, int position, int buff_size, double* in_buff,
-    double* out_buff, int dline_size, int n_taps, int delay, double two_mu,
-    double gamma,
+extern ANF create_anf	(
+				int run,
+				int position,
+				int buff_size,
+				double *in_buff,
+				double *out_buff,
+				int dline_size,
+				int n_taps,
+				int delay,
+				double two_mu,
+				double gamma,
 
-    double lidx, double lidx_min, double lidx_max, double ngamma,
-    double den_mult, double lincr, double ldecr);
+				double lidx,
+				double lidx_min,
+				double lidx_max,
+				double ngamma,
+				double den_mult,
+				double lincr,
+				double ldecr
+			);
 
-extern void destroy_anf(ANF a);
+extern void destroy_anf (ANF a);
 
-extern void flush_anf(ANF a);
+extern void flush_anf (ANF a);
 
-extern void xanf(ANF a, int position);
+extern void xanf (ANF a, int position);
 
-extern void setBuffers_anf(ANF a, double* in, double* out);
+extern void setBuffers_anf (ANF a, double* in, double* out);
 
-extern void setSamplerate_anf(ANF a, int rate);
+extern void setSamplerate_anf (ANF a, int rate);
 
-extern void setSize_anf(ANF a, int size);
+extern void setSize_anf (ANF a, int size);
 
 // RXA Properties
 
-extern __declspec(dllexport) void SetRXAANFRun(int channel, int setit);
+extern __declspec (dllexport) void SetRXAANFRun (int channel, int setit);
 
-extern __declspec(dllexport) void SetRXAANFVals(
-    int channel, int taps, int delay, double gain, double leakage);
+extern __declspec (dllexport) void SetRXAANFVals (int channel, int taps, int delay, double gain, double leakage);
 
-extern __declspec(dllexport) void SetRXAANFTaps(int channel, int taps);
+extern __declspec (dllexport) void SetRXAANFTaps (int channel, int taps);
 
-extern __declspec(dllexport) void SetRXAANFDelay(int channel, int delay);
+extern __declspec (dllexport) void SetRXAANFDelay (int channel, int delay);
 
-extern __declspec(dllexport) void SetRXAANFGain(int channel, double gain);
+extern __declspec (dllexport) void SetRXAANFGain (int channel, double gain);
 
-extern __declspec(dllexport) void SetRXAANFLeakage(int channel, double leakage);
+extern __declspec (dllexport) void SetRXAANFLeakage (int channel, double leakage);
 
-extern __declspec(dllexport) void SetRXAANFPosition(int channel, int position);
+extern __declspec (dllexport) void SetRXAANFPosition (int channel, int position);
 
 #endif

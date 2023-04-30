@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-The author can be reached by email at
+The author can be reached by email at  
 
 warren@wpratt.com
 
@@ -26,106 +26,148 @@ warren@wpratt.com
 
 #include "comm.h"
 
-void wdspmain(void* pargs) {
-    DWORD taskIndex = 0;
-    HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
-    if (hTask != 0)
-        AvSetMmThreadPriority(hTask, AVRT_PRIORITY_CRITICAL);
-    else
-        SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+void wdspmain (void *pargs)
+{
+	DWORD taskIndex = 0;
+	HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
+	if (hTask != 0) AvSetMmThreadPriority(hTask, 2);
+	else SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 
-    int channel = (int)(uintptr_t)pargs;
-    while (_InterlockedAnd(&ch[channel].run, 1)) {
-        WaitForSingleObject(ch[channel].iob.pd->Sem_BuffReady, INFINITE);
-        EnterCriticalSection(&ch[channel].csDSP);
-        if (!_InterlockedAnd(&ch[channel].iob.pd->exec_bypass, 1)) {
-            switch (ch[channel].type) {
-                case 0: // rxa
-                    dexchange(
-                        channel, rxa[channel].outbuff, rxa[channel].inbuff);
-                    xrxa(channel);
-                    break;
-                case 1: // txa
-                    dexchange(
-                        channel, txa[channel].outbuff, txa[channel].inbuff);
-                    xtxa(channel);
-                    break;
-                case 31: //
+	int channel = (int)(uintptr_t)pargs;
+	while (_InterlockedAnd (&ch[channel].run, 1))
+	{
+		WaitForSingleObject(ch[channel].iob.pd->Sem_BuffReady,INFINITE);
+		EnterCriticalSection (&ch[channel].csDSP);
+		if (!_InterlockedAnd (&ch[channel].iob.pd->exec_bypass, 1))
+		{
+			switch (ch[channel].type)
+			{
+			case 0:		// rxa
+				dexchange (channel, rxa[channel].outbuff, rxa[channel].inbuff);
+				xrxa (channel);
+				break;
+			case 1:		// txa
+				dexchange (channel, txa[channel].outbuff, txa[channel].inbuff);
+				xtxa (channel);
+				break;
+			case 31:	//
 
-                    break;
-            }
-        }
-        LeaveCriticalSection(&ch[channel].csDSP);
-    }
-
-    if (hTask) AvRevertMmThreadCharacteristics(hTask);
-    _endthread();
+				break;
+			}
+		}
+		LeaveCriticalSection (&ch[channel].csDSP);
+	}
+	_endthread();
 }
 
-void create_main(int channel) {
-    switch (ch[channel].type) {
-        case 0: create_rxa(channel); break;
-        case 1: create_txa(channel); break;
-        case 31: //
-
-            break;
-    }
+void create_main (int channel)
+{
+	switch (ch[channel].type)
+	{
+	case 0:
+		create_rxa (channel);
+		break;
+	case 1:
+		create_txa (channel);
+		break;
+	case 31:  //
+		
+		break;
+	}
 }
 
-void destroy_main(int channel) {
-    switch (ch[channel].type) {
-        case 0: destroy_rxa(channel); break;
-        case 1: destroy_txa(channel); break;
-        case 31: //
-
-            break;
-    }
+void destroy_main (int channel)
+{
+	switch (ch[channel].type)
+	{
+	case 0:
+		destroy_rxa (channel);
+		break;
+	case 1:
+		destroy_txa (channel);
+		break;
+	case 31:  //
+		
+		break;
+	}
 }
 
-void flush_main(int channel) {
-    switch (ch[channel].type) {
-        case 0: flush_rxa(channel); break;
-        case 1: flush_txa(channel); break;
-        case 31: break;
-    }
+void flush_main (int channel)
+{
+	switch (ch[channel].type)
+	{
+	case 0:
+		flush_rxa (channel);
+		break;
+	case 1:
+		flush_txa (channel);
+		break;
+	case 31:
+		
+		break;
+	}
 }
 
-void setInputSamplerate_main(int channel) {
-    switch (ch[channel].type) {
-        case 0: setInputSamplerate_rxa(channel); break;
-        case 1: setInputSamplerate_txa(channel); break;
-        case 31: //
+void setInputSamplerate_main (int channel)
+{
+	switch (ch[channel].type)
+	{
+	case 0:
+		setInputSamplerate_rxa (channel);
+		break;
+	case 1:
+		setInputSamplerate_txa (channel);
+		break;
+	case 31:  //
 
-            break;
-    }
+		break;
+	}
 }
 
-void setOutputSamplerate_main(int channel) {
-    switch (ch[channel].type) {
-        case 0: setOutputSamplerate_rxa(channel); break;
-        case 1: setOutputSamplerate_txa(channel); break;
-        case 31: //
+void setOutputSamplerate_main (int channel)
+{
+	switch (ch[channel].type)
+	{
+	case 0:
+		setOutputSamplerate_rxa (channel);
+		break;
+	case 1:
+		setOutputSamplerate_txa (channel);
+		break;
+	case 31:  //
 
-            break;
-    }
+		break;
+	}
 }
 
-void setDSPSamplerate_main(int channel) {
-    switch (ch[channel].type) {
-        case 0: setDSPSamplerate_rxa(channel); break;
-        case 1: setDSPSamplerate_txa(channel); break;
-        case 31: //
+void setDSPSamplerate_main (int channel)
+{
+	switch (ch[channel].type)
+	{
+	case 0:
+		setDSPSamplerate_rxa (channel);
+		break;
+	case 1:
+		setDSPSamplerate_txa (channel);
+		break;
+	case 31:  //
 
-            break;
-    }
+		break;
+	}
 }
 
-void setDSPBuffsize_main(int channel) {
-    switch (ch[channel].type) {
-        case 0: setDSPBuffsize_rxa(channel); break;
-        case 1: setDSPBuffsize_txa(channel); break;
-        case 31: //
+void setDSPBuffsize_main (int channel)
+{
+	switch (ch[channel].type)
+	{
+	case 0:
+		setDSPBuffsize_rxa (channel);
+		break;
+	case 1:
+		setDSPBuffsize_txa (channel);
+		break;
+	case 31:  //
 
-            break;
-    }
+		break;
+	}
 }

@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>wdsp</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+    <EnableASAN>false</EnableASAN>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="..\Console\Resources\Common.Win32.user.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="..\Console\Resources\Common.x64.user.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="..\Console\Resources\Common.Win32.user.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="..\Console\Resources\Common.x64.user.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\wdsp\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\wdsp\</IntDir>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\wdsp\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\bin\$(LibrariesArchitecture)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\wdsp\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;WDSP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <AdditionalIncludeDirectories>.;../../lib/portaudio_VS2008/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <AdditionalOptions>/D_ATL_XP_TARGETING %(AdditionalOptions) /Qpar-report:1 /Qvec-report:1</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
+      <CompileAs>CompileAsC</CompileAs>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>../../lib/fftw_$(HPSDR_PLATFORM)/libfftw3-3.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>../Debug;../../lib/portaudio_VS2008/build/msvc/Win32/Debug;../../lib/fftw_$(HPSDR_PLATFORM)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;WDSP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <AdditionalIncludeDirectories>.;../../lib/portaudio_VS2008/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <AdditionalOptions>/D_ATL_XP_TARGETING %(AdditionalOptions) /Qpar-report:1 /Qvec-report:1</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
+      <CompileAs>CompileAsC</CompileAs>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>../../lib/fftw_$(HPSDR_PLATFORM)/libfftw3-3.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>../../lib/fftw_$(HPSDR_PLATFORM)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WIN32;_MBCS;NDEBUG;_WINDOWS;_USRDLL;SPECHPSDR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>.;../../lib/portaudio_VS2008/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsC</CompileAs>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalOptions>/D_ATL_XP_TARGETING %(AdditionalOptions) /Qpar-report:1 /Qvec-report:1</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalDependencies>../../lib/fftw_$(HPSDR_PLATFORM)/libfftw3-3.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../Release;../../lib/fftw_$(HPSDR_PLATFORM)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WIN32;_MBCS;NDEBUG;_WINDOWS;_USRDLL;SPECHPSDR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>.;../../lib/portaudio_VS2008/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsC</CompileAs>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalOptions>/D_ATL_XP_TARGETING %(AdditionalOptions) /Qpar-report:1 /Qvec-report:1</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalDependencies>../../lib/fftw_$(HPSDR_PLATFORM)/libfftw3-3.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../lib/fftw_$(HPSDR_PLATFORM)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="amd.h" />
+    <ClInclude Include="ammod.h" />
+    <ClInclude Include="amsq.h" />
+    <ClInclude Include="analyzer.h" />
+    <ClInclude Include="anf.h" />
+    <ClInclude Include="anr.h" />
+    <ClInclude Include="bandpass.h" />
+    <ClInclude Include="calcc.h" />
+    <ClInclude Include="calculus.h" />
+    <ClInclude Include="cblock.h" />
+    <ClInclude Include="cfcomp.h" />
+    <ClInclude Include="cfir.h" />
+    <ClInclude Include="compress.h" />
+    <ClInclude Include="delay.h" />
+    <ClInclude Include="dexp.h" />
+    <ClInclude Include="div.h" />
+    <ClInclude Include="eer.h" />
+    <ClInclude Include="emnr.h" />
+    <ClInclude Include="emph.h" />
+    <ClInclude Include="eq.h" />
+    <ClInclude Include="channel.h" />
+    <ClInclude Include="comm.h" />
+    <ClInclude Include="fcurve.h" />
+    <ClInclude Include="fftw3.h" />
+    <ClInclude Include="fir.h" />
+    <ClInclude Include="firmin.h" />
+    <ClInclude Include="fmd.h" />
+    <ClInclude Include="fmmod.h" />
+    <ClInclude Include="gain.h" />
+    <ClInclude Include="gen.h" />
+    <ClInclude Include="icfir.h" />
+    <ClInclude Include="iir.h" />
+    <ClInclude Include="iobuffs.h" />
+    <ClInclude Include="iqc.h" />
+    <ClInclude Include="lmath.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="meter.h" />
+    <ClInclude Include="meterlog10.h" />
+    <ClInclude Include="nbp.h" />
+    <ClInclude Include="nob.h" />
+    <ClInclude Include="nobII.h" />
+    <ClInclude Include="osctrl.h" />
+    <ClInclude Include="patchpanel.h" />
+    <ClInclude Include="resample.h" />
+    <ClInclude Include="rmatch.h" />
+    <ClInclude Include="RXA.h" />
+    <ClInclude Include="sender.h" />
+    <ClInclude Include="shift.h" />
+    <ClInclude Include="siphon.h" />
+    <ClInclude Include="fmsq.h" />
+    <ClInclude Include="slew.h" />
+    <ClInclude Include="snb.h" />
+    <ClInclude Include="syncbuffs.h" />
+    <ClInclude Include="TXA.h" />
+    <ClInclude Include="utilities.h" />
+    <ClInclude Include="varsamp.h" />
+    <ClInclude Include="wcpAGC.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="amd.c" />
+    <ClCompile Include="ammod.c" />
+    <ClCompile Include="amsq.c" />
+    <ClCompile Include="analyzer.c" />
+    <ClCompile Include="anf.c" />
+    <ClCompile Include="anr.c" />
+    <ClCompile Include="bandpass.c" />
+    <ClCompile Include="calcc.c" />
+    <ClCompile Include="calculus.c" />
+    <ClCompile Include="cblock.c" />
+    <ClCompile Include="cfcomp.c" />
+    <ClCompile Include="cfir.c" />
+    <ClCompile Include="comm.cpp" />
+    <ClCompile Include="compress.c" />
+    <ClCompile Include="delay.c" />
+    <ClCompile Include="dexp.c" />
+    <ClCompile Include="div.c" />
+    <ClCompile Include="eer.c" />
+    <ClCompile Include="emnr.c" />
+    <ClCompile Include="emph.c" />
+    <ClCompile Include="eq.c" />
+    <ClCompile Include="channel.c" />
+    <ClCompile Include="fcurve.c" />
+    <ClCompile Include="firmin.c" />
+    <ClCompile Include="fmd.c" />
+    <ClCompile Include="gain.c" />
+    <ClCompile Include="gen.c" />
+    <ClCompile Include="icfir.c" />
+    <ClCompile Include="iir.c" />
+    <ClCompile Include="iqc.c" />
+    <ClCompile Include="lmath.c" />
+    <ClCompile Include="meterlog10.c" />
+    <ClCompile Include="fir.c" />
+    <ClCompile Include="fmmod.c" />
+    <ClCompile Include="iobuffs.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="meter.c" />
+    <ClCompile Include="nbp.c" />
+    <ClCompile Include="nob.c" />
+    <ClCompile Include="nobII.c" />
+    <ClCompile Include="osctrl.c" />
+    <ClCompile Include="patchpanel.c" />
+    <ClCompile Include="resample.c" />
+    <ClCompile Include="rmatch.c" />
+    <ClCompile Include="RXA.c" />
+    <ClCompile Include="sender.c" />
+    <ClCompile Include="shift.c" />
+    <ClCompile Include="siphon.c" />
+    <ClCompile Include="fmsq.c" />
+    <ClCompile Include="slew.c" />
+    <ClCompile Include="snb.c" />
+    <ClCompile Include="syncbuffs.c" />
+    <ClCompile Include="TXA.c" />
+    <ClCompile Include="utilities.c" />
+    <ClCompile Include="varsamp.c" />
+    <ClCompile Include="version.c" />
+    <ClCompile Include="wcpAGC.c" />
+    <ClCompile Include="wisdom.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\portaudio\msvc\portaudio.vcxproj">
+      <Project>{0a18a071-125e-442f-aff7-a3f68abecf99}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

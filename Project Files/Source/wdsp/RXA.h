@@ -160,7 +160,10 @@ struct _rxa
 	{
 		CBL p;
 	} cbl;
-
+	struct
+	{
+		SSQL p;
+	} ssql;
 };
 
 extern struct _rxa rxa[];
