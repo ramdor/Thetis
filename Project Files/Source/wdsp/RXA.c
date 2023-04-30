@@ -574,8 +574,7 @@ void xrxa(int channel) {
     xcbl(rxa[channel].cbl.p);
     xspeak(rxa[channel].speak.p);
     xmpeak(rxa[channel].mpeak.p);
-    // xssql(rxa[channel].ssql.p); // KLJ disabled for now. It's on by default,
-    // and we have no way in the UI of controlling it.
+    xssql(rxa[channel].ssql.p);
     xpanel(rxa[channel].panel.p);
     xamsq(rxa[channel].amsq.p);
     xresample(rxa[channel].rsmpout.p);
