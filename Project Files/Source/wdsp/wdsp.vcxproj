@@ -226,6 +226,7 @@
     <ClInclude Include="eq.h" />
     <ClInclude Include="channel.h" />
     <ClInclude Include="comm.h" />
+    <ClInclude Include="fastmath.h" />
     <ClInclude Include="fcurve.h" />
     <ClInclude Include="fftw3.h" />
     <ClInclude Include="fir.h" />
@@ -248,6 +249,8 @@
     <ClInclude Include="osctrl.h" />
     <ClInclude Include="patchpanel.h" />
     <ClInclude Include="resample.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="rmatch.h" />
     <ClInclude Include="RXA.h" />
     <ClInclude Include="sender.h" />
@@ -256,10 +259,12 @@
     <ClInclude Include="fmsq.h" />
     <ClInclude Include="slew.h" />
     <ClInclude Include="snb.h" />
+    <ClInclude Include="ssql.h" />
     <ClInclude Include="syncbuffs.h" />
     <ClInclude Include="TXA.h" />
     <ClInclude Include="utilities.h" />
     <ClInclude Include="varsamp.h" />
+    <ClInclude Include="version.h" />
     <ClInclude Include="wcpAGC.h" />
   </ItemGroup>
   <ItemGroup>
@@ -275,7 +280,6 @@
     <ClCompile Include="cblock.c" />
     <ClCompile Include="cfcomp.c" />
     <ClCompile Include="cfir.c" />
-    <ClCompile Include="comm.cpp" />
     <ClCompile Include="compress.c" />
     <ClCompile Include="delay.c" />
     <ClCompile Include="dexp.c" />
@@ -314,6 +318,7 @@
     <ClCompile Include="fmsq.c" />
     <ClCompile Include="slew.c" />
     <ClCompile Include="snb.c" />
+    <ClCompile Include="ssql.c" />
     <ClCompile Include="syncbuffs.c" />
     <ClCompile Include="TXA.c" />
     <ClCompile Include="utilities.c" />
@@ -326,6 +331,12 @@
     <ProjectReference Include="..\..\lib\portaudio\msvc\portaudio.vcxproj">
       <Project>{0a18a071-125e-442f-aff7-a3f68abecf99}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="calculus" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="wdsp.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

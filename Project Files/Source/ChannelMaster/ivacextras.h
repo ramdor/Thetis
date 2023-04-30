@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <string.h> // size_t
 #include <stdint.h>
+#include <assert.h>
 
 // static functions that allow the app to use Float32 inside of PortAudio.
 // Blatantly stolen from pa_converters.c, with modifications and paranoic bounds
