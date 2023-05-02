@@ -1,3 +1,8 @@
+// This is an independent project of an individual developer. Dear PVS-Studio,
+// please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 /*  RXA.c
 
 This file is part of a program that implements a Software-Defined Radio.
@@ -857,7 +862,7 @@ void RXAbpsnbaCheck(int channel, int mode, int notch_run) {
         case RXA_AM:
         case RXA_SAM:
         case RXA_DSB:
-            f_low = +a->abs_low_freq;
+            f_low = +a->abs_low_freq; //-V1037
             f_high = +a->abs_high_freq;
             run_notches = 0;
             break;
@@ -889,7 +894,7 @@ void RXAbpsnbaSet(int channel) {
         case RXA_LSB:
         case RXA_CWL:
         case RXA_DIGL:
-            a->run = rxa[channel].snba.p->run;
+            a->run = rxa[channel].snba.p->run; //-V1037
             a->position = 0;
             break;
         case RXA_USB:
@@ -901,7 +906,7 @@ void RXAbpsnbaSet(int channel) {
         case RXA_AM:
         case RXA_SAM:
         case RXA_DSB:
-            a->run = rxa[channel].snba.p->run;
+            a->run = rxa[channel].snba.p->run; //-V1037
             a->position = 1;
             break;
         case RXA_FM:

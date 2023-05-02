@@ -1,3 +1,7 @@
+// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 double GG[241 * 241] = {
 7.25654181154076983e-01,    7.05038822098223439e-01,    6.85008217584843870e-01,    6.65545775927326222e-01,
 6.46635376294157682e-01,    6.28261355371665386e-01,    6.10408494407843394e-01,    5.93062006626410732e-01,

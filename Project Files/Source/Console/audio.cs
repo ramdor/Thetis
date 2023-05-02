@@ -1843,6 +1843,12 @@ namespace Thetis
                     int return_value = 0;
                     try
                     {
+                        if ((console.VACEnabled || console.VAC2Enabled) && console.SetupForm.MasterVolumeForVac)
+                        {
+                            // KLJ: volume control needed a wiggle to apply audio volume. Don't know why,
+                            // but this should fix it.
+                            ivac.SetIVACMonVolume(-1, Audio.MonitorVolume);
+                        }
                         return_value = ivac.StartAudioIVAC(0);
                         retval = return_value
                             == Convert.ToInt32(
@@ -2013,6 +2019,12 @@ namespace Thetis
 
                     try
                     {
+                        if ((console.VACEnabled || console.VAC2Enabled) && console.SetupForm.MasterVolumeForVac)
+                        {
+                            // KLJ: volume control needed a wiggle to apply audio volume. Don't know why,
+                            // but this should fix it.
+                            ivac.SetIVACMonVolume(-1, Audio.MonitorVolume);
+                        }
                         int return_value = ivac.StartAudioIVAC(1);
                         retval = return_value
                             == Convert.ToInt32(

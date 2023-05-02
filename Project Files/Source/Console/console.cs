@@ -32491,6 +32491,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
 
                 if (vac_enabled)
                 {
+
                     VACEnabled = true; // Don't trigger StopAudioIVAC if the VACs
                                        // aren't needed now
                     if (!Audio.Status[0].state)

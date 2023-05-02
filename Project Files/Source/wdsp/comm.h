@@ -1,3 +1,8 @@
+// This is an independent project of an individual developer. Dear PVS-Studio,
+// please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 /*  comm.h
 
 This file is part of a program that implements a Software-Defined Radio.
@@ -180,5 +185,5 @@ static inline BOOL prioritise_thread_cleanup(HANDLE h) {
 #define TWOPI 6.2831853071795864
 
 // miscellaneous
-typedef double complex[2];
+typedef double complex[2]; //-V677
 #define PORT __declspec(dllexport)
