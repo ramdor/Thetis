@@ -1,3 +1,17 @@
+Tue May 2 14:03:05 2023 +0100 - sjk7: View spectra on PS form not saved. Fixed
+Tue May 2 13:12:59 2023 +0100 - sjk7: Shutdown thread tangle with Ampview and PS form, most likely
+Tue May 2 05:24:10 2023 +0100 - sjk7: Master volume not applied at startup. Static analysis on wdsp code
+Tue May 2 02:52:12 2023 +0100 - steve mac: Tidy ChannelMaster for review
+Tue May 2 01:46:27 2023 +0100 - sjk7: Changed some code relating to #19
+Sun Apr 30 22:56:00 2023 +0100 - sjk7: Sanity build and link. Great if you want to change mode in P1 at start to get any audio!
+Sun Apr 30 21:32:13 2023 +0100 - sjk7: Canonical WDSP builds properly, with my MMThread additions, and ssql is disabled as it is on by default and we have no way of controlling it in the UI. I thought I had no audio at first!
+Sun Apr 30 20:02:35 2023 +0100 - sjk7: WDSP latest guru thread priority code combined in wdsp
+Sun Apr 30 19:25:37 2023 +0100 - sjk7: WDSP latest found (thanks Scott) and used
+Sat Apr 29 19:50:05 2023 +0100 - sjk7: Update ReadMe.md
+Sat Apr 29 19:16:44 2023 +0100 - sjk7: Fixes #41 no tx display needle in edge-style meter
+Sat Apr 29 10:49:39 2023 +0100 - sjk7: Does this fix the 7000 users issue with rx goes dead after tx?
+Sat Apr 29 09:26:54 2023 +0100 - sjk7: Up2dateb4rollback
+Fri Apr 28 05:24:50 2023 +0100 - sjk7: Changelog
 Fri Apr 28 05:22:18 2023 +0100 - sjk7: Close #36: All I can do to prevent Ampview from interfering with low latency audio is lower the thread priority of Ampview, which I have done
 Thu Apr 27 23:19:03 2023 +0100 - sjk7: Added some timing code for #19, but I can't see anything amiss
 Thu Apr 27 22:36:23 2023 +0100 - sjk7: Bugs fixed: HL2 power dip just after hit TUN has gone away, and this closes #33 where the PA power was crippled on subsequent transmissions even after a bad SWR condition was detected
