@@ -159,6 +159,7 @@ namespace Thetis
             {
                 Common.SaveForm(this, "AmpView");
                 Application.ExitThread();
+                return;
             }
             if (this.WindowState == FormWindowState.Minimized || !this.Visible)
             {
@@ -185,11 +186,14 @@ namespace Thetis
             {
                 disp_data();
             }
+            /*/
             if (psform.DismissAmpv)
             {
                 Common.SaveForm(this, "AmpView");
                 Application.ExitThread();
+                return;
             }
+            /*/ // KLJ: I think this is circular. PSForm closes us when the app is quitting.
         }
 
         private void chkAVShowGain_CheckedChanged(object sender, EventArgs e)

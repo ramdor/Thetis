@@ -1324,7 +1324,7 @@ namespace Thetis
                         Debug.Assert(CreatingSetup); // if this Assert()s, you probably have a bug, since Setup is supposed to be created from a specific place!
                         Debug.Print("New setup form - should happen only once");
                         m_frmSetupForm = new Setup(this);
-
+                        psform = new PSForm(this);
                         m_frmSetupForm.AfterConstruct();
                         this.SetupForm.setDBPath(DBFileName);
                         setupFormReady = true;
@@ -1907,7 +1907,7 @@ namespace Thetis
             m_frmNotchPopup = new frmNotchPopup();
             m_frmSeqLog = new frmSeqLog();
 
-            psform = new PSForm(this);
+
 
             Audio.console = this;
 
@@ -2267,6 +2267,7 @@ namespace Thetis
 
             Splash.SetStatus("Finalizing settings");
 
+
             // MW0LGE_21d BandStack2
             BandStackManager.Extended = Extended;
             BandStackManager.Region = CurrentRegion;
@@ -2431,6 +2432,8 @@ namespace Thetis
             //--
 
             initialiseRawInput(); // MW0LGE
+            Debug.Assert(psform != null); // created when setup form is created.
+            psform.startPSThread(); // KLJ. Only now might we need it.
 
             return;
         }
@@ -33611,8 +33614,6 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             AriesCATEnabled = false;
             GanymedeCATEnabled = false;
 
-            if (psform != null) psform.StopPSThread();
-
             if (chkPower.Checked == true) // If we're quitting without first
                                           // clicking off the "Power" button
                 chkPower.Checked = false;
@@ -46592,6 +46593,15 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
                         // exit).
                         this.RemoveOwnedForm(this.OwnedForms[0]);
                     }
+
+                    // now. because of earlier bad ownership, things like AmpView and friends do not expect to be owned at closedown, and lead to a hanging app in task manager. KLJ
+                    while (OwnedForms.Length > 0)
+                    {
+                        Debug.Print("Removing owned form " + this.OwnedForms[0].Name);
+                        this.RemoveOwnedForm(this.OwnedForms[0]);
+                    }
+                    this.AppQuitting = true;
+                    this.psform.Close();
                 }
 
                 base.WndProc(ref m);

@@ -33,7 +33,8 @@ namespace Thetis
 
             _advancedON = chkAdvancedViewHidden.Checked; //MW0LGE_[2.9.0.6]
 
-            startPSThread(); // MW0LGE_21k8 removed the winform timers, now using dedicated thread
+            // startPSThread(); // MW0LGE_21k8 removed the winform timers, now using dedicated thread
+            // KLJ this is now called from console just before setup is created. We really don't need yet another thread running during startup.
         }
 
         #endregion
@@ -85,7 +86,7 @@ namespace Thetis
 
         #region properties
 
-        private void startPSThread()
+        public void startPSThread()
         {
             if (_ps_thread == null || !_ps_thread.IsAlive)
             {
@@ -93,7 +94,7 @@ namespace Thetis
                 {
                     Name = "PureSignal Thread",
                     Priority = ThreadPriority.AboveNormal,
-                    IsBackground = false
+                    IsBackground = true // don't interfere with proper closedown. KLJ.
                 };
                 _ps_thread.Start();
             }
@@ -106,38 +107,60 @@ namespace Thetis
             set { m_bQuckAttenuate = value; }
         }
 
-        public void StopPSThread()
+        private void StopPSThread()
         {
             _bPSRunning = false;
+            // KLJ. Note, we can't wait on the thread here, because it uses the "threadsafe" controls with Invoke and not BeginInvoke,
+            // so we can deadlock. I made it a background thread instead so it won't affect app lifetime.
         }
 
-        private bool _bPSRunning = false;
-        private async void PSLoop()
+        private volatile bool _bPSRunning = false; // KLJ X-Thread vars need to be volatile, always.
+        private volatile bool _inPSLoop = false;
+        private void PSLoop()
         {
             int nCount = 0;
 
             _bPSRunning = true;
-            while (_bPSRunning)
+            _inPSLoop = true;
+            try
             {
-                if (console.PowerOn)
+                while (_bPSRunning)
                 {
-                    if (nCount < (m_bQuckAttenuate ? 1 : 10))
+                    if (console.PowerOn)
                     {
-                        timer1code(); // every 10ms
-                        nCount++;
+                        if (nCount < (m_bQuckAttenuate ? 1 : 10))
+                        {
+                            timer1code(); // every 10ms
+                            nCount++;
+                        }
+                        else
+                        {
+                            timer2code(); // every 100ms if !m_bQuckAttenuate, or every 20ms otherwise
+                            nCount = 0;
+                        }
+
+                        //await Task.Delay(10);
+                        Thread.Sleep(10);
                     }
                     else
                     {
-                        timer2code(); // every 100ms if !m_bQuckAttenuate, or every 20ms otherwise
-                        nCount = 0;
+                        //await Task.Delay(200);
+                        Thread.Sleep(200);
                     }
-
-                    await Task.Delay(10);
                 }
-                else
+            }
+            catch (Exception ex)
+            {
+                // don't care about exception here during closedown.
+                if (_bPSRunning)
                 {
-                    await Task.Delay(200);
+                    Common.LogException(ex);
                 }
+
+            }
+            finally
+            {
+                _inPSLoop = false; // close down properly
             }
         }
 
@@ -344,15 +367,34 @@ namespace Thetis
             if (console.AppQuitting)
             {
                 _dismissAmpv = true;
-                ampvThread.Join();
-                ampv.Close();
-                ampv = null;
+                try
+                {
+                    if (ampvThread.IsAlive)
+                    {
+                        ampvThread.Join();
+                        ampv.Close();
+                        ampv = null;
+                    }
+                    StopPSThread();
+                }
+                catch (Exception)
+                {
+
+                }
+                finally
+                {
+                    e.Cancel = false;
+                }
+                return;
             }
-            //_advancedON = true;//MW0LGE_[2.9.0.7]
-            //btnPSAdvanced_Click(this, e); //MW0LGE_[2.9.0.7]
-            this.Hide();
-            e.Cancel = true;
-            Common.SaveForm(this, "PureSignal");
+            else
+            {
+                //_advancedON = true;//MW0LGE_[2.9.0.7]
+                //btnPSAdvanced_Click(this, e); //MW0LGE_[2.9.0.7]
+                this.Hide();
+                e.Cancel = true;
+                Common.SaveForm(this, "PureSignal");
+            }
         }
 
         public void RunAmpv()
@@ -369,6 +411,7 @@ namespace Thetis
                 ampvThread = new Thread(RunAmpv);
                 ampvThread.SetApartmentState(ApartmentState.STA);
                 ampvThread.Priority = ThreadPriority.Lowest;
+                ampvThread.IsBackground = true; // don't cause issues when closing app.
                 ampvThread.Name = "Ampv Thread";
                 ampvThread.Start();
             }
