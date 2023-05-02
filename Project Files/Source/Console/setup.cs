@@ -191,6 +191,8 @@ namespace Thetis
             return m_protoControls[idx];
         }
 
+        public bool ForcingAllEvents { get; set; }
+
         private int initCounter = 0;
         public Setup(Console c)
         {
@@ -198,6 +200,10 @@ namespace Thetis
             initCounter++;
             try
             {
+
+
+                Splash.SetStatus("Initialising the many UI controls on the setup window ...");
+
                 InitializeComponent();
                 this.Owner = c;
                 this.rbP1.CheckedChanged += this.Protocol_CheckedChanged;
@@ -215,6 +221,7 @@ namespace Thetis
                 m_protoControls.Add(this.rbP1);
                 m_protoControls.Add(this.rbP2);
                 m_protoControls.Add(this.rbPAuto);
+                Splash.SetStatus("Initialising the many UI controls on the setup window, complete.");
 
             }
 
@@ -288,23 +295,50 @@ namespace Thetis
                 = false; // MW0LGE gets shown/hidden by save/cancel/apply
 
             // GetMixerDevices();
-            Thetis.Splash.SetStatus("Loading Audio Hosts ...");
+            Thetis.Splash.SetStatus("Waiting For PortAudio initialisation ...");
 
             int slept = console.WaitForPortAudio();
             Debug.Print("Waited " + slept.ToString()
                 + " millis for portaudio to be ready.");
 
             this.GetHosts();
+
+            Thetis.Splash.SetStatus("Getting Ant Tables ...");
             InitAlexAntTables();
 
             KeyList = new ArrayList();
             SetupKeyMap();
 
+            Thetis.Splash.SetStatus("Getting TX Profiles ...");
+
             GetTxProfiles();
             GetTxProfileDefs();
+
+            Thetis.Splash.SetStatus("Refreshing COM ports ...");
             RefreshCOMPortLists();
 
+
+            slept = 0;
+            while (console.m_waiting_for_dsp)
+            {
+                if (slept == 0)
+                {
+                    Splash.SetStatus("Waiting for DSP initialisation, this may take a while ...");
+                }
+                Thread.Sleep(50);
+                slept += 50;
+                if (slept % 10 == 0 && slept > 0)
+                {
+                    Splash.SetStatus("Waiting for DSP initialisation, waited: " + slept.ToString() + " ms so far ...");
+                }
+                Application.DoEvents();
+                Debug.Assert(slept < 10000);
+            }
+
+            Splash.SetStatus("Getting audio settings ...");
             InitAudioTab();
+
+            Splash.SetStatus("Some more defaults ...");
 
             // MW0LGE_21d some defaults
             chkShowZeroLine.Checked = true;
@@ -538,8 +572,7 @@ namespace Thetis
             // MW0LGE_22b PA Profiles
             initPAProfiles();
             // display setup
-            console.SetupDisplayEngine(false); // MW0LGE_21k9
-                                               //
+
             getOptions();
 
             selectSkin();
@@ -712,8 +745,9 @@ namespace Thetis
             comboKeyerConnSecondary_SelectedIndexChanged(this, EventArgs.Empty);
 
             Splash.SetStatus("Synchronising all UI elements with database ...");
-
+            ForcingAllEvents = true;
             ForceAllEvents();
+            ForcingAllEvents = false;
 
             EventArgs e = EventArgs.Empty;
             tbRX1FilterAlpha_Scroll(this, e);
@@ -11069,7 +11103,7 @@ namespace Thetis
 
             if (checkTXProfileChanged2(dr, true)) // check if vac settings are different
             {
-                // diable the vacs, so we can make changes without them trying to
+                // disable the vacs, so we can make changes without them trying to
                 // re-init etc MW0LGE_21dk5
                 chkAudioEnableVAC.Checked = false;
                 chkVAC2Enable.Checked = false;
@@ -11238,15 +11272,30 @@ namespace Thetis
 
 
             if (!initializing)
+            {
+                if (ForcingAllEvents)
+                {
+                    Splash.SetStatus("Updating DSP, this can take a few moments ...");
+                }
                 console.DeferUpdateDSP = false; // MW0LGE_21k9d  we dont want to undo
                                                 // this if we are initalising
+            }
 
+            if (ForcingAllEvents)
+            {
+                Splash.SetStatus("Continuing to load settings from DB ...");
+            }
             radMicIn.Checked = (bool)dr["Mic_Input_On"];
             chk20dbMicBoost.Checked = (bool)dr["Mic_Input_Boost"];
             radLineIn.Checked = (bool)dr["Line_Input_On"];
             udLineInBoost.Value = (decimal)dr["Line_Input_Level"];
             chkDSPCESSB.Checked = (bool)dr["CESSB_On"];
             console.PureSignalEnabled = (bool)dr["Pure_Signal_Enabled"];
+
+            if (ForcingAllEvents)
+            {
+                Splash.SetStatus("Loading CFC settings from DB ...");
+            }
 
             // CFC
             chkCFCEnable.Checked = (bool)dr["CFCEnabled"];
@@ -11279,6 +11328,11 @@ namespace Thetis
 
             console.TXProfile = sProfileName;
             console.LoadedTXProfile();
+
+            if (ForcingAllEvents)
+            {
+                Splash.SetStatus("Loaded TXProfile " + sProfileName + ".");
+            }
 
             return true;
         }

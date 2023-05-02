@@ -757,7 +757,7 @@ namespace Thetis
                 }
             }
 
-#if (DEBUG)
+#if (DEBUGNONONO)
             AppDataPath += "Debug\\";
 #endif
             if (!Directory.Exists(AppDataPath))
@@ -982,7 +982,6 @@ namespace Thetis
             //
             ucQuickRecallPad.console = this;
             Display.console = this;
-            //
 
             GlobalMouseHandler gmh
                 = new GlobalMouseHandler(); // capture mouse up event
@@ -1033,6 +1032,9 @@ namespace Thetis
             Splash.SetStatus("Initializing Radio ..."); // Set progress point
             radio = new Radio(this, AppDataPath); // Initialize the Radio processor INIT_SLOW
             specRX = new SpecRX();
+
+
+            InitDSPThreaded(); // kick this off as early as possible because setup needs to wait for it
 
             Splash.SetStatus("Initializing Hardware"); // Set progress point
             InitCTCSS();
@@ -1131,8 +1133,7 @@ namespace Thetis
 
             initializing = false;
 
-            Splash.SetStatus("Initialising DSP, this may take a while ...");
-            InitDSP();
+
 
             Splash.SetStatus("Finished");
 
@@ -1318,9 +1319,12 @@ namespace Thetis
 
                     if (IsSetupFormNull)
                     {
+
+
                         Debug.Assert(CreatingSetup); // if this Assert()s, you probably have a bug, since Setup is supposed to be created from a specific place!
                         Debug.Print("New setup form - should happen only once");
                         m_frmSetupForm = new Setup(this);
+
                         m_frmSetupForm.AfterConstruct();
                         this.SetupForm.setDBPath(DBFileName);
                         setupFormReady = true;
@@ -1878,6 +1882,25 @@ namespace Thetis
         }
 
         public bool CreatingSetup { get; set; }
+        public Thread DSPInitThread = null;
+        public volatile bool m_waiting_for_dsp = true;
+
+        private void myInitDSP()
+        {
+            InitDSP();
+            // KLJ: Setup requires that DSP is already there. See the check in setup.AfterConstruct
+            // See the checks in GetSpecRX()
+            SetupDisplayEngine(false);
+            m_waiting_for_dsp = false;
+
+        }
+        private void InitDSPThreaded()
+        {
+            DSPInitThread = new Thread(myInitDSP);
+            DSPInitThread.Priority = ThreadPriority.Highest;
+            DSPInitThread.IsBackground = true;
+            DSPInitThread.Start();
+        }
 
         private void InitConsole()
         {
@@ -2182,8 +2205,10 @@ namespace Thetis
             AriesSiolisten = new SIO6ListenerII(this);
             GanymedeSiolisten = new SIO7ListenerII(this);
 
+            Splash.SetStatus("Initialising the EQ window...");
             EQForm = new EQForm(this);
 
+            Splash.SetStatus("Initialising filter presets ...");
             InitFilterPresets(); // Initialize filter values
 
             SwlForm = new SwlControl(
@@ -2191,7 +2216,7 @@ namespace Thetis
             httpFile = new Http(this); // ke9ns add
             httpServer = new HttpServer(this); // rn3kk add
 
-
+            Splash.SetStatus("Creating setup ...");
             CreatingSetup = true;
             // ***** THIS IS WHERE SETUP FORM IS CREATED
             SetupForm.StartPosition
@@ -29977,7 +30002,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
         private bool mon_recall = false;
         private static readonly HiPerfTimer vox_timer = new HiPerfTimer();
 
-        private async void PollPTT()
+        private void PollPTT()
         {
             while (chkPower.Checked)
             {
@@ -30083,7 +30108,8 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         }
                     }
                 }
-                await Task.Delay(1);
+                // await Task.Delay(1);
+                Thread.Sleep(1); // tried this, instead of await KLJ, for #19
             }
         }
 

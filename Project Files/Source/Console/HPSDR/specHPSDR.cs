@@ -23,6 +23,8 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace Thetis
 {
@@ -45,6 +47,15 @@ namespace Thetis
 
         public SpecHPSDR GetSpecRX(int disp)
         {
+            if (Thread.CurrentThread != Audio.console.DSPInitThread)
+            {
+                Debug.Assert(!Audio.console.m_waiting_for_dsp);
+                if (Audio.console.m_waiting_for_dsp)
+                    MessageBox.Show(
+                        "Wrong order of thread initialisation",
+                        "Thetis Startup", MessageBoxButtons.OK, MessageBoxIcon.Stop,
+                        MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
             var ret = spec_rx[disp];
             Debug.Assert(ret.disp == disp);
             return ret;
