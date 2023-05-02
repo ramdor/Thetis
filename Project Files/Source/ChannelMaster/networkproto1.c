@@ -742,7 +742,7 @@ DWORD WINAPI sendProtocol1Samples(LPVOID n) {
         // WaitForMultipleObjects(2, prn->hsendEventHandles, TRUE, INFINITE);
         // KLJ: These threads seem to be hanging around unnecessarily, blocked
         // on WaitFor... above, whilst io_keep_running was set false long ago.
-        // Therefore:
+        // Therefore: (Is there a better way?)
         DWORD dw = WaitForMultipleObjects(2, prn->hsendEventHandles, TRUE, 500);
         if (!io_keep_running) {
             break;

@@ -41,10 +41,7 @@ HANDLE start_obthread(int id) {
 }
 
 void create_obbuffs(int id, int accept, int max_insize, int outsize) {
-    // KLJ
-    // if (obp.pcbuff[id]) {
-    //   destroy_obbuffs(id);
-    //}
+
     OBB a = (OBB)calloc(1, sizeof(obb));
     obp.pcbuff[id] = obp.pdbuff[id] = obp.pebuff[id] = obp.pfbuff[id] = a;
     a->id = id;
@@ -209,7 +206,7 @@ void SetOBRingOutsize(int id, int size) {
     ReleaseSemaphore(a->Sem_BuffReady, 1, 0);
     LeaveCriticalSection(&a->csOUT);
     Sleep(2);
-    // KLJ:
+    // KLJ: close thread properly.
     if (a->obThread) {
         DWORD dw = WaitForSingleObject(a->obThread, 3000);
         assert(dw != WAIT_TIMEOUT);

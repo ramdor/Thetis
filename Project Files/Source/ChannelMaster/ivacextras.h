@@ -25,8 +25,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <stdint.h>
 #include <assert.h>
 
-// static functions that allow the app to use Float32 inside of PortAudio.
-// Blatantly stolen from pa_converters.c, with modifications and paranoic bounds
+// static functions that allow the app to use Float32 
+// inside of PortAudio, and thus
+// be able to use the mainstream portaudio.
+// Blatantly stolen from pa_converters.c, with modifications 
+// and paranoic bounds 
 // checking. KLJ
 
 static inline void Float64_To_Float32(void* destinationBuffer,
