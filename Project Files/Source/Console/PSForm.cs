@@ -364,12 +364,13 @@ namespace Thetis
 
         private void PSForm_Closing(object sender, FormClosingEventArgs e)
         {
+            Common.SaveForm(this, "PureSignal");
             if (console.AppQuitting)
             {
                 _dismissAmpv = true;
                 try
                 {
-                    if (ampvThread.IsAlive)
+                    if (ampvThread != null && ampvThread.IsAlive)
                     {
                         ampvThread.Join();
                         ampv.Close();
@@ -393,7 +394,6 @@ namespace Thetis
                 //btnPSAdvanced_Click(this, e); //MW0LGE_[2.9.0.7]
                 this.Hide();
                 e.Cancel = true;
-                Common.SaveForm(this, "PureSignal");
             }
         }
 
@@ -757,17 +757,21 @@ namespace Thetis
 
         private void checkLoopback_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkLoopback.Checked && (console.SampleRateRX1 != 192000 || console.SampleRateRX2 != 192000))
+            if (!console.initializing)
             {
-                DialogResult dr = MessageBox.Show("This feature can only be used with sample rates set to 192KHz.",
-                    "Sample Rate Issue",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                if (chkLoopback.Checked && (console.SampleRateRX1 != 192000 || console.SampleRateRX2 != 192000))
+                {
 
-                checkLoopback.Checked = false;
-                return;
+                    DialogResult dr = MessageBox.Show("This feature can only be used with sample rates set to 192KHz.",
+                        "Display PS-RX and PS-TX spectra issue in PureSignal",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                    chkLoopback.Checked = false;
+                    return;
+                }
             }
-            cmaster.PSLoopback = checkLoopback.Checked;
+            cmaster.PSLoopback = chkLoopback.Checked & console.SampleRateRX1 == 192000;
         }
 
         private void chkPSPin_CheckedChanged(object sender, EventArgs e)
@@ -876,6 +880,7 @@ namespace Thetis
             udPSMoxDelay_ValueChanged(this, e);
             chkPSRelaxPtol_CheckedChanged(this, e);
             chkPSAutoAttenuate_CheckedChanged(this, e);
+            checkLoopback_CheckedChanged(this, e);
             chkPSPin_CheckedChanged(this, e);
             chkPSMap_CheckedChanged(this, e);
             chkPSStbl_CheckedChanged(this, e);
