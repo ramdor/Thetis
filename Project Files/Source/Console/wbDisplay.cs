@@ -2354,7 +2354,7 @@ namespace Thetis
 
             try
             {
-                Parallel.For(0, W,
+                Parallel.For(1, W,
                     (i) => // for(int i = 0; i < W; i++)
                     {
                         float max = float.MinValue;
