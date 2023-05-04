@@ -49,6 +49,7 @@ namespace Thetis
         {
             if (Thread.CurrentThread != Audio.console.DSPInitThread)
             {
+
                 Debug.Assert(!Audio.console.m_waiting_for_dsp);
                 if (Audio.console.m_waiting_for_dsp)
                     MessageBox.Show(

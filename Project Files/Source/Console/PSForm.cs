@@ -365,7 +365,7 @@ namespace Thetis
         private void PSForm_Closing(object sender, FormClosingEventArgs e)
         {
             Common.SaveForm(this, "PureSignal");
-            if (console.AppQuitting)
+            if (Console.AppQuitting)
             {
                 _dismissAmpv = true;
                 try

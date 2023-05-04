@@ -335,7 +335,10 @@ namespace Thetis
                 Debug.Assert(slept < 10000);
             }
 
-            Splash.SetStatus("Getting audio settings ...");
+            console.SetupDisplayEngine(false);
+            Display.specready = true;
+
+            Splash.SetStatus("Initting audio settings ...");
             InitAudioTab();
 
             Splash.SetStatus("Some more defaults ...");

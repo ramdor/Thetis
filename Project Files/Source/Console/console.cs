@@ -573,7 +573,7 @@ namespace Thetis
         // MW0LGE
         private TCPIPcatServer m_tcpCATServer;
         private TCPIPtciServer m_tcpTCIServer;
-        private bool m_bDisplayLoopRunning = false;
+        private volatile bool m_bDisplayLoopRunning = false;
         private frmNotchPopup m_frmNotchPopup;
         private frmSeqLog m_frmSeqLog;
         private Thread multimeter2_thread_rx1;
@@ -1065,9 +1065,6 @@ namespace Thetis
                 ApartmentState.STA); // no ASIO devices without this
             pat.Start();
 
-
-            Display.specready = true;
-
             Splash.SetStatus(
                 "Initializing PortAudio ..."); // Set progress point
                                                // PortAudioForThetis.PA_Initialize();
@@ -1132,9 +1129,6 @@ namespace Thetis
             }
 
             initializing = false;
-
-
-
             Splash.SetStatus("Finished");
 
 
@@ -1890,15 +1884,14 @@ namespace Thetis
             InitDSP();
             // KLJ: Setup requires that DSP is already there. See the check in setup.AfterConstruct
             // See the checks in GetSpecRX()
-            SetupDisplayEngine(false);
             m_waiting_for_dsp = false;
-
         }
         private void InitDSPThreaded()
         {
             DSPInitThread = new Thread(myInitDSP);
             DSPInitThread.Priority = ThreadPriority.Highest;
             DSPInitThread.IsBackground = true;
+            // DSPInitThread.ApartmentState = ApartmentState.STA;
             DSPInitThread.Start();
         }
 
@@ -2928,7 +2921,7 @@ namespace Thetis
             // band_60m_register = channels_60m.Count; MW0LGE_21d BandStack2
         }
 
-        // KLJ: AFAIK, this is _only_ called from Console's constructor
+        // KLJ: AFAIK, this is _only_ called from Console's via DSPInitThread
         private int SyncDSPCount = 0;
         private void SyncDSP()
         {
@@ -42355,7 +42348,7 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
                 = N1MM.IsStarted && (N1MM.IsEnabled(1) || N1MM.IsEnabled(2));
         }
         //
-        private bool m_bResizeDX2Display = false;
+        private volatile bool m_bResizeDX2Display = false;
         private async void picDisplay_Resize(object sender, System.EventArgs e)
         {
             pause_DisplayThread = true;
@@ -46600,7 +46593,7 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
                         Debug.Print("Removing owned form " + this.OwnedForms[0].Name);
                         this.RemoveOwnedForm(this.OwnedForms[0]);
                     }
-                    this.AppQuitting = true;
+                    AppQuitting = true;
                     this.psform.Close();
                 }
 
@@ -58849,7 +58842,7 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
             SetupForm.Owner = null; // Don't close setup until we are ready!
         }
 
-        public bool AppQuitting { get; set; }
+        public static bool AppQuitting { get; set; }
 
         private void Console_Load(object sender, EventArgs e) { }
 

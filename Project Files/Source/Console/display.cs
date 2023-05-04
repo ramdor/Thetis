@@ -742,7 +742,7 @@ namespace Thetis
 
         //========================================================
 
-        public static bool specready = false;
+        public volatile static bool specready = false; // KLJ
 
         private static int displayTargetHeight = 0; // target height
         private static int displayTargetWidth = 0; // target width
