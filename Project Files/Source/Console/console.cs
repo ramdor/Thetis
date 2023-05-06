@@ -32941,6 +32941,10 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN100B:
                 case HPSDRModel.ANAN100:
+                    if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB && current_hpsdr_model == HPSDRModel.HERMES)
+                    {
+                        goto fourddcs; // KLJ. It's somewhat hacky, but it gets the job done
+                    }
                     if (chkPower.Checked)
                     {
                         if (!mox)
@@ -33036,6 +33040,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 case HPSDRModel.ORIONMKII:
                 case HPSDRModel.ANAN7000D:
                 case HPSDRModel.ANAN8000D:
+                fourddcs:
                     if (chkPower.Checked)
                     {
                         // If POWER is ON, we always have data flow for RX1 and

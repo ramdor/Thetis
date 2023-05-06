@@ -19,7 +19,6 @@ namespace Thetis
 
         private Console console;
 
-
         public PSForm(Console c)
         {
             InitializeComponent();
@@ -34,7 +33,8 @@ namespace Thetis
 
             _advancedON = chkAdvancedViewHidden.Checked; //MW0LGE_[2.9.0.6]
 
-            startPSThread(); // MW0LGE_21k8 removed the winform timers, now using dedicated thread
+            // startPSThread(); // MW0LGE_21k8 removed the winform timers, now using dedicated thread
+            // KLJ this is now called from console just before setup is created. We really don't need yet another thread running during startup.
         }
 
         #endregion
@@ -86,7 +86,7 @@ namespace Thetis
 
         #region properties
 
-        private void startPSThread()
+        public void startPSThread()
         {
             if (_ps_thread == null || !_ps_thread.IsAlive)
             {
@@ -94,7 +94,7 @@ namespace Thetis
                 {
                     Name = "PureSignal Thread",
                     Priority = ThreadPriority.AboveNormal,
-                    IsBackground = false
+                    IsBackground = true // don't interfere with proper closedown. KLJ.
                 };
                 _ps_thread.Start();
             }
@@ -107,38 +107,60 @@ namespace Thetis
             set { m_bQuckAttenuate = value; }
         }
 
-        public void StopPSThread()
+        private void StopPSThread()
         {
             _bPSRunning = false;
+            // KLJ. Note, we can't wait on the thread here, because it uses the "threadsafe" controls with Invoke and not BeginInvoke,
+            // so we can deadlock. I made it a background thread instead so it won't affect app lifetime.
         }
 
-        private bool _bPSRunning = false;
-        private async void PSLoop()
+        private volatile bool _bPSRunning = false; // KLJ X-Thread vars need to be volatile, always.
+        private volatile bool _inPSLoop = false;
+        private void PSLoop()
         {
             int nCount = 0;
 
             _bPSRunning = true;
-            while (_bPSRunning)
+            _inPSLoop = true;
+            try
             {
-                if (console.PowerOn)
+                while (_bPSRunning)
                 {
-                    if (nCount < (m_bQuckAttenuate ? 1 : 10))
+                    if (console.PowerOn)
                     {
-                        timer1code(); // every 10ms
-                        nCount++;
+                        if (nCount < (m_bQuckAttenuate ? 1 : 10))
+                        {
+                            timer1code(); // every 10ms
+                            nCount++;
+                        }
+                        else
+                        {
+                            timer2code(); // every 100ms if !m_bQuckAttenuate, or every 20ms otherwise
+                            nCount = 0;
+                        }
+
+                        //await Task.Delay(10);
+                        Thread.Sleep(10);
                     }
                     else
                     {
-                        timer2code(); // every 100ms if !m_bQuckAttenuate, or every 20ms otherwise
-                        nCount = 0;
+                        //await Task.Delay(200);
+                        Thread.Sleep(200);
                     }
-
-                    await Task.Delay(10);
                 }
-                else
+            }
+            catch (Exception ex)
+            {
+                // don't care about exception here during closedown.
+                if (_bPSRunning)
                 {
-                    await Task.Delay(200);
+                    Common.LogException(ex);
                 }
+
+            }
+            finally
+            {
+                _inPSLoop = false; // close down properly
             }
         }
 
@@ -164,10 +186,10 @@ namespace Thetis
                     // Set the system to supply feedback.
                     console.UpdateDDCs(console.RX2Enabled);
                     NetworkIO.SetPureSignal(1);
-                    //console.UpdateRXADCCtrl();
+
                     console.UpdateAAudioMixerStates();
-                    unsafe { cmaster.LoadRouterControlBit((void*)0, 0, 0, 1); }
-                    console.radio.GetDSPTX(0).PSRunCal = true;
+                    //unsafe { cmaster.LoadRouterControlBit((void*)0, 0, 0, 1); }
+                    //console.radio.GetDSPTX(0).PSRunCal = true;
                 }
                 else
                 {
@@ -254,20 +276,14 @@ namespace Thetis
 
         private readonly Object _objLocker = new Object();
 
-        private static volatile bool _mox = false;
+        private static bool _mox = false;
         public bool Mox
         {
             get { return _mox; }
             set
             {
                 _mox = value;
-                if (value)
-                {
-                    if (VerifyLoopBack())
-                        cmaster.PSLoopback = chkLoopback.Checked;
-                }
                 puresignal.SetPSMox(_txachannel, value);
-                puresignal._mox = value;
             }
         }
 
@@ -348,18 +364,37 @@ namespace Thetis
 
         private void PSForm_Closing(object sender, FormClosingEventArgs e)
         {
-            if (console.AppQuitting)
+            Common.SaveForm(this, "PureSignal");
+            if (Console.AppQuitting)
             {
                 _dismissAmpv = true;
-                ampvThread.Join();
-                ampv.Close();
-                ampv = null;
+                try
+                {
+                    if (ampvThread != null && ampvThread.IsAlive)
+                    {
+                        ampvThread.Join();
+                        ampv.Close();
+                        ampv = null;
+                    }
+                    StopPSThread();
+                }
+                catch (Exception)
+                {
+
+                }
+                finally
+                {
+                    e.Cancel = false;
+                }
+                return;
             }
-            //_advancedON = true;//MW0LGE_[2.9.0.7]
-            //btnPSAdvanced_Click(this, e); //MW0LGE_[2.9.0.7]
-            this.Hide();
-            e.Cancel = true;
-            Common.SaveForm(this, "PureSignal");
+            else
+            {
+                //_advancedON = true;//MW0LGE_[2.9.0.7]
+                //btnPSAdvanced_Click(this, e); //MW0LGE_[2.9.0.7]
+                this.Hide();
+                e.Cancel = true;
+            }
         }
 
         public void RunAmpv()
@@ -376,7 +411,7 @@ namespace Thetis
                 ampvThread = new Thread(RunAmpv);
                 ampvThread.SetApartmentState(ApartmentState.STA);
                 ampvThread.Priority = ThreadPriority.Lowest;
-                ampvThread.IsBackground = true;
+                ampvThread.IsBackground = true; // don't cause issues when closing app.
                 ampvThread.Name = "Ampv Thread";
                 ampvThread.Start();
             }
@@ -478,7 +513,9 @@ namespace Thetis
 
         private void timer1code()
         {
+            if (Console.AppQuitting) return;
             puresignal.GetInfo(_txachannel);
+            if (Console.AppQuitting) return;
 
             if (puresignal.HasInfoChanged)
             {
@@ -492,6 +529,8 @@ namespace Thetis
                 lblPSInfo13.Text = puresignal.Info[13].ToString();
                 lblPSInfo15.Text = puresignal.Info[15].ToString();
             }
+
+            if (Console.AppQuitting) return;
 
             if (puresignal.CorrectionsBeingApplied)
             {
@@ -722,27 +761,21 @@ namespace Thetis
 
         private void checkLoopback_CheckedChanged(object sender, EventArgs e)
         {
-            if (VerifyLoopBack())
-                cmaster.PSLoopback = chkLoopback.Checked;
-        }
-
-        bool VerifyLoopBack()
-        {
-            if (chkLoopback.Checked && (console.SampleRateRX1 != 192000 || console.SampleRateRX2 != 192000))
+            if (!console.initializing)
             {
-                if (!console.initializing)
+                if (chkLoopback.Checked && (console.SampleRateRX1 != 192000 || console.SampleRateRX2 != 192000))
                 {
-                    DialogResult dr = MessageBox.Show("PS Loopback can only be used with sample rates set to 192KHz.\n\n Therefore, loopback is being disabled.",
-                        "Sample Rate Issue For PureSignal Loopback in Thetis",
+
+                    DialogResult dr = MessageBox.Show("This feature can only be used with sample rates set to 192KHz.",
+                        "Display PS-RX and PS-TX spectra issue in PureSignal",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
                     chkLoopback.Checked = false;
-                    return false;
+                    return;
                 }
-
             }
-            return chkLoopback.Checked;
+            cmaster.PSLoopback = chkLoopback.Checked & console.SampleRateRX1 == 192000;
         }
 
         private void chkPSPin_CheckedChanged(object sender, EventArgs e)
@@ -831,9 +864,6 @@ namespace Thetis
         public void ForcePS()
         {
             EventArgs e = EventArgs.Empty;
-            if (VerifyLoopBack())
-                cmaster.PSLoopback = chkLoopback.Checked;
-
             if (!_autoON)
             {
                 puresignal.SetPSControl(_txachannel, 1, 0, 0, 0);
@@ -854,6 +884,7 @@ namespace Thetis
             udPSMoxDelay_ValueChanged(this, e);
             chkPSRelaxPtol_CheckedChanged(this, e);
             chkPSAutoAttenuate_CheckedChanged(this, e);
+            checkLoopback_CheckedChanged(this, e);
             chkPSPin_CheckedChanged(this, e);
             chkPSMap_CheckedChanged(this, e);
             chkPSStbl_CheckedChanged(this, e);
@@ -880,11 +911,6 @@ namespace Thetis
         }
 
         private void cbPSManual_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void chkLoopback_Click(object sender, EventArgs e)
         {
 
         }
@@ -1069,10 +1095,9 @@ namespace Thetis
         {
             get { return Info[5] != oldInfo[5]; }
         }
-        public static volatile bool _mox;
         public static bool CorrectionsBeingApplied
         {
-            get { return Info[14] == 1 && _mox; }
+            get { return Info[14] == 1; }
         }
         public static int CalibrationCount
         {

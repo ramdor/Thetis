@@ -272,7 +272,7 @@
             // lblPSInfoFB
             // 
             this.lblPSInfoFB.BackColor = System.Drawing.Color.Black;
-            this.lblPSInfoFB.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblPSInfoFB.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblPSInfoFB.ForeColor = System.Drawing.Color.Black;
             this.lblPSInfoFB.Image = null;
             this.lblPSInfoFB.Location = new System.Drawing.Point(14, 41);
@@ -283,7 +283,7 @@
             // lblPSInfoCO
             // 
             this.lblPSInfoCO.BackColor = System.Drawing.Color.Black;
-            this.lblPSInfoCO.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblPSInfoCO.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblPSInfoCO.ForeColor = System.Drawing.Color.Black;
             this.lblPSInfoCO.Image = null;
             this.lblPSInfoCO.Location = new System.Drawing.Point(168, 41);
@@ -444,7 +444,6 @@
             this.chkLoopback.Text = "Display PS-RX and PS-TX spectra";
             this.chkLoopback.UseVisualStyleBackColor = true;
             this.chkLoopback.CheckedChanged += new System.EventHandler(this.checkLoopback_CheckedChanged);
-            this.chkLoopback.Click += new System.EventHandler(this.chkLoopback_Click);
             // 
             // lblPSInfo5
             // 
@@ -788,7 +787,6 @@
             this.chkPSStaticHold.Text = "Enable Static Hold";
             this.toolTip1.SetToolTip(this.chkPSStaticHold, "This mode is like Single-Cal, but not just for the current transmission.");
             this.chkPSStaticHold.UseVisualStyleBackColor = true;
-            this.chkPSStaticHold.Visible = false;
             this.chkPSStaticHold.CheckedChanged += new System.EventHandler(this.chkPSManual_CheckedChanged);
             // 
             // lblPSStatic
