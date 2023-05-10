@@ -191,7 +191,10 @@ void decomp(int n, double* a, int* piv, int* info) {
     int t_piv;
     double m_row, mt_row, m_col, mt_col;
     if (last_wrk_alloc_size < n) { // KLJ
-        last_wrk_alloc_size = n * 4;
+        if (last_wrk_alloc_size) {
+            assert(last_wrk_alloc_size < n);
+        }
+        last_wrk_alloc_size = n * 10;
         if (wrk) {
             _aligned_free(wrk);
         }
