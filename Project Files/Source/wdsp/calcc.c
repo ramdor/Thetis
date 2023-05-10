@@ -765,7 +765,7 @@ typedef struct calc_struct_klj {
     int tsamps_overalloced;
 } CALC_STRUCT, *PCALC_STRUCT;
 
-static PCALC_STRUCT static_pcalc_struct_klj = 0;
+static CALC_STRUCT static_calc_struct_klj;
 
 void calc_destroy(PCALC_STRUCT p) {
     assert(p);
@@ -788,25 +788,16 @@ PCALC_STRUCT calc_create(int tsamps, int nsamps) {
     assert(!busy); // check it's actually OK to create the calc statically.
     busy = 1;
 
-    if (!static_pcalc_struct_klj) {
+    if (static_calc_struct_klj.tsamps_overalloced < nsamps
+        || static_calc_struct_klj.nsamps_overalloced < tsamps) {
         create = 1;
-    } else {
-        if (static_pcalc_struct_klj->nsamps_overalloced < nsamps
-            || static_pcalc_struct_klj->tsamps_overalloced < tsamps) {
-            create = 1;
-            calc_destroy(static_pcalc_struct_klj);
-        }
     }
 
     if (create) {
-        static_pcalc_struct_klj = (PCALC_STRUCT)malloc0(sizeof(CALC_STRUCT));
-        assert(static_pcalc_struct_klj);
-        if (static_pcalc_struct_klj) {
-            memset(static_pcalc_struct_klj, 0, sizeof(CALC_STRUCT));
-        }
+        memset(&static_calc_struct_klj, 0, sizeof(CALC_STRUCT));
     }
 
-    PCALC_STRUCT c = static_pcalc_struct_klj;
+    PCALC_STRUCT c = &static_calc_struct_klj;
 
     if (create) {
         c->env_TX = (double*)malloc0(nsamps_more * sizeof(double));
