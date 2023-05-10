@@ -26,6 +26,7 @@ warren@wpratt.com
 
 #define _CRT_SECURE_NO_WARNINGS
 #include "comm.h"
+#include "klj_mem.h"
 
 void size_calcc(CALCC a) { // for change in ints or spi
     int i;

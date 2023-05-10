@@ -124,9 +124,9 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;WDSP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ARCH_64BIT;PMPA_OVERRIDE_C_MEMORY_FUNCTIONS;WIN32;_DEBUG;_WINDOWS;_USRDLL;WDSP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <AdditionalIncludeDirectories>.;../../lib/portaudio_VS2008/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../memory-pool-allocator;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <AdditionalOptions>/D_ATL_XP_TARGETING %(AdditionalOptions) /Qpar-report:1 /Qvec-report:1</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -136,6 +136,7 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -204,6 +205,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\memory-pool-allocator\pmpa.h" />
     <ClInclude Include="amd.h" />
     <ClInclude Include="ammod.h" />
     <ClInclude Include="amsq.h" />
@@ -239,6 +241,7 @@
     <ClInclude Include="iir.h" />
     <ClInclude Include="iobuffs.h" />
     <ClInclude Include="iqc.h" />
+    <ClInclude Include="klj_mem.h" />
     <ClInclude Include="lmath.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="meter.h" />
@@ -268,6 +271,7 @@
     <ClInclude Include="wcpAGC.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\memory-pool-allocator\pmpa.c" />
     <ClCompile Include="amd.c" />
     <ClCompile Include="ammod.c" />
     <ClCompile Include="amsq.c" />
