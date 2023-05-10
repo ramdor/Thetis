@@ -853,7 +853,6 @@ void calc(CALCC a) {
     double* ym = pcs->ym;
     double* yc = pcs->yc;
     double* ys = pcs->ys;
-    double* cat = pcs->cat;
     double norm;
 
     for (i = 0; i < a->nsamps; i++) {
@@ -948,7 +947,8 @@ void calc(CALCC a) {
     {
         const double mval = 1.0e+00 - 1.0e-10;
         double cval, sval;
-        // double* cat = (double*)malloc0(4 * a->nsamps * sizeof(double)); //KLJ
+        double* cat = pcs->cat; // (double*)malloc0(4 * a->nsamps *
+                                // sizeof(double)); //KLJ
         for (i = 0; i < a->nsamps; i++) {
             cat[4 * i + 0] = x[i];
             cat[4 * i + 1] = ym[i];
@@ -962,7 +962,7 @@ void calc(CALCC a) {
             yc[i] = cat[4 * i + 2];
             ys[i] = cat[4 * i + 3];
         }
-        _aligned_free(cat);
+        // _aligned_free(cat); KLJ
         cval = 0.0;
         sval = 0.0;
         for (i = a->nsamps - 1; i > a->nsamps - 17; i--) {
