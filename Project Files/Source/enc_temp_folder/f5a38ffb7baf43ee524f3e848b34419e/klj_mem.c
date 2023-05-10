@@ -109,7 +109,7 @@ void StorageReset(PSTORAGE arena, int clear) {
     size_t remain = (arena->base + arena->capacity) - arena->current;
     double dmb = (double)MB_KLJ;
     double remainMB = (double)remain / dmb;
-    // printf("remain MB in buffer at reset: %f\n", remainMB);
+    printf("remain MB in buffer at reset: %f\n", remainMB);
     fflush(stdout);
     arena->current = arena->base + arena->offset;
     arena->used = arena->offset;
