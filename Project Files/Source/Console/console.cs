@@ -7919,7 +7919,16 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 case HPSDRModel.ANAN8000D: interval = 20.0f; break;
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E: interval = 1.0f; break;
-                default: interval = 10.0f; break;
+                default:
+                    if (m_frmSetupForm.HermesLite2)
+                    {
+                        interval = 1.0f;
+                    }
+                    else
+                    {
+                        interval = 10.0f;
+                    }
+                    break;
             }
             return PowerKernel(watts, interval, entries, PAsets);
         }
@@ -25066,6 +25075,8 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                                 && current_hpsdr_model != HPSDRModel.ANAN10E
                                 && !apollopresent))
                         {
+
+
                             if (bDrawMarkers)
                             {
                                 g.FillRectangle(
@@ -25157,7 +25168,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                             }
                         }
                         else if (current_hpsdr_model == HPSDRModel.ANAN10
-                            || current_hpsdr_model == HPSDRModel.ANAN10E)
+                            || current_hpsdr_model == HPSDRModel.ANAN10E || m_frmSetupForm.HermesLite2)
                         {
                             if (bDrawMarkers)
                             {
@@ -25252,6 +25263,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         else if (apollopresent) //(anan10present || apollopresent)
                                                 //// 30W
                         {
+
                             if (bDrawMarkers)
                             {
                                 g.FillRectangle(
@@ -29617,9 +29629,18 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     adc_cal_offset = 18;
                     break;
                 default:
-                    bridge_volt = 0.09f;
-                    refvoltage = 3.3f;
-                    adc_cal_offset = 6;
+                    if (m_frmSetupForm.HermesLite2)
+                    {
+                        bridge_volt = 1.5f;
+                        refvoltage = 3.3f;
+                        adc_cal_offset = 6;
+                    }
+                    else
+                    {
+                        bridge_volt = 0.09f;
+                        refvoltage = 3.3f;
+                        adc_cal_offset = 6;
+                    }
                     break;
             }
 

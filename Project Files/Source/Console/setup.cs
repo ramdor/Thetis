@@ -7163,6 +7163,10 @@ namespace Thetis
                     case HPSDRModel.ANAN10E: rv = (float)ud10PA1W.Value; break;
                     case HPSDRModel.ANAN8000D: rv = (float)ud200PA20W.Value; break;
                 }
+
+                if (console.SetupForm.HermesLite2)
+                    rv = (float)ud10PA1W.Value;
+
                 return rv;
             }
         }
@@ -7178,6 +7182,8 @@ namespace Thetis
                     case HPSDRModel.ANAN10E: rv = (float)ud10PA2W.Value; break;
                     case HPSDRModel.ANAN8000D: rv = (float)ud200PA40W.Value; break;
                 }
+                if (console.SetupForm.HermesLite2)
+                    rv = (float)ud10PA1W.Value;
                 return rv;
             }
         }
@@ -7193,6 +7199,8 @@ namespace Thetis
                     case HPSDRModel.ANAN10E: rv = (float)ud10PA3W.Value; break;
                     case HPSDRModel.ANAN8000D: rv = (float)ud200PA60W.Value; break;
                 }
+                if (console.SetupForm.HermesLite2)
+                    rv = (float)ud10PA3W.Value;
                 return rv;
             }
         }
@@ -7208,6 +7216,8 @@ namespace Thetis
                     case HPSDRModel.ANAN10E: rv = (float)ud10PA4W.Value; break;
                     case HPSDRModel.ANAN8000D: rv = (float)ud200PA80W.Value; break;
                 }
+                if (console.SetupForm.HermesLite2)
+                    rv = (float)ud10PA4W.Value;
                 return rv;
             }
         }
@@ -7223,6 +7233,8 @@ namespace Thetis
                     case HPSDRModel.ANAN10E: rv = (float)ud10PA5W.Value; break;
                     case HPSDRModel.ANAN8000D: rv = (float)ud200PA100W.Value; break;
                 }
+                if (console.SetupForm.HermesLite2)
+                    rv = (float)ud10PA5W.Value;
                 return rv;
             }
         }
@@ -7238,6 +7250,8 @@ namespace Thetis
                     case HPSDRModel.ANAN10E: rv = (float)ud10PA6W.Value; break;
                     case HPSDRModel.ANAN8000D: rv = (float)ud200PA120W.Value; break;
                 }
+                if (console.SetupForm.HermesLite2)
+                    rv = (float)ud10PA6W.Value;
                 return rv;
             }
         }
@@ -7253,6 +7267,8 @@ namespace Thetis
                     case HPSDRModel.ANAN10E: rv = (float)ud10PA7W.Value; break;
                     case HPSDRModel.ANAN8000D: rv = (float)ud200PA140W.Value; break;
                 }
+                if (console.SetupForm.HermesLite2)
+                    rv = (float)ud10PA7W.Value;
                 return rv;
             }
         }
@@ -7268,6 +7284,8 @@ namespace Thetis
                     case HPSDRModel.ANAN10E: rv = (float)ud10PA8W.Value; break;
                     case HPSDRModel.ANAN8000D: rv = (float)ud200PA160W.Value; break;
                 }
+                if (console.SetupForm.HermesLite2)
+                    rv = (float)ud10PA8W.Value;
                 return rv;
             }
         }
@@ -7283,6 +7301,8 @@ namespace Thetis
                     case HPSDRModel.ANAN10E: rv = (float)ud10PA9W.Value; break;
                     case HPSDRModel.ANAN8000D: rv = (float)ud200PA180W.Value; break;
                 }
+                if (console.SetupForm.HermesLite2)
+                    rv = (float)ud10PA9W.Value;
                 return rv;
             }
         }
@@ -7298,6 +7318,8 @@ namespace Thetis
                     case HPSDRModel.ANAN10E: rv = (float)ud10PA10W.Value; break;
                     case HPSDRModel.ANAN8000D: rv = (float)ud200PA200W.Value; break;
                 }
+                if (console.SetupForm.HermesLite2)
+                    rv = (float)ud10PA10W.Value;
                 return rv;
             }
         }
@@ -7990,6 +8012,11 @@ namespace Thetis
                 tpPennyCtrl.Text = "Hermes Ctrl";
             else
                 tpPennyCtrl.Text = "OC Control";
+
+            if (this.HermesLite2)
+            {
+                grp10WattMeterTrim.BringToFront();
+            }
 
             if (!console.RX2PreampPresent && console.diversityForm != null)
                 console.diversityForm.Dispose();
@@ -28811,6 +28838,9 @@ namespace Thetis
                 return; // avoid endless loop
             }
             Hl2.HermesLite2 = chkHermesLite2.Checked;
+            if (Hl2.HermesLite2)
+                grp10WattMeterTrim.BringToFront();
+
             if (sender == chkHermesLite2 && !initializing || e == null)
             {
                 int canDo = (int)(State & SetupState.CanApplyHL2Settings);

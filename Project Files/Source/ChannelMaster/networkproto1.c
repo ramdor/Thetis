@@ -459,7 +459,7 @@ void MetisReadThreadMainLoop(void) {
 void WriteMainLoop(char* bufp) {
     // now attempt to TX if there is a frame of data to send
     int txframe;
-    unsigned char C0 = 0, C1 = 0, C2 = 0, C3 = 0, C4 = 0;
+    unsigned char C0 = 0, C1 = 0, C2 = 0, C3 = 0, C4 = 0, ALTC4 = 0;
     unsigned char CWMode;
     char* txbptr;
     int ddc_freq;
@@ -654,6 +654,17 @@ void WriteMainLoop(char* bufp) {
                     | ((prn->puresignal_run & 1) << 6);
                 C3 = prn->user_dig_out & 0b00001111;
                 C4 = (prn->adc[0].rx_step_attn & 0b00011111) | 0b00100000;
+#if 0
+                // MIoBOT
+                if (prn->discovery.BoardType == HermesLite)
+                {
+                    C4 = (prn->adc[0].rx_step_attn & 0b00111111) | 0b01000000;
+                }
+                else
+                {
+                    C4 = (prn->adc[0].rx_step_attn & 0b00011111) | 0b00100000;
+                }
+#endif
                 break;
 
             case 12: // Step ATT control
