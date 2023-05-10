@@ -179,11 +179,25 @@ int fcompare(const void* a, const void* b) {
         return 1;
 }
 
+static double* wrk = 0;
+static size_t last_wrk_alloc_size = 0;
+static volatile int decomp_busy = 0;
+
 void decomp(int n, double* a, int* piv, int* info) {
+
+    assert(!decomp_busy); /// OK for static allocation?
+    decomp_busy = 1;
     int i, j, k;
     int t_piv;
     double m_row, mt_row, m_col, mt_col;
-    double* wrk = (double*)malloc0(n * sizeof(double));
+    if (last_wrk_alloc_size < n) { // KLJ
+        last_wrk_alloc_size = n * 4;
+        if (wrk) {
+            _aligned_free(wrk);
+        }
+
+        wrk = (double*)malloc0((int)(last_wrk_alloc_size * sizeof(double)));
+    }
     *info = 0;
     for (i = 0; i < n; i++) {
         piv[i] = i;
@@ -226,7 +240,8 @@ void decomp(int n, double* a, int* piv, int* info) {
     }
     if (a[n * n - 1] == 0.0) *info = -n;
 cleanup:
-    _aligned_free(wrk);
+    decomp_busy = 0;
+    // _aligned_free(wrk);
 }
 
 void dsolve(int n, double* a, int* piv, double* b, double* x) {
@@ -757,6 +772,7 @@ typedef struct calc_struct_klj {
     double* ym;
     double* yc;
     double* ys;
+    double* cat;
 
     int nsamps;
     int tsamps;
@@ -776,6 +792,7 @@ void calc_destroy(PCALC_STRUCT p) {
 
     _aligned_free(p->env_TX);
     _aligned_free(p->env_RX);
+    _aligned_free(p->cat);
 }
 
 volatile int calc_create_busy = 0;
@@ -812,6 +829,7 @@ PCALC_STRUCT calc_create(int tsamps, int nsamps) {
         c->tsamps = tsamps;
         c->nsamps_overalloced = nsamps_more;
         c->tsamps_overalloced = tsamps_more;
+        c->cat = (double*)malloc0(4 * nsamps * sizeof(double) * 10);
     }
 
     calc_create_busy = 0;
@@ -832,6 +850,7 @@ void calc(CALCC a) {
     double* ym = pcs->ym;
     double* yc = pcs->yc;
     double* ys = pcs->ys;
+    double* cat = pcs->cat;
     double norm;
 
     for (i = 0; i < a->nsamps; i++) {
@@ -926,7 +945,7 @@ void calc(CALCC a) {
     {
         const double mval = 1.0e+00 - 1.0e-10;
         double cval, sval;
-        double* cat = (double*)malloc0(4 * a->nsamps * sizeof(double));
+        // double* cat = (double*)malloc0(4 * a->nsamps * sizeof(double)); //KLJ
         for (i = 0; i < a->nsamps; i++) {
             cat[4 * i + 0] = x[i];
             cat[4 * i + 1] = ym[i];
