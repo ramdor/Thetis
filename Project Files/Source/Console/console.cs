@@ -656,6 +656,18 @@ namespace Thetis
         {
             // CheckIfRussian(); //#UKRAINE
 
+
+#if (DEV_PREVIEW)
+            if (!File.Exists("C:\\cliffdev.txt"))
+            {
+                MessageBox.Show("This is a developer preview and cannot be run on your machine");
+                BadDLL = true;
+                Environment.Exit(0);
+                return;
+            }
+
+#endif
+
             Display.specready = false;
             theConsole = this; // KLJ. Don't let it be assigned only in the caller: it means that anyone looking for 'theConsole'
             // (AFAIK, the NetworkIO) will not find us even after Shown() is complete, thus apparently randomly breaking autostart.
@@ -2262,7 +2274,10 @@ namespace Thetis
 
             // MW0LGE certain things in setup need objects created in this instance,
             // so we will delay them during init of setup, and now do them here
+            Splash.SetStatus("Performing delayed initialisation ...");
             SetupForm.PerformDelayedInitalistion();
+
+            Splash.SetStatus("Continuing to initialise the main window ...");
 
             chkFullDuplex.Checked = false;
             if (rx1_dsp_mode == DSPMode.FIRST || rx1_dsp_mode == DSPMode.LAST)
