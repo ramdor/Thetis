@@ -278,132 +278,6 @@ void cull(int* n, int ints, double* x, double* t, double ptol) {
     *n -= k;
 }
 
-typedef struct builder_mem_klj {
-    double* catxy;
-    double* sx;
-    double* sy;
-    double* h;
-    int* p;
-    int* np;
-
-    double* taa;
-    double* tab;
-    double* tag;
-    double* tad;
-    double* tbb;
-    double* tbg;
-    double* tbd;
-    double* tgg;
-    double* tgd;
-    double* tdd;
-    double u, v, alpha, beta, gamma, delta;
-    int nsize;
-    int intp1;
-    int intm1;
-    double* A;
-    double* B;
-    double* C;
-    double* D;
-    double* E;
-    double* F;
-    double* G;
-    double* MAT;
-    double* RHS;
-    double* SLN;
-    double* z;
-    double* zp;
-    int* ipiv;
-    int ints;
-    int points;
-
-} BUILDER_MEM, *PBUILDER_MEM;
-
-void destroy_builder_mem(PBUILDER_MEM p) {
-    _aligned_free(p->ipiv);
-    _aligned_free(p->catxy);
-    _aligned_free(p->sx);
-    _aligned_free(p->sy);
-    _aligned_free(p->h);
-    _aligned_free(p->p);
-    _aligned_free(p->np);
-
-    _aligned_free(p->taa);
-    _aligned_free(p->tab);
-    _aligned_free(p->tag);
-    _aligned_free(p->tad);
-    _aligned_free(p->tbb);
-    _aligned_free(p->tbg);
-    _aligned_free(p->tbd);
-    _aligned_free(p->tgg);
-    _aligned_free(p->tgd);
-    _aligned_free(p->tdd);
-
-    _aligned_free(p->A);
-    _aligned_free(p->B);
-    _aligned_free(p->C);
-    _aligned_free(p->D);
-    _aligned_free(p->E);
-    _aligned_free(p->F);
-    _aligned_free(p->G);
-
-    _aligned_free(p->MAT);
-    _aligned_free(p->RHS);
-    _aligned_free(p->SLN);
-
-    _aligned_free(p->z);
-    _aligned_free(p->zp);
-}
-
-PBUILDER_MEM create_builder_mem(int points, int ints) {
-    PBUILDER_MEM p = malloc0(sizeof(BUILDER_MEM));
-    assert(p);
-    if (!p) return p;
-    p->points = points;
-    p->ints = ints;
-    p->catxy = (double*)malloc0(2 * points * sizeof(double));
-    p->sx = (double*)malloc0(points * sizeof(double));
-    p->sy = (double*)malloc0(points * sizeof(double));
-    p->h = (double*)malloc0(ints * sizeof(double));
-    p->p = (int*)malloc0(ints * sizeof(int));
-    p->np = (int*)malloc0(ints * sizeof(int));
-
-    p->taa = (double*)malloc0(ints * sizeof(double));
-    p->tab = (double*)malloc0(ints * sizeof(double));
-    p->tag = (double*)malloc0(ints * sizeof(double));
-    p->tad = (double*)malloc0(ints * sizeof(double));
-    p->tbb = (double*)malloc0(ints * sizeof(double));
-    p->tbg = (double*)malloc0(ints * sizeof(double));
-    p->tbd = (double*)malloc0(ints * sizeof(double));
-    p->tgg = (double*)malloc0(ints * sizeof(double));
-    p->tgd = (double*)malloc0(ints * sizeof(double));
-    p->tdd = (double*)malloc0(ints * sizeof(double));
-
-    p->nsize = 3 * ints + 1;
-    p->intp1 = ints + 1;
-    p->intm1 = ints - 1;
-    p->A = (double*)malloc0(p->intp1 * p->intp1 * sizeof(double));
-    p->B = (double*)malloc0(p->intp1 * p->intp1 * sizeof(double));
-    p->C = (double*)malloc0(p->intm1 * p->intp1 * sizeof(double));
-    p->D = (double*)malloc0(p->intp1 * sizeof(double));
-    p->E = (double*)malloc0(p->intp1 * p->intp1 * sizeof(double));
-    p->F = (double*)malloc0(p->intm1 * p->intp1 * sizeof(double));
-    p->G = (double*)malloc0(p->intp1 * sizeof(double));
-    p->MAT = (double*)malloc0(p->nsize * p->nsize * sizeof(double));
-    p->RHS = (double*)malloc0(p->nsize * sizeof(double));
-    p->SLN = (double*)malloc0(p->nsize * sizeof(double));
-    p->z = (double*)malloc0(p->intp1 * sizeof(double));
-    p->zp = (double*)malloc0(p->intp1 * sizeof(double));
-    p->ipiv = (int*)malloc0(p->nsize * sizeof(int));
-    p->p = (int*)malloc0(ints * sizeof(int));
-
-    return p;
-}
-
-void builder_clear(PBUILDER_MEM p) {
-    memset(p->p, 0, p->ints * sizeof(int));
-    memset(p->np, 0, (p->ints * sizeof(int)));
-}
-
 Storage* PSBuilderArena = 0;
 
 void builder(int points, double* x, double* y, int ints, double* t, int* info,
@@ -414,58 +288,12 @@ void builder(int points, double* x, double* y, int ints, double* t, int* info,
     busy = 1;
 
     if (!PSBuilderArena) {
-        PSBuilderArena = StorageCreate(DEFAULT_STORAGE_SIZE_KLJ);
+        PSBuilderArena = StorageCreate(DEFAULT_BUILDER_STORAGE_SIZE_KLJ);
         assert(PSBuilderArena);
     }
     Storage* MemArena = PSBuilderArena;
 
-#ifdef KLJ_USE_PREALLOC_BUILDER
-    static PBUILDER_MEM pmem = 0;
-    if (!pmem || pmem->points < points || pmem->ints < ints) {
-        if (pmem) {
-            destroy_builder_mem(pmem);
-            pmem = 0;
-        }
-        pmem = create_builder_mem(points * 4, ints * 32);
-    }
-
-    builder_clear(pmem);
-    double* catxy = pmem->catxy;
-    double* sx = pmem->sx;
-    double* sy = pmem->sy;
-    double* h = pmem->h;
-    int* p = pmem->p;
-    int* np = pmem->np;
-    double u, v, alpha, beta, gamma, delta;
-    double* taa = pmem->taa;
-    double* tab = pmem->tab;
-    double* tag = pmem->tag;
-    double* tad = pmem->tad;
-    double* tbb = pmem->tbb;
-    double* tbg = pmem->tbg;
-    double* tbd = pmem->tbd;
-    double* tgg = pmem->tgg;
-    double* tgd = pmem->tgd;
-    double* tdd = pmem->tdd;
-    int nsize = 3 * ints + 1;
-    int intp1 = ints + 1;
-    int intm1 = ints - 1;
-    double* A = pmem->A;
-    double* B = pmem->B;
-    double* C = pmem->C;
-    double* D = pmem->D;
-    double* E = pmem->E;
-    double* F = pmem->F;
-    double* G = pmem->G;
-    double* MAT = pmem->MAT;
-    double* RHS = pmem->RHS;
-    double* SLN = pmem->SLN;
-    double* z = pmem->z;
-    double* zp = pmem->zp;
-    int* ipiv = pmem->ipiv;
-    int i, j, k, m;
-    int dinfo;
-#elif (defined KLJ_MEM__ORIG_WAY)
+#ifdef ALLOW_MALLOC_AFTER_TAKEOFF_KLJ
     double* catxy = (double*)malloc0(2 * points * sizeof(double));
     double* sx = (double*)malloc0(points * sizeof(double));
     double* sy = (double*)malloc0(points * sizeof(double));

@@ -23,7 +23,6 @@ static size_t NextPowerOf2(size_t val) {
     return ++val;
 }
 
-
 #ifdef HOOK_MALLOC_KLJ_WDSP
 int WDSPAllocHook(int allocType, void* userData, size_t size, int blockType,
     long requestNumber, const unsigned char* filename, int lineNumber) {
@@ -34,10 +33,10 @@ int WDSPAllocHook(int allocType, void* userData, size_t size, int blockType,
     busy = 1;
 
     switch (allocType) {
-    case _HOOK_ALLOC: break;
-    case _HOOK_REALLOC: break;
-    case _HOOK_FREE: break;
-    default: assert(0);
+        case _HOOK_ALLOC: break;
+        case _HOOK_REALLOC: break;
+        case _HOOK_FREE: break;
+        default: assert(0);
     };
     busy = 0;
     return TRUE; // let malloc do it's thing.
@@ -46,7 +45,7 @@ int WDSPAllocHook(int allocType, void* userData, size_t size, int blockType,
 
 PSTORAGE StorageCreate(size_t sz) {
 
-    if (sz == 0) sz = DEFAULT_STORAGE_SIZE_KLJ;
+    if (sz == 0) sz = DEFAULT_BUILDER_STORAGE_SIZE_KLJ;
     sz = NextPowerOf2(sz);
     assert(sz);
 #ifdef HOOK_MALLOC_KLJ_WDSP
@@ -110,7 +109,7 @@ void StorageReset(PSTORAGE arena, int clear) {
     double dmb = (double)MB_KLJ;
     double remainMB = (double)remain / dmb;
     // printf("remain MB in buffer at reset: %f\n", remainMB);
-    fflush(stdout);
+    // fflush(stdout);
     arena->current = arena->base + arena->offset;
     arena->used = arena->offset;
     if (clear) {

@@ -16,7 +16,7 @@
 
 #define KB_KLJ 1024ULL
 #define MB_KLJ 1024ULL * 1024ULL
-static size_t DEFAULT_STORAGE_SIZE_KLJ = MB_KLJ * 10;
+static size_t DEFAULT_BUILDER_STORAGE_SIZE_KLJ = MB_KLJ * 10;
 
 // my dumb allocator that never frees anything
 typedef struct Storage Storage;
