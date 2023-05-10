@@ -778,15 +778,17 @@ void calc_destroy(PCALC_STRUCT p) {
     _aligned_free(p->env_RX);
 }
 
+volatile int calc_create_busy = 0;
+
 PCALC_STRUCT calc_create(int tsamps, int nsamps) {
 
     int create = 0;
     int nsamps_more = nsamps * 4;
     int tsamps_more = tsamps * 4;
-    static int busy = 0;
 
-    assert(!busy); // check it's actually OK to create the calc statically.
-    busy = 1;
+    assert(!calc_create_busy); // check it's actually OK to create the calc
+                               // statically.
+    calc_create_busy = 1;
 
     if (static_calc_struct_klj.tsamps_overalloced < nsamps
         || static_calc_struct_klj.nsamps_overalloced < tsamps) {
@@ -812,26 +814,17 @@ PCALC_STRUCT calc_create(int tsamps, int nsamps) {
         c->tsamps_overalloced = tsamps_more;
     }
 
-    busy = 0;
-    return c;
+    calc_create_busy = 0;
+    return &static_calc_struct_klj;
 }
-
+volatile int calc_busy = 0;
 void calc(CALCC a) {
-    static int busy = 0;
-    assert(!busy);
-    busy = 1;
+
+    assert(!calc_busy);
+    calc_busy = 1;
     int i;
     int tsamps = a->nsamps + a->npsamps;
-    static PCALC_STRUCT pcs = {0};
-    if (pcs && pcs->nsamps < a->nsamps && pcs->tsamps < tsamps) {
-        // good, don't allocate unless you need to. KLJ
-    } else {
-        if (pcs) {
-            calc_destroy(pcs);
-            pcs = 0;
-        }
-        pcs = calc_create(tsamps, a->nsamps);
-    }
+    PCALC_STRUCT pcs = calc_create(tsamps, a->nsamps);
 
     double* env_TX = pcs->env_TX;
     double* env_RX = pcs->env_RX;
@@ -1014,7 +1007,7 @@ void calc(CALCC a) {
     }
     LeaveCriticalSection(&a->disp.cs_disp);
 cleanup:
-    busy = 0;
+    calc_busy = 0;
     /*/
     _aligned_free(x);
     _aligned_free(ym);
