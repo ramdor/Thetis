@@ -205,7 +205,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\memory-pool-allocator\pmpa.h" />
     <ClInclude Include="amd.h" />
     <ClInclude Include="ammod.h" />
     <ClInclude Include="amsq.h" />
@@ -271,7 +270,6 @@
     <ClInclude Include="wcpAGC.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\memory-pool-allocator\pmpa.c" />
     <ClCompile Include="amd.c" />
     <ClCompile Include="ammod.c" />
     <ClCompile Include="amsq.c" />

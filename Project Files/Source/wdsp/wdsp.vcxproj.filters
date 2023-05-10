@@ -204,9 +204,6 @@
     <ClInclude Include="klj_mem.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\memory-pool-allocator\pmpa.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="channel.c">
@@ -381,9 +378,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ssql.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\memory-pool-allocator\pmpa.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
