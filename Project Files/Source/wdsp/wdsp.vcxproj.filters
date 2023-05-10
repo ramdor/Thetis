@@ -380,6 +380,9 @@
     <ClCompile Include="ssql.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="klj_mem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="calculus">

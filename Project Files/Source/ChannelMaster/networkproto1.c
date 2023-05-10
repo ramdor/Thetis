@@ -304,6 +304,8 @@ void MetisReadThreadMainLoop(void) {
     printf("- MetisReadThreadMainLoop()\n");
     fflush(stdout);
 
+
+
     while (io_keep_running != 0) {
         // MW0LGE_21g WSAWaitForMultipleEvents(1, &prn->hDataEvent, FALSE,
         // WSA_INFINITE, FALSE); added similar timout code from

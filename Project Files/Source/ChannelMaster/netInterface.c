@@ -23,7 +23,7 @@
 #include "network.h"
 #include "obbuffs.h"
 
-#define HOOK_MALLOC_KLJ
+// #define HOOK_MALLOC_KLJ
 
 #ifdef HOOK_MALLOC_KLJ
 #include <stdio.h>
@@ -48,10 +48,8 @@ int MyAllocHook(int allocType, void* userData, size_t size, int blockType,
     busy = 1;
 
     switch (allocType) {
-        case _HOOK_ALLOC: 
-            break;
-        case _HOOK_REALLOC: 
-            break;
+        case _HOOK_ALLOC: break;
+        case _HOOK_REALLOC: break;
         case _HOOK_FREE: break;
         default: assert(0);
     };
@@ -62,7 +60,8 @@ int MyAllocHook(int allocType, void* userData, size_t size, int blockType,
 static _CRT_ALLOC_HOOK RealMalloc;
 
 _CRT_ALLOC_HOOK HookMalloc() {
-    return _CrtSetAllocHook(MyAllocHook);
+    // return _CrtSetAllocHook(MyAllocHook);
+    return 0;
 }
 #endif
 

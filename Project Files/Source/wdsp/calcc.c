@@ -386,15 +386,23 @@ void builder_clear(PBUILDER_MEM p) {
     memset(p->np, 0, (p->ints * sizeof(int)));
 }
 
+Storage* PSBuilderArena = 0;
+
 void builder(int points, double* x, double* y, int ints, double* t, int* info,
     double* c, double ptol) {
 
     static int busy = 0;
-    static PBUILDER_MEM pmem = 0;
     assert(!busy);
     busy = 1;
 
+    if (!PSBuilderArena) {
+        PSBuilderArena = StorageCreate(DEFAULT_STORAGE_SIZE_KLJ);
+        assert(PSBuilderArena);
+    }
+    Storage* MemArena = PSBuilderArena;
+
 #ifdef KLJ_USE_PREALLOC_BUILDER
+    static PBUILDER_MEM pmem = 0;
     if (!pmem || pmem->points < points || pmem->ints < ints) {
         if (pmem) {
             destroy_builder_mem(pmem);
@@ -439,7 +447,7 @@ void builder(int points, double* x, double* y, int ints, double* t, int* info,
     int* ipiv = pmem->ipiv;
     int i, j, k, m;
     int dinfo;
-#else
+#elif (defined KLJ_MEM__ORIG_WAY)
     double* catxy = (double*)malloc0(2 * points * sizeof(double));
     double* sx = (double*)malloc0(points * sizeof(double));
     double* sy = (double*)malloc0(points * sizeof(double));
@@ -475,6 +483,51 @@ void builder(int points, double* x, double* y, int ints, double* t, int* info,
     int i, j, k, m;
     int dinfo;
     int* ipiv = (int*)malloc0(nsize * sizeof(int));
+#else
+
+    double* catxy
+        = (double*)PushArray(MemArena, 2 * points * sizeof(double), double);
+    double* sx = (double*)PushArray(MemArena, points * sizeof(double), double);
+    double* sy = (double*)PushArray(MemArena, points * sizeof(double), double);
+    double* h = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    int* p = (int*)PushArray(MemArena, ints * sizeof(int), int);
+    int* np = (int*)PushArray(MemArena, ints * sizeof(int), int);
+    double u, v, alpha, beta, gamma, delta;
+    double* taa = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tab = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tag = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tad = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tbb = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tbg = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tbd = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tgg = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tgd = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tdd = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    int nsize = 3 * ints + 1;
+    int intp1 = ints + 1;
+    int intm1 = ints - 1;
+    double* A
+        = (double*)PushArray(MemArena, intp1 * intp1 * sizeof(double), double);
+    double* B
+        = (double*)PushArray(MemArena, intp1 * intp1 * sizeof(double), double);
+    double* C
+        = (double*)PushArray(MemArena, intm1 * intp1 * sizeof(double), double);
+    double* D = (double*)PushArray(MemArena, intp1 * sizeof(double), double);
+    double* E
+        = (double*)PushArray(MemArena, intp1 * intp1 * sizeof(double), double);
+    double* F
+        = (double*)PushArray(MemArena, intm1 * intp1 * sizeof(double), double);
+    double* G = (double*)PushArray(MemArena, intp1 * sizeof(double), double);
+    double* MAT
+        = (double*)PushArray(MemArena, nsize * nsize * sizeof(double), double);
+    double* RHS = (double*)PushArray(MemArena, nsize * sizeof(double), double);
+    double* SLN = (double*)PushArray(MemArena, nsize * sizeof(double), double);
+    double* z = (double*)PushArray(MemArena, intp1 * sizeof(double), double);
+    double* zp = (double*)PushArray(MemArena, intp1 * sizeof(double), double);
+    int i, j, k, m;
+    int dinfo;
+    int* ipiv = (int*)PushArray(MemArena, nsize * sizeof(int), int);
+
 #endif
 
     for (i = 0; i < points; i++) {
@@ -601,6 +654,7 @@ void builder(int points, double* x, double* y, int ints, double* t, int* info,
             + 1.0 / (h[i] * h[i]) * (zp[i] + zp[i + 1]);
     }
 cleanup:
+    StorageReset(MemArena, 1);
     busy = 0;
 }
 
@@ -706,25 +760,12 @@ typedef struct calc_struct_klj {
 
     int nsamps;
     int tsamps;
+
+    int nsamps_overalloced;
+    int tsamps_overalloced;
 } CALC_STRUCT, *PCALC_STRUCT;
 
-PCALC_STRUCT calc_create(int tsamps, int nsamps) {
-    PCALC_STRUCT c = (PCALC_STRUCT)malloc(sizeof(CALC_STRUCT));
-    if (!c) {
-        assert("No memory to make a calc_create_klj struct" == 0);
-        return 0;
-    }
-    memset(c, 0, sizeof(CALC_STRUCT));
-    c->env_TX = (double*)malloc0(nsamps * sizeof(double));
-    c->env_RX = (double*)malloc0(nsamps * sizeof(double));
-    c->x = (double*)malloc0(tsamps * sizeof(double));
-    c->ym = (double*)malloc0(tsamps * sizeof(double));
-    c->yc = (double*)malloc0(tsamps * sizeof(double));
-    c->ys = (double*)malloc0(tsamps * sizeof(double));
-    c->nsamps = nsamps;
-    c->tsamps = tsamps;
-    return c;
-}
+static PCALC_STRUCT static_pcalc_struct_klj = 0;
 
 void calc_destroy(PCALC_STRUCT p) {
     assert(p);
@@ -735,6 +776,53 @@ void calc_destroy(PCALC_STRUCT p) {
 
     _aligned_free(p->env_TX);
     _aligned_free(p->env_RX);
+}
+
+PCALC_STRUCT calc_create(int tsamps, int nsamps) {
+
+    int create = 0;
+    int nsamps_more = nsamps * 4;
+    int tsamps_more = tsamps * 4;
+    static int busy = 0;
+
+    assert(!busy); // check it's actually OK to create the calc statically.
+    busy = 1;
+
+    if (!static_pcalc_struct_klj) {
+        create = 1;
+    } else {
+        if (static_pcalc_struct_klj->nsamps_overalloced < nsamps
+            || static_pcalc_struct_klj->tsamps_overalloced < tsamps) {
+            create = 1;
+            calc_destroy(static_pcalc_struct_klj);
+        }
+    }
+
+    if (create) {
+        static_pcalc_struct_klj = (PCALC_STRUCT)malloc0(sizeof(CALC_STRUCT));
+        assert(static_pcalc_struct_klj);
+        if (static_pcalc_struct_klj) {
+            memset(static_pcalc_struct_klj, 0, sizeof(CALC_STRUCT));
+        }
+    }
+
+    PCALC_STRUCT c = static_pcalc_struct_klj;
+
+    if (create) {
+        c->env_TX = (double*)malloc0(nsamps_more * sizeof(double));
+        c->env_RX = (double*)malloc0(nsamps_more * sizeof(double));
+        c->x = (double*)malloc0(tsamps_more * sizeof(double));
+        c->ym = (double*)malloc0(tsamps_more * sizeof(double));
+        c->yc = (double*)malloc0(tsamps_more * sizeof(double));
+        c->ys = (double*)malloc0(tsamps_more * sizeof(double));
+        c->nsamps = nsamps;
+        c->tsamps = tsamps;
+        c->nsamps_overalloced = nsamps_more;
+        c->tsamps_overalloced = tsamps_more;
+    }
+
+    busy = 0;
+    return c;
 }
 
 void calc(CALCC a) {
@@ -947,7 +1035,35 @@ cleanup:
     /*/
 }
 
-void __cdecl doCalcCorrection(void* arg) {
+volatile int wdsp_running = 1;
+CALCC calcCCForTurnOff = 0;
+CALCC calcCCForCorrection = 0;
+
+HANDLE doCalcCorrectionEvent = 0;
+HANDLE doTurnOffEvent = 0;
+
+HANDLE doTurnOffThread = 0;
+HANDLE doCalcCorrectionThread = 0;
+
+DWORD WINAPI doCalcCorrection(void* arg) {
+
+    while (wdsp_running) {
+        DWORD dwWait = WaitForSingleObject(doCalcCorrectionEvent, INFINITE);
+        CALCC a = calcCCForCorrection;
+        if (!a) {
+            return 0;
+        }
+        calc(a); // is this supposed to be outside the critical section? KLJ
+        if (a->scOK) {
+            if (!InterlockedBitTestAndSet(&a->ctrl.running, 0))
+                SetTXAiqcStart(a->channel, a->cm, a->cc, a->cs);
+            else
+                SetTXAiqcSwap(a->channel, a->cm, a->cc, a->cs);
+        }
+        InterlockedBitTestAndSet(&a->ctrl.calcdone, 0);
+    }
+    return 0;
+    /*/
     CALCC a = (CALCC)arg;
     calc(a);
     if (a->scOK) {
@@ -957,13 +1073,20 @@ void __cdecl doCalcCorrection(void* arg) {
             SetTXAiqcSwap(a->channel, a->cm, a->cc, a->cs);
     }
     InterlockedBitTestAndSet(&a->ctrl.calcdone, 0);
-    _endthread();
+    /*/
 }
 
-void __cdecl doTurnoff(void* arg) {
-    CALCC a = (CALCC)arg;
-    SetTXAiqcEnd(a->channel);
-    _endthread();
+DWORD WINAPI doTurnoff(void* arg) {
+
+    while (wdsp_running) {
+        DWORD dwWait = WaitForSingleObject(doTurnOffEvent, INFINITE);
+        CALCC a = calcCCForTurnOff;
+        if (!a) return 0;
+        assert(a);
+        SetTXAiqcEnd(a->channel);
+    }
+
+    return 0;
 }
 
 enum _calcc_state {
@@ -1055,8 +1178,19 @@ PORT void pscc(int channel, int size, double* tx, double* rx) {
                 InterlockedExchange(&a->ctrl.current_state, LRESET);
                 a->ctrl.reset = 0;
                 if (!a->ctrl.turnon)
-                    if (InterlockedBitTestAndReset(&a->ctrl.running, 0))
-                        _beginthread(doTurnoff, 0, (void*)a);
+                    if (InterlockedBitTestAndReset(&a->ctrl.running, 0)) {
+
+                        if (doTurnOffEvent)
+                            // thread is up, and waiting on the event
+                            assert(doTurnOffEvent
+                                && doTurnOffEvent != INVALID_HANDLE_VALUE);
+                        if (doTurnOffEvent) {
+                            calcCCForTurnOff = a;
+                            SetEvent(doTurnOffEvent);
+                        }
+
+                        // _beginthread(doTurnoff, 0, (void*)a);
+                    }
                 a->info[14] = 0;
                 a->ctrl.env_maxtx = 0.0;
                 a->ctrl.bs_count = 0;
@@ -1185,7 +1319,13 @@ PORT void pscc(int channel, int size, double* tx, double* rx) {
                 InterlockedExchange(&a->ctrl.current_state, LCALC);
                 if (!a->ctrl.calcinprogress) {
                     a->ctrl.calcinprogress = 1;
-                    _beginthread(doCalcCorrection, 0, (void*)a);
+                    if (doCalcCorrectionEvent) {
+                        // thread running, just signal it to do work:
+                        calcCCForCorrection = a;
+                        SetEvent(doCalcCorrectionEvent);
+                    }
+
+                    // _beginthread(doCalcCorrection, 0, (void*)a);
                 }
 
                 if (InterlockedBitTestAndReset(&a->ctrl.calcdone, 0)) {
@@ -1284,6 +1424,29 @@ PORT void PSRestoreCorr(int channel, char* filename) {
     LeaveCriticalSection(&txa[channel].calcc.cs_update);
 }
 
+// thread creation for PS
+void MakeThreadsKLJ() {
+
+    if (!doTurnOffEvent) {
+
+        doTurnOffEvent = CreateEvent(0, 0, 0, 0);
+        assert(doTurnOffEvent);
+        doTurnOffThread = CreateThread(0, 0, doTurnoff, 0, 0, 0);
+        assert(doTurnOffThread && doTurnOffThread != INVALID_HANDLE_VALUE);
+    }
+
+    if (!doCalcCorrectionEvent) {
+
+        doCalcCorrectionEvent = CreateEvent(0, 0, 0, 0);
+        assert(doCalcCorrectionEvent);
+        if (doCalcCorrectionEvent) {
+            doCalcCorrectionThread
+                = CreateThread(0, 0, doCalcCorrection, 0, 0, 0);
+            assert(doCalcCorrectionEvent != INVALID_HANDLE_VALUE);
+        }
+    }
+}
+
 /********************************************************************************************************
  *																										*
  *											  Properties
@@ -1292,6 +1455,10 @@ PORT void PSRestoreCorr(int channel, char* filename) {
  ********************************************************************************************************/
 
 PORT void SetPSRunCal(int channel, int run) {
+
+    if (run) {
+        MakeThreadsKLJ();
+    }
     CALCC a;
     EnterCriticalSection(&txa[channel].calcc.cs_update);
     a = txa[channel].calcc.p;

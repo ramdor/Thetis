@@ -136,7 +136,7 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -299,6 +299,7 @@
     <ClCompile Include="icfir.c" />
     <ClCompile Include="iir.c" />
     <ClCompile Include="iqc.c" />
+    <ClCompile Include="klj_mem.c" />
     <ClCompile Include="lmath.c" />
     <ClCompile Include="meterlog10.c" />
     <ClCompile Include="fir.c" />

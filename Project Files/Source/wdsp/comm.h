@@ -89,6 +89,7 @@ warren@wpratt.com
 #include "varsamp.h"
 #include "wcpAGC.h"
 #include <assert.h>
+#include "klj_mem.h"
 
 #ifndef PRIO_THRD_DEFINED
 #define PRIO_THRD_DEFINED
