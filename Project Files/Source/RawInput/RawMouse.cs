@@ -157,7 +157,7 @@ namespace RawInput_dll
             }
             else
             {
-                Debug.WriteLine("Handle: {0} was not in the mouse device list.", _rawBuffer.header.hDevice);
+                // Debug.WriteLine("Handle: {0} was not in the mouse device list.", _rawBuffer.header.hDevice);
                 return;
             }
 

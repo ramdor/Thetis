@@ -167,12 +167,13 @@ PORT int nativeInitMetis(
     fflush(stdout);
 
     sndbufsize = 0xfa000;
-    setsockopt(listenSock, SOL_SOCKET, SO_SNDBUF, (const char*)&sndbufsize,
+    int rv = setsockopt(listenSock, SOL_SOCKET, SO_SNDBUF,
+        (const char*)&sndbufsize, sizeof(int));
+    assert(rv == 0);
+    // sndbufsize = 0x10000;
+    rv = setsockopt(listenSock, SOL_SOCKET, SO_RCVBUF, (const char*)&sndbufsize,
         sizeof(int));
-    sndbufsize = 0x10000;
-    setsockopt(listenSock, SOL_SOCKET, SO_RCVBUF, (const char*)&sndbufsize,
-        sizeof(int));
-
+    assert(rv == 0);
     DestIp = inet_addr(netaddr);
 
     if (DestIp != 0) {
@@ -699,7 +700,7 @@ void CmdGeneral() { // port 1024
     packetbuf[59] = prbpfilter->enable | prbpfilter2->enable;
     // sendto port 1024
     if (listenSock != INVALID_SOCKET && RadioProtocol == ETH)
-        sendPacket(listenSock, packetbuf, sizeof(packetbuf), 1024);
+        sendPacket(listenSock, packetbuf, sizeof(packetbuf), 1024, -1);
 }
 
 void CmdHighPriority() { // port 1027
@@ -855,7 +856,7 @@ void CmdHighPriority() { // port 1027
 
     // sendto port 1027
     if (listenSock != INVALID_SOCKET && RadioProtocol == ETH)
-        sendPacket(listenSock, packetbuf, BUFLEN, 1027);
+        sendPacket(listenSock, packetbuf, BUFLEN, 1027, -1);
 }
 
 PORT void CmdRx() { // port 1025
@@ -967,7 +968,7 @@ PORT void CmdRx() { // port 1025
 
     // sendto port 1025
     if (listenSock != INVALID_SOCKET && RadioProtocol == ETH)
-        sendPacket(listenSock, packetbuf, BUFLEN, 1025);
+        sendPacket(listenSock, packetbuf, BUFLEN, 1025, -1);
 }
 
 void CmdTx() { // port 1026
@@ -1033,7 +1034,7 @@ void CmdTx() { // port 1026
 
     // sendto port 1026
     if (listenSock != INVALID_SOCKET && RadioProtocol == ETH)
-        sendPacket(listenSock, packetbuf, sizeof(packetbuf), 1026);
+        sendPacket(listenSock, packetbuf, sizeof(packetbuf), 1026, -1);
 }
 
 int sendOutbound(int id, double* out, OBB a) {
@@ -1185,7 +1186,7 @@ void WriteUDPFrame(int id, char* bufp, int buflen) {
             ++prn->rx[0].rx_out_seq_no;
             memcpy(framebuf + 4, bufp, buflen);
             if (listenSock != INVALID_SOCKET && RadioProtocol == ETH)
-                sendPacket(listenSock, framebuf, buflen + 4, 1028);
+                sendPacket(listenSock, framebuf, buflen + 4, 1028, -1);
             // send pcm packet
             // sendPacket(listenSock, framebuf+4, buflen, 1050);
             break;
@@ -1199,14 +1200,16 @@ void WriteUDPFrame(int id, char* bufp, int buflen) {
             ++prn->tx[0].mic_out_seq_no;
             memcpy(framebuf + 4, bufp, buflen);
             if (listenSock != INVALID_SOCKET && RadioProtocol == ETH)
-                sendPacket(listenSock, framebuf, buflen + 4, 1029);
+                sendPacket(listenSock, framebuf, buflen + 4, 1029, -1);
             // send pcm packet
             // sendPacket(listenSock, framebuf + 4, buflen, 1051);
             break;
     }
 }
 
-int sendPacket(SOCKET sock, char* data, int length, int port) {
+static volatile int last_metis_ob_seqnum = 0;
+int sendPacket(
+    SOCKET sock, char* data, int length, int port, int metis_ob_seqnum) {
     int ret;
     struct sockaddr_in dest = {0};
 
@@ -1214,6 +1217,12 @@ int sendPacket(SOCKET sock, char* data, int length, int port) {
     dest.sin_port = htons((u_short)port);
     dest.sin_family = AF_INET;
     dest.sin_addr.s_addr = MetisAddr;
+
+    if (metis_ob_seqnum > 0) {
+        assert(metis_ob_seqnum == last_metis_ob_seqnum + 1);
+        last_metis_ob_seqnum = metis_ob_seqnum;
+    }
+
     ret = sendto(sock, data, length, 0, (SOCKADDR*)&dest, sizeof(dest));
     LeaveCriticalSection(&prn->sndpkt);
 
@@ -1292,7 +1301,7 @@ DWORD WINAPI ReadThreadMain(LPVOID n) {
     ReadThreadMainLoop();
     IOThreadRunning = 0;
 
-        if (hTask) AvRevertMmThreadCharacteristics(hTask);
+    if (hTask) AvRevertMmThreadCharacteristics(hTask);
 
     return 0;
 }

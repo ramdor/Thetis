@@ -23,8 +23,48 @@
 #include "network.h"
 #include "obbuffs.h"
 
+#define HOOK_MALLOC_KLJ
+
+#ifdef HOOK_MALLOC_KLJ
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <malloc.h>
+#include <time.h>
+#include <crtdbg.h>
+#endif
+
 #define MDECAY 0.99f;
 const int numInputBuffs = 12;
+
+#ifdef HOOK_MALLOC_KLJ
+
+int MyAllocHook(int allocType, void* userData, size_t size, int blockType,
+    long requestNumber, const unsigned char* filename, int lineNumber) {
+
+    static int busy = 0;
+    if (busy) return TRUE;
+
+    busy = 1;
+
+    switch (allocType) {
+        case _HOOK_ALLOC: 
+            break;
+        case _HOOK_REALLOC: 
+            break;
+        case _HOOK_FREE: break;
+        default: assert(0);
+    };
+    busy = 0;
+    return TRUE; // let malloc do it's thing.
+}
+
+static _CRT_ALLOC_HOOK RealMalloc;
+
+_CRT_ALLOC_HOOK HookMalloc() {
+    return _CrtSetAllocHook(MyAllocHook);
+}
+#endif
 
 PORT int StartAudioNative() {
     int myrc = 0;
@@ -52,6 +92,9 @@ PORT int StartAudioNative() {
 
             if (prn != NULL) {
                 prn->hReadThreadInitSem = CreateSemaphore(NULL, 0, 1, NULL);
+                printf("Requested that MetisReadThread should run...\n");
+                PrintTimeHack();
+                fflush(stdout);
                 prn->hReadThreadMain = (HANDLE)_beginthreadex(
                     NULL, 0, MetisReadThreadMain, 0, 0, NULL);
 
@@ -88,10 +131,20 @@ PORT int StartAudioNative() {
         StopReadThread(); /* is a no op if not running */
     }
 
+#ifdef HOOK_MALLOC_KLJ
+    if (myrc == ERROR_SUCCESS) {
+        HookMalloc();
+    }
+#endif
+
     return myrc;
 }
 
 PORT void StopAudio() {
+
+#ifdef HOOK_MALLOC_KLJ
+    if (RealMalloc) _CrtSetAllocHook(RealMalloc);
+#endif
     int rc;
     printf("stop audio called\n");
     fflush(stdout);

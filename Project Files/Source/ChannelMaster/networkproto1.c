@@ -50,9 +50,11 @@ int SendStartToMetis(void) {
     outpacket.packetbuf[3] = 0x01;
 
     starting_seq = MetisLastRecvSeq;
+    MetisLastRecvSeq = 0;
+
     for (i = 0; i < 5; i++) {
         ForceCandCFrame(1);
-        sendPacket(listenSock, (char*)&outpacket, sizeof(outpacket), 1024);
+        sendPacket(listenSock, (char*)&outpacket, sizeof(outpacket), 1024, -1);
         MetisReadDirect((unsigned char*)&inpacket);
         if (MetisLastRecvSeq != starting_seq) {
             break;
@@ -85,7 +87,7 @@ PORT int SendStopToMetis() {
 
     starting_seq = MetisLastRecvSeq;
     for (i = 0; i < 5; i++) {
-        sendPacket(listenSock, (char*)&outpacket, sizeof(outpacket), 1024);
+        sendPacket(listenSock, (char*)&outpacket, sizeof(outpacket), 1024, -1);
         Sleep(10);
         if (MetisLastRecvSeq == starting_seq) {
             break;
@@ -165,6 +167,8 @@ int MetisReadDirect(unsigned char* bufp) {
         return rc;
     }
 
+    assert(rc == 1032);
+
     /* check frame is from who we expect */
     if (rc == 1032) { /* looks like a data frame */
         if ((inpacket.readbuf[0] == 0xef) && (inpacket.readbuf[1] == 0xfe)
@@ -186,7 +190,14 @@ int MetisReadDirect(unsigned char* bufp) {
                 }
                 memcpy(bufp, inpacket.readbuf + 8, 1024);
                 xpro(prop, seqnum, bufp); // resequence out of order packets
-                if (seqnum != (1 + MetisLastRecvSeq)) {
+
+                if (seqnum != (1 + MetisLastRecvSeq) && MetisLastRecvSeq) {
+#ifdef _DEBUG
+                    printf(
+                        "inpacket bad sequencing. Expected %ld, actual %ld\n",
+                        (long)(1 + MetisLastRecvSeq), (long)seqnum);
+                    fflush(stdout);
+#endif
                     SeqError += 1;
                 }
                 MetisLastRecvSeq = seqnum;
@@ -208,7 +219,11 @@ int MetisReadDirect(unsigned char* bufp) {
     return 0;
 }
 
+static volatile int MetisWriteBusy = 0;
 int MetisWriteFrame(int endpoint, char* bufp) {
+
+    assert(!MetisWriteBusy);
+    MetisWriteBusy = 1;
     int result = 0;
     struct outdgram {
         unsigned char framebuf[1032];
@@ -226,8 +241,10 @@ int MetisWriteFrame(int endpoint, char* bufp) {
     ++MetisOutBoundSeqNum;
     memcpy(outpacket.framebuf + 8, bufp, 1024);
 
-    result = sendPacket(listenSock, (char*)&outpacket, 1024 + 8, 1024);
+    result = sendPacket(
+        listenSock, (char*)&outpacket, 1024 + 8, 1024, MetisOutBoundSeqNum);
     result -= 8;
+    MetisWriteBusy = 0;
     return result;
 }
 
@@ -245,6 +262,7 @@ DWORD WINAPI MetisReadThreadMain(LPVOID n) {
 
     ReleaseSemaphore(prn->hReadThreadInitSem, 1, NULL);
     printf("MetisReadThread runs...\n");
+    PrintTimeHack();
     fflush(stdout);
 
     MetisReadThreadMainLoop();
@@ -748,6 +766,7 @@ DWORD WINAPI sendProtocol1Samples(LPVOID n) {
             break;
         }
         if (dw == WAIT_TIMEOUT) {
+            // nanosleep(1000);
             continue;
         }
         // if ((nddc == 2) || (nddc == 4))

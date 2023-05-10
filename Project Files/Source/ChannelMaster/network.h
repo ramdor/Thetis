@@ -328,7 +328,8 @@ RBPFILTER2 prbpfilter2;
 PORT void create_rnet();
 PORT void destroy_rnet();
 void WriteUDPFrame(int id, char* bufp, int buflen);
-int sendPacket(SOCKET sock, char* data, int length, int port);
+int sendPacket(
+    SOCKET sock, char* data, int length, int port, int metis_ob_seqnum);
 void CmdGeneral(void);
 void CmdHighPriority(void);
 PORT void CmdRx(void);

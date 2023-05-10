@@ -482,8 +482,8 @@ Pa_OpenStream :
     if (error != paNoError) return error;
 
     a->streamInfo = Pa_GetStreamInfo(a->Stream);
-    printf("Stream Info input latency %f\n", a->streamInfo->inputLatency);
-    printf("Stream Info output latency %f\n", a->streamInfo->outputLatency);
+    // printf("Stream Info input latency %f\n", a->streamInfo->inputLatency);
+    // printf("Stream Info output latency %f\n", a->streamInfo->outputLatency);
     fflush(stdout);
 
     return paNoError;

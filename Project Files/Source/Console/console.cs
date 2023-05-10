@@ -579,6 +579,7 @@ namespace Thetis
         private Thread multimeter2_thread_rx1;
         private Thread multimeter2_thread_rx2;
 
+        /*/
         void InitDSP()
         {
             try
@@ -597,6 +598,7 @@ namespace Thetis
                 Common.LogException(e);
             }
         }
+        /*/
 
         public CWX CWXForm
         {
@@ -1129,16 +1131,24 @@ namespace Thetis
                 SaveState();
             }
 
+
+
+            Splash.SetStatus("Setting up DSP, can take a while");                       // Set progress point
+
+            selectFilters();
+            selectModes();
+
+            SyncDSP(); //   INIT_SLOW
             initializing = false;
 
-            Splash.SetStatus("Initialising DSP, this may take a while ...");
-            InitDSP();
+            specRX.GetSpecRX(0).Update = true;
+            specRX.GetSpecRX(1).Update = true;
+            specRX.GetSpecRX(cmaster.inid(1, 0)).Update = true;
+            SetupForm.UpdateTXDisplayFFT(); // prevent display FFT from showing "0"
 
             Splash.SetStatus("Finished");
 
-
-            Splash.SplashForm.Owner = this; // So that main form will show/focus when splash disappears.
-            // //MW0LGE_21d done in show above
+            Splash.SplashForm.Owner = this;						// So that main form will show/focus when splash disappears //MW0LGE_21d done in show above
             Splash.CloseForm(); // End splash screen
 
             if (resetForAutoMerge)
@@ -1235,6 +1245,9 @@ namespace Thetis
                 // go for launch -- display forms, or controls in thetis
                 MeterManager.FinishSetupAndDisplay();
 
+                Debug.Assert(chkFWCATUBypass.Checked == psform.AutoCalEnabled);
+
+
                 // display render thread
                 m_bResizeDX2Display = true;
                 if (draw_display_thread == null || !draw_display_thread.IsAlive)
@@ -1254,9 +1267,6 @@ namespace Thetis
                 pause_DisplayThread = false;
 
                 KLJ.Utils.FadeIn(this);
-                // KLJ.Utils.PrintZOrder(); // G7VKK
-                //m_ff = new frmFindInSetup(this); // G7VKK
-                //m_ff.Show(); // G7VKK
 
 
             }
@@ -32929,6 +32939,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             int RX2 = 1 << WDSP.id(2, 0);
             int MON = 1 << WDSP.id(1, 0);
             int RX2EN;
+            Debug.Print("UpdateAAudioMixerStates Starts ...");
             if (rx2_enabled)
                 RX2EN = 1 << WDSP.id(2, 0);
             else
@@ -32941,10 +32952,13 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN100B:
                 case HPSDRModel.ANAN100:
-                    if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB && current_hpsdr_model == HPSDRModel.HERMES)
+#if (FIX_BUG)
+                    bool fixit = (current_hpsdr_model == HPSDRModel.HERMES);
+                    if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB && fixit)
                     {
                         goto fourddcs; // KLJ. It's somewhat hacky, but it gets the job done
                     }
+#endif
                     if (chkPower.Checked)
                     {
                         if (!mox)
@@ -33064,6 +33078,8 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     break;
                 default: break;
             }
+
+            Debug.Print("UpdateAAudioMixerStates Ends");
         }
 
         public void comboDisplayMode_SelectedIndexChanged(
@@ -44002,8 +44018,8 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
             }
 
             StereoDiversity = old_sd;
-
-            WDSP.SetChannelState(WDSP.id(0, 0), 1, 0); // turn on the DSP channels
+            int en = initializing ? 0 : 1;
+            WDSP.SetChannelState(WDSP.id(0, 0), en, 0); // turn on the DSP channels
             if (radio.GetDSPRX(0, 1).Active)
                 WDSP.SetChannelState(WDSP.id(0, 1), 1, 0);
 
@@ -47190,7 +47206,8 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
 
                     radio.GetDSPRX(1, 0).Active = true;
                     // DttSP.SetThreadProcessingMode(2, 2);
-                    WDSP.SetChannelState(WDSP.id(2, 0), 1, 0);
+                    int en = initializing ? 0 : 1; // klj
+                    WDSP.SetChannelState(WDSP.id(2, 0), en, 0);
                     // RadioDSP.SetThreadNumber(3);
 
                     if (chkEnableMultiRX.Checked)
@@ -48046,9 +48063,10 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
                 SetupForm.ForceAudioReset();
             }
 
+            int en = initializing ? 0 : 1;
             if (rx2_enabled)
                 WDSP.SetChannelState(
-                    WDSP.id(2, 0), 1, 0); // turn ON the DSP channel
+                    WDSP.id(2, 0), en, 0); // turn ON the DSP channel
 
             // MW0LGE_21b
             if (old_mode != new_mode)

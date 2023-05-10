@@ -1067,7 +1067,9 @@ namespace Thetis
         {
             Debug.Assert(recoveryList == null);
             initSRCombo(comboAudioSampleRate1, recoveryList, rp);
+
             initSRCombo(comboAudioSampleRateRX2, recoveryList, rp);
+
 
             Debug.Assert(comboAudioSampleRate1.Items.Count
                 == comboAudioSampleRateRX2.Items.Count);
@@ -8759,6 +8761,7 @@ namespace Thetis
                         // turn ON the DSP channels
                         int w_enable = 0;
                         if (was_enabled) w_enable = 1;
+                        if (initializing) w_enable = 0; // KLJ. saves startup time.
                         WDSP.SetChannelState(WDSP.id(0, 0), w_enable, 0);
                         if (console.radio.GetDSPRX(0, 1).Active)
                             WDSP.SetChannelState(WDSP.id(0, 1), w_enable, 0);

@@ -200,6 +200,7 @@ namespace Thetis
                 else
                 {
                     _OFF = true;
+                    _autoON = false; // KLJ, PS button not agreeing with actual PS state @ startup
                     console.PSState = false;
                 }
             }

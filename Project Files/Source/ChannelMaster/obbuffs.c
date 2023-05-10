@@ -90,7 +90,7 @@ void destroy_obbuffs(int id) {
         signalWakeup();
         if (a->obThread) {
 #ifndef NDEBUG
-            DWORD timeout = 200000;
+            DWORD timeout = 30000;
 #else
             DWORD timeout = 20000;
 #endif
@@ -99,11 +99,11 @@ void destroy_obbuffs(int id) {
         }
     } else {
         // he already died
-        printf("Thread already gone, nothing to do here\n");
+        // printf("Thread already gone, nothing to do here\n");
     }
-    DWORD t2 = timeGetTime();
-    fprintf(stdout, "Took %ld ms to kill the thread\n", (int)(t2 - t1));
-    fflush(stdout);
+    // DWORD t2 = timeGetTime();
+    // fprintf(stdout, "Took %ld ms to kill the thread\n", (int)(t2 - t1));
+    /// fflush(stdout);
 
     DeleteCriticalSection(&a->csOUT);
     DeleteCriticalSection(&a->csIN);

@@ -192,11 +192,11 @@ namespace Thetis
             if (bits != m_nOldBits)
             {
                 string bitsAsString = Convert.ToString(bits, 2).PadLeft(8, '0');
-                System.Console.WriteLine("Bits: " + bits + " (" + bitsAsString + ") Band: " + (int)band + " BandB: " + (int)bandb + " tx: " + tx + " tune: " + tune + " 2ton: " + twoTone);
+                // System.Console.WriteLine("Bits: " + bits + " (" + bitsAsString + ") Band: " + (int)band + " BandB: " + (int)bandb + " tx: " + tx + " tune: " + tune + " 2ton: " + twoTone);
 
                 NetworkIO.SetOCBits(bits);
                 TimeWhenSetOCBits = Console.timeGetTime();
-                Debug.Print("Time taken to fire OCbits = " + TimeUntilOCBitsSet().ToString());
+                // Debug.Print("Time taken to fire OCbits = " + TimeUntilOCBitsSet().ToString());
                 m_nOldBits = bits;
             }
 
