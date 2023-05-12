@@ -124,7 +124,6 @@ static int lastrtype = 0;
 static double lastscale = 0;
 static int lastwintype = 0;
 static double* lastwindow = 0;
-double last_sum = 0;
 static int cnt = 0;
 static double sums[8192];
 
@@ -193,7 +192,7 @@ double* fir_fsamp(int N, double* A, int rtype, double scale, int wintype) {
     lastrtype = rtype;
     lastscale = scale;
     lastwintype = wintype;
-    last_sum = sum;
+
     switch (rtype) {
         case 0:
             for (i = 0; i < N; i++)
