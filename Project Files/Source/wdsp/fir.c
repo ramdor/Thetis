@@ -118,11 +118,22 @@ double* fir_fsamp_odd(int N, double* A, int rtype, double scale, int wintype) {
     return c_impulse;
 }
 
+#define FAST_FIR_SAMP
+static int lastN = 0;
+static int lastrtype = 0;
+static double lastscale = 0;
+static int lastwintype = 0;
+static double* lastwindow = 0;
+double last_sum = 0;
+static int cnt = 0;
+static double sums[8192];
+
 double* fir_fsamp(int N, double* A, int rtype, double scale, int wintype) {
     int n, i, j, k;
     double sum;
     double* window;
     double* c_impulse = (double*)malloc0(N * sizeof(complex));
+    ++cnt;
 
     if (N & 1) {
         int M = (N - 1) / 2;
@@ -139,10 +150,24 @@ double* fir_fsamp(int N, double* A, int rtype, double scale, int wintype) {
         }
     } else {
         double M = (double)(N - 1) / 2.0;
+        assert(N < 8192);
         for (n = 0; n < N / 2; n++) {
             sum = 0.0;
-            for (k = 1; k < N / 2; k++)
-                sum += 2.0 * A[k] * cos(TWOPI * (n - M) * k / N);
+            if (lastN == N && lastrtype == rtype && lastscale == scale
+                && lastwintype == wintype && 0) {
+                sum = sums[n];
+            } else {
+                for (k = 1; k < N / 2; k++) {
+                    sum += 2.0 * A[k] * cos(TWOPI * (n - M) * k / N);
+                }
+
+                if (lastN == N && lastrtype == rtype && lastscale == scale
+                    && lastwintype == wintype) {
+
+                    assert(sums[n] = sum);
+                }
+            }
+
             c_impulse[2 * n + 0] = (1.0 / N) * (A[0] + sum);
             c_impulse[2 * n + 1] = 0.0;
         }
@@ -151,7 +176,24 @@ double* fir_fsamp(int N, double* A, int rtype, double scale, int wintype) {
             c_impulse[2 * n + 1] = 0.0;
         }
     }
+
+#ifdef FAST_FIR_SAMP
+    if (lastN == N && lastrtype == rtype && lastscale == scale
+        && lastwintype == wintype && lastwindow) {
+        window = lastwindow;
+    } else {
+        if (lastwindow) _aligned_free(lastwindow);
+        window = get_fsamp_window(N, wintype);
+    }
+#else
     window = get_fsamp_window(N, wintype);
+#endif
+
+    lastN = N;
+    lastrtype = rtype;
+    lastscale = scale;
+    lastwintype = wintype;
+    last_sum = sum;
     switch (rtype) {
         case 0:
             for (i = 0; i < N; i++)
@@ -164,7 +206,12 @@ double* fir_fsamp(int N, double* A, int rtype, double scale, int wintype) {
             }
             break;
     }
+
+#ifdef FAST_FIR_SAMP
+    lastwindow = window;
+#else
     _aligned_free(window);
+#endif
     return c_impulse;
 }
 

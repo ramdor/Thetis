@@ -41,7 +41,7 @@ namespace Thetis
             setup.setAllHFPAGains(d);
         }
 
-        public void ApplyHL2Defaults()
+        public void ApplyHL2Defaults(bool canDoN2ADR)
         {
             ApplyHL2PASettings();
             setup.ApolloFilter = true;
@@ -50,7 +50,8 @@ namespace Thetis
             setup.HermesEnableAttenuator = true;
             setup.MaxFreq = 38.8M;
             // setup.RadioSampleRate = 48000; // no need for this, HL2 is quite happy @ 192k
-            setup.HL2N2ADRFilters(this);
+            if (canDoN2ADR)
+                setup.HL2N2ADRFilters(this);
             setup.HermesLite2 = true;
         }
 

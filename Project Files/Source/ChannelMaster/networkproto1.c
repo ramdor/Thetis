@@ -158,9 +158,9 @@ int MetisReadDirect(unsigned char* bufp) {
         (struct sockaddr*)&fromaddr, &fromlen);
     if (rc == -1) // SOCKET_ERROR
     {
-        errno = WSAGetLastError();
-        if (errno == WSAEWOULDBLOCK || errno == WSAEMSGSIZE) {
-            printf("Error code %d: recvfrom() : %s\n", errno, strerror(errno));
+        int err   = WSAGetLastError();
+        if (err == WSAEWOULDBLOCK || err == WSAEMSGSIZE) {
+            printf("Error code %d: recvfrom() : %s\n", err, strerror(err));
             fflush(stdout);
         }
         LeaveCriticalSection(&prn->rcvpktp1);

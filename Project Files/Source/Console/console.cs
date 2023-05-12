@@ -1042,7 +1042,31 @@ namespace Thetis
             MinimumSize = this.Size;
 
             Splash.SetStatus("Initializing Database"); // Set progress point
+            int t1 = timeGetTime();
             DB.Init(); // Initialize the database
+            int t2 = timeGetTime();
+            Debug.Print("Took " + (t2 - t1).ToString() + " ms to InitDB()");
+
+            // KLJ: Kick this off as early as possible to avoid waiting for it
+            // later.
+
+            Splash.SetStatus(
+                "Initializing PortAudio ..."); // Set progress point
+                                               // PortAudioForThetis.PA_Initialize();
+                                               // // Initialize the audio interface
+                                               // KLJ moved to different thread to
+                                               // speed start-up
+            m_waiting_for_portaudio = true;
+            var pat = new Thread(new ThreadStart(InitPortAudio))
+            {
+                Name = "Init PortAudioThread",
+                Priority = ThreadPriority.Highest,
+                IsBackground = true,
+
+            };
+            pat.SetApartmentState(
+                ApartmentState.STA); // no ASIO devices without this
+            pat.Start();
 
             Splash.SetStatus("Initializing Radio ..."); // Set progress point
             radio = new Radio(this, AppDataPath); // Initialize the Radio processor INIT_SLOW
@@ -1063,30 +1087,7 @@ namespace Thetis
                     RX2Enabled = false;
             }
 
-            // KLJ: Kick this off as early as possible to avoid waiting for it
-            // later.
-            m_waiting_for_portaudio = true;
-            var pat = new Thread(new ThreadStart(InitPortAudio))
-            {
-                Name = "Init PortAudioThread",
-                Priority = ThreadPriority.Highest,
-                IsBackground = true,
-
-            };
-            pat.SetApartmentState(
-                ApartmentState.STA); // no ASIO devices without this
-            pat.Start();
-
-
             Display.specready = true;
-
-            Splash.SetStatus(
-                "Initializing PortAudio ..."); // Set progress point
-                                               // PortAudioForThetis.PA_Initialize();
-                                               // // Initialize the audio interface
-                                               // KLJ moved to different thread to
-                                               // speed start-up
-
             break_in_timer = new HiPerfTimer();
 
             Midi2Cat = new Midi2CatCommands(this);
@@ -2224,6 +2225,11 @@ namespace Thetis
             BuildTXProfileCombos(); // MW0LGE_21k9rc4b build them, so that GetState
                                     // can apply the combobox text
 
+            if (chk2TONE.BackgroundImage == null || chkMOX.BackgroundImage != null)
+            {
+                chk2TONE.BackgroundImage = chkMOX.BackgroundImage;
+                chk2TONE.ImageList = chkMOX.ImageList;
+            }
 
             Common.RestoreForm(EQForm, "EQForm", false);
 
@@ -2254,6 +2260,19 @@ namespace Thetis
             quick_save_mode = DSPMode.LSB;
             ptbPWR.Value = 100;
             btnDisplayPanCenter_Click(this, EventArgs.Empty);
+
+            // Debug.Assert(false); // check HL2 would be set here
+            if (HermesLite2) // MI0BOT: Changes for HL2 only having a 16 step output attenuator 
+            {
+                ptbPWR.Maximum = 90;
+                ptbPWR.Value = 0;
+                ptbPWR.LargeChange = 6;
+                ptbPWR.SmallChange = 6;
+                ptbTune.Maximum = 90;
+                ptbTune.Value = 0;
+                ptbTune.LargeChange = 6;
+                ptbTune.SmallChange = 6;
+            }
 
             comboFMCTCSS.Text = "100.0";
 
@@ -7935,7 +7954,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E: interval = 1.0f; break;
                 default:
-                    if (m_frmSetupForm.HermesLite2)
+                    if (HermesLite2)
                     {
                         interval = 1.0f;
                     }
@@ -9569,7 +9588,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     break;
                 case HPSDRModel.HERMES:
                 case HPSDRModel.ANAN10:
-                case HPSDRModel.ANAN100:
+                case HPSDRModel.ANAN100: // HermesLite is a  HERMES, so ok
                     P1_rxcount = 4; // RX4 used for puresignal feedback
                     nddc = 4;
                     if (!mox)
@@ -9795,6 +9814,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     // case HPSDRHW.Atlas: /// ???
                     case HPSDRHW.Hermes: // ANAN-10 ANAN-100 Heremes
                     case HPSDRHW.HermesII: // ANAN-10E ANAN-100B HeremesII
+                        // HermesLite2 is a HERMES, so OK
                         switch (tot)
                         {
                             case 0: // off off off
@@ -13131,7 +13151,14 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 rx1_attenuator_data = value;
                 if (initializing) return;
 
-                if (alexpresent && current_hpsdr_model != HPSDRModel.ANAN10
+                if (HermesLite2)
+                {
+                    udRX1StepAttData.Maximum = (decimal)32;
+                    udRX1StepAttData.Minimum = (decimal)-28;
+                    udRX2StepAttData.Maximum = (decimal)32;
+                    udRX2StepAttData.Minimum = (decimal)-28;
+                }
+                else if (alexpresent && current_hpsdr_model != HPSDRModel.ANAN10
                     && current_hpsdr_model != HPSDRModel.ANAN10E
                     && current_hpsdr_model != HPSDRModel.ANAN7000D
                     && current_hpsdr_model != HPSDRModel.ANAN8000D
@@ -13151,7 +13178,12 @@ oldZoomSlider != ptbDisplayZoom.Value*/
 
                 if (rx1_step_att_present)
                 {
-                    if (alexpresent && current_hpsdr_model != HPSDRModel.ANAN10
+                    if (HermesLite2)
+                    {
+                        NetworkIO.SetAlexAtten(0);
+                        NetworkIO.SetADC1StepAttenData(32 - rx1_attenuator_data);
+                    }
+                    else if (alexpresent && current_hpsdr_model != HPSDRModel.ANAN10
                         && current_hpsdr_model != HPSDRModel.ANAN10E
                         && current_hpsdr_model != HPSDRModel.ANAN7000D
                         && current_hpsdr_model != HPSDRModel.ANAN8000D
@@ -13334,7 +13366,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     udRX2StepAttData.Maximum
                         = (decimal)61; // MW0LGE_[2.9.0.7]  changed to udRX2
                 else
-                    udRX2StepAttData.Maximum = (decimal)31;
+                    udRX2StepAttData.Maximum = (decimal)32; // KLJ. was 31
 
                 // MW0LGE_22b step atten
                 int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1,
@@ -17184,7 +17216,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
 
                 switch (current_hpsdr_model)
                 {
-                    case HPSDRModel.HERMES:
+                    case HPSDRModel.HERMES: // HermesLite2 is a Hermes, so ok
                         chkDX.Checked = false;
                         chkDX.Visible = false;
                         rx2_preamp_present = false;
@@ -20859,6 +20891,11 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             set
             {
                 value = Math.Max(0, value); // lower bound
+
+                if (HermesLite2) // Mi0BOT: Limit upper bound for HL2
+                    value = Math.Min(90, value);		// upper bound
+                else
+                    value = Math.Min(100, value);		// upper bound
                 value = Math.Min(100, value); // upper bound
 
                 ptbPWR.Value = value;
@@ -20871,7 +20908,10 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             set
             {
                 value = Math.Max(0, value); // lower bound
-                value = Math.Min(100, value); // upper bound
+                if (HermesLite2) // Mi0BOT: Limit upper bound for HL2
+                    value = Math.Min(90, value);		// upper bound
+                else
+                    value = Math.Min(100, value);		// upper bound
 
                 ptbTune.Value = value;
                 ptbTune_Scroll(this, EventArgs.Empty);
@@ -21840,8 +21880,11 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 {
                     if (!rx1_step_att_present)
                     {
-                        // NetworkIO.SetADC1StepAttenData(rx1_att_value);
-                        if (nRX1ADCinUse == 0)
+                        if (HermesLite2)
+                        {
+                            NetworkIO.SetADC1StepAttenData(32 - rx1_att_value);
+                        }
+                        else if (nRX1ADCinUse == 0)
                             NetworkIO.SetADC1StepAttenData(rx1_att_value);
                         else if (nRX1ADCinUse == 1)
                             NetworkIO.SetADC2StepAttenData(rx1_att_value);
@@ -25088,7 +25131,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         else if ((alexpresent || pa_present)
                             && (current_hpsdr_model != HPSDRModel.ANAN10
                                 && current_hpsdr_model != HPSDRModel.ANAN10E
-                                && !apollopresent))
+                                && !apollopresent && !HermesLite2))
                         {
 
 
@@ -25183,7 +25226,8 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                             }
                         }
                         else if (current_hpsdr_model == HPSDRModel.ANAN10
-                            || current_hpsdr_model == HPSDRModel.ANAN10E || m_frmSetupForm.HermesLite2)
+                            || current_hpsdr_model == HPSDRModel.ANAN10E
+                            || HermesLite2)
                         {
                             if (bDrawMarkers)
                             {
@@ -25465,7 +25509,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         if ((alexpresent || pa_present)
                             && (current_hpsdr_model != HPSDRModel.ANAN10
                                 && current_hpsdr_model != HPSDRModel.ANAN10E
-                                && !apollopresent))
+                                && !apollopresent && !HermesLite2))
                         {
                             if (bDrawMarkers)
                             {
@@ -25697,7 +25741,8 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         }
 
                         else if (current_hpsdr_model == HPSDRModel.ANAN10
-                            || current_hpsdr_model == HPSDRModel.ANAN10E)
+                            || current_hpsdr_model == HPSDRModel.ANAN10E
+                            || HermesLite2)
                         {
                             if (bDrawMarkers)
                             {
@@ -27697,7 +27742,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                                 case MeterTXMode.SWR_POWER:
                                     if (current_hpsdr_model == HPSDRModel.ANAN10
                                         || current_hpsdr_model == HPSDRModel.ANAN10E
-                                        || apollopresent)
+                                        || apollopresent || HermesLite2)
                                         output = num.ToString(format) + " W";
                                     else if (alexpresent || pa_present)
                                         output = num.ToString(format) + " W";
@@ -29243,6 +29288,13 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             }
         }
 
+        public bool HermesLite2
+        {
+            get
+            {
+                return m_frmSetupForm.HermesLite2;
+            }
+        }
         private HiPerfTimer rx2_meter_timer = new HiPerfTimer();
         // private float rx2_meter_avg = Display.CLEAR_FLAG;
         private async void UpdateRX2MeterData()
@@ -29362,6 +29414,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
         private float _MKIIPAAmps = 0f;
         private ConcurrentQueue<int> _voltsQueue = new ConcurrentQueue<int>();
         private ConcurrentQueue<int> _ampsQueue = new ConcurrentQueue<int>();
+        private ConcurrentQueue<int> _tempQueue = new ConcurrentQueue<int>();
         private async void readMKIIPAVoltsAmps()
         {
             // MW0LGE_21k9c
@@ -29372,10 +29425,22 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             // changed volts to 150
             while (chkPower.Checked
                 && (current_hpsdr_model == HPSDRModel.ANAN7000D
-                    || current_hpsdr_model == HPSDRModel.ANAN8000D))
+                    || current_hpsdr_model == HPSDRModel.ANAN8000D
+                    || HermesLite2))
             {
-                _voltsQueue.Enqueue(NetworkIO.getUserADC0());
-                _ampsQueue.Enqueue(NetworkIO.getUserADC1());
+                // _voltsQueue.Enqueue(NetworkIO.getUserADC0());
+                // _ampsQueue.Enqueue(NetworkIO.getUserADC1());
+
+                if (HermesLite2)
+                {
+                    _ampsQueue.Enqueue(NetworkIO.getUserADC0());
+                    _tempQueue.Enqueue(NetworkIO.getExciterPower());
+                }
+                else
+                {
+                    _voltsQueue.Enqueue(NetworkIO.getUserADC0());
+                    _ampsQueue.Enqueue(NetworkIO.getUserADC1());
+                }
 
                 bool bOk;
                 int nTries = 0;
@@ -29402,10 +29467,22 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     }
                 }
 
+                nTries = 0;
+                while (_tempQueue.Count > 100 && nTries < 100) // keep max 100 in the queue
+                {
+                    bOk = _tempQueue.TryDequeue(out int tmp);
+                    if (!bOk)
+                    {
+                        await Task.Delay(1);
+                        nTries++;
+                    }
+                }
+
                 await Task.Delay(8);
             }
             _MKIIPAVolts = 0f;
             _MKIIPAAmps = 0;
+            _MKIIHL2Temp = 0f;
         }
         private void computeMKIIPAVoltsAmps()
         {
@@ -29413,12 +29490,16 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 = _voltsQueue.Count > 0 ? (float)_voltsQueue.Average() : 0;
             float ampAverage
                 = _ampsQueue.Count > 0 ? (float)_ampsQueue.Average() : 0;
+            float tempAverage = _tempQueue.Count > 0 ? (float)_tempQueue.Average() : 0;
 
             // volts
             _MKIIPAVolts = convertToVolts(voltAverage);
 
-            // amps
+            // ampsconvert
             _MKIIPAAmps = convertToAmps(ampAverage);
+
+            // MI0BOT: temp for HL2
+            _MKIIHL2Temp = (3.26f * (tempAverage / 4096.0f) - 0.5f) / 0.01f;
         }
         private float convertToVolts(float IOreading)
         {
@@ -29463,10 +29544,25 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             float voff = _amp_voff;
             float sens = _amp_sens;
             float fwdvolts = (IOreading * 5000.0f) / 4095.0f;
-            if (fwdvolts < 0) fwdvolts = 0.0f;
-            float amps = ((fwdvolts - voff) / sens);
-            //  float amps = (0.01f * adc - 2.91f);
-            if (amps < 0) amps = 0.0f;
+            float amps = 0.0f;
+            if (HermesLite2)
+            {
+                // 3.26 Ref voltage
+                // 4096 steps in ADC
+                // Gain of x50 for sense amp
+                // Sense resistor is 0.04 Ohms
+                amps = ((3.26f * (IOreading / 4096.0f)) / 50.0f) / 0.04f;
+
+                // Scale by resistor voltage divider 1000/(1000+270) at input of slow ADC
+                amps = amps / (1000.0f / 1270.0f);
+            }
+            else
+            {
+                if (fwdvolts < 0) fwdvolts = 0.0f;
+                amps = ((fwdvolts - voff) / sens);
+                //  float amps = (0.01f * adc - 2.91f);
+                if (amps < 0) amps = 0.0f;
+            }
             return amps;
         }
         // private async void displayMKIIPAVoltsAmps()
@@ -29577,6 +29673,13 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     break;
             }
 
+            if (HermesLite2)
+            {
+                bridge_volt = 1.8f;
+                refvoltage = 3.3f;
+                adc_cal_offset = 3;
+            }
+
             // for (int count = 0; count < 50; count++)
             //{
             //     adc = JanusAudio.getRefPower();
@@ -29644,7 +29747,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     adc_cal_offset = 18;
                     break;
                 default:
-                    if (m_frmSetupForm.HermesLite2)
+                    if (HermesLite2)
                     {
                         bridge_volt = 1.5f;
                         refvoltage = 3.3f;
@@ -30955,6 +31058,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
 
         private float _oldMKIIPAVolts = 0f;
         private float _oldMKIIPAAmps = 0f;
+        private float _MKIIHL2Temp;
         private void timer_cpu_meter_Tick(object sender, System.EventArgs e)
         {
             // if ((anan7000dpresent || anan8000dpresent) &&
@@ -30972,27 +31076,37 @@ oldZoomSlider != ptbDisplayZoom.Value*/
 
             computeMKIIPAVoltsAmps(); // MW0LGE_21k9c
 
-            if ((current_hpsdr_model == HPSDRModel.ANAN7000D
-                    || current_hpsdr_model == HPSDRModel.ANAN8000D)
-                && ANAN8000DLEDisplayVoltsAmps)
+
+            if (ANAN8000DLEDisplayVoltsAmps &&
+               (current_hpsdr_model == HPSDRModel.ANAN7000D ||
+                current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                HermesLite2))
             {
                 if (!toolStripStatusLabel_Volts.Visible)
                     toolStripStatusLabel_Volts.Visible = true;
                 if (!toolStripStatusLabel_Amps.Visible)
                     toolStripStatusLabel_Amps.Visible = true;
 
-                // MW0LGE [2.9.0.7] added to prevent edge case flicker due to
-                // rounding
-                if (Math.Abs(_MKIIPAVolts - _oldMKIIPAVolts) >= 0.1f)
+                if (HermesLite2)
                 {
-                    toolStripStatusLabel_Volts.Text
-                        = String.Format("{0:#0.0}V", _MKIIPAVolts);
-                    _oldMKIIPAVolts = _MKIIPAVolts;
+                    toolStripStatusLabel_Volts.Text = String.Format("{0:#0.0}C", _MKIIHL2Temp);
+                    toolStripStatusLabel_Amps.Text = String.Format("{0:#0.00}A", _MKIIPAAmps);
                 }
                 else
                 {
-                    toolStripStatusLabel_Volts.Text
-                        = String.Format("{0:#0.0}V", _oldMKIIPAVolts);
+                    // MW0LGE [2.9.0.7] added to prevent edge case flicker due to
+                    // rounding
+                    if (Math.Abs(_MKIIPAVolts - _oldMKIIPAVolts) >= 0.1f)
+                    {
+                        toolStripStatusLabel_Volts.Text
+                            = String.Format("{0:#0.0}V", _MKIIPAVolts);
+                        _oldMKIIPAVolts = _MKIIPAVolts;
+                    }
+                    else
+                    {
+                        toolStripStatusLabel_Volts.Text
+                            = String.Format("{0:#0.0}V", _oldMKIIPAVolts);
+                    }
                 }
 
                 if (Math.Abs(_MKIIPAAmps - _oldMKIIPAAmps) >= 0.1f)
@@ -32740,7 +32854,8 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 if ((display_volts_amps_thead == null
                         || !display_volts_amps_thead.IsAlive)
                     && (current_hpsdr_model == HPSDRModel.ANAN7000D
-                        || current_hpsdr_model == HPSDRModel.ANAN8000D))
+                        || current_hpsdr_model == HPSDRModel.ANAN8000D
+                        || HermesLite2))
                 {
                     display_volts_amps_thead = new Thread(new ThreadStart(
                         readMKIIPAVoltsAmps))
@@ -33907,18 +34022,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             if (path_Illustrator != null) path_Illustrator.pi_Changed();
         }
 
-        public bool ModelIsHPSDRorHermes()
-        {
-            if (current_hpsdr_model == HPSDRModel.HPSDR)
-            {
-                return true;
-            }
-            if (current_hpsdr_model == HPSDRModel.HERMES)
-            {
-                return true;
-            }
-            return false;
-        }
+
         private void OnDriveSliderUpdateTimerTick(
             object sender, ElapsedEventArgs e)
         {
@@ -33931,6 +34035,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
         }
         private bool _bDelayUpdateDriveLabel = false;
         private bool _bDelayUpdateTuneLabel = false;
+
         public void UpdateDriveLabel(bool bShowLimitValue, System.EventArgs e)
         {
             if (IsSetupFormNull) return;
@@ -33940,8 +34045,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             int drv;
             if (bShowLimitValue)
             {
-                PrettyTrackBar.LimitConstraint lc
-                    = e as PrettyTrackBar.LimitConstraint;
+                PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint;
                 drv = lc.LimitValue;
                 if (lc.MouseWheel)
                 {
@@ -33950,8 +34054,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                     if (_tmrDriveSliderUpdate == null)
                     {
                         _tmrDriveSliderUpdate = new System.Timers.Timer(500);
-                        _tmrDriveSliderUpdate.Elapsed
-                            += OnDriveSliderUpdateTimerTick;
+                        _tmrDriveSliderUpdate.Elapsed += OnDriveSliderUpdateTimerTick;
                         _tmrDriveSliderUpdate.AutoReset = false;
                         _tmrDriveSliderUpdate.Enabled = true;
                     }
@@ -33970,8 +34073,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             string sValue;
             if (bUsePower)
             {
-                int nValue = (int)((drv / (float)(ptbPWR.Maximum - ptbPWR.Minimum))
-                    * SetupForm.GetPABandMaxPower(TXBand));
+                int nValue = (int)((drv / (float)(ptbPWR.Maximum - ptbPWR.Minimum)) * SetupForm.GetPABandMaxPower(TXBand));
                 sValue = nValue.ToString() + "w";
             }
             else
@@ -33979,12 +34081,26 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 sValue = drv.ToString();
             }
 
-            if (!bShowLimitValue)
+            if (HermesLite2)
             {
-                if (ptbPWR.IsConstrained)
-                    lblPWR.Text = "Drive:  (" + sValue + ")";
-                else
-                    lblPWR.Text = "Drive:  " + sValue;
+                if (4 > ptbPWR.Value)
+                {
+                    ptbPWR.Value = 0;
+                }
+                else if (3 < ptbPWR.Value && 6 > ptbPWR.Value)
+                {
+                    ptbPWR.Value = 6;
+                }
+                else if (87 < ptbPWR.Value)
+                {
+                    ptbPWR.Value = 90;
+                }
+                else if (84 < ptbPWR.Value && 88 > ptbPWR.Value)
+                {
+                    ptbPWR.Value = 84;
+                }
+
+                lblPWR.Text = "Drive:  " + ((Math.Round(ptbPWR.Value / 6.0) / 2) - 7.5).ToString() + "dB";
             }
             else
             {
@@ -35481,9 +35597,6 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                 }
                 // MW0LGE_21k8 moved below mox
                 updateVFOFreqs(chkTUN.Checked, true);
-
-
-
                 current_ptt_mode = PTTMode.MANUAL;
                 manual_mox = true;
 
@@ -35492,7 +35605,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         // we switching DB9 pins? 1 & 3 ?
                 NetworkIO.SetUserOut2(1);
 
-                if (apollopresent && apollo_tuner_enabled && !m_frmSetupForm.HermesLite2)
+                if (apollopresent && apollo_tuner_enabled && !HermesLite2)
                     NetworkIO.EnableApolloAutoTune(1); // this makes tun 'dip' momentarily on Hl2
                 return;
             }
@@ -51275,6 +51388,7 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
         // "-30dB", "-40dB", "-50dB" };
         private String[] alex_preamp_settings
             = { "-10db", "-20db", "-30db", "-40db", "-50db" };
+        private String[] hermesLite_preamp_settings = { "10dB", "0dB", "-10dB", "-20dB", "-30dB" };
 
         public void SetComboPreampForHPSDR()
         {
@@ -51289,50 +51403,57 @@ next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor
 
             comboPreamp.Items.Clear();
 
-            switch (current_hpsdr_model)
+            if (HermesLite2)
             {
-                case HPSDRModel.HPSDR:
-                    comboPreamp.Items.AddRange(on_off_preamp_settings);
-                    if (alexpresent)
-                    {
-                        comboPreamp.Items.AddRange(alex_preamp_settings);
-                    }
+                comboPreamp.Items.AddRange(hermesLite_preamp_settings);
+            }
+            else
+            {
+                switch (current_hpsdr_model)
+                {
+                    case HPSDRModel.HPSDR:
+                        comboPreamp.Items.AddRange(on_off_preamp_settings);
+                        if (alexpresent)
+                        {
+                            comboPreamp.Items.AddRange(alex_preamp_settings);
+                        }
 
-                    break;
-                case HPSDRModel.HERMES:
-                    if (alexpresent)
-                    {
+                        break;
+                    case HPSDRModel.HERMES:
+                        if (alexpresent)
+                        {
+                            comboPreamp.Items.AddRange(on_off_preamp_settings);
+                            comboPreamp.Items.AddRange(alex_preamp_settings);
+                        }
+                        else
+                            comboPreamp.Items.AddRange(anan100d_preamp_settings);
+
+                        break;
+                    case HPSDRModel.ANAN10:
+                    case HPSDRModel.ANAN10E:
+                        comboPreamp.Items.AddRange(anan100d_preamp_settings);
+                        break;
+                    case HPSDRModel.ANAN100:
+                    case HPSDRModel.ANAN100B:
                         comboPreamp.Items.AddRange(on_off_preamp_settings);
                         comboPreamp.Items.AddRange(alex_preamp_settings);
-                    }
-                    else
+                        break;
+                    case HPSDRModel.ANAN100D:
+                    case HPSDRModel.ANAN200D:
+                        if (alexpresent)
+                        {
+                            comboPreamp.Items.AddRange(on_off_preamp_settings);
+                            comboPreamp.Items.AddRange(alex_preamp_settings);
+                        }
+                        else
+                            comboPreamp.Items.AddRange(anan100d_preamp_settings);
+                        break;
+                    case HPSDRModel.ANAN7000D:
+                    case HPSDRModel.ANAN8000D:
+                    case HPSDRModel.ORIONMKII:
                         comboPreamp.Items.AddRange(anan100d_preamp_settings);
-
-                    break;
-                case HPSDRModel.ANAN10:
-                case HPSDRModel.ANAN10E:
-                    comboPreamp.Items.AddRange(anan100d_preamp_settings);
-                    break;
-                case HPSDRModel.ANAN100:
-                case HPSDRModel.ANAN100B:
-                    comboPreamp.Items.AddRange(on_off_preamp_settings);
-                    comboPreamp.Items.AddRange(alex_preamp_settings);
-                    break;
-                case HPSDRModel.ANAN100D:
-                case HPSDRModel.ANAN200D:
-                    if (alexpresent)
-                    {
-                        comboPreamp.Items.AddRange(on_off_preamp_settings);
-                        comboPreamp.Items.AddRange(alex_preamp_settings);
-                    }
-                    else
-                        comboPreamp.Items.AddRange(anan100d_preamp_settings);
-                    break;
-                case HPSDRModel.ANAN7000D:
-                case HPSDRModel.ANAN8000D:
-                case HPSDRModel.ORIONMKII:
-                    comboPreamp.Items.AddRange(anan100d_preamp_settings);
-                    break;
+                        break;
+                }
             }
 
             comboRX2Preamp.Items.Clear();
@@ -53859,15 +53980,60 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
             lblRX2AttenLabel.Text = udRX2StepAttData.Value.ToString() + " dB";
         }
 
+        private bool rx1_auto_attenuator = false;
+        public bool RX1AutoAtt
+        {
+            get { return rx1_auto_attenuator; }
+            set
+            {
+                rx1_auto_attenuator = value;
+
+                if (rx1_step_att_present)
+                {
+                    if (rx1_auto_attenuator)
+                    {
+                        udRX1StepAttData.Tag = 1;
+                        lblPreamp.Text = "A-ATT";
+                    }
+                    else
+                    {
+                        udRX1StepAttData.Tag = null;
+                        lblPreamp.Text = "S-ATT";
+                    }
+                }
+            }
+        }
+        private bool autoAttSearch = true;
         private void lblPreamp_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (current_hpsdr_model != HPSDRModel.HPSDR)
+            if (HermesLite2)
             {
-                SetupForm.HermesEnableAttenuator
-                    = !SetupForm.HermesEnableAttenuator;
-                if (RX1RX2usingSameADC)
-                    SetupForm.RX2EnableAtt
-                        = SetupForm.HermesEnableAttenuator; // MW0LGE_22b
+                if (rx1_step_att_present)
+                {
+                    if (udRX1StepAttData.Tag == null && RX1AutoAtt)
+                    {
+                        udRX1StepAttData.Tag = 1;
+                        lblPreamp.Text = "A-ATT";
+                        autoAttSearch = true;
+                    }
+                    else
+                    {
+                        udRX1StepAttData.Tag = null;
+                        lblPreamp.Text = "S-ATT";
+                    }
+                }
+                else
+                {
+                    SetupForm.HermesEnableAttenuator = !SetupForm.HermesEnableAttenuator;
+                }
+            }
+            else if (current_hpsdr_model != HPSDRModel.HPSDR)
+            {
+                SetupForm.HermesEnableAttenuator = !SetupForm.HermesEnableAttenuator;
+            }
+            else
+            {
+                if (RX1RX2usingSameADC) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator; //MW0LGE_22b
             }
         }
 
@@ -56188,6 +56354,12 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
             toolStripStatusLabel_Date.Width = 108;
             toolStripStatusLabel_LocalTime.Width = 100;
             chkFWCATUBypass.Text = "PS-A";
+
+            if (HermesLite2)
+            {
+                toolStripStatusLabelRXAnt.Enabled = false;
+                toolStripStatusLabelTXAnt.Enabled = false;
+            }
         }
 
         private static bool AutoStart { get; set; }
@@ -57995,6 +58167,28 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
                 sValue = drv.ToString();
             }
 
+            if (HermesLite2)
+            {
+                if (4 > ptbTune.Value)
+                {
+                    ptbTune.Value = 0;
+                }
+                else if (3 < ptbTune.Value && 6 > ptbTune.Value)
+                {
+                    ptbTune.Value = 6;
+                }
+                else if (87 < ptbTune.Value)
+                {
+                    ptbTune.Value = 90;
+                }
+                else if (84 < ptbTune.Value && 88 > ptbTune.Value)
+                {
+                    ptbTune.Value = 84;
+                }
+
+                sValue = ((Math.Round(ptbTune.Value / 6.0) / 2) - 7.5).ToString() + "dB";
+            }
+
             if (!bShowLimitValue)
             {
                 if (ptbTune.IsConstrained)
@@ -58317,7 +58511,7 @@ console_basis_size.Height - (panelRX2Filter.Height + 8) :*/
             targetdBm = target_dbm;
             if (!bSetPower) return new_pwr;
 
-            if (new_pwr == 0)
+            if (new_pwr == 0 && !HermesLite2)
             {
                 Audio.RadioVolume = 0.0;
                 if (chkTUN.Checked) radio.GetDSPTX(0).TXPostGenRun = 0;
