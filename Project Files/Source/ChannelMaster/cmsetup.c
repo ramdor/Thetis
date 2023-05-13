@@ -77,6 +77,7 @@ PORT void set_cmdefault_rates(int* xcm_inrates, int aud_outrate,
 }
 
 PORT void CreateRadio() {
+
     int t1 = timeGetTime();
     create_cmaster();
     int t2 = timeGetTime();

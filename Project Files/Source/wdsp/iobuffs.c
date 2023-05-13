@@ -63,7 +63,7 @@ void create_slews (IOB a)
 	theta = 0.0;
 	for (i = 0; i <= a->slew.ntup; i++)
 	{
-		a->slew.cup[i] = 0.5 * (1.0 - cos (theta));
+		a->slew.cup[i] = 0.5 * (1.0 - COS (theta));
 		theta += delta;
 	}
 
@@ -71,7 +71,7 @@ void create_slews (IOB a)
 	theta = 0.0;
 	for (i = 0; i <= a->slew.ntdown; i++)
 	{
-		a->slew.cdown[i] = 0.5 * (1 + cos (theta));
+		a->slew.cdown[i] = 0.5 * (1 + COS (theta));
 		theta += delta;
 	}
 

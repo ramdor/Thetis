@@ -157,7 +157,7 @@ void calc_rmatch (RMATCH a)
 	theta = 0.0;
 	for (m = 0; m <= a->ntslew; m++)
 	{
-		a->cslew[m] = 0.5 * (1.0 - cos (theta));
+		a->cslew[m] = 0.5 * (1.0 - COS (theta));
 		theta += dtheta;
 	}
 	a->baux = (double *) malloc0 (a->ringsize / 2 * sizeof (complex));
@@ -632,7 +632,7 @@ void setRMatchSlewTime1(void* b, double slew_time)
 	theta = 0.0;
 	for (m = 0; m <= a->ntslew; m++)
 	{
-		a->cslew[m] = 0.5 * (1.0 - cos(theta));
+		a->cslew[m] = 0.5 * (1.0 - COS(theta));
 		theta += dtheta;
 	}
 	InterlockedBitTestAndSet(&a->run, 0);

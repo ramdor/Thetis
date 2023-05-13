@@ -72,7 +72,7 @@ void new_window(int disp, int type, int size, double PiAlpha)
 			for (i = 0; i < size; i++)
 			{
 				arg1 = arg0 * (double)i;
-				a->window[i] = 0.35875 - 0.48829 * cos(arg1) + 0.14128 * cos(2.0 * arg1) - 0.01168 * cos(3.0 * arg1);
+				a->window[i] = 0.35875 - 0.48829 * COS(arg1) + 0.14128 * COS(2.0 * arg1) - 0.01168 * COS(3.0 * arg1);
 				cgsum += a->window[i];
 				igsum += a->window[i] * a->window[i];
 			}
@@ -88,7 +88,7 @@ void new_window(int disp, int type, int size, double PiAlpha)
 			igsum = 0.0;
 			for (i = 0; i < size; i++)
 			{
-				a->window[i] = 0.5 * (1.0 - cos((double)i * arg0));
+				a->window[i] = 0.5 * (1.0 - COS((double)i * arg0));
 				cgsum += a->window[i];
 				igsum += a->window[i] * a->window[i];
 			}
@@ -105,7 +105,7 @@ void new_window(int disp, int type, int size, double PiAlpha)
 			for (i = 0; i < size; i++)
 			{
 				arg1 = arg0 * (double)i;
-				a->window[i] = 0.21557895 - 0.41663158 * cos(arg1) + 0.277263158 * cos(2.0 * arg1) - 0.083578947 * cos(3.0 * arg1) + 0.006947368 * cos (4.0 * arg1);
+				a->window[i] = 0.21557895 - 0.41663158 * COS(arg1) + 0.277263158 * COS(2.0 * arg1) - 0.083578947 * COS(3.0 * arg1) + 0.006947368 * COS (4.0 * arg1);
 				cgsum += a->window[i];
 				igsum += a->window[i] * a->window[i];
 			}
@@ -121,7 +121,7 @@ void new_window(int disp, int type, int size, double PiAlpha)
 			igsum = 0.0;
 			for (i = 0; i < size; i++)
 			{
-				a->window[i] = (0.54 - 0.46 * cos((double)i * arg0));
+				a->window[i] = (0.54 - 0.46 * COS((double)i * arg0));
 				cgsum += a->window[i];
 				igsum += a->window[i] * a->window[i];
 			}
@@ -153,7 +153,7 @@ void new_window(int disp, int type, int size, double PiAlpha)
 			igsum = 0.0;
 			for (i = 0; i < size; ++i)
 			{
-				arg1 = cos (arg0 * (double)i);
+				arg1 = COS (arg0 * (double)i);
 				a->window[i]   =	+ 6.3964424114390378e-02
 						+ arg1 *  ( - 2.3993864599352804e-01
 						+ arg1 *  ( + 3.5015956323820469e-01

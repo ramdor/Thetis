@@ -48,13 +48,13 @@ void init_nob (NOB a)
     {
         coef = PI / (a->adv_slew_count + 1);
         for (i = 0; i < a->adv_slew_count; i++)
-            a->awave[i] = 0.5 * cos ((i + 1) * coef);
+            a->awave[i] = 0.5 * COS ((i + 1) * coef);
     }
     if (a->hang_slew_count > 0)
     {
         coef = PI / a->hang_slew_count;
         for (i = 0; i < a->hang_slew_count; i++)
-            a->hwave[i] = 0.5 * cos (i * coef);
+            a->hwave[i] = 0.5 * COS (i * coef);
     }
 	
     flush_nob (a);

@@ -36,7 +36,7 @@ void calc_snotch (SNOTCH a)
 {
 	double fn, qk, qr, csn;
 	fn = a->f / (double)a->rate;
-	csn = cos (TWOPI * fn);
+	csn = COS (TWOPI * fn);
 	qr = 1.0 - 3.0 * a->bw;
 	qk = (1.0 - 2.0 * qr * csn + qr * qr) / (2.0 * (1.0 - csn));
 	a->a0 = + qk;
@@ -166,7 +166,7 @@ void calc_speak (SPEAK a)
 			double fn, qk, qr, csn;
 			a->fgain = a->gain / g_corr;
 			fn = a->f / (double)a->rate / f_corr;
-			csn = cos (TWOPI * fn);
+			csn = COS (TWOPI * fn);
 			qr = 1.0 - 3.0 * a->bw / (double)a->rate * bw_parm;
 			qk = (1.0 - 2.0 * qr * csn + qr * qr) / (2.0 * (1.0 - csn));
 			a->a0 = 1.0 - qk;
@@ -205,7 +205,7 @@ void calc_speak (SPEAK a)
 			c = sn * sinh(0.5 * log((a->f + 0.5 * a->cbw * bw_parm) / (a->f - 0.5 * a->cbw * bw_parm)) * w0 / sn);
 			den = 1.0 + c / A;
 			a->a0 = (1.0 + c * A) / den;
-			a->a1 = - 2.0 * cos (w0) / den;
+			a->a1 = - 2.0 * COS (w0) / den;
 			a->a2 = (1 - c * A) / den;
 			a->b1 = - a->a1;
 			a->b2 = - (1 - c / A ) / den;
@@ -698,7 +698,7 @@ void calc_bqlp(BQLP a)
 {
 	double w0, cs, c, den;
 	w0 = TWOPI * a->fc / (double)a->rate;
-	cs = cos(w0);
+	cs = COS(w0);
 	c = sin(w0) / (2.0 * a->Q);
 	den = 1.0 + c;
 	a->a0 = 0.5 * (1.0 - cs) / den;
@@ -815,7 +815,7 @@ void calc_dbqlp(BQLP a)
 {
 	double w0, cs, c, den;
 	w0 = TWOPI * a->fc / (double)a->rate;
-	cs = cos(w0);
+	cs = COS(w0);
 	c = sin(w0) / (2.0 * a->Q);
 	den = 1.0 + c;
 	a->a0 = 0.5 * (1.0 - cs) / den;
@@ -933,7 +933,7 @@ void calc_bqbp(BQBP a)
 	q = f0 / bw;
 	w0 = TWOPI * f0 / a->rate;
 	sn = sin(w0);
-	cs = cos(w0);
+	cs = COS(w0);
 	c = sn / (2.0 * q);
 	den = 1.0 + c;
 	a->a0 = +c / den;
@@ -1054,7 +1054,7 @@ void calc_dbqbp(BQBP a)
 	q = f0 / bw;
 	w0 = TWOPI * f0 / a->rate;
 	sn = sin(w0);
-	cs = cos(w0);
+	cs = COS(w0);
 	c = sn / (2.0 * q);
 	den = 1.0 + c;
 	a->a0 = +c / den;

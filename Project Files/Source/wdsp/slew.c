@@ -48,7 +48,7 @@ void calc_uslew (USLEW a)
 	theta = 0.0;
 	for (i = 0; i <= a->ntup; i++)
 	{
-		a->cup[i] = 0.5 * (1.0 - cos (theta));
+		a->cup[i] = 0.5 * (1.0 - COS (theta));
 		theta += delta;
 	}
 	InterlockedBitTestAndReset (a->ch_upslew, 0);

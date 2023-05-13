@@ -30,7 +30,7 @@ void calc_tone (GEN a)
 {
 	a->tone.phs = 0.0;
 	a->tone.delta = TWOPI * a->tone.freq / a->rate;
-	a->tone.cosdelta = cos (a->tone.delta);
+	a->tone.cosdelta = COS (a->tone.delta);
 	a->tone.sindelta = sin (a->tone.delta);
 }
 
@@ -40,8 +40,8 @@ void calc_tt (GEN a)
 	a->tt.phs2 = 0.0;
 	a->tt.delta1 = TWOPI * a->tt.f1 / a->rate;
 	a->tt.delta2 = TWOPI * a->tt.f2 / a->rate;
-	a->tt.cosdelta1 = cos (a->tt.delta1);
-	a->tt.cosdelta2 = cos (a->tt.delta2);
+	a->tt.cosdelta1 = COS (a->tt.delta1);
+	a->tt.cosdelta2 = COS (a->tt.delta2);
 	a->tt.sindelta1 = sin (a->tt.delta1);
 	a->tt.sindelta2 = sin (a->tt.delta2);
 }
@@ -77,7 +77,7 @@ void calc_pulse (GEN a)
 	a->pulse.pperiod = 1.0 / a->pulse.pf;
 	a->pulse.tphs = 0.0;
 	a->pulse.tdelta = TWOPI * a->pulse.tf / a->rate;
-	a->pulse.tcosdelta = cos (a->pulse.tdelta);
+	a->pulse.tcosdelta = COS (a->pulse.tdelta);
 	a->pulse.tsindelta = sin (a->pulse.tdelta);
 	a->pulse.pntrans = (int)(a->pulse.ptranstime * a->rate);
 	a->pulse.pnon = (int)(a->pulse.pdutycycle * a->pulse.pperiod * a->rate);
@@ -90,7 +90,7 @@ void calc_pulse (GEN a)
 	theta = 0.0;
 	for (i = 0; i <= a->pulse.pntrans; i++)
 	{
-		a->pulse.ctrans[i] = 0.5 * (1.0 - cos (theta));
+		a->pulse.ctrans[i] = 0.5 * (1.0 - COS (theta));
 		theta += delta;
 	}
 }
@@ -180,7 +180,7 @@ void xgen (GEN a)
 			{
 				int i;
 				double t1, t2;
-				double cosphase = cos (a->tone.phs);
+				double cosphase = COS (a->tone.phs);
 				double sinphase = sin (a->tone.phs);
 				for (i = 0; i < a->size; i++)
 				{
@@ -200,9 +200,9 @@ void xgen (GEN a)
 			{
 				int i;
 				double tcos, tsin;
-				double cosphs1 = cos (a->tt.phs1);
+				double cosphs1 = COS (a->tt.phs1);
 				double sinphs1 = sin (a->tt.phs1);
-				double cosphs2 = cos (a->tt.phs2);
+				double cosphs2 = COS (a->tt.phs2);
 				double sinphs2 = sin (a->tt.phs2);
 				for (i = 0; i < a->size; i++)
 				{
@@ -248,7 +248,7 @@ void xgen (GEN a)
 				int i;
 				for (i = 0; i < a->size; i++)
 				{
-					a->out[2 * i + 0] = + a->sweep.mag * cos(a->sweep.phs);
+					a->out[2 * i + 0] = + a->sweep.mag * COS(a->sweep.phs);
 					a->out[2 * i + 1] = - a->sweep.mag * sin(a->sweep.phs);
 					a->sweep.phs += a->sweep.dphs;
 					a->sweep.dphs += a->sweep.d2phs;
@@ -289,7 +289,7 @@ void xgen (GEN a)
 			{
 				int i;
 				double t1, t2;
-				double cosphase = cos (a->pulse.tphs);
+				double cosphase = COS (a->pulse.tphs);
 				double sinphase = sin (a->pulse.tphs);
 				for (i = 0; i < a->size; i++)
 				{

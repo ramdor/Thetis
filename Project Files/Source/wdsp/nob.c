@@ -47,7 +47,7 @@ void initBlanker(ANB a)
     a->backmult = exp(-1.0 / (a->samplerate * a->backtau));
     a->ombackmult = 1.0 - a->backmult;
     for (i = 0; i <= a->trans_count; i++)
-        a->wave[i] = 0.5 * cos(i * a->coef);
+        a->wave[i] = 0.5 * COS(i * a->coef);
     memset(a->dline, 0, a->dline_size * sizeof(complex));
 }
 

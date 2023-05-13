@@ -36,6 +36,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Thetis
 {
@@ -387,6 +388,16 @@ namespace Thetis
 
         #region Event Handlers
 
+        private int timeWhenLastUpdate = 0;
+        private bool idle = false;
+        private double idlemax = 0;
+        private double idleFraction;
+        private double idleIncrement = 0.01;
+
+        private int TimeSinceLastUpdate()
+        {
+            return Console.timeGetTime() - timeWhenLastUpdate;
+        }
         //********* Event Handlers ************
 
         // Tick Event handler for the Timer control.  
@@ -429,15 +440,43 @@ namespace Thetis
                     //});
                 }
             }
+
             if (m_bFirstLaunch == false && m_dblLastCompletionFraction
-                < m_dblCompletionFraction)
+                                            < m_dblCompletionFraction)
             {
+                idle = false;
+            }
+            else
+            {
+                // no actual progress, but do not 'freeze' (KLJ)
+                // m_dblCompletionFraction += 0.0000001;
+                if (timeWhenLastUpdate > 0 && TimeSinceLastUpdate() > 400)
+                {
+                    if (!idle)
+                    {
+                        idle = true;
+                        idleFraction = m_dblLastCompletionFraction;
+                        if (idleFraction < 0.01)
+                            idlemax = 0.1;
+
+                        idleIncrement = idlemax / 50;
+                    }
+                }
+
+            }
+
+            int width = (int)Math.Floor(
+                 pnlStatus.ClientRectangle.Width * m_dblLastCompletionFraction);
+            int height = pnlStatus.ClientRectangle.Height;
+            int x = pnlStatus.ClientRectangle.X;
+            int y = pnlStatus.ClientRectangle.Y;
+
+            if (m_bFirstLaunch == false && m_dblLastCompletionFraction
+            < m_dblCompletionFraction)
+            {
+                timeWhenLastUpdate = Console.timeGetTime();
                 m_dblLastCompletionFraction += m_dblPBIncrementPerTimerInterval;
-                int width = (int)Math.Floor(
-                    pnlStatus.ClientRectangle.Width * m_dblLastCompletionFraction);
-                int height = pnlStatus.ClientRectangle.Height;
-                int x = pnlStatus.ClientRectangle.X;
-                int y = pnlStatus.ClientRectangle.Y;
+
                 if (width > 0 && height > 0)
                 {
                     m_rProgress = new Rectangle(x, y, width, height);
@@ -454,6 +493,28 @@ namespace Thetis
                     else
                         lblTimeRemaining.Text = string.Format("{0} seconds",
                             iSecondsLeft);
+                }
+            }
+            else
+            {
+
+                if (idle)
+                {
+
+                    idleFraction += idleIncrement;
+                    if (idleFraction >= idlemax)
+                        idleFraction = 0.001;
+
+                    width = (int)Math.Floor(
+                     pnlStatus.ClientRectangle.Width * idleFraction);
+
+                    if (width <= 0)
+                    {
+                        width = 1;
+                    }
+                    m_rProgress = new Rectangle(x, y, width, height);
+                    if (pnlStatus != null && !pnlStatus.IsDisposed) InvalidateRect(pnlStatus.Handle, IntPtr.Zero, false);
+                    Debug.Print("Width of bar is: " + width.ToString());
                 }
             }
 

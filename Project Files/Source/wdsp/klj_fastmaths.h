@@ -5,8 +5,12 @@
 #define PI 3.1415926535897932
 #define TWOPI 6.2831853071795864
 
-#define EXTRA_PRECISION
+// #define EXTRA_PRECISION
+#define USE_REAL_COSINE
 
+#ifndef USE_REAL_COSINE
+
+// halves radio creation time.
 __forceinline double COS(double x) {
     static const double tp = 1. / (2. * PI);
     x *= tp;
@@ -17,3 +21,11 @@ __forceinline double COS(double x) {
 #endif
     return x;
 }
+
+#else
+
+#ifndef COS
+#define COS cos
+#endif
+
+#endif

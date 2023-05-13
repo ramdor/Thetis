@@ -247,6 +247,8 @@ namespace Thetis
             //
             addDelegates();
 
+            Splash.SetStatus("Setting up controls ...");
+
             // timeout stuff
             lblTimeout.Visible = Common.IsTimeOutEnabled;
             lblShowTimeoutText.Visible = Common.IsTimeOutEnabled;
@@ -282,18 +284,19 @@ namespace Thetis
             // combobox does not contain any default value it is bypassed in the
             // event by use of the initializing flag, and is then forced through in
             // ForceAllEvents
-            if (comboRadioModel.Text == "") comboRadioModel.Text = "HERMES";
+            if (string.IsNullOrEmpty(comboRadioModel.Text)) comboRadioModel.Text = "HERMES";
             //
 
             labelSavingLoading.Visible
                 = false; // MW0LGE gets shown/hidden by save/cancel/apply
 
             // GetMixerDevices();
-            Thetis.Splash.SetStatus("Loading Audio Hosts ...");
+            Splash.SetStatus("Waiting for PortAudio to beready ...");
 
             int slept = console.WaitForPortAudio();
-            Debug.Print("Waited " + slept.ToString()
-                + " millis for portaudio to be ready.");
+            string str = "Waited " + slept.ToString() + " millis for portaudio to be ready.";
+            Debug.Print(str);
+            Splash.SetStatus(str);
 
             this.GetHosts();
             InitAlexAntTables();
@@ -301,10 +304,14 @@ namespace Thetis
             KeyList = new ArrayList();
             SetupKeyMap();
 
+            Splash.SetStatus("Getting TX Profiles ...");
             GetTxProfiles();
             GetTxProfileDefs();
+
+            Splash.SetStatus("Refreshing COM Port Lists ...");
             RefreshCOMPortLists();
 
+            Splash.SetStatus("Initalising Audio Tab on setup window ...");
             InitAudioTab();
 
             // MW0LGE_21d some defaults
@@ -330,6 +337,8 @@ namespace Thetis
             comboRX2ColorPalette.Text = "enhanced";
             comboTXLabelAlign.Text = "Cntr";
             // MW0LGE_21g comboDisplayDriver.Text = "DirectX";
+
+            Splash.SetStatus("Setup window: Adding tool tips...");
 
             // MW0LGE_21h
             string sTip
@@ -389,6 +398,7 @@ namespace Thetis
                 + "(2) a feed-forward term that attempts to keep the resampler at the correct sampling ratio. - NR0V";
             toolTip1.SetToolTip(pbVAC1FFAlphaInfo, sTip);
 
+            Splash.SetStatus("Setup window: Init advanced audio tab ...");
             InitAdvancedAudioTab(null);
 
             // OC tab //MW0LGE_21j
@@ -433,7 +443,8 @@ namespace Thetis
             chkMercRandom.Checked = true;
             //
 
-            comboFRSRegion.Text = "United States";
+            Splash.SetStatus("Setting up region ...");
+            InitRegion();
 
             console.DeferUpdateDSP = true; // MW0LGE_21k9d updated below
             comboDSPPhoneRXBuf.Text = "1024";
@@ -793,6 +804,26 @@ namespace Thetis
 
             // MW0LGE_21h
             updateNetworkThrottleCheckBox();
+
+
+        }
+
+        private void InitRegion()
+        {
+            var region = KLJ.Utils.GetRegion();
+            Debug.Print(region.Name);
+            Debug.Print(region.EnglishName);
+            Debug.Print(region.NativeName);
+
+            var found = KLJ.Utils.FindInCombo(comboFRSRegion, region.EnglishName);
+            if (found >= 0)
+            {
+                comboFRSRegion.SelectedIndex = found;
+            }
+            else
+            {
+                comboFRSRegion.Text = "United States";
+            }
         }
 
         private bool _bAddedDelegates = false;

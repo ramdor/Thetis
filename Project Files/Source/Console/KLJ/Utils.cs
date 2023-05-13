@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -69,6 +70,27 @@ namespace Thetis.KLJ
 
     internal class Utils
     {
+
+        internal static int FindInCombo(ComboBox cbo, string what)
+        {
+            int i = 0;
+            foreach (var c in cbo.Items)
+            {
+                if (c.ToString() == what) return i;
+                ++i;
+            }
+
+            return -1;
+        }
+
+        internal static RegionInfo GetRegion()
+        {
+            var regKeyGeoId = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Control Panel\International\Geo");
+            var geoID = (string)regKeyGeoId.GetValue("Nation");
+            var allRegions = CultureInfo.GetCultures(CultureTypes.SpecificCultures).Select(x => new RegionInfo(x.ToString()));
+            var regionInfo = allRegions.FirstOrDefault(r => r.GeoId == Int32.Parse(geoID));
+            return regionInfo;
+        }
 
 
         internal static void TreeViewFromTabControl(TreeView tv, TabControl tc)

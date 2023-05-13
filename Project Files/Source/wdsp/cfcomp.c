@@ -38,7 +38,7 @@ void calc_cfcwindow (CFCOMP a)
 		igsum = 0.0;
 		for (i = 0; i < a->fsize; i++)
 		{
-			a->window[i] = sqrt (0.54 - 0.46 * cos((double)i * arg0));
+			a->window[i] = sqrt (0.54 - 0.46 * COS((double)i * arg0));
 			cgsum += a->window[i];
 			igsum += a->window[i] * a->window[i];
 		}
@@ -55,7 +55,7 @@ void calc_cfcwindow (CFCOMP a)
 		igsum = 0.0;
 		for (i = 0; i < a->fsize; i++)
 		{
-			arg1 = cos(arg0 * (double)i);
+			arg1 = COS(arg0 * (double)i);
 			a->window[i]  = sqrt   (+0.21747
 				          + arg1 * (-0.45325
 				          + arg1 * (+0.28256

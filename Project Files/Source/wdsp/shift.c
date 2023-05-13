@@ -29,7 +29,7 @@ warren@wpratt.com
 void calc_shift (SHIFT a)
 {
 	a->delta = TWOPI * a->shift / a->rate;
-	a->cos_delta = cos (a->delta);
+	a->cos_delta = COS (a->delta);
 	a->sin_delta = sin (a->delta);
 }
 
@@ -63,7 +63,7 @@ void xshift (SHIFT a)
 	{
 		int i;
 		double I1, Q1, t1, t2;
-		double cos_phase = cos (a->phase);
+		double cos_phase = COS (a->phase);
 		double sin_phase = sin (a->phase);
 		for (i = 0; i < a->size; i++)
 		{

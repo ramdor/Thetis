@@ -32,7 +32,7 @@ void calc_fmd (FMD a)
 	a->omega_min = TWOPI * a->fmin / a->rate;
 	a->omega_max = TWOPI * a->fmax / a->rate;
 	a->g1 = 1.0 - exp(-2.0 * a->omegaN * a->zeta / a->rate);
-	a->g2 = -a->g1 + 2.0 * (1 - exp(-a->omegaN * a->zeta / a->rate) * cos(a->omegaN / a->rate * sqrt(1.0 - a->zeta * a->zeta)));
+	a->g2 = -a->g1 + 2.0 * (1 - exp(-a->omegaN * a->zeta / a->rate) * COS(a->omegaN / a->rate * sqrt(1.0 - a->zeta * a->zeta)));
 	a->phs = 0.0;
 	a->fil_out = 0.0;
 	a->omega = 0.0;
@@ -151,7 +151,7 @@ void xfmd (FMD a)
 		for (i = 0; i < a->size; i++)
 		{
 			// pll
-			vco[0]  = cos (a->phs);
+			vco[0]  = COS (a->phs);
 			vco[1]  = sin (a->phs);
 			corr[0] = + a->in[2 * i + 0] * vco[0] + a->in[2 * i + 1] * vco[1];
 			corr[1] = - a->in[2 * i + 0] * vco[1] + a->in[2 * i + 1] * vco[0];

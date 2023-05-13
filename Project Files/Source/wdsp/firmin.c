@@ -406,7 +406,8 @@ void flush_fircore (FIRCORE a)
 	a->buffidx = 0;
 }
 
-void xfircore (FIRCORE a)
+// KLJ forceinline because it's on the hot path
+__forceinline void xfircore (FIRCORE a)
 {
 	int i, j, k;
 	memcpy (&(a->fftin[2 * a->size]), a->in, a->size * sizeof (complex));

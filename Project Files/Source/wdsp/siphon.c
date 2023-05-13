@@ -35,7 +35,7 @@ void build_window (SIPHON a)
 	sum = 0.0;
 	for (i = 0; i < a->fftsize; i++)
 	{
-		cosphi = cos (arg0 * (double)i);
+		cosphi = COS (arg0 * (double)i);
 		a->window[i] =	+ 6.3964424114390378e-02
 		  + cosphi *  ( - 2.3993864599352804e-01
 		  + cosphi *  ( + 3.5015956323820469e-01

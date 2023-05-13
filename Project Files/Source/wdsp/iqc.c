@@ -70,7 +70,7 @@ void calc_iqc (IQC a)
 	theta = 0.0;
 	for (i = 0; i <= a->ntup; i++)
 	{
-		a->cup[i] = 0.5 * (1.0 - cos (theta));
+		a->cup[i] = 0.5 * (1.0 - COS (theta));
 		theta += delta;
 	}
 	InitializeCriticalSectionAndSpinCount (&a->dog.cs, 2500);

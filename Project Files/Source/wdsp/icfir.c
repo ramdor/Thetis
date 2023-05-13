@@ -152,7 +152,7 @@ double* icfir_impulse (int N, int DD, int R, int Pairs, double runrate, double c
 	double phs = 0.0;
 	for (i = 0; i <= x_samps; i++)
 	{
-		xistion[i] = 0.5 * (cos (phs) + 1.0);
+		xistion[i] = 0.5 * (COS (phs) + 1.0);
 		phs += delta;
 	}
 	if ((tmp = DD * R * sin (PI * ft / R) / sin (PI * DD * ft)) < 0.0)	//normalize by peak gain

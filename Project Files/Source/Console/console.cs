@@ -666,6 +666,8 @@ namespace Thetis
                 return;
             }
 
+            //  MessageBox.Show("Click me to start");
+
 #endif
 
             Display.specready = false;
@@ -1919,7 +1921,7 @@ namespace Thetis
             rx_meter_cal_offset_by_radio = new float[(int)HPSDRModel.LAST];
             rx_display_cal_offset_by_radio = new float[(int)HPSDRModel.LAST];
             ResetLevelCalibration(
-                true); 
+                true);
 
             ztb_data_by_band = new ztb_data[2][]; // 2 rx
             ztb_data_by_band[0] = new ztb_data[(int)Band.LAST];
@@ -2936,6 +2938,8 @@ namespace Thetis
             Debug.Assert(
                 SyncDSPCount == 1); // KLJ: broke my assumption, no real serious
                                     // issue, except start up time may be affected.
+
+            int t1 = timeGetTime();
             for (int i = 0; i < 2; i++)
             {
                 for (int j = 0; j < 2; j++)
@@ -2947,6 +2951,7 @@ namespace Thetis
                     dsp_rx.Force = false;
                 }
             }
+            int t2 = timeGetTime();
 
             for (int i = 0; i < 1; i++)
             {
@@ -2956,7 +2961,7 @@ namespace Thetis
                 dsp_tx.BufferSize = dsp_tx.BufferSize;
                 dsp_tx.Force = false;
             }
-
+            int t3 = timeGetTime();
 
 
             for (int i = 0; i < 2; i++)
@@ -2970,6 +2975,7 @@ namespace Thetis
                     dsp_rx.Force = false;
                 }
             }
+            int t4 = timeGetTime();
 
             for (int i = 0; i < 1; i++)
             {
@@ -2979,6 +2985,9 @@ namespace Thetis
                 dsp_tx.Update = true;
                 dsp_tx.Force = false;
             }
+            int t5 = timeGetTime();
+
+            Trace.WriteLine("SyncDSP() took: " + (t5 - t1).ToString() + " ms.");
         }
 
         public bool Force16bitIQ = false;

@@ -96,14 +96,14 @@ void calc_slews (DEXP a)
 	theta = 0.0;
 	for (i = 0; i <= a->nattack; i++)
 	{
-		a->cattack[i] = a->low_gain + (1.0 - a->low_gain) * 0.5 * (1.0 - cos (theta));
+		a->cattack[i] = a->low_gain + (1.0 - a->low_gain) * 0.5 * (1.0 - COS (theta));
 		theta += delta;
 	}
 	delta = PI / (double)a->ndecay;
 	theta = 0.0;
 	for (i = 0; i <= a->ndecay; i++)
 	{
-		a->cdecay[i] = a->low_gain + (1.0 - a->low_gain) * 0.5 * (1.0 + cos (theta));
+		a->cdecay[i] = a->low_gain + (1.0 - a->low_gain) * 0.5 * (1.0 + COS (theta));
 		theta += delta;
 	}
 }

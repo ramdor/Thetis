@@ -75,7 +75,7 @@ void init_amd(AMD a)
 	a->omega_min = TWOPI * a->fmin / a->sample_rate;
 	a->omega_max = TWOPI * a->fmax / a->sample_rate;
 	a->g1 = 1.0 - exp(-2.0 * a->omegaN * a->zeta / a->sample_rate);
-	a->g2 = -a->g1 + 2.0 * (1 - exp(-a->omegaN * a->zeta / a->sample_rate) * cos(a->omegaN / a->sample_rate * sqrt(1.0 - a->zeta * a->zeta)));
+	a->g2 = -a->g1 + 2.0 * (1 - exp(-a->omegaN * a->zeta / a->sample_rate) * COS(a->omegaN / a->sample_rate * sqrt(1.0 - a->zeta * a->zeta)));
 	a->phs = 0.0;
 	a->fil_out = 0.0;
 	a->omega = 0.0;
@@ -149,7 +149,7 @@ void xamd (AMD a)
 				{
 					for (i = 0; i < a->buff_size; i++)
 					{
-						vco[0] = cos(a->phs);
+						vco[0] = COS(a->phs);
 						vco[1] = sin(a->phs);
 
 						ai = a->in_buff[2 * i + 0] * vco[0];

@@ -119,14 +119,14 @@ void compute_ssql_slews(SSQL a) {
     theta = 0.0;
     for (i = 0; i <= a->ntup; i++) {
         a->cup[i]
-            = a->muted_gain + (1.0 - a->muted_gain) * 0.5 * (1.0 - cos(theta));
+            = a->muted_gain + (1.0 - a->muted_gain) * 0.5 * (1.0 - COS(theta));
         theta += delta;
     }
     delta = PI / (double)a->ntdown;
     theta = 0.0;
     for (i = 0; i <= a->ntdown; i++) {
         a->cdown[i]
-            = a->muted_gain + (1.0 - a->muted_gain) * 0.5 * (1.0 + cos(theta));
+            = a->muted_gain + (1.0 - a->muted_gain) * 0.5 * (1.0 + COS(theta));
         theta += delta;
     }
 }

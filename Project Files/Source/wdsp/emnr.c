@@ -174,7 +174,7 @@ void calc_window (EMNR a)
 		sum = 0.0;
 		for (i = 0; i < a->fsize; i++)
 		{
-			a->window[i] = sqrt (0.54 - 0.46 * cos((double)i * arg));
+			a->window[i] = sqrt (0.54 - 0.46 * COS((double)i * arg));
 			sum += a->window[i];
 		}
 		inv_coherent_gain = (double)a->fsize / sum;
