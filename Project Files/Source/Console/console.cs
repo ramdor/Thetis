@@ -30898,10 +30898,16 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         }
 
                         float swr_power_limit = 35.0f;
+                        float openAntDiff = 1.0f;
                         if (HermesLite2)
                         {
                             swr_power_limit = 0.8f; // you can run up to 1 Watt on HerpesLite in order to be able to tune. KLJ.
+                            openAntDiff = 0.1f;
+                            if (ptbPWR.Value == 0)
+                                swr_power_limit = 5.0f; // make sure you can tune when the power slider is at minimum // KLJ
                         }
+
+
 
 
                         if (alexpresent || apollopresent)
@@ -30912,7 +30918,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                             //-W2PA Changed to allow 35w - some amplifier tuners need
                             // about 30w to reliably start working
                             if (swrprotectionEnabled && alex_fwd > swr_power_limit
-                                && (alex_fwd - alex_rev) < 1.0f
+                                && (alex_fwd - alex_rev) < openAntDiff
                                 && current_hpsdr_model
                                     != HPSDRModel.ANAN8000D) // open ant condition
                             {
