@@ -6,7 +6,7 @@
 #define TWOPI 6.2831853071795864
 
 // #define EXTRA_PRECISION
-#define USE_REAL_COSINE
+// #define USE_REAL_COSINE
 
 #ifndef USE_REAL_COSINE
 

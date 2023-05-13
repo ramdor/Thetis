@@ -29065,6 +29065,14 @@ namespace Thetis
             if (Hl2.HermesLite2)
                 grp10WattMeterTrim.BringToFront();
 
+            if (Hl2.HermesLite2)
+            {
+                udTXTunePower.Value = udTXTunePower.Minimum;
+                radUseFixedDriveTune.Checked = true;
+                udTestIMDPower.Value = udTestIMDPower.Minimum;
+                radUseFixedDrive2Tone.Checked = true;
+            }
+
             if (sender == chkHermesLite2 && !initializing || e == null)
             {
                 int canDo = (int)(State & SetupState.CanApplyHL2Settings);
