@@ -176,10 +176,6 @@ static inline BOOL prioritise_thread_cleanup(HANDLE h) {
 #define MAX_WISDOM_SIZE_DISPLAY 262144
 #define MAX_WISDOM_SIZE_FILTER 262144 // was 32769
 
-// math definitions
-#define PI 3.1415926535897932
-#define TWOPI 6.2831853071795864
-
 // miscellaneous
 typedef double complex[2];
 #define PORT __declspec(dllexport)

@@ -1919,24 +1919,7 @@ namespace Thetis
             rx_meter_cal_offset_by_radio = new float[(int)HPSDRModel.LAST];
             rx_display_cal_offset_by_radio = new float[(int)HPSDRModel.LAST];
             ResetLevelCalibration(
-                true); // MW0LGE_[2.9.0.6] removed code below, call
-                       // reset so that code is in one place
-                       // for (int i = 0; i < (int)HPSDRModel.LAST; i++)
-                       //{
-                       //     switch ((HPSDRModel)i)
-                       //     {
-                       //         case HPSDRModel.ANAN7000D:
-                       //         case HPSDRModel.ANAN8000D:
-                       //         case HPSDRModel.ORIONMKII:
-                       //             rx_meter_cal_offset_by_radio[i] = 4.841644f;
-                       //             rx_display_cal_offset_by_radio[i] = 5.259f;
-                       //             break;
-                       //         default:
-                       //             rx_meter_cal_offset_by_radio[i] = 0.98f;
-                       //             rx_display_cal_offset_by_radio[i] = -2.1f;
-                       //             break;
-                       //     }
-                       // }
+                true); 
 
             ztb_data_by_band = new ztb_data[2][]; // 2 rx
             ztb_data_by_band[0] = new ztb_data[(int)Band.LAST];

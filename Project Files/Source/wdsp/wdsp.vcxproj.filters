@@ -202,7 +202,10 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="klj_mem.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="klj_fastmaths.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

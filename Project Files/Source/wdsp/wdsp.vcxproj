@@ -138,6 +138,7 @@
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -241,6 +242,7 @@
     <ClInclude Include="iir.h" />
     <ClInclude Include="iobuffs.h" />
     <ClInclude Include="iqc.h" />
+    <ClInclude Include="klj_fastmaths.h" />
     <ClInclude Include="klj_mem.h" />
     <ClInclude Include="lmath.h" />
     <ClInclude Include="main.h" />

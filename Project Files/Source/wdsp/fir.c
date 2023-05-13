@@ -125,8 +125,9 @@ static double lastscale = 0;
 static int lastwintype = 0;
 static double* lastwindow = 0;
 static int cnt = 0;
-static double sums[8192];
 
+static double last_diff;
+// Very slow. This is the main reason the app is so slow to start. // KLJ
 double* fir_fsamp(int N, double* A, int rtype, double scale, int wintype) {
     int n, i, j, k;
     double sum;
@@ -138,8 +139,10 @@ double* fir_fsamp(int N, double* A, int rtype, double scale, int wintype) {
         int M = (N - 1) / 2;
         for (n = 0; n < M + 1; n++) {
             sum = 0.0;
-            for (k = 1; k < M + 1; k++)
-                sum += 2.0 * A[k] * cos(TWOPI * (n - M) * k / N);
+            for (k = 1; k < M + 1; k++) {
+                sum += 2.0 * A[k] * COS(TWOPI * (n - M) * k / N);
+            };
+
             c_impulse[2 * n + 0] = (1.0 / N) * (A[0] + sum);
             c_impulse[2 * n + 1] = 0.0;
         }
@@ -149,22 +152,10 @@ double* fir_fsamp(int N, double* A, int rtype, double scale, int wintype) {
         }
     } else {
         double M = (double)(N - 1) / 2.0;
-        assert(N < 8192);
-        for (n = 0; n < N / 2; n++) {
+        for (n = 0; n < N / 2; ++n) {
             sum = 0.0;
-            if (lastN == N && lastrtype == rtype && lastscale == scale
-                && lastwintype == wintype && 0) {
-                sum = sums[n];
-            } else {
-                for (k = 1; k < N / 2; k++) {
-                    sum += 2.0 * A[k] * cos(TWOPI * (n - M) * k / N);
-                }
-
-                if (lastN == N && lastrtype == rtype && lastscale == scale
-                    && lastwintype == wintype) {
-
-                    assert(sums[n] = sum);
-                }
+            for (k = 1; k < N / 2; ++k) {
+                sum += 2.0 * A[k] * COS(TWOPI * (n - M) * k / N);
             }
 
             c_impulse[2 * n + 0] = (1.0 / N) * (A[0] + sum);
@@ -181,7 +172,9 @@ double* fir_fsamp(int N, double* A, int rtype, double scale, int wintype) {
         && lastwintype == wintype && lastwindow) {
         window = lastwindow;
     } else {
-        if (lastwindow) _aligned_free(lastwindow);
+        if (lastwindow) {
+            _aligned_free(lastwindow);
+        }
         window = get_fsamp_window(N, wintype);
     }
 #else
