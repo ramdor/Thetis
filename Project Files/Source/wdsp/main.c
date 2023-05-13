@@ -57,10 +57,12 @@ void wdspmain(void* pargs) {
         }
         LeaveCriticalSection(&ch[channel].csDSP);
     }
+    // _endthread  // naughty, naughty, you need to give up the thread resources
 
     if (hTask != 0) {
-        AvRevertMmThreadCharacteristics(h);
+        AvRevertMmThreadCharacteristics(hTask);
     }
+    // _endthread not needed anyway
 }
 
 void create_main(int channel) {

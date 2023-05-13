@@ -988,6 +988,28 @@ namespace Thetis
             CmdLineArgs = args;
             Splash.ShowSplashScreen(this); // Start splash screen
 
+            // KLJ: Kick this off as early as possible to avoid waiting for it
+            // later.
+
+            Splash.SetStatus(
+                "Initializing PortAudio ..."); // Set progress point
+                                               // PortAudioForThetis.PA_Initialize();
+                                               // // Initialize the audio interface
+                                               // KLJ moved to different thread to
+                                               // speed start-up
+            m_waiting_for_portaudio = true;
+            var pat = new Thread(new ThreadStart(InitPortAudio))
+            {
+                Name = "Init PortAudioThread",
+                Priority = ThreadPriority.Highest,
+                IsBackground = true,
+
+            };
+            pat.SetApartmentState(
+                ApartmentState.STA); // no ASIO devices without this
+            pat.Start();
+
+
             Splash.SetStatus("Initializing Components"); // Set progress point
 
             InitializeComponent(); // Windows Forms Generated Code
@@ -1049,26 +1071,7 @@ namespace Thetis
             int t2 = timeGetTime();
             Debug.Print("Took " + (t2 - t1).ToString() + " ms to InitDB()");
 
-            // KLJ: Kick this off as early as possible to avoid waiting for it
-            // later.
 
-            Splash.SetStatus(
-                "Initializing PortAudio ..."); // Set progress point
-                                               // PortAudioForThetis.PA_Initialize();
-                                               // // Initialize the audio interface
-                                               // KLJ moved to different thread to
-                                               // speed start-up
-            m_waiting_for_portaudio = true;
-            var pat = new Thread(new ThreadStart(InitPortAudio))
-            {
-                Name = "Init PortAudioThread",
-                Priority = ThreadPriority.Highest,
-                IsBackground = true,
-
-            };
-            pat.SetApartmentState(
-                ApartmentState.STA); // no ASIO devices without this
-            pat.Start();
 
             Splash.SetStatus("Initializing Radio ..."); // Set progress point
             radio = new Radio(this, AppDataPath); // Initialize the Radio processor INIT_SLOW
