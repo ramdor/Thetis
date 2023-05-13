@@ -21626,11 +21626,11 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             }
         }
 
-        private bool swrprotection = true;
-        public bool SWRProtection
+        private volatile bool swrprotectionEnabled = true;
+        public bool SWRProtectionEnabled
         {
-            get { return swrprotection; }
-            set { swrprotection = value; }
+            get { return swrprotectionEnabled; }
+            set { swrprotectionEnabled = value; }
         }
 
         private bool disable_swr_on_tune = true;
@@ -30810,6 +30810,7 @@ oldZoomSlider != ptbDisplayZoom.Value*/
             }
         }
 
+        private int whenHighSWRFirstDetected = 0;
         private void PollPAPWR()
         {
             const float alpha = 0.90f;
@@ -30885,27 +30886,42 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         else
                             swr = (1.0f + rho) / (1.0f - rho);
 
-                        if ((alex_fwd <= 2.0f && alex_rev <= 2.0f) || swr < 1.0f)
-                            swr = 1.0f;
+                        if (!HermesLite2)
+                        {
+                            if ((alex_fwd <= 2.0f && alex_rev <= 2.0f) || swr < 1.0f)
+                                swr = 1.0f;
+                        }
+                        else
+                        {
+                            if ((alex_fwd <= 0.7f && alex_rev <= 0.25f) || swr < 1.0f)
+                                swr = 1.0f;
+                        }
+
+                        float swr_power_limit = 35.0f;
+                        if (HermesLite2)
+                        {
+                            swr_power_limit = 0.8f; // you can run up to 1 Watt on HerpesLite in order to be able to tune. KLJ.
+                        }
 
 
                         if (alexpresent || apollopresent)
                         {
                             // in following 'if', K2UE recommends not checking open
-                            // antenna for the 8000 model if (swrprotection && alex_fwd
+                            // antenna for the 8000 model if (swrprotectionEnabled && alex_fwd
                             // > 10.0f && (alex_fwd - alex_rev) < 1.0f)
                             //-W2PA Changed to allow 35w - some amplifier tuners need
                             // about 30w to reliably start working
-                            if (swrprotection && alex_fwd > 35.0f
+                            if (swrprotectionEnabled && alex_fwd > swr_power_limit
                                 && (alex_fwd - alex_rev) < 1.0f
                                 && current_hpsdr_model
                                     != HPSDRModel.ANAN8000D) // open ant condition
                             {
+                                whenHighSWRFirstDetected = timeGetTime();
                                 swr = 50.0f;
                                 NetworkIO.SWRProtect = 0.01f;
                                 // chkMOX.Checked = false; Nope, can deadlock with _Paint
-                                TimeWhenBadSWRDetected = timeGetTime();
                                 haveHighSWR = true;
+                                Display.SWROpenAntCondition = true;
 
                                 goto end;
                             }
@@ -30940,17 +30956,22 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                             alex_fwd_limit = 2.0f
                                 * (float)ptbPWR.Value; //    by comparing alex_fwd with
                                                        //    power setting_mo
+                        if (HermesLite2)
+                            alex_fwd_limit = swr_power_limit; // KLJ
 
-                        if (swr > 2.0f && alex_fwd > alex_fwd_limit && swrprotection
+                        if (swr > 2.0f && alex_fwd > alex_fwd_limit && swrprotectionEnabled
                             && !swr_pass)
                         {
                             high_swr_count++;
                             sleepTime = 1;
-                            TimeWhenBadSWRDetected = timeGetTime();
-                            Debug.Print("high_swr_count incremented to: " + high_swr_count.ToString());
+
+                            Trace.WriteLine("high_swr_count incremented to: " + high_swr_count.ToString());
+                            whenHighSWRFirstDetected = timeGetTime();
                             if (high_swr_count >= 4)
                             {
-
+                                Display.SWROpenAntCondition = false;
+                                Trace.WriteLine("High SWR Tripped here");
+                                whenHighSWRFirstDetected = timeGetTime();
                                 NetworkIO.SWRProtect = (float)(2.0f / (swr + 1.0f));
                                 // TimeWhenBadSWRDetected = timeGetTime();
                                 // careful! This can deadlock with picMultiMeterDigital_Paint, because this and that hold MeterLock.
@@ -30965,6 +30986,9 @@ oldZoomSlider != ptbDisplayZoom.Value*/
                         else
                         {
                             // Debug.Print("high_swr_count reset to zero");
+                            if (high_swr_count > 0)
+                                Trace.WriteLine("high_swr_count reset to zero");
+
                             high_swr_count = 0;
                             NetworkIO.SWRProtect = 1.0f;
                             HighSWR = false;
@@ -30982,8 +31006,11 @@ oldZoomSlider != ptbDisplayZoom.Value*/
 
                     if (haveHighSWR)
                     {
-                        Debug.Print("PollPAPWR calls ComeOutOfTXUrgently via HighSWR");
+                        Trace.WriteLine("PollPAPWR calls ComeOutOfTXUrgently via HighSWR");
+                        int howLong = timeGetTime() - whenHighSWRFirstDetected;
+                        Trace.WriteLine("First detected bad SWR " + howLong.ToString() + " ms ago.");
                         HighSWR = true;
+                        TimeWhenBadSWRDetected = timeGetTime();
                     }
 
                 }
@@ -34860,9 +34887,15 @@ oldZoomSlider != ptbDisplayZoom.Value*/
         private void chkMOX_CheckedChanged2(object sender, System.EventArgs e)
         {
             TimeWhenMoxChanged = timeGetTime();
+
             bool bOldMox = mox; //MW0LGE_21b used for state change delgates at end of fn
             if (bOldMox && !chkMOX.Checked)
+            {
                 TimeWhenCameOutOfMox = timeGetTime();
+            }
+
+            if (bOldMox == false && chkMOX.Checked)
+                Display.SWROpenAntCondition = false;
 
             Debug.Print("MOx changed started");
             MoxPreChangeHandlers?.Invoke(rx2_enabled && VFOBTX ? 2 : 1, mox, chkMOX.Checked); // MW0LGE_21k8

@@ -18502,7 +18502,7 @@ namespace Thetis
 
         private void chkSWRProtection_CheckedChanged(object sender, EventArgs e)
         {
-            console.SWRProtection = chkSWRProtection.Checked;
+            console.SWRProtectionEnabled = chkSWRProtection.Checked;
         }
 
         public bool ATTOnTXChecked
