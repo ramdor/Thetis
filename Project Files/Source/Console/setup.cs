@@ -22298,7 +22298,6 @@ namespace Thetis
             bool bEnabled = chkPeakBlobsEnabled.Checked;
             udPeakBlobs.Enabled = bEnabled;
             chkPeakBlobInsideFilterOnly.Enabled = bEnabled;
-            lblBlobMS.Enabled = bEnabled;
             chkBlobPeakHold.Enabled = bEnabled;
             udBlobPeakHoldMS.Enabled = bEnabled && chkBlobPeakHold.Checked;
             chkPeakHoldDrop.Enabled = bEnabled && chkBlobPeakHold.Checked;
@@ -22325,8 +22324,7 @@ namespace Thetis
         private void chkSignalHistory_CheckedChanged(object sender, EventArgs e)
         {
             console.UseSignalHistory = chkSignalHistory.Checked;
-            udSignalHistoryDuration.Enabled = chkSignalHistory.Checked;
-            lblSignalHistoryDurationMS.Enabled = chkSignalHistory.Checked;
+            udSignalHistoryDuration.Enabled = chkSignalHistory.Checked;            
         }
 
         private void clrbtnSignalHistoryColour_Changed(object sender, EventArgs e)
@@ -23885,11 +23883,11 @@ namespace Thetis
             picWarningRegionExtended.Visible = bShow;
             if (bShow)
             {
-                grpFRSRegion.Size = new Size(150, 136);
+                grpFRSRegion.Size = new Size(153, 136);
             }
             else
             {
-                grpFRSRegion.Size = new Size(150, 75);
+                grpFRSRegion.Size = new Size(153, 94);
             }
         }
 
@@ -29229,6 +29227,20 @@ namespace Thetis
 
         }
 
+        private void labelTS19_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblWarningRegionExtended_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label20_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
 
