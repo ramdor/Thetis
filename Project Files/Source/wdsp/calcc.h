@@ -102,10 +102,10 @@ typedef struct _calcc {
     } util;
     double*
         temptx; //////////////////////////////////////////////////// temporary
-                /// tx complex buffer - remove with new callback3port()
+                ///tx complex buffer - remove with new callback3port()
     double*
         temprx; //////////////////////////////////////////////////// temporary
-                /// rx complex buffer - remove with new callback3port()
+                ///rx complex buffer - remove with new callback3port()
 } calcc, *CALCC;
 
 extern CALCC create_calcc(int channel, int runcal, int size, int rate, int ints,
@@ -119,6 +119,8 @@ extern void flush_calcc(CALCC a);
 
 extern __declspec(dllexport) void pscc(
     int channel, int size, double* tx, double* rx);
+
+extern volatile int wdsp_running;
 
 #endif
 

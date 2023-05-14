@@ -63,6 +63,7 @@ namespace Thetis
     using Device = SharpDX.Direct3D11.Device;
     using RectangleF = SharpDX.RectangleF;
     using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;
+    using System.Runtime.CompilerServices;
 
     class Display
     {
@@ -106,6 +107,8 @@ namespace Thetis
         #endregion
 
         #region Properties
+
+        public volatile static bool SWROpenAntCondition = false;
 
         public static float FrameDelta { get; private set; }
 
@@ -1125,12 +1128,8 @@ namespace Thetis
             set { sample_rate_tx = value; }
         }
 
-        private static bool high_swr = false;
-        public static bool HighSWR
-        {
-            get { return high_swr; }
-            set { high_swr = value; }
-        }
+        internal volatile static bool HighSWR = false;
+
 
         // MW0LGE_219k
         // private static DisplayEngine current_display_engine =
@@ -3446,7 +3445,7 @@ namespace Thetis
                         _bRebuildRX2LinearGradBrush = true;
                     }
 
-                    bool should_show_high_swr = high_swr;
+                    bool should_show_high_swr = HighSWR;
                     if (!should_show_high_swr)
                     {
                         if (console.TimeWhenBadSWRDetected != 0)
@@ -3460,8 +3459,12 @@ namespace Thetis
                     // HIGH swr display warning
                     if (should_show_high_swr)
                     {
+                        string txt = "High SWR!";
+                        if (SWROpenAntCondition)
+                            txt = "SWR: Open antenna detected!";
+
                         drawStringDX2D(
-                            "High SWR", fontDX2d_font14, m_bDX2_Red, 245, 20);
+                            txt, fontDX2d_font14, m_bDX2_Red, 245, 20);
                         _d2dRenderTarget.DrawRectangle(
                             new RectangleF(3, 3, displayTargetWidth - 6,
                                 displayTargetHeight - 6),
@@ -3566,7 +3569,7 @@ namespace Thetis
             }
         }
 
-        private static uint ShowHighSWRms = 2000;
+        private static uint ShowHighSWRms = 5000;
         private static int m_nVBlanks = 0;
         public static int VerticalBlanks
         {

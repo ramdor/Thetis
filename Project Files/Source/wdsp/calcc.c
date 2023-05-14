@@ -26,6 +26,7 @@ warren@wpratt.com
 
 #define _CRT_SECURE_NO_WARNINGS
 #include "comm.h"
+#include "klj_mem.h"
 
 void size_calcc(CALCC a) { // for change in ints or spi
     int i;
@@ -178,11 +179,28 @@ int fcompare(const void* a, const void* b) {
         return 1;
 }
 
+static double* wrk = 0;
+static size_t last_wrk_alloc_size = 0;
+static volatile int decomp_busy = 0;
+
 void decomp(int n, double* a, int* piv, int* info) {
+
+    assert(!decomp_busy); /// OK for static allocation?
+    decomp_busy = 1;
     int i, j, k;
     int t_piv;
     double m_row, mt_row, m_col, mt_col;
-    double* wrk = (double*)malloc0(n * sizeof(double));
+    if (last_wrk_alloc_size < n) { // KLJ
+        if (last_wrk_alloc_size) {
+            assert(last_wrk_alloc_size < n);
+        }
+        last_wrk_alloc_size = n * 10;
+        if (wrk) {
+            _aligned_free(wrk);
+        }
+
+        wrk = (double*)malloc0((int)(last_wrk_alloc_size * sizeof(double)));
+    }
     *info = 0;
     for (i = 0; i < n; i++) {
         piv[i] = i;
@@ -225,7 +243,8 @@ void decomp(int n, double* a, int* piv, int* info) {
     }
     if (a[n * n - 1] == 0.0) *info = -n;
 cleanup:
-    _aligned_free(wrk);
+    decomp_busy = 0;
+    // _aligned_free(wrk);
 }
 
 void dsolve(int n, double* a, int* piv, double* b, double* x) {
@@ -259,8 +278,22 @@ void cull(int* n, int ints, double* x, double* t, double ptol) {
     *n -= k;
 }
 
+Storage* PSBuilderArena = 0;
+
 void builder(int points, double* x, double* y, int ints, double* t, int* info,
     double* c, double ptol) {
+
+    static int busy = 0;
+    assert(!busy);
+    busy = 1;
+
+    if (!PSBuilderArena) {
+        PSBuilderArena = StorageCreate(DEFAULT_BUILDER_STORAGE_SIZE_KLJ);
+        assert(PSBuilderArena);
+    }
+    Storage* MemArena = PSBuilderArena;
+
+#ifdef ALLOW_MALLOC_AFTER_TAKEOFF_KLJ
     double* catxy = (double*)malloc0(2 * points * sizeof(double));
     double* sx = (double*)malloc0(points * sizeof(double));
     double* sy = (double*)malloc0(points * sizeof(double));
@@ -296,6 +329,52 @@ void builder(int points, double* x, double* y, int ints, double* t, int* info,
     int i, j, k, m;
     int dinfo;
     int* ipiv = (int*)malloc0(nsize * sizeof(int));
+#else
+
+    double* catxy
+        = (double*)PushArray(MemArena, 2 * points * sizeof(double), double);
+    double* sx = (double*)PushArray(MemArena, points * sizeof(double), double);
+    double* sy = (double*)PushArray(MemArena, points * sizeof(double), double);
+    double* h = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    int* p = (int*)PushArray(MemArena, ints * sizeof(int), int);
+    int* np = (int*)PushArray(MemArena, ints * sizeof(int), int);
+    double u, v, alpha, beta, gamma, delta;
+    double* taa = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tab = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tag = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tad = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tbb = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tbg = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tbd = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tgg = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tgd = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    double* tdd = (double*)PushArray(MemArena, ints * sizeof(double), double);
+    int nsize = 3 * ints + 1;
+    int intp1 = ints + 1;
+    int intm1 = ints - 1;
+    double* A
+        = (double*)PushArray(MemArena, intp1 * intp1 * sizeof(double), double);
+    double* B
+        = (double*)PushArray(MemArena, intp1 * intp1 * sizeof(double), double);
+    double* C
+        = (double*)PushArray(MemArena, intm1 * intp1 * sizeof(double), double);
+    double* D = (double*)PushArray(MemArena, intp1 * sizeof(double), double);
+    double* E
+        = (double*)PushArray(MemArena, intp1 * intp1 * sizeof(double), double);
+    double* F
+        = (double*)PushArray(MemArena, intm1 * intp1 * sizeof(double), double);
+    double* G = (double*)PushArray(MemArena, intp1 * sizeof(double), double);
+    double* MAT
+        = (double*)PushArray(MemArena, nsize * nsize * sizeof(double), double);
+    double* RHS = (double*)PushArray(MemArena, nsize * sizeof(double), double);
+    double* SLN = (double*)PushArray(MemArena, nsize * sizeof(double), double);
+    double* z = (double*)PushArray(MemArena, intp1 * sizeof(double), double);
+    double* zp = (double*)PushArray(MemArena, intp1 * sizeof(double), double);
+    int i, j, k, m;
+    int dinfo;
+    int* ipiv = (int*)PushArray(MemArena, nsize * sizeof(int), int);
+
+#endif
 
     for (i = 0; i < points; i++) {
         catxy[2 * i + 0] = x[i];
@@ -327,6 +406,9 @@ void builder(int points, double* x, double* y, int ints, double* t, int* info,
     }
     for (i = 0; i < ints; i++)
         for (j = p[i]; j < p[i] + np[i]; j++) {
+            if (j >= points) {
+                break;
+            }
             u = (sx[j] - t[i]) / h[i];
             v = u - 1.0;
             alpha = (2.0 * u + 1.0) * v * v;
@@ -418,39 +500,8 @@ void builder(int points, double* x, double* y, int ints, double* t, int* info,
             + 1.0 / (h[i] * h[i]) * (zp[i] + zp[i + 1]);
     }
 cleanup:
-    _aligned_free(ipiv);
-    _aligned_free(catxy);
-    _aligned_free(sx);
-    _aligned_free(sy);
-    _aligned_free(h);
-    _aligned_free(p);
-    _aligned_free(np);
-
-    _aligned_free(taa);
-    _aligned_free(tab);
-    _aligned_free(tag);
-    _aligned_free(tad);
-    _aligned_free(tbb);
-    _aligned_free(tbg);
-    _aligned_free(tbd);
-    _aligned_free(tgg);
-    _aligned_free(tgd);
-    _aligned_free(tdd);
-
-    _aligned_free(A);
-    _aligned_free(B);
-    _aligned_free(C);
-    _aligned_free(D);
-    _aligned_free(E);
-    _aligned_free(F);
-    _aligned_free(G);
-
-    _aligned_free(MAT);
-    _aligned_free(RHS);
-    _aligned_free(SLN);
-
-    _aligned_free(z);
-    _aligned_free(zp);
+    StorageReset(MemArena, 1);
+    busy = 0;
 }
 
 void scheck(CALCC a) {
@@ -544,16 +595,94 @@ void rxscheck(int rints, double* tvec, double* coef, int* info) {
     if (out < 0.00) *info |= 0x0020;
 }
 
+typedef struct calc_struct_klj {
+
+    double* env_TX;
+    double* env_RX;
+    double* x;
+    double* ym;
+    double* yc;
+    double* ys;
+    double* cat;
+
+    int nsamps;
+    int tsamps;
+
+    int nsamps_overalloced;
+    int tsamps_overalloced;
+} CALC_STRUCT, *PCALC_STRUCT;
+
+static CALC_STRUCT static_calc_struct_klj;
+
+void calc_destroy(PCALC_STRUCT p) {
+    assert(p);
+    _aligned_free(p->x);
+    _aligned_free(p->ym);
+    _aligned_free(p->yc);
+    _aligned_free(p->ys);
+
+    _aligned_free(p->env_TX);
+    _aligned_free(p->env_RX);
+    _aligned_free(p->cat);
+}
+
+volatile int calc_create_busy = 0;
+
+PCALC_STRUCT calc_create(int tsamps, int nsamps) {
+
+    int create = 0;
+    int nsamps_more = nsamps * 4;
+    int tsamps_more = tsamps * 4;
+
+    assert(!calc_create_busy); // check it's actually OK to create the calc
+                               // statically.
+    calc_create_busy = 1;
+
+    if (static_calc_struct_klj.tsamps_overalloced < nsamps
+        || static_calc_struct_klj.nsamps_overalloced < tsamps) {
+        create = 1;
+    }
+
+    if (create) {
+        memset(&static_calc_struct_klj, 0, sizeof(CALC_STRUCT));
+    }
+
+    PCALC_STRUCT c = &static_calc_struct_klj;
+
+    if (create) {
+        c->env_TX = (double*)malloc0(nsamps_more * sizeof(double));
+        c->env_RX = (double*)malloc0(nsamps_more * sizeof(double));
+        c->x = (double*)malloc0(tsamps_more * sizeof(double));
+        c->ym = (double*)malloc0(tsamps_more * sizeof(double));
+        c->yc = (double*)malloc0(tsamps_more * sizeof(double));
+        c->ys = (double*)malloc0(tsamps_more * sizeof(double));
+        c->nsamps = nsamps;
+        c->tsamps = tsamps;
+        c->nsamps_overalloced = nsamps_more;
+        c->tsamps_overalloced = tsamps_more;
+        c->cat = (double*)malloc0(4 * nsamps * sizeof(double) * 10);
+    }
+
+    calc_create_busy = 0;
+    return &static_calc_struct_klj;
+}
+volatile int calc_busy = 0;
 void calc(CALCC a) {
+
+    assert(!calc_busy);
+    calc_busy = 1;
     int i;
     int tsamps = a->nsamps + a->npsamps;
-    double* env_TX = (double*)malloc0(a->nsamps * sizeof(double));
-    double* env_RX = (double*)malloc0(a->nsamps * sizeof(double));
-    double* x = (double*)malloc0(tsamps * sizeof(double));
-    double* ym = (double*)malloc0(tsamps * sizeof(double));
-    double* yc = (double*)malloc0(tsamps * sizeof(double));
-    double* ys = (double*)malloc0(tsamps * sizeof(double));
+    PCALC_STRUCT pcs = calc_create(tsamps, a->nsamps);
+
+    double* env_TX = pcs->env_TX;
+    double* env_RX = pcs->env_RX;
+    double* x = pcs->x;
+    double* ym = pcs->ym;
+    double* yc = pcs->yc;
+    double* ys = pcs->ys;
     double norm;
+
     for (i = 0; i < a->nsamps; i++) {
         env_TX[i] = sqrt(a->txs[2 * i + 0] * a->txs[2 * i + 0]
             + a->txs[2 * i + 1] * a->txs[2 * i + 1]);
@@ -646,7 +775,8 @@ void calc(CALCC a) {
     {
         const double mval = 1.0e+00 - 1.0e-10;
         double cval, sval;
-        double* cat = (double*)malloc0(4 * a->nsamps * sizeof(double));
+        double* cat = pcs->cat; // (double*)malloc0(4 * a->nsamps *
+                                // sizeof(double)); //KLJ
         for (i = 0; i < a->nsamps; i++) {
             cat[4 * i + 0] = x[i];
             cat[4 * i + 1] = ym[i];
@@ -660,7 +790,7 @@ void calc(CALCC a) {
             yc[i] = cat[4 * i + 2];
             ys[i] = cat[4 * i + 3];
         }
-        _aligned_free(cat);
+        // _aligned_free(cat); KLJ
         cval = 0.0;
         sval = 0.0;
         for (i = a->nsamps - 1; i > a->nsamps - 17; i--) {
@@ -727,6 +857,8 @@ void calc(CALCC a) {
     }
     LeaveCriticalSection(&a->disp.cs_disp);
 cleanup:
+    calc_busy = 0;
+    /*/
     _aligned_free(x);
     _aligned_free(ym);
     _aligned_free(yc);
@@ -734,9 +866,38 @@ cleanup:
 
     _aligned_free(env_TX);
     _aligned_free(env_RX);
+    /*/
 }
 
-void __cdecl doCalcCorrection(void* arg) {
+volatile int wdsp_running = 1;
+CALCC calcCCForTurnOff = 0;
+CALCC calcCCForCorrection = 0;
+
+HANDLE doCalcCorrectionEvent = 0;
+HANDLE doTurnOffEvent = 0;
+
+HANDLE doTurnOffThread = 0;
+HANDLE doCalcCorrectionThread = 0;
+
+DWORD WINAPI doCalcCorrection(void* arg) {
+
+    while (wdsp_running) {
+        DWORD dwWait = WaitForSingleObject(doCalcCorrectionEvent, INFINITE);
+        CALCC a = calcCCForCorrection;
+        if (!a) {
+            return 0;
+        }
+        calc(a); // is this supposed to be outside the critical section? KLJ
+        if (a->scOK) {
+            if (!InterlockedBitTestAndSet(&a->ctrl.running, 0))
+                SetTXAiqcStart(a->channel, a->cm, a->cc, a->cs);
+            else
+                SetTXAiqcSwap(a->channel, a->cm, a->cc, a->cs);
+        }
+        InterlockedBitTestAndSet(&a->ctrl.calcdone, 0);
+    }
+    return 0;
+    /*/
     CALCC a = (CALCC)arg;
     calc(a);
     if (a->scOK) {
@@ -746,13 +907,20 @@ void __cdecl doCalcCorrection(void* arg) {
             SetTXAiqcSwap(a->channel, a->cm, a->cc, a->cs);
     }
     InterlockedBitTestAndSet(&a->ctrl.calcdone, 0);
-    _endthread();
+    /*/
 }
 
-void __cdecl doTurnoff(void* arg) {
-    CALCC a = (CALCC)arg;
-    SetTXAiqcEnd(a->channel);
-    _endthread();
+DWORD WINAPI doTurnoff(void* arg) {
+
+    while (wdsp_running) {
+        DWORD dwWait = WaitForSingleObject(doTurnOffEvent, INFINITE);
+        CALCC a = calcCCForTurnOff;
+        if (!a) return 0;
+        assert(a);
+        SetTXAiqcEnd(a->channel);
+    }
+
+    return 0;
 }
 
 enum _calcc_state {
@@ -844,8 +1012,19 @@ PORT void pscc(int channel, int size, double* tx, double* rx) {
                 InterlockedExchange(&a->ctrl.current_state, LRESET);
                 a->ctrl.reset = 0;
                 if (!a->ctrl.turnon)
-                    if (InterlockedBitTestAndReset(&a->ctrl.running, 0))
-                        _beginthread(doTurnoff, 0, (void*)a);
+                    if (InterlockedBitTestAndReset(&a->ctrl.running, 0)) {
+
+                        if (doTurnOffEvent)
+                            // thread is up, and waiting on the event
+                            assert(doTurnOffEvent
+                                && doTurnOffEvent != INVALID_HANDLE_VALUE);
+                        if (doTurnOffEvent) {
+                            calcCCForTurnOff = a;
+                            SetEvent(doTurnOffEvent);
+                        }
+
+                        // _beginthread(doTurnoff, 0, (void*)a);
+                    }
                 a->info[14] = 0;
                 a->ctrl.env_maxtx = 0.0;
                 a->ctrl.bs_count = 0;
@@ -974,7 +1153,13 @@ PORT void pscc(int channel, int size, double* tx, double* rx) {
                 InterlockedExchange(&a->ctrl.current_state, LCALC);
                 if (!a->ctrl.calcinprogress) {
                     a->ctrl.calcinprogress = 1;
-                    _beginthread(doCalcCorrection, 0, (void*)a);
+                    if (doCalcCorrectionEvent) {
+                        // thread running, just signal it to do work:
+                        calcCCForCorrection = a;
+                        SetEvent(doCalcCorrectionEvent);
+                    }
+
+                    // _beginthread(doCalcCorrection, 0, (void*)a);
                 }
 
                 if (InterlockedBitTestAndReset(&a->ctrl.calcdone, 0)) {
@@ -1073,6 +1258,29 @@ PORT void PSRestoreCorr(int channel, char* filename) {
     LeaveCriticalSection(&txa[channel].calcc.cs_update);
 }
 
+// thread creation for PS
+void MakeThreadsKLJ() {
+
+    if (!doTurnOffEvent) {
+
+        doTurnOffEvent = CreateEvent(0, 0, 0, 0);
+        assert(doTurnOffEvent);
+        doTurnOffThread = CreateThread(0, 0, doTurnoff, 0, 0, 0);
+        assert(doTurnOffThread && doTurnOffThread != INVALID_HANDLE_VALUE);
+    }
+
+    if (!doCalcCorrectionEvent) {
+
+        doCalcCorrectionEvent = CreateEvent(0, 0, 0, 0);
+        assert(doCalcCorrectionEvent);
+        if (doCalcCorrectionEvent) {
+            doCalcCorrectionThread
+                = CreateThread(0, 0, doCalcCorrection, 0, 0, 0);
+            assert(doCalcCorrectionEvent != INVALID_HANDLE_VALUE);
+        }
+    }
+}
+
 /********************************************************************************************************
  *																										*
  *											  Properties
@@ -1081,6 +1289,10 @@ PORT void PSRestoreCorr(int channel, char* filename) {
  ********************************************************************************************************/
 
 PORT void SetPSRunCal(int channel, int run) {
+
+    if (run) {
+        MakeThreadsKLJ();
+    }
     CALCC a;
     EnterCriticalSection(&txa[channel].calcc.cs_update);
     a = txa[channel].calcc.p;

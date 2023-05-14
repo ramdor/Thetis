@@ -28,12 +28,14 @@ warren@wpratt.com
 
 struct _ch ch[MAX_CHANNELS];
 
-HANDLE start_thread(int channel) {
-    return (HANDLE)_beginthread(wdspmain, 0, (void*)(uintptr_t)channel);
+void start_thread(int channel) {
+    HANDLE handle
+        = (HANDLE)_beginthread(wdspmain, 0, (void*)(uintptr_t)channel);
     // SetThreadPriority(handle, THREAD_PRIORITY_HIGHEST);
 }
 
 void pre_main_build(int channel) {
+
     if (ch[channel].in_rate >= ch[channel].dsp_rate)
         ch[channel].dsp_insize = ch[channel].dsp_size
             * (ch[channel].in_rate / ch[channel].dsp_rate);
@@ -63,12 +65,13 @@ void pre_main_build(int channel) {
 
 void post_main_build(int channel) {
     InterlockedBitTestAndSet(&ch[channel].run, 0);
-    ch[channel].threadHandle = start_thread(channel);
+    start_thread(channel);
     if (ch[channel].state == 1)
         InterlockedBitTestAndSet(&ch[channel].exchange, 0);
 }
 
 void build_channel(int channel) {
+
     pre_main_build(channel);
     create_main(channel);
     post_main_build(channel);
@@ -90,21 +93,6 @@ PORT void OpenChannel(int channel, int in_size, int dsp_size,
     ch[channel].tdelaydown = tdelaydown;
     ch[channel].tslewdown = tslewdown;
     ch[channel].bfo = bfo;
-
-    assert(IsPowerOfTwo(dsp_size));
-    // assert(IsPowerOfTwo(dsp_rate));
-    if (output_samplerate == input_samplerate) {
-
-    } else {
-        if (output_samplerate > input_samplerate) {
-            int div = output_samplerate / input_samplerate;
-            assert(IsPowerOfTwo(div));
-        } else {
-            int div = input_samplerate / output_samplerate;
-            assert(IsPowerOfTwo(div));
-        }
-    }
-
     InterlockedBitTestAndReset(&ch[channel].exchange, 0);
     build_channel(channel);
     if (ch[channel].state) {
@@ -178,8 +166,6 @@ PORT void SetInputBuffsize(int channel,
 }
 
 PORT void SetDSPBuffsize(int channel, int dsp_size) {
-
-    assert(IsPowerOfTwo(dsp_size));
     if (dsp_size != ch[channel].dsp_size) {
         int oldstate = SetChannelState(channel, 0, 1);
         pre_main_destroy(channel);

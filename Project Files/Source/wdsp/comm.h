@@ -24,30 +24,13 @@ warren@wpratt.com
 
 */
 
-#include <float.h> // DBL_EPSILON & friends. G7KLJ
-
-// #include "../ChannelMaster/debug_flags.h"
-
-typedef double SAMPLETYPE;
-
-#ifndef MY_PATIENCE
-#ifdef _DEBUG
-#define MY_PATIENCE FFTW_ESTIMATE
-
-#else
-#define MY_PATIENCE FFTW_PATIENT
-
-#endif
-#endif
-
 #include <Windows.h>
 #include <process.h>
 #include <intrin.h>
 #include <math.h>
+#include <stdint.h>
 #include <time.h>
 #include <avrt.h>
-#include <assert.h>
-#include <stdint.h>
 #include "fftw3.h"
 
 #include "amd.h"
@@ -99,16 +82,23 @@ typedef double SAMPLETYPE;
 #include "siphon.h"
 #include "slew.h"
 #include "snb.h"
+#include "ssql.h"
 #include "syncbuffs.h"
 #include "TXA.h"
 #include "utilities.h"
 #include "varsamp.h"
 #include "wcpAGC.h"
-
-int IsPowerOfTwo(unsigned long x);
+#include <assert.h>
+#include "klj_mem.h"
 
 #ifndef PRIO_THRD_DEFINED
 #define PRIO_THRD_DEFINED
+
+/*/
+static inline int IsPowerOfTwo(unsigned long x) {
+    return (x != 0) && ((x & (x - 1)) == 0);
+}
+/*/
 
 static inline HANDLE prioritise_thread_max() {
 
@@ -185,10 +175,6 @@ static inline BOOL prioritise_thread_cleanup(HANDLE h) {
 // wisdom definitions
 #define MAX_WISDOM_SIZE_DISPLAY 262144
 #define MAX_WISDOM_SIZE_FILTER 262144 // was 32769
-
-// math definitions
-#define PI 3.1415926535897932
-#define TWOPI 6.2831853071795864
 
 // miscellaneous
 typedef double complex[2];

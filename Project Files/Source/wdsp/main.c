@@ -30,9 +30,9 @@ void wdspmain(void* pargs) {
     DWORD taskIndex = 0;
     HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
     if (hTask != 0)
-        AvSetMmThreadPriority(hTask, AVRT_PRIORITY_CRITICAL);
+        AvSetMmThreadPriority(hTask, 2);
     else
-        SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+        SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 
     int channel = (int)(uintptr_t)pargs;
     while (_InterlockedAnd(&ch[channel].run, 1)) {
@@ -57,9 +57,12 @@ void wdspmain(void* pargs) {
         }
         LeaveCriticalSection(&ch[channel].csDSP);
     }
+    // _endthread  // naughty, naughty, you need to give up the thread resources
 
-    if (hTask) AvRevertMmThreadCharacteristics(hTask);
-    _endthread();
+    if (hTask != 0) {
+        AvRevertMmThreadCharacteristics(hTask);
+    }
+    // _endthread not needed anyway
 }
 
 void create_main(int channel) {

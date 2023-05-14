@@ -103,7 +103,7 @@ void flush_varsamp(VARSAMP a) {
     a->isamps = 0.0;
 }
 
-void hshift(VARSAMP a) {
+__forceinline void hshift(VARSAMP a) {
     int i, j, k;
     int hidx;
     double frac, pos;
@@ -115,7 +115,7 @@ void hshift(VARSAMP a) {
         a->hs[i] = a->h[j] + frac * (a->h[k] - a->h[j]);
 }
 
-int xvarsamp(VARSAMP a, double var) {
+__forceinline int xvarsamp(VARSAMP a, double var) {
     int outsamps = 0;
     uint64_t* picvar;
     uint64_t N;

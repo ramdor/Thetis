@@ -351,7 +351,7 @@ FFTW_DEFINE_API(FFTW_MANGLE_QUAD, __float128, fftwq_complex)
 #define FFTW_PATIENT FFTW_ESTIMATE
 #else
 #undef FFTW_PATIENT
-#define FFTW_PATIENT FFTW_MEASURE // KLJ: can we get away with this?
+#define FFTW_PATIENT FFTW_MEASURE
 #endif
 
 /* undocumented beyond-guru flags */

@@ -369,7 +369,7 @@
 
 
 
-		<Binary Id="InstallMeterSkins" SourceFile="$(var.FilesPath)MeterSkinInstaller.exe" />
+		<Binary Id="InstallMeterSkins" SourceFile="$(var.FilesPath)../../MeterSkinInstaller.exe" />
 		<CustomAction Id="InstallMeterSkins_CA" BinaryKey="InstallMeterSkins"
 			Impersonate="yes" Execute="deferred" ExeCommand="[SystemFolder]cmd.exe /C start MeterSkinInstaller.exe"
 					  Return="check"/>

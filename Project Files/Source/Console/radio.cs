@@ -52,17 +52,23 @@ namespace Thetis
         {
             TheConsole = c;
             RadioDSP.AppDataPath = datapath;
+            if (c.initializing)
+                Splash.SetStatus("Creating Radio DSP ...");
+
             RadioDSP.CreateDSP(c);
             Thread.Sleep(100);
 
             dsp_rx = new RadioDSPRX[NUM_RX_THREADS][];
+            Splash.SetStatus("Creating Receivers ...");
             for (int i = 0; i < NUM_RX_THREADS; i++)
             {
+                Splash.SetStatus("Creating Receiver " + i.ToString() + " ...");
                 dsp_rx[i] = new RadioDSPRX[NUM_RX_PER_THREAD];
                 for (int j = 0; j < NUM_RX_PER_THREAD; j++)
                     dsp_rx[i][j] = new RadioDSPRX((uint)i * 2, (uint)j);
             }
 
+            Splash.SetStatus("Creating Transmitters ...");
             dsp_tx = new RadioDSPTX[1];
             dsp_tx[0] = new RadioDSPTX(1);
 
@@ -90,9 +96,6 @@ namespace Thetis
 
         public static void CreateDSP(Console c)
         {
-            //String app_data_path = "";
-            //app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-            //    + "\\OpenHPSDR\\Thetis\\";
             WDSP.WDSPwisdom(app_data_path);
             cmaster.CMCreateCMaster();
         }

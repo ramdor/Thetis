@@ -836,7 +836,8 @@ namespace Thetis.Properties {
         ///     padding-top: 10px;
         ///     margin-right: 10px;
         ///   }
-        ///   .f [rest of string was truncated]&quot;;.
+        ///   .freqPanel {    
+        ///     backg [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string template {
             get {

@@ -1196,6 +1196,10 @@ namespace Thetis
                     nWatts = 1;
                 }
 
+                Debug.Assert(Audio.console != null);
+                if (Audio.console.SetupForm.HermesLite2)
+                    nWatts = 10;
+
                 return nWatts;
             }
         }

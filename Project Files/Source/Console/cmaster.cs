@@ -373,6 +373,7 @@ namespace Thetis
 
             // create receivers, transmitters, specials, and buffers
             Splash.SetStatus("Creating receivers, transmitters and required buffers ...");
+
             cmaster.CreateRadio();
 
             // get transmitter identifiers

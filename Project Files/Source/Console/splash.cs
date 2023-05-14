@@ -36,9 +36,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Thetis
 {
+
+
     public class Splash : System.Windows.Forms.Form
     {
         //MW0LGE
@@ -387,6 +390,16 @@ namespace Thetis
 
         #region Event Handlers
 
+        private int timeWhenLastUpdate = 0;
+        private bool idle = false;
+        private double idlemax = 0;
+        private double idleFraction;
+        private double idleIncrement = 0.01;
+
+        private int TimeSinceLastUpdate()
+        {
+            return Console.timeGetTime() - timeWhenLastUpdate;
+        }
         //********* Event Handlers ************
 
         // Tick Event handler for the Timer control.  
@@ -429,15 +442,49 @@ namespace Thetis
                     //});
                 }
             }
+
             if (m_bFirstLaunch == false && m_dblLastCompletionFraction
-                < m_dblCompletionFraction)
+                                            < m_dblCompletionFraction)
             {
+                idle = false;
+            }
+            else
+            {
+                // no actual progress, but do not 'freeze' (KLJ)
+                // m_dblCompletionFraction += 0.0000001;
+                if (timeWhenLastUpdate > 0 && TimeSinceLastUpdate() > 400)
+                {
+                    if (!idle)
+                    {
+                        idle = true;
+                        idleFraction = m_dblLastCompletionFraction;
+                        if (idleFraction < 0.01)
+                            idlemax = 0.1;
+                        else
+                            idlemax = idleFraction;
+
+                        idleIncrement = idlemax / 50;
+                        if (idleIncrement <= 0)
+                        {
+                            idleIncrement = 0.01;
+                        }
+                    }
+                }
+
+            }
+
+            int width = (int)Math.Floor(
+                 pnlStatus.ClientRectangle.Width * m_dblLastCompletionFraction);
+            int height = pnlStatus.ClientRectangle.Height;
+            int x = pnlStatus.ClientRectangle.X;
+            int y = pnlStatus.ClientRectangle.Y;
+
+            if (m_bFirstLaunch == false && m_dblLastCompletionFraction
+            < m_dblCompletionFraction)
+            {
+                timeWhenLastUpdate = Console.timeGetTime();
                 m_dblLastCompletionFraction += m_dblPBIncrementPerTimerInterval;
-                int width = (int)Math.Floor(
-                    pnlStatus.ClientRectangle.Width * m_dblLastCompletionFraction);
-                int height = pnlStatus.ClientRectangle.Height;
-                int x = pnlStatus.ClientRectangle.X;
-                int y = pnlStatus.ClientRectangle.Y;
+
                 if (width > 0 && height > 0)
                 {
                     m_rProgress = new Rectangle(x, y, width, height);
@@ -456,8 +503,64 @@ namespace Thetis
                             iSecondsLeft);
                 }
             }
+            else
+            {
+
+                if (idle)
+                {
+
+                    idleFraction += idleIncrement;
+                    if (idleFraction >= idlemax)
+                        idleFraction = 0.001;
+
+                    width = (int)Math.Floor(
+                     pnlStatus.ClientRectangle.Width * idleFraction);
+
+                    if (width <= 0)
+                    {
+                        width = 1;
+                    }
+                    m_rProgress = new Rectangle(x, y, width, height);
+                    if (pnlStatus != null && !pnlStatus.IsDisposed) InvalidateRect(pnlStatus.Handle, IntPtr.Zero, false);
+                    Debug.Print("Width of bar is: " + width.ToString());
+                }
+            }
 
         }
+
+        public static GraphicsPath RoundedRect(Rectangle bounds, int radius)
+        {
+            int diameter = radius * 2;
+            Size size = new Size(diameter, diameter);
+            Rectangle arc = new Rectangle(bounds.Location, size);
+            GraphicsPath path = new GraphicsPath();
+
+            if (radius == 0)
+            {
+                path.AddRectangle(bounds);
+                return path;
+            }
+
+            // top left arc  
+            path.AddArc(arc, 180, 90);
+
+            // top right arc  
+            arc.X = bounds.Right - diameter;
+            path.AddArc(arc, 270, 90);
+
+            // bottom right arc  
+            arc.Y = bounds.Bottom - diameter;
+            path.AddArc(arc, 0, 90);
+
+            // bottom left arc 
+            arc.X = bounds.Left;
+            path.AddArc(arc, 90, 90);
+
+            path.CloseFigure();
+            return path;
+        }
+
+
 
         // Paint the portion of the panel invalidated during the tick event.
         private void pnlStatus_Paint(object sender,
@@ -472,6 +575,8 @@ namespace Thetis
                     Color.FromArgb(130, 255, 130),
                     LinearGradientMode.Horizontal);
                 e.Graphics.FillRectangle(brBackground, m_rProgress);
+                //FillRoundedRectangle(e.Graphics, brBackground, m_rProgress, 4);
+
             }
         }
 

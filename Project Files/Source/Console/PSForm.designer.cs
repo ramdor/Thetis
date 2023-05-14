@@ -52,7 +52,7 @@
             this.udPSPhnum = new System.Windows.Forms.NumericUpDownTS();
             this.grpPSInfo = new System.Windows.Forms.GroupBoxTS();
             this.btnDefaultPeaks = new System.Windows.Forms.ButtonTS();
-            this.checkLoopback = new System.Windows.Forms.CheckBoxTS();
+            this.chkLoopback = new System.Windows.Forms.CheckBoxTS();
             this.lblPSInfo5 = new System.Windows.Forms.LabelTS();
             this.labelTS13 = new System.Windows.Forms.LabelTS();
             this.lblPSInfo13 = new System.Windows.Forms.LabelTS();
@@ -272,7 +272,7 @@
             // lblPSInfoFB
             // 
             this.lblPSInfoFB.BackColor = System.Drawing.Color.Black;
-            this.lblPSInfoFB.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblPSInfoFB.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblPSInfoFB.ForeColor = System.Drawing.Color.Black;
             this.lblPSInfoFB.Image = null;
             this.lblPSInfoFB.Location = new System.Drawing.Point(14, 41);
@@ -283,7 +283,7 @@
             // lblPSInfoCO
             // 
             this.lblPSInfoCO.BackColor = System.Drawing.Color.Black;
-            this.lblPSInfoCO.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblPSInfoCO.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblPSInfoCO.ForeColor = System.Drawing.Color.Black;
             this.lblPSInfoCO.Image = null;
             this.lblPSInfoCO.Location = new System.Drawing.Point(168, 41);
@@ -386,7 +386,7 @@
             // grpPSInfo
             // 
             this.grpPSInfo.Controls.Add(this.btnDefaultPeaks);
-            this.grpPSInfo.Controls.Add(this.checkLoopback);
+            this.grpPSInfo.Controls.Add(this.chkLoopback);
             this.grpPSInfo.Controls.Add(this.lblPSInfo5);
             this.grpPSInfo.Controls.Add(this.labelTS13);
             this.grpPSInfo.Controls.Add(this.lblPSInfo13);
@@ -431,19 +431,20 @@
             this.btnDefaultPeaks.UseVisualStyleBackColor = false;
             this.btnDefaultPeaks.Click += new System.EventHandler(this.btnDefaultPeaks_Click);
             // 
-            // checkLoopback
+            // chkLoopback
             // 
-            this.checkLoopback.AutoSize = true;
-            this.checkLoopback.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkLoopback.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.checkLoopback.Image = null;
-            this.checkLoopback.Location = new System.Drawing.Point(9, 121);
-            this.checkLoopback.Name = "checkLoopback";
-            this.checkLoopback.Size = new System.Drawing.Size(188, 17);
-            this.checkLoopback.TabIndex = 40;
-            this.checkLoopback.Text = "Display PS-RX and PS-TX spectra";
-            this.checkLoopback.UseVisualStyleBackColor = true;
-            this.checkLoopback.CheckedChanged += new System.EventHandler(this.checkLoopback_CheckedChanged);
+            this.chkLoopback.AutoSize = true;
+            this.chkLoopback.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkLoopback.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.chkLoopback.Image = null;
+            this.chkLoopback.Location = new System.Drawing.Point(9, 121);
+            this.chkLoopback.Name = "chkLoopback";
+            this.chkLoopback.Size = new System.Drawing.Size(188, 17);
+            this.chkLoopback.TabIndex = 40;
+            this.chkLoopback.Text = "Display PS-RX and PS-TX spectra";
+            this.chkLoopback.UseVisualStyleBackColor = true;
+            this.chkLoopback.CheckedChanged += new System.EventHandler(this.checkLoopback_CheckedChanged);
+            this.chkLoopback.Click += new System.EventHandler(this.chkLoopback_Click);
             // 
             // lblPSInfo5
             // 
@@ -787,6 +788,7 @@
             this.chkPSStaticHold.Text = "Enable Static Hold";
             this.toolTip1.SetToolTip(this.chkPSStaticHold, "This mode is like Single-Cal, but not just for the current transmission.");
             this.chkPSStaticHold.UseVisualStyleBackColor = true;
+            this.chkPSStaticHold.Visible = false;
             this.chkPSStaticHold.CheckedChanged += new System.EventHandler(this.chkPSManual_CheckedChanged);
             // 
             // lblPSStatic
@@ -898,7 +900,7 @@
         private System.Windows.Forms.LabelTS labelTS11;
         private System.Windows.Forms.LabelTS lblPSInfo6;
         private System.Windows.Forms.LabelTS labelTS7;
-        private System.Windows.Forms.CheckBoxTS checkLoopback;
+        private System.Windows.Forms.CheckBoxTS chkLoopback;
         private System.Windows.Forms.CheckBoxTS chkPSPin;
         private System.Windows.Forms.CheckBoxTS chkPSMap;
         private System.Windows.Forms.CheckBoxTS chkPSStbl;

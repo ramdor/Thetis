@@ -14,3 +14,6 @@ Project Files/Source/Thetis-Installer/bin
 *.pdb
 *.pch
 *.ipch
+*.recipe
+*.tlog
+portaudio.tlog

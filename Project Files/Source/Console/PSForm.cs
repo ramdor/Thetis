@@ -19,6 +19,7 @@ namespace Thetis
 
         private Console console;
 
+
         public PSForm(Console c)
         {
             InitializeComponent();
@@ -199,6 +200,7 @@ namespace Thetis
                 else
                 {
                     _OFF = true;
+                    _autoON = false; // KLJ, PS button not agreeing with actual PS state @ startup
                     console.PSState = false;
                 }
             }
@@ -253,14 +255,20 @@ namespace Thetis
 
         private readonly Object _objLocker = new Object();
 
-        private static bool _mox = false;
+        private static volatile bool _mox = false;
         public bool Mox
         {
             get { return _mox; }
             set
             {
                 _mox = value;
+                if (value)
+                {
+                    if (VerifyLoopBack())
+                        cmaster.PSLoopback = chkLoopback.Checked;
+                }
                 puresignal.SetPSMox(_txachannel, value);
+                puresignal._mox = value;
             }
         }
 
@@ -369,6 +377,7 @@ namespace Thetis
                 ampvThread = new Thread(RunAmpv);
                 ampvThread.SetApartmentState(ApartmentState.STA);
                 ampvThread.Priority = ThreadPriority.Lowest;
+                ampvThread.IsBackground = true;
                 ampvThread.Name = "Ampv Thread";
                 ampvThread.Start();
             }
@@ -714,17 +723,27 @@ namespace Thetis
 
         private void checkLoopback_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkLoopback.Checked && (console.SampleRateRX1 != 192000 || console.SampleRateRX2 != 192000))
-            {
-                DialogResult dr = MessageBox.Show("This feature can only be used with sample rates set to 192KHz.",
-                    "Sample Rate Issue",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            if (VerifyLoopBack())
+                cmaster.PSLoopback = chkLoopback.Checked;
+        }
 
-                checkLoopback.Checked = false;
-                return;
+        bool VerifyLoopBack()
+        {
+            if (chkLoopback.Checked && (console.SampleRateRX1 != 192000 || console.SampleRateRX2 != 192000))
+            {
+                if (!console.initializing)
+                {
+                    DialogResult dr = MessageBox.Show("PS Loopback can only be used with sample rates set to 192KHz.\n\n Therefore, loopback is being disabled.",
+                        "Sample Rate Issue For PureSignal Loopback in Thetis",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                    chkLoopback.Checked = false;
+                    return false;
+                }
+
             }
-            cmaster.PSLoopback = checkLoopback.Checked;
+            return chkLoopback.Checked;
         }
 
         private void chkPSPin_CheckedChanged(object sender, EventArgs e)
@@ -813,6 +832,9 @@ namespace Thetis
         public void ForcePS()
         {
             EventArgs e = EventArgs.Empty;
+            if (VerifyLoopBack())
+                cmaster.PSLoopback = chkLoopback.Checked;
+
             if (!_autoON)
             {
                 puresignal.SetPSControl(_txachannel, 1, 0, 0, 0);
@@ -859,6 +881,11 @@ namespace Thetis
         }
 
         private void cbPSManual_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chkLoopback_Click(object sender, EventArgs e)
         {
 
         }
@@ -996,7 +1023,7 @@ namespace Thetis
         private static int[] oldInfo = new int[16];
         private static bool _bInvertRedBlue = false;
         private static bool _validGetInfo = false;
-        public const double PSPK_FOR_HERMES_LITE = 0.24;
+        public const double PSPK_FOR_HERMES_LITE = 0.2348888;
         public const double PSPK_FOR_PROTO1 = 0.4072;
         public const double PSPK_FOR_PROTO2 = 0.2899;
         /*/
@@ -1043,9 +1070,10 @@ namespace Thetis
         {
             get { return Info[5] != oldInfo[5]; }
         }
+        public static volatile bool _mox;
         public static bool CorrectionsBeingApplied
         {
-            get { return Info[14] == 1; }
+            get { return Info[14] == 1 && _mox; }
         }
         public static int CalibrationCount
         {

@@ -2268,7 +2268,7 @@ namespace Thetis
             //    }
 
             //}
-            // if (high_swr && rx == 1)
+            // if (HighSWR && rx == 1)
             //    g.DrawString("High SWR", font14,
             //    Brushes.Red, 245, 20);
         }

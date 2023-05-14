@@ -59,13 +59,13 @@ void calc_fmsq(FMSQ a) {
     delta = PI / (double)a->ntup;
     theta = 0.0;
     for (i = 0; i <= a->ntup; i++) {
-        a->cup[i] = 0.5 * (1.0 - cos(theta));
+        a->cup[i] = 0.5 * (1.0 - COS(theta));
         theta += delta;
     }
     delta = PI / (double)a->ntdown;
     theta = 0.0;
     for (i = 0; i <= a->ntdown; i++) {
-        a->cdown[i] = 0.5 * (1 + cos(theta));
+        a->cdown[i] = 0.5 * (1 + COS(theta));
         theta += delta;
     }
     // control
@@ -106,6 +106,8 @@ FMSQ create_fmsq(int run, int size, double* insig, double* outsig,
     a->max_tail = max_tail;
     a->nc = nc;
     a->mp = mp;
+    // this call is VERY slow. Makes app slow to start.
+    // It's only in use for FM, so can't we delay it until then?
     calc_fmsq(a);
     return a;
 }
@@ -191,19 +193,23 @@ void xfmsq(FMSQ a) {
 }
 
 void setBuffers_fmsq(FMSQ a, double* in, double* out, double* trig) {
+
     a->insig = in;
     a->outsig = out;
     a->trigger = trig;
+
     setBuffers_fircore(a->p, a->trigger, a->noise);
 }
 
 void setSamplerate_fmsq(FMSQ a, int rate) {
+
     decalc_fmsq(a);
     a->rate = rate;
     calc_fmsq(a);
 }
 
 void setSize_fmsq(FMSQ a, int size) {
+
     decalc_fmsq(a);
     a->size = size;
     calc_fmsq(a);
@@ -247,6 +253,7 @@ PORT void SetRXAFMSQNC(int channel, int nc) {
 PORT void SetRXAFMSQMP(int channel, int mp) {
     FMSQ a;
     a = rxa[channel].fmsq.p;
+
     if (a->mp != mp) {
         a->mp = mp;
         setMp_fircore(a->p, a->mp);

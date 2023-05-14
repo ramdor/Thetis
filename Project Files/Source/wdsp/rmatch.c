@@ -146,7 +146,7 @@ void calc_rmatch(RMATCH a) {
     dtheta = PI / (double)a->ntslew;
     theta = 0.0;
     for (m = 0; m <= a->ntslew; m++) {
-        a->cslew[m] = 0.5 * (1.0 - cos(theta));
+        a->cslew[m] = 0.5 * (1.0 - COS(theta));
         theta += dtheta;
     }
     a->baux = (double*)malloc0(a->ringsize / 2 * sizeof(complex));
@@ -286,7 +286,7 @@ void upslew(RMATCH a, int newsamps) {
     }
 }
 
-PORT void xrmatchIN(void* b, double* in) {
+PORT void __forceinline xrmatchIN(void* b, double* in) {
     RMATCH a = (RMATCH)b;
     if (InterlockedAnd(&a->run, 1)) {
         int newsamps, first, second, ovfl;
@@ -570,7 +570,7 @@ PORT void setRMatchSlewTime1(void* b, double slew_time) {
     dtheta = PI / (double)a->ntslew;
     theta = 0.0;
     for (m = 0; m <= a->ntslew; m++) {
-        a->cslew[m] = 0.5 * (1.0 - cos(theta));
+        a->cslew[m] = 0.5 * (1.0 - COS(theta));
         theta += dtheta;
     }
     InterlockedBitTestAndSet(&a->run, 0);

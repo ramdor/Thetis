@@ -195,7 +195,7 @@
             this.lblMetisIP = new System.Windows.Forms.LabelTS();
             this.lblMetisMAC = new System.Windows.Forms.LabelTS();
             this.groupBoxHPSDRHW = new System.Windows.Forms.GroupBoxTS();
-            this.chkN2ADR = new System.Windows.Forms.CheckBox();
+            this.chkN2ADR = new System.Windows.Forms.CheckBoxTS();
             this.chkHermesLite2 = new System.Windows.Forms.CheckBoxTS();
             this.chkApolloPresent = new System.Windows.Forms.CheckBoxTS();
             this.chkPennyLane = new System.Windows.Forms.CheckBoxTS();
@@ -59760,7 +59760,7 @@
         private LabelTS labelTS178;
         private Label lblBuffer;
         private CheckBoxTS chkHermesLite2;
-        private CheckBox chkN2ADR;
+        private CheckBoxTS chkN2ADR;
         private ButtonTS btnExplorer;
         private ButtonTS btnErrorLog;
         public CheckBoxTS chkMasterVolumeForVAC;

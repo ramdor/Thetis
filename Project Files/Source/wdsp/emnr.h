@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-The author can be reached by email at
+The author can be reached by email at  
 
 warren@wpratt.com
 
@@ -27,143 +27,147 @@ warren@wpratt.com
 #ifndef _emnr_h
 #define _emnr_h
 
-typedef struct _emnr {
-    int run;
-    int position;
-    int bsize;
-    double* in;
-    double* out;
-    int fsize;
-    int ovrlp;
-    int incr;
-    double* window;
-    int iasize;
-    double* inaccum;
-    double* forfftin;
-    double* forfftout;
-    int msize;
-    double* mask;
-    double* revfftin;
-    double* revfftout;
-    double** save;
-    int oasize;
-    double* outaccum;
-    double rate;
-    int wintype;
-    double ogain;
-    double gain;
-    int nsamps;
-    int iainidx;
-    int iaoutidx;
-    int init_oainidx;
-    int oainidx;
-    int oaoutidx;
-    int saveidx;
-    fftw_plan Rfor;
-    fftw_plan Rrev;
-    struct _g {
-        int gain_method;
-        int npe_method;
-        int ae_run;
-        double msize;
-        double* mask;
-        double* y;
-        double* lambda_y;
-        double* lambda_d;
-        double* prev_mask;
-        double* prev_gamma;
-        double gf1p5;
-        double alpha;
-        double eps_floor;
-        double gamma_max;
-        double q;
-        double gmax;
-        //
-        double* GG;
-        double* GGS;
-        FILE* fileb;
-    } g;
-    struct _npest {
-        int incr;
-        double rate;
-        int msize;
-        double* lambda_y;
-        double* lambda_d;
-        double* p;
-        double* alphaOptHat;
-        double alphaC;
-        double alphaCsmooth;
-        double alphaCmin;
-        double* alphaHat;
-        double alphaMax;
-        double* sigma2N;
-        double alphaMin_max_value;
-        double snrq;
-        double betamax;
-        double* pbar;
-        double* p2bar;
-        double invQeqMax;
-        double av;
-        double* Qeq;
-        int U;
-        double Dtime;
-        int V;
-        int D;
-        double MofD;
-        double MofV;
-        double* bmin;
-        double* bmin_sub;
-        int* k_mod;
-        double* actmin;
-        double* actmin_sub;
-        int subwc;
-        int* lmin_flag;
-        double* pmin_u;
-        double invQbar_points[4];
-        double nsmax[4];
-        double** actminbuff;
-        int amb_idx;
-    } np;
-    struct _npests {
-        int incr;
-        double rate;
-        int msize;
-        double* lambda_y;
-        double* lambda_d;
+typedef struct _emnr
+{
+	int run;
+	int position;
+	int bsize;
+	double* in;
+	double* out;
+	int fsize;
+	int ovrlp;
+	int incr;
+	double* window;
+	int iasize;
+	double* inaccum;
+	double* forfftin;
+	double* forfftout;
+	int msize;
+	double* mask;
+	double* revfftin;
+	double* revfftout;
+	double** save;
+	int oasize;
+	double* outaccum;
+	double rate;
+	int wintype;
+	double ogain;
+	double gain;
+	int nsamps;
+	int iainidx;
+	int iaoutidx;
+	int init_oainidx;
+	int oainidx;
+	int oaoutidx;
+	int saveidx;
+	fftw_plan Rfor;
+	fftw_plan Rrev;
+	struct _g
+	{
+		int gain_method;
+		int npe_method;
+		int ae_run;
+		double msize;
+		double* mask;
+		double* y;
+		double* lambda_y;
+		double* lambda_d;
+		double* prev_mask;
+		double* prev_gamma;
+		double gf1p5;
+		double alpha;
+		double eps_floor;
+		double gamma_max;
+		double q;
+		double gmax;
+		//
+		double* GG;
+		double* GGS;
+		FILE* fileb;
+	} g;
+	struct _npest
+	{
+		int incr;
+		double rate;
+		int msize;
+		double* lambda_y;
+		double* lambda_d;
+		double* p;
+		double* alphaOptHat;
+		double alphaC;
+		double alphaCsmooth;
+		double alphaCmin;
+		double* alphaHat;
+		double alphaMax;
+		double* sigma2N;
+		double alphaMin_max_value;
+		double snrq;
+		double betamax;
+		double* pbar;
+		double* p2bar;
+		double invQeqMax;
+		double av;
+		double* Qeq;
+		int U;
+		double Dtime;
+		int V;
+		int D;
+		double MofD;
+		double MofV;
+		double* bmin;
+		double* bmin_sub;
+		int* k_mod;
+		double* actmin;
+		double* actmin_sub;
+		int subwc;
+		int* lmin_flag;
+		double* pmin_u;
+		double invQbar_points[4];
+		double nsmax[4];
+		double** actminbuff;
+		int amb_idx;
+	} np;
+	struct _npests
+	{
+		int incr;
+		double rate;
+		int msize;
+		double* lambda_y;
+		double* lambda_d;
+		
+		double alpha_pow;
+		double alpha_Pbar;
+		double epsH1;
+		double epsH1r;
 
-        double alpha_pow;
-        double alpha_Pbar;
-        double epsH1;
-        double epsH1r;
+		double* sigma2N;
+		double* PH1y;
+		double* Pbar;
+		double* EN2y;
+	} nps;
+	struct _ae
+	{
+		int msize;
+		double* lambda_y;
+		double zetaThresh;
+		double psi;
+		double* nmask;
+	} ae;
+}emnr, *EMNR;
 
-        double* sigma2N;
-        double* PH1y;
-        double* Pbar;
-        double* EN2y;
-    } nps;
-    struct _ae {
-        int msize;
-        double* lambda_y;
-        double zetaThresh;
-        double psi;
-        double* nmask;
-    } ae;
-} emnr, *EMNR;
+extern EMNR create_emnr (int run, int position, int size, double* in, double* out, int fsize, int ovrlp, 
+	int rate, int wintype, double gain, int gain_method, int npe_method, int ae_run);
 
-extern EMNR create_emnr(int run, int position, int size, double* in,
-    double* out, int fsize, int ovrlp, int rate, int wintype, double gain,
-    int gain_method, int npe_method, int ae_run);
+extern void destroy_emnr (EMNR a);
 
-extern void destroy_emnr(EMNR a);
+extern void flush_emnr (EMNR a);
 
-extern void flush_emnr(EMNR a);
+extern void xemnr (EMNR a, int pos);
 
-extern void xemnr(EMNR a, int pos);
+extern void setBuffers_emnr (EMNR a, double* in, double* out);
 
-extern void setBuffers_emnr(EMNR a, double* in, double* out);
+extern void setSamplerate_emnr (EMNR a, int rate);
 
-extern void setSamplerate_emnr(EMNR a, int rate);
-
-extern void setSize_emnr(EMNR a, int size);
+extern void setSize_emnr (EMNR a, int size);
 
 #endif

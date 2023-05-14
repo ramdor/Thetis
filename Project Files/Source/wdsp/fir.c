@@ -48,7 +48,7 @@ double* get_fsamp_window(int N, int wintype) {
         case 0:
             arg0 = 2.0 * PI / ((double)N - 1.0);
             for (i = 0; i < N; i++) {
-                arg1 = cos(arg0 * (double)i);
+                arg1 = COS(arg0 * (double)i);
                 window[i] = +0.21747
                     + arg1 * (-0.45325 + arg1 * (+0.28256 + arg1 * (-0.04672)));
             }
@@ -56,7 +56,7 @@ double* get_fsamp_window(int N, int wintype) {
         case 1:
             arg0 = 2.0 * PI / ((double)N - 1.0);
             for (i = 0; i < N; ++i) {
-                arg1 = cos(arg0 * (double)i);
+                arg1 = COS(arg0 * (double)i);
                 window[i] = +6.3964424114390378e-02
                     + arg1
                         * (-2.3993864599352804e-01
@@ -91,7 +91,7 @@ double* fir_fsamp_odd(int N, double* A, int rtype, double scale, int wintype) {
     for (i = 0; i <= mid; i++) {
         mag = A[i] * local_scale;
         phs = -(double)mid * TWOPI * (double)i / (double)N;
-        fcoef[2 * i + 0] = mag * cos(phs);
+        fcoef[2 * i + 0] = mag * COS(phs);
         fcoef[2 * i + 1] = mag * sin(phs);
     }
     for (i = mid + 1, j = 0; i < N; i++, j++) {
@@ -118,18 +118,31 @@ double* fir_fsamp_odd(int N, double* A, int rtype, double scale, int wintype) {
     return c_impulse;
 }
 
+#define FAST_FIR_SAMP
+static int lastN = 0;
+static int lastrtype = 0;
+static double lastscale = 0;
+static int lastwintype = 0;
+static double* lastwindow = 0;
+static int cnt = 0;
+
+static double last_diff;
+// Very slow. This is the main reason the app is so slow to start. // KLJ
 double* fir_fsamp(int N, double* A, int rtype, double scale, int wintype) {
     int n, i, j, k;
     double sum;
     double* window;
     double* c_impulse = (double*)malloc0(N * sizeof(complex));
+    ++cnt;
 
     if (N & 1) {
         int M = (N - 1) / 2;
         for (n = 0; n < M + 1; n++) {
             sum = 0.0;
-            for (k = 1; k < M + 1; k++)
-                sum += 2.0 * A[k] * cos(TWOPI * (n - M) * k / N);
+            for (k = 1; k < M + 1; k++) {
+                sum += 2.0 * A[k] * COS(TWOPI * (n - M) * k / N);
+            };
+
             c_impulse[2 * n + 0] = (1.0 / N) * (A[0] + sum);
             c_impulse[2 * n + 1] = 0.0;
         }
@@ -139,10 +152,12 @@ double* fir_fsamp(int N, double* A, int rtype, double scale, int wintype) {
         }
     } else {
         double M = (double)(N - 1) / 2.0;
-        for (n = 0; n < N / 2; n++) {
+        for (n = 0; n < N / 2; ++n) {
             sum = 0.0;
-            for (k = 1; k < N / 2; k++)
-                sum += 2.0 * A[k] * cos(TWOPI * (n - M) * k / N);
+            for (k = 1; k < N / 2; ++k) {
+                sum += 2.0 * A[k] * COS(TWOPI * (n - M) * k / N);
+            }
+
             c_impulse[2 * n + 0] = (1.0 / N) * (A[0] + sum);
             c_impulse[2 * n + 1] = 0.0;
         }
@@ -151,7 +166,26 @@ double* fir_fsamp(int N, double* A, int rtype, double scale, int wintype) {
             c_impulse[2 * n + 1] = 0.0;
         }
     }
+
+#ifdef FAST_FIR_SAMP
+    if (lastN == N && lastrtype == rtype && lastscale == scale
+        && lastwintype == wintype && lastwindow) {
+        window = lastwindow;
+    } else {
+        if (lastwindow) {
+            _aligned_free(lastwindow);
+        }
+        window = get_fsamp_window(N, wintype);
+    }
+#else
     window = get_fsamp_window(N, wintype);
+#endif
+
+    lastN = N;
+    lastrtype = rtype;
+    lastscale = scale;
+    lastwintype = wintype;
+
     switch (rtype) {
         case 0:
             for (i = 0; i < N; i++)
@@ -164,7 +198,12 @@ double* fir_fsamp(int N, double* A, int rtype, double scale, int wintype) {
             }
             break;
     }
+
+#ifdef FAST_FIR_SAMP
+    lastwindow = window;
+#else
     _aligned_free(window);
+#endif
     return c_impulse;
 }
 
@@ -180,6 +219,7 @@ double* fir_bandpass(int N, double f_low, double f_high, double samplerate,
     double cosphi;
     double posi, posj;
     double sinc, window, coef;
+    window = 0;
 
     if (N & 1) {
         switch (rtype) {
@@ -196,14 +236,14 @@ double* fir_bandpass(int N, double f_low, double f_high, double samplerate,
         sinc = sin(ft_rad * posi) / (PI * posi);
         switch (wintype) {
             case 0: // Blackman-Harris 4-term
-                cosphi = cos(delta * i);
+                cosphi = COS(delta * i);
                 window = +0.21747
                     + cosphi
                         * (-0.45325
                             + cosphi * (+0.28256 + cosphi * (-0.04672)));
                 break;
             case 1: // Blackman-Harris 7-term
-                cosphi = cos(delta * i);
+                cosphi = COS(delta * i);
                 window = +6.3964424114390378e-02
                     + cosphi
                         * (-2.3993864599352804e-01
@@ -222,13 +262,13 @@ double* fir_bandpass(int N, double f_low, double f_high, double samplerate,
         coef = scale * sinc * window;
         switch (rtype) {
             case 0:
-                c_impulse[i] = +coef * cos(posi * w_osc);
-                c_impulse[j] = +coef * cos(posj * w_osc);
+                c_impulse[i] = +coef * COS(posi * w_osc);
+                c_impulse[j] = +coef * COS(posj * w_osc);
                 break;
             case 1:
-                c_impulse[2 * i + 0] = +coef * cos(posi * w_osc);
+                c_impulse[2 * i + 0] = +coef * COS(posi * w_osc);
                 c_impulse[2 * i + 1] = -coef * sin(posi * w_osc);
-                c_impulse[2 * j + 0] = +coef * cos(posj * w_osc);
+                c_impulse[2 * j + 0] = +coef * COS(posj * w_osc);
                 c_impulse[2 * j + 1] = -coef * sin(posj * w_osc);
                 break;
         }
@@ -325,7 +365,7 @@ void mp_imp(int N, double* fir, double* mpfir, int pfactor, int polarity) {
     }
     analytic(size, ana, ana);
     for (i = 0; i < size; i++) {
-        newfreq[2 * i + 0] = +mag[i] * cos(ana[2 * i + 1]);
+        newfreq[2 * i + 0] = +mag[i] * COS(ana[2 * i + 1]);
         if (polarity)
             newfreq[2 * i + 1] = +mag[i] * sin(ana[2 * i + 1]);
         else
