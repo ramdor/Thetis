@@ -41,6 +41,8 @@ using System.Text.RegularExpressions;
 using System.Text;
 using System.Security.Principal;
 using System.Security.Cryptography;
+using System.Globalization;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Thetis
 {
@@ -962,6 +964,26 @@ namespace Thetis
         public static bool IsWindows10OrGreater(int build = -1)
         {
             return Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= build;
+        }
+
+		public static string DateTimeStringForFile(string cultureName = "")
+		{
+			CultureInfo ci;
+
+			if (cultureName == "")
+                ci = CultureInfo.InstalledUICulture;
+			else
+                ci = CultureInfo.GetCultureInfo(cultureName); //"en-US"
+
+            string sDate = DateTime.Now.ToString(ci.DateTimeFormat.ShortDatePattern, ci) + "_" + DateTime.Now.ToString(ci.DateTimeFormat.ShortTimePattern, ci);
+
+            sDate = sDate.Replace("/", "-");
+            sDate = sDate.Replace(":", ".");
+
+			// replace any non valid filename chars with _
+            string sRet = string.Join("_", sDate.Split(Path.GetInvalidFileNameChars()));
+
+			return sRet;
         }
         #endregion
     }
