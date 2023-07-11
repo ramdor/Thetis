@@ -975,7 +975,8 @@ namespace Thetis
 			else
                 ci = CultureInfo.GetCultureInfo(cultureName); //"en-US"
 
-            string sDate = DateTime.Now.ToString(ci.DateTimeFormat.ShortDatePattern, ci) + "_" + DateTime.Now.ToString(ci.DateTimeFormat.ShortTimePattern, ci);
+			DateTime now = DateTime.Now;
+            string sDate = now.ToString(ci.DateTimeFormat.ShortDatePattern, ci) + "_" + now.ToString(ci.DateTimeFormat.ShortTimePattern, ci);
 
             sDate = sDate.Replace("/", "-");
             sDate = sDate.Replace(":", ".");
