@@ -31207,6 +31207,8 @@ namespace Thetis
                         case HPSDRModel.ORIONMKII:
                         case HPSDRModel.ANAN7000D:
                         case HPSDRModel.ANAN8000D:
+                        case HPSDRModel.ANAN_G2:
+                        case HPSDRModel.ANAN_G2_1K:
                             if (chkPower.Checked)
                             {
                                 // If POWER is ON, we always have data flow for RX1 and RX1-Sub; we have data flow for
