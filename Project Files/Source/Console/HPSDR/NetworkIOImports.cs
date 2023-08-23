@@ -198,6 +198,9 @@ namespace Thetis
         public static extern void SetWatchdogTimer(int bits);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetMicXlr(int bits);
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetMicBoost(int bits);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
