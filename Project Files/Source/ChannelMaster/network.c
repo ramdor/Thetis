@@ -990,6 +990,7 @@ void CmdTx() { // port 1026
 	// Bit [2]  - 0 = Orion mic PTT enabled, 1 = Orion mic PTT disabled
 	// Bit [3]  - 0 = Orion mic ptt to ring and mic/mic bias to tip, 1 = Orion mic ptt to tip and mic/mic bias to ring
 	// Bit [4]  - 0 = disables Orion mic bias, 1 = enables Orion microphone bias
+	// bit [5]  - 0 = disables balanced input, 1 = select balabced input (Saturn)
 	packetbuf[50] = prn->mic.mic_control;
 	// Byte 51 Line in gain
 	packetbuf[51] = prn->mic.line_in_gain;

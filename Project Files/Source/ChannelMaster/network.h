@@ -170,7 +170,7 @@ typedef struct CACHE_ALIGN _radionet
 				              mic_ptt   : 1, // bit 02
 				              mic_trs   : 1, // bit 03
 				              mic_bias  : 1, // bit 04
-				                        : 1, // bit 05
+				              mic_xlr   : 1, // bit 05
 				                        : 1, // bit 06
 				                        : 1; // bit 07
 			};

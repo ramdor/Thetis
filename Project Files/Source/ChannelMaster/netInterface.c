@@ -483,6 +483,17 @@ void SetMicBoost(int bits)
 }
 
 PORT
+void SetMicXlr(int bits)
+{
+	if (prn->mic.mic_xlr != bits)
+	{
+		prn->mic.mic_xlr = bits;
+		if (listenSock != INVALID_SOCKET)
+			CmdTx();
+	}
+}
+
+PORT
 void SetLineIn(int bits) 
 {
 	if (prn->mic.line_in != bits) 
