@@ -7030,6 +7030,17 @@ namespace Thetis
                 chkBPF2Gnd.Visible = true;
                 chkEnableXVTRHF.Visible = true;
                 toolTip1.SetToolTip(chkEXT2OutOnTx, "Enable Rx BYPASS during transmit.");
+                if (console.CurrentHPSDRModel == HPSDRModel.ANAN_G2 ||
+                    console.CurrentHPSDRModel == HPSDRModel.ANAN_G2_1K)
+                {
+                    panelSaturnMicInput.Visible = true;
+                    lblSaturnMicInput.Visible = true;
+                }
+                else
+                {
+                    panelSaturnMicInput.Visible = false;
+                    lblSaturnMicInput.Visible = false;
+                }
             }
             else
             {
@@ -17671,6 +17682,13 @@ namespace Thetis
                 comboDSPTxWindow.Text = "BH - 7";
             }
             console.radio.GetDSPTX(0).TXBandpassWindow = wintype;
+        }
+
+        private void radSaturn3p5mm_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radSaturn3p5mm.Checked)
+                NetworkIO.SetMicXlr(0);
+            else NetworkIO.SetMicXlr(1);
         }
 
         private void radOrionPTTOff_CheckedChanged(object sender, EventArgs e)

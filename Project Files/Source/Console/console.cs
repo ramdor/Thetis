@@ -14759,6 +14759,18 @@ namespace Thetis
             }
         }
 
+        private bool mic_xlr = true;
+        public bool MicXlr
+        {
+            get { return mic_xlr; }
+            set
+            {
+                mic_xlr = value;
+                ptbMic_Scroll(this, EventArgs.Empty);
+                SetMicXlr();
+            }
+        }
+
         private bool always_on_top = false;
         public bool AlwaysOnTop
         {
@@ -47996,6 +48008,12 @@ namespace Thetis
                 ++k;
             }
             lineinarrayfill = true;
+        }
+
+        public void SetMicXlr()
+        {
+            var v = mic_xlr ? 1 : 0;
+            NetworkIO.SetMicXlr(v);
         }
 
         public void SetMicGain()
