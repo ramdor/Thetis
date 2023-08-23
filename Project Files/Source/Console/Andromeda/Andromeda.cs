@@ -3488,11 +3488,16 @@ namespace Thetis
                 // MW0LGE [2.9.0.7] in collapsed view, hide them all
                 //https://github.com/ramdor/Thetis-2.9.0/issues/90
 
-                panelModeSpecificPhone.Hide();
-                panelModeSpecificCW.Hide();
-                panelModeSpecificDigital.Hide();
-                panelModeSpecificFM.Hide();
-                return;
+                //unless the mode dependant settings window is shown  // MW0LGE [2.10.0.0] andromeda mode dependant form needs them to be shown
+                bool bModeDependantSettingsWindowShown = modeDependentSettingsForm != null && !modeDependentSettingsForm.IsDisposed && modeDependentSettingsForm.Visible;
+                if(!bModeDependantSettingsWindowShown)
+                {
+                    panelModeSpecificPhone.Hide();
+                    panelModeSpecificCW.Hide();
+                    panelModeSpecificDigital.Hide();
+                    panelModeSpecificFM.Hide();
+                    return;
+                }                
             }
 
             //MW0LGE_21k9d changed to show/hide as it was causing some unexplained
