@@ -128,7 +128,7 @@ namespace Thetis
 
             g.DrawString(s, drawFont, br, new Point(x - (textSize.Width / 2), 24));
         }
-        private Font drawFont = new Font("Arial", 8);
+        private Font drawFont = new Font("Microsft Sans Serif", 8);
         private void drawScales(Graphics g)
         {
             int zeroPoint = 200;
