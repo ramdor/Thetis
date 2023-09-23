@@ -3343,6 +3343,8 @@ namespace Thetis
                 case EButtonBarActions.eBBModeSettingsForm:        // show the "mode dependent settings" form
                     if (modeDependentSettingsForm == null || modeDependentSettingsForm.IsDisposed) modeDependentSettingsForm = new ModeDependentSettingsForm(this);
 
+                    Invoke(new MethodInvoker(modeDependentSettingsForm.Show));
+
                     setupModePanels();
 
                     SelectModeDependentPanel();
@@ -3420,8 +3422,6 @@ namespace Thetis
 
         private void setupModePanels()
         {
-            Invoke(new MethodInvoker(modeDependentSettingsForm.Show));
-
             Invoke(new MethodInvoker(panelModeSpecificCW.Show));
             Invoke(new MethodInvoker(panelModeSpecificPhone.Show));
             Invoke(new MethodInvoker(panelModeSpecificDigital.Show));
