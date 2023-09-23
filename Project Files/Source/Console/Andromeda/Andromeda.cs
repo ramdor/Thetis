@@ -3511,26 +3511,20 @@ namespace Thetis
                         panelModeSpecificCW.Hide();
                         panelModeSpecificDigital.Hide();
                         panelModeSpecificFM.Hide();
+                        return;
                     }
                 }
-                else
-                {
-                    panelModeSpecificPhone.Hide();
-                    panelModeSpecificCW.Hide();
-                    panelModeSpecificDigital.Hide();
-                    panelModeSpecificFM.Hide();
-                }
-                return;
             }
-
-            // MW0LGE [2.10.1.0]
-            // check if the panels have been moved by andromeda into the modeDependentSettingsForm
-            // they will be at 0,0 if they have
-            if (bHaveModeDependentForm && (panelModeSpecificPhone.Location.X == 0 && panelModeSpecificPhone.Location.Y == 0))
+            else
             {
-                moveModeSpecificPanels();
+                // MW0LGE [2.10.1.0]
+                // check if the panels have been moved by andromeda into the modeDependentSettingsForm
+                // they will be at 0,0 if they have
+                if (panelModeSpecificPhone.Location.X == 0 && panelModeSpecificPhone.Location.Y == 0)
+                {
+                    moveModeSpecificPanels();
+                }
             }
-            //
 
             //MW0LGE_21k9d changed to show/hide as it was causing some unexplained
             //slow down, perhaps z-order fighting, not sure. ~1-3 seconds taken to get through
