@@ -3488,15 +3488,17 @@ namespace Thetis
         //
         private void SelectModeDependentPanel()
         {
-            if(iscollapsed && !isexpanded)
+            // MW0LGE [2.10.1.0]
+            bool bHaveModeDependentForm = modeDependentSettingsForm != null && !modeDependentSettingsForm.IsDisposed;
+
+            if (iscollapsed && !isexpanded)
             {
                 // MW0LGE [2.9.0.7] in collapsed view, hide them all
                 //https://github.com/ramdor/Thetis-2.9.0/issues/90
 
                 // MW0LGE [2.10.1.0] andromeda mode dependant form fixes
                 //https://github.com/ramdor/Thetis/issues/145
-                bool bHaveModeDependentForm = modeDependentSettingsForm != null && !modeDependentSettingsForm.IsDisposed;
-                if(bHaveModeDependentForm)
+                if (bHaveModeDependentForm)
                 {
                     if (modeDependentSettingsForm.Visible)
                     {
@@ -3510,14 +3512,21 @@ namespace Thetis
                         panelModeSpecificDigital.Hide();
                         panelModeSpecificFM.Hide();
                     }
-                    return;
                 }
+                else
+                {
+                    panelModeSpecificPhone.Hide();
+                    panelModeSpecificCW.Hide();
+                    panelModeSpecificDigital.Hide();
+                    panelModeSpecificFM.Hide();
+                }
+                return;
             }
 
             // MW0LGE [2.10.1.0]
-            // crude check to see if the panels have been moved by andromeda into the modeDependentSettingsForm
+            // check if the panels have been moved by andromeda into the modeDependentSettingsForm
             // they will be at 0,0 if they have
-            if (!iscollapsed && isexpanded && (panelModeSpecificCW.Location.X == 0 && panelModeSpecificCW.Location.Y == 0))
+            if (bHaveModeDependentForm && (panelModeSpecificPhone.Location.X == 0 && panelModeSpecificPhone.Location.Y == 0))
             {
                 moveModeSpecificPanels();
             }
