@@ -3498,21 +3498,18 @@ namespace Thetis
 
                 // MW0LGE [2.10.1.0] andromeda mode dependant form fixes
                 //https://github.com/ramdor/Thetis/issues/145
-                if (bHaveModeDependentForm)
+                if (bHaveModeDependentForm && modeDependentSettingsForm.Visible)
                 {
-                    if (modeDependentSettingsForm.Visible)
-                    {
-                        // need to move the frames to the modeDepForm
-                        setupModePanels();
-                    }
-                    else
-                    {
-                        panelModeSpecificPhone.Hide();
-                        panelModeSpecificCW.Hide();
-                        panelModeSpecificDigital.Hide();
-                        panelModeSpecificFM.Hide();
-                        return;
-                    }
+                    // need to move the frames to the modeDepForm
+                    setupModePanels();
+                }
+                else
+                {
+                    panelModeSpecificPhone.Hide();
+                    panelModeSpecificCW.Hide();
+                    panelModeSpecificDigital.Hide();
+                    panelModeSpecificFM.Hide();
+                    return;
                 }
             }
             else
