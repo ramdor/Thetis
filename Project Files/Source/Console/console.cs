@@ -43649,7 +43649,13 @@ namespace Thetis
             }
             ckQuickPlay.Enabled = !ckQuickRec.Checked;
         }
-
+        private void moveModeSpecificPanels()
+        {
+            panelModeSpecificPhone.Location = new Point(gr_ModePhone_basis_location.X + h_delta - (h_delta / 4), gr_ModePhone_basis_location.Y + v_delta);
+            panelModeSpecificCW.Location = new Point(gr_ModeCW_basis_location.X + h_delta - (h_delta / 4), gr_ModeCW_basis_location.Y + v_delta);
+            panelModeSpecificDigital.Location = new Point(gr_ModeDig_basis_location.X + h_delta - (h_delta / 4), gr_ModeDig_basis_location.Y + v_delta);
+            panelModeSpecificFM.Location = new Point(gr_ModeFM_basis_location.X + h_delta - (h_delta / 4), gr_ModeFM_basis_location.Y + v_delta);
+        }
         private void ResizeConsole(int h_delta, int v_delta)
         {
             // MW0LGE changes made to this function so that RX1 meter fills space to right of VFOB box, also delay repaint until all controls moved
@@ -43675,10 +43681,7 @@ namespace Thetis
                 panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta, gr_BandVHF_basis_location.Y + (v_delta / 4));
 
                 panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta, gr_Mode_basis_location.Y + (v_delta / 2));
-                panelModeSpecificPhone.Location = new Point(gr_ModePhone_basis_location.X + h_delta - (h_delta / 4), gr_ModePhone_basis_location.Y + v_delta);
-                panelModeSpecificCW.Location = new Point(gr_ModeCW_basis_location.X + h_delta - (h_delta / 4), gr_ModeCW_basis_location.Y + v_delta);
-                panelModeSpecificDigital.Location = new Point(gr_ModeDig_basis_location.X + h_delta - (h_delta / 4), gr_ModeDig_basis_location.Y + v_delta);
-                panelModeSpecificFM.Location = new Point(gr_ModeFM_basis_location.X + h_delta - (h_delta / 4), gr_ModeFM_basis_location.Y + v_delta);
+                moveModeSpecificPanels();// MW0LGE [2.10.1.0]
 
                 panelVFO.Location = new Point(gr_VFO_basis_location.X + (h_delta / 4), gr_VFO_basis_location.Y + v_delta);
 
