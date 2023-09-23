@@ -25784,7 +25784,7 @@ namespace Thetis
             set { m_bUseSignalHistory = value; }
         }
 
-        private Font font7 = new Font("Arial", 7.0f, FontStyle.Bold);
+        private Font font7 = new Font("Microsoft Sans Serif", 7.0f, FontStyle.Bold);
         private double avg_num = Display.CLEAR_FLAG;//- 130.0;
         private List<float> m_RX1SignalPixels_X = new List<float>();
         private List<float> m_RX2SignalPixels_X = new List<float>();

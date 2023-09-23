@@ -1632,7 +1632,7 @@ namespace Thetis
 
                 n4 = 0;          //  USB 
 
-                cl = g1.MeasureString(console.Callsign, new Font("Arial", fontS)); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space
+                cl = g1.MeasureString(console.Callsign, new Font("Microsft Sans Serif", fontS)); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space
                 cl.Width = (xm / 2) - (cl.Width / 2);
                 cl.Height = (ym / 2) - (cl.Height / 2) + 2;
 
@@ -1651,7 +1651,7 @@ namespace Thetis
                 } // vfoA
 
 
-                g1.DrawString(console.Callsign, new Font("Arial", fontS), Brushes.AntiqueWhite, cl.Width, cl.Height); // determine USB or LSB, then draw callsign into bitmap
+                g1.DrawString(console.Callsign, new Font("Microsft Sans Serif", fontS), Brushes.AntiqueWhite, cl.Width, cl.Height); // determine USB or LSB, then draw callsign into bitmap
                 g1.Flush();  // done with graphic function
 
 

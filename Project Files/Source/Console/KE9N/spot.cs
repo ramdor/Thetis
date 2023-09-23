@@ -5109,8 +5109,8 @@ namespace Thetis
         public static Color GrayLine_Last = Color.FromArgb(70, Color.Black);                       // used to check if setup.cs changed the color
         public static Band RX1Band_Last = 0;                                                      // to track a change in RX1 band
 
-        private static Font font1 = new Font("Ariel", 10.5f, FontStyle.Regular, GraphicsUnit.Pixel);  // ke9ns add dx spot call sign font style
-        private static Font font2 = new Font("Ariel", 9.0f, FontStyle.Regular, GraphicsUnit.Pixel);  // ke9ns add dx spot call sign font style
+        private static Font font1 = new Font("Microsft Sans Serif", 10.5f, FontStyle.Regular, GraphicsUnit.Pixel);  // ke9ns add dx spot call sign font style
+        private static Font font2 = new Font("Microsft Sans Serif", 9.0f, FontStyle.Regular, GraphicsUnit.Pixel);  // ke9ns add dx spot call sign font style
 
         private static Color grid_text_color = Color.Yellow;
         SolidBrush grid_text_brush = new SolidBrush(grid_text_color);
@@ -5849,7 +5849,7 @@ namespace Thetis
                             VOA_Color[0] = 70;
 
                             Pen p5 = new Pen(Color.FromArgb(70, Color.Yellow), 1.0f); // dusk
-                            Font font7 = new Font("Ariel", 10.5f, FontStyle.Regular, GraphicsUnit.Pixel);  // ke9ns 
+                            Font font7 = new Font("Microsft Sans Serif", 10.5f, FontStyle.Regular, GraphicsUnit.Pixel);  // ke9ns 
 
                             //      g.DrawString("SDBW: " + VOA_S[y].ToString("D"), font7, grid_text_brush,VOA_X[x] , VOA_Y[y]);
 
