@@ -27481,6 +27481,10 @@ namespace Thetis
         private float _MKIIPAAmps = 0f;
         private ConcurrentQueue<int> _voltsQueue = new ConcurrentQueue<int>();
         private ConcurrentQueue<int> _ampsQueue = new ConcurrentQueue<int>();
+        public float MKIIPAVolts
+        {
+            get { return _MKIIPAVolts; }
+        }
         private async void readMKIIPAVoltsAmps()
         {
             // MW0LGE_21k9c
