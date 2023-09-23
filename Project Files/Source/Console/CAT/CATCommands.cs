@@ -5524,19 +5524,25 @@ namespace Thetis
         //Reads the primary input voltage
         public string ZZRV()
         {
-            if (console.CurrentHPSDRModel != HPSDRModel.HPSDR)
+            //MW0LGE [2.10.1.0]
+            if (console.CurrentHPSDRModel == HPSDRModel.ANAN7000D || console.CurrentHPSDRModel == HPSDRModel.ANAN8000D ||
+                    console.CurrentHPSDRModel == HPSDRModel.ANAN_G2 || console.CurrentHPSDRModel == HPSDRModel.ANAN_G2_1K)
             {
-                int val = 0;
-                decimal volts = 0.0m;
-                volts = (decimal)val / 4096m * 2.5m * 11m;
-                return Decimal.Round(volts, 1).ToString();
+				return String.Format("{0:00.0}", console.MKIIPAVolts);
+            }
+            else if (console.CurrentHPSDRModel != HPSDRModel.HPSDR)
+            {
+				//int val = 0;
+				//decimal volts = 0.0m;
+				//volts = (decimal)val / 4096m * 2.5m * 11m;
+				//return Decimal.Round(volts, 1).ToString();
+				return "00.0";
             }
             else
             {
                 parser.Verbose_Error_Code = 7;
                 return parser.Error1;
             }
-
         }
 
         // Sets or reads the RX1 step attenuation control, 0 to 31dB
