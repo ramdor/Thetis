@@ -60,6 +60,7 @@ namespace Thetis
         private bool _dragging = false;
         private int _startX;
         private float _splitterRatio = 1;
+        private bool _okToResize = false;
 
         private string[] _left1;
         private string[] _left2;
@@ -255,6 +256,8 @@ namespace Thetis
 
             lblSplitter.BackColor = Color.Silver;
             lblFB.Font = _normalPSFont;
+
+            _okToResize = true;
             repositionControls();
         }
 
@@ -1139,12 +1142,17 @@ namespace Thetis
         private void repositionControls()
         {
             // return if any control is null, this should not happen  // MW0LGE [2.9.0.7]
-            if (lblFB is null || lblPS is null ||
+            // added some more checking due to https://github.com/ramdor/Thetis/issues/149
+            if (!_okToResize || _shutDown || _currentFlip < 0 || _currentFlip > MAX_FLIP -1 ||
+                lblFB is null || lblPS is null ||
                 lblLeft1 is null || lblLeft2 is null || lblLeft3 is null ||
                 lblRight1 is null || lblRight2 is null || lblRight3 is null ||
-                lblWarning is null || lblSplitter is null)
+                lblWarning is null || lblSplitter is null ||
+                _left1Width is null || _left2Width is null || _left3Width is null ||
+                _right1Width is null || _right2Width is null || _right3Width is null
+                )
             {
-                Debug.WriteLine(">>>>>>>>> REPOS NULL");
+                Debug.WriteLine("no repositionControls()");
                 return;
             }
 
