@@ -5560,7 +5560,7 @@ namespace Thetis
                 cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb2.ZOrder = 2;
                 cb2.FontColour = System.Drawing.Color.Yellow;
-                cb2.ShowValue = false;
+                cb2.ShowValue = true;
                 cb2.Value = cb2.ScaleCalibration.First().Key;
                 cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;                
                 addMeterItem(cb2);
@@ -5582,6 +5582,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(-30, new PointF(0, 0));
                 cb.ScaleCalibration.Add(0, new PointF(0.665f, 0));
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
+                cb.ShowValue = false;
                 cb.ZOrder = 3;
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.Value = cb.ScaleCalibration.First().Key;
@@ -10051,7 +10052,6 @@ namespace Thetis
                         fHighXPosTransition = x + (w * cbi.HighPoint.X);
                     }
                 }
-
                 SharpDX.Direct2D1.Brush markerColour = getDXBrushForColour(cbi.MarkerColour, nFade);
                 SharpDX.Direct2D1.Brush peakValueColour = getDXBrushForColour(cbi.PeakValueColour, nFade);
                 SharpDX.Direct2D1.Brush historyColour = getDXBrushForColour(cbi.HistoryColour, nFade < cbi.HistoryColour.A ? nFade : cbi.HistoryColour.A);
@@ -10220,7 +10220,6 @@ namespace Thetis
                             sText = cbi.MaxHistory.ToString("f1") + MeterManager.ReadingUnits(cbi.ReadingSource);
                             break;
                     }
-
                     SizeF szTextSize = measureString(sText, cbi.FontFamily, cbi.FntStyle, fontSizeEmScaled);
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x + w - szTextSize.Width, y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
                     _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, fontSizeEmScaled, cbi.FntStyle, true), txtrect, peakValueColour);
