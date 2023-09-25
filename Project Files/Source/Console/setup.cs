@@ -26690,8 +26690,19 @@ namespace Thetis
 
             if (canPasteSettings())
             {
-                //updateItemSettingsControlsForSelected(_itemGroupSettings);
-                //updateMeterType();
+                // ignore some things [2.10.1.0] MW0LGE - fixes issue where bar with change units is paste into new bar, and source bars have no sub indicator
+                MeterManager.clsIGSettings currentSettings = m.GetSettingsForMeterGroup(mt);
+
+                _itemGroupSettings.Unit = currentSettings.Unit;
+
+                if(!_itemGroupSettings.SubIndicators)
+                {
+                    // no sub indicators on the source, replace with current so we end up with no change on the paste
+                    _itemGroupSettings.ShowSubMarker = currentSettings.ShowMarker;
+                    _itemGroupSettings.ShowSubMarker = currentSettings.ShowSubMarker;
+                    _itemGroupSettings.SubMarkerColour = currentSettings.SubMarkerColour;
+                }
+                //
 
                 m.ApplySettingsForMeterGroup(mt, _itemGroupSettings);
                 updateItemSettingsControlsForSelected();

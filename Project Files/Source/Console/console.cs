@@ -32016,6 +32016,7 @@ namespace Thetis
 
                 chkMUT.BackColor = button_selected_color;
                 lblRX1MuteVFOA.Text = "MUTE";
+                lblRX1MuteVFOA.Show(); //[2.10.1.0] from WD5Y
             }
             else
             {
@@ -32027,6 +32028,7 @@ namespace Thetis
                 ptbAF_Scroll(this, EventArgs.Empty);
                 chkMUT.BackColor = SystemColors.Control;
                 lblRX1MuteVFOA.Text = "";
+                lblRX1MuteVFOA.Hide(); //[2.10.1.0] from WD5Y
             }
             if (sliderForm != null) sliderForm.RX1MuteOnOff = chkMUT.Checked;
 
@@ -44025,7 +44027,7 @@ namespace Thetis
                 cmaster.CMSetSRXWavePlayRun(1);
                 cmaster.CMSetSRXWaveRecordRun(1);
                 chkRX2.Checked = value;
-                //Display.Init(); // not needed MW0LGE
+                
                 if (rx2_enabled)
                 {
                     old_rx1_display_mode = comboDisplayMode.Text;
@@ -45643,6 +45645,7 @@ namespace Thetis
                 }
 
                 lblRX2MuteVFOB.Text = "MUTE";
+                lblRX2MuteVFOB.Show(); //[2.10.1.0] from WD5Y
             }
             else
             {
@@ -45653,6 +45656,7 @@ namespace Thetis
 
                 ptbRX2Gain_Scroll(this, EventArgs.Empty);
                 lblRX2MuteVFOB.Text = "";
+                lblRX2MuteVFOB.Hide(); //[2.10.1.0] from WD5Y
             }
             if (sliderForm != null) sliderForm.RX2MuteOnOff = chkRX2Mute.Checked;
 
@@ -48162,6 +48166,7 @@ namespace Thetis
         //         this.CollapseDisplay(true);
         // }
 
+        private bool _modeDependentSettingsFormAutoClosedWhenExpanded = false; // used to bring it back if we go back to collapsed
         private void ExpandDisplay(bool bSuspendDraw = true)
         {
             if (initializing) return;
@@ -48592,6 +48597,18 @@ namespace Thetis
             radRX2ModeDIGL.Location = rad_RX2mode_digl_basis;
             radRX2ModeDIGU.Location = rad_RX2mode_digu_basis;
             radRX2ModeDRM.Location = rad_RX2mode_drm_basis;
+
+            // [2.10.1.0] MW0LGE
+            // check if the modedependant form was used + visible, if so we should close it as the panels will have been been moved back here
+            // to the expanded view and the modedependant form will be empty
+            if (modeDependentSettingsForm != null && !modeDependentSettingsForm.IsDisposed && modeDependentSettingsForm.Visible)
+            {
+                modeDependentSettingsForm.Close();
+                _modeDependentSettingsFormAutoClosedWhenExpanded = true;
+            }
+            else
+                _modeDependentSettingsFormAutoClosedWhenExpanded = false;
+            //
 
             if (bSuspendDraw) ResumeDrawing(this);
 
@@ -49211,6 +49228,15 @@ namespace Thetis
                 panelMode.Show();
             else
                 panelMode.Hide();
+
+            // [2.10.1.0] MW0LGE
+            if(_modeDependentSettingsFormAutoClosedWhenExpanded)
+            {
+                // we closed the modedependent form when we swiched back over to expanded, let us re-show it again by
+                // simulating a button press
+                ExecuteButtonAction(EButtonBarActions.eBBModeSettingsForm, 0);
+            }
+            //
 
             RepositionControlsForCollapsedlDisplay();
 

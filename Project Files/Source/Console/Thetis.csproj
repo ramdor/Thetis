@@ -343,11 +343,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Resource1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resource1.resx</DependentUpon>
-    </Compile>
     <Compile Include="ucMeter.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -727,10 +722,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmSeqLog.resx">
       <DependentUpon>frmSeqLog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resource1.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="ucMeter.resx">
       <DependentUpon>ucMeter.cs</DependentUpon>
