@@ -1143,7 +1143,7 @@ namespace Thetis
         {
             // return if any control is null, this should not happen  // MW0LGE [2.9.0.7]
             // added some more checking due to https://github.com/ramdor/Thetis/issues/149
-            if (!_okToResize || _currentFlip < 0 || _currentFlip > MAX_FLIP -1 ||
+            if (!_okToResize || _shutDown || _currentFlip < 0 || _currentFlip > MAX_FLIP -1 ||
                 lblFB is null || lblPS is null ||
                 lblLeft1 is null || lblLeft2 is null || lblLeft3 is null ||
                 lblRight1 is null || lblRight2 is null || lblRight3 is null ||
@@ -1152,7 +1152,7 @@ namespace Thetis
                 _right1Width is null || _right2Width is null || _right3Width is null
                 )
             {
-                Debug.WriteLine("Check fail for ucInfoBar repositionControls()");
+                Debug.WriteLine("no repositionControls()");
                 return;
             }
 
