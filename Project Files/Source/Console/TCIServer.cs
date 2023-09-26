@@ -605,7 +605,7 @@ namespace Thetis
         }
         private void sendMuteRX(int rx, bool mute)
         {
-            string s = "mute_rx:" + rx.ToString() + "," + mute.ToString().ToLower() + ";";
+            string s = "rx_mute:" + rx.ToString() + "," + mute.ToString().ToLower() + ";";
             sendTextFrame(s);
         }
         private void sendTunePower(int rx, int drive)
@@ -1636,16 +1636,16 @@ namespace Thetis
                 bOK = bool.TryParse(args[1], out bool mute);
                 if (bOK)
                 {
-                    if(rx==1)
+                    if(rx == 0)
                         console.ThreadSafeTCIAccessor.MUT = mute;
-					else
+                    else if(rx == 1)
                         console.ThreadSafeTCIAccessor.MUT2 = mute;
                 }
             }
             else if (bOK && args.Length == 1)
             {
                 //read
-                sendMuteRX(rx, rx == 1 ? console.ThreadSafeTCIAccessor.MUT : console.ThreadSafeTCIAccessor.MUT2);
+                sendMuteRX(rx, rx == 0 ? console.ThreadSafeTCIAccessor.MUT : console.ThreadSafeTCIAccessor.MUT2);
             }
         }
         private void handleSpot(string[] args)
