@@ -12119,7 +12119,7 @@ namespace Thetis
             {
                 double dOld = m_dCentreFrequency;
                 m_dCentreFrequency = value;
-                if (dOld != m_dCentreFrequency) CentreFrequencyHandlers?.Invoke(1, Math.Round(dOld, 6), Math.Round(m_dCentreFrequency, 6), RX1Band); //MW0LGE_21d //MW0LGE_21k9d roundings
+                if (dOld != m_dCentreFrequency) CentreFrequencyHandlers?.Invoke(1, Math.Round(dOld, 6), Math.Round(m_dCentreFrequency, 6), RX1Band, radio.GetDSPRX(0, 0).RXOsc); //MW0LGE_21d //MW0LGE_21k9d roundings
             }
         }
 
@@ -12134,7 +12134,7 @@ namespace Thetis
             set {
                 double dOld = m_dCentreRX2Frequency;
                 m_dCentreRX2Frequency = value;
-                if (dOld != m_dCentreRX2Frequency) CentreFrequencyHandlers?.Invoke(2, Math.Round(dOld, 6), Math.Round(m_dCentreRX2Frequency, 6), RX2Band); //MW0LGE_21d //MW0LGE_21k9d roundings
+                if (dOld != m_dCentreRX2Frequency) CentreFrequencyHandlers?.Invoke(2, Math.Round(dOld, 6), Math.Round(m_dCentreRX2Frequency, 6), RX2Band, radio.GetDSPRX(1, 0).RXOsc); //MW0LGE_21d //MW0LGE_21k9d roundings
             }
         }
 
@@ -31470,7 +31470,7 @@ namespace Thetis
                     chkDisplayPeak.Enabled = true;
                     if (chkDisplayPeak.Checked)
                         chkDisplayPeak.BackColor = button_selected_color;
-                    btnZeroBeat.Enabled = chkDisplayAVG.Checked;
+                    //btnZeroBeat.Enabled = chkDisplayAVG.Checked;
                     radio.GetDSPRX(0, 0).SpectrumPreFilter = true;
                     radio.GetDSPRX(1, 0).SpectrumPreFilter = true;
                     break;
@@ -32011,6 +32011,8 @@ namespace Thetis
         }
         private void chkMUT_CheckedChanged(object sender, System.EventArgs e)
         {
+            bool bOldMute = Audio.MuteRX1;
+
             if (chkMUT.Checked)
             {
                 Audio.MuteRX1 = true;
@@ -32044,6 +32046,9 @@ namespace Thetis
 
             if (path_Illustrator != null)
                 path_Illustrator.pi_Changed();
+
+            if(bOldMute != Audio.MuteRX1)
+                MuteChangedHandlers?.Invoke(1, bOldMute, Audio.MuteRX1);
         }
 
         public bool ModelIsHPSDRorHermes()
@@ -43495,7 +43500,19 @@ namespace Thetis
 
         private void ptbRX1Gain_Scroll(object sender, System.EventArgs e)
         {
-            radio.GetDSPRX(0, 1).RXOutputGain = (double)ptbRX1Gain.Value / ptbRX1Gain.Maximum;
+            //
+            //[2.10.1.0] MW0LGE consider mute when on vac
+            if (!initializing && m_bRXAFSlidersWillUnmute && chkMUT.Checked) chkMUT.Checked = false;
+
+            if (chkMUT.Checked && m_bMuteWillMuteVAC1)
+            {
+                radio.GetDSPRX(0, 1).RXOutputGain = 0.0;
+            }
+            else
+            {
+                radio.GetDSPRX(0, 1).RXOutputGain = (double)ptbRX1Gain.Value / ptbRX1Gain.Maximum;
+            }
+            //
 
             // if (ptbRX1Gain.Focused)
             // btnHidden.Focus();
@@ -45641,6 +45658,8 @@ namespace Thetis
 
         private void chkRX2Mute_CheckedChanged(object sender, System.EventArgs e)
         {
+            bool bOldMute = Audio.MuteRX2;
+
             if (chkRX2Mute.Checked)
             {
                 Audio.MuteRX2 = true;
@@ -45673,6 +45692,8 @@ namespace Thetis
             if (path_Illustrator != null)
                 path_Illustrator.pi_Changed();
 
+            if (bOldMute != Audio.MuteRX2)
+                MuteChangedHandlers?.Invoke(2, bOldMute, Audio.MuteRX2);
         }
 
         private void comboRX2DisplayMode_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -52789,7 +52810,7 @@ namespace Thetis
         public delegate void SetBandChanged(int rx, Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider);
         public delegate void PowerChanged(bool oldPower, bool newPower);
 
-        public delegate void CentreFrequencyChanged(int rx, double oldFreq, double newFreq, Band band);
+        public delegate void CentreFrequencyChanged(int rx, double oldFreq, double newFreq, Band band, double offset);
         public delegate void CTUNChanged(int rx, bool oldCTUN, bool newCTUN, Band band);
         public delegate void FilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high, string sName);
         public delegate void ZoomFactorChanged(double oldZoomFactor, double newZoomFactor, int sliderValue);
@@ -52825,6 +52846,8 @@ namespace Thetis
         public delegate void TransverterIndexChanged(int oldIndex, int newIndex);
 
         public delegate void TXInhibitChanged(bool oldState, bool newState);
+
+        public delegate void MuteChanged(int rx, bool oldState, bool newState);
 
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
@@ -52869,6 +52892,8 @@ namespace Thetis
         public TransverterIndexChanged TransverterIndexChangedHandlers;
 
         public TXInhibitChanged TXInhibitChangedHandlers;
+
+        public MuteChanged MuteChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
@@ -52926,6 +52951,8 @@ namespace Thetis
 
             TXInhibitChangedHandlers += OnTXInhibitChanged;
 
+            //MuteChangedHandlers += OnMuteChanged;
+
             Display.SetupDelegates();
         }
         private void removeDelegates()
@@ -52978,6 +53005,8 @@ namespace Thetis
             TransverterIndexChangedHandlers -= OnTransverterIndexChanged;
 
             TXInhibitChangedHandlers -= OnTXInhibitChanged;
+
+            //MuteChangedHandlers -= OnMuteChanged;
 
             if (m_frmBandStack2 != null) // dont use the singleton accessor as we dont want to make one if one does not exist
             {
@@ -53213,7 +53242,7 @@ namespace Thetis
             //MW0LGE_21h
             updateBandstackOverlay(1);
         }
-        private void OnCentreFrequencyChanged(int rx, double oldFreq, double newFreq, Band band)
+        private void OnCentreFrequencyChanged(int rx, double oldFreq, double newFreq, Band band, double offset)
         {
             //MW0LGE_21h
             if (rx == 1) Display.CentreFreqRX1 = newFreq;

@@ -635,7 +635,7 @@ namespace Thetis
             else
                 FastAttackNoiseFloorRX2 = true;
         }
-        private static void OnCentreFrequencyChanged(int rx, double oldFreq, double newFreq, Band band)
+        private static void OnCentreFrequencyChanged(int rx, double oldFreq, double newFreq, Band band, double offset)
         {
             if (rx == 1)
             {
@@ -7437,13 +7437,12 @@ namespace Thetis
                 int vgrid = (int)((double)(fgrid - vfo_delta - Low) / width * W);
                 //string freq_num = actual_fgrid.ToString();
 
-                bool bBandEdge = false;
-
                 if (!show_freq_offset)
                 {
-
                     //--------------
                     //MW0LGE
+                    bool bBandEdge = false;
+
                     for (int ii = 0; ii < band_edge_list.Length; ii++)
                     {
                         if (actual_fgrid == (double)band_edge_list[ii] / 1000000)
