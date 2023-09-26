@@ -122,6 +122,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Thetis
 {
@@ -212,8 +213,13 @@ namespace Thetis
 			bool bSplit = console.ThreadSafeTCIAccessor.VFOSplit;
 			sendSplit(rx-1, bSplit);
 		}
-
-		private void limitList()
+        public void MuteChanged(int rx, bool newState)
+        {
+            if (m_disconnected) return;
+			sendMute(console.ThreadSafeTCIAccessor.MUT || (console.ThreadSafeTCIAccessor.RX2Enabled && console.ThreadSafeTCIAccessor.MUT2));
+			sendMuteRX(rx - 1, newState);
+        }
+        private void limitList()
         {
 			lock (m_objVFODataLock)
 			{
@@ -251,6 +257,7 @@ namespace Thetis
 					if (vfoData.cen)
                     {
                         sendDDS(vfoData.rx, (long)(vfoData.centreMHz * 1e6));
+                        if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
                     }
                     else
                     {
@@ -591,7 +598,17 @@ namespace Thetis
 			string s = "modulation:" + rx.ToString() + "," + sMode.ToUpper() + ";"; // MW0LGE_22b mods are uppcase on the sun, replicate
 			sendTextFrame(s);
 		}
-		private void sendTunePower(int rx, int drive)
+        private void sendMute(bool mute)
+        {
+            string s = "mute:" + mute.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendMuteRX(int rx, bool mute)
+        {
+            string s = "mute_rx:" + rx.ToString() + "," + mute.ToString().ToLower() + ";";
+            sendTextFrame(s);
+        }
+        private void sendTunePower(int rx, int drive)
 		{
 			if (drive < 0 || drive > 100) return;
 
@@ -1589,7 +1606,49 @@ namespace Thetis
 				sendTunePower(rx, console.ThreadSafeTCIAccessor.TunePWRConstrained);
 			}
 		}
-		private void handleSpot(string[] args)
+        private void handleMute(string[] args)
+        {
+            if (args.Length == 1)
+            {
+                bool bOK = bool.TryParse(args[0], out bool mute);
+                //set
+                if (bOK)
+                {
+					console.ThreadSafeTCIAccessor.MUT = mute;
+					console.ThreadSafeTCIAccessor.MUT2 = mute;
+                }
+            }
+            else if (args.Length == 0)
+            {
+                //read
+                sendMute(console.ThreadSafeTCIAccessor.MUT || console.ThreadSafeTCIAccessor.MUT2);
+            }
+        }
+        private void handleMuteRX(string[] args)
+        {
+            if (args.Length < 1) return;
+
+            bool bOK = int.TryParse(args[0], out int rx);
+
+            if (bOK && args.Length == 2)
+            {
+                //set
+                bOK = bool.TryParse(args[1], out bool mute);
+                if (bOK)
+                {
+                    if(rx==1)
+                        console.ThreadSafeTCIAccessor.MUT = mute;
+					else
+                        console.ThreadSafeTCIAccessor.MUT2 = mute;
+                }
+            }
+            else if (bOK && args.Length == 1)
+            {
+                //read
+                sendMuteRX(rx, rx == 1 ? console.ThreadSafeTCIAccessor.MUT : console.ThreadSafeTCIAccessor.MUT2);
+            }
+        }
+        private void handleSpot(string[] args)
         {
 			if (args.Length >= 4) // 4 as argument 5 may contain commas
 			{
@@ -1775,6 +1834,12 @@ namespace Thetis
 						break;
 					case "tune_drive":
 						handleTuneDrive(args);
+						break;
+					case "mute":
+                        handleMute(args);
+						break;
+                    case "rx_mute":
+                        handleMuteRX(args);
 						break;
                 }
             }
@@ -2017,6 +2082,7 @@ namespace Thetis
 					console.ThreadSafeTCIAccessor.ThetisFocusChangedHandlers += OnThetisFocusChanged;
 					console.ThreadSafeTCIAccessor.RX2EnabledChangedHandlers += OnRX2EnabledChanged;
 					console.ThreadSafeTCIAccessor.SpotClickedHandlers += OnSpotClicked;
+					console.ThreadSafeTCIAccessor.MuteChangedHandlers += OnMuteChanged;
 
 					m_bDelegatesAdded = true;
 				}
@@ -2098,8 +2164,9 @@ namespace Thetis
 					console.ThreadSafeTCIAccessor.ThetisFocusChangedHandlers -= OnThetisFocusChanged;
 					console.ThreadSafeTCIAccessor.RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
 					console.ThreadSafeTCIAccessor.SpotClickedHandlers -= OnSpotClicked;
+                    console.ThreadSafeTCIAccessor.MuteChangedHandlers -= OnMuteChanged;
 
-					m_bDelegatesAdded = false;
+                    m_bDelegatesAdded = false;
 				}
 
 				// Stop the TCP/IP Server, so can clean up without more clients connecting
@@ -2363,18 +2430,21 @@ namespace Thetis
 				}
 			}
 		}
-		public void OnCentreFrequencyChanged(int rx, double oldFreq, double newFreq, Band band)
+		public void OnCentreFrequencyChanged(int rx, double oldFreq, double newFreq, Band band, double offset)
 		{
+			//only want to send IF with this if CTUN is enabled
+			bool bCTun = rx == 1 ? console.ThreadSafeTCIAccessor.ClickTuneDisplay : console.ThreadSafeTCIAccessor.ClickTuneRX2Display;
+
             TCPIPtciSocketListener.VFOData vfod = new TCPIPtciSocketListener.VFOData()
             {
                 freqMHz = -1,
-                offsetHz = -1,
-                chan = -1,
+                offsetHz = bCTun ? (int)-offset : -1,
+                chan = 0,
                 centreMHz = newFreq,
                 cen = true,
                 rx = rx - 1,
                 duplicate_tochan = -1,
-				sendIF = false
+				sendIF = bCTun
             };
             lock (m_objLocker)
             {
@@ -2486,7 +2556,16 @@ namespace Thetis
 				}
 			}
 		}
-
+		private void OnMuteChanged(int rx, bool oldState, bool newState)
+		{
+            lock (m_objLocker)
+            {
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.MuteChanged(rx, newState);
+                }
+            }
+        }
 		public void ShowLog()
         {
 			if (_log != null) _log.ShowWithTitle("TCI");
