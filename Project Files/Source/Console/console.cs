@@ -568,6 +568,8 @@ namespace Thetis
         // ======================================================
         public Console(string[] args)
         {
+            this.Opacity = 0f; // FadeIn below
+
             //CheckIfRussian(); //#UKRAINE
 
             Display.specready = false;
@@ -1014,7 +1016,7 @@ namespace Thetis
             specRX.GetSpecRX(1).Update = true;
             specRX.GetSpecRX(cmaster.inid(1, 0)).Update = true;
 
-            // still waiting?
+            // still waiting PA
             if (_portAudioInitalising && portAudioThread != null && portAudioThread.IsAlive)
             {
                 Splash.SetStatus("Waiting for PortAudio");
@@ -1022,10 +1024,21 @@ namespace Thetis
                 if(!bOk) MessageBox.Show("There was an issue initialising PortAudio", "PortAudio", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
 
+            // still waiting cpu
+            if(!_getInstanceNameComplete && instanceNameThread != null && instanceNameThread.IsAlive)
+            {
+                Splash.SetStatus("Waiting for CPU GetInstance");
+                bool bOk = instanceNameThread.Join(5000);
+                if (!bOk) MessageBox.Show("There was an issue initialising CPU ussage", "CPU Ussage. This will not be available on the status bar.", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
+            CpuUsage(); //[2.10.1.0] MW0LGE initial call to setup check marks in status bar as a minimum
+
             Splash.SetStatus("Finished");
 
             Splash.SplashForm.Owner = this;						// So that main form will show/focus when splash disappears //MW0LGE_21d done in show above
-            Splash.CloseForm();									// End splash screen
+            Splash.CloseForm();									// End splash screen            
+
+            Common.FadeIn(this);
 
             if (resetForAutoMerge)
             {
@@ -1989,15 +2002,8 @@ namespace Thetis
 
             chkDisplayAVG_CheckedChanged(this, EventArgs.Empty);
 
-            //MW0LGE [2.9.0.8] re-implented, have tested and seems to have been resolved in recent updates
-            //MW0LGE_21k9 MEMORYLEAK - PerformanceCounter.NextValue() has a memory leak when using process based counter. It is ok with _Total.
-            //Hide for now until resolved. m_bShowSystemCPUUsage will always be true as it is not recovered from db at the moment (see GetState)
-            //thetisOnlyToolStripMenuItem.Visible = false;
-            //
-
             CalcDisplayFreq();
             CalcRX2DisplayFreq();
-            //CpuUsage();// m_bShowSystemCPUUsage); //MW0LGE done in thread intially
 
             tune_step_index--;					// Setup wheel tuning
             ChangeTuneStepUp();
@@ -3476,8 +3482,7 @@ namespace Thetis
                         m_frmSeqLog.StatusBarWarningOnNegativeOnly = bool.Parse(val);
                         break;
                     case "CPU_ShowSystem":
-                        //MW0LGE [2.9.0.8] re-implented, have tested and seems to have been resolved in recent updates
-                        m_bShowSystemCPUUsage = bool.Parse(val); //MW0LGE_21k9 MEMORYLEAK - commented so it will always be true (memory leak with process based NextValue)
+                        m_bShowSystemCPUUsage = bool.Parse(val);
                         break;
                     case "SetupWizard":
                         if (val == "1")
@@ -22542,8 +22547,6 @@ namespace Thetis
                 }
 
                 _getInstanceNameComplete = true;
-
-                CpuUsage();
             }
             catch
             {
@@ -31762,7 +31765,11 @@ namespace Thetis
 
             SaveState();
 
-            if (!IsSetupFormNull) SetupForm.Hide();
+            if (!IsSetupFormNull)
+            {
+                SetupForm.Owner = null;
+                SetupForm.Hide();
+            }
             if (m_frmCWXForm != null) m_frmCWXForm.Hide();
             if (EQForm != null) EQForm.Hide();
             if (XVTRForm != null) XVTRForm.Hide();

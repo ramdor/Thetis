@@ -4029,10 +4029,10 @@ namespace Thetis
             int grid_max = 0;
             int grid_min = 0;
 
-            Maximums[] spectralPeaks = m_rx1_spectrumPeaks;
-            double dSpectralPeakHoldDelay;// = 100;
-            bool bSpectralPeakHold;// = false;
-            bool bPeakBlobs;// = false;
+            Maximums[] spectralPeaks = null;
+            double dSpectralPeakHoldDelay;
+            bool bSpectralPeakHold;
+            bool bPeakBlobs;
             float dBmSpectralPeakFall;
             bool bActivePeakFill;
 
@@ -4047,7 +4047,7 @@ namespace Thetis
 
             if (rx == 1)
             {
-                bSpectralPeakHold = m_bSpectralPeakHoldRX1 && !m_bDelayRX1SpectrumPeaks;
+                bSpectralPeakHold = !local_mox && m_bSpectralPeakHoldRX1 && !m_bDelayRX1SpectrumPeaks;
                 dSpectralPeakHoldDelay = m_dSpecralPeakHoldDelayRX1;
                 bPeakBlobs = m_bPeakBlobMaximums && !m_bDelayRX1Blobs;
                 dBmSpectralPeakFall = m_dBmPerSecondSpectralPeakFallRX1;
@@ -4092,7 +4092,7 @@ namespace Thetis
             }
             else// if(rx == 2)
             {
-                bSpectralPeakHold = m_bSpectralPeakHoldRX2 && !m_bDelayRX2SpectrumPeaks;
+                bSpectralPeakHold = !local_mox && m_bSpectralPeakHoldRX2 && !m_bDelayRX2SpectrumPeaks;
                 dSpectralPeakHoldDelay = m_dSpecralPeakHoldDelayRX2;
                 bPeakBlobs = m_bPeakBlobMaximums && !m_bDelayRX2Blobs;
                 dBmSpectralPeakFall = m_dBmPerSecondSpectralPeakFallRX2;
@@ -4207,7 +4207,6 @@ namespace Thetis
                 }
                 fillPeaksBrush = m_bDX2_dataPeaks_fill_fpen_brush;
             }
-            float penWidth = data_line_pen.Width;
 
             float dbmToPixel = H / (float)yRange;
 
@@ -4220,10 +4219,8 @@ namespace Thetis
             if (Y < nVerticalShift) Y = nVerticalShift; // crop top
 
             bool bIgnoringPoints = false;
-            bool bOldSpectralPeakPointGood = false;
             SharpDX.Vector2 point = new SharpDX.Vector2();
             SharpDX.Vector2 spectralPeakPoint = new SharpDX.Vector2();
-            SharpDX.Vector2 oldSpectralPeakPoint = new SharpDX.Vector2();
             SharpDX.Vector2 lastIgnoredPoint = new SharpDX.Vector2();
             SharpDX.Vector2 bottomPoint = new SharpDX.Vector2(0, nVerticalShift + H);
             SharpDX.Vector2 previousPoint = new SharpDX.Vector2(0, Y);
@@ -4236,9 +4233,10 @@ namespace Thetis
                 ResetBlobMaximums(rx);
                 if (m_bInsideFilterOnly) getFilterXPositions(rx, W, local_mox, displayduplex, out filter_left_x, out filter_right_x);
             }
+
+            SharpDX.Vector2 oldSpectralPeakPoint = new SharpDX.Vector2();
             if (bSpectralPeakHold)
             {
-
                 if (rx == 1)
                 {
                     if (W > m_rx1_spectrumPeaks.Length)
@@ -4259,6 +4257,11 @@ namespace Thetis
 
                     spectralPeaks = m_rx2_spectrumPeaks;
                 }
+
+                oldSpectralPeakPoint.X = 0;
+                oldSpectralPeakPoint.Y = (int)(((grid_max - spectralPeaks[0].max_dBm) * dbmToPixel) - 0.5f);
+                if (oldSpectralPeakPoint.Y >= H) oldSpectralPeakPoint.Y = H;
+                oldSpectralPeakPoint.Y += nVerticalShift;
             }
 
             float mn = float.PositiveInfinity;
@@ -4267,7 +4270,6 @@ namespace Thetis
             int mnpos = 0;
             int mxpos = 0;
             bool lookformax = true;
-            //List <(int pos, float val)> maxtab_tmp = new List<(int pos, float val)>();
             float triggerDelta = 10; //db
 
             unchecked // we dont expect any overflows
@@ -4280,12 +4282,14 @@ namespace Thetis
 
                 float averageSum = 0;
                 int averageCount = 0;
+                int niDecimated = 0;
                 float currentAverage = rx == 1 ? m_fFFTBinAverageRX1 + 2 : m_fFFTBinAverageRX2 + 2; // +2db to add some extras above the average
 
                 for (int i = 0; i < nDecimatedWidth; i++)
                 {
+                    niDecimated = i * m_nDecimation;
                     max = data[i] + fOffset;
-                    max_copy = current_display_data_copy[i] + fOffset; ;
+                    max_copy = current_display_data_copy[i] + fOffset;
 
                     // noise floor
                     if (!local_mox && (max_copy < currentAverage))
@@ -4300,21 +4304,24 @@ namespace Thetis
                     Y += nVerticalShift;
                     if (Y < nVerticalShift) Y = nVerticalShift; // crop top
 
-                    point.X = i * m_nDecimation;
+                    point.X = niDecimated;
                     point.Y = Y;
 
                     if (max > local_max_y)
                     {
                         // store peak
                         local_max_y = max;
-                        local_max_x = i * m_nDecimation;
+                        local_max_x = niDecimated;
                         local_max_Pixel_y = Y;
                     }
 
-                    if (!local_mox && bSpectralPeakHold && max >= spectralPeaks[i].max_dBm)
+                    if (bSpectralPeakHold)
                     {
-                        spectralPeaks[i].max_dBm = max;
-                        spectralPeaks[i].Time = m_dElapsedFrameStart;
+                        if (max >= spectralPeaks[i].max_dBm)
+                        {
+                            spectralPeaks[i].max_dBm = max;
+                            spectralPeaks[i].Time = m_dElapsedFrameStart;
+                        }
                     }
 
                     ///
@@ -4322,8 +4329,8 @@ namespace Thetis
                     ///
                     if (bPeakBlobs)
                     {
-                        bool bInsideFilter = ((i * m_nDecimation) >= filter_left_x) && ((i * m_nDecimation) <= filter_right_x);
-                        if (!m_bInsideFilterOnly || (m_bInsideFilterOnly && bInsideFilter))
+                        bool bInsideFilter = m_bInsideFilterOnly && (niDecimated >= filter_left_x) && (niDecimated <= filter_right_x);
+                        if (!m_bInsideFilterOnly || bInsideFilter)
                         {
                             if (max > mx)
                             {
@@ -4368,40 +4375,35 @@ namespace Thetis
                     }
 
                     //spectral peak
-                    if (!local_mox && bSpectralPeakHold && spectralPeaks[i].max_dBm >= max)
+                    if (bSpectralPeakHold)
                     {
-                        // draw to peak, but re-work Y as we might rescale the spectrum vertically
-                        spectralPeakPoint.X = point.X;
-                        spectralPeakPoint.Y = (int)(((grid_max - spectralPeaks[i].max_dBm) * dbmToPixel) - 0.5f);
-                        if (spectralPeakPoint.Y >= H) spectralPeakPoint.Y = H;
-                        spectralPeakPoint.Y += nVerticalShift;
-
-                        if (spectralPeakPoint.Y < nVerticalShift) spectralPeakPoint.Y = nVerticalShift; // crop top
-
-                        if (bActivePeakFill)
+                        if (spectralPeaks[i].max_dBm >= max)
                         {
-                            _d2dRenderTarget.DrawLine(point, spectralPeakPoint, fillPeaksBrush, m_nDecimation);
-                        }
-                        else
-                        {
-                            if (!bOldSpectralPeakPointGood)
+                            // draw to peak, but re-work Y as we might rescale the spectrum vertically
+                            spectralPeakPoint.X = point.X;
+                            spectralPeakPoint.Y = (int)(((grid_max - spectralPeaks[i].max_dBm) * dbmToPixel) - 0.5f);
+                            if (spectralPeakPoint.Y >= H) spectralPeakPoint.Y = H;
+                            spectralPeakPoint.Y += nVerticalShift;
+
+                            if (spectralPeakPoint.Y < nVerticalShift) spectralPeakPoint.Y = nVerticalShift; // crop top
+
+                            if (bActivePeakFill)
                             {
+                                _d2dRenderTarget.DrawLine(point, spectralPeakPoint, fillPeaksBrush, m_nDecimation);
+                            }
+                            else
+                            {
+                                _d2dRenderTarget.DrawLine(oldSpectralPeakPoint, spectralPeakPoint, fillPeaksBrush, display_line_width);
                                 oldSpectralPeakPoint = spectralPeakPoint;
-                                bOldSpectralPeakPointGood = true;
                             }
 
-                            _d2dRenderTarget.DrawLine(oldSpectralPeakPoint, spectralPeakPoint, fillPeaksBrush, data_line_pen.Width/*display_line_width*/);
-                            oldSpectralPeakPoint = spectralPeakPoint;
-                        }
-
-                        double dElapsed = m_dElapsedFrameStart - spectralPeaks[i].Time;
-                        if (spectralPeaks[i].max_dBm > max && (dElapsed > dSpectralPeakHoldDelay))
-                        {
-                            spectralPeaks[i].max_dBm -= dBmSpectralPeakFall;
+                            double dElapsed = m_dElapsedFrameStart - spectralPeaks[i].Time;
+                            if (spectralPeaks[i].max_dBm > max && (dElapsed > dSpectralPeakHoldDelay))
+                            {
+                                spectralPeaks[i].max_dBm -= dBmSpectralPeakFall;
+                            }
                         }
                     }
-                    else
-                        bOldSpectralPeakPointGood = false;
 
                     // ignore point if same Y as last point
                     // lines will get longer if flat, reducing number of total points
@@ -4419,7 +4421,7 @@ namespace Thetis
                     {
                         if (bIgnoringPoints)
                         {
-                            _d2dRenderTarget.DrawLine(previousPoint, lastIgnoredPoint, lineBrush, penWidth);
+                            _d2dRenderTarget.DrawLine(previousPoint, lastIgnoredPoint, lineBrush, display_line_width);
                             previousPoint = lastIgnoredPoint;
                             bIgnoringPoints = false;
                         }
@@ -4428,7 +4430,7 @@ namespace Thetis
 
                     if (bIncludeLinePoint)
                     {
-                        _d2dRenderTarget.DrawLine(previousPoint, point, lineBrush, penWidth);
+                        _d2dRenderTarget.DrawLine(previousPoint, point, lineBrush, display_line_width);
                         previousPoint = point;
                     }
                 }

@@ -38,11 +38,9 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Text;
 using System.Security.Principal;
-using System.Security.Cryptography;
 using System.Globalization;
-using System.Diagnostics.Eventing.Reader;
+using System.Threading.Tasks;
 
 namespace Thetis
 {
@@ -985,6 +983,32 @@ namespace Thetis
             string sRet = string.Join("_", sDate.Split(Path.GetInvalidFileNameChars()));
 
 			return sRet;
+        }
+        #endregion
+
+        #region WindowFade
+        public static async void FadeIn(Form frm, int msTimeToFade = 500, int steps = 20)
+        {
+			float stepSize = 1 / (float)steps;
+			float interval = msTimeToFade / (float)steps;
+            while (frm.Opacity < 1.0)
+            {
+                await Task.Delay((int)interval);
+                frm.Opacity += stepSize;
+            }
+            frm.Opacity = 1;
+        }
+
+        public static async void FadeOut(Form frm, int msTimeToFade = 500, int steps = 20)
+        {
+            float stepSize = 1 / (float)steps;
+            float interval = msTimeToFade / (float)steps;
+            while (frm.Opacity > 0.0)
+            {
+                await Task.Delay((int)interval);
+                frm.Opacity -= stepSize;
+            }
+            frm.Opacity = 0;
         }
         #endregion
     }

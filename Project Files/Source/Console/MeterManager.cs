@@ -1614,7 +1614,10 @@ namespace Thetis
             if (m.RX == 2 && !_console.RX2Enabled) return;
 
             if (!_finishedSetup) return;
+
+            frm.Opacity = 0f;
             frm.Show();
+            Common.FadeIn(frm, 100);
         }
         private static void OnRX2EnabledChanged(bool enabled)
         {
