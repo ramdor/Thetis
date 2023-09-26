@@ -43500,7 +43500,19 @@ namespace Thetis
 
         private void ptbRX1Gain_Scroll(object sender, System.EventArgs e)
         {
-            radio.GetDSPRX(0, 1).RXOutputGain = (double)ptbRX1Gain.Value / ptbRX1Gain.Maximum;
+            //
+            //[2.10.1.0] MW0LGE consider mute when on vac
+            if (!initializing && m_bRXAFSlidersWillUnmute && chkMUT.Checked) chkMUT.Checked = false;
+
+            if (chkMUT.Checked && m_bMuteWillMuteVAC1)
+            {
+                radio.GetDSPRX(0, 1).RXOutputGain = 0.0;
+            }
+            else
+            {
+                radio.GetDSPRX(0, 1).RXOutputGain = (double)ptbRX1Gain.Value / ptbRX1Gain.Maximum;
+            }
+            //
 
             // if (ptbRX1Gain.Focused)
             // btnHidden.Focus();
