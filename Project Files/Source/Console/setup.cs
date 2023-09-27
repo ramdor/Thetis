@@ -2508,8 +2508,8 @@ namespace Thetis
                 if (DB.ConvertFromDBVal<bool>(dr["Dexp_LookAhead_On"]) != chkDEXPLookAheadEnable.Checked) return true;
                 if (DB.ConvertFromDBVal<int>(dr["Dexp_LookAhead"]) != (int)udDEXPLookAhead.Value) return true;
 
-                if (DB.ConvertFromDBVal<int>(dr["Tune_Power"]) != (int)udTXTunePower.Value) return true;
-                if (DB.ConvertFromDBVal<string>(dr["Tune_Meter_Type"]) != (string)comboTXTUNMeter.Text) return true;
+                //if (DB.ConvertFromDBVal<int>(dr["Tune_Power"]) != (int)udTXTunePower.Value) return true; // [2.10.1.0] MW0LGE not used anymore
+                //if (DB.ConvertFromDBVal<string>(dr["Tune_Meter_Type"]) != (string)comboTXTUNMeter.Text) return true; // [2.10.1.0] MW0LGE not used anymore
 
                 if (DB.ConvertFromDBVal<int>(dr["TX_AF_Level"]) != console.TXAF) return true;
 
@@ -2821,6 +2821,8 @@ namespace Thetis
 
         private void udpateTXProfileInDB(DataRow dr)
         {
+            if (dr == null) return;
+
             dr["FilterLow"] = (int)udTXFilterLow.Value;
             dr["FilterHigh"] = (int)udTXFilterHigh.Value;
             dr["TXEQNumBands"] = console.EQForm.NumBands;
@@ -2872,8 +2874,8 @@ namespace Thetis
             dr["Dexp_LookAhead_On"] = chkDEXPLookAheadEnable.Checked;
             dr["Dexp_LookAhead"] = (int)udDEXPLookAhead.Value;
 
-            dr["Tune_Power"] = (int)udTXTunePower.Value;
-            dr["Tune_Meter_Type"] = (string)comboTXTUNMeter.Text;
+            //dr["Tune_Power"] = (int)udTXTunePower.Value; // [2.10.1.0] MW0LGE not used anymore
+            //dr["Tune_Meter_Type"] = (string)comboTXTUNMeter.Text; // [2.10.1.0] MW0LGE not used anymore
 
             dr["TX_AF_Level"] = console.TXAF;
 
@@ -2999,13 +3001,24 @@ namespace Thetis
             //        break;
             //    }
             //}
-            foreach (DataRow d in from DataRow d in DB.ds.Tables["TxProfile"].Rows where (string)d["Name"] == name select d)
+            foreach (DataRow dd in from DataRow d in DB.ds.Tables["TxProfile"].Rows where (string)d["Name"] == name select d)
             {
-                dr = d;
+                dr = dd;
                 break;
             }
 
-            udpateTXProfileInDB(dr); //MW0LGE_21a remove duplication
+            if (dr == null)
+            {
+                DialogResult dres = MessageBox.Show(
+                    "Unable to find txprofile in the database for name [" + name + "] in SaveTXProfileData()",
+                    "Missing TX Profile Table",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
+            else
+            {
+                udpateTXProfileInDB(dr); //MW0LGE_21a remove duplication
+            }
         }
 
         public void UpdateWaterfallBandInfo()
@@ -10270,9 +10283,9 @@ namespace Thetis
                 if (result == DialogResult.No)
                     return;
 
-                foreach (DataRow d in from DataRow d in DB.ds.Tables["TxProfile"].Rows where (string)d["Name"] == name select d)
+                foreach (DataRow dd in from DataRow d in DB.ds.Tables["TxProfile"].Rows where (string)d["Name"] == name select d)
                 {
-                    dr = d;
+                    dr = dd;
                     break;
                 }
             }
@@ -10282,7 +10295,18 @@ namespace Thetis
                 dr["Name"] = name;
             }
 
-            udpateTXProfileInDB(dr); //MW0LGE_21a remove duplication
+            if (dr == null)
+            {
+                DialogResult dres = MessageBox.Show(
+                    "Unable to find txprofile in the database for name [" + name + "] in btnTXProfileSave_Click()",
+                    "Missing TX Profile Table",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
+            else
+            {
+                udpateTXProfileInDB(dr); //MW0LGE_21a remove duplication
+            }
 
             //dr["FilterLow"] = (int)udTXFilterLow.Value;
             //dr["FilterHigh"] = (int)udTXFilterHigh.Value;
@@ -20803,7 +20827,7 @@ namespace Thetis
 
         private void comboRadioModel_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // if (initializing) return; // forceallevents will call this
+            if (initializing) return; // forceallevents will call this  // [2.10.1.0] MW0LGE renabled
 
             bool power = console.PowerOn;
             HPSDRModel old_model = console.CurrentHPSDRModel;
@@ -21388,7 +21412,26 @@ namespace Thetis
                 btnResetP2ADC_Click(this, EventArgs.Empty);
                 btnResetP1ADC_Click(this, EventArgs.Empty);
 
-                if (!initializing) updatePAProfileCombo("Default - " + console.CurrentHPSDRModel.ToString()); //MW0LGE_22b
+                if (!initializing)
+                {
+                    string sCurrentPAProfile = comboPAProfile.Text;
+
+                    updatePAProfileCombo("Default - " + console.CurrentHPSDRModel.ToString()); //MW0LGE_22b
+
+                    //[2.10.1.0] MW0LGE
+                    //re-assign the current if it still exists, this needed because on a DB import, we are changing from HERMES to whatever is set in the DB
+                    //and if the PA profile is in the new rebuilt list, let us use it instead of the radio Default
+                    for (int n = 0; n < comboPAProfile.Items.Count; n++)
+                    {
+                        string sName = (string)comboPAProfile.Items[n];
+
+                        if (sName == sCurrentPAProfile)
+                        {
+                            comboPAProfile.SelectedIndex = n;
+                            break;
+                        }
+                    }
+                }
             }
 
             InitHPSDR();
@@ -23915,6 +23958,8 @@ namespace Thetis
         }
         private void comboPAProfile_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (initializing) return; //[2.10.1.0] MW0LGE only want to apply this at the forceallevents stage
+
             PAProfile p = getPAProfile(comboPAProfile.Text);
 
             if (p != null)
@@ -26869,6 +26914,19 @@ namespace Thetis
             }
         }
         #endregion
+
+        private void tmrCheckProfile_Tick(object sender, EventArgs e)
+        {
+            if (!this.Visible) return;
+
+            tmrCheckProfile.Enabled = false;
+
+            bool bChanged = checkTXProfileChanged2();
+
+            lblTXProfileWarning.Visible = bChanged;
+
+            tmrCheckProfile.Enabled = true;
+        }
     }
 
     #region PADeviceInfo Helper Class

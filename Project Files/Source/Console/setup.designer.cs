@@ -3451,6 +3451,8 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.lblTXProfileWarning = new System.Windows.Forms.LabelTS();
+            this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -3523,10 +3525,10 @@
             this.grpMetisAddr.SuspendLayout();
             this.groupBoxHPSDRHW.SuspendLayout();
             this.grpGeneralHardwareORION.SuspendLayout();
+            this.panelSaturnMicInput.SuspendLayout();
             this.panelOrionPTT.SuspendLayout();
             this.panelOrionBias.SuspendLayout();
             this.panelOrionMic.SuspendLayout();
-            this.panelSaturnMicInput.SuspendLayout();
             this.tpGeneralOptions.SuspendLayout();
             this.tcOptions.SuspendLayout();
             this.tpOptions1.SuspendLayout();
@@ -7492,13 +7494,15 @@
             this.grpFRSRegion.Controls.Add(this.comboFRSRegion);
             this.grpFRSRegion.Location = new System.Drawing.Point(28, 134);
             this.grpFRSRegion.Name = "grpFRSRegion";
-            this.grpFRSRegion.Size = new System.Drawing.Size(150, 75);
+            this.grpFRSRegion.Size = new System.Drawing.Size(150, 74);
             this.grpFRSRegion.TabIndex = 33;
             this.grpFRSRegion.TabStop = false;
             this.grpFRSRegion.Text = "Region";
             // 
             // lblWarningRegionExtended
             // 
+            this.lblWarningRegionExtended.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblWarningRegionExtended.ForeColor = System.Drawing.Color.Red;
             this.lblWarningRegionExtended.Image = null;
             this.lblWarningRegionExtended.Location = new System.Drawing.Point(41, 75);
             this.lblWarningRegionExtended.Name = "lblWarningRegionExtended";
@@ -7508,6 +7512,7 @@
             // 
             // picWarningRegionExtended
             // 
+            this.picWarningRegionExtended.Image = global::Thetis.Properties.Resources.warning4;
             this.picWarningRegionExtended.Location = new System.Drawing.Point(12, 75);
             this.picWarningRegionExtended.Name = "picWarningRegionExtended";
             this.picWarningRegionExtended.Size = new System.Drawing.Size(20, 20);
@@ -7784,7 +7789,7 @@
             this.radSaturnXLR.Image = null;
             this.radSaturnXLR.Location = new System.Drawing.Point(3, 2);
             this.radSaturnXLR.Name = "radSaturnXLR";
-            this.radSaturnXLR.Size = new System.Drawing.Size(39, 17);
+            this.radSaturnXLR.Size = new System.Drawing.Size(46, 17);
             this.radSaturnXLR.TabIndex = 0;
             this.radSaturnXLR.TabStop = true;
             this.radSaturnXLR.Text = "XLR";
@@ -7797,8 +7802,9 @@
             this.radSaturn3p5mm.Image = null;
             this.radSaturn3p5mm.Location = new System.Drawing.Point(49, 2);
             this.radSaturn3p5mm.Name = "radSaturn3p5mm";
-            this.radSaturn3p5mm.Size = new System.Drawing.Size(39, 17);
+            this.radSaturn3p5mm.Size = new System.Drawing.Size(56, 17);
             this.radSaturn3p5mm.TabIndex = 1;
+            this.radSaturn3p5mm.TabStop = true;
             this.radSaturn3p5mm.Text = "3.5mm";
             this.radSaturn3p5mm.UseVisualStyleBackColor = true;
             this.radSaturn3p5mm.CheckedChanged += new System.EventHandler(this.radSaturn3p5mm_CheckedChanged);
@@ -7809,7 +7815,7 @@
             this.lblSaturnMicInput.Image = null;
             this.lblSaturnMicInput.Location = new System.Drawing.Point(9, 102);
             this.lblSaturnMicInput.Name = "lblSaturnMicInput";
-            this.lblSaturnMicInput.Size = new System.Drawing.Size(28, 13);
+            this.lblSaturnMicInput.Size = new System.Drawing.Size(31, 13);
             this.lblSaturnMicInput.TabIndex = 6;
             this.lblSaturnMicInput.Text = "Input";
             this.lblSaturnMicInput.Visible = false;
@@ -53838,7 +53844,7 @@
             // btnApply
             // 
             this.btnApply.Image = null;
-            this.btnApply.Location = new System.Drawing.Point(640, 476);
+            this.btnApply.Location = new System.Drawing.Point(659, 476);
             this.btnApply.Name = "btnApply";
             this.btnApply.Selectable = true;
             this.btnApply.Size = new System.Drawing.Size(75, 23);
@@ -53850,7 +53856,7 @@
             // btnCancel
             // 
             this.btnCancel.Image = null;
-            this.btnCancel.Location = new System.Drawing.Point(559, 476);
+            this.btnCancel.Location = new System.Drawing.Point(578, 476);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Selectable = true;
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -53862,7 +53868,7 @@
             // btnOK
             // 
             this.btnOK.Image = null;
-            this.btnOK.Location = new System.Drawing.Point(478, 476);
+            this.btnOK.Location = new System.Drawing.Point(497, 476);
             this.btnOK.Name = "btnOK";
             this.btnOK.Selectable = true;
             this.btnOK.Size = new System.Drawing.Size(75, 23);
@@ -53922,7 +53928,7 @@
             this.labelSavingLoading.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelSavingLoading.ForeColor = System.Drawing.Color.Red;
             this.labelSavingLoading.Image = null;
-            this.labelSavingLoading.Location = new System.Drawing.Point(615, 498);
+            this.labelSavingLoading.Location = new System.Drawing.Point(634, 498);
             this.labelSavingLoading.Name = "labelSavingLoading";
             this.labelSavingLoading.Size = new System.Drawing.Size(100, 10);
             this.labelSavingLoading.TabIndex = 23;
@@ -54949,11 +54955,34 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // lblTXProfileWarning
+            // 
+            this.lblTXProfileWarning.BackColor = System.Drawing.Color.Orange;
+            this.lblTXProfileWarning.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblTXProfileWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTXProfileWarning.ForeColor = System.Drawing.Color.Black;
+            this.lblTXProfileWarning.Image = null;
+            this.lblTXProfileWarning.Location = new System.Drawing.Point(609, 2);
+            this.lblTXProfileWarning.Name = "lblTXProfileWarning";
+            this.lblTXProfileWarning.Size = new System.Drawing.Size(134, 33);
+            this.lblTXProfileWarning.TabIndex = 24;
+            this.lblTXProfileWarning.Text = "TX Profile modified\r\nSave profile to store";
+            this.lblTXProfileWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.lblTXProfileWarning, resources.GetString("lblTXProfileWarning.ToolTip"));
+            this.lblTXProfileWarning.Visible = false;
+            // 
+            // tmrCheckProfile
+            // 
+            this.tmrCheckProfile.Enabled = true;
+            this.tmrCheckProfile.Interval = 1000;
+            this.tmrCheckProfile.Tick += new System.EventHandler(this.tmrCheckProfile_Tick);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(744, 511);
+            this.Controls.Add(this.lblTXProfileWarning);
             this.Controls.Add(this.labelSavingLoading);
             this.Controls.Add(this.btnExportDB);
             this.Controls.Add(this.btnImportDB);
@@ -55046,14 +55075,14 @@
             this.groupBoxHPSDRHW.PerformLayout();
             this.grpGeneralHardwareORION.ResumeLayout(false);
             this.grpGeneralHardwareORION.PerformLayout();
+            this.panelSaturnMicInput.ResumeLayout(false);
+            this.panelSaturnMicInput.PerformLayout();
             this.panelOrionPTT.ResumeLayout(false);
             this.panelOrionPTT.PerformLayout();
             this.panelOrionBias.ResumeLayout(false);
             this.panelOrionBias.PerformLayout();
             this.panelOrionMic.ResumeLayout(false);
             this.panelOrionMic.PerformLayout();
-            this.panelSaturnMicInput.ResumeLayout(false);
-            this.panelSaturnMicInput.PerformLayout();
             this.tpGeneralOptions.ResumeLayout(false);
             this.tcOptions.ResumeLayout(false);
             this.tpOptions1.ResumeLayout(false);
@@ -59503,5 +59532,7 @@
         private GroupBoxTS grpUSBBCD;
         private CheckBoxTS chkUsbBCD;
         private ComboBoxTS comboUsbDevices;
+        private LabelTS lblTXProfileWarning;
+        private Timer tmrCheckProfile;
     }
 }

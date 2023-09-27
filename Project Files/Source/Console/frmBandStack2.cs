@@ -89,7 +89,7 @@ namespace Thetis
             }
 
             string sTmp = bsf.FilterName;
-            if (!bsf.UserDefined && (sTmp.StartsWith("B") || sTmp.StartsWith("b"))) sTmp = sTmp.Substring(1);
+            if (!bsf.UserDefined && (sTmp.StartsWith("B") || sTmp.StartsWith("b"))) sTmp = sTmp.Substring(1); // pull off the b if the name is a band enum
             lblFilterName.Text = sTmp;
 
             if (!bsf.UserDefined)

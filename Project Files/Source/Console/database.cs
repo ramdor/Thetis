@@ -9145,12 +9145,13 @@ namespace Thetis
                     //    break;
 
                     //BandStack2
+                    case "BandStack2Entries":
                     case "BandStack2Filters":
                     case "BandStack2FilterFrequencies":
                     case "BandStack2FilterModes":
                     case "BandStack2FilterSubModes":
                     case "BandStack2FilterBands":
-                    case "BandStack2Entries":
+                    //case "BandStack2HiddenEntries": // not used yet
                         tempMergedTable.Clear();
                         foreach (DataTable t in oldDB.Tables)
                         {
@@ -9179,7 +9180,8 @@ namespace Thetis
                             }
 
                             //import any from old band stack system into bandstack2entries if coming from older db and we havent added them into the merged table already
-                            if ((String.Compare(_versionnumber, "2.8.12") < 0) && table.TableName == "BandStack2Entries")
+                            //if ((String.Compare(_versionnumber, "2.8.12") < 0) && table.TableName == "BandStack2Entries")
+                            if ((Common.CompareVersions(_versionnumber, "2.8.12") < 0) && table.TableName == "BandStack2Entries")
                             {
                                 foundTable = false;
                                 foreach (DataTable t in oldDB.Tables)
@@ -9361,7 +9363,8 @@ namespace Thetis
                                 }
                                 else tempMergedTable.ImportRow(row);
                             }
-                            else if (thisKey == "comboRadioModel" && String.Compare(_versionnumber, "2.7.0") < 0)
+                            //else if (thisKey == "comboRadioModel" && String.Compare(_versionnumber, "2.7.0") < 0)
+                            else if (thisKey == "comboRadioModel" && Common.CompareVersions(_versionnumber, "2.7.0") < 0)
                             {
                                 //MW0LGE this db contains comboRadioModel, we need to pull over old radio selection from radio button implementation
                                 //but only if exists. This will always run even if db being imported does not contain these rad button setting, and

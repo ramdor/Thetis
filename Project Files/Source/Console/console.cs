@@ -1289,8 +1289,7 @@ namespace Thetis
                 {
                     components.Dispose();
                 }
-            }
-            base.Dispose(disposing);
+            }            
 
             ExitConsole();
 
@@ -1306,6 +1305,8 @@ namespace Thetis
                 File.Copy(db_file_name, AppDataPath + "DB_Archive\\Thetis_" + file + "_" + datetime + ".xml");
                 File.Delete(db_file_name);
             }
+
+            base.Dispose(disposing);
         }
 
         #endregion
@@ -2559,41 +2560,41 @@ namespace Thetis
             N1MM.Stop();
             //
 
-            //MW0LGE_21d
-            //cause spot form to save out, because it wont if currently shown, the _closing event does not fire on the form
-            if (SpotForm != null && !SpotForm.IsDisposed) SpotForm.ForceSave();
+            ////MW0LGE_21d
+            ////cause spot form to save out, because it wont if currently shown, the _closing event does not fire on the form
+            //if (SpotForm != null && !SpotForm.IsDisposed) SpotForm.ForceSave();
 
-            //MW0LGE_21d -- the db is updated with everything
-            //all stored as part of DB.Exit below
-            //we are shutting down, but may have moved frquency and not stored that into the current active slot, so do it now
-            //so we can use it when we restart
-            BandStackFilter bsf = BandStackManager.GetFilter(RX1Band, false);
-            if (bsf != null)
-            {
-                bsf.UpdateCurrentWithLastVisitedData(m_bIgnoreFrequencyDupes);
-                bsf.GenerateFilteredList(true);
-            }
-            //now save it all
-            BandStackManager.SaveToDB();
-            if (m_frmBandStack2 != null) BandStack2Form.Store();  // using frm variable, as we may reach here without the singlton being instanced, and there is no point doing so
-                                                                  // this happens on a DB merge etc.
-                                                                  //
-
+            ////MW0LGE_21d -- the db is updated with everything
+            ////all stored as part of DB.Exit below
+            ////we are shutting down, but may have moved frquency and not stored that into the current active slot, so do it now
+            ////so we can use it when we restart
+            //BandStackFilter bsf = BandStackManager.GetFilter(RX1Band, false);
+            //if (bsf != null)
+            //{
+            //    bsf.UpdateCurrentWithLastVisitedData(m_bIgnoreFrequencyDupes);
+            //    bsf.GenerateFilteredList(true);
+            //}
+            ////now save it all
+            //BandStackManager.SaveToDB();
+            //if (m_frmBandStack2 != null) BandStack2Form.Store();  // using frm variable, as we may reach here without the singlton being instanced, and there is no point doing so
+            //                                                      // this happens on a DB merge etc.
+                                                                  
             if (n1mm_udp_client != null)
                 n1mm_udp_client.Close();
 
-            if (SaveTXProfileOnExit == true)    // save the tx profile
-            {
-                SetupForm.SaveTXProfileData();
-            }
+            //if (SaveTXProfileOnExit)    // save the tx profile
+            //{
+            //    SetupForm.SaveTXProfileData();
+            //}
 
             if (!IsSetupFormNull)		// make sure Setup form is deallocated
                 SetupForm.Dispose();
 
             if (m_frmCWXForm != null)			// make sure CWX form is deallocated
                 m_frmCWXForm.Dispose();
-            chkPower.Checked = false;	// make sure power is off		
-            ckQuickRec.Checked = false; // make sure recording is stopped
+
+            //chkPower.Checked = false;	// make sure power is off		
+            //ckQuickRec.Checked = false; // make sure recording is stopped
 
             PA19.PA_Terminate();		// terminate audio interface
             DB.Exit();					// close and save database
@@ -20176,6 +20177,8 @@ namespace Thetis
             get { return txaf; }
             set
             {
+                int oldMONVolume = txaf;
+
                 txaf = value;
                 if (QSKEnabled && chkCWSidetone.Checked)
                 {
@@ -20198,6 +20201,9 @@ namespace Thetis
                     }
                     else NetworkIO.SetCWSidetoneVolume(0);
                 }
+
+                if (txaf != oldMONVolume)
+                    MONVolumeChangedHandlers?.Invoke(oldMONVolume, txaf);
             }
         }
 
@@ -31846,6 +31852,36 @@ namespace Thetis
 
             DumpCap.StopDumpcap();
 
+            //-
+            //[2.10.1.0] MW0LGE - moved here from ExitConsole
+
+            //cause spot form to save out, because it wont if currently shown, the _closing event does not fire on the form
+            if (SpotForm != null && !SpotForm.IsDisposed) SpotForm.ForceSave();
+
+            //MW0LGE_21d -- the db is updated with everything
+            //all stored as part of DB.Exit below
+            //we are shutting down, but may have moved frquency and not stored that into the current active slot, so do it now
+            //so we can use it when we restart
+            BandStackFilter bsf = BandStackManager.GetFilter(RX1Band, false);
+            if (bsf != null)
+            {
+                bsf.UpdateCurrentWithLastVisitedData(m_bIgnoreFrequencyDupes);
+                bsf.GenerateFilteredList(true);
+            }
+            //now save it all
+            BandStackManager.SaveToDB();
+            if (m_frmBandStack2 != null) BandStack2Form.Store();  // using frm variable, as we may reach here without the singlton being instanced, and there is no point doing so
+                                                                  // this happens on a DB merge etc.
+
+            if (SaveTXProfileOnExit)    // save the tx profile
+            {
+                SetupForm.SaveTXProfileData();
+            }
+
+            chkPower.Checked = false;	// make sure power is off		
+            ckQuickRec.Checked = false; // make sure recording is stopped
+            //-
+
             this.Hide();
             frmShutDownForm.Close(); // last thing to get rid of
         }
@@ -32491,6 +32527,8 @@ namespace Thetis
 
         private void chkMON_CheckedChanged(object sender, System.EventArgs e)
         {
+            bool oldMON = Audio.MON;
+
             Audio.MON = chkMON.Checked;
 
             if (chkMON.Checked)
@@ -32503,6 +32541,9 @@ namespace Thetis
 
             if (path_Illustrator != null)
                 path_Illustrator.pi_Changed();
+
+            if (Audio.MON != oldMON)
+                MONChangedHandlers?.Invoke(oldMON, Audio.MON);
         }
 
         private void AudioMOXChanged(bool tx)
@@ -52848,6 +52889,8 @@ namespace Thetis
         public delegate void TXInhibitChanged(bool oldState, bool newState);
 
         public delegate void MuteChanged(int rx, bool oldState, bool newState);
+        public delegate void MONChanged(bool oldState, bool newState);
+        public delegate void MONVolumeChanged(int oldVolume, int newVolume);
 
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
@@ -52894,6 +52937,8 @@ namespace Thetis
         public TXInhibitChanged TXInhibitChangedHandlers;
 
         public MuteChanged MuteChangedHandlers;
+        public MONChanged MONChangedHandlers;
+        public MONVolumeChanged MONVolumeChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
@@ -52901,6 +52946,7 @@ namespace Thetis
         private bool m_bBandStackOverlayClicked = false;        // we have clicked an overlay
         private void addDelegates()
         {
+            // note: all commented handlers are not used in console, but here as a record
             m_frmNotchPopup.NotchDeleteEvent += onNotchDelete;
             m_frmNotchPopup.NotchBWChangedEvent += onBWChanged;
             m_frmNotchPopup.NotchActiveChangedEvent += onActiveChanged;
@@ -52908,14 +52954,14 @@ namespace Thetis
             m_frmSeqLog.ClearButtonEvent += onClearButton;
 
             BandPreChangeHandlers += OnBandBeforeChangeHandler;            // just a band button is pressed
-            BandNoChangeHandlers += OnBandNoChangeHandler;              // no change made to band
+            //BandNoChangeHandlers += OnBandNoChangeHandler;              // no change made to band
             BandChangeHandlers += OnBandChangeHandler;                  // band was changed
             ModeChangeHandlers += OnModeChangeHandler;                  // mode was changed
             VFOAFrequencyChangeHandlers += OnVFOAFrequencyChangeHandler;    //VFOA changed
             VFOBFrequencyChangeHandlers += OnVFOBFrequencyChangeHandler;    //VFOB changed
-            VFOASubFrequencyChangeHandlers += OnVFOASubFrequencyChangeHandler;    //VFOASub changed
+            //VFOASubFrequencyChangeHandlers += OnVFOASubFrequencyChangeHandler;    //VFOASub changed
             MoxChangeHandlers += OnMoxChangeHandler;                    // mox changed
-            MoxPreChangeHandlers += OnMoxPreChangeHandler;              // mox is about to change
+            //MoxPreChangeHandlers += OnMoxPreChangeHandler;              // mox is about to change
             SetBandChangeHanders += OnSetBandChangeHander;              // SetBand completed
             PowerChangeHanders += OnPowerChangeHander;                  // power state changed
 
@@ -52924,34 +52970,36 @@ namespace Thetis
             FilterChangedHandlers += OnFilterChanged;                   // filters changed
             ZoomFactorChangedHandlers += OnZoomChanged;                 // zoom changed
 
-            AttenuatorDataChangedHandlers += OnAttenuatorDataChanged;                 // att data change
+            //AttenuatorDataChangedHandlers += OnAttenuatorDataChanged;                 // att data change
             PreampModeChangedHandlers += OnPreampModeChanged;                 // preamp mode change
 
-            FilterEdgesChangedHandlers += OnFilterEdgesChanged;
-            SplitChangedHandlers += OnSplitChanged;
-            TuneChangedHandlers += OnTuneChanged;
-            DrivePowerChangedHandlers += OnDrivePowerChanged;
-            SampleRateChangedHandlers += OnSampleRateChanged;
-            ThetisFocusChangedHandlers += OnThetisFocusChanged;
+            //FilterEdgesChangedHandlers += OnFilterEdgesChanged;
+            //SplitChangedHandlers += OnSplitChanged;
+            //TuneChangedHandlers += OnTuneChanged;
+            //DrivePowerChangedHandlers += OnDrivePowerChanged;
+            //SampleRateChangedHandlers += OnSampleRateChanged;
+            //ThetisFocusChangedHandlers += OnThetisFocusChanged;
             //RX2EnabledChangedHandlers += OnRX2EnabledChanged;
             //RX2EnabledPreChangedHandlers += OnRX2EnabledPreChanged;
-            SpotClickedHandlers += OnSpotClicked;
-            MultiRxHandlers += OnMultiRxChanged;
+            //SpotClickedHandlers += OnSpotClicked;
+            //MultiRxHandlers += OnMultiRxChanged;
 
             VFOTXChangedHandlers += OnVFOTXChanged;
-            TXBandChangeHandlers += OnTXBandChanged;
+            //TXBandChangeHandlers += OnTXBandChanged;
 
-            MeterReadingsChangedHandlers += OnMeterReadings;
+            //MeterReadingsChangedHandlers += OnMeterReadings;
 
-            AlexPresentChangedHandlers += OnAlexPresentChanged;
-            PAPresentChangedHandlers += OnPAPresentChanged;
-            ApolloPresentChangedHandlers += OnApolloPresentChanged;
-            CurrentModelChangedHandlers += OnCurrentModelChanged;
-            TransverterIndexChangedHandlers += OnTransverterIndexChanged;
+            //AlexPresentChangedHandlers += OnAlexPresentChanged;
+            //PAPresentChangedHandlers += OnPAPresentChanged;
+            //ApolloPresentChangedHandlers += OnApolloPresentChanged;
+            //CurrentModelChangedHandlers += OnCurrentModelChanged;
+            //TransverterIndexChangedHandlers += OnTransverterIndexChanged;
 
             TXInhibitChangedHandlers += OnTXInhibitChanged;
 
             //MuteChangedHandlers += OnMuteChanged;
+            //MONChangedHandlers += OnMONChanged;
+            //MONVolumeChangedHandlers += OnMONVolumeChanged;
 
             Display.SetupDelegates();
         }
@@ -52964,14 +53012,14 @@ namespace Thetis
             m_frmSeqLog.ClearButtonEvent -= onClearButton;
 
             BandPreChangeHandlers -= OnBandBeforeChangeHandler;
-            BandNoChangeHandlers -= OnBandNoChangeHandler;
+            //BandNoChangeHandlers -= OnBandNoChangeHandler;
             BandChangeHandlers -= OnBandChangeHandler;
             ModeChangeHandlers -= OnModeChangeHandler;
             VFOAFrequencyChangeHandlers -= OnVFOAFrequencyChangeHandler;
             VFOBFrequencyChangeHandlers -= OnVFOBFrequencyChangeHandler;
-            VFOASubFrequencyChangeHandlers = OnVFOASubFrequencyChangeHandler;
+            //VFOASubFrequencyChangeHandlers = OnVFOASubFrequencyChangeHandler;
             MoxChangeHandlers -= OnMoxChangeHandler;
-            MoxPreChangeHandlers -= OnMoxPreChangeHandler;
+            //MoxPreChangeHandlers -= OnMoxPreChangeHandler;
             SetBandChangeHanders -= OnSetBandChangeHander;
             CentreFrequencyHandlers -= OnCentreFrequencyChanged;
             CTUNChangedHandlers -= OnCTUNChanged;
@@ -52979,34 +53027,36 @@ namespace Thetis
             ZoomFactorChangedHandlers -= OnZoomChanged;
             PowerChangeHanders -= OnPowerChangeHander;
 
-            AttenuatorDataChangedHandlers -= OnAttenuatorDataChanged;
+            //AttenuatorDataChangedHandlers -= OnAttenuatorDataChanged;
             PreampModeChangedHandlers -= OnPreampModeChanged;
 
-            FilterEdgesChangedHandlers -= OnFilterEdgesChanged;
-            SplitChangedHandlers -= OnSplitChanged;
-            TuneChangedHandlers -= OnTuneChanged;
-            DrivePowerChangedHandlers -= OnDrivePowerChanged;
-            SampleRateChangedHandlers -= OnSampleRateChanged;
-            ThetisFocusChangedHandlers -= OnThetisFocusChanged;
+            //FilterEdgesChangedHandlers -= OnFilterEdgesChanged;
+            //SplitChangedHandlers -= OnSplitChanged;
+            //TuneChangedHandlers -= OnTuneChanged;
+            //DrivePowerChangedHandlers -= OnDrivePowerChanged;
+            //SampleRateChangedHandlers -= OnSampleRateChanged;
+            //ThetisFocusChangedHandlers -= OnThetisFocusChanged;
             //RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
             //RX2EnabledPreChangedHandlers -= OnRX2EnabledPreChanged;
-            SpotClickedHandlers -= OnSpotClicked;
-            MultiRxHandlers -= OnMultiRxChanged;
+            //SpotClickedHandlers -= OnSpotClicked;
+            //MultiRxHandlers -= OnMultiRxChanged;
 
             VFOTXChangedHandlers -= OnVFOTXChanged;
-            TXBandChangeHandlers -= OnTXBandChanged;
+            //TXBandChangeHandlers -= OnTXBandChanged;
 
-            MeterReadingsChangedHandlers -= OnMeterReadings;
+            //MeterReadingsChangedHandlers -= OnMeterReadings;
 
-            AlexPresentChangedHandlers -= OnAlexPresentChanged;
-            PAPresentChangedHandlers -= OnPAPresentChanged;
-            ApolloPresentChangedHandlers -= OnApolloPresentChanged;
-            CurrentModelChangedHandlers -= OnCurrentModelChanged;
-            TransverterIndexChangedHandlers -= OnTransverterIndexChanged;
+            //AlexPresentChangedHandlers -= OnAlexPresentChanged;
+            //PAPresentChangedHandlers -= OnPAPresentChanged;
+            //ApolloPresentChangedHandlers -= OnApolloPresentChanged;
+            //CurrentModelChangedHandlers -= OnCurrentModelChanged;
+            //TransverterIndexChangedHandlers -= OnTransverterIndexChanged;
 
             TXInhibitChangedHandlers -= OnTXInhibitChanged;
 
             //MuteChangedHandlers -= OnMuteChanged;
+            //MONChangedHandlers -= OnMONChanged;
+            //MONVolumeChangedHandlers -= OnMONVolumeChanged;
 
             if (m_frmBandStack2 != null) // dont use the singleton accessor as we dont want to make one if one does not exist
             {
@@ -53026,33 +53076,27 @@ namespace Thetis
         {
             TXInhibit = newState;
         }
-        private void OnTransverterIndexChanged(int oldIndex, int newIndex)
-        {
-
-        }
-        private void OnAlexPresentChanged(bool oldSetting, bool newSetting)
-        {
-
-        }
-        private void OnPAPresentChanged(bool oldSetting, bool newSetting)
-        {
-
-        }
-        private void OnApolloPresentChanged(bool oldSetting, bool newSetting)
-        {
-
-        }
-        private void OnCurrentModelChanged(HPSDRModel oldModel, HPSDRModel newModel)
-        {
-
-        }
-        private void OnMeterReadings(int rx, bool mox, ref Dictionary<Reading, float> readings)
-        {
-
-        }
-        private void OnTXBandChanged(Band oldBand, Band newBand)
-        {
-        }
+        //private void OnTransverterIndexChanged(int oldIndex, int newIndex)
+        //{
+        //}
+        //private void OnAlexPresentChanged(bool oldSetting, bool newSetting)
+        //{
+        //}
+        //private void OnPAPresentChanged(bool oldSetting, bool newSetting)
+        //{
+        //}
+        //private void OnApolloPresentChanged(bool oldSetting, bool newSetting)
+        //{
+        //}
+        //private void OnCurrentModelChanged(HPSDRModel oldModel, HPSDRModel newModel)
+        //{
+        //}
+        //private void OnMeterReadings(int rx, bool mox, ref Dictionary<Reading, float> readings)
+        //{
+        //}
+        //private void OnTXBandChanged(Band oldBand, Band newBand)
+        //{
+        //}
         private void OnVFOTXChanged(bool vfoB, bool oldState, bool newState)
         {
             // cat broadcast for Kenwood AI
@@ -53075,46 +53119,33 @@ namespace Thetis
             updateBandstackOverlay(1);
         }
         //
-        private void OnSpotClicked(string callsign, long frequencyHz, int rx = -1, bool vfoB = false)
-        {
-
-        }
-        private void OnMultiRxChanged(bool newState, bool oldState, double vfoASubFrequency, Band b, bool rx2Enabled)
-        {
-
-        }
-        private void OnThetisFocusChanged(bool focus)
-        {
-
-        }
-        private void OnSampleRateChanged(int rx, int oldSampleRate, int newSampleRate)
-        {
-
-        }
-        private void OnTunePowerChanged(int rx, int newPower)
-        {
-
-        }
-        private void OnDrivePowerChanged(int rx, int newPower, bool tune)
-        {
-
-        }
-        private void OnTuneChanged(int rx, bool oldTune, bool newTune)
-        {
-
-        }
-        private void OnSplitChanged(int rx, bool oldSplit, bool newSplit)
-        {
-
-        }
-        private void OnFilterEdgesChanged(int rx, Filter filter, Band band, int low, int high, string sName)
-        {
-
-        }
-        private void OnAttenuatorDataChanged(int rx, int oldAtt, int newAtt)
-        {
-
-        }
+        //private void OnSpotClicked(string callsign, long frequencyHz, int rx = -1, bool vfoB = false)
+        //{
+        //}
+        //private void OnMultiRxChanged(bool newState, bool oldState, double vfoASubFrequency, Band b, bool rx2Enabled)
+        //{
+        //}
+        //private void OnThetisFocusChanged(bool focus)
+        //{
+        //}
+        //private void OnSampleRateChanged(int rx, int oldSampleRate, int newSampleRate)
+        //{
+        //}
+        //private void OnDrivePowerChanged(int rx, int newPower, bool tune)
+        //{
+        //}
+        //private void OnTuneChanged(int rx, bool oldTune, bool newTune)
+        //{
+        //}
+        //private void OnSplitChanged(int rx, bool oldSplit, bool newSplit)
+        //{
+        //}
+        //private void OnFilterEdgesChanged(int rx, Filter filter, Band band, int low, int high, string sName)
+        //{
+        //}
+        //private void OnAttenuatorDataChanged(int rx, int oldAtt, int newAtt)
+        //{
+        //}
         private void OnPreampModeChanged(int rx, PreampMode oldMode, PreampMode newMode)
         {
 
@@ -53463,10 +53494,10 @@ namespace Thetis
             UpdateDiversityValues();
             NetworkIO.SendHighPriority(1);
         }
-        private void OnBandNoChangeHandler(int rx, Band band)
-        {
-            Debug.Print("BAND NO CHANGE : " + band.ToString());
-        }
+        //private void OnBandNoChangeHandler(int rx, Band band)
+        //{
+        //    Debug.Print("BAND NO CHANGE : " + band.ToString());
+        //}
         private void OnBandChangeHandler(int rx, Band oldBand, Band newBand)
         {
             //reset smeter pixel history //MW0LGE_21a
@@ -53539,9 +53570,9 @@ namespace Thetis
 
             //Debug.Print("vfoB changed : old:" + oldFreq.ToString() + "   new:" + newFreq.ToString());
         }
-        private void OnVFOASubFrequencyChangeHandler(Band oldBand, Band newBand, DSPMode newMode, Filter newFilter, double oldFreq, double newFreq, double newCentreF, bool newCTUN, int newZoomSlider, double offset, int rx)
-        {
-        }
+        //private void OnVFOASubFrequencyChangeHandler(Band oldBand, Band newBand, DSPMode newMode, Filter newFilter, double oldFreq, double newFreq, double newCentreF, bool newCTUN, int newZoomSlider, double offset, int rx)
+        //{
+        //}
         private void OnMoxChangeHandler(int rx, bool oldMox, bool newMox)
         {
             //MW0LGE_21k disable xPA if not permitted to hot switch
@@ -53558,10 +53589,9 @@ namespace Thetis
 
             //Debug.Print("mox changed : old:" + oldMox.ToString() + "   new:" + newMox.ToString());
         }
-        private void OnMoxPreChangeHandler(int rx, bool currentMox, bool expectedMox)
-        {
-            
-        }
+        //private void OnMoxPreChangeHandler(int rx, bool currentMox, bool expectedMox)
+        //{            
+        //}
 
         private void updateStackNumberDisplay(BandStackFilter bsf)
         {
