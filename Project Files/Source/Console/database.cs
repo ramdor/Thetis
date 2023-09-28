@@ -8538,7 +8538,7 @@ namespace Thetis
                 MessageBox.Show("A database write to file operation failed.  " +
                     "The exception error was:\n\n" + ex.Message,
                     "ERROR: Database Write Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 return false;
             }
             return true;
@@ -9002,7 +9002,7 @@ namespace Thetis
         }
        
         //-W2PA New version of ImportDatabase to merge an old database or partly corruped one with a new default one
-        public static bool ImportAndMergeDatabase(string filename, string appDataPath)
+        public static bool ImportAndMergeDatabase(string filename, string appDataPath, bool manualImport)
         {
             //oldDB is the db that is being imported
             //existingDB is the db that is currently in use / loaded
@@ -9570,7 +9570,8 @@ namespace Thetis
             }
 
             WriteImportLog(logFN, "\nImport succeeded.\n");
-            importedDS = true;  // Prevents overwriting the new database file on next exit
+            importedDS = manualImport;  // Prevents overwriting the new database file on next exit // [2.10.1.0] MW0LGE added flag manualImport so that db version update
+                                        // will allow saving when the final restart has completed
             return true;
         }
 

@@ -12496,7 +12496,7 @@ namespace Thetis
         {
             //-W2PA Import more carefully, allowing DBs created by previous versions to retain settings and options
             //MW0LGE_[2.9.0.7] changed structure slightly
-            bool success = DB.ImportAndMergeDatabase(openFileDialog1.FileName, console.AppDataPath);
+            bool success = DB.ImportAndMergeDatabase(openFileDialog1.FileName, console.AppDataPath, true);
 
             if (success)
                 MessageBox.Show("Database Imported Successfully. Thetis will now close.\n\nPlease RE-START.",

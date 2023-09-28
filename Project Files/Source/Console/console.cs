@@ -751,7 +751,7 @@ namespace Thetis
                             if (File.Exists(autoMergeFileName)) // We have already reset and are ready for trying a merge
                             {
                                 //-W2PA Import carefully, allowing use of DB files created by previous versions so as to retain settings and options   
-                                if (DB.ImportAndMergeDatabase(autoMergeFileName, AppDataPath))
+                                if (DB.ImportAndMergeDatabase(autoMergeFileName, AppDataPath, false))
                                 {
                                     string versionName = TitleBar.GetString();
                                     versionName = versionName.Remove(versionName.LastIndexOf("("));  // strip off date                                    
