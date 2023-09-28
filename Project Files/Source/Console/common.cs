@@ -1011,5 +1011,39 @@ namespace Thetis
             frm.Opacity = 0;
         }
         #endregion
+
+        public static int CompareVersions(string version1, string version2)
+        {
+			// in the format X.X X
+
+            string[] parts1 = version1.Split('.');
+            string[] parts2 = version2.Split('.');
+
+            if (parts1.Length != 3 || parts2.Length != 3)
+            {
+                throw new ArgumentException("Invalid version number format. It should be X.X.X");
+            }
+
+            int major1 = int.Parse(parts1[0]);
+            int minor1 = int.Parse(parts1[1]);
+            int patch1 = int.Parse(parts1[2]);
+
+            int major2 = int.Parse(parts2[0]);
+            int minor2 = int.Parse(parts2[1]);
+            int patch2 = int.Parse(parts2[2]);
+
+            if (major1 != major2)
+            {
+                return major1.CompareTo(major2);
+            }
+            else if (minor1 != minor2)
+            {
+                return minor1.CompareTo(minor2);
+            }
+            else
+            {
+                return patch1.CompareTo(patch2);
+            }
+        }
     }
 }

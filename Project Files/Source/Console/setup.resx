@@ -141,9 +141,6 @@
   <metadata name="numericUpDownTS12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>302, 17</value>
-  </metadata>
   <data name="richTextBox1.Text" xml:space="preserve">
     <value>Begin with all spinners set equal to their labelled value.
 For each spinner, from minimum to maximum, adjust the output power
@@ -156,16 +153,6 @@ POWER EXCEEDING THE RATING OF YOUR RADIO!
   </data>
   <data name="lgLinearGradientRX1.EncodedText" xml:space="preserve">
     <value>OXwxfDAuMDAwfC0xNjc3NzIxNnwwfDAuMTI1fC0xNDczNzYzM3wwfDAuMjUwfC0xMjY5ODA1MHwwfDAuMzc1fC0xMDY1ODQ2N3wwfDAuNTAwfC04NjE4ODg0fDB8MC42MjV8LTY1NzkzMDF8MHwwLjc1MHwtNDUzOTcxOHwwfDAuODc1fC0yNTAwMTM1fDF8MS4wMDB8LTF8</value>
-  </data>
-  <data name="groupBox2.ToolTip" xml:space="preserve">
-    <value>Allows you to view the Display are of Thetis remotely
-
-To view your Display.
-1) Locate the IP address off your computer (example: 192.168.1.100)
-2) Open your Web browser and type:  http://&lt;your local IP address&gt;:8081
-
-
-</value>
   </data>
   <data name="udHttpRefresh.ToolTip" xml:space="preserve">
     <value>Select Port# to allow Remote Login by adding the Port# 
@@ -185,9 +172,28 @@ or http://localhost:8081
 But you must also add this port# to your Routers "Port Forward" options
 If Windows Firewall Pops up on the screen, Click on the Allow access.</value>
   </data>
+  <data name="groupBox2.ToolTip" xml:space="preserve">
+    <value>Allows you to view the Display are of Thetis remotely
+
+To view your Display.
+1) Locate the IP address off your computer (example: 192.168.1.100)
+2) Open your Web browser and type:  http://&lt;your local IP address&gt;:8081
+
+
+</value>
+  </data>
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>162, 17</value>
   </metadata>
+  <data name="lblTXProfileWarning.ToolTip" xml:space="preserve">
+    <value>One or more settings have been changed that are
+only stored in a TX profile. This can include things
+like TX EQ, CFC, buffer sizes, VAC state (on/off) and
+many others. You need to save the TX profile so that
+these settings are stored. Use the Transmit-&gt;Profile Save
+button, or use the Auto Save TX Profile options on the
+Transmit tab</value>
+  </data>
   <metadata name="saveFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>516, 17</value>
   </metadata>
@@ -205,6 +211,9 @@ If Windows Firewall Pops up on the screen, Click on the Allow access.</value>
   </metadata>
   <metadata name="tmrCFCOMPGain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>1176, 17</value>
+  </metadata>
+  <metadata name="tmrCheckProfile.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1322, 17</value>
   </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>99</value>

@@ -8455,7 +8455,7 @@ namespace Thetis
             {
                 try
                 {
-                ds.ReadXml(file_name);
+                    ds.ReadXml(file_name);
                 }
                 catch
                 {
@@ -8538,7 +8538,7 @@ namespace Thetis
                 MessageBox.Show("A database write to file operation failed.  " +
                     "The exception error was:\n\n" + ex.Message,
                     "ERROR: Database Write Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 return false;
             }
             return true;
@@ -8890,8 +8890,11 @@ namespace Thetis
                 }
             }
         }
-        public static void SaveVarsDictionary(string tableName, ref Dictionary<string,string> dict)
+        public static void SaveVarsDictionary(string tableName, ref Dictionary<string,string> dict, bool bSaveEmptyValues = true)
         {
+            //[2.10.1.0] MW0LGE added bSaveEmptyValues. All entries need to be in the database even if empty, because
+            //on a DB upgrade the database starts off empty, and without these added into the newdb they wont merge from the oldDb
+
             if (!ds.Tables.Contains(tableName))
                 AddFormTable(tableName);
 
@@ -8902,7 +8905,7 @@ namespace Thetis
                 string key = kvp.Key;
                 string value = kvp.Value;
 
-                if (value.Length == 0) // skip it as no data was provided
+                if (!bSaveEmptyValues && value.Length == 0) // skip it as no data was provided
                     continue;
 
                 //MW0LGE converted to Rows.Find because it is insanely faster, needs a primary key though
@@ -8927,8 +8930,11 @@ namespace Thetis
                 }
             }
         }
-        public static void SaveVars(string tableName, ref ArrayList list)
+        public static void SaveVars(string tableName, ref ArrayList list, bool bSaveEmptyValues = true)
         {
+            //[2.10.1.0] MW0LGE added bSaveEmptyValues. All entries need to be in the database even if empty, because
+            //on a DB upgrade the database starts off empty, and without these added into the newdb they wont merge from the oldDb
+
             if (!ds.Tables.Contains(tableName))
                 AddFormTable(tableName);
 
@@ -8943,7 +8949,7 @@ namespace Thetis
                         vals[1] += "/" + vals[i];
                 }
 
-                if (vals.Length <= 1) // skip it as no data was provided
+                if (!bSaveEmptyValues && vals.Length <= 1) // skip it as no data was provided
                     continue;
                 
                 //DataRow[] rows = ds.Tables[tableName].Select("Key = '" + vals[0] + "'");
@@ -9002,7 +9008,7 @@ namespace Thetis
         }
        
         //-W2PA New version of ImportDatabase to merge an old database or partly corruped one with a new default one
-        public static bool ImportAndMergeDatabase(string filename, string appDataPath)
+        public static bool ImportAndMergeDatabase(string filename, string appDataPath, bool manualImport)
         {
             //oldDB is the db that is being imported
             //existingDB is the db that is currently in use / loaded
@@ -9145,12 +9151,13 @@ namespace Thetis
                     //    break;
 
                     //BandStack2
+                    case "BandStack2Entries":
                     case "BandStack2Filters":
                     case "BandStack2FilterFrequencies":
                     case "BandStack2FilterModes":
                     case "BandStack2FilterSubModes":
                     case "BandStack2FilterBands":
-                    case "BandStack2Entries":
+                    //case "BandStack2HiddenEntries": // not used yet
                         tempMergedTable.Clear();
                         foreach (DataTable t in oldDB.Tables)
                         {
@@ -9179,7 +9186,8 @@ namespace Thetis
                             }
 
                             //import any from old band stack system into bandstack2entries if coming from older db and we havent added them into the merged table already
-                            if ((String.Compare(_versionnumber, "2.8.12") < 0) && table.TableName == "BandStack2Entries")
+                            //if ((String.Compare(_versionnumber, "2.8.12") < 0) && table.TableName == "BandStack2Entries")
+                            if ((Common.CompareVersions(_versionnumber, "2.8.12") < 0) && table.TableName == "BandStack2Entries")
                             {
                                 foundTable = false;
                                 foreach (DataTable t in oldDB.Tables)
@@ -9345,7 +9353,7 @@ namespace Thetis
                             {
                                 DataRow newSettingsRow = row;
                                 DataRow oldSettingsRow;
-                                string selector = "Key = '" + row["Key"] + "'";
+                                string selector = "Key = '" + thisKey + "'";
                                 DataRow[] foundRow = tempTable.Select(selector);
                                 if (foundRow.Length != 0)
                                 {
@@ -9361,7 +9369,8 @@ namespace Thetis
                                 }
                                 else tempMergedTable.ImportRow(row);
                             }
-                            else if (thisKey == "comboRadioModel" && String.Compare(_versionnumber, "2.7.0") < 0)
+                            //else if (thisKey == "comboRadioModel" && String.Compare(_versionnumber, "2.7.0") < 0)
+                            else if (thisKey == "comboRadioModel" && Common.CompareVersions(_versionnumber, "2.7.0") < 0)
                             {
                                 //MW0LGE this db contains comboRadioModel, we need to pull over old radio selection from radio button implementation
                                 //but only if exists. This will always run even if db being imported does not contain these rad button setting, and
@@ -9406,7 +9415,7 @@ namespace Thetis
                             }
                             else
                             {
-                                string selector = "Key = '" + row["Key"] + "'";
+                                string selector = "Key = '" + thisKey + "'";                                
                                 DataRow[] foundRow = tempTable.Select(selector);
                                 if (foundRow.Length != 0) tempMergedTable.ImportRow(foundRow[0]);
                                 else tempMergedTable.ImportRow(row);
@@ -9567,7 +9576,8 @@ namespace Thetis
             }
 
             WriteImportLog(logFN, "\nImport succeeded.\n");
-            importedDS = true;  // Prevents overwriting the new database file on next exit
+            importedDS = manualImport;  // Prevents overwriting the new database file on next exit // [2.10.1.0] MW0LGE added flag manualImport so that db version update
+                                        // will allow saving when the final restart has completed
             return true;
         }
 
