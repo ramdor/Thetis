@@ -9409,7 +9409,7 @@ namespace Thetis
                             }
                             else
                             {
-                                string selector = "Key = '" + row["Key"] + "'";
+                                string selector = "Key = '" + thisKey + "'";                                
                                 DataRow[] foundRow = tempTable.Select(selector);
                                 if (foundRow.Length != 0) tempMergedTable.ImportRow(foundRow[0]);
                                 else tempMergedTable.ImportRow(row);

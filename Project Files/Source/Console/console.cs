@@ -1282,14 +1282,7 @@ namespace Thetis
         public bool reset_db = false;
         protected override void Dispose(bool disposing)
         {
-            if (Midi2Cat != null) Midi2Cat.CloseMidi2Cat();
-            if (disposing)
-            {
-                if (components != null)
-                {
-                    components.Dispose();
-                }
-            }            
+            if (Midi2Cat != null) Midi2Cat.CloseMidi2Cat();        
 
             ExitConsole();
 
@@ -1304,6 +1297,14 @@ namespace Thetis
 
                 File.Copy(db_file_name, AppDataPath + "DB_Archive\\Thetis_" + file + "_" + datetime + ".xml");
                 File.Delete(db_file_name);
+            }
+
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
             }
 
             base.Dispose(disposing);
@@ -2556,45 +2557,16 @@ namespace Thetis
 
         public void ExitConsole()
         {
-            //
             N1MM.Stop();
-            //
-
-            ////MW0LGE_21d
-            ////cause spot form to save out, because it wont if currently shown, the _closing event does not fire on the form
-            //if (SpotForm != null && !SpotForm.IsDisposed) SpotForm.ForceSave();
-
-            ////MW0LGE_21d -- the db is updated with everything
-            ////all stored as part of DB.Exit below
-            ////we are shutting down, but may have moved frquency and not stored that into the current active slot, so do it now
-            ////so we can use it when we restart
-            //BandStackFilter bsf = BandStackManager.GetFilter(RX1Band, false);
-            //if (bsf != null)
-            //{
-            //    bsf.UpdateCurrentWithLastVisitedData(m_bIgnoreFrequencyDupes);
-            //    bsf.GenerateFilteredList(true);
-            //}
-            ////now save it all
-            //BandStackManager.SaveToDB();
-            //if (m_frmBandStack2 != null) BandStack2Form.Store();  // using frm variable, as we may reach here without the singlton being instanced, and there is no point doing so
-            //                                                      // this happens on a DB merge etc.
                                                                   
             if (n1mm_udp_client != null)
                 n1mm_udp_client.Close();
-
-            //if (SaveTXProfileOnExit)    // save the tx profile
-            //{
-            //    SetupForm.SaveTXProfileData();
-            //}
 
             if (!IsSetupFormNull)		// make sure Setup form is deallocated
                 SetupForm.Dispose();
 
             if (m_frmCWXForm != null)			// make sure CWX form is deallocated
                 m_frmCWXForm.Dispose();
-
-            //chkPower.Checked = false;	// make sure power is off		
-            //ckQuickRec.Checked = false; // make sure recording is stopped
 
             PA19.PA_Terminate();		// terminate audio interface
             DB.Exit();					// close and save database
@@ -31764,18 +31736,20 @@ namespace Thetis
             if (chkPower.Checked == true)  // If we're quitting without first clicking off the "Power" button            
                 chkPower.Checked = false;
 
-            MemoryList.Save();
-            SetupForm.SaveNotchesToDatabase();
-
             Thread.Sleep(100);
 
             SaveState();
 
+            MemoryList.Save();
+            
             if (!IsSetupFormNull)
             {
+                SetupForm.SaveNotchesToDatabase();
+
                 SetupForm.Owner = null;
                 SetupForm.Hide();
             }
+
             if (m_frmCWXForm != null) m_frmCWXForm.Hide();
             if (EQForm != null) EQForm.Hide();
             if (XVTRForm != null) XVTRForm.Hide();
@@ -31852,8 +31826,8 @@ namespace Thetis
 
             DumpCap.StopDumpcap();
 
-            //-
-            //[2.10.1.0] MW0LGE - moved here from ExitConsole
+            //-<<<<
+            //[2.10.1.0] MW0LGE - moved all between -<<<< here from ExitConsole()
 
             //cause spot form to save out, because it wont if currently shown, the _closing event does not fire on the form
             if (SpotForm != null && !SpotForm.IsDisposed) SpotForm.ForceSave();
@@ -31880,7 +31854,7 @@ namespace Thetis
 
             chkPower.Checked = false;	// make sure power is off		
             ckQuickRec.Checked = false; // make sure recording is stopped
-            //-
+            //-<<<<
 
             this.Hide();
             frmShutDownForm.Close(); // last thing to get rid of
