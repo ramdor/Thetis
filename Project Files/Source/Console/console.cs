@@ -955,7 +955,7 @@ namespace Thetis
             if (run_setup_wizard)
             {
                 ArrayList a = new ArrayList { "SetupWizard/1" };
-                DB.SaveVars("State", ref a);
+                DB.SaveVars("State", ref a, true);
 
                 SetupForm.SaveOptions();
                 SaveState();
@@ -3161,7 +3161,7 @@ namespace Thetis
                                                 // and if we had 20 in there before, and now only write 3, how do we know?
                                                 // as it will still be [0]..[19]
 
-            DB.SaveVars("State", ref a);		// save the values to the DB
+            DB.SaveVars("State", ref a, true);		// save the values to the DB
         }
 
         private FormWindowState m_WindowState = FormWindowState.Normal;

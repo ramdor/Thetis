@@ -1457,7 +1457,7 @@ namespace Thetis
             // remove any outdated options from the DB MW0LGE_22b
             handleOutdatedOptions(false);
 
-            DB.SaveVarsDictionary("Options", ref a);
+            DB.SaveVarsDictionary("Options", ref a, true);
             //DB.WriteCurrentDB(console.DBFileName);//MW0LGE_[2.9.0.7]
             DB.WriteDB(console.DBFileName);
         }
@@ -23192,7 +23192,7 @@ namespace Thetis
 
         private void tmrCFCOMPGain_Tick(object sender, EventArgs e)
         {
-            if (!console.MOX || !picCFC.Visible || !chkCFCEnable.Checked)
+            if (!picCFC.Visible || !chkCFCEnable.Checked || console.MOX)
             {
                 tmrCFCOMPGain.Interval = 1000;
                 if (m_bShowingCFC) picCFC.Invalidate();

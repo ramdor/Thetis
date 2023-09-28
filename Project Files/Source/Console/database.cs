@@ -8455,7 +8455,7 @@ namespace Thetis
             {
                 try
                 {
-                ds.ReadXml(file_name);
+                    ds.ReadXml(file_name);
                 }
                 catch
                 {
@@ -8890,8 +8890,11 @@ namespace Thetis
                 }
             }
         }
-        public static void SaveVarsDictionary(string tableName, ref Dictionary<string,string> dict)
+        public static void SaveVarsDictionary(string tableName, ref Dictionary<string,string> dict, bool bSaveEmptyValues = true)
         {
+            //[2.10.1.0] MW0LGE added bSaveEmptyValues. All entries need to be in the database even if empty, because
+            //on a DB upgrade the database starts off empty, and without these added into the newdb they wont merge from the oldDb
+
             if (!ds.Tables.Contains(tableName))
                 AddFormTable(tableName);
 
@@ -8902,7 +8905,7 @@ namespace Thetis
                 string key = kvp.Key;
                 string value = kvp.Value;
 
-                if (value.Length == 0) // skip it as no data was provided
+                if (!bSaveEmptyValues && value.Length == 0) // skip it as no data was provided
                     continue;
 
                 //MW0LGE converted to Rows.Find because it is insanely faster, needs a primary key though
@@ -8927,8 +8930,11 @@ namespace Thetis
                 }
             }
         }
-        public static void SaveVars(string tableName, ref ArrayList list)
+        public static void SaveVars(string tableName, ref ArrayList list, bool bSaveEmptyValues = true)
         {
+            //[2.10.1.0] MW0LGE added bSaveEmptyValues. All entries need to be in the database even if empty, because
+            //on a DB upgrade the database starts off empty, and without these added into the newdb they wont merge from the oldDb
+
             if (!ds.Tables.Contains(tableName))
                 AddFormTable(tableName);
 
@@ -8943,7 +8949,7 @@ namespace Thetis
                         vals[1] += "/" + vals[i];
                 }
 
-                if (vals.Length <= 1) // skip it as no data was provided
+                if (!bSaveEmptyValues && vals.Length <= 1) // skip it as no data was provided
                     continue;
                 
                 //DataRow[] rows = ds.Tables[tableName].Select("Key = '" + vals[0] + "'");
@@ -9347,7 +9353,7 @@ namespace Thetis
                             {
                                 DataRow newSettingsRow = row;
                                 DataRow oldSettingsRow;
-                                string selector = "Key = '" + row["Key"] + "'";
+                                string selector = "Key = '" + thisKey + "'";
                                 DataRow[] foundRow = tempTable.Select(selector);
                                 if (foundRow.Length != 0)
                                 {
