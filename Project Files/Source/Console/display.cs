@@ -7071,13 +7071,15 @@ namespace Thetis
                     }
 
                     int localRit = 0;
-                    int localXit = local_mox ? 0 : xit_hz;
+                    int localXit;
+                    if (local_mox)
+                        localXit = displayduplex ? xit_hz : 0;
+                    else
+                        localXit = xit_hz;
                     if (!split_enabled)
                     {
                         if (!local_mox)
                             localRit = rx == 1 ? rit_hz : 0;
-                        //else
-                        //    localRit = rx == 1 && _rx1ClickDisplayCTUN && displayduplex ? rit_hz : 0;
                         filter_left_x = (int)((float)(filter_low_tmp - Low - f_diff + localXit - localRit) / width * W);
                         filter_right_x = (int)((float)(filter_high_tmp - Low - f_diff + localXit - localRit) / width * W);
                     }
@@ -7170,13 +7172,13 @@ namespace Thetis
             if (m_bShowBandStackOverlays && m_bandStackOverlays != null && rx == 1 && !local_mox && !bIsWaterfall)
             {
                 long rf_freq = vfoa_hz;
-                int rit = rit_hz;
+                int local_rit = _rx1ClickDisplayCTUN ? 0 : rit_hz;
 
                 SharpDX.Direct2D1.Brush brush;
                 for (int n = 0; n < m_bandStackOverlays.Length; n++)
                 {
-                    int filter_left_x = (int)((float)((((m_bandStackOverlays[n].Frequency * 1e6) - rf_freq) + m_bandStackOverlays[n].LowFilter) - Low - rit) / width * W);
-                    int filter_right_x = (int)((float)((((m_bandStackOverlays[n].Frequency * 1e6) - rf_freq) + m_bandStackOverlays[n].HighFilter) - Low - rit) / width * W);
+                    int filter_left_x = (int)((float)((((m_bandStackOverlays[n].Frequency * 1e6) - rf_freq) + m_bandStackOverlays[n].LowFilter) - Low - local_rit) / width * W);
+                    int filter_right_x = (int)((float)((((m_bandStackOverlays[n].Frequency * 1e6) - rf_freq) + m_bandStackOverlays[n].HighFilter) - Low - local_rit) / width * W);
 
                     brush = (n == m_nHighlightedBandStackEntryIndex) ? m_bDX2_bandstack_overlay_brush_highlight : m_bDX2_bandstack_overlay_brush;
 
@@ -7262,7 +7264,7 @@ namespace Thetis
             //      MW0LGE
             if (local_mox)
             {
-                int localXit = local_mox ? 0 : xit_hz;
+                int localXit = displayduplex ? xit_hz : 0;
 
                 if (!split_enabled) //MW0LGE_21k8
                 {
@@ -7381,7 +7383,8 @@ namespace Thetis
                     //if (split_enabled) vfo = vfoa_sub_hz;//MW0LGE_21k8
                     if (split_enabled) vfo = vfoa_sub_hz - (localSubDiff);
                     else vfo = vfoa_hz;
-                    vfo += xit_hz;
+
+                    vfo += displayduplex ? 0 : xit_hz;
                 }
                 else if (/*mox*/local_mox && tx_on_vfob)
                 {
@@ -8028,6 +8031,11 @@ namespace Thetis
 
             if (!bIsWaterfall && SpotControl.SP_Active != 0)
             {
+                int localRit;
+                if (rx == 1)
+                    localRit = _rx1ClickDisplayCTUN ? 0 : rit_hz;
+                else
+                    localRit = 0;
 
                 int iii = 0;                          // ke9ns add stairstep holder
 
@@ -8078,7 +8086,7 @@ namespace Thetis
                 {
                     if ((SpotControl.DX_Freq[ii] >= VFOLow) && (SpotControl.DX_Freq[ii] <= VFOHigh))
                     {
-                        int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(SpotControl.DX_Freq[ii] + cwSideToneShiftInverted - VFOLow))); // determine DX spot line pos on current panadapter screen
+                        int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(SpotControl.DX_Freq[ii] + cwSideToneShiftInverted - VFOLow - localRit))); // determine DX spot line pos on current panadapter screen
 
                         holder[kk] = ii;                    // ii is the actual DX_INdex pos the the KK holds
                         holder1[kk] = VFO_DXPos;
@@ -9542,6 +9550,7 @@ namespace Thetis
             int rxDisplayHigh;
 
             bool local_mox = mox && ((rx == 1 && !tx_on_vfob) || (rx == 2 && tx_on_vfob) || (rx == 1 && tx_on_vfob && !console.RX2Enabled));
+            int local_rit;
 
             if (rx == 1)
             {
@@ -9549,6 +9558,8 @@ namespace Thetis
                 rxDisplayLow = RXDisplayLow;
                 rxDisplayHigh = RXDisplayHigh;
                 _spotLayerRightRX1.Clear();
+
+                local_rit = _rx1ClickDisplayCTUN ? 0 : rit_hz;
             }
             else// if (rx == 2)
             {
@@ -9556,6 +9567,8 @@ namespace Thetis
                 rxDisplayLow = RX2DisplayLow;
                 rxDisplayHigh = RX2DisplayHigh;
                 _spotLayerRightRX2.Clear();
+
+                local_rit = 0;
             }
 
             int yTop = nVerticalShift + 20;
@@ -9581,7 +9594,7 @@ namespace Thetis
                 int height = (int)spot.Size.Height + 2;
 
                 int halfWidth = width / 2;
-                float x = (spot.frequencyHZ - vfoLow - cwShift) * HzToPixel;
+                float x = (spot.frequencyHZ - vfoLow - cwShift - local_rit) * HzToPixel;
 
                 int leftX;
                 int rightX;
