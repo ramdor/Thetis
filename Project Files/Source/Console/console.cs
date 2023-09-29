@@ -34636,7 +34636,9 @@ namespace Thetis
 
             bool bLimitToSpectral = m_bLimitCTToSpectralArea && ((m_bLimitCTMouseOnly && rx1_click_tune_drag) || !m_bLimitCTMouseOnly);
 
-            if (click_tune_display && bCanFitInView && (/*(mox && VFOBTX) ||*/ !mox || display_duplex)/*&&
+            bool bRitOk = !mox || (mox && VFOBTX && RX2Enabled); //[2.10.1.0] MW0LGE we can apply rit
+
+            if (click_tune_display && bCanFitInView && ((mox && VFOBTX && RX2Enabled) || !mox || display_duplex)/*&&
                 ((Display.CurrentDisplayMode == DisplayMode.PANADAPTER && mox && VFOBTX) ||
                 (Display.CurrentDisplayMode == DisplayMode.WATERFALL && mox && VFOBTX) ||
                 (Display.CurrentDisplayMode == DisplayMode.PANAFALL && mox && VFOBTX) ||
@@ -34702,7 +34704,7 @@ namespace Thetis
                     }
                 }
 
-                if (chkRIT.Checked)
+                if (chkRIT.Checked && bRitOk)
                     rx1_osc -= (int)udRIT.Value;// *0.000001;
 
                 // check if we move outside sample area
@@ -35080,7 +35082,7 @@ namespace Thetis
             double rx_freq = freq;
             double tx_freq = freq;
 
-            if (chkRIT.Checked)
+            if (chkRIT.Checked && bRitOk)
                 rx_freq += (int)udRIT.Value * 0.000001;
 
             if (rx_freq < min_freq) rx_freq = min_freq;
@@ -35649,6 +35651,8 @@ namespace Thetis
 
             bool bLimitToSpectral = m_bLimitCTToSpectralArea && ((m_bLimitCTMouseOnly && rx2_click_tune_drag) || !m_bLimitCTMouseOnly);
 
+            bool bRitOk = !mox || (mox && VFOATX && RX2Enabled); //[2.10.1.0] MW0LGE we can apply rit to rx2
+
             if (rx2_enabled)
             {
                 if (click_tune_rx2_display && bCanFitInView && (/*(mox && !VFOBTX) ||*/ !mox)
@@ -35715,7 +35719,7 @@ namespace Thetis
                         }
                     }
 
-                    if (chkRIT.Checked && VFOSync)
+                    if (chkRIT.Checked && VFOSync && bRitOk)
                         rx2_osc -= (int)udRIT.Value;// *0.000001;
 
                     // check if we move outside sample area
@@ -36233,7 +36237,7 @@ namespace Thetis
                 RX2XVTRGainOffset = XVTRForm.GetRXGain(rx2_xvtr_index);
             }
 
-            if (chkRIT.Checked && VFOSync)
+            if (chkRIT.Checked && VFOSync && bRitOk)
                 freq += (int)udRIT.Value * 0.000001;
 
             if (freq < min_freq) freq = min_freq;
@@ -42651,7 +42655,9 @@ namespace Thetis
 
             //	if(fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
             //	{
-            if (chkVFOSplit.Checked || full_duplex)
+
+            //if (chkVFOSplit.Checked || full_duplex)
+            if (chkVFOSplit.Checked || full_duplex || (VFOBTX && RX2Enabled)) //[2.10.1.0] MW0LGE need to reprocess freq if txing on rx2
                 txtVFOBFreq_LostFocus(this, EventArgs.Empty);
             else
                 txtVFOAFreq_LostFocus(this, EventArgs.Empty);
@@ -42686,22 +42692,30 @@ namespace Thetis
                 Display.RIT = 0;
             }
 
-            if (!mox)
-            {
-                txtVFOAFreq_LostFocus(this, EventArgs.Empty);
-                txtVFOBFreq_LostFocus(this, EventArgs.Empty);
-            }
+            //if (!mox)
+            //{
+            //    txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+            //    txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+            //}
+            //[2.10.1.0] MW0LGE need this so that osc offset gets assigned if needed
+            if (!mox || (mox && (VFOBTX && RX2Enabled))) txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+            if (!mox || (mox && VFOATX)) txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+
             AndromedaIndicatorCheck(EIndicatorActions.eINRIT, false, chkRIT.Checked);
 
         }
 
         private void udRIT_ValueChanged(object sender, System.EventArgs e)
         {
-            if (chkRIT.Checked && !mox)
-            {
-                txtVFOAFreq_LostFocus(this, EventArgs.Empty);
-                txtVFOBFreq_LostFocus(this, EventArgs.Empty);
-            }
+            //if (chkRIT.Checked && !mox)
+            //{
+            //    txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+            //    txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+            //}
+            //[2.10.1.0] MW0LGE need this so that osc offset gets assigned if needed
+            if (!mox || (mox && (VFOBTX && RX2Enabled))) txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+            if (!mox || (mox && VFOATX)) txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+
             lblRITValue.Text = udRIT.Value.ToString();
             if (chkRIT.Checked) Display.RIT = (int)udRIT.Value;
 
@@ -42721,7 +42735,8 @@ namespace Thetis
         {
             if (chkXIT.Checked)
             {
-                if (chkVFOSplit.Checked)
+                //if (chkVFOSplit.Checked)
+                if (chkVFOSplit.Checked || (VFOBTX && RX2Enabled)) //[2.10.1.0] MW0LGE need to reprocess freq in the case of tx'ing on rx2 as well
                     txtVFOBFreq_LostFocus(this, EventArgs.Empty);
                 else
                     txtVFOAFreq_LostFocus(this, EventArgs.Empty);
