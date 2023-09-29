@@ -13203,13 +13203,19 @@ namespace Thetis
             Common.HightlightControl(ptbCPDR, bHighlight);
             Common.HightlightControl(ptbMic, bHighlight);
             Common.HightlightControl(ptbFMMic, bHighlight);
-            Common.HightlightControl(ptbPWR, bHighlight);
+            //Common.HightlightControl(ptbPWR, bHighlight); //[2.10.1.0] MW0LGE removed as of MW0LGE_21k9rc5 has moved to perband
             Common.HightlightControl(chkShowTXFilter, bHighlight);
             Common.HightlightControl(chkFWCATUBypass, bHighlight);
             Common.HightlightControl(chkMicMute, bHighlight);
+            Common.HightlightControl(udTXFilterLow, bHighlight);
+            Common.HightlightControl(udTXFilterHigh, bHighlight);
 
             // set via EQ form, consequently included in tx profile
             Common.HightlightControl(chkTXEQ, bHighlight);
+
+            //vac buttons
+            Common.HightlightControl(chkVAC1, bHighlight);
+            Common.HightlightControl(chkVAC2, bHighlight);
         }
         public bool DX
         {
