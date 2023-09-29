@@ -26927,6 +26927,11 @@ namespace Thetis
 
             tmrCheckProfile.Enabled = true;
         }
+
+        private void btnClearTCISpots_Click(object sender, EventArgs e)
+        {
+            SpotManager2.ClearAllSpots();
+        }
     }
 
     #region PADeviceInfo Helper Class

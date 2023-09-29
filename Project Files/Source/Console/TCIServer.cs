@@ -1167,6 +1167,10 @@ namespace Thetis
             if (console.ThreadSafeTCIAccessor.PowerOn)
 				console.ThreadSafeTCIAccessor.PowerOn = false;
 		}
+		private void handleSpotClear()
+		{
+			SpotManager2.ClearAllSpots();
+		}
 		private void handleSplitEnableMessage(string[] args)
 		{
 			int rx = 0;
@@ -1955,6 +1959,9 @@ namespace Thetis
                     case "mon_volume":
                         handleMONVolume(null, false);
                         break;
+					case "spot_clear":
+						handleSpotClear();
+						break;
                 }
             }
 		}
