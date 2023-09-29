@@ -3208,6 +3208,7 @@
             this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
             this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.btnClearTCISpots = new System.Windows.Forms.ButtonTS();
             this.chkEmulateExpertSDR3Protocol = new System.Windows.Forms.CheckBoxTS();
             this.chkEmulateSunSDR2Pro = new System.Windows.Forms.CheckBoxTS();
             this.btnIPv4TCI = new System.Windows.Forms.ButtonTS();
@@ -51013,6 +51014,7 @@
             // 
             // grpTCIServer
             // 
+            this.grpTCIServer.Controls.Add(this.btnClearTCISpots);
             this.grpTCIServer.Controls.Add(this.chkEmulateExpertSDR3Protocol);
             this.grpTCIServer.Controls.Add(this.chkEmulateSunSDR2Pro);
             this.grpTCIServer.Controls.Add(this.btnIPv4TCI);
@@ -51043,6 +51045,18 @@
             this.grpTCIServer.TabIndex = 98;
             this.grpTCIServer.TabStop = false;
             this.grpTCIServer.Text = "TCI Server (0 clients)";
+            // 
+            // btnClearTCISpots
+            // 
+            this.btnClearTCISpots.Image = null;
+            this.btnClearTCISpots.Location = new System.Drawing.Point(229, 251);
+            this.btnClearTCISpots.Name = "btnClearTCISpots";
+            this.btnClearTCISpots.Selectable = true;
+            this.btnClearTCISpots.Size = new System.Drawing.Size(77, 26);
+            this.btnClearTCISpots.TabIndex = 99;
+            this.btnClearTCISpots.Text = "Clear Spots";
+            this.btnClearTCISpots.UseVisualStyleBackColor = true;
+            this.btnClearTCISpots.Click += new System.EventHandler(this.btnClearTCISpots_Click);
             // 
             // chkEmulateExpertSDR3Protocol
             // 
@@ -59534,5 +59548,6 @@
         private ComboBoxTS comboUsbDevices;
         private LabelTS lblTXProfileWarning;
         private Timer tmrCheckProfile;
+        private ButtonTS btnClearTCISpots;
     }
 }
