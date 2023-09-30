@@ -23484,17 +23484,29 @@ namespace Thetis
 
         private float PixelToHz(float x, int rx)
         {
+            //[2.10.1.0] MW0LGE re-implemented
+            bool moxRX1 = mox && (VFOATX || (VFOBTX && !RX2Enabled));
+            bool moxRX2 = mox && (VFOBTX && RX2Enabled);
+            bool localMox = (moxRX1 && rx == 1) || (moxRX2 && rx == 2);
+            bool specScope = rx == 1 && (Display.CurrentDisplayMode == DisplayMode.SPECTRUM || Display.CurrentDisplayMode == DisplayMode.HISTOGRAM);
             int low, high;
-            if (!mox)
+
+            if (localMox)
             {
-                if (rx == 1)
+                if(rx == 1)
                 {
-                    if (Display.CurrentDisplayMode == DisplayMode.SPECTRUM ||
-                        Display.CurrentDisplayMode == DisplayMode.HISTOGRAM)
-                    // Display.CurrentDisplayMode != DisplayMode.SPECTRASCOPE)
+                    if (moxRX1)
                     {
-                        low = Display.RXSpectrumDisplayLow;
-                        high = Display.RXSpectrumDisplayHigh;
+                        if (display_duplex)
+                        {
+                            low = specScope ? Display.RXSpectrumDisplayLow : Display.RXDisplayLow;
+                            high = specScope ? Display.RXSpectrumDisplayHigh : Display.RXDisplayHigh;
+                        }
+                        else
+                        {
+                            low = specScope ? Display.TXSpectrumDisplayLow : Display.TXDisplayLow;
+                            high = specScope ? Display.TXSpectrumDisplayHigh : Display.TXDisplayHigh;
+                        }
                     }
                     else
                     {
@@ -23504,16 +23516,13 @@ namespace Thetis
                 }
                 else
                 {
-                    if (Display.CurrentDisplayMode == DisplayMode.SPECTRUM ||
-                    Display.CurrentDisplayMode == DisplayMode.HISTOGRAM)
-                    // Display.CurrentDisplayMode != DisplayMode.SPECTRASCOPE)
+                    if (moxRX2)
                     {
-                        low = Display.RX2SpectrumDisplayLow;
-                        high = Display.RX2SpectrumDisplayHigh;
+                        low = Display.TXDisplayLow;
+                        high = Display.TXDisplayHigh;
                     }
                     else
                     {
-
                         low = Display.RX2DisplayLow;
                         high = Display.RX2DisplayHigh;
                     }
@@ -23521,50 +23530,32 @@ namespace Thetis
             }
             else
             {
-                if (Display.CurrentDisplayMode == DisplayMode.SPECTRUM ||
-                    Display.CurrentDisplayMode == DisplayMode.HISTOGRAM)
-                // Display.CurrentDisplayMode != DisplayMode.SPECTRASCOPE)
+                if(rx == 1)
                 {
-                    if (display_duplex)
-                    {
-                        low = Display.RXSpectrumDisplayLow;
-                        high = Display.RXSpectrumDisplayHigh;
-                    }
-                    else
-                    {
-                        low = Display.TXSpectrumDisplayLow;
-                        high = Display.TXSpectrumDisplayHigh;
-                    }
+                    low = specScope ? Display.RXSpectrumDisplayLow : Display.RXDisplayLow;
+                    high = specScope ? Display.RXSpectrumDisplayHigh : Display.RXDisplayHigh;                    
                 }
                 else
                 {
-                    if (display_duplex)
-                    {
-                        low = Display.RXDisplayLow;
-                        high = Display.RXDisplayHigh;
-                    }
-                    else
-                    {
-                        low = Display.TXDisplayLow;
-                        high = Display.TXDisplayHigh;
-                    }
+                    low = Display.RX2DisplayLow;
+                    high = Display.RX2DisplayHigh; 
                 }
             }
 
-            if (rx == 1) // RIT/XIT rx1 only MW0LGE_21k9
+            if(rx == 1) // rit only rx1
             {
-                if (!chkMOX.Checked)
+                if(!moxRX1) // rit, only when rxing
                 {
-                    if (chkRIT.Checked)
+                    if (chkRIT.Checked && !CTuneDisplay) // only need this if in ctun off mode
                     {
                         int offset = (int)udRIT.Value;
                         low += offset;
                         high += offset;
                     }
                 }
-                else
+                else // xit, only when txing
                 {
-                    if (chkXIT.Checked)
+                    if (chkXIT.Checked && !display_duplex) // only when not in dusplay duplex mode
                     {
                         int offset = (int)udXIT.Value;
                         low += offset;
@@ -23572,11 +23563,11 @@ namespace Thetis
                     }
                 }
             }
-            else //rx2 MW0LGE [pre-g2]
+            else // xit can be on rx2
             {
-                if (VFOSync && chkRIT.Checked)
+                if (moxRX2 && chkXIT.Checked)
                 {
-                    int offset = (int)udRIT.Value;
+                    int offset = (int)udXIT.Value;
                     low += offset;
                     high += offset;
                 }
@@ -23584,7 +23575,6 @@ namespace Thetis
 
             int width = high - low;
             return (float)(low + ((double)x / (double)picDisplay.Width) * (double)width);
-            //return (float)(low + ((double)x*(high - low)/picDisplay.Width));
         }
 
         private int HzToPixel(float freq)
@@ -23594,10 +23584,52 @@ namespace Thetis
 
         private int HzToPixel(float freq, int rx)
         {
+            //[2.10.1.0] MW0LGE re-implemented
+            bool moxRX1 = mox && (VFOATX || (VFOBTX && !RX2Enabled));
+            bool moxRX2 = mox && (VFOBTX && RX2Enabled);
+            bool localMox = (moxRX1 && rx == 1) || (moxRX2 && rx == 2);
             int low, high;
-            if (!mox)
+
+            if(localMox)
             {
                 if (rx == 1)
+                {
+                    if (moxRX1)
+                    {
+                        if (display_duplex)
+                        {
+                            low = Display.RXDisplayLow;
+                            high = Display.RXDisplayHigh;
+                        }
+                        else
+                        {
+                            low = Display.TXDisplayLow;
+                            high = Display.TXDisplayHigh;
+                        }
+                    }
+                    else
+                    {
+                        low = Display.RXDisplayLow;
+                        high = Display.RXDisplayHigh;
+                    }
+                }
+                else
+                {
+                    if (moxRX2)
+                    {
+                        low = Display.TXDisplayLow;
+                        high = Display.TXDisplayHigh;
+                    }
+                    else
+                    {
+                        low = Display.RX2DisplayLow;
+                        high = Display.RX2DisplayHigh;
+                    }
+                }
+            }
+            else
+            {
+                if(rx == 1)
                 {
                     low = Display.RXDisplayLow;
                     high = Display.RXDisplayHigh;
@@ -23608,14 +23640,52 @@ namespace Thetis
                     high = Display.RX2DisplayHigh;
                 }
             }
-            else
-            {
-                low = Display.TXDisplayLow;
-                high = Display.TXDisplayHigh;
-            }
+            //if (!mox)
+            //{
+            //    if (rx == 1)
+            //    {
+            //        low = Display.RXDisplayLow;
+            //        high = Display.RXDisplayHigh;
+            //    }
+            //    else
+            //    {
+            //        low = Display.RX2DisplayLow;
+            //        high = Display.RX2DisplayHigh;
+            //    }
+            //}
+            //else
+            //{
+            //    if (rx == 1) //[2.10.9.1] MW0LGE duplex support for rx1
+            //    {
+            //        if (display_duplex && VFOATX)
+            //        {
+            //            low = Display.RXDisplayLow;
+            //            high = Display.RXDisplayHigh;
+            //        }
+            //        else
+            //        {
+            //            low = Display.TXDisplayLow;
+            //            high = Display.TXDisplayHigh;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (rx == 2 && VFOATX)
+            //        {
+            //            low = Display.RX2DisplayLow;
+            //            high = Display.RX2DisplayHigh;
+            //        }
+            //        else
+            //        {
+            //            low = Display.TXDisplayLow;
+            //            high = Display.TXDisplayHigh;
+            //        }
+            //    }
+            //}
 
+            int localRit = rx == 1 && RITOn && CTuneDisplay ? RITValue : 0;
             int width = high - low;
-            return (int)((double)(freq - low) / (double)width * (double)picDisplay.Width);
+            return (int)((double)(freq - low + localRit) / (double)width * (double)picDisplay.Width);
             //return picDisplay.Width/2+(int)(freq/(high-low)*picDisplay.Width);
         }
 
@@ -26735,7 +26805,13 @@ namespace Thetis
                             "rx2_fm_squelch_state : " + rx2_fm_squelch_state.ToString() + Environment.NewLine +
                             "rx2_squelch_threshold_scroll : " + rx2_squelch_threshold_scroll.ToString() + Environment.NewLine +
                             "rx2_fm_squelch_threshold_scroll : " + rx2_fm_squelch_threshold_scroll.ToString() + Environment.NewLine +
-                            "rx2_voice_squelch_threshold_scroll : " + rx2_voice_squelch_threshold_scroll.ToString();
+                            "rx2_voice_squelch_threshold_scroll : " + rx2_voice_squelch_threshold_scroll.ToString() + Environment.NewLine +
+                            "RXDisplayLow : " + Display.RXDisplayLow.ToString() + Environment.NewLine +
+                            "RXDisplayHigh : " + Display.RXDisplayHigh.ToString() + Environment.NewLine +
+                            "RX2DisplayLow : " + Display.RX2DisplayLow.ToString() + Environment.NewLine +
+                            "RX2DisplayHigh : " + Display.RX2DisplayHigh.ToString() + Environment.NewLine +
+                            "TXDisplayLow : " + Display.TXDisplayLow.ToString() + Environment.NewLine +
+                            "TXDisplayHigh : " + Display.TXDisplayHigh.ToString();
                     }
 
                     objStopWatch.Reset();
@@ -34638,7 +34714,7 @@ namespace Thetis
 
             bool bRitOk = !mox || (mox && VFOBTX && RX2Enabled); //[2.10.1.0] MW0LGE we can apply rit
 
-            if (click_tune_display && bCanFitInView && ((mox && VFOBTX && RX2Enabled) || !mox || display_duplex)/*&&
+            if (click_tune_display && bCanFitInView && ((mox && VFOBTX && RX2Enabled) || !mox || display_duplex)/*&&  //[2.10.1.0] MW0LGE want if moxing rx2
                 ((Display.CurrentDisplayMode == DisplayMode.PANADAPTER && mox && VFOBTX) ||
                 (Display.CurrentDisplayMode == DisplayMode.WATERFALL && mox && VFOBTX) ||
                 (Display.CurrentDisplayMode == DisplayMode.PANAFALL && mox && VFOBTX) ||
@@ -34774,7 +34850,7 @@ namespace Thetis
                     Display.FreqDiff = (int)radio.GetDSPRX(0, 0).RXOsc;
             }
 
-            if (click_tune_display && (/*(mox && VFOBTX) ||*/ !mox || display_duplex)/* &&
+            if (click_tune_display && ((mox && VFOBTX && RX2Enabled) || !mox || display_duplex)/* &&  //[2.10.1.0] MW0LGE want this to happen if moxing on rx2
                 ((Display.CurrentDisplayMode == DisplayMode.PANADAPTER && mox && VFOBTX) ||
                 (Display.CurrentDisplayMode == DisplayMode.PANADAPTER && display_duplex) ||
                 (Display.CurrentDisplayMode == DisplayMode.PANADAPTER && !mox) ||
@@ -35655,7 +35731,7 @@ namespace Thetis
 
             if (rx2_enabled)
             {
-                if (click_tune_rx2_display && bCanFitInView && (/*(mox && !VFOBTX) ||*/ !mox)
+                if (click_tune_rx2_display && bCanFitInView && ((mox && VFOATX && RX2Enabled) || !mox) //[2.10.1.0] MW0LGE want if moxing rx1
                                 /*((Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER && mox && !VFOBTX) ||
                                 (Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && mox && !VFOBTX) ||
                                 (Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && mox && !VFOBTX) ||
@@ -35817,7 +35893,7 @@ namespace Thetis
                 if (true)//!stereo_diversity) MW0LGE_21a
                 {
                     //-W2PA Freeze display unless we are zoomed in too far to fit the passband
-                    if (click_tune_rx2_display && (/*(mox && !VFOBTX) ||*/ !mox)/*&&
+                    if (click_tune_rx2_display && ((mox && VFOATX && RX2Enabled) || /*(mox && !VFOBTX) ||*/ !mox)/*&& // [2.10.1.0] MW0LGE want if moxing rx1
                                      ((Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER && mox && !VFOBTX) ||
                                      (Display.CurrentDisplayModeBottom == DisplayMode.WATERFALL && mox && !VFOBTX) ||
                         (Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && mox && !VFOBTX) ||
@@ -36732,8 +36808,16 @@ namespace Thetis
                 {
                     if (mox)// && chkVFOATX.Checked)
                     {
-                        filt_low_x = HzToPixel(radio.GetDSPTX(0).TXFilterLow);
-                        filt_high_x = HzToPixel(radio.GetDSPTX(0).TXFilterHigh);
+                        if (display_duplex) //[2.10.1.0] MW0LGE support duplex
+                        {
+                            filt_low_x = RX1diff + HzToPixel(radio.GetDSPTX(0).TXFilterLow) - HzToPixel(0.0f);
+                            filt_high_x = RX1diff + HzToPixel(radio.GetDSPTX(0).TXFilterHigh) - HzToPixel(0.0f);
+                        }
+                        else
+                        {
+                            filt_low_x = HzToPixel(radio.GetDSPTX(0).TXFilterLow);
+                            filt_high_x = HzToPixel(radio.GetDSPTX(0).TXFilterHigh);
+                        }
                     }
                     else
                     {
@@ -37244,7 +37328,7 @@ namespace Thetis
                 _highlightedSpot = SpotManager2.HighlightSpot(e.X, e.Y);
                 //
 
-                #region AGC and Filter Dragging
+                #region AGC, Filter Dragging and edge highlighting
                 switch (Display.CurrentDisplayMode)
                 {
                     case DisplayMode.HISTOGRAM:
@@ -37625,22 +37709,14 @@ namespace Thetis
                         ////txtDisplayCursorFreq.Text = String.Copy(temp_text.Insert(jper, " "));
                         ////////
 
-                        bool bOkToChangeRX1 = bOverRX1 && rx1_enabled && !rx1_click_tune_drag && !rx1_spectrum_drag && (rx1_dsp_mode != DSPMode.DRM);
-                        bool bOkToChangeRX2 = bOverRX2 && rx2_enabled && !rx2_click_tune_drag && !rx2_spectrum_drag && (rx2_dsp_mode != DSPMode.DRM);
+                        bool bOkToChangeRX1 = bOverRX1 && rx1_enabled && !rx1_click_tune_drag && !rx1_spectrum_drag && (rx1_dsp_mode != DSPMode.DRM) && !(mox && (VFOATX || (RX2Enabled && VFOSplit))); //[2.10.1.0] MW0LGE prevent highlight when MOX
+                        bool bOkToChangeRX2 = bOverRX2 && rx2_enabled && !rx2_click_tune_drag && !rx2_spectrum_drag && (rx2_dsp_mode != DSPMode.DRM) && !(mox && RX2Enabled && VFOBTX);
 
                         if (bOkToChangeRX1 || bOkToChangeRX2)
                         {
                             if (!rx1_spectrum_tune_drag && !rx2_spectrum_tune_drag && /*!click_tune_display && !click_tune_rx2_display &&*/ current_click_tune_mode == ClickTuneMode.Off/* &&
                                 next_cursor != Cursors.Hand && next_cursor != Cursors.SizeNS && next_cursor != Cursors.VSplit*/)
                             {
-                                //MW0LGE_21k8 reworked
-                                //bool bLowEdge = (Math.Abs(e.X - filt_low_x) < 3 || rx1_low_filter_drag) ||
-                                //    (rx2_enabled && e.Y > picDisplay.Height / 2 && (Math.Abs(e.X - vfob_low_x) < 3)) ||
-                                //    rx2_low_filter_drag;
-                                //bool bHighEdge = (Math.Abs(e.X - filt_high_x) < 3 || rx1_high_filter_drag) ||
-                                //    (rx2_enabled && e.Y > picDisplay.Height / 2 && (Math.Abs(e.X - vfob_high_x) < 3)) ||
-                                //    rx2_high_filter_drag;
-
                                 bool bLowEdge = (bOkToChangeRX1 && (!rx1_whole_filter_drag && (Math.Abs(e.X - filt_low_x) < 3 || rx1_low_filter_drag))) ||
                                                 (bOkToChangeRX2 && (!rx2_whole_filter_drag && (Math.Abs(e.X - vfob_low_x) < 3 || rx2_low_filter_drag)));
 
@@ -37920,7 +37996,7 @@ namespace Thetis
                 //re-implemented cursor info MW0LGE_21k9
                 if (bShowCursorData)
                 {
-                    float x = 0;
+                    float xposHz = 0;
                     float y = 0;
                     double rf_freq;
                     string temp_text;
@@ -37940,8 +38016,8 @@ namespace Thetis
                     {
                         localDSPMode = RX2DSPMode;
                         bOn60mChan = RX2IsOn60mChannel();
-                        x = PixelToHz(e.X, 2);
-                        rf_freq = VFOBFreq + (double)x * 0.0000010;
+                        xposHz = PixelToHz(e.X, 2);
+                        rf_freq = VFOBFreq + (double)xposHz * 0.0000010;
                         localFreq = VFOBFreq;
                         loclCentreFrequency = CentreRX2Frequency;
                         localClickTuneDisplay = click_tune_rx2_display;
@@ -37969,9 +38045,22 @@ namespace Thetis
                     {
                         localDSPMode = RX1DSPMode;
                         bOn60mChan = RX1IsOn60mChannel();
-                        x = PixelToHz(e.X, 1);
-                        rf_freq = VFOAFreq + (double)x * 0.0000010;
-                        localFreq = VFOAFreq;
+                        xposHz = PixelToHz(e.X, 1);
+                        double localVFOfreq;//[2.10.1.0] MW0LGE consider split and vfob when txing
+                        if (mox && (VFOATX || (VFOBTX && !RX2Enabled))) // check rx1 is a txRX
+                        {
+                            if (VFOATX && VFOSplit && RX2Enabled) // txing rx1 subvfo
+                                localVFOfreq = VFOASubFreq;
+                            else if(VFOBTX) // txing rx on vfoB
+                                localVFOfreq = VFOBFreq;
+                            else
+                                localVFOfreq = VFOAFreq;
+                        }
+                        else
+                            localVFOfreq = VFOAFreq;
+
+                        rf_freq = localVFOfreq + (double)xposHz * 0.0000010;
+                        localFreq = localVFOfreq;
                         loclCentreFrequency = CentreFrequency;
                         localClickTuneDisplay = click_tune_display;
 
@@ -38004,7 +38093,7 @@ namespace Thetis
 
                     DisplayCursorX = e.X; // update display cursor position (crosshairs)
                     DisplayCursorY = e.Y;
-                    Display.FREQ = x; // for the filter overlay
+                    Display.MouseFrequency = xposHz; // for the filter overlay
 
                     switch (localDSPMode)
                     {
@@ -38036,9 +38125,10 @@ namespace Thetis
                             break;
                     }
 
-                    infoBar.Left1(0, x.ToString("f1") + "Hz");
+                    infoBar.Left1(0, xposHz.ToString("f1") + "Hz");
 
-                    if ((localClickTuneDisplay && !mox) || (localClickTuneDisplay && display_duplex))    // Correct cursor frequency when CTUN on -G3OQD  // MW0LGE_21a also when in CTD and DUP
+                    bool localMox = mox && ((RX2Enabled && (!bRx2 && VFOATX) || (bRx2 && VFOBTX)) || !RX2Enabled); //[2.10.1.0] MW0LGE consider if we are over the RX that is in mox
+                    if ((localClickTuneDisplay && !localMox) || (localClickTuneDisplay && (display_duplex && !bRx2)))    // Correct cursor frequency when CTUN on -G3OQD  // MW0LGE_21a also when in CTD and DUP //[2.10.1.0] MW0LGE ignore rx2 if dup
                         rf_freq += (loclCentreFrequency - localFreq);
 
                     temp_text = rf_freq.ToString("f6") + " MHz";      // Disply cursor frequency under Spectrum  

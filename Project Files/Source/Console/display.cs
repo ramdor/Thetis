@@ -404,13 +404,13 @@ namespace Thetis
             }
         }
 
-        private static double freq;
-        public static double FREQ
+        private static double _mouseFrequency;
+        public static double MouseFrequency
         {
-            get { return freq; }
+            get { return _mouseFrequency; }
             set
             {
-                freq = value;
+                _mouseFrequency = value;
             }
         }
 
@@ -7738,8 +7738,8 @@ namespace Thetis
 
                 if (bShow)
                 {
-                    double freq_low = freq + filter_low;
-                    double freq_high = freq + filter_high;
+                    double freq_low = _mouseFrequency + filter_low;
+                    double freq_high = _mouseFrequency + filter_high;
                     int x1 = (int)((freq_low - Low) / width * W);
                     int x2 = (int)((freq_high - Low) / width * W);
 
