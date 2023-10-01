@@ -35,8 +35,6 @@ using System.Windows.Forms;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Diagnostics;
-using System.Linq;
 
 namespace Thetis
 {

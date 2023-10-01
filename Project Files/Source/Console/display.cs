@@ -56,8 +56,6 @@ namespace Thetis
     using Brush = System.Drawing.Brush;
     using Point = System.Drawing.Point;
     using Pen = System.Drawing.Pen;
-    using PixelFormat = System.Drawing.Imaging.PixelFormat;
-    using DashStyle = System.Drawing.Drawing2D.DashStyle;
     // SharpDX clashes
     using AlphaMode = SharpDX.Direct2D1.AlphaMode;
     using Device = SharpDX.Direct3D11.Device;
@@ -404,13 +402,13 @@ namespace Thetis
             }
         }
 
-        private static double freq;
-        public static double FREQ
+        private static double _mouseFrequency;
+        public static double MouseFrequency
         {
-            get { return freq; }
+            get { return _mouseFrequency; }
             set
             {
-                freq = value;
+                _mouseFrequency = value;
             }
         }
 
@@ -530,12 +528,18 @@ namespace Thetis
         }
         public static void SetupDelegates()
         {
+            // get initial state data from console that might get modified by delegate
+            _rx1ClickDisplayCTUN = console.ClickTuneDisplay;
+            _rx2ClickDisplayCTUN = console.ClickTuneRX2Display;
+            //
+
             console.PowerChangeHanders += OnPowerChangeHander;
             console.BandChangeHandlers += OnBandChangeHandler;
             console.MoxChangeHandlers += OnMoxChangeHandler;
             console.AttenuatorDataChangedHandlers += OnAttenuatorDataChanged;
             console.PreampModeChangedHandlers += OnPreampModeChanged;
             console.CentreFrequencyHandlers += OnCentreFrequencyChanged;
+            console.CTUNChangedHandlers += OnCTUNChanged;
         }
         public static void RemoveDelegates()
         {
@@ -545,8 +549,17 @@ namespace Thetis
             console.AttenuatorDataChangedHandlers -= OnAttenuatorDataChanged;
             console.PreampModeChangedHandlers -= OnPreampModeChanged;
             console.CentreFrequencyHandlers -= OnCentreFrequencyChanged;
+            console.CTUNChangedHandlers -= OnCTUNChanged;
         }
-
+        private static bool _rx1ClickDisplayCTUN = false;
+        private static bool _rx2ClickDisplayCTUN = false;
+        private static void OnCTUNChanged(int rx, bool oldCTUN, bool newCTUN, Band band)
+        {
+            if (rx == 1)
+                _rx1ClickDisplayCTUN = newCTUN;
+            else if (rx == 2)
+                _rx2ClickDisplayCTUN = newCTUN;
+        }
         private static void OnPowerChangeHander(bool oldPower, bool newPower)
         {
             if (newPower)
@@ -6790,7 +6803,7 @@ namespace Thetis
             #region setup
             //MW0LGE
             int cwSideToneShift = getCWSideToneShift(rx);
-            int cwSideToneShiftInverted = cwSideToneShift * -1; // invert the sign as cw zero lines/tx lines etc are a shift in opposite direction to the grid
+            int cwSideToneShiftInverted = -cwSideToneShift; // invert the sign as cw zero lines/tx lines etc are a shift in opposite direction to the grid
 
             if (rx == 1)
             {
@@ -6928,17 +6941,61 @@ namespace Thetis
 
             if (bIsWaterfall) top = 20; //change top so that the filter gap doesnt change, inore grid spacing
             else top = (int)((double)grid_step * H / y_range); // top is based on grid spacing
+
+            //-- [2.10.1.0] MW0LGE fix for when split and dup is off. Note dupe always off for rx2
+            long localSubDiff;
+            if (local_mox)
+            {
+                if (displayduplex)
+                {
+                    localSubDiff = vfoa_sub_hz - vfoa_hz;
+                }
+                else
+                {
+                    localSubDiff = 0;
+                }
+            }
+            else
+            {
+                localSubDiff = vfoa_sub_hz - vfoa_hz;
+            }
+
+            int local_rit_hz;
+            if (local_mox)
+            {
+                local_rit_hz = 0; // no rit in tx
+            }
+            else
+            {
+                if (rx == 1)
+                {
+                    if (console.CTuneDisplay)
+                    {
+                        local_rit_hz = 0; // dont move the grid by rit if we have CTUN enabled
+                    }
+                    else
+                    {
+                        local_rit_hz = rit_hz;
+                    }
+                }
+                else
+                {
+                    local_rit_hz = 0; // rit works on rx1 only, does not apply to rx2
+                }
+            }
+            //--
             #endregion
 
-            #region RX filter and filter lines
+            #region RX filter, filter lines and sub rx overlay
             if (!local_mox && sub_rx1_enabled && rx == 1) //multi-rx
             {
+                int localRit = _rx1ClickDisplayCTUN ? rit_hz : 0;
                 if ((bIsWaterfall && m_bShowRXFilterOnWaterfall) || !bIsWaterfall)
                 {
                     // draw Sub RX filter
                     // get filter screen coordinates
-                    int filter_left_x = (int)((float)(filter_low - Low + vfoa_sub_hz - vfoa_hz - rit_hz) / width * W);
-                    int filter_right_x = (int)((float)(filter_high - Low + vfoa_sub_hz - vfoa_hz - rit_hz) / width * W);
+                    int filter_left_x = (int)((float)(filter_low - Low + localSubDiff + localRit) / width * W);
+                    int filter_right_x = (int)((float)(filter_high - Low + localSubDiff + localRit) / width * W);
 
                     drawFilterOverlayDX2D(m_bDX2_sub_rx_filter_brush, filter_left_x, filter_right_x, W, H, rx, top, bottom, nVerticalShift);
                 }
@@ -6946,7 +7003,7 @@ namespace Thetis
                 if ((bIsWaterfall && m_bShowRXZeroLineOnWaterfall) || !bIsWaterfall)
                 {
                     // draw Sub RX 0Hz line
-                    int x = (int)((float)(vfoa_sub_hz - vfoa_hz - Low) / width * W);
+                    int x = (int)((float)(localSubDiff - Low + localRit) / width * W);
                     drawLineDX2D(m_bDX2_sub_rx_zero_line_pen, x, nVerticalShift + top, x, nVerticalShift + H, 2);
                 }
             }
@@ -6955,7 +7012,7 @@ namespace Thetis
             if ((bIsWaterfall && m_bShowRXFilterOnWaterfall) || !bIsWaterfall)
             {
                 if (!local_mox)// && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
-                {
+                {                    
                     // draw RX filter
                     int filter_left_x = (int)((float)(filter_low - Low - f_diff) / width * W);
                     int filter_right_x = (int)((float)(filter_high - Low - f_diff) / width * W);
@@ -7011,15 +7068,25 @@ namespace Thetis
                         filter_high_tmp = tx_filter_high;
                     }
 
+                    int localRit = 0;
+                    int localXit;
+                    if (local_mox)
+                        localXit = displayduplex ? xit_hz : 0;
+                    else
+                        localXit = xit_hz;
                     if (!split_enabled)
                     {
-                        filter_left_x = (int)((float)(filter_low_tmp - Low - f_diff + xit_hz) / width * W);
-                        filter_right_x = (int)((float)(filter_high_tmp - Low - f_diff + xit_hz) / width * W);
+                        if (!local_mox)
+                            localRit = rx == 1 ? rit_hz : 0;
+                        filter_left_x = (int)((float)(filter_low_tmp - Low - f_diff + localXit - localRit) / width * W);
+                        filter_right_x = (int)((float)(filter_high_tmp - Low - f_diff + localXit - localRit) / width * W);
                     }
                     else // MW0LGE_21k8
                     {
-                        filter_left_x = (int)((float)(filter_low_tmp - Low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
-                        filter_right_x = (int)((float)(filter_high_tmp - Low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
+                        if (!local_mox)
+                            localRit = rx == 1 && _rx1ClickDisplayCTUN ? 0 : rx == 2 ? 0 : rit_hz;
+                        filter_left_x = (int)((float)(filter_low_tmp - Low + localXit + (localSubDiff) - localRit) / width * W);
+                        filter_right_x = (int)((float)(filter_high_tmp - Low + localXit + (localSubDiff) - localRit) / width * W);
                     }
 
                     if (local_mox)
@@ -7036,104 +7103,6 @@ namespace Thetis
                     }
                 }
             }
-
-            ////if ((bIsWaterfall && m_bShowTXFilterOnWaterfall) || !bIsWaterfall)
-            ////{
-            ////    if (local_mox && (rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU))
-            ////    {
-            ////        // draw TX filter
-            ////        int filter_left_x;
-            ////        int filter_right_x;
-
-            ////        if (!split_enabled)
-            ////        {
-            ////            filter_left_x = (int)((float)(filter_low - Low - f_diff + xit_hz) / width * W);
-            ////            filter_right_x = (int)((float)(filter_high - Low - f_diff + xit_hz) / width * W);
-            ////        }
-            ////        else // MW0LGE_21k8
-            ////        {
-            ////            filter_left_x = (int)((float)(filter_low - Low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
-            ////            filter_right_x = (int)((float)(filter_high - Low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
-            ////        }
-
-            ////        drawFilterOverlayDX2D(m_bDX2_tx_filter_brush, filter_left_x, filter_right_x, W, H, rx, top, bottom, nVerticalShift);
-            ////    }
-            ////}
-
-            ////if ((!bIsWaterfall || (bIsWaterfall && m_bShowTXFilterOnRXWaterfall)) && //MW0LGE
-            ////    !/*mox*/local_mox && draw_tx_filter &&
-            ////    (rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU))
-            ////{
-            ////    // get tx filter limits
-            ////    int filter_left_x;
-            ////    int filter_right_x;
-
-            ////    if (tx_on_vfob)
-            ////    {
-            ////        if (!split_enabled)
-            ////        {
-            ////            // MW0LGE - f_diff
-            ////            filter_left_x = (int)((float)(tx_filter_low - Low - f_diff + xit_hz - rit_hz) / width * W);
-            ////            filter_right_x = (int)((float)(tx_filter_high - Low - f_diff + xit_hz - rit_hz) / width * W);
-            ////        }
-            ////        else
-            ////        {
-            ////            filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
-            ////            filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
-            ////        }
-            ////    }
-            ////    else
-            ////    {
-            ////        if (!split_enabled)
-            ////        {
-            ////            filter_left_x = (int)((float)(tx_filter_low - Low - f_diff + xit_hz - rit_hz) / width * W);
-            ////            filter_right_x = (int)((float)(tx_filter_high - Low - f_diff + xit_hz - rit_hz) / width * W);
-            ////        }
-            ////        else
-            ////        {
-            ////            filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
-            ////            filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
-            ////        }
-            ////    }
-
-            ////    if ((rx == 2 && tx_on_vfob) || (rx == 1 && !(tx_on_vfob && rx2_enabled)))
-            ////    {
-            ////        drawLineDX2D(m_bDX2_tx_filter_pen, filter_left_x, nVerticalShift + top, filter_left_x, nVerticalShift + H, tx_filter_pen.Width);        // draw tx filter overlay
-            ////        drawLineDX2D(m_bDX2_tx_filter_pen, filter_right_x, nVerticalShift + top, filter_right_x, nVerticalShift + H, tx_filter_pen.Width);	// draw tx filter overlay
-            ////    }
-            ////}
-
-            //if (rx == 1 && !local_mox /* && !tx_on_vfob */ && draw_tx_cw_freq &&
-            //    (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
-            //{
-            //    //int pitch = cw_pitch;
-            //    //if (rx1_dsp_mode == DSPMode.CWL)
-            //    //    pitch = -cw_pitch;
-
-            //    int cw_line_x;
-            //    if (!split_enabled)
-            //        cw_line_x = (int)((float)(cwSideToneShiftInverted - Low - f_diff + xit_hz - rit_hz) / width * W);
-            //    else
-            //        cw_line_x = (int)((float)(cwSideToneShiftInverted - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
-
-            //    drawLineDX2D(m_bDX2_tx_filter_pen, cw_line_x, nVerticalShift + top, cw_line_x, nVerticalShift + H, tx_filter_pen.Width); //MW0LGE
-            //}
-
-            //if (rx==2 && !local_mox && tx_on_vfob && draw_tx_cw_freq &&
-            //    (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
-            //{
-            //    //int pitch = cw_pitch;
-            //    //if (rx2_dsp_mode == DSPMode.CWL)
-            //    //    pitch = -cw_pitch;
-
-            //    int cw_line_x;
-            //    if (!split_enabled)
-            //        cw_line_x = (int)((float)(cwSideToneShiftInverted - Low + xit_hz - rit_hz) / width * W);
-            //    else
-            //        cw_line_x = (int)((float)(cwSideToneShiftInverted - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
-
-            //    drawLineDX2D(m_bDX2_tx_filter_pen, cw_line_x, nVerticalShift + top, cw_line_x, nVerticalShift + H, tx_filter_pen.Width); //MW0LGE
-            //}
             #endregion
 
             #region 60m channels
@@ -7143,8 +7112,8 @@ namespace Thetis
                 foreach (Channel c in Console.Channels60m)
                 {
                     long rf_freq = vfoa_hz;
-                    int rit = rit_hz;
-                    if (local_mox) rit = 0;
+                    int local_rit = _rx1ClickDisplayCTUN ? 0 : rit_hz;
+                    if (local_mox) local_rit = 0;
 
                     if (bottom || (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2)) // MW0LGE
                     {
@@ -7179,8 +7148,8 @@ namespace Thetis
                         // offset for CW Pitch to align display
                         rf_freq += cwSideToneShift;
 
-                        int chan_left_x = (int)((float)(c.Freq * 1e6 - rf_freq - c.BW / 2 - Low - rit) / width * W);
-                        int chan_right_x = (int)((float)(c.Freq * 1e6 - rf_freq + c.BW / 2 - Low - rit) / width * W);
+                        int chan_left_x = (int)((float)(c.Freq * 1e6 - rf_freq - c.BW / 2 - Low - local_rit) / width * W);
+                        int chan_right_x = (int)((float)(c.Freq * 1e6 - rf_freq + c.BW / 2 - Low - local_rit) / width * W);
 
                         if (chan_right_x == chan_left_x)
                             chan_right_x = chan_left_x + 1;
@@ -7196,18 +7165,18 @@ namespace Thetis
             }
             #endregion
 
-            //MW0LGE_21h
             #region BandStackOverlay
+            //MW0LGE_21h
             if (m_bShowBandStackOverlays && m_bandStackOverlays != null && rx == 1 && !local_mox && !bIsWaterfall)
             {
                 long rf_freq = vfoa_hz;
-                int rit = rit_hz;
+                int local_rit = _rx1ClickDisplayCTUN ? 0 : rit_hz;
 
                 SharpDX.Direct2D1.Brush brush;
                 for (int n = 0; n < m_bandStackOverlays.Length; n++)
                 {
-                    int filter_left_x = (int)((float)((((m_bandStackOverlays[n].Frequency * 1e6) - rf_freq) + m_bandStackOverlays[n].LowFilter) - Low - rit) / width * W);
-                    int filter_right_x = (int)((float)((((m_bandStackOverlays[n].Frequency * 1e6) - rf_freq) + m_bandStackOverlays[n].HighFilter) - Low - rit) / width * W);
+                    int filter_left_x = (int)((float)((((m_bandStackOverlays[n].Frequency * 1e6) - rf_freq) + m_bandStackOverlays[n].LowFilter) - Low - local_rit) / width * W);
+                    int filter_right_x = (int)((float)((((m_bandStackOverlays[n].Frequency * 1e6) - rf_freq) + m_bandStackOverlays[n].HighFilter) - Low - local_rit) / width * W);
 
                     brush = (n == m_nHighlightedBandStackEntryIndex) ? m_bDX2_bandstack_overlay_brush_highlight : m_bDX2_bandstack_overlay_brush;
 
@@ -7255,26 +7224,33 @@ namespace Thetis
                 }
                 if (draw_tx_cw_freq)
                 {
-                    if (rx == 1 && !local_mox &&
+                    if (rx == 1 && !local_mox && !tx_on_vfob &&
                         (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
                         int cw_line_x1;
+                        int localRit;
                         if (!split_enabled)
-                            cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low - f_diff + xit_hz - rit_hz) / width * W);
+                        {
+                            localRit = rx == 1 ? rit_hz : 0;
+                            cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low - f_diff + xit_hz - localRit) / width * W);
+                        }
                         else
-                            cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
+                        {
+                            localRit = rx == 1 && _rx1ClickDisplayCTUN ? 0 : rx == 2 ? 0 : rit_hz;
+                            cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low + xit_hz - localRit + (localSubDiff)) / width * W);
+                        }
 
                         drawLineDX2D(m_bDX2_tx_filter_pen, cw_line_x1, nVerticalShift + top, cw_line_x1, nVerticalShift + H, tx_filter_pen.Width);
                     }
 
                     if (rx == 2 && !local_mox && tx_on_vfob &&  //MW0LGE [2.9.0.7] txonb
-                        (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU)) //MW0LGE [2.9.0.7] txonb
+                        (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
                     {
                         int cw_line_x1;
                         if (!split_enabled)
-                            cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low - f_diff + xit_hz - rit_hz) / width * W);
+                            cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low - f_diff + xit_hz) / width * W);
                         else
-                            cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W);
+                            cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low + xit_hz + (localSubDiff)) / width * W);
 
                         drawLineDX2D(m_bDX2_tx_filter_pen, cw_line_x1, nVerticalShift + top, cw_line_x1, nVerticalShift + H, tx_filter_pen.Width);
                     }
@@ -7282,20 +7258,29 @@ namespace Thetis
             }
             #endregion
 
+            #region Centre Lines, 0hz line, and Freq offset text
             //      MW0LGE
             if (local_mox)
             {
+                int localXit = displayduplex ? xit_hz : 0;
+
                 if (!split_enabled) //MW0LGE_21k8
                 {
-                    center_line_x = (int)((float)(-f_diff - Low + xit_hz) / width * W); // locked 0 line
+                    center_line_x = (int)((float)(-f_diff - Low + localXit) / width * W); // locked 0 line
                 }
                 else
                 {
-                    center_line_x = (int)((float)(-Low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / width * W); // locked 0 line
+                    center_line_x = (int)((float)(-Low + localXit + (localSubDiff)) / width * W); // locked 0 line
                 }
             }
             else
-                center_line_x = (int)((float)(-f_diff - Low) / width * W); // locked 0 line
+            {
+                int localRit = 0;
+                //if (rx == 1 && (mox && tx_on_vfob))
+                //    localRit = _rx1ClickDisplayCTUN ? rit_hz : 0;
+
+                center_line_x = (int)((float)(-f_diff - Low + localRit) / width * W); // locked 0 line
+            }
 
             // Draw 0Hz vertical line if visible
             if ((!bIsWaterfall && show_zero_line) |
@@ -7316,6 +7301,7 @@ namespace Thetis
 
                 drawStringDX2D("0", fontDX2d_font9, brBrush, center_line_x - 5, nVerticalShift + 4/*(float)Math.Floor(H * .01)*/);
             }
+            #endregion
 
             #region Band edges, H+V lines and labels
             //MW0LGE
@@ -7393,16 +7379,17 @@ namespace Thetis
                 if (local_mox)
                 {
                     //if (split_enabled) vfo = vfoa_sub_hz;//MW0LGE_21k8
-                    if (split_enabled) vfo = vfoa_sub_hz - (vfoa_sub_hz - vfoa_hz);
+                    if (split_enabled) vfo = vfoa_sub_hz - (localSubDiff);
                     else vfo = vfoa_hz;
-                    vfo += xit_hz;
+
+                    vfo += displayduplex ? 0 : xit_hz;
                 }
                 else if (/*mox*/local_mox && tx_on_vfob)
                 {
-                    if (console.RX2Enabled) vfo = vfoa_hz + rit_hz;
+                    if (console.RX2Enabled) vfo = vfoa_hz + local_rit_hz;
                     else vfo = vfoa_sub_hz;
                 }
-                else vfo = vfoa_hz + rit_hz;
+                else vfo = vfoa_hz + local_rit_hz;
             }
             else //if(rx==2)
             {
@@ -7410,7 +7397,7 @@ namespace Thetis
                     vfo = vfob_hz + xit_hz;
                 else
                 {
-                    if (console.VFOSync) vfo = vfob_hz + rit_hz;
+                    if (console.VFOSync) vfo = vfob_hz + local_rit_hz;
                     else vfo = vfob_hz;
                 }
             }
@@ -7749,8 +7736,8 @@ namespace Thetis
 
                 if (bShow)
                 {
-                    double freq_low = freq + filter_low;
-                    double freq_high = freq + filter_high;
+                    double freq_low = _mouseFrequency + filter_low;
+                    double freq_high = _mouseFrequency + filter_high;
                     int x1 = (int)((freq_low - Low) / width * W);
                     int x2 = (int)((freq_high - Low) / width * W);
 
@@ -8042,6 +8029,11 @@ namespace Thetis
 
             if (!bIsWaterfall && SpotControl.SP_Active != 0)
             {
+                int localRit;
+                if (rx == 1)
+                    localRit = _rx1ClickDisplayCTUN ? 0 : rit_hz;
+                else
+                    localRit = 0;
 
                 int iii = 0;                          // ke9ns add stairstep holder
 
@@ -8092,7 +8084,7 @@ namespace Thetis
                 {
                     if ((SpotControl.DX_Freq[ii] >= VFOLow) && (SpotControl.DX_Freq[ii] <= VFOHigh))
                     {
-                        int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(SpotControl.DX_Freq[ii] + cwSideToneShiftInverted - VFOLow))); // determine DX spot line pos on current panadapter screen
+                        int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(SpotControl.DX_Freq[ii] + cwSideToneShiftInverted - VFOLow - localRit))); // determine DX spot line pos on current panadapter screen
 
                         holder[kk] = ii;                    // ii is the actual DX_INdex pos the the KK holds
                         holder1[kk] = VFO_DXPos;
@@ -9556,6 +9548,7 @@ namespace Thetis
             int rxDisplayHigh;
 
             bool local_mox = mox && ((rx == 1 && !tx_on_vfob) || (rx == 2 && tx_on_vfob) || (rx == 1 && tx_on_vfob && !console.RX2Enabled));
+            int local_rit;
 
             if (rx == 1)
             {
@@ -9563,6 +9556,8 @@ namespace Thetis
                 rxDisplayLow = RXDisplayLow;
                 rxDisplayHigh = RXDisplayHigh;
                 _spotLayerRightRX1.Clear();
+
+                local_rit = _rx1ClickDisplayCTUN ? 0 : rit_hz;
             }
             else// if (rx == 2)
             {
@@ -9570,6 +9565,8 @@ namespace Thetis
                 rxDisplayLow = RX2DisplayLow;
                 rxDisplayHigh = RX2DisplayHigh;
                 _spotLayerRightRX2.Clear();
+
+                local_rit = 0;
             }
 
             int yTop = nVerticalShift + 20;
@@ -9595,7 +9592,7 @@ namespace Thetis
                 int height = (int)spot.Size.Height + 2;
 
                 int halfWidth = width / 2;
-                float x = (spot.frequencyHZ - vfoLow - cwShift) * HzToPixel;
+                float x = (spot.frequencyHZ - vfoLow - cwShift - local_rit) * HzToPixel;
 
                 int leftX;
                 int rightX;

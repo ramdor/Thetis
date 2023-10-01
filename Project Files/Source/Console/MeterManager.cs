@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using System.Collections;
 
 //directX
 using SharpDX;
@@ -928,10 +927,15 @@ namespace Thetis
         {
             lock (_metersLock)
             {
+                bool updateVFOASub = _console.VFOASubInUse; //[2.10.1.0] MW0LGE needed because at init rx2 might not be enabled, and the init function will have been given -999.999 from console.vfoasubfreq
+                double freq = _console.VFOASubFreq;
+
                 foreach (KeyValuePair<string, clsMeter> mkvp in _meters)
                 {
                     clsMeter m = mkvp.Value;
                     m.Split = rx == m.RX && newSplit;
+
+                    if (rx == m.RX && updateVFOASub) m.VfoSub = freq;
                 }
             }
         }
@@ -1041,7 +1045,7 @@ namespace Thetis
         }
         private static void OnVFOA(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
-            _rx1VHForAbove = _console.VFOAFreq >= 30;
+            _rx1VHForAbove = /*_console.VFOAFreq*/ newFreq >= 30;
 
             lock (_metersLock)
             {
@@ -1056,7 +1060,7 @@ namespace Thetis
         }
         private static void OnVFOB(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
-            _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= 30;
+            _rx2VHForAbove = _console.RX2Enabled && newFreq/*_console.VFOBFreq*/ >= 30;
 
             lock (_metersLock)
             {
