@@ -61,9 +61,8 @@ namespace Thetis
     using System.Timers;
     using System.Windows.Forms;
     using System.Xml.Linq;
-    using System.Text.RegularExpressions;
     using System.Collections.Concurrent;
-    
+
     public partial class Console : Form
     {
         //MULTIMETERS MW0LGE [2.9.0.7]
@@ -20030,13 +20029,17 @@ namespace Thetis
                     CentreFrequency, ClickTuneDisplay, ptbDisplayZoom.Value, radio.GetDSPRX(0, 1).RXOsc, 1);
             }
         }
-
+        public bool VFOASubInUse
+        {
+            get { return rx2_enabled && (chkEnableMultiRX.Checked || chkVFOSplit.Checked); }
+        }
         private double m_dVFOASubFreq = 0;
         public double VFOASubFreq //rx2
         {
             get
             {
-                if (!rx2_enabled || (!chkEnableMultiRX.Checked && !chkVFOSplit.Checked)) return -999.999;
+                //if (!rx2_enabled || (!chkEnableMultiRX.Checked && !chkVFOSplit.Checked)) return -999.999;
+                if (!VFOASubInUse) return -999.999; // [2.10.1.0] MW0LGE changed as MeterManager makes use of this
                 return Math.Round(m_dVFOASubFreq, 6); // MW0LGE_21d rounded to 6
             }
 
@@ -37568,16 +37571,18 @@ namespace Thetis
                                         else if (!bLowEdge && bHighEdge) highlightRX2 = 1;
                                     }
                                 }
-                                else if (e.X > filt_low_x && e.X < filt_high_x)
+                                else if (bOverRX1 && e.X > filt_low_x && e.X < filt_high_x)
                                 {
                                     // middle of the filter, but only when in CTUN on, or holding shift
-                                    if ((((click_tune_display && bOverRX1) || (click_tune_rx2_display && bOverRX2)) || Common.ShiftKeyDown) && _highlightedSpot == null)
+                                    if ((click_tune_display || Common.ShiftKeyDown) && _highlightedSpot == null)
                                         next_cursor = Cursors.NoMoveHoriz;
                                 }
-                                //else
-                                //{
-                                //    next_cursor = Cursors.Cross;
-                                //}
+                                else if (bOverRX2 && e.X > vfob_low_x && e.X < vfob_high_x)
+                                {
+                                    // middle of the filter, but only when in CTUN on, or holding shift
+                                    if ((click_tune_rx2_display || Common.ShiftKeyDown) && _highlightedSpot == null)
+                                        next_cursor = Cursors.NoMoveHoriz;
+                                }
 
                                 //MW0LGE_21k9 added the filter info onto the cursor info, also done below on the filter drags
                                 if (highlightRX1 == -1)
@@ -38072,15 +38077,27 @@ namespace Thetis
 
             }
         }
-
         private void getFilterEdgesInPixels(MouseEventArgs e, ref int low_x, ref int high_x, ref int vfoa_sub_x, ref int vfoa_sub_low_x, ref int vfoa_sub_high_x)
         {
             if (rx2_enabled && e.Y > picDisplay.Height / 2)//rx2
             {
                 if (mox)// && chkVFOBTX.Checked)
                 {
-                    low_x = HzToPixel(radio.GetDSPTX(0).TXFilterLow);
-                    high_x = HzToPixel(radio.GetDSPTX(0).TXFilterHigh);
+                    if (VFOBTX)
+                    {
+                        low_x = HzToPixel(radio.GetDSPTX(0).TXFilterLow, 2);
+                        high_x = HzToPixel(radio.GetDSPTX(0).TXFilterHigh, 2);
+                    }
+                    else
+                    {
+                        //low_x = HzToPixel(radio.GetDSPRX(1, 0).RXFilterLow, 2); //[2.10.1.0] MW0LGE
+                        //high_x = HzToPixel(radio.GetDSPRX(1, 0).RXFilterHigh, 2);
+
+                        //[2.10.1.0] MW0LGE changes so that CTUN on works for filter drag
+                        int diff = HzToPixel((float)((VFOBFreq - CentreRX2Frequency) * 1e6), 2);
+                        low_x = diff + HzToPixel(radio.GetDSPRX(1, 0).RXFilterLow, 2) - HzToPixel(0.0f, 2);
+                        high_x = diff + HzToPixel(radio.GetDSPRX(1, 0).RXFilterHigh, 2) - HzToPixel(0.0f, 2);
+                    }
                 }
                 else if (rx2_dsp_mode != DSPMode.DRM)
                 {
@@ -38818,20 +38835,23 @@ namespace Thetis
                                     {
                                         if (mox && chkVFOBTX.Checked)
                                         {
-                                            switch (radio.GetDSPTX(0).CurrentDSPMode)
+                                            if (!click_tune_rx2_display) //[2.10.1.0] not when in ctun
                                             {
-                                                case DSPMode.LSB:
-                                                case DSPMode.CWL:
-                                                case DSPMode.DIGL:
-                                                case DSPMode.AM:
-                                                case DSPMode.SAM:
-                                                case DSPMode.FM:
-                                                case DSPMode.DSB:
-                                                    tx_high_filter_drag = true;
-                                                    break;
-                                                default:
-                                                    tx_low_filter_drag = true;
-                                                    break;
+                                                switch (radio.GetDSPTX(0).CurrentDSPMode)
+                                                {
+                                                    case DSPMode.LSB:
+                                                    case DSPMode.CWL:
+                                                    case DSPMode.DIGL:
+                                                    case DSPMode.AM:
+                                                    case DSPMode.SAM:
+                                                    case DSPMode.FM:
+                                                    case DSPMode.DSB:
+                                                        tx_high_filter_drag = true;
+                                                        break;
+                                                    default:
+                                                        tx_low_filter_drag = true;
+                                                        break;
+                                                }
                                             }
                                         }
                                         else rx2_low_filter_drag = true;
@@ -38840,20 +38860,23 @@ namespace Thetis
                                     {
                                         if (mox && (!chkSplitDisplay.Checked || chkVFOATX.Checked))
                                         {
-                                            switch (radio.GetDSPTX(0).CurrentDSPMode)
+                                            if (!click_tune_display) //[2.10.1.0] not when in ctun
                                             {
-                                                case DSPMode.LSB:
-                                                case DSPMode.CWL:
-                                                case DSPMode.DIGL:
-                                                case DSPMode.AM:
-                                                case DSPMode.SAM:
-                                                case DSPMode.FM:
-                                                case DSPMode.DSB:
-                                                    tx_high_filter_drag = true;
-                                                    break;
-                                                default:
-                                                    tx_low_filter_drag = true;
-                                                    break;
+                                                switch (radio.GetDSPTX(0).CurrentDSPMode)
+                                                {
+                                                    case DSPMode.LSB:
+                                                    case DSPMode.CWL:
+                                                    case DSPMode.DIGL:
+                                                    case DSPMode.AM:
+                                                    case DSPMode.SAM:
+                                                    case DSPMode.FM:
+                                                    case DSPMode.DSB:
+                                                        tx_high_filter_drag = true;
+                                                        break;
+                                                    default:
+                                                        tx_low_filter_drag = true;
+                                                        break;
+                                                }
                                             }
                                         }
                                         else rx1_low_filter_drag = true;
@@ -38865,6 +38888,27 @@ namespace Thetis
                                     {
                                         if (mox && chkVFOBTX.Checked)
                                         {
+                                            if (!click_tune_rx2_display) //[2.10.1.0] not when in ctun
+                                            {
+                                                switch (radio.GetDSPTX(0).CurrentDSPMode)
+                                                {
+                                                    case DSPMode.LSB:
+                                                    case DSPMode.CWL:
+                                                    case DSPMode.DIGL:
+                                                        tx_low_filter_drag = true;
+                                                        break;
+                                                    default:
+                                                        tx_high_filter_drag = true;
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                        else rx2_high_filter_drag = true;
+                                    }
+                                    else if (mox && (!chkSplitDisplay.Checked || (chkSplitDisplay.Checked && chkVFOATX.Checked)))
+                                    {
+                                        if (!click_tune_display) //[2.10.1.0] not when in ctun
+                                        {
                                             switch (radio.GetDSPTX(0).CurrentDSPMode)
                                             {
                                                 case DSPMode.LSB:
@@ -38876,21 +38920,6 @@ namespace Thetis
                                                     tx_high_filter_drag = true;
                                                     break;
                                             }
-                                        }
-                                        else rx2_high_filter_drag = true;
-                                    }
-                                    else if (mox && (!chkSplitDisplay.Checked || (chkSplitDisplay.Checked && chkVFOATX.Checked)))
-                                    {
-                                        switch (radio.GetDSPTX(0).CurrentDSPMode)
-                                        {
-                                            case DSPMode.LSB:
-                                            case DSPMode.CWL:
-                                            case DSPMode.DIGL:
-                                                tx_low_filter_drag = true;
-                                                break;
-                                            default:
-                                                tx_high_filter_drag = true;
-                                                break;
                                         }
                                     }
                                     else rx1_high_filter_drag = true;

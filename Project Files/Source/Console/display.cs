@@ -56,8 +56,6 @@ namespace Thetis
     using Brush = System.Drawing.Brush;
     using Point = System.Drawing.Point;
     using Pen = System.Drawing.Pen;
-    using PixelFormat = System.Drawing.Imaging.PixelFormat;
-    using DashStyle = System.Drawing.Drawing2D.DashStyle;
     // SharpDX clashes
     using AlphaMode = SharpDX.Direct2D1.AlphaMode;
     using Device = SharpDX.Direct3D11.Device;

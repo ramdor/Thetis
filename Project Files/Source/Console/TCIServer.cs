@@ -122,7 +122,6 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Thetis
 {
