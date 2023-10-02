@@ -120,9 +120,9 @@ namespace Thetis
 #endif
             initializing = true;
 
-            // MW0LGE node: this will allways cause the change event to fire, as the combobox does not contain any default value
+            // MW0LGE note: this will allways cause the change event to fire, as the combobox does not contain any default value
             // it is bypassed in the event by use of the initializing flag, and is then
-            // forced through in ForceAllEvents
+            // forced through in ForceAllEvents. This is the default radio with a blank database.
             if (comboRadioModel.Text == "") comboRadioModel.Text = "HERMES";
             //
 
@@ -20825,17 +20825,52 @@ namespace Thetis
             console.QSOTimerFlashAfterAutoReset = chkQSOTimerFlashTimerIfResetOnExpiry.Checked;
         }
 
+        private HPSDRModel stringModelToEnum(string sModel)
+        {
+            switch (sModel.ToUpper())
+            {
+                case "HERMES":
+                    return HPSDRModel.HERMES;
+                case "ANAN-10":
+                    return HPSDRModel.ANAN10;
+                case "ANAN-10E":
+                    return HPSDRModel.ANAN10E;
+                case "ANAN-100":
+                    return HPSDRModel.ANAN100;
+                case "ANAN-100B":
+                    return HPSDRModel.ANAN100B;
+                case "ANAN-100D":
+                    return HPSDRModel.ANAN100D;
+                case "ANAN-200D":
+                    return HPSDRModel.ANAN200D;
+                case "ANAN-7000DLE":
+                    return HPSDRModel.ANAN7000D;
+                case "ANAN-8000DLE":
+                    return HPSDRModel.ANAN8000D;
+                case "ANAN-G2":
+                    return HPSDRModel.ANAN_G2;
+                case "ANAN-G2-1K":
+                    return HPSDRModel.ANAN_G2_1K;
+            }
+
+            return HPSDRModel.FIRST;
+        }
         private void comboRadioModel_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return; // forceallevents will call this  // [2.10.1.0] MW0LGE renabled
 
             bool power = console.PowerOn;
-            HPSDRModel old_model = console.CurrentHPSDRModel;
+            HPSDRModel old_model;
+            if (console.CurrentHPSDRModel == HPSDRModel.FIRST) // unset state // [2.10.1.0] MW0LGE
+                old_model = stringModelToEnum(comboRadioModel.Text);
+            else
+                old_model = console.CurrentHPSDRModel;
+
             comboAudioSampleRateRX2.Enabled = true;
 
-            switch (comboRadioModel.Text)
+            switch (stringModelToEnum(comboRadioModel.Text))
             {
-                case "HERMES":
+                case HPSDRModel.HERMES:
                     console.CurrentHPSDRModel = HPSDRModel.HERMES;
                     // chkPennyPresent.Checked = false;
                     // chkPennyPresent.Enabled = false;
@@ -20878,7 +20913,7 @@ namespace Thetis
                     chkBPF2Gnd.Visible = false;
                     break;
 
-                case "ANAN-10":
+                case HPSDRModel.ANAN10:
                     console.CurrentHPSDRModel = HPSDRModel.ANAN10;
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
@@ -20918,7 +20953,7 @@ namespace Thetis
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     break;
 
-                case "ANAN-10E":
+                case HPSDRModel.ANAN10E:
                     // set RX2 sample_rate equal to RX1 rate
                     console.CurrentHPSDRModel = HPSDRModel.ANAN10E;
                     comboAudioSampleRateRX2.SelectedIndex = comboAudioSampleRate1.SelectedIndex;
@@ -20962,7 +20997,7 @@ namespace Thetis
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     break;
 
-                case "ANAN-100":
+                case HPSDRModel.ANAN100:
                     console.CurrentHPSDRModel = HPSDRModel.ANAN100;
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
@@ -21004,7 +21039,7 @@ namespace Thetis
                     chkBPF2Gnd.Visible = false;
                     break;
 
-                case "ANAN-100B":
+                case HPSDRModel.ANAN100B:
                     console.CurrentHPSDRModel = HPSDRModel.ANAN100B;
                     comboAudioSampleRateRX2.SelectedIndex = comboAudioSampleRate1.SelectedIndex;
                     comboAudioSampleRateRX2_SelectedIndexChanged(this, e);
@@ -21052,7 +21087,7 @@ namespace Thetis
                     chkBPF2Gnd.Visible = false;
                     break;
 
-                case "ANAN-100D":
+                case HPSDRModel.ANAN100D:
                     console.CurrentHPSDRModel = HPSDRModel.ANAN100D;
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
@@ -21116,7 +21151,7 @@ namespace Thetis
                     if (radDDC6ADC2.Checked) radDDC6ADC0.Checked = true;
                     break;
 
-                case "ANAN-200D":
+                case HPSDRModel.ANAN200D:
                     console.CurrentHPSDRModel = HPSDRModel.ANAN200D;
                     //chkPennyPresent.Checked = false;
                     //chkPennyPresent.Enabled = false;
@@ -21168,7 +21203,7 @@ namespace Thetis
                     radDDC6ADC2.Enabled = true;
                     break;
 
-                case "ANAN-7000DLE":
+                case HPSDRModel.ANAN7000D:
                     console.CurrentHPSDRModel = HPSDRModel.ANAN7000D;
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
@@ -21226,7 +21261,7 @@ namespace Thetis
                     radDDC6ADC2.Enabled = true;
                     break;
 
-                case "ANAN-8000DLE":
+                case HPSDRModel.ANAN8000D:
                     console.CurrentHPSDRModel = HPSDRModel.ANAN8000D;
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
@@ -21287,7 +21322,7 @@ namespace Thetis
                     chkBPF2Gnd.Visible = true;
                     break;
 
-                case "ANAN-G2":                 // added G8NJJ
+                case HPSDRModel.ANAN_G2:                 // added G8NJJ
                     console.CurrentHPSDRModel = HPSDRModel.ANAN_G2;
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
@@ -21345,7 +21380,7 @@ namespace Thetis
                     radDDC6ADC2.Enabled = true;
                     break;
 
-                case "ANAN-G2-1K":              // added G8NJJ
+                case HPSDRModel.ANAN_G2_1K:              // added G8NJJ
                     console.CurrentHPSDRModel = HPSDRModel.ANAN_G2_1K;
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
@@ -21402,8 +21437,6 @@ namespace Thetis
                     radDDC5ADC2.Enabled = true;
                     radDDC6ADC2.Enabled = true;
                     break;
-
-
             }
 
             if (old_model != console.CurrentHPSDRModel)
