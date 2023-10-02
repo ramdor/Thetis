@@ -20855,13 +20855,15 @@ namespace Thetis
 
             return HPSDRModel.FIRST;
         }
+        private bool _firstRadioModelChange = true;
         private void comboRadioModel_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return; // forceallevents will call this  // [2.10.1.0] MW0LGE renabled
 
             bool power = console.PowerOn;
+
             HPSDRModel old_model;
-            if (console.CurrentHPSDRModel == HPSDRModel.FIRST) // unset state // [2.10.1.0] MW0LGE
+            if (_firstRadioModelChange) // unset state // [2.10.1.0] MW0LGE
                 old_model = stringModelToEnum(comboRadioModel.Text);
             else
                 old_model = console.CurrentHPSDRModel;
@@ -21444,7 +21446,10 @@ namespace Thetis
                 setupADCRadioButtions();
                 btnResetP2ADC_Click(this, EventArgs.Empty);
                 btnResetP1ADC_Click(this, EventArgs.Empty);
+            }
 
+            if(_firstRadioModelChange || old_model != console.CurrentHPSDRModel)
+            { 
                 if (!initializing)
                 {
                     string sCurrentPAProfile = comboPAProfile.Text;
@@ -21480,6 +21485,8 @@ namespace Thetis
             {
                 console.PowerOn = true;
             }
+
+            _firstRadioModelChange = false;
         }
         private void setupADCRadioButtions()
         {

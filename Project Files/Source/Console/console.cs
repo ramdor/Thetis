@@ -16282,7 +16282,7 @@ namespace Thetis
             }
         }
 
-        private HPSDRModel current_hpsdr_model = HPSDRModel.FIRST; // [2.10.1.0] MW0LGE set uninitialsed
+        private HPSDRModel current_hpsdr_model = HPSDRModel.HERMES;
         public HPSDRModel CurrentHPSDRModel
         {
             get { return current_hpsdr_model; }
