@@ -6697,7 +6697,12 @@ namespace Thetis
         private static List<clsNotchCoords> handleNotches(int rx, bool bottom, int cwSideToneShift, int Low, int High, int nVerticalShift, int top, int width, int W, int H, bool bDraw)//, int expandHz = 0)
         {
             long rf_freq = vfoa_hz;
-            int rit = rit_hz;
+            int localRit;
+
+            if (rx == 1)
+                localRit = _rx1ClickDisplayCTUN ? 0 : rit_hz;
+            else
+                localRit = 0; // no rit rx2
 
             if (/*bottom || */(current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2)) // MW0LGE
             {
@@ -6718,13 +6723,12 @@ namespace Thetis
                 int notch_centre_x;
                 int notch_left_x;
                 int notch_right_x;
-
                 
                 if (bDraw)
                 {
-                    notch_centre_x = (int)((float)((n.FCenter) - rf_freq - Low - rit) / width * W);
-                    notch_left_x = (int)((float)((n.FCenter) - rf_freq - n.FWidth / 2 - Low - rit) / width * W);
-                    notch_right_x = (int)((float)((n.FCenter) - rf_freq + n.FWidth / 2 - Low - rit) / width * W);
+                    notch_centre_x = (int)((float)((n.FCenter) - rf_freq - Low - localRit) / width * W);
+                    notch_left_x = (int)((float)((n.FCenter) - rf_freq - n.FWidth / 2 - Low - localRit) / width * W);
+                    notch_right_x = (int)((float)((n.FCenter) - rf_freq + n.FWidth / 2 - Low - localRit) / width * W);
                 }
                 else
                 {
@@ -6732,9 +6736,9 @@ namespace Thetis
                     //double nw = n.FWidth < 100 ? 100 : n.FWidth;
                     double dNewWidth = n.FWidth < _mnfMinSize ? _mnfMinSize : n.FWidth; // use the min width of filter from WDSP
                     dNewWidth += 20; // fudge factor to align better with spectrum notch
-                    notch_centre_x = (int)((float)((n.FCenter) - rf_freq - Low - rit) / width * W);
-                    notch_left_x = (int)((float)((n.FCenter) - rf_freq - dNewWidth / 2 - Low - rit/* - expandHz*/) / width * W);
-                    notch_right_x = (int)((float)((n.FCenter) - rf_freq + dNewWidth / 2 - Low - rit/* + expandHz*/) / width * W);
+                    notch_centre_x = (int)((float)((n.FCenter) - rf_freq - Low - localRit) / width * W);
+                    notch_left_x = (int)((float)((n.FCenter) - rf_freq - dNewWidth / 2 - Low - localRit/* - expandHz*/) / width * W);
+                    notch_right_x = (int)((float)((n.FCenter) - rf_freq + dNewWidth / 2 - Low - localRit/* + expandHz*/) / width * W);
                 }
 
                 clsNotchCoords nc = new clsNotchCoords(notch_centre_x, notch_left_x, notch_right_x, _tnf_active && n.Active, (int)n.FWidth);
