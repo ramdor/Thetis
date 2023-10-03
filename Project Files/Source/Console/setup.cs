@@ -51,6 +51,7 @@ namespace Thetis
     using System.Security.Cryptography;
     using System.Xml;
     using System.Xml.Serialization;
+    using System.Diagnostics.Eventing.Reader;
 
     public partial class Setup : Form
     {
@@ -2390,6 +2391,9 @@ namespace Thetis
 
             //
             chkForceATTwhenPSAoff_CheckedChanged(this, e); //MW0LGE [2.9.0.7]
+
+            //options2 tab
+            chkQuickSplit_CheckedChanged(this, e);
         }
 
         public string[] GetTXProfileStrings()
@@ -6957,6 +6961,11 @@ namespace Thetis
         {
             get { return tcGeneral; }
             set { tcGeneral = value; }
+        }
+        public TabControl TabOptions
+        {
+            get { return tcOptions; }
+            set { tcOptions = value; }
         }
         public TabControl TabDisplay
         {
@@ -21553,7 +21562,8 @@ namespace Thetis
             DISPGEN_Tab,
             DISPRX1_Tab,
             DISPRX2_Tab,
-            SpotTCI
+            SpotTCI,
+            OPTIONS2_Tab
         }
         public void ShowSetupTab(SetupTab eTab)
         {
@@ -21636,6 +21646,11 @@ namespace Thetis
                 case SetupTab.SpotTCI:
                     TabSetup.SelectedIndex = 8; // cat
                     TabCAT.SelectedIndex = 2; // user
+                    break;
+                case SetupTab.OPTIONS2_Tab:
+                    TabSetup.SelectedIndex = 0; // general
+                    TabGeneral.SelectedIndex = 2; // options
+                    TabOptions.SelectedIndex = 1; // options2
                     break;
             }
         }
@@ -26971,6 +26986,50 @@ namespace Thetis
         private void btnClearTCISpots_Click(object sender, EventArgs e)
         {
             SpotManager2.ClearAllSpots();
+        }
+
+        public bool QuickSplitEnabled
+        {
+            get { return chkQuickSplit.Checked; }
+            set { chkQuickSplit.Checked = value; }
+        }
+        public int QuickSplitShiftHz
+        {
+            get { return (int)nudQuickSplitShift.Value; }
+            set { nudQuickSplitShift.Value = (decimal)value; }
+        }
+        public bool QuickSplitZoom
+        {
+            get { return chkQuickSplitZoom.Checked; }
+        }
+        public bool QuickSplitMultiRX
+        {
+            get { return chkQuickSplitMultiRX.Checked; }
+        }
+        public bool QuickSplitFL
+        {
+            get { return chkQuickSplitFL.Checked; }
+        }
+        public bool QuickSplitSwapVFOWheels
+        {
+            get { return chkQuickSplitSwapVFOWheels.Checked; }
+        }
+        private void chkQuickSplit_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            grpQuickSplit.Enabled = chkQuickSplit.Checked;
+            console.SetQuickSplit();
+        }
+
+        private void btnQuickSplitDown5_Click(object sender, EventArgs e)
+        {
+            QuickSplitShiftHz = -5000;
+        }
+
+        private void btnQuickSplitUp5_Click(object sender, EventArgs e)
+        {
+            QuickSplitShiftHz = 5000;
         }
     }
 

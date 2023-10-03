@@ -336,6 +336,16 @@
             this.lblOptClickTuneDIGU = new System.Windows.Forms.LabelTS();
             this.udOptClickTuneOffsetDIGU = new System.Windows.Forms.NumericUpDownTS();
             this.tpOptions2 = new System.Windows.Forms.TabPage();
+            this.chkQuickSplit = new System.Windows.Forms.CheckBoxTS();
+            this.grpQuickSplit = new System.Windows.Forms.GroupBoxTS();
+            this.btnQuickSplitUp5 = new System.Windows.Forms.ButtonTS();
+            this.btnQuickSplitDown5 = new System.Windows.Forms.ButtonTS();
+            this.chkQuickSplitSwapVFOWheels = new System.Windows.Forms.CheckBoxTS();
+            this.chkQuickSplitFL = new System.Windows.Forms.CheckBoxTS();
+            this.chkQuickSplitMultiRX = new System.Windows.Forms.CheckBoxTS();
+            this.chkQuickSplitZoom = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS182 = new System.Windows.Forms.LabelTS();
+            this.nudQuickSplitShift = new System.Windows.Forms.NumericUpDownTS();
             this.groupBoxTS26 = new System.Windows.Forms.GroupBoxTS();
             this.btnResetNFShift = new System.Windows.Forms.ButtonTS();
             this.labelTS160 = new System.Windows.Forms.LabelTS();
@@ -3551,6 +3561,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGU)).BeginInit();
             this.tpOptions2.SuspendLayout();
+            this.grpQuickSplit.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudQuickSplitShift)).BeginInit();
             this.groupBoxTS26.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudNFshift)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNFsensitivity)).BeginInit();
@@ -8860,6 +8872,8 @@
             // tpOptions2
             // 
             this.tpOptions2.BackColor = System.Drawing.SystemColors.Control;
+            this.tpOptions2.Controls.Add(this.chkQuickSplit);
+            this.tpOptions2.Controls.Add(this.grpQuickSplit);
             this.tpOptions2.Controls.Add(this.groupBoxTS26);
             this.tpOptions2.Controls.Add(this.groupBoxTS23);
             this.tpOptions2.Controls.Add(this.groupBoxTS22);
@@ -8870,6 +8884,140 @@
             this.tpOptions2.Size = new System.Drawing.Size(716, 384);
             this.tpOptions2.TabIndex = 1;
             this.tpOptions2.Text = "Options-2";
+            // 
+            // chkQuickSplit
+            // 
+            this.chkQuickSplit.AutoSize = true;
+            this.chkQuickSplit.Image = null;
+            this.chkQuickSplit.Location = new System.Drawing.Point(446, 194);
+            this.chkQuickSplit.Name = "chkQuickSplit";
+            this.chkQuickSplit.Size = new System.Drawing.Size(189, 17);
+            this.chkQuickSplit.TabIndex = 37;
+            this.chkQuickSplit.Text = "Quick Split   (rx on vfoa tx on vfob)";
+            this.chkQuickSplit.UseVisualStyleBackColor = true;
+            this.chkQuickSplit.CheckedChanged += new System.EventHandler(this.chkQuickSplit_CheckedChanged);
+            // 
+            // grpQuickSplit
+            // 
+            this.grpQuickSplit.Controls.Add(this.btnQuickSplitUp5);
+            this.grpQuickSplit.Controls.Add(this.btnQuickSplitDown5);
+            this.grpQuickSplit.Controls.Add(this.chkQuickSplitSwapVFOWheels);
+            this.grpQuickSplit.Controls.Add(this.chkQuickSplitFL);
+            this.grpQuickSplit.Controls.Add(this.chkQuickSplitMultiRX);
+            this.grpQuickSplit.Controls.Add(this.chkQuickSplitZoom);
+            this.grpQuickSplit.Controls.Add(this.labelTS182);
+            this.grpQuickSplit.Controls.Add(this.nudQuickSplitShift);
+            this.grpQuickSplit.Location = new System.Drawing.Point(440, 195);
+            this.grpQuickSplit.Name = "grpQuickSplit";
+            this.grpQuickSplit.Size = new System.Drawing.Size(255, 156);
+            this.grpQuickSplit.TabIndex = 36;
+            this.grpQuickSplit.TabStop = false;
+            // 
+            // btnQuickSplitUp5
+            // 
+            this.btnQuickSplitUp5.Image = null;
+            this.btnQuickSplitUp5.Location = new System.Drawing.Point(185, 30);
+            this.btnQuickSplitUp5.Name = "btnQuickSplitUp5";
+            this.btnQuickSplitUp5.Selectable = true;
+            this.btnQuickSplitUp5.Size = new System.Drawing.Size(42, 23);
+            this.btnQuickSplitUp5.TabIndex = 44;
+            this.btnQuickSplitUp5.Text = "+5kHz";
+            this.btnQuickSplitUp5.UseVisualStyleBackColor = true;
+            this.btnQuickSplitUp5.Click += new System.EventHandler(this.btnQuickSplitUp5_Click);
+            // 
+            // btnQuickSplitDown5
+            // 
+            this.btnQuickSplitDown5.Image = null;
+            this.btnQuickSplitDown5.Location = new System.Drawing.Point(138, 30);
+            this.btnQuickSplitDown5.Name = "btnQuickSplitDown5";
+            this.btnQuickSplitDown5.Selectable = true;
+            this.btnQuickSplitDown5.Size = new System.Drawing.Size(42, 23);
+            this.btnQuickSplitDown5.TabIndex = 38;
+            this.btnQuickSplitDown5.Text = "-5kHz";
+            this.btnQuickSplitDown5.UseVisualStyleBackColor = true;
+            this.btnQuickSplitDown5.Click += new System.EventHandler(this.btnQuickSplitDown5_Click);
+            // 
+            // chkQuickSplitSwapVFOWheels
+            // 
+            this.chkQuickSplitSwapVFOWheels.AutoSize = true;
+            this.chkQuickSplitSwapVFOWheels.Image = null;
+            this.chkQuickSplitSwapVFOWheels.Location = new System.Drawing.Point(19, 128);
+            this.chkQuickSplitSwapVFOWheels.Name = "chkQuickSplitSwapVFOWheels";
+            this.chkQuickSplitSwapVFOWheels.Size = new System.Drawing.Size(143, 17);
+            this.chkQuickSplitSwapVFOWheels.TabIndex = 43;
+            this.chkQuickSplitSwapVFOWheels.Text = "Swap VFO-Wheels (midi)";
+            this.chkQuickSplitSwapVFOWheels.UseVisualStyleBackColor = true;
+            // 
+            // chkQuickSplitFL
+            // 
+            this.chkQuickSplitFL.AutoSize = true;
+            this.chkQuickSplitFL.Image = null;
+            this.chkQuickSplitFL.Location = new System.Drawing.Point(19, 105);
+            this.chkQuickSplitFL.Name = "chkQuickSplitFL";
+            this.chkQuickSplitFL.Size = new System.Drawing.Size(143, 17);
+            this.chkQuickSplitFL.TabIndex = 42;
+            this.chkQuickSplitFL.Text = "Enable TX filter lines (FL)";
+            this.chkQuickSplitFL.UseVisualStyleBackColor = true;
+            // 
+            // chkQuickSplitMultiRX
+            // 
+            this.chkQuickSplitMultiRX.AutoSize = true;
+            this.chkQuickSplitMultiRX.Image = null;
+            this.chkQuickSplitMultiRX.Location = new System.Drawing.Point(19, 82);
+            this.chkQuickSplitMultiRX.Name = "chkQuickSplitMultiRX";
+            this.chkQuickSplitMultiRX.Size = new System.Drawing.Size(99, 17);
+            this.chkQuickSplitMultiRX.TabIndex = 41;
+            this.chkQuickSplitMultiRX.Text = "Enable MultiRX";
+            this.chkQuickSplitMultiRX.UseVisualStyleBackColor = true;
+            // 
+            // chkQuickSplitZoom
+            // 
+            this.chkQuickSplitZoom.AutoSize = true;
+            this.chkQuickSplitZoom.Image = null;
+            this.chkQuickSplitZoom.Location = new System.Drawing.Point(19, 59);
+            this.chkQuickSplitZoom.Name = "chkQuickSplitZoom";
+            this.chkQuickSplitZoom.Size = new System.Drawing.Size(65, 17);
+            this.chkQuickSplitZoom.TabIndex = 40;
+            this.chkQuickSplitZoom.Text = "Zoom In";
+            this.chkQuickSplitZoom.UseVisualStyleBackColor = true;
+            // 
+            // labelTS182
+            // 
+            this.labelTS182.AutoSize = true;
+            this.labelTS182.Image = null;
+            this.labelTS182.Location = new System.Drawing.Point(89, 35);
+            this.labelTS182.Name = "labelTS182";
+            this.labelTS182.Size = new System.Drawing.Size(29, 13);
+            this.labelTS182.TabIndex = 39;
+            this.labelTS182.Text = "± Hz";
+            // 
+            // nudQuickSplitShift
+            // 
+            this.nudQuickSplitShift.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudQuickSplitShift.Location = new System.Drawing.Point(19, 33);
+            this.nudQuickSplitShift.Maximum = new decimal(new int[] {
+            15000,
+            0,
+            0,
+            0});
+            this.nudQuickSplitShift.Minimum = new decimal(new int[] {
+            15000,
+            0,
+            0,
+            -2147483648});
+            this.nudQuickSplitShift.Name = "nudQuickSplitShift";
+            this.nudQuickSplitShift.Size = new System.Drawing.Size(64, 20);
+            this.nudQuickSplitShift.TabIndex = 38;
+            this.nudQuickSplitShift.TinyStep = false;
+            this.nudQuickSplitShift.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // groupBoxTS26
             // 
@@ -55121,6 +55269,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGL)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGU)).EndInit();
             this.tpOptions2.ResumeLayout(false);
+            this.tpOptions2.PerformLayout();
+            this.grpQuickSplit.ResumeLayout(false);
+            this.grpQuickSplit.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudQuickSplitShift)).EndInit();
             this.groupBoxTS26.ResumeLayout(false);
             this.groupBoxTS26.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudNFshift)).EndInit();
@@ -59549,5 +59701,15 @@
         private LabelTS lblTXProfileWarning;
         private Timer tmrCheckProfile;
         private ButtonTS btnClearTCISpots;
+        private GroupBoxTS grpQuickSplit;
+        private CheckBoxTS chkQuickSplit;
+        private NumericUpDownTS nudQuickSplitShift;
+        private LabelTS labelTS182;
+        private CheckBoxTS chkQuickSplitSwapVFOWheels;
+        private CheckBoxTS chkQuickSplitFL;
+        private CheckBoxTS chkQuickSplitMultiRX;
+        private CheckBoxTS chkQuickSplitZoom;
+        private ButtonTS btnQuickSplitUp5;
+        private ButtonTS btnQuickSplitDown5;
     }
 }

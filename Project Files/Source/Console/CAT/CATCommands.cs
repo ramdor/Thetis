@@ -8020,6 +8020,53 @@ namespace Thetis
                 return parser.Error1;
             }
         }
+		//[2.10.1.0]MW0LGE enable/disable quick split mode
+		public string ZZZN(string s)
+		{
+            if (console is null || console.Midi2Cat is null) return parser.Error1;
+
+            if (s.Length == parser.nSet && (s == "0" || s == "1"))
+            {
+				if(!console.IsSetupFormNull)
+					console.SetupForm.QuickSplitEnabled = (s == "1");
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+				bool bRet = false;
+				if (!console.IsSetupFormNull) bRet = console.SetupForm.QuickSplitEnabled;
+                return bRet ? "1" : "0";
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+        //[2.10.1.0]MW0LGE enable/disable quick split and turn split on/off at same time
+        public string ZZZO(string s)
+        {
+            if (console is null || console.Midi2Cat is null) return parser.Error1;
+
+            if (s.Length == parser.nSet && (s == "0" || s == "1"))
+            {
+                if (!console.IsSetupFormNull)
+                    console.SetupForm.QuickSplitEnabled = (s == "1");
+
+				console.VFOSplit = (s == "1");
+
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+				bool bRet = console.VFOSplit;
+				if (!console.IsSetupFormNull) bRet &= console.SetupForm.QuickSplitEnabled;				
+                return bRet ? "1" : "0";
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
         #endregion Extended CAT Methods ZZR-ZZZ
 
 
