@@ -6201,7 +6201,62 @@ namespace Thetis
             }
             return CmdState.NoChange;
         }
-        #endregion
+        public CmdState QuickSplitOnOff(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
 
+                int quickSplitEnabled = Convert.ToInt16(commands.ZZZN(""));
+
+                if (quickSplitEnabled == 0)
+                {
+                    commands.ZZZN("1");
+                    return CmdState.On;
+                }
+                if (quickSplitEnabled == 1)
+                {
+                    commands.ZZZN("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+        public CmdState QuickSplitOnOffandSplitOnOff(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+                
+                int quickSplitEnabled = Convert.ToInt16(commands.ZZZN(""));
+                int splitEnabled = Convert.ToInt16(commands.ZZSP(""));
+                bool oldState = quickSplitEnabled == 1 && splitEnabled == 1;
+
+                if (quickSplitEnabled == 0 || splitEnabled == 0)
+                {
+                    commands.ZZZN("1");
+                    commands.ZZSP("1");
+                }
+                else if (quickSplitEnabled == 1 || splitEnabled == 1)
+                {
+                    commands.ZZZN("0");
+                    commands.ZZSP("0");
+                }
+
+                quickSplitEnabled = Convert.ToInt16(commands.ZZZN(""));
+                splitEnabled = Convert.ToInt16(commands.ZZSP(""));
+                bool newState = quickSplitEnabled == 1 && splitEnabled == 1;
+                if (newState != oldState)
+                {
+                    return newState ? CmdState.On : CmdState.Off;
+                }
+                else
+                    return CmdState.NoChange;
+            }
+            return CmdState.NoChange;
+        }
+        #endregion
     }
 }

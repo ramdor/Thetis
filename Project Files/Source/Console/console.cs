@@ -42470,6 +42470,10 @@ namespace Thetis
                 lblVFOSplit.BackColor = System.Drawing.Color.Transparent;
             }
 
+            //[2.10.1.0] MW0LGE apply a quick shift
+            SetQuickSplit();
+            //
+
             if (rx2_enabled/* && !stereo_diversity*/) //[2.10.1.0] MW0LGE not used anymore
             {
                 UpdateVFOASub();
@@ -42550,6 +42554,7 @@ namespace Thetis
 				SetSoftRockOscFreqs();
 			}
 #endif
+
             AndromedaIndicatorCheck(EIndicatorActions.eINSplit, false, chkVFOSplit.Checked);
 
             if (_bOldVFOSplit != chkVFOSplit.Checked) //MW0LGE_22a
@@ -42558,7 +42563,93 @@ namespace Thetis
                 _bOldVFOSplit = chkVFOSplit.Checked;
             }
         }
+        private Dictionary<string, object> _oldQuickSplitSettings = null;
+        private bool _ignoreQuickSplitSet = false; // used to prevent multiple events calling this when running
+        public void SetQuickSplit()
+        {
+            if (_ignoreQuickSplitSet)
+            {
+                _ignoreQuickSplitSet = false;
+                return;
+            }
 
+            bool bRestore = false;
+            if (!IsSetupFormNull && SetupForm.QuickSplitEnabled && !RX2Enabled)
+            {
+                if (chkVFOSplit.Checked)
+                {
+                    // store old settings
+                    if (_oldQuickSplitSettings == null)
+                    {
+                        _oldQuickSplitSettings = new Dictionary<string, object>();
+
+                        _oldQuickSplitSettings.Add("zoom", this.Zoom);
+                        _oldQuickSplitSettings.Add("multirx", chkEnableMultiRX.Checked);
+                        _oldQuickSplitSettings.Add("txfl", chkShowTXFilter.Checked);
+                        _oldQuickSplitSettings.Add("swapwheels", Midi2Cat.SwapVFOWheelsProperty);
+
+                        if (RX2Enabled)
+                            _oldQuickSplitSettings.Add("VFOASubFreq", VFOASubFreq);
+                        else
+                            _oldQuickSplitSettings.Add("VFOBFreq", VFOBFreq);
+                    }
+                    //
+
+                    double shift = SetupForm.QuickSplitShiftHz * 1e-6;
+
+                    if (SetupForm.QuickSplitZoom && this.Zoom != 190)
+                        this.Zoom = 190;
+
+                    if (SetupForm.QuickSplitMultiRX && !chkEnableMultiRX.Checked)
+                        chkEnableMultiRX.Checked = true;
+
+                    if (SetupForm.QuickSplitFL && !chkShowTXFilter.Checked)
+                        chkShowTXFilter.Checked = true;
+
+                    if (SetupForm.QuickSplitSwapVFOWheels && !Midi2Cat.SwapVFOWheelsProperty)
+                        Midi2Cat.SwapVFOWheelsProperty = true;
+
+                    //Note: qsplit has been disabled when rx2 in use, as it made no sense to use vfosuba
+                    //if (RX2Enabled)
+                    //{
+                    //    // must be sub vfo
+                    //    VFOASubFreq = VFOAFreq + shift;
+                    //}
+                    //else
+                    //{
+                    VFOBFreq = VFOAFreq + shift;
+                    //}
+                }
+                else
+                {
+                    bRestore = true;                    
+                }
+
+                chkVFOSplit.Text = "QPLT";
+            }
+            else
+            {
+                bRestore = true;
+                chkVFOSplit.Text = "SPLT";
+            }
+
+            if (bRestore)
+            {
+                //do we have old settings?
+                if (_oldQuickSplitSettings != null)
+                {
+                    if (_oldQuickSplitSettings.ContainsKey("zoom")) this.Zoom = (int)_oldQuickSplitSettings["zoom"];
+                    if (_oldQuickSplitSettings.ContainsKey("multirx")) chkEnableMultiRX.Checked = (bool)_oldQuickSplitSettings["multirx"];
+                    if (_oldQuickSplitSettings.ContainsKey("txfl")) chkShowTXFilter.Checked = (bool)_oldQuickSplitSettings["txfl"];
+                    if (_oldQuickSplitSettings.ContainsKey("swapwheels")) Midi2Cat.SwapVFOWheelsProperty = (bool)_oldQuickSplitSettings["swapwheels"];
+                    if (_oldQuickSplitSettings.ContainsKey("VFOASubFreq")) VFOASubFreq = (double)_oldQuickSplitSettings["VFOASubFreq"];
+                    if (_oldQuickSplitSettings.ContainsKey("VFOBFreq")) VFOBFreq = (double)_oldQuickSplitSettings["VFOBFreq"];
+
+                    _oldQuickSplitSettings.Clear();
+                    _oldQuickSplitSettings = null;
+                }
+            }
+        }
 
         private void chkXIT_CheckedChanged(object sender, System.EventArgs e)
         {
@@ -43359,7 +43450,11 @@ namespace Thetis
                     else
                     {
                         txtVFOBFreq_LostFocus(this, EventArgs.Empty);
-                        if (chkVFOSplit.Checked) chkVFOSplit_CheckedChanged(this, EventArgs.Empty);
+                        if (chkVFOSplit.Checked)
+                        {
+                            _ignoreQuickSplitSet = true;
+                            chkVFOSplit_CheckedChanged(this, EventArgs.Empty);
+                        }
                         else
                         {
                             txtVFOBFreq.ForeColor = vfo_text_light_color;
@@ -43390,6 +43485,7 @@ namespace Thetis
                     {
                         if (chkVFOSplit.Checked)// && !rx2_enabled)
                         {
+                            _ignoreQuickSplitSet = true;
                             chkVFOSplit_CheckedChanged(this, EventArgs.Empty);
                         }
                         //else if (rx2_enabled)
@@ -44258,7 +44354,11 @@ namespace Thetis
 
             pause_DisplayThread = false; //MW0LGE_21k8
 
-            if (oldRX2Enabled != RX2Enabled) RX2EnabledChangedHandlers?.Invoke(RX2Enabled);
+            if (oldRX2Enabled != RX2Enabled)
+            {
+                SetQuickSplit(); //[2.10.1.0] MW0LGE
+                RX2EnabledChangedHandlers?.Invoke(RX2Enabled);
+            }
         }
 
         private void setSmallRX2ModeFilterLabels()
@@ -55537,6 +55637,26 @@ namespace Thetis
         private void chkRX2Squelch_MouseDown(object sender, MouseEventArgs e)
         {
             if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.AM_Tab);
+        }
+
+        private void chkVFOSplit_MouseClick(object sender, MouseEventArgs e)
+        {
+            //[2.10.1.0] MW0LGE
+            // this control has AutoCheck turned off, and is now handled here
+            // so that QSPLIT can be enabled/disabled byt shift left clicking SPLT button
+            if (e.Button == MouseButtons.Left && Keyboard.IsKeyDown(Keys.LShiftKey))
+            {
+                if (!IsSetupFormNull && !RX2Enabled) SetupForm.QuickSplitEnabled = !SetupForm.QuickSplitEnabled;
+            }
+            else
+            {
+                chkVFOSplit.Checked = !chkVFOSplit.Checked;
+            }
+        }
+
+        private void chkVFOSplit_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.OPTIONS2_Tab);
         }
     }
 

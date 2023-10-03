@@ -1485,7 +1485,13 @@ namespace Thetis
 				case "ZZZZ":
 					rtncmd = cmdlist.ZZZZ();
 					break;
-			}
+				case "ZZZN":
+					rtncmd = cmdlist.ZZZN(suffix);
+					break;
+                case "ZZZO":
+                    rtncmd = cmdlist.ZZZO(suffix);
+                    break;
+            }
             if (!rtncmd.Contains(Error1))
             //rtncmd != Error1 && rtncmd != Error2 && rtncmd != Error3)
             {

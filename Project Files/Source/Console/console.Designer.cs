@@ -2049,11 +2049,14 @@
             // chkVFOSplit
             // 
             resources.ApplyResources(this.chkVFOSplit, "chkVFOSplit");
+            this.chkVFOSplit.AutoCheck = false;
             this.chkVFOSplit.FlatAppearance.BorderSize = 0;
             this.chkVFOSplit.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.chkVFOSplit.Name = "chkVFOSplit";
             this.toolTip1.SetToolTip(this.chkVFOSplit, resources.GetString("chkVFOSplit.ToolTip"));
             this.chkVFOSplit.CheckedChanged += new System.EventHandler(this.chkVFOSplit_CheckedChanged);
+            this.chkVFOSplit.MouseClick += new System.Windows.Forms.MouseEventHandler(this.chkVFOSplit_MouseClick);
+            this.chkVFOSplit.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkVFOSplit_MouseDown);
             // 
             // btnRITReset
             // 

@@ -497,6 +497,10 @@ namespace Midi2Cat.Data
         RX2AutoAGC = 302,
         [CatCommandAttribute("Swap VFO Wheels", ControlType.Button, true)] // MW0LGE [2.9.0.7]
         SwapVFOWheels = 303,
+        [CatCommandAttribute("Quick Split On Off", ControlType.Button, true)]
+        QuickSplitOnOff = 304,
+        [CatCommandAttribute("Quick Split + VFO Split On Off", ControlType.Button, true)]
+        QuickSplitOnOffandSplitOnOff = 305,
         [CatCommandAttribute("Toggle Wheel to VFOA/VFOB ", ControlType.Button)]  //-W2PA Added a toggle between A/B for main wheel 
         ToggleVFOWheel = 700
     }
