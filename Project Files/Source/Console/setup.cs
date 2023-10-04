@@ -2109,6 +2109,7 @@ namespace Thetis
             udNoiseFloorAttackRX1_ValueChanged(this, e);
             udNoiseFloorAttackRX2_ValueChanged(this, e);
             //
+            chkNewNoiseFloorMethod_CheckedChanged(this, e);
 
             //Leveler
             chkDSPLevelerEnabled_CheckedChanged(this, e);
@@ -6956,7 +6957,11 @@ namespace Thetis
             get { return tcSetup; }
             set { tcSetup = value; }
         }
-
+        public TabControl TabPowerAmplifier
+        {
+            get { return tcPowerAmplifier; }
+            set { tcPowerAmplifier = value; }
+        }        
         public TabControl TabGeneral
         {
             get { return tcGeneral; }
@@ -21563,7 +21568,8 @@ namespace Thetis
             DISPRX1_Tab,
             DISPRX2_Tab,
             SpotTCI,
-            OPTIONS2_Tab
+            OPTIONS2_Tab,
+            PA_Tab
         }
         public void ShowSetupTab(SetupTab eTab)
         {
@@ -21651,6 +21657,10 @@ namespace Thetis
                     TabSetup.SelectedIndex = 0; // general
                     TabGeneral.SelectedIndex = 2; // options
                     TabOptions.SelectedIndex = 1; // options2
+                    break;
+                case SetupTab.PA_Tab:
+                    TabSetup.SelectedIndex = 5; // pa
+                    TabPowerAmplifier.SelectedIndex = 0; // gains
                     break;
             }
         }
@@ -27030,6 +27040,11 @@ namespace Thetis
         private void btnQuickSplitUp5_Click(object sender, EventArgs e)
         {
             QuickSplitShiftHz = 5000;
+        }
+
+        private void chkNewNoiseFloorMethod_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.UseOldNoiseFloorMethod = !chkNewNoiseFloorMethod.Checked;
         }
     }
 

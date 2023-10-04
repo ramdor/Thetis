@@ -32037,7 +32037,7 @@ namespace Thetis
         }
         public string PAProfile
         {
-            set { lblPAProfile.Text = value; }
+            set { lblPAProfile.Text = "PA Profile: " + value; }
         }
         private void ptbPWR_MouseUp(object sender, MouseEventArgs e)
         {
@@ -43853,6 +43853,8 @@ namespace Thetis
                 panelAndromedaMisc.Hide();
             }
 
+            setPAProfileLabelPos();  //[2.10.1.0] MW0LGE
+
             ResumeDrawing(this); //MW0LGE
         }
 
@@ -48717,16 +48719,43 @@ namespace Thetis
                 _modeDependentSettingsFormAutoClosedWhenExpanded = false;
             //
 
-            if (bSuspendDraw) ResumeDrawing(this);
-
             isexpanded = true;
             iscollapsed = false;
+
+            setPAProfileLabelPos(); //[2.10.1.0] MW0LGE
+
+            if (bSuspendDraw) ResumeDrawing(this);
 
             SelectModeDependentPanel(); //MW0LGE [2.9.0.7] moved here
 
             this.Text = BasicTitleBar; //MW0LGE_21a moved here after expaned is true so that title text gets rebuild correctly
         }
+        private void setPAProfileLabelPos()
+        {
+            int x = -1;
+            int y = -1;
 
+            if (!iscollapsed && isexpanded)
+            {
+                // use panelModeSpecificPhone even though might not be show, it is still repositioned
+                x = panelModeSpecificPhone.Left + 4;
+                y = panelModeSpecificPhone.Bottom - lblPAProfile.Height - 6;
+            }
+            else if (iscollapsed && !isexpanded)
+            {
+                x = picMultiMeterDigital.Left;
+                y = picMultiMeterDigital.Bottom + 4;
+            }
+
+            if (x > -1 && y > -1)
+            {
+                lblPAProfile.Location = new Point(x, y);
+                lblPAProfile.BringToFront();
+                lblPAProfile.Visible = true;
+            }
+            else
+                lblPAProfile.Visible = false;
+        }
         public Color StatusBarBackColour {
             get { return statusStripMain.BackColor; }
             set { statusStripMain.BackColor = value; }
@@ -48751,7 +48780,7 @@ namespace Thetis
 
             // Save expanded display size
             if (!this.collapsedDisplay)
-                this.expandedSize = this.Size;
+                this.expandedSize = this.Size;            
 
             this.collapseToolStripMenuItem.Text = "Expand";
             this.collapsedDisplay = true;
@@ -49337,7 +49366,7 @@ namespace Thetis
                 panelMode.Hide();
 
             // [2.10.1.0] MW0LGE
-            if(_modeDependentSettingsFormAutoClosedWhenExpanded)
+            if (_modeDependentSettingsFormAutoClosedWhenExpanded)
             {
                 // we closed the modedependent form when we swiched back over to expanded, let us re-show it again by
                 // simulating a button press
@@ -49345,15 +49374,17 @@ namespace Thetis
             }
             //
 
-            RepositionControlsForCollapsedlDisplay();
-
             this.Size = new Size(SetupForm.CollapsedWidth,
                 SetupForm.CollapsedHeight);
 
-            if (bSuspendDraw) ResumeDrawing(this);
+            RepositionControlsForCollapsedlDisplay();
 
             iscollapsed = true;
             isexpanded = false;
+            
+            setPAProfileLabelPos(); //[2.10.1.0] MW0LGE
+
+            if (bSuspendDraw) ResumeDrawing(this);
 
             SelectModeDependentPanel(); //MW0LGE [2.9.0.7] moved here
         }
@@ -55657,6 +55688,11 @@ namespace Thetis
         private void chkVFOSplit_MouseDown(object sender, MouseEventArgs e)
         {
             if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.OPTIONS2_Tab);
+        }
+
+        private void lblPAProfile_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.PA_Tab);
         }
     }
 
