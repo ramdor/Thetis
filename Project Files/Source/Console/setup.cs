@@ -2274,6 +2274,17 @@ namespace Thetis
             chkNoiseFloorShowDBM_CheckedChanged(this, e);
             udNoiseFloorLineWidth_ValueChanged(this, e);
 
+            //[2.10.1.0]MW0LGE mainly colours
+            clrbtnOutOfBand_Changed(this, e);
+            chkVFOSmallLSD_CheckedChanged(this, e);
+            clrbtnVFOSmallColor_Changed(this, e);
+            clrbtnInfoButtonsColor_Changed(this, e);
+            clrbtnPeakBackground_Changed(this, e);
+            clrbtnMeterBackground_Changed(this, e);
+            clrbtnBandBackground_Changed(this, e);
+            clrbtnVFOBackground_Changed(this, e);
+            //
+
             // RX2 tab
             chkRX2AutoMuteTX_CheckedChanged(this, e);
             udMoxDelay_ValueChanged(this, e);
