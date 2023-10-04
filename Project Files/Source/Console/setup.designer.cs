@@ -3464,6 +3464,7 @@
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
+            this.chkNewNoiseFloorMethod = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -8907,9 +8908,9 @@
             this.grpQuickSplit.Controls.Add(this.chkQuickSplitZoom);
             this.grpQuickSplit.Controls.Add(this.labelTS182);
             this.grpQuickSplit.Controls.Add(this.nudQuickSplitShift);
-            this.grpQuickSplit.Location = new System.Drawing.Point(440, 195);
+            this.grpQuickSplit.Location = new System.Drawing.Point(438, 194);
             this.grpQuickSplit.Name = "grpQuickSplit";
-            this.grpQuickSplit.Size = new System.Drawing.Size(255, 156);
+            this.grpQuickSplit.Size = new System.Drawing.Size(257, 156);
             this.grpQuickSplit.TabIndex = 36;
             this.grpQuickSplit.TabStop = false;
             // 
@@ -9021,6 +9022,7 @@
             // 
             // groupBoxTS26
             // 
+            this.groupBoxTS26.Controls.Add(this.chkNewNoiseFloorMethod);
             this.groupBoxTS26.Controls.Add(this.btnResetNFShift);
             this.groupBoxTS26.Controls.Add(this.labelTS160);
             this.groupBoxTS26.Controls.Add(this.btnRX2PBsnr);
@@ -9032,7 +9034,7 @@
             this.groupBoxTS26.Controls.Add(this.nudNFsensitivity);
             this.groupBoxTS26.Location = new System.Drawing.Point(438, 13);
             this.groupBoxTS26.Name = "groupBoxTS26";
-            this.groupBoxTS26.Size = new System.Drawing.Size(257, 148);
+            this.groupBoxTS26.Size = new System.Drawing.Size(257, 175);
             this.groupBoxTS26.TabIndex = 35;
             this.groupBoxTS26.TabStop = false;
             this.groupBoxTS26.Text = "Noise Floor";
@@ -55139,6 +55141,19 @@
             this.tmrCheckProfile.Interval = 1000;
             this.tmrCheckProfile.Tick += new System.EventHandler(this.tmrCheckProfile_Tick);
             // 
+            // chkNewNoiseFloorMethod
+            // 
+            this.chkNewNoiseFloorMethod.AutoSize = true;
+            this.chkNewNoiseFloorMethod.Image = null;
+            this.chkNewNoiseFloorMethod.Location = new System.Drawing.Point(21, 143);
+            this.chkNewNoiseFloorMethod.Name = "chkNewNoiseFloorMethod";
+            this.chkNewNoiseFloorMethod.Size = new System.Drawing.Size(176, 17);
+            this.chkNewNoiseFloorMethod.TabIndex = 17;
+            this.chkNewNoiseFloorMethod.Text = "New noise floor method (slower)";
+            this.toolTip1.SetToolTip(this.chkNewNoiseFloorMethod, "Linearises the dBm values during average calculations");
+            this.chkNewNoiseFloorMethod.UseVisualStyleBackColor = true;
+            this.chkNewNoiseFloorMethod.CheckedChanged += new System.EventHandler(this.chkNewNoiseFloorMethod_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -59711,5 +59726,6 @@
         private CheckBoxTS chkQuickSplitZoom;
         private ButtonTS btnQuickSplitUp5;
         private ButtonTS btnQuickSplitDown5;
+        private CheckBoxTS chkNewNoiseFloorMethod;
     }
 }

@@ -905,6 +905,9 @@
             this.toolStripStatusLabel_Date = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_LocalTime = new System.Windows.Forms.ToolStripStatusLabel();
             this.tmrAutoAGC = new System.Windows.Forms.Timer(this.components);
+            this.lblPAProfile = new System.Windows.Forms.LabelTS();
+            this.nudPwrTemp2 = new System.Windows.Forms.NumericUpDownTS();
+            this.nudPwrTemp = new System.Windows.Forms.NumericUpDownTS();
             this.grpMultimeter = new System.Windows.Forms.GroupBoxTS();
             this.pnlResizeMeter = new System.Windows.Forms.PanelTS();
             this.picMultiMeterDigital = new System.Windows.Forms.PictureBox();
@@ -1021,8 +1024,6 @@
             this.lblAF2 = new System.Windows.Forms.LabelTS();
             this.lblPWR2 = new System.Windows.Forms.LabelTS();
             this.panelModeSpecificPhone = new System.Windows.Forms.PanelTS();
-            this.labelTS2 = new System.Windows.Forms.LabelTS();
-            this.lblPAProfile = new System.Windows.Forms.LabelTS();
             this.labelTS4 = new System.Windows.Forms.LabelTS();
             this.labelTS3 = new System.Windows.Forms.LabelTS();
             this.picNoiseGate = new System.Windows.Forms.PictureBox();
@@ -1120,8 +1121,6 @@
             this.tbAndromedaEncoderSlider = new System.Windows.Forms.TrackBarTS();
             this.lblAndromedaEncoderSlider = new System.Windows.Forms.LabelTS();
             this.lblATUTuneLabel = new System.Windows.Forms.LabelTS();
-            this.nudPwrTemp = new System.Windows.Forms.NumericUpDownTS();
-            this.nudPwrTemp2 = new System.Windows.Forms.NumericUpDownTS();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).BeginInit();
@@ -1165,6 +1164,8 @@
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).BeginInit();
             this.statusStripMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp)).BeginInit();
             this.grpMultimeter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).BeginInit();
             this.panelFilter.SuspendLayout();
@@ -1219,8 +1220,6 @@
             this.grpMultimeterMenus.SuspendLayout();
             this.panelAndromedaMisc.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbAndromedaEncoderSlider)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp2)).BeginInit();
             this.SuspendLayout();
             // 
             // timer_cpu_meter
@@ -5280,6 +5279,69 @@
             this.tmrAutoAGC.Interval = 500;
             this.tmrAutoAGC.Tick += new System.EventHandler(this.tmrAutoAGC_Tick);
             // 
+            // lblPAProfile
+            // 
+            this.lblPAProfile.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblPAProfile, "lblPAProfile");
+            this.lblPAProfile.ForeColor = System.Drawing.Color.White;
+            this.lblPAProfile.Name = "lblPAProfile";
+            this.toolTip1.SetToolTip(this.lblPAProfile, resources.GetString("lblPAProfile.ToolTip"));
+            this.lblPAProfile.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblPAProfile_MouseDown);
+            // 
+            // nudPwrTemp2
+            // 
+            this.nudPwrTemp2.DecimalPlaces = 2;
+            this.nudPwrTemp2.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            resources.ApplyResources(this.nudPwrTemp2, "nudPwrTemp2");
+            this.nudPwrTemp2.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudPwrTemp2.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudPwrTemp2.Name = "nudPwrTemp2";
+            this.nudPwrTemp2.TinyStep = false;
+            this.nudPwrTemp2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // nudPwrTemp
+            // 
+            this.nudPwrTemp.DecimalPlaces = 1;
+            this.nudPwrTemp.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            resources.ApplyResources(this.nudPwrTemp, "nudPwrTemp");
+            this.nudPwrTemp.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudPwrTemp.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudPwrTemp.Name = "nudPwrTemp";
+            this.nudPwrTemp.TinyStep = false;
+            this.nudPwrTemp.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // grpMultimeter
             // 
             this.grpMultimeter.BackColor = System.Drawing.Color.Transparent;
@@ -6313,8 +6375,6 @@
             // 
             resources.ApplyResources(this.panelModeSpecificPhone, "panelModeSpecificPhone");
             this.panelModeSpecificPhone.BackColor = System.Drawing.Color.Transparent;
-            this.panelModeSpecificPhone.Controls.Add(this.labelTS2);
-            this.panelModeSpecificPhone.Controls.Add(this.lblPAProfile);
             this.panelModeSpecificPhone.Controls.Add(this.labelTS4);
             this.panelModeSpecificPhone.Controls.Add(this.labelTS3);
             this.panelModeSpecificPhone.Controls.Add(this.udTXFilterLow);
@@ -6341,18 +6401,6 @@
             this.panelModeSpecificPhone.Controls.Add(this.chkNoiseGate);
             this.panelModeSpecificPhone.Controls.Add(this.comboAMTXProfile);
             this.panelModeSpecificPhone.Name = "panelModeSpecificPhone";
-            // 
-            // labelTS2
-            // 
-            resources.ApplyResources(this.labelTS2, "labelTS2");
-            this.labelTS2.ForeColor = System.Drawing.Color.White;
-            this.labelTS2.Name = "labelTS2";
-            // 
-            // lblPAProfile
-            // 
-            resources.ApplyResources(this.lblPAProfile, "lblPAProfile");
-            this.lblPAProfile.ForeColor = System.Drawing.Color.White;
-            this.lblPAProfile.Name = "lblPAProfile";
             // 
             // labelTS4
             // 
@@ -7358,65 +7406,12 @@
             this.lblATUTuneLabel.ForeColor = System.Drawing.Color.White;
             this.lblATUTuneLabel.Name = "lblATUTuneLabel";
             // 
-            // nudPwrTemp
-            // 
-            this.nudPwrTemp.DecimalPlaces = 1;
-            this.nudPwrTemp.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            resources.ApplyResources(this.nudPwrTemp, "nudPwrTemp");
-            this.nudPwrTemp.Maximum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.nudPwrTemp.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudPwrTemp.Name = "nudPwrTemp";
-            this.nudPwrTemp.TinyStep = false;
-            this.nudPwrTemp.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // nudPwrTemp2
-            // 
-            this.nudPwrTemp2.DecimalPlaces = 2;
-            this.nudPwrTemp2.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            resources.ApplyResources(this.nudPwrTemp2, "nudPwrTemp2");
-            this.nudPwrTemp2.Maximum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.nudPwrTemp2.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudPwrTemp2.Name = "nudPwrTemp2";
-            this.nudPwrTemp2.TinyStep = false;
-            this.nudPwrTemp2.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
             // Console
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.Controls.Add(this.lblPAProfile);
             this.Controls.Add(this.nudPwrTemp2);
             this.Controls.Add(this.nudPwrTemp);
             this.Controls.Add(this.statusStripMain);
@@ -7527,6 +7522,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).EndInit();
             this.statusStripMain.ResumeLayout(false);
             this.statusStripMain.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp)).EndInit();
             this.grpMultimeter.ResumeLayout(false);
             this.grpMultimeter.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).EndInit();
@@ -7590,8 +7587,6 @@
             this.grpMultimeterMenus.ResumeLayout(false);
             this.panelAndromedaMisc.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tbAndromedaEncoderSlider)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -7725,7 +7720,6 @@
         private PrettyTrackBar ptbTune;
         private LabelTS lblTune;
         private LabelTS lblPAProfile;
-        private LabelTS labelTS2;
         private NumericUpDownTS nudPwrTemp;
         private NumericUpDownTS nudPwrTemp2;
         private ToolStripStatusLabel toolStripStatusLabel_TXInhibit;

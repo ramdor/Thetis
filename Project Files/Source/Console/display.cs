@@ -4309,6 +4309,7 @@ namespace Thetis
                 int averageCount = 1;
                 int niDecimated = 0;
                 float currentAverage = rx == 1 ? m_fFFTBinAverageRX1 + 2 : m_fFFTBinAverageRX2 + 2; // +2db to add some extras above the average
+                bool useOldMethod = _oldNoiseFloorMethod;
 
                 for (int i = 0; i < nDecimatedWidth; i++)
                 {
@@ -4319,7 +4320,11 @@ namespace Thetis
                     // noise floor
                     if (!local_mox && (max_copy < currentAverage))
                     {
-                        averageSum += max_copy;
+                        if(useOldMethod)
+                            averageSum += max_copy;
+                        else
+                            averageSum += (float)Math.Pow(10f, max_copy / 10f);
+
                         averageCount++;
                     }
                     //
@@ -4465,7 +4470,7 @@ namespace Thetis
                 {
                     bool bPreviousRX1 = _bNoiseFloorAlreadyCalculatedRX1;
                     bool bPreviousRX2 = _bNoiseFloorAlreadyCalculatedRX2;
-                    processNoiseFloor(rx, averageCount, averageSum, nDecimatedWidth, false);
+                    processNoiseFloor(rx, averageCount, averageSum, nDecimatedWidth, false, useOldMethod);
 
                     int yPixelLerp;
                     int yPixelActual;
@@ -4629,7 +4634,21 @@ namespace Thetis
                 _NFsensitivity = t;
             }
         }
-        private static void processNoiseFloor(int rx, int averageCount, float averageSum, int width, bool waterfall)
+        private static bool _oldNoiseFloorMethod = true;
+        public static bool UseOldNoiseFloorMethod
+        {
+            get { return _oldNoiseFloorMethod; }
+            set 
+            { 
+                if(value != _oldNoiseFloorMethod)
+                {
+                    FastAttackNoiseFloorRX1 = true;
+                    FastAttackNoiseFloorRX2 = true;
+                }
+                _oldNoiseFloorMethod = value; 
+            }
+        }
+        private static void processNoiseFloor(int rx, int averageCount, float averageSum, int width, bool waterfall, bool useOldMethod)
         {
             if (rx == 1 && _bNoiseFloorAlreadyCalculatedRX1) return; // already done, ignore
             if (rx == 2 && _bNoiseFloorAlreadyCalculatedRX2) return; // already done, ignore
@@ -4641,7 +4660,17 @@ namespace Thetis
             {
                 if (averageCount >= requireSamples)
                 {
-                    m_fFFTBinAverageRX1 = (m_fFFTBinAverageRX1 + (averageSum / (float)averageCount)) / 2f;
+                    if (useOldMethod)
+                    {
+                        m_fFFTBinAverageRX1 = (m_fFFTBinAverageRX1 + (averageSum / (float)averageCount)) / 2f;
+                    }
+                    else
+                    {
+                        float linearAverage = averageSum / (float)averageCount;
+                        float oldLinear = (float)Math.Pow(10f, m_fFFTBinAverageRX1 / 10f);
+                        float newLinear = (linearAverage + oldLinear) / 2f;
+                        m_fFFTBinAverageRX1 = (float)(10f * Math.Log10(newLinear));
+                    }
                 }
                 else
                 {
@@ -4670,7 +4699,17 @@ namespace Thetis
             {
                 if (averageCount >= requireSamples)
                 {
-                    m_fFFTBinAverageRX2 = (m_fFFTBinAverageRX2 + (averageSum / (float)averageCount)) / 2f;
+                    if (useOldMethod)
+                    {
+                        m_fFFTBinAverageRX2 = (m_fFFTBinAverageRX2 + (averageSum / (float)averageCount)) / 2f;
+                    }
+                    else
+                    {
+                        float linearAverage = averageSum / (float)averageCount;
+                        float oldLinear = (float)Math.Pow(10f, m_fFFTBinAverageRX2 / 10f);
+                        float newLinear = (linearAverage + oldLinear) / 2f;
+                        m_fFFTBinAverageRX2 = (float)(10f * Math.Log10(newLinear));
+                    }
                 }
                 else
                 {
@@ -4911,6 +4950,7 @@ namespace Thetis
                     float averageSum = 0;
                     int averageCount = 0;
                     float currentAverage = rx == 1 ? m_fFFTBinAverageRX1 + 2 : m_fFFTBinAverageRX2 + 2;
+                    bool useOldMethod = _oldNoiseFloorMethod;
 
                     for (int i = 0; i < nDecimatedWidth; i++)
                     {
@@ -4920,7 +4960,11 @@ namespace Thetis
                         // noise floor
                         if (!local_mox && (max_copy < currentAverage))
                         {
-                            averageSum += max_copy;
+                            if(useOldMethod)
+                                averageSum += max_copy;
+                            else
+                                averageSum += (float)Math.Pow(10f, max_copy / 10f);
+
                             averageCount++;
                         }
                         //
@@ -4945,7 +4989,7 @@ namespace Thetis
                     {
                         bool bPreviousRX1 = _bNoiseFloorAlreadyCalculatedRX1;
                         bool bPreviousRX2 = _bNoiseFloorAlreadyCalculatedRX2;
-                        processNoiseFloor(rx, averageCount, averageSum, nDecimatedWidth, true);
+                        processNoiseFloor(rx, averageCount, averageSum, nDecimatedWidth, true, useOldMethod);
 
                         if (rx == 1)
                         {
