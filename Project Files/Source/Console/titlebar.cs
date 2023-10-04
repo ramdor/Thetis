@@ -34,8 +34,8 @@ namespace Thetis
 {
     class TitleBar
     {
-        public const string BUILD_NAME = "wip_lge_11";
-        public const string BUILD_DATE = "(10/02/23)<FW>"; //MW0LGE_21g <FW> gets replaced in BasicTitle (console.cs) with firmware version
+        public const string BUILD_NAME = "";
+        public const string BUILD_DATE = "(10/04/23)<FW>"; //MW0LGE_21g <FW> gets replaced in BasicTitle (console.cs) with firmware version
 
         public static string GetString()
         {

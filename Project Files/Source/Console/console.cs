@@ -40412,7 +40412,6 @@ namespace Thetis
                     chkANF.Enabled = true;
                     chkANF_CheckedChanged(this, EventArgs.Empty);
 
-
                     if (!RX1IsIn60mChannel())
                     {
                         switch (new_mode)
