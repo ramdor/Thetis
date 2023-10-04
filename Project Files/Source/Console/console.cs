@@ -48737,14 +48737,17 @@ namespace Thetis
 
             if (!iscollapsed && isexpanded)
             {
-                // use panelModeSpecificPhone even though might not be show, it is still repositioned
+                // use panelModeSpecificPhone even though might not be shown, it is still repositioned
                 x = panelModeSpecificPhone.Left + 4;
                 y = panelModeSpecificPhone.Bottom - lblPAProfile.Height - 6;
             }
             else if (iscollapsed && !isexpanded)
             {
-                x = picMultiMeterDigital.Left;
-                y = picMultiMeterDigital.Bottom + 4;
+                if (showAndromedaTopControls || m_bShowTopControls)
+                {
+                    x = picMultiMeterDigital.Left;
+                    y = picMultiMeterDigital.Bottom + (m_bShowTopControls ? 0 : 4);
+                }
             }
 
             if (x > -1 && y > -1)
@@ -55674,7 +55677,7 @@ namespace Thetis
         {
             //[2.10.1.0] MW0LGE
             // this control has AutoCheck turned off, and is now handled here
-            // so that QSPLIT can be enabled/disabled byt shift left clicking SPLT button
+            // so that QSPLIT can be enabled/disabled by shift left clicking SPLT button
             if (e.Button == MouseButtons.Left && Keyboard.IsKeyDown(Keys.LShiftKey))
             {
                 if (!IsSetupFormNull && !RX2Enabled) SetupForm.QuickSplitEnabled = !SetupForm.QuickSplitEnabled;
