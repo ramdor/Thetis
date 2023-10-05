@@ -347,6 +347,7 @@
             this.labelTS182 = new System.Windows.Forms.LabelTS();
             this.nudQuickSplitShift = new System.Windows.Forms.NumericUpDownTS();
             this.groupBoxTS26 = new System.Windows.Forms.GroupBoxTS();
+            this.chkNewNoiseFloorMethod = new System.Windows.Forms.CheckBoxTS();
             this.btnResetNFShift = new System.Windows.Forms.ButtonTS();
             this.labelTS160 = new System.Windows.Forms.LabelTS();
             this.btnRX2PBsnr = new System.Windows.Forms.ButtonTS();
@@ -3464,7 +3465,6 @@
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
-            this.chkNewNoiseFloorMethod = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -8895,6 +8895,7 @@
             this.chkQuickSplit.Size = new System.Drawing.Size(189, 17);
             this.chkQuickSplit.TabIndex = 37;
             this.chkQuickSplit.Text = "Quick Split   (rx on vfoa tx on vfob)";
+            this.toolTip1.SetToolTip(this.chkQuickSplit, "Enable quick split for the split button on rx1");
             this.chkQuickSplit.UseVisualStyleBackColor = true;
             this.chkQuickSplit.CheckedChanged += new System.EventHandler(this.chkQuickSplit_CheckedChanged);
             // 
@@ -8947,6 +8948,7 @@
             this.chkQuickSplitSwapVFOWheels.Size = new System.Drawing.Size(143, 17);
             this.chkQuickSplitSwapVFOWheels.TabIndex = 43;
             this.chkQuickSplitSwapVFOWheels.Text = "Swap VFO-Wheels (midi)";
+            this.toolTip1.SetToolTip(this.chkQuickSplitSwapVFOWheels, "Swap the wheels around for vfoa and vfob on midi device");
             this.chkQuickSplitSwapVFOWheels.UseVisualStyleBackColor = true;
             // 
             // chkQuickSplitFL
@@ -8958,6 +8960,7 @@
             this.chkQuickSplitFL.Size = new System.Drawing.Size(143, 17);
             this.chkQuickSplitFL.TabIndex = 42;
             this.chkQuickSplitFL.Text = "Enable TX filter lines (FL)";
+            this.toolTip1.SetToolTip(this.chkQuickSplitFL, "Turn on the TX filter lines if off");
             this.chkQuickSplitFL.UseVisualStyleBackColor = true;
             // 
             // chkQuickSplitMultiRX
@@ -8969,6 +8972,7 @@
             this.chkQuickSplitMultiRX.Size = new System.Drawing.Size(99, 17);
             this.chkQuickSplitMultiRX.TabIndex = 41;
             this.chkQuickSplitMultiRX.Text = "Enable MultiRX";
+            this.toolTip1.SetToolTip(this.chkQuickSplitMultiRX, "Turn on multi RX if off");
             this.chkQuickSplitMultiRX.UseVisualStyleBackColor = true;
             // 
             // chkQuickSplitZoom
@@ -8980,6 +8984,7 @@
             this.chkQuickSplitZoom.Size = new System.Drawing.Size(65, 17);
             this.chkQuickSplitZoom.TabIndex = 40;
             this.chkQuickSplitZoom.Text = "Zoom In";
+            this.toolTip1.SetToolTip(this.chkQuickSplitZoom, "Zoom in to ~85%");
             this.chkQuickSplitZoom.UseVisualStyleBackColor = true;
             // 
             // labelTS182
@@ -9014,6 +9019,7 @@
             this.nudQuickSplitShift.Size = new System.Drawing.Size(64, 20);
             this.nudQuickSplitShift.TabIndex = 38;
             this.nudQuickSplitShift.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudQuickSplitShift, "The offset for the split");
             this.nudQuickSplitShift.Value = new decimal(new int[] {
             0,
             0,
@@ -9038,6 +9044,19 @@
             this.groupBoxTS26.TabIndex = 35;
             this.groupBoxTS26.TabStop = false;
             this.groupBoxTS26.Text = "Noise Floor";
+            // 
+            // chkNewNoiseFloorMethod
+            // 
+            this.chkNewNoiseFloorMethod.AutoSize = true;
+            this.chkNewNoiseFloorMethod.Image = null;
+            this.chkNewNoiseFloorMethod.Location = new System.Drawing.Point(21, 143);
+            this.chkNewNoiseFloorMethod.Name = "chkNewNoiseFloorMethod";
+            this.chkNewNoiseFloorMethod.Size = new System.Drawing.Size(137, 17);
+            this.chkNewNoiseFloorMethod.TabIndex = 17;
+            this.chkNewNoiseFloorMethod.Text = "New noise floor method";
+            this.toolTip1.SetToolTip(this.chkNewNoiseFloorMethod, "Linearises the dBm values during average calculations");
+            this.chkNewNoiseFloorMethod.UseVisualStyleBackColor = true;
+            this.chkNewNoiseFloorMethod.CheckedChanged += new System.EventHandler(this.chkNewNoiseFloorMethod_CheckedChanged);
             // 
             // btnResetNFShift
             // 
@@ -55140,19 +55159,6 @@
             this.tmrCheckProfile.Enabled = true;
             this.tmrCheckProfile.Interval = 1000;
             this.tmrCheckProfile.Tick += new System.EventHandler(this.tmrCheckProfile_Tick);
-            // 
-            // chkNewNoiseFloorMethod
-            // 
-            this.chkNewNoiseFloorMethod.AutoSize = true;
-            this.chkNewNoiseFloorMethod.Image = null;
-            this.chkNewNoiseFloorMethod.Location = new System.Drawing.Point(21, 143);
-            this.chkNewNoiseFloorMethod.Name = "chkNewNoiseFloorMethod";
-            this.chkNewNoiseFloorMethod.Size = new System.Drawing.Size(176, 17);
-            this.chkNewNoiseFloorMethod.TabIndex = 17;
-            this.chkNewNoiseFloorMethod.Text = "New noise floor method (slower)";
-            this.toolTip1.SetToolTip(this.chkNewNoiseFloorMethod, "Linearises the dBm values during average calculations");
-            this.chkNewNoiseFloorMethod.UseVisualStyleBackColor = true;
-            this.chkNewNoiseFloorMethod.CheckedChanged += new System.EventHandler(this.chkNewNoiseFloorMethod_CheckedChanged);
             // 
             // Setup
             // 
