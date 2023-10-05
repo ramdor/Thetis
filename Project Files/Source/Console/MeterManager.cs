@@ -2042,6 +2042,7 @@ namespace Thetis
             private float _maxPower;
             private string _readingName;
 
+            private int _fadeValue;
             public clsMeterItem()
             {
                 // constructor
@@ -2074,6 +2075,12 @@ namespace Thetis
                 _maxPower = CurrentPowerRating;//100f;
                 _percCache = new Dictionary<float, clsPercCache>();
                 _updateStopwatch = new Stopwatch();
+                _fadeValue = 255;
+            }
+            public int FadeValue //[2.10.1.0] MW0LGE used for on rx/tx fading
+            {
+                get { return _fadeValue; }
+                set { _fadeValue = value; }
             }
             public void AddPerc(clsPercCache pc)
             {
@@ -8962,6 +8969,31 @@ namespace Thetis
 
                 return size;
             }
+            // [2.10.1.0] MW0LGE
+            private int fade(clsMeterItem mi, clsMeter m)
+            {
+                if (!mi.FadeOnTx && m.MOX && mi.FadeValue == 255) return 255;
+                if (!mi.FadeOnRx && !m.MOX && mi.FadeValue == 255) return 255;
+
+                int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                // fade to take half a second
+                int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
+                int stepSize = (int)Math.Ceiling(207 / (float)steps_needed); // 255-48 = 207
+
+                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx))
+                {
+                    mi.FadeValue -= stepSize;
+                    if (mi.FadeValue < 48) mi.FadeValue = 48;
+                }
+                else
+                {
+                    mi.FadeValue += stepSize;
+                    if (mi.FadeValue > 255) mi.FadeValue = 255;
+                }
+
+                return mi.FadeValue;
+            }
+            //
             private void renderNeedleScale(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsNeedleScalePwrItem scale = (clsNeedleScalePwrItem)mi;
@@ -8973,8 +9005,7 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = 255;
-                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+                int nFade = fade(mi, m);
 
                 SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.CornflowerBlue));
@@ -9188,8 +9219,7 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = 255;
-                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+                int nFade = fade(mi, m);
 
                 SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.CornflowerBlue));
@@ -9740,8 +9770,7 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = 255;
-                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+                int nFade = fade(mi, m);
 
                 //SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Green));
@@ -9867,8 +9896,7 @@ namespace Thetis
             //    float w = rect.Width * (mi.Size.Width / m.XRatio);
             //    float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-            //    int nFade = 255;
-            //    if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+            //    int nFade = fade(mi, m);
 
             //    SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
             //    _renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Green));
@@ -9928,8 +9956,7 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = 255;
-                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+                int nFade = fade(mi, m);
 
                 string sText;
                 switch (txt.Text.ToLower())
@@ -9974,8 +10001,7 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = 255;
-                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+                int nFade = fade(mi, m);
 
                 PointF min, max;
                 float percX, percY;
@@ -10012,8 +10038,7 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = 255;
-                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+                int nFade = fade(mi, m);
 
                 //SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Red));
@@ -10381,8 +10406,7 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = 255;
-                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+                int nFade = fade(mi, m);
 
                 SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
                 _renderTarget.FillRectangle(rectSC, getDXBrushForColour(sc.Colour, nFade < sc.Colour.A ? nFade : sc.Colour.A));
@@ -10423,8 +10447,7 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = 255;
-                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+                int nFade = fade(mi, m);
 
                 int nVfoAFade = nFade;
                 int nVfoBFade = nFade;
@@ -10563,8 +10586,7 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = 255;
-                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+                int nFade = fade(mi, m);
 
                 DateTime now = DateTime.Now;
                 DateTime UTCnow = DateTime.UtcNow;
@@ -10630,8 +10652,7 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = 255;
-                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;              
+                int nFade = fade(mi, m);
 
                 float fontSizeEmScaled;
                 SizeF szTextSize;
@@ -10698,8 +10719,7 @@ namespace Thetis
             //        float w = rect.Width * (mi.Size.Width / m.XRatio);
             //        float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-            //        int nFade = 255;
-            //        if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+            //        int nFade = fade(mi, m);
 
             //        float top = Display.SpectrumGridMax; //dbm
             //        float bottom = Display.SpectrumGridMin; //-150; //dbm
@@ -10767,8 +10787,7 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = 255;
-                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+                int nFade = fade(mi, m);
 
                 string sImage = img.ImageName;
 
@@ -10839,8 +10858,7 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = 255;
-                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx)) nFade = 48;
+                int nFade = fade(mi, m);
 
                 SharpDX.RectangleF nirect = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.DrawRectangle(nirect, getDXBrushForColour(System.Drawing.Color.Red));

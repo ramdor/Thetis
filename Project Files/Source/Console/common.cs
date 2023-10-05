@@ -52,6 +52,14 @@ namespace Thetis
 			return source?.IndexOf(toCheck, comp) >= 0;
 		}
 	}
+    public static class ControlExtentions
+    {
+        public static string GetFullName(this Control control)
+        {
+            if (control.Parent == null) return control.Name;
+            return control.Parent.GetFullName() + "." + control.Name;
+        }
+    }
     //public static class Extensions
     //{
     //    private const double Epsilon = 1e-10;
@@ -69,83 +77,88 @@ namespace Thetis
 
 		public static MessageBoxOptions MB_TOPMOST = (MessageBoxOptions)0x00040000L; //MW0LGE_21g TOPMOST for MessageBox
 
-		#region HiglightControls
-		private static Dictionary<string, Color> m_backgroundColours = new Dictionary<string, Color>();
+        #region HiglightControls
+        private static Dictionary<string, Color> m_backgroundColours = new Dictionary<string, Color>();
 		private static Dictionary<string, Color> m_foregoundColours = new Dictionary<string, Color>();
 		private static Dictionary<string, FlatStyle> m_flatStyle = new Dictionary<string, FlatStyle>();
 		private static Dictionary<string, Image> m_backImage = new Dictionary<string, Image>();
 		public static void HightlightControl(Control c, bool bHighlight)
 		{
-			if (!m_backgroundColours.ContainsKey(c.Name))
+			string sKey = c.GetFullName(); //[2.10.1.0] added because control with same name can be in different forms/containers
+
+			if (!m_backgroundColours.ContainsKey(sKey))
 			{
-				m_backgroundColours.Add(c.Name, c.BackColor);
+				m_backgroundColours.Add(sKey, c.BackColor);
 			}
-			if (!m_foregoundColours.ContainsKey(c.Name))
+			if (!m_foregoundColours.ContainsKey(sKey))
 			{
-				m_foregoundColours.Add(c.Name, c.ForeColor);
+				m_foregoundColours.Add(sKey, c.ForeColor);
 			}
-			if (!m_backImage.ContainsKey(c.Name))
+			if (!m_backImage.ContainsKey(sKey))
 			{
-				m_backImage.Add(c.Name, c.BackgroundImage);
+				m_backImage.Add(sKey, c.BackgroundImage);
 			}
 
 			if (c.GetType() == typeof(NumericUpDownTS))
 			{
-				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[c.Name];
-			}
+				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
+                c.ForeColor = bHighlight ? Color.Black : m_foregoundColours[sKey];
+            }
 			else if (c.GetType() == typeof(CheckBoxTS))
 			{
 				CheckBoxTS cb = c as CheckBoxTS;
-				if (!m_flatStyle.ContainsKey(cb.Name)) m_flatStyle.Add(cb.Name, cb.FlatStyle);
-				cb.FlatStyle = bHighlight ? FlatStyle.Flat : m_flatStyle[cb.Name];
-				cb.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[cb.Name];
-				cb.ForeColor = bHighlight ? Color.Red : m_foregoundColours[cb.Name];
-				cb.BackgroundImage = bHighlight ? null : m_backImage[cb.Name];
+				if (!m_flatStyle.ContainsKey(sKey)) m_flatStyle.Add(sKey, cb.FlatStyle);
+				cb.FlatStyle = bHighlight ? FlatStyle.Flat : m_flatStyle[sKey];
+				cb.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
+				cb.ForeColor = bHighlight ? Color.Red : m_foregoundColours[sKey];
+				cb.BackgroundImage = bHighlight ? null : m_backImage[sKey];
 			}
 			else if (c.GetType() == typeof(TrackBarTS))
 			{
-				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[c.Name];
-				c.ForeColor = bHighlight ? Color.Yellow : m_foregoundColours[c.Name];
-				c.BackgroundImage = bHighlight ? null : m_backImage[c.Name];
+				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
+				c.ForeColor = bHighlight ? Color.Yellow : m_foregoundColours[sKey];
+				c.BackgroundImage = bHighlight ? null : m_backImage[sKey];
 			}
 			else if (c.GetType() == typeof(PrettyTrackBar))
 			{
-				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[c.Name];
-				c.ForeColor = bHighlight ? Color.Yellow : m_foregoundColours[c.Name];
-				c.BackgroundImage = bHighlight ? null : m_backImage[c.Name];
+				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
+				c.ForeColor = bHighlight ? Color.Yellow : m_foregoundColours[sKey];
+				c.BackgroundImage = bHighlight ? null : m_backImage[sKey];
 			}
 			else if (c.GetType() == typeof(ComboBoxTS))
 			{
 				ComboBoxTS cb = c as ComboBoxTS;
-				if (!m_flatStyle.ContainsKey(cb.Name)) m_flatStyle.Add(cb.Name, cb.FlatStyle);
-				cb.FlatStyle = bHighlight ? FlatStyle.Flat : m_flatStyle[cb.Name];
-				cb.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[cb.Name];
-				cb.ForeColor = bHighlight ? Color.Red : m_foregoundColours[cb.Name];
+				if (!m_flatStyle.ContainsKey(sKey)) m_flatStyle.Add(sKey, cb.FlatStyle);
+				cb.FlatStyle = bHighlight ? FlatStyle.Flat : m_flatStyle[sKey];
+				cb.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
+				cb.ForeColor = bHighlight ? Color.Red : m_foregoundColours[sKey];
 			}
 			else if (c.GetType() == typeof(RadioButtonTS))
 			{
 				RadioButtonTS cb = c as RadioButtonTS;
-				if (!m_flatStyle.ContainsKey(cb.Name)) m_flatStyle.Add(cb.Name, cb.FlatStyle);
-				cb.FlatStyle = bHighlight ? FlatStyle.Flat : m_flatStyle[cb.Name];
-				cb.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[cb.Name];
-				cb.ForeColor = bHighlight ? Color.Red : m_foregoundColours[cb.Name];
-				cb.BackgroundImage = bHighlight ? null : m_backImage[cb.Name];
+				if (!m_flatStyle.ContainsKey(sKey)) m_flatStyle.Add(sKey, cb.FlatStyle);
+				cb.FlatStyle = bHighlight ? FlatStyle.Flat : m_flatStyle[sKey];
+				cb.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
+				cb.ForeColor = bHighlight ? Color.Red : m_foregoundColours[sKey];
+				cb.BackgroundImage = bHighlight ? null : m_backImage[sKey];
 			}
 			else if (c.GetType() == typeof(TextBoxTS))
 			{
-				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[c.Name];
-			}
+				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
+                c.ForeColor = bHighlight ? Color.Black : m_foregoundColours[sKey];
+            }
 			else if (c.GetType() == typeof(LabelTS))
 			{
-				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[c.Name];
-			}
+				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
+                c.ForeColor = bHighlight ? Color.Black : m_foregoundColours[sKey];
+            }
 
 			if (!bHighlight)
 			{
-				if (!m_backgroundColours.ContainsKey(c.Name)) m_backgroundColours.Remove(c.Name);
-				if (!m_foregoundColours.ContainsKey(c.Name)) m_foregoundColours.Remove(c.Name);
-				if (!m_flatStyle.ContainsKey(c.Name)) m_flatStyle.Remove(c.Name);
-				if (!m_backImage.ContainsKey(c.Name)) m_backImage.Remove(c.Name);
+				if (!m_backgroundColours.ContainsKey(sKey)) m_backgroundColours.Remove(sKey);
+				if (!m_foregoundColours.ContainsKey(sKey)) m_foregoundColours.Remove(sKey);
+				if (!m_flatStyle.ContainsKey(sKey)) m_flatStyle.Remove(sKey);
+				if (!m_backImage.ContainsKey(sKey)) m_backImage.Remove(sKey);
 			}
 
 			c.Invalidate();
