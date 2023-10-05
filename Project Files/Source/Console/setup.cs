@@ -1952,6 +1952,11 @@ namespace Thetis
 
             chkVAC1WillMute_CheckedChanged(this, e);
             chkVAC2WillMute_CheckedChanged(this, e);
+
+            chkLinkMaster_CheckedChanged(this, e);
+            chkLinkRX0AF_CheckedChanged(this, e);
+            chkLinkRX1AF_CheckedChanged(this, e);
+            chkLinkRX2AF_CheckedChanged(this, e);
             // 
 
             // Calibration Tab
@@ -27056,6 +27061,34 @@ namespace Thetis
         private void chkNewNoiseFloorMethod_CheckedChanged(object sender, EventArgs e)
         {
             Display.UseOldNoiseFloorMethod = !chkNewNoiseFloorMethod.Checked;
+        }
+
+        private void chkLinkRX0AF_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            console.SetMasterAFLinked(1, chkLinkRX0AF.Checked);
+        }
+
+        private void chkLinkRX1AF_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            console.SetMasterAFLinked(2, chkLinkRX1AF.Checked);
+        }
+
+        private void chkLinkRX2AF_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            console.SetMasterAFLinked(3, chkLinkToRX2AF.Checked);
+        }
+
+        private void chkLinkMaster_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            console.SetMasterAFLinked(0, chkLinkMaster.Checked);
         }
     }
 
