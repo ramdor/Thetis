@@ -1709,6 +1709,9 @@
             this.comboAudioDriver3 = new System.Windows.Forms.ComboBoxTS();
             this.chkVAC2Enable = new System.Windows.Forms.CheckBoxTS();
             this.tpAudioOptions = new System.Windows.Forms.TabPage();
+            this.chkLinkToRX2AF = new System.Windows.Forms.CheckBoxTS();
+            this.chkLinkRX1AF = new System.Windows.Forms.CheckBoxTS();
+            this.chkLinkRX0AF = new System.Windows.Forms.CheckBoxTS();
             this.chkDisableRearSpeakerJacksAudioAmplifier = new System.Windows.Forms.CheckBoxTS();
             this.chkNoFadeOverUnderWarning = new System.Windows.Forms.CheckBoxTS();
             this.chkAFSlidersMute = new System.Windows.Forms.CheckBoxTS();
@@ -3465,6 +3468,8 @@
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
+            this.groupBoxTS29 = new System.Windows.Forms.GroupBoxTS();
+            this.chkLinkMaster = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4383,6 +4388,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
+            this.groupBoxTS29.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -27716,6 +27722,7 @@
             // tpAudioOptions
             // 
             this.tpAudioOptions.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAudioOptions.Controls.Add(this.groupBoxTS29);
             this.tpAudioOptions.Controls.Add(this.chkDisableRearSpeakerJacksAudioAmplifier);
             this.tpAudioOptions.Controls.Add(this.chkNoFadeOverUnderWarning);
             this.tpAudioOptions.Controls.Add(this.chkAFSlidersMute);
@@ -27725,6 +27732,42 @@
             this.tpAudioOptions.Size = new System.Drawing.Size(712, 404);
             this.tpAudioOptions.TabIndex = 4;
             this.tpAudioOptions.Text = "Options";
+            // 
+            // chkLinkMasterToRX2
+            // 
+            this.chkLinkToRX2AF.AutoSize = true;
+            this.chkLinkToRX2AF.Image = null;
+            this.chkLinkToRX2AF.Location = new System.Drawing.Point(23, 70);
+            this.chkLinkToRX2AF.Name = "chkLinkMasterToRX2";
+            this.chkLinkToRX2AF.Size = new System.Drawing.Size(63, 17);
+            this.chkLinkToRX2AF.TabIndex = 5;
+            this.chkLinkToRX2AF.Text = "RX2 AF";
+            this.chkLinkToRX2AF.UseVisualStyleBackColor = true;
+            this.chkLinkToRX2AF.CheckedChanged += new System.EventHandler(this.chkLinkRX2AF_CheckedChanged);
+            // 
+            // chkLinkMasterToRX1
+            // 
+            this.chkLinkRX1AF.AutoSize = true;
+            this.chkLinkRX1AF.Image = null;
+            this.chkLinkRX1AF.Location = new System.Drawing.Point(23, 93);
+            this.chkLinkRX1AF.Name = "chkLinkMasterToRX1";
+            this.chkLinkRX1AF.Size = new System.Drawing.Size(122, 17);
+            this.chkLinkRX1AF.TabIndex = 4;
+            this.chkLinkRX1AF.Text = "SubRX AF (MultiRX)";
+            this.chkLinkRX1AF.UseVisualStyleBackColor = true;
+            this.chkLinkRX1AF.CheckedChanged += new System.EventHandler(this.chkLinkRX1AF_CheckedChanged);
+            // 
+            // chkLinkMasterToRX0
+            // 
+            this.chkLinkRX0AF.AutoSize = true;
+            this.chkLinkRX0AF.Image = null;
+            this.chkLinkRX0AF.Location = new System.Drawing.Point(23, 47);
+            this.chkLinkRX0AF.Name = "chkLinkMasterToRX0";
+            this.chkLinkRX0AF.Size = new System.Drawing.Size(63, 17);
+            this.chkLinkRX0AF.TabIndex = 3;
+            this.chkLinkRX0AF.Text = "RX1 AF";
+            this.chkLinkRX0AF.UseVisualStyleBackColor = true;
+            this.chkLinkRX0AF.CheckedChanged += new System.EventHandler(this.chkLinkRX0AF_CheckedChanged);
             // 
             // chkDisableRearSpeakerJacksAudioAmplifier
             // 
@@ -55160,6 +55203,32 @@
             this.tmrCheckProfile.Interval = 1000;
             this.tmrCheckProfile.Tick += new System.EventHandler(this.tmrCheckProfile_Tick);
             // 
+            // groupBoxTS29
+            // 
+            this.groupBoxTS29.Controls.Add(this.chkLinkMaster);
+            this.groupBoxTS29.Controls.Add(this.chkLinkRX0AF);
+            this.groupBoxTS29.Controls.Add(this.chkLinkToRX2AF);
+            this.groupBoxTS29.Controls.Add(this.chkLinkRX1AF);
+            this.groupBoxTS29.Location = new System.Drawing.Point(19, 134);
+            this.groupBoxTS29.Name = "groupBoxTS29";
+            this.groupBoxTS29.Size = new System.Drawing.Size(200, 120);
+            this.groupBoxTS29.TabIndex = 6;
+            this.groupBoxTS29.TabStop = false;
+            this.groupBoxTS29.Text = "Linked AF Sliders";
+            this.toolTip1.SetToolTip(this.groupBoxTS29, "When one moves, the others move");
+            // 
+            // chkLinkMaster
+            // 
+            this.chkLinkMaster.AutoSize = true;
+            this.chkLinkMaster.Image = null;
+            this.chkLinkMaster.Location = new System.Drawing.Point(23, 24);
+            this.chkLinkMaster.Name = "chkLinkMaster";
+            this.chkLinkMaster.Size = new System.Drawing.Size(74, 17);
+            this.chkLinkMaster.TabIndex = 6;
+            this.chkLinkMaster.Text = "Master AF";
+            this.chkLinkMaster.UseVisualStyleBackColor = true;
+            this.chkLinkMaster.CheckedChanged += new System.EventHandler(this.chkLinkMaster_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -56266,6 +56335,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
+            this.groupBoxTS29.ResumeLayout(false);
+            this.groupBoxTS29.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -59733,5 +59804,10 @@
         private ButtonTS btnQuickSplitUp5;
         private ButtonTS btnQuickSplitDown5;
         private CheckBoxTS chkNewNoiseFloorMethod;
+        private CheckBoxTS chkLinkRX0AF;
+        private CheckBoxTS chkLinkToRX2AF;
+        private CheckBoxTS chkLinkRX1AF;
+        private GroupBoxTS groupBoxTS29;
+        private CheckBoxTS chkLinkMaster;
     }
 }

@@ -188,9 +188,6 @@ If Windows Firewall Pops up on the screen, Click on the Allow access.</value>
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>162, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>302, 17</value>
-  </metadata>
   <data name="lblTXProfileWarning.ToolTip" xml:space="preserve">
     <value>One or more settings have been changed that are
 only stored in a TX profile. This can include things

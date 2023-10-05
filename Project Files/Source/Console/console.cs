@@ -532,6 +532,7 @@ namespace Thetis
         private bool _onlyOneSetupInstance; // used by setup to ensure only one instance created
 
         private bool _portAudioInitalising = false;
+        private bool _dllsOk = true;       
 
         public CWX CWXForm
         {
@@ -597,6 +598,10 @@ namespace Thetis
                     "Version error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                _dllsOk = false;
+                Environment.Exit(1);
+                return;
             }
             //
 
@@ -1281,21 +1286,24 @@ namespace Thetis
         public bool reset_db = false;
         protected override void Dispose(bool disposing)
         {
-            if (Midi2Cat != null) Midi2Cat.CloseMidi2Cat();        
-
-            ExitConsole();
-
-            if (reset_db)
+            if (_dllsOk) // ignore this if the incorrect dlls are found. We wont have used anything
             {
-                string datetime = Common.DateTimeStringForFile();//DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
+                if (Midi2Cat != null) Midi2Cat.CloseMidi2Cat();
 
-                string file = db_file_name.Substring(db_file_name.LastIndexOf("\\") + 1);
-                file = file.Substring(0, file.Length - 4);
-                if (!Directory.Exists(AppDataPath + "DB_Archive\\"))
-                    Directory.CreateDirectory(AppDataPath + "DB_Archive\\");
+                ExitConsole();
 
-                File.Copy(db_file_name, AppDataPath + "DB_Archive\\Thetis_" + file + "_" + datetime + ".xml");
-                File.Delete(db_file_name);
+                if (reset_db)
+                {
+                    string datetime = Common.DateTimeStringForFile();//DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
+
+                    string file = db_file_name.Substring(db_file_name.LastIndexOf("\\") + 1);
+                    file = file.Substring(0, file.Length - 4);
+                    if (!Directory.Exists(AppDataPath + "DB_Archive\\"))
+                        Directory.CreateDirectory(AppDataPath + "DB_Archive\\");
+
+                    File.Copy(db_file_name, AppDataPath + "DB_Archive\\Thetis_" + file + "_" + datetime + ".xml");
+                    File.Delete(db_file_name);
+                }
             }
 
             if (disposing)
@@ -12739,6 +12747,58 @@ namespace Thetis
             }
         }
 
+        private bool[] _masterAFLink = { false, false, false, false };
+        public void SetMasterAFLinked(int source, bool state)
+        {
+            if (source < 0 || source > 3) return;
+            _masterAFLink[source] = state;
+
+            int value = 0;
+
+            switch (source)
+            {
+                case 0:
+                    value = AF;//master
+                    break;
+                case 1:
+                    value = RX0Gain;//rx1
+                    break;
+                case 2:
+                    value = RX1Gain;//rx1sub
+                    break;
+                case 3:
+                    value = RX2Gain;//rx2
+                    break;
+            }
+            setLinkedAF(source, value);
+        }
+        public bool IsMasterAFLinked(int rx)
+        {
+            if (rx < 0 || rx > 3) return false;
+
+            return _masterAFLink[rx];
+        }
+        private bool _settingLinked = false;
+        private void setLinkedAF(int source, int value)
+        {
+            if (source < 0 || source > 3) return;
+
+            if (_settingLinked) return;
+            _settingLinked = true;
+
+            if (!mox)
+            {
+                if (_masterAFLink[source])
+                {
+                    if (_masterAFLink[0]) AF = value; //master
+                    if (_masterAFLink[1]) RX0Gain = value; //rx1
+                    if (_masterAFLink[2]) RX1Gain = value; //rx1sub
+                    if (_masterAFLink[3]) RX2Gain = value; //rx2
+                }
+            }
+
+            _settingLinked = false;
+        }
         public int RX0Gain
         {
             get
@@ -32156,12 +32216,14 @@ namespace Thetis
                 (MOX && !Audio.MOX)) RXAF = ptbAF.Value;
             else if (MOX && chkMON.Checked && !m_bIgnoreAFChangeForMonitor) TXAF = ptbAF.Value; //MW0LGE_21k9 ingore the monitor AF slider change when in mox //MW0LGE_22b added chMON, so only adjust txaf if monitoring
 
+            setLinkedAF(0, ptbAF.Value); //[2.10.1.0] MW0LGE
+
             if (sender.GetType() == typeof(PrettyTrackBar))
             {
                 ptbAF.Focus();
             }
             if (sliderForm != null)
-                sliderForm.MasterAFGain = ptbAF.Value;
+                sliderForm.MasterAFGain = ptbAF.Value;            
         }
         private void ptbRF_Scroll(object sender, System.EventArgs e)
         {
@@ -43534,8 +43596,8 @@ namespace Thetis
         {
             lblRX1Vol.Text = "Vol";
 
-            //MWLGE_21k9 re-worked
-            if (!initializing && m_bRXAFSlidersWillUnmute && chkMUT.Checked) chkMUT.Checked = false;
+            //MWLGE_21k9 re-worked //[2.10.1.0] MW0LGE added eventargs empty
+            if (!initializing && e != EventArgs.Empty && m_bRXAFSlidersWillUnmute && chkMUT.Checked) chkMUT.Checked = false;
 
             if (chkMUT.Checked && m_bMuteWillMuteVAC1) //MW0LGE_21k9
             {
@@ -43543,11 +43605,13 @@ namespace Thetis
             }
             else
             {
-                radio.GetDSPRX(0, 0).RXOutputGain = (double)ptbRX0Gain.Value / ptbRX0Gain.Maximum;
-                ptbRX1AF.Value = ptbRX0Gain.Value;
+                radio.GetDSPRX(0, 0).RXOutputGain = (double)ptbRX0Gain.Value / ptbRX0Gain.Maximum;                
             }
+            ptbRX1AF.Value = ptbRX0Gain.Value;
 
             lblRX1AF.Text = "RX1 AF:  " + ptbRX0Gain.Value.ToString();
+
+            setLinkedAF(1, ptbRX1AF.Value); //[2.10.1.0] MW0LGE
 
             if (sender.GetType() == typeof(PrettyTrackBar))
             {
@@ -43566,7 +43630,7 @@ namespace Thetis
         {
             //
             //[2.10.1.0] MW0LGE consider mute when on vac
-            if (!initializing && m_bRXAFSlidersWillUnmute && chkMUT.Checked) chkMUT.Checked = false;
+            if (!initializing && e != EventArgs.Empty && m_bRXAFSlidersWillUnmute && chkMUT.Checked) chkMUT.Checked = false;
 
             if (chkMUT.Checked && m_bMuteWillMuteVAC1)
             {
@@ -43577,6 +43641,8 @@ namespace Thetis
                 radio.GetDSPRX(0, 1).RXOutputGain = (double)ptbRX1Gain.Value / ptbRX1Gain.Maximum;
             }
             //
+
+            setLinkedAF(2, ptbRX1Gain.Value); //[2.10.1.0] MW0LGE
 
             // if (ptbRX1Gain.Focused)
             // btnHidden.Focus();
@@ -45702,8 +45768,8 @@ namespace Thetis
 
         private void ptbRX2Gain_Scroll(object sender, System.EventArgs e)
         {
-            //MWLGE_21k9 re-worked
-            if (!initializing && m_bRXAFSlidersWillUnmute && chkRX2Mute.Checked) chkRX2Mute.Checked = false;
+            //MWLGE_21k9 re-worked //[2.10.1.0] MW0LGE event args empty
+            if (!initializing && e != EventArgs.Empty && m_bRXAFSlidersWillUnmute && chkRX2Mute.Checked) chkRX2Mute.Checked = false;
 
             if (chkRX2Mute.Checked && m_bMuteWillMuteVAC2) //MW0LGE_21k9
             {
@@ -45711,11 +45777,13 @@ namespace Thetis
             }
             else
             {
-                radio.GetDSPRX(1, 0).RXOutputGain = (double)ptbRX2Gain.Value / ptbRX2Gain.Maximum;
-                ptbRX2AF.Value = ptbRX2Gain.Value;
+                radio.GetDSPRX(1, 0).RXOutputGain = (double)ptbRX2Gain.Value / ptbRX2Gain.Maximum;                
             }
+            ptbRX2AF.Value = ptbRX2Gain.Value;
 
             lblRX2AF.Text = "RX2 AF:  " + ptbRX2Gain.Value.ToString();
+
+            setLinkedAF(3, ptbRX2Gain.Value); //[2.10.1.0] MW0LGE
 
             if (sender.GetType() == typeof(PrettyTrackBar))
             {
@@ -50307,6 +50375,9 @@ namespace Thetis
 
         private void ptbRX1AF_Scroll(object sender, EventArgs e)
         {
+            //[2.10.1.0] MW0LGE
+            if (!initializing && e != EventArgs.Empty && m_bRXAFSlidersWillUnmute && chkMUT.Checked) chkMUT.Checked = false;
+
             RX0Gain = ptbRX1AF.Value;
             if (sender.GetType() == typeof(PrettyTrackBar))
             {
@@ -50322,6 +50393,9 @@ namespace Thetis
 
         private void ptbRX2AF_Scroll(object sender, EventArgs e)
         {
+            //[2.10.1.0] MW0LGE
+            if (!initializing && e != EventArgs.Empty && m_bRXAFSlidersWillUnmute && chkRX2Mute.Checked) chkRX2Mute.Checked = false;
+
             RX2Gain = ptbRX2AF.Value;
             if (sender.GetType() == typeof(PrettyTrackBar))
             {
