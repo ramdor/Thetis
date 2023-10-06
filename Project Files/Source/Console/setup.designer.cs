@@ -1709,9 +1709,11 @@
             this.comboAudioDriver3 = new System.Windows.Forms.ComboBoxTS();
             this.chkVAC2Enable = new System.Windows.Forms.CheckBoxTS();
             this.tpAudioOptions = new System.Windows.Forms.TabPage();
+            this.groupBoxTS29 = new System.Windows.Forms.GroupBoxTS();
+            this.chkLinkMaster = new System.Windows.Forms.CheckBoxTS();
+            this.chkLinkRX0AF = new System.Windows.Forms.CheckBoxTS();
             this.chkLinkToRX2AF = new System.Windows.Forms.CheckBoxTS();
             this.chkLinkRX1AF = new System.Windows.Forms.CheckBoxTS();
-            this.chkLinkRX0AF = new System.Windows.Forms.CheckBoxTS();
             this.chkDisableRearSpeakerJacksAudioAmplifier = new System.Windows.Forms.CheckBoxTS();
             this.chkNoFadeOverUnderWarning = new System.Windows.Forms.CheckBoxTS();
             this.chkAFSlidersMute = new System.Windows.Forms.CheckBoxTS();
@@ -2921,6 +2923,7 @@
             this.clrbtnPeakText = new Thetis.ColorButton();
             this.lblPeakText = new System.Windows.Forms.LabelTS();
             this.tpAppearanceMeter = new System.Windows.Forms.TabPage();
+            this.chkLegacyMeters = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS14 = new System.Windows.Forms.GroupBoxTS();
             this.tbSignalHistoryAlpha = new System.Windows.Forms.TrackBarTS();
             this.clrbtnSignalHistoryColour = new Thetis.ColorButton();
@@ -3468,8 +3471,7 @@
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
-            this.groupBoxTS29 = new System.Windows.Forms.GroupBoxTS();
-            this.chkLinkMaster = new System.Windows.Forms.CheckBoxTS();
+            this.radSpaceBarVFOBTX = new System.Windows.Forms.RadioButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -3774,6 +3776,7 @@
             this.grpAudioBuffer3.SuspendLayout();
             this.grpAudioDetails3.SuspendLayout();
             this.tpAudioOptions.SuspendLayout();
+            this.groupBoxTS29.SuspendLayout();
             this.tpAdvancedAudio.SuspendLayout();
             this.grpVAC2ResamplerAdvanced.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC2FFMinOut)).BeginInit();
@@ -4388,7 +4391,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
-            this.groupBoxTS29.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -27733,41 +27735,67 @@
             this.tpAudioOptions.TabIndex = 4;
             this.tpAudioOptions.Text = "Options";
             // 
-            // chkLinkMasterToRX2
+            // groupBoxTS29
+            // 
+            this.groupBoxTS29.Controls.Add(this.chkLinkMaster);
+            this.groupBoxTS29.Controls.Add(this.chkLinkRX0AF);
+            this.groupBoxTS29.Controls.Add(this.chkLinkToRX2AF);
+            this.groupBoxTS29.Controls.Add(this.chkLinkRX1AF);
+            this.groupBoxTS29.Location = new System.Drawing.Point(19, 134);
+            this.groupBoxTS29.Name = "groupBoxTS29";
+            this.groupBoxTS29.Size = new System.Drawing.Size(200, 120);
+            this.groupBoxTS29.TabIndex = 6;
+            this.groupBoxTS29.TabStop = false;
+            this.groupBoxTS29.Text = "Linked AF Sliders";
+            this.toolTip1.SetToolTip(this.groupBoxTS29, "When one moves, the others move");
+            // 
+            // chkLinkMaster
+            // 
+            this.chkLinkMaster.AutoSize = true;
+            this.chkLinkMaster.Image = null;
+            this.chkLinkMaster.Location = new System.Drawing.Point(23, 24);
+            this.chkLinkMaster.Name = "chkLinkMaster";
+            this.chkLinkMaster.Size = new System.Drawing.Size(74, 17);
+            this.chkLinkMaster.TabIndex = 6;
+            this.chkLinkMaster.Text = "Master AF";
+            this.chkLinkMaster.UseVisualStyleBackColor = true;
+            this.chkLinkMaster.CheckedChanged += new System.EventHandler(this.chkLinkMaster_CheckedChanged);
+            // 
+            // chkLinkRX0AF
+            // 
+            this.chkLinkRX0AF.AutoSize = true;
+            this.chkLinkRX0AF.Image = null;
+            this.chkLinkRX0AF.Location = new System.Drawing.Point(23, 47);
+            this.chkLinkRX0AF.Name = "chkLinkRX0AF";
+            this.chkLinkRX0AF.Size = new System.Drawing.Size(63, 17);
+            this.chkLinkRX0AF.TabIndex = 3;
+            this.chkLinkRX0AF.Text = "RX1 AF";
+            this.chkLinkRX0AF.UseVisualStyleBackColor = true;
+            this.chkLinkRX0AF.CheckedChanged += new System.EventHandler(this.chkLinkRX0AF_CheckedChanged);
+            // 
+            // chkLinkToRX2AF
             // 
             this.chkLinkToRX2AF.AutoSize = true;
             this.chkLinkToRX2AF.Image = null;
             this.chkLinkToRX2AF.Location = new System.Drawing.Point(23, 70);
-            this.chkLinkToRX2AF.Name = "chkLinkMasterToRX2";
+            this.chkLinkToRX2AF.Name = "chkLinkToRX2AF";
             this.chkLinkToRX2AF.Size = new System.Drawing.Size(63, 17);
             this.chkLinkToRX2AF.TabIndex = 5;
             this.chkLinkToRX2AF.Text = "RX2 AF";
             this.chkLinkToRX2AF.UseVisualStyleBackColor = true;
             this.chkLinkToRX2AF.CheckedChanged += new System.EventHandler(this.chkLinkRX2AF_CheckedChanged);
             // 
-            // chkLinkMasterToRX1
+            // chkLinkRX1AF
             // 
             this.chkLinkRX1AF.AutoSize = true;
             this.chkLinkRX1AF.Image = null;
             this.chkLinkRX1AF.Location = new System.Drawing.Point(23, 93);
-            this.chkLinkRX1AF.Name = "chkLinkMasterToRX1";
+            this.chkLinkRX1AF.Name = "chkLinkRX1AF";
             this.chkLinkRX1AF.Size = new System.Drawing.Size(122, 17);
             this.chkLinkRX1AF.TabIndex = 4;
             this.chkLinkRX1AF.Text = "SubRX AF (MultiRX)";
             this.chkLinkRX1AF.UseVisualStyleBackColor = true;
             this.chkLinkRX1AF.CheckedChanged += new System.EventHandler(this.chkLinkRX1AF_CheckedChanged);
-            // 
-            // chkLinkMasterToRX0
-            // 
-            this.chkLinkRX0AF.AutoSize = true;
-            this.chkLinkRX0AF.Image = null;
-            this.chkLinkRX0AF.Location = new System.Drawing.Point(23, 47);
-            this.chkLinkRX0AF.Name = "chkLinkMasterToRX0";
-            this.chkLinkRX0AF.Size = new System.Drawing.Size(63, 17);
-            this.chkLinkRX0AF.TabIndex = 3;
-            this.chkLinkRX0AF.Text = "RX1 AF";
-            this.chkLinkRX0AF.UseVisualStyleBackColor = true;
-            this.chkLinkRX0AF.CheckedChanged += new System.EventHandler(this.chkLinkRX0AF_CheckedChanged);
             // 
             // chkDisableRearSpeakerJacksAudioAmplifier
             // 
@@ -47330,6 +47358,7 @@
             // tpAppearanceMeter
             // 
             this.tpAppearanceMeter.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAppearanceMeter.Controls.Add(this.chkLegacyMeters);
             this.tpAppearanceMeter.Controls.Add(this.groupBoxTS14);
             this.tpAppearanceMeter.Controls.Add(this.labelTS2);
             this.tpAppearanceMeter.Controls.Add(this.clrbtnMeterDigBackground);
@@ -47344,6 +47373,21 @@
             this.tpAppearanceMeter.Size = new System.Drawing.Size(724, 410);
             this.tpAppearanceMeter.TabIndex = 2;
             this.tpAppearanceMeter.Text = "Meter";
+            // 
+            // chkLegacyMeters
+            // 
+            this.chkLegacyMeters.AutoSize = true;
+            this.chkLegacyMeters.Checked = true;
+            this.chkLegacyMeters.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkLegacyMeters.Image = null;
+            this.chkLegacyMeters.Location = new System.Drawing.Point(367, 23);
+            this.chkLegacyMeters.Name = "chkLegacyMeters";
+            this.chkLegacyMeters.Size = new System.Drawing.Size(113, 17);
+            this.chkLegacyMeters.TabIndex = 86;
+            this.chkLegacyMeters.Text = "Use legacy meters";
+            this.toolTip1.SetToolTip(this.chkLegacyMeters, "Show or hide the legacy meters");
+            this.chkLegacyMeters.UseVisualStyleBackColor = true;
+            this.chkLegacyMeters.CheckedChanged += new System.EventHandler(this.chkLegacyMeters_CheckedChanged);
             // 
             // groupBoxTS14
             // 
@@ -49743,13 +49787,14 @@
             // 
             // grpBoxSpaceBarPTT
             // 
+            this.grpBoxSpaceBarPTT.Controls.Add(this.radSpaceBarVFOBTX);
             this.grpBoxSpaceBarPTT.Controls.Add(this.radSpaceBarLastBtn);
             this.grpBoxSpaceBarPTT.Controls.Add(this.radSpaceBarMicMute);
             this.grpBoxSpaceBarPTT.Controls.Add(this.radSpaceBarVOX);
             this.grpBoxSpaceBarPTT.Controls.Add(this.radSpaceBarPTT);
             this.grpBoxSpaceBarPTT.Location = new System.Drawing.Point(525, 8);
             this.grpBoxSpaceBarPTT.Name = "grpBoxSpaceBarPTT";
-            this.grpBoxSpaceBarPTT.Size = new System.Drawing.Size(168, 112);
+            this.grpBoxSpaceBarPTT.Size = new System.Drawing.Size(168, 130);
             this.grpBoxSpaceBarPTT.TabIndex = 41;
             this.grpBoxSpaceBarPTT.TabStop = false;
             this.grpBoxSpaceBarPTT.Text = "SpaceBar Control";
@@ -49977,7 +50022,7 @@
             // 
             this.grpKeyboardOptions.Controls.Add(this.chkOptEnableKBShortcuts);
             this.grpKeyboardOptions.Controls.Add(this.chkOptQuickQSY);
-            this.grpKeyboardOptions.Location = new System.Drawing.Point(525, 139);
+            this.grpKeyboardOptions.Location = new System.Drawing.Point(525, 144);
             this.grpKeyboardOptions.Name = "grpKeyboardOptions";
             this.grpKeyboardOptions.Size = new System.Drawing.Size(168, 72);
             this.grpKeyboardOptions.TabIndex = 27;
@@ -55203,31 +55248,18 @@
             this.tmrCheckProfile.Interval = 1000;
             this.tmrCheckProfile.Tick += new System.EventHandler(this.tmrCheckProfile_Tick);
             // 
-            // groupBoxTS29
+            // radSpaceBarVFOBTX
             // 
-            this.groupBoxTS29.Controls.Add(this.chkLinkMaster);
-            this.groupBoxTS29.Controls.Add(this.chkLinkRX0AF);
-            this.groupBoxTS29.Controls.Add(this.chkLinkToRX2AF);
-            this.groupBoxTS29.Controls.Add(this.chkLinkRX1AF);
-            this.groupBoxTS29.Location = new System.Drawing.Point(19, 134);
-            this.groupBoxTS29.Name = "groupBoxTS29";
-            this.groupBoxTS29.Size = new System.Drawing.Size(200, 120);
-            this.groupBoxTS29.TabIndex = 6;
-            this.groupBoxTS29.TabStop = false;
-            this.groupBoxTS29.Text = "Linked AF Sliders";
-            this.toolTip1.SetToolTip(this.groupBoxTS29, "When one moves, the others move");
-            // 
-            // chkLinkMaster
-            // 
-            this.chkLinkMaster.AutoSize = true;
-            this.chkLinkMaster.Image = null;
-            this.chkLinkMaster.Location = new System.Drawing.Point(23, 24);
-            this.chkLinkMaster.Name = "chkLinkMaster";
-            this.chkLinkMaster.Size = new System.Drawing.Size(74, 17);
-            this.chkLinkMaster.TabIndex = 6;
-            this.chkLinkMaster.Text = "Master AF";
-            this.chkLinkMaster.UseVisualStyleBackColor = true;
-            this.chkLinkMaster.CheckedChanged += new System.EventHandler(this.chkLinkMaster_CheckedChanged);
+            this.radSpaceBarVFOBTX.AutoSize = true;
+            this.radSpaceBarVFOBTX.Image = null;
+            this.radSpaceBarVFOBTX.Location = new System.Drawing.Point(6, 103);
+            this.radSpaceBarVFOBTX.Name = "radSpaceBarVFOBTX";
+            this.radSpaceBarVFOBTX.Size = new System.Drawing.Size(115, 17);
+            this.radSpaceBarVFOBTX.TabIndex = 68;
+            this.radSpaceBarVFOBTX.Text = "VFOB_TX - Toggle";
+            this.toolTip1.SetToolTip(this.radSpaceBarVFOBTX, "SpaceBar Toggles To VFOB-TX");
+            this.radSpaceBarVFOBTX.UseVisualStyleBackColor = true;
+            this.radSpaceBarVFOBTX.CheckedChanged += new System.EventHandler(this.radSpaceBarVFOBTX_CheckedChanged);
             // 
             // Setup
             // 
@@ -55621,6 +55653,8 @@
             this.grpAudioDetails3.ResumeLayout(false);
             this.tpAudioOptions.ResumeLayout(false);
             this.tpAudioOptions.PerformLayout();
+            this.groupBoxTS29.ResumeLayout(false);
+            this.groupBoxTS29.PerformLayout();
             this.tpAdvancedAudio.ResumeLayout(false);
             this.tpAdvancedAudio.PerformLayout();
             this.grpVAC2ResamplerAdvanced.ResumeLayout(false);
@@ -56165,6 +56199,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).EndInit();
             this.grpDisplayPeakCursor.ResumeLayout(false);
             this.tpAppearanceMeter.ResumeLayout(false);
+            this.tpAppearanceMeter.PerformLayout();
             this.groupBoxTS14.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tbSignalHistoryAlpha)).EndInit();
             this.grpMeterEdge.ResumeLayout(false);
@@ -56335,8 +56370,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
-            this.groupBoxTS29.ResumeLayout(false);
-            this.groupBoxTS29.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -59809,5 +59842,7 @@
         private CheckBoxTS chkLinkRX1AF;
         private GroupBoxTS groupBoxTS29;
         private CheckBoxTS chkLinkMaster;
+        private CheckBoxTS chkLegacyMeters;
+        private RadioButtonTS radSpaceBarVFOBTX;
     }
 }

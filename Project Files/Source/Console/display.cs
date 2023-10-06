@@ -674,7 +674,7 @@ namespace Thetis
             set
             {
                 m_bNoiseFloorGoodRX1 = false;
-                m_nAttackFastFramesRX1 = m_nFps;
+                _fLastFastAttackEnabledTimeRX1 = m_objFrameStartTimer.ElapsedMsec;
                 m_bFastAttackNoiseFloorRX1 = value;
             }
         }
@@ -684,7 +684,7 @@ namespace Thetis
             set
             {
                 m_bNoiseFloorGoodRX2 = false;
-                m_nAttackFastFramesRX2 = m_nFps;
+                _fLastFastAttackEnabledTimeRX2 = m_objFrameStartTimer.ElapsedMsec;
                 m_bFastAttackNoiseFloorRX2 = value;
             }
         }
@@ -3030,6 +3030,10 @@ namespace Thetis
                     _d2dRenderTarget = new RenderTarget(_d2dFactory, _surface, rtp);
 
                     setupAliasing();
+
+                    //[2.10.1.0] MW0LGE spectrum/bitmaps may be cleared or bad, so wait to settle
+                    FastAttackNoiseFloorRX1 = true;
+                    if(RX2Enabled) FastAttackNoiseFloorRX2 = true;
                 }
             }
             catch (Exception e)
@@ -3804,17 +3808,18 @@ namespace Thetis
 
         static private float m_fAttackTimeInMSForRX1 = 2000;
         static private float m_fAttackTimeInMSForRX2 = 2000;
-        static private int m_nAttackFastFramesRX1 = 60;       // frames neeeded to complete the lerp. As display is entirely fps base, then
-        static private int m_nAttackFastFramesRX2 = 60;       // need to caclulate this each time fast attack is enabled
 
-        public static int AttackFastFramesRX1
-        {
-            get { return m_nAttackFastFramesRX1; }
-        }
-        public static int AttackFastFramesRX2
-        {
-            get { return m_nAttackFastFramesRX2; }
-        }
+        static private double _fLastFastAttackEnabledTimeRX1 = 0;
+        static private double _fLastFastAttackEnabledTimeRX2 = 0;
+
+        //public static int AttackFastFramesRX1
+        //{
+        //    get { return m_nAttackFastFramesRX1; }
+        //}
+        //public static int AttackFastFramesRX2
+        //{
+        //    get { return m_nAttackFastFramesRX2; }
+        //}
         public static float AttackTimeInMSForRX1
         {
             get { return m_fAttackTimeInMSForRX1; }
@@ -4687,8 +4692,8 @@ namespace Thetis
                 else if (m_fLerpAverageRX1 < m_fFFTBinAverageRX1)
                     m_fLerpAverageRX1 += (m_fFFTBinAverageRX1 - m_fLerpAverageRX1) / framesInAttackTime;
 
-                if (m_nAttackFastFramesRX1 > 0) m_nAttackFastFramesRX1--;
-                if (m_bFastAttackNoiseFloorRX1 && (Math.Abs(m_fFFTBinAverageRX1 - m_fLerpAverageRX1) < 1f) && (m_nAttackFastFramesRX1 == 0))
+                bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX1) > 1000f; //[2.10.1.0] MW0LGE change to time related, instead of frame related
+                if (m_bFastAttackNoiseFloorRX1 && (Math.Abs(m_fFFTBinAverageRX1 - m_fLerpAverageRX1) < 1f) && bElapsed)
                 {
                     m_bFastAttackNoiseFloorRX1 = false;
                 }
@@ -4726,8 +4731,8 @@ namespace Thetis
                 else if (m_fLerpAverageRX2 < m_fFFTBinAverageRX2)
                     m_fLerpAverageRX2 += (m_fFFTBinAverageRX2 - m_fLerpAverageRX2) / framesInAttackTime;
 
-                if (m_nAttackFastFramesRX2 > 0) m_nAttackFastFramesRX2--;
-                if (m_bFastAttackNoiseFloorRX2 && (Math.Abs(m_fFFTBinAverageRX2 - m_fLerpAverageRX2) < 1f) && (m_nAttackFastFramesRX2 == 0))
+                bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX2) > 1000f; //[2.10.1.0] MW0LGE change to time related, instead of frame related
+                if (m_bFastAttackNoiseFloorRX2 && (Math.Abs(m_fFFTBinAverageRX2 - m_fLerpAverageRX2) < 1f) && bElapsed)
                 {
                     m_bFastAttackNoiseFloorRX2 = false;
                 }
