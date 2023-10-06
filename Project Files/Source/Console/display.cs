@@ -6668,7 +6668,7 @@ namespace Thetis
             Utilities.Dispose(ref layout);
             layout = null;
 
-            if (m_stringSizeCache.Count > 500) m_stringSizeCache.Remove(m_stringSizeCache.Keys.Last()); // dump oldest, as new one are inserted at the head of dictionary list
+            if (m_stringSizeCache.Count > 500) m_stringSizeCache.Remove(m_stringSizeCache.Keys.First()); // [2.10.1.0] MW0LGE this used to be last, double checked and oldest is actually first
             m_stringSizeCache.Add(key, sz);
 
             return sz;
