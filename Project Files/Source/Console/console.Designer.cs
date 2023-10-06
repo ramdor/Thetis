@@ -719,6 +719,7 @@
             this.comboAMTXProfile = new System.Windows.Forms.ComboBoxTS();
             this.btnDisplayZTB = new System.Windows.Forms.ButtonTS();
             this.ptbTune = new Thetis.PrettyTrackBar();
+            this.lblPAProfile = new System.Windows.Forms.LabelTS();
             this.picSquelch = new System.Windows.Forms.PictureBox();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -905,7 +906,6 @@
             this.toolStripStatusLabel_Date = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_LocalTime = new System.Windows.Forms.ToolStripStatusLabel();
             this.tmrAutoAGC = new System.Windows.Forms.Timer(this.components);
-            this.lblPAProfile = new System.Windows.Forms.LabelTS();
             this.nudPwrTemp2 = new System.Windows.Forms.NumericUpDownTS();
             this.nudPwrTemp = new System.Windows.Forms.NumericUpDownTS();
             this.grpMultimeter = new System.Windows.Forms.GroupBoxTS();
@@ -3939,6 +3939,15 @@
             this.ptbTune.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbTune_Scroll);
             this.ptbTune.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ptbTune_MouseUp);
             // 
+            // lblPAProfile
+            // 
+            this.lblPAProfile.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblPAProfile, "lblPAProfile");
+            this.lblPAProfile.ForeColor = System.Drawing.Color.White;
+            this.lblPAProfile.Name = "lblPAProfile";
+            this.toolTip1.SetToolTip(this.lblPAProfile, resources.GetString("lblPAProfile.ToolTip"));
+            this.lblPAProfile.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblPAProfile_MouseDown);
+            // 
             // picSquelch
             // 
             this.picSquelch.BackColor = System.Drawing.SystemColors.ControlText;
@@ -5278,15 +5287,6 @@
             this.tmrAutoAGC.Enabled = true;
             this.tmrAutoAGC.Interval = 500;
             this.tmrAutoAGC.Tick += new System.EventHandler(this.tmrAutoAGC_Tick);
-            // 
-            // lblPAProfile
-            // 
-            this.lblPAProfile.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.lblPAProfile, "lblPAProfile");
-            this.lblPAProfile.ForeColor = System.Drawing.Color.White;
-            this.lblPAProfile.Name = "lblPAProfile";
-            this.toolTip1.SetToolTip(this.lblPAProfile, resources.GetString("lblPAProfile.ToolTip"));
-            this.lblPAProfile.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblPAProfile_MouseDown);
             // 
             // nudPwrTemp2
             // 
@@ -7468,6 +7468,7 @@
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Console";
+            this.Opacity = 0D;
             this.Activated += new System.EventHandler(this.Console_Activated);
             this.Closing += new System.ComponentModel.CancelEventHandler(this.Console_Closing);
             this.Deactivate += new System.EventHandler(this.Console_Deactivate);

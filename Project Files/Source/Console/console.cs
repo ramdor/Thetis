@@ -568,7 +568,7 @@ namespace Thetis
         // ======================================================
         public Console(string[] args)
         {
-            this.Opacity = 0f; // FadeIn below
+            this.Opacity = 0f; // FadeIn below. Note: console form has 0% set in form designer
 
             //CheckIfRussian(); //#UKRAINE
 
@@ -14105,6 +14105,8 @@ namespace Thetis
                 lblFilterLabel.BackColor = value;
                 lblModeLabel.BackColor = value;
                 lblModeBigLabel.BackColor = value;
+                lblRX2ModeBigLabel.BackColor = value; //[2.10.1.0]MW0LGE ty WD5Y
+
                 //MW0LGE_21d
                 lblRX1MuteVFOA.BackColor = value;
                 lblRX2MuteVFOB.BackColor = value;
@@ -14308,6 +14310,7 @@ namespace Thetis
 
                 lblModeLabel.ForeColor = value;
                 lblModeBigLabel.ForeColor = value;
+                lblRX2ModeBigLabel.ForeColor = value;//[2.10.1.0]MW0LGE ty WD5Y
                 lblFilterLabel.ForeColor = value;
                 lblAttenLabel.ForeColor = value;
                 lblAGCLabel.ForeColor = value;
@@ -26671,8 +26674,8 @@ namespace Thetis
                             "display_duplex : " + display_duplex.ToString() + Environment.NewLine +
                             "cachedMeasureStrings : " + Display.CachedMeasureStringsCount.ToString() + Environment.NewLine +
                             "cachedDXBrushes : " + Display.CachedDXBrushes.ToString() + Environment.NewLine +
-                            "AttackFastFramesRX1 : " + Display.AttackFastFramesRX1.ToString() + Environment.NewLine +
-                            "AttackFastFramesRX2 : " + Display.AttackFastFramesRX2.ToString() + Environment.NewLine +
+                            //"AttackFastFramesRX1 : " + Display.AttackFastFramesRX1.ToString() + Environment.NewLine +
+                            //"AttackFastFramesRX2 : " + Display.AttackFastFramesRX2.ToString() + Environment.NewLine +
                             "CurrentClickTuneMode : " + CurrentClickTuneMode.ToString() + Environment.NewLine +
                             "Cursor : " + picDisplay.Cursor.ToString() + Environment.NewLine +
                             "rx1_squelch_state : " + rx1_squelch_state.ToString() + Environment.NewLine +
@@ -27129,7 +27132,7 @@ namespace Thetis
         private async void UpdateMultimeter()
         {
             meter_timer.Start();
-            while (chkPower.Checked)
+            while (_useLegacyMeters && chkPower.Checked)
             {               
                 if (!meter_data_ready)
                 {
@@ -27310,7 +27313,7 @@ namespace Thetis
         private async void UpdateRX2MeterData()
         {
             rx2_meter_timer.Start();
-            while (chkPower.Checked && rx2_enabled)
+            while (_useLegacyMeters && chkPower.Checked && rx2_enabled)
             {
                 if (!rx2_meter_data_ready)
                 {
@@ -30080,6 +30083,17 @@ namespace Thetis
                                     chkMicMute.Checked = !chkMicMute.Checked;
                                     e.Handled = true;
                                 }
+                                else if(_spacebar_vfobtx)
+                                {
+                                    //[2.10.1.0]MW0LGE ideas from WD5Y
+                                    // flip TX vfos, they can be either or, so setting one, unsets the other
+                                    if (VFOATX)
+                                        VFOBTX = true;
+                                    else
+                                        VFOATX = true;
+
+                                    e.Handled = true;
+                                }
                                 else if (spacebar_last_btn)
                                 {
                                     break;
@@ -30501,7 +30515,36 @@ namespace Thetis
                 }
             }
         }
+        private void setupLegacyMeterThreads(int rx)
+        {
+            if (_useLegacyMeters && chkPower.Checked)
+            {
+                if (rx == 1 && (multimeter_thread == null || !multimeter_thread.IsAlive))
+                {
+                    multimeter_thread = new Thread(new ThreadStart(UpdateMultimeter))
+                    {
+                        Name = "Multimeter Thread",
+                        Priority = ThreadPriority.Lowest,
+                        IsBackground = true
+                    };
+                    multimeter_thread.Start();
+                }
 
+                if (rx2_enabled)
+                {
+                    if (rx == 2 && (rx2_meter_thread == null || !rx2_meter_thread.IsAlive))
+                    {
+                        rx2_meter_thread = new Thread(new ThreadStart(UpdateRX2MeterData))
+                        {
+                            Name = "RX2 Meter Thread",
+                            Priority = ThreadPriority.Lowest,
+                            IsBackground = true
+                        };
+                        rx2_meter_thread.Start();
+                    }
+                }
+            }
+        }
         private bool DataFlowing = false;
         private byte[] id_bytes = new byte[1];
         private void chkPower_CheckedChanged(object sender, System.EventArgs e)
@@ -30568,16 +30611,19 @@ namespace Thetis
                 if (chkEnableMultiRX.Checked) chkEnableMultiRX_CheckedChanged(this, EventArgs.Empty);
                 if (chkVFOSplit.Checked) chkVFOSplit_CheckedChanged(this, EventArgs.Empty);
 
-                if (multimeter_thread == null || !multimeter_thread.IsAlive)
-                {
-                    multimeter_thread = new Thread(new ThreadStart(UpdateMultimeter))
-                    {
-                        Name = "Multimeter Thread",
-                        Priority = ThreadPriority.Lowest,
-                        IsBackground = true
-                    };
-                    multimeter_thread.Start();
-                }
+                //[2.10.1.0] MW0LGE moved into startUpLegacyMeterThreads()
+                //if (multimeter_thread == null || !multimeter_thread.IsAlive)
+                //{
+                //    multimeter_thread = new Thread(new ThreadStart(UpdateMultimeter))
+                //    {
+                //        Name = "Multimeter Thread",
+                //        Priority = ThreadPriority.Lowest,
+                //        IsBackground = true
+                //    };
+                //    multimeter_thread.Start();
+                //}
+
+                setupLegacyMeterThreads(1);
 
                 //multimeter2 MW0LGE_[2.9.0.7]
                 if (USE_MULTIMETERS2)
@@ -30597,16 +30643,19 @@ namespace Thetis
 
                 if (rx2_enabled)
                 {
-                    if (rx2_meter_thread == null || !rx2_meter_thread.IsAlive)
-                    {
-                        rx2_meter_thread = new Thread(new ThreadStart(UpdateRX2MeterData))
-                        {
-                            Name = "RX2 Meter Thread",
-                            Priority = ThreadPriority.Lowest,
-                            IsBackground = true
-                        };
-                        rx2_meter_thread.Start();
-                    }
+                    //[2.10.1.0] MW0LGE moved into startUpLegacyMeterThreads()
+                    //if (rx2_meter_thread == null || !rx2_meter_thread.IsAlive)
+                    //{
+                    //    rx2_meter_thread = new Thread(new ThreadStart(UpdateRX2MeterData))
+                    //    {
+                    //        Name = "RX2 Meter Thread",
+                    //        Priority = ThreadPriority.Lowest,
+                    //        IsBackground = true
+                    //    };
+                    //    rx2_meter_thread.Start();
+                    //}
+
+                    setupLegacyMeterThreads(2);
 
                     //multimeter2 MW0LGE_[2.9.0.7]
                     if (USE_MULTIMETERS2)
@@ -32194,6 +32243,9 @@ namespace Thetis
         private void ptbAF_Scroll(object sender, System.EventArgs e)
         {
             lblAF.Text = "Master AF:  " + ptbAF.Value.ToString();
+
+            //[2.10.1.0] MW0LGE added
+            if (!initializing && e != EventArgs.Empty && m_bRXAFSlidersWillUnmute && chkMUT.Checked) chkMUT.Checked = false;
 
             if ((mox) && !chkMON.Checked)
             {
@@ -48402,7 +48454,7 @@ namespace Thetis
             panelVFOLabels.Hide();
             panelAndromedaMisc.Hide();
 
-            grpMultimeterMenus.Show(); //MW0LGE
+            //JUSTNO grpMultimeterMenus.Show(); //MW0LGE
 
             chkMUT.Show();
             radRX1Show.Hide();
@@ -48412,7 +48464,7 @@ namespace Thetis
             grpVFOA.Show();
             grpVFOB.Show();
             grpVFOBetween.Show();
-            grpMultimeter.Show();
+            //JUSTNO grpMultimeter.Show();
             panelOptions.Show();
             panelSoundControls.Show();
             chkSquelch.Show();
@@ -48474,8 +48526,8 @@ namespace Thetis
             comboPreamp.Show();
             udRX1StepAttData.Show();
             comboAGC.Show();
-            comboMeterRXMode.Show();
-            comboMeterTXMode.Show();                    // added G8NJJ - I was hiding this for Andromeda but not bringing it back
+            //JUSTNO comboMeterRXMode.Show();
+            //JUSTNO comboMeterTXMode.Show();                    // added G8NJJ - I was hiding this for Andromeda but not bringing it back
             txtMultiText.Show();
             chkFWCATU.Show();
             //RX2 Controls
@@ -48492,9 +48544,9 @@ namespace Thetis
             panelRX2Display.Show();
             panelRX2Mode.Show();
             panelRX2Filter.Show();
-            grpRX2Meter.Show();
+            //grpRX2Meter.Show();
             comboRX2AGC.Show();
-            comboRX2MeterMode.Show();
+            //JUSTNO comboRX2MeterMode.Show();
             picRX2Meter.Show();
             panelRX2RF.Show();
             ptbRX2AF.Show();
@@ -48812,8 +48864,9 @@ namespace Thetis
             {
                 if (showAndromedaTopControls || m_bShowTopControls)
                 {
-                    x = picMultiMeterDigital.Left;
-                    y = picMultiMeterDigital.Bottom + (m_bShowTopControls ? 0 : 4);
+                    PictureBox pb = show_rx2 ? picRX2Meter : picMultiMeterDigital; // need to know which is shown
+                    x = pb.Left;
+                    y = pb.Bottom + (m_bShowTopControls ? 0 : 4);
                 }
             }
 
@@ -48926,7 +48979,7 @@ namespace Thetis
             this.MinimumSize = new Size(minWidth, minHeight);
 
 
-            grpMultimeterMenus.Hide(); //MW0LGE
+            //JUSTNO grpMultimeterMenus.Hide(); //MW0LGE
 
             panelPower.Hide();
             panelRX2Power.Hide();
@@ -48981,7 +49034,7 @@ namespace Thetis
             panelRX2Display.Hide();
             panelRX2Mode.Hide();
             panelRX2Filter.Hide();
-            grpRX2Meter.Hide();
+            //JUSTNO grpRX2Meter.Hide();
             panelRX2RF.Hide();
 
             // G8NJJ: top display with both VFO controls
@@ -49009,11 +49062,11 @@ namespace Thetis
                 udRX2StepAttData.Hide();
                 //comboPreamp.Hide();
                 //udRX1StepAttData.Hide();
-                comboMeterRXMode.Hide();
-                comboRX2MeterMode.Hide();
-                comboMeterTXMode.Hide();
+                //JUSTNO comboMeterRXMode.Hide();
+                //JUSTNO comboRX2MeterMode.Hide();
+                //JUSTNO comboMeterTXMode.Hide();
 
-                panelMeterLabels.Show();
+                //JUSTNO panelMeterLabels.Show();
                 panelVFOALabels.Show();
                 lblModeBigLabel.Show();
                 panelVFOBLabels.Show();
@@ -49061,13 +49114,13 @@ namespace Thetis
                     comboDisplayMode.Show();            // display mode eg panadapter
                     comboRX2DisplayMode.Hide();
                     picMultiMeterDigital.Parent = this;
-                    picMultiMeterDigital.Show();
+                    //JUSTNO picMultiMeterDigital.Show();
                     txtMultiText.Parent = this;
-                    txtMultiText.Show();
+                    //JUSTNO txtMultiText.Show();
                     // picRX2Meter.Parent = this;
-                    picRX2Meter.Hide();
+                    //JUSTNO picRX2Meter.Hide();
                     // txtRX2Meter.Parent = this;
-                    txtRX2Meter.Hide();
+                    //JUSTNO txtRX2Meter.Hide();
                     // lblMultiSMeter.Parent = this;
                     //MW0LGE lblMultiSMeter.Hide();
                     //lblRX2Meter.Hide();
@@ -49084,13 +49137,13 @@ namespace Thetis
                     comboDisplayMode.Hide();
                     comboRX2DisplayMode.Show();
                     // picMultiMeterDigital.Parent = this;
-                    picMultiMeterDigital.Hide();
+                    //JUSTNO picMultiMeterDigital.Hide();
                     // txtMultiText.Parent = this;
-                    txtMultiText.Hide();
+                    //JUSTNO txtMultiText.Hide();
                     picRX2Meter.Parent = this;
-                    picRX2Meter.Show();
+                    //JUSTNO picRX2Meter.Show();
                     txtRX2Meter.Parent = this;
-                    txtRX2Meter.Show();
+                    //JUSTNO txtRX2Meter.Show();
 
                     // lblMultiSMeter.Parent = this;
                     //lblMultiSMeter.Hide();
@@ -49135,7 +49188,7 @@ namespace Thetis
                 lblRX2ModeBigLabel.Hide();
                 panelVFOLabels.Hide();
                 panelAndromedaMisc.Hide();
-                panelMeterLabels.Hide();
+                //JUSTNO panelMeterLabels.Hide();
 
                 if (show_rx1)
                 {
@@ -49156,14 +49209,14 @@ namespace Thetis
                     //grpMultimeter.Show();
                     picMultiMeterDigital.Parent = this;
                     picMultiMeterDigital.Size = pic_multi_meter_size_basis;//MW0LGE
-                    picMultiMeterDigital.Show();
+                    //JUSTNO picMultiMeterDigital.Show();
                     // picRX2Meter.Parent = this;
-                    picRX2Meter.Hide();
+                    //JUSTNO picRX2Meter.Hide();
                     txtMultiText.Parent = this;
                     txtMultiText.Size = txt_multi_text_size_basis;//MW0LGE
-                    txtMultiText.Show();
+                    //JUSTNO txtMultiText.Show();
                     // txtRX2Meter.Parent = this;
-                    txtRX2Meter.Hide();
+                    //JUSTNO txtRX2Meter.Hide();
 
                     chkMON.Parent = this;
                     chkMON.Show();
@@ -49220,11 +49273,11 @@ namespace Thetis
                     //MW0LGE lblMultiSMeter.Hide();
                     //lblRX2Meter.Hide();
                     comboMeterRXMode.Parent = this;
-                    comboMeterRXMode.Show();
+                    //JUSTNO comboMeterRXMode.Show();
                     //combo2RXMeterMode.Parent = this;
-                    comboRX2MeterMode.Hide();
+                    //JUSTNO comboRX2MeterMode.Hide();
                     comboMeterTXMode.Parent = this;
-                    comboMeterTXMode.Show();
+                    //JUSTNO comboMeterTXMode.Show();
 
                     lblModeLabel.Show();
                     lblFilterLabel.Show();
@@ -49245,7 +49298,7 @@ namespace Thetis
                       else
                       {
                           picMultiMeterDigital.Parent = this;
-                          picMultiMeterDigital.Show();
+                          //JUSTNO picMultiMeterDigital.Show();
                           lblMultiSMeter.Hide();
                       }*/
                     // changed G8NJJ to pick up RX1 or RX2 mode
@@ -49279,13 +49332,13 @@ namespace Thetis
                     // grpVFOBetween.Show();
                     //grpMultimeter.Show();
                     // picMultiMeterDigital.Parent = this;
-                    picMultiMeterDigital.Hide();
+                    //JUSTNO picMultiMeterDigital.Hide();
                     picRX2Meter.Parent = this;
-                    picRX2Meter.Show();
+                    //JUSTNO picRX2Meter.Show();
                     // txtMultiText.Parent = this;
-                    txtMultiText.Hide();
+                    //JUSTNO txtMultiText.Hide();
                     txtRX2Meter.Parent = this;
-                    txtRX2Meter.Show();
+                    //JUSTNO txtRX2Meter.Show();
 
                     chkMON.Parent = this;
                     chkMON.Show();
@@ -49354,12 +49407,12 @@ namespace Thetis
                     //lblMultiSMeter.Hide();
                     //MW0LGE lblRX2Meter.Hide();
                     // comboMeterRXMode.Parent = this;
-                    comboMeterRXMode.Hide();
+                    //JUSTNO comboMeterRXMode.Hide();
                     comboRX2MeterMode.Parent = this;
-                    comboRX2MeterMode.Show();
+                    //JUSTNO comboRX2MeterMode.Show();
 
                     comboMeterTXMode.Parent = this;
-                    comboMeterTXMode.Show();
+                    //JUSTNO comboMeterTXMode.Show();
 
                     lblRX2ModeLabel.Show();
                     lblRX2FilterLabel.Show();
@@ -49381,7 +49434,7 @@ namespace Thetis
                 comboDisplayMode.Show();
                 //chkPower.Hide();
                 grpVFOBetween.Hide();
-                grpMultimeter.Hide();
+                //JUSTNO grpMultimeter.Hide();
                 lblAF2.Hide();
                 lblRF2.Hide();
                 lblPWR2.Hide();
@@ -49429,6 +49482,8 @@ namespace Thetis
                 panelBandHF.Hide();
                 panelBandGEN.Hide();
             }
+
+            updateLegacyMeterControls(false);// [2.10.1.0] MW0LGE
 
             if (this.m_bShowModeControls)
                 panelMode.Show();
@@ -55769,6 +55824,84 @@ namespace Thetis
         private void lblPAProfile_MouseDown(object sender, MouseEventArgs e)
         {
             if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.PA_Tab);
+        }
+
+        private bool _useLegacyMeters = true;
+        public bool UseLegacyMeters
+        {
+            get { return _useLegacyMeters; }
+            set { 
+                _useLegacyMeters = value;
+
+                //start threads if needed, if previously running thread loops will terminate if _useLegacyMeters becomes false
+                if (_useLegacyMeters)
+                {
+                    setupLegacyMeterThreads(1);
+                    setupLegacyMeterThreads(2);
+                }
+
+                updateLegacyMeterControls(isexpanded && !iscollapsed);
+            }
+        }
+        private void updateLegacyMeterControls(bool expanded)
+        {
+            if (expanded)
+            {
+                grpMultimeter.Visible = _useLegacyMeters;
+                grpRX2Meter.Visible = _useLegacyMeters;
+                grpMultimeterMenus.Visible = _useLegacyMeters;
+                comboMeterRXMode.Visible = _useLegacyMeters;
+                comboRX2MeterMode.Visible = _useLegacyMeters;
+                comboMeterTXMode.Visible = _useLegacyMeters;
+            }
+            else
+            {
+                grpMultimeter.Visible = false;
+                grpRX2Meter.Visible = false;
+                grpMultimeterMenus.Visible = false;
+
+                if (m_bShowTopControls || showAndromedaTopControls)
+                {
+                    picMultiMeterDigital.Visible = _useLegacyMeters && ShowRX1;
+                    txtMultiText.Visible = _useLegacyMeters && ShowRX1;
+                    picRX2Meter.Visible = _useLegacyMeters && ShowRX2;
+                    txtRX2Meter.Visible = _useLegacyMeters && ShowRX2;
+                }
+                
+                if (m_bShowTopControls)
+                {
+                    panelMeterLabels.Visible = false;
+                    comboMeterRXMode.Visible = _useLegacyMeters && ShowRX1;
+                    comboRX2MeterMode.Visible = _useLegacyMeters && ShowRX2;
+                    comboMeterTXMode.Visible = _useLegacyMeters;
+                }
+                else if (showAndromedaTopControls)
+                {
+                    panelMeterLabels.Visible = _useLegacyMeters;
+                    comboMeterRXMode.Visible = false;
+                    comboRX2MeterMode.Visible = false;
+                    comboMeterTXMode.Visible = false;
+                }
+                else
+                {
+                    panelMeterLabels.Visible = false;
+                    comboMeterRXMode.Visible = false;
+                    comboRX2MeterMode.Visible = false;                   
+                    comboMeterTXMode.Visible = false;
+                    picMultiMeterDigital.Visible = false;
+                    txtMultiText.Visible = false;
+                    picRX2Meter.Visible = false;
+                    txtRX2Meter.Visible = false;
+                }                             
+            }
+        }
+
+        //[2.10.1.0] MW0LGE code/idea from WD5Y
+        private bool _spacebar_vfobtx = false;
+        public bool SpaceBarVFOBTX
+        {
+            get { return _spacebar_vfobtx; }
+            set { _spacebar_vfobtx = value; }
         }
     }
 

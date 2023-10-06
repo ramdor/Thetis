@@ -2207,6 +2207,7 @@ namespace Thetis
             comboKBCWDot_SelectedIndexChanged(this, e);
             comboKBPTTTx_SelectedIndexChanged(this, e);
             comboKBPTTRx_SelectedIndexChanged(this, e);
+            radSpaceBarVFOBTX_CheckedChanged(this, e);
 
             // Appearance Tab
             clrbtnBtnSel_Changed(this, e);
@@ -2279,7 +2280,7 @@ namespace Thetis
             chkNoiseFloorShowDBM_CheckedChanged(this, e);
             udNoiseFloorLineWidth_ValueChanged(this, e);
 
-            //[2.10.1.0]MW0LGE mainly colours
+            //[2.10.1.0]MW0LGE
             clrbtnOutOfBand_Changed(this, e);
             chkVFOSmallLSD_CheckedChanged(this, e);
             clrbtnVFOSmallColor_Changed(this, e);
@@ -2288,6 +2289,8 @@ namespace Thetis
             clrbtnMeterBackground_Changed(this, e);
             clrbtnBandBackground_Changed(this, e);
             clrbtnVFOBackground_Changed(this, e);
+
+            chkLegacyMeters_CheckedChanged(this, e);
             //
 
             // RX2 tab
@@ -27089,6 +27092,20 @@ namespace Thetis
             if (initializing) return;
 
             console.SetMasterAFLinked(0, chkLinkMaster.Checked);
+        }
+
+        private void chkLegacyMeters_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            console.UseLegacyMeters = chkLegacyMeters.Checked;
+        }
+
+        private void radSpaceBarVFOBTX_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            console.SpaceBarVFOBTX = radSpaceBarVFOBTX.Checked;
         }
     }
 
