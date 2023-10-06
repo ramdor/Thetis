@@ -6912,6 +6912,20 @@ namespace Thetis
                                             fc.FadeOnRx = igs.FadeOnRx;
                                             fc.FadeOnTx = igs.FadeOnTx;
                                         }
+
+                                        // recalc bounds for fade overlay cover as these will change as eye scale changes
+                                        System.Drawing.RectangleF eyeBounds = getBounds(ig.ID);
+                                        if (!eyeBounds.IsEmpty)
+                                        {
+                                            foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                            {
+                                                clsFadeCover fc = fcs.Value as clsFadeCover;
+                                                if (fc == null) continue;
+
+                                                fc.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f), _fPadY - (_fHeight * 0.75f) + ((fLargest - igs.EyeScale) * 0.5f));
+                                                fc.Size = new SizeF(igs.EyeScale, igs.EyeScale);
+                                            }
+                                        }
                                     }
                                     break;
                                 case MeterType.ANANMM:
@@ -9128,9 +9142,9 @@ namespace Thetis
 
                 if (emSize == 0) return SizeF.Empty; // zero size text is zero measurement
 
-                emSize = (float)Math.Round(emSize, 1);                
+                emSize = (float)Math.Round(emSize, 2);                
 
-                string sKey = sText + emSize.ToString("0.0");
+                string sKey = sText.Length + "_" + emSize.ToString("0.00");
 
                 if (_stringMeasure.ContainsKey(sKey)) return _stringMeasure[sKey];
 
@@ -9158,6 +9172,7 @@ namespace Thetis
                 size.Height *= 1.1f;
 
                 _stringMeasure.Add(sKey, size);
+                if (_stringMeasure.Count > 500) _stringMeasure.Remove(_stringMeasure.Keys.First());
 
                 return size;
             }
@@ -9433,7 +9448,7 @@ namespace Thetis
                         _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, getDXBrushForColour(scale.FontColourType, nFade));
                     }
 
-                    szTextSize = measureString("0", scale.FontFamily, scale.FntStyle, fontSizeEmScaled);
+                    //szTextSize = measureString("0", scale.FontFamily, scale.FntStyle, fontSizeEmScaled);
 
                     float fLineBaseY = y + (h * 0.85f);
 
@@ -10278,7 +10293,7 @@ namespace Thetis
                 }
                 SharpDX.Direct2D1.Brush markerColour = getDXBrushForColour(cbi.MarkerColour, nFade);
                 SharpDX.Direct2D1.Brush peakValueColour = getDXBrushForColour(cbi.PeakValueColour, nFade);
-                SharpDX.Direct2D1.Brush historyColour = getDXBrushForColour(cbi.HistoryColour, nFade/*nFade < cbi.HistoryColour.A ? nFade : cbi.HistoryColour.A*/);
+                SharpDX.Direct2D1.Brush historyColour = getDXBrushForColour(cbi.HistoryColour, nFade < cbi.HistoryColour.A ? nFade : cbi.HistoryColour.A);
                 SharpDX.Direct2D1.Brush colour = getDXBrushForColour(cbi.Colour, nFade);
                 SharpDX.Direct2D1.Brush colourHigh = getDXBrushForColour(cbi.ColourHigh, nFade);
                 SharpDX.Direct2D1.Brush peakHoldMarkerColour = getDXBrushForColour(cbi.PeakHoldMarkerColour, nFade);
@@ -10601,7 +10616,7 @@ namespace Thetis
                 int nFade = 255;
 
                 SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
-                _renderTarget.FillRectangle(rectSC, getDXBrushForColour(sc.Colour, nFade/*nFade < sc.Colour.A ? nFade : sc.Colour.A*/));
+                _renderTarget.FillRectangle(rectSC, getDXBrushForColour(sc.Colour, nFade < sc.Colour.A ? nFade : sc.Colour.A));
             }
             private void renderFadeCover(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
@@ -10617,6 +10632,7 @@ namespace Thetis
                 SharpDX.RectangleF rectFC = new SharpDX.RectangleF(x, y, w, h);
                 rectFC.Inflate(2f, 2f); // increase size slightly as indictator lines stroke width of 3, and they will be outside bounds when on edge by 1 pixel
                 _renderTarget.FillRectangle(rectFC, getDXBrushForColour(this.BackgroundColour, nFade));
+                //_renderTarget.DrawRectangle(rectFC, getDXBrushForColour(System.Drawing.Color.YellowGreen, nFade));
             }
             private void getParts(double vfoFreq, out string MHz, out string kHz, out string hz)
             {
@@ -11169,7 +11185,7 @@ namespace Thetis
                         geo.EndFigure(FigureEnd.Closed); // adds the closing line
                         geo.Close();
 
-                        _renderTarget.FillGeometry(sharpGeometry, getDXBrushForColour(ni.HistoryColour, nFade/*nFade < ni.HistoryColour.A ? nFade : ni.HistoryColour.A*/));
+                        _renderTarget.FillGeometry(sharpGeometry, getDXBrushForColour(ni.HistoryColour, nFade < ni.HistoryColour.A ? nFade : ni.HistoryColour.A));
 
                         Utilities.Dispose(ref geo);
                         geo = null;

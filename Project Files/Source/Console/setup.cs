@@ -2458,7 +2458,194 @@ namespace Thetis
                 }
             }
         }
+        private string getTXProfileChangeReport(DataRow drToCheck = null, bool bOnlyVac = false)
+        {
+            // duplicate of code from checkTXProfileChanged2
 
+            string sReport = "";
+
+            //bOnlyVac will only consider settings related to VAC
+
+            DataRow dr;
+            if (drToCheck == null)
+            {
+                // check everything in the TX profile
+                DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+
+                if (rows.Length != 1)
+                    return "";
+
+                dr = rows[0];
+            }
+            else
+            {
+                dr = drToCheck;
+            }
+
+            if (!bOnlyVac)
+            {
+                if (DB.ConvertFromDBVal<int>(dr["FilterLow"]) != (int)udTXFilterLow.Value) sReport += "FilterLow" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["FilterHigh"]) != (int)udTXFilterHigh.Value) sReport += "FilterHigh" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["TXEQNumBands"]) != console.EQForm.NumBands) sReport += "TXEQNumBands" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<bool>(dr["TXEQEnabled"]) != console.EQForm.TXEQEnabled) sReport += "TXEQEnabled" + Environment.NewLine;
+                int[] eq = console.EQForm.TXEQ;
+                if (DB.ConvertFromDBVal<int>(dr["TXEQPreamp"]) != eq[0]) sReport += "TXEQPreamp" + Environment.NewLine;
+                for (int i = 1; i < 11; i++)
+                    if (DB.ConvertFromDBVal<int>(dr["TXEQ" + i.ToString()]) != eq[i]) sReport += "TXEQ" + i.ToString() + Environment.NewLine;
+                for (int i = 11; i < 21; i++)
+                    if (DB.ConvertFromDBVal<int>(dr["TxEqFreq" + (i - 10).ToString()]) != eq[i]) sReport += "TxEqFreq" + (i - 10).ToString() + Environment.NewLine;
+
+                if (DB.ConvertFromDBVal<bool>(dr["DXOn"]) != console.DX) sReport += "DXOn" + Environment.NewLine;
+                //if (DB.ConvertFromDBVal<int>(dr["DXLevel"]) != console.DXLevel) sReport += "" + Environment.NewLine;  //MW0LGE_22b
+                if (DB.ConvertFromDBVal<bool>(dr["CompanderOn"]) != console.CPDR) sReport += "CompanderOn" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["CompanderLevel"]) != console.CPDRLevel) sReport += "CompanderLevel" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["MicGain"]) != console.Mic) sReport += "MicGain" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["FMMicGain"]) != console.FMMic) sReport += "FMMicGain" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<bool>(dr["MicMute"]) != console.MicMute) sReport += "MicMute" + Environment.NewLine;
+
+                if (DB.ConvertFromDBVal<bool>(dr["Lev_On"]) != chkDSPLevelerEnabled.Checked) sReport += "Lev_On" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["Lev_Slope"]) != (int)udDSPLevelerSlope.Value) sReport += "Lev_Slope" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["Lev_MaxGain"]) != (int)udDSPLevelerThreshold.Value) sReport += "Lev_MaxGain" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["Lev_Attack"]) != (int)udDSPLevelerAttack.Value) sReport += "Lev_Attack" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["Lev_Decay"]) != (int)udDSPLevelerDecay.Value) sReport += "Lev_Decay" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["Lev_Hang"]) != (int)udDSPLevelerHangTime.Value) sReport += "Lev_Hang" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["Lev_HangThreshold"]) != tbDSPLevelerHangThreshold.Value) sReport += "Lev_HangThreshold" + Environment.NewLine;
+
+                if (DB.ConvertFromDBVal<int>(dr["ALC_Slope"]) != (int)udDSPALCSlope.Value) sReport += "ALC_Slope" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["ALC_MaximumGain"]) != (int)udDSPALCMaximumGain.Value) sReport += "ALC_MaximumGain" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["ALC_Attack"]) != (int)udDSPALCAttack.Value) sReport += "ALC_Attack" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["ALC_Decay"]) != (int)udDSPALCDecay.Value) sReport += "ALC_Decay" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["ALC_Hang"]) != (int)udDSPALCHangTime.Value) sReport += "ALC_Hang" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["ALC_HangThreshold"]) != tbDSPALCHangThreshold.Value) sReport += "ALC_HangThreshold" + Environment.NewLine;
+
+                //if (DB.ConvertFromDBVal<int>(dr["Power"]) != console.PWR) sReport += "" + Environment.NewLine;  //MW0LGE_21k9rc5 removed from tx profile as power is per band now
+
+                if (DB.ConvertFromDBVal<bool>(dr["VOX_On"]) != chkVOXEnable.Checked) sReport += "VOX_On" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<bool>(dr["Dexp_On"]) != chkDEXPEnable.Checked) sReport += "Dexp_On" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["Dexp_Threshold"]) != (int)udDEXPThreshold.Value) sReport += "Dexp_Threshold" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["Dexp_Attack"]) != (int)udDEXPAttack.Value) sReport += "Dexp_Attack" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["VOX_HangTime"]) != (int)udDEXPHold.Value) sReport += "VOX_HangTime" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["Dexp_Release"]) != (int)udDEXPRelease.Value) sReport += "Dexp_Release" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<decimal>(dr["Dexp_Attenuate"]) != udDEXPExpansionRatio.Value) sReport += "Dexp_Attenuate" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<decimal>(dr["Dexp_Hysterisis"]) != udDEXPHysteresisRatio.Value) sReport += "Dexp_Hysterisis" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["Dexp_Tau"]) != (int)udDEXPDetTau.Value) sReport += "Dexp_Tau" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<bool>(dr["Dexp_SCF_On"]) != chkSCFEnable.Checked) sReport += "Dexp_SCF_On" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["Dexp_SCF_Low"]) != (int)udSCFLowCut.Value) sReport += "Dexp_SCF_Low" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["Dexp_SCF_High"]) != (int)udSCFHighCut.Value) sReport += "Dexp_SCF_High" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<bool>(dr["Dexp_LookAhead_On"]) != chkDEXPLookAheadEnable.Checked) sReport += "Dexp_LookAhead_On" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["Dexp_LookAhead"]) != (int)udDEXPLookAhead.Value) sReport += "Dexp_LookAhead" + Environment.NewLine;
+
+                //if (DB.ConvertFromDBVal<int>(dr["Tune_Power"]) != (int)udTXTunePower.Value) sReport += "" + Environment.NewLine; // [2.10.1.0] MW0LGE not used anymore
+                //if (DB.ConvertFromDBVal<string>(dr["Tune_Meter_Type"]) != (string)comboTXTUNMeter.Text) sReport += "" + Environment.NewLine; // [2.10.1.0] MW0LGE not used anymore
+
+                if (DB.ConvertFromDBVal<int>(dr["TX_AF_Level"]) != console.TXAF) sReport += "TX_AF_Level" + Environment.NewLine;
+
+                if (DB.ConvertFromDBVal<int>(dr["AM_Carrier_Level"]) != (int)udTXAMCarrierLevel.Value) sReport += "AM_Carrier_Level" + Environment.NewLine;
+
+                if (DB.ConvertFromDBVal<bool>(dr["Show_TX_Filter"]) != (bool)console.ShowTXFilter) sReport += "Show_TX_Filter" + Environment.NewLine;
+            }
+
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_On"]) != (bool)chkAudioEnableVAC.Checked) sReport += "VAC1_On" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Auto_On"]) != (bool)chkAudioVACAutoEnable.Checked) sReport += "VAC1_Auto_On" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<int>(dr["VAC1_RX_GAIN"]) != (int)udAudioVACGainRX.Value) sReport += "VAC1_RX_GAIN" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<int>(dr["VAC1_TX_GAIN"]) != (int)udAudioVACGainTX.Value) sReport += "VAC1_TX_GAIN" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Stereo_On"]) != (bool)chkAudio2Stereo.Checked) sReport += "VAC1_Stereo_On" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<string>(dr["VAC1_Sample_Rate"]) != (string)comboAudioSampleRate2.Text) sReport += "VAC1_Sample_Rate" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<string>(dr["VAC1_Buffer_Size"]) != (string)comboAudioBuffer2.Text) sReport += "VAC1_Buffer_Size" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_IQ_Output"]) != (bool)chkAudioIQtoVAC.Checked) sReport += "VAC1_IQ_Output" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_IQ_Correct"]) != (bool)chkAudioCorrectIQ.Checked) sReport += "VAC1_IQ_Correct" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_PTT_OverRide"]) != (bool)chkVACAllowBypass.Checked) sReport += "VAC1_PTT_OverRide" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Combine_Input_Channels"]) != (bool)chkVACCombine.Checked) sReport += "VAC1_Combine_Input_Channels" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Latency_On"]) != (bool)chkAudioLatencyManual2.Checked) sReport += "VAC1_Latency_On" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<int>(dr["VAC1_Latency_Duration"]) != (int)udAudioLatency2.Value) sReport += "VAC1_Latency_Duration" + Environment.NewLine;
+
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Latency_RBOut_On"]) != (bool)chkAudioLatencyManual2_Out.Checked) sReport += "VAC1_Latency_RBOut_On" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<int>(dr["VAC1_Latency_RBOut_Duration"]) != (int)udAudioLatency2_Out.Value) sReport += "VAC1_Latency_RBOut_Duration" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Latency_PAIn_On"]) != (bool)chkAudioLatencyPAInManual.Checked) sReport += "VAC1_Latency_PAIn_On" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<int>(dr["VAC1_Latency_PAIn_Duration"]) != (int)udAudioLatencyPAIn.Value) sReport += "VAC1_Latency_PAIn_Duration" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Latency_PAOut_On"]) != (bool)chkAudioLatencyPAOutManual.Checked) sReport += "VAC1_Latency_PAOut_On" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<int>(dr["VAC1_Latency_PAOut_Duration"]) != (int)udAudioLatencyPAOut.Value) sReport += "VAC1_Latency_PAOut_Duration" + Environment.NewLine;
+
+            if (DB.ConvertFromDBVal<string>(dr["VAC1_AudioDriver"]) != (string)comboAudioDriver2.Text) sReport += "VAC1_AudioDriver" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<string>(dr["VAC1_AudioInput"]) != (string)comboAudioInput2.Text) sReport += "VAC1_AudioInput" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<string>(dr["VAC1_AudioOutput"]) != (string)comboAudioOutput2.Text) sReport += "VAC1_AudioOutput" + Environment.NewLine;
+
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_On"]) != (bool)chkVAC2Enable.Checked) sReport += "VAC2_On" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Auto_On"]) != (bool)chkVAC2AutoEnable.Checked) sReport += "VAC2_Auto_On" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<int>(dr["VAC2_RX_GAIN"]) != (int)udVAC2GainRX.Value) sReport += "VAC2_RX_GAIN" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<int>(dr["VAC2_TX_GAIN"]) != (int)udVAC2GainTX.Value) sReport += "VAC2_TX_GAIN" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Stereo_On"]) != (bool)chkAudioStereo3.Checked) sReport += "VAC2_Stereo_On" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<string>(dr["VAC2_Sample_Rate"]) != (string)comboAudioSampleRate3.Text) sReport += "VAC2_Sample_Rate" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<string>(dr["VAC2_Buffer_Size"]) != (string)comboAudioBuffer3.Text) sReport += "VAC2_Buffer_Size" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_IQ_Output"]) != (bool)chkVAC2DirectIQ.Checked) sReport += "VAC2_IQ_Output" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_IQ_Correct"]) != (bool)chkVAC2DirectIQCal.Checked) sReport += "VAC2_IQ_Correct" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Combine_Input_Channels"]) != (bool)chkVAC2Combine.Checked) sReport += "VAC2_Combine_Input_Channels" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Latency_On"]) != (bool)chkVAC2LatencyManual.Checked) sReport += "VAC2_Latency_On" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<int>(dr["VAC2_Latency_Duration"]) != (int)udVAC2Latency.Value) sReport += "VAC2_Latency_Duration" + Environment.NewLine;
+
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Latency_RBOut_On"]) != (bool)chkVAC2LatencyOutManual.Checked) sReport += "VAC2_Latency_RBOut_On" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<int>(dr["VAC2_Latency_RBOut_Duration"]) != (int)udVAC2LatencyOut.Value) sReport += "VAC2_Latency_RBOut_Duration" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Latency_PAIn_On"]) != (bool)chkVAC2LatencyPAInManual.Checked) sReport += "VAC2_Latency_PAIn_On" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<int>(dr["VAC2_Latency_PAIn_Duration"]) != (int)udVAC2LatencyPAIn.Value) sReport += "VAC2_Latency_PAIn_Duration" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Latency_PAOut_On"]) != (bool)chkVAC2LatencyPAOutManual.Checked) sReport += "VAC2_Latency_PAOut_On" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<int>(dr["VAC2_Latency_PAOut_Duration"]) != (int)udVAC2LatencyPAOut.Value) sReport += "VAC2_Latency_PAOut_Duration" + Environment.NewLine;
+
+            if (DB.ConvertFromDBVal<string>(dr["VAC2_AudioDriver"]) != (string)comboAudioDriver3.Text) sReport += "VAC2_AudioDriver" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<string>(dr["VAC2_AudioInput"]) != (string)comboAudioInput3.Text) sReport += "VAC2_AudioInput" + Environment.NewLine;
+            if (DB.ConvertFromDBVal<string>(dr["VAC2_AudioOutput"]) != (string)comboAudioOutput3.Text) sReport += "VAC2_AudioOutput" + Environment.NewLine;
+
+            if (!bOnlyVac)
+            {
+                if (DB.ConvertFromDBVal<string>(dr["Phone_RX_DSP_Buffer"]) != (string)comboDSPPhoneRXBuf.Text) sReport += "Phone_RX_DSP_Buffer" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["Phone_TX_DSP_Buffer"]) != (string)comboDSPPhoneTXBuf.Text) sReport += "Phone_TX_DSP_Buffer" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["FM_RX_DSP_Buffer"]) != (string)comboDSPFMRXBuf.Text) sReport += "FM_RX_DSP_Buffer" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["FM_TX_DSP_Buffer"]) != (string)comboDSPFMTXBuf.Text) sReport += "FM_TX_DSP_Buffer" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["Digi_RX_DSP_Buffer"]) != (string)comboDSPDigRXBuf.Text) sReport += "Digi_RX_DSP_Buffer" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["Digi_TX_DSP_Buffer"]) != (string)comboDSPDigTXBuf.Text) sReport += "Digi_TX_DSP_Buffer" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["CW_RX_DSP_Buffer"]) != (string)comboDSPCWRXBuf.Text) sReport += "CW_RX_DSP_Buffer" + Environment.NewLine;
+
+                if (DB.ConvertFromDBVal<string>(dr["Phone_RX_DSP_Filter_Size"]) != (string)comboDSPPhoneRXFiltSize.Text) sReport += "Phone_RX_DSP_Filter_Size" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["Phone_TX_DSP_Filter_Size"]) != (string)comboDSPPhoneTXFiltSize.Text) sReport += "Phone_TX_DSP_Filter_Size" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["FM_RX_DSP_Filter_Size"]) != (string)comboDSPFMRXFiltSize.Text) sReport += "FM_RX_DSP_Filter_Size" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["FM_TX_DSP_Filter_Size"]) != (string)comboDSPFMTXFiltSize.Text) sReport += "FM_TX_DSP_Filter_Size" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["Digi_RX_DSP_Filter_Size"]) != (string)comboDSPDigRXFiltSize.Text) sReport += "Digi_RX_DSP_Filter_Size" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["Digi_TX_DSP_Filter_Size"]) != (string)comboDSPDigTXFiltSize.Text) sReport += "Digi_TX_DSP_Filter_Size" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["CW_RX_DSP_Filter_Size"]) != (string)comboDSPCWRXFiltSize.Text) sReport += "CW_RX_DSP_Filter_Size" + Environment.NewLine;
+
+                if (DB.ConvertFromDBVal<string>(dr["Phone_RX_DSP_Filter_Type"]) != (string)comboDSPPhoneRXFiltType.Text) sReport += "Phone_RX_DSP_Filter_Type" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["Phone_TX_DSP_Filter_Type"]) != (string)comboDSPPhoneTXFiltType.Text) sReport += "Phone_TX_DSP_Filter_Type" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["FM_RX_DSP_Filter_Type"]) != (string)comboDSPFMRXFiltType.Text) sReport += "FM_RX_DSP_Filter_Type" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["FM_TX_DSP_Filter_Type"]) != (string)comboDSPFMTXFiltType.Text) sReport += "FM_TX_DSP_Filter_Type" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["Digi_RX_DSP_Filter_Type"]) != (string)comboDSPDigRXFiltType.Text) sReport += "Digi_RX_DSP_Filter_Type" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["Digi_TX_DSP_Filter_Type"]) != (string)comboDSPDigTXFiltType.Text) sReport += "Digi_TX_DSP_Filter_Type" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<string>(dr["CW_RX_DSP_Filter_Type"]) != (string)comboDSPCWRXFiltType.Text) sReport += "CW_RX_DSP_Filter_Type" + Environment.NewLine;
+
+                if (DB.ConvertFromDBVal<bool>(dr["Mic_Input_On"]) != (bool)radMicIn.Checked) sReport += "Mic_Input_On" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<bool>(dr["Mic_Input_Boost"]) != (bool)chk20dbMicBoost.Checked) sReport += "Mic_Input_Boost" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<bool>(dr["Line_Input_On"]) != (bool)radLineIn.Checked) sReport += "Line_Input_On" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<decimal>(dr["Line_Input_Level"]) != udLineInBoost.Value) sReport += "Line_Input_Level" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<bool>(dr["CESSB_On"]) != chkDSPCESSB.Checked) sReport += "CESSB_On" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<bool>(dr["Pure_Signal_Enabled"]) != console.PureSignalEnabled) sReport += "Pure_Signal_Enabled" + Environment.NewLine;
+
+                //CFC
+                if (DB.ConvertFromDBVal<bool>(dr["CFCEnabled"]) != chkCFCEnable.Checked) sReport += "CFCEnabled" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<bool>(dr["CFCPostEqEnabled"]) != chkCFCPeqEnable.Checked) sReport += "CFCPostEqEnabled" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<bool>(dr["CFCPhaseRotatorEnabled"]) != chkPHROTEnable.Checked) sReport += "CFCPhaseRotatorEnabled" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["CFCPhaseRotatorFreq"]) != (int)udPhRotFreq.Value) sReport += "CFCPhaseRotatorFreq" + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["CFCPhaseRotatorStages"]) != (int)udPHROTStages.Value) sReport += "CFCPhaseRotatorStages" + Environment.NewLine;
+                int[] cfceq = CFCCOMPEQ;
+                if (DB.ConvertFromDBVal<int>(dr["CFCPreComp"]) != cfceq[0]) sReport += "CFCPreComp" + Environment.NewLine;
+                for (int i = 1; i < 11; i++)
+                    if (DB.ConvertFromDBVal<int>(dr["CFCPreComp" + (i - 1).ToString()]) != cfceq[i]) sReport += "CFCPreComp" + (i - 1).ToString() + Environment.NewLine;
+                if (DB.ConvertFromDBVal<int>(dr["CFCPostEqGain"]) != cfceq[11]) sReport += "CFCPostEqGain" + Environment.NewLine;
+                for (int i = 12; i < 22; i++)
+                    if (DB.ConvertFromDBVal<int>(dr["CFCPostEqGain" + (i - 12).ToString()]) != cfceq[i]) sReport += "CFCPostEqGain" + (i - 12).ToString() + Environment.NewLine;
+                for (int i = 22; i < 32; i++)
+                    if (DB.ConvertFromDBVal<int>(dr["CFCEqFreq" + (i - 22).ToString()]) != cfceq[i]) sReport += "CFCEqFreq" + (i - 22).ToString() + Environment.NewLine;
+            }
+
+            return sReport;
+        }
         private bool checkTXProfileChanged2(DataRow drToCheck = null, bool bOnlyVac = false)
         {
             //bOnlyVac will only consider settings related to VAC
@@ -27009,6 +27196,11 @@ namespace Thetis
 
             lblTXProfileWarning.Visible = bChanged;
 
+            if (bChanged && txtboxTXProfileChangedReport.Visible)
+                lblTXProfileWarning_Click(this, e);
+            else
+                txtboxTXProfileChangedReport.Visible = false;
+
             tmrCheckProfile.Enabled = true;
         }
 
@@ -27106,6 +27298,25 @@ namespace Thetis
             if (initializing) return;
 
             console.SpaceBarVFOBTX = radSpaceBarVFOBTX.Checked;
+        }
+
+        private void lblTXProfileWarning_Click(object sender, EventArgs e)
+        {
+            if (e != EventArgs.Empty && txtboxTXProfileChangedReport.Visible)
+            {
+                txtboxTXProfileChangedReport.Visible = false;
+                return;
+            }
+
+            string sReport = getTXProfileChangeReport();
+            if (sReport != "")
+            {
+                txtboxTXProfileChangedReport.Location = new Point(this.ClientSize.Width - txtboxTXProfileChangedReport.Size.Width, 34);
+                txtboxTXProfileChangedReport.Text = "Differences" + Environment.NewLine + Environment.NewLine + sReport;
+                txtboxTXProfileChangedReport.Visible = true;
+            }
+            else
+                txtboxTXProfileChangedReport.Visible = false;
         }
     }
 
