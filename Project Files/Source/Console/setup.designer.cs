@@ -3100,6 +3100,7 @@
             this.comboKBPTTTx = new System.Windows.Forms.ComboBoxTS();
             this.comboKBPTTRx = new System.Windows.Forms.ComboBoxTS();
             this.grpBoxSpaceBarPTT = new System.Windows.Forms.GroupBoxTS();
+            this.radSpaceBarVFOBTX = new System.Windows.Forms.RadioButtonTS();
             this.radSpaceBarLastBtn = new System.Windows.Forms.RadioButtonTS();
             this.radSpaceBarMicMute = new System.Windows.Forms.RadioButtonTS();
             this.radSpaceBarVOX = new System.Windows.Forms.RadioButtonTS();
@@ -3471,7 +3472,6 @@
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
-            this.radSpaceBarVFOBTX = new System.Windows.Forms.RadioButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -27830,10 +27830,11 @@
             this.chkAFSlidersMute.Image = null;
             this.chkAFSlidersMute.Location = new System.Drawing.Point(19, 19);
             this.chkAFSlidersMute.Name = "chkAFSlidersMute";
-            this.chkAFSlidersMute.Size = new System.Drawing.Size(125, 17);
+            this.chkAFSlidersMute.Size = new System.Drawing.Size(197, 17);
             this.chkAFSlidersMute.TabIndex = 0;
-            this.chkAFSlidersMute.Text = "RX AF slider un-mute";
-            this.toolTip1.SetToolTip(this.chkAFSlidersMute, "Moving AF sliders will un-mute");
+            this.chkAFSlidersMute.Text = "Master AF and RX AF slider un-mute";
+            this.toolTip1.SetToolTip(this.chkAFSlidersMute, "Moving AF sliders will un-mute.\r\nMaster slider will un-mute RX1 and RX2.\r\nRX1 and" +
+        " RX2 sliders will un-mute the related mute.");
             this.chkAFSlidersMute.UseVisualStyleBackColor = true;
             this.chkAFSlidersMute.CheckedChanged += new System.EventHandler(this.chkAFSlidersMute_CheckedChanged);
             // 
@@ -49799,6 +49800,19 @@
             this.grpBoxSpaceBarPTT.TabStop = false;
             this.grpBoxSpaceBarPTT.Text = "SpaceBar Control";
             // 
+            // radSpaceBarVFOBTX
+            // 
+            this.radSpaceBarVFOBTX.AutoSize = true;
+            this.radSpaceBarVFOBTX.Image = null;
+            this.radSpaceBarVFOBTX.Location = new System.Drawing.Point(6, 103);
+            this.radSpaceBarVFOBTX.Name = "radSpaceBarVFOBTX";
+            this.radSpaceBarVFOBTX.Size = new System.Drawing.Size(115, 17);
+            this.radSpaceBarVFOBTX.TabIndex = 68;
+            this.radSpaceBarVFOBTX.Text = "VFOB_TX - Toggle";
+            this.toolTip1.SetToolTip(this.radSpaceBarVFOBTX, "SpaceBar Toggles To VFOB-TX");
+            this.radSpaceBarVFOBTX.UseVisualStyleBackColor = true;
+            this.radSpaceBarVFOBTX.CheckedChanged += new System.EventHandler(this.radSpaceBarVFOBTX_CheckedChanged);
+            // 
             // radSpaceBarLastBtn
             // 
             this.radSpaceBarLastBtn.AutoSize = true;
@@ -55247,19 +55261,6 @@
             this.tmrCheckProfile.Enabled = true;
             this.tmrCheckProfile.Interval = 1000;
             this.tmrCheckProfile.Tick += new System.EventHandler(this.tmrCheckProfile_Tick);
-            // 
-            // radSpaceBarVFOBTX
-            // 
-            this.radSpaceBarVFOBTX.AutoSize = true;
-            this.radSpaceBarVFOBTX.Image = null;
-            this.radSpaceBarVFOBTX.Location = new System.Drawing.Point(6, 103);
-            this.radSpaceBarVFOBTX.Name = "radSpaceBarVFOBTX";
-            this.radSpaceBarVFOBTX.Size = new System.Drawing.Size(115, 17);
-            this.radSpaceBarVFOBTX.TabIndex = 68;
-            this.radSpaceBarVFOBTX.Text = "VFOB_TX - Toggle";
-            this.toolTip1.SetToolTip(this.radSpaceBarVFOBTX, "SpaceBar Toggles To VFOB-TX");
-            this.radSpaceBarVFOBTX.UseVisualStyleBackColor = true;
-            this.radSpaceBarVFOBTX.CheckedChanged += new System.EventHandler(this.radSpaceBarVFOBTX_CheckedChanged);
             // 
             // Setup
             // 
