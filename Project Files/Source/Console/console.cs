@@ -32245,7 +32245,11 @@ namespace Thetis
             lblAF.Text = "Master AF:  " + ptbAF.Value.ToString();
 
             //[2.10.1.0] MW0LGE added
-            if (!initializing && e != EventArgs.Empty && m_bRXAFSlidersWillUnmute && chkMUT.Checked) chkMUT.Checked = false;
+            if (!initializing && !mox && e != EventArgs.Empty && m_bRXAFSlidersWillUnmute)
+            {
+                if (chkMUT.Checked) chkMUT.Checked = false;
+                if (RX2Enabled && chkRX2Mute.Checked) chkRX2Mute.Checked = false;
+            }
 
             if ((mox) && !chkMON.Checked)
             {
@@ -48454,7 +48458,7 @@ namespace Thetis
             panelVFOLabels.Hide();
             panelAndromedaMisc.Hide();
 
-            //JUSTNO grpMultimeterMenus.Show(); //MW0LGE
+            //LM grpMultimeterMenus.Show(); //MW0LGE
 
             chkMUT.Show();
             radRX1Show.Hide();
@@ -48464,7 +48468,7 @@ namespace Thetis
             grpVFOA.Show();
             grpVFOB.Show();
             grpVFOBetween.Show();
-            //JUSTNO grpMultimeter.Show();
+            //LM grpMultimeter.Show();
             panelOptions.Show();
             panelSoundControls.Show();
             chkSquelch.Show();
@@ -48526,8 +48530,8 @@ namespace Thetis
             comboPreamp.Show();
             udRX1StepAttData.Show();
             comboAGC.Show();
-            //JUSTNO comboMeterRXMode.Show();
-            //JUSTNO comboMeterTXMode.Show();                    // added G8NJJ - I was hiding this for Andromeda but not bringing it back
+            //LM comboMeterRXMode.Show();
+            //LM comboMeterTXMode.Show();                    // added G8NJJ - I was hiding this for Andromeda but not bringing it back
             txtMultiText.Show();
             chkFWCATU.Show();
             //RX2 Controls
@@ -48546,7 +48550,7 @@ namespace Thetis
             panelRX2Filter.Show();
             //grpRX2Meter.Show();
             comboRX2AGC.Show();
-            //JUSTNO comboRX2MeterMode.Show();
+            //LM comboRX2MeterMode.Show();
             picRX2Meter.Show();
             panelRX2RF.Show();
             ptbRX2AF.Show();
@@ -48979,7 +48983,7 @@ namespace Thetis
             this.MinimumSize = new Size(minWidth, minHeight);
 
 
-            //JUSTNO grpMultimeterMenus.Hide(); //MW0LGE
+            //LM grpMultimeterMenus.Hide(); //MW0LGE
 
             panelPower.Hide();
             panelRX2Power.Hide();
@@ -49034,7 +49038,7 @@ namespace Thetis
             panelRX2Display.Hide();
             panelRX2Mode.Hide();
             panelRX2Filter.Hide();
-            //JUSTNO grpRX2Meter.Hide();
+            //LM grpRX2Meter.Hide();
             panelRX2RF.Hide();
 
             // G8NJJ: top display with both VFO controls
@@ -49062,11 +49066,11 @@ namespace Thetis
                 udRX2StepAttData.Hide();
                 //comboPreamp.Hide();
                 //udRX1StepAttData.Hide();
-                //JUSTNO comboMeterRXMode.Hide();
-                //JUSTNO comboRX2MeterMode.Hide();
-                //JUSTNO comboMeterTXMode.Hide();
+                //LM comboMeterRXMode.Hide();
+                //LM comboRX2MeterMode.Hide();
+                //LM comboMeterTXMode.Hide();
 
-                //JUSTNO panelMeterLabels.Show();
+                //LM panelMeterLabels.Show();
                 panelVFOALabels.Show();
                 lblModeBigLabel.Show();
                 panelVFOBLabels.Show();
@@ -49114,13 +49118,13 @@ namespace Thetis
                     comboDisplayMode.Show();            // display mode eg panadapter
                     comboRX2DisplayMode.Hide();
                     picMultiMeterDigital.Parent = this;
-                    //JUSTNO picMultiMeterDigital.Show();
+                    //LM picMultiMeterDigital.Show();
                     txtMultiText.Parent = this;
-                    //JUSTNO txtMultiText.Show();
+                    //LM txtMultiText.Show();
                     // picRX2Meter.Parent = this;
-                    //JUSTNO picRX2Meter.Hide();
+                    //LM picRX2Meter.Hide();
                     // txtRX2Meter.Parent = this;
-                    //JUSTNO txtRX2Meter.Hide();
+                    //LM txtRX2Meter.Hide();
                     // lblMultiSMeter.Parent = this;
                     //MW0LGE lblMultiSMeter.Hide();
                     //lblRX2Meter.Hide();
@@ -49137,13 +49141,13 @@ namespace Thetis
                     comboDisplayMode.Hide();
                     comboRX2DisplayMode.Show();
                     // picMultiMeterDigital.Parent = this;
-                    //JUSTNO picMultiMeterDigital.Hide();
+                    //LM picMultiMeterDigital.Hide();
                     // txtMultiText.Parent = this;
-                    //JUSTNO txtMultiText.Hide();
+                    //LM txtMultiText.Hide();
                     picRX2Meter.Parent = this;
-                    //JUSTNO picRX2Meter.Show();
+                    //LM picRX2Meter.Show();
                     txtRX2Meter.Parent = this;
-                    //JUSTNO txtRX2Meter.Show();
+                    //LM txtRX2Meter.Show();
 
                     // lblMultiSMeter.Parent = this;
                     //lblMultiSMeter.Hide();
@@ -49188,7 +49192,7 @@ namespace Thetis
                 lblRX2ModeBigLabel.Hide();
                 panelVFOLabels.Hide();
                 panelAndromedaMisc.Hide();
-                //JUSTNO panelMeterLabels.Hide();
+                //LM panelMeterLabels.Hide();
 
                 if (show_rx1)
                 {
@@ -49209,14 +49213,14 @@ namespace Thetis
                     //grpMultimeter.Show();
                     picMultiMeterDigital.Parent = this;
                     picMultiMeterDigital.Size = pic_multi_meter_size_basis;//MW0LGE
-                    //JUSTNO picMultiMeterDigital.Show();
+                    //LM picMultiMeterDigital.Show();
                     // picRX2Meter.Parent = this;
-                    //JUSTNO picRX2Meter.Hide();
+                    //LM picRX2Meter.Hide();
                     txtMultiText.Parent = this;
                     txtMultiText.Size = txt_multi_text_size_basis;//MW0LGE
-                    //JUSTNO txtMultiText.Show();
+                    //LM txtMultiText.Show();
                     // txtRX2Meter.Parent = this;
-                    //JUSTNO txtRX2Meter.Hide();
+                    //LM txtRX2Meter.Hide();
 
                     chkMON.Parent = this;
                     chkMON.Show();
@@ -49273,11 +49277,11 @@ namespace Thetis
                     //MW0LGE lblMultiSMeter.Hide();
                     //lblRX2Meter.Hide();
                     comboMeterRXMode.Parent = this;
-                    //JUSTNO comboMeterRXMode.Show();
+                    //LM comboMeterRXMode.Show();
                     //combo2RXMeterMode.Parent = this;
-                    //JUSTNO comboRX2MeterMode.Hide();
+                    //LM comboRX2MeterMode.Hide();
                     comboMeterTXMode.Parent = this;
-                    //JUSTNO comboMeterTXMode.Show();
+                    //LM comboMeterTXMode.Show();
 
                     lblModeLabel.Show();
                     lblFilterLabel.Show();
@@ -49298,7 +49302,7 @@ namespace Thetis
                       else
                       {
                           picMultiMeterDigital.Parent = this;
-                          //JUSTNO picMultiMeterDigital.Show();
+                          //LM picMultiMeterDigital.Show();
                           lblMultiSMeter.Hide();
                       }*/
                     // changed G8NJJ to pick up RX1 or RX2 mode
@@ -49332,13 +49336,13 @@ namespace Thetis
                     // grpVFOBetween.Show();
                     //grpMultimeter.Show();
                     // picMultiMeterDigital.Parent = this;
-                    //JUSTNO picMultiMeterDigital.Hide();
+                    //LM picMultiMeterDigital.Hide();
                     picRX2Meter.Parent = this;
-                    //JUSTNO picRX2Meter.Show();
+                    //LM picRX2Meter.Show();
                     // txtMultiText.Parent = this;
-                    //JUSTNO txtMultiText.Hide();
+                    //LM txtMultiText.Hide();
                     txtRX2Meter.Parent = this;
-                    //JUSTNO txtRX2Meter.Show();
+                    //LM txtRX2Meter.Show();
 
                     chkMON.Parent = this;
                     chkMON.Show();
@@ -49407,12 +49411,12 @@ namespace Thetis
                     //lblMultiSMeter.Hide();
                     //MW0LGE lblRX2Meter.Hide();
                     // comboMeterRXMode.Parent = this;
-                    //JUSTNO comboMeterRXMode.Hide();
+                    //LM comboMeterRXMode.Hide();
                     comboRX2MeterMode.Parent = this;
-                    //JUSTNO comboRX2MeterMode.Show();
+                    //LM comboRX2MeterMode.Show();
 
                     comboMeterTXMode.Parent = this;
-                    //JUSTNO comboMeterTXMode.Show();
+                    //LM comboMeterTXMode.Show();
 
                     lblRX2ModeLabel.Show();
                     lblRX2FilterLabel.Show();
@@ -49434,7 +49438,7 @@ namespace Thetis
                 comboDisplayMode.Show();
                 //chkPower.Hide();
                 grpVFOBetween.Hide();
-                //JUSTNO grpMultimeter.Hide();
+                //LM grpMultimeter.Hide();
                 lblAF2.Hide();
                 lblRF2.Hide();
                 lblPWR2.Hide();
@@ -55845,6 +55849,7 @@ namespace Thetis
         }
         private void updateLegacyMeterControls(bool expanded)
         {
+            //note: code lines commented with //LM in other functions are now performed here
             if (expanded)
             {
                 grpMultimeter.Visible = _useLegacyMeters;
