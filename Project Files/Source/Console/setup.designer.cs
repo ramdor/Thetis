@@ -2889,6 +2889,7 @@
             this.clrbtnText = new Thetis.ColorButton();
             this.lblDisplayTextColor = new System.Windows.Forms.LabelTS();
             this.grpAppPanadapter = new System.Windows.Forms.GroupBoxTS();
+            this.chkJoinBandEdges = new System.Windows.Forms.CheckBoxTS();
             this.tbBandstackOverlayAlpha = new System.Windows.Forms.TrackBarTS();
             this.clrbtnBandstackOverlay = new Thetis.ColorButton();
             this.labelTS532 = new System.Windows.Forms.LabelTS();
@@ -46922,6 +46923,7 @@
             // 
             // grpAppPanadapter
             // 
+            this.grpAppPanadapter.Controls.Add(this.chkJoinBandEdges);
             this.grpAppPanadapter.Controls.Add(this.tbBandstackOverlayAlpha);
             this.grpAppPanadapter.Controls.Add(this.clrbtnBandstackOverlay);
             this.grpAppPanadapter.Controls.Add(this.labelTS532);
@@ -46960,6 +46962,19 @@
             this.grpAppPanadapter.TabIndex = 77;
             this.grpAppPanadapter.TabStop = false;
             this.grpAppPanadapter.Text = "Panadapter                         Alpha";
+            // 
+            // chkJoinBandEdges
+            // 
+            this.chkJoinBandEdges.AutoSize = true;
+            this.chkJoinBandEdges.Image = null;
+            this.chkJoinBandEdges.Location = new System.Drawing.Point(133, 338);
+            this.chkJoinBandEdges.Name = "chkJoinBandEdges";
+            this.chkJoinBandEdges.Size = new System.Drawing.Size(106, 17);
+            this.chkJoinBandEdges.TabIndex = 100;
+            this.chkJoinBandEdges.Text = "Join Band Edges";
+            this.toolTip1.SetToolTip(this.chkJoinBandEdges, "Show a joining line between the band edges");
+            this.chkJoinBandEdges.UseVisualStyleBackColor = true;
+            this.chkJoinBandEdges.CheckedChanged += new System.EventHandler(this.chkJoinBandEdges_CheckedChanged);
             // 
             // tbBandstackOverlayAlpha
             // 
@@ -47120,7 +47135,7 @@
             // labelgrayline
             // 
             this.labelgrayline.Image = null;
-            this.labelgrayline.Location = new System.Drawing.Point(52, 167);
+            this.labelgrayline.Location = new System.Drawing.Point(52, 164);
             this.labelgrayline.Name = "labelgrayline";
             this.labelgrayline.Size = new System.Drawing.Size(64, 23);
             this.labelgrayline.TabIndex = 89;
@@ -59922,5 +59937,6 @@
         private CheckBoxTS chkQuickSplitPanAudioFlip;
         private CheckBoxTS chkQuickSplitPanAudio;
         private CheckBoxTS chkCancelQSplitOnCatTCIsplit;
+        private CheckBoxTS chkJoinBandEdges;
     }
 }
