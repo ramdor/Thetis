@@ -42688,7 +42688,7 @@ namespace Thetis
             {
                 _ignoreQuickSplitSet = false;
                 return;
-            }
+            }            
 
             bool bRestore = false;
             if (!IsSetupFormNull && SetupForm.QuickSplitEnabled && !RX2Enabled)
@@ -42700,7 +42700,7 @@ namespace Thetis
                     {
                         _oldQuickSplitSettings = new Dictionary<string, object>();
 
-                        _oldQuickSplitSettings.Add("zoom", this.Zoom);
+                        _oldQuickSplitSettings.Add("zoom", Zoom);
                         _oldQuickSplitSettings.Add("multirx", chkEnableMultiRX.Checked);
                         _oldQuickSplitSettings.Add("txfl", chkShowTXFilter.Checked);
                         _oldQuickSplitSettings.Add("swapwheels", Midi2Cat.SwapVFOWheelsProperty);
@@ -42709,10 +42709,24 @@ namespace Thetis
                             _oldQuickSplitSettings.Add("VFOASubFreq", VFOASubFreq);
                         else
                             _oldQuickSplitSettings.Add("VFOBFreq", VFOBFreq);
+
+                        _oldQuickSplitSettings.Add("panmain", PanMainRX);
+                        _oldQuickSplitSettings.Add("pansub", PanSubRX);
                     }
                     //
 
                     double shift = SetupForm.QuickSplitShiftHz * 1e-6;
+
+                    //Note: qsplit has been disabled when rx2 in use, as it made no sense to use vfosuba
+                    //if (RX2Enabled)
+                    //{
+                    //    // must be sub vfo
+                    //    VFOASubFreq = VFOAFreq + shift;
+                    //}
+                    //else
+                    //{
+                    VFOBFreq = VFOAFreq + shift;
+                    //}
 
                     if (SetupForm.QuickSplitZoom && this.Zoom != 190)
                         this.Zoom = 190;
@@ -42726,16 +42740,22 @@ namespace Thetis
                     if (SetupForm.QuickSplitSwapVFOWheels && !Midi2Cat.SwapVFOWheelsProperty)
                         Midi2Cat.SwapVFOWheelsProperty = true;
 
-                    //Note: qsplit has been disabled when rx2 in use, as it made no sense to use vfosuba
-                    //if (RX2Enabled)
-                    //{
-                    //    // must be sub vfo
-                    //    VFOASubFreq = VFOAFreq + shift;
-                    //}
-                    //else
-                    //{
-                    VFOBFreq = VFOAFreq + shift;
-                    //}
+                    if (SetupForm.QuickSplitPanAudio)
+                    {
+                        // note this can be flipped if Swap turned on on main UI, resulting in double flip
+                        if (!SetupForm.QuickSplitPanAudioFlip)
+                        {
+                            // main in left, sub in right
+                            PanMainRX = 0;
+                            PanSubRX = 100;
+                        }
+                        else
+                        {
+                            // main in right, sub in left
+                            PanMainRX = 100;
+                            PanSubRX = 0;
+                        }
+                    }
                 }
                 else
                 {
@@ -42755,12 +42775,14 @@ namespace Thetis
                 //do we have old settings?
                 if (_oldQuickSplitSettings != null)
                 {
-                    if (_oldQuickSplitSettings.ContainsKey("zoom")) this.Zoom = (int)_oldQuickSplitSettings["zoom"];
+                    if (_oldQuickSplitSettings.ContainsKey("zoom")) Zoom = (int)_oldQuickSplitSettings["zoom"];
                     if (_oldQuickSplitSettings.ContainsKey("multirx")) chkEnableMultiRX.Checked = (bool)_oldQuickSplitSettings["multirx"];
                     if (_oldQuickSplitSettings.ContainsKey("txfl")) chkShowTXFilter.Checked = (bool)_oldQuickSplitSettings["txfl"];
                     if (_oldQuickSplitSettings.ContainsKey("swapwheels")) Midi2Cat.SwapVFOWheelsProperty = (bool)_oldQuickSplitSettings["swapwheels"];
                     if (_oldQuickSplitSettings.ContainsKey("VFOASubFreq")) VFOASubFreq = (double)_oldQuickSplitSettings["VFOASubFreq"];
                     if (_oldQuickSplitSettings.ContainsKey("VFOBFreq")) VFOBFreq = (double)_oldQuickSplitSettings["VFOBFreq"];
+                    if (_oldQuickSplitSettings.ContainsKey("panmain")) PanMainRX = (int)_oldQuickSplitSettings["panmain"];
+                    if (_oldQuickSplitSettings.ContainsKey("pansub")) PanSubRX = (int)_oldQuickSplitSettings["pansub"];
 
                     _oldQuickSplitSettings.Clear();
                     _oldQuickSplitSettings = null;

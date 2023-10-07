@@ -234,7 +234,7 @@ namespace Thetis
 
 		// Sets or reads VFO B to control tx
 		// another "happiness" command
-		public string FT(string s)
+		public string FT(string s, bool bFromCatDirect = false)
 		{
 			//			if(s.Length == parser.nSet)
 			//			{
@@ -254,7 +254,7 @@ namespace Thetis
 			//			}
 			//			else
 			//				return parser.Error1;
-			return ZZSP(s);
+			return ZZSP(s, bFromCatDirect);
 		}
 
 		// Sets or reads the DSP filter width
@@ -5740,10 +5740,19 @@ namespace Thetis
         }
 
 		// Sets or reads the VFO Split status
-		public string ZZSP(string s)
+		public string ZZSP(string s, bool bFromCatDirect = false)
 		{
 			if(s.Length == parser.nSet && (s == "0" || s == "1"))
 			{
+				if (bFromCatDirect && !console.IsSetupFormNull)
+				{
+					if (console.SetupForm.SplitFromCATorTCIcancelsQSPLIT)
+					{
+						if (console.SetupForm.QuickSplitEnabled)
+							console.SetupForm.QuickSplitEnabled = false;
+					}
+				}
+
 				if(s == "0")
 					console.VFOSplit = false;
 				else

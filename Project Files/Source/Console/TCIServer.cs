@@ -1184,6 +1184,14 @@ namespace Thetis
 
 				if (bOK)
 				{
+					if (!console.ThreadSafeTCIAccessor.IsSetupFormNull)
+					{
+                        if (console.ThreadSafeTCIAccessor.SetupForm.SplitFromCATorTCIcancelsQSPLIT)
+                        {
+                            if (console.ThreadSafeTCIAccessor.SetupForm.QuickSplitEnabled)
+                                console.ThreadSafeTCIAccessor.SetupForm.QuickSplitEnabled = false;
+                        }
+                    }
 					if (rx == 0 || rx == 1)
 						if(console.ThreadSafeTCIAccessor.VFOSplit != bSplit)
 							console.ThreadSafeTCIAccessor.VFOSplit = bSplit;
