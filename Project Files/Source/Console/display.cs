@@ -6651,6 +6651,8 @@ namespace Thetis
             }
         }
         private static Dictionary<string, System.Drawing.SizeF> m_stringSizeCache = new Dictionary<string, System.Drawing.SizeF>();
+        private static Queue<string> _stringMeasureKeys = new Queue<string>();
+        
         private static System.Drawing.SizeF measureStringDX2D(string s, SharpDX.DirectWrite.TextFormat tf, bool cacheStringLength = false)
         {
             // keep cache of calced sizes as this is quite a slow process
@@ -6668,8 +6670,13 @@ namespace Thetis
             Utilities.Dispose(ref layout);
             layout = null;
 
-            if (m_stringSizeCache.Count > 500) m_stringSizeCache.Remove(m_stringSizeCache.Keys.First()); // [2.10.1.0] MW0LGE this used to be last, double checked and oldest is actually first
             m_stringSizeCache.Add(key, sz);
+            _stringMeasureKeys.Enqueue(key);
+            if (m_stringSizeCache.Count > 500)
+            {
+                string oldKey = _stringMeasureKeys.Dequeue();
+                m_stringSizeCache.Remove(oldKey); // [2.10.1.0] MW0LGE dictionary is not ordered
+            }
 
             return sz;
         }

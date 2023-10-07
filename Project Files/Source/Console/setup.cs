@@ -1151,6 +1151,12 @@ namespace Thetis
         // new code for selective cancel
         public new void Show()
         {
+            if (!m_bShown)
+            {
+                lblTXProfileWarning.Visible = false;
+                txtboxTXProfileChangedReport.Visible = false;
+            }
+
             // shadow method to always clear the list if someone somewhere shows the form
 
             // this may not be 100%, but best effort, we only want to do this if we come from a 'hidden' state
@@ -27352,8 +27358,9 @@ namespace Thetis
             string sReport = getTXProfileChangeReport();
             if (sReport != "")
             {
+                txtboxTXProfileChangedReport.Text = "Modifications" + Environment.NewLine + Environment.NewLine + sReport;
+                txtboxTXProfileChangedReport.Width = getTextBoxWidthForReport();
                 txtboxTXProfileChangedReport.Location = new Point(this.ClientSize.Width - txtboxTXProfileChangedReport.Size.Width, 34);
-                txtboxTXProfileChangedReport.Text = "Differences" + Environment.NewLine + Environment.NewLine + sReport;
                 txtboxTXProfileChangedReport.Visible = true;
             }
             else
@@ -27365,6 +27372,20 @@ namespace Thetis
             if (initializing) return;
 
             chkQuickSplitPanAudioFlip.Enabled = chkQuickSplitPanAudio.Checked;
+        }
+
+        private int getTextBoxWidthForReport()
+        {
+            int maxWidth = 0;
+
+            foreach (string line in txtboxTXProfileChangedReport.Lines)
+            {
+                int lineWidth = TextRenderer.MeasureText(line, txtboxTXProfileChangedReport.Font).Width;
+                if (lineWidth > maxWidth)
+                    maxWidth = lineWidth;
+            }
+
+            return maxWidth + SystemInformation.VerticalScrollBarWidth + 4;
         }
     }
 
