@@ -61,6 +61,7 @@ namespace Thetis
     using Device = SharpDX.Direct3D11.Device;
     using RectangleF = SharpDX.RectangleF;
     using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;
+    using System.Security.Permissions;
 
     class Display
     {
@@ -6857,6 +6858,12 @@ namespace Thetis
 
             return notchData;
         }
+        private static bool _joinBandEdges = false;
+        public static bool JoinBandEdges
+        {
+            get { return _joinBandEdges; }
+            set { _joinBandEdges = value; }
+        }
         private static void drawPanadapterAndWaterfallGridDX2D(int nVerticalShift, int W, int H, int rx, bool bottom, bool bIsWaterfall = false)
         {
             // MW0LGE
@@ -7091,7 +7098,7 @@ namespace Thetis
             if ((bIsWaterfall && m_bShowRXFilterOnWaterfall) || !bIsWaterfall)
             {
                 if (!local_mox)// && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
-                {                    
+                {
                     // draw RX filter
                     int filter_left_x = (int)((float)(filter_low - Low - f_diff) / width * W);
                     int filter_right_x = (int)((float)(filter_high - Low - f_diff) / width * W);
@@ -7127,7 +7134,7 @@ namespace Thetis
             #region Tx filter and tx lines
 
             //MW0LGE_21k8 reworked
-            if ((rx==1 && rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU) || (rx == 2 && rx2_dsp_mode != DSPMode.CWL && rx2_dsp_mode != DSPMode.CWU)) //MW0LGE [2.9.0.7] +rx2
+            if ((rx == 1 && rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU) || (rx == 2 && rx2_dsp_mode != DSPMode.CWL && rx2_dsp_mode != DSPMode.CWU)) //MW0LGE [2.9.0.7] +rx2
             {
                 if ((bIsWaterfall && m_bShowTXFilterOnRXWaterfall/*m_bShowTXFilterOnWaterfall*/) || !bIsWaterfall)
                 {
@@ -7612,6 +7619,61 @@ namespace Thetis
                     }
                 }
             }
+
+            //
+            if (!bIsWaterfall && _joinBandEdges)
+            { 
+                int local_rit_e = rx == 1 ? (_rx1ClickDisplayCTUN ? 0 : rit_hz) : 0;
+                long vfoLocal = rx == 1 ? vfoa_hz : vfob_hz;
+                SharpDX.Direct2D1.Brush bandEdgeOverheadBrush = local_mox ? m_bDX2_tx_band_edge_pen : m_bDX2_band_edge_pen;
+                //int LowPixelX = (int)((float)((vfoLocal + Low) - vfoLocal - Low - local_rit_e) / width * W);
+                //int HighPixelX = (int)((float)((vfoLocal + High) - vfoLocal - Low - local_rit_e) / width * W);
+
+                for (int ii = 0; ii < band_edge_list.Length; ii += 2)
+                {
+                    int low = band_edge_list[ii];
+                    int high = band_edge_list[ii + 1];
+
+                    int lowPixelX = (int)((float)(low - cwSideToneShift - vfoLocal - Low - local_rit_e) / width * W);
+                    int highPixelX = (int)((float)(high - cwSideToneShift - vfoLocal - Low - local_rit_e) / width * W);
+
+                    //check if low or high in view
+                    bool bLowInPB = (lowPixelX >= 0) && (lowPixelX <= W);
+                    bool bHighInPB = (highPixelX >= 0) && (highPixelX <= W);
+
+                    if (bLowInPB)
+                    {
+                        if (bHighInPB)
+                        {
+                            // draw between low and high
+                            drawLineDX2D(bandEdgeOverheadBrush, lowPixelX, nVerticalShift + 2, highPixelX, nVerticalShift + 2, 1);
+                            drawLineDX2D(bandEdgeOverheadBrush, lowPixelX, nVerticalShift + 2, lowPixelX, nVerticalShift + 8, 1);
+                            drawLineDX2D(bandEdgeOverheadBrush, highPixelX, nVerticalShift + 2, highPixelX, nVerticalShift + 8, 1);
+                        }
+                        else
+                        {
+                            // draw between low and right edge
+                            drawLineDX2D(bandEdgeOverheadBrush, lowPixelX, nVerticalShift + 2, W, nVerticalShift + 2, 1);
+                            drawLineDX2D(bandEdgeOverheadBrush, lowPixelX, nVerticalShift + 2, lowPixelX, nVerticalShift + 8, 1);
+                        }
+                    }
+                    else if (bHighInPB)
+                    {
+                        // draw between left edge and high
+                        drawLineDX2D(bandEdgeOverheadBrush, 0, nVerticalShift + 2, highPixelX, nVerticalShift + 2, 1);
+                        drawLineDX2D(bandEdgeOverheadBrush, highPixelX, nVerticalShift + 2, highPixelX, nVerticalShift + 8, 1);
+                    }
+                    else
+                    {
+                        if (lowPixelX < 0 && highPixelX > W)
+                        {
+                            // draw between Low and High
+                            drawLineDX2D(bandEdgeOverheadBrush, 0, nVerticalShift + 2, W, nVerticalShift + 2, 1);
+                        }
+                    }
+                }
+            }
+            //
 
             if (!bIsWaterfall)
             {

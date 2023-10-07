@@ -2297,6 +2297,8 @@ namespace Thetis
             clrbtnVFOBackground_Changed(this, e);
 
             chkLegacyMeters_CheckedChanged(this, e);
+
+            chkJoinBandEdges_CheckedChanged(this, e);
             //
 
             // RX2 tab
@@ -27386,6 +27388,13 @@ namespace Thetis
             }
 
             return maxWidth + SystemInformation.VerticalScrollBarWidth + 4;
+        }
+
+        private void chkJoinBandEdges_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            Display.JoinBandEdges = chkJoinBandEdges.Checked;
         }
     }
 
