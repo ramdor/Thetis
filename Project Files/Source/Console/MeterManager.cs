@@ -6859,7 +6859,7 @@ namespace Thetis
                                 case MeterType.MAGIC_EYE:
                                     {
                                         float fLargest = Math.Max(igs.EyeScale, igs.EyeBezelScale);
-
+                                        
                                         if (fLargest != ig.Size.Width)
                                         {
                                             ig.TopLeft = new PointF(0.5f - (fLargest / 2f), _fPadY - (_fHeight * 0.75f));
@@ -6922,8 +6922,8 @@ namespace Thetis
                                                 clsFadeCover fc = fcs.Value as clsFadeCover;
                                                 if (fc == null) continue;
 
-                                                fc.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f), _fPadY - (_fHeight * 0.75f) + ((fLargest - igs.EyeScale) * 0.5f));
-                                                fc.Size = new SizeF(igs.EyeScale, igs.EyeScale);
+                                                fc.TopLeft = new PointF(0.5f - (fLargest / 2f), _fPadY - (_fHeight * 0.75f));
+                                                fc.Size = new SizeF(fLargest, fLargest);
                                             }
                                         }
                                     }

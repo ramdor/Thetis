@@ -336,8 +336,12 @@
             this.lblOptClickTuneDIGU = new System.Windows.Forms.LabelTS();
             this.udOptClickTuneOffsetDIGU = new System.Windows.Forms.NumericUpDownTS();
             this.tpOptions2 = new System.Windows.Forms.TabPage();
+            this.chkCancelQSplitOnCatTCIsplit = new System.Windows.Forms.CheckBoxTS();
             this.chkQuickSplit = new System.Windows.Forms.CheckBoxTS();
             this.grpQuickSplit = new System.Windows.Forms.GroupBoxTS();
+            this.chkQuickSplitPanAudioFlip = new System.Windows.Forms.CheckBoxTS();
+            this.chkQuickSplitPanAudio = new System.Windows.Forms.CheckBoxTS();
+            this.labelQuickSplitInfo = new System.Windows.Forms.LabelTS();
             this.btnQuickSplitUp5 = new System.Windows.Forms.ButtonTS();
             this.btnQuickSplitDown5 = new System.Windows.Forms.ButtonTS();
             this.chkQuickSplitSwapVFOWheels = new System.Windows.Forms.CheckBoxTS();
@@ -8882,6 +8886,7 @@
             // tpOptions2
             // 
             this.tpOptions2.BackColor = System.Drawing.SystemColors.Control;
+            this.tpOptions2.Controls.Add(this.chkCancelQSplitOnCatTCIsplit);
             this.tpOptions2.Controls.Add(this.chkQuickSplit);
             this.tpOptions2.Controls.Add(this.grpQuickSplit);
             this.tpOptions2.Controls.Add(this.groupBoxTS26);
@@ -8895,21 +8900,36 @@
             this.tpOptions2.TabIndex = 1;
             this.tpOptions2.Text = "Options-2";
             // 
+            // chkCancelQSplitOnCatTCIsplit
+            // 
+            this.chkCancelQSplitOnCatTCIsplit.AutoSize = true;
+            this.chkCancelQSplitOnCatTCIsplit.Image = null;
+            this.chkCancelQSplitOnCatTCIsplit.Location = new System.Drawing.Point(446, 171);
+            this.chkCancelQSplitOnCatTCIsplit.Name = "chkCancelQSplitOnCatTCIsplit";
+            this.chkCancelQSplitOnCatTCIsplit.Size = new System.Drawing.Size(254, 17);
+            this.chkCancelQSplitOnCatTCIsplit.TabIndex = 38;
+            this.chkCancelQSplitOnCatTCIsplit.Text = "Cancel Quick Split on CAT or TCI split command";
+            this.toolTip1.SetToolTip(this.chkCancelQSplitOnCatTCIsplit, "Quick Split is disabled if a split message is received from cat or tci");
+            this.chkCancelQSplitOnCatTCIsplit.UseVisualStyleBackColor = true;
+            // 
             // chkQuickSplit
             // 
             this.chkQuickSplit.AutoSize = true;
             this.chkQuickSplit.Image = null;
             this.chkQuickSplit.Location = new System.Drawing.Point(446, 194);
             this.chkQuickSplit.Name = "chkQuickSplit";
-            this.chkQuickSplit.Size = new System.Drawing.Size(189, 17);
+            this.chkQuickSplit.Size = new System.Drawing.Size(183, 17);
             this.chkQuickSplit.TabIndex = 37;
-            this.chkQuickSplit.Text = "Quick Split   (rx on vfoa tx on vfob)";
+            this.chkQuickSplit.Text = "Quick Split (rx on vfoa tx on vfob)";
             this.toolTip1.SetToolTip(this.chkQuickSplit, "Enable quick split for the split button on rx1");
             this.chkQuickSplit.UseVisualStyleBackColor = true;
             this.chkQuickSplit.CheckedChanged += new System.EventHandler(this.chkQuickSplit_CheckedChanged);
             // 
             // grpQuickSplit
             // 
+            this.grpQuickSplit.Controls.Add(this.chkQuickSplitPanAudioFlip);
+            this.grpQuickSplit.Controls.Add(this.chkQuickSplitPanAudio);
+            this.grpQuickSplit.Controls.Add(this.labelQuickSplitInfo);
             this.grpQuickSplit.Controls.Add(this.btnQuickSplitUp5);
             this.grpQuickSplit.Controls.Add(this.btnQuickSplitDown5);
             this.grpQuickSplit.Controls.Add(this.chkQuickSplitSwapVFOWheels);
@@ -8920,14 +8940,49 @@
             this.grpQuickSplit.Controls.Add(this.nudQuickSplitShift);
             this.grpQuickSplit.Location = new System.Drawing.Point(438, 194);
             this.grpQuickSplit.Name = "grpQuickSplit";
-            this.grpQuickSplit.Size = new System.Drawing.Size(257, 156);
+            this.grpQuickSplit.Size = new System.Drawing.Size(257, 184);
             this.grpQuickSplit.TabIndex = 36;
             this.grpQuickSplit.TabStop = false;
+            // 
+            // chkQuickSplitPanAudioFlip
+            // 
+            this.chkQuickSplitPanAudioFlip.AutoSize = true;
+            this.chkQuickSplitPanAudioFlip.Enabled = false;
+            this.chkQuickSplitPanAudioFlip.Image = null;
+            this.chkQuickSplitPanAudioFlip.Location = new System.Drawing.Point(39, 161);
+            this.chkQuickSplitPanAudioFlip.Name = "chkQuickSplitPanAudioFlip";
+            this.chkQuickSplitPanAudioFlip.Size = new System.Drawing.Size(42, 17);
+            this.chkQuickSplitPanAudioFlip.TabIndex = 47;
+            this.chkQuickSplitPanAudioFlip.Text = "Flip";
+            this.chkQuickSplitPanAudioFlip.UseVisualStyleBackColor = true;
+            // 
+            // chkQuickSplitPanAudio
+            // 
+            this.chkQuickSplitPanAudio.AutoSize = true;
+            this.chkQuickSplitPanAudio.Image = null;
+            this.chkQuickSplitPanAudio.Location = new System.Drawing.Point(19, 142);
+            this.chkQuickSplitPanAudio.Name = "chkQuickSplitPanAudio";
+            this.chkQuickSplitPanAudio.Size = new System.Drawing.Size(74, 17);
+            this.chkQuickSplitPanAudio.TabIndex = 46;
+            this.chkQuickSplitPanAudio.Text = "Pan audio";
+            this.toolTip1.SetToolTip(this.chkQuickSplitPanAudio, "vfoA in left ear, vfoB in right ear. Flipped if flip is on");
+            this.chkQuickSplitPanAudio.UseVisualStyleBackColor = true;
+            this.chkQuickSplitPanAudio.CheckedChanged += new System.EventHandler(this.chkQuickSplitPanAudio_CheckedChanged);
+            // 
+            // labelQuickSplitInfo
+            // 
+            this.labelQuickSplitInfo.Image = null;
+            this.labelQuickSplitInfo.Location = new System.Drawing.Point(123, 139);
+            this.labelQuickSplitInfo.Name = "labelQuickSplitInfo";
+            this.labelQuickSplitInfo.Size = new System.Drawing.Size(125, 39);
+            this.labelQuickSplitInfo.TabIndex = 45;
+            this.labelQuickSplitInfo.Text = "note: options are\r\napplied when QSPLT\r\nis changed to on state";
+            this.labelQuickSplitInfo.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // btnQuickSplitUp5
             // 
             this.btnQuickSplitUp5.Image = null;
-            this.btnQuickSplitUp5.Location = new System.Drawing.Point(185, 30);
+            this.btnQuickSplitUp5.Location = new System.Drawing.Point(185, 21);
             this.btnQuickSplitUp5.Name = "btnQuickSplitUp5";
             this.btnQuickSplitUp5.Selectable = true;
             this.btnQuickSplitUp5.Size = new System.Drawing.Size(42, 23);
@@ -8939,7 +8994,7 @@
             // btnQuickSplitDown5
             // 
             this.btnQuickSplitDown5.Image = null;
-            this.btnQuickSplitDown5.Location = new System.Drawing.Point(138, 30);
+            this.btnQuickSplitDown5.Location = new System.Drawing.Point(138, 21);
             this.btnQuickSplitDown5.Name = "btnQuickSplitDown5";
             this.btnQuickSplitDown5.Selectable = true;
             this.btnQuickSplitDown5.Size = new System.Drawing.Size(42, 23);
@@ -8952,7 +9007,7 @@
             // 
             this.chkQuickSplitSwapVFOWheels.AutoSize = true;
             this.chkQuickSplitSwapVFOWheels.Image = null;
-            this.chkQuickSplitSwapVFOWheels.Location = new System.Drawing.Point(19, 128);
+            this.chkQuickSplitSwapVFOWheels.Location = new System.Drawing.Point(19, 119);
             this.chkQuickSplitSwapVFOWheels.Name = "chkQuickSplitSwapVFOWheels";
             this.chkQuickSplitSwapVFOWheels.Size = new System.Drawing.Size(143, 17);
             this.chkQuickSplitSwapVFOWheels.TabIndex = 43;
@@ -8964,7 +9019,7 @@
             // 
             this.chkQuickSplitFL.AutoSize = true;
             this.chkQuickSplitFL.Image = null;
-            this.chkQuickSplitFL.Location = new System.Drawing.Point(19, 105);
+            this.chkQuickSplitFL.Location = new System.Drawing.Point(19, 96);
             this.chkQuickSplitFL.Name = "chkQuickSplitFL";
             this.chkQuickSplitFL.Size = new System.Drawing.Size(143, 17);
             this.chkQuickSplitFL.TabIndex = 42;
@@ -8976,7 +9031,7 @@
             // 
             this.chkQuickSplitMultiRX.AutoSize = true;
             this.chkQuickSplitMultiRX.Image = null;
-            this.chkQuickSplitMultiRX.Location = new System.Drawing.Point(19, 82);
+            this.chkQuickSplitMultiRX.Location = new System.Drawing.Point(19, 73);
             this.chkQuickSplitMultiRX.Name = "chkQuickSplitMultiRX";
             this.chkQuickSplitMultiRX.Size = new System.Drawing.Size(99, 17);
             this.chkQuickSplitMultiRX.TabIndex = 41;
@@ -8988,7 +9043,7 @@
             // 
             this.chkQuickSplitZoom.AutoSize = true;
             this.chkQuickSplitZoom.Image = null;
-            this.chkQuickSplitZoom.Location = new System.Drawing.Point(19, 59);
+            this.chkQuickSplitZoom.Location = new System.Drawing.Point(19, 50);
             this.chkQuickSplitZoom.Name = "chkQuickSplitZoom";
             this.chkQuickSplitZoom.Size = new System.Drawing.Size(65, 17);
             this.chkQuickSplitZoom.TabIndex = 40;
@@ -9000,7 +9055,7 @@
             // 
             this.labelTS182.AutoSize = true;
             this.labelTS182.Image = null;
-            this.labelTS182.Location = new System.Drawing.Point(89, 35);
+            this.labelTS182.Location = new System.Drawing.Point(89, 26);
             this.labelTS182.Name = "labelTS182";
             this.labelTS182.Size = new System.Drawing.Size(29, 13);
             this.labelTS182.TabIndex = 39;
@@ -9013,7 +9068,7 @@
             0,
             0,
             0});
-            this.nudQuickSplitShift.Location = new System.Drawing.Point(19, 33);
+            this.nudQuickSplitShift.Location = new System.Drawing.Point(19, 24);
             this.nudQuickSplitShift.Maximum = new decimal(new int[] {
             15000,
             0,
@@ -9049,7 +9104,7 @@
             this.groupBoxTS26.Controls.Add(this.nudNFsensitivity);
             this.groupBoxTS26.Location = new System.Drawing.Point(438, 13);
             this.groupBoxTS26.Name = "groupBoxTS26";
-            this.groupBoxTS26.Size = new System.Drawing.Size(257, 175);
+            this.groupBoxTS26.Size = new System.Drawing.Size(257, 146);
             this.groupBoxTS26.TabIndex = 35;
             this.groupBoxTS26.TabStop = false;
             this.groupBoxTS26.Text = "Noise Floor";
@@ -9058,7 +9113,7 @@
             // 
             this.chkNewNoiseFloorMethod.AutoSize = true;
             this.chkNewNoiseFloorMethod.Image = null;
-            this.chkNewNoiseFloorMethod.Location = new System.Drawing.Point(21, 143);
+            this.chkNewNoiseFloorMethod.Location = new System.Drawing.Point(21, 124);
             this.chkNewNoiseFloorMethod.Name = "chkNewNoiseFloorMethod";
             this.chkNewNoiseFloorMethod.Size = new System.Drawing.Size(137, 17);
             this.chkNewNoiseFloorMethod.TabIndex = 17;
@@ -9070,7 +9125,7 @@
             // btnResetNFShift
             // 
             this.btnResetNFShift.Image = null;
-            this.btnResetNFShift.Location = new System.Drawing.Point(164, 46);
+            this.btnResetNFShift.Location = new System.Drawing.Point(164, 43);
             this.btnResetNFShift.Name = "btnResetNFShift";
             this.btnResetNFShift.Selectable = true;
             this.btnResetNFShift.Size = new System.Drawing.Size(47, 23);
@@ -9083,7 +9138,7 @@
             // labelTS160
             // 
             this.labelTS160.Image = null;
-            this.labelTS160.Location = new System.Drawing.Point(13, 92);
+            this.labelTS160.Location = new System.Drawing.Point(13, 82);
             this.labelTS160.Name = "labelTS160";
             this.labelTS160.Size = new System.Drawing.Size(145, 35);
             this.labelTS160.TabIndex = 15;
@@ -9093,7 +9148,7 @@
             // btnRX2PBsnr
             // 
             this.btnRX2PBsnr.Image = null;
-            this.btnRX2PBsnr.Location = new System.Drawing.Point(164, 107);
+            this.btnRX2PBsnr.Location = new System.Drawing.Point(164, 97);
             this.btnRX2PBsnr.Name = "btnRX2PBsnr";
             this.btnRX2PBsnr.Selectable = true;
             this.btnRX2PBsnr.Size = new System.Drawing.Size(47, 23);
@@ -9106,7 +9161,7 @@
             // btnRX1PBsnr
             // 
             this.btnRX1PBsnr.Image = null;
-            this.btnRX1PBsnr.Location = new System.Drawing.Point(164, 78);
+            this.btnRX1PBsnr.Location = new System.Drawing.Point(164, 73);
             this.btnRX1PBsnr.Name = "btnRX1PBsnr";
             this.btnRX1PBsnr.Selectable = true;
             this.btnRX1PBsnr.Size = new System.Drawing.Size(47, 23);
@@ -9120,7 +9175,7 @@
             // 
             this.labelTS157.AutoSize = true;
             this.labelTS157.Image = null;
-            this.labelTS157.Location = new System.Drawing.Point(123, 49);
+            this.labelTS157.Location = new System.Drawing.Point(123, 46);
             this.labelTS157.Name = "labelTS157";
             this.labelTS157.Size = new System.Drawing.Size(28, 13);
             this.labelTS157.TabIndex = 12;
@@ -9130,7 +9185,7 @@
             // 
             this.labelTS156.AutoSize = true;
             this.labelTS156.Image = null;
-            this.labelTS156.Location = new System.Drawing.Point(38, 49);
+            this.labelTS156.Location = new System.Drawing.Point(38, 46);
             this.labelTS156.Name = "labelTS156";
             this.labelTS156.Size = new System.Drawing.Size(26, 13);
             this.labelTS156.TabIndex = 11;
@@ -9145,7 +9200,7 @@
             0,
             0,
             65536});
-            this.nudNFshift.Location = new System.Drawing.Point(70, 47);
+            this.nudNFshift.Location = new System.Drawing.Point(70, 44);
             this.nudNFshift.Maximum = new decimal(new int[] {
             12,
             0,
@@ -55267,12 +55322,12 @@
             // txtboxTXProfileChangedReport
             // 
             this.txtboxTXProfileChangedReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
-            this.txtboxTXProfileChangedReport.Location = new System.Drawing.Point(327, 478);
+            this.txtboxTXProfileChangedReport.Location = new System.Drawing.Point(234, 494);
             this.txtboxTXProfileChangedReport.Multiline = true;
             this.txtboxTXProfileChangedReport.Name = "txtboxTXProfileChangedReport";
             this.txtboxTXProfileChangedReport.ReadOnly = true;
             this.txtboxTXProfileChangedReport.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtboxTXProfileChangedReport.Size = new System.Drawing.Size(180, 128);
+            this.txtboxTXProfileChangedReport.Size = new System.Drawing.Size(326, 128);
             this.txtboxTXProfileChangedReport.TabIndex = 25;
             this.txtboxTXProfileChangedReport.Text = "used to report tx profile changes if you click on oragne box";
             this.txtboxTXProfileChangedReport.Visible = false;
@@ -59863,5 +59918,9 @@
         private CheckBoxTS chkLegacyMeters;
         private RadioButtonTS radSpaceBarVFOBTX;
         private TextBoxTS txtboxTXProfileChangedReport;
+        private LabelTS labelQuickSplitInfo;
+        private CheckBoxTS chkQuickSplitPanAudioFlip;
+        private CheckBoxTS chkQuickSplitPanAudio;
+        private CheckBoxTS chkCancelQSplitOnCatTCIsplit;
     }
 }
