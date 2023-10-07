@@ -1182,6 +1182,19 @@ namespace Thetis
         private static void OnPower(bool oldPower, bool newPower)
         {
             _power = newPower;
+
+            if(oldPower != newPower)
+            {
+                lock (_metersLock)
+                {
+                    foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                    {
+                        clsMeter m = ms.Value;
+
+                        m.ZeroOut(true, true);
+                    }
+                }
+            }
         }
         private static void OnPreMox(int rx, bool oldMox, bool newMox)
         {
@@ -2013,6 +2026,7 @@ namespace Thetis
                 public PointF _max;
             }
             private Dictionary<float, clsPercCache> _percCache;
+            private Queue<float> _percCacheKey;
 
             private string _sId;
             private string _sParentId;
@@ -2075,6 +2089,7 @@ namespace Thetis
                 _bPrimary = false;
                 _maxPower = CurrentPowerRating;//100f;
                 _percCache = new Dictionary<float, clsPercCache>();
+                _percCacheKey = new Queue<float>();
                 _updateStopwatch = new Stopwatch();
                 _fadeValue = 255;
             }
@@ -2086,9 +2101,14 @@ namespace Thetis
             public void AddPerc(clsPercCache pc)
             {
                 if (_percCache.ContainsKey(pc._value)) return;
-                if (_percCache.Count > 1000) _percCache.Remove(_percCache.Keys.First());
 
-                _percCache.Add(pc._value,pc);
+                _percCache.Add(pc._value, pc);
+                _percCacheKey.Enqueue(pc._value);
+                if (_percCache.Count > 500)
+                {
+                    float sOldestKey = _percCacheKey.Dequeue();
+                    _percCache.Remove(sOldestKey);
+                }
             }
             public clsPercCache GetPerc(float value)
             {
@@ -3191,7 +3211,7 @@ namespace Thetis
             {
                 if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
-                    value = _scaleCalibration.First().Key;
+                    value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
                     return true;
                 }
                 value = 0;
@@ -3737,7 +3757,7 @@ namespace Thetis
             {
                 if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
-                    value = _scaleCalibration.First().Key;
+                    value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
                     return true;
                 }
                 value = 0;
@@ -4258,7 +4278,7 @@ namespace Thetis
             {
                 if(_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
-                    value = _scaleCalibration.First().Key;
+                    value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
                     return true;
                 }
                 value = 0;
@@ -4521,9 +4541,9 @@ namespace Thetis
                 cb.ScaleCalibration.Add(-73, new PointF(0.5f, 0)); // position for S9
                 cb.ScaleCalibration.Add(-13, new PointF(0.99f, 0)); // position for S9+60dB or above
                 cb.FontColour = System.Drawing.Color.Yellow;
-                cb.Value = cb.ScaleCalibration.First().Key;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 cb.ZOrder = 2;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -4659,8 +4679,8 @@ namespace Thetis
                 cb.ScaleCalibration.Add(0, new PointF(0.99f, 0));
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.ZOrder = 2;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb);
 
                 //avg on top
@@ -4684,8 +4704,8 @@ namespace Thetis
                 cb2.FontColour = System.Drawing.Color.Yellow;
                 cb2.ShowValue = false;
                 cb2.ZOrder = 3;
-                cb2.Value = cb2.ScaleCalibration.First().Key;
-                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
+                cb2.Value = cb2.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb2.HighPoint = cb2.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 cb2.PostDrawItem = cb;
                 addMeterItem(cb2);
 
@@ -4746,8 +4766,8 @@ namespace Thetis
                 cb.ScaleCalibration.Add(60, new PointF(0.99f, 0));
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.ZOrder = 2;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -4816,8 +4836,8 @@ namespace Thetis
                 cb.ScaleCalibration.Add(125, new PointF(0.99f, 0));
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.ZOrder = 2;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -4877,8 +4897,8 @@ namespace Thetis
                 cb.ScaleCalibration.Add(125, new PointF(0.99f, 0));
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.ZOrder = 2;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb);
 
                 clsBarItem cb2 = new clsBarItem();
@@ -4903,8 +4923,8 @@ namespace Thetis
                 cb2.FontColour = System.Drawing.Color.Yellow;
                 cb2.ShowValue = false;
                 cb2.ZOrder = 3;
-                cb2.Value = cb2.ScaleCalibration.First().Key;
-                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
+                cb2.Value = cb2.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb2.HighPoint = cb2.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 cb2.PostDrawItem = cb;
                 addMeterItem(cb2);
 
@@ -4959,7 +4979,7 @@ namespace Thetis
                 me.ScaleCalibration.Add(-127f, new PointF(0, 0));
                 me.ScaleCalibration.Add(-73f, new PointF(0.85f, 0));
                 me.ScaleCalibration.Add(-13f, new PointF(1f, 0));
-                me.Value = me.ScaleCalibration.First().Key;
+                me.Value = me.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 addMeterItem(me);
 
                 clsImage img = new clsImage();
@@ -5031,7 +5051,7 @@ namespace Thetis
                 ni.ScaleCalibration.Add(-13f, new PointF(0.926f, 0.31f));
                 //ni.Value = -127f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                ni.Value = ni.ScaleCalibration.First().Key;
+                ni.Value = ni.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 addMeterItem(ni);
 
                 //volts
@@ -5057,7 +5077,7 @@ namespace Thetis
                 ni2.ScaleCalibration.Add(15f, new PointF(0.665f, 0.784f));
                 ni2.Value = 10f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                //ni2.Value = ni2.ScaleCalibration.First().Key;
+                //ni2.Value = ni2.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 addMeterItem(ni2);
 
                 //amps
@@ -5093,7 +5113,7 @@ namespace Thetis
                 ni3.ScaleCalibration.Add(20f, new PointF(0.799f, 0.576f));
                 ni3.Value = 10f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                //ni3.Value = ni3.ScaleCalibration.First().Key;
+                //ni3.Value = ni3.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 addMeterItem(ni3);
 
                 //
@@ -5162,7 +5182,7 @@ namespace Thetis
                 ni4.ScaleCalibration.Add(150f, new PointF(0.899f, 0.352f));
                 //ni4.Value = 0f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                ni4.Value = ni4.ScaleCalibration.First().Key;
+                ni4.Value = ni4.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 addMeterItem(ni4);
 
                 clsNeedleScalePwrItem nspi = new clsNeedleScalePwrItem();
@@ -5219,7 +5239,7 @@ namespace Thetis
                 ni5.ScaleCalibration.Add(10f, new PointF(0.847f, 0.476f));
                 //ni5.Value = 1f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                ni5.Value = ni5.ScaleCalibration.First().Key;
+                ni5.Value = ni5.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 addMeterItem(ni5);
 
                 clsNeedleItem ni6 = new clsNeedleItem();
@@ -5250,7 +5270,7 @@ namespace Thetis
                 ni6.ScaleCalibration.Add(30f, new PointF(0.751f, 0.688f));
                 //ni6.Value = 0f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                ni6.Value = ni6.ScaleCalibration.First().Key;
+                ni6.Value = ni6.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 addMeterItem(ni6);
 
                 clsNeedleItem ni7 = new clsNeedleItem();
@@ -5279,7 +5299,7 @@ namespace Thetis
                 ni7.ScaleCalibration.Add(25f, new PointF(0.499f, 0.756f));
                 //ni7.Value = -30f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                ni7.Value = ni7.ScaleCalibration.First().Key;
+                ni7.Value = ni7.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 addMeterItem(ni7);
                 //
 
@@ -5375,7 +5395,7 @@ namespace Thetis
                 ni.NormaliseTo100W = true;
                 //ni.Value = 0f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                ni.Value = ni.ScaleCalibration.First().Key;
+                ni.Value = ni.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 addMeterItem(ni);
 
                 clsNeedleScalePwrItem nspi = new clsNeedleScalePwrItem();
@@ -5449,7 +5469,7 @@ namespace Thetis
                 ni2.NormaliseTo100W = true;
                 //ni2.Value = 0f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                ni2.Value = ni2.ScaleCalibration.First().Key;
+                ni2.Value = ni2.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 addMeterItem(ni2);
 
                 clsNeedleScalePwrItem nspi2 = new clsNeedleScalePwrItem();
@@ -5542,8 +5562,8 @@ namespace Thetis
                 cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb2.ZOrder = 2;
                 cb2.FontColour = System.Drawing.Color.Yellow;
-                cb2.Value = cb2.ScaleCalibration.First().Key;
-                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
+                cb2.Value = cb2.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb2.HighPoint = cb2.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb2);
 
                 clsBarItem cb = new clsBarItem();
@@ -5566,8 +5586,8 @@ namespace Thetis
                 cb.ShowValue = false;
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.ZOrder = 3;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 cb.PostDrawItem = cb2;
                 addMeterItem(cb);
 
@@ -5628,8 +5648,8 @@ namespace Thetis
                 cb2.ZOrder = 2;
                 cb2.FontColour = System.Drawing.Color.Yellow;
                 cb2.ShowValue = true;
-                cb2.Value = cb2.ScaleCalibration.First().Key;
-                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;                
+                cb2.Value = cb2.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb2.HighPoint = cb2.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;                
                 addMeterItem(cb2);
 
                 clsBarItem cb = new clsBarItem();
@@ -5652,8 +5672,8 @@ namespace Thetis
                 cb.ShowValue = false;
                 cb.ZOrder = 3;
                 cb.FontColour = System.Drawing.Color.Yellow;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 cb.PostDrawItem = cb2;
                 addMeterItem(cb);
 
@@ -5713,8 +5733,8 @@ namespace Thetis
                 cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb2.ZOrder = 2;
                 cb2.FontColour = System.Drawing.Color.Yellow;
-                cb2.Value = cb2.ScaleCalibration.First().Key;
-                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
+                cb2.Value = cb2.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb2.HighPoint = cb2.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb2);
 
                 clsBarItem cb = new clsBarItem();
@@ -5736,8 +5756,8 @@ namespace Thetis
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb.ZOrder = 3;
                 cb.ShowValue = false;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 cb.PostDrawItem = cb2;
                 addMeterItem(cb);
 
@@ -5797,8 +5817,8 @@ namespace Thetis
                 cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
                 cb.ZOrder = 2;
                 cb.FontColour = System.Drawing.Color.Yellow;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -5857,8 +5877,8 @@ namespace Thetis
                 cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb2.ZOrder = 2;
                 cb2.FontColour = System.Drawing.Color.Yellow;
-                cb2.Value = cb2.ScaleCalibration.First().Key;
-                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
+                cb2.Value = cb2.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb2.HighPoint = cb2.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb2);
 
                 clsBarItem cb = new clsBarItem();
@@ -5880,8 +5900,8 @@ namespace Thetis
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb.ZOrder = 3;
                 cb.ShowValue = false;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 cb.PostDrawItem = cb2;
                 addMeterItem(cb);
 
@@ -5941,8 +5961,8 @@ namespace Thetis
                 cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
                 cb.ZOrder = 2;
                 cb.FontColour = System.Drawing.Color.Yellow;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -6001,8 +6021,8 @@ namespace Thetis
                 cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
                 cb.ZOrder = 2;
                 cb.FontColour = System.Drawing.Color.Yellow;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -6061,8 +6081,8 @@ namespace Thetis
                 cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb2.ZOrder = 2;
                 cb2.FontColour = System.Drawing.Color.Yellow;                
-                cb2.Value = cb2.ScaleCalibration.First().Key;
-                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
+                cb2.Value = cb2.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb2.HighPoint = cb2.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb2);
 
                 clsBarItem cb = new clsBarItem();
@@ -6084,8 +6104,8 @@ namespace Thetis
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb.ZOrder = 3;
                 cb.ShowValue = false;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 cb.PostDrawItem = cb2;
                 addMeterItem(cb);
 
@@ -6145,8 +6165,8 @@ namespace Thetis
                 cb.ScaleCalibration.Add(25, new PointF(0.99f, 0));
                 cb.ZOrder = 3;
                 cb.FontColour = System.Drawing.Color.Yellow;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb);               
 
                 clsScaleItem cs = new clsScaleItem();
@@ -6205,8 +6225,8 @@ namespace Thetis
                 cb2.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb2.ZOrder = 2;
                 cb2.FontColour = System.Drawing.Color.Yellow;
-                cb2.Value = cb2.ScaleCalibration.First().Key;
-                cb2.HighPoint = cb2.ScaleCalibration.ElementAt(1).Value;
+                cb2.Value = cb2.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb2.HighPoint = cb2.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb2);
 
                 clsBarItem cb = new clsBarItem();
@@ -6228,8 +6248,8 @@ namespace Thetis
                 cb.ScaleCalibration.Add(12, new PointF(0.99f, 0));
                 cb.ZOrder = 3;
                 cb.ShowValue = false;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(1).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 cb.PostDrawItem = cb2;
                 addMeterItem(cb);
 
@@ -6361,8 +6381,8 @@ namespace Thetis
                 cb.NormaliseTo100W = true;
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.ZOrder = 2;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(4).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(4).Value;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -6426,8 +6446,8 @@ namespace Thetis
                 cb.ScaleCalibration.Add(5, new PointF(0.99f, 0));
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.ZOrder = 2;
-                cb.Value = cb.ScaleCalibration.First().Key;
-                cb.HighPoint = cb.ScaleCalibration.ElementAt(3).Value;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(3).Value;
                 addMeterItem(cb);
 
                 clsScaleItem cs = new clsScaleItem();
@@ -6692,8 +6712,11 @@ namespace Thetis
 
                         if (bOk)
                         {
-                            if (bRxReadings) setReadingForced(RX, mi.ReadingSource, value);
-                            if (bTxReadings) setReadingForced(RX, mi.ReadingSource, value);
+                            //[2.10.1.0] MW0LGE only want to do this if value is lower than current reading
+                            float reading = getReading(RX, mi.ReadingSource);
+                            bool bUpdate = (value < reading) || (reading == -200f); // -220f is init or no value state
+                            if (bRxReadings && bUpdate) setReadingForced(RX, mi.ReadingSource, value);
+                            if (bTxReadings && bUpdate) setReadingForced(RX, mi.ReadingSource, value);
                         }
                     }
                 }
@@ -8203,6 +8226,7 @@ namespace Thetis
             private Dictionary<string, SharpDX.DirectWrite.TextFormat> _textFormats; // fonts
             private SharpDX.DirectWrite.Factory _fontFactory;
             private Dictionary<string, SizeF> _stringMeasure;
+            private Queue<string> _stringMeasureKeys;
             //
 
             private int _rx;
@@ -8240,6 +8264,7 @@ namespace Thetis
                 _DXBrushes = new Dictionary<System.Drawing.Color, SharpDX.Direct2D1.Brush>();
                 _textFormats = new Dictionary<string, SharpDX.DirectWrite.TextFormat>();
                 _stringMeasure = new Dictionary<string, SizeF>();
+                _stringMeasureKeys = new Queue<string>();
 
                 _dxDisplayThreadRunning = false;
                 _bAntiAlias = true;
@@ -9172,7 +9197,12 @@ namespace Thetis
                 size.Height *= 1.1f;
 
                 _stringMeasure.Add(sKey, size);
-                if (_stringMeasure.Count > 500) _stringMeasure.Remove(_stringMeasure.Keys.First());
+                _stringMeasureKeys.Enqueue(sKey);
+                if (_stringMeasure.Count > 500)
+                {
+                    string oldKey = _stringMeasureKeys.Dequeue();
+                    _stringMeasure.Remove(oldKey);
+                }
 
                 return size;
             }

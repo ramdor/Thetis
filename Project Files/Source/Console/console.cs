@@ -27464,6 +27464,21 @@ namespace Thetis
             }
             _MKIIPAVolts = 0f;
             _MKIIPAAmps = 0;
+
+            //there is no clear for ConcurrentQueues, we need to dequeue to clear
+            int tries;
+            tries = _voltsQueue.Count;
+            while (_voltsQueue.Count > 0 && tries > 0)
+            {
+                _voltsQueue.TryDequeue(out int tmp);
+                tries--;
+            }
+            tries = _ampsQueue.Count;
+            while (_ampsQueue.Count > 0 && tries > 0)
+            {
+                _ampsQueue.TryDequeue(out int tmp);
+                tries--;
+            }
         }
         private void computeMKIIPAVoltsAmps()
         {
