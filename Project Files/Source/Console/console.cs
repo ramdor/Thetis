@@ -44508,7 +44508,7 @@ namespace Thetis
             setupZTBButton();
 
             // need to update anything on the info bar buttons that is relying on rx2
-            SetupInfoBarButton(ucInfoBar.ActionTypes.ActivePeaks, Display.SpectralPeakHoldRX1 | (RX2Enabled && Display.SpectralPeakHoldRX2));
+            SetupInfoBarButton(ucInfoBar.ActionTypes.ActivePeaks, Display.SpectralPeakHoldRX1 || (RX2Enabled && Display.SpectralPeakHoldRX2));
 
             if(!m_bResizeDX2Display && (oldRX2Enabled != RX2Enabled)) m_bResizeDX2Display = true; // MW0LGE_22b force resize is rx2 enabled state is changed, this may also be set by reisze calls above
 
@@ -48881,6 +48881,8 @@ namespace Thetis
 
             isexpanded = true;
             iscollapsed = false;
+
+            updateLegacyMeterControls(true);// [2.10.1.0] MW0LGE
 
             setPAProfileLabelPos(); //[2.10.1.0] MW0LGE
 
