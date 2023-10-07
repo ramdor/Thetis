@@ -7310,26 +7310,26 @@ namespace Thetis
                 }
                 if (draw_tx_cw_freq)
                 {
-                    if (rx == 1 && !local_mox && !tx_on_vfob &&
+                    if (rx == 1 && !local_mox && !(rx2_enabled && tx_on_vfob) &&
                         (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
                         int cw_line_x1;
                         int localRit;
                         if (!split_enabled)
                         {
-                            localRit = rx == 1 ? rit_hz : 0;
+                            localRit = rit_hz;
                             cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low - f_diff + xit_hz - localRit) / width * W);
                         }
                         else
                         {
-                            localRit = rx == 1 && _rx1ClickDisplayCTUN ? 0 : rx == 2 ? 0 : rit_hz;
+                            localRit = _rx1ClickDisplayCTUN ? 0 : rit_hz;
                             cw_line_x1 = (int)((float)(cwSideToneShiftInverted - Low + xit_hz - localRit + (localSubDiff)) / width * W);
                         }
 
                         drawLineDX2D(m_bDX2_tx_filter_pen, cw_line_x1, nVerticalShift + top, cw_line_x1, nVerticalShift + H, tx_filter_pen.Width);
                     }
 
-                    if (rx == 2 && !local_mox && tx_on_vfob &&  //MW0LGE [2.9.0.7] txonb
+                    if (rx == 2 && !local_mox && (rx2_enabled && tx_on_vfob) &&  //MW0LGE [2.9.0.7] txonb
                         (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
                     {
                         int cw_line_x1;
