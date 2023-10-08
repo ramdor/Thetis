@@ -2958,6 +2958,7 @@
             this.comboMeterType = new System.Windows.Forms.ComboBoxTS();
             this.tpAppearanceMeter2 = new System.Windows.Forms.TabPage();
             this.grpMultiMeterHolder = new System.Windows.Forms.GroupBoxTS();
+            this.chkContainerNoTitle = new System.Windows.Forms.CheckBoxTS();
             this.btnMeterCopySettings = new System.Windows.Forms.ButtonTS();
             this.btnMeterPasteSettings = new System.Windows.Forms.ButtonTS();
             this.grpMeterItemVfoDisplaySettings = new System.Windows.Forms.GroupBoxTS();
@@ -3478,6 +3479,9 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
             this.txtboxTXProfileChangedReport = new System.Windows.Forms.TextBoxTS();
+            this.chkAutoModeSwitchCWReturn = new System.Windows.Forms.CheckBoxTS();
+            this.nudAutoModeSwitchCWReturn = new System.Windows.Forms.NumericUpDownTS();
+            this.lblAutoModeSwitchCWms = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4397,6 +4401,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAutoModeSwitchCWReturn)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -34459,6 +34464,9 @@
             // 
             // grpDSPKeyerOptions
             // 
+            this.grpDSPKeyerOptions.Controls.Add(this.lblAutoModeSwitchCWms);
+            this.grpDSPKeyerOptions.Controls.Add(this.nudAutoModeSwitchCWReturn);
+            this.grpDSPKeyerOptions.Controls.Add(this.chkAutoModeSwitchCWReturn);
             this.grpDSPKeyerOptions.Controls.Add(this.udCWKeyerWeight);
             this.grpDSPKeyerOptions.Controls.Add(this.chkDSPKeyerSidetone);
             this.grpDSPKeyerOptions.Controls.Add(this.chkStrictCharSpacing);
@@ -34469,7 +34477,7 @@
             this.grpDSPKeyerOptions.Controls.Add(this.chkCWAutoSwitchMode);
             this.grpDSPKeyerOptions.Location = new System.Drawing.Point(296, 8);
             this.grpDSPKeyerOptions.Name = "grpDSPKeyerOptions";
-            this.grpDSPKeyerOptions.Size = new System.Drawing.Size(142, 204);
+            this.grpDSPKeyerOptions.Size = new System.Drawing.Size(188, 223);
             this.grpDSPKeyerOptions.TabIndex = 37;
             this.grpDSPKeyerOptions.TabStop = false;
             this.grpDSPKeyerOptions.Text = "Options";
@@ -34481,7 +34489,7 @@
             0,
             0,
             0});
-            this.udCWKeyerWeight.Location = new System.Drawing.Point(72, 178);
+            this.udCWKeyerWeight.Location = new System.Drawing.Point(72, 187);
             this.udCWKeyerWeight.Maximum = new decimal(new int[] {
             66,
             0,
@@ -34523,7 +34531,7 @@
             // 
             this.chkStrictCharSpacing.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkStrictCharSpacing.Image = null;
-            this.chkStrictCharSpacing.Location = new System.Drawing.Point(16, 140);
+            this.chkStrictCharSpacing.Location = new System.Drawing.Point(16, 160);
             this.chkStrictCharSpacing.Name = "chkStrictCharSpacing";
             this.chkStrictCharSpacing.Size = new System.Drawing.Size(113, 16);
             this.chkStrictCharSpacing.TabIndex = 46;
@@ -34560,7 +34568,7 @@
             // lblCWWeight
             // 
             this.lblCWWeight.Image = null;
-            this.lblCWWeight.Location = new System.Drawing.Point(13, 178);
+            this.lblCWWeight.Location = new System.Drawing.Point(13, 187);
             this.lblCWWeight.Name = "lblCWWeight";
             this.lblCWWeight.Size = new System.Drawing.Size(48, 16);
             this.lblCWWeight.TabIndex = 39;
@@ -47789,6 +47797,7 @@
             // 
             // grpMultiMeterHolder
             // 
+            this.grpMultiMeterHolder.Controls.Add(this.chkContainerNoTitle);
             this.grpMultiMeterHolder.Controls.Add(this.btnMeterCopySettings);
             this.grpMultiMeterHolder.Controls.Add(this.btnMeterPasteSettings);
             this.grpMultiMeterHolder.Controls.Add(this.grpMeterItemVfoDisplaySettings);
@@ -47813,6 +47822,20 @@
             this.grpMultiMeterHolder.Size = new System.Drawing.Size(703, 385);
             this.grpMultiMeterHolder.TabIndex = 86;
             this.grpMultiMeterHolder.TabStop = false;
+            // 
+            // chkContainerNoTitle
+            // 
+            this.chkContainerNoTitle.AutoSize = true;
+            this.chkContainerNoTitle.Image = null;
+            this.chkContainerNoTitle.Location = new System.Drawing.Point(23, 100);
+            this.chkContainerNoTitle.Name = "chkContainerNoTitle";
+            this.chkContainerNoTitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkContainerNoTitle.Size = new System.Drawing.Size(123, 17);
+            this.chkContainerNoTitle.TabIndex = 104;
+            this.chkContainerNoTitle.Text = "No title when pinned";
+            this.toolTip1.SetToolTip(this.chkContainerNoTitle, "Prevents the display of the mouse over title bar when pinned");
+            this.chkContainerNoTitle.UseVisualStyleBackColor = true;
+            this.chkContainerNoTitle.CheckedChanged += new System.EventHandler(this.chkContainerNoTitle_CheckedChanged);
             // 
             // btnMeterCopySettings
             // 
@@ -48297,7 +48320,7 @@
             // 
             this.chkContainerBorder.AutoSize = true;
             this.chkContainerBorder.Image = null;
-            this.chkContainerBorder.Location = new System.Drawing.Point(100, 83);
+            this.chkContainerBorder.Location = new System.Drawing.Point(89, 77);
             this.chkContainerBorder.Name = "chkContainerBorder";
             this.chkContainerBorder.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.chkContainerBorder.Size = new System.Drawing.Size(57, 17);
@@ -49189,7 +49212,7 @@
             // 
             this.chkContainerHighlight.AutoSize = true;
             this.chkContainerHighlight.Image = null;
-            this.chkContainerHighlight.Location = new System.Drawing.Point(90, 60);
+            this.chkContainerHighlight.Location = new System.Drawing.Point(79, 54);
             this.chkContainerHighlight.Name = "chkContainerHighlight";
             this.chkContainerHighlight.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.chkContainerHighlight.Size = new System.Drawing.Size(67, 17);
@@ -55347,6 +55370,58 @@
             this.txtboxTXProfileChangedReport.Text = "used to report tx profile changes if you click on oragne box";
             this.txtboxTXProfileChangedReport.Visible = false;
             // 
+            // chkAutoModeSwitchCWReturn
+            // 
+            this.chkAutoModeSwitchCWReturn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkAutoModeSwitchCWReturn.Image = null;
+            this.chkAutoModeSwitchCWReturn.Location = new System.Drawing.Point(29, 138);
+            this.chkAutoModeSwitchCWReturn.Name = "chkAutoModeSwitchCWReturn";
+            this.chkAutoModeSwitchCWReturn.Size = new System.Drawing.Size(63, 16);
+            this.chkAutoModeSwitchCWReturn.TabIndex = 48;
+            this.chkAutoModeSwitchCWReturn.Text = "Return";
+            this.toolTip1.SetToolTip(this.chkAutoModeSwitchCWReturn, "Return to previous mode");
+            this.chkAutoModeSwitchCWReturn.CheckedChanged += new System.EventHandler(this.chkAutoModeSwitchCWReturn_CheckedChanged);
+            // 
+            // nudAutoModeSwitchCWReturn
+            // 
+            this.nudAutoModeSwitchCWReturn.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudAutoModeSwitchCWReturn.Location = new System.Drawing.Point(98, 137);
+            this.nudAutoModeSwitchCWReturn.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.nudAutoModeSwitchCWReturn.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudAutoModeSwitchCWReturn.Name = "nudAutoModeSwitchCWReturn";
+            this.nudAutoModeSwitchCWReturn.Size = new System.Drawing.Size(56, 20);
+            this.nudAutoModeSwitchCWReturn.TabIndex = 49;
+            this.nudAutoModeSwitchCWReturn.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudAutoModeSwitchCWReturn, "Selects the preferred CW tone frequency.");
+            this.nudAutoModeSwitchCWReturn.Value = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.nudAutoModeSwitchCWReturn.ValueChanged += new System.EventHandler(this.nudAutoModeSwitchCWReturn_ValueChanged);
+            // 
+            // lblAutoModeSwitchCWms
+            // 
+            this.lblAutoModeSwitchCWms.AutoSize = true;
+            this.lblAutoModeSwitchCWms.Image = null;
+            this.lblAutoModeSwitchCWms.Location = new System.Drawing.Point(160, 141);
+            this.lblAutoModeSwitchCWms.Name = "lblAutoModeSwitchCWms";
+            this.lblAutoModeSwitchCWms.Size = new System.Drawing.Size(20, 13);
+            this.lblAutoModeSwitchCWms.TabIndex = 50;
+            this.lblAutoModeSwitchCWms.Text = "ms";
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -55916,6 +55991,7 @@
             this.grpDSPCWPitch.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udDSPCWPitch)).EndInit();
             this.grpDSPKeyerOptions.ResumeLayout(false);
+            this.grpDSPKeyerOptions.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udCWKeyerWeight)).EndInit();
             this.grpDSPKeyerSemiBreakIn.ResumeLayout(false);
             this.grpDSPKeyerSemiBreakIn.PerformLayout();
@@ -56457,6 +56533,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAutoModeSwitchCWReturn)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -59938,5 +60015,9 @@
         private CheckBoxTS chkQuickSplitPanAudio;
         private CheckBoxTS chkCancelQSplitOnCatTCIsplit;
         private CheckBoxTS chkJoinBandEdges;
+        private CheckBoxTS chkContainerNoTitle;
+        private LabelTS lblAutoModeSwitchCWms;
+        private NumericUpDownTS nudAutoModeSwitchCWReturn;
+        private CheckBoxTS chkAutoModeSwitchCWReturn;
     }
 }
