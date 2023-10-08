@@ -21115,7 +21115,38 @@ namespace Thetis
                     NetworkIO.SetRX1Preamp(merc_preamp);
                 }
 
-                NetworkIO.SetAlexAtten(alex_atten);
+                //NetworkIO.SetAlexAtten(alex_atten); //[2.10.1.0] MW0LGE this causes issue #140, now changed to consider if step att present, code from RX1 attunator data
+                if (rx1_step_att_present)
+                {
+                    if (alexpresent &&
+                        current_hpsdr_model != HPSDRModel.ANAN10 &&
+                        current_hpsdr_model != HPSDRModel.ANAN10E &&
+                        current_hpsdr_model != HPSDRModel.ANAN7000D &&
+                        current_hpsdr_model != HPSDRModel.ANAN8000D &&
+                        current_hpsdr_model != HPSDRModel.ORIONMKII &&
+                        current_hpsdr_model != HPSDRModel.ANAN_G2 &&
+                        current_hpsdr_model != HPSDRModel.ANAN_G2_1K)
+                    {
+                        if (rx1_attenuator_data <= 31)
+                        {
+                            NetworkIO.SetAlexAtten(0); // 0dB Alex Attenuator
+                        }
+                        else
+                        {
+                            NetworkIO.SetAlexAtten(3); // -30dB Alex Attenuator
+                        }
+                    }
+                    else
+                    {
+                        NetworkIO.SetAlexAtten(0);
+                    }
+                }
+                else
+                {
+                    NetworkIO.SetAlexAtten(alex_atten);
+                }
+                //
+
                 rx1_preamp_by_band[(int)rx1_band] = rx1_preamp_mode;
 
                 switch (rx1_preamp_mode)
@@ -32647,7 +32678,6 @@ namespace Thetis
 
                 NetworkIO.SetPttOut(0);
                 NetworkIO.SetTRXrelay(0);
-
                 // Hdw.TransmitRelay = false;
                 //if (//ptto_delay_control && // PTT Delay  // wcp:  2018-12-24 commented-out this delay
                 //     RX1DSPMode != DSPMode.CWL &&
