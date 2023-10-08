@@ -39,6 +39,7 @@ namespace Thetis
             _console = null;
             _id = System.Guid.NewGuid().ToString();
             _border = true;
+            _noTitleWhenPinned = false;
 
             btnFloat.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 
@@ -78,6 +79,7 @@ namespace Thetis
         private bool _mox;
         private string _id;
         private bool _border;
+        private bool _noTitleWhenPinned;
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Console Console
@@ -312,9 +314,11 @@ namespace Thetis
         {
             bool bContains;
 
+
             if (!_dragging)
             {
-                bContains = pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition));
+                bool noBar = _pinOnTop && _noTitleWhenPinned; //[2.10.1.0]MW0LGE no title when pinned has been chosen
+                bContains = !noBar && pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition));
                 if (bContains && !pnlBar.Visible)
                 {
                     pnlBar.BringToFront();
@@ -473,7 +477,14 @@ namespace Thetis
                 setupBorder();
             }
         }
-
+        public bool NoTitleWhenPinned
+        {
+            get { return _noTitleWhenPinned; }
+            set
+            {
+                _noTitleWhenPinned = value;
+            }
+        }
         private void btnAxis_Click(object sender, EventArgs e)
         {
             MouseEventArgs me = (MouseEventArgs)e;
@@ -568,7 +579,8 @@ namespace Thetis
                 AxisLock.ToString() + "|" +
                 PinOnTop.ToString() + "|" +
                 UCBorder.ToString() + "|" +
-                Common.ColourToString(this.BackColor);
+                Common.ColourToString(this.BackColor) + "|" +
+                NoTitleWhenPinned.ToString();
         }
         public bool TryParse(string str)
         {
@@ -577,11 +589,12 @@ namespace Thetis
             bool floating = false;
             bool pinOnTop = false;
             bool border = false;
+            bool noTitleWhenPinned = false;
 
             if (str != "")
             {
                 string[] tmp = str.Split('|');
-                if(tmp.Length == 13)
+                if(tmp.Length >= 13 && tmp.Length <= 14)
                 {
                     bOk = tmp[0] != "";
                     if (bOk) ID = tmp[0];
@@ -623,6 +636,12 @@ namespace Thetis
                     Color c = Common.ColourFromString(tmp[12]);
                     bOk = c != System.Drawing.Color.Empty;
                     if(bOk) this.BackColor = c;
+
+                    if(bOk && tmp.Length > 13) // we also have the new for [2.10.1.0] the notitleifpined option
+                    {
+                        bOk = bool.TryParse(tmp[13], out noTitleWhenPinned);
+                        if (bOk) NoTitleWhenPinned = noTitleWhenPinned;
+                    }
                 }
             }
 

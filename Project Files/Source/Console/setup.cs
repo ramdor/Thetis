@@ -2096,6 +2096,9 @@ namespace Thetis
             chkCFCDisplayAutoScale_CheckedChanged(this, e);
             udCFCPicDBPerLine_ValueChanged(this, e);
 
+            chkCWAutoSwitchMode_CheckedChanged(this, e);
+            chkAutoModeSwitchCWReturn_CheckedChanged(this, e);
+
             //AGC
             udDSPAGCFixedGaindB_ValueChanged(this, e);
             udDSPAGCMaxGaindB_ValueChanged(this, e);
@@ -10156,12 +10159,19 @@ namespace Thetis
             console.radio.GetDSPTX(0).TXLevelerDecay = (int)udDSPLevelerDecay.Value;
         }
 
+        private bool _oldLevelerState = true; //it is true in frm design
         private void chkDSPLevelerEnabled_CheckedChanged(object sender, System.EventArgs e)
         {
             console.radio.GetDSPTX(0).TXLevelerOn = chkDSPLevelerEnabled.Checked;
 
             //
             console.SetupInfoBarButton(ucInfoBar.ActionTypes.Leveler, chkDSPLevelerEnabled.Checked);
+
+            if(_oldLevelerState != chkDSPLevelerEnabled.Checked)
+            {
+                console.LevelerChangedHandlers?.Invoke(_oldLevelerState, chkDSPLevelerEnabled.Checked);
+                _oldLevelerState = chkDSPLevelerEnabled.Checked;
+            }
         }
 
         #endregion
@@ -13794,6 +13804,7 @@ namespace Thetis
         private void chkCWAutoSwitchMode_CheckedChanged(object sender, System.EventArgs e)
         {
             console.CWAutoModeSwitch = chkCWAutoSwitchMode.Checked;
+            setEnabledAutoModeSwitchCWReturn(chkCWAutoSwitchMode.Checked);
         }
 
         private void clrbtnGenBackground_Changed(object sender, System.EventArgs e)//k6jca 1/13/08
@@ -19696,6 +19707,7 @@ namespace Thetis
             console.EnableXVTRHF = chkEnableXVTRHF.Checked;
         }
 
+        private bool _oldCFCState = false; // is false in frm design
         private void chkCFCEnable_CheckedChanged(object sender, EventArgs e)
         {
             int run;
@@ -19705,6 +19717,12 @@ namespace Thetis
 
             //
             console.SetupInfoBarButton(ucInfoBar.ActionTypes.CFC, chkCFCEnable.Checked);
+
+            if(_oldCFCState != chkCFCEnable.Checked)
+            {
+                console.CFCChangedHandlers?.Invoke(_oldCFCState, chkCFCEnable.Checked);
+                _oldCFCState = chkCFCEnable.Checked;
+            }
         }
 
         private void setCFCProfile(object sender, EventArgs e)
@@ -26042,6 +26060,7 @@ namespace Thetis
             comboContainerSelect.Enabled = bEnableControls;
             clrbtnContainerBackground.Enabled = bEnableControls;
             chkContainerBorder.Enabled = bEnableControls;
+            chkContainerNoTitle.Enabled = bEnableControls;
             lblMMContainerBackground.Enabled = bEnableControls;
             lstMetersAvailable.Enabled = bEnableControls;
             lstMetersInUse.Enabled = bEnableControls;
@@ -27395,6 +27414,34 @@ namespace Thetis
             if (initializing) return;
 
             Display.JoinBandEdges = chkJoinBandEdges.Checked;
+        }
+
+        private void chkContainerNoTitle_CheckedChanged(object sender, EventArgs e)
+        {
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.NoTitleWhenPinned(cci.ID, chkContainerNoTitle.Checked);
+            }
+        }
+
+        private void chkAutoModeSwitchCWReturn_CheckedChanged(object sender, EventArgs e)
+        {
+            nudAutoModeSwitchCWReturn.Enabled = chkAutoModeSwitchCWReturn.Checked;
+            lblAutoModeSwitchCWms.Enabled = chkAutoModeSwitchCWReturn.Checked;
+
+            console.AutoModeSwitchCWReturn = chkAutoModeSwitchCWReturn.Checked;
+            nudAutoModeSwitchCWReturn_ValueChanged(this, e);
+        }
+        private void setEnabledAutoModeSwitchCWReturn(bool bEnable)
+        {
+            chkAutoModeSwitchCWReturn.Enabled = bEnable;
+            nudAutoModeSwitchCWReturn.Enabled = chkAutoModeSwitchCWReturn.Checked;
+            lblAutoModeSwitchCWms.Enabled = chkAutoModeSwitchCWReturn.Checked;
+        }
+        private void nudAutoModeSwitchCWReturn_ValueChanged(object sender, EventArgs e)
+        {
+            console.AutoModeSwitchCWReturnMs = (int)nudAutoModeSwitchCWReturn.Value;
         }
     }
 

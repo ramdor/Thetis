@@ -694,6 +694,17 @@ namespace Thetis
                 uc.UCBorder = border;
             }
         }
+        public static void NoTitleWhenPinned(string sId, bool noTitleWhenPinned)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return;
+                if (!_lstUCMeters.ContainsKey(sId)) return;
+
+                ucMeter uc = _lstUCMeters[sId];
+                uc.NoTitleWhenPinned = noTitleWhenPinned;
+            }
+        }
         public static bool ContainerHasBorder(string sId)
         {
             lock (_metersLock)
@@ -885,6 +896,11 @@ namespace Thetis
             _console.RX2EnabledChangedHandlers += OnRX2EnabledChanged;
             _console.RX2EnabledPreChangedHandlers += OnRX2EnabledPreChanged;
 
+            _console.EQChangedHandlers += OnEQChanged;
+            _console.LevelerChangedHandlers += OnLevelerChanged;
+            _console.CFCChangedHandlers += OnCFCChanged;
+            _console.CompandChangedHandlers += OnCompandChanged;
+
             _delegatesAdded = true;
         }
         private static void removeDelegates()
@@ -915,6 +931,11 @@ namespace Thetis
 
             _console.RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
             _console.RX2EnabledPreChangedHandlers -= OnRX2EnabledPreChanged;
+
+            _console.EQChangedHandlers -= OnEQChanged;
+            _console.LevelerChangedHandlers -= OnLevelerChanged;
+            _console.CFCChangedHandlers -= OnCFCChanged;
+            _console.CompandChangedHandlers -= OnCompandChanged;
 
             foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
@@ -1148,6 +1169,11 @@ namespace Thetis
                         m.FilterVfoB = _console.RX2Filter;
                         m.FilterVfoBName = getFilterName(2);//_console.rx2_filters[(int)_console.RX2DSPMode].GetName(_console.RX2Filter);
                     }
+
+                    m.TXEQEnabled = _console.TXEQ;
+                    m.LevelerEnabled = !_console.IsSetupFormNull && _console.SetupForm.TXLevelerOn;
+                    m.CFCEnabled = _console.CFCEnabled;
+                    m.CompandEnabled = _console.CPDR;
                 }
             }
         }
@@ -1213,14 +1239,10 @@ namespace Thetis
                 foreach (KeyValuePair<string, clsMeter> mkvp in _meters)
                 {
                     clsMeter m = mkvp.Value;
+
                     m.MOX = rx == m.RX && newMox;
-                }
 
-                foreach (KeyValuePair<string, clsMeter> ms in _meters) //.Where(o => o.Value.RX == rx))  // reset them all
-                {
-                    clsMeter m = ms.Value;
-
-                    if(newMox && !oldMox)
+                    if (newMox && !oldMox)
                         // now tx from rx
                         m.ZeroOut(true, false); // reset rx readings
                     else if (!newMox && oldMox)
@@ -1230,6 +1252,60 @@ namespace Thetis
 
                 if (_readingIgnore != null && _readingIgnore.ContainsKey(rx))
                     _readingIgnore[rx] = false;
+            }
+        }
+        private static void OnEQChanged(bool oldState, bool newState)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> mkvp in _meters)
+                {
+                    clsMeter m = mkvp.Value;
+                    m.TXEQEnabled = newState;
+
+                    m.DisableMeterType(MeterType.EQ, !newState);
+                }
+            }
+        }
+        private static void OnLevelerChanged(bool oldState, bool newState)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> mkvp in _meters)
+                {
+                    clsMeter m = mkvp.Value;
+                    m.LevelerEnabled = newState;
+
+                    m.DisableMeterType(MeterType.LEVELER, !newState);
+                    m.DisableMeterType(MeterType.LEVELER_GAIN, !newState);
+                }
+            }
+        }
+        private static void OnCFCChanged(bool oldState, bool newState)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> mkvp in _meters)
+                {
+                    clsMeter m = mkvp.Value;
+                    m.CFCEnabled = newState;
+
+                    m.DisableMeterType(MeterType.CFC, !newState);
+                    m.DisableMeterType(MeterType.CFC_GAIN, !newState);
+                }
+            }
+        }
+        private static void OnCompandChanged(bool oldState, bool newState)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> mkvp in _meters)
+                {
+                    clsMeter m = mkvp.Value;
+                    m.CompandEnabled = newState;
+
+                    m.DisableMeterType(MeterType.COMP, !newState);
+                }
             }
         }
         public static int CurrentPowerRating
@@ -2058,6 +2134,8 @@ namespace Thetis
             private string _readingName;
 
             private int _fadeValue;
+            private bool _disabled;
+
             public clsMeterItem()
             {
                 // constructor
@@ -2092,11 +2170,17 @@ namespace Thetis
                 _percCacheKey = new Queue<float>();
                 _updateStopwatch = new Stopwatch();
                 _fadeValue = 255;
+                _disabled = false;
             }
             public int FadeValue //[2.10.1.0] MW0LGE used for on rx/tx fading
             {
                 get { return _fadeValue; }
                 set { _fadeValue = value; }
+            }
+            public bool Disabled //[2.10.1.0] MW0LGE used when certain features turned off such as eq,leveler,cfc
+            {
+                get { return _disabled; }
+                set { _disabled = value; }
             }
             public void AddPerc(clsPercCache pc)
             {
@@ -4439,6 +4523,11 @@ namespace Thetis
             private bool _rx2Enabled;
             private bool _multiRxEnabled;
 
+            private bool _txeqEnabled;
+            private bool _levelerEnabled;
+            private bool _cfcEnabled;
+            private bool _compandEnabled;
+
             private Filter _filterVfoA;
             private Filter _filterVfoB;
 
@@ -4489,10 +4578,28 @@ namespace Thetis
                     //case MeterType.HISTORY: AddHistory(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.VFO_DISPLAY: AddVFODisplay(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.CLOCK: AddClock(nDelay, 0, out bBottom, restoreIg); break;
-                    //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
+                        //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
+                }
+
+                // update state of items
+                switch (meter)
+                {
+                    case MeterType.EQ:
+                        OnEQChanged(TXEQEnabled, TXEQEnabled);
+                        break;
+                    case MeterType.LEVELER:
+                    case MeterType.LEVELER_GAIN:
+                        OnLevelerChanged(LevelerEnabled, LevelerEnabled);
+                        break;
+                    case MeterType.CFC:
+                    case MeterType.CFC_GAIN:
+                        OnCFCChanged(CFCEnabled, CFCEnabled);
+                        break;
+                    case MeterType.COMP:
+                        OnCompandChanged(CompandEnabled, CompandEnabled);
+                        break;
                 }
             }
-
             #region meterDefs
             public string AddSMeterBarSignal(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             { 
@@ -6847,6 +6954,29 @@ namespace Thetis
                     return false;
                 }
             }
+            public void DisableMeterType(MeterType mt, bool bDisable)
+            {
+                lock (_meterItemsLock)
+                {
+                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    {
+                        clsItemGroup ig = kvp.Value as clsItemGroup;
+
+                        if (ig.MeterType == mt)
+                        {
+                            Dictionary<string, clsMeterItem> mtItems = itemsFromID(ig.ID, false, true);
+
+                            foreach (KeyValuePair<string, clsMeterItem> kvpmi in mtItems)
+                            {
+                                clsMeterItem mi = kvpmi.Value as clsMeterItem;
+                                mi.Disabled = bDisable;
+                            }
+                        }
+                    }
+                }
+            }
             public string MeterGroupID(MeterType mt)
             {
                 lock (_meterItemsLock)
@@ -7999,6 +8129,26 @@ namespace Thetis
             {
                 get { return _multiRxEnabled; }
                 set { _multiRxEnabled = value; }
+            }
+            public bool TXEQEnabled
+            {
+                get { return _txeqEnabled; }
+                set { _txeqEnabled = value; }
+            }
+            public bool LevelerEnabled
+            {
+                get { return _levelerEnabled; }
+                set { _levelerEnabled = value; }
+            }
+            public bool CFCEnabled
+            {
+                get { return _cfcEnabled; }
+                set { _cfcEnabled = value; }
+            }
+            public bool CompandEnabled
+            {
+                get { return _compandEnabled; }
+                set { _compandEnabled = value; }
             }
             public float PadX { get { return _fPadX; } set { _fPadX = value; } }
             public float PadY { get { return _fPadY; } set { _fPadY = value; } }
@@ -9209,18 +9359,19 @@ namespace Thetis
             // [2.10.1.0] MW0LGE
             private int fade(clsMeterItem mi, clsMeter m)
             {
-                if (!mi.FadeOnTx && m.MOX && mi.FadeValue == 255) return 255;
-                if (!mi.FadeOnRx && !m.MOX && mi.FadeValue == 255) return 255;
+                int dimmed = 48; // the level to dim to
+                if (!mi.Disabled && !mi.FadeOnTx && m.MOX && mi.FadeValue == 255) return 255;
+                if (!mi.Disabled && !mi.FadeOnRx && !m.MOX && mi.FadeValue == 255) return 255;
 
                 int updateInterval = m.QuickestUpdateInterval(m.MOX);
                 // fade to take half a second
                 int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
                 int stepSize = (int)Math.Ceiling(207 / (float)steps_needed); // 255-48 = 207
 
-                if ((m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx))
+                if (mi.Disabled || (m.MOX && mi.FadeOnTx) || (!m.MOX && mi.FadeOnRx))
                 {
                     mi.FadeValue -= stepSize;
-                    if (mi.FadeValue < 48) mi.FadeValue = 48;
+                    if (mi.FadeValue < dimmed) mi.FadeValue = dimmed;
                 }
                 else
                 {

@@ -20339,118 +20339,118 @@ namespace Thetis
             }
         }
 
-        private DSPMode saved_cw_auto_switch_dsp_mode = DSPMode.FIRST;
-        public void SetConsoleMox(bool b)
-        {
-            if (disable_ptt && b) return;
-            DSPMode tx_mode = radio.GetDSPTX(0).CurrentDSPMode;
+        //private DSPMode saved_cw_auto_switch_dsp_mode = DSPMode.FIRST;
+        //public void SetConsoleMox(bool b)
+        //{
+        //    if (disable_ptt && b) return;
+        //    DSPMode tx_mode = radio.GetDSPTX(0).CurrentDSPMode;
 
-            if (cw_auto_mode_switch)
-            {
-                CWAutoSwitchMode(b, tx_mode);
-            }
-            else
-            {
-                switch (tx_mode)
-                {
-                    case DSPMode.CWL:
-                    case DSPMode.CWU:
-                        MOX = b;
-                        break;
-                }
-            }
-        }
+        //    if (cw_auto_mode_switch)
+        //    {
+        //        CWAutoSwitchMode(b, tx_mode);
+        //    }
+        //    else
+        //    {
+        //        switch (tx_mode)
+        //        {
+        //            case DSPMode.CWL:
+        //            case DSPMode.CWU:
+        //                MOX = b;
+        //                break;
+        //        }
+        //    }
+        //}
 
-        private void CWAutoSwitchMode(bool b, DSPMode tx_mode)
-        {
-            if (b)
-            {
-                if (saved_cw_auto_switch_dsp_mode != tx_mode)
-                    saved_cw_auto_switch_dsp_mode = tx_mode;
+        //private void CWAutoSwitchMode(bool b, DSPMode tx_mode)
+        //{
+        //    if (b)
+        //    {
+        //        if (saved_cw_auto_switch_dsp_mode != tx_mode)
+        //            saved_cw_auto_switch_dsp_mode = tx_mode;
 
-                switch (tx_mode)
-                {
-                    case DSPMode.CWL:
-                    case DSPMode.CWU:
-                        break; // do nothing
-                    case DSPMode.LSB:
-                    case DSPMode.DIGL:
-                        if (rx2_enabled && chkVFOBTX.Checked)
-                            Invoke(new MethodInvoker(radRX2ModeCWL.Select)); // switch RX2 to CWL mode
-                        else Invoke(new MethodInvoker(radModeCWL.Select)); // switch RX1 to CWL mode
-                        break;
-                    case DSPMode.USB:
-                    case DSPMode.DIGU:
-                    case DSPMode.AM:
-                    case DSPMode.SAM:
-                    case DSPMode.FM:
-                    case DSPMode.DSB:
-                    case DSPMode.DRM:
-                        if (rx2_enabled && chkVFOBTX.Checked)
-                            Invoke(new MethodInvoker(radRX2ModeCWU.Select)); // switch RX2 to CWU mode    
-                        else Invoke(new MethodInvoker(radModeCWU.Select)); // switch RX1 to CWU mode
-                        break;
-                }
+        //        switch (tx_mode)
+        //        {
+        //            case DSPMode.CWL:
+        //            case DSPMode.CWU:
+        //                break; // do nothing
+        //            case DSPMode.LSB:
+        //            case DSPMode.DIGL:
+        //                if (rx2_enabled && chkVFOBTX.Checked)
+        //                    Invoke(new MethodInvoker(radRX2ModeCWL.Select)); // switch RX2 to CWL mode
+        //                else Invoke(new MethodInvoker(radModeCWL.Select)); // switch RX1 to CWL mode
+        //                break;
+        //            case DSPMode.USB:
+        //            case DSPMode.DIGU:
+        //            case DSPMode.AM:
+        //            case DSPMode.SAM:
+        //            case DSPMode.FM:
+        //            case DSPMode.DSB:
+        //            case DSPMode.DRM:
+        //                if (rx2_enabled && chkVFOBTX.Checked)
+        //                    Invoke(new MethodInvoker(radRX2ModeCWU.Select)); // switch RX2 to CWU mode    
+        //                else Invoke(new MethodInvoker(radModeCWU.Select)); // switch RX1 to CWU mode
+        //                break;
+        //        }
 
-                MOX = true;
-            }
-            else
-            {
-                MOX = false;
-                switch (saved_cw_auto_switch_dsp_mode)
-                {
-                    case DSPMode.CWL:
-                    case DSPMode.CWU:
-                        break; // do nothing
-                    default:
-                        RadioButtonTS rad = null;
-                        bool rx2 = (rx2_enabled && chkVFOBTX.Checked);
-                        switch (saved_cw_auto_switch_dsp_mode)
-                        {
-                            case DSPMode.LSB:
-                                if (rx2) rad = radRX2ModeLSB;
-                                else rad = radModeLSB;
-                                break;
-                            case DSPMode.USB:
-                                if (rx2) rad = radRX2ModeUSB;
-                                else rad = radModeUSB;
-                                break;
-                            case DSPMode.DSB:
-                                if (rx2) rad = radRX2ModeDSB;
-                                else rad = radModeDSB;
-                                break;
-                            case DSPMode.FM:
-                                if (rx2) rad = radRX2ModeFMN;
-                                else rad = radModeFMN;
-                                break;
-                            case DSPMode.AM:
-                                if (rx2) rad = radRX2ModeAM;
-                                else rad = radModeAM;
-                                break;
-                            case DSPMode.SAM:
-                                if (rx2) rad = radRX2ModeSAM;
-                                else rad = radModeSAM;
-                                break;
-                            case DSPMode.DIGL:
-                                if (rx2) rad = radRX2ModeDIGL;
-                                else rad = radModeDIGL;
-                                break;
-                            case DSPMode.DIGU:
-                                if (rx2) rad = radRX2ModeDIGU;
-                                else rad = radModeDIGU;
-                                break;
-                            case DSPMode.DRM:
-                                if (rx2) rad = radRX2ModeDRM;
-                                else rad = radModeDRM;
-                                break;
-                        }
+        //        MOX = true;
+        //    }
+        //    else
+        //    {
+        //        MOX = false;
+        //        switch (saved_cw_auto_switch_dsp_mode)
+        //        {
+        //            case DSPMode.CWL:
+        //            case DSPMode.CWU:
+        //                break; // do nothing
+        //            default:
+        //                RadioButtonTS rad = null;
+        //                bool rx2 = (rx2_enabled && chkVFOBTX.Checked);
+        //                switch (saved_cw_auto_switch_dsp_mode)
+        //                {
+        //                    case DSPMode.LSB:
+        //                        if (rx2) rad = radRX2ModeLSB;
+        //                        else rad = radModeLSB;
+        //                        break;
+        //                    case DSPMode.USB:
+        //                        if (rx2) rad = radRX2ModeUSB;
+        //                        else rad = radModeUSB;
+        //                        break;
+        //                    case DSPMode.DSB:
+        //                        if (rx2) rad = radRX2ModeDSB;
+        //                        else rad = radModeDSB;
+        //                        break;
+        //                    case DSPMode.FM:
+        //                        if (rx2) rad = radRX2ModeFMN;
+        //                        else rad = radModeFMN;
+        //                        break;
+        //                    case DSPMode.AM:
+        //                        if (rx2) rad = radRX2ModeAM;
+        //                        else rad = radModeAM;
+        //                        break;
+        //                    case DSPMode.SAM:
+        //                        if (rx2) rad = radRX2ModeSAM;
+        //                        else rad = radModeSAM;
+        //                        break;
+        //                    case DSPMode.DIGL:
+        //                        if (rx2) rad = radRX2ModeDIGL;
+        //                        else rad = radModeDIGL;
+        //                        break;
+        //                    case DSPMode.DIGU:
+        //                        if (rx2) rad = radRX2ModeDIGU;
+        //                        else rad = radModeDIGU;
+        //                        break;
+        //                    case DSPMode.DRM:
+        //                        if (rx2) rad = radRX2ModeDRM;
+        //                        else rad = radModeDRM;
+        //                        break;
+        //                }
 
-                        if (rad != null)
-                            Invoke(new MethodInvoker(rad.Select));
-                        break;
-                }
-            }
-        }
+        //                if (rad != null)
+        //                    Invoke(new MethodInvoker(rad.Select));
+        //                break;
+        //        }
+        //    }
+        //}
 
         // Sets or reads the PS-A button
         public bool PSA
@@ -28257,29 +28257,97 @@ namespace Thetis
             }
         }
 
+        private void cwAutoModeTick(object o)
+        {
+            bool bRx2 = (bool)o;
+
+            if(_old_cw_auto_mode != DSPMode.FIRST)
+            {
+                if (bRx2)
+                {
+                    if(InvokeRequired)
+                        Invoke(new Action(() => { RX2DSPMode = _old_cw_auto_mode; }));
+                    else
+                        RX2DSPMode = _old_cw_auto_mode;
+                }
+                else
+                {
+                    if (InvokeRequired)
+                        Invoke(new Action(() => { RX1DSPMode = _old_cw_auto_mode; }));
+                    else
+                        RX1DSPMode = _old_cw_auto_mode;
+                }
+            }
+        }
+        private DSPMode _old_cw_auto_mode = DSPMode.FIRST;
+        private bool _return_from_cw_auto_mode_switch = false;
+        private int _return_from_cw_auto_mode_switch_ms = 2000;
+        private System.Threading.Timer _cwAutoModeTick = null;
         private bool fw_dot = false;
+        public bool AutoModeSwitchCWReturn
+        {
+            get { return _return_from_cw_auto_mode_switch; }
+            set { _return_from_cw_auto_mode_switch = value; }
+        }
+        public int AutoModeSwitchCWReturnMs
+        {
+            get { return _return_from_cw_auto_mode_switch_ms; }
+            set { _return_from_cw_auto_mode_switch_ms = value; }
+        }        
         public bool FWDot
         {
             get { return fw_dot; }
             set
             {
+                //[2.10.1.0] MW0LGE modified to implement #70
+                bool bTxOnRx2 = RX2Enabled && VFOBTX;
+                DSPMode currentMode = bTxOnRx2 ? RX2DSPMode : RX1DSPMode;
+                bool bInCW = currentMode == DSPMode.CWL || currentMode == DSPMode.CWU;
+
                 fw_dot = value;
 
                 if (value && cw_auto_mode_switch)
                 {
-                    switch (rx1_dsp_mode)
+                    if (!bInCW)
                     {
-                        case DSPMode.CWL:
-                        case DSPMode.CWU:
-                            break;
-                        case DSPMode.LSB:
-                        case DSPMode.DIGL:
-                            RX1DSPMode = DSPMode.CWL;
-                            break;
-                        default:
-                            RX1DSPMode = DSPMode.CWU;
-                            break;
+                        if (_return_from_cw_auto_mode_switch && _old_cw_auto_mode != currentMode)
+                            _old_cw_auto_mode = currentMode;
+
+                        switch (currentMode)
+                        {
+                            case DSPMode.CWL:
+                            case DSPMode.CWU:
+                                break;
+                            case DSPMode.LSB:
+                            case DSPMode.DIGL:
+                                if (bTxOnRx2)
+                                    RX2DSPMode = DSPMode.CWL;
+                                else
+                                    RX1DSPMode = DSPMode.CWL;
+                                break;
+                            default:
+                                if (bTxOnRx2)
+                                    RX2DSPMode = DSPMode.CWU;
+                                else
+                                    RX1DSPMode = DSPMode.CWU;
+                                break;
+                        }
                     }
+
+                    // return after some time, start timer
+                    if (_return_from_cw_auto_mode_switch)
+                    {
+                        if(_cwAutoModeTick != null)
+                        {
+                            _cwAutoModeTick.Change(Timeout.Infinite, Timeout.Infinite);
+                            _cwAutoModeTick.Dispose();
+                            _cwAutoModeTick = null;
+                        }
+
+                        _cwAutoModeTick = new System.Threading.Timer(cwAutoModeTick, bTxOnRx2, _return_from_cw_auto_mode_switch_ms, Timeout.Infinite);
+                    }
+                    else
+                        _old_cw_auto_mode = DSPMode.FIRST;
                 }
             }
         }
@@ -34342,11 +34410,18 @@ namespace Thetis
             if (EQForm != null) EQForm.RXEQEnabled = chkRXEQ.Checked;
         }
 
+        private bool _oldTXEQ = false; // it is false in frm design
         private void chkTXEQ_CheckedChanged(object sender, System.EventArgs e)
         {
             if (chkTXEQ.Checked) chkTXEQ.BackColor = button_selected_color;
             else chkTXEQ.BackColor = SystemColors.Control;
             if (EQForm != null) EQForm.TXEQEnabled = chkTXEQ.Checked;
+
+            if (_oldTXEQ != chkTXEQ.Checked)
+            {
+                EQChangedHandlers?.Invoke(_oldTXEQ, chkTXEQ.Checked);
+                _oldTXEQ = chkTXEQ.Checked;
+            }
         }
 
         #endregion
@@ -43386,6 +43461,7 @@ namespace Thetis
             set { txosctrl = value; }
         }
 
+        private bool _oldCompandState = false; // initial state to match frm design
         private void chkCPDR_CheckedChanged(object sender, System.EventArgs e)
         {
             if (chkCPDR.Checked)
@@ -43416,6 +43492,11 @@ namespace Thetis
             cat_cmpd_status = Convert.ToInt32(chkCPDR.Checked);
             AndromedaIndicatorCheck(EIndicatorActions.eINCompanderEnabled, false, chkCPDR.Checked);
 
+            if(_oldCompandState != chkCPDR.Checked)
+            {
+                CompandChangedHandlers?.Invoke(_oldCompandState, chkCPDR.Checked);
+                _oldCompandState = chkCPDR.Checked;
+            }
         }
 
         private void ptbCPDR_Scroll(object sender, System.EventArgs e)
@@ -53165,6 +53246,11 @@ namespace Thetis
         public delegate void MONChanged(bool oldState, bool newState);
         public delegate void MONVolumeChanged(int oldVolume, int newVolume);
 
+        public delegate void EQChanged(bool oldState, bool newState);
+        public delegate void LevelerChanged(bool oldState, bool newState);
+        public delegate void CFCChanged(bool oldState, bool newState);
+        public delegate void CompandChanged(bool oldState, bool newState);
+
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
         public BandChanged BandChangeHandlers;
@@ -53212,6 +53298,11 @@ namespace Thetis
         public MuteChanged MuteChangedHandlers;
         public MONChanged MONChangedHandlers;
         public MONVolumeChanged MONVolumeChangedHandlers;
+
+        public EQChanged EQChangedHandlers;
+        public LevelerChanged LevelerChangedHandlers;
+        public CFCChanged CFCChangedHandlers;
+        public CompandChanged CompandChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
