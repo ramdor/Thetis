@@ -27465,6 +27465,8 @@ namespace Thetis
         }
         private async void readMKIIPAVoltsAmps()
         {
+            string sVALog = Path.Combine(AppDataPath, "VALog.txt");
+
             // MW0LGE_21k9c
             // old method ran ~100ms of volts and ~100ms of amps, then waited 600ms, total time for 100 readings of each = 800ms
             // new method takes two readings every 8ms into a threadsafe fifo queue, so those 100 of each will be spread over 800ms
@@ -27473,8 +27475,10 @@ namespace Thetis
             while (chkPower.Checked && (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D || 
                                         current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K))         //G8NJJ
             {
-                _voltsQueue.Enqueue(NetworkIO.getUserADC0());
-                _ampsQueue.Enqueue(NetworkIO.getUserADC1());
+                int adc0 = NetworkIO.getUserADC0();
+                int adc1 = NetworkIO.getUserADC1();
+                _voltsQueue.Enqueue(adc0);
+                _ampsQueue.Enqueue(adc1);
 
                 bool bOk;
                 int nTries = 0;
@@ -27500,6 +27504,37 @@ namespace Thetis
                 }
 
                 await Task.Delay(8);
+
+                // [2.10.1.0]MW0LGE log data to VALog.txt
+                if (_logVA)
+                {
+                    DateTime now = DateTime.Now;
+                    if(now.Subtract(_lastSaveTime).TotalSeconds >= 1)
+                    {
+                        try
+                        {
+                            using (StreamWriter writer = File.AppendText(sVALog))
+                            {
+                                writer.WriteLine($"{now:yyyy-MM-dd HH:mm:ss}\tadc0(v)={adc0}\tadc1(a)={adc1}\tvolts={convertToVolts(adc0).ToString("f2")}\tamps={convertToAmps(adc1).ToString("f2")}");
+                            }
+                        }
+                        catch
+                        {
+
+                        }
+                        finally
+                        {
+                            _lastSaveTime = DateTime.Now;
+                        }
+
+                        if(now.Subtract(_firstSaveTime).TotalMinutes >= 60)
+                        {
+                            // we left it on, turn it off
+                            if (!IsSetupFormNull) SetupForm.LogVA = false;
+                        }
+                    }
+                }
+                //
             }
             _MKIIPAVolts = 0f;
             _MKIIPAAmps = 0;
@@ -27517,6 +27552,35 @@ namespace Thetis
             {
                 _ampsQueue.TryDequeue(out int tmp);
                 tries--;
+            }
+        }
+        private DateTime _lastSaveTime = DateTime.MinValue;
+        private DateTime _firstSaveTime = DateTime.MinValue;
+        private bool _logVA = false;
+        public bool LogVA
+        {
+            get { return _logVA; }
+            set
+            {
+                try
+                {
+                    if (value)
+                    {                        
+                        string sVALog = Path.Combine(AppDataPath, "VALog.txt");                        
+
+                        using (StreamWriter writer = File.AppendText(sVALog))
+                        {
+                            writer.WriteLine($"Volts/Amps Log \t_amp_voff={_amp_voff}\t_amp_sens={_amp_sens}");
+                        }
+                        _firstSaveTime = DateTime.Now;
+                    }
+
+                    _logVA = value;
+                }
+                catch
+                {
+
+                }
             }
         }
         private void computeMKIIPAVoltsAmps()
