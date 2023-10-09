@@ -2138,6 +2138,9 @@
             this.lblDSPCWPitchFreq = new System.Windows.Forms.LabelTS();
             this.udDSPCWPitch = new System.Windows.Forms.NumericUpDownTS();
             this.grpDSPKeyerOptions = new System.Windows.Forms.GroupBoxTS();
+            this.lblAutoModeSwitchCWms = new System.Windows.Forms.LabelTS();
+            this.nudAutoModeSwitchCWReturn = new System.Windows.Forms.NumericUpDownTS();
+            this.chkAutoModeSwitchCWReturn = new System.Windows.Forms.CheckBoxTS();
             this.udCWKeyerWeight = new System.Windows.Forms.NumericUpDownTS();
             this.chkDSPKeyerSidetone = new System.Windows.Forms.CheckBoxTS();
             this.chkStrictCharSpacing = new System.Windows.Forms.CheckBoxTS();
@@ -3479,9 +3482,6 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
             this.txtboxTXProfileChangedReport = new System.Windows.Forms.TextBoxTS();
-            this.chkAutoModeSwitchCWReturn = new System.Windows.Forms.CheckBoxTS();
-            this.nudAutoModeSwitchCWReturn = new System.Windows.Forms.NumericUpDownTS();
-            this.lblAutoModeSwitchCWms = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -3936,6 +3936,7 @@
             this.grpDSPCWPitch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPCWPitch)).BeginInit();
             this.grpDSPKeyerOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAutoModeSwitchCWReturn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWKeyerWeight)).BeginInit();
             this.grpDSPKeyerSemiBreakIn.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udCWBreakInDelay)).BeginInit();
@@ -4401,7 +4402,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudAutoModeSwitchCWReturn)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -9804,7 +9804,7 @@
             this.grpBoxTXDisplayCal.Controls.Add(this.udTXDisplayCalOffset);
             this.grpBoxTXDisplayCal.Location = new System.Drawing.Point(360, 126);
             this.grpBoxTXDisplayCal.Name = "grpBoxTXDisplayCal";
-            this.grpBoxTXDisplayCal.Size = new System.Drawing.Size(168, 105);
+            this.grpBoxTXDisplayCal.Size = new System.Drawing.Size(168, 80);
             this.grpBoxTXDisplayCal.TabIndex = 13;
             this.grpBoxTXDisplayCal.TabStop = false;
             this.grpBoxTXDisplayCal.Text = "TX Display Cal";
@@ -9812,12 +9812,12 @@
             // labelTS55
             // 
             this.labelTS55.Image = null;
-            this.labelTS55.Location = new System.Drawing.Point(32, 39);
+            this.labelTS55.Location = new System.Drawing.Point(26, 34);
             this.labelTS55.Name = "labelTS55";
             this.labelTS55.Size = new System.Drawing.Size(54, 23);
             this.labelTS55.TabIndex = 13;
             this.labelTS55.Text = "Offset:";
-            this.labelTS55.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.labelTS55.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // udTXDisplayCalOffset
             // 
@@ -9827,7 +9827,7 @@
             0,
             0,
             65536});
-            this.udTXDisplayCalOffset.Location = new System.Drawing.Point(92, 42);
+            this.udTXDisplayCalOffset.Location = new System.Drawing.Point(86, 37);
             this.udTXDisplayCalOffset.Maximum = new decimal(new int[] {
             100,
             0,
@@ -34482,6 +34482,58 @@
             this.grpDSPKeyerOptions.TabStop = false;
             this.grpDSPKeyerOptions.Text = "Options";
             // 
+            // lblAutoModeSwitchCWms
+            // 
+            this.lblAutoModeSwitchCWms.AutoSize = true;
+            this.lblAutoModeSwitchCWms.Image = null;
+            this.lblAutoModeSwitchCWms.Location = new System.Drawing.Point(160, 141);
+            this.lblAutoModeSwitchCWms.Name = "lblAutoModeSwitchCWms";
+            this.lblAutoModeSwitchCWms.Size = new System.Drawing.Size(20, 13);
+            this.lblAutoModeSwitchCWms.TabIndex = 50;
+            this.lblAutoModeSwitchCWms.Text = "ms";
+            // 
+            // nudAutoModeSwitchCWReturn
+            // 
+            this.nudAutoModeSwitchCWReturn.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudAutoModeSwitchCWReturn.Location = new System.Drawing.Point(98, 137);
+            this.nudAutoModeSwitchCWReturn.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.nudAutoModeSwitchCWReturn.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudAutoModeSwitchCWReturn.Name = "nudAutoModeSwitchCWReturn";
+            this.nudAutoModeSwitchCWReturn.Size = new System.Drawing.Size(56, 20);
+            this.nudAutoModeSwitchCWReturn.TabIndex = 49;
+            this.nudAutoModeSwitchCWReturn.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudAutoModeSwitchCWReturn, "Selects the preferred CW tone frequency.");
+            this.nudAutoModeSwitchCWReturn.Value = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.nudAutoModeSwitchCWReturn.ValueChanged += new System.EventHandler(this.nudAutoModeSwitchCWReturn_ValueChanged);
+            // 
+            // chkAutoModeSwitchCWReturn
+            // 
+            this.chkAutoModeSwitchCWReturn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkAutoModeSwitchCWReturn.Image = null;
+            this.chkAutoModeSwitchCWReturn.Location = new System.Drawing.Point(29, 138);
+            this.chkAutoModeSwitchCWReturn.Name = "chkAutoModeSwitchCWReturn";
+            this.chkAutoModeSwitchCWReturn.Size = new System.Drawing.Size(63, 16);
+            this.chkAutoModeSwitchCWReturn.TabIndex = 48;
+            this.chkAutoModeSwitchCWReturn.Text = "Return";
+            this.toolTip1.SetToolTip(this.chkAutoModeSwitchCWReturn, "Return to previous mode");
+            this.chkAutoModeSwitchCWReturn.CheckedChanged += new System.EventHandler(this.chkAutoModeSwitchCWReturn_CheckedChanged);
+            // 
             // udCWKeyerWeight
             // 
             this.udCWKeyerWeight.Increment = new decimal(new int[] {
@@ -55370,58 +55422,6 @@
             this.txtboxTXProfileChangedReport.Text = "used to report tx profile changes if you click on oragne box";
             this.txtboxTXProfileChangedReport.Visible = false;
             // 
-            // chkAutoModeSwitchCWReturn
-            // 
-            this.chkAutoModeSwitchCWReturn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkAutoModeSwitchCWReturn.Image = null;
-            this.chkAutoModeSwitchCWReturn.Location = new System.Drawing.Point(29, 138);
-            this.chkAutoModeSwitchCWReturn.Name = "chkAutoModeSwitchCWReturn";
-            this.chkAutoModeSwitchCWReturn.Size = new System.Drawing.Size(63, 16);
-            this.chkAutoModeSwitchCWReturn.TabIndex = 48;
-            this.chkAutoModeSwitchCWReturn.Text = "Return";
-            this.toolTip1.SetToolTip(this.chkAutoModeSwitchCWReturn, "Return to previous mode");
-            this.chkAutoModeSwitchCWReturn.CheckedChanged += new System.EventHandler(this.chkAutoModeSwitchCWReturn_CheckedChanged);
-            // 
-            // nudAutoModeSwitchCWReturn
-            // 
-            this.nudAutoModeSwitchCWReturn.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.nudAutoModeSwitchCWReturn.Location = new System.Drawing.Point(98, 137);
-            this.nudAutoModeSwitchCWReturn.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.nudAutoModeSwitchCWReturn.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudAutoModeSwitchCWReturn.Name = "nudAutoModeSwitchCWReturn";
-            this.nudAutoModeSwitchCWReturn.Size = new System.Drawing.Size(56, 20);
-            this.nudAutoModeSwitchCWReturn.TabIndex = 49;
-            this.nudAutoModeSwitchCWReturn.TinyStep = false;
-            this.toolTip1.SetToolTip(this.nudAutoModeSwitchCWReturn, "Selects the preferred CW tone frequency.");
-            this.nudAutoModeSwitchCWReturn.Value = new decimal(new int[] {
-            2000,
-            0,
-            0,
-            0});
-            this.nudAutoModeSwitchCWReturn.ValueChanged += new System.EventHandler(this.nudAutoModeSwitchCWReturn_ValueChanged);
-            // 
-            // lblAutoModeSwitchCWms
-            // 
-            this.lblAutoModeSwitchCWms.AutoSize = true;
-            this.lblAutoModeSwitchCWms.Image = null;
-            this.lblAutoModeSwitchCWms.Location = new System.Drawing.Point(160, 141);
-            this.lblAutoModeSwitchCWms.Name = "lblAutoModeSwitchCWms";
-            this.lblAutoModeSwitchCWms.Size = new System.Drawing.Size(20, 13);
-            this.lblAutoModeSwitchCWms.TabIndex = 50;
-            this.lblAutoModeSwitchCWms.Text = "ms";
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -55992,6 +55992,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDSPCWPitch)).EndInit();
             this.grpDSPKeyerOptions.ResumeLayout(false);
             this.grpDSPKeyerOptions.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAutoModeSwitchCWReturn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWKeyerWeight)).EndInit();
             this.grpDSPKeyerSemiBreakIn.ResumeLayout(false);
             this.grpDSPKeyerSemiBreakIn.PerformLayout();
@@ -56533,7 +56534,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudAutoModeSwitchCWReturn)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

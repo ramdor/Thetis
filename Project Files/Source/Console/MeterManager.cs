@@ -148,8 +148,8 @@ namespace Thetis
         private static Dictionary<string, DataStream> _pooledStreamData;
         private static Dictionary<string, System.Drawing.Bitmap> _pooledImages;
 
-        //public static float[] newSpectrumPassband;
-        //public static float[] currentSpectrumPassband;
+        //public static float[] _newSpectrumPassband;
+        //public static float[] _currentSpectrumPassband;
         //private static bool _spectrumReady;
 
         public class clsIGSettings
@@ -386,29 +386,29 @@ namespace Thetis
         //{
         //    lock (_spectrumArrayLock)
         //    {
-        //        if (newSpectrumPassband == null || newSpectrumPassband.Length != len)
+        //        if (_newSpectrumPassband == null || _newSpectrumPassband.Length != len)
         //        {
-        //            newSpectrumPassband = new float[len];
+        //            _newSpectrumPassband = new float[len];
 
-        //            if (currentSpectrumPassband == null)
+        //            if (_currentSpectrumPassband == null)
         //            {
-        //                currentSpectrumPassband = new float[len];
+        //                _currentSpectrumPassband = new float[len];
         //            }
         //            else
         //            {
         //                float[] tmp = new float[len];
-        //                int stop = Math.Min(tmp.Length, currentSpectrumPassband.Length);
+        //                int stop = Math.Min(tmp.Length, _currentSpectrumPassband.Length);
 
         //                for (int i = 0; i < stop; i++)
         //                {
-        //                    tmp[i] = currentSpectrumPassband[i];
+        //                    tmp[i] = _currentSpectrumPassband[i];
         //                }
         //                for (int i = stop; i < len; i++)
         //                {
         //                    tmp[i] = Display.SpectrumGridMin;
         //                }
 
-        //                currentSpectrumPassband = tmp;
+        //                _currentSpectrumPassband = tmp;
         //            }
         //        }
         //    }
@@ -1066,7 +1066,7 @@ namespace Thetis
         }
         private static void OnVFOA(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
-            _rx1VHForAbove = /*_console.VFOAFreq*/ newFreq >= 30;
+            _rx1VHForAbove = newFreq >= 30;
 
             lock (_metersLock)
             {
@@ -1149,7 +1149,7 @@ namespace Thetis
                     m.BandVfoA = _console.RX1Band;
                     m.FilterVfoA = _console.RX1Filter;
                     m.FilterVfoAName = getFilterName(1);// _console.rx1_filters[(int)_console.RX1DSPMode].GetName(_console.RX1Filter);
-
+                    
                     m.VfoB = _console.VFOBFreq;
 
                     m.VfoSub = _console.VFOASubFreq;
@@ -1554,6 +1554,8 @@ namespace Thetis
 
             if (_lstUCMeters == null || _lstUCMeters.Count == 0) return;
 
+            zeroAllMeters();
+
             lock (_metersLock)
             {
                 foreach (KeyValuePair<string, ucMeter> ucms in _lstUCMeters)
@@ -1751,6 +1753,17 @@ namespace Thetis
                         else
                             ucM.Hide();
                     }
+                }
+            }
+        }
+        private static void zeroAllMeters()
+        {
+            lock(_metersLock)
+            {
+                foreach(KeyValuePair<string, clsMeter> kvp in _meters)
+                {
+                    clsMeter m = kvp.Value;
+                    m.ZeroOut(true, true);
                 }
             }
         }
@@ -2428,7 +2441,7 @@ namespace Thetis
             public virtual void HandleDecrement()
             {
             }
-            public virtual bool ZeroOut(out float value)
+            public virtual bool ZeroOut(out float value, int rx)
             {
                 value = 0;
                 return false;
@@ -3291,11 +3304,12 @@ namespace Thetis
                 get { return _scaleCalibration; }
                 set { }
             }
-            public override bool ZeroOut(out float value)
+            public override bool ZeroOut(out float value, int rx)
             {
                 if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
                     value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
+                    if (IsAbove30(rx)) value -= 20;
                     return true;
                 }
                 value = 0;
@@ -3837,11 +3851,12 @@ namespace Thetis
                     _units = value;
                 }
             }
-            public override bool ZeroOut(out float value)
+            public override bool ZeroOut(out float value, int rx)
             {
                 if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
                     value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
+                    if (IsAbove30(rx)) value -= 20;
                     return true;
                 }
                 value = 0;
@@ -4102,9 +4117,12 @@ namespace Thetis
                     _units = value;
                 }
             }
-            public override bool ZeroOut(out float value)
+            public override bool ZeroOut(out float value, int rx)
             {
-                value = -133; //S0
+                if (IsAbove30(rx))
+                    value = -153; //S0
+                else
+                    value = -133; //S0
                 return true;
             }
         }
@@ -4358,11 +4376,12 @@ namespace Thetis
                     if (_peakNeedleFadeIn < 0) _peakNeedleFadeIn = 0;
                 }
             }
-            public override bool ZeroOut(out float value)
+            public override bool ZeroOut(out float value, int rx)
             {
                 if(_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
                     value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
+                    if (IsAbove30(rx)) value -= 20;
                     return true;
                 }
                 value = 0;
@@ -4476,7 +4495,7 @@ namespace Thetis
         }
         //internal class clsSpectrum : clsMeterItem
         //{
-        //    private System.Drawing.Color _color;          
+        //    private System.Drawing.Color _color;
 
         //    public clsSpectrum()
         //    {
@@ -4486,7 +4505,7 @@ namespace Thetis
         //        StoreSettings = false;
         //    }
         //}
-        //
+
         #endregion
         #region clsMeterItems
         public class clsMeter
@@ -4578,7 +4597,7 @@ namespace Thetis
                     //case MeterType.HISTORY: AddHistory(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.VFO_DISPLAY: AddVFODisplay(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.CLOCK: AddClock(nDelay, 0, out bBottom, restoreIg); break;
-                        //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
+                    //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
                 // update state of items
@@ -4649,6 +4668,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(-13, new PointF(0.99f, 0)); // position for S9+60dB or above
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                if (IsAbove30(_rx)) cb.Value -= 20;
                 cb.ZOrder = 2;
                 cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb);
@@ -5087,6 +5107,7 @@ namespace Thetis
                 me.ScaleCalibration.Add(-73f, new PointF(0.85f, 0));
                 me.ScaleCalibration.Add(-13f, new PointF(1f, 0));
                 me.Value = me.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                if (IsAbove30(_rx)) me.Value -= 20;
                 addMeterItem(me);
 
                 clsImage img = new clsImage();
@@ -5159,6 +5180,7 @@ namespace Thetis
                 //ni.Value = -127f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
                 ni.Value = ni.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                if (IsAbove30(_rx)) ni.Value -= 20;
                 addMeterItem(ni);
 
                 //volts
@@ -5184,7 +5206,7 @@ namespace Thetis
                 ni2.ScaleCalibration.Add(15f, new PointF(0.665f, 0.784f));
                 ni2.Value = 10f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                //ni2.Value = ni2.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                ni2.Value = ni2.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 addMeterItem(ni2);
 
                 //amps
@@ -5220,7 +5242,7 @@ namespace Thetis
                 ni3.ScaleCalibration.Add(20f, new PointF(0.799f, 0.576f));
                 ni3.Value = 10f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
-                //ni3.Value = ni3.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                ni3.Value = ni3.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 addMeterItem(ni3);
 
                 //
@@ -6815,7 +6837,7 @@ namespace Thetis
 
                         mi.ClearHistory();
 
-                        bool bOk = mi.ZeroOut(out float value); // get value to zero out the meter, returns false if no scale
+                        bool bOk = mi.ZeroOut(out float value, _rx); // get value to zero out the meter, returns false if no scale
 
                         if (bOk)
                         {
@@ -8063,12 +8085,20 @@ namespace Thetis
             public double VfoA
             {
                 get { return _vfoA; }
-                set { _vfoA = value; }
+                set 
+                { 
+                    _vfoA = value;
+                    if(_rx == 1) _rx1VHForAbove = _vfoA >= 30;
+                }
             }
             public double VfoB
             {
                 get { return _vfoB; }
-                set { _vfoB = value; }
+                set 
+                { 
+                    _vfoB = value;
+                    if (_rx == 2) _rx2VHForAbove = _vfoB >= 30;
+                }
             }
             public double VfoSub
             {
@@ -11114,7 +11144,7 @@ namespace Thetis
             //{
             //    lock (_spectrumArrayLock)
             //    {
-            //        if (newSpectrumPassband == null || currentSpectrumPassband == null) return;
+            //        if (_newSpectrumPassband == null || _currentSpectrumPassband == null) return;
 
             //        clsSpectrum spect = (clsSpectrum)mi;
 
@@ -11131,41 +11161,41 @@ namespace Thetis
             //        float yRange = top - bottom;
             //        float dbmToPixel = h / yRange;
 
-            //        if (SpectrumReady)
+            //        if (_spectrumReady)
             //        {
             //            unsafe
             //            {
-            //                //// copy to current
-            //                //fixed (void* srcptr = &newSpectrumPassband[0])
-            //                //fixed (void* destptr = &currentSpectrumPassband[0])
-            //                //    Win32.memcpy(destptr, srcptr, currentSpectrumPassband.Length * sizeof(float));
+            //                // copy to current
+            //                fixed (void* srcptr = &_newSpectrumPassband[0])
+            //                fixed (void* destptr = &_currentSpectrumPassband[0])
+            //                    Win32.memcpy(destptr, srcptr, _currentSpectrumPassband.Length * sizeof(float));
 
-            //                for (int i = 0; i < newSpectrumPassband.Length; i++)
-            //                {
-            //                    currentSpectrumPassband[i] = (newSpectrumPassband[i] * 0.3f) + (currentSpectrumPassband[i] * 0.7f);
-            //                }
+            //                //for (int i = 0; i < _newSpectrumPassband.Length; i++)
+            //                //{
+            //                //    _currentSpectrumPassband[i] = (_newSpectrumPassband[i] * 0.3f) + (_currentSpectrumPassband[i] * 0.7f);
+            //                //}
             //            }
-            //            SpectrumReady = false;
+            //            _spectrumReady = false;
             //        }
 
-            //        if (currentSpectrumPassband != null)
+            //        if (_currentSpectrumPassband != null)
             //        {
             //            SharpDX.RectangleF rct = new SharpDX.RectangleF(x, y, w, h);
             //            _renderTarget.PushAxisAlignedClip(rct, AntialiasMode.Aliased);
 
             //            float xPos = x;
-            //            float increment = w / currentSpectrumPassband.Length;
+            //            float increment = w / _currentSpectrumPassband.Length;
             //            Vector2 oldPoint = new Vector2();
             //            Vector2 newPoint = new Vector2();
 
             //            oldPoint.X = x;
-            //            oldPoint.Y = y + ((top - (float)currentSpectrumPassband[0]) * dbmToPixel);
+            //            oldPoint.Y = y + ((top - (float)_currentSpectrumPassband[0]) * dbmToPixel);
 
             //            SharpDX.Direct2D1.Brush b = getDXBrushForColour(System.Drawing.Color.White, nFade);
 
-            //            for (int i = 0; i < currentSpectrumPassband.Length; i++)
+            //            for (int i = 0; i < _currentSpectrumPassband.Length; i++)
             //            {
-            //                float yPos = y + ((top - (float)currentSpectrumPassband[i]) * dbmToPixel);
+            //                float yPos = y + ((top - (float)_currentSpectrumPassband[i]) * dbmToPixel);
 
             //                newPoint.X = xPos;
             //                newPoint.Y = yPos;

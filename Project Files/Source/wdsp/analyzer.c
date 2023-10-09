@@ -1267,12 +1267,32 @@ PORT
 void SnapSpectrum(	int disp,
 					int ss,
 					int LO,
-					double *snap_buff)
+					double *snap_buff,
+					int wait_ms,		//wait for milliseconds, < 0 infinte
+					int *flag			//else, returns 0 (try again later)
+					)
 {
 	DP a = pdisp[disp];
 	a->snap_buff[ss][LO] = snap_buff;
 	InterlockedBitTestAndSet(&(a->snap[ss][LO]), 0);
-	WaitForSingleObject(a->hSnapEvent[ss][LO], INFINITE);
+
+	DWORD result;
+	if (wait_ms < 0)
+	{
+		result = WaitForSingleObject(a->hSnapEvent[ss][LO], INFINITE);
+	}
+	else
+	{
+		result = WaitForSingleObject(a->hSnapEvent[ss][LO], wait_ms);
+	}
+	if (result == 0)
+	{
+		*flag = 1;
+	}
+	else
+	{
+		*flag = 0;
+	}
 }
 
 int calcompare (const void * a, const void * b)
