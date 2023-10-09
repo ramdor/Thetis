@@ -802,10 +802,8 @@ namespace Thetis
 		{
 			if(str == "") return 0;
 
-            //MD5 md5Hasher = MD5.Create();
-            //byte[] hashed = md5Hasher.ComputeHash(Encoding.UTF8.GetBytes(str),);
-            //return BitConverter.ToInt32(hashed, 0) % 99999;
-
+            // Jenkins one_at_a_time hash function
+            // https://en.wikipedia.org/wiki/Jenkins_hash_function
             uint hash = 0;
             foreach (byte b in System.Text.Encoding.Unicode.GetBytes(str))
             {
@@ -816,6 +814,7 @@ namespace Thetis
             hash += (hash << 3);
             hash ^= (hash >> 11);
             hash += (hash << 15);
+
             return (int)(hash % 99999);
         }
         public static string ColourToString(System.Drawing.Color c)

@@ -3260,7 +3260,7 @@ namespace Thetis
                                 DrawWaterfallDX2D(0, displayTargetWidth, m_nRX1DisplayHeight, 1, false);
                                 break;
                             case DisplayMode.HISTOGRAM:
-                                DrawHistogramDX2D(displayTargetWidth, m_nRX1DisplayHeight);
+                                DrawHistogramDX2D(1, displayTargetWidth, m_nRX1DisplayHeight);
                                 break;
                             case DisplayMode.PANAFALL:
                                 lock (m_objSplitDisplayLock)
@@ -3322,7 +3322,7 @@ namespace Thetis
                                 DrawWaterfallDX2D(0, displayTargetWidth, m_nRX1DisplayHeight, 1, false);
                                 break;
                             case DisplayMode.HISTOGRAM:
-                                DrawHistogramDX2D(displayTargetWidth, m_nRX1DisplayHeight);
+                                DrawHistogramDX2D(1, displayTargetWidth, m_nRX1DisplayHeight);
                                 break;
                             case DisplayMode.PANAFALL:
                                 m_nRX1DisplayHeight = displayTargetHeight / 4;
@@ -4006,7 +4006,11 @@ namespace Thetis
                 bool local_mox = mox && (!tx_on_vfob || (tx_on_vfob && !console.RX2Enabled));
                 bool displayduplex = isRxDuplex(1);
 
-                if (local_mox) fOffset = tx_display_cal_offset;
+                if (local_mox)
+                {
+                    fOffset = tx_display_cal_offset;
+                    if (displayduplex) fOffset += rx1_display_cal_offset;
+                }
                 else if (mox && tx_on_vfob && !displayduplex)
                 {
                     if (console.RX2Enabled) fOffset = rx1_display_cal_offset;
@@ -8548,15 +8552,16 @@ namespace Thetis
                 max = current_display_data_bottom[0];
             }
 
-            if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
-            {
-                if (rx == 1/*!bottom*/) max += rx1_display_cal_offset; //MW0LGE_21g
-                else max += rx2_display_cal_offset;
-            }
-            else
-            {
-                max += tx_display_cal_offset;
-            }
+            //if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
+            //{
+            //    if (rx == 1/*!bottom*/) max += rx1_display_cal_offset; //MW0LGE_21g
+            //    else max += rx2_display_cal_offset;
+            //}
+            //else
+            //{
+            //    max += tx_display_cal_offset;
+            //}
+            max += rx == 1 ? RX1Offset : RX2Offset;
 
             if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
             {
@@ -8567,6 +8572,8 @@ namespace Thetis
             Y = (int)Math.Min((Math.Floor((grid_max - max) * H / yRange)), H);
             previousPoint.X = 0;// + 0.5f; // the 0.5f pushes it into the middle of a 'pixel', so that it is not drawn half in one, and half in the other
             previousPoint.Y = Y;// + 0.5f;
+
+            float fOffset = rx == 1 ? RX1Offset : RX2Offset;
 
             for (int i = 0; i < nDecimatedWidth; i++)
             {
@@ -8579,15 +8586,16 @@ namespace Thetis
                     max = current_display_data_bottom[i];
                 }
 
-                if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
-                {
-                    if (rx == 1/*!bottom*/) max += rx1_display_cal_offset; //MW0LGE_21g
-                    else max += rx2_display_cal_offset;
-                }
-                else
-                {
-                    max += tx_display_cal_offset;
-                }
+                //if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
+                //{
+                //    if (rx == 1/*!bottom*/) max += rx1_display_cal_offset; //MW0LGE_21g
+                //    else max += rx2_display_cal_offset;
+                //}
+                //else
+                //{
+                //    max += tx_display_cal_offset;
+                //}
+                max += fOffset;
 
                 if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
                 {
@@ -9411,7 +9419,7 @@ namespace Thetis
             }
         }
 
-        unsafe static private bool DrawHistogramDX2D(int W, int H)
+        unsafe static private bool DrawHistogramDX2D(int rx, int W, int H)
         {
             DrawSpectrumGridDX2D(W, H, false);
 
@@ -9458,19 +9466,21 @@ namespace Thetis
             }
 
             int sum = 0;
+            float fOffset = rx == 1 ? RX1Offset : RX2Offset;
 
             for (int i = 0; i < nDecimatedWidth; i++)
             {
                 float max = max = current_display_data[i];
 
-                if (!mox)
-                {
-                    max += rx1_display_cal_offset;
-                }
-                else
-                {
-                    max += tx_display_cal_offset;
-                }
+                //if (!mox)
+                //{
+                //    max += rx1_display_cal_offset;
+                //}
+                //else
+                //{
+                //    max += tx_display_cal_offset;
+                //}
+                max += fOffset;
 
                 if (!mox) max += (rx1_preamp_offset - alex_preamp_offset);
 
