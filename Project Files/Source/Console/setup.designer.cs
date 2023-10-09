@@ -47895,12 +47895,11 @@
             // 
             // chkContainerNoTitle
             // 
-            this.chkContainerNoTitle.AutoSize = true;
             this.chkContainerNoTitle.Image = null;
-            this.chkContainerNoTitle.Location = new System.Drawing.Point(23, 99);
+            this.chkContainerNoTitle.Location = new System.Drawing.Point(17, 99);
             this.chkContainerNoTitle.Name = "chkContainerNoTitle";
             this.chkContainerNoTitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.chkContainerNoTitle.Size = new System.Drawing.Size(123, 17);
+            this.chkContainerNoTitle.Size = new System.Drawing.Size(129, 17);
             this.chkContainerNoTitle.TabIndex = 104;
             this.chkContainerNoTitle.Text = "No title when pinned";
             this.toolTip1.SetToolTip(this.chkContainerNoTitle, "Prevents the display of the mouse over title bar when pinned");

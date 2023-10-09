@@ -716,6 +716,17 @@ namespace Thetis
                 return uc.UCBorder;
             }
         }
+        public static bool ContainerNoTitleWhenPinned(string sId)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return false;
+                if (!_lstUCMeters.ContainsKey(sId)) return false;
+
+                ucMeter uc = _lstUCMeters[sId];
+                return uc.NoTitleWhenPinned;
+            }
+        }        
         public static void ContainerBackgroundColour(string sId, System.Drawing.Color c)
         {
             lock (_metersLock)

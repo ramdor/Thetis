@@ -29,7 +29,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Thetis
 {
@@ -26145,6 +26145,7 @@ namespace Thetis
 
             chkContainerBorder.Checked = MeterManager.ContainerHasBorder(cci.ID);
             clrbtnContainerBackground.Color = MeterManager.GetContainerBackgroundColour(cci.ID);
+            chkContainerNoTitle.Checked = MeterManager.ContainerNoTitleWhenPinned(cci.ID);
 
             updateMeterLists();
         }
@@ -27471,7 +27472,13 @@ namespace Thetis
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.InitialDirectory = myDocumentsPath;
             saveFileDialog.Filter = "ZIP Files (*.zip)|*.zip";
-            saveFileDialog.FileName = version.Replace(" ", "_").Replace(".", "_") + "_database_logs.zip";
+            DateTime now = DateTime.Now;
+            string localDateTime = now.ToShortTimeString() + "_" + now.ToShortDateString();
+
+            string invalidCharsPattern = "[" + Regex.Escape(new string(Path.GetInvalidFileNameChars())) + "]";
+            string cleanLocalDateTime = Regex.Replace(localDateTime, invalidCharsPattern, "_"); ;
+
+            saveFileDialog.FileName = version.Replace(" ", "_").Replace(".", "_") + "_" + cleanLocalDateTime.Replace(" ", "_") + "_database_logs.zip";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
