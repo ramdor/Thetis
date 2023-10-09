@@ -52,7 +52,7 @@ namespace Thetis
     using System.Xml;
     using System.Xml.Serialization;
     using System.Diagnostics.Eventing.Reader;
-
+    using Ionic.Zip;
     public partial class Setup : Form
     {
         private const string s_DEFAULT_GRADIENT = "9|1|0.000|-1509884160|1|0.339|-1493237760|1|0.234|-1509884160|1|0.294|-1493211648|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1493237760|";
@@ -340,6 +340,8 @@ namespace Thetis
 
             //MW0LGE [2.9.0.7] setup amp/volts calibration
             initVoltsAmpsCalibration();
+            chkLogVoltsAmps.Checked = false; //[2.10.1.0]MW0LGE
+            chkLogVoltsAmps_CheckedChanged(this, EventArgs.Empty);
             //
 
             // display setup
@@ -10361,7 +10363,7 @@ namespace Thetis
             console.ShowTXFilter = (bool)dr["Show_TX_Filter"];
 
             //chkAudioEnableVAC.Checked = (bool)dr["VAC1_On"];
-            chkAudioVACAutoEnable.Checked = (bool)dr["VAC1_Auto_On"];
+            //chkAudioVACAutoEnable.Checked = (bool)dr["VAC1_Auto_On"];
             udAudioVACGainRX.Value = (int)dr["VAC1_RX_GAIN"];
             udAudioVACGainTX.Value = (int)dr["VAC1_TX_GAIN"];
             chkAudio2Stereo.Checked = (bool)dr["VAC1_Stereo_On"];
@@ -10389,7 +10391,7 @@ namespace Thetis
             }
 
             //chkVAC2Enable.Checked = (bool)dr["VAC2_On"];
-            chkVAC2AutoEnable.Checked = (bool)dr["VAC2_Auto_On"];
+            //chkVAC2AutoEnable.Checked = (bool)dr["VAC2_Auto_On"];
             udVAC2GainRX.Value = (int)dr["VAC2_RX_GAIN"];
             udVAC2GainTX.Value = (int)dr["VAC2_TX_GAIN"];
             chkAudioStereo3.Checked = (bool)dr["VAC2_Stereo_On"];
@@ -10469,7 +10471,9 @@ namespace Thetis
             CFCCOMPEQ = cfceq;
 
             chkAudioEnableVAC.Checked = (bool)dr["VAC1_On"];    // moved here after setting to off MW0LGE_21k9d
+            chkAudioVACAutoEnable.Checked = (bool)dr["VAC1_Auto_On"]; //[2.10.1.0] MW0LGE moved here
             chkVAC2Enable.Checked = (bool)dr["VAC2_On"];    // moved here after setting to off MW0LGE_21k9d
+            chkVAC2AutoEnable.Checked = (bool)dr["VAC2_Auto_On"]; //[2.10.1.0] MW0LGE moved here
 
             console.TXProfile = sProfileName;
             console.LoadedTXProfile();
@@ -27442,6 +27446,71 @@ namespace Thetis
         private void nudAutoModeSwitchCWReturn_ValueChanged(object sender, EventArgs e)
         {
             console.AutoModeSwitchCWReturnMs = (int)nudAutoModeSwitchCWReturn.Value;
+        }
+        private void btnZipDebug_Click(object sender, EventArgs e)
+        {
+            buildZipFile(console.ProductVersion, console.AppDataPath);
+        }
+
+        private void btnOpenDBFolder_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start("explorer.exe", console.AppDataPath);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private void buildZipFile(string version, string sourceDirectory)
+        {
+            string[] filesToZip = { "database.xml", "ErrorLog.txt", "VALog.txt", "ImportLog.txt" };
+            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.InitialDirectory = myDocumentsPath;
+            saveFileDialog.Filter = "ZIP Files (*.zip)|*.zip";
+            saveFileDialog.FileName = version.Replace(" ", "_").Replace(".", "_") + "_database_logs.zip";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string zipFilePath = saveFileDialog.FileName;
+
+                try
+                {
+                    if (File.Exists(zipFilePath))
+                        File.Delete(zipFilePath);
+
+                    using (ZipFile zip = new ZipFile())
+                    {
+                        foreach (string fileName in filesToZip)
+                        {
+                            string filePath = Path.Combine(sourceDirectory, fileName);
+
+                            if (File.Exists(filePath))
+                            {
+                                zip.AddFile(filePath, "");
+                            }
+                        }
+
+                        zip.Save(zipFilePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}", "Error building zip", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
+            }
+        }
+        public bool LogVA
+        {
+            get { return chkLogVoltsAmps.Checked; }
+            set { chkLogVoltsAmps.Checked = value; }
+        }
+        private void chkLogVoltsAmps_CheckedChanged(object sender, EventArgs e)
+        {
+            console.LogVA = chkLogVoltsAmps.Checked;
         }
     }
 

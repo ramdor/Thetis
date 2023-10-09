@@ -383,6 +383,7 @@
             this.chkQSOTimerEnabled = new System.Windows.Forms.CheckBoxTS();
             this.tpGeneralCalibration = new System.Windows.Forms.TabPage();
             this.groupBoxTS27 = new System.Windows.Forms.GroupBoxTS();
+            this.chkLogVoltsAmps = new System.Windows.Forms.CheckBoxTS();
             this.btnAmpDefault = new System.Windows.Forms.ButtonTS();
             this.labelTS159 = new System.Windows.Forms.LabelTS();
             this.labelTS158 = new System.Windows.Forms.LabelTS();
@@ -3355,9 +3356,12 @@
             this.labelTSPort = new System.Windows.Forms.LabelTS();
             this.chkEnableAndromeda = new System.Windows.Forms.CheckBoxTS();
             this.tpTests = new System.Windows.Forms.TabPage();
+            this.btnOpenDBFolder = new System.Windows.Forms.ButtonTS();
+            this.btnZipDebugInfo = new System.Windows.Forms.ButtonTS();
+            this.groupBoxTS30 = new System.Windows.Forms.GroupBoxTS();
+            this.btnShowSeqLog = new System.Windows.Forms.ButtonTS();
             this.chkShowDisplayDebug = new System.Windows.Forms.CheckBoxTS();
             this.chkShowControlDebug = new System.Windows.Forms.CheckBoxTS();
-            this.btnShowSeqLog = new System.Windows.Forms.ButtonTS();
             this.grpBoxTS1 = new System.Windows.Forms.GroupBoxTS();
             this.grpSigGenTransmit = new System.Windows.Forms.GroupBoxTS();
             this.grpPulse = new System.Windows.Forms.GroupBoxTS();
@@ -4340,6 +4344,7 @@
             this.grpAndrOptions.SuspendLayout();
             this.grpAndr.SuspendLayout();
             this.tpTests.SuspendLayout();
+            this.groupBoxTS30.SuspendLayout();
             this.grpBoxTS1.SuspendLayout();
             this.grpSigGenTransmit.SuspendLayout();
             this.grpPulse.SuspendLayout();
@@ -9586,6 +9591,7 @@
             // 
             // groupBoxTS27
             // 
+            this.groupBoxTS27.Controls.Add(this.chkLogVoltsAmps);
             this.groupBoxTS27.Controls.Add(this.btnAmpDefault);
             this.groupBoxTS27.Controls.Add(this.labelTS159);
             this.groupBoxTS27.Controls.Add(this.labelTS158);
@@ -9593,10 +9599,22 @@
             this.groupBoxTS27.Controls.Add(this.udAmpVoff);
             this.groupBoxTS27.Location = new System.Drawing.Point(541, 11);
             this.groupBoxTS27.Name = "groupBoxTS27";
-            this.groupBoxTS27.Size = new System.Drawing.Size(175, 122);
+            this.groupBoxTS27.Size = new System.Drawing.Size(175, 172);
             this.groupBoxTS27.TabIndex = 15;
             this.groupBoxTS27.TabStop = false;
             this.groupBoxTS27.Text = "Current (A) calculation";
+            // 
+            // chkLogVoltsAmps
+            // 
+            this.chkLogVoltsAmps.AutoSize = true;
+            this.chkLogVoltsAmps.Image = null;
+            this.chkLogVoltsAmps.Location = new System.Drawing.Point(41, 125);
+            this.chkLogVoltsAmps.Name = "chkLogVoltsAmps";
+            this.chkLogVoltsAmps.Size = new System.Drawing.Size(104, 30);
+            this.chkLogVoltsAmps.TabIndex = 5;
+            this.chkLogVoltsAmps.Text = "Log Volts/Amps \r\nto VALog.txt";
+            this.chkLogVoltsAmps.UseVisualStyleBackColor = true;
+            this.chkLogVoltsAmps.CheckedChanged += new System.EventHandler(this.chkLogVoltsAmps_CheckedChanged);
             // 
             // btnAmpDefault
             // 
@@ -47879,7 +47897,7 @@
             // 
             this.chkContainerNoTitle.AutoSize = true;
             this.chkContainerNoTitle.Image = null;
-            this.chkContainerNoTitle.Location = new System.Drawing.Point(23, 100);
+            this.chkContainerNoTitle.Location = new System.Drawing.Point(23, 99);
             this.chkContainerNoTitle.Name = "chkContainerNoTitle";
             this.chkContainerNoTitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.chkContainerNoTitle.Size = new System.Drawing.Size(123, 17);
@@ -53106,9 +53124,9 @@
             // 
             // tpTests
             // 
-            this.tpTests.Controls.Add(this.chkShowDisplayDebug);
-            this.tpTests.Controls.Add(this.chkShowControlDebug);
-            this.tpTests.Controls.Add(this.btnShowSeqLog);
+            this.tpTests.Controls.Add(this.btnOpenDBFolder);
+            this.tpTests.Controls.Add(this.btnZipDebugInfo);
+            this.tpTests.Controls.Add(this.groupBoxTS30);
             this.tpTests.Controls.Add(this.grpBoxTS1);
             this.tpTests.Controls.Add(this.grpTestTXIMD);
             this.tpTests.Controls.Add(this.grpImpulseTest);
@@ -53119,10 +53137,61 @@
             this.tpTests.TabIndex = 7;
             this.tpTests.Text = "Tests";
             // 
+            // btnOpenDBFolder
+            // 
+            this.btnOpenDBFolder.Image = null;
+            this.btnOpenDBFolder.Location = new System.Drawing.Point(344, 369);
+            this.btnOpenDBFolder.Name = "btnOpenDBFolder";
+            this.btnOpenDBFolder.Selectable = true;
+            this.btnOpenDBFolder.Size = new System.Drawing.Size(111, 53);
+            this.btnOpenDBFolder.TabIndex = 122;
+            this.btnOpenDBFolder.Text = "Open DB folder";
+            this.toolTip1.SetToolTip(this.btnOpenDBFolder, "Open the folder containing the database");
+            this.btnOpenDBFolder.UseVisualStyleBackColor = true;
+            this.btnOpenDBFolder.Click += new System.EventHandler(this.btnOpenDBFolder_Click);
+            // 
+            // btnZipDebugInfo
+            // 
+            this.btnZipDebugInfo.Image = null;
+            this.btnZipDebugInfo.Location = new System.Drawing.Point(228, 369);
+            this.btnZipDebugInfo.Name = "btnZipDebugInfo";
+            this.btnZipDebugInfo.Selectable = true;
+            this.btnZipDebugInfo.Size = new System.Drawing.Size(111, 53);
+            this.btnZipDebugInfo.TabIndex = 121;
+            this.btnZipDebugInfo.Text = "Zip database.xml\r\nand log files";
+            this.toolTip1.SetToolTip(this.btnZipDebugInfo, "Make a zip file containing the database.xml, ErrorLog.txt, VALog.txt, ImportLog.t" +
+        "xt");
+            this.btnZipDebugInfo.UseVisualStyleBackColor = true;
+            this.btnZipDebugInfo.Click += new System.EventHandler(this.btnZipDebug_Click);
+            // 
+            // groupBoxTS30
+            // 
+            this.groupBoxTS30.Controls.Add(this.btnShowSeqLog);
+            this.groupBoxTS30.Controls.Add(this.chkShowDisplayDebug);
+            this.groupBoxTS30.Controls.Add(this.chkShowControlDebug);
+            this.groupBoxTS30.Location = new System.Drawing.Point(11, 340);
+            this.groupBoxTS30.Name = "groupBoxTS30";
+            this.groupBoxTS30.Size = new System.Drawing.Size(211, 82);
+            this.groupBoxTS30.TabIndex = 120;
+            this.groupBoxTS30.TabStop = false;
+            this.groupBoxTS30.Text = "Debug";
+            // 
+            // btnShowSeqLog
+            // 
+            this.btnShowSeqLog.Image = null;
+            this.btnShowSeqLog.Location = new System.Drawing.Point(6, 19);
+            this.btnShowSeqLog.Name = "btnShowSeqLog";
+            this.btnShowSeqLog.Selectable = true;
+            this.btnShowSeqLog.Size = new System.Drawing.Size(60, 57);
+            this.btnShowSeqLog.TabIndex = 92;
+            this.btnShowSeqLog.Text = "Show SEQ log";
+            this.btnShowSeqLog.UseVisualStyleBackColor = true;
+            this.btnShowSeqLog.Click += new System.EventHandler(this.btnShowSeqLog_Click);
+            // 
             // chkShowDisplayDebug
             // 
             this.chkShowDisplayDebug.Image = null;
-            this.chkShowDisplayDebug.Location = new System.Drawing.Point(529, 398);
+            this.chkShowDisplayDebug.Location = new System.Drawing.Point(74, 47);
             this.chkShowDisplayDebug.Name = "chkShowDisplayDebug";
             this.chkShowDisplayDebug.Size = new System.Drawing.Size(131, 24);
             this.chkShowDisplayDebug.TabIndex = 119;
@@ -53133,7 +53202,7 @@
             // chkShowControlDebug
             // 
             this.chkShowControlDebug.Image = null;
-            this.chkShowControlDebug.Location = new System.Drawing.Point(529, 375);
+            this.chkShowControlDebug.Location = new System.Drawing.Point(74, 17);
             this.chkShowControlDebug.Name = "chkShowControlDebug";
             this.chkShowControlDebug.Size = new System.Drawing.Size(131, 24);
             this.chkShowControlDebug.TabIndex = 118;
@@ -53141,18 +53210,6 @@
             this.toolTip1.SetToolTip(this.chkShowControlDebug, "Show the control name that is being hovered over with the mouse as debug in the s" +
         "pectrum display area");
             this.chkShowControlDebug.CheckedChanged += new System.EventHandler(this.chkShowControlDebug_CheckedChanged);
-            // 
-            // btnShowSeqLog
-            // 
-            this.btnShowSeqLog.Image = null;
-            this.btnShowSeqLog.Location = new System.Drawing.Point(420, 376);
-            this.btnShowSeqLog.Name = "btnShowSeqLog";
-            this.btnShowSeqLog.Selectable = true;
-            this.btnShowSeqLog.Size = new System.Drawing.Size(97, 46);
-            this.btnShowSeqLog.TabIndex = 92;
-            this.btnShowSeqLog.Text = "Show SEQ log";
-            this.btnShowSeqLog.UseVisualStyleBackColor = true;
-            this.btnShowSeqLog.Click += new System.EventHandler(this.btnShowSeqLog_Click);
             // 
             // grpBoxTS1
             // 
@@ -53604,7 +53661,7 @@
             this.chkSigGenRX1.Checked = true;
             this.chkSigGenRX1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSigGenRX1.Image = null;
-            this.chkSigGenRX1.Location = new System.Drawing.Point(13, 296);
+            this.chkSigGenRX1.Location = new System.Drawing.Point(13, 227);
             this.chkSigGenRX1.Name = "chkSigGenRX1";
             this.chkSigGenRX1.Size = new System.Drawing.Size(48, 24);
             this.chkSigGenRX1.TabIndex = 116;
@@ -53825,7 +53882,7 @@
             // chkSigGenRX2
             // 
             this.chkSigGenRX2.Image = null;
-            this.chkSigGenRX2.Location = new System.Drawing.Point(101, 296);
+            this.chkSigGenRX2.Location = new System.Drawing.Point(101, 227);
             this.chkSigGenRX2.Name = "chkSigGenRX2";
             this.chkSigGenRX2.Size = new System.Drawing.Size(48, 24);
             this.chkSigGenRX2.TabIndex = 101;
@@ -56466,6 +56523,7 @@
             this.grpAndr.ResumeLayout(false);
             this.grpAndr.PerformLayout();
             this.tpTests.ResumeLayout(false);
+            this.groupBoxTS30.ResumeLayout(false);
             this.grpBoxTS1.ResumeLayout(false);
             this.grpSigGenTransmit.ResumeLayout(false);
             this.grpSigGenTransmit.PerformLayout();
@@ -60019,5 +60077,9 @@
         private LabelTS lblAutoModeSwitchCWms;
         private NumericUpDownTS nudAutoModeSwitchCWReturn;
         private CheckBoxTS chkAutoModeSwitchCWReturn;
+        private ButtonTS btnZipDebugInfo;
+        private GroupBoxTS groupBoxTS30;
+        private ButtonTS btnOpenDBFolder;
+        private CheckBoxTS chkLogVoltsAmps;
     }
 }
