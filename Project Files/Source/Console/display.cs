@@ -4009,7 +4009,7 @@ namespace Thetis
                 if (local_mox)
                 {
                     fOffset = tx_display_cal_offset;
-                    if (displayduplex) fOffset += rx1_display_cal_offset;
+                    if (displayduplex) fOffset += rx1_display_cal_offset; //[2.10.1.0] MW0LGE fix issue #137
                 }
                 else if (mox && tx_on_vfob && !displayduplex)
                 {
