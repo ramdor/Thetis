@@ -335,6 +335,12 @@
             KeyPath="yes"
               />
       </Component>
+	  <Component Guid="*">
+        <File Id="DotNetZipDLL"
+            Source="$(var.FilesPath)DotNetZip.dll"
+            KeyPath="yes"
+              />
+      </Component>
       <Component Guid="*">
         <File Id="PureSignalPDF"
               Source="$(var.DocumentationPath)PureSignal.pdf"
