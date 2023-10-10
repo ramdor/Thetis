@@ -197,6 +197,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)..\build\$(HPSDR_PLATFORM)\$(Configuration)\;</AdditionalLibraryDirectories>
       <AdditionalDependencies>wdsp.lib;pa19.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkErrorReporting>QueueForNextLogin</LinkErrorReporting>
+      <Version>
+      </Version>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
@@ -219,6 +221,8 @@
     <ClInclude Include="obbuffs.h" />
     <ClInclude Include="pipe.h" />
     <ClInclude Include="pro.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="ring.h" />
     <ClInclude Include="router.h" />
     <ClInclude Include="sync.h" />
@@ -254,6 +258,9 @@
     <ClCompile Include="zeer.c" />
     <ClCompile Include="znob.c" />
     <ClCompile Include="znobII.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ChannelMaster.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

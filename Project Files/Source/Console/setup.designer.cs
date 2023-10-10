@@ -201,8 +201,6 @@
             this.tpGeneral = new System.Windows.Forms.TabPage();
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.chkSupportUkraine = new System.Windows.Forms.CheckBoxTS();
             this.lblTimeout = new System.Windows.Forms.LabelTS();
             this.lblShowTimeoutText = new System.Windows.Forms.LabelTS();
             this.grpFirmware = new System.Windows.Forms.GroupBoxTS();
@@ -3533,7 +3531,6 @@
             this.tpGeneral.SuspendLayout();
             this.tcGeneral.SuspendLayout();
             this.tpGeneralHardware.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpFirmware.SuspendLayout();
             this.grpOzyType.SuspendLayout();
             this.panelTS7.SuspendLayout();
@@ -6754,8 +6751,6 @@
             // tpGeneralHardware
             // 
             this.tpGeneralHardware.BackColor = System.Drawing.SystemColors.Control;
-            this.tpGeneralHardware.Controls.Add(this.pictureBox1);
-            this.tpGeneralHardware.Controls.Add(this.chkSupportUkraine);
             this.tpGeneralHardware.Controls.Add(this.lblTimeout);
             this.tpGeneralHardware.Controls.Add(this.lblShowTimeoutText);
             this.tpGeneralHardware.Controls.Add(this.grpFirmware);
@@ -6771,30 +6766,6 @@
             this.tpGeneralHardware.TabIndex = 0;
             this.tpGeneralHardware.Text = "H/W Select";
             this.tpGeneralHardware.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralHardware_Paint);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::Thetis.Properties.Resources.ukraine_flag;
-            this.pictureBox1.Location = new System.Drawing.Point(16, 372);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(44, 28);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 40;
-            this.pictureBox1.TabStop = false;
-            this.toolTip1.SetToolTip(this.pictureBox1, "RIP Ivan UR8GX");
-            // 
-            // chkSupportUkraine
-            // 
-            this.chkSupportUkraine.AutoSize = true;
-            this.chkSupportUkraine.Image = null;
-            this.chkSupportUkraine.Location = new System.Drawing.Point(66, 377);
-            this.chkSupportUkraine.Name = "chkSupportUkraine";
-            this.chkSupportUkraine.Size = new System.Drawing.Size(103, 17);
-            this.chkSupportUkraine.TabIndex = 39;
-            this.chkSupportUkraine.Text = "Support Ukraine";
-            this.toolTip1.SetToolTip(this.chkSupportUkraine, "RIP Ivan UR8GX");
-            this.chkSupportUkraine.UseVisualStyleBackColor = true;
-            this.chkSupportUkraine.CheckedChanged += new System.EventHandler(this.chkSupportUkraine_CheckedChanged);
             // 
             // lblTimeout
             // 
@@ -55561,8 +55532,6 @@
             this.tpGeneral.ResumeLayout(false);
             this.tcGeneral.ResumeLayout(false);
             this.tpGeneralHardware.ResumeLayout(false);
-            this.tpGeneralHardware.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.grpFirmware.ResumeLayout(false);
             this.grpOzyType.ResumeLayout(false);
             this.panelTS7.ResumeLayout(false);
@@ -59924,7 +59893,6 @@
         private NumericUpDownTS nudRX1NFoffsetGridFollow;
         private NumericUpDownTS nudRX2NFoffsetGridFollow;
         private Button btnResetLevelCal;
-        private CheckBoxTS chkSupportUkraine;
         private GroupBoxTS groupBoxTS27;
         private ButtonTS btnAmpDefault;
         private LabelTS labelTS159;
@@ -60045,7 +60013,6 @@
         private ColorButton clrbtnMeterItemPowerScale;
         private NumericUpDownTS nudMeterItemIgnoreHistoryDuration;
         private LabelTS lblMMHistoryIgnore;
-        private PictureBox pictureBox1;
         private ButtonTS btnMeterCopySettings;
         private ButtonTS btnMeterPasteSettings;
         private GroupBoxTS groupBoxTS28;

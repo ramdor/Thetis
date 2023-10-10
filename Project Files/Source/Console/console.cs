@@ -570,8 +570,6 @@ namespace Thetis
         {
             this.Opacity = 0f; // FadeIn below. Note: console form has 0% set in form designer
 
-            //CheckIfRussian(); //#UKRAINE
-
             Display.specready = false;
 
             //MW0LGE
@@ -757,13 +755,13 @@ namespace Thetis
                                 //-W2PA Import carefully, allowing use of DB files created by previous versions so as to retain settings and options   
                                 if (DB.ImportAndMergeDatabase(autoMergeFileName, AppDataPath, false))
                                 {
-                                    string versionName = TitleBar.GetString();
+                                    string versionName = TitleBar.GetString(false);
                                     versionName = versionName.Remove(versionName.LastIndexOf("("));  // strip off date                                    
                                     File.Delete(autoMergeFileName);
                                     //DB.WriteCurrentDB(db_file_name);//MW0LGE_[2.9.0.7]
                                     DB.WriteDB(db_file_name);
                                     DB.Init();
-                                    versionName = versionName.Replace("<FW>", "");
+                                    //versionName = versionName.Replace("<FW>", ""); //[2.10.1.0]MW0LGE
                                     MessageBox.Show("Your database from a different version was imported successfully into a new one.\n\n"
                                         + versionName + " will now start.", "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                                 }
@@ -909,7 +907,6 @@ namespace Thetis
             specRX = new SpecRX();
             Display.specready = true;
 
-            //test
             //Splash.SetStatus("Initializing PortAudio");			// Set progress point
             //PA19.PA_Initialize();                               // Initialize the audio interface
 
@@ -1508,7 +1505,7 @@ namespace Thetis
         //MW0LGE_21g
         public string VersionWithoutFW
         {
-            get { return TitleBar.GetString().Replace("<FW>", ""); }
+            get { return TitleBar.GetString(false); }
         }
 
         private string getTitleWithFWVersion()
@@ -38545,9 +38542,6 @@ namespace Thetis
 
         private void picDisplay_MouseDown(object sender, MouseEventArgs e)
         {
-            if (Display.FlagHitBox(e.X, e.Y))
-                return; // #UKRAINE - handled in mouse up
-
             if (m_frmNotchPopup.Visible) return;
             if (_highlightedSpot != null)
             {
@@ -39513,12 +39507,6 @@ namespace Thetis
 
         private void picDisplay_MouseUp(object sender, MouseEventArgs e)
         {
-            if (Display.FlagHitBox(e.X, e.Y))
-            {
-                Display.FlagShown = false; // #UKRAINE
-                return;
-            }
-
             if (e.Button == MouseButtons.Left)
             {
                 switch (Display.CurrentDisplayMode)
@@ -54667,92 +54655,6 @@ namespace Thetis
             if (!IsSetupFormNull) SetupForm.SwapRedBlueChanged();
         }
         #endregion
-
-        #region Ukraine
-        ////#UKRAINE
-        //private Object _rCheck = new Object();
-        //private bool _bIsRussian = false;
-        //public bool IsRussian
-        //{
-        //    get { return _bIsRussian; }
-        //}
-        //public void CheckIfRussian(string callsign = "")
-        //{
-        //    lock (_rCheck)
-        //    {
-        //        _bIsRussian = false;
-
-        //        try
-        //        {
-        //            // passed in callsign is russian?
-        //            if (callsign != "" && Common.IsCallsignRussian(callsign))
-        //            {
-        //                _bIsRussian = true;
-        //                return;
-        //            }
-
-        //            // picked Russian region?
-        //            if (CurrentRegion == FRSRegion.Russia)
-        //            {
-        //                _bIsRussian = true;
-        //                return;
-        //            }
-
-        //            // callsign russian in custom title?
-        //            if (Common.IsCallsignRussian(CustomTitle))
-        //            {
-        //                _bIsRussian = true;
-        //                return;
-        //            }
-
-        //            // callsign russian in spot system?
-        //            if (SpotForm != null && Common.IsCallsignRussian(SpotForm.callBox.Text))
-        //            {
-        //                _bIsRussian = true;
-        //                return;
-        //            }
-
-        //            // current OS language is russian
-        //            CultureInfo ci = CultureInfo.InstalledUICulture;
-        //            if (ci != null)
-        //                if (ci.TwoLetterISOLanguageName.Trim().ToLower().StartsWith("ru") ||
-        //                    ci.ThreeLetterISOLanguageName.Trim().ToLower().StartsWith("rus"))
-        //                {
-        //                    _bIsRussian = true;
-        //                    return;
-        //                }
-
-        //            // Is Russian an installed language in OS?
-        //            foreach (InputLanguage il in InputLanguage.InstalledInputLanguages)
-        //            {
-        //                if (il.Culture.ToString().Trim().ToLower().StartsWith("ru") ||
-        //                    il.Culture.TwoLetterISOLanguageName.Trim().ToLower().StartsWith("ru") ||
-        //                    il.Culture.ThreeLetterISOLanguageName.Trim().ToLower().StartsWith("rus")
-        //                    )
-        //                {
-        //                    _bIsRussian = true;
-        //                    return;
-        //                }
-        //            }
-
-        //            // keyboard layout?
-        //            int layoutID = CultureInfo.InstalledUICulture.KeyboardLayoutId;
-        //            if (layoutID == 0x00000419 ||   //Russian
-        //                layoutID == 0x00020419 ||   //Russian - Mnemonic
-        //                layoutID == 0x00010419      //Russian (Typewriter)
-        //                )
-        //            {
-        //                _bIsRussian = true;
-        //                return;
-        //            }
-        //        }
-        //        catch
-        //        {
-        //        }
-        //    }
-        //}
-        #endregion
-
         private Color _limitSliderBarColor = Color.Red;
         public Color LimitSliderColor
         {

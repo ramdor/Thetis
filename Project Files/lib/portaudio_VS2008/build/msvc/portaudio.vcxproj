@@ -175,6 +175,8 @@
       <TargetMachine>MachineX64</TargetMachine>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>QueueForNextLogin</LinkErrorReporting>
+      <Version>
+      </Version>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>

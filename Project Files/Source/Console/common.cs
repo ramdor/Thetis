@@ -748,40 +748,6 @@ namespace Thetis
 				return System.IntPtr.Size == 8 ? true : false;
 			}
         }
-		//#Ukraine
-		public static bool IsCallsignRussian(string callsign)
-		{
-			if (callsign == "") return false;
-
-			bool bRet = false;
-			string lowerCustomTitle = callsign.ToUpper().Trim();
-
-			// filter out U5 - (^[U][5]{1,2}[A-Z]{1,3})
-			Match matchU5 = Regex.Match(lowerCustomTitle, "(^[U][5]{1,2}[A-Z]{1,3})");
-
-			if (!matchU5.Success)
-			{
-				Match match = Regex.Match(lowerCustomTitle, "(^[R][AC-DF-GJ-OPQRST-Z]{0,1}[0-9]{1,3}[A-Z]{1,3})|(^[U][A-I]{0,1}[0-9]{1,2}[A-Z]{1,3})");
-				if (match.Success)
-				{
-					string matchString = match.ToString();
-					if (!(
-						matchString.StartsWith("UA2") ||
-						matchString.StartsWith("RA2") ||
-						matchString.StartsWith("R2") ||
-						matchString.StartsWith("RK2") ||
-						matchString.StartsWith("RN2") ||
-						matchString.StartsWith("RY2")
-						)) // best attemt to ignore Kaliningrad, this is not 100%
-					{
-						bRet = true;
-					}
-				}
-			}
-
-			return bRet;
-		}
-
 		public static void DoubleBuffered(Control c, bool bEnabled)
         {
 			// MW0LGE_[2.9.0.6]

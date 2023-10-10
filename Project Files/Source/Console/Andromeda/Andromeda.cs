@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Thetis
 {
-    public partial class Console
+    public partial class Console : Form
     {
         // G8NJJ: handlers for ARIES ATU
         #region ARIES ATU functions
