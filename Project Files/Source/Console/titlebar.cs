@@ -34,10 +34,10 @@ namespace Thetis
 {
     class TitleBar
     {
-        public const string BUILD_NAME = "pre-release4";
+        public const string BUILD_NAME = "pre-release5";
         public const string BUILD_DATE = "(10/04/23)<FW>"; //MW0LGE_21g <FW> gets replaced in BasicTitle (console.cs) with firmware version
 
-        public static string GetString()
+        public static string GetString(bool bWithFirmware = true)
         {
             string sRevision = "." + Common.GetRevision(); //MW0LGE_22b
             if (sRevision == ".0") sRevision = "";
@@ -50,6 +50,8 @@ namespace Thetis
             s += " v" + version + sBits;
             if (BUILD_DATE != "") s += " " + BUILD_DATE;
             if (BUILD_NAME != "") s += " " + BUILD_NAME;
+
+            if (!bWithFirmware) s = s.Replace("<FW>", "");
 
             return s;
         }

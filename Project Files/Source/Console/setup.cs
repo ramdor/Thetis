@@ -25887,11 +25887,6 @@ namespace Thetis
                 console.ResetLevelCalibration();
         }
 
-        private void chkSupportUkraine_CheckedChanged(object sender, EventArgs e)
-        {
-            Display.FlagShown = chkSupportUkraine.Checked; //MW0LGE [2.9.0.7]
-        }
-
         private bool _bVoffSet = false;
         private bool _bSensSet = false;
         private void btnAmpDefault_Click(object sender, EventArgs e)

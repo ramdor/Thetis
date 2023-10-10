@@ -3393,8 +3393,6 @@ namespace Thetis
 
                     DrawCursorInfo(displayTargetWidth);
 
-                    ukraineFlag();
-
                     // undo the translate
                     _d2dRenderTarget.Transform = Matrix3x2.Identity;
 
@@ -9946,47 +9944,6 @@ namespace Thetis
             get { return _bUseLegacyBuffers; }
             set { _bUseLegacyBuffers = value; }
         }
-
-        #region Ukraine
-        private static bool _showFlag = false; // set to true to always show at startup
-        private static DateTime _lastFlagCheck = DateTime.MinValue;
-        public static bool FlagShown
-        {
-            get { return _showFlag; }
-            set { _showFlag = value; }
-        }
-        public static bool FlagHitBox(int x, int y)
-        {
-            return _showFlag && (x <= 175) && (y > displayTargetHeight - 100);
-        }
-        private static void ukraineFlag()
-        {
-            //#UKRAINE
-
-            //if ((DateTime.Now - _lastFlagCheck).TotalMinutes >= 120)
-            //{
-            //    _lastFlagCheck = DateTime.Now;
-
-            //    console.CheckIfRussian();
-
-            //    if (console.IsRussian)
-            //        _showFlag = true; // every two hours, replace the flag if russian
-            //}
-
-            if (_showFlag)
-            {
-                RectangleF rectDestTop = new RectangleF(0, displayTargetHeight - 100, 175, 50);
-                RectangleF rectDestBottom = new RectangleF(0, displayTargetHeight - 50, 175, 50);
-
-                Color blue = Color.FromArgb(192, 56, 91, 185);
-                Color yellow = Color.FromArgb(192, 241, 214, 36);
-                _d2dRenderTarget.FillRectangle(rectDestTop, getDXBrushForColour(blue));
-                _d2dRenderTarget.FillRectangle(rectDestBottom, getDXBrushForColour(yellow));
-                drawStringDX2D("Stand up for Ukraine", fontDX2d_font9b, getDXBrushForColour(Color.White, 192), 30, displayTargetHeight - 75 - 10);
-                drawStringDX2D("click to hide", fontDX2d_font9b, getDXBrushForColour(Color.White, 48), 54, displayTargetHeight - 55 - 10);
-            }
-        }
-        #endregion
         #endregion
     }
 }

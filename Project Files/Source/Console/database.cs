@@ -8466,7 +8466,7 @@ namespace Thetis
             CheckBandTextValid();
 
             VersionNumber = Common.GetVerNum();
-            VersionString = TitleBar.GetString();
+            VersionString = TitleBar.GetString(false);
 
             return true;
         }
