@@ -1155,12 +1155,12 @@ namespace Thetis
         {
             if (!m_bShown)
             {
+                // always clear them when showing, they will re-appear if needed
                 lblTXProfileWarning.Visible = false;
                 txtboxTXProfileChangedReport.Visible = false;
             }
 
             // shadow method to always clear the list if someone somewhere shows the form
-
             // this may not be 100%, but best effort, we only want to do this if we come from a 'hidden' state
             if (!m_bShown) clearUpdatedClickControlList();
 
@@ -1372,7 +1372,7 @@ namespace Thetis
             }
         }
         //-
-
+        private bool _savingOptions = false;
         public void SaveOptions()
         {
             // Automatically saves all control settings to the database in the tab
@@ -1383,6 +1383,7 @@ namespace Thetis
                 mergingdb = false;
                 return;
             }
+            _savingOptions = true;
 
             //MW0LGE_21a moved to dictionary to use same code as get options
             Dictionary<string, Control> controls = new Dictionary<string, Control>();
@@ -1469,6 +1470,8 @@ namespace Thetis
             DB.SaveVarsDictionary("Options", ref a, true);
             //DB.WriteCurrentDB(console.DBFileName);//MW0LGE_[2.9.0.7]
             DB.WriteDB(console.DBFileName);
+
+            _savingOptions = false;
         }
 
         private void InitTransmitTab(List<string> recoveryList = null)
@@ -1513,8 +1516,10 @@ namespace Thetis
                 _oldSettings.Clear();
             }
         }
+        private bool _gettingOptions = false;
         private void getOptions(List<string> recoveryList = null)
         {
+            _gettingOptions = true;
             //MW0LGE_21d
             //if a list of control names is provided, only those will be recovered from the database
             //mostly used when cancelling the setup form
@@ -1718,6 +1723,8 @@ namespace Thetis
 
             if (loadTXProfile(comboTXProfileName.Text)) current_profile = comboTXProfileName.Text;
             else current_profile = "";
+
+            _gettingOptions = false;
         }
 
         private string KeyToString(Keys k)
@@ -27249,7 +27256,7 @@ namespace Thetis
 
         private void tmrCheckProfile_Tick(object sender, EventArgs e)
         {
-            if (!this.Visible) return;
+            if (!this.Visible || _savingOptions || _gettingOptions) return;
 
             tmrCheckProfile.Enabled = false;
 
@@ -27335,28 +27342,28 @@ namespace Thetis
         {
             if (initializing) return;
 
-            console.SetMasterAFLinked(1, chkLinkRX0AF.Checked);
+            console.SetAFLinks(1, chkLinkRX0AF.Checked);
         }
 
         private void chkLinkRX1AF_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
 
-            console.SetMasterAFLinked(2, chkLinkRX1AF.Checked);
+            console.SetAFLinks(2, chkLinkRX1AF.Checked);
         }
 
         private void chkLinkRX2AF_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
 
-            console.SetMasterAFLinked(3, chkLinkToRX2AF.Checked);
+            console.SetAFLinks(3, chkLinkToRX2AF.Checked);
         }
 
         private void chkLinkMaster_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
 
-            console.SetMasterAFLinked(0, chkLinkMaster.Checked);
+            console.SetAFLinks(0, chkLinkMaster.Checked);
         }
 
         private void chkLegacyMeters_CheckedChanged(object sender, EventArgs e)
@@ -27375,6 +27382,7 @@ namespace Thetis
 
         private void lblTXProfileWarning_Click(object sender, EventArgs e)
         {
+            if (_savingOptions || _gettingOptions) return;
             if (e != EventArgs.Empty && txtboxTXProfileChangedReport.Visible)
             {
                 txtboxTXProfileChangedReport.Visible = false;
@@ -27518,6 +27526,14 @@ namespace Thetis
         private void chkLogVoltsAmps_CheckedChanged(object sender, EventArgs e)
         {
             console.LogVA = chkLogVoltsAmps.Checked;
+        }
+        public bool LinkAFSlidersOnlyIfCtrlHeld
+        {
+            get { return chkLinkIfCtrlHeld.Checked; }
+            set
+            {
+                chkLinkIfCtrlHeld.Checked = value;
+            }
         }
     }
 
