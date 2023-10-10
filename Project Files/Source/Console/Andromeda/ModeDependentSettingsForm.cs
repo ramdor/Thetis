@@ -89,6 +89,7 @@ namespace Thetis
             this.btnClose.Image = null;
             this.btnClose.Location = new System.Drawing.Point(140, 166);
             this.btnClose.Name = "btnClose";
+            this.btnClose.Selectable = true;
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 0;
             this.btnClose.Text = "Close";
@@ -104,7 +105,7 @@ namespace Thetis
             this.Controls.Add(this.btnClose);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ModeDependentSettingsForm";
-            this.Text = "ModeDependentSettingsForm";
+            this.Text = "ModeDependentSettingsForm (RX1)";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ModeDependentSettingsForm_FormClosing);
             this.ResumeLayout(false);

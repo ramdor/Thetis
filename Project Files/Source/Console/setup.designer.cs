@@ -1715,6 +1715,7 @@
             this.chkVAC2Enable = new System.Windows.Forms.CheckBoxTS();
             this.tpAudioOptions = new System.Windows.Forms.TabPage();
             this.groupBoxTS29 = new System.Windows.Forms.GroupBoxTS();
+            this.chkLinkIfCtrlHeld = new System.Windows.Forms.CheckBoxTS();
             this.chkLinkMaster = new System.Windows.Forms.CheckBoxTS();
             this.chkLinkRX0AF = new System.Windows.Forms.CheckBoxTS();
             this.chkLinkToRX2AF = new System.Windows.Forms.CheckBoxTS();
@@ -27818,17 +27819,30 @@
             // 
             // groupBoxTS29
             // 
+            this.groupBoxTS29.Controls.Add(this.chkLinkIfCtrlHeld);
             this.groupBoxTS29.Controls.Add(this.chkLinkMaster);
             this.groupBoxTS29.Controls.Add(this.chkLinkRX0AF);
             this.groupBoxTS29.Controls.Add(this.chkLinkToRX2AF);
             this.groupBoxTS29.Controls.Add(this.chkLinkRX1AF);
             this.groupBoxTS29.Location = new System.Drawing.Point(19, 134);
             this.groupBoxTS29.Name = "groupBoxTS29";
-            this.groupBoxTS29.Size = new System.Drawing.Size(200, 120);
+            this.groupBoxTS29.Size = new System.Drawing.Size(200, 167);
             this.groupBoxTS29.TabIndex = 6;
             this.groupBoxTS29.TabStop = false;
             this.groupBoxTS29.Text = "Linked AF Sliders";
             this.toolTip1.SetToolTip(this.groupBoxTS29, "When one moves, the others move");
+            // 
+            // chkLinkIfCtrlHeld
+            // 
+            this.chkLinkIfCtrlHeld.AutoSize = true;
+            this.chkLinkIfCtrlHeld.Image = null;
+            this.chkLinkIfCtrlHeld.Location = new System.Drawing.Point(23, 135);
+            this.chkLinkIfCtrlHeld.Name = "chkLinkIfCtrlHeld";
+            this.chkLinkIfCtrlHeld.Size = new System.Drawing.Size(130, 17);
+            this.chkLinkIfCtrlHeld.TabIndex = 7;
+            this.chkLinkIfCtrlHeld.Text = "Link only if CTRL held";
+            this.toolTip1.SetToolTip(this.chkLinkIfCtrlHeld, "Only link the selected sliders if CTRL is held");
+            this.chkLinkIfCtrlHeld.UseVisualStyleBackColor = true;
             // 
             // chkLinkMaster
             // 
@@ -60081,5 +60095,6 @@
         private GroupBoxTS groupBoxTS30;
         private ButtonTS btnOpenDBFolder;
         private CheckBoxTS chkLogVoltsAmps;
+        private CheckBoxTS chkLinkIfCtrlHeld;
     }
 }

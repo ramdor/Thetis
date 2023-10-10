@@ -12750,9 +12750,10 @@ namespace Thetis
         }
 
         private bool[] _masterAFLink = { false, false, false, false };
-        public void SetMasterAFLinked(int source, bool state)
+        public void SetAFLinks(int source, bool state)
         {
             if (source < 0 || source > 3) return;
+
             _masterAFLink[source] = state;
 
             int value = 0;
@@ -12783,6 +12784,7 @@ namespace Thetis
         private bool _settingLinked = false;
         private void setLinkedAF(int source, int value)
         {
+            if (!IsSetupFormNull && SetupForm.LinkAFSlidersOnlyIfCtrlHeld && !Common.CtrlKeyDown) return;
             if (source < 0 || source > 3) return;
 
             if (_settingLinked) return;
@@ -49067,11 +49069,10 @@ namespace Thetis
 
             updateLegacyMeterControls(true);// [2.10.1.0] MW0LGE
 
+            SelectModeDependentPanel(); //MW0LGE [2.9.0.7] moved here
             setPAProfileLabelPos(); //[2.10.1.0] MW0LGE
 
             if (bSuspendDraw) ResumeDrawing(this);
-
-            SelectModeDependentPanel(); //MW0LGE [2.9.0.7] moved here
 
             this.Text = BasicTitleBar; //MW0LGE_21a moved here after expaned is true so that title text gets rebuild correctly
         }
@@ -49090,7 +49091,7 @@ namespace Thetis
             {
                 if (showAndromedaTopControls || m_bShowTopControls)
                 {
-                    PictureBox pb = show_rx2 ? picRX2Meter : picMultiMeterDigital; // need to know which is shown
+                    PictureBox pb = show_rx1 ? picMultiMeterDigital : picRX2Meter; // need to know which is shown
                     x = pb.Left;
                     y = pb.Bottom + (m_bShowTopControls ? 0 : 4);
                 }
@@ -49732,12 +49733,11 @@ namespace Thetis
 
             iscollapsed = true;
             isexpanded = false;
-            
+
+            SelectModeDependentPanel(); //MW0LGE [2.9.0.7] moved here
             setPAProfileLabelPos(); //[2.10.1.0] MW0LGE
 
             if (bSuspendDraw) ResumeDrawing(this);
-
-            SelectModeDependentPanel(); //MW0LGE [2.9.0.7] moved here
         }
 
 
@@ -50664,12 +50664,14 @@ namespace Thetis
             {
                 ptbRX1AF.Focus();
             }
-            if (Common.CtrlKeyDown && (sender == ptbRX1AF))  //MW0LGE_21a
-            {
-                // check sender is us so we done cause endless loop when we get update from RX2 slider
-                ptbRX2AF.Value = RX0Gain;
-                ptbRX2AF_Scroll(sender, EventArgs.Empty);
-            }
+
+            //[2.10.1.0]MW0LGE replaced with new AF link
+            //if (Common.CtrlKeyDown && (sender == ptbRX1AF))  //MW0LGE_21a
+            //{
+            //    // check sender is us so we done cause endless loop when we get update from RX2 slider
+            //    ptbRX2AF.Value = RX0Gain;
+            //    ptbRX2AF_Scroll(sender, EventArgs.Empty);
+            //}
         }
 
         private void ptbRX2AF_Scroll(object sender, EventArgs e)
@@ -50682,12 +50684,14 @@ namespace Thetis
             {
                 ptbRX2AF.Focus();
             }
-            if (Common.CtrlKeyDown && (sender == ptbRX2AF))  //MW0LGE_21a
-            {
-                // check sender is us so we done cause endless loop when we get update from RX1 slider
-                ptbRX1AF.Value = RX2Gain;
-                ptbRX1AF_Scroll(sender, EventArgs.Empty);
-            }
+
+            //[2.10.1.0]MW0LGE replaced with new AF link
+            //if (Common.CtrlKeyDown && (sender == ptbRX2AF))  //MW0LGE_21a
+            //{
+            //    // check sender is us so we done cause endless loop when we get update from RX1 slider
+            //    ptbRX1AF.Value = RX2Gain;
+            //    ptbRX1AF_Scroll(sender, EventArgs.Empty);
+            //}
         }
 
         private void radRX1Show_CheckedChanged(object sender, EventArgs e)
