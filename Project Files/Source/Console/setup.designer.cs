@@ -9613,6 +9613,7 @@
             this.chkLogVoltsAmps.Size = new System.Drawing.Size(104, 30);
             this.chkLogVoltsAmps.TabIndex = 5;
             this.chkLogVoltsAmps.Text = "Log Volts/Amps \r\nto VALog.txt";
+            this.toolTip1.SetToolTip(this.chkLogVoltsAmps, "Logs data for up to 1hr in VALog.txt file which is in the same folder as the DB");
             this.chkLogVoltsAmps.UseVisualStyleBackColor = true;
             this.chkLogVoltsAmps.CheckedChanged += new System.EventHandler(this.chkLogVoltsAmps_CheckedChanged);
             // 

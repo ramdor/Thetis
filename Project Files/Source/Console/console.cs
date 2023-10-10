@@ -10530,7 +10530,7 @@ namespace Thetis
             for (int i = 0; i < 10; i++)                    // average 10 spectra to reduce noise
             {
                 fixed (double* ptr = &buf[0, 0])
-                    SpecHPSDRDLL.SnapSpectrum(0, ss, 0, ptr, -1, ref flag);          // get a spectrum
+                    SpecHPSDRDLL.SnapSpectrum(0, ss, 0, ptr);          // get a spectrum
                 for (int j = 0; j < fft_size; j++)
                     sum[j] += buf[j, 0] * buf[j, 0] + buf[j, 1] * buf[j, 1];    // compute magnitude and add to "average"
                 Thread.Sleep(50);                                               // wait a little for noise to change
@@ -10716,7 +10716,7 @@ namespace Thetis
             for (int i = 0; i < iterations; i++)
             {
                 fixed (double* ptr = &buf[0, 0])
-                    SpecHPSDRDLL.SnapSpectrum(0, ss, 0, ptr, -1, ref flag);                   // get a spectrum
+                    SpecHPSDRDLL.SnapSpectrum(0, ss, 0, ptr);                   // get a spectrum
 
                 for (int j = fft_size / 2 - offset; j <= fft_size / 2 + offset; j++)
                     // sum[j] += buf[j, 0] * buf[j, 0] + buf[j, 1] * buf[j, 1];    // compute magnitude^2 for each bin and add to previous for averaging
@@ -10925,7 +10925,7 @@ namespace Thetis
             for (int i = 0; i < iterations; i++)            // average 10 spectra to reduce noise
             {
                 fixed (double* ptr = &buf[0, 0])
-                    SpecHPSDRDLL.SnapSpectrum(0, ss, 0, ptr, -1, ref flag);                   // get a spectrum
+                    SpecHPSDRDLL.SnapSpectrum(0, ss, 0, ptr);                   // get a spectrum
                 for (int j = fft_size / 2 - offset; j <= fft_size / 2 + offset; j++)
                     sum[j] += buf[j, 0] * buf[j, 0] + buf[j, 1] * buf[j, 1];    // compute magnitude^2 and add to sum
                 Thread.Sleep(20);                                               // wait a little for noise to change
@@ -26638,7 +26638,7 @@ namespace Thetis
         //                unsafe
         //                {
         //                    fixed (double* ptr = &(spectrum_data[0, 0]))
-        //                        SpecHPSDRDLL.SnapSpectrum(0, centreSubSpan, 0, ptr, 1000/nFps, ref flag);
+        //                        SpecHPSDRDLL.SnapSpectrum(0, centreSubSpan, 0, ptr);
         //                }
         //                _spectrum_mutex.ReleaseMutex();
 
@@ -43320,13 +43320,10 @@ namespace Thetis
                     return -1; // bail out - not buffer 
                 }
 
-                int flag = 0;
                 _spectrum_mutex.WaitOne();
                 fixed (double* ptr = &(spectrum_data[0, 0]))
-                    SpecHPSDRDLL.SnapSpectrum(0, ss, 0, ptr, 5000, ref flag);        //depends upon receiver configuration, want center sub-span from disp 0, I think
+                    SpecHPSDRDLL.SnapSpectrum(0, ss, 0, ptr);        //depends upon receiver configuration, want center sub-span from disp 0, I think
                 _spectrum_mutex.ReleaseMutex();
-
-                if (flag == 0) return -1;
 
                 double mag_sqr;
 
