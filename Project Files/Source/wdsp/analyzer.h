@@ -183,9 +183,6 @@ extern __declspec( dllexport )
 void SnapSpectrum(	int disp,
 					int ss,
 					int LO,
-					double *snap_buff,
-					int wait_ms,
-					int *flag
-					);
+					double *snap_buff);
 
 #endif
