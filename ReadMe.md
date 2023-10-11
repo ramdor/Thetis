@@ -1,4 +1,6 @@
-# Latest Release v2.10.0 June 19, 2023
+# Latest Release v2.10.2 October, 11th 2023
+
+# 2.10.2 (2023-11-10)
 
 # 2.10.0 (2023-19-06)
 
