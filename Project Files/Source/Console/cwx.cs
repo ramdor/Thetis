@@ -1581,6 +1581,8 @@ namespace Thetis
                 return;
             }
 
+            if (!checkPTT()) return;
+
             quit = true;
             kquit = true;
             while (quit) Thread.Sleep(10);
@@ -1590,7 +1592,22 @@ namespace Thetis
             setkey(true);
             keying = true;
         }
-
+        private bool checkPTT(bool bShowWarning = true)
+        {
+            //[2.10.1.0] MW0LGE fixes #205
+            if (console.DisablePTT)
+            {
+                if (bShowWarning)
+                {
+                    MessageBox.Show("Console has PTT disabled.  Please enable it and try again.",
+                        "PTT disabled",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+                return false;
+            }
+            return true;
+        }
         private void CWX_Load(object sender, System.EventArgs e)
         {
 
@@ -1996,6 +2013,7 @@ namespace Thetis
         private void process_element()		// called at the element rate
         {
             byte data;
+            if (!checkPTT(false)) return;
 
             if (quit)		// shut 'er all down
             {

@@ -8270,6 +8270,7 @@ namespace Thetis
                         break;
                 }
 
+                console.SetMillisecondTXRXdelayTime(1);//[2.10.1.0]MW0LGE
             }
 
             //if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
@@ -8349,6 +8350,8 @@ namespace Thetis
                 double bin_width = (double)new_rate / (double)console.specRX.GetSpecRX(1).FFTSize;
                 lblRX2DisplayBinWidth.Text = bin_width.ToString("N3");
             }
+
+            console.SetMillisecondTXRXdelayTime(2);//[2.10.1.0]MW0LGE
         }
 
         private void comboAudioSampleRate2_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -17741,6 +17744,8 @@ namespace Thetis
             Display.FastAttackNoiseFloorRX1 = true;
 
             if (console._spectrum_mutex != null) console._spectrum_mutex.ReleaseMutex();
+
+            console.SetMillisecondTXRXdelayTime(1);//[2.10.1.0]MW0LGE
         }
 
         private void tbRX2DisplayFFTSize_Scroll(object sender, EventArgs e)
@@ -17756,6 +17761,8 @@ namespace Thetis
             Display.FastAttackNoiseFloorRX2 = true;
 
             if (console._spectrum_mutex != null) console._spectrum_mutex.ReleaseMutex();
+
+            console.SetMillisecondTXRXdelayTime(2);//[2.10.1.0]MW0LGE
         }
 
         private void comboDispWinType_SelectedIndexChanged(object sender, EventArgs e)

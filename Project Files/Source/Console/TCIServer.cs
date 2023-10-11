@@ -1235,7 +1235,7 @@ namespace Thetis
 							console.ThreadSafeTCIAccessor.VFOATX = true;
 
 						if (console.ThreadSafeTCIAccessor.MOX != bMox)
-							console.ThreadSafeTCIAccessor.MOX = bMox;
+							console.ThreadSafeTCIAccessor.TCIPTT = bMox;
 					}
                     else if (rx == 1 && console.ThreadSafeTCIAccessor.RX2Enabled)
                     {
@@ -1243,7 +1243,7 @@ namespace Thetis
 							console.ThreadSafeTCIAccessor.VFOBTX = true;
 
 						if (console.ThreadSafeTCIAccessor.MOX != bMox)
-							console.ThreadSafeTCIAccessor.MOX = bMox;
+							console.ThreadSafeTCIAccessor.TCIPTT = bMox;
 					}
 				}
 			}

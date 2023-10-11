@@ -62,6 +62,8 @@ namespace Thetis
     using RectangleF = SharpDX.RectangleF;
     using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;
     using System.Security.Permissions;
+    using System.Diagnostics.Eventing.Reader;
+    using System.Threading;
 
     class Display
     {
@@ -85,7 +87,7 @@ namespace Thetis
         public static float[] current_display_data_bottom;
 
         public static float[] current_display_data_copy;
-        public static float[] current_display_data_copy_bottom;
+        public static float[] current_display_data_bottom_copy;
 
         //waterfall
         public static float[] new_waterfall_data;
@@ -96,7 +98,7 @@ namespace Thetis
         private static float[] waterfall_data;
 
         public static float[] current_waterfall_data_copy;
-        public static float[] current_waterfall_data_copy_bottom;
+        public static float[] current_waterfall_data_bottom_copy;
 
         private static SharpDX.Direct2D1.Bitmap _waterfall_bmp_dx2d = null;					// MW0LGE
         private static SharpDX.Direct2D1.Bitmap _waterfall_bmp2_dx2d = null;
@@ -621,20 +623,22 @@ namespace Thetis
 
         private static void OnMoxChangeHandler(int rx, bool oldMox, bool newMox)
         {
-            if (oldMox != newMox) resetPeaksAndNoise(); // belts braces
+            //if (oldMox != newMox) resetPeaksAndNoise(); // belts braces // removed, done in display.mox
         }
 
         private static void resetPeaksAndNoise()
         {
-            FastAttackNoiseFloorRX1 = true;
             ResetBlobMaximums(1, true);
             ResetSpectrumPeaks(1);
+            _RX1waterfallPreviousMinValue = -200f;
+            FastAttackNoiseFloorRX1 = true;
 
             if (RX2Enabled)
             {
-                FastAttackNoiseFloorRX2 = true;
                 ResetBlobMaximums(2, true);
                 ResetSpectrumPeaks(2);
+                _RX2waterfallPreviousMinValue = -200f;
+                FastAttackNoiseFloorRX2 = true;
             }
         }
         private static void OnAttenuatorDataChanged(int rx, int oldAtt, int newAtt)
@@ -1187,11 +1191,13 @@ namespace Thetis
             get { return mox; }
             set
             {
-                if (value != mox) resetPeaksAndNoise();
+                if (value != mox)
+                {
+                    resetPeaksAndNoise();
+                }
                 mox = value;
             }
         }
-
         private static bool m_bShowRX1NoiseFloor = false;
         public static bool ShowRX1NoiseFloor
         {
@@ -1338,8 +1344,7 @@ namespace Thetis
         {
             get { return waterfall_data_ready; }
             set { waterfall_data_ready = value; }
-        }
-
+        }        
         private static int spectrum_grid_max = -40;
         public static int SpectrumGridMax
         {
@@ -2311,10 +2316,11 @@ namespace Thetis
                     new_waterfall_data[i] = -200.0f;
                     current_waterfall_data[i] = -200.0f;
                     current_display_data_copy[i] = -200.0f;
-                    current_display_data_copy_bottom[i] = -200.0f;
+                    current_display_data_bottom_copy[i] = -200.0f;
                 });
+                _RX1waterfallPreviousMinValue = -200f;
 
-                FastAttackNoiseFloorRX1 = true;
+                FastAttackNoiseFloorRX1 = true;                
             }
             else
             {
@@ -2325,8 +2331,9 @@ namespace Thetis
                     new_waterfall_data_bottom[i] = -200.0f;
                     current_waterfall_data_bottom[i] = -200.0f;
                     current_waterfall_data_copy[i] = -200.0f;
-                    current_waterfall_data_copy_bottom[i] = -200f;
+                    current_waterfall_data_bottom_copy[i] = -200f;
                 });
+                _RX2waterfallPreviousMinValue = -200f;
 
                 FastAttackNoiseFloorRX2 = true;
             }
@@ -2363,8 +2370,8 @@ namespace Thetis
                 if (current_display_data_copy != null) m_objFloatPool.Return(current_display_data_copy);
                 if (current_waterfall_data_copy != null) m_objFloatPool.Return(current_waterfall_data_copy);
 
-                if (current_display_data_copy_bottom != null) m_objFloatPool.Return(current_display_data_copy_bottom);
-                if (current_waterfall_data_copy_bottom != null) m_objFloatPool.Return(current_waterfall_data_copy_bottom);
+                if (current_display_data_bottom_copy != null) m_objFloatPool.Return(current_display_data_bottom_copy);
+                if (current_waterfall_data_bottom_copy != null) m_objFloatPool.Return(current_waterfall_data_bottom_copy);
 
                 // cant be W width, as more info can be stored in these, for example scope data
                 new_display_data = m_objFloatPool.Rent(BUFFER_SIZE);
@@ -2374,7 +2381,7 @@ namespace Thetis
                 current_display_data_bottom = m_objFloatPool.Rent(BUFFER_SIZE);
 
                 current_display_data_copy = m_objFloatPool.Rent(BUFFER_SIZE);
-                current_display_data_copy_bottom = m_objFloatPool.Rent(BUFFER_SIZE);
+                current_display_data_bottom_copy = m_objFloatPool.Rent(BUFFER_SIZE);
 
                 new_waterfall_data = m_objFloatPool.Rent(W);
                 current_waterfall_data = m_objFloatPool.Rent(W);
@@ -2383,29 +2390,10 @@ namespace Thetis
                 current_waterfall_data_bottom = m_objFloatPool.Rent(W);
 
                 current_waterfall_data_copy = m_objFloatPool.Rent(W);
-                current_waterfall_data_copy_bottom = m_objFloatPool.Rent(W);
+                current_waterfall_data_bottom_copy = m_objFloatPool.Rent(W);
 
                 m_rx1_spectrumPeaks = new Maximums[W];
                 m_rx2_spectrumPeaks = new Maximums[W];
-
-                //ResetBlobMaximums(1, true);
-                //ResetBlobMaximums(2, true);
-                //ResetSpectrumPeaks(1);
-                //ResetSpectrumPeaks(2);
-                //FastAttackNoiseFloorRX1 = true;
-                //FastAttackNoiseFloorRX2 = true;
-
-                //Parallel.For(0, W, (i) => //for (int i = 0; i < displayTargetWidth; i++)
-                //{
-                //    new_display_data[i] = -200.0f;
-                //    current_display_data[i] = -200.0f;
-                //    new_display_data_bottom[i] = -200.0f;
-                //    current_display_data_bottom[i] = -200.0f;
-                //    new_waterfall_data[i] = -200.0f;
-                //    current_waterfall_data[i] = -200.0f;
-                //    new_waterfall_data_bottom[i] = -200.0f;
-                //    current_waterfall_data_bottom[i] = -200.0f;
-                //});
 
                 clearBuffers(W, 1);
                 clearBuffers(W, 2);
@@ -2558,8 +2546,8 @@ namespace Thetis
             set { rx2_waterfall_update_period = value; }
         }
 
-        private static float RX1waterfallPreviousMinValue = 0.0f;
-        private static float RX2waterfallPreviousMinValue = 0.0f;
+        private static float _RX1waterfallPreviousMinValue = -200.0f;
+        private static float _RX2waterfallPreviousMinValue = -200.0f;
         private static void ResetWaterfallBmp(/*int scale*/)
         {
             int H = displayTargetHeight;
@@ -3124,6 +3112,7 @@ namespace Thetis
                 _d2dRenderTarget.TextAntialiasMode = TextAntialiasMode.Default;
             }
         }
+        //private static bool _clearBuffers = false;
         public static void RenderDX2D()
         {
             try
@@ -3231,6 +3220,23 @@ namespace Thetis
                         }
                     }
                     //
+
+                    ////
+                    //if(_clearBuffers)
+                    //{
+                    //    if (_clear_rx1_buffers)
+                    //    {
+                    //        clearBuffers(displayTargetWidth, 1);
+                    //        _clear_rx1_buffers = false;
+                    //    }
+                    //    if (_clear_rx2_buffers)
+                    //    {
+                    //        clearBuffers(displayTargetWidth, 2);
+                    //        _clear_rx2_buffers = false;
+                    //    }
+                    //    _clearBuffers = false;
+                    //}
+                    ////
 
                     if (!split_display)
                     {
@@ -3397,6 +3403,8 @@ namespace Thetis
                     _d2dRenderTarget.Transform = Matrix3x2.Identity;
 
                     _d2dRenderTarget.EndDraw();
+
+                    //_clearBuffers = _clear_rx1_buffers | _clear_rx2_buffers; //next time around
 
                     // render
                     // note: the only way to have Present non block when using vsync number of blanks 0 , is to use DoNotWait
@@ -4119,6 +4127,7 @@ namespace Thetis
 
                     data_ready = false;
                 }
+
                 data = current_display_data;
                 dataCopy = current_display_data_copy;
             }
@@ -4161,13 +4170,14 @@ namespace Thetis
 
                     // make copy of the data so visual notch does not change the average noise floor
                     fixed (void* rptr = &current_display_data_bottom[0])
-                    fixed (void* wptr = &current_display_data_copy_bottom[0])
+                    fixed (void* wptr = &current_display_data_bottom_copy[0])
                         Win32.memcpy(wptr, rptr, /*BUFFER_SIZE*/nDecimatedWidth * sizeof(float));
 
                     data_ready_bottom = false;
                 }
+
                 data = current_display_data_bottom;
-                dataCopy = current_display_data_copy_bottom;
+                dataCopy = current_display_data_bottom_copy;
             }
 
             dBmSpectralPeakFall /= (float)m_nFps;
@@ -4774,7 +4784,7 @@ namespace Thetis
             bool displayduplex = isRxDuplex(rx);
             float low_threshold = 0.0f;
             float high_threshold = 0.0f;
-            float waterfall_minimum = 0.0f;
+            float waterfall_minimum = 200f;
             ColorSheme cSheme = ColorSheme.enhanced;
             Color low_color = Color.Black;
             Color mid_color = Color.Red;
@@ -4801,7 +4811,7 @@ namespace Thetis
                         }
                         else
                         {
-                            low_threshold = RX2waterfallPreviousMinValue;
+                            low_threshold = _RX2waterfallPreviousMinValue;
                         }
                         low_threshold -= m_fWaterfallAGCOffsetRX2;
                     }
@@ -4821,7 +4831,7 @@ namespace Thetis
                 }
                 else
                 {
-                    low_threshold = RX1waterfallPreviousMinValue;
+                    low_threshold = _RX1waterfallPreviousMinValue;
                     high_threshold = waterfall_high_threshold;
                     if (rx1_waterfall_agc && !m_bRX1_spectrum_thresholds)
                     {
@@ -4831,7 +4841,7 @@ namespace Thetis
                         }
                         else
                         {
-                            low_threshold = RX1waterfallPreviousMinValue;
+                            low_threshold = _RX1waterfallPreviousMinValue;
                         }
                         low_threshold -= m_fWaterfallAGCOffsetRX1;
                     }
@@ -4845,6 +4855,8 @@ namespace Thetis
 
             if (console.PowerOn)
             {
+                low_threshold = low_threshold == -200f ? 0 : low_threshold;
+
                 if (rx == 1 && waterfall_data_ready)
                 {
                     bDoVisualNotch = true;
@@ -4885,7 +4897,7 @@ namespace Thetis
 
                     // make copy of the data so visual notch does not change the average noise floor
                     fixed (void* rptr = &current_waterfall_data_bottom[0])
-                    fixed (void* wptr = &current_waterfall_data_copy_bottom[0])
+                    fixed (void* wptr = &current_waterfall_data_bottom_copy[0])
                         Win32.memcpy(wptr, rptr, /*BUFFER_SIZE*/nDecimatedWidth * sizeof(float));
 
                     waterfall_data_ready_bottom = false;
@@ -4925,7 +4937,7 @@ namespace Thetis
                     else // rx2
                     {
                         data = current_waterfall_data_bottom;
-                        dataCopy = current_waterfall_data_copy_bottom;
+                        dataCopy = current_waterfall_data_bottom_copy;
                     }
 
                     float max;
@@ -4968,7 +4980,7 @@ namespace Thetis
                         // noise floor
                         if (!local_mox && (max_copy < currentAverage))
                         {
-                            if(useOldMethod)
+                            if (useOldMethod)
                                 averageSum += max_copy;
                             else
                                 averageSum += (float)Math.Pow(10f, max_copy / 10f);
@@ -5096,7 +5108,7 @@ namespace Thetis
                         case (ColorSheme.enhanced):
                             {
                                 // draw new data
-                                for (int i = 0; i < nDecimatedWidth; i++)	// for each pixel in the new line
+                                for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
                                 {
                                     if (waterfall_data[i] <= low_threshold)
                                     {
@@ -5171,7 +5183,7 @@ namespace Thetis
                                         waterfall_minimum = waterfall_data[i];
 
                                     // set pixel color
-                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)B;	// set color in memory
+                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)B;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
                                     row[(i * m_nDecimation) * pixel_size + 2] = (byte)R;
                                     row[(i * m_nDecimation) * pixel_size + 3] = nbBitmapAlpaha;
@@ -5182,7 +5194,7 @@ namespace Thetis
                         case (ColorSheme.SPECTRAN):
                             {
                                 // draw new data
-                                for (int i = 0; i < nDecimatedWidth; i++)	// for each pixel in the new line
+                                for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
                                 {
                                     if (waterfall_data[i] <= low_threshold)
                                     {
@@ -5253,7 +5265,7 @@ namespace Thetis
                                         waterfall_minimum = waterfall_data[i];
 
                                     // set pixel color
-                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)B;	// set color in memory
+                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)B;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
                                     row[(i * m_nDecimation) * pixel_size + 2] = (byte)R;
                                     row[(i * m_nDecimation) * pixel_size + 3] = nbBitmapAlpaha;
@@ -5264,7 +5276,7 @@ namespace Thetis
                         case (ColorSheme.BLACKWHITE):
                             {
                                 // draw new data
-                                for (int i = 0; i < nDecimatedWidth; i++)	// for each pixel in the new line
+                                for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
                                 {
                                     if (waterfall_data[i] <= low_threshold)
                                     {
@@ -5292,7 +5304,7 @@ namespace Thetis
                                         waterfall_minimum = waterfall_data[i];
 
                                     // set pixel color
-                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)B;	// set color in memory
+                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)B;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
                                     row[(i * m_nDecimation) * pixel_size + 2] = (byte)R;
                                     row[(i * m_nDecimation) * pixel_size + 3] = nbBitmapAlpaha;
@@ -5302,7 +5314,7 @@ namespace Thetis
 
                         case (ColorSheme.LinLog):
                             {
-                                for (int i = 0; i < nDecimatedWidth; i++)	// for each pixel in the new line
+                                for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
                                 {
                                     if (waterfall_data[i] <= low_threshold)
                                     {
@@ -5502,7 +5514,7 @@ namespace Thetis
 
                                     // set pixel color changed by w3sz
 
-                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;	// set color in memory
+                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
                                     row[(i * m_nDecimation) * pixel_size + 2] = (byte)B;
                                     row[(i * m_nDecimation) * pixel_size + 3] = nbBitmapAlpaha;
@@ -5514,7 +5526,7 @@ namespace Thetis
 
                         case (ColorSheme.LinRad):
                             {
-                                for (int i = 0; i < nDecimatedWidth; i++)	// for each pixel in the new line
+                                for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
                                 {
                                     if (waterfall_data[i] <= low_threshold)
                                     {
@@ -5706,7 +5718,7 @@ namespace Thetis
                                     if (waterfall_minimum > waterfall_data[i])
                                         waterfall_minimum = waterfall_data[i];
 
-                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;	// set color in memory
+                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
                                     row[(i * m_nDecimation) * pixel_size + 2] = (byte)B;
                                     row[(i * m_nDecimation) * pixel_size + 3] = nbBitmapAlpaha;
@@ -5718,7 +5730,7 @@ namespace Thetis
 
                         case (ColorSheme.LinAuto):
                             {
-                                for (int i = 0; i < nDecimatedWidth; i++)	// for each pixel in the new line
+                                for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
                                 {
                                     display_min_w3sz = min_y_w3sz - 5; //for histogram equilization
                                     display_max_w3sz = max_y; //for histogram equalization
@@ -5911,7 +5923,7 @@ namespace Thetis
                                     }
 
                                     // set pixel color changed by w3sz
-                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;	// set color in memory
+                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
                                     row[(i * m_nDecimation) * pixel_size + 2] = (byte)B;
                                     row[(i * m_nDecimation) * pixel_size + 3] = nbBitmapAlpaha;
@@ -5947,10 +5959,23 @@ namespace Thetis
                     Utilities.Dispose(ref topPixels);
                     topPixels = null;
 
-                    if (rx == 1)
-                        RX1waterfallPreviousMinValue = (((RX1waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10) + 1; //wfagc
-                    else
-                        RX2waterfallPreviousMinValue = ((RX2waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10 + 1; //wfagc
+                    if (!local_mox)
+                    {
+                        if (rx == 1)
+                        {
+                            if (_RX1waterfallPreviousMinValue == -200f)
+                                _RX1waterfallPreviousMinValue = waterfall_minimum;
+                            else
+                                _RX1waterfallPreviousMinValue = (((_RX1waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10) + 1; //wfagc
+                        }
+                        else
+                        {
+                            if (_RX2waterfallPreviousMinValue == -200f)
+                                _RX2waterfallPreviousMinValue = waterfall_minimum;
+                            else
+                                _RX2waterfallPreviousMinValue = ((_RX2waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10 + 1; //wfagc
+                        }
+                    }
                 }
 
                 if (rx == 1)
