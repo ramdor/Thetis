@@ -7738,7 +7738,7 @@ namespace Thetis
                                 console.BlockSize1 = beacon66;          // get blocksize (must be 2048 during wwv bcd read)
 
                             }
-                            console.UpdateDisplay();
+                            //console.UpdateDisplay();
 
                             beacon10 = false;
                         }
@@ -7786,7 +7786,7 @@ namespace Thetis
 
                             console.VFOAFreq = (double)Beacon_Freq[beacon11 - 1] / 1e6; // shift 0hz down 600 for cw mode and convert to MHZ
 
-                            console.UpdateDisplay();
+                            //console.UpdateDisplay();
 
                             Debug.WriteLine(">>>freq:beacon11, BX_Index[beacon11 - 1] , beacon14: " + beacon11+" , "+ BX_Index[beacon11 - 1] + " , " + beacon14);
 
@@ -7953,7 +7953,7 @@ namespace Thetis
 
                             console.VFOAFreq = (double)Beacon_Freq[beacon5 - 1] / 1e6; //  convert to MHZ
 
-                            console.UpdateDisplay();
+                            //console.UpdateDisplay();
 
                             beacon6 = 0; // reset noise pulse ignore
                             stopWatch1.Stop();
@@ -8112,7 +8112,7 @@ namespace Thetis
 
                 }
 
-                console.UpdateDisplay();
+                //console.UpdateDisplay();
             }
 
         } //  private void BeaconSlot()
@@ -8540,7 +8540,7 @@ namespace Thetis
 
 
           
-            console.UpdateDisplay();
+            //console.UpdateDisplay();
 
             int BCDSignal= 0;              // measured BCD data stream dBm signal
             int CarrierSignal = 0;         // measured Carrier dBm signal
@@ -9342,7 +9342,7 @@ namespace Thetis
 
             //  console.CATPreamp = beacon55;
 
-            console.UpdateDisplay();
+            //console.UpdateDisplay();
 
             WWVNewTime.Stop();
 

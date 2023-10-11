@@ -2245,6 +2245,18 @@ namespace Thetis
         }
 
         //TCI
+        private bool _tci_ptt = false;
+        public bool TCIPTT
+        {
+            get { return _tci_ptt; }
+            set 
+            { 
+                _tci_ptt = value && !disable_ptt; // only use when we allow ptt control
+                                                  // Prevents the issue when ptt control is off,
+                                                  // a tcippt request comes in and then sits there
+                                                  // until sometime later ptt control is turned on
+            }
+        }
         private int m_nTCIPort = 50001;
         public int TCIport
         {
@@ -22960,24 +22972,24 @@ namespace Thetis
 
         #region Display Routines
 
-        public void UpdateDisplay()
-        {
-            //switch (current_display_engine)
-            //{
-            //    //MW0LGE_21g gdi+ //case DisplayEngine.GDI_PLUS:
-            //    //    specRX.GetSpecRX(0).Pixels = picDisplay.Width;
-            //    //    specRX.GetSpecRX(1).Pixels = picDisplay.Width;
-            //    //    specRX.GetSpecRX(cmaster.inid(1, 0)).Pixels = picDisplay.Width;
+        //public void UpdateDisplay()
+        //{
+        //    //switch (current_display_engine)
+        //    //{
+        //    //    //MW0LGE_21g gdi+ //case DisplayEngine.GDI_PLUS:
+        //    //    //    specRX.GetSpecRX(0).Pixels = picDisplay.Width;
+        //    //    //    specRX.GetSpecRX(1).Pixels = picDisplay.Width;
+        //    //    //    specRX.GetSpecRX(cmaster.inid(1, 0)).Pixels = picDisplay.Width;
 
-            //    //    picDisplay.Invalidate();
-            //    //    break;
-            //    /*case DisplayEngine.DIRECT_X:
-            //        Display.RenderDirectX();
-            //        break;
-            //        */
-            //}
-        }
-        //
+        //    //    //    picDisplay.Invalidate();
+        //    //    //    break;
+        //    //    /*case DisplayEngine.DIRECT_X:
+        //    //        Display.RenderDirectX();
+        //    //        break;
+        //    //        */
+        //    //}
+        //}
+        ////
         private static bool isBitSet(int n, int pos)
         {
             return (n & (1 << pos)) != 0;
@@ -26672,12 +26684,11 @@ namespace Thetis
             try
             {
                 HiPerfTimer objStopWatch = new HiPerfTimer();
+                bool bPreviousMox = Display.MOX;
                 double fFractionOfMs = 0;
                 double fThreadSleepLate = 0;
-                //uint thread = 0;
-                //			display_running = true;
 
-                while (m_bDisplayLoopRunning)//true) //(chkPower.Checked)
+                while (m_bDisplayLoopRunning)
                 {
                     if (m_bEnableDisplayDebug)
                     {
@@ -26752,22 +26763,18 @@ namespace Thetis
                     bool bWaterfallDataReady = false;
                     bool bN1mm = false;
 
-                    bool bLocalMox = Display.MOX;//mox;  //MW0LGE_21k7 use the state from display
-
+                    bool bLocalMox = Display.MOX;
                     bool bGetPixelIssue = false;
-
                     //MW0LGE_21g
-                    if (mox)
+                    if (bLocalMox)
                     {
                         if (chkVFOATX.Checked || !chkRX2.Checked) top_thread = 1;
                         else if (chkVFOBTX.Checked && chkRX2.Checked) bottom_thread = 1;
                     }
-                    //
 
                     if ((!Display.DataReady || !Display.WaterfallDataReady) ||
                         (chkSplitDisplay.Checked && (!Display.DataReadyBottom || !Display.WaterfallDataReadyBottom)))
                     {
-
                         if (calibration_running)
                         {
                             calibration_mutex.WaitOne();
@@ -27007,9 +27014,9 @@ namespace Thetis
                             Display.WaterfallDataReadyBottom = bWaterfallDataReady;
                             if (bN1mm && N1MM.IsStarted)
                             {
-                                if(bDataReady)
+                                if (bDataReady)
                                     N1MM.CopyData(2, Display.new_display_data_bottom);
-                                else if(bWaterfallDataReady)
+                                else if (bWaterfallDataReady)
                                     N1MM.CopyData(2, Display.new_waterfall_data_bottom);
                             }
 
@@ -27029,8 +27036,7 @@ namespace Thetis
                     if (!pause_DisplayThread) Display.RenderDX2D();
 
                     //MW0LGE consider how long all the above took (reset at start of loop), and remove any inaccuarcy from Thread.Sleep below
-                    double dly = display_delay - objStopWatch.ElapsedMsec - fThreadSleepLate;
-
+                    double dly = display_delay - objStopWatch.ElapsedMsec - fThreadSleepLate;                   
                     if (dly < 0)
                     {
                         if (dly <= -1) Display.FrameRateIssue = true;
@@ -28202,6 +28208,16 @@ namespace Thetis
 
                     if (!mox)
                     {
+                        if (_tci_ptt)
+                        {
+                            current_ptt_mode = PTTMode.TCI;
+                            chkMOX.Checked = true;
+                            if (!mox)                                     
+                            {
+                                chkPower.Checked = false;
+                                return;
+                            }
+                        }
                         if (cat_ptt_local)
                         {
                             current_ptt_mode = PTTMode.CAT;
@@ -28264,6 +28280,12 @@ namespace Thetis
                     {
                         switch (current_ptt_mode)
                         {
+                            case PTTMode.TCI:
+                                if (!_tci_ptt)
+                                {
+                                    chkMOX.Checked = false;
+                                }
+                                break;
                             case PTTMode.CAT:
                                 if (!cat_ptt_local)
                                 {
@@ -33024,8 +33046,12 @@ namespace Thetis
 
             bool tx = chkMOX.Checked;
 
-            if (!tx && CATPTT) CATPTT = false; //MW0LGE [2.9.0.7] we need to abort the CATPTT otherwise
-                                               // it will try to PTT again after we stop mox
+            //[2.10.1.0]MW0LGE changed
+            if (!tx)
+            {
+                if(CATPTT) CATPTT = false;
+                if(TCIPTT) TCIPTT = false;
+            }
 
             if (tx) mox = tx;
             double freq = 0.0;
@@ -38235,22 +38261,24 @@ namespace Thetis
                         case DSPMode.AM:
                         case DSPMode.SAM:
                         case DSPMode.FM:
-                            if (!bRx2 && chkTUN.Checked && !display_duplex) rf_freq -= cw_pitch * 1e-6;
+                            //[2.10.1.0]MW0LGE all these tun shifts removed now because of changes
+                            //to the pixeltohz etc
+                            //if (!bRx2 && chkTUN.Checked && !display_duplex) rf_freq -= cw_pitch * 1e-6;
                             break;
                         case DSPMode.USB:
                         case DSPMode.DIGU:
                         case DSPMode.DSB:
-                            if (!bRx2 && chkTUN.Checked && !display_duplex)
-                            {
-                                if (bOn60mChan && current_region == FRSRegion.US)
-                                    rf_freq -= (ModeFreqOffset(localDSPMode) + cw_pitch * 1e-6);
-                                else
-                                    rf_freq -= cw_pitch * 1e-6;
-                            }
+                            //if (!bRx2 && chkTUN.Checked && !display_duplex)
+                            //{
+                            //    if (bOn60mChan && current_region == FRSRegion.US)
+                            //        rf_freq -= (ModeFreqOffset(localDSPMode) + cw_pitch * 1e-6);
+                            //    else
+                            //        rf_freq -= cw_pitch * 1e-6;
+                            //}
                             break;
                         case DSPMode.LSB:
                         case DSPMode.DIGL:
-                            if (!bRx2 && chkTUN.Checked && !display_duplex) rf_freq += cw_pitch * 1e-6;
+                            //if (!bRx2 && chkTUN.Checked && !display_duplex) rf_freq += cw_pitch * 1e-6;
                             break;
                     }
 
@@ -56059,6 +56087,51 @@ namespace Thetis
         {
             get { return _spacebar_vfobtx; }
             set { _spacebar_vfobtx = value; }
+        }
+
+        private float _txRx1MSsDelayTime = 0f;
+        private float _txRx2MSsDelayTime = 0f;
+        public void SetMillisecondTXRXdelayTime(int rx)
+        {
+            //https://community.apache-labs.com/viewtopic.php?f=9&t=4382&p=22287
+            //https://github.com/ramdor/Thetis/issues/204
+            //issue #204
+            int fft_size;
+            int sample_rate;
+
+            if (rx == 2)
+            {
+                fft_size = specRX.GetSpecRX(1).FFTSize;
+                sample_rate = specRX.GetSpecRX(1).SampleRate;
+            }
+            else
+            {
+                fft_size = specRX.GetSpecRX(0).FFTSize;
+                sample_rate = specRX.GetSpecRX(0).SampleRate;
+            }
+
+            float bin_width = sample_rate / (float)fft_size;
+            float length = (float)Math.Round(sample_rate / bin_width);
+            int power2length = findNextPowerOf2((int)length);
+
+            float milliseconds = (power2length / (float)sample_rate) * 1000f;
+
+            if (rx == 1)
+                _txRx1MSsDelayTime = milliseconds;
+            else
+                _txRx2MSsDelayTime = milliseconds;
+
+            Debug.Print($"fft={fft_size}\t sample_rate={sample_rate}\tbin_width={bin_width}\tpower2length={power2length}\tmilliseconds={milliseconds}");
+        }
+        private int findNextPowerOf2(int n)
+        {
+            n--;
+            n |= n >> 1;
+            n |= n >> 2;
+            n |= n >> 4;
+            n |= n >> 8;
+            n |= n >> 16;
+            return ++n;
         }
     }
 
