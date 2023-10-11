@@ -1,4 +1,5 @@
 # Latest Release v2.10.2 October, 11th 2023
+https://github.com/ramdor/Thetis/releases/tag/v2.10.2
 
 # 2.10.2 (2023-11-10)
 
