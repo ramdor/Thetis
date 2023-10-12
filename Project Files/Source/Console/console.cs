@@ -42922,21 +42922,15 @@ namespace Thetis
 
                         _oldQuickSplitSettings.Add("panmain", PanMainRX);
                         _oldQuickSplitSettings.Add("pansub", PanSubRX);
+
+                        _oldQuickSplitSettings.Add("vfosync", VFOSync);
                     }
                     //
 
                     double shift = SetupForm.QuickSplitShiftHz * 1e-6;
 
-                    //Note: qsplit has been disabled when rx2 in use, as it made no sense to use vfosuba
-                    //if (RX2Enabled)
-                    //{
-                    //    // must be sub vfo
-                    //    VFOASubFreq = VFOAFreq + shift;
-                    //}
-                    //else
-                    //{
+                    if (VFOSync) VFOSync = false; //[2.10.2.1] fix for issue #208
                     VFOBFreq = VFOAFreq + shift;
-                    //}
 
                     if (SetupForm.QuickSplitZoom && this.Zoom != 190)
                         this.Zoom = 190;
@@ -42993,7 +42987,7 @@ namespace Thetis
                     if (_oldQuickSplitSettings.ContainsKey("VFOBFreq")) VFOBFreq = (double)_oldQuickSplitSettings["VFOBFreq"];
                     if (_oldQuickSplitSettings.ContainsKey("panmain")) PanMainRX = (int)_oldQuickSplitSettings["panmain"];
                     if (_oldQuickSplitSettings.ContainsKey("pansub")) PanSubRX = (int)_oldQuickSplitSettings["pansub"];
-
+                    if (_oldQuickSplitSettings.ContainsKey("vfosync")) VFOSync = (bool)_oldQuickSplitSettings["vfosync"];
                     _oldQuickSplitSettings.Clear();
                     _oldQuickSplitSettings = null;
                 }
