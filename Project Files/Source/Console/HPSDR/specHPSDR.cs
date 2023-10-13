@@ -476,6 +476,10 @@ namespace Thetis
         //    public int[] flip;
         //}
 
+        public void resetPixelBuffers()
+        {
+            SpecHPSDRDLL.ResetPixelBuffers(disp);
+        }
         public void initAnalyzer()
         {
             //no spur elimination => only one spur_elim_fft and it's spectrum is not flipped
@@ -715,6 +719,9 @@ namespace Thetis
         [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void XCreateAnalyzer(int disp, ref int success, int m_size, int m_LO, int m_stitch, string app_data_path);
         // public static extern void XCreateAnalyzer(int disp, ref int success, int m_size, int m_LO, int m_stitch);
+
+        [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void ResetPixelBuffers(int disp);
 
         [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void DestroyAnalyzer(int disp);

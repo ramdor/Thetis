@@ -27207,6 +27207,7 @@ namespace Thetis
         private void chkUsbBCD_CheckedChanged(object sender, EventArgs e)
         {
             UsbBCD = chkUsbBCD.Checked;
+            comboUsbDevices.Enabled = UsbBCD;
 
             if (usbBCD)
             {

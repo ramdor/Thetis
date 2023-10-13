@@ -923,6 +923,78 @@ void CalcBandwidthNormalization (DP a)
 	a->norm_oneHz = 10.0 * mlog10 (1.0 / bin_width);
 }
 
+PORT
+void ResetPixelBuffers(int disp)
+{
+	//[2.10.2]MW0LGE reset all the pixel and average buffers
+	DP a = pdisp[disp];
+	int i, j, k;
+
+	EnterCriticalSection(&a->SetAnalyzerSection);
+
+	EnterCriticalSection(&a->ResampleSection);
+	for (i = 0; i < dMAX_PIXOUTS; i++)
+	{				
+		for (j = 0; j < dNUM_PIXEL_BUFFS; j++)
+			for (k = 0; k < dMAX_PIXELS; k++)
+				a->pixels[i][j][k] = 0.0;
+		for (j = 0; j < dMAX_PIXELS; j++)
+			a->t_pixels[i][j] = 0.0;
+		for (j = 0; j < dMAX_AVERAGE; j++)
+			for (k = 0; k < dMAX_PIXELS; k++)
+				a->av_buff[i][j][k] = 0.0f;
+		switch (a->av_mode[i])
+		{
+		case 1:
+			for (j = 0; j < dMAX_PIXELS; j++)
+				a->av_sum[i][j] = 1.0e-12;
+			break;
+		case 2:
+			a->avail_frames[i] = 0;
+			a->av_in_idx[i] = 0;
+			a->av_out_idx[i] = 0;
+			break;
+		case 3:
+			for (j = 0; j < dMAX_PIXELS; j++)
+				a->av_sum[i][j] = -160.0;
+			break;
+		default:
+			memset((void*)a->av_sum[i], 0, sizeof(double) * dMAX_PIXELS);
+			break;
+		}
+		a->avail_frames[i] = 0;
+		a->av_in_idx[i] = 0;
+		a->av_out_idx[i] = 0;
+
+		a->w_pix_buff[i] = 0;
+		a->r_pix_buff[i] = 0;
+		a->last_pix_buff[i] = 0;
+		for (j = 0; j < dNUM_PIXEL_BUFFS; j++)
+			a->pb_ready[i][j] = 0;		
+	}
+	LeaveCriticalSection(&a->ResampleSection);
+
+	for (i = 0; i < dMAX_STITCH; i++)
+		for (j = 0; j < dMAX_NUM_FFT; j++)
+			a->input_busy[i][j] = 0;
+
+	for (i = 0; i < dMAX_STITCH; i++)
+		a->spec_flag[i] = 0;
+	a->stitch_flag = 0;
+	a->ss = 0;
+	a->LO = 0;
+	for (i = 0; i < dMAX_STITCH; i++)
+		for (j = 0; j < dMAX_NUM_FFT; j++)
+		{
+			a->buff_ready[i][j] = 0;
+			a->have_samples[i][j] = 0;
+			a->IQin_index[i][j] = 0;
+			a->IQout_index[i][j] = 0;
+		}
+
+	LeaveCriticalSection(&a->SetAnalyzerSection);
+}
+
 PORT    
 void SetAnalyzer (	int disp,			// display identifier
 					int n_pixout,		// pixel output identifier
@@ -946,7 +1018,7 @@ void SetAnalyzer (	int disp,			// display identifier
 				 )
 {
 	DP a = pdisp[disp];
-	int i, j;
+	int i, j, k;
 
 	EnterCriticalSection(&a->SetAnalyzerSection);
 	a->end_dispatcher = 1;
@@ -1041,7 +1113,7 @@ void SetAnalyzer (	int disp,			// display identifier
 		a->spec_flag[i] = 0;
 	a->stitch_flag = 0;
 	for (i = 0; i < dMAX_PIXOUTS; i++)
-	{
+	{		
 		a->w_pix_buff[i] = 0;
 		a->r_pix_buff[i] = 0;
 		a->last_pix_buff[i] = 0;

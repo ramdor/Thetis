@@ -11628,6 +11628,7 @@
             // 
             // comboUsbDevices
             // 
+            this.comboUsbDevices.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboUsbDevices.FormattingEnabled = true;
             this.comboUsbDevices.Location = new System.Drawing.Point(27, 39);
             this.comboUsbDevices.Name = "comboUsbDevices";

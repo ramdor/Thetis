@@ -988,40 +988,55 @@ namespace Thetis
             }
             frm.Opacity = 0;
         }
-        #endregion
+		#endregion
 
-        public static int CompareVersions(string version1, string version2)
-        {
-			// in the format X.X X
+		public static int CompareVersions(string version1, string version2)
+		{
+			// in the format X.X X - major.minor.build
+			// also in X.X.X.X - major.minor.build.revision
 
-            string[] parts1 = version1.Split('.');
-            string[] parts2 = version2.Split('.');
+			string[] parts1 = version1.Split('.');
+			string[] parts2 = version2.Split('.');
+			int lenP1 = parts1.Length;
+			int lenP2 = parts2.Length;
 
-            if (parts1.Length != 3 || parts2.Length != 3)
-            {
-                throw new ArgumentException("Invalid version number format. It should be X.X.X");
-            }
+            if (lenP1 != lenP2 || !(lenP1 >= 3 && lenP1 <= 4))
+			{
+				throw new ArgumentException("Invalid version number format. It should be X.X.X, or X.X.X.X");
+			}
+			bool bHasRevision = lenP1 == 4;
 
-            int major1 = int.Parse(parts1[0]);
-            int minor1 = int.Parse(parts1[1]);
-            int patch1 = int.Parse(parts1[2]);
+			int major1 = int.Parse(parts1[0]);
+			int minor1 = int.Parse(parts1[1]);
+			int patch1 = int.Parse(parts1[2]);
+			int revision1 = 0;
+			if (bHasRevision)
+				revision1 = int.Parse(parts1[3]);
 
-            int major2 = int.Parse(parts2[0]);
-            int minor2 = int.Parse(parts2[1]);
-            int patch2 = int.Parse(parts2[2]);
+			int major2 = int.Parse(parts2[0]);
+			int minor2 = int.Parse(parts2[1]);
+			int patch2 = int.Parse(parts2[2]);
+			int revision2 = 0;
+			if (bHasRevision)
+				revision2 = int.Parse(parts2[3]);
 
-            if (major1 != major2)
-            {
-                return major1.CompareTo(major2);
-            }
-            else if (minor1 != minor2)
-            {
-                return minor1.CompareTo(minor2);
-            }
-            else
-            {
-                return patch1.CompareTo(patch2);
-            }
+			if (major1 != major2)
+			{
+				return major1.CompareTo(major2);
+			}
+			else if (minor1 != minor2)
+			{
+				return minor1.CompareTo(minor2);
+			}
+			else if (patch1 != patch2)
+			{
+				return patch1.CompareTo(patch2);
+			}
+			else if (bHasRevision)
+			{
+				return revision1.CompareTo(revision2);
+			}
+			else return 0;
         }
     }
 }

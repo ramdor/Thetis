@@ -2297,6 +2297,8 @@ namespace Thetis
         private static ArrayPool<float> m_objFloatPool = ArrayPool<float>.Shared;
         private static ArrayPool<int> m_objIntPool = ArrayPool<int>.Shared;
 
+        private static bool _reset_rx1_low_waterfall = false;
+        private static bool _reset_rx2_low_waterfall = false;
         private static void clearBuffers(int W, int rx)
         {
             ResetBlobMaximums(rx, true);
@@ -2320,7 +2322,8 @@ namespace Thetis
                 });
                 _RX1waterfallPreviousMinValue = -200f;
 
-                FastAttackNoiseFloorRX1 = true;                
+                _reset_rx1_low_waterfall = true;
+                FastAttackNoiseFloorRX1 = true;
             }
             else
             {
@@ -2335,8 +2338,9 @@ namespace Thetis
                 });
                 _RX2waterfallPreviousMinValue = -200f;
 
+                _reset_rx2_low_waterfall = true;
                 FastAttackNoiseFloorRX2 = true;
-            }
+            }            
         }
 
         private static void initDisplayArrays(int W, int H)
@@ -4705,7 +4709,7 @@ namespace Thetis
                 else if (m_fLerpAverageRX1 < m_fFFTBinAverageRX1)
                     m_fLerpAverageRX1 += (m_fFFTBinAverageRX1 - m_fLerpAverageRX1) / framesInAttackTime;
 
-                bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX1) > 1000f; //[2.10.1.0] MW0LGE change to time related, instead of frame related
+                bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX1) > 500f + console.RX1MSDelayTime; //[2.10.1.0] MW0LGE change to time related, instead of frame related
                 if (m_bFastAttackNoiseFloorRX1 && (Math.Abs(m_fFFTBinAverageRX1 - m_fLerpAverageRX1) < 1f) && bElapsed)
                 {
                     m_bFastAttackNoiseFloorRX1 = false;
@@ -4744,7 +4748,7 @@ namespace Thetis
                 else if (m_fLerpAverageRX2 < m_fFFTBinAverageRX2)
                     m_fLerpAverageRX2 += (m_fFFTBinAverageRX2 - m_fLerpAverageRX2) / framesInAttackTime;
 
-                bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX2) > 1000f; //[2.10.1.0] MW0LGE change to time related, instead of frame related
+                bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX2) > 500f + console.RX2MSDelayTime; //[2.10.1.0] MW0LGE change to time related, instead of frame related
                 if (m_bFastAttackNoiseFloorRX2 && (Math.Abs(m_fFFTBinAverageRX2 - m_fLerpAverageRX2) < 1f) && bElapsed)
                 {
                     m_bFastAttackNoiseFloorRX2 = false;
@@ -4805,7 +4809,7 @@ namespace Thetis
                     high_threshold = rx2_waterfall_high_threshold;
                     if (rx2_waterfall_agc && !m_bRX2_spectrum_thresholds)
                     {
-                        if (m_bWaterfallUseNFForACGRX2)
+                        if (m_bWaterfallUseNFForACGRX2 && !FastAttackNoiseFloorRX2)
                         {
                             low_threshold = m_fLerpAverageRX2;
                         }
@@ -4835,7 +4839,7 @@ namespace Thetis
                     high_threshold = waterfall_high_threshold;
                     if (rx1_waterfall_agc && !m_bRX1_spectrum_thresholds)
                     {
-                        if (m_bWaterfallUseNFForACGRX1)
+                        if (m_bWaterfallUseNFForACGRX1 && !FastAttackNoiseFloorRX1)
                         {
                             low_threshold = m_fLerpAverageRX1;
                         }
@@ -4855,7 +4859,18 @@ namespace Thetis
 
             if (console.PowerOn)
             {
-                low_threshold = low_threshold == -200f ? 0 : low_threshold;
+                if (_reset_rx1_low_waterfall && rx == 1)
+                {
+                    low_threshold = 0;
+                    _RX1waterfallPreviousMinValue = 0;
+                    _reset_rx1_low_waterfall = false;
+                }
+                else if (_reset_rx2_low_waterfall && rx == 2)
+                {
+                    low_threshold = 0;
+                    _RX2waterfallPreviousMinValue = 0;
+                    _reset_rx2_low_waterfall = false;
+                }
 
                 if (rx == 1 && waterfall_data_ready)
                 {
@@ -9968,6 +9983,12 @@ namespace Thetis
         {
             get { return _bUseLegacyBuffers; }
             set { _bUseLegacyBuffers = value; }
+        }
+
+        public static void PurgeBuffers()
+        {
+            clearBuffers(displayTargetWidth, 1);
+            if(rx2_enabled) clearBuffers(displayTargetWidth, 2);
         }
         #endregion
     }

@@ -65,11 +65,6 @@ namespace Thetis
 
     public partial class Console : Form
     {
-        //MULTIMETERS MW0LGE [2.9.0.7]
-        //just so that we can use this without them. Will eventually be removed
-        private const bool USE_MULTIMETERS2 = true;
-        //
-
         private const bool ENABLE_DB_FORCE_UPDATE = true;
 
         public const int MAX_FPS = 144;
@@ -532,6 +527,7 @@ namespace Thetis
         private bool _onlyOneSetupInstance; // used by setup to ensure only one instance created
 
         private bool _portAudioInitalising = false;
+        private bool _portAudioIssue = false;
         private bool _dllsOk = true;       
 
         public CWX CWXForm
@@ -811,6 +807,7 @@ namespace Thetis
             // PA init thread - from G7KLJ changes - done as early as possible
             Splash.SetStatus("Initializing PortAudio");			// Set progress point as early as possible
             _portAudioInitalising = true;
+            _portAudioIssue = false;
             Thread portAudioThread = new Thread(new ThreadStart(initialisePortAudio))
             {
                 Name = "Initalise PortAudioThread",
@@ -820,7 +817,7 @@ namespace Thetis
             portAudioThread.SetApartmentState(ApartmentState.STA); // no ASIO deivces without this
             portAudioThread.Start();
             //
-
+            
             // Instance name - done as early as possible as very slow
             _getInstanceNameComplete = false;
             Thread instanceNameThread = new Thread(new ThreadStart(getInstanceName))
@@ -1000,11 +997,8 @@ namespace Thetis
 
             //MW0LGE [2.9.0.8]
             //start multimer renderers
-            if (USE_MULTIMETERS2)
-            {
-                Splash.SetStatus("Setting up meters");
-                MeterManager.RunAllRendererDisplays();
-            }
+            Splash.SetStatus("Setting up meters");
+            MeterManager.RunAllRendererDisplays();
 
             Splash.SetStatus("Setting up DSP");                       // Set progress point
 
@@ -1024,6 +1018,8 @@ namespace Thetis
                 bool bOk = portAudioThread.Join(5000);
                 if(!bOk) MessageBox.Show("There was an issue initialising PortAudio", "PortAudio", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
+            if (_portAudioIssue)
+                MessageBox.Show("There was an issue initialising PortAudio", "PortAudio", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
             // still waiting cpu
             if(!_getInstanceNameComplete && instanceNameThread != null && instanceNameThread.IsAlive)
@@ -1126,11 +1122,8 @@ namespace Thetis
                 if (RX2Enabled) N1MM.Resize(2);
                 //
 
-                if (USE_MULTIMETERS2)
-                {
-                    // go for launch -- display forms, or controls in thetis
-                    MeterManager.FinishSetupAndDisplay();
-                }
+                // go for launch -- display forms, or user controls in thetis
+                MeterManager.FinishSetupAndDisplay();
 
                 //display render thread
                 m_bResizeDX2Display = true;
@@ -1175,7 +1168,9 @@ namespace Thetis
         }
         private void initialisePortAudio()
         {
-            PA19.PA_Initialize();
+            System.Int32 result = PA19.PA_Initialize();
+            _portAudioIssue = result != 0;
+
             _portAudioInitalising = false;
             Debug.Print("PA init done");
         }
@@ -1853,20 +1848,17 @@ namespace Thetis
             InitMultiMeterModes();              // Initialize MultiMeter Modes
 
             // MW0LGE_[2.9.0.7] setup the multi meter
-            if (USE_MULTIMETERS2)
+            _RX1MeterValues = new Dictionary<Reading, float>();
+            _RX2MeterValues = new Dictionary<Reading, float>();
+
+            for (int n = 0; n < (int)Reading.LAST; n++)
             {
-                _RX1MeterValues = new Dictionary<Reading, float>();
-                _RX2MeterValues = new Dictionary<Reading, float>();
-
-                for (int n = 0; n < (int)Reading.LAST; n++)
-                {
-                    _RX1MeterValues.Add((Reading)n, -200f);
-                    _RX2MeterValues.Add((Reading)n, -200f);
-                }
-
-                string sMeterImagePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
-                MeterManager.Init(this, sMeterImagePath);
+                _RX1MeterValues.Add((Reading)n, -200f);
+                _RX2MeterValues.Add((Reading)n, -200f);
             }
+
+            string sMeterImagePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
+            MeterManager.Init(this, sMeterImagePath);
             //
 
             Siolisten = new SIOListenerII(this);
@@ -26677,6 +26669,45 @@ namespace Thetis
         //        Thread.Sleep(1000 / nFps);
         //    }
         //}
+        private void resetPixelBuffersForDisplay(int rx, bool tx)
+        {
+            if (rx == 1)
+            {
+                if (tx)
+                {
+                    if (!display_duplex)
+                    {
+                        if (chkVFOATX.Checked || !chkRX2.Checked)
+                        {
+                            specRX.GetSpecRX(cmaster.inid(1, 0)).resetPixelBuffers();
+                        }
+                        else
+                        {
+                            specRX.GetSpecRX(0).resetPixelBuffers();
+                        }
+                    }
+                    else
+                    {
+                        specRX.GetSpecRX(0).resetPixelBuffers();
+                    }
+                }
+                else
+                {
+                    specRX.GetSpecRX(0).resetPixelBuffers();
+                }
+            }
+            else
+            {
+                if (tx && VFOBTX)
+                {
+                    specRX.GetSpecRX(cmaster.inid(1, 0)).resetPixelBuffers();
+                }
+                else
+                {
+                    specRX.GetSpecRX(1).resetPixelBuffers();
+                }
+            }
+        }
         unsafe private void RunDisplay()
         {
             m_bDisplayLoopRunning = true;
@@ -26684,9 +26715,10 @@ namespace Thetis
             try
             {
                 HiPerfTimer objStopWatch = new HiPerfTimer();
-                bool bPreviousMox = Display.MOX;
                 double fFractionOfMs = 0;
                 double fThreadSleepLate = 0;
+                bool bOldLocalMox = Display.MOX;
+                bool bHasBeenReset = false;
 
                 while (m_bDisplayLoopRunning)
                 {
@@ -26765,11 +26797,22 @@ namespace Thetis
 
                     bool bLocalMox = Display.MOX;
                     bool bGetPixelIssue = false;
+                    bool bGetPixelIssueBottom = false;
                     //MW0LGE_21g
                     if (bLocalMox)
                     {
                         if (chkVFOATX.Checked || !chkRX2.Checked) top_thread = 1;
                         else if (chkVFOBTX.Checked && chkRX2.Checked) bottom_thread = 1;
+                    }
+                    
+                    if (bLocalMox != bOldLocalMox)
+                    {
+                        resetPixelBuffersForDisplay(1, mox);
+                        if (RX2Enabled) resetPixelBuffersForDisplay(2, mox);
+                        Thread.Sleep(1);
+                        Display.PurgeBuffers();
+                        bHasBeenReset = true;
+                        bOldLocalMox = bLocalMox;
                     }
 
                     if ((!Display.DataReady || !Display.WaterfallDataReady) ||
@@ -26792,7 +26835,7 @@ namespace Thetis
                             switch (Display.CurrentDisplayMode)
                             {
                                 case DisplayMode.WATERFALL:
-                                case DisplayMode.PANAFALL:
+                                case DisplayMode.PANAFALL:                                    
                                     if (bLocalMox && !display_duplex)
                                     {
                                         if (chkVFOATX.Checked || !chkRX2.Checked)
@@ -27020,7 +27063,7 @@ namespace Thetis
                                     N1MM.CopyData(2, Display.new_waterfall_data_bottom);
                             }
 
-                            bGetPixelIssue |= !bDataReady && !bWaterfallDataReady;
+                            bGetPixelIssueBottom |= !bDataReady && !bWaterfallDataReady;
                         }
 
                         if (displaydidit)
@@ -27030,7 +27073,18 @@ namespace Thetis
                         }
                     }
 
-                    Display.GetPixelsIssue = bGetPixelIssue;
+                    //
+                    if (bHasBeenReset)
+                    {
+                        //make sure
+                        resetPixelBuffersForDisplay(1, mox);
+                        if (RX2Enabled) resetPixelBuffersForDisplay(2, mox);
+                        Thread.Sleep(1);
+                        bHasBeenReset = false;
+                    }
+                    //
+
+                    Display.GetPixelsIssue = bGetPixelIssue | bGetPixelIssueBottom;
 
                     // MW0LGE_21k9 always want to run the renderer, as swr warning etc are displayed
                     if (!pause_DisplayThread) Display.RenderDX2D();
@@ -30833,18 +30887,15 @@ namespace Thetis
                 setupLegacyMeterThreads(1);
 
                 //multimeter2 MW0LGE_[2.9.0.7]
-                if (USE_MULTIMETERS2)
+                if (multimeter2_thread_rx1 == null || !multimeter2_thread_rx1.IsAlive)
                 {
-                    if (multimeter2_thread_rx1 == null || !multimeter2_thread_rx1.IsAlive)
+                    multimeter2_thread_rx1 = new Thread(new ThreadStart(MultiMeter2UpdateRX1))
                     {
-                        multimeter2_thread_rx1 = new Thread(new ThreadStart(MultiMeter2UpdateRX1))
-                        {
-                            Name = "Multimeter2 RX1 Thread",
-                            Priority = ThreadPriority.Lowest,
-                            IsBackground = true
-                        };
-                        multimeter2_thread_rx1.Start();
-                    }
+                        Name = "Multimeter2 RX1 Thread",
+                        Priority = ThreadPriority.Lowest,
+                        IsBackground = true
+                    };
+                    multimeter2_thread_rx1.Start();
                 }
                 //
 
@@ -30865,18 +30916,15 @@ namespace Thetis
                     setupLegacyMeterThreads(2);
 
                     //multimeter2 MW0LGE_[2.9.0.7]
-                    if (USE_MULTIMETERS2)
+                    if (multimeter2_thread_rx2 == null || !multimeter2_thread_rx2.IsAlive)
                     {
-                        if (multimeter2_thread_rx2 == null || !multimeter2_thread_rx2.IsAlive)
+                        multimeter2_thread_rx2 = new Thread(new ThreadStart(MultiMeter2UpdateRX2))
                         {
-                            multimeter2_thread_rx2 = new Thread(new ThreadStart(MultiMeter2UpdateRX2))
-                            {
-                                Name = "Multimeter2 RX2 Thread",
-                                Priority = ThreadPriority.Lowest,
-                                IsBackground = true
-                            };
-                            multimeter2_thread_rx2.Start();
-                        }
+                            Name = "Multimeter2 RX2 Thread",
+                            Priority = ThreadPriority.Lowest,
+                            IsBackground = true
+                        };
+                        multimeter2_thread_rx2.Start();
                     }
                     //
 
@@ -31088,19 +31136,16 @@ namespace Thetis
                         rx2_meter_thread.Abort();
                 }
                 //MW0LGE_[2.9.0.7]
-                if (USE_MULTIMETERS2)
+                if (multimeter2_thread_rx1 != null)
                 {
-                    if (multimeter2_thread_rx1 != null)
-                    {
-                        if (!multimeter2_thread_rx1.Join(MeterManager.QuickestUpdateInterval(1, MOX)))
-                            multimeter2_thread_rx1.Abort();
-                    }
-                    if (multimeter2_thread_rx2 != null)
-                    {
-                        if (!multimeter2_thread_rx2.Join(MeterManager.QuickestUpdateInterval(2, MOX)))
-                            multimeter2_thread_rx2.Abort();
-                    }
+                    if (!multimeter2_thread_rx1.Join(MeterManager.QuickestUpdateInterval(1, MOX)))
+                        multimeter2_thread_rx1.Abort();
                 }
+                if (multimeter2_thread_rx2 != null)
+                {
+                    if (!multimeter2_thread_rx2.Join(MeterManager.QuickestUpdateInterval(2, MOX)))
+                        multimeter2_thread_rx2.Abort();
+                }                
                 //
                 if (rx2_sql_update_thread != null)
                 {
@@ -31986,10 +32031,7 @@ namespace Thetis
             //}            
             ////
 
-            if (USE_MULTIMETERS2)
-            {
-                MeterManager.Shutdown();
-            }
+            MeterManager.Shutdown();
 
             m_bDisplayLoopRunning = false; // will cause the display loop to exit
             if (draw_display_thread != null && draw_display_thread.IsAlive) draw_display_thread.Join(1100); // added 1100, slightly longer than 1fps MW0LGE [2.9.0.7]
@@ -44496,18 +44538,15 @@ namespace Thetis
                         }
 
                         //multimeter2 MW0LGE_[2.9.0.7]
-                        if (USE_MULTIMETERS2)
+                        if (multimeter2_thread_rx2 == null || !multimeter2_thread_rx2.IsAlive)
                         {
-                            if (multimeter2_thread_rx2 == null || !multimeter2_thread_rx2.IsAlive)
+                            multimeter2_thread_rx2 = new Thread(new ThreadStart(MultiMeter2UpdateRX2))
                             {
-                                multimeter2_thread_rx2 = new Thread(new ThreadStart(MultiMeter2UpdateRX2))
-                                {
-                                    Name = "Multimeter2 RX2 Thread",
-                                    Priority = ThreadPriority.Lowest,
-                                    IsBackground = true
-                                };
-                                multimeter2_thread_rx2.Start();
-                            }
+                                Name = "Multimeter2 RX2 Thread",
+                                Priority = ThreadPriority.Lowest,
+                                IsBackground = true
+                            };
+                            multimeter2_thread_rx2.Start();
                         }
                         //
 
@@ -56083,6 +56122,14 @@ namespace Thetis
             set { _spacebar_vfobtx = value; }
         }
 
+        public float RX1MSDelayTime
+        {
+            get { return _txRx1MSsDelayTime; }
+        }
+        public float RX2MSDelayTime
+        {
+            get { return _txRx2MSsDelayTime; }
+        }
         private float _txRx1MSsDelayTime = 0f;
         private float _txRx2MSsDelayTime = 0f;
         public void SetMillisecondTXRXdelayTime(int rx)

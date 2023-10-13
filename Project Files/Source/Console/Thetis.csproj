@@ -618,6 +618,7 @@
     <Compile Include="ucUnderOverFlowWarningViewer.Designer.cs">
       <DependentUpon>ucUnderOverFlowWarningViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="VersionInfo.cs" />
     <Compile Include="Versions.cs" />
     <Compile Include="Andromeda\vfosettingspopup.cs">
       <SubType>Form</SubType>
@@ -972,8 +973,24 @@
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>@echo off
+for /f "delims=" %25%25x in ('wmic os get localdatetime ^| find "."') do set datetime=%25%25x
+set year=%25datetime:~2,2%25
+set month=%25datetime:~4,2%25
+set day=%25datetime:~6,2%25
+set formatted_date=%25month%25/%25day%25/%25year%25
+
+echo // &gt;  "$(ProjectDir)VersionInfo.cs"
+echo //Auto Generated Pre-Build event MW0LGE &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo // &gt;&gt;  "$(ProjectDir)VersionInfo.cs"
+echo using System; &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo namespace Thetis &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo { &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo     public static class VersionInfo &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo     { &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo         public static string BuildDate { get { return "%25formatted_date%25"; } }  &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo     } &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo } &gt;&gt; "$(ProjectDir)VersionInfo.cs"</PreBuildEvent>
     <PostBuildEvent>copy /Y "..\..\..\lib\fftw_$(PlatformName)\libfftw3-3.dll" "$(ProjectDir)$(OutDir)";
 copy /Y "$(ProjectDir)CAT\CATStructs.xml" "$(ProjectDir)$(OutDir)";
 copy /Y "..\..\..\lib\Thetis-resources\calculus" "$(ProjectDir)$(OutDir)"
