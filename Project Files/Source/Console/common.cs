@@ -990,53 +990,35 @@ namespace Thetis
         }
 		#endregion
 
-		public static int CompareVersions(string version1, string version2)
-		{
-			// in the format X.X X - major.minor.build
-			// also in X.X.X.X - major.minor.build.revision
+        public static int CompareVersions(string version1, string version2)
+        {
+            string[] v1Parts = version1.Split('.').Select(part => TryParseVersionPart(part)).ToArray();
+            string[] v2Parts = version2.Split('.').Select(part => TryParseVersionPart(part)).ToArray();
 
-			string[] parts1 = version1.Split('.');
-			string[] parts2 = version2.Split('.');
-			int lenP1 = parts1.Length;
-			int lenP2 = parts2.Length;
+            int maxLength = Math.Max(v1Parts.Length, v2Parts.Length);
 
-            if (lenP1 != lenP2 || !(lenP1 >= 3 && lenP1 <= 4))
-			{
-				throw new ArgumentException("Invalid version number format. It should be X.X.X, or X.X.X.X");
-			}
-			bool bHasRevision = lenP1 == 4;
+            for (int i = 0; i < maxLength; i++)
+            {
+                int v1Part = (i < v1Parts.Length) ? int.Parse(v1Parts[i]) : 0;
+                int v2Part = (i < v2Parts.Length) ? int.Parse(v2Parts[i]) : 0;
 
-			int major1 = int.Parse(parts1[0]);
-			int minor1 = int.Parse(parts1[1]);
-			int patch1 = int.Parse(parts1[2]);
-			int revision1 = 0;
-			if (bHasRevision)
-				revision1 = int.Parse(parts1[3]);
+                int comparison = v1Part.CompareTo(v2Part);
+                if (comparison != 0)
+                {
+                    return comparison;
+                }
+            }
 
-			int major2 = int.Parse(parts2[0]);
-			int minor2 = int.Parse(parts2[1]);
-			int patch2 = int.Parse(parts2[2]);
-			int revision2 = 0;
-			if (bHasRevision)
-				revision2 = int.Parse(parts2[3]);
+            return 0; // Versions are equal
+        }
 
-			if (major1 != major2)
-			{
-				return major1.CompareTo(major2);
-			}
-			else if (minor1 != minor2)
-			{
-				return minor1.CompareTo(minor2);
-			}
-			else if (patch1 != patch2)
-			{
-				return patch1.CompareTo(patch2);
-			}
-			else if (bHasRevision)
-			{
-				return revision1.CompareTo(revision2);
-			}
-			else return 0;
+        private static string TryParseVersionPart(string part)
+        {
+            if (int.TryParse(part, out int result))
+            {
+                return result.ToString();
+            }
+            return "-1"; // Invalid version part, treat as lower priority
         }
     }
 }
