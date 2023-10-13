@@ -992,36 +992,33 @@ namespace Thetis
 
         public static int CompareVersions(string version1, string version2)
         {
-			// in the format X.X X
+            string[] v1Parts = version1.Split('.').Select(part => TryParseVersionPart(part)).ToArray();
+            string[] v2Parts = version2.Split('.').Select(part => TryParseVersionPart(part)).ToArray();
 
-            string[] parts1 = version1.Split('.');
-            string[] parts2 = version2.Split('.');
+            int maxLength = Math.Max(v1Parts.Length, v2Parts.Length);
 
-            if (parts1.Length != 3 || parts2.Length != 3)
+            for (int i = 0; i < maxLength; i++)
             {
-                throw new ArgumentException("Invalid version number format. It should be X.X.X");
+                int v1Part = (i < v1Parts.Length) ? int.Parse(v1Parts[i]) : 0;
+                int v2Part = (i < v2Parts.Length) ? int.Parse(v2Parts[i]) : 0;
+
+                int comparison = v1Part.CompareTo(v2Part);
+                if (comparison != 0)
+                {
+                    return comparison;
+                }
             }
 
-            int major1 = int.Parse(parts1[0]);
-            int minor1 = int.Parse(parts1[1]);
-            int patch1 = int.Parse(parts1[2]);
+            return 0; // Versions are equal
+        }
 
-            int major2 = int.Parse(parts2[0]);
-            int minor2 = int.Parse(parts2[1]);
-            int patch2 = int.Parse(parts2[2]);
-
-            if (major1 != major2)
+        private static string TryParseVersionPart(string part)
+        {
+            if (int.TryParse(part, out int result))
             {
-                return major1.CompareTo(major2);
+                return result.ToString();
             }
-            else if (minor1 != minor2)
-            {
-                return minor1.CompareTo(minor2);
-            }
-            else
-            {
-                return patch1.CompareTo(patch2);
-            }
+            return "-1"; // Invalid version part, treat as lower priority
         }
     }
 }
