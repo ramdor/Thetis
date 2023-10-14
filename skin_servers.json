@@ -1,9 +1,24 @@
 {
   "SkinServers": [
-    "https://skinserver1.com",
-    "https://skinserver2.com",
-    "https://skinserver3.com",
-    "https://skinserver4.com",
-    "https://skinserver5.com"
+    {
+      "SkinServerUrl": "https://skinserver1.com",
+      "Description": "Server 1 Description"
+    },
+    {
+      "SkinServerUrl": "https://skinserver2.com",
+      "Description": "Server 2 Description"
+    },
+    {
+      "SkinServerUrl": "https://skinserver3.com",
+      "Description": "Server 3 Description"
+    },
+    {
+      "SkinServerUrl": "https://skinserver4.com",
+      "Description": "Server 4 Description"
+    },
+    {
+      "SkinServerUrl": "https://skinserver5.com",
+      "Description": "Server 5 Description"
+    }
   ]
 }
