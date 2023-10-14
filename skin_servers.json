@@ -1,8 +1,8 @@
 {
   "SkinServers": [
     {
-      "SkinServerUrl": "https://skinserver1.com",
-      "Description": "Server 1 Description"
+      "SkinServerUrl": "https://www.oe3ide.com/wordp/wp-content/uploads/thetisskins/thetis_skins.json",
+      "Description": "OE3IDE's various skins, Matrix, Startrek and others !"
     },
     {
       "SkinServerUrl": "https://skinserver2.com",
