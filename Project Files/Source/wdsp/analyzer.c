@@ -931,7 +931,6 @@ void ResetPixelBuffers(int disp)
 	int i, j, k;
 
 	EnterCriticalSection(&a->SetAnalyzerSection);
-
 	EnterCriticalSection(&a->ResampleSection);
 	for (i = 0; i < dMAX_PIXOUTS; i++)
 	{				
@@ -950,9 +949,10 @@ void ResetPixelBuffers(int disp)
 				a->av_sum[i][j] = 1.0e-12;
 			break;
 		case 2:
-			a->avail_frames[i] = 0;
-			a->av_in_idx[i] = 0;
-			a->av_out_idx[i] = 0;
+			//done below
+			//a->avail_frames[i] = 0;
+			//a->av_in_idx[i] = 0;
+			//a->av_out_idx[i] = 0;
 			break;
 		case 3:
 			for (j = 0; j < dMAX_PIXELS; j++)

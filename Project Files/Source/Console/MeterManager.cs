@@ -912,6 +912,8 @@ namespace Thetis
             _console.CFCChangedHandlers += OnCFCChanged;
             _console.CompandChangedHandlers += OnCompandChanged;
 
+            _console.QuickSplitChangedHandlers += OnQuickSplitChanged;
+
             _delegatesAdded = true;
         }
         private static void removeDelegates()
@@ -947,6 +949,8 @@ namespace Thetis
             _console.LevelerChangedHandlers -= OnLevelerChanged;
             _console.CFCChangedHandlers -= OnCFCChanged;
             _console.CompandChangedHandlers -= OnCompandChanged;
+
+            _console.QuickSplitChangedHandlers -= OnQuickSplitChanged;
 
             foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
@@ -1185,6 +1189,8 @@ namespace Thetis
                     m.LevelerEnabled = !_console.IsSetupFormNull && _console.SetupForm.TXLevelerOn;
                     m.CFCEnabled = _console.CFCEnabled;
                     m.CompandEnabled = _console.CPDR;
+
+                    m.QuickSplitEnabled = _console.GetQuickSplitEnabled;
                 }
             }
         }
@@ -1316,6 +1322,17 @@ namespace Thetis
                     m.CompandEnabled = newState;
 
                     m.DisableMeterType(MeterType.COMP, !newState);
+                }
+            }
+        }
+        private static void OnQuickSplitChanged(bool oldState, bool newState)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> mkvp in _meters)
+                {
+                    clsMeter m = mkvp.Value;
+                    m.QuickSplitEnabled = newState;
                 }
             }
         }
@@ -4558,6 +4575,8 @@ namespace Thetis
             private bool _cfcEnabled;
             private bool _compandEnabled;
 
+            private bool _quickSplitEnabled;
+
             private Filter _filterVfoA;
             private Filter _filterVfoB;
 
@@ -6826,6 +6845,13 @@ namespace Thetis
                 _rx2Enabled = false;
                 _multiRxEnabled = false;
 
+                _txeqEnabled = true;
+                _levelerEnabled = true;
+                _cfcEnabled = true;
+                _compandEnabled = true;
+
+                _quickSplitEnabled = false;
+
                 _fPadX = 0.02f;
                 _fPadY = 0.05f;
                 _fHeight = 0.05f;
@@ -8190,6 +8216,11 @@ namespace Thetis
             {
                 get { return _compandEnabled; }
                 set { _compandEnabled = value; }
+            }
+            public bool QuickSplitEnabled
+            {
+                get { return _quickSplitEnabled; }
+                set { _quickSplitEnabled = value; }
             }
             public float PadX { get { return _fPadX; } set { _fPadX = value; } }
             public float PadY { get { return _fPadY; } set { _fPadY = value; } }
@@ -10964,7 +10995,7 @@ namespace Thetis
                 SharpDX.RectangleF rectSplit = new SharpDX.RectangleF(x + (w * 0.1f), y + (h * 0.03f), w * 0.1f, h * 0.4f);
                 _renderTarget.FillRectangle(rectSplit, getDXBrushForColour(vfo.SplitBackColour, nVfoAFade));
                 System.Drawing.Color splitColor = m.Split ? vfo.SplitColour : System.Drawing.Color.Black;
-                plotText("SPLIT", rectSplit.X + (w * 0.015f), rectSplit.Y, h, rect.Width, vfo.FontSize * 1f, splitColor, nVfoAFade, vfo.FontFamily, vfo.Style);
+                plotText(m.QuickSplitEnabled ? "QSPLT" : "SPLIT", rectSplit.X + (w * (m.QuickSplitEnabled ? 0.01f : 0.015f)), rectSplit.Y, h, rect.Width, vfo.FontSize * 1f, splitColor, nVfoAFade, vfo.FontFamily, vfo.Style);
 
                 //-- tx/rx state
                 bool bCanVfoATx = m.RX == 1 && !m.TXVFOb && !m.Split;

@@ -992,8 +992,8 @@ namespace Thetis
 
         public static int CompareVersions(string version1, string version2)
         {
-            string[] v1Parts = version1.Split('.').Select(part => TryParseVersionPart(part)).ToArray();
-            string[] v2Parts = version2.Split('.').Select(part => TryParseVersionPart(part)).ToArray();
+            string[] v1Parts = version1.Split('.').Select(part => tryParseVersionPart(part)).ToArray();
+            string[] v2Parts = version2.Split('.').Select(part => tryParseVersionPart(part)).ToArray();
 
             int maxLength = Math.Max(v1Parts.Length, v2Parts.Length);
 
@@ -1012,7 +1012,7 @@ namespace Thetis
             return 0; // Versions are equal
         }
 
-        private static string TryParseVersionPart(string part)
+        private static string tryParseVersionPart(string part)
         {
             if (int.TryParse(part, out int result))
             {

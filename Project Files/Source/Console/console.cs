@@ -42934,14 +42934,20 @@ namespace Thetis
         }
         private Dictionary<string, object> _oldQuickSplitSettings = null;
         private bool _ignoreQuickSplitSet = false; // used to prevent multiple events calling this when running
-        public void SetQuickSplit()
+        private bool _quickSplitState = false;
+        public bool GetQuickSplitEnabled
         {
+            get { return _quickSplitState; }
+        }
+        public void SetQuickSplit()
+        {        
             if (_ignoreQuickSplitSet)
             {
                 _ignoreQuickSplitSet = false;
                 return;
-            }            
+            }
 
+            bool bOldQuickSplitState = _quickSplitState;
             bool bRestore = false;
             if (!IsSetupFormNull && SetupForm.QuickSplitEnabled && !RX2Enabled)
             {
@@ -43005,13 +43011,14 @@ namespace Thetis
                 }
                 else
                 {
-                    bRestore = true;                    
+                    bRestore = true;
                 }
-
+                _quickSplitState = true;
                 chkVFOSplit.Text = "QPLT";
             }
             else
             {
+                _quickSplitState = false;
                 bRestore = true;
                 chkVFOSplit.Text = "SPLT";
             }
@@ -43033,6 +43040,11 @@ namespace Thetis
                     _oldQuickSplitSettings.Clear();
                     _oldQuickSplitSettings = null;
                 }
+            }
+
+            if(bOldQuickSplitState != _quickSplitState)
+            {
+                QuickSplitChangedHandlers?.Invoke(bOldQuickSplitState, _quickSplitState);
             }
         }
 
@@ -53376,6 +53388,8 @@ namespace Thetis
         public delegate void CFCChanged(bool oldState, bool newState);
         public delegate void CompandChanged(bool oldState, bool newState);
 
+        public delegate void QuickSplitChanged(bool oldState, bool newState);
+
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
         public BandChanged BandChangeHandlers;
@@ -53428,6 +53442,8 @@ namespace Thetis
         public LevelerChanged LevelerChangedHandlers;
         public CFCChanged CFCChangedHandlers;
         public CompandChanged CompandChangedHandlers;
+
+        public QuickSplitChanged QuickSplitChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
