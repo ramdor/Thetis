@@ -2,23 +2,11 @@
   "SkinServers": [
     {
       "SkinServerUrl": "https://www.oe3ide.com/wordp/wp-content/uploads/thetisskins/thetis_skins.json",
-      "Description": "OE3IDE's various skins, Matrix, Startrek and others !"
-    },
-    {
-      "SkinServerUrl": "https://skinserver2.com",
-      "Description": "Server 2 Description"
+      "Description": "OE3IDE's various skins"
     },
     {
       "SkinServerUrl": "https://grange-lane.co.uk/thetis_skins/thetis_skins.json",
-      "Description": "MW0LGE skins test4"
+      "Description": "W1AEX's many skins"
     },
-    {
-      "SkinServerUrl": "https://skinserver4.com",
-      "Description": "Server 4 Description"
-    },
-    {
-      "SkinServerUrl": "https://skinserver5.com",
-      "Description": "Server 5 Description"
-    }
   ]
 }
