@@ -2,11 +2,13 @@
   "SkinServers": [
     {
       "SkinServerUrl": "https://www.oe3ide.com/wordp/wp-content/uploads/thetisskins/thetis_skins.json",
-      "Description": "OE3IDE's various skins"
+      "Description": "OE3IDE's various skins",
+      "BypassRootFolderCheck": false
     },
     {
       "SkinServerUrl": "https://grange-lane.co.uk/thetis_skins/thetis_skins.json",
-      "Description": "W1AEX's many skins"
+      "Description": "W1AEX's many skins",
+      "BypassRootFolderCheck": true
     }
   ]
 }
