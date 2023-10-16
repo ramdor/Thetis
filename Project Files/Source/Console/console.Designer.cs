@@ -1377,10 +1377,12 @@
             // chkFullDuplex
             // 
             resources.ApplyResources(this.chkFullDuplex, "chkFullDuplex");
+            this.chkFullDuplex.BackColor = System.Drawing.Color.Transparent;
             this.chkFullDuplex.FlatAppearance.BorderSize = 0;
             this.chkFullDuplex.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.chkFullDuplex.Name = "chkFullDuplex";
             this.toolTip1.SetToolTip(this.chkFullDuplex, resources.GetString("chkFullDuplex.ToolTip"));
+            this.chkFullDuplex.UseVisualStyleBackColor = false;
             this.chkFullDuplex.CheckedChanged += new System.EventHandler(this.chkFullDuplex_CheckedChanged);
             // 
             // chkRX2Squelch

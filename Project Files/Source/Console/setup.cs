@@ -585,6 +585,11 @@ namespace Thetis
             console.RX2EnabledChangedHandlers += OnRX2EnabledChanged;
             console.TXInhibitChangedHandlers += OnTXInhibit;
 
+            ThetisSkinService.SubscribeForSkinServerData(skinServersDataReceivedHandler);
+            ThetisSkinService.SubscribeForSkinData(skinDataReceivedHandler);
+            ThetisSkinService.SubscribeForImageLoaded(imageLoadedHandler);
+            ThetisSkinService.SubscribeForDownload(fileDownloadHandler);
+
             _bAddedDelegates = true;
         }
         public void RemoveDelegates()
@@ -596,6 +601,11 @@ namespace Thetis
             console.TXBandChangeHandlers -= OnTXBandChanged;
             console.RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
             console.TXInhibitChangedHandlers -= OnTXInhibit;
+
+            ThetisSkinService.UnsubscribeFromSkinData(skinDataReceivedHandler);
+            ThetisSkinService.UnsubscribeFromSkinServerData(skinServersDataReceivedHandler);
+            ThetisSkinService.UnsubscribeFromImageLoaded(imageLoadedHandler);
+            ThetisSkinService.UnsubscribeFromDownload(fileDownloadHandler);
 
             _bAddedDelegates = false;
         }
@@ -1020,7 +1030,15 @@ namespace Thetis
             comboGanymedeCATPort.Items.Add("None");
             comboGanymedeCATPort.Items.AddRange(com_ports);
         }
-
+        private string _skinPath = "";
+        public string SkinPath
+        {
+            get
+            {
+                // updated after RefreshSkinList called
+                return _skinPath;
+            }
+        }
         private void RefreshSkinList()
         {
             comboAppSkin.Items.Clear();
@@ -1030,6 +1048,7 @@ namespace Thetis
             else
                 path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
                     "\\OpenHPSDR\\Skins";
+            _skinPath = path;
 
             if (!Directory.Exists(path))
             {
@@ -1047,6 +1066,8 @@ namespace Thetis
                 if (!s.StartsWith("."))
                     comboAppSkin.Items.Add(d.Substring(d.LastIndexOf("\\") + 1));
             }
+
+            btnRemoveSkin.Enabled = comboAppSkin.Items.Count > 1;
 
             if (comboAppSkin.Items.Count == 0)
             {
@@ -1176,6 +1197,8 @@ namespace Thetis
             m_bShown = false;
 
             chkContainerHighlight.Checked = false; // no point highlighting when setup closed
+
+            ThetisSkinService.CancelDownload();
 
             base.Hide();
         }
@@ -14161,22 +14184,33 @@ namespace Thetis
             Display.TXPanFill = chkTXPanFill.Checked;
         }
 
+        private bool _skinChanging = false;
         private void comboAppSkin_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (initializing) return;  // prevents call on getoptions, need to force call after options loaded MW0LGE 
+            if (initializing || _skinChanging) return;  // prevents call on getoptions, need to force call after options loaded MW0LGE 
+
+            _skinChanging = true;
 
             string path = ".\\Skins\\";
-            if (Directory.Exists(path + comboAppSkin.Text))
-                Skin.Restore(comboAppSkin.Text, path, console);
-            else
+            if (!Directory.Exists(path + comboAppSkin.Text))
+                //[2.10.2.2]MW0LGE why restore here twice?
+                //Skin.Restore(comboAppSkin.Text, path, console);
+            //else
                 path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
-                        "\\OpenHPSDR\\Skins\\";
+                        "\\OpenHPSDR\\Skins";
 
-            if (Directory.Exists(path + comboAppSkin.Text))
-                Skin.Restore(comboAppSkin.Text, path, console);
+            if (_skinPath == "") _skinPath = path;
+
+            if (Directory.Exists(_skinPath + "\\" + comboAppSkin.Text))
+            {
+                Skin.Restore(comboAppSkin.Text, _skinPath, console);
+                console.UpdateAndromedaSkins();
+            }
 
             console.CurrentSkin = comboAppSkin.Text;
             console.RadarColorUpdate = true;
+
+            _skinChanging = false;
         }
 
         private void btnSkinExport_Click(object sender, EventArgs e)
@@ -27538,6 +27572,638 @@ namespace Thetis
                 chkLinkIfCtrlHeld.Checked = value;
             }
         }
+
+        private void tcAppearance_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            if (isSkinServerTabVisible())
+            {                
+                getSkinServers();
+            }         
+            else
+            {
+                hideAllSkinServerRelatedControls();
+                ThetisSkinService.CancelDownload();
+            }
+        }
+        private bool isSkinServerTabVisible()
+        {
+            if (!this.Visible) return false;
+            int sel = tcSetup.SelectedIndex;
+            if (sel == -1) return false;
+            TabPage selectedTab = tcSetup.TabPages[sel];
+            if (selectedTab.Name != "tpAppearance") return false;
+            sel = tcAppearance.SelectedIndex;
+            if (sel == -1) return false;
+            selectedTab = tcAppearance.TabPages[sel];
+            if (selectedTab.Name != "tpSkinServers") return false;
+
+            return true;
+        }
+        private void getSkinServers()
+        {
+            hideAllSkinServerRelatedControls();
+            panelGetServerList.Visible = true;
+
+            comboSkinServerList.DataSource = null; // this will release server list objects from belonging to this control
+                                                   // as it cant be cleared unless this happens
+            comboSkinServerList.Items.Clear();
+            lstAvailableSkins.DataSource = null; // this will release server list objects from belonging to this control
+            lstAvailableSkins.Items.Clear();
+
+            ThetisSkinService.GetSkinServers("https://raw.githubusercontent.com/ramdor/Thetis/master/skin_servers.json");
+            //ThetisSkinService.GetSkinServers("https://grange-lane.co.uk/thetis_skins/skin_servers.json");
+        }
+        private void hideAllSkinServerRelatedControls()
+        {
+            // hides everything for the skin server tab
+            panelSkinServerControls.Visible = false;
+            panelGetServerList.Visible = false;
+            gtpAvailableSkins.Visible = false;
+            grpAuthorDetails.Visible = false;
+            picSkinThumbnail.Image = null;
+            prgSkinDownload.Visible = false;
+        }
+        private void skinDataReceivedHandler(object sender, SkinsData e)
+        {
+            if (e != null)
+            {
+                Debug.Print(e.AuthorName);
+                gtpAvailableSkins.Visible = true;
+                grpAuthorDetails.Visible = true;
+
+                lstAvailableSkins.DisplayMember = "SkinName";
+                lstAvailableSkins.DataSource = e.ThetisSkins;
+
+                if (e.AuthorNickname == "")
+                    lblAuthorDetails1.Text = "Skins By " + e.AuthorName.Left(50);
+                else
+                    lblAuthorDetails1.Text = "Skins By " + e.AuthorNickname.Left(50);
+
+                if (e.AuthorCallsign != "")
+                    lblAuthorDetails2.Text = "Callsign : " + e.AuthorCallsign.Left(20);
+                else
+                    lblAuthorDetails2.Text = "";
+
+                if (e.SkinsHomepageUrl != "" && Common.IsValidUri(e.SkinsHomepageUrl))
+                {
+                    btnSkinsHomepage.Visible = true;
+                    btnSkinsHomepage.Tag = e.SkinsHomepageUrl.Left(1024);
+                }
+                else
+                    btnSkinsHomepage.Visible = false;
+
+                if (e.DonateUrl != "" && Common.IsValidUri(e.DonateUrl))
+                {
+                    btnSkinsDonate.Visible = true;
+                    btnSkinsDonate.Tag = e.DonateUrl.Left(1024);
+                }
+                else
+                    btnSkinsDonate.Visible = false;
+            }
+            else
+            {
+                grpAuthorDetails.Visible = false;
+                gtpAvailableSkins.Visible = false;
+                Debug.Print("no skins");
+            }
+        }
+        private void updateSelectedSkin()
+        {
+            if(lstAvailableSkins.Items.Count == 0) return;
+
+            int sel = comboSkinServerList.SelectedIndex;
+            if (sel == -1) return;
+
+            SkinServer ss = comboSkinServerList.SelectedItem as SkinServer;
+            if (ss == null) return;
+
+            sel = lstAvailableSkins.SelectedIndex;
+            if (sel == -1) return;
+
+            ThetisSkin ts = lstAvailableSkins.Items[sel] as ThetisSkin;
+            if (ts == null) return;
+
+            if (ts.ThumbnailUrl != "" && Common.IsValidUri(ts.ThumbnailUrl))
+            {
+                if (Common.IsValidUri(ts.ThumbnailUrl))
+                {
+                    ThetisSkinService.LoadImageFromUrl(ts.ThumbnailUrl, "[" + ss.SkinServerUrl + "]_[" + ts.SkinName + "]");
+                }
+            }
+            else
+                picSkinThumbnail.Image = null;
+
+            lblSkinVersion.Text = "Version: " + validateVersion(ts.SkinVersion);
+            lblSkinThetisVersion.Text = "Min Thetis Version: " + validateVersion(ts.FromThetisVersion);
+            lblSkinDateReleased.Text = "Release Date: " + validateDate(ts.DateReleased).Left(14);
+            lblSkinOverview.Text = ts.Overview.Left(1024);
+            lblSkinMeters.Text = "Type: " + (ts.IsMeterSkin ? "MultiMeter Skin" : "Console Skin");
+
+            if (ts.SkinHomepageUrl != "" && Common.IsValidUri(ts.SkinHomepageUrl))
+            {
+                btnSkinHomepage.Visible = true;
+                btnSkinHomepage.Tag = ts.SkinHomepageUrl.Left(1024);
+            }
+            else
+                btnSkinHomepage.Visible = false;
+
+            if (ts.SkinUrl != "" && Common.IsValidUri(ts.SkinUrl))
+            {
+                btnDownloadSkin.Tag = ts.SkinUrl.Left(1024);
+                btnDownloadSkin.Enabled = Common.CompareVersions(ts.FromThetisVersion, Common.GetVerNum()) <= 0;
+            }
+            else
+                btnDownloadSkin.Enabled = false;
+
+            btnDownloadSkin.Text = "Download";
+        }
+        private string validateDate(string sDate)
+        {
+            bool bOk = DateTime.TryParse(sDate, out DateTime tmp);
+
+            return bOk ? sDate : "__/__/__";
+        }
+        private string validateVersion(string sVersion)
+        {
+            // can be X.X, X.X.X, or X.X.X.X  where X is +ve int
+            string[] ss = sVersion.Split('.');
+
+            if (ss.Length >= 2 && ss.Length <= 4)
+            {
+                bool bAllNums = true;
+                foreach(string s in ss)
+                {
+                    if (!int.TryParse(s, out int tmp))
+                    {
+                        if (tmp >= 0)
+                        {
+                            bAllNums = false;
+                            break;
+                        }
+                    }
+                }
+                if(bAllNums) return sVersion;
+            }
+            return "?";
+        }
+        private void skinServersDataReceivedHandler(object sender, SkinServersData e)
+        {
+            if (!isSkinServerTabVisible()) return;
+
+            if (e != null)
+            {
+                if (e.SkinServers.Count > 0) {
+                    panelGetServerList.Visible = false;
+                    panelSkinServerControls.Visible = true;
+                    grpAuthorDetails.Visible = false;
+
+                    bIgnoreSkinServerListUpdate = true;
+                    comboSkinServerList.DisplayMember = "Description";
+                    comboSkinServerList.DataSource = e.SkinServers;
+                    bIgnoreSkinServerListUpdate = false;
+                    Debug.Print($"{e.SkinServers.Count} skin servers");
+                }
+                else
+                {
+                    grpAuthorDetails.Visible = false;
+                    panelSkinServerControls.Visible = false;
+                    panelGetServerList.Visible = true;
+                    lblSkinServersInfo.Text = "No skin servers in the list\nfrom Github.";
+                    Debug.Print("no skins in the list on github");
+                }
+            }
+            else
+            {
+                grpAuthorDetails.Visible = false;
+                panelSkinServerControls.Visible = false;
+                panelGetServerList.Visible = true;
+                lblSkinServersInfo.Text = "Unable to retrieve skin server list\nfrom Github at this time.";
+                Debug.Print("no servers");
+            }
+        }
+        private void imageLoadedHandler(object sender, SkinHttpImage e)
+        {
+            // all these checks because the image could finish downloading when were are somewhere else
+            int sel = comboSkinServerList.SelectedIndex;
+            if (sel == -1) return;
+
+            SkinServer ss = comboSkinServerList.SelectedItem as SkinServer;
+            if (ss == null) return;
+
+            sel = lstAvailableSkins.SelectedIndex;
+            if (sel == -1) return;
+
+            ThetisSkin ts = lstAvailableSkins.Items[sel] as ThetisSkin;
+            if (ts == null) return;
+
+            if (e != null)
+            {
+                //this id is built on the donwload request, so when we get the event here we can check that it belongs to the skin we are viewing
+                if (e.ID != "[" + ss.SkinServerUrl + "]_[" + ts.SkinName + "]") return;
+
+                if (e.Image.Width == picSkinThumbnail.Width && e.Image.Height == picSkinThumbnail.Height)
+                    picSkinThumbnail.SizeMode = PictureBoxSizeMode.CenterImage;
+                else
+                    picSkinThumbnail.SizeMode = PictureBoxSizeMode.Zoom;
+
+                picSkinThumbnail.Image = e.Image;
+            }
+            else
+                picSkinThumbnail.Image = null;
+        }
+        private void btnRefreshSkinsForServer_Click(object sender, EventArgs e)
+        {
+            if (comboSkinServerList.Items.Count == 0 || comboSkinServerList.SelectedIndex == -1) return;
+
+            SkinServer ss = comboSkinServerList.SelectedItem as SkinServer;
+            if (ss == null) return;
+
+            // start the query of the specific server
+            ThetisSkinService.GetThetisSkinsData(ss.SkinServerUrl);
+        }
+
+        private void btnSkinsHomepage_Click(object sender, EventArgs e)
+        {
+            Common.OpenUri(btnSkinsHomepage.Tag.ToString());
+        }
+
+        private void btnSkinsDonate_Click(object sender, EventArgs e)
+        {
+            Common.OpenUri(btnSkinsDonate.Tag.ToString());
+        }
+
+        private void btnSkinHomepage_Click(object sender, EventArgs e)
+        {
+            Common.OpenUri(btnSkinHomepage.Tag.ToString());
+        }
+        private void fileDownloadHandler(object sender, SkinFileDownload e)
+        {
+            if (e != null)
+            {
+                if (e.Complete)
+                {
+                    prgSkinDownload.Value = 100;
+
+                    Debug.Print(e.BytesDownloaded.ToString() + " - " + e.TotalBytes.ToString());
+
+                    string sFile = getFileFromUrl(e.Url);
+
+                    if (isSkinZipFile(e.Path, sFile, out bool bUsesFileInRoot, out bool bIsMeterSkin, e.BypassRootFolderCheck))
+                    {
+                        string sOutputPath;
+                        if (bUsesFileInRoot || (e.BypassRootFolderCheck && !bIsMeterSkin))
+                        {
+                            //expand into OpenHPSDR\Skins
+                            sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Skins";                            
+                        }
+                        else if(bIsMeterSkin)
+                        {
+                            //expand into OpenHPSDR\Meters
+                            sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
+                        }
+                        else
+                        {
+                            //expand into OpenHPSDR\
+                            sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
+                        }
+
+                        extractPngFilesFromZip(e.Path, sOutputPath);
+                    }
+
+                    tryRemoveDownload(e.Path);
+
+                    btnDownloadSkin.Text = "Download";
+                    prgSkinDownload.Visible = false;
+
+                    string sCurrentSkin = comboAppSkin.Text;
+                    RefreshSkinList();
+                    if (comboAppSkin.Items.Contains(sCurrentSkin))
+                        comboAppSkin.Text = sCurrentSkin;
+                }
+                else
+                {
+                    if(e.TotalBytes != -1)
+                    {
+                        if (!prgSkinDownload.Visible) prgSkinDownload.Visible = true;
+
+                        prgSkinDownload.Value = e.PercentageDownloaded;
+                        if (e.PercentageDownloaded > 0)
+                        {
+                            prgSkinDownload.Value = e.PercentageDownloaded;
+                        }
+                    }
+                    else
+                    {
+                        if (prgSkinDownload.Visible)
+                            prgSkinDownload.Visible = false;
+                    }
+                }
+            }
+            else
+            {
+                prgSkinDownload.Visible = false;
+                btnDownloadSkin.Text = "Download";
+            }
+        }
+        private void tryRemoveDownload(string path)
+        {
+            try
+            {
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+            catch { }
+        }
+        private string getFileFromUrl(string sUrl, bool bWithoutExtenstion = true)
+        {
+            string sFilename = "";
+            try
+            {
+                if (bWithoutExtenstion)
+                    sFilename = Path.GetFileNameWithoutExtension(new Uri(sUrl).LocalPath);
+                else
+                    sFilename = Path.GetFileName(new Uri(sUrl).LocalPath);
+            }
+            catch { }
+            return sFilename;
+        }
+        private void btnDownloadSkin_Click(object sender, EventArgs e)
+        {
+            if (btnDownloadSkin.Text == "Cancel")
+            {
+                ThetisSkinService.CancelDownload();
+            }
+            else
+            {
+                int sel = comboSkinServerList.SelectedIndex;
+                if (sel == -1) return;
+
+                SkinServer ss = comboSkinServerList.SelectedItem as SkinServer;
+                if (ss == null) return;
+
+                btnDownloadSkin.Text = "Cancel";
+
+                string tempFilePath = Path.GetTempFileName();
+                ThetisSkinService.DownloadFile(btnDownloadSkin.Tag.ToString(), tempFilePath, ss.BypassRootFolderCheck);
+            }
+        }
+
+        private void lstAvailableSkins_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstAvailableSkins.Items.Count == 0 || lstAvailableSkins.SelectedIndex == -1) return;
+
+            //ThetisSkin ts = comboAvailableSkins.SelectedItem as ThetisSkin;
+            //if (ts == null) return;
+
+            ThetisSkinService.CancelDownload();
+
+            updateSelectedSkin();
+        }
+
+        private bool isSkinZipFile(string filePath, string sFilename, out bool usesFilenameInRoot, out bool isMeterSkin, bool bypassRootFolderCheck)
+        {
+            bool bOk = false;
+            usesFilenameInRoot = false;
+            isMeterSkin = false;
+
+            try
+            {
+                using (ZipFile zipFile = ZipFile.Read(filePath))
+                {
+                    if (zipFile.Any(entry => entry.FileName.StartsWith("Meters" + "/") && entry.IsDirectory))
+                    {
+                        bOk = true;
+                        isMeterSkin = true;
+                    }
+
+                    if (!bOk)
+                    {
+                        if (!bypassRootFolderCheck)
+                        {
+                            if (!bOk && zipFile.Any(entry => entry.FileName.StartsWith("Skins" + "/") && entry.IsDirectory))
+                                bOk = true;
+
+                            if (!bOk && sFilename != "")
+                            {
+                                string sReplacedWithSpaces = sFilename.Replace("_", " ");
+                                string sReplacedWithoutSpaces = sFilename.Replace(" ", "_");
+                                string sReplacedWithMinus = sFilename.Replace(" ", "-");
+                                string sReplacedWithoutMinus = sFilename.Replace("-", " ");
+                                if (zipFile.Any(entry => (entry.FileName.StartsWith(sFilename + "/") || entry.FileName.StartsWith(sReplacedWithSpaces + "/") || 
+                                    entry.FileName.StartsWith(sReplacedWithoutSpaces + "/") || entry.FileName.StartsWith(sReplacedWithMinus + "/") ||
+                                    entry.FileName.StartsWith(sReplacedWithoutMinus + "/")
+                                    ) && entry.IsDirectory))
+                                {
+                                    usesFilenameInRoot = true;
+                                    bOk = true;
+                                }
+                            }
+                        }
+                        else
+                            bOk = true;
+                    }
+                }
+            }
+            catch (Ionic.Zip.BadReadException)
+            {
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return bOk;
+        }
+        private bool doesFolderExistInZip(string zipFilePath, string folderName)
+        {
+            using (ZipFile zipFile = ZipFile.Read(zipFilePath))
+            {
+                return zipFile.Any(entry => entry.FileName.StartsWith(folderName + "/") && entry.IsDirectory);
+            }
+        }
+
+        private static void extractPngFilesFromZip(string sourceZipFilePath, string outputPath)
+        {
+            try
+            {
+                sourceZipFilePath = sourceZipFilePath.Replace('/', '\\');
+                outputPath = outputPath.Replace('/', '\\');
+
+                using (ZipFile zip = ZipFile.Read(sourceZipFilePath))
+                {
+                    foreach (var entry in zip.Where(e => e.FileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        string entryPath = Path.Combine(outputPath, entry.FileName.Replace('/', '\\'));
+
+                        // Create the directory structure if it doesn't exist
+                        Directory.CreateDirectory(Path.GetDirectoryName(entryPath));
+
+                        if (File.Exists(entryPath))
+                            File.Delete(entryPath);
+
+                        entry.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private bool bIgnoreSkinServerListUpdate = false;
+        private void comboSkinServerList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing || bIgnoreSkinServerListUpdate) return;
+
+            hideAllSkinServerRelatedControls();
+            panelSkinServerControls.Visible = true;
+        }
+
+        private void btnRemoveSkin_Click(object sender, EventArgs e)
+        {
+            if(comboAppSkin.SelectedIndex == -1 || comboAppSkin.Items.Count <= 1 || _skinPath == "")
+            {
+                btnRemoveSkin.Enabled = comboAppSkin.Items.Count > 1; // some reason it was enabled
+
+                return;
+            }
+
+            btnRemoveSkin.Enabled = false;
+
+            string sSelectedSkin = comboAppSkin.Text;
+            int nSelected = comboAppSkin.SelectedIndex;
+
+            DialogResult dres = MessageBox.Show(
+            "Do you want to remove the skin [" + sSelectedSkin + "] from the available skins?\n\nThis will permanently remove it from the Skins folder.\n\nTo do so another skin will be selected instead.",
+            "Skin removal",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+
+            if(dres == DialogResult.Yes)
+            {
+                int nToSelect;
+                if(nSelected == comboAppSkin.Items.Count - 1)
+                {
+                    // selected last in the list, select previous
+                    nToSelect = nSelected -1;
+                }
+                else
+                {
+                    //select next
+                    nToSelect = nSelected + 1;
+                }
+
+                // change skin
+                comboAppSkin.SelectedIndex = nToSelect;
+
+                string sSkinPath = _skinPath + "\\" + sSelectedSkin;
+
+                try
+                {
+                    if (Directory.Exists(sSkinPath))
+                        Directory.Delete(sSkinPath, true);
+                }
+                catch (Exception ex)
+                {
+                    dres = MessageBox.Show(
+                                "There was an isssue deleting [" + sSelectedSkin + "] from the skin folder.\n\nSome files would not delete.\n\nPlease remove manually.",
+                                "Skin removal issue",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
+
+                //bool bRenamedOk = renameSkinForDeletion(sSkinPath);
+                //if(!bRenamedOk)
+                //{
+                //    dres = MessageBox.Show(
+                //                "There was an isssue removing [" + sSelectedSkin + "] from the skin folder.\n\nPlease remove manually.",
+                //                "Skin removal issue",
+                //                MessageBoxButtons.OK,
+                //                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                //}
+
+                string sSkinBeforeRefresh = comboAppSkin.Text;
+                RefreshSkinList();
+                if (comboAppSkin.Items.Contains(sSkinBeforeRefresh) && comboAppSkin.Text != sSkinBeforeRefresh)
+                    comboAppSkin.Text = sSkinBeforeRefresh;
+            }
+
+            btnRemoveSkin.Enabled = true;
+        }
+
+        private void btnOpenSkinsFolder_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if(_skinPath != "")
+                    Process.Start("explorer.exe", _skinPath);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+        //private bool renameSkinForDeletion(string sFullPath)
+        //{
+        //    if (_skinPath == "" || !Directory.Exists(sFullPath)) return false;
+
+        //    int deleteIndex = 1;            
+        //    string sRenamePath = _skinPath + "\\delete_" + deleteIndex.ToString();
+
+        //    while(Directory.Exists(sRenamePath))
+        //    {
+        //        deleteIndex++;
+        //        sRenamePath = _skinPath + "\\delete_" + deleteIndex.ToString();
+        //    }
+
+        //    try
+        //    {
+        //        Directory.Move(sFullPath, sRenamePath);
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        return false;
+        //    }
+        //    return true;
+        //}
+
+        private void buttonTS1_Click(object sender, EventArgs e)
+        {
+            //releaseSkinImages();
+        }
+
+        //private void forceDeleteDirectory(string directoryPath)
+        //{
+        //    // Check if the directory exists
+        //    if (Directory.Exists(directoryPath))
+        //    {
+        //        // Create a process to execute the 'rd /s /q' command, which deletes the directory
+        //        using (Process process = new Process())
+        //        {
+        //            ProcessStartInfo startInfo = new ProcessStartInfo
+        //            {
+        //                FileName = "cmd.exe",
+        //                RedirectStandardInput = true,
+        //                RedirectStandardOutput = true,
+        //                RedirectStandardError = true,
+        //                UseShellExecute = false,
+        //                CreateNoWindow = true,
+        //                WorkingDirectory = directoryPath
+        //            };
+
+        //            process.StartInfo = startInfo;
+        //            process.Start();
+
+        //            // Send the command to delete the directory
+        //            process.StandardInput.WriteLine($"rd /s /q \"{directoryPath}\"");
+        //            process.StandardInput.Flush();
+        //            process.StandardInput.Close();
+
+        //            // Wait for the process to exit
+        //            process.WaitForExit();
+        //        }
+        //    }
+        //}
     }
 
     #region PADeviceInfo Helper Class

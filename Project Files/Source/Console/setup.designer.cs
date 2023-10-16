@@ -2814,21 +2814,26 @@
             this.tpAppearance = new System.Windows.Forms.TabPage();
             this.tcAppearance = new System.Windows.Forms.TabControl();
             this.tpAppearanceGeneral = new System.Windows.Forms.TabPage();
-            this.chkConsoleDarkModeTitleBar = new System.Windows.Forms.CheckBoxTS();
+            this.groupBoxTS31 = new System.Windows.Forms.GroupBoxTS();
+            this.chkEnableLEDFont = new System.Windows.Forms.CheckBoxTS();
             this.labelTS8 = new System.Windows.Forms.LabelTS();
             this.clrbtnSliderLimitBar = new Thetis.ColorButton();
+            this.chkConsoleDarkModeTitleBar = new System.Windows.Forms.CheckBoxTS();
+            this.lblAppearanceGenBtnSel = new System.Windows.Forms.LabelTS();
+            this.clrbtnBtnSel = new Thetis.ColorButton();
+            this.clrbtnGenBackground = new Thetis.ColorButton();
+            this.lblGenBackground = new System.Windows.Forms.LabelTS();
             this.groupBoxTS12 = new System.Windows.Forms.GroupBoxTS();
             this.clrbtnStatusBarText = new Thetis.ColorButton();
             this.nlblStatusBarTextColour = new System.Windows.Forms.LabelTS();
             this.clrbtnStatusBarBackground = new Thetis.ColorButton();
             this.nlblStatusBarBackground = new System.Windows.Forms.LabelTS();
-            this.chkEnableLEDFont = new System.Windows.Forms.CheckBoxTS();
             this.btnSkinExport = new System.Windows.Forms.ButtonTS();
             this.grpAppSkins = new System.Windows.Forms.GroupBoxTS();
+            this.btnOpenSkinsFolder = new System.Windows.Forms.ButtonTS();
+            this.btnRemoveSkin = new System.Windows.Forms.ButtonTS();
             this.chkDisablePicDisplayBackgroundImage = new System.Windows.Forms.CheckBoxTS();
             this.comboAppSkin = new System.Windows.Forms.ComboBoxTS();
-            this.lblGenBackground = new System.Windows.Forms.LabelTS();
-            this.clrbtnGenBackground = new Thetis.ColorButton();
             this.grpAppearanceBand = new System.Windows.Forms.GroupBoxTS();
             this.clrbtnBandBackground = new Thetis.ColorButton();
             this.lblBandBackground = new System.Windows.Forms.LabelTS();
@@ -2850,8 +2855,6 @@
             this.clrbtnVFODark = new Thetis.ColorButton();
             this.lblVFOPowerOn = new System.Windows.Forms.LabelTS();
             this.lblVFOPowerOff = new System.Windows.Forms.LabelTS();
-            this.clrbtnBtnSel = new Thetis.ColorButton();
-            this.lblAppearanceGenBtnSel = new System.Windows.Forms.LabelTS();
             this.tpAppearanceDisplay = new System.Windows.Forms.TabPage();
             this.groupBoxTS18 = new System.Windows.Forms.GroupBoxTS();
             this.chkNFShowDecimal = new System.Windows.Forms.CheckBoxTS();
@@ -3102,6 +3105,29 @@
             this.chkShowModeControls = new System.Windows.Forms.CheckBoxTS();
             this.chkShowBandControls = new System.Windows.Forms.CheckBoxTS();
             this.chkShowTopControls = new System.Windows.Forms.CheckBoxTS();
+            this.tpSkinServers = new System.Windows.Forms.TabPage();
+            this.panelSkinServerControls = new System.Windows.Forms.PanelTS();
+            this.grpAuthorDetails = new System.Windows.Forms.GroupBoxTS();
+            this.btnSkinsDonate = new System.Windows.Forms.ButtonTS();
+            this.btnSkinsHomepage = new System.Windows.Forms.ButtonTS();
+            this.lblAuthorDetails2 = new System.Windows.Forms.LabelTS();
+            this.lblAuthorDetails1 = new System.Windows.Forms.LabelTS();
+            this.labelTS183 = new System.Windows.Forms.LabelTS();
+            this.btnRefreshSkinsForServer = new System.Windows.Forms.ButtonTS();
+            this.comboSkinServerList = new System.Windows.Forms.ComboBoxTS();
+            this.gtpAvailableSkins = new System.Windows.Forms.GroupBoxTS();
+            this.lblSkinOverview = new System.Windows.Forms.TextBoxTS();
+            this.btnSkinHomepage = new System.Windows.Forms.Button();
+            this.prgSkinDownload = new Thetis.ucProgress();
+            this.lstAvailableSkins = new System.Windows.Forms.ListBox();
+            this.lblSkinMeters = new System.Windows.Forms.LabelTS();
+            this.picSkinThumbnail = new System.Windows.Forms.PictureBox();
+            this.lblSkinDateReleased = new System.Windows.Forms.LabelTS();
+            this.btnDownloadSkin = new System.Windows.Forms.ButtonTS();
+            this.lblSkinThetisVersion = new System.Windows.Forms.LabelTS();
+            this.lblSkinVersion = new System.Windows.Forms.LabelTS();
+            this.panelGetServerList = new System.Windows.Forms.PanelTS();
+            this.lblSkinServersInfo = new System.Windows.Forms.LabelTS();
             this.tpKeyboard = new System.Windows.Forms.TabPage();
             this.grpKBPTT = new System.Windows.Forms.GroupBoxTS();
             this.labelTS389 = new System.Windows.Forms.LabelTS();
@@ -4234,6 +4260,7 @@
             this.tpAppearance.SuspendLayout();
             this.tcAppearance.SuspendLayout();
             this.tpAppearanceGeneral.SuspendLayout();
+            this.groupBoxTS31.SuspendLayout();
             this.groupBoxTS12.SuspendLayout();
             this.grpAppSkins.SuspendLayout();
             this.grpAppearanceBand.SuspendLayout();
@@ -4292,6 +4319,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbTXBackgroundAlpha)).BeginInit();
             this.tpAppearanceCollapsible.SuspendLayout();
             this.grpBoxCollapsible.SuspendLayout();
+            this.tpSkinServers.SuspendLayout();
+            this.panelSkinServerControls.SuspendLayout();
+            this.grpAuthorDetails.SuspendLayout();
+            this.gtpAvailableSkins.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picSkinThumbnail)).BeginInit();
+            this.panelGetServerList.SuspendLayout();
             this.tpKeyboard.SuspendLayout();
             this.grpKBPTT.SuspendLayout();
             this.grpBoxSpaceBarPTT.SuspendLayout();
@@ -46001,52 +46034,63 @@
             this.tcAppearance.Controls.Add(this.tpAppearanceMeter2);
             this.tcAppearance.Controls.Add(this.tcAppearanceTXDisplay);
             this.tcAppearance.Controls.Add(this.tpAppearanceCollapsible);
+            this.tcAppearance.Controls.Add(this.tpSkinServers);
             this.tcAppearance.Location = new System.Drawing.Point(0, 0);
             this.tcAppearance.Name = "tcAppearance";
             this.tcAppearance.SelectedIndex = 0;
             this.tcAppearance.Size = new System.Drawing.Size(732, 436);
             this.tcAppearance.TabIndex = 40;
+            this.tcAppearance.SelectedIndexChanged += new System.EventHandler(this.tcAppearance_SelectedIndexChanged);
             // 
             // tpAppearanceGeneral
             // 
             this.tpAppearanceGeneral.BackColor = System.Drawing.SystemColors.Control;
-            this.tpAppearanceGeneral.Controls.Add(this.chkConsoleDarkModeTitleBar);
-            this.tpAppearanceGeneral.Controls.Add(this.labelTS8);
-            this.tpAppearanceGeneral.Controls.Add(this.clrbtnSliderLimitBar);
+            this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS31);
             this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS12);
-            this.tpAppearanceGeneral.Controls.Add(this.chkEnableLEDFont);
             this.tpAppearanceGeneral.Controls.Add(this.btnSkinExport);
             this.tpAppearanceGeneral.Controls.Add(this.grpAppSkins);
-            this.tpAppearanceGeneral.Controls.Add(this.lblGenBackground);
-            this.tpAppearanceGeneral.Controls.Add(this.clrbtnGenBackground);
             this.tpAppearanceGeneral.Controls.Add(this.grpAppearanceBand);
             this.tpAppearanceGeneral.Controls.Add(this.grpAppearanceVFO);
-            this.tpAppearanceGeneral.Controls.Add(this.clrbtnBtnSel);
-            this.tpAppearanceGeneral.Controls.Add(this.lblAppearanceGenBtnSel);
             this.tpAppearanceGeneral.Location = new System.Drawing.Point(4, 22);
             this.tpAppearanceGeneral.Name = "tpAppearanceGeneral";
             this.tpAppearanceGeneral.Size = new System.Drawing.Size(724, 410);
             this.tpAppearanceGeneral.TabIndex = 0;
             this.tpAppearanceGeneral.Text = "General";
             // 
-            // chkConsoleDarkModeTitleBar
+            // groupBoxTS31
             // 
-            this.chkConsoleDarkModeTitleBar.AutoSize = true;
-            this.chkConsoleDarkModeTitleBar.Image = null;
-            this.chkConsoleDarkModeTitleBar.Location = new System.Drawing.Point(29, 280);
-            this.chkConsoleDarkModeTitleBar.Name = "chkConsoleDarkModeTitleBar";
-            this.chkConsoleDarkModeTitleBar.Size = new System.Drawing.Size(156, 17);
-            this.chkConsoleDarkModeTitleBar.TabIndex = 92;
-            this.chkConsoleDarkModeTitleBar.Text = "Dark mode Console title bar";
-            this.toolTip1.SetToolTip(this.chkConsoleDarkModeTitleBar, "Dark mode Console title bar (only on Windows 10 and later)");
-            this.chkConsoleDarkModeTitleBar.UseVisualStyleBackColor = true;
-            this.chkConsoleDarkModeTitleBar.Visible = false;
-            this.chkConsoleDarkModeTitleBar.CheckedChanged += new System.EventHandler(this.chkConsoleDarkModeTitleBar_CheckedChanged);
+            this.groupBoxTS31.Controls.Add(this.chkEnableLEDFont);
+            this.groupBoxTS31.Controls.Add(this.labelTS8);
+            this.groupBoxTS31.Controls.Add(this.clrbtnSliderLimitBar);
+            this.groupBoxTS31.Controls.Add(this.chkConsoleDarkModeTitleBar);
+            this.groupBoxTS31.Controls.Add(this.lblAppearanceGenBtnSel);
+            this.groupBoxTS31.Controls.Add(this.clrbtnBtnSel);
+            this.groupBoxTS31.Controls.Add(this.clrbtnGenBackground);
+            this.groupBoxTS31.Controls.Add(this.lblGenBackground);
+            this.groupBoxTS31.Location = new System.Drawing.Point(13, 123);
+            this.groupBoxTS31.Name = "groupBoxTS31";
+            this.groupBoxTS31.Size = new System.Drawing.Size(294, 132);
+            this.groupBoxTS31.TabIndex = 93;
+            this.groupBoxTS31.TabStop = false;
+            this.groupBoxTS31.Text = "General";
+            // 
+            // chkEnableLEDFont
+            // 
+            this.chkEnableLEDFont.AutoSize = true;
+            this.chkEnableLEDFont.Image = null;
+            this.chkEnableLEDFont.Location = new System.Drawing.Point(6, 19);
+            this.chkEnableLEDFont.Name = "chkEnableLEDFont";
+            this.chkEnableLEDFont.Size = new System.Drawing.Size(93, 17);
+            this.chkEnableLEDFont.TabIndex = 88;
+            this.chkEnableLEDFont.Text = "Use LED Font";
+            this.toolTip1.SetToolTip(this.chkEnableLEDFont, "Use 7-segment LED fonts for VFO and Meter displays.");
+            this.chkEnableLEDFont.UseVisualStyleBackColor = true;
+            this.chkEnableLEDFont.CheckedChanged += new System.EventHandler(this.chkEnableLEDFont_CheckedChanged);
             // 
             // labelTS8
             // 
             this.labelTS8.Image = null;
-            this.labelTS8.Location = new System.Drawing.Point(22, 223);
+            this.labelTS8.Location = new System.Drawing.Point(161, 95);
             this.labelTS8.Name = "labelTS8";
             this.labelTS8.Size = new System.Drawing.Size(86, 23);
             this.labelTS8.TabIndex = 91;
@@ -46058,7 +46102,7 @@
             this.clrbtnSliderLimitBar.Automatic = "Automatic";
             this.clrbtnSliderLimitBar.Color = System.Drawing.Color.Red;
             this.clrbtnSliderLimitBar.Image = null;
-            this.clrbtnSliderLimitBar.Location = new System.Drawing.Point(108, 223);
+            this.clrbtnSliderLimitBar.Location = new System.Drawing.Point(247, 95);
             this.clrbtnSliderLimitBar.MoreColors = "More Colors...";
             this.clrbtnSliderLimitBar.Name = "clrbtnSliderLimitBar";
             this.clrbtnSliderLimitBar.Selectable = true;
@@ -46067,13 +46111,74 @@
             this.toolTip1.SetToolTip(this.clrbtnSliderLimitBar, "Colour of the Limit bar area in the Drive/Tune sliders");
             this.clrbtnSliderLimitBar.Changed += new System.EventHandler(this.clrbtnSliderLimitBar_Changed);
             // 
+            // chkConsoleDarkModeTitleBar
+            // 
+            this.chkConsoleDarkModeTitleBar.AutoSize = true;
+            this.chkConsoleDarkModeTitleBar.Image = null;
+            this.chkConsoleDarkModeTitleBar.Location = new System.Drawing.Point(6, 42);
+            this.chkConsoleDarkModeTitleBar.Name = "chkConsoleDarkModeTitleBar";
+            this.chkConsoleDarkModeTitleBar.Size = new System.Drawing.Size(156, 17);
+            this.chkConsoleDarkModeTitleBar.TabIndex = 92;
+            this.chkConsoleDarkModeTitleBar.Text = "Dark mode Console title bar";
+            this.toolTip1.SetToolTip(this.chkConsoleDarkModeTitleBar, "Dark mode Console title bar (only on Windows 10 and later)");
+            this.chkConsoleDarkModeTitleBar.UseVisualStyleBackColor = true;
+            this.chkConsoleDarkModeTitleBar.Visible = false;
+            this.chkConsoleDarkModeTitleBar.CheckedChanged += new System.EventHandler(this.chkConsoleDarkModeTitleBar_CheckedChanged);
+            // 
+            // lblAppearanceGenBtnSel
+            // 
+            this.lblAppearanceGenBtnSel.Image = null;
+            this.lblAppearanceGenBtnSel.Location = new System.Drawing.Point(175, 16);
+            this.lblAppearanceGenBtnSel.Name = "lblAppearanceGenBtnSel";
+            this.lblAppearanceGenBtnSel.Size = new System.Drawing.Size(64, 32);
+            this.lblAppearanceGenBtnSel.TabIndex = 55;
+            this.lblAppearanceGenBtnSel.Text = "Button Selected:";
+            // 
+            // clrbtnBtnSel
+            // 
+            this.clrbtnBtnSel.Automatic = "Automatic";
+            this.clrbtnBtnSel.Color = System.Drawing.Color.Yellow;
+            this.clrbtnBtnSel.Image = null;
+            this.clrbtnBtnSel.Location = new System.Drawing.Point(247, 16);
+            this.clrbtnBtnSel.MoreColors = "More Colors...";
+            this.clrbtnBtnSel.Name = "clrbtnBtnSel";
+            this.clrbtnBtnSel.Selectable = true;
+            this.clrbtnBtnSel.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnBtnSel.TabIndex = 66;
+            this.clrbtnBtnSel.Changed += new System.EventHandler(this.clrbtnBtnSel_Changed);
+            // 
+            // clrbtnGenBackground
+            // 
+            this.clrbtnGenBackground.Automatic = "Automatic";
+            this.clrbtnGenBackground.Color = System.Drawing.SystemColors.ControlDark;
+            this.clrbtnGenBackground.Image = null;
+            this.clrbtnGenBackground.Location = new System.Drawing.Point(247, 51);
+            this.clrbtnGenBackground.MoreColors = "More Colors...";
+            this.clrbtnGenBackground.Name = "clrbtnGenBackground";
+            this.clrbtnGenBackground.Selectable = true;
+            this.clrbtnGenBackground.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnGenBackground.TabIndex = 83;
+            this.clrbtnGenBackground.Visible = false;
+            this.clrbtnGenBackground.Changed += new System.EventHandler(this.clrbtnGenBackground_Changed);
+            // 
+            // lblGenBackground
+            // 
+            this.lblGenBackground.Image = null;
+            this.lblGenBackground.Location = new System.Drawing.Point(175, 51);
+            this.lblGenBackground.Name = "lblGenBackground";
+            this.lblGenBackground.Size = new System.Drawing.Size(72, 32);
+            this.lblGenBackground.TabIndex = 84;
+            this.lblGenBackground.Text = "Overall Background:";
+            this.lblGenBackground.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblGenBackground.Visible = false;
+            // 
             // groupBoxTS12
             // 
             this.groupBoxTS12.Controls.Add(this.clrbtnStatusBarText);
             this.groupBoxTS12.Controls.Add(this.nlblStatusBarTextColour);
             this.groupBoxTS12.Controls.Add(this.clrbtnStatusBarBackground);
             this.groupBoxTS12.Controls.Add(this.nlblStatusBarBackground);
-            this.groupBoxTS12.Location = new System.Drawing.Point(455, 166);
+            this.groupBoxTS12.Location = new System.Drawing.Point(463, 166);
             this.groupBoxTS12.Name = "groupBoxTS12";
             this.groupBoxTS12.Size = new System.Drawing.Size(144, 89);
             this.groupBoxTS12.TabIndex = 89;
@@ -46126,19 +46231,6 @@
             this.nlblStatusBarBackground.Text = "Background:";
             this.nlblStatusBarBackground.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // chkEnableLEDFont
-            // 
-            this.chkEnableLEDFont.AutoSize = true;
-            this.chkEnableLEDFont.Image = null;
-            this.chkEnableLEDFont.Location = new System.Drawing.Point(616, 27);
-            this.chkEnableLEDFont.Name = "chkEnableLEDFont";
-            this.chkEnableLEDFont.Size = new System.Drawing.Size(71, 17);
-            this.chkEnableLEDFont.TabIndex = 88;
-            this.chkEnableLEDFont.Text = "LED Font";
-            this.toolTip1.SetToolTip(this.chkEnableLEDFont, "Use 7-segment LED fonts for VFO and Meter displays.");
-            this.chkEnableLEDFont.UseVisualStyleBackColor = true;
-            this.chkEnableLEDFont.CheckedChanged += new System.EventHandler(this.chkEnableLEDFont_CheckedChanged);
-            // 
             // btnSkinExport
             // 
             this.btnSkinExport.Image = null;
@@ -46154,25 +46246,52 @@
             // 
             // grpAppSkins
             // 
+            this.grpAppSkins.Controls.Add(this.btnOpenSkinsFolder);
+            this.grpAppSkins.Controls.Add(this.btnRemoveSkin);
             this.grpAppSkins.Controls.Add(this.chkDisablePicDisplayBackgroundImage);
             this.grpAppSkins.Controls.Add(this.comboAppSkin);
-            this.grpAppSkins.Location = new System.Drawing.Point(30, 8);
+            this.grpAppSkins.Location = new System.Drawing.Point(13, 8);
             this.grpAppSkins.Name = "grpAppSkins";
-            this.grpAppSkins.Size = new System.Drawing.Size(128, 77);
+            this.grpAppSkins.Size = new System.Drawing.Size(294, 80);
             this.grpAppSkins.TabIndex = 85;
             this.grpAppSkins.TabStop = false;
             this.grpAppSkins.Text = "Skins";
+            // 
+            // btnOpenSkinsFolder
+            // 
+            this.btnOpenSkinsFolder.Image = null;
+            this.btnOpenSkinsFolder.Location = new System.Drawing.Point(178, 46);
+            this.btnOpenSkinsFolder.Name = "btnOpenSkinsFolder";
+            this.btnOpenSkinsFolder.Selectable = true;
+            this.btnOpenSkinsFolder.Size = new System.Drawing.Size(107, 23);
+            this.btnOpenSkinsFolder.TabIndex = 92;
+            this.btnOpenSkinsFolder.Text = "Open Skins Folder";
+            this.btnOpenSkinsFolder.UseVisualStyleBackColor = true;
+            this.btnOpenSkinsFolder.Click += new System.EventHandler(this.btnOpenSkinsFolder_Click);
+            // 
+            // btnRemoveSkin
+            // 
+            this.btnRemoveSkin.Image = null;
+            this.btnRemoveSkin.Location = new System.Drawing.Point(178, 17);
+            this.btnRemoveSkin.Name = "btnRemoveSkin";
+            this.btnRemoveSkin.Selectable = true;
+            this.btnRemoveSkin.Size = new System.Drawing.Size(107, 23);
+            this.btnRemoveSkin.TabIndex = 91;
+            this.btnRemoveSkin.Text = "Remove";
+            this.toolTip1.SetToolTip(this.btnRemoveSkin, "Removes the skin from the skins folder");
+            this.btnRemoveSkin.UseVisualStyleBackColor = true;
+            this.btnRemoveSkin.Click += new System.EventHandler(this.btnRemoveSkin_Click);
             // 
             // chkDisablePicDisplayBackgroundImage
             // 
             this.chkDisablePicDisplayBackgroundImage.AutoSize = true;
             this.chkDisablePicDisplayBackgroundImage.Image = null;
-            this.chkDisablePicDisplayBackgroundImage.Location = new System.Drawing.Point(6, 48);
+            this.chkDisablePicDisplayBackgroundImage.Location = new System.Drawing.Point(6, 50);
             this.chkDisablePicDisplayBackgroundImage.Name = "chkDisablePicDisplayBackgroundImage";
-            this.chkDisablePicDisplayBackgroundImage.Size = new System.Drawing.Size(112, 17);
+            this.chkDisablePicDisplayBackgroundImage.Size = new System.Drawing.Size(151, 17);
             this.chkDisablePicDisplayBackgroundImage.TabIndex = 90;
-            this.chkDisablePicDisplayBackgroundImage.Text = "Disable picDisplay";
-            this.toolTip1.SetToolTip(this.chkDisablePicDisplayBackgroundImage, "Disables picDisplay background image on pana/waterfall");
+            this.chkDisablePicDisplayBackgroundImage.Text = "Ignore spectral area image";
+            this.toolTip1.SetToolTip(this.chkDisablePicDisplayBackgroundImage, "Ignores the skin image on pana/waterfall area");
             this.chkDisablePicDisplayBackgroundImage.UseVisualStyleBackColor = true;
             this.chkDisablePicDisplayBackgroundImage.CheckedChanged += new System.EventHandler(this.chkDisablePicDisplayBackgroundImage_CheckedChanged);
             // 
@@ -46182,34 +46301,9 @@
             this.comboAppSkin.FormattingEnabled = true;
             this.comboAppSkin.Location = new System.Drawing.Point(6, 19);
             this.comboAppSkin.Name = "comboAppSkin";
-            this.comboAppSkin.Size = new System.Drawing.Size(116, 21);
+            this.comboAppSkin.Size = new System.Drawing.Size(144, 21);
             this.comboAppSkin.TabIndex = 0;
             this.comboAppSkin.SelectedIndexChanged += new System.EventHandler(this.comboAppSkin_SelectedIndexChanged);
-            // 
-            // lblGenBackground
-            // 
-            this.lblGenBackground.Image = null;
-            this.lblGenBackground.Location = new System.Drawing.Point(36, 162);
-            this.lblGenBackground.Name = "lblGenBackground";
-            this.lblGenBackground.Size = new System.Drawing.Size(72, 32);
-            this.lblGenBackground.TabIndex = 84;
-            this.lblGenBackground.Text = "Overall Background:";
-            this.lblGenBackground.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblGenBackground.Visible = false;
-            // 
-            // clrbtnGenBackground
-            // 
-            this.clrbtnGenBackground.Automatic = "Automatic";
-            this.clrbtnGenBackground.Color = System.Drawing.SystemColors.ControlDark;
-            this.clrbtnGenBackground.Image = null;
-            this.clrbtnGenBackground.Location = new System.Drawing.Point(108, 162);
-            this.clrbtnGenBackground.MoreColors = "More Colors...";
-            this.clrbtnGenBackground.Name = "clrbtnGenBackground";
-            this.clrbtnGenBackground.Selectable = true;
-            this.clrbtnGenBackground.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnGenBackground.TabIndex = 83;
-            this.clrbtnGenBackground.Visible = false;
-            this.clrbtnGenBackground.Changed += new System.EventHandler(this.clrbtnGenBackground_Changed);
             // 
             // grpAppearanceBand
             // 
@@ -46221,7 +46315,7 @@
             this.grpAppearanceBand.Controls.Add(this.lblBandDark);
             this.grpAppearanceBand.Controls.Add(this.clrbtnOutOfBand);
             this.grpAppearanceBand.Controls.Add(this.lblOutOfBand);
-            this.grpAppearanceBand.Location = new System.Drawing.Point(455, 8);
+            this.grpAppearanceBand.Location = new System.Drawing.Point(463, 8);
             this.grpAppearanceBand.Name = "grpAppearanceBand";
             this.grpAppearanceBand.Size = new System.Drawing.Size(144, 152);
             this.grpAppearanceBand.TabIndex = 74;
@@ -46329,9 +46423,9 @@
             this.grpAppearanceVFO.Controls.Add(this.clrbtnVFODark);
             this.grpAppearanceVFO.Controls.Add(this.lblVFOPowerOn);
             this.grpAppearanceVFO.Controls.Add(this.lblVFOPowerOff);
-            this.grpAppearanceVFO.Location = new System.Drawing.Point(223, 8);
+            this.grpAppearanceVFO.Location = new System.Drawing.Point(313, 8);
             this.grpAppearanceVFO.Name = "grpAppearanceVFO";
-            this.grpAppearanceVFO.Size = new System.Drawing.Size(144, 231);
+            this.grpAppearanceVFO.Size = new System.Drawing.Size(144, 247);
             this.grpAppearanceVFO.TabIndex = 39;
             this.grpAppearanceVFO.TabStop = false;
             this.grpAppearanceVFO.Text = "VFO";
@@ -46457,28 +46551,6 @@
             this.lblVFOPowerOff.Size = new System.Drawing.Size(64, 24);
             this.lblVFOPowerOff.TabIndex = 57;
             this.lblVFOPowerOff.Text = "Inactive:";
-            // 
-            // clrbtnBtnSel
-            // 
-            this.clrbtnBtnSel.Automatic = "Automatic";
-            this.clrbtnBtnSel.Color = System.Drawing.Color.Yellow;
-            this.clrbtnBtnSel.Image = null;
-            this.clrbtnBtnSel.Location = new System.Drawing.Point(108, 127);
-            this.clrbtnBtnSel.MoreColors = "More Colors...";
-            this.clrbtnBtnSel.Name = "clrbtnBtnSel";
-            this.clrbtnBtnSel.Selectable = true;
-            this.clrbtnBtnSel.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnBtnSel.TabIndex = 66;
-            this.clrbtnBtnSel.Changed += new System.EventHandler(this.clrbtnBtnSel_Changed);
-            // 
-            // lblAppearanceGenBtnSel
-            // 
-            this.lblAppearanceGenBtnSel.Image = null;
-            this.lblAppearanceGenBtnSel.Location = new System.Drawing.Point(36, 127);
-            this.lblAppearanceGenBtnSel.Name = "lblAppearanceGenBtnSel";
-            this.lblAppearanceGenBtnSel.Size = new System.Drawing.Size(64, 32);
-            this.lblAppearanceGenBtnSel.TabIndex = 55;
-            this.lblAppearanceGenBtnSel.Text = "Button Selected:";
             // 
             // tpAppearanceDisplay
             // 
@@ -49864,6 +49936,269 @@
             this.chkShowTopControls.Text = "Top Controls";
             this.chkShowTopControls.UseVisualStyleBackColor = true;
             this.chkShowTopControls.CheckedChanged += new System.EventHandler(this.chkShowTopControls_CheckedChanged);
+            // 
+            // tpSkinServers
+            // 
+            this.tpSkinServers.BackColor = System.Drawing.SystemColors.Control;
+            this.tpSkinServers.Controls.Add(this.panelSkinServerControls);
+            this.tpSkinServers.Controls.Add(this.panelGetServerList);
+            this.tpSkinServers.Location = new System.Drawing.Point(4, 22);
+            this.tpSkinServers.Name = "tpSkinServers";
+            this.tpSkinServers.Size = new System.Drawing.Size(724, 410);
+            this.tpSkinServers.TabIndex = 6;
+            this.tpSkinServers.Text = "Skin Servers";
+            // 
+            // panelSkinServerControls
+            // 
+            this.panelSkinServerControls.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.panelSkinServerControls.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelSkinServerControls.Controls.Add(this.grpAuthorDetails);
+            this.panelSkinServerControls.Controls.Add(this.labelTS183);
+            this.panelSkinServerControls.Controls.Add(this.btnRefreshSkinsForServer);
+            this.panelSkinServerControls.Controls.Add(this.comboSkinServerList);
+            this.panelSkinServerControls.Controls.Add(this.gtpAvailableSkins);
+            this.panelSkinServerControls.Location = new System.Drawing.Point(6, 8);
+            this.panelSkinServerControls.Name = "panelSkinServerControls";
+            this.panelSkinServerControls.Size = new System.Drawing.Size(710, 399);
+            this.panelSkinServerControls.TabIndex = 4;
+            // 
+            // grpAuthorDetails
+            // 
+            this.grpAuthorDetails.Controls.Add(this.btnSkinsDonate);
+            this.grpAuthorDetails.Controls.Add(this.btnSkinsHomepage);
+            this.grpAuthorDetails.Controls.Add(this.lblAuthorDetails2);
+            this.grpAuthorDetails.Controls.Add(this.lblAuthorDetails1);
+            this.grpAuthorDetails.Location = new System.Drawing.Point(9, 35);
+            this.grpAuthorDetails.Name = "grpAuthorDetails";
+            this.grpAuthorDetails.Size = new System.Drawing.Size(416, 82);
+            this.grpAuthorDetails.TabIndex = 4;
+            this.grpAuthorDetails.TabStop = false;
+            this.grpAuthorDetails.Text = "Author Details";
+            // 
+            // btnSkinsDonate
+            // 
+            this.btnSkinsDonate.Image = null;
+            this.btnSkinsDonate.Location = new System.Drawing.Point(255, 48);
+            this.btnSkinsDonate.Name = "btnSkinsDonate";
+            this.btnSkinsDonate.Selectable = true;
+            this.btnSkinsDonate.Size = new System.Drawing.Size(128, 23);
+            this.btnSkinsDonate.TabIndex = 4;
+            this.btnSkinsDonate.Text = "Donate";
+            this.btnSkinsDonate.UseVisualStyleBackColor = true;
+            this.btnSkinsDonate.Click += new System.EventHandler(this.btnSkinsDonate_Click);
+            // 
+            // btnSkinsHomepage
+            // 
+            this.btnSkinsHomepage.Image = null;
+            this.btnSkinsHomepage.Location = new System.Drawing.Point(255, 19);
+            this.btnSkinsHomepage.Name = "btnSkinsHomepage";
+            this.btnSkinsHomepage.Selectable = true;
+            this.btnSkinsHomepage.Size = new System.Drawing.Size(128, 23);
+            this.btnSkinsHomepage.TabIndex = 3;
+            this.btnSkinsHomepage.Text = "Skins Homepage";
+            this.btnSkinsHomepage.UseVisualStyleBackColor = true;
+            this.btnSkinsHomepage.Click += new System.EventHandler(this.btnSkinsHomepage_Click);
+            // 
+            // lblAuthorDetails2
+            // 
+            this.lblAuthorDetails2.BackColor = System.Drawing.Color.Silver;
+            this.lblAuthorDetails2.Image = null;
+            this.lblAuthorDetails2.Location = new System.Drawing.Point(12, 47);
+            this.lblAuthorDetails2.Name = "lblAuthorDetails2";
+            this.lblAuthorDetails2.Size = new System.Drawing.Size(216, 13);
+            this.lblAuthorDetails2.TabIndex = 1;
+            this.lblAuthorDetails2.Text = "lblAuthorDetails2";
+            // 
+            // lblAuthorDetails1
+            // 
+            this.lblAuthorDetails1.BackColor = System.Drawing.Color.Silver;
+            this.lblAuthorDetails1.Image = null;
+            this.lblAuthorDetails1.Location = new System.Drawing.Point(12, 24);
+            this.lblAuthorDetails1.Name = "lblAuthorDetails1";
+            this.lblAuthorDetails1.Size = new System.Drawing.Size(216, 13);
+            this.lblAuthorDetails1.TabIndex = 0;
+            this.lblAuthorDetails1.Text = "lblAuthorDetails1";
+            // 
+            // labelTS183
+            // 
+            this.labelTS183.AutoSize = true;
+            this.labelTS183.Image = null;
+            this.labelTS183.Location = new System.Drawing.Point(7, 11);
+            this.labelTS183.Name = "labelTS183";
+            this.labelTS183.Size = new System.Drawing.Size(68, 13);
+            this.labelTS183.TabIndex = 2;
+            this.labelTS183.Text = "Skin Server :";
+            this.labelTS183.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // btnRefreshSkinsForServer
+            // 
+            this.btnRefreshSkinsForServer.Image = null;
+            this.btnRefreshSkinsForServer.Location = new System.Drawing.Point(350, 6);
+            this.btnRefreshSkinsForServer.Name = "btnRefreshSkinsForServer";
+            this.btnRefreshSkinsForServer.Selectable = true;
+            this.btnRefreshSkinsForServer.Size = new System.Drawing.Size(75, 23);
+            this.btnRefreshSkinsForServer.TabIndex = 3;
+            this.btnRefreshSkinsForServer.Text = "Refresh";
+            this.btnRefreshSkinsForServer.UseVisualStyleBackColor = true;
+            this.btnRefreshSkinsForServer.Click += new System.EventHandler(this.btnRefreshSkinsForServer_Click);
+            // 
+            // comboSkinServerList
+            // 
+            this.comboSkinServerList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboSkinServerList.FormattingEnabled = true;
+            this.comboSkinServerList.Items.AddRange(new object[] {
+            "test1",
+            "test2",
+            "test3",
+            "abc",
+            "123"});
+            this.comboSkinServerList.Location = new System.Drawing.Point(81, 8);
+            this.comboSkinServerList.Name = "comboSkinServerList";
+            this.comboSkinServerList.Size = new System.Drawing.Size(264, 21);
+            this.comboSkinServerList.TabIndex = 1;
+            this.comboSkinServerList.SelectedIndexChanged += new System.EventHandler(this.comboSkinServerList_SelectedIndexChanged);
+            // 
+            // gtpAvailableSkins
+            // 
+            this.gtpAvailableSkins.Controls.Add(this.lblSkinOverview);
+            this.gtpAvailableSkins.Controls.Add(this.btnSkinHomepage);
+            this.gtpAvailableSkins.Controls.Add(this.prgSkinDownload);
+            this.gtpAvailableSkins.Controls.Add(this.lstAvailableSkins);
+            this.gtpAvailableSkins.Controls.Add(this.lblSkinMeters);
+            this.gtpAvailableSkins.Controls.Add(this.picSkinThumbnail);
+            this.gtpAvailableSkins.Controls.Add(this.lblSkinDateReleased);
+            this.gtpAvailableSkins.Controls.Add(this.btnDownloadSkin);
+            this.gtpAvailableSkins.Controls.Add(this.lblSkinThetisVersion);
+            this.gtpAvailableSkins.Controls.Add(this.lblSkinVersion);
+            this.gtpAvailableSkins.Location = new System.Drawing.Point(5, -3);
+            this.gtpAvailableSkins.Name = "gtpAvailableSkins";
+            this.gtpAvailableSkins.Size = new System.Drawing.Size(702, 399);
+            this.gtpAvailableSkins.TabIndex = 5;
+            this.gtpAvailableSkins.TabStop = false;
+            // 
+            // lblSkinOverview
+            // 
+            this.lblSkinOverview.BackColor = System.Drawing.Color.Silver;
+            this.lblSkinOverview.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lblSkinOverview.Location = new System.Drawing.Point(427, 82);
+            this.lblSkinOverview.Multiline = true;
+            this.lblSkinOverview.Name = "lblSkinOverview";
+            this.lblSkinOverview.ReadOnly = true;
+            this.lblSkinOverview.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.lblSkinOverview.Size = new System.Drawing.Size(269, 65);
+            this.lblSkinOverview.TabIndex = 11;
+            this.lblSkinOverview.Text = "dgjdfgdgdthrhtrhrhrthrthrthrthrthrthrthrthhAAAAAAAAAAAAAAAAAAA\r\ndgrgerge\r\ng\r\nwg\r\n" +
+    "gr\r\neg\r\nrge\r\nrherh\r\nerh";
+            // 
+            // btnSkinHomepage
+            // 
+            this.btnSkinHomepage.Location = new System.Drawing.Point(621, 14);
+            this.btnSkinHomepage.Name = "btnSkinHomepage";
+            this.btnSkinHomepage.Size = new System.Drawing.Size(75, 61);
+            this.btnSkinHomepage.TabIndex = 9;
+            this.btnSkinHomepage.Text = "Skin\r\nHomepge";
+            this.btnSkinHomepage.UseVisualStyleBackColor = true;
+            this.btnSkinHomepage.Click += new System.EventHandler(this.btnSkinHomepage_Click);
+            // 
+            // prgSkinDownload
+            // 
+            this.prgSkinDownload.Location = new System.Drawing.Point(582, 374);
+            this.prgSkinDownload.Name = "prgSkinDownload";
+            this.prgSkinDownload.Size = new System.Drawing.Size(114, 14);
+            this.prgSkinDownload.TabIndex = 6;
+            this.prgSkinDownload.Value = 50;
+            // 
+            // lstAvailableSkins
+            // 
+            this.lstAvailableSkins.FormattingEnabled = true;
+            this.lstAvailableSkins.Location = new System.Drawing.Point(5, 149);
+            this.lstAvailableSkins.Name = "lstAvailableSkins";
+            this.lstAvailableSkins.Size = new System.Drawing.Size(145, 238);
+            this.lstAvailableSkins.TabIndex = 10;
+            this.lstAvailableSkins.SelectedIndexChanged += new System.EventHandler(this.lstAvailableSkins_SelectedIndexChanged);
+            // 
+            // lblSkinMeters
+            // 
+            this.lblSkinMeters.BackColor = System.Drawing.Color.Silver;
+            this.lblSkinMeters.Image = null;
+            this.lblSkinMeters.Location = new System.Drawing.Point(426, 46);
+            this.lblSkinMeters.Name = "lblSkinMeters";
+            this.lblSkinMeters.Size = new System.Drawing.Size(181, 13);
+            this.lblSkinMeters.TabIndex = 8;
+            this.lblSkinMeters.Text = "lblSkinMeters";
+            // 
+            // picSkinThumbnail
+            // 
+            this.picSkinThumbnail.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.picSkinThumbnail.Location = new System.Drawing.Point(159, 153);
+            this.picSkinThumbnail.Name = "picSkinThumbnail";
+            this.picSkinThumbnail.Size = new System.Drawing.Size(416, 234);
+            this.picSkinThumbnail.TabIndex = 7;
+            this.picSkinThumbnail.TabStop = false;
+            // 
+            // lblSkinDateReleased
+            // 
+            this.lblSkinDateReleased.BackColor = System.Drawing.Color.Silver;
+            this.lblSkinDateReleased.Image = null;
+            this.lblSkinDateReleased.Location = new System.Drawing.Point(426, 62);
+            this.lblSkinDateReleased.Name = "lblSkinDateReleased";
+            this.lblSkinDateReleased.Size = new System.Drawing.Size(181, 13);
+            this.lblSkinDateReleased.TabIndex = 5;
+            this.lblSkinDateReleased.Text = "lblSkinDateReleased";
+            // 
+            // btnDownloadSkin
+            // 
+            this.btnDownloadSkin.Image = null;
+            this.btnDownloadSkin.Location = new System.Drawing.Point(582, 154);
+            this.btnDownloadSkin.Name = "btnDownloadSkin";
+            this.btnDownloadSkin.Selectable = true;
+            this.btnDownloadSkin.Size = new System.Drawing.Size(114, 211);
+            this.btnDownloadSkin.TabIndex = 1;
+            this.btnDownloadSkin.Text = "Download\r\nSkin";
+            this.btnDownloadSkin.UseVisualStyleBackColor = true;
+            this.btnDownloadSkin.Click += new System.EventHandler(this.btnDownloadSkin_Click);
+            // 
+            // lblSkinThetisVersion
+            // 
+            this.lblSkinThetisVersion.BackColor = System.Drawing.Color.Silver;
+            this.lblSkinThetisVersion.Image = null;
+            this.lblSkinThetisVersion.Location = new System.Drawing.Point(426, 30);
+            this.lblSkinThetisVersion.Name = "lblSkinThetisVersion";
+            this.lblSkinThetisVersion.Size = new System.Drawing.Size(181, 13);
+            this.lblSkinThetisVersion.TabIndex = 4;
+            this.lblSkinThetisVersion.Text = "lblSkinThetisVersion";
+            // 
+            // lblSkinVersion
+            // 
+            this.lblSkinVersion.BackColor = System.Drawing.Color.Silver;
+            this.lblSkinVersion.Image = null;
+            this.lblSkinVersion.Location = new System.Drawing.Point(426, 14);
+            this.lblSkinVersion.Name = "lblSkinVersion";
+            this.lblSkinVersion.Size = new System.Drawing.Size(181, 13);
+            this.lblSkinVersion.TabIndex = 3;
+            this.lblSkinVersion.Text = "lblSkinVersion";
+            // 
+            // panelGetServerList
+            // 
+            this.panelGetServerList.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.panelGetServerList.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelGetServerList.Controls.Add(this.lblSkinServersInfo);
+            this.panelGetServerList.Location = new System.Drawing.Point(137, 141);
+            this.panelGetServerList.Name = "panelGetServerList";
+            this.panelGetServerList.Size = new System.Drawing.Size(470, 100);
+            this.panelGetServerList.TabIndex = 0;
+            // 
+            // lblSkinServersInfo
+            // 
+            this.lblSkinServersInfo.AutoSize = true;
+            this.lblSkinServersInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSkinServersInfo.Image = null;
+            this.lblSkinServersInfo.Location = new System.Drawing.Point(39, 27);
+            this.lblSkinServersInfo.Name = "lblSkinServersInfo";
+            this.lblSkinServersInfo.Size = new System.Drawing.Size(410, 50);
+            this.lblSkinServersInfo.TabIndex = 0;
+            this.lblSkinServersInfo.Text = "Obtaining skin server list from Github.\r\nPlease wait...";
+            this.lblSkinServersInfo.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // tpKeyboard
             // 
@@ -56374,7 +56709,8 @@
             this.tpAppearance.ResumeLayout(false);
             this.tcAppearance.ResumeLayout(false);
             this.tpAppearanceGeneral.ResumeLayout(false);
-            this.tpAppearanceGeneral.PerformLayout();
+            this.groupBoxTS31.ResumeLayout(false);
+            this.groupBoxTS31.PerformLayout();
             this.groupBoxTS12.ResumeLayout(false);
             this.grpAppSkins.ResumeLayout(false);
             this.grpAppSkins.PerformLayout();
@@ -56445,6 +56781,15 @@
             this.tpAppearanceCollapsible.PerformLayout();
             this.grpBoxCollapsible.ResumeLayout(false);
             this.grpBoxCollapsible.PerformLayout();
+            this.tpSkinServers.ResumeLayout(false);
+            this.panelSkinServerControls.ResumeLayout(false);
+            this.panelSkinServerControls.PerformLayout();
+            this.grpAuthorDetails.ResumeLayout(false);
+            this.gtpAvailableSkins.ResumeLayout(false);
+            this.gtpAvailableSkins.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picSkinThumbnail)).EndInit();
+            this.panelGetServerList.ResumeLayout(false);
+            this.panelGetServerList.PerformLayout();
             this.tpKeyboard.ResumeLayout(false);
             this.grpKBPTT.ResumeLayout(false);
             this.grpBoxSpaceBarPTT.ResumeLayout(false);
@@ -60064,5 +60409,31 @@
         private ButtonTS btnOpenDBFolder;
         private CheckBoxTS chkLogVoltsAmps;
         private CheckBoxTS chkLinkIfCtrlHeld;
+        private TabPage tpSkinServers;
+        private PanelTS panelGetServerList;
+        private LabelTS lblSkinServersInfo;
+        private PanelTS panelSkinServerControls;
+        private LabelTS labelTS183;
+        private ButtonTS btnRefreshSkinsForServer;
+        private ComboBoxTS comboSkinServerList;
+        private GroupBoxTS grpAuthorDetails;
+        private LabelTS lblAuthorDetails2;
+        private LabelTS lblAuthorDetails1;
+        private GroupBoxTS gtpAvailableSkins;
+        private ButtonTS btnSkinsDonate;
+        private ButtonTS btnSkinsHomepage;
+        private LabelTS lblSkinDateReleased;
+        private LabelTS lblSkinThetisVersion;
+        private LabelTS lblSkinVersion;
+        private ButtonTS btnDownloadSkin;
+        private Button btnSkinHomepage;
+        private LabelTS lblSkinMeters;
+        private PictureBox picSkinThumbnail;
+        private ListBox lstAvailableSkins;
+        private ucProgress prgSkinDownload;
+        private TextBoxTS lblSkinOverview;
+        private ButtonTS btnOpenSkinsFolder;
+        private ButtonTS btnRemoveSkin;
+        private GroupBoxTS groupBoxTS31;
     }
 }

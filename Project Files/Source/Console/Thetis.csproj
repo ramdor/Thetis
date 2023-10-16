@@ -214,6 +214,9 @@
       <HintPath>..\packages\FTD2XX.Net.1.2.1\lib\net45\FTDI2XX.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
     </Reference>
@@ -235,7 +238,10 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -245,7 +251,16 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
@@ -282,6 +297,7 @@
     <Compile Include="CAT\UsbBCDCable.cs" />
     <Compile Include="Channel.cs" />
     <Compile Include="clsBandStackManager.cs" />
+    <Compile Include="clsThetisSkinService.cs" />
     <Compile Include="Firewall.cs" />
     <Compile Include="cmaster.cs" />
     <Compile Include="Andromeda\displaysettingsform.cs">
@@ -594,6 +610,12 @@
     <Compile Include="TCIServer.cs" />
     <Compile Include="titlebar.cs" />
     <Compile Include="TuneStep.cs" />
+    <Compile Include="ucProgress.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucProgress.Designer.cs">
+      <DependentUpon>ucProgress.cs</DependentUpon>
+    </Compile>
     <Compile Include="ucQuickRecall.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -868,6 +890,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Andromeda\vfosettingspopup.resx">
       <DependentUpon>vfosettingspopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucProgress.resx">
+      <DependentUpon>ucProgress.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ucQuickRecall.resx">
       <DependentUpon>ucQuickRecall.cs</DependentUpon>

@@ -49,9 +49,47 @@ namespace Thetis
 	{
 		public static bool Contains(this string source, string toCheck, StringComparison comp)
 		{
-			return source?.IndexOf(toCheck, comp) >= 0;
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+            if (toCheck == null)
+            {
+                throw new ArgumentNullException(nameof(toCheck));
+            }
+
+            return source?.IndexOf(toCheck, comp) >= 0;
 		}
-	}
+
+        public static string Left(this string source, int length)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length), "Length cannot be negative.");
+            }
+
+            return source.Length > length ? source.Substring(0, length) : source;
+        }
+        public static string Right(this string source, int length)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length), "Length cannot be negative.");
+            }
+
+            return length >= source.Length ? source : source.Substring(source.Length - length);
+        }
+    }
     public static class ControlExtentions
     {
         public static string GetFullName(this Control control)
@@ -1019,6 +1057,36 @@ namespace Thetis
                 return result.ToString();
             }
             return "-1"; // Invalid version part, treat as lower priority
+        }
+
+        public static bool IsValidUri(string uri)
+        {
+			if (uri == "") return false;
+
+			try
+			{
+				if (!Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+					return false;
+				Uri tmp;
+				if (!Uri.TryCreate(uri, UriKind.Absolute, out tmp))
+					return false;
+				return tmp.Scheme == Uri.UriSchemeHttp || tmp.Scheme == Uri.UriSchemeHttps;
+			}
+			catch { return false; }
+        }
+
+        public static bool OpenUri(string uri)
+        {
+			try
+			{
+				if (!IsValidUri(uri))
+					return false;
+
+				Task.Run(() => System.Diagnostics.Process.Start(uri));
+
+				return true;
+			}
+			catch { return false; }
         }
     }
 }

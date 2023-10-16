@@ -3419,7 +3419,19 @@ namespace Thetis
             }
             UpdateButtonBarButtons();                               // re-check texts
         }
-
+        public void UpdateAndromedaSkins()
+        {
+            if (modePopupForm != null && modePopupForm.Visible)
+                Skin.Restore(CurrentSkin, AppDataPath, modePopupForm);
+            if (filterPopupForm != null && filterPopupForm.Visible)
+                Skin.Restore(CurrentSkin, AppDataPath, filterPopupForm);
+            if (bandPopupForm != null && bandPopupForm.Visible)
+                Skin.Restore(CurrentSkin, AppDataPath, bandPopupForm);
+            if (sliderForm != null && sliderForm.Visible)
+                Skin.Restore(CurrentSkin, AppDataPath, sliderForm);
+            if (VFOSettingsForm != null && VFOSettingsForm.Visible)
+                Skin.Restore(CurrentSkin, AppDataPath, VFOSettingsForm);
+        }
         private void setupModePanels()
         {
             Invoke(new MethodInvoker(panelModeSpecificCW.Show));

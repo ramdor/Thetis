@@ -52403,6 +52403,9 @@ namespace Thetis
                 return m_imgBackgroundCopy;
             }
             set {
+                if(m_imgBackgroundCopy != null)
+                    m_imgBackgroundCopy.Dispose();
+
                 m_imgBackgroundCopy = value;
 
                 setBackground();
