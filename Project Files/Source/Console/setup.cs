@@ -1185,6 +1185,9 @@ namespace Thetis
             // this may not be 100%, but best effort, we only want to do this if we come from a 'hidden' state
             if (!m_bShown) clearUpdatedClickControlList();
 
+            if (!m_bShown && isSkinServerTabVisible(false))
+                getSkinServers();
+
             m_bShown = true;
 
             if (this.WindowState != FormWindowState.Normal) this.WindowState = FormWindowState.Normal; //MW0LGE_21i
@@ -1198,6 +1201,7 @@ namespace Thetis
 
             chkContainerHighlight.Checked = false; // no point highlighting when setup closed
 
+            hideAllSkinServerRelatedControls();
             ThetisSkinService.CancelDownload();
 
             base.Hide();
@@ -2454,6 +2458,10 @@ namespace Thetis
 
             //
             chkForceATTwhenPSAoff_CheckedChanged(this, e); //MW0LGE [2.9.0.7]
+
+            //options1 tab
+            chkPurgeBuffers_CheckedChanged(this, e);
+            chkPurgeBuffersDisplayEngine_CheckedChanged(this, e);
 
             //options2 tab
             chkQuickSplit_CheckedChanged(this, e);
@@ -8293,7 +8301,7 @@ namespace Thetis
                         break;
                 }
 
-                console.SetMillisecondTXRXdelayTime(1);//[2.10.1.0]MW0LGE
+                console.InitFFTFillTime(1);//[2.10.1.0]MW0LGE
             }
 
             //if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
@@ -8374,7 +8382,7 @@ namespace Thetis
                 lblRX2DisplayBinWidth.Text = bin_width.ToString("N3");
             }
 
-            console.SetMillisecondTXRXdelayTime(2);//[2.10.1.0]MW0LGE
+            console.InitFFTFillTime(2);//[2.10.1.0]MW0LGE
         }
 
         private void comboAudioSampleRate2_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -17779,7 +17787,7 @@ namespace Thetis
 
             if (console._spectrum_mutex != null) console._spectrum_mutex.ReleaseMutex();
 
-            console.SetMillisecondTXRXdelayTime(1);//[2.10.1.0]MW0LGE
+            console.InitFFTFillTime(1);//[2.10.1.0]MW0LGE
         }
 
         private void tbRX2DisplayFFTSize_Scroll(object sender, EventArgs e)
@@ -17796,7 +17804,7 @@ namespace Thetis
 
             if (console._spectrum_mutex != null) console._spectrum_mutex.ReleaseMutex();
 
-            console.SetMillisecondTXRXdelayTime(2);//[2.10.1.0]MW0LGE
+            console.InitFFTFillTime(2);//[2.10.1.0]MW0LGE
         }
 
         private void comboDispWinType_SelectedIndexChanged(object sender, EventArgs e)
@@ -27587,9 +27595,9 @@ namespace Thetis
                 ThetisSkinService.CancelDownload();
             }
         }
-        private bool isSkinServerTabVisible()
+        private bool isSkinServerTabVisible(bool checkFormVisible = true)
         {
-            if (!this.Visible) return false;
+            if (checkFormVisible && !this.Visible) return false;
             int sel = tcSetup.SelectedIndex;
             if (sel == -1) return false;
             TabPage selectedTab = tcSetup.TabPages[sel];
@@ -28143,6 +28151,26 @@ namespace Thetis
             {
             }
         }
+
+        private void chkPurgeBuffers_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.MOXTransitionBufferClear = chkPurgeBuffers.Checked;
+
+            // display engine should be purged if this is on
+            if (chkPurgeBuffers.Checked && !chkPurgeBuffersDisplayEngine.Checked)
+                chkPurgeBuffersDisplayEngine.Checked = true;
+        }
+
+        private void chkPurgeBuffersDisplayEngine_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            Display.MOXTransitionBufferClearForDisplay = chkPurgeBuffersDisplayEngine.Checked;
+
+            // if this is off, then chkPurgeBuffers should be off too
+            if (!chkPurgeBuffersDisplayEngine.Checked && chkPurgeBuffers.Checked)
+                chkPurgeBuffers.Checked = false;
+        }
         //private bool renameSkinForDeletion(string sFullPath)
         //{
         //    if (_skinPath == "" || !Directory.Exists(sFullPath)) return false;
@@ -28166,11 +28194,6 @@ namespace Thetis
         //    }
         //    return true;
         //}
-
-        private void buttonTS1_Click(object sender, EventArgs e)
-        {
-            //releaseSkinImages();
-        }
 
         //private void forceDeleteDirectory(string directoryPath)
         //{

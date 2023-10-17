@@ -26669,7 +26669,7 @@ namespace Thetis
         //        Thread.Sleep(1000 / nFps);
         //    }
         //}
-        private void resetPixelBuffersForDisplay(int rx, bool tx)
+        private void resetWDSPdisplayBuffers(int rx, bool tx)
         {
             if (rx == 1)
             {
@@ -26708,6 +26708,16 @@ namespace Thetis
                 }
             }
         }
+        private bool _mox_transition_buffer_clear = false;
+        public bool MOXTransitionBufferClear
+        {
+            get { return _mox_transition_buffer_clear; }
+            set 
+            { 
+                _mox_transition_buffer_clear = value;
+                Display.MOXTransitionBufferClear = _mox_transition_buffer_clear;
+            }
+        }
         unsafe private void RunDisplay()
         {
             m_bDisplayLoopRunning = true;
@@ -26718,7 +26728,6 @@ namespace Thetis
                 double fFractionOfMs = 0;
                 double fThreadSleepLate = 0;
                 bool bOldLocalMox = Display.MOX;
-                bool bHasBeenReset = false;
 
                 while (m_bDisplayLoopRunning)
                 {
@@ -26807,11 +26816,18 @@ namespace Thetis
                     
                     if (bLocalMox != bOldLocalMox)
                     {
-                        resetPixelBuffersForDisplay(1, mox);
-                        if (RX2Enabled) resetPixelBuffersForDisplay(2, mox);
-                        Thread.Sleep(1);
+                        // [2.10.2.2]MW0LGE
+                        // if the mox state is different, reset the analyzer to remove
+                        // possibilty of tx data being in the rx buffers, and vice versa
+                        if (_mox_transition_buffer_clear)
+                        {
+                            resetWDSPdisplayBuffers(1, mox);
+                            if (RX2Enabled) resetWDSPdisplayBuffers(2, mox);
+                        }
+
+                        // always clear display buffers
                         Display.PurgeBuffers();
-                        bHasBeenReset = true;
+
                         bOldLocalMox = bLocalMox;
                     }
 
@@ -27073,18 +27089,8 @@ namespace Thetis
                         }
                     }
 
-                    //
-                    if (bHasBeenReset)
-                    {
-                        //make sure
-                        resetPixelBuffersForDisplay(1, mox);
-                        if (RX2Enabled) resetPixelBuffersForDisplay(2, mox);
-                        Thread.Sleep(1);
-                        bHasBeenReset = false;
-                    }
-                    //
-
-                    Display.GetPixelsIssue = bGetPixelIssue | bGetPixelIssueBottom;
+                    Display.GetPixelsIssueRX1 = bGetPixelIssue;
+                    Display.GetPixelsIssueRX2 = bGetPixelIssueBottom;
 
                     // MW0LGE_21k9 always want to run the renderer, as swr warning etc are displayed
                     if (!pause_DisplayThread) Display.RenderDX2D();
@@ -56141,17 +56147,17 @@ namespace Thetis
             set { _spacebar_vfobtx = value; }
         }
 
-        public float RX1MSDelayTime
+        public float RX1FFTFillTime
         {
-            get { return _txRx1MSsDelayTime; }
+            get { return _fft_fill_timeRX1; }
         }
-        public float RX2MSDelayTime
+        public float RX2FFTFillTime
         {
-            get { return _txRx2MSsDelayTime; }
+            get { return _fft_fill_timeRX2; }
         }
-        private float _txRx1MSsDelayTime = 0f;
-        private float _txRx2MSsDelayTime = 0f;
-        public void SetMillisecondTXRXdelayTime(int rx)
+        private float _fft_fill_timeRX1 = 0f;
+        private float _fft_fill_timeRX2 = 0f;
+        public void InitFFTFillTime(int rx)
         {
             //https://community.apache-labs.com/viewtopic.php?f=9&t=4382&p=22287
             //https://github.com/ramdor/Thetis/issues/204
@@ -56164,11 +56170,12 @@ namespace Thetis
                 fft_size = specRX.GetSpecRX(1).FFTSize;
                 sample_rate = specRX.GetSpecRX(1).SampleRate;
             }
-            else
+            else if (rx == 1)
             {
                 fft_size = specRX.GetSpecRX(0).FFTSize;
                 sample_rate = specRX.GetSpecRX(0).SampleRate;
             }
+            else return;
 
             float bin_width = sample_rate / (float)fft_size;
             float length = (float)Math.Round(sample_rate / bin_width);
@@ -56177,11 +56184,12 @@ namespace Thetis
             float milliseconds = (power2length / (float)sample_rate) * 1000f;
 
             if (rx == 1)
-                _txRx1MSsDelayTime = milliseconds;
+                _fft_fill_timeRX1 = milliseconds;
             else
-                _txRx2MSsDelayTime = milliseconds;
+                _fft_fill_timeRX2 = milliseconds;
 
-            Debug.Print($"fft={fft_size}\t sample_rate={sample_rate}\tbin_width={bin_width}\tpower2length={power2length}\tmilliseconds={milliseconds}");
+            Display.RX1FFTFillTime = _fft_fill_timeRX1;
+            Display.RX2FFTFillTime = _fft_fill_timeRX2;
         }
         private int findNextPowerOf2(int n)
         {

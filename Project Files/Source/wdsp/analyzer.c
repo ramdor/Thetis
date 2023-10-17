@@ -965,33 +965,37 @@ void ResetPixelBuffers(int disp)
 		a->avail_frames[i] = 0;
 		a->av_in_idx[i] = 0;
 		a->av_out_idx[i] = 0;
-
+		EnterCriticalSection(&a->PB_ControlsSection[i]);
 		a->w_pix_buff[i] = 0;
 		a->r_pix_buff[i] = 0;
 		a->last_pix_buff[i] = 0;
 		for (j = 0; j < dNUM_PIXEL_BUFFS; j++)
-			a->pb_ready[i][j] = 0;		
+			a->pb_ready[i][j] = 0;
+		LeaveCriticalSection(&a->PB_ControlsSection[i]);
 	}
+	//memset((void*)a->pre_av_sum, 0, sizeof(double) * a->max_size * a->max_stitch);	//not used
+	memset((void*)a->pre_av_out, 0, sizeof(double) * a->max_size * a->max_stitch);
 	LeaveCriticalSection(&a->ResampleSection);
-
+	EnterCriticalSection(&a->StitchSection);
 	for (i = 0; i < dMAX_STITCH; i++)
 		for (j = 0; j < dMAX_NUM_FFT; j++)
 			a->input_busy[i][j] = 0;
-
 	for (i = 0; i < dMAX_STITCH; i++)
 		a->spec_flag[i] = 0;
 	a->stitch_flag = 0;
 	a->ss = 0;
-	a->LO = 0;
+	a->LO = 0;	
 	for (i = 0; i < dMAX_STITCH; i++)
 		for (j = 0; j < dMAX_NUM_FFT; j++)
 		{
+			EnterCriticalSection(&(a->BufferControlSection[i][j]));
 			a->buff_ready[i][j] = 0;
 			a->have_samples[i][j] = 0;
 			a->IQin_index[i][j] = 0;
 			a->IQout_index[i][j] = 0;
-		}
-
+			LeaveCriticalSection(&(a->BufferControlSection[i][j]));
+		}	
+	LeaveCriticalSection(&a->StitchSection);
 	LeaveCriticalSection(&a->SetAnalyzerSection);
 }
 

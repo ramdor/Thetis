@@ -125,11 +125,17 @@ namespace Thetis
             set { m_bFrameRateIssue = value; }
         }
 
-        private static bool m_bGetPixelsIssue = false;
-        public static bool GetPixelsIssue
+        private static bool _bGetPixelsIssueRX1 = false;
+        public static bool GetPixelsIssueRX1
         {
-            get { return m_bGetPixelsIssue; }
-            set { m_bGetPixelsIssue = value; }
+            get { return _bGetPixelsIssueRX1; }
+            set { _bGetPixelsIssueRX1 = value; }
+        }
+        private static bool _bGetPixelsIssueRX2 = false;
+        public static bool GetPixelsIssueRX2
+        {
+            get { return _bGetPixelsIssueRX2; }
+            set { _bGetPixelsIssueRX2 = value; }
         }
 
         private static bool m_bShowFrameRateIssue = true;
@@ -568,10 +574,7 @@ namespace Thetis
         private static void OnPowerChangeHander(bool oldPower, bool newPower)
         {
             if (newPower)
-            {
-                FastAttackNoiseFloorRX1 = true;
-                FastAttackNoiseFloorRX2 = true;
-            }
+                PurgeBuffers();
         }
         private static void OnBandChangeHandler(int rx, Band oldBand, Band newBand)
         {
@@ -2297,50 +2300,55 @@ namespace Thetis
         private static ArrayPool<float> m_objFloatPool = ArrayPool<float>.Shared;
         private static ArrayPool<int> m_objIntPool = ArrayPool<int>.Shared;
 
-        private static bool _reset_rx1_low_waterfall = false;
-        private static bool _reset_rx2_low_waterfall = false;
+        private static bool _ignore_waterfall_data_rx1 = false;
+        private static bool _ignore_waterfall_data_rx2 = false;
+        private static double _rx1_clearbuffer_timeout_waterfall = 0;
+        private static double _rx2_clearbuffer_timeout_waterfall = 0;
         private static void clearBuffers(int W, int rx)
         {
-            ResetBlobMaximums(rx, true);
-            ResetSpectrumPeaks(rx);
-
-            if (rx == 1)
+            lock (_objDX2Lock)
             {
-                Parallel.For(0, W, (i) => //for (int i = 0; i < displayTargetWidth; i++)
-                {
-                    histogram_data[i] = Int32.MaxValue;
-                    histogram_history[i] = 0;
-                });
-                Parallel.For(0, W, (i) => //for (int i = 0; i < displayTargetWidth; i++)
-                {
-                    new_display_data[i] = -200.0f;
-                    current_display_data[i] = -200.0f;
-                    new_waterfall_data[i] = -200.0f;
-                    current_waterfall_data[i] = -200.0f;
-                    current_display_data_copy[i] = -200.0f;
-                    current_display_data_bottom_copy[i] = -200.0f;
-                });
-                _RX1waterfallPreviousMinValue = -200f;
+                ResetBlobMaximums(rx, true);
+                ResetSpectrumPeaks(rx);
 
-                _reset_rx1_low_waterfall = true;
-                FastAttackNoiseFloorRX1 = true;
+                if (rx == 1)
+                {
+                    Parallel.For(0, W, (i) => //for (int i = 0; i < displayTargetWidth; i++)
+                    {
+                        histogram_data[i] = Int32.MaxValue;
+                        histogram_history[i] = 0;
+                    });
+                    Parallel.For(0, W, (i) => //for (int i = 0; i < displayTargetWidth; i++)
+                    {
+                        new_display_data[i] = -200;
+                        current_display_data[i] = -200;
+                        new_waterfall_data[i] = -200;
+                        current_waterfall_data[i] = -200;
+                        current_display_data_copy[i] = -200;
+                        current_display_data_bottom_copy[i] = -200;
+                    });
+                    float tmpDelay = Math.Max(200f, _fft_fill_timeRX1);
+                    _rx1_clearbuffer_timeout_waterfall = m_objFrameStartTimer.ElapsedMsec + tmpDelay;
+                    _ignore_waterfall_data_rx1 = _mox_transition_buffer_clear_for_display;
+                    FastAttackNoiseFloorRX1 = true;
+                }
+                else
+                {
+                    Parallel.For(0, W, (i) => //for (int i = 0; i < displayTargetWidth; i++)
+                    {
+                        new_display_data_bottom[i] = -200;
+                        current_display_data_bottom[i] = -200;
+                        new_waterfall_data_bottom[i] = -200;
+                        current_waterfall_data_bottom[i] = -200;
+                        current_waterfall_data_copy[i] = -200;
+                        current_waterfall_data_bottom_copy[i] = -200;
+                    });
+                    float tmpDelay = Math.Max(200f, _fft_fill_timeRX2);
+                    _rx2_clearbuffer_timeout_waterfall = m_objFrameStartTimer.ElapsedMsec + tmpDelay;
+                    _ignore_waterfall_data_rx2 = _mox_transition_buffer_clear_for_display;
+                    FastAttackNoiseFloorRX2 = true;
+                }
             }
-            else
-            {
-                Parallel.For(0, W, (i) => //for (int i = 0; i < displayTargetWidth; i++)
-                {
-                    new_display_data_bottom[i] = -200.0f;
-                    current_display_data_bottom[i] = -200.0f;
-                    new_waterfall_data_bottom[i] = -200.0f;
-                    current_waterfall_data_bottom[i] = -200.0f;
-                    current_waterfall_data_copy[i] = -200.0f;
-                    current_waterfall_data_bottom_copy[i] = -200f;
-                });
-                _RX2waterfallPreviousMinValue = -200f;
-
-                _reset_rx2_low_waterfall = true;
-                FastAttackNoiseFloorRX2 = true;
-            }            
         }
 
         private static void initDisplayArrays(int W, int H)
@@ -3116,7 +3124,7 @@ namespace Thetis
                 _d2dRenderTarget.TextAntialiasMode = TextAntialiasMode.Default;
             }
         }
-        //private static bool _clearBuffers = false;
+
         public static void RenderDX2D()
         {
             try
@@ -3224,23 +3232,6 @@ namespace Thetis
                         }
                     }
                     //
-
-                    ////
-                    //if(_clearBuffers)
-                    //{
-                    //    if (_clear_rx1_buffers)
-                    //    {
-                    //        clearBuffers(displayTargetWidth, 1);
-                    //        _clear_rx1_buffers = false;
-                    //    }
-                    //    if (_clear_rx2_buffers)
-                    //    {
-                    //        clearBuffers(displayTargetWidth, 2);
-                    //        _clear_rx2_buffers = false;
-                    //    }
-                    //    _clearBuffers = false;
-                    //}
-                    ////
 
                     if (!split_display)
                     {
@@ -3380,7 +3371,7 @@ namespace Thetis
                     }
 
                     if (m_bShowFrameRateIssue && m_bFrameRateIssue) _d2dRenderTarget.FillRectangle(new RectangleF(0, 0, 8, 8), m_bDX2_Red);
-                    if (m_bShowGetPixelsIssue && m_bGetPixelsIssue) _d2dRenderTarget.FillRectangle(new RectangleF(0, 8, 8, 8), m_bDX2_Yellow);
+                    if (m_bShowGetPixelsIssue && (_bGetPixelsIssueRX1 || _bGetPixelsIssueRX2)) _d2dRenderTarget.FillRectangle(new RectangleF(0, 8, 8, 8), m_bDX2_Yellow);
 
                     calcFps();
                     if (m_bShowFPS) _d2dRenderTarget.DrawText(m_nFps.ToString(), fontDX2d_callout, new RectangleF(10, 0, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_m_bTextCallOutActive, DrawTextOptions.None);
@@ -3407,8 +3398,6 @@ namespace Thetis
                     _d2dRenderTarget.Transform = Matrix3x2.Identity;
 
                     _d2dRenderTarget.EndDraw();
-
-                    //_clearBuffers = _clear_rx1_buffers | _clear_rx2_buffers; //next time around
 
                     // render
                     // note: the only way to have Present non block when using vsync number of blanks 0 , is to use DoNotWait
@@ -3806,9 +3795,8 @@ namespace Thetis
         }
         static private SharpDX.Direct2D1.Ellipse m_objEllipse = new SharpDX.Direct2D1.Ellipse(Vector2.Zero, 5f, 5f);
 
-        // using -160 instead of -200 as somewhat closer to reality
-        static private float m_fNoiseFloorRX1 = -160; // the NF exposed outside Display
-        static private float m_fNoiseFloorRX2 = -160;
+        static private float m_fNoiseFloorRX1 = -200; // the NF exposed outside Display
+        static private float m_fNoiseFloorRX2 = -200;
         static private bool m_bNoiseFloorGoodRX1 = false; // is the noisefloor good? can be used outside Display
         static private bool m_bNoiseFloorGoodRX2 = false;
 
@@ -4672,6 +4660,8 @@ namespace Thetis
         }
         private static void processNoiseFloor(int rx, int averageCount, float averageSum, int width, bool waterfall, bool useOldMethod)
         {
+            //if (rx == 1 && _bGetPixelsIssueRX1) return;
+            //if (rx == 2 && _bGetPixelsIssueRX2) return;
             if (rx == 1 && _bNoiseFloorAlreadyCalculatedRX1) return; // already done, ignore
             if (rx == 2 && _bNoiseFloorAlreadyCalculatedRX2) return; // already done, ignore
 
@@ -4697,8 +4687,9 @@ namespace Thetis
                 else
                 {
                     m_fFFTBinAverageRX1 += m_bFastAttackNoiseFloorRX1 ? 3f : 1f;
-                    if (m_fFFTBinAverageRX1 > 200) m_fFFTBinAverageRX1 = 200;
                 }
+                if (m_fFFTBinAverageRX1 > 200) m_fFFTBinAverageRX1 = 200;
+                if (m_fFFTBinAverageRX1 < -200) m_fFFTBinAverageRX1 = -200;
 
                 // so in attackTime period we need to have moved to where we want
                 int framesInAttackTime = m_bFastAttackNoiseFloorRX1 ? 0 : (int)((fps / 1000f) * (double)m_fAttackTimeInMSForRX1);
@@ -4709,10 +4700,11 @@ namespace Thetis
                 else if (m_fLerpAverageRX1 < m_fFFTBinAverageRX1)
                     m_fLerpAverageRX1 += (m_fFFTBinAverageRX1 - m_fLerpAverageRX1) / framesInAttackTime;
 
-                bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX1) > 500f + console.RX1MSDelayTime; //[2.10.1.0] MW0LGE change to time related, instead of frame related
-                if (m_bFastAttackNoiseFloorRX1 && (Math.Abs(m_fFFTBinAverageRX1 - m_fLerpAverageRX1) < 1f) && bElapsed)
+                if (m_bFastAttackNoiseFloorRX1 && (Math.Abs(m_fFFTBinAverageRX1 - m_fLerpAverageRX1) < 1f))
                 {
-                    m_bFastAttackNoiseFloorRX1 = false;
+                    float tmpDelay = Math.Max(1000f, _fft_fill_timeRX1 + (_mox_transition_buffer_clear ? 1000 : 0)); // another 1000 if WDSP is being reset
+                    bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX1) > tmpDelay; //[2.10.1.0] MW0LGE change to time related, instead of frame related
+                    if(bElapsed) m_bFastAttackNoiseFloorRX1 = false;
                 }
 
                 _bNoiseFloorAlreadyCalculatedRX1 = true;
@@ -4736,8 +4728,9 @@ namespace Thetis
                 else
                 {
                     m_fFFTBinAverageRX2 += m_bFastAttackNoiseFloorRX2 ? 3f : 1f;
-                    if (m_fFFTBinAverageRX2 > 200) m_fFFTBinAverageRX2 = 200;
                 }
+                if (m_fFFTBinAverageRX2 > 200) m_fFFTBinAverageRX2 = 200;
+                if (m_fFFTBinAverageRX2 < -200) m_fFFTBinAverageRX2 = -200;
 
                 // so in attackTime period we need to have moved to where we want
                 int framesInAttackTime = m_bFastAttackNoiseFloorRX2 ? 0 : (int)((fps / 1000f) * (double)m_fAttackTimeInMSForRX2);
@@ -4748,10 +4741,11 @@ namespace Thetis
                 else if (m_fLerpAverageRX2 < m_fFFTBinAverageRX2)
                     m_fLerpAverageRX2 += (m_fFFTBinAverageRX2 - m_fLerpAverageRX2) / framesInAttackTime;
 
-                bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX2) > 500f + console.RX2MSDelayTime; //[2.10.1.0] MW0LGE change to time related, instead of frame related
-                if (m_bFastAttackNoiseFloorRX2 && (Math.Abs(m_fFFTBinAverageRX2 - m_fLerpAverageRX2) < 1f) && bElapsed)
+                if (m_bFastAttackNoiseFloorRX2 && (Math.Abs(m_fFFTBinAverageRX2 - m_fLerpAverageRX2) < 1f))
                 {
-                    m_bFastAttackNoiseFloorRX2 = false;
+                    float tmpDelay = Math.Max(1000f, _fft_fill_timeRX2 + (_mox_transition_buffer_clear ? 1000 : 0)); // another 1000 if WDSP is being reset
+                    bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX2) > tmpDelay; //[2.10.1.0] MW0LGE change to time related, instead of frame related
+                    if(bElapsed) m_bFastAttackNoiseFloorRX2 = false;
                 }
 
                 _bNoiseFloorAlreadyCalculatedRX2 = true;
@@ -4859,17 +4853,25 @@ namespace Thetis
 
             if (console.PowerOn)
             {
-                if (_reset_rx1_low_waterfall && rx == 1)
+                if (rx == 1)
                 {
-                    low_threshold = 0;
-                    _RX1waterfallPreviousMinValue = 0;
-                    _reset_rx1_low_waterfall = false;
+                    if (_ignore_waterfall_data_rx1 && m_objFrameStartTimer.ElapsedMsec < _rx1_clearbuffer_timeout_waterfall)
+                    {
+                        low_threshold = 0;
+                        _RX1waterfallPreviousMinValue = low_threshold;                       
+                    }
+                    else
+                        _ignore_waterfall_data_rx1 = false;
                 }
-                else if (_reset_rx2_low_waterfall && rx == 2)
+                else
                 {
-                    low_threshold = 0;
-                    _RX2waterfallPreviousMinValue = 0;
-                    _reset_rx2_low_waterfall = false;
+                    if (_ignore_waterfall_data_rx2 && m_objFrameStartTimer.ElapsedMsec < _rx2_clearbuffer_timeout_waterfall)
+                    {
+                        low_threshold = 0;
+                        _RX2waterfallPreviousMinValue = low_threshold;                        
+                    }
+                    else
+                        _ignore_waterfall_data_rx2 = false;
                 }
 
                 if (rx == 1 && waterfall_data_ready)
@@ -5977,19 +5979,9 @@ namespace Thetis
                     if (!local_mox)
                     {
                         if (rx == 1)
-                        {
-                            if (_RX1waterfallPreviousMinValue == -200f)
-                                _RX1waterfallPreviousMinValue = waterfall_minimum;
-                            else
-                                _RX1waterfallPreviousMinValue = (((_RX1waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10) + 1; //wfagc
-                        }
+                            _RX1waterfallPreviousMinValue = (((_RX1waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10) + 1; //wfagc
                         else
-                        {
-                            if (_RX2waterfallPreviousMinValue == -200f)
-                                _RX2waterfallPreviousMinValue = waterfall_minimum;
-                            else
-                                _RX2waterfallPreviousMinValue = ((_RX2waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10 + 1; //wfagc
-                        }
+                            _RX2waterfallPreviousMinValue = ((_RX2waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10 + 1; //wfagc
                     }
                 }
 
@@ -9987,8 +9979,36 @@ namespace Thetis
 
         public static void PurgeBuffers()
         {
-            clearBuffers(displayTargetWidth, 1);
-            if(rx2_enabled) clearBuffers(displayTargetWidth, 2);
+            if (_mox_transition_buffer_clear_for_display)
+            {
+                clearBuffers(displayTargetWidth, 1);
+                if (rx2_enabled) clearBuffers(displayTargetWidth, 2);
+            }
+        }
+
+        private static float _fft_fill_timeRX1 = 0f;
+        private static float _fft_fill_timeRX2 = 0f;
+        public static float RX1FFTFillTime
+        {
+            get { return _fft_fill_timeRX1; }
+            set { _fft_fill_timeRX1 = value; }
+        }
+        public static float RX2FFTFillTime
+        {
+            get { return _fft_fill_timeRX2; }
+            set { _fft_fill_timeRX2 = value; }
+        }
+        private static bool _mox_transition_buffer_clear = false;
+        public static bool MOXTransitionBufferClear
+        {
+            get { return _mox_transition_buffer_clear; }
+            set { _mox_transition_buffer_clear = value; }
+        }
+        private static bool _mox_transition_buffer_clear_for_display = false;
+        public static bool MOXTransitionBufferClearForDisplay
+        {
+            get { return _mox_transition_buffer_clear_for_display; }
+            set { _mox_transition_buffer_clear_for_display = value; }
         }
         #endregion
     }

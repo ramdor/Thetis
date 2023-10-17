@@ -1813,6 +1813,7 @@
             this.udPeakBlobs = new System.Windows.Forms.NumericUpDownTS();
             this.chkPeakBlobsEnabled = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS11 = new System.Windows.Forms.GroupBoxTS();
+            this.chkPurgeBuffers = new System.Windows.Forms.CheckBoxTS();
             this.chkShowMHzOnCursor = new System.Windows.Forms.CheckBoxTS();
             this.chkSmallModeFilteronVFOs = new System.Windows.Forms.CheckBoxTS();
             this.grpDisplay8000DLE = new System.Windows.Forms.GroupBoxTS();
@@ -3511,6 +3512,7 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
             this.txtboxTXProfileChangedReport = new System.Windows.Forms.TextBoxTS();
+            this.chkPurgeBuffersDisplayEngine = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -29615,14 +29617,29 @@
             // 
             // groupBoxTS11
             // 
+            this.groupBoxTS11.Controls.Add(this.chkPurgeBuffersDisplayEngine);
+            this.groupBoxTS11.Controls.Add(this.chkPurgeBuffers);
             this.groupBoxTS11.Controls.Add(this.chkShowMHzOnCursor);
             this.groupBoxTS11.Controls.Add(this.chkSmallModeFilteronVFOs);
-            this.groupBoxTS11.Location = new System.Drawing.Point(513, 78);
+            this.groupBoxTS11.Location = new System.Drawing.Point(498, 61);
             this.groupBoxTS11.Name = "groupBoxTS11";
-            this.groupBoxTS11.Size = new System.Drawing.Size(200, 69);
+            this.groupBoxTS11.Size = new System.Drawing.Size(215, 119);
             this.groupBoxTS11.TabIndex = 47;
             this.groupBoxTS11.TabStop = false;
             this.groupBoxTS11.Text = "Other";
+            // 
+            // chkPurgeBuffers
+            // 
+            this.chkPurgeBuffers.AutoSize = true;
+            this.chkPurgeBuffers.Image = null;
+            this.chkPurgeBuffers.Location = new System.Drawing.Point(10, 65);
+            this.chkPurgeBuffers.Name = "chkPurgeBuffers";
+            this.chkPurgeBuffers.Size = new System.Drawing.Size(167, 17);
+            this.chkPurgeBuffers.TabIndex = 56;
+            this.chkPurgeBuffers.Text = "Purge WDSP buffers on MOX";
+            this.toolTip1.SetToolTip(this.chkPurgeBuffers, resources.GetString("chkPurgeBuffers.ToolTip"));
+            this.chkPurgeBuffers.UseVisualStyleBackColor = true;
+            this.chkPurgeBuffers.CheckedChanged += new System.EventHandler(this.chkPurgeBuffers_CheckedChanged);
             // 
             // chkShowMHzOnCursor
             // 
@@ -29654,9 +29671,9 @@
             // grpDisplay8000DLE
             // 
             this.grpDisplay8000DLE.Controls.Add(this.chkANAN8000DLEDisplayVoltsAmps);
-            this.grpDisplay8000DLE.Location = new System.Drawing.Point(513, 11);
+            this.grpDisplay8000DLE.Location = new System.Drawing.Point(498, 11);
             this.grpDisplay8000DLE.Name = "grpDisplay8000DLE";
-            this.grpDisplay8000DLE.Size = new System.Drawing.Size(200, 47);
+            this.grpDisplay8000DLE.Size = new System.Drawing.Size(215, 47);
             this.grpDisplay8000DLE.TabIndex = 44;
             this.grpDisplay8000DLE.TabStop = false;
             this.grpDisplay8000DLE.Text = "7000DLE/8000DLE";
@@ -55800,6 +55817,19 @@
             this.txtboxTXProfileChangedReport.Text = "used to report tx profile changes if you click on oragne box";
             this.txtboxTXProfileChangedReport.Visible = false;
             // 
+            // chkPurgeBuffersDisplayEngine
+            // 
+            this.chkPurgeBuffersDisplayEngine.AutoSize = true;
+            this.chkPurgeBuffersDisplayEngine.Image = null;
+            this.chkPurgeBuffersDisplayEngine.Location = new System.Drawing.Point(10, 87);
+            this.chkPurgeBuffersDisplayEngine.Name = "chkPurgeBuffersDisplayEngine";
+            this.chkPurgeBuffersDisplayEngine.Size = new System.Drawing.Size(198, 17);
+            this.chkPurgeBuffersDisplayEngine.TabIndex = 57;
+            this.chkPurgeBuffersDisplayEngine.Text = "Purge DirectX spectral data on MOX";
+            this.toolTip1.SetToolTip(this.chkPurgeBuffersDisplayEngine, resources.GetString("chkPurgeBuffersDisplayEngine.ToolTip"));
+            this.chkPurgeBuffersDisplayEngine.UseVisualStyleBackColor = true;
+            this.chkPurgeBuffersDisplayEngine.CheckedChanged += new System.EventHandler(this.chkPurgeBuffersDisplayEngine_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -60435,5 +60465,7 @@
         private ButtonTS btnOpenSkinsFolder;
         private ButtonTS btnRemoveSkin;
         private GroupBoxTS groupBoxTS31;
+        private CheckBoxTS chkPurgeBuffers;
+        private CheckBoxTS chkPurgeBuffersDisplayEngine;
     }
 }

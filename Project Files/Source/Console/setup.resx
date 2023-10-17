@@ -141,6 +141,19 @@
   <metadata name="numericUpDownTS12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <data name="chkPurgeBuffersDisplayEngine.ToolTip" xml:space="preserve">
+    <value>On a mox transition there are times where you get a 'pulse' of energy in the display.
+This is not spurious RF but a side effect of the FFT bins and averages.
+This setting will reset the display engine's buffers on MOX change. They will be refilled
+on the next frame from the WDSP image spectral data generation.
+</value>
+  </data>
+  <data name="chkPurgeBuffers.ToolTip" xml:space="preserve">
+    <value>On a mox transition there are times where you get a 'pulse' of energy in the display.
+This is not spurious RF but a side effect of the FFT bins and averages.
+This setting will reset the WDSP analyzer pixel/average buffers.
+They will take a time to 're-fill' and is determined by sample rate and bin size.</value>
+  </data>
   <data name="richTextBox1.Text" xml:space="preserve">
     <value>Begin with all spinners set equal to their labelled value.
 For each spinner, from minimum to maximum, adjust the output power

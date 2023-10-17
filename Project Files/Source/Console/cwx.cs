@@ -1602,7 +1602,7 @@ namespace Thetis
                     MessageBox.Show("Console has PTT disabled.  Please enable it and try again.",
                         "PTT disabled",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
                 return false;
             }
