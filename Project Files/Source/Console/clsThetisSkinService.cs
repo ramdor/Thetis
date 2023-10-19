@@ -80,6 +80,7 @@ namespace Thetis
         public bool Complete {  get; set; }
         public int PercentageDownloaded { get; set; }
         public bool BypassRootFolderCheck { get; set; }
+        public bool IsMeterSkin { get; set; }
     }
     public static class ThetisSkinService
     {
@@ -289,7 +290,7 @@ namespace Thetis
             }
         }
 
-        public static async void DownloadFile(string fileUrl, string savePath, bool bypassFolderCheck = false)
+        public static async void DownloadFile(string fileUrl, string savePath, bool bypassFolderCheck, bool isMeterSkin)
         {
             if (_downloadCancellationTokenSource != null) return; // busy
             _downloadCancellationTokenSource = new CancellationTokenSource();
@@ -309,11 +310,12 @@ namespace Thetis
                             long downloadedBytes = 0;
 
                             sfd.BypassRootFolderCheck = bypassFolderCheck;
+                            sfd.IsMeterSkin = isMeterSkin;
                             sfd.Url = fileUrl;
                             sfd.Path = savePath;
                             sfd.TotalBytes = totalBytes;
                             sfd.Complete = false;
-                            sfd.PercentageDownloaded = 0;
+                            sfd.PercentageDownloaded = 0;                            
 
                             FileDownload?.Invoke(null, sfd);
                             int buffLen = 4096;

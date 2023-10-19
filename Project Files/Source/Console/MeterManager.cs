@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.IO;
 
 //directX
 using SharpDX;
@@ -14,6 +15,7 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Thetis
 {
@@ -125,13 +127,13 @@ namespace Thetis
         private static Console _console;
         private static bool _delegatesAdded;
         private static bool _finishedSetup;
+        //private static bool _power; //not used yet
         private static Dictionary<int, clsReadings> _readings;
         private static Dictionary<string, clsMeter> _meters;
         private static Dictionary<int, bool> _readingIgnore;
         private static Thread _meterThread;
         private static bool _meterThreadRunning;
-        //private static object _readingsLock = new object();
-        private static bool _power;
+        //private static object _readingsLock = new object();        
         private static bool _rx1VHForAbove;
         private static bool _rx2VHForAbove;
 
@@ -140,13 +142,14 @@ namespace Thetis
         private static bool _paPresent;
         private static bool _apolloPresent;
         private static int _transverterIndex;
-        private static string _imagePath;
 
         private static Object _imageLock = new Object();
         private static Object _metersLock = new Object();
 
         private static Dictionary<string, DataStream> _pooledStreamData;
         private static Dictionary<string, System.Drawing.Bitmap> _pooledImages;
+
+        private static string _openHPSDR_appdatapath;
 
         //public static float[] _newSpectrumPassband;
         //public static float[] _currentSpectrumPassband;
@@ -189,8 +192,7 @@ namespace Thetis
             private bool _showMarker;
             private bool _showSubMarker;
             private bool _hasSubIndicators;
-            private int _ignoreHistoryDuration;
-
+            private int _ignoreHistoryDuration;            
             public clsIGSettings()
             {
                 _hasSubIndicators = false;
@@ -360,12 +362,12 @@ namespace Thetis
             _meters = new Dictionary<string, clsMeter>();
             _readingIgnore = new Dictionary<int, bool>();
 
+            //_power = false;
             _currentHPSDRmodel = HPSDRModel.HERMES;
             _alexPresent = false;
             _paPresent = false;
             _apolloPresent = false;
             _transverterIndex = -1; // no transverter
-            _imagePath = "";
             //_spectrumReady = false;
 
             _pooledImages = new Dictionary<string, System.Drawing.Bitmap>();
@@ -380,6 +382,8 @@ namespace Thetis
             _readingIgnore.Add(2, false);
 
             _meterThreadRunning = false;
+
+            _openHPSDR_appdatapath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
         }
         //private static object _spectrumArrayLock = new object();
         //public static void ResizeSpectrum(int len)
@@ -630,14 +634,62 @@ namespace Thetis
             }
         }
         //image caching, used by dxrenderer
-        internal static void AddBitmap(string sKey, System.Drawing.Bitmap image)
+        internal static void ClearAllCachedImageData(bool bOnlySkins = false)
+        {
+            if (_pooledImages == null) return;
+
+            lock (_imageLock)
+            {
+                List<string> keys = _pooledImages.Keys.ToList();
+
+                foreach(string sKey in keys)
+                {
+                    RemoveImageCacheData(sKey, bOnlySkins);
+                }
+
+                if (!bOnlySkins)
+                {
+                    _pooledImages.Clear();
+                    _pooledStreamData.Clear();
+                }
+            }
+        }
+        internal static bool RemoveImageCacheData(string sKey, bool bOnlySkins = false)
         {
             lock (_imageLock)
             {
-                if (_pooledImages == null) return;
+                if (_pooledImages == null) return false;
+                if (!_pooledImages.ContainsKey(sKey)) return false;
+
+                // remove the bitmap, tag = true then skin image
+                if (bOnlySkins && !(bool)_pooledImages[sKey].Tag) return false;
+
+                _pooledImages[sKey].Dispose();
+                _pooledImages.Remove(sKey);
+
+                if (_pooledStreamData != null)
+                {
+                    if(_pooledStreamData.ContainsKey(sKey))
+                    {
+                        // remove the stream related to the bitmap
+                        _pooledStreamData[sKey].Dispose();
+                        _pooledStreamData.Remove(sKey);
+                    }
+                }
+            }
+            return true;
+        }
+        internal static bool AddBitmap(string sKey, System.Drawing.Bitmap image)
+        {
+            bool bRet = true;
+            lock (_imageLock)
+            {
+                if (_pooledImages == null) bRet = false;
+                if (_pooledImages.ContainsKey(sKey)) bRet = false;
 
                 _pooledImages.Add(sKey, image);
             }
+            return bRet;
         }
         internal static System.Drawing.Bitmap GetBitmap(string sKey)
         {
@@ -662,6 +714,7 @@ namespace Thetis
             lock (_imageLock)
             {
                 if (_pooledStreamData == null) return;
+                if (_pooledStreamData.ContainsKey(sId)) return;
 
                 _pooledStreamData.Add(sId, tempStream);
             }
@@ -783,10 +836,10 @@ namespace Thetis
             }
             _pooledImages.Clear();
         }
-        public static void Init(Console c, string sImagePath = "")
+        public static void Init(Console c)
         {
             _console = c;
-            _power = _console.PowerOn;
+            //_power = _console.PowerOn;
             _rx1VHForAbove = _console.VFOAFreq >= 30;
             _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= 30;
             _currentHPSDRmodel = _console.CurrentHPSDRModel;
@@ -794,7 +847,6 @@ namespace Thetis
             _alexPresent = _console.AlexPresent;
             _paPresent = _console.PAPresent;
             _transverterIndex = _console.TXXVTRIndex;
-            _imagePath = sImagePath;
 
             addDelegates();
 
@@ -806,18 +858,51 @@ namespace Thetis
             };
             _meterThread.Start();
         }
-        public static string ImagePath
-        {
-            get { return _imagePath; }
-            set { _imagePath = value; }
-        }
         private static Dictionary<string, DXRenderer> _DXrenderers = new Dictionary<string, DXRenderer>();
         private static void addRenderer(string sId, int rx, PictureBox target, clsMeter meter, System.Drawing.Color backColour)
         {
-            DXRenderer renderer = new DXRenderer(sId, rx, target, _console, MeterManager.ImagePath, meter);
+            DXRenderer renderer = new DXRenderer(sId, rx, target, _console, meter);
             renderer.BackgroundColour = backColour;
 
             _DXrenderers.Add(sId, renderer);
+        }
+        public static void RefreshAllImages()
+        {
+            if (_DXrenderers.Count < 1) return;
+
+            //remove skins from cache
+            ClearAllCachedImageData();
+
+            foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
+            {
+                DXRenderer r = kvp.Value;
+                r.RemoveAllDXImages();
+            }
+
+            foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
+            {
+                DXRenderer r = kvp.Value;
+                r.LoadDXImages(_openHPSDR_appdatapath, _current_skin_path);
+            }
+        }
+        private static void LoadDXSkinImages()
+        {
+            if (_DXrenderers.Count < 1) return;
+
+            //remove skins from cache
+            ClearAllCachedImageData(true);
+
+            foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
+            {
+                DXRenderer r = kvp.Value;
+                r.RemoveAnySkinImages();              
+            }
+
+            foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
+            {
+                DXRenderer r = kvp.Value;
+                r.LoadDXImages(_openHPSDR_appdatapath, _current_skin_path);
+            }
         }
         public static void RunRendererDisplay(string sId)
         {
@@ -825,6 +910,7 @@ namespace Thetis
 
             DXRenderer r = _DXrenderers[sId];
             r.RunDisplay();
+            r.LoadDXImages(_openHPSDR_appdatapath, _current_skin_path);
         }
         public static void RunAllRendererDisplays()
         {
@@ -832,8 +918,28 @@ namespace Thetis
 
             foreach(KeyValuePair <string, DXRenderer> kvp in _DXrenderers)
             {
-                DXRenderer r = kvp.Value;
-                r.RunDisplay();
+                RunRendererDisplay(kvp.Key);
+            }
+        }
+        private static string _current_skin = "IK3VIG Special"; // matches selectSkin() fn in setup.cs
+        private static string _current_skin_path = "";
+        public static string CurrentSkinPath
+        {
+            get { return _current_skin_path; }
+        }
+        public static string CurrentSkin
+        {
+            get { return _current_skin; }
+            set
+            {
+                _current_skin_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
+                    "\\OpenHPSDR\\Skins\\" + value;
+
+                if (value != _current_skin)
+                {
+                    LoadDXSkinImages();
+                    _current_skin = value;
+                }
             }
         }
         private static void removeRenderer(string sId)
@@ -1224,7 +1330,7 @@ namespace Thetis
         }
         private static void OnPower(bool oldPower, bool newPower)
         {
-            _power = newPower;
+            //_power = newPower;
 
             if(oldPower != newPower)
             {
@@ -8470,9 +8576,8 @@ namespace Thetis
             private int _newTargetWidth;
             private int _newTargetHeight;
             private bool _targetVisible;
-            private string _imagePath;
 
-            public DXRenderer(string sId, int rx, PictureBox target, Console c, string sImagePath, clsMeter meter)
+            public DXRenderer(string sId, int rx, PictureBox target, Console c, clsMeter meter)
             {
                 if (c == null || target == null) return;
 
@@ -8518,14 +8623,10 @@ namespace Thetis
                 _displayTarget.Resize += target_Resize;
                 _displayTarget.MouseUp += OnMouseUp;
                 _displayTarget.VisibleChanged += target_VisibleChanged;
-
-                _imagePath = sImagePath;
             }            
             public void RunDisplay()
             {
                 dxInit();
-
-                loadImages(_imagePath);
 
                 _dxDisplayThreadRunning = false;
                 _dxRenderThread = new Thread(new ThreadStart(dxRender))
@@ -8556,64 +8657,96 @@ namespace Thetis
             }
 
             //DIRECTX
-            private string[] _imageFileNames = { "ananMM", "ananMM-bg", "ananMM-bg-tx", "cross-needle", "cross-needle-bg", "eye-bezel" };
-            private void loadImages(string sImagePath)
+            internal void RemoveAnySkinImages()
             {
-                if (!sImagePath.EndsWith("\\")) sImagePath += "\\";
-
-                if (System.IO.Directory.Exists(sImagePath))
+                lock (_DXlock)
                 {
-                    for(int n = 0;n < _imageFileNames.Length;n++)
+                    List<string> keysWithTrueTag = _images.Where(pair => (bool)pair.Value.Tag)
+                        .Select(pair => pair.Key).ToList();
+
+                    foreach(string sKey in keysWithTrueTag)
                     {
-                        string sFileName = sImagePath + _imageFileNames[n];
-
-                        //normal
-                        loadImage(sFileName + ".png");
-
-                        //small
-                        loadImage(sFileName + "-small" + ".png");
-
-                        //large
-                        loadImage(sFileName + "-large" + ".png");
-
-                        //dark
-                        //normal
-                        loadImage(sFileName + "-dark.png");
-
-                        //small
-                        loadImage(sFileName + "-dark-small" + ".png");
-
-                        //large
-                        loadImage(sFileName + "-dark-large" + ".png");
+                        RemoveDXImage(sKey);
                     }
                 }
             }
-            private void loadImage(string sFilePath)
+            internal void LoadDXImages(string sDefaultPath, string sSkinPath)
+            {
+                string[] imageFileNames = { "ananMM", "ananMM-bg", "ananMM-bg-tx", "cross-needle", "cross-needle-bg", "eye-bezel" };
+                string[] imageFileNameParts = { "", "-small", "-large", "-dark", "-dark-small", "-dark-large" };
+
+                if (!_bDXSetup) return;
+                
+                lock (_DXlock)
+                {
+                    // load
+                    if (!sDefaultPath.EndsWith("\\")) sDefaultPath += "\\";
+                    if (System.IO.Directory.Exists(sDefaultPath))
+                    {
+                        for (int n = 0; n < imageFileNames.Length; n++)
+                        {
+                            string sSkinFileName = sSkinPath + "\\Meters\\" + imageFileNames[n];
+                            string sDefaultFileName = sDefaultPath + "\\Meters\\" + imageFileNames[n];
+                            for (int i = 0; i < imageFileNameParts.Length; i++)
+                            {
+                                if (File.Exists(sSkinFileName + imageFileNameParts[i] + ".png"))
+                                {
+                                    string sRemove = imageFileNames[n] + imageFileNameParts[i];
+                                    //remove it
+                                    if (_images.ContainsKey(sRemove))
+                                    {
+                                        RemoveImageCacheData(sRemove);
+                                        RemoveDXImage(sRemove);
+                                    }
+
+                                    loadImage(sSkinFileName + imageFileNameParts[i] + ".png", true);
+                                }
+                                else
+                                {
+                                    loadImage(sDefaultFileName + imageFileNameParts[i] + ".png", false);
+                                }                                    
+                            }
+                        }
+                    }
+                }
+            }
+            private void loadImage(string sFilePath, bool isSkinImage)
             {
                 string sID = System.IO.Path.GetFileNameWithoutExtension(sFilePath);
 
-                if (!_images.ContainsKey(sID) && System.IO.File.Exists(sFilePath)) // check contains incase of filename dupe somehow
+                if (!_images.ContainsKey(sID)) // check contains incase of filename dupe somehow
                 {
-                    try
+                    if (System.IO.File.Exists(sFilePath))
                     {
-                        if (!MeterManager.ContainsBitmap(sID))
-                        {
-                            System.Drawing.Image image = System.Drawing.Image.FromFile(sFilePath);
-                            System.Drawing.Bitmap bmp2 = new System.Drawing.Bitmap(image);
-                            MeterManager.AddBitmap(sID, bmp2);
+                        System.Drawing.Image image = null;
 
-                            Debug.Print("Loaded image : " + sFilePath);
+                        try
+                        {
+                            if (!MeterManager.ContainsBitmap(sID))
+                            {
+                                image = System.Drawing.Image.FromFile(sFilePath);
+                                System.Drawing.Bitmap bmp2 = new System.Drawing.Bitmap(image);
+                                bmp2.Tag = isSkinImage;
+                                MeterManager.AddBitmap(sID, bmp2);
+
+                                Debug.Print("Loaded image : " + sFilePath);
+                            }
+
+                            System.Drawing.Bitmap bmp = MeterManager.GetBitmap(sID);
+
+                            if (bmp != null)
+                            {
+                                SharpDX.Direct2D1.Bitmap img = bitmapFromSystemBitmap(_renderTarget, bmp, sID);
+                                img.Tag = isSkinImage;
+                                _images.Add(sID, img);
+                            }
                         }
-
-                        System.Drawing.Bitmap bmp = MeterManager.GetBitmap(sID);
-
-                        if (bmp != null)
+                        catch { }
+                        finally
                         {
-                            SharpDX.Direct2D1.Bitmap img = bitmapFromSysBitmap2(_renderTarget, bmp, sID);
-                            _images.Add(sID, img);
+                            if (image != null) image.Dispose();
                         }
                     }
-                    catch { }
                 }
             }
             private int getMaxSamples()
@@ -8861,12 +8994,7 @@ namespace Thetis
                         _device.ImmediateContext.Flush();
                     }
 
-                    foreach (KeyValuePair<string, SharpDX.Direct2D1.Bitmap> kvp in _images)
-                    {
-                        SharpDX.Direct2D1.Bitmap b = kvp.Value;
-                        Utilities.Dispose(ref b);
-                    }
-                    _images.Clear();
+                    RemoveAllDXImages();
 
                     releaseDXFonts();
                     releaseDXResources();
@@ -8912,6 +9040,34 @@ namespace Thetis
                 catch (Exception e)
                 {
                     MessageBox.Show("Problem Shutting Down Meter DirectX !" + System.Environment.NewLine + System.Environment.NewLine + "[" + e.ToString() + "]", "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
+            }
+            internal void RemoveAllDXImages()
+            {
+                if (_images == null || _images.Count == 0) return;
+
+                lock (_DXlock)
+                {
+                    foreach (KeyValuePair<string, SharpDX.Direct2D1.Bitmap> kvp in _images)
+                    {
+                        SharpDX.Direct2D1.Bitmap b = kvp.Value;
+                        Utilities.Dispose(ref b);
+                    }
+                    _images.Clear();
+                }
+            }
+            internal void RemoveDXImage(string sKey)
+            {
+                if (_images == null || _images.Count == 0) return;
+
+                lock (_DXlock)
+                {
+                    if (_images.ContainsKey(sKey))
+                    {
+                        SharpDX.Direct2D1.Bitmap b = _images[sKey];
+                        Utilities.Dispose(ref b);
+                        _images.Remove(sKey);
+                    }
                 }
             }
             //private void calcFps()
@@ -11299,18 +11455,21 @@ namespace Thetis
                         _renderTarget.PushAxisAlignedClip(clipRect, AntialiasMode.Aliased); // prevent anything drawing from outside the rectangle, no nee to cut the image
                     }
 
-                    SharpDX.Direct2D1.Bitmap b = _images[sImage];
+                    if (_images.ContainsKey(sImage))
+                    {
+                        SharpDX.Direct2D1.Bitmap b = _images[sImage];
 
-                    // maintain aspect ratio, the clip removes anything outside the rect
-                    float im_w = b.Size.Width;
-                    float im_h = b.Size.Height;
+                        // maintain aspect ratio, the clip removes anything outside the rect
+                        float im_w = b.Size.Width;
+                        float im_h = b.Size.Height;
 
-                    if (w > h) 
-                        imgRect.Height = imgRect.Width * (im_h / im_w);
-                    else
-                        imgRect.Width = imgRect.Height * (im_w / im_h);
+                        if (w > h)
+                            imgRect.Height = imgRect.Width * (im_h / im_w);
+                        else
+                            imgRect.Width = imgRect.Height * (im_w / im_h);
 
-                    _renderTarget.DrawBitmap(b, imgRect, nFade / 255f, BitmapInterpolationMode.Linear);//, sourceRect);
+                        _renderTarget.DrawBitmap(b, imgRect, nFade / 255f, BitmapInterpolationMode.Linear);//, sourceRect);
+                    }
 
                     _renderTarget.PopAxisAlignedClip();
                 }
@@ -11696,49 +11855,8 @@ namespace Thetis
                                                             _max = max };
                     mi.AddPerc(pc);
                 }
-            }
-            private SharpDX.Direct2D1.Bitmap bitmapFromSysBitmap(RenderTarget rt, System.Drawing.Bitmap bitmap)
-            {
-                System.Drawing.Rectangle sourceArea = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
-                BitmapProperties bitmapProperties = new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(Format.B8G8R8A8_UNorm, _ALPHA_MODE)); //was R8G8B8A8_UNorm  //MW0LGE_21k9
-                Size2 size = new Size2(bitmap.Width, bitmap.Height);
-
-                // Transform pixels from BGRA to RGBA
-                int stride = bitmap.Width * sizeof(int);
-                DataStream tempStream = new DataStream(bitmap.Height * stride, true, true);
-
-                // Lock System.Drawing.Bitmap
-                System.Drawing.Imaging.BitmapData bitmapData = bitmap.LockBits(sourceArea, System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-
-                // Convert all pixels 
-                for (int y = 0; y < bitmap.Height; y++)
-                {
-                    int offset = bitmapData.Stride * y;
-                    for (int x = 0; x < bitmap.Width; x++)
-                    {
-                        byte B = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                        byte G = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                        byte R = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                        byte A = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                        //int rgba = R | (G << 8) | (B << 16) | (A << 24); //MW0LGE_21k9
-                        //tempStream.Write(rgba);
-                        int bgra = B | (G << 8) | (R << 16) | (A << 24);
-                        tempStream.Write(bgra);
-                    }
-
-                }
-                bitmap.UnlockBits(bitmapData);
-
-                tempStream.Position = 0;
-
-                SharpDX.Direct2D1.Bitmap dxBitmap = new SharpDX.Direct2D1.Bitmap(rt, size, tempStream, stride, bitmapProperties);
-
-                Utilities.Dispose(ref tempStream);
-                tempStream = null;
-
-                return dxBitmap;
-            }
-            private SharpDX.Direct2D1.Bitmap bitmapFromSysBitmap2(RenderTarget rt, System.Drawing.Bitmap bitmap, string sId)
+            }            
+            private SharpDX.Direct2D1.Bitmap bitmapFromSystemBitmap(RenderTarget rt, System.Drawing.Bitmap bitmap, string sId)
             {
                 SharpDX.Direct2D1.Bitmap dxBitmap;
                 Size2 size = new Size2(bitmap.Width, bitmap.Height);

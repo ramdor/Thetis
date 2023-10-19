@@ -98,7 +98,7 @@ namespace Thetis
         private Thread rx2_sql_update_thread;				// polls the RX2 signal strength
         private Thread vox_update_thread;					// polls the mic input
         private Thread noise_gate_update_thread;			// polls the mic input during TX
-        public bool pause_DisplayThread = true;             // MW0LGE_21d initally paused
+        public bool _pause_DisplayThread = true;             // MW0LGE_21d initally paused
         private bool calibration_running = false;
         private bool displaydidit = false;
         public Mutex calibration_mutex = new Mutex();
@@ -1137,7 +1137,7 @@ namespace Thetis
                     };
                     draw_display_thread.Start();
                 }
-                pause_DisplayThread = false;
+                _pause_DisplayThread = false;
 
                 // test spectrum
                 //if (_spectrum_thread == null || !_spectrum_thread.IsAlive)
@@ -1857,8 +1857,7 @@ namespace Thetis
                 _RX2MeterValues.Add((Reading)n, -200f);
             }
 
-            string sMeterImagePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
-            MeterManager.Init(this, sMeterImagePath);
+            MeterManager.Init(this);
             //
 
             Siolisten = new SIOListenerII(this);
@@ -8741,7 +8740,6 @@ namespace Thetis
             if (comboFMTXProfile.Text == "") comboFMTXProfile.Text = "Default";
             if (comboAMTXProfile.Text == "") comboAMTXProfile.Text = "Default";
         }
-
         // Diversity operation is on RX1; therefore, the 'rx1_rate' will be used as the diversity rate;
         public void UpdateDDCs(bool rx2_enabled)
         {
@@ -15120,7 +15118,7 @@ namespace Thetis
         //MW0LGE_21k9
         public void SetupDisplayEngine(bool resizeN1MM = true)
         {
-            pause_DisplayThread = true;
+            _pause_DisplayThread = true;
 
             Display.Target = picDisplay;
 
@@ -15139,7 +15137,7 @@ namespace Thetis
             comboDisplayMode_SelectedIndexChanged(this, EventArgs.Empty);
             if (rx2_enabled) comboRX2DisplayMode_SelectedIndexChanged(this, EventArgs.Empty);
 
-            pause_DisplayThread = false;
+            _pause_DisplayThread = false;
         }
 
         private bool diversity_rx_ref;
@@ -22068,23 +22066,23 @@ namespace Thetis
             }
         }
 
-        private int display_fps = 60;
-        private float display_delay = 1000 / 60f;
+        private int _display_fps = 60;
+        private double _display_delay = 1000 / 60f;
         public int DisplayFPS
         {
-            get { return display_fps; }
+            get { return _display_fps; }
             set
             {
-                display_fps = value;
-                if (display_fps > MAX_FPS) display_fps = MAX_FPS;
-                if (display_fps < 1) display_fps = 1;
-                display_delay = 1000 / (float)display_fps;
+                _display_fps = value;
+                if (_display_fps > MAX_FPS) _display_fps = MAX_FPS;
+                if (_display_fps < 1) _display_fps = 1;
+                _display_delay = 1000 / (float)_display_fps;
 
-                Display.CurrentFPS = display_fps; //MW0LGE_21k8 pre init
+                Display.CurrentFPS = _display_fps; //MW0LGE_21k8 pre init
 
-                specRX.GetSpecRX(0).FrameRate = display_fps;
-                specRX.GetSpecRX(1).FrameRate = display_fps;
-                specRX.GetSpecRX(cmaster.inid(1, 0)).FrameRate = display_fps;
+                specRX.GetSpecRX(0).FrameRate = _display_fps;
+                specRX.GetSpecRX(1).FrameRate = _display_fps;
+                specRX.GetSpecRX(cmaster.inid(1, 0)).FrameRate = _display_fps;
             }
         }
 
@@ -23663,7 +23661,7 @@ namespace Thetis
             }
 
             int nCurrentFps = Display.CurrentFPS;
-            if (nCurrentFps == 0) nCurrentFps = display_fps;
+            if (nCurrentFps == 0) nCurrentFps = _display_fps;
 
             float fRet = (y - 16) * (localWaterFallUpdatePeriod * (1000f / nCurrentFps));
             if (fRet < 0) fRet = 0;
@@ -26708,14 +26706,14 @@ namespace Thetis
                 }
             }
         }
-        private bool _mox_transition_buffer_clear = false;
-        public bool MOXTransitionBufferClear
+        private bool _wdsp_mox_transition_buffer_clear = false;
+        public bool WDSPMOXTransitionBufferClear
         {
-            get { return _mox_transition_buffer_clear; }
+            get { return _wdsp_mox_transition_buffer_clear; }
             set 
             { 
-                _mox_transition_buffer_clear = value;
-                Display.MOXTransitionBufferClear = _mox_transition_buffer_clear;
+                _wdsp_mox_transition_buffer_clear = value;
+                Display.WDSPMOXTransitionBufferClear = _wdsp_mox_transition_buffer_clear;
             }
         }
         unsafe private void RunDisplay()
@@ -26726,13 +26724,14 @@ namespace Thetis
             {
                 HiPerfTimer objStopWatch = new HiPerfTimer();
                 double fFractionOfMs = 0;
-                double fThreadSleepLate = 0;
+                double fThreadSleepOverRun = 0;
                 bool bOldLocalMox = Display.MOX;
 
                 while (m_bDisplayLoopRunning)
                 {
+                    #region debug_text
                     if (m_bEnableDisplayDebug)
-                    {
+                    {                        
                         Display.DebugText = "chkVFOSplit : " + chkVFOSplit.Checked.ToString() + Environment.NewLine +
                             "VFOATX : " + VFOATX.ToString() + Environment.NewLine +
                             "VFOBTX : " + VFOBTX.ToString() + Environment.NewLine +
@@ -26785,13 +26784,13 @@ namespace Thetis
                             "RX2DisplayCalOffset : " + Display.RX2DisplayCalOffset.ToString() + Environment.NewLine +
                             "TXDisplayCalOffset : " + Display.TXDisplayCalOffset.ToString();
                     }
+                    #endregion
 
                     objStopWatch.Reset();
 
                     if (m_bResizeDX2Display)
                     {
                         Display.Target = picDisplay;
-
                         m_bResizeDX2Display = false;
                     }
 
@@ -26799,14 +26798,13 @@ namespace Thetis
                     uint bottom_thread = 2;
                     int flag = -1;
                     int flag2 = -1;
-
                     bool bDataReady = false;
                     bool bWaterfallDataReady = false;
                     bool bN1mm = false;
-
                     bool bLocalMox = Display.MOX;
                     bool bGetPixelIssue = false;
                     bool bGetPixelIssueBottom = false;
+
                     //MW0LGE_21g
                     if (bLocalMox)
                     {
@@ -26819,13 +26817,13 @@ namespace Thetis
                         // [2.10.2.2]MW0LGE
                         // if the mox state is different, reset the analyzer to remove
                         // possibilty of tx data being in the rx buffers, and vice versa
-                        if (_mox_transition_buffer_clear)
+                        if (_wdsp_mox_transition_buffer_clear)
                         {
                             resetWDSPdisplayBuffers(1, mox);
                             if (RX2Enabled) resetWDSPdisplayBuffers(2, mox);
                         }
 
-                        // always clear display buffers
+                        // clear display buffers
                         Display.PurgeBuffers();
 
                         bOldLocalMox = bLocalMox;
@@ -26840,246 +26838,249 @@ namespace Thetis
                             displaydidit = true;
                         }
 
-                        if (!pause_DisplayThread && (!Display.DataReady || !Display.WaterfallDataReady) &&
-                            Display.CurrentDisplayMode != DisplayMode.OFF)
+                        if (!_pause_DisplayThread) // skip any of this
                         {
-                            flag2 = -1;
-                            bDataReady = false;
-                            bWaterfallDataReady = false;
-                            bN1mm = false;
-
-                            switch (Display.CurrentDisplayMode)
+                            if ((!Display.DataReady || !Display.WaterfallDataReady) &&
+                                Display.CurrentDisplayMode != DisplayMode.OFF)
                             {
-                                case DisplayMode.WATERFALL:
-                                case DisplayMode.PANAFALL:                                    
-                                    if (bLocalMox && !display_duplex)
-                                    {
-                                        if (chkVFOATX.Checked || !chkRX2.Checked)
+                                flag2 = -1;
+                                bDataReady = false;
+                                bWaterfallDataReady = false;
+                                bN1mm = false;
+
+                                switch (Display.CurrentDisplayMode)
+                                {
+                                    case DisplayMode.WATERFALL:
+                                    case DisplayMode.PANAFALL:
+                                        if (bLocalMox && !display_duplex)
                                         {
-                                            fixed (float* ptr = &Display.new_display_data[0])
-                                                SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag);
-                                            bDataReady = (flag == 1);
-                                            fixed (float* ptr = &Display.new_waterfall_data[0])
-                                                SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag);
-                                            bWaterfallDataReady = (flag == 1);
+                                            if (chkVFOATX.Checked || !chkRX2.Checked)
+                                            {
+                                                fixed (float* ptr = &Display.new_display_data[0])
+                                                    SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag);
+                                                bDataReady = (flag == 1);
+                                                fixed (float* ptr = &Display.new_waterfall_data[0])
+                                                    SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag);
+                                                bWaterfallDataReady = (flag == 1);
+                                            }
+                                            else
+                                            {
+                                                fixed (float* ptr = &Display.new_display_data[0])
+                                                    // SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag);
+                                                    SpecHPSDRDLL.GetPixels(0, 0, ptr, ref flag);
+                                                bDataReady = (flag == 1);
+                                                fixed (float* ptr = &Display.new_waterfall_data[0])
+                                                    //SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag); 
+                                                    SpecHPSDRDLL.GetPixels(0, 1, ptr, ref flag);
+                                                bWaterfallDataReady = (flag == 1);
+                                            }
                                         }
-                                        else
+                                        else //rx
                                         {
                                             fixed (float* ptr = &Display.new_display_data[0])
-                                                // SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag);
                                                 SpecHPSDRDLL.GetPixels(0, 0, ptr, ref flag);
                                             bDataReady = (flag == 1);
+                                            bN1mm = true;
                                             fixed (float* ptr = &Display.new_waterfall_data[0])
-                                                //SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag); 
                                                 SpecHPSDRDLL.GetPixels(0, 1, ptr, ref flag);
                                             bWaterfallDataReady = (flag == 1);
                                         }
-                                    }
-                                    else //rx
-                                    {
-                                        fixed (float* ptr = &Display.new_display_data[0])
-                                            SpecHPSDRDLL.GetPixels(0, 0, ptr, ref flag);
-                                        bDataReady = (flag == 1);
-                                        bN1mm = true;
-                                        fixed (float* ptr = &Display.new_waterfall_data[0])
-                                            SpecHPSDRDLL.GetPixels(0, 1, ptr, ref flag);
-                                        bWaterfallDataReady = (flag == 1);
-                                    }
-                                    break;
-                                case DisplayMode.SPECTRUM:
-                                case DisplayMode.HISTOGRAM:
-                                case DisplayMode.SPECTRASCOPE:
-                                case DisplayMode.PANADAPTER:
-                                case DisplayMode.PANASCOPE:
-                                    if (bLocalMox && !display_duplex)
-                                    {
-                                        if (chkVFOATX.Checked || !chkRX2.Checked)
+                                        break;
+                                    case DisplayMode.SPECTRUM:
+                                    case DisplayMode.HISTOGRAM:
+                                    case DisplayMode.SPECTRASCOPE:
+                                    case DisplayMode.PANADAPTER:
+                                    case DisplayMode.PANASCOPE:
+                                        if (bLocalMox && !display_duplex)
                                         {
-                                            fixed (float* ptr = &Display.new_display_data[0])
-                                                SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag);
-                                            bDataReady = (flag == 1);
+                                            if (chkVFOATX.Checked || !chkRX2.Checked)
+                                            {
+                                                fixed (float* ptr = &Display.new_display_data[0])
+                                                    SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag);
+                                                bDataReady = (flag == 1);
+                                            }
+                                            else
+                                            {
+                                                fixed (float* ptr = &Display.new_display_data[0])
+                                                    SpecHPSDRDLL.GetPixels(0, 0, ptr, ref flag);
+                                                bDataReady = (flag == 1);
+                                            }
                                         }
                                         else
                                         {
                                             fixed (float* ptr = &Display.new_display_data[0])
                                                 SpecHPSDRDLL.GetPixels(0, 0, ptr, ref flag);
                                             bDataReady = (flag == 1);
+                                            bN1mm = Display.CurrentDisplayMode == DisplayMode.PANADAPTER || Display.CurrentDisplayMode == DisplayMode.PANASCOPE;
                                         }
-                                    }
-                                    else
-                                    {
+                                        break;
+                                    case DisplayMode.SCOPE:
+                                    case DisplayMode.SCOPE2:
                                         fixed (float* ptr = &Display.new_display_data[0])
-                                            SpecHPSDRDLL.GetPixels(0, 0, ptr, ref flag);
-                                        bDataReady = (flag == 1);
-                                        bN1mm = Display.CurrentDisplayMode == DisplayMode.PANADAPTER || Display.CurrentDisplayMode == DisplayMode.PANASCOPE;
-                                    }
-                                    break;
-                                case DisplayMode.SCOPE:
-                                case DisplayMode.SCOPE2:
-                                    fixed (float* ptr = &Display.new_display_data[0])
-                                    //DttSP.GetScope(top_thread, ptr, (int)(scope_time * 48));
-                                    {
-                                        if (top_thread != 1)
-                                            WDSP.RXAGetaSipF(WDSP.id(top_thread, 0), ptr, (int)(scope_time * 48));
-                                        else
-                                            WDSP.TXAGetaSipF(WDSP.id(top_thread, 0), ptr, (int)(scope_time * 48));
-                                    }
-                                    bDataReady = true;
-                                    break;
-                                case DisplayMode.PHASE:
-                                    fixed (float* ptr = &Display.new_display_data[0])
-                                    //DttSP.GetPhase(top_thread, ptr, Display.PhaseNumPts);
-                                    {
-                                        if (top_thread != 1)
-                                            WDSP.RXAGetaSipF1(WDSP.id(top_thread, 0), ptr, Display.PhaseNumPts);
-                                        else
-                                            WDSP.TXAGetaSipF1(WDSP.id(top_thread, 0), ptr, Display.PhaseNumPts);
-                                    }
-                                    bDataReady = true;
-                                    break;
-                                case DisplayMode.PHASE2:
-                                    if (Audio.phase_buf_l != null && Audio.phase_buf_r != null) // MW0LGE would be null if audio not running (ie not connected?)
-                                    {
-                                        //Audio.phase_mutex.WaitOne();
-                                        for (int i = 0; i < Display.PhaseNumPts; i++)
+                                        //DttSP.GetScope(top_thread, ptr, (int)(scope_time * 48));
                                         {
-                                            Display.new_display_data[i * 2] = Audio.phase_buf_l[i];
-                                            Display.new_display_data[i * 2 + 1] = Audio.phase_buf_r[i];
+                                            if (top_thread != 1)
+                                                WDSP.RXAGetaSipF(WDSP.id(top_thread, 0), ptr, (int)(scope_time * 48));
+                                            else
+                                                WDSP.TXAGetaSipF(WDSP.id(top_thread, 0), ptr, (int)(scope_time * 48));
                                         }
                                         bDataReady = true;
-                                        //Audio.phase_mutex.ReleaseMutex();
-                                    }
-                                    break;
-                            }
-
-                            Display.DataReady = bDataReady;
-                            Display.WaterfallDataReady = bWaterfallDataReady;
-                            if (bN1mm && N1MM.IsStarted)
-                            {
-                                if (bDataReady)
-                                    N1MM.CopyData(1, Display.new_display_data);
-                                else if (bWaterfallDataReady)
-                                    N1MM.CopyData(1, Display.new_waterfall_data);
-                            }
-
-                            bGetPixelIssue |= !bDataReady && !bWaterfallDataReady;
-                        }
-
-                        if (!pause_DisplayThread && chkSplitDisplay.Checked &&
-                            (!Display.DataReadyBottom || !Display.WaterfallDataReadyBottom) &&
-                            Display.CurrentDisplayModeBottom != DisplayMode.OFF)
-                        {
-                            flag2 = -1;
-                            bDataReady = false;
-                            bWaterfallDataReady = false;
-                            bN1mm = false;
-
-                            switch (Display.CurrentDisplayModeBottom)
-                            {
-                                case DisplayMode.SPECTRUM:
-                                case DisplayMode.HISTOGRAM:
-                                    break;
-                                case DisplayMode.WATERFALL:
-                                    if (bLocalMox && VFOBTX)
-                                    {
-                                        fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
-                                            SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag2);
-                                        bWaterfallDataReady = (flag2 == 1);
-                                    }
-                                    else
-                                    {
-                                        fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
-                                            SpecHPSDRDLL.GetPixels(1, 1, ptr, ref flag2);
-                                        bWaterfallDataReady = (flag2 == 1);
-                                        bN1mm = true;
-                                    }
-                                    break;
-                                case DisplayMode.PANADAPTER:
-                                    if (bLocalMox && VFOBTX)
-                                    {
-                                        fixed (float* ptr = &Display.new_display_data_bottom[0])
-                                            SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag2);
-                                        bDataReady = (flag2 == 1);
-                                    }
-                                    else
-                                    {
-                                        fixed (float* ptr = &Display.new_display_data_bottom[0])
-                                            SpecHPSDRDLL.GetPixels(1, 0, ptr, ref flag2);
-                                        //Display.DataReadyBottom = (flag2 == 1);
-                                        bDataReady = (flag2 == 1);
-                                        bN1mm = true;
-                                    }
-                                    break;
-                                case DisplayMode.PANAFALL:  // MW0LGE
-                                    if (bLocalMox && VFOBTX)
-                                    {
-                                        fixed (float* ptr = &Display.new_display_data_bottom[0])
-                                            SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag2);
-                                        bDataReady = (flag2 == 1);
-                                        fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
-                                            SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag2);
-                                        bWaterfallDataReady = (flag2 == 1);
-                                    }
-                                    else
-                                    {
-                                        fixed (float* ptr = &Display.new_display_data_bottom[0])
-                                            SpecHPSDRDLL.GetPixels(1, 0, ptr, ref flag2);
-                                        bDataReady = (flag2 == 1);
-                                        bN1mm = true;
-                                        fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
-                                            SpecHPSDRDLL.GetPixels(1, 1, ptr, ref flag2);
-                                        bWaterfallDataReady = (flag2 == 1);
-                                    }
-                                    break;
-                                case DisplayMode.SCOPE:
-                                case DisplayMode.SCOPE2:
-                                    fixed (float* ptr = &Display.new_display_data_bottom[0])
-                                    //DttSP.GetScope(bottom_thread, ptr, (int)(scope_time * 48));
-                                    {
-                                        if (bottom_thread != 1)
-                                            WDSP.RXAGetaSipF(WDSP.id(bottom_thread, 0), ptr, (int)(scope_time * 48));
-                                        else
-                                            WDSP.TXAGetaSipF(WDSP.id(bottom_thread, 0), ptr, (int)(scope_time * 48));
-                                    }
-                                    bDataReady = true;
-                                    break;
-                                case DisplayMode.PHASE:
-                                    fixed (float* ptr = &Display.new_display_data_bottom[0])
-                                    //DttSP.GetPhase(bottom_thread, ptr, Display.PhaseNumPts);
-                                    {
-                                        if (bottom_thread != 1)
-                                            WDSP.RXAGetaSipF1(WDSP.id(bottom_thread, 0), ptr, Display.PhaseNumPts);
-                                        else
-                                            WDSP.TXAGetaSipF1(WDSP.id(bottom_thread, 0), ptr, Display.PhaseNumPts);
-                                    }
-                                    bDataReady = true;
-                                    break;
-                                case DisplayMode.PHASE2:
-                                    if (Audio.phase_buf_l != null && Audio.phase_buf_r != null) // MW0LGE would be null if audio not running (ie not connected?)
-                                    {
-                                        //Audio.phase_mutex.WaitOne();
-                                        for (int i = 0; i < Display.PhaseNumPts; i++)
+                                        break;
+                                    case DisplayMode.PHASE:
+                                        fixed (float* ptr = &Display.new_display_data[0])
+                                        //DttSP.GetPhase(top_thread, ptr, Display.PhaseNumPts);
                                         {
-                                            Display.new_display_data_bottom[i * 2] = Audio.phase_buf_l[i];
-                                            Display.new_display_data_bottom[i * 2 + 1] = Audio.phase_buf_r[i];
+                                            if (top_thread != 1)
+                                                WDSP.RXAGetaSipF1(WDSP.id(top_thread, 0), ptr, Display.PhaseNumPts);
+                                            else
+                                                WDSP.TXAGetaSipF1(WDSP.id(top_thread, 0), ptr, Display.PhaseNumPts);
                                         }
-                                        //Audio.phase_mutex.ReleaseMutex();
                                         bDataReady = true;
-                                    }
-                                    break;
+                                        break;
+                                    case DisplayMode.PHASE2:
+                                        if (Audio.phase_buf_l != null && Audio.phase_buf_r != null) // MW0LGE would be null if audio not running (ie not connected?)
+                                        {
+                                            //Audio.phase_mutex.WaitOne();
+                                            for (int i = 0; i < Display.PhaseNumPts; i++)
+                                            {
+                                                Display.new_display_data[i * 2] = Audio.phase_buf_l[i];
+                                                Display.new_display_data[i * 2 + 1] = Audio.phase_buf_r[i];
+                                            }
+                                            bDataReady = true;
+                                            //Audio.phase_mutex.ReleaseMutex();
+                                        }
+                                        break;
+                                }
+
+                                Display.DataReady = bDataReady;
+                                Display.WaterfallDataReady = bWaterfallDataReady;
+                                if (bN1mm && N1MM.IsStarted)
+                                {
+                                    if (bDataReady)
+                                        N1MM.CopyData(1, Display.new_display_data);
+                                    else if (bWaterfallDataReady)
+                                        N1MM.CopyData(1, Display.new_waterfall_data);
+                                }
+
+                                bGetPixelIssue |= !bDataReady && !bWaterfallDataReady;
                             }
 
-                            Display.DataReadyBottom = bDataReady;
-                            Display.WaterfallDataReadyBottom = bWaterfallDataReady;
-                            if (bN1mm && N1MM.IsStarted)
+                            if (chkSplitDisplay.Checked &&
+                                (!Display.DataReadyBottom || !Display.WaterfallDataReadyBottom) &&
+                                Display.CurrentDisplayModeBottom != DisplayMode.OFF)
                             {
-                                if (bDataReady)
-                                    N1MM.CopyData(2, Display.new_display_data_bottom);
-                                else if (bWaterfallDataReady)
-                                    N1MM.CopyData(2, Display.new_waterfall_data_bottom);
-                            }
+                                flag2 = -1;
+                                bDataReady = false;
+                                bWaterfallDataReady = false;
+                                bN1mm = false;
 
-                            bGetPixelIssueBottom |= !bDataReady && !bWaterfallDataReady;
+                                switch (Display.CurrentDisplayModeBottom)
+                                {
+                                    case DisplayMode.SPECTRUM:
+                                    case DisplayMode.HISTOGRAM:
+                                        break;
+                                    case DisplayMode.WATERFALL:
+                                        if (bLocalMox && VFOBTX)
+                                        {
+                                            fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
+                                                SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag2);
+                                            bWaterfallDataReady = (flag2 == 1);
+                                        }
+                                        else
+                                        {
+                                            fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
+                                                SpecHPSDRDLL.GetPixels(1, 1, ptr, ref flag2);
+                                            bWaterfallDataReady = (flag2 == 1);
+                                            bN1mm = true;
+                                        }
+                                        break;
+                                    case DisplayMode.PANADAPTER:
+                                        if (bLocalMox && VFOBTX)
+                                        {
+                                            fixed (float* ptr = &Display.new_display_data_bottom[0])
+                                                SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag2);
+                                            bDataReady = (flag2 == 1);
+                                        }
+                                        else
+                                        {
+                                            fixed (float* ptr = &Display.new_display_data_bottom[0])
+                                                SpecHPSDRDLL.GetPixels(1, 0, ptr, ref flag2);
+                                            //Display.DataReadyBottom = (flag2 == 1);
+                                            bDataReady = (flag2 == 1);
+                                            bN1mm = true;
+                                        }
+                                        break;
+                                    case DisplayMode.PANAFALL:  // MW0LGE
+                                        if (bLocalMox && VFOBTX)
+                                        {
+                                            fixed (float* ptr = &Display.new_display_data_bottom[0])
+                                                SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 0, ptr, ref flag2);
+                                            bDataReady = (flag2 == 1);
+                                            fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
+                                                SpecHPSDRDLL.GetPixels(cmaster.inid(1, 0), 1, ptr, ref flag2);
+                                            bWaterfallDataReady = (flag2 == 1);
+                                        }
+                                        else
+                                        {
+                                            fixed (float* ptr = &Display.new_display_data_bottom[0])
+                                                SpecHPSDRDLL.GetPixels(1, 0, ptr, ref flag2);
+                                            bDataReady = (flag2 == 1);
+                                            bN1mm = true;
+                                            fixed (float* ptr = &Display.new_waterfall_data_bottom[0])
+                                                SpecHPSDRDLL.GetPixels(1, 1, ptr, ref flag2);
+                                            bWaterfallDataReady = (flag2 == 1);
+                                        }
+                                        break;
+                                    case DisplayMode.SCOPE:
+                                    case DisplayMode.SCOPE2:
+                                        fixed (float* ptr = &Display.new_display_data_bottom[0])
+                                        //DttSP.GetScope(bottom_thread, ptr, (int)(scope_time * 48));
+                                        {
+                                            if (bottom_thread != 1)
+                                                WDSP.RXAGetaSipF(WDSP.id(bottom_thread, 0), ptr, (int)(scope_time * 48));
+                                            else
+                                                WDSP.TXAGetaSipF(WDSP.id(bottom_thread, 0), ptr, (int)(scope_time * 48));
+                                        }
+                                        bDataReady = true;
+                                        break;
+                                    case DisplayMode.PHASE:
+                                        fixed (float* ptr = &Display.new_display_data_bottom[0])
+                                        //DttSP.GetPhase(bottom_thread, ptr, Display.PhaseNumPts);
+                                        {
+                                            if (bottom_thread != 1)
+                                                WDSP.RXAGetaSipF1(WDSP.id(bottom_thread, 0), ptr, Display.PhaseNumPts);
+                                            else
+                                                WDSP.TXAGetaSipF1(WDSP.id(bottom_thread, 0), ptr, Display.PhaseNumPts);
+                                        }
+                                        bDataReady = true;
+                                        break;
+                                    case DisplayMode.PHASE2:
+                                        if (Audio.phase_buf_l != null && Audio.phase_buf_r != null) // MW0LGE would be null if audio not running (ie not connected?)
+                                        {
+                                            //Audio.phase_mutex.WaitOne();
+                                            for (int i = 0; i < Display.PhaseNumPts; i++)
+                                            {
+                                                Display.new_display_data_bottom[i * 2] = Audio.phase_buf_l[i];
+                                                Display.new_display_data_bottom[i * 2 + 1] = Audio.phase_buf_r[i];
+                                            }
+                                            //Audio.phase_mutex.ReleaseMutex();
+                                            bDataReady = true;
+                                        }
+                                        break;
+                                }
+
+                                Display.DataReadyBottom = bDataReady;
+                                Display.WaterfallDataReadyBottom = bWaterfallDataReady;
+                                if (bN1mm && N1MM.IsStarted)
+                                {
+                                    if (bDataReady)
+                                        N1MM.CopyData(2, Display.new_display_data_bottom);
+                                    else if (bWaterfallDataReady)
+                                        N1MM.CopyData(2, Display.new_waterfall_data_bottom);
+                                }
+
+                                bGetPixelIssueBottom |= !bDataReady && !bWaterfallDataReady;
+                            }
                         }
 
                         if (displaydidit)
@@ -27089,14 +27090,19 @@ namespace Thetis
                         }
                     }
 
+                    //WDSP could not return us data this frame if one of these are set
+                    //display engine will use last good
                     Display.GetPixelsIssueRX1 = bGetPixelIssue;
                     Display.GetPixelsIssueRX2 = bGetPixelIssueBottom;
+                    
+                    //render everything
+                    if (!_pause_DisplayThread) Display.RenderDX2D();
 
-                    // MW0LGE_21k9 always want to run the renderer, as swr warning etc are displayed
-                    if (!pause_DisplayThread) Display.RenderDX2D();
-
-                    //MW0LGE consider how long all the above took (reset at start of loop), and remove any inaccuarcy from Thread.Sleep below
-                    double dly = display_delay - objStopWatch.ElapsedMsec - fThreadSleepLate;                   
+                    #region FrameTiming
+                    //MW0LGE consider how long all the above took (reset at start of loop), and remove any inaccuarcy from Thread.Sleep
+                    //fThreadSleepOverRun will have some value if the Thread.Sleep(x) took longer than x. If so we need to
+                    //delay slightly less this time
+                    double dly = _display_delay - objStopWatch.ElapsedMsec - fThreadSleepOverRun;                   
                     if (dly < 0)
                     {
                         if (dly <= -1) Display.FrameRateIssue = true;
@@ -27104,47 +27110,41 @@ namespace Thetis
                         fFractionOfMs = 0;
                     }
                     else
-                    {
                         Display.FrameRateIssue = false;
-                    }
 
                     if (m_bUseAccurateFrameTiming)
                     {
                         // wait for the calculated delay
                         objStopWatch.Reset();
-                        while (objStopWatch.ElapsedMsec <= dly)
-                        {
-                            //Thread.Sleep(0);  // hmmm
-                        }
-                        fThreadSleepLate = objStopWatch.ElapsedMsec - dly;
+                        while (objStopWatch.ElapsedMsec <= dly) ;
+                        fThreadSleepOverRun = objStopWatch.ElapsedMsec - dly;
                     }
                     else
                     {
                         // accumulate the fractional delay
-                        fFractionOfMs += dly - (int)dly;
-                        int nIntegerPart = (int)fFractionOfMs;
-                        fFractionOfMs -= nIntegerPart;
+                        int nIntegerDelay = (int)dly;
+                        fFractionOfMs += dly - nIntegerDelay;
+                        int nIntegerFractions = (int)fFractionOfMs;
+                        fFractionOfMs -= nIntegerFractions;
 
-                        int nWantToWait = (int)dly + nIntegerPart;
-                        fThreadSleepLate = 0;
+                        int nWantToWait = nIntegerDelay + nIntegerFractions;
+                        fThreadSleepOverRun = 0;
 
                         if (nWantToWait > 0)
                         {
                             // time how long we actually sleep for, and use this difference to lower dly time next time around
                             objStopWatch.Reset();
                             Thread.Sleep(nWantToWait); // not guaranteed to be the delay we want, but it will be AT LEAST what we want
-                            fThreadSleepLate = objStopWatch.ElapsedMsec - nWantToWait;
+                            fThreadSleepOverRun = objStopWatch.ElapsedMsec - nWantToWait;
                         }
                         else if (fFractionOfMs > 0)
                         {
                             objStopWatch.Reset();
-                            while (objStopWatch.ElapsedMsec <= fFractionOfMs)
-                            {
-                                //Thread.Sleep(0);  // hmmm
-                            }
+                            while (objStopWatch.ElapsedMsec <= fFractionOfMs) ;
                             fFractionOfMs = objStopWatch.ElapsedMsec - fFractionOfMs;
                         }
                     }
+                    #endregion
                 }
             }
             catch (Exception e)
@@ -31490,7 +31490,7 @@ namespace Thetis
         }
         public void comboDisplayMode_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            pause_DisplayThread = true;
+            _pause_DisplayThread = true;
             DisplayMode old_mode = Display.CurrentDisplayMode;
 
             switch (comboDisplayMode.Text)
@@ -31761,7 +31761,7 @@ namespace Thetis
 
             if (comboDisplayMode.Focused)
                 btnHidden.Focus();
-            pause_DisplayThread = false;
+            _pause_DisplayThread = false;
         }
 
         private void chkBIN_CheckedChanged(object sender, System.EventArgs e)
@@ -33267,7 +33267,8 @@ namespace Thetis
                 }
             }
 
-            pause_DisplayThread = true; // MW0LGE_21k8 turn display off whilst everything is being setup, prevents flashes of pixels etc
+            _pause_DisplayThread = true; // MW0LGE_21k8 turn display off whilst everything is being setup, prevents flashes of pixels etc
+
             if (tx)                     // change to TX mode
             {
                 //
@@ -33411,9 +33412,10 @@ namespace Thetis
 
             if (tx) UIMOXChangedTrue();
             else UIMOXChangedFalse();
+
             AndromedaIndicatorCheck(EIndicatorActions.eINMOX, false, tx);
 
-            pause_DisplayThread = false; //MW0LGE_21k8 re-enable
+            _pause_DisplayThread = false; //MW0LGE_21k8 re-enable
 
             if (bOldMox != tx) MoxChangeHandlers?.Invoke(rx2_enabled && VFOBTX ? 2 : 1, bOldMox, tx); // MW0LGE_21a
         }
@@ -35057,7 +35059,9 @@ namespace Thetis
                     Display.FreqDiff = -12000;
                 }
                 else
-                    Display.FreqDiff = (int)radio.GetDSPRX(0, 0).RXOsc;
+                {
+                     Display.FreqDiff = (int)radio.GetDSPRX(0, 0).RXOsc;
+                }
             }
 
             if (click_tune_display && ((mox && VFOBTX && RX2Enabled) || !mox || display_duplex)/* &&  //[2.10.1.0] MW0LGE want this to happen if moxing on rx2
@@ -39766,7 +39770,7 @@ namespace Thetis
         private bool m_bResizeDX2Display = false;
         private async void picDisplay_Resize(object sender, System.EventArgs e)
         {
-            pause_DisplayThread = true;
+            _pause_DisplayThread = true;
 
             // tell display thread to resize DX2
             m_bResizeDX2Display = true;
@@ -39790,7 +39794,7 @@ namespace Thetis
                 UpdateTXSpectrumDisplayVars();
             }
 
-            pause_DisplayThread = false;
+            _pause_DisplayThread = false;
         }
 
         private void ptbDisplayPan_Scroll(object sender, System.EventArgs e)
@@ -44664,7 +44668,7 @@ namespace Thetis
         private bool update_rx2_display = false;
         private void chkRX2_CheckedChanged(object sender, System.EventArgs e)
         {
-            pause_DisplayThread = true; //MW0LGE_21k8 hide the changes
+            _pause_DisplayThread = true; //MW0LGE_21k8 hide the changes
 
             bool oldRX2Enabled = RX2Enabled;
 
@@ -44764,7 +44768,7 @@ namespace Thetis
 
             if(!m_bResizeDX2Display && (oldRX2Enabled != RX2Enabled)) m_bResizeDX2Display = true; // MW0LGE_22b force resize is rx2 enabled state is changed, this may also be set by reisze calls above
 
-            pause_DisplayThread = false; //MW0LGE_21k8
+            _pause_DisplayThread = false; //MW0LGE_21k8
 
             if (oldRX2Enabled != RX2Enabled)
             {
@@ -56200,6 +56204,11 @@ namespace Thetis
             n |= n >> 8;
             n |= n >> 16;
             return ++n;
+        }
+
+        private void buttonTS1_Click(object sender, EventArgs e)
+        {
+            
         }
     }
 

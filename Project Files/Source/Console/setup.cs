@@ -1031,17 +1031,11 @@ namespace Thetis
             comboGanymedeCATPort.Items.AddRange(com_ports);
         }
         private string _skinPath = "";
-        public string SkinPath
-        {
-            get
-            {
-                // updated after RefreshSkinList called
-                return _skinPath;
-            }
-        }
         private void RefreshSkinList()
         {
             comboAppSkin.Items.Clear();
+            btnRemoveSkin.Enabled = false;
+
             string path = ".\\Skins\\";
             if (Directory.Exists(path))
                 path = ".\\Skins\\";
@@ -1085,10 +1079,6 @@ namespace Thetis
 
             if (skin == "")
             {
-                //if (comboAppSkin.Items.Contains("Default"))
-                //    comboAppSkin.Text = "Default";
-                //else
-                //    comboAppSkin.Text = "IK3VIG Special"; //"OpenHPSDR-Gray";
                 if (comboAppSkin.Items.Contains("IK3VIG Special"))
                     comboAppSkin.Text = "IK3VIG Special";
                 else
@@ -14212,11 +14202,12 @@ namespace Thetis
             if (Directory.Exists(_skinPath + "\\" + comboAppSkin.Text))
             {
                 Skin.Restore(comboAppSkin.Text, _skinPath, console);
-                console.UpdateAndromedaSkins();
+                console.UpdateAndromedaSkins();                
             }
 
             console.CurrentSkin = comboAppSkin.Text;
             console.RadarColorUpdate = true;
+            MeterManager.CurrentSkin = comboAppSkin.Text;
 
             _skinChanging = false;
         }
@@ -20437,7 +20428,8 @@ namespace Thetis
             clrbtnDataFill_Changed(this, EventArgs.Empty);
             if (!initializing) lgLinearGradientRX1.ApplyGlobalAlpha(tbDataFillAlpha.Value); // also adjust LG alpha values, always do this even if disabled MW0LGE_21a
         }
-
+        #region RawInput
+        ///--- RAWINPUT
         private void chkWheelTunesOutsideSpectral_CheckedChanged(object sender, EventArgs e)
         {
             console.WheelTunesOutsideSpectral = chkWheelTunesOutsideSpectral.Checked;
@@ -20445,6 +20437,8 @@ namespace Thetis
 
         private void ComboHIDMouseWheel_SelectedIndexChanged(object sender, EventArgs e)
         {
+            lblRawHIDWarning.Visible = false;
+
             if (!(comboHIDMouseWheel.SelectedItem is HIDComboItem)) return;
 
             HIDComboItem objItem = comboHIDMouseWheel.SelectedItem as HIDComboItem;
@@ -20455,11 +20449,10 @@ namespace Thetis
                 console.SpecificMouseDeviceHandle = objItem.DeviceHandle;
                 lblDeviceHID.Text = objItem.DeviceID;
                 txtDeviceHID_hidden.Text = objItem.DeviceID; // this control will be saved out
+
+                lblRawHIDWarning.Visible = objItem.source.Contains("_01");
             }
         }
-
-        #region RawInput WIP
-        ///--- RAWINPUT WIP
         private void ChkGlobalListenForMouseWheel_CheckedChanged(object sender, EventArgs e)
         {
             console.GlobalListenForMouseWheel = chkGlobalListenForMouseWheel.Checked;
@@ -20472,6 +20465,7 @@ namespace Thetis
 
         private void setupHIDControls(bool bEnabled)
         {
+            lblRawHIDWarning.Enabled = bEnabled;
             comboHIDMouseWheel.Enabled = bEnabled;
             lblDeviceHID.Enabled = bEnabled;
             chkGlobalListenForMouseWheel.Enabled = bEnabled;
@@ -20493,7 +20487,7 @@ namespace Thetis
             {
                 MouseEvent me = entry.Value;
 
-                HIDComboItem objItem = new HIDComboItem(me.Name, me.DeviceHandle, me.DeviceName);
+                HIDComboItem objItem = new HIDComboItem(me.Name, me.DeviceHandle, me.DeviceName, me.Source);
                 int nIndex = comboHIDMouseWheel.Items.Add(objItem);
 
                 if (me.DeviceName == txtDeviceHID_hidden.Text) comboHIDMouseWheel.SelectedIndex = nIndex;
@@ -20512,9 +20506,11 @@ namespace Thetis
             protected String m_sName;
             protected IntPtr m_nValue;
             protected String m_sID;
+            protected string _source;
 
-            public HIDComboItem(String sName, IntPtr nValue, String sID)
+            public HIDComboItem(String sName, IntPtr nValue, String sID, string source)
             {
+                _source = source;
                 m_sName = sName;
                 m_nValue = nValue;
                 m_sID = sID;
@@ -20545,6 +20541,11 @@ namespace Thetis
                 {
 
                 }
+            }
+            public string source
+            {
+                get { return _source; }
+                set { }
             }
         }
 
@@ -27503,7 +27504,7 @@ namespace Thetis
         }
         private void btnZipDebug_Click(object sender, EventArgs e)
         {
-            buildZipFile(console.ProductVersion, console.AppDataPath);
+            buildZipFile(console.ProductVersion + "\n" + console.BasicTitleBar, console.AppDataPath);
         }
 
         private void btnOpenDBFolder_Click(object sender, EventArgs e)
@@ -27526,12 +27527,9 @@ namespace Thetis
             saveFileDialog.InitialDirectory = myDocumentsPath;
             saveFileDialog.Filter = "ZIP Files (*.zip)|*.zip";
             DateTime now = DateTime.Now;
-            string localDateTime = now.ToShortTimeString() + "_" + now.ToShortDateString();
+            string formattedDate = now.ToString("MM-dd-yy_HHmmss");
 
-            string invalidCharsPattern = "[" + Regex.Escape(new string(Path.GetInvalidFileNameChars())) + "]";
-            string cleanLocalDateTime = Regex.Replace(localDateTime, invalidCharsPattern, "_"); ;
-
-            saveFileDialog.FileName = version.Replace(" ", "_").Replace(".", "_") + "_" + cleanLocalDateTime.Replace(" ", "_") + "_database_logs.zip";
+            saveFileDialog.FileName = formattedDate + "_database_logs.zip";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -27553,6 +27551,8 @@ namespace Thetis
                                 zip.AddFile(filePath, "");
                             }
                         }
+
+                        zip.AddEntry("version.txt", version);
 
                         zip.Save(zipFilePath);
                     }
@@ -27621,7 +27621,6 @@ namespace Thetis
             lstAvailableSkins.Items.Clear();
 
             ThetisSkinService.GetSkinServers("https://raw.githubusercontent.com/ramdor/Thetis/master/skin_servers.json");
-            //ThetisSkinService.GetSkinServers("https://grange-lane.co.uk/thetis_skins/skin_servers.json");
         }
         private void hideAllSkinServerRelatedControls()
         {
@@ -27852,6 +27851,8 @@ namespace Thetis
             {
                 if (e.Complete)
                 {
+                    bool bExpandedMeterSkins = false;
+
                     prgSkinDownload.Value = 100;
 
                     Debug.Print(e.BytesDownloaded.ToString() + " - " + e.TotalBytes.ToString());
@@ -27860,35 +27861,58 @@ namespace Thetis
 
                     if (isSkinZipFile(e.Path, sFile, out bool bUsesFileInRoot, out bool bIsMeterSkin, e.BypassRootFolderCheck))
                     {
-                        string sOutputPath;
+                        bool bExtract = false;
+                        string sOutputPath = "";                        
+
                         if (bUsesFileInRoot || (e.BypassRootFolderCheck && !bIsMeterSkin))
                         {
                             //expand into OpenHPSDR\Skins
-                            sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Skins";                            
+                            sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Skins";
+                            bExtract = true;
                         }
-                        else if(bIsMeterSkin)
+                        else if (bIsMeterSkin || e.IsMeterSkin)
                         {
-                            //expand into OpenHPSDR\Meters
-                            sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
+                            if (bIsMeterSkin && e.IsMeterSkin)
+                            {
+                                // \Meters\* items were found, expand into \\OpenHPSDR
+                                sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
+                                bExtract = true;
+                            }
+                            else
+                            {
+                                // no \Meters were found, but is defined as meter skin, so expand into \\OpenHPSDR\\Meters
+                                sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
+                                bExtract = true;
+                            }
+                            bExpandedMeterSkins = true;
                         }
                         else
                         {
                             //expand into OpenHPSDR\
                             sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
+                            bExtract = true;
                         }
 
-                        extractPngFilesFromZip(e.Path, sOutputPath);
+                        if (bExtract)
+                            extractPngFilesFromZip(e.Path, sOutputPath);
                     }
 
                     tryRemoveDownload(e.Path);
 
+                    if (bExpandedMeterSkins)
+                    {
+                        MeterManager.RefreshAllImages();
+                    }
+                    else
+                    {
+                        string sCurrentSkin = comboAppSkin.Text;
+                        RefreshSkinList();
+                        if (comboAppSkin.Items.Contains(sCurrentSkin))
+                            comboAppSkin.Text = sCurrentSkin;
+                    }
+
                     btnDownloadSkin.Text = "Download";
                     prgSkinDownload.Visible = false;
-
-                    string sCurrentSkin = comboAppSkin.Text;
-                    RefreshSkinList();
-                    if (comboAppSkin.Items.Contains(sCurrentSkin))
-                        comboAppSkin.Text = sCurrentSkin;
                 }
                 else
                 {
@@ -27951,19 +27975,22 @@ namespace Thetis
                 SkinServer ss = comboSkinServerList.SelectedItem as SkinServer;
                 if (ss == null) return;
 
-                btnDownloadSkin.Text = "Cancel";
+                sel = lstAvailableSkins.SelectedIndex;
+                if (sel == -1) return;
 
+                ThetisSkin ts = lstAvailableSkins.Items[sel] as ThetisSkin;
+                if (ts == null) return;
+
+                btnDownloadSkin.Text = "Cancel";
+                
                 string tempFilePath = Path.GetTempFileName();
-                ThetisSkinService.DownloadFile(btnDownloadSkin.Tag.ToString(), tempFilePath, ss.BypassRootFolderCheck);
+                ThetisSkinService.DownloadFile(btnDownloadSkin.Tag.ToString(), tempFilePath, ss.BypassRootFolderCheck, ts.IsMeterSkin);
             }
         }
 
         private void lstAvailableSkins_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstAvailableSkins.Items.Count == 0 || lstAvailableSkins.SelectedIndex == -1) return;
-
-            //ThetisSkin ts = comboAvailableSkins.SelectedItem as ThetisSkin;
-            //if (ts == null) return;
 
             ThetisSkinService.CancelDownload();
 
@@ -27999,6 +28026,7 @@ namespace Thetis
                                 string sReplacedWithoutSpaces = sFilename.Replace(" ", "_");
                                 string sReplacedWithMinus = sFilename.Replace(" ", "-");
                                 string sReplacedWithoutMinus = sFilename.Replace("-", " ");
+
                                 if (zipFile.Any(entry => (entry.FileName.StartsWith(sFilename + "/") || entry.FileName.StartsWith(sReplacedWithSpaces + "/") || 
                                     entry.FileName.StartsWith(sReplacedWithoutSpaces + "/") || entry.FileName.StartsWith(sReplacedWithMinus + "/") ||
                                     entry.FileName.StartsWith(sReplacedWithoutMinus + "/")
@@ -28155,7 +28183,7 @@ namespace Thetis
         private void chkPurgeBuffers_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            console.MOXTransitionBufferClear = chkPurgeBuffers.Checked;
+            console.WDSPMOXTransitionBufferClear = chkPurgeBuffers.Checked;
 
             // display engine should be purged if this is on
             if (chkPurgeBuffers.Checked && !chkPurgeBuffersDisplayEngine.Checked)
@@ -28170,6 +28198,11 @@ namespace Thetis
             // if this is off, then chkPurgeBuffers should be off too
             if (!chkPurgeBuffersDisplayEngine.Checked && chkPurgeBuffers.Checked)
                 chkPurgeBuffers.Checked = false;
+        }
+
+        private void tcSetup_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (isSkinServerTabVisible()) getSkinServers();
         }
         //private bool renameSkinForDeletion(string sFullPath)
         //{

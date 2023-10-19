@@ -201,8 +201,10 @@
             this.tpGeneral = new System.Windows.Forms.TabPage();
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
+            this.btnOpenDBFolder = new System.Windows.Forms.ButtonTS();
             this.lblTimeout = new System.Windows.Forms.LabelTS();
             this.lblShowTimeoutText = new System.Windows.Forms.LabelTS();
+            this.btnZipDebugInfo = new System.Windows.Forms.ButtonTS();
             this.grpFirmware = new System.Windows.Forms.GroupBoxTS();
             this.lblPLLLock = new System.Windows.Forms.LabelTS();
             this.lblProtocolInfo = new System.Windows.Forms.LabelTS();
@@ -1537,6 +1539,7 @@
             this.chkRX2AutoMuteTX = new System.Windows.Forms.CheckBoxTS();
             this.tpGeneralNavigation = new System.Windows.Forms.TabPage();
             this.grpGlobalHIDConrtolOptions = new System.Windows.Forms.GroupBoxTS();
+            this.lblRawHIDWarning = new System.Windows.Forms.LabelTS();
             this.txtDeviceHID_hidden = new System.Windows.Forms.TextBoxTS();
             this.lblWheelActive = new System.Windows.Forms.LabelTS();
             this.lblDeviceHID = new System.Windows.Forms.LabelTS();
@@ -1813,6 +1816,7 @@
             this.udPeakBlobs = new System.Windows.Forms.NumericUpDownTS();
             this.chkPeakBlobsEnabled = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS11 = new System.Windows.Forms.GroupBoxTS();
+            this.chkPurgeBuffersDisplayEngine = new System.Windows.Forms.CheckBoxTS();
             this.chkPurgeBuffers = new System.Windows.Forms.CheckBoxTS();
             this.chkShowMHzOnCursor = new System.Windows.Forms.CheckBoxTS();
             this.chkSmallModeFilteronVFOs = new System.Windows.Forms.CheckBoxTS();
@@ -3382,8 +3386,6 @@
             this.labelTSPort = new System.Windows.Forms.LabelTS();
             this.chkEnableAndromeda = new System.Windows.Forms.CheckBoxTS();
             this.tpTests = new System.Windows.Forms.TabPage();
-            this.btnOpenDBFolder = new System.Windows.Forms.ButtonTS();
-            this.btnZipDebugInfo = new System.Windows.Forms.ButtonTS();
             this.groupBoxTS30 = new System.Windows.Forms.GroupBoxTS();
             this.btnShowSeqLog = new System.Windows.Forms.ButtonTS();
             this.chkShowDisplayDebug = new System.Windows.Forms.CheckBoxTS();
@@ -3512,7 +3514,6 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
             this.txtboxTXProfileChangedReport = new System.Windows.Forms.TextBoxTS();
-            this.chkPurgeBuffersDisplayEngine = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -6754,6 +6755,7 @@
             this.tcSetup.SelectedIndex = 0;
             this.tcSetup.Size = new System.Drawing.Size(736, 462);
             this.tcSetup.TabIndex = 16;
+            this.tcSetup.SelectedIndexChanged += new System.EventHandler(this.tcSetup_SelectedIndexChanged);
             // 
             // tpGeneral
             // 
@@ -6786,8 +6788,10 @@
             // tpGeneralHardware
             // 
             this.tpGeneralHardware.BackColor = System.Drawing.SystemColors.Control;
+            this.tpGeneralHardware.Controls.Add(this.btnOpenDBFolder);
             this.tpGeneralHardware.Controls.Add(this.lblTimeout);
             this.tpGeneralHardware.Controls.Add(this.lblShowTimeoutText);
+            this.tpGeneralHardware.Controls.Add(this.btnZipDebugInfo);
             this.tpGeneralHardware.Controls.Add(this.grpFirmware);
             this.tpGeneralHardware.Controls.Add(this.grpOzyType);
             this.tpGeneralHardware.Controls.Add(this.grpFRSRegion);
@@ -6802,10 +6806,23 @@
             this.tpGeneralHardware.Text = "H/W Select";
             this.tpGeneralHardware.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralHardware_Paint);
             // 
+            // btnOpenDBFolder
+            // 
+            this.btnOpenDBFolder.Image = null;
+            this.btnOpenDBFolder.Location = new System.Drawing.Point(142, 310);
+            this.btnOpenDBFolder.Name = "btnOpenDBFolder";
+            this.btnOpenDBFolder.Selectable = true;
+            this.btnOpenDBFolder.Size = new System.Drawing.Size(111, 53);
+            this.btnOpenDBFolder.TabIndex = 122;
+            this.btnOpenDBFolder.Text = "Open DB folder";
+            this.toolTip1.SetToolTip(this.btnOpenDBFolder, "Open the folder containing the database");
+            this.btnOpenDBFolder.UseVisualStyleBackColor = true;
+            this.btnOpenDBFolder.Click += new System.EventHandler(this.btnOpenDBFolder_Click);
+            // 
             // lblTimeout
             // 
             this.lblTimeout.Image = null;
-            this.lblTimeout.Location = new System.Drawing.Point(272, 349);
+            this.lblTimeout.Location = new System.Drawing.Point(271, 380);
             this.lblTimeout.Name = "lblTimeout";
             this.lblTimeout.Size = new System.Drawing.Size(87, 13);
             this.lblTimeout.TabIndex = 38;
@@ -6814,12 +6831,26 @@
             // lblShowTimeoutText
             // 
             this.lblShowTimeoutText.Image = null;
-            this.lblShowTimeoutText.Location = new System.Drawing.Point(13, 349);
+            this.lblShowTimeoutText.Location = new System.Drawing.Point(12, 380);
             this.lblShowTimeoutText.Name = "lblShowTimeoutText";
             this.lblShowTimeoutText.Size = new System.Drawing.Size(253, 13);
             this.lblShowTimeoutText.TabIndex = 37;
             this.lblShowTimeoutText.Text = "This test/beta version of Thetis will timeout in :";
             this.lblShowTimeoutText.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // btnZipDebugInfo
+            // 
+            this.btnZipDebugInfo.Image = null;
+            this.btnZipDebugInfo.Location = new System.Drawing.Point(25, 310);
+            this.btnZipDebugInfo.Name = "btnZipDebugInfo";
+            this.btnZipDebugInfo.Selectable = true;
+            this.btnZipDebugInfo.Size = new System.Drawing.Size(111, 53);
+            this.btnZipDebugInfo.TabIndex = 121;
+            this.btnZipDebugInfo.Text = "Zip database.xml\r\nand log files";
+            this.toolTip1.SetToolTip(this.btnZipDebugInfo, "Make a zip file containing the database.xml, ErrorLog.txt, VALog.txt, ImportLog.t" +
+        "xt");
+            this.btnZipDebugInfo.UseVisualStyleBackColor = true;
+            this.btnZipDebugInfo.Click += new System.EventHandler(this.btnZipDebug_Click);
             // 
             // grpFirmware
             // 
@@ -7537,7 +7568,7 @@
             this.grpFRSRegion.Controls.Add(this.picWarningRegionExtended);
             this.grpFRSRegion.Controls.Add(this.chkExtended);
             this.grpFRSRegion.Controls.Add(this.comboFRSRegion);
-            this.grpFRSRegion.Location = new System.Drawing.Point(28, 134);
+            this.grpFRSRegion.Location = new System.Drawing.Point(25, 115);
             this.grpFRSRegion.Name = "grpFRSRegion";
             this.grpFRSRegion.Size = new System.Drawing.Size(150, 74);
             this.grpFRSRegion.TabIndex = 33;
@@ -25279,6 +25310,7 @@
             // 
             // grpGlobalHIDConrtolOptions
             // 
+            this.grpGlobalHIDConrtolOptions.Controls.Add(this.lblRawHIDWarning);
             this.grpGlobalHIDConrtolOptions.Controls.Add(this.txtDeviceHID_hidden);
             this.grpGlobalHIDConrtolOptions.Controls.Add(this.lblWheelActive);
             this.grpGlobalHIDConrtolOptions.Controls.Add(this.lblDeviceHID);
@@ -25288,10 +25320,24 @@
             this.grpGlobalHIDConrtolOptions.Controls.Add(this.chkAlsoUseSpecificMouseWheel);
             this.grpGlobalHIDConrtolOptions.Location = new System.Drawing.Point(12, 17);
             this.grpGlobalHIDConrtolOptions.Name = "grpGlobalHIDConrtolOptions";
-            this.grpGlobalHIDConrtolOptions.Size = new System.Drawing.Size(378, 181);
+            this.grpGlobalHIDConrtolOptions.Size = new System.Drawing.Size(378, 171);
             this.grpGlobalHIDConrtolOptions.TabIndex = 1;
             this.grpGlobalHIDConrtolOptions.TabStop = false;
-            this.grpGlobalHIDConrtolOptions.Text = "RawInput HID control - WIP";
+            this.grpGlobalHIDConrtolOptions.Text = "RawInput HID control";
+            // 
+            // lblRawHIDWarning
+            // 
+            this.lblRawHIDWarning.AutoSize = true;
+            this.lblRawHIDWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRawHIDWarning.ForeColor = System.Drawing.Color.Red;
+            this.lblRawHIDWarning.Image = null;
+            this.lblRawHIDWarning.Location = new System.Drawing.Point(122, 16);
+            this.lblRawHIDWarning.Name = "lblRawHIDWarning";
+            this.lblRawHIDWarning.Size = new System.Drawing.Size(250, 26);
+            this.lblRawHIDWarning.TabIndex = 8;
+            this.lblRawHIDWarning.Text = "This may cause multiple VFO steps if used.\r\nIt is the first hardware mouse device" +
+    ".";
+            this.lblRawHIDWarning.Visible = false;
             // 
             // txtDeviceHID_hidden
             // 
@@ -25308,7 +25354,7 @@
             this.lblWheelActive.BackColor = System.Drawing.Color.Red;
             this.lblWheelActive.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.lblWheelActive.Image = null;
-            this.lblWheelActive.Location = new System.Drawing.Point(285, 64);
+            this.lblWheelActive.Location = new System.Drawing.Point(285, 65);
             this.lblWheelActive.Name = "lblWheelActive";
             this.lblWheelActive.Size = new System.Drawing.Size(75, 21);
             this.lblWheelActive.TabIndex = 6;
@@ -25319,7 +25365,7 @@
             // 
             this.lblDeviceHID.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDeviceHID.Image = null;
-            this.lblDeviceHID.Location = new System.Drawing.Point(41, 92);
+            this.lblDeviceHID.Location = new System.Drawing.Point(41, 93);
             this.lblDeviceHID.Name = "lblDeviceHID";
             this.lblDeviceHID.Size = new System.Drawing.Size(238, 26);
             this.lblDeviceHID.TabIndex = 5;
@@ -25341,7 +25387,7 @@
             // 
             this.chkGlobalListenForMouseWheel.AutoSize = true;
             this.chkGlobalListenForMouseWheel.Image = null;
-            this.chkGlobalListenForMouseWheel.Location = new System.Drawing.Point(38, 121);
+            this.chkGlobalListenForMouseWheel.Location = new System.Drawing.Point(38, 122);
             this.chkGlobalListenForMouseWheel.Name = "chkGlobalListenForMouseWheel";
             this.chkGlobalListenForMouseWheel.Size = new System.Drawing.Size(194, 17);
             this.chkGlobalListenForMouseWheel.TabIndex = 2;
@@ -25354,7 +25400,7 @@
             // 
             this.comboHIDMouseWheel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboHIDMouseWheel.FormattingEnabled = true;
-            this.comboHIDMouseWheel.Location = new System.Drawing.Point(38, 64);
+            this.comboHIDMouseWheel.Location = new System.Drawing.Point(38, 65);
             this.comboHIDMouseWheel.Name = "comboHIDMouseWheel";
             this.comboHIDMouseWheel.Size = new System.Drawing.Size(241, 21);
             this.comboHIDMouseWheel.TabIndex = 1;
@@ -25365,7 +25411,7 @@
             // 
             this.chkAlsoUseSpecificMouseWheel.AutoSize = true;
             this.chkAlsoUseSpecificMouseWheel.Image = null;
-            this.chkAlsoUseSpecificMouseWheel.Location = new System.Drawing.Point(16, 38);
+            this.chkAlsoUseSpecificMouseWheel.Location = new System.Drawing.Point(16, 44);
             this.chkAlsoUseSpecificMouseWheel.Name = "chkAlsoUseSpecificMouseWheel";
             this.chkAlsoUseSpecificMouseWheel.Size = new System.Drawing.Size(240, 17);
             this.chkAlsoUseSpecificMouseWheel.TabIndex = 0;
@@ -29627,6 +29673,19 @@
             this.groupBoxTS11.TabIndex = 47;
             this.groupBoxTS11.TabStop = false;
             this.groupBoxTS11.Text = "Other";
+            // 
+            // chkPurgeBuffersDisplayEngine
+            // 
+            this.chkPurgeBuffersDisplayEngine.AutoSize = true;
+            this.chkPurgeBuffersDisplayEngine.Image = null;
+            this.chkPurgeBuffersDisplayEngine.Location = new System.Drawing.Point(10, 87);
+            this.chkPurgeBuffersDisplayEngine.Name = "chkPurgeBuffersDisplayEngine";
+            this.chkPurgeBuffersDisplayEngine.Size = new System.Drawing.Size(198, 17);
+            this.chkPurgeBuffersDisplayEngine.TabIndex = 57;
+            this.chkPurgeBuffersDisplayEngine.Text = "Purge DirectX spectral data on MOX";
+            this.toolTip1.SetToolTip(this.chkPurgeBuffersDisplayEngine, resources.GetString("chkPurgeBuffersDisplayEngine.ToolTip"));
+            this.chkPurgeBuffersDisplayEngine.UseVisualStyleBackColor = true;
+            this.chkPurgeBuffersDisplayEngine.CheckedChanged += new System.EventHandler(this.chkPurgeBuffersDisplayEngine_CheckedChanged);
             // 
             // chkPurgeBuffers
             // 
@@ -50018,7 +50077,7 @@
             // 
             // lblAuthorDetails2
             // 
-            this.lblAuthorDetails2.BackColor = System.Drawing.Color.Silver;
+            this.lblAuthorDetails2.BackColor = System.Drawing.SystemColors.Control;
             this.lblAuthorDetails2.Image = null;
             this.lblAuthorDetails2.Location = new System.Drawing.Point(12, 47);
             this.lblAuthorDetails2.Name = "lblAuthorDetails2";
@@ -50028,7 +50087,7 @@
             // 
             // lblAuthorDetails1
             // 
-            this.lblAuthorDetails1.BackColor = System.Drawing.Color.Silver;
+            this.lblAuthorDetails1.BackColor = System.Drawing.SystemColors.Control;
             this.lblAuthorDetails1.Image = null;
             this.lblAuthorDetails1.Location = new System.Drawing.Point(12, 24);
             this.lblAuthorDetails1.Name = "lblAuthorDetails1";
@@ -50095,7 +50154,7 @@
             // 
             // lblSkinOverview
             // 
-            this.lblSkinOverview.BackColor = System.Drawing.Color.Silver;
+            this.lblSkinOverview.BackColor = System.Drawing.SystemColors.ControlLight;
             this.lblSkinOverview.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lblSkinOverview.Location = new System.Drawing.Point(427, 82);
             this.lblSkinOverview.Multiline = true;
@@ -50119,24 +50178,24 @@
             // 
             // prgSkinDownload
             // 
-            this.prgSkinDownload.Location = new System.Drawing.Point(582, 374);
+            this.prgSkinDownload.Location = new System.Drawing.Point(602, 374);
             this.prgSkinDownload.Name = "prgSkinDownload";
-            this.prgSkinDownload.Size = new System.Drawing.Size(114, 14);
+            this.prgSkinDownload.Size = new System.Drawing.Size(94, 14);
             this.prgSkinDownload.TabIndex = 6;
             this.prgSkinDownload.Value = 50;
             // 
             // lstAvailableSkins
             // 
             this.lstAvailableSkins.FormattingEnabled = true;
-            this.lstAvailableSkins.Location = new System.Drawing.Point(5, 149);
+            this.lstAvailableSkins.Location = new System.Drawing.Point(19, 137);
             this.lstAvailableSkins.Name = "lstAvailableSkins";
-            this.lstAvailableSkins.Size = new System.Drawing.Size(145, 238);
+            this.lstAvailableSkins.Size = new System.Drawing.Size(145, 251);
             this.lstAvailableSkins.TabIndex = 10;
             this.lstAvailableSkins.SelectedIndexChanged += new System.EventHandler(this.lstAvailableSkins_SelectedIndexChanged);
             // 
             // lblSkinMeters
             // 
-            this.lblSkinMeters.BackColor = System.Drawing.Color.Silver;
+            this.lblSkinMeters.BackColor = System.Drawing.SystemColors.Control;
             this.lblSkinMeters.Image = null;
             this.lblSkinMeters.Location = new System.Drawing.Point(426, 46);
             this.lblSkinMeters.Name = "lblSkinMeters";
@@ -50147,7 +50206,7 @@
             // picSkinThumbnail
             // 
             this.picSkinThumbnail.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.picSkinThumbnail.Location = new System.Drawing.Point(159, 153);
+            this.picSkinThumbnail.Location = new System.Drawing.Point(180, 154);
             this.picSkinThumbnail.Name = "picSkinThumbnail";
             this.picSkinThumbnail.Size = new System.Drawing.Size(416, 234);
             this.picSkinThumbnail.TabIndex = 7;
@@ -50155,7 +50214,7 @@
             // 
             // lblSkinDateReleased
             // 
-            this.lblSkinDateReleased.BackColor = System.Drawing.Color.Silver;
+            this.lblSkinDateReleased.BackColor = System.Drawing.SystemColors.Control;
             this.lblSkinDateReleased.Image = null;
             this.lblSkinDateReleased.Location = new System.Drawing.Point(426, 62);
             this.lblSkinDateReleased.Name = "lblSkinDateReleased";
@@ -50166,10 +50225,10 @@
             // btnDownloadSkin
             // 
             this.btnDownloadSkin.Image = null;
-            this.btnDownloadSkin.Location = new System.Drawing.Point(582, 154);
+            this.btnDownloadSkin.Location = new System.Drawing.Point(602, 154);
             this.btnDownloadSkin.Name = "btnDownloadSkin";
             this.btnDownloadSkin.Selectable = true;
-            this.btnDownloadSkin.Size = new System.Drawing.Size(114, 211);
+            this.btnDownloadSkin.Size = new System.Drawing.Size(94, 211);
             this.btnDownloadSkin.TabIndex = 1;
             this.btnDownloadSkin.Text = "Download\r\nSkin";
             this.btnDownloadSkin.UseVisualStyleBackColor = true;
@@ -50177,7 +50236,7 @@
             // 
             // lblSkinThetisVersion
             // 
-            this.lblSkinThetisVersion.BackColor = System.Drawing.Color.Silver;
+            this.lblSkinThetisVersion.BackColor = System.Drawing.SystemColors.Control;
             this.lblSkinThetisVersion.Image = null;
             this.lblSkinThetisVersion.Location = new System.Drawing.Point(426, 30);
             this.lblSkinThetisVersion.Name = "lblSkinThetisVersion";
@@ -50187,7 +50246,7 @@
             // 
             // lblSkinVersion
             // 
-            this.lblSkinVersion.BackColor = System.Drawing.Color.Silver;
+            this.lblSkinVersion.BackColor = System.Drawing.SystemColors.Control;
             this.lblSkinVersion.Image = null;
             this.lblSkinVersion.Location = new System.Drawing.Point(426, 14);
             this.lblSkinVersion.Name = "lblSkinVersion";
@@ -53462,8 +53521,6 @@
             // 
             // tpTests
             // 
-            this.tpTests.Controls.Add(this.btnOpenDBFolder);
-            this.tpTests.Controls.Add(this.btnZipDebugInfo);
             this.tpTests.Controls.Add(this.groupBoxTS30);
             this.tpTests.Controls.Add(this.grpBoxTS1);
             this.tpTests.Controls.Add(this.grpTestTXIMD);
@@ -53474,33 +53531,6 @@
             this.tpTests.Size = new System.Drawing.Size(728, 436);
             this.tpTests.TabIndex = 7;
             this.tpTests.Text = "Tests";
-            // 
-            // btnOpenDBFolder
-            // 
-            this.btnOpenDBFolder.Image = null;
-            this.btnOpenDBFolder.Location = new System.Drawing.Point(344, 369);
-            this.btnOpenDBFolder.Name = "btnOpenDBFolder";
-            this.btnOpenDBFolder.Selectable = true;
-            this.btnOpenDBFolder.Size = new System.Drawing.Size(111, 53);
-            this.btnOpenDBFolder.TabIndex = 122;
-            this.btnOpenDBFolder.Text = "Open DB folder";
-            this.toolTip1.SetToolTip(this.btnOpenDBFolder, "Open the folder containing the database");
-            this.btnOpenDBFolder.UseVisualStyleBackColor = true;
-            this.btnOpenDBFolder.Click += new System.EventHandler(this.btnOpenDBFolder_Click);
-            // 
-            // btnZipDebugInfo
-            // 
-            this.btnZipDebugInfo.Image = null;
-            this.btnZipDebugInfo.Location = new System.Drawing.Point(228, 369);
-            this.btnZipDebugInfo.Name = "btnZipDebugInfo";
-            this.btnZipDebugInfo.Selectable = true;
-            this.btnZipDebugInfo.Size = new System.Drawing.Size(111, 53);
-            this.btnZipDebugInfo.TabIndex = 121;
-            this.btnZipDebugInfo.Text = "Zip database.xml\r\nand log files";
-            this.toolTip1.SetToolTip(this.btnZipDebugInfo, "Make a zip file containing the database.xml, ErrorLog.txt, VALog.txt, ImportLog.t" +
-        "xt");
-            this.btnZipDebugInfo.UseVisualStyleBackColor = true;
-            this.btnZipDebugInfo.Click += new System.EventHandler(this.btnZipDebug_Click);
             // 
             // groupBoxTS30
             // 
@@ -55816,19 +55846,6 @@
             this.txtboxTXProfileChangedReport.TabIndex = 25;
             this.txtboxTXProfileChangedReport.Text = "used to report tx profile changes if you click on oragne box";
             this.txtboxTXProfileChangedReport.Visible = false;
-            // 
-            // chkPurgeBuffersDisplayEngine
-            // 
-            this.chkPurgeBuffersDisplayEngine.AutoSize = true;
-            this.chkPurgeBuffersDisplayEngine.Image = null;
-            this.chkPurgeBuffersDisplayEngine.Location = new System.Drawing.Point(10, 87);
-            this.chkPurgeBuffersDisplayEngine.Name = "chkPurgeBuffersDisplayEngine";
-            this.chkPurgeBuffersDisplayEngine.Size = new System.Drawing.Size(198, 17);
-            this.chkPurgeBuffersDisplayEngine.TabIndex = 57;
-            this.chkPurgeBuffersDisplayEngine.Text = "Purge DirectX spectral data on MOX";
-            this.toolTip1.SetToolTip(this.chkPurgeBuffersDisplayEngine, resources.GetString("chkPurgeBuffersDisplayEngine.ToolTip"));
-            this.chkPurgeBuffersDisplayEngine.UseVisualStyleBackColor = true;
-            this.chkPurgeBuffersDisplayEngine.CheckedChanged += new System.EventHandler(this.chkPurgeBuffersDisplayEngine_CheckedChanged);
             // 
             // Setup
             // 
@@ -60467,5 +60484,6 @@
         private GroupBoxTS groupBoxTS31;
         private CheckBoxTS chkPurgeBuffers;
         private CheckBoxTS chkPurgeBuffersDisplayEngine;
+        private LabelTS lblRawHIDWarning;
     }
 }

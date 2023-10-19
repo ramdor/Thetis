@@ -1774,7 +1774,7 @@ namespace Thetis
             //[2.10.2.2] MW0LGE
             //notes: Image.LoadFile leaves open file handles, until app is closed, meaning skins can not be deleted.
             //They get released when the images in each ImageList are removed or .clear() however there were some left over from time to time.
-            //Tried all the methods below. Solved by using this bitmap hack.
+            //Solved by using this bitmap hack.
 
             Image img;
             try
@@ -1789,32 +1789,6 @@ namespace Thetis
                 img = null;
             }
             return img;
-
-            ////TEST1
-            //byte[] data = File.ReadAllBytes(path);
-            //Image img = null;
-            //if (data.Length > 0)
-            //{
-            //    using (MemoryStream ms = new MemoryStream(data))
-            //    {
-            //        img = Image.FromStream(ms);
-            //    }
-            //}
-            //return img;
-
-            ////TEST2
-            //FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);            
-            //byte[] data;
-            //data = new byte[fileStream.Length];
-            //fileStream.Read(data, 0, data.Length);
-            //fileStream.Close();
-            //fileStream.Dispose();
-            //MemoryStream ms = new MemoryStream(data);
-            //Image img = Image.FromStream(ms);
-            //ms.Close();
-            //ms.Dispose();
-
-            //return img;
         }
         #endregion
     }
