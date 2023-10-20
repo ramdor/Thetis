@@ -28116,6 +28116,8 @@ namespace Thetis
         {
             if(lstAvailableSkins.Items.Count == 0) return;
 
+            chkReplaceCurrentMeterInSelectedSkin.Enabled = false;
+
             int sel = comboSkinServerList.SelectedIndex;
             if (sel == -1) return;
 
@@ -28143,6 +28145,8 @@ namespace Thetis
             lblSkinDateReleased.Text = "Release Date: " + validateDate(ts.DateReleased).Left(14);
             lblSkinOverview.Text = ts.Overview.Left(1024);
             lblSkinMeters.Text = "Type: " + (ts.IsMeterSkin ? "MultiMeter Skin" : "Console Skin");
+
+            chkReplaceCurrentMeterInSelectedSkin.Enabled = ts.IsMeterSkin;
 
             if (ts.SkinHomepageUrl != "" && Common.IsValidUri(ts.SkinHomepageUrl))
             {
@@ -28296,29 +28300,37 @@ namespace Thetis
 
                     string sFile = getFileFromUrl(e.Url);
 
-                    if (isSkinZipFile(e.Path, sFile, out bool bUsesFileInRoot, out bool bIsMeterSkin, e.BypassRootFolderCheck | e.IsMeterSkin))
+                    if (isSkinZipFile(e.Path, sFile, out bool bUsesFileInRoot, out bool bMeterFolderFound, e.BypassRootFolderCheck | e.IsMeterSkin))
                     {
                         bool bExtract = false;
                         string sOutputPath = "";                        
 
-                        if (bUsesFileInRoot || (e.BypassRootFolderCheck && !bIsMeterSkin))
+                        if (bUsesFileInRoot || (e.BypassRootFolderCheck && !bMeterFolderFound))
                         {
                             //expand into OpenHPSDR\Skins
                             sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Skins";
                             bExtract = true;
                         }
-                        else if (bIsMeterSkin || e.IsMeterSkin)
+                        else if (bMeterFolderFound || e.IsMeterSkin)
                         {
-                            if (bIsMeterSkin && e.IsMeterSkin)
+                            if (chkReplaceCurrentMeterInSelectedSkin.Checked)
                             {
-                                // \Meters\* items were found, expand into \\OpenHPSDR
-                                sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
-                                bExtract = true;
+                                if (Directory.Exists(_skinPath + "\\" + comboAppSkin.Text))
+                                {
+                                    if (bMeterFolderFound)
+                                        sOutputPath = _skinPath + "\\" + comboAppSkin.Text;
+                                    else
+                                        sOutputPath = _skinPath + "\\" + comboAppSkin.Text + "\\Meters";
+
+                                    bExtract = true;
+                                }
                             }
                             else
                             {
-                                // no \Meters were found, but is defined as meter skin, so expand into \\OpenHPSDR\\Meters
-                                sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
+                                if (bMeterFolderFound)
+                                    sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
+                                else
+                                    sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
                                 bExtract = true;
                             }
                             bExpandedMeterSkins = true;
@@ -28345,9 +28357,11 @@ namespace Thetis
                         string sCurrentSkin = comboAppSkin.Text;
 
                         RefreshSkinList();
-                        
+
+                        MeterManager.AlwaysUpdateSkin = true; // cause everything to update even if same skin name
                         if (comboAppSkin.Items.Contains(sCurrentSkin))
                             comboAppSkin.Text = sCurrentSkin;
+                        MeterManager.AlwaysUpdateSkin = false;
                     }
 
                     btnDownloadSkin.Text = "Download";
@@ -28606,7 +28620,7 @@ namespace Thetis
                     comboAppSkin.Text = sSkinBeforeRefresh;
             }
 
-            btnRemoveSkin.Enabled = true;
+            btnRemoveSkin.Enabled = comboAppSkin.Items.Count > 1;
         }
 
         private void btnOpenSkinsFolder_Click(object sender, EventArgs e)

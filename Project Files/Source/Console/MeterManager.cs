@@ -927,6 +927,7 @@ namespace Thetis
         {
             get { return _current_skin_path; }
         }
+        public static bool AlwaysUpdateSkin { get; set; }
         public static string CurrentSkin
         {
             get { return _current_skin; }
@@ -935,7 +936,7 @@ namespace Thetis
                 _current_skin_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
                     "\\OpenHPSDR\\Skins\\" + value;
 
-                if (value != _current_skin)
+                if (value != _current_skin || AlwaysUpdateSkin)
                 {
                     LoadDXSkinImages();
                     _current_skin = value;

@@ -3127,6 +3127,7 @@
             this.btnRefreshSkinsForServer = new System.Windows.Forms.ButtonTS();
             this.comboSkinServerList = new System.Windows.Forms.ComboBoxTS();
             this.gtpAvailableSkins = new System.Windows.Forms.GroupBoxTS();
+            this.chkReplaceCurrentMeterInSelectedSkin = new System.Windows.Forms.CheckBoxTS();
             this.lblSkinOverview = new System.Windows.Forms.TextBoxTS();
             this.btnSkinHomepage = new System.Windows.Forms.Button();
             this.prgSkinDownload = new Thetis.ucProgress();
@@ -50248,6 +50249,7 @@
             // 
             // gtpAvailableSkins
             // 
+            this.gtpAvailableSkins.Controls.Add(this.chkReplaceCurrentMeterInSelectedSkin);
             this.gtpAvailableSkins.Controls.Add(this.lblSkinOverview);
             this.gtpAvailableSkins.Controls.Add(this.btnSkinHomepage);
             this.gtpAvailableSkins.Controls.Add(this.prgSkinDownload);
@@ -50263,6 +50265,21 @@
             this.gtpAvailableSkins.Size = new System.Drawing.Size(702, 399);
             this.gtpAvailableSkins.TabIndex = 5;
             this.gtpAvailableSkins.TabStop = false;
+            // 
+            // chkReplaceCurrentMeterInSelectedSkin
+            // 
+            this.chkReplaceCurrentMeterInSelectedSkin.AutoSize = true;
+            this.chkReplaceCurrentMeterInSelectedSkin.Checked = true;
+            this.chkReplaceCurrentMeterInSelectedSkin.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkReplaceCurrentMeterInSelectedSkin.Enabled = false;
+            this.chkReplaceCurrentMeterInSelectedSkin.Image = null;
+            this.chkReplaceCurrentMeterInSelectedSkin.Location = new System.Drawing.Point(299, 129);
+            this.chkReplaceCurrentMeterInSelectedSkin.Name = "chkReplaceCurrentMeterInSelectedSkin";
+            this.chkReplaceCurrentMeterInSelectedSkin.Size = new System.Drawing.Size(115, 17);
+            this.chkReplaceCurrentMeterInSelectedSkin.TabIndex = 12;
+            this.chkReplaceCurrentMeterInSelectedSkin.Text = "Add to current skin";
+            this.toolTip1.SetToolTip(this.chkReplaceCurrentMeterInSelectedSkin, resources.GetString("chkReplaceCurrentMeterInSelectedSkin.ToolTip"));
+            this.chkReplaceCurrentMeterInSelectedSkin.UseVisualStyleBackColor = true;
             // 
             // lblSkinOverview
             // 
@@ -60605,5 +60622,6 @@
         private LabelTS labelTS184;
         private LabelTS labelTS186;
         private LabelTS labelTS187;
+        private CheckBoxTS chkReplaceCurrentMeterInSelectedSkin;
     }
 }

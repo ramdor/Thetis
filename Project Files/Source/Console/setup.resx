@@ -167,6 +167,12 @@ POWER EXCEEDING THE RATING OF YOUR RADIO!
   <data name="lgLinearGradientRX1.EncodedText" xml:space="preserve">
     <value>OXwxfDAuMDAwfC0xNjc3NzIxNnwwfDAuMTI1fC0xNDczNzYzM3wwfDAuMjUwfC0xMjY5ODA1MHwwfDAuMzc1fC0xMDY1ODQ2N3wwfDAuNTAwfC04NjE4ODg0fDB8MC42MjV8LTY1NzkzMDF8MHwwLjc1MHwtNDUzOTcxOHwwfDAuODc1fC0yNTAwMTM1fDF8MS4wMDB8LTF8</value>
   </data>
+  <data name="chkReplaceCurrentMeterInSelectedSkin.ToolTip" xml:space="preserve">
+    <value>If this is checked, the downloaded meter skins
+will be added to the current selected skin. Unchecked
+and the default MultiMeter skins will be updated and
+only used if a selected skin does not provide its own.</value>
+  </data>
   <data name="udHttpRefresh.ToolTip" xml:space="preserve">
     <value>Select Port# to allow Remote Login by adding the Port# 
 to the end of the URL
