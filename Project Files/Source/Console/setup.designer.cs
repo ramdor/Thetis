@@ -2263,6 +2263,12 @@
             this.radRX2LSBUSB = new System.Windows.Forms.RadioButtonTS();
             this.tpDSPFM = new System.Windows.Forms.TabPage();
             this.grpFMRX = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS187 = new System.Windows.Forms.LabelTS();
+            this.labelTS186 = new System.Windows.Forms.LabelTS();
+            this.labelTS185 = new System.Windows.Forms.LabelTS();
+            this.labelTS184 = new System.Windows.Forms.LabelTS();
+            this.udHighCutRX = new System.Windows.Forms.NumericUpDownTS();
+            this.udLowCutRX = new System.Windows.Forms.NumericUpDownTS();
             this.lblFMLimGain30dB = new System.Windows.Forms.LabelTS();
             this.lblFMLimGain0dB = new System.Windows.Forms.LabelTS();
             this.lblFMDetLimGain = new System.Windows.Forms.LabelTS();
@@ -4019,6 +4025,8 @@
             this.grpRX2AMSBSEL.SuspendLayout();
             this.tpDSPFM.SuspendLayout();
             this.grpFMRX.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udHighCutRX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udLowCutRX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDSPFMDetLimGain)).BeginInit();
             this.grpFMTX.SuspendLayout();
             this.tpDSPAudio.SuspendLayout();
@@ -36644,6 +36652,12 @@
             // 
             // grpFMRX
             // 
+            this.grpFMRX.Controls.Add(this.labelTS187);
+            this.grpFMRX.Controls.Add(this.labelTS186);
+            this.grpFMRX.Controls.Add(this.labelTS185);
+            this.grpFMRX.Controls.Add(this.labelTS184);
+            this.grpFMRX.Controls.Add(this.udHighCutRX);
+            this.grpFMRX.Controls.Add(this.udLowCutRX);
             this.grpFMRX.Controls.Add(this.lblFMLimGain30dB);
             this.grpFMRX.Controls.Add(this.lblFMLimGain0dB);
             this.grpFMRX.Controls.Add(this.lblFMDetLimGain);
@@ -36654,10 +36668,108 @@
             this.grpFMRX.Margin = new System.Windows.Forms.Padding(4);
             this.grpFMRX.Name = "grpFMRX";
             this.grpFMRX.Padding = new System.Windows.Forms.Padding(4);
-            this.grpFMRX.Size = new System.Drawing.Size(335, 174);
+            this.grpFMRX.Size = new System.Drawing.Size(429, 174);
             this.grpFMRX.TabIndex = 1;
             this.grpFMRX.TabStop = false;
             this.grpFMRX.Text = "FM Receiver";
+            // 
+            // labelTS187
+            // 
+            this.labelTS187.AutoSize = true;
+            this.labelTS187.Image = null;
+            this.labelTS187.Location = new System.Drawing.Point(387, 34);
+            this.labelTS187.Name = "labelTS187";
+            this.labelTS187.Size = new System.Drawing.Size(20, 13);
+            this.labelTS187.TabIndex = 60;
+            this.labelTS187.Text = "Hz";
+            // 
+            // labelTS186
+            // 
+            this.labelTS186.AutoSize = true;
+            this.labelTS186.Image = null;
+            this.labelTS186.Location = new System.Drawing.Point(197, 34);
+            this.labelTS186.Name = "labelTS186";
+            this.labelTS186.Size = new System.Drawing.Size(44, 13);
+            this.labelTS186.TabIndex = 59;
+            this.labelTS186.Text = "AF cut :";
+            // 
+            // labelTS185
+            // 
+            this.labelTS185.AutoSize = true;
+            this.labelTS185.Image = null;
+            this.labelTS185.Location = new System.Drawing.Point(335, 14);
+            this.labelTS185.Name = "labelTS185";
+            this.labelTS185.Size = new System.Drawing.Size(27, 13);
+            this.labelTS185.TabIndex = 58;
+            this.labelTS185.Text = "high";
+            // 
+            // labelTS184
+            // 
+            this.labelTS184.AutoSize = true;
+            this.labelTS184.Image = null;
+            this.labelTS184.Location = new System.Drawing.Point(267, 14);
+            this.labelTS184.Name = "labelTS184";
+            this.labelTS184.Size = new System.Drawing.Size(23, 13);
+            this.labelTS184.TabIndex = 57;
+            this.labelTS184.Text = "low";
+            // 
+            // udHighCutRX
+            // 
+            this.udHighCutRX.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udHighCutRX.Location = new System.Drawing.Point(318, 32);
+            this.udHighCutRX.Maximum = new decimal(new int[] {
+            8000,
+            0,
+            0,
+            0});
+            this.udHighCutRX.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udHighCutRX.Name = "udHighCutRX";
+            this.udHighCutRX.Size = new System.Drawing.Size(63, 20);
+            this.udHighCutRX.TabIndex = 56;
+            this.udHighCutRX.TinyStep = false;
+            this.udHighCutRX.Value = new decimal(new int[] {
+            3000,
+            0,
+            0,
+            0});
+            this.udHighCutRX.ValueChanged += new System.EventHandler(this.udHighCutRX_ValueChanged);
+            // 
+            // udLowCutRX
+            // 
+            this.udLowCutRX.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udLowCutRX.Location = new System.Drawing.Point(249, 32);
+            this.udLowCutRX.Maximum = new decimal(new int[] {
+            8000,
+            0,
+            0,
+            0});
+            this.udLowCutRX.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udLowCutRX.Name = "udLowCutRX";
+            this.udLowCutRX.Size = new System.Drawing.Size(63, 20);
+            this.udLowCutRX.TabIndex = 55;
+            this.udLowCutRX.TinyStep = false;
+            this.udLowCutRX.Value = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+            this.udLowCutRX.ValueChanged += new System.EventHandler(this.udLowCutRX_ValueChanged);
             // 
             // lblFMLimGain30dB
             // 
@@ -50228,9 +50340,9 @@
             this.btnDownloadSkin.Location = new System.Drawing.Point(602, 154);
             this.btnDownloadSkin.Name = "btnDownloadSkin";
             this.btnDownloadSkin.Selectable = true;
-            this.btnDownloadSkin.Size = new System.Drawing.Size(94, 211);
+            this.btnDownloadSkin.Size = new System.Drawing.Size(94, 214);
             this.btnDownloadSkin.TabIndex = 1;
-            this.btnDownloadSkin.Text = "Download\r\nSkin";
+            this.btnDownloadSkin.Text = "Download";
             this.btnDownloadSkin.UseVisualStyleBackColor = true;
             this.btnDownloadSkin.Click += new System.EventHandler(this.btnDownloadSkin_Click);
             // 
@@ -56477,6 +56589,8 @@
             this.tpDSPFM.ResumeLayout(false);
             this.grpFMRX.ResumeLayout(false);
             this.grpFMRX.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udHighCutRX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udLowCutRX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDSPFMDetLimGain)).EndInit();
             this.grpFMTX.ResumeLayout(false);
             this.grpFMTX.PerformLayout();
@@ -60485,5 +60599,11 @@
         private CheckBoxTS chkPurgeBuffers;
         private CheckBoxTS chkPurgeBuffersDisplayEngine;
         private LabelTS lblRawHIDWarning;
+        private NumericUpDownTS udHighCutRX;
+        private NumericUpDownTS udLowCutRX;
+        private LabelTS labelTS185;
+        private LabelTS labelTS184;
+        private LabelTS labelTS186;
+        private LabelTS labelTS187;
     }
 }

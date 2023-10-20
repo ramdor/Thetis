@@ -690,7 +690,7 @@ namespace Thetis
             set
             {
                 m_bNoiseFloorGoodRX1 = false;
-                _fLastFastAttackEnabledTimeRX1 = m_objFrameStartTimer.ElapsedMsec;
+                if(value) _fLastFastAttackEnabledTimeRX1 = m_objFrameStartTimer.ElapsedMsec;
                 m_bFastAttackNoiseFloorRX1 = value;
             }
         }
@@ -700,7 +700,7 @@ namespace Thetis
             set
             {
                 m_bNoiseFloorGoodRX2 = false;
-                _fLastFastAttackEnabledTimeRX2 = m_objFrameStartTimer.ElapsedMsec;
+                if(value) _fLastFastAttackEnabledTimeRX2 = m_objFrameStartTimer.ElapsedMsec;
                 m_bFastAttackNoiseFloorRX2 = value;
             }
         }

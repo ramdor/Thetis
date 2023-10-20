@@ -330,6 +330,8 @@ namespace Thetis
             RXANR2AERun = rx_nr2_ae_run;
             RXANR2Run = rx_nr2_run;
             RXANR2Position = rx_nr2_position;
+            RXFMLowCut = rx_fm_lowcut;
+            RXFMHighCut = rx_fm_highcut;
         }
 
 		#region Non-Static Properties & Routines
@@ -1388,6 +1390,45 @@ namespace Thetis
                 }
             }
         }
+
+        //
+        private double rx_fm_lowcut_dsp = 300.0;
+        private double rx_fm_lowcut = 300.0;
+        private double rx_fm_highcut_dsp = 3000.0;
+        private double rx_fm_highcut = 3000.0;
+        public double RXFMLowCut
+        {
+            get { return rx_fm_lowcut; }
+            set
+            {
+                rx_fm_lowcut = value;
+                if (update)
+                {
+                    if (value != rx_fm_lowcut_dsp || force)
+                    {
+                        WDSP.SetRXAFMAFFilter(WDSP.id(thread, subrx), value, rx_fm_highcut_dsp);
+                        rx_fm_lowcut_dsp = value;
+                    }
+                }
+            }
+        }
+        public double RXFMHighCut
+        {
+            get { return rx_fm_highcut; }
+            set
+            {
+                rx_fm_highcut = value;
+                if (update)
+                {
+                    if (value != rx_fm_highcut_dsp || force)
+                    {
+                        WDSP.SetRXAFMAFFilter(WDSP.id(thread, subrx), rx_fm_lowcut_dsp, value);
+                        rx_fm_highcut_dsp = value;
+                    }
+                }
+            }
+        }
+        //
 
         private int rx_anf_position_dsp = 1;
         private int rx_anf_position = 1;

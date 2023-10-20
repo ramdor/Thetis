@@ -268,6 +268,9 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "SetRXAFMLimGain", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXAFMLimGain(int channel, double gaindB);
 
+        [DllImport("wdsp.dll", EntryPoint = "SetRXAFMAFFilter", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXAFMAFFilter(int channel, double low, double high);
+
         [DllImport("wdsp.dll", EntryPoint = "SetTXAFMDeviation", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXAFMDeviation(int channel, double deviation);
 

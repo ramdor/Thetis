@@ -3229,13 +3229,16 @@ namespace Thetis
                 stream2.Close();   // close stream
             }
 
-            ArrayList checkbox_list = new ArrayList();
-            ArrayList combobox_list = new ArrayList();
-            ArrayList numericupdown_list = new ArrayList();
-            ArrayList radiobutton_list = new ArrayList();
-            ArrayList textbox_list = new ArrayList();
-            ArrayList trackbar_list = new ArrayList();
-            ArrayList prettytrackbar_list = new ArrayList();
+            //ArrayList checkbox_list = new ArrayList();
+            //ArrayList combobox_list = new ArrayList();
+            //ArrayList numericupdown_list = new ArrayList();
+            //ArrayList radiobutton_list = new ArrayList();
+            //ArrayList textbox_list = new ArrayList();
+            //ArrayList trackbar_list = new ArrayList();
+            //ArrayList prettytrackbar_list = new ArrayList();
+
+            //[2.10.2.3]MW0LGE change to dictionary as controls will be unique
+            Dictionary<string, Control> ctrls = new Dictionary<string, Control>();
 
             foreach (Control c in this.Controls)
             {
@@ -3244,44 +3247,46 @@ namespace Thetis
                 {
                     foreach (Control c2 in c.Controls)
                     {
-                        if (c2.Enabled)
-                        {
-                            if (c2.GetType() == typeof(CheckBoxTS))			// the control is a CheckBox
-                                checkbox_list.Add(c2);
-                            else if (c2.GetType() == typeof(ComboBoxTS))		// the control is a ComboBox
-                                combobox_list.Add(c2);
-                            else if (c2.GetType() == typeof(NumericUpDownTS))	// the control is a NumericUpDown
-                                numericupdown_list.Add(c2);
-                            else if (c2.GetType() == typeof(RadioButtonTS))	// the control is a RadioButton
-                                radiobutton_list.Add(c2);
-                            else if (c2.GetType() == typeof(TextBoxTS))		// the control is a TextBox
-                                textbox_list.Add(c2);
-                            else if (c2.GetType() == typeof(TrackBarTS))		// the control is a TrackBar (slider)
-                                trackbar_list.Add(c2);
-                            else if (c2.GetType() == typeof(PrettyTrackBar))
-                                prettytrackbar_list.Add(c2);
-                        }
+                        //if (c2.Enabled)
+                        //{
+                        //    if (c2.GetType() == typeof(CheckBoxTS))			// the control is a CheckBox
+                        //        checkbox_list.Add(c2);
+                        //    else if (c2.GetType() == typeof(ComboBoxTS))		// the control is a ComboBox
+                        //        combobox_list.Add(c2);
+                        //    else if (c2.GetType() == typeof(NumericUpDownTS))	// the control is a NumericUpDown
+                        //        numericupdown_list.Add(c2);
+                        //    else if (c2.GetType() == typeof(RadioButtonTS))	// the control is a RadioButton
+                        //        radiobutton_list.Add(c2);
+                        //    else if (c2.GetType() == typeof(TextBoxTS))		// the control is a TextBox
+                        //        textbox_list.Add(c2);
+                        //    else if (c2.GetType() == typeof(TrackBarTS))		// the control is a TrackBar (slider)
+                        //        trackbar_list.Add(c2);
+                        //    else if (c2.GetType() == typeof(PrettyTrackBar))
+                        //        prettytrackbar_list.Add(c2);
+                        //}
+                        ctrls.Add(c2.Name, c2);
                     }
                 }
                 else
                 {
-                    if (c.Enabled)
-                    {
-                        if (c.GetType() == typeof(CheckBoxTS))				// the control is a CheckBox
-                            checkbox_list.Add(c);
-                        else if (c.GetType() == typeof(ComboBoxTS))		// the control is a ComboBox
-                            combobox_list.Add(c);
-                        else if (c.GetType() == typeof(NumericUpDownTS))	// the control is a NumericUpDown
-                            numericupdown_list.Add(c);
-                        else if (c.GetType() == typeof(RadioButtonTS))		// the control is a RadioButton
-                            radiobutton_list.Add(c);
-                        else if (c.GetType() == typeof(TextBoxTS))			// the control is a TextBox
-                            textbox_list.Add(c);
-                        else if (c.GetType() == typeof(TrackBarTS))		// the control is a TrackBar (slider)
-                            trackbar_list.Add(c);
-                        else if (c.GetType() == typeof(PrettyTrackBar))
-                            prettytrackbar_list.Add(c);
-                    }
+                    //if (c.Enabled)
+                    //{
+                    //    if (c.GetType() == typeof(CheckBoxTS))				// the control is a CheckBox
+                    //        checkbox_list.Add(c);
+                    //    else if (c.GetType() == typeof(ComboBoxTS))		// the control is a ComboBox
+                    //        combobox_list.Add(c);
+                    //    else if (c.GetType() == typeof(NumericUpDownTS))	// the control is a NumericUpDown
+                    //        numericupdown_list.Add(c);
+                    //    else if (c.GetType() == typeof(RadioButtonTS))		// the control is a RadioButton
+                    //        radiobutton_list.Add(c);
+                    //    else if (c.GetType() == typeof(TextBoxTS))			// the control is a TextBox
+                    //        textbox_list.Add(c);
+                    //    else if (c.GetType() == typeof(TrackBarTS))		// the control is a TrackBar (slider)
+                    //        trackbar_list.Add(c);
+                    //    else if (c.GetType() == typeof(PrettyTrackBar))
+                    //        prettytrackbar_list.Add(c);
+                    //}
+                    ctrls.Add(c.Name, c);
                 }
             }
 
@@ -4342,114 +4347,133 @@ namespace Thetis
                         break;
 
                     case var nam when name.StartsWith("chk"):
-                        for (int i = 0; i < checkbox_list.Count; i++)
-                        {   // look through each control to find the matching name
-                            CheckBoxTS c = (CheckBoxTS)checkbox_list[i];
-                            if (c.Name.Equals(name))        // name found
-                            {
-                                c.Checked = bool.Parse(val);    // restore value
-                                i = checkbox_list.Count + 1;
-                            }
-                            if (i == checkbox_list.Count)
-                                MessageBox.Show("Control not found: " + name, "GetState Error",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                        }
+                        //for (int i = 0; i < checkbox_list.Count; i++)
+                        //{   // look through each control to find the matching name
+                        //    CheckBoxTS c = (CheckBoxTS)checkbox_list[i];
+                        //    if (c.Name.Equals(name))        // name found
+                        //    {
+                        //        c.Checked = bool.Parse(val);    // restore value
+                        //        i = checkbox_list.Count + 1;
+                        //    }
+                        //    if (i == checkbox_list.Count)
+                        //        MessageBox.Show("Control not found: " + name, "GetState Error",
+                        //            MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        //}
+                        if (ctrls.ContainsKey(name)) ((CheckBoxTS)ctrls[name]).Checked = bool.Parse(val);
                         break;
 
                     case var nam when name.StartsWith("combo"):
-                        for (int i = 0; i < combobox_list.Count; i++)
-                        {   // look through each control to find the matching name
-                            ComboBoxTS c = (ComboBoxTS)combobox_list[i];
-                            if (c.Name.Equals(name))        // name found
-                            {
-                                c.Text = val;   // restore value
-                                i = combobox_list.Count + 1;
-                            }
-                            if (i == combobox_list.Count)
-                                MessageBox.Show("Control not found: " + name, "GetState Error",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                        }
+                        //for (int i = 0; i < combobox_list.Count; i++)
+                        //{   // look through each control to find the matching name
+                        //    ComboBoxTS c = (ComboBoxTS)combobox_list[i];
+                        //    if (c.Name.Equals(name))        // name found
+                        //    {
+                        //        c.Text = val;   // restore value
+                        //        i = combobox_list.Count + 1;
+                        //    }
+                        //    if (i == combobox_list.Count)
+                        //        MessageBox.Show("Control not found: " + name, "GetState Error",
+                        //            MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        //}
+                        if (ctrls.ContainsKey(name)) ((ComboBoxTS)ctrls[name]).Text = val;
                         break;
 
                     case var nam when name.StartsWith("ud"):
-                        for (int i = 0; i < numericupdown_list.Count; i++)
-                        {   // look through each control to find the matching name
-                            NumericUpDownTS c = (NumericUpDownTS)numericupdown_list[i];
-                            if (c.Name.Equals(name))        // name found
-                            {
-                                decimal dnum = decimal.Parse(val);
+                        //for (int i = 0; i < numericupdown_list.Count; i++)
+                        //{   // look through each control to find the matching name
+                        //    NumericUpDownTS c = (NumericUpDownTS)numericupdown_list[i];
+                        //    if (c.Name.Equals(name))        // name found
+                        //    {
+                        //        decimal dnum = decimal.Parse(val);
 
-                                if (dnum > c.Maximum) dnum = c.Maximum;       // check endpoints
-                                else if (dnum < c.Minimum) dnum = c.Minimum;
-                                c.Value = dnum;          // restore value
-                                i = numericupdown_list.Count + 1;
-                            }
-                            if (i == numericupdown_list.Count)
-                                MessageBox.Show("Control not found: " + name, "GetState Error",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        //        if (dnum > c.Maximum) dnum = c.Maximum;       // check endpoints
+                        //        else if (dnum < c.Minimum) dnum = c.Minimum;
+                        //        c.Value = dnum;          // restore value
+                        //        i = numericupdown_list.Count + 1;
+                        //    }
+                        //    if (i == numericupdown_list.Count)
+                        //        MessageBox.Show("Control not found: " + name, "GetState Error",
+                        //            MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        //}
+                        if (ctrls.ContainsKey(name))
+                        {
+                            NumericUpDownTS c = (NumericUpDownTS)ctrls[name];
+                            decimal dnum = decimal.Parse(val);
+                            if (dnum > c.Maximum) dnum = c.Maximum;
+                            else if (dnum < c.Minimum) dnum = c.Minimum;
+                            c.Value = dnum;
                         }
                         break;
 
                     case var nam when name.StartsWith("rad"):
-                        for (int i = 0; i < radiobutton_list.Count; i++)
+                        //for (int i = 0; i < radiobutton_list.Count; i++)
+                        //{
+                        //    RadioButtonTS c = (RadioButtonTS)radiobutton_list[i];
+                        //    if (c.Name.Equals(name))        // name found
+                        //    {
+                        //        if (!val.ToLower().Equals("true") && !val.ToLower().Equals("false"))
+                        //            val = "True";
+                        //        c.Checked = bool.Parse(val);    // restore value
+                        //        i = radiobutton_list.Count + 1;
+                        //    }
+                        //    if (i == radiobutton_list.Count)
+                        //        MessageBox.Show("Control not found: " + name, "GetState Error",
+                        //            MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        //}
+                        if (ctrls.ContainsKey(name))
                         {
-                            RadioButtonTS c = (RadioButtonTS)radiobutton_list[i];
-                            if (c.Name.Equals(name))        // name found
-                            {
-                                if (!val.ToLower().Equals("true") && !val.ToLower().Equals("false"))
-                                    val = "True";
-                                c.Checked = bool.Parse(val);    // restore value
-                                i = radiobutton_list.Count + 1;
-                            }
-                            if (i == radiobutton_list.Count)
-                                MessageBox.Show("Control not found: " + name, "GetState Error",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                            RadioButtonTS c = (RadioButtonTS)ctrls[name];
+                            if (!val.ToLower().Equals("true") && !val.ToLower().Equals("false")) val = "True";
+                            c.Checked = bool.Parse(val);
                         }
                         break;
 
                     case var nam when name.StartsWith("txt"):
-                        for (int i = 0; i < textbox_list.Count; i++)
-                        {
-                            TextBoxTS c = (TextBoxTS)textbox_list[i];
-                            if (c.Name.Equals(name))        // name found
-                            {
-                                c.Text = val;   // restore value
-                                i = textbox_list.Count + 1;
-                            }
-                            if (i == textbox_list.Count)
-                                MessageBox.Show("Control not found: " + name, "GetState Error",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                        }
+                        //for (int i = 0; i < textbox_list.Count; i++)
+                        //{
+                        //    TextBoxTS c = (TextBoxTS)textbox_list[i];
+                        //    if (c.Name.Equals(name))        // name found
+                        //    {
+                        //        c.Text = val;   // restore value
+                        //        i = textbox_list.Count + 1;
+                        //    }
+                        //    if (i == textbox_list.Count)
+                        //        MessageBox.Show("Control not found: " + name, "GetState Error",
+                        //            MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        //}
+                        if (ctrls.ContainsKey(name)) ((TextBoxTS)ctrls[name]).Text = val;
                         break;
 
                     case var nam when name.StartsWith("tb"):
-                        for (int i = 0; i < trackbar_list.Count; i++)
-                        {
-                            TrackBarTS c = (TrackBarTS)trackbar_list[i];
-                            if (c.Name.Equals(name))        // name found
-                            {
-                                c.Value = Int32.Parse(val);
-                                i = trackbar_list.Count + 1;
-                            }
-                            if (i == trackbar_list.Count)
-                                MessageBox.Show("Control not found: " + name, "GetState Error",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                        }
+                        //for (int i = 0; i < trackbar_list.Count; i++)
+                        //{
+                        //    TrackBarTS c = (TrackBarTS)trackbar_list[i];
+                        //    if (c.Name.Equals(name))        // name found
+                        //    {
+                        //        c.Value = Int32.Parse(val);
+                        //        i = trackbar_list.Count + 1;
+                        //    }
+                        //    if (i == trackbar_list.Count)
+                        //        MessageBox.Show("Control not found: " + name, "GetState Error",
+                        //            MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        //}
+                        if (ctrls.ContainsKey(name)) ((TrackBarTS)ctrls[name]).Value = Int32.Parse(val);                        
                         break;
 
                     case var nam when name.StartsWith("ptb"):
-                        for (int i = 0; i < prettytrackbar_list.Count; i++)
-                        {
-                            PrettyTrackBar c = (PrettyTrackBar)prettytrackbar_list[i];
-                            if (c.Name.Equals(name))        // name found
-                            {
-                                c.Value = Int32.Parse(val);
-                                i = prettytrackbar_list.Count + 1;
-                            }
-                            if (i == prettytrackbar_list.Count)
-                                MessageBox.Show("Control not found: " + name, "GetState Error",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                        }
+                        //for (int i = 0; i < prettytrackbar_list.Count; i++)
+                        //{
+                        //    PrettyTrackBar c = (PrettyTrackBar)prettytrackbar_list[i];
+                        //    if (c.Name.Equals(name))        // name found
+                        //    {
+                        //        c.Value = Int32.Parse(val);
+                        //        i = prettytrackbar_list.Count + 1;
+                        //    }
+                        //    if (i == prettytrackbar_list.Count)
+                        //        MessageBox.Show("Control not found: " + name, "GetState Error",
+                        //            MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        //}
+                        if (ctrls.ContainsKey(name)) ((PrettyTrackBar)ctrls[name]).Value = Int32.Parse(val);
                         break;
                 }
             }
