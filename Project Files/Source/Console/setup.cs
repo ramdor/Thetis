@@ -28158,7 +28158,7 @@ namespace Thetis
             lblSkinVersion.Text = "Version: " + validateVersion(ts.SkinVersion);
             lblSkinThetisVersion.Text = "Min Thetis Version: " + validateVersion(ts.FromThetisVersion);
             lblSkinDateReleased.Text = "Release Date: " + validateDate(ts.DateReleased).Left(14);
-            lblSkinOverview.Text = ts.Overview.Left(1024);
+            lblSkinOverview.Text = ts.SkinName + Environment.NewLine + ts.Overview.Left(1024);
             lblSkinMeters.Text = "Type: " + (ts.IsMeterSkin ? "MultiMeter Skin" : "Console Skin");
 
             chkReplaceCurrentMeterInSelectedSkin.Enabled = ts.IsMeterSkin;

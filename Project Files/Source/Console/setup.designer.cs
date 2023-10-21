@@ -1676,6 +1676,7 @@
             this.lblVAC2overflows = new System.Windows.Forms.LabelTS();
             this.chkVAC2UseRX2 = new System.Windows.Forms.CheckBoxTS();
             this.grpVAC2DirectIQ = new System.Windows.Forms.GroupBoxTS();
+            this.chkSwapIQVac2 = new System.Windows.Forms.CheckBoxTS();
             this.chkVAC2DirectIQCal = new System.Windows.Forms.CheckBoxTS();
             this.chkVAC2DirectIQ = new System.Windows.Forms.CheckBoxTS();
             this.chkVAC2Combine = new System.Windows.Forms.CheckBoxTS();
@@ -3528,7 +3529,6 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
             this.txtboxTXProfileChangedReport = new System.Windows.Forms.TextBoxTS();
-            this.chkSwapIQVac2 = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -27325,6 +27325,18 @@
             this.grpVAC2DirectIQ.TabStop = false;
             this.grpVAC2DirectIQ.Text = "Direct I/Q";
             // 
+            // chkSwapIQVac2
+            // 
+            this.chkSwapIQVac2.AutoSize = true;
+            this.chkSwapIQVac2.Image = null;
+            this.chkSwapIQVac2.Location = new System.Drawing.Point(16, 46);
+            this.chkSwapIQVac2.Name = "chkSwapIQVac2";
+            this.chkSwapIQVac2.Size = new System.Drawing.Size(64, 17);
+            this.chkSwapIQVac2.TabIndex = 4;
+            this.chkSwapIQVac2.Text = "SwapIQ";
+            this.chkSwapIQVac2.UseVisualStyleBackColor = true;
+            this.chkSwapIQVac2.CheckedChanged += new System.EventHandler(this.chkSwapIQVac2_CheckedChanged);
+            // 
             // chkVAC2DirectIQCal
             // 
             this.chkVAC2DirectIQCal.Enabled = false;
@@ -50443,10 +50455,14 @@
             // 
             // lstAvailableSkins
             // 
+            this.lstAvailableSkins.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lstAvailableSkins.FormattingEnabled = true;
-            this.lstAvailableSkins.Location = new System.Drawing.Point(19, 137);
+            this.lstAvailableSkins.ItemHeight = 11;
+            this.lstAvailableSkins.Items.AddRange(new object[] {
+            "01234567890123456789012"});
+            this.lstAvailableSkins.Location = new System.Drawing.Point(4, 137);
             this.lstAvailableSkins.Name = "lstAvailableSkins";
-            this.lstAvailableSkins.Size = new System.Drawing.Size(145, 251);
+            this.lstAvailableSkins.Size = new System.Drawing.Size(170, 246);
             this.lstAvailableSkins.TabIndex = 10;
             this.lstAvailableSkins.SelectedIndexChanged += new System.EventHandler(this.lstAvailableSkins_SelectedIndexChanged);
             // 
@@ -56103,18 +56119,6 @@
             this.txtboxTXProfileChangedReport.TabIndex = 25;
             this.txtboxTXProfileChangedReport.Text = "used to report tx profile changes if you click on oragne box";
             this.txtboxTXProfileChangedReport.Visible = false;
-            // 
-            // chkSwapIQVac2
-            // 
-            this.chkSwapIQVac2.AutoSize = true;
-            this.chkSwapIQVac2.Image = null;
-            this.chkSwapIQVac2.Location = new System.Drawing.Point(16, 46);
-            this.chkSwapIQVac2.Name = "chkSwapIQVac2";
-            this.chkSwapIQVac2.Size = new System.Drawing.Size(64, 17);
-            this.chkSwapIQVac2.TabIndex = 4;
-            this.chkSwapIQVac2.Text = "SwapIQ";
-            this.chkSwapIQVac2.UseVisualStyleBackColor = true;
-            this.chkSwapIQVac2.CheckedChanged += new System.EventHandler(this.chkSwapIQVac2_CheckedChanged);
             // 
             // Setup
             // 
