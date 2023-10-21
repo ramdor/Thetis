@@ -10570,7 +10570,7 @@
             this.udRX2OptMaxFilterWidth.Size = new System.Drawing.Size(48, 20);
             this.udRX2OptMaxFilterWidth.TabIndex = 0;
             this.udRX2OptMaxFilterWidth.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udRX2OptMaxFilterWidth, "Wets the maximum filter bandwidth");
+            this.toolTip1.SetToolTip(this.udRX2OptMaxFilterWidth, "Sets the maximum filter bandwidth");
             this.udRX2OptMaxFilterWidth.Value = new decimal(new int[] {
             9999,
             0,
@@ -10745,7 +10745,7 @@
             this.udOptMaxFilterWidth.Size = new System.Drawing.Size(48, 20);
             this.udOptMaxFilterWidth.TabIndex = 0;
             this.udOptMaxFilterWidth.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udOptMaxFilterWidth, "Wets the maximum filter bandwidth");
+            this.toolTip1.SetToolTip(this.udOptMaxFilterWidth, "Sets the maximum filter bandwidth");
             this.udOptMaxFilterWidth.Value = new decimal(new int[] {
             9999,
             0,

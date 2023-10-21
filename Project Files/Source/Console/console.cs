@@ -4457,7 +4457,14 @@ namespace Thetis
                         //        MessageBox.Show("Control not found: " + name, "GetState Error",
                         //            MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                         //}
-                        if (ctrls.ContainsKey(name)) ((TrackBarTS)ctrls[name]).Value = Int32.Parse(val);                        
+                        if (ctrls.ContainsKey(name))
+                        {
+                            TrackBarTS c = (TrackBarTS)ctrls[name];
+                            int num = int.Parse(val);
+                            if (num > c.Maximum) num = c.Maximum;
+                            if (num < c.Minimum) num = c.Minimum;
+                            c.Value = num;
+                        }
                         break;
 
                     case var nam when name.StartsWith("ptb"):
@@ -56233,7 +56240,7 @@ namespace Thetis
         private void buttonTS1_Click(object sender, EventArgs e)
         {
             
-        }
+        }   
     }
 
     public class DigiMode

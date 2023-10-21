@@ -635,6 +635,7 @@ namespace Thetis
         // Init Routines
         // ======================================================
 
+        // note: any control that needs it settings recovered from the DB when cancel clicked, uses this 'needsRecovering' system
         private void InitGeneralTab(List<string> recoveryList = null)
         {
             if (needsRecovering(recoveryList, "chkGeneralRXOnly")) chkGeneralRXOnly.Checked = console.RXOnly;
@@ -28072,7 +28073,6 @@ namespace Thetis
         {
             if (e != null)
             {
-                Debug.Print(e.AuthorName);
                 gtpAvailableSkins.Visible = true;
                 grpAuthorDetails.Visible = true;
 
@@ -28344,6 +28344,20 @@ namespace Thetis
 
                         if (bExtract)
                             extractPngFilesFromZip(e.Path, sOutputPath);
+                        else
+                            MessageBox.Show(
+                                "Nothing was found in the skin download that could be used. Please contact the creator.",
+                                "Skin of my teeth !",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    }
+                    else
+                    {
+                        MessageBox.Show(
+                            "This does not seem to be a valid skin. Please contact the creator.",
+                            "Very dry skin !",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                     }
 
                     tryRemoveDownload(e.Path);
@@ -28367,6 +28381,11 @@ namespace Thetis
                     btnDownloadSkin.Text = "Download";
                     prgSkinDownload.Visible = false;
                 }
+                else if (e.Cancelled)
+                {
+                    prgSkinDownload.Visible = false;
+                    btnDownloadSkin.Text = "Download";
+                }
                 else
                 {
                     if(e.TotalBytes != -1)
@@ -28387,6 +28406,12 @@ namespace Thetis
             }
             else
             {
+                MessageBox.Show(
+                    "There was an issue downloading. Please try again or contact the creator.",
+                    "No skin off my nose !",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                // aborted or error
                 prgSkinDownload.Visible = false;
                 btnDownloadSkin.Text = "Download";
             }

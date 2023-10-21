@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 namespace Thetis
 {   
@@ -78,6 +80,7 @@ namespace Thetis
         public long TotalBytes { get; set; }
         public string Url { get; set; }
         public bool Complete {  get; set; }
+        public bool Cancelled { get; set; }
         public int PercentageDownloaded { get; set; }
         public bool BypassRootFolderCheck { get; set; }
         public bool IsMeterSkin { get; set; }
@@ -179,7 +182,7 @@ namespace Thetis
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                //MessageBox.Show(ex.ToString());
                 ThetisSkinServerData?.Invoke(null, null);
             }
             finally
@@ -348,11 +351,19 @@ namespace Thetis
                             sfd.BytesDownloaded = downloadedBytes;
                             sfd.PercentageDownloaded = 100;
                             sfd.Complete = true;
+                            sfd.Cancelled = false;
 
                             FileDownload?.Invoke(null, sfd);
                         }
                     }
                 }
+            }
+            catch (TaskCanceledException tex)
+            {
+                SkinFileDownload sfd = new SkinFileDownload();
+                sfd.Complete = false;
+                sfd.Cancelled = true;
+                FileDownload?.Invoke(null, sfd);
             }
             catch (Exception ex)
             {

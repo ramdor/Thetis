@@ -313,32 +313,37 @@ namespace Thetis
 			ArrayList temp = new ArrayList();		// list of all first level controls
 			ControlList(form, ref temp);
 
-			ArrayList checkbox_list = new ArrayList();
-			ArrayList combobox_list = new ArrayList();
-			ArrayList numericupdown_list = new ArrayList();
-			ArrayList radiobutton_list = new ArrayList();
-			ArrayList textbox_list = new ArrayList();
-			ArrayList trackbar_list = new ArrayList();
-			ArrayList colorbutton_list = new ArrayList();
+			//ArrayList checkbox_list = new ArrayList();
+			//ArrayList combobox_list = new ArrayList();
+			//ArrayList numericupdown_list = new ArrayList();
+			//ArrayList radiobutton_list = new ArrayList();
+			//ArrayList textbox_list = new ArrayList();
+			//ArrayList trackbar_list = new ArrayList();
+			//ArrayList colorbutton_list = new ArrayList();
+
+			//[2.10.2.3]MW0LGE change to single dictionary of controls
+			Dictionary<string, Control> ctrls = new Dictionary<string, Control>();
 
 			//ArrayList controls = new ArrayList();	// list of controls to restore
 			foreach(Control c in temp)
 			{
-				if(c.GetType() == typeof(CheckBoxTS))			// the control is a CheckBoxTS
-					checkbox_list.Add(c);
-				else if(c.GetType() == typeof(ComboBoxTS))		// the control is a ComboBox
-					combobox_list.Add(c);
-				else if(c.GetType() == typeof(NumericUpDownTS))	// the control is a NumericUpDown
-					numericupdown_list.Add(c);
-				else if(c.GetType() == typeof(RadioButtonTS))	// the control is a RadioButton
-					radiobutton_list.Add(c);
-				else if(c.GetType() == typeof(TextBoxTS))		// the control is a TextBox
-					textbox_list.Add(c);
-				else if(c.GetType() == typeof(TrackBarTS))		// the control is a TrackBar (slider)
-					trackbar_list.Add(c);
-				else if(c.GetType() == typeof(ColorButton))
-					colorbutton_list.Add(c);
-			}
+                //if(c.GetType() == typeof(CheckBoxTS))			// the control is a CheckBoxTS
+                //	checkbox_list.Add(c);
+                //else if(c.GetType() == typeof(ComboBoxTS))		// the control is a ComboBox
+                //	combobox_list.Add(c);
+                //else if(c.GetType() == typeof(NumericUpDownTS))	// the control is a NumericUpDown
+                //	numericupdown_list.Add(c);
+                //else if(c.GetType() == typeof(RadioButtonTS))	// the control is a RadioButton
+                //	radiobutton_list.Add(c);
+                //else if(c.GetType() == typeof(TextBoxTS))		// the control is a TextBox
+                //	textbox_list.Add(c);
+                //else if(c.GetType() == typeof(TrackBarTS))		// the control is a TrackBar (slider)
+                //	trackbar_list.Add(c);
+                //else if(c.GetType() == typeof(ColorButton))
+                //	colorbutton_list.Add(c);
+
+                ctrls.Add(c.Name, c); //[2.10.2.3]MW0LGE yes, control names are unique per form, and to create and search each list is madness
+            }
 			temp.Clear();	// now that we have the controls we want, delete first list 
 
 			ArrayList a = DB.GetVars(tablename);						// Get the saved list of controls
@@ -397,121 +402,159 @@ namespace Thetis
 
 				if(s.StartsWith("chk"))			// control is a CheckBoxTS
 				{
-					for(int i=0; i<checkbox_list.Count; i++)
-					{	// look through each control to find the matching name
-						CheckBoxTS c = (CheckBoxTS)checkbox_list[i];
-						if(c.Name.Equals(name))		// name found
-						{
-							c.Checked = bool.Parse(val);	// restore value
-							i = checkbox_list.Count+1;
-						}
-						if(i == checkbox_list.Count)
-							MessageBox.Show("Control not found: "+name);
-					}
-				}
+					//for(int i=0; i<checkbox_list.Count; i++)
+					//{	// look through each control to find the matching name
+					//	CheckBoxTS c = (CheckBoxTS)checkbox_list[i];
+					//	if(c.Name.Equals(name))		// name found
+					//	{
+					//		c.Checked = bool.Parse(val);	// restore value
+					//		i = checkbox_list.Count+1;
+					//	}
+					//	if(i == checkbox_list.Count)
+					//		MessageBox.Show("Control not found: "+name);
+					//}
+					if (ctrls.ContainsKey(name)) ((CheckBoxTS)ctrls[name]).Checked = bool.Parse(val);
+                }
 				else if(s.StartsWith("combo"))	// control is a ComboBox
 				{
-					for(int i=0; i<combobox_list.Count; i++)
-					{	// look through each control to find the matching name
-						ComboBoxTS c = (ComboBoxTS)combobox_list[i];
-						if(c.Name.Equals(name))		// name found
-						{
-							c.Text = val;	// restore value
-							i = combobox_list.Count+1;
-							if(c.Text != val) Debug.WriteLine("Warning: "+form.Name+"."+name+" did not set to "+val);
-						}
-						if(i == combobox_list.Count)
-							MessageBox.Show("Control not found: "+name);
-					}
-				}
+					//for(int i=0; i<combobox_list.Count; i++)
+					//{	// look through each control to find the matching name
+					//	ComboBoxTS c = (ComboBoxTS)combobox_list[i];
+					//	if(c.Name.Equals(name))		// name found
+					//	{
+					//		c.Text = val;	// restore value
+					//		i = combobox_list.Count+1;
+					//		if(c.Text != val) Debug.WriteLine("Warning: "+form.Name+"."+name+" did not set to "+val);
+					//	}
+					//	if(i == combobox_list.Count)
+					//		MessageBox.Show("Control not found: "+name);
+					//}
+					if (ctrls.ContainsKey(name)) ((ComboBoxTS)ctrls[name]).Text = val;
+                }
 				else if(s.StartsWith("ud"))
 				{
-					for(int i=0; i<numericupdown_list.Count; i++)
-					{	// look through each control to find the matching name
-						NumericUpDownTS c = (NumericUpDownTS)numericupdown_list[i];
-						if(c.Name.Equals(name))		// name found
-						{
-							decimal num = decimal.Parse(val);
+                    //for(int i=0; i<numericupdown_list.Count; i++)
+                    //{	// look through each control to find the matching name
+                    //	NumericUpDownTS c = (NumericUpDownTS)numericupdown_list[i];
+                    //	if(c.Name.Equals(name))		// name found
+                    //	{
+                    //		decimal num = decimal.Parse(val);
 
-							if(num > c.Maximum) num = c.Maximum;		// check endpoints
-							else if(num < c.Minimum) num = c.Minimum;
-							c.Value = num;			// restore value
-							i = numericupdown_list.Count+1;
-						}
-						if(i == numericupdown_list.Count)
-							MessageBox.Show("Control not found: "+name);	
-					}
-				}
+                    //		if(num > c.Maximum) num = c.Maximum;		// check endpoints
+                    //		else if(num < c.Minimum) num = c.Minimum;
+                    //		c.Value = num;			// restore value
+                    //		i = numericupdown_list.Count+1;
+                    //	}
+                    //	if(i == numericupdown_list.Count)
+                    //		MessageBox.Show("Control not found: "+name);	
+                    //}
+                    if (ctrls.ContainsKey(name))
+                    {
+                        NumericUpDownTS c = (NumericUpDownTS)ctrls[name];
+                        decimal dnum = decimal.Parse(val);
+                        if (dnum > c.Maximum) dnum = c.Maximum;
+                        else if (dnum < c.Minimum) dnum = c.Minimum;
+                        c.Value = dnum;
+                    }
+                }
 				else if(s.StartsWith("rad"))
-				{	// look through each control to find the matching name
-					for(int i=0; i<radiobutton_list.Count; i++)
-					{
-						RadioButtonTS c = (RadioButtonTS)radiobutton_list[i];
-						if(c.Name.Equals(name))		// name found
-						{
-							if(!val.ToLower().Equals("true") && !val.ToLower().Equals("false"))
-								val = "True";
-							c.Checked = bool.Parse(val);	// restore value
-							i = radiobutton_list.Count+1;
-						}
-						if(i == radiobutton_list.Count)
-							MessageBox.Show("Control not found: "+name);
-					}
-				}
+				{   // look through each control to find the matching name
+                    //for(int i=0; i<radiobutton_list.Count; i++)
+                    //{
+                    //	RadioButtonTS c = (RadioButtonTS)radiobutton_list[i];
+                    //	if(c.Name.Equals(name))		// name found
+                    //	{
+                    //		if(!val.ToLower().Equals("true") && !val.ToLower().Equals("false"))
+                    //			val = "True";
+                    //		c.Checked = bool.Parse(val);	// restore value
+                    //		i = radiobutton_list.Count+1;
+                    //	}
+                    //	if(i == radiobutton_list.Count)
+                    //		MessageBox.Show("Control not found: "+name);
+                    //}
+                    if (ctrls.ContainsKey(name))
+                    {
+                        RadioButtonTS c = (RadioButtonTS)ctrls[name];
+                        if (!val.ToLower().Equals("true") && !val.ToLower().Equals("false")) val = "True";
+                        c.Checked = bool.Parse(val);
+                    }
+                }
 				else if(s.StartsWith("txt"))
-				{	// look through each control to find the matching name
-					for(int i=0; i<textbox_list.Count; i++)
-					{
-						TextBoxTS c = (TextBoxTS)textbox_list[i];
-						if(c.Name.Equals(name))		// name found
-						{
-							c.Text = val;	// restore value
-							i = textbox_list.Count+1;
-						}
-						if(i == textbox_list.Count)
-							MessageBox.Show("Control not found: "+name);
-					}
-				}
+				{   // look through each control to find the matching name
+                    //for(int i=0; i<textbox_list.Count; i++)
+                    //{
+                    //	TextBoxTS c = (TextBoxTS)textbox_list[i];
+                    //	if(c.Name.Equals(name))		// name found
+                    //	{
+                    //		c.Text = val;	// restore value
+                    //		i = textbox_list.Count+1;
+                    //	}
+                    //	if(i == textbox_list.Count)
+                    //		MessageBox.Show("Control not found: "+name);
+                    //}
+                    if (ctrls.ContainsKey(name)) ((TextBoxTS)ctrls[name]).Text = val;
+                }
 				else if(s.StartsWith("tb"))
 				{
-					// look through each control to find the matching name
-					for(int i=0; i<trackbar_list.Count; i++)
+					//// look through each control to find the matching name
+					//for(int i=0; i<trackbar_list.Count; i++)
+					//{
+					//	TrackBarTS c = (TrackBarTS)trackbar_list[i];
+					//	if(c.Name.Equals(name))		// name found
+					//	{
+					//		int num = int.Parse(val);
+					//		if(num > c.Maximum) num = c.Maximum;
+					//		if(num < c.Minimum) num = c.Minimum;
+					//		c.Value = num;
+					//		i = trackbar_list.Count+1;
+					//	}
+					//	if(i == trackbar_list.Count)
+					//		MessageBox.Show("Control not found: "+name);
+					//}
+					if (ctrls.ContainsKey(name))
 					{
-						TrackBarTS c = (TrackBarTS)trackbar_list[i];
-						if(c.Name.Equals(name))		// name found
-						{
-							int num = int.Parse(val);
-							if(num > c.Maximum) num = c.Maximum;
-							if(num < c.Minimum) num = c.Minimum;
-							c.Value = num;
-							i = trackbar_list.Count+1;
-						}
-						if(i == trackbar_list.Count)
-							MessageBox.Show("Control not found: "+name);
-					}
-				}
+						TrackBarTS c = (TrackBarTS)ctrls[name];
+						int num = int.Parse(val);
+						if (num > c.Maximum) num = c.Maximum;
+						if (num < c.Minimum) num = c.Minimum;
+                        c.Value = num;
+                    }
+                }
 				else if(s.StartsWith("clrbtn"))
 				{
-					string[] colors = val.Split('.');
-					if(colors.Length == 4)
+					//string[] colors = val.Split('.');
+					//if(colors.Length == 4)
+					//{
+					//	int R,G,B,A;
+					//	R = Int32.Parse(colors[0]);
+					//	G = Int32.Parse(colors[1]);
+					//	B = Int32.Parse(colors[2]);
+					//	A = Int32.Parse(colors[3]);
+					//	for(int i=0; i<colorbutton_list.Count; i++)
+					//	{
+					//		ColorButton c = (ColorButton)colorbutton_list[i];
+					//		if(c.Name.Equals(name))		// name found
+					//		{
+					//			c.Color = Color.FromArgb(A, R, G, B);
+					//			i = colorbutton_list.Count+1;
+					//		}
+					//		if(i == colorbutton_list.Count)
+					//			MessageBox.Show("Control not found: "+name);
+					//	}
+					//}
+					if (ctrls.ContainsKey(name))
 					{
-						int R,G,B,A;
-						R = Int32.Parse(colors[0]);
-						G = Int32.Parse(colors[1]);
-						B = Int32.Parse(colors[2]);
-						A = Int32.Parse(colors[3]);
-
-						for(int i=0; i<colorbutton_list.Count; i++)
+                        string[] colors = val.Split('.');
+						if (colors.Length == 4)
 						{
-							ColorButton c = (ColorButton)colorbutton_list[i];
-							if(c.Name.Equals(name))		// name found
-							{
-								c.Color = Color.FromArgb(A, R, G, B);
-								i = colorbutton_list.Count+1;
-							}
-							if(i == colorbutton_list.Count)
-								MessageBox.Show("Control not found: "+name);
-						}
+							int R, G, B, A;
+							R = Int32.Parse(colors[0]);
+							G = Int32.Parse(colors[1]);
+							B = Int32.Parse(colors[2]);
+							A = Int32.Parse(colors[3]);
+							ColorButton c = (ColorButton)ctrls[name];
+                            c.Color = Color.FromArgb(A, R, G, B);
+                        }
 					}
 				}
 			}

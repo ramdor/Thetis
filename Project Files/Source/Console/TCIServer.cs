@@ -2710,5 +2710,25 @@ namespace Thetis
         {
 			if (_log != null) _log.Hide();
 		}
-	}
+
+        public async Task ConnectToServer(string serverAddress, int port, int timeoutMilliseconds)
+        {
+            using (TcpClient client = new TcpClient())
+            {
+                Task connectTask = client.ConnectAsync(serverAddress, port);
+                Task timeoutTask = Task.Delay(timeoutMilliseconds);
+
+                Task completedTask = await Task.WhenAny(connectTask, timeoutTask);
+
+                if (completedTask == connectTask)
+                {
+                    client.Close();
+                }
+                else
+                {
+                    //throw new TimeoutException("Connection timed out.");
+                }
+            }
+        }
+    }
 }
