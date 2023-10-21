@@ -254,6 +254,8 @@ namespace Thetis
             this.RXANR2AERun = rx.rx_nr2_ae_run;
             this.RXANR2Run = rx.rx_nr2_run;
             this.RXANR2Position = rx.rx_nr2_position;
+            this.RXFilterLow = rx.rx_filter_low;
+            this.RXFilterHigh = rx.rx_filter_high;
         }
 
 		private void SyncAll()
@@ -2033,6 +2035,8 @@ namespace Thetis
             TXPostGenSweepRate = tx_postgen_sweep_rate;
             PSRunCal = ps_run_cal;
             MicGain = mic_gain;
+            TXFilterLow = tx_filter_low;
+            TXFilterHigh = tx_filter_high;
 		}
 
 		#region Non-Static Properties & Routines
@@ -3348,9 +3352,46 @@ namespace Thetis
                 }
             }
         }
-		
-		#endregion
-	}
+
+        private double tx_fm_lowcut_dsp = 300.0;
+        private double tx_fm_lowcut = 300.0;
+        private double tx_fm_highcut_dsp = 3000.0;
+        private double tx_fm_highcut = 3000.0;
+        public double TXFMLowCut
+        {
+            get { return tx_fm_lowcut; }
+            set
+            {
+                tx_fm_lowcut = value;
+                if (update)
+                {
+                    if (value != tx_fm_lowcut_dsp || force)
+                    {
+                        WDSP.SetTXAFMAFFilter(WDSP.id(1, 0), value, tx_fm_highcut_dsp);
+                        tx_fm_lowcut_dsp = value;
+                    }
+                }
+            }
+        }
+        public double TXFMHighCut
+        {
+            get { return tx_fm_highcut; }
+            set
+            {
+                tx_fm_highcut = value;
+                if (update)
+                {
+                    if (value != tx_fm_highcut_dsp || force)
+                    {
+                        WDSP.SetTXAFMAFFilter(WDSP.id(1, 0), tx_fm_lowcut_dsp, value);
+                        tx_fm_highcut_dsp = value;
+                    }
+                }
+            }
+        }
+
+        #endregion
+    }
 
 	#endregion
 

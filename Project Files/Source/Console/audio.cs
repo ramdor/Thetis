@@ -1387,6 +1387,26 @@ namespace Thetis
             }
         }
 
+        private static int _swap_iq_vac1 = 0;
+        public static int VAC1SwapIQ
+        {
+            get { return _swap_iq_vac1; }
+            set
+            {
+                _swap_iq_vac1 = value;
+                ivac.SetIVACswapIQout(0, _swap_iq_vac1);
+            }
+        }
+        private static int _swap_iq_vac2 = 0;
+        public static int VAC2SwapIQ
+        {
+            get { return _swap_iq_vac2; }
+            set
+            {
+                _swap_iq_vac2 = value;
+                ivac.SetIVACswapIQout(1, _swap_iq_vac2);
+            }
+        }
         #endregion
 
         #region Callback Routines
@@ -1642,6 +1662,7 @@ namespace Thetis
                     ivac.SetIVACFFRingMax(0, 1, vac1_ff_ringmaxIn);
                     ivac.SetIVACFFAlpha(0, 0, vac1_ff_alphaOut);
                     ivac.SetIVACFFAlpha(0, 1, vac1_ff_alphaIn);
+                    ivac.SetIVACswapIQout(0, _swap_iq_vac1);
                     //ivac.SetIVACvar(0, 0, vac1_oldVarOut);
                     //ivac.SetIVACvar(0, 1, vac1_oldVarIn);
                     ivac.SetIVACinitialVars(0, vac1_oldVarIn, vac1_oldVarOut);
@@ -1725,6 +1746,7 @@ namespace Thetis
                     ivac.SetIVACFFRingMax(1, 1, vac2_ff_ringmaxIn);
                     ivac.SetIVACFFAlpha(1, 0, vac2_ff_alphaOut);
                     ivac.SetIVACFFAlpha(1, 1, vac2_ff_alphaIn);
+                    ivac.SetIVACswapIQout(1, _swap_iq_vac2);
                     //ivac.SetIVACvar(1, 0, vac2_oldVarOut);
                     //ivac.SetIVACvar(1, 1, vac2_oldVarIn);
                     ivac.SetIVACinitialVars(1, vac2_oldVarIn, vac2_oldVarOut);

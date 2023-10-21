@@ -86,6 +86,7 @@ PORT void create_ivac(
 	a->OUTfvar = 1.0;
 	a->initial_INvar = 1.0;
 	a->initial_OUTvar = 1.0;
+	a->swapIQout = 0;
 	create_resamps(a);
 	{
 		int inrate[2] = { a->audio_rate, a->txmon_rate };
@@ -169,6 +170,9 @@ int CallbackIVAC(const void *input,
 	xrmatchIN (a->rmatchIN, in_ptr);	// MIC data from VAC
 	xrmatchOUT(a->rmatchOUT, out_ptr);	// audio or I-Q data to VAC
 	// if (id == 0)  WriteAudio (120.0, 48000, a->vac_size, out_ptr, 3); //
+	if (a->iq_type && a->swapIQout)
+		for (int i = 0, j = 1; i < a->vac_size; i++, j+=2)
+			out_ptr[j] = -out_ptr[j];
 	return 0;
 }
 
@@ -679,5 +683,12 @@ void SetIVACinitialVars(int id, double INvar, double OUTvar)
 		destroy_resamps(a);
 		create_resamps(a);
 	}
+}
+
+PORT
+void SetIVACswapIQout(int id, int swap)
+{
+	IVAC a = pvac[id];
+	a->swapIQout = swap;
 }
 //

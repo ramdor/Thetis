@@ -926,3 +926,10 @@ void TXASetMP (int channel, int mp)
 	SetTXAEQMP					(channel, mp);
 	SetTXAFMMP					(channel, mp);
 }
+
+PORT
+void SetTXAFMAFFilter (int channel, double low, double high)
+{
+	SetTXAFMPreEmphFreqs (channel, low, high);
+	SetTXAFMAFFreqs (channel, low, high);
+}

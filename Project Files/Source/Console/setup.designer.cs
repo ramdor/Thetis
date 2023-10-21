@@ -1592,6 +1592,7 @@
             this.chkMOXAllowBypass = new System.Windows.Forms.CheckBoxTS();
             this.chkSPACEAllowBypass = new System.Windows.Forms.CheckBoxTS();
             this.grpDirectIQOutput = new System.Windows.Forms.GroupBoxTS();
+            this.chkSwapIQVac1 = new System.Windows.Forms.CheckBoxTS();
             this.chkAudioRX2toVAC = new System.Windows.Forms.CheckBoxTS();
             this.chkAudioCorrectIQ = new System.Windows.Forms.CheckBoxTS();
             this.chkAudioIQtoVAC = new System.Windows.Forms.CheckBoxTS();
@@ -2276,6 +2277,12 @@
             this.chkFMDetLimON = new System.Windows.Forms.CheckBoxTS();
             this.chkRemoveTone = new System.Windows.Forms.CheckBoxTS();
             this.grpFMTX = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS188 = new System.Windows.Forms.LabelTS();
+            this.labelTS189 = new System.Windows.Forms.LabelTS();
+            this.labelTS190 = new System.Windows.Forms.LabelTS();
+            this.labelTS191 = new System.Windows.Forms.LabelTS();
+            this.udHighCutTX = new System.Windows.Forms.NumericUpDownTS();
+            this.udLowCutTX = new System.Windows.Forms.NumericUpDownTS();
             this.chkEmphPos = new System.Windows.Forms.CheckBoxTS();
             this.tpDSPAudio = new System.Windows.Forms.TabPage();
             this.grpDSPAudRX2Dolly = new System.Windows.Forms.GroupBoxTS();
@@ -3521,6 +3528,7 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
             this.txtboxTXProfileChangedReport = new System.Windows.Forms.TextBoxTS();
+            this.chkSwapIQVac2 = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4030,6 +4038,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.udLowCutRX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDSPFMDetLimGain)).BeginInit();
             this.grpFMTX.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udHighCutTX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udLowCutTX)).BeginInit();
             this.tpDSPAudio.SuspendLayout();
             this.grpDSPAudRX2Dolly.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPRX2DollyF1)).BeginInit();
@@ -26074,6 +26084,7 @@
             // 
             // grpDirectIQOutput
             // 
+            this.grpDirectIQOutput.Controls.Add(this.chkSwapIQVac1);
             this.grpDirectIQOutput.Controls.Add(this.chkAudioRX2toVAC);
             this.grpDirectIQOutput.Controls.Add(this.chkAudioCorrectIQ);
             this.grpDirectIQOutput.Controls.Add(this.chkAudioIQtoVAC);
@@ -26083,6 +26094,18 @@
             this.grpDirectIQOutput.TabIndex = 78;
             this.grpDirectIQOutput.TabStop = false;
             this.grpDirectIQOutput.Text = "Direct I/Q";
+            // 
+            // chkSwapIQVac1
+            // 
+            this.chkSwapIQVac1.AutoSize = true;
+            this.chkSwapIQVac1.Image = null;
+            this.chkSwapIQVac1.Location = new System.Drawing.Point(16, 45);
+            this.chkSwapIQVac1.Name = "chkSwapIQVac1";
+            this.chkSwapIQVac1.Size = new System.Drawing.Size(64, 17);
+            this.chkSwapIQVac1.TabIndex = 3;
+            this.chkSwapIQVac1.Text = "SwapIQ";
+            this.chkSwapIQVac1.UseVisualStyleBackColor = true;
+            this.chkSwapIQVac1.CheckedChanged += new System.EventHandler(this.chkSwapIQVac1_CheckedChanged);
             // 
             // chkAudioRX2toVAC
             // 
@@ -26099,7 +26122,7 @@
             // 
             this.chkAudioCorrectIQ.Enabled = false;
             this.chkAudioCorrectIQ.Image = null;
-            this.chkAudioCorrectIQ.Location = new System.Drawing.Point(16, 46);
+            this.chkAudioCorrectIQ.Location = new System.Drawing.Point(93, 46);
             this.chkAudioCorrectIQ.Name = "chkAudioCorrectIQ";
             this.chkAudioCorrectIQ.Size = new System.Drawing.Size(88, 16);
             this.chkAudioCorrectIQ.TabIndex = 1;
@@ -27292,6 +27315,7 @@
             // 
             // grpVAC2DirectIQ
             // 
+            this.grpVAC2DirectIQ.Controls.Add(this.chkSwapIQVac2);
             this.grpVAC2DirectIQ.Controls.Add(this.chkVAC2DirectIQCal);
             this.grpVAC2DirectIQ.Controls.Add(this.chkVAC2DirectIQ);
             this.grpVAC2DirectIQ.Location = new System.Drawing.Point(550, 12);
@@ -27305,7 +27329,7 @@
             // 
             this.chkVAC2DirectIQCal.Enabled = false;
             this.chkVAC2DirectIQCal.Image = null;
-            this.chkVAC2DirectIQCal.Location = new System.Drawing.Point(16, 46);
+            this.chkVAC2DirectIQCal.Location = new System.Drawing.Point(108, 46);
             this.chkVAC2DirectIQCal.Name = "chkVAC2DirectIQCal";
             this.chkVAC2DirectIQCal.Size = new System.Drawing.Size(88, 16);
             this.chkVAC2DirectIQCal.TabIndex = 1;
@@ -36845,13 +36869,117 @@
             // 
             // grpFMTX
             // 
+            this.grpFMTX.Controls.Add(this.labelTS188);
+            this.grpFMTX.Controls.Add(this.labelTS189);
+            this.grpFMTX.Controls.Add(this.labelTS190);
+            this.grpFMTX.Controls.Add(this.labelTS191);
+            this.grpFMTX.Controls.Add(this.udHighCutTX);
+            this.grpFMTX.Controls.Add(this.udLowCutTX);
             this.grpFMTX.Controls.Add(this.chkEmphPos);
             this.grpFMTX.Location = new System.Drawing.Point(8, 189);
             this.grpFMTX.Name = "grpFMTX";
-            this.grpFMTX.Size = new System.Drawing.Size(268, 139);
+            this.grpFMTX.Size = new System.Drawing.Size(429, 139);
             this.grpFMTX.TabIndex = 0;
             this.grpFMTX.TabStop = false;
             this.grpFMTX.Text = "FM Transmitter";
+            // 
+            // labelTS188
+            // 
+            this.labelTS188.AutoSize = true;
+            this.labelTS188.Image = null;
+            this.labelTS188.Location = new System.Drawing.Point(387, 69);
+            this.labelTS188.Name = "labelTS188";
+            this.labelTS188.Size = new System.Drawing.Size(20, 13);
+            this.labelTS188.TabIndex = 66;
+            this.labelTS188.Text = "Hz";
+            // 
+            // labelTS189
+            // 
+            this.labelTS189.AutoSize = true;
+            this.labelTS189.Image = null;
+            this.labelTS189.Location = new System.Drawing.Point(197, 69);
+            this.labelTS189.Name = "labelTS189";
+            this.labelTS189.Size = new System.Drawing.Size(44, 13);
+            this.labelTS189.TabIndex = 65;
+            this.labelTS189.Text = "AF cut :";
+            // 
+            // labelTS190
+            // 
+            this.labelTS190.AutoSize = true;
+            this.labelTS190.Image = null;
+            this.labelTS190.Location = new System.Drawing.Point(335, 49);
+            this.labelTS190.Name = "labelTS190";
+            this.labelTS190.Size = new System.Drawing.Size(27, 13);
+            this.labelTS190.TabIndex = 64;
+            this.labelTS190.Text = "high";
+            // 
+            // labelTS191
+            // 
+            this.labelTS191.AutoSize = true;
+            this.labelTS191.Image = null;
+            this.labelTS191.Location = new System.Drawing.Point(267, 49);
+            this.labelTS191.Name = "labelTS191";
+            this.labelTS191.Size = new System.Drawing.Size(23, 13);
+            this.labelTS191.TabIndex = 63;
+            this.labelTS191.Text = "low";
+            // 
+            // udHighCutTX
+            // 
+            this.udHighCutTX.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udHighCutTX.Location = new System.Drawing.Point(318, 67);
+            this.udHighCutTX.Maximum = new decimal(new int[] {
+            8000,
+            0,
+            0,
+            0});
+            this.udHighCutTX.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udHighCutTX.Name = "udHighCutTX";
+            this.udHighCutTX.Size = new System.Drawing.Size(63, 20);
+            this.udHighCutTX.TabIndex = 62;
+            this.udHighCutTX.TinyStep = false;
+            this.udHighCutTX.Value = new decimal(new int[] {
+            3000,
+            0,
+            0,
+            0});
+            this.udHighCutTX.ValueChanged += new System.EventHandler(this.udHighCutTX_ValueChanged);
+            // 
+            // udLowCutTX
+            // 
+            this.udLowCutTX.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udLowCutTX.Location = new System.Drawing.Point(249, 67);
+            this.udLowCutTX.Maximum = new decimal(new int[] {
+            8000,
+            0,
+            0,
+            0});
+            this.udLowCutTX.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udLowCutTX.Name = "udLowCutTX";
+            this.udLowCutTX.Size = new System.Drawing.Size(63, 20);
+            this.udLowCutTX.TabIndex = 61;
+            this.udLowCutTX.TinyStep = false;
+            this.udLowCutTX.Value = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+            this.udLowCutTX.ValueChanged += new System.EventHandler(this.udLowCutTX_ValueChanged);
             // 
             // chkEmphPos
             // 
@@ -55976,6 +56104,18 @@
             this.txtboxTXProfileChangedReport.Text = "used to report tx profile changes if you click on oragne box";
             this.txtboxTXProfileChangedReport.Visible = false;
             // 
+            // chkSwapIQVac2
+            // 
+            this.chkSwapIQVac2.AutoSize = true;
+            this.chkSwapIQVac2.Image = null;
+            this.chkSwapIQVac2.Location = new System.Drawing.Point(16, 46);
+            this.chkSwapIQVac2.Name = "chkSwapIQVac2";
+            this.chkSwapIQVac2.Size = new System.Drawing.Size(64, 17);
+            this.chkSwapIQVac2.TabIndex = 4;
+            this.chkSwapIQVac2.Text = "SwapIQ";
+            this.chkSwapIQVac2.UseVisualStyleBackColor = true;
+            this.chkSwapIQVac2.CheckedChanged += new System.EventHandler(this.chkSwapIQVac2_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -56329,6 +56469,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1_Force2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1_Force)).EndInit();
             this.grpDirectIQOutput.ResumeLayout(false);
+            this.grpDirectIQOutput.PerformLayout();
             this.grpAudioVACAutoEnable.ResumeLayout(false);
             this.grpAudioVACGain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udAudioVACGainTX)).EndInit();
@@ -56351,6 +56492,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udVAC2_Force2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC2_Force)).EndInit();
             this.grpVAC2DirectIQ.ResumeLayout(false);
+            this.grpVAC2DirectIQ.PerformLayout();
             this.grpVAC2AutoEnable.ResumeLayout(false);
             this.grpVAC2Gain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udVAC2GainTX)).EndInit();
@@ -56611,6 +56753,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbDSPFMDetLimGain)).EndInit();
             this.grpFMTX.ResumeLayout(false);
             this.grpFMTX.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udHighCutTX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udLowCutTX)).EndInit();
             this.tpDSPAudio.ResumeLayout(false);
             this.grpDSPAudRX2Dolly.ResumeLayout(false);
             this.grpDSPAudRX2Dolly.PerformLayout();
@@ -60623,5 +60767,13 @@
         private LabelTS labelTS186;
         private LabelTS labelTS187;
         private CheckBoxTS chkReplaceCurrentMeterInSelectedSkin;
+        private LabelTS labelTS188;
+        private LabelTS labelTS189;
+        private LabelTS labelTS190;
+        private LabelTS labelTS191;
+        private NumericUpDownTS udHighCutTX;
+        private NumericUpDownTS udLowCutTX;
+        private CheckBoxTS chkSwapIQVac1;
+        private CheckBoxTS chkSwapIQVac2;
     }
 }

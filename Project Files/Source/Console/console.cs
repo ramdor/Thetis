@@ -21836,8 +21836,8 @@ namespace Thetis
             set { audio_output_index3 = value; }
         }
 
-        private int sample_rate_rx1 = 48000;
-        private int m_nOldSampleRateRX1 = 48000;
+        private int sample_rate_rx1 = 0; //[2.10.2.3]MW0LGE change to 0 so that comboAudioSampleRate1_SelectedIndexChanged will do its thing is system is shutdown with 48000 selected
+        private int m_nOldSampleRateRX1 = 0;
         public int SampleRateRX1
         {
             get { return sample_rate_rx1; }
@@ -21880,8 +21880,8 @@ namespace Thetis
             }
         }
 
-        private int sample_rate_rx2 = 48000;
-        private int m_nOldSampleRateRX2 = 48000;
+        private int sample_rate_rx2 = 0;//[2.10.2.3]MW0LGE change to 0 so that comboAudioSampleRate1_SelectedIndexChanged will do its thing is system is shutdown with 48000 selected
+        private int m_nOldSampleRateRX2 = 0;
         public int SampleRateRX2
         {
             get { return sample_rate_rx2; }
@@ -56199,23 +56199,21 @@ namespace Thetis
             //issue #204
             int fft_size;
             int sample_rate;
-
-            if (rx == 2)
-            {
-                fft_size = specRX.GetSpecRX(1).FFTSize;
-                sample_rate = specRX.GetSpecRX(1).SampleRate;
-            }
-            else if (rx == 1)
+            if (rx == 1)
             {
                 fft_size = specRX.GetSpecRX(0).FFTSize;
                 sample_rate = specRX.GetSpecRX(0).SampleRate;
+            }
+            else if (rx == 2)
+            {
+                fft_size = specRX.GetSpecRX(1).FFTSize;
+                sample_rate = specRX.GetSpecRX(1).SampleRate;
             }
             else return;
 
             float bin_width = sample_rate / (float)fft_size;
             float length = (float)Math.Round(sample_rate / bin_width);
             int power2length = findNextPowerOf2((int)length);
-
             float milliseconds = (power2length / (float)sample_rate) * 1000f;
 
             if (rx == 1)

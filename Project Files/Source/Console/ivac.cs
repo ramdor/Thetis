@@ -140,6 +140,9 @@
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACinitialVars", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetIVACinitialVars(int id, double INvar, double OUTvar);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACswapIQout", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetIVACswapIQout(int id, int swap);
         //
         #endregion
 

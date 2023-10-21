@@ -581,6 +581,12 @@ namespace Thetis
                 lock (_objDX2Lock)
                 {
                     PurgeBuffers();
+                    if (!_mox_transition_buffer_clear_for_display)
+                    {
+                        // pergebuffers wont cause this if above bool is false, so do here
+                        FastAttackNoiseFloorRX1 = true;
+                        if(_rx2_enabled) FastAttackNoiseFloorRX2 = true;
+                    }
                 }
             }
         }

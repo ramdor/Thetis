@@ -1990,6 +1990,11 @@ namespace Thetis
             chkLinkRX0AF_CheckedChanged(this, e);
             chkLinkRX1AF_CheckedChanged(this, e);
             chkLinkRX2AF_CheckedChanged(this, e);
+
+            chkAudioIQtoVAC_CheckedChanged(this, e);
+            chkVAC2DirectIQ_CheckedChanged(this, e);
+            chkSwapIQVac1_CheckedChanged(this, e);
+            chkSwapIQVac2_CheckedChanged(this, e);
             // 
 
             // Calibration Tab
@@ -2181,6 +2186,8 @@ namespace Thetis
             tbDSPDetLimGain_Scroll(this, e);
             udLowCutRX_ValueChanged(this, e);
             udHighCutRX_ValueChanged(this, e);
+            udLowCutTX_ValueChanged(this, e);
+            udHighCutTX_ValueChanged(this, e);
 
             // EER Tab
             chkDSPEERon_CheckedChanged(this, e);
@@ -14104,6 +14111,7 @@ namespace Thetis
 
         private void chkAudioIQtoVAC_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (initializing) return;
             bool power = console.PowerOn;
             if (power && chkAudioEnableVAC.Checked)
             {
@@ -14122,10 +14130,12 @@ namespace Thetis
 
             chkAudioCorrectIQ.Enabled = chkAudioIQtoVAC.Checked;
             chkAudioRX2toVAC.Enabled = chkAudioIQtoVAC.Checked;
+            chkSwapIQVac1.Enabled = chkAudioIQtoVAC.Checked;
         }
 
         private void chkVAC2DirectIQ_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (initializing) return;
             bool power = console.PowerOn;
             if (power && chkVAC2Enable.Checked)
             {
@@ -14145,6 +14155,7 @@ namespace Thetis
             }
 
             chkVAC2DirectIQCal.Enabled = chkVAC2DirectIQ.Checked;
+            chkSwapIQVac2.Enabled = chkVAC2DirectIQ.Checked;
         }
 
         private void chkAudioCorrectIQ_CheckChanged(object sender, System.EventArgs e)
@@ -20483,6 +20494,7 @@ namespace Thetis
 
         private void chkBlockTxAnt2_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             radAlexR_160_CheckedChanged(this, EventArgs.Empty);
             radAlexR_80_CheckedChanged(this, EventArgs.Empty);
             radAlexR_60_CheckedChanged(this, EventArgs.Empty);
@@ -20499,6 +20511,7 @@ namespace Thetis
 
         private void chkBlockTxAnt3_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             radAlexR_160_CheckedChanged(this, EventArgs.Empty);
             radAlexR_80_CheckedChanged(this, EventArgs.Empty);
             radAlexR_60_CheckedChanged(this, EventArgs.Empty);
@@ -20945,6 +20958,7 @@ namespace Thetis
 
         private void chkWaterfallUseRX1SpectrumMinMax_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             if (chkWaterfallUseRX1SpectrumMinMax.Checked)
             {
                 chkRX1WaterfallAGC.Enabled = false;
@@ -20969,6 +20983,7 @@ namespace Thetis
 
         private void chkWaterfallUseRX2SpectrumMinMax_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             if (chkWaterfallUseRX2SpectrumMinMax.Checked)
             {
                 chkRX2WaterfallAGC.Enabled = false;
@@ -28688,9 +28703,9 @@ namespace Thetis
         private void udLowCutRX_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            console.radio.GetDSPRX(0, 0).RXFMLowCut = (double)udLowCutRX.Value;
-            console.radio.GetDSPRX(0, 1).RXFMLowCut = (double)udLowCutRX.Value;
-            console.radio.GetDSPRX(1, 0).RXFMLowCut = (double)udLowCutRX.Value;
+            console.radio.GetDSPRX(0, 0).RXFMLowCut = (double)udLowCutRX.Value; //main rx1
+            console.radio.GetDSPRX(0, 1).RXFMLowCut = (double)udLowCutRX.Value; //sub rx1
+            console.radio.GetDSPRX(1, 0).RXFMLowCut = (double)udLowCutRX.Value; //rx2
         }
 
         private void udHighCutRX_ValueChanged(object sender, EventArgs e)
@@ -28699,6 +28714,30 @@ namespace Thetis
             console.radio.GetDSPRX(0, 0).RXFMHighCut = (double)udHighCutRX.Value;
             console.radio.GetDSPRX(0, 1).RXFMHighCut = (double)udHighCutRX.Value;
             console.radio.GetDSPRX(1, 0).RXFMHighCut = (double)udHighCutRX.Value;
+        }
+
+        private void udLowCutTX_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.radio.GetDSPTX(0).TXFMLowCut = (double)udLowCutTX.Value;
+        }
+
+        private void udHighCutTX_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.radio.GetDSPTX(0).TXFMHighCut = (double)udHighCutTX.Value;
+        }
+
+        private void chkSwapIQVac1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            Audio.VAC1SwapIQ = chkSwapIQVac1.Checked ? 1 : 0;
+        }
+
+        private void chkSwapIQVac2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            Audio.VAC2SwapIQ = chkSwapIQVac2.Checked ? 1 : 0;
         }
         //private bool renameSkinForDeletion(string sFullPath)
         //{

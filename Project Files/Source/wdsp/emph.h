@@ -68,6 +68,8 @@ __declspec (dllexport) void SetTXAFMEmphMP (int channel, int mp);
 
 __declspec (dllexport) void SetTXAFMEmphNC (int channel, int nc);
 
+__declspec (dllexport) void SetTXAFMPreEmphFreqs(int channel, double low, double high);
+
 #endif
 
 /********************************************************************************************************
