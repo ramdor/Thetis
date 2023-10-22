@@ -22,7 +22,7 @@ namespace Thetis
             get { return _skinName; }
             set
             {
-                _skinName = value.Left(22);
+                _skinName = value.Left(30);
             }
         }
         public string SkinUrl { get; set; }

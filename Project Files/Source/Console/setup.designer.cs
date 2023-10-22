@@ -50447,22 +50447,21 @@
             // 
             // prgSkinDownload
             // 
-            this.prgSkinDownload.Location = new System.Drawing.Point(602, 374);
+            this.prgSkinDownload.Location = new System.Drawing.Point(621, 374);
             this.prgSkinDownload.Name = "prgSkinDownload";
-            this.prgSkinDownload.Size = new System.Drawing.Size(94, 14);
+            this.prgSkinDownload.Size = new System.Drawing.Size(75, 14);
             this.prgSkinDownload.TabIndex = 6;
             this.prgSkinDownload.Value = 50;
             // 
             // lstAvailableSkins
             // 
-            this.lstAvailableSkins.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstAvailableSkins.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.lstAvailableSkins.FormattingEnabled = true;
-            this.lstAvailableSkins.ItemHeight = 11;
             this.lstAvailableSkins.Items.AddRange(new object[] {
-            "01234567890123456789012"});
-            this.lstAvailableSkins.Location = new System.Drawing.Point(4, 137);
+            "01234567890123456789012345"});
+            this.lstAvailableSkins.Location = new System.Drawing.Point(4, 132);
             this.lstAvailableSkins.Name = "lstAvailableSkins";
-            this.lstAvailableSkins.Size = new System.Drawing.Size(170, 246);
+            this.lstAvailableSkins.Size = new System.Drawing.Size(189, 251);
             this.lstAvailableSkins.TabIndex = 10;
             this.lstAvailableSkins.SelectedIndexChanged += new System.EventHandler(this.lstAvailableSkins_SelectedIndexChanged);
             // 
@@ -50479,7 +50478,7 @@
             // picSkinThumbnail
             // 
             this.picSkinThumbnail.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.picSkinThumbnail.Location = new System.Drawing.Point(180, 154);
+            this.picSkinThumbnail.Location = new System.Drawing.Point(199, 154);
             this.picSkinThumbnail.Name = "picSkinThumbnail";
             this.picSkinThumbnail.Size = new System.Drawing.Size(416, 234);
             this.picSkinThumbnail.TabIndex = 7;
@@ -50498,10 +50497,10 @@
             // btnDownloadSkin
             // 
             this.btnDownloadSkin.Image = null;
-            this.btnDownloadSkin.Location = new System.Drawing.Point(602, 154);
+            this.btnDownloadSkin.Location = new System.Drawing.Point(621, 154);
             this.btnDownloadSkin.Name = "btnDownloadSkin";
             this.btnDownloadSkin.Selectable = true;
-            this.btnDownloadSkin.Size = new System.Drawing.Size(94, 214);
+            this.btnDownloadSkin.Size = new System.Drawing.Size(75, 214);
             this.btnDownloadSkin.TabIndex = 1;
             this.btnDownloadSkin.Text = "Download";
             this.btnDownloadSkin.UseVisualStyleBackColor = true;

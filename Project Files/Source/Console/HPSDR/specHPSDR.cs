@@ -742,6 +742,9 @@ namespace Thetis
         public static extern void SnapSpectrum(int disp, int ss, int LO, double* snap_buff);
 
         [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SnapSpectrumTimeout(int disp, int ss, int LO, double* snap_buff, uint timeout, ref int flag);
+
+        [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetDisplayDetectorMode (int disp, int pixout, int mode);
 
         [DllImport("WDSP.dll", CallingConvention = CallingConvention.Cdecl)]

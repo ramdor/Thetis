@@ -43427,10 +43427,13 @@ namespace Thetis
                     return -1; // bail out - not buffer 
                 }
 
+                int flag = 0;
                 _spectrum_mutex.WaitOne();
                 fixed (double* ptr = &(spectrum_data[0, 0]))
-                    SpecHPSDRDLL.SnapSpectrum(0, ss, 0, ptr);        //depends upon receiver configuration, want center sub-span from disp 0, I think
+                    //[2.10.2.3]MW0LGE timeout version used, with 10 times frame rate to give some additional time
+                    SpecHPSDRDLL.SnapSpectrumTimeout(0, ss, 0, ptr, (uint)((1000 / (float)_display_fps) * 10), ref flag);
                 _spectrum_mutex.ReleaseMutex();
+                if (flag == 0) return -1;
 
                 double mag_sqr;
 

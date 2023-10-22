@@ -1022,7 +1022,7 @@ void SetAnalyzer (	int disp,			// display identifier
 				 )
 {
 	DP a = pdisp[disp];
-	int i, j, k;
+	int i, j;
 
 	EnterCriticalSection(&a->SetAnalyzerSection);
 	a->end_dispatcher = 1;
@@ -1194,7 +1194,6 @@ void XCreateAnalyzer(	int disp,
 			a->Cfft_in[i][j]  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * a->max_size);
 			a->fft_out[i][j]  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * a->max_size);
 		}
-	a->pre_av_sum = (double*) malloc0 (sizeof(double) * a->max_size * a->max_stitch);
 	a->pre_av_out = (double*) malloc0 (sizeof(double) * a->max_size * a->max_stitch);
 	for (i = 0; i < dMAX_PIXOUTS; i++)
 	{
@@ -1280,7 +1279,6 @@ void DestroyAnalyzer(int disp)
 		_aligned_free (a->av_sum[i]);
 	}
 	
-	_aligned_free (a->pre_av_sum);
 	_aligned_free (a->pre_av_out);
 	for (i = 0; i < a->max_stitch; i++)
 		for (j = 0; j < a->max_num_fft; j++)
@@ -1349,6 +1347,27 @@ void SnapSpectrum(	int disp,
 	a->snap_buff[ss][LO] = snap_buff;
 	InterlockedBitTestAndSet(&(a->snap[ss][LO]), 0);
 	WaitForSingleObject(a->hSnapEvent[ss][LO], INFINITE);
+}
+
+PORT
+void SnapSpectrumTimeout(int disp,
+	int ss,
+	int LO,
+	double* snap_buff,
+	DWORD timeout,
+	int* flag)
+{
+	DP a = pdisp[disp];
+	a->snap_buff[ss][LO] = snap_buff;
+	ResetEvent(a->hSnapEvent[ss][LO]);
+	InterlockedBitTestAndSet(&(a->snap[ss][LO]), 0);
+	if (!WaitForSingleObject(a->hSnapEvent[ss][LO], timeout))
+		*flag = 1;
+	else
+	{
+		InterlockedBitTestAndReset(&(a->snap[ss][LO]), 0);
+		*flag = 0;
+	}
 }
 
 int calcompare (const void * a, const void * b)
