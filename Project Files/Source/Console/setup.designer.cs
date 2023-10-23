@@ -2508,6 +2508,7 @@
             this.lblCFCPEG0 = new System.Windows.Forms.LabelTS();
             this.tbCFCPEQGAIN = new System.Windows.Forms.TrackBarTS();
             this.grpPhRot = new System.Windows.Forms.GroupBoxTS();
+            this.chkPHROTReverse = new System.Windows.Forms.CheckBoxTS();
             this.lblPHROTStages = new System.Windows.Forms.LabelTS();
             this.udPHROTStages = new System.Windows.Forms.NumericUpDownTS();
             this.lblPHROTFreq = new System.Windows.Forms.LabelTS();
@@ -12340,6 +12341,7 @@
             // 
             // comboPin1TXActionHF
             // 
+            this.comboPin1TXActionHF.BackColor = System.Drawing.SystemColors.Window;
             this.comboPin1TXActionHF.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboPin1TXActionHF.FormattingEnabled = true;
             this.comboPin1TXActionHF.Items.AddRange(new object[] {
@@ -40634,17 +40636,31 @@
             // 
             // grpPhRot
             // 
+            this.grpPhRot.Controls.Add(this.chkPHROTReverse);
             this.grpPhRot.Controls.Add(this.lblPHROTStages);
             this.grpPhRot.Controls.Add(this.udPHROTStages);
             this.grpPhRot.Controls.Add(this.lblPHROTFreq);
             this.grpPhRot.Controls.Add(this.udPhRotFreq);
             this.grpPhRot.Controls.Add(this.chkPHROTEnable);
-            this.grpPhRot.Location = new System.Drawing.Point(518, 274);
+            this.grpPhRot.Location = new System.Drawing.Point(513, 264);
             this.grpPhRot.Name = "grpPhRot";
-            this.grpPhRot.Size = new System.Drawing.Size(124, 100);
+            this.grpPhRot.Size = new System.Drawing.Size(124, 121);
             this.grpPhRot.TabIndex = 170;
             this.grpPhRot.TabStop = false;
             this.grpPhRot.Text = "Phase Rotator";
+            // 
+            // chkPHROTReverse
+            // 
+            this.chkPHROTReverse.AutoSize = true;
+            this.chkPHROTReverse.Image = null;
+            this.chkPHROTReverse.Location = new System.Drawing.Point(7, 98);
+            this.chkPHROTReverse.Name = "chkPHROTReverse";
+            this.chkPHROTReverse.Size = new System.Drawing.Size(99, 17);
+            this.chkPHROTReverse.TabIndex = 157;
+            this.chkPHROTReverse.Text = "Reverse Phase";
+            this.toolTip1.SetToolTip(this.chkPHROTReverse, "Reverses the phase");
+            this.chkPHROTReverse.UseVisualStyleBackColor = true;
+            this.chkPHROTReverse.CheckedChanged += new System.EventHandler(this.chkPHROTReverse_CheckedChanged);
             // 
             // lblPHROTStages
             // 
@@ -41761,6 +41777,7 @@
             // 
             // udMicGainMax
             // 
+            this.udMicGainMax.BackColor = System.Drawing.SystemColors.Window;
             this.udMicGainMax.Increment = new decimal(new int[] {
             1,
             0,
@@ -60778,5 +60795,6 @@
         private NumericUpDownTS udLowCutTX;
         private CheckBoxTS chkSwapIQVac1;
         private CheckBoxTS chkSwapIQVac2;
+        private CheckBoxTS chkPHROTReverse;
     }
 }

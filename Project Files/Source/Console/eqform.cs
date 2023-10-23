@@ -1990,6 +1990,13 @@ namespace Thetis
             setDBtip(sender);
         }
 
-		#endregion		
-	}
+        public ToolTip ToolTip
+        {
+            get
+            {
+                return toolTip1;
+            }
+        }
+        #endregion
+    }
 }

@@ -11039,8 +11039,13 @@ namespace Thetis
 
                 int nFade = 255 - fade(mi, m);
 
+                float wi = w * 0.01f;
+                float hi = h * 0.01f;
+                wi = Math.Max(2f, wi);
+                hi = Math.Max(2f, hi);
+
                 SharpDX.RectangleF rectFC = new SharpDX.RectangleF(x, y, w, h);
-                rectFC.Inflate(2f, 2f); // increase size slightly as indictator lines stroke width of 3, and they will be outside bounds when on edge by 1 pixel
+                rectFC.Inflate(wi, hi); // increase size slightly as indictator lines stroke width of 3 will be outside bounds
                 _renderTarget.FillRectangle(rectFC, getDXBrushForColour(this.BackgroundColour, nFade));
                 //_renderTarget.DrawRectangle(rectFC, getDXBrushForColour(System.Drawing.Color.YellowGreen, nFade));
             }

@@ -47,7 +47,7 @@ namespace Thetis
 	// extend contains to be able to ignore case etc MW0LGE
 	public static class StringExtensions
 	{
-		public static bool Contains(this string source, string toCheck, StringComparison comp)
+        public static bool Contains(this string source, string toCheck, StringComparison comp)
 		{
             if (source == null)
             {
@@ -94,6 +94,11 @@ namespace Thetis
     {
         public static string GetFullName(this Control control)
         {
+            if (control == null)
+            {
+                throw new ArgumentNullException(nameof(control));
+            }
+
             if (control.Parent == null) return control.Name;
             return control.Parent.GetFullName() + "." + control.Name;
         }
@@ -115,88 +120,84 @@ namespace Thetis
 
 		public static MessageBoxOptions MB_TOPMOST = (MessageBoxOptions)0x00040000L; //MW0LGE_21g TOPMOST for MessageBox
 
-        #region HiglightControls
-        private static Dictionary<string, Color> m_backgroundColours = new Dictionary<string, Color>();
-		private static Dictionary<string, Color> m_foregoundColours = new Dictionary<string, Color>();
-		private static Dictionary<string, FlatStyle> m_flatStyle = new Dictionary<string, FlatStyle>();
-		private static Dictionary<string, Image> m_backImage = new Dictionary<string, Image>();
-		public static void HightlightControl(Control c, bool bHighlight)
+		#region HiglightControls
+
+		private class HighlightData
+		{
+			public Color BackgroundColour { get; set; }
+			public Color ForegroundColour { get; set; }
+			public FlatStyle FlatStyle { get; set; }
+			public Image BackgroundImage { get; set; }
+		}
+
+		private static Dictionary<string, HighlightData> _hightlightData = new Dictionary<string, HighlightData>();
+
+		public static void HightlightControl(Control c, bool bHighlight, bool bFromFinder = false)
 		{
 			string sKey = c.GetFullName(); //[2.10.1.0] added because control with same name can be in different forms/containers
 
-			if (!m_backgroundColours.ContainsKey(sKey))
+			HighlightData hd;
+			bool bAdd = false;
+
+            if (!_hightlightData.ContainsKey(sKey))
 			{
-				m_backgroundColours.Add(sKey, c.BackColor);
-			}
-			if (!m_foregoundColours.ContainsKey(sKey))
-			{
-				m_foregoundColours.Add(sKey, c.ForeColor);
-			}
-			if (!m_backImage.ContainsKey(sKey))
-			{
-				m_backImage.Add(sKey, c.BackgroundImage);
+				hd = new HighlightData();
+				hd.BackgroundColour = c.BackColor;
+				hd.ForegroundColour = c.ForeColor;
+				hd.BackgroundImage = c.BackgroundImage;
+				hd.FlatStyle = FlatStyle.Flat;
+
+				_hightlightData.Add(sKey, hd);
+				bAdd = true;
 			}
 
-			if (c.GetType() == typeof(NumericUpDownTS))
-			{
-				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
-                c.ForeColor = bHighlight ? Color.Black : m_foregoundColours[sKey];
-            }
-			else if (c.GetType() == typeof(CheckBoxTS))
+			hd = _hightlightData[sKey];
+
+            c.BackColor = bHighlight ? Color.Yellow : hd.BackgroundColour;
+            c.ForeColor = bHighlight ? Color.Black : hd.ForegroundColour;
+            c.BackgroundImage = bHighlight ? null : hd.BackgroundImage;
+
+			//if (c.GetType() == typeof(NumericUpDownTS))
+			//{
+			//}
+			//else
+			if (c.GetType() == typeof(CheckBoxTS))
 			{
 				CheckBoxTS cb = c as CheckBoxTS;
-				if (!m_flatStyle.ContainsKey(sKey)) m_flatStyle.Add(sKey, cb.FlatStyle);
-				cb.FlatStyle = bHighlight ? FlatStyle.Flat : m_flatStyle[sKey];
-				cb.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
-				cb.ForeColor = bHighlight ? Color.Red : m_foregoundColours[sKey];
-				cb.BackgroundImage = bHighlight ? null : m_backImage[sKey];
+				if (bAdd) hd.FlatStyle = cb.FlatStyle;
+				cb.FlatStyle = bHighlight ? FlatStyle.Flat : hd.FlatStyle;
 			}
-			else if (c.GetType() == typeof(TrackBarTS))
-			{
-				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
-				c.ForeColor = bHighlight ? Color.Yellow : m_foregoundColours[sKey];
-				c.BackgroundImage = bHighlight ? null : m_backImage[sKey];
-			}
-			else if (c.GetType() == typeof(PrettyTrackBar))
-			{
-				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
-				c.ForeColor = bHighlight ? Color.Yellow : m_foregoundColours[sKey];
-				c.BackgroundImage = bHighlight ? null : m_backImage[sKey];
-			}
+			//else if (c.GetType() == typeof(TrackBarTS))
+			//{
+			//}
+			//else if (c.GetType() == typeof(PrettyTrackBar))
+			//{
+			//}
 			else if (c.GetType() == typeof(ComboBoxTS))
 			{
 				ComboBoxTS cb = c as ComboBoxTS;
-				if (!m_flatStyle.ContainsKey(sKey)) m_flatStyle.Add(sKey, cb.FlatStyle);
-				cb.FlatStyle = bHighlight ? FlatStyle.Flat : m_flatStyle[sKey];
-				cb.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
-				cb.ForeColor = bHighlight ? Color.Red : m_foregoundColours[sKey];
-			}
+                if (bAdd) hd.FlatStyle = cb.FlatStyle;
+                cb.FlatStyle = bHighlight ? FlatStyle.Flat : hd.FlatStyle;
+            }
 			else if (c.GetType() == typeof(RadioButtonTS))
 			{
 				RadioButtonTS cb = c as RadioButtonTS;
-				if (!m_flatStyle.ContainsKey(sKey)) m_flatStyle.Add(sKey, cb.FlatStyle);
-				cb.FlatStyle = bHighlight ? FlatStyle.Flat : m_flatStyle[sKey];
-				cb.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
-				cb.ForeColor = bHighlight ? Color.Red : m_foregoundColours[sKey];
-				cb.BackgroundImage = bHighlight ? null : m_backImage[sKey];
-			}
-			else if (c.GetType() == typeof(TextBoxTS))
-			{
-				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
-                c.ForeColor = bHighlight ? Color.Black : m_foregoundColours[sKey];
+                if (bAdd) hd.FlatStyle = cb.FlatStyle;
+                cb.FlatStyle = bHighlight ? FlatStyle.Flat : hd.FlatStyle;
             }
-			else if (c.GetType() == typeof(LabelTS))
-			{
-				c.BackColor = bHighlight ? Color.Yellow : m_backgroundColours[sKey];
-                c.ForeColor = bHighlight ? Color.Black : m_foregoundColours[sKey];
-            }
+			//else if (c.GetType() == typeof(TextBoxTS))
+			//{
+			//}
+			//else if (c.GetType() == typeof(LabelTS))
+			//{
+			//}
 
 			if (!bHighlight)
 			{
-				if (!m_backgroundColours.ContainsKey(sKey)) m_backgroundColours.Remove(sKey);
-				if (!m_foregoundColours.ContainsKey(sKey)) m_foregoundColours.Remove(sKey);
-				if (!m_flatStyle.ContainsKey(sKey)) m_flatStyle.Remove(sKey);
-				if (!m_backImage.ContainsKey(sKey)) m_backImage.Remove(sKey);
+				if(_hightlightData.ContainsKey(sKey))
+				{
+					_hightlightData.Remove(sKey);
+				}
 			}
 
 			c.Invalidate();

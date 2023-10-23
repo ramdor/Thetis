@@ -2410,6 +2410,7 @@ namespace Thetis
             chkPHROTEnable_CheckedChanged(this, e);
             udPhRotFreq_ValueChanged(this, e);
             udPHROTStages_ValueChanged(this, e);
+            chkPHROTReverse_CheckedChanged(this, e);
 
             // TXEQ
             console.EQForm.setTXEQProfile(this, e);
@@ -2711,6 +2712,7 @@ namespace Thetis
                 if (isTXProfileSettingDifferent<bool>(dr, "CFCEnabled", chkCFCEnable.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "CFCPostEqEnabled", chkCFCPeqEnable.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "CFCPhaseRotatorEnabled", chkPHROTEnable.Checked, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<bool>(dr, "CFCPhaseReverseEnabled", chkPHROTReverse.Checked, out sReportOut)) sReport += sReportOut;                
                 if (isTXProfileSettingDifferent<int>(dr, "CFCPhaseRotatorFreq", (int)udPhRotFreq.Value, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<int>(dr, "CFCPhaseRotatorStages", (int)udPHROTStages.Value, out sReportOut)) sReport += sReportOut;
                 int[] cfceq = CFCCOMPEQ;
@@ -2895,6 +2897,7 @@ namespace Thetis
                 if (DB.ConvertFromDBVal<bool>(dr["CFCEnabled"]) != chkCFCEnable.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["CFCPostEqEnabled"]) != chkCFCPeqEnable.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["CFCPhaseRotatorEnabled"]) != chkPHROTEnable.Checked) return true;
+                if (DB.ConvertFromDBVal<bool>(dr["CFCPhaseReverseEnabled"]) != chkPHROTReverse.Checked) return true;                
                 if (DB.ConvertFromDBVal<int>(dr["CFCPhaseRotatorFreq"]) != (int)udPhRotFreq.Value) return true;
                 if (DB.ConvertFromDBVal<int>(dr["CFCPhaseRotatorStages"]) != (int)udPHROTStages.Value) return true;
                 int[] cfceq = CFCCOMPEQ;
@@ -3073,6 +3076,7 @@ namespace Thetis
             Common.HightlightControl(chkPHROTEnable, bHighlight);
             Common.HightlightControl(udPhRotFreq, bHighlight);
             Common.HightlightControl(udPHROTStages, bHighlight);
+            Common.HightlightControl(chkPHROTReverse, bHighlight);
 
             Common.HightlightControl(tbCFCPRECOMP, bHighlight);
             Common.HightlightControl(tbCFC0, bHighlight);
@@ -3258,6 +3262,7 @@ namespace Thetis
             dr["CFCEnabled"] = chkCFCEnable.Checked;
             dr["CFCPostEqEnabled"] = chkCFCPeqEnable.Checked;
             dr["CFCPhaseRotatorEnabled"] = chkPHROTEnable.Checked;
+            dr["CFCPhaseReverseEnabled"] = chkPHROTReverse.Checked;
             dr["CFCPhaseRotatorFreq"] = (int)udPhRotFreq.Value;
             dr["CFCPhaseRotatorStages"] = (int)udPHROTStages.Value;
             int[] cfceq = CFCCOMPEQ;
@@ -10584,6 +10589,7 @@ namespace Thetis
             chkCFCEnable.Checked = (bool)dr["CFCEnabled"];
             chkCFCPeqEnable.Checked = (bool)dr["CFCPostEqEnabled"];
             chkPHROTEnable.Checked = (bool)dr["CFCPhaseRotatorEnabled"];
+            chkPHROTReverse.Checked = (bool)dr["CFCPhaseReverseEnabled"];
 
             udPhRotFreq.Value = Math.Min(Math.Max((int)dr["CFCPhaseRotatorFreq"], udPhRotFreq.Minimum), udPhRotFreq.Maximum);
             udPHROTStages.Value = Math.Min(Math.Max((int)dr["CFCPhaseRotatorStages"], udPHROTStages.Minimum), udPHROTStages.Maximum);
@@ -10707,142 +10713,7 @@ namespace Thetis
             else
             {
                 udpateTXProfileInDB(dr); //MW0LGE_21a remove duplication
-            }
-
-            //dr["FilterLow"] = (int)udTXFilterLow.Value;
-            //dr["FilterHigh"] = (int)udTXFilterHigh.Value;
-            //dr["TXEQEnabled"] = console.EQForm.TXEQEnabled;
-            //dr["TXEQNumBands"] = console.EQForm.NumBands;
-            //int[] eq = console.EQForm.TXEQ;
-            //dr["TXEQPreamp"] = eq[0];
-            //for (int i = 1; i < 11; i++)
-            //    dr["TXEQ" + i.ToString()] = eq[i];
-            //for (int i = 11; i < 21; i++)
-            //    dr["TxEqFreq" + (i - 10).ToString()] = eq[i];
-
-            //dr["DXOn"] = console.DX;
-            //dr["DXLevel"] = console.DXLevel;
-            //dr["CompanderOn"] = console.CPDR;
-            //dr["CompanderLevel"] = console.CPDRLevel;
-            //dr["MicGain"] = console.Mic;
-            //dr["FMMicGain"] = console.FMMic;
-
-            //dr["Lev_On"] = chkDSPLevelerEnabled.Checked;
-            //dr["Lev_Slope"] = (int)udDSPLevelerSlope.Value;
-            //dr["Lev_MaxGain"] = (int)udDSPLevelerThreshold.Value;
-            //dr["Lev_Attack"] = (int)udDSPLevelerAttack.Value;
-            //dr["Lev_Decay"] = (int)udDSPLevelerDecay.Value;
-            //dr["Lev_Hang"] = (int)udDSPLevelerHangTime.Value;
-            //dr["Lev_HangThreshold"] = tbDSPLevelerHangThreshold.Value;
-
-            //dr["ALC_Slope"] = (int)udDSPALCSlope.Value;
-            //dr["ALC_MaximumGain"] = (int)udDSPALCMaximumGain.Value;
-            //dr["ALC_Attack"] = (int)udDSPALCAttack.Value;
-            //dr["ALC_Decay"] = (int)udDSPALCDecay.Value;
-            //dr["ALC_Hang"] = (int)udDSPALCHangTime.Value;
-            //dr["ALC_HangThreshold"] = tbDSPALCHangThreshold.Value;
-
-            //dr["Power"] = console.PWR;
-
-            //dr["VOX_On"] = chkVOXEnable.Checked;
-            //dr["Dexp_On"] = chkDEXPEnable.Checked;
-            //dr["Dexp_Threshold"] = (int)udDEXPThreshold.Value;
-            //dr["Dexp_Attack"] = (int)udDEXPAttack.Value;
-            //dr["VOX_HangTime"] = (int)udDEXPHold.Value;
-            //dr["Dexp_Release"] = (int)udDEXPRelease.Value;
-            //dr["Dexp_Attenuate"] = udDEXPExpansionRatio.Value;
-            //dr["Dexp_Hysterisis"] = udDEXPHysteresisRatio.Value;
-            //dr["Dexp_Tau"] = (int)udDEXPDetTau.Value;
-            //dr["Dexp_SCF_On"] = chkSCFEnable.Checked;
-            //dr["Dexp_SCF_Low"] = (int)udSCFLowCut.Value;
-            //dr["Dexp_SCF_High"] = (int)udSCFHighCut.Value;
-            //dr["Dexp_LookAhead_On"] = chkDEXPLookAheadEnable.Checked;
-            //dr["Dexp_LookAhead"] = (int)udDEXPLookAhead.Value;
-
-            //dr["Tune_Power"] = (int)udTXTunePower.Value;
-            //dr["Tune_Meter_Type"] = (string)comboTXTUNMeter.Text;
-
-            //// dr["TX_Limit_Slew"] = (bool)chkTXLimitSlew.Checked;
-
-            //dr["TX_AF_Level"] = console.TXAF;
-
-            //dr["AM_Carrier_Level"] = (int)udTXAMCarrierLevel.Value;
-
-            //dr["Show_TX_Filter"] = (bool)console.ShowTXFilter;
-
-            //dr["VAC1_On"] = (bool)chkAudioEnableVAC.Checked;
-            //dr["VAC1_Auto_On"] = (bool)chkAudioVACAutoEnable.Checked;
-            //dr["VAC1_RX_GAIN"] = (int)udAudioVACGainRX.Value;
-            //dr["VAC1_TX_GAIN"] = (int)udAudioVACGainTX.Value;
-            //dr["VAC1_Stereo_On"] = (bool)chkAudio2Stereo.Checked;
-            //dr["VAC1_Sample_Rate"] = (string)comboAudioSampleRate2.Text;
-            //dr["VAC1_Buffer_Size"] = (string)comboAudioBuffer2.Text;
-            //dr["VAC1_IQ_Output"] = (bool)chkAudioIQtoVAC.Checked;
-            //dr["VAC1_IQ_Correct"] = (bool)chkAudioCorrectIQ.Checked;
-            //dr["VAC1_PTT_OverRide"] = (bool)chkVACAllowBypass.Checked;
-            //dr["VAC1_Combine_Input_Channels"] = (bool)chkVACCombine.Checked;
-            //dr["VAC1_Latency_On"] = (bool)chkAudioLatencyManual2.Checked;
-            //dr["VAC1_Latency_Duration"] = (int)udAudioLatency2.Value;
-
-            //dr["VAC2_On"] = (bool)chkVAC2Enable.Checked;
-            //dr["VAC2_Auto_On"] = (bool)chkVAC2AutoEnable.Checked;
-            //dr["VAC2_RX_GAIN"] = (int)udVAC2GainRX.Value;
-            //dr["VAC2_TX_GAIN"] = (int)udVAC2GainTX.Value;
-            //dr["VAC2_Stereo_On"] = (bool)chkAudioStereo3.Checked;
-            //dr["VAC2_Sample_Rate"] = (string)comboAudioSampleRate3.Text;
-            //dr["VAC2_Buffer_Size"] = (string)comboAudioBuffer3.Text;
-            //dr["VAC2_IQ_Output"] = (bool)chkVAC2DirectIQ.Checked;
-            //dr["VAC2_IQ_Correct"] = (bool)chkVAC2DirectIQCal.Checked;
-            //dr["VAC2_Combine_Input_Channels"] = (bool)chkVAC2Combine.Checked;
-            //dr["VAC2_Latency_On"] = (bool)chkVAC2LatencyManual.Checked;
-            //dr["VAC2_Latency_Duration"] = (int)udVAC2Latency.Value;
-
-            //dr["Phone_RX_DSP_Buffer"] = (string)comboDSPPhoneRXBuf.Text;
-            //dr["Phone_TX_DSP_Buffer"] = (string)comboDSPPhoneTXBuf.Text;
-            //dr["FM_RX_DSP_Buffer"] = (string)comboDSPFMRXBuf.Text;
-            //dr["FM_TX_DSP_Buffer"] = (string)comboDSPFMTXBuf.Text;
-            //dr["Digi_RX_DSP_Buffer"] = (string)comboDSPDigRXBuf.Text;
-            //dr["Digi_TX_DSP_Buffer"] = (string)comboDSPDigTXBuf.Text;
-            //dr["CW_RX_DSP_Buffer"] = (string)comboDSPCWRXBuf.Text;
-
-            //dr["Phone_RX_DSP_Filter_Size"] = (string)comboDSPPhoneRXFiltSize.Text;
-            //dr["Phone_TX_DSP_Filter_Size"] = (string)comboDSPPhoneTXFiltSize.Text;
-            //dr["FM_RX_DSP_Filter_Size"] = (string)comboDSPFMRXFiltSize.Text;
-            //dr["FM_TX_DSP_Filter_Size"] = (string)comboDSPFMTXFiltSize.Text;
-            //dr["Digi_RX_DSP_Filter_Size"] = (string)comboDSPDigRXFiltSize.Text;
-            //dr["Digi_TX_DSP_Filter_Size"] = (string)comboDSPDigTXFiltSize.Text;
-            //dr["CW_RX_DSP_Filter_Size"] = (string)comboDSPCWRXFiltSize.Text;
-
-            //dr["Phone_RX_DSP_Filter_Type"] = (string)comboDSPPhoneRXFiltType.Text;
-            //dr["Phone_TX_DSP_Filter_Type"] = (string)comboDSPPhoneTXFiltType.Text;
-            //dr["FM_RX_DSP_Filter_Type"] = (string)comboDSPFMRXFiltType.Text;
-            //dr["FM_TX_DSP_Filter_Type"] = (string)comboDSPFMTXFiltType.Text;
-            //dr["Digi_RX_DSP_Filter_Type"] = (string)comboDSPDigRXFiltType.Text;
-            //dr["Digi_TX_DSP_Filter_Type"] = (string)comboDSPDigTXFiltType.Text;
-            //dr["CW_RX_DSP_Filter_Type"] = (string)comboDSPCWRXFiltType.Text;
-
-            //dr["Mic_Input_On"] = (bool)radMicIn.Checked;
-            //dr["Mic_Input_Boost"] = (bool)chk20dbMicBoost.Checked;
-            //dr["Line_Input_On"] = (bool)radLineIn.Checked;
-            //dr["Line_Input_Level"] = udLineInBoost.Value;
-            //dr["CESSB_On"] = chkDSPCESSB.Checked;
-            //dr["Pure_Signal_Enabled"] = console.PureSignalEnabled;
-
-            ////CFC
-            //dr["CFCEnabled"] = chkCFCEnable.Checked;
-            //dr["CFCPostEqEnabled"] = chkCFCPeqEnable.Checked;
-            //dr["CFCPhaseRotatorEnabled"] = chkPHROTEnable.Checked;
-            //dr["CFCPhaseRotatorFreq"] = (int)udPhRotFreq.Value;
-            //dr["CFCPhaseRotatorStages"] = (int)udPHROTStages.Value;
-            //int[] cfceq = CFCCOMPEQ;
-            //dr["CFCPreComp"] = cfceq[0];
-            //for (int i = 1; i < 11; i++)
-            //    dr["CFCPreComp" + (i - 1).ToString()] = cfceq[i];
-            //dr["CFCPostEqGain"] = cfceq[11];
-            //for (int i = 12; i < 22; i++)
-            //    dr["CFCPostEqGain" + (i - 12).ToString()] = cfceq[i];
-            //for (int i = 22; i < 32; i++)
-            //    dr["CFCEqFreq" + (i - 22).ToString()] = cfceq[i];
+            }            
 
             if (!comboTXProfileName.Items.Contains(name))
             {
@@ -28739,6 +28610,22 @@ namespace Thetis
             if (initializing) return;
             Audio.VAC2SwapIQ = chkSwapIQVac2.Checked ? 1 : 0;
         }
+
+        public ToolTip ToolTip
+        {
+            get
+            {
+                return toolTip1;
+            }
+        }
+
+        private void chkPHROTReverse_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            int run = chkPHROTEnable.Checked ? 1 : 0;
+            WDSP.SetTXAPHROTRun(WDSP.id(1, 0), run);
+        }
+
         //private bool renameSkinForDeletion(string sFullPath)
         //{
         //    if (_skinPath == "" || !Directory.Exists(sFullPath)) return false;

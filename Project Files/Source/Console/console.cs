@@ -521,6 +521,7 @@ namespace Thetis
         private TCPIPtciServer m_tcpTCIServer;
         private bool m_bDisplayLoopRunning = false;
         private frmNotchPopup m_frmNotchPopup;
+        private frmFinder _frmFinder;
         private frmSeqLog m_frmSeqLog;
         private Thread multimeter2_thread_rx1;
         private Thread multimeter2_thread_rx2;
@@ -1117,6 +1118,14 @@ namespace Thetis
                     SetupForm.StartupTCPIPcatServer();
                 }
 
+                //-- setup finder search data
+                _frmFinder.GatherSearchData(this, toolTip1);
+                _frmFinder.GatherSearchData(SetupForm, SetupForm.ToolTip);
+                _frmFinder.GatherSearchData(EQForm, EQForm.ToolTip);
+                _frmFinder.GatherSearchData(m_frmBandStack2, m_frmBandStack2.ToolTip);
+                _frmFinder.GatherSearchData(psform, null);
+                //
+
                 //resize N1MM //MW0LGE_21k9c
                 N1MM.Resize(1);
                 if (RX2Enabled) N1MM.Resize(2);
@@ -1576,6 +1585,7 @@ namespace Thetis
         {
             m_frmNotchPopup = new frmNotchPopup();
             m_frmSeqLog = new frmSeqLog();
+            _frmFinder = new frmFinder();
 
             psform = new PSForm(this);
 
@@ -52416,13 +52426,21 @@ namespace Thetis
             {
                 if (m_imgBackgroundCopy != null)
                 {
-                    Image c = m_imgBackgroundCopy.Clone() as Image;
-                    Display.SetDX2BackgoundImage(c);
-                    c.Dispose();
+                    try
+                    {
+                        Image c = m_imgBackgroundCopy.Clone() as Image;
+                        Display.SetDX2BackgoundImage(c);
+                        c.Dispose();
+                    }
+                    catch
+                    {
+                        Display.SetDX2BackgoundImage(null);
+                        m_imgBackgroundCopy = null;
+                    }
                 }
                 else
                 {
-                    Display.SetDX2BackgoundImage((Image)null);
+                    Display.SetDX2BackgoundImage(null);
                 }
             }
         }
@@ -56238,10 +56256,14 @@ namespace Thetis
             return ++n;
         }
 
-        private void buttonTS1_Click(object sender, EventArgs e)
+        private void finderMenuItem_Click(object sender, EventArgs e)
         {
-            
-        }   
+            if (_frmFinder == null) return; // InitContonsole creates this
+
+            //_frmFinder.Owner = this;
+            _frmFinder.TopMost = true;
+            _frmFinder.Show();
+        }
     }
 
     public class DigiMode

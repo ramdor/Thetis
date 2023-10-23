@@ -371,6 +371,14 @@ namespace Thetis
         {
             ShowInSpectrumHandlers?.Invoke(chkShowInSpectrum.Checked);
         }
+        public ToolTip ToolTip
+        {
+            get
+            {
+                return toolTip1;
+            }
+        }
+
     }
     #region BandStackListBox
     //based on

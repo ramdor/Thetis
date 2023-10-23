@@ -9593,6 +9593,12 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="BPFToolStripMenuItem.Text" xml:space="preserve">
     <value>BPF</value>
   </data>
+  <data name="finderMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>52, 20</value>
+  </data>
+  <data name="finderMenuItem.Text" xml:space="preserve">
+    <value>Finder</value>
+  </data>
   <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
@@ -18369,6 +18375,12 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>BPF2ToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;BPF2ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;finderMenuItem.Name" xml:space="preserve">
+    <value>finderMenuItem</value>
+  </data>
+  <data name="&gt;&gt;finderMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripDropDownButton_ScreenSize.Name" xml:space="preserve">
