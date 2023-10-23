@@ -21,15 +21,21 @@ namespace Thetis
 
         private Dictionary<string, SearchData> _searchData;
         private object _objLocker;
+        private object _objWTLocker;
         private Dictionary<string, Thread> _workerThreads;
         private bool _fullDetails;
+        private StringFormat _stringFormat;
 
         public frmFinder()
         {
             _objLocker = new object();
+            _objWTLocker = new object();
             _searchData = new Dictionary<string, SearchData>();
             _workerThreads = new Dictionary<string, Thread>();
             _fullDetails = false;
+
+            _stringFormat = new StringFormat(StringFormat.GenericTypographic);
+            _stringFormat.FormatFlags = StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
 
             InitializeComponent();
         }
@@ -47,7 +53,10 @@ namespace Thetis
                 IsBackground = true,
             };
 
-            _workerThreads.Add(frm.Name, worker);
+            lock (_objWTLocker)
+            {
+                _workerThreads.Add(frm.Name, worker);
+            }
 
             worker.Start();
         }
@@ -56,6 +65,11 @@ namespace Thetis
             lock (_objLocker)
             {
                 getControlList(frm, ref _searchData, tt);
+            }
+
+            lock (_objWTLocker)
+            {
+                _workerThreads.Remove(frm.Name);
             }
         }
         private void getControlList(Control c, ref Dictionary<string, SearchData> searchData, ToolTip tt)
@@ -195,50 +209,23 @@ namespace Thetis
 
             int yPos = e.Bounds.Y;
             List<Tuple<int, int>> lst;
-            StringFormat sf = new StringFormat(StringFormat.GenericTypographic);
-            sf.FormatFlags = StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
 
             if (_fullDetails)
             {
                 if (!string.IsNullOrEmpty(sd.Text))
                 {
-                    lst = findSubstringOccurrences(sd.Text.ToLower(), txtSearch.Text.ToLower());
-                    foreach (Tuple<int, int> t in lst)
-                    {
-                        float start = g.MeasureString(sd.Text.Substring(0, t.Item1), listBox.Font, int.MaxValue, sf).Width;
-                        float width = g.MeasureString(sd.Text.Substring(t.Item1, txtSearch.Text.Length), listBox.Font, int.MaxValue, sf).Width;
-                        Rectangle newRect = new Rectangle(e.Bounds.X + (int)start, yPos, (int)(width), 20);
-                        g.FillRectangle(new SolidBrush(Color.Yellow), newRect);
-                    }
-
-                    g.DrawString(sd.Text, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, sf);
+                    highlight(txtSearch.Text.ToLower(), sd.Text, listBox, e.Bounds.X, yPos, g);
+                    g.DrawString(sd.Text, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, _stringFormat);
                     yPos += 20;
                 }
                 if (!string.IsNullOrEmpty(sd.ToolTip))
                 {
-                    lst = findSubstringOccurrences(sd.ToolTip.ToLower(), txtSearch.Text.ToLower());
-                    foreach (Tuple<int, int> t in lst)
-                    {
-                        float start = g.MeasureString(sd.ToolTip.Substring(0, t.Item1), listBox.Font, int.MaxValue, sf).Width;
-                        float width = g.MeasureString(sd.ToolTip.Substring(t.Item1, txtSearch.Text.Length), listBox.Font, int.MaxValue, sf).Width;
-                        Rectangle newRect = new Rectangle(e.Bounds.X + (int)start, yPos, (int)(width), 20);
-                        g.FillRectangle(new SolidBrush(Color.Yellow), newRect);
-                    }
-
-                    g.DrawString(sd.ToolTip, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, sf);
+                    highlight(txtSearch.Text.ToLower(), sd.ToolTip, listBox, e.Bounds.X, yPos, g);
+                    g.DrawString(sd.ToolTip, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, _stringFormat);
                     yPos += 20;
                 }
-
-                lst = findSubstringOccurrences(sd.Name.ToLower(), txtSearch.Text.ToLower());
-                foreach (Tuple<int, int> t in lst)
-                {
-                    float start = g.MeasureString(sd.Name.Substring(0, t.Item1), listBox.Font, int.MaxValue, sf).Width;
-                    float width = g.MeasureString(sd.Name.Substring(t.Item1, txtSearch.Text.Length), listBox.Font, int.MaxValue, sf).Width;
-                    Rectangle newRect = new Rectangle(e.Bounds.X + (int)start, yPos, (int)(width), 20);
-                    g.FillRectangle(new SolidBrush(Color.Yellow), newRect);
-                }
-
-                g.DrawString(sd.Name, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, sf);
+                highlight(txtSearch.Text.ToLower(), sd.Name, listBox, e.Bounds.X, yPos, g);
+                g.DrawString(sd.Name, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, _stringFormat);
             }
             else
             {
@@ -258,21 +245,22 @@ namespace Thetis
                         sTextAddition = " [" + sd.Text + "]";
                     sText = sd.ShortName + sTextAddition;
                 }
-
-                lst = findSubstringOccurrences(sText.ToLower(), txtSearch.Text.ToLower());
-                foreach(Tuple<int, int> t in lst)
-                {
-                    float start = g.MeasureString(sText.Substring(0, t.Item1), listBox.Font, int.MaxValue, sf).Width;
-                    float width = g.MeasureString(sText.Substring(t.Item1, txtSearch.Text.Length), listBox.Font, int.MaxValue, sf).Width;
-                    Rectangle newRect = new Rectangle(e.Bounds.X + (int)start, e.Bounds.Y, (int)(width), 20);
-                    g.FillRectangle(new SolidBrush(Color.Yellow), newRect);
-                }
-
-                g.DrawString(sText, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, sf);
+                highlight(txtSearch.Text.ToLower(), sText, listBox, e.Bounds.X, e.Bounds.Y, g);
+                g.DrawString(sText, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, _stringFormat);
             }
-            sf.Dispose();
 
             //g.DrawRectangle(Pens.Gray, e.Bounds.X, e.Bounds.Y, e.Bounds.Width - 1, e.Bounds.Height - 1);
+        }
+        private void highlight(string sSearchText, string sLineText, ListBox listBox, int xPos, int yPos, Graphics g)
+        {
+            List<Tuple<int, int>> lst = findSubstringOccurrences(sLineText.ToLower(), txtSearch.Text.ToLower());
+            foreach (Tuple<int, int> t in lst)
+            {
+                float start = g.MeasureString(sLineText.Substring(0, t.Item1), listBox.Font, int.MaxValue, _stringFormat).Width;
+                float width = g.MeasureString(sLineText.Substring(t.Item1, txtSearch.Text.Length), listBox.Font, int.MaxValue, _stringFormat).Width;
+                Rectangle newRect = new Rectangle(xPos + (int)start, yPos, (int)(width), 20);
+                g.FillRectangle(new SolidBrush(Color.Yellow), newRect);
+            }
         }
         private List<Tuple<int, int>> findSubstringOccurrences(string inputString, string searchString)
         {
