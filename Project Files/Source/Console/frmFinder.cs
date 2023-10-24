@@ -284,6 +284,8 @@ namespace Thetis
         }
         private void highlight(string sSearchText, string sLineText, ListBox listBox, int xPos, int yPos, Graphics g)
         {
+            if (!_highlightReusults) return;
+
             List<Tuple<int, int>> lst = findSubstringOccurrences(sLineText.ToLower(), txtSearch.Text.ToLower());
             foreach (Tuple<int, int> t in lst)
             {
@@ -400,14 +402,19 @@ namespace Thetis
 
         private void chkFullDetails_CheckedChanged(object sender, EventArgs e)
         {
-            _fullDetails = chkFullDetails.Checked;
-
-            txtSearch_TextChanged(this, EventArgs.Empty);
+            lock (_objLocker)
+            {
+                SearchData sd = lstResults.SelectedItem as SearchData;
+                _fullDetails = chkFullDetails.Checked;
+                txtSearch_TextChanged(this, EventArgs.Empty);
+                if (sd != null)
+                    lstResults.SelectedItem = sd;
+            }
         }
 
         public void ReadXmlFinderFile(string directoryPath)
         {
-            string filePath = Path.Combine(directoryPath, "finder.xml");
+            string filePath = Path.Combine(directoryPath, "Finder.xml");
 
             _xmlData.Clear();
 
@@ -433,12 +440,66 @@ namespace Thetis
             catch { }
         }
 
+        public void WriteXmlFinderFile(string directoryPath)
+        {
+            string filePath = Path.Combine(directoryPath, "Finder.xml");
+
+            try
+            {
+                if (File.Exists(filePath)) return; // only do if not there
+
+                int tries = 0;
+                bool workersWorking = false;
+                lock (_objWTLocker)
+                {
+                    workersWorking = _workerThreads.Count > 0;
+                }
+                while (workersWorking)
+                {
+                    Thread.Sleep(50);
+                    lock (_objWTLocker)
+                    {
+                        workersWorking = _workerThreads.Count > 0;
+                    }
+                    tries++;
+                    if (tries > 100) return; // give up after 5 seconds total time. Could use .join but ...
+                }
+
+                XmlDocument xmlDoc = new XmlDocument();
+                XmlDeclaration xmlDeclaration = xmlDoc.CreateXmlDeclaration("1.0", "UTF-8", null);
+                xmlDoc.AppendChild(xmlDeclaration);
+
+                XmlElement rootElement = xmlDoc.CreateElement("root");
+                xmlDoc.AppendChild(rootElement);
+
+                lock (_objLocker)
+                {
+                    foreach (KeyValuePair<string, SearchData> kvp in _searchData)
+                    {
+                        XmlElement elementElement = xmlDoc.CreateElement("element");
+                        XmlElement controlElement = xmlDoc.CreateElement("control");
+                        controlElement.InnerText = kvp.Key;
+                        elementElement.AppendChild(controlElement);
+                        XmlElement textElement = xmlDoc.CreateElement("text");
+                        textElement.InnerText = null;
+                        elementElement.AppendChild(textElement);
+                        rootElement.AppendChild(elementElement);
+                    }
+                }
+
+                xmlDoc.Save(filePath);
+            }
+            catch {}
+        }
         private void frmFinder_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.ShiftKey && _fullDetails)
+            // alt key to show additional info when in full details mode
+            // ctrl c to copy full control name to clipboard
+            if(e.Alt && _fullDetails)
             {
                 _fullName = !_fullName;
                 txtSearch_TextChanged(this, EventArgs.Empty);
+                e.Handled = true;
             }
             else if (e.Control && e.KeyCode == Keys.C)
             {
@@ -448,6 +509,7 @@ namespace Thetis
                     try
                     {
                         Clipboard.SetText(sd.FullName);
+                        e.Handled = true;
                     }
                     catch { }
                 }
@@ -456,7 +518,14 @@ namespace Thetis
 
         private void chkHighlight_CheckedChanged(object sender, EventArgs e)
         {
-            _highlightReusults = chkHighlight.Checked;
+            lock (_objLocker)
+            {
+                SearchData sd = lstResults.SelectedItem as SearchData;
+                _highlightReusults = chkHighlight.Checked;                
+                txtSearch_TextChanged(this, EventArgs.Empty);
+                if(sd != null)
+                    lstResults.SelectedItem = sd; 
+            }
         }
     }
 }

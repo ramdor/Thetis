@@ -1124,7 +1124,8 @@ namespace Thetis
                 _frmFinder.GatherSearchData(SetupForm, SetupForm.ToolTip);
                 _frmFinder.GatherSearchData(EQForm, EQForm.ToolTip);
                 _frmFinder.GatherSearchData(m_frmBandStack2, m_frmBandStack2.ToolTip);
-                _frmFinder.GatherSearchData(psform, null);                
+                _frmFinder.GatherSearchData(psform, null);
+                _frmFinder.WriteXmlFinderFile(AppDataPath);
                 //
 
                 //resize N1MM //MW0LGE_21k9c
@@ -1450,9 +1451,9 @@ namespace Thetis
                 if (ex.Message.Contains("does not belong to table", StringComparison.InvariantCultureIgnoreCase))
                 {
                     string msg = "The database is incorrectly configured for this version of Thetis.\n\n" +
-                        "This is most likely because the database has not been updated.\n\n" +
-                        "If this is a modified version of Thetis, then try holding left \n" +
-                        "CTRL as you start up Thetis, and keep it held until you see a message.";
+                        "This is most likely because the database has not yet been updated.\n\n" +
+                        "Try holding left CTRL as you start up Thetis,\n" +
+                        "and keep it held until you see a message.";
                     MessageBox.Show(msg, "Database Error",
                         MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
@@ -28292,7 +28293,6 @@ namespace Thetis
 
         private async void PollPTT()
         {
-
             while (chkPower.Checked)
             {
                 int dotdashptt = NetworkIO.nativeGetDotDashPTT();
