@@ -2013,7 +2013,6 @@ namespace Thetis
         private void process_element()		// called at the element rate
         {
             byte data;
-            if (!checkPTT(false)) return;
 
             if (quit)		// shut 'er all down
             {
@@ -2021,6 +2020,9 @@ namespace Thetis
                 quit = false;
                 return;
             }
+
+            if (!checkPTT(false)) return;
+
             if (newptt > 0)
             {
                 newptt--;

@@ -2184,10 +2184,10 @@ namespace Thetis
             chkRemoveTone_CheckedChanged(this, e);
             chkFMDetLimON_CheckedChanged(this, e);
             tbDSPDetLimGain_Scroll(this, e);
-            udLowCutRX_ValueChanged(this, e);
-            udHighCutRX_ValueChanged(this, e);
-            udLowCutTX_ValueChanged(this, e);
-            udHighCutTX_ValueChanged(this, e);
+            udFMLowCutRX_ValueChanged(this, e);
+            udFMHighCutRX_ValueChanged(this, e);
+            udFMLowCutTX_ValueChanged(this, e);
+            udFMHighCutTX_ValueChanged(this, e);
 
             // EER Tab
             chkDSPEERon_CheckedChanged(this, e);
@@ -2708,6 +2708,20 @@ namespace Thetis
                 if (isTXProfileSettingDifferent<bool>(dr, "CESSB_On", chkDSPCESSB.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "Pure_Signal_Enabled", console.PureSignalEnabled, out sReportOut)) sReport += sReportOut;
 
+                //
+                if (isTXProfileSettingDifferent<decimal>(dr, "FM_RX_AFFilter_Low", (decimal)udFMLowCutRX.Value, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<decimal>(dr, "FM_RX_AFFilter_High", (decimal)udFMHighCutRX.Value, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<decimal>(dr, "FM_TX_AFFilter_Low", (decimal)udFMLowCutTX.Value, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<decimal>(dr, "FM_TX_AFFilter_High", (decimal)udFMHighCutTX.Value, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<bool>(dr, "VAC1_Force_In", (bool)chkVAC1_Force2.Checked, out sReportOut)) sReport += sReportOut;  // note in is force2, and out is force
+                if (isTXProfileSettingDifferent<bool>(dr, "VAC1_Force_Out", (bool)chkVAC1_Force.Checked, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<bool>(dr, "VAC2_Force_In", (bool)chkVAC2_Force2.Checked, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<bool>(dr, "VAC2_Force_Out", (bool)chkVAC2_Force.Checked, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<bool>(dr, "VAC1_SwapIQ", (bool)chkSwapIQVac1.Checked, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<bool>(dr, "VAC2_SwapIQ", (bool)chkSwapIQVac2.Checked, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<bool>(dr, "Audio_Disable_Audio_Amp", (bool)chkDisableRearSpeakerJacksAudioAmplifier.Checked, out sReportOut)) sReport += sReportOut;
+                //
+
                 //CFC
                 if (isTXProfileSettingDifferent<bool>(dr, "CFCEnabled", chkCFCEnable.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "CFCPostEqEnabled", chkCFCPeqEnable.Checked, out sReportOut)) sReport += sReportOut;
@@ -2893,6 +2907,20 @@ namespace Thetis
                 if (DB.ConvertFromDBVal<bool>(dr["CESSB_On"]) != chkDSPCESSB.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["Pure_Signal_Enabled"]) != console.PureSignalEnabled) return true;
 
+                //
+                if (DB.ConvertFromDBVal<decimal>(dr["FM_RX_AFFilter_Low"]) != (decimal)udFMLowCutRX.Value) return true;
+                if (DB.ConvertFromDBVal<decimal>(dr["FM_RX_AFFilter_High"]) != (decimal)udFMHighCutRX.Value) return true;
+                if (DB.ConvertFromDBVal<decimal>(dr["FM_TX_AFFilter_Low"]) != (decimal)udFMLowCutTX.Value) return true;
+                if (DB.ConvertFromDBVal<decimal>(dr["FM_TX_AFFilter_High"]) != (decimal)udFMHighCutTX.Value) return true;
+                if (DB.ConvertFromDBVal<bool>(dr["VAC1_Force_In"]) != (bool)chkVAC1_Force2.Checked) return true;  // note in is force2, and out is force
+                if (DB.ConvertFromDBVal<bool>(dr["VAC1_Force_Out"]) != (bool)chkVAC1_Force.Checked) return true;
+                if (DB.ConvertFromDBVal<bool>(dr["VAC2_Force_In"]) != (bool)chkVAC2_Force2.Checked) return true;
+                if (DB.ConvertFromDBVal<bool>(dr["VAC2_Force_Out"]) != (bool)chkVAC2_Force.Checked) return true;
+                if (DB.ConvertFromDBVal<bool>(dr["VAC1_SwapIQ"]) != (bool)chkSwapIQVac1.Checked) return true;
+                if (DB.ConvertFromDBVal<bool>(dr["VAC2_SwapIQ"]) != (bool)chkSwapIQVac2.Checked) return true;
+                if (DB.ConvertFromDBVal<bool>(dr["Audio_Disable_Audio_Amp"]) != (bool)chkDisableRearSpeakerJacksAudioAmplifier.Checked) return true;
+                //
+
                 //CFC
                 if (DB.ConvertFromDBVal<bool>(dr["CFCEnabled"]) != chkCFCEnable.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["CFCPostEqEnabled"]) != chkCFCPeqEnable.Checked) return true;
@@ -3070,6 +3098,20 @@ namespace Thetis
             Common.HightlightControl(udLineInBoost, bHighlight);
             Common.HightlightControl(chkDSPCESSB, bHighlight);
 
+            //
+            Common.HightlightControl(udFMLowCutRX, bHighlight);
+            Common.HightlightControl(udFMHighCutRX, bHighlight);
+            Common.HightlightControl(udFMLowCutTX, bHighlight);
+            Common.HightlightControl(udFMHighCutTX, bHighlight);
+            Common.HightlightControl(chkVAC1_Force2, bHighlight);  // note in is force2, and out is force
+            Common.HightlightControl(chkVAC1_Force, bHighlight);
+            Common.HightlightControl(chkVAC2_Force2, bHighlight);
+            Common.HightlightControl(chkVAC2_Force, bHighlight);
+            Common.HightlightControl(chkSwapIQVac1, bHighlight);
+            Common.HightlightControl(chkSwapIQVac2, bHighlight);
+            Common.HightlightControl(chkDisableRearSpeakerJacksAudioAmplifier, bHighlight);
+            //
+
             //CFC
             Common.HightlightControl(chkCFCEnable, bHighlight);
             Common.HightlightControl(chkCFCPeqEnable, bHighlight);
@@ -3154,8 +3196,8 @@ namespace Thetis
 
             dr["Power"] = console.PWR;
 
-            dr["VOX_On"] = chkVOXEnable.Checked;
-            dr["Dexp_On"] = chkDEXPEnable.Checked;
+            dr["VOX_On"] = (bool)chkVOXEnable.Checked;
+            dr["Dexp_On"] = (bool)chkDEXPEnable.Checked;
             dr["Dexp_Threshold"] = (int)udDEXPThreshold.Value;
             dr["Dexp_Attack"] = (int)udDEXPAttack.Value;
             dr["VOX_HangTime"] = (int)udDEXPHold.Value;
@@ -3163,10 +3205,10 @@ namespace Thetis
             dr["Dexp_Attenuate"] = udDEXPExpansionRatio.Value;
             dr["Dexp_Hysterisis"] = udDEXPHysteresisRatio.Value;
             dr["Dexp_Tau"] = (int)udDEXPDetTau.Value;
-            dr["Dexp_SCF_On"] = chkSCFEnable.Checked;
+            dr["Dexp_SCF_On"] = (bool)chkSCFEnable.Checked;
             dr["Dexp_SCF_Low"] = (int)udSCFLowCut.Value;
             dr["Dexp_SCF_High"] = (int)udSCFHighCut.Value;
-            dr["Dexp_LookAhead_On"] = chkDEXPLookAheadEnable.Checked;
+            dr["Dexp_LookAhead_On"] = (bool)chkDEXPLookAheadEnable.Checked;
             dr["Dexp_LookAhead"] = (int)udDEXPLookAhead.Value;
 
             //dr["Tune_Power"] = (int)udTXTunePower.Value; // [2.10.1.0] MW0LGE not used anymore
@@ -3254,15 +3296,29 @@ namespace Thetis
             dr["Mic_Input_On"] = (bool)radMicIn.Checked;
             dr["Mic_Input_Boost"] = (bool)chk20dbMicBoost.Checked;
             dr["Line_Input_On"] = (bool)radLineIn.Checked;
-            dr["Line_Input_Level"] = udLineInBoost.Value;
-            dr["CESSB_On"] = chkDSPCESSB.Checked;
-            dr["Pure_Signal_Enabled"] = console.PureSignalEnabled;
+            dr["Line_Input_Level"] = (decimal)udLineInBoost.Value;
+            dr["CESSB_On"] = (bool)chkDSPCESSB.Checked;
+            dr["Pure_Signal_Enabled"] = (bool)console.PureSignalEnabled;
+
+            //
+            dr["FM_RX_AFFilter_Low"] = (decimal)udFMLowCutRX.Value;
+            dr["FM_RX_AFFilter_High"] = (decimal)udFMHighCutRX.Value;
+            dr["FM_TX_AFFilter_Low"] = (decimal)udFMLowCutTX.Value;
+            dr["FM_TX_AFFilter_High"] = (decimal)udFMHighCutTX.Value; 
+            dr["VAC1_Force_In"] = (bool)chkVAC1_Force2.Checked;  // note in is force2, and out is force
+            dr["VAC1_Force_Out"] = (bool)chkVAC1_Force.Checked;
+            dr["VAC2_Force_In"] = (bool)chkVAC2_Force2.Checked;
+            dr["VAC2_Force_Out"] = (bool)chkVAC2_Force.Checked;
+            dr["VAC1_SwapIQ"] = (bool)chkSwapIQVac1.Checked;
+            dr["VAC2_SwapIQ"] = (bool)chkSwapIQVac2.Checked;
+            dr["Audio_Disable_Audio_Amp"] = (bool)chkDisableRearSpeakerJacksAudioAmplifier.Checked;
+            //
 
             //CFC
-            dr["CFCEnabled"] = chkCFCEnable.Checked;
-            dr["CFCPostEqEnabled"] = chkCFCPeqEnable.Checked;
-            dr["CFCPhaseRotatorEnabled"] = chkPHROTEnable.Checked;
-            dr["CFCPhaseReverseEnabled"] = chkPHROTReverse.Checked;
+            dr["CFCEnabled"] = (bool)chkCFCEnable.Checked;
+            dr["CFCPostEqEnabled"] = (bool)chkCFCPeqEnable.Checked;
+            dr["CFCPhaseRotatorEnabled"] = (bool)chkPHROTEnable.Checked;
+            dr["CFCPhaseReverseEnabled"] = (bool)chkPHROTReverse.Checked;
             dr["CFCPhaseRotatorFreq"] = (int)udPhRotFreq.Value;
             dr["CFCPhaseRotatorStages"] = (int)udPHROTStages.Value;
             int[] cfceq = CFCCOMPEQ;
@@ -10584,6 +10640,20 @@ namespace Thetis
             udLineInBoost.Value = (decimal)dr["Line_Input_Level"];
             chkDSPCESSB.Checked = (bool)dr["CESSB_On"];
             console.PureSignalEnabled = (bool)dr["Pure_Signal_Enabled"];
+
+            //
+            udFMLowCutRX.Value = (decimal)dr["FM_RX_AFFilter_Low"];
+            udFMHighCutRX.Value = (decimal)dr["FM_RX_AFFilter_High"];
+            udFMLowCutTX.Value = (decimal)dr["FM_TX_AFFilter_Low"];
+            udFMHighCutTX.Value = (decimal)dr["FM_TX_AFFilter_High"];
+            chkVAC1_Force2.Checked = (bool)dr["VAC1_Force_In"];  // note in is force2, and out is force
+            chkVAC1_Force.Checked = (bool)dr["VAC1_Force_Out"];
+            chkVAC2_Force2.Checked = (bool)dr["VAC2_Force_In"];
+            chkVAC2_Force.Checked = (bool)dr["VAC2_Force_Out"];
+            chkSwapIQVac1.Checked = (bool)dr["VAC1_SwapIQ"];
+            chkSwapIQVac2.Checked = (bool)dr["VAC2_SwapIQ"];
+            chkDisableRearSpeakerJacksAudioAmplifier.Checked = (bool)dr["Audio_Disable_Audio_Amp"];
+            //
 
             //CFC
             chkCFCEnable.Checked = (bool)dr["CFCEnabled"];
@@ -28571,32 +28641,32 @@ namespace Thetis
             if (isSkinServerTabVisible()) getSkinServers();
         }
 
-        private void udLowCutRX_ValueChanged(object sender, EventArgs e)
+        private void udFMLowCutRX_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            console.radio.GetDSPRX(0, 0).RXFMLowCut = (double)udLowCutRX.Value; //main rx1
-            console.radio.GetDSPRX(0, 1).RXFMLowCut = (double)udLowCutRX.Value; //sub rx1
-            console.radio.GetDSPRX(1, 0).RXFMLowCut = (double)udLowCutRX.Value; //rx2
+            console.radio.GetDSPRX(0, 0).RXFMLowCut = (double)udFMLowCutRX.Value; //main rx1
+            console.radio.GetDSPRX(0, 1).RXFMLowCut = (double)udFMLowCutRX.Value; //sub rx1
+            console.radio.GetDSPRX(1, 0).RXFMLowCut = (double)udFMLowCutRX.Value; //rx2
         }
 
-        private void udHighCutRX_ValueChanged(object sender, EventArgs e)
+        private void udFMHighCutRX_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            console.radio.GetDSPRX(0, 0).RXFMHighCut = (double)udHighCutRX.Value;
-            console.radio.GetDSPRX(0, 1).RXFMHighCut = (double)udHighCutRX.Value;
-            console.radio.GetDSPRX(1, 0).RXFMHighCut = (double)udHighCutRX.Value;
+            console.radio.GetDSPRX(0, 0).RXFMHighCut = (double)udFMHighCutRX.Value;
+            console.radio.GetDSPRX(0, 1).RXFMHighCut = (double)udFMHighCutRX.Value;
+            console.radio.GetDSPRX(1, 0).RXFMHighCut = (double)udFMHighCutRX.Value;
         }
 
-        private void udLowCutTX_ValueChanged(object sender, EventArgs e)
+        private void udFMLowCutTX_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            console.radio.GetDSPTX(0).TXFMLowCut = (double)udLowCutTX.Value;
+            console.radio.GetDSPTX(0).TXFMLowCut = (double)udFMLowCutTX.Value;
         }
 
-        private void udHighCutTX_ValueChanged(object sender, EventArgs e)
+        private void udFMHighCutTX_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            console.radio.GetDSPTX(0).TXFMHighCut = (double)udHighCutTX.Value;
+            console.radio.GetDSPTX(0).TXFMHighCut = (double)udFMHighCutTX.Value;
         }
 
         private void chkSwapIQVac1_CheckedChanged(object sender, EventArgs e)

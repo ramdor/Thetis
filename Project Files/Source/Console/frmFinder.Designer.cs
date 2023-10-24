@@ -28,9 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.lstResults = new System.Windows.Forms.ListBox();
+            this.chkHighlight = new System.Windows.Forms.CheckBoxTS();
             this.chkFullDetails = new System.Windows.Forms.CheckBoxTS();
             this.txtSearch = new System.Windows.Forms.TextBoxTS();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // lstResults
@@ -52,6 +55,22 @@
             this.lstResults.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.lstResults_MeasureItem);
             this.lstResults.SelectedIndexChanged += new System.EventHandler(this.lstResults_SelectedIndexChanged);
             // 
+            // chkHighlight
+            // 
+            this.chkHighlight.AutoSize = true;
+            this.chkHighlight.Checked = true;
+            this.chkHighlight.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkHighlight.Image = null;
+            this.chkHighlight.Location = new System.Drawing.Point(102, 8);
+            this.chkHighlight.Name = "chkHighlight";
+            this.chkHighlight.Size = new System.Drawing.Size(105, 17);
+            this.chkHighlight.TabIndex = 2;
+            this.chkHighlight.Text = "Highlight Results";
+            this.toolTip1.SetToolTip(this.chkHighlight, "Highlight part of the search that matched. It may be hidden if Full Details is no" +
+        "t enabled.");
+            this.chkHighlight.UseVisualStyleBackColor = true;
+            this.chkHighlight.CheckedChanged += new System.EventHandler(this.chkHighlight_CheckedChanged);
+            // 
             // chkFullDetails
             // 
             this.chkFullDetails.AutoSize = true;
@@ -61,6 +80,8 @@
             this.chkFullDetails.Size = new System.Drawing.Size(75, 17);
             this.chkFullDetails.TabIndex = 1;
             this.chkFullDetails.Text = "Full details";
+            this.toolTip1.SetToolTip(this.chkFullDetails, "Shows full details. Text, Tooltip and Control name. Use CTRL to toglle full contr" +
+        "ol name for use in Finder.xml");
             this.chkFullDetails.UseVisualStyleBackColor = true;
             this.chkFullDetails.CheckedChanged += new System.EventHandler(this.chkFullDetails_CheckedChanged);
             // 
@@ -74,6 +95,7 @@
             this.txtSearch.Size = new System.Drawing.Size(280, 29);
             this.txtSearch.TabIndex = 0;
             this.txtSearch.Text = "Search";
+            this.toolTip1.SetToolTip(this.txtSearch, "Type something to search");
             this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
             // 
             // frmFinder
@@ -81,10 +103,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(304, 382);
+            this.Controls.Add(this.chkHighlight);
             this.Controls.Add(this.chkFullDetails);
             this.Controls.Add(this.lstResults);
             this.Controls.Add(this.txtSearch);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(320, 400);
             this.Name = "frmFinder";
             this.ShowIcon = false;
@@ -92,6 +116,7 @@
             this.Text = "Finder";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmFinder_FormClosing);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmFinder_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -102,5 +127,7 @@
         private System.Windows.Forms.TextBoxTS txtSearch;
         private System.Windows.Forms.ListBox lstResults;
         private System.Windows.Forms.CheckBoxTS chkFullDetails;
+        private System.Windows.Forms.CheckBoxTS chkHighlight;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

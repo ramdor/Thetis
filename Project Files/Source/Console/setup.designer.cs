@@ -2269,8 +2269,8 @@
             this.labelTS186 = new System.Windows.Forms.LabelTS();
             this.labelTS185 = new System.Windows.Forms.LabelTS();
             this.labelTS184 = new System.Windows.Forms.LabelTS();
-            this.udHighCutRX = new System.Windows.Forms.NumericUpDownTS();
-            this.udLowCutRX = new System.Windows.Forms.NumericUpDownTS();
+            this.udFMHighCutRX = new System.Windows.Forms.NumericUpDownTS();
+            this.udFMLowCutRX = new System.Windows.Forms.NumericUpDownTS();
             this.lblFMLimGain30dB = new System.Windows.Forms.LabelTS();
             this.lblFMLimGain0dB = new System.Windows.Forms.LabelTS();
             this.lblFMDetLimGain = new System.Windows.Forms.LabelTS();
@@ -2282,8 +2282,8 @@
             this.labelTS189 = new System.Windows.Forms.LabelTS();
             this.labelTS190 = new System.Windows.Forms.LabelTS();
             this.labelTS191 = new System.Windows.Forms.LabelTS();
-            this.udHighCutTX = new System.Windows.Forms.NumericUpDownTS();
-            this.udLowCutTX = new System.Windows.Forms.NumericUpDownTS();
+            this.udFMHighCutTX = new System.Windows.Forms.NumericUpDownTS();
+            this.udFMLowCutTX = new System.Windows.Forms.NumericUpDownTS();
             this.chkEmphPos = new System.Windows.Forms.CheckBoxTS();
             this.tpDSPAudio = new System.Windows.Forms.TabPage();
             this.grpDSPAudRX2Dolly = new System.Windows.Forms.GroupBoxTS();
@@ -4035,12 +4035,12 @@
             this.grpRX2AMSBSEL.SuspendLayout();
             this.tpDSPFM.SuspendLayout();
             this.grpFMRX.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udHighCutRX)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udLowCutRX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udFMHighCutRX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udFMLowCutRX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDSPFMDetLimGain)).BeginInit();
             this.grpFMTX.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udHighCutTX)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udLowCutTX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udFMHighCutTX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udFMLowCutTX)).BeginInit();
             this.tpDSPAudio.SuspendLayout();
             this.grpDSPAudRX2Dolly.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPRX2DollyF1)).BeginInit();
@@ -36695,8 +36695,8 @@
             this.grpFMRX.Controls.Add(this.labelTS186);
             this.grpFMRX.Controls.Add(this.labelTS185);
             this.grpFMRX.Controls.Add(this.labelTS184);
-            this.grpFMRX.Controls.Add(this.udHighCutRX);
-            this.grpFMRX.Controls.Add(this.udLowCutRX);
+            this.grpFMRX.Controls.Add(this.udFMHighCutRX);
+            this.grpFMRX.Controls.Add(this.udFMLowCutRX);
             this.grpFMRX.Controls.Add(this.lblFMLimGain30dB);
             this.grpFMRX.Controls.Add(this.lblFMLimGain0dB);
             this.grpFMRX.Controls.Add(this.lblFMDetLimGain);
@@ -36752,63 +36752,63 @@
             this.labelTS184.TabIndex = 57;
             this.labelTS184.Text = "low";
             // 
-            // udHighCutRX
+            // udFMHighCutRX
             // 
-            this.udHighCutRX.Increment = new decimal(new int[] {
+            this.udFMHighCutRX.Increment = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.udHighCutRX.Location = new System.Drawing.Point(318, 32);
-            this.udHighCutRX.Maximum = new decimal(new int[] {
+            this.udFMHighCutRX.Location = new System.Drawing.Point(318, 32);
+            this.udFMHighCutRX.Maximum = new decimal(new int[] {
             8000,
             0,
             0,
             0});
-            this.udHighCutRX.Minimum = new decimal(new int[] {
+            this.udFMHighCutRX.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.udHighCutRX.Name = "udHighCutRX";
-            this.udHighCutRX.Size = new System.Drawing.Size(63, 20);
-            this.udHighCutRX.TabIndex = 56;
-            this.udHighCutRX.TinyStep = false;
-            this.udHighCutRX.Value = new decimal(new int[] {
+            this.udFMHighCutRX.Name = "udFMHighCutRX";
+            this.udFMHighCutRX.Size = new System.Drawing.Size(63, 20);
+            this.udFMHighCutRX.TabIndex = 56;
+            this.udFMHighCutRX.TinyStep = false;
+            this.udFMHighCutRX.Value = new decimal(new int[] {
             3000,
             0,
             0,
             0});
-            this.udHighCutRX.ValueChanged += new System.EventHandler(this.udHighCutRX_ValueChanged);
+            this.udFMHighCutRX.ValueChanged += new System.EventHandler(this.udFMHighCutRX_ValueChanged);
             // 
-            // udLowCutRX
+            // udFMLowCutRX
             // 
-            this.udLowCutRX.Increment = new decimal(new int[] {
+            this.udFMLowCutRX.Increment = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.udLowCutRX.Location = new System.Drawing.Point(249, 32);
-            this.udLowCutRX.Maximum = new decimal(new int[] {
+            this.udFMLowCutRX.Location = new System.Drawing.Point(249, 32);
+            this.udFMLowCutRX.Maximum = new decimal(new int[] {
             8000,
             0,
             0,
             0});
-            this.udLowCutRX.Minimum = new decimal(new int[] {
+            this.udFMLowCutRX.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.udLowCutRX.Name = "udLowCutRX";
-            this.udLowCutRX.Size = new System.Drawing.Size(63, 20);
-            this.udLowCutRX.TabIndex = 55;
-            this.udLowCutRX.TinyStep = false;
-            this.udLowCutRX.Value = new decimal(new int[] {
+            this.udFMLowCutRX.Name = "udFMLowCutRX";
+            this.udFMLowCutRX.Size = new System.Drawing.Size(63, 20);
+            this.udFMLowCutRX.TabIndex = 55;
+            this.udFMLowCutRX.TinyStep = false;
+            this.udFMLowCutRX.Value = new decimal(new int[] {
             300,
             0,
             0,
             0});
-            this.udLowCutRX.ValueChanged += new System.EventHandler(this.udLowCutRX_ValueChanged);
+            this.udFMLowCutRX.ValueChanged += new System.EventHandler(this.udFMLowCutRX_ValueChanged);
             // 
             // lblFMLimGain30dB
             // 
@@ -36887,8 +36887,8 @@
             this.grpFMTX.Controls.Add(this.labelTS189);
             this.grpFMTX.Controls.Add(this.labelTS190);
             this.grpFMTX.Controls.Add(this.labelTS191);
-            this.grpFMTX.Controls.Add(this.udHighCutTX);
-            this.grpFMTX.Controls.Add(this.udLowCutTX);
+            this.grpFMTX.Controls.Add(this.udFMHighCutTX);
+            this.grpFMTX.Controls.Add(this.udFMLowCutTX);
             this.grpFMTX.Controls.Add(this.chkEmphPos);
             this.grpFMTX.Location = new System.Drawing.Point(8, 189);
             this.grpFMTX.Name = "grpFMTX";
@@ -36937,63 +36937,63 @@
             this.labelTS191.TabIndex = 63;
             this.labelTS191.Text = "low";
             // 
-            // udHighCutTX
+            // udFMHighCutTX
             // 
-            this.udHighCutTX.Increment = new decimal(new int[] {
+            this.udFMHighCutTX.Increment = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.udHighCutTX.Location = new System.Drawing.Point(318, 67);
-            this.udHighCutTX.Maximum = new decimal(new int[] {
+            this.udFMHighCutTX.Location = new System.Drawing.Point(318, 67);
+            this.udFMHighCutTX.Maximum = new decimal(new int[] {
             8000,
             0,
             0,
             0});
-            this.udHighCutTX.Minimum = new decimal(new int[] {
+            this.udFMHighCutTX.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.udHighCutTX.Name = "udHighCutTX";
-            this.udHighCutTX.Size = new System.Drawing.Size(63, 20);
-            this.udHighCutTX.TabIndex = 62;
-            this.udHighCutTX.TinyStep = false;
-            this.udHighCutTX.Value = new decimal(new int[] {
+            this.udFMHighCutTX.Name = "udFMHighCutTX";
+            this.udFMHighCutTX.Size = new System.Drawing.Size(63, 20);
+            this.udFMHighCutTX.TabIndex = 62;
+            this.udFMHighCutTX.TinyStep = false;
+            this.udFMHighCutTX.Value = new decimal(new int[] {
             3000,
             0,
             0,
             0});
-            this.udHighCutTX.ValueChanged += new System.EventHandler(this.udHighCutTX_ValueChanged);
+            this.udFMHighCutTX.ValueChanged += new System.EventHandler(this.udFMHighCutTX_ValueChanged);
             // 
-            // udLowCutTX
+            // udFMLowCutTX
             // 
-            this.udLowCutTX.Increment = new decimal(new int[] {
+            this.udFMLowCutTX.Increment = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.udLowCutTX.Location = new System.Drawing.Point(249, 67);
-            this.udLowCutTX.Maximum = new decimal(new int[] {
+            this.udFMLowCutTX.Location = new System.Drawing.Point(249, 67);
+            this.udFMLowCutTX.Maximum = new decimal(new int[] {
             8000,
             0,
             0,
             0});
-            this.udLowCutTX.Minimum = new decimal(new int[] {
+            this.udFMLowCutTX.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.udLowCutTX.Name = "udLowCutTX";
-            this.udLowCutTX.Size = new System.Drawing.Size(63, 20);
-            this.udLowCutTX.TabIndex = 61;
-            this.udLowCutTX.TinyStep = false;
-            this.udLowCutTX.Value = new decimal(new int[] {
+            this.udFMLowCutTX.Name = "udFMLowCutTX";
+            this.udFMLowCutTX.Size = new System.Drawing.Size(63, 20);
+            this.udFMLowCutTX.TabIndex = 61;
+            this.udFMLowCutTX.TinyStep = false;
+            this.udFMLowCutTX.Value = new decimal(new int[] {
             300,
             0,
             0,
             0});
-            this.udLowCutTX.ValueChanged += new System.EventHandler(this.udLowCutTX_ValueChanged);
+            this.udFMLowCutTX.ValueChanged += new System.EventHandler(this.udFMLowCutTX_ValueChanged);
             // 
             // chkEmphPos
             // 
@@ -56768,13 +56768,13 @@
             this.tpDSPFM.ResumeLayout(false);
             this.grpFMRX.ResumeLayout(false);
             this.grpFMRX.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udHighCutRX)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udLowCutRX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udFMHighCutRX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udFMLowCutRX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDSPFMDetLimGain)).EndInit();
             this.grpFMTX.ResumeLayout(false);
             this.grpFMTX.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udHighCutTX)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udLowCutTX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udFMHighCutTX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udFMLowCutTX)).EndInit();
             this.tpDSPAudio.ResumeLayout(false);
             this.grpDSPAudRX2Dolly.ResumeLayout(false);
             this.grpDSPAudRX2Dolly.PerformLayout();
@@ -60780,8 +60780,8 @@
         private CheckBoxTS chkPurgeBuffers;
         private CheckBoxTS chkPurgeBuffersDisplayEngine;
         private LabelTS lblRawHIDWarning;
-        private NumericUpDownTS udHighCutRX;
-        private NumericUpDownTS udLowCutRX;
+        private NumericUpDownTS udFMHighCutRX;
+        private NumericUpDownTS udFMLowCutRX;
         private LabelTS labelTS185;
         private LabelTS labelTS184;
         private LabelTS labelTS186;
@@ -60791,8 +60791,8 @@
         private LabelTS labelTS189;
         private LabelTS labelTS190;
         private LabelTS labelTS191;
-        private NumericUpDownTS udHighCutTX;
-        private NumericUpDownTS udLowCutTX;
+        private NumericUpDownTS udFMHighCutTX;
+        private NumericUpDownTS udFMLowCutTX;
         private CheckBoxTS chkSwapIQVac1;
         private CheckBoxTS chkSwapIQVac2;
         private CheckBoxTS chkPHROTReverse;

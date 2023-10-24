@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Threading;
+using System.IO;
+using System.Xml;
 
 namespace Thetis
 {
@@ -14,9 +16,11 @@ namespace Thetis
         {
             public Control Control { get; set; }
             public string Name { get; set; }
+            public string FullName { get; set; }
             public string Text { get; set; }
             public string ToolTip { get; set; }
             public string ShortName {  get; set; }
+            public string XMLReplacement { get; set; }
         }
 
         private Dictionary<string, SearchData> _searchData;
@@ -25,6 +29,9 @@ namespace Thetis
         private Dictionary<string, Thread> _workerThreads;
         private bool _fullDetails;
         private StringFormat _stringFormat;
+        Dictionary<string, string> _xmlData = new Dictionary<string, string>();
+        private bool _fullName;
+        private bool _highlightReusults;
 
         public frmFinder()
         {
@@ -32,12 +39,17 @@ namespace Thetis
             _objWTLocker = new object();
             _searchData = new Dictionary<string, SearchData>();
             _workerThreads = new Dictionary<string, Thread>();
-            _fullDetails = false;
+            _fullName = false;
+            _xmlData = new Dictionary<string, string>();
 
             _stringFormat = new StringFormat(StringFormat.GenericTypographic);
             _stringFormat.FormatFlags = StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
 
             InitializeComponent();
+
+            // match inital form state
+            _highlightReusults = chkHighlight.Checked;
+            _fullDetails = chkFullDetails.Checked;
         }
         public void GatherSearchData(Form frm, ToolTip tt)
         {
@@ -99,6 +111,10 @@ namespace Thetis
 
                 if (!searchData.ContainsKey(sKey))
                 {
+                    string xmlReplace = "";
+                    if(_xmlData.ContainsKey(sKey))
+                        xmlReplace = _xmlData[sKey];
+                    
                     string toolTip = "";
                     if (tt != null)
                         toolTip = tt.GetToolTip(c).Replace("\n", " ");
@@ -125,7 +141,9 @@ namespace Thetis
                         Name = c.Name,
                         ShortName = sShortName,
                         Text = c.Text.Replace("\n", " "),
-                        ToolTip = toolTip
+                        ToolTip = toolTip,
+                        XMLReplacement = xmlReplace,
+                        FullName = sKey
                     };
 
                     searchData.Add(sKey, sd);
@@ -208,29 +226,42 @@ namespace Thetis
             g.FillRectangle(new SolidBrush(backgroundColor), e.Bounds);
 
             int yPos = e.Bounds.Y;
-            List<Tuple<int, int>> lst;
 
             if (_fullDetails)
             {
+                string sSearchLower = txtSearch.Text.ToLower();
                 if (!string.IsNullOrEmpty(sd.Text))
                 {
-                    highlight(txtSearch.Text.ToLower(), sd.Text, listBox, e.Bounds.X, yPos, g);
+                    highlight(sSearchLower, sd.Text, listBox, e.Bounds.X, yPos, g);
                     g.DrawString(sd.Text, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, _stringFormat);
                     yPos += 20;
                 }
-                if (!string.IsNullOrEmpty(sd.ToolTip))
+
+                if (_xmlData.ContainsKey(sd.FullName.ToLower()))
                 {
-                    highlight(txtSearch.Text.ToLower(), sd.ToolTip, listBox, e.Bounds.X, yPos, g);
+                    string sText = _xmlData[sd.FullName.ToLower()];
+                    highlight(sSearchLower, sText, listBox, e.Bounds.X, yPos, g);
+                    g.DrawString(sText, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, _stringFormat);
+                    yPos += 20;
+                }
+                else if (!string.IsNullOrEmpty(sd.ToolTip))
+                {
+                    highlight(sSearchLower, sd.ToolTip, listBox, e.Bounds.X, yPos, g);
                     g.DrawString(sd.ToolTip, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, _stringFormat);
                     yPos += 20;
                 }
-                highlight(txtSearch.Text.ToLower(), sd.Name, listBox, e.Bounds.X, yPos, g);
-                g.DrawString(sd.Name, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, _stringFormat);
+
+                highlight(sSearchLower, _fullName ? sd.FullName : sd.Name, listBox, e.Bounds.X, yPos, g);
+                g.DrawString(_fullName ? sd.FullName : sd.Name, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, _stringFormat);
             }
             else
             {
                 string sText;
-                if (!string.IsNullOrEmpty(sd.ToolTip))
+                if (_xmlData.ContainsKey(sd.FullName.ToLower()))
+                {
+                    sText = _xmlData[sd.FullName.ToLower()];
+                }
+                else if (!string.IsNullOrEmpty(sd.ToolTip))
                 {
                     sText = sd.ToolTip;
                 }
@@ -372,6 +403,60 @@ namespace Thetis
             _fullDetails = chkFullDetails.Checked;
 
             txtSearch_TextChanged(this, EventArgs.Empty);
+        }
+
+        public void ReadXmlFinderFile(string directoryPath)
+        {
+            string filePath = Path.Combine(directoryPath, "finder.xml");
+
+            _xmlData.Clear();
+
+            if (!File.Exists(filePath)) return;
+
+            try
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.Load(filePath);                
+
+                XmlNodeList nodes = xmlDoc.SelectNodes("//element");
+                foreach (XmlNode node in nodes)
+                {
+                    string controlName = node.SelectSingleNode("control")?.InnerText;
+                    string text = node.SelectSingleNode("text")?.InnerText;
+
+                    if (!string.IsNullOrEmpty(controlName) && !string.IsNullOrEmpty(text))
+                    {
+                        _xmlData.Add(controlName.ToLower(), text); // to lower, make life easier in the xml
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private void frmFinder_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.ShiftKey && _fullDetails)
+            {
+                _fullName = !_fullName;
+                txtSearch_TextChanged(this, EventArgs.Empty);
+            }
+            else if (e.Control && e.KeyCode == Keys.C)
+            {
+                SearchData sd = lstResults.SelectedItem as SearchData;
+                if(sd != null)
+                {
+                    try
+                    {
+                        Clipboard.SetText(sd.FullName);
+                    }
+                    catch { }
+                }
+            }
+        }
+
+        private void chkHighlight_CheckedChanged(object sender, EventArgs e)
+        {
+            _highlightReusults = chkHighlight.Checked;
         }
     }
 }

@@ -111,7 +111,7 @@ namespace Thetis
         }
 
         private bool _bPSRunning = false;
-        private async void PSLoop()
+        private void PSLoop()
         {
             int nCount = 0;
 
@@ -131,11 +131,11 @@ namespace Thetis
                         nCount = 0;
                     }
 
-                    await Task.Delay(10);
+                    Thread.Sleep(10);
                 }
                 else
                 {
-                    await Task.Delay(200);
+                    Thread.Sleep(200);
                 }
             }
         }

@@ -1119,11 +1119,12 @@ namespace Thetis
                 }
 
                 //-- setup finder search data
+                _frmFinder.ReadXmlFinderFile(AppDataPath); // note: needs to be before frm gather
                 _frmFinder.GatherSearchData(this, toolTip1);
                 _frmFinder.GatherSearchData(SetupForm, SetupForm.ToolTip);
                 _frmFinder.GatherSearchData(EQForm, EQForm.ToolTip);
                 _frmFinder.GatherSearchData(m_frmBandStack2, m_frmBandStack2.ToolTip);
-                _frmFinder.GatherSearchData(psform, null);
+                _frmFinder.GatherSearchData(psform, null);                
                 //
 
                 //resize N1MM //MW0LGE_21k9c
@@ -28291,6 +28292,7 @@ namespace Thetis
 
         private async void PollPTT()
         {
+
             while (chkPower.Checked)
             {
                 int dotdashptt = NetworkIO.nativeGetDotDashPTT();
@@ -50754,7 +50756,6 @@ namespace Thetis
             if (bandPopupForm != null) bandPopupForm.RepopulateForm();
             if (modePopupForm != null) modePopupForm.RepopulateForm();
             if (filterPopupForm != null) filterPopupForm.RepopulateForm();
-
         }
 
         private void eSCToolStripMenuItem_Click(object sender, EventArgs e)
