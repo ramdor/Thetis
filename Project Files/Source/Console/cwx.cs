@@ -1602,7 +1602,7 @@ namespace Thetis
                     MessageBox.Show("Console has PTT disabled.  Please enable it and try again.",
                         "PTT disabled",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
                 return false;
             }
@@ -2013,7 +2013,6 @@ namespace Thetis
         private void process_element()		// called at the element rate
         {
             byte data;
-            if (!checkPTT(false)) return;
 
             if (quit)		// shut 'er all down
             {
@@ -2021,6 +2020,9 @@ namespace Thetis
                 quit = false;
                 return;
             }
+
+            if (!checkPTT(false)) return;
+
             if (newptt > 0)
             {
                 newptt--;

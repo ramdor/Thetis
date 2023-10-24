@@ -36,34 +36,7 @@ namespace Thetis
 
             public void BrowseQRZ()
             {
-                try
-                {
-                    OpenUri("https://www.qrz.com/db/" + callsign.ToUpper());
-                }
-                catch
-                {
-
-                }
-            }
-
-            private static bool IsValidUri(string uri)
-            {
-                if (!Uri.IsWellFormedUriString(uri, UriKind.Absolute))
-                    return false;
-                Uri tmp;
-                if (!Uri.TryCreate(uri, UriKind.Absolute, out tmp))
-                    return false;
-                return tmp.Scheme == Uri.UriSchemeHttp || tmp.Scheme == Uri.UriSchemeHttps;
-            }
-
-            private static bool OpenUri(string uri)
-            {
-                if (!IsValidUri(uri))
-                    return false;
-
-                Task.Run( () => System.Diagnostics.Process.Start(uri) );
-                
-                return true;
+                Common.OpenUri("https://www.qrz.com/db/" + callsign.ToUpper());
             }
         }
 

@@ -83,6 +83,8 @@ typedef struct _ivac
 
 	double initial_INvar;			// init the var ratio
 	double initial_OUTvar;			// init the var ratio
+
+	int swapIQout;
 } ivac, *IVAC;
 
 void combinebuff (int n, double* a, double* combined);

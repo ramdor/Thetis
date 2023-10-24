@@ -852,6 +852,7 @@
             this.BPFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.BPF1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.BPF2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.finderMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.picRX2Squelch = new System.Windows.Forms.PictureBox();
             this.statusStripMain = new System.Windows.Forms.StatusStrip();
             this.toolStripDropDownButton_ScreenSize = new System.Windows.Forms.ToolStripDropDownButton();
@@ -1377,10 +1378,12 @@
             // chkFullDuplex
             // 
             resources.ApplyResources(this.chkFullDuplex, "chkFullDuplex");
+            this.chkFullDuplex.BackColor = System.Drawing.Color.Transparent;
             this.chkFullDuplex.FlatAppearance.BorderSize = 0;
             this.chkFullDuplex.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.chkFullDuplex.Name = "chkFullDuplex";
             this.toolTip1.SetToolTip(this.chkFullDuplex, resources.GetString("chkFullDuplex.ToolTip"));
+            this.chkFullDuplex.UseVisualStyleBackColor = false;
             this.chkFullDuplex.CheckedChanged += new System.EventHandler(this.chkFullDuplex_CheckedChanged);
             // 
             // chkRX2Squelch
@@ -4076,7 +4079,8 @@
             this.RAtoolStripMenuItem,
             this.wBToolStripMenuItem,
             this.pIToolStripMenuItem,
-            this.BPFToolStripMenuItem});
+            this.BPFToolStripMenuItem,
+            this.finderMenuItem});
             resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Name = "menuStrip1";
             // 
@@ -4893,6 +4897,13 @@
             this.BPF2ToolStripMenuItem.Name = "BPF2ToolStripMenuItem";
             resources.ApplyResources(this.BPF2ToolStripMenuItem, "BPF2ToolStripMenuItem");
             this.BPF2ToolStripMenuItem.Click += new System.EventHandler(this.BPF2ToolStripMenuItem_Click);
+            // 
+            // finderMenuItem
+            // 
+            this.finderMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.finderMenuItem.Name = "finderMenuItem";
+            resources.ApplyResources(this.finderMenuItem, "finderMenuItem");
+            this.finderMenuItem.Click += new System.EventHandler(this.finderMenuItem_Click);
             // 
             // picRX2Squelch
             // 
@@ -7724,5 +7735,6 @@
         private NumericUpDownTS nudPwrTemp;
         private NumericUpDownTS nudPwrTemp2;
         private ToolStripStatusLabel toolStripStatusLabel_TXInhibit;
+        private ToolStripMenuItem finderMenuItem;
     }
 }

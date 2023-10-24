@@ -360,3 +360,25 @@ void SetRXAFMLimGain (int channel, double gaindB)
 	}
 	LeaveCriticalSection(&ch[channel].csDSP);
 }
+
+PORT
+void SetRXAFMAFFilter(int channel, double low, double high)
+{
+	FMD a = rxa[channel].fmd.p;
+	double* impulse;
+	EnterCriticalSection(&ch[channel].csDSP);
+	if (a->f_low != low || a->f_high != high)
+	{
+		a->f_low = low;
+		a->f_high = high;
+		// de-emphasis filter
+		impulse = fc_impulse (a->nc_de, a->f_low, a->f_high, +20.0 * log10(a->f_high / a->f_low), 0.0, 1, a->rate, 1.0 / (2.0 * a->size), 0, 0);
+		setImpulse_fircore (a->pde, impulse, 1);
+		_aligned_free (impulse);
+		// audio filter
+		impulse = fir_bandpass (a->nc_aud, 0.8 * a->f_low, 1.1 * a->f_high, a->rate, 0, 1, a->afgain / (2.0 * a->size));
+		setImpulse_fircore (a->paud, impulse, 1);
+		_aligned_free (impulse);
+	}
+	LeaveCriticalSection(&ch[channel].csDSP);
+}

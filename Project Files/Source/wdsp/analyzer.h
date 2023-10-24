@@ -81,7 +81,6 @@ typedef struct _dp
 	int av_out_idx[dMAX_PIXOUTS];							// output index in averaging pixel buffer ring
 	double *av_sum[dMAX_PIXOUTS];							// pointer to sum buffer for averaging
 	double *av_buff[dMAX_PIXOUTS][dMAX_AVERAGE];			// pointers to ring of buffers to hold pixel frames for averaging
-	double *pre_av_sum;
 	double *pre_av_out;
 	int av_mode[dMAX_PIXOUTS];
 	double av_backmult[dMAX_PIXOUTS];						// back multiplier for weighted averaging
@@ -184,5 +183,13 @@ void SnapSpectrum(	int disp,
 					int ss,
 					int LO,
 					double *snap_buff);
+
+extern __declspec(dllexport)
+void SnapSpectrumTimeout(int disp,
+	int ss,
+	int LO,
+	double* snap_buff,
+	DWORD timeout,
+	int* flag);
 
 #endif

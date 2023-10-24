@@ -268,6 +268,12 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "SetRXAFMLimGain", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXAFMLimGain(int channel, double gaindB);
 
+        [DllImport("wdsp.dll", EntryPoint = "SetRXAFMAFFilter", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXAFMAFFilter(int channel, double low, double high);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAFMAFFilter", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAFMAFFilter(int channel, double low, double high);
+
         [DllImport("wdsp.dll", EntryPoint = "SetTXAFMDeviation", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXAFMDeviation(int channel, double deviation);
 
@@ -647,6 +653,9 @@ namespace Thetis
 
         [DllImport("wdsp.dll", EntryPoint = "SetTXAPHROTNstages", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXAPHROTNstages(int channel, int nstages);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPHROTReverse", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPHROTReverse(int channel, int reverse);
 
         // TXEQ
         [DllImport("wdsp.dll", EntryPoint = "SetTXAEQProfile", CallingConvention = CallingConvention.Cdecl)]

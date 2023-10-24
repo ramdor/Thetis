@@ -4340,11 +4340,26 @@ namespace Thetis
             t.Columns.Add("CESSB_On", typeof(bool));
             t.Columns.Add("Pure_Signal_Enabled", typeof(bool));
 
+            //
+            t.Columns.Add("FM_RX_AFFilter_Low", typeof(decimal));
+            t.Columns.Add("FM_RX_AFFilter_High", typeof(decimal));
+            t.Columns.Add("FM_TX_AFFilter_Low", typeof(decimal));
+            t.Columns.Add("FM_TX_AFFilter_High", typeof(decimal));
+            t.Columns.Add("VAC1_Force_In", typeof(bool));
+            t.Columns.Add("VAC1_Force_Out", typeof(bool));
+            t.Columns.Add("VAC2_Force_In", typeof(bool));
+            t.Columns.Add("VAC2_Force_Out", typeof(bool));
+            t.Columns.Add("VAC1_SwapIQ", typeof(bool));
+            t.Columns.Add("VAC2_SwapIQ", typeof(bool));
+            t.Columns.Add("Audio_Disable_Audio_Amp", typeof(bool));
+            //
+
             // CFC
             t.Columns.Add("CFCEnabled", typeof(bool));
             t.Columns.Add("CFCPostEqEnabled", typeof(bool));
             t.Columns.Add("CFCPhaseRotatorEnabled", typeof(bool));
-
+            t.Columns.Add("CFCPhaseReverseEnabled", typeof(bool));
+            
             t.Columns.Add("CFCPhaseRotatorFreq", typeof(int));
             t.Columns.Add("CFCPhaseRotatorStages", typeof(int));
 
@@ -4530,10 +4545,25 @@ namespace Thetis
             dr["CESSB_On"] = false;
             dr["Pure_Signal_Enabled"] = false;
 
+            //
+            dr["FM_RX_AFFilter_Low"] = 300;
+            dr["FM_RX_AFFilter_High"] = 3000;
+            dr["FM_TX_AFFilter_Low"] = 300;
+            dr["FM_TX_AFFilter_High"] = 3000;
+            dr["VAC1_Force_In"] = false;
+            dr["VAC1_Force_Out"] = false;
+            dr["VAC2_Force_In"] = false;
+            dr["VAC2_Force_Out"] = false;
+            dr["VAC1_SwapIQ"] = true;
+            dr["VAC2_SwapIQ"] = true;
+            dr["Audio_Disable_Audio_Amp"] = false;
+            //
+
             // CFC
             dr["CFCEnabled"] = false;
             dr["CFCPostEqEnabled"] = false;
             dr["CFCPhaseRotatorEnabled"] = false;
+            dr["CFCPhaseReverseEnabled"] = false;
 
             dr["CFCPhaseRotatorFreq"] = 338;
             dr["CFCPhaseRotatorStages"] = 8;
@@ -4722,10 +4752,25 @@ namespace Thetis
             dr["CESSB_On"] = false;
             dr["Pure_Signal_Enabled"] = false;
 
+            //
+            dr["FM_RX_AFFilter_Low"] = 300;
+            dr["FM_RX_AFFilter_High"] = 3000;
+            dr["FM_TX_AFFilter_Low"] = 300;
+            dr["FM_TX_AFFilter_High"] = 3000;
+            dr["VAC1_Force_In"] = false;
+            dr["VAC1_Force_Out"] = false;
+            dr["VAC2_Force_In"] = false;
+            dr["VAC2_Force_Out"] = false;
+            dr["VAC1_SwapIQ"] = true;
+            dr["VAC2_SwapIQ"] = true;
+            dr["Audio_Disable_Audio_Amp"] = false;
+            //
+
             // CFC
             dr["CFCEnabled"] = false;
             dr["CFCPostEqEnabled"] = false;
             dr["CFCPhaseRotatorEnabled"] = false;
+            dr["CFCPhaseReverseEnabled"] = false;
 
             dr["CFCPhaseRotatorFreq"] = 338;
             dr["CFCPhaseRotatorStages"] = 8;
@@ -4915,10 +4960,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -5107,10 +5167,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -5298,10 +5373,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -5489,10 +5579,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -5680,10 +5785,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -5871,10 +5991,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -6062,10 +6197,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -6253,10 +6403,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -6444,10 +6609,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -6635,10 +6815,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -6826,10 +7021,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -7017,10 +7227,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -7208,10 +7433,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -7399,10 +7639,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -7590,10 +7845,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = false;
                 dr["CFCPostEqEnabled"] = false;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -7781,10 +8051,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = true;
                 dr["CFCPostEqEnabled"] = true;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -7972,10 +8257,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = true;
                 dr["CFCPostEqEnabled"] = true;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -8163,10 +8463,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = true;
                 dr["CFCPostEqEnabled"] = true;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 8;
@@ -8354,10 +8669,25 @@ namespace Thetis
                 dr["CESSB_On"] = false;
                 dr["Pure_Signal_Enabled"] = false;
 
+                //
+                dr["FM_RX_AFFilter_Low"] = 300;
+                dr["FM_RX_AFFilter_High"] = 3000;
+                dr["FM_TX_AFFilter_Low"] = 300;
+                dr["FM_TX_AFFilter_High"] = 3000;
+                dr["VAC1_Force_In"] = false;
+                dr["VAC1_Force_Out"] = false;
+                dr["VAC2_Force_In"] = false;
+                dr["VAC2_Force_Out"] = false;
+                dr["VAC1_SwapIQ"] = true;
+                dr["VAC2_SwapIQ"] = true;
+                dr["Audio_Disable_Audio_Amp"] = false;
+                //
+
                 // CFC
                 dr["CFCEnabled"] = true;
                 dr["CFCPostEqEnabled"] = true;
                 dr["CFCPhaseRotatorEnabled"] = false;
+                dr["CFCPhaseReverseEnabled"] = false;
 
                 dr["CFCPhaseRotatorFreq"] = 338;
                 dr["CFCPhaseRotatorStages"] = 9;

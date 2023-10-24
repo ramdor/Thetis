@@ -125,11 +125,17 @@ namespace Thetis
             set { m_bFrameRateIssue = value; }
         }
 
-        private static bool m_bGetPixelsIssue = false;
-        public static bool GetPixelsIssue
+        private static bool _bGetPixelsIssueRX1 = false;
+        public static bool GetPixelsIssueRX1
         {
-            get { return m_bGetPixelsIssue; }
-            set { m_bGetPixelsIssue = value; }
+            get { return _bGetPixelsIssueRX1; }
+            set { _bGetPixelsIssueRX1 = value; }
+        }
+        private static bool _bGetPixelsIssueRX2 = false;
+        public static bool GetPixelsIssueRX2
+        {
+            get { return _bGetPixelsIssueRX2; }
+            set { _bGetPixelsIssueRX2 = value; }
         }
 
         private static bool m_bShowFrameRateIssue = true;
@@ -266,13 +272,13 @@ namespace Thetis
             set { pan_fill_color = value; }
         }
 
-        private static bool tx_on_vfob = false;
+        private static bool _tx_on_vfob = false;
         public static bool TXOnVFOB
         {
-            get { return tx_on_vfob; }
+            get { return _tx_on_vfob; }
             set
             {
-                tx_on_vfob = value;
+                _tx_on_vfob = value;
             }
         }
 
@@ -282,7 +288,7 @@ namespace Thetis
             get { return display_duplex; }
             set
             {
-                if (mox && value != display_duplex)
+                if (_mox && value != display_duplex)
                 {
                     // just incase dup is changed whilst tx'ing
                     ResetBlobMaximums(1, true);
@@ -318,7 +324,10 @@ namespace Thetis
                 current_display_mode_bottom = value;
                 if (bDifferent)
                 {
-                    clearBuffers(displayTargetWidth, 2);
+                    lock (_objDX2Lock)
+                    {
+                        clearBuffers(displayTargetWidth, 2);
+                    }
                     if (value == DisplayMode.PANAFALL || value == DisplayMode.WATERFALL)
                         ResetWaterfallBmp2();
                 }
@@ -569,8 +578,16 @@ namespace Thetis
         {
             if (newPower)
             {
-                FastAttackNoiseFloorRX1 = true;
-                FastAttackNoiseFloorRX2 = true;
+                lock (_objDX2Lock)
+                {
+                    PurgeBuffers();
+                    if (!_mox_transition_buffer_clear_for_display)
+                    {
+                        // pergebuffers wont cause this if above bool is false, so do here
+                        FastAttackNoiseFloorRX1 = true;
+                        if(_rx2_enabled) FastAttackNoiseFloorRX2 = true;
+                    }
+                }
             }
         }
         private static void OnBandChangeHandler(int rx, Band oldBand, Band newBand)
@@ -679,7 +696,7 @@ namespace Thetis
             set
             {
                 m_bNoiseFloorGoodRX1 = false;
-                _fLastFastAttackEnabledTimeRX1 = m_objFrameStartTimer.ElapsedMsec;
+                if(value) _fLastFastAttackEnabledTimeRX1 = m_objFrameStartTimer.ElapsedMsec;
                 m_bFastAttackNoiseFloorRX1 = value;
             }
         }
@@ -689,7 +706,7 @@ namespace Thetis
             set
             {
                 m_bNoiseFloorGoodRX2 = false;
-                _fLastFastAttackEnabledTimeRX2 = m_objFrameStartTimer.ElapsedMsec;
+                if(value) _fLastFastAttackEnabledTimeRX2 = m_objFrameStartTimer.ElapsedMsec;
                 m_bFastAttackNoiseFloorRX2 = value;
             }
         }
@@ -1185,17 +1202,17 @@ namespace Thetis
         //    set { current_display_engine = value; }
         //}
 
-        private static bool mox = false;
+        private static bool _mox = false;
         public static bool MOX
         {
-            get { return mox; }
+            get { return _mox; }
             set
             {
-                if (value != mox)
+                if (value != _mox)
                 {
                     resetPeaksAndNoise();
                 }
-                mox = value;
+                _mox = value;
             }
         }
         private static bool m_bShowRX1NoiseFloor = false;
@@ -1249,12 +1266,14 @@ namespace Thetis
                 current_display_mode = value;
 
                 if (console.PowerOn)
-                    console.pause_DisplayThread = true;
+                    console._pause_DisplayThread = true;
 
                 if (bDifferent)
                 {
-                    clearBuffers(displayTargetWidth, 1);
-
+                    lock (_objDX2Lock)
+                    {
+                        clearBuffers(displayTargetWidth, 1);
+                    }
                     if (value == DisplayMode.PANAFALL || value == DisplayMode.WATERFALL)
                         ResetWaterfallBmp();
                 }
@@ -1275,7 +1294,7 @@ namespace Thetis
                         cmaster.CMSetScopeRun(0, false);
                         break;
                 }
-                console.pause_DisplayThread = false;
+                console._pause_DisplayThread = false;
             }
         }
 
@@ -1293,11 +1312,11 @@ namespace Thetis
             set { max_y = value; }
         }
 
-        private static bool rx2_enabled = false;
+        private static bool _rx2_enabled = false;
         public static bool RX2Enabled
         {
-            get { return rx2_enabled; }
-            set { rx2_enabled = value; }
+            get { return _rx2_enabled; }
+            set { _rx2_enabled = value; }
         }
 
         private static bool _bRebuildRX1LinearGradBrush = true;
@@ -1382,7 +1401,7 @@ namespace Thetis
         {
             get
             {
-                bool local_mox = mox && (!tx_on_vfob || (tx_on_vfob && !rx2_enabled));
+                bool local_mox = localMox(1);// _mox && (!_tx_on_vfob || (_tx_on_vfob && !_rx2_enabled));
                 if (local_mox)
                     return tx_spectrum_grid_max;
                 else
@@ -1394,7 +1413,7 @@ namespace Thetis
         {
             get
             {
-                bool local_mox = mox && (!tx_on_vfob || (tx_on_vfob && !rx2_enabled));
+                bool local_mox = localMox(1);// _mox && (!_tx_on_vfob || (_tx_on_vfob && !_rx2_enabled));
                 if (local_mox)
                     return tx_spectrum_grid_min;
                 else
@@ -1406,7 +1425,7 @@ namespace Thetis
         {
             get
             {
-                bool local_mox = mox && (!tx_on_vfob || (tx_on_vfob && !rx2_enabled));
+                bool local_mox = localMox(1);// _mox && (!_tx_on_vfob || (_tx_on_vfob && !_rx2_enabled));
                 if (local_mox)
                     return tx_spectrum_grid_step;
                 else
@@ -1417,7 +1436,7 @@ namespace Thetis
         {
             get
             {
-                bool local_mox = mox && (tx_on_vfob && rx2_enabled);
+                bool local_mox = localMox(2);// _mox && (_tx_on_vfob && _rx2_enabled);
                 if (local_mox)
                     return tx_spectrum_grid_max;
                 else
@@ -1429,7 +1448,7 @@ namespace Thetis
         {
             get
             {
-                bool local_mox = mox && (tx_on_vfob && rx2_enabled);
+                bool local_mox = localMox(2);// _mox && (_tx_on_vfob && _rx2_enabled);
                 if (local_mox)
                     return tx_spectrum_grid_min;
                 else
@@ -1441,7 +1460,7 @@ namespace Thetis
         {
             get
             {
-                bool local_mox = mox && (tx_on_vfob && rx2_enabled);
+                bool local_mox = localMox(2);// _mox && (_tx_on_vfob && _rx2_enabled);
                 if (local_mox)
                     return tx_spectrum_grid_step;
                 else
@@ -2297,6 +2316,10 @@ namespace Thetis
         private static ArrayPool<float> m_objFloatPool = ArrayPool<float>.Shared;
         private static ArrayPool<int> m_objIntPool = ArrayPool<int>.Shared;
 
+        private static bool _ignore_waterfall_agc_RX1 = false;
+        private static bool _ignore_waterfall_agc_RX2 = false;
+        private static double _rx1_clearbuffer_timeout_waterfall = 0;
+        private static double _rx2_clearbuffer_timeout_waterfall = 0;
         private static void clearBuffers(int W, int rx)
         {
             ResetBlobMaximums(rx, true);
@@ -2304,40 +2327,42 @@ namespace Thetis
 
             if (rx == 1)
             {
-                Parallel.For(0, W, (i) => //for (int i = 0; i < displayTargetWidth; i++)
+                Parallel.For(0, W, (i) =>
                 {
                     histogram_data[i] = Int32.MaxValue;
                     histogram_history[i] = 0;
                 });
-                Parallel.For(0, W, (i) => //for (int i = 0; i < displayTargetWidth; i++)
+                Parallel.For(0, W, (i) =>
                 {
-                    new_display_data[i] = -200.0f;
-                    current_display_data[i] = -200.0f;
-                    new_waterfall_data[i] = -200.0f;
-                    current_waterfall_data[i] = -200.0f;
-                    current_display_data_copy[i] = -200.0f;
-                    current_display_data_bottom_copy[i] = -200.0f;
+                    new_display_data[i] = -200;
+                    current_display_data[i] = -200;
+                    new_waterfall_data[i] = -200;
+                    current_waterfall_data[i] = -200;
+                    current_display_data_copy[i] = -200;
+                    current_display_data_bottom_copy[i] = -200;
                 });
-                _RX1waterfallPreviousMinValue = -200f;
-
-                FastAttackNoiseFloorRX1 = true;                
+                float tmpDelay = Math.Max(200f, _fft_fill_timeRX1);
+                _rx1_clearbuffer_timeout_waterfall = m_objFrameStartTimer.ElapsedMsec + tmpDelay;
+                _ignore_waterfall_agc_RX1 = _mox_transition_buffer_clear_for_display;
+                FastAttackNoiseFloorRX1 = true;
             }
             else
             {
-                Parallel.For(0, W, (i) => //for (int i = 0; i < displayTargetWidth; i++)
+                Parallel.For(0, W, (i) =>
                 {
-                    new_display_data_bottom[i] = -200.0f;
-                    current_display_data_bottom[i] = -200.0f;
-                    new_waterfall_data_bottom[i] = -200.0f;
-                    current_waterfall_data_bottom[i] = -200.0f;
-                    current_waterfall_data_copy[i] = -200.0f;
-                    current_waterfall_data_bottom_copy[i] = -200f;
+                    new_display_data_bottom[i] = -200;
+                    current_display_data_bottom[i] = -200;
+                    new_waterfall_data_bottom[i] = -200;
+                    current_waterfall_data_bottom[i] = -200;
+                    current_waterfall_data_copy[i] = -200;
+                    current_waterfall_data_bottom_copy[i] = -200;
                 });
-                _RX2waterfallPreviousMinValue = -200f;
-
+                float tmpDelay = Math.Max(200f, _fft_fill_timeRX2);
+                _rx2_clearbuffer_timeout_waterfall = m_objFrameStartTimer.ElapsedMsec + tmpDelay;
+                _ignore_waterfall_agc_RX2 = _mox_transition_buffer_clear_for_display;
                 FastAttackNoiseFloorRX2 = true;
             }
-        }
+    }
 
         private static void initDisplayArrays(int W, int H)
         {
@@ -2552,10 +2577,10 @@ namespace Thetis
         {
             int H = displayTargetHeight;
             if (current_display_mode == DisplayMode.PANAFALL) H /= 2;
-            if (rx2_enabled) H /= 2;
+            if (_rx2_enabled) H /= 2;
 
             //override for splitter pos, when only one rx and it is panafall
-            if (!rx2_enabled && current_display_mode == DisplayMode.PANAFALL) H = displayTargetHeight - PanafallSplitBarPos;
+            if (!_rx2_enabled && current_display_mode == DisplayMode.PANAFALL) H = displayTargetHeight - PanafallSplitBarPos;
 
             lock (_objDX2Lock)
             {
@@ -3112,7 +3137,7 @@ namespace Thetis
                 _d2dRenderTarget.TextAntialiasMode = TextAntialiasMode.Default;
             }
         }
-        //private static bool _clearBuffers = false;
+
         public static void RenderDX2D()
         {
             try
@@ -3220,23 +3245,6 @@ namespace Thetis
                         }
                     }
                     //
-
-                    ////
-                    //if(_clearBuffers)
-                    //{
-                    //    if (_clear_rx1_buffers)
-                    //    {
-                    //        clearBuffers(displayTargetWidth, 1);
-                    //        _clear_rx1_buffers = false;
-                    //    }
-                    //    if (_clear_rx2_buffers)
-                    //    {
-                    //        clearBuffers(displayTargetWidth, 2);
-                    //        _clear_rx2_buffers = false;
-                    //    }
-                    //    _clearBuffers = false;
-                    //}
-                    ////
 
                     if (!split_display)
                     {
@@ -3376,7 +3384,7 @@ namespace Thetis
                     }
 
                     if (m_bShowFrameRateIssue && m_bFrameRateIssue) _d2dRenderTarget.FillRectangle(new RectangleF(0, 0, 8, 8), m_bDX2_Red);
-                    if (m_bShowGetPixelsIssue && m_bGetPixelsIssue) _d2dRenderTarget.FillRectangle(new RectangleF(0, 8, 8, 8), m_bDX2_Yellow);
+                    if (m_bShowGetPixelsIssue && (_bGetPixelsIssueRX1 || _bGetPixelsIssueRX2)) _d2dRenderTarget.FillRectangle(new RectangleF(0, 8, 8, 8), m_bDX2_Yellow);
 
                     calcFps();
                     if (m_bShowFPS) _d2dRenderTarget.DrawText(m_nFps.ToString(), fontDX2d_callout, new RectangleF(10, 0, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_m_bTextCallOutActive, DrawTextOptions.None);
@@ -3403,8 +3411,6 @@ namespace Thetis
                     _d2dRenderTarget.Transform = Matrix3x2.Identity;
 
                     _d2dRenderTarget.EndDraw();
-
-                    //_clearBuffers = _clear_rx1_buffers | _clear_rx2_buffers; //next time around
 
                     // render
                     // note: the only way to have Present non block when using vsync number of blanks 0 , is to use DoNotWait
@@ -3711,100 +3717,99 @@ namespace Thetis
             return displayduplex;
         }
 
-        static private int GetDBMPixelPos(int nVerticalShift, float dBm, int rx, int H, bool bIsWaterfall)
-        {
-            float fOffset;
-            bool displayduplex = isRxDuplex(rx);
+        //static private int GetDBMPixelPos(int nVerticalShift, float dBm, int rx, int H, bool bIsWaterfall)
+        //{
+        //    float fOffset;
+        //    bool displayduplex = isRxDuplex(rx);
 
-            int grid_max;
-            int grid_min;
-            int grid_step;
-            int yRange;
+        //    int grid_max;
+        //    int grid_min;
+        //    int grid_step;
+        //    int yRange;
 
-            bool local_mox = mox && ((rx == 1 && !tx_on_vfob) || (rx == 2 && tx_on_vfob) || (rx == 1 && tx_on_vfob && !console.RX2Enabled));
+        //    bool local_mox = _mox && ((rx == 1 && !_tx_on_vfob) || (rx == 2 && _tx_on_vfob) || (rx == 1 && _tx_on_vfob && !console.RX2Enabled));
 
-            if (rx == 1)
-            {
-                if (local_mox)  // && !tx_on_vfob)
-                {
-                    grid_max = tx_spectrum_grid_max;
-                    grid_min = tx_spectrum_grid_min;
-                    grid_step = tx_spectrum_grid_step;
-                }
-                else
-                {
-                    grid_max = spectrum_grid_max;
-                    grid_min = spectrum_grid_min;
-                    grid_step = spectrum_grid_step;
-                }
+        //    if (rx == 1)
+        //    {
+        //        if (local_mox)  // && !tx_on_vfob)
+        //        {
+        //            grid_max = tx_spectrum_grid_max;
+        //            grid_min = tx_spectrum_grid_min;
+        //            grid_step = tx_spectrum_grid_step;
+        //        }
+        //        else
+        //        {
+        //            grid_max = spectrum_grid_max;
+        //            grid_min = spectrum_grid_min;
+        //            grid_step = spectrum_grid_step;
+        //        }
 
-                yRange = grid_max - grid_min;
-            }
-            else// if(rx == 2)
-            {
-                if (local_mox)// && tx_on_vfob)
-                {
-                    grid_max = tx_spectrum_grid_max;
-                    grid_min = tx_spectrum_grid_min;
-                    grid_step = tx_spectrum_grid_step;
-                }
-                else
-                {
-                    grid_max = rx2_spectrum_grid_max;
-                    grid_min = rx2_spectrum_grid_min;
-                    grid_step = rx2_spectrum_grid_step;
-                }
+        //        yRange = grid_max - grid_min;
+        //    }
+        //    else// if(rx == 2)
+        //    {
+        //        if (local_mox)// && tx_on_vfob)
+        //        {
+        //            grid_max = tx_spectrum_grid_max;
+        //            grid_min = tx_spectrum_grid_min;
+        //            grid_step = tx_spectrum_grid_step;
+        //        }
+        //        else
+        //        {
+        //            grid_max = rx2_spectrum_grid_max;
+        //            grid_min = rx2_spectrum_grid_min;
+        //            grid_step = rx2_spectrum_grid_step;
+        //        }
 
-                yRange = grid_max - grid_min;
-            }
+        //        yRange = grid_max - grid_min;
+        //    }
 
-            if (rx == 1)
-                fOffset = RX1Offset;
-            else
-                fOffset = RX2Offset;
+        //    if (rx == 1)
+        //        fOffset = RX1Offset;
+        //    else
+        //        fOffset = RX2Offset;
 
-            //MW0LGE [2.9.0.7]
-            //if (rx == 1)
-            //{
-            //    if (local_mox) fOffset = tx_display_cal_offset;
-            //    else if (mox && tx_on_vfob && !displayduplex)
-            //    {
-            //        if (console.RX2Enabled) fOffset = rx1_display_cal_offset;
-            //        else fOffset = tx_display_cal_offset;
-            //    }
-            //    else fOffset = rx1_display_cal_offset;
-            //}
-            //else //if (rx == 2)
-            //{
-            //    if (local_mox) fOffset = tx_display_cal_offset;
-            //    else fOffset = rx2_display_cal_offset;
-            //}
+        //    //MW0LGE [2.9.0.7]
+        //    //if (rx == 1)
+        //    //{
+        //    //    if (local_mox) fOffset = tx_display_cal_offset;
+        //    //    else if (mox && tx_on_vfob && !displayduplex)
+        //    //    {
+        //    //        if (console.RX2Enabled) fOffset = rx1_display_cal_offset;
+        //    //        else fOffset = tx_display_cal_offset;
+        //    //    }
+        //    //    else fOffset = rx1_display_cal_offset;
+        //    //}
+        //    //else //if (rx == 2)
+        //    //{
+        //    //    if (local_mox) fOffset = tx_display_cal_offset;
+        //    //    else fOffset = rx2_display_cal_offset;
+        //    //}
 
-            //if (!local_mox || (local_mox && displayduplex))
-            //{
-            //    if (rx == 1) fOffset += rx1_preamp_offset;
-            //    else if (rx == 2) fOffset += rx2_preamp_offset;
-            //}
+        //    //if (!local_mox || (local_mox && displayduplex))
+        //    //{
+        //    //    if (rx == 1) fOffset += rx1_preamp_offset;
+        //    //    else if (rx == 2) fOffset += rx2_preamp_offset;
+        //    //}
 
-            int Y;
-            dBm += fOffset;
-            //Y = (int)(Math.Floor((grid_max - max) * H / yRange));
-            Y = (int)(((grid_max - dBm) * H / yRange) - 0.5f); // -0.5 to mimic floor
-            //Y = Math.Min(Y, H);
-            Y = Y < H ? Y : H;
-            Y += nVerticalShift;
+        //    int Y;
+        //    dBm += fOffset;
+        //    //Y = (int)(Math.Floor((grid_max - max) * H / yRange));
+        //    Y = (int)(((grid_max - dBm) * H / yRange) - 0.5f); // -0.5 to mimic floor
+        //    //Y = Math.Min(Y, H);
+        //    Y = Y < H ? Y : H;
+        //    Y += nVerticalShift;
 
-            int top; // a shift to include the gap at the top of the grid lines. This will make sure that this dbm point will match the scales
-            if (bIsWaterfall) top = 20; //change top so that the filter gap doesnt change, inore grid spacing
-            else top = (int)((double)grid_step * H / yRange); // top is based on grid spacing
+        //    int top; // a shift to include the gap at the top of the grid lines. This will make sure that this dbm point will match the scales
+        //    if (bIsWaterfall) top = 20; //change top so that the filter gap doesnt change, inore grid spacing
+        //    else top = (int)((double)grid_step * H / yRange); // top is based on grid spacing
 
-            return Y + top;
-        }
+        //    return Y + top;
+        //}
         static private SharpDX.Direct2D1.Ellipse m_objEllipse = new SharpDX.Direct2D1.Ellipse(Vector2.Zero, 5f, 5f);
 
-        // using -160 instead of -200 as somewhat closer to reality
-        static private float m_fNoiseFloorRX1 = -160; // the NF exposed outside Display
-        static private float m_fNoiseFloorRX2 = -160;
+        static private float m_fNoiseFloorRX1 = -200; // the NF exposed outside Display
+        static private float m_fNoiseFloorRX2 = -200;
         static private bool m_bNoiseFloorGoodRX1 = false; // is the noisefloor good? can be used outside Display
         static private bool m_bNoiseFloorGoodRX2 = false;
 
@@ -3910,16 +3915,16 @@ namespace Thetis
             set { m_bActivePeakFillRX2 = value; }
         }
 
-        private static float m_fActiveDisplayOffsetRX1 = 0;
-        private static float m_fActiveDisplayOffsetRX2 = 0;
-        public static float ActiveDisplayOffsetRX1
-        {
-            get { return m_fActiveDisplayOffsetRX1; }
-        }
-        public static float ActiveDisplayOffsetRX2
-        {
-            get { return m_fActiveDisplayOffsetRX2; }
-        }
+        //private static float m_fActiveDisplayOffsetRX1 = 0;
+        //private static float m_fActiveDisplayOffsetRX2 = 0;
+        //public static float ActiveDisplayOffsetRX1
+        //{
+        //    get { return m_fActiveDisplayOffsetRX1; }
+        //}
+        //public static float ActiveDisplayOffsetRX2
+        //{
+        //    get { return m_fActiveDisplayOffsetRX2; }
+        //}
         private static void modifyDataForNotches(ref float[] data, int rx, bool bottom, bool local_mox, bool displayduplex, int W)
         {
             int Low, High;
@@ -4009,7 +4014,7 @@ namespace Thetis
             get
             {
                 float fOffset;
-                bool local_mox = mox && (!tx_on_vfob || (tx_on_vfob && !console.RX2Enabled));
+                bool local_mox = localMox(1);// _mox && (!_tx_on_vfob || (_tx_on_vfob && !console.RX2Enabled));
                 bool displayduplex = isRxDuplex(1);
 
                 if (local_mox)
@@ -4017,7 +4022,7 @@ namespace Thetis
                     fOffset = tx_display_cal_offset;
                     if (displayduplex) fOffset += rx1_display_cal_offset; //[2.10.1.0] MW0LGE fix issue #137
                 }
-                else if (mox && tx_on_vfob && !displayduplex)
+                else if (_mox && _tx_on_vfob && !displayduplex)
                 {
                     if (console.RX2Enabled) fOffset = rx1_display_cal_offset;
                     else fOffset = tx_display_cal_offset;
@@ -4037,7 +4042,7 @@ namespace Thetis
             get
             {
                 float fOffset;
-                bool local_mox = mox && tx_on_vfob;
+                bool local_mox = localMox(2);// _mox && _tx_on_vfob;
                 bool displayduplex = isRxDuplex(2);
 
                 if (local_mox) fOffset = tx_display_cal_offset;
@@ -4074,7 +4079,7 @@ namespace Thetis
             float dBmSpectralPeakFall;
             bool bActivePeakFill;
 
-            bool local_mox = mox && ((rx == 1 && !tx_on_vfob) || (rx == 2 && tx_on_vfob) || (rx == 1 && tx_on_vfob && !console.RX2Enabled));
+            bool local_mox = localMox(rx);// _mox && ((rx == 1 && !_tx_on_vfob) || (rx == 2 && _tx_on_vfob) || (rx == 1 && _tx_on_vfob && !console.RX2Enabled));
 
             int nDecimatedWidth = W / m_nDecimation;
 
@@ -4108,7 +4113,7 @@ namespace Thetis
                 if (data_ready)
                 {
                     bDoVisualNotch = true;
-                    if (!displayduplex && (local_mox || (mox && tx_on_vfob)) && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
+                    if (!displayduplex && (local_mox || (_mox && _tx_on_vfob)) && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
                         for (int i = 0; i < nDecimatedWidth/*current_display_data.Length*/; i++)
                             current_display_data[i] = grid_min - rx1_display_cal_offset;
@@ -4498,7 +4503,7 @@ namespace Thetis
                     {
                         if (!m_bFastAttackNoiseFloorRX1 && !bPreviousRX1)
                         {
-                            m_fActiveDisplayOffsetRX1 = fOffset;
+                            //m_fActiveDisplayOffsetRX1 = fOffset;
                             m_fNoiseFloorRX1 = m_fLerpAverageRX1 + _fNFshiftDBM;
                             m_bNoiseFloorGoodRX1 = true;
                         }
@@ -4512,7 +4517,7 @@ namespace Thetis
                     {
                         if (!m_bFastAttackNoiseFloorRX2 && !bPreviousRX2)
                         {
-                            m_fActiveDisplayOffsetRX2 = fOffset;
+                            //m_fActiveDisplayOffsetRX2 = fOffset;
                             m_fNoiseFloorRX2 = m_fLerpAverageRX2 + _fNFshiftDBM;
                             m_bNoiseFloorGoodRX2 = true;
                         }
@@ -4668,6 +4673,8 @@ namespace Thetis
         }
         private static void processNoiseFloor(int rx, int averageCount, float averageSum, int width, bool waterfall, bool useOldMethod)
         {
+            //if (rx == 1 && _bGetPixelsIssueRX1) return;
+            //if (rx == 2 && _bGetPixelsIssueRX2) return;
             if (rx == 1 && _bNoiseFloorAlreadyCalculatedRX1) return; // already done, ignore
             if (rx == 2 && _bNoiseFloorAlreadyCalculatedRX2) return; // already done, ignore
 
@@ -4693,8 +4700,9 @@ namespace Thetis
                 else
                 {
                     m_fFFTBinAverageRX1 += m_bFastAttackNoiseFloorRX1 ? 3f : 1f;
-                    if (m_fFFTBinAverageRX1 > 200) m_fFFTBinAverageRX1 = 200;
                 }
+                if (m_fFFTBinAverageRX1 > 200) m_fFFTBinAverageRX1 = 200;
+                if (m_fFFTBinAverageRX1 < -200) m_fFFTBinAverageRX1 = -200;
 
                 // so in attackTime period we need to have moved to where we want
                 int framesInAttackTime = m_bFastAttackNoiseFloorRX1 ? 0 : (int)((fps / 1000f) * (double)m_fAttackTimeInMSForRX1);
@@ -4705,10 +4713,11 @@ namespace Thetis
                 else if (m_fLerpAverageRX1 < m_fFFTBinAverageRX1)
                     m_fLerpAverageRX1 += (m_fFFTBinAverageRX1 - m_fLerpAverageRX1) / framesInAttackTime;
 
-                bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX1) > 1000f; //[2.10.1.0] MW0LGE change to time related, instead of frame related
-                if (m_bFastAttackNoiseFloorRX1 && (Math.Abs(m_fFFTBinAverageRX1 - m_fLerpAverageRX1) < 1f) && bElapsed)
+                if (m_bFastAttackNoiseFloorRX1 && (Math.Abs(m_fFFTBinAverageRX1 - m_fLerpAverageRX1) < 1f))
                 {
-                    m_bFastAttackNoiseFloorRX1 = false;
+                    float tmpDelay = Math.Max(1000f, _fft_fill_timeRX1 + (_wdsp_mox_transition_buffer_clear ? 1000 : 0)); // another 1000 if WDSP is being reset
+                    bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX1) > tmpDelay; //[2.10.1.0] MW0LGE change to time related, instead of frame related
+                    if(bElapsed) m_bFastAttackNoiseFloorRX1 = false;
                 }
 
                 _bNoiseFloorAlreadyCalculatedRX1 = true;
@@ -4732,8 +4741,9 @@ namespace Thetis
                 else
                 {
                     m_fFFTBinAverageRX2 += m_bFastAttackNoiseFloorRX2 ? 3f : 1f;
-                    if (m_fFFTBinAverageRX2 > 200) m_fFFTBinAverageRX2 = 200;
                 }
+                if (m_fFFTBinAverageRX2 > 200) m_fFFTBinAverageRX2 = 200;
+                if (m_fFFTBinAverageRX2 < -200) m_fFFTBinAverageRX2 = -200;
 
                 // so in attackTime period we need to have moved to where we want
                 int framesInAttackTime = m_bFastAttackNoiseFloorRX2 ? 0 : (int)((fps / 1000f) * (double)m_fAttackTimeInMSForRX2);
@@ -4744,10 +4754,11 @@ namespace Thetis
                 else if (m_fLerpAverageRX2 < m_fFFTBinAverageRX2)
                     m_fLerpAverageRX2 += (m_fFFTBinAverageRX2 - m_fLerpAverageRX2) / framesInAttackTime;
 
-                bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX2) > 1000f; //[2.10.1.0] MW0LGE change to time related, instead of frame related
-                if (m_bFastAttackNoiseFloorRX2 && (Math.Abs(m_fFFTBinAverageRX2 - m_fLerpAverageRX2) < 1f) && bElapsed)
+                if (m_bFastAttackNoiseFloorRX2 && (Math.Abs(m_fFFTBinAverageRX2 - m_fLerpAverageRX2) < 1f))
                 {
-                    m_bFastAttackNoiseFloorRX2 = false;
+                    float tmpDelay = Math.Max(1000f, _fft_fill_timeRX2 + (_wdsp_mox_transition_buffer_clear ? 1000 : 0)); // another 1000 if WDSP is being reset
+                    bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX2) > tmpDelay; //[2.10.1.0] MW0LGE change to time related, instead of frame related
+                    if(bElapsed) m_bFastAttackNoiseFloorRX2 = false;
                 }
 
                 _bNoiseFloorAlreadyCalculatedRX2 = true;
@@ -4775,7 +4786,7 @@ namespace Thetis
             }
 
             float local_max_y = float.MinValue;
-            bool local_mox = mox && ((rx == 1 && !tx_on_vfob) || (rx == 2 && tx_on_vfob) || (rx == 1 && tx_on_vfob && !console.RX2Enabled));
+            bool local_mox = localMox(rx);// _mox && ((rx == 1 && !_tx_on_vfob) || (rx == 2 && _tx_on_vfob) || (rx == 1 && _tx_on_vfob && !console.RX2Enabled));
             float local_min_y_w3sz = float.MaxValue;
             float display_min_w3sz = float.MaxValue;
             float display_max_w3sz = float.MinValue;
@@ -4805,7 +4816,7 @@ namespace Thetis
                     high_threshold = rx2_waterfall_high_threshold;
                     if (rx2_waterfall_agc && !m_bRX2_spectrum_thresholds)
                     {
-                        if (m_bWaterfallUseNFForACGRX2)
+                        if (m_bWaterfallUseNFForACGRX2 && !FastAttackNoiseFloorRX2)
                         {
                             low_threshold = m_fLerpAverageRX2;
                         }
@@ -4835,7 +4846,7 @@ namespace Thetis
                     high_threshold = waterfall_high_threshold;
                     if (rx1_waterfall_agc && !m_bRX1_spectrum_thresholds)
                     {
-                        if (m_bWaterfallUseNFForACGRX1)
+                        if (m_bWaterfallUseNFForACGRX1 && !FastAttackNoiseFloorRX1)
                         {
                             low_threshold = m_fLerpAverageRX1;
                         }
@@ -4855,8 +4866,6 @@ namespace Thetis
 
             if (console.PowerOn)
             {
-                low_threshold = low_threshold == -200f ? 0 : low_threshold;
-
                 if (rx == 1 && waterfall_data_ready)
                 {
                     bDoVisualNotch = true;
@@ -4933,35 +4942,45 @@ namespace Thetis
                     {
                         data = current_waterfall_data;
                         dataCopy = current_waterfall_data_copy;
+
+                        if (_ignore_waterfall_agc_RX1 && m_objFrameStartTimer.ElapsedMsec < _rx1_clearbuffer_timeout_waterfall)
+                        {
+                            low_threshold = 0;
+                            high_threshold = low_threshold;
+                            _RX1waterfallPreviousMinValue = low_threshold;
+                        }
+                        else
+                            _ignore_waterfall_agc_RX1 = false;
                     }
                     else // rx2
                     {
                         data = current_waterfall_data_bottom;
                         dataCopy = current_waterfall_data_bottom_copy;
+
+                        if (_ignore_waterfall_agc_RX2 && m_objFrameStartTimer.ElapsedMsec < _rx2_clearbuffer_timeout_waterfall)
+                        {
+                            low_threshold = 0;
+                            high_threshold = low_threshold;
+                            _RX2waterfallPreviousMinValue = low_threshold;
+                        }
+                        else
+                            _ignore_waterfall_agc_RX2 = false;
                     }
 
                     float max;
-                    float max_copy;
-                    float fOffset;// = 0; ///MW0LGE - block of code moved out of for loop +- for now, TODO
+                    float max_copy;                    
 
                     if (!local_mox)
                     {
-                        //if (rx == 1) fOffset += rx1_display_cal_offset + (rx1_preamp_offset - alex_preamp_offset);
-                        //else if (rx == 2) fOffset += rx2_display_cal_offset + (rx2_preamp_offset);
-
                         if (bDoVisualNotch && m_bShowVisualNotch)
                         {
                             // modify the data for visual notches
                             modifyDataForNotches(ref data, rx, bottom, local_mox, displayduplex, W);
                         }
                     }
-                    //else
-                    //{
-                    //if (rx == 1) fOffset += tx_display_cal_offset + (rx1_preamp_offset - alex_preamp_offset);
-                    //else if (rx == 2) fOffset += tx_display_cal_offset + (rx2_preamp_offset);
-                    //}
 
                     //MW0LGE [2.9.0.7]
+                    float fOffset;
                     if (rx == 1)
                         fOffset = RX1Offset;
                     else
@@ -4974,7 +4993,7 @@ namespace Thetis
 
                     for (int i = 0; i < nDecimatedWidth; i++)
                     {
-                        max = data[i] + fOffset; //MW0LGE
+                        max = data[i] + fOffset;
                         max_copy = dataCopy[i] + fOffset;
 
                         // noise floor
@@ -5015,7 +5034,7 @@ namespace Thetis
                         {
                             if (!m_bFastAttackNoiseFloorRX1 && !bPreviousRX1)
                             {
-                                m_fActiveDisplayOffsetRX1 = fOffset;
+                                //m_fActiveDisplayOffsetRX1 = fOffset;
                                 m_fNoiseFloorRX1 = m_fLerpAverageRX1 + _fNFshiftDBM;
                                 m_bNoiseFloorGoodRX1 = true;
                             }
@@ -5024,7 +5043,7 @@ namespace Thetis
                         {
                             if (!m_bFastAttackNoiseFloorRX2 && !bPreviousRX2)
                             {
-                                m_fActiveDisplayOffsetRX2 = fOffset;
+                                //m_fActiveDisplayOffsetRX2 = fOffset;
                                 m_fNoiseFloorRX2 = m_fLerpAverageRX2 + _fNFshiftDBM;
                                 m_bNoiseFloorGoodRX2 = true;
                             }
@@ -5202,7 +5221,7 @@ namespace Thetis
                                         G = 0;
                                         B = 0;
                                     }
-                                    else if (waterfall_data[i] >= WaterfallHighThreshold) // white
+                                    else if (waterfall_data[i] >= high_threshold) // white
                                     {
                                         R = 240;
                                         G = 240;
@@ -5210,7 +5229,7 @@ namespace Thetis
                                     }
                                     else // value is between low and high
                                     {
-                                        float range = WaterfallHighThreshold - low_threshold;
+                                        float range = high_threshold - low_threshold;
                                         float offset = waterfall_data[i] - low_threshold;
                                         float local_percent = ((100.0f * offset) / range);
 
@@ -5284,7 +5303,7 @@ namespace Thetis
                                         G = 0;
                                         B = 0;
                                     }
-                                    else if (waterfall_data[i] >= WaterfallHighThreshold) // white
+                                    else if (waterfall_data[i] >= high_threshold) // white
                                     {
                                         R = 255;
                                         G = 255;
@@ -5292,7 +5311,7 @@ namespace Thetis
                                     }
                                     else // value is between low and high
                                     {
-                                        float range = WaterfallHighThreshold - low_threshold;
+                                        float range = high_threshold - low_threshold;
                                         float offset = waterfall_data[i] - low_threshold;
                                         float local_percent = ((100.0f * offset) / range);
                                         R = (int)((local_percent / 100) * 255);
@@ -5962,19 +5981,9 @@ namespace Thetis
                     if (!local_mox)
                     {
                         if (rx == 1)
-                        {
-                            if (_RX1waterfallPreviousMinValue == -200f)
-                                _RX1waterfallPreviousMinValue = waterfall_minimum;
-                            else
-                                _RX1waterfallPreviousMinValue = (((_RX1waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10) + 1; //wfagc
-                        }
+                            _RX1waterfallPreviousMinValue = (((_RX1waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10) + 1; //wfagc
                         else
-                        {
-                            if (_RX2waterfallPreviousMinValue == -200f)
-                                _RX2waterfallPreviousMinValue = waterfall_minimum;
-                            else
-                                _RX2waterfallPreviousMinValue = ((_RX2waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10 + 1; //wfagc
-                        }
+                            _RX2waterfallPreviousMinValue = ((_RX2waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10 + 1; //wfagc
                     }
                 }
 
@@ -6898,7 +6907,7 @@ namespace Thetis
             //
             DisplayLabelAlignment label_align = display_label_align;
             bool displayduplex = isRxDuplex(rx);
-            bool local_mox = mox && ((rx == 1 && !tx_on_vfob) || (rx == 2 && tx_on_vfob) || (rx == 1 && tx_on_vfob && !console.RX2Enabled));
+            bool local_mox = localMox(rx);// _mox && ((rx == 1 && !_tx_on_vfob) || (rx == 2 && _tx_on_vfob) || (rx == 1 && _tx_on_vfob && !console.RX2Enabled));
             int Low = 0;					// initialize variables
             int High = 0;
             int mid_w = W / 2;
@@ -7208,7 +7217,7 @@ namespace Thetis
                     }
                     else if (draw_tx_filter)
                     {
-                        if ((rx == 2 && tx_on_vfob) || (rx == 1 && !(tx_on_vfob && rx2_enabled)))
+                        if ((rx == 2 && _tx_on_vfob) || (rx == 1 && !(_tx_on_vfob && _rx2_enabled)))
                         {
                             drawLineDX2D(m_bDX2_tx_filter_pen, filter_left_x, nVerticalShift + top, filter_left_x, nVerticalShift + H, tx_filter_pen.Width);
                             drawLineDX2D(m_bDX2_tx_filter_pen, filter_right_x, nVerticalShift + top, filter_right_x, nVerticalShift + H, tx_filter_pen.Width);
@@ -7337,7 +7346,7 @@ namespace Thetis
                 }
                 if (draw_tx_cw_freq)
                 {
-                    if (rx == 1 && !local_mox && !(rx2_enabled && tx_on_vfob) &&
+                    if (rx == 1 && !local_mox && !(_rx2_enabled && _tx_on_vfob) &&
                         (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
                         int cw_line_x1;
@@ -7356,7 +7365,7 @@ namespace Thetis
                         drawLineDX2D(m_bDX2_tx_filter_pen, cw_line_x1, nVerticalShift + top, cw_line_x1, nVerticalShift + H, tx_filter_pen.Width);
                     }
 
-                    if (rx == 2 && !local_mox && (rx2_enabled && tx_on_vfob) &&  //MW0LGE [2.9.0.7] txonb
+                    if (rx == 2 && !local_mox && (_rx2_enabled && _tx_on_vfob) &&  //MW0LGE [2.9.0.7] txonb
                         (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
                     {
                         int cw_line_x1;
@@ -7497,7 +7506,7 @@ namespace Thetis
 
                     vfo += displayduplex ? 0 : xit_hz;
                 }
-                else if (/*mox*/local_mox && tx_on_vfob)
+                else if (/*mox*/local_mox && _tx_on_vfob)
                 {
                     if (console.RX2Enabled) vfo = vfoa_hz + local_rit_hz;
                     else vfo = vfoa_sub_hz;
@@ -7888,7 +7897,7 @@ namespace Thetis
 
                 if (rx == 1)
                 {
-                    if (rx2_enabled)
+                    if (_rx2_enabled)
                     {
                         bShow = (current_display_mode == DisplayMode.PANAFALL) ? display_cursor_y <= 2 * H : display_cursor_y <= H;
                     }
@@ -8510,7 +8519,7 @@ namespace Thetis
             int grid_max = 0;
             int grid_min = 0;
 
-            if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
+            if (!_mox || (_mox && _tx_on_vfob && console.RX2Enabled))
             {
                 low = rx_spectrum_display_low;
                 high = rx_spectrum_display_high;
@@ -8537,7 +8546,7 @@ namespace Thetis
 
             if (!bottom && data_ready)
             {
-                if (mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
+                if (_mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                 {
                     for (int i = 0; i < nDecimatedWidth/*current_display_data.Length*/; i++)
                         current_display_data[i] = grid_min - rx1_display_cal_offset;
@@ -8586,7 +8595,7 @@ namespace Thetis
             //}
             max += rx == 1 ? RX1Offset : RX2Offset;
 
-            if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
+            if (!_mox || (_mox && _tx_on_vfob && console.RX2Enabled))
             {
                 if (rx == 1/*!bottom*/) max += rx1_preamp_offset - alex_preamp_offset;   //MW0LGE_21 change to rx==1
                 else max += rx2_preamp_offset;
@@ -8620,7 +8629,7 @@ namespace Thetis
                 //}
                 max += fOffset;
 
-                if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
+                if (!_mox || (_mox && _tx_on_vfob && console.RX2Enabled))
                 {
                     if (rx == 1/*!bottom*/) max += rx1_preamp_offset - alex_preamp_offset;  //MW0LGE_21 change to rx==1
                     else max += rx2_preamp_offset;
@@ -8671,7 +8680,7 @@ namespace Thetis
             int low = 0;								// init limit variables
             int high = 0;
 
-            if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
+            if (!_mox || (_mox && _tx_on_vfob && console.RX2Enabled))
             {
                 low = rx_spectrum_display_low;				// get RX display limits
                 high = rx_spectrum_display_high;
@@ -8701,13 +8710,13 @@ namespace Thetis
             int grid_min = 0;
             int grid_step = 0;
 
-            if (!mox || (mox && tx_on_vfob && console.RX2Enabled))// || (mox && tx_on_vfob))
+            if (!_mox || (_mox && _tx_on_vfob && console.RX2Enabled))// || (mox && tx_on_vfob))
             {
                 grid_max = spectrum_grid_max;
                 grid_min = spectrum_grid_min;
                 grid_step = spectrum_grid_step;
             }
-            else if (mox)
+            else if (_mox)
             {
                 grid_max = tx_spectrum_grid_max;
                 grid_min = tx_spectrum_grid_min;
@@ -9454,7 +9463,7 @@ namespace Thetis
             int grid_max = 0;
             int grid_min = 0;
 
-            if (!mox || (mox && tx_on_vfob && console.RX2Enabled))
+            if (!_mox || (_mox && _tx_on_vfob && console.RX2Enabled))
             {
                 low = rx_spectrum_display_low;
                 high = rx_spectrum_display_high;
@@ -9505,7 +9514,7 @@ namespace Thetis
                 //}
                 max += fOffset;
 
-                if (!mox) max += (rx1_preamp_offset - alex_preamp_offset);
+                if (!_mox) max += (rx1_preamp_offset - alex_preamp_offset);
 
                 switch (rx1_dsp_mode)
                 {
@@ -9721,7 +9730,7 @@ namespace Thetis
             int rxDisplayLow;
             int rxDisplayHigh;
 
-            bool local_mox = mox && ((rx == 1 && !tx_on_vfob) || (rx == 2 && tx_on_vfob) || (rx == 1 && tx_on_vfob && !console.RX2Enabled));
+            bool local_mox = localMox(rx);// _mox && ((rx == 1 && !_tx_on_vfob) || (rx == 2 && _tx_on_vfob) || (rx == 1 && _tx_on_vfob && !console.RX2Enabled));
             int local_rit;
 
             if (rx == 1)
@@ -9969,6 +9978,50 @@ namespace Thetis
             get { return _bUseLegacyBuffers; }
             set { _bUseLegacyBuffers = value; }
         }
+
+        public static void PurgeBuffers()
+        {
+            // note: lock not used here as primary call is from display thread.
+            if (_mox_transition_buffer_clear_for_display)
+            {
+                clearBuffers(displayTargetWidth, 1);
+                if (_rx2_enabled) clearBuffers(displayTargetWidth, 2);
+            }
+        }
+
+        private static float _fft_fill_timeRX1 = 0f;
+        private static float _fft_fill_timeRX2 = 0f;
+        public static float RX1FFTFillTime
+        {
+            get { return _fft_fill_timeRX1; }
+            set { _fft_fill_timeRX1 = value; }
+        }
+        public static float RX2FFTFillTime
+        {
+            get { return _fft_fill_timeRX2; }
+            set { _fft_fill_timeRX2 = value; }
+        }
+        private static bool _wdsp_mox_transition_buffer_clear = false;
+        public static bool WDSPMOXTransitionBufferClear
+        {
+            get { return _wdsp_mox_transition_buffer_clear; }
+            set { _wdsp_mox_transition_buffer_clear = value; }
+        }
+        private static bool _mox_transition_buffer_clear_for_display = false;
+        public static bool MOXTransitionBufferClearForDisplay
+        {
+            get { return _mox_transition_buffer_clear_for_display; }
+            set { _mox_transition_buffer_clear_for_display = value; }
+        }
         #endregion
+        private static bool localMox(int rx)
+        {
+            if(rx == 1)
+                return _mox && (!_tx_on_vfob || (_tx_on_vfob && !_rx2_enabled));
+            else if(rx == 2)
+                return _mox && (_tx_on_vfob && _rx2_enabled);
+
+            return false;
+        }
     }
 }

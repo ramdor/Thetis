@@ -34,8 +34,9 @@ namespace Thetis
 {
     class TitleBar
     {
-        public const string BUILD_NAME = "";
-        public const string BUILD_DATE = "(10/13/23)<FW>"; //MW0LGE_21g <FW> gets replaced in BasicTitle (console.cs) with firmware version
+        public const string BUILD_NAME = "dev-build-1";
+        //[2.10.2.2]MW0LGE pre-build event script auto build date
+        //public const string BUILD_DATE = "(10/11/23)<FW>"; //MW0LGE_21g <FW> gets replaced in BasicTitle (console.cs) with firmware version
 
         public static string GetString(bool bWithFirmware = true)
         {
@@ -48,7 +49,9 @@ namespace Thetis
             string sBits = Common.Is64Bit ? " x64" : " x86";
 
             s += " v" + version + sBits;
-            if (BUILD_DATE != "") s += " " + BUILD_DATE;
+            //if (BUILD_DATE != "") s += " " + BUILD_DATE;
+            s += " (" + VersionInfo.BuildDate + ")<FW>";
+
             if (BUILD_NAME != "") s += " " + BUILD_NAME;
 
             if (!bWithFirmware) s = s.Replace("<FW>", "");

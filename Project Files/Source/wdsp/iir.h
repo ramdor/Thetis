@@ -166,6 +166,7 @@ extern void setSize_mpeak (MPEAK a, int size);
 
 typedef struct _phrot
 {
+	int reverse;
 	int run;
 	int size;
 	double* in;

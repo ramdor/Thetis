@@ -27,7 +27,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <ManifestCertificateThumbprint>AEF2072BFD4E1723668C4A72938E707A73AAFB8B</ManifestCertificateThumbprint>
     <ManifestKeyFile>PowerSDR_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>false</GenerateManifests>
@@ -214,6 +214,9 @@
       <HintPath>..\packages\FTD2XX.Net.1.2.1\lib\net45\FTDI2XX.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
     </Reference>
@@ -235,7 +238,10 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -245,7 +251,16 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
@@ -282,6 +297,7 @@
     <Compile Include="CAT\UsbBCDCable.cs" />
     <Compile Include="Channel.cs" />
     <Compile Include="clsBandStackManager.cs" />
+    <Compile Include="clsThetisSkinService.cs" />
     <Compile Include="Firewall.cs" />
     <Compile Include="cmaster.cs" />
     <Compile Include="Andromeda\displaysettingsform.cs">
@@ -291,6 +307,12 @@
     <Compile Include="enums.cs" />
     <Compile Include="Andromeda\FilterButtonsPopup.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmFinder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmFinder.Designer.cs">
+      <DependentUpon>frmFinder.cs</DependentUpon>
     </Compile>
     <Compile Include="frmIPv4Picker.cs">
       <SubType>Form</SubType>
@@ -594,6 +616,12 @@
     <Compile Include="TCIServer.cs" />
     <Compile Include="titlebar.cs" />
     <Compile Include="TuneStep.cs" />
+    <Compile Include="ucProgress.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucProgress.Designer.cs">
+      <DependentUpon>ucProgress.cs</DependentUpon>
+    </Compile>
     <Compile Include="ucQuickRecall.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -618,6 +646,7 @@
     <Compile Include="ucUnderOverFlowWarningViewer.Designer.cs">
       <DependentUpon>ucUnderOverFlowWarningViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="VersionInfo.cs" />
     <Compile Include="Versions.cs" />
     <Compile Include="Andromeda\vfosettingspopup.cs">
       <SubType>Form</SubType>
@@ -701,6 +730,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Andromeda\FilterButtonsPopup.resx">
       <DependentUpon>FilterButtonsPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmFinder.resx">
+      <DependentUpon>frmFinder.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmIPv4Picker.resx">
       <DependentUpon>frmIPv4Picker.cs</DependentUpon>
@@ -868,6 +900,9 @@
     <EmbeddedResource Include="Andromeda\vfosettingspopup.resx">
       <DependentUpon>vfosettingspopup.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ucProgress.resx">
+      <DependentUpon>ucProgress.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ucQuickRecall.resx">
       <DependentUpon>ucQuickRecall.cs</DependentUpon>
     </EmbeddedResource>
@@ -972,8 +1007,24 @@
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>@echo off
+for /f "delims=" %25%25x in ('wmic os get localdatetime ^| find "."') do set datetime=%25%25x
+set year=%25datetime:~2,2%25
+set month=%25datetime:~4,2%25
+set day=%25datetime:~6,2%25
+set formatted_date=%25month%25/%25day%25/%25year%25
+
+echo // &gt;  "$(ProjectDir)VersionInfo.cs"
+echo //Auto Generated Pre-Build event MW0LGE &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo // &gt;&gt;  "$(ProjectDir)VersionInfo.cs"
+echo using System; &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo namespace Thetis &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo { &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo     public static class VersionInfo &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo     { &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo         public static string BuildDate { get { return "%25formatted_date%25"; } }  &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo     } &gt;&gt; "$(ProjectDir)VersionInfo.cs"
+echo } &gt;&gt; "$(ProjectDir)VersionInfo.cs"</PreBuildEvent>
     <PostBuildEvent>copy /Y "..\..\..\lib\fftw_$(PlatformName)\libfftw3-3.dll" "$(ProjectDir)$(OutDir)";
 copy /Y "$(ProjectDir)CAT\CATStructs.xml" "$(ProjectDir)$(OutDir)";
 copy /Y "..\..\..\lib\Thetis-resources\calculus" "$(ProjectDir)$(OutDir)"

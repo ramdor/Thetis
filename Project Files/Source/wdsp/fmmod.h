@@ -82,4 +82,6 @@ extern __declspec (dllexport) void SetTXAFMMP (int channel, int mp);
 
 extern __declspec (dllexport) void SetTXAFMNC (int channel, int nc);
 
+extern __declspec (dllexport) void SetTXAFMAFFreqs (int channel, double low, double high);
+
 #endif
