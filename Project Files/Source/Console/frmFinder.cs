@@ -497,8 +497,14 @@ namespace Thetis
             // ctrl c to copy full control name to clipboard
             if(e.Alt && _fullDetails)
             {
-                _fullName = !_fullName;
-                txtSearch_TextChanged(this, EventArgs.Empty);
+                lock (_objLocker)
+                {
+                    _fullName = !_fullName;
+                    SearchData sd = lstResults.SelectedItem as SearchData;
+                    txtSearch_TextChanged(this, EventArgs.Empty);
+                    if (sd != null)
+                        lstResults.SelectedItem = sd;
+                }
                 e.Handled = true;
             }
             else if (e.Control && e.KeyCode == Keys.C)
