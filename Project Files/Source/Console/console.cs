@@ -26774,7 +26774,7 @@ namespace Thetis
                 {
                     #region debug_text
                     if (m_bEnableDisplayDebug)
-                    {                        
+                    {
                         Display.DebugText = "chkVFOSplit : " + chkVFOSplit.Checked.ToString() + Environment.NewLine +
                             "VFOATX : " + VFOATX.ToString() + Environment.NewLine +
                             "VFOBTX : " + VFOBTX.ToString() + Environment.NewLine +
@@ -26825,7 +26825,8 @@ namespace Thetis
                             "TXDisplayHigh : " + Display.TXDisplayHigh.ToString() + Environment.NewLine +
                             "RX1DisplayCalOffset : " + Display.RX1DisplayCalOffset.ToString() + Environment.NewLine +
                             "RX2DisplayCalOffset : " + Display.RX2DisplayCalOffset.ToString() + Environment.NewLine +
-                            "TXDisplayCalOffset : " + Display.TXDisplayCalOffset.ToString();
+                            "TXDisplayCalOffset : " + Display.TXDisplayCalOffset.ToString() + Environment.NewLine +
+                            "mon_recall : " + mon_recall.ToString();
                     }
                     #endregion
 
@@ -41116,15 +41117,13 @@ namespace Thetis
                         {
                             chkMOX.Enabled = true;
                         }
-
-
-                        if (rx1_dsp_mode != DSPMode.CWL)
+                        
+                        if (old_mode != DSPMode.CWL && old_mode != DSPMode.CWU)//[2.10.3]MW0LGE fixes #59 mon issue, did not consider old_mode and igmored CWU
                         {
                             if (!initializing)
                                 mon_recall = chkMON.Checked;
                             chkMON.Checked = cw_sidetone;
                         }
-
                         SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
                     }
 
