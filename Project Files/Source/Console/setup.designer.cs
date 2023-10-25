@@ -2558,6 +2558,7 @@
             this.tbCFC1 = new System.Windows.Forms.TrackBarTS();
             this.tbCFC2 = new System.Windows.Forms.TrackBarTS();
             this.tpTransmit = new System.Windows.Forms.TabPage();
+            this.chkRecoverPAProfileFromTXProfile = new System.Windows.Forms.CheckBoxTS();
             this.chkHighlightTXProfileSaveItems = new System.Windows.Forms.CheckBoxTS();
             this.chkRestoreVAC2DeviceDetailsFromTXProfile = new System.Windows.Forms.CheckBoxTS();
             this.chkRestoreVAC1DeviceDetailsFromTXProfile = new System.Windows.Forms.CheckBoxTS();
@@ -2616,6 +2617,7 @@
             this.tpGainByBand = new System.Windows.Forms.TabPage();
             this.chkPANewCal = new System.Windows.Forms.CheckBoxTS();
             this.grpGainByBandPA = new System.Windows.Forms.GroupBoxTS();
+            this.lblPAProfileWarning = new System.Windows.Forms.LabelTS();
             this.panelTS1 = new System.Windows.Forms.PanelTS();
             this.chkUsePowerOnDrvTunPA = new System.Windows.Forms.CheckBoxTS();
             this.labelTS165 = new System.Windows.Forms.LabelTS();
@@ -41461,6 +41463,7 @@
             // 
             // tpTransmit
             // 
+            this.tpTransmit.Controls.Add(this.chkRecoverPAProfileFromTXProfile);
             this.tpTransmit.Controls.Add(this.chkHighlightTXProfileSaveItems);
             this.tpTransmit.Controls.Add(this.chkRestoreVAC2DeviceDetailsFromTXProfile);
             this.tpTransmit.Controls.Add(this.chkRestoreVAC1DeviceDetailsFromTXProfile);
@@ -41486,11 +41489,22 @@
             this.tpTransmit.TabIndex = 5;
             this.tpTransmit.Text = "Transmit";
             // 
+            // chkRecoverPAProfileFromTXProfile
+            // 
+            this.chkRecoverPAProfileFromTXProfile.Image = null;
+            this.chkRecoverPAProfileFromTXProfile.Location = new System.Drawing.Point(23, 316);
+            this.chkRecoverPAProfileFromTXProfile.Name = "chkRecoverPAProfileFromTXProfile";
+            this.chkRecoverPAProfileFromTXProfile.Size = new System.Drawing.Size(203, 18);
+            this.chkRecoverPAProfileFromTXProfile.TabIndex = 77;
+            this.chkRecoverPAProfileFromTXProfile.Text = "Restore PA profile from TX Profile";
+            this.toolTip1.SetToolTip(this.chkRecoverPAProfileFromTXProfile, "Restore the PA profile that was stored along stide this TX profile");
+            this.chkRecoverPAProfileFromTXProfile.CheckedChanged += new System.EventHandler(this.chkRecoverPAProfileFromTXProfile_CheckedChanged);
+            // 
             // chkHighlightTXProfileSaveItems
             // 
             this.chkHighlightTXProfileSaveItems.AutoSize = true;
             this.chkHighlightTXProfileSaveItems.Image = null;
-            this.chkHighlightTXProfileSaveItems.Location = new System.Drawing.Point(23, 402);
+            this.chkHighlightTXProfileSaveItems.Location = new System.Drawing.Point(23, 406);
             this.chkHighlightTXProfileSaveItems.Name = "chkHighlightTXProfileSaveItems";
             this.chkHighlightTXProfileSaveItems.Size = new System.Drawing.Size(175, 17);
             this.chkHighlightTXProfileSaveItems.TabIndex = 76;
@@ -41599,7 +41613,7 @@
             // chkSaveTXProfileOnExit
             // 
             this.chkSaveTXProfileOnExit.Image = null;
-            this.chkSaveTXProfileOnExit.Location = new System.Drawing.Point(23, 319);
+            this.chkSaveTXProfileOnExit.Location = new System.Drawing.Point(23, 349);
             this.chkSaveTXProfileOnExit.Name = "chkSaveTXProfileOnExit";
             this.chkSaveTXProfileOnExit.Size = new System.Drawing.Size(235, 18);
             this.chkSaveTXProfileOnExit.TabIndex = 67;
@@ -41610,7 +41624,7 @@
             // chkAutoSaveTXProfile
             // 
             this.chkAutoSaveTXProfile.Image = null;
-            this.chkAutoSaveTXProfile.Location = new System.Drawing.Point(23, 343);
+            this.chkAutoSaveTXProfile.Location = new System.Drawing.Point(23, 373);
             this.chkAutoSaveTXProfile.Name = "chkAutoSaveTXProfile";
             this.chkAutoSaveTXProfile.Size = new System.Drawing.Size(189, 18);
             this.chkAutoSaveTXProfile.TabIndex = 66;
@@ -42345,6 +42359,7 @@
             // 
             // grpGainByBandPA
             // 
+            this.grpGainByBandPA.Controls.Add(this.lblPAProfileWarning);
             this.grpGainByBandPA.Controls.Add(this.panelTS1);
             this.grpGainByBandPA.Controls.Add(this.panelAdjustGain);
             this.grpGainByBandPA.Controls.Add(this.btnCopyPAProfile);
@@ -42408,6 +42423,18 @@
             this.grpGainByBandPA.TabIndex = 119;
             this.grpGainByBandPA.TabStop = false;
             this.grpGainByBandPA.Text = "PA Gain By Band (dB)";
+            // 
+            // lblPAProfileWarning
+            // 
+            this.lblPAProfileWarning.AutoSize = true;
+            this.lblPAProfileWarning.ForeColor = System.Drawing.Color.Red;
+            this.lblPAProfileWarning.Image = null;
+            this.lblPAProfileWarning.Location = new System.Drawing.Point(3, 347);
+            this.lblPAProfileWarning.Name = "lblPAProfileWarning";
+            this.lblPAProfileWarning.Size = new System.Drawing.Size(239, 39);
+            this.lblPAProfileWarning.TabIndex = 169;
+            this.lblPAProfileWarning.Text = "Info: PA Profile is being recovered from TX Profile\r\nso your selection may be cha" +
+    "nged depending on\r\nthe TX Profile in use.";
             // 
             // panelTS1
             // 
@@ -56959,6 +56986,7 @@
             this.tpGainByBand.ResumeLayout(false);
             this.tpGainByBand.PerformLayout();
             this.grpGainByBandPA.ResumeLayout(false);
+            this.grpGainByBandPA.PerformLayout();
             this.panelTS1.ResumeLayout(false);
             this.panelTS1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxPowerForBandPA)).EndInit();
@@ -60796,5 +60824,7 @@
         private CheckBoxTS chkSwapIQVac1;
         private CheckBoxTS chkSwapIQVac2;
         private CheckBoxTS chkPHROTReverse;
+        private CheckBoxTS chkRecoverPAProfileFromTXProfile;
+        private LabelTS lblPAProfileWarning;
     }
 }

@@ -2227,6 +2227,7 @@ namespace Thetis
             chkLimitExtAmpOnOverload_CheckedChanged(this, e);
             chkBPF2Gnd_CheckedChanged(this, e);
             chkSaveTXProfileOnExit_CheckedChanged(this, e);
+            chkRecoverPAProfileFromTXProfile_CheckedChanged(this, e);
             ForceTXProfileUpdate();
 
             // Keyboard Tab
@@ -2720,6 +2721,12 @@ namespace Thetis
                 if (isTXProfileSettingDifferent<bool>(dr, "VAC1_SwapIQ", (bool)chkSwapIQVac1.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "VAC2_SwapIQ", (bool)chkSwapIQVac2.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "Audio_Disable_Audio_Amp", (bool)chkDisableRearSpeakerJacksAudioAmplifier.Checked, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<string>(dr, "PA_Profile", (string)comboPAProfile.Text, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<bool>(dr, "RXEQEnabled", console.EQForm.RXEQEnabled, out sReportOut)) sReport += sReportOut;
+                int[] rxeq = console.EQForm.RXEQ;
+                if (isTXProfileSettingDifferent<int>(dr, "RXEQPreamp", rxeq[0], out sReportOut)) sReport += sReportOut;
+                for (int i = 1; i < 11; i++)
+                    if (isTXProfileSettingDifferent<int>(dr, "RXEQ" + i.ToString(), rxeq[i], out sReportOut)) sReport += sReportOut;
                 //
 
                 //CFC
@@ -2919,6 +2926,12 @@ namespace Thetis
                 if (DB.ConvertFromDBVal<bool>(dr["VAC1_SwapIQ"]) != (bool)chkSwapIQVac1.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["VAC2_SwapIQ"]) != (bool)chkSwapIQVac2.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["Audio_Disable_Audio_Amp"]) != (bool)chkDisableRearSpeakerJacksAudioAmplifier.Checked) return true;
+                if (DB.ConvertFromDBVal<string>(dr["PA_Profile"]) != (string)comboPAProfile.Text) return true;
+                if (DB.ConvertFromDBVal<bool>(dr["RXEQEnabled"]) != console.EQForm.RXEQEnabled) return true;
+                int[] rxeq = console.EQForm.RXEQ;
+                if (DB.ConvertFromDBVal<int>(dr["RXEQPreamp"]) != rxeq[0]) return true;
+                for (int i = 1; i < 11; i++)
+                    if (DB.ConvertFromDBVal<int>(dr["RXEQ" + i.ToString()]) != rxeq[i]) return true;
                 //
 
                 //CFC
@@ -3110,6 +3123,7 @@ namespace Thetis
             Common.HightlightControl(chkSwapIQVac1, bHighlight);
             Common.HightlightControl(chkSwapIQVac2, bHighlight);
             Common.HightlightControl(chkDisableRearSpeakerJacksAudioAmplifier, bHighlight);
+            Common.HightlightControl(comboPAProfile, bHighlight);
             //
 
             //CFC
@@ -3312,6 +3326,12 @@ namespace Thetis
             dr["VAC1_SwapIQ"] = (bool)chkSwapIQVac1.Checked;
             dr["VAC2_SwapIQ"] = (bool)chkSwapIQVac2.Checked;
             dr["Audio_Disable_Audio_Amp"] = (bool)chkDisableRearSpeakerJacksAudioAmplifier.Checked;
+            dr["PA_Profile"] = (string)comboPAProfile.Text;
+            dr["RXEQEnabled"] = console.EQForm.RXEQEnabled;
+            int[] rxeq = console.EQForm.RXEQ;
+            dr["RXEQPreamp"] = rxeq[0];
+            for (int i = 1; i < 11; i++)
+                dr["RXEQ" + i.ToString()] = rxeq[i];
             //
 
             //CFC
@@ -10471,10 +10491,8 @@ namespace Thetis
             }
 
             DataRow dr = rows[0];
-            int[] eq = null;
-            eq = new int[21];
-            int[] cfceq = null;
-            cfceq = new int[32];
+            int[] eq = new int[21];
+            int[] cfceq = new int[32];
 
             if (checkTXProfileChanged2(dr, true)) // check if vac settings are different
             {
@@ -10653,6 +10671,18 @@ namespace Thetis
             chkSwapIQVac1.Checked = (bool)dr["VAC1_SwapIQ"];
             chkSwapIQVac2.Checked = (bool)dr["VAC2_SwapIQ"];
             chkDisableRearSpeakerJacksAudioAmplifier.Checked = (bool)dr["Audio_Disable_Audio_Amp"];
+            if (chkRecoverPAProfileFromTXProfile.Checked)
+            {
+                string paProf = (string)dr["PA_Profile"];
+                if (comboPAProfile.Items.Contains(paProf))
+                    comboPAProfile.Text = paProf;
+            }
+            console.EQForm.RXEQEnabled = (bool)dr["RXEQEnabled"];
+            int[] rxeq = new int[21];
+            rxeq[0] = (int)dr["RXEQPreamp"];
+            for (int i = 1; i < 11; i++)
+                rxeq[i] = (int)dr["RXEQ" + i.ToString()];
+            console.EQForm.RXEQ = rxeq;
             //
 
             //CFC
@@ -28694,6 +28724,26 @@ namespace Thetis
             if (initializing) return;
             int run = chkPHROTEnable.Checked ? 1 : 0;
             WDSP.SetTXAPHROTRun(WDSP.id(1, 0), run);
+        }
+
+        private void chkRecoverPAProfileFromTXProfile_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            if(sender == chkRecoverPAProfileFromTXProfile && chkRecoverPAProfileFromTXProfile.Checked)
+            {
+                // manually clicked, warning
+                DialogResult dres = MessageBox.Show(
+                    "Warning: Modes will recover TX profiles that are associated with them. Please ensure the TX profile assocated with a specific mode has the correct PA profile stored against it. Failure to do so may result in unexpected results and/or overdrive issues.\n\nDo you want to enable this?",
+                    "PA Profile recovery from TX Profile",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+
+                if (dres == DialogResult.No)
+                    chkRecoverPAProfileFromTXProfile.Checked = false;
+            }
+
+            lblPAProfileWarning.Visible = chkRecoverPAProfileFromTXProfile.Checked;
         }
 
         //private bool renameSkinForDeletion(string sFullPath)

@@ -1336,6 +1336,21 @@ namespace Thetis
             Common.HightlightControl(udTXEQ7, bHighlight);
             Common.HightlightControl(udTXEQ8, bHighlight);
             Common.HightlightControl(udTXEQ9, bHighlight);
+
+            //
+            Common.HightlightControl(chkRXEQEnabled, bHighlight);
+            Common.HightlightControl(tbRXEQPreamp, bHighlight);
+            Common.HightlightControl(tbRXEQ1, bHighlight);
+            Common.HightlightControl(tbRXEQ2, bHighlight);
+            Common.HightlightControl(tbRXEQ3, bHighlight);
+            Common.HightlightControl(tbRXEQ4, bHighlight);
+            Common.HightlightControl(tbRXEQ5, bHighlight);
+            Common.HightlightControl(tbRXEQ6, bHighlight);
+            Common.HightlightControl(tbRXEQ7, bHighlight);
+            Common.HightlightControl(tbRXEQ8, bHighlight);
+            Common.HightlightControl(tbRXEQ9, bHighlight);
+            Common.HightlightControl(tbRXEQ10, bHighlight);
+            //
         }
 
         public int NumBands
