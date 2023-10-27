@@ -614,7 +614,7 @@ namespace Thetis
                         _cmdstate = eCMDState.TurnOnSingleCalibrate;// 3;
                     break;
                 case eCMDState.TurnOFF://6:     // Turn-OFF
-                    //autoON = false;
+                    //_autoON = false;
                     if(!_autocal_enabled) _autoON = false; // only want to turn this off if autocal is off MW0LGE_21k9rc4
                     puresignal.SetPSControl(_txachannel, 1, 0, 0, 0);
                     if (!PSEnabled) PSEnabled = true;
@@ -642,11 +642,13 @@ namespace Thetis
         }
         private void timer2code()
         {
-            //if (autoattenuate && !console.ATTOnTX) console.ATTOnTX = true;//MW0LGE moved into 0 state
+            bool bIgnore = console.WillForceTXATTto31; //[2.10.3] MW0LGE work around for issue #226
+                                                   //note: this will prevent PS from changing the 31 txatt 
+                                                   //applied by console.cs when in cw mode
             switch (_autoAttenuateState)
             {
                 case eAAState.Monitor:// 0: // monitor
-                    if (_autoattenuate && puresignal.CalibrationAttemptsChanged
+                    if (!bIgnore && _autoattenuate && puresignal.CalibrationAttemptsChanged
                         && puresignal.NeedToRecalibrate(console.SetupForm.ATTOnTX))
                     {
                         if (!console.ATTOnTX) AutoAttenuate = true; //MW0LGE
@@ -684,6 +686,7 @@ namespace Thetis
                     if (console.SetupForm.ATTOnTX != newAtten)
                     {
                         console.SetupForm.ATTOnTX = newAtten;
+
                         // give some additional time for the network msg to get to the radio before switching back on MW0LGE_21k9d5
                         if(m_bQuckAttenuate) Thread.Sleep(100);
                     }

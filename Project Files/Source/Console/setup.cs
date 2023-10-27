@@ -3651,8 +3651,7 @@ namespace Thetis
                     //chkRX2StepAtt_CheckedChanged(this, EventArgs.Empty);
                 }
             }
-        }
-
+        }      
         public int ATTOnTX
         {
             get
@@ -17588,8 +17587,11 @@ namespace Thetis
             }
         }
 
+        private bool _updatingRX1HermiesStepAttData = false;       
         private void udHermesStepAttenuatorData_ValueChanged(object sender, EventArgs e)
         {
+            if (_updatingRX1HermiesStepAttData) return;
+            _updatingRX1HermiesStepAttData = true;
             console.RX1AttenuatorData = (int)udHermesStepAttenuatorData.Value;
 
             //MW0LGE_21f
@@ -17603,6 +17605,7 @@ namespace Thetis
                 console.CurrentHPSDRModel != HPSDRModel.ANAN_G2_1K)
                 udHermesStepAttenuatorData.Maximum = (decimal)61;
             else udHermesStepAttenuatorData.Maximum = (decimal)31;
+            _updatingRX1HermiesStepAttData = false;
         }
 
         private void chkRX2StepAtt_CheckedChanged(object sender, EventArgs e)
@@ -17625,8 +17628,11 @@ namespace Thetis
                 if (nRX1ADCinUse == nRX2ADCinUse && chkHermesStepAttenuator.Checked != chkRX2StepAtt.Checked) chkHermesStepAttenuator.Checked = chkRX2StepAtt.Checked;
             }
         }
+        private bool _updatingRX2HermiesStepAttData = false;
         private void udHermesStepAttenuatorDataRX2_ValueChanged(object sender, EventArgs e)
         {
+            if(_updatingRX2HermiesStepAttData) return;
+            _updatingRX2HermiesStepAttData = true;
             console.RX2AttenuatorData = (int)udHermesStepAttenuatorDataRX2.Value;
 
             //MW0LGE_21f
@@ -17640,6 +17646,7 @@ namespace Thetis
                 console.CurrentHPSDRModel != HPSDRModel.ANAN_G2_1K)
                 udHermesStepAttenuatorDataRX2.Maximum = (decimal)61;
             else udHermesStepAttenuatorDataRX2.Maximum = (decimal)31;
+            _updatingRX2HermiesStepAttData = false;
         }
 
         private void udAlex160mLPFStart_ValueChanged(object sender, EventArgs e)
@@ -18990,10 +18997,13 @@ namespace Thetis
             if (initializing) return; //[2.10.2.3]MW0LGE forceallevents call this
             console.radio.GetDSPRX(0, 1).RXADollyFreq1 = (double)udDSPRX1SubDollyF1.Value;
         }
-
+        private bool _updatingATTTX = false;
         private void udATTOnTX_ValueChanged(object sender, EventArgs e)
         {
+            if (_updatingATTTX) return;
+            _updatingATTTX = true;
             console.TxAttenData = (int)udATTOnTX.Value;
+            _updatingATTTX = false;
         }
 
         private void ud6mLNAGainOffset_ValueChanged(object sender, EventArgs e)

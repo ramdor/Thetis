@@ -33596,6 +33596,7 @@
             // 
             // pbWarningBufferType
             // 
+            this.pbWarningBufferType.Image = ((System.Drawing.Image)(resources.GetObject("pbWarningBufferType.Image")));
             this.pbWarningBufferType.Location = new System.Drawing.Point(260, 334);
             this.pbWarningBufferType.Name = "pbWarningBufferType";
             this.pbWarningBufferType.Size = new System.Drawing.Size(20, 20);
@@ -33604,6 +33605,7 @@
             // 
             // pbWarningFilterSize
             // 
+            this.pbWarningFilterSize.Image = ((System.Drawing.Image)(resources.GetObject("pbWarningFilterSize.Image")));
             this.pbWarningFilterSize.Location = new System.Drawing.Point(142, 334);
             this.pbWarningFilterSize.Name = "pbWarningFilterSize";
             this.pbWarningFilterSize.Size = new System.Drawing.Size(20, 20);
@@ -33612,6 +33614,7 @@
             // 
             // pbWarningBufferSize
             // 
+            this.pbWarningBufferSize.Image = ((System.Drawing.Image)(resources.GetObject("pbWarningBufferSize.Image")));
             this.pbWarningBufferSize.Location = new System.Drawing.Point(16, 334);
             this.pbWarningBufferSize.Name = "pbWarningBufferSize";
             this.pbWarningBufferSize.Size = new System.Drawing.Size(20, 20);
@@ -41506,9 +41509,12 @@
             this.chkHighlightTXProfileSaveItems.Image = null;
             this.chkHighlightTXProfileSaveItems.Location = new System.Drawing.Point(23, 406);
             this.chkHighlightTXProfileSaveItems.Name = "chkHighlightTXProfileSaveItems";
-            this.chkHighlightTXProfileSaveItems.Size = new System.Drawing.Size(175, 17);
+            this.chkHighlightTXProfileSaveItems.Size = new System.Drawing.Size(172, 17);
             this.chkHighlightTXProfileSaveItems.TabIndex = 76;
-            this.chkHighlightTXProfileSaveItems.Text = "Hightlight TX Profile Save Items";
+            this.chkHighlightTXProfileSaveItems.Text = "Highlight TX Profile Save Items";
+            this.toolTip1.SetToolTip(this.chkHighlightTXProfileSaveItems, "Enabling this will highlight in yellow all settings throughout Thetis that will b" +
+        "e saved\r\nwith a tx profile and consequently recovered when the tx profile is use" +
+        "d.");
             this.chkHighlightTXProfileSaveItems.UseVisualStyleBackColor = true;
             this.chkHighlightTXProfileSaveItems.CheckedChanged += new System.EventHandler(this.chkHighlightTXProfileSaveItems_CheckedChanged);
             // 
@@ -49333,7 +49339,7 @@
             0,
             0});
             this.nudMeterItemUpdateRate.Minimum = new decimal(new int[] {
-            50,
+            30,
             0,
             0,
             0});

@@ -65,9 +65,9 @@ namespace Thetis
 
 			dsp_rx[0][0].Active = true; // enable main RX
 		}
-        ~Radio()
+        public void Shutdown()
         {
-            RadioDSP.DestroyDSP(); //[2.10.1.0] MW0LGE added finalizer/destructor to call closedown/cleanup code
+            RadioDSP.DestroyDSP(); //[2.10.3] MW0LGE
         }
 		public RadioDSPRX GetDSPRX(int thread, int subrx)
 		{
