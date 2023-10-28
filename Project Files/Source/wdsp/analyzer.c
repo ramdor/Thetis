@@ -973,7 +973,6 @@ void ResetPixelBuffers(int disp)
 			a->pb_ready[i][j] = 0;
 		LeaveCriticalSection(&a->PB_ControlsSection[i]);
 	}
-	//memset((void*)a->pre_av_sum, 0, sizeof(double) * a->max_size * a->max_stitch);	//not used
 	memset((void*)a->pre_av_out, 0, sizeof(double) * a->max_size * a->max_stitch);
 	LeaveCriticalSection(&a->ResampleSection);
 	EnterCriticalSection(&a->StitchSection);

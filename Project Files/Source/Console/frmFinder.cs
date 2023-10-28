@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Threading;
 using System.IO;
 using System.Xml;
+using System.Drawing.Drawing2D;
 
 namespace Thetis
 {
@@ -222,7 +223,9 @@ namespace Thetis
             Color textColor = e.State.HasFlag(DrawItemState.Selected) ? SystemColors.HighlightText : SystemColors.ControlText;
 
             // Fill the background
-            backgroundColor = e.Index % 2 == 0 ? backgroundColor : applyTint(backgroundColor, Color.LightGray);
+            if (!e.State.HasFlag(DrawItemState.Selected)) {
+                backgroundColor = e.Index % 2 == 0 ? backgroundColor : applyTint(backgroundColor, Color.LightGray);
+            }
             g.FillRectangle(new SolidBrush(backgroundColor), e.Bounds);
 
             int yPos = e.Bounds.Y;
@@ -292,7 +295,10 @@ namespace Thetis
                 float start = g.MeasureString(sLineText.Substring(0, t.Item1), listBox.Font, int.MaxValue, _stringFormat).Width;
                 float width = g.MeasureString(sLineText.Substring(t.Item1, txtSearch.Text.Length), listBox.Font, int.MaxValue, _stringFormat).Width;
                 Rectangle newRect = new Rectangle(xPos + (int)start, yPos, (int)(width), 20);
-                g.FillRectangle(new SolidBrush(Color.Yellow), newRect);
+                CompositingMode oldMode = g.CompositingMode;
+                g.CompositingMode = CompositingMode.SourceOver;
+                g.FillRectangle(new SolidBrush(Color.FromArgb(102,Color.Yellow)), newRect);
+                g.CompositingMode = oldMode;
             }
         }
         private List<Tuple<int, int>> findSubstringOccurrences(string inputString, string searchString)
@@ -380,8 +386,10 @@ namespace Thetis
 
             selectRequiredTabs(f, c);
 
+            this.SuspendLayout();
             this.BringToFront();
             lstResults.Focus();
+            this.ResumeLayout();
         }
 
         private void selectRequiredTabs(Control parentControl, Control targetControl)
@@ -497,8 +505,14 @@ namespace Thetis
             // ctrl c to copy full control name to clipboard
             if(e.Alt && _fullDetails)
             {
-                _fullName = !_fullName;
-                txtSearch_TextChanged(this, EventArgs.Empty);
+                lock (_objLocker)
+                {
+                    _fullName = !_fullName;
+                    SearchData sd = lstResults.SelectedItem as SearchData;
+                    txtSearch_TextChanged(this, EventArgs.Empty);
+                    if (sd != null)
+                        lstResults.SelectedItem = sd;
+                }
                 e.Handled = true;
             }
             else if (e.Control && e.KeyCode == Keys.C)

@@ -103,6 +103,7 @@ typedef struct _calcc
 		volatile long running;
 		int bs_count;
 		volatile long current_state;
+		CRITICAL_SECTION cs_SafeToEnd;
 	} ctrl;
 	struct _disp
 	{

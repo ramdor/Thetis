@@ -1309,6 +1309,12 @@ namespace Thetis
                 }
             }
 
+            if (_frmShutDownForm != null)
+            {                
+                _frmShutDownForm.Close(); // last thing to get rid of
+                _frmShutDownForm.Dispose();
+            }
+
             if (disposing)
             {
                 if (components != null)
@@ -2590,6 +2596,11 @@ namespace Thetis
             PA19.PA_Terminate();		// terminate audio interface
             DB.Exit();					// close and save database
             NetworkIO.DestroyRNet();
+            if (radio != null)
+            {
+                radio.Shutdown();
+                radio = null;
+            }
             Win32.TimeEndPeriod(1); // return to previous timing precision
             Thread.Sleep(100);
         }
@@ -11940,11 +11951,14 @@ namespace Thetis
         }
 
         private int tx_attenuator_data = 31;
+        private bool _updatingTxAtt = false;
         public int TxAttenData
         {
             get { return tx_attenuator_data; }
             set
             {
+                if (_updatingTxAtt) return;
+                _updatingTxAtt = true;
                 tx_attenuator_data = value;
                 if (!initializing)
                 {
@@ -11955,6 +11969,7 @@ namespace Thetis
                     if (m_bAttontx && mox)
                         udRX1StepAttData.Value = value;
                 }
+                _updatingTxAtt = false;
             }
         }
 
@@ -13318,6 +13333,7 @@ namespace Thetis
 
             // set via EQ form, consequently included in tx profile
             Common.HightlightControl(chkTXEQ, bHighlight);
+            Common.HightlightControl(chkRXEQ, bHighlight);
 
             //vac buttons
             Common.HightlightControl(chkVAC1, bHighlight);
@@ -26774,7 +26790,7 @@ namespace Thetis
                 {
                     #region debug_text
                     if (m_bEnableDisplayDebug)
-                    {                        
+                    {
                         Display.DebugText = "chkVFOSplit : " + chkVFOSplit.Checked.ToString() + Environment.NewLine +
                             "VFOATX : " + VFOATX.ToString() + Environment.NewLine +
                             "VFOBTX : " + VFOBTX.ToString() + Environment.NewLine +
@@ -26825,7 +26841,8 @@ namespace Thetis
                             "TXDisplayHigh : " + Display.TXDisplayHigh.ToString() + Environment.NewLine +
                             "RX1DisplayCalOffset : " + Display.RX1DisplayCalOffset.ToString() + Environment.NewLine +
                             "RX2DisplayCalOffset : " + Display.RX2DisplayCalOffset.ToString() + Environment.NewLine +
-                            "TXDisplayCalOffset : " + Display.TXDisplayCalOffset.ToString();
+                            "TXDisplayCalOffset : " + Display.TXDisplayCalOffset.ToString() + Environment.NewLine +
+                            "mon_recall : " + mon_recall.ToString();
                     }
                     #endregion
 
@@ -27678,6 +27695,7 @@ namespace Thetis
 
                         using (StreamWriter writer = File.AppendText(sVALog))
                         {
+                            writer.WriteLine(ProductVersion + "\n" + BasicTitleBar);
                             writer.WriteLine($"Volts/Amps Log \t_amp_voff={_amp_voff}\t_amp_sens={_amp_sens}");
                         }
                         _firstSaveTime = DateTime.Now;
@@ -32003,14 +32021,14 @@ namespace Thetis
         //        mbx.Close();
         //    }
         //}
-
+        private ShutdownForm _frmShutDownForm = null;
         private void Console_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // MW0LGE
             // show a shutdown window
-            ShutdownForm frmShutDownForm = new ShutdownForm();
-            frmShutDownForm.Location = new Point(this.Location.X + this.Size.Width / 2 - frmShutDownForm.Size.Width / 2, this.Location.Y + this.Size.Height / 2 - frmShutDownForm.Size.Height / 2);
-            frmShutDownForm.Show();
+            _frmShutDownForm = new ShutdownForm();
+            _frmShutDownForm.Location = new Point(this.Location.X + this.Size.Width / 2 - _frmShutDownForm.Size.Width / 2, this.Location.Y + this.Size.Height / 2 - _frmShutDownForm.Size.Height / 2);
+            _frmShutDownForm.Show();
             Application.DoEvents();
 
             if (m_tcpTCIServer != null)
@@ -32159,7 +32177,7 @@ namespace Thetis
             //-<<<<
 
             this.Hide();
-            frmShutDownForm.Close(); // last thing to get rid of
+            //note frm shutdown close is done in dispose now
         }
 
         private void comboPreamp_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -33351,14 +33369,14 @@ namespace Thetis
                     }
                     else
                     {
-                        //if (!chkFWCATUBypass.Checked && // MW0LGE_21k9d changed from || to &&
+                        //if (!chkFWCATUBypass.Checked ||
                         //    (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
                         //     radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) SetupForm.ATTOnTX = 31; // reset when PS is OFF or in CW mode
 
-                        //MW0LGE [2.9.0.7]
-                        if((!chkFWCATUBypass.Checked && _forceATTwhenPSAoff) ||
-                            (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
-                             radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) SetupForm.ATTOnTX = 31; // reset when PS is OFF or in CW mode
+                        //MW0LGE [2.9.0.7] added option to always apply 31 att from setup form when not in ps
+                        if ((!chkFWCATUBypass.Checked && _forceATTwhenPSAoff) ||
+                                        (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
+                                         radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) SetupForm.ATTOnTX = 31; // reset when PS is OFF or in CW mode
 
                         SetupForm.HermesAttenuatorData = tx_step_attenuator_by_band[(int)rx1_band];
                         NetworkIO.SetTxAttenData(tx_step_attenuator_by_band[(int)rx1_band]);
@@ -33461,8 +33479,7 @@ namespace Thetis
             _pause_DisplayThread = false; //MW0LGE_21k8 re-enable
 
             if (bOldMox != tx) MoxChangeHandlers?.Invoke(rx2_enabled && VFOBTX ? 2 : 1, bOldMox, tx); // MW0LGE_21a
-        }
-
+        }      
         private void chkMOX_Click(object sender, System.EventArgs e)
         {
             if (chkMOX.Checked)			// because the CheckedChanged event fires first
@@ -34255,27 +34272,27 @@ namespace Thetis
 
             if (rx1_dsp_mode == DSPMode.DIGL || rx1_dsp_mode == DSPMode.DIGU)
             {
-                SetDigiMode(1, "preset"); // store bunch of profile settings
-                SetDigiMode(1, "set"); // set it into digi mode
+                SetDigiMode(1, DigiMode.DigiModeSettingState.dmssStore); // store bunch of profile settings
+                SetDigiMode(1, DigiMode.DigiModeSettingState.dmssTurnOffSettings); // set it into digi mode
             }
             else
             {
-                if (rx1dm != null && (rx1dm.Mode == "set" || rx1dm.Mode == "preset"))
+                if (rx1dm != null && (rx1dm.Mode == DigiMode.DigiModeSettingState.dmssTurnOffSettings || rx1dm.Mode == DigiMode.DigiModeSettingState.dmssStore))
                 {
-                    SetDigiMode(1, "reset"); // restore those profile settings, may be case where not initialised
+                    SetDigiMode(1, DigiMode.DigiModeSettingState.dmssRecall); // restore those profile settings, may be case where not initialised
                 }
             }
 
             if (rx2_dsp_mode == DSPMode.DIGL || rx2_dsp_mode == DSPMode.DIGU)
             {
-                SetDigiMode(2, "preset"); // store bunch of profile settings
-                SetDigiMode(2, "set"); // set it into digi mode
+                SetDigiMode(2, DigiMode.DigiModeSettingState.dmssStore); // store bunch of profile settings
+                SetDigiMode(2, DigiMode.DigiModeSettingState.dmssTurnOffSettings); // set it into digi mode
             }
             else
             {
-                if (rx2dm != null && (rx2dm.Mode == "set" || rx2dm.Mode == "preset"))
+                if (rx2dm != null && (rx2dm.Mode == DigiMode.DigiModeSettingState.dmssTurnOffSettings || rx2dm.Mode == DigiMode.DigiModeSettingState.dmssStore))
                 {
-                    SetDigiMode(2, "reset"); // restore those profile settings, may be case where not initialised
+                    SetDigiMode(2, DigiMode.DigiModeSettingState.dmssRecall); // restore those profile settings, may be case where not initialised
                 }
             }
         }
@@ -40742,7 +40759,7 @@ namespace Thetis
 
             //MW0LGE_21d
             Band oldBand = RX1Band;
-            //
+            //            
 
             DSPMode old_mode = rx1_dsp_mode;
 
@@ -40979,7 +40996,7 @@ namespace Thetis
                         SetupForm.VACEnable = false;
                     }
 
-                    if (new_mode != DSPMode.DIGU) SetDigiMode(1, "reset");
+                    if (new_mode != DSPMode.DIGU) SetDigiMode(1, DigiMode.DigiModeSettingState.dmssRecall);
                     break;
                 case DSPMode.DIGU:
                     radModeDIGU.BackColor = SystemColors.Control;
@@ -40990,7 +41007,7 @@ namespace Thetis
                         SetupForm.VACEnable = false;
                     }
 
-                    if (new_mode != DSPMode.DIGL) SetDigiMode(1, "reset");
+                    if (new_mode != DSPMode.DIGL) SetDigiMode(1, DigiMode.DigiModeSettingState.dmssRecall);
                     break;
                 case DSPMode.DRM:
                     radModeDRM.BackColor = SystemColors.Control;
@@ -41012,7 +41029,7 @@ namespace Thetis
                     btnTNFAdd.Enabled = true;
                     break;
             }
-
+            
             switch (new_mode)
             {
                 case DSPMode.LSB:
@@ -41116,15 +41133,13 @@ namespace Thetis
                         {
                             chkMOX.Enabled = true;
                         }
-
-
-                        if (rx1_dsp_mode != DSPMode.CWL)
+                        
+                        if (old_mode != DSPMode.CWL && old_mode != DSPMode.CWU)//[2.10.3]MW0LGE fixes #59 mon issue, did not consider old_mode and igmored CWU
                         {
                             if (!initializing)
                                 mon_recall = chkMON.Checked;
                             chkMON.Checked = cw_sidetone;
                         }
-
                         SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
                     }
 
@@ -41263,8 +41278,8 @@ namespace Thetis
 
                     if (old_mode != DSPMode.DIGU)
                     {
-                        SetDigiMode(1, "preset");
-                        SetDigiMode(1, "set");
+                        SetDigiMode(1, DigiMode.DigiModeSettingState.dmssStore);
+                        SetDigiMode(1, DigiMode.DigiModeSettingState.dmssTurnOffSettings);
                     }
                     break;
                 case DSPMode.DIGU:
@@ -41282,10 +41297,9 @@ namespace Thetis
 
                     if (old_mode != DSPMode.DIGL)
                     {
-                        SetDigiMode(1, "preset");
-                        SetDigiMode(1, "set");
+                        SetDigiMode(1, DigiMode.DigiModeSettingState.dmssStore);
+                        SetDigiMode(1, DigiMode.DigiModeSettingState.dmssTurnOffSettings);
                     }
-
                     break;
                 case DSPMode.DRM:
                     if_shift = false;
@@ -45168,7 +45182,7 @@ namespace Thetis
                     {
                         SetupForm.VAC2Enable = false;
                     }
-                    if (new_mode != DSPMode.DIGU) SetDigiMode(2, "reset");
+                    if (new_mode != DSPMode.DIGU) SetDigiMode(2, DigiMode.DigiModeSettingState.dmssRecall);
                     break;
                 case DSPMode.DIGU:
                     radRX2ModeDIGU.BackColor = SystemColors.Control;
@@ -45178,7 +45192,7 @@ namespace Thetis
                     {
                         SetupForm.VAC2Enable = false;
                     }
-                    if (new_mode != DSPMode.DIGL) SetDigiMode(2, "reset");
+                    if (new_mode != DSPMode.DIGL) SetDigiMode(2, DigiMode.DigiModeSettingState.dmssRecall);
                     break;
                 case DSPMode.DRM:
                     radRX2ModeDRM.BackColor = SystemColors.Control;
@@ -45389,8 +45403,8 @@ namespace Thetis
 
                     if (old_mode != DSPMode.DIGU)
                     {
-                        SetDigiMode(2, "preset");
-                        SetDigiMode(2, "set");
+                        SetDigiMode(2, DigiMode.DigiModeSettingState.dmssStore);
+                        SetDigiMode(2, DigiMode.DigiModeSettingState.dmssTurnOffSettings);
                     }
 
                     break;
@@ -45408,8 +45422,8 @@ namespace Thetis
 
                     if (old_mode != DSPMode.DIGL)
                     {
-                        SetDigiMode(2, "preset");
-                        SetDigiMode(2, "set");
+                        SetDigiMode(2, DigiMode.DigiModeSettingState.dmssStore);
+                        SetDigiMode(2, DigiMode.DigiModeSettingState.dmssTurnOffSettings);
                     }
 
                     break;
@@ -46540,6 +46554,7 @@ namespace Thetis
             if (bMadeAChange && !IsSetupFormNull)
             {
                 SetupForm.DSPChangeDuration = sw.ElapsedMilliseconds;
+                Display.UpdateMNFminWidth(); //[2.10.3]MW0LGE update
             }
         }
 
@@ -50868,9 +50883,11 @@ namespace Thetis
             if (CollapsedDisplay)
                 chkRX2Mute.Checked = !chkRX2Mute.Checked;
         }
-
+        private bool _updatingRX1StepAttData = false;
         private void udRX1StepAttData_ValueChanged(object sender, EventArgs e)
         {
+            if (_updatingRX1StepAttData) return;
+            _updatingRX1StepAttData = true;
             if (!IsSetupFormNull)
             {
                 if (mox)
@@ -50883,10 +50900,14 @@ namespace Thetis
             if (udRX1StepAttData.Focused) btnHidden.Focus();
             if (sliderForm != null) sliderForm.RX1Atten = (int)udRX1StepAttData.Value;
             lblAttenLabel.Text = udRX1StepAttData.Value.ToString() + " dB";
+            _updatingRX1StepAttData = false;
         }
 
+        private bool _updatingRX2StepAttData = false;
         private void udRX2StepAttData_ValueChanged(object sender, EventArgs e)
         {
+            if (_updatingRX2StepAttData) return;
+            _updatingRX2StepAttData = true;
             //MW0LGE_21d
 
             //RX2AttenuatorData = (int)udRX2StepAttData.Value;
@@ -50906,6 +50927,7 @@ namespace Thetis
             if (udRX2StepAttData.Focused) btnHidden.Focus();
             if (sliderForm != null) sliderForm.RX2Atten = (int)udRX2StepAttData.Value;
             lblRX2AttenLabel.Text = udRX2StepAttData.Value.ToString() + " dB";
+            _updatingRX2StepAttData = false;
         }
 
         private void lblPreamp_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -51029,15 +51051,19 @@ namespace Thetis
             raForm.Focus();
         }
 
-        private void SetDigiMode(int rx, string mode)
+        private void SetDigiMode(int rx, DigiMode.DigiModeSettingState mode)
         {
             if (rx == 1)
             {
-                if (rx1dm == null) rx1dm = new DigiMode();
+                if (rx1dm == null)
+                {
+                    rx1dm = new DigiMode();
+                    if (mode == DigiMode.DigiModeSettingState.dmssRecall) return;
+                }
                 rx1dm.Mode = mode;
                 switch (mode)
                 {
-                    case "set":
+                    case DigiMode.DigiModeSettingState.dmssTurnOffSettings:
                         chkNoiseGate.Checked = false;
                         chkTXEQ.Checked = false;
                         SetupForm.TXLevelerOn = false;
@@ -51050,7 +51076,7 @@ namespace Thetis
                         CFCEnabled = false;
                         SetupForm.PhaseRotEnabled = false;
                         break;
-                    case "preset":
+                    case DigiMode.DigiModeSettingState.dmssStore:
                         rx1dm.DEXP = chkNoiseGate.Checked;
                         rx1dm.TXEQ = chkTXEQ.Checked;
                         rx1dm.LEVELER = SetupForm.TXLevelerOn;
@@ -51062,7 +51088,7 @@ namespace Thetis
                         rx1dm.CFCEnabled = CFCEnabled;
                         rx1dm.PhaseRotEnabled = SetupForm.PhaseRotEnabled;
                         break;
-                    case "reset":
+                    case DigiMode.DigiModeSettingState.dmssRecall:
                         chkNoiseGate.Checked = rx1dm.DEXP;
                         chkTXEQ.Checked = rx1dm.TXEQ;
                         SetupForm.TXLevelerOn = rx1dm.LEVELER;
@@ -51079,19 +51105,23 @@ namespace Thetis
 
             if (rx == 2)
             {
-                if (rx2dm == null) rx2dm = new DigiMode();
+                if (rx2dm == null)
+                {
+                    rx2dm = new DigiMode();
+                    if (mode == DigiMode.DigiModeSettingState.dmssRecall) return;
+                }
                 rx2dm.Mode = mode;
                 switch (mode)
                 {
-                    case "set":
+                    case DigiMode.DigiModeSettingState.dmssTurnOffSettings:
                         chkRX2ANF.Checked = false;
                         chkRX2NR.CheckState = CheckState.Unchecked;
                         break;
-                    case "preset":
+                    case DigiMode.DigiModeSettingState.dmssStore:
                         rx2dm.ANF = chkRX2ANF.Checked;
                         rx2dm.NR = chkRX2NR.CheckState;
                         break;
-                    case "reset":
+                    case DigiMode.DigiModeSettingState.dmssRecall:
                         chkRX2ANF.Checked = rx2dm.ANF;
                         chkRX2NR.CheckState = rx2dm.NR;
                         break;
@@ -54063,7 +54093,7 @@ namespace Thetis
             UpdateWaterfallLevelValues();
             updateDisplayGridLevelValues();
             UpdateDiversityValues();
-            NetworkIO.SendHighPriority(1);
+            NetworkIO.SendHighPriority(1);            
         }
         //private void OnBandNoChangeHandler(int rx, Band band)
         //{
@@ -56273,6 +56303,12 @@ namespace Thetis
         {
 
         }
+        public enum DigiModeSettingState
+        {
+            dmssTurnOffSettings = 0,
+            dmssStore,
+            dmssRecall
+        }
 
         public bool DEXP { get; set; }
         public bool TXEQ { get; set; }
@@ -56284,7 +56320,7 @@ namespace Thetis
         public CheckState NR { get; set; }
         public bool CFCEnabled { get; set; }
         public bool PhaseRotEnabled { get; set; }
-        public string Mode { get; set; }
+        public DigiModeSettingState Mode { get; set; }
     }
 
     public class AsyncLock : IDisposable

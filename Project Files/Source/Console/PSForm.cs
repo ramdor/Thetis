@@ -77,8 +77,8 @@ namespace Thetis
 
         private static eCMDState _cmdstate = eCMDState.OFF;
         private static bool _topmost = false;
-
-        private Thread _ps_thread;
+        
+        private Thread _ps_thread = null;
         #endregion
 
         #region properties
@@ -135,6 +135,7 @@ namespace Thetis
                 }
                 else
                 {
+                    nCount = 0;
                     Thread.Sleep(200);
                 }
             }
@@ -614,7 +615,7 @@ namespace Thetis
                         _cmdstate = eCMDState.TurnOnSingleCalibrate;// 3;
                     break;
                 case eCMDState.TurnOFF://6:     // Turn-OFF
-                    //autoON = false;
+                    //_autoON = false;
                     if(!_autocal_enabled) _autoON = false; // only want to turn this off if autocal is off MW0LGE_21k9rc4
                     puresignal.SetPSControl(_txachannel, 1, 0, 0, 0);
                     if (!PSEnabled) PSEnabled = true;
@@ -642,7 +643,6 @@ namespace Thetis
         }
         private void timer2code()
         {
-            //if (autoattenuate && !console.ATTOnTX) console.ATTOnTX = true;//MW0LGE moved into 0 state
             switch (_autoAttenuateState)
             {
                 case eAAState.Monitor:// 0: // monitor
@@ -684,6 +684,7 @@ namespace Thetis
                     if (console.SetupForm.ATTOnTX != newAtten)
                     {
                         console.SetupForm.ATTOnTX = newAtten;
+
                         // give some additional time for the network msg to get to the radio before switching back on MW0LGE_21k9d5
                         if(m_bQuckAttenuate) Thread.Sleep(100);
                     }
