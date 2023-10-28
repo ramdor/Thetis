@@ -77,8 +77,8 @@ namespace Thetis
 
         private static eCMDState _cmdstate = eCMDState.OFF;
         private static bool _topmost = false;
-
-        private Thread _ps_thread;
+        
+        private Thread _ps_thread = null;
         #endregion
 
         #region properties
@@ -135,6 +135,7 @@ namespace Thetis
                 }
                 else
                 {
+                    nCount = 0;
                     Thread.Sleep(200);
                 }
             }
@@ -642,13 +643,10 @@ namespace Thetis
         }
         private void timer2code()
         {
-            bool bIgnore = console.WillForceTXATTto31; //[2.10.3] MW0LGE work around for issue #226
-                                                   //note: this will prevent PS from changing the 31 txatt 
-                                                   //applied by console.cs when in cw mode
             switch (_autoAttenuateState)
             {
                 case eAAState.Monitor:// 0: // monitor
-                    if (!bIgnore && _autoattenuate && puresignal.CalibrationAttemptsChanged
+                    if (_autoattenuate && puresignal.CalibrationAttemptsChanged
                         && puresignal.NeedToRecalibrate(console.SetupForm.ATTOnTX))
                     {
                         if (!console.ATTOnTX) AutoAttenuate = true; //MW0LGE

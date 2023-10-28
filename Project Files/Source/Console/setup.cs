@@ -28754,6 +28754,7 @@ namespace Thetis
             }
 
             lblPAProfileWarning.Visible = chkRecoverPAProfileFromTXProfile.Checked;
+            pbPAProfileWarning.Visible = chkRecoverPAProfileFromTXProfile.Checked;
         }
 
         //private bool renameSkinForDeletion(string sFullPath)

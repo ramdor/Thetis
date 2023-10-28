@@ -27695,6 +27695,7 @@ namespace Thetis
 
                         using (StreamWriter writer = File.AppendText(sVALog))
                         {
+                            writer.WriteLine(ProductVersion + "\n" + BasicTitleBar);
                             writer.WriteLine($"Volts/Amps Log \t_amp_voff={_amp_voff}\t_amp_sens={_amp_sens}");
                         }
                         _firstSaveTime = DateTime.Now;
@@ -33373,7 +33374,9 @@ namespace Thetis
                         //     radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) SetupForm.ATTOnTX = 31; // reset when PS is OFF or in CW mode
 
                         //MW0LGE [2.9.0.7] added option to always apply 31 att from setup form when not in ps
-                        if (WillForceTXATTto31) SetupForm.ATTOnTX = 31; // reset when PS is OFF or in CW mode
+                        if ((!chkFWCATUBypass.Checked && _forceATTwhenPSAoff) ||
+                                        (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
+                                         radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) SetupForm.ATTOnTX = 31; // reset when PS is OFF or in CW mode
 
                         SetupForm.HermesAttenuatorData = tx_step_attenuator_by_band[(int)rx1_band];
                         NetworkIO.SetTxAttenData(tx_step_attenuator_by_band[(int)rx1_band]);
@@ -33476,16 +33479,7 @@ namespace Thetis
             _pause_DisplayThread = false; //MW0LGE_21k8 re-enable
 
             if (bOldMox != tx) MoxChangeHandlers?.Invoke(rx2_enabled && VFOBTX ? 2 : 1, bOldMox, tx); // MW0LGE_21a
-        }
-        public bool WillForceTXATTto31
-        {
-            get
-            {
-                return ((!chkFWCATUBypass.Checked && _forceATTwhenPSAoff) ||
-                                        (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
-                                         radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU));
-            }
-        }
+        }      
         private void chkMOX_Click(object sender, System.EventArgs e)
         {
             if (chkMOX.Checked)			// because the CheckedChanged event fires first
