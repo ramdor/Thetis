@@ -23997,7 +23997,7 @@ namespace Thetis
 
         private void tmrCFCOMPGain_Tick(object sender, EventArgs e)
         {
-            if (!picCFC.Visible || !chkCFCEnable.Checked || console.MOX)
+            if (!picCFC.Visible || !chkCFCEnable.Checked || !console.MOX)
             {
                 tmrCFCOMPGain.Interval = 1000;
                 if (m_bShowingCFC) picCFC.Invalidate();

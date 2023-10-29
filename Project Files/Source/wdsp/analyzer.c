@@ -934,9 +934,6 @@ void ResetPixelBuffers(int disp)
 	EnterCriticalSection(&a->ResampleSection);
 	for (i = 0; i < dMAX_PIXOUTS; i++)
 	{				
-		for (j = 0; j < dNUM_PIXEL_BUFFS; j++)
-			for (k = 0; k < dMAX_PIXELS; k++)
-				a->pixels[i][j][k] = 0.0;
 		for (j = 0; j < dMAX_PIXELS; j++)
 			a->t_pixels[i][j] = 0.0;
 		for (j = 0; j < dMAX_AVERAGE; j++)
