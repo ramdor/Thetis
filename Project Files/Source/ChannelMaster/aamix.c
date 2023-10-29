@@ -31,6 +31,9 @@ __declspec (align (16)) AAMIX paamix[MAX_EXT_AAMIX];		// array of pointers for A
 
 void mix_main (void *pargs)
 {
+	const wchar_t* threadName = L"mix_main Thread";
+	SetThreadDescription(GetCurrentThread(), threadName);
+
 	DWORD taskIndex = 0;
 	HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
 	if (hTask != 0) AvSetMmThreadPriority(hTask, 2);

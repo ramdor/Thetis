@@ -883,6 +883,9 @@ int build_interpolants(int disp, int set, int n, int m, double *x, double (*y)[d
 
 void __cdecl sendbuf(void *arg)
 {
+	const wchar_t* threadName = L"sendbuf Thread";
+	SetThreadDescription(GetCurrentThread(), threadName);
+
 	DP a = pdisp[(int)(uintptr_t)arg];
 	while(!a->end_dispatcher)
 	{

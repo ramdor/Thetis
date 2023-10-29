@@ -393,8 +393,9 @@ namespace Thetis
 
 				m_clientListenerThread =
 					new Thread(new ThreadStart(SocketListenerThreadStart));
+				m_clientListenerThread.Name = "TCI client listener Thread";
 
-				m_clientListenerThread.Start();
+                m_clientListenerThread.Start();
 			}
 		}
 
@@ -2206,11 +2207,13 @@ namespace Thetis
 
 					m_serverThread = new Thread(new ThreadStart(ServerThreadStart));
 					m_serverThread.Priority = ThreadPriority.BelowNormal;
+					m_serverThread.Name = "TCI server Thread";
 					m_serverThread.Start();
 
 					m_purgingThread = new Thread(new ThreadStart(PurgingThreadStart));
 					m_purgingThread.Priority = ThreadPriority.Lowest;
-					m_purgingThread.Start();
+                    m_purgingThread.Name = "TCI purging Thread";
+                    m_purgingThread.Start();
 				}
 				catch(SocketException se)
                 {

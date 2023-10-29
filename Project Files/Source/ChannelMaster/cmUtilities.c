@@ -24,6 +24,9 @@ int done = 0;
 
 void WriteAudioFile (void* arg)
 {
+	const wchar_t* threadName = L"WriteAudioFile Thread";
+	SetThreadDescription(GetCurrentThread(), threadName);
+
 	byte* dat = (byte *) arg;
 	FILE* file = fopen ("AudioFile", "wb");
 
@@ -115,6 +118,8 @@ struct EscribeEstructura EscribeCosas;
 
 void EscribeLoTodo (void* arg)
 {
+	const wchar_t* threadName = L"EscribeLoTodo Thread";
+	SetThreadDescription(GetCurrentThread(), threadName);
 
 	for (int i = 0; i < EscribeCosas.nddcs; i++)
 	{

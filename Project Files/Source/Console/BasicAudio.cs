@@ -86,6 +86,7 @@ namespace Thetis
                 // even though m_objPlayer.Play() is async for some reason perhaps on initial play there would
                 // be noticabled glitch in specturm. Starting it on this thread seems to reduce the occurance
                 m_objThread = new Thread(new ThreadStart(playSound));
+                m_objThread.Name = "Basic Audio Thread";
                 m_objThread.Priority = ThreadPriority.BelowNormal;
                 m_objThread.IsBackground = true;
                 m_objThread.Start();

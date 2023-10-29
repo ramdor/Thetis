@@ -270,6 +270,13 @@ namespace Thetis
                    // CWKeyer.PTTEnqueue(item);
                 }
 
+                if (state) // only if ptt on, as we will not get a setkey after ptt is off
+                {
+                    NetworkIO.SendHighPriority(0); // prevent UpdateAlex from doing it in SetAntennasForCWX, which will also prevent SetCWX doing it in setkey
+                    Debug.Print("SendHighPriority(0) in setptt()");
+                }
+                console.SetAntennasForCWX(state); //[2.10.3]MW0LGE
+
                 ptt = state;
                 if (state) pttLed.BackColor = System.Drawing.Color.Red;
                 else pttLed.BackColor = System.Drawing.Color.Black;
@@ -284,7 +291,12 @@ namespace Thetis
         {       
             if (setkey_memory != state)
             {
-                NetworkIO.SetCWX(Convert.ToInt32(state));
+                //[2.10.3]MW0LGE note, ptt now sets up antenns in setptt()
+                //we had set SetHighPri to 0 there, so the SetCWX packet wont go out
+                //so need to SendHighPro(1) here
+                NetworkIO.SetCWX(Convert.ToInt32(state)); 
+                NetworkIO.SendHighPriority(1);
+                Debug.Print("SendHighPriority(1) in setkey()");
 
                 if (state) keyLed.BackColor = System.Drawing.Color.Yellow;
                 else keyLed.BackColor = System.Drawing.Color.Black;
@@ -296,10 +308,14 @@ namespace Thetis
         {            
             clear_fifo();
             clear_fifo2();
+            //setptt(false);
+            //setkey(false);
+            setkey(false); //[2.10.3]MW0LGE swap
             setptt(false);
-            setkey(false);
             ttx = 0; pause = 0; newptt = 0;
             keying = false;
+            NetworkIO.SendHighPriority(1);
+            Debug.Print("SendHighPriority(1) in quitshut()");
         }
         private void clear_fifo()
         {            
@@ -2088,8 +2104,11 @@ namespace Thetis
             // X on flow
             if (ttx > 0) ttx--;			// time out timer down one element
             if (ttx > 0) return;		// not yet timed out
-            setptt(false);			// cw timer timed out
+            //setptt(false);			// cw timer timed out
+            //setkey(false);
+            //[2.10.3]MW0LGE swap
             setkey(false);
+            setptt(false);			// cw timer timed out
         }
 
         // keyboardFifo pops keys from fifo2 and then calls loadchar() to

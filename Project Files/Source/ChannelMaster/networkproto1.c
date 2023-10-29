@@ -234,6 +234,9 @@ int MetisWriteFrame(int endpoint, char* bufp) {
 
 // this is the main thread that reads data
 DWORD WINAPI MetisReadThreadMain(LPVOID n) {
+	const wchar_t* threadName = L"MetisReadThreadMain Thread";
+	SetThreadDescription(GetCurrentThread(), threadName);
+
 	DWORD taskIndex = 0;
 	HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
 	if (hTask != 0) AvSetMmThreadPriority(hTask, 2);
@@ -677,6 +680,9 @@ void WriteMainLoop(char* bufp)
 
 DWORD WINAPI sendProtocol1Samples(LPVOID n)
 {
+	const wchar_t* threadName = L"sendProtocol1Samples Thread";
+	SetThreadDescription(GetCurrentThread(), threadName);
+
 	DWORD taskIndex = 0;
 	HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
 	if (hTask != 0) AvSetMmThreadPriority(hTask, 2);
