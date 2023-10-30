@@ -128,7 +128,7 @@
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="lblPAProfile.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 6.75pt</value>
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="lblPAProfile.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
@@ -138,10 +138,10 @@
     <value>Off</value>
   </data>
   <data name="lblPAProfile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>509, 570</value>
+    <value>511, 565</value>
   </data>
   <data name="lblPAProfile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 14</value>
+    <value>195, 14</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="lblPAProfile.TabIndex" type="System.Int32, mscorlib">
@@ -1570,7 +1570,7 @@
     <value>2</value>
   </data>
   <data name="udCWPitch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>265, 143</value>
+    <value>284, 143</value>
   </data>
   <data name="udCWPitch.Size" type="System.Drawing.Size, System.Drawing">
     <value>48, 20</value>
@@ -1594,7 +1594,7 @@
     <value>3</value>
   </data>
   <data name="udCWBreakInDelay.Location" type="System.Drawing.Point, System.Drawing">
-    <value>156, 20</value>
+    <value>167, 20</value>
   </data>
   <data name="udCWBreakInDelay.Size" type="System.Drawing.Size, System.Drawing">
     <value>48, 20</value>
@@ -3466,7 +3466,7 @@
     <value>Off</value>
   </data>
   <data name="chkShowTXFilter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>268, 132</value>
+    <value>280, 119</value>
   </data>
   <data name="chkShowTXFilter.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -3559,7 +3559,7 @@
     <value>Off</value>
   </data>
   <data name="chkTXEQ.Location" type="System.Drawing.Point, System.Drawing">
-    <value>268, 109</value>
+    <value>280, 96</value>
   </data>
   <data name="chkTXEQ.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -3595,10 +3595,10 @@
     <value>13</value>
   </data>
   <data name="comboTXProfile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>211, 26</value>
+    <value>193, 25</value>
   </data>
   <data name="comboTXProfile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 21</value>
+    <value>139, 21</value>
   </data>
   <data name="comboTXProfile.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -3616,7 +3616,7 @@
     <value>panelModeSpecificPhone</value>
   </data>
   <data name="&gt;&gt;comboTXProfile.ZOrder" xml:space="preserve">
-    <value>19</value>
+    <value>23</value>
   </data>
   <data name="chkRXEQ.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -3634,7 +3634,7 @@
     <value>Off</value>
   </data>
   <data name="chkRXEQ.Location" type="System.Drawing.Point, System.Drawing">
-    <value>217, 109</value>
+    <value>193, 96</value>
   </data>
   <data name="chkRXEQ.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -3661,7 +3661,7 @@
     <value>panelModeSpecificPhone</value>
   </data>
   <data name="&gt;&gt;chkRXEQ.ZOrder" xml:space="preserve">
-    <value>20</value>
+    <value>19</value>
   </data>
   <data name="chkCPDR.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -3679,10 +3679,10 @@
     <value>NoControl</value>
   </data>
   <data name="chkCPDR.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 47</value>
+    <value>2, 24</value>
   </data>
   <data name="chkCPDR.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 24</value>
+    <value>50, 23</value>
   </data>
   <data name="chkCPDR.TabIndex" type="System.Int32, mscorlib">
     <value>35</value>
@@ -3706,7 +3706,7 @@
     <value>panelModeSpecificPhone</value>
   </data>
   <data name="&gt;&gt;chkCPDR.ZOrder" xml:space="preserve">
-    <value>21</value>
+    <value>20</value>
   </data>
   <data name="chkVAC1.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -3769,7 +3769,7 @@
     <value>Off</value>
   </data>
   <data name="chkVOX.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 73</value>
+    <value>2, 47</value>
   </data>
   <data name="chkVOX.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 24</value>
@@ -3796,7 +3796,7 @@
     <value>panelModeSpecificPhone</value>
   </data>
   <data name="&gt;&gt;chkVOX.ZOrder" xml:space="preserve">
-    <value>22</value>
+    <value>21</value>
   </data>
   <data name="chkNoiseGate.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -3814,7 +3814,7 @@
     <value>Off</value>
   </data>
   <data name="chkNoiseGate.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 99</value>
+    <value>2, 70</value>
   </data>
   <data name="chkNoiseGate.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 24</value>
@@ -3841,16 +3841,22 @@
     <value>panelModeSpecificPhone</value>
   </data>
   <data name="&gt;&gt;chkNoiseGate.ZOrder" xml:space="preserve">
-    <value>23</value>
+    <value>22</value>
+  </data>
+  <data name="comboDigTXProfile.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Popup</value>
+  </data>
+  <data name="comboDigTXProfile.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="comboDigTXProfile.ItemHeight" type="System.Int32, mscorlib">
     <value>13</value>
   </data>
   <data name="comboDigTXProfile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>83, 121</value>
+    <value>193, 25</value>
   </data>
   <data name="comboDigTXProfile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 21</value>
+    <value>139, 21</value>
   </data>
   <data name="comboDigTXProfile.TabIndex" type="System.Int32, mscorlib">
     <value>79</value>
@@ -3868,7 +3874,7 @@
     <value>panelModeSpecificDigital</value>
   </data>
   <data name="&gt;&gt;comboDigTXProfile.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="chkVACStereo.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -3902,6 +3908,12 @@
   </data>
   <data name="&gt;&gt;chkVACStereo.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="comboVACSampleRate.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Popup</value>
+  </data>
+  <data name="comboVACSampleRate.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="comboVACSampleRate.ItemHeight" type="System.Int32, mscorlib">
     <value>13</value>
@@ -6326,7 +6338,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>panelModeSpecificDigital</value>
   </data>
   <data name="&gt;&gt;ptbVACRXGain.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="ptbVACTXGain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -6335,7 +6347,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="ptbVACTXGain.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 85</value>
+    <value>15, 87</value>
   </data>
   <data name="ptbVACTXGain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
@@ -6359,7 +6371,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>panelModeSpecificDigital</value>
   </data>
   <data name="&gt;&gt;ptbVACTXGain.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <metadata name="radDisplayZoom05.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -6581,10 +6593,10 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="chkMicMute.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 21</value>
+    <value>2, 1</value>
   </data>
   <data name="chkMicMute.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 24</value>
+    <value>50, 23</value>
   </data>
   <data name="chkMicMute.TabIndex" type="System.Int32, mscorlib">
     <value>114</value>
@@ -6746,7 +6758,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="radFMDeviation5kHz.Location" type="System.Drawing.Point, System.Drawing">
-    <value>138, 36</value>
+    <value>123, 24</value>
   </data>
   <data name="radFMDeviation5kHz.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -6775,14 +6787,17 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
   <data name="&gt;&gt;radFMDeviation5kHz.ZOrder" xml:space="preserve">
     <value>18</value>
   </data>
+  <data name="comboFMTXProfile.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Popup</value>
+  </data>
   <data name="comboFMTXProfile.ItemHeight" type="System.Int32, mscorlib">
     <value>13</value>
   </data>
   <data name="comboFMTXProfile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>216, 20</value>
+    <value>193, 25</value>
   </data>
   <data name="comboFMTXProfile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 21</value>
+    <value>139, 21</value>
   </data>
   <data name="comboFMTXProfile.TabIndex" type="System.Int32, mscorlib">
     <value>118</value>
@@ -6803,7 +6818,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>17</value>
   </data>
   <data name="udFMOffset.Location" type="System.Drawing.Point, System.Drawing">
-    <value>217, 62</value>
+    <value>221, 77</value>
   </data>
   <data name="udFMOffset.Size" type="System.Drawing.Size, System.Drawing">
     <value>95, 20</value>
@@ -6842,7 +6857,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="chkFMTXSimplex.Location" type="System.Drawing.Point, System.Drawing">
-    <value>241, 87</value>
+    <value>237, 101</value>
   </data>
   <data name="chkFMTXSimplex.Size" type="System.Drawing.Size, System.Drawing">
     <value>63, 23</value>
@@ -6871,8 +6886,11 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
   <data name="&gt;&gt;chkFMTXSimplex.ZOrder" xml:space="preserve">
     <value>15</value>
   </data>
+  <data name="comboFMCTCSS.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Popup</value>
+  </data>
   <data name="comboFMCTCSS.Location" type="System.Drawing.Point, System.Drawing">
-    <value>90, 67</value>
+    <value>104, 51</value>
   </data>
   <data name="comboFMCTCSS.Size" type="System.Drawing.Size, System.Drawing">
     <value>60, 21</value>
@@ -6908,7 +6926,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="btnFMMemory.Location" type="System.Drawing.Point, System.Drawing">
-    <value>11, 119</value>
+    <value>3, 76</value>
   </data>
   <data name="btnFMMemory.Size" type="System.Drawing.Size, System.Drawing">
     <value>70, 23</value>
@@ -6950,7 +6968,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="chkFMCTCSS.Location" type="System.Drawing.Point, System.Drawing">
-    <value>11, 66</value>
+    <value>3, 50</value>
   </data>
   <data name="chkFMCTCSS.Size" type="System.Drawing.Size, System.Drawing">
     <value>70, 23</value>
@@ -6992,7 +7010,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="btnFMMemoryUp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>221, 119</value>
+    <value>191, 76</value>
   </data>
   <data name="btnFMMemoryUp.Size" type="System.Drawing.Size, System.Drawing">
     <value>24, 23</value>
@@ -7034,7 +7052,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="btnFMMemoryDown.Location" type="System.Drawing.Point, System.Drawing">
-    <value>92, 119</value>
+    <value>79, 76</value>
   </data>
   <data name="btnFMMemoryDown.Size" type="System.Drawing.Size, System.Drawing">
     <value>24, 23</value>
@@ -7079,7 +7097,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="radFMDeviation2kHz.Location" type="System.Drawing.Point, System.Drawing">
-    <value>88, 36</value>
+    <value>73, 24</value>
   </data>
   <data name="radFMDeviation2kHz.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 23</value>
@@ -7124,7 +7142,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="chkFMTXLow.Location" type="System.Drawing.Point, System.Drawing">
-    <value>216, 87</value>
+    <value>210, 101</value>
   </data>
   <data name="chkFMTXLow.Size" type="System.Drawing.Size, System.Drawing">
     <value>25, 23</value>
@@ -7169,7 +7187,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="chkFMTXHigh.Location" type="System.Drawing.Point, System.Drawing">
-    <value>304, 87</value>
+    <value>302, 101</value>
   </data>
   <data name="chkFMTXHigh.Size" type="System.Drawing.Size, System.Drawing">
     <value>25, 23</value>
@@ -7217,7 +7235,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>Off</value>
   </data>
   <data name="chkFMTXRev.Location" type="System.Drawing.Point, System.Drawing">
-    <value>288, 116</value>
+    <value>248, 129</value>
   </data>
   <data name="chkFMTXRev.Size" type="System.Drawing.Size, System.Drawing">
     <value>41, 23</value>
@@ -8494,7 +8512,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="udTXFilterLow.Location" type="System.Drawing.Point, System.Drawing">
-    <value>211, 81</value>
+    <value>193, 71</value>
   </data>
   <data name="udTXFilterLow.Size" type="System.Drawing.Size, System.Drawing">
     <value>51, 20</value>
@@ -8524,7 +8542,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="udTXFilterHigh.Location" type="System.Drawing.Point, System.Drawing">
-    <value>268, 81</value>
+    <value>280, 71</value>
   </data>
   <data name="udTXFilterHigh.Size" type="System.Drawing.Size, System.Drawing">
     <value>52, 20</value>
@@ -8688,14 +8706,17 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;chkQSK.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="comboAMTXProfile.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Popup</value>
+  </data>
   <data name="comboAMTXProfile.ItemHeight" type="System.Int32, mscorlib">
     <value>13</value>
   </data>
   <data name="comboAMTXProfile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>211, 26</value>
+    <value>193, 25</value>
   </data>
   <data name="comboAMTXProfile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 21</value>
+    <value>139, 21</value>
   </data>
   <data name="comboAMTXProfile.TabIndex" type="System.Int32, mscorlib">
     <value>125</value>
@@ -13005,7 +13026,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="radRX1Show.Location" type="System.Drawing.Point, System.Drawing">
-    <value>142, 76</value>
+    <value>140, 81</value>
   </data>
   <data name="radRX1Show.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 17</value>
@@ -13029,7 +13050,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelModeSpecificDigital</value>
   </data>
   <data name="&gt;&gt;radRX1Show.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="radRX2Show.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -13041,7 +13062,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="radRX2Show.Location" type="System.Drawing.Point, System.Drawing">
-    <value>142, 96</value>
+    <value>140, 101</value>
   </data>
   <data name="radRX2Show.Size" type="System.Drawing.Size, System.Drawing">
     <value>49, 17</value>
@@ -13185,7 +13206,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>6</value>
   </data>
   <data name="panelModeSpecificCW.Location" type="System.Drawing.Point, System.Drawing">
-    <value>504, 424</value>
+    <value>499, 420</value>
   </data>
   <data name="panelModeSpecificCW.Size" type="System.Drawing.Size, System.Drawing">
     <value>336, 165</value>
@@ -13421,6 +13442,9 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;grpSemiBreakIn.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
+  <data name="lblCWBreakInDelay.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="lblCWBreakInDelay.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -13428,10 +13452,10 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblCWBreakInDelay.Location" type="System.Drawing.Point, System.Drawing">
-    <value>91, 22</value>
+    <value>110, 22</value>
   </data>
   <data name="lblCWBreakInDelay.Size" type="System.Drawing.Size, System.Drawing">
-    <value>64, 16</value>
+    <value>59, 13</value>
   </data>
   <data name="lblCWBreakInDelay.TabIndex" type="System.Int32, mscorlib">
     <value>34</value>
@@ -13451,6 +13475,9 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblCWBreakInDelay.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
+  <data name="lblCWPitchFreq.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="lblCWPitchFreq.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -13458,10 +13485,10 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblCWPitchFreq.Location" type="System.Drawing.Point, System.Drawing">
-    <value>175, 145</value>
+    <value>206, 145</value>
   </data>
   <data name="lblCWPitchFreq.Size" type="System.Drawing.Size, System.Drawing">
-    <value>88, 16</value>
+    <value>80, 13</value>
   </data>
   <data name="lblCWPitchFreq.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -14822,197 +14849,11 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="panelModeSpecificPhone.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
-  <data name="&gt;&gt;labelTS4.Name" xml:space="preserve">
-    <value>labelTS4</value>
-  </data>
-  <data name="&gt;&gt;labelTS4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;labelTS4.Parent" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;labelTS4.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;labelTS3.Name" xml:space="preserve">
-    <value>labelTS3</value>
-  </data>
-  <data name="&gt;&gt;labelTS3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;labelTS3.Parent" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;labelTS3.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;picNoiseGate.Name" xml:space="preserve">
-    <value>picNoiseGate</value>
-  </data>
-  <data name="&gt;&gt;picNoiseGate.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;picNoiseGate.Parent" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;picNoiseGate.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;lblNoiseGateVal.Name" xml:space="preserve">
-    <value>lblNoiseGateVal</value>
-  </data>
-  <data name="&gt;&gt;lblNoiseGateVal.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;lblNoiseGateVal.Parent" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;lblNoiseGateVal.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;ptbNoiseGate.Name" xml:space="preserve">
-    <value>ptbNoiseGate</value>
-  </data>
-  <data name="&gt;&gt;ptbNoiseGate.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbNoiseGate.Parent" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;ptbNoiseGate.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;picVOX.Name" xml:space="preserve">
-    <value>picVOX</value>
-  </data>
-  <data name="&gt;&gt;picVOX.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;picVOX.Parent" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;picVOX.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;ptbVOX.Name" xml:space="preserve">
-    <value>ptbVOX</value>
-  </data>
-  <data name="&gt;&gt;ptbVOX.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbVOX.Parent" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;ptbVOX.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;lblVOXVal.Name" xml:space="preserve">
-    <value>lblVOXVal</value>
-  </data>
-  <data name="&gt;&gt;lblVOXVal.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;lblVOXVal.Parent" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;lblVOXVal.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="&gt;&gt;ptbCPDR.Name" xml:space="preserve">
-    <value>ptbCPDR</value>
-  </data>
-  <data name="&gt;&gt;ptbCPDR.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbCPDR.Parent" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;ptbCPDR.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <data name="&gt;&gt;lblCPDRVal.Name" xml:space="preserve">
-    <value>lblCPDRVal</value>
-  </data>
-  <data name="&gt;&gt;lblCPDRVal.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;lblCPDRVal.Parent" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;lblCPDRVal.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
-  <data name="&gt;&gt;lblMicVal.Name" xml:space="preserve">
-    <value>lblMicVal</value>
-  </data>
-  <data name="&gt;&gt;lblMicVal.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;lblMicVal.Parent" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;lblMicVal.ZOrder" xml:space="preserve">
-    <value>13</value>
-  </data>
-  <data name="&gt;&gt;ptbMic.Name" xml:space="preserve">
-    <value>ptbMic</value>
-  </data>
-  <data name="&gt;&gt;ptbMic.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbMic.Parent" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;ptbMic.ZOrder" xml:space="preserve">
-    <value>14</value>
-  </data>
-  <data name="&gt;&gt;lblMIC.Name" xml:space="preserve">
-    <value>lblMIC</value>
-  </data>
-  <data name="&gt;&gt;lblMIC.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;lblMIC.Parent" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;lblMIC.ZOrder" xml:space="preserve">
-    <value>15</value>
-  </data>
-  <data name="&gt;&gt;lblTransmitProfile.Name" xml:space="preserve">
-    <value>lblTransmitProfile</value>
-  </data>
-  <data name="&gt;&gt;lblTransmitProfile.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;lblTransmitProfile.Parent" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;lblTransmitProfile.ZOrder" xml:space="preserve">
-    <value>17</value>
-  </data>
-  <data name="panelModeSpecificPhone.Location" type="System.Drawing.Point, System.Drawing">
-    <value>504, 424</value>
-  </data>
-  <data name="panelModeSpecificPhone.Size" type="System.Drawing.Size, System.Drawing">
-    <value>336, 165</value>
-  </data>
-  <data name="panelModeSpecificPhone.TabIndex" type="System.Int32, mscorlib">
-    <value>125</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificPhone.Name" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificPhone.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificPhone.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificPhone.ZOrder" xml:space="preserve">
-    <value>52</value>
-  </data>
   <data name="labelTS4.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
+  </data>
+  <data name="labelTS4.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
   </data>
   <data name="labelTS4.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -15021,16 +14862,19 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="labelTS4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>270, 66</value>
+    <value>277, 53</value>
   </data>
   <data name="labelTS4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>29, 13</value>
+    <value>33, 13</value>
   </data>
   <data name="labelTS4.TabIndex" type="System.Int32, mscorlib">
     <value>119</value>
   </data>
   <data name="labelTS4.Text" xml:space="preserve">
     <value>High</value>
+  </data>
+  <data name="labelTS4.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="&gt;&gt;labelTS4.Name" xml:space="preserve">
     <value>labelTS4</value>
@@ -15047,6 +14891,9 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="labelTS3.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="labelTS3.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
   <data name="labelTS3.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -15054,10 +14901,10 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="labelTS3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>210, 66</value>
+    <value>190, 53</value>
   </data>
   <data name="labelTS3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>27, 13</value>
+    <value>30, 13</value>
   </data>
   <data name="labelTS3.TabIndex" type="System.Int32, mscorlib">
     <value>118</value>
@@ -15084,7 +14931,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="picNoiseGate.Location" type="System.Drawing.Point, System.Drawing">
-    <value>65, 120</value>
+    <value>61, 91</value>
   </data>
   <data name="picNoiseGate.Size" type="System.Drawing.Size, System.Drawing">
     <value>83, 3</value>
@@ -15117,10 +14964,10 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblNoiseGateVal.Location" type="System.Drawing.Point, System.Drawing">
-    <value>159, 103</value>
+    <value>155, 68</value>
   </data>
   <data name="lblNoiseGateVal.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 16</value>
+    <value>37, 23</value>
   </data>
   <data name="lblNoiseGateVal.TabIndex" type="System.Int32, mscorlib">
     <value>113</value>
@@ -15129,7 +14976,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>-40</value>
   </data>
   <data name="lblNoiseGateVal.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
+    <value>MiddleLeft</value>
   </data>
   <data name="lblNoiseGateVal.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -15156,7 +15003,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="ptbNoiseGate.Location" type="System.Drawing.Point, System.Drawing">
-    <value>57, 99</value>
+    <value>52, 70</value>
   </data>
   <data name="ptbNoiseGate.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
@@ -15189,7 +15036,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="picVOX.Location" type="System.Drawing.Point, System.Drawing">
-    <value>65, 91</value>
+    <value>61, 68</value>
   </data>
   <data name="picVOX.Size" type="System.Drawing.Size, System.Drawing">
     <value>83, 3</value>
@@ -15216,7 +15063,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="ptbVOX.Location" type="System.Drawing.Point, System.Drawing">
-    <value>57, 70</value>
+    <value>52, 47</value>
   </data>
   <data name="ptbVOX.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
@@ -15252,10 +15099,10 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblVOXVal.Location" type="System.Drawing.Point, System.Drawing">
-    <value>159, 76</value>
+    <value>155, 47</value>
   </data>
   <data name="lblVOXVal.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 16</value>
+    <value>37, 23</value>
   </data>
   <data name="lblVOXVal.TabIndex" type="System.Int32, mscorlib">
     <value>111</value>
@@ -15264,7 +15111,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>200</value>
   </data>
   <data name="lblVOXVal.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;lblVOXVal.Name" xml:space="preserve">
     <value>lblVOXVal</value>
@@ -15285,7 +15132,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="ptbCPDR.Location" type="System.Drawing.Point, System.Drawing">
-    <value>57, 47</value>
+    <value>52, 24</value>
   </data>
   <data name="ptbCPDR.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
@@ -15321,10 +15168,10 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblCPDRVal.Location" type="System.Drawing.Point, System.Drawing">
-    <value>159, 50</value>
+    <value>155, 24</value>
   </data>
   <data name="lblCPDRVal.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 16</value>
+    <value>37, 23</value>
   </data>
   <data name="lblCPDRVal.TabIndex" type="System.Int32, mscorlib">
     <value>110</value>
@@ -15333,7 +15180,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>1</value>
   </data>
   <data name="lblCPDRVal.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;lblCPDRVal.Name" xml:space="preserve">
     <value>lblCPDRVal</value>
@@ -15357,10 +15204,10 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblMicVal.Location" type="System.Drawing.Point, System.Drawing">
-    <value>159, 24</value>
+    <value>155, 1</value>
   </data>
   <data name="lblMicVal.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 16</value>
+    <value>49, 23</value>
   </data>
   <data name="lblMicVal.TabIndex" type="System.Int32, mscorlib">
     <value>108</value>
@@ -15369,7 +15216,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>6</value>
   </data>
   <data name="lblMicVal.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;lblMicVal.Name" xml:space="preserve">
     <value>lblMicVal</value>
@@ -15390,7 +15237,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="ptbMic.Location" type="System.Drawing.Point, System.Drawing">
-    <value>57, 21</value>
+    <value>52, 1</value>
   </data>
   <data name="ptbMic.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
@@ -15426,10 +15273,10 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblMIC.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 18</value>
+    <value>2, 1</value>
   </data>
   <data name="lblMIC.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 20</value>
+    <value>50, 23</value>
   </data>
   <data name="lblMIC.TabIndex" type="System.Int32, mscorlib">
     <value>52</value>
@@ -15455,6 +15302,9 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblMIC.ZOrder" xml:space="preserve">
     <value>15</value>
   </data>
+  <data name="lblTransmitProfile.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
   <data name="lblTransmitProfile.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -15462,7 +15312,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblTransmitProfile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>205, 8</value>
+    <value>199, 5</value>
   </data>
   <data name="lblTransmitProfile.Size" type="System.Drawing.Size, System.Drawing">
     <value>123, 16</value>
@@ -15488,6 +15338,27 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblTransmitProfile.ZOrder" xml:space="preserve">
     <value>17</value>
   </data>
+  <data name="panelModeSpecificPhone.Location" type="System.Drawing.Point, System.Drawing">
+    <value>499, 420</value>
+  </data>
+  <data name="panelModeSpecificPhone.Size" type="System.Drawing.Size, System.Drawing">
+    <value>336, 165</value>
+  </data>
+  <data name="panelModeSpecificPhone.TabIndex" type="System.Int32, mscorlib">
+    <value>125</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificPhone.Name" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificPhone.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificPhone.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificPhone.ZOrder" xml:space="preserve">
+    <value>52</value>
+  </data>
   <data name="panelModeSpecificDigital.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
@@ -15506,18 +15377,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblVACTXIndicator.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;lblVACRXIndicator.Name" xml:space="preserve">
-    <value>lblVACRXIndicator</value>
-  </data>
-  <data name="&gt;&gt;lblVACRXIndicator.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;lblVACRXIndicator.Parent" xml:space="preserve">
-    <value>panelModeSpecificDigital</value>
-  </data>
-  <data name="&gt;&gt;lblVACRXIndicator.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <data name="&gt;&gt;lblDigTXProfile.Name" xml:space="preserve">
     <value>lblDigTXProfile</value>
   </data>
@@ -15528,7 +15387,19 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelModeSpecificDigital</value>
   </data>
   <data name="&gt;&gt;lblDigTXProfile.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lblVACRXIndicator.Name" xml:space="preserve">
+    <value>lblVACRXIndicator</value>
+  </data>
+  <data name="&gt;&gt;lblVACRXIndicator.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblVACRXIndicator.Parent" xml:space="preserve">
+    <value>panelModeSpecificDigital</value>
+  </data>
+  <data name="&gt;&gt;lblVACRXIndicator.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="&gt;&gt;lblRXGain.Name" xml:space="preserve">
     <value>lblRXGain</value>
@@ -15582,7 +15453,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
   </data>
   <data name="panelModeSpecificDigital.Location" type="System.Drawing.Point, System.Drawing">
-    <value>504, 424</value>
+    <value>499, 420</value>
   </data>
   <data name="panelModeSpecificDigital.Size" type="System.Drawing.Size, System.Drawing">
     <value>336, 165</value>
@@ -15632,6 +15503,39 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblVACTXIndicator.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="lblDigTXProfile.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="lblDigTXProfile.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="lblDigTXProfile.Location" type="System.Drawing.Point, System.Drawing">
+    <value>199, 5</value>
+  </data>
+  <data name="lblDigTXProfile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>123, 16</value>
+  </data>
+  <data name="lblDigTXProfile.TabIndex" type="System.Int32, mscorlib">
+    <value>80</value>
+  </data>
+  <data name="lblDigTXProfile.Text" xml:space="preserve">
+    <value>Transmit Profile</value>
+  </data>
+  <data name="lblDigTXProfile.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;lblDigTXProfile.Name" xml:space="preserve">
+    <value>lblDigTXProfile</value>
+  </data>
+  <data name="&gt;&gt;lblDigTXProfile.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblDigTXProfile.Parent" xml:space="preserve">
+    <value>panelModeSpecificDigital</value>
+  </data>
+  <data name="&gt;&gt;lblDigTXProfile.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="lblVACRXIndicator.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -15639,7 +15543,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblVACRXIndicator.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 10</value>
+    <value>12, 7</value>
   </data>
   <data name="lblVACRXIndicator.Size" type="System.Drawing.Size, System.Drawing">
     <value>38, 16</value>
@@ -15660,40 +15564,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelModeSpecificDigital</value>
   </data>
   <data name="&gt;&gt;lblVACRXIndicator.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="lblDigTXProfile.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="lblDigTXProfile.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="lblDigTXProfile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 119</value>
-  </data>
-  <data name="lblDigTXProfile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>70, 22</value>
-  </data>
-  <data name="lblDigTXProfile.TabIndex" type="System.Int32, mscorlib">
-    <value>80</value>
-  </data>
-  <data name="lblDigTXProfile.Text" xml:space="preserve">
-    <value>TX Profile:</value>
-  </data>
-  <data name="lblDigTXProfile.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
-  </data>
-  <data name="&gt;&gt;lblDigTXProfile.Name" xml:space="preserve">
-    <value>lblDigTXProfile</value>
-  </data>
-  <data name="&gt;&gt;lblDigTXProfile.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;lblDigTXProfile.Parent" xml:space="preserve">
-    <value>panelModeSpecificDigital</value>
-  </data>
-  <data name="&gt;&gt;lblDigTXProfile.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>2</value>
   </data>
   <data name="lblRXGain.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -15702,7 +15573,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblRXGain.Location" type="System.Drawing.Point, System.Drawing">
-    <value>49, 10</value>
+    <value>49, 7</value>
   </data>
   <data name="lblRXGain.Size" type="System.Drawing.Size, System.Drawing">
     <value>107, 16</value>
@@ -15726,7 +15597,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>7</value>
   </data>
   <data name="grpVACStereo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>224, 76</value>
+    <value>213, 106</value>
   </data>
   <data name="grpVACStereo.Size" type="System.Drawing.Size, System.Drawing">
     <value>96, 57</value>
@@ -15780,7 +15651,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>10</value>
   </data>
   <data name="grpDIGSampleRate.Location" type="System.Drawing.Point, System.Drawing">
-    <value>225, 11</value>
+    <value>213, 49</value>
   </data>
   <data name="grpDIGSampleRate.Size" type="System.Drawing.Size, System.Drawing">
     <value>96, 56</value>
@@ -18450,7 +18321,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>19</value>
   </data>
   <data name="panelModeSpecificFM.Location" type="System.Drawing.Point, System.Drawing">
-    <value>504, 424</value>
+    <value>499, 420</value>
   </data>
   <data name="panelModeSpecificFM.Size" type="System.Drawing.Size, System.Drawing">
     <value>336, 165</value>
@@ -18477,7 +18348,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="ptbFMMic.Location" type="System.Drawing.Point, System.Drawing">
-    <value>60, 8</value>
+    <value>52, 1</value>
   </data>
   <data name="ptbFMMic.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
@@ -18513,10 +18384,10 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblMicValFM.Location" type="System.Drawing.Point, System.Drawing">
-    <value>163, 11</value>
+    <value>155, 1</value>
   </data>
   <data name="lblMicValFM.Size" type="System.Drawing.Size, System.Drawing">
-    <value>29, 16</value>
+    <value>49, 23</value>
   </data>
   <data name="lblMicValFM.TabIndex" type="System.Int32, mscorlib">
     <value>134</value>
@@ -18525,7 +18396,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>10</value>
   </data>
   <data name="lblMicValFM.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;lblMicValFM.Name" xml:space="preserve">
     <value>lblMicValFM</value>
@@ -18539,6 +18410,9 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblMicValFM.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
+  <data name="labelTS7.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
   <data name="labelTS7.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -18546,16 +18420,16 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="labelTS7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>216, 4</value>
+    <value>199, 5</value>
   </data>
   <data name="labelTS7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>88, 16</value>
+    <value>123, 16</value>
   </data>
   <data name="labelTS7.TabIndex" type="System.Int32, mscorlib">
     <value>132</value>
   </data>
   <data name="labelTS7.Text" xml:space="preserve">
-    <value>Transmit Profile:</value>
+    <value>Transmit Profile</value>
   </data>
   <data name="labelTS7.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleCenter</value>
@@ -18572,8 +18446,11 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;labelTS7.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
+  <data name="lblFMOffset.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="lblFMOffset.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt</value>
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
   </data>
   <data name="lblFMOffset.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -18582,10 +18459,10 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblFMOffset.Location" type="System.Drawing.Point, System.Drawing">
-    <value>211, 42</value>
+    <value>214, 54</value>
   </data>
   <data name="lblFMOffset.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 20</value>
+    <value>116, 13</value>
   </data>
   <data name="lblFMOffset.TabIndex" type="System.Int32, mscorlib">
     <value>131</value>
@@ -18618,10 +18495,10 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblFMDeviation.Location" type="System.Drawing.Point, System.Drawing">
-    <value>11, 37</value>
+    <value>4, 25</value>
   </data>
   <data name="lblFMDeviation.Size" type="System.Drawing.Size, System.Drawing">
-    <value>82, 20</value>
+    <value>68, 20</value>
   </data>
   <data name="lblFMDeviation.TabIndex" type="System.Int32, mscorlib">
     <value>128</value>
@@ -18630,7 +18507,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Deviation</value>
   </data>
   <data name="lblFMDeviation.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;lblFMDeviation.Name" xml:space="preserve">
     <value>lblFMDeviation</value>
@@ -18644,14 +18521,17 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblFMDeviation.ZOrder" xml:space="preserve">
     <value>11</value>
   </data>
+  <data name="comboFMMemory.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Popup</value>
+  </data>
   <data name="comboFMMemory.ItemHeight" type="System.Int32, mscorlib">
     <value>13</value>
   </data>
   <data name="comboFMMemory.Location" type="System.Drawing.Point, System.Drawing">
-    <value>116, 119</value>
+    <value>104, 77</value>
   </data>
   <data name="comboFMMemory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>105, 21</value>
+    <value>86, 21</value>
   </data>
   <data name="comboFMMemory.TabIndex" type="System.Int32, mscorlib">
     <value>123</value>
@@ -18678,10 +18558,10 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="lblFMMic.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 8</value>
+    <value>4, 3</value>
   </data>
   <data name="lblFMMic.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 20</value>
+    <value>32, 20</value>
   </data>
   <data name="lblFMMic.TabIndex" type="System.Int32, mscorlib">
     <value>53</value>
@@ -18690,7 +18570,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>MIC</value>
   </data>
   <data name="lblFMMic.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;lblFMMic.Name" xml:space="preserve">
     <value>lblFMMic</value>
