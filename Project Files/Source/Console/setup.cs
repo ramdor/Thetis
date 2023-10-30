@@ -2463,7 +2463,6 @@ namespace Thetis
 
             //options1 tab
             chkPurgeBuffers_CheckedChanged(this, e);
-            chkPurgeBuffersDisplayEngine_CheckedChanged(this, e);
 
             //options2 tab
             chkQuickSplit_CheckedChanged(this, e);
@@ -28722,20 +28721,6 @@ namespace Thetis
         {
             if (initializing) return;
             console.WDSPMOXTransitionBufferClear = chkPurgeBuffers.Checked;
-
-            // display engine should be purged if this is on
-            if (chkPurgeBuffers.Checked && !chkPurgeBuffersDisplayEngine.Checked)
-                chkPurgeBuffersDisplayEngine.Checked = true;
-        }
-
-        private void chkPurgeBuffersDisplayEngine_CheckedChanged(object sender, EventArgs e)
-        {
-            if (initializing) return;
-            Display.MOXTransitionBufferClearForDisplay = chkPurgeBuffersDisplayEngine.Checked;
-
-            // if this is off, then chkPurgeBuffers should be off too
-            if (!chkPurgeBuffersDisplayEngine.Checked && chkPurgeBuffers.Checked)
-                chkPurgeBuffers.Checked = false;
         }
 
         private void tcSetup_SelectedIndexChanged(object sender, EventArgs e)

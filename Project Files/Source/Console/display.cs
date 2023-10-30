@@ -581,7 +581,6 @@ namespace Thetis
                 lock (_objDX2Lock)
                 {
                     PurgeBuffers();
-                    resetPeaksAndNoise();
                 }
             }
         }
@@ -638,17 +637,18 @@ namespace Thetis
             //if (oldMox != newMox) resetPeaksAndNoise(); // belts braces // removed, done in display.mox
         }
 
-        private static void resetPeaksAndNoise()
+        private static void resetPeaksAndNoise(int rx)
         {
-            ResetBlobMaximums(1, true);
-            ResetSpectrumPeaks(1);
-            _RX1waterfallPreviousMinValue = -100f;
-            FastAttackNoiseFloorRX1 = true;
+            ResetBlobMaximums(rx, true);
+            ResetSpectrumPeaks(rx);
 
-            if (RX2Enabled)
+            if (rx == 1)
             {
-                ResetBlobMaximums(2, true);
-                ResetSpectrumPeaks(2);
+                _RX1waterfallPreviousMinValue = -100f;
+                FastAttackNoiseFloorRX1 = true;
+            }
+            else if (rx == 2)
+            {
                 _RX2waterfallPreviousMinValue = -100f;
                 FastAttackNoiseFloorRX2 = true;
             }
@@ -1203,10 +1203,12 @@ namespace Thetis
             get { return _mox; }
             set
             {
-                if (value != _mox)
-                {
-                    resetPeaksAndNoise();
-                }
+                // not needed as display engine will call purge buffers on T/R mox change
+                //if (value != _mox)
+                //{
+                //    resetPeaksAndNoise(1);
+                //    if(RX2Enabled) resetPeaksAndNoise(2);
+                //}
                 _mox = value;
             }
         }
@@ -2317,8 +2319,7 @@ namespace Thetis
         private static double _rx2_clearbuffer_timeout_waterfall = 0;
         private static void clearBuffers(int W, int rx)
         {
-            ResetBlobMaximums(rx, true);
-            ResetSpectrumPeaks(rx);
+            resetPeaksAndNoise(rx);
 
             if (rx == 1)
             {
@@ -2338,8 +2339,7 @@ namespace Thetis
                 });
                 float tmpDelay = Math.Max(200f, _fft_fill_timeRX1);
                 _rx1_clearbuffer_timeout_waterfall = m_objFrameStartTimer.ElapsedMsec + tmpDelay;
-                _ignore_waterfall_agc_RX1 = _mox_transition_buffer_clear_for_display;
-                FastAttackNoiseFloorRX1 = true;
+                _ignore_waterfall_agc_RX1 = true;
             }
             else
             {
@@ -2354,8 +2354,7 @@ namespace Thetis
                 });
                 float tmpDelay = Math.Max(200f, _fft_fill_timeRX2);
                 _rx2_clearbuffer_timeout_waterfall = m_objFrameStartTimer.ElapsedMsec + tmpDelay;
-                _ignore_waterfall_agc_RX2 = _mox_transition_buffer_clear_for_display;
-                FastAttackNoiseFloorRX2 = true;
+                _ignore_waterfall_agc_RX2 = true;
             }
     }
 
@@ -9993,11 +9992,8 @@ namespace Thetis
         public static void PurgeBuffers()
         {
             // note: lock not used here as primary call is from display thread.
-            if (_mox_transition_buffer_clear_for_display)
-            {
-                clearBuffers(displayTargetWidth, 1);
-                if (_rx2_enabled) clearBuffers(displayTargetWidth, 2);
-            }
+            clearBuffers(displayTargetWidth, 1);
+            if (_rx2_enabled) clearBuffers(displayTargetWidth, 2);
         }
 
         private static float _fft_fill_timeRX1 = 0f;
@@ -10017,12 +10013,6 @@ namespace Thetis
         {
             get { return _wdsp_mox_transition_buffer_clear; }
             set { _wdsp_mox_transition_buffer_clear = value; }
-        }
-        private static bool _mox_transition_buffer_clear_for_display = false;
-        public static bool MOXTransitionBufferClearForDisplay
-        {
-            get { return _mox_transition_buffer_clear_for_display; }
-            set { _mox_transition_buffer_clear_for_display = value; }
         }
         #endregion
         private static bool localMox(int rx)

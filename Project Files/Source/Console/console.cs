@@ -56323,12 +56323,15 @@ namespace Thetis
             float milliseconds = (power2length / (float)sample_rate) * 1000f;
 
             if (rx == 1)
+            {
                 _fft_fill_timeRX1 = milliseconds;
+                Display.RX1FFTFillTime = _fft_fill_timeRX1;
+            }
             else
+            {
                 _fft_fill_timeRX2 = milliseconds;
-
-            Display.RX1FFTFillTime = _fft_fill_timeRX1;
-            Display.RX2FFTFillTime = _fft_fill_timeRX2;
+                Display.RX2FFTFillTime = _fft_fill_timeRX2;
+            }
         }
         private int findNextPowerOf2(int n)
         {

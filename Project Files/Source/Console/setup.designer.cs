@@ -1818,7 +1818,6 @@
             this.udPeakBlobs = new System.Windows.Forms.NumericUpDownTS();
             this.chkPeakBlobsEnabled = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS11 = new System.Windows.Forms.GroupBoxTS();
-            this.chkPurgeBuffersDisplayEngine = new System.Windows.Forms.CheckBoxTS();
             this.chkPurgeBuffers = new System.Windows.Forms.CheckBoxTS();
             this.chkShowMHzOnCursor = new System.Windows.Forms.CheckBoxTS();
             this.chkSmallModeFilteronVFOs = new System.Windows.Forms.CheckBoxTS();
@@ -29713,29 +29712,15 @@
             // 
             // groupBoxTS11
             // 
-            this.groupBoxTS11.Controls.Add(this.chkPurgeBuffersDisplayEngine);
             this.groupBoxTS11.Controls.Add(this.chkPurgeBuffers);
             this.groupBoxTS11.Controls.Add(this.chkShowMHzOnCursor);
             this.groupBoxTS11.Controls.Add(this.chkSmallModeFilteronVFOs);
             this.groupBoxTS11.Location = new System.Drawing.Point(498, 61);
             this.groupBoxTS11.Name = "groupBoxTS11";
-            this.groupBoxTS11.Size = new System.Drawing.Size(215, 119);
+            this.groupBoxTS11.Size = new System.Drawing.Size(215, 98);
             this.groupBoxTS11.TabIndex = 47;
             this.groupBoxTS11.TabStop = false;
             this.groupBoxTS11.Text = "Other";
-            // 
-            // chkPurgeBuffersDisplayEngine
-            // 
-            this.chkPurgeBuffersDisplayEngine.AutoSize = true;
-            this.chkPurgeBuffersDisplayEngine.Image = null;
-            this.chkPurgeBuffersDisplayEngine.Location = new System.Drawing.Point(10, 87);
-            this.chkPurgeBuffersDisplayEngine.Name = "chkPurgeBuffersDisplayEngine";
-            this.chkPurgeBuffersDisplayEngine.Size = new System.Drawing.Size(198, 17);
-            this.chkPurgeBuffersDisplayEngine.TabIndex = 57;
-            this.chkPurgeBuffersDisplayEngine.Text = "Purge DirectX spectral data on MOX";
-            this.toolTip1.SetToolTip(this.chkPurgeBuffersDisplayEngine, resources.GetString("chkPurgeBuffersDisplayEngine.ToolTip"));
-            this.chkPurgeBuffersDisplayEngine.UseVisualStyleBackColor = true;
-            this.chkPurgeBuffersDisplayEngine.CheckedChanged += new System.EventHandler(this.chkPurgeBuffersDisplayEngine_CheckedChanged);
             // 
             // chkPurgeBuffers
             // 
@@ -60812,7 +60797,6 @@
         private ButtonTS btnRemoveSkin;
         private GroupBoxTS groupBoxTS31;
         private CheckBoxTS chkPurgeBuffers;
-        private CheckBoxTS chkPurgeBuffersDisplayEngine;
         private LabelTS lblRawHIDWarning;
         private NumericUpDownTS udFMHighCutRX;
         private NumericUpDownTS udFMLowCutRX;
