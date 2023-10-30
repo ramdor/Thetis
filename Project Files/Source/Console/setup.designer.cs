@@ -2501,7 +2501,6 @@
             this.labelTS607 = new System.Windows.Forms.LabelTS();
             this.labelTS606 = new System.Windows.Forms.LabelTS();
             this.udCFCPicDBPerLine = new System.Windows.Forms.NumericUpDownTS();
-            this.chkCFCDisplayAutoScale = new System.Windows.Forms.CheckBoxTS();
             this.picCFC = new System.Windows.Forms.PictureBox();
             this.lblCFCPEG = new System.Windows.Forms.LabelTS();
             this.lblCFCPEG15 = new System.Windows.Forms.LabelTS();
@@ -2615,9 +2614,9 @@
             this.tpPowerAmplifier = new System.Windows.Forms.TabPage();
             this.tcPowerAmplifier = new System.Windows.Forms.TabControl();
             this.tpGainByBand = new System.Windows.Forms.TabPage();
+            this.pbPAProfileWarning = new System.Windows.Forms.PictureBox();
             this.chkPANewCal = new System.Windows.Forms.CheckBoxTS();
             this.grpGainByBandPA = new System.Windows.Forms.GroupBoxTS();
-            this.pbPAProfileWarning = new System.Windows.Forms.PictureBox();
             this.lblPAProfileWarning = new System.Windows.Forms.LabelTS();
             this.panelTS1 = new System.Windows.Forms.PanelTS();
             this.chkUsePowerOnDrvTunPA = new System.Windows.Forms.CheckBoxTS();
@@ -4196,8 +4195,8 @@
             this.tpPowerAmplifier.SuspendLayout();
             this.tcPowerAmplifier.SuspendLayout();
             this.tpGainByBand.SuspendLayout();
-            this.grpGainByBandPA.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbPAProfileWarning)).BeginInit();
+            this.grpGainByBandPA.SuspendLayout();
             this.panelTS1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxPowerForBandPA)).BeginInit();
             this.panelAdjustGain.SuspendLayout();
@@ -40466,7 +40465,6 @@
             this.tpDSPCFC.Controls.Add(this.labelTS607);
             this.tpDSPCFC.Controls.Add(this.labelTS606);
             this.tpDSPCFC.Controls.Add(this.udCFCPicDBPerLine);
-            this.tpDSPCFC.Controls.Add(this.chkCFCDisplayAutoScale);
             this.tpDSPCFC.Controls.Add(this.picCFC);
             this.tpDSPCFC.Controls.Add(this.lblCFCPEG);
             this.tpDSPCFC.Controls.Add(this.lblCFCPEG15);
@@ -40566,23 +40564,11 @@
             this.udCFCPicDBPerLine.TabIndex = 177;
             this.udCFCPicDBPerLine.TinyStep = false;
             this.udCFCPicDBPerLine.Value = new decimal(new int[] {
-            10,
+            20,
             0,
             0,
             0});
             this.udCFCPicDBPerLine.ValueChanged += new System.EventHandler(this.udCFCPicDBPerLine_ValueChanged);
-            // 
-            // chkCFCDisplayAutoScale
-            // 
-            this.chkCFCDisplayAutoScale.AutoSize = true;
-            this.chkCFCDisplayAutoScale.Image = null;
-            this.chkCFCDisplayAutoScale.Location = new System.Drawing.Point(578, 27);
-            this.chkCFCDisplayAutoScale.Name = "chkCFCDisplayAutoScale";
-            this.chkCFCDisplayAutoScale.Size = new System.Drawing.Size(133, 17);
-            this.chkCFCDisplayAutoScale.TabIndex = 176;
-            this.chkCFCDisplayAutoScale.Text = "Auto Scale (10dB/line)";
-            this.chkCFCDisplayAutoScale.UseVisualStyleBackColor = true;
-            this.chkCFCDisplayAutoScale.CheckedChanged += new System.EventHandler(this.chkCFCDisplayAutoScale_CheckedChanged);
             // 
             // picCFC
             // 
@@ -42353,6 +42339,15 @@
             this.tpGainByBand.TabIndex = 0;
             this.tpGainByBand.Text = "PA Gain";
             // 
+            // pbPAProfileWarning
+            // 
+            this.pbPAProfileWarning.Image = ((System.Drawing.Image)(resources.GetObject("pbPAProfileWarning.Image")));
+            this.pbPAProfileWarning.Location = new System.Drawing.Point(16, 338);
+            this.pbPAProfileWarning.Name = "pbPAProfileWarning";
+            this.pbPAProfileWarning.Size = new System.Drawing.Size(20, 20);
+            this.pbPAProfileWarning.TabIndex = 170;
+            this.pbPAProfileWarning.TabStop = false;
+            // 
             // chkPANewCal
             // 
             this.chkPANewCal.AutoSize = true;
@@ -42432,15 +42427,6 @@
             this.grpGainByBandPA.TabIndex = 119;
             this.grpGainByBandPA.TabStop = false;
             this.grpGainByBandPA.Text = "PA Gain By Band (dB)";
-            // 
-            // pbPAProfileWarning
-            // 
-            this.pbPAProfileWarning.Image = ((System.Drawing.Image)(resources.GetObject("pbPAProfileWarning.Image")));
-            this.pbPAProfileWarning.Location = new System.Drawing.Point(16, 338);
-            this.pbPAProfileWarning.Name = "pbPAProfileWarning";
-            this.pbPAProfileWarning.Size = new System.Drawing.Size(20, 20);
-            this.pbPAProfileWarning.TabIndex = 170;
-            this.pbPAProfileWarning.TabStop = false;
             // 
             // lblPAProfileWarning
             // 
@@ -57005,9 +56991,9 @@
             this.tcPowerAmplifier.ResumeLayout(false);
             this.tpGainByBand.ResumeLayout(false);
             this.tpGainByBand.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbPAProfileWarning)).EndInit();
             this.grpGainByBandPA.ResumeLayout(false);
             this.grpGainByBandPA.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbPAProfileWarning)).EndInit();
             this.panelTS1.ResumeLayout(false);
             this.panelTS1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxPowerForBandPA)).EndInit();
@@ -60429,7 +60415,6 @@
         private PictureBox picCFC;
         private LabelTS labelTS606;
         private NumericUpDownTS udCFCPicDBPerLine;
-        private CheckBoxTS chkCFCDisplayAutoScale;
         private LabelTS labelTS607;
         private CheckBoxTS chkShowDisplayDebug;
         private CheckBoxTS chkCTLimitDragToSpectral;

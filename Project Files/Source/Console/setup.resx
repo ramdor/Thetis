@@ -141,22 +141,6 @@
   <metadata name="numericUpDownTS12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="pbPAProfileWarning.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWxJREFUOE+l
-        kc0rRGEYxU/ZMJmUSNL4D2wViWyVHRt/AQsrC7NQ1orMAluLUXaWSmahuT4ym/mgcd0hauxoPnzEdbnX
-        e9479M7tZsY49aun85zzdHsvflN0DdA1bAjWOTes5D5wn4RFODek8CyQjUP7MPBOxByn9ycFWoBUDCik
-        UXau4BDO9LirS8FAE0YG5NeULANmdAXO5hIczsIrcsdMTQ2L4PUxQqUMbvklwpJwfjxDnjtmako/aIZx
-        CNvOwfYeosfd3jYwMdop874a6pe/e8zU8cyi9xDhjpmd1ZDs+MqItePmBOZ3iXR1uKgeM8wO9rVVmop6
-        uuUDh1+yKKil6Sk4MwLVY0Zk5yNzvZW2otwRkE+gqBaIeBeJ179LoMxOlZYXgQsNW58GLG8h2Ori9Zll
-        h90fne4CDym8esNErKseW4UddqUmx+XbZKxLvPmFIwsufjt2RDfNGzyCp3P/YD2wyxs8xOGfwPkC0OWy
-        xBfi75wAAAAASUVORK5CYII=
-</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>302, 17</value>
-  </metadata>
   <data name="chkPurgeBuffersDisplayEngine.ToolTip" xml:space="preserve">
     <value>On a mox transition there are times where you get a 'pulse' of energy in the display.
 This is not spurious RF but a side effect of the FFT bins and averages.
@@ -170,6 +154,7 @@ This is not spurious RF but a side effect of the FFT bins and averages.
 This setting will reset the WDSP analyzer pixel/average buffers.
 They will take a time to 're-fill' and is determined by sample rate and bin size.</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="pbWarningBufferType.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWxJREFUOE+l
@@ -206,6 +191,18 @@ They will take a time to 're-fill' and is determined by sample rate and bin size
         xBfi75wAAAAASUVORK5CYII=
 </value>
   </data>
+  <data name="pbPAProfileWarning.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWxJREFUOE+l
+        kc0rRGEYxU/ZMJmUSNL4D2wViWyVHRt/AQsrC7NQ1orMAluLUXaWSmahuT4ym/mgcd0hauxoPnzEdbnX
+        e9479M7tZsY49aun85zzdHsvflN0DdA1bAjWOTes5D5wn4RFODek8CyQjUP7MPBOxByn9ycFWoBUDCik
+        UXau4BDO9LirS8FAE0YG5NeULANmdAXO5hIczsIrcsdMTQ2L4PUxQqUMbvklwpJwfjxDnjtmako/aIZx
+        CNvOwfYeosfd3jYwMdop874a6pe/e8zU8cyi9xDhjpmd1ZDs+MqItePmBOZ3iXR1uKgeM8wO9rVVmop6
+        uuUDh1+yKKil6Sk4MwLVY0Zk5yNzvZW2otwRkE+gqBaIeBeJ179LoMxOlZYXgQsNW58GLG8h2Ori9Zll
+        h90fne4CDym8esNErKseW4UddqUmx+XbZKxLvPmFIwsufjt2RDfNGzyCp3P/YD2wyxs8xOGfwPkC0OWy
+        xBfi75wAAAAASUVORK5CYII=
+</value>
+  </data>
   <data name="richTextBox1.Text" xml:space="preserve">
     <value>Begin with all spinners set equal to their labelled value.
 For each spinner, from minimum to maximum, adjust the output power
@@ -225,16 +222,6 @@ will be added to the current selected skin. Unchecked
 and the default MultiMeter skins will be updated and
 only used if a selected skin does not provide its own.</value>
   </data>
-  <data name="groupBox2.ToolTip" xml:space="preserve">
-    <value>Allows you to view the Display are of Thetis remotely
-
-To view your Display.
-1) Locate the IP address off your computer (example: 192.168.1.100)
-2) Open your Web browser and type:  http://&lt;your local IP address&gt;:8081
-
-
-</value>
-  </data>
   <data name="udHttpRefresh.ToolTip" xml:space="preserve">
     <value>Select Port# to allow Remote Login by adding the Port# 
 to the end of the URL
@@ -252,6 +239,16 @@ or http://localhost:8081
 
 But you must also add this port# to your Routers "Port Forward" options
 If Windows Firewall Pops up on the screen, Click on the Allow access.</value>
+  </data>
+  <data name="groupBox2.ToolTip" xml:space="preserve">
+    <value>Allows you to view the Display are of Thetis remotely
+
+To view your Display.
+1) Locate the IP address off your computer (example: 192.168.1.100)
+2) Open your Web browser and type:  http://&lt;your local IP address&gt;:8081
+
+
+</value>
   </data>
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>162, 17</value>

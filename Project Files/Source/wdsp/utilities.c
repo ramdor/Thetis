@@ -262,6 +262,9 @@ void print_deviation (const char* filename, double dpmax, double rate)
 
 void __cdecl CalccPrintSamples (void *pargs)
 {
+	const wchar_t* threadName = L"CalccPrintSamples Thread";
+	SetThreadDescription(GetCurrentThread(), threadName);
+
 	int i;
 	double env_tx, env_rx;
 	int channel = (int)(uintptr_t)pargs;
@@ -309,6 +312,9 @@ int done = 0;
 
 void WriteAudioFile(void* arg)
 {
+	const wchar_t* threadName = L"WriteAudioFile Thread";
+	SetThreadDescription(GetCurrentThread(), threadName);
+
 	byte* dat = (byte *)arg;
 	FILE* file = fopen("AudioFile", "wb");
 
@@ -382,6 +388,9 @@ void WriteAudioWDSP (double seconds, int rate, int size, double* indata, int mod
 
 void WriteScaledAudioFile (void* arg)
 {
+	const wchar_t* threadName = L"WriteScaledAudioFile Thread";
+	SetThreadDescription(GetCurrentThread(), threadName);
+
 	typedef struct
 	{
 		int n;

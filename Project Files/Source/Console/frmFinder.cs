@@ -61,7 +61,7 @@ namespace Thetis
                 gatherSearchDataThread(frm, tt);
             })
             {
-                Name = "Search Worker Thread for " + frm.Name,
+                Name = "Finder Worker Thread for " + frm.Name,
                 Priority = ThreadPriority.Highest,
                 IsBackground = true,
             };

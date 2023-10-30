@@ -20108,6 +20108,8 @@ namespace Thetis
             }
 
             setDBtip(sender);
+
+            picCFC.Invalidate();
         }
 
         private void tbCFCPRECOMP_Scroll(object sender, EventArgs e)
@@ -20116,6 +20118,8 @@ namespace Thetis
             WDSP.SetTXACFCOMPPrecomp(WDSP.id(1, 0), (double)tbCFCPRECOMP.Value);
 
             setDBtip(sender);
+
+            picCFC.Invalidate();
         }
 
         private void chkCFCPeqEnable_CheckedChanged(object sender, EventArgs e)
@@ -23992,27 +23996,31 @@ namespace Thetis
             Display.WaterfallUseNFForACGRX2 = chkWaterfallUseNFForAGCRX2.Checked;
         }
 
-        private static double[] CFCCompValues = new double[1025];
+        private object _cfcValueLock = new object();
+        private static double[] _CFCCompValues = new double[1025];
         private bool m_bShowingCFC = false;
 
         private void tmrCFCOMPGain_Tick(object sender, EventArgs e)
         {
-            if (!picCFC.Visible || !chkCFCEnable.Checked || console.MOX)
+            if (!picCFC.Visible || !chkCFCEnable.Checked || !console.MOX)
             {
                 tmrCFCOMPGain.Interval = 1000;
-                if (m_bShowingCFC) picCFC.Invalidate();
-                m_bShowingCFC = false;
+                if (m_bShowingCFC)
+                {
+                    m_bShowingCFC = false;
+                    picCFC.Invalidate();
+                } 
                 return;
             }
             else
             {
-                tmrCFCOMPGain.Interval = 50;
+                tmrCFCOMPGain.Interval = 32;
             }
 
             int ready = 0;
             unsafe
             {
-                fixed (double* ptrCompValues = &CFCCompValues[0])
+                fixed (double* ptrCompValues = &_CFCCompValues[0])
                     WDSP.GetTXACFCOMPDisplayCompression(WDSP.id(1, 0), ptrCompValues, &ready);
             }
 
@@ -24026,58 +24034,111 @@ namespace Thetis
         private void picCFC_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
+            g.Clear(Color.Black);
 
+            Point[] linePoints;            
             int height = picCFC.Height;
-
             float binsPerHz = 1025 / 48000f;// (float)console.SampleRateTX;
-
             int endFreqIndex = (int)((double)udCFC9.Value * binsPerHz);
             int startFreqIndex = (int)((double)udCFC0.Value * binsPerHz);
             int span = endFreqIndex - startFreqIndex;
-
-            if (!console.MOX || !chkCFCEnable.Checked || span <= 0)
-            {
-                g.Clear(Color.Black);
-                return;
-            }
-
             float step = picCFC.Width / (float)span;
-
-            double max = 0;
-            if (chkCFCDisplayAutoScale.Checked)
-            {
-                for (int n = startFreqIndex; n <= endFreqIndex; n++)
-                {
-                    if (CFCCompValues[n] > max) max = CFCCompValues[n];
-                }
-            }
-            else
-            {
-                max = (int)udCFCPicDBPerLine.Value - 10;
-            }
-
+            double max = (int)udCFCPicDBPerLine.Value - 10;
             int tenDBs = (int)Math.Floor(max / 10f) + 1;
-            float scale = height / (tenDBs * 10f);
-
             float penWidth = (float)Math.Ceiling((double)step);
 
-            using (Pen p = new Pen(Brushes.Red, penWidth))
-            {
-                for (int n = startFreqIndex; n <= endFreqIndex/*1025*/; n++)
-                {
-                    double dbm = CFCCompValues[n];
+            float scale = height / (tenDBs * 10f);
 
-                    int x = (int)((n - startFreqIndex) * step);
-                    x += (int)(penWidth / 2);
-                    g.DrawLine(p, x, height - 1, x, height - (int)(dbm * scale) - 1);
+            if (console.MOX && chkCFCEnable.Checked && span > 0 && m_bShowingCFC)
+            {
+                // the cfc data
+                linePoints = new Point[span + 1];
+                using (Pen p = new Pen(Brushes.Red, penWidth))
+                {
+                    for (int n = startFreqIndex; n <= endFreqIndex/*1025*/; n++)
+                    {
+                        double dbm = _CFCCompValues[n];
+
+                        int x = (int)((n - startFreqIndex) * step);
+                        x += (int)(penWidth / 2);
+                        g.DrawLine(p, x, height - 1, x, height - (int)(dbm * scale) - 1);
+
+                        linePoints[n] = new Point(x, height - (int)(dbm * scale) - 1);
+                    }
+
+                    using (Pen p2 = new Pen(Brushes.White, 2f))
+                        g.DrawCurve(p2, linePoints);
                 }
             }
 
+            // scale lines
             for (int n = 0; n < tenDBs + 1; n++)
             {
                 int y = (int)(n * (scale * 10f));
                 g.DrawLine(Pens.White, 0, y, picCFC.Width - 1, y);
             }
+
+            //
+            float fLow = (float)udCFC0.Value;
+            float fHigh = (float)udCFC9.Value;
+            float fWidth = fHigh - fLow;
+            float fHzPerPizel = picCFC.Width / fWidth;
+            int pre = tbCFCPRECOMP.Value;
+            if ((int)(scale * 26f) > height)
+                scale = height / 26f; // shrink to view so that it is usable, unless we have more dB height than needed 
+                                      // 26f; // where 26 = 16 preamp + 10db slider
+            linePoints = new Point[10];
+            for (int n = 0; n < 10; n++)
+            {
+                switch(n)
+                {
+                    case 0:
+                        linePoints[n] = new Point((int)(((float)udCFC0.Value - fLow) * fHzPerPizel), height - (int)((pre + tbCFC0.Value) * scale));
+                        break;
+                    case 1:
+                        linePoints[n] = new Point((int)(((float)udCFC1.Value - fLow) * fHzPerPizel), height - (int)((pre + tbCFC1.Value) * scale));
+                        break;
+                    case 2:
+                        linePoints[n] = new Point((int)(((float)udCFC2.Value - fLow) * fHzPerPizel), height - (int)((pre + tbCFC2.Value) * scale));
+                        break;
+                    case 3:
+                        linePoints[n] = new Point((int)(((float)udCFC3.Value - fLow) * fHzPerPizel), height - (int)((pre + tbCFC3.Value) * scale));
+                        break;
+                    case 4:
+                        linePoints[n] = new Point((int)(((float)udCFC4.Value - fLow) * fHzPerPizel), height - (int)((pre + tbCFC4.Value) * scale));
+                        break;
+                    case 5:
+                        linePoints[n] = new Point((int)(((float)udCFC5.Value - fLow) * fHzPerPizel), height - (int)((pre + tbCFC5.Value) * scale));
+                        break;
+                    case 6:
+                        linePoints[n] = new Point((int)(((float)udCFC6.Value - fLow) * fHzPerPizel), height - (int)((pre + tbCFC6.Value) * scale));
+                        break;
+                    case 7:
+                        linePoints[n] = new Point((int)(((float)udCFC7.Value - fLow) * fHzPerPizel), height - (int)((pre + tbCFC7.Value) * scale));
+                        break;
+                    case 8:
+                        linePoints[n] = new Point((int)(((float)udCFC8.Value - fLow) * fHzPerPizel), height - (int)((pre + tbCFC8.Value) * scale));
+                        break;
+                    case 9:
+                        linePoints[n] = new Point((int)(((float)udCFC9.Value - fLow) * fHzPerPizel), height - (int)((pre + tbCFC9.Value) * scale));
+                        break;
+                }
+            }
+
+            using (Pen p = new Pen(Brushes.White, 2f))
+            {
+                g.DrawCurve(p, linePoints);
+            }
+            Rectangle[] rectangles = new Rectangle[10];
+            using (Brush b = new SolidBrush(Color.White))
+            {
+                for (int i = 0; i < linePoints.Length; i++)
+                {
+                    rectangles[i] = new Rectangle(linePoints[i].X - 2, linePoints[i].Y - 2, 5, 5);
+                }
+                g.FillRectangles(b, rectangles);
+            }
+            //
         }
 
         private void picCFC_Click(object sender, EventArgs e)
@@ -24087,14 +24148,15 @@ namespace Thetis
 
         private void chkCFCDisplayAutoScale_CheckedChanged(object sender, EventArgs e)
         {
-            if (initializing) return; //[2.10.2.3]MW0LGE forceallevents call this
-            udCFCPicDBPerLine.Enabled = !chkCFCDisplayAutoScale.Checked;
+            if (initializing) return;
+            picCFC.Invalidate();
         }
 
         private void udCFCPicDBPerLine_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return; //[2.10.2.3]MW0LGE forceallevents call this
             udCFCPicDBPerLine.Value = (int)(udCFCPicDBPerLine.Value / 10) * 10;
+            picCFC.Invalidate();
         }
 
         private void chkShowDisplayDebug_CheckedChanged(object sender, EventArgs e)

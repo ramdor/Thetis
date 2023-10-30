@@ -1228,6 +1228,9 @@ int IOThreadStop() {
 }
 
 DWORD WINAPI ReadThreadMain(LPVOID n) {
+	const wchar_t* threadName = L"ReadThreadMain Thread";
+	SetThreadDescription(GetCurrentThread(), threadName);
+
 	DWORD taskIndex = 0;
 	HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
 	if (hTask != 0) AvSetMmThreadPriority(hTask, 2);
@@ -1243,6 +1246,8 @@ DWORD WINAPI ReadThreadMain(LPVOID n) {
 }
 
 DWORD WINAPI KeepAliveMain(LPVOID n) {
+	const wchar_t* threadName = L"KeepAliveMain Thread";
+	SetThreadDescription(GetCurrentThread(), threadName);
 
 	KeepAliveLoop();
 
