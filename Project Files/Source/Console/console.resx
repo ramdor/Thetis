@@ -2401,16 +2401,16 @@
     <value>161, 17</value>
   </data>
   <data name="chkEnableMultiRX.Size" type="System.Drawing.Size, System.Drawing">
-    <value>63, 23</value>
+    <value>50, 23</value>
   </data>
   <data name="chkEnableMultiRX.TabIndex" type="System.Int32, mscorlib">
     <value>61</value>
   </data>
   <data name="chkEnableMultiRX.Text" xml:space="preserve">
-    <value>MultiRX</value>
+    <value>SubRX</value>
   </data>
   <data name="chkEnableMultiRX.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
+    <value>MiddleLeft</value>
   </data>
   <data name="chkEnableMultiRX.ToolTip" xml:space="preserve">
     <value>Enables the sub receiver controlled by VFO B.</value>
