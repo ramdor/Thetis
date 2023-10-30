@@ -9670,6 +9670,8 @@ namespace Thetis
 
             DataSet mergedDB = ds.Clone(); // Adopt the new DB schema
 
+            List<string> foundNotches = new List<string>();
+
             // MW0LGE [2.9.0.8]
             // check if we have multimeter and/or PA settings in the db that is being imported
             bool bOldDBhasMultiMeterSettings = false;
@@ -9946,8 +9948,7 @@ namespace Thetis
                         }
 
                         // For each row of existingDB table, if there is matching key in corresponding oldDB table, 
-                        // copy that entry, else take the existing one, into tempMergedTable.
-                        List<string> foundNotches = new List<string>();
+                        // copy that entry, else take the existing one, into tempMergedTable.                        
 
                         foreach (DataRow row in table.Rows)
                         {
@@ -10010,7 +10011,7 @@ namespace Thetis
                                 }
                                 else tempMergedTable.ImportRow(row);
                             }
-                            else if (thisKey.Contains("mnotchdb"))
+                            else if (thisKey.Contains("mnotchdb")) //[2.10.3]MW0LGE let defaul else import any
                             {
                                 // add existing to list, to check at end
                                 foundNotches.Add(row["Value"].ToString());
@@ -10093,29 +10094,43 @@ namespace Thetis
                             }
                         }
 
-                        //MW0LGE_[2.9.0.7] reimplemented
-                        // run through temp table to check if any notches already there, and remove them from the list
-                        if (foundNotches.Count > 0)
+                        //[2.10.3]MW0LGE merge from old, any notches, fixes #236
+                        if (tempTable.TableName == "State" && oldDB.Tables.Contains("State"))
                         {
-                            int nTot = 0;
-                            foreach (DataRow row in tempTable.Rows)
+                            DataTable stateTable = oldDB.Tables["State"];
+                            DataRow[] rows = stateTable.Select("Key like '" + "mnotchdb*" + "'");
+                            if (rows != null)
                             {
-                                string thisKey = Convert.ToString(row["Key"]);
-                                if (thisKey.Contains("mnotchdb"))
+                                foreach (DataRow dr in rows)
                                 {
-                                    string sValue = row["Value"].ToString();
-                                    if (foundNotches.Contains(sValue))
+                                    string thisKey = Convert.ToString(dr["Key"]);
+                                    if (thisKey.Contains("mnotchdb"))
                                     {
-                                        // alread in the table, remove from the importing list
-                                        foundNotches.Remove(sValue);
+                                        string sValue = dr["Value"].ToString();
+
+                                        MNotch newNotch = MNotch.Parse(sValue);
+                                        bool notchExists = false;
+                                        foreach(string sn in foundNotches)
+                                        {
+                                            MNotch notch = MNotch.Parse(sn);
+                                            if(notch.FCenter == newNotch.FCenter)
+                                            {
+                                                //note this will not import notch width or active state settings from oldDB, if the same notch frequency is in existingDB
+                                                notchExists = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (!notchExists) // check we dont already have this exact notch
+                                            foundNotches.Add(sValue);
                                     }
-                                    nTot++;
                                 }
                             }
-                            // now add any
+
+                            //write everything to merged table
+                            int nTot = 0;
                             foreach (string s in foundNotches)
                             {
-                                // any that are left add in
                                 DataRow dr = tempMergedTable.NewRow();
 
                                 dr["Key"] = "mnotchdb[" + nTot.ToString() + "]";
@@ -10126,21 +10141,6 @@ namespace Thetis
                             }
                         }
                         //
-
-                        //// merge in any old notch entries MW0LGE_21k9rc6
-                        //if (foundTable && table.TableName == "State")
-                        //{
-                        //    foreach (DataRow row in tempTable.Rows)
-                        //    {
-                        //        string thisKey = Convert.ToString(row["Key"]);
-
-                        //        if (thisKey.Contains("mnotchdb"))
-                        //        {
-                        //            tempMergedTable.ImportRow(row);
-                        //        }
-                        //    }
-                        //}
-                        ////
 
                         // Merge in the assembled temp table into mergedDB 
                         mergedDB.Merge(tempMergedTable);

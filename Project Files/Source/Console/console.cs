@@ -538,6 +538,7 @@ namespace Thetis
                 if (m_frmCWXForm == null || m_frmCWXForm.IsDisposed)
                 {
                     m_frmCWXForm = new CWX(this);
+                    m_frmCWXForm.StopEverything(chkPower.Checked); //[2.10.3]MW0LGE
                 }
                 return m_frmCWXForm;
             }
@@ -1146,6 +1147,7 @@ namespace Thetis
                         Priority = m_tpDisplayThreadPriority, //MW0LGE now defaulted with m_tpDisplayThreadPriority, and updated by setupform
                         IsBackground = false//true MW0LGE_21b rundisplay now stops nicely, ensuring dx gpu resources are released
                     };
+                    draw_display_thread.SetApartmentState(ApartmentState.STA);
                     draw_display_thread.Start();
                 }
                 _pause_DisplayThread = false;
@@ -2590,8 +2592,12 @@ namespace Thetis
             if (!IsSetupFormNull)		// make sure Setup form is deallocated
                 SetupForm.Dispose();
 
-            if (m_frmCWXForm != null)			// make sure CWX form is deallocated
+            if (m_frmCWXForm != null)           // make sure CWX form is deallocated
+            {
+                m_frmCWXForm.StopEverything(); //[2.10.3]MW0LGE
+                m_frmCWXForm.Close();
                 m_frmCWXForm.Dispose();
+            }
 
             PA19.PA_Terminate();		// terminate audio interface
             DB.Exit();					// close and save database
@@ -31121,6 +31127,8 @@ namespace Thetis
                     display_volts_amps_thead.Start();
                 }
 
+                if (m_frmCWXForm != null)
+                    m_frmCWXForm.StopEverything(chkPower.Checked); //[2.10.3]MW0LGE
                 if (!rx_only)
                 {
                     chkMOX.Enabled = true;
@@ -31168,6 +31176,8 @@ namespace Thetis
                 UpdateAAudioMixerStates();
                 UpdateDDCs(rx2_enabled);
 
+                if (m_frmCWXForm != null)
+                    m_frmCWXForm.StopEverything(chkPower.Checked); //[2.10.3]MW0LGE
                 chkMOX.Checked = false;
                 chkMOX.Enabled = false;
                 chkTUN.Checked = false;
@@ -32891,24 +32901,6 @@ namespace Thetis
             ptbAF_Scroll(this, EventArgs.Empty);
         }
 
-        private bool _ignoreAntSelectionInHdwMox = false;
-        public void SetAntennasForCWX(bool state)
-        {
-            Debug.Print(">> SetAntennasForCWX <<");
-            lock (_objBypassAntSelectionLocker)
-            {
-                _ignoreAntSelectionInHdwMox = true;                
-                UpdateTRXAnt();
-                if (rx1_xvtr_index >= 0)
-                {
-                    Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, true);
-                    Alex.getAlex().UpdateAlexAntSelection(lo_band, state, alex_ant_ctrl_enabled, true);
-                }
-                else
-                    Alex.getAlex().UpdateAlexAntSelection(tx_band, state, alex_ant_ctrl_enabled, false);
-            }
-        }
-        private object _objBypassAntSelectionLocker = new object();
         private void HdwMOXChanged(bool tx, double freq)
         {
             if (tx)
@@ -32916,7 +32908,7 @@ namespace Thetis
                 if (m_bQSOResetTimerOnMox) QSOTimerReset();
                 if (m_bQSOTimerDuringMoxOnly && !m_bQSOTimerRunning) QSOTimerRunning = true;
 
-                if (bpf2_gnd) NetworkIO.SetBPF2Gnd(1); // ground adc2 input
+                if (bpf2_gnd) NetworkIO.SetBPF2Gnd(1);
 
                 //MW0LGE_21k8
                 //if (chkVFOSplit.Checked || psstate)
@@ -32947,36 +32939,29 @@ namespace Thetis
                     if (!IsSetupFormNull) SetupForm.UpdateOCLedStrip(_mox, bits);
                 }
 
-                lock (_objBypassAntSelectionLocker)
+                UpdateTRXAnt();
+                if (rx1_xvtr_index >= 0)
                 {
-                    if (!_ignoreAntSelectionInHdwMox)
-                    {
-                        UpdateTRXAnt();
-                        if (rx1_xvtr_index >= 0)
-                        {
-                            // Fix Penny O/C VHF control Vk4xv
-                            // lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region);
-                            // lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, false, current_region);
+                    // Fix Penny O/C VHF control Vk4xv
+                    // lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region);
+                    // lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, false, current_region);
 
-                            //if (penny_ext_ctrl_enabled)
-                            // Penny.getPenny().UpdateExtCtrl(lo_band, lo_bandb, mox);
+                    //if (penny_ext_ctrl_enabled)
+                    // Penny.getPenny().UpdateExtCtrl(lo_band, lo_bandb, mox);
 
-                            // if (alex_ant_ctrl_enabled)
-                            // Alex.getAlex().UpdateAlexAntSelection(lo_band, mox, true);
-                            Alex.getAlex().UpdateAlexAntSelection(lo_band, _mox, alex_ant_ctrl_enabled, true);
-                        }
-                        else
-                        {
-                            // if (penny_ext_ctrl_enabled)
-                            // Penny.getPenny().UpdateExtCtrl(tx_band, rx2_band, mox);
-
-                            // if (alex_ant_ctrl_enabled)
-                            // Alex.getAlex().UpdateAlexAntSelection(tx_band, mox, false);
-                            Alex.getAlex().UpdateAlexAntSelection(tx_band, _mox, alex_ant_ctrl_enabled, false);
-                        }
-                    }
-                    _ignoreAntSelectionInHdwMox = false;
+                    // if (alex_ant_ctrl_enabled)
+                    // Alex.getAlex().UpdateAlexAntSelection(lo_band, mox, true);
+                    Alex.getAlex().UpdateAlexAntSelection(lo_band, _mox, alex_ant_ctrl_enabled, true);
                 }
+                else
+                {
+                    // if (penny_ext_ctrl_enabled)
+                    // Penny.getPenny().UpdateExtCtrl(tx_band, rx2_band, mox);
+
+                    // if (alex_ant_ctrl_enabled)
+                    // Alex.getAlex().UpdateAlexAntSelection(tx_band, mox, false);
+                    Alex.getAlex().UpdateAlexAntSelection(tx_band, _mox, alex_ant_ctrl_enabled, false);
+                }             
 
                 // Hdw.TransmitRelay = true;
                 NetworkIO.SetTRXrelay(1);
@@ -32995,7 +32980,7 @@ namespace Thetis
                 if (m_bQSOTimerDuringMoxOnly && m_bQSOTimerRunning) QSOTimerRunning = false;
 
                 NetworkIO.SetPttOut(0);
-                NetworkIO.SetTRXrelay(0);
+                NetworkIO.SetTRXrelay(0);                
                 // Hdw.TransmitRelay = false;
                 //if (//ptto_delay_control && // PTT Delay  // wcp:  2018-12-24 commented-out this delay
                 //     RX1DSPMode != DSPMode.CWL &&
@@ -33059,7 +33044,6 @@ namespace Thetis
                     // Alex.getAlex().UpdateAlexAntSelection(rx1_band, mox, false);
                     Alex.getAlex().UpdateAlexAntSelection(rx1_band, _mox, alex_ant_ctrl_enabled, false);
                 }
-
                 NetworkIO.SetBPF2Gnd(0);
                 UpdateTRXAnt();
             }
@@ -33262,13 +33246,16 @@ namespace Thetis
                     //MW0LGE [2.9.0.7]
                     if (_preventTXonDifferentBandToRXband && ((!RX2Enabled && VFOBTX && RX1Band != TXBand) || (RX2Enabled && VFOBTX && RX2Band != TXBand)))
                     {
+                        if (m_frmCWXForm != null)
+                            m_frmCWXForm.StopEverything(chkPower.Checked);
+
+                        chkMOX.Checked = false;
+
                         // note RX2 enabled with a TXvfoB will always TX
                         MessageBox.Show("Your TX band is different to your RX band and you have selected the option to prevent this.",
                         "Transmit Error: TX/RX bands different",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-
-                        chkMOX.Checked = false;
                         return;
                     }
 

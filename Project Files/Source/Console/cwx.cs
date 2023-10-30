@@ -260,8 +260,7 @@ namespace Thetis
 
         private bool setptt_memory = false;
         private void setptt(bool state)
-        {
-            
+        {            
             if (setptt_memory != state)
             {
                 if (!console.CWFWKeyer)
@@ -269,13 +268,6 @@ namespace Thetis
                    // CWPTTItem item = new CWPTTItem(state, CWSensorItem.GetCurrentTime());
                    // CWKeyer.PTTEnqueue(item);
                 }
-
-                if (state) // only if ptt on, as we will not get a setkey after ptt is off
-                {
-                    NetworkIO.SendHighPriority(0); // prevent UpdateAlex from doing it in SetAntennasForCWX, which will also prevent SetCWX doing it in setkey
-                    Debug.Print("SendHighPriority(0) in setptt()");
-                }
-                console.SetAntennasForCWX(state); //[2.10.3]MW0LGE
 
                 ptt = state;
                 if (state) pttLed.BackColor = System.Drawing.Color.Red;
@@ -291,12 +283,7 @@ namespace Thetis
         {       
             if (setkey_memory != state)
             {
-                //[2.10.3]MW0LGE note, ptt now sets up antenns in setptt()
-                //we had set SetHighPri to 0 there, so the SetCWX packet wont go out
-                //so need to SendHighPro(1) here
-                NetworkIO.SetCWX(Convert.ToInt32(state)); 
-                NetworkIO.SendHighPriority(1);
-                Debug.Print("SendHighPriority(1) in setkey()");
+                NetworkIO.SetCWX(Convert.ToInt32(state));
 
                 if (state) keyLed.BackColor = System.Drawing.Color.Yellow;
                 else keyLed.BackColor = System.Drawing.Color.Black;
@@ -308,8 +295,6 @@ namespace Thetis
         {            
             clear_fifo();
             clear_fifo2();
-            //setptt(false);
-            //setkey(false);
             setkey(false); //[2.10.3]MW0LGE swap
             setptt(false);
             ttx = 0; pause = 0; newptt = 0;
@@ -833,15 +818,11 @@ namespace Thetis
             this.keyLed = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.keyboardLed = new System.Windows.Forms.Panel();
-            this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
-            this.udWPM = new System.Windows.Forms.NumericUpDownTS();
             this.pttdelaylabel = new System.Windows.Forms.LabelTS();
-            this.udPtt = new System.Windows.Forms.NumericUpDownTS();
             this.expandButton = new System.Windows.Forms.ButtonTS();
             this.keyboardButton = new System.Windows.Forms.ButtonTS();
             this.clearButton = new System.Windows.Forms.ButtonTS();
             this.chkPause = new System.Windows.Forms.CheckBoxTS();
-            this.txtdummy1 = new System.Windows.Forms.TextBoxTS();
             this.txt9 = new System.Windows.Forms.TextBoxTS();
             this.txt8 = new System.Windows.Forms.TextBoxTS();
             this.txt7 = new System.Windows.Forms.TextBoxTS();
@@ -851,19 +832,13 @@ namespace Thetis
             this.txt3 = new System.Windows.Forms.TextBoxTS();
             this.txt2 = new System.Windows.Forms.TextBoxTS();
             this.txt1 = new System.Windows.Forms.TextBoxTS();
-            this.label7 = new System.Windows.Forms.LabelTS();
             this.keyButton = new System.Windows.Forms.ButtonTS();
             this.dropdelaylabel = new System.Windows.Forms.LabelTS();
-            this.udDrop = new System.Windows.Forms.NumericUpDownTS();
             this.s9 = new System.Windows.Forms.ButtonTS();
             this.s8 = new System.Windows.Forms.ButtonTS();
             this.s7 = new System.Windows.Forms.ButtonTS();
-            this.label6 = new System.Windows.Forms.LabelTS();
-            this.label5 = new System.Windows.Forms.LabelTS();
             this.stopButton = new System.Windows.Forms.ButtonTS();
-            this.label4 = new System.Windows.Forms.LabelTS();
             this.repeatdelayLabel = new System.Windows.Forms.LabelTS();
-            this.udDelay = new System.Windows.Forms.NumericUpDownTS();
             this.cbMorse = new System.Windows.Forms.ComboBoxTS();
             this.notesButton = new System.Windows.Forms.ButtonTS();
             this.speedLabel = new System.Windows.Forms.LabelTS();
@@ -873,6 +848,16 @@ namespace Thetis
             this.s3 = new System.Windows.Forms.ButtonTS();
             this.s2 = new System.Windows.Forms.ButtonTS();
             this.s1 = new System.Windows.Forms.ButtonTS();
+            this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
+            this.udWPM = new System.Windows.Forms.NumericUpDownTS();
+            this.udPtt = new System.Windows.Forms.NumericUpDownTS();
+            this.txtdummy1 = new System.Windows.Forms.TextBoxTS();
+            this.label7 = new System.Windows.Forms.LabelTS();
+            this.udDrop = new System.Windows.Forms.NumericUpDownTS();
+            this.label6 = new System.Windows.Forms.LabelTS();
+            this.label5 = new System.Windows.Forms.LabelTS();
+            this.label4 = new System.Windows.Forms.LabelTS();
+            this.udDelay = new System.Windows.Forms.NumericUpDownTS();
             ((System.ComponentModel.ISupportInitialize)(this.udWPM)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPtt)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDrop)).BeginInit();
@@ -906,46 +891,6 @@ namespace Thetis
             this.keyboardLed.TabIndex = 52;
             this.toolTip1.SetToolTip(this.keyboardLed, " Keyboard active indicator.");
             // 
-            // chkAlwaysOnTop
-            // 
-            this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(528, 8);
-            this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
-            this.chkAlwaysOnTop.Size = new System.Drawing.Size(104, 24);
-            this.chkAlwaysOnTop.TabIndex = 57;
-            this.chkAlwaysOnTop.Text = "Always On Top";
-            this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
-            // 
-            // udWPM
-            // 
-            this.udWPM.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.udWPM.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udWPM.Location = new System.Drawing.Point(240, 8);
-            this.udWPM.Maximum = new decimal(new int[] {
-            99,
-            0,
-            0,
-            0});
-            this.udWPM.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udWPM.Name = "udWPM";
-            this.udWPM.Size = new System.Drawing.Size(56, 20);
-            this.udWPM.TabIndex = 56;
-            this.udWPM.Value = new decimal(new int[] {
-            22,
-            0,
-            0,
-            0});
-            this.udWPM.ValueChanged += new System.EventHandler(this.udWPM_ValueChanged);
-            this.udWPM.LostFocus += new System.EventHandler(this.udWPM_LostFocus);
-            // 
             // pttdelaylabel
             // 
             this.pttdelaylabel.Image = null;
@@ -957,36 +902,6 @@ namespace Thetis
             this.toolTip1.SetToolTip(this.pttdelaylabel, "Set delay from PTT to key down in milliseconds.");
             this.pttdelaylabel.Visible = false;
             // 
-            // udPtt
-            // 
-            this.udPtt.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udPtt.Location = new System.Drawing.Point(456, 8);
-            this.udPtt.Maximum = new decimal(new int[] {
-            2000,
-            0,
-            0,
-            0});
-            this.udPtt.Minimum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            this.udPtt.Name = "udPtt";
-            this.udPtt.Size = new System.Drawing.Size(56, 20);
-            this.udPtt.TabIndex = 54;
-            this.udPtt.Value = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            this.udPtt.Visible = false;
-            this.udPtt.ValueChanged += new System.EventHandler(this.udPtt_ValueChanged);
-            this.udPtt.LostFocus += new System.EventHandler(this.udPtt_LostFocus);
-            // 
             // expandButton
             // 
             this.expandButton.BackColor = System.Drawing.Color.RoyalBlue;
@@ -994,6 +909,7 @@ namespace Thetis
             this.expandButton.Image = null;
             this.expandButton.Location = new System.Drawing.Point(688, 266);
             this.expandButton.Name = "expandButton";
+            this.expandButton.Selectable = true;
             this.expandButton.Size = new System.Drawing.Size(8, 8);
             this.expandButton.TabIndex = 53;
             this.toolTip1.SetToolTip(this.expandButton, "Contract Form");
@@ -1006,6 +922,7 @@ namespace Thetis
             this.keyboardButton.Image = null;
             this.keyboardButton.Location = new System.Drawing.Point(216, 152);
             this.keyboardButton.Name = "keyboardButton";
+            this.keyboardButton.Selectable = true;
             this.keyboardButton.Size = new System.Drawing.Size(112, 23);
             this.keyboardButton.TabIndex = 45;
             this.keyboardButton.Text = "Keyboard";
@@ -1019,6 +936,7 @@ namespace Thetis
             this.clearButton.Image = null;
             this.clearButton.Location = new System.Drawing.Point(120, 152);
             this.clearButton.Name = "clearButton";
+            this.clearButton.Selectable = true;
             this.clearButton.Size = new System.Drawing.Size(75, 23);
             this.clearButton.TabIndex = 46;
             this.clearButton.Text = "Clear (F2)";
@@ -1035,15 +953,6 @@ namespace Thetis
             this.chkPause.Text = "Pause (F1)";
             this.toolTip1.SetToolTip(this.chkPause, " Pause keyboard transmission.");
             this.chkPause.CheckedChanged += new System.EventHandler(this.chkPause_CheckedChanged);
-            // 
-            // txtdummy1
-            // 
-            this.txtdummy1.Location = new System.Drawing.Point(12, 180);
-            this.txtdummy1.Multiline = true;
-            this.txtdummy1.Name = "txtdummy1";
-            this.txtdummy1.Size = new System.Drawing.Size(665, 82);
-            this.txtdummy1.TabIndex = 42;
-            this.txtdummy1.Text = "the actual text box will be a graphic here and this one disabled";
             // 
             // txt9
             // 
@@ -1124,20 +1033,12 @@ namespace Thetis
             this.txt1.Text = "cq cq test w5sxd test";
             this.toolTip1.SetToolTip(this.txt1, "Message edit box.");
             // 
-            // label7
-            // 
-            this.label7.Image = null;
-            this.label7.Location = new System.Drawing.Point(376, 352);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(256, 32);
-            this.label7.TabIndex = 47;
-            this.label7.Text = "label7";
-            // 
             // keyButton
             // 
             this.keyButton.Image = null;
             this.keyButton.Location = new System.Drawing.Point(128, 8);
             this.keyButton.Name = "keyButton";
+            this.keyButton.Selectable = true;
             this.keyButton.Size = new System.Drawing.Size(40, 24);
             this.keyButton.TabIndex = 37;
             this.keyButton.Text = "Key";
@@ -1154,6 +1055,271 @@ namespace Thetis
             this.dropdelaylabel.Text = "Drop Delay";
             this.toolTip1.SetToolTip(this.dropdelaylabel, " Set break in drop out in milliseconds. Minimum allowed is PTT Delay * 1.5 .");
             this.dropdelaylabel.Visible = false;
+            // 
+            // s9
+            // 
+            this.s9.Image = null;
+            this.s9.Location = new System.Drawing.Point(456, 120);
+            this.s9.Name = "s9";
+            this.s9.Selectable = true;
+            this.s9.Size = new System.Drawing.Size(24, 20);
+            this.s9.TabIndex = 33;
+            this.s9.Text = "9";
+            this.toolTip1.SetToolTip(this.s9, "Start message 9.");
+            this.s9.Click += new System.EventHandler(this.s9_Click);
+            this.s9.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s9_MouseDown);
+            // 
+            // s8
+            // 
+            this.s8.Image = null;
+            this.s8.Location = new System.Drawing.Point(456, 88);
+            this.s8.Name = "s8";
+            this.s8.Selectable = true;
+            this.s8.Size = new System.Drawing.Size(24, 20);
+            this.s8.TabIndex = 31;
+            this.s8.Text = "8";
+            this.toolTip1.SetToolTip(this.s8, "Start message 8.");
+            this.s8.Click += new System.EventHandler(this.s8_Click);
+            this.s8.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s8_MouseDown);
+            // 
+            // s7
+            // 
+            this.s7.Image = null;
+            this.s7.Location = new System.Drawing.Point(456, 56);
+            this.s7.Name = "s7";
+            this.s7.Selectable = true;
+            this.s7.Size = new System.Drawing.Size(24, 20);
+            this.s7.TabIndex = 30;
+            this.s7.Text = "7";
+            this.toolTip1.SetToolTip(this.s7, "Start message 7.");
+            this.s7.Click += new System.EventHandler(this.s7_Click);
+            this.s7.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s7_MouseDown);
+            // 
+            // stopButton
+            // 
+            this.stopButton.Image = null;
+            this.stopButton.Location = new System.Drawing.Point(48, 8);
+            this.stopButton.Name = "stopButton";
+            this.stopButton.Selectable = true;
+            this.stopButton.Size = new System.Drawing.Size(72, 24);
+            this.stopButton.TabIndex = 26;
+            this.stopButton.Text = "Stop (Esc)";
+            this.toolTip1.SetToolTip(this.stopButton, "Stop all keying.");
+            this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
+            // 
+            // repeatdelayLabel
+            // 
+            this.repeatdelayLabel.Image = null;
+            this.repeatdelayLabel.Location = new System.Drawing.Point(304, 32);
+            this.repeatdelayLabel.Name = "repeatdelayLabel";
+            this.repeatdelayLabel.Size = new System.Drawing.Size(80, 16);
+            this.repeatdelayLabel.TabIndex = 48;
+            this.repeatdelayLabel.Text = "Repeat Delay";
+            this.toolTip1.SetToolTip(this.repeatdelayLabel, " Set repeat message delay in seconds.");
+            // 
+            // cbMorse
+            // 
+            this.cbMorse.Cursor = System.Windows.Forms.Cursors.Default;
+            this.cbMorse.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbMorse.DropDownWidth = 208;
+            this.cbMorse.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbMorse.Location = new System.Drawing.Point(472, 152);
+            this.cbMorse.Name = "cbMorse";
+            this.cbMorse.Size = new System.Drawing.Size(208, 23);
+            this.cbMorse.TabIndex = 19;
+            this.toolTip1.SetToolTip(this.cbMorse, "View and right click to edit Morse definition table.");
+            this.cbMorse.SelectedIndexChanged += new System.EventHandler(this.CbMorse_SelectedIndexChanged);
+            this.cbMorse.MouseDown += new System.Windows.Forms.MouseEventHandler(this.cbMorse_MouseDown);
+            // 
+            // notesButton
+            // 
+            this.notesButton.Image = null;
+            this.notesButton.Location = new System.Drawing.Point(176, 8);
+            this.notesButton.Name = "notesButton";
+            this.notesButton.Selectable = true;
+            this.notesButton.Size = new System.Drawing.Size(48, 24);
+            this.notesButton.TabIndex = 17;
+            this.notesButton.Text = "Notes";
+            this.toolTip1.SetToolTip(this.notesButton, "Show program notes.");
+            this.notesButton.Click += new System.EventHandler(this.notesButton_Click);
+            // 
+            // speedLabel
+            // 
+            this.speedLabel.Image = null;
+            this.speedLabel.Location = new System.Drawing.Point(232, 32);
+            this.speedLabel.Name = "speedLabel";
+            this.speedLabel.Size = new System.Drawing.Size(72, 16);
+            this.speedLabel.TabIndex = 15;
+            this.speedLabel.Text = "Speed WPM";
+            this.toolTip1.SetToolTip(this.speedLabel, " Set memory keyer (not paddle) speed in words per minute. (PARIS method)");
+            // 
+            // s6
+            // 
+            this.s6.Image = null;
+            this.s6.Location = new System.Drawing.Point(232, 120);
+            this.s6.Name = "s6";
+            this.s6.Selectable = true;
+            this.s6.Size = new System.Drawing.Size(24, 20);
+            this.s6.TabIndex = 14;
+            this.s6.Text = "6";
+            this.toolTip1.SetToolTip(this.s6, "Start message 6.");
+            this.s6.Click += new System.EventHandler(this.s6_Click);
+            this.s6.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s6_MouseDown);
+            // 
+            // s5
+            // 
+            this.s5.Image = null;
+            this.s5.Location = new System.Drawing.Point(232, 88);
+            this.s5.Name = "s5";
+            this.s5.Selectable = true;
+            this.s5.Size = new System.Drawing.Size(24, 20);
+            this.s5.TabIndex = 12;
+            this.s5.Text = "5";
+            this.toolTip1.SetToolTip(this.s5, "Start message 5.");
+            this.s5.Click += new System.EventHandler(this.s5_Click);
+            this.s5.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s5_MouseDown);
+            // 
+            // s4
+            // 
+            this.s4.Image = null;
+            this.s4.Location = new System.Drawing.Point(232, 56);
+            this.s4.Name = "s4";
+            this.s4.Selectable = true;
+            this.s4.Size = new System.Drawing.Size(24, 20);
+            this.s4.TabIndex = 10;
+            this.s4.Text = "4";
+            this.toolTip1.SetToolTip(this.s4, "Start message 4.");
+            this.s4.Click += new System.EventHandler(this.s4_Click);
+            this.s4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s4_MouseDown);
+            // 
+            // s3
+            // 
+            this.s3.Image = null;
+            this.s3.Location = new System.Drawing.Point(8, 120);
+            this.s3.Name = "s3";
+            this.s3.Selectable = true;
+            this.s3.Size = new System.Drawing.Size(24, 20);
+            this.s3.TabIndex = 8;
+            this.s3.Text = "3";
+            this.toolTip1.SetToolTip(this.s3, "Start message 3.");
+            this.s3.Click += new System.EventHandler(this.s3_Click);
+            this.s3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s3_MouseDown);
+            // 
+            // s2
+            // 
+            this.s2.Image = null;
+            this.s2.Location = new System.Drawing.Point(8, 88);
+            this.s2.Name = "s2";
+            this.s2.Selectable = true;
+            this.s2.Size = new System.Drawing.Size(24, 20);
+            this.s2.TabIndex = 6;
+            this.s2.Text = "2";
+            this.toolTip1.SetToolTip(this.s2, "Start message 2.");
+            this.s2.Click += new System.EventHandler(this.s2_Click);
+            this.s2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s2_MouseDown);
+            // 
+            // s1
+            // 
+            this.s1.Image = null;
+            this.s1.Location = new System.Drawing.Point(8, 56);
+            this.s1.Name = "s1";
+            this.s1.Selectable = true;
+            this.s1.Size = new System.Drawing.Size(24, 20);
+            this.s1.TabIndex = 4;
+            this.s1.Text = "1";
+            this.toolTip1.SetToolTip(this.s1, "Start message 1.");
+            this.s1.Click += new System.EventHandler(this.s1_Click);
+            this.s1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s1_MouseDown);
+            // 
+            // chkAlwaysOnTop
+            // 
+            this.chkAlwaysOnTop.Image = null;
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(528, 8);
+            this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
+            this.chkAlwaysOnTop.Size = new System.Drawing.Size(104, 24);
+            this.chkAlwaysOnTop.TabIndex = 57;
+            this.chkAlwaysOnTop.Text = "Always On Top";
+            this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
+            // 
+            // udWPM
+            // 
+            this.udWPM.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.udWPM.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udWPM.Location = new System.Drawing.Point(240, 8);
+            this.udWPM.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+            this.udWPM.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udWPM.Name = "udWPM";
+            this.udWPM.Size = new System.Drawing.Size(56, 20);
+            this.udWPM.TabIndex = 56;
+            this.udWPM.TinyStep = false;
+            this.udWPM.Value = new decimal(new int[] {
+            22,
+            0,
+            0,
+            0});
+            this.udWPM.ValueChanged += new System.EventHandler(this.udWPM_ValueChanged);
+            this.udWPM.LostFocus += new System.EventHandler(this.udWPM_LostFocus);
+            // 
+            // udPtt
+            // 
+            this.udPtt.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udPtt.Location = new System.Drawing.Point(456, 8);
+            this.udPtt.Maximum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.udPtt.Minimum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.udPtt.Name = "udPtt";
+            this.udPtt.Size = new System.Drawing.Size(56, 20);
+            this.udPtt.TabIndex = 54;
+            this.udPtt.TinyStep = false;
+            this.udPtt.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.udPtt.Visible = false;
+            this.udPtt.ValueChanged += new System.EventHandler(this.udPtt_ValueChanged);
+            this.udPtt.LostFocus += new System.EventHandler(this.udPtt_LostFocus);
+            // 
+            // txtdummy1
+            // 
+            this.txtdummy1.Location = new System.Drawing.Point(12, 180);
+            this.txtdummy1.Multiline = true;
+            this.txtdummy1.Name = "txtdummy1";
+            this.txtdummy1.Size = new System.Drawing.Size(665, 82);
+            this.txtdummy1.TabIndex = 42;
+            this.txtdummy1.Text = "the actual text box will be a graphic here and this one disabled";
+            // 
+            // label7
+            // 
+            this.label7.Image = null;
+            this.label7.Location = new System.Drawing.Point(376, 352);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(256, 32);
+            this.label7.TabIndex = 47;
+            this.label7.Text = "label7";
             // 
             // udDrop
             // 
@@ -1176,6 +1342,7 @@ namespace Thetis
             this.udDrop.Name = "udDrop";
             this.udDrop.Size = new System.Drawing.Size(56, 20);
             this.udDrop.TabIndex = 35;
+            this.udDrop.TinyStep = false;
             this.udDrop.Value = new decimal(new int[] {
             300,
             0,
@@ -1184,42 +1351,6 @@ namespace Thetis
             this.udDrop.Visible = false;
             this.udDrop.ValueChanged += new System.EventHandler(this.udDrop_ValueChanged);
             this.udDrop.LostFocus += new System.EventHandler(this.udDrop_LostFocus);
-            // 
-            // s9
-            // 
-            this.s9.Image = null;
-            this.s9.Location = new System.Drawing.Point(456, 120);
-            this.s9.Name = "s9";
-            this.s9.Size = new System.Drawing.Size(24, 20);
-            this.s9.TabIndex = 33;
-            this.s9.Text = "9";
-            this.toolTip1.SetToolTip(this.s9, "Start message 9.");
-            this.s9.Click += new System.EventHandler(this.s9_Click);
-            this.s9.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s9_MouseDown);
-            // 
-            // s8
-            // 
-            this.s8.Image = null;
-            this.s8.Location = new System.Drawing.Point(456, 88);
-            this.s8.Name = "s8";
-            this.s8.Size = new System.Drawing.Size(24, 20);
-            this.s8.TabIndex = 31;
-            this.s8.Text = "8";
-            this.toolTip1.SetToolTip(this.s8, "Start message 8.");
-            this.s8.Click += new System.EventHandler(this.s8_Click);
-            this.s8.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s8_MouseDown);
-            // 
-            // s7
-            // 
-            this.s7.Image = null;
-            this.s7.Location = new System.Drawing.Point(456, 56);
-            this.s7.Name = "s7";
-            this.s7.Size = new System.Drawing.Size(24, 20);
-            this.s7.TabIndex = 30;
-            this.s7.Text = "7";
-            this.toolTip1.SetToolTip(this.s7, "Start message 7.");
-            this.s7.Click += new System.EventHandler(this.s7_Click);
-            this.s7.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s7_MouseDown);
             // 
             // label6
             // 
@@ -1239,17 +1370,6 @@ namespace Thetis
             this.label5.TabIndex = 27;
             this.label5.Text = "label5";
             // 
-            // stopButton
-            // 
-            this.stopButton.Image = null;
-            this.stopButton.Location = new System.Drawing.Point(48, 8);
-            this.stopButton.Name = "stopButton";
-            this.stopButton.Size = new System.Drawing.Size(72, 24);
-            this.stopButton.TabIndex = 26;
-            this.stopButton.Text = "Stop (Esc)";
-            this.toolTip1.SetToolTip(this.stopButton, "Stop all keying.");
-            this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
-            // 
             // label4
             // 
             this.label4.Image = null;
@@ -1258,16 +1378,6 @@ namespace Thetis
             this.label4.Size = new System.Drawing.Size(256, 32);
             this.label4.TabIndex = 25;
             this.label4.Text = "label4";
-            // 
-            // repeatdelayLabel
-            // 
-            this.repeatdelayLabel.Image = null;
-            this.repeatdelayLabel.Location = new System.Drawing.Point(304, 32);
-            this.repeatdelayLabel.Name = "repeatdelayLabel";
-            this.repeatdelayLabel.Size = new System.Drawing.Size(80, 16);
-            this.repeatdelayLabel.TabIndex = 48;
-            this.repeatdelayLabel.Text = "Repeat Delay";
-            this.toolTip1.SetToolTip(this.repeatdelayLabel, " Set repeat message delay in seconds.");
             // 
             // udDelay
             // 
@@ -1290,6 +1400,7 @@ namespace Thetis
             this.udDelay.Name = "udDelay";
             this.udDelay.Size = new System.Drawing.Size(56, 20);
             this.udDelay.TabIndex = 20;
+            this.udDelay.TinyStep = false;
             this.udDelay.Value = new decimal(new int[] {
             3,
             0,
@@ -1297,113 +1408,6 @@ namespace Thetis
             0});
             this.udDelay.ValueChanged += new System.EventHandler(this.udDelay_ValueChanged);
             this.udDelay.LostFocus += new System.EventHandler(this.udDelay_LostFocus);
-            // 
-            // cbMorse
-            // 
-            this.cbMorse.Cursor = System.Windows.Forms.Cursors.Default;
-            this.cbMorse.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbMorse.DropDownWidth = 208;
-            this.cbMorse.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbMorse.Location = new System.Drawing.Point(472, 152);
-            this.cbMorse.Name = "cbMorse";
-            this.cbMorse.Size = new System.Drawing.Size(208, 23);
-            this.cbMorse.TabIndex = 19;
-            this.toolTip1.SetToolTip(this.cbMorse, "View and right click to edit Morse definition table.");
-            this.cbMorse.SelectedIndexChanged += new System.EventHandler(this.CbMorse_SelectedIndexChanged);
-            this.cbMorse.MouseDown += new System.Windows.Forms.MouseEventHandler(this.cbMorse_MouseDown);
-            // 
-            // notesButton
-            // 
-            this.notesButton.Image = null;
-            this.notesButton.Location = new System.Drawing.Point(176, 8);
-            this.notesButton.Name = "notesButton";
-            this.notesButton.Size = new System.Drawing.Size(48, 24);
-            this.notesButton.TabIndex = 17;
-            this.notesButton.Text = "Notes";
-            this.toolTip1.SetToolTip(this.notesButton, "Show program notes.");
-            this.notesButton.Click += new System.EventHandler(this.notesButton_Click);
-            // 
-            // speedLabel
-            // 
-            this.speedLabel.Image = null;
-            this.speedLabel.Location = new System.Drawing.Point(232, 32);
-            this.speedLabel.Name = "speedLabel";
-            this.speedLabel.Size = new System.Drawing.Size(72, 16);
-            this.speedLabel.TabIndex = 15;
-            this.speedLabel.Text = "Speed WPM";
-            this.toolTip1.SetToolTip(this.speedLabel, " Set memory keyer (not paddle) speed in words per minute. (PARIS method)");
-            // 
-            // s6
-            // 
-            this.s6.Image = null;
-            this.s6.Location = new System.Drawing.Point(232, 120);
-            this.s6.Name = "s6";
-            this.s6.Size = new System.Drawing.Size(24, 20);
-            this.s6.TabIndex = 14;
-            this.s6.Text = "6";
-            this.toolTip1.SetToolTip(this.s6, "Start message 6.");
-            this.s6.Click += new System.EventHandler(this.s6_Click);
-            this.s6.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s6_MouseDown);
-            // 
-            // s5
-            // 
-            this.s5.Image = null;
-            this.s5.Location = new System.Drawing.Point(232, 88);
-            this.s5.Name = "s5";
-            this.s5.Size = new System.Drawing.Size(24, 20);
-            this.s5.TabIndex = 12;
-            this.s5.Text = "5";
-            this.toolTip1.SetToolTip(this.s5, "Start message 5.");
-            this.s5.Click += new System.EventHandler(this.s5_Click);
-            this.s5.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s5_MouseDown);
-            // 
-            // s4
-            // 
-            this.s4.Image = null;
-            this.s4.Location = new System.Drawing.Point(232, 56);
-            this.s4.Name = "s4";
-            this.s4.Size = new System.Drawing.Size(24, 20);
-            this.s4.TabIndex = 10;
-            this.s4.Text = "4";
-            this.toolTip1.SetToolTip(this.s4, "Start message 4.");
-            this.s4.Click += new System.EventHandler(this.s4_Click);
-            this.s4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s4_MouseDown);
-            // 
-            // s3
-            // 
-            this.s3.Image = null;
-            this.s3.Location = new System.Drawing.Point(8, 120);
-            this.s3.Name = "s3";
-            this.s3.Size = new System.Drawing.Size(24, 20);
-            this.s3.TabIndex = 8;
-            this.s3.Text = "3";
-            this.toolTip1.SetToolTip(this.s3, "Start message 3.");
-            this.s3.Click += new System.EventHandler(this.s3_Click);
-            this.s3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s3_MouseDown);
-            // 
-            // s2
-            // 
-            this.s2.Image = null;
-            this.s2.Location = new System.Drawing.Point(8, 88);
-            this.s2.Name = "s2";
-            this.s2.Size = new System.Drawing.Size(24, 20);
-            this.s2.TabIndex = 6;
-            this.s2.Text = "2";
-            this.toolTip1.SetToolTip(this.s2, "Start message 2.");
-            this.s2.Click += new System.EventHandler(this.s2_Click);
-            this.s2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s2_MouseDown);
-            // 
-            // s1
-            // 
-            this.s1.Image = null;
-            this.s1.Location = new System.Drawing.Point(8, 56);
-            this.s1.Name = "s1";
-            this.s1.Size = new System.Drawing.Size(24, 20);
-            this.s1.TabIndex = 4;
-            this.s1.Text = "1";
-            this.toolTip1.SetToolTip(this.s1, "Start message 1.");
-            this.s1.Click += new System.EventHandler(this.s1_Click);
-            this.s1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s1_MouseDown);
             // 
             // CWX
             // 
@@ -1531,7 +1535,8 @@ namespace Thetis
         // the Alt key press is detected here and altkey set to true
         private void CWX_KeyDown_1(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-            
+            if (!console.PowerOn) return;
+
             char key = (char)e.KeyValue;
 
             label5.Text = "KeyDown " + key + " " +
@@ -1573,14 +1578,14 @@ namespace Thetis
 
         private void keyboardButton_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
-            
+            if (!console.PowerOn) return;
+
             process_key(e.KeyChar);
         }
 
         // process the 'Key' button which start transmitter with key down
         private void keyButton_Click(object sender, System.EventArgs e)	// the 'Key' button
         {
-            
             if (keying)
             {
                 quitshut();
@@ -1866,6 +1871,7 @@ namespace Thetis
                 y = kyty + 2;
                 dx = 11; dy = 19;
 
+                if (this.Disposing || this.IsDisposed) return;
                 if(formGraphics==null) formGraphics = this.CreateGraphics(); //MW0LGE
 
                 System.Drawing.Font drawFont = new System.Drawing.Font("Courier New", 14, FontStyle.Bold);
@@ -2104,10 +2110,8 @@ namespace Thetis
             // X on flow
             if (ttx > 0) ttx--;			// time out timer down one element
             if (ttx > 0) return;		// not yet timed out
-            //setptt(false);			// cw timer timed out
-            //setkey(false);
             //[2.10.3]MW0LGE swap
-            setkey(false);
+            setkey(false);          
             setptt(false);			// cw timer timed out
         }
 
@@ -2432,5 +2436,22 @@ namespace Thetis
 
         #endregion
 
+        public void StopEverything(bool bPowerState = false)
+        {
+            keyButton.Enabled = bPowerState;
+            keyboardButton.Enabled = bPowerState;
+            s1.Enabled = bPowerState;
+            s2.Enabled = bPowerState;
+            s3.Enabled = bPowerState;
+            s4.Enabled = bPowerState;
+            s5.Enabled = bPowerState;
+            s6.Enabled = bPowerState;
+            s7.Enabled = bPowerState;
+            s8.Enabled = bPowerState;
+            s9.Enabled = bPowerState;            
+
+            clear_show();
+            quitshut();
+        }
     } // end class
 } // end namespace

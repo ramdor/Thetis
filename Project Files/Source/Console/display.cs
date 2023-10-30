@@ -581,12 +581,7 @@ namespace Thetis
                 lock (_objDX2Lock)
                 {
                     PurgeBuffers();
-                    if (!_mox_transition_buffer_clear_for_display)
-                    {
-                        // pergebuffers wont cause this if above bool is false, so do here
-                        FastAttackNoiseFloorRX1 = true;
-                        if(_rx2_enabled) FastAttackNoiseFloorRX2 = true;
-                    }
+                    resetPeaksAndNoise();
                 }
             }
         }
@@ -647,14 +642,14 @@ namespace Thetis
         {
             ResetBlobMaximums(1, true);
             ResetSpectrumPeaks(1);
-            _RX1waterfallPreviousMinValue = -200f;
+            _RX1waterfallPreviousMinValue = -100f;
             FastAttackNoiseFloorRX1 = true;
 
             if (RX2Enabled)
             {
                 ResetBlobMaximums(2, true);
                 ResetSpectrumPeaks(2);
-                _RX2waterfallPreviousMinValue = -200f;
+                _RX2waterfallPreviousMinValue = -100f;
                 FastAttackNoiseFloorRX2 = true;
             }
         }
@@ -2571,8 +2566,8 @@ namespace Thetis
             set { rx2_waterfall_update_period = value; }
         }
 
-        private static float _RX1waterfallPreviousMinValue = -200.0f;
-        private static float _RX2waterfallPreviousMinValue = -200.0f;
+        private static float _RX1waterfallPreviousMinValue = -100f;
+        private static float _RX2waterfallPreviousMinValue = -100f;
         private static void ResetWaterfallBmp(/*int scale*/)
         {
             int H = displayTargetHeight;
@@ -4943,28 +4938,34 @@ namespace Thetis
                         data = current_waterfall_data;
                         dataCopy = current_waterfall_data_copy;
 
-                        if (_ignore_waterfall_agc_RX1 && m_objFrameStartTimer.ElapsedMsec < _rx1_clearbuffer_timeout_waterfall)
+                        if (_ignore_waterfall_agc_RX1)
                         {
-                            low_threshold = 0;
-                            high_threshold = low_threshold;
-                            _RX1waterfallPreviousMinValue = low_threshold;
+                            if (m_objFrameStartTimer.ElapsedMsec < _rx1_clearbuffer_timeout_waterfall)
+                            {
+                                low_threshold = 0;
+                                high_threshold = low_threshold;
+                                _RX1waterfallPreviousMinValue = low_threshold;
+                            }
+                            else
+                                _ignore_waterfall_agc_RX1 = false;
                         }
-                        else
-                            _ignore_waterfall_agc_RX1 = false;
                     }
                     else // rx2
                     {
                         data = current_waterfall_data_bottom;
                         dataCopy = current_waterfall_data_bottom_copy;
 
-                        if (_ignore_waterfall_agc_RX2 && m_objFrameStartTimer.ElapsedMsec < _rx2_clearbuffer_timeout_waterfall)
+                        if (_ignore_waterfall_agc_RX2)
                         {
-                            low_threshold = 0;
-                            high_threshold = low_threshold;
-                            _RX2waterfallPreviousMinValue = low_threshold;
+                            if (m_objFrameStartTimer.ElapsedMsec < _rx2_clearbuffer_timeout_waterfall)
+                            {
+                                low_threshold = 0;
+                                high_threshold = low_threshold;
+                                _RX2waterfallPreviousMinValue = low_threshold;
+                            }
+                            else
+                                _ignore_waterfall_agc_RX2 = false;
                         }
-                        else
-                            _ignore_waterfall_agc_RX2 = false;
                     }
 
                     float max;
