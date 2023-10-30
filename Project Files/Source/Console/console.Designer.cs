@@ -509,6 +509,7 @@
             this.timer_cpu_meter = new System.Windows.Forms.Timer(this.components);
             this.timer_peak_text = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.lblPAProfile = new System.Windows.Forms.LabelTS();
             this.ptbFilterShift = new Thetis.PrettyTrackBar();
             this.ptbFilterWidth = new Thetis.PrettyTrackBar();
             this.btnFilterShiftReset = new System.Windows.Forms.ButtonTS();
@@ -719,7 +720,6 @@
             this.comboAMTXProfile = new System.Windows.Forms.ComboBoxTS();
             this.btnDisplayZTB = new System.Windows.Forms.ButtonTS();
             this.ptbTune = new Thetis.PrettyTrackBar();
-            this.lblPAProfile = new System.Windows.Forms.LabelTS();
             this.picSquelch = new System.Windows.Forms.PictureBox();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -1233,6 +1233,15 @@
             // 
             this.timer_peak_text.Interval = 500;
             this.timer_peak_text.Tick += new System.EventHandler(this.timer_peak_text_Tick);
+            // 
+            // lblPAProfile
+            // 
+            this.lblPAProfile.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblPAProfile, "lblPAProfile");
+            this.lblPAProfile.ForeColor = System.Drawing.Color.White;
+            this.lblPAProfile.Name = "lblPAProfile";
+            this.toolTip1.SetToolTip(this.lblPAProfile, resources.GetString("lblPAProfile.ToolTip"));
+            this.lblPAProfile.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblPAProfile_MouseDown);
             // 
             // ptbFilterShift
             // 
@@ -3941,15 +3950,6 @@
             this.ptbTune.Value = 50;
             this.ptbTune.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbTune_Scroll);
             this.ptbTune.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ptbTune_MouseUp);
-            // 
-            // lblPAProfile
-            // 
-            this.lblPAProfile.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.lblPAProfile, "lblPAProfile");
-            this.lblPAProfile.ForeColor = System.Drawing.Color.White;
-            this.lblPAProfile.Name = "lblPAProfile";
-            this.toolTip1.SetToolTip(this.lblPAProfile, resources.GetString("lblPAProfile.ToolTip"));
-            this.lblPAProfile.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblPAProfile_MouseDown);
             // 
             // picSquelch
             // 
