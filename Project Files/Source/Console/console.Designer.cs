@@ -509,6 +509,7 @@
             this.timer_cpu_meter = new System.Windows.Forms.Timer(this.components);
             this.timer_peak_text = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.lblPAProfile = new System.Windows.Forms.LabelTS();
             this.ptbFilterShift = new Thetis.PrettyTrackBar();
             this.ptbFilterWidth = new Thetis.PrettyTrackBar();
             this.btnFilterShiftReset = new System.Windows.Forms.ButtonTS();
@@ -719,7 +720,6 @@
             this.comboAMTXProfile = new System.Windows.Forms.ComboBoxTS();
             this.btnDisplayZTB = new System.Windows.Forms.ButtonTS();
             this.ptbTune = new Thetis.PrettyTrackBar();
-            this.lblPAProfile = new System.Windows.Forms.LabelTS();
             this.picSquelch = new System.Windows.Forms.PictureBox();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -1041,8 +1041,8 @@
             this.lblTransmitProfile = new System.Windows.Forms.LabelTS();
             this.panelModeSpecificDigital = new System.Windows.Forms.PanelTS();
             this.lblVACTXIndicator = new System.Windows.Forms.LabelTS();
-            this.lblVACRXIndicator = new System.Windows.Forms.LabelTS();
             this.lblDigTXProfile = new System.Windows.Forms.LabelTS();
+            this.lblVACRXIndicator = new System.Windows.Forms.LabelTS();
             this.lblRXGain = new System.Windows.Forms.LabelTS();
             this.grpVACStereo = new System.Windows.Forms.GroupBoxTS();
             this.lblTXGain = new System.Windows.Forms.LabelTS();
@@ -1233,6 +1233,15 @@
             // 
             this.timer_peak_text.Interval = 500;
             this.timer_peak_text.Tick += new System.EventHandler(this.timer_peak_text_Tick);
+            // 
+            // lblPAProfile
+            // 
+            this.lblPAProfile.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.lblPAProfile, "lblPAProfile");
+            this.lblPAProfile.ForeColor = System.Drawing.Color.White;
+            this.lblPAProfile.Name = "lblPAProfile";
+            this.toolTip1.SetToolTip(this.lblPAProfile, resources.GetString("lblPAProfile.ToolTip"));
+            this.lblPAProfile.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblPAProfile_MouseDown);
             // 
             // ptbFilterShift
             // 
@@ -1459,8 +1468,8 @@
             this.comboRX2AGC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboRX2AGC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboRX2AGC.DropDownWidth = 48;
-            this.comboRX2AGC.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboRX2AGC, "comboRX2AGC");
+            this.comboRX2AGC.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboRX2AGC.Name = "comboRX2AGC";
             this.toolTip1.SetToolTip(this.comboRX2AGC, resources.GetString("comboRX2AGC.ToolTip"));
             this.comboRX2AGC.SelectedIndexChanged += new System.EventHandler(this.comboRX2AGC_SelectedIndexChanged);
@@ -1609,8 +1618,8 @@
             this.comboRX2Band.DisplayMember = "0";
             this.comboRX2Band.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboRX2Band.DropDownWidth = 56;
-            this.comboRX2Band.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboRX2Band, "comboRX2Band");
+            this.comboRX2Band.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboRX2Band.Items.AddRange(new object[] {
             resources.GetString("comboRX2Band.Items"),
             resources.GetString("comboRX2Band.Items1"),
@@ -1931,8 +1940,8 @@
             this.comboRX2DisplayMode.DisplayMember = "0";
             this.comboRX2DisplayMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboRX2DisplayMode.DropDownWidth = 88;
-            this.comboRX2DisplayMode.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboRX2DisplayMode, "comboRX2DisplayMode");
+            this.comboRX2DisplayMode.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboRX2DisplayMode.Items.AddRange(new object[] {
             resources.GetString("comboRX2DisplayMode.Items"),
             resources.GetString("comboRX2DisplayMode.Items1"),
@@ -2212,8 +2221,8 @@
             this.comboAGC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboAGC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboAGC.DropDownWidth = 48;
-            this.comboAGC.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboAGC, "comboAGC");
+            this.comboAGC.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboAGC.Name = "comboAGC";
             this.toolTip1.SetToolTip(this.comboAGC, resources.GetString("comboAGC.ToolTip"));
             this.comboAGC.SelectedIndexChanged += new System.EventHandler(this.comboAGC_SelectedIndexChanged);
@@ -2231,8 +2240,8 @@
             this.comboPreamp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboPreamp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboPreamp.DropDownWidth = 48;
-            this.comboPreamp.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboPreamp, "comboPreamp");
+            this.comboPreamp.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboPreamp.Name = "comboPreamp";
             this.toolTip1.SetToolTip(this.comboPreamp, resources.GetString("comboPreamp.ToolTip"));
             this.comboPreamp.SelectedIndexChanged += new System.EventHandler(this.comboPreamp_SelectedIndexChanged);
@@ -2278,8 +2287,8 @@
             this.comboTXProfile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboTXProfile.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboTXProfile.DropDownWidth = 96;
-            this.comboTXProfile.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboTXProfile, "comboTXProfile");
+            this.comboTXProfile.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboTXProfile.Name = "comboTXProfile";
             this.toolTip1.SetToolTip(this.comboTXProfile, resources.GetString("comboTXProfile.ToolTip"));
             this.comboTXProfile.SelectedIndexChanged += new System.EventHandler(this.comboTXProfile_SelectedIndexChanged);
@@ -2340,8 +2349,8 @@
             this.comboDigTXProfile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboDigTXProfile.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboDigTXProfile.DropDownWidth = 96;
-            this.comboDigTXProfile.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboDigTXProfile, "comboDigTXProfile");
+            this.comboDigTXProfile.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboDigTXProfile.Name = "comboDigTXProfile";
             this.toolTip1.SetToolTip(this.comboDigTXProfile, resources.GetString("comboDigTXProfile.ToolTip"));
             this.comboDigTXProfile.SelectedIndexChanged += new System.EventHandler(this.comboDigTXProfile_SelectedIndexChanged);
@@ -2359,8 +2368,8 @@
             this.comboVACSampleRate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboVACSampleRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboVACSampleRate.DropDownWidth = 64;
-            this.comboVACSampleRate.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboVACSampleRate, "comboVACSampleRate");
+            this.comboVACSampleRate.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboVACSampleRate.Items.AddRange(new object[] {
             resources.GetString("comboVACSampleRate.Items"),
             resources.GetString("comboVACSampleRate.Items1"),
@@ -2553,8 +2562,8 @@
             this.comboMeterTXMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboMeterTXMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboMeterTXMode.DropDownWidth = 72;
-            this.comboMeterTXMode.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboMeterTXMode, "comboMeterTXMode");
+            this.comboMeterTXMode.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboMeterTXMode.Name = "comboMeterTXMode";
             this.toolTip1.SetToolTip(this.comboMeterTXMode, resources.GetString("comboMeterTXMode.ToolTip"));
             this.comboMeterTXMode.SelectedIndexChanged += new System.EventHandler(this.comboMeterTXMode_SelectedIndexChanged);
@@ -2564,8 +2573,8 @@
             this.comboMeterRXMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboMeterRXMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboMeterRXMode.DropDownWidth = 72;
-            this.comboMeterRXMode.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboMeterRXMode, "comboMeterRXMode");
+            this.comboMeterRXMode.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboMeterRXMode.Name = "comboMeterRXMode";
             this.toolTip1.SetToolTip(this.comboMeterRXMode, resources.GetString("comboMeterRXMode.ToolTip"));
             this.comboMeterRXMode.SelectedIndexChanged += new System.EventHandler(this.comboMeterRXMode_SelectedIndexChanged);
@@ -2692,8 +2701,8 @@
             this.comboRX2MeterMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboRX2MeterMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboRX2MeterMode.DropDownWidth = 72;
-            this.comboRX2MeterMode.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboRX2MeterMode, "comboRX2MeterMode");
+            this.comboRX2MeterMode.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboRX2MeterMode.Name = "comboRX2MeterMode";
             this.toolTip1.SetToolTip(this.comboRX2MeterMode, resources.GetString("comboRX2MeterMode.ToolTip"));
             this.comboRX2MeterMode.SelectedIndexChanged += new System.EventHandler(this.comboRX2MeterMode_SelectedIndexChanged);
@@ -3242,8 +3251,8 @@
             this.comboFMTXProfile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboFMTXProfile.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboFMTXProfile.DropDownWidth = 96;
-            this.comboFMTXProfile.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboFMTXProfile, "comboFMTXProfile");
+            this.comboFMTXProfile.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboFMTXProfile.Name = "comboFMTXProfile";
             this.toolTip1.SetToolTip(this.comboFMTXProfile, resources.GetString("comboFMTXProfile.ToolTip"));
             this.comboFMTXProfile.SelectedIndexChanged += new System.EventHandler(this.comboFMTXProfile_SelectedIndexChanged);
@@ -3293,9 +3302,11 @@
             // 
             // comboFMCTCSS
             // 
+            this.comboFMCTCSS.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboFMCTCSS.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboFMCTCSS.DropDownWidth = 60;
             resources.ApplyResources(this.comboFMCTCSS, "comboFMCTCSS");
+            this.comboFMCTCSS.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboFMCTCSS.Name = "comboFMCTCSS";
             this.toolTip1.SetToolTip(this.comboFMCTCSS, resources.GetString("comboFMCTCSS.ToolTip"));
             this.comboFMCTCSS.SelectedIndexChanged += new System.EventHandler(this.comboFMCTCSS_SelectedIndexChanged);
@@ -3505,8 +3516,8 @@
             this.comboRX2Preamp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboRX2Preamp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboRX2Preamp.DropDownWidth = 48;
-            this.comboRX2Preamp.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboRX2Preamp, "comboRX2Preamp");
+            this.comboRX2Preamp.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboRX2Preamp.Name = "comboRX2Preamp";
             this.toolTip1.SetToolTip(this.comboRX2Preamp, resources.GetString("comboRX2Preamp.ToolTip"));
             this.comboRX2Preamp.SelectedIndexChanged += new System.EventHandler(this.comboRX2Preamp_SelectedIndexChanged);
@@ -3904,8 +3915,8 @@
             this.comboAMTXProfile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboAMTXProfile.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboAMTXProfile.DropDownWidth = 96;
-            this.comboAMTXProfile.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboAMTXProfile, "comboAMTXProfile");
+            this.comboAMTXProfile.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboAMTXProfile.Name = "comboAMTXProfile";
             this.toolTip1.SetToolTip(this.comboAMTXProfile, resources.GetString("comboAMTXProfile.ToolTip"));
             this.comboAMTXProfile.SelectedIndexChanged += new System.EventHandler(this.comboAMTXProfile_SelectedIndexChanged);
@@ -3941,15 +3952,6 @@
             this.ptbTune.Value = 50;
             this.ptbTune.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbTune_Scroll);
             this.ptbTune.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ptbTune_MouseUp);
-            // 
-            // lblPAProfile
-            // 
-            this.lblPAProfile.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.lblPAProfile, "lblPAProfile");
-            this.lblPAProfile.ForeColor = System.Drawing.Color.White;
-            this.lblPAProfile.Name = "lblPAProfile";
-            this.toolTip1.SetToolTip(this.lblPAProfile, resources.GetString("lblPAProfile.ToolTip"));
-            this.lblPAProfile.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblPAProfile_MouseDown);
             // 
             // picSquelch
             // 
@@ -6040,14 +6042,14 @@
             // 
             // lblCWBreakInDelay
             // 
-            this.lblCWBreakInDelay.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.lblCWBreakInDelay, "lblCWBreakInDelay");
+            this.lblCWBreakInDelay.ForeColor = System.Drawing.Color.White;
             this.lblCWBreakInDelay.Name = "lblCWBreakInDelay";
             // 
             // lblCWPitchFreq
             // 
-            this.lblCWPitchFreq.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.lblCWPitchFreq, "lblCWPitchFreq");
+            this.lblCWPitchFreq.ForeColor = System.Drawing.Color.White;
             this.lblCWPitchFreq.Name = "lblCWPitchFreq";
             // 
             // panelRX2Filter
@@ -6405,11 +6407,11 @@
             this.panelModeSpecificPhone.Controls.Add(this.chkShowTXFilter);
             this.panelModeSpecificPhone.Controls.Add(this.lblTransmitProfile);
             this.panelModeSpecificPhone.Controls.Add(this.chkTXEQ);
-            this.panelModeSpecificPhone.Controls.Add(this.comboTXProfile);
             this.panelModeSpecificPhone.Controls.Add(this.chkRXEQ);
             this.panelModeSpecificPhone.Controls.Add(this.chkCPDR);
             this.panelModeSpecificPhone.Controls.Add(this.chkVOX);
             this.panelModeSpecificPhone.Controls.Add(this.chkNoiseGate);
+            this.panelModeSpecificPhone.Controls.Add(this.comboTXProfile);
             this.panelModeSpecificPhone.Controls.Add(this.comboAMTXProfile);
             this.panelModeSpecificPhone.Name = "panelModeSpecificPhone";
             // 
@@ -6545,8 +6547,8 @@
             // 
             // lblTransmitProfile
             // 
-            this.lblTransmitProfile.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.lblTransmitProfile, "lblTransmitProfile");
+            this.lblTransmitProfile.ForeColor = System.Drawing.Color.White;
             this.lblTransmitProfile.Name = "lblTransmitProfile";
             // 
             // panelModeSpecificDigital
@@ -6554,12 +6556,12 @@
             resources.ApplyResources(this.panelModeSpecificDigital, "panelModeSpecificDigital");
             this.panelModeSpecificDigital.BackColor = System.Drawing.Color.Transparent;
             this.panelModeSpecificDigital.Controls.Add(this.lblVACTXIndicator);
+            this.panelModeSpecificDigital.Controls.Add(this.lblDigTXProfile);
             this.panelModeSpecificDigital.Controls.Add(this.lblVACRXIndicator);
             this.panelModeSpecificDigital.Controls.Add(this.ptbVACTXGain);
             this.panelModeSpecificDigital.Controls.Add(this.comboDigTXProfile);
             this.panelModeSpecificDigital.Controls.Add(this.ptbVACRXGain);
             this.panelModeSpecificDigital.Controls.Add(this.radRX1Show);
-            this.panelModeSpecificDigital.Controls.Add(this.lblDigTXProfile);
             this.panelModeSpecificDigital.Controls.Add(this.lblRXGain);
             this.panelModeSpecificDigital.Controls.Add(this.radRX2Show);
             this.panelModeSpecificDigital.Controls.Add(this.grpVACStereo);
@@ -6574,17 +6576,17 @@
             resources.ApplyResources(this.lblVACTXIndicator, "lblVACTXIndicator");
             this.lblVACTXIndicator.Name = "lblVACTXIndicator";
             // 
-            // lblVACRXIndicator
-            // 
-            this.lblVACRXIndicator.ForeColor = System.Drawing.Color.White;
-            resources.ApplyResources(this.lblVACRXIndicator, "lblVACRXIndicator");
-            this.lblVACRXIndicator.Name = "lblVACRXIndicator";
-            // 
             // lblDigTXProfile
             // 
             this.lblDigTXProfile.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.lblDigTXProfile, "lblDigTXProfile");
             this.lblDigTXProfile.Name = "lblDigTXProfile";
+            // 
+            // lblVACRXIndicator
+            // 
+            this.lblVACRXIndicator.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.lblVACRXIndicator, "lblVACRXIndicator");
+            this.lblVACRXIndicator.Name = "lblVACRXIndicator";
             // 
             // lblRXGain
             // 
@@ -7298,14 +7300,14 @@
             // labelTS7
             // 
             this.labelTS7.BackColor = System.Drawing.Color.Transparent;
-            this.labelTS7.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.labelTS7, "labelTS7");
+            this.labelTS7.ForeColor = System.Drawing.Color.White;
             this.labelTS7.Name = "labelTS7";
             // 
             // lblFMOffset
             // 
-            this.lblFMOffset.BackColor = System.Drawing.Color.Transparent;
             resources.ApplyResources(this.lblFMOffset, "lblFMOffset");
+            this.lblFMOffset.BackColor = System.Drawing.Color.Transparent;
             this.lblFMOffset.ForeColor = System.Drawing.Color.White;
             this.lblFMOffset.Name = "lblFMOffset";
             // 
@@ -7321,8 +7323,8 @@
             this.comboFMMemory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboFMMemory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboFMMemory.DropDownWidth = 96;
-            this.comboFMMemory.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.comboFMMemory, "comboFMMemory");
+            this.comboFMMemory.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.comboFMMemory.Name = "comboFMMemory";
             this.comboFMMemory.SelectedIndexChanged += new System.EventHandler(this.comboFMMemory_SelectedIndexChanged);
             // 
@@ -7553,8 +7555,10 @@
             this.panelRX2Power.ResumeLayout(false);
             this.panelPower.ResumeLayout(false);
             this.panelModeSpecificCW.ResumeLayout(false);
+            this.panelModeSpecificCW.PerformLayout();
             this.grpCWAPF.ResumeLayout(false);
             this.grpSemiBreakIn.ResumeLayout(false);
+            this.grpSemiBreakIn.PerformLayout();
             this.panelRX2Filter.ResumeLayout(false);
             this.panelRX2Mode.ResumeLayout(false);
             this.panelRX2Display.ResumeLayout(false);
@@ -7593,6 +7597,7 @@
             this.panelBandVHF.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ptbSquelch)).EndInit();
             this.panelModeSpecificFM.ResumeLayout(false);
+            this.panelModeSpecificFM.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFMMic)).EndInit();
             this.panelBandGEN.ResumeLayout(false);
             this.panelMeterLabels.ResumeLayout(false);
