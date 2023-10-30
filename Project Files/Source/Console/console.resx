@@ -1662,6 +1662,9 @@
   <data name="udRX2FilterHigh.TabIndex" type="System.Int32, mscorlib">
     <value>45</value>
   </data>
+  <data name="udRX2FilterHigh.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
+  </data>
   <data name="udRX2FilterHigh.ToolTip" xml:space="preserve">
     <value>High Filter Cutoff</value>
   </data>
@@ -1688,6 +1691,9 @@
   </data>
   <data name="udRX2FilterLow.TabIndex" type="System.Int32, mscorlib">
     <value>26</value>
+  </data>
+  <data name="udRX2FilterLow.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
   </data>
   <data name="udRX2FilterLow.ToolTip" xml:space="preserve">
     <value>Low Filter Cutoff</value>
@@ -2934,6 +2940,9 @@
   <data name="udRIT.TabIndex" type="System.Int32, mscorlib">
     <value>35</value>
   </data>
+  <data name="udRIT.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
+  </data>
   <data name="udRIT.ToolTip" xml:space="preserve">
     <value>RIT Value to offset receive frequency in Hz when above button is active.</value>
   </data>
@@ -3158,6 +3167,9 @@
   </data>
   <data name="udXIT.TabIndex" type="System.Int32, mscorlib">
     <value>29</value>
+  </data>
+  <data name="udXIT.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
   </data>
   <data name="udXIT.ToolTip" xml:space="preserve">
     <value>XIT Value to offset transmit frequency in Hz when above button is active.</value>
@@ -8445,6 +8457,9 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="udTXFilterLow.TabIndex" type="System.Int32, mscorlib">
     <value>116</value>
   </data>
+  <data name="udTXFilterLow.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
+  </data>
   <data name="udTXFilterLow.ToolTip" xml:space="preserve">
     <value>TX Low Filter Cutoff</value>
   </data>
@@ -8471,6 +8486,9 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="udTXFilterHigh.TabIndex" type="System.Int32, mscorlib">
     <value>117</value>
+  </data>
+  <data name="udTXFilterHigh.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
   </data>
   <data name="udTXFilterHigh.ToolTip" xml:space="preserve">
     <value>TX High Filter Cutoff</value>
