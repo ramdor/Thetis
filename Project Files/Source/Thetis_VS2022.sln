@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thetis", "Console\Thetis.cs
 		{0A18A071-125E-442F-AFF7-A3F68ABECF99} = {0A18A071-125E-442F-AFF7-A3F68ABECF99}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "portaudio", "..\lib\portaudio_VS2008\build\msvc\portaudio.vcxproj", "{0A18A071-125E-442F-AFF7-A3F68ABECF99}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wdsp", "wdsp\wdsp.vcxproj", "{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChannelMaster", "ChannelMaster\ChannelMaster.vcxproj", "{8E5759EA-1D4E-46DA-9B3C-3577A98301C1}"
@@ -30,6 +28,8 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Thetis-Installer", "Thetis-
 		{4143D085-38CF-4640-BB05-2FDFFAF94D76} = {4143D085-38CF-4640-BB05-2FDFFAF94D76}
 		{8E5759EA-1D4E-46DA-9B3C-3577A98301C1} = {8E5759EA-1D4E-46DA-9B3C-3577A98301C1}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "portaudio", "..\lib\portaudio-19.7.0\build\msvc\portaudio.vcxproj", "{0A18A071-125E-442F-AFF7-A3F68ABECF99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,22 +59,6 @@ Global
 		{831AEB2F-CA78-4057-85D7-32B4816ED6AE}.Release|x64.Build.0 = Release|x64
 		{831AEB2F-CA78-4057-85D7-32B4816ED6AE}.Release|x86.ActiveCfg = Release|x86
 		{831AEB2F-CA78-4057-85D7-32B4816ED6AE}.Release|x86.Build.0 = Release|x86
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|Any CPU.Build.0 = Debug|Win32
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|Mixed Platforms.Build.0 = Debug|Win32
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|x64.ActiveCfg = Debug|x64
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|x64.Build.0 = Debug|x64
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|x86.ActiveCfg = Debug|Win32
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|x86.Build.0 = Debug|Win32
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|Any CPU.ActiveCfg = Release|Win32
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|Any CPU.Build.0 = Release|Win32
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|Mixed Platforms.Build.0 = Release|Win32
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|x64.ActiveCfg = Release|x64
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|x64.Build.0 = Release|x64
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|x86.ActiveCfg = Release|Win32
-		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|x86.Build.0 = Release|Win32
 		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Debug|Any CPU.Build.0 = Debug|Win32
 		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
@@ -148,6 +132,22 @@ Global
 		{B3FB4FDC-D517-4C56-872D-9E86627B5A53}.Release|Mixed Platforms.Build.0 = Release|x86
 		{B3FB4FDC-D517-4C56-872D-9E86627B5A53}.Release|x64.ActiveCfg = Release|x64
 		{B3FB4FDC-D517-4C56-872D-9E86627B5A53}.Release|x86.ActiveCfg = Release|x86
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|Any CPU.Build.0 = Debug|x64
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|x64.ActiveCfg = Debug|x64
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|x64.Build.0 = Debug|x64
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|x86.ActiveCfg = Debug|Win32
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Debug|x86.Build.0 = Debug|Win32
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|Any CPU.ActiveCfg = Release|x64
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|Any CPU.Build.0 = Release|x64
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|Mixed Platforms.Build.0 = Release|x64
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|x64.ActiveCfg = Release|x64
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|x64.Build.0 = Release|x64
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|x86.ActiveCfg = Release|Win32
+		{0A18A071-125E-442F-AFF7-A3F68ABECF99}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

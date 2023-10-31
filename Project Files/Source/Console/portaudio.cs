@@ -40,6 +40,7 @@ using PaTime = System.Double;
 using PaSampleFormat = System.UInt32;
 using PaStreamFlags = System.UInt32;
 using PaStreamCallbackFlags = System.UInt32;
+using System.Diagnostics.Contracts;
 
 namespace Thetis
 {
@@ -70,7 +71,6 @@ namespace Thetis
         public const PaStreamCallbackFlags paOutputUnderflow = (PaStreamCallbackFlags)0x04;
         public const PaStreamCallbackFlags paOutputOverflow = (PaStreamCallbackFlags)0x08;
         public const PaStreamCallbackFlags paPrimingOutput = (PaStreamCallbackFlags)0x10;
-
         #endregion
 
         #region Enums
@@ -89,9 +89,20 @@ namespace Thetis
 
         public enum PaHostApiTypeId
         {
-            paInDevelopment = 0, paDirectSound = 1, paMME = 2, paASIO = 3,
-            paSoundManager = 4, paCoreAudio = 5, paOSS = 7, paALSA = 8,
-            paAL = 9, paBeOS = 10
+            paInDevelopment = 0,
+            paDirectSound = 1,
+            paMME = 2,
+            paASIO = 3,
+            paSoundManager = 4,
+            paCoreAudio = 5,
+            paOSS = 7,
+            paALSA = 8,
+            paAL = 9,
+            paBeOS = 10,
+            paWDMKS = 11,
+            paJACK = 12,
+            paWASAPI = 13,
+            paAudioScienceHPI = 14
         }
 
         public enum PaStreamCallbackResult

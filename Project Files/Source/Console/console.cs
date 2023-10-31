@@ -2602,8 +2602,8 @@ namespace Thetis
             PA19.PA_Terminate();		// terminate audio interface
             DB.Exit();					// close and save database
             NetworkIO.DestroyRNet();
-            //if (radio != null) //[2.10.3]MW0LGE removed until WDSP close down issue resolved after using CWX - ForWarren
-            //    radio.Shutdown();
+            if (radio != null) //[2.10.3]MW0LGE removed until WDSP close down issue resolved after using CWX - ForWarren
+                radio.Shutdown();
             Win32.TimeEndPeriod(1); // return to previous timing precision
             Thread.Sleep(100);
         }
@@ -2689,6 +2689,8 @@ namespace Thetis
                                 Debug.WriteLine(this.Name + " -> " + c2.Name + " needs to be converted to a Thread Safe control.");
 #endif
                         }
+                        else
+                            Debug.Print("Not saving : " + c2.Name);
                     }
                 }
                 else // it is not a group box
@@ -3345,6 +3347,11 @@ namespace Thetis
 
                 switch (name)
                 {
+                    //ignore section
+                    case "udFilterLow":
+                    case "udFilterHigh":
+                        //[2.10.3]MW0LGE ignore section, in the case of the filter ud controls, they will be set by the filter being selected
+                        break;
                     case "last_radio_protocol":
                         Audio.LastRadioProtocol = (RadioProtocol)Enum.Parse(typeof(RadioProtocol), val);
                         break;
@@ -53276,6 +53283,10 @@ namespace Thetis
             {
                 // nPAVersion = PortAudio.Pa_GetVersion();
                 nPAVersion = PA19.PA_GetVersion();
+                int major = (nPAVersion >> 16) & 0xFF;
+                int minor = (nPAVersion >> 8) & 0xFF;
+                int subminor = nPAVersion & 0xFF;
+                nPAVersion = major * 100 + minor * 10 + subminor;
                 if (nPAVersion != Versions._PORTAUDIO_VERSION)
                 {
                     DialogResult dr = MessageBox.Show("Incorrect version of portaudio.dll installed.",
@@ -53283,7 +53294,6 @@ namespace Thetis
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
                 }
-
             }
             catch
             {

@@ -1627,6 +1627,8 @@
             this.grpAudioBuffer2 = new System.Windows.Forms.GroupBoxTS();
             this.comboAudioBuffer2 = new System.Windows.Forms.ComboBoxTS();
             this.grpAudioDetails2 = new System.Windows.Forms.GroupBoxTS();
+            this.lblVAC1Exclusive = new System.Windows.Forms.LabelTS();
+            this.chkVAC1Exclusive = new System.Windows.Forms.CheckBoxTS();
             this.lblAudioOutput2 = new System.Windows.Forms.LabelTS();
             this.comboAudioOutput2 = new System.Windows.Forms.ComboBoxTS();
             this.lblAudioInput2 = new System.Windows.Forms.LabelTS();
@@ -1709,6 +1711,8 @@
             this.grpAudioBuffer3 = new System.Windows.Forms.GroupBoxTS();
             this.comboAudioBuffer3 = new System.Windows.Forms.ComboBoxTS();
             this.grpAudioDetails3 = new System.Windows.Forms.GroupBoxTS();
+            this.lblVAC2Exclusive = new System.Windows.Forms.LabelTS();
+            this.chkVAC2Exclusive = new System.Windows.Forms.CheckBoxTS();
             this.lblAudioOutput3 = new System.Windows.Forms.LabelTS();
             this.comboAudioOutput3 = new System.Windows.Forms.ComboBoxTS();
             this.lblAudioInput3 = new System.Windows.Forms.LabelTS();
@@ -26103,7 +26107,7 @@
             // 
             this.chkSwapIQVac1.AutoSize = true;
             this.chkSwapIQVac1.Image = null;
-            this.chkSwapIQVac1.Location = new System.Drawing.Point(16, 45);
+            this.chkSwapIQVac1.Location = new System.Drawing.Point(16, 46);
             this.chkSwapIQVac1.Name = "chkSwapIQVac1";
             this.chkSwapIQVac1.Size = new System.Drawing.Size(64, 17);
             this.chkSwapIQVac1.TabIndex = 3;
@@ -26148,7 +26152,7 @@
             // 
             this.chkVACCombine.Enabled = false;
             this.chkVACCombine.Image = null;
-            this.chkVACCombine.Location = new System.Drawing.Point(24, 200);
+            this.chkVACCombine.Location = new System.Drawing.Point(24, 216);
             this.chkVACCombine.Name = "chkVACCombine";
             this.chkVACCombine.Size = new System.Drawing.Size(117, 40);
             this.chkVACCombine.TabIndex = 76;
@@ -26174,7 +26178,7 @@
             // grpAudioVACAutoEnable
             // 
             this.grpAudioVACAutoEnable.Controls.Add(this.chkAudioVACAutoEnable);
-            this.grpAudioVACAutoEnable.Location = new System.Drawing.Point(8, 138);
+            this.grpAudioVACAutoEnable.Location = new System.Drawing.Point(8, 154);
             this.grpAudioVACAutoEnable.Name = "grpAudioVACAutoEnable";
             this.grpAudioVACAutoEnable.Size = new System.Drawing.Size(224, 56);
             this.grpAudioVACAutoEnable.TabIndex = 74;
@@ -26556,7 +26560,7 @@
             // grpAudioSampleRate2
             // 
             this.grpAudioSampleRate2.Controls.Add(this.comboAudioSampleRate2);
-            this.grpAudioSampleRate2.Location = new System.Drawing.Point(274, 64);
+            this.grpAudioSampleRate2.Location = new System.Drawing.Point(290, 64);
             this.grpAudioSampleRate2.Name = "grpAudioSampleRate2";
             this.grpAudioSampleRate2.Size = new System.Drawing.Size(96, 56);
             this.grpAudioSampleRate2.TabIndex = 66;
@@ -26588,7 +26592,7 @@
             // grpAudioBuffer2
             // 
             this.grpAudioBuffer2.Controls.Add(this.comboAudioBuffer2);
-            this.grpAudioBuffer2.Location = new System.Drawing.Point(274, 6);
+            this.grpAudioBuffer2.Location = new System.Drawing.Point(290, 6);
             this.grpAudioBuffer2.Name = "grpAudioBuffer2";
             this.grpAudioBuffer2.Size = new System.Drawing.Size(96, 56);
             this.grpAudioBuffer2.TabIndex = 65;
@@ -26615,6 +26619,8 @@
             // 
             // grpAudioDetails2
             // 
+            this.grpAudioDetails2.Controls.Add(this.lblVAC1Exclusive);
+            this.grpAudioDetails2.Controls.Add(this.chkVAC1Exclusive);
             this.grpAudioDetails2.Controls.Add(this.lblAudioOutput2);
             this.grpAudioDetails2.Controls.Add(this.comboAudioOutput2);
             this.grpAudioDetails2.Controls.Add(this.lblAudioInput2);
@@ -26623,10 +26629,31 @@
             this.grpAudioDetails2.Controls.Add(this.comboAudioDriver2);
             this.grpAudioDetails2.Location = new System.Drawing.Point(8, 28);
             this.grpAudioDetails2.Name = "grpAudioDetails2";
-            this.grpAudioDetails2.Size = new System.Drawing.Size(224, 100);
+            this.grpAudioDetails2.Size = new System.Drawing.Size(276, 97);
             this.grpAudioDetails2.TabIndex = 35;
             this.grpAudioDetails2.TabStop = false;
             this.grpAudioDetails2.Text = "Virtual Audio Cable Setup";
+            // 
+            // lblVAC1Exclusive
+            // 
+            this.lblVAC1Exclusive.AutoSize = true;
+            this.lblVAC1Exclusive.Image = null;
+            this.lblVAC1Exclusive.Location = new System.Drawing.Point(222, 26);
+            this.lblVAC1Exclusive.Name = "lblVAC1Exclusive";
+            this.lblVAC1Exclusive.Size = new System.Drawing.Size(51, 13);
+            this.lblVAC1Exclusive.TabIndex = 38;
+            this.lblVAC1Exclusive.Text = "exclusive";
+            // 
+            // chkVAC1Exclusive
+            // 
+            this.chkVAC1Exclusive.AutoSize = true;
+            this.chkVAC1Exclusive.Image = null;
+            this.chkVAC1Exclusive.Location = new System.Drawing.Point(236, 47);
+            this.chkVAC1Exclusive.Name = "chkVAC1Exclusive";
+            this.chkVAC1Exclusive.Size = new System.Drawing.Size(15, 14);
+            this.chkVAC1Exclusive.TabIndex = 36;
+            this.chkVAC1Exclusive.UseVisualStyleBackColor = true;
+            this.chkVAC1Exclusive.CheckedChanged += new System.EventHandler(this.chkVAC1Exclusive_CheckedChanged);
             // 
             // lblAudioOutput2
             // 
@@ -27367,7 +27394,7 @@
             // 
             this.chkVAC2Combine.Enabled = false;
             this.chkVAC2Combine.Image = null;
-            this.chkVAC2Combine.Location = new System.Drawing.Point(24, 200);
+            this.chkVAC2Combine.Location = new System.Drawing.Point(24, 216);
             this.chkVAC2Combine.Name = "chkVAC2Combine";
             this.chkVAC2Combine.Size = new System.Drawing.Size(117, 40);
             this.chkVAC2Combine.TabIndex = 88;
@@ -27378,7 +27405,7 @@
             // grpVAC2AutoEnable
             // 
             this.grpVAC2AutoEnable.Controls.Add(this.chkVAC2AutoEnable);
-            this.grpVAC2AutoEnable.Location = new System.Drawing.Point(8, 138);
+            this.grpVAC2AutoEnable.Location = new System.Drawing.Point(8, 154);
             this.grpVAC2AutoEnable.Name = "grpVAC2AutoEnable";
             this.grpVAC2AutoEnable.Size = new System.Drawing.Size(224, 56);
             this.grpVAC2AutoEnable.TabIndex = 86;
@@ -27757,7 +27784,7 @@
             // grpAudioSampleRate3
             // 
             this.grpAudioSampleRate3.Controls.Add(this.comboAudioSampleRate3);
-            this.grpAudioSampleRate3.Location = new System.Drawing.Point(274, 64);
+            this.grpAudioSampleRate3.Location = new System.Drawing.Point(290, 64);
             this.grpAudioSampleRate3.Name = "grpAudioSampleRate3";
             this.grpAudioSampleRate3.Size = new System.Drawing.Size(96, 56);
             this.grpAudioSampleRate3.TabIndex = 82;
@@ -27790,7 +27817,7 @@
             // grpAudioBuffer3
             // 
             this.grpAudioBuffer3.Controls.Add(this.comboAudioBuffer3);
-            this.grpAudioBuffer3.Location = new System.Drawing.Point(274, 6);
+            this.grpAudioBuffer3.Location = new System.Drawing.Point(290, 6);
             this.grpAudioBuffer3.Name = "grpAudioBuffer3";
             this.grpAudioBuffer3.Size = new System.Drawing.Size(96, 56);
             this.grpAudioBuffer3.TabIndex = 81;
@@ -27817,6 +27844,8 @@
             // 
             // grpAudioDetails3
             // 
+            this.grpAudioDetails3.Controls.Add(this.lblVAC2Exclusive);
+            this.grpAudioDetails3.Controls.Add(this.chkVAC2Exclusive);
             this.grpAudioDetails3.Controls.Add(this.lblAudioOutput3);
             this.grpAudioDetails3.Controls.Add(this.comboAudioOutput3);
             this.grpAudioDetails3.Controls.Add(this.lblAudioInput3);
@@ -27825,10 +27854,31 @@
             this.grpAudioDetails3.Controls.Add(this.comboAudioDriver3);
             this.grpAudioDetails3.Location = new System.Drawing.Point(8, 28);
             this.grpAudioDetails3.Name = "grpAudioDetails3";
-            this.grpAudioDetails3.Size = new System.Drawing.Size(224, 100);
+            this.grpAudioDetails3.Size = new System.Drawing.Size(276, 97);
             this.grpAudioDetails3.TabIndex = 80;
             this.grpAudioDetails3.TabStop = false;
             this.grpAudioDetails3.Text = "Virtual Audio Cable Setup";
+            // 
+            // lblVAC2Exclusive
+            // 
+            this.lblVAC2Exclusive.AutoSize = true;
+            this.lblVAC2Exclusive.Image = null;
+            this.lblVAC2Exclusive.Location = new System.Drawing.Point(222, 26);
+            this.lblVAC2Exclusive.Name = "lblVAC2Exclusive";
+            this.lblVAC2Exclusive.Size = new System.Drawing.Size(51, 13);
+            this.lblVAC2Exclusive.TabIndex = 41;
+            this.lblVAC2Exclusive.Text = "exclusive";
+            // 
+            // chkVAC2Exclusive
+            // 
+            this.chkVAC2Exclusive.AutoSize = true;
+            this.chkVAC2Exclusive.Image = null;
+            this.chkVAC2Exclusive.Location = new System.Drawing.Point(236, 47);
+            this.chkVAC2Exclusive.Name = "chkVAC2Exclusive";
+            this.chkVAC2Exclusive.Size = new System.Drawing.Size(15, 14);
+            this.chkVAC2Exclusive.TabIndex = 39;
+            this.chkVAC2Exclusive.UseVisualStyleBackColor = true;
+            this.chkVAC2Exclusive.CheckedChanged += new System.EventHandler(this.chkVAC2Exclusive_CheckedChanged);
             // 
             // lblAudioOutput3
             // 
@@ -56522,6 +56572,7 @@
             this.grpAudioSampleRate2.ResumeLayout(false);
             this.grpAudioBuffer2.ResumeLayout(false);
             this.grpAudioDetails2.ResumeLayout(false);
+            this.grpAudioDetails2.PerformLayout();
             this.tpVAC2.ResumeLayout(false);
             this.tpVAC2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC2GrapherSwing)).EndInit();
@@ -56545,6 +56596,7 @@
             this.grpAudioSampleRate3.ResumeLayout(false);
             this.grpAudioBuffer3.ResumeLayout(false);
             this.grpAudioDetails3.ResumeLayout(false);
+            this.grpAudioDetails3.PerformLayout();
             this.tpAudioOptions.ResumeLayout(false);
             this.tpAudioOptions.PerformLayout();
             this.groupBoxTS29.ResumeLayout(false);
@@ -60817,5 +60869,9 @@
         private CheckBoxTS chkRecoverPAProfileFromTXProfile;
         private LabelTS lblPAProfileWarning;
         private PictureBox pbPAProfileWarning;
+        private LabelTS lblVAC1Exclusive;
+        private CheckBoxTS chkVAC1Exclusive;
+        private LabelTS lblVAC2Exclusive;
+        private CheckBoxTS chkVAC2Exclusive;
     }
 }

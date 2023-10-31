@@ -26,6 +26,7 @@ warren@wpratt.com
 */
 
 #include "cmcomm.h"
+#include "pa_win_wasapi.h"
 
 __declspec (align (16))			IVAC pvac[MAX_EXT_VACS];
 
@@ -87,6 +88,7 @@ PORT void create_ivac(
 	a->initial_INvar = 1.0;
 	a->initial_OUTvar = 1.0;
 	a->swapIQout = 0;
+	a->exclusive = 0;
 	create_resamps(a);
 	{
 		int inrate[2] = { a->audio_rate, a->txmon_rate };
@@ -187,11 +189,54 @@ PORT int StartAudioIVAC(int id)
 	a->inParam.channelCount = 2;
 	a->inParam.suggestedLatency = a->pa_in_latency;
 	a->inParam.sampleFormat = paFloat64;
-
+	a->inParam.hostApiSpecificStreamInfo = NULL;
+	
 	a->outParam.device = out_dev;
 	a->outParam.channelCount = 2;
 	a->outParam.suggestedLatency = a->pa_out_latency;
 	a->outParam.sampleFormat = paFloat64;
+	a->outParam.hostApiSpecificStreamInfo = NULL;
+
+	//attempt to get exlusive if wasapi devices
+	PaWasapiStreamInfo wasapiInputInfo;
+	PaWasapiStreamInfo wasapiOutputInfo;
+	if (in_dev >= 0 && a->exclusive)
+	{
+		PaDeviceInfo *devInfo = Pa_GetDeviceInfo(in_dev);
+		if (devInfo != NULL)
+		{
+			PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(devInfo->hostApi);
+			if (hostApiInfo != NULL && hostApiInfo->type == paWASAPI)
+			{
+				wasapiInputInfo.size = sizeof(PaWasapiStreamInfo);
+				wasapiInputInfo.hostApiType = paWASAPI;
+				wasapiInputInfo.version = 1;
+				wasapiInputInfo.flags = (paWinWasapiExclusive | paWinWasapiThreadPriority);
+				wasapiInputInfo.threadPriority = eThreadPriorityProAudio;
+
+				a->inParam.hostApiSpecificStreamInfo = &wasapiInputInfo;
+			}
+		}		
+	}
+	if (out_dev >= 0 && a->exclusive)
+	{
+		PaDeviceInfo* devInfo = Pa_GetDeviceInfo(out_dev);
+		if (devInfo != NULL)
+		{
+			PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(devInfo->hostApi);
+			if (hostApiInfo != NULL && hostApiInfo->type == paWASAPI)
+			{
+				wasapiOutputInfo.size = sizeof(PaWasapiStreamInfo);
+				wasapiOutputInfo.hostApiType = paWASAPI;
+				wasapiOutputInfo.version = 1;
+				wasapiOutputInfo.flags = (paWinWasapiExclusive | paWinWasapiThreadPriority);
+				wasapiOutputInfo.threadPriority = eThreadPriorityProAudio;
+
+				a->outParam.hostApiSpecificStreamInfo = &wasapiOutputInfo;
+			}
+		}
+	}
+	//
 
 	error = Pa_OpenStream(&a->Stream,
 		&a->inParam,
@@ -690,5 +735,12 @@ void SetIVACswapIQout(int id, int swap)
 {
 	IVAC a = pvac[id];
 	a->swapIQout = swap;
+}
+
+PORT
+void SetIVACExclusive(int id, int exclusive)
+{
+	IVAC a = pvac[id];
+	a->exclusive = exclusive;
 }
 //

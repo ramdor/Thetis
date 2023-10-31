@@ -1407,6 +1407,26 @@ namespace Thetis
                 ivac.SetIVACswapIQout(1, _swap_iq_vac2);
             }
         }
+        private static int _exclusive_vac1 = 0;
+        public static int VAC1Exclusive
+        {
+            get { return _exclusive_vac1; }
+            set
+            {
+                _exclusive_vac1 = value;
+                ivac.SetIVACExclusive(0, _exclusive_vac1);
+            }
+        }
+        private static int _exclusive_vac2 = 0;
+        public static int VAC2Exclusive
+        {
+            get { return _exclusive_vac2; }
+            set
+            {
+                _exclusive_vac2 = value;
+                ivac.SetIVACExclusive(1, _exclusive_vac2);
+            }
+        }
         #endregion
 
         #region Callback Routines
@@ -1442,6 +1462,7 @@ namespace Thetis
             {
                 int devIndex = PA19.PA_HostApiDeviceIndexToDeviceIndex(hostIndex, i);
                 PA19.PaDeviceInfo devInfo = PA19.PA_GetDeviceInfo(devIndex);
+                
                 if (devInfo.maxInputChannels > 0)
                 {
                     string name = devInfo.name;

@@ -58,7 +58,7 @@ typedef struct _ivac
 	int OUTringsize;
 
 	PaStreamParameters inParam, outParam;
-	PaStream *Stream;
+	PaStream *Stream;	
 
 	int host_api_index;
 	int input_dev_index;
@@ -85,6 +85,8 @@ typedef struct _ivac
 	double initial_OUTvar;			// init the var ratio
 
 	int swapIQout;
+
+	int exclusive;				// only use with wasapi right now
 } ivac, *IVAC;
 
 void combinebuff (int n, double* a, double* combined);

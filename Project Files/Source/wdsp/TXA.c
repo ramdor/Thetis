@@ -484,8 +484,8 @@ void destroy_txa (int channel)
 	destroy_meter (txa[channel].outmeter.p);
 	destroy_resample (txa[channel].rsmpout.p);
 	destroy_cfir(txa[channel].cfir.p);
-	destroy_iqc (txa[channel].iqc.p0);
-	destroy_calcc (txa[channel].calcc.p);
+	destroy_calcc(txa[channel].calcc.p);
+	destroy_iqc (txa[channel].iqc.p0);	
 	destroy_siphon (txa[channel].sip1.p);
 	destroy_meter (txa[channel].alcmeter.p);
 	destroy_uslew (txa[channel].uslew.p);
