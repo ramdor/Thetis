@@ -1102,11 +1102,11 @@ namespace Thetis
                     Audio.GetPAOutputDevices(host_index).Count > 0)
                 {
                     //comboAudioDriver1.Items.Add(new PADeviceInfo(PAHostName, host_index));
-                    if (PAHostName != "Windows WASAPI")
-                    {
+                    //if (PAHostName != "Windows WASAPI") //[2.10.3]MW0LGE we want all the wasabi !
+                    //{
                         comboAudioDriver2.Items.Add(new PADeviceInfo(PAHostName, host_index));
                         comboAudioDriver3.Items.Add(new PADeviceInfo(PAHostName, host_index));
-                    }
+                    //}
                     // comboAudioDriver1.Items.Add(new PADeviceInfo(PAHostName, host_index));
                     // comboAudioDriver2.Items.Add(new PADeviceInfo(PAHostName, host_index));
                 }
@@ -1122,7 +1122,7 @@ namespace Thetis
             ArrayList a = Audio.GetPAInputDevices(host);
             foreach (PADeviceInfo p in a)
                 comboAudioInput2.Items.Add(p);
-
+            
             a = Audio.GetPAOutputDevices(host);
             foreach (PADeviceInfo p in a)
                 comboAudioOutput2.Items.Add(p);

@@ -53276,6 +53276,10 @@ namespace Thetis
             {
                 // nPAVersion = PortAudio.Pa_GetVersion();
                 nPAVersion = PA19.PA_GetVersion();
+                int major = (nPAVersion >> 16) & 0xFF;
+                int minor = (nPAVersion >> 8) & 0xFF;
+                int subminor = nPAVersion & 0xFF;
+                nPAVersion = major * 100 + minor * 10 + subminor;
                 if (nPAVersion != Versions._PORTAUDIO_VERSION)
                 {
                     DialogResult dr = MessageBox.Show("Incorrect version of portaudio.dll installed.",
@@ -53283,7 +53287,6 @@ namespace Thetis
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
                 }
-
             }
             catch
             {

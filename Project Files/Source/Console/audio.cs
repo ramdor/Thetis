@@ -1442,6 +1442,7 @@ namespace Thetis
             {
                 int devIndex = PA19.PA_HostApiDeviceIndexToDeviceIndex(hostIndex, i);
                 PA19.PaDeviceInfo devInfo = PA19.PA_GetDeviceInfo(devIndex);
+                
                 if (devInfo.maxInputChannels > 0)
                 {
                     string name = devInfo.name;

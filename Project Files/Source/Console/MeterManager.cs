@@ -8636,6 +8636,7 @@ namespace Thetis
                     Priority = ThreadPriority.Lowest,
                     IsBackground = false
                 };
+                _dxRenderThread.SetApartmentState(ApartmentState.STA); //[2.10.3]
                 _dxRenderThread.Start();
             }
             public string ID
