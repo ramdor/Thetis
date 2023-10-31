@@ -205,6 +205,8 @@ CALCC create_calcc (int channel, int runcal, int size, int rate, int ints, int s
 void destroy_calcc (CALCC a)
 {
 	// correction save and restore threads
+	InterlockedBitTestAndReset(&txa[a->channel].iqc.p1->busy, 0);
+	Sleep(10);
 	InterlockedBitTestAndSet(&a->savecorr_bypass, 0);
 	ReleaseSemaphore(a->Sem_SaveCorr, 1, 0);
 	while (InterlockedAnd(&a->savecorr_bypass, 0xffffffff)) Sleep(1);

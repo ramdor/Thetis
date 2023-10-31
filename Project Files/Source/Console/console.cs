@@ -2602,8 +2602,8 @@ namespace Thetis
             PA19.PA_Terminate();		// terminate audio interface
             DB.Exit();					// close and save database
             NetworkIO.DestroyRNet();
-            //if (radio != null) //[2.10.3]MW0LGE removed until WDSP close down issue resolved after using CWX - ForWarren
-            //    radio.Shutdown();
+            if (radio != null) //[2.10.3]MW0LGE removed until WDSP close down issue resolved after using CWX - ForWarren
+                radio.Shutdown();
             Win32.TimeEndPeriod(1); // return to previous timing precision
             Thread.Sleep(100);
         }
