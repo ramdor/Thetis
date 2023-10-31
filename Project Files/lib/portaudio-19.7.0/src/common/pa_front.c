@@ -1800,7 +1800,7 @@ PaError Pa_GetSampleSize( PaSampleFormat format )
         result = 4;
         break;
 
-    case paFloat64: //[2.10.3]MW0LGE
+	case paFloat64:
         result = 8;
         break;
 

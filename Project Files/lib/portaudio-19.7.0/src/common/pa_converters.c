@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: pa_converters.c 1748 2011-09-01 22:08:32Z philburk $
  * Portable Audio I/O Library sample conversion mechanism
  *
  * Based on the Open Source API proposed by Ross Bencina
@@ -66,7 +66,6 @@
 #include "pa_endianness.h"
 #include "pa_types.h"
 
-//#define PA_NO_STANDARD_ZEROERS
 
 PaSampleFormat PaUtil_SelectClosestAvailableFormat(
     PaSampleFormat availableFormats, PaSampleFormat format)
@@ -91,7 +90,8 @@ PaSampleFormat PaUtil_SelectClosestAvailableFormat(
             do
             {
                 result >>= 1;
-            } while ((result & availableFormats) == 0 && result != 0);
+            }
+            while( (result & availableFormats) == 0 && result != 0 );
         }
         else
         {
@@ -104,14 +104,14 @@ PaSampleFormat PaUtil_SelectClosestAvailableFormat(
             do
             {
                 result <<= 1;
-            } while ((result & availableFormats) == 0 && result != paCustomFormat);
+            }
+            while( (result & availableFormats) == 0 && result != paCustomFormat );
 
             if ((result & availableFormats) == 0)
                 result = paSampleFormatNotSupported;
         }
 
-    }
-    else {
+    }else{
         result = format;
     }
 
@@ -1412,6 +1412,7 @@ static void Int24_To_Float64(
 
 /* -------------------------------------------------------------------------- */
 
+
 static void Int24_To_Float32(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -1674,6 +1675,7 @@ static void Int16_To_Float64(
         dest += destinationStride;
     }
 }
+
 /* -------------------------------------------------------------------------- */
 
 static void Int16_To_Float32(
@@ -1687,7 +1689,7 @@ static void Int16_To_Float32(
 
     while (count--)
     {
-        float samp = *src * const_1_div_32768_; /* FIXME: i'm concerned about this being asymmetrical with float->int16 -rb */
+        float samp = *src * const_1_div_32768_; /* FIXME: i'm concerned about this being asymetrical with float->int16 -rb */
         *dest = samp;
 
         src += sourceStride;
@@ -2418,6 +2420,7 @@ static void Zero32(void* destinationBuffer, signed int destinationStride,
 }
 
 /* -------------------------------------------------------------------------- */
+
 
 static void Zero64(void* destinationBuffer, signed int destinationStride,
     unsigned int count)
