@@ -2689,6 +2689,8 @@ namespace Thetis
                                 Debug.WriteLine(this.Name + " -> " + c2.Name + " needs to be converted to a Thread Safe control.");
 #endif
                         }
+                        else
+                            Debug.Print("Not saving : " + c2.Name);
                     }
                 }
                 else // it is not a group box
@@ -3345,6 +3347,11 @@ namespace Thetis
 
                 switch (name)
                 {
+                    //ignore section
+                    case "udFilterLow":
+                    case "udFilterHigh":
+                        //[2.10.3]MW0LGE ignore section, in the case of the filter ud controls, they will be set by the filter being selected
+                        break;
                     case "last_radio_protocol":
                         Audio.LastRadioProtocol = (RadioProtocol)Enum.Parse(typeof(RadioProtocol), val);
                         break;
