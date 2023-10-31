@@ -5437,14 +5437,14 @@
             // 
             // lblFilterHigh
             // 
-            this.lblFilterHigh.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.lblFilterHigh, "lblFilterHigh");
+            this.lblFilterHigh.ForeColor = System.Drawing.Color.White;
             this.lblFilterHigh.Name = "lblFilterHigh";
             // 
             // lblFilterWidth
             // 
-            this.lblFilterWidth.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.lblFilterWidth, "lblFilterWidth");
+            this.lblFilterWidth.ForeColor = System.Drawing.Color.White;
             this.lblFilterWidth.Name = "lblFilterWidth";
             // 
             // radFilterVar2
@@ -5457,8 +5457,8 @@
             // 
             // lblFilterLow
             // 
-            this.lblFilterLow.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.lblFilterLow, "lblFilterLow");
+            this.lblFilterLow.ForeColor = System.Drawing.Color.White;
             this.lblFilterLow.Name = "lblFilterLow";
             // 
             // radFilterVar1
@@ -5471,8 +5471,8 @@
             // 
             // lblFilterShift
             // 
-            this.lblFilterShift.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.lblFilterShift, "lblFilterShift");
+            this.lblFilterShift.ForeColor = System.Drawing.Color.White;
             this.lblFilterShift.Name = "lblFilterShift";
             // 
             // radFilter9
@@ -6205,8 +6205,8 @@
             // 
             // lblRX2Vol
             // 
-            this.lblRX2Vol.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.lblRX2Vol, "lblRX2Vol");
+            this.lblRX2Vol.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.lblRX2Vol.Name = "lblRX2Vol";
             // 
             // panelMultiRX
