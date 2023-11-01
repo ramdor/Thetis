@@ -28891,6 +28891,11 @@ namespace Thetis
             }
         }
 
+        private void btnReleaseNotes_Click(object sender, EventArgs e)
+        {
+            console.ShowReleaseNotes();
+        }
+
         //private bool renameSkinForDeletion(string sFullPath)
         //{
         //    if (_skinPath == "" || !Directory.Exists(sFullPath)) return false;

@@ -1,0 +1,31 @@
+# !! CW Warning !!
+
+If you use CW and you have different RX and TX antenna ports configured, there is a high potential for full RF power to be present briefly on the RX port. This may lead to damage of any sensitive equipment attached to the RX port such as active antennas and the like. This situation can occur if you utilise the CWX form, serial keying/PTT, and standard hardware keys plugged into the radio. This issue is currently under investigation and has existed in Thetis for an extended period (years and years). If you are interested in following the progress, you can read more about it on [GitHub here](https://github.com/ramdor/Thetis/issues/228).
+
+**Note: You can revisit these release notes by clicking the button in the setup form within the General -> H/W Select tab.**
+
+## v2.10.3 Release
+
+1) PortAudio has been updated to 19.7.0. This brings with it WASAPI support, with exclusive use options.
+2) Skins can now be downloaded and updated from within Thetis. Check them out in the Appearance, Skin Servers tab.
+3) A new menu bar item exists, Finder. Find any control, setting or text in Thetis, click it and it will take you there. Note, some are hidden due to settings, and may even be related to RX2 that is not in use for example. Get additional info by clicking on the checkbox, press left alt when in that extra info mode to get the control name. Ctrl-C will copy it to clipboard and then you can look in the Finder.xml file along side database.xml if you want to change the search text returned for a given item.
+4) CFC display has had an update. I may bring this to a multimeter near you in the future.
+5) FM AF filters for RX and TX, low and high cut
+6) Mic phase reversal
+7) Re-alignment and improvements of UI by Sigi DH1KLM
+
+Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
+
+73
+Richie
+**MW0LGE**
+
+## v2.10.3 Change Log
+- Item 1
+- Item 2
+	- Another item
+	- Another item
+- Item 3
+
+
+

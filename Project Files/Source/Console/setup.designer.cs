@@ -3535,6 +3535,7 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
             this.txtboxTXProfileChangedReport = new System.Windows.Forms.TextBoxTS();
+            this.btnReleaseNotes = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -6814,6 +6815,7 @@
             // tpGeneralHardware
             // 
             this.tpGeneralHardware.BackColor = System.Drawing.SystemColors.Control;
+            this.tpGeneralHardware.Controls.Add(this.btnReleaseNotes);
             this.tpGeneralHardware.Controls.Add(this.btnOpenDBFolder);
             this.tpGeneralHardware.Controls.Add(this.lblTimeout);
             this.tpGeneralHardware.Controls.Add(this.lblShowTimeoutText);
@@ -56214,6 +56216,19 @@
             this.txtboxTXProfileChangedReport.Text = "used to report tx profile changes if you click on oragne box";
             this.txtboxTXProfileChangedReport.Visible = false;
             // 
+            // btnReleaseNotes
+            // 
+            this.btnReleaseNotes.Image = null;
+            this.btnReleaseNotes.Location = new System.Drawing.Point(259, 310);
+            this.btnReleaseNotes.Name = "btnReleaseNotes";
+            this.btnReleaseNotes.Selectable = true;
+            this.btnReleaseNotes.Size = new System.Drawing.Size(111, 53);
+            this.btnReleaseNotes.TabIndex = 123;
+            this.btnReleaseNotes.Text = "Release Notes";
+            this.toolTip1.SetToolTip(this.btnReleaseNotes, "Show the release notes for this version");
+            this.btnReleaseNotes.UseVisualStyleBackColor = true;
+            this.btnReleaseNotes.Click += new System.EventHandler(this.btnReleaseNotes_Click);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -60883,5 +60898,6 @@
         private CheckBoxTS chkVAC2ExclusiveOut;
         private CheckBoxTS chkVAC1ExclusiveIn;
         private CheckBoxTS chkVAC2ExclusiveIn;
+        private ButtonTS btnReleaseNotes;
     }
 }
