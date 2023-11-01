@@ -4365,6 +4365,10 @@ namespace Thetis
             t.Columns.Add("RXEQ8", typeof(int));
             t.Columns.Add("RXEQ9", typeof(int));
             t.Columns.Add("RXEQ10", typeof(int));
+            t.Columns.Add("VAC1_Exclusive_In", typeof(bool));
+            t.Columns.Add("VAC1_Exclusive_Out", typeof(bool));
+            t.Columns.Add("VAC2_Exclusive_In", typeof(bool));
+            t.Columns.Add("VAC2_Exclusive_Out", typeof(bool));
             //
 
             // CFC
@@ -4583,6 +4587,10 @@ namespace Thetis
             dr["RXEQ8"] = 0;
             dr["RXEQ9"] = 0;
             dr["RXEQ10"] = 0;
+            dr["VAC1_Exclusive_In"] = false;
+            dr["VAC1_Exclusive_Out"] = false;
+            dr["VAC2_Exclusive_In"] = false;
+            dr["VAC2_Exclusive_Out"] = false;
             //
 
             // CFC
@@ -4803,6 +4811,10 @@ namespace Thetis
             dr["RXEQ8"] = 0;
             dr["RXEQ9"] = 0;
             dr["RXEQ10"] = 0;
+            dr["VAC1_Exclusive_In"] = false;
+            dr["VAC1_Exclusive_Out"] = false;
+            dr["VAC2_Exclusive_In"] = false;
+            dr["VAC2_Exclusive_Out"] = false;
             //
 
             // CFC
@@ -5024,6 +5036,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -5244,6 +5260,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -5463,6 +5483,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -5682,6 +5706,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -5901,6 +5929,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -6120,6 +6152,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -6339,6 +6375,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -6558,6 +6598,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -6777,6 +6821,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -6996,6 +7044,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -7215,6 +7267,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -7434,6 +7490,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -7653,6 +7713,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -7872,6 +7936,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -8091,6 +8159,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -8310,6 +8382,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -8529,6 +8605,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -8748,6 +8828,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC
@@ -8967,6 +9051,10 @@ namespace Thetis
                 dr["RXEQ8"] = 0;
                 dr["RXEQ9"] = 0;
                 dr["RXEQ10"] = 0;
+                dr["VAC1_Exclusive_In"] = false;
+                dr["VAC1_Exclusive_Out"] = false;
+                dr["VAC2_Exclusive_In"] = false;
+                dr["VAC2_Exclusive_Out"] = false;
                 //
 
                 // CFC

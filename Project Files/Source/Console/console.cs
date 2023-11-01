@@ -2600,6 +2600,9 @@ namespace Thetis
         public void ExitConsole()
         {
             N1MM.Stop();
+
+            if (_frmReleaseNotes != null)
+                _frmReleaseNotes.Close();
                                                                   
             if (n1mm_udp_client != null)
                 n1mm_udp_client.Close();

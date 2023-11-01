@@ -2731,6 +2731,10 @@ namespace Thetis
                 if (isTXProfileSettingDifferent<int>(dr, "RXEQPreamp", rxeq[0], out sReportOut)) sReport += sReportOut;
                 for (int i = 1; i < 11; i++)
                     if (isTXProfileSettingDifferent<int>(dr, "RXEQ" + i.ToString(), rxeq[i], out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<bool>(dr, "VAC1_Exclusive_In", (bool)chkVAC1ExclusiveIn.Checked, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<bool>(dr, "VAC1_Exclusive_Out", (bool)chkVAC1ExclusiveOut.Checked, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<bool>(dr, "VAC2_Exclusive_In", (bool)chkVAC2ExclusiveIn.Checked, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<bool>(dr, "VAC2_Exclusive_Out", (bool)chkVAC2ExclusiveOut.Checked, out sReportOut)) sReport += sReportOut;
                 //
 
                 //CFC
@@ -2861,6 +2865,9 @@ namespace Thetis
             if (DB.ConvertFromDBVal<string>(dr["VAC1_AudioInput"]) != (string)comboAudioInput2.Text) return true;
             if (DB.ConvertFromDBVal<string>(dr["VAC1_AudioOutput"]) != (string)comboAudioOutput2.Text) return true;
 
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Exclusive_In"]) != (bool)chkVAC1ExclusiveIn.Checked) return true;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC1_Exclusive_Out"]) != (bool)chkVAC1ExclusiveOut.Checked) return true;
+
             if (DB.ConvertFromDBVal<bool>(dr["VAC2_On"]) != (bool)chkVAC2Enable.Checked) return true;
             if (DB.ConvertFromDBVal<bool>(dr["VAC2_Auto_On"]) != (bool)chkVAC2AutoEnable.Checked) return true;
             if (DB.ConvertFromDBVal<int>(dr["VAC2_RX_GAIN"]) != (int)udVAC2GainRX.Value) return true;
@@ -2884,6 +2891,9 @@ namespace Thetis
             if (DB.ConvertFromDBVal<string>(dr["VAC2_AudioDriver"]) != (string)comboAudioDriver3.Text) return true;
             if (DB.ConvertFromDBVal<string>(dr["VAC2_AudioInput"]) != (string)comboAudioInput3.Text) return true;
             if (DB.ConvertFromDBVal<string>(dr["VAC2_AudioOutput"]) != (string)comboAudioOutput3.Text) return true;
+
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Exclusive_In"]) != (bool)chkVAC2ExclusiveIn.Checked) return true;
+            if (DB.ConvertFromDBVal<bool>(dr["VAC2_Exclusive_Out"]) != (bool)chkVAC2ExclusiveOut.Checked) return true;
 
             if (!bOnlyVac)
             {
@@ -2936,6 +2946,10 @@ namespace Thetis
                 if (DB.ConvertFromDBVal<int>(dr["RXEQPreamp"]) != rxeq[0]) return true;
                 for (int i = 1; i < 11; i++)
                     if (DB.ConvertFromDBVal<int>(dr["RXEQ" + i.ToString()]) != rxeq[i]) return true;
+                if (DB.ConvertFromDBVal<bool>(dr["VAC1_Exclusive_In"]) != (bool)chkVAC1ExclusiveIn.Checked) return true;
+                if (DB.ConvertFromDBVal<bool>(dr["VAC1_Exclusive_Out"]) != (bool)chkVAC1ExclusiveOut.Checked) return true;
+                if (DB.ConvertFromDBVal<bool>(dr["VAC2_Exclusive_In"]) != (bool)chkVAC2ExclusiveIn.Checked) return true;
+                if (DB.ConvertFromDBVal<bool>(dr["VAC2_Exclusive_Out"]) != (bool)chkVAC2ExclusiveOut.Checked) return true;
                 //
 
                 //CFC
@@ -3128,6 +3142,10 @@ namespace Thetis
             Common.HightlightControl(chkSwapIQVac2, bHighlight);
             Common.HightlightControl(chkDisableRearSpeakerJacksAudioAmplifier, bHighlight);
             Common.HightlightControl(comboPAProfile, bHighlight);
+            Common.HightlightControl(chkVAC1ExclusiveIn, bHighlight);
+            Common.HightlightControl(chkVAC1ExclusiveOut, bHighlight);
+            Common.HightlightControl(chkVAC2ExclusiveIn, bHighlight);
+            Common.HightlightControl(chkVAC2ExclusiveOut, bHighlight);
             //
 
             //CFC
@@ -3336,6 +3354,10 @@ namespace Thetis
             dr["RXEQPreamp"] = rxeq[0];
             for (int i = 1; i < 11; i++)
                 dr["RXEQ" + i.ToString()] = rxeq[i];
+            dr["VAC1_Exclusive_In"] = (bool)chkVAC1ExclusiveIn.Checked;
+            dr["VAC1_Exclusive_Out"] = (bool)chkVAC1ExclusiveOut.Checked;
+            dr["VAC2_Exclusive_In"] = (bool)chkVAC2ExclusiveIn.Checked;
+            dr["VAC2_Exclusive_Out"] = (bool)chkVAC2ExclusiveOut.Checked;
             //
 
             //CFC
@@ -8015,8 +8037,14 @@ namespace Thetis
             //[2.10.3]MW0LGE only enable if wasapi
             int hostIndex = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Index;
             PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
-            chkVAC1ExclusiveOut.Enabled = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
-            chkVAC1ExclusiveIn.Enabled = chkVAC1ExclusiveOut.Enabled;
+            bool bIsWASAPI = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
+            chkVAC1ExclusiveOut.Enabled = bIsWASAPI;
+            chkVAC1ExclusiveIn.Enabled = bIsWASAPI;
+            if(!bIsWASAPI) // turn these off so that when they are enabled again and vac is on, we dont start exclusive
+            {
+                chkVAC1ExclusiveOut.Checked = false;
+                chkVAC1ExclusiveIn.Checked = false;
+            }
             //
 
             string new_driver_name = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Name;
@@ -8054,8 +8082,15 @@ namespace Thetis
             //[2.10.3]MW0LGE only enable if wasapi
             int hostIndex = ((PADeviceInfo)comboAudioDriver3.SelectedItem).Index;
             PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
-            chkVAC2ExclusiveOut.Enabled = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
-            chkVAC2ExclusiveIn.Enabled = chkVAC2ExclusiveOut.Enabled;
+            bool bIsWASAPI = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
+            chkVAC2ExclusiveOut.Enabled = bIsWASAPI;
+            chkVAC2ExclusiveIn.Enabled = bIsWASAPI;
+            if (!bIsWASAPI) // turn these off so that when they are enabled again and vac is on, we dont start exclusive
+            {
+                chkVAC2ExclusiveOut.Checked = false;
+                chkVAC1ExclusiveOut.Checked = false;
+            }
+
             //
 
             string new_driver_name = ((PADeviceInfo)comboAudioDriver3.SelectedItem).Name;
@@ -10615,6 +10650,9 @@ namespace Thetis
                 comboAudioDriver2.Text = DB.ConvertFromDBVal<string>(dr["VAC1_AudioDriver"]);
                 comboAudioInput2.Text = DB.ConvertFromDBVal<string>(dr["VAC1_AudioInput"]);
                 comboAudioOutput2.Text = DB.ConvertFromDBVal<string>(dr["VAC1_AudioOutput"]);
+
+                chkVAC1ExclusiveIn.Checked = (bool)dr["VAC1_Exclusive_In"];
+                chkVAC1ExclusiveOut.Checked = (bool)dr["VAC1_Exclusive_Out"];
             }
 
             //chkVAC2Enable.Checked = (bool)dr["VAC2_On"];
@@ -10642,6 +10680,9 @@ namespace Thetis
                 comboAudioDriver3.Text = DB.ConvertFromDBVal<string>(dr["VAC2_AudioDriver"]);
                 comboAudioInput3.Text = DB.ConvertFromDBVal<string>(dr["VAC2_AudioInput"]);
                 comboAudioOutput3.Text = DB.ConvertFromDBVal<string>(dr["VAC2_AudioOutput"]);
+
+                chkVAC2ExclusiveIn.Checked = (bool)dr["VAC2_Exclusive_In"];
+                chkVAC2ExclusiveOut.Checked = (bool)dr["VAC2_Exclusive_Out"];
             }
 
             console.DeferUpdateDSP = true; //MW0LGE_21k9d
@@ -24082,7 +24123,7 @@ namespace Thetis
                         x += (int)(penWidth / 2);
                         g.DrawLine(p, x, height - 1, x, height - (int)(dbm * scale) - 1);
 
-                        linePoints[n] = new Point(x, height - (int)(dbm * scale) - 1);
+                        linePoints[n - startFreqIndex] = new Point(x, height - (int)(dbm * scale) - 1);
                     }
 
                     using (Pen p2 = new Pen(Brushes.White, 2f))
