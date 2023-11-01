@@ -86,7 +86,8 @@ typedef struct _ivac
 
 	int swapIQout;
 
-	int exclusive;				// only use with wasapi right now
+	int exclusive_in;				// only use with wasapi right now
+	int exclusive_out;				// only use with wasapi right now
 } ivac, *IVAC;
 
 void combinebuff (int n, double* a, double* combined);

@@ -1996,8 +1996,10 @@ namespace Thetis
             chkSwapIQVac1_CheckedChanged(this, e);
             chkSwapIQVac2_CheckedChanged(this, e);
 
-            chkVAC1Exclusive_CheckedChanged(this, e);
-            chkVAC2Exclusive_CheckedChanged(this, e);
+            chkVAC1ExclusiveIn_CheckedChanged(this, e);
+            chkVAC2ExclusiveIn_CheckedChanged(this, e);
+            chkVAC1ExclusiveOut_CheckedChanged(this, e);
+            chkVAC2ExclusiveOut_CheckedChanged(this, e);
             // 
 
             // Calibration Tab
@@ -8013,7 +8015,8 @@ namespace Thetis
             //[2.10.3]MW0LGE only enable if wasapi
             int hostIndex = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Index;
             PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
-            chkVAC1Exclusive.Enabled = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
+            chkVAC1ExclusiveOut.Enabled = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
+            chkVAC1ExclusiveIn.Enabled = chkVAC1ExclusiveOut.Enabled;
             //
 
             string new_driver_name = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Name;
@@ -8051,7 +8054,8 @@ namespace Thetis
             //[2.10.3]MW0LGE only enable if wasapi
             int hostIndex = ((PADeviceInfo)comboAudioDriver3.SelectedItem).Index;
             PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
-            chkVAC2Exclusive.Enabled = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
+            chkVAC2ExclusiveOut.Enabled = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
+            chkVAC2ExclusiveIn.Enabled = chkVAC2ExclusiveOut.Enabled;
             //
 
             string new_driver_name = ((PADeviceInfo)comboAudioDriver3.SelectedItem).Name;
@@ -28819,8 +28823,7 @@ namespace Thetis
             lblPAProfileWarning.Visible = chkRecoverPAProfileFromTXProfile.Checked;
             pbPAProfileWarning.Visible = chkRecoverPAProfileFromTXProfile.Checked;
         }
-
-        private void chkVAC1Exclusive_CheckedChanged(object sender, EventArgs e)
+        private void chkVAC1ExclusiveOut_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
 
@@ -28829,7 +28832,7 @@ namespace Thetis
                 Audio.EnableVAC1(false);
             }
 
-            Audio.VAC1Exclusive = chkVAC1Exclusive.Checked ? 1 : 0;
+            Audio.VAC1ExclusiveOut = chkVAC1ExclusiveOut.Checked ? 1 : 0;
 
             if (console.PowerOn && chkAudioEnableVAC.Checked)
             {
@@ -28837,7 +28840,7 @@ namespace Thetis
             }
         }
 
-        private void chkVAC2Exclusive_CheckedChanged(object sender, EventArgs e)
+        private void chkVAC2ExclusiveOut_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
 
@@ -28846,7 +28849,41 @@ namespace Thetis
                 Audio.EnableVAC2(false);
             }
 
-            Audio.VAC2Exclusive = chkVAC2Exclusive.Checked ? 1 : 0;
+            Audio.VAC2ExclusiveOut = chkVAC2ExclusiveOut.Checked ? 1 : 0;
+
+            if (console.PowerOn && chkVAC2Enable.Checked)
+            {
+                Audio.EnableVAC2(true);
+            }
+        }
+
+        private void chkVAC1ExclusiveIn_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            if (console.PowerOn && chkAudioEnableVAC.Checked)
+            {
+                Audio.EnableVAC1(false);
+            }
+
+            Audio.VAC1ExclusiveIn = chkVAC1ExclusiveIn.Checked ? 1 : 0;
+
+            if (console.PowerOn && chkAudioEnableVAC.Checked)
+            {
+                Audio.EnableVAC1(true);
+            }
+        }
+
+        private void chkVAC2ExclusiveIn_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            if (console.PowerOn && chkVAC2Enable.Checked)
+            {
+                Audio.EnableVAC2(false);
+            }
+
+            Audio.VAC2ExclusiveIn = chkVAC2ExclusiveIn.Checked ? 1 : 0;
 
             if (console.PowerOn && chkVAC2Enable.Checked)
             {

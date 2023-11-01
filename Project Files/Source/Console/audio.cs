@@ -1407,24 +1407,45 @@ namespace Thetis
                 ivac.SetIVACswapIQout(1, _swap_iq_vac2);
             }
         }
-        private static int _exclusive_vac1 = 0;
-        public static int VAC1Exclusive
+        private static int _exclusive_out_vac1 = 0;
+        public static int VAC1ExclusiveOut
         {
-            get { return _exclusive_vac1; }
+            get { return _exclusive_out_vac1; }
             set
             {
-                _exclusive_vac1 = value;
-                ivac.SetIVACExclusive(0, _exclusive_vac1);
+                _exclusive_out_vac1 = value;
+                ivac.SetIVACExclusiveOut(0, _exclusive_out_vac1);
             }
         }
-        private static int _exclusive_vac2 = 0;
-        public static int VAC2Exclusive
+        private static int _exclusive_out_vac2 = 0;
+        public static int VAC2ExclusiveOut
         {
-            get { return _exclusive_vac2; }
+            get { return _exclusive_out_vac2; }
             set
             {
-                _exclusive_vac2 = value;
-                ivac.SetIVACExclusive(1, _exclusive_vac2);
+                _exclusive_out_vac2 = value;
+                ivac.SetIVACExclusiveOut(1, _exclusive_out_vac2);
+            }
+        }
+
+        private static int _exclusive_in_vac1 = 0;
+        public static int VAC1ExclusiveIn
+        {
+            get { return _exclusive_in_vac1; }
+            set
+            {
+                _exclusive_in_vac1 = value;
+                ivac.SetIVACExclusiveIn(0, _exclusive_in_vac1);
+            }
+        }
+        private static int _exclusive_in_vac2 = 0;
+        public static int VAC2ExclusiveIn
+        {
+            get { return _exclusive_in_vac2; }
+            set
+            {
+                _exclusive_in_vac2 = value;
+                ivac.SetIVACExclusiveIn(1, _exclusive_in_vac2);
             }
         }
         #endregion
