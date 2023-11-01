@@ -55305,8 +55305,7 @@ namespace Thetis
         private void enableAudioAmplfier(bool bEnable)
         {
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH &&
-                (CurrentHPSDRModel == HPSDRModel.ANAN7000D || CurrentHPSDRModel == HPSDRModel.ANAN8000D
-                || CurrentHPSDRModel == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K))
+                (CurrentHPSDRModel == HPSDRModel.ANAN7000D || CurrentHPSDRModel == HPSDRModel.ANAN8000D))           // G8NJJ not adding Saturn in this list just yet
             {
                 NetworkIO.SetAudioAmpEnable(_bEnableAudioAmplifier);
             }
