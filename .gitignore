@@ -13,3 +13,4 @@ Project Files/Source/Thetis-Installer/obj
 Project Files/Source/Thetis-Installer/bin
 *.idb
 *.pdb
+Project Files/lib/portaudio-19.7.0/build/msvc/Win32/Release/portaudio.Build.CppClean.log

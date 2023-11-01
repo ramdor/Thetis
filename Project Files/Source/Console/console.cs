@@ -65,8 +65,6 @@ namespace Thetis
 
     public partial class Console : Form
     {
-        private const bool ENABLE_DB_FORCE_UPDATE = true;
-
         public const int MAX_FPS = 144;
 
         #region Variable Declarations
@@ -739,11 +737,16 @@ namespace Thetis
 
                         //MW0LGE_21a
                         //check for modifier keys, and force db update if CTRL held, much like reset above
-                        bool bForcedUpdate = ENABLE_DB_FORCE_UPDATE && (Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey));
+                        bool bForcedUpdate = !File.Exists(autoMergeFileName) && (Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey));
                         if (bForcedUpdate)
                         {
                             Thread.Sleep(500); // ensure this is intentional
                             bForcedUpdate = (Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey));
+                            if (bForcedUpdate)
+                            {
+                                DialogResult dr = MessageBox.Show("Forced update CTRL key detected. Do you want to do this?", "Forced Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+                                if (dr == DialogResult.No) bForcedUpdate = false;
+                            }
                         }
                         //
 
@@ -783,7 +786,7 @@ namespace Thetis
                             else  // Not yet ready for trying an automatic merge - get set up for it
                             {
                                 // Archive the old database file and reset database
-                               // string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                                // string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                                 string datetime = Common.DateTimeStringForFile();//DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
 
                                 string file = db_file_name.Substring(db_file_name.LastIndexOf("\\") + 1);
