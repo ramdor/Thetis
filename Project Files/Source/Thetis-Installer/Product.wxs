@@ -13,6 +13,7 @@
 <?define VC143 = "Microsoft_VC143_CRT_x64.msm" ?>
 <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
 <?define FilesPath = "..\..\Bin\$(var.Platform)\$(var.Configuration)\" ?>
+<?define SourcePath = "..\..\Source\" ?>
 <?else ?>
 <?define Win64 = "no" ?>
 <?define UpgradeCode = "CE4756C9-3CA7-4A55-8980-7F0A920890DE"?>
@@ -196,7 +197,7 @@
          Target="[INSTALLFOLDER]Thetis-CAT-Command-Reference-Guide-V3.pdf"
          WorkingDirectory="INSTALLFOLDER" />
 
-      </Component>
+	  </Component>
     </DirectoryRef>
        
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
@@ -299,7 +300,21 @@
 				  Source="$(var.FilesPath)Newtonsoft.Json.dll"
 				  KeyPath="yes"
               />
-		</Component>	
+		</Component>
+
+		<Component Guid="*">
+			<File Id="MarkdigDLL"
+				  Source="$(var.FilesPath)Markdig.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+
+		<Component Guid="*">
+			<File Id="System.MemoryDLL"
+				  Source="$(var.FilesPath)System.Memory.dll"
+				  KeyPath="yes"
+              />
+		</Component>
 		
       <Component Guid="*">
         <File Id="SharpDX.Direct2D1DLL"
@@ -382,7 +397,13 @@
               Source="$(var.DocumentationPath)Thetis-CAT-Command-Reference-Guide-V3.pdf"
               KeyPath="yes"
               />
-      </Component>
+	  </Component>
+		<Component Guid="*">
+			<File Id="ThetisReleaseNotesTXT"
+				Source="$(var.SourcePath)ReleaseNotes.txt"
+				KeyPath="yes"
+            />			  
+		  </Component>
     </ComponentGroup>
 
     <Binary Id="InstallSkins" SourceFile="OpenHPSDR_Skins.exe" />

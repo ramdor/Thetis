@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Diagnostics.Tracing</name>
+  </assembly>
+  <members>
+    <member name="M:System.Diagnostics.Tracing.EventCounter.#ctor(System.String,System.Diagnostics.Tracing.EventSource)">
+      <summary>Initializes a new instance of the <see cref="T:System.Diagnostics.Tracing.EventCounter" /> class.</summary>
+      <param name="name">The event counter name.</param>
+      <param name="eventSource">The event source.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="name" /> is <see langword="null" />.  
+-or-  
+              <paramref name="eventSource" /> is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Diagnostics.Tracing.EventCounter.WriteMetric(System.Single)">
+      <summary>Writes the metric if performance counters are on.</summary>
+      <param name="value">The value to be written.</param>
+    </member>
+    <member name="T:System.Diagnostics.Tracing.EventCounter">
+      <summary>Provides the ability to collect statistics for very frequent events through the  <see cref="T:System.Diagnostics.Tracing.EventSource" /> class.</summary>
+    </member>
+  </members>
+</doc>
