@@ -3,6 +3,8 @@
 *.lo
 *.o
 *.obj
+*.idb
+*.pdb
 
 # annoying files
 **/.DS_Store
