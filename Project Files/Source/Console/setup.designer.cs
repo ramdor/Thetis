@@ -1627,7 +1627,8 @@
             this.grpAudioBuffer2 = new System.Windows.Forms.GroupBoxTS();
             this.comboAudioBuffer2 = new System.Windows.Forms.ComboBoxTS();
             this.grpAudioDetails2 = new System.Windows.Forms.GroupBoxTS();
-            this.chkVAC1Exclusive = new System.Windows.Forms.CheckBoxTS();
+            this.chkVAC1ExclusiveIn = new System.Windows.Forms.CheckBoxTS();
+            this.chkVAC1ExclusiveOut = new System.Windows.Forms.CheckBoxTS();
             this.lblAudioOutput2 = new System.Windows.Forms.LabelTS();
             this.comboAudioOutput2 = new System.Windows.Forms.ComboBoxTS();
             this.lblAudioInput2 = new System.Windows.Forms.LabelTS();
@@ -1710,7 +1711,8 @@
             this.grpAudioBuffer3 = new System.Windows.Forms.GroupBoxTS();
             this.comboAudioBuffer3 = new System.Windows.Forms.ComboBoxTS();
             this.grpAudioDetails3 = new System.Windows.Forms.GroupBoxTS();
-            this.chkVAC2Exclusive = new System.Windows.Forms.CheckBoxTS();
+            this.chkVAC2ExclusiveIn = new System.Windows.Forms.CheckBoxTS();
+            this.chkVAC2ExclusiveOut = new System.Windows.Forms.CheckBoxTS();
             this.lblAudioOutput3 = new System.Windows.Forms.LabelTS();
             this.comboAudioOutput3 = new System.Windows.Forms.ComboBoxTS();
             this.lblAudioInput3 = new System.Windows.Forms.LabelTS();
@@ -26616,7 +26618,8 @@
             // 
             // grpAudioDetails2
             // 
-            this.grpAudioDetails2.Controls.Add(this.chkVAC1Exclusive);
+            this.grpAudioDetails2.Controls.Add(this.chkVAC1ExclusiveIn);
+            this.grpAudioDetails2.Controls.Add(this.chkVAC1ExclusiveOut);
             this.grpAudioDetails2.Controls.Add(this.lblAudioOutput2);
             this.grpAudioDetails2.Controls.Add(this.comboAudioOutput2);
             this.grpAudioDetails2.Controls.Add(this.lblAudioInput2);
@@ -26631,18 +26634,31 @@
             this.grpAudioDetails2.TabStop = false;
             this.grpAudioDetails2.Text = "Virtual Audio Cable 1 Setup";
             // 
-            // chkVAC1Exclusive
+            // chkVAC1ExclusiveIn
             // 
-            this.chkVAC1Exclusive.AutoSize = true;
-            this.chkVAC1Exclusive.Image = null;
-            this.chkVAC1Exclusive.Location = new System.Drawing.Point(229, 97);
-            this.chkVAC1Exclusive.Name = "chkVAC1Exclusive";
-            this.chkVAC1Exclusive.Size = new System.Drawing.Size(90, 17);
-            this.chkVAC1Exclusive.TabIndex = 36;
-            this.chkVAC1Exclusive.Text = "exclusive use";
-            this.toolTip1.SetToolTip(this.chkVAC1Exclusive, "Try to use this device exclusively when using WASAPI driver");
-            this.chkVAC1Exclusive.UseVisualStyleBackColor = true;
-            this.chkVAC1Exclusive.CheckedChanged += new System.EventHandler(this.chkVAC1Exclusive_CheckedChanged);
+            this.chkVAC1ExclusiveIn.AutoSize = true;
+            this.chkVAC1ExclusiveIn.Image = null;
+            this.chkVAC1ExclusiveIn.Location = new System.Drawing.Point(116, 97);
+            this.chkVAC1ExclusiveIn.Name = "chkVAC1ExclusiveIn";
+            this.chkVAC1ExclusiveIn.Size = new System.Drawing.Size(81, 17);
+            this.chkVAC1ExclusiveIn.TabIndex = 37;
+            this.chkVAC1ExclusiveIn.Text = "exclusive in";
+            this.toolTip1.SetToolTip(this.chkVAC1ExclusiveIn, "Try to use this input device exclusively when using WASAPI driver");
+            this.chkVAC1ExclusiveIn.UseVisualStyleBackColor = true;
+            this.chkVAC1ExclusiveIn.CheckedChanged += new System.EventHandler(this.chkVAC1ExclusiveIn_CheckedChanged);
+            // 
+            // chkVAC1ExclusiveOut
+            // 
+            this.chkVAC1ExclusiveOut.AutoSize = true;
+            this.chkVAC1ExclusiveOut.Image = null;
+            this.chkVAC1ExclusiveOut.Location = new System.Drawing.Point(229, 97);
+            this.chkVAC1ExclusiveOut.Name = "chkVAC1ExclusiveOut";
+            this.chkVAC1ExclusiveOut.Size = new System.Drawing.Size(88, 17);
+            this.chkVAC1ExclusiveOut.TabIndex = 36;
+            this.chkVAC1ExclusiveOut.Text = "exclusive out";
+            this.toolTip1.SetToolTip(this.chkVAC1ExclusiveOut, "Try to use this output device exclusively when using WASAPI driver");
+            this.chkVAC1ExclusiveOut.UseVisualStyleBackColor = true;
+            this.chkVAC1ExclusiveOut.CheckedChanged += new System.EventHandler(this.chkVAC1ExclusiveOut_CheckedChanged);
             // 
             // lblAudioOutput2
             // 
@@ -27832,7 +27848,8 @@
             // 
             // grpAudioDetails3
             // 
-            this.grpAudioDetails3.Controls.Add(this.chkVAC2Exclusive);
+            this.grpAudioDetails3.Controls.Add(this.chkVAC2ExclusiveIn);
+            this.grpAudioDetails3.Controls.Add(this.chkVAC2ExclusiveOut);
             this.grpAudioDetails3.Controls.Add(this.lblAudioOutput3);
             this.grpAudioDetails3.Controls.Add(this.comboAudioOutput3);
             this.grpAudioDetails3.Controls.Add(this.lblAudioInput3);
@@ -27847,18 +27864,31 @@
             this.grpAudioDetails3.TabStop = false;
             this.grpAudioDetails3.Text = "Virtual Audio Cable 2 Setup";
             // 
-            // chkVAC2Exclusive
+            // chkVAC2ExclusiveIn
             // 
-            this.chkVAC2Exclusive.AutoSize = true;
-            this.chkVAC2Exclusive.Image = null;
-            this.chkVAC2Exclusive.Location = new System.Drawing.Point(229, 97);
-            this.chkVAC2Exclusive.Name = "chkVAC2Exclusive";
-            this.chkVAC2Exclusive.Size = new System.Drawing.Size(90, 17);
-            this.chkVAC2Exclusive.TabIndex = 39;
-            this.chkVAC2Exclusive.Text = "exclusive use";
-            this.toolTip1.SetToolTip(this.chkVAC2Exclusive, "Try to use this device exclusively when using WASAPI driver");
-            this.chkVAC2Exclusive.UseVisualStyleBackColor = true;
-            this.chkVAC2Exclusive.CheckedChanged += new System.EventHandler(this.chkVAC2Exclusive_CheckedChanged);
+            this.chkVAC2ExclusiveIn.AutoSize = true;
+            this.chkVAC2ExclusiveIn.Image = null;
+            this.chkVAC2ExclusiveIn.Location = new System.Drawing.Point(116, 97);
+            this.chkVAC2ExclusiveIn.Name = "chkVAC2ExclusiveIn";
+            this.chkVAC2ExclusiveIn.Size = new System.Drawing.Size(81, 17);
+            this.chkVAC2ExclusiveIn.TabIndex = 80;
+            this.chkVAC2ExclusiveIn.Text = "exclusive in";
+            this.toolTip1.SetToolTip(this.chkVAC2ExclusiveIn, "Try to use this input device exclusively when using WASAPI driver");
+            this.chkVAC2ExclusiveIn.UseVisualStyleBackColor = true;
+            this.chkVAC2ExclusiveIn.CheckedChanged += new System.EventHandler(this.chkVAC2ExclusiveIn_CheckedChanged);
+            // 
+            // chkVAC2ExclusiveOut
+            // 
+            this.chkVAC2ExclusiveOut.AutoSize = true;
+            this.chkVAC2ExclusiveOut.Image = null;
+            this.chkVAC2ExclusiveOut.Location = new System.Drawing.Point(229, 97);
+            this.chkVAC2ExclusiveOut.Name = "chkVAC2ExclusiveOut";
+            this.chkVAC2ExclusiveOut.Size = new System.Drawing.Size(88, 17);
+            this.chkVAC2ExclusiveOut.TabIndex = 39;
+            this.chkVAC2ExclusiveOut.Text = "exclusive out";
+            this.toolTip1.SetToolTip(this.chkVAC2ExclusiveOut, "Try to use this output device exclusively when using WASAPI driver");
+            this.chkVAC2ExclusiveOut.UseVisualStyleBackColor = true;
+            this.chkVAC2ExclusiveOut.CheckedChanged += new System.EventHandler(this.chkVAC2ExclusiveOut_CheckedChanged);
             // 
             // lblAudioOutput3
             // 
@@ -60849,7 +60879,9 @@
         private CheckBoxTS chkRecoverPAProfileFromTXProfile;
         private LabelTS lblPAProfileWarning;
         private PictureBox pbPAProfileWarning;
-        private CheckBoxTS chkVAC1Exclusive;
-        private CheckBoxTS chkVAC2Exclusive;
+        private CheckBoxTS chkVAC1ExclusiveOut;
+        private CheckBoxTS chkVAC2ExclusiveOut;
+        private CheckBoxTS chkVAC1ExclusiveIn;
+        private CheckBoxTS chkVAC2ExclusiveIn;
     }
 }

@@ -88,7 +88,8 @@ PORT void create_ivac(
 	a->initial_INvar = 1.0;
 	a->initial_OUTvar = 1.0;
 	a->swapIQout = 0;
-	a->exclusive = 0;
+	a->exclusive_in = 0;
+	a->exclusive_out = 0;
 	create_resamps(a);
 	{
 		int inrate[2] = { a->audio_rate, a->txmon_rate };
@@ -200,12 +201,12 @@ PORT int StartAudioIVAC(int id)
 	//attempt to get exlusive if wasapi devices
 	PaWasapiStreamInfo wasapiInputInfo;
 	PaWasapiStreamInfo wasapiOutputInfo;
-	if (in_dev >= 0 && a->exclusive)
+	if (in_dev >= 0 && a->exclusive_in)
 	{
-		PaDeviceInfo *devInfo = Pa_GetDeviceInfo(in_dev);
+		const PaDeviceInfo *devInfo = Pa_GetDeviceInfo(in_dev);
 		if (devInfo != NULL)
 		{
-			PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(devInfo->hostApi);
+			const PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(devInfo->hostApi);
 			if (hostApiInfo != NULL && hostApiInfo->type == paWASAPI)
 			{
 				wasapiInputInfo.size = sizeof(PaWasapiStreamInfo);
@@ -218,12 +219,12 @@ PORT int StartAudioIVAC(int id)
 			}
 		}		
 	}
-	if (out_dev >= 0 && a->exclusive)
+	if (out_dev >= 0 && a->exclusive_out)
 	{
-		PaDeviceInfo* devInfo = Pa_GetDeviceInfo(out_dev);
+		const PaDeviceInfo* devInfo = Pa_GetDeviceInfo(out_dev);
 		if (devInfo != NULL)
 		{
-			PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(devInfo->hostApi);
+			const PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(devInfo->hostApi);
 			if (hostApiInfo != NULL && hostApiInfo->type == paWASAPI)
 			{
 				wasapiOutputInfo.size = sizeof(PaWasapiStreamInfo);
@@ -245,7 +246,7 @@ PORT int StartAudioIVAC(int id)
 		a->vac_size,	//paFramesPerBufferUnspecified, 
 		0,
 		CallbackIVAC,
-		(void *)id);	// pass 'id' as userData
+		(void*)id);	// pass 'id' as userData
 
 	if (error != 0) return -1;
 
@@ -738,9 +739,16 @@ void SetIVACswapIQout(int id, int swap)
 }
 
 PORT
-void SetIVACExclusive(int id, int exclusive)
+void SetIVACExclusiveOut(int id, int exclusive_out)
 {
 	IVAC a = pvac[id];
-	a->exclusive = exclusive;
+	a->exclusive_out = exclusive_out;
+}
+
+PORT
+void SetIVACExclusiveIn(int id, int exclusive_in)
+{
+	IVAC a = pvac[id];
+	a->exclusive_in = exclusive_in;
 }
 //
