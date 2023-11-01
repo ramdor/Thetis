@@ -401,6 +401,7 @@ namespace Thetis
         }
         private void onWarning(object sender, System.Timers.ElapsedEventArgs e)
         {
+            _warningTimer.Interval = 2000;
             if (_shutDown) return;
             if (this.IsDisposed || this.Disposing) return;
             if (lblWarning.IsDisposed || lblWarning.Disposing) return;
@@ -865,7 +866,7 @@ namespace Thetis
             get { return this.chkButton2; }
         }
 
-        public void Warning(string msg, int nOverloadColourCount = -1)
+        public void Warning(string msg, int nOverloadColourCount = -1, bool bExtendedShow = false)
         {
             if (_shutDown) return;
 
@@ -884,6 +885,10 @@ namespace Thetis
 
             lblWarning.Text = msg;
             lblWarning.Visible = true;
+            if (bExtendedShow)
+                _warningTimer.Interval = 10000;
+            else
+                _warningTimer.Interval = 2000;
             _warningTimer.Start();
         }
         private void InfoBar_Resize(object sender, EventArgs e)

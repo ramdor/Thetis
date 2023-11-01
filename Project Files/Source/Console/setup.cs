@@ -8014,7 +8014,6 @@ namespace Thetis
             int hostIndex = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Index;
             PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
             chkVAC1Exclusive.Enabled = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
-            lblVAC1Exclusive.Enabled = chkVAC1Exclusive.Enabled;
             //
 
             string new_driver_name = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Name;
@@ -8053,7 +8052,6 @@ namespace Thetis
             int hostIndex = ((PADeviceInfo)comboAudioDriver3.SelectedItem).Index;
             PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
             chkVAC2Exclusive.Enabled = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
-            lblVAC2Exclusive.Enabled = chkVAC2Exclusive.Enabled;
             //
 
             string new_driver_name = ((PADeviceInfo)comboAudioDriver3.SelectedItem).Name;
