@@ -22690,7 +22690,8 @@ namespace Thetis
         }
 
         private bool m_bShowSystemCPUUsage = true;
-        public volatile PerformanceCounter cpu_usage = null;
+        public volatile PerformanceCounter total_cpu_usage = null;
+        public volatile PerformanceCounter total_thetis_usage = null;
         private volatile string _sInstanceName = "";
         private volatile bool _getInstanceNameComplete = false;
 
@@ -22741,36 +22742,30 @@ namespace Thetis
 
                 string sMachineName = System.Environment.MachineName;
 
-                if (cpu_usage != null)
+                if (total_cpu_usage != null)
                 {
-                    cpu_usage.Close();
-                    cpu_usage.Dispose(); //MW0LGE_21k8
-                    cpu_usage = null;
+                    total_cpu_usage.Close();
+                    total_cpu_usage.Dispose(); //MW0LGE_21k8
+                    total_cpu_usage = null;
                 }
 
-                if (m_bShowSystemCPUUsage || _sInstanceName == "")
+                if (total_thetis_usage != null)
                 {
-                    if (_sInstanceName == "") // if issue with instance name
-                    {
-                        m_bShowSystemCPUUsage = true;
-                        if (!systemToolStripMenuItem.Checked)
-                        {
-                            systemToolStripMenuItem.Checked = m_bShowSystemCPUUsage;
-                            thetisOnlyToolStripMenuItem.Checked = !m_bShowSystemCPUUsage;
-                        }
-                    }
+                    total_thetis_usage.Close();
+                    total_thetis_usage.Dispose(); //MW0LGE_21k8
+                    total_thetis_usage = null;
+                }
 
-                    cpu_usage = new PerformanceCounter("Processor", "% Processor Time", "_Total", sMachineName);
-                }
-                else
+                total_cpu_usage = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total", sMachineName);
+                float tmp = total_cpu_usage.NextValue();
+
+                if (_sInstanceName != "")
                 {
-                    //NOTE: Environment.ProcessorCount in timer_cpu_meter_Tick is required in the calculation
-                    //as .nextvalue returns a % compared to a single processor such that over 100% would mean 100% of a single cpu machine
-                    cpu_usage = new PerformanceCounter("Process", "% Processor Time", _sInstanceName, sMachineName);
+                  total_thetis_usage = new PerformanceCounter("Process", "% Processor Time", _sInstanceName, sMachineName);
+                  tmp = total_thetis_usage.NextValue();
                 }
-                float cpuPerc = cpu_usage.NextValue(); //MW0LGE_21k8 get the next value - prevents status bar showing 0% when swapping from overall to thetis only
             }
-            catch
+            catch (Exception ex)
             {
                 disableCpuUsage();
             }
@@ -29435,6 +29430,7 @@ namespace Thetis
 
         private float _oldMKIIPAVolts = 0f;
         private float _oldMKIIPAAmps = 0f;
+        private float _cpu_perc_smoothed = 0;
         private void timer_cpu_meter_Tick(object sender, System.EventArgs e)
         {
             //if ((anan7000dpresent || anan8000dpresent) && ANAN8000DLEDisplayVoltsAmps)
@@ -29488,12 +29484,18 @@ namespace Thetis
             {
                 if (_getInstanceNameComplete)
                 {
-                    if (cpu_usage != null)
+                    if ((total_cpu_usage != null && m_bShowSystemCPUUsage) || (total_thetis_usage != null && !m_bShowSystemCPUUsage))
                     {
                         if (!toolStripDropDownButton_CPU.Visible) toolStripDropDownButton_CPU.Visible = true;
-                        float cpuPerc = cpu_usage.NextValue();
-                        if (!m_bShowSystemCPUUsage) cpuPerc /= Environment.ProcessorCount;
-                        toolStripDropDownButton_CPU.Text = String.Format("{0:##0}%", cpuPerc);
+
+                        float cpuPerc = 0f;
+                        if (m_bShowSystemCPUUsage)
+                            cpuPerc = total_cpu_usage.NextValue();
+                        else
+                            cpuPerc = total_thetis_usage.NextValue() / (float)Environment.ProcessorCount;
+
+                        _cpu_perc_smoothed = (_cpu_perc_smoothed * 0.8f) + (cpuPerc * 0.2f);
+                        toolStripDropDownButton_CPU.Text = String.Format("{0:##0}%", _cpu_perc_smoothed);                        
                     }
                     else
                     {

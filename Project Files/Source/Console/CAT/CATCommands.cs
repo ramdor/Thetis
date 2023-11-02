@@ -1894,7 +1894,7 @@ namespace Thetis
 		{
 			//return parser.Error1;
 			if (console.initializing) return "";
-            return String.Format("{0:000.00}", console.cpu_usage.NextValue());
+            return String.Format("{0:000.00}", console.total_cpu_usage.NextValue());
 		}
 
 		// Sets or reads the Display Average status

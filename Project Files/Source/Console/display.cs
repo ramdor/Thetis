@@ -9991,9 +9991,11 @@ namespace Thetis
 
         public static void PurgeBuffers()
         {
-            // note: lock not used here as primary call is from display thread.
-            clearBuffers(displayTargetWidth, 1);
-            if (_rx2_enabled) clearBuffers(displayTargetWidth, 2);
+            lock (_objDX2Lock)
+            { 
+                clearBuffers(displayTargetWidth, 1);
+                if (_rx2_enabled) clearBuffers(displayTargetWidth, 2);
+            }
         }
 
         private static float _fft_fill_timeRX1 = 0f;
