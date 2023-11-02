@@ -6,10 +6,10 @@ If you use CW and you have different RX and TX antenna ports configured, there i
 
 ## v2.10.3 Release
 
-1) PortAudio has been updated to 19.7.0. This brings with it WASAPI support, with exclusive use options.
-2) Skins can now be downloaded and updated from within Thetis. Check them out in the Appearance, Skin Servers tab.
-3) A new menu bar item exists, Finder. Find any control, setting or text in Thetis, click it and it will take you there. Note, some are hidden due to settings, and may even be related to RX2 that is not in use for example. Get additional info by clicking on the checkbox, press left alt when in that extra info mode to get the control name. Ctrl-C will copy it to clipboard and then you can look in the Finder.xml file along side database.xml if you want to change the search text returned for a given item.
-4) CFC display has had an update. I may bring this to a multimeter near you in the future.
+1) PortAudio has been updated to 19.7.0. This brings with it WASAPI support, with exclusive use options
+2) Skins can now be downloaded and updated from within Thetis. Check them out in the Appearance, Skin Servers tab. Please see video VVVVVVV
+3) A new menu bar item exists, Finder. Find any control, setting or text in Thetis, click it and it will take you there. Please see video VVVV
+4) CFC display has had an update. I may bring this to a multimeter near you in the future
 5) FM AF filters for RX and TX, low and high cut
 6) Mic phase reversal
 7) Re-alignment and improvements of UI by Sigi DH1KLM
@@ -21,11 +21,35 @@ Richie
 **MW0LGE**
 
 ## v2.10.3 Change Log
-- Item 1
-- Item 2
-	- Another item
-	- Another item
-- Item 3
-
-
+- PortAudio 19.7.0 from the 2021 official release update. Exclusive options when using WASAPI
+- T/R noise pulse in waterfall improved. Waterfall agc delayed. New option in setup to purge WDSP analyzer buffers to perform extra clear down
+- compare version in TX profile importing fixed
+- .net framework moved to 4.8.1
+- skin server implementation
+- skin image handles released correctly after the images have been loaded. Known issue with Image.FromFile
+- FM tx/rx AF filters in DSP FM tab
+- IQ swap for each vac
+- 0beat deadlock prevention where zero beat could lock Thetis on rare occasions
+- finder option on main menu bar
+- PS not able to engage after CW hopefully resolved - considerable work from Warren NR0V
+- additional items stored against tx profile
+	- FM AF filters
+	- VAC force checkbox state
+	- SwapIQ
+	- External audio amp checkbox state
+	- PA profile is now stored against TX profile. There is an option to recover this from a TX profile change if you want to use this
+	- RX EQ data and enabled state
+	- WASAPI exclusive states
+- cfc display changes and should correctly show again
+- mic phase reversal in DSP->CFC->PhaseRot area. Phase rot does not need to be enabled for mic phase to be used
+- updates to UI controls, positions and colours by DH1KLM
+- changes to serial to hopefully prevent rare freeze situation
+- RadioDSP is now destroyed down on exit to ensure clean shutdown
+- mon should now return correctly when using cwu and changing to other modes
+- notches should import from database when importing/upgrading
+- audio device dropdowns resized in setup
+- release notes shown on DB upgrade and button to show again from Setup->General->H/W Select
+- the force db upgrade by holding CTRL when Thetis is launched now has additional yes/no prompt to prevent accidental upgrading
+- rear speaker amp can now be disabled with G2 and G2_1k, setting in Setup->Audio->Options
+- system CPU usage should better match taskmanager. Thetis process only usage is still a mystery
 
