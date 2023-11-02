@@ -35,7 +35,7 @@ namespace Thetis
         public SIOListenerII(Console c)
         {
             console = c;
-            console.Activated += new EventHandler(console_Activated);
+            //[2.10.3]MW0LGE console.Activated += new EventHandler(console_Activated);  // why try to init on form activation? er...
             console.Closing += new System.ComponentModel.CancelEventHandler(console_Closing);
             parser = new CATParser(console);
 
@@ -66,11 +66,11 @@ namespace Thetis
 
 		public void enableCAT() 
 		{
-			lock ( this ) 
-			{
+			//[2.10.3]MW0LGElock ( this )    // just not needed as this object will only be created and accesed by the same thread, ie the UI thread
+			//{
 				if ( cat_enabled ) return; // nothing to do already enabled 
 				cat_enabled = true; 
-			}
+			//}
 			int port_num = console.CATPort; 
 			SIO = new SDRSerialPort(port_num);
 			SIO.setCommParms(console.CATBaudRate, 
@@ -148,11 +148,11 @@ namespace Thetis
 		// closes the serial port and neutralized the listeners we have in place
 		public void disableCAT() 
 		{
-			lock ( this ) 
-			{
-				if ( !cat_enabled )  return; // nothing to do already disabled  
+            //[2.10.3]MW0LGElock ( this ) 
+            //{
+                if ( !cat_enabled )  return; // nothing to do already disabled  
 				cat_enabled = false; 
-			}
+			//}
 
 			if ( SIO != null ) 
 			{
@@ -328,7 +328,7 @@ namespace Thetis
         public SIO2ListenerII(Console c)
         {
             console = c;
-            console.Activated += new EventHandler(console_Activated);
+            //console.Activated += new EventHandler(console_Activated);
             console.Closing += new System.ComponentModel.CancelEventHandler(console_Closing);
             parser = new CATParser(console);
 
@@ -360,11 +360,11 @@ namespace Thetis
 
         public void enableCAT2()
         {
-            lock (this)
-            {
+            //[2.10.3]MW0LGElock (this)
+            //{
                 if (cat2_enabled) return; // nothing to do already enabled 
                 cat2_enabled = true;
-            }
+            //}
             int port_num = console.CAT2Port;
             SIO2 = new SDRSerialPort2(port_num);
             SIO2.setCommParms(console.CAT2BaudRate,
@@ -434,11 +434,11 @@ namespace Thetis
  
         public void disableCAT2()
         {
-            lock (this)
-            {
+            //[2.10.3]MW0LGElock (this)
+            //{
                 if (!cat2_enabled) return;
                 cat2_enabled = false; 
-            }
+            //}
 
             if (SIO2 != null)
             {
@@ -560,7 +560,7 @@ namespace Thetis
         public SIO3ListenerII(Console c)
         {
             console = c;
-            console.Activated += new EventHandler(console_Activated);
+            //console.Activated += new EventHandler(console_Activated);
             console.Closing += new System.ComponentModel.CancelEventHandler(console_Closing);
             parser = new CATParser(console);
 
@@ -592,11 +592,11 @@ namespace Thetis
 
         public void enableCAT3()
         {
-            lock (this)
-            {
+            //[2.10.3]MW0LGElock (this)
+            //{
                 if (cat3_enabled) return; // nothing to do already enabled 
                 cat3_enabled = true;
-            }
+            //}
             int port_num = console.CAT3Port;
             SIO3 = new SDRSerialPort3(port_num);
             SIO3.setCommParms(console.CAT3BaudRate,
@@ -666,11 +666,11 @@ namespace Thetis
  
         public void disableCAT3()
         {
-            lock (this)
-            {
+            //[2.10.3]MW0LGElock (this)
+            //{
                 if (!cat3_enabled) return;
                 cat3_enabled = false; 
-            }
+            //}
 
             if (SIO3 != null)
             {
@@ -788,7 +788,7 @@ namespace Thetis
         public SIO4ListenerII(Console c)
         {
             console = c;
-            console.Activated += new EventHandler(console_Activated);
+            //console.Activated += new EventHandler(console_Activated);
             console.Closing += new System.ComponentModel.CancelEventHandler(console_Closing);
             parser = new CATParser(console);
 
@@ -819,11 +819,11 @@ namespace Thetis
 
             public void enableCAT4()
            {
-               lock (this)
-               {
+               //[2.10.3]MW0LGElock (this)
+               //{
                    if (cat4_enabled) return; // nothing to do already enabled 
                    cat4_enabled = true;
-               }
+               //}
                int port_num = console.CAT4Port;
                SIO4 = new SDRSerialPort4(port_num);
                SIO4.setCommParms(console.CAT4BaudRate,
@@ -893,11 +893,11 @@ namespace Thetis
   
           public void disableCAT4()
           {
-              lock (this)
-              {
+              //[2.10.3]MW0LGElock (this)
+              //{
                   if (!cat4_enabled) return; 
                   cat4_enabled = false;
-              }
+              //}
 
               if (SIO4 != null)
               {
@@ -1017,7 +1017,7 @@ namespace Thetis
         public SIO5ListenerII(Console c)
         {
             console = c;
-            console.Activated += new EventHandler(console_Activated);
+            //console.Activated += new EventHandler(console_Activated);
             console.Closing += new System.ComponentModel.CancelEventHandler(console_Closing);
             parser = new CATParser(console);
 
@@ -1049,11 +1049,11 @@ namespace Thetis
 
         public void enableCAT5()
         {
-            lock (this)
-            {
+            //[2.10.3]MW0LGElock (this)
+            //{
                 if (cat5_enabled) return; // nothing to do already enabled 
                 cat5_enabled = true;
-            }
+            //}
             int port_num = console.AndromedaCATPort;
             SIO5 = new SDRSerialPort5(port_num);
             SIO5.setCommParms(9600, Parity.None, 8, StopBits.One);
@@ -1066,11 +1066,11 @@ namespace Thetis
 
         public void disableCAT5()
         {
-            lock (this)
-            {
+            //[2.10.3]MW0LGElock (this)
+            //{
                 if (!cat5_enabled) return;
                 cat5_enabled = false;
-            }
+            //}
 
             if (SIO5 != null)
             {
@@ -1191,7 +1191,7 @@ namespace Thetis
         public SIO6ListenerII(Console c)
         {
             console = c;
-            console.Activated += new EventHandler(console_Activated);
+            //console.Activated += new EventHandler(console_Activated);
             console.Closing += new System.ComponentModel.CancelEventHandler(console_Closing);
             parser = new CATParser(console);
 
@@ -1223,11 +1223,11 @@ namespace Thetis
 
         public void enableCAT6()
         {
-            lock (this)
-            {
+            //[2.10.3]MW0LGElock (this)
+            //{
                 if (cat6_enabled) return; // nothing to do already enabled 
                 cat6_enabled = true;
-            }
+            //}
             int port_num = console.AriesCATPort;
             SIO6 = new SDRSerialPort6(port_num);
             SIO6.setCommParms(9600, Parity.None, 8, StopBits.One);
@@ -1240,11 +1240,11 @@ namespace Thetis
 
         public void disableCAT6()
         {
-            lock (this)
-            {
+            //[2.10.3]MW0LGElock (this)
+            //{
                 if (!cat6_enabled) return;
                 cat6_enabled = false;
-            }
+            //}
 
             if (SIO6 != null)
             {
@@ -1365,7 +1365,7 @@ namespace Thetis
         public SIO7ListenerII(Console c)
         {
             console = c;
-            console.Activated += new EventHandler(console_Activated);
+            //console.Activated += new EventHandler(console_Activated);
             console.Closing += new System.ComponentModel.CancelEventHandler(console_Closing);
             parser = new CATParser(console);
 
@@ -1397,11 +1397,11 @@ namespace Thetis
 
         public void enableCAT7()
         {
-            lock (this)
-            {
+            //[2.10.3]MW0LGElock (this)
+            //{
                 if (cat7_enabled) return; // nothing to do already enabled 
                 cat7_enabled = true;
-            }
+            //}
             int port_num = console.GanymedeCATPort;
             SIO7 = new SDRSerialPort7(port_num);
             SIO7.setCommParms(9600, Parity.None, 8, StopBits.One);
@@ -1414,11 +1414,11 @@ namespace Thetis
 
         public void disableCAT7()
         {
-            lock (this)
-            {
+            //[2.10.3]MW0LGElock (this)
+            //{
                 if (!cat7_enabled) return;
                 cat7_enabled = false;
-            }
+            //}
 
             if (SIO7 != null)
             {

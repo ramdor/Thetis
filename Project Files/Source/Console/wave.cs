@@ -971,7 +971,7 @@ namespace Thetis
                     WaveThing.wave_file_writer[1] = new WaveFileWriter(1, 2, waveOptionsForm.SampleRate, file_name2);
                 }
 			}
-			
+            
 			Audio.WaveRecord = checkBoxRecord.Checked;
 
             if (!checkBoxRecord.Checked)
