@@ -540,6 +540,7 @@ namespace Thetis
                     m_frmCWXForm = new CWX(this);
                     m_frmCWXForm.StopEverything(chkPower.Checked); //[2.10.3]MW0LGE
                 }
+
                 return m_frmCWXForm;
             }
             set { }
@@ -1898,6 +1899,11 @@ namespace Thetis
             MeterManager.Init(this);
             //
 
+            //[2.10.3.1]MW0LGE make sure it is created on this thread, as the following serial
+            //decices could cause it to be created on another thread
+            CWX tmp = CWXForm;
+            //--
+
             Siolisten = new SIOListenerII(this);
             Sio2listen = new SIO2ListenerII(this);
             Sio3listen = new SIO3ListenerII(this);
@@ -2089,7 +2095,6 @@ namespace Thetis
             SetupInfoBar();
             //
 
-            //--
             DumpCap.Initalise(this);
             if (DumpCap.ClearFolderOnRestart) DumpCap.ClearDumpFolder();
             m_frmSeqLog.SetWireSharkPath(DumpCap.WireSharkPath);
@@ -2605,18 +2610,17 @@ namespace Thetis
             N1MM.Stop();
 
             if (_frmReleaseNotes != null)
-                _frmReleaseNotes.Close();
-                                                                  
+                _frmReleaseNotes.Dispose();
+
             if (n1mm_udp_client != null)
                 n1mm_udp_client.Close();
 
             if (!IsSetupFormNull)		// make sure Setup form is deallocated
                 SetupForm.Dispose();
 
-            if (m_frmCWXForm != null)           // make sure CWX form is deallocated
+            if (m_frmCWXForm != null && !m_frmCWXForm.IsDisposed)           // make sure CWX form is deallocated
             {
                 m_frmCWXForm.StopEverything(); //[2.10.3]MW0LGE
-                m_frmCWXForm.Close();
                 m_frmCWXForm.Dispose();
             }
 
@@ -32115,6 +32119,11 @@ namespace Thetis
             //this.Hide(); 
             // Audio.callback_return = 2;
             CATEnabled = false;
+            //[2.10.3.1]MW0LGE not being done anywhere
+            if(Sio2listen != null) Sio2listen.disableCAT2();
+            if(Sio3listen != null) Sio3listen.disableCAT3();
+            if(Sio4listen != null) Sio4listen.disableCAT4();
+            //
             AndromedaCATEnabled = false;
             AriesCATEnabled = false;
             GanymedeCATEnabled = false;
@@ -32138,6 +32147,7 @@ namespace Thetis
                 SetupForm.Hide();
             }
 
+            if (_frmReleaseNotes != null) _frmReleaseNotes.Hide();
             if (m_frmCWXForm != null) m_frmCWXForm.Hide();
             if (EQForm != null) EQForm.Hide();
             if (XVTRForm != null) XVTRForm.Hide();
@@ -32201,6 +32211,9 @@ namespace Thetis
             if (diversityForm != null) diversityForm.Close();
             //  if (preSelForm != null) preSelForm.Close();
             if (psform != null) psform.Close();
+
+            if(_frmReleaseNotes != null) _frmReleaseNotes.Close();
+            if (m_frmCWXForm != null) m_frmCWXForm.Close();
 
             //MW0LGE getwb performs a show, so the window will flash.
             //as Closewb handles null ref ok, then just call cmaster.Closewb(0);

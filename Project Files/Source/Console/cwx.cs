@@ -2448,7 +2448,7 @@ namespace Thetis
             s6.Enabled = bPowerState;
             s7.Enabled = bPowerState;
             s8.Enabled = bPowerState;
-            s9.Enabled = bPowerState;            
+            s9.Enabled = bPowerState;
 
             clear_show();
             quitshut();
