@@ -7,9 +7,9 @@ If you use CW and you have different RX and TX antenna ports configured, there i
 ## v2.10.3 Release
 
 1) PortAudio has been updated to 19.7.0. This brings with it WASAPI support, with exclusive use options
-2) Skins can now be downloaded and updated from within Thetis. Check them out in the Appearance, Skin Servers tab. Please see video VVVVVVV
-3) A new menu bar item exists, Finder. Find any control, setting or text in Thetis, click it and it will take you there. Please see video VVVV
-4) CFC display has had an update. I may bring this to a multimeter near you in the future
+2) Skins can now be downloaded and updated from within Thetis. Check them out in the Appearance, Skin Servers tab
+3) A new menu bar item exists, Finder. Find any control, setting or text in Thetis, click it and it will take you there
+4) CFC display has had an update
 5) FM AF filters for RX and TX, low and high cut
 6) Mic phase reversal
 7) Re-alignment and improvements of UI by Sigi DH1KLM
