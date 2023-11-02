@@ -2609,20 +2609,14 @@ namespace Thetis
         {
             N1MM.Stop();
 
-            if (_frmReleaseNotes != null)
-                _frmReleaseNotes.Dispose();
+            if (m_frmCWXForm != null)
+                m_frmCWXForm.Close();
 
             if (n1mm_udp_client != null)
                 n1mm_udp_client.Close();
 
             if (!IsSetupFormNull)		// make sure Setup form is deallocated
                 SetupForm.Dispose();
-
-            if (m_frmCWXForm != null && !m_frmCWXForm.IsDisposed)           // make sure CWX form is deallocated
-            {
-                m_frmCWXForm.StopEverything(); //[2.10.3]MW0LGE
-                m_frmCWXForm.Dispose();
-            }
 
             PA19.PA_Terminate();		// terminate audio interface
             DB.Exit();					// close and save database
@@ -31161,8 +31155,9 @@ namespace Thetis
                     display_volts_amps_thead.Start();
                 }
 
-                if (m_frmCWXForm != null)
+                if (m_frmCWXForm != null && !m_frmCWXForm.IsDisposed)
                     m_frmCWXForm.StopEverything(chkPower.Checked); //[2.10.3]MW0LGE
+
                 if (!rx_only)
                 {
                     chkMOX.Enabled = true;
@@ -31210,8 +31205,9 @@ namespace Thetis
                 UpdateAAudioMixerStates();
                 UpdateDDCs(rx2_enabled);
 
-                if (m_frmCWXForm != null)
+                if (m_frmCWXForm != null && !m_frmCWXForm.IsDisposed)
                     m_frmCWXForm.StopEverything(chkPower.Checked); //[2.10.3]MW0LGE
+
                 chkMOX.Checked = false;
                 chkMOX.Enabled = false;
                 chkTUN.Checked = false;
@@ -32211,9 +32207,8 @@ namespace Thetis
             if (diversityForm != null) diversityForm.Close();
             //  if (preSelForm != null) preSelForm.Close();
             if (psform != null) psform.Close();
-
             if(_frmReleaseNotes != null) _frmReleaseNotes.Close();
-            if (m_frmCWXForm != null) m_frmCWXForm.Close();
+            if (m_frmCWXForm != null && !m_frmCWXForm.IsDisposed) m_frmCWXForm.StopEverything(); //[2.10.3.1]MW0LGE
 
             //MW0LGE getwb performs a show, so the window will flash.
             //as Closewb handles null ref ok, then just call cmaster.Closewb(0);
@@ -33289,7 +33284,7 @@ namespace Thetis
                     //MW0LGE [2.9.0.7]
                     if (_preventTXonDifferentBandToRXband && ((!RX2Enabled && VFOBTX && RX1Band != TXBand) || (RX2Enabled && VFOBTX && RX2Band != TXBand)))
                     {
-                        if (m_frmCWXForm != null)
+                        if (m_frmCWXForm != null && !m_frmCWXForm.IsDisposed)
                             m_frmCWXForm.StopEverything(chkPower.Checked);
 
                         chkMOX.Checked = false;
