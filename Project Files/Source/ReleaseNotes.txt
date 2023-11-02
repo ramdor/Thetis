@@ -21,7 +21,7 @@ Richie
 **MW0LGE**
 
 ## v2.10.3.1 Change Log
-- [fix] serial data ariving could prevent Thetis from closing and could also cause UI freeze
+- [fix] serial data arriving could prevent Thetis from closing and could also cause UI freeze
 - [change] reverted to .net framework 4.8.0 to work with more operating systems
 - [change] added additional small buffer sizes to VAC config, 8, 16, 32
 
