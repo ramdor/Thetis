@@ -36,6 +36,7 @@ namespace Thetis
         {
             try
             {
+                if (this.Visible) return;
                 Opacity = 0f;
                 string file = Path.Combine(_releaseNotesPath, "ReleaseNotes.txt");
                 if (!File.Exists(file)) return;
