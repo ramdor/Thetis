@@ -260,13 +260,13 @@ namespace Thetis
 
         private bool setptt_memory = false;
         private void setptt(bool state)
-        {            
+        {
             if (setptt_memory != state)
             {
                 if (!console.CWFWKeyer)
                 {
-                   // CWPTTItem item = new CWPTTItem(state, CWSensorItem.GetCurrentTime());
-                   // CWKeyer.PTTEnqueue(item);
+                    // CWPTTItem item = new CWPTTItem(state, CWSensorItem.GetCurrentTime());
+                    // CWKeyer.PTTEnqueue(item);
                 }
 
                 ptt = state;
@@ -280,7 +280,7 @@ namespace Thetis
 
         private bool setkey_memory = false;
         private void setkey(bool state)
-        {       
+        {
             if (setkey_memory != state)
             {
                 NetworkIO.SetCWX(Convert.ToInt32(state));
@@ -292,7 +292,7 @@ namespace Thetis
             }
         }
         private void quitshut()
-        {            
+        {
             clear_fifo();
             clear_fifo2();
             setkey(false); //[2.10.3]MW0LGE swap
@@ -303,7 +303,7 @@ namespace Thetis
             Debug.Print("SendHighPriority(1) in quitshut()");
         }
         private void clear_fifo()
-        {            
+        {
             cwfifo.WaitOne();
             infifo = 0;
             pin = 0;
@@ -311,7 +311,7 @@ namespace Thetis
             cwfifo.ReleaseMutex();
         }
         private void push_fifo(byte data)
-        {            
+        {
             cwfifo.WaitOne();
             elfifo.SetValue(data, pin);
             pin++;
@@ -343,7 +343,7 @@ namespace Thetis
         }
 
         private void clear_fifo2()
-        {            
+        {
             cwfifo2.WaitOne();
             infifo2 = 0;
             pin2 = 0;
@@ -351,7 +351,7 @@ namespace Thetis
             cwfifo2.ReleaseMutex();
         }
         private void push_fifo2(byte data)
-        {            
+        {
             cwfifo2.WaitOne();
             fifo2.SetValue(data, pin2);
             pin2++;
@@ -390,7 +390,7 @@ namespace Thetis
             return (1200 / cwxwpm);
         }
         private void help()
-        {            
+        {
             string t;
 
             t = "                  Memory and Keyboard Keyer Notes\n";
@@ -448,7 +448,7 @@ namespace Thetis
 
 
         private void build_mbits2()
-        {            
+        {
             uint els;
             uint nel;
             uint mask;
@@ -648,7 +648,7 @@ namespace Thetis
 
         private void SendBufferMessage()				//CAT Read Thread
         {
-            
+
             while (true)									//do forever
             {
                 Thread.Sleep(10);
@@ -686,7 +686,7 @@ namespace Thetis
 
         public void CWXStop()
         {
-            
+
             stopSending = true;
             rb.Reset();
             stopSending = false;
@@ -711,7 +711,7 @@ namespace Thetis
             InitializeComponent();
 
             console = c;
-            
+
             //
             // TODO: Add any constructor code after InitializeComponent call
             //
@@ -728,7 +728,7 @@ namespace Thetis
             txt7.Text = "?";
             txt8.Text = "agn";
             txt9.Text = "n6vs";
-            
+
             //RestoreSettings();
             Common.RestoreForm(this, "CWX", true);
 
@@ -789,8 +789,8 @@ namespace Thetis
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            
-#if(CWX_DEBUG)
+
+#if (CWX_DEBUG)
 			Debug.WriteLine("dispose cwx");
 #endif
             timeKillEvent(timerID);
@@ -1482,7 +1482,7 @@ namespace Thetis
 
         private void expandButton_Click(object sender, System.EventArgs e)
         {
-            
+
             if (this.Width > 500)
             {
                 this.Width = 466;
@@ -1503,7 +1503,7 @@ namespace Thetis
 
         private void keyboardButton_Leave(object sender, System.EventArgs e)
         {
-            
+
             keyboardButton.ForeColor = System.Drawing.Color.Gray;
             keyboardButton.Text = "Keys Off";
             keyboardLed.BackColor = System.Drawing.Color.Black;
@@ -1512,7 +1512,7 @@ namespace Thetis
 
         private void keyboardButton_Enter(object sender, System.EventArgs e)
         {
-            
+
             keyboardButton.ForeColor = System.Drawing.Color.Black;
             keyboardButton.Text = "KEYS ACTIVE";
             keyboardLed.BackColor = System.Drawing.Color.Cyan;
@@ -1522,7 +1522,7 @@ namespace Thetis
         // this guy checks for the release of the Alt key
         private void CWX_KeyUp_1(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-            
+
             kkk++;
             label6.Text = kkk.ToString() + " " +
                 e.KeyCode.ToString() + " " +
@@ -1672,37 +1672,37 @@ namespace Thetis
 
         private void s1_Click(object sender, System.EventArgs e)
         {
-            
+
             queue_start(1);
         }
 
         private void s2_Click(object sender, System.EventArgs e)
         {
-            
+
             queue_start(2);
         }
 
         private void s3_Click(object sender, System.EventArgs e)
         {
-            
+
             queue_start(3);
         }
 
         private void s4_Click(object sender, System.EventArgs e)
         {
-            
+
             queue_start(4);
         }
 
         private void s5_Click(object sender, System.EventArgs e)
         {
-            
+
             queue_start(5);
         }
 
         private void s6_Click(object sender, System.EventArgs e)
         {
-            
+
             queue_start(6);
         }
 
@@ -1827,7 +1827,7 @@ namespace Thetis
 
         private void chkAlwaysOnTop_CheckedChanged(object sender, System.EventArgs e)
         {
-            
+
             /*if(chkAlwaysOnTop.Checked)
             {
                 Win32.SetWindowPos(this.Handle.ToInt32(),
@@ -1860,7 +1860,7 @@ namespace Thetis
 
         private readonly Object m_objLock = new Object();
         private void show_keys(Graphics formGraphics = null)
-        {            
+        {
             string s;
             int i;
             int x, y, dx, dy;
@@ -1873,7 +1873,7 @@ namespace Thetis
                 dx = 11; dy = 19;
 
                 if (this.Disposing || this.IsDisposed) return;
-                if(formGraphics==null) formGraphics = this.CreateGraphics(); //MW0LGE
+                if (formGraphics == null) formGraphics = this.CreateGraphics(); //MW0LGE
 
                 System.Drawing.Font drawFont = new System.Drawing.Font("Courier New", 14, FontStyle.Bold);
                 System.Drawing.SolidBrush drawBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Black);
@@ -2112,7 +2112,7 @@ namespace Thetis
             if (ttx > 0) ttx--;			// time out timer down one element
             if (ttx > 0) return;		// not yet timed out
             //[2.10.3]MW0LGE swap
-            setkey(false);          
+            setkey(false);
             setptt(false);			// cw timer timed out
         }
 
@@ -2232,8 +2232,8 @@ namespace Thetis
         }
 
         private void loadchar(char cc)	// convert and load a single character
-        {		// this is the guts of loadmsg and work much the same way
-            
+        {       // this is the guts of loadmsg and work much the same way
+
             uint v, n;
             int ic;
 
@@ -2366,7 +2366,7 @@ namespace Thetis
 
         private void insert_key(char key)
         {
-            
+
             int i;
 
             keydisplay.WaitOne();
@@ -2464,7 +2464,8 @@ namespace Thetis
             s9.Enabled = bPowerState;
 
             clear_show();
-            quitshut();
-        }
-    } // end class
+            quit = true;
+            kquit = true;
+        } // end class
+    }
 } // end namespace
