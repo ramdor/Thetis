@@ -201,6 +201,7 @@
             this.tpGeneral = new System.Windows.Forms.TabPage();
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
+            this.btnReleaseNotes = new System.Windows.Forms.ButtonTS();
             this.btnOpenDBFolder = new System.Windows.Forms.ButtonTS();
             this.lblTimeout = new System.Windows.Forms.LabelTS();
             this.lblShowTimeoutText = new System.Windows.Forms.LabelTS();
@@ -3535,7 +3536,6 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
             this.txtboxTXProfileChangedReport = new System.Windows.Forms.TextBoxTS();
-            this.btnReleaseNotes = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -6833,6 +6833,19 @@
             this.tpGeneralHardware.TabIndex = 0;
             this.tpGeneralHardware.Text = "H/W Select";
             this.tpGeneralHardware.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralHardware_Paint);
+            // 
+            // btnReleaseNotes
+            // 
+            this.btnReleaseNotes.Image = null;
+            this.btnReleaseNotes.Location = new System.Drawing.Point(259, 310);
+            this.btnReleaseNotes.Name = "btnReleaseNotes";
+            this.btnReleaseNotes.Selectable = true;
+            this.btnReleaseNotes.Size = new System.Drawing.Size(111, 53);
+            this.btnReleaseNotes.TabIndex = 123;
+            this.btnReleaseNotes.Text = "Release Notes";
+            this.toolTip1.SetToolTip(this.btnReleaseNotes, "Show the release notes for this version");
+            this.btnReleaseNotes.UseVisualStyleBackColor = true;
+            this.btnReleaseNotes.Click += new System.EventHandler(this.btnReleaseNotes_Click);
             // 
             // btnOpenDBFolder
             // 
@@ -26605,6 +26618,9 @@
             this.comboAudioBuffer2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboAudioBuffer2.DropDownWidth = 56;
             this.comboAudioBuffer2.Items.AddRange(new object[] {
+            "8",
+            "16",
+            "32",
             "64",
             "128",
             "256",
@@ -27835,6 +27851,9 @@
             this.comboAudioBuffer3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboAudioBuffer3.DropDownWidth = 56;
             this.comboAudioBuffer3.Items.AddRange(new object[] {
+            "8",
+            "16",
+            "32",
             "64",
             "128",
             "256",
@@ -56215,19 +56234,6 @@
             this.txtboxTXProfileChangedReport.TabIndex = 25;
             this.txtboxTXProfileChangedReport.Text = "used to report tx profile changes if you click on oragne box";
             this.txtboxTXProfileChangedReport.Visible = false;
-            // 
-            // btnReleaseNotes
-            // 
-            this.btnReleaseNotes.Image = null;
-            this.btnReleaseNotes.Location = new System.Drawing.Point(259, 310);
-            this.btnReleaseNotes.Name = "btnReleaseNotes";
-            this.btnReleaseNotes.Selectable = true;
-            this.btnReleaseNotes.Size = new System.Drawing.Size(111, 53);
-            this.btnReleaseNotes.TabIndex = 123;
-            this.btnReleaseNotes.Text = "Release Notes";
-            this.toolTip1.SetToolTip(this.btnReleaseNotes, "Show the release notes for this version");
-            this.btnReleaseNotes.UseVisualStyleBackColor = true;
-            this.btnReleaseNotes.Click += new System.EventHandler(this.btnReleaseNotes_Click);
             // 
             // Setup
             // 
