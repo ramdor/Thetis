@@ -484,9 +484,6 @@ cleanup:
 
 void __cdecl doPSCalcCorrection (void *arg)
 {
-	const wchar_t* threadName = L"doPSCalcCorrection Thread";
-	SetThreadDescription(GetCurrentThread(), threadName);
-
 	CALCC a = (CALCC)arg;
 	while (!InterlockedAnd(&a->calccorr_bypass, 0xffffffff))
 	{
@@ -511,9 +508,6 @@ void __cdecl doPSCalcCorrection (void *arg)
 
 void __cdecl doPSTurnoff (void *arg)
 {
-	const wchar_t* threadName = L"doPSTurnoff Thread";
-	SetThreadDescription(GetCurrentThread(), threadName);
-
 	CALCC a = (CALCC)arg;
 	while (!InterlockedAnd(&a->turnoff_bypass, 0xffffffff))
 	{
@@ -544,9 +538,6 @@ enum _calcc_state
 
 void __cdecl PSSaveCorrection (void *pargs)
 {
-	const wchar_t* threadName = L"PSSaveCorrection Thread";
-	SetThreadDescription(GetCurrentThread(), threadName);
-
 	int i, k;
 	CALCC a = (CALCC)pargs;
 	while (!InterlockedAnd(&a->savecorr_bypass, 0xffffffff))
@@ -577,9 +568,6 @@ void __cdecl PSSaveCorrection (void *pargs)
 
 void __cdecl PSRestoreCorrection(void *pargs)
 {
-	const wchar_t* threadName = L"PSRestoreCorrection Thread";
-	SetThreadDescription(GetCurrentThread(), threadName);
-
 	int i, k;
 	CALCC a = (CALCC)pargs;
 	while (!InterlockedAnd(&a->restcorr_bypass, 0xffffffff))
