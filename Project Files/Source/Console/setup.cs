@@ -2729,7 +2729,7 @@ namespace Thetis
                 if (isTXProfileSettingDifferent<bool>(dr, "RXEQEnabled", console.EQForm.RXEQEnabled, out sReportOut)) sReport += sReportOut;
                 int[] rxeq = console.EQForm.RXEQ;
                 if (isTXProfileSettingDifferent<int>(dr, "RXEQPreamp", rxeq[0], out sReportOut)) sReport += sReportOut;
-                for (int i = 1; i < 11; i++)
+                for (int i = 1; i < rxeq.Length; i++)
                     if (isTXProfileSettingDifferent<int>(dr, "RXEQ" + i.ToString(), rxeq[i], out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "VAC1_Exclusive_In", (bool)chkVAC1ExclusiveIn.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "VAC1_Exclusive_Out", (bool)chkVAC1ExclusiveOut.Checked, out sReportOut)) sReport += sReportOut;
@@ -2944,7 +2944,7 @@ namespace Thetis
                 if (DB.ConvertFromDBVal<bool>(dr["RXEQEnabled"]) != console.EQForm.RXEQEnabled) return true;
                 int[] rxeq = console.EQForm.RXEQ;
                 if (DB.ConvertFromDBVal<int>(dr["RXEQPreamp"]) != rxeq[0]) return true;
-                for (int i = 1; i < 11; i++)
+                for (int i = 1; i < rxeq.Length; i++)
                     if (DB.ConvertFromDBVal<int>(dr["RXEQ" + i.ToString()]) != rxeq[i]) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["VAC1_Exclusive_In"]) != (bool)chkVAC1ExclusiveIn.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["VAC1_Exclusive_Out"]) != (bool)chkVAC1ExclusiveOut.Checked) return true;
@@ -3192,7 +3192,7 @@ namespace Thetis
             Common.HightlightControl(udCFC9, bHighlight);
         }
 
-        private void udpateTXProfileInDB(DataRow dr)
+        private void updateTXProfileInDB(DataRow dr)
         {
             if (dr == null) return;
 
@@ -3352,7 +3352,7 @@ namespace Thetis
             dr["RXEQEnabled"] = console.EQForm.RXEQEnabled;
             int[] rxeq = console.EQForm.RXEQ;
             dr["RXEQPreamp"] = rxeq[0];
-            for (int i = 1; i < 11; i++)
+            for (int i = 1; i < rxeq.Length; i++)
                 dr["RXEQ" + i.ToString()] = rxeq[i];
             dr["VAC1_Exclusive_In"] = (bool)chkVAC1ExclusiveIn.Checked;
             dr["VAC1_Exclusive_Out"] = (bool)chkVAC1ExclusiveOut.Checked;
@@ -3415,7 +3415,7 @@ namespace Thetis
             }
             else
             {
-                udpateTXProfileInDB(dr); //MW0LGE_21a remove duplication
+                updateTXProfileInDB(dr); //MW0LGE_21a remove duplication
             }
         }
 
@@ -10754,9 +10754,10 @@ namespace Thetis
                     comboPAProfile.Text = paProf;
             }
             console.EQForm.RXEQEnabled = (bool)dr["RXEQEnabled"];
-            int[] rxeq = new int[21];
+            //[2.10.3.2]MW0LGE console.EQForm.NumBands is set above, so just use RXeq to get the array, then adjust it
+            int[] rxeq = console.EQForm.RXEQ;
             rxeq[0] = (int)dr["RXEQPreamp"];
-            for (int i = 1; i < 11; i++)
+            for (int i = 1; i < rxeq.Length; i++)
                 rxeq[i] = (int)dr["RXEQ" + i.ToString()];
             console.EQForm.RXEQ = rxeq;
             //
@@ -10888,7 +10889,7 @@ namespace Thetis
             }
             else
             {
-                udpateTXProfileInDB(dr); //MW0LGE_21a remove duplication
+                updateTXProfileInDB(dr); //MW0LGE_21a remove duplication
             }            
 
             if (!comboTXProfileName.Items.Contains(name))
