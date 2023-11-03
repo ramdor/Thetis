@@ -8035,15 +8035,24 @@ namespace Thetis
             }
 
             //[2.10.3]MW0LGE only enable if wasapi
-            int hostIndex = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Index;
-            PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
-            bool bIsWASAPI = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
-            chkVAC1ExclusiveOut.Enabled = bIsWASAPI;
-            chkVAC1ExclusiveIn.Enabled = bIsWASAPI;
-            if(!bIsWASAPI) // turn these off so that when they are enabled again and vac is on, we dont start exclusive
+            try
+            {
+                PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(new_driver);
+                bool bIsWASAPI = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
+                chkVAC1ExclusiveOut.Enabled = bIsWASAPI;
+                chkVAC1ExclusiveIn.Enabled = bIsWASAPI;
+                if (!bIsWASAPI) // turn these off so that when they are enabled again and vac is on, we dont start exclusive
+                {
+                    chkVAC1ExclusiveOut.Checked = false;
+                    chkVAC1ExclusiveIn.Checked = false;
+                }
+            }
+            catch
             {
                 chkVAC1ExclusiveOut.Checked = false;
                 chkVAC1ExclusiveIn.Checked = false;
+                chkVAC1ExclusiveOut.Enabled = false;
+                chkVAC1ExclusiveIn.Enabled = false;
             }
             //
 
@@ -8080,17 +8089,25 @@ namespace Thetis
             }
 
             //[2.10.3]MW0LGE only enable if wasapi
-            int hostIndex = ((PADeviceInfo)comboAudioDriver3.SelectedItem).Index;
-            PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
-            bool bIsWASAPI = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
-            chkVAC2ExclusiveOut.Enabled = bIsWASAPI;
-            chkVAC2ExclusiveIn.Enabled = bIsWASAPI;
-            if (!bIsWASAPI) // turn these off so that when they are enabled again and vac is on, we dont start exclusive
+            try
+            {
+                PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(new_driver);
+                bool bIsWASAPI = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
+                chkVAC2ExclusiveOut.Enabled = bIsWASAPI;
+                chkVAC2ExclusiveIn.Enabled = bIsWASAPI;
+                if (!bIsWASAPI) // turn these off so that when they are enabled again and vac is on, we dont start exclusive
+                {
+                    chkVAC2ExclusiveOut.Checked = false;
+                    chkVAC1ExclusiveOut.Checked = false;
+                }
+            }
+            catch
             {
                 chkVAC2ExclusiveOut.Checked = false;
                 chkVAC1ExclusiveOut.Checked = false;
+                chkVAC2ExclusiveOut.Enabled = false;
+                chkVAC2ExclusiveIn.Enabled = false;
             }
-
             //
 
             string new_driver_name = ((PADeviceInfo)comboAudioDriver3.SelectedItem).Name;

@@ -1663,6 +1663,21 @@ namespace Thetis
             //	this.Hide();
             //	e.Cancel = true;
         }
+        private bool _shown = false;
+        public new void Show()
+        { // shadow of show
+
+            if (!_shown)
+            {
+                //timer stops when window is hidden, so restart it on show
+                setup_timer();
+            }
+
+            _shown = true;
+
+            base.Show();
+        }
+
         // Callback method called by the Win32 multimedia timer when a timer
         // periodic event occurs.
         private void TimerPeriodicEventCallback(int id, int msg, int user, int param1, int param2)
@@ -2392,6 +2407,7 @@ namespace Thetis
             clear_show();
             quitshut();
 
+            _shown = false;
             e.Cancel = true;
             this.Hide();
         }
@@ -2463,9 +2479,7 @@ namespace Thetis
             s8.Enabled = bPowerState;
             s9.Enabled = bPowerState;
 
-            clear_show();
-            quit = true;
-            kquit = true;
+            stopButton_Click(this, EventArgs.Empty);
         } // end class
     }
 } // end namespace
