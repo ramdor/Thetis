@@ -8035,7 +8035,7 @@ namespace Thetis
             }
 
             //[2.10.3]MW0LGE only enable if wasapi
-            try
+            if(comboAudioDriver2.SelectedIndex < PA19.PA_GetHostApiCount()) //[2.10.3.4]MW0LGE ignore the manually added HPSDR (PCM A/D)
             {
                 PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(new_driver);
                 bool bIsWASAPI = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
@@ -8047,7 +8047,7 @@ namespace Thetis
                     chkVAC1ExclusiveIn.Checked = false;
                 }
             }
-            catch
+            else
             {
                 chkVAC1ExclusiveOut.Checked = false;
                 chkVAC1ExclusiveIn.Checked = false;
@@ -8089,7 +8089,7 @@ namespace Thetis
             }
 
             //[2.10.3]MW0LGE only enable if wasapi
-            try
+            if (comboAudioDriver3.SelectedIndex < PA19.PA_GetHostApiCount()) //[2.10.3.4]MW0LGE ignore the manually added HPSDR (PCM A/D)
             {
                 PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(new_driver);
                 bool bIsWASAPI = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
@@ -8101,7 +8101,7 @@ namespace Thetis
                     chkVAC1ExclusiveOut.Checked = false;
                 }
             }
-            catch
+            else
             {
                 chkVAC2ExclusiveOut.Checked = false;
                 chkVAC1ExclusiveOut.Checked = false;

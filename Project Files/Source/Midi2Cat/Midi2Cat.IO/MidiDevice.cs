@@ -607,6 +607,9 @@ namespace Midi2Cat.IO
 
         public void inDevice_ChannelMessageReceived(int ControlId, int Data, int Status, int Event, int Channel)
         {
+            //handy doc : https://anotherproducer.com/online-tools-for-musicians/midi-cc-list/
+            if (ControlId >= 32 && ControlId <= 63) return; //[2.10.3.4]MW0LGE ignore LSB Controller message for 0-31 until we code up 14 bit support
+
             if (onMidiInput != null) 
             {
                 try

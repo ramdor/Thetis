@@ -30705,7 +30705,7 @@
             0,
             0});
             this.udActivePeakHoldDropRX1.Name = "udActivePeakHoldDropRX1";
-            this.udActivePeakHoldDropRX1.Size = new System.Drawing.Size(48, 20);
+            this.udActivePeakHoldDropRX1.Size = new System.Drawing.Size(55, 20);
             this.udActivePeakHoldDropRX1.TabIndex = 68;
             this.udActivePeakHoldDropRX1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDropRX1, "The speed of the drop in dBm per second");
@@ -30759,7 +30759,7 @@
             0});
             this.udActivePeakHoldDurationRX1.Location = new System.Drawing.Point(100, 21);
             this.udActivePeakHoldDurationRX1.Maximum = new decimal(new int[] {
-            10000,
+            60000,
             0,
             0,
             0});
@@ -30769,12 +30769,12 @@
             0,
             0});
             this.udActivePeakHoldDurationRX1.Name = "udActivePeakHoldDurationRX1";
-            this.udActivePeakHoldDurationRX1.Size = new System.Drawing.Size(48, 20);
+            this.udActivePeakHoldDurationRX1.Size = new System.Drawing.Size(55, 20);
             this.udActivePeakHoldDurationRX1.TabIndex = 66;
             this.udActivePeakHoldDurationRX1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDurationRX1, "How long to hold the peaks");
             this.udActivePeakHoldDurationRX1.Value = new decimal(new int[] {
-            100,
+            1000,
             0,
             0,
             0});
@@ -31856,7 +31856,7 @@
             0,
             0});
             this.udActivePeakHoldDropRX2.Name = "udActivePeakHoldDropRX2";
-            this.udActivePeakHoldDropRX2.Size = new System.Drawing.Size(48, 20);
+            this.udActivePeakHoldDropRX2.Size = new System.Drawing.Size(55, 20);
             this.udActivePeakHoldDropRX2.TabIndex = 72;
             this.udActivePeakHoldDropRX2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDropRX2, "The speed of the drop in dBm per second");
@@ -31911,7 +31911,7 @@
             0});
             this.udActivePeakHoldDurationRX2.Location = new System.Drawing.Point(100, 21);
             this.udActivePeakHoldDurationRX2.Maximum = new decimal(new int[] {
-            10000,
+            60000,
             0,
             0,
             0});
@@ -31921,12 +31921,12 @@
             0,
             0});
             this.udActivePeakHoldDurationRX2.Name = "udActivePeakHoldDurationRX2";
-            this.udActivePeakHoldDurationRX2.Size = new System.Drawing.Size(48, 20);
+            this.udActivePeakHoldDurationRX2.Size = new System.Drawing.Size(55, 20);
             this.udActivePeakHoldDurationRX2.TabIndex = 70;
             this.udActivePeakHoldDurationRX2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDurationRX2, "How long to hold the peaks");
             this.udActivePeakHoldDurationRX2.Value = new decimal(new int[] {
-            100,
+            1000,
             0,
             0,
             0});
@@ -50612,13 +50612,16 @@
             // 
             // btnDownloadSkin
             // 
-            this.btnDownloadSkin.Image = null;
+            this.btnDownloadSkin.Image = ((System.Drawing.Image)(resources.GetObject("btnDownloadSkin.Image")));
+            this.btnDownloadSkin.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.btnDownloadSkin.Location = new System.Drawing.Point(621, 154);
             this.btnDownloadSkin.Name = "btnDownloadSkin";
+            this.btnDownloadSkin.Padding = new System.Windows.Forms.Padding(0, 80, 0, 80);
             this.btnDownloadSkin.Selectable = true;
             this.btnDownloadSkin.Size = new System.Drawing.Size(75, 214);
             this.btnDownloadSkin.TabIndex = 1;
             this.btnDownloadSkin.Text = "Download";
+            this.btnDownloadSkin.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.btnDownloadSkin.UseVisualStyleBackColor = true;
             this.btnDownloadSkin.Click += new System.EventHandler(this.btnDownloadSkin_Click);
             // 

@@ -578,10 +578,7 @@ namespace Thetis
         {
             if (newPower)
             {
-                lock (_objDX2Lock)
-                {
-                    PurgeBuffers();
-                }
+                 purgeBuffers();
             }
         }
         private static void OnBandChangeHandler(int rx, Band oldBand, Band newBand)
@@ -644,12 +641,12 @@ namespace Thetis
 
             if (rx == 1)
             {
-                _RX1waterfallPreviousMinValue = -100f;
+                //_RX1waterfallPreviousMinValue = -100f;
                 FastAttackNoiseFloorRX1 = true;
             }
             else if (rx == 2)
             {
-                _RX2waterfallPreviousMinValue = -100f;
+                //_RX2waterfallPreviousMinValue = -100f;
                 FastAttackNoiseFloorRX2 = true;
             }
         }
@@ -1197,6 +1194,7 @@ namespace Thetis
         //    set { current_display_engine = value; }
         //}
 
+        private static bool _old_mox = false;
         private static bool _mox = false;
         public static bool MOX
         {
@@ -1209,7 +1207,16 @@ namespace Thetis
                 //    resetPeaksAndNoise(1);
                 //    if(RX2Enabled) resetPeaksAndNoise(2);
                 //}
-                _mox = value;
+
+                lock (_objDX2Lock)
+                {
+                    if (value != _old_mox)
+                    {
+                        purgeBuffers();
+                        _old_mox = value;
+                    }
+                    _mox = value;
+                }
             }
         }
         private static bool m_bShowRX1NoiseFloor = false;
@@ -2313,10 +2320,10 @@ namespace Thetis
         private static ArrayPool<float> m_objFloatPool = ArrayPool<float>.Shared;
         private static ArrayPool<int> m_objIntPool = ArrayPool<int>.Shared;
 
-        private static bool _ignore_waterfall_agc_RX1 = false;
-        private static bool _ignore_waterfall_agc_RX2 = false;
-        private static double _rx1_clearbuffer_timeout_waterfall = 0;
-        private static double _rx2_clearbuffer_timeout_waterfall = 0;
+        private static bool _ignore_waterfall_rx1_pixels = false;
+        private static bool _ignore_waterfall_rx2_pixels = false;
+        private static double _rx1_no_pixels_duration = 0;
+        private static double _rx2_no_pixels_duration = 0;
         private static void clearBuffers(int W, int rx)
         {
             resetPeaksAndNoise(rx);
@@ -2337,9 +2344,10 @@ namespace Thetis
                     current_display_data_copy[i] = -200;
                     current_display_data_bottom_copy[i] = -200;
                 });
-                float tmpDelay = Math.Max(200f, _fft_fill_timeRX1);
-                _rx1_clearbuffer_timeout_waterfall = m_objFrameStartTimer.ElapsedMsec + tmpDelay;
-                _ignore_waterfall_agc_RX1 = true;
+
+                //delay waterfall AGC
+                _rx1_no_pixels_duration = m_objFrameStartTimer.ElapsedMsec + _fft_fill_timeRX1 + (m_nFps / 1000f); // 1 frame extra  + (m_nFps / 1000f)
+                _ignore_waterfall_rx1_pixels = true;
             }
             else
             {
@@ -2352,9 +2360,10 @@ namespace Thetis
                     current_waterfall_data_copy[i] = -200;
                     current_waterfall_data_bottom_copy[i] = -200;
                 });
-                float tmpDelay = Math.Max(200f, _fft_fill_timeRX2);
-                _rx2_clearbuffer_timeout_waterfall = m_objFrameStartTimer.ElapsedMsec + tmpDelay;
-                _ignore_waterfall_agc_RX2 = true;
+
+                //delay waterfall AGC
+                _rx2_no_pixels_duration = m_objFrameStartTimer.ElapsedMsec + _fft_fill_timeRX2 + (m_nFps / 1000f);
+                _ignore_waterfall_rx2_pixels = true;
             }
     }
 
@@ -4709,7 +4718,7 @@ namespace Thetis
 
                 if (m_bFastAttackNoiseFloorRX1 && (Math.Abs(m_fFFTBinAverageRX1 - m_fLerpAverageRX1) < 1f))
                 {
-                    float tmpDelay = Math.Max(1000f, _fft_fill_timeRX1 + (_wdsp_mox_transition_buffer_clear ? 1000 : 0)); // another 1000 if WDSP is being reset
+                    float tmpDelay = Math.Max(1000f, _fft_fill_timeRX1 + (_wdsp_mox_transition_buffer_clear ? _fft_fill_timeRX1 : 0)); // extra
                     bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX1) > tmpDelay; //[2.10.1.0] MW0LGE change to time related, instead of frame related
                     if(bElapsed) m_bFastAttackNoiseFloorRX1 = false;
                 }
@@ -4750,7 +4759,7 @@ namespace Thetis
 
                 if (m_bFastAttackNoiseFloorRX2 && (Math.Abs(m_fFFTBinAverageRX2 - m_fLerpAverageRX2) < 1f))
                 {
-                    float tmpDelay = Math.Max(1000f, _fft_fill_timeRX2 + (_wdsp_mox_transition_buffer_clear ? 1000 : 0)); // another 1000 if WDSP is being reset
+                    float tmpDelay = Math.Max(1000f, _fft_fill_timeRX2 + (_wdsp_mox_transition_buffer_clear ? _fft_fill_timeRX2 : 0)); // extra
                     bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX2) > tmpDelay; //[2.10.1.0] MW0LGE change to time related, instead of frame related
                     if(bElapsed) m_bFastAttackNoiseFloorRX2 = false;
                 }
@@ -4767,7 +4776,6 @@ namespace Thetis
 
         private static int m_nRX1WaterFallFrameCount = 0; // 1=every frame, 2= every other, etc
         private static int m_nRX2WaterFallFrameCount = 0;
-
         unsafe static private bool DrawWaterfallDX2D(int nVerticalShift, int W, int H, int rx, bool bottom)
         {
             // undo the rendertarget transform that is used to move linedraws to middle of pixel grid
@@ -4936,35 +4944,11 @@ namespace Thetis
                     {
                         data = current_waterfall_data;
                         dataCopy = current_waterfall_data_copy;
-
-                        if (_ignore_waterfall_agc_RX1)
-                        {
-                            if (m_objFrameStartTimer.ElapsedMsec < _rx1_clearbuffer_timeout_waterfall)
-                            {
-                                low_threshold = 0;
-                                high_threshold = low_threshold;
-                                _RX1waterfallPreviousMinValue = low_threshold;
-                            }
-                            else
-                                _ignore_waterfall_agc_RX1 = false;
-                        }
                     }
                     else // rx2
                     {
                         data = current_waterfall_data_bottom;
                         dataCopy = current_waterfall_data_bottom_copy;
-
-                        if (_ignore_waterfall_agc_RX2)
-                        {
-                            if (m_objFrameStartTimer.ElapsedMsec < _rx2_clearbuffer_timeout_waterfall)
-                            {
-                                low_threshold = 0;
-                                high_threshold = low_threshold;
-                                _RX2waterfallPreviousMinValue = low_threshold;
-                            }
-                            else
-                                _ignore_waterfall_agc_RX2 = false;
-                        }
                     }
 
                     float max;
@@ -5541,9 +5525,9 @@ namespace Thetis
 
                                     // set pixel color changed by w3sz
 
-                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;    // set color in memory
+                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)B;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
-                                    row[(i * m_nDecimation) * pixel_size + 2] = (byte)B;
+                                    row[(i * m_nDecimation) * pixel_size + 2] = (byte)R;
                                     row[(i * m_nDecimation) * pixel_size + 3] = nbBitmapAlpaha;
                                 }
                             }
@@ -5747,9 +5731,9 @@ namespace Thetis
                                     if (waterfall_minimum > dataCopy[i] + fOffset) //[2.10.3]MW0LGE use non notched data
                                         waterfall_minimum = dataCopy[i] + fOffset;
 
-                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;    // set color in memory
+                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)B;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
-                                    row[(i * m_nDecimation) * pixel_size + 2] = (byte)B;
+                                    row[(i * m_nDecimation) * pixel_size + 2] = (byte)R;
                                     row[(i * m_nDecimation) * pixel_size + 3] = nbBitmapAlpaha;
                                 }
                             }
@@ -5952,15 +5936,37 @@ namespace Thetis
                                     }
 
                                     // set pixel color changed by w3sz
-                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;    // set color in memory
+                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)B;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
-                                    row[(i * m_nDecimation) * pixel_size + 2] = (byte)B;
+                                    row[(i * m_nDecimation) * pixel_size + 2] = (byte)R;
                                     row[(i * m_nDecimation) * pixel_size + 3] = nbBitmapAlpaha;
                                 }
                             }
                             break;
                     }
                     #endregion
+                    
+                    bool bIgnoreData = (rx == 1 && _ignore_waterfall_rx1_pixels && m_objFrameStartTimer.ElapsedMsec < _rx1_no_pixels_duration) ||
+                                     (rx == 2 && _ignore_waterfall_rx2_pixels && m_objFrameStartTimer.ElapsedMsec < _rx2_no_pixels_duration);
+
+                    if (bIgnoreData)
+                    {
+                        // ignore the data, just build a black line
+                        for (int i = 0; i < nDecimatedWidth; i++)
+                        {
+                            row[(i * m_nDecimation) * pixel_size + 0] = 0;
+                            row[(i * m_nDecimation) * pixel_size + 1] = 0;
+                            row[(i * m_nDecimation) * pixel_size + 2] = 0;
+                            row[(i * m_nDecimation) * pixel_size + 3] = 255;
+                        }
+                    }
+                    else
+                    {
+                        if (rx == 1)
+                            _ignore_waterfall_rx1_pixels = false;
+                        else
+                            _ignore_waterfall_rx2_pixels = false;
+                    }
 
                     // fill pixels into decimation spaces so we dont have gaps
                     for (int i = 0; i < nDecimatedWidth; i++)
@@ -5988,7 +5994,7 @@ namespace Thetis
                     Utilities.Dispose(ref topPixels);
                     topPixels = null;
 
-                    if (!local_mox)
+                    if (!local_mox && !bIgnoreData)
                     {
                         if (rx == 1)
                             _RX1waterfallPreviousMinValue = (((_RX1waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10) + 1; //wfagc
@@ -9989,7 +9995,7 @@ namespace Thetis
             set { _bUseLegacyBuffers = value; }
         }
 
-        public static void PurgeBuffers()
+        private static void purgeBuffers()
         {
             lock (_objDX2Lock)
             { 

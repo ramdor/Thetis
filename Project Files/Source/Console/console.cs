@@ -1146,6 +1146,9 @@ namespace Thetis
                 // go for launch -- display forms, or user controls in thetis
                 MeterManager.FinishSetupAndDisplay();
 
+                //[2.10.3.4]MW0LGE startup stuff for linearity and ampview
+                if (psform != null) psform.HandleStartup();
+
                 //display render thread
                 m_bResizeDX2Display = true;
                 if (draw_display_thread == null || !draw_display_thread.IsAlive)
@@ -2152,8 +2155,8 @@ namespace Thetis
         }
         public void InfoBarFeedbackLevel(int level, bool bFeedbackLevelOk, bool bCorrectionsBeingApplied, bool bCalibrationAttemptsChanged, Color feedbackColour)
         {
-            if (this.InvokeRequired)
-                this.Invoke(new Action(() => infoBar.PSInfo(level, bFeedbackLevelOk, bCorrectionsBeingApplied, bCalibrationAttemptsChanged, feedbackColour)));
+            if (infoBar.InvokeRequired)
+                infoBar.Invoke(new Action(() => infoBar.PSInfo(level, bFeedbackLevelOk, bCorrectionsBeingApplied, bCalibrationAttemptsChanged, feedbackColour)));
             else
                 infoBar.PSInfo(level, bFeedbackLevelOk, bCorrectionsBeingApplied, bCalibrationAttemptsChanged, feedbackColour);
         }
@@ -26807,16 +26810,16 @@ namespace Thetis
             try
             {
                 HiPerfTimer objStopWatch = new HiPerfTimer();
-                HiPerfTimer objPixelDelayRX1 = new HiPerfTimer();
-                HiPerfTimer objPixelDelayRX2 = new HiPerfTimer();
+                HiPerfTimer objPixelDelayRX1Timer = new HiPerfTimer();
+                HiPerfTimer objPixelDelayRX2Timer = new HiPerfTimer();
                 double fFractionOfMs = 0;
                 double fThreadSleepOverRun = 0;
                 bool bOldLocalMox = Display.MOX;
                 bool bIgnorePixelsRX1 = false;
                 bool bIgnorePixelsRX2 = false;
 
-                objPixelDelayRX1.Stop();
-                objPixelDelayRX2.Stop();
+                objPixelDelayRX1Timer.Stop();
+                objPixelDelayRX2Timer.Stop();
 
                 while (m_bDisplayLoopRunning)
                 {
@@ -26906,24 +26909,23 @@ namespace Thetis
                     
                     if (bLocalMox != bOldLocalMox)
                     {
-                        // [2.10.2.2]MW0LGE
                         // if the mox state is different, reset the analyzer to remove
                         // possibilty of tx data being in the rx buffers, and vice versa
                         if (_wdsp_mox_transition_buffer_clear)
                         {
-                            objPixelDelayRX1.Reset();
-                            bIgnorePixelsRX1 = true;
                             resetWDSPdisplayBuffers(1, bLocalMox);
                             if (RX2Enabled)
-                            {
-                                objPixelDelayRX2.Reset();
-                                bIgnorePixelsRX2 = true;
                                 resetWDSPdisplayBuffers(2, bLocalMox);
-                            }
                         }
 
-                        // clear display buffers
-                        Display.PurgeBuffers();
+                        // stop gathering pixel data from WDSP for duration of fft fill
+                        bIgnorePixelsRX1 = true;
+                        objPixelDelayRX1Timer.Reset();
+                        if (RX2Enabled)
+                        {
+                            bIgnorePixelsRX2 = true;
+                            objPixelDelayRX2Timer.Reset();
+                        }
 
                         bOldLocalMox = bLocalMox;
                     }
@@ -27194,15 +27196,15 @@ namespace Thetis
                     Display.GetPixelsIssueRX1 = bGetPixelIssue;
                     Display.GetPixelsIssueRX2 = bGetPixelIssueBottom;
                     
-                    //
-                    if(bIgnorePixelsRX1 && objPixelDelayRX1.ElapsedMsec >= _fft_fill_timeRX1)
+                    // start gathering data if we WDSP has been given enough time
+                    if(bIgnorePixelsRX1 && objPixelDelayRX1Timer.ElapsedMsec >= _fft_fill_timeRX1)
                     {
-                        objPixelDelayRX1.Stop();
+                        objPixelDelayRX1Timer.Stop();
                         bIgnorePixelsRX1 = false;
                     }
-                    if (bIgnorePixelsRX2 && objPixelDelayRX2.ElapsedMsec >= _fft_fill_timeRX2)
+                    if (bIgnorePixelsRX2 && objPixelDelayRX2Timer.ElapsedMsec >= _fft_fill_timeRX2)
                     {
-                        objPixelDelayRX2.Stop();
+                        objPixelDelayRX2Timer.Stop();
                         bIgnorePixelsRX2 = false;
                     }
                     //
@@ -32124,12 +32126,16 @@ namespace Thetis
             AriesCATEnabled = false;
             GanymedeCATEnabled = false;
 
-            if (psform != null) psform.StopPSThread();
-
             if (chkPower.Checked == true)  // If we're quitting without first clicking off the "Power" button            
                 chkPower.Checked = false;
 
             Thread.Sleep(100);
+
+            if (psform != null)
+            {
+                psform.CloseAmpView(); //[2.10.4.3]MW0LGE
+                psform.StopPSThread();
+            }
 
             SaveState();
 
@@ -33090,7 +33096,7 @@ namespace Thetis
         private CheckState NB_CheckState;
         private void UIMOXChangedTrue()
         {
-            Display.MOX = true;
+            //Display.MOX = true;//[2.10.3.4]MW0LGE moved to after HdwMOXChanged
             NB_CheckState = chkNB.CheckState; // save current state of NB
             if (display_duplex) chkNB.CheckState = CheckState.Unchecked; // turn off NB/NB2 while transmitting with DUP enabled
             meter_peak_count = multimeter_peak_hold_samples;		// reset multimeter peak
@@ -33128,7 +33134,7 @@ namespace Thetis
 
         private void UIMOXChangedFalse()
         {
-            Display.MOX = false;
+            //Display.MOX = false;//[2.10.3.4]MW0LGE moved to after HdwMOXChanged
             if (display_duplex) chkNB.CheckState = NB_CheckState; // restore saved state of NB
 
             if (((rx1_dsp_mode == DSPMode.CWL ||
@@ -33464,6 +33470,7 @@ namespace Thetis
                 UpdateDDCs(rx2_enabled);
                 //UpdateRXADCCtrl();
                 HdwMOXChanged(tx, freq);   // flip the hardware
+                Display.MOX = tx;
                 psform.Mox = tx;
                 cmaster.Mox = tx;          // loads router bit, among other things
 
@@ -33505,6 +33512,7 @@ namespace Thetis
                 //UpdateRXADCCtrl();
                 AudioMOXChanged(tx);    // set audio.cs to RX
                 HdwMOXChanged(tx, freq);// flip the hardware
+                Display.MOX = tx;
                 cmaster.Mox = tx;       // loads router bit, among other things
                 if (ptt_out_delay > 0)
                     Thread.Sleep(ptt_out_delay);                 //wcp:  added 2018-12-24, time for HW to switch

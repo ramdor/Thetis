@@ -39,6 +39,8 @@ namespace Thetis
 
         private void AmpView_Load(object sender, EventArgs e)
         {
+            Common.FadeIn(this);
+
             PSForm.ampv.ClientSize = new System.Drawing.Size(560, 445); //
             Common.RestoreForm(this, "AmpView", false);
             hx  = GCHandle.Alloc(x,  GCHandleType.Pinned);
