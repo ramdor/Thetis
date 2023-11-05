@@ -341,7 +341,7 @@ namespace Midi2Cat.IO
                         if (Event == (int)MidiEvent.Note_Off)
                             data = 0x00;
 
-                       // Debug.WriteLine("wMsg=MIM_DATA, dwInstance={0}, dwParam1={1}, dwParam2={2}", dwInstance, dwParam1.ToString("X8"), dwParam2.ToString("X8"));
+                        // Debug.WriteLine("wMsg=MIM_DATA, dwInstance={0}, dwParam1={1}, dwParam2={2}", dwInstance, dwParam1.ToString("X8"), dwParam2.ToString("X8"));
 
                         //Debug.WriteLine("ControlId={0}, byte2={1}, status={2}, Event={3}, channel={4}", controlId.ToString("X2"), data.ToString("X2"), status.ToString("X2"), Event.ToString("X2"), channel.ToString("X2"));
 
@@ -607,8 +607,8 @@ namespace Midi2Cat.IO
 
         public void inDevice_ChannelMessageReceived(int ControlId, int Data, int Status, int Event, int Channel)
         {
-            //handy doc : https://anotherproducer.com/online-tools-for-musicians/midi-cc-list/
-            if (ControlId >= 32 && ControlId <= 63) return; //[2.10.3.4]MW0LGE ignore LSB Controller message for 0-31 until we code up 14 bit support
+
+            if (!messageOk(ControlId, Status, Channel)) return; //[2.10.3.4]MW0LGE added filter
 
             if (onMidiInput != null) 
             {
@@ -621,7 +621,22 @@ namespace Midi2Cat.IO
                 catch { }
             }
         }
+        private bool messageOk(int controlId, int status, int channel)
+        {
+            // return true if msg is ok
 
+            //handy doc : https://anotherproducer.com/online-tools-for-musicians/midi-cc-list/
+            if (controlId >= 32 && controlId <= 63) return false; //[2.10.3.4]MW0LGE ignore LSB Controller message for 0-31 until we code up 14 bit support
+
+            if(DeviceName == "DJControl Starlight")
+            {
+                // ignore the finger presses on the wheel surfaces as this causes a problem when adding as a wheel
+                // two events will come in otherwise, and is virtually impossible to setup a vfo wheel for example
+                if (controlId == 0x8 && (status == 0x91 || status == 0x92) && (channel == 0x1 || channel == 0x2)) return false;
+            }
+
+            return true;
+        }
         private int FixBehringerCtlID(int ControlId, int Status) //-W2PA Test for DeviceName is a Behringer type, and disambiguate the messages if necessary
         {            
             if (DeviceName == "CMD PL-1")

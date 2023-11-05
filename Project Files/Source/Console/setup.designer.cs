@@ -41051,6 +41051,7 @@
             this.chkCFCEnable.Size = new System.Drawing.Size(82, 17);
             this.chkCFCEnable.TabIndex = 149;
             this.chkCFCEnable.Text = "CFC Enable";
+            this.toolTip1.SetToolTip(this.chkCFCEnable, "Enable/Disable the Continuous Frequency Compression");
             this.chkCFCEnable.UseVisualStyleBackColor = true;
             this.chkCFCEnable.CheckedChanged += new System.EventHandler(this.chkCFCEnable_CheckedChanged);
             // 
