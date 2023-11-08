@@ -2037,16 +2037,18 @@ namespace Thetis
             MicGain = mic_gain;
             TXFilterLow = tx_filter_low;
             TXFilterHigh = tx_filter_high;
-		}
+            TXFMLowCut = tx_fm_lowcut;
+            TXFMHighCut = tx_fm_highcut;
+        }
 
-		#region Non-Static Properties & Routines
+        #region Non-Static Properties & Routines
 
-		/// <summary>
-		/// Controls whether updates to following properties call the DSP.  
-		/// Each property uses this value and a copy of the last thing sent to
-		/// the DSP to update in a minimal fashion.
-		/// </summary>
-		private bool update = false;
+        /// <summary>
+        /// Controls whether updates to following properties call the DSP.  
+        /// Each property uses this value and a copy of the last thing sent to
+        /// the DSP to update in a minimal fashion.
+        /// </summary>
+        private bool update = false;
 		public bool Update
 		{
 			get { return update; }
@@ -2734,7 +2736,7 @@ namespace Thetis
                 {
                     if (value != tx_bandpass_window_dsp || force)
                     {
-                        WDSP.SetTXABandpassWindow(WDSP.id(1, 0), value);
+                        WDSP.SetTXABandpassWindow(WDSP.id(thread, 0), value);
                         tx_bandpass_window_dsp = value;
                     }
                 }
@@ -2753,7 +2755,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_run_dsp || force)
                     {
-                        WDSP.SetTXAPreGenRun(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenRun(WDSP.id(thread, 0), value);
                         tx_pregen_run_dsp = value;
                     }
                 }
@@ -2772,7 +2774,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_mode_dsp || force)
                     {
-                        WDSP.SetTXAPreGenMode(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenMode(WDSP.id(thread, 0), value);
                         tx_pregen_mode_dsp = value;
                     }
                 }
@@ -2791,7 +2793,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_tone_mag_dsp || force)
                     {
-                        WDSP.SetTXAPreGenToneMag(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenToneMag(WDSP.id(thread, 0), value);
                         tx_pregen_tone_mag_dsp = value;
                     }
                 }
@@ -2810,7 +2812,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_tone_freq_dsp || force)
                     {
-                        WDSP.SetTXAPreGenToneFreq(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenToneFreq(WDSP.id(thread, 0), value);
                         tx_pregen_tone_freq_dsp = value;
                     }
                 }
@@ -2829,7 +2831,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_noise_mag_dsp || force)
                     {
-                        WDSP.SetTXAPreGenNoiseMag(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenNoiseMag(WDSP.id(thread, 0), value);
                         tx_pregen_noise_mag_dsp = value;
                     }
                 }
@@ -2848,7 +2850,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_sweep_mag_dsp || force)
                     {
-                        WDSP.SetTXAPreGenSweepMag(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenSweepMag(WDSP.id(thread, 0), value);
                         tx_pregen_sweep_mag_dsp = value;
                     }
                 }
@@ -2868,7 +2870,7 @@ namespace Thetis
                     if (value != tx_pregen_sweep_freq1_dsp || force)
                     {
                         tx_pregen_sweep_freq1_dsp = value;
-                        WDSP.SetTXAPreGenSweepFreq(WDSP.id(1, 0), tx_pregen_sweep_freq1_dsp, tx_pregen_sweep_freq2_dsp);
+                        WDSP.SetTXAPreGenSweepFreq(WDSP.id(thread, 0), tx_pregen_sweep_freq1_dsp, tx_pregen_sweep_freq2_dsp);
 
                     }
                 }
@@ -2888,7 +2890,7 @@ namespace Thetis
                     if (value != tx_pregen_sweep_freq2_dsp || force)
                     {
                         tx_pregen_sweep_freq2_dsp = value;
-                        WDSP.SetTXAPreGenSweepFreq(WDSP.id(1, 0), tx_pregen_sweep_freq1_dsp, tx_pregen_sweep_freq2_dsp);
+                        WDSP.SetTXAPreGenSweepFreq(WDSP.id(thread, 0), tx_pregen_sweep_freq1_dsp, tx_pregen_sweep_freq2_dsp);
                     }
                 }
             }
@@ -2906,7 +2908,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_sweep_rate_dsp || force)
                     {
-                        WDSP.SetTXAPreGenSweepRate(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenSweepRate(WDSP.id(thread, 0), value);
                         tx_pregen_sweep_rate_dsp = value;
                     }
                 }
@@ -2925,7 +2927,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_sawtooth_mag_dsp || force)
                     {
-                        WDSP.SetTXAPreGenSawtoothMag(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenSawtoothMag(WDSP.id(thread, 0), value);
                         tx_pregen_sawtooth_mag_dsp = value;
                     }
                 }
@@ -2944,7 +2946,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_sawtooth_freq_dsp || force)
                     {
-                        WDSP.SetTXAPreGenSawtoothFreq(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenSawtoothFreq(WDSP.id(thread, 0), value);
                         tx_pregen_sawtooth_freq_dsp = value;
                     }
                 }
@@ -2963,7 +2965,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_triangle_mag_dsp || force)
                     {
-                        WDSP.SetTXAPreGenTriangleMag(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenTriangleMag(WDSP.id(thread, 0), value);
                         tx_pregen_triangle_mag_dsp = value;
                     }
                 }
@@ -2982,7 +2984,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_triangle_freq_dsp || force)
                     {
-                        WDSP.SetTXAPreGenTriangleFreq(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenTriangleFreq(WDSP.id(thread, 0), value);
                         tx_pregen_triangle_freq_dsp = value;
                     }
                 }
@@ -3001,7 +3003,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_pulse_mag_dsp || force)
                     {
-                        WDSP.SetTXAPreGenPulseMag(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenPulseMag(WDSP.id(thread, 0), value);
                         tx_pregen_pulse_mag_dsp = value;
                     }
                 }
@@ -3020,7 +3022,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_pulse_freq_dsp || force)
                     {
-                        WDSP.SetTXAPreGenPulseFreq(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenPulseFreq(WDSP.id(thread, 0), value);
                         tx_pregen_pulse_freq_dsp = value;
                     }
                 }
@@ -3039,7 +3041,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_pulse_dutycycle_dsp || force)
                     {
-                        WDSP.SetTXAPreGenPulseDutyCycle(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenPulseDutyCycle(WDSP.id(thread, 0), value);
                         tx_pregen_pulse_dutycycle_dsp = value;
                     }
                 }
@@ -3058,7 +3060,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_pulse_tonefreq_dsp || force)
                     {
-                        WDSP.SetTXAPreGenPulseToneFreq(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenPulseToneFreq(WDSP.id(thread, 0), value);
                         tx_pregen_pulse_tonefreq_dsp = value;
                     }
                 }
@@ -3077,7 +3079,7 @@ namespace Thetis
                 {
                     if (value != tx_pregen_pulse_transition_dsp || force)
                     {
-                        WDSP.SetTXAPreGenPulseTransition(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPreGenPulseTransition(WDSP.id(thread, 0), value);
                         tx_pregen_pulse_transition_dsp = value;
                     }
                 }
@@ -3096,7 +3098,7 @@ namespace Thetis
                 {
                     if (value != tx_postgen_run_dsp || force)
                     {
-                        WDSP.SetTXAPostGenRun(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPostGenRun(WDSP.id(thread, 0), value);
                         tx_postgen_run_dsp = value;
                     }
                 }
@@ -3115,7 +3117,7 @@ namespace Thetis
                 {
                     if (value != tx_postgen_mode_dsp || force)
                     {
-                        WDSP.SetTXAPostGenMode(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPostGenMode(WDSP.id(thread, 0), value);
                         tx_postgen_mode_dsp = value;
                     }
                 }
@@ -3134,7 +3136,7 @@ namespace Thetis
                 {
                     if (value != tx_postgen_tone_mag_dsp || force)
                     {
-                        WDSP.SetTXAPostGenToneMag(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPostGenToneMag(WDSP.id(thread, 0), value);
                         tx_postgen_tone_mag_dsp = value;
                     }
                 }
@@ -3153,7 +3155,7 @@ namespace Thetis
                 {
                     if (value != tx_postgen_tone_freq_dsp || force)
                     {
-                        WDSP.SetTXAPostGenToneFreq(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPostGenToneFreq(WDSP.id(thread, 0), value);
                         tx_postgen_tone_freq_dsp = value;
                     }
                 }
@@ -3173,7 +3175,7 @@ namespace Thetis
                     if (value != tx_postgen_tt_mag1_dsp || force)
                     {
                         tx_postgen_tt_mag1_dsp = value;
-                        WDSP.SetTXAPostGenTTMag(WDSP.id(1, 0), tx_postgen_tt_mag1_dsp, tx_postgen_tt_mag2_dsp);
+                        WDSP.SetTXAPostGenTTMag(WDSP.id(thread, 0), tx_postgen_tt_mag1_dsp, tx_postgen_tt_mag2_dsp);
                     }
                 }
             }
@@ -3192,7 +3194,7 @@ namespace Thetis
                     if (value != tx_postgen_tt_mag2_dsp || force)
                     {
                         tx_postgen_tt_mag2_dsp = value;
-                        WDSP.SetTXAPostGenTTMag(WDSP.id(1, 0), tx_postgen_tt_mag1_dsp, tx_postgen_tt_mag2_dsp);
+                        WDSP.SetTXAPostGenTTMag(WDSP.id(thread, 0), tx_postgen_tt_mag1_dsp, tx_postgen_tt_mag2_dsp);
                     }
                 }
             }
@@ -3211,7 +3213,7 @@ namespace Thetis
                     if (value != tx_postgen_tt_freq1_dsp || force)
                     {
                         tx_postgen_tt_freq1_dsp = value;
-                        WDSP.SetTXAPostGenTTFreq(WDSP.id(1, 0), tx_postgen_tt_freq1_dsp, tx_postgen_tt_freq2_dsp);
+                        WDSP.SetTXAPostGenTTFreq(WDSP.id(thread, 0), tx_postgen_tt_freq1_dsp, tx_postgen_tt_freq2_dsp);
 
                     }
                 }
@@ -3231,7 +3233,7 @@ namespace Thetis
                     if (value != tx_postgen_tt_freq2_dsp || force)
                     {
                         tx_postgen_tt_freq2_dsp = value;
-                        WDSP.SetTXAPostGenTTFreq(WDSP.id(1, 0), tx_postgen_tt_freq1_dsp, tx_postgen_tt_freq2_dsp);
+                        WDSP.SetTXAPostGenTTFreq(WDSP.id(thread, 0), tx_postgen_tt_freq1_dsp, tx_postgen_tt_freq2_dsp);
 
                     }
                 }
@@ -3250,7 +3252,7 @@ namespace Thetis
                 {
                     if (value != tx_postgen_sweep_mag_dsp || force)
                     {
-                        WDSP.SetTXAPostGenSweepMag(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPostGenSweepMag(WDSP.id(thread, 0), value);
                         tx_postgen_sweep_mag_dsp = value;
                     }
                 }
@@ -3270,7 +3272,7 @@ namespace Thetis
                     if (value != tx_postgen_sweep_freq1_dsp || force)
                     {
                         tx_postgen_sweep_freq1_dsp = value;
-                        WDSP.SetTXAPostGenSweepFreq(WDSP.id(1, 0), tx_postgen_sweep_freq1_dsp, tx_postgen_sweep_freq2_dsp);
+                        WDSP.SetTXAPostGenSweepFreq(WDSP.id(thread, 0), tx_postgen_sweep_freq1_dsp, tx_postgen_sweep_freq2_dsp);
 
                     }
                 }
@@ -3290,7 +3292,7 @@ namespace Thetis
                     if (value != tx_postgen_sweep_freq2_dsp || force)
                     {
                         tx_postgen_sweep_freq2_dsp = value;
-                        WDSP.SetTXAPostGenSweepFreq(WDSP.id(1, 0), tx_postgen_sweep_freq1_dsp, tx_postgen_sweep_freq2_dsp);
+                        WDSP.SetTXAPostGenSweepFreq(WDSP.id(thread, 0), tx_postgen_sweep_freq1_dsp, tx_postgen_sweep_freq2_dsp);
                     }
                 }
             }
@@ -3308,7 +3310,7 @@ namespace Thetis
                 {
                     if (value != tx_postgen_sweep_rate_dsp || force)
                     {
-                        WDSP.SetTXAPostGenSweepRate(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPostGenSweepRate(WDSP.id(thread, 0), value);
                         tx_postgen_sweep_rate_dsp = value;
                     }
                 }
@@ -3327,7 +3329,7 @@ namespace Thetis
                 {
                     if (value != ps_run_cal_dsp || force)
                     {
-                        puresignal.SetPSRunCal(WDSP.id(1, 0), value);
+                        puresignal.SetPSRunCal(WDSP.id(thread, 0), value);
                         ps_run_cal_dsp = value;
                     }
                 }
@@ -3346,7 +3348,7 @@ namespace Thetis
                 {
                     if (value != mic_gain_dsp || force)
                     {
-                        WDSP.SetTXAPanelGain1(WDSP.id(1, 0), value);
+                        WDSP.SetTXAPanelGain1(WDSP.id(thread, 0), value);
                         mic_gain_dsp = value;
                     }
                 }
@@ -3367,7 +3369,8 @@ namespace Thetis
                 {
                     if (value != tx_fm_lowcut_dsp || force)
                     {
-                        WDSP.SetTXAFMAFFilter(WDSP.id(1, 0), value, tx_fm_highcut_dsp);
+                        //WDSP.SetTXABandpassFreqs(WDSP.id(thread, 0), value, tx_filter_high_dsp); //done in setfilters in console.cs
+                        WDSP.SetTXAFMAFFilter(WDSP.id(thread, 0), value, tx_fm_highcut_dsp);
                         tx_fm_lowcut_dsp = value;
                     }
                 }
@@ -3383,7 +3386,8 @@ namespace Thetis
                 {
                     if (value != tx_fm_highcut_dsp || force)
                     {
-                        WDSP.SetTXAFMAFFilter(WDSP.id(1, 0), tx_fm_lowcut_dsp, value);
+                        //WDSP.SetTXABandpassFreqs(WDSP.id(thread, 0), tx_filter_low_dsp, value); //done in setfilters in console.cs
+                        WDSP.SetTXAFMAFFilter(WDSP.id(thread, 0), tx_fm_lowcut_dsp, value);
                         tx_fm_highcut_dsp = value;
                     }
                 }

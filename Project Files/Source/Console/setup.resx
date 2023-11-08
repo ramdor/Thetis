@@ -141,13 +141,69 @@
   <metadata name="numericUpDownTS12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pbVAC1FFAlphaInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE+V
+        joEJwzAQA71rx+oUHaQzuZwfkfdbsZuDI+CXRNqBXnzMKL7efVLvBE7YgapyFBy2tJNOVGdsGD/fPuCb
+        3+lE9WIKVDP1RjcmgiWQvfsjpBsTmxHhblk2boccLofboaxwN/xrSLib1BDYAAp3Q7oxEdiQcDdJNyYu
+        lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="pbVAC1FFMaxInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE+V
+        joEJwzAQA71rx+oUHaQzuZwfkfdbsZuDI+CXRNqBXnzMKL7efVLvBE7YgapyFBy2tJNOVGdsGD/fPuCb
+        3+lE9WIKVDP1RjcmgiWQvfsjpBsTmxHhblk2boccLofboaxwN/xrSLib1BDYAAp3Q7oxEdiQcDdJNyYu
+        lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="pbVAC1FFMinInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE+V
+        joEJwzAQA71rx+oUHaQzuZwfkfdbsZuDI+CXRNqBXnzMKL7efVLvBE7YgapyFBy2tJNOVGdsGD/fPuCb
+        3+lE9WIKVDP1RjcmgiWQvfsjpBsTmxHhblk2boccLofboaxwN/xrSLib1BDYAAp3Q7oxEdiQcDdJNyYu
+        lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="pbVAC1PropFeedbackMaxInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE+V
+        joEJwzAQA71rx+oUHaQzuZwfkfdbsZuDI+CXRNqBXnzMKL7efVLvBE7YgapyFBy2tJNOVGdsGD/fPuCb
+        3+lE9WIKVDP1RjcmgiWQvfsjpBsTmxHhblk2boccLofboaxwN/xrSLib1BDYAAp3Q7oxEdiQcDdJNyYu
+        lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="pbVAC1PropFeedbackMinInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE+V
+        joEJwzAQA71rx+oUHaQzuZwfkfdbsZuDI+CXRNqBXnzMKL7efVLvBE7YgapyFBy2tJNOVGdsGD/fPuCb
+        3+lE9WIKVDP1RjcmgiWQvfsjpBsTmxHhblk2boccLofboaxwN/xrSLib1BDYAAp3Q7oxEdiQcDdJNyYu
+        lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="pbVAC1SlewTimeInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE+V
+        joEJwzAQA71rx+oUHaQzuZwfkfdbsZuDI+CXRNqBXnzMKL7efVLvBE7YgapyFBy2tJNOVGdsGD/fPuCb
+        3+lE9WIKVDP1RjcmgiWQvfsjpBsTmxHhblk2boccLofboaxwN/xrSLib1BDYAAp3Q7oxEdiQcDdJNyYu
+        lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="pbVAC1FeedbackGainInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE+V
+        joEJwzAQA71rx+oUHaQzuZwfkfdbsZuDI+CXRNqBXnzMKL7efVLvBE7YgapyFBy2tJNOVGdsGD/fPuCb
+        3+lE9WIKVDP1RjcmgiWQvfsjpBsTmxHhblk2boccLofboaxwN/xrSLib1BDYAAp3Q7oxEdiQcDdJNyYu
+        lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
+</value>
+  </data>
   <data name="chkPurgeBuffers.ToolTip" xml:space="preserve">
     <value>On a mox transition there are times where you get a 'pulse' of energy in the display.
 This is not spurious RF but a side effect of the FFT bins and averages.
 This setting will reset the WDSP analyzer pixel/average buffers.
 They will take a time to 're-fill' and is determined by sample rate and bin size.</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="pbWarningBufferType.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWxJREFUOE+l
@@ -218,7 +274,7 @@ only used if a selected skin does not provide its own.</value>
   <data name="btnDownloadSkin.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wQAADsEBuJFr7QAAAiJJREFUWEfNl79LHEEYhhcJYhGChYiEIEEsxFokiASxEisJIiIiIkEsLFKHIIiI
+        wAAADsABataJCQAAAiJJREFUWEfNl79LHEEYhhcJYhGChYiEIEEsxFokiASxEisJIiIiIkEsLFKHIIiI
         VQgiVpYiIpbWIiLWIv4FIiIiktpC9H2W+Y7lmJ2d+8m98NzdzH4z38vuN7NzSaupXXwUn0Sn+zY6RMM0
         Lq7Eq3jL4UUcim5RV30TTO5L6uNacKfqpjPhSxRiVtRND8KXJMSp+CVWxYpYdvx0LDkWMyyIeTEjBkRJ
         1RioFWptR7SJ5FH4gpoBd7BkgOIaFF/EZ9HjoOrLsWs+GBuiX7DiyHkjSgb+0miSNgQ572mYgS0akfog

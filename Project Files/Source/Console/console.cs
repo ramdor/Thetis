@@ -8235,32 +8235,40 @@ namespace Thetis
                     }
                     break;
                 case DSPMode.FM:
-                    if (radio.GetDSPTX(0).TXFMDeviation == 5000)
-                    {
-                        low = -8000;
-                        high = 8000;
-                        lblFilterLabel.Text = "16k";
-                    }
-                    else if (radio.GetDSPTX(0).TXFMDeviation == 2500)
-                    {
-                        low = -4000;
-                        high = 4000;
-                        lblFilterLabel.Text = "8k";
-                    }
+                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(0, 0).RXFMHighCut);  //[2.10.3.4]MW0LGE
+                    int bw = ((halfBw * 2) / 1000);
+                    low = -halfBw;
+                    high = halfBw;
+                    lblFilterLabel.Text = bw.ToString() + "k";
+                    //if (radio.GetDSPTX(0).TXFMDeviation == 5000)
+                    //{
+                    //    low = -8000;
+                    //    high = 8000;
+                    //    lblFilterLabel.Text = "16k";
+                    //}
+                    //else if (radio.GetDSPTX(0).TXFMDeviation == 2500)
+                    //{
+                    //    low = -4000;
+                    //    high = 4000;
+                    //    lblFilterLabel.Text = "8k";
+                    //}
                     break;
             }
 
             //MW0LGE_21k9
             limitFilterToSidebands(ref low, ref high, 1);
 
-            if (low < -max_filter_width)
-                low = -max_filter_width;
-            if (high > max_filter_width)
-                high = max_filter_width;
-            if (high < -max_filter_width)
-                high = -max_filter_width;
-            if (low > max_filter_width)
-                low = max_filter_width;
+            if (rx1_dsp_mode != DSPMode.FM) //[2.10.3.4]MW0LGE bypass for FM
+            {
+                if (low < -max_filter_width)
+                    low = -max_filter_width;
+                if (high > max_filter_width)
+                    high = max_filter_width;
+                if (high < -max_filter_width)
+                    high = -max_filter_width;
+                if (low > max_filter_width)
+                    low = max_filter_width;
+            }
 
             // if (low < -14999)
             //   low = -14999;
@@ -8379,30 +8387,36 @@ namespace Thetis
                     }
                     break;
                 case DSPMode.FM:
-                    if (radio.GetDSPTX(0).TXFMDeviation == 5000)
-                    {
-                        low = -8000;
-                        high = 8000;
-                    }
-                    else if (radio.GetDSPTX(0).TXFMDeviation == 2500)
-                    {
-                        low = -4000;
-                        high = 4000;
-                    }
+                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(1, 0).RXFMHighCut);  //[2.10.3.4]MW0LGE
+                    low = -halfBw;
+                    high = halfBw;
+                    //if (radio.GetDSPTX(0).TXFMDeviation == 5000)
+                    //{
+                    //    low = -8000;
+                    //    high = 8000;
+                    //}
+                    //else if (radio.GetDSPTX(0).TXFMDeviation == 2500)
+                    //{
+                    //    low = -4000;
+                    //    high = 4000;
+                    //}
                     break;
             }
 
             //MW0LGE_21k9
             limitFilterToSidebands(ref low, ref high, 2);
 
-            if (low < -max_filter_width)
-                low = -max_filter_width;
-            if (high > max_filter_width)
-                high = max_filter_width;
-            if (high < -max_filter_width)
-                high = -max_filter_width;
-            if (low > max_filter_width)
-                low = max_filter_width;
+            if (rx1_dsp_mode != DSPMode.FM) //[2.10.3.4]MW0LGE bypass for FM
+            {
+                if (low < -max_filter_width)
+                    low = -max_filter_width;
+                if (high > max_filter_width)
+                    high = max_filter_width;
+                if (high < -max_filter_width)
+                    high = -max_filter_width;
+                if (low > max_filter_width)
+                    low = max_filter_width;
+            }
             // if (low < -14999)
             //   low = -14999;
             // if (high > 14999)
@@ -8731,16 +8745,19 @@ namespace Thetis
                     h = high;
                     break;
                 case DSPMode.FM:
-                    if (radio.GetDSPTX(0).TXFMDeviation == 5000)
-                    {
-                        l = -8000;
-                        h = 8000;
-                    }
-                    else if (radio.GetDSPTX(0).TXFMDeviation == 2500)
-                    {
-                        l = -5500;
-                        h = 5500;
-                    }
+                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPTX(0).TXFMHighCut); //[2.10.3.4]MW0LGE
+                    l = -halfBw;
+                    h = halfBw;
+                    //if (radio.GetDSPTX(0).TXFMDeviation == 5000)
+                    //{
+                    //    l = -8000;
+                    //    h = 8000;
+                    //}
+                    //else if (radio.GetDSPTX(0).TXFMDeviation == 2500)
+                    //{
+                    //    l = -5500;
+                    //    h = 5500;
+                    //}
                     break;
                 case DSPMode.DRM:
                     l = 7000;
@@ -8761,6 +8778,13 @@ namespace Thetis
             }
 
             radio.GetDSPTX(0).SetTXFilter(l, h);
+            if (mode == DSPMode.FM)
+            {
+                radio.GetDSPTX(0).Force = true;
+                radio.GetDSPTX(0).TXFMLowCut = radio.GetDSPTX(0).TXFMLowCut;
+                radio.GetDSPTX(0).TXFMHighCut = radio.GetDSPTX(0).TXFMHighCut;
+                radio.GetDSPTX(0).Force = false;
+            }
 
             Display.TXFilterLow = l;
             Display.TXFilterHigh = h;
@@ -26918,14 +26942,16 @@ namespace Thetis
                                 resetWDSPdisplayBuffers(2, bLocalMox);
                         }
 
-                        // stop gathering pixel data from WDSP for duration of fft fill
-                        bIgnorePixelsRX1 = true;
-                        objPixelDelayRX1Timer.Reset();
-                        if (RX2Enabled)
-                        {
-                            bIgnorePixelsRX2 = true;
-                            objPixelDelayRX2Timer.Reset();
-                        }
+                        //// stop gathering pixel data from WDSP for duration of fft fill
+                        //bIgnorePixelsRX1 = true;
+                        //objPixelDelayRX1Timer.Reset();
+                        //if (RX2Enabled)
+                        //{
+                        //    bIgnorePixelsRX2 = true;
+                        //    objPixelDelayRX2Timer.Reset();
+                        //}
+
+                        Display.PurgeBuffers();
 
                         bOldLocalMox = bLocalMox;
                     }
@@ -33894,7 +33920,7 @@ namespace Thetis
 
                 radio.GetDSPTX(0).TXPostGenToneMag = 0.99999;
                 radio.GetDSPTX(0).TXPostGenMode = 0;
-                radio.GetDSPTX(0).TXPostGenRun = 1;
+                radio.GetDSPTX(0).TXPostGenRun = 1;                
 
                 // remember old power //MW0LGE_22b
                 if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
@@ -33959,6 +33985,7 @@ namespace Thetis
                 }
 
                 chkMOX.Checked = true;
+
                 await Task.Delay(100); // MW0LGE_21k8
                 // go for it
                 if (!_mox)
@@ -40886,9 +40913,18 @@ namespace Thetis
                 WDSP.SetChannelTDelayDown(WDSP.id(0, 1), 0.000);
                 WDSP.SetChannelTSlewDown(WDSP.id(0, 0), 0.005);
                 WDSP.SetChannelTSlewDown(WDSP.id(0, 1), 0.005);
+
+                ////TXA channel
+                //WDSP.SetChannelTDelayUp(WDSP.id(1, 0), 0.005);
+                //WDSP.SetChannelTSlewUp(WDSP.id(1, 0), 0.010);
+                //WDSP.SetChannelTDelayDown(WDSP.id(1, 0), 0.000);
+                //WDSP.SetChannelTSlewDown(WDSP.id(1, 0), 0.005);
+
+                ////WDSP carrier generated TXA
+                //WDSP.SetTXAuSlewTime(WDSP.id(1, 0), 0.005);
             }
             else
-            {
+            {                
                 WDSP.SetChannelTDelayUp(WDSP.id(0, 0), 0.000);
                 WDSP.SetChannelTDelayUp(WDSP.id(0, 1), 0.000);
                 WDSP.SetChannelTSlewUp(WDSP.id(0, 0), 0.010);
@@ -40897,7 +40933,20 @@ namespace Thetis
                 WDSP.SetChannelTDelayDown(WDSP.id(0, 1), 0.000);
                 WDSP.SetChannelTSlewDown(WDSP.id(0, 0), 0.010);
                 WDSP.SetChannelTSlewDown(WDSP.id(0, 1), 0.010);
+
+                ////TXA channel
+                //WDSP.SetChannelTDelayUp(WDSP.id(1, 0), 0.000);
+                //WDSP.SetChannelTSlewUp(WDSP.id(1, 0), 0.010);
+                //WDSP.SetChannelTDelayDown(WDSP.id(1, 0), 0.000);
+                //WDSP.SetChannelTSlewDown(WDSP.id(1, 0), 0.010);
+
+                ////WDSP carrier generated TXA
+                //if (new_mode == DSPMode.AM || new_mode == DSPMode.SAM || new_mode == DSPMode.FM)
+                //    WDSP.SetTXAuSlewTime(WDSP.id(1, 0), 0.009); // slew-up must be LESS THAN TXA channel for these modes, carrier to rise faster than the modulating audio
+                //else
+                //    WDSP.SetTXAuSlewTime(WDSP.id(1, 0), 0.010);
             }
+
 
             double rx1_freq = VFOAFreq;
             // int old_txosc = (int)radio.GetDSPTX(0).TXOsc;
@@ -41461,14 +41510,16 @@ namespace Thetis
             {
                 if (rx1_dsp_mode == DSPMode.FM)
                 {
-                    if (radio.GetDSPTX(0).TXFMDeviation == 5000)
-                    {
-                        UpdateRX1Filters(-8000, 8000);
-                    }
-                    else
-                    {
-                        UpdateRX1Filters(-5500, 5500);
-                    }
+                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(0, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
+                    UpdateRX1Filters(-halfBw, halfBw);
+                    //if (radio.GetDSPTX(0).TXFMDeviation == 5000)
+                    //{
+                    //    UpdateRX1Filters(-8000, 8000);
+                    //}
+                    //else
+                    //{
+                    //    UpdateRX1Filters(-5500, 5500);
+                    //}
                 }
 
                 RX1Filter = Filter.NONE;
@@ -42544,15 +42595,18 @@ namespace Thetis
                 case DSPMode.DSB:
                     low = current_center - new_bw;
                     high = current_center + new_bw;
-                    if (low < -max_filter_width)
+                    if (rx1_dsp_mode != DSPMode.FM) //[2.10.3.4]MW0LGE bypass for FM
                     {
-                        low += (-max_filter_width - low);
-                        high += (-max_filter_width - low);
-                    }
-                    else if (high > max_filter_width)
-                    {
-                        high -= (high - max_filter_width);
-                        low -= (high - max_filter_width);
+                        if (low < -max_filter_width)
+                        {
+                            low += (-max_filter_width - low);
+                            high += (-max_filter_width - low);
+                        }
+                        else if (high > max_filter_width)
+                        {
+                            high -= (high - max_filter_width);
+                            low -= (high - max_filter_width);
+                        }
                     }
                     break;
                 case DSPMode.LSB:
@@ -45110,6 +45164,28 @@ namespace Thetis
             Display.RX2DSPMode = new_mode;
             RadioDSP.RX2DSPMode = new_mode;
 
+            //if (new_mode == DSPMode.CWL || new_mode == DSPMode.CWU)
+            //{
+            //    WDSP.SetChannelTDelayUp(WDSP.id(2, 0), 0.005);
+            //    WDSP.SetChannelTDelayUp(WDSP.id(2, 1), 0.005);
+            //    WDSP.SetChannelTSlewUp(WDSP.id(2, 0), 0.010);
+            //    WDSP.SetChannelTSlewUp(WDSP.id(2, 1), 0.010);
+            //    WDSP.SetChannelTDelayDown(WDSP.id(2, 0), 0.000);
+            //    WDSP.SetChannelTDelayDown(WDSP.id(2, 1), 0.000);
+            //    WDSP.SetChannelTSlewDown(WDSP.id(2, 0), 0.005);
+            //    WDSP.SetChannelTSlewDown(WDSP.id(2, 1), 0.005);
+            //}
+            //else
+            //{
+            //    WDSP.SetChannelTDelayUp(WDSP.id(2, 0), 0.010);
+            //    WDSP.SetChannelTDelayUp(WDSP.id(2, 1), 0.010);
+            //    WDSP.SetChannelTSlewUp(WDSP.id(2, 0), 0.025);
+            //    WDSP.SetChannelTSlewUp(WDSP.id(2, 1), 0.025);
+            //    WDSP.SetChannelTDelayDown(WDSP.id(2, 0), 0.000);
+            //    WDSP.SetChannelTDelayDown(WDSP.id(2, 1), 0.000);
+            //    WDSP.SetChannelTSlewDown(WDSP.id(2, 0), 0.010);
+            //    WDSP.SetChannelTSlewDown(WDSP.id(2, 1), 0.010);
+            //}
             if (new_mode == DSPMode.CWL || new_mode == DSPMode.CWU)
             {
                 WDSP.SetChannelTDelayUp(WDSP.id(2, 0), 0.005);
@@ -45123,10 +45199,10 @@ namespace Thetis
             }
             else
             {
-                WDSP.SetChannelTDelayUp(WDSP.id(2, 0), 0.010);
-                WDSP.SetChannelTDelayUp(WDSP.id(2, 1), 0.010);
-                WDSP.SetChannelTSlewUp(WDSP.id(2, 0), 0.025);
-                WDSP.SetChannelTSlewUp(WDSP.id(2, 1), 0.025);
+                WDSP.SetChannelTDelayUp(WDSP.id(2, 0), 0.000);
+                WDSP.SetChannelTDelayUp(WDSP.id(2, 1), 0.000);
+                WDSP.SetChannelTSlewUp(WDSP.id(2, 0), 0.010);
+                WDSP.SetChannelTSlewUp(WDSP.id(2, 1), 0.010);
                 WDSP.SetChannelTDelayDown(WDSP.id(2, 0), 0.000);
                 WDSP.SetChannelTDelayDown(WDSP.id(2, 1), 0.000);
                 WDSP.SetChannelTSlewDown(WDSP.id(2, 0), 0.010);
@@ -45578,14 +45654,16 @@ namespace Thetis
             {
                 if (rx2_dsp_mode == DSPMode.FM)
                 {
-                    if (radio.GetDSPRX(1, 0).RXFMDeviation == 5000)
-                    {
-                        UpdateRX2Filters(-8000, 8000);
-                    }
-                    else
-                    {
-                        UpdateRX2Filters(-5500, 5500);
-                    }
+                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(1, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
+                    UpdateRX2Filters(-halfBw, halfBw);
+                    //if (radio.GetDSPRX(1, 0).RXFMDeviation == 5000)
+                    //{
+                    //    UpdateRX2Filters(-8000, 8000);
+                    //}
+                    //else
+                    //{
+                    //    UpdateRX2Filters(-5500, 5500);
+                    //}
                 }
                 RX2Filter = Filter.NONE;
             }
@@ -48266,19 +48344,21 @@ namespace Thetis
                 radio.GetDSPRX(0, 0).RXFMDeviation = 2500;
                 if (RX1DSPMode == DSPMode.FM)
                 {
-                    UpdateRX1Filters(-4000, 4000);
-                    //MW0LGE_21g gdi+ //if (current_display_engine == DisplayEngine.GDI_PLUS)
-                    //    picDisplay.Invalidate();
+                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(0, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
+                    UpdateRX1Filters(-halfBw, halfBw);
+                    //UpdateRX1Filters(-4000, 4000);
                 }
                 if (RX2DSPMode == DSPMode.FM)
                 {
-                    UpdateRX2Filters(-4000, 4000);
-                    //MW0LGE_21g gdi+ //if (current_display_engine == DisplayEngine.GDI_PLUS)
-                    //    picDisplay.Invalidate();
+                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(1, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
+                    UpdateRX2Filters(-halfBw, halfBw);
+                    //UpdateRX2Filters(-4000, 4000);
                 }
                 if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.FM)
                 {
-                    SetTXFilters(DSPMode.FM, -4000, 4000);
+                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPTX(0).TXFMHighCut); //[2.10.3.4]MW0LGE
+                    SetTXFilters(DSPMode.FM, -halfBw, halfBw);
+                    //SetTXFilters(DSPMode.FM, -4000, 4000);
                 }
             }
         }
@@ -48291,19 +48371,21 @@ namespace Thetis
                 radio.GetDSPRX(0, 0).RXFMDeviation = 5000;
                 if (RX1DSPMode == DSPMode.FM)
                 {
-                    UpdateRX1Filters(-8000, 8000);
-                    //MW0LGE_21g gdi+ //if (current_display_engine == DisplayEngine.GDI_PLUS)
-                    //    picDisplay.Invalidate();
+                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(0, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
+                    UpdateRX1Filters(-halfBw, halfBw);
+                    //UpdateRX1Filters(-8000, 8000);
                 }
                 if (RX2DSPMode == DSPMode.FM)
                 {
-                    UpdateRX2Filters(-8000, 8000);
-                    //MW0LGE_21g gdi+ //if (current_display_engine == DisplayEngine.GDI_PLUS)
-                    //    picDisplay.Invalidate();
+                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(1, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
+                    UpdateRX2Filters(-halfBw, halfBw);
+                    //UpdateRX2Filters(-8000, 8000);
                 }
                 if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.FM)
                 {
-                    SetTXFilters(DSPMode.FM, -8000, 8000);
+                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPTX(0).TXFMHighCut); //[2.10.3.4]MW0LGE
+                    SetTXFilters(DSPMode.FM , - halfBw, halfBw);
+                    //SetTXFilters(DSPMode.FM, -8000, 8000);
                 }
             }
         }
@@ -49340,7 +49422,7 @@ namespace Thetis
             if (x > -1 && y > -1)
             {
                 lblPAProfile.Location = new Point(x, y);
-                lblPAProfile.BringToFront();
+                //lblPAProfile.BringToFront();
                 lblPAProfile.Visible = true;
             }
             else

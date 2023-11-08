@@ -677,7 +677,12 @@ namespace Thetis
         public int WPM
         {
             get { return cwxwpm; }
-            set { udWPM.Value = value; }
+            set 
+            {
+                int tmp = Math.Max((int)udWPM.Minimum, value);
+                tmp = Math.Min((int)udWPM.Maximum, tmp);
+                udWPM.Value = tmp; 
+            }
         }
 
         public int Characters2Send

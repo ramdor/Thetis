@@ -150,6 +150,8 @@ void SetTXAFMPreEmphFreqs (int channel, double low, double high)
 	a = txa[channel].preemph.p;
 	if (a->f_low != low || a->f_high != high)
 	{
+		a->f_low = low;
+		a->f_high = high;
 		impulse = fc_impulse (a->nc, a->f_low, a->f_high, -20.0 * log10(a->f_high / a->f_low), 0.0, a->ctype, a->rate, 1.0 / (2.0 * a->size), 0, 0);
 		setImpulse_fircore (a->p, impulse, 1);
 		_aligned_free (impulse);

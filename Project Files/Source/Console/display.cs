@@ -578,7 +578,7 @@ namespace Thetis
         {
             if (newPower)
             {
-                 purgeBuffers();
+                 PurgeBuffers();
             }
         }
         private static void OnBandChangeHandler(int rx, Band oldBand, Band newBand)
@@ -1212,7 +1212,7 @@ namespace Thetis
                 {
                     if (value != _old_mox)
                     {
-                        purgeBuffers();
+                        PurgeBuffers();
                         _old_mox = value;
                     }
                     _mox = value;
@@ -2320,10 +2320,10 @@ namespace Thetis
         private static ArrayPool<float> m_objFloatPool = ArrayPool<float>.Shared;
         private static ArrayPool<int> m_objIntPool = ArrayPool<int>.Shared;
 
-        private static bool _ignore_waterfall_rx1_pixels = false;
-        private static bool _ignore_waterfall_rx2_pixels = false;
-        private static double _rx1_no_pixels_duration = 0;
-        private static double _rx2_no_pixels_duration = 0;
+        private static bool _ignore_waterfall_rx1_agc = false;
+        private static bool _ignore_waterfall_rx2_agc = false;
+        private static double _rx1_no_agc_duration = 0;
+        private static double _rx2_no_agc_duration = 0;
         private static void clearBuffers(int W, int rx)
         {
             resetPeaksAndNoise(rx);
@@ -2345,9 +2345,9 @@ namespace Thetis
                     current_display_data_bottom_copy[i] = -200;
                 });
 
-                //delay waterfall AGC
-                _rx1_no_pixels_duration = m_objFrameStartTimer.ElapsedMsec + _fft_fill_timeRX1 + (m_nFps / 1000f); // 1 frame extra  + (m_nFps / 1000f)
-                _ignore_waterfall_rx1_pixels = true;
+                //delay waterfall agc
+                _rx1_no_agc_duration = m_objFrameStartTimer.ElapsedMsec + _fft_fill_timeRX1 + ((m_nFps / 1000f) * 2); // 2 extra frames
+                _ignore_waterfall_rx1_agc = true;
             }
             else
             {
@@ -2361,9 +2361,9 @@ namespace Thetis
                     current_waterfall_data_bottom_copy[i] = -200;
                 });
 
-                //delay waterfall AGC
-                _rx2_no_pixels_duration = m_objFrameStartTimer.ElapsedMsec + _fft_fill_timeRX2 + (m_nFps / 1000f);
-                _ignore_waterfall_rx2_pixels = true;
+                //delay waterfall agc
+                _rx2_no_agc_duration = m_objFrameStartTimer.ElapsedMsec + _fft_fill_timeRX2 + ((m_nFps / 1000f) * 2); // 2 extra frames
+                _ignore_waterfall_rx2_agc = true;
             }
     }
 
@@ -5945,28 +5945,6 @@ namespace Thetis
                             break;
                     }
                     #endregion
-                    
-                    bool bIgnoreData = (rx == 1 && _ignore_waterfall_rx1_pixels && m_objFrameStartTimer.ElapsedMsec < _rx1_no_pixels_duration) ||
-                                     (rx == 2 && _ignore_waterfall_rx2_pixels && m_objFrameStartTimer.ElapsedMsec < _rx2_no_pixels_duration);
-
-                    if (bIgnoreData)
-                    {
-                        // ignore the data, just build a black line
-                        for (int i = 0; i < nDecimatedWidth; i++)
-                        {
-                            row[(i * m_nDecimation) * pixel_size + 0] = 0;
-                            row[(i * m_nDecimation) * pixel_size + 1] = 0;
-                            row[(i * m_nDecimation) * pixel_size + 2] = 0;
-                            row[(i * m_nDecimation) * pixel_size + 3] = 255;
-                        }
-                    }
-                    else
-                    {
-                        if (rx == 1)
-                            _ignore_waterfall_rx1_pixels = false;
-                        else
-                            _ignore_waterfall_rx2_pixels = false;
-                    }
 
                     // fill pixels into decimation spaces so we dont have gaps
                     for (int i = 0; i < nDecimatedWidth; i++)
@@ -5994,7 +5972,18 @@ namespace Thetis
                     Utilities.Dispose(ref topPixels);
                     topPixels = null;
 
-                    if (!local_mox && !bIgnoreData)
+                    bool bIgnoreAgc = (rx == 1 && _ignore_waterfall_rx1_agc && m_objFrameStartTimer.ElapsedMsec < _rx1_no_agc_duration) ||
+                                        (rx == 2 && _ignore_waterfall_rx2_agc && m_objFrameStartTimer.ElapsedMsec < _rx2_no_agc_duration);
+
+                    if (!bIgnoreAgc)
+                    {
+                        if (rx == 1)
+                            _ignore_waterfall_rx1_agc = false;
+                        else
+                            _ignore_waterfall_rx2_agc = false;
+                    }
+
+                    if (!local_mox && !bIgnoreAgc)
                     {
                         if (rx == 1)
                             _RX1waterfallPreviousMinValue = (((_RX1waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10) + 1; //wfagc
@@ -9995,7 +9984,7 @@ namespace Thetis
             set { _bUseLegacyBuffers = value; }
         }
 
-        private static void purgeBuffers()
+        public static void PurgeBuffers()
         {
             lock (_objDX2Lock)
             { 
@@ -10003,6 +9992,22 @@ namespace Thetis
                 if (_rx2_enabled) clearBuffers(displayTargetWidth, 2);
             }
         }
+        //public static void PauseWaterfallAgc()
+        //{
+        //    lock (_objDX2Lock)
+        //    {
+        //        //delay waterfall agc
+        //        _rx1_no_agc_duration = m_objFrameStartTimer.ElapsedMsec + _fft_fill_timeRX1 + (m_nFps / 1000f);
+        //        _ignore_waterfall_rx1_agc = true;
+
+        //        if (_rx2_enabled)
+        //        {
+        //            //delay waterfall agc
+        //            _rx2_no_agc_duration = m_objFrameStartTimer.ElapsedMsec + _fft_fill_timeRX2 + (m_nFps / 1000f);
+        //            _ignore_waterfall_rx2_agc = true;
+        //        }
+        //    }
+        //}
 
         private static float _fft_fill_timeRX1 = 0f;
         private static float _fft_fill_timeRX2 = 0f;

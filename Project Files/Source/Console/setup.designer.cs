@@ -28909,6 +28909,7 @@
             // 
             // pbVAC1FFAlphaInfo
             // 
+            this.pbVAC1FFAlphaInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FFAlphaInfo.Image")));
             this.pbVAC1FFAlphaInfo.Location = new System.Drawing.Point(325, 197);
             this.pbVAC1FFAlphaInfo.Name = "pbVAC1FFAlphaInfo";
             this.pbVAC1FFAlphaInfo.Size = new System.Drawing.Size(20, 20);
@@ -28919,6 +28920,7 @@
             // 
             // pbVAC1FFMaxInfo
             // 
+            this.pbVAC1FFMaxInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FFMaxInfo.Image")));
             this.pbVAC1FFMaxInfo.Location = new System.Drawing.Point(325, 173);
             this.pbVAC1FFMaxInfo.Name = "pbVAC1FFMaxInfo";
             this.pbVAC1FFMaxInfo.Size = new System.Drawing.Size(20, 20);
@@ -28929,6 +28931,7 @@
             // 
             // pbVAC1FFMinInfo
             // 
+            this.pbVAC1FFMinInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FFMinInfo.Image")));
             this.pbVAC1FFMinInfo.Location = new System.Drawing.Point(325, 147);
             this.pbVAC1FFMinInfo.Name = "pbVAC1FFMinInfo";
             this.pbVAC1FFMinInfo.Size = new System.Drawing.Size(20, 20);
@@ -28939,7 +28942,8 @@
             // 
             // pbVAC1PropFeedbackMaxInfo
             // 
-            this.pbVAC1PropFeedbackMaxInfo.Location = new System.Drawing.Point(326, 121);
+            this.pbVAC1PropFeedbackMaxInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1PropFeedbackMaxInfo.Image")));
+            this.pbVAC1PropFeedbackMaxInfo.Location = new System.Drawing.Point(325, 121);
             this.pbVAC1PropFeedbackMaxInfo.Name = "pbVAC1PropFeedbackMaxInfo";
             this.pbVAC1PropFeedbackMaxInfo.Size = new System.Drawing.Size(20, 20);
             this.pbVAC1PropFeedbackMaxInfo.TabIndex = 68;
@@ -28949,7 +28953,8 @@
             // 
             // pbVAC1PropFeedbackMinInfo
             // 
-            this.pbVAC1PropFeedbackMinInfo.Location = new System.Drawing.Point(326, 95);
+            this.pbVAC1PropFeedbackMinInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1PropFeedbackMinInfo.Image")));
+            this.pbVAC1PropFeedbackMinInfo.Location = new System.Drawing.Point(325, 95);
             this.pbVAC1PropFeedbackMinInfo.Name = "pbVAC1PropFeedbackMinInfo";
             this.pbVAC1PropFeedbackMinInfo.Size = new System.Drawing.Size(20, 20);
             this.pbVAC1PropFeedbackMinInfo.TabIndex = 67;
@@ -29409,6 +29414,7 @@
             // 
             // pbVAC1SlewTimeInfo
             // 
+            this.pbVAC1SlewTimeInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1SlewTimeInfo.Image")));
             this.pbVAC1SlewTimeInfo.Location = new System.Drawing.Point(325, 69);
             this.pbVAC1SlewTimeInfo.Name = "pbVAC1SlewTimeInfo";
             this.pbVAC1SlewTimeInfo.Size = new System.Drawing.Size(20, 20);
@@ -29419,6 +29425,7 @@
             // 
             // pbVAC1FeedbackGainInfo
             // 
+            this.pbVAC1FeedbackGainInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FeedbackGainInfo.Image")));
             this.pbVAC1FeedbackGainInfo.Location = new System.Drawing.Point(325, 43);
             this.pbVAC1FeedbackGainInfo.Name = "pbVAC1FeedbackGainInfo";
             this.pbVAC1FeedbackGainInfo.Size = new System.Drawing.Size(20, 20);

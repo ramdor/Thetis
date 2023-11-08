@@ -28810,29 +28810,45 @@ namespace Thetis
         private void udFMLowCutRX_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            if (udFMLowCutRX.Value > udFMHighCutRX.Value) return;
             console.radio.GetDSPRX(0, 0).RXFMLowCut = (double)udFMLowCutRX.Value; //main rx1
             console.radio.GetDSPRX(0, 1).RXFMLowCut = (double)udFMLowCutRX.Value; //sub rx1
             console.radio.GetDSPRX(1, 0).RXFMLowCut = (double)udFMLowCutRX.Value; //rx2
+            if (console.RX1DSPMode == DSPMode.FM)
+                console.UpdateRX1Filters((int)console.radio.GetDSPRX(0, 0).RXFMLowCut, (int)console.radio.GetDSPTX(0).TXFMHighCut);
+            if (console.RX2DSPMode == DSPMode.FM)
+                console.UpdateRX2Filters((int)console.radio.GetDSPRX(1, 0).RXFMLowCut, (int)console.radio.GetDSPTX(0).TXFMHighCut);
         }
 
         private void udFMHighCutRX_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            if (udFMHighCutRX.Value < udFMLowCutRX.Value) return;
             console.radio.GetDSPRX(0, 0).RXFMHighCut = (double)udFMHighCutRX.Value;
             console.radio.GetDSPRX(0, 1).RXFMHighCut = (double)udFMHighCutRX.Value;
             console.radio.GetDSPRX(1, 0).RXFMHighCut = (double)udFMHighCutRX.Value;
+            if (console.RX1DSPMode == DSPMode.FM)
+                console.UpdateRX1Filters((int)console.radio.GetDSPRX(0, 0).RXFMLowCut, (int)console.radio.GetDSPTX(0).TXFMHighCut);
+            if (console.RX2DSPMode == DSPMode.FM)
+                console.UpdateRX2Filters((int)console.radio.GetDSPRX(1, 0).RXFMLowCut, (int)console.radio.GetDSPTX(0).TXFMHighCut);
         }
 
         private void udFMLowCutTX_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            if (udFMLowCutTX.Value > udFMHighCutTX.Value) return;
             console.radio.GetDSPTX(0).TXFMLowCut = (double)udFMLowCutTX.Value;
+            if (console.RX1DSPMode == DSPMode.FM)
+                console.SetTXFilters(DSPMode.FM, (int)console.radio.GetDSPTX(0).TXFMLowCut, (int)console.radio.GetDSPTX(0).TXFMHighCut);
         }
 
         private void udFMHighCutTX_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            if (udFMHighCutTX.Value < udFMLowCutTX.Value) return;
             console.radio.GetDSPTX(0).TXFMHighCut = (double)udFMHighCutTX.Value;
+            if (console.RX1DSPMode == DSPMode.FM)
+                console.SetTXFilters(DSPMode.FM, (int)console.radio.GetDSPTX(0).TXFMLowCut, (int)console.radio.GetDSPTX(0).TXFMHighCut);
         }
 
         private void chkSwapIQVac1_CheckedChanged(object sender, EventArgs e)
