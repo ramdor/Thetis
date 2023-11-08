@@ -172,3 +172,21 @@ void setSize_uslew (USLEW a, int size)
 	a->size = size;
 	flush_uslew (a);
 }
+
+/********************************************************************************************************
+*																										*
+*								             TXA Properties												*
+*																										*
+********************************************************************************************************/
+
+PORT
+void SetTXAuSlewTime(int channel, double time)
+{
+	// NOTE:  'time' is in seconds
+	EnterCriticalSection(&ch[channel].csDSP);
+	USLEW a = txa[channel].uslew.p;
+	decalc_uslew(a);
+	a->tupslew = time;
+	calc_uslew(a);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
