@@ -4994,7 +4994,7 @@ static void WaspiHostProcessingLoop( void *inputBuffer,  long inputFrames,
         else
             pending_time = (PaTime)stream->in.latencySeconds;
 
-        timeInfo.inputBufferAdcTime = timeInfo.currentTime + pending_time;
+        timeInfo.inputBufferAdcTime = timeInfo.currentTime - pending_time; //#850
     }
     // Query output current latency
     if (stream->out.clientProc != NULL)

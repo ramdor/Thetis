@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Full version number to display -->
 <?define VersionNumber="!(bind.FileVersion.ThetisEXE)" ?>
-<!-- <?define NetFx480MinRelease = 528040 ?> -->
-<?define NetFx481MinRelease = 533320 ?>
+<?define NetFx480MinRelease = 528040 ?>
+<!-- <?define NetFx481MinRelease = 533320 ?> -->
 <?define DocumentationPath = "..\..\lib\Thetis-resources\" ?>
 <!-- 32-bit / 64-bit variables -->
 <?if $(var.Platform) = x64 ?>
@@ -53,10 +53,10 @@
     <MediaTemplate EmbedCab="yes" />
 
     <PropertyRef Id="NETFRAMEWORK45" />
-    <PropertyRef Id="WIX_IS_NETFRAMEWORK_481_OR_LATER_INSTALLED"/>
+    <PropertyRef Id="WIX_IS_NETFRAMEWORK_480_OR_LATER_INSTALLED"/>
 
-    <Condition Message="[ProductName] Requires .NET Framework 4.8.1 or later to be installed. Please install the .NET Framework then run this installer again.">
-      <![CDATA[Installed OR WIX_IS_NETFRAMEWORK_481_OR_LATER_INSTALLED]]>
+    <Condition Message="[ProductName] Requires .NET Framework 4.8.0 or later to be installed. Please install the .NET Framework then run this installer again.">
+      <![CDATA[Installed OR WIX_IS_NETFRAMEWORK_480_OR_LATER_INSTALLED]]>
     </Condition>
 
     <WixVariable Id="WixUILicenseRtf" Value="GNU_GENERAL_PUBLIC_LICENSE.rtf" />
@@ -106,9 +106,9 @@
 
   <Fragment>
     <PropertyRef Id="WIXNETFX4RELEASEINSTALLED" />
-    <Property Id="WIX_IS_NETFRAMEWORK_481_OR_LATER_INSTALLED" Secure="yes" />
-    <SetProperty Id="WIX_IS_NETFRAMEWORK_481_OR_LATER_INSTALLED" Value="1" After="AppSearch">
-		WIXNETFX4RELEASEINSTALLED >= "#$(var.NetFx481MinRelease)"
+    <Property Id="WIX_IS_NETFRAMEWORK_480_OR_LATER_INSTALLED" Secure="yes" />
+    <SetProperty Id="WIX_IS_NETFRAMEWORK_480_OR_LATER_INSTALLED" Value="1" After="AppSearch">
+		WIXNETFX4RELEASEINSTALLED >= "#$(var.NetFx480MinRelease)"
 	</SetProperty>
   </Fragment>
 

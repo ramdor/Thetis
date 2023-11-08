@@ -152,9 +152,6 @@ void obdata (int id, double* out)
 
 void ob_main (void *pargs)
 {
-	const wchar_t* threadName = L"ob_main Thread";
-	SetThreadDescription(GetCurrentThread(), threadName);
-
 	DWORD taskIndex = 0;
 	HANDLE hTask = AvSetMmThreadCharacteristics(TEXT("Pro Audio"), &taskIndex);
 	if (hTask != 0) AvSetMmThreadPriority(hTask, 2);

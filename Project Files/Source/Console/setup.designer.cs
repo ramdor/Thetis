@@ -201,6 +201,7 @@
             this.tpGeneral = new System.Windows.Forms.TabPage();
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
+            this.btnReleaseNotes = new System.Windows.Forms.ButtonTS();
             this.btnOpenDBFolder = new System.Windows.Forms.ButtonTS();
             this.lblTimeout = new System.Windows.Forms.LabelTS();
             this.lblShowTimeoutText = new System.Windows.Forms.LabelTS();
@@ -3535,7 +3536,6 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
             this.txtboxTXProfileChangedReport = new System.Windows.Forms.TextBoxTS();
-            this.btnReleaseNotes = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -6833,6 +6833,19 @@
             this.tpGeneralHardware.TabIndex = 0;
             this.tpGeneralHardware.Text = "H/W Select";
             this.tpGeneralHardware.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralHardware_Paint);
+            // 
+            // btnReleaseNotes
+            // 
+            this.btnReleaseNotes.Image = null;
+            this.btnReleaseNotes.Location = new System.Drawing.Point(259, 310);
+            this.btnReleaseNotes.Name = "btnReleaseNotes";
+            this.btnReleaseNotes.Selectable = true;
+            this.btnReleaseNotes.Size = new System.Drawing.Size(111, 53);
+            this.btnReleaseNotes.TabIndex = 123;
+            this.btnReleaseNotes.Text = "Release Notes";
+            this.toolTip1.SetToolTip(this.btnReleaseNotes, "Show the release notes for this version");
+            this.btnReleaseNotes.UseVisualStyleBackColor = true;
+            this.btnReleaseNotes.Click += new System.EventHandler(this.btnReleaseNotes_Click);
             // 
             // btnOpenDBFolder
             // 
@@ -26605,6 +26618,9 @@
             this.comboAudioBuffer2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboAudioBuffer2.DropDownWidth = 56;
             this.comboAudioBuffer2.Items.AddRange(new object[] {
+            "8",
+            "16",
+            "32",
             "64",
             "128",
             "256",
@@ -27835,6 +27851,9 @@
             this.comboAudioBuffer3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboAudioBuffer3.DropDownWidth = 56;
             this.comboAudioBuffer3.Items.AddRange(new object[] {
+            "8",
+            "16",
+            "32",
             "64",
             "128",
             "256",
@@ -28890,6 +28909,7 @@
             // 
             // pbVAC1FFAlphaInfo
             // 
+            this.pbVAC1FFAlphaInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FFAlphaInfo.Image")));
             this.pbVAC1FFAlphaInfo.Location = new System.Drawing.Point(325, 197);
             this.pbVAC1FFAlphaInfo.Name = "pbVAC1FFAlphaInfo";
             this.pbVAC1FFAlphaInfo.Size = new System.Drawing.Size(20, 20);
@@ -28900,6 +28920,7 @@
             // 
             // pbVAC1FFMaxInfo
             // 
+            this.pbVAC1FFMaxInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FFMaxInfo.Image")));
             this.pbVAC1FFMaxInfo.Location = new System.Drawing.Point(325, 173);
             this.pbVAC1FFMaxInfo.Name = "pbVAC1FFMaxInfo";
             this.pbVAC1FFMaxInfo.Size = new System.Drawing.Size(20, 20);
@@ -28910,6 +28931,7 @@
             // 
             // pbVAC1FFMinInfo
             // 
+            this.pbVAC1FFMinInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FFMinInfo.Image")));
             this.pbVAC1FFMinInfo.Location = new System.Drawing.Point(325, 147);
             this.pbVAC1FFMinInfo.Name = "pbVAC1FFMinInfo";
             this.pbVAC1FFMinInfo.Size = new System.Drawing.Size(20, 20);
@@ -28920,7 +28942,8 @@
             // 
             // pbVAC1PropFeedbackMaxInfo
             // 
-            this.pbVAC1PropFeedbackMaxInfo.Location = new System.Drawing.Point(326, 121);
+            this.pbVAC1PropFeedbackMaxInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1PropFeedbackMaxInfo.Image")));
+            this.pbVAC1PropFeedbackMaxInfo.Location = new System.Drawing.Point(325, 121);
             this.pbVAC1PropFeedbackMaxInfo.Name = "pbVAC1PropFeedbackMaxInfo";
             this.pbVAC1PropFeedbackMaxInfo.Size = new System.Drawing.Size(20, 20);
             this.pbVAC1PropFeedbackMaxInfo.TabIndex = 68;
@@ -28930,7 +28953,8 @@
             // 
             // pbVAC1PropFeedbackMinInfo
             // 
-            this.pbVAC1PropFeedbackMinInfo.Location = new System.Drawing.Point(326, 95);
+            this.pbVAC1PropFeedbackMinInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1PropFeedbackMinInfo.Image")));
+            this.pbVAC1PropFeedbackMinInfo.Location = new System.Drawing.Point(325, 95);
             this.pbVAC1PropFeedbackMinInfo.Name = "pbVAC1PropFeedbackMinInfo";
             this.pbVAC1PropFeedbackMinInfo.Size = new System.Drawing.Size(20, 20);
             this.pbVAC1PropFeedbackMinInfo.TabIndex = 67;
@@ -29390,6 +29414,7 @@
             // 
             // pbVAC1SlewTimeInfo
             // 
+            this.pbVAC1SlewTimeInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1SlewTimeInfo.Image")));
             this.pbVAC1SlewTimeInfo.Location = new System.Drawing.Point(325, 69);
             this.pbVAC1SlewTimeInfo.Name = "pbVAC1SlewTimeInfo";
             this.pbVAC1SlewTimeInfo.Size = new System.Drawing.Size(20, 20);
@@ -29400,6 +29425,7 @@
             // 
             // pbVAC1FeedbackGainInfo
             // 
+            this.pbVAC1FeedbackGainInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FeedbackGainInfo.Image")));
             this.pbVAC1FeedbackGainInfo.Location = new System.Drawing.Point(325, 43);
             this.pbVAC1FeedbackGainInfo.Name = "pbVAC1FeedbackGainInfo";
             this.pbVAC1FeedbackGainInfo.Size = new System.Drawing.Size(20, 20);
@@ -30686,7 +30712,7 @@
             0,
             0});
             this.udActivePeakHoldDropRX1.Name = "udActivePeakHoldDropRX1";
-            this.udActivePeakHoldDropRX1.Size = new System.Drawing.Size(48, 20);
+            this.udActivePeakHoldDropRX1.Size = new System.Drawing.Size(55, 20);
             this.udActivePeakHoldDropRX1.TabIndex = 68;
             this.udActivePeakHoldDropRX1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDropRX1, "The speed of the drop in dBm per second");
@@ -30740,7 +30766,7 @@
             0});
             this.udActivePeakHoldDurationRX1.Location = new System.Drawing.Point(100, 21);
             this.udActivePeakHoldDurationRX1.Maximum = new decimal(new int[] {
-            10000,
+            60000,
             0,
             0,
             0});
@@ -30750,12 +30776,12 @@
             0,
             0});
             this.udActivePeakHoldDurationRX1.Name = "udActivePeakHoldDurationRX1";
-            this.udActivePeakHoldDurationRX1.Size = new System.Drawing.Size(48, 20);
+            this.udActivePeakHoldDurationRX1.Size = new System.Drawing.Size(55, 20);
             this.udActivePeakHoldDurationRX1.TabIndex = 66;
             this.udActivePeakHoldDurationRX1.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDurationRX1, "How long to hold the peaks");
             this.udActivePeakHoldDurationRX1.Value = new decimal(new int[] {
-            100,
+            1000,
             0,
             0,
             0});
@@ -31837,7 +31863,7 @@
             0,
             0});
             this.udActivePeakHoldDropRX2.Name = "udActivePeakHoldDropRX2";
-            this.udActivePeakHoldDropRX2.Size = new System.Drawing.Size(48, 20);
+            this.udActivePeakHoldDropRX2.Size = new System.Drawing.Size(55, 20);
             this.udActivePeakHoldDropRX2.TabIndex = 72;
             this.udActivePeakHoldDropRX2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDropRX2, "The speed of the drop in dBm per second");
@@ -31892,7 +31918,7 @@
             0});
             this.udActivePeakHoldDurationRX2.Location = new System.Drawing.Point(100, 21);
             this.udActivePeakHoldDurationRX2.Maximum = new decimal(new int[] {
-            10000,
+            60000,
             0,
             0,
             0});
@@ -31902,12 +31928,12 @@
             0,
             0});
             this.udActivePeakHoldDurationRX2.Name = "udActivePeakHoldDurationRX2";
-            this.udActivePeakHoldDurationRX2.Size = new System.Drawing.Size(48, 20);
+            this.udActivePeakHoldDurationRX2.Size = new System.Drawing.Size(55, 20);
             this.udActivePeakHoldDurationRX2.TabIndex = 70;
             this.udActivePeakHoldDurationRX2.TinyStep = false;
             this.toolTip1.SetToolTip(this.udActivePeakHoldDurationRX2, "How long to hold the peaks");
             this.udActivePeakHoldDurationRX2.Value = new decimal(new int[] {
-            100,
+            1000,
             0,
             0,
             0});
@@ -41032,6 +41058,7 @@
             this.chkCFCEnable.Size = new System.Drawing.Size(82, 17);
             this.chkCFCEnable.TabIndex = 149;
             this.chkCFCEnable.Text = "CFC Enable";
+            this.toolTip1.SetToolTip(this.chkCFCEnable, "Enable/Disable the Continuous Frequency Compression");
             this.chkCFCEnable.UseVisualStyleBackColor = true;
             this.chkCFCEnable.CheckedChanged += new System.EventHandler(this.chkCFCEnable_CheckedChanged);
             // 
@@ -50593,13 +50620,16 @@
             // 
             // btnDownloadSkin
             // 
-            this.btnDownloadSkin.Image = null;
+            this.btnDownloadSkin.Image = ((System.Drawing.Image)(resources.GetObject("btnDownloadSkin.Image")));
+            this.btnDownloadSkin.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.btnDownloadSkin.Location = new System.Drawing.Point(621, 154);
             this.btnDownloadSkin.Name = "btnDownloadSkin";
+            this.btnDownloadSkin.Padding = new System.Windows.Forms.Padding(0, 80, 0, 80);
             this.btnDownloadSkin.Selectable = true;
             this.btnDownloadSkin.Size = new System.Drawing.Size(75, 214);
             this.btnDownloadSkin.TabIndex = 1;
             this.btnDownloadSkin.Text = "Download";
+            this.btnDownloadSkin.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.btnDownloadSkin.UseVisualStyleBackColor = true;
             this.btnDownloadSkin.Click += new System.EventHandler(this.btnDownloadSkin_Click);
             // 
@@ -56215,19 +56245,6 @@
             this.txtboxTXProfileChangedReport.TabIndex = 25;
             this.txtboxTXProfileChangedReport.Text = "used to report tx profile changes if you click on oragne box";
             this.txtboxTXProfileChangedReport.Visible = false;
-            // 
-            // btnReleaseNotes
-            // 
-            this.btnReleaseNotes.Image = null;
-            this.btnReleaseNotes.Location = new System.Drawing.Point(259, 310);
-            this.btnReleaseNotes.Name = "btnReleaseNotes";
-            this.btnReleaseNotes.Selectable = true;
-            this.btnReleaseNotes.Size = new System.Drawing.Size(111, 53);
-            this.btnReleaseNotes.TabIndex = 123;
-            this.btnReleaseNotes.Text = "Release Notes";
-            this.toolTip1.SetToolTip(this.btnReleaseNotes, "Show the release notes for this version");
-            this.btnReleaseNotes.UseVisualStyleBackColor = true;
-            this.btnReleaseNotes.Click += new System.EventHandler(this.btnReleaseNotes_Click);
             // 
             // Setup
             // 

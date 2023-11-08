@@ -161,9 +161,6 @@ void syncbdata (SYNCB a)
 
 void syncb_main (void *p)
 {
-	const wchar_t* threadName = L"syncb_main Thread";
-	SetThreadDescription(GetCurrentThread(), threadName);
-
 	SYNCB a = (SYNCB)p;
 	
 	while (_InterlockedAnd (&a->run, 1))

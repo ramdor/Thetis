@@ -3457,8 +3457,9 @@ namespace Thetis
 			if(s.Length == parser.nSet)
 			{
 				cws = Convert.ToInt32(s);
-				cws = Math.Max(1, cws);
-				cws = Math.Min(99, cws);
+				//cws = Math.Max(1, cws);
+				//cws = Math.Min(99, cws);
+				//[2.10.3.4]MW0LGE put in the property WPM where it should be
 				console.CWXForm.WPM = cws;
 				return "";
 

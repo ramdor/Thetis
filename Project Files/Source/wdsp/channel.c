@@ -127,9 +127,6 @@ void CloseChannel (int channel)
 
 void flushChannel (void* p)
 {
-	const wchar_t* threadName = L"flushChannel Thread";
-	SetThreadDescription(GetCurrentThread(), threadName);
-
 	int channel = (int)(uintptr_t)p;
 	IOB a = ch[channel].iob.pc;
 	while (!InterlockedAnd(&a->flush_bypass, 0xffffffff))

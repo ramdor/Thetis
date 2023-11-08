@@ -163,6 +163,7 @@ namespace Thetis
         private System.Windows.Forms.LabelTS pttdelaylabel;
         private System.Windows.Forms.CheckBoxTS chkAlwaysOnTop;
         private System.Windows.Forms.NumericUpDownTS udWPM;
+        private CheckBoxTS chkForceToCWmode;
         private ASCIIEncoding AE = new ASCIIEncoding();
 
         #endregion
@@ -260,13 +261,13 @@ namespace Thetis
 
         private bool setptt_memory = false;
         private void setptt(bool state)
-        {            
+        {
             if (setptt_memory != state)
             {
                 if (!console.CWFWKeyer)
                 {
-                   // CWPTTItem item = new CWPTTItem(state, CWSensorItem.GetCurrentTime());
-                   // CWKeyer.PTTEnqueue(item);
+                    // CWPTTItem item = new CWPTTItem(state, CWSensorItem.GetCurrentTime());
+                    // CWKeyer.PTTEnqueue(item);
                 }
 
                 ptt = state;
@@ -280,7 +281,7 @@ namespace Thetis
 
         private bool setkey_memory = false;
         private void setkey(bool state)
-        {       
+        {
             if (setkey_memory != state)
             {
                 NetworkIO.SetCWX(Convert.ToInt32(state));
@@ -292,7 +293,7 @@ namespace Thetis
             }
         }
         private void quitshut()
-        {            
+        {
             clear_fifo();
             clear_fifo2();
             setkey(false); //[2.10.3]MW0LGE swap
@@ -303,7 +304,7 @@ namespace Thetis
             Debug.Print("SendHighPriority(1) in quitshut()");
         }
         private void clear_fifo()
-        {            
+        {
             cwfifo.WaitOne();
             infifo = 0;
             pin = 0;
@@ -311,7 +312,7 @@ namespace Thetis
             cwfifo.ReleaseMutex();
         }
         private void push_fifo(byte data)
-        {            
+        {
             cwfifo.WaitOne();
             elfifo.SetValue(data, pin);
             pin++;
@@ -343,7 +344,7 @@ namespace Thetis
         }
 
         private void clear_fifo2()
-        {            
+        {
             cwfifo2.WaitOne();
             infifo2 = 0;
             pin2 = 0;
@@ -351,7 +352,7 @@ namespace Thetis
             cwfifo2.ReleaseMutex();
         }
         private void push_fifo2(byte data)
-        {            
+        {
             cwfifo2.WaitOne();
             fifo2.SetValue(data, pin2);
             pin2++;
@@ -390,7 +391,7 @@ namespace Thetis
             return (1200 / cwxwpm);
         }
         private void help()
-        {            
+        {
             string t;
 
             t = "                  Memory and Keyboard Keyer Notes\n";
@@ -448,7 +449,7 @@ namespace Thetis
 
 
         private void build_mbits2()
-        {            
+        {
             uint els;
             uint nel;
             uint mask;
@@ -648,7 +649,7 @@ namespace Thetis
 
         private void SendBufferMessage()				//CAT Read Thread
         {
-            
+
             while (true)									//do forever
             {
                 Thread.Sleep(10);
@@ -676,7 +677,12 @@ namespace Thetis
         public int WPM
         {
             get { return cwxwpm; }
-            set { udWPM.Value = value; }
+            set 
+            {
+                int tmp = Math.Max((int)udWPM.Minimum, value);
+                tmp = Math.Min((int)udWPM.Maximum, tmp);
+                udWPM.Value = tmp; 
+            }
         }
 
         public int Characters2Send
@@ -686,7 +692,7 @@ namespace Thetis
 
         public void CWXStop()
         {
-            
+
             stopSending = true;
             rb.Reset();
             stopSending = false;
@@ -711,7 +717,7 @@ namespace Thetis
             InitializeComponent();
 
             console = c;
-            
+
             //
             // TODO: Add any constructor code after InitializeComponent call
             //
@@ -728,7 +734,7 @@ namespace Thetis
             txt7.Text = "?";
             txt8.Text = "agn";
             txt9.Text = "n6vs";
-            
+
             //RestoreSettings();
             Common.RestoreForm(this, "CWX", true);
 
@@ -789,8 +795,8 @@ namespace Thetis
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            
-#if(CWX_DEBUG)
+
+#if (CWX_DEBUG)
 			Debug.WriteLine("dispose cwx");
 #endif
             timeKillEvent(timerID);
@@ -858,6 +864,7 @@ namespace Thetis
             this.label5 = new System.Windows.Forms.LabelTS();
             this.label4 = new System.Windows.Forms.LabelTS();
             this.udDelay = new System.Windows.Forms.NumericUpDownTS();
+            this.chkForceToCWmode = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.udWPM)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPtt)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDrop)).BeginInit();
@@ -1409,10 +1416,24 @@ namespace Thetis
             this.udDelay.ValueChanged += new System.EventHandler(this.udDelay_ValueChanged);
             this.udDelay.LostFocus += new System.EventHandler(this.udDelay_LostFocus);
             // 
+            // chkForceToCWmode
+            // 
+            this.chkForceToCWmode.AutoSize = true;
+            this.chkForceToCWmode.Checked = true;
+            this.chkForceToCWmode.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkForceToCWmode.Image = null;
+            this.chkForceToCWmode.Location = new System.Drawing.Point(528, 32);
+            this.chkForceToCWmode.Name = "chkForceToCWmode";
+            this.chkForceToCWmode.Size = new System.Drawing.Size(115, 17);
+            this.chkForceToCWmode.TabIndex = 58;
+            this.chkForceToCWmode.Text = "Force to CW mode";
+            this.chkForceToCWmode.UseVisualStyleBackColor = true;
+            // 
             // CWX
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.ClientSize = new System.Drawing.Size(704, 281);
+            this.Controls.Add(this.chkForceToCWmode);
             this.Controls.Add(this.chkAlwaysOnTop);
             this.Controls.Add(this.udWPM);
             this.Controls.Add(this.pttdelaylabel);
@@ -1462,6 +1483,7 @@ namespace Thetis
             this.Name = "CWX";
             this.Text = "   CW Memories and Keyboard ...";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.CWX_Closing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CWX_FormClosing);
             this.Load += new System.EventHandler(this.CWX_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.CWX_Paint);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CWX_KeyDown_1);
@@ -1481,7 +1503,7 @@ namespace Thetis
 
         private void expandButton_Click(object sender, System.EventArgs e)
         {
-            
+
             if (this.Width > 500)
             {
                 this.Width = 466;
@@ -1502,7 +1524,7 @@ namespace Thetis
 
         private void keyboardButton_Leave(object sender, System.EventArgs e)
         {
-            
+
             keyboardButton.ForeColor = System.Drawing.Color.Gray;
             keyboardButton.Text = "Keys Off";
             keyboardLed.BackColor = System.Drawing.Color.Black;
@@ -1511,7 +1533,7 @@ namespace Thetis
 
         private void keyboardButton_Enter(object sender, System.EventArgs e)
         {
-            
+
             keyboardButton.ForeColor = System.Drawing.Color.Black;
             keyboardButton.Text = "KEYS ACTIVE";
             keyboardLed.BackColor = System.Drawing.Color.Cyan;
@@ -1521,7 +1543,7 @@ namespace Thetis
         // this guy checks for the release of the Alt key
         private void CWX_KeyUp_1(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-            
+
             kkk++;
             label6.Text = kkk.ToString() + " " +
                 e.KeyCode.ToString() + " " +
@@ -1662,6 +1684,21 @@ namespace Thetis
             //	this.Hide();
             //	e.Cancel = true;
         }
+        private bool _shown = false;
+        public new void Show()
+        { // shadow of show
+
+            if (!_shown)
+            {
+                //timer stops when window is hidden, so restart it on show
+                setup_timer();
+            }
+
+            _shown = true;
+
+            base.Show();
+        }
+
         // Callback method called by the Win32 multimedia timer when a timer
         // periodic event occurs.
         private void TimerPeriodicEventCallback(int id, int msg, int user, int param1, int param2)
@@ -1671,37 +1708,37 @@ namespace Thetis
 
         private void s1_Click(object sender, System.EventArgs e)
         {
-            
+
             queue_start(1);
         }
 
         private void s2_Click(object sender, System.EventArgs e)
         {
-            
+
             queue_start(2);
         }
 
         private void s3_Click(object sender, System.EventArgs e)
         {
-            
+
             queue_start(3);
         }
 
         private void s4_Click(object sender, System.EventArgs e)
         {
-            
+
             queue_start(4);
         }
 
         private void s5_Click(object sender, System.EventArgs e)
         {
-            
+
             queue_start(5);
         }
 
         private void s6_Click(object sender, System.EventArgs e)
         {
-            
+
             queue_start(6);
         }
 
@@ -1826,7 +1863,7 @@ namespace Thetis
 
         private void chkAlwaysOnTop_CheckedChanged(object sender, System.EventArgs e)
         {
-            
+
             /*if(chkAlwaysOnTop.Checked)
             {
                 Win32.SetWindowPos(this.Handle.ToInt32(),
@@ -1859,7 +1896,7 @@ namespace Thetis
 
         private readonly Object m_objLock = new Object();
         private void show_keys(Graphics formGraphics = null)
-        {            
+        {
             string s;
             int i;
             int x, y, dx, dy;
@@ -1872,7 +1909,7 @@ namespace Thetis
                 dx = 11; dy = 19;
 
                 if (this.Disposing || this.IsDisposed) return;
-                if(formGraphics==null) formGraphics = this.CreateGraphics(); //MW0LGE
+                if (formGraphics == null) formGraphics = this.CreateGraphics(); //MW0LGE
 
                 System.Drawing.Font drawFont = new System.Drawing.Font("Courier New", 14, FontStyle.Bold);
                 System.Drawing.SolidBrush drawBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Black);
@@ -2111,7 +2148,7 @@ namespace Thetis
             if (ttx > 0) ttx--;			// time out timer down one element
             if (ttx > 0) return;		// not yet timed out
             //[2.10.3]MW0LGE swap
-            setkey(false);          
+            setkey(false);
             setptt(false);			// cw timer timed out
         }
 
@@ -2194,7 +2231,10 @@ namespace Thetis
                 else Thread.Sleep(20);		// this was originally 10 ms
             }
         }
-
+        public bool ForceToCWmode
+        {
+            get { return chkForceToCWmode.Checked; }
+        }
         private void queue_start(int qmsg)			// queue message n for start
         {
             if (console.RX1DSPMode != DSPMode.CWL &&
@@ -2231,8 +2271,8 @@ namespace Thetis
         }
 
         private void loadchar(char cc)	// convert and load a single character
-        {		// this is the guts of loadmsg and work much the same way
-            
+        {       // this is the guts of loadmsg and work much the same way
+
             uint v, n;
             int ic;
 
@@ -2365,7 +2405,7 @@ namespace Thetis
 
         private void insert_key(char key)
         {
-            
+
             int i;
 
             keydisplay.WaitOne();
@@ -2381,6 +2421,19 @@ namespace Thetis
             // no empty place, put at the end
             kbufnew.SetValue(key, NKEYS - 1);
             keydisplay.ReleaseMutex();
+        }
+
+        private void CWX_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //[2.10.3.1]MW0LGE added to stop this form from being destroyed and the reference in console.cs being lost
+            //fixes issue where a polling serial product such as DXLabs Commander will 'bring to life' a dead CWXForm
+            //when it queries wpm from the CWX form via CAT
+            clear_show();
+            quitshut();
+
+            _shown = false;
+            e.Cancel = true;
+            this.Hide();
         }
 
         private void backspace()
@@ -2448,10 +2501,9 @@ namespace Thetis
             s6.Enabled = bPowerState;
             s7.Enabled = bPowerState;
             s8.Enabled = bPowerState;
-            s9.Enabled = bPowerState;            
+            s9.Enabled = bPowerState;
 
-            clear_show();
-            quitshut();
-        }
-    } // end class
+            stopButton_Click(this, EventArgs.Empty);
+        } // end class
+    }
 } // end namespace

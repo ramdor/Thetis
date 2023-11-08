@@ -4,7 +4,7 @@ If you use CW and you have different RX and TX antenna ports configured, there i
 
 **Note: You can revisit these release notes by clicking the button in the setup form within the General -> H/W Select tab.**
 
-## v2.10.3 Release
+## v2.10.3.3 Release
 
 1) PortAudio has been updated to 19.7.0. This brings with it WASAPI support, with exclusive use options
 2) Skins can now be downloaded and updated from within Thetis. Check them out in the Appearance, Skin Servers tab
@@ -20,19 +20,23 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 Richie
 **MW0LGE**
 
+## v2.10.3.3 Change Log
+- [fix] resolved DLL load issue for Win7 and other OS's that dont have SetThreadDescription()
+
+## v2.10.3.2 Change Log
+- [fix] resolved issue where a 3 band equaliser would cause out of array bounds exception
+
+## v2.10.3.1 Change Log
+- [fix] serial data arriving could prevent Thetis from closing and could also cause UI freeze
+- [change] reverted to .net framework 4.8.0 to work with more operating systems
+- [change] added additional small buffer sizes to VAC config, 8, 16, 32
+
 ## v2.10.3 Change Log
-- PortAudio 19.7.0 from the 2021 official release update. Exclusive options when using WASAPI
-- T/R noise pulse in waterfall improved. Waterfall agc delayed. New option in setup to purge WDSP analyzer buffers to perform extra clear down
-- compare version in TX profile importing fixed
-- .net framework moved to 4.8.1
-- skin server implementation
-- skin image handles released correctly after the images have been loaded. Known issue with Image.FromFile
-- FM tx/rx AF filters in DSP FM tab
-- IQ swap for each vac
-- 0beat deadlock prevention where zero beat could lock Thetis on rare occasions
-- finder option on main menu bar
-- PS not able to engage after CW hopefully resolved - considerable work from Warren NR0V
-- additional items stored against tx profile
+- [add] T/R noise pulse in waterfall improved. Waterfall agc delayed. New option in setup to purge WDSP analyzer buffers to perform extra clear down
+- [add] skin server implementation
+- [add] FM tx/rx AF filters in DSP FM tab
+- [add] IQ swap for each vac
+- [add] additional items stored against tx profile
 	- FM AF filters
 	- VAC force checkbox state
 	- SwapIQ
@@ -40,16 +44,23 @@ Richie
 	- PA profile is now stored against TX profile. There is an option to recover this from a TX profile change if you want to use this
 	- RX EQ data and enabled state
 	- WASAPI exclusive states
-- cfc display changes and should correctly show again
-- mic phase reversal in DSP->CFC->PhaseRot area. Phase rot does not need to be enabled for mic phase to be used
-- updates to UI controls, positions and colours by DH1KLM
-- changes to serial to hopefully prevent rare freeze situation
-- RadioDSP is now destroyed down on exit to ensure clean shutdown
-- mon should now return correctly when using cwu and changing to other modes
-- notches should import from database when importing/upgrading
-- audio device dropdowns resized in setup
-- release notes shown on DB upgrade and button to show again from Setup->General->H/W Select
-- the force db upgrade by holding CTRL when Thetis is launched now has additional yes/no prompt to prevent accidental upgrading
-- rear speaker amp can now be disabled with G2 and G2_1k, setting in Setup->Audio->Options
-- system CPU usage should better match taskmanager. Thetis process only usage is still a mystery
+- [add] release notes shown on DB upgrade and button to show again from Setup->General->H/W Select
+- [add] rear speaker amp can now be disabled with G2 and G2_1k, setting in Setup->Audio->Options
+- [add] finder option on main menu bar
+- [add] mic phase reversal in DSP->CFC->PhaseRot area. Phase rot does not need to be enabled for mic phase to be used
+- [fix] compare version in TX profile importing fixed
+- [fix] skin image handles released correctly after the images have been loaded. Known issue with Image.FromFile
+- [fix] 0beat deadlock prevention where zero beat could lock Thetis on rare occasions
+- [fix] PS not able to engage after CW hopefully resolved - considerable work from Warren NR0V
+- [fix] cfc display changes and should correctly show again
+- [fix] RadioDSP is now destroyed on exit to ensure clean shutdown
+- [fix] mon should now return correctly when using cwu and changing to other modes
+- [fix] notches should import from database when importing/upgrading
+- [change] PortAudio 19.7.0 from the 2021 official release update. Exclusive options when using WASAPI
+- [change] .net framework moved to 4.8.1
+- [change] updates to UI controls, positions and colours by DH1KLM
+- [change] changes to serial to hopefully prevent rare freeze situation
+- [change] audio device dropdowns resized in setup
+- [change] the force db upgrade by holding CTRL when Thetis is launched now has additional yes/no prompt to prevent accidental upgrading
+- [change] system CPU usage should better match taskmanager. Thetis process only usage is still a mystery
 

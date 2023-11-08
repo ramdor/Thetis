@@ -7,7 +7,6 @@ namespace Thetis
 {
     public enum Axis
     {
-//        NONE = 0,
         LEFT = 0,
         TOPLEFT,
         TOP,
@@ -51,9 +50,6 @@ namespace Thetis
             setTopBarButtons();
             setTitle();
             setupBorder();
-
-            //btnFloat.foc
-            //btnFloat.SetStyle(ControlStyles.Selectable, false);
 
             btnAxis.Hide();
 

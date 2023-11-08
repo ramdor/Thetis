@@ -2729,7 +2729,7 @@ namespace Thetis
                 if (isTXProfileSettingDifferent<bool>(dr, "RXEQEnabled", console.EQForm.RXEQEnabled, out sReportOut)) sReport += sReportOut;
                 int[] rxeq = console.EQForm.RXEQ;
                 if (isTXProfileSettingDifferent<int>(dr, "RXEQPreamp", rxeq[0], out sReportOut)) sReport += sReportOut;
-                for (int i = 1; i < 11; i++)
+                for (int i = 1; i < rxeq.Length; i++)
                     if (isTXProfileSettingDifferent<int>(dr, "RXEQ" + i.ToString(), rxeq[i], out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "VAC1_Exclusive_In", (bool)chkVAC1ExclusiveIn.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "VAC1_Exclusive_Out", (bool)chkVAC1ExclusiveOut.Checked, out sReportOut)) sReport += sReportOut;
@@ -2944,7 +2944,7 @@ namespace Thetis
                 if (DB.ConvertFromDBVal<bool>(dr["RXEQEnabled"]) != console.EQForm.RXEQEnabled) return true;
                 int[] rxeq = console.EQForm.RXEQ;
                 if (DB.ConvertFromDBVal<int>(dr["RXEQPreamp"]) != rxeq[0]) return true;
-                for (int i = 1; i < 11; i++)
+                for (int i = 1; i < rxeq.Length; i++)
                     if (DB.ConvertFromDBVal<int>(dr["RXEQ" + i.ToString()]) != rxeq[i]) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["VAC1_Exclusive_In"]) != (bool)chkVAC1ExclusiveIn.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["VAC1_Exclusive_Out"]) != (bool)chkVAC1ExclusiveOut.Checked) return true;
@@ -3192,7 +3192,7 @@ namespace Thetis
             Common.HightlightControl(udCFC9, bHighlight);
         }
 
-        private void udpateTXProfileInDB(DataRow dr)
+        private void updateTXProfileInDB(DataRow dr)
         {
             if (dr == null) return;
 
@@ -3352,7 +3352,7 @@ namespace Thetis
             dr["RXEQEnabled"] = console.EQForm.RXEQEnabled;
             int[] rxeq = console.EQForm.RXEQ;
             dr["RXEQPreamp"] = rxeq[0];
-            for (int i = 1; i < 11; i++)
+            for (int i = 1; i < rxeq.Length; i++)
                 dr["RXEQ" + i.ToString()] = rxeq[i];
             dr["VAC1_Exclusive_In"] = (bool)chkVAC1ExclusiveIn.Checked;
             dr["VAC1_Exclusive_Out"] = (bool)chkVAC1ExclusiveOut.Checked;
@@ -3415,7 +3415,7 @@ namespace Thetis
             }
             else
             {
-                udpateTXProfileInDB(dr); //MW0LGE_21a remove duplication
+                updateTXProfileInDB(dr); //MW0LGE_21a remove duplication
             }
         }
 
@@ -8035,15 +8035,24 @@ namespace Thetis
             }
 
             //[2.10.3]MW0LGE only enable if wasapi
-            int hostIndex = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Index;
-            PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
-            bool bIsWASAPI = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
-            chkVAC1ExclusiveOut.Enabled = bIsWASAPI;
-            chkVAC1ExclusiveIn.Enabled = bIsWASAPI;
-            if(!bIsWASAPI) // turn these off so that when they are enabled again and vac is on, we dont start exclusive
+            if(comboAudioDriver2.SelectedIndex < PA19.PA_GetHostApiCount()) //[2.10.3.4]MW0LGE ignore the manually added HPSDR (PCM A/D)
+            {
+                PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(new_driver);
+                bool bIsWASAPI = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
+                chkVAC1ExclusiveOut.Enabled = bIsWASAPI;
+                chkVAC1ExclusiveIn.Enabled = bIsWASAPI;
+                if (!bIsWASAPI) // turn these off so that when they are enabled again and vac is on, we dont start exclusive
+                {
+                    chkVAC1ExclusiveOut.Checked = false;
+                    chkVAC1ExclusiveIn.Checked = false;
+                }
+            }
+            else
             {
                 chkVAC1ExclusiveOut.Checked = false;
                 chkVAC1ExclusiveIn.Checked = false;
+                chkVAC1ExclusiveOut.Enabled = false;
+                chkVAC1ExclusiveIn.Enabled = false;
             }
             //
 
@@ -8080,17 +8089,25 @@ namespace Thetis
             }
 
             //[2.10.3]MW0LGE only enable if wasapi
-            int hostIndex = ((PADeviceInfo)comboAudioDriver3.SelectedItem).Index;
-            PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(hostIndex);
-            bool bIsWASAPI = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
-            chkVAC2ExclusiveOut.Enabled = bIsWASAPI;
-            chkVAC2ExclusiveIn.Enabled = bIsWASAPI;
-            if (!bIsWASAPI) // turn these off so that when they are enabled again and vac is on, we dont start exclusive
+            if (comboAudioDriver3.SelectedIndex < PA19.PA_GetHostApiCount()) //[2.10.3.4]MW0LGE ignore the manually added HPSDR (PCM A/D)
+            {
+                PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(new_driver);
+                bool bIsWASAPI = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
+                chkVAC2ExclusiveOut.Enabled = bIsWASAPI;
+                chkVAC2ExclusiveIn.Enabled = bIsWASAPI;
+                if (!bIsWASAPI) // turn these off so that when they are enabled again and vac is on, we dont start exclusive
+                {
+                    chkVAC2ExclusiveOut.Checked = false;
+                    chkVAC1ExclusiveOut.Checked = false;
+                }
+            }
+            else
             {
                 chkVAC2ExclusiveOut.Checked = false;
                 chkVAC1ExclusiveOut.Checked = false;
+                chkVAC2ExclusiveOut.Enabled = false;
+                chkVAC2ExclusiveIn.Enabled = false;
             }
-
             //
 
             string new_driver_name = ((PADeviceInfo)comboAudioDriver3.SelectedItem).Name;
@@ -10737,9 +10754,10 @@ namespace Thetis
                     comboPAProfile.Text = paProf;
             }
             console.EQForm.RXEQEnabled = (bool)dr["RXEQEnabled"];
-            int[] rxeq = new int[21];
+            //[2.10.3.2]MW0LGE console.EQForm.NumBands is set above, so just use RXeq to get the array, then adjust it
+            int[] rxeq = console.EQForm.RXEQ;
             rxeq[0] = (int)dr["RXEQPreamp"];
-            for (int i = 1; i < 11; i++)
+            for (int i = 1; i < rxeq.Length; i++)
                 rxeq[i] = (int)dr["RXEQ" + i.ToString()];
             console.EQForm.RXEQ = rxeq;
             //
@@ -10871,7 +10889,7 @@ namespace Thetis
             }
             else
             {
-                udpateTXProfileInDB(dr); //MW0LGE_21a remove duplication
+                updateTXProfileInDB(dr); //MW0LGE_21a remove duplication
             }            
 
             if (!comboTXProfileName.Items.Contains(name))
@@ -28792,29 +28810,45 @@ namespace Thetis
         private void udFMLowCutRX_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            if (udFMLowCutRX.Value > udFMHighCutRX.Value) return;
             console.radio.GetDSPRX(0, 0).RXFMLowCut = (double)udFMLowCutRX.Value; //main rx1
             console.radio.GetDSPRX(0, 1).RXFMLowCut = (double)udFMLowCutRX.Value; //sub rx1
             console.radio.GetDSPRX(1, 0).RXFMLowCut = (double)udFMLowCutRX.Value; //rx2
+            if (console.RX1DSPMode == DSPMode.FM)
+                console.UpdateRX1Filters((int)console.radio.GetDSPRX(0, 0).RXFMLowCut, (int)console.radio.GetDSPTX(0).TXFMHighCut);
+            if (console.RX2DSPMode == DSPMode.FM)
+                console.UpdateRX2Filters((int)console.radio.GetDSPRX(1, 0).RXFMLowCut, (int)console.radio.GetDSPTX(0).TXFMHighCut);
         }
 
         private void udFMHighCutRX_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            if (udFMHighCutRX.Value < udFMLowCutRX.Value) return;
             console.radio.GetDSPRX(0, 0).RXFMHighCut = (double)udFMHighCutRX.Value;
             console.radio.GetDSPRX(0, 1).RXFMHighCut = (double)udFMHighCutRX.Value;
             console.radio.GetDSPRX(1, 0).RXFMHighCut = (double)udFMHighCutRX.Value;
+            if (console.RX1DSPMode == DSPMode.FM)
+                console.UpdateRX1Filters((int)console.radio.GetDSPRX(0, 0).RXFMLowCut, (int)console.radio.GetDSPTX(0).TXFMHighCut);
+            if (console.RX2DSPMode == DSPMode.FM)
+                console.UpdateRX2Filters((int)console.radio.GetDSPRX(1, 0).RXFMLowCut, (int)console.radio.GetDSPTX(0).TXFMHighCut);
         }
 
         private void udFMLowCutTX_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            if (udFMLowCutTX.Value > udFMHighCutTX.Value) return;
             console.radio.GetDSPTX(0).TXFMLowCut = (double)udFMLowCutTX.Value;
+            if (console.RX1DSPMode == DSPMode.FM)
+                console.SetTXFilters(DSPMode.FM, (int)console.radio.GetDSPTX(0).TXFMLowCut, (int)console.radio.GetDSPTX(0).TXFMHighCut);
         }
 
         private void udFMHighCutTX_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            if (udFMHighCutTX.Value < udFMLowCutTX.Value) return;
             console.radio.GetDSPTX(0).TXFMHighCut = (double)udFMHighCutTX.Value;
+            if (console.RX1DSPMode == DSPMode.FM)
+                console.SetTXFilters(DSPMode.FM, (int)console.radio.GetDSPTX(0).TXFMLowCut, (int)console.radio.GetDSPTX(0).TXFMHighCut);
         }
 
         private void chkSwapIQVac1_CheckedChanged(object sender, EventArgs e)
