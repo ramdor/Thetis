@@ -44400,7 +44400,6 @@ namespace Thetis
                 panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta, gr_BandVHF_basis_location.Y + (v_delta / 4));
 
                 panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta, gr_Mode_basis_location.Y + (v_delta / 2));
-                moveModeSpecificPanels();// MW0LGE [2.10.1.0]
 
                 panelVFO.Location = new Point(gr_VFO_basis_location.X + (h_delta / 4), gr_VFO_basis_location.Y + v_delta);
 
@@ -44408,6 +44407,8 @@ namespace Thetis
 
                 if (!this.collapsedDisplay)
                 {
+                    moveModeSpecificPanels();// [2.10.3.4]MW0LGE  SelectModeDependentPanel will deal with this when collapsed
+
                     grpVFOB.Location = new Point(gr_VFOB_basis_location.X + h_delta - (h_delta / 4), gr_VFOB_basis_location.Y);
                     grpVFOA.Location = new Point(gr_VFOA_basis_location.X + (h_delta / 4), gr_VFOA_basis_location.Y);
 
@@ -49028,13 +49029,6 @@ namespace Thetis
             panelModeSpecificPhone.Parent = this;
             panelModeSpecificDigital.Parent = this;
             panelModeSpecificFM.Parent = this;
-
-            //MW0LGE_21k9d
-            //panelModeSpecificCW.Show();
-            //panelModeSpecificPhone.Show();
-            //panelModeSpecificDigital.Show();
-            //panelModeSpecificFM.Show();
-            //SelectModeDependentPanel();  //MW0LGE [2.9.0.7] moved to end
 
             panelFilter.Show();
             panelMode.Show();
