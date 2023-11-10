@@ -4,21 +4,19 @@ If you use CW and you have different RX and TX antenna ports configured, there i
 
 **Note: You can revisit these release notes by clicking the button in the setup form within the General -> H/W Select tab.**
 
-## v2.10.3.3 Release
-
-1) PortAudio has been updated to 19.7.0. This brings with it WASAPI support, with exclusive use options
-2) Skins can now be downloaded and updated from within Thetis. Check them out in the Appearance, Skin Servers tab
-3) A new menu bar item exists, Finder. Find any control, setting or text in Thetis, click it and it will take you there
-4) CFC display has had an update
-5) FM AF filters for RX and TX, low and high cut
-6) Mic phase reversal
-7) Re-alignment and improvements of UI by Sigi DH1KLM
 
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
-73
-Richie
-**MW0LGE**
+
+## v2.10.3.4 Change Log
+- [add] show on startup options for ampview and linearise. Set in the linearise window
+- [fix] now ignores 14bit midi messages. More devices should work
+- [fix] Midi ignores Hercules DJControl Starlight finger press on the wheels
+- [fix] PortAudio #850 fix included
+- [fix] FM should now use low/high cuts. Carlson's rules used for filter width display in FM rx and tx
+- [fix] ModeSpecificForm shouldn't now clear on resize
+- [change] tweaks to waterfall agc to try and prevent screen wide pulse on T/R
+- [change] waterfall low/high step sizes lowered to 5
 
 ## v2.10.3.3 Change Log
 - [fix] resolved DLL load issue for Win7 and other OS's that dont have SetThreadDescription()
