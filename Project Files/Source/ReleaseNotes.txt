@@ -9,13 +9,13 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 
 
 ## v2.10.3.4 Change Log
-- [add] show on startup options for ampview and linearise. Set in the linearise window
-- [fix] now ignores 14bit midi messages. More devices should work
+- [add] show on startup options for ampview and linearity/ps window. Set in the linearity/ps window
+- [fix] now ignores 14bit Midi messages. More devices should work
 - [fix] Midi ignores Hercules DJControl Starlight finger press on the wheels
 - [fix] PortAudio #850 fix included
 - [fix] FM should now use low/high cuts. Carlson's rules used for filter width display in FM rx and tx
-- [fix] ModeSpecificForm shouldn't now clear on resize
-- [change] tweaks to waterfall agc to try and prevent screen wide pulse on T/R
+- [fix] Andromeda ModeSpecificForm shouldn't now clear on console resize
+- [change] tweaks to waterfall agc to minimise screen wide pulse on T/R
 - [change] waterfall low/high step sizes lowered to 5
 
 ## v2.10.3.3 Change Log
