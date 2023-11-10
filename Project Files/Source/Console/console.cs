@@ -22143,7 +22143,7 @@ namespace Thetis
             set
             {
                 cpu_meter_delay = value;
-                timer_cpu_meter.Interval = value;
+                timer_cpu_volts_meter.Interval = value;
             }
         }
 
@@ -22756,14 +22756,21 @@ namespace Thetis
             }
             Debug.Print("Get instance name done");
         }
+        private bool _cpu_usage_setup = false;
         private void CpuUsage()
         {
-            try
+            _cpu_usage_setup = false;
+
+            if (!_getInstanceNameComplete)
             {
+                disableCpuVoltsUsage();
+                return; // thread has not finished getting the process counter related instance name            
+            }
+
+            try
+            {                
                 systemToolStripMenuItem.Checked = m_bShowSystemCPUUsage;
                 thetisOnlyToolStripMenuItem.Checked = !m_bShowSystemCPUUsage;
-
-                if (!_getInstanceNameComplete) return; // thread has not finished getting the process counter related instance name
 
                 string sMachineName = System.Environment.MachineName;
 
@@ -22789,20 +22796,26 @@ namespace Thetis
                   total_thetis_usage = new PerformanceCounter("Process", "% Processor Time", _sInstanceName, sMachineName);
                   tmp = total_thetis_usage.NextValue();
                 }
+
+                _cpu_usage_setup = true;
             }
-            catch (Exception ex)
+            catch
             {
-                disableCpuUsage();
+                disableCpuVoltsUsage();
             }
         }
 
-        private void disableCpuUsage()
+        private void disableCpuVoltsUsage()
         {
-            timer_cpu_meter.Enabled = false;
+            timer_cpu_volts_meter.Enabled = false;
 
             systemToolStripMenuItem.Checked = false;
             thetisOnlyToolStripMenuItem.Checked = false;
             toolStripDropDownButton_CPU.Visible = false;
+
+            //[2.10.3.4]MW0LGE volts/amps as well because there are both part of the same timer tick
+            toolStripStatusLabel_Volts.Visible = false;
+            toolStripStatusLabel_Amps.Visible = false;
         }
 
         private int scope_time = 50;
@@ -29457,23 +29470,13 @@ namespace Thetis
         private float _oldMKIIPAVolts = 0f;
         private float _oldMKIIPAAmps = 0f;
         private float _cpu_perc_smoothed = 0;
-        private void timer_cpu_meter_Tick(object sender, System.EventArgs e)
+        private void timer_cpu_volts_meter_Tick(object sender, System.EventArgs e)
         {
-            //if ((anan7000dpresent || anan8000dpresent) && ANAN8000DLEDisplayVoltsAmps)
-            //{
-            //    txtCPUMeter.Text = String.Format("{0:#0.0}V {1:#0.0}A", MKIIPAVolts, MKIIPAAmps);
-            //}
-            //else
-            //{
-            //    if (cpu_usage != null)
-            //        txtCPUMeter.Text = String.Format("CPU%  {0:##0}", cpu_usage.NextValue());
-            //}
-
-            computeMKIIPAVoltsAmps(); //MW0LGE_21k9c
-
             if ((current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
                  current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K) && ANAN8000DLEDisplayVoltsAmps)
             {
+                computeMKIIPAVoltsAmps(); //MW0LGE_21k9c
+
                 if (!toolStripStatusLabel_Volts.Visible) toolStripStatusLabel_Volts.Visible = true;
                 if (!toolStripStatusLabel_Amps.Visible) toolStripStatusLabel_Amps.Visible = true;
 
@@ -29506,32 +29509,21 @@ namespace Thetis
             }
 
             // cpu ussage
-            try
+            if (_cpu_usage_setup && Environment.ProcessorCount > 0)
             {
-                if (_getInstanceNameComplete)
+                if ((total_cpu_usage != null && m_bShowSystemCPUUsage) || (total_thetis_usage != null && !m_bShowSystemCPUUsage))
                 {
-                    if ((total_cpu_usage != null && m_bShowSystemCPUUsage) || (total_thetis_usage != null && !m_bShowSystemCPUUsage))
-                    {
-                        if (!toolStripDropDownButton_CPU.Visible) toolStripDropDownButton_CPU.Visible = true;
+                    if (!toolStripDropDownButton_CPU.Visible) toolStripDropDownButton_CPU.Visible = true;
 
-                        float cpuPerc = 0f;
-                        if (m_bShowSystemCPUUsage)
-                            cpuPerc = total_cpu_usage.NextValue();
-                        else
-                            cpuPerc = total_thetis_usage.NextValue() / (float)Environment.ProcessorCount;
-
-                        _cpu_perc_smoothed = (_cpu_perc_smoothed * 0.8f) + (cpuPerc * 0.2f);
-                        toolStripDropDownButton_CPU.Text = String.Format("{0:##0}%", _cpu_perc_smoothed);                        
-                    }
+                    float cpuPerc = 0f;
+                    if (m_bShowSystemCPUUsage)
+                        cpuPerc = total_cpu_usage.NextValue();
                     else
-                    {
-                        disableCpuUsage();
-                    }
+                        cpuPerc = total_thetis_usage.NextValue() / (float)Environment.ProcessorCount;
+
+                    _cpu_perc_smoothed = (_cpu_perc_smoothed * 0.8f) + (cpuPerc * 0.2f);
+                    toolStripDropDownButton_CPU.Text = String.Format("{0:##0}%", _cpu_perc_smoothed);
                 }
-            }
-            catch
-            {
-                disableCpuUsage();
             }
         }
 

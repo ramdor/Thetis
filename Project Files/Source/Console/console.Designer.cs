@@ -55,7 +55,7 @@
         public System.Windows.Forms.CheckBoxTS chkVFOSplit;
         private System.Windows.Forms.CheckBoxTS chkDisplayAVG;
         private System.Windows.Forms.TextBoxTS txtMultiText;
-        private System.Windows.Forms.Timer timer_cpu_meter;
+        private System.Windows.Forms.Timer timer_cpu_volts_meter;
         private System.Windows.Forms.LabelTS lblFilterHigh;
         private System.Windows.Forms.LabelTS lblFilterLow;
         private System.Windows.Forms.PictureBox picMultiMeterDigital;
@@ -506,7 +506,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Console));
-            this.timer_cpu_meter = new System.Windows.Forms.Timer(this.components);
+            this.timer_cpu_volts_meter = new System.Windows.Forms.Timer(this.components);
             this.timer_peak_text = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.picSquelch = new System.Windows.Forms.PictureBox();
@@ -1225,9 +1225,9 @@
             // 
             // timer_cpu_meter
             // 
-            this.timer_cpu_meter.Enabled = true;
-            this.timer_cpu_meter.Interval = 1000;
-            this.timer_cpu_meter.Tick += new System.EventHandler(this.timer_cpu_meter_Tick);
+            this.timer_cpu_volts_meter.Enabled = true;
+            this.timer_cpu_volts_meter.Interval = 1000;
+            this.timer_cpu_volts_meter.Tick += new System.EventHandler(this.timer_cpu_volts_meter_Tick);
             // 
             // timer_peak_text
             // 
