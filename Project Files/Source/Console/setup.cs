@@ -29,7 +29,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
+using Midi2Cat.IO;
 
 namespace Thetis
 {
@@ -46,13 +46,9 @@ namespace Thetis
     using System.IO.Ports;
     using RawInput_dll;
     using System.Net;
-    using System.Net.Sockets;
     using System.Threading.Tasks;
-    using System.Security.Cryptography;
-    using System.Xml;
-    using System.Xml.Serialization;
-    using System.Diagnostics.Eventing.Reader;
     using Ionic.Zip;
+
     public partial class Setup : Form
     {
         private const string s_DEFAULT_GRADIENT = "9|1|0.000|-1509884160|1|0.339|-1493237760|1|0.234|-1509884160|1|0.294|-1493211648|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1493237760|";
@@ -2397,6 +2393,9 @@ namespace Thetis
             udTCISpotLifetime_ValueChanged(this, EventArgs.Empty);
             chkShowTCISpots_CheckedChanged(this, EventArgs.Empty);
             chkSpotOwnCallAppearance_CheckedChanged(this, EventArgs.Empty);
+
+            chkIgnore14bitMidiMessages_CheckedChanged(this, EventArgs.Empty);
+            chkMidiControlIDincludesStatus_CheckedChanged(this, EventArgs.Empty);
 
             // SNB
             udDSPSNBThresh1_ValueChanged(this, e);
@@ -28969,6 +28968,16 @@ namespace Thetis
         private void btnReleaseNotes_Click(object sender, EventArgs e)
         {
             console.ShowReleaseNotes();
+        }
+
+        private void chkIgnore14bitMidiMessages_CheckedChanged(object sender, EventArgs e)
+        {
+            MidiDevice.Ignore14bitMessages = chkIgnore14bitMidiMessages.Checked;
+        }
+
+        private void chkMidiControlIDincludesStatus_CheckedChanged(object sender, EventArgs e)
+        {
+            MidiDevice.BuildIDFromControlIDAndStatus = chkMidiControlIDincludesStatus.Checked;
         }
 
         //private bool renameSkinForDeletion(string sFullPath)

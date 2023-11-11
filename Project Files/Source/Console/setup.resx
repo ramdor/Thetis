@@ -274,7 +274,7 @@ only used if a selected skin does not provide its own.</value>
   <data name="btnDownloadSkin.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vwAADr8BOAVTJAAAAiJJREFUWEfNl79LHEEYhhcJYhGChYiEIEEsxFokiASxEisJIiIiIkEsLFKHIIiI
+        vQAADr0BR/uQrQAAAiJJREFUWEfNl79LHEEYhhcJYhGChYiEIEEsxFokiASxEisJIiIiIkEsLFKHIIiI
         VQgiVpYiIpbWIiLWIv4FIiIiktpC9H2W+Y7lmJ2d+8m98NzdzH4z38vuN7NzSaupXXwUn0Sn+zY6RMM0
         Lq7Eq3jL4UUcim5RV30TTO5L6uNacKfqpjPhSxRiVtRND8KXJMSp+CVWxYpYdvx0LDkWMyyIeTEjBkRJ
         1RioFWptR7SJ5FH4gpoBd7BkgOIaFF/EZ9HjoOrLsWs+GBuiX7DiyHkjSgb+0miSNgQ572mYgS0akfog
@@ -285,6 +285,12 @@ only used if a selected skin does not provide its own.</value>
         H9eIKZK9jtNleOsa2zSaJFYPOdMDCc/K3HDC5dRK9VL9MFUjNg9zMjc57P1zKZIJEfNs6w05J0UqHN4J
         X2Aj4NZ79wh2Mf6UNhJytIqS5B20I3/Xm75I8AAAAABJRU5ErkJggg==
 </value>
+  </data>
+  <data name="chkIgnore14bitMidiMessages.ToolTip" xml:space="preserve">
+    <value>Some devices also send messages that are used for 14 bit values.
+This causes issues for Thetis which can be seen when the midi capture
+is flickering when a knob is turned for example. Eventually 14 bit messages
+will be handled, but as a stop gap they can be ignored.</value>
   </data>
   <data name="udHttpRefresh.ToolTip" xml:space="preserve">
     <value>Select Port# to allow Remote Login by adding the Port# 

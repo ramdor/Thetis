@@ -34,13 +34,11 @@ namespace Thetis
 {
     class TitleBar
     {
-        public const string BUILD_NAME = "dev2";
-        //[2.10.2.2]MW0LGE pre-build event script auto build date
-        //public const string BUILD_DATE = "(10/11/23)<FW>"; //MW0LGE_21g <FW> gets replaced in BasicTitle (console.cs) with firmware version
+        public const string BUILD_NAME = "pre-release_2";
 
         public static string GetString(bool bWithFirmware = true)
         {
-            string sRevision = "." + Common.GetRevision(); //MW0LGE_22b
+            string sRevision = "." + Common.GetRevision();
             if (sRevision == ".0") sRevision = "";
 
             string version = Common.GetVerNum() + sRevision;
@@ -49,8 +47,7 @@ namespace Thetis
             string sBits = Common.Is64Bit ? " x64" : " x86";
 
             s += " v" + version + sBits;
-            //if (BUILD_DATE != "") s += " " + BUILD_DATE;
-            s += " (" + VersionInfo.BuildDate + ")<FW>";  //[2.10.2.2]MW0LGE use the audo generated class from pre build event for the BuildDate
+            s += " (" + VersionInfo.BuildDate + ")<FW>";  //[2.10.2.2]MW0LGE use the auto generated class from pre build event for the BuildDate
 
             if (BUILD_NAME != "") s += " " + BUILD_NAME;
 

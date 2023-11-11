@@ -56,6 +56,8 @@ namespace Midi2Cat.IO
         public event MidiInputEventHandler onMidiInput;
         public event DebugMsgEventHandler onMidiDebugMessage;
 
+        static public bool BuildIDFromControlIDAndStatus = false; //[2.10.3.4]MW0LGE
+        static public bool Ignore14bitMessages = false; //[2.10.3.4]MW0LGE
         static public int VFOSelect;  //-W2PA for switching Behringer PL-1 main wheel between VFO A and B.  Used in inDevice_ChannelMessageReceived() below and in MidiDeviceSetup.cs
         public int latestControlID = 0;
         public int lastLED = 0;
@@ -608,31 +610,51 @@ namespace Midi2Cat.IO
         public void inDevice_ChannelMessageReceived(int ControlId, int Data, int Status, int Event, int Channel)
         {
 
-            if (!messageOk(ControlId, Status, Channel)) return; //[2.10.3.4]MW0LGE added filter
+            if (!messageOk(ControlId, Status, Channel, out int controlIDmapped)) return; //[2.10.3.4]MW0LGE added filter
 
             if (onMidiInput != null) 
             {
                 try
                 {
-                    ControlId = FixBehringerCtlID(ControlId, Status); //-W2PA Disambiguate messages from Behringer controllers
+                    ControlId = FixBehringerCtlID(controlIDmapped, Status); //-W2PA Disambiguate messages from Behringer controllers
 
                     onMidiInput(this, DeviceIndex, ControlId, Data, Status, Event, Channel);
                 }
                 catch { }
             }
         }
-        private bool messageOk(int controlId, int status, int channel)
+        private bool messageOk(int controlId, int status, int channel, out int controlIDmapped)
         {
             // return true if msg is ok
 
-            //handy doc : https://anotherproducer.com/online-tools-for-musicians/midi-cc-list/
-            if (controlId >= 32 && controlId <= 63) return false; //[2.10.3.4]MW0LGE ignore LSB Controller message for 0-31 until we code up 14 bit support
+            controlIDmapped = controlId;
 
-            if(DeviceName == "DJControl Starlight")
+            //handy doc : https://anotherproducer.com/online-tools-for-musicians/midi-cc-list/
+            if (Ignore14bitMessages && controlId >= 32 && controlId <= 63) return false; //[2.10.3.4]MW0LGE ignore LSB Controller message for 0-31 until we code up 14 bit support
+
+            switch (DeviceName)
             {
-                // ignore the finger presses on the wheel surfaces as this causes a problem when adding as a wheel
-                // two events will come in otherwise, and is virtually impossible to setup a vfo wheel for example
-                if (controlId == 0x8 && (status == 0x91 || status == 0x92) && (channel == 0x1 || channel == 0x2)) return false;
+                case "DJControl Starlight" :
+                    {
+                        // ignore the finger presses on the wheel surfaces as this causes a problem when adding as a wheel
+                        // two events will come in otherwise, and is virtually impossible to setup a vfo wheel
+                        if (controlId == 0x08 && (status == 0x91 || status == 0x92) && (channel == 0x01 || channel == 0x02)) return false;
+
+                        // scrap first message for the vinal button as two arrive
+                        if (controlId == 0x03 && status == 0x91 && channel == 0x01) return false;
+                        
+                        // controlID and the status defines a button/control with the starlight
+                        controlIDmapped = ((controlId & 0xFF) << 8) | (status & 0xFF);
+
+                        break;
+                    }
+                default :
+                    {
+                        if (BuildIDFromControlIDAndStatus) // build a 16 bit ID from the controlID and the status, as so many controlID's are duplicated for different buttons on some devices
+                            controlIDmapped = ((controlId & 0xFF) << 8) | (status & 0xFF);
+
+                        break;
+                    }
             }
 
             return true;

@@ -10,8 +10,9 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 
 ## v2.10.3.4 Change Log
 - [add] show on startup options for ampview and linearity/ps window. Set in the linearity/ps window
-- [fix] now ignores 14bit Midi messages. More devices should work
-- [fix] Midi ignores Hercules DJControl Starlight finger press on the wheels
+- [add] can now ignore 14bit Midi messages. More devices should work. Option in Setup->Serial/Network/Midi CAT->Midi
+- [add] can now combine midi control id and status to be used as the control ID. This should allow devices that share controlIDs for multiple buttons/sliders to work. Option in Setup->Serial/Network/Midi CAT->Midi
+- [fix] Hercules DJControl Starlight midi device is now better handled. Wheel finger press for example are ignored. If you used this device before you will need to reconfigure as the control IDs will have changed
 - [fix] PortAudio #850 fix included
 - [fix] FM should now use low/high cuts. Carlson's rules used for filter width display in FM rx and tx
 - [fix] Andromeda ModeSpecificForm shouldn't now clear on console resize

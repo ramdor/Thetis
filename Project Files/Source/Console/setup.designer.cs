@@ -3336,6 +3336,7 @@
             this.chkN1MMEnableRX1 = new System.Windows.Forms.CheckBoxTS();
             this.tbMIDIcat = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkIgnore14bitMidiMessages = new System.Windows.Forms.CheckBoxTS();
             this.udUpdatesPerStepMin = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS511 = new System.Windows.Forms.LabelTS();
             this.labelTS512 = new System.Windows.Forms.LabelTS();
@@ -3536,6 +3537,7 @@
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
             this.txtboxTXProfileChangedReport = new System.Windows.Forms.TextBoxTS();
+            this.chkMidiControlIDincludesStatus = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -52954,6 +52956,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkMidiControlIDincludesStatus);
+            this.groupBox1.Controls.Add(this.chkIgnore14bitMidiMessages);
             this.groupBox1.Controls.Add(this.udUpdatesPerStepMin);
             this.groupBox1.Controls.Add(this.labelTS511);
             this.groupBox1.Controls.Add(this.labelTS512);
@@ -52962,10 +52966,23 @@
             this.groupBox1.Controls.Add(this.btnConfigure);
             this.groupBox1.Location = new System.Drawing.Point(14, 15);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(339, 121);
+            this.groupBox1.Size = new System.Drawing.Size(339, 158);
             this.groupBox1.TabIndex = 105;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "MIDI Configuration";
+            // 
+            // chkIgnore14bitMidiMessages
+            // 
+            this.chkIgnore14bitMidiMessages.AutoSize = true;
+            this.chkIgnore14bitMidiMessages.Image = null;
+            this.chkIgnore14bitMidiMessages.Location = new System.Drawing.Point(165, 111);
+            this.chkIgnore14bitMidiMessages.Name = "chkIgnore14bitMidiMessages";
+            this.chkIgnore14bitMidiMessages.Size = new System.Drawing.Size(135, 17);
+            this.chkIgnore14bitMidiMessages.TabIndex = 113;
+            this.chkIgnore14bitMidiMessages.Text = "Ignore 14 bit messages";
+            this.toolTip1.SetToolTip(this.chkIgnore14bitMidiMessages, resources.GetString("chkIgnore14bitMidiMessages.ToolTip"));
+            this.chkIgnore14bitMidiMessages.UseVisualStyleBackColor = true;
+            this.chkIgnore14bitMidiMessages.CheckedChanged += new System.EventHandler(this.chkIgnore14bitMidiMessages_CheckedChanged);
             // 
             // udUpdatesPerStepMin
             // 
@@ -56245,6 +56262,21 @@
             this.txtboxTXProfileChangedReport.TabIndex = 25;
             this.txtboxTXProfileChangedReport.Text = "used to report tx profile changes if you click on oragne box";
             this.txtboxTXProfileChangedReport.Visible = false;
+            // 
+            // chkMidiControlIDincludesStatus
+            // 
+            this.chkMidiControlIDincludesStatus.AutoSize = true;
+            this.chkMidiControlIDincludesStatus.Image = null;
+            this.chkMidiControlIDincludesStatus.Location = new System.Drawing.Point(165, 134);
+            this.chkMidiControlIDincludesStatus.Name = "chkMidiControlIDincludesStatus";
+            this.chkMidiControlIDincludesStatus.Size = new System.Drawing.Size(168, 17);
+            this.chkMidiControlIDincludesStatus.TabIndex = 114;
+            this.chkMidiControlIDincludesStatus.Text = "Control ID includes Midi status";
+            this.toolTip1.SetToolTip(this.chkMidiControlIDincludesStatus, "Some devices use the same control ID for multiple buttons/knobs etc.\r\nUse this op" +
+        "tion to include the midi status value with the control id, this\r\nshould then uni" +
+        "quely identify each control.");
+            this.chkMidiControlIDincludesStatus.UseVisualStyleBackColor = true;
+            this.chkMidiControlIDincludesStatus.CheckedChanged += new System.EventHandler(this.chkMidiControlIDincludesStatus_CheckedChanged);
             // 
             // Setup
             // 
@@ -60916,5 +60948,7 @@
         private CheckBoxTS chkVAC1ExclusiveIn;
         private CheckBoxTS chkVAC2ExclusiveIn;
         private ButtonTS btnReleaseNotes;
+        private CheckBoxTS chkIgnore14bitMidiMessages;
+        private CheckBoxTS chkMidiControlIDincludesStatus;
     }
 }

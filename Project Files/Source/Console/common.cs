@@ -676,6 +676,23 @@ namespace Thetis
         {
             m_sLogPath = sPath;
         }
+        public static void LogStringToPath(string entry, string sPath, string sFilename)
+        {
+            if (sPath == "" || entry == "" || sFilename == "") return;
+
+            try
+            {
+                using (StreamWriter w = File.AppendText(sPath + "\\" + sFilename))
+                {
+                    //using block will auto close stream
+                    w.WriteLine(entry);
+                }
+            }
+            catch
+            {
+
+            }
+        }
         public static void LogString(string entry)
         {
             // MW0LGE very simple logger
