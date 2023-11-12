@@ -10062,6 +10062,17 @@ namespace Thetis
             public bool Settled {  get; set; }
             public float Size { get; set; }
 
+            public SnowFlake(int width)
+            {
+                X = _rnd.Next(width);
+                Y = 0;
+                FallSpeed = _rnd.NextFloat(0.1f, 1.5f);
+                Alpha = _rnd.Next(64, 256);
+                XShift = _rnd.NextFloat(-0.5f, 0.5f);
+                Settled = false;
+                Size = _rnd.NextFloat(1f, 2f);
+            }
+
             public void Update()
             {
                 if (!Settled)
@@ -10122,15 +10133,7 @@ namespace Thetis
             {
                 if (_snow.Count < 500)
                 {
-                    SnowFlake sf = new SnowFlake();
-                    sf.X = _rnd.Next(Target.Width);
-                    sf.Y = 0;
-                    sf.FallSpeed = _rnd.NextFloat(0.1f, 1.5f);
-                    sf.Alpha = _rnd.Next(1, 255);
-                    sf.XShift = _rnd.NextFloat(-0.5f, 0.5f);
-                    sf.Settled = false;
-                    sf.Size = _rnd.NextFloat(1f, 2f);
-
+                    SnowFlake sf = new SnowFlake(Target.Width);
                     _snow.Add(sf);
                 }               
 
