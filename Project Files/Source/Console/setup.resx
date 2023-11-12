@@ -123,25 +123,111 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>302, 17</value>
   </metadata>
-  <metadata name="numericUpDownTS3.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="numericUpDownTS4.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="numericUpDownTS6.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="numericUpDownTS9.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="numericUpDownTS10.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="numericUpDownTS12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pbWarningBufferType.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWxJREFUOE+l
+        kc0rRGEYxU/ZMJmUSNL4D2wViWyVHRt/AQsrC7NQ1orMAluLUXaWSmahuT4ym/mgcd0hauxoPnzEdbnX
+        e9479M7tZsY49aun85zzdHsvflN0DdA1bAjWOTes5D5wn4RFODek8CyQjUP7MPBOxByn9ycFWoBUDCik
+        UXau4BDO9LirS8FAE0YG5NeULANmdAXO5hIczsIrcsdMTQ2L4PUxQqUMbvklwpJwfjxDnjtmako/aIZx
+        CNvOwfYeosfd3jYwMdop874a6pe/e8zU8cyi9xDhjpmd1ZDs+MqItePmBOZ3iXR1uKgeM8wO9rVVmop6
+        uuUDh1+yKKil6Sk4MwLVY0Zk5yNzvZW2otwRkE+gqBaIeBeJ179LoMxOlZYXgQsNW58GLG8h2Ori9Zll
+        h90fne4CDym8esNErKseW4UddqUmx+XbZKxLvPmFIwsufjt2RDfNGzyCp3P/YD2wyxs8xOGfwPkC0OWy
+        xBfi75wAAAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="pbWarningFilterSize.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWxJREFUOE+l
+        kc0rRGEYxU/ZMJmUSNL4D2wViWyVHRt/AQsrC7NQ1orMAluLUXaWSmahuT4ym/mgcd0hauxoPnzEdbnX
+        e9479M7tZsY49aun85zzdHsvflN0DdA1bAjWOTes5D5wn4RFODek8CyQjUP7MPBOxByn9ycFWoBUDCik
+        UXau4BDO9LirS8FAE0YG5NeULANmdAXO5hIczsIrcsdMTQ2L4PUxQqUMbvklwpJwfjxDnjtmako/aIZx
+        CNvOwfYeosfd3jYwMdop874a6pe/e8zU8cyi9xDhjpmd1ZDs+MqItePmBOZ3iXR1uKgeM8wO9rVVmop6
+        uuUDh1+yKKil6Sk4MwLVY0Zk5yNzvZW2otwRkE+gqBaIeBeJ179LoMxOlZYXgQsNW58GLG8h2Ori9Zll
+        h90fne4CDym8esNErKseW4UddqUmx+XbZKxLvPmFIwsufjt2RDfNGzyCp3P/YD2wyxs8xOGfwPkC0OWy
+        xBfi75wAAAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="pbWarningBufferSize.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWxJREFUOE+l
+        kc0rRGEYxU/ZMJmUSNL4D2wViWyVHRt/AQsrC7NQ1orMAluLUXaWSmahuT4ym/mgcd0hauxoPnzEdbnX
+        e9479M7tZsY49aun85zzdHsvflN0DdA1bAjWOTes5D5wn4RFODek8CyQjUP7MPBOxByn9ycFWoBUDCik
+        UXau4BDO9LirS8FAE0YG5NeULANmdAXO5hIczsIrcsdMTQ2L4PUxQqUMbvklwpJwfjxDnjtmako/aIZx
+        CNvOwfYeosfd3jYwMdop874a6pe/e8zU8cyi9xDhjpmd1ZDs+MqItePmBOZ3iXR1uKgeM8wO9rVVmop6
+        uuUDh1+yKKil6Sk4MwLVY0Zk5yNzvZW2otwRkE+gqBaIeBeJ179LoMxOlZYXgQsNW58GLG8h2Ori9Zll
+        h90fne4CDym8esNErKseW4UddqUmx+XbZKxLvPmFIwsufjt2RDfNGzyCp3P/YD2wyxs8xOGfwPkC0OWy
+        xBfi75wAAAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="pbPAProfileWarning.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWxJREFUOE+l
+        kc0rRGEYxU/ZMJmUSNL4D2wViWyVHRt/AQsrC7NQ1orMAluLUXaWSmahuT4ym/mgcd0hauxoPnzEdbnX
+        e9479M7tZsY49aun85zzdHsvflN0DdA1bAjWOTes5D5wn4RFODek8CyQjUP7MPBOxByn9ycFWoBUDCik
+        UXau4BDO9LirS8FAE0YG5NeULANmdAXO5hIczsIrcsdMTQ2L4PUxQqUMbvklwpJwfjxDnjtmako/aIZx
+        CNvOwfYeosfd3jYwMdop874a6pe/e8zU8cyi9xDhjpmd1ZDs+MqItePmBOZ3iXR1uKgeM8wO9rVVmop6
+        uuUDh1+yKKil6Sk4MwLVY0Zk5yNzvZW2otwRkE+gqBaIeBeJ179LoMxOlZYXgQsNW58GLG8h2Ori9Zll
+        h90fne4CDym8esNErKseW4UddqUmx+XbZKxLvPmFIwsufjt2RDfNGzyCp3P/YD2wyxs8xOGfwPkC0OWy
+        xBfi75wAAAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>Begin with all spinners set equal to their labelled value.
+For each spinner, from minimum to maximum, adjust the output power
+such that your CALIBRATED EXTERNAL METER is equal to the spinner
+value.  Record the values appearing in the Thetis 'Fwd Pwr' meter.
+After completing measurements for all spinners, enter your
+recorded values into the respective spinners.  DO NOT USE
+POWER EXCEEDING THE RATING OF YOUR RADIO!
+</value>
+  </data>
+  <data name="groupBox2.ToolTip" xml:space="preserve">
+    <value>Allows you to view the Display are of Thetis remotely
+
+To view your Display.
+1) Locate the IP address off your computer (example: 192.168.1.100)
+2) Open your Web browser and type:  http://&lt;your local IP address&gt;:8081
+
+
+</value>
+  </data>
+  <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>162, 17</value>
+  </metadata>
+  <metadata name="saveFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>516, 17</value>
+  </metadata>
+  <metadata name="timer_VAC_Monitor.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>652, 17</value>
+  </metadata>
+  <metadata name="timer_LED_Mirror.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="timer_RawInputMouseWheel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>810, 17</value>
+  </metadata>
+  <metadata name="tmrPLLLockChecker.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1018, 17</value>
+  </metadata>
+  <metadata name="tmrCFCOMPGain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1176, 17</value>
+  </metadata>
+  <metadata name="tmrCheckProfile.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1322, 17</value>
+  </metadata>
+  <data name="lblTXProfileWarning.ToolTip" xml:space="preserve">
+    <value>One or more settings have been changed that are
+only stored in a TX profile. This can include things
+like TX EQ, CFC, buffer sizes, VAC state (on/off) and
+many others. You need to save the TX profile so that
+these settings are stored. Use the Transmit-&gt;Profile Save
+button, or use the Auto Save TX Profile options on the
+Transmit tab</value>
+  </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>302, 17</value>
+  </metadata>
   <data name="pbVAC1FFAlphaInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE+V
@@ -204,66 +290,8 @@ This is not spurious RF but a side effect of the FFT bins and averages.
 This setting will reset the WDSP analyzer pixel/average buffers.
 They will take a time to 're-fill' and is determined by sample rate and bin size.</value>
   </data>
-  <data name="pbWarningBufferType.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWxJREFUOE+l
-        kc0rRGEYxU/ZMJmUSNL4D2wViWyVHRt/AQsrC7NQ1orMAluLUXaWSmahuT4ym/mgcd0hauxoPnzEdbnX
-        e9479M7tZsY49aun85zzdHsvflN0DdA1bAjWOTes5D5wn4RFODek8CyQjUP7MPBOxByn9ycFWoBUDCik
-        UXau4BDO9LirS8FAE0YG5NeULANmdAXO5hIczsIrcsdMTQ2L4PUxQqUMbvklwpJwfjxDnjtmako/aIZx
-        CNvOwfYeosfd3jYwMdop874a6pe/e8zU8cyi9xDhjpmd1ZDs+MqItePmBOZ3iXR1uKgeM8wO9rVVmop6
-        uuUDh1+yKKil6Sk4MwLVY0Zk5yNzvZW2otwRkE+gqBaIeBeJ179LoMxOlZYXgQsNW58GLG8h2Ori9Zll
-        h90fne4CDym8esNErKseW4UddqUmx+XbZKxLvPmFIwsufjt2RDfNGzyCp3P/YD2wyxs8xOGfwPkC0OWy
-        xBfi75wAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="pbWarningFilterSize.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWxJREFUOE+l
-        kc0rRGEYxU/ZMJmUSNL4D2wViWyVHRt/AQsrC7NQ1orMAluLUXaWSmahuT4ym/mgcd0hauxoPnzEdbnX
-        e9479M7tZsY49aun85zzdHsvflN0DdA1bAjWOTes5D5wn4RFODek8CyQjUP7MPBOxByn9ycFWoBUDCik
-        UXau4BDO9LirS8FAE0YG5NeULANmdAXO5hIczsIrcsdMTQ2L4PUxQqUMbvklwpJwfjxDnjtmako/aIZx
-        CNvOwfYeosfd3jYwMdop874a6pe/e8zU8cyi9xDhjpmd1ZDs+MqItePmBOZ3iXR1uKgeM8wO9rVVmop6
-        uuUDh1+yKKil6Sk4MwLVY0Zk5yNzvZW2otwRkE+gqBaIeBeJ179LoMxOlZYXgQsNW58GLG8h2Ori9Zll
-        h90fne4CDym8esNErKseW4UddqUmx+XbZKxLvPmFIwsufjt2RDfNGzyCp3P/YD2wyxs8xOGfwPkC0OWy
-        xBfi75wAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="pbWarningBufferSize.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWxJREFUOE+l
-        kc0rRGEYxU/ZMJmUSNL4D2wViWyVHRt/AQsrC7NQ1orMAluLUXaWSmahuT4ym/mgcd0hauxoPnzEdbnX
-        e9479M7tZsY49aun85zzdHsvflN0DdA1bAjWOTes5D5wn4RFODek8CyQjUP7MPBOxByn9ycFWoBUDCik
-        UXau4BDO9LirS8FAE0YG5NeULANmdAXO5hIczsIrcsdMTQ2L4PUxQqUMbvklwpJwfjxDnjtmako/aIZx
-        CNvOwfYeosfd3jYwMdop874a6pe/e8zU8cyi9xDhjpmd1ZDs+MqItePmBOZ3iXR1uKgeM8wO9rVVmop6
-        uuUDh1+yKKil6Sk4MwLVY0Zk5yNzvZW2otwRkE+gqBaIeBeJ179LoMxOlZYXgQsNW58GLG8h2Ori9Zll
-        h90fne4CDym8esNErKseW4UddqUmx+XbZKxLvPmFIwsufjt2RDfNGzyCp3P/YD2wyxs8xOGfwPkC0OWy
-        xBfi75wAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="pbPAProfileWarning.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWxJREFUOE+l
-        kc0rRGEYxU/ZMJmUSNL4D2wViWyVHRt/AQsrC7NQ1orMAluLUXaWSmahuT4ym/mgcd0hauxoPnzEdbnX
-        e9479M7tZsY49aun85zzdHsvflN0DdA1bAjWOTes5D5wn4RFODek8CyQjUP7MPBOxByn9ycFWoBUDCik
-        UXau4BDO9LirS8FAE0YG5NeULANmdAXO5hIczsIrcsdMTQ2L4PUxQqUMbvklwpJwfjxDnjtmako/aIZx
-        CNvOwfYeosfd3jYwMdop874a6pe/e8zU8cyi9xDhjpmd1ZDs+MqItePmBOZ3iXR1uKgeM8wO9rVVmop6
-        uuUDh1+yKKil6Sk4MwLVY0Zk5yNzvZW2otwRkE+gqBaIeBeJ179LoMxOlZYXgQsNW58GLG8h2Ori9Zll
-        h90fne4CDym8esNErKseW4UddqUmx+XbZKxLvPmFIwsufjt2RDfNGzyCp3P/YD2wyxs8xOGfwPkC0OWy
-        xBfi75wAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Begin with all spinners set equal to their labelled value.
-For each spinner, from minimum to maximum, adjust the output power
-such that your CALIBRATED EXTERNAL METER is equal to the spinner
-value.  Record the values appearing in the Thetis 'Fwd Pwr' meter.
-After completing measurements for all spinners, enter your
-recorded values into the respective spinners.  DO NOT USE
-POWER EXCEEDING THE RATING OF YOUR RADIO!
-</value>
-  </data>
   <data name="lgLinearGradientRX1.EncodedText" xml:space="preserve">
-    <value>OXwxfDAuMDAwfC0xNjc3NzIxNnwwfDAuMTI1fC0xNDczNzYzM3wwfDAuMjUwfC0xMjY5ODA1MHwwfDAuMzc1fC0xMDY1ODQ2N3wwfDAuNTAwfC04NjE4ODg0fDB8MC42MjV8LTY1NzkzMDF8MHwwLjc1MHwtNDUzOTcxOHwwfDAuODc1fC0yNTAwMTM1fDF8MS4wMDB8LTF8</value>
+    <value>OXwxfDAsMDAwfC0xNjc3NzIxNnwwfDEyNSwwMDB8LTE0NzM3NjMzfDB8MjUwLDAwMHwtMTI2OTgwNTB8MHwzNzUsMDAwfC0xMDY1ODQ2N3wwfDUwMCwwMDB8LTg2MTg4ODR8MHw2MjUsMDAwfC02NTc5MzAxfDB8NzUwLDAwMHwtNDUzOTcxOHwwfDg3NSwwMDB8LTI1MDAxMzV8MXwxMDAwLDAwMHwtMXw=</value>
   </data>
   <data name="chkReplaceCurrentMeterInSelectedSkin.ToolTip" xml:space="preserve">
     <value>If this is checked, the downloaded meter skins
@@ -274,7 +302,7 @@ only used if a selected skin does not provide its own.</value>
   <data name="btnDownloadSkin.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vQAADr0BR/uQrQAAAiJJREFUWEfNl79LHEEYhhcJYhGChYiEIEEsxFokiASxEisJIiIiIkEsLFKHIIiI
+        vAAADrwBlbxySQAAAiJJREFUWEfNl79LHEEYhhcJYhGChYiEIEEsxFokiASxEisJIiIiIkEsLFKHIIiI
         VQgiVpYiIpbWIiLWIv4FIiIiktpC9H2W+Y7lmJ2d+8m98NzdzH4z38vuN7NzSaupXXwUn0Sn+zY6RMM0
         Lq7Eq3jL4UUcim5RV30TTO5L6uNacKfqpjPhSxRiVtRND8KXJMSp+CVWxYpYdvx0LDkWMyyIeTEjBkRJ
         1RioFWptR7SJ5FH4gpoBd7BkgOIaFF/EZ9HjoOrLsWs+GBuiX7DiyHkjSgb+0miSNgQ572mYgS0akfog
@@ -310,48 +338,23 @@ or http://localhost:8081
 But you must also add this port# to your Routers "Port Forward" options
 If Windows Firewall Pops up on the screen, Click on the Allow access.</value>
   </data>
-  <data name="groupBox2.ToolTip" xml:space="preserve">
-    <value>Allows you to view the Display are of Thetis remotely
-
-To view your Display.
-1) Locate the IP address off your computer (example: 192.168.1.100)
-2) Open your Web browser and type:  http://&lt;your local IP address&gt;:8081
-
-
-</value>
-  </data>
-  <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>162, 17</value>
+  <metadata name="numericUpDownTS3.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
   </metadata>
-  <data name="lblTXProfileWarning.ToolTip" xml:space="preserve">
-    <value>One or more settings have been changed that are
-only stored in a TX profile. This can include things
-like TX EQ, CFC, buffer sizes, VAC state (on/off) and
-many others. You need to save the TX profile so that
-these settings are stored. Use the Transmit-&gt;Profile Save
-button, or use the Auto Save TX Profile options on the
-Transmit tab</value>
-  </data>
-  <metadata name="saveFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>516, 17</value>
+  <metadata name="numericUpDownTS4.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
   </metadata>
-  <metadata name="timer_VAC_Monitor.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>652, 17</value>
+  <metadata name="numericUpDownTS6.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
   </metadata>
-  <metadata name="timer_LED_Mirror.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
+  <metadata name="numericUpDownTS9.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
   </metadata>
-  <metadata name="timer_RawInputMouseWheel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>810, 17</value>
+  <metadata name="numericUpDownTS10.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
   </metadata>
-  <metadata name="tmrPLLLockChecker.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1018, 17</value>
-  </metadata>
-  <metadata name="tmrCFCOMPGain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1176, 17</value>
-  </metadata>
-  <metadata name="tmrCheckProfile.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1322, 17</value>
+  <metadata name="numericUpDownTS12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
   </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>99</value>
