@@ -638,20 +638,20 @@ namespace Midi2Cat.IO
                     {
                         // ignore the finger presses on the wheel surfaces as this causes a problem when adding as a wheel
                         // two events will come in otherwise, and is virtually impossible to setup a vfo wheel
-                        if (controlId == 0x08 && (status == 0x91 || status == 0x92) && (channel == 0x01 || channel == 0x02)) return false;
+                        if (controlId == 0x08 && (channel == 0x01 || channel == 0x02) && (status == 0x91 || status == 0x92)) return false;
 
                         // scrap first message for the vinal button as two arrive
-                        if (controlId == 0x03 && status == 0x91 && channel == 0x01) return false;
-                        
-                        // controlID and the status defines a button/control with the starlight
-                        controlIDmapped = ((controlId & 0xFF) << 8) | (status & 0xFF);
+                        if (controlId == 0x03 && channel == 0x01 && status == 0x91) return false;
+
+                        // controlID and the channel defines a button/control id with the starlight
+                        controlIDmapped = ((controlId & 0xFF) << 8) | (channel & 0xFF);
 
                         break;
                     }
                 default :
                     {
-                        if (BuildIDFromControlIDAndStatus) // build a 16 bit ID from the controlID and the status, as so many controlID's are duplicated for different buttons on some devices
-                            controlIDmapped = ((controlId & 0xFF) << 8) | (status & 0xFF);
+                        if (BuildIDFromControlIDAndStatus) // build a 16 bit ID from the controlID and the channel, as so many controlID's are duplicated for different buttons on some devices
+                            controlIDmapped = ((controlId & 0xFF) << 8) | (channel & 0xFF);
 
                         break;
                     }

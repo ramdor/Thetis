@@ -9795,10 +9795,19 @@ namespace Thetis
 
         private void udDisplayScopeTime_ValueChanged(object sender, System.EventArgs e)
         {
+            if (initializing) return;
             //console.ScopeTime = (int)udDisplayScopeTime.Value;
             int samples = (int)((double)udDisplayScopeTime.Value * Audio.OutRate / 1000000.0);
             //Debug.WriteLine("sample: "+samples);
             Audio.ScopeSamplesPerPixel = samples;
+
+            //int pixels = Display.Target.Width;
+            //int microseconds_to_complete_display_width = (int)udDisplayScopeTime.Value;
+            //int samples_per_second = Audio.OutRate;
+            //double samples_in_one_microsecond = (double)samples_per_second / 1000000.0;
+            //double samples_needed = microseconds_to_complete_display_width * samples_in_one_microsecond;
+            //int samples_per_pixel = (int)(samples_needed / pixels);
+            //Audio.ScopeSamplesPerPixel = samples_per_pixel;
         }
 
         private void udDisplayMeterAvg_ValueChanged(object sender, System.EventArgs e)
@@ -14426,6 +14435,12 @@ namespace Thetis
             console.CurrentSkin = comboAppSkin.Text;
             console.RadarColorUpdate = true;
             MeterManager.CurrentSkin = comboAppSkin.Text;
+
+#if SNOWFALL
+            string sSkinNameLower = comboAppSkin.Text.ToLower();
+            Display.SnowFall = sSkinNameLower.Contains("xmas") || sSkinNameLower.Contains("christmas") || sSkinNameLower.Contains("x-mas") ||
+                               sSkinNameLower.Contains("snow") || sSkinNameLower.Contains("flakes") || sSkinNameLower.Contains("winter");
+#endif
 
             _skinChanging = false;
         }
@@ -28874,7 +28889,7 @@ namespace Thetis
         {
             if (initializing) return;
             int run = chkPHROTEnable.Checked ? 1 : 0;
-            WDSP.SetTXAPHROTRun(WDSP.id(1, 0), run);
+            WDSP.SetTXAPHROTReverse(WDSP.id(1, 0), run);
         }
 
         private void chkRecoverPAProfileFromTXProfile_CheckedChanged(object sender, EventArgs e)
@@ -28972,11 +28987,13 @@ namespace Thetis
 
         private void chkIgnore14bitMidiMessages_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             MidiDevice.Ignore14bitMessages = chkIgnore14bitMidiMessages.Checked;
         }
 
         private void chkMidiControlIDincludesStatus_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             MidiDevice.BuildIDFromControlIDAndStatus = chkMidiControlIDincludesStatus.Checked;
         }
 

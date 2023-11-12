@@ -34,7 +34,7 @@ namespace Thetis
 {
     class TitleBar
     {
-        public const string BUILD_NAME = "pre-release_2";
+        public const string BUILD_NAME = "pre-release-3";
 
         public static string GetString(bool bWithFirmware = true)
         {

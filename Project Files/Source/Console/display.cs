@@ -838,6 +838,10 @@ namespace Thetis
                         console.specRX.GetSpecRX(1).Pixels = displayTargetWidth / m_nDecimation;
                         console.specRX.GetSpecRX(cmaster.inid(1, 0)).Pixels = displayTargetWidth / m_nDecimation;
                     }
+
+#if SNOWFALL
+                    if(_snowFall) _snow.Clear();
+#endif
                 }
             }
         }
@@ -2309,7 +2313,7 @@ namespace Thetis
                             font95 = new System.Drawing.Font("Arial", 9.5f),
                             font32b = new System.Drawing.Font("Arial", 32, FontStyle.Bold);
 
-        #endregion
+#endregion
 
         #region General Routines
 
@@ -3409,6 +3413,10 @@ namespace Thetis
                     }
 
                     DrawCursorInfo(displayTargetWidth);
+
+#if SNOWFALL
+                    if(_snowFall) letItSnow();
+#endif
 
                     // undo the translate
                     _d2dRenderTarget.Transform = Matrix3x2.Identity;
@@ -8453,7 +8461,7 @@ namespace Thetis
 
                 }// for loop through DX_Index
             }
-            #endregion           
+            #endregion
         }
 
         private static void DrawCursorInfo(int W)
@@ -9075,7 +9083,7 @@ namespace Thetis
                 return false;
             }
 
-            drawFillRectangleDX2D(m_bDX2_display_background_brush, 0, bottom ? H : 0, W, H);
+            //drawFillRectangleDX2D(m_bDX2_display_background_brush, 0, bottom ? H : 0, W, H);
 
             SharpDX.Vector2 pointMin = new SharpDX.Vector2();
             SharpDX.Vector2 pointMax = new SharpDX.Vector2();
@@ -9164,15 +9172,20 @@ namespace Thetis
                 pixel = (int)(H / 2 * scope_min[i]);
                 pointMin.Y = H / 2 - pixel;
 
+                pointMax.Y -= 0.5f;
+                pointMin.Y -= 0.5f;
+
                 if (bottom)
                 {
                     pointMax.Y += H;
                     pointMin.Y += H;
                 }
 
-                _d2dRenderTarget.DrawLine(previousPointMax, pointMax, m_bDX2_waveform_line_pen);
-                _d2dRenderTarget.DrawLine(previousPointMin, pointMin, m_bDX2_waveform_line_pen);
-                _d2dRenderTarget.DrawLine(pointMin, pointMax, m_bDX2_waveform_line_pen, m_nDecimation);
+                //_d2dRenderTarget.DrawLine(previousPointMax, pointMax, m_bDX2_waveform_line_pen);
+                //_d2dRenderTarget.DrawLine(previousPointMin, pointMin, m_bDX2_waveform_line_pen);
+                if (previousPointMax.Y > pointMin.Y) _d2dRenderTarget.DrawLine(previousPointMax, pointMin, m_bDX2_waveform_line_pen, 1f);
+                if (previousPointMin.Y < pointMax.Y) _d2dRenderTarget.DrawLine(previousPointMin, pointMax, m_bDX2_waveform_line_pen, 1f);
+                _d2dRenderTarget.DrawLine(pointMin, pointMax, m_bDX2_waveform_line_pen, 1f);
 
                 previousPointMax.X = i * m_nDecimation;
                 previousPointMin.X = previousPointMax.X;
@@ -10027,7 +10040,7 @@ namespace Thetis
             get { return _wdsp_mox_transition_buffer_clear; }
             set { _wdsp_mox_transition_buffer_clear = value; }
         }
-        #endregion
+#endregion
         private static bool localMox(int rx)
         {
             if(rx == 1)
@@ -10037,5 +10050,106 @@ namespace Thetis
 
             return false;
         }
+
+#if SNOWFALL
+        private class SnowFlake
+        {
+            public float X { get; set; }
+            public float Y { get; set; }
+            public float FallSpeed { get; set; }
+            public float Alpha { get; set; }
+            public float XShift { get; set; }
+            public bool Settled {  get; set; }
+            public float Size { get; set; }
+
+            public void Update()
+            {
+                if (!Settled)
+                {
+
+                    Y += FallSpeed;
+                    X += XShift;                    
+
+                    int dirRand = _rnd.Next(0, 10);
+                    if (dirRand == 9 && XShift < 0.5f)
+                        XShift += 0.1f;
+                    else if (dirRand == 0 && XShift > -0.5f)
+                        XShift -= 0.1f;
+
+                    if (Y >= Target.Height - 1)
+                    {
+                        Y = Target.Height - 1;
+                        Settled = true;
+                    }
+
+                    if (X > Target.Width - 1)
+                        X = 0;
+                    else if (X < 0)
+                        X = Target.Width - 1;
+                }
+                else
+                {
+                    Alpha -= 0.5f;
+                    if (Alpha < 0) Alpha = 0;
+                }
+            }
+        }
+
+        private static bool _snowFall = false;
+        public static bool SnowFall
+        {
+            get { return _snowFall; }
+            set 
+            { 
+                _snowFall = value;
+                if (!_snowFall) _snow.Clear();
+            }
+        }
+        private static Random _rnd = new Random();
+        private static List<SnowFlake> _snow = new List<SnowFlake>();
+        private static double _oldSnowFrame = 0;
+        private static void letItSnow()
+        {
+            bool bUpdate = false;
+            if (m_dElapsedFrameStart >= _oldSnowFrame + 16)
+            {
+                //fixed update
+                _oldSnowFrame = m_dElapsedFrameStart;
+                bUpdate = true;
+            }
+
+            if (bUpdate)
+            {
+                if (_snow.Count < 500)
+                {
+                    SnowFlake sf = new SnowFlake();
+                    sf.X = _rnd.Next(Target.Width);
+                    sf.Y = 0;
+                    sf.FallSpeed = _rnd.NextFloat(0.1f, 1.5f);
+                    sf.Alpha = _rnd.Next(1, 255);
+                    sf.XShift = _rnd.NextFloat(-0.5f, 0.5f);
+                    sf.Settled = false;
+                    sf.Size = _rnd.NextFloat(1f, 2f);
+
+                    _snow.Add(sf);
+                }               
+
+                foreach (SnowFlake snowflake in _snow)
+                    snowflake.Update();
+
+                _snow.RemoveAll(s => s.Alpha == 0);
+            }
+
+            Ellipse e = new Ellipse(new SharpDX.Vector2(0, 0), 1, 1);
+            foreach (SnowFlake snowflake in _snow)
+            {
+                e.Point.X = snowflake.X;
+                e.Point.Y = snowflake.Y;
+                e.RadiusX = snowflake.Size;
+                e.RadiusY = snowflake.Size;
+                _d2dRenderTarget.FillEllipse(e, getDXBrushForColour(Color.White, (int)snowflake.Alpha));
+            }
+        }
+#endif
     }
 }
