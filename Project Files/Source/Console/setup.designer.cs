@@ -3337,6 +3337,7 @@
             this.tbMIDIcat = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkMidiControlIDincludesStatus = new System.Windows.Forms.CheckBoxTS();
+            this.chkMidiControlIDincludesChannel = new System.Windows.Forms.CheckBoxTS();
             this.chkIgnore14bitMidiMessages = new System.Windows.Forms.CheckBoxTS();
             this.udUpdatesPerStepMin = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS511 = new System.Windows.Forms.LabelTS();
@@ -52957,6 +52958,7 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.chkMidiControlIDincludesStatus);
+            this.groupBox1.Controls.Add(this.chkMidiControlIDincludesChannel);
             this.groupBox1.Controls.Add(this.chkIgnore14bitMidiMessages);
             this.groupBox1.Controls.Add(this.udUpdatesPerStepMin);
             this.groupBox1.Controls.Add(this.labelTS511);
@@ -52966,7 +52968,7 @@
             this.groupBox1.Controls.Add(this.btnConfigure);
             this.groupBox1.Location = new System.Drawing.Point(14, 15);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(337, 158);
+            this.groupBox1.Size = new System.Drawing.Size(337, 176);
             this.groupBox1.TabIndex = 105;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "MIDI Configuration";
@@ -52975,14 +52977,28 @@
             // 
             this.chkMidiControlIDincludesStatus.AutoSize = true;
             this.chkMidiControlIDincludesStatus.Image = null;
-            this.chkMidiControlIDincludesStatus.Location = new System.Drawing.Point(165, 134);
+            this.chkMidiControlIDincludesStatus.Location = new System.Drawing.Point(179, 153);
             this.chkMidiControlIDincludesStatus.Name = "chkMidiControlIDincludesStatus";
-            this.chkMidiControlIDincludesStatus.Size = new System.Drawing.Size(156, 17);
-            this.chkMidiControlIDincludesStatus.TabIndex = 114;
-            this.chkMidiControlIDincludesStatus.Text = "Control ID includes channel";
-            this.toolTip1.SetToolTip(this.chkMidiControlIDincludesStatus, resources.GetString("chkMidiControlIDincludesStatus.ToolTip"));
+            this.chkMidiControlIDincludesStatus.Size = new System.Drawing.Size(114, 17);
+            this.chkMidiControlIDincludesStatus.TabIndex = 115;
+            this.chkMidiControlIDincludesStatus.Text = "Also include status";
+            this.toolTip1.SetToolTip(this.chkMidiControlIDincludesStatus, "Note: the control ID will now\r\nbe made as follows : controlIDmapped = ((controlId" +
+        " & 0xFF) << 16) | ((channel & 0xFF) << 8) | (status & 0xFF);");
             this.chkMidiControlIDincludesStatus.UseVisualStyleBackColor = true;
             this.chkMidiControlIDincludesStatus.CheckedChanged += new System.EventHandler(this.chkMidiControlIDincludesStatus_CheckedChanged);
+            // 
+            // chkMidiControlIDincludesChannel
+            // 
+            this.chkMidiControlIDincludesChannel.AutoSize = true;
+            this.chkMidiControlIDincludesChannel.Image = null;
+            this.chkMidiControlIDincludesChannel.Location = new System.Drawing.Point(165, 134);
+            this.chkMidiControlIDincludesChannel.Name = "chkMidiControlIDincludesChannel";
+            this.chkMidiControlIDincludesChannel.Size = new System.Drawing.Size(156, 17);
+            this.chkMidiControlIDincludesChannel.TabIndex = 114;
+            this.chkMidiControlIDincludesChannel.Text = "Control ID includes channel";
+            this.toolTip1.SetToolTip(this.chkMidiControlIDincludesChannel, resources.GetString("chkMidiControlIDincludesChannel.ToolTip"));
+            this.chkMidiControlIDincludesChannel.UseVisualStyleBackColor = true;
+            this.chkMidiControlIDincludesChannel.CheckedChanged += new System.EventHandler(this.chkMidiControlIDincludesChannel_CheckedChanged);
             // 
             // chkIgnore14bitMidiMessages
             // 
@@ -60947,6 +60963,7 @@
         private CheckBoxTS chkVAC2ExclusiveIn;
         private ButtonTS btnReleaseNotes;
         private CheckBoxTS chkIgnore14bitMidiMessages;
+        private CheckBoxTS chkMidiControlIDincludesChannel;
         private CheckBoxTS chkMidiControlIDincludesStatus;
     }
 }

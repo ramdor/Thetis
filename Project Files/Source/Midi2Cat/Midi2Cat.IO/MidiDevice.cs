@@ -56,7 +56,8 @@ namespace Midi2Cat.IO
         public event MidiInputEventHandler onMidiInput;
         public event DebugMsgEventHandler onMidiDebugMessage;
 
-        static public bool BuildIDFromControlIDAndStatus = false; //[2.10.3.4]MW0LGE
+        static public bool BuildIDFromControlIDAndChannel = false; //[2.10.3.4]MW0LGE
+        static public bool IncludeStatusInControlID = false; //[2.10.3.4]MW0LGE
         static public bool Ignore14bitMessages = false; //[2.10.3.4]MW0LGE
         static public int VFOSelect;  //-W2PA for switching Behringer PL-1 main wheel between VFO A and B.  Used in inDevice_ChannelMessageReceived() below and in MidiDeviceSetup.cs
         public int latestControlID = 0;
@@ -643,15 +644,20 @@ namespace Midi2Cat.IO
                         // scrap first message for the vinal button as two arrive
                         if (controlId == 0x03 && channel == 0x01 && status == 0x91) return false;
 
-                        // controlID and the channel defines a button/control id with the starlight
+                        // controlID and the channel defines a button/control id with the starlight, fine to use 16 bits
                         controlIDmapped = ((controlId & 0xFF) << 8) | (channel & 0xFF);
 
                         break;
                     }
                 default :
                     {
-                        if (BuildIDFromControlIDAndStatus) // build a 16 bit ID from the controlID and the channel, as so many controlID's are duplicated for different buttons on some devices
-                            controlIDmapped = ((controlId & 0xFF) << 8) | (channel & 0xFF);
+                        if (BuildIDFromControlIDAndChannel) // build a 16/24 bit ID from the controlID and the channel and status, as so many controlID's are duplicated for different buttons on some devices
+                        {
+                            if (IncludeStatusInControlID)
+                                controlIDmapped = ((controlId & 0xFF) << 16) | ((channel & 0xFF) << 8) | (status & 0xFF);
+                            else
+                                controlIDmapped = ((controlId & 0xFF) << 8) | (channel & 0xFF);
+                        }
 
                         break;
                     }
