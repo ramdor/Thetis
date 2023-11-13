@@ -1417,7 +1417,7 @@ namespace Thetis
             {
                 if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1)
                 {
-                    int size = Audio.OutCount;
+                    int size = Audio.MOX ? Audio.OutCountTX : Audio.OutCount; //[2.10.3.4]MW0LGE use OutCountTX if moxing
                     fixed (float* pleft = &left[0])
                     fixed (float* pright = &right[0])
                     {
