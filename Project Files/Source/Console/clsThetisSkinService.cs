@@ -77,6 +77,7 @@ namespace Thetis
         public long BytesDownloaded { get; set; }
         public long TotalBytes { get; set; }
         public string Url { get; set; }
+        public string FinalUri { get; set; }
         public bool Complete {  get; set; }
         public bool Cancelled { get; set; }
         public int PercentageDownloaded { get; set; }
@@ -316,7 +317,12 @@ namespace Thetis
                             sfd.Path = savePath;
                             sfd.TotalBytes = totalBytes;
                             sfd.Complete = false;
-                            sfd.PercentageDownloaded = 0;                            
+                            sfd.PercentageDownloaded = 0;
+                            if (response.RequestMessage != null)
+                            {
+                                Uri finalUri = response.RequestMessage.RequestUri;
+                                sfd.FinalUri = finalUri.ToString();
+                            }
 
                             FileDownload?.Invoke(null, sfd);
                             int buffLen = 4096;
@@ -352,6 +358,10 @@ namespace Thetis
                             sfd.Cancelled = false;
 
                             FileDownload?.Invoke(null, sfd);
+                        }
+                        else
+                        {
+                            FileDownload?.Invoke(null, null);
                         }
                     }
                 }

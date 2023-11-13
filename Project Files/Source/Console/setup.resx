@@ -286,7 +286,7 @@ only used if a selected skin does not provide its own.</value>
         X2Aj4NZ79wh2Mf6UNhJytIqS5B20I3/Xm75I8AAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="chkMidiControlIDincludesStatus.ToolTip" xml:space="preserve">
+  <data name="chkMidiControlIDincludesChannel.ToolTip" xml:space="preserve">
     <value>Some devices use the same control ID for multiple buttons/knobs etc.
 Use this option to combine the midi channel value with the control id, this
 should then uniquely identify each control. Note: the control ID will now
