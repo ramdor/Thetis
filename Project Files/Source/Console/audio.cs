@@ -712,6 +712,18 @@ namespace Thetis
             }
         }
 
+        //[2.10.3.4]MW0LGE added
+        private static int block_size_tx = 1024;
+        public static int BlockSizeTX
+        {
+            get { return block_size_tx; }
+            set
+            {
+                block_size_tx = value;
+                SetOutCountTX();
+            }
+        }
+
         private static int block_size_vac = 1024;
         public static int BlockSizeVAC
         {
@@ -1351,10 +1363,16 @@ namespace Thetis
 
         private static void SetOutCountTX()
         {
+            //if (out_rate_tx >= sample_rate_tx)
+            //    OutCountTX = block_size1 * (out_rate_tx / sample_rate_tx);
+            //else
+            //    OutCountTX = block_size1 / (sample_rate_tx / out_rate_tx);
+
+            //[2.10.3.4]MW0LGE changed to use tx block size
             if (out_rate_tx >= sample_rate_tx)
-                OutCountTX = block_size1 * (out_rate_tx / sample_rate_tx);
+                OutCountTX = block_size_tx * (out_rate_tx / sample_rate_tx);
             else
-                OutCountTX = block_size1 / (sample_rate_tx / out_rate_tx);
+                OutCountTX = block_size_tx / (sample_rate_tx / out_rate_tx);
         }
 
         private static int out_count = 1024;

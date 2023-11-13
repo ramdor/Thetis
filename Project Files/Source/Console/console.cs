@@ -22052,7 +22052,9 @@ namespace Thetis
             set
             {
                 sample_rate_tx = value;
-                Audio.SampleRateTX = value;
+                Audio.OutRateTX = value; //[2.10.3.4]MW0LGE added
+                Audio.BlockSizeTX = cmaster.GetBuffSize(value); //[2.10.3.4]MW0LGE added
+                Audio.SampleRateTX = value;                
                 Display.SampleRateTX = value;
                 cmaster.SetXmtrChannelOutrate(0, value, cmaster.MONMixState);
 
@@ -22120,6 +22122,18 @@ namespace Thetis
             {
                 block_size_rx2 = value;
                 Audio.BlockSizeRX2 = value;
+            }
+        }
+
+        //[2.10.3.4]MW0LGE added for completeness
+        private int block_size_tx;
+        public int BlockSizeTX
+        {
+            get { return block_size_tx; }
+            set
+            {
+                block_size_tx = value;
+                Audio.BlockSizeTX = value;
             }
         }
 
