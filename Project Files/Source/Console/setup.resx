@@ -263,7 +263,7 @@ POWER EXCEEDING THE RATING OF YOUR RADIO!
 </value>
   </data>
   <data name="lgLinearGradientRX1.EncodedText" xml:space="preserve">
-    <value>OXwxfDAuMDAwfC0xNjc3NzIxNnwwfDAuMTI1fC0xNDczNzYzM3wwfDAuMjUwfC0xMjY5ODA1MHwwfDAuMzc1fC0xMDY1ODQ2N3wwfDAuNTAwfC04NjE4ODg0fDB8MC42MjV8LTY1NzkzMDF8MHwwLjc1MHwtNDUzOTcxOHwwfDAuODc1fC0yNTAwMTM1fDF8MS4wMDB8LTF8</value>
+    <value>OXwxfDAsMDAwfC0xNjc3NzIxNnwwfDEyNSwwMDB8LTE0NzM3NjMzfDB8MjUwLDAwMHwtMTI2OTgwNTB8MHwzNzUsMDAwfC0xMDY1ODQ2N3wwfDUwMCwwMDB8LTg2MTg4ODR8MHw2MjUsMDAwfC02NTc5MzAxfDB8NzUwLDAwMHwtNDUzOTcxOHwwfDg3NSwwMDB8LTI1MDAxMzV8MXwxMDAwLDAwMHwtMXw=</value>
   </data>
   <data name="chkReplaceCurrentMeterInSelectedSkin.ToolTip" xml:space="preserve">
     <value>If this is checked, the downloaded meter skins
