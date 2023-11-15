@@ -43,6 +43,9 @@ typedef struct _pipe
 		void (__stdcall *xscope)(int state, double* data);						// scope display
 		void (__stdcall *xplaywave)(int state, double* data);					// WAV player
 		void (__stdcall *xrecordwave)(int state, int pos, double* data);		// WAV recorder
+		int scope_run;
+		int playwave_run;
+		int recordwave_run;
 	} rcvr[cmMAXrcvr];
 	struct // transmitter items
 	{

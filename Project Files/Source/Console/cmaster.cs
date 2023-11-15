@@ -841,6 +841,7 @@ namespace Thetis
                         && Audio.console.RX2Enabled;
                     break;
             }
+            WaveThing.SetWavePlayerRun(id, run ? 1 : 0); //[2.10.3.4]MW0LGE
             WaveThing.wplayer[id].Run = run;
         }
 
@@ -859,6 +860,7 @@ namespace Thetis
                         && Audio.console.RX2Enabled;
                     break;
             }
+            WaveThing.SetWaveRecorderRun(id, run ? 1 : 0); //[2.10.3.4]MW0LGE
             WaveThing.wrecorder[id].Run = run;
         }
 
@@ -937,6 +939,7 @@ namespace Thetis
 
         public static void CMSetScopeRun(int id, bool run)
         {
+            Scope.SetScopeRun(id, run ? 1 : 0); //[2.10.3.4]MW0LGE run on/off
             Scope.dscope[id].Run = run;
         }
 
@@ -1083,11 +1086,17 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", EntryPoint = "SendCBCreateWPlay", CallingConvention = CallingConvention.Cdecl)]
         unsafe public static extern void SendCBCreateWPlay(createWplay del);
 
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetWavePlayerRun", CallingConvention = CallingConvention.Cdecl)]
+        unsafe public static extern void SetWavePlayerRun(int id, int run);
+
         unsafe public delegate void createWrecord(int id);
         unsafe private static createWrecord cwrDel = createWaveRecorder;
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SendCBCreateWRecord", CallingConvention = CallingConvention.Cdecl)]
         unsafe public static extern void SendCBCreateWRecord(createWrecord del);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetWaveRecorderRun", CallingConvention = CallingConvention.Cdecl)]
+        unsafe public static extern void SetWaveRecorderRun(int id, int run);
 
         unsafe public static void initWaves()
         {
@@ -1370,6 +1379,9 @@ namespace Thetis
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SendCBScope", CallingConvention = CallingConvention.Cdecl)]
         unsafe public static extern void SendCBScope(int id, Xscope del);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "SetScopeRun", CallingConvention = CallingConvention.Cdecl)]
+        unsafe public static extern void SetScopeRun(int id, int run);
 
         const int nscopes = 16;
         public static DoScope[] dscope = new DoScope[nscopes];

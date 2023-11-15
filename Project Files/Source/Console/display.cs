@@ -4331,6 +4331,8 @@ namespace Thetis
             bool lookformax = true;
             float triggerDelta = 10; //db
 
+            Rectangle nf_box = new Rectangle(40, 0, 8, 8);
+
             unchecked // we dont expect any overflows
             {
                 // modify the data for visual notches
@@ -4553,23 +4555,22 @@ namespace Thetis
                             yPixelActual = yPixelActual < H ? yPixelActual : H;
                             yPixelActual += nVerticalShift;
 
-                            SharpDX.Direct2D1.Brush brYG = bFast ? m_bDX2_Gray : m_bDX2_noisefloor;
-                            SharpDX.Direct2D1.Brush brY = bFast ? m_bDX2_Gray : m_bDX2_Yellow;
+                            SharpDX.Direct2D1.Brush nf_colour = bFast ? m_bDX2_Gray : m_bDX2_noisefloor;
 
                             int yP = (int)yPixelLerp;
 
-                            Rectangle box = new Rectangle(40, yP - 8, 8, 8);
-                            drawFillRectangleDX2D(brYG, box);
-                            drawLineDX2D(brYG, 40, yP, W - 40, yP, m_styleDots, m_fNoiseFloorLineWidth); // horiz line
+                            nf_box.Y = yP - 8;
+                            drawFillRectangleDX2D(nf_colour, nf_box);
+                            drawLineDX2D(nf_colour, 40, yP, W - 40, yP, m_styleDots, m_fNoiseFloorLineWidth); // horiz line
 
                             if (m_bShowNoiseFloorDBM)
                             {
-                                drawLineDX2D(brY, box.X - 3, (int)yPixelActual, box.X - 3, yP, 2); // direction up/down line
-                                drawStringDX2D(lerp.ToString(_NFDecimal ? "F1" : "F0"), fontDX2d_font9b, brY, box.X + box.Width, box.Y - 6);
+                                drawLineDX2D(nf_colour, nf_box.X - 3, (int)yPixelActual, nf_box.X - 3, yP, 2); // direction up/down line
+                                drawStringDX2D(lerp.ToString(_NFDecimal ? "F1" : "F0"), fontDX2d_font9b, nf_colour, nf_box.X + nf_box.Width, nf_box.Y - 6);
                             }
                             else
                             {
-                                drawStringDX2D("-NF", fontDX2d_panafont, brYG, box.X + box.Width, box.Y - 4);
+                                drawStringDX2D("-NF", fontDX2d_panafont, nf_colour, nf_box.X + nf_box.Width, nf_box.Y - 4);
                             }
                         }
                     }

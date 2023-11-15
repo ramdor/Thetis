@@ -30939,7 +30939,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(212, 116);
+            this.label14.Location = new System.Drawing.Point(216, 116);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(57, 13);
             this.label14.TabIndex = 86;
@@ -30968,7 +30968,7 @@
             0,
             0,
             0});
-            this.nudRX1NFoffsetGridFollow.Location = new System.Drawing.Point(155, 114);
+            this.nudRX1NFoffsetGridFollow.Location = new System.Drawing.Point(159, 114);
             this.nudRX1NFoffsetGridFollow.Maximum = new decimal(new int[] {
             30,
             0,
@@ -32488,7 +32488,7 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(212, 116);
+            this.label20.Location = new System.Drawing.Point(216, 116);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(57, 13);
             this.label20.TabIndex = 88;
@@ -32517,7 +32517,7 @@
             0,
             0,
             0});
-            this.nudRX2NFoffsetGridFollow.Location = new System.Drawing.Point(155, 114);
+            this.nudRX2NFoffsetGridFollow.Location = new System.Drawing.Point(159, 114);
             this.nudRX2NFoffsetGridFollow.Maximum = new decimal(new int[] {
             30,
             0,
@@ -50472,23 +50472,24 @@
             // 
             // btnSkinsDonate
             // 
+            this.btnSkinsDonate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
             this.btnSkinsDonate.Image = null;
-            this.btnSkinsDonate.Location = new System.Drawing.Point(255, 48);
+            this.btnSkinsDonate.Location = new System.Drawing.Point(255, 46);
             this.btnSkinsDonate.Name = "btnSkinsDonate";
             this.btnSkinsDonate.Selectable = true;
-            this.btnSkinsDonate.Size = new System.Drawing.Size(128, 23);
+            this.btnSkinsDonate.Size = new System.Drawing.Size(128, 28);
             this.btnSkinsDonate.TabIndex = 4;
             this.btnSkinsDonate.Text = "Donate";
-            this.btnSkinsDonate.UseVisualStyleBackColor = true;
+            this.btnSkinsDonate.UseVisualStyleBackColor = false;
             this.btnSkinsDonate.Click += new System.EventHandler(this.btnSkinsDonate_Click);
             // 
             // btnSkinsHomepage
             // 
             this.btnSkinsHomepage.Image = null;
-            this.btnSkinsHomepage.Location = new System.Drawing.Point(255, 19);
+            this.btnSkinsHomepage.Location = new System.Drawing.Point(255, 13);
             this.btnSkinsHomepage.Name = "btnSkinsHomepage";
             this.btnSkinsHomepage.Selectable = true;
-            this.btnSkinsHomepage.Size = new System.Drawing.Size(128, 23);
+            this.btnSkinsHomepage.Size = new System.Drawing.Size(128, 28);
             this.btnSkinsHomepage.TabIndex = 3;
             this.btnSkinsHomepage.Text = "Skins Homepage";
             this.btnSkinsHomepage.UseVisualStyleBackColor = true;

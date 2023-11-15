@@ -10667,7 +10667,6 @@ namespace Thetis
 
             Thread.Sleep(1000);                             // wait for changes to take effect
 
-            int flag = 0;
             int ss = 0;
             int fft_size = specRX.GetSpecRX(0).FFTSize;     // get fft_size
             double[,] buf = new double[fft_size, 2];        // buffer for complex spectrum data
@@ -10857,7 +10856,6 @@ namespace Thetis
             int offset = (int)(cal_range / bin_width);
             double maxsumsq = double.MinValue;
             double avgmag = 0;
-            int flag = 0;
 
             _spectrum_mutex.WaitOne();
             for (int i = 0; i < iterations; i++)
@@ -19479,7 +19477,6 @@ namespace Thetis
         public string CATReadFwdPwr()
         {
             double power = 0.0;
-            float num = 0f;
 
             if (alexpresent)
             {
@@ -26899,16 +26896,9 @@ namespace Thetis
             try
             {
                 HiPerfTimer objStopWatch = new HiPerfTimer();
-                HiPerfTimer objPixelDelayRX1Timer = new HiPerfTimer();
-                HiPerfTimer objPixelDelayRX2Timer = new HiPerfTimer();
                 double fFractionOfMs = 0;
                 double fThreadSleepOverRun = 0;
                 bool bOldLocalMox = Display.MOX;
-                bool bIgnorePixelsRX1 = false;
-                bool bIgnorePixelsRX2 = false;
-
-                objPixelDelayRX1Timer.Stop();
-                objPixelDelayRX2Timer.Stop();
 
                 while (m_bDisplayLoopRunning)
                 {
@@ -27007,15 +26997,6 @@ namespace Thetis
                                 resetWDSPdisplayBuffers(2, bLocalMox);
                         }
 
-                        //// stop gathering pixel data from WDSP for duration of fft fill
-                        //bIgnorePixelsRX1 = true;
-                        //objPixelDelayRX1Timer.Reset();
-                        //if (RX2Enabled)
-                        //{
-                        //    bIgnorePixelsRX2 = true;
-                        //    objPixelDelayRX2Timer.Reset();
-                        //}
-
                         Display.PurgeBuffers();
 
                         bOldLocalMox = bLocalMox;
@@ -27032,7 +27013,7 @@ namespace Thetis
 
                         if (!_pause_DisplayThread) // skip any of this
                         {
-                            if (!bIgnorePixelsRX1 && (!Display.DataReady || !Display.WaterfallDataReady) &&
+                            if ((!Display.DataReady || !Display.WaterfallDataReady) &&
                                 Display.CurrentDisplayMode != DisplayMode.OFF)
                             {
                                 flag2 = -1;
@@ -27106,18 +27087,18 @@ namespace Thetis
                                             bN1mm = Display.CurrentDisplayMode == DisplayMode.PANADAPTER || Display.CurrentDisplayMode == DisplayMode.PANASCOPE;
                                         }
                                         break;
-                                    case DisplayMode.SCOPE:
-                                    case DisplayMode.SCOPE2:
-                                        fixed (float* ptr = &Display.new_display_data[0])
-                                        //DttSP.GetScope(top_thread, ptr, (int)(scope_time * 48));
-                                        {
-                                            if (top_thread != 1)
-                                                WDSP.RXAGetaSipF(WDSP.id(top_thread, 0), ptr, (int)(scope_time * 48));
-                                            else
-                                                WDSP.TXAGetaSipF(WDSP.id(top_thread, 0), ptr, (int)(scope_time * 48));
-                                        }
-                                        bDataReady = true;
-                                        break;
+                                    //case DisplayMode.SCOPE:  //[2.10.3.4]MW0LGE not used anymore since scope was coded in cmaster.cs
+                                    //case DisplayMode.SCOPE2:
+                                    //    fixed (float* ptr = &Display.new_display_data[0])
+                                    //    //DttSP.GetScope(top_thread, ptr, (int)(scope_time * 48));
+                                    //    {
+                                    //        if (top_thread != 1)
+                                    //            WDSP.RXAGetaSipF(WDSP.id(top_thread, 0), ptr, (int)(scope_time * 48));
+                                    //        else
+                                    //            WDSP.TXAGetaSipF(WDSP.id(top_thread, 0), ptr, (int)(scope_time * 48));
+                                    //    }
+                                    //    bDataReady = true;
+                                    //    break;
                                     case DisplayMode.PHASE:
                                         fixed (float* ptr = &Display.new_display_data[0])
                                         //DttSP.GetPhase(top_thread, ptr, Display.PhaseNumPts);
@@ -27157,7 +27138,7 @@ namespace Thetis
                                 bGetPixelIssue = !bDataReady && !bWaterfallDataReady;
                             }
 
-                            if (!bIgnorePixelsRX2 && chkSplitDisplay.Checked &&
+                            if (chkSplitDisplay.Checked &&
                                 (!Display.DataReadyBottom || !Display.WaterfallDataReadyBottom) &&
                                 Display.CurrentDisplayModeBottom != DisplayMode.OFF)
                             {
@@ -27223,18 +27204,18 @@ namespace Thetis
                                             bWaterfallDataReady = (flag2 == 1);
                                         }
                                         break;
-                                    case DisplayMode.SCOPE:
-                                    case DisplayMode.SCOPE2:
-                                        fixed (float* ptr = &Display.new_display_data_bottom[0])
-                                        //DttSP.GetScope(bottom_thread, ptr, (int)(scope_time * 48));
-                                        {
-                                            if (bottom_thread != 1)
-                                                WDSP.RXAGetaSipF(WDSP.id(bottom_thread, 0), ptr, (int)(scope_time * 48));
-                                            else
-                                                WDSP.TXAGetaSipF(WDSP.id(bottom_thread, 0), ptr, (int)(scope_time * 48));
-                                        }
-                                        bDataReady = true;
-                                        break;
+                                    //case DisplayMode.SCOPE:  //[2.10.3.4]MW0LGE not used anymore since scope was coded in cmaster.cs
+                                    //case DisplayMode.SCOPE2:
+                                    //    fixed (float* ptr = &Display.new_display_data_bottom[0])
+                                    //    //DttSP.GetScope(bottom_thread, ptr, (int)(scope_time * 48));
+                                    //    {
+                                    //        if (bottom_thread != 1)
+                                    //            WDSP.RXAGetaSipF(WDSP.id(bottom_thread, 0), ptr, (int)(scope_time * 48));
+                                    //        else
+                                    //            WDSP.TXAGetaSipF(WDSP.id(bottom_thread, 0), ptr, (int)(scope_time * 48));
+                                    //    }
+                                    //    bDataReady = true;
+                                    //    break;
                                     case DisplayMode.PHASE:
                                         fixed (float* ptr = &Display.new_display_data_bottom[0])
                                         //DttSP.GetPhase(bottom_thread, ptr, Display.PhaseNumPts);
@@ -27286,19 +27267,6 @@ namespace Thetis
                     //display engine will use last good
                     Display.GetPixelsIssueRX1 = bGetPixelIssue;
                     Display.GetPixelsIssueRX2 = bGetPixelIssueBottom;
-                    
-                    // start gathering data if we WDSP has been given enough time
-                    if(bIgnorePixelsRX1 && objPixelDelayRX1Timer.ElapsedMsec >= _fft_fill_timeRX1)
-                    {
-                        objPixelDelayRX1Timer.Stop();
-                        bIgnorePixelsRX1 = false;
-                    }
-                    if (bIgnorePixelsRX2 && objPixelDelayRX2Timer.ElapsedMsec >= _fft_fill_timeRX2)
-                    {
-                        objPixelDelayRX2Timer.Stop();
-                        bIgnorePixelsRX2 = false;
-                    }
-                    //
 
                     //render everything
                     if (!_pause_DisplayThread) Display.RenderDX2D();

@@ -18300,6 +18300,8 @@ namespace Thetis
             console.radio.GetDSPRX(0, 0).RXBandpassWindow = wintype;
             console.radio.GetDSPRX(0, 1).RXBandpassWindow = wintype;
             console.radio.GetDSPRX(1, 0).RXBandpassWindow = wintype;
+
+            Display.UpdateMNFminWidth(); //[2.10.3.4]MW0LGE
         }
 
         private void comboDSPTxWindow_SelectedIndexChanged(object sender, EventArgs e)
