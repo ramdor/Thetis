@@ -101,8 +101,8 @@ namespace Thetis
         private bool displaydidit = false;
         public Mutex calibration_mutex = new Mutex();
 
-        public Http httpFile;                           // ke9ns add
-        public HttpServer httpServer = null;           // rn3kk add
+        //public Http httpFile;                           // ke9ns add
+        //public HttpServer httpServer = null;           // rn3kk add
 
         private Setup m_frmSetupForm;
         private readonly Object m_objSetupFormLocker = new Object();
@@ -1920,8 +1920,8 @@ namespace Thetis
             InitFilterPresets();					// Initialize filter values
 
             SwlForm = new SwlControl(this);         // ke9ns add communicate with swl list controls
-            httpFile = new Http(this);              // ke9ns add
-            httpServer = new HttpServer(this);      // rn3kk add
+            //httpFile = new Http(this);              // ke9ns add
+            //httpServer = new HttpServer(this);      // rn3kk add
 
             // ***** THIS IS WHERE SETUP FORM IS CREATED
             _onlyOneSetupInstance = true; // make sure that we limit to one instance
@@ -27087,18 +27087,18 @@ namespace Thetis
                                             bN1mm = Display.CurrentDisplayMode == DisplayMode.PANADAPTER || Display.CurrentDisplayMode == DisplayMode.PANASCOPE;
                                         }
                                         break;
-                                    //case DisplayMode.SCOPE:  //[2.10.3.4]MW0LGE not used anymore since scope was coded in cmaster.cs
-                                    //case DisplayMode.SCOPE2:
-                                    //    fixed (float* ptr = &Display.new_display_data[0])
-                                    //    //DttSP.GetScope(top_thread, ptr, (int)(scope_time * 48));
-                                    //    {
-                                    //        if (top_thread != 1)
-                                    //            WDSP.RXAGetaSipF(WDSP.id(top_thread, 0), ptr, (int)(scope_time * 48));
-                                    //        else
-                                    //            WDSP.TXAGetaSipF(WDSP.id(top_thread, 0), ptr, (int)(scope_time * 48));
-                                    //    }
-                                    //    bDataReady = true;
-                                    //    break;
+                                    case DisplayMode.SCOPE:  //[2.10.3.4]MW0LGE not used anymore since scope was coded in cmaster.cs
+                                    case DisplayMode.SCOPE2:
+                                        //    fixed (float* ptr = &Display.new_display_data[0])
+                                        //    //DttSP.GetScope(top_thread, ptr, (int)(scope_time * 48));
+                                        //    {
+                                        //        if (top_thread != 1)
+                                        //            WDSP.RXAGetaSipF(WDSP.id(top_thread, 0), ptr, (int)(scope_time * 48));
+                                        //        else
+                                        //            WDSP.TXAGetaSipF(WDSP.id(top_thread, 0), ptr, (int)(scope_time * 48));
+                                        //    }
+                                        bDataReady = true;
+                                        break;
                                     case DisplayMode.PHASE:
                                         fixed (float* ptr = &Display.new_display_data[0])
                                         //DttSP.GetPhase(top_thread, ptr, Display.PhaseNumPts);
@@ -27204,18 +27204,18 @@ namespace Thetis
                                             bWaterfallDataReady = (flag2 == 1);
                                         }
                                         break;
-                                    //case DisplayMode.SCOPE:  //[2.10.3.4]MW0LGE not used anymore since scope was coded in cmaster.cs
-                                    //case DisplayMode.SCOPE2:
-                                    //    fixed (float* ptr = &Display.new_display_data_bottom[0])
-                                    //    //DttSP.GetScope(bottom_thread, ptr, (int)(scope_time * 48));
-                                    //    {
-                                    //        if (bottom_thread != 1)
-                                    //            WDSP.RXAGetaSipF(WDSP.id(bottom_thread, 0), ptr, (int)(scope_time * 48));
-                                    //        else
-                                    //            WDSP.TXAGetaSipF(WDSP.id(bottom_thread, 0), ptr, (int)(scope_time * 48));
-                                    //    }
-                                    //    bDataReady = true;
-                                    //    break;
+                                    case DisplayMode.SCOPE:  //[2.10.3.4]MW0LGE not used anymore since scope was coded in cmaster.cs
+                                    case DisplayMode.SCOPE2:
+                                        //    fixed (float* ptr = &Display.new_display_data_bottom[0])
+                                        //    //DttSP.GetScope(bottom_thread, ptr, (int)(scope_time * 48));
+                                        //    {
+                                        //        if (bottom_thread != 1)
+                                        //            WDSP.RXAGetaSipF(WDSP.id(bottom_thread, 0), ptr, (int)(scope_time * 48));
+                                        //        else
+                                        //            WDSP.TXAGetaSipF(WDSP.id(bottom_thread, 0), ptr, (int)(scope_time * 48));
+                                        //    }
+                                        bDataReady = true;
+                                        break;
                                     case DisplayMode.PHASE:
                                         fixed (float* ptr = &Display.new_display_data_bottom[0])
                                         //DttSP.GetPhase(bottom_thread, ptr, Display.PhaseNumPts);
@@ -52208,24 +52208,24 @@ namespace Thetis
         }
 
 
-        //=========================================================================================
-        //=========================================================================================
-        // ke9ns add allows Http server to talk with Setup through Console
+        ////=========================================================================================
+        ////=========================================================================================
+        //// ke9ns add allows Http server to talk with Setup through Console
 
-        */
+        //*/
 
-        public static int m_port = 0;   // ke9ns add port# 
-        public static bool m_terminated = true;
+        //public static int m_port = 0;   // ke9ns add port# 
+        //public static bool m_terminated = true;
 
-        public bool HttpServer
-        {
+        //public bool HttpServer
+        //{
 
-            set
-            {
-                httpFile.HttpServer1();
-            }
+        //    set
+        //    {
+        //        httpFile.HttpServer1();
+        //    }
 
-        } //HttpServer
+        //} //HttpServer
 
 
         //=========================================================================================
@@ -52244,55 +52244,55 @@ namespace Thetis
             if (!IsSetupFormNull) SetupForm.TXFilterLow = (int)udTXFilterLow.Value;
         }
 
-        //=========================================================================================
-        //=========================================================================================
-        // ke9ns add allows Http server to talk with Setup through Console
+        ////=========================================================================================
+        ////=========================================================================================
+        //// ke9ns add allows Http server to talk with Setup through Console
 
-        public int HTTP_PORT
-        {
-            get
-            {
-                return (int)SetupForm.udHttpPort.Value;
-            }
+        //public int HTTP_PORT
+        //{
+        //    get
+        //    {
+        //        return (int)SetupForm.udHttpPort.Value;
+        //    }
 
-        } // HTTP_PORT
+        //} // HTTP_PORT
 
-        //=========================================================================================
-        //=========================================================================================
-        // ke9ns add allows Http server to talk with Setup through Console
-        public int HTTP_REFRESH
-        {
-            get
-            {
-                return (int)SetupForm.udHttpRefresh.Value;
-            }
+        ////=========================================================================================
+        ////=========================================================================================
+        //// ke9ns add allows Http server to talk with Setup through Console
+        //public int HTTP_REFRESH
+        //{
+        //    get
+        //    {
+        //        return (int)SetupForm.udHttpRefresh.Value;
+        //    }
 
-        } // HTTP_REFRESH
+        //} // HTTP_REFRESH
 
-        //=========================================================================================
-        //=========================================================================================
-        // ke9ns add allows Http server to talk with Setup through Console
-        public string HTTP_USER
-        {
-            get
-            {
-                return SetupForm.txtHttpUser.Text;
-            }
+        ////=========================================================================================
+        ////=========================================================================================
+        //// ke9ns add allows Http server to talk with Setup through Console
+        //public string HTTP_USER
+        //{
+        //    get
+        //    {
+        //        return SetupForm.txtHttpUser.Text;
+        //    }
 
-        } // HTTP_PORT
+        //} // HTTP_PORT
 
 
-        //=========================================================================================
-        //=========================================================================================
-        // ke9ns add allows Http server to talk with Setup through Console
-        public string HTTP_PASS
-        {
-            get
-            {
-                return SetupForm.txtHttpPass.Text;
-            }
+        ////=========================================================================================
+        ////=========================================================================================
+        //// ke9ns add allows Http server to talk with Setup through Console
+        //public string HTTP_PASS
+        //{
+        //    get
+        //    {
+        //        return SetupForm.txtHttpPass.Text;
+        //    }
 
-        } // HTTP_PORT
+        //} // HTTP_PORT
 
         //=========================================================================================
         //=========================================================================================
@@ -52389,21 +52389,21 @@ namespace Thetis
 
         //} // setup_timer1
 
-        //=========================================================================================
-        //=========================================================================================
-        // rn3kk 
-        public void startHttpServer(int port)
-        {
-            httpServer.start(port);
-        }
+        ////=========================================================================================
+        ////=========================================================================================
+        //// rn3kk 
+        //public void startHttpServer(int port)
+        //{
+        //    httpServer.start(port);
+        //}
 
-        //=========================================================================================
-        //=========================================================================================
-        // rn3kk 
-        public void stopHttpServer()
-        {
-            httpServer.stop();
-        }
+        ////=========================================================================================
+        ////=========================================================================================
+        //// rn3kk 
+        //public void stopHttpServer()
+        //{
+        //    httpServer.stop();
+        //}
 
         //=========================================================================================
         //=========================================================================================

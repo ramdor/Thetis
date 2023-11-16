@@ -747,7 +747,7 @@ namespace Thetis
                 uc.UCBorder = border;
             }
         }
-        public static void NoTitleWhenPinned(string sId, bool noTitleWhenPinned)
+        public static void NoTitleBar(string sId, bool noTitleBar)
         {
             lock (_metersLock)
             {
@@ -755,7 +755,7 @@ namespace Thetis
                 if (!_lstUCMeters.ContainsKey(sId)) return;
 
                 ucMeter uc = _lstUCMeters[sId];
-                uc.NoTitleWhenPinned = noTitleWhenPinned;
+                uc.NoTitleBar = noTitleBar;
             }
         }
         public static bool ContainerHasBorder(string sId)
@@ -777,7 +777,7 @@ namespace Thetis
                 if (!_lstUCMeters.ContainsKey(sId)) return false;
 
                 ucMeter uc = _lstUCMeters[sId];
-                return uc.NoTitleWhenPinned;
+                return uc.NoTitleBar;
             }
         }        
         public static void ContainerBackgroundColour(string sId, System.Drawing.Color c)

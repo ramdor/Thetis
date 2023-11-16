@@ -38,7 +38,7 @@ namespace Thetis
             _console = null;
             _id = System.Guid.NewGuid().ToString();
             _border = true;
-            _noTitleWhenPinned = false;
+            _noTitleBar = false;
 
             btnFloat.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 
@@ -75,7 +75,7 @@ namespace Thetis
         private bool _mox;
         private string _id;
         private bool _border;
-        private bool _noTitleWhenPinned;
+        private bool _noTitleBar;
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Console Console
@@ -308,13 +308,10 @@ namespace Thetis
 
         private void picContainer_MouseMove(object sender, MouseEventArgs e)
         {
-            bool bContains;
-
-
             if (!_dragging)
             {
-                bool noBar = _pinOnTop && _noTitleWhenPinned; //[2.10.1.0]MW0LGE no title when pinned has been chosen
-                bContains = !noBar && pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition));
+                bool noBar = _noTitleBar && !Common.ShiftKeyDown; //[2.10.3.4]MW0LGE no title, override by holding shift
+                bool bContains = !noBar && pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition));
                 if (bContains && !pnlBar.Visible)
                 {
                     pnlBar.BringToFront();
@@ -328,7 +325,7 @@ namespace Thetis
 
             if (!_resizing)
             {
-                bContains = pbGrab.ClientRectangle.Contains(pbGrab.PointToClient(Control.MousePosition));
+                bool bContains = pbGrab.ClientRectangle.Contains(pbGrab.PointToClient(Control.MousePosition));
                 if (bContains && !pbGrab.Visible)
                 {
                     pbGrab.BringToFront();
@@ -473,12 +470,12 @@ namespace Thetis
                 setupBorder();
             }
         }
-        public bool NoTitleWhenPinned
+        public bool NoTitleBar
         {
-            get { return _noTitleWhenPinned; }
+            get { return _noTitleBar; }
             set
             {
-                _noTitleWhenPinned = value;
+                _noTitleBar = value;
             }
         }
         private void btnAxis_Click(object sender, EventArgs e)
@@ -576,7 +573,7 @@ namespace Thetis
                 PinOnTop.ToString() + "|" +
                 UCBorder.ToString() + "|" +
                 Common.ColourToString(this.BackColor) + "|" +
-                NoTitleWhenPinned.ToString();
+                NoTitleBar.ToString();
         }
         public bool TryParse(string str)
         {
@@ -636,7 +633,7 @@ namespace Thetis
                     if(bOk && tmp.Length > 13) // we also have the new for [2.10.1.0] the notitleifpined option
                     {
                         bOk = bool.TryParse(tmp[13], out noTitleWhenPinned);
-                        if (bOk) NoTitleWhenPinned = noTitleWhenPinned;
+                        if (bOk) NoTitleBar = noTitleWhenPinned;
                     }
                 }
             }

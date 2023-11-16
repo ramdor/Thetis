@@ -733,6 +733,24 @@ namespace Midi2Cat.IO
 
         public ParsedMidiMessage ParseMsg(int inChannel, int inValue, int inStatus, int inControl, string inMsg)
         {
+            // undo controlID changes [2.10.3.4]MW0LGE
+            switch (DeviceName)
+            {
+                case "DJControl Starlight":
+                    inControl = (inControl >> 8) & 0xFF;
+                    break;
+                default:
+                    if (BuildIDFromControlIDAndChannel)
+                    {
+                        if (IncludeStatusInControlID)
+                            inControl = (inControl >> 16) & 0xFF;
+                        else
+                            inControl = (inControl >> 8) & 0xFF;
+                    }
+                    break;
+            }
+            //
+
             string msg = inMsg;
             ParsedMidiMessage Rc = new ParsedMidiMessage();
             if (msg.Length != 6)
