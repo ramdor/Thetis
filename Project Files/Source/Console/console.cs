@@ -12511,7 +12511,7 @@ namespace Thetis
                 {
                     if (!_setFromOtherAttenuator)
                     {
-                        bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
+                        bool bRX1RX2diversity = m_bDiversityAttLinkForRX1andRX2 && (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
                         if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX2AttenuatorData != rx1_attenuator_data)
                         {
                             _setFromOtherAttenuator = true;
@@ -12529,6 +12529,13 @@ namespace Thetis
 
                 if (oldData != rx1_attenuator_data) AttenuatorDataChangedHandlers?.Invoke(1, oldData, rx1_attenuator_data);
             }
+        }
+
+        private bool m_bDiversityAttLinkForRX1andRX2 = false;
+        public bool DiversityAttLink //[2.10.3.4]MW0LGE used by diversity form
+        {
+            get { return m_bDiversityAttLinkForRX1andRX2; }
+            set { m_bDiversityAttLinkForRX1andRX2 = value; }
         }
 
         private bool rx2_step_att_present = false;
@@ -12678,7 +12685,7 @@ namespace Thetis
                 {
                     if (!_setFromOtherAttenuator)
                     {
-                        bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both //MW0LGE_[2.9.0.6]
+                        bool bRX1RX2diversity = m_bDiversityAttLinkForRX1andRX2 && (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both //MW0LGE_[2.9.0.6]
                         if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX1AttenuatorData != rx2_attenuator_data)
                         {
                             _setFromOtherAttenuator = true;
@@ -21344,7 +21351,7 @@ namespace Thetis
 
                 if (!_mox && !_setFromOtherAttenuator)
                 {
-                    bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
+                    bool bRX1RX2diversity = m_bDiversityAttLinkForRX1andRX2 && (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
                     if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX2PreampMode != rx1_preamp_mode)
                     {
                         _setFromOtherAttenuator = true;
@@ -21500,7 +21507,7 @@ namespace Thetis
 
                 if (!_mox && !_setFromOtherAttenuator)
                 {
-                    bool bRX1RX2diversity = (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
+                    bool bRX1RX2diversity = m_bDiversityAttLinkForRX1andRX2 && (diversityForm != null && Diversity2 && diversityForm.EXTDIVOutput == 2); // if using diversity, and both rx's are linked, then we need to attenuate both
                     if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX1PreampMode != rx2_preamp_mode)
                     {
                         _setFromOtherAttenuator = true;
@@ -52675,34 +52682,13 @@ namespace Thetis
         //MW0LGE
         private void setBackground()
         {
-            if (m_bDisableBackgroundImage)
-            {
+            if (m_bDisableBackgroundImage || m_imgBackground == null)
                 Display.SetDX2BackgoundImage((Image)null);
-            }
             else
-            {
-                if (m_imgBackgroundCopy != null)
-                {
-                    try
-                    {
-                        Image c = m_imgBackgroundCopy.Clone() as Image;
-                        Display.SetDX2BackgoundImage(c);
-                        c.Dispose();
-                    }
-                    catch
-                    {
-                        Display.SetDX2BackgoundImage(null);
-                        m_imgBackgroundCopy = null;
-                    }
-                }
-                else
-                {
-                    Display.SetDX2BackgoundImage(null);
-                }
-            }
+                Display.SetDX2BackgoundImage(m_imgBackground);
         }
 
-        private Image m_imgBackgroundCopy = null;
+        private Image m_imgBackground = null;
         private bool m_bDisableBackgroundImage = false;
         public bool DisableBackgroundImage
         {
@@ -52717,15 +52703,22 @@ namespace Thetis
         public Image PicDisplayBackgroundImage
         {
             get {
-                if (m_bDisableBackgroundImage) return null;
+                //if (m_bDisableBackgroundImage) return null;
 
-                return m_imgBackgroundCopy;
+                return m_imgBackground;
             }
             set {
-                if(m_imgBackgroundCopy != null)
-                    m_imgBackgroundCopy.Dispose();
+                if(m_imgBackground != null)
+                    m_imgBackground.Dispose();
 
-                m_imgBackgroundCopy = value;
+                try
+                {
+                    m_imgBackground = value.Clone() as Image;
+                }
+                catch
+                {
+                    m_imgBackground = null;
+                }
 
                 setBackground();
             }

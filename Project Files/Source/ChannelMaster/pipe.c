@@ -128,6 +128,33 @@ void destroy_pipe()
 	destroy_siphonEXT (0);
 }
 
+void xplaywave(int rx, int state, double* data)
+{
+	// prevent 1000's of calls when not being used
+	if (ppip->rcvr[rx].playwave_run)
+	{
+		(*pip.rcvr[rx].xplaywave)(state, data);
+	}
+}
+
+void xrecordwave(int rx, int state, int pos, double* data)
+{
+	// prevent 1000's of calls when not being used
+	if (ppip->rcvr[rx].recordwave_run)
+	{
+		(*pip.rcvr[rx].xrecordwave)(state, pos, data);
+	}
+}
+
+void xscope(int rx, int state, double* data)
+{
+	// prevent 1000's of calls when not being used
+	if (ppip->rcvr[rx].scope_run)
+	{
+		(*pip.rcvr[rx].xscope)(state, data);
+	}
+}
+
 void xpipe (int stream, int pos, double** buffs)
 {
 	double* buff = buffs[stream];
@@ -143,8 +170,8 @@ void xpipe (int stream, int pos, double** buffs)
 		switch (pos)
 		{
 		case 0:	// IQ data
-			if (ppip->rcvr[rx].playwave_run) (*pip.rcvr[rx].xplaywave)(0, buff);				// wav player
-			if (ppip->rcvr[rx].recordwave_run) (*pip.rcvr[rx].xrecordwave)(0, 0, buff);			// wav recorder
+			xplaywave(rx, 0, buff);																// wav player
+			xrecordwave(rx, 0, 0, buff);														// wav recorder
 			xsiphonEXT(rx, buff);																// siphon for phase2 display
 			Spectrum0(_InterlockedAnd(&pip.rcvr[0].top_pan3_run, 0xffffffff), rx, 1, 0, buff);	// stitched pan
 			xvacOUT(rx, 0, buff);																// data to VAC
@@ -154,9 +181,9 @@ void xpipe (int stream, int pos, double** buffs)
 			for (i = 1; i < pcm->cmSubRCVR; i++)
 				for (j = 0; j < 2 * pcm->rcvr[rx].ch_outsize; j++)
 					ppip->rbuff[rx][j] += buffs[i][j];
-			if(ppip->rcvr[rx].scope_run) (*pip.rcvr[rx].xscope)(0, ppip->rbuff[rx]);				// scope
-			xvacOUT(rx, 1, ppip->rbuff[rx]);						// data to VAC
-			if (ppip->rcvr[rx].recordwave_run) (*pip.rcvr[rx].xrecordwave)(0, 1, ppip->rbuff[rx]);	// wav recorder
+			xscope(rx, 0, ppip->rbuff[rx]);														// scope
+			xvacOUT(rx, 1, ppip->rbuff[rx]);													// data to VAC
+			xrecordwave(rx, 0, 1, ppip->rbuff[rx]);												// wav recorder
 			break;
 		}
 	}
@@ -165,17 +192,17 @@ void xpipe (int stream, int pos, double** buffs)
 		switch (pos)
 		{
 		case 0: // IQ data
-			if (ppip->rcvr[rx].playwave_run) (*pip.rcvr[rx].xplaywave)(0, buff);					// wav player
-			if (ppip->rcvr[rx].recordwave_run) (*pip.rcvr[rx].xrecordwave)(0, 0, buff);				// wav recorder
-			xvacOUT(rx, 0, buff);																	// data to VAC
+			xplaywave(rx, 0, buff);																// wav player
+			xrecordwave(rx, 0, 0, buff);														// wav recorder
+			xvacOUT(rx, 0, buff);																// data to VAC
 			break;
 		case 1: // Audio data
 			memcpy (ppip->rbuff[rx], buffs[0], pcm->rcvr[rx].ch_outsize * sizeof (complex));
 			for (i = 1; i < pcm->cmSubRCVR; i++)
 				for (j = 0; j < 2 * pcm->rcvr[rx].ch_outsize; j++)
 					ppip->rbuff[rx][j] += buffs[i][j];
-			xvacOUT(rx, 1, ppip->rbuff[rx]);															// data to VAC
-			if (ppip->rcvr[rx].recordwave_run) (*pip.rcvr[rx].xrecordwave)(0, 1, ppip->rbuff[rx]);		// wav recorder
+			xvacOUT(rx, 1, ppip->rbuff[rx]);													// data to VAC
+			xrecordwave(rx, 0, 1, ppip->rbuff[rx]);												// wav recorder
 			break;
 		}
 	}
@@ -184,19 +211,19 @@ void xpipe (int stream, int pos, double** buffs)
 		switch (pos)
 		{
 		case 0: // MIC data
-			if (ppip->rcvr[0].playwave_run) (*pip.rcvr[0].xplaywave)(1, buff);						// wav player 0
-			if (ppip->rcvr[1].playwave_run) (*pip.rcvr[1].xplaywave)(1, buff);						// wav player 1
-			if (ppip->rcvr[0].recordwave_run) (*pip.rcvr[0].xrecordwave)(1, 0, buff);				// wav recorder 0
-			if (ppip->rcvr[1].recordwave_run) (*pip.rcvr[1].xrecordwave)(1, 0, buff);				// wav recorder 1
+			xplaywave(0, 1, buff);																// wav player 0
+			xplaywave(1, 1, buff);																// wav player 1
+			xrecordwave(0, 1, 0, buff);															// wav recorder 0
+			xrecordwave(1, 1, 0, buff);															// wav recorder 1
 			if (pip.xmtr[0].txvac == 0)  { xvacIN(0, buff, 0);  xvacIN(1, buff, 1); }
 			if (pip.xmtr[0].txvac == 1)  { xvacIN(1, buff, 0);  xvacIN(0, buff, 1); }
 			break;
 		case 1: // IQ data
-			if (pip.rcvr[0].scope_run) (*pip.rcvr[0].xscope)(1, buffs[0]);								// scope
-			xvacOUT(0, 2, buffs[0]);																	// data to VAC 0
-			xvacOUT(1, 2, buffs[0]);																	// data to VAC 1
-			if (ppip->rcvr[0].recordwave_run) (*pip.rcvr[0].xrecordwave)(1, 1, buffs[0]);				// wav recorder 0
-			if (ppip->rcvr[1].recordwave_run) (*pip.rcvr[1].xrecordwave)(1, 1, buffs[0]);				// wav recorder 1
+			xscope(0, 1, buffs[0]);																// scope
+			xvacOUT(0, 2, buffs[0]);															// data to VAC 0
+			xvacOUT(1, 2, buffs[0]);															// data to VAC 1
+			xrecordwave(0, 1, 1, buffs[0]);														// wav recorder 0
+			xrecordwave(1, 1, 1, buffs[0]);														// wav recorder 1
 			break;
 		}
 	}

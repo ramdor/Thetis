@@ -350,8 +350,16 @@ namespace Thetis
 
                 if (mox)
                 {
-                    ivac.SetIVACmox(0, 1);
-                    ivac.SetIVACmox(1, 1);
+                    if (rx2_enabled && vfob_tx)  //[2.10.0.4]MW0LGE fix issue with no RX2 audio when tx'ing on rx1
+                    {
+                        ivac.SetIVACmox(0, 0);
+                        ivac.SetIVACmox(1, 1);
+                    }
+                    else
+                    {
+                        ivac.SetIVACmox(0, 1);
+                        ivac.SetIVACmox(1, 0);
+                    }
                 }
                 else
                 {

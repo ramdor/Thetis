@@ -117,6 +117,7 @@ namespace Thetis
         private NumericUpDownTS udGainMulti;
         private CheckBoxTS chkAlwaysOnTop;
         private ToolTip toolTip1;
+        private CheckBoxTS chkNoAttLink;
         private IContainer components;
 
         public DiversityForm(Console c)
@@ -229,6 +230,7 @@ namespace Thetis
             this.labelTS9 = new System.Windows.Forms.LabelTS();
             this.udAngle0 = new System.Windows.Forms.NumericUpDownTS();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.chkNoAttLink = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.picRadar)).BeginInit();
             this.panelDivControls.SuspendLayout();
             this.grpRxSource.SuspendLayout();
@@ -297,6 +299,7 @@ namespace Thetis
             // panelDivControls
             // 
             this.panelDivControls.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.panelDivControls.Controls.Add(this.chkNoAttLink);
             this.panelDivControls.Controls.Add(this.chkAlwaysOnTop);
             this.panelDivControls.Controls.Add(this.chkEnableDiversity);
             this.panelDivControls.Controls.Add(this.grpRxSource);
@@ -318,7 +321,7 @@ namespace Thetis
             // 
             this.chkAlwaysOnTop.AutoSize = true;
             this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(215, 15);
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(215, 13);
             this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
             this.chkAlwaysOnTop.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.chkAlwaysOnTop.Size = new System.Drawing.Size(98, 17);
@@ -335,7 +338,7 @@ namespace Thetis
             this.chkEnableDiversity.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkEnableDiversity.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkEnableDiversity.Image = null;
-            this.chkEnableDiversity.Location = new System.Drawing.Point(235, 57);
+            this.chkEnableDiversity.Location = new System.Drawing.Point(235, 38);
             this.chkEnableDiversity.Name = "chkEnableDiversity";
             this.chkEnableDiversity.Size = new System.Drawing.Size(66, 23);
             this.chkEnableDiversity.TabIndex = 101;
@@ -706,7 +709,7 @@ namespace Thetis
             // 
             // btnSync
             // 
-            this.btnSync.Location = new System.Drawing.Point(235, 89);
+            this.btnSync.Location = new System.Drawing.Point(235, 67);
             this.btnSync.Name = "btnSync";
             this.btnSync.Size = new System.Drawing.Size(66, 23);
             this.btnSync.TabIndex = 47;
@@ -968,6 +971,20 @@ namespace Thetis
             0});
             this.udAngle0.Visible = false;
             this.udAngle0.ValueChanged += new System.EventHandler(this.udAngle0_ValueChanged);
+            // 
+            // chkNoAttLink
+            // 
+            this.chkNoAttLink.AutoSize = true;
+            this.chkNoAttLink.Image = null;
+            this.chkNoAttLink.Location = new System.Drawing.Point(230, 96);
+            this.chkNoAttLink.Name = "chkNoAttLink";
+            this.chkNoAttLink.Size = new System.Drawing.Size(83, 17);
+            this.chkNoAttLink.TabIndex = 103;
+            this.chkNoAttLink.Text = "No ATT link";
+            this.toolTip1.SetToolTip(this.chkNoAttLink, "Normally if RX1+RX2 are in use the attenuators will be linked. Select this if you" +
+        " dont want that to happen.");
+            this.chkNoAttLink.UseVisualStyleBackColor = true;
+            this.chkNoAttLink.CheckedChanged += new System.EventHandler(this.chkNoAttLink_CheckedChanged);
             // 
             // DiversityForm
             // 
@@ -2071,6 +2088,11 @@ namespace Thetis
         private void chkAlwaysOnTop_CheckedChanged(object sender, EventArgs e)
         {
             this.TopMost = chkAlwaysOnTop.Checked;
+        }
+
+        private void chkNoAttLink_CheckedChanged(object sender, EventArgs e)
+        {
+            console.DiversityAttLink = !chkNoAttLink.Checked;
         }
     }
 }

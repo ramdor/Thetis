@@ -3174,7 +3174,7 @@ namespace Thetis
                         // draw background image
                         RectangleF rectDest = new RectangleF(0, 0, displayTargetWidth, displayTargetHeight);
                         _d2dRenderTarget.DrawBitmap(_bitmapBackground, rectDest, 1f, BitmapInterpolationMode.Linear);
-                        _d2dRenderTarget.FillRectangle(rectDest, m_bDX2_display_background_brush);
+                        _d2dRenderTarget.FillRectangle(rectDest, m_bDX2_display_background_brush); // used for the transparency
                     }
 
                     // LINEAR BRUSH BUILDING
