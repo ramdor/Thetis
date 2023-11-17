@@ -4878,15 +4878,28 @@ namespace Thetis
 
 
 
-        public static Image Skin1 = null; // temp holder for orignal skin image in picdisplay
+        private Image m_imgOriginalSkin = null; // temp holder for orignal skin image in picdisplay
+        private void returnOriginalSkin()
+        {
+            if (m_imgOriginalSkin == null) return;
+            console.PicDisplayBackgroundImage = m_imgOriginalSkin; // put back original image                
+            m_imgOriginalSkin.Dispose();
+            m_imgOriginalSkin = null;
+        }
+        private void storeOriginalSkin()
+        {
+            if (m_imgOriginalSkin != null) return;
+            if (console.PicDisplayBackgroundImage == null) return;
 
+            m_imgOriginalSkin = console.PicDisplayBackgroundImage.Clone() as Image;
+        }
         //=========================================================================================
         private void chkSUN_CheckedChanged(object sender, EventArgs e)
         {
             
             if ((chkSUN.Checked == false) && (chkGrayLine.Checked == false))
             {
-                if (Skin1 != null) console.PicDisplayBackgroundImage = Skin1; // put back original image
+                returnOriginalSkin();
             }
             if (SP_Active != 0 ) 
             {
@@ -4894,8 +4907,8 @@ namespace Thetis
                 if ((chkSUN.Checked == true) || (chkGrayLine.Checked == true))
                 {
 
-                    console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
-                    if (Skin1 == null) Skin1 = console.PicDisplayBackgroundImage;
+                    //console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
+                    storeOriginalSkin();
 
                     if (MAP == null)
                     {
@@ -4921,7 +4934,7 @@ namespace Thetis
         {
             if ((chkSUN.Checked == false) && (chkGrayLine.Checked == false))
             {
-                if (Skin1 != null) console.PicDisplayBackgroundImage = Skin1; // put back original image
+                returnOriginalSkin();
             }
 
             if ( SP_Active != 0) 
@@ -4929,8 +4942,8 @@ namespace Thetis
               
                 if ((chkSUN.Checked == true) || (chkGrayLine.Checked == true))
                 {
-                    console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
-                    if (Skin1 == null) Skin1 = console.PicDisplayBackgroundImage;
+                    //console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
+                    storeOriginalSkin();
 
                     if (MAP == null)
                     {
@@ -4979,8 +4992,8 @@ namespace Thetis
                 
                 if ((chkSUN.Checked == true) || (chkGrayLine.Checked == true))
                 {
-                    console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
-                    if (Skin1 == null) Skin1 = console.PicDisplayBackgroundImage;
+                    //console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
+                    storeOriginalSkin();
 
                     if (MAP == null)
                     {
@@ -5024,8 +5037,8 @@ namespace Thetis
                 btnTrack.Text = "Track";
      
                 textBox1.Text += "Click to turn off GrayLine Sun Tracking\r\n";
-             
-                if (Skin1 != null) console.PicDisplayBackgroundImage = Skin1; // put back original image
+
+                returnOriginalSkin();
 
                 //MW0LGE_21d hacky way of storing setting for use on restart
                 chkTrackActive.Checked = false;
@@ -6441,7 +6454,8 @@ namespace Thetis
                         //----------------------------------------------------------------------------------------------------
                         // update MAP background
 
-                        console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;           // put image back onto picDisplay background image
+                        //console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;           // put image back onto picDisplay background image
+                        storeOriginalSkin(); //[2.10.3.4]MW0LGE added because line below might happen first
                         console.PicDisplayBackgroundImage = MAP;                                  // MAP.Save("test.bmp");  save modified map_image to actual file on hard drive
 
 
@@ -7239,8 +7253,8 @@ namespace Thetis
                     if ((chkSUN.Checked == true) || (chkGrayLine.Checked == true))
                     {
 
-                        console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
-                        if (Skin1 == null) Skin1 = console.PicDisplayBackgroundImage;
+                        //console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
+                        storeOriginalSkin();
 
                         if (MAP == null)
                         {
@@ -7459,7 +7473,7 @@ namespace Thetis
 
                     textBox1.Text += "Click to turn off GrayLine Sun Tracking\r\n";
 
-                    if (Skin1 != null) console.PicDisplayBackgroundImage = Skin1; // put back original image
+                    returnOriginalSkin();
 
                 } // map was off so turn back off after doen with beacon
 

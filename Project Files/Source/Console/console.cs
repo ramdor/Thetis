@@ -52675,34 +52675,13 @@ namespace Thetis
         //MW0LGE
         private void setBackground()
         {
-            if (m_bDisableBackgroundImage)
-            {
+            if (m_bDisableBackgroundImage || m_imgBackground == null)
                 Display.SetDX2BackgoundImage((Image)null);
-            }
             else
-            {
-                if (m_imgBackgroundCopy != null)
-                {
-                    try
-                    {
-                        Image c = m_imgBackgroundCopy.Clone() as Image;
-                        Display.SetDX2BackgoundImage(c);
-                        c.Dispose();
-                    }
-                    catch
-                    {
-                        Display.SetDX2BackgoundImage(null);
-                        m_imgBackgroundCopy = null;
-                    }
-                }
-                else
-                {
-                    Display.SetDX2BackgoundImage(null);
-                }
-            }
+                Display.SetDX2BackgoundImage(m_imgBackground);
         }
 
-        private Image m_imgBackgroundCopy = null;
+        private Image m_imgBackground = null;
         private bool m_bDisableBackgroundImage = false;
         public bool DisableBackgroundImage
         {
@@ -52717,15 +52696,22 @@ namespace Thetis
         public Image PicDisplayBackgroundImage
         {
             get {
-                if (m_bDisableBackgroundImage) return null;
+                //if (m_bDisableBackgroundImage) return null;
 
-                return m_imgBackgroundCopy;
+                return m_imgBackground;
             }
             set {
-                if(m_imgBackgroundCopy != null)
-                    m_imgBackgroundCopy.Dispose();
+                if(m_imgBackground != null)
+                    m_imgBackground.Dispose();
 
-                m_imgBackgroundCopy = value;
+                try
+                {
+                    m_imgBackground = value.Clone() as Image;
+                }
+                catch
+                {
+                    m_imgBackground = null;
+                }
 
                 setBackground();
             }
