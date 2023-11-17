@@ -14,7 +14,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] can now combine midi control id, channel and status to be used as the control ID. This should allow devices that share controlIDs for multiple buttons/sliders to work. Options in Setup->Serial/Network/Midi CAT->Midi
 - [add] certain skins might make it snow !
 - [add] option to prevent rx1+rx2 attenuator linking when using diversity. Setting in the diversity form
-- [fix] you can now hear rx2 audio when tx'ing on rx1 and setup->rx2->auto mutu rx2 on tx is turned off
+- [fix] you can now hear rx2 audio when tx'ing on rx1 and setup->rx2->auto mute rx2 on tx is turned off
 - [fix] mic phase reverse now calling correct function in WDSP, and can be turned on/off
 - [fix] Hercules DJControl Starlight midi device is now better handled. Wheel finger press for example are ignored. If you used this device before you will need to reconfigure as the control IDs will have changed
 - [fix] PortAudio #850 fix included
