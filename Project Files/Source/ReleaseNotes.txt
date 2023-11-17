@@ -13,15 +13,21 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] can now ignore 14bit Midi messages. More devices should work. Option in Setup->Serial/Network/Midi CAT->Midi
 - [add] can now combine midi control id, channel and status to be used as the control ID. This should allow devices that share controlIDs for multiple buttons/sliders to work. Options in Setup->Serial/Network/Midi CAT->Midi
 - [add] certain skins might make it snow !
+- [add] option to prevent rx1+rx2 attenuator linking when using diversity. Setting in the diversity form
+- [fix] you can now hear rx2 audio when tx'ing on rx1 and setup->rx2->auto mutu rx2 on tx is turned off
 - [fix] mic phase reverse now calling correct function in WDSP, and can be turned on/off
 - [fix] Hercules DJControl Starlight midi device is now better handled. Wheel finger press for example are ignored. If you used this device before you will need to reconfigure as the control IDs will have changed
 - [fix] PortAudio #850 fix included
 - [fix] FM should now use low/high cuts. Carlson's rules used for filter width display in FM rx and tx
 - [fix] Andromeda ModeSpecificForm shouldn't now clear on console resize
+- [fix] scope in TX should now work
 - [change] tweaks to waterfall agc to minimise screen wide pulse on T/R
 - [change] waterfall low/high step sizes lowered to 5
 - [change] multimeter container no title bar. Now applies even if not pinned. Hold shift and move mouse in the title bar area to bring it up even if hidden
 - [change] removed old noise floor calc method + option from setup form
+- [change] removed old http server as was non operational
+- [change] cosmetic and layout improvements to setup by Sigi DH1KLM
+
 
 ## v2.10.3.3 Change Log
 - [fix] resolved DLL load issue for Win7 and other OS's that dont have SetThreadDescription()
