@@ -203,26 +203,9 @@
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       
       <Component Id="fwException" Guid="*" Transitive="yes">
-        <Condition>Privileged</Condition>
         <File Id="ThetisEXE"
               Source="$(var.FilesPath)Thetis.exe"
               KeyPath="yes">
-
-			<fire:FirewallException Id="thetis_$(var.Platform)_tcp"
-                      Name="$(var.ThetisName) (TCP In)"
-                      Description="TCP In-bound Firewall rule for OpenHPSDR SDRs running Thetis"
-                      Protocol="tcp"
-                      Scope="any"
-                      IgnoreFailure="no"
-                      Profile="all" />
-			
-			<fire:FirewallException Id="thetis_$(var.Platform)_udp"
-                      Name="$(var.ThetisName) (UDP In)"
-                      Description="UDP In-bound Firewall rule for OpenHPSDR SDRs running Thetis"
-                      Protocol="udp"
-                      Scope="any"
-                      IgnoreFailure="no"
-                      Profile="all" />
         </File>
       </Component>
       
