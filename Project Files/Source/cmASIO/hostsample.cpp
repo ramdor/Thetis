@@ -447,6 +447,7 @@ ASIOError create_asio_buffers (DriverInfo *asioDriverInfo)
 
 					for (int i = 0; i < asioDriverInfo.inputBuffers + asioDriverInfo.outputBuffers; i++)
 					{
+						if (asioDriverInfo.channelInfos[i].type != ASIOSTInt32LSB) result = ASE_InvalidMode;
 						sprintf_s(buf, 128, "Channel %d:  type = %d   name = %s   isInput = %d   channelNum = %d", i, asioDriverInfo.channelInfos[i].type, asioDriverInfo.channelInfos[i].name, asioDriverInfo.bufferInfos[i].isInput, asioDriverInfo.bufferInfos[i].channelNum);
 						OutputDebugStringA(buf);
 					}
@@ -455,6 +456,13 @@ ASIOError create_asio_buffers (DriverInfo *asioDriverInfo)
 					ASIOGetSampleRate(&asioDriverInfo.sampleRate);
 					sprintf_s(buf, 128, "\nSample Rate = %f\nBuffer Size = %d", asioDriverInfo.sampleRate, asioDriverInfo.preferredSize);
 					OutputDebugStringA(buf);
+
+					if (result == ASE_InvalidMode)
+					{
+						sprintf_s(buf, 128, "Incompatible sample format type: %d", asioDriverInfo.channelInfos[0].type);
+						OutputDebugStringA(buf);
+						return result;
+					}
 
 					//ASIOError result;
 					//result = ASIOStart();
