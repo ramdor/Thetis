@@ -150,6 +150,9 @@
         lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
 </value>
   </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>302, 17</value>
+  </metadata>
   <data name="pbVAC1FFMaxInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE+V
@@ -263,7 +266,7 @@ POWER EXCEEDING THE RATING OF YOUR RADIO!
 </value>
   </data>
   <data name="lgLinearGradientRX1.EncodedText" xml:space="preserve">
-    <value>OXwxfDAuMDAwfC0xNjc3NzIxNnwwfDEyNTAwMC4wMDB8LTE0NzM3NjMzfDB8MjUwMDAwLjAwMHwtMTI2OTgwNTB8MHwzNzUwMDAuMDAwfC0xMDY1ODQ2N3wwfDUwMDAwMC4wMDB8LTg2MTg4ODR8MHw2MjUwMDAuMDAwfC02NTc5MzAxfDB8NzUwMDAwLjAwMHwtNDUzOTcxOHwwfDg3NTAwMC4wMDB8LTI1MDAxMzV8MXwxMDAwMDAwLjAwMHwtMXw=</value>
+    <value>OXwxfDAsMDAwfC0xNjc3NzIxNnwwfDEyNTAwMDAwMCwwMDB8LTE0NzM3NjMzfDB8MjUwMDAwMDAwLDAwMHwtMTI2OTgwNTB8MHwzNzUwMDAwMDAsMDAwfC0xMDY1ODQ2N3wwfDUwMDAwMDAwMCwwMDB8LTg2MTg4ODR8MHw2MjUwMDAwMDAsMDAwfC02NTc5MzAxfDB8NzUwMDAwMDAwLDAwMHwtNDUzOTcxOHwwfDg3NTAwMDAwMCwwMDB8LTI1MDAxMzV8MXwxMDAwMDAwMDAwLDAwMHwtMXw=</value>
   </data>
   <data name="chkReplaceCurrentMeterInSelectedSkin.ToolTip" xml:space="preserve">
     <value>If this is checked, the downloaded meter skins
