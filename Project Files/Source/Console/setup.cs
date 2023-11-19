@@ -28696,13 +28696,14 @@ namespace Thetis
 
                 using (ZipFile zip = ZipFile.Read(sourceZipFilePath))
                 {
-                    foreach (var entry in zip.Where(e => e.FileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
+                    foreach (ZipEntry entry in zip.Where(e => e.FileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
                     {
                         string entryPath = Path.Combine(outputPath, entry.FileName.Replace('/', '\\'));
 
                         // Create the directory structure if it doesn't exist
                         Directory.CreateDirectory(Path.GetDirectoryName(entryPath));
 
+                        // if there is a file remove it
                         if (File.Exists(entryPath))
                             File.Delete(entryPath);
 
@@ -28712,6 +28713,11 @@ namespace Thetis
             }
             catch (Exception ex)
             {
+                MessageBox.Show(
+                        "There was an issue extracting the .png file(s) from the download.\n\nSome/all of the images may be missing. The error is as follows :\n\n" + ex.ToString(),
+                        "Skin download issue",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
         }
 

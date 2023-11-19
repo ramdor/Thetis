@@ -302,7 +302,7 @@ namespace Thetis
         {
             Cursor = _cursor;
 
-            if (!_resizing && !pbGrab.ClientRectangle.Contains(picContainer.PointToClient(Control.MousePosition)))
+            if (!_resizing && (!pbGrab.ClientRectangle.Contains(pbGrab.PointToClient(Control.MousePosition)) || !this.ClientRectangle.Contains(this.PointToClient(Control.MousePosition)))) //[2.10.3.4]MW0LGE added 'this' incase we are totally outside, fix issue where ui items get left visible
                 mouseLeave();
         }
 
@@ -667,7 +667,13 @@ namespace Thetis
 
         private void uiComponentMouseLeave()
         {
-            if (!_dragging && !pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)))
+            if (!_dragging && (!pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition)) || !this.ClientRectangle.Contains(this.PointToClient(Control.MousePosition)))) //[2.10.3.4]MW0LGE added 'this' incase we are totally outside, fix issue where ui items get left visible
+                mouseLeave();
+        }
+
+        private void ucMeter_MouseLeave(object sender, EventArgs e)
+        {
+            if (!(_dragging || _resizing) && !picContainer.ClientRectangle.Contains(this.PointToClient(Control.MousePosition)))
                 mouseLeave();
         }
     }

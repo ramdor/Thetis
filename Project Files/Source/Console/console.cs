@@ -12420,6 +12420,7 @@ namespace Thetis
 
                 ////MW0LGE why ??  if (CollapsedDisplay)
                 //    CollapseDisplay();
+                handleAttCombosNuds();
 
                 if (!_mox)
                 {
@@ -12428,6 +12429,13 @@ namespace Thetis
                     UpdatePreamps();
                 }
                 UpdateRX1DisplayOffsets();
+
+                if(iscollapsed && !isexpanded)
+                {
+                    //[2.10.3.4]MW0LGE we need to move the meters to top, because in collasped mode the bring to fronts above
+                    //will cause the combo to be above everything, including meters.
+                    MeterManager.BringToFront();
+                }
             }
         }
 
@@ -12570,6 +12578,7 @@ namespace Thetis
 
                     //MW0LGE why ??  if (CollapsedDisplay)
                     //    CollapseDisplay();
+                    handleAttCombosNuds();
 
                     if (!_mox)
                     {
@@ -12578,6 +12587,14 @@ namespace Thetis
                         UpdatePreamps();
                     }
                     UpdateRX2DisplayOffsets();
+
+                    if (iscollapsed && !isexpanded)
+                    {
+                        //[2.10.3.4]MW0LGE we need to move the meters to top, because in collasped mode the bring to fronts above
+                        //will cause the combo to be above everything, including meters.
+                        MeterManager.BringToFront();
+                    }
+
                 }
             }
         }
@@ -22843,6 +22860,8 @@ namespace Thetis
                     total_thetis_usage.Dispose(); //MW0LGE_21k8
                     total_thetis_usage = null;
                 }
+
+                //NOTE: run 'lodctr /R' on admin command prompt to rebuild performance counters
 
                 total_cpu_usage = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total", sMachineName);
                 float tmp = total_cpu_usage.NextValue();
@@ -49291,6 +49310,7 @@ namespace Thetis
                 //  comboRX2Preamp.Location = combo_rx2_preamp_basis;
                 comboRX2Preamp.BringToFront();
             }
+
             // G8NJJ
             comboDisplayMode.Parent = panelDisplay2;
             comboDisplayMode.Location = combo_display_mode_basis;
@@ -49478,6 +49498,38 @@ namespace Thetis
                 }
             }
         }
+        //
+        private void handleAttCombosNuds() //[2.10.3.4]MW0LGE called from functions that make these visble
+        {
+            if (!iscollapsed && isexpanded) return;
+
+            if (show_rx1)
+            {
+                comboRX2Preamp.Hide();
+                udRX2StepAttData.Hide();
+                comboPreamp.Show();
+                udRX1StepAttData.Show();
+            }
+            else if (show_rx2)
+            {
+                if (rx2_preamp_present)
+                {
+                    comboPreamp.Hide();
+                    udRX1StepAttData.Hide();
+                    comboRX2Preamp.Show();
+                    udRX2StepAttData.Show();
+                }
+                else
+                {
+                    comboRX2Preamp.Hide();
+                    udRX2StepAttData.Hide();
+                    comboPreamp.Show();
+                    udRX1StepAttData.Show();
+                }
+            }
+        }
+        //
+
         //
         // modified G8NJJ to add alternate top/button controls for Andromeda
         // optimised for 1024x600 touchscreen display
