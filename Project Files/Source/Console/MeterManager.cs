@@ -1711,7 +1711,20 @@ namespace Thetis
                 }
             }
         }
+        public static void BringToFront()
+        {
+            if (_lstUCMeters == null || _lstUCMeters.Count == 0) return;
 
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, ucMeter> ucms in _lstUCMeters)
+                {
+                    ucMeter ucm = ucms.Value;
+                    if (!ucm.Floating)
+                        ucm.BringToFront();
+                }
+            }
+        }
         public static string AddMeterContainer(int nRx, bool bFloating, bool bShow = false)
         {
             ucMeter ucM = new ucMeter();

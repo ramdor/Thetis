@@ -21,6 +21,9 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] FM should now use low/high cuts. Carlson's rules used for filter width display in FM rx and tx
 - [fix] Andromeda ModeSpecificForm shouldn't now clear on console resize
 - [fix] scope in TX should now work
+- [fix] spot sun/greyline track should not forget the skin background if track is turned off
+- [fix] ui controls on the multimeter containers should now not get stuck visible
+- [fix] attenuator controls should now not appear above meter containers when coming out of tx
 - [change] tweaks to waterfall agc to minimise screen wide pulse on T/R
 - [change] waterfall low/high step sizes lowered to 5
 - [change] multimeter container no title bar. Now applies even if not pinned. Hold shift and move mouse in the title bar area to bring it up even if hidden

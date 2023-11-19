@@ -34,8 +34,7 @@ namespace Thetis
 {
     class TitleBar
     {
-        public const string BUILD_NAME = "pre-release-6";
-
+        public const string BUILD_NAME = "";
         public static string GetString(bool bWithFirmware = true)
         {
             string sRevision = "." + Common.GetRevision();
