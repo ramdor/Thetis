@@ -8062,8 +8062,8 @@ namespace Thetis
 
                     float x = float.MaxValue;
                     float y = float.MaxValue;
-                    float width = float.MinValue;
-                    float height = float.MinValue;
+                    float brx = float.MinValue;
+                    float bry = float.MinValue;
 
                     foreach (KeyValuePair<string, clsMeterItem> kvp in items)
                     {
@@ -8071,11 +8071,11 @@ namespace Thetis
 
                         if(mi.TopLeft.X < x) x = mi.TopLeft.X;
                         if(mi.TopLeft.Y < y) y = mi.TopLeft.Y;
-                        if(mi.Size.Width > width) width = mi.Size.Width;
-                        if(mi.Size.Height > height) height = mi.Size.Height;
+                        if (mi.TopLeft.X + mi.Size.Width > brx) brx = mi.TopLeft.X + mi.Size.Width;
+                        if (mi.TopLeft.Y + mi.Size.Height > bry) bry = mi.TopLeft.Y + mi.Size.Height;
                     }
 
-                    return new System.Drawing.RectangleF(x, y, width, height);
+                    return new System.Drawing.RectangleF(x, y, brx - x, bry - y);
                 }
             }
             internal Dictionary<string, clsMeterItem> itemsFromID(string sId, bool bIncludeTheParent = true, bool bOnlyChildren = false)
