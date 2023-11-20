@@ -50417,7 +50417,6 @@
             // 
             this.panelSkinServerControls.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.panelSkinServerControls.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.panelSkinServerControls.Controls.Add(this.grpAuthorDetails);
             this.panelSkinServerControls.Controls.Add(this.labelTS183);
             this.panelSkinServerControls.Controls.Add(this.btnRefreshSkinsForServer);
             this.panelSkinServerControls.Controls.Add(this.comboSkinServerList);
@@ -50433,7 +50432,7 @@
             this.grpAuthorDetails.Controls.Add(this.btnSkinsHomepage);
             this.grpAuthorDetails.Controls.Add(this.lblAuthorDetails2);
             this.grpAuthorDetails.Controls.Add(this.lblAuthorDetails1);
-            this.grpAuthorDetails.Location = new System.Drawing.Point(9, 35);
+            this.grpAuthorDetails.Location = new System.Drawing.Point(4, 39);
             this.grpAuthorDetails.Name = "grpAuthorDetails";
             this.grpAuthorDetails.Size = new System.Drawing.Size(416, 82);
             this.grpAuthorDetails.TabIndex = 4;
@@ -50444,7 +50443,7 @@
             // 
             this.btnSkinsDonate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
             this.btnSkinsDonate.Image = null;
-            this.btnSkinsDonate.Location = new System.Drawing.Point(282, 47);
+            this.btnSkinsDonate.Location = new System.Drawing.Point(282, 45);
             this.btnSkinsDonate.Name = "btnSkinsDonate";
             this.btnSkinsDonate.Selectable = true;
             this.btnSkinsDonate.Size = new System.Drawing.Size(128, 28);
@@ -50456,7 +50455,7 @@
             // btnSkinsHomepage
             // 
             this.btnSkinsHomepage.Image = null;
-            this.btnSkinsHomepage.Location = new System.Drawing.Point(282, 16);
+            this.btnSkinsHomepage.Location = new System.Drawing.Point(282, 14);
             this.btnSkinsHomepage.Name = "btnSkinsHomepage";
             this.btnSkinsHomepage.Selectable = true;
             this.btnSkinsHomepage.Size = new System.Drawing.Size(128, 28);
@@ -50471,7 +50470,7 @@
             this.lblAuthorDetails2.Image = null;
             this.lblAuthorDetails2.Location = new System.Drawing.Point(12, 47);
             this.lblAuthorDetails2.Name = "lblAuthorDetails2";
-            this.lblAuthorDetails2.Size = new System.Drawing.Size(237, 13);
+            this.lblAuthorDetails2.Size = new System.Drawing.Size(255, 13);
             this.lblAuthorDetails2.TabIndex = 1;
             this.lblAuthorDetails2.Text = "lblAuthorDetails2";
             // 
@@ -50481,7 +50480,7 @@
             this.lblAuthorDetails1.Image = null;
             this.lblAuthorDetails1.Location = new System.Drawing.Point(12, 24);
             this.lblAuthorDetails1.Name = "lblAuthorDetails1";
-            this.lblAuthorDetails1.Size = new System.Drawing.Size(237, 13);
+            this.lblAuthorDetails1.Size = new System.Drawing.Size(255, 13);
             this.lblAuthorDetails1.TabIndex = 0;
             this.lblAuthorDetails1.Text = "lblAuthorDetails1";
             // 
@@ -50526,6 +50525,7 @@
             // 
             // gtpAvailableSkins
             // 
+            this.gtpAvailableSkins.Controls.Add(this.grpAuthorDetails);
             this.gtpAvailableSkins.Controls.Add(this.chkReplaceCurrentMeterInSelectedSkin);
             this.gtpAvailableSkins.Controls.Add(this.lblSkinOverview);
             this.gtpAvailableSkins.Controls.Add(this.btnSkinHomepage);
