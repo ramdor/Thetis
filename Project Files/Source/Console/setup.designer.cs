@@ -34443,7 +34443,7 @@
             this.grpDSPWintype.Controls.Add(this.comboDSPRxWindow);
             this.grpDSPWintype.Location = new System.Drawing.Point(419, 8);
             this.grpDSPWintype.Name = "grpDSPWintype";
-            this.grpDSPWintype.Size = new System.Drawing.Size(109, 85);
+            this.grpDSPWintype.Size = new System.Drawing.Size(109, 88);
             this.grpDSPWintype.TabIndex = 34;
             this.grpDSPWintype.TabStop = false;
             this.grpDSPWintype.Text = "Filter Windows";
@@ -34451,7 +34451,7 @@
             // labelTS144
             // 
             this.labelTS144.Image = null;
-            this.labelTS144.Location = new System.Drawing.Point(6, 25);
+            this.labelTS144.Location = new System.Drawing.Point(6, 40);
             this.labelTS144.Name = "labelTS144";
             this.labelTS144.Size = new System.Drawing.Size(24, 16);
             this.labelTS144.TabIndex = 22;
@@ -34460,7 +34460,7 @@
             // labelTS302
             // 
             this.labelTS302.Image = null;
-            this.labelTS302.Location = new System.Drawing.Point(6, 49);
+            this.labelTS302.Location = new System.Drawing.Point(6, 64);
             this.labelTS302.Name = "labelTS302";
             this.labelTS302.Size = new System.Drawing.Size(24, 16);
             this.labelTS302.TabIndex = 23;
@@ -34473,7 +34473,7 @@
             this.comboDSPTxWindow.Items.AddRange(new object[] {
             "BH - 4",
             "BH - 7"});
-            this.comboDSPTxWindow.Location = new System.Drawing.Point(36, 46);
+            this.comboDSPTxWindow.Location = new System.Drawing.Point(36, 64);
             this.comboDSPTxWindow.Name = "comboDSPTxWindow";
             this.comboDSPTxWindow.Size = new System.Drawing.Size(67, 21);
             this.comboDSPTxWindow.TabIndex = 1;
@@ -34486,7 +34486,7 @@
             this.comboDSPRxWindow.Items.AddRange(new object[] {
             "BH - 4",
             "BH - 7"});
-            this.comboDSPRxWindow.Location = new System.Drawing.Point(36, 22);
+            this.comboDSPRxWindow.Location = new System.Drawing.Point(36, 40);
             this.comboDSPRxWindow.Name = "comboDSPRxWindow";
             this.comboDSPRxWindow.Size = new System.Drawing.Size(67, 21);
             this.comboDSPRxWindow.TabIndex = 0;
@@ -50444,7 +50444,7 @@
             // 
             this.btnSkinsDonate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
             this.btnSkinsDonate.Image = null;
-            this.btnSkinsDonate.Location = new System.Drawing.Point(255, 46);
+            this.btnSkinsDonate.Location = new System.Drawing.Point(282, 47);
             this.btnSkinsDonate.Name = "btnSkinsDonate";
             this.btnSkinsDonate.Selectable = true;
             this.btnSkinsDonate.Size = new System.Drawing.Size(128, 28);
@@ -50456,7 +50456,7 @@
             // btnSkinsHomepage
             // 
             this.btnSkinsHomepage.Image = null;
-            this.btnSkinsHomepage.Location = new System.Drawing.Point(255, 13);
+            this.btnSkinsHomepage.Location = new System.Drawing.Point(282, 16);
             this.btnSkinsHomepage.Name = "btnSkinsHomepage";
             this.btnSkinsHomepage.Selectable = true;
             this.btnSkinsHomepage.Size = new System.Drawing.Size(128, 28);
@@ -50471,7 +50471,7 @@
             this.lblAuthorDetails2.Image = null;
             this.lblAuthorDetails2.Location = new System.Drawing.Point(12, 47);
             this.lblAuthorDetails2.Name = "lblAuthorDetails2";
-            this.lblAuthorDetails2.Size = new System.Drawing.Size(216, 13);
+            this.lblAuthorDetails2.Size = new System.Drawing.Size(237, 13);
             this.lblAuthorDetails2.TabIndex = 1;
             this.lblAuthorDetails2.Text = "lblAuthorDetails2";
             // 
@@ -50481,7 +50481,7 @@
             this.lblAuthorDetails1.Image = null;
             this.lblAuthorDetails1.Location = new System.Drawing.Point(12, 24);
             this.lblAuthorDetails1.Name = "lblAuthorDetails1";
-            this.lblAuthorDetails1.Size = new System.Drawing.Size(216, 13);
+            this.lblAuthorDetails1.Size = new System.Drawing.Size(237, 13);
             this.lblAuthorDetails1.TabIndex = 0;
             this.lblAuthorDetails1.Text = "lblAuthorDetails1";
             // 
@@ -50499,7 +50499,7 @@
             // btnRefreshSkinsForServer
             // 
             this.btnRefreshSkinsForServer.Image = null;
-            this.btnRefreshSkinsForServer.Location = new System.Drawing.Point(350, 6);
+            this.btnRefreshSkinsForServer.Location = new System.Drawing.Point(350, 7);
             this.btnRefreshSkinsForServer.Name = "btnRefreshSkinsForServer";
             this.btnRefreshSkinsForServer.Selectable = true;
             this.btnRefreshSkinsForServer.Size = new System.Drawing.Size(75, 23);
@@ -50578,7 +50578,7 @@
             this.btnSkinHomepage.Name = "btnSkinHomepage";
             this.btnSkinHomepage.Size = new System.Drawing.Size(75, 61);
             this.btnSkinHomepage.TabIndex = 9;
-            this.btnSkinHomepage.Text = "Skin\r\nHomepge";
+            this.btnSkinHomepage.Text = "Skin\r\nHomepage";
             this.btnSkinHomepage.UseVisualStyleBackColor = true;
             this.btnSkinHomepage.Click += new System.EventHandler(this.btnSkinHomepage_Click);
             // 
@@ -50596,7 +50596,7 @@
             this.lstAvailableSkins.FormattingEnabled = true;
             this.lstAvailableSkins.Items.AddRange(new object[] {
             "01234567890123456789012345"});
-            this.lstAvailableSkins.Location = new System.Drawing.Point(4, 132);
+            this.lstAvailableSkins.Location = new System.Drawing.Point(4, 136);
             this.lstAvailableSkins.Name = "lstAvailableSkins";
             this.lstAvailableSkins.Size = new System.Drawing.Size(189, 251);
             this.lstAvailableSkins.TabIndex = 10;
