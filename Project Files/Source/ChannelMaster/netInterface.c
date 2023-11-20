@@ -260,7 +260,7 @@ int getUserI08_p2()
 PORT
 int getUserI02_p2()
 {
-	return (prn->user_dig_in & 0x16) != 0;
+	return (prn->user_dig_in & 0x10) != 0; //[2.10.3.5]MW0LGE changed to 0x10 from 0x16, spotted by G8NJJ
 }
 //
 
