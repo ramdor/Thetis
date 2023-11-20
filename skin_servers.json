@@ -14,6 +14,11 @@
       "SkinServerUrl": "https://www.w1aex.com/hpsdr/thetis_skins.json",
       "Description": "W1AEX's many skins",
       "BypassRootFolderCheck": true
+    },
+    {
+      "SkinServerUrl": "http://www.die-jetzis.de/skins/thetis_skins.json",
+      "Description": "DH1KLM's big collection",
+      "BypassRootFolderCheck": false
     }
   ]
 }
