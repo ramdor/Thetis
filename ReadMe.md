@@ -1,5 +1,17 @@
-# Latest Release v2.10.2.2 October, 13th 2023
-https://github.com/ramdor/Thetis/releases/tag/v2.10.2.2
+# Latest Release v2.10.3.4 November, 19th 2023
+https://github.com/ramdor/Thetis/releases/tag/v2.10.3.4
+
+# 2.10.3.3 (2023-03-11)
+https://github.com/ramdor/Thetis/releases/tag/v2.10.3.3
+
+# 2.10.3.2 (2023-03-11)
+https://github.com/ramdor/Thetis/releases/tag/v2.10.3.2
+
+# 2.10.3.1 (2023-03-11)
+https://github.com/ramdor/Thetis/releases/tag/v2.10.3.1
+
+# 2.10.3 (2023-02-11)
+https://github.com/ramdor/Thetis/releases/tag/v2.10.3
 
 # 2.10.2.2 (2023-13-10)
 
