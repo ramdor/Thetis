@@ -1050,6 +1050,21 @@ namespace Thetis
             }
             CpuUsage(); //[2.10.1.0] MW0LGE initial call to setup check marks in status bar as a minimum
 
+            if (!resetForAutoMerge)
+            {
+                Splash.SetStatus("Processing Finder Info");
+                // obtain finder info before splash closes
+                //-- setup finder search data
+                _frmFinder.ReadXmlFinderFile(AppDataPath); // note: needs to be before frm gather
+                _frmFinder.GatherSearchData(this, toolTip1);
+                _frmFinder.GatherSearchData(SetupForm, SetupForm.ToolTip);
+                _frmFinder.GatherSearchData(EQForm, EQForm.ToolTip);
+                _frmFinder.GatherSearchData(m_frmBandStack2, m_frmBandStack2.ToolTip);
+                _frmFinder.GatherSearchData(psform, null);
+                _frmFinder.WriteXmlFinderFile(AppDataPath); // note: this will only happen if not already there
+                //
+            }
+
             Splash.SetStatus("Finished");
 
             Splash.SplashForm.Owner = this;						// So that main form will show/focus when splash disappears //MW0LGE_21d done in show above
@@ -1136,16 +1151,6 @@ namespace Thetis
                     SetupForm.StartupTCIServer();
                     SetupForm.StartupTCPIPcatServer();
                 }
-
-                //-- setup finder search data
-                _frmFinder.ReadXmlFinderFile(AppDataPath); // note: needs to be before frm gather
-                _frmFinder.GatherSearchData(this, toolTip1);
-                _frmFinder.GatherSearchData(SetupForm, SetupForm.ToolTip);
-                _frmFinder.GatherSearchData(EQForm, EQForm.ToolTip);
-                _frmFinder.GatherSearchData(m_frmBandStack2, m_frmBandStack2.ToolTip);
-                _frmFinder.GatherSearchData(psform, null);
-                _frmFinder.WriteXmlFinderFile(AppDataPath);
-                //
 
                 //resize N1MM //MW0LGE_21k9c
                 N1MM.Resize(1);
