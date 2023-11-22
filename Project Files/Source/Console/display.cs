@@ -5485,7 +5485,7 @@ namespace Thetis
                                         waterfall_minimum = dataCopy[i] + fOffset;
 
                                     // set pixel color changed by w3sz
-                                    //[2.10.3.5]MW0LGE note this are reverse RGB, we normally expect BGRA
+                                    //[2.10.3.5]MW0LGE note these are reverse RGB, we normally expect BGRA #289
                                     row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
                                     row[(i * m_nDecimation) * pixel_size + 2] = (byte)B;
@@ -5692,7 +5692,7 @@ namespace Thetis
                                     if (waterfall_minimum > dataCopy[i] + fOffset) //[2.10.3]MW0LGE use non notched data
                                         waterfall_minimum = dataCopy[i] + fOffset;
 
-                                    //[2.10.3.5]MW0LGE note this are reverse RGB, we normally expect BGRA
+                                    //[2.10.3.5]MW0LGE note these are reverse RGB, we normally expect BGRA #289
                                     row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
                                     row[(i * m_nDecimation) * pixel_size + 2] = (byte)B;
@@ -5898,7 +5898,7 @@ namespace Thetis
                                     }
 
                                     // set pixel color changed by w3sz
-                                    //[2.10.3.5]MW0LGE note this are reverse RGB, we normally expect BGRA
+                                    //[2.10.3.5]MW0LGE note these are reverse RGB, we normally expect BGRA #289
                                     row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
                                     row[(i * m_nDecimation) * pixel_size + 2] = (byte)B;
