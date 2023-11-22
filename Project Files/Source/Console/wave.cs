@@ -2487,8 +2487,13 @@ namespace Thetis
             {
                 lock (m_inversGainlock)
                 {
-                    if (value < 0) value = 0;
-                    else if (value > 1f) value = 1f;
+                    if (value <= 0)
+                    {
+                        m_fInverseGain = 0;
+                        return;
+                    }
+                    
+                    if (value > 1f) value = 1f;
 
                     m_fInverseGain = 1 / value; // apply inverse gain to the stream to counter act the volume applied by the user
                 }
