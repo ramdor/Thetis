@@ -2478,98 +2478,89 @@ namespace Thetis
 			return filename;
 		}
 
-        private float m_fGain = 1f;
-        private readonly object m_gainLock = new object();
+        private float m_fInverseGain = 1f;
         public float CurrentGain
         {
-            get { return m_fGain; }
+            get { return m_fInverseGain; }
             set
             {
-                lock (m_gainLock)
-                {
-                    if (value <= 0)
-                    {
-                        // in the case of zero gain or mute, when gain is 0 then record nothing
-                        m_fGain = 0;
-                        return;
-                    }
+                if (value < 0) value = 0;
+                else if (value > 1f) value = 1f;
 
-                    if (value > 1f) value = 1f;
-
-                    m_fGain = 1 / value; // apply inverse gain to the stream to counter act the volume applied by the user
-                }
+                m_fInverseGain = 1 / value; // apply inverse gain to the stream to counter act the volume applied by the user
             }
         }
         public static bool dither = false;
 		private void WriteBuffer(ref BinaryWriter writer, ref int count)
 		{
-            lock (m_gainLock)
+            float fGain = m_fInverseGain;
+
+            int cntL = rb_l.Read(in_buf_l, IN_BLOCK);
+            int cntR = rb_r.Read(in_buf_r, IN_BLOCK);
+            if (cntL != cntR) return;
+
+            int out_cnt = cntL;//= IN_BLOCK; //[2.10.3.5]MW0LGE
+
+            // resample
+            // if(sample_rate != external_rate_base)
+            // {
+            // 	fixed(float* in_ptr = &in_buf_l[0])
+            // 		fixed(float* out_ptr = &out_buf_l[0])
+            //             WDSP.xresampleFV(in_ptr, out_ptr, cnt, &out_cnt, resamp_l);
+            // 	if(channels > 1)
+            // 	{
+            // 		fixed(float* in_ptr = &in_buf_r[0])
+            // 			fixed(float* out_ptr = &out_buf_r[0])
+            //                 WDSP.xresampleFV(in_ptr, out_ptr, cnt, &out_cnt, resamp_r);
+            // 	}
+            // }
+            // else
+            // {
+            in_buf_l.CopyTo(out_buf_l, 0);
+            in_buf_r.CopyTo(out_buf_r, 0);
+            // }
+
+            if (channels > 1)
             {
-                int cnt = rb_l.Read(in_buf_l, IN_BLOCK);
-                rb_r.Read(in_buf_r, IN_BLOCK);
-                int out_cnt = IN_BLOCK;
-
-                // resample
-                // if(sample_rate != external_rate_base)
-                // {
-                // 	fixed(float* in_ptr = &in_buf_l[0])
-                // 		fixed(float* out_ptr = &out_buf_l[0])
-                //             WDSP.xresampleFV(in_ptr, out_ptr, cnt, &out_cnt, resamp_l);
-                // 	if(channels > 1)
-                // 	{
-                // 		fixed(float* in_ptr = &in_buf_r[0])
-                // 			fixed(float* out_ptr = &out_buf_r[0])
-                //                 WDSP.xresampleFV(in_ptr, out_ptr, cnt, &out_cnt, resamp_r);
-                // 	}
-                // }
-                // else
-                // {
-                in_buf_l.CopyTo(out_buf_l, 0);
-                in_buf_r.CopyTo(out_buf_r, 0);
-                // }
-
-                if (channels > 1)
+                // interleave samples and clip
+                for (int i = 0; i < out_cnt; i++)
                 {
-                    // interleave samples and clip
-                    for (int i = 0; i < out_cnt; i++)
-                    {
-                        out_buf[i * 2] = out_buf_l[i] * m_fGain;
-                        if (out_buf[i * 2] > 1.0f) out_buf[i * 2] = 1.0f;
-                        else if (out_buf[i * 2] < -1.0f) out_buf[i * 2] = -1.0f;
+                    out_buf[i * 2] = out_buf_l[i] * fGain;
+                    if (out_buf[i * 2] > 1.0f) out_buf[i * 2] = 1.0f;
+                    else if (out_buf[i * 2] < -1.0f) out_buf[i * 2] = -1.0f;
 
-                        out_buf[i * 2 + 1] = out_buf_r[i] * m_fGain;
-                        if (out_buf[i * 2 + 1] > 1.0f) out_buf[i * 2 + 1] = 1.0f;
-                        else if (out_buf[i * 2 + 1] < -1.0f) out_buf[i * 2 + 1] = -1.0f;
-                    }
+                    out_buf[i * 2 + 1] = out_buf_r[i] * fGain;
+                    if (out_buf[i * 2 + 1] > 1.0f) out_buf[i * 2 + 1] = 1.0f;
+                    else if (out_buf[i * 2 + 1] < -1.0f) out_buf[i * 2 + 1] = -1.0f;
                 }
-                else
+            }
+            else
+            {
+                for (int i = 0; i < out_cnt; i++)
                 {
-                    for (int i = 0; i < out_cnt; i++)
-                    {
-                        out_buf_l[i] = out_buf_l[i] * m_fGain;
-                    }
-
-                    out_buf_l.CopyTo(out_buf, 0);
+                    out_buf_l[i] = out_buf_l[i] * fGain;
                 }
 
-                int length = out_cnt;
-                if (channels > 1) length *= 2;
+                out_buf_l.CopyTo(out_buf, 0);
+            }
 
-                switch (bit_depth)
-                {
-                    case 32:
-                        Write_32(length, ref count, out_cnt);
-                        break;
-                    case 24:
-                        Write_24(length, ref count, out_cnt);
-                        break;
-                    case 16:
-                        Write_16(length, ref count, out_cnt);
-                        break;
-                    case 8:
-                        Write_8(length, ref count, out_cnt);
-                        break;
-                }
+            int length = out_cnt;
+            if (channels > 1) length *= 2;
+
+            switch (bit_depth)
+            {
+                case 32:
+                    Write_32(length, ref count, out_cnt);
+                    break;
+                case 24:
+                    Write_24(length, ref count, out_cnt);
+                    break;
+                case 16:
+                    Write_16(length, ref count, out_cnt);
+                    break;
+                case 8:
+                    Write_8(length, ref count, out_cnt);
+                    break;
             }
         }
 

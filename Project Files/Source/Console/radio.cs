@@ -926,8 +926,11 @@ namespace Thetis
 				rx_output_gain = value;
 				if(update)
 				{
-					if(value != rx_output_gain_dsp || force)
+                    if (value != rx_output_gain_dsp || force)
 					{
+                        if (value < 0.0001) value = 0.0001; //[2.10.3.5]MW0LGE quiet, but not that quiet
+                                                             //so that we can keep writing a recording
+
                         WDSP.SetRXAPanelGain1(WDSP.id(thread, subrx), value);
 						rx_output_gain_dsp = value;
 
