@@ -2479,21 +2479,29 @@ namespace Thetis
 		}
 
         private float m_fInverseGain = 1f;
+        private object m_inversGainlock = new object();
         public float CurrentGain
         {
             get { return m_fInverseGain; }
             set
             {
-                if (value < 0) value = 0;
-                else if (value > 1f) value = 1f;
+                lock (m_inversGainlock)
+                {
+                    if (value < 0) value = 0;
+                    else if (value > 1f) value = 1f;
 
-                m_fInverseGain = 1 / value; // apply inverse gain to the stream to counter act the volume applied by the user
+                    m_fInverseGain = 1 / value; // apply inverse gain to the stream to counter act the volume applied by the user
+                }
             }
         }
         public static bool dither = false;
 		private void WriteBuffer(ref BinaryWriter writer, ref int count)
 		{
-            float fGain = m_fInverseGain;
+            float fGain;
+            lock (m_inversGainlock)
+            {
+                fGain = m_fInverseGain;
+            }
 
             int cntL = rb_l.Read(in_buf_l, IN_BLOCK);
             int cntR = rb_r.Read(in_buf_r, IN_BLOCK);
