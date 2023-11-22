@@ -101,9 +101,6 @@ namespace Thetis
         private bool displaydidit = false;
         public Mutex calibration_mutex = new Mutex();
 
-        //public Http httpFile;                           // ke9ns add
-        //public HttpServer httpServer = null;           // rn3kk add
-
         private Setup m_frmSetupForm;
         private readonly Object m_objSetupFormLocker = new Object();
 
@@ -1925,8 +1922,6 @@ namespace Thetis
             InitFilterPresets();					// Initialize filter values
 
             SwlForm = new SwlControl(this);         // ke9ns add communicate with swl list controls
-            //httpFile = new Http(this);              // ke9ns add
-            //httpServer = new HttpServer(this);      // rn3kk add
 
             // ***** THIS IS WHERE SETUP FORM IS CREATED
             _onlyOneSetupInstance = true; // make sure that we limit to one instance
@@ -52270,27 +52265,7 @@ namespace Thetis
         {
 
         }
-
-
-        ////=========================================================================================
-        ////=========================================================================================
-        //// ke9ns add allows Http server to talk with Setup through Console
-
-        //*/
-
-        //public static int m_port = 0;   // ke9ns add port# 
-        //public static bool m_terminated = true;
-
-        //public bool HttpServer
-        //{
-
-        //    set
-        //    {
-        //        httpFile.HttpServer1();
-        //    }
-
-        //} //HttpServer
-
+        */
 
         //=========================================================================================
         //=========================================================================================
@@ -52307,56 +52282,6 @@ namespace Thetis
             if (initializing) return; // MW0LGE
             if (!IsSetupFormNull) SetupForm.TXFilterLow = (int)udTXFilterLow.Value;
         }
-
-        ////=========================================================================================
-        ////=========================================================================================
-        //// ke9ns add allows Http server to talk with Setup through Console
-
-        //public int HTTP_PORT
-        //{
-        //    get
-        //    {
-        //        return (int)SetupForm.udHttpPort.Value;
-        //    }
-
-        //} // HTTP_PORT
-
-        ////=========================================================================================
-        ////=========================================================================================
-        //// ke9ns add allows Http server to talk with Setup through Console
-        //public int HTTP_REFRESH
-        //{
-        //    get
-        //    {
-        //        return (int)SetupForm.udHttpRefresh.Value;
-        //    }
-
-        //} // HTTP_REFRESH
-
-        ////=========================================================================================
-        ////=========================================================================================
-        //// ke9ns add allows Http server to talk with Setup through Console
-        //public string HTTP_USER
-        //{
-        //    get
-        //    {
-        //        return SetupForm.txtHttpUser.Text;
-        //    }
-
-        //} // HTTP_PORT
-
-
-        ////=========================================================================================
-        ////=========================================================================================
-        //// ke9ns add allows Http server to talk with Setup through Console
-        //public string HTTP_PASS
-        //{
-        //    get
-        //    {
-        //        return SetupForm.txtHttpPass.Text;
-        //    }
-
-        //} // HTTP_PORT
 
         //=========================================================================================
         //=========================================================================================

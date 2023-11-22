@@ -530,7 +530,6 @@
     </Compile>
     <Compile Include="HPSDR\NetworkIO.cs" />
     <Compile Include="ivac.cs" />
-    <Compile Include="KE9N\Http.cs" />
     <Compile Include="KE9N\HttpServer\GetTRXParamHandler.cs" />
     <Compile Include="KE9N\HttpServer\HandlerFactory.cs" />
     <Compile Include="KE9N\HttpServer\HttpServer.cs" />

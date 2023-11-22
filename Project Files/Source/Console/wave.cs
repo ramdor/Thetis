@@ -954,7 +954,7 @@ namespace Thetis
 
                // string file_name2 = file_name+"-rx2";				
                 WaveThing.wave_file_writer[0] = new WaveFileWriter(0, 2, waveOptionsForm.SampleRate, file_name);
- 
+
                 if (console.RX2Enabled)
                 {
                     string temp_rx2 = console.RX2DSPMode.ToString() + " ";
@@ -2388,8 +2388,13 @@ namespace Thetis
                 xmtr_rate = cmaster.GetChannelOutputRate(1, 0);
                 xmtr_size = cmaster.GetBuffSize(xmtr_rate);
             }
-            
-			channels = chan;
+
+            if (wfw_id == 0) //[2.10.3.5]MW0LGE
+                CurrentGain = (float)Audio.console.radio.GetDSPRX(0, 0).RXOutputGain;
+            else if (wfw_id == 1)
+                CurrentGain = (float)Audio.console.radio.GetDSPRX(1, 0).RXOutputGain;
+
+            channels = chan;
             // sample_rate refers to the rate of the recording
 			sample_rate = samp_rate;
             format_tag = Audio.FormatTag;
@@ -2462,10 +2467,10 @@ namespace Thetis
 
 		unsafe public void AddWriteBuffer(float *left, float *right, int nsamps)
 		{
-			rb_l.WritePtr(left,  nsamps);
+            rb_l.WritePtr(left,  nsamps);
 			rb_r.WritePtr(right, nsamps);
-			// Debug.WriteLine("ReadSpace: "+rb.ReadSpace());
-		}
+            // Debug.WriteLine("ReadSpace: "+rb.ReadSpace());
+        }
 
 		public string Stop()
 		{
@@ -2473,68 +2478,98 @@ namespace Thetis
 			return filename;
 		}
 
+        private float m_fGain = 1f;
+        private readonly object m_gainLock = new object();
+        public float CurrentGain
+        {
+            get { return m_fGain; }
+            set
+            {
+                lock (m_gainLock)
+                {
+                    if (value <= 0)
+                    {
+                        // in the case of zero gain or mute, when gain is 0 then record nothing
+                        m_fGain = 0;
+                        return;
+                    }
+
+                    if (value > 1f) value = 1f;
+
+                    m_fGain = 1 / value; // apply inverse gain to the stream to counter act the volume applied by the user
+                }
+            }
+        }
         public static bool dither = false;
 		private void WriteBuffer(ref BinaryWriter writer, ref int count)
 		{
-			int cnt = rb_l.Read(in_buf_l, IN_BLOCK);
-			rb_r.Read(in_buf_r, IN_BLOCK);
-			int out_cnt = IN_BLOCK;
-
-			// resample
-			// if(sample_rate != external_rate_base)
-			// {
-			// 	fixed(float* in_ptr = &in_buf_l[0])
-			// 		fixed(float* out_ptr = &out_buf_l[0])
-            //             WDSP.xresampleFV(in_ptr, out_ptr, cnt, &out_cnt, resamp_l);
-			// 	if(channels > 1)
-			// 	{
-			// 		fixed(float* in_ptr = &in_buf_r[0])
-			// 			fixed(float* out_ptr = &out_buf_r[0])
-            //                 WDSP.xresampleFV(in_ptr, out_ptr, cnt, &out_cnt, resamp_r);
-			// 	}
-			// }
-			// else
-			// {
-				in_buf_l.CopyTo(out_buf_l, 0);
-				in_buf_r.CopyTo(out_buf_r, 0);
-			// }
-
-			if(channels > 1)
-			{
-                // interleave samples and clip
-				for(int i=0; i<out_cnt; i++)
-				{
-					out_buf[i*2] = out_buf_l[i];
-                    if (out_buf[i * 2] > 1.0f) out_buf[i * 2] = 1.0f;
-                    else if (out_buf[i * 2] < -1.0f) out_buf[i * 2] = -1.0f;
-
-					out_buf[i*2+1] = out_buf_r[i];
-                    if (out_buf[i * 2 + 1] > 1.0f) out_buf[i * 2 + 1] = 1.0f;
-                    else if (out_buf[i * 2 + 1] < -1.0f) out_buf[i * 2 + 1] = -1.0f;
-				}
-			}
-			else
-			{
-				out_buf_l.CopyTo(out_buf, 0);
-			}
-
-			int length = out_cnt;
-			if(channels > 1) length *= 2;
-
-            switch (bit_depth)
+            lock (m_gainLock)
             {
-                case 32:
-                    Write_32(length, ref count, out_cnt);
-                    break;
-                case 24:
-                    Write_24(length, ref count, out_cnt);
-                    break;
-                case 16:
-                    Write_16(length, ref count, out_cnt);
-                    break;
-                case 8:
-                    Write_8(length, ref count, out_cnt);
-                    break;
+                int cnt = rb_l.Read(in_buf_l, IN_BLOCK);
+                rb_r.Read(in_buf_r, IN_BLOCK);
+                int out_cnt = IN_BLOCK;
+
+                // resample
+                // if(sample_rate != external_rate_base)
+                // {
+                // 	fixed(float* in_ptr = &in_buf_l[0])
+                // 		fixed(float* out_ptr = &out_buf_l[0])
+                //             WDSP.xresampleFV(in_ptr, out_ptr, cnt, &out_cnt, resamp_l);
+                // 	if(channels > 1)
+                // 	{
+                // 		fixed(float* in_ptr = &in_buf_r[0])
+                // 			fixed(float* out_ptr = &out_buf_r[0])
+                //                 WDSP.xresampleFV(in_ptr, out_ptr, cnt, &out_cnt, resamp_r);
+                // 	}
+                // }
+                // else
+                // {
+                in_buf_l.CopyTo(out_buf_l, 0);
+                in_buf_r.CopyTo(out_buf_r, 0);
+                // }
+
+                if (channels > 1)
+                {
+                    // interleave samples and clip
+                    for (int i = 0; i < out_cnt; i++)
+                    {
+                        out_buf[i * 2] = out_buf_l[i] * m_fGain;
+                        if (out_buf[i * 2] > 1.0f) out_buf[i * 2] = 1.0f;
+                        else if (out_buf[i * 2] < -1.0f) out_buf[i * 2] = -1.0f;
+
+                        out_buf[i * 2 + 1] = out_buf_r[i] * m_fGain;
+                        if (out_buf[i * 2 + 1] > 1.0f) out_buf[i * 2 + 1] = 1.0f;
+                        else if (out_buf[i * 2 + 1] < -1.0f) out_buf[i * 2 + 1] = -1.0f;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < out_cnt; i++)
+                    {
+                        out_buf_l[i] = out_buf_l[i] * m_fGain;
+                    }
+
+                    out_buf_l.CopyTo(out_buf, 0);
+                }
+
+                int length = out_cnt;
+                if (channels > 1) length *= 2;
+
+                switch (bit_depth)
+                {
+                    case 32:
+                        Write_32(length, ref count, out_cnt);
+                        break;
+                    case 24:
+                        Write_24(length, ref count, out_cnt);
+                        break;
+                    case 16:
+                        Write_16(length, ref count, out_cnt);
+                        break;
+                    case 8:
+                        Write_8(length, ref count, out_cnt);
+                        break;
+                }
             }
         }
 

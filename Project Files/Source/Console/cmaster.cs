@@ -854,11 +854,13 @@ namespace Thetis
                 case 0:
                     run =  Audio.WaveRecord
                         && WaveThing.wave_file_writer[0] != null;
+                    if (run) WaveThing.wave_file_writer[0].CurrentGain = (float)Audio.console.radio.GetDSPRX(0, 0).RXOutputGain; //[2.10.3.5]MW0LGE
                     break;
                 case 1:
                     run = Audio.WaveRecord
                         && WaveThing.wave_file_writer[1] != null
                         && Audio.console.RX2Enabled;
+                    if (run) WaveThing.wave_file_writer[1].CurrentGain = (float)Audio.console.radio.GetDSPRX(1, 0).RXOutputGain; //[2.10.3.5]MW0LGE
                     break;
             }
             WaveThing.SetWaveRecorderRun(id, run ? 1 : 0); //[2.10.3.4]MW0LGE
@@ -1160,7 +1162,6 @@ namespace Thetis
             SendCBWaveRecorder(id, precord[id]);
             wrecorder[id].ID = id;
         }
-
         #endregion
     }
 
