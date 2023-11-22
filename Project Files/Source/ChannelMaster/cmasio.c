@@ -24,7 +24,6 @@ bryanr@bometals.com
 
 */
 
-#include "cmasio.h"
 #include "cmcomm.h"
 #include "obbuffs.h"
 
