@@ -42,7 +42,7 @@ namespace Thetis
             Common.FadeIn(this);
 
             PSForm.ampv.ClientSize = new System.Drawing.Size(560, 445); //
-            Common.RestoreForm(this, "AmpView", false);
+            Common.RestoreForm(this, "AmpView", true); //[2.10.3.5]MW0LGE  #292
             hx  = GCHandle.Alloc(x,  GCHandleType.Pinned);
             hym = GCHandle.Alloc(ym, GCHandleType.Pinned);
             hyc = GCHandle.Alloc(yc, GCHandleType.Pinned);

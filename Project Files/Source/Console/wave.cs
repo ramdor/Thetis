@@ -2390,9 +2390,9 @@ namespace Thetis
             }
 
             if (wfw_id == 0) //[2.10.3.5]MW0LGE
-                CurrentGain = (float)Audio.console.radio.GetDSPRX(0, 0).RXOutputGain;
+                RecordGain = (float)Audio.console.radio.GetDSPRX(0, 0).RXOutputGain;
             else if (wfw_id == 1)
-                CurrentGain = (float)Audio.console.radio.GetDSPRX(1, 0).RXOutputGain;
+                RecordGain = (float)Audio.console.radio.GetDSPRX(1, 0).RXOutputGain;
 
             channels = chan;
             // sample_rate refers to the rate of the recording
@@ -2480,9 +2480,8 @@ namespace Thetis
 
         private float m_fInverseGain = 1f;
         private object m_inversGainlock = new object();
-        public float CurrentGain
+        public float RecordGain
         {
-            get { return m_fInverseGain; }
             set
             {
                 lock (m_inversGainlock)
@@ -2495,7 +2494,7 @@ namespace Thetis
                     
                     if (value > 1f) value = 1f;
 
-                    m_fInverseGain = 1 / value; // apply inverse gain to the stream to counter act the volume applied by the user
+                    m_fInverseGain = 1 / value; // apply inverse gain to the stream to counteract the volume applied by the user
                 }
             }
         }

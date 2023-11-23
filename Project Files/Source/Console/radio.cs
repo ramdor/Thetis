@@ -936,11 +936,11 @@ namespace Thetis
                         {
                             case 0: //rx1
                                 if(WaveThing.wave_file_writer[0] != null)
-                                    WaveThing.wave_file_writer[0].CurrentGain = (float)value;
+                                    WaveThing.wave_file_writer[0].RecordGain = (float)value;
                                 break;
                             case 2: //rx2
                                 if (WaveThing.wave_file_writer[1] != null)
-                                    WaveThing.wave_file_writer[1].CurrentGain = (float)value;
+                                    WaveThing.wave_file_writer[1].RecordGain = (float)value;
                                 break;
                         }
                     }
