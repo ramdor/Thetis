@@ -1905,7 +1905,7 @@ namespace Thetis
             //
 
             //[2.10.3.1]MW0LGE make sure it is created on this thread, as the following serial
-            //decices could cause it to be created on another thread
+            //devices could cause it to be created on another thread
             CWX tmp = CWXForm;
             //--
 

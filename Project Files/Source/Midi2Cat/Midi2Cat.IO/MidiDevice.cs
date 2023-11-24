@@ -611,7 +611,7 @@ namespace Midi2Cat.IO
         public void inDevice_ChannelMessageReceived(int ControlId, int Data, int Status, int Event, int Channel)
         {
 
-            if (!messageOk(ControlId, Status, Channel, out int controlIDmapped)) return; //[2.10.3.4]MW0LGE added filter
+            if (!filterAndMap(ControlId, Status, Channel, Data, out int controlIDmapped, out int dataMapped)) return; //[2.10.3.4]MW0LGE added filter/mapper
 
             if (onMidiInput != null) 
             {
@@ -619,22 +619,31 @@ namespace Midi2Cat.IO
                 {
                     ControlId = FixBehringerCtlID(controlIDmapped, Status); //-W2PA Disambiguate messages from Behringer controllers
 
-                    onMidiInput(this, DeviceIndex, ControlId, Data, Status, Event, Channel);
+                    onMidiInput(this, DeviceIndex, ControlId, dataMapped, Status, Event, Channel);
                 }
                 catch { }
             }
         }
-        private bool messageOk(int controlId, int status, int channel, out int controlIDmapped)
+        private bool filterAndMap(int controlId, int status, int channel, int data, out int controlIDmapped, out int dataMapped)
         {
             // return true if msg is ok
 
             controlIDmapped = controlId;
+            dataMapped = data;
 
             //handy doc : https://anotherproducer.com/online-tools-for-musicians/midi-cc-list/
             if (Ignore14bitMessages && controlId >= 32 && controlId <= 63) return false; //[2.10.3.4]MW0LGE ignore LSB Controller message for 0-31 until we code up 14 bit support
 
             switch (DeviceName)
             {
+                case "DJ2GO2 Touch MIDI": // Numark DJ2GO2 Touch
+                    // reverse the slider data value, 0-127 becomes 127-0
+                    if (controlId == 0x09 && (channel == 0x01 || channel == 0x02) && (status == 0xB0 || status == 0xB1)) dataMapped = 127 - (data & 0x7F);
+
+                    // controlID and the channel defines a button/control id with the Numark DJ2GO2 Touch, fine to use 16 bits
+                    controlIDmapped = ((controlId & 0xFF) << 8) | (channel & 0xFF);
+
+                    break;
                 case "DJControl Starlight" :
                     {
                         // ignore the finger presses on the wheel surfaces as this causes a problem when adding as a wheel
@@ -736,6 +745,7 @@ namespace Midi2Cat.IO
             // undo controlID changes [2.10.3.4]MW0LGE
             switch (DeviceName)
             {
+                case "DJ2GO2 Touch MIDI":
                 case "DJControl Starlight":
                     inControl = (inControl >> 8) & 0xFF;
                     break;

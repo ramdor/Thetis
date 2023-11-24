@@ -20,7 +20,7 @@ namespace Thetis
             get { return _skinName; }
             set
             {
-                _skinName = value.Left(30);
+                _skinName = value.Left(45);
             }
         }
         public string SkinUrl { get; set; }
@@ -86,16 +86,19 @@ namespace Thetis
     }
     public static class ThetisSkinService
     {
-        // perhaps change to static instead of creating new HTTPclients all over?
-        private static HttpClient httpClient = new HttpClient();
-
         public static event EventHandler<SkinsData> ThetisSkinsData;
         public static event EventHandler<SkinServersData> ThetisSkinServerData;
         public static event EventHandler<SkinHttpImage> ImageLoaded;
         public static event EventHandler<SkinFileDownload> FileDownload;
 
-        public static CancellationTokenSource _downloadCancellationTokenSource = null;
+        private static CancellationTokenSource _downloadCancellationTokenSource = null;
+        private static string _version;
 
+        public static string Version
+        {
+            get { return _version; }
+            set { _version = value; }
+        }
         public static async void GetThetisSkinsData(string jsonUrl)
         {
             HttpRequestCachePolicy cp = null;
@@ -118,7 +121,7 @@ namespace Thetis
                 // Send a GET request to the JSON URL and read the content asynchronously.
                 // In some scenarios, especially in UI applications (e.g., WinForms, WPF),
                 // calling asynchronous methods without ConfigureAwait(false) can lead to a deadlock. 
-                string jsonContent = await httpClient.GetStringAsync(jsonUrl + "?timestamp=" + DateTime.Now.Ticks);
+                string jsonContent = await client.GetStringAsync(jsonUrl + "?timestamp=" + DateTime.Now.Ticks);
 
                 // Deserialize the JSON data into the pre-defined class.
                 SkinsData thetisSkinsData = JsonConvert.DeserializeObject<SkinsData>(jsonContent);
@@ -175,7 +178,7 @@ namespace Thetis
                 client = new HttpClient(wrh);
                 client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue(){ NoCache = true };
 
-                string jsonContent = await httpClient.GetStringAsync(jsonUrl + "?timestamp=" + DateTime.Now.Ticks);
+                string jsonContent = await client.GetStringAsync(jsonUrl + "?timestamp=" + DateTime.Now.Ticks);
                 SkinServersData skinServersData = JsonConvert.DeserializeObject<SkinServersData>(jsonContent);
                 ThetisSkinServerData?.Invoke(null, skinServersData);
             }
@@ -257,7 +260,7 @@ namespace Thetis
                 client = new HttpClient(wrh);
                 client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue() { NoCache = true };
 
-                byte[] imageBytes = await httpClient.GetByteArrayAsync(imageUrl);
+                byte[] imageBytes = await client.GetByteArrayAsync(imageUrl);
 
                 using (System.IO.MemoryStream stream = new System.IO.MemoryStream(imageBytes))
                 {
@@ -301,6 +304,8 @@ namespace Thetis
             {
                 using (HttpClient httpClient = new HttpClient())
                 {
+                    httpClient.DefaultRequestHeaders.Add("User-Agent", "Thetis v" + _version);
+
                     using (HttpResponseMessage response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead,_downloadCancellationTokenSource.Token))
                     using (Stream contentStream = await response.Content.ReadAsStreamAsync())
                     {
