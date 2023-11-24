@@ -8707,7 +8707,7 @@
             // 
             // btnQSOTimerPlaySelectedWAV
             // 
-            this.btnQSOTimerPlaySelectedWAV.Image = null;
+            this.btnQSOTimerPlaySelectedWAV.Image = global::Thetis.Properties.Resources.play;
             this.btnQSOTimerPlaySelectedWAV.Location = new System.Drawing.Point(92, 138);
             this.btnQSOTimerPlaySelectedWAV.Name = "btnQSOTimerPlaySelectedWAV";
             this.btnQSOTimerPlaySelectedWAV.Selectable = true;

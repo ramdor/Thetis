@@ -8,6 +8,7 @@ using System.Threading;
 using System.IO;
 using System.Xml;
 using System.Drawing.Drawing2D;
+using System.Diagnostics;
 
 namespace Thetis
 {
@@ -75,22 +76,19 @@ namespace Thetis
         }
         private void gatherSearchDataThread(Control frm, ToolTip tt)
         {
-            lock (_objLocker)
-            {
-                getControlList(frm, ref _searchData, tt);
-            }
+            getControlList(frm, tt);
 
             lock (_objWTLocker)
             {
                 _workerThreads.Remove(frm.Name);
             }
         }
-        private void getControlList(Control c, ref Dictionary<string, SearchData> searchData, ToolTip tt)
+        private void getControlList(Control c, ToolTip tt)
         {
             if (c.Controls.Count > 0)
             {
                 foreach (Control c2 in c.Controls)
-                    getControlList(c2, ref searchData, tt);
+                    getControlList(c2, tt);
             }
 
             if (c.GetType() == typeof(CheckBoxTS) || c.GetType() == typeof(CheckBox) ||
@@ -110,7 +108,13 @@ namespace Thetis
             {
                 string sKey = c.GetFullName();
 
-                if (!searchData.ContainsKey(sKey))
+                bool bAdd = false;
+                lock (_objLocker)
+                {
+                   bAdd = !_searchData.ContainsKey(sKey);
+                }
+
+                if (bAdd)
                 {
                     string xmlReplace = "";
                     if(_xmlData.ContainsKey(sKey))
@@ -147,7 +151,10 @@ namespace Thetis
                         FullName = sKey
                     };
 
-                    searchData.Add(sKey, sd);
+                    lock (_objLocker)
+                    {
+                        _searchData.Add(sKey, sd);
+                    }
                 }
             }
         }
@@ -470,7 +477,7 @@ namespace Thetis
                         workersWorking = _workerThreads.Count > 0;
                     }
                     tries++;
-                    if (tries > 100) return; // give up after 5 seconds total time. Could use .join but ...
+                    if (tries > 200) return; // give up after 10 seconds total time. If not done in 10 seconds then time to buy a new cpu !
                 }
 
                 XmlDocument xmlDoc = new XmlDocument();

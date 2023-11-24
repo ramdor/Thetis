@@ -954,7 +954,7 @@ namespace Thetis
 
                // string file_name2 = file_name+"-rx2";				
                 WaveThing.wave_file_writer[0] = new WaveFileWriter(0, 2, waveOptionsForm.SampleRate, file_name);
- 
+
                 if (console.RX2Enabled)
                 {
                     string temp_rx2 = console.RX2DSPMode.ToString() + " ";
@@ -2388,8 +2388,13 @@ namespace Thetis
                 xmtr_rate = cmaster.GetChannelOutputRate(1, 0);
                 xmtr_size = cmaster.GetBuffSize(xmtr_rate);
             }
-            
-			channels = chan;
+
+            if (wfw_id == 0) //[2.10.3.5]MW0LGE
+                RecordGain = (float)Audio.console.radio.GetDSPRX(0, 0).RXOutputGain;
+            else if (wfw_id == 1)
+                RecordGain = (float)Audio.console.radio.GetDSPRX(1, 0).RXOutputGain;
+
+            channels = chan;
             // sample_rate refers to the rate of the recording
 			sample_rate = samp_rate;
             format_tag = Audio.FormatTag;
@@ -2462,10 +2467,10 @@ namespace Thetis
 
 		unsafe public void AddWriteBuffer(float *left, float *right, int nsamps)
 		{
-			rb_l.WritePtr(left,  nsamps);
+            rb_l.WritePtr(left,  nsamps);
 			rb_r.WritePtr(right, nsamps);
-			// Debug.WriteLine("ReadSpace: "+rb.ReadSpace());
-		}
+            // Debug.WriteLine("ReadSpace: "+rb.ReadSpace());
+        }
 
 		public string Stop()
 		{
@@ -2473,53 +2478,86 @@ namespace Thetis
 			return filename;
 		}
 
+        private float m_fInverseGain = 1f;
+        private object m_inversGainlock = new object();
+        public float RecordGain
+        {
+            set
+            {
+                lock (m_inversGainlock)
+                {
+                    if (value <= 0)
+                    {
+                        m_fInverseGain = 0;
+                        return;
+                    }
+                    
+                    if (value > 1f) value = 1f;
+
+                    m_fInverseGain = 1 / value; // apply inverse gain to the stream to counteract the volume applied by the user
+                }
+            }
+        }
         public static bool dither = false;
 		private void WriteBuffer(ref BinaryWriter writer, ref int count)
 		{
-			int cnt = rb_l.Read(in_buf_l, IN_BLOCK);
-			rb_r.Read(in_buf_r, IN_BLOCK);
-			int out_cnt = IN_BLOCK;
+            float fGain;
+            lock (m_inversGainlock)
+            {
+                fGain = m_fInverseGain;
+            }
 
-			// resample
-			// if(sample_rate != external_rate_base)
-			// {
-			// 	fixed(float* in_ptr = &in_buf_l[0])
-			// 		fixed(float* out_ptr = &out_buf_l[0])
+            int cntL = rb_l.Read(in_buf_l, IN_BLOCK);
+            int cntR = rb_r.Read(in_buf_r, IN_BLOCK);
+            if (cntL != cntR) return;
+
+            int out_cnt = cntL;//= IN_BLOCK; //[2.10.3.5]MW0LGE
+
+            // resample
+            // if(sample_rate != external_rate_base)
+            // {
+            // 	fixed(float* in_ptr = &in_buf_l[0])
+            // 		fixed(float* out_ptr = &out_buf_l[0])
             //             WDSP.xresampleFV(in_ptr, out_ptr, cnt, &out_cnt, resamp_l);
-			// 	if(channels > 1)
-			// 	{
-			// 		fixed(float* in_ptr = &in_buf_r[0])
-			// 			fixed(float* out_ptr = &out_buf_r[0])
+            // 	if(channels > 1)
+            // 	{
+            // 		fixed(float* in_ptr = &in_buf_r[0])
+            // 			fixed(float* out_ptr = &out_buf_r[0])
             //                 WDSP.xresampleFV(in_ptr, out_ptr, cnt, &out_cnt, resamp_r);
-			// 	}
-			// }
-			// else
-			// {
-				in_buf_l.CopyTo(out_buf_l, 0);
-				in_buf_r.CopyTo(out_buf_r, 0);
-			// }
+            // 	}
+            // }
+            // else
+            // {
+            in_buf_l.CopyTo(out_buf_l, 0);
+            in_buf_r.CopyTo(out_buf_r, 0);
+            // }
 
-			if(channels > 1)
-			{
+            if (channels > 1)
+            {
                 // interleave samples and clip
-				for(int i=0; i<out_cnt; i++)
-				{
-					out_buf[i*2] = out_buf_l[i];
+                for (int i = 0; i < out_cnt; i++)
+                {
+                    out_buf[i * 2] = out_buf_l[i] * fGain;
                     if (out_buf[i * 2] > 1.0f) out_buf[i * 2] = 1.0f;
                     else if (out_buf[i * 2] < -1.0f) out_buf[i * 2] = -1.0f;
 
-					out_buf[i*2+1] = out_buf_r[i];
+                    out_buf[i * 2 + 1] = out_buf_r[i] * fGain;
                     if (out_buf[i * 2 + 1] > 1.0f) out_buf[i * 2 + 1] = 1.0f;
                     else if (out_buf[i * 2 + 1] < -1.0f) out_buf[i * 2 + 1] = -1.0f;
-				}
-			}
-			else
-			{
-				out_buf_l.CopyTo(out_buf, 0);
-			}
+                }
+            }
+            else
+            {
+                for (int i = 0; i < out_cnt; i++)
+                {
+                    out_buf_l[i] = out_buf_l[i] * fGain;
+                }
 
-			int length = out_cnt;
-			if(channels > 1) length *= 2;
+                out_buf_l.CopyTo(out_buf, 0);
+            }
+
+            int length = out_cnt;
+            if (channels > 1) length *= 2;
 
             switch (bit_depth)
             {

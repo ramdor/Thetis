@@ -5485,10 +5485,10 @@ namespace Thetis
                                         waterfall_minimum = dataCopy[i] + fOffset;
 
                                     // set pixel color changed by w3sz
-
-                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)B;    // set color in memory
+                                    //[2.10.3.5]MW0LGE note these are reverse RGB, we normally expect BGRA #289
+                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
-                                    row[(i * m_nDecimation) * pixel_size + 2] = (byte)R;
+                                    row[(i * m_nDecimation) * pixel_size + 2] = (byte)B;
                                     row[(i * m_nDecimation) * pixel_size + 3] = nbBitmapAlpaha;
                                 }
                             }
@@ -5692,9 +5692,10 @@ namespace Thetis
                                     if (waterfall_minimum > dataCopy[i] + fOffset) //[2.10.3]MW0LGE use non notched data
                                         waterfall_minimum = dataCopy[i] + fOffset;
 
-                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)B;    // set color in memory
+                                    //[2.10.3.5]MW0LGE note these are reverse RGB, we normally expect BGRA #289
+                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
-                                    row[(i * m_nDecimation) * pixel_size + 2] = (byte)R;
+                                    row[(i * m_nDecimation) * pixel_size + 2] = (byte)B;
                                     row[(i * m_nDecimation) * pixel_size + 3] = nbBitmapAlpaha;
                                 }
                             }
@@ -5897,9 +5898,10 @@ namespace Thetis
                                     }
 
                                     // set pixel color changed by w3sz
-                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)B;    // set color in memory
+                                    //[2.10.3.5]MW0LGE note these are reverse RGB, we normally expect BGRA #289
+                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)R;    // set color in memory
                                     row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
-                                    row[(i * m_nDecimation) * pixel_size + 2] = (byte)R;
+                                    row[(i * m_nDecimation) * pixel_size + 2] = (byte)B;
                                     row[(i * m_nDecimation) * pixel_size + 3] = nbBitmapAlpaha;
                                 }
                             }
