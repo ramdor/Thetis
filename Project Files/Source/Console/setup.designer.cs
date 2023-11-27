@@ -18,6 +18,7 @@
             System.Windows.Forms.NumericUpDownTS numericUpDownTS10;
             System.Windows.Forms.NumericUpDownTS numericUpDownTS12;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Setup));
+            this.chkForceATTwhenOutPowerChanges = new System.Windows.Forms.CheckBoxTS();
             this.chkForceATTwhenPSAoff = new System.Windows.Forms.CheckBoxTS();
             this.chkEnableXVTRHF = new System.Windows.Forms.CheckBoxTS();
             this.chkBPF2Gnd = new System.Windows.Forms.CheckBoxTS();
@@ -2723,36 +2724,6 @@
             this.chkPA6 = new System.Windows.Forms.CheckBoxTS();
             this.tpWattMeter = new System.Windows.Forms.TabPage();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.grp10WattMeterTrim = new System.Windows.Forms.GroupBox();
-            this.btnResetWattMeterValues = new System.Windows.Forms.ButtonTS();
-            this.ud10PA1W = new System.Windows.Forms.NumericUpDownTS();
-            this.ud10PA10W = new System.Windows.Forms.NumericUpDownTS();
-            this.label10PA9W = new System.Windows.Forms.LabelTS();
-            this.label10PA10W = new System.Windows.Forms.LabelTS();
-            this.ud10PA9W = new System.Windows.Forms.NumericUpDownTS();
-            this.label10PA11W = new System.Windows.Forms.LabelTS();
-            this.label10PA8W = new System.Windows.Forms.LabelTS();
-            this.ud10PA11W = new System.Windows.Forms.NumericUpDownTS();
-            this.ud10PA8W = new System.Windows.Forms.NumericUpDownTS();
-            this.ud10PA12W = new System.Windows.Forms.NumericUpDownTS();
-            this.label10PA7W = new System.Windows.Forms.LabelTS();
-            this.label10PA12W = new System.Windows.Forms.LabelTS();
-            this.ud10PA7W = new System.Windows.Forms.NumericUpDownTS();
-            this.ud10PA13W = new System.Windows.Forms.NumericUpDownTS();
-            this.label10PA6W = new System.Windows.Forms.LabelTS();
-            this.label10PA1W = new System.Windows.Forms.LabelTS();
-            this.label10PA13W = new System.Windows.Forms.LabelTS();
-            this.ud10PA6W = new System.Windows.Forms.NumericUpDownTS();
-            this.ud10PA14W = new System.Windows.Forms.NumericUpDownTS();
-            this.label10PA5W = new System.Windows.Forms.LabelTS();
-            this.ud10PA2W = new System.Windows.Forms.NumericUpDownTS();
-            this.label10PA14W = new System.Windows.Forms.LabelTS();
-            this.ud10PA5W = new System.Windows.Forms.NumericUpDownTS();
-            this.label10PA2W = new System.Windows.Forms.LabelTS();
-            this.label10PA4W = new System.Windows.Forms.LabelTS();
-            this.ud10PA4W = new System.Windows.Forms.NumericUpDownTS();
-            this.ud10PA3W = new System.Windows.Forms.NumericUpDownTS();
-            this.label10PA3W = new System.Windows.Forms.LabelTS();
             this.grp100WattMeterTrim = new System.Windows.Forms.GroupBox();
             this.ud100PA10W = new System.Windows.Forms.NumericUpDownTS();
             this.ud100PA100W = new System.Windows.Forms.NumericUpDownTS();
@@ -2811,6 +2782,36 @@
             this.ud200PA80W = new System.Windows.Forms.NumericUpDownTS();
             this.ud200PA60W = new System.Windows.Forms.NumericUpDownTS();
             this.label200PA60W = new System.Windows.Forms.LabelTS();
+            this.grp10WattMeterTrim = new System.Windows.Forms.GroupBox();
+            this.btnResetWattMeterValues = new System.Windows.Forms.ButtonTS();
+            this.ud10PA1W = new System.Windows.Forms.NumericUpDownTS();
+            this.ud10PA10W = new System.Windows.Forms.NumericUpDownTS();
+            this.label10PA9W = new System.Windows.Forms.LabelTS();
+            this.label10PA10W = new System.Windows.Forms.LabelTS();
+            this.ud10PA9W = new System.Windows.Forms.NumericUpDownTS();
+            this.label10PA11W = new System.Windows.Forms.LabelTS();
+            this.label10PA8W = new System.Windows.Forms.LabelTS();
+            this.ud10PA11W = new System.Windows.Forms.NumericUpDownTS();
+            this.ud10PA8W = new System.Windows.Forms.NumericUpDownTS();
+            this.ud10PA12W = new System.Windows.Forms.NumericUpDownTS();
+            this.label10PA7W = new System.Windows.Forms.LabelTS();
+            this.label10PA12W = new System.Windows.Forms.LabelTS();
+            this.ud10PA7W = new System.Windows.Forms.NumericUpDownTS();
+            this.ud10PA13W = new System.Windows.Forms.NumericUpDownTS();
+            this.label10PA6W = new System.Windows.Forms.LabelTS();
+            this.label10PA1W = new System.Windows.Forms.LabelTS();
+            this.label10PA13W = new System.Windows.Forms.LabelTS();
+            this.ud10PA6W = new System.Windows.Forms.NumericUpDownTS();
+            this.ud10PA14W = new System.Windows.Forms.NumericUpDownTS();
+            this.label10PA5W = new System.Windows.Forms.LabelTS();
+            this.ud10PA2W = new System.Windows.Forms.NumericUpDownTS();
+            this.label10PA14W = new System.Windows.Forms.LabelTS();
+            this.ud10PA5W = new System.Windows.Forms.NumericUpDownTS();
+            this.label10PA2W = new System.Windows.Forms.LabelTS();
+            this.label10PA4W = new System.Windows.Forms.LabelTS();
+            this.ud10PA4W = new System.Windows.Forms.NumericUpDownTS();
+            this.ud10PA3W = new System.Windows.Forms.NumericUpDownTS();
+            this.label10PA3W = new System.Windows.Forms.LabelTS();
             this.panelPAValues = new System.Windows.Forms.PanelTS();
             this.textSWR = new System.Windows.Forms.TextBoxTS();
             this.labelTS256 = new System.Windows.Forms.LabelTS();
@@ -3132,15 +3133,15 @@
             this.chkShowTopControls = new System.Windows.Forms.CheckBoxTS();
             this.tpSkinServers = new System.Windows.Forms.TabPage();
             this.panelSkinServerControls = new System.Windows.Forms.PanelTS();
+            this.labelTS183 = new System.Windows.Forms.LabelTS();
+            this.btnRefreshSkinsForServer = new System.Windows.Forms.ButtonTS();
+            this.comboSkinServerList = new System.Windows.Forms.ComboBoxTS();
+            this.gtpAvailableSkins = new System.Windows.Forms.GroupBoxTS();
             this.grpAuthorDetails = new System.Windows.Forms.GroupBoxTS();
             this.btnSkinsDonate = new System.Windows.Forms.ButtonTS();
             this.btnSkinsHomepage = new System.Windows.Forms.ButtonTS();
             this.lblAuthorDetails2 = new System.Windows.Forms.LabelTS();
             this.lblAuthorDetails1 = new System.Windows.Forms.LabelTS();
-            this.labelTS183 = new System.Windows.Forms.LabelTS();
-            this.btnRefreshSkinsForServer = new System.Windows.Forms.ButtonTS();
-            this.comboSkinServerList = new System.Windows.Forms.ComboBoxTS();
-            this.gtpAvailableSkins = new System.Windows.Forms.GroupBoxTS();
             this.chkReplaceCurrentMeterInSelectedSkin = new System.Windows.Forms.CheckBoxTS();
             this.lblSkinOverview = new System.Windows.Forms.TextBoxTS();
             this.btnSkinHomepage = new System.Windows.Forms.Button();
@@ -3466,6 +3467,7 @@
             this.btnTestAudioBalStart = new System.Windows.Forms.ButtonTS();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.lblTXProfileWarning = new System.Windows.Forms.LabelTS();
             this.btnExportDB = new System.Windows.Forms.ButtonTS();
             this.btnImportDB = new System.Windows.Forms.ButtonTS();
             this.btnResetDB = new System.Windows.Forms.ButtonTS();
@@ -3473,13 +3475,14 @@
             this.btnCancel = new System.Windows.Forms.ButtonTS();
             this.btnOK = new System.Windows.Forms.ButtonTS();
             this.chkEnableRFEPATR = new System.Windows.Forms.CheckBoxTS();
-            this.lblTXProfileWarning = new System.Windows.Forms.LabelTS();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
             this.tmrPLLLockChecker = new System.Windows.Forms.Timer(this.components);
             this.tmrCFCOMPGain = new System.Windows.Forms.Timer(this.components);
+            this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
+            this.txtboxTXProfileChangedReport = new System.Windows.Forms.TextBoxTS();
             this.labelSavingLoading = new System.Windows.Forms.LabelTS();
             this.grpDiagInfo = new System.Windows.Forms.GroupBoxTS();
             this.lblSyncData = new System.Windows.Forms.LabelTS();
@@ -3524,8 +3527,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.tmrCheckProfile = new System.Windows.Forms.Timer(this.components);
-            this.txtboxTXProfileChangedReport = new System.Windows.Forms.TextBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4231,21 +4232,6 @@
             this.panelAutoPACalibrate.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udPACalPower)).BeginInit();
             this.tpWattMeter.SuspendLayout();
-            this.grp10WattMeterTrim.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA1W)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA10W)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA9W)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA11W)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA8W)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA12W)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA7W)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA13W)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA6W)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA14W)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA2W)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA5W)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA4W)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA3W)).BeginInit();
             this.grp100WattMeterTrim.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ud100PA10W)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ud100PA100W)).BeginInit();
@@ -4276,6 +4262,21 @@
             ((System.ComponentModel.ISupportInitialize)(this.ud200PA100W)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ud200PA80W)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ud200PA60W)).BeginInit();
+            this.grp10WattMeterTrim.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA1W)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA10W)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA9W)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA11W)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA8W)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA12W)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA7W)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA13W)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA6W)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA14W)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA2W)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA5W)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA4W)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA3W)).BeginInit();
             this.panelPAValues.SuspendLayout();
             this.tpAppearance.SuspendLayout();
             this.tcAppearance.SuspendLayout();
@@ -4341,8 +4342,8 @@
             this.grpBoxCollapsible.SuspendLayout();
             this.tpSkinServers.SuspendLayout();
             this.panelSkinServerControls.SuspendLayout();
-            this.grpAuthorDetails.SuspendLayout();
             this.gtpAvailableSkins.SuspendLayout();
+            this.grpAuthorDetails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSkinThumbnail)).BeginInit();
             this.panelGetServerList.SuspendLayout();
             this.tpKeyboard.SuspendLayout();
@@ -4460,6 +4461,7 @@
             // tpAlexAntCtrl
             // 
             tpAlexAntCtrl.BackColor = System.Drawing.SystemColors.Control;
+            tpAlexAntCtrl.Controls.Add(this.chkForceATTwhenOutPowerChanges);
             tpAlexAntCtrl.Controls.Add(this.chkForceATTwhenPSAoff);
             tpAlexAntCtrl.Controls.Add(this.chkEnableXVTRHF);
             tpAlexAntCtrl.Controls.Add(this.chkBPF2Gnd);
@@ -4481,14 +4483,28 @@
             tpAlexAntCtrl.TabIndex = 0;
             tpAlexAntCtrl.Text = "Antenna";
             // 
+            // chkForceATTwhenOutPowerChanges
+            // 
+            this.chkForceATTwhenOutPowerChanges.Checked = true;
+            this.chkForceATTwhenOutPowerChanges.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkForceATTwhenOutPowerChanges.Image = null;
+            this.chkForceATTwhenOutPowerChanges.Location = new System.Drawing.Point(477, 219);
+            this.chkForceATTwhenOutPowerChanges.Name = "chkForceATTwhenOutPowerChanges";
+            this.chkForceATTwhenOutPowerChanges.Size = new System.Drawing.Size(225, 31);
+            this.chkForceATTwhenOutPowerChanges.TabIndex = 21;
+            this.chkForceATTwhenOutPowerChanges.Text = "Force ATT on Tx to 31 when Drive or\r\nTune power is increased and PS-A is on";
+            this.toolTip1.SetToolTip(this.chkForceATTwhenOutPowerChanges, "Forces ATT on Tx to 31 when Drive or Tune power is increased and PS-A is on");
+            this.chkForceATTwhenOutPowerChanges.UseVisualStyleBackColor = true;
+            this.chkForceATTwhenOutPowerChanges.CheckedChanged += new System.EventHandler(this.chkForceATTwhenOutPowerChanges_CheckedChanged);
+            // 
             // chkForceATTwhenPSAoff
             // 
             this.chkForceATTwhenPSAoff.Checked = true;
             this.chkForceATTwhenPSAoff.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkForceATTwhenPSAoff.Image = null;
-            this.chkForceATTwhenPSAoff.Location = new System.Drawing.Point(528, 188);
+            this.chkForceATTwhenPSAoff.Location = new System.Drawing.Point(477, 188);
             this.chkForceATTwhenPSAoff.Name = "chkForceATTwhenPSAoff";
-            this.chkForceATTwhenPSAoff.Size = new System.Drawing.Size(149, 31);
+            this.chkForceATTwhenPSAoff.Size = new System.Drawing.Size(225, 31);
             this.chkForceATTwhenPSAoff.TabIndex = 20;
             this.chkForceATTwhenPSAoff.Text = "Force ATT on Tx to 31 when PS-A is off";
             this.toolTip1.SetToolTip(this.chkForceATTwhenPSAoff, "Forces ATT on Tx to 31 when PS-A is off. CW will do this anyway");
@@ -4499,7 +4515,7 @@
             // 
             this.chkEnableXVTRHF.AutoSize = true;
             this.chkEnableXVTRHF.Image = null;
-            this.chkEnableXVTRHF.Location = new System.Drawing.Point(528, 318);
+            this.chkEnableXVTRHF.Location = new System.Drawing.Point(477, 356);
             this.chkEnableXVTRHF.Name = "chkEnableXVTRHF";
             this.chkEnableXVTRHF.Size = new System.Drawing.Size(108, 17);
             this.chkEnableXVTRHF.TabIndex = 19;
@@ -4514,7 +4530,7 @@
             this.chkBPF2Gnd.Checked = true;
             this.chkBPF2Gnd.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBPF2Gnd.Image = null;
-            this.chkBPF2Gnd.Location = new System.Drawing.Point(528, 298);
+            this.chkBPF2Gnd.Location = new System.Drawing.Point(477, 336);
             this.chkBPF2Gnd.Name = "chkBPF2Gnd";
             this.chkBPF2Gnd.Size = new System.Drawing.Size(105, 17);
             this.chkBPF2Gnd.TabIndex = 16;
@@ -4541,7 +4557,7 @@
             // 
             this.chkEXT2OutOnTx.AutoSize = true;
             this.chkEXT2OutOnTx.Image = null;
-            this.chkEXT2OutOnTx.Location = new System.Drawing.Point(528, 238);
+            this.chkEXT2OutOnTx.Location = new System.Drawing.Point(477, 276);
             this.chkEXT2OutOnTx.Name = "chkEXT2OutOnTx";
             this.chkEXT2OutOnTx.Size = new System.Drawing.Size(94, 17);
             this.chkEXT2OutOnTx.TabIndex = 13;
@@ -4554,7 +4570,7 @@
             // 
             this.chkEXT1OutOnTx.AutoSize = true;
             this.chkEXT1OutOnTx.Image = null;
-            this.chkEXT1OutOnTx.Location = new System.Drawing.Point(528, 258);
+            this.chkEXT1OutOnTx.Location = new System.Drawing.Point(477, 296);
             this.chkEXT1OutOnTx.Name = "chkEXT1OutOnTx";
             this.chkEXT1OutOnTx.Size = new System.Drawing.Size(94, 17);
             this.chkEXT1OutOnTx.TabIndex = 10;
@@ -4567,7 +4583,7 @@
             // 
             this.labelATTOnTX.AutoSize = true;
             this.labelATTOnTX.Image = null;
-            this.labelATTOnTX.Location = new System.Drawing.Point(525, 158);
+            this.labelATTOnTX.Location = new System.Drawing.Point(469, 158);
             this.labelATTOnTX.Name = "labelATTOnTX";
             this.labelATTOnTX.Size = new System.Drawing.Size(31, 13);
             this.labelATTOnTX.TabIndex = 9;
@@ -4581,7 +4597,7 @@
             0,
             0,
             0});
-            this.udATTOnTX.Location = new System.Drawing.Point(557, 155);
+            this.udATTOnTX.Location = new System.Drawing.Point(506, 156);
             this.udATTOnTX.Maximum = new decimal(new int[] {
             31,
             0,
@@ -4608,7 +4624,7 @@
             // 
             this.chkHFTRRelay.AutoSize = true;
             this.chkHFTRRelay.Image = null;
-            this.chkHFTRRelay.Location = new System.Drawing.Point(528, 278);
+            this.chkHFTRRelay.Location = new System.Drawing.Point(477, 316);
             this.chkHFTRRelay.Name = "chkHFTRRelay";
             this.chkHFTRRelay.Size = new System.Drawing.Size(95, 17);
             this.chkHFTRRelay.TabIndex = 7;
@@ -4621,7 +4637,7 @@
             // 
             this.grpSWRProtectionControl.Controls.Add(this.chkSWRTuneProtection);
             this.grpSWRProtectionControl.Controls.Add(this.chkSWRProtection);
-            this.grpSWRProtectionControl.Location = new System.Drawing.Point(504, 43);
+            this.grpSWRProtectionControl.Location = new System.Drawing.Point(453, 44);
             this.grpSWRProtectionControl.Name = "grpSWRProtectionControl";
             this.grpSWRProtectionControl.Size = new System.Drawing.Size(143, 84);
             this.grpSWRProtectionControl.TabIndex = 5;
@@ -4663,7 +4679,7 @@
             this.chkATTOnTX.Checked = true;
             this.chkATTOnTX.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkATTOnTX.Image = null;
-            this.chkATTOnTX.Location = new System.Drawing.Point(528, 133);
+            this.chkATTOnTX.Location = new System.Drawing.Point(477, 134);
             this.chkATTOnTX.Name = "chkATTOnTX";
             this.chkATTOnTX.Size = new System.Drawing.Size(77, 17);
             this.chkATTOnTX.TabIndex = 4;
@@ -4676,7 +4692,7 @@
             // 
             this.chkRxOutOnTx.AutoSize = true;
             this.chkRxOutOnTx.Image = null;
-            this.chkRxOutOnTx.Location = new System.Drawing.Point(528, 218);
+            this.chkRxOutOnTx.Location = new System.Drawing.Point(477, 256);
             this.chkRxOutOnTx.Name = "chkRxOutOnTx";
             this.chkRxOutOnTx.Size = new System.Drawing.Size(98, 17);
             this.chkRxOutOnTx.TabIndex = 2;
@@ -4695,7 +4711,7 @@
             this.chkAlexAntCtrl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.chkAlexAntCtrl.ForeColor = System.Drawing.SystemColors.ControlText;
             this.chkAlexAntCtrl.Image = null;
-            this.chkAlexAntCtrl.Location = new System.Drawing.Point(528, 14);
+            this.chkAlexAntCtrl.Location = new System.Drawing.Point(477, 15);
             this.chkAlexAntCtrl.Name = "chkAlexAntCtrl";
             this.chkAlexAntCtrl.Size = new System.Drawing.Size(95, 23);
             this.chkAlexAntCtrl.TabIndex = 1;
@@ -6969,7 +6985,7 @@
             // chkFirewallCheck
             // 
             this.chkFirewallCheck.Image = null;
-            this.chkFirewallCheck.Location = new System.Drawing.Point(216, 99);
+            this.chkFirewallCheck.Location = new System.Drawing.Point(216, 51);
             this.chkFirewallCheck.Name = "chkFirewallCheck";
             this.chkFirewallCheck.Selectable = true;
             this.chkFirewallCheck.Size = new System.Drawing.Size(98, 33);
@@ -7012,7 +7028,7 @@
             this.chkNetworkWDT.Image = null;
             this.chkNetworkWDT.Location = new System.Drawing.Point(25, 60);
             this.chkNetworkWDT.Name = "chkNetworkWDT";
-            this.chkNetworkWDT.Size = new System.Drawing.Size(152, 16);
+            this.chkNetworkWDT.Size = new System.Drawing.Size(152, 17);
             this.chkNetworkWDT.TabIndex = 16;
             this.chkNetworkWDT.Text = "Network Watchdog";
             this.toolTip1.SetToolTip(this.chkNetworkWDT, "Resets software/firmware if network becomes inactive.");
@@ -7045,7 +7061,7 @@
             this.panelTS7.Controls.Add(this.udStaticIP1);
             this.panelTS7.Location = new System.Drawing.Point(9, 138);
             this.panelTS7.Name = "panelTS7";
-            this.panelTS7.Size = new System.Drawing.Size(234, 124);
+            this.panelTS7.Size = new System.Drawing.Size(305, 124);
             this.panelTS7.TabIndex = 15;
             // 
             // radStaticIP4
@@ -7442,10 +7458,10 @@
             // btnSetIPAddr
             // 
             this.btnSetIPAddr.Image = null;
-            this.btnSetIPAddr.Location = new System.Drawing.Point(166, 102);
+            this.btnSetIPAddr.Location = new System.Drawing.Point(226, 33);
             this.btnSetIPAddr.Name = "btnSetIPAddr";
             this.btnSetIPAddr.Selectable = true;
-            this.btnSetIPAddr.Size = new System.Drawing.Size(60, 20);
+            this.btnSetIPAddr.Size = new System.Drawing.Size(60, 33);
             this.btnSetIPAddr.TabIndex = 4;
             this.btnSetIPAddr.Text = "Select IP";
             this.btnSetIPAddr.UseVisualStyleBackColor = true;
@@ -7783,7 +7799,7 @@
             this.groupBoxHPSDRHW.Controls.Add(this.chkPennyPresent);
             this.groupBoxHPSDRHW.Location = new System.Drawing.Point(208, 8);
             this.groupBoxHPSDRHW.Name = "groupBoxHPSDRHW";
-            this.groupBoxHPSDRHW.Size = new System.Drawing.Size(160, 171);
+            this.groupBoxHPSDRHW.Size = new System.Drawing.Size(160, 172);
             this.groupBoxHPSDRHW.TabIndex = 30;
             this.groupBoxHPSDRHW.TabStop = false;
             this.groupBoxHPSDRHW.Text = "Hardware Options";
@@ -9182,7 +9198,7 @@
             this.groupBoxTS26.Controls.Add(this.nudNFsensitivity);
             this.groupBoxTS26.Location = new System.Drawing.Point(438, 8);
             this.groupBoxTS26.Name = "groupBoxTS26";
-            this.groupBoxTS26.Size = new System.Drawing.Size(257, 146);
+            this.groupBoxTS26.Size = new System.Drawing.Size(257, 132);
             this.groupBoxTS26.TabIndex = 35;
             this.groupBoxTS26.TabStop = false;
             this.groupBoxTS26.Text = "Noise Floor";
@@ -9470,7 +9486,7 @@
             // 
             // btnQSOTimerPlaySelectedWAV
             // 
-            this.btnQSOTimerPlaySelectedWAV.Image = null;
+            this.btnQSOTimerPlaySelectedWAV.Image = global::Thetis.Properties.Resources.play;
             this.btnQSOTimerPlaySelectedWAV.Location = new System.Drawing.Point(92, 138);
             this.btnQSOTimerPlaySelectedWAV.Name = "btnQSOTimerPlaySelectedWAV";
             this.btnQSOTimerPlaySelectedWAV.Selectable = true;
@@ -9656,7 +9672,7 @@
             this.groupBoxTS27.Controls.Add(this.udAmpVoff);
             this.groupBoxTS27.Location = new System.Drawing.Point(541, 8);
             this.groupBoxTS27.Name = "groupBoxTS27";
-            this.groupBoxTS27.Size = new System.Drawing.Size(175, 175);
+            this.groupBoxTS27.Size = new System.Drawing.Size(175, 227);
             this.groupBoxTS27.TabIndex = 15;
             this.groupBoxTS27.TabStop = false;
             this.groupBoxTS27.Text = "Current (A) calculation";
@@ -10053,7 +10069,7 @@
             // chkCalExpert
             // 
             this.chkCalExpert.Image = null;
-            this.chkCalExpert.Location = new System.Drawing.Point(408, 237);
+            this.chkCalExpert.Location = new System.Drawing.Point(408, 238);
             this.chkCalExpert.Name = "chkCalExpert";
             this.chkCalExpert.Size = new System.Drawing.Size(56, 24);
             this.chkCalExpert.TabIndex = 10;
@@ -11763,9 +11779,9 @@
             this.grpExtPAControlHF.Controls.Add(this.chkPin2TXPAHF);
             this.grpExtPAControlHF.Controls.Add(this.chkPin4TXPAHF);
             this.grpExtPAControlHF.Controls.Add(this.chkPin3TXPAHF);
-            this.grpExtPAControlHF.Location = new System.Drawing.Point(579, 14);
+            this.grpExtPAControlHF.Location = new System.Drawing.Point(579, 6);
             this.grpExtPAControlHF.Name = "grpExtPAControlHF";
-            this.grpExtPAControlHF.Size = new System.Drawing.Size(118, 237);
+            this.grpExtPAControlHF.Size = new System.Drawing.Size(118, 245);
             this.grpExtPAControlHF.TabIndex = 14;
             this.grpExtPAControlHF.TabStop = false;
             this.grpExtPAControlHF.Text = "Ext PA Control (xPA)";
@@ -12168,9 +12184,9 @@
             this.grpTransmitPinActionHF.Controls.Add(this.labelTS549);
             this.grpTransmitPinActionHF.Controls.Add(this.comboPin1TXActionHF);
             this.grpTransmitPinActionHF.Controls.Add(this.labelTS548);
-            this.grpTransmitPinActionHF.Location = new System.Drawing.Point(338, 14);
+            this.grpTransmitPinActionHF.Location = new System.Drawing.Point(338, 6);
             this.grpTransmitPinActionHF.Name = "grpTransmitPinActionHF";
-            this.grpTransmitPinActionHF.Size = new System.Drawing.Size(235, 237);
+            this.grpTransmitPinActionHF.Size = new System.Drawing.Size(235, 245);
             this.grpTransmitPinActionHF.TabIndex = 11;
             this.grpTransmitPinActionHF.TabStop = false;
             this.grpTransmitPinActionHF.Text = "Transmit Pin Action";
@@ -14864,9 +14880,9 @@
             this.grpExtPAControlVHF.Controls.Add(this.chkPin4RXPAVHF);
             this.grpExtPAControlVHF.Controls.Add(this.chkPin3RXPAVHF);
             this.grpExtPAControlVHF.Controls.Add(this.labelTS580);
-            this.grpExtPAControlVHF.Location = new System.Drawing.Point(579, 14);
+            this.grpExtPAControlVHF.Location = new System.Drawing.Point(579, 6);
             this.grpExtPAControlVHF.Name = "grpExtPAControlVHF";
-            this.grpExtPAControlVHF.Size = new System.Drawing.Size(118, 237);
+            this.grpExtPAControlVHF.Size = new System.Drawing.Size(118, 245);
             this.grpExtPAControlVHF.TabIndex = 15;
             this.grpExtPAControlVHF.TabStop = false;
             this.grpExtPAControlVHF.Text = "Ext PA Control (xPA)";
@@ -15159,9 +15175,9 @@
             this.grpTransmitPinActionVHF.Controls.Add(this.labelTS560);
             this.grpTransmitPinActionVHF.Controls.Add(this.comboPin1TXActionVHF);
             this.grpTransmitPinActionVHF.Controls.Add(this.labelTS561);
-            this.grpTransmitPinActionVHF.Location = new System.Drawing.Point(338, 14);
+            this.grpTransmitPinActionVHF.Location = new System.Drawing.Point(338, 6);
             this.grpTransmitPinActionVHF.Name = "grpTransmitPinActionVHF";
-            this.grpTransmitPinActionVHF.Size = new System.Drawing.Size(235, 237);
+            this.grpTransmitPinActionVHF.Size = new System.Drawing.Size(235, 245);
             this.grpTransmitPinActionVHF.TabIndex = 12;
             this.grpTransmitPinActionVHF.TabStop = false;
             this.grpTransmitPinActionVHF.Text = "Transmit Pin Action";
@@ -17762,9 +17778,9 @@
             this.grpExtPAControlSWL.Controls.Add(this.chkPin4RXPASWL);
             this.grpExtPAControlSWL.Controls.Add(this.chkPin3RXPASWL);
             this.grpExtPAControlSWL.Controls.Add(this.labelTS581);
-            this.grpExtPAControlSWL.Location = new System.Drawing.Point(579, 14);
+            this.grpExtPAControlSWL.Location = new System.Drawing.Point(579, 6);
             this.grpExtPAControlSWL.Name = "grpExtPAControlSWL";
-            this.grpExtPAControlSWL.Size = new System.Drawing.Size(118, 237);
+            this.grpExtPAControlSWL.Size = new System.Drawing.Size(118, 245);
             this.grpExtPAControlSWL.TabIndex = 15;
             this.grpExtPAControlSWL.TabStop = false;
             this.grpExtPAControlSWL.Text = "Ext PA Control (xPA)";
@@ -18057,9 +18073,9 @@
             this.groupBoxTS19.Controls.Add(this.labelTS567);
             this.groupBoxTS19.Controls.Add(this.comboPin1TXActionSWL);
             this.groupBoxTS19.Controls.Add(this.labelTS568);
-            this.groupBoxTS19.Location = new System.Drawing.Point(338, 14);
+            this.groupBoxTS19.Location = new System.Drawing.Point(338, 6);
             this.groupBoxTS19.Name = "groupBoxTS19";
-            this.groupBoxTS19.Size = new System.Drawing.Size(235, 237);
+            this.groupBoxTS19.Size = new System.Drawing.Size(235, 245);
             this.groupBoxTS19.TabIndex = 12;
             this.groupBoxTS19.TabStop = false;
             this.groupBoxTS19.Text = "Transmit Pin Action";
@@ -25343,7 +25359,7 @@
             this.grpGlobalHIDConrtolOptions.Controls.Add(this.chkGlobalListenForMouseWheel);
             this.grpGlobalHIDConrtolOptions.Controls.Add(this.comboHIDMouseWheel);
             this.grpGlobalHIDConrtolOptions.Controls.Add(this.chkAlsoUseSpecificMouseWheel);
-            this.grpGlobalHIDConrtolOptions.Location = new System.Drawing.Point(12, 17);
+            this.grpGlobalHIDConrtolOptions.Location = new System.Drawing.Point(12, 8);
             this.grpGlobalHIDConrtolOptions.Name = "grpGlobalHIDConrtolOptions";
             this.grpGlobalHIDConrtolOptions.Size = new System.Drawing.Size(378, 171);
             this.grpGlobalHIDConrtolOptions.TabIndex = 1;
@@ -29788,7 +29804,7 @@
             this.groupBoxTS11.Controls.Add(this.chkSmallModeFilteronVFOs);
             this.groupBoxTS11.Location = new System.Drawing.Point(498, 60);
             this.groupBoxTS11.Name = "groupBoxTS11";
-            this.groupBoxTS11.Size = new System.Drawing.Size(215, 100);
+            this.groupBoxTS11.Size = new System.Drawing.Size(215, 84);
             this.groupBoxTS11.TabIndex = 47;
             this.groupBoxTS11.TabStop = false;
             this.groupBoxTS11.Text = "Other";
@@ -29836,7 +29852,7 @@
             // grpDisplay8000DLE
             // 
             this.grpDisplay8000DLE.Controls.Add(this.chkANAN8000DLEDisplayVoltsAmps);
-            this.grpDisplay8000DLE.Location = new System.Drawing.Point(498, 11);
+            this.grpDisplay8000DLE.Location = new System.Drawing.Point(498, 8);
             this.grpDisplay8000DLE.Name = "grpDisplay8000DLE";
             this.grpDisplay8000DLE.Size = new System.Drawing.Size(215, 47);
             this.grpDisplay8000DLE.TabIndex = 44;
@@ -29867,7 +29883,7 @@
             this.grpDisplayDriverEngine.Controls.Add(this.chkShowFPS);
             this.grpDisplayDriverEngine.Location = new System.Drawing.Point(566, 166);
             this.grpDisplayDriverEngine.Name = "grpDisplayDriverEngine";
-            this.grpDisplayDriverEngine.Size = new System.Drawing.Size(147, 229);
+            this.grpDisplayDriverEngine.Size = new System.Drawing.Size(147, 227);
             this.grpDisplayDriverEngine.TabIndex = 46;
             this.grpDisplayDriverEngine.TabStop = false;
             this.grpDisplayDriverEngine.Text = "DirectX Display Settings";
@@ -30292,7 +30308,7 @@
             this.grpDisplayScopeMode.Controls.Add(this.lblDisplayScopeTime);
             this.grpDisplayScopeMode.Location = new System.Drawing.Point(291, 80);
             this.grpDisplayScopeMode.Name = "grpDisplayScopeMode";
-            this.grpDisplayScopeMode.Size = new System.Drawing.Size(136, 63);
+            this.grpDisplayScopeMode.Size = new System.Drawing.Size(199, 64);
             this.grpDisplayScopeMode.TabIndex = 43;
             this.grpDisplayScopeMode.TabStop = false;
             this.grpDisplayScopeMode.Text = "Scope Mode";
@@ -31288,7 +31304,7 @@
             this.grpDisplayRX1Pan.Controls.Add(this.labelTS142);
             this.grpDisplayRX1Pan.Controls.Add(this.labelTS139);
             this.grpDisplayRX1Pan.Controls.Add(this.tbDisplayFFTSize);
-            this.grpDisplayRX1Pan.Location = new System.Drawing.Point(6, 6);
+            this.grpDisplayRX1Pan.Location = new System.Drawing.Point(6, 8);
             this.grpDisplayRX1Pan.Name = "grpDisplayRX1Pan";
             this.grpDisplayRX1Pan.Size = new System.Drawing.Size(260, 128);
             this.grpDisplayRX1Pan.TabIndex = 45;
@@ -31416,7 +31432,7 @@
             this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallLowLevel);
             this.grpDisplayWaterfall.Controls.Add(this.lblDisplayWaterfallHighLevel);
             this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallHighLevel);
-            this.grpDisplayWaterfall.Location = new System.Drawing.Point(375, 10);
+            this.grpDisplayWaterfall.Location = new System.Drawing.Point(375, 8);
             this.grpDisplayWaterfall.Name = "grpDisplayWaterfall";
             this.grpDisplayWaterfall.Size = new System.Drawing.Size(304, 216);
             this.grpDisplayWaterfall.TabIndex = 40;
@@ -32062,7 +32078,7 @@
             this.grpRX2DisplayWaterfall.Controls.Add(this.udRX2DisplayWaterfallLowLevel);
             this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2DisplayWaterfallHighLevel);
             this.grpRX2DisplayWaterfall.Controls.Add(this.udRX2DisplayWaterfallHighLevel);
-            this.grpRX2DisplayWaterfall.Location = new System.Drawing.Point(375, 10);
+            this.grpRX2DisplayWaterfall.Location = new System.Drawing.Point(375, 8);
             this.grpRX2DisplayWaterfall.Name = "grpRX2DisplayWaterfall";
             this.grpRX2DisplayWaterfall.Size = new System.Drawing.Size(304, 216);
             this.grpRX2DisplayWaterfall.TabIndex = 50;
@@ -32834,7 +32850,7 @@
             this.grpDisplayRX2Pan.Controls.Add(this.labelTS140);
             this.grpDisplayRX2Pan.Controls.Add(this.labelTS141);
             this.grpDisplayRX2Pan.Controls.Add(this.tbRX2DisplayFFTSize);
-            this.grpDisplayRX2Pan.Location = new System.Drawing.Point(6, 6);
+            this.grpDisplayRX2Pan.Location = new System.Drawing.Point(6, 8);
             this.grpDisplayRX2Pan.Name = "grpDisplayRX2Pan";
             this.grpDisplayRX2Pan.Size = new System.Drawing.Size(260, 128);
             this.grpDisplayRX2Pan.TabIndex = 46;
@@ -32955,7 +32971,7 @@
             this.grpTXWFAmpScale.Controls.Add(this.udTXWFAmpMax);
             this.grpTXWFAmpScale.Controls.Add(this.lblTXWFAmpMin);
             this.grpTXWFAmpScale.Controls.Add(this.lblTXWFAmpMax);
-            this.grpTXWFAmpScale.Location = new System.Drawing.Point(375, 10);
+            this.grpTXWFAmpScale.Location = new System.Drawing.Point(375, 8);
             this.grpTXWFAmpScale.Margin = new System.Windows.Forms.Padding(7);
             this.grpTXWFAmpScale.Name = "grpTXWFAmpScale";
             this.grpTXWFAmpScale.Padding = new System.Windows.Forms.Padding(7);
@@ -33164,7 +33180,7 @@
             this.groupBoxTS8.Controls.Add(this.labelTS385);
             this.groupBoxTS8.Controls.Add(this.labelTS386);
             this.groupBoxTS8.Controls.Add(this.tbTXDisplayFFTSize);
-            this.groupBoxTS8.Location = new System.Drawing.Point(6, 6);
+            this.groupBoxTS8.Location = new System.Drawing.Point(6, 8);
             this.groupBoxTS8.Name = "groupBoxTS8";
             this.groupBoxTS8.Size = new System.Drawing.Size(260, 128);
             this.groupBoxTS8.TabIndex = 83;
@@ -42012,10 +42028,11 @@
             // 
             // lblTXAMCarrierLevel
             // 
+            this.lblTXAMCarrierLevel.AutoSize = true;
             this.lblTXAMCarrierLevel.Image = null;
             this.lblTXAMCarrierLevel.Location = new System.Drawing.Point(8, 22);
             this.lblTXAMCarrierLevel.Name = "lblTXAMCarrierLevel";
-            this.lblTXAMCarrierLevel.Size = new System.Drawing.Size(77, 16);
+            this.lblTXAMCarrierLevel.Size = new System.Drawing.Size(69, 13);
             this.lblTXAMCarrierLevel.TabIndex = 5;
             this.lblTXAMCarrierLevel.Text = "Carrier Level:";
             // 
@@ -42488,7 +42505,7 @@
             this.grpGainByBandPA.Controls.Add(this.btnResetPAProfile);
             this.grpGainByBandPA.Controls.Add(this.btnDeletePAProfile);
             this.grpGainByBandPA.Controls.Add(this.comboPAProfile);
-            this.grpGainByBandPA.Location = new System.Drawing.Point(14, 18);
+            this.grpGainByBandPA.Location = new System.Drawing.Point(14, 8);
             this.grpGainByBandPA.Name = "grpGainByBandPA";
             this.grpGainByBandPA.Size = new System.Drawing.Size(540, 389);
             this.grpGainByBandPA.TabIndex = 119;
@@ -44322,9 +44339,9 @@
             // 
             this.tpWattMeter.BackColor = System.Drawing.SystemColors.Control;
             this.tpWattMeter.Controls.Add(this.richTextBox1);
-            this.tpWattMeter.Controls.Add(this.grp10WattMeterTrim);
             this.tpWattMeter.Controls.Add(this.grp100WattMeterTrim);
             this.tpWattMeter.Controls.Add(this.grp200WattMeterTrim);
+            this.tpWattMeter.Controls.Add(this.grp10WattMeterTrim);
             this.tpWattMeter.Controls.Add(this.panelPAValues);
             this.tpWattMeter.Controls.Add(this.chkPAValues);
             this.tpWattMeter.Location = new System.Drawing.Point(4, 22);
@@ -44342,621 +44359,6 @@
             this.richTextBox1.Size = new System.Drawing.Size(567, 101);
             this.richTextBox1.TabIndex = 3;
             this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
-            // 
-            // grp10WattMeterTrim
-            // 
-            this.grp10WattMeterTrim.Controls.Add(this.btnResetWattMeterValues);
-            this.grp10WattMeterTrim.Controls.Add(this.ud10PA1W);
-            this.grp10WattMeterTrim.Controls.Add(this.ud10PA10W);
-            this.grp10WattMeterTrim.Controls.Add(this.label10PA9W);
-            this.grp10WattMeterTrim.Controls.Add(this.label10PA10W);
-            this.grp10WattMeterTrim.Controls.Add(this.ud10PA9W);
-            this.grp10WattMeterTrim.Controls.Add(this.label10PA11W);
-            this.grp10WattMeterTrim.Controls.Add(this.label10PA8W);
-            this.grp10WattMeterTrim.Controls.Add(this.ud10PA11W);
-            this.grp10WattMeterTrim.Controls.Add(this.ud10PA8W);
-            this.grp10WattMeterTrim.Controls.Add(this.ud10PA12W);
-            this.grp10WattMeterTrim.Controls.Add(this.label10PA7W);
-            this.grp10WattMeterTrim.Controls.Add(this.label10PA12W);
-            this.grp10WattMeterTrim.Controls.Add(this.ud10PA7W);
-            this.grp10WattMeterTrim.Controls.Add(this.ud10PA13W);
-            this.grp10WattMeterTrim.Controls.Add(this.label10PA6W);
-            this.grp10WattMeterTrim.Controls.Add(this.label10PA1W);
-            this.grp10WattMeterTrim.Controls.Add(this.label10PA13W);
-            this.grp10WattMeterTrim.Controls.Add(this.ud10PA6W);
-            this.grp10WattMeterTrim.Controls.Add(this.ud10PA14W);
-            this.grp10WattMeterTrim.Controls.Add(this.label10PA5W);
-            this.grp10WattMeterTrim.Controls.Add(this.ud10PA2W);
-            this.grp10WattMeterTrim.Controls.Add(this.label10PA14W);
-            this.grp10WattMeterTrim.Controls.Add(this.ud10PA5W);
-            this.grp10WattMeterTrim.Controls.Add(this.label10PA2W);
-            this.grp10WattMeterTrim.Controls.Add(this.label10PA4W);
-            this.grp10WattMeterTrim.Controls.Add(this.ud10PA4W);
-            this.grp10WattMeterTrim.Controls.Add(this.ud10PA3W);
-            this.grp10WattMeterTrim.Controls.Add(this.label10PA3W);
-            this.grp10WattMeterTrim.Location = new System.Drawing.Point(71, 19);
-            this.grp10WattMeterTrim.Name = "grp10WattMeterTrim";
-            this.grp10WattMeterTrim.Size = new System.Drawing.Size(249, 231);
-            this.grp10WattMeterTrim.TabIndex = 23;
-            this.grp10WattMeterTrim.TabStop = false;
-            this.grp10WattMeterTrim.Text = "10 Watt Meter Trim";
-            // 
-            // btnResetWattMeterValues
-            // 
-            this.btnResetWattMeterValues.Image = null;
-            this.btnResetWattMeterValues.Location = new System.Drawing.Point(100, 197);
-            this.btnResetWattMeterValues.Name = "btnResetWattMeterValues";
-            this.btnResetWattMeterValues.Selectable = true;
-            this.btnResetWattMeterValues.Size = new System.Drawing.Size(50, 23);
-            this.btnResetWattMeterValues.TabIndex = 6;
-            this.btnResetWattMeterValues.Text = "Reset";
-            this.toolTip1.SetToolTip(this.btnResetWattMeterValues, "Reset trim values to default.");
-            this.btnResetWattMeterValues.UseVisualStyleBackColor = true;
-            this.btnResetWattMeterValues.Click += new System.EventHandler(this.btnResetWattMeterValues_Click);
-            // 
-            // ud10PA1W
-            // 
-            this.ud10PA1W.DecimalPlaces = 1;
-            this.ud10PA1W.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ud10PA1W.Location = new System.Drawing.Point(48, 24);
-            this.ud10PA1W.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.ud10PA1W.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.ud10PA1W.Name = "ud10PA1W";
-            this.ud10PA1W.Size = new System.Drawing.Size(48, 20);
-            this.ud10PA1W.TabIndex = 87;
-            this.ud10PA1W.TinyStep = false;
-            this.ud10PA1W.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // ud10PA10W
-            // 
-            this.ud10PA10W.DecimalPlaces = 1;
-            this.ud10PA10W.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ud10PA10W.Location = new System.Drawing.Point(184, 72);
-            this.ud10PA10W.Maximum = new decimal(new int[] {
-            12,
-            0,
-            0,
-            0});
-            this.ud10PA10W.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.ud10PA10W.Name = "ud10PA10W";
-            this.ud10PA10W.Size = new System.Drawing.Size(48, 20);
-            this.ud10PA10W.TabIndex = 105;
-            this.ud10PA10W.TinyStep = false;
-            this.ud10PA10W.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            // 
-            // label10PA9W
-            // 
-            this.label10PA9W.Image = null;
-            this.label10PA9W.Location = new System.Drawing.Point(144, 48);
-            this.label10PA9W.Name = "label10PA9W";
-            this.label10PA9W.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label10PA9W.Size = new System.Drawing.Size(40, 16);
-            this.label10PA9W.TabIndex = 104;
-            this.label10PA9W.Text = "9W:";
-            this.label10PA9W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label10PA10W
-            // 
-            this.label10PA10W.Image = null;
-            this.label10PA10W.Location = new System.Drawing.Point(144, 72);
-            this.label10PA10W.Name = "label10PA10W";
-            this.label10PA10W.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label10PA10W.Size = new System.Drawing.Size(40, 16);
-            this.label10PA10W.TabIndex = 106;
-            this.label10PA10W.Text = "10W:";
-            this.label10PA10W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // ud10PA9W
-            // 
-            this.ud10PA9W.DecimalPlaces = 1;
-            this.ud10PA9W.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ud10PA9W.Location = new System.Drawing.Point(184, 48);
-            this.ud10PA9W.Maximum = new decimal(new int[] {
-            11,
-            0,
-            0,
-            0});
-            this.ud10PA9W.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.ud10PA9W.Name = "ud10PA9W";
-            this.ud10PA9W.Size = new System.Drawing.Size(48, 20);
-            this.ud10PA9W.TabIndex = 103;
-            this.ud10PA9W.TinyStep = false;
-            this.ud10PA9W.Value = new decimal(new int[] {
-            9,
-            0,
-            0,
-            0});
-            // 
-            // label10PA11W
-            // 
-            this.label10PA11W.Image = null;
-            this.label10PA11W.Location = new System.Drawing.Point(144, 96);
-            this.label10PA11W.Name = "label10PA11W";
-            this.label10PA11W.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label10PA11W.Size = new System.Drawing.Size(40, 16);
-            this.label10PA11W.TabIndex = 107;
-            this.label10PA11W.Text = "11W:";
-            this.label10PA11W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label10PA11W.Visible = false;
-            // 
-            // label10PA8W
-            // 
-            this.label10PA8W.Image = null;
-            this.label10PA8W.Location = new System.Drawing.Point(144, 24);
-            this.label10PA8W.Name = "label10PA8W";
-            this.label10PA8W.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label10PA8W.Size = new System.Drawing.Size(40, 16);
-            this.label10PA8W.TabIndex = 102;
-            this.label10PA8W.Text = "8W:";
-            this.label10PA8W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // ud10PA11W
-            // 
-            this.ud10PA11W.DecimalPlaces = 1;
-            this.ud10PA11W.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ud10PA11W.Location = new System.Drawing.Point(184, 96);
-            this.ud10PA11W.Maximum = new decimal(new int[] {
-            13,
-            0,
-            0,
-            0});
-            this.ud10PA11W.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.ud10PA11W.Name = "ud10PA11W";
-            this.ud10PA11W.Size = new System.Drawing.Size(48, 20);
-            this.ud10PA11W.TabIndex = 108;
-            this.ud10PA11W.TinyStep = false;
-            this.ud10PA11W.Value = new decimal(new int[] {
-            11,
-            0,
-            0,
-            0});
-            // 
-            // ud10PA8W
-            // 
-            this.ud10PA8W.DecimalPlaces = 1;
-            this.ud10PA8W.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ud10PA8W.Location = new System.Drawing.Point(184, 24);
-            this.ud10PA8W.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.ud10PA8W.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.ud10PA8W.Name = "ud10PA8W";
-            this.ud10PA8W.Size = new System.Drawing.Size(48, 20);
-            this.ud10PA8W.TabIndex = 101;
-            this.ud10PA8W.TinyStep = false;
-            this.ud10PA8W.Value = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            // 
-            // ud10PA12W
-            // 
-            this.ud10PA12W.DecimalPlaces = 1;
-            this.ud10PA12W.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ud10PA12W.Location = new System.Drawing.Point(184, 120);
-            this.ud10PA12W.Maximum = new decimal(new int[] {
-            14,
-            0,
-            0,
-            0});
-            this.ud10PA12W.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.ud10PA12W.Name = "ud10PA12W";
-            this.ud10PA12W.Size = new System.Drawing.Size(48, 20);
-            this.ud10PA12W.TabIndex = 109;
-            this.ud10PA12W.TinyStep = false;
-            this.ud10PA12W.Value = new decimal(new int[] {
-            12,
-            0,
-            0,
-            0});
-            // 
-            // label10PA7W
-            // 
-            this.label10PA7W.Image = null;
-            this.label10PA7W.Location = new System.Drawing.Point(8, 168);
-            this.label10PA7W.Name = "label10PA7W";
-            this.label10PA7W.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label10PA7W.Size = new System.Drawing.Size(40, 16);
-            this.label10PA7W.TabIndex = 100;
-            this.label10PA7W.Text = "7W:";
-            this.label10PA7W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label10PA12W
-            // 
-            this.label10PA12W.Image = null;
-            this.label10PA12W.Location = new System.Drawing.Point(144, 120);
-            this.label10PA12W.Name = "label10PA12W";
-            this.label10PA12W.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label10PA12W.Size = new System.Drawing.Size(40, 16);
-            this.label10PA12W.TabIndex = 110;
-            this.label10PA12W.Text = "12W:";
-            this.label10PA12W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label10PA12W.Visible = false;
-            // 
-            // ud10PA7W
-            // 
-            this.ud10PA7W.DecimalPlaces = 1;
-            this.ud10PA7W.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ud10PA7W.Location = new System.Drawing.Point(48, 168);
-            this.ud10PA7W.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.ud10PA7W.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.ud10PA7W.Name = "ud10PA7W";
-            this.ud10PA7W.Size = new System.Drawing.Size(48, 20);
-            this.ud10PA7W.TabIndex = 99;
-            this.ud10PA7W.TinyStep = false;
-            this.ud10PA7W.Value = new decimal(new int[] {
-            7,
-            0,
-            0,
-            0});
-            // 
-            // ud10PA13W
-            // 
-            this.ud10PA13W.DecimalPlaces = 1;
-            this.ud10PA13W.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ud10PA13W.Location = new System.Drawing.Point(184, 144);
-            this.ud10PA13W.Maximum = new decimal(new int[] {
-            15,
-            0,
-            0,
-            0});
-            this.ud10PA13W.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.ud10PA13W.Name = "ud10PA13W";
-            this.ud10PA13W.Size = new System.Drawing.Size(48, 20);
-            this.ud10PA13W.TabIndex = 111;
-            this.ud10PA13W.TinyStep = false;
-            this.ud10PA13W.Value = new decimal(new int[] {
-            13,
-            0,
-            0,
-            0});
-            // 
-            // label10PA6W
-            // 
-            this.label10PA6W.Image = null;
-            this.label10PA6W.Location = new System.Drawing.Point(8, 144);
-            this.label10PA6W.Name = "label10PA6W";
-            this.label10PA6W.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label10PA6W.Size = new System.Drawing.Size(40, 16);
-            this.label10PA6W.TabIndex = 98;
-            this.label10PA6W.Text = "6W:";
-            this.label10PA6W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label10PA1W
-            // 
-            this.label10PA1W.Image = null;
-            this.label10PA1W.Location = new System.Drawing.Point(8, 24);
-            this.label10PA1W.Name = "label10PA1W";
-            this.label10PA1W.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label10PA1W.Size = new System.Drawing.Size(40, 16);
-            this.label10PA1W.TabIndex = 88;
-            this.label10PA1W.Text = "1W:";
-            this.label10PA1W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label10PA13W
-            // 
-            this.label10PA13W.Image = null;
-            this.label10PA13W.Location = new System.Drawing.Point(144, 144);
-            this.label10PA13W.Name = "label10PA13W";
-            this.label10PA13W.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label10PA13W.Size = new System.Drawing.Size(40, 16);
-            this.label10PA13W.TabIndex = 112;
-            this.label10PA13W.Text = "13W:";
-            this.label10PA13W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label10PA13W.Visible = false;
-            // 
-            // ud10PA6W
-            // 
-            this.ud10PA6W.DecimalPlaces = 1;
-            this.ud10PA6W.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ud10PA6W.Location = new System.Drawing.Point(48, 144);
-            this.ud10PA6W.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.ud10PA6W.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.ud10PA6W.Name = "ud10PA6W";
-            this.ud10PA6W.Size = new System.Drawing.Size(48, 20);
-            this.ud10PA6W.TabIndex = 97;
-            this.ud10PA6W.TinyStep = false;
-            this.ud10PA6W.Value = new decimal(new int[] {
-            6,
-            0,
-            0,
-            0});
-            // 
-            // ud10PA14W
-            // 
-            this.ud10PA14W.DecimalPlaces = 1;
-            this.ud10PA14W.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ud10PA14W.Location = new System.Drawing.Point(184, 168);
-            this.ud10PA14W.Maximum = new decimal(new int[] {
-            16,
-            0,
-            0,
-            0});
-            this.ud10PA14W.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.ud10PA14W.Name = "ud10PA14W";
-            this.ud10PA14W.Size = new System.Drawing.Size(48, 20);
-            this.ud10PA14W.TabIndex = 113;
-            this.ud10PA14W.TinyStep = false;
-            this.ud10PA14W.Value = new decimal(new int[] {
-            14,
-            0,
-            0,
-            0});
-            // 
-            // label10PA5W
-            // 
-            this.label10PA5W.Image = null;
-            this.label10PA5W.Location = new System.Drawing.Point(8, 120);
-            this.label10PA5W.Name = "label10PA5W";
-            this.label10PA5W.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label10PA5W.Size = new System.Drawing.Size(40, 16);
-            this.label10PA5W.TabIndex = 96;
-            this.label10PA5W.Text = "5W:";
-            this.label10PA5W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // ud10PA2W
-            // 
-            this.ud10PA2W.DecimalPlaces = 1;
-            this.ud10PA2W.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ud10PA2W.Location = new System.Drawing.Point(48, 48);
-            this.ud10PA2W.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.ud10PA2W.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.ud10PA2W.Name = "ud10PA2W";
-            this.ud10PA2W.Size = new System.Drawing.Size(48, 20);
-            this.ud10PA2W.TabIndex = 89;
-            this.ud10PA2W.TinyStep = false;
-            this.ud10PA2W.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            // 
-            // label10PA14W
-            // 
-            this.label10PA14W.Image = null;
-            this.label10PA14W.Location = new System.Drawing.Point(144, 168);
-            this.label10PA14W.Name = "label10PA14W";
-            this.label10PA14W.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label10PA14W.Size = new System.Drawing.Size(40, 16);
-            this.label10PA14W.TabIndex = 114;
-            this.label10PA14W.Text = "14W:";
-            this.label10PA14W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label10PA14W.Visible = false;
-            // 
-            // ud10PA5W
-            // 
-            this.ud10PA5W.DecimalPlaces = 1;
-            this.ud10PA5W.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ud10PA5W.Location = new System.Drawing.Point(48, 120);
-            this.ud10PA5W.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.ud10PA5W.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.ud10PA5W.Name = "ud10PA5W";
-            this.ud10PA5W.Size = new System.Drawing.Size(48, 20);
-            this.ud10PA5W.TabIndex = 95;
-            this.ud10PA5W.TinyStep = false;
-            this.ud10PA5W.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            // 
-            // label10PA2W
-            // 
-            this.label10PA2W.Image = null;
-            this.label10PA2W.Location = new System.Drawing.Point(8, 48);
-            this.label10PA2W.Name = "label10PA2W";
-            this.label10PA2W.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label10PA2W.Size = new System.Drawing.Size(40, 16);
-            this.label10PA2W.TabIndex = 90;
-            this.label10PA2W.Text = "2W:";
-            this.label10PA2W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label10PA4W
-            // 
-            this.label10PA4W.Image = null;
-            this.label10PA4W.Location = new System.Drawing.Point(8, 96);
-            this.label10PA4W.Name = "label10PA4W";
-            this.label10PA4W.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label10PA4W.Size = new System.Drawing.Size(40, 16);
-            this.label10PA4W.TabIndex = 94;
-            this.label10PA4W.Text = "4W:";
-            this.label10PA4W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // ud10PA4W
-            // 
-            this.ud10PA4W.DecimalPlaces = 1;
-            this.ud10PA4W.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ud10PA4W.Location = new System.Drawing.Point(48, 96);
-            this.ud10PA4W.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.ud10PA4W.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.ud10PA4W.Name = "ud10PA4W";
-            this.ud10PA4W.Size = new System.Drawing.Size(48, 20);
-            this.ud10PA4W.TabIndex = 93;
-            this.ud10PA4W.TinyStep = false;
-            this.ud10PA4W.Value = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            // 
-            // ud10PA3W
-            // 
-            this.ud10PA3W.DecimalPlaces = 1;
-            this.ud10PA3W.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.ud10PA3W.Location = new System.Drawing.Point(48, 72);
-            this.ud10PA3W.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.ud10PA3W.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.ud10PA3W.Name = "ud10PA3W";
-            this.ud10PA3W.Size = new System.Drawing.Size(48, 20);
-            this.ud10PA3W.TabIndex = 91;
-            this.ud10PA3W.TinyStep = false;
-            this.ud10PA3W.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            // 
-            // label10PA3W
-            // 
-            this.label10PA3W.Image = null;
-            this.label10PA3W.Location = new System.Drawing.Point(8, 72);
-            this.label10PA3W.Name = "label10PA3W";
-            this.label10PA3W.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label10PA3W.Size = new System.Drawing.Size(40, 16);
-            this.label10PA3W.TabIndex = 92;
-            this.label10PA3W.Text = "3W:";
-            this.label10PA3W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // grp100WattMeterTrim
             // 
@@ -44988,7 +44390,7 @@
             this.grp100WattMeterTrim.Controls.Add(this.ud100PA40W);
             this.grp100WattMeterTrim.Controls.Add(this.ud100PA30W);
             this.grp100WattMeterTrim.Controls.Add(this.label100PA30W);
-            this.grp100WattMeterTrim.Location = new System.Drawing.Point(71, 19);
+            this.grp100WattMeterTrim.Location = new System.Drawing.Point(71, 8);
             this.grp100WattMeterTrim.Name = "grp100WattMeterTrim";
             this.grp100WattMeterTrim.Size = new System.Drawing.Size(249, 198);
             this.grp100WattMeterTrim.TabIndex = 0;
@@ -45593,7 +44995,7 @@
             this.grp200WattMeterTrim.Controls.Add(this.ud200PA80W);
             this.grp200WattMeterTrim.Controls.Add(this.ud200PA60W);
             this.grp200WattMeterTrim.Controls.Add(this.label200PA60W);
-            this.grp200WattMeterTrim.Location = new System.Drawing.Point(71, 19);
+            this.grp200WattMeterTrim.Location = new System.Drawing.Point(71, 8);
             this.grp200WattMeterTrim.Name = "grp200WattMeterTrim";
             this.grp200WattMeterTrim.Size = new System.Drawing.Size(249, 198);
             this.grp200WattMeterTrim.TabIndex = 7;
@@ -46168,6 +45570,621 @@
             this.label200PA60W.Text = "60W:";
             this.label200PA60W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // grp10WattMeterTrim
+            // 
+            this.grp10WattMeterTrim.Controls.Add(this.btnResetWattMeterValues);
+            this.grp10WattMeterTrim.Controls.Add(this.ud10PA1W);
+            this.grp10WattMeterTrim.Controls.Add(this.ud10PA10W);
+            this.grp10WattMeterTrim.Controls.Add(this.label10PA9W);
+            this.grp10WattMeterTrim.Controls.Add(this.label10PA10W);
+            this.grp10WattMeterTrim.Controls.Add(this.ud10PA9W);
+            this.grp10WattMeterTrim.Controls.Add(this.label10PA11W);
+            this.grp10WattMeterTrim.Controls.Add(this.label10PA8W);
+            this.grp10WattMeterTrim.Controls.Add(this.ud10PA11W);
+            this.grp10WattMeterTrim.Controls.Add(this.ud10PA8W);
+            this.grp10WattMeterTrim.Controls.Add(this.ud10PA12W);
+            this.grp10WattMeterTrim.Controls.Add(this.label10PA7W);
+            this.grp10WattMeterTrim.Controls.Add(this.label10PA12W);
+            this.grp10WattMeterTrim.Controls.Add(this.ud10PA7W);
+            this.grp10WattMeterTrim.Controls.Add(this.ud10PA13W);
+            this.grp10WattMeterTrim.Controls.Add(this.label10PA6W);
+            this.grp10WattMeterTrim.Controls.Add(this.label10PA1W);
+            this.grp10WattMeterTrim.Controls.Add(this.label10PA13W);
+            this.grp10WattMeterTrim.Controls.Add(this.ud10PA6W);
+            this.grp10WattMeterTrim.Controls.Add(this.ud10PA14W);
+            this.grp10WattMeterTrim.Controls.Add(this.label10PA5W);
+            this.grp10WattMeterTrim.Controls.Add(this.ud10PA2W);
+            this.grp10WattMeterTrim.Controls.Add(this.label10PA14W);
+            this.grp10WattMeterTrim.Controls.Add(this.ud10PA5W);
+            this.grp10WattMeterTrim.Controls.Add(this.label10PA2W);
+            this.grp10WattMeterTrim.Controls.Add(this.label10PA4W);
+            this.grp10WattMeterTrim.Controls.Add(this.ud10PA4W);
+            this.grp10WattMeterTrim.Controls.Add(this.ud10PA3W);
+            this.grp10WattMeterTrim.Controls.Add(this.label10PA3W);
+            this.grp10WattMeterTrim.Location = new System.Drawing.Point(71, 8);
+            this.grp10WattMeterTrim.Name = "grp10WattMeterTrim";
+            this.grp10WattMeterTrim.Size = new System.Drawing.Size(249, 231);
+            this.grp10WattMeterTrim.TabIndex = 23;
+            this.grp10WattMeterTrim.TabStop = false;
+            this.grp10WattMeterTrim.Text = "10 Watt Meter Trim";
+            // 
+            // btnResetWattMeterValues
+            // 
+            this.btnResetWattMeterValues.Image = null;
+            this.btnResetWattMeterValues.Location = new System.Drawing.Point(100, 202);
+            this.btnResetWattMeterValues.Name = "btnResetWattMeterValues";
+            this.btnResetWattMeterValues.Selectable = true;
+            this.btnResetWattMeterValues.Size = new System.Drawing.Size(50, 23);
+            this.btnResetWattMeterValues.TabIndex = 6;
+            this.btnResetWattMeterValues.Text = "Reset";
+            this.toolTip1.SetToolTip(this.btnResetWattMeterValues, "Reset trim values to default.");
+            this.btnResetWattMeterValues.UseVisualStyleBackColor = true;
+            this.btnResetWattMeterValues.Click += new System.EventHandler(this.btnResetWattMeterValues_Click);
+            // 
+            // ud10PA1W
+            // 
+            this.ud10PA1W.DecimalPlaces = 1;
+            this.ud10PA1W.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ud10PA1W.Location = new System.Drawing.Point(48, 24);
+            this.ud10PA1W.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.ud10PA1W.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.ud10PA1W.Name = "ud10PA1W";
+            this.ud10PA1W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA1W.TabIndex = 87;
+            this.ud10PA1W.TinyStep = false;
+            this.ud10PA1W.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // ud10PA10W
+            // 
+            this.ud10PA10W.DecimalPlaces = 1;
+            this.ud10PA10W.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ud10PA10W.Location = new System.Drawing.Point(184, 72);
+            this.ud10PA10W.Maximum = new decimal(new int[] {
+            12,
+            0,
+            0,
+            0});
+            this.ud10PA10W.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.ud10PA10W.Name = "ud10PA10W";
+            this.ud10PA10W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA10W.TabIndex = 105;
+            this.ud10PA10W.TinyStep = false;
+            this.ud10PA10W.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // label10PA9W
+            // 
+            this.label10PA9W.Image = null;
+            this.label10PA9W.Location = new System.Drawing.Point(144, 48);
+            this.label10PA9W.Name = "label10PA9W";
+            this.label10PA9W.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label10PA9W.Size = new System.Drawing.Size(40, 16);
+            this.label10PA9W.TabIndex = 104;
+            this.label10PA9W.Text = "9W:";
+            this.label10PA9W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label10PA10W
+            // 
+            this.label10PA10W.Image = null;
+            this.label10PA10W.Location = new System.Drawing.Point(144, 72);
+            this.label10PA10W.Name = "label10PA10W";
+            this.label10PA10W.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label10PA10W.Size = new System.Drawing.Size(40, 16);
+            this.label10PA10W.TabIndex = 106;
+            this.label10PA10W.Text = "10W:";
+            this.label10PA10W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // ud10PA9W
+            // 
+            this.ud10PA9W.DecimalPlaces = 1;
+            this.ud10PA9W.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ud10PA9W.Location = new System.Drawing.Point(184, 48);
+            this.ud10PA9W.Maximum = new decimal(new int[] {
+            11,
+            0,
+            0,
+            0});
+            this.ud10PA9W.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.ud10PA9W.Name = "ud10PA9W";
+            this.ud10PA9W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA9W.TabIndex = 103;
+            this.ud10PA9W.TinyStep = false;
+            this.ud10PA9W.Value = new decimal(new int[] {
+            9,
+            0,
+            0,
+            0});
+            // 
+            // label10PA11W
+            // 
+            this.label10PA11W.Image = null;
+            this.label10PA11W.Location = new System.Drawing.Point(144, 96);
+            this.label10PA11W.Name = "label10PA11W";
+            this.label10PA11W.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label10PA11W.Size = new System.Drawing.Size(40, 16);
+            this.label10PA11W.TabIndex = 107;
+            this.label10PA11W.Text = "11W:";
+            this.label10PA11W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label10PA11W.Visible = false;
+            // 
+            // label10PA8W
+            // 
+            this.label10PA8W.Image = null;
+            this.label10PA8W.Location = new System.Drawing.Point(144, 24);
+            this.label10PA8W.Name = "label10PA8W";
+            this.label10PA8W.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label10PA8W.Size = new System.Drawing.Size(40, 16);
+            this.label10PA8W.TabIndex = 102;
+            this.label10PA8W.Text = "8W:";
+            this.label10PA8W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // ud10PA11W
+            // 
+            this.ud10PA11W.DecimalPlaces = 1;
+            this.ud10PA11W.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ud10PA11W.Location = new System.Drawing.Point(184, 96);
+            this.ud10PA11W.Maximum = new decimal(new int[] {
+            13,
+            0,
+            0,
+            0});
+            this.ud10PA11W.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.ud10PA11W.Name = "ud10PA11W";
+            this.ud10PA11W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA11W.TabIndex = 108;
+            this.ud10PA11W.TinyStep = false;
+            this.ud10PA11W.Value = new decimal(new int[] {
+            11,
+            0,
+            0,
+            0});
+            // 
+            // ud10PA8W
+            // 
+            this.ud10PA8W.DecimalPlaces = 1;
+            this.ud10PA8W.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ud10PA8W.Location = new System.Drawing.Point(184, 24);
+            this.ud10PA8W.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.ud10PA8W.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.ud10PA8W.Name = "ud10PA8W";
+            this.ud10PA8W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA8W.TabIndex = 101;
+            this.ud10PA8W.TinyStep = false;
+            this.ud10PA8W.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            // 
+            // ud10PA12W
+            // 
+            this.ud10PA12W.DecimalPlaces = 1;
+            this.ud10PA12W.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ud10PA12W.Location = new System.Drawing.Point(184, 120);
+            this.ud10PA12W.Maximum = new decimal(new int[] {
+            14,
+            0,
+            0,
+            0});
+            this.ud10PA12W.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.ud10PA12W.Name = "ud10PA12W";
+            this.ud10PA12W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA12W.TabIndex = 109;
+            this.ud10PA12W.TinyStep = false;
+            this.ud10PA12W.Value = new decimal(new int[] {
+            12,
+            0,
+            0,
+            0});
+            // 
+            // label10PA7W
+            // 
+            this.label10PA7W.Image = null;
+            this.label10PA7W.Location = new System.Drawing.Point(8, 168);
+            this.label10PA7W.Name = "label10PA7W";
+            this.label10PA7W.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label10PA7W.Size = new System.Drawing.Size(40, 16);
+            this.label10PA7W.TabIndex = 100;
+            this.label10PA7W.Text = "7W:";
+            this.label10PA7W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label10PA12W
+            // 
+            this.label10PA12W.Image = null;
+            this.label10PA12W.Location = new System.Drawing.Point(144, 120);
+            this.label10PA12W.Name = "label10PA12W";
+            this.label10PA12W.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label10PA12W.Size = new System.Drawing.Size(40, 16);
+            this.label10PA12W.TabIndex = 110;
+            this.label10PA12W.Text = "12W:";
+            this.label10PA12W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label10PA12W.Visible = false;
+            // 
+            // ud10PA7W
+            // 
+            this.ud10PA7W.DecimalPlaces = 1;
+            this.ud10PA7W.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ud10PA7W.Location = new System.Drawing.Point(48, 168);
+            this.ud10PA7W.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.ud10PA7W.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.ud10PA7W.Name = "ud10PA7W";
+            this.ud10PA7W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA7W.TabIndex = 99;
+            this.ud10PA7W.TinyStep = false;
+            this.ud10PA7W.Value = new decimal(new int[] {
+            7,
+            0,
+            0,
+            0});
+            // 
+            // ud10PA13W
+            // 
+            this.ud10PA13W.DecimalPlaces = 1;
+            this.ud10PA13W.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ud10PA13W.Location = new System.Drawing.Point(184, 144);
+            this.ud10PA13W.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.ud10PA13W.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.ud10PA13W.Name = "ud10PA13W";
+            this.ud10PA13W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA13W.TabIndex = 111;
+            this.ud10PA13W.TinyStep = false;
+            this.ud10PA13W.Value = new decimal(new int[] {
+            13,
+            0,
+            0,
+            0});
+            // 
+            // label10PA6W
+            // 
+            this.label10PA6W.Image = null;
+            this.label10PA6W.Location = new System.Drawing.Point(8, 144);
+            this.label10PA6W.Name = "label10PA6W";
+            this.label10PA6W.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label10PA6W.Size = new System.Drawing.Size(40, 16);
+            this.label10PA6W.TabIndex = 98;
+            this.label10PA6W.Text = "6W:";
+            this.label10PA6W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label10PA1W
+            // 
+            this.label10PA1W.Image = null;
+            this.label10PA1W.Location = new System.Drawing.Point(8, 24);
+            this.label10PA1W.Name = "label10PA1W";
+            this.label10PA1W.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label10PA1W.Size = new System.Drawing.Size(40, 16);
+            this.label10PA1W.TabIndex = 88;
+            this.label10PA1W.Text = "1W:";
+            this.label10PA1W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label10PA13W
+            // 
+            this.label10PA13W.Image = null;
+            this.label10PA13W.Location = new System.Drawing.Point(144, 144);
+            this.label10PA13W.Name = "label10PA13W";
+            this.label10PA13W.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label10PA13W.Size = new System.Drawing.Size(40, 16);
+            this.label10PA13W.TabIndex = 112;
+            this.label10PA13W.Text = "13W:";
+            this.label10PA13W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label10PA13W.Visible = false;
+            // 
+            // ud10PA6W
+            // 
+            this.ud10PA6W.DecimalPlaces = 1;
+            this.ud10PA6W.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ud10PA6W.Location = new System.Drawing.Point(48, 144);
+            this.ud10PA6W.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.ud10PA6W.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.ud10PA6W.Name = "ud10PA6W";
+            this.ud10PA6W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA6W.TabIndex = 97;
+            this.ud10PA6W.TinyStep = false;
+            this.ud10PA6W.Value = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            // 
+            // ud10PA14W
+            // 
+            this.ud10PA14W.DecimalPlaces = 1;
+            this.ud10PA14W.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ud10PA14W.Location = new System.Drawing.Point(184, 168);
+            this.ud10PA14W.Maximum = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+            this.ud10PA14W.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.ud10PA14W.Name = "ud10PA14W";
+            this.ud10PA14W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA14W.TabIndex = 113;
+            this.ud10PA14W.TinyStep = false;
+            this.ud10PA14W.Value = new decimal(new int[] {
+            14,
+            0,
+            0,
+            0});
+            // 
+            // label10PA5W
+            // 
+            this.label10PA5W.Image = null;
+            this.label10PA5W.Location = new System.Drawing.Point(8, 120);
+            this.label10PA5W.Name = "label10PA5W";
+            this.label10PA5W.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label10PA5W.Size = new System.Drawing.Size(40, 16);
+            this.label10PA5W.TabIndex = 96;
+            this.label10PA5W.Text = "5W:";
+            this.label10PA5W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // ud10PA2W
+            // 
+            this.ud10PA2W.DecimalPlaces = 1;
+            this.ud10PA2W.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ud10PA2W.Location = new System.Drawing.Point(48, 48);
+            this.ud10PA2W.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.ud10PA2W.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.ud10PA2W.Name = "ud10PA2W";
+            this.ud10PA2W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA2W.TabIndex = 89;
+            this.ud10PA2W.TinyStep = false;
+            this.ud10PA2W.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // label10PA14W
+            // 
+            this.label10PA14W.Image = null;
+            this.label10PA14W.Location = new System.Drawing.Point(144, 168);
+            this.label10PA14W.Name = "label10PA14W";
+            this.label10PA14W.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label10PA14W.Size = new System.Drawing.Size(40, 16);
+            this.label10PA14W.TabIndex = 114;
+            this.label10PA14W.Text = "14W:";
+            this.label10PA14W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label10PA14W.Visible = false;
+            // 
+            // ud10PA5W
+            // 
+            this.ud10PA5W.DecimalPlaces = 1;
+            this.ud10PA5W.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ud10PA5W.Location = new System.Drawing.Point(48, 120);
+            this.ud10PA5W.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.ud10PA5W.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.ud10PA5W.Name = "ud10PA5W";
+            this.ud10PA5W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA5W.TabIndex = 95;
+            this.ud10PA5W.TinyStep = false;
+            this.ud10PA5W.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // label10PA2W
+            // 
+            this.label10PA2W.Image = null;
+            this.label10PA2W.Location = new System.Drawing.Point(8, 48);
+            this.label10PA2W.Name = "label10PA2W";
+            this.label10PA2W.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label10PA2W.Size = new System.Drawing.Size(40, 16);
+            this.label10PA2W.TabIndex = 90;
+            this.label10PA2W.Text = "2W:";
+            this.label10PA2W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label10PA4W
+            // 
+            this.label10PA4W.Image = null;
+            this.label10PA4W.Location = new System.Drawing.Point(8, 96);
+            this.label10PA4W.Name = "label10PA4W";
+            this.label10PA4W.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label10PA4W.Size = new System.Drawing.Size(40, 16);
+            this.label10PA4W.TabIndex = 94;
+            this.label10PA4W.Text = "4W:";
+            this.label10PA4W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // ud10PA4W
+            // 
+            this.ud10PA4W.DecimalPlaces = 1;
+            this.ud10PA4W.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ud10PA4W.Location = new System.Drawing.Point(48, 96);
+            this.ud10PA4W.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.ud10PA4W.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.ud10PA4W.Name = "ud10PA4W";
+            this.ud10PA4W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA4W.TabIndex = 93;
+            this.ud10PA4W.TinyStep = false;
+            this.ud10PA4W.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            // 
+            // ud10PA3W
+            // 
+            this.ud10PA3W.DecimalPlaces = 1;
+            this.ud10PA3W.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ud10PA3W.Location = new System.Drawing.Point(48, 72);
+            this.ud10PA3W.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.ud10PA3W.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.ud10PA3W.Name = "ud10PA3W";
+            this.ud10PA3W.Size = new System.Drawing.Size(48, 20);
+            this.ud10PA3W.TabIndex = 91;
+            this.ud10PA3W.TinyStep = false;
+            this.ud10PA3W.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            // 
+            // label10PA3W
+            // 
+            this.label10PA3W.Image = null;
+            this.label10PA3W.Location = new System.Drawing.Point(8, 72);
+            this.label10PA3W.Name = "label10PA3W";
+            this.label10PA3W.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label10PA3W.Size = new System.Drawing.Size(40, 16);
+            this.label10PA3W.TabIndex = 92;
+            this.label10PA3W.Text = "3W:";
+            this.label10PA3W.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // panelPAValues
             // 
             this.panelPAValues.AutoScrollMargin = new System.Drawing.Size(0, 0);
@@ -46463,7 +46480,7 @@
             this.chkPAValues.Appearance = System.Windows.Forms.Appearance.Button;
             this.chkPAValues.AutoSize = true;
             this.chkPAValues.Image = null;
-            this.chkPAValues.Location = new System.Drawing.Point(569, 216);
+            this.chkPAValues.Location = new System.Drawing.Point(555, 210);
             this.chkPAValues.Name = "chkPAValues";
             this.chkPAValues.Size = new System.Drawing.Size(66, 23);
             this.chkPAValues.TabIndex = 1;
@@ -46545,12 +46562,11 @@
             // labelTS8
             // 
             this.labelTS8.Image = null;
-            this.labelTS8.Location = new System.Drawing.Point(167, 100);
+            this.labelTS8.Location = new System.Drawing.Point(154, 100);
             this.labelTS8.Name = "labelTS8";
-            this.labelTS8.Size = new System.Drawing.Size(81, 13);
+            this.labelTS8.Size = new System.Drawing.Size(85, 15);
             this.labelTS8.TabIndex = 91;
             this.labelTS8.Text = "Slider Limit Bar:";
-            this.labelTS8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // clrbtnSliderLimitBar
             // 
@@ -46583,9 +46599,9 @@
             // lblAppearanceGenBtnSel
             // 
             this.lblAppearanceGenBtnSel.Image = null;
-            this.lblAppearanceGenBtnSel.Location = new System.Drawing.Point(167, 31);
+            this.lblAppearanceGenBtnSel.Location = new System.Drawing.Point(154, 71);
             this.lblAppearanceGenBtnSel.Name = "lblAppearanceGenBtnSel";
-            this.lblAppearanceGenBtnSel.Size = new System.Drawing.Size(64, 32);
+            this.lblAppearanceGenBtnSel.Size = new System.Drawing.Size(87, 15);
             this.lblAppearanceGenBtnSel.TabIndex = 55;
             this.lblAppearanceGenBtnSel.Text = "Button Selected:";
             // 
@@ -46594,7 +46610,7 @@
             this.clrbtnBtnSel.Automatic = "Automatic";
             this.clrbtnBtnSel.Color = System.Drawing.Color.Yellow;
             this.clrbtnBtnSel.Image = null;
-            this.clrbtnBtnSel.Location = new System.Drawing.Point(245, 35);
+            this.clrbtnBtnSel.Location = new System.Drawing.Point(245, 66);
             this.clrbtnBtnSel.MoreColors = "More Colors...";
             this.clrbtnBtnSel.Name = "clrbtnBtnSel";
             this.clrbtnBtnSel.Selectable = true;
@@ -46607,7 +46623,7 @@
             this.clrbtnGenBackground.Automatic = "Automatic";
             this.clrbtnGenBackground.Color = System.Drawing.SystemColors.ControlDark;
             this.clrbtnGenBackground.Image = null;
-            this.clrbtnGenBackground.Location = new System.Drawing.Point(245, 66);
+            this.clrbtnGenBackground.Location = new System.Drawing.Point(245, 19);
             this.clrbtnGenBackground.MoreColors = "More Colors...";
             this.clrbtnGenBackground.Name = "clrbtnGenBackground";
             this.clrbtnGenBackground.Selectable = true;
@@ -46619,7 +46635,7 @@
             // lblGenBackground
             // 
             this.lblGenBackground.Image = null;
-            this.lblGenBackground.Location = new System.Drawing.Point(167, 61);
+            this.lblGenBackground.Location = new System.Drawing.Point(167, 10);
             this.lblGenBackground.Name = "lblGenBackground";
             this.lblGenBackground.Size = new System.Drawing.Size(72, 32);
             this.lblGenBackground.TabIndex = 84;
@@ -46725,7 +46741,7 @@
             // btnRemoveSkin
             // 
             this.btnRemoveSkin.Image = null;
-            this.btnRemoveSkin.Location = new System.Drawing.Point(178, 17);
+            this.btnRemoveSkin.Location = new System.Drawing.Point(178, 18);
             this.btnRemoveSkin.Name = "btnRemoveSkin";
             this.btnRemoveSkin.Selectable = true;
             this.btnRemoveSkin.Size = new System.Drawing.Size(107, 23);
@@ -47040,7 +47056,7 @@
             // 
             this.chkNFShowDecimal.AutoSize = true;
             this.chkNFShowDecimal.Image = null;
-            this.chkNFShowDecimal.Location = new System.Drawing.Point(106, 78);
+            this.chkNFShowDecimal.Location = new System.Drawing.Point(116, 78);
             this.chkNFShowDecimal.Name = "chkNFShowDecimal";
             this.chkNFShowDecimal.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.chkNFShowDecimal.Size = new System.Drawing.Size(92, 17);
@@ -48046,7 +48062,7 @@
             this.chkLegacyMeters.Checked = true;
             this.chkLegacyMeters.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkLegacyMeters.Image = null;
-            this.chkLegacyMeters.Location = new System.Drawing.Point(19, 16);
+            this.chkLegacyMeters.Location = new System.Drawing.Point(19, 8);
             this.chkLegacyMeters.Name = "chkLegacyMeters";
             this.chkLegacyMeters.Size = new System.Drawing.Size(113, 17);
             this.chkLegacyMeters.TabIndex = 86;
@@ -49882,7 +49898,7 @@
             // 
             this.grpAppTXWaterfall.Controls.Add(this.chkShowTXZeroLineOnWaterfall);
             this.grpAppTXWaterfall.Controls.Add(this.chkShowTXFilterOnWaterfall);
-            this.grpAppTXWaterfall.Location = new System.Drawing.Point(541, 5);
+            this.grpAppTXWaterfall.Location = new System.Drawing.Point(541, 8);
             this.grpAppTXWaterfall.Name = "grpAppTXWaterfall";
             this.grpAppTXWaterfall.Size = new System.Drawing.Size(132, 83);
             this.grpAppTXWaterfall.TabIndex = 85;
@@ -49922,12 +49938,12 @@
             this.groupBoxTS3.Controls.Add(this.clrbtnTXDataLine);
             this.groupBoxTS3.Controls.Add(this.lblTXLineWidth);
             this.groupBoxTS3.Controls.Add(this.udTXLineWidth);
-            this.groupBoxTS3.Location = new System.Drawing.Point(20, 5);
+            this.groupBoxTS3.Location = new System.Drawing.Point(20, 8);
             this.groupBoxTS3.Name = "groupBoxTS3";
             this.groupBoxTS3.Size = new System.Drawing.Size(227, 128);
             this.groupBoxTS3.TabIndex = 80;
             this.groupBoxTS3.TabStop = false;
-            this.groupBoxTS3.Text = "Panadapter                         Alpha";
+            this.groupBoxTS3.Text = "Panadapter                        Alpha";
             // 
             // tbTXFilterAlpha
             // 
@@ -50049,7 +50065,7 @@
             this.groupBoxTS2.Controls.Add(this.lblTXZeroLineColor);
             this.groupBoxTS2.Controls.Add(this.clrbtnTXText);
             this.groupBoxTS2.Controls.Add(this.lblTXTextColor);
-            this.groupBoxTS2.Location = new System.Drawing.Point(266, 5);
+            this.groupBoxTS2.Location = new System.Drawing.Point(266, 8);
             this.groupBoxTS2.Name = "groupBoxTS2";
             this.groupBoxTS2.Size = new System.Drawing.Size(256, 256);
             this.groupBoxTS2.TabIndex = 79;
@@ -50329,7 +50345,7 @@
             this.grpBoxCollapsible.Controls.Add(this.chkShowModeControls);
             this.grpBoxCollapsible.Controls.Add(this.chkShowBandControls);
             this.grpBoxCollapsible.Controls.Add(this.chkShowTopControls);
-            this.grpBoxCollapsible.Location = new System.Drawing.Point(15, 15);
+            this.grpBoxCollapsible.Location = new System.Drawing.Point(15, 8);
             this.grpBoxCollapsible.Name = "grpBoxCollapsible";
             this.grpBoxCollapsible.Size = new System.Drawing.Size(162, 141);
             this.grpBoxCollapsible.TabIndex = 1;
@@ -50426,64 +50442,6 @@
             this.panelSkinServerControls.Size = new System.Drawing.Size(710, 399);
             this.panelSkinServerControls.TabIndex = 4;
             // 
-            // grpAuthorDetails
-            // 
-            this.grpAuthorDetails.Controls.Add(this.btnSkinsDonate);
-            this.grpAuthorDetails.Controls.Add(this.btnSkinsHomepage);
-            this.grpAuthorDetails.Controls.Add(this.lblAuthorDetails2);
-            this.grpAuthorDetails.Controls.Add(this.lblAuthorDetails1);
-            this.grpAuthorDetails.Location = new System.Drawing.Point(4, 39);
-            this.grpAuthorDetails.Name = "grpAuthorDetails";
-            this.grpAuthorDetails.Size = new System.Drawing.Size(416, 82);
-            this.grpAuthorDetails.TabIndex = 4;
-            this.grpAuthorDetails.TabStop = false;
-            this.grpAuthorDetails.Text = "Author Details";
-            // 
-            // btnSkinsDonate
-            // 
-            this.btnSkinsDonate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
-            this.btnSkinsDonate.Image = null;
-            this.btnSkinsDonate.Location = new System.Drawing.Point(282, 45);
-            this.btnSkinsDonate.Name = "btnSkinsDonate";
-            this.btnSkinsDonate.Selectable = true;
-            this.btnSkinsDonate.Size = new System.Drawing.Size(128, 28);
-            this.btnSkinsDonate.TabIndex = 4;
-            this.btnSkinsDonate.Text = "Donate";
-            this.btnSkinsDonate.UseVisualStyleBackColor = false;
-            this.btnSkinsDonate.Click += new System.EventHandler(this.btnSkinsDonate_Click);
-            // 
-            // btnSkinsHomepage
-            // 
-            this.btnSkinsHomepage.Image = null;
-            this.btnSkinsHomepage.Location = new System.Drawing.Point(282, 14);
-            this.btnSkinsHomepage.Name = "btnSkinsHomepage";
-            this.btnSkinsHomepage.Selectable = true;
-            this.btnSkinsHomepage.Size = new System.Drawing.Size(128, 28);
-            this.btnSkinsHomepage.TabIndex = 3;
-            this.btnSkinsHomepage.Text = "Skins Homepage";
-            this.btnSkinsHomepage.UseVisualStyleBackColor = true;
-            this.btnSkinsHomepage.Click += new System.EventHandler(this.btnSkinsHomepage_Click);
-            // 
-            // lblAuthorDetails2
-            // 
-            this.lblAuthorDetails2.BackColor = System.Drawing.SystemColors.Control;
-            this.lblAuthorDetails2.Image = null;
-            this.lblAuthorDetails2.Location = new System.Drawing.Point(12, 47);
-            this.lblAuthorDetails2.Name = "lblAuthorDetails2";
-            this.lblAuthorDetails2.Size = new System.Drawing.Size(255, 13);
-            this.lblAuthorDetails2.TabIndex = 1;
-            this.lblAuthorDetails2.Text = "lblAuthorDetails2";
-            // 
-            // lblAuthorDetails1
-            // 
-            this.lblAuthorDetails1.BackColor = System.Drawing.SystemColors.Control;
-            this.lblAuthorDetails1.Image = null;
-            this.lblAuthorDetails1.Location = new System.Drawing.Point(12, 24);
-            this.lblAuthorDetails1.Name = "lblAuthorDetails1";
-            this.lblAuthorDetails1.Size = new System.Drawing.Size(255, 13);
-            this.lblAuthorDetails1.TabIndex = 0;
-            this.lblAuthorDetails1.Text = "lblAuthorDetails1";
-            // 
             // labelTS183
             // 
             this.labelTS183.AutoSize = true;
@@ -50542,6 +50500,64 @@
             this.gtpAvailableSkins.Size = new System.Drawing.Size(702, 399);
             this.gtpAvailableSkins.TabIndex = 5;
             this.gtpAvailableSkins.TabStop = false;
+            // 
+            // grpAuthorDetails
+            // 
+            this.grpAuthorDetails.Controls.Add(this.btnSkinsDonate);
+            this.grpAuthorDetails.Controls.Add(this.btnSkinsHomepage);
+            this.grpAuthorDetails.Controls.Add(this.lblAuthorDetails2);
+            this.grpAuthorDetails.Controls.Add(this.lblAuthorDetails1);
+            this.grpAuthorDetails.Location = new System.Drawing.Point(4, 39);
+            this.grpAuthorDetails.Name = "grpAuthorDetails";
+            this.grpAuthorDetails.Size = new System.Drawing.Size(416, 82);
+            this.grpAuthorDetails.TabIndex = 4;
+            this.grpAuthorDetails.TabStop = false;
+            this.grpAuthorDetails.Text = "Author Details";
+            // 
+            // btnSkinsDonate
+            // 
+            this.btnSkinsDonate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
+            this.btnSkinsDonate.Image = null;
+            this.btnSkinsDonate.Location = new System.Drawing.Point(282, 45);
+            this.btnSkinsDonate.Name = "btnSkinsDonate";
+            this.btnSkinsDonate.Selectable = true;
+            this.btnSkinsDonate.Size = new System.Drawing.Size(128, 28);
+            this.btnSkinsDonate.TabIndex = 4;
+            this.btnSkinsDonate.Text = "Donate";
+            this.btnSkinsDonate.UseVisualStyleBackColor = false;
+            this.btnSkinsDonate.Click += new System.EventHandler(this.btnSkinsDonate_Click);
+            // 
+            // btnSkinsHomepage
+            // 
+            this.btnSkinsHomepage.Image = null;
+            this.btnSkinsHomepage.Location = new System.Drawing.Point(282, 14);
+            this.btnSkinsHomepage.Name = "btnSkinsHomepage";
+            this.btnSkinsHomepage.Selectable = true;
+            this.btnSkinsHomepage.Size = new System.Drawing.Size(128, 28);
+            this.btnSkinsHomepage.TabIndex = 3;
+            this.btnSkinsHomepage.Text = "Skins Homepage";
+            this.btnSkinsHomepage.UseVisualStyleBackColor = true;
+            this.btnSkinsHomepage.Click += new System.EventHandler(this.btnSkinsHomepage_Click);
+            // 
+            // lblAuthorDetails2
+            // 
+            this.lblAuthorDetails2.BackColor = System.Drawing.SystemColors.Control;
+            this.lblAuthorDetails2.Image = null;
+            this.lblAuthorDetails2.Location = new System.Drawing.Point(12, 47);
+            this.lblAuthorDetails2.Name = "lblAuthorDetails2";
+            this.lblAuthorDetails2.Size = new System.Drawing.Size(255, 13);
+            this.lblAuthorDetails2.TabIndex = 1;
+            this.lblAuthorDetails2.Text = "lblAuthorDetails2";
+            // 
+            // lblAuthorDetails1
+            // 
+            this.lblAuthorDetails1.BackColor = System.Drawing.SystemColors.Control;
+            this.lblAuthorDetails1.Image = null;
+            this.lblAuthorDetails1.Location = new System.Drawing.Point(12, 24);
+            this.lblAuthorDetails1.Name = "lblAuthorDetails1";
+            this.lblAuthorDetails1.Size = new System.Drawing.Size(255, 13);
+            this.lblAuthorDetails1.TabIndex = 0;
+            this.lblAuthorDetails1.Text = "lblAuthorDetails1";
             // 
             // chkReplaceCurrentMeterInSelectedSkin
             // 
@@ -51653,7 +51669,7 @@
             this.grpCat4ControlBox.Controls.Add(this.comboCAT4parity);
             this.grpCat4ControlBox.Controls.Add(this.comboCAT4databits);
             this.grpCat4ControlBox.Controls.Add(this.comboCAT4stopbits);
-            this.grpCat4ControlBox.Location = new System.Drawing.Point(512, 15);
+            this.grpCat4ControlBox.Location = new System.Drawing.Point(512, 8);
             this.grpCat4ControlBox.Name = "grpCat4ControlBox";
             this.grpCat4ControlBox.Size = new System.Drawing.Size(160, 216);
             this.grpCat4ControlBox.TabIndex = 93;
@@ -51809,7 +51825,7 @@
             this.grpCat3ControlBox.Controls.Add(this.comboCAT3parity);
             this.grpCat3ControlBox.Controls.Add(this.comboCAT3databits);
             this.grpCat3ControlBox.Controls.Add(this.comboCAT3stopbits);
-            this.grpCat3ControlBox.Location = new System.Drawing.Point(346, 15);
+            this.grpCat3ControlBox.Location = new System.Drawing.Point(346, 8);
             this.grpCat3ControlBox.Name = "grpCat3ControlBox";
             this.grpCat3ControlBox.Size = new System.Drawing.Size(160, 216);
             this.grpCat3ControlBox.TabIndex = 92;
@@ -51965,7 +51981,7 @@
             this.grpCat2ControlBox.Controls.Add(this.comboCAT2parity);
             this.grpCat2ControlBox.Controls.Add(this.comboCAT2databits);
             this.grpCat2ControlBox.Controls.Add(this.comboCAT2stopbits);
-            this.grpCat2ControlBox.Location = new System.Drawing.Point(180, 15);
+            this.grpCat2ControlBox.Location = new System.Drawing.Point(180, 8);
             this.grpCat2ControlBox.Name = "grpCat2ControlBox";
             this.grpCat2ControlBox.Size = new System.Drawing.Size(160, 216);
             this.grpCat2ControlBox.TabIndex = 91;
@@ -52121,7 +52137,7 @@
             this.grpCatControlBox.Controls.Add(this.comboCATparity);
             this.grpCatControlBox.Controls.Add(this.comboCATdatabits);
             this.grpCatControlBox.Controls.Add(this.comboCATstopbits);
-            this.grpCatControlBox.Location = new System.Drawing.Point(14, 15);
+            this.grpCatControlBox.Location = new System.Drawing.Point(14, 8);
             this.grpCatControlBox.Name = "grpCatControlBox";
             this.grpCatControlBox.Size = new System.Drawing.Size(160, 216);
             this.grpCatControlBox.TabIndex = 90;
@@ -52304,7 +52320,7 @@
             this.grpTCIServer.Controls.Add(this.chkTCIServerListening);
             this.grpTCIServer.Controls.Add(this.btnDefaultBindPortForTCI);
             this.grpTCIServer.Controls.Add(this.txtTCIServerBindIPPort);
-            this.grpTCIServer.Location = new System.Drawing.Point(14, 15);
+            this.grpTCIServer.Location = new System.Drawing.Point(14, 8);
             this.grpTCIServer.Name = "grpTCIServer";
             this.grpTCIServer.Size = new System.Drawing.Size(373, 389);
             this.grpTCIServer.TabIndex = 98;
@@ -52673,7 +52689,7 @@
             this.grpTCPIPcatServer.Controls.Add(this.chkTCPIPCatServerListening);
             this.grpTCPIPcatServer.Controls.Add(this.btnDefaultBindPortForTCPIPCat);
             this.grpTCPIPcatServer.Controls.Add(this.txtTCPIPCATServerBindIPPort);
-            this.grpTCPIPcatServer.Location = new System.Drawing.Point(393, 15);
+            this.grpTCPIPcatServer.Location = new System.Drawing.Point(393, 8);
             this.grpTCPIPcatServer.Name = "grpTCPIPcatServer";
             this.grpTCPIPcatServer.Size = new System.Drawing.Size(323, 169);
             this.grpTCPIPcatServer.TabIndex = 97;
@@ -52997,7 +53013,7 @@
             this.groupBox1.Controls.Add(this.labelTS515);
             this.groupBox1.Controls.Add(this.udUpdatesPerStepMax);
             this.groupBox1.Controls.Add(this.btnConfigure);
-            this.groupBox1.Location = new System.Drawing.Point(14, 15);
+            this.groupBox1.Location = new System.Drawing.Point(14, 8);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(337, 176);
             this.groupBox1.TabIndex = 105;
@@ -53168,7 +53184,7 @@
             this.groupBoxTS25.Controls.Add(this.chkKWAI);
             this.groupBoxTS25.Controls.Add(this.txtZZSN);
             this.groupBoxTS25.Controls.Add(this.labelTS323);
-            this.groupBoxTS25.Location = new System.Drawing.Point(221, 15);
+            this.groupBoxTS25.Location = new System.Drawing.Point(221, 8);
             this.groupBoxTS25.Name = "groupBoxTS25";
             this.groupBoxTS25.Size = new System.Drawing.Size(201, 156);
             this.groupBoxTS25.TabIndex = 109;
@@ -53247,7 +53263,7 @@
             this.groupBoxTS24.Controls.Add(this.btnCATTest);
             this.groupBoxTS24.Controls.Add(this.comboCATRigType);
             this.groupBoxTS24.Controls.Add(this.lblCATRigType);
-            this.groupBoxTS24.Location = new System.Drawing.Point(462, 15);
+            this.groupBoxTS24.Location = new System.Drawing.Point(462, 8);
             this.groupBoxTS24.Name = "groupBoxTS24";
             this.groupBoxTS24.Size = new System.Drawing.Size(241, 100);
             this.groupBoxTS24.TabIndex = 108;
@@ -53300,7 +53316,7 @@
             this.grpRTTYOffset.Controls.Add(this.udRTTYL);
             this.grpRTTYOffset.Controls.Add(this.chkRTTYOffsetEnableB);
             this.grpRTTYOffset.Controls.Add(this.chkRTTYOffsetEnableA);
-            this.grpRTTYOffset.Location = new System.Drawing.Point(14, 15);
+            this.grpRTTYOffset.Location = new System.Drawing.Point(14, 8);
             this.grpRTTYOffset.Name = "grpRTTYOffset";
             this.grpRTTYOffset.Size = new System.Drawing.Size(201, 156);
             this.grpRTTYOffset.TabIndex = 97;
@@ -53428,7 +53444,7 @@
             this.groupBoxTS10.Controls.Add(this.labelTS469);
             this.groupBoxTS10.Controls.Add(this.chkBoxPM);
             this.groupBoxTS10.Controls.Add(this.udSpeedPM);
-            this.groupBoxTS10.Location = new System.Drawing.Point(515, 14);
+            this.groupBoxTS10.Location = new System.Drawing.Point(515, 8);
             this.groupBoxTS10.Name = "groupBoxTS10";
             this.groupBoxTS10.Size = new System.Drawing.Size(184, 155);
             this.groupBoxTS10.TabIndex = 56;
@@ -53552,7 +53568,7 @@
             this.grpFocusMaster.Controls.Add(this.txtFocusMasterWinTitle);
             this.grpFocusMaster.Controls.Add(this.txtFocusMasterUDPPort);
             this.grpFocusMaster.Controls.Add(this.comboFocusMasterMode);
-            this.grpFocusMaster.Location = new System.Drawing.Point(18, 14);
+            this.grpFocusMaster.Location = new System.Drawing.Point(18, 8);
             this.grpFocusMaster.Name = "grpFocusMaster";
             this.grpFocusMaster.Size = new System.Drawing.Size(334, 100);
             this.grpFocusMaster.TabIndex = 104;
@@ -53662,7 +53678,7 @@
             this.grpAndrOptions.Controls.Add(this.chkAndrDiversityLandscape);
             this.grpAndrOptions.Controls.Add(this.chkAndrDiversityAutoshow);
             this.grpAndrOptions.Controls.Add(this.chkAndrGainAutoshow);
-            this.grpAndrOptions.Location = new System.Drawing.Point(271, 15);
+            this.grpAndrOptions.Location = new System.Drawing.Point(271, 8);
             this.grpAndrOptions.Name = "grpAndrOptions";
             this.grpAndrOptions.Size = new System.Drawing.Size(244, 187);
             this.grpAndrOptions.TabIndex = 107;
@@ -53757,7 +53773,7 @@
             this.grpAndr.Controls.Add(this.comboAndromedaCATPort);
             this.grpAndr.Controls.Add(this.labelTSPort);
             this.grpAndr.Controls.Add(this.chkEnableAndromeda);
-            this.grpAndr.Location = new System.Drawing.Point(14, 15);
+            this.grpAndr.Location = new System.Drawing.Point(14, 8);
             this.grpAndr.Name = "grpAndr";
             this.grpAndr.Size = new System.Drawing.Size(240, 187);
             this.grpAndr.TabIndex = 106;
@@ -53893,7 +53909,7 @@
             this.grpBoxTS1.Controls.Add(this.grpSigGenReceive);
             this.grpBoxTS1.Location = new System.Drawing.Point(228, 8);
             this.grpBoxTS1.Name = "grpBoxTS1";
-            this.grpBoxTS1.Size = new System.Drawing.Size(432, 350);
+            this.grpBoxTS1.Size = new System.Drawing.Size(422, 326);
             this.grpBoxTS1.TabIndex = 88;
             this.grpBoxTS1.TabStop = false;
             this.grpBoxTS1.Text = "Signal Generator";
@@ -53911,7 +53927,7 @@
             this.grpSigGenTransmit.Controls.Add(this.cmboSigGenTXMode);
             this.grpSigGenTransmit.Location = new System.Drawing.Point(221, 16);
             this.grpSigGenTransmit.Name = "grpSigGenTransmit";
-            this.grpSigGenTransmit.Size = new System.Drawing.Size(176, 326);
+            this.grpSigGenTransmit.Size = new System.Drawing.Size(189, 302);
             this.grpSigGenTransmit.TabIndex = 102;
             this.grpSigGenTransmit.TabStop = false;
             this.grpSigGenTransmit.Text = "Transmit";
@@ -53924,9 +53940,9 @@
             this.grpPulse.Controls.Add(this.labelTS316);
             this.grpPulse.Controls.Add(this.udTXGenPulseFreq);
             this.grpPulse.Controls.Add(this.labelTS315);
-            this.grpPulse.Location = new System.Drawing.Point(7, 220);
+            this.grpPulse.Location = new System.Drawing.Point(7, 205);
             this.grpPulse.Name = "grpPulse";
-            this.grpPulse.Size = new System.Drawing.Size(163, 100);
+            this.grpPulse.Size = new System.Drawing.Size(163, 92);
             this.grpPulse.TabIndex = 119;
             this.grpPulse.TabStop = false;
             this.grpPulse.Text = "Pulse";
@@ -54075,7 +54091,7 @@
             this.grpTXGenSweep.Controls.Add(this.udTXGenSweepLow);
             this.grpTXGenSweep.Location = new System.Drawing.Point(7, 115);
             this.grpTXGenSweep.Name = "grpTXGenSweep";
-            this.grpTXGenSweep.Size = new System.Drawing.Size(163, 102);
+            this.grpTXGenSweep.Size = new System.Drawing.Size(163, 91);
             this.grpTXGenSweep.TabIndex = 110;
             this.grpTXGenSweep.TabStop = false;
             this.grpTXGenSweep.Text = "Sweep";
@@ -54323,9 +54339,9 @@
             this.grpSigGenReceive.Controls.Add(this.chkSigGenRX2);
             this.grpSigGenReceive.Controls.Add(this.lblSigGenRXMode);
             this.grpSigGenReceive.Controls.Add(this.cmboSigGenRXMode);
-            this.grpSigGenReceive.Location = new System.Drawing.Point(8, 16);
+            this.grpSigGenReceive.Location = new System.Drawing.Point(10, 16);
             this.grpSigGenReceive.Name = "grpSigGenReceive";
-            this.grpSigGenReceive.Size = new System.Drawing.Size(189, 326);
+            this.grpSigGenReceive.Size = new System.Drawing.Size(189, 302);
             this.grpSigGenReceive.TabIndex = 101;
             this.grpSigGenReceive.TabStop = false;
             this.grpSigGenReceive.Text = "Receive";
@@ -54347,7 +54363,7 @@
             this.chkSigGenRX1.Checked = true;
             this.chkSigGenRX1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSigGenRX1.Image = null;
-            this.chkSigGenRX1.Location = new System.Drawing.Point(11, 237);
+            this.chkSigGenRX1.Location = new System.Drawing.Point(11, 222);
             this.chkSigGenRX1.Name = "chkSigGenRX1";
             this.chkSigGenRX1.Size = new System.Drawing.Size(47, 17);
             this.chkSigGenRX1.TabIndex = 116;
@@ -54364,7 +54380,7 @@
             this.grpRXGenSweep.Controls.Add(this.udRXGenSweepLow);
             this.grpRXGenSweep.Location = new System.Drawing.Point(7, 115);
             this.grpRXGenSweep.Name = "grpRXGenSweep";
-            this.grpRXGenSweep.Size = new System.Drawing.Size(163, 102);
+            this.grpRXGenSweep.Size = new System.Drawing.Size(163, 91);
             this.grpRXGenSweep.TabIndex = 115;
             this.grpRXGenSweep.TabStop = false;
             this.grpRXGenSweep.Text = "Sweep";
@@ -54574,7 +54590,7 @@
             // 
             this.chkSigGenRX2.AutoSize = true;
             this.chkSigGenRX2.Image = null;
-            this.chkSigGenRX2.Location = new System.Drawing.Point(101, 237);
+            this.chkSigGenRX2.Location = new System.Drawing.Point(101, 222);
             this.chkSigGenRX2.Name = "chkSigGenRX2";
             this.chkSigGenRX2.Size = new System.Drawing.Size(47, 17);
             this.chkSigGenRX2.TabIndex = 101;
@@ -54990,6 +55006,23 @@
             // 
             this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
             // 
+            // lblTXProfileWarning
+            // 
+            this.lblTXProfileWarning.BackColor = System.Drawing.Color.Orange;
+            this.lblTXProfileWarning.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblTXProfileWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTXProfileWarning.ForeColor = System.Drawing.Color.Black;
+            this.lblTXProfileWarning.Image = null;
+            this.lblTXProfileWarning.Location = new System.Drawing.Point(609, 2);
+            this.lblTXProfileWarning.Name = "lblTXProfileWarning";
+            this.lblTXProfileWarning.Size = new System.Drawing.Size(134, 33);
+            this.lblTXProfileWarning.TabIndex = 24;
+            this.lblTXProfileWarning.Text = "TX Profile modified\r\nSave profile to store";
+            this.lblTXProfileWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.lblTXProfileWarning, resources.GetString("lblTXProfileWarning.ToolTip"));
+            this.lblTXProfileWarning.Visible = false;
+            this.lblTXProfileWarning.Click += new System.EventHandler(this.lblTXProfileWarning_Click);
+            // 
             // btnExportDB
             // 
             this.btnExportDB.Image = null;
@@ -55074,23 +55107,6 @@
             this.toolTip1.SetToolTip(this.chkEnableRFEPATR, "Enabled the RFE PA TR line to toggle with MOX (for use with non-FLEX PA).");
             this.chkEnableRFEPATR.CheckedChanged += new System.EventHandler(this.chkEnableRFEPATR_CheckedChanged);
             // 
-            // lblTXProfileWarning
-            // 
-            this.lblTXProfileWarning.BackColor = System.Drawing.Color.Orange;
-            this.lblTXProfileWarning.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.lblTXProfileWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTXProfileWarning.ForeColor = System.Drawing.Color.Black;
-            this.lblTXProfileWarning.Image = null;
-            this.lblTXProfileWarning.Location = new System.Drawing.Point(609, 2);
-            this.lblTXProfileWarning.Name = "lblTXProfileWarning";
-            this.lblTXProfileWarning.Size = new System.Drawing.Size(134, 33);
-            this.lblTXProfileWarning.TabIndex = 24;
-            this.lblTXProfileWarning.Text = "TX Profile modified\r\nSave profile to store";
-            this.lblTXProfileWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.lblTXProfileWarning, resources.GetString("lblTXProfileWarning.ToolTip"));
-            this.lblTXProfileWarning.Visible = false;
-            this.lblTXProfileWarning.Click += new System.EventHandler(this.lblTXProfileWarning_Click);
-            // 
             // saveFileDialog1
             // 
             this.saveFileDialog1.Filter = "Thetis Database Files (*.xml)|*.xml|All files|*.*";
@@ -55125,6 +55141,25 @@
             this.tmrCFCOMPGain.Enabled = true;
             this.tmrCFCOMPGain.Interval = 50;
             this.tmrCFCOMPGain.Tick += new System.EventHandler(this.tmrCFCOMPGain_Tick);
+            // 
+            // tmrCheckProfile
+            // 
+            this.tmrCheckProfile.Enabled = true;
+            this.tmrCheckProfile.Interval = 1000;
+            this.tmrCheckProfile.Tick += new System.EventHandler(this.tmrCheckProfile_Tick);
+            // 
+            // txtboxTXProfileChangedReport
+            // 
+            this.txtboxTXProfileChangedReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
+            this.txtboxTXProfileChangedReport.Location = new System.Drawing.Point(234, 494);
+            this.txtboxTXProfileChangedReport.Multiline = true;
+            this.txtboxTXProfileChangedReport.Name = "txtboxTXProfileChangedReport";
+            this.txtboxTXProfileChangedReport.ReadOnly = true;
+            this.txtboxTXProfileChangedReport.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtboxTXProfileChangedReport.Size = new System.Drawing.Size(326, 128);
+            this.txtboxTXProfileChangedReport.TabIndex = 25;
+            this.txtboxTXProfileChangedReport.Text = "used to report tx profile changes if you click on orange box";
+            this.txtboxTXProfileChangedReport.Visible = false;
             // 
             // labelSavingLoading
             // 
@@ -56158,25 +56193,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // tmrCheckProfile
-            // 
-            this.tmrCheckProfile.Enabled = true;
-            this.tmrCheckProfile.Interval = 1000;
-            this.tmrCheckProfile.Tick += new System.EventHandler(this.tmrCheckProfile_Tick);
-            // 
-            // txtboxTXProfileChangedReport
-            // 
-            this.txtboxTXProfileChangedReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
-            this.txtboxTXProfileChangedReport.Location = new System.Drawing.Point(234, 494);
-            this.txtboxTXProfileChangedReport.Multiline = true;
-            this.txtboxTXProfileChangedReport.Name = "txtboxTXProfileChangedReport";
-            this.txtboxTXProfileChangedReport.ReadOnly = true;
-            this.txtboxTXProfileChangedReport.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtboxTXProfileChangedReport.Size = new System.Drawing.Size(326, 128);
-            this.txtboxTXProfileChangedReport.TabIndex = 25;
-            this.txtboxTXProfileChangedReport.Text = "used to report tx profile changes if you click on orange box";
-            this.txtboxTXProfileChangedReport.Visible = false;
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -56987,6 +57003,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udLineInBoost)).EndInit();
             this.grpTXProfileDef.ResumeLayout(false);
             this.grpTXAM.ResumeLayout(false);
+            this.grpTXAM.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTXAMCarrierLevel)).EndInit();
             this.grpTXMonitor.ResumeLayout(false);
             this.grpTXMonitor.PerformLayout();
@@ -57049,21 +57066,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udPACalPower)).EndInit();
             this.tpWattMeter.ResumeLayout(false);
             this.tpWattMeter.PerformLayout();
-            this.grp10WattMeterTrim.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA1W)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA10W)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA9W)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA11W)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA8W)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA12W)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA7W)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA13W)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA6W)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA14W)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA2W)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA5W)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA4W)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ud10PA3W)).EndInit();
             this.grp100WattMeterTrim.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ud100PA10W)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ud100PA100W)).EndInit();
@@ -57094,6 +57096,21 @@
             ((System.ComponentModel.ISupportInitialize)(this.ud200PA100W)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ud200PA80W)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ud200PA60W)).EndInit();
+            this.grp10WattMeterTrim.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA1W)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA10W)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA9W)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA11W)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA8W)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA12W)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA7W)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA13W)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA6W)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA14W)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA2W)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA5W)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA4W)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ud10PA3W)).EndInit();
             this.panelPAValues.ResumeLayout(false);
             this.panelPAValues.PerformLayout();
             this.tpAppearance.ResumeLayout(false);
@@ -57180,9 +57197,9 @@
             this.tpSkinServers.ResumeLayout(false);
             this.panelSkinServerControls.ResumeLayout(false);
             this.panelSkinServerControls.PerformLayout();
-            this.grpAuthorDetails.ResumeLayout(false);
             this.gtpAvailableSkins.ResumeLayout(false);
             this.gtpAvailableSkins.PerformLayout();
+            this.grpAuthorDetails.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picSkinThumbnail)).EndInit();
             this.panelGetServerList.ResumeLayout(false);
             this.panelGetServerList.PerformLayout();
@@ -60852,5 +60869,6 @@
         private CheckBoxTS chkIgnore14bitMidiMessages;
         private CheckBoxTS chkMidiControlIDincludesChannel;
         private CheckBoxTS chkMidiControlIDincludesStatus;
+        private CheckBoxTS chkForceATTwhenOutPowerChanges;
     }
 }

@@ -2244,13 +2244,13 @@
             // udRIT
             // 
             this.udRIT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            resources.ApplyResources(this.udRIT, "udRIT");
             this.udRIT.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.udRIT.Increment = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            resources.ApplyResources(this.udRIT, "udRIT");
             this.udRIT.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -2322,13 +2322,13 @@
             // udXIT
             // 
             this.udXIT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            resources.ApplyResources(this.udXIT, "udXIT");
             this.udXIT.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.udXIT.Increment = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            resources.ApplyResources(this.udXIT, "udXIT");
             this.udXIT.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -4060,6 +4060,7 @@
             // menuStrip1
             // 
             this.menuStrip1.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setupToolStripMenuItem,
@@ -4083,7 +4084,6 @@
             this.pIToolStripMenuItem,
             this.BPFToolStripMenuItem,
             this.finderMenuItem});
-            resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Name = "menuStrip1";
             // 
             // setupToolStripMenuItem

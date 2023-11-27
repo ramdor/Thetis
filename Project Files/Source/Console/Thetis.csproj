@@ -530,15 +530,6 @@
     </Compile>
     <Compile Include="HPSDR\NetworkIO.cs" />
     <Compile Include="ivac.cs" />
-    <Compile Include="KE9N\Http.cs" />
-    <Compile Include="KE9N\HttpServer\GetTRXParamHandler.cs" />
-    <Compile Include="KE9N\HttpServer\HandlerFactory.cs" />
-    <Compile Include="KE9N\HttpServer\HttpServer.cs" />
-    <Compile Include="KE9N\HttpServer\IHandler.cs" />
-    <Compile Include="KE9N\HttpServer\ImageRequestHandler.cs" />
-    <Compile Include="KE9N\HttpServer\SetParamRequestHandler.cs" />
-    <Compile Include="KE9N\HttpServer\UnknownRequestHandler.cs" />
-    <Compile Include="KE9N\HttpServer\WebPageRequestHandler.cs" />
     <Compile Include="KE9N\scan.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -718,6 +709,7 @@
     <None Include="Resources\stop.png" />
     <None Include="Resources\download.png" />
     <None Include="Resources\download1.png" />
+    <None Include="Resources\3-santa-moving-snow.gif" />
     <Content Include="thetis-icon.ico" />
     <None Include="Resources\thetis-logo1.png" />
     <None Include="Resources\cross_rl.cur" />
@@ -806,7 +798,6 @@
     <None Include="Resources\cpu.png" />
     <EmbeddedResource Include="Resources\picD2.png" />
     <EmbeddedResource Include="Resources\star.png" />
-    <EmbeddedResource Include="KE9N\HttpServer\template.html" />
     <EmbeddedResource Include="KE9N\stack.resx">
       <DependentUpon>stack.cs</DependentUpon>
     </EmbeddedResource>

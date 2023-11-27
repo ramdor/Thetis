@@ -926,11 +926,24 @@ namespace Thetis
 				rx_output_gain = value;
 				if(update)
 				{
-					if(value != rx_output_gain_dsp || force)
+                    if (value != rx_output_gain_dsp || force)
 					{
                         WDSP.SetRXAPanelGain1(WDSP.id(thread, subrx), value);
 						rx_output_gain_dsp = value;
-					}
+
+                        //[2.10.3.5]MW0LGE wave recorder volume normalise
+                        switch(WDSP.id(thread, subrx))
+                        {
+                            case 0: //rx1
+                                if(WaveThing.wave_file_writer[0] != null)
+                                    WaveThing.wave_file_writer[0].RecordGain = (float)value;
+                                break;
+                            case 2: //rx2
+                                if (WaveThing.wave_file_writer[1] != null)
+                                    WaveThing.wave_file_writer[1].RecordGain = (float)value;
+                                break;
+                        }
+                    }
 				}
 			}
 		}

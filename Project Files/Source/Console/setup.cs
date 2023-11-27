@@ -48,6 +48,8 @@ namespace Thetis
     using System.Net;
     using System.Threading.Tasks;
     using Ionic.Zip;
+    using System.Drawing.Text;
+    using System.Diagnostics.Eventing.Reader;
 
     public partial class Setup : Form
     {
@@ -81,11 +83,12 @@ namespace Thetis
             //everything here moved to AfterConstructor, which is called during singleton instance // G8KLJ's idea/implementation
         }
         internal void AfterConstructor()
-        { 
-            //
-            addDelegates();
-
+        {
             Splash.SetStatus("Setting up controls");
+
+            ThetisSkinService.Version = console.ProductVersion;
+
+            addDelegates();
 
             // timeout stuff
             lblTimeout.Visible = Common.IsTimeOutEnabled;
@@ -2464,6 +2467,7 @@ namespace Thetis
 
             //
             chkForceATTwhenPSAoff_CheckedChanged(this, e); //MW0LGE [2.9.0.7]
+            chkForceATTwhenOutPowerChanges_CheckedChanged(this, e);
 
             //options1 tab
             chkPurgeBuffers_CheckedChanged(this, e);
@@ -14416,6 +14420,9 @@ namespace Thetis
 
             _skinChanging = true;
 
+            Cursor c = Cursor.Current;
+            Cursor.Current = Cursors.WaitCursor;
+
             string path = ".\\Skins\\";
             if (!Directory.Exists(path + comboAppSkin.Text))
                 //[2.10.2.2]MW0LGE why restore here twice?
@@ -14441,6 +14448,8 @@ namespace Thetis
             Display.SnowFall = sSkinNameLower.Contains("xmas") || sSkinNameLower.Contains("christmas") || sSkinNameLower.Contains("x-mas") ||
                                sSkinNameLower.Contains("snow") || sSkinNameLower.Contains("flakes") || sSkinNameLower.Contains("winter");
 #endif
+
+            Cursor.Current = c;
 
             _skinChanging = false;
         }
@@ -28438,7 +28447,9 @@ namespace Thetis
             {
                 if (e.Complete)
                 {
+                    bool bExtract = false;
                     bool bExpandedMeterSkins = false;
+                    string sRootFolder = "";
 
                     prgSkinDownload.Value = 100;
 
@@ -28449,8 +28460,7 @@ namespace Thetis
                         sFile = getFileFromUrl(e.FinalUri);
 
                     if (isSkinZipFile(e.Path, sFile, out bool bUsesFileInRoot, out bool bMeterFolderFound, e.BypassRootFolderCheck | e.IsMeterSkin))
-                    {
-                        bool bExtract = false;
+                    {                        
                         string sOutputPath = "";                        
 
                         if (bUsesFileInRoot || (e.BypassRootFolderCheck && !bMeterFolderFound))
@@ -28491,7 +28501,12 @@ namespace Thetis
                         }
 
                         if (bExtract)
-                            extractPngFilesFromZip(e.Path, sOutputPath);
+                        {
+                            Cursor c = Cursor.Current;
+                            Cursor.Current = Cursors.WaitCursor;
+                            sRootFolder = extractPngFilesFromZip(e.Path, sOutputPath);
+                            Cursor.Current = c;
+                        }
                         else
                             MessageBox.Show(
                                 "Nothing was found in the skin download that could be used. Please contact the creator.",
@@ -28510,20 +28525,32 @@ namespace Thetis
 
                     tryRemoveDownload(e.Path);
 
-                    if (bExpandedMeterSkins)
+                    if (bExtract)
                     {
-                        MeterManager.RefreshAllImages();
-                    }
-                    else
-                    {
-                        string sCurrentSkin = comboAppSkin.Text;
+                        Cursor c = Cursor.Current;
+                        Cursor.Current = Cursors.WaitCursor;
 
-                        RefreshSkinList();
+                        if (bExpandedMeterSkins)
+                        {
+                            MeterManager.RefreshAllImages();
+                        }
+                        else
+                        {
+                            RefreshSkinList();
 
-                        MeterManager.AlwaysUpdateSkin = true; // cause everything to update even if same skin name
-                        if (comboAppSkin.Items.Contains(sCurrentSkin))
-                            comboAppSkin.Text = sCurrentSkin;
-                        MeterManager.AlwaysUpdateSkin = false;
+                            string sCurrentSkin;
+                            if (sRootFolder != "")
+                                sCurrentSkin = sRootFolder;
+                            else
+                                sCurrentSkin = comboAppSkin.Text;
+
+                            MeterManager.AlwaysUpdateSkin = true; // cause everything to update even if same skin name
+                            if (comboAppSkin.Items.Contains(sCurrentSkin))
+                                comboAppSkin.Text = sCurrentSkin;
+                            MeterManager.AlwaysUpdateSkin = false;
+                        }
+
+                        Cursor.Current = c;
                     }
 
                     btnDownloadSkin.Text = "Download";
@@ -28687,8 +28714,9 @@ namespace Thetis
             }
         }
 
-        private static void extractPngFilesFromZip(string sourceZipFilePath, string outputPath)
+        private static string extractPngFilesFromZip(string sourceZipFilePath, string outputPath)
         {
+            string sRootFolder = "";
             try
             {
                 sourceZipFilePath = sourceZipFilePath.Replace('/', '\\');
@@ -28708,6 +28736,13 @@ namespace Thetis
                             File.Delete(entryPath);
 
                         entry.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
+
+                        if(sRootFolder == "")
+                        {
+                            //get skin name from folder structure
+                            int index = entry.FileName.IndexOf('/');
+                            if (index > 0) sRootFolder = entry.FileName.Substring(0, index);
+                        }
                     }
                 }
             }
@@ -28719,6 +28754,7 @@ namespace Thetis
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
+            return sRootFolder;
         }
 
         private bool bIgnoreSkinServerListUpdate = false;
@@ -29007,6 +29043,12 @@ namespace Thetis
         {
             if (initializing) return;
             MidiDevice.IncludeStatusInControlID = chkMidiControlIDincludesChannel.Checked && chkMidiControlIDincludesStatus.Checked;
+        }
+
+        private void chkForceATTwhenOutPowerChanges_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.ForceATTwhenOutputPowerChangesWhenPSAon = chkForceATTwhenOutPowerChanges.Checked;
         }
 
         //private bool renameSkinForDeletion(string sFullPath)

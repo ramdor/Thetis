@@ -101,9 +101,6 @@ namespace Thetis
         private bool displaydidit = false;
         public Mutex calibration_mutex = new Mutex();
 
-        //public Http httpFile;                           // ke9ns add
-        //public HttpServer httpServer = null;           // rn3kk add
-
         private Setup m_frmSetupForm;
         private readonly Object m_objSetupFormLocker = new Object();
 
@@ -1050,6 +1047,21 @@ namespace Thetis
             }
             CpuUsage(); //[2.10.1.0] MW0LGE initial call to setup check marks in status bar as a minimum
 
+            if (!resetForAutoMerge)
+            {
+                Splash.SetStatus("Processing Finder Info");
+                // obtain finder info before splash closes
+                //-- setup finder search data
+                _frmFinder.ReadXmlFinderFile(AppDataPath); // note: needs to be before frm gather
+                _frmFinder.GatherSearchData(this, toolTip1);
+                _frmFinder.GatherSearchData(SetupForm, SetupForm.ToolTip);
+                _frmFinder.GatherSearchData(EQForm, EQForm.ToolTip);
+                _frmFinder.GatherSearchData(m_frmBandStack2, m_frmBandStack2.ToolTip);
+                _frmFinder.GatherSearchData(psform, null);
+                _frmFinder.WriteXmlFinderFile(AppDataPath); // note: this will only happen if not already there
+                //
+            }
+
             Splash.SetStatus("Finished");
 
             Splash.SplashForm.Owner = this;						// So that main form will show/focus when splash disappears //MW0LGE_21d done in show above
@@ -1137,16 +1149,6 @@ namespace Thetis
                     SetupForm.StartupTCPIPcatServer();
                 }
 
-                //-- setup finder search data
-                _frmFinder.ReadXmlFinderFile(AppDataPath); // note: needs to be before frm gather
-                _frmFinder.GatherSearchData(this, toolTip1);
-                _frmFinder.GatherSearchData(SetupForm, SetupForm.ToolTip);
-                _frmFinder.GatherSearchData(EQForm, EQForm.ToolTip);
-                _frmFinder.GatherSearchData(m_frmBandStack2, m_frmBandStack2.ToolTip);
-                _frmFinder.GatherSearchData(psform, null);
-                _frmFinder.WriteXmlFinderFile(AppDataPath);
-                //
-
                 //resize N1MM //MW0LGE_21k9c
                 N1MM.Resize(1);
                 if (RX2Enabled) N1MM.Resize(2);
@@ -1159,6 +1161,9 @@ namespace Thetis
                 if (psform != null) psform.HandleStartup();
 
                 //display render thread
+#if SNOWFALL
+                Display.SetSantaGif(Properties.Resources.santa);
+#endif
                 m_bResizeDX2Display = true;
                 if (draw_display_thread == null || !draw_display_thread.IsAlive)
                 {
@@ -1903,7 +1908,7 @@ namespace Thetis
             //
 
             //[2.10.3.1]MW0LGE make sure it is created on this thread, as the following serial
-            //decices could cause it to be created on another thread
+            //devices could cause it to be created on another thread
             CWX tmp = CWXForm;
             //--
 
@@ -1920,8 +1925,6 @@ namespace Thetis
             InitFilterPresets();					// Initialize filter values
 
             SwlForm = new SwlControl(this);         // ke9ns add communicate with swl list controls
-            //httpFile = new Http(this);              // ke9ns add
-            //httpServer = new HttpServer(this);      // rn3kk add
 
             // ***** THIS IS WHERE SETUP FORM IS CREATED
             _onlyOneSetupInstance = true; // make sure that we limit to one instance
@@ -33281,12 +33284,25 @@ namespace Thetis
         private bool _mox = false;
         private PreampMode temp_mode = PreampMode.HPSDR_OFF; // HPSDR preamp mode
         private PreampMode temp_mode2 = PreampMode.HPSDR_OFF; // HPSDR preamp mode
+
         private bool _forceATTwhenPSAoff = true; //MW0LGE [2.9.0.7] added
         public bool ForceATTwhenPSAoff
         {
             get { return _forceATTwhenPSAoff; }
             set { _forceATTwhenPSAoff = value; }
         }
+        private bool _forceATTwhenPowerChangesWhenPSAon = true; //MW0LGE [2.9.3.5] added
+        private float _lastPower = -1;
+        public bool ForceATTwhenOutputPowerChangesWhenPSAon
+        {
+            get { return _forceATTwhenPowerChangesWhenPSAon; }
+            set 
+            {
+                if (value != _forceATTwhenPowerChangesWhenPSAon) _lastPower = -1;
+                _forceATTwhenPowerChangesWhenPSAon = value;                 
+            }
+        }
+        
         private void chkMOX_CheckedChanged2(object sender, System.EventArgs e)
         {
             bool bOldMox = _mox; //MW0LGE_21b used for state change delgates at end of fn
@@ -52265,27 +52281,7 @@ namespace Thetis
         {
 
         }
-
-
-        ////=========================================================================================
-        ////=========================================================================================
-        //// ke9ns add allows Http server to talk with Setup through Console
-
-        //*/
-
-        //public static int m_port = 0;   // ke9ns add port# 
-        //public static bool m_terminated = true;
-
-        //public bool HttpServer
-        //{
-
-        //    set
-        //    {
-        //        httpFile.HttpServer1();
-        //    }
-
-        //} //HttpServer
-
+        */
 
         //=========================================================================================
         //=========================================================================================
@@ -52302,56 +52298,6 @@ namespace Thetis
             if (initializing) return; // MW0LGE
             if (!IsSetupFormNull) SetupForm.TXFilterLow = (int)udTXFilterLow.Value;
         }
-
-        ////=========================================================================================
-        ////=========================================================================================
-        //// ke9ns add allows Http server to talk with Setup through Console
-
-        //public int HTTP_PORT
-        //{
-        //    get
-        //    {
-        //        return (int)SetupForm.udHttpPort.Value;
-        //    }
-
-        //} // HTTP_PORT
-
-        ////=========================================================================================
-        ////=========================================================================================
-        //// ke9ns add allows Http server to talk with Setup through Console
-        //public int HTTP_REFRESH
-        //{
-        //    get
-        //    {
-        //        return (int)SetupForm.udHttpRefresh.Value;
-        //    }
-
-        //} // HTTP_REFRESH
-
-        ////=========================================================================================
-        ////=========================================================================================
-        //// ke9ns add allows Http server to talk with Setup through Console
-        //public string HTTP_USER
-        //{
-        //    get
-        //    {
-        //        return SetupForm.txtHttpUser.Text;
-        //    }
-
-        //} // HTTP_PORT
-
-
-        ////=========================================================================================
-        ////=========================================================================================
-        //// ke9ns add allows Http server to talk with Setup through Console
-        //public string HTTP_PASS
-        //{
-        //    get
-        //    {
-        //        return SetupForm.txtHttpPass.Text;
-        //    }
-
-        //} // HTTP_PORT
 
         //=========================================================================================
         //=========================================================================================
@@ -55464,6 +55410,15 @@ namespace Thetis
 
             targetdBm = target_dbm;
             if (!bSetPower) return new_pwr;
+
+            //[2.10.3.5]MW0LGE max tx attenuation when power is increased and PS is enabled
+            if (new_pwr != _lastPower && chkFWCATUBypass.Checked && _forceATTwhenPowerChangesWhenPSAon)
+            {
+                if(new_pwr > _lastPower)
+                    SetupForm.ATTOnTX = 31;
+
+                _lastPower = new_pwr;
+            }
 
             if (new_pwr == 0)
             {
