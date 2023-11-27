@@ -503,6 +503,16 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap santa {
+            get {
+                object obj = ResourceManager.GetObject("santa", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap screen {
             get {
                 object obj = ResourceManager.GetObject("screen", resourceCulture);
@@ -807,40 +817,6 @@ namespace Thetis.Properties {
             get {
                 object obj = ResourceManager.GetObject("swissli", resourceCulture);
                 return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;html&gt;
-        /// &lt;head&gt;
-        ///  &lt;meta charset=&quot;utf-8&quot;&gt;
-        ///  &lt;title&gt;Thetis remote console&lt;/title&gt;
-        /// &lt;style type=&quot;text/css&quot;&gt;
-        ///   .body {
-        ///     background: #363636;
-        ///   }
-        ///   .freqTextBig {
-        ///     font-size: 40px;
-        ///     font-family: Arial;
-        ///     color: #FFFF00;
-        ///     text-align: right;
-        ///     width: 200px;
-        ///     margin-right: 8px;
-        ///     float: left;
-        ///   }
-        ///   .freqTextSmall {
-        ///     font-size: 30px;
-        ///     font-family: Arial;
-        ///     color: #FF4500;
-        ///     float: left;
-        ///     padding-top: 10px;
-        ///     margin-right: 10px;
-        ///   }
-        ///   .f [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string template {
-            get {
-                return ResourceManager.GetString("template", resourceCulture);
             }
         }
         

@@ -840,7 +840,14 @@ namespace Thetis
                     }
 
 #if SNOWFALL
-                    if(_snowFall) _snow.Clear();
+                    if (_snowFall)
+                    {
+                        lock (_snowLock)
+                        {
+                            _snow.Clear();
+                            _showSanta = false;
+                        }
+                    }
 #endif
                 }
             }
@@ -2750,6 +2757,10 @@ namespace Thetis
 
                     if (_bitmapBackground != null)
                         Utilities.Dispose(ref _bitmapBackground);
+
+#if SNOWFALL
+                    santaCleanUp();
+#endif
 
                     Utilities.Dispose(ref _waterfall_bmp_dx2d);
                     Utilities.Dispose(ref _waterfall_bmp2_dx2d);
@@ -10072,12 +10083,28 @@ namespace Thetis
             set 
             { 
                 _snowFall = value;
-                if (!_snowFall) _snow.Clear();
+                if (!_snowFall)
+                {
+                    lock (_snowLock)
+                    {
+                        _snow.Clear();
+                        _showSanta = false;
+                    }
+                }
             }
         }
+        private static readonly object _snowLock = new object();
         private static Random _rnd = new Random();
         private static List<SnowFlake> _snow = new List<SnowFlake>();
         private static double _oldSnowFrame = 0;
+        private static double _oldSantaFrame = 0;
+        private static double _oldSantaXFrame = 0;
+        private static SharpDX.Direct2D1.Bitmap[] _santaFrames;
+        private static int _santaFrameIndex;
+        private static float _santaX;
+        private static bool _showSanta;
+        private static DateTime _whenToShowSanta;
+
         private static void letItSnow()
         {
             bool bUpdate = false;
@@ -10088,28 +10115,145 @@ namespace Thetis
                 bUpdate = true;
             }
 
-            if (bUpdate)
+            lock (_snowLock)
             {
-                if (_snow.Count < 500)
+                if (bUpdate)
                 {
-                    SnowFlake sf = new SnowFlake(Target.Width);
-                    _snow.Add(sf);
-                }               
+                    if (_snow.Count < 500)
+                    {
+                        SnowFlake sf = new SnowFlake(Target.Width);
+                        _snow.Add(sf);
+                    }
 
+                    foreach (SnowFlake snowflake in _snow)
+                        snowflake.Update();
+
+                    _snow.RemoveAll(s => s.Alpha == 0);
+                }
+
+                Ellipse e = new Ellipse(new SharpDX.Vector2(0, 0), 1, 1);
                 foreach (SnowFlake snowflake in _snow)
-                    snowflake.Update();
-
-                _snow.RemoveAll(s => s.Alpha == 0);
+                {
+                    e.Point.X = snowflake.X;
+                    e.Point.Y = snowflake.Y;
+                    e.RadiusX = snowflake.Size;
+                    e.RadiusY = snowflake.Size;
+                    _d2dRenderTarget.FillEllipse(e, getDXBrushForColour(Color.White, (int)snowflake.Alpha));
+                }
             }
 
-            Ellipse e = new Ellipse(new SharpDX.Vector2(0, 0), 1, 1);
-            foreach (SnowFlake snowflake in _snow)
+            plotSanta();
+        }
+        private static void plotSanta()
+        {
+            if (!_showSanta)
             {
-                e.Point.X = snowflake.X;
-                e.Point.Y = snowflake.Y;
-                e.RadiusX = snowflake.Size;
-                e.RadiusY = snowflake.Size;
-                _d2dRenderTarget.FillEllipse(e, getDXBrushForColour(Color.White, (int)snowflake.Alpha));
+                DateTime now = DateTime.Now;
+                if (now > _whenToShowSanta)
+                {                    
+                    _showSanta = now >= new DateTime(now.Year, 12, 1) && now.Date <= new DateTime(now.Year, 12, 25);
+                    _whenToShowSanta = now.AddSeconds(_rnd.Next(120, 600));
+                }
+
+                return;
+            }
+
+            if (_santaFrames.Length <= 0) return;
+
+            bool bUpdateFrame = false;
+            if (m_dElapsedFrameStart >= _oldSantaFrame + 250)
+            {
+                //fixed update
+                _oldSantaFrame = m_dElapsedFrameStart;
+                bUpdateFrame = true;
+            }
+
+            SharpDX.Direct2D1.Bitmap santa = _santaFrames[_santaFrameIndex];
+
+            float y = displayTargetHeight - santa.Size.Height / 2;
+            RectangleF rectDest = new RectangleF(_santaX, y, santa.Size.Width / 2, santa.Size.Height / 2);
+            _d2dRenderTarget.DrawBitmap(santa, rectDest, 1f, BitmapInterpolationMode.Linear);
+
+            // xpos shift
+            if (m_dElapsedFrameStart >= _oldSantaXFrame + 16)
+            {
+                if (_santaFrameIndex <= 2) // dig frames 0 and 1
+                {
+                    lock (_snowLock)
+                    {
+                        float x = rectDest.X + rectDest.Width / 2;
+
+                        _snow
+                            .Where(snowflake => snowflake.Settled && snowflake.X >= x && snowflake.X <= rectDest.X + rectDest.Width)
+                            .ToList()
+                            .ForEach(snowflake => snowflake.Alpha = 0);
+                    }
+                }
+
+                //fixed update
+                _oldSantaXFrame = m_dElapsedFrameStart;
+
+                _santaX += 0.5f;
+                if (_santaX > displayTargetWidth)
+                {
+                    _santaX = -50;
+                    _showSanta = false;
+                }
+            }
+
+            if (bUpdateFrame)
+            {
+                _santaFrameIndex++;
+                if (_santaFrameIndex >= _santaFrames.Length) _santaFrameIndex = 0;
+            }
+        }
+        public static void SetSantaGif(System.Drawing.Image image)
+        {
+            lock (_objDX2Lock)
+            {
+                if (!_bDX2Setup) return;
+                if (image== null) return;
+                if (image.RawFormat != null && image.RawFormat.Guid != ImageFormat.Gif.Guid) return; // image not a gif
+                if (image.FrameDimensionsList != null && image.FrameDimensionsList.Length <= 0) return;
+
+                _santaFrameIndex = 0;
+                _santaX = -50;
+                _showSanta = false;
+                _whenToShowSanta = DateTime.Now.AddSeconds(_rnd.Next(120, 600));
+
+                FrameDimension dimension = new FrameDimension(image.FrameDimensionsList[0]);
+                int totalFrames = image.GetFrameCount(dimension);
+
+                // remove any existing santa frames
+                santaCleanUp();
+
+                _santaFrames = new SharpDX.Direct2D1.Bitmap[totalFrames];
+
+                for (int i = 0; i < totalFrames; i++)
+                {
+                    image.SelectActiveFrame(dimension, i);
+
+                    using (Bitmap graphicsImage = new Bitmap(image))
+                    {                        
+                        _santaFrames[i] = SDXBitmapFromSysBitmap(_d2dRenderTarget, graphicsImage);
+                    }
+                }
+            }
+        }
+        private static void santaCleanUp()
+        {
+            if (_santaFrames != null)
+            {
+                for (int i = 0; i < _santaFrames.Length; i++)
+                {
+                    if (_santaFrames[i] != null)
+                    {
+                        Utilities.Dispose(ref _santaFrames[i]);
+                        _santaFrames[i] = null;
+                    }
+                }
+
+                _santaFrames = null;
             }
         }
 #endif

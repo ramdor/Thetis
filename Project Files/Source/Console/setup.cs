@@ -2467,6 +2467,7 @@ namespace Thetis
 
             //
             chkForceATTwhenPSAoff_CheckedChanged(this, e); //MW0LGE [2.9.0.7]
+            chkForceATTwhenOutPowerChanges_CheckedChanged(this, e);
 
             //options1 tab
             chkPurgeBuffers_CheckedChanged(this, e);
@@ -14419,6 +14420,9 @@ namespace Thetis
 
             _skinChanging = true;
 
+            Cursor c = Cursor.Current;
+            Cursor.Current = Cursors.WaitCursor;
+
             string path = ".\\Skins\\";
             if (!Directory.Exists(path + comboAppSkin.Text))
                 //[2.10.2.2]MW0LGE why restore here twice?
@@ -14444,6 +14448,8 @@ namespace Thetis
             Display.SnowFall = sSkinNameLower.Contains("xmas") || sSkinNameLower.Contains("christmas") || sSkinNameLower.Contains("x-mas") ||
                                sSkinNameLower.Contains("snow") || sSkinNameLower.Contains("flakes") || sSkinNameLower.Contains("winter");
 #endif
+
+            Cursor.Current = c;
 
             _skinChanging = false;
         }
@@ -29037,6 +29043,12 @@ namespace Thetis
         {
             if (initializing) return;
             MidiDevice.IncludeStatusInControlID = chkMidiControlIDincludesChannel.Checked && chkMidiControlIDincludesStatus.Checked;
+        }
+
+        private void chkForceATTwhenOutPowerChanges_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.ForceATTwhenOutputPowerChangesWhenPSAon = chkForceATTwhenOutPowerChanges.Checked;
         }
 
         //private bool renameSkinForDeletion(string sFullPath)
