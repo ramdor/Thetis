@@ -1161,6 +1161,9 @@ namespace Thetis
                 if (psform != null) psform.HandleStartup();
 
                 //display render thread
+#if SNOWFALL
+                Display.SetSantaGif(Properties.Resources.santa);
+#endif
                 m_bResizeDX2Display = true;
                 if (draw_display_thread == null || !draw_display_thread.IsAlive)
                 {
@@ -33281,12 +33284,25 @@ namespace Thetis
         private bool _mox = false;
         private PreampMode temp_mode = PreampMode.HPSDR_OFF; // HPSDR preamp mode
         private PreampMode temp_mode2 = PreampMode.HPSDR_OFF; // HPSDR preamp mode
+
         private bool _forceATTwhenPSAoff = true; //MW0LGE [2.9.0.7] added
         public bool ForceATTwhenPSAoff
         {
             get { return _forceATTwhenPSAoff; }
             set { _forceATTwhenPSAoff = value; }
         }
+        private bool _forceATTwhenPowerChangesWhenPSAon = true; //MW0LGE [2.9.3.5] added
+        private float _lastPower = -1;
+        public bool ForceATTwhenOutputPowerChangesWhenPSAon
+        {
+            get { return _forceATTwhenPowerChangesWhenPSAon; }
+            set 
+            {
+                if (value != _forceATTwhenPowerChangesWhenPSAon) _lastPower = -1;
+                _forceATTwhenPowerChangesWhenPSAon = value;                 
+            }
+        }
+        
         private void chkMOX_CheckedChanged2(object sender, System.EventArgs e)
         {
             bool bOldMox = _mox; //MW0LGE_21b used for state change delgates at end of fn
@@ -55394,6 +55410,15 @@ namespace Thetis
 
             targetdBm = target_dbm;
             if (!bSetPower) return new_pwr;
+
+            //[2.10.3.5]MW0LGE max tx attenuation when power is increased and PS is enabled
+            if (new_pwr != _lastPower && chkFWCATUBypass.Checked && _forceATTwhenPowerChangesWhenPSAon)
+            {
+                if(new_pwr > _lastPower)
+                    SetupForm.ATTOnTX = 31;
+
+                _lastPower = new_pwr;
+            }
 
             if (new_pwr == 0)
             {
