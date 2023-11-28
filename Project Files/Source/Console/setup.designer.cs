@@ -338,6 +338,15 @@
             this.lblOptClickTuneDIGU = new System.Windows.Forms.LabelTS();
             this.udOptClickTuneOffsetDIGU = new System.Windows.Forms.NumericUpDownTS();
             this.tpOptions2 = new System.Windows.Forms.TabPage();
+            this.groupBoxTS32 = new System.Windows.Forms.GroupBoxTS();
+            this.btnPingDef = new System.Windows.Forms.ButtonTS();
+            this.txtToTPingIP = new System.Windows.Forms.TextBoxTS();
+            this.chkToTPing = new System.Windows.Forms.CheckBoxTS();
+            this.lblPingTotSec = new System.Windows.Forms.LabelTS();
+            this.udPingToTSeconds = new System.Windows.Forms.NumericUpDownTS();
+            this.chkToTMox = new System.Windows.Forms.CheckBoxTS();
+            this.lblMoxTotSec = new System.Windows.Forms.LabelTS();
+            this.udMoxToTSeconds = new System.Windows.Forms.NumericUpDownTS();
             this.chkCancelQSplitOnCatTCIsplit = new System.Windows.Forms.CheckBoxTS();
             this.chkQuickSplit = new System.Windows.Forms.CheckBoxTS();
             this.grpQuickSplit = new System.Windows.Forms.GroupBoxTS();
@@ -3623,6 +3632,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGU)).BeginInit();
             this.tpOptions2.SuspendLayout();
+            this.groupBoxTS32.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udPingToTSeconds)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udMoxToTSeconds)).BeginInit();
             this.grpQuickSplit.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudQuickSplitShift)).BeginInit();
             this.groupBoxTS26.SuspendLayout();
@@ -8981,6 +8993,7 @@
             // tpOptions2
             // 
             this.tpOptions2.BackColor = System.Drawing.SystemColors.Control;
+            this.tpOptions2.Controls.Add(this.groupBoxTS32);
             this.tpOptions2.Controls.Add(this.chkCancelQSplitOnCatTCIsplit);
             this.tpOptions2.Controls.Add(this.chkQuickSplit);
             this.tpOptions2.Controls.Add(this.grpQuickSplit);
@@ -8994,6 +9007,155 @@
             this.tpOptions2.Size = new System.Drawing.Size(716, 384);
             this.tpOptions2.TabIndex = 1;
             this.tpOptions2.Text = "Options-2";
+            // 
+            // groupBoxTS32
+            // 
+            this.groupBoxTS32.Controls.Add(this.btnPingDef);
+            this.groupBoxTS32.Controls.Add(this.txtToTPingIP);
+            this.groupBoxTS32.Controls.Add(this.chkToTPing);
+            this.groupBoxTS32.Controls.Add(this.lblPingTotSec);
+            this.groupBoxTS32.Controls.Add(this.udPingToTSeconds);
+            this.groupBoxTS32.Controls.Add(this.chkToTMox);
+            this.groupBoxTS32.Controls.Add(this.lblMoxTotSec);
+            this.groupBoxTS32.Controls.Add(this.udMoxToTSeconds);
+            this.groupBoxTS32.Location = new System.Drawing.Point(8, 244);
+            this.groupBoxTS32.Name = "groupBoxTS32";
+            this.groupBoxTS32.Size = new System.Drawing.Size(166, 120);
+            this.groupBoxTS32.TabIndex = 39;
+            this.groupBoxTS32.TabStop = false;
+            this.groupBoxTS32.Text = "Time Out Timers";
+            // 
+            // btnPingDef
+            // 
+            this.btnPingDef.Image = null;
+            this.btnPingDef.Location = new System.Drawing.Point(121, 73);
+            this.btnPingDef.Name = "btnPingDef";
+            this.btnPingDef.Selectable = true;
+            this.btnPingDef.Size = new System.Drawing.Size(37, 26);
+            this.btnPingDef.TabIndex = 15;
+            this.btnPingDef.Text = "Def";
+            this.toolTip1.SetToolTip(this.btnPingDef, "Default value of 8.8.8.8 (Google DNS)");
+            this.btnPingDef.UseVisualStyleBackColor = true;
+            this.btnPingDef.Click += new System.EventHandler(this.btnPingDef_Click);
+            // 
+            // txtToTPingIP
+            // 
+            this.txtToTPingIP.Location = new System.Drawing.Point(25, 77);
+            this.txtToTPingIP.Name = "txtToTPingIP";
+            this.txtToTPingIP.Size = new System.Drawing.Size(87, 20);
+            this.txtToTPingIP.TabIndex = 14;
+            this.txtToTPingIP.Text = "8.8.8.8";
+            this.toolTip1.SetToolTip(this.txtToTPingIP, "Try to ping this IP");
+            this.txtToTPingIP.TextChanged += new System.EventHandler(this.txtToTPingIP_TextChanged);
+            // 
+            // chkToTPing
+            // 
+            this.chkToTPing.AutoSize = true;
+            this.chkToTPing.Image = null;
+            this.chkToTPing.Location = new System.Drawing.Point(9, 54);
+            this.chkToTPing.Name = "chkToTPing";
+            this.chkToTPing.Size = new System.Drawing.Size(47, 17);
+            this.chkToTPing.TabIndex = 13;
+            this.chkToTPing.Text = "Ping";
+            this.toolTip1.SetToolTip(this.chkToTPing, "If ping fails for X seconds, then stop mox.\r\nNote: use cmd line to check you can " +
+        "ping this IP.");
+            this.chkToTPing.UseVisualStyleBackColor = true;
+            this.chkToTPing.CheckedChanged += new System.EventHandler(this.chkToTPing_CheckedChanged);
+            // 
+            // lblPingTotSec
+            // 
+            this.lblPingTotSec.AutoSize = true;
+            this.lblPingTotSec.Image = null;
+            this.lblPingTotSec.Location = new System.Drawing.Point(118, 55);
+            this.lblPingTotSec.Name = "lblPingTotSec";
+            this.lblPingTotSec.Size = new System.Drawing.Size(29, 13);
+            this.lblPingTotSec.TabIndex = 12;
+            this.lblPingTotSec.Text = "secs";
+            // 
+            // udPingToTSeconds
+            // 
+            this.udPingToTSeconds.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udPingToTSeconds.Location = new System.Drawing.Point(65, 53);
+            this.udPingToTSeconds.Maximum = new decimal(new int[] {
+            1800,
+            0,
+            0,
+            0});
+            this.udPingToTSeconds.Minimum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.udPingToTSeconds.Name = "udPingToTSeconds";
+            this.udPingToTSeconds.Size = new System.Drawing.Size(47, 20);
+            this.udPingToTSeconds.TabIndex = 11;
+            this.udPingToTSeconds.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udPingToTSeconds, "The minutes and seconds before the timer expires. Sound may play, and timer will " +
+        "flash");
+            this.udPingToTSeconds.Value = new decimal(new int[] {
+            180,
+            0,
+            0,
+            0});
+            this.udPingToTSeconds.ValueChanged += new System.EventHandler(this.udPingToTSeconds_ValueChanged);
+            // 
+            // chkToTMox
+            // 
+            this.chkToTMox.AutoSize = true;
+            this.chkToTMox.Image = null;
+            this.chkToTMox.Location = new System.Drawing.Point(9, 28);
+            this.chkToTMox.Name = "chkToTMox";
+            this.chkToTMox.Size = new System.Drawing.Size(50, 17);
+            this.chkToTMox.TabIndex = 10;
+            this.chkToTMox.Text = "MOX";
+            this.toolTip1.SetToolTip(this.chkToTMox, "Time out Mox after X seconds");
+            this.chkToTMox.UseVisualStyleBackColor = true;
+            this.chkToTMox.CheckedChanged += new System.EventHandler(this.chkToTMox_CheckedChanged);
+            // 
+            // lblMoxTotSec
+            // 
+            this.lblMoxTotSec.AutoSize = true;
+            this.lblMoxTotSec.Image = null;
+            this.lblMoxTotSec.Location = new System.Drawing.Point(118, 29);
+            this.lblMoxTotSec.Name = "lblMoxTotSec";
+            this.lblMoxTotSec.Size = new System.Drawing.Size(29, 13);
+            this.lblMoxTotSec.TabIndex = 9;
+            this.lblMoxTotSec.Text = "secs";
+            // 
+            // udMoxToTSeconds
+            // 
+            this.udMoxToTSeconds.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udMoxToTSeconds.Location = new System.Drawing.Point(65, 27);
+            this.udMoxToTSeconds.Maximum = new decimal(new int[] {
+            1800,
+            0,
+            0,
+            0});
+            this.udMoxToTSeconds.Minimum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.udMoxToTSeconds.Name = "udMoxToTSeconds";
+            this.udMoxToTSeconds.Size = new System.Drawing.Size(47, 20);
+            this.udMoxToTSeconds.TabIndex = 7;
+            this.udMoxToTSeconds.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udMoxToTSeconds, "The minutes and seconds before the timer expires. Sound may play, and timer will " +
+        "flash");
+            this.udMoxToTSeconds.Value = new decimal(new int[] {
+            180,
+            0,
+            0,
+            0});
+            this.udMoxToTSeconds.ValueChanged += new System.EventHandler(this.udMoxToTSeconds_ValueChanged);
             // 
             // chkCancelQSplitOnCatTCIsplit
             // 
@@ -56322,6 +56484,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGU)).EndInit();
             this.tpOptions2.ResumeLayout(false);
             this.tpOptions2.PerformLayout();
+            this.groupBoxTS32.ResumeLayout(false);
+            this.groupBoxTS32.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udPingToTSeconds)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udMoxToTSeconds)).EndInit();
             this.grpQuickSplit.ResumeLayout(false);
             this.grpQuickSplit.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudQuickSplitShift)).EndInit();
@@ -60870,5 +61036,14 @@
         private CheckBoxTS chkMidiControlIDincludesChannel;
         private CheckBoxTS chkMidiControlIDincludesStatus;
         private CheckBoxTS chkForceATTwhenOutPowerChanges;
+        private GroupBoxTS groupBoxTS32;
+        private CheckBoxTS chkToTPing;
+        private LabelTS lblPingTotSec;
+        private NumericUpDownTS udPingToTSeconds;
+        private CheckBoxTS chkToTMox;
+        private LabelTS lblMoxTotSec;
+        private NumericUpDownTS udMoxToTSeconds;
+        private ButtonTS btnPingDef;
+        private TextBoxTS txtToTPingIP;
     }
 }
