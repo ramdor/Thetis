@@ -13465,12 +13465,14 @@ namespace Thetis
 
         private void udTXFilterLow_LostFocus(object sender, EventArgs e)
         {
-            udTXFilterLow.Value = udTXFilterLow.Value;
+            //udTXFilterLow.Value = udTXFilterLow.Value;
+            udTXFilterLow_ValueChanged(sender, e); //[2.10.3.5]MW0LGE we want to validate even value doesnt change
         }
 
         private void udTXFilterHigh_LostFocus(object sender, EventArgs e)
         {
-            udTXFilterHigh.Value = udTXFilterHigh.Value;
+            //udTXFilterHigh.Value = udTXFilterHigh.Value;
+            udTXFilterHigh_ValueChanged(sender, e); //[2.10.3.5]MW0LGE we want to validate even value doesnt change
         }
 
         private void udMicGainMax_LostFocus(object sender, EventArgs e)
