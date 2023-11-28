@@ -2475,6 +2475,8 @@ namespace Thetis
             //options2 tab
             chkQuickSplit_CheckedChanged(this, e);
             chkQuickSplitPanAudio_CheckedChanged(this, e);
+            chkToTMox_CheckedChanged(this, e);
+            chkToTPing_CheckedChanged(this, e);
         }
 
         public string[] GetTXProfileStrings()
@@ -29049,6 +29051,52 @@ namespace Thetis
         {
             if (initializing) return;
             console.ForceATTwhenOutputPowerChangesWhenPSAon = chkForceATTwhenOutPowerChanges.Checked;
+        }
+
+        private void chkToTMox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            udMoxToTSeconds.Enabled = chkToTMox.Checked;
+            lblMoxTotSec.Enabled = chkToTMox.Checked;
+            TimeOutTimerManager.MoxTimeOut((int)udMoxToTSeconds.Value, chkToTMox.Checked);
+        }
+
+        private void udMoxToTSeconds_ValueChanged(object sender, EventArgs e)
+        {
+            chkToTMox_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void chkToTPing_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            udPingToTSeconds.Enabled = chkToTPing.Checked;
+            txtToTPingIP.Enabled = chkToTPing.Checked;
+            btnPingDef.Enabled = chkToTPing.Checked;
+            lblPingTotSec.Enabled = chkToTPing.Checked;
+
+            bool bIPOk = IPAddress.TryParse(txtToTPingIP.Text, out IPAddress address);
+            if (bIPOk)
+            {
+                txtToTPingIP.BackColor = SystemColors.Window;
+                TimeOutTimerManager.PingTimeOut(txtToTPingIP.Text, (int)udPingToTSeconds.Value, chkToTPing.Checked);
+            }
+            else
+                txtToTPingIP.BackColor = Color.Red;
+        }
+
+        private void udPingToTSeconds_ValueChanged(object sender, EventArgs e)
+        {
+            chkToTPing_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void txtToTPingIP_TextChanged(object sender, EventArgs e)
+        {
+            chkToTPing_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void btnPingDef_Click(object sender, EventArgs e)
+        {
+            txtToTPingIP.Text = "8.8.8.8";
         }
 
         //private bool renameSkinForDeletion(string sFullPath)

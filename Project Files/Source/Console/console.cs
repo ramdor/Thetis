@@ -938,6 +938,8 @@ namespace Thetis
             Init60mChannels();
             LoadLEDFont();
 
+            TimeOutTimerManager.Initialise(this);
+
             Splash.SetStatus("Loading Settings");				// Set progress point
 
             InitConsole();                                      // Initialize all forms and main variables  INIT_SLOW
@@ -951,7 +953,6 @@ namespace Thetis
             catch { }
             //
 
-            // MW0LGE_21k9pre5 moved after initconosole
             addDelegates();
 
             CWFWKeyer = true;
@@ -32269,6 +32270,9 @@ namespace Thetis
             if (!IsSetupFormNull) SetupForm.RemoveDelegates(); // MW0LGE_22b
             //
 
+            Common.LogStringToPath("BeforeTimeOutTimerManager.StopToT()", AppDataPath, "shutdown_log.txt");
+            TimeOutTimerManager.Shutdown();
+
             //MW0LGE
             //Change to check if existing save is happening. Without this
             //it is possible to crash on save and corrupt settings file
@@ -53823,6 +53827,8 @@ namespace Thetis
             //MONVolumeChangedHandlers += OnMONVolumeChanged;
 
             Display.SetupDelegates();
+            
+            TimeOutTimerManager.SetCallback(timeOutTimer);
         }
         private void removeDelegates()
         {
@@ -53891,8 +53897,25 @@ namespace Thetis
             }
 
             Display.RemoveDelegates();
+            TimeOutTimerManager.RemoveCallback(timeOutTimer);
         }
         //
+        private void timeOutTimer(string msg)
+        {
+            if (MOX || manual_mox || chkTUN.Checked || chk2TONE.Checked)
+            {
+                //everything off !!
+                MOX = false;
+                manual_mox = false;
+                if (chkTUN.Checked)
+                    chkTUN.Checked = false;
+                if (chk2TONE.Checked)
+                    chk2TONE.Checked = false;
+
+                infoBar.Warning(msg + " Time Out Timer", 1, true);
+            }
+        }
+
         private void OnTXInhibitChanged(bool oldState, bool newState)
         {
             TXInhibit = newState;
