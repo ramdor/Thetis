@@ -309,6 +309,7 @@
     <Compile Include="Channel.cs" />
     <Compile Include="clsBandStackManager.cs" />
     <Compile Include="clsThetisSkinService.cs" />
+    <Compile Include="TimeOutTimerManager.cs" />
     <Compile Include="Firewall.cs" />
     <Compile Include="cmaster.cs" />
     <Compile Include="Andromeda\displaysettingsform.cs">
