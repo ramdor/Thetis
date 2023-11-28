@@ -501,6 +501,10 @@ namespace Midi2Cat.Data
         QuickSplitOnOff = 304,
         [CatCommandAttribute("Quick Split + VFO Split On Off", ControlType.Button, true)]
         QuickSplitOnOffandSplitOnOff = 305,
+        [CatCommandAttribute("Quick Play Wave File",ControlType.Button, true)] // DH1KLM 
+        QuickPlayOnOff = 306,
+        [CatCommandAttribute("Quick Rec Wave File", ControlType.Button, true)] // DH1KLM
+        QuickRecOnOff = 307,
         [CatCommandAttribute("Toggle Wheel to VFOA/VFOB ", ControlType.Button)]  //-W2PA Added a toggle between A/B for main wheel 
         ToggleVFOWheel = 700
     }

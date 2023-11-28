@@ -6663,14 +6663,58 @@ namespace Thetis
 				return parser.Error1;
 			}
 		}
-
-
-		/// <summary>
-		/// Sets or reads the VAC Stereo checkbox
-		/// </summary>
-		/// <param name="s"></param>
-		/// <returns></returns>
-		public string ZZVF(string s)
+		//Reads or sets the Quick Play button status // DH1KLM
+		public string ZZQA(string s)
+		{
+			if(s.Length == parser.nSet && (s == "0" || s == "1"))
+			{
+				if(s == "1")
+					console.QuickPlay = true;
+				else
+					console.QuickPlay = false;
+				return "";
+			}
+			else if(s.Length == parser.nGet)
+			{
+				if(console.QuickPlay)
+					return "1";
+				else
+					return "0";
+			}
+			else
+			{
+				return parser.Error1;
+			}
+		}
+        //Reads or sets the Quick Rec button status // DH1KLM
+        public string ZZQB(string s)
+        {
+            if (s.Length == parser.nSet && (s == "0" || s == "1"))
+            {
+                if (s == "1")
+                    console.QuickRec = true;
+                else
+                    console.QuickRec = false;
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                if (console.QuickRec)
+                    return "1";
+                else
+                    return "0";
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+        /// <summary>
+        /// Sets or reads the VAC Stereo checkbox
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public string ZZVF(string s)
 		{
 			if(s.Length == parser.nSet && (s == "0" || s == "1"))
 			{

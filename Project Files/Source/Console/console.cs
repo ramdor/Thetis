@@ -13434,8 +13434,16 @@ namespace Thetis
                 UpdateButtonBarButtons();
             }
         }
-
-
+        public bool QuickRec // DH1KLM
+        {     
+            get { return ckQuickRec.Checked; }
+            set
+            {
+                ckQuickRec.Checked = value;
+                UpdateButtonBarButtons();
+            }
+        }
+        
         public void HighlightTXProfileSaveItems(bool bHighlight)
         {
             Common.HightlightControl(chkDX, bHighlight);
