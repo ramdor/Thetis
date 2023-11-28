@@ -6257,6 +6257,64 @@ namespace Thetis
             }
             return CmdState.NoChange;
         }
+		public CmdState QuickPlayOnOff(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                try
+                {
+                    int QPstate = Convert.ToInt16(commands.ZZQA(""));
+
+                    if (QPstate == 0)
+                    {
+                        commands.ZZQA("1");
+                        return CmdState.On;
+                    }
+                    if (QPstate == 1)
+                    {
+                        commands.ZZQA("0");
+                        return CmdState.Off;
+                    }
+                }
+                catch
+                {
+                    return CmdState.NoChange; ;
+                }
+            }
+            return CmdState.NoChange;
+        }
+        public CmdState QuickRecOnOff(int msg, MidiDevice device) // DH1KLM
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                try
+                {
+                    int QPstate = Convert.ToInt16(commands.ZZQB(""));
+
+                    if (QPstate == 0)
+                    {
+                        commands.ZZQB("1");
+                        return CmdState.On;
+                    }
+                    if (QPstate == 1)
+                    {
+                        commands.ZZQB("0");
+                        return CmdState.Off;
+                    }
+                }
+                catch
+                {
+                    return CmdState.NoChange; ;
+                }
+            }
+            return CmdState.NoChange;
+        }
         #endregion
     }
 }
