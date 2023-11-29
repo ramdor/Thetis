@@ -87,6 +87,9 @@
     <ClInclude Include="resource1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cmasio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="aamix.c">
@@ -159,6 +162,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pro.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cmasio.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

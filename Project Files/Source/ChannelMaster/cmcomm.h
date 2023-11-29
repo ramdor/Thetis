@@ -33,6 +33,7 @@ warren@wpratt.com
 
 #include "aamix.h"
 #include "amix.h"
+#include "cmasio.h"
 #include "cmaster.h"
 #include "cmbuffs.h"
 #include "cmsetup.h"
