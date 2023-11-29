@@ -61,10 +61,8 @@ typedef struct _cmaster
 	CMB pfbuff[cmMAXstream];
 	CRITICAL_SECTION update[cmMAXstream];
 	int aamix_inrates[cmMAXrcvr * cmMAXSubRcvr + cmMAXxmtr];
-	void (*OutboundRx)(int id, int nsamples, double* buff);			// pointer to Outbound function called by aamix with rx audio from the global mixer
-	void (*OutboundTx)(int id, int nsamples, double* buff);			// pointer to Outbound function called by ilv with xmtr samples from the interleaver
-	int	audioCodecId;
-	
+	void (*Outbound)(int id, int nsamples, double* buff);			// pointer to Outbound function
+																	// this function is called by xmtr and aamix
 	// receivers
 	struct _rcvr
 	{
@@ -100,14 +98,6 @@ extern void create_cmaster();
 
 extern void destroy_cmaster();
 
-extern __declspec (dllexport) void SendpOutboundRx (void (*Outbound)(int id, int nsamples, double* buff));
-extern __declspec (dllexport) void SendpOutboundTx (void (*Outbound)(int id, int nsamples, double* buff));
-
-enum AudioCODEC
-{
-	HERMES = 0,														// audio codec chip in radio hardware unit
-	ASIO   = 1,														// asio sound device on host
-	WASAPI = 2														// wasapi sound device on host (to be implemented)
-};
+extern __declspec (dllexport) void SendpOutbound (void (*Outbound)(int id, int nsamples, double* buff));
 
 #endif

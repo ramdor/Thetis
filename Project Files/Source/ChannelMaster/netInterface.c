@@ -40,7 +40,7 @@ int StartAudioNative()
 	}
 
 	UpdateRadioProtocolSampleSize(); // we know the radio protocol - need to update sample sizes
-	cm_asioStart(RadioProtocol);
+
 	if (RadioProtocol == USB)
 	{		
 		do { // once								
@@ -103,7 +103,6 @@ void StopAudio()
 	printf("iothread stopped\n");   fflush(stdout);
 
 	StopReadThread();
-	cm_asioStop();
 	destroy_obbuffs(0);
 	destroy_obbuffs(1);
 }
@@ -1454,19 +1453,7 @@ void create_rnet()
 		(void)InitializeCriticalSectionAndSpinCount(&prn->rcvpktp1, 2500);
 		(void)InitializeCriticalSectionAndSpinCount(&prn->seqErrors, 0); 
 
-		switch (pcm->audioCodecId)
-		{
-		case HERMES:
-			SendpOutboundRx(OutBound);
-			break;
-		case ASIO:
-			SendpOutboundRx(asioOUT);
-			break;
-		case WASAPI:
-			// not implmented
-			break;
-		}
-		SendpOutboundTx(OutBound);
+		SendpOutbound(OutBound); 
 	}
 }
 
