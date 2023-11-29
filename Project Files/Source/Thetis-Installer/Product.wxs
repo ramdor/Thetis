@@ -4,6 +4,7 @@
 <?define NetFx480MinRelease = 528040 ?>
 <!-- <?define NetFx481MinRelease = 533320 ?> -->
 <?define DocumentationPath = "..\..\lib\Thetis-resources\" ?>
+<?define SourcePath = "..\..\Source\" ?>
 <!-- 32-bit / 64-bit variables -->
 <?if $(var.Platform) = x64 ?>
 <?define Win64 = "yes" ?>
@@ -13,7 +14,6 @@
 <?define VC143 = "Microsoft_VC143_CRT_x64.msm" ?>
 <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
 <?define FilesPath = "..\..\Bin\$(var.Platform)\$(var.Configuration)\" ?>
-<?define SourcePath = "..\..\Source\" ?>
 <?else ?>
 <?define Win64 = "no" ?>
 <?define UpgradeCode = "CE4756C9-3CA7-4A55-8980-7F0A920890DE"?>
