@@ -72,7 +72,6 @@ void set_cmdefault_rates (
 	}
 	pcm->audio_outrate = aud_outrate;
 	pcm->audio_outsize = getbuffsize (pcm->audio_outrate);
-	pcm->audioCodecId = HERMES;
 	for (i = 0; i < pcm->cmRCVR; i++)
 	{
 		pcm->rcvr[i].ch_outrate = rcvr_ch_outrates[i];
