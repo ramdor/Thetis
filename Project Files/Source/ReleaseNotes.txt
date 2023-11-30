@@ -7,6 +7,18 @@ If you use CW and you have different RX and TX antenna ports configured, there i
 
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
+## v2.10.3.5 WIP Change Log
+- [add] midi device DJ2GO2 Touch MIDI is now handled uniqely, and main sliders will have values reversed
+- [add] time out timer functionality in Options2 tab
+- [add] amp view will restore size if set to 'show on startup'
+- [add] new Cat/Midi support for Quick Play/Record by Sigi DH1KLM
+	- ZZQA 1/0 QuickPlay
+	- ZZQB 1/0 QuickRecord
+- [fix] lin waterfall palettes should now look better
+- [fix] could not manually change TX filter in setup, it would try to 'validate' whilst typing new value
+- [change] wav file recording volume is normalised to ignore RX AF. Note: when muted/0vol recording is 'silent'
+- [change] finder will now gather info using threads. Some users were reporting startup time delay
+- [change] skinserver now selects skin when downloaded and shows 'wait' mouse pointer whilst changing
 
 ## v2.10.3.4 Change Log
 - [add] show on startup options for ampview and linearity/ps window. Set in the linearity/ps window
