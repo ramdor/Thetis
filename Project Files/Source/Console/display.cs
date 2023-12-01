@@ -1941,6 +1941,19 @@ namespace Thetis
                 }
             }
         }
+        private static Color noisefloor_color_text = Color.Yellow;
+        public static Color NoiseFloorColorText
+        {
+            get { return noisefloor_color_text; }
+            set
+            {
+                lock (_objDX2Lock)
+                {
+                    noisefloor_color_text = value;
+                    buildDX2Resources();
+                }
+            }
+        }
         private static float m_fWaterfallAGCOffsetRX1 = 0.0f;
         private static float m_fWaterfallAGCOffsetRX2 = 0.0f;
         public static float WaterfallAGCOffsetRX1
@@ -3995,7 +4008,8 @@ namespace Thetis
             float fAttenuation = 100f;
             int width = High - Low;
 
-            List<clsNotchCoords> notchData = handleNotches(rx, bottom, getCWSideToneShift(rx), Low, High, 0, 0, width, W, 0, false);//, 50);
+            // get the notch data
+            List<clsNotchCoords> notchData = handleNotches(rx, bottom, getCWSideToneShift(rx), Low, High, 0, 0, width, W, 0, false);
 
             int nDecimatedWidth = W / m_nDecimation;
 
@@ -4005,26 +4019,26 @@ namespace Thetis
 
                 // do left
                 int wL = nc._c_x - nc._left_x;
-                //wL *= 3;
+                wL = Math.Max(1, wL);
                 for (int i = nc._c_x; i > nc._c_x - wL; i--)
                 {
                     int xPos = i / m_nDecimation;
                     if (xPos < 0 || xPos > nDecimatedWidth - 1) continue;
 
-                    int x = nc._c_x - i + 1; // +1 to fix /0
+                    int x = nc._c_x - i;
 
                     float fTmp = 1f / ((float)Math.Pow((double)wL / (double)(wL - x), 1.5)); // pow2 quite sharp
                     data[xPos] -= (fAttenuation * fTmp);
                 }
                 // do right
                 int wR = nc._right_x - nc._c_x;
-                //wR *= 3;
+                wR = Math.Max(1, wR);
                 for (int i = nc._c_x; i < nc._c_x + wR; i++)
                 {
                     int xPos = i / m_nDecimation;
                     if (xPos < 0 || xPos > nDecimatedWidth - 1) continue;
 
-                    int x = i - nc._c_x + 1; // +1 to fix /0
+                    int x = i - nc._c_x;
 
                     float fTmp = 1f / ((float)Math.Pow((double)wR / (double)(wR - x), 1.5)); // pow2 quite sharp
                     data[xPos] -= (fAttenuation * fTmp);
@@ -4552,6 +4566,7 @@ namespace Thetis
                             yPixelActual += nVerticalShift;
 
                             SharpDX.Direct2D1.Brush nf_colour = bFast ? m_bDX2_Gray : m_bDX2_noisefloor;
+                            SharpDX.Direct2D1.Brush nf_colour_text = bFast ? m_bDX2_Gray : m_bDX2_noisefloor_text;
 
                             int yP = (int)yPixelLerp;
 
@@ -4562,11 +4577,11 @@ namespace Thetis
                             if (m_bShowNoiseFloorDBM)
                             {
                                 drawLineDX2D(nf_colour, nf_box.X - 3, (int)yPixelActual, nf_box.X - 3, yP, 2); // direction up/down line
-                                drawStringDX2D(lerp.ToString(_NFDecimal ? "F1" : "F0"), fontDX2d_font9b, nf_colour, nf_box.X + nf_box.Width, nf_box.Y - 6);
+                                drawStringDX2D(lerp.ToString(_NFDecimal ? "F1" : "F0"), fontDX2d_font9b, nf_colour_text, nf_box.X + nf_box.Width, nf_box.Y - 6);
                             }
                             else
                             {
-                                drawStringDX2D("-NF", fontDX2d_panafont, nf_colour, nf_box.X + nf_box.Width, nf_box.Y - 4);
+                                drawStringDX2D("-NF", fontDX2d_panafont, nf_colour_text, nf_box.X + nf_box.Width, nf_box.Y - 4);
                             }
                         }
                     }
@@ -6130,6 +6145,7 @@ namespace Thetis
         private static SharpDX.Direct2D1.StrokeStyle m_styleDots;
 
         private static SharpDX.Direct2D1.Brush m_bDX2_noisefloor;
+        private static SharpDX.Direct2D1.Brush m_bDX2_noisefloor_text;
 
         private static SharpDX.Direct2D1.Brush m_bDX2_m_bHightlightNumberScale;
         private static SharpDX.Direct2D1.Brush m_bDX2_m_bHightlightNumbers;
@@ -6332,6 +6348,7 @@ namespace Thetis
             if (m_styleDots != null) Utilities.Dispose(ref m_styleDots);
 
             if (m_bDX2_noisefloor != null) Utilities.Dispose(ref m_bDX2_noisefloor);
+            if (m_bDX2_noisefloor_text != null) Utilities.Dispose(ref m_bDX2_noisefloor_text);
 
             //
             m_brushLGDataFillRX1 = null;
@@ -6410,6 +6427,7 @@ namespace Thetis
             m_styleDots = null;
 
             m_bDX2_noisefloor = null;
+            m_bDX2_noisefloor_text = null;
             //
 
         }
@@ -6496,6 +6514,7 @@ namespace Thetis
                 m_styleDots = new StrokeStyle(_d2dFactory, ssp);
 
                 m_bDX2_noisefloor = convertBrush(new SolidBrush(noisefloor_color));
+                m_bDX2_noisefloor_text = convertBrush(new SolidBrush(noisefloor_color_text));
             }
         }
         //--------------------------
@@ -6804,13 +6823,11 @@ namespace Thetis
                 }
                 else
                 {
-                    //int expandHz = (int)(_dMNFminSize * 0.5);
-                    //double nw = n.FWidth < 100 ? 100 : n.FWidth;
                     double dNewWidth = n.FWidth < _mnfMinSize ? _mnfMinSize : n.FWidth; // use the min width of filter from WDSP
                     dNewWidth += 20; // fudge factor to align better with spectrum notch
                     notch_centre_x = (int)((float)((n.FCenter) - rf_freq - Low - localRit) / width * W);
-                    notch_left_x = (int)((float)((n.FCenter) - rf_freq - dNewWidth / 2 - Low - localRit/* - expandHz*/) / width * W);
-                    notch_right_x = (int)((float)((n.FCenter) - rf_freq + dNewWidth / 2 - Low - localRit/* + expandHz*/) / width * W);
+                    notch_left_x = (int)((float)((n.FCenter) - rf_freq - dNewWidth / 2 - Low - localRit) / width * W);
+                    notch_right_x = (int)((float)((n.FCenter) - rf_freq + dNewWidth / 2 - Low - localRit) / width * W);
                 }
 
                 clsNotchCoords nc = new clsNotchCoords(notch_centre_x, notch_left_x, notch_right_x, _tnf_active && n.Active, (int)n.FWidth);
@@ -10031,6 +10048,7 @@ namespace Thetis
             public float XShift { get; set; }
             public bool Settled {  get; set; }
             public float Size { get; set; }
+            public bool Finished { get; set; }
 
             public SnowFlake(int width)
             {
@@ -10041,6 +10059,7 @@ namespace Thetis
                 XShift = _rnd.NextFloat(-0.5f, 0.5f);
                 Settled = false;
                 Size = _rnd.NextFloat(1f, 2f);
+                Finished = false;
             }
 
             public void Update()
@@ -10049,7 +10068,7 @@ namespace Thetis
                 {
 
                     Y += FallSpeed;
-                    X += XShift;                    
+                    X += XShift;
 
                     int dirRand = _rnd.Next(0, 10);
                     if (dirRand == 9 && XShift < 0.5f)
@@ -10071,7 +10090,11 @@ namespace Thetis
                 else
                 {
                     Alpha -= 0.5f;
-                    if (Alpha < 0) Alpha = 0;
+                    if (Alpha <= 0)
+                    {
+                        Alpha = 0;
+                        Finished = true;
+                    }
                 }
             }
         }
@@ -10128,7 +10151,7 @@ namespace Thetis
                     foreach (SnowFlake snowflake in _snow)
                         snowflake.Update();
 
-                    _snow.RemoveAll(s => s.Alpha == 0);
+                    _snow.RemoveAll(s => s.Finished);
                 }
 
                 Ellipse e = new Ellipse(new SharpDX.Vector2(0, 0), 1, 1);

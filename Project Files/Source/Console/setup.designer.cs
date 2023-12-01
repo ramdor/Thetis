@@ -2892,6 +2892,8 @@
             this.lblVFOPowerOff = new System.Windows.Forms.LabelTS();
             this.tpAppearanceDisplay = new System.Windows.Forms.TabPage();
             this.groupBoxTS18 = new System.Windows.Forms.GroupBoxTS();
+            this.clrbtnNoiseFloorText = new Thetis.ColorButton();
+            this.labelTS192 = new System.Windows.Forms.LabelTS();
             this.chkNFShowDecimal = new System.Windows.Forms.CheckBoxTS();
             this.clrbtnNoiseFloor = new Thetis.ColorButton();
             this.udNoiseFloorLineWidth = new System.Windows.Forms.NumericUpDownTS();
@@ -47201,6 +47203,8 @@
             // 
             // groupBoxTS18
             // 
+            this.groupBoxTS18.Controls.Add(this.clrbtnNoiseFloorText);
+            this.groupBoxTS18.Controls.Add(this.labelTS192);
             this.groupBoxTS18.Controls.Add(this.chkNFShowDecimal);
             this.groupBoxTS18.Controls.Add(this.clrbtnNoiseFloor);
             this.groupBoxTS18.Controls.Add(this.udNoiseFloorLineWidth);
@@ -47213,6 +47217,29 @@
             this.groupBoxTS18.TabIndex = 97;
             this.groupBoxTS18.TabStop = false;
             this.groupBoxTS18.Text = "Panadapter Noise Floor";
+            // 
+            // clrbtnNoiseFloorText
+            // 
+            this.clrbtnNoiseFloorText.Automatic = "Automatic";
+            this.clrbtnNoiseFloorText.Color = System.Drawing.Color.Yellow;
+            this.clrbtnNoiseFloorText.Image = null;
+            this.clrbtnNoiseFloorText.Location = new System.Drawing.Point(208, 19);
+            this.clrbtnNoiseFloorText.MoreColors = "More Colors...";
+            this.clrbtnNoiseFloorText.Name = "clrbtnNoiseFloorText";
+            this.clrbtnNoiseFloorText.Selectable = true;
+            this.clrbtnNoiseFloorText.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnNoiseFloorText.TabIndex = 99;
+            this.clrbtnNoiseFloorText.Changed += new System.EventHandler(this.clrbtnNoiseFloorText_Changed);
+            // 
+            // labelTS192
+            // 
+            this.labelTS192.AutoSize = true;
+            this.labelTS192.Image = null;
+            this.labelTS192.Location = new System.Drawing.Point(153, 24);
+            this.labelTS192.Name = "labelTS192";
+            this.labelTS192.Size = new System.Drawing.Size(55, 13);
+            this.labelTS192.TabIndex = 98;
+            this.labelTS192.Text = "dBm Text:";
             // 
             // chkNFShowDecimal
             // 
@@ -61045,5 +61072,7 @@
         private NumericUpDownTS udMoxToTSeconds;
         private ButtonTS btnPingDef;
         private TextBoxTS txtToTPingIP;
+        private ColorButton clrbtnNoiseFloorText;
+        private LabelTS labelTS192;
     }
 }
