@@ -80,18 +80,46 @@ namespace Midi2Cat.IO
         public const int MIM_MOREDATA = 0x3C7;
 
         #region Midi Setup
+        public enum MidiUniqueDevices
+        {
+            Default = 0,
+            CMDPL1,
+            CMDMicro,
+            DJStarlight,
+            NumarkDJ2GO2Touch
+        }
+
         int DeviceIndex = 0;
         string DeviceName;
+
+        private MidiUniqueDevices _uniqueDevice;
 
         public string GetDeviceName()
         {
             return DeviceName;
         }
+        private MidiUniqueDevices getUniqueDevice(string sDeviceName)
+        {
+            MidiUniqueDevices mudRet;
+            string sLower = sDeviceName.ToLower();
 
+            //"DJ2GO2 Touch MIDI" // NumarkDJ2GO2Touch
+            //"DJControl Starlight" // DJStarlight
+
+            if (sLower.Contains("djcontrol") && sLower.Contains("starlight")) mudRet = MidiUniqueDevices.DJStarlight;
+            else if (sLower.Contains("dj2go2") && sLower.Contains("touch") && sLower.Contains("midi")) mudRet = MidiUniqueDevices.NumarkDJ2GO2Touch;
+            else if (sLower.Contains("cmd") && sLower.Contains("pl-1")) mudRet = MidiUniqueDevices.CMDPL1;
+            else if (sLower.Contains("cmd") && sLower.Contains("micro")) mudRet = MidiUniqueDevices.CMDMicro;
+            else mudRet = MidiUniqueDevices.Default;
+
+            return mudRet;
+        }
         public bool OpenMidiIn(int deviceIndex,string deviceName)
         {
             DeviceIndex = deviceIndex;
             this.DeviceName = deviceName;
+            _uniqueDevice = getUniqueDevice(deviceName); //[2.10.3.5]MW0LGE
+
             //this.VFOSelect = 0;
             callback = new WinMM.MidiInCallback(InCallback);
             int result = WinMM.MidiInOpen(out midi_in_handle, (uint)DeviceIndex, callback, IntPtr.Zero, 
@@ -634,9 +662,9 @@ namespace Midi2Cat.IO
             //handy doc : https://anotherproducer.com/online-tools-for-musicians/midi-cc-list/
             if (Ignore14bitMessages && controlId >= 32 && controlId <= 63) return false; //[2.10.3.4]MW0LGE ignore LSB Controller message for 0-31 until we code up 14 bit support
 
-            switch (DeviceName)
+            switch (_uniqueDevice)
             {
-                case "DJ2GO2 Touch MIDI": // Numark DJ2GO2 Touch
+                case MidiUniqueDevices.NumarkDJ2GO2Touch: // Numark DJ2GO2 Touch
                     // reverse the slider data value, 0-127 becomes 127-0
                     if (controlId == 0x09 && (channel == 0x01 || channel == 0x02) && (status == 0xB0 || status == 0xB1)) dataMapped = 127 - (data & 0x7F);
 
@@ -644,7 +672,7 @@ namespace Midi2Cat.IO
                     controlIDmapped = ((controlId & 0xFF) << 8) | (channel & 0xFF);
 
                     break;
-                case "DJControl Starlight" :
+                case MidiUniqueDevices.DJStarlight: // DJControl starlight
                     {
                         // ignore the finger presses on the wheel surfaces as this causes a problem when adding as a wheel
                         // two events will come in otherwise, and is virtually impossible to setup a vfo wheel
@@ -743,10 +771,10 @@ namespace Midi2Cat.IO
         public ParsedMidiMessage ParseMsg(int inChannel, int inValue, int inStatus, int inControl, string inMsg)
         {
             // undo controlID changes [2.10.3.4]MW0LGE
-            switch (DeviceName)
+            switch (_uniqueDevice)
             {
-                case "DJ2GO2 Touch MIDI":
-                case "DJControl Starlight":
+                case MidiUniqueDevices.NumarkDJ2GO2Touch:
+                case MidiUniqueDevices.DJStarlight:
                     inControl = (inControl >> 8) & 0xFF;
                     break;
                 default:

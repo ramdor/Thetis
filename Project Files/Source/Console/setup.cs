@@ -2326,6 +2326,7 @@ namespace Thetis
             udActivePeakHoldDurationRX2_ValueChanged(this, e);
 
             clrbtnNoiseFloor_Changed(this, e);
+            clrbtnNoiseFloorText_Changed(this, e);
             chkNoiseFloorShowDBM_CheckedChanged(this, e);
             udNoiseFloorLineWidth_ValueChanged(this, e);
 
@@ -29105,6 +29106,12 @@ namespace Thetis
         private void btnPingDef_Click(object sender, EventArgs e)
         {
             txtToTPingIP.Text = "8.8.8.8";
+        }
+
+        private void clrbtnNoiseFloorText_Changed(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            Display.NoiseFloorColorText = clrbtnNoiseFloorText.Color;
         }
 
         //private bool renameSkinForDeletion(string sFullPath)
