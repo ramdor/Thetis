@@ -747,7 +747,7 @@ namespace Thetis
                 uc.UCBorder = border;
             }
         }
-        public static void NoTitleBar(string sId, bool noTitleBar)
+        public static void NoTitle(string sId, bool noTitle)
         {
             lock (_metersLock)
             {
@@ -755,7 +755,39 @@ namespace Thetis
                 if (!_lstUCMeters.ContainsKey(sId)) return;
 
                 ucMeter uc = _lstUCMeters[sId];
-                uc.NoTitleBar = noTitleBar;
+                uc.NoTitle = noTitle;
+            }
+        }
+        public static void ShowContainer(string sId, bool show)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return;
+                if (!_lstUCMeters.ContainsKey(sId)) return;
+
+                ucMeter uc = _lstUCMeters[sId];
+                bool bOldState = uc.ShowMeter;
+                uc.ShowMeter = show;
+
+                if (show != bOldState && _lstMeterDisplayForms.ContainsKey(uc.ID))
+                {
+                    frmMeterDisplay f = _lstMeterDisplayForms[uc.ID];
+
+                    if (uc.Floating)
+                    {
+                        if (!show)
+                            f.Hide();
+                        else
+                            setMeterFloating(uc, f);
+                    }
+                    else
+                    {
+                        if (!show)
+                            uc.Hide();
+                        else
+                            returnMeterFromFloating(uc, f);
+                    }
+                }
             }
         }
         public static bool ContainerHasBorder(string sId)
@@ -769,7 +801,7 @@ namespace Thetis
                 return uc.UCBorder;
             }
         }
-        public static bool ContainerNoTitleWhenPinned(string sId)
+        public static bool ContainerNoTitleBar(string sId)
         {
             lock (_metersLock)
             {
@@ -777,9 +809,20 @@ namespace Thetis
                 if (!_lstUCMeters.ContainsKey(sId)) return false;
 
                 ucMeter uc = _lstUCMeters[sId];
-                return uc.NoTitleBar;
+                return uc.NoTitle;
             }
-        }        
+        }
+        public static bool ContainerShow(string sId)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return false;
+                if (!_lstUCMeters.ContainsKey(sId)) return false;
+
+                ucMeter uc = _lstUCMeters[sId];
+                return uc.ShowMeter;
+            }
+        }
         public static void ContainerBackgroundColour(string sId, System.Drawing.Color c)
         {
             lock (_metersLock)
@@ -1672,7 +1715,7 @@ namespace Thetis
                 // init all the meter info from console
                 initConsoleData(ucM.RX);
 
-                if (bShow)
+                if (bShow && ucM.ShowMeter)
                 {
                     if (ucM.Floating)
                     {
@@ -1696,7 +1739,7 @@ namespace Thetis
                 foreach (KeyValuePair<string, ucMeter> ucms in _lstUCMeters)
                 {
                     ucMeter ucm = ucms.Value;
-                    if (_lstMeterDisplayForms.ContainsKey(ucm.ID))
+                    if (_lstMeterDisplayForms.ContainsKey(ucm.ID) && ucm.ShowMeter)
                     {
                         // setup
                         frmMeterDisplay f = _lstMeterDisplayForms[ucm.ID];
@@ -1872,7 +1915,7 @@ namespace Thetis
                     {
                         ucMeter ucM = kvp.Value;
 
-                        if (!_lstMeterDisplayForms.ContainsKey(ucM.ID)) return;
+                        if (!_lstMeterDisplayForms.ContainsKey(ucM.ID) || !ucM.ShowMeter) return;
 
                         if (ucM.Floating)
                             setMeterFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
