@@ -26719,6 +26719,7 @@ namespace Thetis
             clrbtnContainerBackground.Enabled = bEnableControls;
             chkContainerBorder.Enabled = bEnableControls;
             chkContainerNoTitle.Enabled = bEnableControls;
+            chkContainerShow.Enabled = bEnableControls;
             lblMMContainerBackground.Enabled = bEnableControls;
             lstMetersAvailable.Enabled = bEnableControls;
             lstMetersInUse.Enabled = bEnableControls;
@@ -26799,7 +26800,8 @@ namespace Thetis
 
             chkContainerBorder.Checked = MeterManager.ContainerHasBorder(cci.ID);
             clrbtnContainerBackground.Color = MeterManager.GetContainerBackgroundColour(cci.ID);
-            chkContainerNoTitle.Checked = MeterManager.ContainerNoTitleWhenPinned(cci.ID);
+            chkContainerNoTitle.Checked = MeterManager.ContainerNoTitleBar(cci.ID);
+            chkContainerShow.Checked = MeterManager.ContainerShow(cci.ID);
 
             updateMeterLists();
         }
@@ -26819,7 +26821,14 @@ namespace Thetis
                 MeterManager.HighlightContainer("");
             }
         }
-
+        private void chkContainerShow_CheckedChanged(object sender, EventArgs e)
+        {
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.ShowContainer(cci.ID, chkContainerShow.Checked);
+            }
+        }
         private void btnAddMeterItem_Click(object sender, EventArgs e)
         {
             clsMeterTypeComboboxItem mti = lstMetersAvailable.SelectedItem as clsMeterTypeComboboxItem;
@@ -28082,7 +28091,7 @@ namespace Thetis
             clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
             if (cci != null)
             {
-                MeterManager.NoTitleBar(cci.ID, chkContainerNoTitle.Checked);
+                MeterManager.NoTitle(cci.ID, chkContainerNoTitle.Checked);
             }
         }
 

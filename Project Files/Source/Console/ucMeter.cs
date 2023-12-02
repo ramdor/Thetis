@@ -39,6 +39,7 @@ namespace Thetis
             _id = System.Guid.NewGuid().ToString();
             _border = true;
             _noTitleBar = false;
+            _show = true;
 
             btnFloat.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 
@@ -76,6 +77,7 @@ namespace Thetis
         private string _id;
         private bool _border;
         private bool _noTitleBar;
+        private bool _show;
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Console Console
@@ -470,7 +472,16 @@ namespace Thetis
                 setupBorder();
             }
         }
-        public bool NoTitleBar
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public bool ShowMeter
+        {
+            get { return _show; }
+            set
+            {
+                _show = value;                
+            }
+        }
+        public bool NoTitle
         {
             get { return _noTitleBar; }
             set
@@ -573,7 +584,8 @@ namespace Thetis
                 PinOnTop.ToString() + "|" +
                 UCBorder.ToString() + "|" +
                 Common.ColourToString(this.BackColor) + "|" +
-                NoTitleBar.ToString();
+                NoTitle.ToString() + "|" +
+                ShowMeter.ToString();
         }
         public bool TryParse(string str)
         {
@@ -582,12 +594,13 @@ namespace Thetis
             bool floating = false;
             bool pinOnTop = false;
             bool border = false;
-            bool noTitleWhenPinned = false;
+            bool noTitleBar = false;
+            bool show = true;
 
             if (str != "")
             {
                 string[] tmp = str.Split('|');
-                if(tmp.Length >= 13 && tmp.Length <= 14)
+                if(tmp.Length >= 13 && tmp.Length <= 15)
                 {
                     bOk = tmp[0] != "";
                     if (bOk) ID = tmp[0];
@@ -632,8 +645,14 @@ namespace Thetis
 
                     if(bOk && tmp.Length > 13) // we also have the new for [2.10.1.0] the notitleifpined option
                     {
-                        bOk = bool.TryParse(tmp[13], out noTitleWhenPinned);
-                        if (bOk) NoTitleBar = noTitleWhenPinned;
+                        bOk = bool.TryParse(tmp[13], out noTitleBar);
+                        if (bOk) NoTitle = noTitleBar;
+                    }
+
+                    if (bOk && tmp.Length > 14) // we also have the new for [2.10.3.5] the show option
+                    {
+                        bOk = bool.TryParse(tmp[14], out show);
+                        if (bOk) ShowMeter = show;
                     }
                 }
             }

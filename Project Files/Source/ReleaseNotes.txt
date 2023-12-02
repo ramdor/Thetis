@@ -16,6 +16,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 	- ZZQB 1/0 QuickRecord
 - [add] new option to apply 31dB tx attenuation when output power is increased and PS-A is on
 - [add] dBm text colour appearance option for noise floor line
+- [add] option to show/hide multimeter containers
 - [fix] lin waterfall palettes should now look better
 - [fix] fix an issue which would prevent manually changing TX filter in setup form, it would try to 'validate' whilst typing new value
 - [change] wav file recording volume is normalised to ignore RX AF. Note: when muted/0vol recording is 'silent'

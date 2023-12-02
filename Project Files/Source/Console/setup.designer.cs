@@ -3001,6 +3001,7 @@
             this.comboMeterType = new System.Windows.Forms.ComboBoxTS();
             this.tpAppearanceMeter2 = new System.Windows.Forms.TabPage();
             this.grpMultiMeterHolder = new System.Windows.Forms.GroupBoxTS();
+            this.chkContainerShow = new System.Windows.Forms.CheckBoxTS();
             this.chkContainerNoTitle = new System.Windows.Forms.CheckBoxTS();
             this.btnMeterCopySettings = new System.Windows.Forms.ButtonTS();
             this.btnMeterPasteSettings = new System.Windows.Forms.ButtonTS();
@@ -48598,6 +48599,7 @@
             // 
             // grpMultiMeterHolder
             // 
+            this.grpMultiMeterHolder.Controls.Add(this.chkContainerShow);
             this.grpMultiMeterHolder.Controls.Add(this.chkContainerNoTitle);
             this.grpMultiMeterHolder.Controls.Add(this.btnMeterCopySettings);
             this.grpMultiMeterHolder.Controls.Add(this.btnMeterPasteSettings);
@@ -48623,6 +48625,19 @@
             this.grpMultiMeterHolder.Size = new System.Drawing.Size(703, 385);
             this.grpMultiMeterHolder.TabIndex = 86;
             this.grpMultiMeterHolder.TabStop = false;
+            // 
+            // chkContainerShow
+            // 
+            this.chkContainerShow.AutoSize = true;
+            this.chkContainerShow.Image = null;
+            this.chkContainerShow.Location = new System.Drawing.Point(159, 99);
+            this.chkContainerShow.Name = "chkContainerShow";
+            this.chkContainerShow.Size = new System.Drawing.Size(53, 17);
+            this.chkContainerShow.TabIndex = 105;
+            this.chkContainerShow.Text = "Show";
+            this.toolTip1.SetToolTip(this.chkContainerShow, "Show the selected container");
+            this.chkContainerShow.UseVisualStyleBackColor = true;
+            this.chkContainerShow.CheckedChanged += new System.EventHandler(this.chkContainerShow_CheckedChanged);
             // 
             // chkContainerNoTitle
             // 
@@ -61074,5 +61089,6 @@
         private TextBoxTS txtToTPingIP;
         private ColorButton clrbtnNoiseFloorText;
         private LabelTS labelTS192;
+        private CheckBoxTS chkContainerShow;
     }
 }
