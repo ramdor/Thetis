@@ -177,6 +177,7 @@ namespace Thetis
 
                 client = new HttpClient(wrh);
                 client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue(){ NoCache = true };
+                client.Timeout = TimeSpan.FromSeconds(10); // 10 seconds
 
                 string jsonContent = await client.GetStringAsync(jsonUrl + "?timestamp=" + DateTime.Now.Ticks);
                 SkinServersData skinServersData = JsonConvert.DeserializeObject<SkinServersData>(jsonContent);
