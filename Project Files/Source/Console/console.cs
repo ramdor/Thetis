@@ -53402,6 +53402,7 @@ namespace Thetis
         private bool checkVersions()
         {
             int nCMasterVersion = -1;
+            int nCMasterAsioVersion = -1;
             int nWDSPVersion = -1;
             int nPAVersion = -1;
 
@@ -53425,6 +53426,26 @@ namespace Thetis
                     MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
 
+            //cmASIO.dll
+            try
+            {
+                nCMasterAsioVersion = cmaster.GetCMasioVersion();
+                if (nCMasterAsioVersion != Versions._CMASTER_ASIO_VERSION)
+                {
+                    DialogResult dr = MessageBox.Show("Incorrect version of cmASIO.dll installed.",
+                    "Version error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
+            }
+            catch
+            {
+                DialogResult dr = MessageBox.Show("Could not find GetCMasioVersion() in cmASIO.dll .\nEnsure correct version installed.",
+                    "Version function error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
+            
             // wdsp.dll
             // Version number is in version.c where it is 121.  *10 to match Versions.WDSP_VERSION
             try
@@ -53472,6 +53493,7 @@ namespace Thetis
             }
 
             bool bRet = (nCMasterVersion == Versions._CMASTER_VERSION) &&
+                   (nCMasterAsioVersion == Versions._CMASTER_ASIO_VERSION) &&
                    (nWDSPVersion == Versions._WDSP_VERSION) &&
                    (nPAVersion == Versions._PORTAUDIO_VERSION);
 
