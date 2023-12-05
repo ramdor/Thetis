@@ -238,9 +238,7 @@
   <ItemGroup>
     <ClCompile Include="aamix.c" />
     <ClCompile Include="amix.c" />
-    <ClCompile Include="cmasio.c">
-      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotSet</EnableEnhancedInstructionSet>
-    </ClCompile>
+    <ClCompile Include="cmasio.c" />
     <ClCompile Include="cmaster.c" />
     <ClCompile Include="cmbuffs.c" />
     <ClCompile Include="cmsetup.c" />
