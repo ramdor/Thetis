@@ -225,7 +225,7 @@ void create_xmtr()
 			pcm->xmtr[i].ch_outsize,			// input buffer size
 			2,									// maximum number of inputs
 			3,									// which streams to interleave, one bit per stream
-			pcm->Outbound);						// function to call with Outbound data
+			pcm->OutboundTx);					// function to call with Outbound data
 	}
 }
 
@@ -282,12 +282,13 @@ void create_cmaster()
 			4096,														// ring buffer size
 			pcm->aamix_inrates,											// sample rates of input streams
 			pcm->audio_outrate,											// audio output sample rate
-			pcm->Outbound,												// pointer to Outbound() call
+			pcm->OutboundRx,												// pointer to Outbound() call
 			0.000,														// tdelayup
 			0.010,														// tslewup
 			0.000,														// tdelaydown
 			0.010);														// tslewdown
 	}
+	create_cmasio();
 	create_router(0);
 }
 
@@ -295,6 +296,7 @@ void destroy_cmaster()
 {
 	int i;
 	destroy_router(0, 0);
+	destroy_cmasio();
 	destroy_aamix  (0, 0);
 	destroy_xmtr();
 	destroy_rcvr();
@@ -336,6 +338,7 @@ void xcmaster (int stream)
 
 	case 1:  // standard transmitter
 		tx = txid (stream);
+		asioIN(pcm->in[stream]);
 		xpipe (stream, 0, pcm->in);
 		xdexp (tx);																				// vox-dexp
 		fexchange0 (chid (stream, 0), pcm->in[stream], pcm->xmtr[tx].out[0], &error);			// dsp
@@ -356,11 +359,17 @@ void xcmaster (int stream)
 }
 
 PORT
-void SendpOutbound (void (*Outbound)(int id, int nsamples, double* buff))
+void SendpOutboundRx (void (*Outbound)(int id, int nsamples, double* buff))
 {
-	pcm->Outbound = Outbound;
-	SetAAudioMixOutputPointer (0, 0, pcm->Outbound);
-	SetILVOutputPointer(0, pcm->Outbound);
+	pcm->OutboundRx = Outbound;
+	SetAAudioMixOutputPointer (0, 0, pcm->OutboundRx);
+}
+
+PORT
+void SendpOutboundTx(void (*Outbound)(int id, int nsamples, double* buff))
+{
+	pcm->OutboundTx = Outbound;
+	SetILVOutputPointer(0, pcm->OutboundTx);
 }
 
 PORT

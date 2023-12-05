@@ -2,15 +2,15 @@
 
 #if WIN32 
     // removes public keyword
-#define public    
+    #define public    
 #else
-// C# code
-using System;
-namespace Thetis
-{
-    public class Versions
+    // C# code
+    using System;
+    namespace Thetis
     {
-        //... C# Specific class code
+        public class Versions
+        {
+            //... C# Specific class code
 #endif
         // c# & c
 
@@ -19,6 +19,7 @@ namespace Thetis
         //    version_number * 1000.  E.g., Version 1.899 will return 1899.
 
         public const int _CMASTER_VERSION = 1000;
+        public const int _CMASTER_ASIO_VERSION = 1000;
         public const int _WDSP_VERSION = 1230; // from wdsp\version.c
         public const int _PORTAUDIO_VERSION = 1970;  // from pa_front.c
 
@@ -26,14 +27,14 @@ namespace Thetis
         // c specific
 #else
         // c# specific
-    };
+        };
 #endif
 
 #if WIN32
     //C++ code
-#undef public
+    #undef public
 
 #else
     //C# code
-}    // end Thetis
+    }    // end Thetis
 #endif

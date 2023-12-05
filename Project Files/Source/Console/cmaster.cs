@@ -277,6 +277,9 @@ namespace Thetis
         // version
         [DllImport("ChannelMaster.dll", EntryPoint = "GetCMVersion", CallingConvention = CallingConvention.Cdecl)]
         extern public static int GetCMVersion();
+
+        [DllImport("cmASIO.dll", EntryPoint = "GetCMasioVersion", CallingConvention = CallingConvention.Cdecl)]
+        extern public static int GetCMasioVersion();
         #endregion
 
         #region properties
