@@ -261,6 +261,13 @@
               />
       </Component>
 
+      <Component Guid="*">
+        <File Id="cmASIODLL"
+              Source="$(var.FilesPath)cmASIO.dll"
+              KeyPath="yes"
+              />
+      </Component>
+
       <!--<Component Guid="*">
         <File Id="calculus"
               Source="$(var.FilesPath)calculus"
