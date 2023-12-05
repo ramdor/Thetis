@@ -197,6 +197,12 @@
          Target="[INSTALLFOLDER]Thetis-CAT-Command-Reference-Guide-V3.pdf"
          WorkingDirectory="INSTALLFOLDER" />
 
+		  <Shortcut Id="cmASIOGuideShortcut"
+            Name="cmASIOGuide"
+            Description="ChannelMaster ASIO Guide"
+            Target="[INSTALLFOLDER]cmASIO Guide.pdf"
+            WorkingDirectory="INSTALLFOLDER" />
+		  
 	  </Component>
     </DirectoryRef>
        
@@ -411,7 +417,13 @@
 				KeyPath="yes"
             />			  
 		  </Component>
-    </ComponentGroup>
+		<Component Guid="*">
+			<File Id="cmASIOGuidePDF"
+				Source="$(var.DocumentationPath)cmASIO Guide.pdf"
+				KeyPath="yes"
+            />
+		</Component>
+	</ComponentGroup>
 
     <Binary Id="InstallSkins" SourceFile="OpenHPSDR_Skins.exe" />
     <CustomAction Id="InstallSkins_CA" BinaryKey="InstallSkins"
