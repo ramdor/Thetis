@@ -124,7 +124,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;CHANNELMASTER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\wdsp;.;../../lib/portaudio-19.7.0/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <CompileAs>CompileAsC</CompileAs>
       <AdditionalOptions>/D_ATL_XP_TARGETING /FS %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
@@ -182,7 +182,7 @@
       <AdditionalIncludeDirectories>..\wdsp;.;../../lib/portaudio-19.7.0/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <CompileAs>CompileAsC</CompileAs>
       <AdditionalOptions>/D_ATL_XP_TARGETING /FS %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>

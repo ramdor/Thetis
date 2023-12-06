@@ -1455,7 +1455,7 @@ namespace Thetis
             // add this manually because soundfile string not stored in any control in setup
             a.Add("QSOTimerFilenameWav", console.QSOTimerAudioPlayer.SoundFile);
 
-            a.Add("chkRadioProtocolSelect_checkstate", chkRadioProtocolSelect.CheckState.ToString());
+            //a.Add("chkRadioProtocolSelect_checkstate", chkRadioProtocolSelect.CheckState.ToString()); //[2.10.3.5]MW0LGE not used anymore
             a.Add("lgLinearGradientRX1", lgLinearGradientRX1.Text);
 
             // store PA profiles
@@ -1482,7 +1482,7 @@ namespace Thetis
             //
 
             // remove any outdated options from the DB MW0LGE_22b
-            handleOutdatedOptions(false);
+            removeOutdatedOptions();
 
             DB.SaveVarsDictionary("Options", ref a, true);
             //DB.WriteCurrentDB(console.DBFileName);//MW0LGE_[2.9.0.7]
@@ -1495,43 +1495,56 @@ namespace Thetis
         {
             if (needsRecovering(recoveryList, "comboTXTUNMeter")) comboTXTUNMeter.Text = "Fwd SWR"; // this needs to be setup in the case of new database and we havent hit tx/tune yet // MW0LGE_21a
         }
-        List<string> _oldSettings = new List<string>();
-        private void handleOutdatedOptions(bool bGet)
+        private List<string> _oldSettings = new List<string>();
+        private void handleOutdatedOptions(ref Dictionary<string, string> getDict)
         {
-            Dictionary<string, string> temp = new Dictionary<string, string>();
-            handleOutdatedOptions(bGet, ref temp);
+            _oldSettings.Clear();
+
+            if (getDict.ContainsKey("chkTXTunePower"))
+            {
+                if (bool.Parse(getDict["chkTXTunePower"]))
+                    radUseDriveSliderTune.Checked = true;
+                else
+                    radUseFixedDriveTune.Checked = true;
+                _oldSettings.Add("chkTXTunePower");
+            }
+            if (getDict.ContainsKey("chkTestIMDPower"))
+            {
+                if (bool.Parse(getDict["chkTestIMDPower"]))
+                    radUseDriveSlider2Tone.Checked = true;
+                else
+                    radUseFixedDrive2Tone.Checked = true;
+                _oldSettings.Add("chkTestIMDPower");
+            }
+            if (getDict.ContainsKey("chkRadioProtocolSelect_checkstate")) //[2.10.3.5]MW0LGE this is no longer used
+            {
+                CheckState cs = (CheckState)(Enum.Parse(typeof(CheckState), getDict["chkRadioProtocolSelect_checkstate"]));
+
+                switch (cs)
+                {
+                    case CheckState.Checked: // auto
+                        radRadioProtocolAutoSelect.Checked = true;
+                        break;
+                    case CheckState.Indeterminate: // p1
+                        radRadioProtocol1Select.Checked = true;
+                        break;
+                    case CheckState.Unchecked: // p2
+                        radRadioProtocol2Select.Checked = true;
+                        break;
+                }
+               
+                _oldSettings.Add("chkRadioProtocolSelect_checkstate");
+            }
+
+            handleOldPAGainSettings(ref getDict);
         }
-        private void handleOutdatedOptions(bool bGet, ref Dictionary<string, string> getDict)
+        private void removeOutdatedOptions()
         {
-            if (bGet)
-            {
-                _oldSettings.Clear();
+            if (_oldSettings == null || _oldSettings.Count == 0) return;
 
-                if (getDict.ContainsKey("chkTXTunePower"))
-                {
-                    if (bool.Parse(getDict["chkTXTunePower"]))
-                        radUseDriveSliderTune.Checked = true;
-                    else
-                        radUseFixedDriveTune.Checked = true;
-                    _oldSettings.Add("chkTXTunePower");
-                }
-                if (getDict.ContainsKey("chkTestIMDPower"))
-                {
-                    if (bool.Parse(getDict["chkTestIMDPower"]))
-                        radUseDriveSlider2Tone.Checked = true;
-                    else
-                        radUseFixedDrive2Tone.Checked = true;
-                    _oldSettings.Add("chkTestIMDPower");
-                }
-
-                handleOldPAGainSettings(ref getDict);
-            }
-            else
-            {
-                // remove any old settings we dont use any more
-                DB.RemoveVarsList("Options", _oldSettings);
-                _oldSettings.Clear();
-            }
+            // remove any old settings we dont use any more
+            DB.RemoveVarsList("Options", _oldSettings);
+            _oldSettings.Clear();
         }
         private bool _gettingOptions = false;
         private void getOptions(List<string> recoveryList = null)
@@ -1551,7 +1564,7 @@ namespace Thetis
 
             // deal with out dated settings //MW0LGE_22b
             // these will be removed in saveOptions
-            handleOutdatedOptions(true, ref a);
+            handleOutdatedOptions(ref a);
 
             List<string> sortedList = a.Keys.ToList();
             sortedList.Sort();
@@ -1653,10 +1666,10 @@ namespace Thetis
                     {
                         console.QSOTimerAudioPlayer.LoadSound(val);
                     }
-                    else if (name == "chkRadioProtocolSelect_checkstate")
-                    {
-                        chkRadioProtocolSelect.CheckState = (CheckState)(Enum.Parse(typeof(CheckState), val));
-                    }
+                    //else if (name == "chkRadioProtocolSelect_checkstate") //[2.10.3.5]MW0LGE not used anymore
+                    //{
+                    //    chkRadioProtocolSelect.CheckState = (CheckState)(Enum.Parse(typeof(CheckState), val));
+                    //}
                     else if (name.StartsWith("PAProfile_") || name == "PAProfileCount")
                     {
                         // ignore, done later
@@ -1724,7 +1737,7 @@ namespace Thetis
             //
             if (recoveryList == null) // MW0LGE [2.9.0.8] ignore if we hit cancel, not possible to undo multimeter changes at this time
             {
-                if (!MeterManager.RestoreSettings2(ref a)) // pass this dictionary of settings to the meter manager to restore from
+                if (!MeterManager.RestoreSettings(ref a)) // pass this dictionary of settings to the meter manager to restore from
                 {
                     MessageBox.Show("There was an issue restoring the settings for MultiMeter. Please remove all meters, re-add, and restart Thetis.", "MultiMeter RestoreSettings",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
@@ -1902,7 +1915,8 @@ namespace Thetis
             radOrionMicTip_CheckedChanged(this, e);
             radOrionBiasOn_CheckedChanged(this, e);
             chkNetworkWDT_CheckedChanged(this, e);
-            chkRadioProtocolSelect_CheckStateChanged(this, e);
+            //chkRadioProtocolSelect_CheckStateChanged(this, e); //[2.10.3.5]MW0LGE not used anymore
+            radRadioProtocolSelect_CheckedChanged(this, e);
             chkTuneStepPerModeRX1_CheckedChanged(this, e);
             chkCTUNignore0beat_CheckedChanged(this, e); //MW0LGE_21k9d
 
@@ -22446,30 +22460,30 @@ namespace Thetis
             }
         }
 
-        private void chkRadioProtocolSelect_CheckStateChanged(object sender, EventArgs e)
-        {
-            if (initializing) return;
-            switch (chkRadioProtocolSelect.CheckState)
-            {
-                case CheckState.Checked:
-                    RadioProtocolSelected = RadioProtocol.Auto;
-                    NetworkIO.RadioProtocolSelected = RadioProtocol.Auto;
-                    chkRadioProtocolSelect.Text = "Auto Detect Protocol";
-                    break;
-                case CheckState.Indeterminate:
-                    RadioProtocolSelected = RadioProtocol.USB;
-                    NetworkIO.RadioProtocolSelected = RadioProtocol.USB;
-                    chkRadioProtocolSelect.Text = "Protocol 1";
-                    break;
-                case CheckState.Unchecked:
-                    RadioProtocolSelected = RadioProtocol.ETH;
-                    NetworkIO.RadioProtocolSelected = RadioProtocol.ETH;
-                    chkRadioProtocolSelect.Text = "Protocol 2";
-                    break;
-            }
+        //private void chkRadioProtocolSelect_CheckStateChanged(object sender, EventArgs e)
+        //{
+        //    if (initializing) return;
+        //    switch (chkRadioProtocolSelect.CheckState)
+        //    {
+        //        case CheckState.Checked:
+        //            RadioProtocolSelected = RadioProtocol.Auto;
+        //            NetworkIO.RadioProtocolSelected = RadioProtocol.Auto;
+        //            chkRadioProtocolSelect.Text = "Auto Detect Protocol";
+        //            break;
+        //        case CheckState.Indeterminate:
+        //            RadioProtocolSelected = RadioProtocol.USB;
+        //            NetworkIO.RadioProtocolSelected = RadioProtocol.USB;
+        //            chkRadioProtocolSelect.Text = "Protocol 1";
+        //            break;
+        //        case CheckState.Unchecked:
+        //            RadioProtocolSelected = RadioProtocol.ETH;
+        //            NetworkIO.RadioProtocolSelected = RadioProtocol.ETH;
+        //            chkRadioProtocolSelect.Text = "Protocol 2";
+        //            break;
+        //    }
 
-            InitAudioTab();
-        }
+        //    InitAudioTab();
+        //}
         public static RadioProtocol RadioProtocolSelected { get; set; } = RadioProtocol.ETH;
 
         private void btnResetP2ADC_Click(object sender, EventArgs e)
@@ -29123,6 +29137,35 @@ namespace Thetis
             Display.NoiseFloorColorText = clrbtnNoiseFloorText.Color;
         }
 
+        private void radRadioProtocolSelect_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            //note: all 3 radio buttons for radio protocol call this on change
+
+            if(radRadioProtocol1Select.Checked)
+            {
+                RadioProtocolSelected = RadioProtocol.USB;
+                NetworkIO.RadioProtocolSelected = RadioProtocol.USB;
+            }
+            else if (radRadioProtocol2Select.Checked)
+            {
+                RadioProtocolSelected = RadioProtocol.ETH;
+                NetworkIO.RadioProtocolSelected = RadioProtocol.ETH;
+            }
+            else if (radRadioProtocolAutoSelect.Checked)
+            {
+                RadioProtocolSelected = RadioProtocol.Auto;
+                NetworkIO.RadioProtocolSelected = RadioProtocol.Auto;
+            }
+            else
+            {
+                //default to auto
+                radRadioProtocolAutoSelect.Checked = true;
+                return;
+            }
+
+            InitAudioTab();
+        }
         //private bool renameSkinForDeletion(string sFullPath)
         //{
         //    if (_skinPath == "" || !Directory.Exists(sFullPath)) return false;

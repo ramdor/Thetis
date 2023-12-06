@@ -3407,6 +3407,7 @@ namespace Thetis
 
                 string name = vals[0];
                 string val = vals[1];
+                string[] list;
                 int num = 0;
 
                 switch (name)
@@ -3426,7 +3427,8 @@ namespace Thetis
                         tune_step_index = Int32.Parse(val);
                         break;
                     case var nam when name.StartsWith("wheel_tune_index_by_mode"):
-                        string[] list = val.Split('|');
+                        list = val.Split('|');
+                        if (list.Length != (int)DSPMode.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)DSPMode.LAST; i++)
                             m_nTuneStepsByMode[i] = int.Parse(list[i]);
                         break;
@@ -4216,6 +4218,7 @@ namespace Thetis
 
                     case var nam when name.StartsWith("diversity_rx1_ref_by_band"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             diversity_rx1_ref_by_band[i] = Convert.ToBoolean(int.Parse(list[i]));
                         break;
@@ -4223,41 +4226,49 @@ namespace Thetis
                     // MW0LGE_21k9d - store/recall ZTB
                     case var nam when name.StartsWith("rx1_ztbdata_cf"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             ztb_data_by_band[0][i].CentreFrequency = double.Parse(list[i]);
                         break;
                     case var nam when name.StartsWith("rx2_ztbdata_cf"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             ztb_data_by_band[1][i].CentreFrequency = double.Parse(list[i]);
                         break;
                     case var nam when name.StartsWith("rx1_ztbdata_ps"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             ztb_data_by_band[0][i].PanSliderPosition = int.Parse(list[i]);
                         break;
                     case var nam when name.StartsWith("rx2_ztbdata_ps"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             ztb_data_by_band[1][i].PanSliderPosition = int.Parse(list[i]);
                         break;
                     case var nam when name.StartsWith("rx1_ztbdata_zs"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             ztb_data_by_band[0][i].ZoomSliderPosition = int.Parse(list[i]);
                         break;
                     case var nam when name.StartsWith("rx2_ztbdata_zs"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             ztb_data_by_band[1][i].ZoomSliderPosition = int.Parse(list[i]);
                         break;
                     case var nam when name.StartsWith("rx1_ztbdata_init"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             ztb_data_by_band[0][i].Initalised = bool.Parse(list[i]);
                         break;
                     case var nam when name.StartsWith("rx2_ztbdata_init"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             ztb_data_by_band[1][i].Initalised = bool.Parse(list[i]);
                         break;
@@ -4285,6 +4296,7 @@ namespace Thetis
 
                     case var nam when name.StartsWith("rx1_preamp_by_band"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             rx1_preamp_by_band[i] = (PreampMode)(int.Parse(list[i]));
                         break;
@@ -4292,6 +4304,7 @@ namespace Thetis
 
                     case var nam when name.StartsWith("rx2_preamp_by_band"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             rx2_preamp_by_band[i] = (PreampMode)(int.Parse(list[i]));
                         break;
@@ -4299,24 +4312,28 @@ namespace Thetis
 
                     case var nam when name.StartsWith("rx1_step_attenuator_by_band"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             rx1_step_attenuator_by_band[i] = int.Parse(list[i]);
                         break;
 
                     case var nam when name.StartsWith("rx2_step_attenuator_by_band"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             rx2_step_attenuator_by_band[i] = int.Parse(list[i]);
                         break;
 
                     case var nam when name.StartsWith("tx_step_attenuator_by_band"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             tx_step_attenuator_by_band[i] = int.Parse(list[i]);
                         break;
 
                     case var nam when name.StartsWith("power_by_band"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                         {
                             power_by_band[i] = int.Parse(list[i]);
@@ -4325,6 +4342,7 @@ namespace Thetis
 
                     case var nam when name.StartsWith("tunePower_by_band"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                         {
                             tunePower_by_band[i] = int.Parse(list[i]);
@@ -4333,6 +4351,7 @@ namespace Thetis
 
                     case var nam when name.StartsWith("limitPower_by_band"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                         {
                             limitPower_by_band[i] = int.Parse(list[i]);
@@ -4341,6 +4360,7 @@ namespace Thetis
 
                     case var nam when name.StartsWith("limitTunePower_by_band"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                         {
                             limitTunePower_by_band[i] = int.Parse(list[i]);
@@ -4349,30 +4369,35 @@ namespace Thetis
 
                     case var nam when name.StartsWith("fm_tx_offset_by_band_mhz"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             fm_tx_offset_by_band_mhz[i] = double.Parse(list[i]);
                         break;
 
                     case var nam when name.StartsWith("rx1_agct_by_band"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             rx1_agct_by_band[i] = int.Parse(list[i]);
                         break;
 
                     case var nam when name.StartsWith("rx2_agct_by_band"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             rx2_agct_by_band[i] = int.Parse(list[i]);
                         break;
 
                     case var nam when name.StartsWith("rx1_agcm_by_band"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             rx1_agcm_by_band[i] = (AGCMode)(int.Parse(list[i]));
                         break;
 
                     case var nam when name.StartsWith("rx2_agcm_by_band"):
                         list = val.Split('|');
+                        if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
                             rx2_agcm_by_band[i] = (AGCMode)(int.Parse(list[i]));
                         break;
