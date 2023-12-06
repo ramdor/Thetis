@@ -1958,7 +1958,7 @@ namespace Thetis
                 }
             }
         }
-        public static bool RestoreSettings2(ref Dictionary<string, string> settings)
+        public static bool RestoreSettings(ref Dictionary<string, string> settings)
         {
             bool bRestoreOk = true;
             try
@@ -2033,79 +2033,7 @@ namespace Thetis
                 bRestoreOk = false;
             }
             return bRestoreOk;
-        }
-        //public static bool RestoreSettings(ref List<KeyValuePair<string, string>> settings)
-        //{
-        //    bool bRestoreOk = true;
-        //    try
-        //    {
-        //        foreach (KeyValuePair<string, string> kvp in settings.Where(o => o.Key.StartsWith("meterContData_")))
-        //        {
-        //            ucMeter ucM = new ucMeter();
-        //            bool bUcMeterOk = ucM.TryParse(kvp.Value);
-        //            if (bUcMeterOk)
-        //            {
-        //                AddMeterContainer(ucM, false);
-
-        //                clsMeter m = MeterFromId(ucM.ID);
-
-        //                if (m != null)
-        //                {
-        //                    // now the meter
-        //                    IEnumerable<KeyValuePair<string, string>> meterData = settings.Where(o => o.Key.StartsWith("meterData_" + m.ID));
-        //                    if (meterData != null && meterData.Count() == 1)
-        //                    {
-        //                        KeyValuePair<string, string> md = meterData.First();
-
-        //                        clsMeter tmpMeter = new clsMeter(1, ""); // dummy init data, will get replaced by tryparse below
-        //                        tmpMeter.TryParse(md.Value);
-
-        //                        // copy to actual meter
-        //                        // id will be the same
-        //                        m.Name = tmpMeter.Name;
-        //                        m.RX = tmpMeter.RX;
-        //                        m.XRatio = tmpMeter.XRatio;
-        //                        m.YRatio = tmpMeter.YRatio;
-        //                        m.DisplayGroup = tmpMeter.DisplayGroup;
-        //                        m.PadX = tmpMeter.PadX;
-        //                        m.PadY = tmpMeter.PadY;
-        //                        m.Height = tmpMeter.Height;
-        //                    }
-
-        //                    // finally the groups
-        //                    IEnumerable<KeyValuePair<string, string>> meterIGData = settings.Where(o => o.Key.StartsWith("meterIGData_") && o.Value.Contains(m.ID)); // parent id, stored in value
-        //                    foreach (KeyValuePair<string, string> igd in meterIGData)
-        //                    {
-        //                        clsItemGroup ig = new clsItemGroup();
-        //                        bool bOk = ig.TryParse(igd.Value);
-
-        //                        if (bOk)
-        //                        {
-        //                            m.AddMeter(ig.MeterType, ig);
-
-        //                            //and the settings
-        //                            IEnumerable<KeyValuePair<string, string>> meterIGSettings = settings.Where(o => o.Key.StartsWith("meterIGSettings_" + ig.ID));
-        //                            if (meterIGSettings != null && meterIGSettings.Count() == 1)
-        //                            {
-        //                                clsIGSettings igs = new clsIGSettings();
-        //                                bool bIGSok = igs.TryParse(meterIGSettings.First().Value);
-        //                                if (bIGSok) m.ApplySettingsForMeterGroup(ig.MeterType, igs);
-        //                            }
-        //                        }
-        //                    }
-        //                    m.ZeroOut(true, true);
-
-        //                    m.Rebuild();
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        bRestoreOk = false;
-        //    }
-        //    return bRestoreOk;
-        //}
+        }        
         public static List<string> GetFormGuidList()
         {
             List<string> sGuidList = new List<string>();

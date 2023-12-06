@@ -215,9 +215,12 @@
             this.labelTS88 = new System.Windows.Forms.LabelTS();
             this.lblMetisVer = new System.Windows.Forms.LabelTS();
             this.grpOzyType = new System.Windows.Forms.GroupBoxTS();
+            this.panelTS9 = new System.Windows.Forms.PanelTS();
+            this.radRadioProtocolAutoSelect = new System.Windows.Forms.RadioButtonTS();
+            this.radRadioProtocol1Select = new System.Windows.Forms.RadioButtonTS();
+            this.radRadioProtocol2Select = new System.Windows.Forms.RadioButtonTS();
             this.chkFirewallCheck = new System.Windows.Forms.ButtonTS();
             this.chkNetworkThrottleIndexTweak = new System.Windows.Forms.CheckBoxTS();
-            this.chkRadioProtocolSelect = new System.Windows.Forms.CheckBoxTS();
             this.chkNetworkWDT = new System.Windows.Forms.CheckBoxTS();
             this.panelTS7 = new System.Windows.Forms.PanelTS();
             this.radStaticIP4 = new System.Windows.Forms.RadioButtonTS();
@@ -3587,6 +3590,7 @@
             this.tpGeneralHardware.SuspendLayout();
             this.grpFirmware.SuspendLayout();
             this.grpOzyType.SuspendLayout();
+            this.panelTS9.SuspendLayout();
             this.panelTS7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udStaticIP16)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udStaticIP15)).BeginInit();
@@ -6982,9 +6986,9 @@
             // 
             // grpOzyType
             // 
+            this.grpOzyType.Controls.Add(this.panelTS9);
             this.grpOzyType.Controls.Add(this.chkFirewallCheck);
             this.grpOzyType.Controls.Add(this.chkNetworkThrottleIndexTweak);
-            this.grpOzyType.Controls.Add(this.chkRadioProtocolSelect);
             this.grpOzyType.Controls.Add(this.chkNetworkWDT);
             this.grpOzyType.Controls.Add(this.panelTS7);
             this.grpOzyType.Controls.Add(this.chkEnableStaticIP);
@@ -6996,6 +7000,59 @@
             this.grpOzyType.TabStop = false;
             this.grpOzyType.Text = "Network Settings";
             this.grpOzyType.Visible = false;
+            // 
+            // panelTS9
+            // 
+            this.panelTS9.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.panelTS9.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelTS9.Controls.Add(this.radRadioProtocolAutoSelect);
+            this.panelTS9.Controls.Add(this.radRadioProtocol1Select);
+            this.panelTS9.Controls.Add(this.radRadioProtocol2Select);
+            this.panelTS9.Location = new System.Drawing.Point(22, 101);
+            this.panelTS9.Name = "panelTS9";
+            this.panelTS9.Size = new System.Drawing.Size(296, 30);
+            this.panelTS9.TabIndex = 124;
+            // 
+            // radRadioProtocolAutoSelect
+            // 
+            this.radRadioProtocolAutoSelect.AutoSize = true;
+            this.radRadioProtocolAutoSelect.Checked = true;
+            this.radRadioProtocolAutoSelect.Image = null;
+            this.radRadioProtocolAutoSelect.Location = new System.Drawing.Point(169, 7);
+            this.radRadioProtocolAutoSelect.Name = "radRadioProtocolAutoSelect";
+            this.radRadioProtocolAutoSelect.Size = new System.Drawing.Size(122, 17);
+            this.radRadioProtocolAutoSelect.TabIndex = 42;
+            this.radRadioProtocolAutoSelect.TabStop = true;
+            this.radRadioProtocolAutoSelect.Text = "Auto detect Protocol";
+            this.toolTip1.SetToolTip(this.radRadioProtocolAutoSelect, "Try to auto detect the protocol");
+            this.radRadioProtocolAutoSelect.UseVisualStyleBackColor = true;
+            this.radRadioProtocolAutoSelect.CheckedChanged += new System.EventHandler(this.radRadioProtocolSelect_CheckedChanged);
+            // 
+            // radRadioProtocol1Select
+            // 
+            this.radRadioProtocol1Select.AutoSize = true;
+            this.radRadioProtocol1Select.Image = null;
+            this.radRadioProtocol1Select.Location = new System.Drawing.Point(3, 7);
+            this.radRadioProtocol1Select.Name = "radRadioProtocol1Select";
+            this.radRadioProtocol1Select.Size = new System.Drawing.Size(73, 17);
+            this.radRadioProtocol1Select.TabIndex = 40;
+            this.radRadioProtocol1Select.Text = "Protocol 1";
+            this.toolTip1.SetToolTip(this.radRadioProtocol1Select, "Use Protocol 1");
+            this.radRadioProtocol1Select.UseVisualStyleBackColor = true;
+            this.radRadioProtocol1Select.CheckedChanged += new System.EventHandler(this.radRadioProtocolSelect_CheckedChanged);
+            // 
+            // radRadioProtocol2Select
+            // 
+            this.radRadioProtocol2Select.AutoSize = true;
+            this.radRadioProtocol2Select.Image = null;
+            this.radRadioProtocol2Select.Location = new System.Drawing.Point(85, 7);
+            this.radRadioProtocol2Select.Name = "radRadioProtocol2Select";
+            this.radRadioProtocol2Select.Size = new System.Drawing.Size(73, 17);
+            this.radRadioProtocol2Select.TabIndex = 41;
+            this.radRadioProtocol2Select.Text = "Protocol 2";
+            this.toolTip1.SetToolTip(this.radRadioProtocol2Select, "Use Protocol 2");
+            this.radRadioProtocol2Select.UseVisualStyleBackColor = true;
+            this.radRadioProtocol2Select.CheckedChanged += new System.EventHandler(this.radRadioProtocolSelect_CheckedChanged);
             // 
             // chkFirewallCheck
             // 
@@ -7013,7 +7070,7 @@
             // chkNetworkThrottleIndexTweak
             // 
             this.chkNetworkThrottleIndexTweak.Image = null;
-            this.chkNetworkThrottleIndexTweak.Location = new System.Drawing.Point(25, 100);
+            this.chkNetworkThrottleIndexTweak.Location = new System.Drawing.Point(25, 83);
             this.chkNetworkThrottleIndexTweak.Name = "chkNetworkThrottleIndexTweak";
             this.chkNetworkThrottleIndexTweak.Size = new System.Drawing.Size(186, 16);
             this.chkNetworkThrottleIndexTweak.TabIndex = 18;
@@ -7021,20 +7078,6 @@
             this.toolTip1.SetToolTip(this.chkNetworkThrottleIndexTweak, "When enabled NetworkThrottlingIndex is set to 0xffffffff to prevent windows from " +
         "throttling the network connection. See thread on forums for more information.");
             this.chkNetworkThrottleIndexTweak.CheckedChanged += new System.EventHandler(this.chkNetworkThrottleIndexTweak_CheckedChanged);
-            // 
-            // chkRadioProtocolSelect
-            // 
-            this.chkRadioProtocolSelect.Checked = true;
-            this.chkRadioProtocolSelect.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRadioProtocolSelect.Image = null;
-            this.chkRadioProtocolSelect.Location = new System.Drawing.Point(25, 80);
-            this.chkRadioProtocolSelect.Name = "chkRadioProtocolSelect";
-            this.chkRadioProtocolSelect.Size = new System.Drawing.Size(152, 16);
-            this.chkRadioProtocolSelect.TabIndex = 17;
-            this.chkRadioProtocolSelect.Text = "Auto Detect Protocol";
-            this.chkRadioProtocolSelect.ThreeState = true;
-            this.toolTip1.SetToolTip(this.chkRadioProtocolSelect, "Selects Radio Protocol");
-            this.chkRadioProtocolSelect.CheckStateChanged += new System.EventHandler(this.chkRadioProtocolSelect_CheckStateChanged);
             // 
             // chkNetworkWDT
             // 
@@ -56467,6 +56510,8 @@
             this.tpGeneralHardware.ResumeLayout(false);
             this.grpFirmware.ResumeLayout(false);
             this.grpOzyType.ResumeLayout(false);
+            this.panelTS9.ResumeLayout(false);
+            this.panelTS9.PerformLayout();
             this.panelTS7.ResumeLayout(false);
             this.panelTS7.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udStaticIP16)).EndInit();
@@ -60284,7 +60329,6 @@
         private CheckBoxTS chkAndrDiversityAutoshow;
         private CheckBoxTS chkAndrDiversityLandscape;
         private CheckBoxTS chkAndrFastStepTune;
-        private CheckBoxTS chkRadioProtocolSelect;
         private ButtonTS btnResetP1ADC;
         private LabelTS lblP1assignment;
         private ButtonTS btnResetP2ADC;
@@ -61090,5 +61134,9 @@
         private ColorButton clrbtnNoiseFloorText;
         private LabelTS labelTS192;
         private CheckBoxTS chkContainerShow;
+        private RadioButtonTS radRadioProtocolAutoSelect;
+        private RadioButtonTS radRadioProtocol2Select;
+        private RadioButtonTS radRadioProtocol1Select;
+        private PanelTS panelTS9;
     }
 }
