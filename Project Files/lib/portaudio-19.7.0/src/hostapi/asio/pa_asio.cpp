@@ -1289,7 +1289,7 @@ PaError PaAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex
         const LPCSTR valueName = "ASIOdrivername";
         char szData[32] = { 0 };
         DWORD szDataSize = 32;  //length of ASIO driver names are limited to 32 bytes, including the zero terminator
-        LSTATUS status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_SZ, NULL, szData, &szDataSize);
+        LSTATUS status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_SZ | RRF_SUBKEY_WOW6464KEY, NULL, szData, &szDataSize);
 
         for( i=0; i < driverCount; ++i )
         {
