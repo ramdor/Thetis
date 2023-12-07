@@ -3542,6 +3542,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.chkMICVOXAllowBypass = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -25692,6 +25693,7 @@
             // 
             // tpVAC
             // 
+            this.tpVAC.Controls.Add(this.chkMICVOXAllowBypass);
             this.tpVAC.Controls.Add(this.chkVAC1WillMute);
             this.tpVAC.Controls.Add(this.chkVAC1GrapherAuto);
             this.tpVAC.Controls.Add(this.udVAC1GrapherSwing);
@@ -25721,7 +25723,7 @@
             // 
             this.chkVAC1WillMute.AutoSize = true;
             this.chkVAC1WillMute.Image = null;
-            this.chkVAC1WillMute.Location = new System.Drawing.Point(249, 238);
+            this.chkVAC1WillMute.Location = new System.Drawing.Point(249, 244);
             this.chkVAC1WillMute.Name = "chkVAC1WillMute";
             this.chkVAC1WillMute.Size = new System.Drawing.Size(117, 17);
             this.chkVAC1WillMute.TabIndex = 89;
@@ -56440,6 +56442,18 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // chkMICVOXAllowBypass
+            // 
+            this.chkMICVOXAllowBypass.Image = null;
+            this.chkMICVOXAllowBypass.Location = new System.Drawing.Point(249, 224);
+            this.chkMICVOXAllowBypass.Name = "chkMICVOXAllowBypass";
+            this.chkMICVOXAllowBypass.Size = new System.Drawing.Size(271, 16);
+            this.chkMICVOXAllowBypass.TabIndex = 90;
+            this.chkMICVOXAllowBypass.Text = "VOX uses MIC instead of VAC";
+            this.toolTip1.SetToolTip(this.chkMICVOXAllowBypass, "Allows VOX to trigger off the MIC input instead of the VAC input");
+            this.chkMICVOXAllowBypass.UseVisualStyleBackColor = true;
+            this.chkMICVOXAllowBypass.CheckedChanged += new System.EventHandler(this.chkMICVOXAllowBypass_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -61138,5 +61152,6 @@
         private RadioButtonTS radRadioProtocol2Select;
         private RadioButtonTS radRadioProtocol1Select;
         private PanelTS panelTS9;
+        private CheckBoxTS chkMICVOXAllowBypass;
     }
 }

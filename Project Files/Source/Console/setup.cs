@@ -29166,6 +29166,11 @@ namespace Thetis
 
             InitAudioTab();
         }
+
+        private void chkMICVOXAllowBypass_CheckedChanged(object sender, EventArgs e)
+        {
+            console.AllowMICVOXBypass = chkMICVOXAllowBypass.Checked;
+        }
         //private bool renameSkinForDeletion(string sFullPath)
         //{
         //    if (_skinPath == "" || !Directory.Exists(sFullPath)) return false;
