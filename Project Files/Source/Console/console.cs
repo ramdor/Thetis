@@ -18542,42 +18542,105 @@ namespace Thetis
             }
         }
 
-        private int cat_squelch_status = 0;
         public int CATSquelch
         {
+            //get
+            //{
+            //    if (chkSquelch.Checked)
+            //        return 1;
+            //    else
+            //        return 0;
+            //}
+            //set
+            //{
+            //    if (value == 1)
+            //        chkSquelch.Checked = true;
+            //    else
+            //        chkSquelch.Checked = false;
+            //}
             get
             {
-                if (chkSquelch.Checked)
-                    cat_squelch_status = 1;
-                else
-                    cat_squelch_status = 0;
-
-                return cat_squelch_status;
+                int nRet = 0;
+                switch (chkSquelch.CheckState)
+                {
+                    case CheckState.Unchecked:
+                        nRet = 0;
+                        break;
+                    case CheckState.Checked: //sql
+                        nRet = 1;
+                        break;
+                    case CheckState.Indeterminate: //vsql
+                        nRet = 2;
+                        break;
+                }
+                return nRet;
             }
             set
             {
-                if (value == 1)
-                    chkSquelch.Checked = true;
-                else
-                    chkSquelch.Checked = false;
+                switch(value)
+                {
+                    case 0: // unchecked
+                        chkSquelch.CheckState = CheckState.Unchecked;
+                        break;
+                    case 1: // checked sql
+                        chkSquelch.CheckState = CheckState.Checked;
+                        break;
+                    case 2: // intermediate vsql
+                        chkSquelch.CheckState = CheckState.Indeterminate;
+                        break;
+                }
             }
         }
 
-        public string CATSquelch2
+        public int CATSquelch2 //[2.10.3.5]MW0LGE change to an int, same as CATSquelch, why implement it differenly in the first place? boggles my mind
         {
+            //get
+            //{
+            //    if (chkRX2Squelch.Checked)
+            //        return 1;
+            //    else
+            //        return 0;
+            //}
+            //set
+            //{
+            //    if (value == 1)
+            //        chkRX2Squelch.Checked = true;
+            //    else
+            //        chkRX2Squelch.Checked = false;
+            //}
+
+            //[2.10.3.5]MW0LGE tri state for vsql
             get
             {
-                if (chkRX2Squelch.Checked)
-                    return "1";
-                else
-                    return "0";
+                int nRet = 0;
+                switch (chkRX2Squelch.CheckState)
+                {
+                    case CheckState.Unchecked:
+                        nRet = 0;
+                        break;
+                    case CheckState.Checked: //sql
+                        nRet = 1;
+                        break;
+                    case CheckState.Indeterminate: //vsql
+                        nRet = 2;
+                        break;
+                }
+                return nRet;
             }
             set
             {
-                if (value == "1")
-                    chkRX2Squelch.Checked = true;
-                else
-                    chkRX2Squelch.Checked = false;
+                switch (value)
+                {
+                    case 0: // unchecked
+                        chkRX2Squelch.CheckState = CheckState.Unchecked;
+                        break;
+                    case 1: // checked sql
+                        chkRX2Squelch.CheckState = CheckState.Checked;
+                        break;
+                    case 2: // intermediate vsql
+                        chkRX2Squelch.CheckState = CheckState.Indeterminate;
+                        break;
+                }
             }
         }
 
@@ -21590,10 +21653,11 @@ namespace Thetis
         {
             get 
             {
-                //return ptbSquelch.Value; 
+                // [2.9.3.5]MW0LGE reverted back to -160 to 0
+                return ptbSquelch.Value; 
 
-                // MW0LGE [2.9.0.8] needs to return 0 to -160 range instead of 0 to 100
-                return 0 - (int)(ptbSquelch.Value * 1.6f);
+                //// MW0LGE [2.9.0.8] needs to return 0 to -160 range instead of 0 to 100
+                //return 0 - (int)(ptbSquelch.Value * 1.6f);
             }
             set
             {
@@ -21601,33 +21665,39 @@ namespace Thetis
                 //if (chkSquelch.Checked)
                 //    ptbSquelch_Scroll(this, EventArgs.Empty);
 
-                // MW0LGE [2.9.0.8] as the sql sliders have been converted to 0-100 range
-                // note: fm 100 range is also performed in catcommands.cs which is not ideal
-                value = Math.Abs(value); // make +ve
-
-                switch (chkSquelch.CheckState)
-                {
-                    case CheckState.Unchecked:
-                    case CheckState.Checked:
-                        if (rx1_dsp_mode == DSPMode.FM)
-                        {
-                            if (value > 100) value = 100;
-                        }
-                        else
-                        {
-                            if (value > 160) value = 160;
-                            value = (int)((float)(value / 160f) * 100); // convert from 0-160 to 0-100
-                        }
-                        break;
-                    case CheckState.Indeterminate:
-                        if (value > 100) value = 100;
-                        break;
-                }
-
+                // [2.9.3.5]MW0LGE reverted back to -160 to 0
                 _bIgnoreSqlUpdate = true;
                 ptbSquelch.Value = value;
                 _bIgnoreSqlUpdate = false;
                 ptbSquelch_Scroll(this, EventArgs.Empty);
+
+                //// MW0LGE [2.9.0.8] as the sql sliders have been converted to 0-100 range
+                //// note: fm 100 range is also performed in catcommands.cs which is not ideal
+                //value = Math.Abs(value); // make +ve
+
+                //switch (chkSquelch.CheckState)
+                //{
+                //    case CheckState.Unchecked:
+                //    case CheckState.Checked:
+                //        if (rx1_dsp_mode == DSPMode.FM)
+                //        {
+                //            if (value > 100) value = 100;
+                //        }
+                //        else
+                //        {
+                //            if (value > 160) value = 160;
+                //            value = (int)((float)(value / 160f) * 100); // convert from 0-160 to 0-100
+                //        }
+                //        break;
+                //    case CheckState.Indeterminate:
+                //        if (value > 100) value = 100;
+                //        break;
+                //}
+
+                //_bIgnoreSqlUpdate = true;
+                //ptbSquelch.Value = value;
+                //_bIgnoreSqlUpdate = false;
+                //ptbSquelch_Scroll(this, EventArgs.Empty);
             }
         }
 
@@ -21635,10 +21705,11 @@ namespace Thetis
         {
             get
             {
-                //return ptbRX2Squelch.Value; 
+                // [2.9.3.5]MW0LGE reverted back to -160 to 0
+                return ptbRX2Squelch.Value; 
 
-                // MW0LGE [2.9.0.8] needs to return 0 to -160 range instead of 0 to 100
-                return 0 - (int)(ptbRX2Squelch.Value * 1.6f);
+                //// MW0LGE [2.9.0.8] needs to return 0 to -160 range instead of 0 to 100
+                //return 0 - (int)(ptbRX2Squelch.Value * 1.6f);
             }
             set
             {
@@ -21646,33 +21717,39 @@ namespace Thetis
                 //if (chkRX2Squelch.Checked)
                 //    ptbRX2Squelch_Scroll(this, EventArgs.Empty);
 
-                // MW0LGE [2.9.0.8] as the sql sliders have been converted to 0-100 range
-                // note: fm 100 range is also performed in catcommands.cs which is not ideal
-                value = Math.Abs(value); // make +ve
-
-                switch (chkRX2Squelch.CheckState)
-                {
-                    case CheckState.Unchecked:
-                    case CheckState.Checked:
-                        if (rx2_dsp_mode == DSPMode.FM)
-                        {
-                            if (value > 100) value = 100;
-                        }
-                        else
-                        {
-                            if (value > 160) value = 160;
-                            value = (int)((float)(value / 160f) * 100); // convert from 0-160 to 0-100
-                        }
-                        break;
-                    case CheckState.Indeterminate:
-                        if (value > 100) value = 100;
-                        break;
-                }
-
+                // [2.9.3.5]MW0LGE reverted back to -160 to 0
                 _bIgnoreSqlUpdate = true;
                 ptbRX2Squelch.Value = value;
                 _bIgnoreSqlUpdate = false;
                 ptbRX2Squelch_Scroll(this, EventArgs.Empty);
+
+                //// MW0LGE [2.9.0.8] as the sql sliders have been converted to 0-100 range
+                //// note: fm 100 range is also performed in catcommands.cs which is not ideal
+                //value = Math.Abs(value); // make +ve
+
+                //switch (chkRX2Squelch.CheckState)
+                //{
+                //    case CheckState.Unchecked:
+                //    case CheckState.Checked:
+                //        if (rx2_dsp_mode == DSPMode.FM)
+                //        {
+                //            if (value > 100) value = 100;
+                //        }
+                //        else
+                //        {
+                //            if (value > 160) value = 160;
+                //            value = (int)((float)(value / 160f) * 100); // convert from 0-160 to 0-100
+                //        }
+                //        break;
+                //    case CheckState.Indeterminate:
+                //        if (value > 100) value = 100;
+                //        break;
+                //}
+
+                //_bIgnoreSqlUpdate = true;
+                //ptbRX2Squelch.Value = value;
+                //_bIgnoreSqlUpdate = false;
+                //ptbRX2Squelch_Scroll(this, EventArgs.Empty);
             }
         }
 
@@ -32908,13 +32985,13 @@ namespace Thetis
         }        
         private void picSquelch_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
-            //int signal_x = (int)((sql_data + 160.0) * (picSquelch.Width - 1) / 160.0);
-            //int sql_x = (int)(((float)ptbSquelch.Value + 160.0) * (picSquelch.Width - 1) / 160.0);
-
-            float fValue = -160f + (160f * (ptbSquelch.Value / 100f)); // MW0LGE [2.9.0.8] converted to 0-100, as we are not now chaninging min/max of scroll bar
-
             int signal_x = (int)((sql_data + 160.0) * (picSquelch.Width - 1) / 160.0);
-            int sql_x = (int)((fValue + 160.0) * (picSquelch.Width - 1) / 160.0);
+            int sql_x = (int)(((float)ptbSquelch.Value + 160.0) * (picSquelch.Width - 1) / 160.0);
+
+            //float fValue = -160f + (160f * (ptbSquelch.Value / 100f)); // MW0LGE [2.9.0.8] converted to 0-100, as we are not now chaninging min/max of scroll bar
+
+            //int signal_x = (int)((sql_data + 160.0) * (picSquelch.Width - 1) / 160.0);
+            //int sql_x = (int)((fValue + 160.0) * (picSquelch.Width - 1) / 160.0);
 
             if (_mox) signal_x = sql_x = 0;
                 e.Graphics.FillRectangle(Brushes.LimeGreen, 0, 0, signal_x, picSquelch.Height);
@@ -55976,19 +56053,23 @@ namespace Thetis
                     // sql
                     if (rx1_dsp_mode == DSPMode.FM) //FM Squelch
                     {
-                        nValue = ptbSquelch.Value; // 0-100
+                        //nValue = ptbSquelch.Value; // 0-100
+                        //[2.10.3.5]MW0LGE convert to a 0-100 scale from a -160 to 0 scale
+                        nValue = (int)(((ptbSquelch.Value + 160) / 160f) * 100f);
 
-                        rx1_fm_squelch_threshold_scroll = nValue;
+                        rx1_fm_squelch_threshold_scroll = ptbSquelch.Value;
 
                         radio.GetDSPRX(0, 0).FMSquelchThreshold = (float)Math.Pow(10.0, -2.0 * nValue / 100.0);
                         radio.GetDSPRX(0, 1).FMSquelchThreshold = (float)Math.Pow(10.0, -2.0 * nValue / 100.0);
                     }
                     else
                     {
-                        rx1_squelch_threshold_scroll = ptbSquelch.Value; // 0-100
+                        rx1_squelch_threshold_scroll = ptbSquelch.Value;
 
-                        float fPerc = ptbSquelch.Value / 100f;
-                        nValue = -160 + (int)(160  * fPerc);
+                        //float fPerc = ptbSquelch.Value / 100f;
+                        //nValue = -160 + (int)(160  * fPerc);
+                        //[2.10.3.5]MW0LGE reverted back to a -160 to 0 scale
+                        nValue = ptbSquelch.Value;                        
 
                         radio.GetDSPRX(0, 0).RXSquelchThreshold = (float)nValue -
                           rx1_preamp_offset[(int)rx1_preamp_mode] -
@@ -56007,9 +56088,11 @@ namespace Thetis
                     break;
                 case CheckState.Indeterminate:
                     // vsq
-                    nValue = ptbSquelch.Value; // 0-100
+                    //nValue = ptbSquelch.Value; // 0-100
+                    //[2.10.3.5]MW0LGE convert to a 0-100 scale from a -160 to 0 scale
+                    nValue = (int)(((ptbSquelch.Value + 160) / 160f) * 100f);
 
-                    rx1_voice_squelch_threshold_scroll = nValue;
+                    rx1_voice_squelch_threshold_scroll = ptbSquelch.Value;
 
                     radio.GetDSPRX(0, 0).SSqlThreshold = nValue / 100f;
                     radio.GetDSPRX(0, 1).SSqlThreshold = nValue / 100f;
@@ -56023,7 +56106,9 @@ namespace Thetis
                 ptbSquelch.Focus();
             }
             if (sliderForm != null)
-                sliderForm.RX1Squelch = -(int)(ptbSquelch.Value * 1.6f); // convert to range 0 to -160
+                //sliderForm.RX1Squelch = -(int)(ptbSquelch.Value * 1.6f); // convert to range 0 to -160
+                //[2.10.3.5]MW0LGE
+                sliderForm.RX1Squelch = ptbSquelch.Value;
         }
         private bool _bIgnoreSqlStateChange = false;// used by handleSqlFM
         private void chkSquelch_CheckStateChanged(object sender, EventArgs e)
@@ -56107,7 +56192,8 @@ namespace Thetis
             //if (rx1_dsp_mode == DSPMode.FM) rx1_fm_squelch_on = chkSquelch.Checked;
 
             if (sliderForm != null)
-                sliderForm.RX1SquelchOnOff = chkSquelch.Checked;
+                //sliderForm.RX1SquelchOnOff = chkSquelch.Checked;
+                sliderForm.RX1SquelchState = chkSquelch.CheckState; //[2.10.3.5]MW0LGE
             AndromedaIndicatorCheck(EIndicatorActions.eINSquelch, true, chkSquelch.Checked);
 
             //update
@@ -56278,7 +56364,8 @@ namespace Thetis
             }
 
             if (sliderForm != null)
-                sliderForm.RX2SquelchOnOff = chkRX2Squelch.Checked;
+                //sliderForm.RX2SquelchOnOff = chkRX2Squelch.Checked;
+                sliderForm.RX2SquelchState = chkRX2Squelch.CheckState; //[2.10.3.5]MW0LGE
             AndromedaIndicatorCheck(EIndicatorActions.eINSquelch, true, chkRX2Squelch.Checked);
 
             //update
@@ -56379,9 +56466,11 @@ namespace Thetis
                     // sql
                     if (rx2_dsp_mode == DSPMode.FM) //FM Squelch
                     {
-                        nValue = ptbRX2Squelch.Value; // 0-100
+                        //nValue = ptbRX2Squelch.Value; // 0-100
+                        //[2.10.3.5]MW0LGE convert to a 0-100 scale from a -160 to 0 scale
+                        nValue = (int)(((ptbRX2Squelch.Value + 160) / 160f) * 100f);
 
-                        rx2_fm_squelch_threshold_scroll = nValue;
+                        rx2_fm_squelch_threshold_scroll = ptbRX2Squelch.Value;
 
                         radio.GetDSPRX(1, 0).FMSquelchThreshold = (float)Math.Pow(10.0, -2.0 * nValue / 100.0);
                         radio.GetDSPRX(1, 1).FMSquelchThreshold = (float)Math.Pow(10.0, -2.0 * nValue / 100.0);
@@ -56390,8 +56479,10 @@ namespace Thetis
                     {
                         rx2_squelch_threshold_scroll = ptbRX2Squelch.Value; // 0-100
 
-                        float fPerc = ptbRX2Squelch.Value / 100f;
-                        nValue = -160 + (int)(160 * fPerc);
+                        //float fPerc = ptbRX2Squelch.Value / 100f;
+                        //nValue = -160 + (int)(160 * fPerc);
+                        //[2.10.3.5]MW0LGE reverted back to a -160 to 0 scale
+                        nValue = ptbRX2Squelch.Value;
 
                         radio.GetDSPRX(1, 0).RXSquelchThreshold = (float)nValue -
                           rx2_preamp_offset[(int)rx2_preamp_mode] -
@@ -56410,9 +56501,11 @@ namespace Thetis
                     break;
                 case CheckState.Indeterminate:
                     // vsq
-                    nValue = ptbRX2Squelch.Value; // 0-100
+                    //nValue = ptbRX2Squelch.Value; // 0-100
+                    //[2.10.3.5]MW0LGE convert to a 0-100 scale from a -160 to 0 scale
+                    nValue = (int)(((ptbRX2Squelch.Value + 160) / 160f) * 100f);
 
-                    rx2_voice_squelch_threshold_scroll = nValue;
+                    rx2_voice_squelch_threshold_scroll = ptbRX2Squelch.Value;
 
                     radio.GetDSPRX(1, 0).SSqlThreshold = nValue / 100f;
                     radio.GetDSPRX(1, 1).SSqlThreshold = nValue / 100f;
@@ -56426,7 +56519,9 @@ namespace Thetis
                 ptbRX2Squelch.Focus();
             }
             if (sliderForm != null)
-                sliderForm.RX2Squelch = -(int)(ptbRX2Squelch.Value * 1.6f); // convert to range 0 to -160
+                //sliderForm.RX2Squelch = -(int)(ptbRX2Squelch.Value * 1.6f); // convert to range 0 to -160
+                //[2.10.3.5]MW0LGE
+                sliderForm.RX2Squelch = ptbRX2Squelch.Value;
         }
 
         private void chkSquelch_MouseDown(object sender, MouseEventArgs e)

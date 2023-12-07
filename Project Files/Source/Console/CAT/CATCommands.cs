@@ -5778,7 +5778,7 @@ namespace Thetis
 		// Sets or reads the Squelch on/off status
 		public string ZZSO(string s)
 		{
-			if(s.Length == parser.nSet && (s == "0" || s == "1"))
+			if(s.Length == parser.nSet && (s == "0" || s == "1" || s == "2")) //[2.10.3.5]MW0LGE 2 is vsql
 			{
 				console.CATSquelch = Convert.ToInt32(s);
 				return "";
@@ -5789,7 +5789,6 @@ namespace Thetis
 			}
 			else
 				return parser.Error1;
-
 		}
 
 		// Sets or reads the SDR-1000 Squelch control
@@ -5882,18 +5881,17 @@ namespace Thetis
         // Sets or reads the RX2 Squelch button
         public string ZZSV(string s)
         {
-                if (s.Length == parser.nSet && (s == "0" || s == "1"))
-                {
-                    console.CATSquelch2 = s;
-                    return "";
-                }
-                else if (s.Length == parser.nGet)
-                {
-                    return console.CATSquelch2;
-                }
-                else
-                    return parser.Error1;
-        
+            if (s.Length == parser.nSet && (s == "0" || s == "1" || s == "2")) //[2.10.3.5]MW0LGE 2 is vsql
+            {
+				console.CATSquelch2 = Convert.ToInt32(s);
+				return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+				return console.CATSquelch2.ToString();
+            }
+            else
+				return parser.Error1;        
         }
 
         //Swaps VFO A/B TX buttons
@@ -7711,7 +7709,7 @@ namespace Thetis
                 m_att = (int)console.RX2PreampMode;
                 m_att = (m_att & 7) << 3;           // 3 bits, moved left
                 n = m_agc + m_att;
-                if (console.CATSquelch2 == "1")
+                if (console.CATSquelch2 != 0)
                     n += (1 << 6);
                 if (console.CATRX2NB1 != 0)
                     n += (1 << 7);
