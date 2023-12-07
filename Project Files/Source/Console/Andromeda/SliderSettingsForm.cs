@@ -105,7 +105,6 @@ namespace Thetis
             AutoHideTimer = new System.Timers.Timer(); 
             AutoHideTimer.Elapsed += new ElapsedEventHandler(Callback);
             AutoHideTimer.Enabled = false;
-
         }
 
         /// <summary>
@@ -132,6 +131,8 @@ namespace Thetis
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SliderSettingsForm));
+            this.labelTS16 = new System.Windows.Forms.LabelTS();
+            this.tbMicGain = new System.Windows.Forms.TrackBarTS();
             this.btnClose = new System.Windows.Forms.ButtonTS();
             this.lblMasterAF = new System.Windows.Forms.LabelTS();
             this.lblDrive = new System.Windows.Forms.LabelTS();
@@ -179,8 +180,7 @@ namespace Thetis
             this.tbRX1Sql = new System.Windows.Forms.TrackBarTS();
             this.tbRX1RF = new System.Windows.Forms.TrackBarTS();
             this.tbRX1AF = new System.Windows.Forms.TrackBarTS();
-            this.tbMicGain = new System.Windows.Forms.TrackBarTS();
-            this.labelTS16 = new System.Windows.Forms.LabelTS();
+            ((System.ComponentModel.ISupportInitialize)(this.tbMicGain)).BeginInit();
             this.grpSubRX.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbSubRXPan)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbSubRXAF)).BeginInit();
@@ -202,14 +202,35 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.tbRX1Sql)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRX1RF)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRX1AF)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbMicGain)).BeginInit();
             this.SuspendLayout();
+            // 
+            // labelTS16
+            // 
+            this.labelTS16.AutoSize = true;
+            this.labelTS16.ForeColor = System.Drawing.SystemColors.Control;
+            this.labelTS16.Image = null;
+            this.labelTS16.Location = new System.Drawing.Point(795, 107);
+            this.labelTS16.Name = "labelTS16";
+            this.labelTS16.Size = new System.Drawing.Size(49, 13);
+            this.labelTS16.TabIndex = 13;
+            this.labelTS16.Text = "Mic Gain";
+            // 
+            // tbMicGain
+            // 
+            this.tbMicGain.Location = new System.Drawing.Point(740, 77);
+            this.tbMicGain.Maximum = 70;
+            this.tbMicGain.Minimum = -96;
+            this.tbMicGain.Name = "tbMicGain";
+            this.tbMicGain.Size = new System.Drawing.Size(131, 45);
+            this.tbMicGain.TabIndex = 12;
+            this.tbMicGain.Scroll += new System.EventHandler(this.TbMicGain_Scroll);
             // 
             // btnClose
             // 
             this.btnClose.Image = null;
             this.btnClose.Location = new System.Drawing.Point(759, 211);
             this.btnClose.Name = "btnClose";
+            this.btnClose.Selectable = true;
             this.btnClose.Size = new System.Drawing.Size(96, 40);
             this.btnClose.TabIndex = 11;
             this.btnClose.Text = "Close";
@@ -480,14 +501,15 @@ namespace Thetis
             this.chkRX2Sql.Appearance = System.Windows.Forms.Appearance.Button;
             this.chkRX2Sql.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.chkRX2Sql.Image = null;
-            this.chkRX2Sql.Location = new System.Drawing.Point(92, 156);
+            this.chkRX2Sql.Location = new System.Drawing.Point(87, 156);
             this.chkRX2Sql.Name = "chkRX2Sql";
-            this.chkRX2Sql.Size = new System.Drawing.Size(40, 28);
+            this.chkRX2Sql.Size = new System.Drawing.Size(49, 28);
             this.chkRX2Sql.TabIndex = 6;
             this.chkRX2Sql.Text = "SQL";
             this.chkRX2Sql.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.chkRX2Sql.ThreeState = true;
             this.chkRX2Sql.UseVisualStyleBackColor = true;
-            this.chkRX2Sql.CheckedChanged += new System.EventHandler(this.chkRX2Sql_CheckedChanged);
+            this.chkRX2Sql.CheckStateChanged += new System.EventHandler(this.chkRX2Sql_CheckStateChanged);
             // 
             // tbRX2Pan
             // 
@@ -706,14 +728,15 @@ namespace Thetis
             this.chkRX1Sql.Appearance = System.Windows.Forms.Appearance.Button;
             this.chkRX1Sql.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.chkRX1Sql.Image = null;
-            this.chkRX1Sql.Location = new System.Drawing.Point(91, 156);
+            this.chkRX1Sql.Location = new System.Drawing.Point(86, 156);
             this.chkRX1Sql.Name = "chkRX1Sql";
-            this.chkRX1Sql.Size = new System.Drawing.Size(40, 28);
+            this.chkRX1Sql.Size = new System.Drawing.Size(49, 28);
             this.chkRX1Sql.TabIndex = 5;
             this.chkRX1Sql.Text = "SQL";
             this.chkRX1Sql.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.chkRX1Sql.ThreeState = true;
             this.chkRX1Sql.UseVisualStyleBackColor = true;
-            this.chkRX1Sql.CheckedChanged += new System.EventHandler(this.chkRX1Sql_CheckedChanged);
+            this.chkRX1Sql.CheckStateChanged += new System.EventHandler(this.chkRX1Sql_CheckStateChanged);
             // 
             // tbRX1Pan
             // 
@@ -759,27 +782,6 @@ namespace Thetis
             this.tbRX1AF.TabIndex = 1;
             this.tbRX1AF.Scroll += new System.EventHandler(this.tbRX1AF_Scroll);
             // 
-            // tbMicGain
-            // 
-            this.tbMicGain.Location = new System.Drawing.Point(740, 77);
-            this.tbMicGain.Maximum = 70;
-            this.tbMicGain.Minimum = -96;
-            this.tbMicGain.Name = "tbMicGain";
-            this.tbMicGain.Size = new System.Drawing.Size(131, 45);
-            this.tbMicGain.TabIndex = 12;
-            this.tbMicGain.Scroll += new System.EventHandler(this.TbMicGain_Scroll);
-            // 
-            // labelTS16
-            // 
-            this.labelTS16.AutoSize = true;
-            this.labelTS16.ForeColor = System.Drawing.SystemColors.Control;
-            this.labelTS16.Image = null;
-            this.labelTS16.Location = new System.Drawing.Point(795, 107);
-            this.labelTS16.Name = "labelTS16";
-            this.labelTS16.Size = new System.Drawing.Size(49, 13);
-            this.labelTS16.TabIndex = 13;
-            this.labelTS16.Text = "Mic Gain";
-            // 
             // SliderSettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -806,6 +808,7 @@ namespace Thetis
             this.Activated += new System.EventHandler(this.SliderSettingsForm_Activated);
             this.Closing += new System.ComponentModel.CancelEventHandler(this.SliderSettingsForm_Closing);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SliderSettingsForm_FormClosing);
+            ((System.ComponentModel.ISupportInitialize)(this.tbMicGain)).EndInit();
             this.grpSubRX.ResumeLayout(false);
             this.grpSubRX.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbSubRXPan)).EndInit();
@@ -830,7 +833,6 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.tbRX1Sql)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRX1RF)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRX1AF)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbMicGain)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1015,34 +1017,59 @@ namespace Thetis
 
             }
         }
-
-        public bool RX1SquelchOnOff
+        public CheckState RX1SquelchState
         {
             get
             {
-                if (chkRX1Sql != null) return chkRX1Sql.Checked;
-                else return false;
+                if (chkRX1Sql != null) return chkRX1Sql.CheckState;
+                else return CheckState.Unchecked;
             }
             set
             {
-                if (chkRX1Sql != null) chkRX1Sql.Checked = value;
-
+                if (chkRX1Sql != null)
+                    chkRX1Sql.CheckState = value;
             }
         }
-
-        public bool RX2SquelchOnOff
+        public CheckState RX2SquelchState
         {
             get
             {
-                if (chkRX2Sql != null) return chkRX2Sql.Checked;
-                else return false;
+                if (chkRX2Sql != null) return chkRX2Sql.CheckState;
+                else return CheckState.Unchecked;
             }
             set
             {
-                if (chkRX2Sql != null) chkRX2Sql.Checked = value;
-
+                if (chkRX2Sql != null)
+                    chkRX2Sql.CheckState = value;
             }
         }
+        //public bool RX1SquelchOnOff
+        //{
+        //    get
+        //    {
+        //        if (chkRX1Sql != null) return chkRX1Sql.Checked;
+        //        else return false;
+        //    }
+        //    set
+        //    {
+        //        if (chkRX1Sql != null) chkRX1Sql.Checked = value;
+
+        //    }
+        //}
+
+        //public bool RX2SquelchOnOff
+        //{
+        //    get
+        //    {
+        //        if (chkRX2Sql != null) return chkRX2Sql.Checked;
+        //        else return false;
+        //    }
+        //    set
+        //    {
+        //        if (chkRX2Sql != null) chkRX2Sql.Checked = value;
+
+        //    }
+        //}
 
         public bool RX1MuteOnOff
         {
@@ -1245,14 +1272,18 @@ namespace Thetis
             tbSubRXPan.Value = console.PanSubRX;
             tbMasterAF.Value = console.AF;
             tbDrive.Value = console.PWR;
-            if (console.CATSquelch == 1)
-                chkRX1Sql.Checked = true;
-            else
-                chkRX1Sql.Checked = false;
-            if (console.CATSquelch2 == "1")
-                chkRX2Sql.Checked = true;
-            else
-                chkRX2Sql.Checked = false;
+
+            //[2.10.3.5]MW0LGE
+            //if (console.CATSquelch == 1)
+            //    chkRX1Sql.Checked = true;
+            //else
+            //    chkRX1Sql.Checked = false;
+            //if (console.CATSquelch2 == 1)
+            //    chkRX2Sql.Checked = true;
+            //else
+            //    chkRX2Sql.Checked = false;
+            getSQLinfoOnFormActivate();
+
             chkRX1Mute.Checked = console.MUT;
             chkRX2Mute.Checked = console.MUT2;
             if (console.CATMultRX == "1")
@@ -1335,22 +1366,6 @@ namespace Thetis
         private void tbDrive_Scroll(object sender, EventArgs e)
         {
             console.PWR = tbDrive.Value;
-        }
-
-        private void chkRX1Sql_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chkRX1Sql.Checked == true)
-                console.CATSquelch = 1;
-            else
-                console.CATSquelch = 0;
-        }
-
-        private void chkRX2Sql_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chkRX2Sql.Checked == true)
-                console.CATSquelch2 = "1";
-            else
-                console.CATSquelch2 = "0";
         }
 
         private void chkSubRX_CheckedChanged(object sender, EventArgs e)
@@ -1461,6 +1476,99 @@ namespace Thetis
             AutoHideTimer.Enabled = false;
             this.Hide();
         }
+        //private void chkRX1Sql_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    if (chkRX1Sql.Checked == true)
+        //        console.CATSquelch = 1;
+        //    else
+        //        console.CATSquelch = 0;
+        //}
 
+        //private void chkRX2Sql_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    if (chkRX2Sql.Checked == true)
+        //        console.CATSquelch2 = 1;
+        //    else
+        //        console.CATSquelch2 = 0;
+        //}
+        private void chkRX1Sql_CheckStateChanged(object sender, EventArgs e)
+        {
+            switch (chkRX1Sql.CheckState)
+            {
+                case CheckState.Unchecked:
+                    console.CATSquelch = 0;
+                    break;
+                case CheckState.Checked: //sql
+                    console.CATSquelch = 1;
+                    break;
+                case CheckState.Indeterminate: //vsql
+                    console.CATSquelch = 2;
+                    break;
+            }
+            updateSQLButtons(1);
+        }
+        private void chkRX2Sql_CheckStateChanged(object sender, EventArgs e)
+        {
+            switch (chkRX2Sql.CheckState)
+            {
+                case CheckState.Unchecked:
+                    console.CATSquelch2 = 0;
+                    break;
+                case CheckState.Checked: //sql
+                    console.CATSquelch2 = 1;
+                    break;
+                case CheckState.Indeterminate: //vsql
+                    console.CATSquelch2 = 2;
+                    break;
+            }
+            updateSQLButtons(2);
+        }
+        private void updateSQLButtons(int rx)
+        {
+            if (rx == 1)
+            {
+                if (chkRX1Sql.CheckState == CheckState.Indeterminate)
+                    chkRX1Sql.Text = "VSQL";
+                else
+                    chkRX1Sql.Text = "SQL";
+            }
+            else if (rx == 2)
+            {
+                if (chkRX2Sql.CheckState == CheckState.Indeterminate)
+                    chkRX2Sql.Text = "VSQL";
+                else
+                    chkRX2Sql.Text = "SQL";
+            }
+        }
+        private void getSQLinfoOnFormActivate()
+        {
+            if (console == null) return;
+
+            switch (console.CATSquelch)
+            {
+                case 0:
+                    chkRX1Sql.CheckState = CheckState.Unchecked;
+                    break;
+                case 1: //sql
+                    chkRX1Sql.CheckState = CheckState.Checked;
+                    break;
+                case 2: //vsql
+                    chkRX1Sql.CheckState = CheckState.Indeterminate;
+                    break;
+            }
+
+            switch (console.CATSquelch2)
+            {
+                case 0:
+                    chkRX2Sql.CheckState = CheckState.Unchecked;
+                    break;
+                case 1: //sql
+                    chkRX2Sql.CheckState = CheckState.Checked;
+                    break;
+                case 2: //vsql
+                    chkRX2Sql.CheckState = CheckState.Indeterminate;
+                    break;
+            }
+        }
     }
 }

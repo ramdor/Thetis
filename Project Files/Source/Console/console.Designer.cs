@@ -5565,8 +5565,8 @@
             this.ptbRX2Squelch.LimitBarColor = System.Drawing.Color.Red;
             this.ptbRX2Squelch.LimitEnabled = false;
             this.ptbRX2Squelch.LimitValue = 0;
-            this.ptbRX2Squelch.Maximum = 100;
-            this.ptbRX2Squelch.Minimum = 0;
+            this.ptbRX2Squelch.Maximum = 0;
+            this.ptbRX2Squelch.Minimum = -160;
             this.ptbRX2Squelch.Name = "ptbRX2Squelch";
             this.ptbRX2Squelch.Orientation = System.Windows.Forms.Orientation.Horizontal;
             this.ptbRX2Squelch.SmallChange = 1;
@@ -7237,8 +7237,8 @@
             this.ptbSquelch.LimitBarColor = System.Drawing.Color.Red;
             this.ptbSquelch.LimitEnabled = false;
             this.ptbSquelch.LimitValue = 0;
-            this.ptbSquelch.Maximum = 100;
-            this.ptbSquelch.Minimum = 0;
+            this.ptbSquelch.Maximum = 0;
+            this.ptbSquelch.Minimum = -160;
             this.ptbSquelch.Name = "ptbSquelch";
             this.ptbSquelch.Orientation = System.Windows.Forms.Orientation.Horizontal;
             this.ptbSquelch.SmallChange = 1;
