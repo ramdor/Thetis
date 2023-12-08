@@ -20,10 +20,13 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] can now use vsql from andromeda analogue slider window. The sql buttons are now tri state, sqloff, sql, vsql
 - [add] cmASIO feature for 'power users'. See included documention in the install folder/start menu
 - [add] someone in red might show up when it snows from now until the 26th Dec
+- [add] option in VAC1 to cause VOX to use MIC instead of VAC
+- [add] option to stop RX1/2 waterfall on TX
 - [fix] lin waterfall palettes should now look better
 - [fix] fix an issue which would prevent manually changing TX filter in setup form, it would try to 'validate' whilst typing new value
 - [fix] fix collapsed andromeda sql gain sliders from behaving erratically
 - [fix] thin notches would not clear single pixel carriers from waterfall if visual approximation was used
+- [fix] re-write of the usb-bcd code so that only the devicce in use is opened/closed as equired. Also recovers state at startup
 - [change] wav file recording volume is normalised to ignore RX AF. Note: when muted/0vol recording is 'silent'
 - [change] finder will now gather info using multiple threads at a time. Some users were reporting startup time delay
 - [change] skinserver now attempts to select skin when downloaded and shows 'wait' mouse pointer whilst changing

@@ -2111,19 +2111,19 @@ namespace Thetis
             set { waterfall_low_color = value; }
         }
 
-        private static Color waterfall_mid_color = Color.Red;
-        public static Color WaterfallMidColor
-        {
-            get { return waterfall_mid_color; }
-            set { waterfall_mid_color = value; }
-        }
+        //private static Color waterfall_mid_color = Color.Red;
+        //public static Color WaterfallMidColor
+        //{
+        //    get { return waterfall_mid_color; }
+        //    set { waterfall_mid_color = value; }
+        //}
 
-        private static Color waterfall_high_color = Color.Yellow;
-        public static Color WaterfallHighColor
-        {
-            get { return waterfall_high_color; }
-            set { waterfall_high_color = value; }
-        }
+        //private static Color waterfall_high_color = Color.Yellow;
+        //public static Color WaterfallHighColor
+        //{
+        //    get { return waterfall_high_color; }
+        //    set { waterfall_high_color = value; }
+        //}
 
         private static float waterfall_high_threshold = -80.0F;
         public static float WaterfallHighThreshold
@@ -2172,19 +2172,19 @@ namespace Thetis
             set { rx2_waterfall_low_color = value; }
         }
 
-        private static Color rx2_waterfall_mid_color = Color.Red;
-        public static Color RX2WaterfallMidColor
-        {
-            get { return rx2_waterfall_mid_color; }
-            set { rx2_waterfall_mid_color = value; }
-        }
+        //private static Color rx2_waterfall_mid_color = Color.Red;
+        //public static Color RX2WaterfallMidColor
+        //{
+        //    get { return rx2_waterfall_mid_color; }
+        //    set { rx2_waterfall_mid_color = value; }
+        //}
 
-        private static Color rx2_waterfall_high_color = Color.Yellow;
-        public static Color RX2WaterfallHighColor
-        {
-            get { return rx2_waterfall_high_color; }
-            set { rx2_waterfall_high_color = value; }
-        }
+        //private static Color rx2_waterfall_high_color = Color.Yellow;
+        //public static Color RX2WaterfallHighColor
+        //{
+        //    get { return rx2_waterfall_high_color; }
+        //    set { rx2_waterfall_high_color = value; }
+        //}
 
         private static float rx2_waterfall_high_threshold = -80.0F;
         public static float RX2WaterfallHighThreshold
@@ -2596,6 +2596,19 @@ namespace Thetis
         {
             get { return rx2_waterfall_update_period; }
             set { rx2_waterfall_update_period = value; }
+        }
+
+        private static bool m_bStopRX1WaterfallOnTX = false;
+        private static bool m_bStopRX2WaterfallOnTX = false;
+        public static bool StopRX1WaterfallOnTx
+        {
+            get { return m_bStopRX1WaterfallOnTX; }
+            set { m_bStopRX1WaterfallOnTX = value; }
+        }
+        public static bool StopRX2WaterfallOnTx
+        {
+            get { return m_bStopRX2WaterfallOnTX; }
+            set { m_bStopRX2WaterfallOnTX = value; }
         }
 
         private static float _RX1waterfallPreviousMinValue = -100f;
@@ -4792,8 +4805,8 @@ namespace Thetis
             float waterfall_minimum = 200f;
             ColorSheme cSheme = ColorSheme.enhanced;
             Color low_color = Color.Black;
-            Color mid_color = Color.Red;
-            Color high_color = Color.Blue;
+            //Color mid_color = Color.Red;
+            //Color high_color = Color.Blue;
 
             bool bDoVisualNotch = false;
             int nDecimatedWidth = W / m_nDecimation;
@@ -4824,8 +4837,8 @@ namespace Thetis
                 }
                 cSheme = rx2_color_sheme;
                 low_color = rx2_waterfall_low_color;
-                mid_color = rx2_waterfall_mid_color;
-                high_color = rx2_waterfall_high_color;
+                //mid_color = rx2_waterfall_mid_color;
+                //high_color = rx2_waterfall_high_color;
             }
             else
             {
@@ -4854,8 +4867,8 @@ namespace Thetis
                 }
                 cSheme = color_sheme;
                 low_color = waterfall_low_color;
-                mid_color = waterfall_mid_color;
-                high_color = waterfall_high_color;
+                //mid_color = waterfall_mid_color;
+                //high_color = waterfall_high_color;
             }
 
             if (console.PowerOn)
@@ -5949,13 +5962,19 @@ namespace Thetis
 
                     if (rx == 1)
                     {
-                        _waterfall_bmp_dx2d.CopyFromMemory(row, W * pixel_size, new SharpDX.Rectangle(0, 0, W, 1));
-                        _waterfall_bmp_dx2d.CopyFromBitmap(topPixels, new SharpDX.Point(0, 1));
+                        if (!(m_bStopRX1WaterfallOnTX && local_mox))
+                        {
+                            _waterfall_bmp_dx2d.CopyFromMemory(row, W * pixel_size, new SharpDX.Rectangle(0, 0, W, 1));
+                            _waterfall_bmp_dx2d.CopyFromBitmap(topPixels, new SharpDX.Point(0, 1));
+                        }
                     }
                     else
                     {
-                        _waterfall_bmp2_dx2d.CopyFromMemory(row, W * pixel_size, new SharpDX.Rectangle(0, 0, W, 1));
-                        _waterfall_bmp2_dx2d.CopyFromBitmap(topPixels, new SharpDX.Point(0, 1));
+                        if (!(m_bStopRX2WaterfallOnTX && local_mox))
+                        { 
+                            _waterfall_bmp2_dx2d.CopyFromMemory(row, W * pixel_size, new SharpDX.Rectangle(0, 0, W, 1));
+                            _waterfall_bmp2_dx2d.CopyFromBitmap(topPixels, new SharpDX.Point(0, 1));
+                        }
                     }
 
                     Utilities.Dispose(ref topPixels);

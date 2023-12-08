@@ -610,21 +610,24 @@ namespace Thetis
                     // udpate any meter
                     foreach (KeyValuePair<string, clsMeter> kvp in _meters)
                     {
-                        readingsUsed.Clear();
-
                         clsMeter m = kvp.Value;
 
-                        m.Update(ref readingsUsed);
-
-                        int nTmp = m.DelayForUpdate();
-                        if (nTmp < nDelay) nDelay = nTmp;
-
-                        //lock (_readingsLock)
+                        if (m.Enabled)
                         {
-                            // use/invalidate any readings that have been used, so that they can be updated
-                            foreach (Reading rt in readingsUsed)
+                            readingsUsed.Clear();
+
+                            m.Update(ref readingsUsed);
+
+                            int nTmp = m.DelayForUpdate();
+                            if (nTmp < nDelay) nDelay = nTmp;
+
+                            //lock (_readingsLock)
                             {
-                                _readings[m.RX].UseReading(rt);
+                                // use/invalidate any readings that have been used, so that they can be updated
+                                foreach (Reading rt in readingsUsed)
+                                {
+                                    _readings[m.RX].UseReading(rt);
+                                }
                             }
                         }
                     }
@@ -758,35 +761,43 @@ namespace Thetis
                 uc.NoTitle = noTitle;
             }
         }
-        public static void ShowContainer(string sId, bool show)
+        public static void EnableContainer(string sId, bool enabled)
         {
             lock (_metersLock)
             {
                 if (_lstUCMeters == null) return;
                 if (!_lstUCMeters.ContainsKey(sId)) return;
-
+                
                 ucMeter uc = _lstUCMeters[sId];
-                bool bOldState = uc.ShowMeter;
-                uc.ShowMeter = show;
+                bool bOldState = uc.MeterEnabled;
+                uc.MeterEnabled = enabled;
 
-                if (show != bOldState && _lstMeterDisplayForms.ContainsKey(uc.ID))
+                if (enabled != bOldState && _lstMeterDisplayForms.ContainsKey(uc.ID))
                 {
                     frmMeterDisplay f = _lstMeterDisplayForms[uc.ID];
 
                     if (uc.Floating)
                     {
-                        if (!show)
+                        if (!enabled)
                             f.Hide();
                         else
                             setMeterFloating(uc, f);
                     }
                     else
                     {
-                        if (!show)
+                        if (!enabled)
                             uc.Hide();
                         else
                             returnMeterFromFloating(uc, f);
                     }
+
+                    // meter
+                    if(_meters != null && _meters.ContainsKey(sId))
+                        _meters[sId].Enabled = enabled;
+
+                    // DXrenderer
+                    if (_DXrenderers != null && _DXrenderers.ContainsKey(uc.ID))
+                        _DXrenderers[sId].Enabled = enabled;
                 }
             }
         }
@@ -820,7 +831,7 @@ namespace Thetis
                 if (!_lstUCMeters.ContainsKey(sId)) return false;
 
                 ucMeter uc = _lstUCMeters[sId];
-                return uc.ShowMeter;
+                return uc.MeterEnabled;
             }
         }
         public static void ContainerBackgroundColour(string sId, System.Drawing.Color c)
@@ -1682,12 +1693,14 @@ namespace Thetis
                 return _meters.ContainsKey(sId);
             }
         }
-        public static void AddMeterContainer(ucMeter ucM, bool bShow = false)
+        public static void AddMeterContainer(ucMeter ucM)//, bool bEnabled = false)
         {
             if (_console == null) return;
 
             lock (_metersLock)
             {
+                bool bEnabled = ucM.Enabled;
+
                 ucM.Console = _console;
                 ucM.FloatingDockedClicked += ucMeter_FloatingDockedClicked;
                 ucM.DockedMoved += ucMeter_FloatingDockedMoved;
@@ -1700,6 +1713,7 @@ namespace Thetis
                 // meter items
                 clsMeter meter = new clsMeter(ucM.RX, "", 1f, 1f);
                 meter.ID = ucM.ID;
+                meter.Enabled = bEnabled;
 
                 // a renderer
                 addRenderer(ucM.ID, ucM.RX, ucM.DisplayContainer, meter, ucM.BackColor);
@@ -1715,7 +1729,7 @@ namespace Thetis
                 // init all the meter info from console
                 initConsoleData(ucM.RX);
 
-                if (bShow && ucM.ShowMeter)
+                if (bEnabled && ucM.MeterEnabled)
                 {
                     if (ucM.Floating)
                     {
@@ -1739,7 +1753,7 @@ namespace Thetis
                 foreach (KeyValuePair<string, ucMeter> ucms in _lstUCMeters)
                 {
                     ucMeter ucm = ucms.Value;
-                    if (_lstMeterDisplayForms.ContainsKey(ucm.ID) && ucm.ShowMeter)
+                    if (_lstMeterDisplayForms.ContainsKey(ucm.ID) && ucm.MeterEnabled)
                     {
                         // setup
                         frmMeterDisplay f = _lstMeterDisplayForms[ucm.ID];
@@ -1768,13 +1782,13 @@ namespace Thetis
                 }
             }
         }
-        public static string AddMeterContainer(int nRx, bool bFloating, bool bShow = false)
+        public static string AddMeterContainer(int nRx, bool bFloating)//, bool bEnabled = false)
         {
             ucMeter ucM = new ucMeter();
             ucM.RX = nRx;
             ucM.Floating = bFloating;
 
-            AddMeterContainer(ucM, bShow);
+            AddMeterContainer(ucM);//, bEnabled);
             RunRendererDisplay(ucM.ID);
 
             return ucM.ID;
@@ -1915,7 +1929,7 @@ namespace Thetis
                     {
                         ucMeter ucM = kvp.Value;
 
-                        if (!_lstMeterDisplayForms.ContainsKey(ucM.ID) || !ucM.ShowMeter) return;
+                        if (!_lstMeterDisplayForms.ContainsKey(ucM.ID) || !ucM.MeterEnabled) return;
 
                         if (ucM.Floating)
                             setMeterFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
@@ -1972,7 +1986,7 @@ namespace Thetis
                     {
                         if (!MeterExists(ucM.ID))
                         {
-                            AddMeterContainer(ucM, false);
+                            AddMeterContainer(ucM);//, false);
 
                             clsMeter m = MeterFromId(ucM.ID);
 
@@ -4633,6 +4647,7 @@ namespace Thetis
             private string _sId;
             private string _name;            
             private int _rx;
+            private bool _enabled;
 
             private float _XRatio; // 0-1
             private float _YRatio; // 0-1
@@ -6917,6 +6932,7 @@ namespace Thetis
                 _sId = Guid.NewGuid().ToString();
                 _rx = rx;
                 _name = sName;
+                _enabled = true;
                 _quickestRXUpdate = 250;
                 _quickestTXUpdate = 250;
                 _split = false;
@@ -8013,6 +8029,11 @@ namespace Thetis
                 }
                 if (bRebuild) Rebuild();
             }
+            public bool Enabled
+            {
+                get { return _enabled; }
+                set { _enabled = value; }
+            }
             private clsMeterItem itemFromID(string sId)
             {
                 lock (_meterItemsLock)
@@ -8561,6 +8582,7 @@ namespace Thetis
             private int _newTargetWidth;
             private int _newTargetHeight;
             private bool _targetVisible;
+            private bool _enabled;
 
             public DXRenderer(string sId, int rx, PictureBox target, Console c, clsMeter meter)
             {
@@ -8571,6 +8593,7 @@ namespace Thetis
                 _console = c;
                 _meter = meter;
                 _highlightEdge = false;
+                _enabled = true;
 
                 //dx
                 _DXBrushes = new Dictionary<System.Drawing.Color, SharpDX.Direct2D1.Brush>();
@@ -8631,6 +8654,11 @@ namespace Thetis
             {
                 get { return _highlightEdge; }
                 set { _highlightEdge = value; }
+            }
+            public bool Enabled
+            {
+                get { return _enabled; }
+                set { _enabled = value; }
             }
             public System.Drawing.Color BackgroundColour
             {
@@ -9084,7 +9112,7 @@ namespace Thetis
 
                         objStopWatch.Reset();
 
-                        if (_targetVisible)
+                        if (_enabled && _targetVisible)
                         {
                             //fps
                             //_dElapsedFrameStart = _objFrameStartTimer.ElapsedMsec;

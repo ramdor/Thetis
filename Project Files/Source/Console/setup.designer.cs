@@ -1563,6 +1563,7 @@
             this.tpAudio = new System.Windows.Forms.TabPage();
             this.tcAudio = new System.Windows.Forms.TabControl();
             this.tpVAC = new System.Windows.Forms.TabPage();
+            this.chkMICVOXAllowBypass = new System.Windows.Forms.CheckBoxTS();
             this.chkVAC1WillMute = new System.Windows.Forms.CheckBoxTS();
             this.chkVAC1GrapherAuto = new System.Windows.Forms.CheckBoxTS();
             this.udVAC1GrapherSwing = new System.Windows.Forms.NumericUpDownTS();
@@ -1885,6 +1886,29 @@
             this.udDisplayFPS = new System.Windows.Forms.NumericUpDownTS();
             this.lblDisplayFPS = new System.Windows.Forms.LabelTS();
             this.tpDisplayTop = new System.Windows.Forms.TabPage();
+            this.grpDisplayWaterfall = new System.Windows.Forms.GroupBoxTS();
+            this.chkStopRX1WaterfallOnTx = new System.Windows.Forms.CheckBoxTS();
+            this.chkWaterfallUseNFForAGCRX1 = new System.Windows.Forms.CheckBoxTS();
+            this.lblWaterfallAGCOffsetRX1 = new System.Windows.Forms.LabelTS();
+            this.udWaterfallAGCOffsetRX1 = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS91 = new System.Windows.Forms.LabelTS();
+            this.tbRX1WaterfallOpacity = new System.Windows.Forms.TrackBarTS();
+            this.labelTS519 = new System.Windows.Forms.LabelTS();
+            this.lblRX1WaterFallCalulatedDelayMS = new System.Windows.Forms.LabelTS();
+            this.chkWaterfallUseRX1SpectrumMinMax = new System.Windows.Forms.CheckBoxTS();
+            this.chkRX1WaterfallAGC = new System.Windows.Forms.CheckBoxTS();
+            this.lblWaterfallLevels = new System.Windows.Forms.Label();
+            this.txtWaterFallBandLevel = new System.Windows.Forms.TextBox();
+            this.comboColorPalette = new System.Windows.Forms.ComboBoxTS();
+            this.label11 = new System.Windows.Forms.Label();
+            this.udDisplayWaterfallUpdatePeriod = new System.Windows.Forms.NumericUpDownTS();
+            this.lblDisplayWaterfallUpdatePeriod = new System.Windows.Forms.LabelTS();
+            this.clrbtnWaterfallLow = new Thetis.ColorButton();
+            this.lblDisplayWaterfallLowColor = new System.Windows.Forms.LabelTS();
+            this.lblDisplayWaterfallLowLevel = new System.Windows.Forms.LabelTS();
+            this.udDisplayWaterfallLowLevel = new System.Windows.Forms.NumericUpDownTS();
+            this.lblDisplayWaterfallHighLevel = new System.Windows.Forms.LabelTS();
+            this.udDisplayWaterfallHighLevel = new System.Windows.Forms.NumericUpDownTS();
             this.groupBoxTS21 = new System.Windows.Forms.GroupBoxTS();
             this.chkFillActivePeakHoldRX1 = new System.Windows.Forms.CheckBoxTS();
             this.udActivePeakHoldDropRX1 = new System.Windows.Forms.NumericUpDownTS();
@@ -1932,33 +1956,30 @@
             this.labelTS142 = new System.Windows.Forms.LabelTS();
             this.labelTS139 = new System.Windows.Forms.LabelTS();
             this.tbDisplayFFTSize = new System.Windows.Forms.TrackBarTS();
-            this.grpDisplayWaterfall = new System.Windows.Forms.GroupBoxTS();
-            this.chkWaterfallUseNFForAGCRX1 = new System.Windows.Forms.CheckBoxTS();
-            this.lblWaterfallAGCOffsetRX1 = new System.Windows.Forms.LabelTS();
-            this.udWaterfallAGCOffsetRX1 = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS91 = new System.Windows.Forms.LabelTS();
-            this.tbRX1WaterfallOpacity = new System.Windows.Forms.TrackBarTS();
-            this.labelTS519 = new System.Windows.Forms.LabelTS();
-            this.lblRX1WaterFallCalulatedDelayMS = new System.Windows.Forms.LabelTS();
-            this.chkWaterfallUseRX1SpectrumMinMax = new System.Windows.Forms.CheckBoxTS();
-            this.clrbtnWaterfallMid = new Thetis.ColorButton();
-            this.chkRX1WaterfallAGC = new System.Windows.Forms.CheckBoxTS();
-            this.clrbtnWaterfallHigh = new Thetis.ColorButton();
-            this.lblWaterfallLevels = new System.Windows.Forms.Label();
-            this.txtWaterFallBandLevel = new System.Windows.Forms.TextBox();
-            this.lblDisplayWaterfallMidColor = new System.Windows.Forms.LabelTS();
-            this.comboColorPalette = new System.Windows.Forms.ComboBoxTS();
-            this.lblDisplayWaterfallHighColor = new System.Windows.Forms.LabelTS();
-            this.label11 = new System.Windows.Forms.Label();
-            this.udDisplayWaterfallUpdatePeriod = new System.Windows.Forms.NumericUpDownTS();
-            this.lblDisplayWaterfallUpdatePeriod = new System.Windows.Forms.LabelTS();
-            this.clrbtnWaterfallLow = new Thetis.ColorButton();
-            this.lblDisplayWaterfallLowColor = new System.Windows.Forms.LabelTS();
-            this.lblDisplayWaterfallLowLevel = new System.Windows.Forms.LabelTS();
-            this.udDisplayWaterfallLowLevel = new System.Windows.Forms.NumericUpDownTS();
-            this.lblDisplayWaterfallHighLevel = new System.Windows.Forms.LabelTS();
-            this.udDisplayWaterfallHighLevel = new System.Windows.Forms.NumericUpDownTS();
             this.tpDisplayBottom = new System.Windows.Forms.TabPage();
+            this.grpRX2DisplayWaterfall = new System.Windows.Forms.GroupBoxTS();
+            this.chkStopRX2WaterfallOnTx = new System.Windows.Forms.CheckBoxTS();
+            this.chkWaterfallUseNFForAGCRX2 = new System.Windows.Forms.CheckBoxTS();
+            this.lblWaterfallAGCOffsetRX2 = new System.Windows.Forms.LabelTS();
+            this.udWaterfallAGCOffsetRX2 = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS92 = new System.Windows.Forms.LabelTS();
+            this.tbRX2WaterfallOpacity = new System.Windows.Forms.TrackBarTS();
+            this.labelTS520 = new System.Windows.Forms.LabelTS();
+            this.lblRX2WaterFallCalulatedDelayMS = new System.Windows.Forms.LabelTS();
+            this.chkWaterfallUseRX2SpectrumMinMax = new System.Windows.Forms.CheckBoxTS();
+            this.chkRX2WaterfallAGC = new System.Windows.Forms.CheckBoxTS();
+            this.lblRX2WaterfallLevels = new System.Windows.Forms.Label();
+            this.txtRX2WaterFallBandLevel = new System.Windows.Forms.TextBox();
+            this.comboRX2ColorPalette = new System.Windows.Forms.ComboBoxTS();
+            this.label21 = new System.Windows.Forms.Label();
+            this.udRX2DisplayWaterfallUpdatePeriod = new System.Windows.Forms.NumericUpDownTS();
+            this.lblRX2DisplayWaterfallUpdatePeriod = new System.Windows.Forms.LabelTS();
+            this.clrbtnRX2WaterfallLow = new Thetis.ColorButton();
+            this.lblRX2DisplayWaterfallLowColor = new System.Windows.Forms.LabelTS();
+            this.lblRX2DisplayWaterfallLowLevel = new System.Windows.Forms.LabelTS();
+            this.udRX2DisplayWaterfallLowLevel = new System.Windows.Forms.NumericUpDownTS();
+            this.lblRX2DisplayWaterfallHighLevel = new System.Windows.Forms.LabelTS();
+            this.udRX2DisplayWaterfallHighLevel = new System.Windows.Forms.NumericUpDownTS();
             this.groupBoxTS20 = new System.Windows.Forms.GroupBoxTS();
             this.chkFillActivePeakHoldRX2 = new System.Windows.Forms.CheckBoxTS();
             this.udActivePeakHoldDropRX2 = new System.Windows.Forms.NumericUpDownTS();
@@ -1973,32 +1994,6 @@
             this.comboRX2DispWFDetector = new System.Windows.Forms.ComboBoxTS();
             this.udRX2DisplayWFAVTime = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS377 = new System.Windows.Forms.LabelTS();
-            this.grpRX2DisplayWaterfall = new System.Windows.Forms.GroupBoxTS();
-            this.chkWaterfallUseNFForAGCRX2 = new System.Windows.Forms.CheckBoxTS();
-            this.lblWaterfallAGCOffsetRX2 = new System.Windows.Forms.LabelTS();
-            this.udWaterfallAGCOffsetRX2 = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS92 = new System.Windows.Forms.LabelTS();
-            this.tbRX2WaterfallOpacity = new System.Windows.Forms.TrackBarTS();
-            this.labelTS520 = new System.Windows.Forms.LabelTS();
-            this.lblRX2WaterFallCalulatedDelayMS = new System.Windows.Forms.LabelTS();
-            this.chkWaterfallUseRX2SpectrumMinMax = new System.Windows.Forms.CheckBoxTS();
-            this.clrbtnRX2WaterfallMid = new Thetis.ColorButton();
-            this.chkRX2WaterfallAGC = new System.Windows.Forms.CheckBoxTS();
-            this.clrbtnRX2WaterfallHigh = new Thetis.ColorButton();
-            this.lblRX2WaterfallLevels = new System.Windows.Forms.Label();
-            this.lblRX2DisplayWaterfallMidColor = new System.Windows.Forms.LabelTS();
-            this.txtRX2WaterFallBandLevel = new System.Windows.Forms.TextBox();
-            this.lblRX2DisplayWaterfallHighColor = new System.Windows.Forms.LabelTS();
-            this.comboRX2ColorPalette = new System.Windows.Forms.ComboBoxTS();
-            this.label21 = new System.Windows.Forms.Label();
-            this.udRX2DisplayWaterfallUpdatePeriod = new System.Windows.Forms.NumericUpDownTS();
-            this.lblRX2DisplayWaterfallUpdatePeriod = new System.Windows.Forms.LabelTS();
-            this.clrbtnRX2WaterfallLow = new Thetis.ColorButton();
-            this.lblRX2DisplayWaterfallLowColor = new System.Windows.Forms.LabelTS();
-            this.lblRX2DisplayWaterfallLowLevel = new System.Windows.Forms.LabelTS();
-            this.udRX2DisplayWaterfallLowLevel = new System.Windows.Forms.NumericUpDownTS();
-            this.lblRX2DisplayWaterfallHighLevel = new System.Windows.Forms.LabelTS();
-            this.udRX2DisplayWaterfallHighLevel = new System.Windows.Forms.NumericUpDownTS();
             this.grpRX2DisplaySpectrumGrid = new System.Windows.Forms.GroupBoxTS();
             this.label20 = new System.Windows.Forms.Label();
             this.chkMaintainNFAdjustDeltaRX2 = new System.Windows.Forms.CheckBoxTS();
@@ -3004,7 +2999,7 @@
             this.comboMeterType = new System.Windows.Forms.ComboBoxTS();
             this.tpAppearanceMeter2 = new System.Windows.Forms.TabPage();
             this.grpMultiMeterHolder = new System.Windows.Forms.GroupBoxTS();
-            this.chkContainerShow = new System.Windows.Forms.CheckBoxTS();
+            this.chkContainerEnable = new System.Windows.Forms.CheckBoxTS();
             this.chkContainerNoTitle = new System.Windows.Forms.CheckBoxTS();
             this.btnMeterCopySettings = new System.Windows.Forms.ButtonTS();
             this.btnMeterPasteSettings = new System.Windows.Forms.ButtonTS();
@@ -3542,7 +3537,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.chkMICVOXAllowBypass = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -3918,6 +3912,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayPeakText)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayFPS)).BeginInit();
             this.tpDisplayTop.SuspendLayout();
+            this.grpDisplayWaterfall.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udWaterfallAGCOffsetRX1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbRX1WaterfallOpacity)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallUpdatePeriod)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallLowLevel)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallHighLevel)).BeginInit();
             this.groupBoxTS21.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDropRX1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDurationRX1)).BeginInit();
@@ -3932,24 +3932,18 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayAVGTime)).BeginInit();
             this.grpDisplayRX1Pan.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbDisplayFFTSize)).BeginInit();
-            this.grpDisplayWaterfall.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udWaterfallAGCOffsetRX1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbRX1WaterfallOpacity)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallUpdatePeriod)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallLowLevel)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallHighLevel)).BeginInit();
             this.tpDisplayBottom.SuspendLayout();
-            this.groupBoxTS20.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDropRX2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDurationRX2)).BeginInit();
-            this.grpRX2DisplayAveraging.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayWFAVTime)).BeginInit();
             this.grpRX2DisplayWaterfall.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udWaterfallAGCOffsetRX2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRX2WaterfallOpacity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayWaterfallUpdatePeriod)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayWaterfallLowLevel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayWaterfallHighLevel)).BeginInit();
+            this.groupBoxTS20.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDropRX2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDurationRX2)).BeginInit();
+            this.grpRX2DisplayAveraging.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayWFAVTime)).BeginInit();
             this.grpRX2DisplaySpectrumGrid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudRX2NFoffsetGridFollow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayGridStep)).BeginInit();
@@ -25720,6 +25714,18 @@
             this.tpVAC.TabIndex = 1;
             this.tpVAC.Text = "VAC 1";
             // 
+            // chkMICVOXAllowBypass
+            // 
+            this.chkMICVOXAllowBypass.Image = null;
+            this.chkMICVOXAllowBypass.Location = new System.Drawing.Point(249, 224);
+            this.chkMICVOXAllowBypass.Name = "chkMICVOXAllowBypass";
+            this.chkMICVOXAllowBypass.Size = new System.Drawing.Size(271, 16);
+            this.chkMICVOXAllowBypass.TabIndex = 90;
+            this.chkMICVOXAllowBypass.Text = "VOX uses MIC instead of VAC";
+            this.toolTip1.SetToolTip(this.chkMICVOXAllowBypass, "Allows VOX to trigger off the MIC input instead of the VAC input");
+            this.chkMICVOXAllowBypass.UseVisualStyleBackColor = true;
+            this.chkMICVOXAllowBypass.CheckedChanged += new System.EventHandler(this.chkMICVOXAllowBypass_CheckedChanged);
+            // 
             // chkVAC1WillMute
             // 
             this.chkVAC1WillMute.AutoSize = true;
@@ -26994,7 +27000,7 @@
             // 
             this.chkVAC2WillMute.AutoSize = true;
             this.chkVAC2WillMute.Image = null;
-            this.chkVAC2WillMute.Location = new System.Drawing.Point(249, 238);
+            this.chkVAC2WillMute.Location = new System.Drawing.Point(249, 244);
             this.chkVAC2WillMute.Name = "chkVAC2WillMute";
             this.chkVAC2WillMute.Size = new System.Drawing.Size(117, 17);
             this.chkVAC2WillMute.TabIndex = 96;
@@ -30866,12 +30872,12 @@
             // tpDisplayTop
             // 
             this.tpDisplayTop.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDisplayTop.Controls.Add(this.grpDisplayWaterfall);
             this.tpDisplayTop.Controls.Add(this.groupBoxTS21);
             this.tpDisplayTop.Controls.Add(this.grpWaterfallAverage);
             this.tpDisplayTop.Controls.Add(this.grpDisplaySpectrumGrid);
             this.tpDisplayTop.Controls.Add(this.grpDisplayAverage);
             this.tpDisplayTop.Controls.Add(this.grpDisplayRX1Pan);
-            this.tpDisplayTop.Controls.Add(this.grpDisplayWaterfall);
             this.tpDisplayTop.Location = new System.Drawing.Point(4, 22);
             this.tpDisplayTop.Name = "tpDisplayTop";
             this.tpDisplayTop.Padding = new System.Windows.Forms.Padding(3);
@@ -30879,6 +30885,367 @@
             this.tpDisplayTop.TabIndex = 1;
             this.tpDisplayTop.Text = " RX 1";
             this.toolTip1.SetToolTip(this.tpDisplayTop, "Normalize to One Hz Bandwidth for Average & Sample Detectors");
+            // 
+            // grpDisplayWaterfall
+            // 
+            this.grpDisplayWaterfall.Controls.Add(this.chkStopRX1WaterfallOnTx);
+            this.grpDisplayWaterfall.Controls.Add(this.chkWaterfallUseNFForAGCRX1);
+            this.grpDisplayWaterfall.Controls.Add(this.lblWaterfallAGCOffsetRX1);
+            this.grpDisplayWaterfall.Controls.Add(this.udWaterfallAGCOffsetRX1);
+            this.grpDisplayWaterfall.Controls.Add(this.labelTS91);
+            this.grpDisplayWaterfall.Controls.Add(this.tbRX1WaterfallOpacity);
+            this.grpDisplayWaterfall.Controls.Add(this.labelTS519);
+            this.grpDisplayWaterfall.Controls.Add(this.lblRX1WaterFallCalulatedDelayMS);
+            this.grpDisplayWaterfall.Controls.Add(this.chkWaterfallUseRX1SpectrumMinMax);
+            this.grpDisplayWaterfall.Controls.Add(this.chkRX1WaterfallAGC);
+            this.grpDisplayWaterfall.Controls.Add(this.lblWaterfallLevels);
+            this.grpDisplayWaterfall.Controls.Add(this.txtWaterFallBandLevel);
+            this.grpDisplayWaterfall.Controls.Add(this.comboColorPalette);
+            this.grpDisplayWaterfall.Controls.Add(this.label11);
+            this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallUpdatePeriod);
+            this.grpDisplayWaterfall.Controls.Add(this.lblDisplayWaterfallUpdatePeriod);
+            this.grpDisplayWaterfall.Controls.Add(this.clrbtnWaterfallLow);
+            this.grpDisplayWaterfall.Controls.Add(this.lblDisplayWaterfallLowColor);
+            this.grpDisplayWaterfall.Controls.Add(this.lblDisplayWaterfallLowLevel);
+            this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallLowLevel);
+            this.grpDisplayWaterfall.Controls.Add(this.lblDisplayWaterfallHighLevel);
+            this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallHighLevel);
+            this.grpDisplayWaterfall.Location = new System.Drawing.Point(375, 8);
+            this.grpDisplayWaterfall.Name = "grpDisplayWaterfall";
+            this.grpDisplayWaterfall.Size = new System.Drawing.Size(304, 218);
+            this.grpDisplayWaterfall.TabIndex = 40;
+            this.grpDisplayWaterfall.TabStop = false;
+            this.grpDisplayWaterfall.Text = "Waterfall";
+            // 
+            // chkStopRX1WaterfallOnTx
+            // 
+            this.chkStopRX1WaterfallOnTx.AutoSize = true;
+            this.chkStopRX1WaterfallOnTx.Image = null;
+            this.chkStopRX1WaterfallOnTx.Location = new System.Drawing.Point(139, 116);
+            this.chkStopRX1WaterfallOnTx.Name = "chkStopRX1WaterfallOnTx";
+            this.chkStopRX1WaterfallOnTx.Size = new System.Drawing.Size(82, 17);
+            this.chkStopRX1WaterfallOnTx.TabIndex = 93;
+            this.chkStopRX1WaterfallOnTx.Text = "Stop On TX";
+            this.toolTip1.SetToolTip(this.chkStopRX1WaterfallOnTx, "Stop the waterfall when TX\'ing");
+            this.chkStopRX1WaterfallOnTx.UseVisualStyleBackColor = true;
+            this.chkStopRX1WaterfallOnTx.CheckedChanged += new System.EventHandler(this.chkStopRX1WaterfallOnTx_CheckedChanged);
+            // 
+            // chkWaterfallUseNFForAGCRX1
+            // 
+            this.chkWaterfallUseNFForAGCRX1.AutoSize = true;
+            this.chkWaterfallUseNFForAGCRX1.Image = null;
+            this.chkWaterfallUseNFForAGCRX1.Location = new System.Drawing.Point(139, 93);
+            this.chkWaterfallUseNFForAGCRX1.Name = "chkWaterfallUseNFForAGCRX1";
+            this.chkWaterfallUseNFForAGCRX1.Size = new System.Drawing.Size(149, 17);
+            this.chkWaterfallUseNFForAGCRX1.TabIndex = 92;
+            this.chkWaterfallUseNFForAGCRX1.Text = "Noise Floor Compensation";
+            this.toolTip1.SetToolTip(this.chkWaterfallUseNFForAGCRX1, "Use the noise floor to control the AGC Low Level");
+            this.chkWaterfallUseNFForAGCRX1.UseVisualStyleBackColor = true;
+            this.chkWaterfallUseNFForAGCRX1.CheckedChanged += new System.EventHandler(this.chkWaterfallUseNFForAGCRX1_CheckedChanged);
+            // 
+            // lblWaterfallAGCOffsetRX1
+            // 
+            this.lblWaterfallAGCOffsetRX1.Image = null;
+            this.lblWaterfallAGCOffsetRX1.Location = new System.Drawing.Point(8, 69);
+            this.lblWaterfallAGCOffsetRX1.Name = "lblWaterfallAGCOffsetRX1";
+            this.lblWaterfallAGCOffsetRX1.Size = new System.Drawing.Size(64, 16);
+            this.lblWaterfallAGCOffsetRX1.TabIndex = 91;
+            this.lblWaterfallAGCOffsetRX1.Text = "AGC Offset";
+            // 
+            // udWaterfallAGCOffsetRX1
+            // 
+            this.udWaterfallAGCOffsetRX1.DecimalPlaces = 1;
+            this.udWaterfallAGCOffsetRX1.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.udWaterfallAGCOffsetRX1.Location = new System.Drawing.Point(72, 68);
+            this.udWaterfallAGCOffsetRX1.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.udWaterfallAGCOffsetRX1.Minimum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            -2147483648});
+            this.udWaterfallAGCOffsetRX1.Name = "udWaterfallAGCOffsetRX1";
+            this.udWaterfallAGCOffsetRX1.Size = new System.Drawing.Size(48, 20);
+            this.udWaterfallAGCOffsetRX1.TabIndex = 90;
+            this.udWaterfallAGCOffsetRX1.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udWaterfallAGCOffsetRX1, "Apply dBm offset if using AGC");
+            this.udWaterfallAGCOffsetRX1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udWaterfallAGCOffsetRX1.ValueChanged += new System.EventHandler(this.udWaterfallAGCOffsetRX1_ValueChanged);
+            // 
+            // labelTS91
+            // 
+            this.labelTS91.AutoSize = true;
+            this.labelTS91.Image = null;
+            this.labelTS91.Location = new System.Drawing.Point(38, 190);
+            this.labelTS91.Name = "labelTS91";
+            this.labelTS91.Size = new System.Drawing.Size(46, 13);
+            this.labelTS91.TabIndex = 81;
+            this.labelTS91.Text = "Opacity:";
+            // 
+            // tbRX1WaterfallOpacity
+            // 
+            this.tbRX1WaterfallOpacity.AutoSize = false;
+            this.tbRX1WaterfallOpacity.Location = new System.Drawing.Point(89, 190);
+            this.tbRX1WaterfallOpacity.Maximum = 100;
+            this.tbRX1WaterfallOpacity.Name = "tbRX1WaterfallOpacity";
+            this.tbRX1WaterfallOpacity.Size = new System.Drawing.Size(160, 18);
+            this.tbRX1WaterfallOpacity.TabIndex = 89;
+            this.tbRX1WaterfallOpacity.TickFrequency = 10;
+            this.tbRX1WaterfallOpacity.Value = 100;
+            this.tbRX1WaterfallOpacity.Scroll += new System.EventHandler(this.tbRX1WaterfallOpacity_Scroll);
+            // 
+            // labelTS519
+            // 
+            this.labelTS519.AutoSize = true;
+            this.labelTS519.Image = null;
+            this.labelTS519.Location = new System.Drawing.Point(148, 140);
+            this.labelTS519.Name = "labelTS519";
+            this.labelTS519.Size = new System.Drawing.Size(33, 13);
+            this.labelTS519.TabIndex = 84;
+            this.labelTS519.Text = "frame";
+            // 
+            // lblRX1WaterFallCalulatedDelayMS
+            // 
+            this.lblRX1WaterFallCalulatedDelayMS.AutoSize = true;
+            this.lblRX1WaterFallCalulatedDelayMS.Image = null;
+            this.lblRX1WaterFallCalulatedDelayMS.Location = new System.Drawing.Point(187, 140);
+            this.lblRX1WaterFallCalulatedDelayMS.Name = "lblRX1WaterFallCalulatedDelayMS";
+            this.lblRX1WaterFallCalulatedDelayMS.Size = new System.Drawing.Size(44, 13);
+            this.lblRX1WaterFallCalulatedDelayMS.TabIndex = 83;
+            this.lblRX1WaterFallCalulatedDelayMS.Text = "0.00 ms";
+            // 
+            // chkWaterfallUseRX1SpectrumMinMax
+            // 
+            this.chkWaterfallUseRX1SpectrumMinMax.AutoSize = true;
+            this.chkWaterfallUseRX1SpectrumMinMax.Image = null;
+            this.chkWaterfallUseRX1SpectrumMinMax.Location = new System.Drawing.Point(139, 70);
+            this.chkWaterfallUseRX1SpectrumMinMax.Name = "chkWaterfallUseRX1SpectrumMinMax";
+            this.chkWaterfallUseRX1SpectrumMinMax.Size = new System.Drawing.Size(118, 17);
+            this.chkWaterfallUseRX1SpectrumMinMax.TabIndex = 82;
+            this.chkWaterfallUseRX1SpectrumMinMax.Text = "Use Spec Min/Max";
+            this.toolTip1.SetToolTip(this.chkWaterfallUseRX1SpectrumMinMax, "Spectrum Grid min/max used for low and high level");
+            this.chkWaterfallUseRX1SpectrumMinMax.UseVisualStyleBackColor = true;
+            this.chkWaterfallUseRX1SpectrumMinMax.CheckedChanged += new System.EventHandler(this.chkWaterfallUseRX1SpectrumMinMax_CheckedChanged);
+            // 
+            // chkRX1WaterfallAGC
+            // 
+            this.chkRX1WaterfallAGC.AutoSize = true;
+            this.chkRX1WaterfallAGC.Checked = true;
+            this.chkRX1WaterfallAGC.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRX1WaterfallAGC.Image = null;
+            this.chkRX1WaterfallAGC.Location = new System.Drawing.Point(139, 47);
+            this.chkRX1WaterfallAGC.Name = "chkRX1WaterfallAGC";
+            this.chkRX1WaterfallAGC.Size = new System.Drawing.Size(93, 17);
+            this.chkRX1WaterfallAGC.TabIndex = 81;
+            this.chkRX1WaterfallAGC.Text = "Waterfall AGC";
+            this.toolTip1.SetToolTip(this.chkRX1WaterfallAGC, "Automatically calculates Low Level Threshold for Waterfall.");
+            this.chkRX1WaterfallAGC.UseVisualStyleBackColor = true;
+            this.chkRX1WaterfallAGC.CheckedChanged += new System.EventHandler(this.chkRX1WaterfallAGC_CheckedChanged);
+            // 
+            // lblWaterfallLevels
+            // 
+            this.lblWaterfallLevels.AutoSize = true;
+            this.lblWaterfallLevels.Location = new System.Drawing.Point(8, 167);
+            this.lblWaterfallLevels.Name = "lblWaterfallLevels";
+            this.lblWaterfallLevels.Size = new System.Drawing.Size(134, 13);
+            this.lblWaterfallLevels.TabIndex = 80;
+            this.lblWaterfallLevels.Text = "Band for Low/High Levels:";
+            this.toolTip1.SetToolTip(this.lblWaterfallLevels, "Waterfall Low/High levels can be set by band.  RX2 bands inherit RX1 band\'s Water" +
+        "fall Settings.");
+            // 
+            // txtWaterFallBandLevel
+            // 
+            this.txtWaterFallBandLevel.Location = new System.Drawing.Point(155, 164);
+            this.txtWaterFallBandLevel.Name = "txtWaterFallBandLevel";
+            this.txtWaterFallBandLevel.ReadOnly = true;
+            this.txtWaterFallBandLevel.Size = new System.Drawing.Size(94, 20);
+            this.txtWaterFallBandLevel.TabIndex = 79;
+            this.txtWaterFallBandLevel.Text = "Current Band";
+            this.toolTip1.SetToolTip(this.txtWaterFallBandLevel, "Current RX1 band selected for setting Waterfall Low/High level settings");
+            // 
+            // comboColorPalette
+            // 
+            this.comboColorPalette.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboColorPalette.DropDownWidth = 48;
+            this.comboColorPalette.Items.AddRange(new object[] {
+            "Enhanced",
+            "Spectran",
+            "BlackWhite",
+            "LinLog",
+            "LinRad",
+            "LinAuto"});
+            this.comboColorPalette.Location = new System.Drawing.Point(54, 95);
+            this.comboColorPalette.Name = "comboColorPalette";
+            this.comboColorPalette.Size = new System.Drawing.Size(72, 21);
+            this.comboColorPalette.TabIndex = 74;
+            this.toolTip1.SetToolTip(this.comboColorPalette, "Sets the color sheme");
+            this.comboColorPalette.SelectedIndexChanged += new System.EventHandler(this.comboColorPalette_SelectedIndexChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(8, 98);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(40, 13);
+            this.label11.TabIndex = 73;
+            this.label11.Text = "Palette";
+            this.toolTip1.SetToolTip(this.label11, "Color sheme");
+            // 
+            // udDisplayWaterfallUpdatePeriod
+            // 
+            this.udDisplayWaterfallUpdatePeriod.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udDisplayWaterfallUpdatePeriod.Location = new System.Drawing.Point(94, 138);
+            this.udDisplayWaterfallUpdatePeriod.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.udDisplayWaterfallUpdatePeriod.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udDisplayWaterfallUpdatePeriod.Name = "udDisplayWaterfallUpdatePeriod";
+            this.udDisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayWaterfallUpdatePeriod.TabIndex = 71;
+            this.udDisplayWaterfallUpdatePeriod.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDisplayWaterfallUpdatePeriod, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
+        "hat this is tamed by the FPS setting.");
+            this.udDisplayWaterfallUpdatePeriod.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.udDisplayWaterfallUpdatePeriod.ValueChanged += new System.EventHandler(this.udDisplayWaterfallUpdatePeriod_ValueChanged);
+            // 
+            // lblDisplayWaterfallUpdatePeriod
+            // 
+            this.lblDisplayWaterfallUpdatePeriod.Image = null;
+            this.lblDisplayWaterfallUpdatePeriod.Location = new System.Drawing.Point(8, 140);
+            this.lblDisplayWaterfallUpdatePeriod.Name = "lblDisplayWaterfallUpdatePeriod";
+            this.lblDisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(76, 22);
+            this.lblDisplayWaterfallUpdatePeriod.TabIndex = 72;
+            this.lblDisplayWaterfallUpdatePeriod.Text = "Update every";
+            this.toolTip1.SetToolTip(this.lblDisplayWaterfallUpdatePeriod, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
+        "hat this is tamed by the FPS setting.");
+            // 
+            // clrbtnWaterfallLow
+            // 
+            this.clrbtnWaterfallLow.Automatic = "Automatic";
+            this.clrbtnWaterfallLow.Color = System.Drawing.Color.Transparent;
+            this.clrbtnWaterfallLow.Image = null;
+            this.clrbtnWaterfallLow.Location = new System.Drawing.Point(200, 16);
+            this.clrbtnWaterfallLow.MoreColors = "More Colors...";
+            this.clrbtnWaterfallLow.Name = "clrbtnWaterfallLow";
+            this.clrbtnWaterfallLow.Selectable = true;
+            this.clrbtnWaterfallLow.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnWaterfallLow.TabIndex = 68;
+            this.toolTip1.SetToolTip(this.clrbtnWaterfallLow, "The Color to use when the signal level is at or below the low level set above.");
+            this.clrbtnWaterfallLow.Changed += new System.EventHandler(this.clrbtnWaterfallLow_Changed);
+            // 
+            // lblDisplayWaterfallLowColor
+            // 
+            this.lblDisplayWaterfallLowColor.Image = null;
+            this.lblDisplayWaterfallLowColor.Location = new System.Drawing.Point(136, 20);
+            this.lblDisplayWaterfallLowColor.Name = "lblDisplayWaterfallLowColor";
+            this.lblDisplayWaterfallLowColor.Size = new System.Drawing.Size(64, 16);
+            this.lblDisplayWaterfallLowColor.TabIndex = 57;
+            this.lblDisplayWaterfallLowColor.Text = "Low Color:";
+            // 
+            // lblDisplayWaterfallLowLevel
+            // 
+            this.lblDisplayWaterfallLowLevel.Image = null;
+            this.lblDisplayWaterfallLowLevel.Location = new System.Drawing.Point(8, 20);
+            this.lblDisplayWaterfallLowLevel.Name = "lblDisplayWaterfallLowLevel";
+            this.lblDisplayWaterfallLowLevel.Size = new System.Drawing.Size(64, 16);
+            this.lblDisplayWaterfallLowLevel.TabIndex = 3;
+            this.lblDisplayWaterfallLowLevel.Text = "Low Level";
+            // 
+            // udDisplayWaterfallLowLevel
+            // 
+            this.udDisplayWaterfallLowLevel.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udDisplayWaterfallLowLevel.Location = new System.Drawing.Point(72, 16);
+            this.udDisplayWaterfallLowLevel.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.udDisplayWaterfallLowLevel.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            -2147483648});
+            this.udDisplayWaterfallLowLevel.Name = "udDisplayWaterfallLowLevel";
+            this.udDisplayWaterfallLowLevel.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayWaterfallLowLevel.TabIndex = 2;
+            this.udDisplayWaterfallLowLevel.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDisplayWaterfallLowLevel, "Waterfall Low Signal - Show Low Color below this value (gradient in between).");
+            this.udDisplayWaterfallLowLevel.Value = new decimal(new int[] {
+            120,
+            0,
+            0,
+            -2147483648});
+            this.udDisplayWaterfallLowLevel.ValueChanged += new System.EventHandler(this.udDisplayWaterfallLowLevel_ValueChanged);
+            this.udDisplayWaterfallLowLevel.LostFocus += new System.EventHandler(this.udDisplayWaterfallLowLevel_LostFocus);
+            // 
+            // lblDisplayWaterfallHighLevel
+            // 
+            this.lblDisplayWaterfallHighLevel.Image = null;
+            this.lblDisplayWaterfallHighLevel.Location = new System.Drawing.Point(8, 43);
+            this.lblDisplayWaterfallHighLevel.Name = "lblDisplayWaterfallHighLevel";
+            this.lblDisplayWaterfallHighLevel.Size = new System.Drawing.Size(64, 16);
+            this.lblDisplayWaterfallHighLevel.TabIndex = 1;
+            this.lblDisplayWaterfallHighLevel.Text = "High Level";
+            // 
+            // udDisplayWaterfallHighLevel
+            // 
+            this.udDisplayWaterfallHighLevel.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udDisplayWaterfallHighLevel.Location = new System.Drawing.Point(72, 42);
+            this.udDisplayWaterfallHighLevel.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.udDisplayWaterfallHighLevel.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            -2147483648});
+            this.udDisplayWaterfallHighLevel.Name = "udDisplayWaterfallHighLevel";
+            this.udDisplayWaterfallHighLevel.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayWaterfallHighLevel.TabIndex = 0;
+            this.udDisplayWaterfallHighLevel.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDisplayWaterfallHighLevel, "Waterfall High Signal - Show High Color above this value (gradient in between).");
+            this.udDisplayWaterfallHighLevel.Value = new decimal(new int[] {
+            80,
+            0,
+            0,
+            -2147483648});
+            this.udDisplayWaterfallHighLevel.ValueChanged += new System.EventHandler(this.udDisplayWaterfallHighLevel_ValueChanged);
+            this.udDisplayWaterfallHighLevel.LostFocus += new System.EventHandler(this.udDisplayWaterfallHighLevel_LostFocus);
             // 
             // groupBoxTS21
             // 
@@ -31616,411 +31983,12 @@
             this.tbDisplayFFTSize.Value = 5;
             this.tbDisplayFFTSize.Scroll += new System.EventHandler(this.tbDisplayFFTSize_Scroll);
             // 
-            // grpDisplayWaterfall
-            // 
-            this.grpDisplayWaterfall.Controls.Add(this.chkWaterfallUseNFForAGCRX1);
-            this.grpDisplayWaterfall.Controls.Add(this.lblWaterfallAGCOffsetRX1);
-            this.grpDisplayWaterfall.Controls.Add(this.udWaterfallAGCOffsetRX1);
-            this.grpDisplayWaterfall.Controls.Add(this.labelTS91);
-            this.grpDisplayWaterfall.Controls.Add(this.tbRX1WaterfallOpacity);
-            this.grpDisplayWaterfall.Controls.Add(this.labelTS519);
-            this.grpDisplayWaterfall.Controls.Add(this.lblRX1WaterFallCalulatedDelayMS);
-            this.grpDisplayWaterfall.Controls.Add(this.chkWaterfallUseRX1SpectrumMinMax);
-            this.grpDisplayWaterfall.Controls.Add(this.clrbtnWaterfallMid);
-            this.grpDisplayWaterfall.Controls.Add(this.chkRX1WaterfallAGC);
-            this.grpDisplayWaterfall.Controls.Add(this.clrbtnWaterfallHigh);
-            this.grpDisplayWaterfall.Controls.Add(this.lblWaterfallLevels);
-            this.grpDisplayWaterfall.Controls.Add(this.txtWaterFallBandLevel);
-            this.grpDisplayWaterfall.Controls.Add(this.lblDisplayWaterfallMidColor);
-            this.grpDisplayWaterfall.Controls.Add(this.comboColorPalette);
-            this.grpDisplayWaterfall.Controls.Add(this.lblDisplayWaterfallHighColor);
-            this.grpDisplayWaterfall.Controls.Add(this.label11);
-            this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallUpdatePeriod);
-            this.grpDisplayWaterfall.Controls.Add(this.lblDisplayWaterfallUpdatePeriod);
-            this.grpDisplayWaterfall.Controls.Add(this.clrbtnWaterfallLow);
-            this.grpDisplayWaterfall.Controls.Add(this.lblDisplayWaterfallLowColor);
-            this.grpDisplayWaterfall.Controls.Add(this.lblDisplayWaterfallLowLevel);
-            this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallLowLevel);
-            this.grpDisplayWaterfall.Controls.Add(this.lblDisplayWaterfallHighLevel);
-            this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallHighLevel);
-            this.grpDisplayWaterfall.Location = new System.Drawing.Point(375, 8);
-            this.grpDisplayWaterfall.Name = "grpDisplayWaterfall";
-            this.grpDisplayWaterfall.Size = new System.Drawing.Size(304, 216);
-            this.grpDisplayWaterfall.TabIndex = 40;
-            this.grpDisplayWaterfall.TabStop = false;
-            this.grpDisplayWaterfall.Text = "Waterfall";
-            // 
-            // chkWaterfallUseNFForAGCRX1
-            // 
-            this.chkWaterfallUseNFForAGCRX1.AutoSize = true;
-            this.chkWaterfallUseNFForAGCRX1.Image = null;
-            this.chkWaterfallUseNFForAGCRX1.Location = new System.Drawing.Point(139, 93);
-            this.chkWaterfallUseNFForAGCRX1.Name = "chkWaterfallUseNFForAGCRX1";
-            this.chkWaterfallUseNFForAGCRX1.Size = new System.Drawing.Size(149, 17);
-            this.chkWaterfallUseNFForAGCRX1.TabIndex = 92;
-            this.chkWaterfallUseNFForAGCRX1.Text = "Noise Floor Compensation";
-            this.toolTip1.SetToolTip(this.chkWaterfallUseNFForAGCRX1, "Use the noise floor to control the AGC Low Level");
-            this.chkWaterfallUseNFForAGCRX1.UseVisualStyleBackColor = true;
-            this.chkWaterfallUseNFForAGCRX1.CheckedChanged += new System.EventHandler(this.chkWaterfallUseNFForAGCRX1_CheckedChanged);
-            // 
-            // lblWaterfallAGCOffsetRX1
-            // 
-            this.lblWaterfallAGCOffsetRX1.Image = null;
-            this.lblWaterfallAGCOffsetRX1.Location = new System.Drawing.Point(8, 69);
-            this.lblWaterfallAGCOffsetRX1.Name = "lblWaterfallAGCOffsetRX1";
-            this.lblWaterfallAGCOffsetRX1.Size = new System.Drawing.Size(64, 16);
-            this.lblWaterfallAGCOffsetRX1.TabIndex = 91;
-            this.lblWaterfallAGCOffsetRX1.Text = "AGC Offset";
-            // 
-            // udWaterfallAGCOffsetRX1
-            // 
-            this.udWaterfallAGCOffsetRX1.DecimalPlaces = 1;
-            this.udWaterfallAGCOffsetRX1.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.udWaterfallAGCOffsetRX1.Location = new System.Drawing.Point(72, 68);
-            this.udWaterfallAGCOffsetRX1.Maximum = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-            this.udWaterfallAGCOffsetRX1.Minimum = new decimal(new int[] {
-            60,
-            0,
-            0,
-            -2147483648});
-            this.udWaterfallAGCOffsetRX1.Name = "udWaterfallAGCOffsetRX1";
-            this.udWaterfallAGCOffsetRX1.Size = new System.Drawing.Size(48, 20);
-            this.udWaterfallAGCOffsetRX1.TabIndex = 90;
-            this.udWaterfallAGCOffsetRX1.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udWaterfallAGCOffsetRX1, "Apply dBm offset if using AGC");
-            this.udWaterfallAGCOffsetRX1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udWaterfallAGCOffsetRX1.ValueChanged += new System.EventHandler(this.udWaterfallAGCOffsetRX1_ValueChanged);
-            // 
-            // labelTS91
-            // 
-            this.labelTS91.AutoSize = true;
-            this.labelTS91.Image = null;
-            this.labelTS91.Location = new System.Drawing.Point(38, 182);
-            this.labelTS91.Name = "labelTS91";
-            this.labelTS91.Size = new System.Drawing.Size(46, 13);
-            this.labelTS91.TabIndex = 81;
-            this.labelTS91.Text = "Opacity:";
-            // 
-            // tbRX1WaterfallOpacity
-            // 
-            this.tbRX1WaterfallOpacity.AutoSize = false;
-            this.tbRX1WaterfallOpacity.Location = new System.Drawing.Point(89, 182);
-            this.tbRX1WaterfallOpacity.Maximum = 100;
-            this.tbRX1WaterfallOpacity.Name = "tbRX1WaterfallOpacity";
-            this.tbRX1WaterfallOpacity.Size = new System.Drawing.Size(160, 18);
-            this.tbRX1WaterfallOpacity.TabIndex = 89;
-            this.tbRX1WaterfallOpacity.TickFrequency = 10;
-            this.tbRX1WaterfallOpacity.Value = 100;
-            this.tbRX1WaterfallOpacity.Scroll += new System.EventHandler(this.tbRX1WaterfallOpacity_Scroll);
-            // 
-            // labelTS519
-            // 
-            this.labelTS519.AutoSize = true;
-            this.labelTS519.Image = null;
-            this.labelTS519.Location = new System.Drawing.Point(148, 124);
-            this.labelTS519.Name = "labelTS519";
-            this.labelTS519.Size = new System.Drawing.Size(33, 13);
-            this.labelTS519.TabIndex = 84;
-            this.labelTS519.Text = "frame";
-            // 
-            // lblRX1WaterFallCalulatedDelayMS
-            // 
-            this.lblRX1WaterFallCalulatedDelayMS.AutoSize = true;
-            this.lblRX1WaterFallCalulatedDelayMS.Image = null;
-            this.lblRX1WaterFallCalulatedDelayMS.Location = new System.Drawing.Point(187, 124);
-            this.lblRX1WaterFallCalulatedDelayMS.Name = "lblRX1WaterFallCalulatedDelayMS";
-            this.lblRX1WaterFallCalulatedDelayMS.Size = new System.Drawing.Size(44, 13);
-            this.lblRX1WaterFallCalulatedDelayMS.TabIndex = 83;
-            this.lblRX1WaterFallCalulatedDelayMS.Text = "0.00 ms";
-            // 
-            // chkWaterfallUseRX1SpectrumMinMax
-            // 
-            this.chkWaterfallUseRX1SpectrumMinMax.AutoSize = true;
-            this.chkWaterfallUseRX1SpectrumMinMax.Image = null;
-            this.chkWaterfallUseRX1SpectrumMinMax.Location = new System.Drawing.Point(139, 70);
-            this.chkWaterfallUseRX1SpectrumMinMax.Name = "chkWaterfallUseRX1SpectrumMinMax";
-            this.chkWaterfallUseRX1SpectrumMinMax.Size = new System.Drawing.Size(118, 17);
-            this.chkWaterfallUseRX1SpectrumMinMax.TabIndex = 82;
-            this.chkWaterfallUseRX1SpectrumMinMax.Text = "Use Spec Min/Max";
-            this.toolTip1.SetToolTip(this.chkWaterfallUseRX1SpectrumMinMax, "Spectrum Grid min/max used for low and high level");
-            this.chkWaterfallUseRX1SpectrumMinMax.UseVisualStyleBackColor = true;
-            this.chkWaterfallUseRX1SpectrumMinMax.CheckedChanged += new System.EventHandler(this.chkWaterfallUseRX1SpectrumMinMax_CheckedChanged);
-            // 
-            // clrbtnWaterfallMid
-            // 
-            this.clrbtnWaterfallMid.Automatic = "Automatic";
-            this.clrbtnWaterfallMid.Color = System.Drawing.Color.Transparent;
-            this.clrbtnWaterfallMid.Image = null;
-            this.clrbtnWaterfallMid.Location = new System.Drawing.Point(80, 208);
-            this.clrbtnWaterfallMid.MoreColors = "More Colors...";
-            this.clrbtnWaterfallMid.Name = "clrbtnWaterfallMid";
-            this.clrbtnWaterfallMid.Selectable = true;
-            this.clrbtnWaterfallMid.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnWaterfallMid.TabIndex = 78;
-            this.toolTip1.SetToolTip(this.clrbtnWaterfallMid, "The mid color used when the signal level is exactly between the low and high leve" +
-        "ls shown above.  A gradient is used if it is not eactly in the middle.");
-            this.clrbtnWaterfallMid.Changed += new System.EventHandler(this.clrbtnWaterfallMid_Changed);
-            // 
-            // chkRX1WaterfallAGC
-            // 
-            this.chkRX1WaterfallAGC.AutoSize = true;
-            this.chkRX1WaterfallAGC.Checked = true;
-            this.chkRX1WaterfallAGC.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRX1WaterfallAGC.Image = null;
-            this.chkRX1WaterfallAGC.Location = new System.Drawing.Point(139, 47);
-            this.chkRX1WaterfallAGC.Name = "chkRX1WaterfallAGC";
-            this.chkRX1WaterfallAGC.Size = new System.Drawing.Size(93, 17);
-            this.chkRX1WaterfallAGC.TabIndex = 81;
-            this.chkRX1WaterfallAGC.Text = "Waterfall AGC";
-            this.toolTip1.SetToolTip(this.chkRX1WaterfallAGC, "Automatically calculates Low Level Threshold for Waterfall.");
-            this.chkRX1WaterfallAGC.UseVisualStyleBackColor = true;
-            this.chkRX1WaterfallAGC.CheckedChanged += new System.EventHandler(this.chkRX1WaterfallAGC_CheckedChanged);
-            // 
-            // clrbtnWaterfallHigh
-            // 
-            this.clrbtnWaterfallHigh.Automatic = "Automatic";
-            this.clrbtnWaterfallHigh.Color = System.Drawing.Color.Transparent;
-            this.clrbtnWaterfallHigh.Image = null;
-            this.clrbtnWaterfallHigh.Location = new System.Drawing.Point(200, 208);
-            this.clrbtnWaterfallHigh.MoreColors = "More Colors...";
-            this.clrbtnWaterfallHigh.Name = "clrbtnWaterfallHigh";
-            this.clrbtnWaterfallHigh.Selectable = true;
-            this.clrbtnWaterfallHigh.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnWaterfallHigh.TabIndex = 77;
-            this.toolTip1.SetToolTip(this.clrbtnWaterfallHigh, "The color to display when the signal level is at or above the high level shown ab" +
-        "ove.");
-            this.clrbtnWaterfallHigh.Changed += new System.EventHandler(this.clrbtnWaterfallHigh_Changed);
-            // 
-            // lblWaterfallLevels
-            // 
-            this.lblWaterfallLevels.AutoSize = true;
-            this.lblWaterfallLevels.Location = new System.Drawing.Point(8, 159);
-            this.lblWaterfallLevels.Name = "lblWaterfallLevels";
-            this.lblWaterfallLevels.Size = new System.Drawing.Size(134, 13);
-            this.lblWaterfallLevels.TabIndex = 80;
-            this.lblWaterfallLevels.Text = "Band for Low/High Levels:";
-            this.toolTip1.SetToolTip(this.lblWaterfallLevels, "Waterfall Low/High levels can be set by band.  RX2 bands inherit RX1 band\'s Water" +
-        "fall Settings.");
-            // 
-            // txtWaterFallBandLevel
-            // 
-            this.txtWaterFallBandLevel.Location = new System.Drawing.Point(155, 156);
-            this.txtWaterFallBandLevel.Name = "txtWaterFallBandLevel";
-            this.txtWaterFallBandLevel.ReadOnly = true;
-            this.txtWaterFallBandLevel.Size = new System.Drawing.Size(94, 20);
-            this.txtWaterFallBandLevel.TabIndex = 79;
-            this.txtWaterFallBandLevel.Text = "Current Band";
-            this.toolTip1.SetToolTip(this.txtWaterFallBandLevel, "Current RX1 band selected for setting Waterfall Low/High level settings");
-            // 
-            // lblDisplayWaterfallMidColor
-            // 
-            this.lblDisplayWaterfallMidColor.Image = null;
-            this.lblDisplayWaterfallMidColor.Location = new System.Drawing.Point(20, 213);
-            this.lblDisplayWaterfallMidColor.Name = "lblDisplayWaterfallMidColor";
-            this.lblDisplayWaterfallMidColor.Size = new System.Drawing.Size(64, 16);
-            this.lblDisplayWaterfallMidColor.TabIndex = 76;
-            this.lblDisplayWaterfallMidColor.Text = "Mid Color:";
-            // 
-            // comboColorPalette
-            // 
-            this.comboColorPalette.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboColorPalette.DropDownWidth = 48;
-            this.comboColorPalette.Items.AddRange(new object[] {
-            "Enhanced",
-            "Spectran",
-            "BlackWhite",
-            "LinLog",
-            "LinRad",
-            "LinAuto"});
-            this.comboColorPalette.Location = new System.Drawing.Point(54, 95);
-            this.comboColorPalette.Name = "comboColorPalette";
-            this.comboColorPalette.Size = new System.Drawing.Size(72, 21);
-            this.comboColorPalette.TabIndex = 74;
-            this.toolTip1.SetToolTip(this.comboColorPalette, "Sets the color sheme");
-            this.comboColorPalette.SelectedIndexChanged += new System.EventHandler(this.comboColorPalette_SelectedIndexChanged);
-            // 
-            // lblDisplayWaterfallHighColor
-            // 
-            this.lblDisplayWaterfallHighColor.Image = null;
-            this.lblDisplayWaterfallHighColor.Location = new System.Drawing.Point(131, 213);
-            this.lblDisplayWaterfallHighColor.Name = "lblDisplayWaterfallHighColor";
-            this.lblDisplayWaterfallHighColor.Size = new System.Drawing.Size(64, 16);
-            this.lblDisplayWaterfallHighColor.TabIndex = 75;
-            this.lblDisplayWaterfallHighColor.Text = "High Color:";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(8, 98);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(40, 13);
-            this.label11.TabIndex = 73;
-            this.label11.Text = "Palette";
-            this.toolTip1.SetToolTip(this.label11, "Color sheme");
-            // 
-            // udDisplayWaterfallUpdatePeriod
-            // 
-            this.udDisplayWaterfallUpdatePeriod.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDisplayWaterfallUpdatePeriod.Location = new System.Drawing.Point(94, 122);
-            this.udDisplayWaterfallUpdatePeriod.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.udDisplayWaterfallUpdatePeriod.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDisplayWaterfallUpdatePeriod.Name = "udDisplayWaterfallUpdatePeriod";
-            this.udDisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(48, 20);
-            this.udDisplayWaterfallUpdatePeriod.TabIndex = 71;
-            this.udDisplayWaterfallUpdatePeriod.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDisplayWaterfallUpdatePeriod, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
-        "hat this is tamed by the FPS setting.");
-            this.udDisplayWaterfallUpdatePeriod.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.udDisplayWaterfallUpdatePeriod.ValueChanged += new System.EventHandler(this.udDisplayWaterfallUpdatePeriod_ValueChanged);
-            // 
-            // lblDisplayWaterfallUpdatePeriod
-            // 
-            this.lblDisplayWaterfallUpdatePeriod.Image = null;
-            this.lblDisplayWaterfallUpdatePeriod.Location = new System.Drawing.Point(8, 124);
-            this.lblDisplayWaterfallUpdatePeriod.Name = "lblDisplayWaterfallUpdatePeriod";
-            this.lblDisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(76, 22);
-            this.lblDisplayWaterfallUpdatePeriod.TabIndex = 72;
-            this.lblDisplayWaterfallUpdatePeriod.Text = "Update every";
-            this.toolTip1.SetToolTip(this.lblDisplayWaterfallUpdatePeriod, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
-        "hat this is tamed by the FPS setting.");
-            // 
-            // clrbtnWaterfallLow
-            // 
-            this.clrbtnWaterfallLow.Automatic = "Automatic";
-            this.clrbtnWaterfallLow.Color = System.Drawing.Color.Transparent;
-            this.clrbtnWaterfallLow.Image = null;
-            this.clrbtnWaterfallLow.Location = new System.Drawing.Point(200, 16);
-            this.clrbtnWaterfallLow.MoreColors = "More Colors...";
-            this.clrbtnWaterfallLow.Name = "clrbtnWaterfallLow";
-            this.clrbtnWaterfallLow.Selectable = true;
-            this.clrbtnWaterfallLow.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnWaterfallLow.TabIndex = 68;
-            this.toolTip1.SetToolTip(this.clrbtnWaterfallLow, "The Color to use when the signal level is at or below the low level set above.");
-            this.clrbtnWaterfallLow.Changed += new System.EventHandler(this.clrbtnWaterfallLow_Changed);
-            // 
-            // lblDisplayWaterfallLowColor
-            // 
-            this.lblDisplayWaterfallLowColor.Image = null;
-            this.lblDisplayWaterfallLowColor.Location = new System.Drawing.Point(136, 20);
-            this.lblDisplayWaterfallLowColor.Name = "lblDisplayWaterfallLowColor";
-            this.lblDisplayWaterfallLowColor.Size = new System.Drawing.Size(64, 16);
-            this.lblDisplayWaterfallLowColor.TabIndex = 57;
-            this.lblDisplayWaterfallLowColor.Text = "Low Color:";
-            // 
-            // lblDisplayWaterfallLowLevel
-            // 
-            this.lblDisplayWaterfallLowLevel.Image = null;
-            this.lblDisplayWaterfallLowLevel.Location = new System.Drawing.Point(8, 20);
-            this.lblDisplayWaterfallLowLevel.Name = "lblDisplayWaterfallLowLevel";
-            this.lblDisplayWaterfallLowLevel.Size = new System.Drawing.Size(64, 16);
-            this.lblDisplayWaterfallLowLevel.TabIndex = 3;
-            this.lblDisplayWaterfallLowLevel.Text = "Low Level";
-            // 
-            // udDisplayWaterfallLowLevel
-            // 
-            this.udDisplayWaterfallLowLevel.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.udDisplayWaterfallLowLevel.Location = new System.Drawing.Point(72, 16);
-            this.udDisplayWaterfallLowLevel.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.udDisplayWaterfallLowLevel.Minimum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            -2147483648});
-            this.udDisplayWaterfallLowLevel.Name = "udDisplayWaterfallLowLevel";
-            this.udDisplayWaterfallLowLevel.Size = new System.Drawing.Size(48, 20);
-            this.udDisplayWaterfallLowLevel.TabIndex = 2;
-            this.udDisplayWaterfallLowLevel.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDisplayWaterfallLowLevel, "Waterfall Low Signal - Show Low Color below this value (gradient in between).");
-            this.udDisplayWaterfallLowLevel.Value = new decimal(new int[] {
-            120,
-            0,
-            0,
-            -2147483648});
-            this.udDisplayWaterfallLowLevel.ValueChanged += new System.EventHandler(this.udDisplayWaterfallLowLevel_ValueChanged);
-            this.udDisplayWaterfallLowLevel.LostFocus += new System.EventHandler(this.udDisplayWaterfallLowLevel_LostFocus);
-            // 
-            // lblDisplayWaterfallHighLevel
-            // 
-            this.lblDisplayWaterfallHighLevel.Image = null;
-            this.lblDisplayWaterfallHighLevel.Location = new System.Drawing.Point(8, 43);
-            this.lblDisplayWaterfallHighLevel.Name = "lblDisplayWaterfallHighLevel";
-            this.lblDisplayWaterfallHighLevel.Size = new System.Drawing.Size(64, 16);
-            this.lblDisplayWaterfallHighLevel.TabIndex = 1;
-            this.lblDisplayWaterfallHighLevel.Text = "High Level";
-            // 
-            // udDisplayWaterfallHighLevel
-            // 
-            this.udDisplayWaterfallHighLevel.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.udDisplayWaterfallHighLevel.Location = new System.Drawing.Point(72, 42);
-            this.udDisplayWaterfallHighLevel.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.udDisplayWaterfallHighLevel.Minimum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            -2147483648});
-            this.udDisplayWaterfallHighLevel.Name = "udDisplayWaterfallHighLevel";
-            this.udDisplayWaterfallHighLevel.Size = new System.Drawing.Size(48, 20);
-            this.udDisplayWaterfallHighLevel.TabIndex = 0;
-            this.udDisplayWaterfallHighLevel.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDisplayWaterfallHighLevel, "Waterfall High Signal - Show High Color above this value (gradient in between).");
-            this.udDisplayWaterfallHighLevel.Value = new decimal(new int[] {
-            80,
-            0,
-            0,
-            -2147483648});
-            this.udDisplayWaterfallHighLevel.ValueChanged += new System.EventHandler(this.udDisplayWaterfallHighLevel_ValueChanged);
-            this.udDisplayWaterfallHighLevel.LostFocus += new System.EventHandler(this.udDisplayWaterfallHighLevel_LostFocus);
-            // 
             // tpDisplayBottom
             // 
             this.tpDisplayBottom.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDisplayBottom.Controls.Add(this.grpRX2DisplayWaterfall);
             this.tpDisplayBottom.Controls.Add(this.groupBoxTS20);
             this.tpDisplayBottom.Controls.Add(this.grpRX2DisplayAveraging);
-            this.tpDisplayBottom.Controls.Add(this.grpRX2DisplayWaterfall);
             this.tpDisplayBottom.Controls.Add(this.grpRX2DisplaySpectrumGrid);
             this.tpDisplayBottom.Controls.Add(this.grpRX2DisplayAverage);
             this.tpDisplayBottom.Controls.Add(this.grpDisplayRX2Pan);
@@ -32030,6 +31998,365 @@
             this.tpDisplayBottom.Size = new System.Drawing.Size(721, 403);
             this.tpDisplayBottom.TabIndex = 2;
             this.tpDisplayBottom.Text = " RX 2";
+            // 
+            // grpRX2DisplayWaterfall
+            // 
+            this.grpRX2DisplayWaterfall.Controls.Add(this.chkStopRX2WaterfallOnTx);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.chkWaterfallUseNFForAGCRX2);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.lblWaterfallAGCOffsetRX2);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.udWaterfallAGCOffsetRX2);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.labelTS92);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.tbRX2WaterfallOpacity);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.labelTS520);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2WaterFallCalulatedDelayMS);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.chkWaterfallUseRX2SpectrumMinMax);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.chkRX2WaterfallAGC);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2WaterfallLevels);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.txtRX2WaterFallBandLevel);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.comboRX2ColorPalette);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.label21);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.udRX2DisplayWaterfallUpdatePeriod);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2DisplayWaterfallUpdatePeriod);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.clrbtnRX2WaterfallLow);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2DisplayWaterfallLowColor);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2DisplayWaterfallLowLevel);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.udRX2DisplayWaterfallLowLevel);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2DisplayWaterfallHighLevel);
+            this.grpRX2DisplayWaterfall.Controls.Add(this.udRX2DisplayWaterfallHighLevel);
+            this.grpRX2DisplayWaterfall.Location = new System.Drawing.Point(375, 8);
+            this.grpRX2DisplayWaterfall.Name = "grpRX2DisplayWaterfall";
+            this.grpRX2DisplayWaterfall.Size = new System.Drawing.Size(304, 218);
+            this.grpRX2DisplayWaterfall.TabIndex = 50;
+            this.grpRX2DisplayWaterfall.TabStop = false;
+            this.grpRX2DisplayWaterfall.Text = "Waterfall";
+            // 
+            // chkStopRX2WaterfallOnTx
+            // 
+            this.chkStopRX2WaterfallOnTx.AutoSize = true;
+            this.chkStopRX2WaterfallOnTx.Image = null;
+            this.chkStopRX2WaterfallOnTx.Location = new System.Drawing.Point(139, 116);
+            this.chkStopRX2WaterfallOnTx.Name = "chkStopRX2WaterfallOnTx";
+            this.chkStopRX2WaterfallOnTx.Size = new System.Drawing.Size(104, 17);
+            this.chkStopRX2WaterfallOnTx.TabIndex = 96;
+            this.chkStopRX2WaterfallOnTx.Text = "Stop On Rx2 TX";
+            this.toolTip1.SetToolTip(this.chkStopRX2WaterfallOnTx, "Stop the waterfall when TX\'ing on Rx2");
+            this.chkStopRX2WaterfallOnTx.UseVisualStyleBackColor = true;
+            this.chkStopRX2WaterfallOnTx.CheckedChanged += new System.EventHandler(this.chkStopRX2WaterfallOnTx_CheckedChanged);
+            // 
+            // chkWaterfallUseNFForAGCRX2
+            // 
+            this.chkWaterfallUseNFForAGCRX2.AutoSize = true;
+            this.chkWaterfallUseNFForAGCRX2.Image = null;
+            this.chkWaterfallUseNFForAGCRX2.Location = new System.Drawing.Point(139, 93);
+            this.chkWaterfallUseNFForAGCRX2.Name = "chkWaterfallUseNFForAGCRX2";
+            this.chkWaterfallUseNFForAGCRX2.Size = new System.Drawing.Size(149, 17);
+            this.chkWaterfallUseNFForAGCRX2.TabIndex = 95;
+            this.chkWaterfallUseNFForAGCRX2.Text = "Noise Floor Compensation";
+            this.toolTip1.SetToolTip(this.chkWaterfallUseNFForAGCRX2, "Use the noise floor to control the AGC Low Level");
+            this.chkWaterfallUseNFForAGCRX2.UseVisualStyleBackColor = true;
+            this.chkWaterfallUseNFForAGCRX2.CheckedChanged += new System.EventHandler(this.chkWaterfallUseNFForAGCRX2_CheckedChanged);
+            // 
+            // lblWaterfallAGCOffsetRX2
+            // 
+            this.lblWaterfallAGCOffsetRX2.Image = null;
+            this.lblWaterfallAGCOffsetRX2.Location = new System.Drawing.Point(8, 69);
+            this.lblWaterfallAGCOffsetRX2.Name = "lblWaterfallAGCOffsetRX2";
+            this.lblWaterfallAGCOffsetRX2.Size = new System.Drawing.Size(64, 16);
+            this.lblWaterfallAGCOffsetRX2.TabIndex = 94;
+            this.lblWaterfallAGCOffsetRX2.Text = "AGC Offset";
+            // 
+            // udWaterfallAGCOffsetRX2
+            // 
+            this.udWaterfallAGCOffsetRX2.DecimalPlaces = 1;
+            this.udWaterfallAGCOffsetRX2.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.udWaterfallAGCOffsetRX2.Location = new System.Drawing.Point(72, 68);
+            this.udWaterfallAGCOffsetRX2.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.udWaterfallAGCOffsetRX2.Minimum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            -2147483648});
+            this.udWaterfallAGCOffsetRX2.Name = "udWaterfallAGCOffsetRX2";
+            this.udWaterfallAGCOffsetRX2.Size = new System.Drawing.Size(48, 20);
+            this.udWaterfallAGCOffsetRX2.TabIndex = 93;
+            this.udWaterfallAGCOffsetRX2.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udWaterfallAGCOffsetRX2, "Apply dBm offset if using AGC");
+            this.udWaterfallAGCOffsetRX2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udWaterfallAGCOffsetRX2.ValueChanged += new System.EventHandler(this.udWaterfallAGCOffsetRX2_ValueChanged);
+            // 
+            // labelTS92
+            // 
+            this.labelTS92.AutoSize = true;
+            this.labelTS92.Image = null;
+            this.labelTS92.Location = new System.Drawing.Point(38, 190);
+            this.labelTS92.Name = "labelTS92";
+            this.labelTS92.Size = new System.Drawing.Size(46, 13);
+            this.labelTS92.TabIndex = 90;
+            this.labelTS92.Text = "Opacity:";
+            // 
+            // tbRX2WaterfallOpacity
+            // 
+            this.tbRX2WaterfallOpacity.AutoSize = false;
+            this.tbRX2WaterfallOpacity.Location = new System.Drawing.Point(89, 190);
+            this.tbRX2WaterfallOpacity.Maximum = 100;
+            this.tbRX2WaterfallOpacity.Name = "tbRX2WaterfallOpacity";
+            this.tbRX2WaterfallOpacity.Size = new System.Drawing.Size(160, 18);
+            this.tbRX2WaterfallOpacity.TabIndex = 91;
+            this.tbRX2WaterfallOpacity.TickFrequency = 10;
+            this.tbRX2WaterfallOpacity.Value = 100;
+            this.tbRX2WaterfallOpacity.Scroll += new System.EventHandler(this.tbRX2WaterfallOpacity_Scroll);
+            // 
+            // labelTS520
+            // 
+            this.labelTS520.AutoSize = true;
+            this.labelTS520.Image = null;
+            this.labelTS520.Location = new System.Drawing.Point(148, 140);
+            this.labelTS520.Name = "labelTS520";
+            this.labelTS520.Size = new System.Drawing.Size(33, 13);
+            this.labelTS520.TabIndex = 85;
+            this.labelTS520.Text = "frame";
+            // 
+            // lblRX2WaterFallCalulatedDelayMS
+            // 
+            this.lblRX2WaterFallCalulatedDelayMS.AutoSize = true;
+            this.lblRX2WaterFallCalulatedDelayMS.Image = null;
+            this.lblRX2WaterFallCalulatedDelayMS.Location = new System.Drawing.Point(187, 140);
+            this.lblRX2WaterFallCalulatedDelayMS.Name = "lblRX2WaterFallCalulatedDelayMS";
+            this.lblRX2WaterFallCalulatedDelayMS.Size = new System.Drawing.Size(44, 13);
+            this.lblRX2WaterFallCalulatedDelayMS.TabIndex = 84;
+            this.lblRX2WaterFallCalulatedDelayMS.Text = "0.00 ms";
+            // 
+            // chkWaterfallUseRX2SpectrumMinMax
+            // 
+            this.chkWaterfallUseRX2SpectrumMinMax.AutoSize = true;
+            this.chkWaterfallUseRX2SpectrumMinMax.Image = null;
+            this.chkWaterfallUseRX2SpectrumMinMax.Location = new System.Drawing.Point(139, 70);
+            this.chkWaterfallUseRX2SpectrumMinMax.Name = "chkWaterfallUseRX2SpectrumMinMax";
+            this.chkWaterfallUseRX2SpectrumMinMax.Size = new System.Drawing.Size(118, 17);
+            this.chkWaterfallUseRX2SpectrumMinMax.TabIndex = 83;
+            this.chkWaterfallUseRX2SpectrumMinMax.Text = "Use Spec Min/Max";
+            this.toolTip1.SetToolTip(this.chkWaterfallUseRX2SpectrumMinMax, "Spectrum Grid min/max used for low and high level");
+            this.chkWaterfallUseRX2SpectrumMinMax.UseVisualStyleBackColor = true;
+            this.chkWaterfallUseRX2SpectrumMinMax.CheckedChanged += new System.EventHandler(this.chkWaterfallUseRX2SpectrumMinMax_CheckedChanged);
+            // 
+            // chkRX2WaterfallAGC
+            // 
+            this.chkRX2WaterfallAGC.AutoSize = true;
+            this.chkRX2WaterfallAGC.Checked = true;
+            this.chkRX2WaterfallAGC.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRX2WaterfallAGC.Image = null;
+            this.chkRX2WaterfallAGC.Location = new System.Drawing.Point(139, 47);
+            this.chkRX2WaterfallAGC.Name = "chkRX2WaterfallAGC";
+            this.chkRX2WaterfallAGC.Size = new System.Drawing.Size(93, 17);
+            this.chkRX2WaterfallAGC.TabIndex = 82;
+            this.chkRX2WaterfallAGC.Text = "Waterfall AGC";
+            this.toolTip1.SetToolTip(this.chkRX2WaterfallAGC, "Automatically calculates Low Level Threshold for Waterfall.");
+            this.chkRX2WaterfallAGC.UseVisualStyleBackColor = true;
+            this.chkRX2WaterfallAGC.CheckedChanged += new System.EventHandler(this.chkRX2WaterfallAGC_CheckedChanged);
+            // 
+            // lblRX2WaterfallLevels
+            // 
+            this.lblRX2WaterfallLevels.AutoSize = true;
+            this.lblRX2WaterfallLevels.Location = new System.Drawing.Point(8, 167);
+            this.lblRX2WaterfallLevels.Name = "lblRX2WaterfallLevels";
+            this.lblRX2WaterfallLevels.Size = new System.Drawing.Size(134, 13);
+            this.lblRX2WaterfallLevels.TabIndex = 80;
+            this.lblRX2WaterfallLevels.Text = "Band for Low/High Levels:";
+            this.toolTip1.SetToolTip(this.lblRX2WaterfallLevels, "Waterfall Low/High levels can be set by band.  RX2 bands inherit RX1 band\'s Water" +
+        "fall Settings.");
+            // 
+            // txtRX2WaterFallBandLevel
+            // 
+            this.txtRX2WaterFallBandLevel.Location = new System.Drawing.Point(155, 164);
+            this.txtRX2WaterFallBandLevel.Name = "txtRX2WaterFallBandLevel";
+            this.txtRX2WaterFallBandLevel.ReadOnly = true;
+            this.txtRX2WaterFallBandLevel.Size = new System.Drawing.Size(94, 20);
+            this.txtRX2WaterFallBandLevel.TabIndex = 79;
+            this.txtRX2WaterFallBandLevel.Text = "Current Band";
+            this.toolTip1.SetToolTip(this.txtRX2WaterFallBandLevel, "Current RX1 band selected for setting Waterfall Low/High level settings");
+            // 
+            // comboRX2ColorPalette
+            // 
+            this.comboRX2ColorPalette.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboRX2ColorPalette.DropDownWidth = 48;
+            this.comboRX2ColorPalette.Items.AddRange(new object[] {
+            "Enhanced",
+            "Spectran",
+            "BlackWhite",
+            "LinLog",
+            "LinRad",
+            "LinAuto"});
+            this.comboRX2ColorPalette.Location = new System.Drawing.Point(54, 95);
+            this.comboRX2ColorPalette.Name = "comboRX2ColorPalette";
+            this.comboRX2ColorPalette.Size = new System.Drawing.Size(72, 21);
+            this.comboRX2ColorPalette.TabIndex = 74;
+            this.toolTip1.SetToolTip(this.comboRX2ColorPalette, "Sets the color sheme");
+            this.comboRX2ColorPalette.SelectedIndexChanged += new System.EventHandler(this.comboRX2ColorPalette_SelectedIndexChanged);
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(8, 98);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(40, 13);
+            this.label21.TabIndex = 73;
+            this.label21.Text = "Palette";
+            this.toolTip1.SetToolTip(this.label21, "Color sheme");
+            // 
+            // udRX2DisplayWaterfallUpdatePeriod
+            // 
+            this.udRX2DisplayWaterfallUpdatePeriod.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udRX2DisplayWaterfallUpdatePeriod.Location = new System.Drawing.Point(94, 138);
+            this.udRX2DisplayWaterfallUpdatePeriod.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.udRX2DisplayWaterfallUpdatePeriod.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udRX2DisplayWaterfallUpdatePeriod.Name = "udRX2DisplayWaterfallUpdatePeriod";
+            this.udRX2DisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(48, 20);
+            this.udRX2DisplayWaterfallUpdatePeriod.TabIndex = 71;
+            this.udRX2DisplayWaterfallUpdatePeriod.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udRX2DisplayWaterfallUpdatePeriod, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
+        "hat this is tamed by the FPS setting.");
+            this.udRX2DisplayWaterfallUpdatePeriod.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.udRX2DisplayWaterfallUpdatePeriod.ValueChanged += new System.EventHandler(this.udRX2DisplayWaterfallUpdatePeriod_ValueChanged);
+            // 
+            // lblRX2DisplayWaterfallUpdatePeriod
+            // 
+            this.lblRX2DisplayWaterfallUpdatePeriod.Image = null;
+            this.lblRX2DisplayWaterfallUpdatePeriod.Location = new System.Drawing.Point(8, 140);
+            this.lblRX2DisplayWaterfallUpdatePeriod.Name = "lblRX2DisplayWaterfallUpdatePeriod";
+            this.lblRX2DisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(80, 20);
+            this.lblRX2DisplayWaterfallUpdatePeriod.TabIndex = 72;
+            this.lblRX2DisplayWaterfallUpdatePeriod.Text = "Update every";
+            this.toolTip1.SetToolTip(this.lblRX2DisplayWaterfallUpdatePeriod, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
+        "hat this is tamed by the FPS setting.");
+            // 
+            // clrbtnRX2WaterfallLow
+            // 
+            this.clrbtnRX2WaterfallLow.Automatic = "Automatic";
+            this.clrbtnRX2WaterfallLow.Color = System.Drawing.Color.Transparent;
+            this.clrbtnRX2WaterfallLow.Image = null;
+            this.clrbtnRX2WaterfallLow.Location = new System.Drawing.Point(200, 16);
+            this.clrbtnRX2WaterfallLow.MoreColors = "More Colors...";
+            this.clrbtnRX2WaterfallLow.Name = "clrbtnRX2WaterfallLow";
+            this.clrbtnRX2WaterfallLow.Selectable = true;
+            this.clrbtnRX2WaterfallLow.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnRX2WaterfallLow.TabIndex = 68;
+            this.toolTip1.SetToolTip(this.clrbtnRX2WaterfallLow, "The Color to use when the signal level is at or below the low level set above.");
+            this.clrbtnRX2WaterfallLow.Changed += new System.EventHandler(this.clrbtnRX2WaterfallLow_Changed);
+            // 
+            // lblRX2DisplayWaterfallLowColor
+            // 
+            this.lblRX2DisplayWaterfallLowColor.Image = null;
+            this.lblRX2DisplayWaterfallLowColor.Location = new System.Drawing.Point(136, 20);
+            this.lblRX2DisplayWaterfallLowColor.Name = "lblRX2DisplayWaterfallLowColor";
+            this.lblRX2DisplayWaterfallLowColor.Size = new System.Drawing.Size(64, 16);
+            this.lblRX2DisplayWaterfallLowColor.TabIndex = 57;
+            this.lblRX2DisplayWaterfallLowColor.Text = "Low Color:";
+            // 
+            // lblRX2DisplayWaterfallLowLevel
+            // 
+            this.lblRX2DisplayWaterfallLowLevel.Image = null;
+            this.lblRX2DisplayWaterfallLowLevel.Location = new System.Drawing.Point(8, 20);
+            this.lblRX2DisplayWaterfallLowLevel.Name = "lblRX2DisplayWaterfallLowLevel";
+            this.lblRX2DisplayWaterfallLowLevel.Size = new System.Drawing.Size(64, 16);
+            this.lblRX2DisplayWaterfallLowLevel.TabIndex = 3;
+            this.lblRX2DisplayWaterfallLowLevel.Text = "Low Level";
+            // 
+            // udRX2DisplayWaterfallLowLevel
+            // 
+            this.udRX2DisplayWaterfallLowLevel.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udRX2DisplayWaterfallLowLevel.Location = new System.Drawing.Point(72, 16);
+            this.udRX2DisplayWaterfallLowLevel.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.udRX2DisplayWaterfallLowLevel.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            -2147483648});
+            this.udRX2DisplayWaterfallLowLevel.Name = "udRX2DisplayWaterfallLowLevel";
+            this.udRX2DisplayWaterfallLowLevel.Size = new System.Drawing.Size(48, 20);
+            this.udRX2DisplayWaterfallLowLevel.TabIndex = 2;
+            this.udRX2DisplayWaterfallLowLevel.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udRX2DisplayWaterfallLowLevel, "Waterfall Low Signal - Show Low Color below this value (gradient in between).");
+            this.udRX2DisplayWaterfallLowLevel.Value = new decimal(new int[] {
+            120,
+            0,
+            0,
+            -2147483648});
+            this.udRX2DisplayWaterfallLowLevel.ValueChanged += new System.EventHandler(this.udRX2DisplayWaterfallLowLevel_ValueChanged);
+            // 
+            // lblRX2DisplayWaterfallHighLevel
+            // 
+            this.lblRX2DisplayWaterfallHighLevel.Image = null;
+            this.lblRX2DisplayWaterfallHighLevel.Location = new System.Drawing.Point(8, 43);
+            this.lblRX2DisplayWaterfallHighLevel.Name = "lblRX2DisplayWaterfallHighLevel";
+            this.lblRX2DisplayWaterfallHighLevel.Size = new System.Drawing.Size(64, 16);
+            this.lblRX2DisplayWaterfallHighLevel.TabIndex = 1;
+            this.lblRX2DisplayWaterfallHighLevel.Text = "High Level";
+            // 
+            // udRX2DisplayWaterfallHighLevel
+            // 
+            this.udRX2DisplayWaterfallHighLevel.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udRX2DisplayWaterfallHighLevel.Location = new System.Drawing.Point(72, 42);
+            this.udRX2DisplayWaterfallHighLevel.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.udRX2DisplayWaterfallHighLevel.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            -2147483648});
+            this.udRX2DisplayWaterfallHighLevel.Name = "udRX2DisplayWaterfallHighLevel";
+            this.udRX2DisplayWaterfallHighLevel.Size = new System.Drawing.Size(48, 20);
+            this.udRX2DisplayWaterfallHighLevel.TabIndex = 0;
+            this.udRX2DisplayWaterfallHighLevel.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udRX2DisplayWaterfallHighLevel, "Waterfall High Signal - Show High Color above this value (gradient in between).");
+            this.udRX2DisplayWaterfallHighLevel.Value = new decimal(new int[] {
+            80,
+            0,
+            0,
+            -2147483648});
+            this.udRX2DisplayWaterfallHighLevel.ValueChanged += new System.EventHandler(this.udRX2DisplayWaterfallHighLevel_ValueChanged);
             // 
             // groupBoxTS20
             // 
@@ -32261,403 +32588,6 @@
             this.labelTS377.Size = new System.Drawing.Size(64, 23);
             this.labelTS377.TabIndex = 3;
             this.labelTS377.Text = "Time (ms):";
-            // 
-            // grpRX2DisplayWaterfall
-            // 
-            this.grpRX2DisplayWaterfall.Controls.Add(this.chkWaterfallUseNFForAGCRX2);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.lblWaterfallAGCOffsetRX2);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.udWaterfallAGCOffsetRX2);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.labelTS92);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.tbRX2WaterfallOpacity);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.labelTS520);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2WaterFallCalulatedDelayMS);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.chkWaterfallUseRX2SpectrumMinMax);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.clrbtnRX2WaterfallMid);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.chkRX2WaterfallAGC);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.clrbtnRX2WaterfallHigh);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2WaterfallLevels);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2DisplayWaterfallMidColor);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.txtRX2WaterFallBandLevel);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2DisplayWaterfallHighColor);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.comboRX2ColorPalette);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.label21);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.udRX2DisplayWaterfallUpdatePeriod);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2DisplayWaterfallUpdatePeriod);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.clrbtnRX2WaterfallLow);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2DisplayWaterfallLowColor);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2DisplayWaterfallLowLevel);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.udRX2DisplayWaterfallLowLevel);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.lblRX2DisplayWaterfallHighLevel);
-            this.grpRX2DisplayWaterfall.Controls.Add(this.udRX2DisplayWaterfallHighLevel);
-            this.grpRX2DisplayWaterfall.Location = new System.Drawing.Point(375, 8);
-            this.grpRX2DisplayWaterfall.Name = "grpRX2DisplayWaterfall";
-            this.grpRX2DisplayWaterfall.Size = new System.Drawing.Size(304, 216);
-            this.grpRX2DisplayWaterfall.TabIndex = 50;
-            this.grpRX2DisplayWaterfall.TabStop = false;
-            this.grpRX2DisplayWaterfall.Text = "Waterfall";
-            // 
-            // chkWaterfallUseNFForAGCRX2
-            // 
-            this.chkWaterfallUseNFForAGCRX2.AutoSize = true;
-            this.chkWaterfallUseNFForAGCRX2.Image = null;
-            this.chkWaterfallUseNFForAGCRX2.Location = new System.Drawing.Point(139, 93);
-            this.chkWaterfallUseNFForAGCRX2.Name = "chkWaterfallUseNFForAGCRX2";
-            this.chkWaterfallUseNFForAGCRX2.Size = new System.Drawing.Size(149, 17);
-            this.chkWaterfallUseNFForAGCRX2.TabIndex = 95;
-            this.chkWaterfallUseNFForAGCRX2.Text = "Noise Floor Compensation";
-            this.toolTip1.SetToolTip(this.chkWaterfallUseNFForAGCRX2, "Use the noise floor to control the AGC Low Level");
-            this.chkWaterfallUseNFForAGCRX2.UseVisualStyleBackColor = true;
-            this.chkWaterfallUseNFForAGCRX2.CheckedChanged += new System.EventHandler(this.chkWaterfallUseNFForAGCRX2_CheckedChanged);
-            // 
-            // lblWaterfallAGCOffsetRX2
-            // 
-            this.lblWaterfallAGCOffsetRX2.Image = null;
-            this.lblWaterfallAGCOffsetRX2.Location = new System.Drawing.Point(8, 69);
-            this.lblWaterfallAGCOffsetRX2.Name = "lblWaterfallAGCOffsetRX2";
-            this.lblWaterfallAGCOffsetRX2.Size = new System.Drawing.Size(64, 16);
-            this.lblWaterfallAGCOffsetRX2.TabIndex = 94;
-            this.lblWaterfallAGCOffsetRX2.Text = "AGC Offset";
-            // 
-            // udWaterfallAGCOffsetRX2
-            // 
-            this.udWaterfallAGCOffsetRX2.DecimalPlaces = 1;
-            this.udWaterfallAGCOffsetRX2.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.udWaterfallAGCOffsetRX2.Location = new System.Drawing.Point(72, 68);
-            this.udWaterfallAGCOffsetRX2.Maximum = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-            this.udWaterfallAGCOffsetRX2.Minimum = new decimal(new int[] {
-            60,
-            0,
-            0,
-            -2147483648});
-            this.udWaterfallAGCOffsetRX2.Name = "udWaterfallAGCOffsetRX2";
-            this.udWaterfallAGCOffsetRX2.Size = new System.Drawing.Size(48, 20);
-            this.udWaterfallAGCOffsetRX2.TabIndex = 93;
-            this.udWaterfallAGCOffsetRX2.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udWaterfallAGCOffsetRX2, "Apply dBm offset if using AGC");
-            this.udWaterfallAGCOffsetRX2.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udWaterfallAGCOffsetRX2.ValueChanged += new System.EventHandler(this.udWaterfallAGCOffsetRX2_ValueChanged);
-            // 
-            // labelTS92
-            // 
-            this.labelTS92.AutoSize = true;
-            this.labelTS92.Image = null;
-            this.labelTS92.Location = new System.Drawing.Point(38, 182);
-            this.labelTS92.Name = "labelTS92";
-            this.labelTS92.Size = new System.Drawing.Size(46, 13);
-            this.labelTS92.TabIndex = 90;
-            this.labelTS92.Text = "Opacity:";
-            // 
-            // tbRX2WaterfallOpacity
-            // 
-            this.tbRX2WaterfallOpacity.AutoSize = false;
-            this.tbRX2WaterfallOpacity.Location = new System.Drawing.Point(89, 182);
-            this.tbRX2WaterfallOpacity.Maximum = 100;
-            this.tbRX2WaterfallOpacity.Name = "tbRX2WaterfallOpacity";
-            this.tbRX2WaterfallOpacity.Size = new System.Drawing.Size(160, 18);
-            this.tbRX2WaterfallOpacity.TabIndex = 91;
-            this.tbRX2WaterfallOpacity.TickFrequency = 10;
-            this.tbRX2WaterfallOpacity.Value = 100;
-            this.tbRX2WaterfallOpacity.Scroll += new System.EventHandler(this.tbRX2WaterfallOpacity_Scroll);
-            // 
-            // labelTS520
-            // 
-            this.labelTS520.AutoSize = true;
-            this.labelTS520.Image = null;
-            this.labelTS520.Location = new System.Drawing.Point(148, 124);
-            this.labelTS520.Name = "labelTS520";
-            this.labelTS520.Size = new System.Drawing.Size(33, 13);
-            this.labelTS520.TabIndex = 85;
-            this.labelTS520.Text = "frame";
-            // 
-            // lblRX2WaterFallCalulatedDelayMS
-            // 
-            this.lblRX2WaterFallCalulatedDelayMS.AutoSize = true;
-            this.lblRX2WaterFallCalulatedDelayMS.Image = null;
-            this.lblRX2WaterFallCalulatedDelayMS.Location = new System.Drawing.Point(187, 124);
-            this.lblRX2WaterFallCalulatedDelayMS.Name = "lblRX2WaterFallCalulatedDelayMS";
-            this.lblRX2WaterFallCalulatedDelayMS.Size = new System.Drawing.Size(44, 13);
-            this.lblRX2WaterFallCalulatedDelayMS.TabIndex = 84;
-            this.lblRX2WaterFallCalulatedDelayMS.Text = "0.00 ms";
-            // 
-            // chkWaterfallUseRX2SpectrumMinMax
-            // 
-            this.chkWaterfallUseRX2SpectrumMinMax.AutoSize = true;
-            this.chkWaterfallUseRX2SpectrumMinMax.Image = null;
-            this.chkWaterfallUseRX2SpectrumMinMax.Location = new System.Drawing.Point(139, 70);
-            this.chkWaterfallUseRX2SpectrumMinMax.Name = "chkWaterfallUseRX2SpectrumMinMax";
-            this.chkWaterfallUseRX2SpectrumMinMax.Size = new System.Drawing.Size(118, 17);
-            this.chkWaterfallUseRX2SpectrumMinMax.TabIndex = 83;
-            this.chkWaterfallUseRX2SpectrumMinMax.Text = "Use Spec Min/Max";
-            this.toolTip1.SetToolTip(this.chkWaterfallUseRX2SpectrumMinMax, "Spectrum Grid min/max used for low and high level");
-            this.chkWaterfallUseRX2SpectrumMinMax.UseVisualStyleBackColor = true;
-            this.chkWaterfallUseRX2SpectrumMinMax.CheckedChanged += new System.EventHandler(this.chkWaterfallUseRX2SpectrumMinMax_CheckedChanged);
-            // 
-            // clrbtnRX2WaterfallMid
-            // 
-            this.clrbtnRX2WaterfallMid.Automatic = "Automatic";
-            this.clrbtnRX2WaterfallMid.Color = System.Drawing.Color.Transparent;
-            this.clrbtnRX2WaterfallMid.Image = null;
-            this.clrbtnRX2WaterfallMid.Location = new System.Drawing.Point(86, 207);
-            this.clrbtnRX2WaterfallMid.MoreColors = "More Colors...";
-            this.clrbtnRX2WaterfallMid.Name = "clrbtnRX2WaterfallMid";
-            this.clrbtnRX2WaterfallMid.Selectable = true;
-            this.clrbtnRX2WaterfallMid.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnRX2WaterfallMid.TabIndex = 78;
-            this.toolTip1.SetToolTip(this.clrbtnRX2WaterfallMid, "The mid color used when the signal level is exactly between the low and high leve" +
-        "ls shown above.  A gradient is used if it is not eactly in the middle.");
-            this.clrbtnRX2WaterfallMid.Changed += new System.EventHandler(this.clrbtnRX2WaterfallMid_Changed);
-            // 
-            // chkRX2WaterfallAGC
-            // 
-            this.chkRX2WaterfallAGC.AutoSize = true;
-            this.chkRX2WaterfallAGC.Checked = true;
-            this.chkRX2WaterfallAGC.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRX2WaterfallAGC.Image = null;
-            this.chkRX2WaterfallAGC.Location = new System.Drawing.Point(139, 47);
-            this.chkRX2WaterfallAGC.Name = "chkRX2WaterfallAGC";
-            this.chkRX2WaterfallAGC.Size = new System.Drawing.Size(93, 17);
-            this.chkRX2WaterfallAGC.TabIndex = 82;
-            this.chkRX2WaterfallAGC.Text = "Waterfall AGC";
-            this.toolTip1.SetToolTip(this.chkRX2WaterfallAGC, "Automatically calculates Low Level Threshold for Waterfall.");
-            this.chkRX2WaterfallAGC.UseVisualStyleBackColor = true;
-            this.chkRX2WaterfallAGC.CheckedChanged += new System.EventHandler(this.chkRX2WaterfallAGC_CheckedChanged);
-            // 
-            // clrbtnRX2WaterfallHigh
-            // 
-            this.clrbtnRX2WaterfallHigh.Automatic = "Automatic";
-            this.clrbtnRX2WaterfallHigh.Color = System.Drawing.Color.Transparent;
-            this.clrbtnRX2WaterfallHigh.Image = null;
-            this.clrbtnRX2WaterfallHigh.Location = new System.Drawing.Point(206, 207);
-            this.clrbtnRX2WaterfallHigh.MoreColors = "More Colors...";
-            this.clrbtnRX2WaterfallHigh.Name = "clrbtnRX2WaterfallHigh";
-            this.clrbtnRX2WaterfallHigh.Selectable = true;
-            this.clrbtnRX2WaterfallHigh.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnRX2WaterfallHigh.TabIndex = 77;
-            this.toolTip1.SetToolTip(this.clrbtnRX2WaterfallHigh, "The color to display when the signal level is at or above the high level shown ab" +
-        "ove.");
-            this.clrbtnRX2WaterfallHigh.Changed += new System.EventHandler(this.clrbtnRX2WaterfallHigh_Changed);
-            // 
-            // lblRX2WaterfallLevels
-            // 
-            this.lblRX2WaterfallLevels.AutoSize = true;
-            this.lblRX2WaterfallLevels.Location = new System.Drawing.Point(8, 159);
-            this.lblRX2WaterfallLevels.Name = "lblRX2WaterfallLevels";
-            this.lblRX2WaterfallLevels.Size = new System.Drawing.Size(134, 13);
-            this.lblRX2WaterfallLevels.TabIndex = 80;
-            this.lblRX2WaterfallLevels.Text = "Band for Low/High Levels:";
-            this.toolTip1.SetToolTip(this.lblRX2WaterfallLevels, "Waterfall Low/High levels can be set by band.  RX2 bands inherit RX1 band\'s Water" +
-        "fall Settings.");
-            // 
-            // lblRX2DisplayWaterfallMidColor
-            // 
-            this.lblRX2DisplayWaterfallMidColor.Image = null;
-            this.lblRX2DisplayWaterfallMidColor.Location = new System.Drawing.Point(26, 212);
-            this.lblRX2DisplayWaterfallMidColor.Name = "lblRX2DisplayWaterfallMidColor";
-            this.lblRX2DisplayWaterfallMidColor.Size = new System.Drawing.Size(64, 16);
-            this.lblRX2DisplayWaterfallMidColor.TabIndex = 76;
-            this.lblRX2DisplayWaterfallMidColor.Text = "Mid Color:";
-            // 
-            // txtRX2WaterFallBandLevel
-            // 
-            this.txtRX2WaterFallBandLevel.Location = new System.Drawing.Point(155, 156);
-            this.txtRX2WaterFallBandLevel.Name = "txtRX2WaterFallBandLevel";
-            this.txtRX2WaterFallBandLevel.ReadOnly = true;
-            this.txtRX2WaterFallBandLevel.Size = new System.Drawing.Size(94, 20);
-            this.txtRX2WaterFallBandLevel.TabIndex = 79;
-            this.txtRX2WaterFallBandLevel.Text = "Current Band";
-            this.toolTip1.SetToolTip(this.txtRX2WaterFallBandLevel, "Current RX1 band selected for setting Waterfall Low/High level settings");
-            // 
-            // lblRX2DisplayWaterfallHighColor
-            // 
-            this.lblRX2DisplayWaterfallHighColor.Image = null;
-            this.lblRX2DisplayWaterfallHighColor.Location = new System.Drawing.Point(136, 212);
-            this.lblRX2DisplayWaterfallHighColor.Name = "lblRX2DisplayWaterfallHighColor";
-            this.lblRX2DisplayWaterfallHighColor.Size = new System.Drawing.Size(64, 16);
-            this.lblRX2DisplayWaterfallHighColor.TabIndex = 75;
-            this.lblRX2DisplayWaterfallHighColor.Text = "High Color:";
-            // 
-            // comboRX2ColorPalette
-            // 
-            this.comboRX2ColorPalette.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboRX2ColorPalette.DropDownWidth = 48;
-            this.comboRX2ColorPalette.Items.AddRange(new object[] {
-            "Enhanced",
-            "Spectran",
-            "BlackWhite",
-            "LinLog",
-            "LinRad",
-            "LinAuto"});
-            this.comboRX2ColorPalette.Location = new System.Drawing.Point(54, 95);
-            this.comboRX2ColorPalette.Name = "comboRX2ColorPalette";
-            this.comboRX2ColorPalette.Size = new System.Drawing.Size(72, 21);
-            this.comboRX2ColorPalette.TabIndex = 74;
-            this.toolTip1.SetToolTip(this.comboRX2ColorPalette, "Sets the color sheme");
-            this.comboRX2ColorPalette.SelectedIndexChanged += new System.EventHandler(this.comboRX2ColorPalette_SelectedIndexChanged);
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(8, 98);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(40, 13);
-            this.label21.TabIndex = 73;
-            this.label21.Text = "Palette";
-            this.toolTip1.SetToolTip(this.label21, "Color sheme");
-            // 
-            // udRX2DisplayWaterfallUpdatePeriod
-            // 
-            this.udRX2DisplayWaterfallUpdatePeriod.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udRX2DisplayWaterfallUpdatePeriod.Location = new System.Drawing.Point(94, 122);
-            this.udRX2DisplayWaterfallUpdatePeriod.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.udRX2DisplayWaterfallUpdatePeriod.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udRX2DisplayWaterfallUpdatePeriod.Name = "udRX2DisplayWaterfallUpdatePeriod";
-            this.udRX2DisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(48, 20);
-            this.udRX2DisplayWaterfallUpdatePeriod.TabIndex = 71;
-            this.udRX2DisplayWaterfallUpdatePeriod.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udRX2DisplayWaterfallUpdatePeriod, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
-        "hat this is tamed by the FPS setting.");
-            this.udRX2DisplayWaterfallUpdatePeriod.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.udRX2DisplayWaterfallUpdatePeriod.ValueChanged += new System.EventHandler(this.udRX2DisplayWaterfallUpdatePeriod_ValueChanged);
-            // 
-            // lblRX2DisplayWaterfallUpdatePeriod
-            // 
-            this.lblRX2DisplayWaterfallUpdatePeriod.Image = null;
-            this.lblRX2DisplayWaterfallUpdatePeriod.Location = new System.Drawing.Point(8, 124);
-            this.lblRX2DisplayWaterfallUpdatePeriod.Name = "lblRX2DisplayWaterfallUpdatePeriod";
-            this.lblRX2DisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(80, 20);
-            this.lblRX2DisplayWaterfallUpdatePeriod.TabIndex = 72;
-            this.lblRX2DisplayWaterfallUpdatePeriod.Text = "Update every";
-            this.toolTip1.SetToolTip(this.lblRX2DisplayWaterfallUpdatePeriod, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
-        "hat this is tamed by the FPS setting.");
-            // 
-            // clrbtnRX2WaterfallLow
-            // 
-            this.clrbtnRX2WaterfallLow.Automatic = "Automatic";
-            this.clrbtnRX2WaterfallLow.Color = System.Drawing.Color.Transparent;
-            this.clrbtnRX2WaterfallLow.Image = null;
-            this.clrbtnRX2WaterfallLow.Location = new System.Drawing.Point(200, 16);
-            this.clrbtnRX2WaterfallLow.MoreColors = "More Colors...";
-            this.clrbtnRX2WaterfallLow.Name = "clrbtnRX2WaterfallLow";
-            this.clrbtnRX2WaterfallLow.Selectable = true;
-            this.clrbtnRX2WaterfallLow.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnRX2WaterfallLow.TabIndex = 68;
-            this.toolTip1.SetToolTip(this.clrbtnRX2WaterfallLow, "The Color to use when the signal level is at or below the low level set above.");
-            this.clrbtnRX2WaterfallLow.Changed += new System.EventHandler(this.clrbtnRX2WaterfallLow_Changed);
-            // 
-            // lblRX2DisplayWaterfallLowColor
-            // 
-            this.lblRX2DisplayWaterfallLowColor.Image = null;
-            this.lblRX2DisplayWaterfallLowColor.Location = new System.Drawing.Point(136, 20);
-            this.lblRX2DisplayWaterfallLowColor.Name = "lblRX2DisplayWaterfallLowColor";
-            this.lblRX2DisplayWaterfallLowColor.Size = new System.Drawing.Size(64, 16);
-            this.lblRX2DisplayWaterfallLowColor.TabIndex = 57;
-            this.lblRX2DisplayWaterfallLowColor.Text = "Low Color:";
-            // 
-            // lblRX2DisplayWaterfallLowLevel
-            // 
-            this.lblRX2DisplayWaterfallLowLevel.Image = null;
-            this.lblRX2DisplayWaterfallLowLevel.Location = new System.Drawing.Point(8, 20);
-            this.lblRX2DisplayWaterfallLowLevel.Name = "lblRX2DisplayWaterfallLowLevel";
-            this.lblRX2DisplayWaterfallLowLevel.Size = new System.Drawing.Size(64, 16);
-            this.lblRX2DisplayWaterfallLowLevel.TabIndex = 3;
-            this.lblRX2DisplayWaterfallLowLevel.Text = "Low Level";
-            // 
-            // udRX2DisplayWaterfallLowLevel
-            // 
-            this.udRX2DisplayWaterfallLowLevel.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.udRX2DisplayWaterfallLowLevel.Location = new System.Drawing.Point(72, 16);
-            this.udRX2DisplayWaterfallLowLevel.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.udRX2DisplayWaterfallLowLevel.Minimum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            -2147483648});
-            this.udRX2DisplayWaterfallLowLevel.Name = "udRX2DisplayWaterfallLowLevel";
-            this.udRX2DisplayWaterfallLowLevel.Size = new System.Drawing.Size(48, 20);
-            this.udRX2DisplayWaterfallLowLevel.TabIndex = 2;
-            this.udRX2DisplayWaterfallLowLevel.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udRX2DisplayWaterfallLowLevel, "Waterfall Low Signal - Show Low Color below this value (gradient in between).");
-            this.udRX2DisplayWaterfallLowLevel.Value = new decimal(new int[] {
-            120,
-            0,
-            0,
-            -2147483648});
-            this.udRX2DisplayWaterfallLowLevel.ValueChanged += new System.EventHandler(this.udRX2DisplayWaterfallLowLevel_ValueChanged);
-            // 
-            // lblRX2DisplayWaterfallHighLevel
-            // 
-            this.lblRX2DisplayWaterfallHighLevel.Image = null;
-            this.lblRX2DisplayWaterfallHighLevel.Location = new System.Drawing.Point(8, 43);
-            this.lblRX2DisplayWaterfallHighLevel.Name = "lblRX2DisplayWaterfallHighLevel";
-            this.lblRX2DisplayWaterfallHighLevel.Size = new System.Drawing.Size(64, 16);
-            this.lblRX2DisplayWaterfallHighLevel.TabIndex = 1;
-            this.lblRX2DisplayWaterfallHighLevel.Text = "High Level";
-            // 
-            // udRX2DisplayWaterfallHighLevel
-            // 
-            this.udRX2DisplayWaterfallHighLevel.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.udRX2DisplayWaterfallHighLevel.Location = new System.Drawing.Point(72, 42);
-            this.udRX2DisplayWaterfallHighLevel.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.udRX2DisplayWaterfallHighLevel.Minimum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            -2147483648});
-            this.udRX2DisplayWaterfallHighLevel.Name = "udRX2DisplayWaterfallHighLevel";
-            this.udRX2DisplayWaterfallHighLevel.Size = new System.Drawing.Size(48, 20);
-            this.udRX2DisplayWaterfallHighLevel.TabIndex = 0;
-            this.udRX2DisplayWaterfallHighLevel.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udRX2DisplayWaterfallHighLevel, "Waterfall High Signal - Show High Color above this value (gradient in between).");
-            this.udRX2DisplayWaterfallHighLevel.Value = new decimal(new int[] {
-            80,
-            0,
-            0,
-            -2147483648});
-            this.udRX2DisplayWaterfallHighLevel.ValueChanged += new System.EventHandler(this.udRX2DisplayWaterfallHighLevel_ValueChanged);
             // 
             // grpRX2DisplaySpectrumGrid
             // 
@@ -48645,7 +48575,7 @@
             // 
             // grpMultiMeterHolder
             // 
-            this.grpMultiMeterHolder.Controls.Add(this.chkContainerShow);
+            this.grpMultiMeterHolder.Controls.Add(this.chkContainerEnable);
             this.grpMultiMeterHolder.Controls.Add(this.chkContainerNoTitle);
             this.grpMultiMeterHolder.Controls.Add(this.btnMeterCopySettings);
             this.grpMultiMeterHolder.Controls.Add(this.btnMeterPasteSettings);
@@ -48672,18 +48602,18 @@
             this.grpMultiMeterHolder.TabIndex = 86;
             this.grpMultiMeterHolder.TabStop = false;
             // 
-            // chkContainerShow
+            // chkContainerEnable
             // 
-            this.chkContainerShow.AutoSize = true;
-            this.chkContainerShow.Image = null;
-            this.chkContainerShow.Location = new System.Drawing.Point(159, 99);
-            this.chkContainerShow.Name = "chkContainerShow";
-            this.chkContainerShow.Size = new System.Drawing.Size(53, 17);
-            this.chkContainerShow.TabIndex = 105;
-            this.chkContainerShow.Text = "Show";
-            this.toolTip1.SetToolTip(this.chkContainerShow, "Show the selected container");
-            this.chkContainerShow.UseVisualStyleBackColor = true;
-            this.chkContainerShow.CheckedChanged += new System.EventHandler(this.chkContainerShow_CheckedChanged);
+            this.chkContainerEnable.AutoSize = true;
+            this.chkContainerEnable.Image = null;
+            this.chkContainerEnable.Location = new System.Drawing.Point(159, 99);
+            this.chkContainerEnable.Name = "chkContainerEnable";
+            this.chkContainerEnable.Size = new System.Drawing.Size(65, 17);
+            this.chkContainerEnable.TabIndex = 105;
+            this.chkContainerEnable.Text = "Enabled";
+            this.toolTip1.SetToolTip(this.chkContainerEnable, "Show the selected container");
+            this.chkContainerEnable.UseVisualStyleBackColor = true;
+            this.chkContainerEnable.CheckedChanged += new System.EventHandler(this.chkContainerEnable_CheckedChanged);
             // 
             // chkContainerNoTitle
             // 
@@ -56443,18 +56373,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // chkMICVOXAllowBypass
-            // 
-            this.chkMICVOXAllowBypass.Image = null;
-            this.chkMICVOXAllowBypass.Location = new System.Drawing.Point(249, 224);
-            this.chkMICVOXAllowBypass.Name = "chkMICVOXAllowBypass";
-            this.chkMICVOXAllowBypass.Size = new System.Drawing.Size(271, 16);
-            this.chkMICVOXAllowBypass.TabIndex = 90;
-            this.chkMICVOXAllowBypass.Text = "VOX uses MIC instead of VAC";
-            this.toolTip1.SetToolTip(this.chkMICVOXAllowBypass, "Allows VOX to trigger off the MIC input instead of the VAC input");
-            this.chkMICVOXAllowBypass.UseVisualStyleBackColor = true;
-            this.chkMICVOXAllowBypass.CheckedChanged += new System.EventHandler(this.chkMICVOXAllowBypass_CheckedChanged);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -56934,6 +56852,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayPeakText)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayFPS)).EndInit();
             this.tpDisplayTop.ResumeLayout(false);
+            this.grpDisplayWaterfall.ResumeLayout(false);
+            this.grpDisplayWaterfall.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udWaterfallAGCOffsetRX1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbRX1WaterfallOpacity)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallUpdatePeriod)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallLowLevel)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallHighLevel)).EndInit();
             this.groupBoxTS21.ResumeLayout(false);
             this.groupBoxTS21.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDropRX1)).EndInit();
@@ -56953,21 +56878,7 @@
             this.grpDisplayRX1Pan.ResumeLayout(false);
             this.grpDisplayRX1Pan.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbDisplayFFTSize)).EndInit();
-            this.grpDisplayWaterfall.ResumeLayout(false);
-            this.grpDisplayWaterfall.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udWaterfallAGCOffsetRX1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbRX1WaterfallOpacity)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallUpdatePeriod)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallLowLevel)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallHighLevel)).EndInit();
             this.tpDisplayBottom.ResumeLayout(false);
-            this.groupBoxTS20.ResumeLayout(false);
-            this.groupBoxTS20.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDropRX2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDurationRX2)).EndInit();
-            this.grpRX2DisplayAveraging.ResumeLayout(false);
-            this.grpRX2DisplayAveraging.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayWFAVTime)).EndInit();
             this.grpRX2DisplayWaterfall.ResumeLayout(false);
             this.grpRX2DisplayWaterfall.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udWaterfallAGCOffsetRX2)).EndInit();
@@ -56975,6 +56886,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayWaterfallUpdatePeriod)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayWaterfallLowLevel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayWaterfallHighLevel)).EndInit();
+            this.groupBoxTS20.ResumeLayout(false);
+            this.groupBoxTS20.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDropRX2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udActivePeakHoldDurationRX2)).EndInit();
+            this.grpRX2DisplayAveraging.ResumeLayout(false);
+            this.grpRX2DisplayAveraging.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udRX2DisplayWFAVTime)).EndInit();
             this.grpRX2DisplaySpectrumGrid.ResumeLayout(false);
             this.grpRX2DisplaySpectrumGrid.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudRX2NFoffsetGridFollow)).EndInit();
@@ -58627,10 +58545,6 @@
         private CheckBoxTS chkClickTuneFilter;
         private Label label11;
         private ComboBoxTS comboColorPalette;
-        private ColorButton clrbtnWaterfallMid;
-        private ColorButton clrbtnWaterfallHigh;
-        private LabelTS lblDisplayWaterfallMidColor;
-        private LabelTS lblDisplayWaterfallHighColor;
         private LabelTS lblMetisBoardID;
         private LabelTS labelTS88;
         private LabelTS lblMetisCodeVersion;
@@ -59077,10 +58991,6 @@
         private System.Windows.Forms.GroupBoxTS grpRX2DisplayWaterfall;
         private System.Windows.Forms.Label lblRX2WaterfallLevels;
         private System.Windows.Forms.TextBox txtRX2WaterFallBandLevel;
-        private ColorButton clrbtnRX2WaterfallMid;
-        private ColorButton clrbtnRX2WaterfallHigh;
-        private System.Windows.Forms.LabelTS lblRX2DisplayWaterfallMidColor;
-        private System.Windows.Forms.LabelTS lblRX2DisplayWaterfallHighColor;
         private System.Windows.Forms.ComboBoxTS comboRX2ColorPalette;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.NumericUpDownTS udRX2DisplayWaterfallUpdatePeriod;
@@ -61148,11 +61058,13 @@
         private TextBoxTS txtToTPingIP;
         private ColorButton clrbtnNoiseFloorText;
         private LabelTS labelTS192;
-        private CheckBoxTS chkContainerShow;
+        private CheckBoxTS chkContainerEnable;
         private RadioButtonTS radRadioProtocolAutoSelect;
         private RadioButtonTS radRadioProtocol2Select;
         private RadioButtonTS radRadioProtocol1Select;
         private PanelTS panelTS9;
         private CheckBoxTS chkMICVOXAllowBypass;
+        private CheckBoxTS chkStopRX1WaterfallOnTx;
+        private CheckBoxTS chkStopRX2WaterfallOnTx;
     }
 }

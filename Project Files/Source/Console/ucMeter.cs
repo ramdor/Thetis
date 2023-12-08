@@ -39,7 +39,7 @@ namespace Thetis
             _id = System.Guid.NewGuid().ToString();
             _border = true;
             _noTitleBar = false;
-            _show = true;
+            _enabled = true;
 
             btnFloat.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 
@@ -77,7 +77,7 @@ namespace Thetis
         private string _id;
         private bool _border;
         private bool _noTitleBar;
-        private bool _show;
+        private bool _enabled;
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Console Console
@@ -473,12 +473,12 @@ namespace Thetis
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public bool ShowMeter
+        public bool MeterEnabled
         {
-            get { return _show; }
+            get { return _enabled; }
             set
             {
-                _show = value;                
+                _enabled = value;                
             }
         }
         public bool NoTitle
@@ -585,7 +585,7 @@ namespace Thetis
                 UCBorder.ToString() + "|" +
                 Common.ColourToString(this.BackColor) + "|" +
                 NoTitle.ToString() + "|" +
-                ShowMeter.ToString();
+                MeterEnabled.ToString();
         }
         public bool TryParse(string str)
         {
@@ -595,7 +595,7 @@ namespace Thetis
             bool pinOnTop = false;
             bool border = false;
             bool noTitleBar = false;
-            bool show = true;
+            bool enabled = true;
 
             if (str != "")
             {
@@ -651,8 +651,8 @@ namespace Thetis
 
                     if (bOk && tmp.Length > 14) // we also have the new for [2.10.3.5] the show option
                     {
-                        bOk = bool.TryParse(tmp[14], out show);
-                        if (bOk) ShowMeter = show;
+                        bOk = bool.TryParse(tmp[14], out enabled);
+                        if (bOk) MeterEnabled = enabled;
                     }
                 }
             }
