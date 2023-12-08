@@ -2483,8 +2483,7 @@ namespace Thetis
 
             //OC tab
             chkAllowHotSwitching_CheckedChanged(this, e);
-            chkUsbBCD_CheckedChanged(this, e);
-            comboUsbDevices_SelectedIndexChanged(this, e);
+            chkUsbBCD_CheckedChanged(this, e); //[2.10.3.5]MW0LGE
 
             //PA
             comboPAProfile_SelectedIndexChanged(this, e); //MW0LGE_22b
