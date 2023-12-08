@@ -13561,11 +13561,11 @@ namespace Thetis
             set { allow_mox_bypass = value; }
         }
 
-        private bool allow_micvox_bypass = false;
+        private bool m_allow_micvox_bypass = false;
         public bool AllowMICVOXBypass
         {
-            get { return allow_micvox_bypass; }
-            set { allow_micvox_bypass = value; }
+            get { return m_allow_micvox_bypass; }
+            set { m_allow_micvox_bypass = value; }
         }
 
         public float NewMeterData
@@ -28589,7 +28589,7 @@ namespace Thetis
 
                     if (!_mox)
                     {
-                        Audio.VACBypass = (chkVAC1.Checked && allow_micvox_bypass);
+                        Audio.VACBypass = (chkVAC1.Checked && m_allow_micvox_bypass);
                         if (_tci_ptt)
                         {
                             current_ptt_mode = PTTMode.TCI;
@@ -28669,7 +28669,7 @@ namespace Thetis
                                 }
                                 break;
                             case PTTMode.CAT:
-                                if (chkVAC1.Checked && allow_micvox_bypass)
+                                if (chkVAC1.Checked && m_allow_micvox_bypass)
                                     Audio.VACBypass = false;
                                 if (!cat_ptt_local)
                                 {
@@ -32342,6 +32342,9 @@ namespace Thetis
             
             if (!IsSetupFormNull)
             {
+                Common.LogStringToPath("Before SetupForm.CloseUsbBcdDevice()", AppDataPath, "shutdown_log.txt");
+                SetupForm.CloseUsbBcdDevice();
+
                 Common.LogStringToPath("Before SetupForm.SaveNotchesToDatabase()", AppDataPath, "shutdown_log.txt");
                 SetupForm.SaveNotchesToDatabase();
 
@@ -32458,7 +32461,7 @@ namespace Thetis
                                                                   // this happens on a DB merge etc.
 
             Common.LogStringToPath("Before SetupForm.SaveTXProfileData()", AppDataPath, "shutdown_log.txt");
-            if (SaveTXProfileOnExit)    // save the tx profile
+            if (!IsSetupFormNull && SaveTXProfileOnExit)    // save the tx profile
             {
                 SetupForm.SaveTXProfileData();
             }

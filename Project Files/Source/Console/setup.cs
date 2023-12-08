@@ -1452,6 +1452,9 @@ namespace Thetis
 #endif
             }
 
+            // add this manually because the usbbcd combo box will need this to recover previously selected
+            a.Add("UsbBCDSerialNumber", m_sUsbBCDSerialNumber);
+
             // add this manually because soundfile string not stored in any control in setup
             a.Add("QSOTimerFilenameWav", console.QSOTimerAudioPlayer.SoundFile);
 
@@ -1661,6 +1664,10 @@ namespace Thetis
                             lgLinearGradientRX1.Text = val;
                             //lgPickerRX1.HighlightFirstGripper();
                         }
+                    }
+                    else if (name == "UsbBCDSerialNumber") // [2.10.3.5]MW0LGE recover this as the usbbcd combo box will not have any entries at this point
+                    {
+                        m_sUsbBCDSerialNumber = val;
                     }
                     else if (name == "QSOTimerFilenameWav")
                     {
@@ -2476,6 +2483,7 @@ namespace Thetis
 
             //OC tab
             chkAllowHotSwitching_CheckedChanged(this, e);
+            chkUsbBCD_CheckedChanged(this, e); //[2.10.3.5]MW0LGE
 
             //PA
             comboPAProfile_SelectedIndexChanged(this, e); //MW0LGE_22b
@@ -27859,71 +27867,200 @@ namespace Thetis
         #endregion
 
         #region USB/BCD Cable
-        UsbBCDDevices _usbbcddevices;
-        private bool usbBCD = false;
+        //[2.10.3.5]MW0LGE re-write, fixes #222
+        private UsbBCDDevices m_usbbcddevices;
+        private bool m_bUsbBCD = false;
+        private string m_sUsbBCDSerialNumber = "";
+        private bool m_bUsbBCDdeviceOpen = false;
         public bool UsbBCD
         {
-            get { return usbBCD; }
-            set { usbBCD = value; }
+            get { return m_bUsbBCD; }
+            set { m_bUsbBCD = value; }
         }
-
         public void UpdateUsbBCDdevice(Band rx1band)
         {
-            if(usbBCD) 
-            _usbbcddevices.SetBCDbyBand(_usbdevicesn, rx1band);
+            if (m_bUsbBCD && m_sUsbBCDSerialNumber != "" && m_bUsbBCDdeviceOpen)
+                m_usbbcddevices.SetBCDbyBand(m_sUsbBCDSerialNumber, rx1band);
         }
-        private string _usbdevicesn;
         private void chkUsbBCD_CheckedChanged(object sender, EventArgs e)
         {
-            UsbBCD = chkUsbBCD.Checked;
-            comboUsbDevices.Enabled = UsbBCD;
+            if (initializing) return;
+            m_bUsbBCD = chkUsbBCD.Checked;
+            comboUsbDevices.Enabled = m_bUsbBCD;
 
-            if (usbBCD)
+            if (!m_bUsbBCD)
             {
-                if (_usbbcddevices == null)
-                {
-                    _usbbcddevices = new UsbBCDDevices();
+                // close current
+                CloseUsbBcdDevice();
 
-                    if (_usbbcddevices.HasDevices)
+                // clear all
+                comboUsbDevices.Items.Clear();
+                m_sUsbBCDSerialNumber = "";
+                m_usbbcddevices = null;
+
+                return;
+            }
+
+            if (m_bUsbBCD)
+            {
+                if (m_usbbcddevices == null)
+                {
+                    comboUsbDevices.Items.Clear(); // not needed  but belts/braces
+                    try
                     {
-                        foreach (string device in _usbbcddevices.DeviceSerialNumbers)
+                        m_usbbcddevices = new UsbBCDDevices();
+
+                        foreach (string s in m_usbbcddevices.DeviceSerialNumbers)
                         {
-                            _usbbcddevices.OpenDevice(device);
+                            comboUsbDevices.Items.Add(s);
                         }
+
+                        if (comboUsbDevices.Items.Contains(m_sUsbBCDSerialNumber))
+                            comboUsbDevices.SelectedIndex = comboUsbDevices.Items.IndexOf(m_sUsbBCDSerialNumber);
                     }
-                    else
+                    catch
                     {
                         chkUsbBCD.Checked = false;
                         return;
                     }
                 }
-
-                comboUsbDevices.DataSource = _usbbcddevices.DeviceSerialNumbers;
-                comboUsbDevices.SelectedIndex = 0;
-
-                _usbdevicesn = comboUsbDevices.Text;
-                if (_usbdevicesn == "")
-                {
-                    return;
-                }
-
-                byte values = _usbbcddevices.GetRelays(_usbdevicesn);
-                //_usbbcddevices.SetRelays(sn, values);
-                _usbbcddevices.SetBCDbyBand(_usbdevicesn, console.RX1Band);
-
-            }
-            else
-            {
-                if (_usbbcddevices != null)
-                {
-                    if (_usbbcddevices.HasDevices) _usbbcddevices.SetRelays(_usbdevicesn, 0);                   
-                    _usbbcddevices.CloseDevice(_usbdevicesn);
-                    _usbbcddevices = null;
-                    _usbdevicesn = "";
-                    comboUsbDevices.Text = "";
-                }              
             }
         }
+        public void CloseUsbBcdDevice()
+        {
+            if (m_usbbcddevices != null && m_sUsbBCDSerialNumber != "" && m_bUsbBCDdeviceOpen)
+            {
+                bool bOk = true;
+                try
+                {
+                    m_usbbcddevices.SetRelays(m_sUsbBCDSerialNumber, 0);
+                }
+                catch { bOk = false; }
+                if (bOk)
+                {
+                    try
+                    {
+                        m_usbbcddevices.CloseDevice(m_sUsbBCDSerialNumber);
+                    }
+                    catch { }
+                }
+            }
+            m_bUsbBCDdeviceOpen = false;
+        }
+        private void comboUsbDevices_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (m_usbbcddevices == null) return;
+
+            if (m_bUsbBCDdeviceOpen && comboUsbDevices.Text != m_sUsbBCDSerialNumber)
+            {
+                // a device is open, but the one we now want is different, close current
+                CloseUsbBcdDevice();
+            }
+
+            m_sUsbBCDSerialNumber = comboUsbDevices.Text;
+
+            if (m_sUsbBCDSerialNumber != "")
+            {
+                bool bOk = true;
+
+                if (!m_bUsbBCDdeviceOpen)
+                {
+                    try
+                    {
+                        m_usbbcddevices.OpenDevice(m_sUsbBCDSerialNumber);
+                        m_bUsbBCDdeviceOpen = true;
+                    }
+                    catch { bOk = false; }
+                }
+
+                if (bOk && m_bUsbBCDdeviceOpen)
+                {
+                    try
+                    {
+                        byte values = m_usbbcddevices.GetRelays(m_sUsbBCDSerialNumber);
+                    }
+                    catch { bOk = false; }
+
+                    try
+                    {
+                        m_usbbcddevices.SetBCDbyBand(m_sUsbBCDSerialNumber, console.RX1Band);
+                    }
+                    catch { bOk = false; }
+                }
+
+                if (!bOk)
+                {
+                    chkUsbBCD.Checked = false;
+                    return;
+                }
+            }
+        }
+        //UsbBCDDevices _usbbcddevices;
+        //private bool usbBCD = false;
+        //public bool UsbBCD
+        //{
+        //    get { return usbBCD; }
+        //    set { usbBCD = value; }
+        //}
+
+        //public void UpdateUsbBCDdevice(Band rx1band)
+        //{
+        //    if(usbBCD) 
+        //    _usbbcddevices.SetBCDbyBand(_usbdevicesn, rx1band);
+        //}
+        //private string _usbdevicesn;
+        //private void chkUsbBCD_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    UsbBCD = chkUsbBCD.Checked;
+        //    comboUsbDevices.Enabled = UsbBCD;
+
+        //    if (usbBCD)
+        //    {
+        //        if (_usbbcddevices == null)
+        //        {
+        //            _usbbcddevices = new UsbBCDDevices();
+
+        //            if (_usbbcddevices.HasDevices)
+        //            {
+        //                foreach (string device in _usbbcddevices.DeviceSerialNumbers)
+        //                {
+        //                    _usbbcddevices.OpenDevice(device);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                chkUsbBCD.Checked = false;
+        //                return;
+        //            }
+        //        }
+
+        //        comboUsbDevices.DataSource = _usbbcddevices.DeviceSerialNumbers;
+        //        comboUsbDevices.SelectedIndex = 0;
+
+        //        _usbdevicesn = comboUsbDevices.Text;
+        //        if (_usbdevicesn == "")
+        //        {
+        //            return;
+        //        }
+
+        //        byte values = _usbbcddevices.GetRelays(_usbdevicesn);
+        //        //_usbbcddevices.SetRelays(sn, values);
+        //        _usbbcddevices.SetBCDbyBand(_usbdevicesn, console.RX1Band);
+
+        //    }
+        //    else
+        //    {
+        //        if (_usbbcddevices != null)
+        //        {
+        //            if (_usbbcddevices.HasDevices) _usbbcddevices.SetRelays(_usbdevicesn, 0);                   
+        //            _usbbcddevices.CloseDevice(_usbdevicesn);
+        //            _usbbcddevices = null;
+        //            _usbdevicesn = "";
+        //            comboUsbDevices.Text = "";
+        //        }              
+        //    }
+        //}
         #endregion
 
         private bool _timerCheckingTXProfile = false; //[2.10.3.5]MW0LGE used to bypass changed events caused
