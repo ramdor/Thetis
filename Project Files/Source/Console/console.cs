@@ -13561,7 +13561,6 @@ namespace Thetis
             set { allow_mox_bypass = value; }
         }
 
-        private bool allow_micvox_bypass = false;
         private bool m_allow_micvox_bypass = false;
         public bool AllowMICVOXBypass
         {
