@@ -7,7 +7,7 @@ If you use CW and you have different RX and TX antenna ports configured, there i
 
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
-## v2.10.3.5 WIP Change Log
+## v2.10.3.5 Pre-Release Change Log
 - [add] midi device DJ2GO2 Touch MIDI is now handled uniquely, and main sliders will have values reversed
 - [add] mox/ptt time out timer functionality in Options2 tab
 - [add] amp view will restore size if set to 'show on startup'
@@ -31,7 +31,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] wav file recording volume is normalised to ignore RX AF. Note: when muted/0vol recording is 'silent'
 - [change] finder will now gather info using multiple threads at a time. Some users were reporting startup time delay
 - [change] skinserver now attempts to select skin when downloaded and shows 'wait' mouse pointer whilst changing
-- [change] sql reworked to fix collapsed view analogue slider issues. Will require you to setup your sql levels again
+- [change] sql reworked to fix collapsed view analogue slider issues. Will require you to setup your sql/vsql levels again
 - [change] protocol tri state checkbox changed over to 3 radio buttons, one to select each protocol, and one to select auto
 
 ## v2.10.3.4 Change Log
