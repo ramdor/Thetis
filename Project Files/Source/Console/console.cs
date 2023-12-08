@@ -13561,6 +13561,13 @@ namespace Thetis
             set { allow_mox_bypass = value; }
         }
 
+        private bool allow_micvox_bypass = false;
+        public bool AllowMICVOXBypass
+        {
+            get { return allow_micvox_bypass; }
+            set { allow_micvox_bypass = value; }
+        }
+
         public float NewMeterData
         {
             get { return new_meter_data; }
@@ -28582,6 +28589,7 @@ namespace Thetis
 
                     if (!_mox)
                     {
+                        Audio.VACBypass = (chkVAC1.Checked && allow_micvox_bypass);
                         if (_tci_ptt)
                         {
                             current_ptt_mode = PTTMode.TCI;
@@ -28661,6 +28669,8 @@ namespace Thetis
                                 }
                                 break;
                             case PTTMode.CAT:
+                                if (chkVAC1.Checked && allow_micvox_bypass)
+                                    Audio.VACBypass = false;
                                 if (!cat_ptt_local)
                                 {
                                     chkMOX.Checked = false;
