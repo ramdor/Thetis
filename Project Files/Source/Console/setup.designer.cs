@@ -11949,6 +11949,7 @@
             this.comboUsbDevices.Name = "comboUsbDevices";
             this.comboUsbDevices.Size = new System.Drawing.Size(124, 21);
             this.comboUsbDevices.TabIndex = 13;
+            this.comboUsbDevices.SelectedIndexChanged += new System.EventHandler(this.comboUsbDevices_SelectedIndexChanged);
             // 
             // chkUsbBCD
             // 
