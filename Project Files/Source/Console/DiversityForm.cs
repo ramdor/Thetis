@@ -1732,9 +1732,14 @@ namespace Thetis
         {
             set
             {
+                bool bOldLock = chkLockR.Checked; //[2.10.3.5]MW0LGE fixes #324
+                chkLockR.Checked = false;
+
                 decimal v = Math.Min(value, udR1.Maximum);
                 v = Math.Max(v, udR1.Minimum); //MW0LGE_[2.9.0.7] not really needed as min is 0, belts/braces
                 udR1.Value = v;
+
+                chkLockR.Checked = bOldLock;
             }
             get { return udR1.Value; }      // added 31/3/2018 G8NJJ to allow access by CAT commands
         }
@@ -1743,16 +1748,29 @@ namespace Thetis
         {
             set
             {
+                bool bOldLock = chkLockR.Checked; //[2.10.3.5]MW0LGE fixes #324
+                chkLockR.Checked = false;
+
                 decimal v = Math.Min(value, udR2.Maximum);
                 v = Math.Max(v, udR2.Minimum); //MW0LGE_[2.9.0.7] not really needed as min is 0, belts/braces
                 udR2.Value = v;
+
+                chkLockR.Checked = bOldLock;
             }
             get { return udR2.Value; }      // added 31/3/2018 G8NJJ to allow access by CAT commands
         }
 
         public decimal DiversityPhase
         {
-            set { udFineNull.Value = value; }
+            set 
+            {
+                bool bOldLockAngle = chkLockAngle.Checked; //[2.10.3.5]MW0LGE fixes #324
+                chkLockAngle.Checked = false;
+
+                udFineNull.Value = value;
+
+                chkLockAngle.Checked = bOldLockAngle;
+            }
             get { return udFineNull.Value; }        // added 31/3/2018 G8NJJ to allow access by CAT commands
         }
 
