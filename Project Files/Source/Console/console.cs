@@ -1057,7 +1057,7 @@ namespace Thetis
                 _frmFinder.GatherSearchData(this, toolTip1);
                 _frmFinder.GatherSearchData(SetupForm, SetupForm.ToolTip);
                 _frmFinder.GatherSearchData(EQForm, EQForm.ToolTip);
-                _frmFinder.GatherSearchData(m_frmBandStack2, m_frmBandStack2.ToolTip);
+                _frmFinder.GatherSearchData(BandStack2Form, BandStack2Form.ToolTip);
                 _frmFinder.GatherSearchData(psform, null);
                 _frmFinder.WriteXmlFinderFile(AppDataPath); // note: this will only happen if not already there
                 //
@@ -17299,7 +17299,7 @@ namespace Thetis
             }
         }
 
-        private FRSRegion current_region; // = FRSRegion.US; 
+        private FRSRegion current_region = FRSRegion.FIRST; // = FRSRegion.US; 
         public FRSRegion CurrentRegion
         {
             get { return current_region; }
