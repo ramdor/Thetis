@@ -41,6 +41,8 @@ namespace Thetis
             _noTitleBar = false;
             _enabled = true;
 
+            this.Name = "UCMeter_" + _id;
+
             btnFloat.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 
             _axisLock = Axis.TOPLEFT;

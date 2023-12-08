@@ -26,13 +26,15 @@
 #define MDECAY 0.99f;
 const int numInputBuffs = 12;
 
+int audio_running = 0;
 PORT
 int StartAudioNative()
 {
 	int myrc = 0;
 	int rc;
+	if (audio_running) return;
+	audio_running = 1;
 	HaveSync = 1;
-
 	// make sure we're not already opened
 	if (IOThreadRunning || prn == NULL) 
 	{
@@ -94,6 +96,8 @@ PORT
 void StopAudio() 
 {
 	int rc;
+	if (!audio_running) return;
+	audio_running = 0;
 	printf("stop audio called\n");  fflush(stdout);
 	rc = IOThreadStop();
 	if (rc != 0) 

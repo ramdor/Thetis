@@ -1693,13 +1693,13 @@ namespace Thetis
                 return _meters.ContainsKey(sId);
             }
         }
-        public static void AddMeterContainer(ucMeter ucM)//, bool bEnabled = false)
+        public static void AddMeterContainer(ucMeter ucM, bool bFromRestore = false)
         {
             if (_console == null) return;
 
             lock (_metersLock)
             {
-                bool bEnabled = ucM.Enabled;
+                bool bEnabled = ucM.MeterEnabled;
 
                 ucM.Console = _console;
                 ucM.FloatingDockedClicked += ucMeter_FloatingDockedClicked;
@@ -1711,7 +1711,7 @@ namespace Thetis
                 f.ID = ucM.ID;
 
                 // meter items
-                clsMeter meter = new clsMeter(ucM.RX, "", 1f, 1f);
+                clsMeter meter = new clsMeter(ucM.RX, ucM.Name, 1f, 1f);
                 meter.ID = ucM.ID;
                 meter.Enabled = bEnabled;
 
@@ -1729,7 +1729,7 @@ namespace Thetis
                 // init all the meter info from console
                 initConsoleData(ucM.RX);
 
-                if (bEnabled && ucM.MeterEnabled)
+                if (bEnabled && ucM.MeterEnabled && !bFromRestore) //ignore if we are restoring from db. Meters are shown by FinishSetupAndDisplay() from console in this case
                 {
                     if (ucM.Floating)
                     {
@@ -1986,7 +1986,7 @@ namespace Thetis
                     {
                         if (!MeterExists(ucM.ID))
                         {
-                            AddMeterContainer(ucM);//, false);
+                            AddMeterContainer(ucM, true);
 
                             clsMeter m = MeterFromId(ucM.ID);
 
@@ -1998,7 +1998,7 @@ namespace Thetis
                                 {
                                     KeyValuePair<string, string> md = meterData.First();
 
-                                    clsMeter tmpMeter = new clsMeter(1, ""); // dummy init data, will get replaced by tryparse below
+                                    clsMeter tmpMeter = new clsMeter(1, ucM.Name); // dummy init data, will get replaced by tryparse below
                                     tmpMeter.TryParse(md.Value);
 
                                     // copy to actual meter
@@ -8593,7 +8593,7 @@ namespace Thetis
                 _console = c;
                 _meter = meter;
                 _highlightEdge = false;
-                _enabled = true;
+                _enabled = meter.Enabled;
 
                 //dx
                 _DXBrushes = new Dictionary<System.Drawing.Color, SharpDX.Direct2D1.Brush>();
