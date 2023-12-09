@@ -3526,13 +3526,8 @@ namespace Thetis
             }
             else
             {
-                // MW0LGE [2.10.1.0]
-                // check if the panels have been moved by andromeda into the modeDependentSettingsForm
-                // they will be at 0,0 if they have by function setupModePanels()
-                if (panelModeSpecificPhone.Location.X == 0 && panelModeSpecificPhone.Location.Y == 0)
-                {
-                    moveModeSpecificPanels();
-                }
+                //[2.10.3.5]MW0LGE we are expanded, so ok to move them always
+                moveModeSpecificPanels();
             }
 
             //MW0LGE_21k9d changed to show/hide as it was causing some unexplained
