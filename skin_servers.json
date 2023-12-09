@@ -1,7 +1,7 @@
 {
   "SkinServers": [
     {
-      "SkinServerUrl": "https://grange-lane.co.uk/thetis_skins/default_skins.json",
+      "SkinServerUrl": "https://raw.githubusercontent.com/ramdor/ThetisSkins/main/thetis_skins.json",
       "Description": "Thetis default skins",
       "BypassRootFolderCheck": false
     },    
