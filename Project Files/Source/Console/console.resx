@@ -6135,7 +6135,7 @@
     <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="udRIT.Location" type="System.Drawing.Point, System.Drawing">
-    <value>17, 99</value>
+    <value>19, 99</value>
   </data>
   <data name="udRIT.Size" type="System.Drawing.Size, System.Drawing">
     <value>48, 20</value>
@@ -6366,7 +6366,7 @@
     <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="udXIT.Location" type="System.Drawing.Point, System.Drawing">
-    <value>68, 99</value>
+    <value>70, 99</value>
   </data>
   <data name="udXIT.Size" type="System.Drawing.Size, System.Drawing">
     <value>48, 20</value>
