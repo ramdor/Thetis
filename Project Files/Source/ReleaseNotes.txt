@@ -28,6 +28,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] thin notches would not clear single pixel carriers from waterfall if visual approximation was used
 - [fix] re-write of the usb-bcd code so that only the device in use is opened/closed as equired. Also recovers state at startup
 - [fix] fix issue where if diversity gain/phase locks are on changing band would overwrite the new band with the locked values. Now new band values are applied then locked if needed
+- [fix] menu bar has text size fixed like all other control so size/height does not change with OS text scale. Fixes cut off vfoA/B group box labels
 - [change] wav file recording volume is normalised to ignore RX AF. Note: when muted/0vol recording is 'silent'
 - [change] finder will now gather info using multiple threads at a time. Some users were reporting startup time delay
 - [change] skinserver now attempts to select skin when downloaded and shows 'wait' mouse pointer whilst changing
