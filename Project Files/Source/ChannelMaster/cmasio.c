@@ -29,13 +29,14 @@ bryanr@bometals.com
 
 cmasio cma = { 0 };
 CMASIO pcma = &cma;
+int cmaError = 0;
 
 void create_cmasio()
 {
 	pcma->blocksize = pcm->audio_outsize;
 	int samplerate = pcm->audio_outrate;
 	char* asioDriverName = (char*)calloc(32, sizeof(char));
-	if (getASIODriverString(asioDriverName) != 0) return;
+	if (getASIODriverString(asioDriverName) != 0) { free(asioDriverName); return; }
 	char buf[128];
 	sprintf_s(buf, 128, "Initializing cmASIO with: \nblock size = %d\nsample rate = %d\ndriver name = %s\n\n", pcma->blocksize, samplerate, asioDriverName);
 	OutputDebugStringA(buf);
@@ -70,6 +71,7 @@ void create_cmasio()
 
 		pcma->overFlowsIn = pcma->overFlowsOut = pcma->underFlowsIn = pcma->underFlowsOut = 0;
 	}
+	cmaError = result;
 	free(asioDriverName);
 }
 
@@ -199,6 +201,16 @@ long cm_asioStop()
 	sprintf_s(buf, 128, "asioStop = %d", result);
 	OutputDebugStringA(buf);
 	return result;
+}
+
+PORT
+int getCMAstate()
+{
+	if (cmaError)
+	{
+		return -1;
+	}
+	return (pcm->audioCodecId == ASIO) ? 1 : 0;
 }
 
 PORT
