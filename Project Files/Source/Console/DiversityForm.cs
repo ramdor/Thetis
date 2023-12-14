@@ -74,7 +74,6 @@ namespace Thetis
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.NumericUpDownTS udR;
         private System.Windows.Forms.NumericUpDownTS udAngle;
-        private System.Windows.Forms.Button btnSync;
         private System.Windows.Forms.CheckBox chkEnable;
         private GroupBoxTS panelDivControls;
         private LabelTS labelTS6;
@@ -118,6 +117,7 @@ namespace Thetis
         private CheckBoxTS chkAlwaysOnTop;
         private ToolTip toolTip1;
         private CheckBoxTS chkNoAttLink;
+        private CheckBoxTS chkVFOSync;
         private IContainer components;
 
         public DiversityForm(Console c)
@@ -131,6 +131,8 @@ namespace Thetis
 
             udR1.Maximum = (decimal)m_dGainMulti; //MW0LGE_21f
             udR2.Maximum = (decimal)m_dGainMulti;
+
+            chkVFOSync.Checked = console.VFOSync;
 
             // labelTS2.Visible = false;
             labelTS30.Visible = false;
@@ -191,6 +193,8 @@ namespace Thetis
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.picRadar = new System.Windows.Forms.PictureBox();
             this.panelDivControls = new System.Windows.Forms.GroupBoxTS();
+            this.chkVFOSync = new System.Windows.Forms.CheckBoxTS();
+            this.chkNoAttLink = new System.Windows.Forms.CheckBoxTS();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.chkEnableDiversity = new System.Windows.Forms.CheckBoxTS();
             this.grpRxSource = new System.Windows.Forms.GroupBoxTS();
@@ -215,7 +219,6 @@ namespace Thetis
             this.radioButtonMerc2 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonMerc1 = new System.Windows.Forms.RadioButtonTS();
             this.btnShiftUp45 = new System.Windows.Forms.ButtonTS();
-            this.btnSync = new System.Windows.Forms.Button();
             this.groupBoxTS1 = new System.Windows.Forms.GroupBoxTS();
             this.labelTS41 = new System.Windows.Forms.LabelTS();
             this.labelTS30 = new System.Windows.Forms.LabelTS();
@@ -230,7 +233,6 @@ namespace Thetis
             this.labelTS9 = new System.Windows.Forms.LabelTS();
             this.udAngle0 = new System.Windows.Forms.NumericUpDownTS();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.chkNoAttLink = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.picRadar)).BeginInit();
             this.panelDivControls.SuspendLayout();
             this.grpRxSource.SuspendLayout();
@@ -299,6 +301,7 @@ namespace Thetis
             // panelDivControls
             // 
             this.panelDivControls.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.panelDivControls.Controls.Add(this.chkVFOSync);
             this.panelDivControls.Controls.Add(this.chkNoAttLink);
             this.panelDivControls.Controls.Add(this.chkAlwaysOnTop);
             this.panelDivControls.Controls.Add(this.chkEnableDiversity);
@@ -308,7 +311,6 @@ namespace Thetis
             this.panelDivControls.Controls.Add(this.labelTS6);
             this.panelDivControls.Controls.Add(this.groupBox_refMerc);
             this.panelDivControls.Controls.Add(this.btnShiftUp45);
-            this.panelDivControls.Controls.Add(this.btnSync);
             this.panelDivControls.ImeMode = System.Windows.Forms.ImeMode.AlphaFull;
             this.panelDivControls.Location = new System.Drawing.Point(8, 3);
             this.panelDivControls.Name = "panelDivControls";
@@ -316,6 +318,36 @@ namespace Thetis
             this.panelDivControls.TabIndex = 51;
             this.panelDivControls.TabStop = false;
             this.panelDivControls.Enter += new System.EventHandler(this.panelDivControls_Enter);
+            // 
+            // chkVFOSync
+            // 
+            this.chkVFOSync.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkVFOSync.BackColor = System.Drawing.SystemColors.Control;
+            this.chkVFOSync.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkVFOSync.Image = null;
+            this.chkVFOSync.Location = new System.Drawing.Point(221, 67);
+            this.chkVFOSync.Name = "chkVFOSync";
+            this.chkVFOSync.Size = new System.Drawing.Size(84, 23);
+            this.chkVFOSync.TabIndex = 104;
+            this.chkVFOSync.Text = "VFO Sync";
+            this.chkVFOSync.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.chkVFOSync, "Enable VFO sync");
+            this.chkVFOSync.UseVisualStyleBackColor = false;
+            this.chkVFOSync.CheckedChanged += new System.EventHandler(this.chkVFOSync_CheckedChanged);
+            // 
+            // chkNoAttLink
+            // 
+            this.chkNoAttLink.AutoSize = true;
+            this.chkNoAttLink.Image = null;
+            this.chkNoAttLink.Location = new System.Drawing.Point(230, 96);
+            this.chkNoAttLink.Name = "chkNoAttLink";
+            this.chkNoAttLink.Size = new System.Drawing.Size(83, 17);
+            this.chkNoAttLink.TabIndex = 103;
+            this.chkNoAttLink.Text = "No ATT link";
+            this.toolTip1.SetToolTip(this.chkNoAttLink, "Normally if RX1+RX2 are in use the attenuators will be linked. Select this if you" +
+        " dont want that to happen.");
+            this.chkNoAttLink.UseVisualStyleBackColor = true;
+            this.chkNoAttLink.CheckedChanged += new System.EventHandler(this.chkNoAttLink_CheckedChanged);
             // 
             // chkAlwaysOnTop
             // 
@@ -338,9 +370,9 @@ namespace Thetis
             this.chkEnableDiversity.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkEnableDiversity.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkEnableDiversity.Image = null;
-            this.chkEnableDiversity.Location = new System.Drawing.Point(235, 38);
+            this.chkEnableDiversity.Location = new System.Drawing.Point(221, 38);
             this.chkEnableDiversity.Name = "chkEnableDiversity";
-            this.chkEnableDiversity.Size = new System.Drawing.Size(66, 23);
+            this.chkEnableDiversity.Size = new System.Drawing.Size(84, 23);
             this.chkEnableDiversity.TabIndex = 101;
             this.chkEnableDiversity.Text = "Enabled";
             this.chkEnableDiversity.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -707,16 +739,6 @@ namespace Thetis
             this.btnShiftUp45.UseVisualStyleBackColor = false;
             this.btnShiftUp45.Click += new System.EventHandler(this.btnShiftUp45_Click);
             // 
-            // btnSync
-            // 
-            this.btnSync.Location = new System.Drawing.Point(235, 67);
-            this.btnSync.Name = "btnSync";
-            this.btnSync.Size = new System.Drawing.Size(66, 23);
-            this.btnSync.TabIndex = 47;
-            this.btnSync.Text = "VFO Sync";
-            this.toolTip1.SetToolTip(this.btnSync, "Sync RX2 with RX1");
-            this.btnSync.Click += new System.EventHandler(this.btnSync_Click);
-            // 
             // groupBoxTS1
             // 
             this.groupBoxTS1.Controls.Add(this.labelTS41);
@@ -971,20 +993,6 @@ namespace Thetis
             0});
             this.udAngle0.Visible = false;
             this.udAngle0.ValueChanged += new System.EventHandler(this.udAngle0_ValueChanged);
-            // 
-            // chkNoAttLink
-            // 
-            this.chkNoAttLink.AutoSize = true;
-            this.chkNoAttLink.Image = null;
-            this.chkNoAttLink.Location = new System.Drawing.Point(230, 96);
-            this.chkNoAttLink.Name = "chkNoAttLink";
-            this.chkNoAttLink.Size = new System.Drawing.Size(83, 17);
-            this.chkNoAttLink.TabIndex = 103;
-            this.chkNoAttLink.Text = "No ATT link";
-            this.toolTip1.SetToolTip(this.chkNoAttLink, "Normally if RX1+RX2 are in use the attenuators will be linked. Select this if you" +
-        " dont want that to happen.");
-            this.chkNoAttLink.UseVisualStyleBackColor = true;
-            this.chkNoAttLink.CheckedChanged += new System.EventHandler(this.chkNoAttLink_CheckedChanged);
             // 
             // DiversityForm
             // 
@@ -1355,15 +1363,6 @@ namespace Thetis
             //p = new Point((int)(r * L / 2 * Math.Cos(angle)) + L / 2, -(int)(r * L / 2 * Math.Sin(angle)) + L / 2);
 
             picRadar.Invalidate();
-        }
-
-        private void btnSync_Click(object sender, System.EventArgs e)
-        {
-            console.RX2DSPMode = console.RX1DSPMode;
-            console.RX2Filter = console.RX1Filter;
-            console.RX2PreampMode = console.RX1PreampMode;
-            console.VFOSync = true;
-            console.radio.GetDSPRX(1, 0).Copy(console.radio.GetDSPRX(0, 0));
         }
 
         private void chkEnable_CheckedChanged(object sender, System.EventArgs e)
@@ -2112,5 +2111,35 @@ namespace Thetis
         {
             console.DiversityAttLink = !chkNoAttLink.Checked;
         }
+
+        private void chkVFOSync_CheckedChanged(object sender, EventArgs e)
+        {
+            //note: pointless doing all the rx2 changes as per the commented block below, as everything gets overwritten with the copy anyway
+            console.VFOSync = chkVFOSync.Checked;
+            chkVFOSync.BackColor = chkVFOSync.Checked ? Color.LimeGreen : SystemColors.Control;
+        }
+
+        public bool VFOSync
+        {
+            get { return chkVFOSync.Checked; }
+            set
+            {
+                if (this.InvokeRequired)
+                    this.Invoke((Action)(() => chkVFOSync.Checked = value));
+                else
+                    chkVFOSync.Checked = value;
+
+            }
+        }
+
+        //[2.10.3.5]MW0LGE old code, kept for reference
+        //private void btnSync_Click(object sender, System.EventArgs e)
+        //{
+        //    console.RX2DSPMode = console.RX1DSPMode;
+        //    console.RX2Filter = console.RX1Filter;
+        //    console.RX2PreampMode = console.RX1PreampMode;
+        //    console.VFOSync = true;
+        //    console.radio.GetDSPRX(1, 0).Copy(console.radio.GetDSPRX(0, 0));
+        //}
     }
 }

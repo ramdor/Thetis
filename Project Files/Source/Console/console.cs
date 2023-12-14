@@ -47719,6 +47719,10 @@ namespace Thetis
                 chkVFOSync.BackColor = SystemColors.Control;
                 lblVFOSyncLabel.BackColor = System.Drawing.Color.Transparent;
             }
+
+            if (diversityForm != null) //[2.10.3.5]MW0LGE
+                diversityForm.VFOSync = chkVFOSync.Checked;
+
             AndromedaIndicatorCheck(EIndicatorActions.eINVFOSync, false, chkVFOSync.Checked);
         }
 
