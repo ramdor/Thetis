@@ -168,78 +168,6 @@
   <data name="&gt;&gt;lblPAProfile.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="ptbFilterShift.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbFilterShift.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbFilterShift.Location" type="System.Drawing.Point, System.Drawing">
-    <value>40, 135</value>
-  </data>
-  <data name="ptbFilterShift.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbFilterShift.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbFilterShift.Size" type="System.Drawing.Size, System.Drawing">
-    <value>80, 24</value>
-  </data>
-  <data name="ptbFilterShift.TabIndex" type="System.Int32, mscorlib">
-    <value>108</value>
-  </data>
-  <data name="ptbFilterShift.ToolTip" xml:space="preserve">
-    <value>Shifts the filter up or down the band with the slider.</value>
-  </data>
-  <data name="&gt;&gt;ptbFilterShift.Name" xml:space="preserve">
-    <value>ptbFilterShift</value>
-  </data>
-  <data name="&gt;&gt;ptbFilterShift.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbFilterShift.Parent" xml:space="preserve">
-    <value>panelFilter</value>
-  </data>
-  <data name="&gt;&gt;ptbFilterShift.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="ptbFilterWidth.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbFilterWidth.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbFilterWidth.Location" type="System.Drawing.Point, System.Drawing">
-    <value>50, 105</value>
-  </data>
-  <data name="ptbFilterWidth.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbFilterWidth.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbFilterWidth.Size" type="System.Drawing.Size, System.Drawing">
-    <value>112, 24</value>
-  </data>
-  <data name="ptbFilterWidth.TabIndex" type="System.Int32, mscorlib">
-    <value>114</value>
-  </data>
-  <data name="ptbFilterWidth.ToolTip" xml:space="preserve">
-    <value>Extends/Contracts the filter width with the slider.</value>
-  </data>
-  <data name="&gt;&gt;ptbFilterWidth.Name" xml:space="preserve">
-    <value>ptbFilterWidth</value>
-  </data>
-  <data name="&gt;&gt;ptbFilterWidth.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbFilterWidth.Parent" xml:space="preserve">
-    <value>panelFilter</value>
-  </data>
-  <data name="&gt;&gt;ptbFilterWidth.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <data name="btnFilterShiftReset.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
   </data>
@@ -344,42 +272,6 @@
   </data>
   <data name="&gt;&gt;udFilterLow.ZOrder" xml:space="preserve">
     <value>5</value>
-  </data>
-  <data name="ptbRX2RF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbRX2RF.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbRX2RF.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 24</value>
-  </data>
-  <data name="ptbRX2RF.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbRX2RF.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbRX2RF.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbRX2RF.TabIndex" type="System.Int32, mscorlib">
-    <value>118</value>
-  </data>
-  <data name="ptbRX2RF.ToolTip" xml:space="preserve">
-    <value>AGC Max Gain - Operates similarly to traditional RF Gain. Right click AUTO based on noise floor</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2RF.Name" xml:space="preserve">
-    <value>ptbRX2RF</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2RF.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2RF.Parent" xml:space="preserve">
-    <value>panelRX2RF</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2RF.ZOrder" xml:space="preserve">
-    <value>0</value>
   </data>
   <data name="lblRX2RF.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -1973,42 +1865,6 @@
   </data>
   <data name="&gt;&gt;chkPower.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="ptbCWSpeed.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbCWSpeed.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbCWSpeed.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 22</value>
-  </data>
-  <data name="ptbCWSpeed.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWSpeed.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWSpeed.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbCWSpeed.TabIndex" type="System.Int32, mscorlib">
-    <value>115</value>
-  </data>
-  <data name="ptbCWSpeed.ToolTip" xml:space="preserve">
-    <value>Sets the CW Speed in WPM</value>
-  </data>
-  <data name="&gt;&gt;ptbCWSpeed.Name" xml:space="preserve">
-    <value>ptbCWSpeed</value>
-  </data>
-  <data name="&gt;&gt;ptbCWSpeed.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbCWSpeed.Parent" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;ptbCWSpeed.ZOrder" xml:space="preserve">
-    <value>2</value>
   </data>
   <data name="udCWPitch.Location" type="System.Drawing.Point, System.Drawing">
     <value>281, 140</value>
@@ -6067,462 +5923,6 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
   <data name="&gt;&gt;radBand80.ZOrder" xml:space="preserve">
     <value>13</value>
   </data>
-  <metadata name="ptbDisplayZoom.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="ptbDisplayZoom.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Right</value>
-  </data>
-  <data name="ptbDisplayZoom.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbDisplayZoom.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbDisplayZoom.Location" type="System.Drawing.Point, System.Drawing">
-    <value>335, 271</value>
-  </data>
-  <data name="ptbDisplayZoom.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbDisplayZoom.Size" type="System.Drawing.Size, System.Drawing">
-    <value>160, 24</value>
-  </data>
-  <data name="ptbDisplayZoom.TabIndex" type="System.Int32, mscorlib">
-    <value>63</value>
-  </data>
-  <data name="ptbDisplayZoom.ToolTip" xml:space="preserve">
-    <value>Extends/Contracts the displayed frequency width with the slider.</value>
-  </data>
-  <data name="&gt;&gt;ptbDisplayZoom.Name" xml:space="preserve">
-    <value>ptbDisplayZoom</value>
-  </data>
-  <data name="&gt;&gt;ptbDisplayZoom.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbDisplayZoom.Parent" xml:space="preserve">
-    <value>panelDisplay</value>
-  </data>
-  <data name="&gt;&gt;ptbDisplayZoom.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <metadata name="ptbDisplayPan.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="ptbDisplayPan.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
-  </data>
-  <data name="ptbDisplayPan.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbDisplayPan.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbDisplayPan.Location" type="System.Drawing.Point, System.Drawing">
-    <value>41, 271</value>
-  </data>
-  <data name="ptbDisplayPan.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbDisplayPan.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 24</value>
-  </data>
-  <data name="ptbDisplayPan.TabIndex" type="System.Int32, mscorlib">
-    <value>62</value>
-  </data>
-  <data name="ptbDisplayPan.ToolTip" xml:space="preserve">
-    <value>Shifts the displayed frequency with the slider.</value>
-  </data>
-  <data name="&gt;&gt;ptbDisplayPan.Name" xml:space="preserve">
-    <value>ptbDisplayPan</value>
-  </data>
-  <data name="&gt;&gt;ptbDisplayPan.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbDisplayPan.Parent" xml:space="preserve">
-    <value>panelDisplay</value>
-  </data>
-  <data name="&gt;&gt;ptbDisplayPan.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="ptbPWR.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbPWR.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbPWR.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 202</value>
-  </data>
-  <data name="ptbPWR.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbPWR.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbPWR.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbPWR.TabIndex" type="System.Int32, mscorlib">
-    <value>105</value>
-  </data>
-  <data name="ptbPWR.ToolTip" xml:space="preserve">
-    <value>Transmit Drive - This is a relative value and is not meant to imply watts, unless the PA profile is configured with MAX watts @ 100%</value>
-  </data>
-  <data name="&gt;&gt;ptbPWR.Name" xml:space="preserve">
-    <value>ptbPWR</value>
-  </data>
-  <data name="&gt;&gt;ptbPWR.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbPWR.Parent" xml:space="preserve">
-    <value>panelSoundControls</value>
-  </data>
-  <data name="&gt;&gt;ptbPWR.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="ptbRF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbRF.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbRF.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 158</value>
-  </data>
-  <data name="ptbRF.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbRF.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbRF.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbRF.TabIndex" type="System.Int32, mscorlib">
-    <value>104</value>
-  </data>
-  <data name="ptbRF.ToolTip" xml:space="preserve">
-    <value>AGC Max Gain - Operates similarly to traditional RF Gain. Right click AUTO based on noise floor.</value>
-  </data>
-  <data name="&gt;&gt;ptbRF.Name" xml:space="preserve">
-    <value>ptbRF</value>
-  </data>
-  <data name="&gt;&gt;ptbRF.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbRF.Parent" xml:space="preserve">
-    <value>panelSoundControls</value>
-  </data>
-  <data name="&gt;&gt;ptbRF.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="ptbAF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbAF.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbAF.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 23</value>
-  </data>
-  <data name="ptbAF.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbAF.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbAF.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbAF.TabIndex" type="System.Int32, mscorlib">
-    <value>64</value>
-  </data>
-  <data name="ptbAF.ToolTip" xml:space="preserve">
-    <value>AF Gain - Monitor Volume for RX/TX</value>
-  </data>
-  <data name="&gt;&gt;ptbAF.Name" xml:space="preserve">
-    <value>ptbAF</value>
-  </data>
-  <data name="&gt;&gt;ptbAF.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbAF.Parent" xml:space="preserve">
-    <value>panelSoundControls</value>
-  </data>
-  <data name="&gt;&gt;ptbAF.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="ptbPanMainRX.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbPanMainRX.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbPanMainRX.Location" type="System.Drawing.Point, System.Drawing">
-    <value>40, 19</value>
-  </data>
-  <data name="ptbPanMainRX.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbPanMainRX.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbPanMainRX.Size" type="System.Drawing.Size, System.Drawing">
-    <value>96, 24</value>
-  </data>
-  <data name="ptbPanMainRX.TabIndex" type="System.Int32, mscorlib">
-    <value>116</value>
-  </data>
-  <data name="ptbPanMainRX.ToolTip" xml:space="preserve">
-    <value>Sets the main receiver in the stereo field from Left to Right</value>
-  </data>
-  <data name="&gt;&gt;ptbPanMainRX.Name" xml:space="preserve">
-    <value>ptbPanMainRX</value>
-  </data>
-  <data name="&gt;&gt;ptbPanMainRX.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbPanMainRX.Parent" xml:space="preserve">
-    <value>panelMultiRX</value>
-  </data>
-  <data name="&gt;&gt;ptbPanMainRX.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="ptbPanSubRX.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbPanSubRX.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbPanSubRX.Location" type="System.Drawing.Point, System.Drawing">
-    <value>40, 46</value>
-  </data>
-  <data name="ptbPanSubRX.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbPanSubRX.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbPanSubRX.Size" type="System.Drawing.Size, System.Drawing">
-    <value>96, 24</value>
-  </data>
-  <data name="ptbPanSubRX.TabIndex" type="System.Int32, mscorlib">
-    <value>117</value>
-  </data>
-  <data name="ptbPanSubRX.ToolTip" xml:space="preserve">
-    <value>Sets the Sub receiver in the stereo field from Left to Right</value>
-  </data>
-  <data name="&gt;&gt;ptbPanSubRX.Name" xml:space="preserve">
-    <value>ptbPanSubRX</value>
-  </data>
-  <data name="&gt;&gt;ptbPanSubRX.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbPanSubRX.Parent" xml:space="preserve">
-    <value>panelMultiRX</value>
-  </data>
-  <data name="&gt;&gt;ptbPanSubRX.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="ptbRX2Gain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbRX2Gain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbRX2Gain.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 22</value>
-  </data>
-  <data name="ptbRX2Gain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbRX2Gain.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 79</value>
-  </data>
-  <data name="ptbRX2Gain.TabIndex" type="System.Int32, mscorlib">
-    <value>64</value>
-  </data>
-  <data name="ptbRX2Gain.ToolTip" xml:space="preserve">
-    <value>Audio gain for RX2 main receiver</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2Gain.Name" xml:space="preserve">
-    <value>ptbRX2Gain</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2Gain.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2Gain.Parent" xml:space="preserve">
-    <value>panelRX2Mixer</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2Gain.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="ptbRX2Pan.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbRX2Pan.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbRX2Pan.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 5</value>
-  </data>
-  <data name="ptbRX2Pan.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbRX2Pan.Size" type="System.Drawing.Size, System.Drawing">
-    <value>40, 16</value>
-  </data>
-  <data name="ptbRX2Pan.TabIndex" type="System.Int32, mscorlib">
-    <value>65</value>
-  </data>
-  <data name="ptbRX2Pan.ToolTip" xml:space="preserve">
-    <value>Sets the main RX2 receiver in the stereo field from Left to Right</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2Pan.Name" xml:space="preserve">
-    <value>ptbRX2Pan</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2Pan.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2Pan.Parent" xml:space="preserve">
-    <value>panelRX2Mixer</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2Pan.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="ptbRX0Gain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbRX0Gain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbRX0Gain.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 19</value>
-  </data>
-  <data name="ptbRX0Gain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbRX0Gain.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 52</value>
-  </data>
-  <data name="ptbRX0Gain.TabIndex" type="System.Int32, mscorlib">
-    <value>65</value>
-  </data>
-  <data name="ptbRX0Gain.ToolTip" xml:space="preserve">
-    <value>Audio gain for RX1 main receiver</value>
-  </data>
-  <data name="&gt;&gt;ptbRX0Gain.Name" xml:space="preserve">
-    <value>ptbRX0Gain</value>
-  </data>
-  <data name="&gt;&gt;ptbRX0Gain.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbRX0Gain.Parent" xml:space="preserve">
-    <value>panelMultiRX</value>
-  </data>
-  <data name="&gt;&gt;ptbRX0Gain.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="ptbRX1Gain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbRX1Gain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbRX1Gain.Location" type="System.Drawing.Point, System.Drawing">
-    <value>140, 19</value>
-  </data>
-  <data name="ptbRX1Gain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbRX1Gain.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 52</value>
-  </data>
-  <data name="ptbRX1Gain.TabIndex" type="System.Int32, mscorlib">
-    <value>66</value>
-  </data>
-  <data name="ptbRX1Gain.ToolTip" xml:space="preserve">
-    <value>Audio gain for RX1 sub receiver</value>
-  </data>
-  <data name="&gt;&gt;ptbRX1Gain.Name" xml:space="preserve">
-    <value>ptbRX1Gain</value>
-  </data>
-  <data name="&gt;&gt;ptbRX1Gain.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbRX1Gain.Parent" xml:space="preserve">
-    <value>panelMultiRX</value>
-  </data>
-  <data name="&gt;&gt;ptbRX1Gain.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="ptbVACRXGain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbVACRXGain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbVACRXGain.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 26</value>
-  </data>
-  <data name="ptbVACRXGain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbVACRXGain.Size" type="System.Drawing.Size, System.Drawing">
-    <value>113, 24</value>
-  </data>
-  <data name="ptbVACRXGain.TabIndex" type="System.Int32, mscorlib">
-    <value>64</value>
-  </data>
-  <data name="ptbVACRXGain.ToolTip" xml:space="preserve">
-    <value>Controls the gain applied to the RX audio before it is sent to the third party application.</value>
-  </data>
-  <data name="&gt;&gt;ptbVACRXGain.Name" xml:space="preserve">
-    <value>ptbVACRXGain</value>
-  </data>
-  <data name="&gt;&gt;ptbVACRXGain.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbVACRXGain.Parent" xml:space="preserve">
-    <value>panelModeSpecificDigital</value>
-  </data>
-  <data name="&gt;&gt;ptbVACRXGain.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="ptbVACTXGain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbVACTXGain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbVACTXGain.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 87</value>
-  </data>
-  <data name="ptbVACTXGain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbVACTXGain.Size" type="System.Drawing.Size, System.Drawing">
-    <value>113, 24</value>
-  </data>
-  <data name="ptbVACTXGain.TabIndex" type="System.Int32, mscorlib">
-    <value>65</value>
-  </data>
-  <data name="ptbVACTXGain.ToolTip" xml:space="preserve">
-    <value>Controls the gain on the audio coming from third party applications.</value>
-  </data>
-  <data name="&gt;&gt;ptbVACTXGain.Name" xml:space="preserve">
-    <value>ptbVACTXGain</value>
-  </data>
-  <data name="&gt;&gt;ptbVACTXGain.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbVACTXGain.Parent" xml:space="preserve">
-    <value>panelModeSpecificDigital</value>
-  </data>
-  <data name="&gt;&gt;ptbVACTXGain.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
   <metadata name="radDisplayZoom05.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -7453,78 +6853,6 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
   <data name="&gt;&gt;btnTNFAdd.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="ptbRX2AF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbRX2AF.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbRX2AF.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 112</value>
-  </data>
-  <data name="ptbRX2AF.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbRX2AF.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbRX2AF.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbRX2AF.TabIndex" type="System.Int32, mscorlib">
-    <value>109</value>
-  </data>
-  <data name="ptbRX2AF.ToolTip" xml:space="preserve">
-    <value>AF Gain - Monitor Volume for RX2</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2AF.Name" xml:space="preserve">
-    <value>ptbRX2AF</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2AF.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2AF.Parent" xml:space="preserve">
-    <value>panelSoundControls</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2AF.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="ptbRX1AF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbRX1AF.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbRX1AF.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 69</value>
-  </data>
-  <data name="ptbRX1AF.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbRX1AF.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbRX1AF.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbRX1AF.TabIndex" type="System.Int32, mscorlib">
-    <value>107</value>
-  </data>
-  <data name="ptbRX1AF.ToolTip" xml:space="preserve">
-    <value>AF Gain - Monitor Volume for RX</value>
-  </data>
-  <data name="&gt;&gt;ptbRX1AF.Name" xml:space="preserve">
-    <value>ptbRX1AF</value>
-  </data>
-  <data name="&gt;&gt;ptbRX1AF.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbRX1AF.Parent" xml:space="preserve">
-    <value>panelSoundControls</value>
-  </data>
-  <data name="&gt;&gt;ptbRX1AF.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
   <data name="chkVAC2.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
   </data>
@@ -7728,114 +7056,6 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
   </data>
   <data name="&gt;&gt;chkCWAPFEnabled.ZOrder" xml:space="preserve">
     <value>6</value>
-  </data>
-  <data name="ptbCWAPFGain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbCWAPFGain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbCWAPFGain.Location" type="System.Drawing.Point, System.Drawing">
-    <value>114, 60</value>
-  </data>
-  <data name="ptbCWAPFGain.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWAPFGain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWAPFGain.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbCWAPFGain.TabIndex" type="System.Int32, mscorlib">
-    <value>125</value>
-  </data>
-  <data name="ptbCWAPFGain.ToolTip" xml:space="preserve">
-    <value>Sets the CW APF Gain.</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFGain.Name" xml:space="preserve">
-    <value>ptbCWAPFGain</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFGain.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFGain.Parent" xml:space="preserve">
-    <value>grpCWAPF</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFGain.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.Location" type="System.Drawing.Point, System.Drawing">
-    <value>114, 35</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.TabIndex" type="System.Int32, mscorlib">
-    <value>120</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.ToolTip" xml:space="preserve">
-    <value>Sets the CW APF Bandwidth.</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFBandwidth.Name" xml:space="preserve">
-    <value>ptbCWAPFBandwidth</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFBandwidth.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFBandwidth.Parent" xml:space="preserve">
-    <value>grpCWAPF</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFBandwidth.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="ptbCWAPFFreq.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbCWAPFFreq.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbCWAPFFreq.Location" type="System.Drawing.Point, System.Drawing">
-    <value>114, 10</value>
-  </data>
-  <data name="ptbCWAPFFreq.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWAPFFreq.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWAPFFreq.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbCWAPFFreq.TabIndex" type="System.Int32, mscorlib">
-    <value>119</value>
-  </data>
-  <data name="ptbCWAPFFreq.ToolTip" xml:space="preserve">
-    <value>Sets the CW APF Frequency.</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFFreq.Name" xml:space="preserve">
-    <value>ptbCWAPFFreq</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFFreq.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFFreq.Parent" xml:space="preserve">
-    <value>grpCWAPF</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFFreq.ZOrder" xml:space="preserve">
-    <value>3</value>
   </data>
   <data name="lblBandStack.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -8796,6 +8016,786 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;btnDisplayZTB.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="ptbFilterShift.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbFilterShift.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbFilterShift.Location" type="System.Drawing.Point, System.Drawing">
+    <value>40, 135</value>
+  </data>
+  <data name="ptbFilterShift.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbFilterShift.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbFilterShift.Size" type="System.Drawing.Size, System.Drawing">
+    <value>80, 24</value>
+  </data>
+  <data name="ptbFilterShift.TabIndex" type="System.Int32, mscorlib">
+    <value>108</value>
+  </data>
+  <data name="ptbFilterShift.ToolTip" xml:space="preserve">
+    <value>Shifts the filter up or down the band with the slider.</value>
+  </data>
+  <data name="&gt;&gt;ptbFilterShift.Name" xml:space="preserve">
+    <value>ptbFilterShift</value>
+  </data>
+  <data name="&gt;&gt;ptbFilterShift.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbFilterShift.Parent" xml:space="preserve">
+    <value>panelFilter</value>
+  </data>
+  <data name="&gt;&gt;ptbFilterShift.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="ptbFilterWidth.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbFilterWidth.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbFilterWidth.Location" type="System.Drawing.Point, System.Drawing">
+    <value>50, 105</value>
+  </data>
+  <data name="ptbFilterWidth.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbFilterWidth.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbFilterWidth.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 24</value>
+  </data>
+  <data name="ptbFilterWidth.TabIndex" type="System.Int32, mscorlib">
+    <value>114</value>
+  </data>
+  <data name="ptbFilterWidth.ToolTip" xml:space="preserve">
+    <value>Extends/Contracts the filter width with the slider.</value>
+  </data>
+  <data name="&gt;&gt;ptbFilterWidth.Name" xml:space="preserve">
+    <value>ptbFilterWidth</value>
+  </data>
+  <data name="&gt;&gt;ptbFilterWidth.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbFilterWidth.Parent" xml:space="preserve">
+    <value>panelFilter</value>
+  </data>
+  <data name="&gt;&gt;ptbFilterWidth.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="ptbRX2RF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbRX2RF.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbRX2RF.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 24</value>
+  </data>
+  <data name="ptbRX2RF.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbRX2RF.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbRX2RF.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbRX2RF.TabIndex" type="System.Int32, mscorlib">
+    <value>118</value>
+  </data>
+  <data name="ptbRX2RF.ToolTip" xml:space="preserve">
+    <value>AGC Max Gain - Operates similarly to traditional RF Gain. Right click AUTO based on noise floor</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2RF.Name" xml:space="preserve">
+    <value>ptbRX2RF</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2RF.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2RF.Parent" xml:space="preserve">
+    <value>panelRX2RF</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2RF.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="ptbCWSpeed.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbCWSpeed.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbCWSpeed.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 22</value>
+  </data>
+  <data name="ptbCWSpeed.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWSpeed.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWSpeed.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbCWSpeed.TabIndex" type="System.Int32, mscorlib">
+    <value>115</value>
+  </data>
+  <data name="ptbCWSpeed.ToolTip" xml:space="preserve">
+    <value>Sets the CW Speed in WPM</value>
+  </data>
+  <data name="&gt;&gt;ptbCWSpeed.Name" xml:space="preserve">
+    <value>ptbCWSpeed</value>
+  </data>
+  <data name="&gt;&gt;ptbCWSpeed.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbCWSpeed.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;ptbCWSpeed.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <metadata name="ptbDisplayZoom.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="ptbDisplayZoom.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="ptbDisplayZoom.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbDisplayZoom.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbDisplayZoom.Location" type="System.Drawing.Point, System.Drawing">
+    <value>335, 271</value>
+  </data>
+  <data name="ptbDisplayZoom.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbDisplayZoom.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 24</value>
+  </data>
+  <data name="ptbDisplayZoom.TabIndex" type="System.Int32, mscorlib">
+    <value>63</value>
+  </data>
+  <data name="ptbDisplayZoom.ToolTip" xml:space="preserve">
+    <value>Extends/Contracts the displayed frequency width with the slider.</value>
+  </data>
+  <data name="&gt;&gt;ptbDisplayZoom.Name" xml:space="preserve">
+    <value>ptbDisplayZoom</value>
+  </data>
+  <data name="&gt;&gt;ptbDisplayZoom.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbDisplayZoom.Parent" xml:space="preserve">
+    <value>panelDisplay</value>
+  </data>
+  <data name="&gt;&gt;ptbDisplayZoom.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <metadata name="ptbDisplayPan.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="ptbDisplayPan.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left</value>
+  </data>
+  <data name="ptbDisplayPan.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbDisplayPan.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbDisplayPan.Location" type="System.Drawing.Point, System.Drawing">
+    <value>41, 271</value>
+  </data>
+  <data name="ptbDisplayPan.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbDisplayPan.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 24</value>
+  </data>
+  <data name="ptbDisplayPan.TabIndex" type="System.Int32, mscorlib">
+    <value>62</value>
+  </data>
+  <data name="ptbDisplayPan.ToolTip" xml:space="preserve">
+    <value>Shifts the displayed frequency with the slider.</value>
+  </data>
+  <data name="&gt;&gt;ptbDisplayPan.Name" xml:space="preserve">
+    <value>ptbDisplayPan</value>
+  </data>
+  <data name="&gt;&gt;ptbDisplayPan.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbDisplayPan.Parent" xml:space="preserve">
+    <value>panelDisplay</value>
+  </data>
+  <data name="&gt;&gt;ptbDisplayPan.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="ptbPWR.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbPWR.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbPWR.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 202</value>
+  </data>
+  <data name="ptbPWR.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbPWR.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbPWR.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbPWR.TabIndex" type="System.Int32, mscorlib">
+    <value>105</value>
+  </data>
+  <data name="ptbPWR.ToolTip" xml:space="preserve">
+    <value>Transmit Drive - This is a relative value and is not meant to imply watts, unless the PA profile is configured with MAX watts @ 100%</value>
+  </data>
+  <data name="&gt;&gt;ptbPWR.Name" xml:space="preserve">
+    <value>ptbPWR</value>
+  </data>
+  <data name="&gt;&gt;ptbPWR.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbPWR.Parent" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;ptbPWR.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="ptbRF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbRF.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbRF.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 158</value>
+  </data>
+  <data name="ptbRF.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbRF.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbRF.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbRF.TabIndex" type="System.Int32, mscorlib">
+    <value>104</value>
+  </data>
+  <data name="ptbRF.ToolTip" xml:space="preserve">
+    <value>AGC Max Gain - Operates similarly to traditional RF Gain. Right click AUTO based on noise floor.</value>
+  </data>
+  <data name="&gt;&gt;ptbRF.Name" xml:space="preserve">
+    <value>ptbRF</value>
+  </data>
+  <data name="&gt;&gt;ptbRF.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbRF.Parent" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;ptbRF.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="ptbAF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbAF.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbAF.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 23</value>
+  </data>
+  <data name="ptbAF.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbAF.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbAF.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbAF.TabIndex" type="System.Int32, mscorlib">
+    <value>64</value>
+  </data>
+  <data name="ptbAF.ToolTip" xml:space="preserve">
+    <value>AF Gain - Monitor Volume for RX/TX</value>
+  </data>
+  <data name="&gt;&gt;ptbAF.Name" xml:space="preserve">
+    <value>ptbAF</value>
+  </data>
+  <data name="&gt;&gt;ptbAF.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbAF.Parent" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;ptbAF.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="ptbPanMainRX.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbPanMainRX.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbPanMainRX.Location" type="System.Drawing.Point, System.Drawing">
+    <value>40, 19</value>
+  </data>
+  <data name="ptbPanMainRX.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbPanMainRX.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbPanMainRX.Size" type="System.Drawing.Size, System.Drawing">
+    <value>96, 24</value>
+  </data>
+  <data name="ptbPanMainRX.TabIndex" type="System.Int32, mscorlib">
+    <value>116</value>
+  </data>
+  <data name="ptbPanMainRX.ToolTip" xml:space="preserve">
+    <value>Sets the main receiver in the stereo field from Left to Right</value>
+  </data>
+  <data name="&gt;&gt;ptbPanMainRX.Name" xml:space="preserve">
+    <value>ptbPanMainRX</value>
+  </data>
+  <data name="&gt;&gt;ptbPanMainRX.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbPanMainRX.Parent" xml:space="preserve">
+    <value>panelMultiRX</value>
+  </data>
+  <data name="&gt;&gt;ptbPanMainRX.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="ptbPanSubRX.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbPanSubRX.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbPanSubRX.Location" type="System.Drawing.Point, System.Drawing">
+    <value>40, 46</value>
+  </data>
+  <data name="ptbPanSubRX.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbPanSubRX.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbPanSubRX.Size" type="System.Drawing.Size, System.Drawing">
+    <value>96, 24</value>
+  </data>
+  <data name="ptbPanSubRX.TabIndex" type="System.Int32, mscorlib">
+    <value>117</value>
+  </data>
+  <data name="ptbPanSubRX.ToolTip" xml:space="preserve">
+    <value>Sets the Sub receiver in the stereo field from Left to Right</value>
+  </data>
+  <data name="&gt;&gt;ptbPanSubRX.Name" xml:space="preserve">
+    <value>ptbPanSubRX</value>
+  </data>
+  <data name="&gt;&gt;ptbPanSubRX.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbPanSubRX.Parent" xml:space="preserve">
+    <value>panelMultiRX</value>
+  </data>
+  <data name="&gt;&gt;ptbPanSubRX.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="ptbRX2Gain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbRX2Gain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbRX2Gain.Location" type="System.Drawing.Point, System.Drawing">
+    <value>15, 22</value>
+  </data>
+  <data name="ptbRX2Gain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbRX2Gain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>24, 79</value>
+  </data>
+  <data name="ptbRX2Gain.TabIndex" type="System.Int32, mscorlib">
+    <value>64</value>
+  </data>
+  <data name="ptbRX2Gain.ToolTip" xml:space="preserve">
+    <value>Audio gain for RX2 main receiver</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2Gain.Name" xml:space="preserve">
+    <value>ptbRX2Gain</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2Gain.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2Gain.Parent" xml:space="preserve">
+    <value>panelRX2Mixer</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2Gain.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="ptbRX2Pan.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbRX2Pan.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbRX2Pan.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 5</value>
+  </data>
+  <data name="ptbRX2Pan.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbRX2Pan.Size" type="System.Drawing.Size, System.Drawing">
+    <value>40, 16</value>
+  </data>
+  <data name="ptbRX2Pan.TabIndex" type="System.Int32, mscorlib">
+    <value>65</value>
+  </data>
+  <data name="ptbRX2Pan.ToolTip" xml:space="preserve">
+    <value>Sets the main RX2 receiver in the stereo field from Left to Right</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2Pan.Name" xml:space="preserve">
+    <value>ptbRX2Pan</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2Pan.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2Pan.Parent" xml:space="preserve">
+    <value>panelRX2Mixer</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2Pan.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="ptbRX0Gain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbRX0Gain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbRX0Gain.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 19</value>
+  </data>
+  <data name="ptbRX0Gain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbRX0Gain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>24, 52</value>
+  </data>
+  <data name="ptbRX0Gain.TabIndex" type="System.Int32, mscorlib">
+    <value>65</value>
+  </data>
+  <data name="ptbRX0Gain.ToolTip" xml:space="preserve">
+    <value>Audio gain for RX1 main receiver</value>
+  </data>
+  <data name="&gt;&gt;ptbRX0Gain.Name" xml:space="preserve">
+    <value>ptbRX0Gain</value>
+  </data>
+  <data name="&gt;&gt;ptbRX0Gain.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbRX0Gain.Parent" xml:space="preserve">
+    <value>panelMultiRX</value>
+  </data>
+  <data name="&gt;&gt;ptbRX0Gain.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="ptbRX1Gain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbRX1Gain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbRX1Gain.Location" type="System.Drawing.Point, System.Drawing">
+    <value>140, 19</value>
+  </data>
+  <data name="ptbRX1Gain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbRX1Gain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>24, 52</value>
+  </data>
+  <data name="ptbRX1Gain.TabIndex" type="System.Int32, mscorlib">
+    <value>66</value>
+  </data>
+  <data name="ptbRX1Gain.ToolTip" xml:space="preserve">
+    <value>Audio gain for RX1 sub receiver</value>
+  </data>
+  <data name="&gt;&gt;ptbRX1Gain.Name" xml:space="preserve">
+    <value>ptbRX1Gain</value>
+  </data>
+  <data name="&gt;&gt;ptbRX1Gain.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbRX1Gain.Parent" xml:space="preserve">
+    <value>panelMultiRX</value>
+  </data>
+  <data name="&gt;&gt;ptbRX1Gain.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="ptbVACRXGain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbVACRXGain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbVACRXGain.Location" type="System.Drawing.Point, System.Drawing">
+    <value>15, 26</value>
+  </data>
+  <data name="ptbVACRXGain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbVACRXGain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>113, 24</value>
+  </data>
+  <data name="ptbVACRXGain.TabIndex" type="System.Int32, mscorlib">
+    <value>64</value>
+  </data>
+  <data name="ptbVACRXGain.ToolTip" xml:space="preserve">
+    <value>Controls the gain applied to the RX audio before it is sent to the third party application.</value>
+  </data>
+  <data name="&gt;&gt;ptbVACRXGain.Name" xml:space="preserve">
+    <value>ptbVACRXGain</value>
+  </data>
+  <data name="&gt;&gt;ptbVACRXGain.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbVACRXGain.Parent" xml:space="preserve">
+    <value>panelModeSpecificDigital</value>
+  </data>
+  <data name="&gt;&gt;ptbVACRXGain.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="ptbVACTXGain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbVACTXGain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbVACTXGain.Location" type="System.Drawing.Point, System.Drawing">
+    <value>15, 87</value>
+  </data>
+  <data name="ptbVACTXGain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbVACTXGain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>113, 24</value>
+  </data>
+  <data name="ptbVACTXGain.TabIndex" type="System.Int32, mscorlib">
+    <value>65</value>
+  </data>
+  <data name="ptbVACTXGain.ToolTip" xml:space="preserve">
+    <value>Controls the gain on the audio coming from third party applications.</value>
+  </data>
+  <data name="&gt;&gt;ptbVACTXGain.Name" xml:space="preserve">
+    <value>ptbVACTXGain</value>
+  </data>
+  <data name="&gt;&gt;ptbVACTXGain.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbVACTXGain.Parent" xml:space="preserve">
+    <value>panelModeSpecificDigital</value>
+  </data>
+  <data name="&gt;&gt;ptbVACTXGain.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="ptbRX2AF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbRX2AF.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbRX2AF.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 112</value>
+  </data>
+  <data name="ptbRX2AF.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbRX2AF.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbRX2AF.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbRX2AF.TabIndex" type="System.Int32, mscorlib">
+    <value>109</value>
+  </data>
+  <data name="ptbRX2AF.ToolTip" xml:space="preserve">
+    <value>AF Gain - Monitor Volume for RX2</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2AF.Name" xml:space="preserve">
+    <value>ptbRX2AF</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2AF.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2AF.Parent" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2AF.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="ptbRX1AF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbRX1AF.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbRX1AF.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 69</value>
+  </data>
+  <data name="ptbRX1AF.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbRX1AF.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbRX1AF.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbRX1AF.TabIndex" type="System.Int32, mscorlib">
+    <value>107</value>
+  </data>
+  <data name="ptbRX1AF.ToolTip" xml:space="preserve">
+    <value>AF Gain - Monitor Volume for RX</value>
+  </data>
+  <data name="&gt;&gt;ptbRX1AF.Name" xml:space="preserve">
+    <value>ptbRX1AF</value>
+  </data>
+  <data name="&gt;&gt;ptbRX1AF.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbRX1AF.Parent" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;ptbRX1AF.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="ptbCWAPFGain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbCWAPFGain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbCWAPFGain.Location" type="System.Drawing.Point, System.Drawing">
+    <value>114, 60</value>
+  </data>
+  <data name="ptbCWAPFGain.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWAPFGain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWAPFGain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbCWAPFGain.TabIndex" type="System.Int32, mscorlib">
+    <value>125</value>
+  </data>
+  <data name="ptbCWAPFGain.ToolTip" xml:space="preserve">
+    <value>Sets the CW APF Gain.</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFGain.Name" xml:space="preserve">
+    <value>ptbCWAPFGain</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFGain.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFGain.Parent" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFGain.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.Location" type="System.Drawing.Point, System.Drawing">
+    <value>114, 35</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.TabIndex" type="System.Int32, mscorlib">
+    <value>120</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.ToolTip" xml:space="preserve">
+    <value>Sets the CW APF Bandwidth.</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFBandwidth.Name" xml:space="preserve">
+    <value>ptbCWAPFBandwidth</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFBandwidth.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFBandwidth.Parent" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFBandwidth.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="ptbCWAPFFreq.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbCWAPFFreq.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbCWAPFFreq.Location" type="System.Drawing.Point, System.Drawing">
+    <value>114, 10</value>
+  </data>
+  <data name="ptbCWAPFFreq.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWAPFFreq.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWAPFFreq.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbCWAPFFreq.TabIndex" type="System.Int32, mscorlib">
+    <value>119</value>
+  </data>
+  <data name="ptbCWAPFFreq.ToolTip" xml:space="preserve">
+    <value>Sets the CW APF Frequency.</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFFreq.Name" xml:space="preserve">
+    <value>ptbCWAPFFreq</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFFreq.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFFreq.Parent" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFFreq.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
   <data name="ptbTune.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
   </data>
@@ -8831,30 +8831,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;ptbTune.ZOrder" xml:space="preserve">
     <value>0</value>
-  </data>
-  <data name="picSquelch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="picSquelch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>17, 568</value>
-  </data>
-  <data name="picSquelch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>83, 3</value>
-  </data>
-  <data name="picSquelch.TabIndex" type="System.Int32, mscorlib">
-    <value>73</value>
-  </data>
-  <data name="&gt;&gt;picSquelch.Name" xml:space="preserve">
-    <value>picSquelch</value>
-  </data>
-  <data name="&gt;&gt;picSquelch.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;picSquelch.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;picSquelch.ZOrder" xml:space="preserve">
-    <value>33</value>
   </data>
   <metadata name="timer_clock.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>929, 17</value>
@@ -9719,30 +9695,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
     <value>15</value>
   </data>
-  <data name="picRX2Squelch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="picRX2Squelch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>169, 685</value>
-  </data>
-  <data name="picRX2Squelch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>83, 3</value>
-  </data>
-  <data name="picRX2Squelch.TabIndex" type="System.Int32, mscorlib">
-    <value>137</value>
-  </data>
-  <data name="&gt;&gt;picRX2Squelch.Name" xml:space="preserve">
-    <value>picRX2Squelch</value>
-  </data>
-  <data name="&gt;&gt;picRX2Squelch.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;picRX2Squelch.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;picRX2Squelch.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
   <metadata name="statusStripMain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>1226, 17</value>
   </metadata>
@@ -10025,6 +9977,15 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="toolStripStatusLabel_SeqWarning.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
+  <data name="toolStripStatusLabel_CMstatus.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="toolStripStatusLabel_CMstatus.Size" type="System.Drawing.Size, System.Drawing">
+    <value>16, 15</value>
+  </data>
+  <data name="toolStripStatusLabel_CMstatus.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="toolStripStatusLabelRXAnt.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -10125,7 +10086,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>None</value>
   </data>
   <data name="toolStripStatusLabel_Fill.Size" type="System.Drawing.Size, System.Drawing">
-    <value>204, 15</value>
+    <value>35, 15</value>
   </data>
   <data name="toolStripStatusLabel_N1MMActive.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -11092,39 +11053,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;panelRX2RF.ZOrder" xml:space="preserve">
     <value>9</value>
-  </data>
-  <data name="ptbRX2Squelch.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbRX2Squelch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbRX2Squelch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>160, 665</value>
-  </data>
-  <data name="ptbRX2Squelch.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbRX2Squelch.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbRX2Squelch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbRX2Squelch.TabIndex" type="System.Int32, mscorlib">
-    <value>132</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2Squelch.Name" xml:space="preserve">
-    <value>ptbRX2Squelch</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2Squelch.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2Squelch.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;ptbRX2Squelch.ZOrder" xml:space="preserve">
-    <value>12</value>
   </data>
   <data name="panelRX2DSP.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -16925,39 +16853,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;panelBandVHF.ZOrder" xml:space="preserve">
     <value>43</value>
   </data>
-  <data name="ptbSquelch.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbSquelch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbSquelch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 547</value>
-  </data>
-  <data name="ptbSquelch.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbSquelch.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbSquelch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbSquelch.TabIndex" type="System.Int32, mscorlib">
-    <value>106</value>
-  </data>
-  <data name="&gt;&gt;ptbSquelch.Name" xml:space="preserve">
-    <value>ptbSquelch</value>
-  </data>
-  <data name="&gt;&gt;ptbSquelch.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbSquelch.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;ptbSquelch.ZOrder" xml:space="preserve">
-    <value>39</value>
-  </data>
   <data name="panelModeSpecificFM.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
@@ -17506,6 +17401,120 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;panelAndromedaMisc.ZOrder" xml:space="preserve">
     <value>51</value>
+  </data>
+  <data name="picRX2Squelch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="picRX2Squelch.Location" type="System.Drawing.Point, System.Drawing">
+    <value>169, 685</value>
+  </data>
+  <data name="picRX2Squelch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>83, 3</value>
+  </data>
+  <data name="picRX2Squelch.TabIndex" type="System.Int32, mscorlib">
+    <value>137</value>
+  </data>
+  <data name="&gt;&gt;picRX2Squelch.Name" xml:space="preserve">
+    <value>picRX2Squelch</value>
+  </data>
+  <data name="&gt;&gt;picRX2Squelch.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;picRX2Squelch.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;picRX2Squelch.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="ptbRX2Squelch.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbRX2Squelch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbRX2Squelch.Location" type="System.Drawing.Point, System.Drawing">
+    <value>160, 665</value>
+  </data>
+  <data name="ptbRX2Squelch.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbRX2Squelch.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbRX2Squelch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbRX2Squelch.TabIndex" type="System.Int32, mscorlib">
+    <value>132</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2Squelch.Name" xml:space="preserve">
+    <value>ptbRX2Squelch</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2Squelch.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2Squelch.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;ptbRX2Squelch.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="picSquelch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="picSquelch.Location" type="System.Drawing.Point, System.Drawing">
+    <value>17, 568</value>
+  </data>
+  <data name="picSquelch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>83, 3</value>
+  </data>
+  <data name="picSquelch.TabIndex" type="System.Int32, mscorlib">
+    <value>73</value>
+  </data>
+  <data name="&gt;&gt;picSquelch.Name" xml:space="preserve">
+    <value>picSquelch</value>
+  </data>
+  <data name="&gt;&gt;picSquelch.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;picSquelch.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;picSquelch.ZOrder" xml:space="preserve">
+    <value>33</value>
+  </data>
+  <data name="ptbSquelch.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbSquelch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbSquelch.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 547</value>
+  </data>
+  <data name="ptbSquelch.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbSquelch.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbSquelch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbSquelch.TabIndex" type="System.Int32, mscorlib">
+    <value>106</value>
+  </data>
+  <data name="&gt;&gt;ptbSquelch.Name" xml:space="preserve">
+    <value>ptbSquelch</value>
+  </data>
+  <data name="&gt;&gt;ptbSquelch.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.5, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbSquelch.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;ptbSquelch.ZOrder" xml:space="preserve">
+    <value>39</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -18750,6 +18759,12 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>toolStripStatusLabel_SeqWarning</value>
   </data>
   <data name="&gt;&gt;toolStripStatusLabel_SeqWarning.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel_CMstatus.Name" xml:space="preserve">
+    <value>toolStripStatusLabel_CMstatus</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel_CMstatus.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripStatusLabelRXAnt.Name" xml:space="preserve">

@@ -909,6 +909,10 @@ namespace Thetis
 
             Splash.SetStatus("Initializing Radio");				// Set progress point
             radio = new Radio(AppDataPath);					    // Initialize the Radio processor   INIT_SLOW
+
+            //[2.10.3.5]MW0LGE should now know if cmASIO is in use, setup statusbar
+            setupCMasioStatusBar();
+
             specRX = new SpecRX();
             Display.specready = true;
 
@@ -53662,6 +53666,7 @@ namespace Thetis
             toolStripStatusLabel_Volts.Width = 60;
             toolStripStatusLabel_Amps.Width = 50;
             toolStripStatusLabel_SeqWarning.Width = 18;
+            toolStripStatusLabel_CMstatus.Width = 18;
             toolStripStatusLabelRXAnt.Width = 90;
             toolStripStatusLabelTXAnt.Width = 90;
             toolStripStatusLabelAndromedaMulti.Width = 140;
@@ -56714,6 +56719,32 @@ namespace Thetis
             //_frmFinder.Owner = this;
             _frmFinder.TopMost = true;
             _frmFinder.Show();
+        }
+
+        private void setupCMasioStatusBar()
+        {
+            int state = cmaster.GetCMAstate();
+
+            switch (state)
+            {
+                case 0:
+                    // not in use
+                    toolStripStatusLabel_CMstatus.Visible = false;
+                    break;
+                case 1:
+                    // in use, all ok
+                    toolStripStatusLabel_CMstatus.Image = Properties.Resources.cm_green;
+                    toolStripStatusLabel_CMstatus.ToolTipText = "CM ASIO is in use. The driver being used will not be available to VAC.\n" +
+                                                                "Also, speaker/microphone jacks on the radio will be inoperable.";
+                    toolStripStatusLabel_CMstatus.Visible = true;
+                    break;
+                default:
+                    // otherwise error
+                    toolStripStatusLabel_CMstatus.Image = Properties.Resources.cm_red;
+                    toolStripStatusLabel_CMstatus.ToolTipText = "Issue starting CM ASIO. Check driver name in registry.";
+                    toolStripStatusLabel_CMstatus.Visible = true;
+                    break;
+            }
         }
     }
 

@@ -510,12 +510,9 @@
             this.timer_peak_text = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.lblPAProfile = new System.Windows.Forms.LabelTS();
-            this.ptbFilterShift = new Thetis.PrettyTrackBar();
-            this.ptbFilterWidth = new Thetis.PrettyTrackBar();
             this.btnFilterShiftReset = new System.Windows.Forms.ButtonTS();
             this.udFilterHigh = new System.Windows.Forms.NumericUpDownTS();
             this.udFilterLow = new System.Windows.Forms.NumericUpDownTS();
-            this.ptbRX2RF = new Thetis.PrettyTrackBar();
             this.lblRX2RF = new System.Windows.Forms.LabelTS();
             this.chkFullDuplex = new System.Windows.Forms.CheckBoxTS();
             this.chkRX2Squelch = new System.Windows.Forms.CheckBoxTS();
@@ -553,7 +550,6 @@
             this.comboRX2Band = new System.Windows.Forms.ComboBoxTS();
             this.chkRX2Preamp = new System.Windows.Forms.CheckBoxTS();
             this.chkPower = new System.Windows.Forms.CheckBoxTS();
-            this.ptbCWSpeed = new Thetis.PrettyTrackBar();
             this.udCWPitch = new System.Windows.Forms.NumericUpDownTS();
             this.udCWBreakInDelay = new System.Windows.Forms.NumericUpDownTS();
             this.chkShowTXCWFreq = new System.Windows.Forms.CheckBoxTS();
@@ -652,19 +648,6 @@
             this.radBand40 = new System.Windows.Forms.RadioButtonTS();
             this.radBand60 = new System.Windows.Forms.RadioButtonTS();
             this.radBand80 = new System.Windows.Forms.RadioButtonTS();
-            this.ptbDisplayZoom = new Thetis.PrettyTrackBar();
-            this.ptbDisplayPan = new Thetis.PrettyTrackBar();
-            this.ptbPWR = new Thetis.PrettyTrackBar();
-            this.ptbRF = new Thetis.PrettyTrackBar();
-            this.ptbAF = new Thetis.PrettyTrackBar();
-            this.ptbPanMainRX = new Thetis.PrettyTrackBar();
-            this.ptbPanSubRX = new Thetis.PrettyTrackBar();
-            this.ptbRX2Gain = new Thetis.PrettyTrackBar();
-            this.ptbRX2Pan = new Thetis.PrettyTrackBar();
-            this.ptbRX0Gain = new Thetis.PrettyTrackBar();
-            this.ptbRX1Gain = new Thetis.PrettyTrackBar();
-            this.ptbVACRXGain = new Thetis.PrettyTrackBar();
-            this.ptbVACTXGain = new Thetis.PrettyTrackBar();
             this.radDisplayZoom05 = new System.Windows.Forms.RadioButtonTS();
             this.radDisplayZoom4x = new System.Windows.Forms.RadioButtonTS();
             this.radDisplayZoom2x = new System.Windows.Forms.RadioButtonTS();
@@ -687,17 +670,12 @@
             this.chkFMTXRev = new System.Windows.Forms.CheckBoxTS();
             this.chkTNF = new System.Windows.Forms.CheckBoxTS();
             this.btnTNFAdd = new System.Windows.Forms.ButtonTS();
-            this.ptbRX2AF = new Thetis.PrettyTrackBar();
-            this.ptbRX1AF = new Thetis.PrettyTrackBar();
             this.chkVAC2 = new System.Windows.Forms.CheckBoxTS();
             this.chkCWSidetone = new System.Windows.Forms.CheckBoxTS();
             this.udRX1StepAttData = new System.Windows.Forms.NumericUpDownTS();
             this.comboRX2Preamp = new System.Windows.Forms.ComboBoxTS();
             this.udRX2StepAttData = new System.Windows.Forms.NumericUpDownTS();
             this.chkCWAPFEnabled = new System.Windows.Forms.CheckBoxTS();
-            this.ptbCWAPFGain = new Thetis.PrettyTrackBar();
-            this.ptbCWAPFBandwidth = new Thetis.PrettyTrackBar();
-            this.ptbCWAPFFreq = new Thetis.PrettyTrackBar();
             this.lblBandStack = new System.Windows.Forms.LabelTS();
             this.regBandStackCurrentEntry = new System.Windows.Forms.TextBoxTS();
             this.regBandStackTotalEntries = new System.Windows.Forms.TextBoxTS();
@@ -719,8 +697,29 @@
             this.chkVFOBLock = new System.Windows.Forms.CheckBoxTS();
             this.chkQSK = new System.Windows.Forms.CheckBoxTS();
             this.btnDisplayZTB = new System.Windows.Forms.ButtonTS();
+            this.ptbFilterShift = new Thetis.PrettyTrackBar();
+            this.ptbFilterWidth = new Thetis.PrettyTrackBar();
+            this.ptbRX2RF = new Thetis.PrettyTrackBar();
+            this.ptbCWSpeed = new Thetis.PrettyTrackBar();
+            this.ptbDisplayZoom = new Thetis.PrettyTrackBar();
+            this.ptbDisplayPan = new Thetis.PrettyTrackBar();
+            this.ptbPWR = new Thetis.PrettyTrackBar();
+            this.ptbRF = new Thetis.PrettyTrackBar();
+            this.ptbAF = new Thetis.PrettyTrackBar();
+            this.ptbPanMainRX = new Thetis.PrettyTrackBar();
+            this.ptbPanSubRX = new Thetis.PrettyTrackBar();
+            this.ptbRX2Gain = new Thetis.PrettyTrackBar();
+            this.ptbRX2Pan = new Thetis.PrettyTrackBar();
+            this.ptbRX0Gain = new Thetis.PrettyTrackBar();
+            this.ptbRX1Gain = new Thetis.PrettyTrackBar();
+            this.ptbVACRXGain = new Thetis.PrettyTrackBar();
+            this.ptbVACTXGain = new Thetis.PrettyTrackBar();
+            this.ptbRX2AF = new Thetis.PrettyTrackBar();
+            this.ptbRX1AF = new Thetis.PrettyTrackBar();
+            this.ptbCWAPFGain = new Thetis.PrettyTrackBar();
+            this.ptbCWAPFBandwidth = new Thetis.PrettyTrackBar();
+            this.ptbCWAPFFreq = new Thetis.PrettyTrackBar();
             this.ptbTune = new Thetis.PrettyTrackBar();
-            this.picSquelch = new System.Windows.Forms.PictureBox();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItemRX1FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
@@ -853,7 +852,6 @@
             this.BPF1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.BPF2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.finderMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.picRX2Squelch = new System.Windows.Forms.PictureBox();
             this.statusStripMain = new System.Windows.Forms.StatusStrip();
             this.toolStripDropDownButton_ScreenSize = new System.Windows.Forms.ToolStripDropDownButton();
             this.includeBordersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -891,6 +889,7 @@
             this.toolStripStatusLabel_Amps = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_TXInhibit = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_SeqWarning = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_CMstatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelRXAnt = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem19 = new System.Windows.Forms.ToolStripMenuItem();
@@ -931,7 +930,6 @@
             this.radFilter5 = new System.Windows.Forms.RadioButtonTS();
             this.radFilter10 = new System.Windows.Forms.RadioButtonTS();
             this.panelRX2RF = new System.Windows.Forms.PanelTS();
-            this.ptbRX2Squelch = new Thetis.PrettyTrackBar();
             this.panelRX2DSP = new System.Windows.Forms.PanelTS();
             this.btnHidden = new System.Windows.Forms.ButtonTS();
             this.panelOptions = new System.Windows.Forms.PanelTS();
@@ -1104,7 +1102,6 @@
             this.radBandVHF2 = new System.Windows.Forms.RadioButtonTS();
             this.radBandVHF1 = new System.Windows.Forms.RadioButtonTS();
             this.radBandVHF0 = new System.Windows.Forms.RadioButtonTS();
-            this.ptbSquelch = new Thetis.PrettyTrackBar();
             this.panelModeSpecificFM = new System.Windows.Forms.PanelTS();
             this.ptbFMMic = new Thetis.PrettyTrackBar();
             this.lblMicValFM = new System.Windows.Forms.LabelTS();
@@ -1122,20 +1119,27 @@
             this.tbAndromedaEncoderSlider = new System.Windows.Forms.TrackBarTS();
             this.lblAndromedaEncoderSlider = new System.Windows.Forms.LabelTS();
             this.lblATUTuneLabel = new System.Windows.Forms.LabelTS();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).BeginInit();
+            this.picRX2Squelch = new System.Windows.Forms.PictureBox();
+            this.ptbRX2Squelch = new Thetis.PrettyTrackBar();
+            this.picSquelch = new System.Windows.Forms.PictureBox();
+            this.ptbSquelch = new Thetis.PrettyTrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterLow)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterHigh)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbCWSpeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWPitch)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWBreakInDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2FilterHigh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2FilterLow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRIT)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udXIT)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udFMOffset)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udRX1StepAttData)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udRX2StepAttData)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbCWSpeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayZoom)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayPan)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbPWR)).BeginInit();
@@ -1149,21 +1153,16 @@
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX1Gain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbVACRXGain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbVACTXGain)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udFMOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX2AF)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX1AF)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udRX1StepAttData)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udRX2StepAttData)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFGain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFBandwidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbTune)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).BeginInit();
             this.contextMenuStripFilterRX1.SuspendLayout();
             this.contextMenuStripFilterRX2.SuspendLayout();
             this.contextMenuStripNotch.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).BeginInit();
             this.statusStripMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp)).BeginInit();
@@ -1171,7 +1170,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).BeginInit();
             this.panelFilter.SuspendLayout();
             this.panelRX2RF.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).BeginInit();
             this.panelRX2DSP.SuspendLayout();
             this.panelOptions.SuspendLayout();
             this.panelModeSpecificPhone.SuspendLayout();
@@ -1213,7 +1211,6 @@
             this.grpRX2Meter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Meter)).BeginInit();
             this.panelBandVHF.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbSquelch)).BeginInit();
             this.panelModeSpecificFM.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFMMic)).BeginInit();
             this.panelBandGEN.SuspendLayout();
@@ -1221,6 +1218,10 @@
             this.grpMultimeterMenus.SuspendLayout();
             this.panelAndromedaMisc.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbAndromedaEncoderSlider)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbSquelch)).BeginInit();
             this.SuspendLayout();
             // 
             // timer_cpu_volts_meter
@@ -1242,44 +1243,6 @@
             this.lblPAProfile.Name = "lblPAProfile";
             this.toolTip1.SetToolTip(this.lblPAProfile, resources.GetString("lblPAProfile.ToolTip"));
             this.lblPAProfile.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblPAProfile_MouseDown);
-            // 
-            // ptbFilterShift
-            // 
-            resources.ApplyResources(this.ptbFilterShift, "ptbFilterShift");
-            this.ptbFilterShift.GreenThumb = false;
-            this.ptbFilterShift.HeadImage = null;
-            this.ptbFilterShift.LargeChange = 1;
-            this.ptbFilterShift.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbFilterShift.LimitEnabled = false;
-            this.ptbFilterShift.LimitValue = 0;
-            this.ptbFilterShift.Maximum = 1000;
-            this.ptbFilterShift.Minimum = -1000;
-            this.ptbFilterShift.Name = "ptbFilterShift";
-            this.ptbFilterShift.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbFilterShift.SmallChange = 1;
-            this.ptbFilterShift.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbFilterShift, resources.GetString("ptbFilterShift.ToolTip"));
-            this.ptbFilterShift.Value = 0;
-            this.ptbFilterShift.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbFilterShift_Scroll);
-            // 
-            // ptbFilterWidth
-            // 
-            resources.ApplyResources(this.ptbFilterWidth, "ptbFilterWidth");
-            this.ptbFilterWidth.GreenThumb = false;
-            this.ptbFilterWidth.HeadImage = null;
-            this.ptbFilterWidth.LargeChange = 1;
-            this.ptbFilterWidth.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbFilterWidth.LimitEnabled = false;
-            this.ptbFilterWidth.LimitValue = 0;
-            this.ptbFilterWidth.Maximum = 15000;
-            this.ptbFilterWidth.Minimum = 0;
-            this.ptbFilterWidth.Name = "ptbFilterWidth";
-            this.ptbFilterWidth.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbFilterWidth.SmallChange = 1;
-            this.ptbFilterWidth.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbFilterWidth, resources.GetString("ptbFilterWidth.ToolTip"));
-            this.ptbFilterWidth.Value = 10;
-            this.ptbFilterWidth.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbFilterWidth_Scroll);
             // 
             // btnFilterShiftReset
             // 
@@ -1354,27 +1317,6 @@
             this.udFilterLow.ValueChanged += new System.EventHandler(this.udFilterLow_ValueChanged);
             this.udFilterLow.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Console_KeyPress);
             this.udFilterLow.LostFocus += new System.EventHandler(this.udFilterLow_LostFocus);
-            // 
-            // ptbRX2RF
-            // 
-            resources.ApplyResources(this.ptbRX2RF, "ptbRX2RF");
-            this.ptbRX2RF.GreenThumb = false;
-            this.ptbRX2RF.HeadImage = null;
-            this.ptbRX2RF.LargeChange = 1;
-            this.ptbRX2RF.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbRX2RF.LimitEnabled = false;
-            this.ptbRX2RF.LimitValue = 0;
-            this.ptbRX2RF.Maximum = 120;
-            this.ptbRX2RF.Minimum = -20;
-            this.ptbRX2RF.Name = "ptbRX2RF";
-            this.ptbRX2RF.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbRX2RF.SmallChange = 1;
-            this.ptbRX2RF.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbRX2RF, resources.GetString("ptbRX2RF.ToolTip"));
-            this.ptbRX2RF.Value = 90;
-            this.ptbRX2RF.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2RF_Scroll);
-            this.ptbRX2RF.Click += new System.EventHandler(this.ptbRX2RF_Click);
-            this.ptbRX2RF.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ptbRX2RF_MouseDown);
             // 
             // lblRX2RF
             // 
@@ -1810,25 +1752,6 @@
             this.toolTip1.SetToolTip(this.chkPower, resources.GetString("chkPower.ToolTip"));
             this.chkPower.UseVisualStyleBackColor = false;
             this.chkPower.CheckedChanged += new System.EventHandler(this.chkPower_CheckedChanged);
-            // 
-            // ptbCWSpeed
-            // 
-            resources.ApplyResources(this.ptbCWSpeed, "ptbCWSpeed");
-            this.ptbCWSpeed.GreenThumb = false;
-            this.ptbCWSpeed.HeadImage = null;
-            this.ptbCWSpeed.LargeChange = 1;
-            this.ptbCWSpeed.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbCWSpeed.LimitEnabled = false;
-            this.ptbCWSpeed.LimitValue = 1;
-            this.ptbCWSpeed.Maximum = 60;
-            this.ptbCWSpeed.Minimum = 1;
-            this.ptbCWSpeed.Name = "ptbCWSpeed";
-            this.ptbCWSpeed.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbCWSpeed.SmallChange = 1;
-            this.ptbCWSpeed.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbCWSpeed, resources.GetString("ptbCWSpeed.ToolTip"));
-            this.ptbCWSpeed.Value = 25;
-            this.ptbCWSpeed.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbCWSpeed_Scroll);
             // 
             // udCWPitch
             // 
@@ -2976,260 +2899,6 @@
             this.radBand80.Click += new System.EventHandler(this.radBand80_Click);
             this.radBand80.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand80_MouseDown);
             // 
-            // ptbDisplayZoom
-            // 
-            resources.ApplyResources(this.ptbDisplayZoom, "ptbDisplayZoom");
-            this.ptbDisplayZoom.GreenThumb = false;
-            this.ptbDisplayZoom.HeadImage = null;
-            this.ptbDisplayZoom.LargeChange = 1;
-            this.ptbDisplayZoom.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbDisplayZoom.LimitEnabled = false;
-            this.ptbDisplayZoom.LimitValue = 10;
-            this.ptbDisplayZoom.Maximum = 240;
-            this.ptbDisplayZoom.Minimum = 10;
-            this.ptbDisplayZoom.Name = "ptbDisplayZoom";
-            this.ptbDisplayZoom.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbDisplayZoom.SmallChange = 1;
-            this.ptbDisplayZoom.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbDisplayZoom, resources.GetString("ptbDisplayZoom.ToolTip"));
-            this.ptbDisplayZoom.Value = 150;
-            this.ptbDisplayZoom.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbDisplayZoom_Scroll);
-            // 
-            // ptbDisplayPan
-            // 
-            resources.ApplyResources(this.ptbDisplayPan, "ptbDisplayPan");
-            this.ptbDisplayPan.GreenThumb = false;
-            this.ptbDisplayPan.HeadImage = null;
-            this.ptbDisplayPan.LargeChange = 1;
-            this.ptbDisplayPan.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbDisplayPan.LimitEnabled = false;
-            this.ptbDisplayPan.LimitValue = 0;
-            this.ptbDisplayPan.Maximum = 1000;
-            this.ptbDisplayPan.Minimum = 0;
-            this.ptbDisplayPan.Name = "ptbDisplayPan";
-            this.ptbDisplayPan.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbDisplayPan.SmallChange = 1;
-            this.ptbDisplayPan.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbDisplayPan, resources.GetString("ptbDisplayPan.ToolTip"));
-            this.ptbDisplayPan.Value = 500;
-            this.ptbDisplayPan.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbDisplayPan_Scroll);
-            // 
-            // ptbPWR
-            // 
-            resources.ApplyResources(this.ptbPWR, "ptbPWR");
-            this.ptbPWR.GreenThumb = false;
-            this.ptbPWR.HeadImage = null;
-            this.ptbPWR.LargeChange = 1;
-            this.ptbPWR.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbPWR.LimitEnabled = true;
-            this.ptbPWR.LimitValue = 50;
-            this.ptbPWR.Maximum = 100;
-            this.ptbPWR.Minimum = 0;
-            this.ptbPWR.Name = "ptbPWR";
-            this.ptbPWR.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbPWR.SmallChange = 1;
-            this.ptbPWR.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbPWR, resources.GetString("ptbPWR.ToolTip"));
-            this.ptbPWR.Value = 50;
-            this.ptbPWR.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbPWR_Scroll);
-            this.ptbPWR.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ptbPWR_MouseUp);
-            // 
-            // ptbRF
-            // 
-            resources.ApplyResources(this.ptbRF, "ptbRF");
-            this.ptbRF.GreenThumb = false;
-            this.ptbRF.HeadImage = null;
-            this.ptbRF.LargeChange = 1;
-            this.ptbRF.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbRF.LimitEnabled = false;
-            this.ptbRF.LimitValue = 0;
-            this.ptbRF.Maximum = 120;
-            this.ptbRF.Minimum = -20;
-            this.ptbRF.Name = "ptbRF";
-            this.ptbRF.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbRF.SmallChange = 1;
-            this.ptbRF.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbRF, resources.GetString("ptbRF.ToolTip"));
-            this.ptbRF.Value = 90;
-            this.ptbRF.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRF_Scroll);
-            this.ptbRF.Click += new System.EventHandler(this.ptbRF_Click);
-            this.ptbRF.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ptbRF_MouseDown);
-            // 
-            // ptbAF
-            // 
-            resources.ApplyResources(this.ptbAF, "ptbAF");
-            this.ptbAF.GreenThumb = false;
-            this.ptbAF.HeadImage = null;
-            this.ptbAF.LargeChange = 1;
-            this.ptbAF.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbAF.LimitEnabled = false;
-            this.ptbAF.LimitValue = 0;
-            this.ptbAF.Maximum = 100;
-            this.ptbAF.Minimum = 0;
-            this.ptbAF.Name = "ptbAF";
-            this.ptbAF.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbAF.SmallChange = 1;
-            this.ptbAF.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbAF, resources.GetString("ptbAF.ToolTip"));
-            this.ptbAF.Value = 30;
-            this.ptbAF.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbAF_Scroll);
-            this.ptbAF.DoubleClick += new System.EventHandler(this.ptbAF_DoubleClick);
-            // 
-            // ptbPanMainRX
-            // 
-            resources.ApplyResources(this.ptbPanMainRX, "ptbPanMainRX");
-            this.ptbPanMainRX.GreenThumb = false;
-            this.ptbPanMainRX.HeadImage = null;
-            this.ptbPanMainRX.LargeChange = 1;
-            this.ptbPanMainRX.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbPanMainRX.LimitEnabled = false;
-            this.ptbPanMainRX.LimitValue = 0;
-            this.ptbPanMainRX.Maximum = 100;
-            this.ptbPanMainRX.Minimum = 0;
-            this.ptbPanMainRX.Name = "ptbPanMainRX";
-            this.ptbPanMainRX.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbPanMainRX.SmallChange = 1;
-            this.ptbPanMainRX.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbPanMainRX, resources.GetString("ptbPanMainRX.ToolTip"));
-            this.ptbPanMainRX.Value = 50;
-            this.ptbPanMainRX.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbPanMainRX_Scroll);
-            this.ptbPanMainRX.DoubleClick += new System.EventHandler(this.ptbPanMainRX_DoubleClick);
-            // 
-            // ptbPanSubRX
-            // 
-            resources.ApplyResources(this.ptbPanSubRX, "ptbPanSubRX");
-            this.ptbPanSubRX.GreenThumb = false;
-            this.ptbPanSubRX.HeadImage = null;
-            this.ptbPanSubRX.LargeChange = 1;
-            this.ptbPanSubRX.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbPanSubRX.LimitEnabled = false;
-            this.ptbPanSubRX.LimitValue = 0;
-            this.ptbPanSubRX.Maximum = 100;
-            this.ptbPanSubRX.Minimum = 0;
-            this.ptbPanSubRX.Name = "ptbPanSubRX";
-            this.ptbPanSubRX.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbPanSubRX.SmallChange = 1;
-            this.ptbPanSubRX.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbPanSubRX, resources.GetString("ptbPanSubRX.ToolTip"));
-            this.ptbPanSubRX.Value = 50;
-            this.ptbPanSubRX.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbPanSubRX_Scroll);
-            this.ptbPanSubRX.DoubleClick += new System.EventHandler(this.ptbPanSubRX_DoubleClick);
-            // 
-            // ptbRX2Gain
-            // 
-            resources.ApplyResources(this.ptbRX2Gain, "ptbRX2Gain");
-            this.ptbRX2Gain.GreenThumb = false;
-            this.ptbRX2Gain.HeadImage = null;
-            this.ptbRX2Gain.LargeChange = 1;
-            this.ptbRX2Gain.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbRX2Gain.LimitEnabled = false;
-            this.ptbRX2Gain.LimitValue = 0;
-            this.ptbRX2Gain.Maximum = 100;
-            this.ptbRX2Gain.Minimum = 0;
-            this.ptbRX2Gain.Name = "ptbRX2Gain";
-            this.ptbRX2Gain.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.ptbRX2Gain.SmallChange = 1;
-            this.ptbRX2Gain.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbRX2Gain, resources.GetString("ptbRX2Gain.ToolTip"));
-            this.ptbRX2Gain.Value = 0;
-            this.ptbRX2Gain.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2Gain_Scroll);
-            // 
-            // ptbRX2Pan
-            // 
-            resources.ApplyResources(this.ptbRX2Pan, "ptbRX2Pan");
-            this.ptbRX2Pan.GreenThumb = false;
-            this.ptbRX2Pan.HeadImage = null;
-            this.ptbRX2Pan.LargeChange = 1;
-            this.ptbRX2Pan.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbRX2Pan.LimitEnabled = false;
-            this.ptbRX2Pan.LimitValue = 0;
-            this.ptbRX2Pan.Maximum = 100;
-            this.ptbRX2Pan.Minimum = 0;
-            this.ptbRX2Pan.Name = "ptbRX2Pan";
-            this.ptbRX2Pan.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbRX2Pan.SmallChange = 1;
-            this.ptbRX2Pan.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbRX2Pan, resources.GetString("ptbRX2Pan.ToolTip"));
-            this.ptbRX2Pan.Value = 50;
-            this.ptbRX2Pan.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2Pan_Scroll);
-            this.ptbRX2Pan.DoubleClick += new System.EventHandler(this.ptbRX2Pan_DoubleClick);
-            // 
-            // ptbRX0Gain
-            // 
-            resources.ApplyResources(this.ptbRX0Gain, "ptbRX0Gain");
-            this.ptbRX0Gain.GreenThumb = false;
-            this.ptbRX0Gain.HeadImage = null;
-            this.ptbRX0Gain.LargeChange = 1;
-            this.ptbRX0Gain.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbRX0Gain.LimitEnabled = false;
-            this.ptbRX0Gain.LimitValue = 0;
-            this.ptbRX0Gain.Maximum = 100;
-            this.ptbRX0Gain.Minimum = 0;
-            this.ptbRX0Gain.Name = "ptbRX0Gain";
-            this.ptbRX0Gain.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.ptbRX0Gain.SmallChange = 1;
-            this.ptbRX0Gain.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbRX0Gain, resources.GetString("ptbRX0Gain.ToolTip"));
-            this.ptbRX0Gain.Value = 20;
-            this.ptbRX0Gain.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX0Gain_Scroll);
-            // 
-            // ptbRX1Gain
-            // 
-            resources.ApplyResources(this.ptbRX1Gain, "ptbRX1Gain");
-            this.ptbRX1Gain.GreenThumb = false;
-            this.ptbRX1Gain.HeadImage = null;
-            this.ptbRX1Gain.LargeChange = 1;
-            this.ptbRX1Gain.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbRX1Gain.LimitEnabled = false;
-            this.ptbRX1Gain.LimitValue = 0;
-            this.ptbRX1Gain.Maximum = 100;
-            this.ptbRX1Gain.Minimum = 0;
-            this.ptbRX1Gain.Name = "ptbRX1Gain";
-            this.ptbRX1Gain.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.ptbRX1Gain.SmallChange = 1;
-            this.ptbRX1Gain.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbRX1Gain, resources.GetString("ptbRX1Gain.ToolTip"));
-            this.ptbRX1Gain.Value = 100;
-            this.ptbRX1Gain.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX1Gain_Scroll);
-            // 
-            // ptbVACRXGain
-            // 
-            resources.ApplyResources(this.ptbVACRXGain, "ptbVACRXGain");
-            this.ptbVACRXGain.GreenThumb = false;
-            this.ptbVACRXGain.HeadImage = null;
-            this.ptbVACRXGain.LargeChange = 1;
-            this.ptbVACRXGain.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbVACRXGain.LimitEnabled = false;
-            this.ptbVACRXGain.LimitValue = 0;
-            this.ptbVACRXGain.Maximum = 40;
-            this.ptbVACRXGain.Minimum = -40;
-            this.ptbVACRXGain.Name = "ptbVACRXGain";
-            this.ptbVACRXGain.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbVACRXGain.SmallChange = 1;
-            this.ptbVACRXGain.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbVACRXGain, resources.GetString("ptbVACRXGain.ToolTip"));
-            this.ptbVACRXGain.Value = 0;
-            this.ptbVACRXGain.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbVACRXGain_Scroll);
-            // 
-            // ptbVACTXGain
-            // 
-            resources.ApplyResources(this.ptbVACTXGain, "ptbVACTXGain");
-            this.ptbVACTXGain.GreenThumb = false;
-            this.ptbVACTXGain.HeadImage = null;
-            this.ptbVACTXGain.LargeChange = 1;
-            this.ptbVACTXGain.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbVACTXGain.LimitEnabled = false;
-            this.ptbVACTXGain.LimitValue = 0;
-            this.ptbVACTXGain.Maximum = 40;
-            this.ptbVACTXGain.Minimum = -40;
-            this.ptbVACTXGain.Name = "ptbVACTXGain";
-            this.ptbVACTXGain.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbVACTXGain.SmallChange = 1;
-            this.ptbVACTXGain.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbVACTXGain, resources.GetString("ptbVACTXGain.ToolTip"));
-            this.ptbVACTXGain.Value = 0;
-            this.ptbVACTXGain.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbVACTXGain_Scroll);
-            // 
             // radDisplayZoom05
             // 
             resources.ApplyResources(this.radDisplayZoom05, "radDisplayZoom05");
@@ -3493,46 +3162,6 @@
             this.toolTip1.SetToolTip(this.btnTNFAdd, resources.GetString("btnTNFAdd.ToolTip"));
             this.btnTNFAdd.Click += new System.EventHandler(this.btnTNFAdd_Click);
             // 
-            // ptbRX2AF
-            // 
-            resources.ApplyResources(this.ptbRX2AF, "ptbRX2AF");
-            this.ptbRX2AF.GreenThumb = false;
-            this.ptbRX2AF.HeadImage = null;
-            this.ptbRX2AF.LargeChange = 1;
-            this.ptbRX2AF.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbRX2AF.LimitEnabled = false;
-            this.ptbRX2AF.LimitValue = 0;
-            this.ptbRX2AF.Maximum = 100;
-            this.ptbRX2AF.Minimum = 0;
-            this.ptbRX2AF.Name = "ptbRX2AF";
-            this.ptbRX2AF.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbRX2AF.SmallChange = 1;
-            this.ptbRX2AF.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbRX2AF, resources.GetString("ptbRX2AF.ToolTip"));
-            this.ptbRX2AF.Value = 0;
-            this.ptbRX2AF.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2AF_Scroll);
-            this.ptbRX2AF.DoubleClick += new System.EventHandler(this.ptbRX2AF_DoubleClick);
-            // 
-            // ptbRX1AF
-            // 
-            resources.ApplyResources(this.ptbRX1AF, "ptbRX1AF");
-            this.ptbRX1AF.GreenThumb = false;
-            this.ptbRX1AF.HeadImage = null;
-            this.ptbRX1AF.LargeChange = 1;
-            this.ptbRX1AF.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbRX1AF.LimitEnabled = false;
-            this.ptbRX1AF.LimitValue = 0;
-            this.ptbRX1AF.Maximum = 100;
-            this.ptbRX1AF.Minimum = 0;
-            this.ptbRX1AF.Name = "ptbRX1AF";
-            this.ptbRX1AF.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbRX1AF.SmallChange = 1;
-            this.ptbRX1AF.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbRX1AF, resources.GetString("ptbRX1AF.ToolTip"));
-            this.ptbRX1AF.Value = 20;
-            this.ptbRX1AF.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX1AF_Scroll);
-            this.ptbRX1AF.DoubleClick += new System.EventHandler(this.ptbRX1AF_DoubleClick);
-            // 
             // chkVAC2
             // 
             resources.ApplyResources(this.chkVAC2, "chkVAC2");
@@ -3632,63 +3261,6 @@
             this.toolTip1.SetToolTip(this.chkCWAPFEnabled, resources.GetString("chkCWAPFEnabled.ToolTip"));
             this.chkCWAPFEnabled.CheckedChanged += new System.EventHandler(this.chkCWAPFEnabled_CheckedChanged);
             this.chkCWAPFEnabled.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkCWAPFEnabled_MouseDown);
-            // 
-            // ptbCWAPFGain
-            // 
-            resources.ApplyResources(this.ptbCWAPFGain, "ptbCWAPFGain");
-            this.ptbCWAPFGain.GreenThumb = false;
-            this.ptbCWAPFGain.HeadImage = null;
-            this.ptbCWAPFGain.LargeChange = 1;
-            this.ptbCWAPFGain.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbCWAPFGain.LimitEnabled = false;
-            this.ptbCWAPFGain.LimitValue = 0;
-            this.ptbCWAPFGain.Maximum = 100;
-            this.ptbCWAPFGain.Minimum = 0;
-            this.ptbCWAPFGain.Name = "ptbCWAPFGain";
-            this.ptbCWAPFGain.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbCWAPFGain.SmallChange = 1;
-            this.ptbCWAPFGain.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbCWAPFGain, resources.GetString("ptbCWAPFGain.ToolTip"));
-            this.ptbCWAPFGain.Value = 0;
-            this.ptbCWAPFGain.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbCWAPFGain_Scroll);
-            // 
-            // ptbCWAPFBandwidth
-            // 
-            resources.ApplyResources(this.ptbCWAPFBandwidth, "ptbCWAPFBandwidth");
-            this.ptbCWAPFBandwidth.GreenThumb = false;
-            this.ptbCWAPFBandwidth.HeadImage = null;
-            this.ptbCWAPFBandwidth.LargeChange = 1;
-            this.ptbCWAPFBandwidth.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbCWAPFBandwidth.LimitEnabled = false;
-            this.ptbCWAPFBandwidth.LimitValue = 10;
-            this.ptbCWAPFBandwidth.Maximum = 150;
-            this.ptbCWAPFBandwidth.Minimum = 10;
-            this.ptbCWAPFBandwidth.Name = "ptbCWAPFBandwidth";
-            this.ptbCWAPFBandwidth.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbCWAPFBandwidth.SmallChange = 1;
-            this.ptbCWAPFBandwidth.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbCWAPFBandwidth, resources.GetString("ptbCWAPFBandwidth.ToolTip"));
-            this.ptbCWAPFBandwidth.Value = 150;
-            this.ptbCWAPFBandwidth.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbCWAPFBandwidth_Scroll);
-            // 
-            // ptbCWAPFFreq
-            // 
-            resources.ApplyResources(this.ptbCWAPFFreq, "ptbCWAPFFreq");
-            this.ptbCWAPFFreq.GreenThumb = false;
-            this.ptbCWAPFFreq.HeadImage = null;
-            this.ptbCWAPFFreq.LargeChange = 1;
-            this.ptbCWAPFFreq.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbCWAPFFreq.LimitEnabled = false;
-            this.ptbCWAPFFreq.LimitValue = 0;
-            this.ptbCWAPFFreq.Maximum = 250;
-            this.ptbCWAPFFreq.Minimum = -250;
-            this.ptbCWAPFFreq.Name = "ptbCWAPFFreq";
-            this.ptbCWAPFFreq.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbCWAPFFreq.SmallChange = 1;
-            this.ptbCWAPFFreq.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbCWAPFFreq, resources.GetString("ptbCWAPFFreq.ToolTip"));
-            this.ptbCWAPFFreq.Value = 0;
-            this.ptbCWAPFFreq.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbCWAPFFreq_Scroll);
             // 
             // lblBandStack
             // 
@@ -3933,6 +3505,435 @@
             this.btnDisplayZTB.Click += new System.EventHandler(this.btnDisplayZTB_Click);
             this.btnDisplayZTB.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnDisplayZTB_MouseUp);
             // 
+            // ptbFilterShift
+            // 
+            resources.ApplyResources(this.ptbFilterShift, "ptbFilterShift");
+            this.ptbFilterShift.GreenThumb = false;
+            this.ptbFilterShift.HeadImage = null;
+            this.ptbFilterShift.LargeChange = 1;
+            this.ptbFilterShift.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbFilterShift.LimitEnabled = false;
+            this.ptbFilterShift.LimitValue = 0;
+            this.ptbFilterShift.Maximum = 1000;
+            this.ptbFilterShift.Minimum = -1000;
+            this.ptbFilterShift.Name = "ptbFilterShift";
+            this.ptbFilterShift.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbFilterShift.SmallChange = 1;
+            this.ptbFilterShift.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbFilterShift, resources.GetString("ptbFilterShift.ToolTip"));
+            this.ptbFilterShift.Value = 0;
+            this.ptbFilterShift.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbFilterShift_Scroll);
+            // 
+            // ptbFilterWidth
+            // 
+            resources.ApplyResources(this.ptbFilterWidth, "ptbFilterWidth");
+            this.ptbFilterWidth.GreenThumb = false;
+            this.ptbFilterWidth.HeadImage = null;
+            this.ptbFilterWidth.LargeChange = 1;
+            this.ptbFilterWidth.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbFilterWidth.LimitEnabled = false;
+            this.ptbFilterWidth.LimitValue = 0;
+            this.ptbFilterWidth.Maximum = 15000;
+            this.ptbFilterWidth.Minimum = 0;
+            this.ptbFilterWidth.Name = "ptbFilterWidth";
+            this.ptbFilterWidth.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbFilterWidth.SmallChange = 1;
+            this.ptbFilterWidth.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbFilterWidth, resources.GetString("ptbFilterWidth.ToolTip"));
+            this.ptbFilterWidth.Value = 10;
+            this.ptbFilterWidth.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbFilterWidth_Scroll);
+            // 
+            // ptbRX2RF
+            // 
+            resources.ApplyResources(this.ptbRX2RF, "ptbRX2RF");
+            this.ptbRX2RF.GreenThumb = false;
+            this.ptbRX2RF.HeadImage = null;
+            this.ptbRX2RF.LargeChange = 1;
+            this.ptbRX2RF.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbRX2RF.LimitEnabled = false;
+            this.ptbRX2RF.LimitValue = 0;
+            this.ptbRX2RF.Maximum = 120;
+            this.ptbRX2RF.Minimum = -20;
+            this.ptbRX2RF.Name = "ptbRX2RF";
+            this.ptbRX2RF.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbRX2RF.SmallChange = 1;
+            this.ptbRX2RF.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbRX2RF, resources.GetString("ptbRX2RF.ToolTip"));
+            this.ptbRX2RF.Value = 90;
+            this.ptbRX2RF.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2RF_Scroll);
+            this.ptbRX2RF.Click += new System.EventHandler(this.ptbRX2RF_Click);
+            this.ptbRX2RF.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ptbRX2RF_MouseDown);
+            // 
+            // ptbCWSpeed
+            // 
+            resources.ApplyResources(this.ptbCWSpeed, "ptbCWSpeed");
+            this.ptbCWSpeed.GreenThumb = false;
+            this.ptbCWSpeed.HeadImage = null;
+            this.ptbCWSpeed.LargeChange = 1;
+            this.ptbCWSpeed.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbCWSpeed.LimitEnabled = false;
+            this.ptbCWSpeed.LimitValue = 1;
+            this.ptbCWSpeed.Maximum = 60;
+            this.ptbCWSpeed.Minimum = 1;
+            this.ptbCWSpeed.Name = "ptbCWSpeed";
+            this.ptbCWSpeed.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbCWSpeed.SmallChange = 1;
+            this.ptbCWSpeed.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbCWSpeed, resources.GetString("ptbCWSpeed.ToolTip"));
+            this.ptbCWSpeed.Value = 25;
+            this.ptbCWSpeed.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbCWSpeed_Scroll);
+            // 
+            // ptbDisplayZoom
+            // 
+            resources.ApplyResources(this.ptbDisplayZoom, "ptbDisplayZoom");
+            this.ptbDisplayZoom.GreenThumb = false;
+            this.ptbDisplayZoom.HeadImage = null;
+            this.ptbDisplayZoom.LargeChange = 1;
+            this.ptbDisplayZoom.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbDisplayZoom.LimitEnabled = false;
+            this.ptbDisplayZoom.LimitValue = 10;
+            this.ptbDisplayZoom.Maximum = 240;
+            this.ptbDisplayZoom.Minimum = 10;
+            this.ptbDisplayZoom.Name = "ptbDisplayZoom";
+            this.ptbDisplayZoom.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbDisplayZoom.SmallChange = 1;
+            this.ptbDisplayZoom.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbDisplayZoom, resources.GetString("ptbDisplayZoom.ToolTip"));
+            this.ptbDisplayZoom.Value = 150;
+            this.ptbDisplayZoom.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbDisplayZoom_Scroll);
+            // 
+            // ptbDisplayPan
+            // 
+            resources.ApplyResources(this.ptbDisplayPan, "ptbDisplayPan");
+            this.ptbDisplayPan.GreenThumb = false;
+            this.ptbDisplayPan.HeadImage = null;
+            this.ptbDisplayPan.LargeChange = 1;
+            this.ptbDisplayPan.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbDisplayPan.LimitEnabled = false;
+            this.ptbDisplayPan.LimitValue = 0;
+            this.ptbDisplayPan.Maximum = 1000;
+            this.ptbDisplayPan.Minimum = 0;
+            this.ptbDisplayPan.Name = "ptbDisplayPan";
+            this.ptbDisplayPan.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbDisplayPan.SmallChange = 1;
+            this.ptbDisplayPan.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbDisplayPan, resources.GetString("ptbDisplayPan.ToolTip"));
+            this.ptbDisplayPan.Value = 500;
+            this.ptbDisplayPan.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbDisplayPan_Scroll);
+            // 
+            // ptbPWR
+            // 
+            resources.ApplyResources(this.ptbPWR, "ptbPWR");
+            this.ptbPWR.GreenThumb = false;
+            this.ptbPWR.HeadImage = null;
+            this.ptbPWR.LargeChange = 1;
+            this.ptbPWR.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbPWR.LimitEnabled = true;
+            this.ptbPWR.LimitValue = 50;
+            this.ptbPWR.Maximum = 100;
+            this.ptbPWR.Minimum = 0;
+            this.ptbPWR.Name = "ptbPWR";
+            this.ptbPWR.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbPWR.SmallChange = 1;
+            this.ptbPWR.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbPWR, resources.GetString("ptbPWR.ToolTip"));
+            this.ptbPWR.Value = 50;
+            this.ptbPWR.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbPWR_Scroll);
+            this.ptbPWR.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ptbPWR_MouseUp);
+            // 
+            // ptbRF
+            // 
+            resources.ApplyResources(this.ptbRF, "ptbRF");
+            this.ptbRF.GreenThumb = false;
+            this.ptbRF.HeadImage = null;
+            this.ptbRF.LargeChange = 1;
+            this.ptbRF.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbRF.LimitEnabled = false;
+            this.ptbRF.LimitValue = 0;
+            this.ptbRF.Maximum = 120;
+            this.ptbRF.Minimum = -20;
+            this.ptbRF.Name = "ptbRF";
+            this.ptbRF.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbRF.SmallChange = 1;
+            this.ptbRF.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbRF, resources.GetString("ptbRF.ToolTip"));
+            this.ptbRF.Value = 90;
+            this.ptbRF.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRF_Scroll);
+            this.ptbRF.Click += new System.EventHandler(this.ptbRF_Click);
+            this.ptbRF.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ptbRF_MouseDown);
+            // 
+            // ptbAF
+            // 
+            resources.ApplyResources(this.ptbAF, "ptbAF");
+            this.ptbAF.GreenThumb = false;
+            this.ptbAF.HeadImage = null;
+            this.ptbAF.LargeChange = 1;
+            this.ptbAF.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbAF.LimitEnabled = false;
+            this.ptbAF.LimitValue = 0;
+            this.ptbAF.Maximum = 100;
+            this.ptbAF.Minimum = 0;
+            this.ptbAF.Name = "ptbAF";
+            this.ptbAF.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbAF.SmallChange = 1;
+            this.ptbAF.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbAF, resources.GetString("ptbAF.ToolTip"));
+            this.ptbAF.Value = 30;
+            this.ptbAF.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbAF_Scroll);
+            this.ptbAF.DoubleClick += new System.EventHandler(this.ptbAF_DoubleClick);
+            // 
+            // ptbPanMainRX
+            // 
+            resources.ApplyResources(this.ptbPanMainRX, "ptbPanMainRX");
+            this.ptbPanMainRX.GreenThumb = false;
+            this.ptbPanMainRX.HeadImage = null;
+            this.ptbPanMainRX.LargeChange = 1;
+            this.ptbPanMainRX.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbPanMainRX.LimitEnabled = false;
+            this.ptbPanMainRX.LimitValue = 0;
+            this.ptbPanMainRX.Maximum = 100;
+            this.ptbPanMainRX.Minimum = 0;
+            this.ptbPanMainRX.Name = "ptbPanMainRX";
+            this.ptbPanMainRX.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbPanMainRX.SmallChange = 1;
+            this.ptbPanMainRX.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbPanMainRX, resources.GetString("ptbPanMainRX.ToolTip"));
+            this.ptbPanMainRX.Value = 50;
+            this.ptbPanMainRX.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbPanMainRX_Scroll);
+            this.ptbPanMainRX.DoubleClick += new System.EventHandler(this.ptbPanMainRX_DoubleClick);
+            // 
+            // ptbPanSubRX
+            // 
+            resources.ApplyResources(this.ptbPanSubRX, "ptbPanSubRX");
+            this.ptbPanSubRX.GreenThumb = false;
+            this.ptbPanSubRX.HeadImage = null;
+            this.ptbPanSubRX.LargeChange = 1;
+            this.ptbPanSubRX.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbPanSubRX.LimitEnabled = false;
+            this.ptbPanSubRX.LimitValue = 0;
+            this.ptbPanSubRX.Maximum = 100;
+            this.ptbPanSubRX.Minimum = 0;
+            this.ptbPanSubRX.Name = "ptbPanSubRX";
+            this.ptbPanSubRX.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbPanSubRX.SmallChange = 1;
+            this.ptbPanSubRX.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbPanSubRX, resources.GetString("ptbPanSubRX.ToolTip"));
+            this.ptbPanSubRX.Value = 50;
+            this.ptbPanSubRX.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbPanSubRX_Scroll);
+            this.ptbPanSubRX.DoubleClick += new System.EventHandler(this.ptbPanSubRX_DoubleClick);
+            // 
+            // ptbRX2Gain
+            // 
+            resources.ApplyResources(this.ptbRX2Gain, "ptbRX2Gain");
+            this.ptbRX2Gain.GreenThumb = false;
+            this.ptbRX2Gain.HeadImage = null;
+            this.ptbRX2Gain.LargeChange = 1;
+            this.ptbRX2Gain.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbRX2Gain.LimitEnabled = false;
+            this.ptbRX2Gain.LimitValue = 0;
+            this.ptbRX2Gain.Maximum = 100;
+            this.ptbRX2Gain.Minimum = 0;
+            this.ptbRX2Gain.Name = "ptbRX2Gain";
+            this.ptbRX2Gain.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.ptbRX2Gain.SmallChange = 1;
+            this.ptbRX2Gain.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbRX2Gain, resources.GetString("ptbRX2Gain.ToolTip"));
+            this.ptbRX2Gain.Value = 0;
+            this.ptbRX2Gain.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2Gain_Scroll);
+            // 
+            // ptbRX2Pan
+            // 
+            resources.ApplyResources(this.ptbRX2Pan, "ptbRX2Pan");
+            this.ptbRX2Pan.GreenThumb = false;
+            this.ptbRX2Pan.HeadImage = null;
+            this.ptbRX2Pan.LargeChange = 1;
+            this.ptbRX2Pan.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbRX2Pan.LimitEnabled = false;
+            this.ptbRX2Pan.LimitValue = 0;
+            this.ptbRX2Pan.Maximum = 100;
+            this.ptbRX2Pan.Minimum = 0;
+            this.ptbRX2Pan.Name = "ptbRX2Pan";
+            this.ptbRX2Pan.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbRX2Pan.SmallChange = 1;
+            this.ptbRX2Pan.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbRX2Pan, resources.GetString("ptbRX2Pan.ToolTip"));
+            this.ptbRX2Pan.Value = 50;
+            this.ptbRX2Pan.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2Pan_Scroll);
+            this.ptbRX2Pan.DoubleClick += new System.EventHandler(this.ptbRX2Pan_DoubleClick);
+            // 
+            // ptbRX0Gain
+            // 
+            resources.ApplyResources(this.ptbRX0Gain, "ptbRX0Gain");
+            this.ptbRX0Gain.GreenThumb = false;
+            this.ptbRX0Gain.HeadImage = null;
+            this.ptbRX0Gain.LargeChange = 1;
+            this.ptbRX0Gain.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbRX0Gain.LimitEnabled = false;
+            this.ptbRX0Gain.LimitValue = 0;
+            this.ptbRX0Gain.Maximum = 100;
+            this.ptbRX0Gain.Minimum = 0;
+            this.ptbRX0Gain.Name = "ptbRX0Gain";
+            this.ptbRX0Gain.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.ptbRX0Gain.SmallChange = 1;
+            this.ptbRX0Gain.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbRX0Gain, resources.GetString("ptbRX0Gain.ToolTip"));
+            this.ptbRX0Gain.Value = 20;
+            this.ptbRX0Gain.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX0Gain_Scroll);
+            // 
+            // ptbRX1Gain
+            // 
+            resources.ApplyResources(this.ptbRX1Gain, "ptbRX1Gain");
+            this.ptbRX1Gain.GreenThumb = false;
+            this.ptbRX1Gain.HeadImage = null;
+            this.ptbRX1Gain.LargeChange = 1;
+            this.ptbRX1Gain.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbRX1Gain.LimitEnabled = false;
+            this.ptbRX1Gain.LimitValue = 0;
+            this.ptbRX1Gain.Maximum = 100;
+            this.ptbRX1Gain.Minimum = 0;
+            this.ptbRX1Gain.Name = "ptbRX1Gain";
+            this.ptbRX1Gain.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.ptbRX1Gain.SmallChange = 1;
+            this.ptbRX1Gain.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbRX1Gain, resources.GetString("ptbRX1Gain.ToolTip"));
+            this.ptbRX1Gain.Value = 100;
+            this.ptbRX1Gain.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX1Gain_Scroll);
+            // 
+            // ptbVACRXGain
+            // 
+            resources.ApplyResources(this.ptbVACRXGain, "ptbVACRXGain");
+            this.ptbVACRXGain.GreenThumb = false;
+            this.ptbVACRXGain.HeadImage = null;
+            this.ptbVACRXGain.LargeChange = 1;
+            this.ptbVACRXGain.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbVACRXGain.LimitEnabled = false;
+            this.ptbVACRXGain.LimitValue = 0;
+            this.ptbVACRXGain.Maximum = 40;
+            this.ptbVACRXGain.Minimum = -40;
+            this.ptbVACRXGain.Name = "ptbVACRXGain";
+            this.ptbVACRXGain.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbVACRXGain.SmallChange = 1;
+            this.ptbVACRXGain.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbVACRXGain, resources.GetString("ptbVACRXGain.ToolTip"));
+            this.ptbVACRXGain.Value = 0;
+            this.ptbVACRXGain.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbVACRXGain_Scroll);
+            // 
+            // ptbVACTXGain
+            // 
+            resources.ApplyResources(this.ptbVACTXGain, "ptbVACTXGain");
+            this.ptbVACTXGain.GreenThumb = false;
+            this.ptbVACTXGain.HeadImage = null;
+            this.ptbVACTXGain.LargeChange = 1;
+            this.ptbVACTXGain.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbVACTXGain.LimitEnabled = false;
+            this.ptbVACTXGain.LimitValue = 0;
+            this.ptbVACTXGain.Maximum = 40;
+            this.ptbVACTXGain.Minimum = -40;
+            this.ptbVACTXGain.Name = "ptbVACTXGain";
+            this.ptbVACTXGain.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbVACTXGain.SmallChange = 1;
+            this.ptbVACTXGain.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbVACTXGain, resources.GetString("ptbVACTXGain.ToolTip"));
+            this.ptbVACTXGain.Value = 0;
+            this.ptbVACTXGain.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbVACTXGain_Scroll);
+            // 
+            // ptbRX2AF
+            // 
+            resources.ApplyResources(this.ptbRX2AF, "ptbRX2AF");
+            this.ptbRX2AF.GreenThumb = false;
+            this.ptbRX2AF.HeadImage = null;
+            this.ptbRX2AF.LargeChange = 1;
+            this.ptbRX2AF.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbRX2AF.LimitEnabled = false;
+            this.ptbRX2AF.LimitValue = 0;
+            this.ptbRX2AF.Maximum = 100;
+            this.ptbRX2AF.Minimum = 0;
+            this.ptbRX2AF.Name = "ptbRX2AF";
+            this.ptbRX2AF.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbRX2AF.SmallChange = 1;
+            this.ptbRX2AF.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbRX2AF, resources.GetString("ptbRX2AF.ToolTip"));
+            this.ptbRX2AF.Value = 0;
+            this.ptbRX2AF.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2AF_Scroll);
+            this.ptbRX2AF.DoubleClick += new System.EventHandler(this.ptbRX2AF_DoubleClick);
+            // 
+            // ptbRX1AF
+            // 
+            resources.ApplyResources(this.ptbRX1AF, "ptbRX1AF");
+            this.ptbRX1AF.GreenThumb = false;
+            this.ptbRX1AF.HeadImage = null;
+            this.ptbRX1AF.LargeChange = 1;
+            this.ptbRX1AF.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbRX1AF.LimitEnabled = false;
+            this.ptbRX1AF.LimitValue = 0;
+            this.ptbRX1AF.Maximum = 100;
+            this.ptbRX1AF.Minimum = 0;
+            this.ptbRX1AF.Name = "ptbRX1AF";
+            this.ptbRX1AF.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbRX1AF.SmallChange = 1;
+            this.ptbRX1AF.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbRX1AF, resources.GetString("ptbRX1AF.ToolTip"));
+            this.ptbRX1AF.Value = 20;
+            this.ptbRX1AF.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX1AF_Scroll);
+            this.ptbRX1AF.DoubleClick += new System.EventHandler(this.ptbRX1AF_DoubleClick);
+            // 
+            // ptbCWAPFGain
+            // 
+            resources.ApplyResources(this.ptbCWAPFGain, "ptbCWAPFGain");
+            this.ptbCWAPFGain.GreenThumb = false;
+            this.ptbCWAPFGain.HeadImage = null;
+            this.ptbCWAPFGain.LargeChange = 1;
+            this.ptbCWAPFGain.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbCWAPFGain.LimitEnabled = false;
+            this.ptbCWAPFGain.LimitValue = 0;
+            this.ptbCWAPFGain.Maximum = 100;
+            this.ptbCWAPFGain.Minimum = 0;
+            this.ptbCWAPFGain.Name = "ptbCWAPFGain";
+            this.ptbCWAPFGain.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbCWAPFGain.SmallChange = 1;
+            this.ptbCWAPFGain.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbCWAPFGain, resources.GetString("ptbCWAPFGain.ToolTip"));
+            this.ptbCWAPFGain.Value = 0;
+            this.ptbCWAPFGain.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbCWAPFGain_Scroll);
+            // 
+            // ptbCWAPFBandwidth
+            // 
+            resources.ApplyResources(this.ptbCWAPFBandwidth, "ptbCWAPFBandwidth");
+            this.ptbCWAPFBandwidth.GreenThumb = false;
+            this.ptbCWAPFBandwidth.HeadImage = null;
+            this.ptbCWAPFBandwidth.LargeChange = 1;
+            this.ptbCWAPFBandwidth.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbCWAPFBandwidth.LimitEnabled = false;
+            this.ptbCWAPFBandwidth.LimitValue = 10;
+            this.ptbCWAPFBandwidth.Maximum = 150;
+            this.ptbCWAPFBandwidth.Minimum = 10;
+            this.ptbCWAPFBandwidth.Name = "ptbCWAPFBandwidth";
+            this.ptbCWAPFBandwidth.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbCWAPFBandwidth.SmallChange = 1;
+            this.ptbCWAPFBandwidth.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbCWAPFBandwidth, resources.GetString("ptbCWAPFBandwidth.ToolTip"));
+            this.ptbCWAPFBandwidth.Value = 150;
+            this.ptbCWAPFBandwidth.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbCWAPFBandwidth_Scroll);
+            // 
+            // ptbCWAPFFreq
+            // 
+            resources.ApplyResources(this.ptbCWAPFFreq, "ptbCWAPFFreq");
+            this.ptbCWAPFFreq.GreenThumb = false;
+            this.ptbCWAPFFreq.HeadImage = null;
+            this.ptbCWAPFFreq.LargeChange = 1;
+            this.ptbCWAPFFreq.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbCWAPFFreq.LimitEnabled = false;
+            this.ptbCWAPFFreq.LimitValue = 0;
+            this.ptbCWAPFFreq.Maximum = 250;
+            this.ptbCWAPFFreq.Minimum = -250;
+            this.ptbCWAPFFreq.Name = "ptbCWAPFFreq";
+            this.ptbCWAPFFreq.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbCWAPFFreq.SmallChange = 1;
+            this.ptbCWAPFFreq.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbCWAPFFreq, resources.GetString("ptbCWAPFFreq.ToolTip"));
+            this.ptbCWAPFFreq.Value = 0;
+            this.ptbCWAPFFreq.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbCWAPFFreq_Scroll);
+            // 
             // ptbTune
             // 
             resources.ApplyResources(this.ptbTune, "ptbTune");
@@ -3952,14 +3953,6 @@
             this.ptbTune.Value = 50;
             this.ptbTune.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbTune_Scroll);
             this.ptbTune.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ptbTune_MouseUp);
-            // 
-            // picSquelch
-            // 
-            this.picSquelch.BackColor = System.Drawing.SystemColors.ControlText;
-            resources.ApplyResources(this.picSquelch, "picSquelch");
-            this.picSquelch.Name = "picSquelch";
-            this.picSquelch.TabStop = false;
-            this.picSquelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picSquelch_Paint);
             // 
             // timer_clock
             // 
@@ -4907,14 +4900,6 @@
             resources.ApplyResources(this.finderMenuItem, "finderMenuItem");
             this.finderMenuItem.Click += new System.EventHandler(this.finderMenuItem_Click);
             // 
-            // picRX2Squelch
-            // 
-            this.picRX2Squelch.BackColor = System.Drawing.SystemColors.ControlText;
-            resources.ApplyResources(this.picRX2Squelch, "picRX2Squelch");
-            this.picRX2Squelch.Name = "picRX2Squelch";
-            this.picRX2Squelch.TabStop = false;
-            this.picRX2Squelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX2Squelch_Paint);
-            // 
             // statusStripMain
             // 
             resources.ApplyResources(this.statusStripMain, "statusStripMain");
@@ -4928,6 +4913,7 @@
             this.toolStripStatusLabel_Amps,
             this.toolStripStatusLabel_TXInhibit,
             this.toolStripStatusLabel_SeqWarning,
+            this.toolStripStatusLabel_CMstatus,
             this.toolStripStatusLabelRXAnt,
             this.toolStripStatusLabelTXAnt,
             this.toolStripStatusLabelAndromedaMulti,
@@ -5179,6 +5165,14 @@
             this.toolStripStatusLabel_SeqWarning.Name = "toolStripStatusLabel_SeqWarning";
             this.toolStripStatusLabel_SeqWarning.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.toolStripStatusLabel_SeqWarning.Click += new System.EventHandler(this.toolStripStatusLabel_SeqWarning_Click);
+            // 
+            // toolStripStatusLabel_CMstatus
+            // 
+            this.toolStripStatusLabel_CMstatus.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripStatusLabel_CMstatus.Image = global::Thetis.Properties.Resources.cm_red;
+            resources.ApplyResources(this.toolStripStatusLabel_CMstatus, "toolStripStatusLabel_CMstatus");
+            this.toolStripStatusLabel_CMstatus.Name = "toolStripStatusLabel_CMstatus";
+            this.toolStripStatusLabel_CMstatus.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             // 
             // toolStripStatusLabelRXAnt
             // 
@@ -5555,24 +5549,6 @@
             this.panelRX2RF.Controls.Add(this.lblRX2RF);
             this.panelRX2RF.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.panelRX2RF.Name = "panelRX2RF";
-            // 
-            // ptbRX2Squelch
-            // 
-            resources.ApplyResources(this.ptbRX2Squelch, "ptbRX2Squelch");
-            this.ptbRX2Squelch.GreenThumb = false;
-            this.ptbRX2Squelch.HeadImage = null;
-            this.ptbRX2Squelch.LargeChange = 1;
-            this.ptbRX2Squelch.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbRX2Squelch.LimitEnabled = false;
-            this.ptbRX2Squelch.LimitValue = 0;
-            this.ptbRX2Squelch.Maximum = 0;
-            this.ptbRX2Squelch.Minimum = -160;
-            this.ptbRX2Squelch.Name = "ptbRX2Squelch";
-            this.ptbRX2Squelch.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbRX2Squelch.SmallChange = 1;
-            this.ptbRX2Squelch.TabStop = false;
-            this.ptbRX2Squelch.Value = 0;
-            this.ptbRX2Squelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2Squelch_Scroll);
             // 
             // panelRX2DSP
             // 
@@ -7228,24 +7204,6 @@
             this.radBandVHF0.Click += new System.EventHandler(this.radBandVHF_Click);
             this.radBandVHF0.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF0_MouseDown);
             // 
-            // ptbSquelch
-            // 
-            resources.ApplyResources(this.ptbSquelch, "ptbSquelch");
-            this.ptbSquelch.GreenThumb = false;
-            this.ptbSquelch.HeadImage = null;
-            this.ptbSquelch.LargeChange = 1;
-            this.ptbSquelch.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbSquelch.LimitEnabled = false;
-            this.ptbSquelch.LimitValue = 0;
-            this.ptbSquelch.Maximum = 0;
-            this.ptbSquelch.Minimum = -160;
-            this.ptbSquelch.Name = "ptbSquelch";
-            this.ptbSquelch.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbSquelch.SmallChange = 1;
-            this.ptbSquelch.TabStop = false;
-            this.ptbSquelch.Value = 0;
-            this.ptbSquelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbSquelch_Scroll);
-            // 
             // panelModeSpecificFM
             // 
             resources.ApplyResources(this.panelModeSpecificFM, "panelModeSpecificFM");
@@ -7419,6 +7377,58 @@
             this.lblATUTuneLabel.ForeColor = System.Drawing.Color.White;
             this.lblATUTuneLabel.Name = "lblATUTuneLabel";
             // 
+            // picRX2Squelch
+            // 
+            this.picRX2Squelch.BackColor = System.Drawing.SystemColors.ControlText;
+            resources.ApplyResources(this.picRX2Squelch, "picRX2Squelch");
+            this.picRX2Squelch.Name = "picRX2Squelch";
+            this.picRX2Squelch.TabStop = false;
+            this.picRX2Squelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX2Squelch_Paint);
+            // 
+            // ptbRX2Squelch
+            // 
+            resources.ApplyResources(this.ptbRX2Squelch, "ptbRX2Squelch");
+            this.ptbRX2Squelch.GreenThumb = false;
+            this.ptbRX2Squelch.HeadImage = null;
+            this.ptbRX2Squelch.LargeChange = 1;
+            this.ptbRX2Squelch.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbRX2Squelch.LimitEnabled = false;
+            this.ptbRX2Squelch.LimitValue = 0;
+            this.ptbRX2Squelch.Maximum = 0;
+            this.ptbRX2Squelch.Minimum = -160;
+            this.ptbRX2Squelch.Name = "ptbRX2Squelch";
+            this.ptbRX2Squelch.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbRX2Squelch.SmallChange = 1;
+            this.ptbRX2Squelch.TabStop = false;
+            this.ptbRX2Squelch.Value = 0;
+            this.ptbRX2Squelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2Squelch_Scroll);
+            // 
+            // picSquelch
+            // 
+            this.picSquelch.BackColor = System.Drawing.SystemColors.ControlText;
+            resources.ApplyResources(this.picSquelch, "picSquelch");
+            this.picSquelch.Name = "picSquelch";
+            this.picSquelch.TabStop = false;
+            this.picSquelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picSquelch_Paint);
+            // 
+            // ptbSquelch
+            // 
+            resources.ApplyResources(this.ptbSquelch, "ptbSquelch");
+            this.ptbSquelch.GreenThumb = false;
+            this.ptbSquelch.HeadImage = null;
+            this.ptbSquelch.LargeChange = 1;
+            this.ptbSquelch.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbSquelch.LimitEnabled = false;
+            this.ptbSquelch.LimitValue = 0;
+            this.ptbSquelch.Maximum = 0;
+            this.ptbSquelch.Minimum = -160;
+            this.ptbSquelch.Name = "ptbSquelch";
+            this.ptbSquelch.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbSquelch.SmallChange = 1;
+            this.ptbSquelch.TabStop = false;
+            this.ptbSquelch.Value = 0;
+            this.ptbSquelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbSquelch_Scroll);
+            // 
             // Console
             // 
             resources.ApplyResources(this, "$this");
@@ -7491,20 +7501,23 @@
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Console_KeyUp);
             this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.Console_MouseWheel);
             this.Resize += new System.EventHandler(this.Console_Resize);
-            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterLow)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterHigh)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbCWSpeed)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWPitch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWBreakInDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2FilterHigh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2FilterLow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRIT)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udXIT)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udFMOffset)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udRX1StepAttData)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udRX2StepAttData)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbCWSpeed)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayZoom)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayPan)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbPWR)).EndInit();
@@ -7518,22 +7531,17 @@
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX1Gain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbVACRXGain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbVACTXGain)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udFMOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX2AF)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX1AF)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udRX1StepAttData)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udRX2StepAttData)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFGain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFBandwidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFFreq)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbTune)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).EndInit();
             this.contextMenuStripFilterRX1.ResumeLayout(false);
             this.contextMenuStripFilterRX2.ResumeLayout(false);
             this.contextMenuStripNotch.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).EndInit();
             this.statusStripMain.ResumeLayout(false);
             this.statusStripMain.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp2)).EndInit();
@@ -7543,7 +7551,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).EndInit();
             this.panelFilter.ResumeLayout(false);
             this.panelRX2RF.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).EndInit();
             this.panelRX2DSP.ResumeLayout(false);
             this.panelOptions.ResumeLayout(false);
             this.panelModeSpecificPhone.ResumeLayout(false);
@@ -7595,7 +7602,6 @@
             this.grpRX2Meter.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Meter)).EndInit();
             this.panelBandVHF.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ptbSquelch)).EndInit();
             this.panelModeSpecificFM.ResumeLayout(false);
             this.panelModeSpecificFM.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFMMic)).EndInit();
@@ -7604,6 +7610,10 @@
             this.grpMultimeterMenus.ResumeLayout(false);
             this.panelAndromedaMisc.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tbAndromedaEncoderSlider)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbSquelch)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -7741,5 +7751,6 @@
         private NumericUpDownTS nudPwrTemp2;
         private ToolStripStatusLabel toolStripStatusLabel_TXInhibit;
         private ToolStripMenuItem finderMenuItem;
+        private ToolStripStatusLabel toolStripStatusLabel_CMstatus;
     }
 }
