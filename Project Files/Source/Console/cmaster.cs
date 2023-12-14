@@ -64,6 +64,9 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", EntryPoint = "getChannelOutputRate", CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetChannelOutputRate(int stype, int id);
 
+        [DllImport("ChannelMaster.dll", EntryPoint = "getCMAstate", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetCMAstate();
+
         // router
 
         [DllImport("ChannelMaster.dll", EntryPoint = "LoadRouterAll", CallingConvention = CallingConvention.Cdecl)]
