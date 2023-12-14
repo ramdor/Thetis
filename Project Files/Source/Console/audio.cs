@@ -366,6 +366,13 @@ namespace Thetis
                     ivac.SetIVACmox(0, 0);
                     ivac.SetIVACmox(1, 0);
                 }
+
+                // [2.10.3.5]MW0LGE
+                if (WaveThing.wave_file_writer[0] != null)
+                    WaveThing.wave_file_writer[0].UpdateMox();
+                if (WaveThing.wave_file_writer[1] != null)
+                    WaveThing.wave_file_writer[1].UpdateMox();
+                //
             }
         }
 
