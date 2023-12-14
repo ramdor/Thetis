@@ -976,13 +976,15 @@ namespace Thetis
 
             if (!checkBoxRecord.Checked)
             {
-                if (console.RX2Enabled && WaveThing.wave_file_writer[0] != null)
+                if (console.RX2Enabled && WaveThing.wave_file_writer[1] != null) //[2.10.3.5]MW0LGE [1] for null not [0]
                 {
                     Thread.Sleep(100);
                     WaveThing.wave_file_writer[1].Stop();
                 }
 
-             	WaveThing.wave_file_writer[0].Stop();
+                if (WaveThing.wave_file_writer[0] != null) //[2.10.3.5]MW0LGE
+                    WaveThing.wave_file_writer[0].Stop();
+
 				checkBoxRecord.BackColor = SystemColors.Control;
 				//MessageBox.Show("The file has been written to the following location:\n"+file_name);
 			}
@@ -2504,7 +2506,10 @@ namespace Thetis
             float fGain;
             lock (m_inversGainlock)
             {
-                fGain = m_fInverseGain;
+                if (!Audio.MOX)                                     // data belongs to RX
+                    fGain = m_fInverseGain;
+                else                                                // data belongs to TX
+                    fGain = 1;
             }
 
             int cntL = rb_l.Read(in_buf_l, IN_BLOCK);
@@ -2551,6 +2556,8 @@ namespace Thetis
                 for (int i = 0; i < out_cnt; i++)
                 {
                     out_buf_l[i] = out_buf_l[i] * fGain;
+                    if (out_buf_l[i] > 1.0f) out_buf_l[i] = 1.0f;
+                    else if (out_buf_l[i] < -1.0f) out_buf_l[i] = -1.0f;
                 }
 
                 out_buf_l.CopyTo(out_buf, 0);
