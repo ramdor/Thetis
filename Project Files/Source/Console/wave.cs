@@ -2480,7 +2480,7 @@ namespace Thetis
 			return filename;
 		}
 
-        private bool m_bMoxData = false;
+        private bool m_bMox = false;
         private float m_fInverseGain = 1f;
         private object m_inversGainlock = new object();
         public float RecordGain
@@ -2505,12 +2505,14 @@ namespace Thetis
         }
         public void UpdateMox()
         {
+            // upate based on what is happening in console
+            // this m_bMox bool is then used win WriteBuffer() so that audio recorded when mox has a gain of 1
             lock (m_inversGainlock)
             {
                 if (id == 0) //rx1 sub0
-                    m_bMoxData = Audio.MOX && Audio.console.VFOATX;
+                    m_bMox = Audio.MOX && Audio.console.VFOATX;
                 else if (id == 1) //rx2 sub0
-                    m_bMoxData = Audio.MOX && Audio.console.RX2Enabled && Audio.console.VFOBTX;
+                    m_bMox = Audio.MOX && Audio.console.RX2Enabled && Audio.console.VFOBTX;
             }
         }
 
@@ -2520,7 +2522,7 @@ namespace Thetis
             float fGain;
             lock (m_inversGainlock)
             {
-                if (!m_bMoxData)                                     // data belongs to RX
+                if (!m_bMox)                                     // data belongs to RX
                     fGain = m_fInverseGain;
                 else                                                // data belongs to TX
                     fGain = 1;

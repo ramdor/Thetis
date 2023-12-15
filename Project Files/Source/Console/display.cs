@@ -10255,8 +10255,8 @@ namespace Thetis
             {
                 if (!_bDX2Setup) return;
                 if (image== null) return;
-                if (image.RawFormat != null && image.RawFormat.Guid != ImageFormat.Gif.Guid) return; // image not a gif
-                if (image.FrameDimensionsList != null && image.FrameDimensionsList.Length <= 0) return;
+                if (image.RawFormat == null || image.RawFormat.Guid != ImageFormat.Gif.Guid) return; // image not a gif
+                if (image.FrameDimensionsList == null || image.FrameDimensionsList.Length <= 0) return;
 
                 _santaFrameIndex = 0;
                 _santaX = -50;

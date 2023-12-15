@@ -713,6 +713,10 @@
     <None Include="Resources\3-santa-moving-snow.gif" />
     <None Include="Resources\cm_green.png" />
     <None Include="Resources\cm_red.png" />
+    <None Include="Resources\n1mm.png" />
+    <None Include="Resources\cat_tcp_status.png" />
+    <None Include="Resources\cat_serial_status.png" />
+    <None Include="Resources\tci_status.png" />
     <Content Include="thetis-icon.ico" />
     <None Include="Resources\thetis-logo1.png" />
     <None Include="Resources\cross_rl.cur" />
