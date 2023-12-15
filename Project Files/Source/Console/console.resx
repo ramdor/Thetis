@@ -9977,15 +9977,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="toolStripStatusLabel_SeqWarning.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="toolStripStatusLabel_CMstatus.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="toolStripStatusLabel_CMstatus.Size" type="System.Drawing.Size, System.Drawing">
-    <value>16, 15</value>
-  </data>
-  <data name="toolStripStatusLabel_CMstatus.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="toolStripStatusLabelRXAnt.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -10086,22 +10077,83 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>None</value>
   </data>
   <data name="toolStripStatusLabel_Fill.Size" type="System.Drawing.Size, System.Drawing">
-    <value>35, 15</value>
+    <value>72, 15</value>
   </data>
-  <data name="toolStripStatusLabel_N1MMActive.AutoSize" type="System.Boolean, mscorlib">
+  <data name="toolStripStatusLabel_N1MM.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="toolStripStatusLabel_N1MMActive.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  <data name="toolStripStatusLabel_N1MM.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
+    <value>None</value>
   </data>
-  <data name="toolStripStatusLabel_N1MMActive.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1, 15</value>
+  <data name="toolStripStatusLabel_N1MM.Size" type="System.Drawing.Size, System.Drawing">
+    <value>16, 15</value>
   </data>
-  <data name="toolStripStatusLabel_N1MMActive.Text" xml:space="preserve">
-    <value>N1MM</value>
+  <data name="toolStripStatusLabel_N1MM.ToolTipText" xml:space="preserve">
+    <value>N1MM udp data output enabled</value>
   </data>
-  <data name="toolStripStatusLabel_N1MMActive.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleRight</value>
+  <data name="toolStripStatusLabel_N1MM.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripStatusLabel_TCI.AutoSize" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripStatusLabel_TCI.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="toolStripStatusLabel_TCI.Size" type="System.Drawing.Size, System.Drawing">
+    <value>22, 15</value>
+  </data>
+  <data name="toolStripStatusLabel_TCI.ToolTipText" xml:space="preserve">
+    <value>TCI server is enabled</value>
+  </data>
+  <data name="toolStripStatusLabel_TCI.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripStatusLabel_CatTCPip.AutoSize" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripStatusLabel_CatTCPip.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="toolStripStatusLabel_CatTCPip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>22, 15</value>
+  </data>
+  <data name="toolStripStatusLabel_CatTCPip.ToolTipText" xml:space="preserve">
+    <value>CAT TCP/IP server is enabled</value>
+  </data>
+  <data name="toolStripStatusLabel_CatTCPip.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripStatusLabel_CatSerial.AutoSize" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripStatusLabel_CatSerial.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAF5JREFUOE/t
+        jkEKwCAMBPP/T9tmO7ELIkUp9NLxkp3IkniNZqAEqjuiQF2SUVR2P5vFIMD9bBaDgPQO+rmgsvvZ3ElZ
+        oNYKvuW8J2+6z2q8jtaWtfP/fwFbF2sF+0Qc0tDbJYGjz0MAAAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="toolStripStatusLabel_CatSerial.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="toolStripStatusLabel_CatSerial.Size" type="System.Drawing.Size, System.Drawing">
+    <value>22, 15</value>
+  </data>
+  <data name="toolStripStatusLabel_CatSerial.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripStatusLabel_CMstatus.AutoSize" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripStatusLabel_CMstatus.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="toolStripStatusLabel_CMstatus.Size" type="System.Drawing.Size, System.Drawing">
+    <value>22, 15</value>
+  </data>
+  <data name="toolStripStatusLabel_CMstatus.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="toolStripStatusLabel_timer.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -10116,7 +10168,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>None</value>
   </data>
   <data name="toolStripStatusLabel_timer.Size" type="System.Drawing.Size, System.Drawing">
-    <value>80, 15</value>
+    <value>72, 15</value>
   </data>
   <data name="toolStripStatusLabel_timer.Text" xml:space="preserve">
     <value>00:00</value>
@@ -10134,7 +10186,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
   </data>
   <data name="toolStripStatusLabel_UTCTime.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 15</value>
+    <value>92, 15</value>
   </data>
   <data name="toolStripStatusLabel_UTCTime.Text" xml:space="preserve">
     <value>12:00:00 UTC</value>
@@ -10164,7 +10216,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
   </data>
   <data name="toolStripStatusLabel_LocalTime.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 15</value>
+    <value>92, 15</value>
   </data>
   <data name="toolStripStatusLabel_LocalTime.Text" xml:space="preserve">
     <value>12:00:00 LOC</value>
@@ -18761,12 +18813,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;toolStripStatusLabel_SeqWarning.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripStatusLabel_CMstatus.Name" xml:space="preserve">
-    <value>toolStripStatusLabel_CMstatus</value>
-  </data>
-  <data name="&gt;&gt;toolStripStatusLabel_CMstatus.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;toolStripStatusLabelRXAnt.Name" xml:space="preserve">
     <value>toolStripStatusLabelRXAnt</value>
   </data>
@@ -18827,10 +18873,34 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;toolStripStatusLabel_Fill.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripStatusLabel_N1MMActive.Name" xml:space="preserve">
-    <value>toolStripStatusLabel_N1MMActive</value>
+  <data name="&gt;&gt;toolStripStatusLabel_N1MM.Name" xml:space="preserve">
+    <value>toolStripStatusLabel_N1MM</value>
   </data>
-  <data name="&gt;&gt;toolStripStatusLabel_N1MMActive.Type" xml:space="preserve">
+  <data name="&gt;&gt;toolStripStatusLabel_N1MM.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel_TCI.Name" xml:space="preserve">
+    <value>toolStripStatusLabel_TCI</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel_TCI.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel_CatTCPip.Name" xml:space="preserve">
+    <value>toolStripStatusLabel_CatTCPip</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel_CatTCPip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel_CatSerial.Name" xml:space="preserve">
+    <value>toolStripStatusLabel_CatSerial</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel_CatSerial.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel_CMstatus.Name" xml:space="preserve">
+    <value>toolStripStatusLabel_CMstatus</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel_CMstatus.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripStatusLabel_timer.Name" xml:space="preserve">

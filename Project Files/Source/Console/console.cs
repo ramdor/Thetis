@@ -910,9 +910,6 @@ namespace Thetis
             Splash.SetStatus("Initializing Radio");				// Set progress point
             radio = new Radio(AppDataPath);					    // Initialize the Radio processor   INIT_SLOW
 
-            //[2.10.3.5]MW0LGE should now know if cmASIO is in use, setup statusbar
-            setupCMasioStatusBar();
-
             specRX = new SpecRX();
             Display.specready = true;
 
@@ -1164,6 +1161,10 @@ namespace Thetis
 
                 //[2.10.3.4]MW0LGE startup stuff for linearity and ampview
                 if (psform != null) psform.HandleStartup();
+
+                //[2.10.3.5]MW0LGE should now know if cmASIO is in use
+                //also setup other status items
+                UpdateStatusBarStatusIcons();
 
                 //display render thread
 #if SNOWFALL
@@ -2287,6 +2288,7 @@ namespace Thetis
                     removeTCPIPcatDelegates();
                 }
             }
+            UpdateStatusBarStatusIcons(3);
         }
 
         //TCI
@@ -2456,6 +2458,7 @@ namespace Thetis
                     removeTCIDelegates();
                 }
             }
+            UpdateStatusBarStatusIcons(5);
         }
         //
 
@@ -28598,22 +28601,24 @@ namespace Thetis
                         {
                             current_ptt_mode = PTTMode.TCI;
                             chkMOX.Checked = true;
-                            if (!_mox)                                     
-                            {
-                                chkPower.Checked = false;
-                                return;
-                            }
+                            //[2.10.3.5]MW0LGE removed as tci was only doing what was implemented for cat_ptt_local
+                            //if (!_mox)                                     
+                            //{
+                            //    chkPower.Checked = false;
+                            //    return;
+                            //}
                         }
                         if (cat_ptt_local)
                         {
                             current_ptt_mode = PTTMode.CAT;
                             chkMOX.Checked = true;
-                            if (!_mox)   // although we are in a !mox block, the mox bool gets updated by the _checked event on chkMOX.Checked=true (the line above)
-                                        // if mox(tx) failed then assume it is ok to pull the power
-                            {
-                                chkPower.Checked = false;
-                                return;
-                            }
+                            //[2.10.3.5]MW0LGE removed as seems somewhat strange to do. Vox/cw/micptt do not consider it, and they could quite easily fail from out of band issue
+                            //if (!_mox)   // although we are in a !mox block, the mox bool gets updated by the _checked event on chkMOX.Checked=true (the line above)
+                            //            // if mox(tx) failed then assume it is ok to pull the power
+                            //{
+                            //    chkPower.Checked = false;
+                            //    return;
+                            //}
                         }
 
                         if ((tx_mode == DSPMode.CWL ||
@@ -33574,7 +33579,7 @@ namespace Thetis
                                 case DSPMode.CWL:
                                 case DSPMode.CWU:
                                     MessageBox.Show("The frequency " + freq.ToString("f6") + "MHz is not within the\n" +
-                                        "Band specifications for your region (" + ((int)current_region).ToString() + ").",
+                                        "Band specifications for your region (" + current_region.ToString() + ").",
                                         "Transmit Error: Out Of Band",
                                         MessageBoxButtons.OK,
                                         MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
@@ -33584,7 +33589,7 @@ namespace Thetis
                                     {
                                         MessageBox.Show("The frequency " + freq.ToString("f6") + "MHz in combination with your TX filter\n" +
                                             "settings [" + Display.TXFilterLow.ToString() + ", " + Display.TXFilterHigh.ToString() + "] are not within the " +
-                                            "Band specifications for your region (" + ((int)current_region).ToString() + ").",
+                                            "Band specifications for your region (" + current_region.ToString() + ").",
                                             "Transmit Error: Out Of Band",
                                             MessageBoxButtons.OK,
                                             MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
@@ -33592,7 +33597,7 @@ namespace Thetis
                                     else
                                     {
                                         MessageBox.Show("The frequency " + freq.ToString("f6") + "MHz is not within the\n" +
-                                               "Band specifications for your region (" + ((int)current_region).ToString() + ").",
+                                               "Band specifications for your region (" + current_region.ToString() + ").",
                                                "Transmit Error: Out Of Band",
                                                MessageBoxButtons.OK,
                                                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
@@ -35766,7 +35771,7 @@ namespace Thetis
                 {
                     switch (radio.GetDSPTX(0).CurrentDSPMode)
                     {
-                        case DSPMode.CWL: // MW0LGE [2.9.0.7] NOTE, will not get here on tune, as the currentdspmode is changed to USB/LSB in chkTUN_CheckedChanged
+                        case DSPMode.CWL:
                         case DSPMode.CWU:
                             MessageBox.Show("The frequency " + tx_freq.ToString("f6") + "MHz is not within the\n" +
                                 "Band specifications for your region (" + current_region.ToString() + ").",
@@ -35787,7 +35792,7 @@ namespace Thetis
                             else
                             {
                                 MessageBox.Show("The frequency " + tx_freq.ToString("f6") + "MHz is not within the\n" +
-                                       "Band specifications for your region (" + ((int)current_region).ToString() + ").",
+                                       "Band specifications for your region (" + current_region.ToString() + ").",
                                        "Transmit Error: Out Of Band",
                                        MessageBoxButtons.OK,
                                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
@@ -36820,7 +36825,7 @@ namespace Thetis
                         case DSPMode.CWL:
                         case DSPMode.CWU:
                             MessageBox.Show("The frequency " + tx_freq.ToString("f6") + "MHz is not within the\n" +
-                                "Band specifications for your region (" + ((int)current_region).ToString() + ").",
+                                "Band specifications for your region (" + current_region.ToString() + ").",
                                 "Transmit Error: Out Of Band",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
@@ -36830,7 +36835,7 @@ namespace Thetis
                             {
                                 MessageBox.Show("The frequency " + tx_freq.ToString("f6") + "MHz in combination with your TX filter\n" +
                                     "settings [" + Display.TXFilterLow.ToString() + ", " + Display.TXFilterHigh.ToString() + "] are not within the " +
-                                    "Band specifications for your region (" + ((int)current_region).ToString() + ").",
+                                    "Band specifications for your region (" + current_region.ToString() + ").",
                                     "Transmit Error: Out Of Band",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
@@ -36838,7 +36843,7 @@ namespace Thetis
                             else
                             {
                                 MessageBox.Show("The frequency " + tx_freq.ToString("f6") + "MHz is not within the\n" +
-                                       "Band specifications for your region (" + ((int)current_region).ToString() + ").",
+                                       "Band specifications for your region (" + current_region.ToString() + ").",
                                        "Transmit Error: Out Of Band",
                                        MessageBoxButtons.OK,
                                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
@@ -40135,12 +40140,6 @@ namespace Thetis
                 }
             }
 
-        }
-
-        public void SetN1MMToolStrip()
-        {
-            // update the toolbar to show activity
-            toolStripStatusLabel_N1MMActive.Visible = N1MM.IsStarted && (N1MM.IsEnabled(1) || N1MM.IsEnabled(2));
         }
         //
         private bool m_bResizeDX2Display = false;
@@ -53669,16 +53668,20 @@ namespace Thetis
             toolStripDropDownButton_CPU.Width = 68;
             toolStripStatusLabel_Volts.Width = 60;
             toolStripStatusLabel_Amps.Width = 50;
-            toolStripStatusLabel_SeqWarning.Width = 18;
-            toolStripStatusLabel_CMstatus.Width = 18;
+            toolStripStatusLabel_SeqWarning.Width = 18;            
             toolStripStatusLabelRXAnt.Width = 90;
             toolStripStatusLabelTXAnt.Width = 90;
             toolStripStatusLabelAndromedaMulti.Width = 140;
-            toolStripStatusLabel_N1MMActive.Width = 60;
             toolStripStatusLabel_timer.Width = 80;
-            toolStripStatusLabel_UTCTime.Width = 100;
-            toolStripStatusLabel_Date.Width = 108;
-            toolStripStatusLabel_LocalTime.Width = 100;
+            toolStripStatusLabel_UTCTime.Width = 92;
+            toolStripStatusLabel_Date.Width = 104;
+            toolStripStatusLabel_LocalTime.Width = 92;
+
+            toolStripStatusLabel_CMstatus.Width = 22;
+            toolStripStatusLabel_N1MM.Width = 22;
+            toolStripStatusLabel_CatTCPip.Width = 22;
+            toolStripStatusLabel_CatSerial.Width = 22;
+            toolStripStatusLabel_TCI.Width = 22;
         }
 
         //private bool twoTone = false;
@@ -56070,7 +56073,7 @@ namespace Thetis
             switch (chkSquelch.CheckState)
             {
                 case CheckState.Unchecked:
-                    // off
+                    // off //NOTE: no break here so that the sql threshold values are set, ready for us clicking the sql button
                 case CheckState.Checked:
                     // sql
                     if (rx1_dsp_mode == DSPMode.FM) //FM Squelch
@@ -56749,6 +56752,95 @@ namespace Thetis
                     toolStripStatusLabel_CMstatus.Visible = true;
                     break;
             }
+        }
+
+        private void setupSerialCatStatusBar()
+        {
+            if (IsSetupFormNull) return;
+
+            int[] catState = SetupForm.SerialCatState();
+
+            // check if anything in use
+            int nTot = 0;
+            for(int n = 0;n< catState.Length; n++)
+                nTot += catState[n];
+            if (nTot == 0)
+            {
+                toolStripStatusLabel_CatSerial.Visible = false;
+                return;
+            }
+            //
+
+            //replace colours in cat_serial_status image, red, green, blue and black to show state for cat1-4
+            Bitmap modifiedImage = new Bitmap(Properties.Resources.cat_serial_status);
+
+            for (int x = 0; x < modifiedImage.Width; x++)
+            {
+                for (int y = 0; y < modifiedImage.Height; y++)
+                {
+                    Color pixelColor = modifiedImage.GetPixel(x, y);
+
+                    if (pixelColor.A == 255 && pixelColor.R == 255 && pixelColor.G == 0 && pixelColor.B == 0) // Check for red  cat 1
+                    {
+                        Color c = catState[0] == 0 ? Color.Transparent : catState[0] == 1 ? Color.FromArgb(255, 255, 0, 0) : Color.FromArgb(255, 0, 255, 0);
+                        modifiedImage.SetPixel(x, y, c);
+                    }
+                    else if (pixelColor.A == 255 && pixelColor.R == 0 && pixelColor.G == 255 && pixelColor.B == 0) // Check for green  cat 2
+                    {
+                        Color c = catState[1] == 0 ? Color.Transparent : catState[1] == 1 ? Color.FromArgb(255, 255, 0, 0) : Color.FromArgb(255, 0, 255, 0);
+                        modifiedImage.SetPixel(x, y, c);
+                    }
+                    else if (pixelColor.A == 255 && pixelColor.R == 0 && pixelColor.G == 0 && pixelColor.B == 255) // Check for blue  cat 3
+                    {
+                        Color c = catState[2] == 0 ? Color.Transparent : catState[2] == 1 ? Color.FromArgb(255, 255, 0, 0) : Color.FromArgb(255, 0, 255, 0);
+                        modifiedImage.SetPixel(x, y, c);
+                    }
+                    else if (pixelColor.A == 255 && pixelColor.R == 0 && pixelColor.G == 0 && pixelColor.B == 0) // Check for black  cat 4
+                    {
+                        Color c = catState[3] == 0 ? Color.Transparent : catState[3] == 1 ? Color.FromArgb(255, 255, 0, 0) : Color.FromArgb(255,0,255,0);
+                        modifiedImage.SetPixel(x, y, c);
+                    }
+                }
+            }
+
+            string sToolTip = "Serial : ";
+            for (int n = 0; n < catState.Length; n++)
+            {
+                if (catState[n] == 1)
+                {
+                    sToolTip += $"CAT{n+1} disabled, ";
+                }
+                else if (catState[n] == 2)
+                {
+                    sToolTip += $"CAT{n+1} enabled, ";
+                }
+            }
+
+            if (sToolTip.Right(2) == ", ") sToolTip = sToolTip.Left(sToolTip.Length - 2);
+
+            toolStripStatusLabel_CatSerial.Image = modifiedImage;
+            toolStripStatusLabel_CatSerial.ToolTipText = sToolTip;
+            toolStripStatusLabel_CatSerial.Visible = true;
+        }
+
+        public void UpdateStatusBarStatusIcons(int nGroup = 0)
+        {
+            // 0 = all
+
+            if(nGroup == 0 || nGroup == 1) //cmasio
+                setupCMasioStatusBar();
+
+            if(nGroup == 0 || nGroup == 2) //n1mm
+                toolStripStatusLabel_N1MM.Visible = N1MM.IsStarted && (N1MM.IsEnabled(1) || N1MM.IsEnabled(2));
+
+            if (nGroup == 0 || nGroup == 3) //tcp/ip cat
+                toolStripStatusLabel_CatTCPip.Visible = m_tcpCATServer != null ? m_tcpCATServer.IsServerRunning : false;
+
+            if (nGroup == 0 || nGroup == 4) //serial cat
+                setupSerialCatStatusBar();
+
+            if (nGroup == 0 || nGroup == 5) //tci
+                toolStripStatusLabel_TCI.Visible = m_tcpTCIServer != null ? m_tcpTCIServer.IsServerRunning : false;
         }
     }
 

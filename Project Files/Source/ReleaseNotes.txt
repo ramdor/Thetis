@@ -23,6 +23,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] someone in red might show up when it snows from now until the 26th Dec
 - [add] option in VAC1 to cause VOX to use MIC instead of VAC
 - [add] option to stop RX1/2 waterfall on TX
+- [add] status bar icons for tci, cat serial, cat tcp/ip, n1mm
 - [fix] lin waterfall palettes should now look better
 - [fix] fix an issue which would prevent manually changing TX filter in setup form, it would try to 'validate' whilst typing new value
 - [fix] fix collapsed andromeda sql gain sliders from behaving erratically
@@ -35,6 +36,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] skinserver now attempts to select skin when downloaded and shows 'wait' mouse pointer whilst changing
 - [change] sql reworked to fix collapsed view analogue slider issues. Will require you to setup your sql/vsql levels again
 - [change] protocol tri state checkbox changed over to 3 radio buttons, one to select each protocol, and one to select auto
+- [change] vfosync in diversity form now mirrors state at top of main console
 
 ## v2.10.3.4 Change Log
 - [add] show on startup options for ampview and linearity/ps window. Set in the linearity/ps window

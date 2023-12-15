@@ -889,7 +889,6 @@
             this.toolStripStatusLabel_Amps = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_TXInhibit = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_SeqWarning = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel_CMstatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelRXAnt = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem19 = new System.Windows.Forms.ToolStripMenuItem();
@@ -900,7 +899,11 @@
             this.toolStripMenuItem17 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripStatusLabelAndromedaMulti = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_Fill = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel_N1MMActive = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_N1MM = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_TCI = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_CatTCPip = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_CatSerial = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_CMstatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_timer = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_UTCTime = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_Date = new System.Windows.Forms.ToolStripStatusLabel();
@@ -4913,12 +4916,15 @@
             this.toolStripStatusLabel_Amps,
             this.toolStripStatusLabel_TXInhibit,
             this.toolStripStatusLabel_SeqWarning,
-            this.toolStripStatusLabel_CMstatus,
             this.toolStripStatusLabelRXAnt,
             this.toolStripStatusLabelTXAnt,
             this.toolStripStatusLabelAndromedaMulti,
             this.toolStripStatusLabel_Fill,
-            this.toolStripStatusLabel_N1MMActive,
+            this.toolStripStatusLabel_N1MM,
+            this.toolStripStatusLabel_TCI,
+            this.toolStripStatusLabel_CatTCPip,
+            this.toolStripStatusLabel_CatSerial,
+            this.toolStripStatusLabel_CMstatus,
             this.toolStripStatusLabel_timer,
             this.toolStripStatusLabel_UTCTime,
             this.toolStripStatusLabel_Date,
@@ -5166,14 +5172,6 @@
             this.toolStripStatusLabel_SeqWarning.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.toolStripStatusLabel_SeqWarning.Click += new System.EventHandler(this.toolStripStatusLabel_SeqWarning_Click);
             // 
-            // toolStripStatusLabel_CMstatus
-            // 
-            this.toolStripStatusLabel_CMstatus.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripStatusLabel_CMstatus.Image = global::Thetis.Properties.Resources.cm_red;
-            resources.ApplyResources(this.toolStripStatusLabel_CMstatus, "toolStripStatusLabel_CMstatus");
-            this.toolStripStatusLabel_CMstatus.Name = "toolStripStatusLabel_CMstatus";
-            this.toolStripStatusLabel_CMstatus.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-            // 
             // toolStripStatusLabelRXAnt
             // 
             resources.ApplyResources(this.toolStripStatusLabelRXAnt, "toolStripStatusLabelRXAnt");
@@ -5251,13 +5249,44 @@
             this.toolStripStatusLabel_Fill.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.toolStripStatusLabel_Fill.Spring = true;
             // 
-            // toolStripStatusLabel_N1MMActive
+            // toolStripStatusLabel_N1MM
             // 
-            resources.ApplyResources(this.toolStripStatusLabel_N1MMActive, "toolStripStatusLabel_N1MMActive");
-            this.toolStripStatusLabel_N1MMActive.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripStatusLabel_N1MMActive.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.toolStripStatusLabel_N1MMActive.Name = "toolStripStatusLabel_N1MMActive";
-            this.toolStripStatusLabel_N1MMActive.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+            resources.ApplyResources(this.toolStripStatusLabel_N1MM, "toolStripStatusLabel_N1MM");
+            this.toolStripStatusLabel_N1MM.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripStatusLabel_N1MM.Image = global::Thetis.Properties.Resources.n1mm;
+            this.toolStripStatusLabel_N1MM.Name = "toolStripStatusLabel_N1MM";
+            this.toolStripStatusLabel_N1MM.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+            // 
+            // toolStripStatusLabel_TCI
+            // 
+            resources.ApplyResources(this.toolStripStatusLabel_TCI, "toolStripStatusLabel_TCI");
+            this.toolStripStatusLabel_TCI.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripStatusLabel_TCI.Image = global::Thetis.Properties.Resources.tci_status;
+            this.toolStripStatusLabel_TCI.Name = "toolStripStatusLabel_TCI";
+            this.toolStripStatusLabel_TCI.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+            // 
+            // toolStripStatusLabel_CatTCPip
+            // 
+            resources.ApplyResources(this.toolStripStatusLabel_CatTCPip, "toolStripStatusLabel_CatTCPip");
+            this.toolStripStatusLabel_CatTCPip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripStatusLabel_CatTCPip.Image = global::Thetis.Properties.Resources.cat_tcp_status;
+            this.toolStripStatusLabel_CatTCPip.Name = "toolStripStatusLabel_CatTCPip";
+            this.toolStripStatusLabel_CatTCPip.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+            // 
+            // toolStripStatusLabel_CatSerial
+            // 
+            resources.ApplyResources(this.toolStripStatusLabel_CatSerial, "toolStripStatusLabel_CatSerial");
+            this.toolStripStatusLabel_CatSerial.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripStatusLabel_CatSerial.Name = "toolStripStatusLabel_CatSerial";
+            this.toolStripStatusLabel_CatSerial.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+            // 
+            // toolStripStatusLabel_CMstatus
+            // 
+            resources.ApplyResources(this.toolStripStatusLabel_CMstatus, "toolStripStatusLabel_CMstatus");
+            this.toolStripStatusLabel_CMstatus.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripStatusLabel_CMstatus.Image = global::Thetis.Properties.Resources.cm_red;
+            this.toolStripStatusLabel_CMstatus.Name = "toolStripStatusLabel_CMstatus";
+            this.toolStripStatusLabel_CMstatus.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             // 
             // toolStripStatusLabel_timer
             // 
@@ -7736,7 +7765,6 @@
         private ToolStripMenuItem toolStripMenuItem18;
         private ToolStripStatusLabel toolStripStatusLabelAndromedaMulti;
         private ucQuickRecall ucQuickRecallPad;
-        private ToolStripStatusLabel toolStripStatusLabel_N1MMActive;
         private CheckBoxTS checkBoxTS1;
         private CheckBoxTS chkExternalPA;
         private Timer tmrAutoAGC;
@@ -7752,5 +7780,9 @@
         private ToolStripStatusLabel toolStripStatusLabel_TXInhibit;
         private ToolStripMenuItem finderMenuItem;
         private ToolStripStatusLabel toolStripStatusLabel_CMstatus;
+        private ToolStripStatusLabel toolStripStatusLabel_CatSerial;
+        private ToolStripStatusLabel toolStripStatusLabel_N1MM;
+        private ToolStripStatusLabel toolStripStatusLabel_CatTCPip;
+        private ToolStripStatusLabel toolStripStatusLabel_TCI;
     }
 }
