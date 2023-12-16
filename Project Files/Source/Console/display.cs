@@ -830,7 +830,7 @@ namespace Thetis
                         ResetWaterfallBmp2();
                     }
 
-                    //Audio.ScopeDisplayWidth = displayTargetWidth / m_nDecimation;
+                    Audio.ScopePixelWidth = displayTargetWidth;
 
                     if (specready)
                     {

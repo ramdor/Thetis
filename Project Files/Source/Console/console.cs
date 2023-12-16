@@ -22203,7 +22203,9 @@ namespace Thetis
                 sample_rate_tx = value;
                 Audio.OutRateTX = value; //[2.10.3.4]MW0LGE added
                 Audio.BlockSizeTX = cmaster.GetBuffSize(value); //[2.10.3.4]MW0LGE added
-                Audio.SampleRateTX = value;                
+                Audio.SampleRateTX = value;
+                if (!IsSetupFormNull)  //[2.10.3.5]MW0LGE added
+                    Audio.ScopeTime = SetupForm.ScopeTime;
                 Display.SampleRateTX = value;
                 cmaster.SetXmtrChannelOutrate(0, value, cmaster.MONMixState);
 
