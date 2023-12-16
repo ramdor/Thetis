@@ -30549,7 +30549,7 @@
             0,
             0});
             this.udDisplayScopeTime.Name = "udDisplayScopeTime";
-            this.udDisplayScopeTime.Size = new System.Drawing.Size(64, 20);
+            this.udDisplayScopeTime.Size = new System.Drawing.Size(69, 20);
             this.udDisplayScopeTime.TabIndex = 0;
             this.udDisplayScopeTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.udDisplayScopeTime, "Amount of time to display across the width of the scope display window.");
@@ -30568,7 +30568,7 @@
             this.lblDisplayScopeTime.Name = "lblDisplayScopeTime";
             this.lblDisplayScopeTime.Size = new System.Drawing.Size(64, 23);
             this.lblDisplayScopeTime.TabIndex = 1;
-            this.lblDisplayScopeTime.Text = "Time (us):";
+            this.lblDisplayScopeTime.Text = "Time (ms):";
             // 
             // grpDisplayPhase
             // 

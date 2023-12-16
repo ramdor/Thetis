@@ -9827,18 +9827,23 @@ namespace Thetis
         private void udDisplayScopeTime_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            /*
             //console.ScopeTime = (int)udDisplayScopeTime.Value;
             int samples = (int)((double)udDisplayScopeTime.Value * Audio.OutRate / 1000000.0);
             //Debug.WriteLine("sample: "+samples);
             Audio.ScopeSamplesPerPixel = samples;
 
-            //int pixels = Display.Target.Width;
-            //int microseconds_to_complete_display_width = (int)udDisplayScopeTime.Value;
-            //int samples_per_second = Audio.OutRate;
-            //double samples_in_one_microsecond = (double)samples_per_second / 1000000.0;
-            //double samples_needed = microseconds_to_complete_display_width * samples_in_one_microsecond;
-            //int samples_per_pixel = (int)(samples_needed / pixels);
-            //Audio.ScopeSamplesPerPixel = samples_per_pixel;
+            samples = (int)((double)udDisplayScopeTime.Value * Audio.OutRateTX / 1000000.0); //[2.10.3.5]MW0lGE added
+            Audio.ScopeSamplesPerPixelTX = samples;
+            */
+
+            //[2.10.3.5]MW0LGE changed the above to keep calcs internal to Audio
+            Audio.ScopeTime = (int)udDisplayScopeTime.Value;
+        }
+
+        public int ScopeTime
+        {
+            get { return (int)udDisplayScopeTime.Value; }
         }
 
         private void udDisplayMeterAvg_ValueChanged(object sender, System.EventArgs e)

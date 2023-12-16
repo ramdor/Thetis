@@ -33,6 +33,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
+using SharpDX.DirectWrite;
 //using ProjectCeilidh.PortAudio;
 //using ProjectCeilidh.PortAudio.Native;
 //using static ProjectCeilidh.PortAudio.Native.PortAudio;
@@ -1954,52 +1955,82 @@ namespace Thetis
             return retval;
         }
 
-//        private static void PortAudioErrorMessageBox(PaErrorCode error)
- //       {
-//            if (error < PaErrorCode.NoError) throw PortAudioException.GetException(error);
-//             switch (error)
-//             {
-//                 case PaErrorCode.InvalidDevice:
-//                     string s = "Whoops!  Looks like something has gone wrong in the\n" +
-//                         "Audio section.  Go look in the Setup Form -> Audio Tab to\n" +
-//                         "verify the settings there.";
-//                     if (vac_enabled) s += "  Since VAC is enabled, make sure\n" +
-//                          "you look at those settings as well.";
-//                     MessageBox.Show(s, "Audio Subsystem Error: Invalid Device",
-//                         MessageBoxButtons.OK, MessageBoxIcon.Error);
-//                     break;
-//                 default:
-//                     MessageBox.Show(PortAudio.Pa_GetErrorText(error), "PortAudio Error: " + error,
-//                         MessageBoxButtons.OK, MessageBoxIcon.Error);
-//                     break;
-//             }
-//        }
+        //        private static void PortAudioErrorMessageBox(PaErrorCode error)
+        //       {
+        //            if (error < PaErrorCode.NoError) throw PortAudioException.GetException(error);
+        //             switch (error)
+        //             {
+        //                 case PaErrorCode.InvalidDevice:
+        //                     string s = "Whoops!  Looks like something has gone wrong in the\n" +
+        //                         "Audio section.  Go look in the Setup Form -> Audio Tab to\n" +
+        //                         "verify the settings there.";
+        //                     if (vac_enabled) s += "  Since VAC is enabled, make sure\n" +
+        //                          "you look at those settings as well.";
+        //                     MessageBox.Show(s, "Audio Subsystem Error: Invalid Device",
+        //                         MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                     break;
+        //                 default:
+        //                     MessageBox.Show(PortAudio.Pa_GetErrorText(error), "PortAudio Error: " + error,
+        //                         MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                     break;
+        //             }
+        //        }
 
         #endregion
 
         #region Scope Stuff
 
-        private static int scope_samples_per_pixel = 10000;
-
-        public static int ScopeSamplesPerPixel
+        private static int m_nScope_pixel_width = 0;
+        private static int m_nScope_time = 10000;
+        private static int m_nScope_samples_per_pixel = 10000;
+        private static int m_nScope_samples_per_pixel_tx = 10000;
+        private static readonly object m_objScope_width_lock = new object();
+        public static int ScopePixelWidth
         {
-            get { return scope_samples_per_pixel; }
-            set { scope_samples_per_pixel = value; }
+            set 
+            {
+                bool bUpdate = false;
+                lock (m_objScope_width_lock)
+                {
+                    bUpdate = value != m_nScope_pixel_width;
+                    m_nScope_pixel_width = value;
+                }
+                if (bUpdate)
+                    ScopeTime = m_nScope_time; // force update if different
+            }
         }
 
-        private static int scope_display_width = 704;
+        public static int ScopeTime //[2.10.3.5]MW0LGE resolves #338
+        {
+            get { return m_nScope_time; }
+            set 
+            {
+                m_nScope_time = value;
 
-        //public static int ScopeDisplayWidth
-        //{
-        //    get { return scope_display_width; }
-        //    set {
-        //        lock (m_objArrayLock)
-        //        {
-        //            scope_display_width = value;
-        //        }
-        //    }
-        //}
+                double fWidth = 0;
+                lock (m_objScope_width_lock)
+                {
+                    fWidth = m_nScope_pixel_width;
+                }
 
+                //scope_samples_per_pixel = (int)((double)scope_time * Audio.OutRate / 1000000.0);
+                //scope_samples_per_pixel_tx = (int)((double)scope_time * Audio.OutRateTX / 1000000.0);
+
+                //scope_time is the time taken to cover the display width, the above does not caclulate this correctly
+                //changed to ms instead of us
+                double fSamples_in_one_interval = Audio.OutRate / 1000.0;// 1000000.0;
+                double fSamples_needed = fSamples_in_one_interval * m_nScope_time;
+                m_nScope_samples_per_pixel = (int)(fSamples_needed / fWidth);
+
+                fSamples_in_one_interval = Audio.OutRateTX / 1000.0;// 1000000.0;
+                fSamples_needed = fSamples_in_one_interval * m_nScope_time;
+                m_nScope_samples_per_pixel_tx = (int)(fSamples_needed / fWidth);
+
+                //Debug.Print($"{m_nScope_samples_per_pixel} tx = {m_nScope_samples_per_pixel_tx}");
+            }
+        }
+
+        private static int scope_array_len = 0;
         private static int scope_sample_index = 0;
         private static int scope_pixel_index = 0;
         private static float scope_pixel_min = float.MaxValue;
@@ -2018,7 +2049,7 @@ namespace Thetis
                     int nMin = scope_min != null ? scope_min.Length : 0;
                     int nMax = scope_max != null ? scope_max.Length : 0;
 
-                    scope_display_width = Math.Min(nMin, nMax);
+                    scope_array_len = Math.Min(nMin, nMax);
                 }
             }
         }
@@ -2036,7 +2067,7 @@ namespace Thetis
                     int nMin = scope_min != null ? scope_min.Length : 0;
                     int nMax = scope_max != null ? scope_max.Length : 0;
 
-                    scope_display_width = Math.Min(nMin, nMax);
+                    scope_array_len = Math.Min(nMin, nMax);
                 }
             }
         }
@@ -2059,6 +2090,8 @@ namespace Thetis
                 //}
                 if (scope_min == null || scope_max == null) return;
 
+                int scope_samples_per_pixel_local = !mox ? m_nScope_samples_per_pixel : m_nScope_samples_per_pixel_tx; //[2.10.3.5]MW0LGE added
+
                 for (int i = 0; i < frameCount; i++)
                 {
                     if (Display.CurrentDisplayMode == DisplayMode.SCOPE || //MW0LGE added all other scope modes
@@ -2075,11 +2108,10 @@ namespace Thetis
                     {
                         scope_pixel_min = buf[i];
                         scope_pixel_max = buf[i];
-                    }
-
+                    }                    
 
                     scope_sample_index++;
-                    if (scope_sample_index >= scope_samples_per_pixel)
+                    if (scope_sample_index >= scope_samples_per_pixel_local)
                     {
                         scope_sample_index = 0;
                         scope_min[scope_pixel_index] = scope_pixel_min;
@@ -2089,7 +2121,7 @@ namespace Thetis
                         scope_pixel_max = float.MinValue;
 
                         scope_pixel_index++;
-                        if (scope_pixel_index >= scope_display_width)
+                        if (scope_pixel_index >= scope_array_len)
                             scope_pixel_index = 0;
                     }
                 }
@@ -2118,7 +2150,7 @@ namespace Thetis
                     int nMin = scope2_min != null ? scope2_min.Length : 0;
                     int nMax = scope2_max != null ? scope2_max.Length : 0;
 
-                    scope_display_width = Math.Min(nMin, nMax);
+                    scope_array_len = Math.Min(nMin, nMax);
                 }
             }
         }
@@ -2133,7 +2165,7 @@ namespace Thetis
                     int nMin = scope2_min != null ? scope2_min.Length : 0;
                     int nMax = scope2_max != null ? scope2_max.Length : 0;
 
-                    scope_display_width = Math.Min(nMin, nMax);
+                    scope_array_len = Math.Min(nMin, nMax);
                 }
             }
         }
@@ -2156,6 +2188,8 @@ namespace Thetis
                 //}
                 if (scope2_min == null || scope2_max == null) return;
 
+                int scope_samples_per_pixel_local = !mox ? m_nScope_samples_per_pixel : m_nScope_samples_per_pixel_tx; //[2.10.3.5]MW0LGE added
+
                 for (int i = 0; i < frameCount; i++)
                 {
                     if (Display.CurrentDisplayMode == DisplayMode.SCOPE ||
@@ -2174,9 +2208,8 @@ namespace Thetis
                         scope2_pixel_max = buf[i];
                     }
 
-
                     scope2_sample_index++;
-                    if (scope2_sample_index >= scope_samples_per_pixel)
+                    if (scope2_sample_index >= scope_samples_per_pixel_local)
                     {
                         scope2_sample_index = 0;
                         scope2_min[scope2_pixel_index] = scope2_pixel_min;  //MW0LGE_21g  fix .. was scope_pixel_index
@@ -2186,7 +2219,7 @@ namespace Thetis
                         scope2_pixel_max = float.MinValue;
 
                         scope2_pixel_index++;
-                        if (scope2_pixel_index >= scope_display_width)
+                        if (scope2_pixel_index >= scope_array_len)
                             scope2_pixel_index = 0;
                     }
                 }
