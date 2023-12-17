@@ -579,21 +579,39 @@ namespace Thetis
                         string[] words = junk.Split(':');
                         System.Console.Write(words[1]);
 
-                        // get MAC address from the payload
+                        //[2.10.3.5]MW0LGE sigh, MAC address in P1 is NOT at data[5], but at data[3]
+                        //// get MAC address from the payload
+                        //byte[] mac = { 0, 0, 0, 0, 0, 0 };
+                        //Array.Copy(data, 5, mac, 0, 6);
+                        //MAC = BitConverter.ToString(mac);
+
                         byte[] mac = { 0, 0, 0, 0, 0, 0 };
-                        Array.Copy(data, 5, mac, 0, 6);
+                        if ((data[0] == 0xef) && // Protocol-USB (P1)
+                             (data[1] == 0xfe) &&
+                             ((data[2] == 0x2) || (data[2] == 0x3)))
+                        {
+                            Array.Copy(data, 3, mac, 0, 6);
+                        }
+                        else if ((data[0] == 0x0) &&  // Protocol-ETH (P2)
+                             (data[1] == 0x0) &&
+                             (data[2] == 0x0) &&
+                             (data[3] == 0x0) &&
+                             ((data[4] == 0x2) || (data[4] == 0x3)))
+                        {
+                            Array.Copy(data, 5, mac, 0, 6);
+                        }
                         MAC = BitConverter.ToString(mac);
 
                         // check for HPSDR frame ID and type 2 (not currently streaming data, which also means 'not yet in use')
                         // changed to filter a proper discovery packet from the radio, even if already in use!  This prevents the need to power-cycle the radio.
                         if (((data[0] == 0xef) && // Protocol-USB (P1) Busy 
-                             (data[1] == 0xfe) &&
-                             (data[2] == 0x3)) ||
-                            ((data[0] == 0x0) &&  // Protocol-ETH (P2) Busy
-                             (data[1] == 0x0) &&
-                             (data[2] == 0x0) &&
-                             (data[3] == 0x0) &&
-                             (data[4] == 0x3)))
+                            (data[1] == 0xfe) &&
+                            (data[2] == 0x3)) ||
+                        ((data[0] == 0x0) &&  // Protocol-ETH (P2) Busy
+                            (data[1] == 0x0) &&
+                            (data[2] == 0x0) &&
+                            (data[3] == 0x0) &&
+                            (data[4] == 0x3)))
                         {
                             System.Console.WriteLine("Radio Busy");
                             return false;
