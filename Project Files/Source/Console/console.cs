@@ -1201,7 +1201,7 @@ namespace Thetis
                 //
 
                 //autostart
-                bool bAutoStart = args?.Contains<string>("-autostart") ?? false || m_bAutoPowerOn;
+                bool bAutoStart = (args?.Contains<string>("-autostart") ?? false) || m_bAutoPowerOn;
                 if (bAutoStart)
                 {
                     autoStartTimer = new System.Timers.Timer(2000);

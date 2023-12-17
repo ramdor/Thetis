@@ -22613,7 +22613,7 @@ namespace Thetis
 
             Display.SpectralPeakHoldRX1 = chkActivePeakHoldRX1.Checked;
             //
-            console.SetupInfoBarButton(ucInfoBar.ActionTypes.ActivePeaks, chkActivePeakHoldRX1.Checked | (console.RX2Enabled && chkActivePeakHoldRX2.Checked));
+            console.SetupInfoBarButton(ucInfoBar.ActionTypes.ActivePeaks, chkActivePeakHoldRX1.Checked || (console.RX2Enabled && chkActivePeakHoldRX2.Checked));
         }
 
         private void udActivePeakHoldDurationRX1_ValueChanged(object sender, EventArgs e)
@@ -22633,7 +22633,7 @@ namespace Thetis
 
             Display.SpectralPeakHoldRX2 = chkActivePeakHoldRX2.Checked;
             //
-            console.SetupInfoBarButton(ucInfoBar.ActionTypes.ActivePeaks, chkActivePeakHoldRX1.Checked | (console.RX2Enabled && chkActivePeakHoldRX2.Checked));
+            console.SetupInfoBarButton(ucInfoBar.ActionTypes.ActivePeaks, chkActivePeakHoldRX1.Checked || (console.RX2Enabled && chkActivePeakHoldRX2.Checked));
         }
 
         private void udActivePeakHoldDurationRX2_ValueChanged(object sender, EventArgs e)
@@ -24608,7 +24608,7 @@ namespace Thetis
             Display.ShowTCISpots = chkShowTCISpots.Checked;
 
             //
-            console.SetupInfoBarButton(ucInfoBar.ActionTypes.ShowSpots, chkShowTCISpots.Checked/* | console.SpotForm*/);
+            console.SetupInfoBarButton(ucInfoBar.ActionTypes.ShowSpots, chkShowTCISpots.Checked/* || console.SpotForm*/);
         }
         public bool ShowTCISpots
         {
@@ -28650,7 +28650,7 @@ namespace Thetis
                     if(sFile == "")
                         sFile = getFileFromUrl(e.FinalUri);
 
-                    if (isSkinZipFile(e.Path, sFile, out bool bUsesFileInRoot, out bool bMeterFolderFound, e.BypassRootFolderCheck | e.IsMeterSkin))
+                    if (isSkinZipFile(e.Path, sFile, out bool bUsesFileInRoot, out bool bMeterFolderFound, e.BypassRootFolderCheck || e.IsMeterSkin))
                     {                        
                         string sOutputPath = "";                        
 
