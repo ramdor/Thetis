@@ -33,7 +33,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
-using SharpDX.DirectWrite;
 //using ProjectCeilidh.PortAudio;
 //using ProjectCeilidh.PortAudio.Native;
 //using static ProjectCeilidh.PortAudio.Native.PortAudio;
