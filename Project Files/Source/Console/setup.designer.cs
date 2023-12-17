@@ -380,6 +380,7 @@
             this.chkHideFeebackLevel = new System.Windows.Forms.CheckBoxTS();
             this.chkSwapREDBluePSAColours = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS22 = new System.Windows.Forms.GroupBoxTS();
+            this.chkAutoPowerOn = new System.Windows.Forms.CheckBoxTS();
             this.chkUseOutlinedCross = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS15 = new System.Windows.Forms.GroupBoxTS();
             this.chkQSOTimerFlashTimerIfResetOnExpiry = new System.Windows.Forms.CheckBoxTS();
@@ -1887,6 +1888,7 @@
             this.lblDisplayFPS = new System.Windows.Forms.LabelTS();
             this.tpDisplayTop = new System.Windows.Forms.TabPage();
             this.grpDisplayWaterfall = new System.Windows.Forms.GroupBoxTS();
+            this.btnRX1CopyLowHighWaterfall = new System.Windows.Forms.ButtonTS();
             this.chkStopRX1WaterfallOnTx = new System.Windows.Forms.CheckBoxTS();
             this.chkWaterfallUseNFForAGCRX1 = new System.Windows.Forms.CheckBoxTS();
             this.lblWaterfallAGCOffsetRX1 = new System.Windows.Forms.LabelTS();
@@ -1924,6 +1926,7 @@
             this.udDisplayAVTimeWF = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS374 = new System.Windows.Forms.LabelTS();
             this.grpDisplaySpectrumGrid = new System.Windows.Forms.GroupBoxTS();
+            this.btnRX1CopyMinMaxSpectrumGrid = new System.Windows.Forms.ButtonTS();
             this.label14 = new System.Windows.Forms.Label();
             this.chkMaintainNFAdjustDeltaRX1 = new System.Windows.Forms.CheckBoxTS();
             this.nudRX1NFoffsetGridFollow = new System.Windows.Forms.NumericUpDownTS();
@@ -1958,6 +1961,7 @@
             this.tbDisplayFFTSize = new System.Windows.Forms.TrackBarTS();
             this.tpDisplayBottom = new System.Windows.Forms.TabPage();
             this.grpRX2DisplayWaterfall = new System.Windows.Forms.GroupBoxTS();
+            this.btnRX2CopyLowHighWaterfall = new System.Windows.Forms.ButtonTS();
             this.chkStopRX2WaterfallOnTx = new System.Windows.Forms.CheckBoxTS();
             this.chkWaterfallUseNFForAGCRX2 = new System.Windows.Forms.CheckBoxTS();
             this.lblWaterfallAGCOffsetRX2 = new System.Windows.Forms.LabelTS();
@@ -1995,6 +1999,7 @@
             this.udRX2DisplayWFAVTime = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS377 = new System.Windows.Forms.LabelTS();
             this.grpRX2DisplaySpectrumGrid = new System.Windows.Forms.GroupBoxTS();
+            this.btnRX2CopyMinMaxSpectrumGrid = new System.Windows.Forms.ButtonTS();
             this.label20 = new System.Windows.Forms.Label();
             this.chkMaintainNFAdjustDeltaRX2 = new System.Windows.Forms.CheckBoxTS();
             this.nudRX2NFoffsetGridFollow = new System.Windows.Forms.NumericUpDownTS();
@@ -9618,13 +9623,27 @@
             // 
             // groupBoxTS22
             // 
+            this.groupBoxTS22.Controls.Add(this.chkAutoPowerOn);
             this.groupBoxTS22.Controls.Add(this.chkUseOutlinedCross);
             this.groupBoxTS22.Location = new System.Drawing.Point(204, 149);
             this.groupBoxTS22.Name = "groupBoxTS22";
             this.groupBoxTS22.Size = new System.Drawing.Size(212, 85);
             this.groupBoxTS22.TabIndex = 12;
             this.groupBoxTS22.TabStop = false;
-            this.groupBoxTS22.Text = "Cursors";
+            this.groupBoxTS22.Text = "Other";
+            // 
+            // chkAutoPowerOn
+            // 
+            this.chkAutoPowerOn.AutoSize = true;
+            this.chkAutoPowerOn.Image = null;
+            this.chkAutoPowerOn.Location = new System.Drawing.Point(18, 46);
+            this.chkAutoPowerOn.Name = "chkAutoPowerOn";
+            this.chkAutoPowerOn.Size = new System.Drawing.Size(148, 17);
+            this.chkAutoPowerOn.TabIndex = 35;
+            this.chkAutoPowerOn.Text = "Auto Power On at start up";
+            this.toolTip1.SetToolTip(this.chkAutoPowerOn, "Attempt to power on at start up");
+            this.chkAutoPowerOn.UseVisualStyleBackColor = true;
+            this.chkAutoPowerOn.CheckedChanged += new System.EventHandler(this.chkAutoPowerOn_CheckedChanged);
             // 
             // chkUseOutlinedCross
             // 
@@ -30888,6 +30907,7 @@
             // 
             // grpDisplayWaterfall
             // 
+            this.grpDisplayWaterfall.Controls.Add(this.btnRX1CopyLowHighWaterfall);
             this.grpDisplayWaterfall.Controls.Add(this.chkStopRX1WaterfallOnTx);
             this.grpDisplayWaterfall.Controls.Add(this.chkWaterfallUseNFForAGCRX1);
             this.grpDisplayWaterfall.Controls.Add(this.lblWaterfallAGCOffsetRX1);
@@ -30916,6 +30936,19 @@
             this.grpDisplayWaterfall.TabIndex = 40;
             this.grpDisplayWaterfall.TabStop = false;
             this.grpDisplayWaterfall.Text = "Waterfall";
+            // 
+            // btnRX1CopyLowHighWaterfall
+            // 
+            this.btnRX1CopyLowHighWaterfall.Image = null;
+            this.btnRX1CopyLowHighWaterfall.Location = new System.Drawing.Point(262, 164);
+            this.btnRX1CopyLowHighWaterfall.Name = "btnRX1CopyLowHighWaterfall";
+            this.btnRX1CopyLowHighWaterfall.Selectable = true;
+            this.btnRX1CopyLowHighWaterfall.Size = new System.Drawing.Size(26, 23);
+            this.btnRX1CopyLowHighWaterfall.TabIndex = 94;
+            this.btnRX1CopyLowHighWaterfall.Text = "=";
+            this.toolTip1.SetToolTip(this.btnRX1CopyLowHighWaterfall, "Assign these Low/High values to all bands");
+            this.btnRX1CopyLowHighWaterfall.UseVisualStyleBackColor = true;
+            this.btnRX1CopyLowHighWaterfall.Click += new System.EventHandler(this.btnRX1CopyLowHighWaterfall_Click);
             // 
             // chkStopRX1WaterfallOnTx
             // 
@@ -31479,6 +31512,7 @@
             // 
             // grpDisplaySpectrumGrid
             // 
+            this.grpDisplaySpectrumGrid.Controls.Add(this.btnRX1CopyMinMaxSpectrumGrid);
             this.grpDisplaySpectrumGrid.Controls.Add(this.label14);
             this.grpDisplaySpectrumGrid.Controls.Add(this.chkMaintainNFAdjustDeltaRX1);
             this.grpDisplaySpectrumGrid.Controls.Add(this.nudRX1NFoffsetGridFollow);
@@ -31499,6 +31533,19 @@
             this.grpDisplaySpectrumGrid.TabIndex = 47;
             this.grpDisplaySpectrumGrid.TabStop = false;
             this.grpDisplaySpectrumGrid.Text = "Spectrum Grid";
+            // 
+            // btnRX1CopyMinMaxSpectrumGrid
+            // 
+            this.btnRX1CopyMinMaxSpectrumGrid.Image = null;
+            this.btnRX1CopyMinMaxSpectrumGrid.Location = new System.Drawing.Point(262, 80);
+            this.btnRX1CopyMinMaxSpectrumGrid.Name = "btnRX1CopyMinMaxSpectrumGrid";
+            this.btnRX1CopyMinMaxSpectrumGrid.Selectable = true;
+            this.btnRX1CopyMinMaxSpectrumGrid.Size = new System.Drawing.Size(26, 23);
+            this.btnRX1CopyMinMaxSpectrumGrid.TabIndex = 87;
+            this.btnRX1CopyMinMaxSpectrumGrid.Text = "=";
+            this.toolTip1.SetToolTip(this.btnRX1CopyMinMaxSpectrumGrid, "Assign these Min/Max values to all bands");
+            this.btnRX1CopyMinMaxSpectrumGrid.UseVisualStyleBackColor = true;
+            this.btnRX1CopyMinMaxSpectrumGrid.Click += new System.EventHandler(this.btnRX1CopyMinMaxSpectrumGrid_Click);
             // 
             // label14
             // 
@@ -32001,6 +32048,7 @@
             // 
             // grpRX2DisplayWaterfall
             // 
+            this.grpRX2DisplayWaterfall.Controls.Add(this.btnRX2CopyLowHighWaterfall);
             this.grpRX2DisplayWaterfall.Controls.Add(this.chkStopRX2WaterfallOnTx);
             this.grpRX2DisplayWaterfall.Controls.Add(this.chkWaterfallUseNFForAGCRX2);
             this.grpRX2DisplayWaterfall.Controls.Add(this.lblWaterfallAGCOffsetRX2);
@@ -32029,6 +32077,19 @@
             this.grpRX2DisplayWaterfall.TabIndex = 50;
             this.grpRX2DisplayWaterfall.TabStop = false;
             this.grpRX2DisplayWaterfall.Text = "Waterfall";
+            // 
+            // btnRX2CopyLowHighWaterfall
+            // 
+            this.btnRX2CopyLowHighWaterfall.Image = null;
+            this.btnRX2CopyLowHighWaterfall.Location = new System.Drawing.Point(262, 164);
+            this.btnRX2CopyLowHighWaterfall.Name = "btnRX2CopyLowHighWaterfall";
+            this.btnRX2CopyLowHighWaterfall.Selectable = true;
+            this.btnRX2CopyLowHighWaterfall.Size = new System.Drawing.Size(26, 23);
+            this.btnRX2CopyLowHighWaterfall.TabIndex = 97;
+            this.btnRX2CopyLowHighWaterfall.Text = "=";
+            this.toolTip1.SetToolTip(this.btnRX2CopyLowHighWaterfall, "Assign these Low/High values to all bands");
+            this.btnRX2CopyLowHighWaterfall.UseVisualStyleBackColor = true;
+            this.btnRX2CopyLowHighWaterfall.Click += new System.EventHandler(this.btnRX2CopyLowHighWaterfall_Click);
             // 
             // chkStopRX2WaterfallOnTx
             // 
@@ -32591,6 +32652,7 @@
             // 
             // grpRX2DisplaySpectrumGrid
             // 
+            this.grpRX2DisplaySpectrumGrid.Controls.Add(this.btnRX2CopyMinMaxSpectrumGrid);
             this.grpRX2DisplaySpectrumGrid.Controls.Add(this.label20);
             this.grpRX2DisplaySpectrumGrid.Controls.Add(this.chkMaintainNFAdjustDeltaRX2);
             this.grpRX2DisplaySpectrumGrid.Controls.Add(this.nudRX2NFoffsetGridFollow);
@@ -32611,6 +32673,19 @@
             this.grpRX2DisplaySpectrumGrid.TabIndex = 49;
             this.grpRX2DisplaySpectrumGrid.TabStop = false;
             this.grpRX2DisplaySpectrumGrid.Text = "Spectrum Grid";
+            // 
+            // btnRX2CopyMinMaxSpectrumGrid
+            // 
+            this.btnRX2CopyMinMaxSpectrumGrid.Image = null;
+            this.btnRX2CopyMinMaxSpectrumGrid.Location = new System.Drawing.Point(262, 80);
+            this.btnRX2CopyMinMaxSpectrumGrid.Name = "btnRX2CopyMinMaxSpectrumGrid";
+            this.btnRX2CopyMinMaxSpectrumGrid.Selectable = true;
+            this.btnRX2CopyMinMaxSpectrumGrid.Size = new System.Drawing.Size(26, 23);
+            this.btnRX2CopyMinMaxSpectrumGrid.TabIndex = 89;
+            this.btnRX2CopyMinMaxSpectrumGrid.Text = "=";
+            this.toolTip1.SetToolTip(this.btnRX2CopyMinMaxSpectrumGrid, "Assign these Min/Max values to all bands");
+            this.btnRX2CopyMinMaxSpectrumGrid.UseVisualStyleBackColor = true;
+            this.btnRX2CopyMinMaxSpectrumGrid.Click += new System.EventHandler(this.btnRX2CopyMinMaxSpectrumGrid_Click);
             // 
             // label20
             // 
@@ -61066,5 +61141,10 @@
         private CheckBoxTS chkMICVOXAllowBypass;
         private CheckBoxTS chkStopRX1WaterfallOnTx;
         private CheckBoxTS chkStopRX2WaterfallOnTx;
+        private CheckBoxTS chkAutoPowerOn;
+        private ButtonTS btnRX1CopyLowHighWaterfall;
+        private ButtonTS btnRX1CopyMinMaxSpectrumGrid;
+        private ButtonTS btnRX2CopyLowHighWaterfall;
+        private ButtonTS btnRX2CopyMinMaxSpectrumGrid;
     }
 }

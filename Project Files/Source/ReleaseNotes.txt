@@ -24,6 +24,8 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] option in VAC1 to cause VOX to use MIC instead of VAC
 - [add] option to stop RX1/2 waterfall on TX
 - [add] status bar icons for tci, cat serial, cat tcp/ip, n1mm
+- [add] option in options2 tab to auto power on at startup
+- [add] buttons [=] for RX1/RX2 waterfall and spectrum grid to copy current low/high min/max to all other bands
 - [fix] lin waterfall palettes should now look better
 - [fix] fix an issue which would prevent manually changing TX filter in setup form, it would try to 'validate' whilst typing new value
 - [fix] fix collapsed andromeda sql gain sliders from behaving erratically

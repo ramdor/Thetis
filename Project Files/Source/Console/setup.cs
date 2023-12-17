@@ -2502,6 +2502,7 @@ namespace Thetis
             chkQuickSplitPanAudio_CheckedChanged(this, e);
             chkToTMox_CheckedChanged(this, e);
             chkToTPing_CheckedChanged(this, e);
+            chkAutoPowerOn_CheckedChanged(this, e);
         }
 
         public string[] GetTXProfileStrings()
@@ -29346,7 +29347,7 @@ namespace Thetis
         public int[] SerialCatState()
         {
             //used to obtain cat state for the status bar icon in console
-            //0 = not in use, 1 = in use, 2 = enabled
+            //0 = not in use, 1 = in use not enabled, 2 = in use and enabled
             int[] nState = new int[4];
 
             nState[0] = !chkCATEnable.Enabled ? 0 : !chkCATEnable.Checked ? 1 : 2;
@@ -29355,6 +29356,556 @@ namespace Thetis
             nState[3] = !chkCAT4Enable.Enabled ? 0 : !chkCAT4Enable.Checked ? 1 : 2;
 
             return nState;
+        }
+
+        private void chkAutoPowerOn_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.AutoPowerOn = chkAutoPowerOn.Checked;
+        }
+
+        private void btnRX1CopyLowHighWaterfall_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show(
+                "Do you want to copy the current low/high values to all bands?",
+                "Low/High copy",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+            if (dr == DialogResult.No) return;
+
+            float low;
+            float high;
+
+            switch (console.RX1Band)
+            {
+                case Band.B160M:
+                    low = console.WaterfallLowThreshold160m;
+                    high = console.WaterfallHighThreshold160m;
+                    break;
+                case Band.B80M:
+                    low = console.WaterfallLowThreshold80m;
+                    high = console.WaterfallHighThreshold80m;
+                    break;
+                case Band.B60M:
+                    low = console.WaterfallLowThreshold60m;
+                    high = console.WaterfallHighThreshold60m;
+                    break;
+                case Band.B40M:
+                    low = console.WaterfallLowThreshold40m;
+                    high = console.WaterfallHighThreshold40m;
+                    break;
+                case Band.B30M:
+                    low = console.WaterfallLowThreshold30m;
+                    high = console.WaterfallHighThreshold30m;
+                    break;
+                case Band.B20M:
+                    low = console.WaterfallLowThreshold20m;
+                    high = console.WaterfallHighThreshold20m;
+                    break;
+                case Band.B17M:
+                    low = console.WaterfallLowThreshold17m;
+                    high = console.WaterfallHighThreshold17m;
+                    break;
+                case Band.B15M:
+                    low = console.WaterfallLowThreshold15m;
+                    high = console.WaterfallHighThreshold15m;
+                    break;
+                case Band.B12M:
+                    low = console.WaterfallLowThreshold12m;
+                    high = console.WaterfallHighThreshold12m;
+                    break;
+                case Band.B10M:
+                    low = console.WaterfallLowThreshold10m;
+                    high = console.WaterfallHighThreshold10m;
+                    break;
+                case Band.B6M:
+                    low = console.WaterfallLowThreshold6m;
+                    high = console.WaterfallHighThreshold6m;
+                    break;
+                case Band.WWV:
+                    low = console.WaterfallLowThresholdWWV;
+                    high = console.WaterfallHighThresholdWWV;
+                    break;
+                case Band.GEN:
+                    low = console.WaterfallLowThresholdGEN;
+                    high = console.WaterfallHighThresholdGEN;
+                    break;
+                default:
+                    low = console.WaterfallLowThresholdXVTR;
+                    high = console.WaterfallHighThresholdXVTR;
+                    break;
+            }
+
+            for (int nBand = (int)Band.FIRST; nBand <= (int)Band.WWV; nBand++) //note FIRST will cause xvtr update
+            {
+                switch ((Band)nBand)
+                {
+                    case Band.B160M:
+                        console.WaterfallLowThreshold160m = low;
+                        console.WaterfallHighThreshold160m = high;
+                        break;
+                    case Band.B80M:
+                        console.WaterfallLowThreshold80m = low;
+                        console.WaterfallHighThreshold80m = high;
+                        break;
+                    case Band.B60M:
+                        console.WaterfallLowThreshold60m = low;
+                        console.WaterfallHighThreshold60m = high;
+                        break;
+                    case Band.B40M:
+                        console.WaterfallLowThreshold40m = low;
+                        console.WaterfallHighThreshold40m = high;
+                        break;
+                    case Band.B30M:
+                        console.WaterfallLowThreshold30m = low;
+                        console.WaterfallHighThreshold30m = high;
+                        break;
+                    case Band.B20M:
+                        console.WaterfallLowThreshold20m = low;
+                        console.WaterfallHighThreshold20m = high;
+                        break;
+                    case Band.B17M:
+                        console.WaterfallLowThreshold17m = low;
+                        console.WaterfallHighThreshold17m = high;
+                        break;
+                    case Band.B15M:
+                        console.WaterfallLowThreshold15m = low;
+                        console.WaterfallHighThreshold15m = high;
+                        break;
+                    case Band.B12M:
+                        console.WaterfallLowThreshold12m = low;
+                        console.WaterfallHighThreshold12m = high;
+                        break;
+                    case Band.B10M:
+                        console.WaterfallLowThreshold10m = low;
+                        console.WaterfallHighThreshold10m = high;
+                        break;
+                    case Band.B6M:
+                        console.WaterfallLowThreshold6m = low;
+                        console.WaterfallHighThreshold6m = high;
+                        break;
+                    case Band.WWV:
+                        console.WaterfallLowThresholdWWV = low;
+                        console.WaterfallHighThresholdWWV = high;
+                        break;
+                    case Band.GEN:
+                        console.WaterfallLowThresholdGEN = low;
+                        console.WaterfallHighThresholdGEN = high;
+                        break;
+                    default:
+                        console.WaterfallLowThresholdXVTR = low;
+                        console.WaterfallHighThresholdXVTR = high;
+                        break;
+                }
+            }
+        }
+
+        private void btnRX1CopyMinMaxSpectrumGrid_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show(
+            "Do you want to copy the current min/max values to all bands?",
+            "Min/Max copy",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+            if (dr == DialogResult.No) return;
+
+            float min;
+            float max;
+
+            switch (console.RX1Band)
+            {
+                case Band.B160M:
+                    min = console.DisplayGridMin160m;
+                    max = console.DisplayGridMax160m;
+                    break;
+                case Band.B80M:
+                    min = console.DisplayGridMin80m;
+                    max = console.DisplayGridMax80m;
+                    break;
+                case Band.B60M:
+                    min = console.DisplayGridMin60m;
+                    max = console.DisplayGridMax60m;
+                    break;
+                case Band.B40M:
+                    min = console.DisplayGridMin40m;
+                    max = console.DisplayGridMax40m;
+                    break;
+                case Band.B30M:
+                    min = console.DisplayGridMin30m;
+                    max = console.DisplayGridMax30m;
+                    break;
+                case Band.B20M:
+                    min = console.DisplayGridMin20m;
+                    max = console.DisplayGridMax20m;
+                    break;
+                case Band.B17M:
+                    min = console.DisplayGridMin17m;
+                    max = console.DisplayGridMax17m;
+                    break;
+                case Band.B15M:
+                    min = console.DisplayGridMin15m;
+                    max = console.DisplayGridMax15m;
+                    break;
+                case Band.B12M:
+                    min = console.DisplayGridMin12m;
+                    max = console.DisplayGridMax12m;
+                    break;
+                case Band.B10M:
+                    min = console.DisplayGridMin10m;
+                    max = console.DisplayGridMax10m;
+                    break;
+                case Band.B6M:
+                    min = console.DisplayGridMin6m;
+                    max = console.DisplayGridMax6m;
+                    break;
+                case Band.WWV:
+                    min = console.DisplayGridMinWWV;
+                    max = console.DisplayGridMaxWWV;
+                    break;
+                case Band.GEN:
+                    min = console.DisplayGridMinGEN;
+                    max = console.DisplayGridMaxGEN;
+                    break;
+                default:
+                    min = console.DisplayGridMinXVTR;
+                    max = console.DisplayGridMaxXVTR;
+                    break;
+            }
+
+            for (int nBand = (int)Band.FIRST; nBand <= (int)Band.WWV; nBand++) //note FIRST will cause xvtr update
+            {
+                switch ((Band)nBand)
+                {
+                    case Band.B160M:
+                        console.DisplayGridMin160m = min;
+                        console.DisplayGridMax160m = max;
+                        break;
+                    case Band.B80M:
+                        console.DisplayGridMin80m = min;
+                        console.DisplayGridMax80m = max;
+                        break;
+                    case Band.B60M:
+                        console.DisplayGridMin60m = min;
+                        console.DisplayGridMax60m = max;
+                        break;
+                    case Band.B40M:
+                        console.DisplayGridMin40m = min;
+                        console.DisplayGridMax40m = max;
+                        break;
+                    case Band.B30M:
+                        console.DisplayGridMin30m = min;
+                        console.DisplayGridMax30m = max;
+                        break;
+                    case Band.B20M:
+                        console.DisplayGridMin20m = min;
+                        console.DisplayGridMax20m = max;
+                        break;
+                    case Band.B17M:
+                        console.DisplayGridMin17m = min;
+                        console.DisplayGridMax17m = max;
+                        break;
+                    case Band.B15M:
+                        console.DisplayGridMin15m = min;
+                        console.DisplayGridMax15m = max;
+                        break;
+                    case Band.B12M:
+                        console.DisplayGridMin12m = min;
+                        console.DisplayGridMax12m = max;
+                        break;
+                    case Band.B10M:
+                        console.DisplayGridMin10m = min;
+                        console.DisplayGridMax10m = max;
+                        break;
+                    case Band.B6M:
+                        console.DisplayGridMin6m = min;
+                        console.DisplayGridMax6m = max;
+                        break;
+                    case Band.WWV:
+                        console.DisplayGridMinWWV = min;
+                        console.DisplayGridMaxWWV = max;
+                        break;
+                    case Band.GEN:
+                        console.DisplayGridMinGEN = min;
+                        console.DisplayGridMaxGEN = max;
+                        break;
+                    default:
+                        console.DisplayGridMinXVTR = min;
+                        console.DisplayGridMaxXVTR = max;
+                        break;
+                }
+            }
+        }
+
+        private void btnRX2CopyLowHighWaterfall_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show(
+            "Do you want to copy the current low/high values to all bands?",
+            "Low/High copy",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+            if (dr == DialogResult.No) return;
+
+            float low;
+            float high;
+
+            switch (console.RX2Band)
+            {
+                case Band.B160M:
+                    low = console.RX2WaterfallLowThreshold160m;
+                    high = console.RX2WaterfallHighThreshold160m;
+                    break;
+                case Band.B80M:
+                    low = console.RX2WaterfallLowThreshold80m;
+                    high = console.RX2WaterfallHighThreshold80m;
+                    break;
+                case Band.B60M:
+                    low = console.RX2WaterfallLowThreshold60m;
+                    high = console.RX2WaterfallHighThreshold60m;
+                    break;
+                case Band.B40M:
+                    low = console.RX2WaterfallLowThreshold40m;
+                    high = console.RX2WaterfallHighThreshold40m;
+                    break;
+                case Band.B30M:
+                    low = console.RX2WaterfallLowThreshold30m;
+                    high = console.RX2WaterfallHighThreshold30m;
+                    break;
+                case Band.B20M:
+                    low = console.RX2WaterfallLowThreshold20m;
+                    high = console.RX2WaterfallHighThreshold20m;
+                    break;
+                case Band.B17M:
+                    low = console.RX2WaterfallLowThreshold17m;
+                    high = console.RX2WaterfallHighThreshold17m;
+                    break;
+                case Band.B15M:
+                    low = console.RX2WaterfallLowThreshold15m;
+                    high = console.RX2WaterfallHighThreshold15m;
+                    break;
+                case Band.B12M:
+                    low = console.RX2WaterfallLowThreshold12m;
+                    high = console.RX2WaterfallHighThreshold12m;
+                    break;
+                case Band.B10M:
+                    low = console.RX2WaterfallLowThreshold10m;
+                    high = console.RX2WaterfallHighThreshold10m;
+                    break;
+                case Band.B6M:
+                    low = console.RX2WaterfallLowThreshold6m;
+                    high = console.RX2WaterfallHighThreshold6m;
+                    break;
+                case Band.WWV:
+                    low = console.RX2WaterfallLowThresholdWWV;
+                    high = console.RX2WaterfallHighThresholdWWV;
+                    break;
+                case Band.GEN:
+                    low = console.RX2WaterfallLowThresholdGEN;
+                    high = console.RX2WaterfallHighThresholdGEN;
+                    break;
+                default:
+                    low = console.RX2WaterfallLowThresholdXVTR;
+                    high = console.RX2WaterfallHighThresholdXVTR;
+                    break;
+            }
+
+            for (int nBand = (int)Band.FIRST; nBand <= (int)Band.WWV; nBand++) //note FIRST will cause xvtr update
+            {
+                switch ((Band)nBand)
+                {
+                    case Band.B160M:
+                        console.RX2WaterfallLowThreshold160m = low;
+                        console.RX2WaterfallHighThreshold160m = high;
+                        break;
+                    case Band.B80M:
+                        console.RX2WaterfallLowThreshold80m = low;
+                        console.RX2WaterfallHighThreshold80m = high;
+                        break;
+                    case Band.B60M:
+                        console.RX2WaterfallLowThreshold60m = low;
+                        console.RX2WaterfallHighThreshold60m = high;
+                        break;
+                    case Band.B40M:
+                        console.RX2WaterfallLowThreshold40m = low;
+                        console.RX2WaterfallHighThreshold40m = high;
+                        break;
+                    case Band.B30M:
+                        console.RX2WaterfallLowThreshold30m = low;
+                        console.RX2WaterfallHighThreshold30m = high;
+                        break;
+                    case Band.B20M:
+                        console.RX2WaterfallLowThreshold20m = low;
+                        console.RX2WaterfallHighThreshold20m = high;
+                        break;
+                    case Band.B17M:
+                        console.RX2WaterfallLowThreshold17m = low;
+                        console.RX2WaterfallHighThreshold17m = high;
+                        break;
+                    case Band.B15M:
+                        console.RX2WaterfallLowThreshold15m = low;
+                        console.RX2WaterfallHighThreshold15m = high;
+                        break;
+                    case Band.B12M:
+                        console.RX2WaterfallLowThreshold12m = low;
+                        console.RX2WaterfallHighThreshold12m = high;
+                        break;
+                    case Band.B10M:
+                        console.RX2WaterfallLowThreshold10m = low;
+                        console.RX2WaterfallHighThreshold10m = high;
+                        break;
+                    case Band.B6M:
+                        console.RX2WaterfallLowThreshold6m = low;
+                        console.RX2WaterfallHighThreshold6m = high;
+                        break;
+                    case Band.WWV:
+                        console.RX2WaterfallLowThresholdWWV = low;
+                        console.RX2WaterfallHighThresholdWWV = high;
+                        break;
+                    case Band.GEN:
+                        console.RX2WaterfallLowThresholdGEN = low;
+                        console.RX2WaterfallHighThresholdGEN = high;
+                        break;
+                    default:
+                        console.RX2WaterfallLowThresholdXVTR = low;
+                        console.RX2WaterfallHighThresholdXVTR = high;
+                        break;
+                }
+            }
+        }
+
+        private void btnRX2CopyMinMaxSpectrumGrid_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show(
+            "Do you want to copy the current min/max values to all bands?",
+            "Min/Max copy",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+            if (dr == DialogResult.No) return;
+
+            float min;
+            float max;
+
+            switch (console.RX2Band)
+            {
+                case Band.B160M:
+                    min = console.RX2DisplayGridMin160m;
+                    max = console.RX2DisplayGridMax160m;
+                    break;
+                case Band.B80M:
+                    min = console.RX2DisplayGridMin80m;
+                    max = console.RX2DisplayGridMax80m;
+                    break;
+                case Band.B60M:
+                    min = console.RX2DisplayGridMin60m;
+                    max = console.RX2DisplayGridMax60m;
+                    break;
+                case Band.B40M:
+                    min = console.RX2DisplayGridMin40m;
+                    max = console.RX2DisplayGridMax40m;
+                    break;
+                case Band.B30M:
+                    min = console.RX2DisplayGridMin30m;
+                    max = console.RX2DisplayGridMax30m;
+                    break;
+                case Band.B20M:
+                    min = console.RX2DisplayGridMin20m;
+                    max = console.RX2DisplayGridMax20m;
+                    break;
+                case Band.B17M:
+                    min = console.RX2DisplayGridMin17m;
+                    max = console.RX2DisplayGridMax17m;
+                    break;
+                case Band.B15M:
+                    min = console.RX2DisplayGridMin15m;
+                    max = console.RX2DisplayGridMax15m;
+                    break;
+                case Band.B12M:
+                    min = console.RX2DisplayGridMin12m;
+                    max = console.RX2DisplayGridMax12m;
+                    break;
+                case Band.B10M:
+                    min = console.RX2DisplayGridMin10m;
+                    max = console.RX2DisplayGridMax10m;
+                    break;
+                case Band.B6M:
+                    min = console.RX2DisplayGridMin6m;
+                    max = console.RX2DisplayGridMax6m;
+                    break;
+                case Band.WWV:
+                    min = console.RX2DisplayGridMinWWV;
+                    max = console.RX2DisplayGridMaxWWV;
+                    break;
+                case Band.GEN:
+                    min = console.RX2DisplayGridMinGEN;
+                    max = console.RX2DisplayGridMaxGEN;
+                    break;
+                default:
+                    min = console.RX2DisplayGridMinXVTR;
+                    max = console.RX2DisplayGridMaxXVTR;
+                    break;
+            }
+
+            for (int nBand = (int)Band.FIRST; nBand <= (int)Band.WWV; nBand++) //note FIRST will cause xvtr update
+            {
+                switch ((Band)nBand)
+                {
+                    case Band.B160M:
+                        console.RX2DisplayGridMin160m = min;
+                        console.RX2DisplayGridMax160m = max;
+                        break;
+                    case Band.B80M:
+                        console.RX2DisplayGridMin80m = min;
+                        console.RX2DisplayGridMax80m = max;
+                        break;
+                    case Band.B60M:
+                        console.RX2DisplayGridMin60m = min;
+                        console.RX2DisplayGridMax60m = max;
+                        break;
+                    case Band.B40M:
+                        console.RX2DisplayGridMin40m = min;
+                        console.RX2DisplayGridMax40m = max;
+                        break;
+                    case Band.B30M:
+                        console.RX2DisplayGridMin30m = min;
+                        console.RX2DisplayGridMax30m = max;
+                        break;
+                    case Band.B20M:
+                        console.RX2DisplayGridMin20m = min;
+                        console.RX2DisplayGridMax20m = max;
+                        break;
+                    case Band.B17M:
+                        console.RX2DisplayGridMin17m = min;
+                        console.RX2DisplayGridMax17m = max;
+                        break;
+                    case Band.B15M:
+                        console.RX2DisplayGridMin15m = min;
+                        console.RX2DisplayGridMax15m = max;
+                        break;
+                    case Band.B12M:
+                        console.RX2DisplayGridMin12m = min;
+                        console.RX2DisplayGridMax12m = max;
+                        break;
+                    case Band.B10M:
+                        console.RX2DisplayGridMin10m = min;
+                        console.RX2DisplayGridMax10m = max;
+                        break;
+                    case Band.B6M:
+                        console.RX2DisplayGridMin6m = min;
+                        console.RX2DisplayGridMax6m = max;
+                        break;
+                    case Band.WWV:
+                        console.RX2DisplayGridMinWWV = min;
+                        console.RX2DisplayGridMaxWWV = max;
+                        break;
+                    case Band.GEN:
+                        console.RX2DisplayGridMinGEN = min;
+                        console.RX2DisplayGridMaxGEN = max;
+                        break;
+                    default:
+                        console.RX2DisplayGridMinXVTR = min;
+                        console.RX2DisplayGridMaxXVTR = max;
+                        break;
+                }
+            }
         }
         //private bool renameSkinForDeletion(string sFullPath)
         //{

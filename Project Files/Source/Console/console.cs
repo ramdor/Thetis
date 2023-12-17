@@ -262,8 +262,6 @@ namespace Thetis
         private int last_var1_shift;
         private int last_var2_shift;
 
-        public string[] CmdLineArgs;
-
         private readonly HiPerfTimer break_in_timer;
         public double avg_vox_pwr = 0.0;
 
@@ -809,7 +807,6 @@ namespace Thetis
 
             }
 
-            CmdLineArgs = args;
             Splash.ShowSplashScreen();							// Start splash screen
 
             // PA init thread - from G7KLJ changes - done as early as possible
@@ -1203,17 +1200,14 @@ namespace Thetis
                 if (bShowReleaseNotes) ShowReleaseNotes();
                 //
 
-                    //autostart?
-                foreach (string s in CmdLineArgs)
+                //autostart
+                bool bAutoStart = args?.Contains<string>("-autostart") ?? false || m_bAutoPowerOn;
+                if (bAutoStart)
                 {
-                    if (s == "-autostart")
-                    {
-                        autoStartTimer = new System.Timers.Timer(2000);
-                        autoStartTimer.Elapsed += OnAutoStartTimerEvent;
-                        autoStartTimer.AutoReset = false;
-                        autoStartTimer.Enabled = true;
-                        break;
-                    }
+                    autoStartTimer = new System.Timers.Timer(2000);
+                    autoStartTimer.Elapsed += OnAutoStartTimerEvent;
+                    autoStartTimer.AutoReset = false;
+                    autoStartTimer.Start();
                 }
             }
         }
@@ -1302,7 +1296,7 @@ namespace Thetis
         //--
         private void OnAutoStartTimerEvent(Object source, ElapsedEventArgs e)
         {
-            // used by autostart command line flags, this event will fire 2 seconds 
+            // used by autostart command line flags, this event will fire after 2 seconds 
             chkPower.Checked = true;
         }
 
@@ -56843,6 +56837,13 @@ namespace Thetis
 
             if (nGroup == 0 || nGroup == 5) //tci
                 toolStripStatusLabel_TCI.Visible = m_tcpTCIServer != null ? m_tcpTCIServer.IsServerRunning : false;
+        }
+
+        private bool m_bAutoPowerOn = false;
+        public bool AutoPowerOn
+        {
+            get { return m_bAutoPowerOn; }
+            set { m_bAutoPowerOn = value; }
         }
     }
 

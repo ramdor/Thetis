@@ -3113,8 +3113,14 @@ namespace Thetis
             get { return m_fPanafallSplitPerc; }
             set
             {
-                bool resetBmp = value != m_fPanafallSplitPerc;
-                m_fPanafallSplitPerc = value;
+                bool resetBmp = false;
+
+                lock (_objDX2Lock)
+                {
+                    resetBmp = value != m_fPanafallSplitPerc;
+                    m_fPanafallSplitPerc = value;
+                }
+
                 if (resetBmp)
                     ResetWaterfallBmp();
             }
@@ -3136,14 +3142,9 @@ namespace Thetis
             {
                 m_bSpecialPanafall = value;
                 if (m_bSpecialPanafall)
-                {
-                    m_fPanafallSplitPerc = 0.8f;
-                }
+                    PanafallSplitBarPerc = 0.8f;
                 else
-                {
-                    m_fPanafallSplitPerc = 0.5f;
-                }
-                ResetWaterfallBmp();
+                    PanafallSplitBarPerc = 0.5f;
             }
         }
 
