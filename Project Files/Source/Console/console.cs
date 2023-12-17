@@ -40210,7 +40210,7 @@ namespace Thetis
             ptbDisplayPan.Value = Math.Min(Math.Max(ptbDisplayPan.Minimum, new_val), ptbDisplayPan.Maximum);
             ptbDisplayPan_Scroll(btnDisplayPanCenter, EventArgs.Empty);
         }
-
+        private bool m_bIgnoreZoomCentre = false;
         private bool m_bIgnoreLimitsForZTB = false;
         private bool zoomToBandBandwidth(Band b, int rx)
         {
@@ -40254,9 +40254,11 @@ namespace Thetis
                 double zoom = Math.Pow(10, tmp) - 1.0;
                 zoom /= 9.0;
 
+                m_bIgnoreZoomCentre = true; //[2.10.3.5]MW0LGE used in ptbDisplayZoom_Scroll to ignore the shift key which might be held for RX2
                 btnDisplayPanCenter_Click(this, EventArgs.Empty);
                 ptbDisplayZoom.Value = (int)((zoom * 230.0) + 10.0);
                 ptbDisplayZoom_Scroll(this, EventArgs.Empty); //force (not ideal)
+                m_bIgnoreZoomCentre = false;
 
                 //bool oldCTD = ClickTuneDrag;
                 //ClickTuneDrag = true; // so that txtvfofreq_lostfocus moves display
@@ -40323,19 +40325,23 @@ namespace Thetis
             if (initializing) lastZoomFactor = zoom_factor;
             bool zoomingIn = (zoom_factor > lastZoomFactor);
 
-            // MW0LGE shift modifier
-            bool bCentre = !m_bZoomShiftModifier || (m_bZoomShiftModifier && ((!Common.ShiftKeyDown && !m_bZoomShiftModifierReverse) || (Common.ShiftKeyDown && m_bZoomShiftModifierReverse)));
+            if (!m_bIgnoreZoomCentre) //[2.10.3.5]MW0LGE fixes #345
+            {
+                // MW0LGE shift modifier
+                bool bCentre = !m_bZoomShiftModifier || (m_bZoomShiftModifier && ((!Common.ShiftKeyDown && !m_bZoomShiftModifierReverse) || (Common.ShiftKeyDown && m_bZoomShiftModifierReverse)));
 
-            if ((ClickTuneDisplay && zoomingIn) && bCentre)  //-W2PA Force centering display when zooming in with CTUN on, to keep the vfo within the display
-            {
-                CentreFrequency = VFOAFreq;
-                txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+                if ((ClickTuneDisplay && zoomingIn) && bCentre)  //-W2PA Force centering display when zooming in with CTUN on, to keep the vfo within the display
+                {
+                    CentreFrequency = VFOAFreq;
+                    txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+                }
+                if (rx2_enabled && (ClickTuneRX2Display && zoomingIn) && bCentre)  //MW0LGE - we should do rx2 as well !
+                {
+                    CentreRX2Frequency = VFOBFreq;
+                    txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+                }
             }
-            if (rx2_enabled && (ClickTuneRX2Display && zoomingIn) && bCentre)  //MW0LGE - we should do rx2 as well !
-            {
-                CentreRX2Frequency = VFOBFreq;
-                txtVFOBFreq_LostFocus(this, EventArgs.Empty);
-            }
+
             lastZoomFactor = zoom_factor;
 
             //if (ptbDisplayZoom.Focused) btnHidden.Focus();
