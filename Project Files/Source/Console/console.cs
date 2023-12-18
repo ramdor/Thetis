@@ -19242,7 +19242,7 @@ namespace Thetis
 
                 }
                 DisplayAriesRXAntenna();
-                SetupForm.UpdateUsbBCDdevice(rx1_band);
+                //SetupForm.UpdateUsbBCDdevice(rx1_band);//[2.10.3.5]MW0LGE delegate in setupform instead
 
                 //MW0LGE_21b
                 if (old_band != rx1_band)
@@ -53670,20 +53670,22 @@ namespace Thetis
             toolStripDropDownButton_CPU.Width = 68;
             toolStripStatusLabel_Volts.Width = 60;
             toolStripStatusLabel_Amps.Width = 50;
-            toolStripStatusLabel_SeqWarning.Width = 18;            
+            toolStripStatusLabel_SeqWarning.Width = 18;
+            toolStripStatusLabel_TXInhibit.Width = 18;
             toolStripStatusLabelRXAnt.Width = 90;
             toolStripStatusLabelTXAnt.Width = 90;
             toolStripStatusLabelAndromedaMulti.Width = 140;
+
+            toolStripStatusLabel_N1MM.Width = 22;
+            toolStripStatusLabel_TCI.Width = 22;
+            toolStripStatusLabel_CatTCPip.Width = 22;
+            toolStripStatusLabel_CatSerial.Width = 22;
+            toolStripStatusLabel_CMstatus.Width = 22;
+
             toolStripStatusLabel_timer.Width = 80;
             toolStripStatusLabel_UTCTime.Width = 92;
             toolStripStatusLabel_Date.Width = 104;
             toolStripStatusLabel_LocalTime.Width = 92;
-
-            toolStripStatusLabel_CMstatus.Width = 22;
-            toolStripStatusLabel_N1MM.Width = 22;
-            toolStripStatusLabel_CatTCPip.Width = 22;
-            toolStripStatusLabel_CatSerial.Width = 22;
-            toolStripStatusLabel_TCI.Width = 22;
         }
 
         //private bool twoTone = false;
