@@ -583,6 +583,7 @@ namespace Thetis
             console.TXBandChangeHandlers += OnTXBandChanged;
             console.RX2EnabledChangedHandlers += OnRX2EnabledChanged;
             console.TXInhibitChangedHandlers += OnTXInhibit;
+            console.BandChangeHandlers += OnBCDBandChangeHandler;
 
             ThetisSkinService.SubscribeForSkinServerData(skinServersDataReceivedHandler);
             ThetisSkinService.SubscribeForSkinData(skinDataReceivedHandler);
@@ -600,6 +601,7 @@ namespace Thetis
             console.TXBandChangeHandlers -= OnTXBandChanged;
             console.RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
             console.TXInhibitChangedHandlers -= OnTXInhibit;
+            console.BandChangeHandlers -= OnBCDBandChangeHandler;
 
             ThetisSkinService.UnsubscribeFromSkinData(skinDataReceivedHandler);
             ThetisSkinService.UnsubscribeFromSkinServerData(skinServersDataReceivedHandler);
@@ -27901,10 +27903,19 @@ namespace Thetis
             get { return m_bUsbBCD; }
             set { m_bUsbBCD = value; }
         }
-        public void UpdateUsbBCDdevice(Band rx1band)
+        private void OnBCDBandChangeHandler(int rx, Band old_band, Band new_band)
         {
-            if (m_bUsbBCD && m_sUsbBCDSerialNumber != "" && m_bUsbBCDdeviceOpen)
-                m_usbbcddevices.SetBCDbyBand(m_sUsbBCDSerialNumber, rx1band);
+            if (initializing) return;
+            if(rx == 1) updateUsbBCDdevice(new_band);
+        }
+        private void updateUsbBCDdevice(Band rx1band)
+        {
+            try
+            {
+                if (m_bUsbBCD && m_usbbcddevices != null && m_sUsbBCDSerialNumber != "" && m_bUsbBCDdeviceOpen)
+                    m_usbbcddevices.SetBCDbyBand(m_sUsbBCDSerialNumber, rx1band);
+            }
+            catch { }
         }
         private void chkUsbBCD_CheckedChanged(object sender, EventArgs e)
         {
