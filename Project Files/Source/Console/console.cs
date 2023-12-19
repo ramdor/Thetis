@@ -20338,7 +20338,7 @@ namespace Thetis
             }
             set
             {
-                if ((VFOLock != CheckState.Unchecked) || vfoA_lock == true || IsSetupFormNull) return;
+                if (/*(VFOLock != CheckState.Unchecked) || */vfoA_lock == true || IsSetupFormNull) return; //[2.10.3.5]MW0LGE removed the state check
                 if (!this.InvokeRequired)
                 {
                     VFOAUpdate(value);
@@ -20421,7 +20421,7 @@ namespace Thetis
             }
             set
             {
-                if ((VFOLock == CheckState.Indeterminate) || IsSetupFormNull || vfoB_lock == true) return;
+                if (/*(VFOLock == CheckState.Indeterminate) || */vfoB_lock == true || IsSetupFormNull) return; //[2.10.3.5]MW0LGE removed state check and why indeterminate when it is not a tri state?
                 value = Math.Max(0, value);
                 if (!this.InvokeRequired)
                 {
