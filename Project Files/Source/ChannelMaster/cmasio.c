@@ -38,7 +38,7 @@ void create_cmasio()
 	char* asioDriverName = (char*)calloc(32, sizeof(char));
 	if (getASIODriverString(asioDriverName) != 0) { free(asioDriverName); return; }
 	char buf[128];
-	sprintf_s(buf, 128, "Initializing cmASIO with: \nblock size = %d\nsample rate = %d\ndriver name = %s\n\n", pcma->blocksize, samplerate, asioDriverName);
+	sprintf_s(buf, 128, "Initializing cmASIO with: \nblock size = %d\nsample rate = %d\ndriver name = \"%s\"\n\n", pcma->blocksize, samplerate, asioDriverName);
 	OutputDebugStringA(buf);
 
 	int result = prepareASIO(pcma->blocksize, samplerate, asioDriverName, &CallbackASIO);
