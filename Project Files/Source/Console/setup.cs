@@ -26642,6 +26642,7 @@ namespace Thetis
         private void btnRX1PBsnr_Click(object sender, EventArgs e)
         {
             float snr = console.RXPBsnr(1);
+            if (snr == -999) return;
 
             float t = (float)nudPBsnrShiftRx1.Value - snr;
 
@@ -26655,6 +26656,7 @@ namespace Thetis
         private void btnRX2PBsnr_Click(object sender, EventArgs e)
         {
             float snr = console.RXPBsnr(2);
+            if (snr == -999) return;
 
             float t = (float)nudPBsnrShiftRx2.Value - snr;
 

@@ -44,9 +44,9 @@ using System.Threading.Tasks;
 
 namespace Thetis
 {
-	// extend contains to be able to ignore case etc MW0LGE
 	public static class StringExtensions
 	{
+        // extend contains to be able to ignore case etc MW0LGE
         public static bool Contains(this string source, string toCheck, StringComparison comp)
 		{
             if (source == null)

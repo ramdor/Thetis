@@ -1159,8 +1159,7 @@ namespace Thetis
                 //[2.10.3.4]MW0LGE startup stuff for linearity and ampview
                 if (psform != null) psform.HandleStartup();
 
-                //[2.10.3.5]MW0LGE should now know if cmASIO is in use
-                //also setup other status items
+                //[2.10.3.5]MW0LGE setup all status icon items
                 UpdateStatusBarStatusIcons();
 
                 //display render thread
@@ -23371,7 +23370,7 @@ namespace Thetis
                     return (float)estimated_snr;
                 }
                 else
-                    return _RX1MeterValues[Reading.ESTIMATED_PBSNR];
+                    return -999;// _RX1MeterValues[Reading.ESTIMATED_PBSNR];
             }
             else
             {
@@ -23382,7 +23381,7 @@ namespace Thetis
                     return (float)estimated_snr;
                 }
                 else
-                    return _RX2MeterValues[Reading.ESTIMATED_PBSNR];
+                    return -999;// _RX2MeterValues[Reading.ESTIMATED_PBSNR];
             }
         }
         private double m_fRX1_PBSNR_shift = 0;
@@ -54898,17 +54897,18 @@ namespace Thetis
 
             // every 500ms
 
-            bool bRX1Good = Display.IsNoiseFloorGoodRX1;
-            bool bRX2Good = Display.IsNoiseFloorGoodRX2;
-            _lastRX1NoiseFloorGood = bRX1Good;
-            _lastRX2NoiseFloorGood = bRX1Good;
-            if (bRX1Good) _lastRX1NoiseFloor = Display.NoiseFloorRX1; // these update noisefloorgoodrx
-            if (bRX2Good) _lastRX2NoiseFloor = Display.NoiseFloorRX2;
+            _lastRX1NoiseFloorGood = Display.IsNoiseFloorGoodRX1;
+            _lastRX2NoiseFloorGood = Display.IsNoiseFloorGoodRX2;
 
-            //
+            if (!_lastRX1NoiseFloorGood && !_lastRX2NoiseFloorGood) return;
+
+            if (_lastRX1NoiseFloorGood) _lastRX1NoiseFloor = Display.NoiseFloorRX1; // these update noisefloorgoodrx, and 'use up' the readings
+            if (_lastRX2NoiseFloorGood) _lastRX2NoiseFloor = Display.NoiseFloorRX2;
+
+            //change the display grids if needed to follow NF
             if (!IsSetupFormNull)
             { 
-                if (bRX1Good && GridMinFollowsNFRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER ||
+                if (_lastRX1NoiseFloorGood && GridMinFollowsNFRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER ||
                                             Display.CurrentDisplayMode == DisplayMode.SPECTRUM ||
                                             Display.CurrentDisplayMode == DisplayMode.PANAFALL ||
                                             Display.CurrentDisplayMode == DisplayMode.PANASCOPE ||
@@ -54923,7 +54923,7 @@ namespace Thetis
                     }
                 }
 
-                if (bRX2Good && RX2Enabled && GridMinFollowsNFRX2 &&
+                if (_lastRX2NoiseFloorGood && RX2Enabled && GridMinFollowsNFRX2 &&
                                            (Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER ||
                                             Display.CurrentDisplayModeBottom == DisplayMode.SPECTRUM ||
                                             Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL ||
@@ -54941,12 +54941,12 @@ namespace Thetis
             }
             //
 
-            if (m_bAutoAGCRX1 && bRX1Good)
+            if (m_bAutoAGCRX1 && _lastRX1NoiseFloorGood)
             {
                 setAGCThresholdPoint(_lastRX1NoiseFloor + m_dAutoAGCOffsetRX1, 1);
             }
 
-            if (m_bAutoAGCRX2 && bRX2Good)
+            if (m_bAutoAGCRX2 && _lastRX2NoiseFloorGood)
             {
                 setAGCThresholdPoint(_lastRX2NoiseFloor + m_dAutoAGCOffsetRX2, 2);
             }
