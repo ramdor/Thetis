@@ -638,13 +638,12 @@ namespace Midi2Cat.IO
 
         public void inDevice_ChannelMessageReceived(int ControlId, int Data, int Status, int Event, int Channel)
         {
-
-            if (!filterAndMap(ControlId, Status, Channel, Data, out int controlIDmapped, out int dataMapped)) return; //[2.10.3.4]MW0LGE added filter/mapper
-
             if (onMidiInput != null) 
             {
                 try
                 {
+                    if (!filterAndMap(ControlId, Status, Channel, Data, out int controlIDmapped, out int dataMapped)) return; //[2.10.3.4]MW0LGE added filter/mapper
+
                     ControlId = FixBehringerCtlID(controlIDmapped, Status); //-W2PA Disambiguate messages from Behringer controllers
 
                     onMidiInput(this, DeviceIndex, ControlId, dataMapped, Status, Event, Channel);
@@ -658,6 +657,8 @@ namespace Midi2Cat.IO
 
             controlIDmapped = controlId;
             dataMapped = data;
+
+            controlId = controlId & 0xff;
 
             //handy doc : https://anotherproducer.com/online-tools-for-musicians/midi-cc-list/
             if (Ignore14bitMessages && controlId >= 32 && controlId <= 63) return false; //[2.10.3.4]MW0LGE ignore LSB Controller message for 0-31 until we code up 14 bit support
@@ -702,7 +703,7 @@ namespace Midi2Cat.IO
 
             return true;
         }
-        private int FixBehringerCtlID(int ControlId, int Status) //-W2PA Test for DeviceName is a Behringer type, and disambiguate the messages if necessary
+        public int FixBehringerCtlID(int ControlId, int Status) //-W2PA Test for DeviceName is a Behringer type, and disambiguate the messages if necessary
         {            
             if (DeviceName == "CMD PL-1")
             {
@@ -767,26 +768,39 @@ namespace Midi2Cat.IO
                 int Rc = WinMM.MidiOutShortMessage(midi_out_handle, msg);
             }
         }
-
-        public ParsedMidiMessage ParseMsg(int inChannel, int inValue, int inStatus, int inControl, string inMsg)
+        public int UnmapControlID(int inControl, out int byteCount)
         {
-            // undo controlID changes [2.10.3.4]MW0LGE
+            byteCount = 1;
+
             switch (_uniqueDevice)
             {
                 case MidiUniqueDevices.NumarkDJ2GO2Touch:
                 case MidiUniqueDevices.DJStarlight:
                     inControl = (inControl >> 8) & 0xFF;
+                    byteCount = 2;
                     break;
                 default:
                     if (BuildIDFromControlIDAndChannel)
                     {
                         if (IncludeStatusInControlID)
+                        {
                             inControl = (inControl >> 16) & 0xFF;
+                            byteCount = 3;
+                        }
                         else
+                        {
                             inControl = (inControl >> 8) & 0xFF;
+                            byteCount = 2;
+                        }
                     }
                     break;
             }
+            return inControl;
+        }
+        public ParsedMidiMessage ParseMsg(int inChannel, int inValue, int inStatus, int inControl, string inMsg)
+        {
+            // undo controlID changes [2.10.3.4]MW0LGE
+            inControl = UnmapControlID(inControl, out int byteCount);
             //
 
             string msg = inMsg;

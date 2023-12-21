@@ -180,13 +180,24 @@ namespace Midi2Cat.IO
             if (DateTime.Now < ignoreMidiMessagesUntil)
                 return;
 
-            ControlId = FixBehringerCtlID(ControlId, Status); //-W2PA Disambiguate messages from Behringer controllers
+            //ControlId = FixBehringerCtlID(ControlId, Status); //-W2PA Disambiguate messages from Behringer controllers  //[2.10.3.5]MW0LGE lets not implent this twice right?
+            ControlId = Device.FixBehringerCtlID(ControlId, Status);
 
             this.InvokeIfRequired(p =>
             {
                 if (tabControl.SelectedTab == debugTab)
                 {
-                    _diagList.Add(new MidiDiagItem { Device = DeviceIdx.ToString("X2"), ControlId = ControlId.ToString("X2"), Data = Data.ToString("X2"), Status = Status.ToString("X2"), Voice = ((MidiEvent)Event).ToString().Replace("_", " "), Channel = (Channel+1).ToString("X2") });
+                    int unmappedControlId = Device.UnmapControlID(ControlId, out int byteCount); //[2.10.3.5]MW0LGE so we can get the original control id
+                    string sControlID;
+                    if (ControlId != unmappedControlId) // if we changed the control id, then display orginal in ()
+                    {
+                        string sLenX = "X" + (byteCount * 2).ToString();
+                        sControlID = ControlId.ToString(sLenX) + " (" + unmappedControlId.ToString("X2") + ")";
+                    }
+                    else
+                        sControlID = ControlId.ToString("X2");
+
+                    _diagList.Add(new MidiDiagItem { Device = DeviceIdx.ToString("X2"), ControlId = sControlID, Data = Data.ToString("X2"), Status = Status.ToString("X2"), Voice = ((MidiEvent)Event).ToString().Replace("_", " "), Channel = (Channel+1).ToString("X2") });
                     if (_diagList.Count > 100)
                     {
                         _diagList.RemoveAt(0);
@@ -237,38 +248,38 @@ namespace Midi2Cat.IO
             });
         }
 
-        private int FixBehringerCtlID(int ControlId, int Status) //-W2PA Test for DeviceName is a Behringer type, and disambiguate the messages if necessary
-        {
-            if (DeviceName == "CMD PL-1")
-            {
-                if (Status == 0xE0) //-W2PA Trap Status E0 from Behringer PL-1 slider, change the ID to something that doesn't conflict with other controls
-                {
-                    ControlId = 73;  //-W2PA I don't think this corresponds to the ID of any other control on the PL-1
-                }
+        //private int FixBehringerCtlID(int ControlId, int Status) //-W2PA Test for DeviceName is a Behringer type, and disambiguate the messages if necessary
+        //{
+        //    if (DeviceName == "CMD PL-1")
+        //    {
+        //        if (Status == 0xE0) //-W2PA Trap Status E0 from Behringer PL-1 slider, change the ID to something that doesn't conflict with other controls
+        //        {
+        //            ControlId = 73;  //-W2PA I don't think this corresponds to the ID of any other control on the PL-1
+        //        }
 
-                if (ControlId == 0x1F && MidiDevice.VFOSelect == 2) //-W2PA Trap PL-1 main wheel, change the ID to something that doesn't conflict with other controls, indicating VFO number (0=A, 1=B)
-                {
-                    ControlId = 77;  //-W2PA I don't think this corresponds to the ID of any other control on the PL-1, so use for VFOB
-                }
-            }
-            if (DeviceName == "CMD Micro")
-            {
-                if (Status == 0xB0) //-W2PA Trap Status E0 from Behringer CMD Micro controls, change the ID to something that doesn't conflict with buttons
-                {
-                    if (ControlId == 0x10) ControlId = 73; // sliders
-                    if (ControlId == 0x12) ControlId = 74;
-                    if (ControlId == 0x22) ControlId = 75;
-                    if (ControlId == 0x20) ControlId = 76;
+        //        if (ControlId == 0x1F && MidiDevice.VFOSelect == 2) //-W2PA Trap PL-1 main wheel, change the ID to something that doesn't conflict with other controls, indicating VFO number (0=A, 1=B)
+        //        {
+        //            ControlId = 77;  //-W2PA I don't think this corresponds to the ID of any other control on the PL-1, so use for VFOB
+        //        }
+        //    }
+        //    if (DeviceName == "CMD Micro")
+        //    {
+        //        if (Status == 0xB0) //-W2PA Trap Status E0 from Behringer CMD Micro controls, change the ID to something that doesn't conflict with buttons
+        //        {
+        //            if (ControlId == 0x10) ControlId = 73; // sliders
+        //            if (ControlId == 0x12) ControlId = 74;
+        //            if (ControlId == 0x22) ControlId = 75;
+        //            if (ControlId == 0x20) ControlId = 76;
 
-                    if (ControlId == 0x11) ControlId = 77; // large wheels
-                    if (ControlId == 0x21) ControlId = 78;
+        //            if (ControlId == 0x11) ControlId = 77; // large wheels
+        //            if (ControlId == 0x21) ControlId = 78;
 
-                    if (ControlId == 0x30) ControlId = 79; // small wheel-knobs
-                    if (ControlId == 0x31) ControlId = 80;
-                }
-            }
-            return ControlId; 
-        }
+        //            if (ControlId == 0x30) ControlId = 79; // small wheel-knobs
+        //            if (ControlId == 0x31) ControlId = 80;
+        //        }
+        //    }
+        //    return ControlId; 
+        //}
 
         void onMidiDebugMsg(int Device, Direction direction, Status status, string msg1, string msg2)
         {
