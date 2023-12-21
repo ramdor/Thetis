@@ -487,7 +487,17 @@ ASIOError create_asio_buffers (DriverInfo *asioDriverInfo)
 			}
 			ASIOExit();
 		}
+		else
+		{
+			sprintf_s(buf, 128, "ASIOInit() FAILED\n");
+			OutputDebugStringA(buf);
+		}
 		asioDrivers->removeCurrentDriver();
+	}
+	else
+	{
+		sprintf_s(buf, 128, "loadAsioDriver() FAILED\n");
+		OutputDebugStringA(buf);
 	}
 	//return 0;
 	return 1;
