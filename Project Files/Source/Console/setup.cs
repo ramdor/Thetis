@@ -339,8 +339,7 @@ namespace Thetis
 
             //MW0LGE [2.9.0.7] setup amp/volts calibration
             initVoltsAmpsCalibration();
-            chkLogVoltsAmps.Checked = false; //[2.10.1.0]MW0LGE
-            chkLogVoltsAmps_CheckedChanged(this, EventArgs.Empty);
+            chkLogVoltsAmps.Checked = false;
             //
 
             // display setup
@@ -2028,6 +2027,7 @@ namespace Thetis
             udTXDisplayCalOffset_ValueChanged(this, e);
             chkUsing10MHzRef_CheckedChanged(this, e); //MW0LGE_21k9rc6
             //udHPSDRFreqCorrectFactor_ValueChanged(this, e);  //MW0LGE_21k9rc6 now called in chkUsing10MHzRef_CheckedChanged
+            chkLogVoltsAmps_CheckedChanged(this, e);
 
             // Filter tab
             udFilterDefaultLowCut_ValueChanged(this, e); //MW0LGE_21d5
@@ -2505,6 +2505,8 @@ namespace Thetis
             chkToTMox_CheckedChanged(this, e);
             chkToTPing_CheckedChanged(this, e);
             chkAutoPowerOn_CheckedChanged(this, e);
+            nudPBsnrShiftRx1_ValueChanged(this, e);
+            nudPBsnrShiftRx2_ValueChanged(this, e);
         }
 
         public string[] GetTXProfileStrings()
@@ -19914,6 +19916,9 @@ namespace Thetis
         {
             if (initializing) return;
             console.specRX.GetSpecRX(1).DetTypePan = comboRX2DispPanDetector.SelectedIndex;
+
+            //[2.10.3.5]MW0LGE note: see updateNormalizePan() in specHPSDR as it only applies to pan detector type 2,3,4
+            chkDispRX2Normalize.Enabled = console.specRX.GetSpecRX(1).DetTypePan >= 2;
         }
 
         private void comboRX2DispPanAveraging_SelectedIndexChanged(object sender, EventArgs e)
@@ -19944,6 +19949,9 @@ namespace Thetis
         {
             if (initializing) return;
             console.specRX.GetSpecRX(0).DetTypePan = comboDispPanDetector.SelectedIndex;
+
+            //[2.10.3.5]MW0LGE note: see updateNormalizePan() in specHPSDR as it only applies to pan detector type 2,3,4
+            chkDispNormalize.Enabled = console.specRX.GetSpecRX(0).DetTypePan >= 2;
         }
 
         private void comboDispWFDetector_SelectedIndexChanged(object sender, EventArgs e)
@@ -19989,6 +19997,9 @@ namespace Thetis
             if (initializing) return;
             console.specRX.GetSpecRX(cmaster.inid(1, 0)).DetTypePan = comboTXDispPanDetector.SelectedIndex;
             console.UpdateTXSpectrumDisplayVars();
+
+            //[2.10.3.5]MW0LGE note: see updateNormalizePan() in specHPSDR as it only applies to pan detector type 2,3,4
+            chkDispTXNormalize.Enabled = console.specRX.GetSpecRX(cmaster.inid(1, 0)).DetTypePan >= 2;
         }
 
         private void comboTXDispPanAveraging_SelectedIndexChanged(object sender, EventArgs e)
@@ -26602,11 +26613,13 @@ namespace Thetis
         }
         private void udAmpVoff_ValueChanged(object sender, EventArgs e)
         {
+            //note: do not check for initalizing here
             console.AmpVoff = (float)udAmpVoff.Value;
             _bVoffSet = true;
         }
         private void udAmpSens_ValueChanged(object sender, EventArgs e)
         {
+            //note: do not check for initalizing here
             console.AmpSens = (float)udAmpSens.Value;
             _bSensSet = true;
         }
@@ -26630,26 +26643,26 @@ namespace Thetis
         {
             float snr = console.RXPBsnr(1);
 
-            float t = (float)nudNFshift.Value + snr;
+            float t = (float)nudPBsnrShiftRx1.Value - snr;
 
-            // limit to 12 for the shift
-            if (t < -12) t = -12;
-            if (t > 12) t = 12;
+            // limit to 24 for the shift
+            if (t < -24) t = -24;
+            if (t > 24) t = 24;
 
-            nudNFshift.Value = (decimal)t;
+            nudPBsnrShiftRx1.Value = (decimal)t;
         }
 
         private void btnRX2PBsnr_Click(object sender, EventArgs e)
         {
             float snr = console.RXPBsnr(2);
 
-            float t = (float)nudNFshift.Value + snr;
+            float t = (float)nudPBsnrShiftRx2.Value - snr;
 
             // limit to 12 for the shift
-            if (t < -12) t = -12;
-            if (t > 12) t = 12;
+            if (t < -24) t = -24;
+            if (t > 24) t = 24;
 
-            nudNFshift.Value = (decimal)t;
+            nudPBsnrShiftRx2.Value = (decimal)t;
         }
 
         private void btnResetNFShift_Click(object sender, EventArgs e)
@@ -28364,6 +28377,7 @@ namespace Thetis
         }
         private void chkLogVoltsAmps_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.LogVA = chkLogVoltsAmps.Checked;
         }
         public bool LinkAFSlidersOnlyIfCtrlHeld
@@ -29917,6 +29931,28 @@ namespace Thetis
                         break;
                 }
             }
+        }
+
+        private void btnRX1PBsnrReset_Click(object sender, EventArgs e)
+        {
+            nudPBsnrShiftRx1.Value = 0;
+        }
+
+        private void btnRX2PBsnrReset_Click(object sender, EventArgs e)
+        {
+            nudPBsnrShiftRx2.Value = 0;
+        }
+
+        private void nudPBsnrShiftRx1_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.RX1PBsnrShift = (double)nudPBsnrShiftRx1.Value;
+        }
+
+        private void nudPBsnrShiftRx2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.RX2PBsnrShift = (double)nudPBsnrShiftRx2.Value;
         }
         //private bool renameSkinForDeletion(string sFullPath)
         //{

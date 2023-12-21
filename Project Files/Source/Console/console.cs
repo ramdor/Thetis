@@ -23322,13 +23322,52 @@ namespace Thetis
         private float _avNumRX1 = -200;
         private float _avNumRX2 = -200;       
         
+        public float RXOffset(int rx)
+        {
+            float fOffset = 0;
+            if (rx == 1)
+            {
+                fOffset = rx1_step_att_present ? (float)rx1_attenuator_data : rx1_preamp_offset[(int)rx1_preamp_mode];
+                fOffset += rx1_meter_cal_offset + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
+            }
+            else //rx2
+            {
+                if (current_hpsdr_model == HPSDRModel.ANAN100D ||
+                    current_hpsdr_model == HPSDRModel.ANAN200D ||
+                    current_hpsdr_model == HPSDRModel.ORIONMKII ||
+                    current_hpsdr_model == HPSDRModel.ANAN7000D ||
+                    current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                    current_hpsdr_model == HPSDRModel.ANAN_G2 ||
+                    current_hpsdr_model == HPSDRModel.ANAN_G2_1K ||
+                    rx2_preamp_present)
+                {
+                    if (rx2_step_att_present)
+                        fOffset = (float)rx2_attenuator_data;
+                    else
+                        fOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
+                }
+                else
+                {
+                    if (rx1_step_att_present)
+                        fOffset = (float)rx1_attenuator_data;
+                    else
+                        fOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+                }
+                fOffset += rx2_meter_cal_offset + rx2_xvtr_gain_offset;
+                if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                    current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K) fOffset += rx2_6m_gain_offset;
+            }
+            return fOffset;
+        }
         public float RXPBsnr(int rx)
         {
+            float offset = RXOffset(rx);
             if (rx == 1)
             {
                 if (!Display.FastAttackNoiseFloorRX1 && _lastRX1NoiseFloorGood)
                 {
-                    spectralCalculations(1, _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH], out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
+                    float num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
+                    spectralCalculations(1, /*_RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH]*/num, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
                     return (float)estimated_snr;
                 }
                 else
@@ -23338,11 +23377,30 @@ namespace Thetis
             {
                 if (!Display.FastAttackNoiseFloorRX2 && _lastRX2NoiseFloorGood)
                 {
-                    spectralCalculations(2, _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH], out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
+                    float num = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
+                    spectralCalculations(2, /*_RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH]*/num, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
                     return (float)estimated_snr;
                 }
                 else
                     return _RX2MeterValues[Reading.ESTIMATED_PBSNR];
+            }
+        }
+        private double m_fRX1_PBSNR_shift = 0;
+        private double m_fRX2_PBSNR_shift = 0;
+        public double RX1PBsnrShift
+        {
+            get { return m_fRX1_PBSNR_shift; }
+            set
+            {
+                m_fRX1_PBSNR_shift = value;
+            }
+        }
+        public double RX2PBsnrShift
+        {
+            get { return m_fRX2_PBSNR_shift; }
+            set
+            {
+                m_fRX2_PBSNR_shift = value;
             }
         }
         private void spectralCalculations(int rx, double signal, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz)
@@ -23360,7 +23418,7 @@ namespace Thetis
 
                 if (!MOX)
                 {
-                    estimated_snr = signal - estimated_passband_noise_power;
+                    estimated_snr = signal - estimated_passband_noise_power + m_fRX1_PBSNR_shift;
                 }
             }
             else//rx2
@@ -23373,8 +23431,8 @@ namespace Thetis
                 estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
 
                 if (!MOX)
-                {                    
-                    estimated_snr = signal - estimated_passband_noise_power;
+                {
+                    estimated_snr = signal - estimated_passband_noise_power + m_fRX2_PBSNR_shift;
                 }
             }
             rx_dBHz = 10 * Math.Log10((double)passbandWidth);//MW0LGE_22b
@@ -23663,8 +23721,8 @@ namespace Thetis
                     }
                     spectralCalculations(1, num, out bin_width, out dRWB, out passbandWidth, out noise_floor_power_spectral_density, out estimated_passband_noise_power, out estimated_snr, out rx_dBHz, out rbw_dBHz);
                     if(!MOX)
-                    { 
-                        estimated_snr = _avNumRX1 - estimated_passband_noise_power;
+                    {
+                        estimated_snr = _avNumRX1 - estimated_passband_noise_power + m_fRX1_PBSNR_shift;
 
                         if (_UseSUnitsForPBNPPBSNR)
                         {
@@ -23730,7 +23788,7 @@ namespace Thetis
                     spectralCalculations(2, num, out bin_width, out dRWB, out passbandWidth, out noise_floor_power_spectral_density, out estimated_passband_noise_power, out estimated_snr, out rx_dBHz, out rbw_dBHz);
                     if (!MOX)
                     { 
-                        estimated_snr = _avNumRX2 - estimated_passband_noise_power;
+                        estimated_snr = _avNumRX2 - estimated_passband_noise_power + m_fRX2_PBSNR_shift;
 
                         if (_UseSUnitsForPBNPPBSNR)
                         {
@@ -55689,8 +55747,7 @@ namespace Thetis
 
                 if (!_mox)
                 {
-                    float offset = rx1_step_att_present ? (float)rx1_attenuator_data : rx1_preamp_offset[(int)rx1_preamp_mode];
-                    offset += rx1_meter_cal_offset + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
+                    float offset = RXOffset(1);
 
                     // get all readings
                     if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_STRENGTH)) _RX1MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
@@ -55823,31 +55880,7 @@ namespace Thetis
                     //float offset = rx2_step_att_present ? (float)rx2_attenuator_data : rx2_preamp_offset[(int)rx1_preamp_mode];
                     //offset += rx2_meter_cal_offset + rx2_xvtr_gain_offset + rx2_6m_gain_offset;
 
-                    float offset = 0;
-                    if (current_hpsdr_model == HPSDRModel.ANAN100D ||
-                        current_hpsdr_model == HPSDRModel.ANAN200D ||
-                        current_hpsdr_model == HPSDRModel.ORIONMKII ||
-                        current_hpsdr_model == HPSDRModel.ANAN7000D ||
-                        current_hpsdr_model == HPSDRModel.ANAN8000D ||
-                        current_hpsdr_model == HPSDRModel.ANAN_G2 ||
-                        current_hpsdr_model == HPSDRModel.ANAN_G2_1K ||
-                        rx2_preamp_present)
-                    {
-                        if (rx2_step_att_present)
-                            offset = (float)rx2_attenuator_data;
-                        else
-                            offset = rx2_preamp_offset[(int)rx2_preamp_mode];
-                    }
-                    else
-                    {
-                        if (rx1_step_att_present)
-                            offset = (float)rx1_attenuator_data;
-                        else
-                            offset = rx1_preamp_offset[(int)rx1_preamp_mode];
-                    }
-                    offset += rx2_meter_cal_offset + rx2_xvtr_gain_offset;
-                    if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
-                        current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K) offset += rx2_6m_gain_offset;
+                    float offset = RXOffset(2);
 
                     // get all readings
                     if (MeterManager.RequiresUpdate(2, Reading.SIGNAL_STRENGTH)) _RX2MeterValues[Reading.SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH) + offset;

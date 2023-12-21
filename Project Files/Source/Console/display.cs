@@ -61,9 +61,6 @@ namespace Thetis
     using Device = SharpDX.Direct3D11.Device;
     using RectangleF = SharpDX.RectangleF;
     using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;
-    using System.Security.Permissions;
-    using System.Diagnostics.Eventing.Reader;
-    using System.Threading;
 
     class Display
     {
@@ -199,7 +196,6 @@ namespace Thetis
 
         private static Brush m_bTextCallOutActive = new SolidBrush(notch_callout_active_color);
         private static Brush m_bTextCallOutInactive = new SolidBrush(notch_callout_inactive_color);
-        private static Font m_fntCallOutFont = new System.Drawing.Font("Trebuchet MS", 9, FontStyle.Regular);
 
         private static ColorSheme color_sheme = ColorSheme.enhanced;
         public static ColorSheme ColorSheme
@@ -792,8 +788,8 @@ namespace Thetis
         //=======================================================
 
         private static bool m_bSpecialPanafall = false; // ke9ns add 1=map mode (panafall but only a small waterfall) and only when just in RX1 mode)
-        public static int K9 = 0;  // ke9ns add rx1 display mode selector:  1=water,2=pan,3=panfall, 5=panfall with RX2 on any mode, 7=special map viewing panafall
-        public static int K10 = 0; // ke9ns add rx2 display mode selector: 0=off 1=water,2=pan, 5=panfall
+        //public static int K9 = 0;  // ke9ns add rx1 display mode selector:  1=water,2=pan,3=panfall, 5=panfall with RX2 on any mode, 7=special map viewing panafall
+        //public static int K10 = 0; // ke9ns add rx2 display mode selector: 0=off 1=water,2=pan, 5=panfall
 
         //========================================================
 
@@ -2319,19 +2315,22 @@ namespace Thetis
         }
 
         private static SolidBrush pana_text_brush = new SolidBrush(Color.Khaki);
-        private static System.Drawing.Font pana_font = new System.Drawing.Font("Tahoma", 7F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+        private static Font pana_font = new Font("Tahoma", 7F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+
+        private static Font m_fntCallOutFont = new Font("Trebuchet MS", 9, FontStyle.Regular);
 
         private static Pen dhp = new Pen(Color.FromArgb(0, 255, 0)),
                            dhp1 = new Pen(Color.FromArgb(150, 0, 0, 255)),
                            dhp2 = new Pen(Color.FromArgb(150, 255, 0, 0));
 
-        private static System.Drawing.Font
-                            font10 = new System.Drawing.Font("Arial", 10),
-                            font14 = new System.Drawing.Font("Arial", 14, FontStyle.Bold),
-                            font9 = new System.Drawing.Font("Arial", 9),
-                            font9b = new System.Drawing.Font("Arial", 9, FontStyle.Bold),
-                            font95 = new System.Drawing.Font("Arial", 9.5f),
-                            font32b = new System.Drawing.Font("Arial", 32, FontStyle.Bold);
+        private static Font
+                            font1 = new Font("Microsft Sans Serif", 9, FontStyle.Regular),
+                            font10 = new Font("Arial", 10),
+                            font14 = new Font("Arial", 14, FontStyle.Bold),
+                            font9 = new Font("Arial", 9),
+                            font9b = new Font("Arial", 9, FontStyle.Bold),
+                            font95 = new Font("Arial", 9.5f),
+                            font32b = new Font("Arial", 32, FontStyle.Bold);
 
 #endregion
 
@@ -2462,23 +2461,23 @@ namespace Thetis
         // ke9ns draw panadapter grid
         //=========================================================
 
-        public static int[] holder2 = new int[100];                           // ke9ns add MEMORY Spot used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
-        public static int[] holder3 = new int[100];                          // ke9ns add
+        //public static int[] holder2 = new int[100];                           // ke9ns add MEMORY Spot used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
+        //public static int[] holder3 = new int[100];                          // ke9ns add
 
         public static int[] holder = new int[100];                           // ke9ns add DX Spot used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
         public static int[] holder1 = new int[100];                          // ke9ns add
-        private static Font font1 = new Font("Microsft Sans Serif", 9, FontStyle.Regular);  // ke9ns add dx spot call sign font style
+        //private static Font font1 = new Font("Microsft Sans Serif", 9, FontStyle.Regular);  // ke9ns add dx spot call sign font style
 
         private static Pen p1 = new Pen(Color.YellowGreen, 2.0f);             // ke9ns add vert line color and thickness  DXSPOTTER
         private static Pen p3 = new Pen(Color.Blue, 2.5f);                   // ke9ns add vert line color and thickness    MEMORY
         private static Pen p2 = new Pen(Color.Purple, 2.0f);                  // ke9ns add color for vert line of SWL list
 
         private static bool m_bLSB = false;                                     // ke9ns add true=LSB, false=USB
-        private static int rx2 = 0;                                          // ke9ns add 0-49 spots for rx1 panadapter window for qrz callup  (50-100 for rx2)
+        //private static int rx2 = 0;                                          // ke9ns add 0-49 spots for rx1 panadapter window for qrz callup  (50-100 for rx2)
 
-        public static int VFOLow = 0;                                       // ke9ns low freq (left side of screen) in HZ (used in DX_spot)
-        public static int VFOHigh = 0;                                      // ke9ns high freq (right side of screen) in HZ
-        public static int VFODiff = 0;                                      // ke9ns diff high-low
+        private static int VFOLow = 0;                                       // ke9ns low freq (left side of screen) in HZ (used in DX_spot)
+        private static int VFOHigh = 0;                                      // ke9ns high freq (right side of screen) in HZ
+        private static int VFODiff = 0;                                      // ke9ns diff high-low
 
         private static Color changeAlpha(Color c, int A)
         {
@@ -8365,6 +8364,7 @@ namespace Thetis
 
                         }
 
+                        int rx2;
                         if (bottom || (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2)) rx2 = 50; // allow only 50 qrz spots per Receiver
                         else rx2 = 0;
 
@@ -8438,6 +8438,7 @@ namespace Thetis
 
                         }
 
+                        int rx2;
                         if (bottom || (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2)) rx2 = 50;
                         else rx2 = 0;
 
