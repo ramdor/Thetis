@@ -1032,7 +1032,7 @@ namespace Thetis
                 chkRX2Squelch_CheckStateChanged(this, EventArgs.Empty);
 
                 UpdateWaterfallLevelValues();
-                updateDisplayGridLevelValues();
+                UpdateDisplayGridLevelMaxValues(true);
                 UpdateDiversityValues();
 
                 rx1_meter_cal_offset = rx_meter_cal_offset_by_radio[(int)current_hpsdr_model];
@@ -5770,7 +5770,7 @@ namespace Thetis
             {
                 UpdateBandButtonColors();
                 UpdateWaterfallLevelValues();
-                updateDisplayGridLevelValues();
+                UpdateDisplayGridLevelMaxValues(true);
                 UpdateDiversityValues();
             }
 
@@ -5794,7 +5794,7 @@ namespace Thetis
             {
                 UpdateBandButtonColors();
                 UpdateWaterfallLevelValues();
-                updateDisplayGridLevelValues();
+                UpdateDisplayGridLevelMaxValues(true);
             }
         }
 
@@ -8538,7 +8538,7 @@ namespace Thetis
                 }
             }
         }
-        public void UpdateDisplayGridLevelMaxValues(bool bDoBandInfoAndWaterFallSync = true)
+        public void UpdateDisplayGridLevelMaxValues(bool bDoBandInfoAndWaterFallSync)
         {
             if (!initializing)
             {
@@ -8671,11 +8671,6 @@ namespace Thetis
                     setWaterfallGainsIfLinkedToSpectrum(2);
                 }
             }
-        }
-        private void updateDisplayGridLevelValues()
-        {
-            //UpdateDisplayGridLevelMinValues(false); // false because we do the updates after setting max below
-            UpdateDisplayGridLevelMaxValues(true);
         }
 
         public bool RX1IsIn60m()
@@ -45477,7 +45472,7 @@ namespace Thetis
             NetworkIO.SendHighPriority(0);
             SetBand(bse.Mode.ToString(), bse.Filter.ToString(), bse.Frequency, bse.CTUNEnabled, bse.ZoomSlider, bse.CentreFrequency);
             UpdateWaterfallLevelValues();
-            updateDisplayGridLevelValues();
+            UpdateDisplayGridLevelMaxValues(true);
             UpdateDiversityValues();
             NetworkIO.SendHighPriority(1);            
         }
@@ -47412,7 +47407,7 @@ namespace Thetis
 
             float bin_width = sample_rate / (float)fft_size;
             float length = (float)Math.Round(sample_rate / bin_width);
-            int power2length = findNextPowerOf2((int)length);
+            int power2length = Common.FindNextPowerOf2((int)length);
             float milliseconds = (power2length / (float)sample_rate) * 1000f;
 
             if (rx == 1)
@@ -47425,16 +47420,6 @@ namespace Thetis
                 _fft_fill_timeRX2 = milliseconds;
                 Display.RX2FFTFillTime = _fft_fill_timeRX2;
             }
-        }
-        private int findNextPowerOf2(int n)
-        {
-            n--;
-            n |= n >> 1;
-            n |= n >> 2;
-            n |= n >> 4;
-            n |= n >> 8;
-            n |= n >> 16;
-            return ++n;
         }
 
         private void finderMenuItem_Click(object sender, EventArgs e)
