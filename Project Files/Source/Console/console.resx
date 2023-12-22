@@ -17515,7 +17515,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Off</value>
   </data>
   <data name="picSquelch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>17, 568</value>
+    <value>22, 568</value>
   </data>
   <data name="picSquelch.Size" type="System.Drawing.Size, System.Drawing">
     <value>83, 3</value>
