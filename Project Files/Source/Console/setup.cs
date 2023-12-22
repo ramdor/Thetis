@@ -26591,7 +26591,7 @@ namespace Thetis
                 "Do you want to reset Level Calibration back to defaults ?",
                 "Level Defaults",
                 MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
+                MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
 
             if (dr == DialogResult.Yes)
                 console.ResetLevelCalibration();
