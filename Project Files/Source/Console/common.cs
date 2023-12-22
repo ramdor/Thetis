@@ -1149,5 +1149,25 @@ namespace Thetis
 			}
 			catch { return false; }
         }
+
+        public static int FindNextPowerOf2(int n)
+        {
+            n--;
+            n |= n >> 1;
+            n |= n >> 2;
+            n |= n >> 4;
+            n |= n >> 8;
+            n |= n >> 16;
+            return ++n;
+        }
+        public static int FindPreviousPowerOf2(int n)
+        {
+            n |= n >> 1;
+            n |= n >> 2;
+            n |= n >> 4;
+            n |= n >> 8;
+            n |= n >> 16;
+            return n - (n >> 1);
+        }
     }
 }
