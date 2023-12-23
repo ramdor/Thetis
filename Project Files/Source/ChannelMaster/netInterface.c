@@ -32,7 +32,7 @@ int StartAudioNative()
 {
 	int myrc = 0;
 	int rc;
-	if (audio_running) return;
+	if (audio_running) return 0;
 	audio_running = 1;
 	HaveSync = 1;
 	// make sure we're not already opened

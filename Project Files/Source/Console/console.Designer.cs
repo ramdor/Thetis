@@ -4930,7 +4930,6 @@
             this.toolStripStatusLabel_Date,
             this.toolStripStatusLabel_LocalTime});
             this.statusStripMain.Name = "statusStripMain";
-            this.statusStripMain.ShowItemToolTips = true;
             // 
             // toolStripDropDownButton_ScreenSize
             // 

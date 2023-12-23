@@ -1100,6 +1100,7 @@ namespace Thetis
                 if (psform != null) psform.HandleStartup();
 
                 //[2.10.3.5]MW0LGE setup all status icon items
+                addStatusStripToolTipHandlers();
                 UpdateStatusBarStatusIcons();
 
                 //display render thread
@@ -47550,6 +47551,60 @@ namespace Thetis
         {
             get { return m_bAutoPowerOn; }
             set { m_bAutoPowerOn = value; }
+        }
+
+        private ToolTip m_statusBarToolTip = null;
+        private void addStatusStripToolTipHandlers()
+        {
+            toolStripStatusLabel_CMstatus.MouseHover += toolTipItemMouseHover;
+            toolStripStatusLabel_N1MM.MouseHover += toolTipItemMouseHover;
+            toolStripStatusLabel_CatTCPip.MouseHover += toolTipItemMouseHover;
+            toolStripStatusLabel_CatSerial.MouseHover += toolTipItemMouseHover;
+            toolStripStatusLabel_TCI.MouseHover += toolTipItemMouseHover;
+
+            toolStripStatusLabel_CMstatus.MouseLeave += toolTipItemMouseLeave;
+            toolStripStatusLabel_N1MM.MouseLeave += toolTipItemMouseLeave;
+            toolStripStatusLabel_CatTCPip.MouseLeave += toolTipItemMouseLeave;
+            toolStripStatusLabel_CatSerial.MouseLeave += toolTipItemMouseLeave;
+            toolStripStatusLabel_TCI.MouseLeave += toolTipItemMouseLeave;
+        }
+
+        private void toolTipItemMouseHover(object sender, EventArgs e)
+        {
+            if (m_statusBarToolTip != null)
+            {
+                // nuke it, seemed to be the only reliable way of getting them to .show
+                m_statusBarToolTip.Hide(statusStripMain);
+                m_statusBarToolTip.Dispose();
+                m_statusBarToolTip = null;
+            }
+                
+            string sToolTip;
+            int x;
+            if (sender is ToolStripDropDownButton tsddb)
+            {
+                sToolTip = tsddb.ToolTipText;
+                x = tsddb.Bounds.X;
+            }
+            else if (sender is ToolStripStatusLabel tssl)
+            {
+                sToolTip = tssl.ToolTipText;
+                x = tssl.Bounds.X;
+            }
+            else return;
+
+            if (string.IsNullOrEmpty(sToolTip)) return;
+
+            Point pt = new Point(x, statusStripMain.Height * 2);
+
+            // a new one every time
+            m_statusBarToolTip = new ToolTip();              
+            m_statusBarToolTip.Show(sToolTip, statusStripMain, pt);
+        }
+        private void toolTipItemMouseLeave(object sender, EventArgs e)
+        {
+            if (m_statusBarToolTip != null)
+                m_statusBarToolTip.Hide(statusStripMain);
         }
     }
 
