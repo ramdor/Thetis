@@ -1100,7 +1100,7 @@ namespace Thetis
                 if (psform != null) psform.HandleStartup();
 
                 //[2.10.3.5]MW0LGE setup all status icon items
-                addStatusStripToolTipHandlers();
+                addStatusStripToolTipHandlers(); // improves #354
                 UpdateStatusBarStatusIcons();
 
                 //display render thread
