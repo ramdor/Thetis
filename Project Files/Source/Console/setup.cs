@@ -21893,8 +21893,7 @@ namespace Thetis
             if (sProfileName == "") return;
             if (!validatePAProfileName(sProfileName)) return;
 
-            PAProfile p = new PAProfile(sProfileName, HPSDRModel.FIRST, false); // we dont really want it associated with a model
-            p.ResetGainDefaultsForModel(console.CurrentHPSDRModel); // set the initial values based on current model, all we can do
+            PAProfile p = new PAProfile(sProfileName, console.CurrentHPSDRModel/*HPSDRModel.FIRST*/, false); // set the initial values based on current model, all we can do
 
             _PAProfiles.Add(sProfileName, p);
 
@@ -22214,9 +22213,9 @@ namespace Thetis
                 _PAProfiles.Add(p.ProfileName, p);
             }
 
-            // add a bypass default, which is used when in PAbypass (part of special calibrate)
-            p = new PAProfile(_sPA_PROFILE_BYPASS, HPSDRModel.FIRST, true); // no specific model for this
-            p.ResetGainDefaultsForModel(p.Model, true);
+            // add a bypass default, which is used when in pa bypass (part of calibrate)
+            p = new PAProfile(_sPA_PROFILE_BYPASS, HPSDRModel.FIRST, true); // no specific model for this, FIRST is handled ResetGainDefaultsForModel called in constructor
+
             _PAProfiles.Add(p.ProfileName, p);
         }
         private PAProfile getPAProfile(string sName)
@@ -22280,14 +22279,14 @@ namespace Thetis
         }
         public float GetBypassGain(Band b)
         {
-            PAProfile p = getPAProfile("Dafault - PA BYPASS");
+            PAProfile p = getPAProfile(_sPA_PROFILE_BYPASS);
             if (p == null) return 1000;
 
             return p.GetGainForBand(b);
         }
         public void SetBypassGain(Band b, float gain)
         {
-            PAProfile p = getPAProfile("Dafault - PA BYPASS");
+            PAProfile p = getPAProfile(_sPA_PROFILE_BYPASS);
             if (p == null) return;
 
             p.SetGainForBand(b, gain);
@@ -22891,7 +22890,7 @@ namespace Thetis
                     _bUseMaxPower[n] = sourceProfile._bUseMaxPower[n];
                 }
             }
-            public void ResetGainDefaultsForModel(HPSDRModel model, bool bypasPASettings = false)
+            public void ResetGainDefaultsForModel(HPSDRModel model)
             {
                 _model = model;
 
@@ -22908,7 +22907,7 @@ namespace Thetis
                 }
                 //
 
-                if (model == HPSDRModel.HERMES || model == HPSDRModel.HPSDR || model == HPSDRModel.ORIONMKII || bypasPASettings)// || (model == HPSDRModel.ANAN100D && bypasPASettings))
+                if (model == HPSDRModel.FIRST || model == HPSDRModel.HERMES || model == HPSDRModel.HPSDR || model == HPSDRModel.ORIONMKII) //note: first is special case for the pa bypass (part of calibrate)
                 {
                     SetGainForBand(Band.B160M, 41.0f);
                     SetGainForBand(Band.B80M, 41.2f);
@@ -23161,7 +23160,7 @@ namespace Thetis
                     SetGainForBand(Band.VHF12, 63.1f);
                     SetGainForBand(Band.VHF13, 63.1f);
 
-                    //return;
+                    return;
                 }
 
                 if (model == HPSDRModel.ANAN_G2_1K)                 // G8NJJ will need changing when PA detail known
@@ -23193,39 +23192,8 @@ namespace Thetis
                     SetGainForBand(Band.VHF12, 63.1f);
                     SetGainForBand(Band.VHF13, 63.1f);
 
-                    //return;
+                    return;
                 }
-                //if (model == HPSDRModel.HERMES)
-                //{
-                //    SetGainForBand(Band.B160M, 41.0f);
-                //    SetGainForBand(Band.B80M, 41.2f);
-                //    SetGainForBand(Band.B60M, 41.3f);
-                //    SetGainForBand(Band.B40M, 41.3f);
-                //    SetGainForBand(Band.B30M, 41.0f);
-                //    SetGainForBand(Band.B20M, 40.5f);
-                //    SetGainForBand(Band.B17M, 39.9f);
-                //    SetGainForBand(Band.B15M, 38.8f);
-                //    SetGainForBand(Band.B12M, 38.8f);
-                //    SetGainForBand(Band.B10M, 38.8f);
-                //    SetGainForBand(Band.B6M, 38.8f);
-
-                //    SetGainForBand(Band.VHF0, 56.2f);
-                //    SetGainForBand(Band.VHF1, 56.2f);
-                //    SetGainForBand(Band.VHF2, 56.2f);
-                //    SetGainForBand(Band.VHF3, 56.2f);
-                //    SetGainForBand(Band.VHF4, 56.2f);
-                //    SetGainForBand(Band.VHF5, 56.2f);
-                //    SetGainForBand(Band.VHF6, 56.2f);
-                //    SetGainForBand(Band.VHF7, 56.2f);
-                //    SetGainForBand(Band.VHF8, 56.2f);
-                //    SetGainForBand(Band.VHF9, 56.2f);
-                //    SetGainForBand(Band.VHF10, 56.2f);
-                //    SetGainForBand(Band.VHF11, 56.2f);
-                //    SetGainForBand(Band.VHF12, 56.2f);
-                //    SetGainForBand(Band.VHF13, 56.2f);
-
-                //    //return;
-                //}
             }
         }
         private void enabledPAAdjust(bool bEnabled)
