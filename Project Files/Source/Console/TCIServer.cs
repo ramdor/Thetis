@@ -1548,7 +1548,34 @@ namespace Thetis
 							mode = DSPMode.FM;
 							break;
 						case "cw":
-						case "cwl":
+                            //change if needed [2.10.3.6]MW0LGE fixes #365
+                            bool bChange = false;
+                            if (m_server != null && console != null)
+							{
+								if(m_server.CWbecomesCWUabove10mhz)
+								{
+									bool bVFOA10orAbove = console.ThreadSafeTCIAccessor.VFOAFreq >= 10.0;
+                                    bool bVFOB10orAbove = console.ThreadSafeTCIAccessor.VFOBFreq >= 10.0;
+									
+                                    if (rx == 0)
+									{
+										if(console.ThreadSafeTCIAccessor.VFOATX)
+                                            bChange = bVFOA10orAbove;
+										else
+                                            bChange = bVFOB10orAbove;
+                                    }
+                                    else if (rx == 1)
+									{
+										if (console.ThreadSafeTCIAccessor.VFOBTX)
+											bChange = bVFOB10orAbove;
+										else
+                                            bChange = bVFOA10orAbove;
+                                    }
+                                }
+                            }
+                            mode = bChange ? DSPMode.CWU : DSPMode.CWL;
+                            break;
+                        case "cwl":
 							mode = DSPMode.CWL;
 							break;
 						case "cwu":
@@ -2138,7 +2165,13 @@ namespace Thetis
 			get { return m_bCWLUbecomesCW; }
 			set { m_bCWLUbecomesCW = value; }
         }
-		private bool m_bUseRX1VFOaForRX2VFOa = false;
+		private bool m_bCWbecomesCWUabove10mhz = false;
+		public bool CWbecomesCWUabove10mhz
+		{
+			get { return m_bCWbecomesCWUabove10mhz; }
+			set { m_bCWbecomesCWUabove10mhz = value; }
+		}
+        private bool m_bUseRX1VFOaForRX2VFOa = false;
 		public bool UseRX1VFOaForRX2VFOa
 		{
 			get { return m_bUseRX1VFOaForRX2VFOa; }

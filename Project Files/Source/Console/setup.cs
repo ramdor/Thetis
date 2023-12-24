@@ -26670,6 +26670,11 @@ namespace Thetis
             if (initializing) return;
             console.RX2PBsnrShift = (double)nudPBsnrShiftRx2.Value;
         }
+
+        private void chkCWbecomesCWUabove10mhz_CheckedChanged(object sender, EventArgs e)
+        {
+            console.TCICWbecomesCWUabove10mhz = chkCWbecomesCWUabove10mhz.Checked;
+        }
     }
 
     #region PADeviceInfo Helper Class

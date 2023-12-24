@@ -2268,6 +2268,16 @@ namespace Thetis
             Debug.Print("TCI Server Error : " + se.Message);
         }
 
+        private bool m_bTCICWbecomesCWUabove10mhz = false;
+        public bool TCICWbecomesCWUabove10mhz
+        {
+            get { return m_bTCICWbecomesCWUabove10mhz; }
+            set
+            {
+                m_bTCICWbecomesCWUabove10mhz = value;
+                if (m_tcpTCIServer != null) m_tcpTCIServer.CWbecomesCWUabove10mhz = m_bTCICWbecomesCWUabove10mhz;
+            }
+        }
         private bool m_bTCICWLUbecomesCW = false;
         public bool TCICWLUbecomesCW
         {
