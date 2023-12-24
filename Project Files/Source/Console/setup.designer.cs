@@ -9150,8 +9150,7 @@
             this.udPingToTSeconds.Size = new System.Drawing.Size(47, 20);
             this.udPingToTSeconds.TabIndex = 11;
             this.udPingToTSeconds.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udPingToTSeconds, "The minutes and seconds before the timer expires. Sound may play, and timer will " +
-        "flash");
+            this.toolTip1.SetToolTip(this.udPingToTSeconds, "If unable to ping for this long, stop mox");
             this.udPingToTSeconds.Value = new decimal(new int[] {
             180,
             0,
@@ -9204,8 +9203,7 @@
             this.udMoxToTSeconds.Size = new System.Drawing.Size(47, 20);
             this.udMoxToTSeconds.TabIndex = 7;
             this.udMoxToTSeconds.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udMoxToTSeconds, "The minutes and seconds before the timer expires. Sound may play, and timer will " +
-        "flash");
+            this.toolTip1.SetToolTip(this.udMoxToTSeconds, "Stop mox if it is enabled for this duration");
             this.udMoxToTSeconds.Value = new decimal(new int[] {
             180,
             0,
