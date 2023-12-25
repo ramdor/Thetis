@@ -224,6 +224,7 @@ namespace Thetis
             this.buttonTS1.Image = null;
             this.buttonTS1.Location = new System.Drawing.Point(347, 465);
             this.buttonTS1.Name = "buttonTS1";
+            this.buttonTS1.Selectable = true;
             this.buttonTS1.Size = new System.Drawing.Size(131, 23);
             this.buttonTS1.TabIndex = 72;
             this.buttonTS1.Text = "Open Rec Folder";
@@ -280,6 +281,7 @@ namespace Thetis
             this.ScheduleDurationTime.Name = "ScheduleDurationTime";
             this.ScheduleDurationTime.Size = new System.Drawing.Size(56, 20);
             this.ScheduleDurationTime.TabIndex = 24;
+            this.ScheduleDurationTime.TinyStep = false;
             this.toolTip1.SetToolTip(this.ScheduleDurationTime, "Duration of Scheduled recording (if Enabled)");
             this.ScheduleDurationTime.Value = new decimal(new int[] {
             30,
@@ -329,6 +331,7 @@ namespace Thetis
             this.btnSelect.Image = null;
             this.btnSelect.Location = new System.Drawing.Point(266, 520);
             this.btnSelect.Name = "btnSelect";
+            this.btnSelect.Selectable = true;
             this.btnSelect.Size = new System.Drawing.Size(75, 23);
             this.btnSelect.TabIndex = 5;
             this.btnSelect.Text = "Select";
@@ -342,6 +345,7 @@ namespace Thetis
             this.btnMemoryRecordDelete.Image = null;
             this.btnMemoryRecordDelete.Location = new System.Drawing.Point(174, 520);
             this.btnMemoryRecordDelete.Name = "btnMemoryRecordDelete";
+            this.btnMemoryRecordDelete.Selectable = true;
             this.btnMemoryRecordDelete.Size = new System.Drawing.Size(75, 23);
             this.btnMemoryRecordDelete.TabIndex = 4;
             this.btnMemoryRecordDelete.Text = "Delete";
@@ -355,6 +359,7 @@ namespace Thetis
             this.btnMemoryRecordCopy.Image = null;
             this.btnMemoryRecordCopy.Location = new System.Drawing.Point(93, 520);
             this.btnMemoryRecordCopy.Name = "btnMemoryRecordCopy";
+            this.btnMemoryRecordCopy.Selectable = true;
             this.btnMemoryRecordCopy.Size = new System.Drawing.Size(75, 23);
             this.btnMemoryRecordCopy.TabIndex = 3;
             this.btnMemoryRecordCopy.Text = "Copy";
@@ -369,6 +374,7 @@ namespace Thetis
             this.MemoryRecordAdd.Image = null;
             this.MemoryRecordAdd.Location = new System.Drawing.Point(12, 520);
             this.MemoryRecordAdd.Name = "MemoryRecordAdd";
+            this.MemoryRecordAdd.Selectable = true;
             this.MemoryRecordAdd.Size = new System.Drawing.Size(75, 23);
             this.MemoryRecordAdd.TabIndex = 2;
             this.MemoryRecordAdd.Text = "Add";
@@ -456,6 +462,7 @@ namespace Thetis
             this.ScheduleExtra.Name = "ScheduleExtra";
             this.ScheduleExtra.Size = new System.Drawing.Size(56, 20);
             this.ScheduleExtra.TabIndex = 71;
+            this.ScheduleExtra.TinyStep = false;
             this.ScheduleExtra.Value = new decimal(new int[] {
             30,
             0,
