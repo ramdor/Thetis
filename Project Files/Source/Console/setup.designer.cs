@@ -3311,6 +3311,7 @@
             this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
             this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.chkCWbecomesCWUabove10mhz = new System.Windows.Forms.CheckBoxTS();
             this.btnClearTCISpots = new System.Windows.Forms.ButtonTS();
             this.chkEmulateExpertSDR3Protocol = new System.Windows.Forms.CheckBoxTS();
             this.chkEmulateSunSDR2Pro = new System.Windows.Forms.CheckBoxTS();
@@ -3550,7 +3551,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.chkCWbecomesCWUabove10mhz = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -43010,7 +43010,7 @@
             this.lblDriveHeader.Size = new System.Drawing.Size(56, 13);
             this.lblDriveHeader.TabIndex = 161;
             this.lblDriveHeader.Text = "Drive";
-            this.lblDriveHeader.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lblDriveHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblAdjustBand
             // 
@@ -43024,111 +43024,102 @@
             // 
             // lblPAAdjust90
             // 
-            this.lblPAAdjust90.AutoSize = true;
             this.lblPAAdjust90.Image = null;
-            this.lblPAAdjust90.Location = new System.Drawing.Point(32, 247);
+            this.lblPAAdjust90.Location = new System.Drawing.Point(9, 247);
             this.lblPAAdjust90.Name = "lblPAAdjust90";
             this.lblPAAdjust90.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust90.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust90.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust90.TabIndex = 159;
             this.lblPAAdjust90.Text = "90";
-            this.lblPAAdjust90.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust90.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust80
             // 
-            this.lblPAAdjust80.AutoSize = true;
             this.lblPAAdjust80.Image = null;
-            this.lblPAAdjust80.Location = new System.Drawing.Point(32, 223);
+            this.lblPAAdjust80.Location = new System.Drawing.Point(9, 223);
             this.lblPAAdjust80.Name = "lblPAAdjust80";
             this.lblPAAdjust80.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust80.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust80.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust80.TabIndex = 158;
             this.lblPAAdjust80.Text = "80";
-            this.lblPAAdjust80.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust80.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust70
             // 
-            this.lblPAAdjust70.AutoSize = true;
             this.lblPAAdjust70.Image = null;
-            this.lblPAAdjust70.Location = new System.Drawing.Point(32, 199);
+            this.lblPAAdjust70.Location = new System.Drawing.Point(9, 199);
             this.lblPAAdjust70.Name = "lblPAAdjust70";
             this.lblPAAdjust70.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust70.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust70.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust70.TabIndex = 157;
             this.lblPAAdjust70.Text = "70";
-            this.lblPAAdjust70.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust70.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust60
             // 
-            this.lblPAAdjust60.AutoSize = true;
             this.lblPAAdjust60.Image = null;
-            this.lblPAAdjust60.Location = new System.Drawing.Point(32, 175);
+            this.lblPAAdjust60.Location = new System.Drawing.Point(9, 175);
             this.lblPAAdjust60.Name = "lblPAAdjust60";
             this.lblPAAdjust60.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust60.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust60.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust60.TabIndex = 156;
             this.lblPAAdjust60.Text = "60";
-            this.lblPAAdjust60.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust60.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust50
             // 
-            this.lblPAAdjust50.AutoSize = true;
             this.lblPAAdjust50.Image = null;
-            this.lblPAAdjust50.Location = new System.Drawing.Point(32, 151);
+            this.lblPAAdjust50.Location = new System.Drawing.Point(9, 151);
             this.lblPAAdjust50.Name = "lblPAAdjust50";
             this.lblPAAdjust50.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust50.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust50.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust50.TabIndex = 155;
             this.lblPAAdjust50.Text = "50";
-            this.lblPAAdjust50.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust50.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust40
             // 
-            this.lblPAAdjust40.AutoSize = true;
             this.lblPAAdjust40.Image = null;
-            this.lblPAAdjust40.Location = new System.Drawing.Point(32, 127);
+            this.lblPAAdjust40.Location = new System.Drawing.Point(9, 127);
             this.lblPAAdjust40.Name = "lblPAAdjust40";
             this.lblPAAdjust40.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust40.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust40.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust40.TabIndex = 154;
             this.lblPAAdjust40.Text = "40";
-            this.lblPAAdjust40.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust40.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust30
             // 
-            this.lblPAAdjust30.AutoSize = true;
             this.lblPAAdjust30.Image = null;
-            this.lblPAAdjust30.Location = new System.Drawing.Point(32, 103);
+            this.lblPAAdjust30.Location = new System.Drawing.Point(9, 103);
             this.lblPAAdjust30.Name = "lblPAAdjust30";
             this.lblPAAdjust30.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust30.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust30.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust30.TabIndex = 153;
             this.lblPAAdjust30.Text = "30";
-            this.lblPAAdjust30.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust30.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust20
             // 
-            this.lblPAAdjust20.AutoSize = true;
             this.lblPAAdjust20.Image = null;
-            this.lblPAAdjust20.Location = new System.Drawing.Point(32, 79);
+            this.lblPAAdjust20.Location = new System.Drawing.Point(9, 79);
             this.lblPAAdjust20.Name = "lblPAAdjust20";
             this.lblPAAdjust20.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust20.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust20.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust20.TabIndex = 152;
             this.lblPAAdjust20.Text = "20";
-            this.lblPAAdjust20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust20.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust10
             // 
-            this.lblPAAdjust10.AutoSize = true;
             this.lblPAAdjust10.Image = null;
-            this.lblPAAdjust10.Location = new System.Drawing.Point(32, 55);
+            this.lblPAAdjust10.Location = new System.Drawing.Point(9, 55);
             this.lblPAAdjust10.Name = "lblPAAdjust10";
             this.lblPAAdjust10.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust10.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust10.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust10.TabIndex = 151;
             this.lblPAAdjust10.Text = "10";
-            this.lblPAAdjust10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // nudAdjustGain90
             // 
@@ -52733,6 +52724,19 @@
             this.grpTCIServer.TabStop = false;
             this.grpTCIServer.Text = "TCI Server (0 clients)";
             // 
+            // chkCWbecomesCWUabove10mhz
+            // 
+            this.chkCWbecomesCWUabove10mhz.AutoSize = true;
+            this.chkCWbecomesCWUabove10mhz.Image = null;
+            this.chkCWbecomesCWUabove10mhz.Location = new System.Drawing.Point(22, 176);
+            this.chkCWbecomesCWUabove10mhz.Name = "chkCWbecomesCWUabove10mhz";
+            this.chkCWbecomesCWUabove10mhz.Size = new System.Drawing.Size(235, 17);
+            this.chkCWbecomesCWUabove10mhz.TabIndex = 100;
+            this.chkCWbecomesCWUabove10mhz.Text = "CW becomes CWU if 10MHz and above (in)";
+            this.toolTip1.SetToolTip(this.chkCWbecomesCWUabove10mhz, "CWL or CWU converts into CW in the outbound mode message");
+            this.chkCWbecomesCWUabove10mhz.UseVisualStyleBackColor = true;
+            this.chkCWbecomesCWUabove10mhz.CheckedChanged += new System.EventHandler(this.chkCWbecomesCWUabove10mhz_CheckedChanged);
+            // 
             // btnClearTCISpots
             // 
             this.btnClearTCISpots.Image = null;
@@ -56599,19 +56603,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // chkCWbecomesCWUabove10mhz
-            // 
-            this.chkCWbecomesCWUabove10mhz.AutoSize = true;
-            this.chkCWbecomesCWUabove10mhz.Image = null;
-            this.chkCWbecomesCWUabove10mhz.Location = new System.Drawing.Point(22, 176);
-            this.chkCWbecomesCWUabove10mhz.Name = "chkCWbecomesCWUabove10mhz";
-            this.chkCWbecomesCWUabove10mhz.Size = new System.Drawing.Size(235, 17);
-            this.chkCWbecomesCWUabove10mhz.TabIndex = 100;
-            this.chkCWbecomesCWUabove10mhz.Text = "CW becomes CWU if 10MHz and above (in)";
-            this.toolTip1.SetToolTip(this.chkCWbecomesCWUabove10mhz, "CWL or CWU converts into CW in the outbound mode message");
-            this.chkCWbecomesCWUabove10mhz.UseVisualStyleBackColor = true;
-            this.chkCWbecomesCWUabove10mhz.CheckedChanged += new System.EventHandler(this.chkCWbecomesCWUabove10mhz_CheckedChanged);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -57456,7 +57447,6 @@
             this.panelTS1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxPowerForBandPA)).EndInit();
             this.panelAdjustGain.ResumeLayout(false);
-            this.panelAdjustGain.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain90)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain80)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain70)).EndInit();
