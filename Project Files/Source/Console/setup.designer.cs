@@ -341,6 +341,17 @@
             this.lblOptClickTuneDIGU = new System.Windows.Forms.LabelTS();
             this.udOptClickTuneOffsetDIGU = new System.Windows.Forms.NumericUpDownTS();
             this.tpOptions2 = new System.Windows.Forms.TabPage();
+            this.groupBoxTS33 = new System.Windows.Forms.GroupBoxTS();
+            this.lblRx2PBsnr = new System.Windows.Forms.LabelTS();
+            this.lblRx1PBsnr = new System.Windows.Forms.LabelTS();
+            this.btnRX1PBsnr = new System.Windows.Forms.ButtonTS();
+            this.btnRX2PBsnrReset = new System.Windows.Forms.ButtonTS();
+            this.btnRX2PBsnr = new System.Windows.Forms.ButtonTS();
+            this.btnRX1PBsnrReset = new System.Windows.Forms.ButtonTS();
+            this.nudPBsnrShiftRx1 = new System.Windows.Forms.NumericUpDownTS();
+            this.lblRx2pbSnrDbm = new System.Windows.Forms.LabelTS();
+            this.lblRx1pbSnrDbm = new System.Windows.Forms.LabelTS();
+            this.nudPBsnrShiftRx2 = new System.Windows.Forms.NumericUpDownTS();
             this.groupBoxTS32 = new System.Windows.Forms.GroupBoxTS();
             this.btnPingDef = new System.Windows.Forms.ButtonTS();
             this.txtToTPingIP = new System.Windows.Forms.TextBoxTS();
@@ -365,18 +376,7 @@
             this.labelTS182 = new System.Windows.Forms.LabelTS();
             this.nudQuickSplitShift = new System.Windows.Forms.NumericUpDownTS();
             this.groupBoxTS26 = new System.Windows.Forms.GroupBoxTS();
-            this.lblRx2PBsnr = new System.Windows.Forms.LabelTS();
-            this.lblRx1PBsnr = new System.Windows.Forms.LabelTS();
-            this.btnRX2PBsnrReset = new System.Windows.Forms.ButtonTS();
-            this.btnRX1PBsnrReset = new System.Windows.Forms.ButtonTS();
-            this.lblRx2pbSnrDbm = new System.Windows.Forms.LabelTS();
-            this.nudPBsnrShiftRx2 = new System.Windows.Forms.NumericUpDownTS();
-            this.lblRx1pbSnrDbm = new System.Windows.Forms.LabelTS();
-            this.nudPBsnrShiftRx1 = new System.Windows.Forms.NumericUpDownTS();
             this.btnResetNFShift = new System.Windows.Forms.ButtonTS();
-            this.labelTS160 = new System.Windows.Forms.LabelTS();
-            this.btnRX2PBsnr = new System.Windows.Forms.ButtonTS();
-            this.btnRX1PBsnr = new System.Windows.Forms.ButtonTS();
             this.labelTS157 = new System.Windows.Forms.LabelTS();
             this.labelTS156 = new System.Windows.Forms.LabelTS();
             this.nudNFshift = new System.Windows.Forms.NumericUpDownTS();
@@ -3311,6 +3311,7 @@
             this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
             this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.chkCWbecomesCWUabove10mhz = new System.Windows.Forms.CheckBoxTS();
             this.btnClearTCISpots = new System.Windows.Forms.ButtonTS();
             this.chkEmulateExpertSDR3Protocol = new System.Windows.Forms.CheckBoxTS();
             this.chkEmulateSunSDR2Pro = new System.Windows.Forms.CheckBoxTS();
@@ -3647,14 +3648,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGU)).BeginInit();
             this.tpOptions2.SuspendLayout();
+            this.groupBoxTS33.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPBsnrShiftRx1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPBsnrShiftRx2)).BeginInit();
             this.groupBoxTS32.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udPingToTSeconds)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udMoxToTSeconds)).BeginInit();
             this.grpQuickSplit.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudQuickSplitShift)).BeginInit();
             this.groupBoxTS26.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudPBsnrShiftRx2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudPBsnrShiftRx1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNFshift)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNFsensitivity)).BeginInit();
             this.groupBoxTS23.SuspendLayout();
@@ -9049,6 +9051,7 @@
             // tpOptions2
             // 
             this.tpOptions2.BackColor = System.Drawing.SystemColors.Control;
+            this.tpOptions2.Controls.Add(this.groupBoxTS33);
             this.tpOptions2.Controls.Add(this.groupBoxTS32);
             this.tpOptions2.Controls.Add(this.chkCancelQSplitOnCatTCIsplit);
             this.tpOptions2.Controls.Add(this.chkQuickSplit);
@@ -9063,6 +9066,181 @@
             this.tpOptions2.Size = new System.Drawing.Size(716, 384);
             this.tpOptions2.TabIndex = 1;
             this.tpOptions2.Text = "Options-2";
+            // 
+            // groupBoxTS33
+            // 
+            this.groupBoxTS33.Controls.Add(this.lblRx2PBsnr);
+            this.groupBoxTS33.Controls.Add(this.lblRx1PBsnr);
+            this.groupBoxTS33.Controls.Add(this.btnRX1PBsnr);
+            this.groupBoxTS33.Controls.Add(this.btnRX2PBsnrReset);
+            this.groupBoxTS33.Controls.Add(this.btnRX2PBsnr);
+            this.groupBoxTS33.Controls.Add(this.btnRX1PBsnrReset);
+            this.groupBoxTS33.Controls.Add(this.nudPBsnrShiftRx1);
+            this.groupBoxTS33.Controls.Add(this.lblRx2pbSnrDbm);
+            this.groupBoxTS33.Controls.Add(this.lblRx1pbSnrDbm);
+            this.groupBoxTS33.Controls.Add(this.nudPBsnrShiftRx2);
+            this.groupBoxTS33.Location = new System.Drawing.Point(438, 88);
+            this.groupBoxTS33.Name = "groupBoxTS33";
+            this.groupBoxTS33.Size = new System.Drawing.Size(257, 78);
+            this.groupBoxTS33.TabIndex = 40;
+            this.groupBoxTS33.TabStop = false;
+            this.groupBoxTS33.Text = "Estrimated PBSNR (normalise to 0dB)";
+            // 
+            // lblRx2PBsnr
+            // 
+            this.lblRx2PBsnr.AutoSize = true;
+            this.lblRx2PBsnr.Image = null;
+            this.lblRx2PBsnr.Location = new System.Drawing.Point(32, 47);
+            this.lblRx2PBsnr.Name = "lblRx2PBsnr";
+            this.lblRx2PBsnr.Size = new System.Drawing.Size(21, 13);
+            this.lblRx2PBsnr.TabIndex = 24;
+            this.lblRx2PBsnr.Text = "rx2";
+            // 
+            // lblRx1PBsnr
+            // 
+            this.lblRx1PBsnr.AutoSize = true;
+            this.lblRx1PBsnr.Image = null;
+            this.lblRx1PBsnr.Location = new System.Drawing.Point(32, 21);
+            this.lblRx1PBsnr.Name = "lblRx1PBsnr";
+            this.lblRx1PBsnr.Size = new System.Drawing.Size(21, 13);
+            this.lblRx1PBsnr.TabIndex = 23;
+            this.lblRx1PBsnr.Text = "rx1";
+            // 
+            // btnRX1PBsnr
+            // 
+            this.btnRX1PBsnr.Image = null;
+            this.btnRX1PBsnr.Location = new System.Drawing.Point(151, 16);
+            this.btnRX1PBsnr.Name = "btnRX1PBsnr";
+            this.btnRX1PBsnr.Selectable = true;
+            this.btnRX1PBsnr.Size = new System.Drawing.Size(47, 23);
+            this.btnRX1PBsnr.TabIndex = 13;
+            this.btnRX1PBsnr.Text = "RX1";
+            this.toolTip1.SetToolTip(this.btnRX1PBsnr, "Offset the PBSNR to bring it to 0dB");
+            this.btnRX1PBsnr.UseVisualStyleBackColor = true;
+            this.btnRX1PBsnr.Click += new System.EventHandler(this.btnRX1PBsnr_Click);
+            // 
+            // btnRX2PBsnrReset
+            // 
+            this.btnRX2PBsnrReset.Image = null;
+            this.btnRX2PBsnrReset.Location = new System.Drawing.Point(201, 42);
+            this.btnRX2PBsnrReset.Name = "btnRX2PBsnrReset";
+            this.btnRX2PBsnrReset.Selectable = true;
+            this.btnRX2PBsnrReset.Size = new System.Drawing.Size(47, 23);
+            this.btnRX2PBsnrReset.TabIndex = 22;
+            this.btnRX2PBsnrReset.Text = "Reset";
+            this.toolTip1.SetToolTip(this.btnRX2PBsnrReset, "Set to 0.0dBm");
+            this.btnRX2PBsnrReset.UseVisualStyleBackColor = true;
+            this.btnRX2PBsnrReset.Click += new System.EventHandler(this.btnRX2PBsnrReset_Click);
+            // 
+            // btnRX2PBsnr
+            // 
+            this.btnRX2PBsnr.Image = null;
+            this.btnRX2PBsnr.Location = new System.Drawing.Point(151, 42);
+            this.btnRX2PBsnr.Name = "btnRX2PBsnr";
+            this.btnRX2PBsnr.Selectable = true;
+            this.btnRX2PBsnr.Size = new System.Drawing.Size(47, 23);
+            this.btnRX2PBsnr.TabIndex = 14;
+            this.btnRX2PBsnr.Text = "RX2";
+            this.toolTip1.SetToolTip(this.btnRX2PBsnr, "Offset the PBSNR to bring it to 0dB");
+            this.btnRX2PBsnr.UseVisualStyleBackColor = true;
+            this.btnRX2PBsnr.Click += new System.EventHandler(this.btnRX2PBsnr_Click);
+            // 
+            // btnRX1PBsnrReset
+            // 
+            this.btnRX1PBsnrReset.Image = null;
+            this.btnRX1PBsnrReset.Location = new System.Drawing.Point(201, 16);
+            this.btnRX1PBsnrReset.Name = "btnRX1PBsnrReset";
+            this.btnRX1PBsnrReset.Selectable = true;
+            this.btnRX1PBsnrReset.Size = new System.Drawing.Size(47, 23);
+            this.btnRX1PBsnrReset.TabIndex = 21;
+            this.btnRX1PBsnrReset.Text = "Reset";
+            this.toolTip1.SetToolTip(this.btnRX1PBsnrReset, "Set to 0.0dBm");
+            this.btnRX1PBsnrReset.UseVisualStyleBackColor = true;
+            this.btnRX1PBsnrReset.Click += new System.EventHandler(this.btnRX1PBsnrReset_Click);
+            // 
+            // nudPBsnrShiftRx1
+            // 
+            this.nudPBsnrShiftRx1.DecimalPlaces = 1;
+            this.nudPBsnrShiftRx1.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudPBsnrShiftRx1.Location = new System.Drawing.Point(60, 19);
+            this.nudPBsnrShiftRx1.Maximum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+            this.nudPBsnrShiftRx1.Minimum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            -2147483648});
+            this.nudPBsnrShiftRx1.Name = "nudPBsnrShiftRx1";
+            this.nudPBsnrShiftRx1.Size = new System.Drawing.Size(47, 20);
+            this.nudPBsnrShiftRx1.TabIndex = 17;
+            this.nudPBsnrShiftRx1.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudPBsnrShiftRx1, "Default 0. Apply a shift.");
+            this.nudPBsnrShiftRx1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudPBsnrShiftRx1.ValueChanged += new System.EventHandler(this.nudPBsnrShiftRx1_ValueChanged);
+            // 
+            // lblRx2pbSnrDbm
+            // 
+            this.lblRx2pbSnrDbm.AutoSize = true;
+            this.lblRx2pbSnrDbm.Image = null;
+            this.lblRx2pbSnrDbm.Location = new System.Drawing.Point(113, 46);
+            this.lblRx2pbSnrDbm.Name = "lblRx2pbSnrDbm";
+            this.lblRx2pbSnrDbm.Size = new System.Drawing.Size(28, 13);
+            this.lblRx2pbSnrDbm.TabIndex = 20;
+            this.lblRx2pbSnrDbm.Text = "dBm";
+            this.lblRx2pbSnrDbm.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblRx1pbSnrDbm
+            // 
+            this.lblRx1pbSnrDbm.AutoSize = true;
+            this.lblRx1pbSnrDbm.Image = null;
+            this.lblRx1pbSnrDbm.Location = new System.Drawing.Point(113, 20);
+            this.lblRx1pbSnrDbm.Name = "lblRx1pbSnrDbm";
+            this.lblRx1pbSnrDbm.Size = new System.Drawing.Size(28, 13);
+            this.lblRx1pbSnrDbm.TabIndex = 18;
+            this.lblRx1pbSnrDbm.Text = "dBm";
+            this.lblRx1pbSnrDbm.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // nudPBsnrShiftRx2
+            // 
+            this.nudPBsnrShiftRx2.DecimalPlaces = 1;
+            this.nudPBsnrShiftRx2.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudPBsnrShiftRx2.Location = new System.Drawing.Point(60, 45);
+            this.nudPBsnrShiftRx2.Maximum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+            this.nudPBsnrShiftRx2.Minimum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            -2147483648});
+            this.nudPBsnrShiftRx2.Name = "nudPBsnrShiftRx2";
+            this.nudPBsnrShiftRx2.Size = new System.Drawing.Size(47, 20);
+            this.nudPBsnrShiftRx2.TabIndex = 19;
+            this.nudPBsnrShiftRx2.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudPBsnrShiftRx2, "Default 0. Apply a shift.");
+            this.nudPBsnrShiftRx2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudPBsnrShiftRx2.ValueChanged += new System.EventHandler(this.nudPBsnrShiftRx2_ValueChanged);
             // 
             // groupBoxTS32
             // 
@@ -9403,18 +9581,7 @@
             // 
             // groupBoxTS26
             // 
-            this.groupBoxTS26.Controls.Add(this.lblRx2PBsnr);
-            this.groupBoxTS26.Controls.Add(this.lblRx1PBsnr);
-            this.groupBoxTS26.Controls.Add(this.btnRX2PBsnrReset);
-            this.groupBoxTS26.Controls.Add(this.btnRX1PBsnrReset);
-            this.groupBoxTS26.Controls.Add(this.lblRx2pbSnrDbm);
-            this.groupBoxTS26.Controls.Add(this.nudPBsnrShiftRx2);
-            this.groupBoxTS26.Controls.Add(this.lblRx1pbSnrDbm);
-            this.groupBoxTS26.Controls.Add(this.nudPBsnrShiftRx1);
             this.groupBoxTS26.Controls.Add(this.btnResetNFShift);
-            this.groupBoxTS26.Controls.Add(this.labelTS160);
-            this.groupBoxTS26.Controls.Add(this.btnRX2PBsnr);
-            this.groupBoxTS26.Controls.Add(this.btnRX1PBsnr);
             this.groupBoxTS26.Controls.Add(this.labelTS157);
             this.groupBoxTS26.Controls.Add(this.labelTS156);
             this.groupBoxTS26.Controls.Add(this.nudNFshift);
@@ -9422,140 +9589,10 @@
             this.groupBoxTS26.Controls.Add(this.nudNFsensitivity);
             this.groupBoxTS26.Location = new System.Drawing.Point(438, 8);
             this.groupBoxTS26.Name = "groupBoxTS26";
-            this.groupBoxTS26.Size = new System.Drawing.Size(257, 158);
+            this.groupBoxTS26.Size = new System.Drawing.Size(257, 74);
             this.groupBoxTS26.TabIndex = 35;
             this.groupBoxTS26.TabStop = false;
             this.groupBoxTS26.Text = "Noise Floor";
-            // 
-            // lblRx2PBsnr
-            // 
-            this.lblRx2PBsnr.AutoSize = true;
-            this.lblRx2PBsnr.Image = null;
-            this.lblRx2PBsnr.Location = new System.Drawing.Point(32, 130);
-            this.lblRx2PBsnr.Name = "lblRx2PBsnr";
-            this.lblRx2PBsnr.Size = new System.Drawing.Size(21, 13);
-            this.lblRx2PBsnr.TabIndex = 24;
-            this.lblRx2PBsnr.Text = "rx2";
-            // 
-            // lblRx1PBsnr
-            // 
-            this.lblRx1PBsnr.AutoSize = true;
-            this.lblRx1PBsnr.Image = null;
-            this.lblRx1PBsnr.Location = new System.Drawing.Point(32, 104);
-            this.lblRx1PBsnr.Name = "lblRx1PBsnr";
-            this.lblRx1PBsnr.Size = new System.Drawing.Size(21, 13);
-            this.lblRx1PBsnr.TabIndex = 23;
-            this.lblRx1PBsnr.Text = "rx1";
-            // 
-            // btnRX2PBsnrReset
-            // 
-            this.btnRX2PBsnrReset.Image = null;
-            this.btnRX2PBsnrReset.Location = new System.Drawing.Point(201, 125);
-            this.btnRX2PBsnrReset.Name = "btnRX2PBsnrReset";
-            this.btnRX2PBsnrReset.Selectable = true;
-            this.btnRX2PBsnrReset.Size = new System.Drawing.Size(47, 23);
-            this.btnRX2PBsnrReset.TabIndex = 22;
-            this.btnRX2PBsnrReset.Text = "Reset";
-            this.toolTip1.SetToolTip(this.btnRX2PBsnrReset, "Set to 0.0dBm");
-            this.btnRX2PBsnrReset.UseVisualStyleBackColor = true;
-            this.btnRX2PBsnrReset.Click += new System.EventHandler(this.btnRX2PBsnrReset_Click);
-            // 
-            // btnRX1PBsnrReset
-            // 
-            this.btnRX1PBsnrReset.Image = null;
-            this.btnRX1PBsnrReset.Location = new System.Drawing.Point(201, 99);
-            this.btnRX1PBsnrReset.Name = "btnRX1PBsnrReset";
-            this.btnRX1PBsnrReset.Selectable = true;
-            this.btnRX1PBsnrReset.Size = new System.Drawing.Size(47, 23);
-            this.btnRX1PBsnrReset.TabIndex = 21;
-            this.btnRX1PBsnrReset.Text = "Reset";
-            this.toolTip1.SetToolTip(this.btnRX1PBsnrReset, "Set to 0.0dBm");
-            this.btnRX1PBsnrReset.UseVisualStyleBackColor = true;
-            this.btnRX1PBsnrReset.Click += new System.EventHandler(this.btnRX1PBsnrReset_Click);
-            // 
-            // lblRx2pbSnrDbm
-            // 
-            this.lblRx2pbSnrDbm.AutoSize = true;
-            this.lblRx2pbSnrDbm.Image = null;
-            this.lblRx2pbSnrDbm.Location = new System.Drawing.Point(113, 129);
-            this.lblRx2pbSnrDbm.Name = "lblRx2pbSnrDbm";
-            this.lblRx2pbSnrDbm.Size = new System.Drawing.Size(28, 13);
-            this.lblRx2pbSnrDbm.TabIndex = 20;
-            this.lblRx2pbSnrDbm.Text = "dBm";
-            this.lblRx2pbSnrDbm.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // nudPBsnrShiftRx2
-            // 
-            this.nudPBsnrShiftRx2.DecimalPlaces = 1;
-            this.nudPBsnrShiftRx2.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.nudPBsnrShiftRx2.Location = new System.Drawing.Point(60, 128);
-            this.nudPBsnrShiftRx2.Maximum = new decimal(new int[] {
-            24,
-            0,
-            0,
-            0});
-            this.nudPBsnrShiftRx2.Minimum = new decimal(new int[] {
-            24,
-            0,
-            0,
-            -2147483648});
-            this.nudPBsnrShiftRx2.Name = "nudPBsnrShiftRx2";
-            this.nudPBsnrShiftRx2.Size = new System.Drawing.Size(47, 20);
-            this.nudPBsnrShiftRx2.TabIndex = 19;
-            this.nudPBsnrShiftRx2.TinyStep = false;
-            this.toolTip1.SetToolTip(this.nudPBsnrShiftRx2, "Default 0. Apply a shift.");
-            this.nudPBsnrShiftRx2.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudPBsnrShiftRx2.ValueChanged += new System.EventHandler(this.nudPBsnrShiftRx2_ValueChanged);
-            // 
-            // lblRx1pbSnrDbm
-            // 
-            this.lblRx1pbSnrDbm.AutoSize = true;
-            this.lblRx1pbSnrDbm.Image = null;
-            this.lblRx1pbSnrDbm.Location = new System.Drawing.Point(113, 103);
-            this.lblRx1pbSnrDbm.Name = "lblRx1pbSnrDbm";
-            this.lblRx1pbSnrDbm.Size = new System.Drawing.Size(28, 13);
-            this.lblRx1pbSnrDbm.TabIndex = 18;
-            this.lblRx1pbSnrDbm.Text = "dBm";
-            this.lblRx1pbSnrDbm.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // nudPBsnrShiftRx1
-            // 
-            this.nudPBsnrShiftRx1.DecimalPlaces = 1;
-            this.nudPBsnrShiftRx1.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.nudPBsnrShiftRx1.Location = new System.Drawing.Point(60, 102);
-            this.nudPBsnrShiftRx1.Maximum = new decimal(new int[] {
-            24,
-            0,
-            0,
-            0});
-            this.nudPBsnrShiftRx1.Minimum = new decimal(new int[] {
-            24,
-            0,
-            0,
-            -2147483648});
-            this.nudPBsnrShiftRx1.Name = "nudPBsnrShiftRx1";
-            this.nudPBsnrShiftRx1.Size = new System.Drawing.Size(47, 20);
-            this.nudPBsnrShiftRx1.TabIndex = 17;
-            this.nudPBsnrShiftRx1.TinyStep = false;
-            this.toolTip1.SetToolTip(this.nudPBsnrShiftRx1, "Default 0. Apply a shift.");
-            this.nudPBsnrShiftRx1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudPBsnrShiftRx1.ValueChanged += new System.EventHandler(this.nudPBsnrShiftRx1_ValueChanged);
             // 
             // btnResetNFShift
             // 
@@ -9569,42 +9606,6 @@
             this.toolTip1.SetToolTip(this.btnResetNFShift, "Set to 0.0dBm");
             this.btnResetNFShift.UseVisualStyleBackColor = true;
             this.btnResetNFShift.Click += new System.EventHandler(this.btnResetNFShift_Click);
-            // 
-            // labelTS160
-            // 
-            this.labelTS160.Image = null;
-            this.labelTS160.Location = new System.Drawing.Point(13, 82);
-            this.labelTS160.Name = "labelTS160";
-            this.labelTS160.Size = new System.Drawing.Size(145, 14);
-            this.labelTS160.TabIndex = 15;
-            this.labelTS160.Text = "Normalise PBSNR to 0dB";
-            this.labelTS160.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // btnRX2PBsnr
-            // 
-            this.btnRX2PBsnr.Image = null;
-            this.btnRX2PBsnr.Location = new System.Drawing.Point(151, 125);
-            this.btnRX2PBsnr.Name = "btnRX2PBsnr";
-            this.btnRX2PBsnr.Selectable = true;
-            this.btnRX2PBsnr.Size = new System.Drawing.Size(47, 23);
-            this.btnRX2PBsnr.TabIndex = 14;
-            this.btnRX2PBsnr.Text = "RX2";
-            this.toolTip1.SetToolTip(this.btnRX2PBsnr, "Offset the PBSNR to bring it to 0dB");
-            this.btnRX2PBsnr.UseVisualStyleBackColor = true;
-            this.btnRX2PBsnr.Click += new System.EventHandler(this.btnRX2PBsnr_Click);
-            // 
-            // btnRX1PBsnr
-            // 
-            this.btnRX1PBsnr.Image = null;
-            this.btnRX1PBsnr.Location = new System.Drawing.Point(151, 99);
-            this.btnRX1PBsnr.Name = "btnRX1PBsnr";
-            this.btnRX1PBsnr.Selectable = true;
-            this.btnRX1PBsnr.Size = new System.Drawing.Size(47, 23);
-            this.btnRX1PBsnr.TabIndex = 13;
-            this.btnRX1PBsnr.Text = "RX1";
-            this.toolTip1.SetToolTip(this.btnRX1PBsnr, "Offset the PBSNR to bring it to 0dB");
-            this.btnRX1PBsnr.UseVisualStyleBackColor = true;
-            this.btnRX1PBsnr.Click += new System.EventHandler(this.btnRX1PBsnr_Click);
             // 
             // labelTS157
             // 
@@ -43009,7 +43010,7 @@
             this.lblDriveHeader.Size = new System.Drawing.Size(56, 13);
             this.lblDriveHeader.TabIndex = 161;
             this.lblDriveHeader.Text = "Drive";
-            this.lblDriveHeader.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lblDriveHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblAdjustBand
             // 
@@ -43023,111 +43024,102 @@
             // 
             // lblPAAdjust90
             // 
-            this.lblPAAdjust90.AutoSize = true;
             this.lblPAAdjust90.Image = null;
-            this.lblPAAdjust90.Location = new System.Drawing.Point(32, 247);
+            this.lblPAAdjust90.Location = new System.Drawing.Point(9, 247);
             this.lblPAAdjust90.Name = "lblPAAdjust90";
             this.lblPAAdjust90.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust90.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust90.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust90.TabIndex = 159;
             this.lblPAAdjust90.Text = "90";
-            this.lblPAAdjust90.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust90.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust80
             // 
-            this.lblPAAdjust80.AutoSize = true;
             this.lblPAAdjust80.Image = null;
-            this.lblPAAdjust80.Location = new System.Drawing.Point(32, 223);
+            this.lblPAAdjust80.Location = new System.Drawing.Point(9, 223);
             this.lblPAAdjust80.Name = "lblPAAdjust80";
             this.lblPAAdjust80.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust80.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust80.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust80.TabIndex = 158;
             this.lblPAAdjust80.Text = "80";
-            this.lblPAAdjust80.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust80.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust70
             // 
-            this.lblPAAdjust70.AutoSize = true;
             this.lblPAAdjust70.Image = null;
-            this.lblPAAdjust70.Location = new System.Drawing.Point(32, 199);
+            this.lblPAAdjust70.Location = new System.Drawing.Point(9, 199);
             this.lblPAAdjust70.Name = "lblPAAdjust70";
             this.lblPAAdjust70.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust70.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust70.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust70.TabIndex = 157;
             this.lblPAAdjust70.Text = "70";
-            this.lblPAAdjust70.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust70.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust60
             // 
-            this.lblPAAdjust60.AutoSize = true;
             this.lblPAAdjust60.Image = null;
-            this.lblPAAdjust60.Location = new System.Drawing.Point(32, 175);
+            this.lblPAAdjust60.Location = new System.Drawing.Point(9, 175);
             this.lblPAAdjust60.Name = "lblPAAdjust60";
             this.lblPAAdjust60.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust60.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust60.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust60.TabIndex = 156;
             this.lblPAAdjust60.Text = "60";
-            this.lblPAAdjust60.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust60.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust50
             // 
-            this.lblPAAdjust50.AutoSize = true;
             this.lblPAAdjust50.Image = null;
-            this.lblPAAdjust50.Location = new System.Drawing.Point(32, 151);
+            this.lblPAAdjust50.Location = new System.Drawing.Point(9, 151);
             this.lblPAAdjust50.Name = "lblPAAdjust50";
             this.lblPAAdjust50.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust50.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust50.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust50.TabIndex = 155;
             this.lblPAAdjust50.Text = "50";
-            this.lblPAAdjust50.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust50.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust40
             // 
-            this.lblPAAdjust40.AutoSize = true;
             this.lblPAAdjust40.Image = null;
-            this.lblPAAdjust40.Location = new System.Drawing.Point(32, 127);
+            this.lblPAAdjust40.Location = new System.Drawing.Point(9, 127);
             this.lblPAAdjust40.Name = "lblPAAdjust40";
             this.lblPAAdjust40.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust40.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust40.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust40.TabIndex = 154;
             this.lblPAAdjust40.Text = "40";
-            this.lblPAAdjust40.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust40.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust30
             // 
-            this.lblPAAdjust30.AutoSize = true;
             this.lblPAAdjust30.Image = null;
-            this.lblPAAdjust30.Location = new System.Drawing.Point(32, 103);
+            this.lblPAAdjust30.Location = new System.Drawing.Point(9, 103);
             this.lblPAAdjust30.Name = "lblPAAdjust30";
             this.lblPAAdjust30.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust30.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust30.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust30.TabIndex = 153;
             this.lblPAAdjust30.Text = "30";
-            this.lblPAAdjust30.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust30.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust20
             // 
-            this.lblPAAdjust20.AutoSize = true;
             this.lblPAAdjust20.Image = null;
-            this.lblPAAdjust20.Location = new System.Drawing.Point(32, 79);
+            this.lblPAAdjust20.Location = new System.Drawing.Point(9, 79);
             this.lblPAAdjust20.Name = "lblPAAdjust20";
             this.lblPAAdjust20.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust20.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust20.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust20.TabIndex = 152;
             this.lblPAAdjust20.Text = "20";
-            this.lblPAAdjust20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust20.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPAAdjust10
             // 
-            this.lblPAAdjust10.AutoSize = true;
             this.lblPAAdjust10.Image = null;
-            this.lblPAAdjust10.Location = new System.Drawing.Point(32, 55);
+            this.lblPAAdjust10.Location = new System.Drawing.Point(9, 55);
             this.lblPAAdjust10.Name = "lblPAAdjust10";
             this.lblPAAdjust10.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.lblPAAdjust10.Size = new System.Drawing.Size(19, 13);
+            this.lblPAAdjust10.Size = new System.Drawing.Size(53, 13);
             this.lblPAAdjust10.TabIndex = 151;
             this.lblPAAdjust10.Text = "10";
-            this.lblPAAdjust10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPAAdjust10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // nudAdjustGain90
             // 
@@ -52699,6 +52691,7 @@
             // 
             // grpTCIServer
             // 
+            this.grpTCIServer.Controls.Add(this.chkCWbecomesCWUabove10mhz);
             this.grpTCIServer.Controls.Add(this.btnClearTCISpots);
             this.grpTCIServer.Controls.Add(this.chkEmulateExpertSDR3Protocol);
             this.grpTCIServer.Controls.Add(this.chkEmulateSunSDR2Pro);
@@ -52731,10 +52724,23 @@
             this.grpTCIServer.TabStop = false;
             this.grpTCIServer.Text = "TCI Server (0 clients)";
             // 
+            // chkCWbecomesCWUabove10mhz
+            // 
+            this.chkCWbecomesCWUabove10mhz.AutoSize = true;
+            this.chkCWbecomesCWUabove10mhz.Image = null;
+            this.chkCWbecomesCWUabove10mhz.Location = new System.Drawing.Point(22, 176);
+            this.chkCWbecomesCWUabove10mhz.Name = "chkCWbecomesCWUabove10mhz";
+            this.chkCWbecomesCWUabove10mhz.Size = new System.Drawing.Size(235, 17);
+            this.chkCWbecomesCWUabove10mhz.TabIndex = 100;
+            this.chkCWbecomesCWUabove10mhz.Text = "CW becomes CWU if 10MHz and above (in)";
+            this.toolTip1.SetToolTip(this.chkCWbecomesCWUabove10mhz, "CWL or CWU converts into CW in the outbound mode message");
+            this.chkCWbecomesCWUabove10mhz.UseVisualStyleBackColor = true;
+            this.chkCWbecomesCWUabove10mhz.CheckedChanged += new System.EventHandler(this.chkCWbecomesCWUabove10mhz_CheckedChanged);
+            // 
             // btnClearTCISpots
             // 
             this.btnClearTCISpots.Image = null;
-            this.btnClearTCISpots.Location = new System.Drawing.Point(184, 247);
+            this.btnClearTCISpots.Location = new System.Drawing.Point(184, 261);
             this.btnClearTCISpots.Name = "btnClearTCISpots";
             this.btnClearTCISpots.Selectable = true;
             this.btnClearTCISpots.Size = new System.Drawing.Size(77, 26);
@@ -52747,7 +52753,7 @@
             // 
             this.chkEmulateExpertSDR3Protocol.AutoSize = true;
             this.chkEmulateExpertSDR3Protocol.Image = null;
-            this.chkEmulateExpertSDR3Protocol.Location = new System.Drawing.Point(22, 183);
+            this.chkEmulateExpertSDR3Protocol.Location = new System.Drawing.Point(22, 199);
             this.chkEmulateExpertSDR3Protocol.Name = "chkEmulateExpertSDR3Protocol";
             this.chkEmulateExpertSDR3Protocol.Size = new System.Drawing.Size(167, 17);
             this.chkEmulateExpertSDR3Protocol.TabIndex = 72;
@@ -52760,7 +52766,7 @@
             // 
             this.chkEmulateSunSDR2Pro.AutoSize = true;
             this.chkEmulateSunSDR2Pro.Image = null;
-            this.chkEmulateSunSDR2Pro.Location = new System.Drawing.Point(22, 206);
+            this.chkEmulateSunSDR2Pro.Location = new System.Drawing.Point(22, 222);
             this.chkEmulateSunSDR2Pro.Name = "chkEmulateSunSDR2Pro";
             this.chkEmulateSunSDR2Pro.Size = new System.Drawing.Size(166, 17);
             this.chkEmulateSunSDR2Pro.TabIndex = 71;
@@ -52772,7 +52778,7 @@
             // btnIPv4TCI
             // 
             this.btnIPv4TCI.Image = null;
-            this.btnIPv4TCI.Location = new System.Drawing.Point(262, 30);
+            this.btnIPv4TCI.Location = new System.Drawing.Point(262, 26);
             this.btnIPv4TCI.Name = "btnIPv4TCI";
             this.btnIPv4TCI.Selectable = true;
             this.btnIPv4TCI.Size = new System.Drawing.Size(42, 26);
@@ -52785,7 +52791,7 @@
             // btnShowLog
             // 
             this.btnShowLog.Image = null;
-            this.btnShowLog.Location = new System.Drawing.Point(21, 344);
+            this.btnShowLog.Location = new System.Drawing.Point(21, 356);
             this.btnShowLog.Name = "btnShowLog";
             this.btnShowLog.Selectable = true;
             this.btnShowLog.Size = new System.Drawing.Size(82, 26);
@@ -52798,7 +52804,7 @@
             // 
             this.chkCWLUbecomesCW.AutoSize = true;
             this.chkCWLUbecomesCW.Image = null;
-            this.chkCWLUbecomesCW.Location = new System.Drawing.Point(22, 160);
+            this.chkCWLUbecomesCW.Location = new System.Drawing.Point(22, 154);
             this.chkCWLUbecomesCW.Name = "chkCWLUbecomesCW";
             this.chkCWLUbecomesCW.Size = new System.Drawing.Size(172, 17);
             this.chkCWLUbecomesCW.TabIndex = 68;
@@ -52812,7 +52818,7 @@
             this.clrbtnOwnCallApearance.Automatic = "Automatic";
             this.clrbtnOwnCallApearance.Color = System.Drawing.Color.Yellow;
             this.clrbtnOwnCallApearance.Image = null;
-            this.clrbtnOwnCallApearance.Location = new System.Drawing.Point(294, 295);
+            this.clrbtnOwnCallApearance.Location = new System.Drawing.Point(294, 309);
             this.clrbtnOwnCallApearance.MoreColors = "More Colors...";
             this.clrbtnOwnCallApearance.Name = "clrbtnOwnCallApearance";
             this.clrbtnOwnCallApearance.Selectable = true;
@@ -52823,7 +52829,7 @@
             // 
             // txtOwnCallsign
             // 
-            this.txtOwnCallsign.Location = new System.Drawing.Point(184, 296);
+            this.txtOwnCallsign.Location = new System.Drawing.Point(184, 310);
             this.txtOwnCallsign.Name = "txtOwnCallsign";
             this.txtOwnCallsign.Size = new System.Drawing.Size(100, 20);
             this.txtOwnCallsign.TabIndex = 28;
@@ -52834,7 +52840,7 @@
             // 
             this.chkSpotOwnCallAppearance.AutoSize = true;
             this.chkSpotOwnCallAppearance.Image = null;
-            this.chkSpotOwnCallAppearance.Location = new System.Drawing.Point(22, 298);
+            this.chkSpotOwnCallAppearance.Location = new System.Drawing.Point(22, 312);
             this.chkSpotOwnCallAppearance.Name = "chkSpotOwnCallAppearance";
             this.chkSpotOwnCallAppearance.Size = new System.Drawing.Size(129, 17);
             this.chkSpotOwnCallAppearance.TabIndex = 27;
@@ -52847,7 +52853,7 @@
             // 
             this.chkShowTCISpots.AutoSize = true;
             this.chkShowTCISpots.Image = null;
-            this.chkShowTCISpots.Location = new System.Drawing.Point(22, 229);
+            this.chkShowTCISpots.Location = new System.Drawing.Point(22, 245);
             this.chkShowTCISpots.Name = "chkShowTCISpots";
             this.chkShowTCISpots.Size = new System.Drawing.Size(103, 17);
             this.chkShowTCISpots.TabIndex = 26;
@@ -52860,7 +52866,7 @@
             // 
             this.labelTS615.AutoSize = true;
             this.labelTS615.Image = null;
-            this.labelTS615.Location = new System.Drawing.Point(183, 275);
+            this.labelTS615.Location = new System.Drawing.Point(183, 289);
             this.labelTS615.Name = "labelTS615";
             this.labelTS615.Size = new System.Drawing.Size(28, 13);
             this.labelTS615.TabIndex = 25;
@@ -52873,7 +52879,7 @@
             0,
             0,
             0});
-            this.udTCISpotLifetime.Location = new System.Drawing.Point(117, 273);
+            this.udTCISpotLifetime.Location = new System.Drawing.Point(117, 287);
             this.udTCISpotLifetime.Maximum = new decimal(new int[] {
             1440,
             0,
@@ -52902,7 +52908,7 @@
             0,
             0,
             0});
-            this.udMaxTCISpots.Location = new System.Drawing.Point(117, 250);
+            this.udMaxTCISpots.Location = new System.Drawing.Point(117, 264);
             this.udMaxTCISpots.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -52928,7 +52934,7 @@
             // 
             this.labelTS614.AutoSize = true;
             this.labelTS614.Image = null;
-            this.labelTS614.Location = new System.Drawing.Point(37, 275);
+            this.labelTS614.Location = new System.Drawing.Point(37, 289);
             this.labelTS614.Name = "labelTS614";
             this.labelTS614.Size = new System.Drawing.Size(74, 13);
             this.labelTS614.TabIndex = 22;
@@ -52938,7 +52944,7 @@
             // 
             this.labelTS613.AutoSize = true;
             this.labelTS613.Image = null;
-            this.labelTS613.Location = new System.Drawing.Point(37, 252);
+            this.labelTS613.Location = new System.Drawing.Point(37, 266);
             this.labelTS613.Name = "labelTS613";
             this.labelTS613.Size = new System.Drawing.Size(63, 13);
             this.labelTS613.TabIndex = 21;
@@ -52948,7 +52954,7 @@
             // 
             this.chkTCIsendInitialStateOnConnect.AutoSize = true;
             this.chkTCIsendInitialStateOnConnect.Image = null;
-            this.chkTCIsendInitialStateOnConnect.Location = new System.Drawing.Point(22, 91);
+            this.chkTCIsendInitialStateOnConnect.Location = new System.Drawing.Point(22, 85);
             this.chkTCIsendInitialStateOnConnect.Name = "chkTCIsendInitialStateOnConnect";
             this.chkTCIsendInitialStateOnConnect.Size = new System.Drawing.Size(208, 17);
             this.chkTCIsendInitialStateOnConnect.TabIndex = 20;
@@ -52961,7 +52967,7 @@
             // 
             this.chkUseRX1vfoaForRX2vfoa.AutoSize = true;
             this.chkUseRX1vfoaForRX2vfoa.Image = null;
-            this.chkUseRX1vfoaForRX2vfoa.Location = new System.Drawing.Point(22, 114);
+            this.chkUseRX1vfoaForRX2vfoa.Location = new System.Drawing.Point(22, 108);
             this.chkUseRX1vfoaForRX2vfoa.Name = "chkUseRX1vfoaForRX2vfoa";
             this.chkUseRX1vfoaForRX2vfoa.Size = new System.Drawing.Size(206, 17);
             this.chkUseRX1vfoaForRX2vfoa.TabIndex = 19;
@@ -52974,7 +52980,7 @@
             // 
             this.chkCopyRX2VFObToVFOa.AutoSize = true;
             this.chkCopyRX2VFObToVFOa.Image = null;
-            this.chkCopyRX2VFObToVFOa.Location = new System.Drawing.Point(22, 137);
+            this.chkCopyRX2VFObToVFOa.Location = new System.Drawing.Point(22, 131);
             this.chkCopyRX2VFObToVFOa.Name = "chkCopyRX2VFObToVFOa";
             this.chkCopyRX2VFObToVFOa.Size = new System.Drawing.Size(215, 17);
             this.chkCopyRX2VFObToVFOa.TabIndex = 18;
@@ -52987,7 +52993,7 @@
             // 
             this.labelTS611.AutoSize = true;
             this.labelTS611.Image = null;
-            this.labelTS611.Location = new System.Drawing.Point(9, 61);
+            this.labelTS611.Location = new System.Drawing.Point(9, 57);
             this.labelTS611.Name = "labelTS611";
             this.labelTS611.Size = new System.Drawing.Size(76, 13);
             this.labelTS611.TabIndex = 17;
@@ -53000,7 +53006,7 @@
             0,
             0,
             0});
-            this.udTCIRateLimit.Location = new System.Drawing.Point(91, 59);
+            this.udTCIRateLimit.Location = new System.Drawing.Point(91, 55);
             this.udTCIRateLimit.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -53029,7 +53035,7 @@
             this.lblToggleToUseTCI.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblToggleToUseTCI.ForeColor = System.Drawing.Color.Red;
             this.lblToggleToUseTCI.Image = null;
-            this.lblToggleToUseTCI.Location = new System.Drawing.Point(136, 322);
+            this.lblToggleToUseTCI.Location = new System.Drawing.Point(136, 336);
             this.lblToggleToUseTCI.Name = "lblToggleToUseTCI";
             this.lblToggleToUseTCI.Size = new System.Drawing.Size(120, 13);
             this.lblToggleToUseTCI.TabIndex = 15;
@@ -53040,7 +53046,7 @@
             // 
             this.labelTS612.AutoSize = true;
             this.labelTS612.Image = null;
-            this.labelTS612.Location = new System.Drawing.Point(9, 36);
+            this.labelTS612.Location = new System.Drawing.Point(9, 32);
             this.labelTS612.Name = "labelTS612";
             this.labelTS612.Size = new System.Drawing.Size(63, 13);
             this.labelTS612.TabIndex = 14;
@@ -53051,7 +53057,7 @@
             this.chkTCIServerListening.AutoSize = true;
             this.chkTCIServerListening.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkTCIServerListening.Image = null;
-            this.chkTCIServerListening.Location = new System.Drawing.Point(22, 321);
+            this.chkTCIServerListening.Location = new System.Drawing.Point(22, 335);
             this.chkTCIServerListening.Name = "chkTCIServerListening";
             this.chkTCIServerListening.Size = new System.Drawing.Size(114, 17);
             this.chkTCIServerListening.TabIndex = 13;
@@ -53063,7 +53069,7 @@
             // btnDefaultBindPortForTCI
             // 
             this.btnDefaultBindPortForTCI.Image = null;
-            this.btnDefaultBindPortForTCI.Location = new System.Drawing.Point(219, 30);
+            this.btnDefaultBindPortForTCI.Location = new System.Drawing.Point(219, 26);
             this.btnDefaultBindPortForTCI.Name = "btnDefaultBindPortForTCI";
             this.btnDefaultBindPortForTCI.Selectable = true;
             this.btnDefaultBindPortForTCI.Size = new System.Drawing.Size(37, 26);
@@ -53075,7 +53081,7 @@
             // 
             // txtTCIServerBindIPPort
             // 
-            this.txtTCIServerBindIPPort.Location = new System.Drawing.Point(91, 33);
+            this.txtTCIServerBindIPPort.Location = new System.Drawing.Point(91, 29);
             this.txtTCIServerBindIPPort.Name = "txtTCIServerBindIPPort";
             this.txtTCIServerBindIPPort.Size = new System.Drawing.Size(122, 20);
             this.txtTCIServerBindIPPort.TabIndex = 11;
@@ -53103,7 +53109,7 @@
             // btnIPv4TCPCat
             // 
             this.btnIPv4TCPCat.Image = null;
-            this.btnIPv4TCPCat.Location = new System.Drawing.Point(262, 30);
+            this.btnIPv4TCPCat.Location = new System.Drawing.Point(262, 26);
             this.btnIPv4TCPCat.Name = "btnIPv4TCPCat";
             this.btnIPv4TCPCat.Selectable = true;
             this.btnIPv4TCPCat.Size = new System.Drawing.Size(42, 26);
@@ -53156,7 +53162,7 @@
             // 
             this.labelTS609.AutoSize = true;
             this.labelTS609.Image = null;
-            this.labelTS609.Location = new System.Drawing.Point(9, 36);
+            this.labelTS609.Location = new System.Drawing.Point(9, 32);
             this.labelTS609.Name = "labelTS609";
             this.labelTS609.Size = new System.Drawing.Size(63, 13);
             this.labelTS609.TabIndex = 14;
@@ -53179,7 +53185,7 @@
             // btnDefaultBindPortForTCPIPCat
             // 
             this.btnDefaultBindPortForTCPIPCat.Image = null;
-            this.btnDefaultBindPortForTCPIPCat.Location = new System.Drawing.Point(219, 30);
+            this.btnDefaultBindPortForTCPIPCat.Location = new System.Drawing.Point(219, 26);
             this.btnDefaultBindPortForTCPIPCat.Name = "btnDefaultBindPortForTCPIPCat";
             this.btnDefaultBindPortForTCPIPCat.Selectable = true;
             this.btnDefaultBindPortForTCPIPCat.Size = new System.Drawing.Size(37, 26);
@@ -53191,7 +53197,7 @@
             // 
             // txtTCPIPCATServerBindIPPort
             // 
-            this.txtTCPIPCATServerBindIPPort.Location = new System.Drawing.Point(91, 33);
+            this.txtTCPIPCATServerBindIPPort.Location = new System.Drawing.Point(91, 29);
             this.txtTCPIPCATServerBindIPPort.Name = "txtTCPIPCATServerBindIPPort";
             this.txtTCPIPCATServerBindIPPort.Size = new System.Drawing.Size(122, 20);
             this.txtTCPIPCATServerBindIPPort.TabIndex = 11;
@@ -56728,6 +56734,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGU)).EndInit();
             this.tpOptions2.ResumeLayout(false);
             this.tpOptions2.PerformLayout();
+            this.groupBoxTS33.ResumeLayout(false);
+            this.groupBoxTS33.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPBsnrShiftRx1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPBsnrShiftRx2)).EndInit();
             this.groupBoxTS32.ResumeLayout(false);
             this.groupBoxTS32.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udPingToTSeconds)).EndInit();
@@ -56737,8 +56747,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudQuickSplitShift)).EndInit();
             this.groupBoxTS26.ResumeLayout(false);
             this.groupBoxTS26.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudPBsnrShiftRx2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudPBsnrShiftRx1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNFshift)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNFsensitivity)).EndInit();
             this.groupBoxTS23.ResumeLayout(false);
@@ -57439,7 +57447,6 @@
             this.panelTS1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxPowerForBandPA)).EndInit();
             this.panelAdjustGain.ResumeLayout(false);
-            this.panelAdjustGain.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain90)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain80)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAdjustGain70)).EndInit();
@@ -61063,7 +61070,6 @@
         private CheckBoxTS chkVisualNotch;
         private ButtonTS btnRX2PBsnr;
         private ButtonTS btnRX1PBsnr;
-        private LabelTS labelTS160;
         private ButtonTS btnResetNFShift;
         private GroupBoxTS grpMultiMeterHolder;
         private ButtonTS btnAddRX2Container;
@@ -61305,5 +61311,7 @@
         private NumericUpDownTS nudPBsnrShiftRx1;
         private LabelTS lblRx2PBsnr;
         private LabelTS lblRx1PBsnr;
+        private GroupBoxTS groupBoxTS33;
+        private CheckBoxTS chkCWbecomesCWUabove10mhz;
     }
 }

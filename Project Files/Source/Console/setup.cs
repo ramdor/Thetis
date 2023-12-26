@@ -22016,6 +22016,7 @@ namespace Thetis
             if (p.GetMaxPowerUse(_adjustingBand))
             {
                 // using watts
+                lblDriveHeader.TextAlign = ContentAlignment.MiddleRight;
                 for (int n = 0; n < 9; n++)
                 {
                     int num = (n * 10) + 10;
@@ -22032,6 +22033,7 @@ namespace Thetis
             else
             {
                 //using drive
+                lblDriveHeader.TextAlign = ContentAlignment.MiddleCenter;
                 for (int n = 0; n < 9; n++)
                 {
                     int num = (n * 10) + 10;
@@ -26669,6 +26671,11 @@ namespace Thetis
         {
             if (initializing) return;
             console.RX2PBsnrShift = (double)nudPBsnrShiftRx2.Value;
+        }
+
+        private void chkCWbecomesCWUabove10mhz_CheckedChanged(object sender, EventArgs e)
+        {
+            console.TCICWbecomesCWUabove10mhz = chkCWbecomesCWUabove10mhz.Checked;
         }
     }
 
