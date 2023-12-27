@@ -52733,7 +52733,7 @@
             this.chkCWbecomesCWUabove10mhz.Size = new System.Drawing.Size(235, 17);
             this.chkCWbecomesCWUabove10mhz.TabIndex = 100;
             this.chkCWbecomesCWUabove10mhz.Text = "CW becomes CWU if 10MHz and above (in)";
-            this.toolTip1.SetToolTip(this.chkCWbecomesCWUabove10mhz, "CWL or CWU converts into CW in the outbound mode message");
+            this.toolTip1.SetToolTip(this.chkCWbecomesCWUabove10mhz, "A CW mode message will be considered CWU if related VFO is at or above 10MHz");
             this.chkCWbecomesCWUabove10mhz.UseVisualStyleBackColor = true;
             this.chkCWbecomesCWUabove10mhz.CheckedChanged += new System.EventHandler(this.chkCWbecomesCWUabove10mhz_CheckedChanged);
             // 

@@ -1032,7 +1032,7 @@ namespace Thetis
                 chkRX2Squelch_CheckStateChanged(this, EventArgs.Empty);
 
                 UpdateWaterfallLevelValues();
-                UpdateDisplayGridLevelMaxValues(true);
+                updateDisplayGridLevelValues();
                 UpdateDiversityValues();
 
                 rx1_meter_cal_offset = rx_meter_cal_offset_by_radio[(int)current_hpsdr_model];
@@ -5781,7 +5781,7 @@ namespace Thetis
             {
                 UpdateBandButtonColors();
                 UpdateWaterfallLevelValues();
-                UpdateDisplayGridLevelMaxValues(true);
+                updateDisplayGridLevelValues();
                 UpdateDiversityValues();
             }
 
@@ -5805,7 +5805,7 @@ namespace Thetis
             {
                 UpdateBandButtonColors();
                 UpdateWaterfallLevelValues();
-                UpdateDisplayGridLevelMaxValues(true);
+                updateDisplayGridLevelValues();
             }
         }
 
@@ -8398,7 +8398,11 @@ namespace Thetis
                 setWaterfallGainsIfLinkedToSpectrum(2);
             }
         }
-
+        private void updateDisplayGridLevelValues()
+        {
+            UpdateDisplayGridLevelMinValues(false); // false because we do the updates after setting max below
+            UpdateDisplayGridLevelMaxValues(true);
+        }
         private void setWaterfallGainsIfLinkedToSpectrum(int rx)
         {
             if (IsSetupFormNull) return;
@@ -8415,7 +8419,7 @@ namespace Thetis
             }
         }
 
-        public void UpdateDisplayGridLevelMinValues(bool bDoBandInfoAndWaterFallSync = true)
+        public void UpdateDisplayGridLevelMinValues(bool bDoBandInfoAndWaterFallSync)
         {
             if (!initializing)
             {
@@ -45483,7 +45487,7 @@ namespace Thetis
             NetworkIO.SendHighPriority(0);
             SetBand(bse.Mode.ToString(), bse.Filter.ToString(), bse.Frequency, bse.CTUNEnabled, bse.ZoomSlider, bse.CentreFrequency);
             UpdateWaterfallLevelValues();
-            UpdateDisplayGridLevelMaxValues(true);
+            updateDisplayGridLevelValues();
             UpdateDiversityValues();
             NetworkIO.SendHighPriority(1);            
         }

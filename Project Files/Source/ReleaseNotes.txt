@@ -36,6 +36,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] scope time base differences between RX and TX should be resolved
 - [fix] Protocol 1 MAC address now correcly obtained from the discovery packet sent from the radio on port 1024. P1 MAC addy starts at byte 3, not byte 5
 - [fix] fixed an issue that caused the spectral area to be recentred for rx1+rx2 when shift was held to peform a ZTB for RX2
+- [change] TCI now has option to switch to CWU if it receives a CW modulation message and frequency is at or above 10MHz
 - [change] wav file recording volume is normalised to ignore RX AF. Note: when muted/0vol recording is 'silent'
 - [change] finder will now gather info using multiple threads at a time. Some users were reporting startup time delay
 - [change] skinserver now attempts to select skin when downloaded and shows 'wait' mouse pointer whilst changing

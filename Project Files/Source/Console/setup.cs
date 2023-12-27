@@ -7385,7 +7385,7 @@ namespace Thetis
                     Display.SpectrumGridMin = (int)console.DisplayGridMinXVTR;
                     break;
             }
-            console.UpdateDisplayGridLevelMinValues(); //MW0LGE  //MW0LGE_21e
+            console.UpdateDisplayGridLevelMinValues(true); //MW0LGE  //MW0LGE_21e
             console.WaterfallUseRX1SpectrumMinMax = chkWaterfallUseRX1SpectrumMinMax.Checked; // MW0LGE_21d this will force an update
                                                                                               // which is needed because Cat etc will cause
                                                                                               // this valuechanged event
