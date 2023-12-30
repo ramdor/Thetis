@@ -2506,13 +2506,15 @@ namespace Thetis
         public void UpdateMox()
         {
             // upate based on what is happening in console
-            // this m_bMox bool is then used win WriteBuffer() so that audio recorded when mox has a gain of 1
+            // this m_bMox bool is then used in WriteBuffer() so that audio recorded when mox has a gain of 1
             lock (m_inversGainlock)
             {
-                if (id == 0) //rx1 sub0
-                    m_bMox = Audio.MOX && Audio.console.VFOATX;
-                else if (id == 1) //rx2 sub0
+                if (id == 0) //rx1
+                    m_bMox = Audio.MOX && (Audio.console.VFOATX || (Audio.console.VFOBTX && !Audio.console.RX2Enabled));
+                else if (id == 1) //rx2
                     m_bMox = Audio.MOX && Audio.console.RX2Enabled && Audio.console.VFOBTX;
+                else m_bMox = Audio.MOX;
+                Debug.Print("WAVEMOX : " + m_bMox.ToString());
             }
         }
 

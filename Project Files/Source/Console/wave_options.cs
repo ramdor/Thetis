@@ -189,7 +189,7 @@ namespace Thetis
             this.radTXPreProcessed.TabIndex = 0;
             this.radTXPreProcessed.TabStop = true;
             this.radTXPreProcessed.Text = "MIC Audio";
-            this.toolTip1.SetToolTip(this.radTXPreProcessed, "Raw MIC Audio Input coming from the hardware.");
+            this.toolTip1.SetToolTip(this.radTXPreProcessed, "Raw MIC Audio Input coming from the hardware or from VAC input.");
             this.radTXPreProcessed.CheckedChanged += new System.EventHandler(this.radTXPreProcessed_CheckedChanged);
             // 
             // radRXPostProcessed
@@ -249,6 +249,7 @@ namespace Thetis
             this.udWaveDitherBits.Name = "udWaveDitherBits";
             this.udWaveDitherBits.Size = new System.Drawing.Size(40, 20);
             this.udWaveDitherBits.TabIndex = 1;
+            this.udWaveDitherBits.TinyStep = false;
             this.udWaveDitherBits.Value = new decimal(new int[] {
             8,
             0,
