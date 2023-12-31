@@ -44531,7 +44531,24 @@ namespace Thetis
         }
         private void chkMicMute_MouseDown(object sender, MouseEventArgs e)
         {
-            if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.Transmit_Tab);
+            if (IsRightButton(e)) //SetupForm.ShowSetupTab(Setup.SetupTab.Transmit_Tab);
+            {
+                switch (chkMicMute.Text)
+                {
+                    case "MIC":
+                        chkMicMute.Text = "MIC 1";
+                        cmaster.selectCMAmic(2);
+                        break;
+                    case "MIC 1":
+                        chkMicMute.Text = "MIC 2";
+                        cmaster.selectCMAmic(1);
+                        break;
+                    case "MIC 2":
+                        chkMicMute.Text = "MIC";
+                        cmaster.selectCMAmic(3);
+                        break;
+                }
+            }
         }
         private void comboTXProfile_MouseDown(object sender, MouseEventArgs e)
         {

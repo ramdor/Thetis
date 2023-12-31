@@ -27,6 +27,7 @@ bryanr@bometals.com
 #include "cmcomm.h"
 #include "obbuffs.h"
 
+void selectChannel(double* a);
 cmasio cma = { 0 };
 CMASIO pcma = &cma;
 int cmaError = 0;
@@ -69,6 +70,7 @@ void create_cmasio()
 		pcma->bufferFull = CreateSemaphore(NULL, 0, 1, NULL);
 		pcma->bufferEmpty = CreateSemaphore(NULL, 1, 1, NULL);
 
+		pcma->nSelect = 3;
 		pcma->overFlowsIn = pcma->overFlowsOut = pcma->underFlowsIn = pcma->underFlowsOut = 0;
 	}
 	cmaError = result;
@@ -98,13 +100,15 @@ void asioIN(double* in_tx)
 	{
 		if (WaitForSingleObject(pcma->bufferFull, 2) == WAIT_TIMEOUT) { ++pcma->underFlowsIn; return; }
 		memcpy(in_tx, pcma->input, pcma->blocksize * sizeof(complex));
-		combinebuff(pcma->blocksize, in_tx, in_tx);
+		//combinebuff(pcma->blocksize, in_tx, in_tx);
+		selectChannel(in_tx);
 		ReleaseSemaphore(pcma->bufferEmpty, 1, NULL);
 	}
 	else
 	{
 		xrmatchOUT(pcma->rmatchIN, in_tx);
-		combinebuff(pcma->blocksize, in_tx, in_tx);
+		//combinebuff(pcma->blocksize, in_tx, in_tx);
+		selectChannel(in_tx);
 	}
 }
 
@@ -201,6 +205,39 @@ long cm_asioStop()
 	sprintf_s(buf, 128, "asioStop = %d", result);
 	OutputDebugStringA(buf);
 	return result;
+}
+
+void selectChannel(double* a)
+{
+	switch (pcma->nSelect)
+	{
+		case 0:
+			break;
+		case 1:
+			for (int i = 0; i < pcma->blocksize; i++)
+			{
+				a[2 * i + 0] = a[2 * i + 1];
+			}
+			break;
+		case 2:
+			for (int i = 0; i < pcma->blocksize; i++)
+			{
+				a[2 * i + 1] = a[2 * i + 0];
+			}
+			break;
+		case 3:
+			for (int i = 0; i < pcma->blocksize; i++)
+			{
+				a[2 * i + 1] = a[2 * i + 0] = a[2 * i + 0] + a[2 * i + 1];
+			}
+			break;
+	}
+}
+
+PORT
+void selectCMAmic(int nSelect)
+{
+	pcma->nSelect = nSelect;
 }
 
 PORT
