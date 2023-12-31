@@ -6986,7 +6986,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>2</value>
   </data>
   <data name="udRX2StepAttData.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 79</value>
+    <value>8, 78</value>
   </data>
   <data name="udRX2StepAttData.Size" type="System.Drawing.Size, System.Drawing">
     <value>55, 20</value>
