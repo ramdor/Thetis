@@ -38,7 +38,6 @@ void CallbackASIO(void* inputL, void* inputR, void* outputL, void* outputR);
 
 extern __declspec(dllimport) long getASIODriverString(void* szData);
 extern __declspec(dllimport) long getASIOBlockNum(void* dwData);
-extern __declspec(dllimport) long getASIOcombineModeIn(void* dwData);
 extern __declspec(dllimport) int prepareASIO(int blocksize, int samplerate, char* asioDriverName, void (*CallbackASIO)(void* inputL, void* inputR, void* outputL, void* outputR));
 extern __declspec(dllimport) void unloadASIO();
 extern __declspec(dllimport) long asioStart();
@@ -59,7 +58,6 @@ typedef struct _cmasio
 	long underFlowsIn;
 	long underFlowsOut;
 	int lockMode;
-	int combineModeIn;
 } cmasio, *CMASIO;
 
 extern CMASIO pcma;

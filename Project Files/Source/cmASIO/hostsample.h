@@ -8,7 +8,6 @@ extern "C" {
 
 	__declspec(dllexport) long getASIODriverString(void* szData);
 	__declspec(dllexport) long getASIOBlockNum(void* dwData);
-	__declspec(dllimport) long getASIOcombineModeIn(void* dwData);
 	__declspec(dllexport) int prepareASIO(int blocksize, int samplerate, char* asioDriverName, void (*CallbackASIO)(void* inputL, void* inputR, void* outputL, void* outputR));
 	__declspec(dllexport) void unloadASIO();
 	__declspec(dllexport) long asioStart();

@@ -549,22 +549,6 @@ long getASIOBlockNum(void* dwData)
 	return status;
 }
 
-long getASIOcombineModeIn(void* dwData)
-{
-	const HKEY hKeyPath = HKEY_LOCAL_MACHINE;
-	const LPCSTR subKey = "SOFTWARE\\OpenHPSDR\\Thetis-x64";
-	const LPCSTR valueName = "ASIOcombinemodein";
-
-	DWORD dwDataSize = sizeof(REG_DWORD);
-
-	LSTATUS status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_DWORD | RRF_SUBKEY_WOW6464KEY, NULL, dwData, &dwDataSize);
-	char buf[128];
-	sprintf_s(buf, 128, "RegGetValue(dword) status = %d", status);
-	OutputDebugStringA(buf);
-
-	return status;
-}
-
 long asioStart()
 {
 	char buf[128];

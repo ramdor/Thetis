@@ -90,7 +90,7 @@ typedef struct _ivac
 	int exclusive_out;				// only use with wasapi right now
 } ivac, *IVAC;
 
-void combinebuff (int n, double* a, double* combined, int combineMode);
+void combinebuff (int n, double* a, double* combined);
 void scalebuff (int n, double* in, double k, double* out);
 void xvac_out(int id, int nsamples, double* buff);
 
