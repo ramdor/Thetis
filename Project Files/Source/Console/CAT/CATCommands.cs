@@ -23,6 +23,52 @@ Modifications to support the Behringer Midi controllers
 by Chris Codella, W2PA, April 2017.  Indicated by //-W2PA comment lines.
 Added extended CAT commands for APF funtions - May 2017.
 */
+/*
+NOTES ON THETIS MODIFICATIONS TO SUPPORT ACOM AMPLIFIERS <123023v1.2>
+
+
+INTRODUCTION:
+
+Code has been added to Thetis 2.10.3.5 to support the automated TUNE function in the Acom 1200S/700S/600S amplifiers when used with the companion Acom 04AT/06AT tuners. This note describes how this was accomplished. 
+
+BASIC APPROACH:
+
+During a TUNE cycle, the Acom amplifiers send a sequence of CAT commands to Thetis intended to save the current state of the radio, initiate a carrier of sufficient level for the Acom tuner, and then restore the radio to the state which existed before the TUNE cycle was initiated. The Acom TUNE CAT command sequence includes CAT commands not provided for in Thetis, as Thetis does not implement the full Kenwood CAT command set (which is extended by the addition of DT commands intended to set an FSK sub-mode in some Elecraft radios). The Acom CAT command sequence includes these DT commands for compatibility with Elecraft radios. These are ignored by Thetis and other radios which do not have the Elecraft sub-modes. 
+
+The Acom CAT command sequence for a TUNE cycle is intended to put the radio into FSK mode to produce a carrier for tuning, and does this by sending an MD6 mode command (RTTY/FSK mode) as part of the TUNE CAT command sequence. With no native FSK mode available in the ANAN radio, Thetis executes this MD6 command in a way that puts the radio in to RTTY (DIGL) mode, which is intended for AFSK operation and does not produce a carrier without modulation. The Acom CAT command sequence also includes DT commands which are ignored by Thetis.  
+
+Code was added to Thetis 2.9.0.8 and 2.9.0.30 which uses the DT commands to override the MD6 command and put the radio into FM mode (MD4), which does produce a carrier suitable for tuning. This is accomplished via additions to the Thetis code, without changing existing code except through these additions in several parts of the CAT processing software. These code additions are all contained in the Thetis CAT C# classes described briefly below. The operation of other CAT commands in the Thetis command set is not affected.
+
+THETIS CODE ADDITIONS:
+
+All code additions are in the CATStructs.cs, CATCommands.cs, and CATParser.cs  classes in the Thetis code. These additions handle processing of various DT commands as described below.
+
+DT mode is a pseudo mode used to achieve a workaround for the absence of a native FSK capability in the ANAN radio. A string variable (DTmode) is declared to hold the state of DT mode, either “DT1” or “DT2”.
+
+DT COMMANDS:
+
+DT;   ->  ANSWERs with current value of DTmode, either “DT1;” or “DT2;”. When Thetis is in FM mode, DTmode = “DT2”, otherwise DTmode = “DT1”
+
+DT1;   ->  SETs DTmode to “DT1”
+
+DT2;  ->  SETs DTmode to “DT2” and sets radio to FM mode (MD4 in the normal Kenwood/Thetis CAT command set)
+
+
+
+CATParser.cs:
+
+Code is added to identify DT commands, assemble an ANSWER to a DT command if required, and handoff execution of the command to CATCommands.cs. 
+
+CATStructs.cs:
+
+An XML description for the new DT command is added.
+
+CATCommands.cs:
+
+Code is added to execute DT commands.
+
+These changes to Thetis have been tested  with an Acom 1200S amplifier and Acom 04AT tuner and  function as intended, but with a few minor side effects; some ANAN settings are not restored to the  their state prior to the TUNE, including MIC gain, RX EQ, and NR. 
+*/
 
 
 using System;
@@ -56,6 +102,7 @@ namespace Thetis
         private int NCATs = 0;
         private readonly int NCATtime = 50;
         public bool firstTimeCAT = true;
+		public string DTmode = "DT1";                               // Added  043023  FRB
 
 		#endregion Variable Definitions
 
@@ -184,6 +231,50 @@ namespace Thetis
 
 			return ZZSA();
 		}
+		public string DT(string s)				                                 // Add DT command from here ...
+        {
+            if (NCATs < NCATInit)
+            {
+                Thread.Sleep(NCATtime);
+                NCATs++;
+            }
+            if (s.Length == parser.nSet)
+            {
+                if (Convert.ToInt32(s) > 0 && Convert.ToInt32(s) <= 9)
+                {
+                    // KString2Mode(s);
+
+                    if (s == "1")
+
+                    { // console.RX1DSPMode = DSPMode.LSB;  //Test code: disabled
+                        DTmode = "DT1";
+                    }
+                    else
+                        if (s == "2")
+                    {
+                        console.RX1DSPMode = DSPMode.FM;
+                        DTmode = "DT2";
+                    }
+                    return "";
+                }
+                else
+                    return parser.Error1;
+            }
+            else if (s.Length == parser.nGet)
+            {
+                if (Mode2KString(console.RX1DSPMode) == "4") // If mode 4 (FM) return "4" -> DT2
+
+                    return "4";
+
+                else
+
+                    return "1";									// otherwuse return "1" -> DT1
+            }
+
+            else
+
+                return parser.Error1;
+        }                                                                 
 
 		// Sets or reads the frequency of VFO A
 		public string FA(string s)
