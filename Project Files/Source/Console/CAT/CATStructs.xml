@@ -161,6 +161,13 @@
 		<ngetparms>0</ngetparms>
 		<nansparms>1</nansparms>
 	</catstruct>
+	<catstruct code="DT">                                    // Added 043023 from here ...
+		<desc>operating mode</desc>
+		<active>true</active>
+		<nsetparms>1</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+	</catstruct>											// ... to here   FRB 043023
 	<catstruct code="EX">
 		<desc>extension menu</desc>
 		<active>false</active>
