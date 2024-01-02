@@ -8,7 +8,11 @@ If you use CW and you have different RX and TX antenna ports configured, there i
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
 ## v2.10.3.6 Change Log - WIP dev
+- [add] -help command line option
+- [add] cmASIO combine mode for input audio based on earlier work by Bryan. Use registry dword ASIOcombinemodein with 1,2,3 as values. 1=ch1, 2=ch2, 3=ch1+ch2. Any other value will be silence in the input
 - [fix] vac mic audio source can now be recorded
+- [change] the dB shift setting for AGC auto noise floor compensation is now a true shift from NF. You will probably need to tweak your previous setting
+- [change] the shutdown log is defaulted off. Use command line param -logshutdown to cause Thetis to create a shutdown_log.txt file if you are having shutdown issues which can then be sent in for analysis
 
 ## v2.10.3.5 Change Log
 - [add] midi device DJ2GO2 Touch MIDI is now handled uniquely, and main sliders will have values reversed

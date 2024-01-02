@@ -61,6 +61,12 @@ void create_cmasio()
 		sprintf_s(buf, 128, "blockNum = %d\nlockMode = %d", blockNum, pcma->lockMode);
 		OutputDebugStringA(buf);
 
+		int combineModeIn = 3;
+		if (getASIOcombineModeIn(&combineModeIn) != 0) combineModeIn = 3;
+		pcma->combineModeIn = combineModeIn;
+		sprintf_s(buf, 128, "combineModeIn = %d", pcma->combineModeIn);
+		OutputDebugStringA(buf);
+
 		pcma->rmatchIN = create_rmatchV(pcma->blocksize, pcma->blocksize, samplerate, samplerate, blockNum * pcma->blocksize, 1);
 		pcma->rmatchOUT = create_rmatchV(pcma->blocksize, pcma->blocksize, samplerate, samplerate, blockNum * pcma->blocksize, 1);
 		forceRMatchVar(pcma->rmatchIN, 1, 1);
@@ -98,13 +104,13 @@ void asioIN(double* in_tx)
 	{
 		if (WaitForSingleObject(pcma->bufferFull, 2) == WAIT_TIMEOUT) { ++pcma->underFlowsIn; return; }
 		memcpy(in_tx, pcma->input, pcma->blocksize * sizeof(complex));
-		combinebuff(pcma->blocksize, in_tx, in_tx);
+		combinebuff(pcma->blocksize, in_tx, in_tx, pcma->combineModeIn);
 		ReleaseSemaphore(pcma->bufferEmpty, 1, NULL);
 	}
 	else
 	{
 		xrmatchOUT(pcma->rmatchIN, in_tx);
-		combinebuff(pcma->blocksize, in_tx, in_tx);
+		combinebuff(pcma->blocksize, in_tx, in_tx, pcma->combineModeIn);
 	}
 }
 

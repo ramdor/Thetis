@@ -512,7 +512,7 @@ namespace Thetis
 
         private bool _portAudioInitalising = false;
         private bool _portAudioIssue = false;
-        private bool _dllsOk = true;
+        private bool _exitConsoleInDispose = true;
 
         private bool m_bLogShutdown = false; // bool that is set via command line args to log the shutdown stages
 
@@ -543,7 +543,6 @@ namespace Thetis
         // rawinput grabbing for mousewheel/keyboard
         private RawInput m_objRawinput;
         // ----
-        //MW0LGE_21d private bool m_bShiftKeyDown = false;
         private static System.Timers.Timer autoStartTimer;
         // ----
         #endregion
@@ -574,7 +573,15 @@ namespace Thetis
             Thread.CurrentThread.CurrentUICulture = ci;
             //
 
-            m_bLogShutdown = args?.Contains<string>("-logshutdown") ?? false;
+            if(hasArg(args, "-help"))
+            {
+                showHelpInfo();
+
+                _exitConsoleInDispose = false;
+                Environment.Exit(0);
+                return;
+            }
+            m_bLogShutdown = hasArg(args, "-logshutdown");
 
             // check versions of DLL/etc
             if (!checkVersions())
@@ -586,7 +593,7 @@ namespace Thetis
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
-                _dllsOk = false;
+                _exitConsoleInDispose = false;
                 Environment.Exit(1);
                 return;
             }
@@ -1145,7 +1152,7 @@ namespace Thetis
                 //
 
                 //autostart
-                bool bAutoStart = (args?.Contains<string>("-autostart") ?? false) || m_bAutoPowerOn;
+                bool bAutoStart = hasArg(args, "-autostart") || m_bAutoPowerOn;
                 if (bAutoStart)
                 {
                     autoStartTimer = new System.Timers.Timer(2000);
@@ -1273,7 +1280,7 @@ namespace Thetis
         {
             shutdownLogStringToPath("Inside Console Dispose()");
 
-            if (_dllsOk) // ignore this if the incorrect dlls are found. We wont have used anything
+            if (_exitConsoleInDispose) // ignore this if the incorrect dlls are found. We wont have used anything
             {               
                 ExitConsole();
             }
@@ -47648,6 +47655,82 @@ namespace Thetis
         {
             if (m_statusBarToolTip != null)
                 m_statusBarToolTip.Hide(statusStripMain);
+        }
+
+        #region -help text
+        [DllImport("kernel32.dll")]
+        private static extern bool AttachConsole(int dwProcessId);
+        //[DllImport("kernel32.dll")]
+        //private static extern bool AllocConsole();
+        [DllImport("kernel32.dll")]
+        private static extern bool FreeConsole();
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr GetConsoleWindow();
+        [DllImport("kernel32.dll")]
+        private static extern bool GenerateConsoleCtrlEvent(int dwCtrlEvent, int dwProcessGroupId);
+        [DllImport("user32.dll")]
+        private static extern int SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        //private const int WM_KEYDOWN = 0x0100;
+        //private const int WM_KEYUP = 0x0101;
+        //private const int WM_CHAR = 0x0102;
+        //private const int VK_ENTER = 0x0D;
+        private const int ATTACH_PARENT_PROCESS = -1;
+
+        private void showHelpInfo()
+        {
+            //from https://community.apache-labs.com/viewtopic.php?f=9&t=4047
+
+            bool bOk = AttachConsole(ATTACH_PARENT_PROCESS);
+
+            if (bOk)
+            {
+                string s = "\nThetis command line help :\n\n";
+
+                s += "  -help   this help\n";
+                s += "  -logshutdown    generate shutdown_log.txt when closing down\n";
+                s += "  -autostart      attempt to power on radio at start up\n\n";
+
+                s += "  -datapath:c:\\thetisdatafolder\\    use this data folder for everything\n";
+                s += "  -datapath:c:\\thetisdatafolder\\ -autostart     as above, with autostart\n";
+                s += "  \"-datapath:c:\\test with spaces\\\"   use this data folder for everything, but with spaces in the path\n";
+                s += "  \"-datapath:c:\\test with spaces\\\" -autostart   as above, with autostart\n\n";
+
+                s += "  -dbfilename:c:\\folder\\database.xml    use this database instead\n";
+                s += "  \"-dbfilename:c:\\folder\\database.xml\"    use this database instead, but with spaces in the path\n";
+
+                //System.Console.Write(s);
+                using (Stream st = System.Console.OpenStandardOutput())
+                {
+                    StreamWriter sw = new StreamWriter(st);
+                    sw.AutoFlush = true;
+                    sw.Write(s);
+                    sw.Close();
+                }
+
+                //the following does not seem to work, needs investigating.
+                //cw does obtain the attached console window, tested with beep
+                //unsure how to resolve this atm
+
+                //// hack to fix problem where enter needs to be hit to return cmd prompt
+                //IntPtr cw = GetConsoleWindow();
+                //if (cw != IntPtr.Zero)
+                //{
+                //    SendMessage(cw, WM_KEYDOWN, (IntPtr)VK_ENTER, IntPtr.Zero);
+                //    SendMessage(cw, WM_KEYUP, (IntPtr)VK_ENTER, IntPtr.Zero);
+                //    SendMessage(cw, WM_CHAR, (IntPtr)VK_ENTER, IntPtr.Zero);
+                //}
+
+                FreeConsole();
+            }
+        }
+        #endregion
+
+        private bool hasArg(string[] args, string arg)
+        {
+            if (args == null || args.Length < 1 || string.IsNullOrEmpty(arg)) return false;
+
+            return args[0].Contains(arg, StringComparison.OrdinalIgnoreCase);
         }
     }
 
