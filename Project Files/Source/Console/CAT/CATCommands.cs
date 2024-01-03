@@ -274,7 +274,7 @@ namespace Thetis
             else
 
                 return parser.Error1;
-        }                                                                 
+        }                                                     		            // ... to here  FRB 043023
 
 		// Sets or reads the frequency of VFO A
 		public string FA(string s)
