@@ -66,6 +66,7 @@
     {
         HPSDR = 0,
         HERMES,
+        HERMESLITE,     //MI0BOT
         ANAN10,
         ANAN10E,
         ANAN100,
@@ -85,6 +86,7 @@
         FIRST = -1,
         HPSDR,
         HERMES,
+        HERMESLITE,     //MI0BOT
         ANAN10,
         ANAN10E,
         ANAN100,
@@ -362,7 +364,8 @@
         Angelia = 3,        // ANAN-100D
         Orion = 4,          // ANAN-200D
         OrionMKII = 5,      // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
-        Saturn = 10,         // ANAN-G2: added G8NJJ
+        HermesLite = 6,     // HermesLite 2 added MI0BOT
+        Saturn = 10,        // ANAN-G2: added G8NJJ
         Unknown = 999,      //MW0LGE
     }
 
