@@ -424,7 +424,8 @@ enum HPSDRHW
 	HermesII = 2, // ANAN-10E/100B
 	Angelia = 3,  // ANAN-100D
 	Orion = 4,    // ANAN-200D
-	OrionMKII = 5 // ANAN-7000DLE/8000DLE
+	OrionMKII = 5, // ANAN-7000DLE/8000DLE
+	HermesLite = 6 // HermesLite MI0BOT
 };
 
 enum _RadioProtocol
