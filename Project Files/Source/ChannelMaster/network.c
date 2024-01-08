@@ -802,6 +802,8 @@ void CmdHighPriority() { // port 1027
 		prn->rx[0].preamp;
 
 	// Alex1 data 
+	packetbuf[1428] = (prbpfilter2->bpfilter >> 24) & 0xff; // [31:24] TXANT
+	packetbuf[1429] = (prbpfilter2->bpfilter >> 16) & 0xff; // [23:16] TXANT
 	packetbuf[1430] = (prbpfilter2->bpfilter >> 8) & 0xff; //RX1
 	packetbuf[1431] = prbpfilter2->bpfilter & 0xff; //RX1
 

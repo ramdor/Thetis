@@ -411,7 +411,7 @@ void SetADCRandom(int bits)
 }
 
 PORT
-void SetAntBits(int rx_only_ant, int trx_ant, int rx_out, char tx) {
+void SetAntBits(int rx_only_ant, int trx_ant, int tx_ant, int rx_out, char tx) {
 
 	if (mkiibpf)
 	{
@@ -438,6 +438,11 @@ void SetAntBits(int rx_only_ant, int trx_ant, int rx_out, char tx) {
 	prbpfilter->_ANT_1 = (trx_ant & (0x01 | 0x02)) == 0x01;
 	prbpfilter->_ANT_2 = (trx_ant & (0x01 | 0x02)) == 0x02;
 	prbpfilter->_ANT_3 = (trx_ant & (0x01 | 0x02)) == (0x01 | 0x02);
+
+	prbpfilter2->_TXANT_1 = (tx_ant & (0x01 | 0x02)) == 0x01;
+	prbpfilter2->_TXANT_2 = (tx_ant & (0x01 | 0x02)) == 0x02;
+	prbpfilter2->_TXANT_3 = (tx_ant & (0x01 | 0x02)) == (0x01 | 0x02);
+
 	if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
 		CmdHighPriority();
 }

@@ -245,6 +245,7 @@ namespace Thetis
 
 		private int m_nOld_rx_only_ant = -99;
 		private int m_nOld_trx_ant = -99;
+		private int m_nOld_tx_ant = -99;
 		private int m_nOld_rx_out = -99;
 		private bool m_bOld_tx = false;
 
@@ -252,12 +253,13 @@ namespace Thetis
 		{
 			if ( !alex_enabled ) 
 			{ 
-				NetworkIO.SetAntBits(0, 0, 0, false); 
+				NetworkIO.SetAntBits(0, 0, 0, 0, false); 
 				return;
 			}            
 
 			int rx_only_ant; 
 			int trx_ant; 
+			int tx_ant; 
 			int rx_out;
             int xrx_out;
 
@@ -275,6 +277,8 @@ namespace Thetis
 			} 
 
 			//System.Console.WriteLine("Ant idx: " + idx);  //moved into different check down below			
+
+			tx_ant = TxAnt[idx];
 
 			if ( tx ) 
 			{
@@ -337,16 +341,18 @@ namespace Thetis
 			//MW0LGE_21k9d only set bits if different
 			if (m_nOld_rx_only_ant != rx_only_ant ||
 				m_nOld_trx_ant != trx_ant ||
+				m_nOld_tx_ant != tx_ant ||
 				m_nOld_rx_out != rx_out ||
 				m_bOld_tx != tx)
 			{
                 System.Console.WriteLine("Ant idx: " + idx); //MW0LGE [2.9.0.8] moved here
-                NetworkIO.SetAntBits(rx_only_ant, trx_ant, rx_out, tx);
-				System.Console.WriteLine("Ant Rx Only {0} , Tx Ant {1}, Rx Out {2}, TX {3}", rx_only_ant.ToString(), trx_ant.ToString(), rx_out.ToString(), tx.ToString());
+                NetworkIO.SetAntBits(rx_only_ant, trx_ant, tx_ant, rx_out, tx);
+				System.Console.WriteLine("Ant Rx Only {0} , TRx Ant {1}, Tx Ant {2}, Rx Out {3}, TX {4}", rx_only_ant.ToString(), trx_ant.ToString(), tx_ant.ToString(), rx_out.ToString(), tx.ToString());
 
 				//store old
 				m_nOld_rx_only_ant = rx_only_ant;
 				m_nOld_trx_ant = trx_ant;
+				m_nOld_tx_ant = tx_ant;
 				m_nOld_rx_out = rx_out;
 				m_bOld_tx = tx;
 			}
