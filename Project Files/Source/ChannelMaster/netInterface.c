@@ -439,6 +439,10 @@ void SetAntBits(int rx_only_ant, int trx_ant, int tx_ant, int rx_out, char tx) {
 	prbpfilter->_ANT_2 = (trx_ant & (0x01 | 0x02)) == 0x02;
 	prbpfilter->_ANT_3 = (trx_ant & (0x01 | 0x02)) == (0x01 | 0x02);
 
+	// copy the upper 16 bits of Alex0
+	prbpfilter2->bpfilter = prbpfilter->bpfilter & 0xf8ff0000;
+
+	// then set the TX mode ANT 1-3 bits
 	prbpfilter2->_TXANT_1 = (tx_ant & (0x01 | 0x02)) == 0x01;
 	prbpfilter2->_TXANT_2 = (tx_ant & (0x01 | 0x02)) == 0x02;
 	prbpfilter2->_TXANT_3 = (tx_ant & (0x01 | 0x02)) == (0x01 | 0x02);
