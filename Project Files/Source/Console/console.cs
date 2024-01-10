@@ -512,7 +512,9 @@ namespace Thetis
 
         private bool _portAudioInitalising = false;
         private bool _portAudioIssue = false;
-        private bool _dllsOk = true;
+        private bool _exitConsoleInDispose = true;
+
+        private bool m_bLogShutdown = false; // bool that is set via command line args to log the shutdown stages
 
         private frmReleaseNotes _frmReleaseNotes;
 
@@ -541,7 +543,6 @@ namespace Thetis
         // rawinput grabbing for mousewheel/keyboard
         private RawInput m_objRawinput;
         // ----
-        //MW0LGE_21d private bool m_bShiftKeyDown = false;
         private static System.Timers.Timer autoStartTimer;
         // ----
         #endregion
@@ -572,6 +573,16 @@ namespace Thetis
             Thread.CurrentThread.CurrentUICulture = ci;
             //
 
+            if(hasArg(args, "-help"))
+            {
+                showHelpInfo();
+
+                _exitConsoleInDispose = false;
+                Environment.Exit(0);
+                return;
+            }
+            m_bLogShutdown = hasArg(args, "-logshutdown");
+
             // check versions of DLL/etc
             if (!checkVersions())
             {
@@ -582,7 +593,7 @@ namespace Thetis
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
-                _dllsOk = false;
+                _exitConsoleInDispose = false;
                 Environment.Exit(1);
                 return;
             }
@@ -1141,7 +1152,7 @@ namespace Thetis
                 //
 
                 //autostart
-                bool bAutoStart = (args?.Contains<string>("-autostart") ?? false) || m_bAutoPowerOn;
+                bool bAutoStart = hasArg(args, "-autostart") || m_bAutoPowerOn;
                 if (bAutoStart)
                 {
                     autoStartTimer = new System.Timers.Timer(2000);
@@ -1267,19 +1278,19 @@ namespace Thetis
         public bool reset_db = false;
         protected override void Dispose(bool disposing)
         {
-            Common.LogStringToPath("Inside Console Dispose()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Inside Console Dispose()");
 
-            if (_dllsOk) // ignore this if the incorrect dlls are found. We wont have used anything
+            if (_exitConsoleInDispose) // ignore this if the incorrect dlls are found. We wont have used anything
             {               
                 ExitConsole();
             }
 
             if (_frmShutDownForm != null)
             {
-                Common.LogStringToPath("Before _frmShutDownForm.Close()", AppDataPath, "shutdown_log.txt");
+                shutdownLogStringToPath("Before _frmShutDownForm.Close()");
                 _frmShutDownForm.Close(); // last thing to get rid of
                 _frmShutDownForm.Dispose();
-                Common.LogStringToPath("After _frmShutDownForm.Dispose()", AppDataPath, "shutdown_log.txt");
+                shutdownLogStringToPath("After _frmShutDownForm.Dispose()");
             }
 
             if (disposing)
@@ -1292,7 +1303,7 @@ namespace Thetis
 
             base.Dispose(disposing);
 
-            Common.LogStringToPath("Leaving Console Dispose()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Leaving Console Dispose()");
         }
 
         #endregion
@@ -2540,47 +2551,47 @@ namespace Thetis
 
         public void ExitConsole()
         {
-            Common.LogStringToPath("Inside ExitConsole()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Inside ExitConsole()");
 
-            Common.LogStringToPath("Before Midi2Cat.CloseMidi2Cat()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before Midi2Cat.CloseMidi2Cat()");
             if (Midi2Cat != null) Midi2Cat.CloseMidi2Cat();
 
-            Common.LogStringToPath("Before N1MM.Stop()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before N1MM.Stop()");
             N1MM.Stop();
 
-            Common.LogStringToPath("Before m_frmCWXForm.Close()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before m_frmCWXForm.Close()");
             if (m_frmCWXForm != null)
                 m_frmCWXForm.Close();
 
-            Common.LogStringToPath("Before n1mm_udp_client.Close()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before n1mm_udp_client.Close()");
             if (n1mm_udp_client != null)
                 n1mm_udp_client.Close();
 
-            Common.LogStringToPath("Before SetupForm.Dispose()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before SetupForm.Dispose()");
             if (!IsSetupFormNull)		// make sure Setup form is deallocated
                 SetupForm.Dispose();
 
-            Common.LogStringToPath("Before PA19.PA_Terminate()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before PA19.PA_Terminate()");
             PA19.PA_Terminate();		// terminate audio interface
 
-            Common.LogStringToPath("Before DB.Exit()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before DB.Exit()");
             DB.Exit();					// close and save database
 
-            Common.LogStringToPath("Before NetworkIO.DestroyRNet()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before NetworkIO.DestroyRNet()");
             NetworkIO.DestroyRNet();
 
-            Common.LogStringToPath("Before radio.Shutdown()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before radio.Shutdown()");
             if (radio != null)
                 radio.Shutdown();
 
-            Common.LogStringToPath("Before Win32.TimeEndPeriod(1)", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before Win32.TimeEndPeriod(1)");
             Win32.TimeEndPeriod(1); // return to previous timing precision
             Thread.Sleep(100);
 
 
             if (reset_db)
             {
-                Common.LogStringToPath("Inside reset_db", AppDataPath, "shutdown_log.txt");
+                shutdownLogStringToPath("Inside reset_db");
 
                 string datetime = Common.DateTimeStringForFile();//DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
 
@@ -2592,10 +2603,10 @@ namespace Thetis
                 File.Copy(db_file_name, AppDataPath + "DB_Archive\\Thetis_" + file + "_" + datetime + ".xml");
                 File.Delete(db_file_name);
 
-                Common.LogStringToPath("Leaving reset_db", AppDataPath, "shutdown_log.txt");
+                shutdownLogStringToPath("Leaving reset_db");
             }
 
-            Common.LogStringToPath("Leaving ExitConsole()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Leaving ExitConsole()");
         }
 
         public void SaveState()
@@ -5809,9 +5820,9 @@ namespace Thetis
             }
         }
 
-        private void SetTXBand(Band b)
+        private void SetTXBand(Band b, bool bIngoreBandChange = false)
         {
-            if (disable_split_on_bandchange)
+            if (!bIngoreBandChange && disable_split_on_bandchange) //[2.10.3.6]MW0LGE might need to ignore this is we are using extended and band is moved to a hamband
             {
                 if (TXBand != b && !tuning)
                 {
@@ -5824,7 +5835,6 @@ namespace Thetis
             TXBand = b;
             if (old_band != b)
                 UpdateBandButtonColors();
-
         }
 
         private float GainByBand(Band b, int nDriveValue)
@@ -27060,7 +27070,7 @@ namespace Thetis
         private ShutdownForm _frmShutDownForm = null;
         private void Console_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Common.LogStringToPath("Inside Console_Closing()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Inside Console_Closing()");
 
             // MW0LGE
             // show a shutdown window
@@ -27071,24 +27081,24 @@ namespace Thetis
 
             if (m_tcpTCIServer != null)
             {
-                Common.LogStringToPath("Before m_tcpTCIServer.StopServer()", AppDataPath, "shutdown_log.txt");
+                shutdownLogStringToPath("Before m_tcpTCIServer.StopServer()");
                 bool wasRunning = m_tcpTCIServer.IsServerRunning;
                 m_tcpTCIServer.StopServer();
                 if (wasRunning) removeTCIDelegates();
             }
             if (m_tcpCATServer != null)
             {
-                Common.LogStringToPath("Before m_tcpCATServer.StopServer()", AppDataPath, "shutdown_log.txt");
+                shutdownLogStringToPath("Before m_tcpCATServer.StopServer()");
                 bool wasRunning = m_tcpCATServer.IsServerRunning;
                 m_tcpCATServer.StopServer();
                 if (wasRunning) removeTCPIPcatDelegates();
             }
 
-            Common.LogStringToPath("Before infoBar.ShutDown()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before infoBar.ShutDown()");
             if (infoBar != null)
                 infoBar.ShutDown();
 
-            Common.LogStringToPath("Before serial disable", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before serial disable");
 
             CATEnabled = false;
             //[2.10.3.1]MW0LGE not being done anywhere
@@ -27100,7 +27110,7 @@ namespace Thetis
             AriesCATEnabled = false;
             GanymedeCATEnabled = false;
 
-            Common.LogStringToPath("Before power off", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before power off");
             if (chkPower.Checked == true)  // If we're quitting without first clicking off the "Power" button            
                 chkPower.Checked = false;
 
@@ -27108,31 +27118,31 @@ namespace Thetis
 
             if (psform != null)
             {
-                Common.LogStringToPath("Before psform.CloseAmpView()", AppDataPath, "shutdown_log.txt");
+                shutdownLogStringToPath("Before psform.CloseAmpView()");
                 psform.CloseAmpView(); //[2.10.4.3]MW0LGE
-                Common.LogStringToPath("Before psform.StopPSThread()", AppDataPath, "shutdown_log.txt");
+                shutdownLogStringToPath("Before psform.StopPSThread()");
                 psform.StopPSThread();
             }
 
-            Common.LogStringToPath("Before SaveState()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before SaveState()");
             SaveState();
 
-            Common.LogStringToPath("Before MemoryList.Save()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before MemoryList.Save()");
             MemoryList.Save();
             
             if (!IsSetupFormNull)
             {
-                Common.LogStringToPath("Before SetupForm.CloseUsbBcdDevice()", AppDataPath, "shutdown_log.txt");
+                shutdownLogStringToPath("Before SetupForm.CloseUsbBcdDevice()");
                 SetupForm.CloseUsbBcdDevice();
 
-                Common.LogStringToPath("Before SetupForm.SaveNotchesToDatabase()", AppDataPath, "shutdown_log.txt");
+                shutdownLogStringToPath("Before SetupForm.SaveNotchesToDatabase()");
                 SetupForm.SaveNotchesToDatabase();
 
                 SetupForm.Owner = null;
                 SetupForm.Hide();
             }
 
-            Common.LogStringToPath("Before hides", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before hides");
             if (_frmReleaseNotes != null) _frmReleaseNotes.Hide();
             if (m_frmCWXForm != null) m_frmCWXForm.Hide();
             if (EQForm != null) EQForm.Hide();
@@ -27146,21 +27156,21 @@ namespace Thetis
 
             cmaster.Hidewb(0);
 
-            Common.LogStringToPath("Before MeterManager.Shutdown()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before MeterManager.Shutdown()");
             MeterManager.Shutdown();
 
-            Common.LogStringToPath("Before Display.ShutdownDX2D()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before Display.ShutdownDX2D()");
             m_bDisplayLoopRunning = false; // will cause the display loop to exit
             if (draw_display_thread != null && draw_display_thread.IsAlive) draw_display_thread.Join(1100); // added 1100, slightly longer than 1fps MW0LGE [2.9.0.7]
             Display.ShutdownDX2D(); // MW0LGE
 
-            Common.LogStringToPath("Before removeDelegates()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before removeDelegates()");
             //MW0LGE_21a un-register delegates
             removeDelegates();
             if (!IsSetupFormNull) SetupForm.RemoveDelegates(); // MW0LGE_22b
             //
 
-            Common.LogStringToPath("BeforeTimeOutTimerManager.StopToT()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("BeforeTimeOutTimerManager.StopToT()");
             TimeOutTimerManager.Shutdown();
 
             //MW0LGE
@@ -27168,7 +27178,7 @@ namespace Thetis
             //it is possible to crash on save and corrupt settings file
             if (!IsSetupFormNull)
             {
-                Common.LogStringToPath("Before SetupForm save", AppDataPath, "shutdown_log.txt");
+                shutdownLogStringToPath("Before SetupForm save");
 
                 SetupForm.IgnoreButtonState = true; // prevents threads from updating controls in the blocked thead caused by WaitForSaveLoad
                 Debug.Write("waiting existing save/load...");
@@ -27184,10 +27194,10 @@ namespace Thetis
                 Debug.Write("done...");
                 SetupForm.SaveOptions();
                 Debug.WriteLine("Saved!");
-                Common.LogStringToPath("Leaving SetupForm save", AppDataPath, "shutdown_log.txt");
+                shutdownLogStringToPath("Leaving SetupForm save");
             }
 
-            Common.LogStringToPath("Before forms close", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before forms close");
             if (EQForm != null) EQForm.Close();
             if (memoryForm != null) memoryForm.Close();
             if (diversityForm != null) diversityForm.Close();
@@ -27198,10 +27208,10 @@ namespace Thetis
 
             cmaster.Closewb(0);
 
-            Common.LogStringToPath("Before DumpCap.StopDumpcap()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before DumpCap.StopDumpcap()");
             DumpCap.StopDumpcap();
 
-            Common.LogStringToPath("Before SpotForm.ForceSave()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before SpotForm.ForceSave()");
             //cause spot form to save out, because it wont if currently shown, the _closing event does not fire on the form
             if (SpotForm != null && !SpotForm.IsDisposed) SpotForm.ForceSave();
 
@@ -27209,7 +27219,7 @@ namespace Thetis
             //all stored as part of DB.Exit below
             //we are shutting down, but may have moved frquency and not stored that into the current active slot, so do it now
             //so we can use it when we restart
-            Common.LogStringToPath("Before Bandstack Save", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before Bandstack Save");
             BandStackFilter bsf = BandStackManager.GetFilter(RX1Band, false);
             if (bsf != null)
             {
@@ -27221,22 +27231,38 @@ namespace Thetis
             if (m_frmBandStack2 != null) BandStack2Form.Store();  // using frm variable, as we may reach here without the singlton being instanced, and there is no point doing so
                                                                   // this happens on a DB merge etc.
 
-            Common.LogStringToPath("Before SetupForm.SaveTXProfileData()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before SetupForm.SaveTXProfileData()");
             if (!IsSetupFormNull && SaveTXProfileOnExit)    // save the tx profile
             {
                 SetupForm.SaveTXProfileData();
             }
 
-            Common.LogStringToPath("Before chkPower + ckQuickRec", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Before chkPower + ckQuickRec");
             chkPower.Checked = false;	// make sure power is off		
             ckQuickRec.Checked = false; // make sure recording is stopped
 
             this.Hide();
             //note frm shutdown close is done in dispose now
 
-            Common.LogStringToPath("Leaving Console_Closing()", AppDataPath, "shutdown_log.txt");
+            shutdownLogStringToPath("Leaving Console_Closing()");
         }
+        private void shutdownLogStringToPath(string entry)
+        {
+            if (!m_bLogShutdown || entry == "") return;
 
+            try
+            {
+                using (StreamWriter w = File.AppendText(AppDataPath + "\\shutdown_log.txt"))
+                {
+                    //using block will auto close stream
+                    w.WriteLine(entry);
+                }
+            }
+            catch
+            {
+
+            }
+        }
         private void comboPreamp_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             PreampMode mode = PreampMode.FIRST;
@@ -29984,28 +30010,10 @@ namespace Thetis
             {
                 b = BandByFreq(freq, tx_xvtr_index, true, current_region, true);
 
-                Band b1 = b; // ke9ns add
-
-                if (extended) // ke9ns add if you have extended capabilities then SWL bands are really ham bands
-                {
-                    if (Band.BLMF == b) b1 = Band.B160M;
-                    else if (Band.B120M == b) b1 = Band.B160M;
-                    else if (Band.B90M == b) b1 = Band.B80M;
-                    else if (Band.B61M == b) b1 = Band.B80M;
-                    else if (Band.B49M == b) b1 = Band.B60M;
-                    else if (Band.B41M == b) b1 = Band.B40M;
-                    else if (Band.B31M == b) b1 = Band.B30M;
-                    else if (Band.B25M == b) b1 = Band.B20M;
-                    else if (Band.B22M == b) b1 = Band.B20M;
-                    else if (Band.B19M == b) b1 = Band.B17M;
-                    else if (Band.B16M == b) b1 = Band.B17M;
-                    else if (Band.B14M == b) b1 = Band.B15M;
-                    else if (Band.B13M == b) b1 = Band.B12M;
-                    else if (Band.B11M == b) b1 = Band.B10M;
-                }
+                Band b1 = getTXBandWhenExtended(b);
 
                 if (b1 != tx_band)
-                    SetTXBand(b1);
+                    SetTXBand(b1, b != b1);
             }
 
             Band lo_band = Band.FIRST;
@@ -30277,6 +30285,30 @@ namespace Thetis
                     oldCentreFreq, CentreFrequency, oldCtun, ClickTuneDisplay, oldZoomSlider, ptbDisplayZoom.Value, radio.GetDSPRX(0, 0).RXOsc, 1);
         }
 
+        private Band getTXBandWhenExtended(Band b)
+        {
+            if (!extended) return b;
+
+            Band b1 = b;
+
+            if (Band.BLMF == b) b1 = Band.B160M;
+            else if (Band.B120M == b) b1 = Band.B160M;
+            else if (Band.B90M == b) b1 = Band.B80M;
+            else if (Band.B61M == b) b1 = Band.B80M;
+            else if (Band.B49M == b) b1 = Band.B60M;
+            else if (Band.B41M == b) b1 = Band.B40M;
+            else if (Band.B31M == b) b1 = Band.B30M;
+            else if (Band.B25M == b) b1 = Band.B20M;
+            else if (Band.B22M == b) b1 = Band.B20M;
+            else if (Band.B19M == b) b1 = Band.B17M;
+            else if (Band.B16M == b) b1 = Band.B17M;
+            else if (Band.B14M == b) b1 = Band.B15M;
+            else if (Band.B13M == b) b1 = Band.B12M;
+            else if (Band.B11M == b) b1 = Band.B10M;
+
+            return b1;
+        }
+
         private void txtVFOAFreq_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
             string separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
@@ -30439,27 +30471,10 @@ namespace Thetis
                 Band old_tx_band = tx_band;
                 Band b = BandByFreq(freq, tx_xvtr_index, true, current_region, true);
 
-                Band b1 = b; // ke9ns add
-                if (extended) // ke9ns add if you have extended capabilities then SWL bands are really ham bands
-                {
-                    if (Band.BLMF == b) b1 = Band.B160M;
-                    else if (Band.B120M == b) b1 = Band.B160M;
-                    else if (Band.B90M == b) b1 = Band.B80M;
-                    else if (Band.B61M == b) b1 = Band.B80M;
-                    else if (Band.B49M == b) b1 = Band.B60M;
-                    else if (Band.B41M == b) b1 = Band.B40M;
-                    else if (Band.B31M == b) b1 = Band.B30M;
-                    else if (Band.B25M == b) b1 = Band.B20M;
-                    else if (Band.B22M == b) b1 = Band.B20M;
-                    else if (Band.B19M == b) b1 = Band.B17M;
-                    else if (Band.B16M == b) b1 = Band.B17M;
-                    else if (Band.B14M == b) b1 = Band.B15M;
-                    else if (Band.B13M == b) b1 = Band.B12M;
-                    else if (Band.B11M == b) b1 = Band.B10M;
-                }
+                Band b1 = getTXBandWhenExtended(b);
 
                 if (chkVFOSplit.Checked && old_tx_band != b1)
-                    SetTXBand(b1); // ke9ns mod b1
+                    SetTXBand(b1, b != b1); // ke9ns mod b1
 
                 //tx
                 if (last_tx_xvtr_index != tx_xvtr_index)
@@ -30945,26 +30960,10 @@ namespace Thetis
             Band old_tx_band = tx_band;
             Band b = BandByFreq(tx_freq, tx_xvtr_index, true, current_region, false);
 
-            Band b1 = b;
-            if (extended) // if you have extended capabilities then SWL bands are really ham bands
-            {
-                if (Band.BLMF == b) b1 = Band.B160M;
-                else if (Band.B120M == b) b1 = Band.B160M;
-                else if (Band.B90M == b) b1 = Band.B80M;
-                else if (Band.B61M == b) b1 = Band.B80M;
-                else if (Band.B49M == b) b1 = Band.B60M;
-                else if (Band.B41M == b) b1 = Band.B40M;
-                else if (Band.B31M == b) b1 = Band.B30M;
-                else if (Band.B25M == b) b1 = Band.B20M;
-                else if (Band.B22M == b) b1 = Band.B20M;
-                else if (Band.B19M == b) b1 = Band.B17M;
-                else if (Band.B16M == b) b1 = Band.B17M;
-                else if (Band.B14M == b) b1 = Band.B15M;
-                else if (Band.B13M == b) b1 = Band.B12M;
-                else if (Band.B11M == b) b1 = Band.B10M;
-            }
+            Band b1 = getTXBandWhenExtended(b);
+
             if (old_tx_band != b1)
-                SetTXBand(b1); // ke9ns mod b1
+                SetTXBand(b1, b != b1); // ke9ns mod b1
 
             if (tx_xvtr_index >= 0)
             {
@@ -31576,7 +31575,37 @@ namespace Thetis
 
             return (dspMode == DSPMode.AM || dspMode == DSPMode.DSB || dspMode == DSPMode.FM || dspMode == DSPMode.SAM || dspMode == DSPMode.SPEC || dspMode == DSPMode.DRM);
         }
-
+        private float agcCalOffset(int rx)
+        {
+            float agc_cal_offset;
+            if (rx == 1)
+            {
+                switch (RX1AGCMode)
+                {
+                    case AGCMode.FIXD:
+                        agc_cal_offset = 0.0f;
+                        break;
+                    default:
+                        agc_cal_offset = 2.0f + (Display.RX1DisplayCalOffset +
+                            (Display.RX1PreampOffset - Display.AlexPreampOffset) - Display.RX1FFTSizeOffset);
+                        break;
+                }
+            }
+            else //rx == 2
+            {
+                switch (RX2AGCMode)
+                {
+                    case AGCMode.FIXD:
+                        agc_cal_offset = 0.0f;
+                        break;
+                    default:
+                        agc_cal_offset = 2.0f + (Display.RX2DisplayCalOffset +
+                            (Display.RX2PreampOffset - Display.AlexPreampOffset) - Display.RX2FFTSizeOffset); //MW0LGE_21k5 change to rx2
+                        break;
+                }
+            }
+            return agc_cal_offset;
+        }
         unsafe private void picDisplay_MouseMove(object sender, MouseEventArgs e)
         {
             try
@@ -32141,31 +32170,9 @@ namespace Thetis
                             case DisplayMode.PANADAPTER:
                                 float cal_offset = 0.0f;
                                 if (rx2_enabled && e.Y > picDisplay.Height / 2)
-                                {
-                                    switch (RX2AGCMode)
-                                    {
-                                        case AGCMode.FIXD:
-                                            cal_offset = 0.0f;
-                                            break;
-                                        default:
-                                            cal_offset = 2.0f + (Display.RX2DisplayCalOffset +
-                                                (Display.RX2PreampOffset - Display.AlexPreampOffset) - Display.RX2FFTSizeOffset); //MW0LGE_21k5 change to rx2
-                                            break;
-                                    }
-                                }
+                                    cal_offset = agcCalOffset(2);
                                 else
-                                {
-                                    switch (RX1AGCMode)
-                                    {
-                                        case AGCMode.FIXD:
-                                            cal_offset = 0.0f;
-                                            break;
-                                        default:
-                                            cal_offset = 2.0f + (Display.RX1DisplayCalOffset +
-                                                (Display.RX1PreampOffset - Display.AlexPreampOffset) - Display.RX1FFTSizeOffset);
-                                            break;
-                                    }
-                                }
+                                    cal_offset = agcCalOffset(1);
 
                                 if (!_mox)
                                 {
@@ -32239,7 +32246,7 @@ namespace Thetis
                                         double agc_thresh_point = (double)PixelToDb(e.Y + 4);
                                         agc_thresh_point -= (double)cal_offset;
                                         if (agc_thresh_point > 2) agc_thresh_point = 2;
-                                        if (agc_thresh_point < -143.0) agc_thresh_point = -143.0;
+                                        if (agc_thresh_point < -160.0) agc_thresh_point = -160.0; //[2.10.3.6]MW0LGE changed from -143
 
                                         double agc_top = 0.0;
 
@@ -45704,38 +45711,39 @@ namespace Thetis
             float cal_offset = 0.0f;
 
             // MW0LGE_21k9d values are already offset as part of Display
-            if (rx == 1)
-            {
-                switch (RX1AGCMode)
-                {
-                    case AGCMode.FIXD:
-                        cal_offset = 0.0f;
-                        break;
-                    default:
-                        cal_offset = 2.0f + (Display.RX1DisplayCalOffset +
-                            (Display.RX1PreampOffset - Display.AlexPreampOffset) + Display.RX1FFTSizeOffset); // note change in the sign for sizeoffset
-                        break;
-                }
-            }
-            else
-            {
-                switch (RX2AGCMode)
-                {
-                    case AGCMode.FIXD:
-                        cal_offset = 0.0f;
-                        break;
-                    default:
-                        cal_offset = 2.0f + (Display.RX2DisplayCalOffset +
-                            (Display.RX2PreampOffset - Display.AlexPreampOffset) + Display.RX2FFTSizeOffset);
-                        break;
-                }
-            }
+            cal_offset = agcCalOffset(rx);
+
+            //if (rx == 1)
+            //{
+            //    switch (RX1AGCMode)
+            //    {
+            //        case AGCMode.FIXD:
+            //            cal_offset = 0.0f;
+            //            break;
+            //        default:
+            //            cal_offset = 2.0f + (Display.RX1DisplayCalOffset +
+            //                (Display.RX1PreampOffset - Display.AlexPreampOffset) + Display.RX1FFTSizeOffset); // note change in the sign for sizeoffset
+            //            break;
+            //    }
+            //}
+            //else
+            //{
+            //    switch (RX2AGCMode)
+            //    {
+            //        case AGCMode.FIXD:
+            //            cal_offset = 0.0f;
+            //            break;
+            //        default:
+            //            cal_offset = 2.0f + (Display.RX2DisplayCalOffset +
+            //                (Display.RX2PreampOffset - Display.AlexPreampOffset) + Display.RX2FFTSizeOffset);
+            //            break;
+            //    }
+            //}
 
             // offset applied before being called
             agc_thresh_point -= (double)cal_offset;
             if (agc_thresh_point > 2) agc_thresh_point = 2;
-
-            if (agc_thresh_point < -200.0) agc_thresh_point = -200.0;
+            if (agc_thresh_point < -160.0) agc_thresh_point = -160.0;
 
             double agc_top = 0.0;
             double size;
@@ -47619,6 +47627,82 @@ namespace Thetis
         {
             if (m_statusBarToolTip != null)
                 m_statusBarToolTip.Hide(statusStripMain);
+        }
+
+        #region -help text
+        [DllImport("kernel32.dll")]
+        private static extern bool AttachConsole(int dwProcessId);
+        //[DllImport("kernel32.dll")]
+        //private static extern bool AllocConsole();
+        [DllImport("kernel32.dll")]
+        private static extern bool FreeConsole();
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr GetConsoleWindow();
+        [DllImport("kernel32.dll")]
+        private static extern bool GenerateConsoleCtrlEvent(int dwCtrlEvent, int dwProcessGroupId);
+        [DllImport("user32.dll")]
+        private static extern int SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        //private const int WM_KEYDOWN = 0x0100;
+        //private const int WM_KEYUP = 0x0101;
+        //private const int WM_CHAR = 0x0102;
+        //private const int VK_ENTER = 0x0D;
+        private const int ATTACH_PARENT_PROCESS = -1;
+
+        private void showHelpInfo()
+        {
+            //from https://community.apache-labs.com/viewtopic.php?f=9&t=4047
+
+            bool bOk = AttachConsole(ATTACH_PARENT_PROCESS);
+
+            if (bOk)
+            {
+                string s = "\nThetis command line help :\n\n";
+
+                s += "  -help   this help\n";
+                s += "  -logshutdown    generate shutdown_log.txt when closing down\n";
+                s += "  -autostart      attempt to power on radio at start up\n\n";
+
+                s += "  -datapath:c:\\thetisdatafolder\\    use this data folder for everything\n";
+                s += "  -datapath:c:\\thetisdatafolder\\ -autostart     as above, with autostart\n";
+                s += "  \"-datapath:c:\\test with spaces\\\"   use this data folder for everything, but with spaces in the path\n";
+                s += "  \"-datapath:c:\\test with spaces\\\" -autostart   as above, with autostart\n\n";
+
+                s += "  -dbfilename:c:\\folder\\database.xml    use this database instead\n";
+                s += "  \"-dbfilename:c:\\folder\\database.xml\"    use this database instead, but with spaces in the path\n";
+
+                //System.Console.Write(s);
+                using (Stream st = System.Console.OpenStandardOutput())
+                {
+                    StreamWriter sw = new StreamWriter(st);
+                    sw.AutoFlush = true;
+                    sw.Write(s);
+                    sw.Close();
+                }
+
+                //the following does not seem to work, needs investigating.
+                //cw does obtain the attached console window, tested with beep
+                //unsure how to resolve this atm
+
+                //// hack to fix problem where enter needs to be hit to return cmd prompt
+                //IntPtr cw = GetConsoleWindow();
+                //if (cw != IntPtr.Zero)
+                //{
+                //    SendMessage(cw, WM_KEYDOWN, (IntPtr)VK_ENTER, IntPtr.Zero);
+                //    SendMessage(cw, WM_KEYUP, (IntPtr)VK_ENTER, IntPtr.Zero);
+                //    SendMessage(cw, WM_CHAR, (IntPtr)VK_ENTER, IntPtr.Zero);
+                //}
+
+                FreeConsole();
+            }
+        }
+        #endregion
+
+        private bool hasArg(string[] args, string arg)
+        {
+            if (args == null || args.Length < 1 || string.IsNullOrEmpty(arg)) return false;
+
+            return args[0].Contains(arg, StringComparison.OrdinalIgnoreCase);
         }
     }
 
