@@ -307,23 +307,41 @@ typedef struct _rbpfilter2 // radio band pass filter
 	{
 		unsigned bpfilter;
 		struct {
-			unsigned char  _rx_yellow_led : 1, // bit 
-			               _13MHz_HPF     : 1, // bit 
-			               _20MHz_HPF     : 1, // bit 
-			               _6M_preamp     : 1, // bit 
-			               _9_5MHz_HPF    : 1, // bit 
-			               _6_5MHz_HPF    : 1, // bit 
-			               _1_5MHz_HPF    : 1, // bit 
-			                              : 1, // bit 
+			unsigned char  _rx_yellow_led : 1, // bit 00
+			               _13MHz_HPF     : 1, // bit 01
+			               _20MHz_HPF     : 1, // bit 02
+			               _6M_preamp     : 1, // bit 03
+			               _9_5MHz_HPF    : 1, // bit 04
+			               _6_5MHz_HPF    : 1, // bit 05
+			               _1_5MHz_HPF    : 1, // bit 06
+			                              : 1, // bit 07
 
-			               _rx2_gnd       : 1, // bit 		
-			                              : 1, // bit 	
-			                              : 1, // bit 
-			                              : 1, // bit 
-			               _Bypass        : 1, // bit 
-			                              : 1, // bit 
-			                              : 1, // bit 
-			               _rx_red_led    : 1; // bit 
+			               _rx2_gnd       : 1, // bit 08	
+			                              : 1, // bit 09
+			                              : 1, // bit 10
+			                              : 1, // bit 11
+			               _Bypass        : 1, // bit 12
+			                              : 1, // bit 13
+			                              : 1, // bit 14
+			               _rx_red_led    : 1, // bit 15
+
+			                              : 1, // bit 16
+			                              : 1, // bit 17
+			               _trx_status    : 1, // bit 18
+			               _tx_yellow_led : 1, // bit 19
+			               _30_20_LPF     : 1, // bit 20
+			               _60_40_LPF     : 1, // bit 21
+			               _80_LPF        : 1, // bit 22
+			               _160_LPF       : 1, // bit 23
+
+			               _TXANT_1       : 1, // bit 24
+			               _TXANT_2       : 1, // bit 25
+			               _TXANT_3       : 1, // bit 26
+			               _TR_Relay      : 1, // bit 27
+			               _tx_red_led    : 1, // bit 28
+			               _6_LPF         : 1, // bit 29
+			               _12_10_LPF     : 1, // bit 30
+			               _17_15_LPF     : 1; // bit 31
 		};
 	};
 }rbpfilter2, *RBPFILTER2;
