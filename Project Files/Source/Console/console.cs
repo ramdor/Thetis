@@ -5820,9 +5820,9 @@ namespace Thetis
             }
         }
 
-        private void SetTXBand(Band b)
+        private void SetTXBand(Band b, bool bIngoreBandChange = false)
         {
-            if (disable_split_on_bandchange)
+            if (!bIngoreBandChange && disable_split_on_bandchange) //[2.10.3.6]MW0LGE might need to ignore this is we are using extended and band is moved to a hamband
             {
                 if (TXBand != b && !tuning)
                 {
@@ -5835,7 +5835,6 @@ namespace Thetis
             TXBand = b;
             if (old_band != b)
                 UpdateBandButtonColors();
-
         }
 
         private float GainByBand(Band b, int nDriveValue)
@@ -30011,28 +30010,10 @@ namespace Thetis
             {
                 b = BandByFreq(freq, tx_xvtr_index, true, current_region, true);
 
-                Band b1 = b; // ke9ns add
-
-                if (extended) // ke9ns add if you have extended capabilities then SWL bands are really ham bands
-                {
-                    if (Band.BLMF == b) b1 = Band.B160M;
-                    else if (Band.B120M == b) b1 = Band.B160M;
-                    else if (Band.B90M == b) b1 = Band.B80M;
-                    else if (Band.B61M == b) b1 = Band.B80M;
-                    else if (Band.B49M == b) b1 = Band.B60M;
-                    else if (Band.B41M == b) b1 = Band.B40M;
-                    else if (Band.B31M == b) b1 = Band.B30M;
-                    else if (Band.B25M == b) b1 = Band.B20M;
-                    else if (Band.B22M == b) b1 = Band.B20M;
-                    else if (Band.B19M == b) b1 = Band.B17M;
-                    else if (Band.B16M == b) b1 = Band.B17M;
-                    else if (Band.B14M == b) b1 = Band.B15M;
-                    else if (Band.B13M == b) b1 = Band.B12M;
-                    else if (Band.B11M == b) b1 = Band.B10M;
-                }
+                Band b1 = getTXBandWhenExtended(b);
 
                 if (b1 != tx_band)
-                    SetTXBand(b1);
+                    SetTXBand(b1, b != b1);
             }
 
             Band lo_band = Band.FIRST;
@@ -30304,6 +30285,30 @@ namespace Thetis
                     oldCentreFreq, CentreFrequency, oldCtun, ClickTuneDisplay, oldZoomSlider, ptbDisplayZoom.Value, radio.GetDSPRX(0, 0).RXOsc, 1);
         }
 
+        private Band getTXBandWhenExtended(Band b)
+        {
+            if (!extended) return b;
+
+            Band b1 = b;
+
+            if (Band.BLMF == b) b1 = Band.B160M;
+            else if (Band.B120M == b) b1 = Band.B160M;
+            else if (Band.B90M == b) b1 = Band.B80M;
+            else if (Band.B61M == b) b1 = Band.B80M;
+            else if (Band.B49M == b) b1 = Band.B60M;
+            else if (Band.B41M == b) b1 = Band.B40M;
+            else if (Band.B31M == b) b1 = Band.B30M;
+            else if (Band.B25M == b) b1 = Band.B20M;
+            else if (Band.B22M == b) b1 = Band.B20M;
+            else if (Band.B19M == b) b1 = Band.B17M;
+            else if (Band.B16M == b) b1 = Band.B17M;
+            else if (Band.B14M == b) b1 = Band.B15M;
+            else if (Band.B13M == b) b1 = Band.B12M;
+            else if (Band.B11M == b) b1 = Band.B10M;
+
+            return b1;
+        }
+
         private void txtVFOAFreq_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
             string separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
@@ -30466,27 +30471,10 @@ namespace Thetis
                 Band old_tx_band = tx_band;
                 Band b = BandByFreq(freq, tx_xvtr_index, true, current_region, true);
 
-                Band b1 = b; // ke9ns add
-                if (extended) // ke9ns add if you have extended capabilities then SWL bands are really ham bands
-                {
-                    if (Band.BLMF == b) b1 = Band.B160M;
-                    else if (Band.B120M == b) b1 = Band.B160M;
-                    else if (Band.B90M == b) b1 = Band.B80M;
-                    else if (Band.B61M == b) b1 = Band.B80M;
-                    else if (Band.B49M == b) b1 = Band.B60M;
-                    else if (Band.B41M == b) b1 = Band.B40M;
-                    else if (Band.B31M == b) b1 = Band.B30M;
-                    else if (Band.B25M == b) b1 = Band.B20M;
-                    else if (Band.B22M == b) b1 = Band.B20M;
-                    else if (Band.B19M == b) b1 = Band.B17M;
-                    else if (Band.B16M == b) b1 = Band.B17M;
-                    else if (Band.B14M == b) b1 = Band.B15M;
-                    else if (Band.B13M == b) b1 = Band.B12M;
-                    else if (Band.B11M == b) b1 = Band.B10M;
-                }
+                Band b1 = getTXBandWhenExtended(b);
 
                 if (chkVFOSplit.Checked && old_tx_band != b1)
-                    SetTXBand(b1); // ke9ns mod b1
+                    SetTXBand(b1, b != b1); // ke9ns mod b1
 
                 //tx
                 if (last_tx_xvtr_index != tx_xvtr_index)
@@ -30972,26 +30960,10 @@ namespace Thetis
             Band old_tx_band = tx_band;
             Band b = BandByFreq(tx_freq, tx_xvtr_index, true, current_region, false);
 
-            Band b1 = b;
-            if (extended) // if you have extended capabilities then SWL bands are really ham bands
-            {
-                if (Band.BLMF == b) b1 = Band.B160M;
-                else if (Band.B120M == b) b1 = Band.B160M;
-                else if (Band.B90M == b) b1 = Band.B80M;
-                else if (Band.B61M == b) b1 = Band.B80M;
-                else if (Band.B49M == b) b1 = Band.B60M;
-                else if (Band.B41M == b) b1 = Band.B40M;
-                else if (Band.B31M == b) b1 = Band.B30M;
-                else if (Band.B25M == b) b1 = Band.B20M;
-                else if (Band.B22M == b) b1 = Band.B20M;
-                else if (Band.B19M == b) b1 = Band.B17M;
-                else if (Band.B16M == b) b1 = Band.B17M;
-                else if (Band.B14M == b) b1 = Band.B15M;
-                else if (Band.B13M == b) b1 = Band.B12M;
-                else if (Band.B11M == b) b1 = Band.B10M;
-            }
+            Band b1 = getTXBandWhenExtended(b);
+
             if (old_tx_band != b1)
-                SetTXBand(b1); // ke9ns mod b1
+                SetTXBand(b1, b != b1); // ke9ns mod b1
 
             if (tx_xvtr_index >= 0)
             {
