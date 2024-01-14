@@ -121,7 +121,7 @@ PORT void xvacIN(int id, double* in_tx, int bypass)
 		{
 			xrmatchOUT (a->rmatchIN, in_tx);
 			if (a->vac_combine_input)
-				combinebuff(a->mic_size, in_tx, in_tx);
+				combinebuff(a->mic_size, in_tx, in_tx, 3);
 			scalebuff(a->mic_size, in_tx, a->vac_preamp, in_tx);
 		}
 		else

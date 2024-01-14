@@ -1079,7 +1079,7 @@ void SetCWX(int bit)
 	if (prn->tx[0].cwx != bit) 
 	{
 		prn->tx[0].cwx = bit;
-		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0) //[2.10.3]MW0LGE considers high priority
+		if (listenSock != INVALID_SOCKET) //[2.10.3.6]MW0LGE high priority always
 			CmdHighPriority();
 	}
 }

@@ -35467,6 +35467,7 @@
             this.udRX2AutoAGCOffset.Size = new System.Drawing.Size(40, 20);
             this.udRX2AutoAGCOffset.TabIndex = 133;
             this.udRX2AutoAGCOffset.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udRX2AutoAGCOffset, "dB shift from noise floor");
             this.udRX2AutoAGCOffset.Value = new decimal(new int[] {
             20,
             0,
@@ -35507,6 +35508,7 @@
             this.udRX1AutoAGCOffset.Size = new System.Drawing.Size(40, 20);
             this.udRX1AutoAGCOffset.TabIndex = 130;
             this.udRX1AutoAGCOffset.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udRX1AutoAGCOffset, "dB shift from noise floor");
             this.udRX1AutoAGCOffset.Value = new decimal(new int[] {
             20,
             0,

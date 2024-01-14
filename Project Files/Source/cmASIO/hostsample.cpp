@@ -504,7 +504,7 @@ ASIOError create_asio_buffers (DriverInfo *asioDriverInfo)
 }
 
 
-	void unloadASIO()
+void unloadASIO()
 {
 	int a =	ASIODisposeBuffers();
 	int b =	ASIOExit();
@@ -515,25 +515,25 @@ ASIOError create_asio_buffers (DriverInfo *asioDriverInfo)
 }
 
 
-	long getASIODriverString(void* szData)
-	{
-		const HKEY hKeyPath = HKEY_LOCAL_MACHINE;
-		const LPCSTR subKey = "SOFTWARE\\OpenHPSDR\\Thetis-x64";
-		const LPCSTR valueName = "ASIOdrivername";
+long getASIODriverString(void* szData)
+{
+	const HKEY hKeyPath = HKEY_LOCAL_MACHINE;
+	const LPCSTR subKey = "SOFTWARE\\OpenHPSDR\\Thetis-x64";
+	const LPCSTR valueName = "ASIOdrivername";
 
-		DWORD szDataSize = 32;  //length of ASIO driver names are limited to 32 bytes, including the zero terminator
+	DWORD szDataSize = 32;  //length of ASIO driver names are limited to 32 bytes, including the zero terminator
 
-		LSTATUS status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_SZ | RRF_SUBKEY_WOW6464KEY, NULL, szData, &szDataSize);
-		char buf[128];
-		sprintf_s(buf, 128, "RegGetValue(sz) status = %d", status);
-		OutputDebugStringA(buf);
-		if (*(char*)szData == 0) status = ERROR_FILE_NOT_FOUND;  //so if the string in the reg key value is empty, we don't try to open an ASIO driver
+	LSTATUS status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_SZ | RRF_SUBKEY_WOW6464KEY, NULL, szData, &szDataSize);
+	char buf[128];
+	sprintf_s(buf, 128, "RegGetValue(sz) status = %d", status);
+	OutputDebugStringA(buf);
+	if (*(char*)szData == 0) status = ERROR_FILE_NOT_FOUND;  //so if the string in the reg key value is empty, we don't try to open an ASIO driver
 
-		return status;
-	}
+	return status;
+}
 
 
-	long getASIOBlockNum(void* dwData)
+long getASIOBlockNum(void* dwData)
 {
 	const HKEY hKeyPath = HKEY_LOCAL_MACHINE;
 	const LPCSTR subKey = "SOFTWARE\\OpenHPSDR\\Thetis-x64";
@@ -549,8 +549,7 @@ ASIOError create_asio_buffers (DriverInfo *asioDriverInfo)
 	return status;
 }
 
-
-	long asioStart()
+long asioStart()
 {
 	char buf[128];
 	long result = ASIOStart();
@@ -567,7 +566,7 @@ ASIOError create_asio_buffers (DriverInfo *asioDriverInfo)
 }
 
 
-	long asioStop()
+long asioStop()
 {
 	char buf[128];
 	long result = ASIOStop();
