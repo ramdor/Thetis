@@ -1580,6 +1580,7 @@ void UpdateRadioProtocolSampleSize()
 }
 
 // set CAT over TCP port for remote communication with protocol client apps
+PORT
 void SetCATPort(int port)
 {
 	prn->CATPort = port;    // LR-samples per packet
