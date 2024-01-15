@@ -1112,7 +1112,7 @@ namespace Thetis
 
                 //[2.10.3.5]MW0LGE setup all status icon items
                 addStatusStripToolTipHandlers(); // improves #354
-                UpdateStatusBarStatusIcons();
+                UpdateStatusBarStatusIcons(StatusBarIconGroup.All);
 
                 //display render thread
 #if SNOWFALL
@@ -2209,7 +2209,7 @@ namespace Thetis
                     removeTCPIPcatDelegates();
                 }
             }
-            UpdateStatusBarStatusIcons(3);
+            UpdateStatusBarStatusIcons(StatusBarIconGroup.TCPIPCat);
         }
 
         //TCI
@@ -2389,7 +2389,7 @@ namespace Thetis
                     removeTCIDelegates();
                 }
             }
-            UpdateStatusBarStatusIcons(5);
+            UpdateStatusBarStatusIcons(StatusBarIconGroup.TCI);
         }
         //
 
@@ -47547,24 +47547,23 @@ namespace Thetis
             toolStripStatusLabel_CatSerial.ToolTipText = sToolTip;
             toolStripStatusLabel_CatSerial.Visible = true;
         }
-
-        public void UpdateStatusBarStatusIcons(int nGroup = 0)
+        public void UpdateStatusBarStatusIcons(StatusBarIconGroup iconGroup)
         {
             // 0 = all
 
-            if(nGroup == 0 || nGroup == 1) //cmasio
+            if(iconGroup == StatusBarIconGroup.All || iconGroup == StatusBarIconGroup.CMAsio) //cmasio
                 setupCMasioStatusBar();
 
-            if(nGroup == 0 || nGroup == 2) //n1mm
+            if(iconGroup == StatusBarIconGroup.All || iconGroup == StatusBarIconGroup.N1MM) //n1mm
                 toolStripStatusLabel_N1MM.Visible = N1MM.IsStarted && (N1MM.IsEnabled(1) || N1MM.IsEnabled(2));
 
-            if (nGroup == 0 || nGroup == 3) //tcp/ip cat
+            if (iconGroup == StatusBarIconGroup.All || iconGroup == StatusBarIconGroup.TCPIPCat) //tcp/ip cat
                 toolStripStatusLabel_CatTCPip.Visible = m_tcpCATServer != null ? m_tcpCATServer.IsServerRunning : false;
 
-            if (nGroup == 0 || nGroup == 4) //serial cat
+            if (iconGroup == StatusBarIconGroup.All || iconGroup == StatusBarIconGroup.SerialCat) //serial cat
                 setupSerialCatStatusBar();
 
-            if (nGroup == 0 || nGroup == 5) //tci
+            if (iconGroup == StatusBarIconGroup.All || iconGroup == StatusBarIconGroup.TCI) //tci
                 toolStripStatusLabel_TCI.Visible = m_tcpTCIServer != null ? m_tcpTCIServer.IsServerRunning : false;
         }
 
@@ -47636,12 +47635,12 @@ namespace Thetis
         //private static extern bool AllocConsole();
         [DllImport("kernel32.dll")]
         private static extern bool FreeConsole();
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr GetConsoleWindow();
-        [DllImport("kernel32.dll")]
-        private static extern bool GenerateConsoleCtrlEvent(int dwCtrlEvent, int dwProcessGroupId);
-        [DllImport("user32.dll")]
-        private static extern int SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+        //[DllImport("kernel32.dll")]
+        //private static extern IntPtr GetConsoleWindow();
+        //[DllImport("kernel32.dll")]
+        //private static extern bool GenerateConsoleCtrlEvent(int dwCtrlEvent, int dwProcessGroupId);
+        //[DllImport("user32.dll")]
+        //private static extern int SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         //private const int WM_KEYDOWN = 0x0100;
         //private const int WM_KEYUP = 0x0101;

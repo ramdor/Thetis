@@ -10,6 +10,8 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 ## v2.10.3.6 Change Log - WIP dev
 - [add] -help command line option
 - [fix] vac mic audio source can now be recorded
+- [fix] disable split when operating extended and out of a ham band will no longer disable split
+- [fix] output power on ANT ports configured as RX only should be resolved. Requires an update to your firmware
 - [change] the dB shift setting for AGC auto noise floor compensation is now a true shift from NF. You will probably need to tweak your previous setting
 - [change] the shutdown log is defaulted off. Use command line param -logshutdown to cause Thetis to create a shutdown_log.txt file if you are having shutdown issues which can then be sent in for analysis
 

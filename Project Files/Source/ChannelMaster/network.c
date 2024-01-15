@@ -789,7 +789,7 @@ void CmdHighPriority() { // port 1027
 
 	// Enable transverter T/R relay 8   Mute Audio Amp bit 1 from J16 pin 9 IO4---DLE
 	//packetbuf[1400] = xvtr_enable | ((!(prn->user_dig_in & 0x01)) << 1 | atu_tune << 2);
-	packetbuf[1400] = xvtr_enable | (!audioamp_enable) << 1 | atu_tune << 2; //MW0LGE_22b  // user_dig_in was gettin overritten by 1025 packet read
+	packetbuf[1400] = xvtr_enable | (!audioamp_enable) << 1 | atu_tune << 2; //MW0LGE_22b  // user_dig_in was gettin overwritten by 1025 packet read
 
 	// Open Collector Outputs
 	packetbuf[1401] = (prn->oc_output << 1) & 0xfe;

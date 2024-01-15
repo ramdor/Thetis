@@ -9710,7 +9710,7 @@ namespace Thetis
                 console.CATEnabled = false;
             }
 
-            console.UpdateStatusBarStatusIcons(4);
+            console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
 
         private void chkCAT2Enable_CheckedChanged(object sender, System.EventArgs e)
@@ -9766,7 +9766,7 @@ namespace Thetis
                 console.CAT2Enabled = false;
             }
 
-            console.UpdateStatusBarStatusIcons(4);
+            console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
 
         private void chkCAT3Enable_CheckedChanged(object sender, System.EventArgs e)
@@ -9822,7 +9822,7 @@ namespace Thetis
                 console.CAT3Enabled = false;
             }
 
-            console.UpdateStatusBarStatusIcons(4);
+            console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
 
         private void chkCAT4Enable_CheckedChanged(object sender, System.EventArgs e)
@@ -9878,7 +9878,7 @@ namespace Thetis
                 console.CAT4Enabled = false;
             }
 
-            console.UpdateStatusBarStatusIcons(4);
+            console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
 
         private void ChkEnableAndromeda_CheckedChanged(object sender, EventArgs e)
@@ -10111,7 +10111,7 @@ namespace Thetis
             if (comboCATPort.Text.StartsWith("COM"))
                 console.CATPort = Int32.Parse(comboCATPort.Text.Substring(3));
 
-            console.UpdateStatusBarStatusIcons(4);
+            console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
 
         private void comboCAT2Port_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -10131,7 +10131,7 @@ namespace Thetis
             if (comboCAT2Port.Text.StartsWith("COM"))
                 console.CAT2Port = Int32.Parse(comboCAT2Port.Text.Substring(3));
 
-            console.UpdateStatusBarStatusIcons(4);
+            console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
 
         private void comboCAT3Port_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -10151,7 +10151,7 @@ namespace Thetis
             if (comboCAT3Port.Text.StartsWith("COM"))
                 console.CAT3Port = Int32.Parse(comboCAT3Port.Text.Substring(3));
 
-            console.UpdateStatusBarStatusIcons(4);
+            console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
 
         private void comboCAT4Port_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -10171,7 +10171,7 @@ namespace Thetis
             if (comboCAT4Port.Text.StartsWith("COM"))
                 console.CAT4Port = Int32.Parse(comboCAT4Port.Text.Substring(3));
 
-            console.UpdateStatusBarStatusIcons(4);
+            console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
 
         private void ComboAndromedaCATPort_SelectedIndexChanged(object sender, EventArgs e)
@@ -19958,7 +19958,7 @@ namespace Thetis
 
             stopStartN1MMSpectrum();
 
-            console.UpdateStatusBarStatusIcons(2);
+            console.UpdateStatusBarStatusIcons(StatusBarIconGroup.N1MM);
         }
 
         private void stopStartN1MMSpectrum()
@@ -19983,7 +19983,7 @@ namespace Thetis
 
             stopStartN1MMSpectrum();
 
-            console.UpdateStatusBarStatusIcons(2);
+            console.UpdateStatusBarStatusIcons(StatusBarIconGroup.N1MM);
         }
 
         private void txtN1MMSendTo_TextChanged(object sender, EventArgs e)

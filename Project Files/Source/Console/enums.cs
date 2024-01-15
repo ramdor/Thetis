@@ -433,5 +433,15 @@
         SQL = 1,
         VSQL = 2
     }
+
+    public enum StatusBarIconGroup
+    {
+        All = 0,
+        CMAsio,
+        N1MM,
+        TCPIPCat,
+        SerialCat,
+        TCI
+    }
     #endregion
 }
