@@ -1365,6 +1365,7 @@ void create_rnet()
 		prn->wb_update_rate = 70;
 		prn->wb_packets_per_frame = 32;
 		prn->lr_audio_swap = 0;
+		prn->CATPort = 0;
 		for (i = 0; i < MAX_ADC; i++) {
 			prn->adc[i].id = i;
 			prn->adc[i].rx_step_attn = 0;
@@ -1576,4 +1577,13 @@ void UpdateRadioProtocolSampleSize()
 
 	create_obbuffs(0, 1, 2048, prn->audio[0].spp);	// rx audio - last parameter is number of samples per packet
 	create_obbuffs(1, 1, 2048, prn->tx[0].spp);    // tx mic audio
+}
+
+// set CAT over TCP port for remote communication with protocol client apps
+void SetCATPort(int port)
+{
+	prn->CATPort = port;    // LR-samples per packet
+	if (listenSock != INVALID_SOCKET)
+		CmdHighPriority();
+
 }

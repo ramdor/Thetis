@@ -787,6 +787,10 @@ void CmdHighPriority() { // port 1027
 	// TX0 drive level
 	packetbuf[345] = prn->tx[0].drive_level;
 
+	// CAT over TCP/IP port
+	packetbuf[1398] = (prn->CATPort >> 8) & 0xff;		// top 16 bits
+	packetbuf[1399] = (prn->CATPort) & 0xff;			// bittom 16 bits
+
 	// Enable transverter T/R relay 8   Mute Audio Amp bit 1 from J16 pin 9 IO4---DLE
 	//packetbuf[1400] = xvtr_enable | ((!(prn->user_dig_in & 0x01)) << 1 | atu_tune << 2);
 	packetbuf[1400] = xvtr_enable | (!audioamp_enable) << 1 | atu_tune << 2; //MW0LGE_22b  // user_dig_in was gettin overritten by 1025 packet read
