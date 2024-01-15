@@ -117,6 +117,9 @@ typedef struct CACHE_ALIGN _radionet
 	// L & R audio swap for certain models; fixes firmware bugs
 	int lr_audio_swap;
 
+	// CAT over TCP/IP port
+	int CATPort;
+
 	struct _adc
 	{
 		int id;

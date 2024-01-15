@@ -2197,6 +2197,10 @@ namespace Thetis
                         MessageBox.Show("Unable to start the server." + Environment.NewLine + Environment.NewLine + "[ " + m_tcpCATServer.LastError + " ]", "TCPIP CAT Server",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                     }
+                    else
+                    {
+                        NetworkIO.SetCATPort(m_nTCPIPCatPort);
+                    }
                 }
                 //
             }

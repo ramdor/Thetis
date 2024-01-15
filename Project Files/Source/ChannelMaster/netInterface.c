@@ -439,8 +439,8 @@ void SetAntBits(int rx_only_ant, int trx_ant, int tx_ant, int rx_out, char tx) {
 	prbpfilter->_ANT_2 = (trx_ant & (0x01 | 0x02)) == 0x02;
 	prbpfilter->_ANT_3 = (trx_ant & (0x01 | 0x02)) == (0x01 | 0x02);
 
-	// copy the upper 16 bits of Alex0
-	prbpfilter2->bpfilter = prbpfilter->bpfilter & 0xf8ff0000;
+	// set the upper 16 bits from Alex0
+	prbpfilter2->bpfilter |= prbpfilter->bpfilter & 0xf8ff0000;
 
 	// then set the TX mode ANT 1-3 bits
 	prbpfilter2->_TXANT_1 = (tx_ant & (0x01 | 0x02)) == 0x01;
@@ -1365,6 +1365,7 @@ void create_rnet()
 		prn->wb_update_rate = 70;
 		prn->wb_packets_per_frame = 32;
 		prn->lr_audio_swap = 0;
+		prn->CATPort = 0;
 		for (i = 0; i < MAX_ADC; i++) {
 			prn->adc[i].id = i;
 			prn->adc[i].rx_step_attn = 0;
@@ -1576,4 +1577,13 @@ void UpdateRadioProtocolSampleSize()
 
 	create_obbuffs(0, 1, 2048, prn->audio[0].spp);	// rx audio - last parameter is number of samples per packet
 	create_obbuffs(1, 1, 2048, prn->tx[0].spp);    // tx mic audio
+}
+
+// set CAT over TCP port for remote communication with protocol client apps
+void SetCATPort(int port)
+{
+	prn->CATPort = port;    // LR-samples per packet
+	if (listenSock != INVALID_SOCKET)
+		CmdHighPriority();
+
 }
