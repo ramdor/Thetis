@@ -20,6 +20,7 @@
  */
 
 #include <stdio.h>
+#include <stdbool.h>
 #include "network.h"
 #include "obbuffs.h"
 
@@ -343,8 +344,9 @@ void SetTRXrelay(int bit)
 	if (prbpfilter->_TR_Relay != bit)
 	{
 		if (!prn->tx[0].pa) // disable PA
-		prbpfilter->_TR_Relay = bit & 0x1;
+			prbpfilter->_TR_Relay = bit & 0x1;
 		prbpfilter->_trx_status = prbpfilter->_TR_Relay; // TXRX_STATUS
+		prbpfilter2->_trx_status = prbpfilter->_TR_Relay; // TXRX_STATUS for Alex1
 		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
 			CmdHighPriority();
 	}
@@ -439,7 +441,9 @@ void SetAntBits(int rx_only_ant, int trx_ant, int tx_ant, int rx_out, char tx) {
 	prbpfilter->_ANT_2 = (trx_ant & (0x01 | 0x02)) == 0x02;
 	prbpfilter->_ANT_3 = (trx_ant & (0x01 | 0x02)) == (0x01 | 0x02);
 
-	// set the upper 16 bits from Alex0
+	// clear the ANT 1-3 bits and set LPF bits from Alex0
+	// Alex1 LPF bits will also get set realtime from SetAlexLPFBits()
+	prbpfilter2->bpfilter &= prbpfilter2->bpfilter & 0x0700ffff;
 	prbpfilter2->bpfilter |= prbpfilter->bpfilter & 0xf8ff0000;
 
 	// then set the TX mode ANT 1-3 bits
@@ -627,7 +631,7 @@ void SetAlex4HPFBits(int bits)
 }
 
 PORT
-void SetAlexLPFBits(int bits) 
+void SetAlexLPFBits(int bits, bool isTX)
 {
 	if (AlexLPFMask != bits) 
 	{
@@ -638,6 +642,10 @@ void SetAlexLPFBits(int bits)
 		prbpfilter->_6_LPF = (bits & 0x10) != 0;
 		prbpfilter->_12_10_LPF = (bits & 0x20) != 0;
 		prbpfilter->_17_15_LPF = (bits & 0x40) != 0;
+		if (isTX) { // alex1 upper 16 bits used for TX only
+			prbpfilter2->bpfilter &= prbpfilter2->bpfilter & 0x0700ffff;
+			prbpfilter2->bpfilter |= prbpfilter->bpfilter & 0xf8ff0000;
+		}
 		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
 			CmdHighPriority();
 	}
