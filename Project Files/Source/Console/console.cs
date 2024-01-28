@@ -5826,7 +5826,7 @@ namespace Thetis
 
         private void SetTXBand(Band b, bool bIngoreBandChange = false)
         {
-            if (!bIngoreBandChange && disable_split_on_bandchange) //[2.10.3.6]MW0LGE might need to ignore this is we are using extended and band is moved to a hamband
+            if (disable_split_on_bandchange && !bIngoreBandChange) //[2.10.3.6]MW0LGE might need to ignore this is we are using extended and band is moved to a hamband
             {
                 if (TXBand != b && !tuning)
                 {

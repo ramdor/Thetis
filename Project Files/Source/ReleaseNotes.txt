@@ -1,5 +1,7 @@
 # !! CW Warning !!
 
+**UPDATE: The CW issue has been resolved for Protocol 2. It requires a firmware update and this modified version of Thetis. Please see the [ApacheLab community forums here](https://community.apache-labs.com/viewtopic.php?f=32&t=4972)**
+
 If you use CW and you have different RX and TX antenna ports configured, there is a high potential for full RF power to be present briefly on the RX port. This may lead to damage of any sensitive equipment attached to the RX port such as active antennas and the like. This situation can occur if you utilise the CWX form, serial keying/PTT, and standard hardware keys plugged into the radio. This issue is currently under investigation and has existed in Thetis for an extended period (years and years). If you are interested in following the progress, you can read more about it on [GitHub here](https://github.com/ramdor/Thetis/issues/228).
 
 **Note: You can revisit these release notes by clicking the button in the setup form within the General -> H/W Select tab.**
@@ -10,8 +12,8 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 ## v2.10.3.6 Change Log - WIP dev
 - [add] -help command line option
 - [fix] vac mic audio source can now be recorded
-- [fix] disable split when operating extended and out of a ham band will no longer disable split
-- [fix] output power on ANT ports configured as RX only should be resolved. Requires an update to your firmware
+- [fix] split TXing out of a ham band will no longer disable split when extended mode is used. The 'Disable Splt on Band Change' option would previously cause this to disable split. Note: 'Prevent TX when on different band to RX' option will be used if enabled and TX band has been moved for bandpass/lpf purposes
+- [fix] output power on ANT ports configured as RX only should be resolved. Requires an update to your firmware. See the [ApacheLab community forums here](https://community.apache-labs.com/viewtopic.php?f=32&t=4972)
 - [change] the dB shift setting for AGC auto noise floor compensation is now a true shift from NF. You will probably need to tweak your previous setting
 - [change] the shutdown log is defaulted off. Use command line param -logshutdown to cause Thetis to create a shutdown_log.txt file if you are having shutdown issues which can then be sent in for analysis
 
