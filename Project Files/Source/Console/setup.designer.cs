@@ -3551,6 +3551,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.lblTXattBand = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4492,6 +4493,7 @@
             // tpAlexAntCtrl
             // 
             tpAlexAntCtrl.BackColor = System.Drawing.SystemColors.Control;
+            tpAlexAntCtrl.Controls.Add(this.lblTXattBand);
             tpAlexAntCtrl.Controls.Add(this.chkForceATTwhenOutPowerChanges);
             tpAlexAntCtrl.Controls.Add(this.chkForceATTwhenPSAoff);
             tpAlexAntCtrl.Controls.Add(this.chkEnableXVTRHF);
@@ -56605,6 +56607,16 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // lblTXattBand
+            // 
+            this.lblTXattBand.AutoSize = true;
+            this.lblTXattBand.Image = null;
+            this.lblTXattBand.Location = new System.Drawing.Point(550, 162);
+            this.lblTXattBand.Name = "lblTXattBand";
+            this.lblTXattBand.Size = new System.Drawing.Size(31, 13);
+            this.lblTXattBand.TabIndex = 22;
+            this.lblTXattBand.Text = "????";
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -61315,5 +61327,6 @@
         private LabelTS lblRx1PBsnr;
         private GroupBoxTS groupBoxTS33;
         private CheckBoxTS chkCWbecomesCWUabove10mhz;
+        private LabelTS lblTXattBand;
     }
 }

@@ -699,7 +699,7 @@ namespace Thetis
                         console.SetupForm.ATTOnTX = newAtten;
 
                         // give some additional time for the network msg to get to the radio before switching back on MW0LGE_21k9d5
-                        if(m_bQuckAttenuate) Thread.Sleep(100);
+                        if (m_bQuckAttenuate) Thread.Sleep(100);
                     }
                     break;
                 case eAAState.RestoreOperation:// 2: // restore operation

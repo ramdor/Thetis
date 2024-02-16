@@ -1594,6 +1594,7 @@ namespace Thetis
 
             rx1_preamp_by_band = new PreampMode[(int)Band.LAST];
             rx2_preamp_by_band = new PreampMode[(int)Band.LAST];
+
             rx1_step_attenuator_by_band = new int[(int)Band.LAST];
             rx2_step_attenuator_by_band = new int[(int)Band.LAST];
             tx_step_attenuator_by_band = new int[(int)Band.LAST];
@@ -1613,12 +1614,14 @@ namespace Thetis
                     default:
                         rx1_preamp_by_band[i] = PreampMode.HPSDR_ON;
                         rx2_preamp_by_band[i] = PreampMode.HPSDR_ON;
-                        rx1_step_attenuator_by_band[i] = 0;
-                        rx2_step_attenuator_by_band[i] = 0;
+                        //rx1_step_attenuator_by_band[i] = 0;
+                        setRX1stepAttenuatorForBand((Band)i, 0);
+                        //rx2_step_attenuator_by_band[i] = 0;
+                        setRX2stepAttenuatorForBand((Band)i, 0);
                         break;
                 }
 
-                tx_step_attenuator_by_band[i] = 31;
+                setTXstepAttenuatorForBand((Band)i, 31);
             }
 
             power_by_band = new int[(int)Band.LAST];
@@ -1953,9 +1956,11 @@ namespace Thetis
 
             initializing = false;
             RX1PreampMode = rx1_preamp_by_band[(int)rx1_band];
-            RX1AttenuatorData = rx1_step_attenuator_by_band[(int)rx1_band];
+            //RX1AttenuatorData = rx1_step_attenuator_by_band[(int)rx1_band];
+            RX1AttenuatorData = getRX1stepAttenuatorForBand(rx1_band);
             RX2PreampMode = rx2_preamp_by_band[(int)rx2_band];
-            RX2AttenuatorData = rx2_step_attenuator_by_band[(int)rx2_band];
+            //RX2AttenuatorData = rx2_step_attenuator_by_band[(int)rx2_band];
+            RX2AttenuatorData = getRX2stepAttenuatorForBand(rx2_band);
             initializing = true;
 
             ptbDisplayZoom_Scroll(this, EventArgs.Empty);
@@ -2992,23 +2997,27 @@ namespace Thetis
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
-            rx1_step_attenuator_by_band[(int)rx1_band] = rx1_attenuator_data;
+            //rx1_step_attenuator_by_band[(int)rx1_band] = rx1_attenuator_data;
+            setRX1stepAttenuatorForBand(rx1_band, rx1_attenuator_data);
             s = "rx1_step_attenuator_by_band/";
             for (int i = 0; i < (int)Band.LAST; i++)
-                s += ((int)rx1_step_attenuator_by_band[i]).ToString() + "|";
+                //s += ((int)rx1_step_attenuator_by_band[i]).ToString() + "|";
+                s += getRX1stepAttenuatorForBand((Band)i).ToString() + "|";
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
-            rx2_step_attenuator_by_band[(int)rx2_band] = rx2_attenuator_data;
+            //rx2_step_attenuator_by_band[(int)rx2_band] = rx2_attenuator_data;
+            setRX2stepAttenuatorForBand(rx2_band, rx2_attenuator_data);
             s = "rx2_step_attenuator_by_band/";
             for (int i = 0; i < (int)Band.LAST; i++)
-                s += ((int)rx2_step_attenuator_by_band[i]).ToString() + "|";
+                //s += ((int)rx2_step_attenuator_by_band[i]).ToString() + "|";
+                s += getRX2stepAttenuatorForBand((Band)i).ToString() + "|";
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
             s = "tx_step_attenuator_by_band/";
             for (int i = 0; i < (int)Band.LAST; i++)
-                s += ((int)tx_step_attenuator_by_band[i]).ToString() + "|";
+                s += getTXstepAttenuatorForBand((Band)i).ToString() + "|";
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
@@ -4179,21 +4188,23 @@ namespace Thetis
                         list = val.Split('|');
                         if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
-                            rx1_step_attenuator_by_band[i] = int.Parse(list[i]);
+                            //rx1_step_attenuator_by_band[i] = int.Parse(list[i]);
+                            setRX1stepAttenuatorForBand((Band)i, int.Parse(list[i]));
                         break;
 
                     case var nam when name.StartsWith("rx2_step_attenuator_by_band"):
                         list = val.Split('|');
                         if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
-                            rx2_step_attenuator_by_band[i] = int.Parse(list[i]);
+                            //rx2_step_attenuator_by_band[i] = int.Parse(list[i]);
+                            setRX2stepAttenuatorForBand((Band)i, int.Parse(list[i]));
                         break;
 
                     case var nam when name.StartsWith("tx_step_attenuator_by_band"):
                         list = val.Split('|');
                         if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
-                            tx_step_attenuator_by_band[i] = int.Parse(list[i]);
+                            setTXstepAttenuatorForBand((Band)i, int.Parse(list[i]));
                         break;
 
                     case var nam when name.StartsWith("power_by_band"):
@@ -10250,8 +10261,8 @@ namespace Thetis
                 tx_attenuator_data = value;
                 if (!initializing)
                 {
-                    tx_step_attenuator_by_band[(int)rx1_band] = tx_attenuator_data;
-                    if (m_bAttontx) NetworkIO.SetTxAttenData(tx_step_attenuator_by_band[(int)rx1_band]);
+                    setTXstepAttenuatorForBand(rx1_band, tx_attenuator_data);
+                    if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(rx1_band));
                     else NetworkIO.SetTxAttenData(0);
 
                     if (m_bAttontx && _mox)
@@ -10620,7 +10631,8 @@ namespace Thetis
                 }
 
                 if (!_mox)
-                    rx1_step_attenuator_by_band[(int)rx1_band] = rx1_attenuator_data;
+                    //rx1_step_attenuator_by_band[(int)rx1_band] = rx1_attenuator_data;
+                    setRX1stepAttenuatorForBand(rx1_band, rx1_attenuator_data);
 
                 udRX1StepAttData.Value = rx1_attenuator_data;
                 lblAttenLabel.Text = rx1_attenuator_data.ToString() + " dB";
@@ -10671,7 +10683,8 @@ namespace Thetis
                         udRX2StepAttData.Visible = true;
                         lblRX2Preamp.Text = "S-ATT";
                         udRX2StepAttData.BringToFront();
-                        udRX2StepAttData.Value = rx2_step_attenuator_by_band[(int)rx2_band];
+                        //udRX2StepAttData.Value = rx2_step_attenuator_by_band[(int)rx2_band];
+                        udRX2StepAttData.Value = getRX2stepAttenuatorForBand(rx2_band);
                         udRX2StepAttData_ValueChanged(this, EventArgs.Empty);
                     }
                     else
@@ -10778,7 +10791,8 @@ namespace Thetis
                 }
 
                 if (!_mox)
-                    rx2_step_attenuator_by_band[(int)rx2_band] = rx2_attenuator_data;
+                    //rx2_step_attenuator_by_band[(int)rx2_band] = rx2_attenuator_data;
+                    setRX2stepAttenuatorForBand(rx2_band, rx2_attenuator_data);
 
                 udRX2StepAttData.Value = rx2_attenuator_data;
                 lblRX2AttenLabel.Text = rx2_attenuator_data.ToString() + " dB";
@@ -16704,7 +16718,8 @@ namespace Thetis
                 if (!initializing && rx1_preamp_mode > PreampMode.FIRST)
                 {
                     rx1_preamp_by_band[(int)old_band] = rx1_preamp_mode;
-                    rx1_step_attenuator_by_band[(int)old_band] = rx1_attenuator_data;
+                    //rx1_step_attenuator_by_band[(int)old_band] = rx1_attenuator_data;
+                    setRX1stepAttenuatorForBand(old_band, rx1_attenuator_data);
                 }
 
                 if (rx1_band != old_band || initializing)
@@ -16712,9 +16727,10 @@ namespace Thetis
                     // save values for old band
                     rx1_agcm_by_band[(int)old_band] = (AGCMode)comboAGC.SelectedIndex;
                     rx1_agct_by_band[(int)old_band] = ptbRF.Value;
-                    SetupForm.ATTOnTX = tx_step_attenuator_by_band[(int)value];
+                    SetupForm.ATTOnTX = getTXstepAttenuatorForBand(value);
                     RX1PreampMode = rx1_preamp_by_band[(int)value];
-                    RX1AttenuatorData = rx1_step_attenuator_by_band[(int)value];
+                    //RX1AttenuatorData = rx1_step_attenuator_by_band[(int)value];
+                    RX1AttenuatorData = getRX1stepAttenuatorForBand(value);
                     RX1AGCMode = rx1_agcm_by_band[(int)value];
                     RF = rx1_agct_by_band[(int)value];
 
@@ -16870,7 +16886,8 @@ namespace Thetis
                 if (!initializing && rx2_preamp_mode > PreampMode.FIRST)
                 {
                     rx2_preamp_by_band[(int)old_band] = rx2_preamp_mode;
-                    rx2_step_attenuator_by_band[(int)old_band] = rx2_attenuator_data;
+                    //rx2_step_attenuator_by_band[(int)old_band] = rx2_attenuator_data;
+                    setRX2stepAttenuatorForBand(old_band, rx2_attenuator_data);
                 }
 
                 if (rx2_band != old_band || initializing)
@@ -16880,7 +16897,8 @@ namespace Thetis
                     rx2_agct_by_band[(int)old_band] = ptbRX2RF.Value;
 
                     RX2PreampMode = rx2_preamp_by_band[(int)value];
-                    RX2AttenuatorData = rx2_step_attenuator_by_band[(int)value];
+                    //RX2AttenuatorData = rx2_step_attenuator_by_band[(int)value];
+                    RX2AttenuatorData = getRX2stepAttenuatorForBand(value);
                     RX2AGCMode = rx2_agcm_by_band[(int)value];
                     RX2RF = rx2_agct_by_band[(int)value];
 
@@ -18444,7 +18462,7 @@ namespace Thetis
 
                 if (PowerOn)
                 {
-                    if (m_bAttontx) NetworkIO.SetTxAttenData(tx_step_attenuator_by_band[(int)rx1_band]);
+                    if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(rx1_band));
                     else NetworkIO.SetTxAttenData(0);
                 }
 
@@ -26269,7 +26287,7 @@ namespace Thetis
                 Thread.Sleep(100); // wait for hardware to settle before starting audio (possible sample rate change)
                 psform.ForcePS();
 
-                if (m_bAttontx) NetworkIO.SetTxAttenData(tx_step_attenuator_by_band[(int)rx1_band]);
+                if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(rx1_band));
                 else NetworkIO.SetTxAttenData(0);
 
                 enableAudioAmplfier(_bEnableAudioAmplifier); // MW0LGE_22b
@@ -28323,8 +28341,8 @@ namespace Thetis
                                         (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
                                          radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) SetupForm.ATTOnTX = 31; // reset when PS is OFF or in CW mode
 
-                        SetupForm.HermesAttenuatorData = tx_step_attenuator_by_band[(int)rx1_band];
-                        NetworkIO.SetTxAttenData(tx_step_attenuator_by_band[(int)rx1_band]);
+                        SetupForm.HermesAttenuatorData = getTXstepAttenuatorForBand(rx1_band);
+                        NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(rx1_band));
                         SetupForm.HermesEnableAttenuator = true;
                         comboRX2Preamp.Enabled = false;
                         udRX2StepAttData.Enabled = false;
@@ -41025,11 +41043,13 @@ namespace Thetis
 
             RX2PreampMode = rx2_preamp_by_band[(int)rx2_band];
             comboRX2Preamp_SelectedIndexChanged(this, EventArgs.Empty);
-            RX2AttenuatorData = rx2_step_attenuator_by_band[(int)rx2_band];
+            //RX2AttenuatorData = rx2_step_attenuator_by_band[(int)rx2_band];
+            RX2AttenuatorData = getRX2stepAttenuatorForBand(rx2_band);
 
             RX1PreampMode = rx1_preamp_by_band[(int)rx1_band];
             comboPreamp_SelectedIndexChanged(this, EventArgs.Empty);
-            RX1AttenuatorData = rx1_step_attenuator_by_band[(int)rx1_band];
+            //RX1AttenuatorData = rx1_step_attenuator_by_band[(int)rx1_band];
+            RX1AttenuatorData = getRX1stepAttenuatorForBand(rx1_band);
         }
 
         private string[] lineinboost = new string[32];
@@ -47707,6 +47727,64 @@ namespace Thetis
 
             return args[0].Contains(arg, StringComparison.OrdinalIgnoreCase);
         }
+
+        #region StepAttenuator data
+        //[2.10.3.6]MW0LGE moved all this to functions to make it easier to diagnose issues
+        private int getRX1stepAttenuatorForBand(Band b)
+        {
+            if (b <= Band.FIRST || b >= Band.LAST) return 0;
+
+            int nAtt = rx1_step_attenuator_by_band[(int)b];
+
+            //Debug.Print("getRX1StepAttForBand " + b.ToString() + " " + nAtt.ToString());
+
+            return nAtt;
+        }
+        private void setRX1stepAttenuatorForBand(Band b, int att)
+        {
+            if (b <= Band.FIRST || b >= Band.LAST) return;
+
+            //Debug.Print("setRX1StepAttForBand " + b.ToString() + " " + att.ToString());
+
+            rx1_step_attenuator_by_band[(int)b] = att;
+        }
+        private int getRX2stepAttenuatorForBand(Band b)
+        {
+            if (b <= Band.FIRST || b >= Band.LAST) return 0;
+
+            int nAtt = rx2_step_attenuator_by_band[(int)b];
+
+            //Debug.Print("getRX2StepAttForBand " + b.ToString() + " " + nAtt.ToString());
+
+            return nAtt;
+        }
+        private void setRX2stepAttenuatorForBand(Band b, int att)
+        {
+            if (b <= Band.FIRST || b >= Band.LAST) return;
+
+            //Debug.Print("setRX2StepAttForBand " + b.ToString() + " " + att.ToString());
+
+            rx2_step_attenuator_by_band[(int)b] = att;
+        }
+        private int getTXstepAttenuatorForBand(Band b)
+        {
+            if (b <= Band.FIRST || b >= Band.LAST) return 31;
+
+            int nAtt = tx_step_attenuator_by_band[(int)b];
+
+            //Debug.Print("getTXStepAttForBand " + b.ToString() + " " + nAtt.ToString());
+
+            return nAtt;
+        }
+        private void setTXstepAttenuatorForBand(Band b, int att)
+        {
+            if (b <= Band.FIRST || b >= Band.LAST) return;
+
+            //Debug.Print("setTXStepAttForBand " + b.ToString() + " " + att.ToString());
+
+            tx_step_attenuator_by_band[(int)b] = att;
+        }
+        #endregion
     }
 
     public class DigiMode

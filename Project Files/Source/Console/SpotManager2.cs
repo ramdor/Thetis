@@ -36,7 +36,7 @@ namespace Thetis
 
             public void BrowseQRZ()
             {
-                Common.OpenUri("https://www.qrz.com/db/" + callsign.ToUpper());
+                Common.OpenUri("https://www.qrz.com/db/" + callsign.ToUpper().Trim());
             }
         }
 
@@ -149,10 +149,9 @@ namespace Thetis
 
         public static void AddSpot(string callsign, DSPMode mode, long frequencyHz, Color colour, string additionalText, string spotter = "")
         {
-            string call = callsign.ToUpper().Trim();
             smSpot spot = new smSpot()
             {
-                callsign = call,
+                callsign = callsign.ToUpper().Trim(),
                 mode = mode,
                 frequencyHZ = frequencyHz,
                 colour = colour,
@@ -161,10 +160,8 @@ namespace Thetis
                 timeAdded = DateTime.Now
             };
 
-            if (_replaceOwnCallAppearance && callsign == _replaceCall)
-            {
+            if (_replaceOwnCallAppearance && spot.callsign == _replaceCall)
                 spot.colour = _replaceBackgroundColour;
-            }
 
             if (spot.callsign.Length > 20)
                 spot.callsign = spot.callsign.Substring(0, 20);
@@ -188,7 +185,7 @@ namespace Thetis
 
             lock (_objLock)
             {
-                smSpot exists = _spots.Find(o => (o.callsign == call) && (Math.Abs(o.frequencyHZ - frequencyHz) <= 5000));
+                smSpot exists = _spots.Find(o => (o.callsign == spot.callsign) && (Math.Abs(o.frequencyHZ - frequencyHz) <= 5000));
                 if (exists != null)
                     _spots.Remove(exists);
 
@@ -243,7 +240,7 @@ namespace Thetis
         public static void OwnCallApearance(bool bEnabled, string sCall, Color replacementColorBackground)
         {
             _replaceOwnCallAppearance = bEnabled;
-            _replaceCall = sCall;
+            _replaceCall = sCall.ToUpper().Trim();
             _replaceBackgroundColour = replacementColorBackground;
         }
     }

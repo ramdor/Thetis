@@ -3513,7 +3513,7 @@ namespace Thetis
                     chkRX2StepAtt.Checked = value;
                 }
             }
-        }      
+        }
         public int ATTOnTX
         {
             get
@@ -3527,7 +3527,11 @@ namespace Thetis
                 {
                     if (value > 31) value = 31;
                     if (value < 0) value = 0; //MW0LGE [2.9.0.7] added after mi0bot source review
-                    udATTOnTX.Value = value;
+                    lblTXattBand.Text = console.TXBand.ToString();
+                    if (udATTOnTX.Value == value) //[2.10.3.6]MW0LGE there will be no change event
+                        udATTOnTX_ValueChanged(this, EventArgs.Empty);
+                    else
+                        udATTOnTX.Value = value;
                 }
             }
         }
@@ -13115,7 +13119,7 @@ namespace Thetis
 
             console.AlexAntCtrlEnabled = true; // need side effect of prop set to push data down to C code 
 
-            return;
+            handleRXAntennaChangeForNF(band);
         }
 
 
@@ -13165,11 +13169,11 @@ namespace Thetis
                 Alex.getAlex().setRxAnt(band, (byte)ant);
                 pi_RxAnt = ant;                                 // Path_Illustrator support
                 console.SetAriesRXAntenna(ant, band); // temporaily disable needs more work
+
+                handleRXAntennaChangeForNF(band);
             }
 
             console.AlexAntCtrlEnabled = true; // need side effect of prop set to push data down to C code 
-
-            return;
         }
 
         // set RX antenna to new antenna 1-3
@@ -13233,6 +13237,21 @@ namespace Thetis
             }
         }
 
+        private void handleRXAntennaChangeForNF(Band band)
+        {
+            // antenna change should cause noise floor to go into fast attack
+
+            int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+            console.GetDDC(out rx1, out rx2, out sync1, out sync2, out psrx, out pstx);
+            int nRX1ADCinUse = console.GetADCInUse(rx1);
+            int nRX2ADCinUse = console.GetADCInUse(rx2);
+
+            if (nRX1ADCinUse == 0 && console.RX1Band == band)
+                Display.FastAttackNoiseFloorRX1 = true;
+
+            if (nRX2ADCinUse == 0 && (console.RX2Enabled && console.RX2Band == band)) // also if adc0 for rx2 then we need to fast attack
+                Display.FastAttackNoiseFloorRX2 = true;
+        }
         private void btnHPSDRFreqCalReset_Click(object sender, System.EventArgs e)
         {
             udHPSDRFreqCorrectFactor.Value = (decimal)1.0;
@@ -13256,19 +13275,31 @@ namespace Thetis
             lblMetisIP.Text = NetworkIO.HpSdrHwIpAddress;
             lblMetisMAC.Text = NetworkIO.HpSdrHwMacAddress;
 
-            //MW0LGE_21d
-            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
+            string sProtocolInfo = "Protocol ?";
+            string sMetisCodeVersion = "?.?";
+            string sBoard = "?";
+
+            if (NetworkIO.getHaveSync() == 1)
             {
-                lblProtocolInfo.Text = "Protocol 2 (v" + NetworkIO.ProtocolSupported.ToString("0\\.0") + ")";
-                lblMetisCodeVersion.Text = NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString();
-            }
-            else
-            {
-                lblProtocolInfo.Text = "Protocol 1";
-                lblMetisCodeVersion.Text = NetworkIO.FWCodeVersion.ToString("0\\.0");
+                //MW0LGE_21d
+                if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
+                {
+                    sProtocolInfo = "Protocol 2 (v" + NetworkIO.ProtocolSupported.ToString("0\\.0") + ")";
+                    sMetisCodeVersion = NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString();
+                }
+                else
+                {
+                    sProtocolInfo = "Protocol 1";
+                    sMetisCodeVersion = NetworkIO.FWCodeVersion.ToString("0\\.0");
+                }
+
+                sBoard = NetworkIO.BoardID.ToString();
             }
 
-            lblMetisBoardID.Text = NetworkIO.BoardID.ToString();
+            lblProtocolInfo.Text = sProtocolInfo;
+            lblMetisCodeVersion.Text = sMetisCodeVersion;
+            lblMetisBoardID.Text = sBoard;
+
             return;
         }
 
@@ -16402,13 +16433,13 @@ namespace Thetis
             if (initializing) return;
             console.radio.GetDSPRX(0, 1).RXADollyFreq1 = (double)udDSPRX1SubDollyF1.Value;
         }
-        private bool _updatingATTTX = false;
+        //private bool _updatingATTTX = false;
         private void udATTOnTX_ValueChanged(object sender, EventArgs e)
         {
-            if (_updatingATTTX) return;
-            _updatingATTTX = true;
+            //if (_updatingATTTX) return;
+            //_updatingATTTX = true;
             console.TxAttenData = (int)udATTOnTX.Value;
-            _updatingATTTX = false;
+            //_updatingATTTX = false;
         }
 
         private void ud6mLNAGainOffset_ValueChanged(object sender, EventArgs e)
@@ -19894,7 +19925,7 @@ namespace Thetis
 
         private void tmrPLLLockChecker_Tick(object sender, EventArgs e)
         {
-            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
+            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH && NetworkIO.getHaveSync() == 1)
             {
                 lblPLLLock.Text = NetworkIO.GetPLLLock() ? "PLL Locked" : "PLL Not Locked";
             }

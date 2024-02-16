@@ -111,6 +111,7 @@ namespace Thetis
         private int pttdelay;		// delay from PTT to key down
         private bool pause_checked;	// pause chekbox is checked
         private bool stopThreads;	// tell threads to shut down
+        private bool _threadsStarted;	// threads have started
 
         // define the position and size of the keyboard area
         private int kylx = 12, kyty = 180;				// ulc of key area
@@ -762,6 +763,25 @@ namespace Thetis
             build_mbits2();
 
             stopThreads = false;
+            _threadsStarted = false;
+
+            startThreads(); //[2.10.3.6]MW0LGE fixes #400
+
+            Thread CATReadThread = new Thread(new ThreadStart(SendBufferMessage))
+            {
+                Name = "CAT Read Thread",
+                IsBackground = true,
+                Priority = ThreadPriority.Highest
+            };
+            CATReadThread.Start();
+
+            //			ttdel = 50;
+        }
+
+        private void startThreads()
+        {
+            if (stopThreads) return; // stopping/stopped
+            if (_threadsStarted) return;
 
             Thread keyFifoThread = new Thread(new ThreadStart(keyboardFifo))
             {
@@ -779,15 +799,7 @@ namespace Thetis
             };
             keyDisplayThread.Start();
 
-            Thread CATReadThread = new Thread(new ThreadStart(SendBufferMessage))
-            {
-                Name = "CAT Read Thread",
-                IsBackground = true,
-                Priority = ThreadPriority.Highest
-            };
-            CATReadThread.Start();
-
-            //			ttdel = 50;
+            _threadsStarted = true;
         }
 
         /// <summary>
@@ -1674,6 +1686,10 @@ namespace Thetis
             }
             Thread.Sleep(200);		// let it all stop
 
+            //[2.10.3.6]MW0LGE
+            _threadsStarted = false;
+            stopThreads = false; // assume they have all stopped by now
+
             //SaveSettings();
             Common.SaveForm(this, "CWX");
 
@@ -1692,6 +1708,9 @@ namespace Thetis
             {
                 //timer stops when window is hidden, so restart it on show
                 setup_timer();
+
+                //restart threads
+                startThreads(); //[2.10.3.6]MW0LGE fixes #400
             }
 
             _shown = true;

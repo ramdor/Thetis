@@ -12,7 +12,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 ## v2.10.3.6 Change Log - WIP dev
 - [add] -help command line option
 - [fix] vac mic audio source can now be recorded
-- [fix] split TXing out of a ham band will no longer disable split when extended mode is used. The 'Disable Splt on Band Change' option would previously cause this to disable split. Note: 'Prevent TX when on different band to RX' option will be used if enabled and TX band has been moved for bandpass/lpf purposes
+- [fix] split TXing out of a ham band will no longer disable split when extended mode is used. Note: 'Prevent TX when on different band to RX' option will be used if enabled and TX band has been moved for bandpass/lpf purposes (ie when tx'ing on 11m)
 - [fix] output power on ANT ports configured as RX only should be resolved. Requires an update to your firmware. See the [ApacheLab community forums here](https://community.apache-labs.com/viewtopic.php?f=32&t=4972)
 - [change] the dB shift setting for AGC auto noise floor compensation is now a true shift from NF. You will probably need to tweak your previous setting
 - [change] the shutdown log is defaulted off. Use command line param -logshutdown to cause Thetis to create a shutdown_log.txt file if you are having shutdown issues which can then be sent in for analysis

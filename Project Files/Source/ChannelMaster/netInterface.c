@@ -201,7 +201,6 @@ int getSeqInDelta(int nInit, int rx, int deltas[], char* dateTimeStamp, int *rec
 PORT
 int GetPLLLock()
 {
-
 	return (prn->pll_locked & 0x10) != 0;
 }
 //NOTE: these 4 user get fuctions are named for P1 //MW0LGE_22b
