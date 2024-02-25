@@ -24304,6 +24304,58 @@ namespace Thetis
             }
         }
 
+        public void SetIOBoardAerialPorts(int rx_only_ant, int rx_ant, int tx_ant, bool tx)
+        {
+            switch (rx_only_ant)
+            {
+                case 1:
+                    IOBoardAerialMode = 2;
+                    break;
+
+                case 0:
+                default:
+                    IOBoardAerialMode = 0;
+                    break;
+            }
+
+            IOBoardAerialPorts = (byte) (rx_ant & 0x0f);
+            IOBoardAerialPorts |= (byte) (tx_ant << 4);
+        }
+
+        private byte IOBoardAerialMode = 0;
+        private byte IOBoardAerialPorts = 0;
+        private bool I2CPollingPause = false;
+        
+        public void SetI2CPollingPause( bool pause )
+        {
+            I2CPollingPause = pause;
+            Task.Delay(80);
+        }
+
+        public enum AutoTuneState
+        {
+            Disabled = 0,
+            Idle,
+            StartTune,
+            WaitRF,
+            Tuning,
+            Fault,
+        }
+
+        public enum ProtocolEvent
+        {
+            Start = -1,             // MI0BOT: Not strictly a protocol event but used to start the whole process
+            Idle = 0x00,
+            RequestTune = 0x01,
+            RequestRF = 0xEE,
+            Fault = 0xF0,
+        }
+
+        private AutoTuneState auto_tuning = AutoTuneState.Disabled; // MI0BOT: Holds state when the Auto TUN button is active
+        private int tune_timeout = 0;                               // MI0BOT: Auto tune timeout
+        private int fault_timeout = 0;                              
+        const byte TIMEOUT = 50;
+
         private async void UpdateVOX()
         {
             while (chkPower.Checked)
