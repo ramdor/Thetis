@@ -19730,6 +19730,13 @@ namespace Thetis
         {
             console.AriesStandalone = checkAriesStandalone.Checked;
         }
+        // MI0BOT: Controls the ability to send CAT commands to VFO B
+
+        private void chkCATtoVFOB_CheckedChanged(object sender, EventArgs e)
+        {
+            console.CATtoVFOB = chkCATtoVFOB.Checked;
+        }
+
 
         private void chkAndrBandBtnDefault_CheckedChanged(object sender, EventArgs e)
         {
