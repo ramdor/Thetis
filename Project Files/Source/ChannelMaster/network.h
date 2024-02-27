@@ -384,6 +384,7 @@ int atu_tune; // controls J16 pin 10 on Orion MKII board
 int audioamp_enable; // constrol audio amp on ?? board //MW0LGE_22b
 int AlexHPFMask;
 int AlexLPFMask;
+int Alex1LPFMask;
 int AlexTRRelay;
 int Alex2HPFMask;
 int Alex2LPFMask;
