@@ -201,6 +201,7 @@ int getSeqInDelta(int nInit, int rx, int deltas[], char* dateTimeStamp, int *rec
 PORT
 int GetPLLLock()
 {
+
 	return (prn->pll_locked & 0x10) != 0;
 }
 //NOTE: these 4 user get fuctions are named for P1 //MW0LGE_22b
@@ -629,27 +630,55 @@ void SetAlex4HPFBits(int bits)
 	Alex4HPFMask = bits;
 }
 
+// LPF bits can be used in older radioas as part of RX filtering too.
+// Change to protocol 2 from 4.3 onwards: TX settings are encoded in the Alex1 word
+// to remain comparible with older hardware, the logic will be:
+// if MOX, write settings to alex0 and alex1
+// if not MOX, write to alex1 if a TX setting else write to alex0
 PORT
-void SetAlexLPFBits(int bits, bool isTX)
+void SetAlexLPFBits(int bits, bool isTX, bool isMox)
 {
-	if (AlexLPFMask != bits) 
+	bool Alex0Changed = false;
+	bool Alex1Changed = false;
+
+	if (isMox || isTX)        // true if Alex1 should be written
 	{
-		prbpfilter->_30_20_LPF = (bits & 0x01) != 0;
-		prbpfilter->_60_40_LPF = (bits & 0x02) != 0;
-		prbpfilter->_80_LPF = (bits & 0x04) != 0;
-		prbpfilter->_160_LPF = (bits & 0x08) != 0;
-		prbpfilter->_6_LPF = (bits & 0x10) != 0;
-		prbpfilter->_12_10_LPF = (bits & 0x20) != 0;
-		prbpfilter->_17_15_LPF = (bits & 0x40) != 0;
-		if (isTX) { // alex1 upper 16 bits used for TX only
-			prbpfilter2->bpfilter &= prbpfilter2->bpfilter & 0x0700ffff;
+		if (Alex1LPFMask != bits) 
+		{
+			Alex1Changed = true;
+			prbpfilter2->bpfilter &= 0x0700ffff;     // copy over Alex0 settings
 			prbpfilter2->bpfilter |= prbpfilter->bpfilter & 0xf8ff0000;
+			prbpfilter2->_30_20_LPF = (bits & 0x01) != 0;
+			prbpfilter2->_60_40_LPF = (bits & 0x02) != 0;
+			prbpfilter2->_80_LPF = (bits & 0x04) != 0;
+			prbpfilter2->_160_LPF = (bits & 0x08) != 0;
+			prbpfilter2->_6_LPF = (bits & 0x10) != 0;
+			prbpfilter2->_12_10_LPF = (bits & 0x20) != 0;
+			prbpfilter2->_17_15_LPF = (bits & 0x40) != 0;
+			Alex1LPFMask = bits;
 		}
+	}
+
+	if (isMox || !isTX)        // true if Alex0 should be written
+	{
+		if (AlexLPFMask != bits) 
+		{
+			prbpfilter->_30_20_LPF = (bits & 0x01) != 0;
+			prbpfilter->_60_40_LPF = (bits & 0x02) != 0;
+			prbpfilter->_80_LPF = (bits & 0x04) != 0;
+			prbpfilter->_160_LPF = (bits & 0x08) != 0;
+			prbpfilter->_6_LPF = (bits & 0x10) != 0;
+			prbpfilter->_12_10_LPF = (bits & 0x20) != 0;
+			prbpfilter->_17_15_LPF = (bits & 0x40) != 0;
+			AlexLPFMask = bits;
+		}
+	}
+
+	if (Alex1Changed || Alex0Changed)
+	{
 		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
 			CmdHighPriority();
 	}
-
-	AlexLPFMask = bits;
 }
 
 PORT
