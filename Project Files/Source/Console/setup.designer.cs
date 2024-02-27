@@ -266,6 +266,7 @@
             this.lblMetisIP = new System.Windows.Forms.LabelTS();
             this.lblMetisMAC = new System.Windows.Forms.LabelTS();
             this.groupBoxHPSDRHW = new System.Windows.Forms.GroupBoxTS();
+            this.chkHL2IOBoardPresent = new System.Windows.Forms.CheckBoxTS();
             this.chkApolloPresent = new System.Windows.Forms.CheckBoxTS();
             this.chkPennyLane = new System.Windows.Forms.CheckBoxTS();
             this.chkAlexPresent = new System.Windows.Forms.CheckBoxTS();
@@ -379,7 +380,6 @@
             this.chkQuickSplitFL = new System.Windows.Forms.CheckBoxTS();
             this.chkQuickSplitMultiRX = new System.Windows.Forms.CheckBoxTS();
             this.chkQuickSplitZoom = new System.Windows.Forms.CheckBoxTS();
-            this.labelTS182 = new System.Windows.Forms.LabelTS();
             this.nudQuickSplitShift = new System.Windows.Forms.NumericUpDownTS();
             this.groupBoxTS26 = new System.Windows.Forms.GroupBoxTS();
             this.btnResetNFShift = new System.Windows.Forms.ButtonTS();
@@ -550,6 +550,9 @@
             this.grpUSBBCD = new System.Windows.Forms.GroupBoxTS();
             this.comboUsbDevices = new System.Windows.Forms.ComboBoxTS();
             this.chkUsbBCD = new System.Windows.Forms.CheckBoxTS();
+            this.grpIOPinState = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS182 = new System.Windows.Forms.LabelTS();
+            this.ucIOPinsLedStripHF = new Thetis.ucOCLedStrip();
             this.grpExtPAControlHF = new System.Windows.Forms.GroupBoxTS();
             this.labelTS577 = new System.Windows.Forms.LabelTS();
             this.labelTS582 = new System.Windows.Forms.LabelTS();
@@ -3724,6 +3727,7 @@
             this.grpTransmitPinActionSWL.SuspendLayout();
             this.tpOCHFControl.SuspendLayout();
             this.grpUSBBCD.SuspendLayout();
+            this.grpIOPinState.SuspendLayout();
             this.grpExtPAControlHF.SuspendLayout();
             this.grpOCPinState.SuspendLayout();
             this.grpTransmitPinActionHF.SuspendLayout();
@@ -8029,6 +8033,7 @@
             // 
             // groupBoxHPSDRHW
             // 
+            this.groupBoxHPSDRHW.Controls.Add(this.chkHL2IOBoardPresent);
             this.groupBoxHPSDRHW.Controls.Add(this.chkApolloPresent);
             this.groupBoxHPSDRHW.Controls.Add(this.chkPennyLane);
             this.groupBoxHPSDRHW.Controls.Add(this.chkAlexPresent);
@@ -8040,6 +8045,21 @@
             this.groupBoxHPSDRHW.TabIndex = 30;
             this.groupBoxHPSDRHW.TabStop = false;
             this.groupBoxHPSDRHW.Text = "Hardware Options";
+            // 
+            // chkHL2IOBoardPresent
+            // 
+            this.chkHL2IOBoardPresent.AutoSize = true;
+            this.chkHL2IOBoardPresent.Enabled = false;
+            this.chkHL2IOBoardPresent.Image = null;
+            this.chkHL2IOBoardPresent.Location = new System.Drawing.Point(25, 123);
+            this.chkHL2IOBoardPresent.Name = "chkHL2IOBoardPresent";
+            this.chkHL2IOBoardPresent.Size = new System.Drawing.Size(96, 17);
+            this.chkHL2IOBoardPresent.TabIndex = 8;
+            this.chkHL2IOBoardPresent.Text = "HL2 I/O Board";
+            this.toolTip1.SetToolTip(this.chkHL2IOBoardPresent, "Thetis power cycle is required if the I/O board is re-enabled.");
+            this.chkHL2IOBoardPresent.UseVisualStyleBackColor = true;
+            this.chkHL2IOBoardPresent.Visible = false;
+            this.chkHL2IOBoardPresent.CheckedChanged += new System.EventHandler(this.chkHL2IOBoardPresent_CheckedChanged);
             // 
             // chkApolloPresent
             // 
@@ -9706,16 +9726,6 @@
             this.chkQuickSplitZoom.Text = "Zoom In";
             this.toolTip1.SetToolTip(this.chkQuickSplitZoom, "Zoom in to ~85%");
             this.chkQuickSplitZoom.UseVisualStyleBackColor = true;
-            // 
-            // labelTS182
-            // 
-            this.labelTS182.AutoSize = true;
-            this.labelTS182.Image = null;
-            this.labelTS182.Location = new System.Drawing.Point(78, 27);
-            this.labelTS182.Name = "labelTS182";
-            this.labelTS182.Size = new System.Drawing.Size(29, 13);
-            this.labelTS182.TabIndex = 39;
-            this.labelTS182.Text = "± Hz";
             // 
             // nudQuickSplitShift
             // 
@@ -12240,6 +12250,7 @@
             // 
             this.tpOCHFControl.BackColor = System.Drawing.SystemColors.Control;
             this.tpOCHFControl.Controls.Add(this.grpUSBBCD);
+            this.tpOCHFControl.Controls.Add(this.grpIOPinState);
             this.tpOCHFControl.Controls.Add(this.grpExtPAControlHF);
             this.tpOCHFControl.Controls.Add(this.chkAllowHotSwitching);
             this.tpOCHFControl.Controls.Add(this.grpOCPinState);
@@ -12290,6 +12301,40 @@
             this.toolTip1.SetToolTip(this.chkUsbBCD, "Enables USB BCD outputs for FTDI cable.");
             this.chkUsbBCD.UseVisualStyleBackColor = true;
             this.chkUsbBCD.CheckedChanged += new System.EventHandler(this.chkUsbBCD_CheckedChanged);
+            // 
+            // grpIOPinState
+            // 
+            this.grpIOPinState.Controls.Add(this.ucIOPinsLedStripHF);
+            this.grpIOPinState.Enabled = false;
+            this.grpIOPinState.Location = new System.Drawing.Point(12, 252);
+            this.grpIOPinState.Name = "grpIOPinState";
+            this.grpIOPinState.Size = new System.Drawing.Size(147, 55);
+            this.grpIOPinState.TabIndex = 16;
+            this.grpIOPinState.TabStop = false;
+            this.grpIOPinState.Text = "I/O Board Pin State";
+            this.grpIOPinState.Visible = false;
+            // 
+            // labelTS182
+            // 
+            this.labelTS182.AutoSize = true;
+            this.labelTS182.Image = null;
+            this.labelTS182.Location = new System.Drawing.Point(78, 27);
+            this.labelTS182.Name = "labelTS182";
+            this.labelTS182.Size = new System.Drawing.Size(29, 13);
+            this.labelTS182.TabIndex = 39;
+            this.labelTS182.Text = "± Hz";
+            // 
+            // ucIOPinsLedStripHF
+            // 
+            this.ucIOPinsLedStripHF.Bits = 0;
+            this.ucIOPinsLedStripHF.DisplayBits = 7;
+            this.ucIOPinsLedStripHF.Enabled = false;
+            this.ucIOPinsLedStripHF.Location = new System.Drawing.Point(9, 33);
+            this.ucIOPinsLedStripHF.Name = "ucIOPinsLedStripHF";
+            this.ucIOPinsLedStripHF.Size = new System.Drawing.Size(134, 17);
+            this.ucIOPinsLedStripHF.TabIndex = 1;
+            this.ucIOPinsLedStripHF.TX = false;
+            this.ucIOPinsLedStripHF.Visible = false;
             // 
             // grpExtPAControlHF
             // 
@@ -57014,6 +57059,8 @@
             this.tpOCHFControl.PerformLayout();
             this.grpUSBBCD.ResumeLayout(false);
             this.grpUSBBCD.PerformLayout();
+            this.grpIOPinState.ResumeLayout(false);
+            this.grpIOPinState.PerformLayout();
             this.grpExtPAControlHF.ResumeLayout(false);
             this.grpExtPAControlHF.PerformLayout();
             this.grpOCPinState.ResumeLayout(false);
@@ -61365,8 +61412,14 @@
         private LabelTS lblMMHistoryIgnore;
         private ButtonTS btnMeterCopySettings;
         private ButtonTS btnMeterPasteSettings;
+        public TextBoxTS txtI2CByte2;
+        public TextBoxTS txtI2CByte1;
+        private CheckBoxTS chkI2CEnable;
+        private GroupBoxTS grpIOPinState;
         private GroupBoxTS groupBoxTS28;
         private LabelTS labelTS161;
+        private ucOCLedStrip ucIOPinsLedStripHF;
+        private CheckBoxTS chkHL2IOBoardPresent;
         private NumericUpDownTS udVSQLMuteTimeConstant;
         private LabelTS labelTS180;
         private NumericUpDownTS udVSQLUnMuteTimeConstant;

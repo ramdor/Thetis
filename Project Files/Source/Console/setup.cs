@@ -5701,6 +5701,96 @@ namespace Thetis
             //set { tcCAT = value; }
         }
 
+        private bool hl2IOBoardPresent = false;
+        public bool HL2IOBoardPresent
+        {
+            get
+            {
+                return hl2IOBoardPresent;
+            }
+            set
+            {
+                hl2IOBoardPresent = value;
+                chkHL2IOBoardPresent.Checked = value;
+                chkHL2IOBoardPresent.Enabled = value;
+                ucIOPinsLedStripHF.Enabled = value;
+                grpIOPinState.Enabled = value;
+
+                radAlexR1_160.Enabled = value;
+                radAlexR1_80.Enabled = value;
+                radAlexR1_60.Enabled = value;
+                radAlexR1_40.Enabled = value;
+                radAlexR1_30.Enabled = value;
+                radAlexR1_20.Enabled = value;
+                radAlexR1_17.Enabled = value;
+                radAlexR1_15.Enabled = value;
+                radAlexR1_12.Enabled = value;
+                radAlexR1_10.Enabled = value;
+
+                radAlexR2_160.Enabled = value;
+                radAlexR2_80.Enabled = value;
+                radAlexR2_60.Enabled = value;
+                radAlexR2_40.Enabled = value;
+                radAlexR2_30.Enabled = value;
+                radAlexR2_20.Enabled = value;
+                radAlexR2_17.Enabled = value;
+                radAlexR2_15.Enabled = value;
+                radAlexR2_12.Enabled = value;
+                radAlexR2_10.Enabled = value;
+
+                radAlexR3_160.Enabled = value;
+                radAlexR3_80.Enabled = value;
+                radAlexR3_60.Enabled = value;
+                radAlexR3_40.Enabled = value;
+                radAlexR3_30.Enabled = value;
+                radAlexR3_20.Enabled = value;
+                radAlexR3_17.Enabled = value;
+                radAlexR3_15.Enabled = value;
+                radAlexR3_12.Enabled = value;
+                radAlexR3_10.Enabled = value;
+
+                radAlexT1_160.Enabled = value;
+                radAlexT1_80.Enabled = value;
+                radAlexT1_60.Enabled = value;
+                radAlexT1_40.Enabled = value;
+                radAlexT1_30.Enabled = value;
+                radAlexT1_20.Enabled = value;
+                radAlexT1_17.Enabled = value;
+                radAlexT1_15.Enabled = value;
+                radAlexT1_12.Enabled = value;
+                radAlexT1_10.Enabled = value;
+
+                radAlexT2_160.Enabled = value;
+                radAlexT2_80.Enabled = value;
+                radAlexT2_60.Enabled = value;
+                radAlexT2_40.Enabled = value;
+                radAlexT2_30.Enabled = value;
+                radAlexT2_20.Enabled = value;
+                radAlexT2_17.Enabled = value;
+                radAlexT2_15.Enabled = value;
+                radAlexT2_12.Enabled = value;
+                radAlexT2_10.Enabled = value;
+
+                radAlexT3_160.Enabled = value;
+                radAlexT3_80.Enabled = value;
+                radAlexT3_60.Enabled = value;
+                radAlexT3_40.Enabled = value;
+                radAlexT3_30.Enabled = value;
+                radAlexT3_20.Enabled = value;
+                radAlexT3_17.Enabled = value;
+                radAlexT3_15.Enabled = value;
+                radAlexT3_12.Enabled = value;
+                radAlexT3_10.Enabled = value;
+
+                chkBlockTxAnt2.Enabled = value;
+                chkBlockTxAnt3.Enabled = value;
+
+                console.AlexAntCtrlEnabled = value;
+
+                EnableIOLedStrip(value);
+            }
+        }
+
 
         #endregion
 
@@ -20729,6 +20819,19 @@ namespace Thetis
             ucOCPinsLedStripHF.Bits = bits;
         }
 
+        public void UpdateIOLedStrip(bool tx, byte bits)
+        {
+            ucIOPinsLedStripHF.TX = tx;
+            ucIOPinsLedStripHF.Bits = (int) bits;
+        }
+
+        public void EnableIOLedStrip(bool state)
+        {
+            ucIOPinsLedStripHF.Enabled = state;
+            ucIOPinsLedStripHF.Visible = state;
+            grpIOPinState.Enabled = state;
+        }
+
         private void tcOCControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch (grpTransmitPinActionSWL.SelectedIndex)
@@ -24670,6 +24773,12 @@ namespace Thetis
 
             return bPaste;
         }
+
+        private void chkHL2IOBoardPresent_CheckedChanged(object sender, EventArgs e)
+        {
+            HL2IOBoardPresent = chkHL2IOBoardPresent.Checked;
+        }
+        
         public void ShowMultiMeterSetupTab(string sID = "")
         {
             // show multimeter tab, with meter container already selected if sID is provided
