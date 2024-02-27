@@ -663,6 +663,7 @@ void SetAlexLPFBits(int bits, bool isTX, bool isMox)
 	{
 		if (AlexLPFMask != bits) 
 		{
+			Alex0Changed = true;
 			prbpfilter->_30_20_LPF = (bits & 0x01) != 0;
 			prbpfilter->_60_40_LPF = (bits & 0x02) != 0;
 			prbpfilter->_80_LPF = (bits & 0x04) != 0;
