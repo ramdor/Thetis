@@ -6699,7 +6699,7 @@ namespace Thetis
         {
             if (!_mox && lpf_bypass)
             {
-                NetworkIO.SetAlexLPFBits(0x10, false); // 6m LPF
+                NetworkIO.SetAlexLPFBits(0x10, false, _mox); // 6m LPF
                 SetupForm.rad6LPFled.Checked = true;
                 return;
             }
@@ -6709,55 +6709,55 @@ namespace Thetis
                 if ((decimal)freq >= SetupForm.udAlex20mLPFStart.Value && // 30/20m LPF
                           (decimal)freq <= SetupForm.udAlex20mLPFEnd.Value)
                 {
-                    NetworkIO.SetAlexLPFBits(0x01, freqIsTX);
+                    NetworkIO.SetAlexLPFBits(0x01, freqIsTX, _mox);
                     SetupForm.rad20LPFled.Checked = true;
                 }
 
                 else if ((decimal)freq >= SetupForm.udAlex40mLPFStart.Value && // 60/40m LPF
                         (decimal)freq <= SetupForm.udAlex40mLPFEnd.Value)
                 {
-                    NetworkIO.SetAlexLPFBits(0x02, freqIsTX);
+                    NetworkIO.SetAlexLPFBits(0x02, freqIsTX, _mox);
                     SetupForm.rad40LPFled.Checked = true;
                 }
 
                 else if ((decimal)freq >= SetupForm.udAlex80mLPFStart.Value && // 80m LPF
                          (decimal)freq <= SetupForm.udAlex80mLPFEnd.Value)
                 {
-                    NetworkIO.SetAlexLPFBits(0x04, freqIsTX);
+                    NetworkIO.SetAlexLPFBits(0x04, freqIsTX, _mox);
                     SetupForm.rad80LPFled.Checked = true;
                 }
 
                 else if ((decimal)freq >= SetupForm.udAlex160mLPFStart.Value && // 160m LPF
                      (decimal)freq <= SetupForm.udAlex160mLPFEnd.Value)
                 {
-                    NetworkIO.SetAlexLPFBits(0x08, freqIsTX);
+                    NetworkIO.SetAlexLPFBits(0x08, freqIsTX, _mox);
                     SetupForm.rad160LPFled.Checked = true;
                 }
 
                 else if ((decimal)freq >= SetupForm.udAlex6mLPFStart.Value && // 6m LPF
                         (decimal)freq <= SetupForm.udAlex6mLPFEnd.Value)
                 {
-                    NetworkIO.SetAlexLPFBits(0x10, freqIsTX);
+                    NetworkIO.SetAlexLPFBits(0x10, freqIsTX, _mox);
                     SetupForm.rad6LPFled.Checked = true;
                 }
 
                 else if ((decimal)freq >= SetupForm.udAlex10mLPFStart.Value && // 12/10m LPF
                          (decimal)freq <= SetupForm.udAlex10mLPFEnd.Value)
                 {
-                    NetworkIO.SetAlexLPFBits(0x20, freqIsTX);
+                    NetworkIO.SetAlexLPFBits(0x20, freqIsTX, _mox);
                     SetupForm.rad10LPFled.Checked = true;
                 }
 
                 else if ((decimal)freq >= SetupForm.udAlex15mLPFStart.Value && // 17/15 LPF
                           (decimal)freq <= SetupForm.udAlex15mLPFEnd.Value)
                 {
-                    NetworkIO.SetAlexLPFBits(0x40, freqIsTX);
+                    NetworkIO.SetAlexLPFBits(0x40, freqIsTX, _mox);
                     SetupForm.rad15LPFled.Checked = true;
                 }
 
                 else
                 {
-                    NetworkIO.SetAlexLPFBits(0x10, freqIsTX); // 6m LPF
+                    NetworkIO.SetAlexLPFBits(0x10, freqIsTX, _mox); // 6m LPF
                     SetupForm.rad6LPFled.Checked = true;
                 }
             }
@@ -14971,11 +14971,9 @@ namespace Thetis
         private void UpdateTXDDSFreq()
         {
             if (initializing) return;
+            SetAlexLPF(tx_dds_freq_mhz, true);
             if (_mox)
-            {
                 SetAlexHPF(fwc_dds_freq);
-                SetAlexLPF(tx_dds_freq_mhz, true);
-            }
             NetworkIO.VFOfreq(0, tx_dds_freq_mhz, 1);
         }
 
