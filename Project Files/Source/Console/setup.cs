@@ -707,6 +707,13 @@ namespace Thetis
                 comboAudioSampleRate1.Items.Add(96000);
             if (!comboAudioSampleRate1.Items.Contains(192000))
                 comboAudioSampleRate1.Items.Add(192000);
+            
+            // The HL supports 384K
+            if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+            {
+                if (!comboAudioSampleRate1.Items.Contains(384000))
+                    comboAudioSampleRate1.Items.Add(384000);
+            }
 
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
             {
@@ -719,8 +726,12 @@ namespace Thetis
             }
             else
             {
-                if (comboAudioSampleRate1.Items.Contains(384000))
-                    comboAudioSampleRate1.Items.Remove(384000);
+                // The HL supports 384K
+                if (console.CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+                {
+                    if (comboAudioSampleRate1.Items.Contains(384000))
+                       comboAudioSampleRate1.Items.Remove(384000);
+                }
                 if (comboAudioSampleRate1.Items.Contains(768000))
                     comboAudioSampleRate1.Items.Remove(768000);
                 if (comboAudioSampleRate1.Items.Contains(1536000))
@@ -738,6 +749,13 @@ namespace Thetis
             if (!comboAudioSampleRateRX2.Items.Contains(192000))
                 comboAudioSampleRateRX2.Items.Add(192000);
 
+            // The HL supports 384K
+            if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+            {
+                if (!comboAudioSampleRate2.Items.Contains(384000))
+                    comboAudioSampleRate2.Items.Add(384000);
+            }
+
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
             {
                 if (!comboAudioSampleRateRX2.Items.Contains(384000))
@@ -749,8 +767,12 @@ namespace Thetis
             }
             else
             {
-                if (comboAudioSampleRateRX2.Items.Contains(384000))
-                    comboAudioSampleRateRX2.Items.Remove(384000);
+                // The HL2 supports 384K
+                if (console.CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+                {
+                    if (comboAudioSampleRate2.Items.Contains(384000))
+                        comboAudioSampleRate2.Items.Remove(384000);
+                }
                 if (comboAudioSampleRateRX2.Items.Contains(768000))
                     comboAudioSampleRateRX2.Items.Remove(768000);
                 if (comboAudioSampleRateRX2.Items.Contains(1536000))
@@ -3526,7 +3548,16 @@ namespace Thetis
                 if (udATTOnTX != null)
                 {
                     if (value > 31) value = 31;
-                    if (value < 0) value = 0; //MW0LGE [2.9.0.7] added after mi0bot source review
+
+                    if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                    {
+                        if (value < -28) value = -28; //MI0BOT: HL2 has a greater range and can go negative 
+                    }
+                    else
+                    {
+                        if (value < 0) value = 0; //MW0LGE [2.9.0.7] added after mi0bot source review
+                    }
+
                     lblTXattBand.Text = console.TXBand.ToString();
                     if (udATTOnTX.Value == value) //[2.10.3.6]MW0LGE there will be no change event
                         udATTOnTX_ValueChanged(this, EventArgs.Empty);
@@ -4853,7 +4884,18 @@ namespace Thetis
         public int FixedTunePower
         {
             get { return (int)udTXTunePower.Value; }
-            set { udTXTunePower.Value = (decimal)value; }
+            set 
+            {
+                if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                {
+                    udTXTunePower.Value = (decimal)(value/3 - 33)/2;    // MI0BOT: Now only has a -16.5 to 0 range in HL2 for Tune power
+                }
+                else
+                {
+                    udTXTunePower.Value = (decimal)value;
+                }
+
+            }
         }
         public int TwoTonePower
         {
@@ -5002,6 +5044,7 @@ namespace Thetis
 
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:     // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA1W.Value;
@@ -5022,6 +5065,7 @@ namespace Thetis
                 float rv = (float)ud100PA20W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA2W.Value;
@@ -5041,6 +5085,7 @@ namespace Thetis
                 float rv = (float)ud100PA30W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA3W.Value;
@@ -5060,6 +5105,7 @@ namespace Thetis
                 float rv = (float)ud100PA40W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA4W.Value;
@@ -5079,6 +5125,7 @@ namespace Thetis
                 float rv = (float)ud100PA50W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA5W.Value;
@@ -5098,6 +5145,7 @@ namespace Thetis
                 float rv = (float)ud100PA60W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA6W.Value;
@@ -5117,6 +5165,7 @@ namespace Thetis
                 float rv = (float)ud100PA70W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA7W.Value;
@@ -5136,6 +5185,7 @@ namespace Thetis
                 float rv = (float)ud100PA80W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA8W.Value;
@@ -5155,6 +5205,7 @@ namespace Thetis
                 float rv = (float)ud100PA90W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA9W.Value;
@@ -5174,6 +5225,7 @@ namespace Thetis
                 float rv = (float)ud100PA100W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA10W.Value;
@@ -5193,6 +5245,7 @@ namespace Thetis
                 float rv = (float)ud100PA110W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA11W.Value;
@@ -5212,6 +5265,7 @@ namespace Thetis
                 float rv = (float)ud100PA120W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA12W.Value;
@@ -5231,6 +5285,7 @@ namespace Thetis
                 float rv = (float)ud100PA130W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA13W.Value;
@@ -5250,6 +5305,7 @@ namespace Thetis
                 float rv = (float)ud100PA140W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA14W.Value;
@@ -5931,13 +5987,21 @@ namespace Thetis
             }
             else
             {
-                chkRxOutOnTx.Enabled = true;
-                chkRxOutOnTx.Visible = true;
-                chkEXT1OutOnTx.Enabled = true;
-                chkEXT1OutOnTx.Visible = true;
-                chkEXT2OutOnTx.Enabled = true;
-                chkEXT2OutOnTx.Visible = true;
-
+                if (console.CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+                {
+                    chkRxOutOnTx.Enabled = true;
+                    chkRxOutOnTx.Visible = true;
+                    chkEXT1OutOnTx.Enabled = true;
+                    chkEXT1OutOnTx.Visible = true;
+                    chkEXT2OutOnTx.Enabled = true;
+                    chkEXT2OutOnTx.Visible = true;
+                    grp100WattMeterTrim.BringToFront();
+                }
+                else
+                {
+                    grp10WattMeterTrim.BringToFront();
+                }
+                // panelAlex1HPFControl.Visible = true;
                 tpAlexFilterControl.Text = "HPF/LPF";
                 labelAlex1FilterHPF.Text = "HPF";
                 chkAlexHPFBypass.Text = "ByPass/55 MHz HPF";
@@ -5946,7 +6010,6 @@ namespace Thetis
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = false;
                 lblRx26mLNA.Visible = false;
-                grp100WattMeterTrim.BringToFront();
                 chkEnableXVTRHF.Visible = false;
             }
 
@@ -5961,8 +6024,12 @@ namespace Thetis
             else
             {
                 tpAlexControl.Text = "Ant/Filters";
-                chkHFTRRelay.Visible = true;
-                chkHFTRRelay.Enabled = true;
+
+                if (console.CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+                {
+                    chkHFTRRelay.Visible = true;
+                    chkHFTRRelay.Enabled = true;
+                }
             }
 
             if (console.CurrentHPSDRModel != HPSDRModel.ANAN200D &&
@@ -6053,7 +6120,10 @@ namespace Thetis
                 }
             }
 
-            if (console.CurrentHPSDRModel == HPSDRModel.HERMES || console.CurrentHPSDRModel == HPSDRModel.ANAN7000D || console.CurrentHPSDRModel == HPSDRModel.ANAN_G2)
+            if (console.CurrentHPSDRModel == HPSDRModel.HERMES   ||
+               console.CurrentHPSDRModel == HPSDRModel.ANAN7000D ||
+               console.CurrentHPSDRModel == HPSDRModel.ANAN_G2         ||
+               console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
             {
                 if (!tcGeneral.TabPages.Contains(tpApolloControl))
                 {
@@ -6740,7 +6810,8 @@ namespace Thetis
 
                         // be sure RX2 sample rate setting is enabled, UNLESS it's a 10E or 100B
                         if (console.CurrentHPSDRModel == HPSDRModel.ANAN10E ||
-                            console.CurrentHPSDRModel == HPSDRModel.ANAN100B)
+                            console.CurrentHPSDRModel == HPSDRModel.ANAN100B ||
+                            console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
                         {
                             // if it's a 10E/100B, set RX2 sample_rate equal to RX1 rate
                             comboAudioSampleRateRX2.Enabled = false;
@@ -8706,8 +8777,17 @@ namespace Thetis
 
         private void udTransmitTunePower_ValueChanged(object sender, System.EventArgs e)
         {
-            if (initializing) return;
-            console.TunePower = (int)udTXTunePower.Value;
+            if (initializing) return; //[2.10.2.3]MW0LGE forceallevents call this
+            
+            if (console.CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+            {
+                console.TunePower = (int)udTXTunePower.Value;
+            }
+            else
+            {
+                // MI0BOT: Range is 0 to -16.5 - convert to 99 - 0
+                console.TunePower = (int) ((33 + (udTXTunePower.Value * 2)) * 3);
+            }
         }
 
         private bool loadTXProfile(String sProfileName)
@@ -10199,8 +10279,17 @@ namespace Thetis
                 }
 
                 chkCATEnable.Enabled = false;
+
+                if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                    chkCATtoVFOB.Enabled = false;
             }
-            else chkCATEnable.Enabled = true;
+            else
+            {
+                chkCATEnable.Enabled = true;
+
+                if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                    chkCATtoVFOB.Enabled = true;
+            }
 
             if (comboCATPort.Text.StartsWith("COM"))
                 console.CATPort = Int32.Parse(comboCATPort.Text.Substring(3));
@@ -13449,48 +13538,96 @@ namespace Thetis
                         }
                     }
 
-                    chkPenOCrcv1601.Checked = true;
-                    chkPenOCxmit1601.Checked = true;
-                    chkPenOCrcv802.Checked = true;
-                    chkPenOCxmit802.Checked = true;
-                    chkPenOCrcv601.Checked = true;
-                    chkPenOCxmit601.Checked = true;
-                    chkPenOCrcv602.Checked = true;
-                    chkPenOCxmit602.Checked = true;
-                    chkPenOCrcv403.Checked = true;
-                    chkPenOCxmit403.Checked = true;
-                    chkPenOCrcv301.Checked = true;
-                    chkPenOCxmit301.Checked = true;
-                    chkPenOCrcv303.Checked = true;
-                    chkPenOCxmit303.Checked = true;
-                    chkPenOCrcv202.Checked = true;
-                    chkPenOCxmit202.Checked = true;
-                    chkPenOCrcv203.Checked = true;
-                    chkPenOCxmit203.Checked = true;
-                    chkPenOCrcv171.Checked = true;
-                    chkPenOCxmit171.Checked = true;
-                    chkPenOCrcv172.Checked = true;
-                    chkPenOCxmit172.Checked = true;
-                    chkPenOCrcv173.Checked = true;
-                    chkPenOCxmit173.Checked = true;
-                    chkPenOCrcv154.Checked = true;
-                    chkPenOCxmit154.Checked = true;
-                    chkPenOCrcv121.Checked = true;
-                    chkPenOCxmit121.Checked = true;
-                    chkPenOCrcv124.Checked = true;
-                    chkPenOCxmit124.Checked = true;
-                    chkPenOCrcv102.Checked = true;
-                    chkPenOCxmit102.Checked = true;
-                    chkPenOCrcv104.Checked = true;
-                    chkPenOCxmit104.Checked = true;
-                    chkPenOCrcv61.Checked = true;
-                    chkPenOCxmit61.Checked = true;
-                    chkPenOCrcv62.Checked = true;
-                    chkPenOCxmit62.Checked = true;
-                    chkPenOCrcv64.Checked = true;
-                    chkPenOCxmit64.Checked = true;
-                    chkPenOCrcv66.Checked = true;
-                    break;
+                    if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                    {
+                        chkPenOCrcv1601.Checked = true;
+                        chkPenOCrcv802.Checked = true;
+                        chkPenOCrcv807.Checked = true;
+                        chkPenOCrcv603.Checked = true;
+                        chkPenOCrcv607.Checked = true;
+                        chkPenOCrcv403.Checked = true;
+                        chkPenOCrcv407.Checked = true;
+                        chkPenOCrcv304.Checked = true;
+                        chkPenOCrcv307.Checked = true;
+                        chkPenOCrcv204.Checked = true;
+                        chkPenOCrcv207.Checked = true;
+                        chkPenOCrcv175.Checked = true;
+                        chkPenOCrcv177.Checked = true;
+                        chkPenOCrcv155.Checked = true;
+                        chkPenOCrcv157.Checked = true;
+                        chkPenOCrcv126.Checked = true;
+                        chkPenOCrcv127.Checked = true;
+                        chkPenOCrcv106.Checked = true;
+                        chkPenOCrcv107.Checked = true;
+                        chkPenOCxmit1601.Checked = true;
+                        chkPenOCxmit802.Checked = true;
+                        chkPenOCxmit603.Checked = true;
+                        chkPenOCxmit403.Checked = true;
+                        chkPenOCxmit304.Checked = true;
+                        chkPenOCxmit204.Checked = true;
+                        chkPenOCxmit175.Checked = true;
+                        chkPenOCxmit155.Checked = true;
+                        chkPenOCxmit126.Checked = true;
+                        chkPenOCxmit106.Checked = true;
+                        chkOCrcv1207.Checked = true;
+                        chkOCrcv907.Checked = true;
+                        chkOCrcv617.Checked = true;
+                        chkOCrcv497.Checked = true;
+                        chkOCrcv417.Checked = true;
+                        chkOCrcv317.Checked = true;
+                        chkOCrcv257.Checked = true;
+                        chkOCrcv227.Checked = true;
+                        chkOCrcv197.Checked = true;
+                        chkOCrcv167.Checked = true;
+                        chkOCrcv147.Checked = true;
+                        chkOCrcv137.Checked = true;
+                        chkOCrcv117.Checked = true;
+                    }
+                    else
+                    {
+                        chkPenOCrcv1601.Checked = true;
+                        chkPenOCxmit1601.Checked = true;
+                        chkPenOCrcv802.Checked = true;
+                        chkPenOCxmit802.Checked = true;
+                        chkPenOCrcv601.Checked = true;
+                        chkPenOCxmit601.Checked = true;
+                        chkPenOCrcv602.Checked = true;
+                        chkPenOCxmit602.Checked = true;
+                        chkPenOCrcv403.Checked = true;
+                        chkPenOCxmit403.Checked = true;
+                        chkPenOCrcv301.Checked = true;
+                        chkPenOCxmit301.Checked = true;
+                        chkPenOCrcv303.Checked = true;
+                        chkPenOCxmit303.Checked = true;
+                        chkPenOCrcv202.Checked = true;
+                        chkPenOCxmit202.Checked = true;
+                        chkPenOCrcv203.Checked = true;
+                        chkPenOCxmit203.Checked = true;
+                        chkPenOCrcv171.Checked = true;
+                        chkPenOCxmit171.Checked = true;
+                        chkPenOCrcv172.Checked = true;
+                        chkPenOCxmit172.Checked = true;
+                        chkPenOCrcv173.Checked = true;
+                        chkPenOCxmit173.Checked = true;
+                        chkPenOCrcv154.Checked = true;
+                        chkPenOCxmit154.Checked = true;
+                        chkPenOCrcv121.Checked = true;
+                        chkPenOCxmit121.Checked = true;
+                        chkPenOCrcv124.Checked = true;
+                        chkPenOCxmit124.Checked = true;
+                        chkPenOCrcv102.Checked = true;
+                        chkPenOCxmit102.Checked = true;
+                        chkPenOCrcv104.Checked = true;
+                        chkPenOCxmit104.Checked = true;
+                        chkPenOCrcv61.Checked = true;
+                        chkPenOCxmit61.Checked = true;
+                        chkPenOCrcv62.Checked = true;
+                        chkPenOCxmit62.Checked = true;
+                        chkPenOCrcv64.Checked = true;
+                        chkPenOCxmit64.Checked = true;
+                        chkPenOCrcv66.Checked = true;
+                    }
+                break;
                 case false:
                     foreach (Control c in grpPennyExtCtrl.Controls)
                     {
@@ -15127,8 +15264,12 @@ namespace Thetis
             _updatingRX1HermiesStepAttData = true;
             console.RX1AttenuatorData = (int)udHermesStepAttenuatorData.Value;
 
-            //MW0LGE_21f
-            if (AlexPresent &&
+            if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+            {
+                udHermesStepAttenuatorData.Maximum = (decimal)32;
+                udHermesStepAttenuatorData.Minimum = (decimal)-28;
+            }
+            else if (AlexPresent && 
                 console.CurrentHPSDRModel != HPSDRModel.ANAN10 &&
                 console.CurrentHPSDRModel != HPSDRModel.ANAN10E &&
                 console.CurrentHPSDRModel != HPSDRModel.ANAN7000D &&
@@ -15673,6 +15814,7 @@ namespace Thetis
         {
             switch (console.CurrentHPSDRModel)              // G8NJJ will need more work for ANAN_G2_1K (1KW PA)
             {
+                case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E:
                     ud10PA1W.Value = 1;
@@ -18976,6 +19118,8 @@ namespace Thetis
             {
                 case "HERMES":
                     return HPSDRModel.HERMES;
+                case "HERMES LITE":
+                    return HPSDRModel.HERMESLITE;           // MI0BOT: HL2
                 case "ANAN-10":
                     return HPSDRModel.ANAN10;
                 case "ANAN-10E":
@@ -19604,6 +19748,7 @@ namespace Thetis
             switch (console.CurrentHPSDRModel)
             {
                 case HPSDRModel.HERMES:
+                case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E:
                 case HPSDRModel.ANAN100:
@@ -23334,6 +23479,39 @@ namespace Thetis
                     SetGainForBand(Band.VHF11, 63.1f);
                     SetGainForBand(Band.VHF12, 63.1f);
                     SetGainForBand(Band.VHF13, 63.1f);
+
+					return;
+                }
+                
+                if (model == HPSDRModel.HERMESLITE)
+                { 
+                    SetGainForBand(Band.B160M, 100f);
+                    SetGainForBand(Band.B80M, 100f);
+                    SetGainForBand(Band.B60M, 100f);
+                    SetGainForBand(Band.B40M, 100f);
+                    SetGainForBand(Band.B30M, 100f);
+                    SetGainForBand(Band.B20M, 100f);
+                    SetGainForBand(Band.B17M, 100f);
+                    SetGainForBand(Band.B15M, 100f);
+                    SetGainForBand(Band.B12M, 100f);
+                    SetGainForBand(Band.B10M, 100f);
+                    SetGainForBand(Band.B6M, 38.8f);
+
+
+                    SetGainForBand(Band.VHF0, 38.8f);
+                    SetGainForBand(Band.VHF1, 38.8f);
+                    SetGainForBand(Band.VHF2, 38.8f);
+                    SetGainForBand(Band.VHF3, 38.8f);
+                    SetGainForBand(Band.VHF4, 38.8f);
+                    SetGainForBand(Band.VHF5, 38.8f);
+                    SetGainForBand(Band.VHF6, 38.8f);
+                    SetGainForBand(Band.VHF7, 38.8f);
+                    SetGainForBand(Band.VHF8, 38.8f);
+                    SetGainForBand(Band.VHF9, 38.8f);
+                    SetGainForBand(Band.VHF10, 38.8f);
+                    SetGainForBand(Band.VHF11, 38.8f);
+                    SetGainForBand(Band.VHF12, 38.8f);
+                    SetGainForBand(Band.VHF13, 38.8f);
 
                     return;
                 }
