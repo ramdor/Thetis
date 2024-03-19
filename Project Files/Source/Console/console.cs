@@ -24502,6 +24502,268 @@ namespace Thetis
         private int tune_timeout = 0;                               // MI0BOT: Auto tune timeout
         private int fault_timeout = 0;                              
         const byte TIMEOUT = 50;
+        bool AutoTuningHL2(ProtocolEvent protocolEvent)
+        {
+            bool returnCode = false;
+            //Debug.WriteLine("State: " + state.ToString());
+
+            switch (protocolEvent)  // Event information of the protocol
+            { 
+
+                case ProtocolEvent.Start:                            // The tune key has been pressed
+                    if (Control.ModifierKeys == Keys.Control &&
+                    SetupForm.HL2IOBoardPresent == true &&
+                    (AutoTuneState.Idle == auto_tuning ||
+                    AutoTuneState.Fault == auto_tuning))
+                    {
+                        auto_tuning = AutoTuneState.StartTune;
+                        returnCode = true;
+                    }
+                    break;
+
+                case ProtocolEvent.Idle:                            // Protocol is idle
+                    switch (auto_tuning)
+                    {
+                        case AutoTuneState.Idle:
+                            break;
+
+                        case AutoTuneState.StartTune:               // Auto tune has been instigated from UI
+                            NetworkIO.I2CWrite(1, 0x1d, 7, (int) ProtocolEvent.RequestTune);   // Start the tune via the protocol
+                            auto_tuning = AutoTuneState.WaitRF;
+                            tune_timeout = 0;
+                            fault_timeout = 0;
+                            chkTUN.Text = "AUTO";
+                            break;
+
+                        case AutoTuneState.Fault:                  // Auto tune has had a fault time out the message
+                            if (fault_timeout++ >= TIMEOUT)
+                            {
+                                infoBar.Warning("");
+                                auto_tuning = AutoTuneState.Idle;
+                                fault_timeout = 0;
+                            }
+                            break;
+
+                        default: 
+                            tune_timeout = TIMEOUT;
+                            break;
+                    }
+                    break;
+
+                case ProtocolEvent.RequestTune:                            // There has been no advance of protocol state, just advance timeout
+                    switch (auto_tuning)
+                    {
+                        case AutoTuneState.WaitRF:
+                            tune_timeout++;
+                            break;
+
+                        default: 
+                            tune_timeout = TIMEOUT;
+                            break;
+                    }
+                    break;
+
+                case ProtocolEvent.RequestRF:                               // Protocol has requested RF
+                    switch (auto_tuning)
+                    {
+                        case AutoTuneState.WaitRF:
+                            auto_tuning = AutoTuneState.Tuning;
+                            chkTUN_CheckedChanged(this, EventArgs.Empty);   // Call CheckedChanged directly as the check flag is already true
+                            break;
+
+                        case AutoTuneState.Tuning:
+                            tune_timeout++;
+                            break;
+
+                        default: 
+                            tune_timeout = TIMEOUT;
+                            break;
+                    }
+                    break;
+
+                default:
+                    // Unexpected return, cancel tuning by setting timeout
+
+                    if(protocolEvent >= ProtocolEvent.Fault)
+                    {
+                        auto_tuning = AutoTuneState.Fault;
+                        fault_timeout = 0;
+                        infoBar.Warning("I/O Board: Auto Tune Fault Code 0x" + ((byte)protocolEvent).ToString("X"));
+                    }
+                    
+                    tune_timeout = TIMEOUT;
+                    break;
+            }
+
+            if (tune_timeout >= TIMEOUT)
+            {                                       // Time out 
+                tune_timeout = 0;
+                NetworkIO.I2CWrite(1, 0x1d, 7, (int) ProtocolEvent.Idle);
+                
+                if (auto_tuning != AutoTuneState.Fault)
+                    auto_tuning = AutoTuneState.Idle;
+
+                chkTUN.Text = "TUN";
+                chkTUN.Checked = false;             // Stop the tuning activity
+            }
+
+            return returnCode;
+        }
+
+        private async void UpdateIOBoard()
+        {
+            long currentFreq, lastFreq = 0;
+            byte[] read_data = new byte[4];
+            byte state = 0;
+            byte old_IOBoardAerialPorts = 0;
+            byte old_IOBoardAerialMode = 0;
+            byte old_IOBoardMode = (Byte) DSPMode.LAST;
+            byte timeout = 0;
+
+            // Read the hardware revision on bus 2 at address 0x41, register 0
+
+            while (0 != NetworkIO.I2CReadInitiate(1, 0x41, 0))
+            {
+                await Task.Delay(1);
+            }
+
+            do
+            {
+                await Task.Delay(1);
+            } while (1 == NetworkIO.I2CResponse(read_data));
+
+            if (read_data[0] == 0xf1)   // Expect to find version 1 of the IO board
+            {
+                if (!SetupForm.HL2IOBoardPresent) SetupForm.HL2IOBoardPresent = true;
+
+                lastFreq = 0;   // Force update if restarted
+
+                bool reset = true;
+
+                auto_tuning = AutoTuneState.Idle;
+
+                while (chkPower.Checked && SetupForm.HL2IOBoardPresent)
+                {
+                    if (reset)
+                    {
+                        reset = false;
+                        NetworkIO.I2CWrite(1, 0x1d, 5, 1);
+                        await Task.Delay(1);
+                    }
+
+                    if (chkVFOATX.Checked)  // Get the frequency of the current VFO select for transmision
+                    {
+                        currentFreq = (long)(VFOAFreq * 1000000.0);
+                    }
+                    else
+                    {
+                        currentFreq = (long)(VFOBFreq * 1000000.0);
+                    }
+
+                    switch (state++)
+                    {
+                        case 0:
+                        case 2: // Secondary receive selection
+                            if (IOBoardAerialMode != old_IOBoardAerialMode)
+                            {
+                                NetworkIO.I2CWrite(1, 0x1d, 11, (IOBoardAerialMode));
+                                old_IOBoardAerialMode = IOBoardAerialMode;
+                            }
+                            break;
+
+                        case 4:
+                        case 6:
+                        case 8:
+                            // Read the input at register 6
+                            NetworkIO.I2CReadInitiate(1, 0x1d, 6);
+
+                            timeout = 0;
+                            do
+                            {
+                                await Task.Delay(1);
+                                if (timeout++ >= 20) break;
+                            } while (1 == NetworkIO.I2CResponse(read_data));    // [3] Input pins, [2] Ant tuner, [1] Fault, [0] Major Version
+
+                            if (0 != read_data[1])
+                            {
+                                TXInhibit = true;
+                                infoBar.Warning("I/O Board: Fault Code " + read_data[1].ToString());
+                                AutoTuningHL2(ProtocolEvent.Idle);
+                            }
+                            else
+                            {
+                                AutoTuningHL2((ProtocolEvent) read_data[2]);
+                            }
+
+                            SetupForm.UpdateIOLedStrip(MOX, read_data[3]);
+                            break;
+
+                        case 1: // Write current transmission frequency
+                            if (currentFreq != lastFreq)
+                            {
+                                // Write frequency on bus 2 at address 0x1d into the five registers
+                                NetworkIO.I2CWrite(1, 0x1d, 0, 0xff & (byte)(currentFreq >> 32));
+                                await Task.Delay(1);
+                                NetworkIO.I2CWrite(1, 0x1d, 1, 0xff & (byte)(currentFreq >> 24));
+                                await Task.Delay(1);
+                                NetworkIO.I2CWrite(1, 0x1d, 2, 0xff & (byte)(currentFreq >> 16));
+                                await Task.Delay(1);
+                                NetworkIO.I2CWrite(1, 0x1d, 3, 0xff & (byte)(currentFreq >> 08));
+                                await Task.Delay(1);
+                                NetworkIO.I2CWrite(1, 0x1d, 4, 0xff & (byte)(currentFreq >> 00));
+
+                                lastFreq = currentFreq;
+                            }
+                            break;
+
+                        case 3:
+                        case 5: // Aerial selection
+                            if (IOBoardAerialPorts != old_IOBoardAerialPorts)
+                            {
+                                NetworkIO.I2CWrite(1, 0x1d, 31, IOBoardAerialPorts);
+                                old_IOBoardAerialPorts = IOBoardAerialPorts;
+                            }
+                            break;
+
+                        case 7: // Mode selection
+                            Byte CurrentMode;
+
+                            if (VFOATX)
+                            {
+                                CurrentMode = (Byte) rx1_dsp_mode;
+                            }
+                            else
+                            {
+                                CurrentMode = (Byte) rx2_dsp_mode;
+                            }
+
+                            if (CurrentMode != old_IOBoardMode)
+                            {
+                                NetworkIO.I2CWrite(1, 0x1d, 32, CurrentMode);
+                                old_IOBoardMode = CurrentMode;
+                            }
+                            break;
+
+                        case 9:
+                        default:
+                            state = 0;
+                            break;
+                    }
+
+                    // Delay and continue to delay if we have been paused
+                    do
+                    {
+                        await Task.Delay(40);
+                    }
+                    while (I2CPollingPause);
+                }
+            }
+
+            auto_tuning = AutoTuneState.Disabled;
+            SetupForm.HL2IOBoardPresent = false;
+
+            return;
+        }
 
         private async void UpdateVOX()
         {
@@ -28690,6 +28952,9 @@ namespace Thetis
 
                 Audio.RX1BlankDisplayTX = blank_rx1_on_vfob_tx;
 
+                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                    AutoTuningHL2(ProtocolEvent.Idle);  // MI0BOT: Stop the auto tune
+
                 if (m_bAttontx)
                 {
                     if (current_hpsdr_model == HPSDRModel.HPSDR)
@@ -28995,7 +29260,12 @@ namespace Thetis
                     chk2TONE.CheckedChanged += new System.EventHandler(chk2TONE_CheckedChanged);
                     await Task.Delay(300);
                 }
-                //
+
+                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                {
+                    if (AutoTuningHL2(ProtocolEvent.Start))                     // MI0BOT: If true, control is handed to Auto Tune routine
+                    return;
+                }
 
                 tuning = true;                                                  // used for a few things
                 chkTUN.BackColor = button_selected_color;
@@ -29024,12 +29294,14 @@ namespace Thetis
                 radio.GetDSPTX(0).TXPostGenRun = 1;                
 
                 // remember old power //MW0LGE_22b
-                if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
+                if (_tuneDrivePowerSource == DrivePowerSource.FIXED ||
+                   (current_hpsdr_model == HPSDRModel.HERMESLITE && auto_tuning == AutoTuneState.Tuning))   // MI0BOT:
                     PreviousPWR = ptbPWR.Value;
                 // set power
                 int new_pwr = SetPowerUsingTargetDBM(out bool bUseConstrain, out double targetdBm, true, true, false);
                 //
-                if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
+                if (_tuneDrivePowerSource == DrivePowerSource.FIXED ||
+                   (current_hpsdr_model == HPSDRModel.HERMESLITE && auto_tuning == AutoTuneState.Tuning))   // MI0BOT:
                 {
                     PWRSliderLimitEnabled = false;
                     PWR = new_pwr;
@@ -29104,11 +29376,12 @@ namespace Thetis
                 updateVFOFreqs(chkTUN.Checked, true);
 
                 if (apollopresent ||
-                   (current_hpsdr_model == HPSDRModel.HERMESLITE))
+                   (current_hpsdr_model == HPSDRModel.HERMESLITE))      // MI0BOT:
                     NetworkIO.EnableApolloAutoTune(0);
 
                 //MW0LGE_22b
-                if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
+                if (_tuneDrivePowerSource == DrivePowerSource.FIXED ||
+                    (current_hpsdr_model == HPSDRModel.HERMESLITE && auto_tuning == AutoTuneState.Tuning))   // MI0BOT:
                 {
                     PWRSliderLimitEnabled = true;
                     PWR = PreviousPWR;
@@ -40348,6 +40621,9 @@ namespace Thetis
             if (chkVFOATX.Checked) VFOTXChangedHandlers?.Invoke(false, m_bLastVFOATXsetting, true);  // MW0LGE_21k9c
 
             m_bLastVFOATXsetting = chkVFOATX.Checked; // MW0LGE_21k9d rc3
+
+            if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                Alex.getAlex().UpdateAlexAntSelection(Band.LAST, MOX, alex_ant_ctrl_enabled, false);    // MI0BOT: Need to let Alex know in case there is a different band ant
         }
 
         private bool psstate = false;
@@ -40475,6 +40751,9 @@ namespace Thetis
             if (chkVFOBTX.Checked) VFOTXChangedHandlers?.Invoke(true, m_bLastVFOBTXsetting, true); // MW0LGE_21k9c
 
             m_bLastVFOBTXsetting = chkVFOBTX.Checked; // MW0LGE_21k9d rc3
+
+            if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                Alex.getAlex().UpdateAlexAntSelection(Band.LAST, MOX, alex_ant_ctrl_enabled, false);    // MI0BOT: Need to let Alex know in case there is a different band ant
         }
 
         private void toolStripMenuItemRX1FilterConfigure_Click(object sender, EventArgs e)
@@ -43500,9 +43779,33 @@ namespace Thetis
 
         private void lblPreamp_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (current_hpsdr_model != HPSDRModel.HPSDR)
+            if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+            {
+                if (rx1_step_att_present)
+                {
+                    if (udRX1StepAttData.Tag == null && RX1AutoAtt)
+                    {
+                        udRX1StepAttData.Tag = 1;
+                        lblPreamp.Text = "A-ATT";
+                        autoAttSearch = true;
+                    }
+                    else
+                    {
+                        udRX1StepAttData.Tag = null;
+                        lblPreamp.Text = "S-ATT";
+                    }
+                }
+                else
+                {
+                    SetupForm.HermesEnableAttenuator = !SetupForm.HermesEnableAttenuator;
+                }
+            }
+            else if (current_hpsdr_model != HPSDRModel.HPSDR)
             {
                 SetupForm.HermesEnableAttenuator = !SetupForm.HermesEnableAttenuator;
+            }
+            else
+            { 
                 if (RX1RX2usingSameADC) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator; //MW0LGE_22b
             }
         }
@@ -46771,17 +47074,57 @@ namespace Thetis
                     power_by_band[(int)tx_band] = new_pwr;
                     break;
                 case 1: //tune
-                    switch (_tuneDrivePowerSource)
+                    DrivePowerSource tuneDrive = _tuneDrivePowerSource;
+                    if (current_hpsdr_model == HPSDRModel.HERMESLITE && auto_tuning == AutoTuneState.Tuning)    // MI0BOT: Auto tune
+                        tuneDrive = DrivePowerSource.FIXED;
+
+                    switch (tuneDrive)
                     {
                         case DrivePowerSource.DRIVE_SLIDER:
                             new_pwr = ptbPWR.Value;
                             break;
                         case DrivePowerSource.TUNE_SLIDER:
                             slider = ptbTune;
-                            new_pwr = ptbTune.Value;
+
+                            if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: As HL2 only has 15 step output attenuator,
+                            {                                                       //         reduce the level further 
+                                if (bConstrain) new_pwr = slider.ConstrainAValue(ptbTune.Value);
+
+                                if (new_pwr <= 51)
+                                {
+                                    radio.GetDSPTX(0).TXPostGenToneMag = (double)(new_pwr + 40) / 100;
+                                    new_pwr = 0;
+                                }
+                                else
+                                {
+                                    radio.GetDSPTX(0).TXPostGenToneMag = 0.9999;
+                                    new_pwr = (new_pwr - 54) * 2;
+                                }
+                            }
+                            else
+                            {
+                                new_pwr = ptbTune.Value;
+                            }
+
                             break;
                         case DrivePowerSource.FIXED:
-                            new_pwr = tune_power;
+                            if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                            {
+                                if (tune_power <= 51)
+                                {
+                                    radio.GetDSPTX(0).TXPostGenToneMag = (double)(tune_power + 40) / 100;
+                                    new_pwr = 0;
+                                }
+                                else
+                                {
+                                    radio.GetDSPTX(0).TXPostGenToneMag = 0.9999;
+                                    new_pwr = (tune_power - 54) * 2;
+                                }
+                            }
+                            else
+                            {
+                                new_pwr = tune_power;
+                            }
                             bConstrain = false;
                             break;
                     }
