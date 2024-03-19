@@ -19302,6 +19302,9 @@ namespace Thetis
                     radRadioProtocol1Select.Enabled = false;
                     radRadioProtocol2Select.Enabled = false;
                     radRadioProtocolAutoSelect.Enabled = false;
+                    toolTip1.SetToolTip(chkHERCULES, "Preset pins for for N2ADR filter board");
+                    toolTip1.SetToolTip(chkApolloFilter, "Enables the full duplex on the HL2");
+                    toolTip1.SetToolTip(chkApolloTuner, "Enables HL2 power amplifier");
 
                     chkAlex160R1.Enabled = true;
                     chkAlex80R1.Enabled = true;
