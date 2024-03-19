@@ -46939,6 +46939,29 @@ namespace Thetis
             UpdateRX1DisplayOffsets();
             UpdateRX2DisplayOffsets();
         }
+
+        private void chkEnableMultiRX_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+            {
+                if (chkEnableMultiRX.Checked && IsRightButton(e))
+                {
+                    if (rx2_enabled)
+                    {
+                        double VFOA = VFOAFreq;
+                        VFOAFreq = VFOASubFreq;
+                        VFOASubFreq = VFOA;
+                    }
+                    else
+                    {
+                        double VFOA = VFOAFreq;
+                        VFOAFreq = VFOBFreq;
+                        VFOBFreq = VFOA;
+                    }
+                }
+
+            }
+        }
         private async void MultiMeter2UpdateRX1()
         {
             HiPerfTimer meterDelay = new HiPerfTimer();
