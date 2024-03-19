@@ -380,6 +380,7 @@
             this.chkQuickSplitFL = new System.Windows.Forms.CheckBoxTS();
             this.chkQuickSplitMultiRX = new System.Windows.Forms.CheckBoxTS();
             this.chkQuickSplitZoom = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS182 = new System.Windows.Forms.LabelTS();
             this.nudQuickSplitShift = new System.Windows.Forms.NumericUpDownTS();
             this.groupBoxTS26 = new System.Windows.Forms.GroupBoxTS();
             this.btnResetNFShift = new System.Windows.Forms.ButtonTS();
@@ -409,6 +410,46 @@
             this.chkQSOTimerResetOnMOX = new System.Windows.Forms.CheckBoxTS();
             this.chkQSOTimerOnlyDuringMOX = new System.Windows.Forms.CheckBoxTS();
             this.chkQSOTimerEnabled = new System.Windows.Forms.CheckBoxTS();
+            this.tpHL2Options = new System.Windows.Forms.TabPage();
+            this.groupBoxHL2RXOptions = new System.Windows.Forms.GroupBoxTS();
+            this.labelCl2Freq = new System.Windows.Forms.LabelTS();
+            this.udCl2Freq = new System.Windows.Forms.NumericUpDownTS();
+            this.chkCl2Enable = new System.Windows.Forms.CheckBoxTS();
+            this.chkExt10MHz = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisconnectReset = new System.Windows.Forms.CheckBoxTS();
+            this.labelPttHang = new System.Windows.Forms.LabelTS();
+            this.labelTxLatency = new System.Windows.Forms.LabelTS();
+            this.udPTTHang = new System.Windows.Forms.NumericUpDownTS();
+            this.udTxBufferLat = new System.Windows.Forms.NumericUpDownTS();
+            this.chkHL2PsSync = new System.Windows.Forms.CheckBoxTS();
+            this.chkHL2BandVolts = new System.Windows.Forms.CheckBoxTS();
+            this.groupBoxI2CControl = new System.Windows.Forms.GroupBoxTS();
+            this.txtI2CByte1 = new System.Windows.Forms.TextBoxTS();
+            this.txtI2CByte2 = new System.Windows.Forms.TextBoxTS();
+            this.chkI2CWriteEnable = new System.Windows.Forms.CheckBoxTS();
+            this.udI2CControl1 = new System.Windows.Forms.NumericUpDownTS();
+            this.txtI2CByte3 = new System.Windows.Forms.TextBoxTS();
+            this.labelI2C2 = new System.Windows.Forms.LabelTS();
+            this.labelI2C1 = new System.Windows.Forms.LabelTS();
+            this.radI2C2 = new System.Windows.Forms.RadioButtonTS();
+            this.radI2C1 = new System.Windows.Forms.RadioButtonTS();
+            this.txtI2CByte0 = new System.Windows.Forms.TextBoxTS();
+            this.btnI2CWrite = new System.Windows.Forms.ButtonTS();
+            this.labelI2CWriteData = new System.Windows.Forms.LabelTS();
+            this.udI2CWriteData = new System.Windows.Forms.NumericUpDownTS();
+            this.labelI2CControl = new System.Windows.Forms.LabelTS();
+            this.udI2CControl0 = new System.Windows.Forms.NumericUpDownTS();
+            this.btnI2CRead = new System.Windows.Forms.ButtonTS();
+            this.labelI2CAddress = new System.Windows.Forms.LabelTS();
+            this.udI2CAddress = new System.Windows.Forms.NumericUpDownTS();
+            this.chkI2CEnable = new System.Windows.Forms.CheckBoxTS();
+            this.grpIOPinState = new System.Windows.Forms.GroupBoxTS();
+            this.labelIOState = new System.Windows.Forms.LabelTS();
+            this.ucIOPinsLedStripHF = new Thetis.ucOCLedStrip();
+            this.grpHermesLiteStepAttenuator = new System.Windows.Forms.GroupBoxTS();
+            this.lblAutoDelay = new System.Windows.Forms.LabelTS();
+            this.chkAutoStepAttenuator = new System.Windows.Forms.CheckBoxTS();
+            this.udHermesStepAttenuatorDelay = new System.Windows.Forms.NumericUpDownTS();
             this.tpGeneralCalibration = new System.Windows.Forms.TabPage();
             this.groupBoxTS27 = new System.Windows.Forms.GroupBoxTS();
             this.chkLogVoltsAmps = new System.Windows.Forms.CheckBoxTS();
@@ -550,9 +591,6 @@
             this.grpUSBBCD = new System.Windows.Forms.GroupBoxTS();
             this.comboUsbDevices = new System.Windows.Forms.ComboBoxTS();
             this.chkUsbBCD = new System.Windows.Forms.CheckBoxTS();
-            this.grpIOPinState = new System.Windows.Forms.GroupBoxTS();
-            this.labelTS182 = new System.Windows.Forms.LabelTS();
-            this.ucIOPinsLedStripHF = new Thetis.ucOCLedStrip();
             this.grpExtPAControlHF = new System.Windows.Forms.GroupBoxTS();
             this.labelTS577 = new System.Windows.Forms.LabelTS();
             this.labelTS582 = new System.Windows.Forms.LabelTS();
@@ -3678,6 +3716,19 @@
             this.groupBoxTS15.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerSeconds)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerMinutes)).BeginInit();
+            this.tpHL2Options.SuspendLayout();
+            this.groupBoxHL2RXOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udCl2Freq)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udPTTHang)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTxBufferLat)).BeginInit();
+            this.groupBoxI2CControl.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udI2CControl1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udI2CWriteData)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udI2CControl0)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udI2CAddress)).BeginInit();
+            this.grpIOPinState.SuspendLayout();
+            this.grpHermesLiteStepAttenuator.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udHermesStepAttenuatorDelay)).BeginInit();
             this.tpGeneralCalibration.SuspendLayout();
             this.groupBoxTS27.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAmpSens)).BeginInit();
@@ -7095,7 +7146,7 @@
             // chkFirewallCheck
             // 
             this.chkFirewallCheck.Image = null;
-            this.chkFirewallCheck.Location = new System.Drawing.Point(216, 51);
+            this.chkFirewallCheck.Location = new System.Drawing.Point(216, 62);
             this.chkFirewallCheck.Name = "chkFirewallCheck";
             this.chkFirewallCheck.Selectable = true;
             this.chkFirewallCheck.Size = new System.Drawing.Size(98, 33);
@@ -8351,6 +8402,7 @@
             // 
             this.tcOptions.Controls.Add(this.tpOptions1);
             this.tcOptions.Controls.Add(this.tpOptions2);
+            this.tcOptions.Controls.Add(this.tpHL2Options);
             this.tcOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tcOptions.Location = new System.Drawing.Point(0, 0);
             this.tcOptions.Name = "tcOptions";
@@ -8643,7 +8695,7 @@
             this.grpHermesStepAttenuator.Controls.Add(this.chkHermesStepAttenuator);
             this.grpHermesStepAttenuator.Location = new System.Drawing.Point(542, 63);
             this.grpHermesStepAttenuator.Name = "grpHermesStepAttenuator";
-            this.grpHermesStepAttenuator.Size = new System.Drawing.Size(168, 102);
+            this.grpHermesStepAttenuator.Size = new System.Drawing.Size(168, 144);
             this.grpHermesStepAttenuator.TabIndex = 30;
             this.grpHermesStepAttenuator.TabStop = false;
             this.grpHermesStepAttenuator.Text = "Hermes Step Attenuator";
@@ -8668,7 +8720,7 @@
             0,
             0,
             0});
-            this.udHermesStepAttenuatorDataRX2.Location = new System.Drawing.Point(107, 67);
+            this.udHermesStepAttenuatorDataRX2.Location = new System.Drawing.Point(106, 64);
             this.udHermesStepAttenuatorDataRX2.Maximum = new decimal(new int[] {
             31,
             0,
@@ -8709,7 +8761,7 @@
             0,
             0,
             0});
-            this.udHermesStepAttenuatorData.Location = new System.Drawing.Point(107, 24);
+            this.udHermesStepAttenuatorData.Location = new System.Drawing.Point(106, 21);
             this.udHermesStepAttenuatorData.Maximum = new decimal(new int[] {
             31,
             0,
@@ -10189,6 +10241,666 @@
             this.toolTip1.SetToolTip(this.chkQSOTimerEnabled, "Enable to use the QSO timer which is shown on the status bar");
             this.chkQSOTimerEnabled.UseVisualStyleBackColor = true;
             this.chkQSOTimerEnabled.CheckedChanged += new System.EventHandler(this.chkQSOTimerEnabled_CheckedChanged);
+            // 
+            // tpHL2Options
+            // 
+            this.tpHL2Options.BackColor = System.Drawing.SystemColors.Control;
+            this.tpHL2Options.Controls.Add(this.groupBoxHL2RXOptions);
+            this.tpHL2Options.Controls.Add(this.groupBoxI2CControl);
+            this.tpHL2Options.Controls.Add(this.chkI2CEnable);
+            this.tpHL2Options.Controls.Add(this.grpIOPinState);
+            this.tpHL2Options.Controls.Add(this.grpHermesLiteStepAttenuator);
+            this.tpHL2Options.Location = new System.Drawing.Point(4, 22);
+            this.tpHL2Options.Name = "tpHL2Options";
+            this.tpHL2Options.Size = new System.Drawing.Size(716, 384);
+            this.tpHL2Options.TabIndex = 1;
+            this.tpHL2Options.Text = "HL2 Options";
+            // 
+            // groupBoxHL2RXOptions
+            // 
+            this.groupBoxHL2RXOptions.Controls.Add(this.labelCl2Freq);
+            this.groupBoxHL2RXOptions.Controls.Add(this.udCl2Freq);
+            this.groupBoxHL2RXOptions.Controls.Add(this.chkCl2Enable);
+            this.groupBoxHL2RXOptions.Controls.Add(this.chkExt10MHz);
+            this.groupBoxHL2RXOptions.Controls.Add(this.chkDisconnectReset);
+            this.groupBoxHL2RXOptions.Controls.Add(this.labelPttHang);
+            this.groupBoxHL2RXOptions.Controls.Add(this.labelTxLatency);
+            this.groupBoxHL2RXOptions.Controls.Add(this.udPTTHang);
+            this.groupBoxHL2RXOptions.Controls.Add(this.udTxBufferLat);
+            this.groupBoxHL2RXOptions.Controls.Add(this.chkHL2PsSync);
+            this.groupBoxHL2RXOptions.Controls.Add(this.chkHL2BandVolts);
+            this.groupBoxHL2RXOptions.Location = new System.Drawing.Point(12, 15);
+            this.groupBoxHL2RXOptions.Name = "groupBoxHL2RXOptions";
+            this.groupBoxHL2RXOptions.Size = new System.Drawing.Size(236, 148);
+            this.groupBoxHL2RXOptions.TabIndex = 3;
+            this.groupBoxHL2RXOptions.TabStop = false;
+            this.groupBoxHL2RXOptions.Text = "Hermes Lite Options";
+            // 
+            // labelCl2Freq
+            // 
+            this.labelCl2Freq.BackColor = System.Drawing.SystemColors.Control;
+            this.labelCl2Freq.Image = null;
+            this.labelCl2Freq.Location = new System.Drawing.Point(157, 121);
+            this.labelCl2Freq.Name = "labelCl2Freq";
+            this.labelCl2Freq.Size = new System.Drawing.Size(36, 16);
+            this.labelCl2Freq.TabIndex = 200;
+            this.labelCl2Freq.Text = "MHz";
+            // 
+            // udCl2Freq
+            // 
+            this.udCl2Freq.DecimalPlaces = 3;
+            this.udCl2Freq.ImeMode = System.Windows.Forms.ImeMode.Off;
+            this.udCl2Freq.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.udCl2Freq.Location = new System.Drawing.Point(89, 119);
+            this.udCl2Freq.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.udCl2Freq.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udCl2Freq.Name = "udCl2Freq";
+            this.udCl2Freq.Size = new System.Drawing.Size(62, 20);
+            this.udCl2Freq.TabIndex = 199;
+            this.udCl2Freq.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udCl2Freq.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udCl2Freq, "Output frequency on CL2 output");
+            this.udCl2Freq.Value = new decimal(new int[] {
+            116,
+            0,
+            0,
+            0});
+            this.udCl2Freq.ValueChanged += new System.EventHandler(this.udCl2Freq_ValueChanged);
+            // 
+            // chkCl2Enable
+            // 
+            this.chkCl2Enable.Image = null;
+            this.chkCl2Enable.Location = new System.Drawing.Point(8, 120);
+            this.chkCl2Enable.Name = "chkCl2Enable";
+            this.chkCl2Enable.Size = new System.Drawing.Size(88, 16);
+            this.chkCl2Enable.TabIndex = 10;
+            this.chkCl2Enable.Text = "Enable CL2";
+            this.toolTip1.SetToolTip(this.chkCl2Enable, "Enable frequency output on CL2");
+            this.chkCl2Enable.UseVisualStyleBackColor = true;
+            this.chkCl2Enable.CheckedChanged += new System.EventHandler(this.chkCl2Enable_CheckedChanged);
+            // 
+            // chkExt10MHz
+            // 
+            this.chkExt10MHz.Image = null;
+            this.chkExt10MHz.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.chkExt10MHz.Location = new System.Drawing.Point(8, 93);
+            this.chkExt10MHz.Name = "chkExt10MHz";
+            this.chkExt10MHz.Size = new System.Drawing.Size(141, 16);
+            this.chkExt10MHz.TabIndex = 9;
+            this.chkExt10MHz.Text = "Ext 10MHz (CL1 Input)";
+            this.toolTip1.SetToolTip(this.chkExt10MHz, "Enable external 10MHz input on CL1");
+            this.chkExt10MHz.UseVisualStyleBackColor = true;
+            this.chkExt10MHz.CheckedChanged += new System.EventHandler(this.chkExt10MHz_CheckedChanged);
+            // 
+            // chkDisconnectReset
+            // 
+            this.chkDisconnectReset.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkDisconnectReset.Image = null;
+            this.chkDisconnectReset.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.chkDisconnectReset.Location = new System.Drawing.Point(8, 67);
+            this.chkDisconnectReset.Name = "chkDisconnectReset";
+            this.chkDisconnectReset.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkDisconnectReset.Size = new System.Drawing.Size(143, 20);
+            this.chkDisconnectReset.TabIndex = 8;
+            this.chkDisconnectReset.Text = "Reset On Disconnect";
+            this.chkDisconnectReset.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.chkDisconnectReset, "Hermes Lite will reset when a software program disconnect from it.");
+            this.chkDisconnectReset.UseVisualStyleBackColor = true;
+            this.chkDisconnectReset.CheckedChanged += new System.EventHandler(this.chkDisconnectReset_CheckedChanged);
+            // 
+            // labelPttHang
+            // 
+            this.labelPttHang.Image = null;
+            this.labelPttHang.Location = new System.Drawing.Point(116, 42);
+            this.labelPttHang.Name = "labelPttHang";
+            this.labelPttHang.Size = new System.Drawing.Size(58, 20);
+            this.labelPttHang.TabIndex = 7;
+            this.labelPttHang.Text = "PTT Hang";
+            this.labelPttHang.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // labelTxLatency
+            // 
+            this.labelTxLatency.Image = null;
+            this.labelTxLatency.Location = new System.Drawing.Point(104, 19);
+            this.labelTxLatency.Name = "labelTxLatency";
+            this.labelTxLatency.Size = new System.Drawing.Size(70, 16);
+            this.labelTxLatency.TabIndex = 6;
+            this.labelTxLatency.Text = "TX Latency";
+            this.labelTxLatency.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // udPTTHang
+            // 
+            this.udPTTHang.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udPTTHang.Location = new System.Drawing.Point(180, 44);
+            this.udPTTHang.Maximum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.udPTTHang.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udPTTHang.Name = "udPTTHang";
+            this.udPTTHang.Size = new System.Drawing.Size(46, 20);
+            this.udPTTHang.TabIndex = 5;
+            this.udPTTHang.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udPTTHang.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udPTTHang, "Sets the msec delay in the HL2 hardware before the PTT is release after RF stops." +
+        "");
+            this.udPTTHang.Value = new decimal(new int[] {
+            12,
+            0,
+            0,
+            0});
+            this.udPTTHang.ValueChanged += new System.EventHandler(this.udPTTHang_ValueChanged);
+            // 
+            // udTxBufferLat
+            // 
+            this.udTxBufferLat.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTxBufferLat.Location = new System.Drawing.Point(180, 19);
+            this.udTxBufferLat.Maximum = new decimal(new int[] {
+            70,
+            0,
+            0,
+            0});
+            this.udTxBufferLat.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTxBufferLat.Name = "udTxBufferLat";
+            this.udTxBufferLat.Size = new System.Drawing.Size(46, 20);
+            this.udTxBufferLat.TabIndex = 4;
+            this.udTxBufferLat.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udTxBufferLat.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udTxBufferLat, "Sets msec delay in the HL2 hardware before RF is produced.");
+            this.udTxBufferLat.Value = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.udTxBufferLat.ValueChanged += new System.EventHandler(this.udTxBufferLat_ValueChanged);
+            // 
+            // chkHL2PsSync
+            // 
+            this.chkHL2PsSync.Image = null;
+            this.chkHL2PsSync.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.chkHL2PsSync.Location = new System.Drawing.Point(8, 45);
+            this.chkHL2PsSync.Name = "chkHL2PsSync";
+            this.chkHL2PsSync.Size = new System.Drawing.Size(112, 16);
+            this.chkHL2PsSync.TabIndex = 1;
+            this.chkHL2PsSync.Text = "Disable PS Sync";
+            this.toolTip1.SetToolTip(this.chkHL2PsSync, "Disables the FPGA synchronisation of the power supply clock");
+            this.chkHL2PsSync.UseVisualStyleBackColor = true;
+            this.chkHL2PsSync.CheckedChanged += new System.EventHandler(this.chkHL2PsSync_CheckedChanged);
+            // 
+            // chkHL2BandVolts
+            // 
+            this.chkHL2BandVolts.Image = null;
+            this.chkHL2BandVolts.Location = new System.Drawing.Point(8, 19);
+            this.chkHL2BandVolts.Name = "chkHL2BandVolts";
+            this.chkHL2BandVolts.Size = new System.Drawing.Size(104, 16);
+            this.chkHL2BandVolts.TabIndex = 0;
+            this.chkHL2BandVolts.Text = "Band Volts";
+            this.toolTip1.SetToolTip(this.chkHL2BandVolts, "Selects Band Volts PWM output instead of Fan Control PWM");
+            this.chkHL2BandVolts.UseVisualStyleBackColor = true;
+            this.chkHL2BandVolts.CheckedChanged += new System.EventHandler(this.chkHL2BandVolts_CheckedChanged);
+            // 
+            // groupBoxI2CControl
+            // 
+            this.groupBoxI2CControl.Controls.Add(this.txtI2CByte1);
+            this.groupBoxI2CControl.Controls.Add(this.txtI2CByte2);
+            this.groupBoxI2CControl.Controls.Add(this.chkI2CWriteEnable);
+            this.groupBoxI2CControl.Controls.Add(this.udI2CControl1);
+            this.groupBoxI2CControl.Controls.Add(this.txtI2CByte3);
+            this.groupBoxI2CControl.Controls.Add(this.labelI2C2);
+            this.groupBoxI2CControl.Controls.Add(this.labelI2C1);
+            this.groupBoxI2CControl.Controls.Add(this.radI2C2);
+            this.groupBoxI2CControl.Controls.Add(this.radI2C1);
+            this.groupBoxI2CControl.Controls.Add(this.txtI2CByte0);
+            this.groupBoxI2CControl.Controls.Add(this.btnI2CWrite);
+            this.groupBoxI2CControl.Controls.Add(this.labelI2CWriteData);
+            this.groupBoxI2CControl.Controls.Add(this.udI2CWriteData);
+            this.groupBoxI2CControl.Controls.Add(this.labelI2CControl);
+            this.groupBoxI2CControl.Controls.Add(this.udI2CControl0);
+            this.groupBoxI2CControl.Controls.Add(this.btnI2CRead);
+            this.groupBoxI2CControl.Controls.Add(this.labelI2CAddress);
+            this.groupBoxI2CControl.Controls.Add(this.udI2CAddress);
+            this.groupBoxI2CControl.Enabled = false;
+            this.groupBoxI2CControl.Location = new System.Drawing.Point(419, 252);
+            this.groupBoxI2CControl.Name = "groupBoxI2CControl";
+            this.groupBoxI2CControl.Size = new System.Drawing.Size(282, 123);
+            this.groupBoxI2CControl.TabIndex = 183;
+            this.groupBoxI2CControl.TabStop = false;
+            this.groupBoxI2CControl.Text = "I2C Control";
+            // 
+            // txtI2CByte1
+            // 
+            this.txtI2CByte1.BackColor = System.Drawing.Color.White;
+            this.txtI2CByte1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.txtI2CByte1.ForeColor = System.Drawing.Color.Black;
+            this.txtI2CByte1.Location = new System.Drawing.Point(215, 64);
+            this.txtI2CByte1.Name = "txtI2CByte1";
+            this.txtI2CByte1.ReadOnly = true;
+            this.txtI2CByte1.Size = new System.Drawing.Size(25, 20);
+            this.txtI2CByte1.TabIndex = 200;
+            this.txtI2CByte1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.toolTip1.SetToolTip(this.txtI2CByte1, "Data at address+1 set by I2C Reg/Control");
+            // 
+            // txtI2CByte2
+            // 
+            this.txtI2CByte2.BackColor = System.Drawing.Color.White;
+            this.txtI2CByte2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.txtI2CByte2.ForeColor = System.Drawing.Color.Black;
+            this.txtI2CByte2.Location = new System.Drawing.Point(184, 64);
+            this.txtI2CByte2.Name = "txtI2CByte2";
+            this.txtI2CByte2.ReadOnly = true;
+            this.txtI2CByte2.Size = new System.Drawing.Size(25, 20);
+            this.txtI2CByte2.TabIndex = 199;
+            this.txtI2CByte2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.toolTip1.SetToolTip(this.txtI2CByte2, "Data at address+2 set by I2C Reg/Control");
+            // 
+            // chkI2CWriteEnable
+            // 
+            this.chkI2CWriteEnable.AutoSize = true;
+            this.chkI2CWriteEnable.Image = null;
+            this.chkI2CWriteEnable.Location = new System.Drawing.Point(256, 93);
+            this.chkI2CWriteEnable.Name = "chkI2CWriteEnable";
+            this.chkI2CWriteEnable.Size = new System.Drawing.Size(15, 14);
+            this.chkI2CWriteEnable.TabIndex = 198;
+            this.chkI2CWriteEnable.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.chkI2CWriteEnable, "Write Enable");
+            this.chkI2CWriteEnable.UseVisualStyleBackColor = true;
+            this.chkI2CWriteEnable.CheckedChanged += new System.EventHandler(this.chkI2CWriteEnable_CheckedChanged);
+            // 
+            // udI2CControl1
+            // 
+            this.udI2CControl1.Hexadecimal = true;
+            this.udI2CControl1.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udI2CControl1.Location = new System.Drawing.Point(84, 64);
+            this.udI2CControl1.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.udI2CControl1.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udI2CControl1.Name = "udI2CControl1";
+            this.udI2CControl1.Size = new System.Drawing.Size(30, 20);
+            this.udI2CControl1.TabIndex = 188;
+            this.udI2CControl1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udI2CControl1.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udI2CControl1, "Upper nibble of Register/Control byte");
+            this.udI2CControl1.Value = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            // 
+            // txtI2CByte3
+            // 
+            this.txtI2CByte3.BackColor = System.Drawing.Color.White;
+            this.txtI2CByte3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.txtI2CByte3.ForeColor = System.Drawing.Color.Black;
+            this.txtI2CByte3.Location = new System.Drawing.Point(153, 64);
+            this.txtI2CByte3.Name = "txtI2CByte3";
+            this.txtI2CByte3.ReadOnly = true;
+            this.txtI2CByte3.Size = new System.Drawing.Size(25, 20);
+            this.txtI2CByte3.TabIndex = 196;
+            this.txtI2CByte3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.toolTip1.SetToolTip(this.txtI2CByte3, "Data at address+3 set by I2C Reg/Control");
+            // 
+            // labelI2C2
+            // 
+            this.labelI2C2.Image = null;
+            this.labelI2C2.Location = new System.Drawing.Point(135, 16);
+            this.labelI2C2.Name = "labelI2C2";
+            this.labelI2C2.Size = new System.Drawing.Size(32, 16);
+            this.labelI2C2.TabIndex = 195;
+            this.labelI2C2.Text = "I2C 2";
+            this.labelI2C2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // labelI2C1
+            // 
+            this.labelI2C1.Image = null;
+            this.labelI2C1.Location = new System.Drawing.Point(74, 16);
+            this.labelI2C1.Name = "labelI2C1";
+            this.labelI2C1.Size = new System.Drawing.Size(37, 16);
+            this.labelI2C1.TabIndex = 194;
+            this.labelI2C1.Text = "I2C 1";
+            this.labelI2C1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // radI2C2
+            // 
+            this.radI2C2.Image = null;
+            this.radI2C2.Location = new System.Drawing.Point(169, 17);
+            this.radI2C2.Name = "radI2C2";
+            this.radI2C2.Size = new System.Drawing.Size(16, 16);
+            this.radI2C2.TabIndex = 193;
+            this.radI2C2.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.toolTip1.SetToolTip(this.radI2C2, "Selects bus 2");
+            this.radI2C2.UseVisualStyleBackColor = true;
+            // 
+            // radI2C1
+            // 
+            this.radI2C1.Checked = true;
+            this.radI2C1.Image = null;
+            this.radI2C1.Location = new System.Drawing.Point(113, 17);
+            this.radI2C1.Name = "radI2C1";
+            this.radI2C1.Size = new System.Drawing.Size(16, 16);
+            this.radI2C1.TabIndex = 192;
+            this.radI2C1.TabStop = true;
+            this.radI2C1.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.toolTip1.SetToolTip(this.radI2C1, "Selects bus 1");
+            this.radI2C1.UseVisualStyleBackColor = true;
+            // 
+            // txtI2CByte0
+            // 
+            this.txtI2CByte0.BackColor = System.Drawing.Color.White;
+            this.txtI2CByte0.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.txtI2CByte0.ForeColor = System.Drawing.Color.Black;
+            this.txtI2CByte0.Location = new System.Drawing.Point(246, 64);
+            this.txtI2CByte0.Name = "txtI2CByte0";
+            this.txtI2CByte0.ReadOnly = true;
+            this.txtI2CByte0.Size = new System.Drawing.Size(25, 20);
+            this.txtI2CByte0.TabIndex = 185;
+            this.txtI2CByte0.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.toolTip1.SetToolTip(this.txtI2CByte0, "Data at address set by I2C Reg/Control");
+            // 
+            // btnI2CWrite
+            // 
+            this.btnI2CWrite.Enabled = false;
+            this.btnI2CWrite.Image = null;
+            this.btnI2CWrite.Location = new System.Drawing.Point(165, 90);
+            this.btnI2CWrite.Name = "btnI2CWrite";
+            this.btnI2CWrite.Selectable = true;
+            this.btnI2CWrite.Size = new System.Drawing.Size(75, 20);
+            this.btnI2CWrite.TabIndex = 191;
+            this.btnI2CWrite.Text = "Write";
+            this.toolTip1.SetToolTip(this.btnI2CWrite, "Write byte to address given by Reg/Control");
+            this.btnI2CWrite.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnI2CWrite_MouseDown);
+            // 
+            // labelI2CWriteData
+            // 
+            this.labelI2CWriteData.Enabled = false;
+            this.labelI2CWriteData.Image = null;
+            this.labelI2CWriteData.Location = new System.Drawing.Point(8, 90);
+            this.labelI2CWriteData.Name = "labelI2CWriteData";
+            this.labelI2CWriteData.Size = new System.Drawing.Size(70, 16);
+            this.labelI2CWriteData.TabIndex = 190;
+            this.labelI2CWriteData.Text = "Write Data";
+            this.labelI2CWriteData.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // udI2CWriteData
+            // 
+            this.udI2CWriteData.Enabled = false;
+            this.udI2CWriteData.Hexadecimal = true;
+            this.udI2CWriteData.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udI2CWriteData.Location = new System.Drawing.Point(84, 90);
+            this.udI2CWriteData.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.udI2CWriteData.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udI2CWriteData.Name = "udI2CWriteData";
+            this.udI2CWriteData.Size = new System.Drawing.Size(59, 20);
+            this.udI2CWriteData.TabIndex = 189;
+            this.udI2CWriteData.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udI2CWriteData.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udI2CWriteData, "Byte to be written to the I2C bus");
+            this.udI2CWriteData.Value = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            // 
+            // labelI2CControl
+            // 
+            this.labelI2CControl.Image = null;
+            this.labelI2CControl.Location = new System.Drawing.Point(10, 64);
+            this.labelI2CControl.Name = "labelI2CControl";
+            this.labelI2CControl.Size = new System.Drawing.Size(70, 16);
+            this.labelI2CControl.TabIndex = 188;
+            this.labelI2CControl.Text = "Reg/Control";
+            this.labelI2CControl.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // udI2CControl0
+            // 
+            this.udI2CControl0.Hexadecimal = true;
+            this.udI2CControl0.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udI2CControl0.Location = new System.Drawing.Point(113, 64);
+            this.udI2CControl0.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.udI2CControl0.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udI2CControl0.Name = "udI2CControl0";
+            this.udI2CControl0.Size = new System.Drawing.Size(30, 20);
+            this.udI2CControl0.TabIndex = 187;
+            this.udI2CControl0.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udI2CControl0.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udI2CControl0, "Lower nibble of Register/Control byte");
+            this.udI2CControl0.Value = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            // 
+            // btnI2CRead
+            // 
+            this.btnI2CRead.Image = null;
+            this.btnI2CRead.Location = new System.Drawing.Point(165, 38);
+            this.btnI2CRead.Name = "btnI2CRead";
+            this.btnI2CRead.Selectable = true;
+            this.btnI2CRead.Size = new System.Drawing.Size(75, 20);
+            this.btnI2CRead.TabIndex = 186;
+            this.btnI2CRead.Text = "Read";
+            this.toolTip1.SetToolTip(this.btnI2CRead, "Read two bytes from the I2C bus");
+            this.btnI2CRead.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnI2CRead_MouseDown);
+            // 
+            // labelI2CAddress
+            // 
+            this.labelI2CAddress.Image = null;
+            this.labelI2CAddress.Location = new System.Drawing.Point(13, 38);
+            this.labelI2CAddress.Name = "labelI2CAddress";
+            this.labelI2CAddress.Size = new System.Drawing.Size(70, 16);
+            this.labelI2CAddress.TabIndex = 184;
+            this.labelI2CAddress.Text = "I2C Address";
+            this.labelI2CAddress.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // udI2CAddress
+            // 
+            this.udI2CAddress.Hexadecimal = true;
+            this.udI2CAddress.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udI2CAddress.Location = new System.Drawing.Point(84, 38);
+            this.udI2CAddress.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.udI2CAddress.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udI2CAddress.Name = "udI2CAddress";
+            this.udI2CAddress.Size = new System.Drawing.Size(59, 20);
+            this.udI2CAddress.TabIndex = 183;
+            this.udI2CAddress.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udI2CAddress.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udI2CAddress, "Device address on the I2C bus");
+            this.udI2CAddress.Value = new decimal(new int[] {
+            212,
+            0,
+            0,
+            0});
+            // 
+            // chkI2CEnable
+            // 
+            this.chkI2CEnable.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkI2CEnable.Image = null;
+            this.chkI2CEnable.Location = new System.Drawing.Point(557, 228);
+            this.chkI2CEnable.Name = "chkI2CEnable";
+            this.chkI2CEnable.Size = new System.Drawing.Size(144, 18);
+            this.chkI2CEnable.TabIndex = 184;
+            this.chkI2CEnable.Text = "Enable I2C control";
+            this.chkI2CEnable.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkI2CEnable.UseVisualStyleBackColor = true;
+            this.chkI2CEnable.CheckedChanged += new System.EventHandler(this.chkI2CEnable_CheckedChanged);
+            // 
+            // grpIOPinState
+            // 
+            this.grpIOPinState.Controls.Add(this.labelIOState);
+            this.grpIOPinState.Controls.Add(this.ucIOPinsLedStripHF);
+            this.grpIOPinState.Enabled = false;
+            this.grpIOPinState.Location = new System.Drawing.Point(12, 229);
+            this.grpIOPinState.Name = "grpIOPinState";
+            this.grpIOPinState.Size = new System.Drawing.Size(147, 55);
+            this.grpIOPinState.TabIndex = 16;
+            this.grpIOPinState.TabStop = false;
+            this.grpIOPinState.Text = "I/O Board Pin State";
+            this.grpIOPinState.Visible = false;
+            // 
+            // labelIOState
+            // 
+            this.labelIOState.BackColor = System.Drawing.SystemColors.Control;
+            this.labelIOState.Image = null;
+            this.labelIOState.Location = new System.Drawing.Point(9, 16);
+            this.labelIOState.Name = "labelIOState";
+            this.labelIOState.Size = new System.Drawing.Size(116, 16);
+            this.labelIOState.TabIndex = 201;
+            this.labelIOState.Text = "Rx  i1  i2  i3  i4   i5 ";
+            // 
+            // ucIOPinsLedStripHF
+            // 
+            this.ucIOPinsLedStripHF.Bits = 0;
+            this.ucIOPinsLedStripHF.DisplayBits = 7;
+            this.ucIOPinsLedStripHF.Enabled = false;
+            this.ucIOPinsLedStripHF.Location = new System.Drawing.Point(9, 33);
+            this.ucIOPinsLedStripHF.Name = "ucIOPinsLedStripHF";
+            this.ucIOPinsLedStripHF.Size = new System.Drawing.Size(134, 17);
+            this.ucIOPinsLedStripHF.TabIndex = 1;
+            this.ucIOPinsLedStripHF.TX = false;
+            this.ucIOPinsLedStripHF.Visible = false;
+            // 
+            // grpHermesLiteStepAttenuator
+            // 
+            this.grpHermesLiteStepAttenuator.Controls.Add(this.lblAutoDelay);
+            this.grpHermesLiteStepAttenuator.Controls.Add(this.chkAutoStepAttenuator);
+            this.grpHermesLiteStepAttenuator.Controls.Add(this.udHermesStepAttenuatorDelay);
+            this.grpHermesLiteStepAttenuator.Location = new System.Drawing.Point(12, 169);
+            this.grpHermesLiteStepAttenuator.Name = "grpHermesLiteStepAttenuator";
+            this.grpHermesLiteStepAttenuator.Size = new System.Drawing.Size(236, 46);
+            this.grpHermesLiteStepAttenuator.TabIndex = 30;
+            this.grpHermesLiteStepAttenuator.TabStop = false;
+            this.grpHermesLiteStepAttenuator.Text = "Hermes Lite Step Attenuator";
+            // 
+            // lblAutoDelay
+            // 
+            this.lblAutoDelay.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.lblAutoDelay.AutoSize = true;
+            this.lblAutoDelay.Image = null;
+            this.lblAutoDelay.Location = new System.Drawing.Point(108, -75);
+            this.lblAutoDelay.Name = "lblAutoDelay";
+            this.lblAutoDelay.Size = new System.Drawing.Size(34, 13);
+            this.lblAutoDelay.TabIndex = 11;
+            this.lblAutoDelay.Text = "Delay";
+            this.toolTip1.SetToolTip(this.lblAutoDelay, "Specifies how offten auto attenuator re-tests ");
+            // 
+            // chkAutoStepAttenuator
+            // 
+            this.chkAutoStepAttenuator.AutoSize = true;
+            this.chkAutoStepAttenuator.Checked = true;
+            this.chkAutoStepAttenuator.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAutoStepAttenuator.Image = null;
+            this.chkAutoStepAttenuator.Location = new System.Drawing.Point(8, 22);
+            this.chkAutoStepAttenuator.Name = "chkAutoStepAttenuator";
+            this.chkAutoStepAttenuator.Size = new System.Drawing.Size(116, 17);
+            this.chkAutoStepAttenuator.TabIndex = 5;
+            this.chkAutoStepAttenuator.Text = "Auto Rx Attenuator";
+            this.toolTip1.SetToolTip(this.chkAutoStepAttenuator, "Automaticly adjust attenuation to maximise ADC range");
+            this.chkAutoStepAttenuator.CheckedChanged += new System.EventHandler(this.chkAutoStepAttenuator_CheckedChanged);
+            // 
+            // udHermesStepAttenuatorDelay
+            // 
+            this.udHermesStepAttenuatorDelay.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udHermesStepAttenuatorDelay.Location = new System.Drawing.Point(180, 19);
+            this.udHermesStepAttenuatorDelay.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.udHermesStepAttenuatorDelay.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udHermesStepAttenuatorDelay.Name = "udHermesStepAttenuatorDelay";
+            this.udHermesStepAttenuatorDelay.Size = new System.Drawing.Size(46, 20);
+            this.udHermesStepAttenuatorDelay.TabIndex = 4;
+            this.udHermesStepAttenuatorDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.udHermesStepAttenuatorDelay.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udHermesStepAttenuatorDelay, "Time between tests for ADC range check");
+            this.udHermesStepAttenuatorDelay.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             // 
             // tpGeneralCalibration
             // 
@@ -12250,7 +12962,6 @@
             // 
             this.tpOCHFControl.BackColor = System.Drawing.SystemColors.Control;
             this.tpOCHFControl.Controls.Add(this.grpUSBBCD);
-            this.tpOCHFControl.Controls.Add(this.grpIOPinState);
             this.tpOCHFControl.Controls.Add(this.grpExtPAControlHF);
             this.tpOCHFControl.Controls.Add(this.chkAllowHotSwitching);
             this.tpOCHFControl.Controls.Add(this.grpOCPinState);
@@ -12302,17 +13013,6 @@
             this.chkUsbBCD.UseVisualStyleBackColor = true;
             this.chkUsbBCD.CheckedChanged += new System.EventHandler(this.chkUsbBCD_CheckedChanged);
             // 
-            // grpIOPinState
-            // 
-            this.grpIOPinState.Controls.Add(this.ucIOPinsLedStripHF);
-            this.grpIOPinState.Enabled = false;
-            this.grpIOPinState.Location = new System.Drawing.Point(12, 252);
-            this.grpIOPinState.Name = "grpIOPinState";
-            this.grpIOPinState.Size = new System.Drawing.Size(147, 55);
-            this.grpIOPinState.TabIndex = 16;
-            this.grpIOPinState.TabStop = false;
-            this.grpIOPinState.Text = "I/O Board Pin State";
-            this.grpIOPinState.Visible = false;
             // 
             // labelTS182
             // 
@@ -12323,19 +13023,7 @@
             this.labelTS182.Size = new System.Drawing.Size(29, 13);
             this.labelTS182.TabIndex = 39;
             this.labelTS182.Text = "± Hz";
-            // 
-            // ucIOPinsLedStripHF
-            // 
-            this.ucIOPinsLedStripHF.Bits = 0;
-            this.ucIOPinsLedStripHF.DisplayBits = 7;
-            this.ucIOPinsLedStripHF.Enabled = false;
-            this.ucIOPinsLedStripHF.Location = new System.Drawing.Point(9, 33);
-            this.ucIOPinsLedStripHF.Name = "ucIOPinsLedStripHF";
-            this.ucIOPinsLedStripHF.Size = new System.Drawing.Size(134, 17);
-            this.ucIOPinsLedStripHF.TabIndex = 1;
-            this.ucIOPinsLedStripHF.TX = false;
-            this.ucIOPinsLedStripHF.Visible = false;
-            // 
+            //
             // grpExtPAControlHF
             // 
             this.grpExtPAControlHF.Controls.Add(this.labelTS577);
@@ -56990,6 +57678,21 @@
             this.groupBoxTS15.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerSeconds)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerMinutes)).EndInit();
+            this.tpHL2Options.ResumeLayout(false);
+            this.groupBoxHL2RXOptions.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.udCl2Freq)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udPTTHang)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTxBufferLat)).EndInit();
+            this.groupBoxI2CControl.ResumeLayout(false);
+            this.groupBoxI2CControl.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udI2CControl1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udI2CWriteData)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udI2CControl0)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udI2CAddress)).EndInit();
+            this.grpIOPinState.ResumeLayout(false);
+            this.grpHermesLiteStepAttenuator.ResumeLayout(false);
+            this.grpHermesLiteStepAttenuator.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udHermesStepAttenuatorDelay)).EndInit();
             this.tpGeneralCalibration.ResumeLayout(false);
             this.groupBoxTS27.ResumeLayout(false);
             this.groupBoxTS27.PerformLayout();
@@ -57059,8 +57762,6 @@
             this.tpOCHFControl.PerformLayout();
             this.grpUSBBCD.ResumeLayout(false);
             this.grpUSBBCD.PerformLayout();
-            this.grpIOPinState.ResumeLayout(false);
-            this.grpIOPinState.PerformLayout();
             this.grpExtPAControlHF.ResumeLayout(false);
             this.grpExtPAControlHF.PerformLayout();
             this.grpOCPinState.ResumeLayout(false);
@@ -58216,6 +58917,7 @@
         private TabControl tcGeneral;
         private TabPage tpGeneralHardware;
         private TabPage tpGeneralOptions;
+        private TabPage tpHL2Options;
         private TabPage tpGeneralCalibration;
         private NumericUpDownTS udGeneralCalFreq1;
         private NumericUpDownTS udGeneralCalFreq3;
@@ -58603,8 +59305,11 @@
         private LabelTS labelTS41;
         private CheckBoxTS chkPennyExtCtrl;
         private GroupBoxTS groupBoxRXOptions;
+        private GroupBoxTS groupBoxHL2RXOptions;
         private CheckBoxTS chkMercRandom;
         private CheckBoxTS chkMercDither;
+        private CheckBoxTS chkHL2PsSync;
+        private CheckBoxTS chkHL2BandVolts;
         private NumericUpDownTS udMaxFreq;
         private LabelTS labelTS57;
         private GroupBoxTS grpVersion;
@@ -59298,6 +60003,7 @@
         private System.Windows.Forms.RadioButtonTS radRX2LSBUSB;
         private System.Windows.Forms.PanelTS panelAutoPACalibrate;
         private System.Windows.Forms.GroupBoxTS grpHermesStepAttenuator;
+        private System.Windows.Forms.GroupBoxTS grpHermesLiteStepAttenuator;
         private System.Windows.Forms.CheckBoxTS chkHermesStepAttenuator;
         private System.Windows.Forms.NumericUpDownTS udHermesStepAttenuatorData;
         private System.Windows.Forms.PanelTS panelAlexTXAntControl;
@@ -60754,6 +61460,9 @@
         private RadioButtonTS radP1DDC0ADC1;
         private RadioButtonTS radP1DDC0ADC0;
         private TabPage tpADC;
+        private LabelTS lblAutoDelay;
+        private CheckBoxTS chkAutoStepAttenuator;
+        private NumericUpDownTS udHermesStepAttenuatorDelay;
         private CheckBoxTS chkCATtoVFOB;
         private CheckBoxTS checkEnableAriesQuickTune;
         private CheckBoxTS checkAriesStandalone;
@@ -60775,6 +61484,12 @@
         private ucLGPicker lgLinearGradientRX1;
         private GroupBoxTS grpPanadaptorGradient;
         public ColorButton clrbtnGripperColour;
+        private CheckBoxTS chkDisconnectReset;
+        private LabelTS labelPttHang;
+        private LabelTS labelTxLatency;
+        private NumericUpDownTS udPTTHang;
+        private NumericUpDownTS udTxBufferLat;
+        private GroupBoxTS groupBoxI2CControl;        
         private ButtonTS btnDeleteColourGripper;
         private ButtonTS btnClearColourGrippers;
         private CheckBoxTS chkPanadpatorGradient;
@@ -60803,6 +61518,26 @@
         private CheckBoxTS chkN1MMEnableRX1;
         private LabelTS labelTS91;
         private TrackBarTS tbRX1WaterfallOpacity;
+        private LabelTS labelI2CControl;
+        private NumericUpDownTS udI2CControl0;
+        private ButtonTS btnI2CRead;
+        public TextBoxTS txtI2CByte0;
+        private LabelTS labelI2CAddress;
+        private NumericUpDownTS udI2CAddress;
+        private ButtonTS btnI2CWrite;
+        private LabelTS labelI2CWriteData;
+        private NumericUpDownTS udI2CWriteData;
+        private LabelTS labelI2C2;
+        private LabelTS labelI2C1;
+        private RadioButtonTS radI2C2;
+        private RadioButtonTS radI2C1;
+        private NumericUpDownTS udI2CControl1;
+        public TextBoxTS txtI2CByte3;
+        private CheckBoxTS chkI2CWriteEnable;
+        private CheckBoxTS chkExt10MHz;
+        private CheckBoxTS chkCl2Enable;
+        private NumericUpDownTS udCl2Freq;
+        private LabelTS labelCl2Freq;        
         private LabelTS labelTS92;
         private TrackBarTS tbRX2WaterfallOpacity;
         private NumericUpDownTS udHermesStepAttenuatorDataRX2;
@@ -61306,6 +62041,7 @@
         private CheckBoxTS chkVisualNotch;
         private ButtonTS btnRX2PBsnr;
         private ButtonTS btnRX1PBsnr;
+        private LabelTS labelTS160;
         private ButtonTS btnResetNFShift;
         private GroupBoxTS grpMultiMeterHolder;
         private ButtonTS btnAddRX2Container;
@@ -61561,5 +62297,6 @@
         private GroupBoxTS groupBoxTS33;
         private CheckBoxTS chkCWbecomesCWUabove10mhz;
         private LabelTS lblTXattBand;
+        private LabelTS labelIOState;
     }
 }

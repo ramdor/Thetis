@@ -266,9 +266,10 @@ namespace Thetis
 			int idx = (int)band - (int)Band.B160M; 
 
             if ((idx < 0 || idx > 11) ||
-               (Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE))	// MI0BOT: For HL2, always go in here to determine Tx band from correct Tx VFO
+               (Console.getConsole() != null &&
+                Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE))	// MI0BOT: For HL2, always go in here to determine Tx band from correct Tx VFO
             {
-                if (Audio.VFOBTX && Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                if (Audio.VFOBTX && Console.getConsole() != null && Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE)
                     band = AntBandFromFreqB();	// MI0BOT: Transmit band is from VFOB
                 else
                     band = AntBandFromFreq();
