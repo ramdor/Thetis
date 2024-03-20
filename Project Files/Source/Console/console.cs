@@ -28416,8 +28416,31 @@ namespace Thetis
         private void chkMicMute_CheckedChanged(object sender, System.EventArgs e)
         {
             if (chkMicMute.Checked)
+            {
+                if(CurrentHPSDRModel == HPSDRModel.HERMESLITE)      // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                {
+                    if (ptbMic.Tag != null)
+                    {
+                        Audio.VACPreamp = (double) ptbMic.Tag;
+                        ptbMic.Tag = null;
+                    }
+                    ptbMic.Enabled = true;
+                }
                 ptbMic_Scroll(this, EventArgs.Empty);
-            else Audio.MicPreamp = 0.0;
+            }
+            else
+            {
+                if(CurrentHPSDRModel == HPSDRModel.HERMESLITE)      // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                {
+                    ptbMic.Enabled = false;
+                    ptbMic.Tag = Audio.VACPreamp;
+                    Audio.VACPreamp = 0.0;
+                }
+                else
+                {
+                    Audio.MicPreamp = 0.0;
+                }
+            }
         }
 
         private void ptbMic_Scroll(object sender, System.EventArgs e)
@@ -28442,6 +28465,29 @@ namespace Thetis
                 }
 
                 Audio.MicPreamp = Math.Pow(10.0, gain_db / 20.0); // convert to scalar 
+
+                // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                if (!IsSetupFormNull && CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                {
+                    if (!(chkRX2.Checked && chkVAC2.Checked && chkVFOBTX.Checked))
+                    {
+                        if (rx1_dsp_mode != DSPMode.DIGU && rx1_dsp_mode != DSPMode.DIGU)
+                        {
+                            lblMicVal.Text = "A " + ptbMic.Value.ToString() + " dB";
+                            SetupForm.VACTXGain = ptbMic.Value;
+                            vac_tx_gain = ptbMic.Value;
+                        }
+                    }
+                    else
+                    {
+                        if (rx2_dsp_mode != DSPMode.DIGU && rx1_dsp_mode != DSPMode.DIGU)
+                        {
+                            lblMicVal.Text = "B " + ptbMic.Value.ToString() + " dB";
+                            SetupForm.VAC2TXGain = ptbMic.Value;
+                            vac2_tx_gain = ptbMic.Value;
+                        }
+                    }
+                }
             }
 
             if (sender.GetType() == typeof(PrettyTrackBar))
@@ -35397,6 +35443,18 @@ namespace Thetis
                     }
                     break;
                 case DSPMode.DIGL:
+                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                    {
+                        ptbRX1AF.Enabled = true;
+                        ptbRX1AF.SmallChange = 1;
+                        ptbRX1AF.LargeChange = 1;
+                        ptbRX0Gain.Enabled = true;
+                        ptbRX0Gain.SmallChange = 1;
+                        ptbRX0Gain.LargeChange = 1;
+
+                        chkMUT_CheckedChanged(this, EventArgs.Empty);
+                    }
+
                     radModeDIGL.BackColor = SystemColors.Control;
                     if (vac_auto_enable &&
                         new_mode != DSPMode.DIGU &&
@@ -35408,6 +35466,18 @@ namespace Thetis
                     if (new_mode != DSPMode.DIGU) bRecallDigiModeSettings = true; // see comment below
                     break;
                 case DSPMode.DIGU:
+                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                    {
+                        ptbRX1AF.Enabled = true;
+                        ptbRX1AF.SmallChange = 1;
+                        ptbRX1AF.LargeChange = 1;
+                        ptbRX0Gain.Enabled = true;
+                        ptbRX0Gain.SmallChange = 1;
+                        ptbRX0Gain.LargeChange = 1;
+
+                        chkMUT_CheckedChanged(this, EventArgs.Empty);
+                    }
+
                     radModeDIGU.BackColor = SystemColors.Control;
                     if (vac_auto_enable &&
                         new_mode != DSPMode.DIGL &&
@@ -35644,6 +35714,17 @@ namespace Thetis
                     Display.RXDisplayHigh = (int)sample_rate_rx1 / 2;
                     break;
                 case DSPMode.DIGL:
+                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                    {
+                        ptbRX1AF.Enabled = false;
+                        ptbRX1AF.SmallChange = 0;
+                        ptbRX1AF.LargeChange = 0;
+                        ptbRX0Gain.Enabled = false;
+                        ptbRX0Gain.SmallChange = 0;
+                        ptbRX0Gain.LargeChange = 0;
+                        radio.GetDSPRX(0, 0).RXOutputGain = 0.1;
+                    }
+
                     radModeDIGL.BackColor = button_selected_color;
 
                     if (chkVFOATX.Checked || !rx2_enabled)
@@ -35661,6 +35742,17 @@ namespace Thetis
                     }
                     break;
                 case DSPMode.DIGU:
+                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                    {
+                        ptbRX1AF.Enabled = false;
+                        ptbRX1AF.SmallChange = 0;
+                        ptbRX1AF.LargeChange = 0;
+                        ptbRX0Gain.Enabled = false;
+                        ptbRX0Gain.SmallChange = 0;
+                        ptbRX0Gain.LargeChange = 0;
+                        radio.GetDSPRX(0, 0).RXOutputGain = 0.1;
+                    }
+
                     radModeDIGU.BackColor = button_selected_color;
 
                     if (chkVFOATX.Checked)
@@ -37040,7 +37132,14 @@ namespace Thetis
                 {
                     txtVFOABand.Font = new Font("Microsoft Sans Sarif", 14.0f, FontStyle.Regular);
 
-                    VFOASubFreq = saved_vfoa_sub_freq;
+                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  Start with the two VFOs on the same frequency
+                    {
+                        VFOASubFreq = VFOAFreq;
+                    }
+                    else
+                    {
+                        VFOASubFreq = saved_vfoa_sub_freq;
+                    }
 
                     if (chkPower.Checked) txtVFOABand.ForeColor = vfo_text_light_color;
                     else txtVFOABand.ForeColor = vfo_text_dark_color;
@@ -39066,6 +39165,18 @@ namespace Thetis
                     }
                     break;
                 case DSPMode.DIGL:
+                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                    {
+                        ptbRX2AF.Enabled = true;
+                        ptbRX2AF.SmallChange = 1;
+                        ptbRX2AF.LargeChange = 1;
+                        ptbRX2Gain.Enabled = true;
+                        ptbRX2Gain.SmallChange = 1;
+                        ptbRX2Gain.LargeChange = 1;
+                        chkRX2Mute_CheckedChanged(this, EventArgs.Empty);
+                        radio.GetDSPRX(1, 0).RXOutputGain = 0.1;
+                    }
+
                     radRX2ModeDIGL.BackColor = SystemColors.Control;
                     if (rx2_enabled && vac2_auto_enable &&
                         new_mode != DSPMode.DIGU &&
@@ -39076,6 +39187,18 @@ namespace Thetis
                     if (new_mode != DSPMode.DIGU) SetDigiMode(2, DigiMode.DigiModeSettingState.dmssRecall);
                     break;
                 case DSPMode.DIGU:
+                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                    {
+                        ptbRX2AF.Enabled = true;
+                        ptbRX2AF.SmallChange = 1;
+                        ptbRX2AF.LargeChange = 1;
+                        ptbRX2Gain.Enabled = true;
+                        ptbRX2Gain.SmallChange = 1;
+                        ptbRX2Gain.LargeChange = 1;
+                        chkRX2Mute_CheckedChanged(this, EventArgs.Empty);
+                        radio.GetDSPRX(1, 0).RXOutputGain = 0.1;
+                    }
+
                     radRX2ModeDIGU.BackColor = SystemColors.Control;
                     if (rx2_enabled && vac2_auto_enable &&
                         new_mode != DSPMode.DIGL &&
@@ -39255,6 +39378,17 @@ namespace Thetis
                     chkRX2BIN.Enabled = false;
                     break;
                 case DSPMode.DIGL:
+                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                    {
+                        ptbRX2AF.Enabled = false;
+                        ptbRX2AF.SmallChange = 0;
+                        ptbRX2AF.LargeChange = 0;
+                        ptbRX2Gain.Enabled = false;
+                        ptbRX2Gain.SmallChange = 0;
+                        ptbRX2Gain.LargeChange = 0;
+                        radio.GetDSPRX(1, 0).RXOutputGain = 0.1;
+                    }
+
                     radRX2ModeDIGL.BackColor = button_selected_color;
 
                     if (chkVFOBTX.Checked && rx2_enabled)
@@ -39274,6 +39408,17 @@ namespace Thetis
 
                     break;
                 case DSPMode.DIGU:
+                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                    {
+                        ptbRX2AF.Enabled = false;
+                        ptbRX2AF.SmallChange = 0;
+                        ptbRX2AF.LargeChange = 0;
+                        ptbRX2Gain.Enabled = false;
+                        ptbRX2Gain.SmallChange = 0;
+                        ptbRX2Gain.LargeChange = 0;
+                        radio.GetDSPRX(1, 0).RXOutputGain = 0.1;
+                    }
+
                     radRX2ModeDIGU.BackColor = button_selected_color;
 
                     if (chkVFOBTX.Checked && rx2_enabled)
@@ -39328,6 +39473,11 @@ namespace Thetis
             radRX2FilterVar2.Text = rx2_filters[(int)new_mode].GetName(Filter.VAR2);
 
             rx2_dsp_mode = new_mode;
+
+            if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                SelectModeDependentPanel();     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+
+
 
             if (rx2_dsp_mode != DSPMode.FM && rx2_dsp_mode != DSPMode.DRM)
             {
@@ -40807,6 +40957,9 @@ namespace Thetis
 
                     chkVACStereo.Checked = vac_stereo;
                 }
+
+                if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                    ptbMic_Scroll(sender, e);
             }
             else
             {
@@ -40869,6 +41022,10 @@ namespace Thetis
         {
             if (chkVFOBTX.Focused && !chkVFOBTX.Checked) chkVFOBTX.Checked = true;
             Display.TXOnVFOB = chkVFOBTX.Checked;
+
+            if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                Penny.getPenny().VFOBTX = chkVFOBTX.Checked; // MI0BOT: Needs to be set early
+
             if (chkVFOBTX.Checked)
             {
                 if (chkVFOATX.Checked) chkVFOATX.Checked = false;
@@ -47355,6 +47512,7 @@ namespace Thetis
             //constrain power
             if(bConstrain) new_pwr = slider.ConstrainAValue(new_pwr);
             //
+            double hl2Power = (double)new_pwr;  // MI0BOT: Just use the slider value for HL2
 
             double target_dbm = 10 * (double)Math.Log10((double)new_pwr * 1000);
             double gbb;
@@ -47383,7 +47541,7 @@ namespace Thetis
                 _lastPower = new_pwr;
             }
 
-            if (new_pwr == 0)
+            if (new_pwr == 0 && CurrentHPSDRModel != HPSDRModel.HERMESLITE)     // MI0BOT: HL2 always does the else
             {
                 Audio.RadioVolume = 0.0;
                 if (chkTUN.Checked)
@@ -47393,9 +47551,17 @@ namespace Thetis
             {
                 if (chkTUN.Checked)
                     radio.GetDSPTX(0).TXPostGenRun = 1;
-                Audio.RadioVolume = (double)Math.Min((target_volts / 0.8), 1.0);
-            }
 
+                if (CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+                {
+                    Audio.RadioVolume = (double)Math.Min((target_volts / 0.8), 1.0);
+                }
+                else
+                {
+                    Audio.RadioVolume = (double)Math.Min((hl2Power * (gbb / 100)) / 93.75, 1.0);  // MI0BOT: We want to jump in steps of 16 but getting 6.
+                }                                                                                 // Drive value is 0-255 but only top 4 bits used.
+            }                                                                                     // Need to correct for multiplication of 1.02 in Radio volume  
+                                                                                                  // Formula - 1/((16/6)/(255/1.02))
             return new_pwr;
         }
 
@@ -47479,7 +47645,6 @@ namespace Thetis
                         VFOBFreq = VFOA;
                     }
                 }
-
             }
         }
         private async void MultiMeter2UpdateRX1()
