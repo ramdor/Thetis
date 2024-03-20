@@ -20672,10 +20672,51 @@ namespace Thetis
                 switch (oload_select)
                 {
                     case 0:
-                        if (adc_oload_num == 0)
-                            infoBar.Warning("ADC Overload !");
-                        else
-                            infoBar.Warning("ADC" + adc_oload_num.ToString() + " Overload !", change_overload_color_count);
+                        if (current_hpsdr_model != HPSDRModel.HERMESLITE || 
+                            udRX1StepAttData.Tag == null)                       // MI0BOT: HL2 auto adjust the LNA based on the over flow indication from the HW
+                        {                                                       //         The .Tag field is used as an enable flag of auto adjust 
+                            if (adc_oload_num == 0)
+                                infoBar.Warning("ADC Overload !");
+                            else
+                                infoBar.Warning("ADC" + adc_oload_num.ToString() + " Overload !", change_overload_color_count);
+                        }
+                        else if (!MOX)
+                        {                           // MI0BOT: If we are receiving and get an ADC overflow
+                            decimal attStep = 1;
+
+                            if (current_band != RX1Band)
+                            {
+                                // MI0BOT: Changed band has caused the over load - set attenuator step to 10dB to quickly remove overload
+                                attStep = 10;
+                            }
+                            else
+                            {
+                                // MI0BOT: The auto search has hit overload so stop it and set step to 3 dB
+                                autoAttSearch = false;
+                                attStep = 3;
+                            }
+
+
+                            if ((udRX1StepAttData.Value + attStep) > udRX1StepAttData.Maximum)
+                            {
+                                // Mi0BOT: The requested attenuator step was to large, limit it to the max possible 
+                                attStep = udRX1StepAttData.Maximum - udRX1StepAttData.Value;
+                            }
+
+                            udRX1StepAttData.Value += attStep;      // MI0BOT: Reduce the gain by the appropriate step amount 
+
+                            if ((ptbRF.Value + attStep) > ptbRF.Maximum)
+                            {
+                                // The requested AGC step was to large, limit it to the max possible 
+                                attStep = ptbRF.Maximum - ptbRF.Value;
+                            }
+
+                            ptbRF.Value += (int)attStep;            // MI0BOT: Move the AGC to compensate for the new LNA gain
+                            ptbRF_Scroll(this, EventArgs.Empty);
+
+                            attn_loop = SetupForm.HermesStepAttenuatorDelay * 2;    // MI0BOT: Set the delay loop up which will tests for changes in band conditions
+                        }
+
                         break;
                     case 1:
                         infoBar.Warning("AMP OVERLOAD !", change_overload_color_count);
@@ -20684,8 +20725,69 @@ namespace Thetis
             }
             else
             {
-
                 change_overload_color_count = 0;
+
+                if (current_hpsdr_model == HPSDRModel.HERMESLITE && !MOX)       // MI0BOT: Loop which searches for a LNA gain which is 3dB below overload
+                {
+                    if (udRX1StepAttData.Tag != null && RX1AutoAtt)
+                    {                                               // MI0BOT: Auto attenuator has been selected
+                        if (current_band == RX1Band)
+                        {                                           // MI0BOT: The band hasn't changed
+                            if (autoAttSearch)
+                            {                                       // MI0BOT: We are in search mode, increase the gain by 2 dB 
+                                if ((udRX1StepAttData.Value - 2) >= udRX1StepAttData.Minimum)   // MI0BOT: Check that we don't hit min limit
+                                {
+                                    udRX1StepAttData.Value -= 2;
+
+                                    if ((ptbRF.Value - 2) >= ptbRF.Minimum)     // MI0BOT: Adjust the AGC
+                                    {
+                                        ptbRF.Value -= 2;
+                                        ptbRF_Scroll(this, EventArgs.Empty);
+                                    }
+                                }
+                                else if (udRX1StepAttData.Value > udRX1StepAttData.Minimum)
+                                {                                   // MI0BOT: Hitting the limit so just adjust by 1 
+                                    udRX1StepAttData.Value--;
+
+                                    if (ptbRF.Value > ptbRF.Minimum)            // MI0BOT: Adjust the AGC
+                                    {
+                                        ptbRF.Value--;
+                                        ptbRF_Scroll(this, EventArgs.Empty);
+                                    }
+                                }
+                            }
+                            else if (0 >= attn_loop)
+                            {                           // MI0BOT: The delay timer has timed out so adjust the gain by 1 dB
+                                if (udRX1StepAttData.Value > udRX1StepAttData.Minimum)
+                                {
+                                    udRX1StepAttData.Value--;
+
+                                    if (ptbRF.Value > ptbRF.Minimum)
+                                    {
+                                        ptbRF.Value--;
+                                        ptbRF_Scroll(this, EventArgs.Empty);
+                                    }
+                                }
+
+                                attn_loop = SetupForm.HermesStepAttenuatorDelay * 2;
+                            }
+                            else
+                            {
+                                attn_loop--;
+                            }
+                        }
+                        else
+                        {   // MI0BOT: The band has changed, so start a search for best dynamic range
+                            autoAttSearch = true;
+                            current_band = RX1Band;
+                            attn_loop = SetupForm.HermesStepAttenuatorDelay * 2;
+                        }
+                    }
+                    else
+                    {
+                        attn_loop = SetupForm.HermesStepAttenuatorDelay * 2;    // MI0BOT: Keep resetting the delay timer
+                    }
+                }
 
                 if (ooo > 0)
                 {
