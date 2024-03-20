@@ -568,6 +568,10 @@ namespace Thetis
 
             //MW0LGE_21h
             updateNetworkThrottleCheckBox();
+
+            // Mi0BOT: Make sure the correct stuff is enabled
+            if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                chkEnableStaticIP_CheckedChanged(this, EventArgs.Empty);
         }
         private bool _bAddedDelegates = false;
         private void addDelegates()
@@ -707,6 +711,13 @@ namespace Thetis
                 comboAudioSampleRate1.Items.Add(96000);
             if (!comboAudioSampleRate1.Items.Contains(192000))
                 comboAudioSampleRate1.Items.Add(192000);
+            
+            // The HL supports 384K
+            if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+            {
+                if (!comboAudioSampleRate1.Items.Contains(384000))
+                    comboAudioSampleRate1.Items.Add(384000);
+            }
 
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
             {
@@ -719,8 +730,12 @@ namespace Thetis
             }
             else
             {
-                if (comboAudioSampleRate1.Items.Contains(384000))
-                    comboAudioSampleRate1.Items.Remove(384000);
+                // The HL supports 384K
+                if (console.CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+                {
+                    if (comboAudioSampleRate1.Items.Contains(384000))
+                       comboAudioSampleRate1.Items.Remove(384000);
+                }
                 if (comboAudioSampleRate1.Items.Contains(768000))
                     comboAudioSampleRate1.Items.Remove(768000);
                 if (comboAudioSampleRate1.Items.Contains(1536000))
@@ -738,6 +753,13 @@ namespace Thetis
             if (!comboAudioSampleRateRX2.Items.Contains(192000))
                 comboAudioSampleRateRX2.Items.Add(192000);
 
+            // The HL supports 384K
+            if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+            {
+                if (!comboAudioSampleRate2.Items.Contains(384000))
+                    comboAudioSampleRate2.Items.Add(384000);
+            }
+
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
             {
                 if (!comboAudioSampleRateRX2.Items.Contains(384000))
@@ -749,8 +771,12 @@ namespace Thetis
             }
             else
             {
-                if (comboAudioSampleRateRX2.Items.Contains(384000))
-                    comboAudioSampleRateRX2.Items.Remove(384000);
+                // The HL2 supports 384K
+                if (console.CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+                {
+                    if (comboAudioSampleRate2.Items.Contains(384000))
+                        comboAudioSampleRate2.Items.Remove(384000);
+                }
                 if (comboAudioSampleRateRX2.Items.Contains(768000))
                     comboAudioSampleRateRX2.Items.Remove(768000);
                 if (comboAudioSampleRateRX2.Items.Contains(1536000))
@@ -3475,6 +3501,20 @@ namespace Thetis
             }
         }
 
+        // MI0BOT: Support for HL2 auto attenuator
+        public bool AutoStepAttenuator
+        {
+            get
+            {
+                if (chkAutoStepAttenuator != null) return chkAutoStepAttenuator.Checked;
+                else return false;
+            }
+            set
+            {
+                if (chkAutoStepAttenuator != null) chkAutoStepAttenuator.Checked = value;
+            }
+        }
+
         public int HermesAttenuatorData
         {
             get
@@ -3526,7 +3566,16 @@ namespace Thetis
                 if (udATTOnTX != null)
                 {
                     if (value > 31) value = 31;
-                    if (value < 0) value = 0; //MW0LGE [2.9.0.7] added after mi0bot source review
+
+                    if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                    {
+                        if (value < -28) value = -28; //MI0BOT: HL2 has a greater range and can go negative 
+                    }
+                    else
+                    {
+                        if (value < 0) value = 0; //MW0LGE [2.9.0.7] added after mi0bot source review
+                    }
+
                     lblTXattBand.Text = console.TXBand.ToString();
                     if (udATTOnTX.Value == value) //[2.10.3.6]MW0LGE there will be no change event
                         udATTOnTX_ValueChanged(this, EventArgs.Empty);
@@ -4853,7 +4902,18 @@ namespace Thetis
         public int FixedTunePower
         {
             get { return (int)udTXTunePower.Value; }
-            set { udTXTunePower.Value = (decimal)value; }
+            set 
+            {
+                if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                {
+                    udTXTunePower.Value = (decimal)(value/3 - 33)/2;    // MI0BOT: Now only has a -16.5 to 0 range in HL2 for Tune power
+                }
+                else
+                {
+                    udTXTunePower.Value = (decimal)value;
+                }
+
+            }
         }
         public int TwoTonePower
         {
@@ -5002,6 +5062,7 @@ namespace Thetis
 
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:     // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA1W.Value;
@@ -5022,6 +5083,7 @@ namespace Thetis
                 float rv = (float)ud100PA20W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA2W.Value;
@@ -5041,6 +5103,7 @@ namespace Thetis
                 float rv = (float)ud100PA30W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA3W.Value;
@@ -5060,6 +5123,7 @@ namespace Thetis
                 float rv = (float)ud100PA40W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA4W.Value;
@@ -5079,6 +5143,7 @@ namespace Thetis
                 float rv = (float)ud100PA50W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA5W.Value;
@@ -5098,6 +5163,7 @@ namespace Thetis
                 float rv = (float)ud100PA60W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA6W.Value;
@@ -5117,6 +5183,7 @@ namespace Thetis
                 float rv = (float)ud100PA70W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA7W.Value;
@@ -5136,6 +5203,7 @@ namespace Thetis
                 float rv = (float)ud100PA80W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA8W.Value;
@@ -5155,6 +5223,7 @@ namespace Thetis
                 float rv = (float)ud100PA90W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA9W.Value;
@@ -5174,6 +5243,7 @@ namespace Thetis
                 float rv = (float)ud100PA100W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA10W.Value;
@@ -5193,6 +5263,7 @@ namespace Thetis
                 float rv = (float)ud100PA110W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA11W.Value;
@@ -5212,6 +5283,7 @@ namespace Thetis
                 float rv = (float)ud100PA120W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA12W.Value;
@@ -5231,6 +5303,7 @@ namespace Thetis
                 float rv = (float)ud100PA130W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA13W.Value;
@@ -5250,6 +5323,7 @@ namespace Thetis
                 float rv = (float)ud100PA140W.Value;
                 switch (console.CurrentHPSDRModel)
                 {
+                    case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
                     case HPSDRModel.ANAN10E:
                         rv = (float)ud10PA14W.Value;
@@ -5262,6 +5336,12 @@ namespace Thetis
             }
         }
 
+        // MI0BOT: Support for HL2 auto attenuator
+        public int HermesStepAttenuatorDelay
+        {
+            get { return (int)udHermesStepAttenuatorDelay.Value; }
+            set { udHermesStepAttenuatorDelay.Value = value; }
+        }
 
         // Added 06/21/05 BT for CAT commands
 
@@ -5701,6 +5781,96 @@ namespace Thetis
             //set { tcCAT = value; }
         }
 
+        private bool hl2IOBoardPresent = false;
+        public bool HL2IOBoardPresent
+        {
+            get
+            {
+                return hl2IOBoardPresent;
+            }
+            set
+            {
+                hl2IOBoardPresent = value;
+                chkHL2IOBoardPresent.Checked = value;
+                chkHL2IOBoardPresent.Enabled = value;
+                ucIOPinsLedStripHF.Enabled = value;
+                grpIOPinState.Enabled = value;
+
+                radAlexR1_160.Enabled = value;
+                radAlexR1_80.Enabled = value;
+                radAlexR1_60.Enabled = value;
+                radAlexR1_40.Enabled = value;
+                radAlexR1_30.Enabled = value;
+                radAlexR1_20.Enabled = value;
+                radAlexR1_17.Enabled = value;
+                radAlexR1_15.Enabled = value;
+                radAlexR1_12.Enabled = value;
+                radAlexR1_10.Enabled = value;
+
+                radAlexR2_160.Enabled = value;
+                radAlexR2_80.Enabled = value;
+                radAlexR2_60.Enabled = value;
+                radAlexR2_40.Enabled = value;
+                radAlexR2_30.Enabled = value;
+                radAlexR2_20.Enabled = value;
+                radAlexR2_17.Enabled = value;
+                radAlexR2_15.Enabled = value;
+                radAlexR2_12.Enabled = value;
+                radAlexR2_10.Enabled = value;
+
+                radAlexR3_160.Enabled = value;
+                radAlexR3_80.Enabled = value;
+                radAlexR3_60.Enabled = value;
+                radAlexR3_40.Enabled = value;
+                radAlexR3_30.Enabled = value;
+                radAlexR3_20.Enabled = value;
+                radAlexR3_17.Enabled = value;
+                radAlexR3_15.Enabled = value;
+                radAlexR3_12.Enabled = value;
+                radAlexR3_10.Enabled = value;
+
+                radAlexT1_160.Enabled = value;
+                radAlexT1_80.Enabled = value;
+                radAlexT1_60.Enabled = value;
+                radAlexT1_40.Enabled = value;
+                radAlexT1_30.Enabled = value;
+                radAlexT1_20.Enabled = value;
+                radAlexT1_17.Enabled = value;
+                radAlexT1_15.Enabled = value;
+                radAlexT1_12.Enabled = value;
+                radAlexT1_10.Enabled = value;
+
+                radAlexT2_160.Enabled = value;
+                radAlexT2_80.Enabled = value;
+                radAlexT2_60.Enabled = value;
+                radAlexT2_40.Enabled = value;
+                radAlexT2_30.Enabled = value;
+                radAlexT2_20.Enabled = value;
+                radAlexT2_17.Enabled = value;
+                radAlexT2_15.Enabled = value;
+                radAlexT2_12.Enabled = value;
+                radAlexT2_10.Enabled = value;
+
+                radAlexT3_160.Enabled = value;
+                radAlexT3_80.Enabled = value;
+                radAlexT3_60.Enabled = value;
+                radAlexT3_40.Enabled = value;
+                radAlexT3_30.Enabled = value;
+                radAlexT3_20.Enabled = value;
+                radAlexT3_17.Enabled = value;
+                radAlexT3_15.Enabled = value;
+                radAlexT3_12.Enabled = value;
+                radAlexT3_10.Enabled = value;
+
+                chkBlockTxAnt2.Enabled = value;
+                chkBlockTxAnt3.Enabled = value;
+
+                console.AlexAntCtrlEnabled = value;
+
+                EnableIOLedStrip(value);
+            }
+        }
+
 
         #endregion
 
@@ -5841,13 +6011,21 @@ namespace Thetis
             }
             else
             {
-                chkRxOutOnTx.Enabled = true;
-                chkRxOutOnTx.Visible = true;
-                chkEXT1OutOnTx.Enabled = true;
-                chkEXT1OutOnTx.Visible = true;
-                chkEXT2OutOnTx.Enabled = true;
-                chkEXT2OutOnTx.Visible = true;
-
+                if (console.CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+                {
+                    chkRxOutOnTx.Enabled = true;
+                    chkRxOutOnTx.Visible = true;
+                    chkEXT1OutOnTx.Enabled = true;
+                    chkEXT1OutOnTx.Visible = true;
+                    chkEXT2OutOnTx.Enabled = true;
+                    chkEXT2OutOnTx.Visible = true;
+                    grp100WattMeterTrim.BringToFront();
+                }
+                else
+                {
+                    grp10WattMeterTrim.BringToFront();
+                }
+                // panelAlex1HPFControl.Visible = true;
                 tpAlexFilterControl.Text = "HPF/LPF";
                 labelAlex1FilterHPF.Text = "HPF";
                 chkAlexHPFBypass.Text = "ByPass/55 MHz HPF";
@@ -5856,7 +6034,6 @@ namespace Thetis
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = false;
                 lblRx26mLNA.Visible = false;
-                grp100WattMeterTrim.BringToFront();
                 chkEnableXVTRHF.Visible = false;
             }
 
@@ -5871,8 +6048,12 @@ namespace Thetis
             else
             {
                 tpAlexControl.Text = "Ant/Filters";
-                chkHFTRRelay.Visible = true;
-                chkHFTRRelay.Enabled = true;
+
+                if (console.CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+                {
+                    chkHFTRRelay.Visible = true;
+                    chkHFTRRelay.Enabled = true;
+                }
             }
 
             if (console.CurrentHPSDRModel != HPSDRModel.ANAN200D &&
@@ -5963,7 +6144,10 @@ namespace Thetis
                 }
             }
 
-            if (console.CurrentHPSDRModel == HPSDRModel.HERMES || console.CurrentHPSDRModel == HPSDRModel.ANAN7000D || console.CurrentHPSDRModel == HPSDRModel.ANAN_G2)
+            if (console.CurrentHPSDRModel == HPSDRModel.HERMES   ||
+               console.CurrentHPSDRModel == HPSDRModel.ANAN7000D ||
+               console.CurrentHPSDRModel == HPSDRModel.ANAN_G2         ||
+               console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
             {
                 if (!tcGeneral.TabPages.Contains(tpApolloControl))
                 {
@@ -6650,7 +6834,8 @@ namespace Thetis
 
                         // be sure RX2 sample rate setting is enabled, UNLESS it's a 10E or 100B
                         if (console.CurrentHPSDRModel == HPSDRModel.ANAN10E ||
-                            console.CurrentHPSDRModel == HPSDRModel.ANAN100B)
+                            console.CurrentHPSDRModel == HPSDRModel.ANAN100B ||
+                            console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
                         {
                             // if it's a 10E/100B, set RX2 sample_rate equal to RX1 rate
                             comboAudioSampleRateRX2.Enabled = false;
@@ -8616,8 +8801,17 @@ namespace Thetis
 
         private void udTransmitTunePower_ValueChanged(object sender, System.EventArgs e)
         {
-            if (initializing) return;
-            console.TunePower = (int)udTXTunePower.Value;
+            if (initializing) return; //[2.10.2.3]MW0LGE forceallevents call this
+            
+            if (console.CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+            {
+                console.TunePower = (int)udTXTunePower.Value;
+            }
+            else
+            {
+                // MI0BOT: Range is 0 to -16.5 - convert to 99 - 0
+                console.TunePower = (int) ((33 + (udTXTunePower.Value * 2)) * 3);
+            }
         }
 
         private bool loadTXProfile(String sProfileName)
@@ -10109,8 +10303,17 @@ namespace Thetis
                 }
 
                 chkCATEnable.Enabled = false;
+
+                if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                    chkCATtoVFOB.Enabled = false;
             }
-            else chkCATEnable.Enabled = true;
+            else
+            {
+                chkCATEnable.Enabled = true;
+
+                if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                    chkCATtoVFOB.Enabled = true;
+            }
 
             if (comboCATPort.Text.StartsWith("COM"))
                 console.CATPort = Int32.Parse(comboCATPort.Text.Substring(3));
@@ -11572,7 +11775,55 @@ namespace Thetis
 
         private void txtGenCustomTitle_TextChanged(object sender, System.EventArgs e)
         {
-            console.CustomTitle = txtGenCustomTitle.Text;
+            if (HPSDRModel.HERMESLITE != console.CurrentHPSDRModel)
+            {
+                console.CustomTitle = txtGenCustomTitle.Text;
+            }
+            else
+            {   // MI0BOT: Handle multi line box for display of different IP address
+                string remotePort = NetworkIO.EthernetRemotePort == 0 ? "" : ":" + NetworkIO.EthernetRemotePort.ToString();
+                int line = 0;
+                string ipAddess = "";
+
+                if (chkEnableStaticIP.Checked)
+                {
+                    if (radStaticIP1.Checked)
+                        line = 1;
+                    else if (radStaticIP2.Checked)
+                        line = 2;
+                    else if (radStaticIP3.Checked)
+                        line = 3;
+                    else if (radStaticIP4.Checked)
+                        line = 4;
+
+                    ipAddess = console.HPSDRNetworkIPAddr;
+                }
+                else
+                {
+                    line = 0;
+                    ipAddess = NetworkIO.HpSdrHwIpAddress.ToString();
+                }
+
+                if ((txtGenCustomTitle.Lines.Length - 1) < line)
+                    line = 0;
+
+                if (chkDisplayIPPort.Checked)
+                    if (line == 0)
+                        if (txtGenCustomTitle.Lines.Length == 0)
+                            console.CustomTitle = ipAddess + remotePort + "   " + txtGenCustomTitle.Text;
+                        else
+                            console.CustomTitle = ipAddess + remotePort + "   " + txtGenCustomTitle.Lines[0];
+                    else
+                        console.CustomTitle = ipAddess + remotePort + "   " + txtGenCustomTitle.Lines[line] + "   " + txtGenCustomTitle.Lines[0];
+                else
+                    if (line == 0)
+                    if (txtGenCustomTitle.Lines.Length == 0)
+                        console.CustomTitle = ipAddess + remotePort + "   " + txtGenCustomTitle.Text;
+                    else
+                        console.CustomTitle = ipAddess + remotePort + "   " + txtGenCustomTitle.Lines[0];
+                else
+                    console.CustomTitle = txtGenCustomTitle.Lines[line] + "   " + txtGenCustomTitle.Lines[0];
+            }
         }
 
         private void chkGenAllModeMicPTT_CheckedChanged(object sender, System.EventArgs e)
@@ -12583,6 +12834,22 @@ namespace Thetis
             NetworkIO.SetADCRandom(v);
         }
 
+        // MI0BOT: Control band volts for the HL2
+        private void chkHL2BandVolts_CheckedChanged(object sender, System.EventArgs e)
+        {
+            if (initializing) return;
+            int v = chkHL2BandVolts.Checked ? 1 : 0;
+            NetworkIO.SetADCDither(v);
+        }
+
+        // MI0BOT: Control power supply sync for the HL2
+        private void chkHL2PsSync_CheckedChanged(object sender, System.EventArgs e)
+        {
+            if (initializing) return;
+            int v = chkHL2PsSync.Checked ? 1 : 0;
+            NetworkIO.SetADCRandom(v);
+        }
+
         private RadioButtonTS[][] AlexRxAntButtons = null;
         private RadioButtonTS[][] AlexTxAntButtons = null;
         private CheckBoxTS[][] AlexRxOnlyAntCheckBoxes = null;
@@ -13290,7 +13557,11 @@ namespace Thetis
                 else
                 {
                     sProtocolInfo = "Protocol 1";
-                    sMetisCodeVersion = NetworkIO.FWCodeVersion.ToString("0\\.0");
+
+                    if(HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                        sMetisCodeVersion = NetworkIO.FWCodeVersion.ToString("0\\.0") + NetworkIO.FWCodeVersionMinor.ToString("\\.0");
+                    else
+                        sMetisCodeVersion = NetworkIO.FWCodeVersion.ToString("0\\.0");
                 }
 
                 sBoard = NetworkIO.BoardID.ToString();
@@ -13316,7 +13587,10 @@ namespace Thetis
                 }
                 else
                 {
-                    sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + " Protocol 1";
+                    if(HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                        sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + NetworkIO.FWCodeVersionMinor.ToString("\\.0") + " Protocol 1";
+                    else
+                        sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + " Protocol 1";
                 }
             }
 
@@ -13326,6 +13600,9 @@ namespace Thetis
         public void UpdateGeneraHardware()
         {
             tpGeneralHardware.Invalidate();
+
+            if(HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                txtGenCustomTitle_TextChanged(this, EventArgs.Empty);
         }
 
         private void udMaxFreq_ValueChanged(object sender, System.EventArgs e)
@@ -13359,48 +13636,96 @@ namespace Thetis
                         }
                     }
 
-                    chkPenOCrcv1601.Checked = true;
-                    chkPenOCxmit1601.Checked = true;
-                    chkPenOCrcv802.Checked = true;
-                    chkPenOCxmit802.Checked = true;
-                    chkPenOCrcv601.Checked = true;
-                    chkPenOCxmit601.Checked = true;
-                    chkPenOCrcv602.Checked = true;
-                    chkPenOCxmit602.Checked = true;
-                    chkPenOCrcv403.Checked = true;
-                    chkPenOCxmit403.Checked = true;
-                    chkPenOCrcv301.Checked = true;
-                    chkPenOCxmit301.Checked = true;
-                    chkPenOCrcv303.Checked = true;
-                    chkPenOCxmit303.Checked = true;
-                    chkPenOCrcv202.Checked = true;
-                    chkPenOCxmit202.Checked = true;
-                    chkPenOCrcv203.Checked = true;
-                    chkPenOCxmit203.Checked = true;
-                    chkPenOCrcv171.Checked = true;
-                    chkPenOCxmit171.Checked = true;
-                    chkPenOCrcv172.Checked = true;
-                    chkPenOCxmit172.Checked = true;
-                    chkPenOCrcv173.Checked = true;
-                    chkPenOCxmit173.Checked = true;
-                    chkPenOCrcv154.Checked = true;
-                    chkPenOCxmit154.Checked = true;
-                    chkPenOCrcv121.Checked = true;
-                    chkPenOCxmit121.Checked = true;
-                    chkPenOCrcv124.Checked = true;
-                    chkPenOCxmit124.Checked = true;
-                    chkPenOCrcv102.Checked = true;
-                    chkPenOCxmit102.Checked = true;
-                    chkPenOCrcv104.Checked = true;
-                    chkPenOCxmit104.Checked = true;
-                    chkPenOCrcv61.Checked = true;
-                    chkPenOCxmit61.Checked = true;
-                    chkPenOCrcv62.Checked = true;
-                    chkPenOCxmit62.Checked = true;
-                    chkPenOCrcv64.Checked = true;
-                    chkPenOCxmit64.Checked = true;
-                    chkPenOCrcv66.Checked = true;
-                    break;
+                    if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                    {
+                        chkPenOCrcv1601.Checked = true;
+                        chkPenOCrcv802.Checked = true;
+                        chkPenOCrcv807.Checked = true;
+                        chkPenOCrcv603.Checked = true;
+                        chkPenOCrcv607.Checked = true;
+                        chkPenOCrcv403.Checked = true;
+                        chkPenOCrcv407.Checked = true;
+                        chkPenOCrcv304.Checked = true;
+                        chkPenOCrcv307.Checked = true;
+                        chkPenOCrcv204.Checked = true;
+                        chkPenOCrcv207.Checked = true;
+                        chkPenOCrcv175.Checked = true;
+                        chkPenOCrcv177.Checked = true;
+                        chkPenOCrcv155.Checked = true;
+                        chkPenOCrcv157.Checked = true;
+                        chkPenOCrcv126.Checked = true;
+                        chkPenOCrcv127.Checked = true;
+                        chkPenOCrcv106.Checked = true;
+                        chkPenOCrcv107.Checked = true;
+                        chkPenOCxmit1601.Checked = true;
+                        chkPenOCxmit802.Checked = true;
+                        chkPenOCxmit603.Checked = true;
+                        chkPenOCxmit403.Checked = true;
+                        chkPenOCxmit304.Checked = true;
+                        chkPenOCxmit204.Checked = true;
+                        chkPenOCxmit175.Checked = true;
+                        chkPenOCxmit155.Checked = true;
+                        chkPenOCxmit126.Checked = true;
+                        chkPenOCxmit106.Checked = true;
+                        chkOCrcv1207.Checked = true;
+                        chkOCrcv907.Checked = true;
+                        chkOCrcv617.Checked = true;
+                        chkOCrcv497.Checked = true;
+                        chkOCrcv417.Checked = true;
+                        chkOCrcv317.Checked = true;
+                        chkOCrcv257.Checked = true;
+                        chkOCrcv227.Checked = true;
+                        chkOCrcv197.Checked = true;
+                        chkOCrcv167.Checked = true;
+                        chkOCrcv147.Checked = true;
+                        chkOCrcv137.Checked = true;
+                        chkOCrcv117.Checked = true;
+                    }
+                    else
+                    {
+                        chkPenOCrcv1601.Checked = true;
+                        chkPenOCxmit1601.Checked = true;
+                        chkPenOCrcv802.Checked = true;
+                        chkPenOCxmit802.Checked = true;
+                        chkPenOCrcv601.Checked = true;
+                        chkPenOCxmit601.Checked = true;
+                        chkPenOCrcv602.Checked = true;
+                        chkPenOCxmit602.Checked = true;
+                        chkPenOCrcv403.Checked = true;
+                        chkPenOCxmit403.Checked = true;
+                        chkPenOCrcv301.Checked = true;
+                        chkPenOCxmit301.Checked = true;
+                        chkPenOCrcv303.Checked = true;
+                        chkPenOCxmit303.Checked = true;
+                        chkPenOCrcv202.Checked = true;
+                        chkPenOCxmit202.Checked = true;
+                        chkPenOCrcv203.Checked = true;
+                        chkPenOCxmit203.Checked = true;
+                        chkPenOCrcv171.Checked = true;
+                        chkPenOCxmit171.Checked = true;
+                        chkPenOCrcv172.Checked = true;
+                        chkPenOCxmit172.Checked = true;
+                        chkPenOCrcv173.Checked = true;
+                        chkPenOCxmit173.Checked = true;
+                        chkPenOCrcv154.Checked = true;
+                        chkPenOCxmit154.Checked = true;
+                        chkPenOCrcv121.Checked = true;
+                        chkPenOCxmit121.Checked = true;
+                        chkPenOCrcv124.Checked = true;
+                        chkPenOCxmit124.Checked = true;
+                        chkPenOCrcv102.Checked = true;
+                        chkPenOCxmit102.Checked = true;
+                        chkPenOCrcv104.Checked = true;
+                        chkPenOCxmit104.Checked = true;
+                        chkPenOCrcv61.Checked = true;
+                        chkPenOCxmit61.Checked = true;
+                        chkPenOCrcv62.Checked = true;
+                        chkPenOCxmit62.Checked = true;
+                        chkPenOCrcv64.Checked = true;
+                        chkPenOCxmit64.Checked = true;
+                        chkPenOCrcv66.Checked = true;
+                    }
+                break;
                 case false:
                     foreach (Control c in grpPennyExtCtrl.Controls)
                     {
@@ -15015,7 +15340,26 @@ namespace Thetis
 
             if (chkHermesStepAttenuator.Checked)
             {
+                if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                {
+                    chkAutoStepAttenuator.Enabled = true;
+                    udHermesStepAttenuatorDelay.Enabled = true;
+                    lblAutoDelay.Enabled = true;
+                    chkAutoStepAttenuator_CheckedChanged(this, EventArgs.Empty);
+
+                }
+
                 udHermesStepAttenuatorData_ValueChanged(this, EventArgs.Empty);
+            }
+            else
+            {
+                if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                {
+                    chkAutoStepAttenuator.Enabled = false;
+                    udHermesStepAttenuatorDelay.Enabled = false;
+                    lblAutoDelay.Enabled = false;
+                    console.RX1AutoAtt = false;
+                }
             }
 
             CheckBoxTS chk = sender as CheckBoxTS;
@@ -15037,8 +15381,12 @@ namespace Thetis
             _updatingRX1HermiesStepAttData = true;
             console.RX1AttenuatorData = (int)udHermesStepAttenuatorData.Value;
 
-            //MW0LGE_21f
-            if (AlexPresent &&
+            if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+            {
+                udHermesStepAttenuatorData.Maximum = (decimal)32;
+                udHermesStepAttenuatorData.Minimum = (decimal)-28;
+            }
+            else if (AlexPresent && 
                 console.CurrentHPSDRModel != HPSDRModel.ANAN10 &&
                 console.CurrentHPSDRModel != HPSDRModel.ANAN10E &&
                 console.CurrentHPSDRModel != HPSDRModel.ANAN7000D &&
@@ -15514,30 +15862,88 @@ namespace Thetis
             if (initializing) return;
             if (radStaticIP1.Checked)
             {
-                console.HPSDRNetworkIPAddr = udStaticIP1.Text + "." + udStaticIP2.Text + "." +
-                                             udStaticIP3.Text + "." + udStaticIP4.Text;
+                if(HPSDRModel.HERMESLITE != console.CurrentHPSDRModel)
+                {
+                    console.HPSDRNetworkIPAddr = udStaticIP1.Text + "." + udStaticIP2.Text + "." +
+                                                 udStaticIP3.Text + "." + udStaticIP4.Text;
+                }
+                else
+                {
+                    console.HPSDRNetworkIPAddr = txtIPAddress1.Text;
+                    console.ReduceEthernetBW = chkReduceBW1.Checked;
+
+                    NetworkIO.DiscoveryPort = (int) udDiscoveryPort1.Value;
+                }
             }
             if (radStaticIP2.Checked)
             {
-                console.HPSDRNetworkIPAddr = udStaticIP5.Text + "." + udStaticIP6.Text + "." +
-                                             udStaticIP7.Text + "." + udStaticIP8.Text;
+                if (HPSDRModel.HERMESLITE != console.CurrentHPSDRModel)
+                {
+                    console.HPSDRNetworkIPAddr = udStaticIP5.Text + "." + udStaticIP6.Text + "." +
+                             udStaticIP7.Text + "." + udStaticIP8.Text;
+                }
+                else
+                {
+                    console.HPSDRNetworkIPAddr = txtIPAddress2.Text;
+                    console.ReduceEthernetBW = chkReduceBW2.Checked;
+
+                    NetworkIO.DiscoveryPort = (int) udDiscoveryPort2.Value;
+                }
             }
             if (radStaticIP3.Checked)
             {
-                console.HPSDRNetworkIPAddr = udStaticIP9.Text + "." + udStaticIP10.Text + "." +
-                                             udStaticIP11.Text + "." + udStaticIP12.Text;
+                if (HPSDRModel.HERMESLITE != console.CurrentHPSDRModel)
+                {
+                    console.HPSDRNetworkIPAddr = udStaticIP9.Text + "." + udStaticIP10.Text + "." +
+                                                 udStaticIP11.Text + "." + udStaticIP12.Text;
+                }
+                else
+                {
+                    console.HPSDRNetworkIPAddr = txtIPAddress3.Text;
+                    console.ReduceEthernetBW = chkReduceBW3.Checked;
+
+                
+                    NetworkIO.DiscoveryPort = (int) udDiscoveryPort3.Value;
+                }
             }
             if (radStaticIP4.Checked)
             {
-                console.HPSDRNetworkIPAddr = udStaticIP13.Text + "." + udStaticIP14.Text + "." +
-                                             udStaticIP15.Text + "." + udStaticIP16.Text;
+                if (HPSDRModel.HERMESLITE != console.CurrentHPSDRModel)
+                {
+                    console.HPSDRNetworkIPAddr = udStaticIP13.Text + "." + udStaticIP14.Text + "." +
+                             udStaticIP15.Text + "." + udStaticIP16.Text;
+                }
+                else
+                {
+                    console.HPSDRNetworkIPAddr = txtIPAddress4.Text;
+                    console.ReduceEthernetBW = chkReduceBW4.Checked;
+
+                    NetworkIO.DiscoveryPort = (int) udDiscoveryPort4.Value;
+                }
             }
         }
 
         private void chkEnableStaticIP_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkEnableStaticIP.Checked) chkFullDiscovery.Checked = false;
+            if (chkEnableStaticIP.Checked)
+            {
+                chkFullDiscovery.Checked = false;
+
+                if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                {
+                    btnSetIPAddr_Click(sender, e);
+                }
+            }
+            else if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+            {
+                chkLimit2Subnet.Checked = true;
+                NetworkIO.DiscoveryPort = 1024;
+            }
+
             NetworkIO.enableStaticIP = chkEnableStaticIP.Checked;
+
+            if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                chkLimit2Subnet.Enabled = chkEnableStaticIP.Checked;
         }
 
         private void chkRX1WaterfallAGC_CheckedChanged(object sender, EventArgs e)
@@ -15583,6 +15989,7 @@ namespace Thetis
         {
             switch (console.CurrentHPSDRModel)              // G8NJJ will need more work for ANAN_G2_1K (1KW PA)
             {
+                case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E:
                     ud10PA1W.Value = 1;
@@ -18886,6 +19293,8 @@ namespace Thetis
             {
                 case "HERMES":
                     return HPSDRModel.HERMES;
+                case "HERMES LITE":
+                    return HPSDRModel.HERMESLITE;           // MI0BOT: HL2
                 case "ANAN-10":
                     return HPSDRModel.ANAN10;
                 case "ANAN-10E":
@@ -18925,6 +19334,9 @@ namespace Thetis
 
             comboAudioSampleRateRX2.Enabled = true;
 
+            // MI0BOT: Remove the HL2 option and only add back if HL2
+            tcOptions.Controls.Remove(tpHL2Options);
+
             switch (stringModelToEnum(comboRadioModel.Text))
             {
                 case HPSDRModel.HERMES:
@@ -18956,6 +19368,254 @@ namespace Thetis
                     groupBoxHPSDRHW.Visible = true;
                     chkDisableRXOut.Visible = false;
                     chkBPF2Gnd.Visible = false;
+                    break;
+
+                case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
+                    console.CurrentHPSDRModel = HPSDRModel.HERMESLITE;
+                    tcOptions.Controls.Add(tpHL2Options);
+                    chkAlexPresent.Enabled = true;
+                    chkAlexPresent.Visible = false;
+                    chkApolloPresent.Enabled = true;
+                    chkApolloPresent.Visible = false;
+                    chkGeneralRXOnly.Visible = true;
+                    chkHermesStepAttenuator.Enabled = false;
+                    chkHermesStepAttenuator.Checked = true;
+                    chkRX2StepAtt.Checked = false;
+                    chkRX2StepAtt.Enabled = false;
+                    chkRX2StepAtt.Visible = false;
+                    udHermesStepAttenuatorDataRX2.Visible = false;
+                    udHermesStepAttenuatorDataRX2.Minimum = (decimal)-28;
+                    udHermesStepAttenuatorData.Maximum = 32;
+                    grpMetisAddr.Text = "Hermes Lite Address";
+                    chkAutoPACalibrate.Checked = false;
+                    chkAutoPACalibrate.Visible = false;
+                    labelRXAntControl.Text = "  RX1   RX2    XVTR";
+                    RXAntChk1Name = "RX1";
+                    RXAntChk2Name = "RX2";
+                    RXAntChk3Name = "XVTR";
+                    labelATTOnTX.Visible = true;
+                    udATTOnTX.Visible = true;
+                    chkRxOutOnTx.Text = "RX 1 OUT on Tx";
+                    chkEXT1OutOnTx.Text = "RX 2 IN on Tx";
+                    chkEXT2OutOnTx.Text = "RX 1 IN on Tx";
+                    chkEXT2OutOnTx.Visible = true;
+                    groupBoxHPSDRHW.Visible = true;
+                    chkDisableRXOut.Visible = false;
+                    chkBPF2Gnd.Visible = false;
+                    chkMercDither.Enabled = false;
+                    chkMercRandom.Enabled = false;
+                    udMaxFreq.Value = (Decimal) 38.4;
+                    tpApolloControl.Text = "PA Control";
+                    chkApolloFilter.Text = "Enable Full Duplex";
+                    chkApolloTuner.Text = "Enable PA";
+                    grpApolloCtrl.Text = "PA Control";
+                    tpApolloApollo.Text = "PA";
+                    tpPennyCtrl.Text = "Hermes Lite Control";
+                    chkHERCULES.Visible = true;
+                    chkHERCULES.Text = "N2ADR Filter";
+                    tpAlexControl.Text = "Ant/Filters";
+                    comboAudioSampleRateRX2.Enabled = false;
+                    ucIOPinsLedStripHF.DisplayBits = 6;
+                    radRadioProtocol1Select.Checked = true;
+                    radRadioProtocol2Select.Checked = false;
+                    radRadioProtocolAutoSelect.Checked = false;
+                    radRadioProtocol1Select.Enabled = false;
+                    radRadioProtocol2Select.Enabled = false;
+                    radRadioProtocolAutoSelect.Enabled = false;
+                    toolTip1.SetToolTip(chkHERCULES, "Preset pins for for N2ADR filter board");
+                    toolTip1.SetToolTip(chkApolloFilter, "Enables the full duplex on the HL2");
+                    toolTip1.SetToolTip(chkApolloTuner, "Enables HL2 power amplifier");
+
+                    chkAlex160R1.Enabled = true;
+                    chkAlex80R1.Enabled = true;
+                    chkAlex60R1.Enabled = true;
+                    chkAlex40R1.Enabled = true;
+                    chkAlex30R1.Enabled = true;
+                    chkAlex20R1.Enabled = true;
+                    chkAlex17R1.Enabled = true;
+                    chkAlex15R1.Enabled = true;
+                    chkAlex12R1.Enabled = true;
+                    chkAlex10R1.Enabled = true;
+
+                    radAlexR1_6.Enabled = false;
+                    radAlexR1_6.Visible = false;
+                    labelTS5.Visible = false;
+                    labelTS5.Enabled = false;
+                    radAlexR2_6.Enabled = false;
+                    radAlexR2_6.Visible = false;
+                    radAlexR3_6.Enabled = false;
+                    radAlexR3_6.Visible = false;
+                    chkAlex6R1.Enabled = false;
+                    chkAlex6R1.Visible = false;
+                    chkAlex160R2.Enabled = false;
+                    chkAlex80R2.Enabled = false;
+                    chkAlex60R2.Enabled = false;
+                    chkAlex40R2.Enabled = false;
+                    chkAlex30R2.Enabled = false;
+                    chkAlex20R2.Enabled = false;
+                    chkAlex17R2.Enabled = false;
+                    chkAlex15R2.Enabled = false;
+                    chkAlex12R2.Enabled = false;
+                    chkAlex10R2.Enabled = false;
+                    chkAlex6R2.Enabled = false;
+                    chkAlex6R2.Visible = false;
+                    chkAlex160XV.Enabled = false;
+                    chkAlex80XV.Enabled = false;
+                    chkAlex60XV.Enabled = false;
+                    chkAlex40XV.Enabled = false;
+                    chkAlex30XV.Enabled = false;
+                    chkAlex20XV.Enabled = false;
+                    chkAlex17XV.Enabled = false;
+                    chkAlex15XV.Enabled = false;
+                    chkAlex12XV.Enabled = false;
+                    chkAlex10XV.Enabled = false;
+                    chkAlex6XV.Enabled = false;
+                    chkAlex6XV.Visible = false;
+                    chkDisableRXOut.Enabled = false;
+                    chkEXT1OutOnTx.Visible = false;
+                    chkEXT2OutOnTx.Visible = false;
+                    chkHFTRRelay.Visible = false;
+                    labelTS104.Visible = false;
+                    radAlexT1_6.Visible = false;
+                    radAlexT2_6.Visible = false;
+                    radAlexT3_6.Visible = false;
+                    radAlexT1_6.Enabled = false;
+                    radAlexT2_6.Enabled = false;
+                    radAlexT3_6.Enabled = false;
+
+                    labelTxLatency.Visible = true;
+                    labelPttHang.Visible = true;
+                    udTxBufferLat.Visible = true;
+                    udPTTHang.Visible = true;
+
+                    grpDisplay8000DLE.Text = "Hermes-Lite";
+                    chkANAN8000DLEDisplayVoltsAmps.Text = "Show Temp/Current";
+                    chkANAN8000DLEDisplayVoltsAmps.Checked = true;
+
+                    udTXTunePower.DecimalPlaces = 1;
+                    udTXTunePower.Increment = (decimal)0.5;
+                    udTXTunePower.Maximum = (decimal)0;
+                    udTXTunePower.Minimum = (decimal)-16.5;
+
+                    chkCATtoVFOB.Enabled = true;
+                    chkCATtoVFOB.Visible = true;
+
+                    chkLimit2Subnet.Visible = true;
+
+                    chkDisplayIPPort.Enabled = true;
+                    chkDisplayIPPort.Visible = true;
+                    udDiscoveryPort1.Enabled = true;
+                    udDiscoveryPort1.Visible = true;
+                    udDiscoveryPort2.Enabled = true;
+                    udDiscoveryPort2.Visible = true;
+                    udDiscoveryPort3.Enabled = true;
+                    udDiscoveryPort3.Visible = true;
+                    udDiscoveryPort4.Enabled = true;
+                    udDiscoveryPort4.Visible = true;
+
+                    txtIPAddress1.Enabled = true;
+                    txtIPAddress1.Visible = true;
+                    txtIPAddress2.Enabled = true;
+                    txtIPAddress2.Visible = true;
+                    txtIPAddress3.Enabled = true;
+                    txtIPAddress3.Visible = true;
+                    txtIPAddress4.Enabled = true;
+                    txtIPAddress4.Visible = true;
+
+                    chkReduceBW1.Visible = true;
+                    chkReduceBW1.Enabled = true;
+                    chkReduceBW2.Visible = true;
+                    chkReduceBW2.Enabled = true;
+                    chkReduceBW3.Visible = true;
+                    chkReduceBW3.Enabled = true;
+                    chkReduceBW4.Visible = true;
+                    chkReduceBW4.Enabled = true;
+
+                    udStaticIP1.Enabled = false;
+                    udStaticIP1.Visible = false;
+                    udStaticIP2.Enabled = false;
+                    udStaticIP2.Visible = false;
+                    udStaticIP3.Enabled = false;
+                    udStaticIP3.Visible = false;
+                    udStaticIP4.Enabled = false;
+                    udStaticIP4.Visible = false;
+                    udStaticIP5.Enabled = false;
+                    udStaticIP5.Visible = false;
+                    udStaticIP6.Enabled = false;
+                    udStaticIP6.Visible = false;
+                    udStaticIP7.Enabled = false;
+                    udStaticIP7.Visible = false;
+                    udStaticIP8.Enabled = false;
+                    udStaticIP8.Visible = false;
+                    udStaticIP9.Enabled = false;
+                    udStaticIP9.Visible = false;
+                    udStaticIP10.Enabled = false;
+                    udStaticIP10.Visible = false;
+                    udStaticIP11.Enabled = false;
+                    udStaticIP11.Visible = false;
+                    udStaticIP12.Enabled = false;
+                    udStaticIP12.Visible = false;
+                    udStaticIP13.Enabled = false;
+                    udStaticIP13.Visible = false;
+                    udStaticIP14.Enabled = false;
+                    udStaticIP14.Visible = false;
+                    udStaticIP15.Enabled = false;
+                    udStaticIP15.Visible = false;
+                    udStaticIP16.Enabled = false;
+                    udStaticIP16.Visible = false;
+
+                    txtGenCustomTitle.MaxLength = 100;
+                    txtGenCustomTitle.Multiline = true;
+                    txtGenCustomTitle.WordWrap = false;
+                    txtGenCustomTitle.TextChanged += new System.EventHandler(this.txtGenCustomTitle_TextChanged);
+                    txtGenCustomTitle.MouseEnter += new System.EventHandler(this.txtGenCustomTitle_MouseEnter);
+                    txtGenCustomTitle.MouseLeave += new System.EventHandler(this.txtGenCustomTitle_MouseLeave);
+
+                    grpIOPinState.Enabled = true;
+                    grpIOPinState.Visible = true;
+                    ucIOPinsLedStripHF.Enabled = true;
+                    ucIOPinsLedStripHF.Visible = true;
+
+                    chkHL2IOBoardPresent.Enabled = true;
+                    chkHL2IOBoardPresent.Visible = true;
+
+                    udATTOnTX.Minimum = (decimal)-28;
+
+                    chkAutoStepAttenuator_CheckedChanged(sender, e);
+
+                    nud160M.Minimum = 0;
+                    nud80M.Minimum = 0;
+                    nud60M.Minimum = 0;
+                    nud40M.Minimum = 0;
+                    nud30M.Minimum = 0;
+                    nud20M.Minimum = 0;
+                    nud17M.Minimum = 0;
+                    nud15M.Minimum = 0;
+                    nud12M.Minimum = 0;
+                    nud10M.Minimum = 0;
+
+                    nud160M.Increment = 1;
+                    nud80M.Increment = 1;
+                    nud60M.Increment = 1;
+                    nud40M.Increment = 1;
+                    nud30M.Increment = 1;
+                    nud20M.Increment = 1;
+                    nud17M.Increment = 1;
+                    nud15M.Increment = 1;
+                    nud12M.Increment = 1;
+                    nud10M.Increment = 1;
+
+                    nud160M.DecimalPlaces = 0;
+                    nud80M.DecimalPlaces = 0;
+                    nud60M.DecimalPlaces = 0;
+                    nud40M.DecimalPlaces = 0;
+                    nud30M.DecimalPlaces = 0;
+                    nud20M.DecimalPlaces = 0;
+                    nud17M.DecimalPlaces = 0;
+                    nud15M.DecimalPlaces = 0;
+                    nud12M.DecimalPlaces = 0;
+                    nud10M.DecimalPlaces = 0;
+
                     break;
 
                 case HPSDRModel.ANAN10:
@@ -19514,6 +20174,7 @@ namespace Thetis
             switch (console.CurrentHPSDRModel)
             {
                 case HPSDRModel.HERMES:
+                case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E:
                 case HPSDRModel.ANAN100:
@@ -19730,6 +20391,40 @@ namespace Thetis
         {
             console.AriesStandalone = checkAriesStandalone.Checked;
         }
+       
+        // MI0BOT: Controls the auto attenuator functionality for the HL2
+		private void chkAutoStepAttenuator_CheckedChanged(object sender, EventArgs e)
+        {
+            console.RX1AutoAtt = chkAutoStepAttenuator.Checked;
+        }
+
+        // MI0BOT: Controls the hardware tx buffer in the HL2
+
+        private void udTxBufferLat_ValueChanged(object sender, EventArgs e)
+        {
+            NetworkIO.SetTxLatency((int)udTxBufferLat.Value);
+        }
+
+        // MI0BOT: Controls the hardware PTT hang in the HL2
+
+        private void udPTTHang_ValueChanged(object sender, EventArgs e)
+        {
+            NetworkIO.SetPttHang((int)udPTTHang.Value);
+        }
+
+        // MI0BOT: Controls the ability to send CAT commands to VFO B
+
+        private void chkCATtoVFOB_CheckedChanged(object sender, EventArgs e)
+        {
+            console.CATtoVFOB = chkCATtoVFOB.Checked;
+        }
+
+        // MI0BOT: Controls if the HL2 will reset after an Ethernet disconnect
+        private void chkDisconnectReset_CheckedChanged(object sender, EventArgs e)
+        {
+            int v = chkDisconnectReset.Checked ? 1 : 0;
+            NetworkIO.SetResetOnDisconnect(v);
+        }        
 
         private void chkAndrBandBtnDefault_CheckedChanged(object sender, EventArgs e)
         {
@@ -19899,6 +20594,304 @@ namespace Thetis
         private void chkVFOSyncLinksCTUN_CheckedChanged(object sender, EventArgs e)
         {
             console.LinkCTUNonVFOSync = chkVFOSyncLinksCTUN.Checked;
+        }
+        
+        // MI0BOT: HL2 access to I2C bus
+        private void btnI2CRead_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (!console.PowerOn)
+            {
+                MessageBox.Show("Power must be on to access the I2C bus.",
+                    "Power is off",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Hand);
+                return;
+            }
+
+            int bus = radI2C1.Checked ? 0 : 1;
+            byte[] read_data = new byte[4];
+            int status;
+                
+            NetworkIO.I2CReadInitiate(bus, (int) udI2CAddress.Value, (int) ((udI2CControl1.Value * 16) + udI2CControl0.Value));
+
+            do
+            {
+                Task.Delay(1);
+                status = NetworkIO.I2CResponse(read_data);
+            } while (1 == status);
+
+            if (-1 == status)
+            {
+                txtI2CByte0.Text = "Err";
+                txtI2CByte1.Text = "or";
+                txtI2CByte2.Text = "Err";
+                txtI2CByte3.Text = "or";
+                txtI2CByte0.ForeColor = Color.Red;
+                txtI2CByte1.ForeColor = Color.Red;
+                txtI2CByte2.ForeColor = Color.Red;
+                txtI2CByte3.ForeColor = Color.Red;
+            }
+            else
+            {
+                int byte0, byte1, byte2, byte3;
+
+                byte0 = read_data[3];
+                byte1 = read_data[2];
+                byte2 = read_data[1];
+                byte3 = read_data[0];
+
+                txtI2CByte0.ForeColor = Color.Black;
+                txtI2CByte1.ForeColor = Color.Black;
+                txtI2CByte2.ForeColor = Color.Black;
+                txtI2CByte3.ForeColor = Color.Black;
+                txtI2CByte0.Text = byte0.ToString("X2");
+                txtI2CByte1.Text = byte1.ToString("X2");
+                txtI2CByte2.Text = byte2.ToString("X2");
+                txtI2CByte3.Text = byte3.ToString("X2");
+            }
+        }
+
+        // MI0BOT: HL2 access to I2C bus
+        private void btnI2CWrite_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (!console.PowerOn)
+            {
+                MessageBox.Show("Power must be on to access the I2C bus.",
+                    "Power is off",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Hand);
+                return;
+            }
+
+            int bus = radI2C1.Checked ? 0 : 1;
+
+            NetworkIO.I2CWriteInitiate(bus, (int)udI2CAddress.Value, (int)((udI2CControl1.Value * 16) + udI2CControl0.Value), (int) udI2CWriteData.Value);
+        }
+
+        // MI0BOT: HL2 access to I2C bus
+        private void chkI2CWriteEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkI2CWriteEnable.Checked)
+            {
+                btnI2CWrite.Enabled = true;
+                udI2CWriteData.Enabled = true;
+                labelI2CWriteData.Enabled = true; 
+            }
+            else
+            {
+                btnI2CWrite.Enabled = false;
+                udI2CWriteData.Enabled = false;
+                labelI2CWriteData.Enabled = false; 
+            }
+        }
+
+        // MI0BOT: HL2 access to I2C bus
+        private void chkI2CEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkI2CEnable.Checked)
+                groupBoxI2CControl.Enabled = true;
+            else
+                groupBoxI2CControl.Enabled = false;
+        }
+
+        // MI0BOT: Support for HL2 10MHz input
+        public bool Ext10MHzChecked
+        {
+            get { return chkExt10MHz.Checked; }
+            set { }
+        }
+
+        // MI0BOT: Support for HL2 Cl2 clock output
+        public bool Cl2Checked
+        {
+            get { return chkCl2Enable.Checked; }
+            set { }
+        }
+
+        // MI0BOT: Data to program clock generator in HL2 to accept external 10MHz on CL2
+        //         Data in format of Address, Data
+
+        private byte[] clockRegisterData10MhzEnable = new byte[] {
+            0x10, 0xc0,
+            0x13, 0x03,
+            0x10, 0x40,
+            0x2d, 0x01,
+            0x2e, 0x20,
+            0x22, 0x03,
+            0x23, 0x00,
+            0x24, 0x00,
+            0x25, 0x00,
+            0x19, 0x00,
+            0x1A, 0x00,
+            0x1B, 0x00,
+            0x18, 0x00,
+            0x17, 0x12 };
+
+        private byte[] clockRegisterData10MhzDisable = new byte[] {
+            0x10, 0xc0,
+            0x13, 0x00,
+            0x10, 0x80,
+            0x2d, 0x01,
+            0x2e, 0x10,
+            0x22, 0x00,
+            0x23, 0x00,
+            0x24, 0x00,
+            0x25, 0x00,
+            0x19, 0x00,
+            0x1A, 0x00,
+            0x1B, 0x00,
+            0x18, 0x40,
+            0x17, 0x04 };
+
+        private byte[] clockRegisterDataCl2 = new byte[] {
+            0x62, 0x3b,
+            0x2c, 0x00,
+            0x31, 0x81,
+            0x3d, 0x01,
+            0x3e, 0x10,
+            0x32, 0x00,
+            0x33, 0x00,
+            0x34, 0x00,
+            0x35, 0x00,
+            0x63, 0x01 };
+
+        private byte[] clockRegisterDataCl2Off = new byte[] {
+            0x62, 0x5b,
+            0x2c, 0x00,
+            0x31, 0x00,
+            0x3d, 0x00,
+            0x3e, 0x00,
+            0x32, 0x00,
+            0x33, 0x00,
+            0x34, 0x00,
+            0x35, 0x00,
+            0x63, 0x00 };
+
+        // MI0BOT: Support for HL2 Cl2 clock output
+        private async Task WriteVersaClockAsync( byte[] registerData )
+        {
+            byte Timeout = 0;
+            int status = 0;
+
+            if (!initializing)
+            {
+                if (!console.PowerOn)
+                {
+                    MessageBox.Show("Power must be on to set the CL2 clock frequency.",
+                        "Power is off",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Hand);
+                    return;
+                }
+
+                console.SetI2CPollingPause(true);
+
+                for (int i = 0; i < registerData.Length; i += 2)
+                {
+                    do
+                    {
+                        status = NetworkIO.I2CWrite(0, 0xd4, (int)registerData[i], registerData[i + 1]);
+                        if (Timeout++ >= 50) break;
+                        await Task.Delay(1);
+                    } while (status != 0);
+
+                    if (50 <= Timeout)
+                    {
+                        MessageBox.Show("IC2 timed out.",
+                            "IC2 Fail",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Hand);
+                        break;
+                    }
+
+                    if (status == -1)
+                    {
+                        MessageBox.Show("IC2 write failed.",
+                            "IC2 Fail",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Hand);
+                        break;
+                    }
+                }
+
+                console.SetI2CPollingPause(false);
+            }
+        }
+
+        // MI0BOT: Support for HL2 10MHz clock input
+        public void EnableCl1_10MHz()
+        {
+            WriteVersaClockAsync(clockRegisterData10MhzEnable);
+        }
+
+        // MI0BOT: Support for HL2 10MHz clock input
+        public void DisableCl1_10MHz()
+        {
+            WriteVersaClockAsync(clockRegisterData10MhzDisable);
+        }
+
+        // MI0BOT: Support for HL2 Cl2 clock output
+        public void ControlCl2(bool enable)
+        {
+            Decimal vco = (Decimal)1305.6;
+
+            if (chkExt10MHz.Checked)
+                vco = 1440;
+
+            if (enable)
+            {
+                udCl2Freq.Enabled = true;
+
+                if (0 != udCl2Freq.Value)
+                {
+                    Decimal diviser = vco / udCl2Freq.Value;
+                    int integer = (int)Decimal.Truncate(diviser);
+                    clockRegisterDataCl2[7] = (Byte)((integer >> 4) & 0xff);
+                    clockRegisterDataCl2[9] = (Byte)((integer << 4) & 0xf0);
+
+                    Decimal frac = diviser - integer;
+                    int intFrac = (int)(frac * (Decimal)(1 << 24));
+
+                    clockRegisterDataCl2[11] = (Byte)((intFrac >> 22) & 0xff);
+                    clockRegisterDataCl2[13] = (Byte)((intFrac >> 14) & 0xff);
+                    clockRegisterDataCl2[15] = (Byte)((intFrac >> 6) & 0xff);
+                    clockRegisterDataCl2[17] = (Byte)((intFrac << 2) & 0xf6);
+
+                    WriteVersaClockAsync(clockRegisterDataCl2);
+                }
+            }
+            else
+            {
+                udCl2Freq.Enabled = false;
+                WriteVersaClockAsync(clockRegisterDataCl2Off);
+            }
+        }
+
+        // MI0BOT: Support for HL2 Cl2 clock output
+        private void chkCl2Enable_CheckedChanged(object sender, EventArgs e)
+        {
+            ControlCl2(chkCl2Enable.Checked);
+        }
+
+        // MI0BOT: Support for HL2 Cl2 clock output
+        private void udCl2Freq_ValueChanged(object sender, EventArgs e)
+        {
+            ControlCl2(chkCl2Enable.Checked);
+        }
+
+        // MI0BOT: Support for HL2 10MHz clock input
+        private void chkExt10MHz_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkExt10MHz.Checked)
+            {
+                EnableCl1_10MHz();
+            }
+            else
+            {
+                DisableCl1_10MHz();
+            }
+
+            ControlCl2(chkCl2Enable.Checked);
         }
 
         private void chkDataLineGradient_CheckedChanged(object sender, EventArgs e)
@@ -20720,6 +21713,19 @@ namespace Thetis
         {
             ucOCPinsLedStripHF.TX = tx;
             ucOCPinsLedStripHF.Bits = bits;
+        }
+
+        public void UpdateIOLedStrip(bool tx, byte bits)
+        {
+            ucIOPinsLedStripHF.TX = tx;
+            ucIOPinsLedStripHF.Bits = (int) bits;
+        }
+
+        public void EnableIOLedStrip(bool state)
+        {
+            ucIOPinsLedStripHF.Enabled = state;
+            ucIOPinsLedStripHF.Visible = state;
+            grpIOPinState.Enabled = state;
         }
 
         private void tcOCControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -23225,6 +24231,39 @@ namespace Thetis
                     SetGainForBand(Band.VHF12, 63.1f);
                     SetGainForBand(Band.VHF13, 63.1f);
 
+					return;
+                }
+                
+                if (model == HPSDRModel.HERMESLITE)
+                { 
+                    SetGainForBand(Band.B160M, 100f);
+                    SetGainForBand(Band.B80M, 100f);
+                    SetGainForBand(Band.B60M, 100f);
+                    SetGainForBand(Band.B40M, 100f);
+                    SetGainForBand(Band.B30M, 100f);
+                    SetGainForBand(Band.B20M, 100f);
+                    SetGainForBand(Band.B17M, 100f);
+                    SetGainForBand(Band.B15M, 100f);
+                    SetGainForBand(Band.B12M, 100f);
+                    SetGainForBand(Band.B10M, 100f);
+                    SetGainForBand(Band.B6M, 38.8f);
+
+
+                    SetGainForBand(Band.VHF0, 38.8f);
+                    SetGainForBand(Band.VHF1, 38.8f);
+                    SetGainForBand(Band.VHF2, 38.8f);
+                    SetGainForBand(Band.VHF3, 38.8f);
+                    SetGainForBand(Band.VHF4, 38.8f);
+                    SetGainForBand(Band.VHF5, 38.8f);
+                    SetGainForBand(Band.VHF6, 38.8f);
+                    SetGainForBand(Band.VHF7, 38.8f);
+                    SetGainForBand(Band.VHF8, 38.8f);
+                    SetGainForBand(Band.VHF9, 38.8f);
+                    SetGainForBand(Band.VHF10, 38.8f);
+                    SetGainForBand(Band.VHF11, 38.8f);
+                    SetGainForBand(Band.VHF12, 38.8f);
+                    SetGainForBand(Band.VHF13, 38.8f);
+
                     return;
                 }
             }
@@ -24663,6 +25702,12 @@ namespace Thetis
 
             return bPaste;
         }
+
+        private void chkHL2IOBoardPresent_CheckedChanged(object sender, EventArgs e)
+        {
+            HL2IOBoardPresent = chkHL2IOBoardPresent.Checked;
+        }
+        
         public void ShowMultiMeterSetupTab(string sID = "")
         {
             // show multimeter tab, with meter container already selected if sID is provided
@@ -24886,6 +25931,53 @@ namespace Thetis
                 txtboxTXProfileChangedReport.Visible = false;
 
             tmrCheckProfile.Enabled = true;
+        }
+        
+        private void chkLimit2Subnet_CheckedChanged(object sender, EventArgs e)
+        {
+            NetworkIO.enableLimitSubnet = chkLimit2Subnet.Checked;
+        }
+
+        private void chkDisplayIPPort_CheckedChanged(object sender, EventArgs e)
+        {
+            txtGenCustomTitle_TextChanged(sender, e);
+        }
+        private void txtIPAddress1_MouseHover(object sender, EventArgs e)
+        {
+            if (txtGenCustomTitle.Lines.Length > 1)
+                toolTip1.SetToolTip(txtIPAddress1, txtGenCustomTitle.Lines[1]);
+        }
+
+        private void txtIPAddress2_MouseHover(object sender, EventArgs e)
+        {
+            if (txtGenCustomTitle.Lines.Length > 2)
+                toolTip1.SetToolTip(txtIPAddress2, txtGenCustomTitle.Lines[2]);
+        }
+
+        private void txtIPAddress3_MouseHover(object sender, EventArgs e)
+        {
+            if (txtGenCustomTitle.Lines.Length > 3)
+                toolTip1.SetToolTip(txtIPAddress3, txtGenCustomTitle.Lines[3]);
+        }
+
+        private void txtIPAddress4_MouseHover(object sender, EventArgs e)
+        {
+            if (txtGenCustomTitle.Lines.Length > 4)
+                toolTip1.SetToolTip(txtIPAddress4, txtGenCustomTitle.Lines[4]);
+        }
+
+        private void txtGenCustomTitle_MouseEnter(object sender, EventArgs e)
+        {
+            grpGenCustomTitleText.Height *= 2;
+            grpGenCustomTitleText.BringToFront();
+            txtGenCustomTitle.Height *= 4;
+        }
+
+        private void txtGenCustomTitle_MouseLeave(object sender, EventArgs e)
+        {
+            txtGenCustomTitle.Height /= 4;
+            grpGenCustomTitleText.Height /= 2;
+            grpGenCustomTitleText.SendToBack();
         }
 
         private void btnClearTCISpots_Click(object sender, EventArgs e)
