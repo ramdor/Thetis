@@ -19380,6 +19380,8 @@ namespace Thetis
                     chkCATtoVFOB.Enabled = true;
                     chkCATtoVFOB.Visible = true;
 
+                    chkLimit2Subnet.Visible = true;
+
                     chkDisplayIPPort.Enabled = true;
                     chkDisplayIPPort.Visible = true;
                     udDiscoveryPort1.Enabled = true;
@@ -19390,6 +19392,57 @@ namespace Thetis
                     udDiscoveryPort3.Visible = true;
                     udDiscoveryPort4.Enabled = true;
                     udDiscoveryPort4.Visible = true;
+
+                    txtIPAddress1.Enabled = true;
+                    txtIPAddress1.Visible = true;
+                    txtIPAddress2.Enabled = true;
+                    txtIPAddress2.Visible = true;
+                    txtIPAddress3.Enabled = true;
+                    txtIPAddress3.Visible = true;
+                    txtIPAddress4.Enabled = true;
+                    txtIPAddress4.Visible = true;
+
+                    chkReduceBW1.Visible = true;
+                    chkReduceBW1.Enabled = true;
+                    chkReduceBW2.Visible = true;
+                    chkReduceBW2.Enabled = true;
+                    chkReduceBW3.Visible = true;
+                    chkReduceBW3.Enabled = true;
+                    chkReduceBW4.Visible = true;
+                    chkReduceBW4.Enabled = true;
+
+                    udStaticIP1.Enabled = false;
+                    udStaticIP1.Visible = false;
+                    udStaticIP2.Enabled = false;
+                    udStaticIP2.Visible = false;
+                    udStaticIP3.Enabled = false;
+                    udStaticIP3.Visible = false;
+                    udStaticIP4.Enabled = false;
+                    udStaticIP4.Visible = false;
+                    udStaticIP5.Enabled = false;
+                    udStaticIP5.Visible = false;
+                    udStaticIP6.Enabled = false;
+                    udStaticIP6.Visible = false;
+                    udStaticIP7.Enabled = false;
+                    udStaticIP7.Visible = false;
+                    udStaticIP8.Enabled = false;
+                    udStaticIP8.Visible = false;
+                    udStaticIP9.Enabled = false;
+                    udStaticIP9.Visible = false;
+                    udStaticIP10.Enabled = false;
+                    udStaticIP10.Visible = false;
+                    udStaticIP11.Enabled = false;
+                    udStaticIP11.Visible = false;
+                    udStaticIP12.Enabled = false;
+                    udStaticIP12.Visible = false;
+                    udStaticIP13.Enabled = false;
+                    udStaticIP13.Visible = false;
+                    udStaticIP14.Enabled = false;
+                    udStaticIP14.Visible = false;
+                    udStaticIP15.Enabled = false;
+                    udStaticIP15.Visible = false;
+                    udStaticIP16.Enabled = false;
+                    udStaticIP16.Visible = false;
 
                     grpIOPinState.Enabled = true;
                     grpIOPinState.Visible = true;
@@ -25751,6 +25804,53 @@ namespace Thetis
                 txtboxTXProfileChangedReport.Visible = false;
 
             tmrCheckProfile.Enabled = true;
+        }
+        
+        private void chkLimit2Subnet_CheckedChanged(object sender, EventArgs e)
+        {
+            NetworkIO.enableLimitSubnet = chkLimit2Subnet.Checked;
+        }
+
+        private void chkDisplayIPPort_CheckedChanged(object sender, EventArgs e)
+        {
+            txtGenCustomTitle_TextChanged(sender, e);
+        }
+        private void txtIPAddress1_MouseHover(object sender, EventArgs e)
+        {
+            if (txtGenCustomTitle.Lines.Length > 1)
+                toolTip1.SetToolTip(txtIPAddress1, txtGenCustomTitle.Lines[1]);
+        }
+
+        private void txtIPAddress2_MouseHover(object sender, EventArgs e)
+        {
+            if (txtGenCustomTitle.Lines.Length > 2)
+                toolTip1.SetToolTip(txtIPAddress2, txtGenCustomTitle.Lines[2]);
+        }
+
+        private void txtIPAddress3_MouseHover(object sender, EventArgs e)
+        {
+            if (txtGenCustomTitle.Lines.Length > 3)
+                toolTip1.SetToolTip(txtIPAddress3, txtGenCustomTitle.Lines[3]);
+        }
+
+        private void txtIPAddress4_MouseHover(object sender, EventArgs e)
+        {
+            if (txtGenCustomTitle.Lines.Length > 4)
+                toolTip1.SetToolTip(txtIPAddress4, txtGenCustomTitle.Lines[4]);
+        }
+
+        private void txtGenCustomTitle_MouseEnter(object sender, EventArgs e)
+        {
+            grpGenCustomTitleText.Height *= 2;
+            grpGenCustomTitleText.BringToFront();
+            txtGenCustomTitle.Height *= 4;
+        }
+
+        private void txtGenCustomTitle_MouseLeave(object sender, EventArgs e)
+        {
+            txtGenCustomTitle.Height /= 4;
+            grpGenCustomTitleText.Height /= 2;
+            grpGenCustomTitleText.SendToBack();
         }
 
         private void btnClearTCISpots_Click(object sender, EventArgs e)

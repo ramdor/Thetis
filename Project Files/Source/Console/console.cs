@@ -7657,7 +7657,14 @@ namespace Thetis
             if (diversity2)
                 P1_diversity = 1;
 
-            switch (current_hpsdr_model)
+            HPSDRModel hpsdr_model = current_hpsdr_model;
+
+            if (hpsdr_model == HPSDRModel.HERMESLITE && ReduceEthernetBW)       // MI0BOT: Change to low bandwidth model for the HL2 for use over WAN
+            {
+                hpsdr_model = HPSDRModel.ANAN10E;
+            }
+
+            switch (hpsdr_model)
             {
                 case HPSDRModel.ANAN100D:
                 case HPSDRModel.ANAN200D:

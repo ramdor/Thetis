@@ -222,8 +222,17 @@
             this.radRadioProtocol2Select = new System.Windows.Forms.RadioButtonTS();
             this.chkFirewallCheck = new System.Windows.Forms.ButtonTS();
             this.chkNetworkThrottleIndexTweak = new System.Windows.Forms.CheckBoxTS();
+            this.chkLimit2Subnet = new System.Windows.Forms.CheckBoxTS();
             this.chkNetworkWDT = new System.Windows.Forms.CheckBoxTS();
             this.panelTS7 = new System.Windows.Forms.PanelTS();
+            this.txtIPAddress4 = new System.Windows.Forms.TextBoxTS();
+            this.chkReduceBW4 = new System.Windows.Forms.CheckBoxTS();
+            this.txtIPAddress3 = new System.Windows.Forms.TextBoxTS();
+            this.chkReduceBW3 = new System.Windows.Forms.CheckBoxTS();
+            this.txtIPAddress2 = new System.Windows.Forms.TextBoxTS();
+            this.chkReduceBW2 = new System.Windows.Forms.CheckBoxTS();
+            this.txtIPAddress1 = new System.Windows.Forms.TextBoxTS();
+            this.chkReduceBW1 = new System.Windows.Forms.CheckBoxTS();
             this.chkDisplayIPPort = new System.Windows.Forms.CheckBoxTS();
             this.udDiscoveryPort4 = new System.Windows.Forms.NumericUpDownTS();
             this.udDiscoveryPort3 = new System.Windows.Forms.NumericUpDownTS();
@@ -3778,7 +3787,6 @@
             this.grpTransmitPinActionSWL.SuspendLayout();
             this.tpOCHFControl.SuspendLayout();
             this.grpUSBBCD.SuspendLayout();
-            this.grpIOPinState.SuspendLayout();
             this.grpExtPAControlHF.SuspendLayout();
             this.grpOCPinState.SuspendLayout();
             this.grpTransmitPinActionHF.SuspendLayout();
@@ -7078,6 +7086,7 @@
             this.grpOzyType.Controls.Add(this.panelTS9);
             this.grpOzyType.Controls.Add(this.chkFirewallCheck);
             this.grpOzyType.Controls.Add(this.chkNetworkThrottleIndexTweak);
+            this.grpOzyType.Controls.Add(this.chkLimit2Subnet);
             this.grpOzyType.Controls.Add(this.chkNetworkWDT);
             this.grpOzyType.Controls.Add(this.panelTS7);
             this.grpOzyType.Controls.Add(this.chkEnableStaticIP);
@@ -7168,6 +7177,20 @@
         "throttling the network connection. See thread on forums for more information.");
             this.chkNetworkThrottleIndexTweak.CheckedChanged += new System.EventHandler(this.chkNetworkThrottleIndexTweak_CheckedChanged);
             // 
+            // chkLimit2Subnet
+            // 
+            this.chkLimit2Subnet.Checked = true;
+            this.chkLimit2Subnet.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkLimit2Subnet.Image = null;
+            this.chkLimit2Subnet.Location = new System.Drawing.Point(203, 40);
+            this.chkLimit2Subnet.Name = "chkLimit2Subnet";
+            this.chkLimit2Subnet.Size = new System.Drawing.Size(104, 16);
+            this.chkLimit2Subnet.TabIndex = 40;
+            this.chkLimit2Subnet.Text = "Limit to Subnet";
+            this.toolTip1.SetToolTip(this.chkLimit2Subnet, "Limit the search for a device to the local subnet. Uncheck for WAN access.");
+            this.chkLimit2Subnet.Visible = false;
+            this.chkLimit2Subnet.CheckedChanged += new System.EventHandler(this.chkLimit2Subnet_CheckedChanged);
+            // 
             // chkNetworkWDT
             // 
             this.chkNetworkWDT.Checked = true;
@@ -7185,6 +7208,13 @@
             // 
             this.panelTS7.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.panelTS7.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelTS7.Controls.Add(this.txtIPAddress4);
+            this.panelTS7.Controls.Add(this.chkReduceBW4);
+            this.panelTS7.Controls.Add(this.txtIPAddress3);
+            this.panelTS7.Controls.Add(this.chkReduceBW3);
+            this.panelTS7.Controls.Add(this.txtIPAddress2);
+            this.panelTS7.Controls.Add(this.chkReduceBW2);
+            this.panelTS7.Controls.Add(this.chkReduceBW1);
             this.panelTS7.Controls.Add(this.chkDisplayIPPort);
             this.panelTS7.Controls.Add(this.udDiscoveryPort4);
             this.panelTS7.Controls.Add(this.udDiscoveryPort3);
@@ -7211,10 +7241,111 @@
             this.panelTS7.Controls.Add(this.udStaticIP3);
             this.panelTS7.Controls.Add(this.udStaticIP2);
             this.panelTS7.Controls.Add(this.udStaticIP1);
+            this.panelTS7.Controls.Add(this.txtIPAddress1);
             this.panelTS7.Location = new System.Drawing.Point(9, 138);
             this.panelTS7.Name = "panelTS7";
             this.panelTS7.Size = new System.Drawing.Size(305, 130);
             this.panelTS7.TabIndex = 15;
+            // 
+            // txtIPAddress4
+            // 
+            this.txtIPAddress4.Location = new System.Drawing.Point(14, 80);
+            this.txtIPAddress4.MaxLength = 100;
+            this.txtIPAddress4.Multiline = true;
+            this.txtIPAddress4.Name = "txtIPAddress4";
+            this.txtIPAddress4.Size = new System.Drawing.Size(177, 20);
+            this.txtIPAddress4.TabIndex = 127;
+            this.txtIPAddress4.Visible = false;
+            this.txtIPAddress4.WordWrap = false;
+            this.txtIPAddress4.MouseHover += new System.EventHandler(this.txtIPAddress4_MouseHover);
+            // 
+            // chkReduceBW4
+            // 
+            this.chkReduceBW4.Checked = true;
+            this.chkReduceBW4.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkReduceBW4.Image = null;
+            this.chkReduceBW4.Location = new System.Drawing.Point(220, 82);
+            this.chkReduceBW4.Name = "chkReduceBW4";
+            this.chkReduceBW4.Size = new System.Drawing.Size(14, 16);
+            this.chkReduceBW4.TabIndex = 33;
+            this.toolTip1.SetToolTip(this.chkReduceBW4, "Tick to reduce bandwidth. Only effective after Select IP and Thetis power cycle. " +
+        "PS may not work with this option selected.\r\n");
+            this.chkReduceBW4.Visible = false;
+            // 
+            // txtIPAddress3
+            // 
+            this.txtIPAddress3.Location = new System.Drawing.Point(14, 54);
+            this.txtIPAddress3.MaxLength = 100;
+            this.txtIPAddress3.Multiline = true;
+            this.txtIPAddress3.Name = "txtIPAddress3";
+            this.txtIPAddress3.Size = new System.Drawing.Size(177, 20);
+            this.txtIPAddress3.TabIndex = 126;
+            this.txtIPAddress3.Visible = false;
+            this.txtIPAddress3.WordWrap = false;
+            this.txtIPAddress3.MouseHover += new System.EventHandler(this.txtIPAddress3_MouseHover);
+            // 
+            // chkReduceBW3
+            // 
+            this.chkReduceBW3.Checked = true;
+            this.chkReduceBW3.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkReduceBW3.Image = null;
+            this.chkReduceBW3.Location = new System.Drawing.Point(220, 56);
+            this.chkReduceBW3.Name = "chkReduceBW3";
+            this.chkReduceBW3.Size = new System.Drawing.Size(14, 16);
+            this.chkReduceBW3.TabIndex = 32;
+            this.toolTip1.SetToolTip(this.chkReduceBW3, "Tick to reduce bandwidth. Only effective after Select IP and Thetis power cycle. " +
+        "PS may not work with this option selected.\r\n");
+            this.chkReduceBW3.Visible = false;
+            // 
+            // txtIPAddress2
+            // 
+            this.txtIPAddress2.Location = new System.Drawing.Point(14, 28);
+            this.txtIPAddress2.MaxLength = 100;
+            this.txtIPAddress2.Multiline = true;
+            this.txtIPAddress2.Name = "txtIPAddress2";
+            this.txtIPAddress2.Size = new System.Drawing.Size(177, 20);
+            this.txtIPAddress2.TabIndex = 125;
+            this.txtIPAddress2.Visible = false;
+            this.txtIPAddress2.WordWrap = false;
+            this.txtIPAddress2.MouseHover += new System.EventHandler(this.txtIPAddress2_MouseHover);
+            // 
+            // chkReduceBW2
+            // 
+            this.chkReduceBW2.Checked = true;
+            this.chkReduceBW2.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkReduceBW2.Image = null;
+            this.chkReduceBW2.Location = new System.Drawing.Point(220, 30);
+            this.chkReduceBW2.Name = "chkReduceBW2";
+            this.chkReduceBW2.Size = new System.Drawing.Size(14, 16);
+            this.chkReduceBW2.TabIndex = 31;
+            this.toolTip1.SetToolTip(this.chkReduceBW2, "Tick to reduce bandwidth. Only effective after Select IP and Thetis power cycle. " +
+        "PS may not work with this option selected.\r\n");
+            this.chkReduceBW2.Visible = false;
+            // 
+            // txtIPAddress1
+            // 
+            this.txtIPAddress1.Location = new System.Drawing.Point(14, 2);
+            this.txtIPAddress1.MaxLength = 100;
+            this.txtIPAddress1.Multiline = true;
+            this.txtIPAddress1.Name = "txtIPAddress1";
+            this.txtIPAddress1.Size = new System.Drawing.Size(177, 20);
+            this.txtIPAddress1.TabIndex = 124;
+            this.txtIPAddress1.Visible = false;
+            this.txtIPAddress1.WordWrap = false;
+            this.txtIPAddress1.MouseHover += new System.EventHandler(this.txtIPAddress1_MouseHover);
+            // 
+            // chkReduceBW1
+            // 
+            this.chkReduceBW1.Checked = true;
+            this.chkReduceBW1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkReduceBW1.Image = null;
+            this.chkReduceBW1.Location = new System.Drawing.Point(220, 5);
+            this.chkReduceBW1.Name = "chkReduceBW1";
+            this.chkReduceBW1.Size = new System.Drawing.Size(14, 16);
+            this.chkReduceBW1.TabIndex = 30;
+            this.toolTip1.SetToolTip(this.chkReduceBW1, "Tick to reduce bandwidth. Only effective after Select IP and Thetis power cycle. " +
+        "PS may not work with this option selected.");
+            this.chkReduceBW1.Visible = false;
             // 
             // chkDisplayIPPort
             // 
@@ -7225,7 +7356,7 @@
             this.chkDisplayIPPort.Size = new System.Drawing.Size(160, 16);
             this.chkDisplayIPPort.TabIndex = 25;
             this.chkDisplayIPPort.Text = "Display IP:Port in Title Bar";
-            this.toolTip1.SetToolTip(this.chkDisplayIPPort, "Displays the IP address and port of the currrently connected device");
+            this.toolTip1.SetToolTip(this.chkDisplayIPPort, "Displays the IP address and port of the currently connected device");
             this.chkDisplayIPPort.Visible = false;
             // 
             // udDiscoveryPort4
@@ -9778,6 +9909,16 @@
             this.chkQuickSplitZoom.Text = "Zoom In";
             this.toolTip1.SetToolTip(this.chkQuickSplitZoom, "Zoom in to ~85%");
             this.chkQuickSplitZoom.UseVisualStyleBackColor = true;
+            // 
+            // labelTS182
+            // 
+            this.labelTS182.AutoSize = true;
+            this.labelTS182.Image = null;
+            this.labelTS182.Location = new System.Drawing.Point(78, 27);
+            this.labelTS182.Name = "labelTS182";
+            this.labelTS182.Size = new System.Drawing.Size(29, 13);
+            this.labelTS182.TabIndex = 39;
+            this.labelTS182.Text = "± Hz";
             // 
             // nudQuickSplitShift
             // 
@@ -13013,17 +13154,6 @@
             this.chkUsbBCD.UseVisualStyleBackColor = true;
             this.chkUsbBCD.CheckedChanged += new System.EventHandler(this.chkUsbBCD_CheckedChanged);
             // 
-            // 
-            // labelTS182
-            // 
-            this.labelTS182.AutoSize = true;
-            this.labelTS182.Image = null;
-            this.labelTS182.Location = new System.Drawing.Point(78, 27);
-            this.labelTS182.Name = "labelTS182";
-            this.labelTS182.Size = new System.Drawing.Size(29, 13);
-            this.labelTS182.TabIndex = 39;
-            this.labelTS182.Text = "± Hz";
-            //
             // grpExtPAControlHF
             // 
             this.grpExtPAControlHF.Controls.Add(this.labelTS577);
@@ -62154,6 +62284,7 @@
         private GroupBoxTS grpIOPinState;
         private GroupBoxTS groupBoxTS28;
         private LabelTS labelTS161;
+        private CheckBoxTS chkLimit2Subnet;        
         private ucOCLedStrip ucIOPinsLedStripHF;
         private CheckBoxTS chkHL2IOBoardPresent;
         private NumericUpDownTS udVSQLMuteTimeConstant;
@@ -62225,6 +62356,10 @@
         private NumericUpDownTS udDiscoveryPort2;
         private NumericUpDownTS udDiscoveryPort4;
         private CheckBoxTS chkDisplayIPPort;
+        private CheckBoxTS chkReduceBW1;
+        private CheckBoxTS chkReduceBW4;
+        private CheckBoxTS chkReduceBW3;
+        private CheckBoxTS chkReduceBW2;
         private PictureBox picSkinThumbnail;
         private ListBox lstAvailableSkins;
         private ucProgress prgSkinDownload;
@@ -62297,6 +62432,10 @@
         private GroupBoxTS groupBoxTS33;
         private CheckBoxTS chkCWbecomesCWUabove10mhz;
         private LabelTS lblTXattBand;
+        private TextBoxTS txtIPAddress4;
+        private TextBoxTS txtIPAddress3;
+        private TextBoxTS txtIPAddress2;
+        private TextBoxTS txtIPAddress1;
         private LabelTS labelIOState;
     }
 }
