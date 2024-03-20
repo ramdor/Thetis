@@ -23899,13 +23899,29 @@ namespace Thetis
             // new method takes two readings every 8ms into a threadsafe fifo queue, so those 100 of each will be spread over 800ms
             // MW0LGE [2.9.0.7] changed volts to 150
             //G8NJJ need similar code for Saturn here, but rates from Ssaturn will be different
-            while (chkPower.Checked && (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D || 
-                                        current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K))         //G8NJJ
+            while (chkPower.Checked &&
+                  (current_hpsdr_model == HPSDRModel.ANAN7000D  ||
+                   current_hpsdr_model == HPSDRModel.ANAN8000D  ||
+                   current_hpsdr_model == HPSDRModel.ANAN_G2    ||
+                   current_hpsdr_model == HPSDRModel.ANAN_G2_1K ||
+                   current_hpsdr_model == HPSDRModel.HERMESLITE))
             {
-                int adc0 = NetworkIO.getUserADC0();
-                int adc1 = NetworkIO.getUserADC1();
-                _voltsQueue.Enqueue(adc0);
-                _ampsQueue.Enqueue(adc1);
+
+                int adc0 = 0;
+                int adc1 = 0;
+
+                if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 temperature & current
+                {
+                    _ampsQueue.Enqueue(NetworkIO.getUserADC0());
+                    _tempQueue.Enqueue(NetworkIO.getExciterPower());
+                }
+                else
+                {
+                    adc0 = NetworkIO.getUserADC0();
+                    adc1 = NetworkIO.getUserADC1();
+                    _voltsQueue.Enqueue(adc0);
+                    _ampsQueue.Enqueue(adc1);
+                }
 
                 bool bOk;
                 int nTries = 0;
@@ -23927,6 +23943,20 @@ namespace Thetis
                     {
                         await Task.Delay(1);
                         nTries++;
+                    }
+                }
+
+                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                { 
+                    nTries = 0;
+                    while (_tempQueue.Count > 100 && nTries < 100) //  MI0BOT: HL2 temperature, keep max 100 in the queue 
+                    {
+                        bOk = _tempQueue.TryDequeue(out int tmp);
+                        if (!bOk)
+                        {
+                            await Task.Delay(1);
+                            nTries++;
+                        }
                     }
                 }
 
@@ -26951,6 +26981,22 @@ namespace Thetis
                     };
                     multimeter2_thread_rx1.Start();
                 }
+
+                if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: I/O Board handler
+                {
+                        // MI0BOT: I/O board thread
+                        if (IOBoard_update_thread == null || !IOBoard_update_thread.IsAlive)
+                    {
+                        IOBoard_update_thread = new Thread(new ThreadStart(UpdateIOBoard))
+                        {
+                            Name = "I/O Board Thread",
+                            Priority = ThreadPriority.Normal,
+                            IsBackground = true
+                        };
+                        IOBoard_update_thread.Start();
+                    }
+                }
+
                 //
 
                 if (rx2_enabled)
@@ -27105,6 +27151,15 @@ namespace Thetis
 
                 if (andromeda_cat_enabled) NetworkIO.ATU_Tune(1); // set default state of J16 pin 10 to high for Andromeda
                 else NetworkIO.ATU_Tune(0);
+        
+                if (current_hpsdr_model == HPSDRModel.HERMESLITE) 
+                {
+                    if (SetupForm.Ext10MHzChecked)          // MI0BOT: HL2 external 10 MHz input
+                        SetupForm.EnableCl1_10MHz();
+    
+                    if (SetupForm.Cl2Checked)               // MI0BOT: HL2 CL2 clock output
+                        SetupForm.ControlCl2(SetupForm.Cl2Checked);
+                }
             }
             else
             {
@@ -27175,6 +27230,14 @@ namespace Thetis
                 {
                     if (!rx2_meter_thread.Join(/*500*/Math.Max(meter_delay, meter_dig_delay) + 50)) //MW0LGE change to meter delay
                         rx2_meter_thread.Abort();
+                }
+                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                {
+                    if (IOBoard_update_thread != null)  // MI0BOT: Tidy up the IO board thread
+                    {
+                        if (!IOBoard_update_thread.Join(500))
+                            IOBoard_update_thread.Abort();
+                    }
                 }
                 //MW0LGE_[2.9.0.7]
                 if (multimeter2_thread_rx1 != null)
@@ -28203,18 +28266,30 @@ namespace Thetis
                 }
 
                 lblPWR.Text = "Drive:  " + ((Math.Round(drv / 6.0) / 2) - 7.5).ToString() + "dB";
-            }
 
-            if (!bShowLimitValue)
-            {
-                if (ptbPWR.IsConstrained)
-                    lblPWR.Text = "Drive:  (" + sValue + ")";
+                if (!bShowLimitValue)
+                {
+                    if (ptbPWR.IsConstrained)
+                        lblPWR.Text = "Drive:  (" + ((Math.Round(drv / 6.0) / 2) - 7.5).ToString() + "dB)";
+                }
                 else
-                    lblPWR.Text = "Drive:  " + sValue;
+                {
+                    lblPWR.Text = "Limit:  " + ((Math.Round(drv / 6.0) / 2) - 7.5).ToString() + "dB";
+                }
             }
             else
             {
-                lblPWR.Text = "Limit: " + sValue;
+                if (!bShowLimitValue)
+                {
+                    if (ptbPWR.IsConstrained)
+                        lblPWR.Text = "Drive:  (" + sValue + ")";
+                    else
+                        lblPWR.Text = "Drive:  " + sValue;
+                }
+                else
+                {
+                    lblPWR.Text = "Limit: " + sValue;
+                }
             }
         }
         public string PAProfile
