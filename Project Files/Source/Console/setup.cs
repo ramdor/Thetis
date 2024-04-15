@@ -26719,9 +26719,7 @@ namespace Thetis
 
         public string Name
         {
-            get {
-                return _Name; 
-            }
+            get { return _Name; }
         }
 
         public int Index
@@ -26737,7 +26735,10 @@ namespace Thetis
 
         public override string ToString()
         {
-            return _Name;
+            //ToString is used by the combo box to show the text
+            //[2.10.3.6]MW0LGE fixes #414, note might have issues when first running up, but should be ok after a profile save
+            byte[] bytes = Encoding.Default.GetBytes(_Name);
+            return Encoding.UTF8.GetString(bytes);
         }
     }
 
