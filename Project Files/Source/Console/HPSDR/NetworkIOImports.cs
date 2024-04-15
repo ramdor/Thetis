@@ -73,7 +73,7 @@ namespace Thetis
         public static extern void SetAlexHPFBits(int bits);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetAlexLPFBits(int bits, bool isTX);
+        public static extern void SetAlexLPFBits(int bits, bool isTX, bool isMox);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void DisablePA(int bit);

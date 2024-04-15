@@ -1187,10 +1187,10 @@ namespace Thetis
                 {
                     if (IsSetupFormNull)
                     {
-                        Debug.Assert(_onlyOneSetupInstance); // this should not happen, ever !  // G8KLJ's idea/implementation
+                        Debug.Assert(_onlyOneSetupInstance); // this should not happen, ever !  // G7KLJ's idea/implementation
                         Debug.Print("New setup form - should happen only once");
                         m_frmSetupForm = new Setup(this);
-                        m_frmSetupForm.AfterConstructor(); // G8KLJ's idea/implementation
+                        m_frmSetupForm.AfterConstructor(); // G7KLJ's idea/implementation
                     }
                     return m_frmSetupForm;
                 }
@@ -6720,7 +6720,7 @@ namespace Thetis
         {
             if (!_mox && lpf_bypass)
             {
-                NetworkIO.SetAlexLPFBits(0x10, false); // 6m LPF
+                NetworkIO.SetAlexLPFBits(0x10, false, _mox); // 6m LPF
                 SetupForm.rad6LPFled.Checked = true;
                 return;
             }
@@ -6730,55 +6730,55 @@ namespace Thetis
                 if ((decimal)freq >= SetupForm.udAlex20mLPFStart.Value && // 30/20m LPF
                           (decimal)freq <= SetupForm.udAlex20mLPFEnd.Value)
                 {
-                    NetworkIO.SetAlexLPFBits(0x01, freqIsTX);
+                    NetworkIO.SetAlexLPFBits(0x01, freqIsTX, _mox);
                     SetupForm.rad20LPFled.Checked = true;
                 }
 
                 else if ((decimal)freq >= SetupForm.udAlex40mLPFStart.Value && // 60/40m LPF
                         (decimal)freq <= SetupForm.udAlex40mLPFEnd.Value)
                 {
-                    NetworkIO.SetAlexLPFBits(0x02, freqIsTX);
+                    NetworkIO.SetAlexLPFBits(0x02, freqIsTX, _mox);
                     SetupForm.rad40LPFled.Checked = true;
                 }
 
                 else if ((decimal)freq >= SetupForm.udAlex80mLPFStart.Value && // 80m LPF
                          (decimal)freq <= SetupForm.udAlex80mLPFEnd.Value)
                 {
-                    NetworkIO.SetAlexLPFBits(0x04, freqIsTX);
+                    NetworkIO.SetAlexLPFBits(0x04, freqIsTX, _mox);
                     SetupForm.rad80LPFled.Checked = true;
                 }
 
                 else if ((decimal)freq >= SetupForm.udAlex160mLPFStart.Value && // 160m LPF
                      (decimal)freq <= SetupForm.udAlex160mLPFEnd.Value)
                 {
-                    NetworkIO.SetAlexLPFBits(0x08, freqIsTX);
+                    NetworkIO.SetAlexLPFBits(0x08, freqIsTX, _mox);
                     SetupForm.rad160LPFled.Checked = true;
                 }
 
                 else if ((decimal)freq >= SetupForm.udAlex6mLPFStart.Value && // 6m LPF
                         (decimal)freq <= SetupForm.udAlex6mLPFEnd.Value)
                 {
-                    NetworkIO.SetAlexLPFBits(0x10, freqIsTX);
+                    NetworkIO.SetAlexLPFBits(0x10, freqIsTX, _mox);
                     SetupForm.rad6LPFled.Checked = true;
                 }
 
                 else if ((decimal)freq >= SetupForm.udAlex10mLPFStart.Value && // 12/10m LPF
                          (decimal)freq <= SetupForm.udAlex10mLPFEnd.Value)
                 {
-                    NetworkIO.SetAlexLPFBits(0x20, freqIsTX);
+                    NetworkIO.SetAlexLPFBits(0x20, freqIsTX, _mox);
                     SetupForm.rad10LPFled.Checked = true;
                 }
 
                 else if ((decimal)freq >= SetupForm.udAlex15mLPFStart.Value && // 17/15 LPF
                           (decimal)freq <= SetupForm.udAlex15mLPFEnd.Value)
                 {
-                    NetworkIO.SetAlexLPFBits(0x40, freqIsTX);
+                    NetworkIO.SetAlexLPFBits(0x40, freqIsTX, _mox);
                     SetupForm.rad15LPFled.Checked = true;
                 }
 
                 else
                 {
-                    NetworkIO.SetAlexLPFBits(0x10, freqIsTX); // 6m LPF
+                    NetworkIO.SetAlexLPFBits(0x10, freqIsTX, _mox); // 6m LPF
                     SetupForm.rad6LPFled.Checked = true;
                 }
             }
@@ -15065,11 +15065,9 @@ namespace Thetis
         private void UpdateTXDDSFreq()
         {
             if (initializing) return;
+            SetAlexLPF(tx_dds_freq_mhz, true);
             if (_mox)
-            {
                 SetAlexHPF(fwc_dds_freq);
-                SetAlexLPF(tx_dds_freq_mhz, true);
-            }
             NetworkIO.VFOfreq(0, tx_dds_freq_mhz, 1);
         }
 
@@ -15309,6 +15307,13 @@ namespace Thetis
                 if (IsSetupFormNull)
                     return;
 
+                //[2.10.3.6]MW0LGE fix #417
+                value = Math.Max(mic_gain_min, value);
+                value = Math.Min(mic_gain_max, value);
+                ptbMic.Minimum = mic_gain_min;
+                ptbMic.Maximum = mic_gain_max;
+                //
+
                 ptbMic.Value = value;
                 ptbMic_Scroll(this, EventArgs.Empty);
             }
@@ -15321,6 +15326,14 @@ namespace Thetis
             {
                 if (IsSetupFormNull)
                     return;
+
+                //[2.10.3.6]MW0LGE fix #417
+                value = Math.Max(mic_gain_min, value);
+                value = Math.Min(mic_gain_max, value);
+                ptbFMMic.Minimum = mic_gain_min;
+                ptbFMMic.Maximum = mic_gain_max;
+                //
+
                 ptbFMMic.Value = value;
                 ptbFMMic_Scroll(this, EventArgs.Empty);
             }
@@ -16069,8 +16082,16 @@ namespace Thetis
             }
             set
             {
-                value = Math.Max(-96, value);
-                value = Math.Min(70, value);
+                //value = Math.Max(-96, value);
+                //value = Math.Min(70, value);
+
+                //[2.10.3.6]MW0LGE fix #417
+                value = Math.Max(mic_gain_min, value);
+                value = Math.Min(mic_gain_max, value);
+                ptbMic.Minimum = mic_gain_min;
+                ptbMic.Maximum = mic_gain_max;
+                //
+
                 ptbMic.Value = value;
                 ptbMic_Scroll(this, EventArgs.Empty);
                 if (sliderForm != null)
