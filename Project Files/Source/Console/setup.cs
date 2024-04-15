@@ -80,13 +80,13 @@ namespace Thetis
             console = c;
             this.Owner = c;
 
-            //everything here moved to AfterConstructor, which is called during singleton instance // G8KLJ's idea/implementation
+            //everything here moved to AfterConstructor, which is called during singleton instance // G7KLJ's idea/implementation
         }
         internal void AfterConstructor()
         {
             Splash.SetStatus("Setting up controls");
 
-            ThetisSkinService.Version = console.ProductVersion;
+            ThetisSkinService.Version = console.ProductVersion;            
 
             addDelegates();
 
@@ -26719,7 +26719,9 @@ namespace Thetis
 
         public string Name
         {
-            get { return _Name; }
+            get {
+                return _Name; 
+            }
         }
 
         public int Index
