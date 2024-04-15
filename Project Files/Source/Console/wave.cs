@@ -2480,15 +2480,15 @@ namespace Thetis
 			return filename;
 		}
 
-        private bool m_bMox = false;
-        private float m_fInverseGain = 1f;
-        private object m_inversGainlock = new object();
+        private volatile bool m_bMox = false;
+        private volatile float m_fInverseGain = 1f;
+        //private object m_inversGainlock = new object(); //[2.10.3.6]MW0LGE fixes issue #416
         public float RecordGain
         {
             set
             {
-                lock (m_inversGainlock)
-                {
+                //lock (m_inversGainlock)
+                //{
                     UpdateMox();
 
                     if (value <= 0)
@@ -2500,35 +2500,35 @@ namespace Thetis
                     if (value > 1f) value = 1f;
 
                     m_fInverseGain = 1 / value; // apply inverse gain to the stream to counteract the volume applied by the user
-                }
+                //}
             }
         }
         public void UpdateMox()
         {
-            // upate based on what is happening in console
-            // this m_bMox bool is then used in WriteBuffer() so that audio recorded when mox has a gain of 1
-            lock (m_inversGainlock)
-            {
+            // update based on what is happening in console
+            // this m_bMox bool is then used in WriteBuffer() so that audio recorded when mox'ed has a gain of 1
+            //lock (m_inversGainlock)
+            //{
                 if (id == 0) //rx1
                     m_bMox = Audio.MOX && (Audio.console.VFOATX || (Audio.console.VFOBTX && !Audio.console.RX2Enabled));
                 else if (id == 1) //rx2
                     m_bMox = Audio.MOX && Audio.console.RX2Enabled && Audio.console.VFOBTX;
                 else m_bMox = Audio.MOX;
-                Debug.Print("WAVEMOX : " + m_bMox.ToString());
-            }
+                //Debug.Print("WAVEMOX : " + m_bMox.ToString());
+            //}
         }
 
         public static bool dither = false;
 		private void WriteBuffer(ref BinaryWriter writer, ref int count)
 		{
             float fGain;
-            lock (m_inversGainlock)
-            {
+            //lock (m_inversGainlock)
+            //{
                 if (!m_bMox)                                     // data belongs to RX
                     fGain = m_fInverseGain;
                 else                                                // data belongs to TX
                     fGain = 1;
-            }
+            //}
 
             int cntL = rb_l.Read(in_buf_l, IN_BLOCK);
             int cntR = rb_r.Read(in_buf_r, IN_BLOCK);
