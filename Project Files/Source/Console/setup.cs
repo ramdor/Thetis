@@ -569,9 +569,12 @@ namespace Thetis
             //MW0LGE_21h
             updateNetworkThrottleCheckBox();
 
-            // Mi0BOT: Make sure the correct stuff is enabled
+            // MI0BOT: Make sure the correct stuff is enabled
             if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+            {
                 chkEnableStaticIP_CheckedChanged(this, EventArgs.Empty);
+                chkHL2PsSync_CheckedChanged(this, EventArgs.Empty);
+            }
         }
         private bool _bAddedDelegates = false;
         private void addDelegates()
@@ -2469,8 +2472,16 @@ namespace Thetis
             chkAntiVoxSource_CheckedChanged(this, e);
 
             // F/W Set
-            chkMercDither_CheckedChanged(this, e);
-            chkMercRandom_CheckedChanged(this, e);
+            if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+            {
+                chkHL2BandVolts_CheckedChanged(this, e);        // MI0BOT: HL2 option page now doesn't share ditter and random
+                chkHL2PsSync_CheckedChanged(this, e);
+            }
+            else
+            {
+                chkMercDither_CheckedChanged(this, e);
+                chkMercRandom_CheckedChanged(this, e);
+            }
 
             //OC tab
             chkAllowHotSwitching_CheckedChanged(this, e);
@@ -19426,6 +19437,22 @@ namespace Thetis
                     toolTip1.SetToolTip(chkApolloFilter, "Enables the full duplex on the HL2");
                     toolTip1.SetToolTip(chkApolloTuner, "Enables HL2 power amplifier");
 
+                    radDDC0ADC0.Checked = true;
+                    radDDC1ADC0.Checked = true;
+                    radDDC2ADC0.Checked = true;
+                    radDDC3ADC0.Checked = true;
+                    radDDC4ADC0.Checked = true;
+                    radDDC5ADC0.Checked = true;
+                    radDDC6ADC0.Checked = true;
+
+                    radDDC0ADC1.Checked = false;
+                    radDDC1ADC1.Checked = false;
+                    radDDC2ADC1.Checked = false;
+                    radDDC3ADC1.Checked = false;
+                    radDDC4ADC1.Checked = false;
+                    radDDC5ADC1.Checked = false;
+                    radDDC6ADC1.Checked = false;
+
                     chkAlex160R1.Enabled = true;
                     chkAlex80R1.Enabled = true;
                     chkAlex60R1.Enabled = true;
@@ -20335,6 +20362,7 @@ namespace Thetis
         {
             switch (console.CurrentHPSDRModel)
             {
+                case HPSDRModel.HERMESLITE:
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E:
                 case HPSDRModel.ANAN100:
@@ -20363,6 +20391,7 @@ namespace Thetis
         {
             switch (console.CurrentHPSDRModel)
             {
+                case HPSDRModel.HERMESLITE:
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E:
                 case HPSDRModel.ANAN100:
@@ -20611,21 +20640,28 @@ namespace Thetis
             int bus = radI2C1.Checked ? 0 : 1;
             byte[] read_data = new byte[4];
             int status;
-                
-            NetworkIO.I2CReadInitiate(bus, (int) udI2CAddress.Value, (int) ((udI2CControl1.Value * 16) + udI2CControl0.Value));
+            int timeout = 0;
+
+            console.SetI2CPollingPause(true);
+
+            while (0 != NetworkIO.I2CReadInitiate(bus, (int) udI2CAddress.Value, (int) ((udI2CControl1.Value * 16) + udI2CControl0.Value)))
+            {
+                Thread.Sleep(1);
+            }
 
             do
             {
-                Task.Delay(1);
+                Thread.Sleep(1);
                 status = NetworkIO.I2CResponse(read_data);
+                if (timeout++ >= 20) break;
             } while (1 == status);
 
             if (-1 == status)
             {
-                txtI2CByte0.Text = "Err";
-                txtI2CByte1.Text = "or";
-                txtI2CByte2.Text = "Err";
-                txtI2CByte3.Text = "or";
+                txtI2CByte0.Text = "or";
+                txtI2CByte1.Text = "Err";
+                txtI2CByte2.Text = "or";
+                txtI2CByte3.Text = "Err";
                 txtI2CByte0.ForeColor = Color.Red;
                 txtI2CByte1.ForeColor = Color.Red;
                 txtI2CByte2.ForeColor = Color.Red;
@@ -20649,6 +20685,8 @@ namespace Thetis
                 txtI2CByte2.Text = byte2.ToString("X2");
                 txtI2CByte3.Text = byte3.ToString("X2");
             }
+
+            console.SetI2CPollingPause(false);
         }
 
         // MI0BOT: HL2 access to I2C bus
@@ -20663,9 +20701,20 @@ namespace Thetis
                 return;
             }
 
+            console.SetI2CPollingPause(false);
+
             int bus = radI2C1.Checked ? 0 : 1;
 
-            NetworkIO.I2CWriteInitiate(bus, (int)udI2CAddress.Value, (int)((udI2CControl1.Value * 16) + udI2CControl0.Value), (int) udI2CWriteData.Value);
+            int controlReg = (int)((udI2CControl1.Value * 16) + udI2CControl0.Value);
+
+            NetworkIO.I2CWrite(bus, (int)udI2CAddress.Value, controlReg, (int) udI2CWriteData.Value);
+
+            if (controlReg == 169)
+            {
+                ucOutPinsLedStripHF_Click(sender, e);
+            }
+
+            console.SetI2CPollingPause(true);
         }
 
         // MI0BOT: HL2 access to I2C bus
@@ -27799,6 +27848,49 @@ namespace Thetis
         private void chkCWbecomesCWUabove10mhz_CheckedChanged(object sender, EventArgs e)
         {
             console.TCICWbecomesCWUabove10mhz = chkCWbecomesCWUabove10mhz.Checked;
+        }
+
+        private void ucOutPinsLedStripHF_Click(object sender, EventArgs e)
+        {
+            byte[] read_data = new byte[4];
+            int status = 0;
+            int timeout = 0;
+
+            console.SetI2CPollingPause(true);
+
+            while (0 != NetworkIO.I2CReadInitiate(1, 0x1d, 169))
+            {
+                Thread.Sleep(1);
+            }
+
+            do
+            {
+                Thread.Sleep(1);
+                status = NetworkIO.I2CResponse(read_data);
+                if (timeout++ >= 20) break;
+            } while (1 == status);
+
+            if (status == 0)
+                ucOutPinsLedStripHF.Bits = read_data[3];
+
+            console.SetI2CPollingPause(false);
+        }
+
+        private void ucOutPinsLedStripHF_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (chkIOPinControl.Checked)
+            {
+                int bit = e.Location.X / 16;
+                byte mask = (byte)(1 << bit);
+
+                console.SetI2CPollingPause(true);
+
+                NetworkIO.I2CWrite(1, 0x1d, 169, ucOutPinsLedStripHF.Bits ^ mask);
+            
+                console.SetI2CPollingPause(false);
+
+                ucOutPinsLedStripHF_Click(sender, e);
+            }
         }
     }
 
