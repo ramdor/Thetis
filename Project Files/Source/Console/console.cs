@@ -1912,6 +1912,10 @@ namespace Thetis
                 // MI0BOT: Changes for HL2 having a greater range of LNA 
                 udRX1StepAttData.Minimum = -28;
                 udRX2StepAttData.Minimum = -28;
+
+                comboRX2Preamp.Enabled = false;
+                udRX2StepAttData.Enabled = false;
+                lblRX2Preamp.Enabled = false;
             }
 
             comboFMCTCSS.Text = "100.0";
@@ -10785,7 +10789,12 @@ namespace Thetis
                 rx2_attenuator_data = value;
                 if (initializing) return;
 
-                if (alexpresent &&
+                if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 LNA has wider range
+                {
+                    udRX2StepAttData.Maximum = (decimal)32;
+                    udRX2StepAttData.Minimum = (decimal)-28;
+                }
+                else if (alexpresent &&
                     current_hpsdr_model != HPSDRModel.ANAN10 &&
                     current_hpsdr_model != HPSDRModel.ANAN10E &&
                     current_hpsdr_model != HPSDRModel.ANAN7000D &&
@@ -10805,7 +10814,12 @@ namespace Thetis
 
                 if (rx2_step_att_present)
                 {
-                    if (alexpresent &&
+                    if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 wider  LNA range
+                    {
+                        NetworkIO.SetAlexAtten(0);
+                        NetworkIO.SetADC1StepAttenData(32 - rx1_attenuator_data);
+                    }
+                    else if (alexpresent &&
                         current_hpsdr_model != HPSDRModel.ANAN10 &&
                         current_hpsdr_model != HPSDRModel.ANAN10E &&
                         current_hpsdr_model != HPSDRModel.ANAN7000D &&
@@ -21608,7 +21622,7 @@ namespace Thetis
                         else if ((alexpresent || pa_present) &&
                                 (current_hpsdr_model != HPSDRModel.ANAN10 &&
                                  current_hpsdr_model != HPSDRModel.ANAN10E &&
-                                 current_hpsdr_model != HPSDRModel.HERMESLITE &&
+                                 current_hpsdr_model != HPSDRModel.HERMESLITE &&        // MI0BOT: HL2
                                 !apollopresent))
                         {
                             if (bDrawMarkers)
@@ -21672,7 +21686,7 @@ namespace Thetis
                         }
                         else if (current_hpsdr_model == HPSDRModel.ANAN10 ||
                                  current_hpsdr_model == HPSDRModel.ANAN10E ||
-                                 current_hpsdr_model == HPSDRModel.HERMESLITE)
+                                 current_hpsdr_model == HPSDRModel.HERMESLITE)          // MI0BOT: HL2
                         {
                             if (bDrawMarkers)
                             {
@@ -21860,7 +21874,7 @@ namespace Thetis
                         if ((alexpresent || pa_present) &&
                             (current_hpsdr_model != HPSDRModel.ANAN10 &&
                              current_hpsdr_model != HPSDRModel.ANAN10E &&
-                             current_hpsdr_model != HPSDRModel.HERMESLITE &&
+                             current_hpsdr_model != HPSDRModel.HERMESLITE &&        // MI0BOT: HL2
                             !apollopresent))
                         {
                             if (bDrawMarkers)
@@ -22000,7 +22014,8 @@ namespace Thetis
                         }
 
                         else if (current_hpsdr_model == HPSDRModel.ANAN10 ||
-                                 current_hpsdr_model == HPSDRModel.ANAN10E)
+                                 current_hpsdr_model == HPSDRModel.ANAN10E ||
+                                 current_hpsdr_model == HPSDRModel.HERMESLITE)
                         {
                             if (bDrawMarkers)
                             {
@@ -22772,7 +22787,7 @@ namespace Thetis
                         case MeterTXMode.SWR_POWER:
                             if (current_hpsdr_model == HPSDRModel.ANAN10 ||
                                 current_hpsdr_model == HPSDRModel.ANAN10E ||
-                                current_hpsdr_model == HPSDRModel.HERMESLITE ||
+                                current_hpsdr_model == HPSDRModel.HERMESLITE ||     // MI0BOT: HL2
                                 apollopresent) output = num.ToString(format) + " W";
                             else if (alexpresent || pa_present) output = num.ToString(format) + " W";
                             else output = num.ToString(format) + " mW";
@@ -24636,7 +24651,7 @@ namespace Thetis
         public void SetI2CPollingPause( bool pause )
         {
             I2CPollingPause = pause;
-            Task.Delay(80);
+            if (pause) Thread.Sleep(45);
         }
 
         public enum AutoTuneState
@@ -24779,6 +24794,7 @@ namespace Thetis
             byte old_IOBoardAerialMode = 0;
             byte old_IOBoardMode = (Byte) DSPMode.LAST;
             byte timeout = 0;
+            int status = 0;
 
             // Read the hardware revision on bus 2 at address 0x41, register 0
 
@@ -24822,8 +24838,8 @@ namespace Thetis
 
                     switch (state++)
                     {
-                        case 0:
-                        case 2: // Secondary receive selection
+                        case 3:
+                        case 6: // Secondary receive selection
                             if (IOBoardAerialMode != old_IOBoardAerialMode)
                             {
                                 NetworkIO.I2CWrite(1, 0x1d, 11, (IOBoardAerialMode));
@@ -24831,9 +24847,10 @@ namespace Thetis
                             }
                             break;
 
+                        case 1:
                         case 4:
-                        case 6:
-                        case 8:
+                        case 7:
+                        case 10:
                             // Read the input at register 6
                             NetworkIO.I2CReadInitiate(1, 0x1d, 6);
 
@@ -24841,24 +24858,29 @@ namespace Thetis
                             do
                             {
                                 await Task.Delay(1);
+                                status = NetworkIO.I2CResponse(read_data);      // [3] Input pins, [2] Ant tuner, [1] Fault, [0] Major Version
                                 if (timeout++ >= 20) break;
-                            } while (1 == NetworkIO.I2CResponse(read_data));    // [3] Input pins, [2] Ant tuner, [1] Fault, [0] Major Version
+                            } while (1 == status);    
 
-                            if (0 != read_data[1])
+                            if (status == 0)
                             {
-                                TXInhibit = true;
-                                infoBar.Warning("I/O Board: Fault Code " + read_data[1].ToString());
-                                AutoTuningHL2(ProtocolEvent.Idle);
-                            }
-                            else
-                            {
-                                AutoTuningHL2((ProtocolEvent) read_data[2]);
-                            }
+                                if (0 != read_data[1])
+                                {
+                                    TXInhibit = true;
+                                    infoBar.Warning("I/O Board: Fault Code " + read_data[1].ToString());
+                                    AutoTuningHL2(ProtocolEvent.Idle);
+                                }
+                                else
+                                {
+                                    AutoTuningHL2((ProtocolEvent) read_data[2]);
+                                }
 
-                            SetupForm.UpdateIOLedStrip(MOX, read_data[3]);
+                                SetupForm.UpdateIOLedStrip(MOX, read_data[3]);
+                            }
                             break;
 
-                        case 1: // Write current transmission frequency
+                        case 8:
+                        case 2: // Write current transmission frequency
                             if (currentFreq != lastFreq)
                             {
                                 // Write frequency on bus 2 at address 0x1d into the five registers
@@ -24876,7 +24898,7 @@ namespace Thetis
                             }
                             break;
 
-                        case 3:
+                        case 9:
                         case 5: // Aerial selection
                             if (IOBoardAerialPorts != old_IOBoardAerialPorts)
                             {
@@ -24885,7 +24907,7 @@ namespace Thetis
                             }
                             break;
 
-                        case 7: // Mode selection
+                        case 0: // Mode selection
                             Byte CurrentMode;
 
                             if (VFOATX)
@@ -24904,7 +24926,7 @@ namespace Thetis
                             }
                             break;
 
-                        case 9:
+                        case 11:
                         default:
                             state = 0;
                             break;
