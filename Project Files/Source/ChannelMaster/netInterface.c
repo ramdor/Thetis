@@ -1436,7 +1436,7 @@ int I2CWriteInitiate(int bus, int address, int control, int data)
 
 		if (next != prn->i2c.out_index)
 		{
-			// Only proceed if the indexs are not the same, as that is the overflow condition
+			// Only proceed if the indexes are not the same, as that is the overflow condition
 
 			prn->i2c.i2c_queue[next].bus = bus;
 			prn->i2c.i2c_queue[next].address = address;
