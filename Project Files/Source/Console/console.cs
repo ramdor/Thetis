@@ -29625,7 +29625,7 @@ namespace Thetis
                 NetworkIO.SetUserOut2(1);
 
                 if ((apollopresent && apollo_tuner_enabled) ||
-                    (current_hpsdr_model == HPSDRModel.HERMESLITE))
+                    ((current_hpsdr_model == HPSDRModel.HERMESLITE) && AriesStandalone))
                     NetworkIO.EnableApolloAutoTune(1);
             }
             else

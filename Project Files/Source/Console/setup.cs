@@ -11788,13 +11788,13 @@ namespace Thetis
         {
             if (HPSDRModel.HERMESLITE != console.CurrentHPSDRModel)
             {
-                console.CustomTitle = txtGenCustomTitle.Text;
+                console.CustomTitle = txtGenCustomTitle.Lines[0];
             }
             else
             {   // MI0BOT: Handle multi line box for display of different IP address
                 string remotePort = NetworkIO.EthernetRemotePort == 0 ? "" : ":" + NetworkIO.EthernetRemotePort.ToString();
                 int line = 0;
-                string ipAddess = "";
+                string ipAddress = "";
 
                 if (chkEnableStaticIP.Checked)
                 {
@@ -11807,12 +11807,12 @@ namespace Thetis
                     else if (radStaticIP4.Checked)
                         line = 4;
 
-                    ipAddess = console.HPSDRNetworkIPAddr;
+                    ipAddress = console.HPSDRNetworkIPAddr;
                 }
                 else
                 {
                     line = 0;
-                    ipAddess = NetworkIO.HpSdrHwIpAddress.ToString();
+                    ipAddress = NetworkIO.HpSdrHwIpAddress.ToString();
                 }
 
                 if ((txtGenCustomTitle.Lines.Length - 1) < line)
@@ -11821,17 +11821,17 @@ namespace Thetis
                 if (chkDisplayIPPort.Checked)
                     if (line == 0)
                         if (txtGenCustomTitle.Lines.Length == 0)
-                            console.CustomTitle = ipAddess + remotePort + "   " + txtGenCustomTitle.Text;
+                            console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Text;
                         else
-                            console.CustomTitle = ipAddess + remotePort + "   " + txtGenCustomTitle.Lines[0];
+                            console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Lines[0];
                     else
-                        console.CustomTitle = ipAddess + remotePort + "   " + txtGenCustomTitle.Lines[line] + "   " + txtGenCustomTitle.Lines[0];
+                        console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Lines[line] + "   " + txtGenCustomTitle.Lines[0];
                 else
                     if (line == 0)
                     if (txtGenCustomTitle.Lines.Length == 0)
-                        console.CustomTitle = ipAddess + remotePort + "   " + txtGenCustomTitle.Text;
+                        console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Text;
                     else
-                        console.CustomTitle = ipAddess + remotePort + "   " + txtGenCustomTitle.Lines[0];
+                        console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Lines[0];
                 else
                     console.CustomTitle = txtGenCustomTitle.Lines[line] + "   " + txtGenCustomTitle.Lines[0];
             }
@@ -20701,7 +20701,7 @@ namespace Thetis
                 return;
             }
 
-            console.SetI2CPollingPause(false);
+            console.SetI2CPollingPause(true);
 
             int bus = radI2C1.Checked ? 0 : 1;
 
@@ -20714,7 +20714,7 @@ namespace Thetis
                 ucOutPinsLedStripHF_Click(sender, e);
             }
 
-            console.SetI2CPollingPause(true);
+            console.SetI2CPollingPause(false);
         }
 
         // MI0BOT: HL2 access to I2C bus
