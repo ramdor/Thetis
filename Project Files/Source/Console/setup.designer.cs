@@ -3611,6 +3611,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.labelAutoAttDelay = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -11020,6 +11021,7 @@
             // 
             // grpHermesLiteStepAttenuator
             // 
+            this.grpHermesLiteStepAttenuator.Controls.Add(this.labelAutoAttDelay);
             this.grpHermesLiteStepAttenuator.Controls.Add(this.lblAutoDelay);
             this.grpHermesLiteStepAttenuator.Controls.Add(this.chkAutoStepAttenuator);
             this.grpHermesLiteStepAttenuator.Controls.Add(this.udHermesStepAttenuatorDelay);
@@ -57693,6 +57695,14 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // labelAutoAttDelay
+            this.labelAutoAttDelay.Image = null;
+            this.labelAutoAttDelay.Location = new System.Drawing.Point(132, 21);
+            this.labelAutoAttDelay.Name = "labelAutoAttDelay";
+            this.labelAutoAttDelay.Size = new System.Drawing.Size(42, 16);
+            this.labelAutoAttDelay.TabIndex = 191;
+            this.labelAutoAttDelay.Text = "Delay";
+            this.labelAutoAttDelay.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -62484,5 +62494,6 @@
         private ucOCLedStrip ucOutPinsLedStripHF;
         private LabelTS labelOutState;
         private CheckBoxTS chkIOPinControl;
+        private LabelTS labelAutoAttDelay;
     }
 }

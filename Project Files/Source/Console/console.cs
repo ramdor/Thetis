@@ -18003,10 +18003,7 @@ namespace Thetis
             {
                 value = Math.Max(0, value);			// lower bound
 
-                if (CurrentHPSDRModel == HPSDRModel.HERMESLITE) // Mi0BOT: Limit upper bound for HL2
-                    value = Math.Min(90, value);		// upper bound
-                else
-                    value = Math.Min(100, value);		// upper bound
+                value = Math.Min(100, value);		// upper bound
 
                 ptbTune.Value = value;
                 ptbTune_Scroll(this, EventArgs.Empty);
@@ -24195,9 +24192,9 @@ namespace Thetis
                     adc_cal_offset = 16;
                     break;
                 case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
-                    bridge_volt = 1.8f;
+                    bridge_volt = 1.5f;
                     refvoltage = 3.3f;
-                    adc_cal_offset = 3;
+                    adc_cal_offset = 6;
                     break;
                 default:
                     bridge_volt = 0.09f;
