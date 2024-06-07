@@ -827,6 +827,8 @@ namespace Thetis
 			}
 			return nFind;
 		}
+		private List<byte> _m_buffer = new List<byte> ();
+
 		private void SocketListenerThreadStart()
 		{
 			Timer t = new Timer(new TimerCallback(PingFrameTimer),
@@ -851,37 +853,53 @@ namespace Thetis
 
 						if (nRead > 0)
 						{
-							//m_currentReceiveDateTime = DateTime.Now;
-
-							string msg = Encoding.UTF8.GetString(bytes);
 							int nStart = 0;
 
-							if (!m_bWebSocket && Regex.IsMatch(msg, "^GET", RegexOptions.IgnoreCase))
+							if (!m_bWebSocket)
 							{
-								if (upgradeToWebSocket(msg))
+                                string msg = Encoding.UTF8.GetString(bytes);
+                                if (Regex.IsMatch(msg, "^GET", RegexOptions.IgnoreCase))
 								{
-									m_bWebSocket = true;
-									Debug.Print("Upgraded to websocket");
 
-									nStart = findEndOfHeader(bytes);
+									if (upgradeToWebSocket(msg))
+									{
+										m_bWebSocket = true;
+										Debug.Print("Upgraded to websocket");
 
-									sendInitialisationData();
-								}
-								else
-								{
-									Debug.Print("Not Upgraded to websocket");
-									m_stopClient = true;
+										nStart = findEndOfHeader(bytes);
+
+										// move rest of bytes if any to the buffer
+										for(int i = nStart; i < nRead; i++)
+											_m_buffer.Add(bytes[i]);
+										nRead = 0; // so that we dont re-add below
+
+										sendInitialisationData();
+									}
+									else
+									{
+										Debug.Print("Not Upgraded to websocket");
+										m_stopClient = true;
+									}
 								}
 							}
 
-							if (m_bWebSocket && (nStart < bytes.Length))
-							{								
-								int nMsgLen = ParseReceiveBuffer(bytes, bytes.Length, nStart);
-								nStart += nMsgLen;
-								while(nStart < bytes.Length)
-                                {
-									nMsgLen = ParseReceiveBuffer(bytes, bytes.Length, nStart);
-									nStart += nMsgLen;
+							if (m_bWebSocket)
+							{
+								// add new bytes to buffer
+                                for (int i = 0; i < nRead; i++)
+                                    _m_buffer.Add(bytes[i]);
+
+                                byte[] bytesAsArray = _m_buffer.ToArray();
+								int frameLen = GetFrameLength(bytesAsArray);
+								while (frameLen > -1 && bytesAsArray.Length >= frameLen)
+								{
+									// enough data to process a frame, dump bytes from the buffer
+									_m_buffer.RemoveRange(0, frameLen);
+
+									ParseReceiveBuffer(bytesAsArray);
+
+									bytesAsArray = _m_buffer.ToArray();
+									frameLen = GetFrameLength(bytesAsArray);
 								}
 							}
 						}
@@ -1071,78 +1089,98 @@ namespace Thetis
 		{
 			return m_disconnected;
 		}
-		private int ParseReceiveBuffer(Byte[] bytes, int size, int nStartPos)
+		private int GetFrameLength(Byte[] bytes)
 		{
-			if (size == 0) return 0;
+            //https://noio-ws.readthedocs.io/en/latest/overview_of_websockets.html
 
-			bool fin = (bytes[nStartPos + 0] & 0b10000000) != 0;	// frame finished bit
-			bool mask = (bytes[nStartPos + 1] & 0b10000000) != 0;	// frame is masked bit
+            if (bytes.Length < 2) return -1; // at least opcode and payload length
+
+            bool mask = (bytes[1] & 0b10000000) != 0;	// frame is masked bit
+            EOpcodeType opcode = (EOpcodeType)(bytes[0] & 0b00001111);
+            int payloadLen = bytes[1] & 0b01111111;
+
+			if (payloadLen <= 125)
+			{
+				return mask ? payloadLen + 6 : payloadLen + 2;
+            }
+			else if (payloadLen == 126)
+			{
+                // need more bytes
+				if(bytes.Length < 4) return -1;
+                int extendedLen = (int)BitConverter.ToInt16(new byte[] { bytes[3], bytes[2] }, 0);
+                return mask ? extendedLen + 8 : extendedLen + 4;
+            }
+            else if (payloadLen == 127)
+            {
+                // need more bytes
+                if (bytes.Length < 10) return -1;
+                int extendedLen = (int)BitConverter.ToInt64(new byte[] { bytes[9], bytes[8], bytes[7], bytes[6], bytes[5], bytes[4], bytes[3], bytes[2] }, 0);
+                return mask ? extendedLen + 14 : extendedLen + 10;
+            }
+
+            return -1;
+        }
+		private void ParseReceiveBuffer(Byte[] bytes)
+		{
+			if (bytes.Length == 0) return;
+
+            bool fin = (bytes[0] & 0b10000000) != 0;	// frame finished bit
+			bool rsv1 = (bytes[0] & 0b01000000) != 0;
+            bool rsv2 = (bytes[0] & 0b00100000) != 0;
+            bool rsv3 = (bytes[0] & 0b00010000) != 0;
+            bool mask = (bytes[1] & 0b10000000) != 0;	// frame is masked bit
 
 			//if (!fin) return 0; // this is not the finish of the data
 
-			int b = bytes[nStartPos + 1];
-			int dataLength = 0;
-			int totalLength = 0;
-			int keyIndex = 0;
-
-			EOpcodeType opcode = (EOpcodeType)(bytes[nStartPos + 0] & 0b00001111);
-
-			b = b &0b01111111; // strip off the 8th bit;
-
-			if (b <= 125)
-			{
-				dataLength = b;
-				keyIndex = 2;
-				totalLength = mask ? dataLength + 6 : dataLength + 2;
-			}
-
-			if (b == 126)
-			{
-				dataLength = BitConverter.ToInt16(new byte[] { bytes[nStartPos + 3], bytes[nStartPos + 2] }, 0);
-				keyIndex = 4;
-				totalLength = mask ? dataLength + 8 : dataLength + 4;
-			}
-
-			if (b == 127)
-			{
-				dataLength = (int)BitConverter.ToInt64(new byte[] { bytes[nStartPos + 9], bytes[nStartPos + 8], bytes[nStartPos + 7], bytes[nStartPos + 6], bytes[nStartPos + 5], bytes[nStartPos + 4], bytes[nStartPos + 3], bytes[nStartPos + 2] }, 0);
-				keyIndex = 10;
-				totalLength = mask ? dataLength + 14 : dataLength + 10;
-			}
-			//Debug.Print(opcode.ToString());
+			EOpcodeType opcode = (EOpcodeType)(bytes[0] & 0b00001111);
+			
 			if (opcode == EOpcodeType.ClosedConnection)
 			{
 				// reply with close frame
 				sendCloseFrame();
 
 				m_stopClient = true;
-				return totalLength;
+				return;
 			}
 			else if (opcode == EOpcodeType.Text)
 			{
-				if (totalLength <= bytes.Length)
-				{
-					int dataIndex = nStartPos + keyIndex;
+                int dataLength = 0;
+                int keyIndex = 0;
 
-					if (mask)
-					{
-						byte[] key = new byte[] { bytes[nStartPos + keyIndex], bytes[nStartPos + keyIndex + 1], bytes[nStartPos + keyIndex + 2], bytes[nStartPos + keyIndex + 3] };
+                int payloadLen = bytes[1] & 0b01111111; // strip off the 8th bit. 8th being the mask
 
-						dataIndex += 4;
-						int count = 0;
-						for (int i = dataIndex; i < dataIndex + dataLength; i++)
-						{
-							bytes[i] = (byte)(bytes[i] ^ key[count % 4]);
-							count++;
-						}
-					}
-
-					parseTextFrame(Encoding.UTF8.GetString(bytes, dataIndex, dataLength));
-				}
-                else
+                if (payloadLen <= 125)
                 {
-					Debug.Print("ERROR : Buffer is shorter than data");
+                    keyIndex = 2;
+					dataLength = payloadLen;
+                }
+				else if (payloadLen == 126) // payload len
+                {
+                    keyIndex = 4;
+                    dataLength = (int)BitConverter.ToInt16(new byte[] { bytes[3], bytes[2] }, 0);
+                }
+				else if (payloadLen == 127) // extended payload len
+                {
+                    keyIndex = 10;
+                    dataLength = (int)BitConverter.ToInt64(new byte[] { bytes[9], bytes[8], bytes[7], bytes[6], bytes[5], bytes[4], bytes[3], bytes[2] }, 0);
+                }
+
+				int dataIndex = keyIndex;
+
+				if (mask)
+				{
+					byte[] key = new byte[] { bytes[keyIndex], bytes[keyIndex + 1], bytes[keyIndex + 2], bytes[keyIndex + 3] };
+
+					dataIndex += 4;
+					int count = 0;
+					for (int i = dataIndex; i < dataIndex + dataLength; i++)
+					{
+						bytes[i] = (byte)(bytes[i] ^ key[count % 4]);
+						count++;
+					}
 				}
+
+				parseTextFrame(Encoding.UTF8.GetString(bytes, dataIndex, dataLength));
 			}
 			else if(opcode == EOpcodeType.Ping)
             {
@@ -1153,8 +1191,6 @@ namespace Thetis
 				// todo !
 				Debug.Print("Binary Frame");
             }
-
-			return totalLength;
 		}
 		private void handleSetInFocus()
         {
