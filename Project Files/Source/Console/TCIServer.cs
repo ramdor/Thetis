@@ -1112,6 +1112,9 @@ namespace Thetis
 			//Debug.Print(opcode.ToString());
 			if (opcode == EOpcodeType.ClosedConnection)
 			{
+				// reply with close frame
+				sendCloseFrame();
+
 				m_stopClient = true;
 				return totalLength;
 			}
