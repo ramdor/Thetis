@@ -869,7 +869,8 @@ namespace Thetis
 										nStart = findEndOfHeader(bytes);
 
 										// move rest of bytes if any to the buffer
-										for(int i = nStart; i < nRead; i++)
+										_m_buffer.Clear();
+                                        for (int i = nStart; i < nRead; i++)
 											_m_buffer.Add(bytes[i]);
 										nRead = 0; // so that we dont re-add below
 
@@ -1093,10 +1094,9 @@ namespace Thetis
 		{
             //https://noio-ws.readthedocs.io/en/latest/overview_of_websockets.html
 
-            if (bytes.Length < 2) return -1; // at least opcode and payload length
+            if (bytes.Length < 2) return -1; // at least 2 bytes to get payload length
 
             bool mask = (bytes[1] & 0b10000000) != 0;	// frame is masked bit
-            EOpcodeType opcode = (EOpcodeType)(bytes[0] & 0b00001111);
             int payloadLen = bytes[1] & 0b01111111;
 
 			if (payloadLen <= 125)
