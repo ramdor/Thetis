@@ -891,7 +891,7 @@ namespace Thetis
 
                                 byte[] bytesAsArray = _m_buffer.ToArray();
 								int frameLen = GetFrameLength(bytesAsArray);
-								while (frameLen > -1 && bytesAsArray.Length >= frameLen)
+								while (!m_stopClient && frameLen > -1 && bytesAsArray.Length >= frameLen)
 								{
 									// enough data to process a frame, dump bytes from the buffer
 									_m_buffer.RemoveRange(0, frameLen);
