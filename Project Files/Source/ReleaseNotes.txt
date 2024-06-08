@@ -1,13 +1,18 @@
-# !! CW Warning !!
-
 **UPDATE: The CW issue has been resolved for Protocol 2. It requires a firmware update and this modified version of Thetis. Please see the [ApacheLab community forums here](https://community.apache-labs.com/viewtopic.php?f=32&t=4972)**
-
-If you use CW and you have different RX and TX antenna ports configured, there is a high potential for full RF power to be present briefly on the RX port. This may lead to damage of any sensitive equipment attached to the RX port such as active antennas and the like. This situation can occur if you utilise the CWX form, serial keying/PTT, and standard hardware keys plugged into the radio. This issue is currently under investigation and has existed in Thetis for an extended period (years and years). If you are interested in following the progress, you can read more about it on [GitHub here](https://github.com/ramdor/Thetis/issues/228).
 
 **Note: You can revisit these release notes by clicking the button in the setup form within the General -> H/W Select tab.**
 
-
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
+
+## v2.10.3.6 Change Log - WIP dev_3
+- [add] Fn keys now activate messages directly in the cwx form
+- [fix] changes to fix issue #407, No TX output when initially going to QSK
+- [fix] TCI spot would be incorrectly shown if it came from RumLog. Thetis now ignores as string of "nil" which RumLog sends (version dependant)
+- [fix] attempt to resolve issue where out of array bounds errors are shown at startup
+- [fix] corrected character display issues in input/output combo boxes (Issue #420)
+- [fix] websocket protocol close frame message is now sent when TCIserver disconnects a client, preventing some third-party clients from closing improperly
+- [fix] reworked TCIserver input message buffer to prevent random client disconnects when TCI WebSocket messages arrive rapidly
+- [change] noise floor approximation now enters 'fast attack' mode more frequently for quicker floor detection (changing modes/antennas/etc)
 
 ## v2.10.3.6 Change Log - WIP dev
 - [add] -help command line option
@@ -40,7 +45,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] fix an issue which would prevent manually changing TX filter in setup form, it would try to 'validate' whilst typing new value
 - [fix] fix collapsed andromeda sql gain sliders from behaving erratically
 - [fix] thin notches would not clear single pixel carriers from waterfall if visual approximation was used
-- [fix] re-write of the usb-bcd code so that only the device in use is opened/closed as equired. Also recovers state at startup
+- [fix] re-write of the usb-bcd code so that only the device in use is opened/closed as required. Also recovers state at startup
 - [fix] fix issue where if diversity gain/phase locks are on changing band would overwrite the new band with the locked values. Now new band values are applied then locked if needed
 - [fix] menu bar has text size fixed like all other control so size/height does not change with OS text scale. Fixes cut off vfoA/B group box labels
 - [fix] scope time base differences between RX and TX should be resolved
