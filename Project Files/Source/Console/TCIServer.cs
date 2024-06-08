@@ -122,6 +122,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace Thetis
 {
@@ -870,9 +871,10 @@ namespace Thetis
 
 										// move rest of bytes if any to the buffer
 										_m_buffer.Clear();
-                                        for (int i = nStart; i < nRead; i++)
-											_m_buffer.Add(bytes[i]);
-										nRead = 0; // so that we dont re-add below
+                                        //for (int i = nStart; i < nRead; i++)
+										//	_m_buffer.Add(bytes[i]);
+                                        _m_buffer.AddRange(bytes.Skip(nStart).Take(nRead - nStart));
+                                        nRead = 0; // so that we dont re-add these below
 
 										sendInitialisationData();
 									}
@@ -886,9 +888,10 @@ namespace Thetis
 
 							if (m_bWebSocket)
 							{
-								// add new bytes to buffer
-                                for (int i = 0; i < nRead; i++)
-                                    _m_buffer.Add(bytes[i]);
+                                // add new bytes to buffer
+                                //for (int i = 0; i < nRead; i++)
+                                //    _m_buffer.Add(bytes[i]);
+                                _m_buffer.AddRange(bytes.Take(nRead));
 
                                 byte[] bytesAsArray = _m_buffer.ToArray();
 								int frameLen = GetFrameLength(bytesAsArray);
