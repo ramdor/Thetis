@@ -18,6 +18,7 @@
             System.Windows.Forms.NumericUpDownTS numericUpDownTS10;
             System.Windows.Forms.NumericUpDownTS numericUpDownTS12;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Setup));
+            this.lblTXattBand = new System.Windows.Forms.LabelTS();
             this.chkForceATTwhenOutPowerChanges = new System.Windows.Forms.CheckBoxTS();
             this.chkForceATTwhenPSAoff = new System.Windows.Forms.CheckBoxTS();
             this.chkEnableXVTRHF = new System.Windows.Forms.CheckBoxTS();
@@ -3371,6 +3372,11 @@
             this.btnConfigure = new System.Windows.Forms.Button();
             this.tpCAToptions = new System.Windows.Forms.TabPage();
             this.groupBoxTS25 = new System.Windows.Forms.GroupBoxTS();
+            this.chkKWAI_tcp = new System.Windows.Forms.CheckBoxTS();
+            this.chkKWAI_port4 = new System.Windows.Forms.CheckBoxTS();
+            this.chkKWAI_port3 = new System.Windows.Forms.CheckBoxTS();
+            this.chkKWAI_port2 = new System.Windows.Forms.CheckBoxTS();
+            this.chkKWAI_port1 = new System.Windows.Forms.CheckBoxTS();
             this.chkLimitPowerCATTCIMsgs = new System.Windows.Forms.CheckBoxTS();
             this.chkRecenterOnZZFx = new System.Windows.Forms.CheckBoxTS();
             this.chkDigUIsUSB = new System.Windows.Forms.CheckBoxTS();
@@ -3551,7 +3557,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.lblTXattBand = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4515,6 +4520,16 @@
             tpAlexAntCtrl.Size = new System.Drawing.Size(708, 378);
             tpAlexAntCtrl.TabIndex = 0;
             tpAlexAntCtrl.Text = "Antenna";
+            // 
+            // lblTXattBand
+            // 
+            this.lblTXattBand.AutoSize = true;
+            this.lblTXattBand.Image = null;
+            this.lblTXattBand.Location = new System.Drawing.Point(550, 162);
+            this.lblTXattBand.Name = "lblTXattBand";
+            this.lblTXattBand.Size = new System.Drawing.Size(31, 13);
+            this.lblTXattBand.TabIndex = 22;
+            this.lblTXattBand.Text = "????";
             // 
             // chkForceATTwhenOutPowerChanges
             // 
@@ -53592,6 +53607,11 @@
             // 
             // groupBoxTS25
             // 
+            this.groupBoxTS25.Controls.Add(this.chkKWAI_tcp);
+            this.groupBoxTS25.Controls.Add(this.chkKWAI_port4);
+            this.groupBoxTS25.Controls.Add(this.chkKWAI_port3);
+            this.groupBoxTS25.Controls.Add(this.chkKWAI_port2);
+            this.groupBoxTS25.Controls.Add(this.chkKWAI_port1);
             this.groupBoxTS25.Controls.Add(this.chkLimitPowerCATTCIMsgs);
             this.groupBoxTS25.Controls.Add(this.chkRecenterOnZZFx);
             this.groupBoxTS25.Controls.Add(this.chkDigUIsUSB);
@@ -53600,16 +53620,81 @@
             this.groupBoxTS25.Controls.Add(this.labelTS323);
             this.groupBoxTS25.Location = new System.Drawing.Point(221, 8);
             this.groupBoxTS25.Name = "groupBoxTS25";
-            this.groupBoxTS25.Size = new System.Drawing.Size(201, 156);
+            this.groupBoxTS25.Size = new System.Drawing.Size(235, 182);
             this.groupBoxTS25.TabIndex = 109;
             this.groupBoxTS25.TabStop = false;
             this.groupBoxTS25.Text = "Other";
+            // 
+            // chkKWAI_tcp
+            // 
+            this.chkKWAI_tcp.AutoSize = true;
+            this.chkKWAI_tcp.Image = null;
+            this.chkKWAI_tcp.Location = new System.Drawing.Point(182, 85);
+            this.chkKWAI_tcp.Name = "chkKWAI_tcp";
+            this.chkKWAI_tcp.Size = new System.Drawing.Size(47, 17);
+            this.chkKWAI_tcp.TabIndex = 113;
+            this.chkKWAI_tcp.Text = "TCP";
+            this.toolTip1.SetToolTip(this.chkKWAI_tcp, "send via TCP/IP CAT server");
+            this.chkKWAI_tcp.UseVisualStyleBackColor = true;
+            this.chkKWAI_tcp.CheckedChanged += new System.EventHandler(this.chkKWAI_tcp_CheckedChanged);
+            // 
+            // chkKWAI_port4
+            // 
+            this.chkKWAI_port4.AutoSize = true;
+            this.chkKWAI_port4.Image = null;
+            this.chkKWAI_port4.Location = new System.Drawing.Point(144, 85);
+            this.chkKWAI_port4.Name = "chkKWAI_port4";
+            this.chkKWAI_port4.Size = new System.Drawing.Size(32, 17);
+            this.chkKWAI_port4.TabIndex = 112;
+            this.chkKWAI_port4.Text = "4";
+            this.toolTip1.SetToolTip(this.chkKWAI_port4, "send via CAT4");
+            this.chkKWAI_port4.UseVisualStyleBackColor = true;
+            this.chkKWAI_port4.CheckedChanged += new System.EventHandler(this.chkKWAI_port4_CheckedChanged);
+            // 
+            // chkKWAI_port3
+            // 
+            this.chkKWAI_port3.AutoSize = true;
+            this.chkKWAI_port3.Image = null;
+            this.chkKWAI_port3.Location = new System.Drawing.Point(106, 85);
+            this.chkKWAI_port3.Name = "chkKWAI_port3";
+            this.chkKWAI_port3.Size = new System.Drawing.Size(32, 17);
+            this.chkKWAI_port3.TabIndex = 111;
+            this.chkKWAI_port3.Text = "3";
+            this.toolTip1.SetToolTip(this.chkKWAI_port3, "send via CAT3");
+            this.chkKWAI_port3.UseVisualStyleBackColor = true;
+            this.chkKWAI_port3.CheckedChanged += new System.EventHandler(this.chkKWAI_port3_CheckedChanged);
+            // 
+            // chkKWAI_port2
+            // 
+            this.chkKWAI_port2.AutoSize = true;
+            this.chkKWAI_port2.Image = null;
+            this.chkKWAI_port2.Location = new System.Drawing.Point(68, 85);
+            this.chkKWAI_port2.Name = "chkKWAI_port2";
+            this.chkKWAI_port2.Size = new System.Drawing.Size(32, 17);
+            this.chkKWAI_port2.TabIndex = 110;
+            this.chkKWAI_port2.Text = "2";
+            this.toolTip1.SetToolTip(this.chkKWAI_port2, "send via CAT2");
+            this.chkKWAI_port2.UseVisualStyleBackColor = true;
+            this.chkKWAI_port2.CheckedChanged += new System.EventHandler(this.chkKWAI_port2_CheckedChanged);
+            // 
+            // chkKWAI_port1
+            // 
+            this.chkKWAI_port1.AutoSize = true;
+            this.chkKWAI_port1.Image = null;
+            this.chkKWAI_port1.Location = new System.Drawing.Point(30, 85);
+            this.chkKWAI_port1.Name = "chkKWAI_port1";
+            this.chkKWAI_port1.Size = new System.Drawing.Size(32, 17);
+            this.chkKWAI_port1.TabIndex = 109;
+            this.chkKWAI_port1.Text = "1";
+            this.toolTip1.SetToolTip(this.chkKWAI_port1, "send via CAT1");
+            this.chkKWAI_port1.UseVisualStyleBackColor = true;
+            this.chkKWAI_port1.CheckedChanged += new System.EventHandler(this.chkKWAI_port1_CheckedChanged);
             // 
             // chkLimitPowerCATTCIMsgs
             // 
             this.chkLimitPowerCATTCIMsgs.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
             this.chkLimitPowerCATTCIMsgs.Image = null;
-            this.chkLimitPowerCATTCIMsgs.Location = new System.Drawing.Point(16, 113);
+            this.chkLimitPowerCATTCIMsgs.Location = new System.Drawing.Point(16, 136);
             this.chkLimitPowerCATTCIMsgs.Name = "chkLimitPowerCATTCIMsgs";
             this.chkLimitPowerCATTCIMsgs.Size = new System.Drawing.Size(176, 33);
             this.chkLimitPowerCATTCIMsgs.TabIndex = 108;
@@ -53654,7 +53739,7 @@
             // 
             // txtZZSN
             // 
-            this.txtZZSN.Location = new System.Drawing.Point(60, 87);
+            this.txtZZSN.Location = new System.Drawing.Point(60, 110);
             this.txtZZSN.Name = "txtZZSN";
             this.txtZZSN.Size = new System.Drawing.Size(65, 20);
             this.txtZZSN.TabIndex = 99;
@@ -53666,7 +53751,7 @@
             // 
             this.labelTS323.AutoSize = true;
             this.labelTS323.Image = null;
-            this.labelTS323.Location = new System.Drawing.Point(13, 90);
+            this.labelTS323.Location = new System.Drawing.Point(13, 113);
             this.labelTS323.Name = "labelTS323";
             this.labelTS323.Size = new System.Drawing.Size(39, 13);
             this.labelTS323.TabIndex = 100;
@@ -53732,7 +53817,7 @@
             this.grpRTTYOffset.Controls.Add(this.chkRTTYOffsetEnableA);
             this.grpRTTYOffset.Location = new System.Drawing.Point(14, 8);
             this.grpRTTYOffset.Name = "grpRTTYOffset";
-            this.grpRTTYOffset.Size = new System.Drawing.Size(201, 156);
+            this.grpRTTYOffset.Size = new System.Drawing.Size(201, 182);
             this.grpRTTYOffset.TabIndex = 97;
             this.grpRTTYOffset.TabStop = false;
             this.grpRTTYOffset.Text = "RTTY Offset";
@@ -56606,16 +56691,6 @@
             this.radioButtonTS6.TabStop = true;
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
-            // 
-            // lblTXattBand
-            // 
-            this.lblTXattBand.AutoSize = true;
-            this.lblTXattBand.Image = null;
-            this.lblTXattBand.Location = new System.Drawing.Point(550, 162);
-            this.lblTXattBand.Name = "lblTXattBand";
-            this.lblTXattBand.Size = new System.Drawing.Size(31, 13);
-            this.lblTXattBand.TabIndex = 22;
-            this.lblTXattBand.Text = "????";
             // 
             // Setup
             // 
@@ -61328,5 +61403,10 @@
         private GroupBoxTS groupBoxTS33;
         private CheckBoxTS chkCWbecomesCWUabove10mhz;
         private LabelTS lblTXattBand;
+        private CheckBoxTS chkKWAI_tcp;
+        private CheckBoxTS chkKWAI_port4;
+        private CheckBoxTS chkKWAI_port3;
+        private CheckBoxTS chkKWAI_port2;
+        private CheckBoxTS chkKWAI_port1;
     }
 }
