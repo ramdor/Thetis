@@ -40175,12 +40175,16 @@ namespace Thetis
 
         private void BroadcastVFOChange(string ndx)
         {
+            if (IsSetupFormNull) return;
+
+            Dictionary<string, bool> ken = SetupForm.KenwoodAISettings;
+
             string cmd = "ZZSW" + ndx + ";";
 
-            sioPut(Siolisten, cmd);
-            sioPut(Sio2listen, cmd);
-            sioPut(Sio3listen, cmd);
-            sioPut(Sio4listen, cmd);
+            if (ken["port1"]) sioPut(Siolisten, cmd);
+            if (ken["port2"]) sioPut(Sio2listen, cmd);
+            if (ken["port3"]) sioPut(Sio3listen, cmd);
+            if (ken["port4"]) sioPut(Sio4listen, cmd);
 
             //if (Siolisten != null && Siolisten.SIO != null)
             //{
@@ -40191,7 +40195,7 @@ namespace Thetis
             //    catch { }
             //}
 
-            if (m_tcpCATServer != null)
+            if (m_tcpCATServer != null && ken["tcp"])
                 m_tcpCATServer.SendToClients(cmd);
         }
 
