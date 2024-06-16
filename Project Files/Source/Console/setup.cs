@@ -2400,6 +2400,9 @@ namespace Thetis
             // CAT
             comboFocusMasterMode_SelectedIndexChanged(this, e);
             chkRecenterOnZZFx_CheckedChanged(this, e);
+            //MW0GLE [2.10.3.6_dev4]
+            chkKWAI_CheckedChanged(this, e);
+
             //MW0LGE_21d n1mm
             chkN1MMEnableRX1_CheckedChanged(this, e);
             chkN1MMEnableRX2_CheckedChanged(this, e);
@@ -5527,6 +5530,9 @@ namespace Thetis
             {
                 allow_freq_broadcast = value;
                 console.KWAutoInformation = value;
+
+                //update the 1/2/3/4/tcp visibility
+                updatePortAIstate(value);
             }
         }
 
@@ -27849,7 +27855,7 @@ namespace Thetis
         {
             console.TCICWbecomesCWUabove10mhz = chkCWbecomesCWUabove10mhz.Checked;
         }
-
+        
         private void ucOutPinsLedStripHF_Click(object sender, EventArgs e)
         {
             byte[] read_data = new byte[4];
@@ -27890,7 +27896,91 @@ namespace Thetis
                 console.SetI2CPollingPause(false);
 
                 ucOutPinsLedStripHF_Click(sender, e);
+            }        
+
+        public readonly Dictionary<string, bool> KenwoodAISettings = new Dictionary<string, bool>(); // contains settings "enabled", "port1", "port2", "port3", "port4", "tcp", all as bools
+        private void chkKWAI_port1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (KenwoodAISettings.ContainsKey("port1"))
+            {
+                KenwoodAISettings["port1"] = chkKWAI_port1.Checked;
             }
+            else
+            {
+                KenwoodAISettings.Add("port1", chkKWAI_port1.Checked);
+            }
+        }
+
+        private void chkKWAI_port2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (KenwoodAISettings.ContainsKey("port2"))
+            {
+                KenwoodAISettings["port2"] = chkKWAI_port2.Checked;
+            }
+            else
+            {
+                KenwoodAISettings.Add("port2", chkKWAI_port2.Checked);
+            }
+        }
+
+        private void chkKWAI_port3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (KenwoodAISettings.ContainsKey("port3"))
+            {
+                KenwoodAISettings["port3"] = chkKWAI_port3.Checked;
+            }
+            else
+            {
+                KenwoodAISettings.Add("port3", chkKWAI_port3.Checked);
+            }
+        }
+
+        private void chkKWAI_port4_CheckedChanged(object sender, EventArgs e)
+        {
+            if (KenwoodAISettings.ContainsKey("port4"))
+            {
+                KenwoodAISettings["port4"] = chkKWAI_port4.Checked;
+            }
+            else
+            {
+                KenwoodAISettings.Add("port4", chkKWAI_port4.Checked);
+            }
+        }
+
+        private void chkKWAI_tcp_CheckedChanged(object sender, EventArgs e)
+        {
+            if (KenwoodAISettings.ContainsKey("tcp"))
+            {
+                KenwoodAISettings["tcp"] = chkKWAI_tcp.Checked;
+            }
+            else
+            {
+                KenwoodAISettings.Add("tcp", chkKWAI_tcp.Checked);
+            }
+        }
+
+        private void updatePortAIstate(bool enabled)
+        {
+            if (KenwoodAISettings.ContainsKey("enabled"))
+            {
+                KenwoodAISettings["enabled"] = chkKWAI.Checked;
+            }
+            else
+            {
+                KenwoodAISettings.Add("enabled", chkKWAI.Checked);
+            }
+
+            chkKWAI_port1.Enabled = enabled;
+            chkKWAI_port2.Enabled = enabled;
+            chkKWAI_port3.Enabled = enabled;
+            chkKWAI_port4.Enabled = enabled;
+            chkKWAI_tcp.Enabled = enabled;
+
+            chkKWAI_port1_CheckedChanged(this, EventArgs.Empty);
+            chkKWAI_port2_CheckedChanged(this, EventArgs.Empty);
+            chkKWAI_port3_CheckedChanged(this, EventArgs.Empty);
+            chkKWAI_port4_CheckedChanged(this, EventArgs.Empty);
+            chkKWAI_tcp_CheckedChanged(this, EventArgs.Empty);
         }
     }
 

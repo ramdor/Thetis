@@ -7393,19 +7393,86 @@ namespace Thetis
             txtVFOALSD.Text = temp.Remove(0, index);
         }
 
+        private bool sioPut(object sio_listener, string msg)
+        {
+            //MW0LGE [2.10.3.6_dev4]
+            //had to implement like this due to non oo implementation of sio listeners
+            if (sio_listener == null) { return false; }
+
+            bool ret = false;
+            try
+            {
+                switch (sio_listener)
+                {
+                    case SIOListenerII siol:
+                        if (siol.SIO != null)
+                        {
+                            if (siol.SIO.IsOpen)
+                            {
+                                siol.SIO.put(msg);
+                                ret = true;
+                            }
+                        }
+                        break;
+                    case SIO2ListenerII siol2:
+                        if (siol2.SIO2 != null)
+                        {
+                            if (siol2.SIO2.IsOpen)
+                            {
+                                siol2.SIO2.put(msg);
+                                ret = true;
+                            }
+                        }
+                        break;
+                    case SIO3ListenerII siol3:
+                        if (siol3.SIO3 != null)
+                        {
+                            if (siol3.SIO3.IsOpen)
+                            {
+                                siol3.SIO3.put(msg);
+                                ret = true;
+                            }
+                        }
+                        break;
+                    case SIO4ListenerII siol4:
+                        if (siol4.SIO4 != null)
+                        {
+                            if (siol4.SIO4.IsOpen)
+                            {
+                                siol4.SIO4.put(msg);
+                                ret = true;
+                            }
+                        }
+                        break;
+                }
+            }
+            catch { }
+
+            return ret;
+        }
         private void BroadcastFreqChange(string vfo, double freq)
         {
-            string cmd = "F" + vfo + freq.ToString("f6").Replace(separator, "").PadLeft(11, '0') + ";"; //MW0LGE_22a
-            if (Siolisten != null && Siolisten.SIO != null)
-            {
-                try
-                {
-                    if (Siolisten.SIO.IsOpen) Siolisten.SIO.put(cmd);
-                }
-                catch { }
-            }
+            if (IsSetupFormNull) return;
 
-            if (m_tcpCATServer != null)
+            Dictionary<string, bool> ken = SetupForm.KenwoodAISettings;
+
+            string cmd = "F" + vfo + freq.ToString("f6").Replace(separator, "").PadLeft(11, '0') + ";"; //MW0LGE_22a
+
+            if (ken["port1"]) sioPut(Siolisten, cmd);
+            if (ken["port2"]) sioPut(Sio2listen, cmd);
+            if (ken["port3"]) sioPut(Sio3listen, cmd);
+            if (ken["port4"]) sioPut(Sio4listen, cmd);
+
+            //if (Siolisten != null && Siolisten.SIO != null)
+            //{
+            //    try
+            //    {
+            //        if (Siolisten.SIO.IsOpen) Siolisten.SIO.put(cmd);
+            //    }
+            //    catch { }
+            //}
+
+            if (m_tcpCATServer != null && ken["tcp"])
                 m_tcpCATServer.SendToClients(cmd);
         }
 
@@ -41048,17 +41115,27 @@ namespace Thetis
 
         private void BroadcastVFOChange(string ndx)
         {
-            string cmd = "ZZSW" + ndx + ";";
-            if (Siolisten != null && Siolisten.SIO != null)
-            {
-                try
-                {
-                    if (Siolisten.SIO.IsOpen) Siolisten.SIO.put(cmd);
-                }
-                catch { }
-            }
+            if (IsSetupFormNull) return;
 
-            if (m_tcpCATServer != null)
+            Dictionary<string, bool> ken = SetupForm.KenwoodAISettings;
+
+            string cmd = "ZZSW" + ndx + ";";
+
+            if (ken["port1"]) sioPut(Siolisten, cmd);
+            if (ken["port2"]) sioPut(Sio2listen, cmd);
+            if (ken["port3"]) sioPut(Sio3listen, cmd);
+            if (ken["port4"]) sioPut(Sio4listen, cmd);
+
+            //if (Siolisten != null && Siolisten.SIO != null)
+            //{
+            //    try
+            //    {
+            //        if (Siolisten.SIO.IsOpen) Siolisten.SIO.put(cmd);
+            //    }
+            //    catch { }
+            //}
+
+            if (m_tcpCATServer != null && ken["tcp"])
                 m_tcpCATServer.SendToClients(cmd);
         }
 
