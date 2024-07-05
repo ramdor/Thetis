@@ -891,6 +891,17 @@ void EnableCWKeyerSpacing(int bits)
 }
 
 PORT
+void SetCWEdgeLength(int edge_length)
+{
+	if (prn->cw.edge_length != edge_length)
+	{
+		prn->cw.edge_length = edge_length;
+		if (listenSock != INVALID_SOCKET)
+			CmdTx();
+	}
+}
+
+PORT
 void SetADC_cntrl1(int bits) 
 {
 	if (ADC_cntrl1 != bits) 
@@ -1389,6 +1400,7 @@ void create_rnet()
 		prn->cw.keyer_weight = 0;
 		prn->cw.hang_delay = 0;
 		prn->cw.rf_delay = 0;
+		prn->cw.edge_length = 7;
 
 		prn->mic.mic_control = 0;
 		prn->mic.line_in_gain = 0;

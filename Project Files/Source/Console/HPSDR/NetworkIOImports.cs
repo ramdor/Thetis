@@ -288,6 +288,9 @@ namespace Thetis
         public static extern void SetCWKeyerWeight(int weight);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetCWEdgeLength(int edge_length);
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void EnableCWKeyerSpacing(int bits);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
