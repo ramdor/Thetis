@@ -2109,6 +2109,7 @@ namespace Thetis
             radANFPreAGC_CheckedChanged(this, e);
             radANF2PreAGC_CheckedChanged(this, e);
             chkMNFAutoIncrease_CheckedChanged(this, e);
+            udCWEdgeLength_ValueChanged(this, e);
             //MW0LGE_21d
             chkShowAGC_CheckedChanged(this, e);
             chkAGCDisplayHangLine_CheckedChanged(this, e);
@@ -2195,13 +2196,19 @@ namespace Thetis
             // NR Tab
             radDSPNR2Linear_CheckedChanged(this, e);
             radDSPNR2Log_CheckedChanged(this, e);
+            radDSPNR2TRND_CheckedChanged(this, e);
+            udDSPNR2trainThresh_ValueChanged(this, e);
             radDSPNR2OSMS_CheckedChanged(this, e);
             radDSPNR2MMSE_CheckedChanged(this, e);
+            radDSPNR2NSTAT_CheckedChanged(this, e);
             chkDSPNR2AE_CheckedChanged(this, e);
             radDSPNR2LinearRX2_CheckedChanged(this, e);
             radDSPNR2LogRX2_CheckedChanged(this, e);
+            radDSPNR2TRNDRX2_CheckedChanged(this, e);
+            udDSPNR2trainThreshRX2_ValueChanged(this, e);
             radDSPNR2OSMSRX2_CheckedChanged(this, e);
             radDSPNR2MMSERX2_CheckedChanged(this, e);
+            radDSPNR2NSTATRX2_CheckedChanged(this, e);
             chkDSPNR2AERX2_CheckedChanged(this, e);
 
             // Transmit Tab
@@ -26798,6 +26805,66 @@ namespace Thetis
             chkKWAI_port3_CheckedChanged(this, EventArgs.Empty);
             chkKWAI_port4_CheckedChanged(this, EventArgs.Empty);
             chkKWAI_tcp_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void udCWEdgeLength_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            NetworkIO.SetCWEdgeLength((int)udCWEdgeLength.Value);
+        }
+
+        private void radDSPNR2TRND_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (radDSPNR2TRND.Checked)
+            {
+                console.radio.GetDSPRX(0, 0).RXANR2GainMethod = 3;
+                console.radio.GetDSPRX(0, 1).RXANR2GainMethod = 3;
+            }
+        }
+
+        private void radDSPNR2TRNDRX2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (radDSPNR2TRNDRX2.Checked)
+            {
+                console.radio.GetDSPRX(1, 0).RXANR2GainMethod = 3;
+                console.radio.GetDSPRX(1, 1).RXANR2GainMethod = 3;
+            }
+        }
+
+        private void radDSPNR2NSTAT_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (radDSPNR2NSTAT.Checked)
+            {
+                console.radio.GetDSPRX(0, 0).RXANR2NPEMethod = 2;
+                console.radio.GetDSPRX(0, 1).RXANR2NPEMethod = 2;
+            }
+        }
+
+        private void radDSPNR2NSTATRX2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (radDSPNR2NSTATRX2.Checked)
+            {
+                console.radio.GetDSPRX(1, 0).RXANR2NPEMethod = 2;
+                console.radio.GetDSPRX(1, 1).RXANR2NPEMethod = 2;
+            }
+        }
+
+        private void udDSPNR2trainThresh_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            WDSP.SetRXAEMNRtrainZetaThresh(WDSP.id(0, 0), (double)udDSPNR2trainThresh.Value);
+            WDSP.SetRXAEMNRtrainZetaThresh(WDSP.id(0, 1), (double)udDSPNR2trainThresh.Value);
+        }
+
+        private void udDSPNR2trainThreshRX2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            WDSP.SetRXAEMNRtrainZetaThresh(WDSP.id(2, 0), (double)udDSPNR2trainThreshRX2.Value);
+            WDSP.SetRXAEMNRtrainZetaThresh(WDSP.id(2, 1), (double)udDSPNR2trainThreshRX2.Value);
         }
     }
 

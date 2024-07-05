@@ -274,12 +274,12 @@
               />
       </Component>
 
-      <!--<Component Guid="*">
-        <File Id="calculus"
-              Source="$(var.FilesPath)calculus"
+      <Component Guid="*">
+        <File Id="zetaHat.bin"
+              Source="$(var.FilesPath)zetaHat.bin"
               KeyPath="yes"
               />
-      </Component>-->
+      </Component>
 
       <Component Guid="*">
         <File Id="Midi2CatDLL"

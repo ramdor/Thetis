@@ -142,6 +142,7 @@ typedef struct CACHE_ALIGN _radionet
 		int keyer_weight;
 		int hang_delay;
 		int rf_delay;
+		int edge_length;
 #pragma pack(push, 1)
 		union
 		{
