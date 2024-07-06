@@ -3961,7 +3961,7 @@
             // 
             // udTXStepAttData
             // 
-            this.udTXStepAttData.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.udTXStepAttData.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.udTXStepAttData.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.udTXStepAttData.Increment = new decimal(new int[] {
             1,

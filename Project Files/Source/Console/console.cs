@@ -28164,8 +28164,8 @@ namespace Thetis
                     //if txing on rx1 (split or non-split), then the att combo and nud will be disabled for rx1
                     comboPreamp.Enabled = false;
                     udRX1StepAttData.Enabled = false;
-                    comboRX2Preamp.Enabled = false;
-                    udRX2StepAttData.Enabled = false;
+                    comboRX2Preamp.Enabled = true;
+                    udRX2StepAttData.Enabled = true;
 
                     //move it to rx1
                     udTXStepAttData.Location = udRX1StepAttData.Location;
@@ -28198,11 +28198,11 @@ namespace Thetis
             { //rx
                 comboPreamp.Enabled = true;
                 udRX1StepAttData.Enabled = true;
-                comboRX2Preamp.Enabled = true;
-                udRX2StepAttData.Enabled = true;
+                comboRX2Preamp.Enabled = rx2_preamp_present;
+                udRX2StepAttData.Enabled = rx2_preamp_present;
                 udTXStepAttData.Visible = false;
                 lblPreamp.Text = rx1_step_att_present ? "S-ATT" : "ATT";
-                lblRX2Preamp.Text = rx2_step_att_present ? "S-ATT" : "ATT";
+                lblRX2Preamp.Text = rx2_step_att_present ? "S-ATT" : (rx2_preamp_present ? "ATT" : "");
             }
         }
 
@@ -41835,30 +41835,32 @@ namespace Thetis
         {
             if (!iscollapsed && isexpanded) return;
 
-            if (show_rx1)
-            {
-                comboRX2Preamp.Hide();
-                udRX2StepAttData.Hide();
-                comboPreamp.Show();
-                udRX1StepAttData.Show();
-            }
-            else if (show_rx2)
-            {
-                if (rx2_preamp_present)
-                {
-                    comboPreamp.Hide();
-                    udRX1StepAttData.Hide();
-                    comboRX2Preamp.Show();
-                    udRX2StepAttData.Show();
-                }
-                else
-                {
-                    comboRX2Preamp.Hide();
-                    udRX2StepAttData.Hide();
-                    comboPreamp.Show();
-                    udRX1StepAttData.Show();
-                }
-            }
+            updateAttNudsCombos(); //MW0LGE [2.10.3.6] att_fix
+
+            //if (show_rx1)
+            //{
+            //    comboRX2Preamp.Hide();
+            //    udRX2StepAttData.Hide();
+            //    comboPreamp.Show();
+            //    udRX1StepAttData.Show();
+            //}
+            //else if (show_rx2)
+            //{
+            //    if (rx2_preamp_present)
+            //    {
+            //        comboPreamp.Hide();
+            //        udRX1StepAttData.Hide();
+            //        comboRX2Preamp.Show();
+            //        udRX2StepAttData.Show();
+            //    }
+            //    else
+            //    {
+            //        comboRX2Preamp.Hide();
+            //        udRX2StepAttData.Hide();
+            //        comboPreamp.Show();
+            //        udRX1StepAttData.Show();
+            //    }
+            //}
         }
         //
 
