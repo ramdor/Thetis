@@ -78,12 +78,22 @@ typedef struct _emnr
 		double alpha;
 		double eps_floor;
 		double gamma_max;
+		double xi_min;
 		double q;
 		double gmax;
 		//
 		double* GG;
 		double* GGS;
 		FILE* fileb;
+		//
+		int dim_zeta;
+		double* zeta_hat;
+		int* zeta_true;
+		double z_gamma_min;
+		double z_gamma_max;
+		double z_xihat_min;
+		double z_xihat_max;
+		double zeta_thresh;
 	} g;
 	struct _npest
 	{
@@ -145,6 +155,29 @@ typedef struct _emnr
 		double* Pbar;
 		double* EN2y;
 	} nps;
+	struct _npestl
+	{
+		double rate;
+		int msize;
+		int incr;
+		double* Ysq;
+		double* P;
+		double* Pmin;
+		double* p;
+		double* D;
+		double* lambda_d;
+
+		double eta;
+		double gamma;
+		double beta;
+		double delta_LF;
+		double delta_MF;
+		double delta_0;
+		double delta_1;
+		double delta_2;
+		double alpha_d;
+		double alpha_p;
+	} npl;
 	struct _ae
 	{
 		int msize;

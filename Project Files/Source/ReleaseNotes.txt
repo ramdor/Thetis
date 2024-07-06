@@ -4,6 +4,11 @@
 
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
+## v2.10.3.6 Change Log - WIP dev_4
+- [add] CW Edge Length: This is currently only for the ANAN-G2. The ability to load CW edges into the firmware of the legacy ANAN products is not available. The minimum Edge Length is 15ms which, based upon testing, is required to meet the new ARRL Guidelines.  However, due to the edge shape, a 15ms total edge yields about 5ms in the range of 10% - 90% amplitude, i.e., the 15ms number is a bit misleading.
+- [add] New NR features: (1) the "Trained" gain method as described below, (2) an alternative Noise Power Estimation method called "NSTAT" which should have a faster response to changing noise levels, and (3) code added in the AE Filter that removes an annoying rumble that could occasionally occur.
+- ["Trained"] The new "Trained" NR has a file (zetaHat.bin). It is a data file that contains the essential information extracted from "training" the algorithm. The algorithm is currently "trained" with about 72 hours of noise and speech recordings. The file may, at some point, be replaced or augmented if different training is required.
+
 ## v2.10.3.6 Change Log - WIP dev_3
 - [add] Fn keys now activate messages directly in the cwx form
 - [fix] changes to fix issue #407, No TX output when initially going to QSK

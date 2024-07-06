@@ -988,6 +988,8 @@ void CmdTx() { // port 1026
 	packetbuf[14] = (prn->tx[0].sampling_rate >> 8) & 0xff;
 	// Byte 15 Tx0 Sampling Rate [7:0]
 	packetbuf[15] = prn->tx[0].sampling_rate & 0xff;
+	// Byte 17 CW Edge Length (ms)
+	packetbuf[17] = prn->cw.edge_length & 0xff;
 	// Byte 26 Tx0 Phase Shift (0 - 359 degrees) [15:8]
 	packetbuf[26] = (prn->tx[0].phase_shift >> 8) & 0xff;
 	// Byte 27 Tx0 Phase Shift [7:0]

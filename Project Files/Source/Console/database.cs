@@ -247,7 +247,7 @@ namespace Thetis
             t.Columns.Add("FilterLow", typeof(int));
             t.Columns.Add("FilterHigh", typeof(int));
 
-            // defaults
+            // defaults (if required)
         }
         public static void SaveBandStack2Filter(BandStackFilter bsf)
         {
@@ -256,7 +256,7 @@ namespace Thetis
             DataRow[] rows;
             string sSelectString;
 
-            //---- remove exiting----
+            //---- remove existing----
             //remove filter
             sSelectString = "GUID = '" + bsf.GUID + "'";
             rows = ds.Tables["BandStack2Filters"].Select(sSelectString);
@@ -292,7 +292,7 @@ namespace Thetis
             {
                 row.Delete();
             }
-            //---- end remove exiting----
+            //---- end remove existing----
 
             //then add
             t = ds.Tables["BandStack2Filters"];
@@ -376,7 +376,7 @@ namespace Thetis
         }
         public static void RemoveBandStack2Entry(BandStackEntry bse)
         {
-            //delete if exiting
+            //delete if existing
             string sSelectString = "GUID = '" + bse.GUID + "'";
             DataRow[] rows = ds.Tables["BandStack2Entries"].Select(sSelectString);
             foreach (DataRow row in rows)
@@ -427,7 +427,7 @@ namespace Thetis
         }
         public static void RemoveAllBandStack2Entries()
         {
-            //delete if exiting
+            //delete if existing
             DataRow[] rows = ds.Tables["BandStack2Entries"].Select();
             foreach (DataRow row in rows)
             {
@@ -463,7 +463,7 @@ namespace Thetis
         {
             DataTable t = ds.Tables["BandStack2Entries"];
 
-            //delete if exiting
+            //delete if existing
             RemoveBandStack2Entry(bse);
             //
 

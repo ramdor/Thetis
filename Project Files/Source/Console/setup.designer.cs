@@ -2214,6 +2214,9 @@
             this.comboDSPTxWindow = new System.Windows.Forms.ComboBoxTS();
             this.comboDSPRxWindow = new System.Windows.Forms.ComboBoxTS();
             this.tpDSPKeyer = new System.Windows.Forms.TabPage();
+            this.grpCWEdgeLength = new System.Windows.Forms.GroupBoxTS();
+            this.udCWEdgeLength = new System.Windows.Forms.NumericUpDownTS();
+            this.lblCWEdgeLength = new System.Windows.Forms.LabelTS();
             this.chkCWDisableUI = new System.Windows.Forms.CheckBoxTS();
             this.grpKeyerConnections = new System.Windows.Forms.GroupBoxTS();
             this.comboKeyerConnKeyLine = new System.Windows.Forms.ComboBoxTS();
@@ -2450,10 +2453,14 @@
             this.tpDSPNR = new System.Windows.Forms.TabPage();
             this.grpDSPNR2RX2 = new System.Windows.Forms.GroupBoxTS();
             this.grpDSPNR2NPEMethodRX2 = new System.Windows.Forms.GroupBoxTS();
+            this.radDSPNR2NSTATRX2 = new System.Windows.Forms.RadioButtonTS();
             this.radDSPNR2MMSERX2 = new System.Windows.Forms.RadioButtonTS();
             this.radDSPNR2OSMSRX2 = new System.Windows.Forms.RadioButtonTS();
             this.chkDSPNR2AERX2 = new System.Windows.Forms.CheckBoxTS();
             this.grpDSPGainMethodRX2 = new System.Windows.Forms.GroupBoxTS();
+            this.lblTRNDThreshRX2 = new System.Windows.Forms.LabelTS();
+            this.udDSPNR2trainThreshRX2 = new System.Windows.Forms.NumericUpDownTS();
+            this.radDSPNR2TRNDRX2 = new System.Windows.Forms.RadioButtonTS();
             this.radDSPNR2GammaRX2 = new System.Windows.Forms.RadioButtonTS();
             this.radDSPNR2LogRX2 = new System.Windows.Forms.RadioButtonTS();
             this.radDSPNR2LinearRX2 = new System.Windows.Forms.RadioButtonTS();
@@ -2462,10 +2469,14 @@
             this.radANFPostAGC2 = new System.Windows.Forms.RadioButtonTS();
             this.grpDSPNR2 = new System.Windows.Forms.GroupBoxTS();
             this.grpDSPNR2NPEMethod = new System.Windows.Forms.GroupBoxTS();
+            this.radDSPNR2NSTAT = new System.Windows.Forms.RadioButtonTS();
             this.radDSPNR2MMSE = new System.Windows.Forms.RadioButtonTS();
             this.radDSPNR2OSMS = new System.Windows.Forms.RadioButtonTS();
             this.chkDSPNR2AE = new System.Windows.Forms.CheckBoxTS();
             this.grpDSPGainMethod = new System.Windows.Forms.GroupBoxTS();
+            this.lblTRNDThresh = new System.Windows.Forms.LabelTS();
+            this.udDSPNR2trainThresh = new System.Windows.Forms.NumericUpDownTS();
+            this.radDSPNR2TRND = new System.Windows.Forms.RadioButtonTS();
             this.radDSPNR2Gamma = new System.Windows.Forms.RadioButtonTS();
             this.radDSPNR2Log = new System.Windows.Forms.RadioButtonTS();
             this.radDSPNR2Linear = new System.Windows.Forms.RadioButtonTS();
@@ -4090,6 +4101,8 @@
             this.grpDSPBufPhone.SuspendLayout();
             this.grpDSPWintype.SuspendLayout();
             this.tpDSPKeyer.SuspendLayout();
+            this.grpCWEdgeLength.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udCWEdgeLength)).BeginInit();
             this.grpKeyerConnections.SuspendLayout();
             this.grpDSPCWPitch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPCWPitch)).BeginInit();
@@ -4187,10 +4200,12 @@
             this.grpDSPNR2RX2.SuspendLayout();
             this.grpDSPNR2NPEMethodRX2.SuspendLayout();
             this.grpDSPGainMethodRX2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udDSPNR2trainThreshRX2)).BeginInit();
             this.groupBoxTS5.SuspendLayout();
             this.grpDSPNR2.SuspendLayout();
             this.grpDSPNR2NPEMethod.SuspendLayout();
             this.grpDSPGainMethod.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udDSPNR2trainThresh)).BeginInit();
             this.grpDSPLMSNR.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udLMSNRLeak)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udLMSNRgain)).BeginInit();
@@ -4593,7 +4608,7 @@
             tpAlexAntCtrl.Controls.Add(this.grpAlexAntCtrl);
             tpAlexAntCtrl.Location = new System.Drawing.Point(4, 22);
             tpAlexAntCtrl.Name = "tpAlexAntCtrl";
-            tpAlexAntCtrl.Padding = new System.Windows.Forms.Padding(3);
+            tpAlexAntCtrl.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             tpAlexAntCtrl.Size = new System.Drawing.Size(708, 378);
             tpAlexAntCtrl.TabIndex = 0;
             tpAlexAntCtrl.Text = "Antenna";
@@ -8563,7 +8578,7 @@
             this.tpOptions1.Controls.Add(this.grpGenTuningOptions);
             this.tpOptions1.Location = new System.Drawing.Point(4, 22);
             this.tpOptions1.Name = "tpOptions1";
-            this.tpOptions1.Padding = new System.Windows.Forms.Padding(3);
+            this.tpOptions1.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpOptions1.Size = new System.Drawing.Size(716, 384);
             this.tpOptions1.TabIndex = 0;
             this.tpOptions1.Text = "Options-1";
@@ -9442,8 +9457,8 @@
             this.tpOptions2.Controls.Add(this.groupBoxTS15);
             this.tpOptions2.Location = new System.Drawing.Point(4, 22);
             this.tpOptions2.Name = "tpOptions2";
-            this.tpOptions2.Padding = new System.Windows.Forms.Padding(3);
-            this.tpOptions2.Size = new System.Drawing.Size(716, 384);
+            this.tpOptions2.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tpOptions2.Size = new System.Drawing.Size(718, 389);
             this.tpOptions2.TabIndex = 1;
             this.tpOptions2.Text = "Options-2";
             // 
@@ -12285,7 +12300,7 @@
             this.tpADC.Controls.Add(this.lblRxDDC0);
             this.tpADC.Location = new System.Drawing.Point(4, 22);
             this.tpADC.Name = "tpADC";
-            this.tpADC.Padding = new System.Windows.Forms.Padding(3);
+            this.tpADC.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpADC.Size = new System.Drawing.Size(724, 410);
             this.tpADC.TabIndex = 12;
             this.tpADC.Text = "ADC";
@@ -13131,7 +13146,7 @@
             this.tpPennyCtrl.Controls.Add(this.grpTransmitPinActionSWL);
             this.tpPennyCtrl.Location = new System.Drawing.Point(4, 22);
             this.tpPennyCtrl.Name = "tpPennyCtrl";
-            this.tpPennyCtrl.Padding = new System.Windows.Forms.Padding(3);
+            this.tpPennyCtrl.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpPennyCtrl.Size = new System.Drawing.Size(724, 410);
             this.tpPennyCtrl.TabIndex = 6;
             this.tpPennyCtrl.Text = "Penny/Hermes Ctrl";
@@ -13164,7 +13179,7 @@
             this.tpOCHFControl.Controls.Add(this.btnPennyCtrlReset);
             this.tpOCHFControl.Location = new System.Drawing.Point(4, 22);
             this.tpOCHFControl.Name = "tpOCHFControl";
-            this.tpOCHFControl.Padding = new System.Windows.Forms.Padding(3);
+            this.tpOCHFControl.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpOCHFControl.Size = new System.Drawing.Size(716, 384);
             this.tpOCHFControl.TabIndex = 0;
             this.tpOCHFControl.Text = "HF";
@@ -13614,6 +13629,7 @@
             this.ucOCPinsLedStripHF.Bits = 0;
             this.ucOCPinsLedStripHF.DisplayBits = 7;
             this.ucOCPinsLedStripHF.Location = new System.Drawing.Point(9, 33);
+            this.ucOCPinsLedStripHF.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ucOCPinsLedStripHF.Name = "ucOCPinsLedStripHF";
             this.ucOCPinsLedStripHF.Size = new System.Drawing.Size(114, 17);
             this.ucOCPinsLedStripHF.TabIndex = 1;
@@ -16301,7 +16317,7 @@
             this.tbOCVHFControl.Controls.Add(this.btnPennyCtrlVHFReset);
             this.tbOCVHFControl.Location = new System.Drawing.Point(4, 22);
             this.tbOCVHFControl.Name = "tbOCVHFControl";
-            this.tbOCVHFControl.Padding = new System.Windows.Forms.Padding(3);
+            this.tbOCVHFControl.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tbOCVHFControl.Size = new System.Drawing.Size(716, 384);
             this.tbOCVHFControl.TabIndex = 1;
             this.tbOCVHFControl.Text = "VHF";
@@ -19199,7 +19215,7 @@
             this.tpOCSWLControl.Controls.Add(this.grpExtCtrlSWL);
             this.tpOCSWLControl.Location = new System.Drawing.Point(4, 22);
             this.tpOCSWLControl.Name = "tpOCSWLControl";
-            this.tpOCSWLControl.Padding = new System.Windows.Forms.Padding(3);
+            this.tpOCSWLControl.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpOCSWLControl.Size = new System.Drawing.Size(716, 384);
             this.tpOCSWLControl.TabIndex = 2;
             this.tpOCSWLControl.Text = "SWL";
@@ -22457,7 +22473,7 @@
             this.tpHPSDR.Controls.Add(this.grpAudioSampleRate1);
             this.tpHPSDR.Location = new System.Drawing.Point(4, 22);
             this.tpHPSDR.Name = "tpHPSDR";
-            this.tpHPSDR.Padding = new System.Windows.Forms.Padding(3);
+            this.tpHPSDR.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpHPSDR.Size = new System.Drawing.Size(724, 410);
             this.tpHPSDR.TabIndex = 7;
             this.tpHPSDR.Text = "F/W Set";
@@ -22875,7 +22891,7 @@
             this.tpAlexControl.Controls.Add(this.tcAlexControl);
             this.tpAlexControl.Location = new System.Drawing.Point(4, 22);
             this.tpAlexControl.Name = "tpAlexControl";
-            this.tpAlexControl.Padding = new System.Windows.Forms.Padding(3);
+            this.tpAlexControl.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpAlexControl.Size = new System.Drawing.Size(724, 410);
             this.tpAlexControl.TabIndex = 8;
             this.tpAlexControl.Text = "Alex";
@@ -22923,7 +22939,7 @@
             this.tpAlexFilterControl.Controls.Add(this.panelBPFControl);
             this.tpAlexFilterControl.Location = new System.Drawing.Point(4, 22);
             this.tpAlexFilterControl.Name = "tpAlexFilterControl";
-            this.tpAlexFilterControl.Padding = new System.Windows.Forms.Padding(3);
+            this.tpAlexFilterControl.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpAlexFilterControl.Size = new System.Drawing.Size(708, 378);
             this.tpAlexFilterControl.TabIndex = 1;
             this.tpAlexFilterControl.Text = "Alex-1 Filters";
@@ -25018,7 +25034,7 @@
             this.tpAlex2FilterControl.Controls.Add(this.udAlex21_5HPFStart);
             this.tpAlex2FilterControl.Location = new System.Drawing.Point(4, 22);
             this.tpAlex2FilterControl.Name = "tpAlex2FilterControl";
-            this.tpAlex2FilterControl.Padding = new System.Windows.Forms.Padding(3);
+            this.tpAlex2FilterControl.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpAlex2FilterControl.Size = new System.Drawing.Size(708, 378);
             this.tpAlex2FilterControl.TabIndex = 2;
             this.tpAlex2FilterControl.Text = "Alex-2 Filters";
@@ -26303,7 +26319,7 @@
             this.tpApolloControl.Controls.Add(this.tpApolloAmp);
             this.tpApolloControl.Location = new System.Drawing.Point(4, 22);
             this.tpApolloControl.Name = "tpApolloControl";
-            this.tpApolloControl.Padding = new System.Windows.Forms.Padding(3);
+            this.tpApolloControl.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpApolloControl.Size = new System.Drawing.Size(724, 410);
             this.tpApolloControl.TabIndex = 10;
             this.tpApolloControl.Text = "Andromeda";
@@ -26325,7 +26341,7 @@
             this.tpApolloApollo.Controls.Add(this.grpApolloCtrl);
             this.tpApolloApollo.Location = new System.Drawing.Point(4, 22);
             this.tpApolloApollo.Name = "tpApolloApollo";
-            this.tpApolloApollo.Padding = new System.Windows.Forms.Padding(3);
+            this.tpApolloApollo.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpApolloApollo.Size = new System.Drawing.Size(576, 340);
             this.tpApolloApollo.TabIndex = 0;
             this.tpApolloApollo.Text = "Apollo";
@@ -26373,7 +26389,7 @@
             this.tpApolloATU.Controls.Add(this.grpAriesCtrl);
             this.tpApolloATU.Location = new System.Drawing.Point(4, 22);
             this.tpApolloATU.Name = "tpApolloATU";
-            this.tpApolloATU.Padding = new System.Windows.Forms.Padding(3);
+            this.tpApolloATU.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpApolloATU.Size = new System.Drawing.Size(576, 340);
             this.tpApolloATU.TabIndex = 1;
             this.tpApolloATU.Text = "ATU";
@@ -26626,7 +26642,7 @@
             this.tabPage3.Controls.Add(this.grpGanymedeCtrl);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tabPage3.Size = new System.Drawing.Size(576, 340);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Amp";
@@ -28241,7 +28257,7 @@
             this.tpVAC2.Controls.Add(this.grpAudioDetails3);
             this.tpVAC2.Location = new System.Drawing.Point(4, 22);
             this.tpVAC2.Name = "tpVAC2";
-            this.tpVAC2.Padding = new System.Windows.Forms.Padding(3);
+            this.tpVAC2.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpVAC2.Size = new System.Drawing.Size(712, 404);
             this.tpVAC2.TabIndex = 2;
             this.tpVAC2.Text = "VAC 2";
@@ -29461,7 +29477,7 @@
             this.tpAudioOptions.Controls.Add(this.chkAFSlidersMute);
             this.tpAudioOptions.Location = new System.Drawing.Point(4, 22);
             this.tpAudioOptions.Name = "tpAudioOptions";
-            this.tpAudioOptions.Padding = new System.Windows.Forms.Padding(3);
+            this.tpAudioOptions.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpAudioOptions.Size = new System.Drawing.Size(712, 404);
             this.tpAudioOptions.TabIndex = 4;
             this.tpAudioOptions.Text = "Options";
@@ -29590,7 +29606,7 @@
             this.tpAdvancedAudio.Controls.Add(this.grpVAC1ResamplerAdvanced);
             this.tpAdvancedAudio.Location = new System.Drawing.Point(4, 22);
             this.tpAdvancedAudio.Name = "tpAdvancedAudio";
-            this.tpAdvancedAudio.Padding = new System.Windows.Forms.Padding(3);
+            this.tpAdvancedAudio.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpAdvancedAudio.Size = new System.Drawing.Size(712, 404);
             this.tpAdvancedAudio.TabIndex = 3;
             this.tpAdvancedAudio.Text = "Advanced";
@@ -31042,7 +31058,7 @@
             this.tpDisplayGeneral.Controls.Add(this.grpDisplayRefreshRates);
             this.tpDisplayGeneral.Location = new System.Drawing.Point(4, 22);
             this.tpDisplayGeneral.Name = "tpDisplayGeneral";
-            this.tpDisplayGeneral.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDisplayGeneral.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpDisplayGeneral.Size = new System.Drawing.Size(721, 403);
             this.tpDisplayGeneral.TabIndex = 0;
             this.tpDisplayGeneral.Text = "General";
@@ -32130,7 +32146,7 @@
             this.tpDisplayTop.Controls.Add(this.grpDisplayRX1Pan);
             this.tpDisplayTop.Location = new System.Drawing.Point(4, 22);
             this.tpDisplayTop.Name = "tpDisplayTop";
-            this.tpDisplayTop.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDisplayTop.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpDisplayTop.Size = new System.Drawing.Size(721, 403);
             this.tpDisplayTop.TabIndex = 1;
             this.tpDisplayTop.Text = " RX 1";
@@ -33272,7 +33288,7 @@
             this.tpDisplayBottom.Controls.Add(this.grpDisplayRX2Pan);
             this.tpDisplayBottom.Location = new System.Drawing.Point(4, 22);
             this.tpDisplayBottom.Name = "tpDisplayBottom";
-            this.tpDisplayBottom.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDisplayBottom.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpDisplayBottom.Size = new System.Drawing.Size(721, 403);
             this.tpDisplayBottom.TabIndex = 2;
             this.tpDisplayBottom.Text = " RX 2";
@@ -34419,9 +34435,9 @@
             this.grpTXWFAmpScale.Controls.Add(this.lblTXWFAmpMin);
             this.grpTXWFAmpScale.Controls.Add(this.lblTXWFAmpMax);
             this.grpTXWFAmpScale.Location = new System.Drawing.Point(375, 8);
-            this.grpTXWFAmpScale.Margin = new System.Windows.Forms.Padding(7);
+            this.grpTXWFAmpScale.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
             this.grpTXWFAmpScale.Name = "grpTXWFAmpScale";
-            this.grpTXWFAmpScale.Padding = new System.Windows.Forms.Padding(7);
+            this.grpTXWFAmpScale.Padding = new System.Windows.Forms.Padding(7, 7, 7, 7);
             this.grpTXWFAmpScale.Size = new System.Drawing.Size(128, 92);
             this.grpTXWFAmpScale.TabIndex = 85;
             this.grpTXWFAmpScale.TabStop = false;
@@ -34435,7 +34451,7 @@
             0,
             0});
             this.udTXWFAmpMin.Location = new System.Drawing.Point(72, 16);
-            this.udTXWFAmpMin.Margin = new System.Windows.Forms.Padding(16);
+            this.udTXWFAmpMin.Margin = new System.Windows.Forms.Padding(16, 16, 16, 16);
             this.udTXWFAmpMin.Maximum = new decimal(new int[] {
             200,
             0,
@@ -34466,7 +34482,7 @@
             0,
             0});
             this.udTXWFAmpMax.Location = new System.Drawing.Point(72, 42);
-            this.udTXWFAmpMax.Margin = new System.Windows.Forms.Padding(16);
+            this.udTXWFAmpMax.Margin = new System.Windows.Forms.Padding(16, 16, 16, 16);
             this.udTXWFAmpMax.Maximum = new decimal(new int[] {
             200,
             0,
@@ -35957,6 +35973,7 @@
             // 
             // tpDSPKeyer
             // 
+            this.tpDSPKeyer.Controls.Add(this.grpCWEdgeLength);
             this.tpDSPKeyer.Controls.Add(this.chkCWDisableUI);
             this.tpDSPKeyer.Controls.Add(this.grpKeyerConnections);
             this.tpDSPKeyer.Controls.Add(this.grpDSPCWPitch);
@@ -35967,6 +35984,60 @@
             this.tpDSPKeyer.Size = new System.Drawing.Size(724, 414);
             this.tpDSPKeyer.TabIndex = 0;
             this.tpDSPKeyer.Text = "CW";
+            // 
+            // grpCWEdgeLength
+            // 
+            this.grpCWEdgeLength.Controls.Add(this.udCWEdgeLength);
+            this.grpCWEdgeLength.Controls.Add(this.lblCWEdgeLength);
+            this.grpCWEdgeLength.Location = new System.Drawing.Point(8, 250);
+            this.grpCWEdgeLength.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.grpCWEdgeLength.Name = "grpCWEdgeLength";
+            this.grpCWEdgeLength.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.grpCWEdgeLength.Size = new System.Drawing.Size(160, 54);
+            this.grpCWEdgeLength.TabIndex = 43;
+            this.grpCWEdgeLength.TabStop = false;
+            this.grpCWEdgeLength.Text = "CW Edge Length (0%-100%)";
+            // 
+            // udCWEdgeLength
+            // 
+            this.udCWEdgeLength.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udCWEdgeLength.Location = new System.Drawing.Point(85, 27);
+            this.udCWEdgeLength.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.udCWEdgeLength.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.udCWEdgeLength.Minimum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.udCWEdgeLength.Name = "udCWEdgeLength";
+            this.udCWEdgeLength.Size = new System.Drawing.Size(46, 20);
+            this.udCWEdgeLength.TabIndex = 1;
+            this.udCWEdgeLength.TinyStep = false;
+            this.udCWEdgeLength.Value = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.udCWEdgeLength.ValueChanged += new System.EventHandler(this.udCWEdgeLength_ValueChanged);
+            // 
+            // lblCWEdgeLength
+            // 
+            this.lblCWEdgeLength.AutoSize = true;
+            this.lblCWEdgeLength.Image = null;
+            this.lblCWEdgeLength.Location = new System.Drawing.Point(17, 29);
+            this.lblCWEdgeLength.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblCWEdgeLength.Name = "lblCWEdgeLength";
+            this.lblCWEdgeLength.Size = new System.Drawing.Size(65, 13);
+            this.lblCWEdgeLength.TabIndex = 0;
+            this.lblCWEdgeLength.Text = "Length (ms):";
             // 
             // chkCWDisableUI
             // 
@@ -37799,7 +37870,7 @@
             this.tpDSPAMSAM.Controls.Add(this.grpRX2AMSAM);
             this.tpDSPAMSAM.Location = new System.Drawing.Point(4, 22);
             this.tpDSPAMSAM.Name = "tpDSPAMSAM";
-            this.tpDSPAMSAM.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDSPAMSAM.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpDSPAMSAM.Size = new System.Drawing.Size(724, 414);
             this.tpDSPAMSAM.TabIndex = 4;
             this.tpDSPAMSAM.Text = "AM/SAM";
@@ -38218,7 +38289,7 @@
             this.tpDSPFM.Controls.Add(this.grpFMTX);
             this.tpDSPFM.Location = new System.Drawing.Point(4, 22);
             this.tpDSPFM.Name = "tpDSPFM";
-            this.tpDSPFM.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDSPFM.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpDSPFM.Size = new System.Drawing.Size(724, 414);
             this.tpDSPFM.TabIndex = 5;
             this.tpDSPFM.Text = "FM";
@@ -38238,9 +38309,9 @@
             this.grpFMRX.Controls.Add(this.chkFMDetLimON);
             this.grpFMRX.Controls.Add(this.chkRemoveTone);
             this.grpFMRX.Location = new System.Drawing.Point(8, 8);
-            this.grpFMRX.Margin = new System.Windows.Forms.Padding(4);
+            this.grpFMRX.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpFMRX.Name = "grpFMRX";
-            this.grpFMRX.Padding = new System.Windows.Forms.Padding(4);
+            this.grpFMRX.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpFMRX.Size = new System.Drawing.Size(429, 174);
             this.grpFMRX.TabIndex = 1;
             this.grpFMRX.TabStop = false;
@@ -38380,7 +38451,7 @@
             this.tbDSPFMDetLimGain.BackColor = System.Drawing.Color.Black;
             this.tbDSPFMDetLimGain.LargeChange = 1;
             this.tbDSPFMDetLimGain.Location = new System.Drawing.Point(8, 111);
-            this.tbDSPFMDetLimGain.Margin = new System.Windows.Forms.Padding(4);
+            this.tbDSPFMDetLimGain.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tbDSPFMDetLimGain.Maximum = 30;
             this.tbDSPFMDetLimGain.Name = "tbDSPFMDetLimGain";
             this.tbDSPFMDetLimGain.Size = new System.Drawing.Size(180, 20);
@@ -38553,7 +38624,7 @@
             this.tpDSPAudio.Controls.Add(this.grpDSPAudRX1APF);
             this.tpDSPAudio.Location = new System.Drawing.Point(4, 22);
             this.tpDSPAudio.Name = "tpDSPAudio";
-            this.tpDSPAudio.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDSPAudio.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpDSPAudio.Size = new System.Drawing.Size(724, 414);
             this.tpDSPAudio.TabIndex = 7;
             this.tpDSPAudio.Text = "Audio";
@@ -39734,7 +39805,7 @@
             this.tpDSPNR.Controls.Add(this.grpDSPLMSNR2);
             this.tpDSPNR.Location = new System.Drawing.Point(4, 22);
             this.tpDSPNR.Name = "tpDSPNR";
-            this.tpDSPNR.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDSPNR.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpDSPNR.Size = new System.Drawing.Size(724, 414);
             this.tpDSPNR.TabIndex = 8;
             this.tpDSPNR.Text = "NR/ANF";
@@ -39746,27 +39817,42 @@
             this.grpDSPNR2RX2.Controls.Add(this.grpDSPGainMethodRX2);
             this.grpDSPNR2RX2.Location = new System.Drawing.Point(518, 8);
             this.grpDSPNR2RX2.Name = "grpDSPNR2RX2";
-            this.grpDSPNR2RX2.Size = new System.Drawing.Size(104, 262);
+            this.grpDSPNR2RX2.Size = new System.Drawing.Size(104, 317);
             this.grpDSPNR2RX2.TabIndex = 1;
             this.grpDSPNR2RX2.TabStop = false;
             this.grpDSPNR2RX2.Text = "NR2 RX2";
             // 
             // grpDSPNR2NPEMethodRX2
             // 
+            this.grpDSPNR2NPEMethodRX2.Controls.Add(this.radDSPNR2NSTATRX2);
             this.grpDSPNR2NPEMethodRX2.Controls.Add(this.radDSPNR2MMSERX2);
             this.grpDSPNR2NPEMethodRX2.Controls.Add(this.radDSPNR2OSMSRX2);
-            this.grpDSPNR2NPEMethodRX2.Location = new System.Drawing.Point(6, 118);
+            this.grpDSPNR2NPEMethodRX2.Location = new System.Drawing.Point(6, 175);
             this.grpDSPNR2NPEMethodRX2.Name = "grpDSPNR2NPEMethodRX2";
-            this.grpDSPNR2NPEMethodRX2.Size = new System.Drawing.Size(89, 93);
+            this.grpDSPNR2NPEMethodRX2.Size = new System.Drawing.Size(89, 106);
             this.grpDSPNR2NPEMethodRX2.TabIndex = 2;
             this.grpDSPNR2NPEMethodRX2.TabStop = false;
             this.grpDSPNR2NPEMethodRX2.Text = "NPE Method";
+            // 
+            // radDSPNR2NSTATRX2
+            // 
+            this.radDSPNR2NSTATRX2.AutoSize = true;
+            this.radDSPNR2NSTATRX2.Image = null;
+            this.radDSPNR2NSTATRX2.Location = new System.Drawing.Point(7, 78);
+            this.radDSPNR2NSTATRX2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.radDSPNR2NSTATRX2.Name = "radDSPNR2NSTATRX2";
+            this.radDSPNR2NSTATRX2.Size = new System.Drawing.Size(61, 17);
+            this.radDSPNR2NSTATRX2.TabIndex = 2;
+            this.radDSPNR2NSTATRX2.TabStop = true;
+            this.radDSPNR2NSTATRX2.Text = "NSTAT";
+            this.radDSPNR2NSTATRX2.UseVisualStyleBackColor = true;
+            this.radDSPNR2NSTATRX2.CheckedChanged += new System.EventHandler(this.radDSPNR2NSTATRX2_CheckedChanged);
             // 
             // radDSPNR2MMSERX2
             // 
             this.radDSPNR2MMSERX2.AutoSize = true;
             this.radDSPNR2MMSERX2.Image = null;
-            this.radDSPNR2MMSERX2.Location = new System.Drawing.Point(7, 57);
+            this.radDSPNR2MMSERX2.Location = new System.Drawing.Point(7, 54);
             this.radDSPNR2MMSERX2.Name = "radDSPNR2MMSERX2";
             this.radDSPNR2MMSERX2.Size = new System.Drawing.Size(57, 17);
             this.radDSPNR2MMSERX2.TabIndex = 1;
@@ -39779,7 +39865,7 @@
             this.radDSPNR2OSMSRX2.AutoSize = true;
             this.radDSPNR2OSMSRX2.Checked = true;
             this.radDSPNR2OSMSRX2.Image = null;
-            this.radDSPNR2OSMSRX2.Location = new System.Drawing.Point(7, 34);
+            this.radDSPNR2OSMSRX2.Location = new System.Drawing.Point(7, 31);
             this.radDSPNR2OSMSRX2.Name = "radDSPNR2OSMSRX2";
             this.radDSPNR2OSMSRX2.Size = new System.Drawing.Size(56, 17);
             this.radDSPNR2OSMSRX2.TabIndex = 0;
@@ -39794,7 +39880,7 @@
             this.chkDSPNR2AERX2.Checked = true;
             this.chkDSPNR2AERX2.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDSPNR2AERX2.Image = null;
-            this.chkDSPNR2AERX2.Location = new System.Drawing.Point(12, 225);
+            this.chkDSPNR2AERX2.Location = new System.Drawing.Point(13, 287);
             this.chkDSPNR2AERX2.Name = "chkDSPNR2AERX2";
             this.chkDSPNR2AERX2.Size = new System.Drawing.Size(65, 17);
             this.chkDSPNR2AERX2.TabIndex = 1;
@@ -39804,15 +39890,74 @@
             // 
             // grpDSPGainMethodRX2
             // 
+            this.grpDSPGainMethodRX2.Controls.Add(this.lblTRNDThreshRX2);
+            this.grpDSPGainMethodRX2.Controls.Add(this.udDSPNR2trainThreshRX2);
+            this.grpDSPGainMethodRX2.Controls.Add(this.radDSPNR2TRNDRX2);
             this.grpDSPGainMethodRX2.Controls.Add(this.radDSPNR2GammaRX2);
             this.grpDSPGainMethodRX2.Controls.Add(this.radDSPNR2LogRX2);
             this.grpDSPGainMethodRX2.Controls.Add(this.radDSPNR2LinearRX2);
             this.grpDSPGainMethodRX2.Location = new System.Drawing.Point(6, 16);
             this.grpDSPGainMethodRX2.Name = "grpDSPGainMethodRX2";
-            this.grpDSPGainMethodRX2.Size = new System.Drawing.Size(89, 96);
+            this.grpDSPGainMethodRX2.Size = new System.Drawing.Size(89, 152);
             this.grpDSPGainMethodRX2.TabIndex = 0;
             this.grpDSPGainMethodRX2.TabStop = false;
             this.grpDSPGainMethodRX2.Text = "Gain Method";
+            // 
+            // lblTRNDThreshRX2
+            // 
+            this.lblTRNDThreshRX2.AutoSize = true;
+            this.lblTRNDThreshRX2.Image = null;
+            this.lblTRNDThreshRX2.Location = new System.Drawing.Point(14, 112);
+            this.lblTRNDThreshRX2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblTRNDThreshRX2.Name = "lblTRNDThreshRX2";
+            this.lblTRNDThreshRX2.Size = new System.Drawing.Size(57, 13);
+            this.lblTRNDThreshRX2.TabIndex = 7;
+            this.lblTRNDThreshRX2.Text = "Threshold:";
+            // 
+            // udDSPNR2trainThreshRX2
+            // 
+            this.udDSPNR2trainThreshRX2.DecimalPlaces = 1;
+            this.udDSPNR2trainThreshRX2.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.udDSPNR2trainThreshRX2.Location = new System.Drawing.Point(37, 129);
+            this.udDSPNR2trainThreshRX2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.udDSPNR2trainThreshRX2.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udDSPNR2trainThreshRX2.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            -2147483648});
+            this.udDSPNR2trainThreshRX2.Name = "udDSPNR2trainThreshRX2";
+            this.udDSPNR2trainThreshRX2.Size = new System.Drawing.Size(46, 20);
+            this.udDSPNR2trainThreshRX2.TabIndex = 6;
+            this.udDSPNR2trainThreshRX2.TinyStep = false;
+            this.udDSPNR2trainThreshRX2.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            -2147418112});
+            this.udDSPNR2trainThreshRX2.ValueChanged += new System.EventHandler(this.udDSPNR2trainThreshRX2_ValueChanged);
+            // 
+            // radDSPNR2TRNDRX2
+            // 
+            this.radDSPNR2TRNDRX2.AutoSize = true;
+            this.radDSPNR2TRNDRX2.Image = null;
+            this.radDSPNR2TRNDRX2.Location = new System.Drawing.Point(6, 92);
+            this.radDSPNR2TRNDRX2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.radDSPNR2TRNDRX2.Name = "radDSPNR2TRNDRX2";
+            this.radDSPNR2TRNDRX2.Size = new System.Drawing.Size(61, 17);
+            this.radDSPNR2TRNDRX2.TabIndex = 3;
+            this.radDSPNR2TRNDRX2.TabStop = true;
+            this.radDSPNR2TRNDRX2.Text = "Trained";
+            this.radDSPNR2TRNDRX2.UseVisualStyleBackColor = true;
+            this.radDSPNR2TRNDRX2.CheckedChanged += new System.EventHandler(this.radDSPNR2TRNDRX2_CheckedChanged);
             // 
             // radDSPNR2GammaRX2
             // 
@@ -39895,27 +40040,42 @@
             this.grpDSPNR2.Controls.Add(this.grpDSPGainMethod);
             this.grpDSPNR2.Location = new System.Drawing.Point(408, 8);
             this.grpDSPNR2.Name = "grpDSPNR2";
-            this.grpDSPNR2.Size = new System.Drawing.Size(104, 262);
+            this.grpDSPNR2.Size = new System.Drawing.Size(104, 317);
             this.grpDSPNR2.TabIndex = 0;
             this.grpDSPNR2.TabStop = false;
             this.grpDSPNR2.Text = "NR2";
             // 
             // grpDSPNR2NPEMethod
             // 
+            this.grpDSPNR2NPEMethod.Controls.Add(this.radDSPNR2NSTAT);
             this.grpDSPNR2NPEMethod.Controls.Add(this.radDSPNR2MMSE);
             this.grpDSPNR2NPEMethod.Controls.Add(this.radDSPNR2OSMS);
-            this.grpDSPNR2NPEMethod.Location = new System.Drawing.Point(6, 118);
+            this.grpDSPNR2NPEMethod.Location = new System.Drawing.Point(6, 175);
             this.grpDSPNR2NPEMethod.Name = "grpDSPNR2NPEMethod";
-            this.grpDSPNR2NPEMethod.Size = new System.Drawing.Size(89, 93);
+            this.grpDSPNR2NPEMethod.Size = new System.Drawing.Size(89, 106);
             this.grpDSPNR2NPEMethod.TabIndex = 2;
             this.grpDSPNR2NPEMethod.TabStop = false;
             this.grpDSPNR2NPEMethod.Text = "NPE Method";
+            // 
+            // radDSPNR2NSTAT
+            // 
+            this.radDSPNR2NSTAT.AutoSize = true;
+            this.radDSPNR2NSTAT.Image = null;
+            this.radDSPNR2NSTAT.Location = new System.Drawing.Point(6, 78);
+            this.radDSPNR2NSTAT.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.radDSPNR2NSTAT.Name = "radDSPNR2NSTAT";
+            this.radDSPNR2NSTAT.Size = new System.Drawing.Size(61, 17);
+            this.radDSPNR2NSTAT.TabIndex = 2;
+            this.radDSPNR2NSTAT.TabStop = true;
+            this.radDSPNR2NSTAT.Text = "NSTAT";
+            this.radDSPNR2NSTAT.UseVisualStyleBackColor = true;
+            this.radDSPNR2NSTAT.CheckedChanged += new System.EventHandler(this.radDSPNR2NSTAT_CheckedChanged);
             // 
             // radDSPNR2MMSE
             // 
             this.radDSPNR2MMSE.AutoSize = true;
             this.radDSPNR2MMSE.Image = null;
-            this.radDSPNR2MMSE.Location = new System.Drawing.Point(7, 57);
+            this.radDSPNR2MMSE.Location = new System.Drawing.Point(6, 54);
             this.radDSPNR2MMSE.Name = "radDSPNR2MMSE";
             this.radDSPNR2MMSE.Size = new System.Drawing.Size(57, 17);
             this.radDSPNR2MMSE.TabIndex = 1;
@@ -39928,7 +40088,7 @@
             this.radDSPNR2OSMS.AutoSize = true;
             this.radDSPNR2OSMS.Checked = true;
             this.radDSPNR2OSMS.Image = null;
-            this.radDSPNR2OSMS.Location = new System.Drawing.Point(7, 34);
+            this.radDSPNR2OSMS.Location = new System.Drawing.Point(6, 31);
             this.radDSPNR2OSMS.Name = "radDSPNR2OSMS";
             this.radDSPNR2OSMS.Size = new System.Drawing.Size(56, 17);
             this.radDSPNR2OSMS.TabIndex = 0;
@@ -39943,7 +40103,7 @@
             this.chkDSPNR2AE.Checked = true;
             this.chkDSPNR2AE.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDSPNR2AE.Image = null;
-            this.chkDSPNR2AE.Location = new System.Drawing.Point(13, 225);
+            this.chkDSPNR2AE.Location = new System.Drawing.Point(14, 287);
             this.chkDSPNR2AE.Name = "chkDSPNR2AE";
             this.chkDSPNR2AE.Size = new System.Drawing.Size(65, 17);
             this.chkDSPNR2AE.TabIndex = 1;
@@ -39953,15 +40113,74 @@
             // 
             // grpDSPGainMethod
             // 
+            this.grpDSPGainMethod.Controls.Add(this.lblTRNDThresh);
+            this.grpDSPGainMethod.Controls.Add(this.udDSPNR2trainThresh);
+            this.grpDSPGainMethod.Controls.Add(this.radDSPNR2TRND);
             this.grpDSPGainMethod.Controls.Add(this.radDSPNR2Gamma);
             this.grpDSPGainMethod.Controls.Add(this.radDSPNR2Log);
             this.grpDSPGainMethod.Controls.Add(this.radDSPNR2Linear);
             this.grpDSPGainMethod.Location = new System.Drawing.Point(6, 16);
             this.grpDSPGainMethod.Name = "grpDSPGainMethod";
-            this.grpDSPGainMethod.Size = new System.Drawing.Size(89, 96);
+            this.grpDSPGainMethod.Size = new System.Drawing.Size(89, 152);
             this.grpDSPGainMethod.TabIndex = 0;
             this.grpDSPGainMethod.TabStop = false;
             this.grpDSPGainMethod.Text = "Gain Method";
+            // 
+            // lblTRNDThresh
+            // 
+            this.lblTRNDThresh.AutoSize = true;
+            this.lblTRNDThresh.Image = null;
+            this.lblTRNDThresh.Location = new System.Drawing.Point(14, 112);
+            this.lblTRNDThresh.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblTRNDThresh.Name = "lblTRNDThresh";
+            this.lblTRNDThresh.Size = new System.Drawing.Size(57, 13);
+            this.lblTRNDThresh.TabIndex = 5;
+            this.lblTRNDThresh.Text = "Threshold:";
+            // 
+            // udDSPNR2trainThresh
+            // 
+            this.udDSPNR2trainThresh.DecimalPlaces = 1;
+            this.udDSPNR2trainThresh.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.udDSPNR2trainThresh.Location = new System.Drawing.Point(37, 129);
+            this.udDSPNR2trainThresh.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.udDSPNR2trainThresh.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udDSPNR2trainThresh.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            -2147483648});
+            this.udDSPNR2trainThresh.Name = "udDSPNR2trainThresh";
+            this.udDSPNR2trainThresh.Size = new System.Drawing.Size(46, 20);
+            this.udDSPNR2trainThresh.TabIndex = 4;
+            this.udDSPNR2trainThresh.TinyStep = false;
+            this.udDSPNR2trainThresh.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            -2147418112});
+            this.udDSPNR2trainThresh.ValueChanged += new System.EventHandler(this.udDSPNR2trainThresh_ValueChanged);
+            // 
+            // radDSPNR2TRND
+            // 
+            this.radDSPNR2TRND.AutoSize = true;
+            this.radDSPNR2TRND.Image = null;
+            this.radDSPNR2TRND.Location = new System.Drawing.Point(7, 92);
+            this.radDSPNR2TRND.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.radDSPNR2TRND.Name = "radDSPNR2TRND";
+            this.radDSPNR2TRND.Size = new System.Drawing.Size(61, 17);
+            this.radDSPNR2TRND.TabIndex = 3;
+            this.radDSPNR2TRND.TabStop = true;
+            this.radDSPNR2TRND.Text = "Trained";
+            this.radDSPNR2TRND.UseVisualStyleBackColor = true;
+            this.radDSPNR2TRND.CheckedChanged += new System.EventHandler(this.radDSPNR2TRND_CheckedChanged);
             // 
             // radDSPNR2Gamma
             // 
@@ -40745,7 +40964,7 @@
             this.tpDSPMNF.Controls.Add(this.grpDSPMNF);
             this.tpDSPMNF.Location = new System.Drawing.Point(4, 22);
             this.tpDSPMNF.Name = "tpDSPMNF";
-            this.tpDSPMNF.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDSPMNF.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpDSPMNF.Size = new System.Drawing.Size(724, 414);
             this.tpDSPMNF.TabIndex = 9;
             this.tpDSPMNF.Text = "MNF";
@@ -41046,7 +41265,7 @@
             this.tpDSPNB.Controls.Add(this.grpDSPNB);
             this.tpDSPNB.Location = new System.Drawing.Point(4, 22);
             this.tpDSPNB.Name = "tpDSPNB";
-            this.tpDSPNB.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDSPNB.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpDSPNB.Size = new System.Drawing.Size(724, 414);
             this.tpDSPNB.TabIndex = 10;
             this.tpDSPNB.Text = "NB/SNB";
@@ -41369,7 +41588,7 @@
             this.tpDSPVOXDE.Controls.Add(this.grpSCF);
             this.tpDSPVOXDE.Location = new System.Drawing.Point(4, 22);
             this.tpDSPVOXDE.Name = "tpDSPVOXDE";
-            this.tpDSPVOXDE.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDSPVOXDE.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpDSPVOXDE.Size = new System.Drawing.Size(724, 414);
             this.tpDSPVOXDE.TabIndex = 13;
             this.tpDSPVOXDE.Text = "VOX/DE";
@@ -42044,7 +42263,7 @@
             this.tpDSPCFC.Controls.Add(this.tbCFC2);
             this.tpDSPCFC.Location = new System.Drawing.Point(4, 22);
             this.tpDSPCFC.Name = "tpDSPCFC";
-            this.tpDSPCFC.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDSPCFC.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpDSPCFC.Size = new System.Drawing.Size(724, 414);
             this.tpDSPCFC.TabIndex = 12;
             this.tpDSPCFC.Text = "CFC";
@@ -43461,7 +43680,7 @@
             // 
             this.lstTXProfileDef.Location = new System.Drawing.Point(8, 16);
             this.lstTXProfileDef.Name = "lstTXProfileDef";
-            this.lstTXProfileDef.Size = new System.Drawing.Size(120, 82);
+            this.lstTXProfileDef.Size = new System.Drawing.Size(120, 69);
             this.lstTXProfileDef.TabIndex = 53;
             // 
             // grpTXAM
@@ -43867,7 +44086,7 @@
             this.tpGainByBand.Controls.Add(this.panelAutoPACalibrate);
             this.tpGainByBand.Location = new System.Drawing.Point(4, 22);
             this.tpGainByBand.Name = "tpGainByBand";
-            this.tpGainByBand.Padding = new System.Windows.Forms.Padding(3);
+            this.tpGainByBand.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpGainByBand.Size = new System.Drawing.Size(724, 413);
             this.tpGainByBand.TabIndex = 0;
             this.tpGainByBand.Text = "PA Gain";
@@ -45786,7 +46005,7 @@
             this.tpWattMeter.Controls.Add(this.chkPAValues);
             this.tpWattMeter.Location = new System.Drawing.Point(4, 22);
             this.tpWattMeter.Name = "tpWattMeter";
-            this.tpWattMeter.Padding = new System.Windows.Forms.Padding(3);
+            this.tpWattMeter.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpWattMeter.Size = new System.Drawing.Size(724, 413);
             this.tpWattMeter.TabIndex = 1;
             this.tpWattMeter.Text = "Watt Meter";
@@ -48705,6 +48924,7 @@
             this.lgLinearGradientRX1.EncodedText = resources.GetString("lgLinearGradientRX1.EncodedText");
             this.lgLinearGradientRX1.IncludeAlphaInPreview = false;
             this.lgLinearGradientRX1.Location = new System.Drawing.Point(8, 20);
+            this.lgLinearGradientRX1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.lgLinearGradientRX1.MinimumSize = new System.Drawing.Size(192, 38);
             this.lgLinearGradientRX1.Name = "lgLinearGradientRX1";
             this.lgLinearGradientRX1.Size = new System.Drawing.Size(419, 38);
@@ -51278,7 +51498,7 @@
             this.lstMetersInUse.FormattingEnabled = true;
             this.lstMetersInUse.Location = new System.Drawing.Point(190, 122);
             this.lstMetersInUse.Name = "lstMetersInUse";
-            this.lstMetersInUse.Size = new System.Drawing.Size(140, 251);
+            this.lstMetersInUse.Size = new System.Drawing.Size(140, 238);
             this.lstMetersInUse.TabIndex = 91;
             this.lstMetersInUse.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lstMetersInUse_DrawItem);
             this.lstMetersInUse.SelectedIndexChanged += new System.EventHandler(this.lstMetersInUse_SelectedIndexChanged);
@@ -51290,7 +51510,7 @@
             this.lstMetersAvailable.FormattingEnabled = true;
             this.lstMetersAvailable.Location = new System.Drawing.Point(6, 122);
             this.lstMetersAvailable.Name = "lstMetersAvailable";
-            this.lstMetersAvailable.Size = new System.Drawing.Size(140, 251);
+            this.lstMetersAvailable.Size = new System.Drawing.Size(140, 238);
             this.lstMetersAvailable.TabIndex = 90;
             this.lstMetersAvailable.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lstMetersAvailable_DrawItem);
             this.lstMetersAvailable.SelectedIndexChanged += new System.EventHandler(this.lstMetersAvailable_SelectedIndexChanged);
@@ -51368,7 +51588,7 @@
             this.tcAppearanceTXDisplay.Controls.Add(this.groupBoxTS2);
             this.tcAppearanceTXDisplay.Location = new System.Drawing.Point(4, 22);
             this.tcAppearanceTXDisplay.Name = "tcAppearanceTXDisplay";
-            this.tcAppearanceTXDisplay.Padding = new System.Windows.Forms.Padding(3);
+            this.tcAppearanceTXDisplay.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tcAppearanceTXDisplay.Size = new System.Drawing.Size(724, 410);
             this.tcAppearanceTXDisplay.TabIndex = 3;
             this.tcAppearanceTXDisplay.Text = "TX Display";
@@ -51792,7 +52012,7 @@
             this.tpAppearanceCollapsible.Controls.Add(this.grpBoxCollapsible);
             this.tpAppearanceCollapsible.Location = new System.Drawing.Point(4, 22);
             this.tpAppearanceCollapsible.Name = "tpAppearanceCollapsible";
-            this.tpAppearanceCollapsible.Padding = new System.Windows.Forms.Padding(3);
+            this.tpAppearanceCollapsible.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpAppearanceCollapsible.Size = new System.Drawing.Size(724, 410);
             this.tpAppearanceCollapsible.TabIndex = 4;
             this.tpAppearanceCollapsible.Text = "Collapsible Display";
@@ -52080,6 +52300,7 @@
             // prgSkinDownload
             // 
             this.prgSkinDownload.Location = new System.Drawing.Point(621, 374);
+            this.prgSkinDownload.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.prgSkinDownload.Name = "prgSkinDownload";
             this.prgSkinDownload.Size = new System.Drawing.Size(75, 14);
             this.prgSkinDownload.TabIndex = 6;
@@ -52093,7 +52314,7 @@
             "01234567890123456789012345"});
             this.lstAvailableSkins.Location = new System.Drawing.Point(4, 136);
             this.lstAvailableSkins.Name = "lstAvailableSkins";
-            this.lstAvailableSkins.Size = new System.Drawing.Size(189, 251);
+            this.lstAvailableSkins.Size = new System.Drawing.Size(189, 238);
             this.lstAvailableSkins.TabIndex = 10;
             this.lstAvailableSkins.SelectedIndexChanged += new System.EventHandler(this.lstAvailableSkins_SelectedIndexChanged);
             // 
@@ -53024,7 +53245,7 @@
             this.tpCATSerialPorts.Controls.Add(this.grpCatControlBox);
             this.tpCATSerialPorts.Location = new System.Drawing.Point(4, 22);
             this.tpCATSerialPorts.Name = "tpCATSerialPorts";
-            this.tpCATSerialPorts.Padding = new System.Windows.Forms.Padding(3);
+            this.tpCATSerialPorts.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpCATSerialPorts.Size = new System.Drawing.Size(724, 407);
             this.tpCATSerialPorts.TabIndex = 2;
             this.tpCATSerialPorts.Text = "Serial";
@@ -53781,7 +54002,7 @@
             this.tpTCITCPIPN1MM.Controls.Add(this.groupBoxTS16);
             this.tpTCITCPIPN1MM.Location = new System.Drawing.Point(4, 22);
             this.tpTCITCPIPN1MM.Name = "tpTCITCPIPN1MM";
-            this.tpTCITCPIPN1MM.Padding = new System.Windows.Forms.Padding(3);
+            this.tpTCITCPIPN1MM.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpTCITCPIPN1MM.Size = new System.Drawing.Size(724, 407);
             this.tpTCITCPIPN1MM.TabIndex = 3;
             this.tpTCITCPIPN1MM.Text = "Network";
@@ -54677,7 +54898,7 @@
             this.tpCAToptions.Controls.Add(this.grpRTTYOffset);
             this.tpCAToptions.Location = new System.Drawing.Point(4, 22);
             this.tpCAToptions.Name = "tpCAToptions";
-            this.tpCAToptions.Padding = new System.Windows.Forms.Padding(3);
+            this.tpCAToptions.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpCAToptions.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.tpCAToptions.Size = new System.Drawing.Size(724, 407);
             this.tpCAToptions.TabIndex = 0;
@@ -54706,6 +54927,8 @@
             // chkKWAI_tcp
             // 
             this.chkKWAI_tcp.AutoSize = true;
+            this.chkKWAI_tcp.Checked = true;
+            this.chkKWAI_tcp.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkKWAI_tcp.Image = null;
             this.chkKWAI_tcp.Location = new System.Drawing.Point(182, 85);
             this.chkKWAI_tcp.Name = "chkKWAI_tcp";
@@ -54758,6 +54981,8 @@
             // chkKWAI_port1
             // 
             this.chkKWAI_port1.AutoSize = true;
+            this.chkKWAI_port1.Checked = true;
+            this.chkKWAI_port1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkKWAI_port1.Image = null;
             this.chkKWAI_port1.Location = new System.Drawing.Point(30, 85);
             this.chkKWAI_port1.Name = "chkKWAI_port1";
@@ -55241,7 +55466,7 @@
             this.tpAndromeda.Controls.Add(this.grpAndr);
             this.tpAndromeda.Location = new System.Drawing.Point(4, 22);
             this.tpAndromeda.Name = "tpAndromeda";
-            this.tpAndromeda.Padding = new System.Windows.Forms.Padding(3);
+            this.tpAndromeda.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.tpAndromeda.Size = new System.Drawing.Size(724, 407);
             this.tpAndromeda.TabIndex = 4;
             this.tpAndromeda.Text = "Andromeda";
@@ -57782,7 +58007,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(744, 511);
+            this.ClientSize = new System.Drawing.Size(744, 510);
             this.Controls.Add(this.txtboxTXProfileChangedReport);
             this.Controls.Add(this.lblTXProfileWarning);
             this.Controls.Add(this.labelSavingLoading);
@@ -57798,8 +58023,8 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(760, 550);
-            this.MinimumSize = new System.Drawing.Size(760, 550);
+            this.MaximumSize = new System.Drawing.Size(760, 549);
+            this.MinimumSize = new System.Drawing.Size(760, 549);
             this.Name = "Setup";
             this.Text = "Setup";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.Setup_Closing);
@@ -58376,6 +58601,9 @@
             this.grpDSPBufPhone.ResumeLayout(false);
             this.grpDSPWintype.ResumeLayout(false);
             this.tpDSPKeyer.ResumeLayout(false);
+            this.grpCWEdgeLength.ResumeLayout(false);
+            this.grpCWEdgeLength.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udCWEdgeLength)).EndInit();
             this.grpKeyerConnections.ResumeLayout(false);
             this.grpDSPCWPitch.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udDSPCWPitch)).EndInit();
@@ -58497,6 +58725,7 @@
             this.grpDSPNR2NPEMethodRX2.PerformLayout();
             this.grpDSPGainMethodRX2.ResumeLayout(false);
             this.grpDSPGainMethodRX2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udDSPNR2trainThreshRX2)).EndInit();
             this.groupBoxTS5.ResumeLayout(false);
             this.groupBoxTS5.PerformLayout();
             this.grpDSPNR2.ResumeLayout(false);
@@ -58505,6 +58734,7 @@
             this.grpDSPNR2NPEMethod.PerformLayout();
             this.grpDSPGainMethod.ResumeLayout(false);
             this.grpDSPGainMethod.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udDSPNR2trainThresh)).EndInit();
             this.grpDSPLMSNR.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udLMSNRLeak)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udLMSNRgain)).EndInit();
@@ -62566,6 +62796,15 @@
         private CheckBoxTS chkKWAI_port3;
         private CheckBoxTS chkKWAI_port2;
         private CheckBoxTS chkKWAI_port1;
+        private GroupBoxTS grpCWEdgeLength;
+        private LabelTS lblCWEdgeLength;
+        private NumericUpDownTS udCWEdgeLength;
+        private RadioButtonTS radDSPNR2TRND;
+        private RadioButtonTS radDSPNR2TRNDRX2;
+        private RadioButtonTS radDSPNR2NSTATRX2;
+        private RadioButtonTS radDSPNR2NSTAT;
+        private NumericUpDownTS udDSPNR2trainThresh;
+        private LabelTS lblTRNDThresh;
         private TextBoxTS txtIPAddress4;
         private TextBoxTS txtIPAddress3;
         private TextBoxTS txtIPAddress2;
@@ -62575,5 +62814,7 @@
         private LabelTS labelOutState;
         private CheckBoxTS chkIOPinControl;
         private LabelTS labelAutoAttDelay;
+        private LabelTS lblTRNDThreshRX2;
+        private NumericUpDownTS udDSPNR2trainThreshRX2;
     }
 }
