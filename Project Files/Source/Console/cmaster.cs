@@ -425,9 +425,7 @@ namespace Thetis
 
             // MI0BOT: Set correct SetPSHWPeak for HL2 and different model for reduced bandwidth
 
-            if (model == HPSDRModel.HERMESLITE)
-                puresignal.SetPSHWPeak(txch, 0.233);
-            else
+            if (model != HPSDRModel.HERMESLITE)
                 puresignal.SetPSHWPeak(txch, 0.2899);
 
             if (model == HPSDRModel.HERMESLITE && Audio.console.ReduceEthernetBW)
