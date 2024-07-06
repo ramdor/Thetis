@@ -27899,11 +27899,12 @@ namespace Thetis
                 console.SetI2CPollingPause(true);
 
                 NetworkIO.I2CWrite(1, 0x1d, 169, ucOutPinsLedStripHF.Bits ^ mask);
-            
+
                 console.SetI2CPollingPause(false);
 
                 ucOutPinsLedStripHF_Click(sender, e);
-            }        
+            }
+        }
 
         public readonly Dictionary<string, bool> KenwoodAISettings = new Dictionary<string, bool>(); // contains settings "enabled", "port1", "port2", "port3", "port4", "tcp", all as bools
         private void chkKWAI_port1_CheckedChanged(object sender, EventArgs e)
