@@ -5556,13 +5556,13 @@ namespace Thetis
                 att = Convert.ToInt32(s);
                 att = Math.Max(0, att);
                 att = Math.Min(31, att);
-                console.SetupForm.HermesAttenuatorData = att;        // Set the console control
+                console.SetupForm.ATTOnRX1 = att;        // Set the console control
                 console.TitleBarEncoderString = "RX1 Step Atten = " + att + "dB";
                 return "";
             }
             else if (s.Length == parser.nGet)   // if this is a read command
             {
-                return AddLeadingZeros(console.SetupForm.HermesAttenuatorData);     // Get the console setting
+                return AddLeadingZeros(console.SetupForm.ATTOnRX1);     // Get the console setting
             }
             else
             {
@@ -5580,13 +5580,13 @@ namespace Thetis
                 att = Convert.ToInt32(s);
                 att = Math.Max(0, att);
                 att = Math.Min(31, att);
-                console.SetupForm.HermesAttenuatorDataRX2 = att; //RX2ATT = att;        // Set the console control // MW0LGE_21d step atten changes
+                console.SetupForm.ATTOnRX2 = att; //RX2ATT = att;        // Set the console control // MW0LGE_21d step atten changes
 				console.TitleBarEncoderString = "RX2 Step Atten = " + att + "dB";
                 return "";
             }
             else if (s.Length == parser.nGet)   // if this is a read command
             {
-                return AddLeadingZeros(console.SetupForm.HermesAttenuatorDataRX2 /*RX2ATT*/);     // Get the console setting // MW0LGE_21d step atten changes
+                return AddLeadingZeros(console.SetupForm.ATTOnRX2 /*RX2ATT*/);     // Get the console setting // MW0LGE_21d step atten changes
 			}
             else
             {
