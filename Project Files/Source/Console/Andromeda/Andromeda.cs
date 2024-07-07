@@ -2341,17 +2341,17 @@ namespace Thetis
                 case EEncoderActions.eENStepAtten:
                     if (UseRX1)
                     {
-                        Value = SetupForm.HermesAttenuatorData;
+                        Value = SetupForm.ATTOnRX1;
                         EncoderUpdate(Steps, ref Value, (int)udRX1StepAttData.Minimum, (int)udRX1StepAttData.Maximum);
                         ShowAndromedaSlider(Value, (int)udRX1StepAttData.Minimum, (int)udRX1StepAttData.Maximum, "RX1 ATT");
-                        SetupForm.HermesAttenuatorData = Value;
+                        SetupForm.ATTOnRX1 = Value;
                     }
                     else
                     {
-                        Value = SetupForm.HermesAttenuatorDataRX2; //RX2ATT; // MW0LGE_21d step atten changes
+                        Value = SetupForm.ATTOnRX2; //RX2ATT; // MW0LGE_21d step atten changes
                         EncoderUpdate(Steps, ref Value, (int)udRX2StepAttData.Minimum, (int)udRX2StepAttData.Maximum);
                         ShowAndromedaSlider(Value, (int)udRX2StepAttData.Minimum, (int)udRX2StepAttData.Maximum, "RX2 ATT");
-                        /*RX2ATT*/SetupForm.HermesAttenuatorDataRX2 = Value; // MW0LGE_21d step atten changes
+                        /*RX2ATT*/SetupForm.ATTOnRX2 = Value; // MW0LGE_21d step atten changes
                     }
                     CheckGainFormAutoShow();
                     break;
@@ -3697,7 +3697,7 @@ namespace Thetis
                     break;
 
                 case EButtonBarActions.eBBRXAntenna:               // RX antenna toggle
-                    if (Alex.trx_ant_not_same)
+                    if (Alex.trx_ant_different)
                         NewString = chkRxAnt.Text;
                     else
                         NewString = DefaultString + " (already = TX ant)";

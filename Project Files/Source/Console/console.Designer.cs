@@ -720,6 +720,7 @@
             this.ptbCWAPFBandwidth = new Thetis.PrettyTrackBar();
             this.ptbCWAPFFreq = new Thetis.PrettyTrackBar();
             this.ptbTune = new Thetis.PrettyTrackBar();
+            this.udTXStepAttData = new System.Windows.Forms.NumericUpDownTS();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItemRX1FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
@@ -1162,6 +1163,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFBandwidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbTune)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXStepAttData)).BeginInit();
             this.contextMenuStripFilterRX1.SuspendLayout();
             this.contextMenuStripFilterRX2.SuspendLayout();
             this.contextMenuStripNotch.SuspendLayout();
@@ -3957,6 +3959,36 @@
             this.ptbTune.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbTune_Scroll);
             this.ptbTune.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ptbTune_MouseUp);
             // 
+            // udTXStepAttData
+            // 
+            this.udTXStepAttData.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.udTXStepAttData.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.udTXStepAttData.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            resources.ApplyResources(this.udTXStepAttData, "udTXStepAttData");
+            this.udTXStepAttData.Maximum = new decimal(new int[] {
+            31,
+            0,
+            0,
+            0});
+            this.udTXStepAttData.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXStepAttData.Name = "udTXStepAttData";
+            this.udTXStepAttData.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udTXStepAttData, resources.GetString("udTXStepAttData.ToolTip"));
+            this.udTXStepAttData.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXStepAttData.ValueChanged += new System.EventHandler(this.udTXStepAttData_ValueChanged);
+            // 
             // timer_clock
             // 
             this.timer_clock.Enabled = true;
@@ -6085,9 +6117,9 @@
             this.panelRX2Power.BackColor = System.Drawing.Color.Transparent;
             this.panelRX2Power.Controls.Add(this.lblRX2Band);
             this.panelRX2Power.Controls.Add(this.comboRX2Band);
+            this.panelRX2Power.Controls.Add(this.lblRX2Preamp);
             this.panelRX2Power.Controls.Add(this.comboRX2Preamp);
             this.panelRX2Power.Controls.Add(this.udRX2StepAttData);
-            this.panelRX2Power.Controls.Add(this.lblRX2Preamp);
             this.panelRX2Power.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.panelRX2Power.Name = "panelRX2Power";
             // 
@@ -6487,6 +6519,7 @@
             this.panelSoundControls.Controls.Add(this.ptbTune);
             this.panelSoundControls.Controls.Add(this.lblTune);
             this.panelSoundControls.Controls.Add(this.ptbRX2AF);
+            this.panelSoundControls.Controls.Add(this.udTXStepAttData);
             this.panelSoundControls.Controls.Add(this.lblRX2AF);
             this.panelSoundControls.Controls.Add(this.ptbRX1AF);
             this.panelSoundControls.Controls.Add(this.lblRX1AF);
@@ -7565,6 +7598,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFBandwidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFFreq)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbTune)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXStepAttData)).EndInit();
             this.contextMenuStripFilterRX1.ResumeLayout(false);
             this.contextMenuStripFilterRX2.ResumeLayout(false);
             this.contextMenuStripNotch.ResumeLayout(false);
@@ -7783,5 +7817,6 @@
         private ToolStripStatusLabel toolStripStatusLabel_N1MM;
         private ToolStripStatusLabel toolStripStatusLabel_CatTCPip;
         private ToolStripStatusLabel toolStripStatusLabel_TCI;
+        private NumericUpDownTS udTXStepAttData;
     }
 }

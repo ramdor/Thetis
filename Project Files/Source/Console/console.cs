@@ -1614,9 +1614,7 @@ namespace Thetis
                     default:
                         rx1_preamp_by_band[i] = PreampMode.HPSDR_ON;
                         rx2_preamp_by_band[i] = PreampMode.HPSDR_ON;
-                        //rx1_step_attenuator_by_band[i] = 0;
                         setRX1stepAttenuatorForBand((Band)i, 0);
-                        //rx2_step_attenuator_by_band[i] = 0;
                         setRX2stepAttenuatorForBand((Band)i, 0);
                         break;
                 }
@@ -1956,10 +1954,8 @@ namespace Thetis
 
             initializing = false;
             RX1PreampMode = rx1_preamp_by_band[(int)rx1_band];
-            //RX1AttenuatorData = rx1_step_attenuator_by_band[(int)rx1_band];
             RX1AttenuatorData = getRX1stepAttenuatorForBand(rx1_band);
             RX2PreampMode = rx2_preamp_by_band[(int)rx2_band];
-            //RX2AttenuatorData = rx2_step_attenuator_by_band[(int)rx2_band];
             RX2AttenuatorData = getRX2stepAttenuatorForBand(rx2_band);
             initializing = true;
 
@@ -2742,6 +2738,7 @@ namespace Thetis
 
             a.Remove("udRX1StepAttData/" + udRX1StepAttData.Value.ToString());
             a.Remove("udRX2StepAttData/" + udRX2StepAttData.Value.ToString());
+            a.Remove("udTXStepAttData/" + udTXStepAttData.Value.ToString()); //[2.3.6.10]MW0LGE
 
             string ver_num = Common.GetVerNum();
 
@@ -2997,20 +2994,16 @@ namespace Thetis
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
-            //rx1_step_attenuator_by_band[(int)rx1_band] = rx1_attenuator_data;
             setRX1stepAttenuatorForBand(rx1_band, rx1_attenuator_data);
             s = "rx1_step_attenuator_by_band/";
             for (int i = 0; i < (int)Band.LAST; i++)
-                //s += ((int)rx1_step_attenuator_by_band[i]).ToString() + "|";
                 s += getRX1stepAttenuatorForBand((Band)i).ToString() + "|";
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
-            //rx2_step_attenuator_by_band[(int)rx2_band] = rx2_attenuator_data;
             setRX2stepAttenuatorForBand(rx2_band, rx2_attenuator_data);
             s = "rx2_step_attenuator_by_band/";
             for (int i = 0; i < (int)Band.LAST; i++)
-                //s += ((int)rx2_step_attenuator_by_band[i]).ToString() + "|";
                 s += getRX2stepAttenuatorForBand((Band)i).ToString() + "|";
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
@@ -4188,7 +4181,6 @@ namespace Thetis
                         list = val.Split('|');
                         if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
-                            //rx1_step_attenuator_by_band[i] = int.Parse(list[i]);
                             setRX1stepAttenuatorForBand((Band)i, int.Parse(list[i]));
                         break;
 
@@ -4196,7 +4188,6 @@ namespace Thetis
                         list = val.Split('|');
                         if (list.Length != (int)Band.LAST) continue; //[2.10.3.5]MW0LGE
                         for (int i = 0; i < (int)Band.LAST; i++)
-                            //rx2_step_attenuator_by_band[i] = int.Parse(list[i]);
                             setRX2stepAttenuatorForBand((Band)i, int.Parse(list[i]));
                         break;
 
@@ -5153,7 +5144,8 @@ namespace Thetis
         public void SetBand(string mode, string filter, double freq, bool CTUN, int ZoomFactor, double CenterFreq)
         {
             //MW0LGE_21d
-            Band oldBandV2 = RX1Band;
+            //Band oldBandV2 = RX1Band;
+            Band oldBand = RX1Band;
             DSPMode oldMode = RX1DSPMode;
             Filter oldFilter = RX1Filter;
             double oldFreq = VFOAFreq;
@@ -5165,7 +5157,7 @@ namespace Thetis
 
             // These are needed for managing QSK when band changes also trigger mode changes.
             RX1_band_change = BandByFreq(freq, tx_xvtr_index, true, current_region, true);
-            Band oldBand = RX1Band;
+            //Band oldBand = RX1Band;
             qsk_band_changing = true;
 
             // Set mode, filter, and frequency according to passed parameters
@@ -5255,7 +5247,7 @@ namespace Thetis
             if (oldBand != RX1Band ||
                 oldFreq != VFOAFreq // or if the freq changes
                 )
-                SetBandChangeHanders?.Invoke(1, oldBandV2, RX1Band, oldMode, RX1DSPMode, oldFilter, RX1Filter, oldFreq, VFOAFreq,
+                SetBandChangeHanders?.Invoke(1, oldBand, RX1Band, oldMode, RX1DSPMode, oldFilter, RX1Filter, oldFreq, VFOAFreq,
                     oldCentreFreq, CentreFrequency, oldCtun, ClickTuneDisplay, oldZoomSlider, ptbDisplayZoom.Value);
         }
 
@@ -6697,6 +6689,7 @@ namespace Thetis
 
         public void SetAlexLPF(double freq, bool freqIsTX)
         {
+            //Debug.Print("lpf : " + freq.ToString());
             if (!_mox && lpf_bypass)
             {
                 NetworkIO.SetAlexLPFBits(0x10, false, _mox); // 6m LPF
@@ -9353,11 +9346,11 @@ namespace Thetis
 
             VFOAFreq = freq;									// set VFOA frequency
 
-            bool step_attn = SetupForm.HermesEnableAttenuator;
+            bool step_attnRX1 = SetupForm.RX1EnableAtt;
             bool step_attnRX2 = SetupForm.RX2EnableAtt; //MW0LGE_[2.9.0.6]
-            SetupForm.HermesEnableAttenuator = false;
+            SetupForm.RX1EnableAtt = false;
             SetupForm.RX2EnableAtt = false; //MW0LGE_[2.9.0.6]
-            PreampMode preamp = RX1PreampMode;				// save current preamp mode
+            PreampMode preampRX1 = RX1PreampMode;				// save current preamp mode
             PreampMode preampRX2 = RX2PreampMode;				// save current preamp mode
             RX1PreampMode = PreampMode.HPSDR_ON;			// set to high
             RX2PreampMode = PreampMode.HPSDR_ON;        //MW0LGE_[2.9.0.6]
@@ -9675,9 +9668,9 @@ namespace Thetis
             chkRIT.Checked = rit_on;							// restore RIT on
             udRIT.Value = rit_val;								// restore RIT value
 
-            RX1PreampMode = preamp;					        	// restore preamp value
+            RX1PreampMode = preampRX1;					        	// restore preamp value
             RX2PreampMode = preampRX2;					        	// restore preamp value MW0LGE_[2.9.0.6]
-            SetupForm.HermesEnableAttenuator = step_attn;
+            SetupForm.RX1EnableAtt = step_attnRX1;
             SetupForm.RX2EnableAtt = step_attnRX2;   //MW0LGE_[2.9.0.6] 
 
             RX1DSPMode = dsp_mode;						    	// restore DSP mode
@@ -10328,12 +10321,13 @@ namespace Thetis
                 tx_attenuator_data = value;
                 if (!initializing)
                 {
-                    setTXstepAttenuatorForBand(rx1_band, tx_attenuator_data);
-                    if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(rx1_band));
+                    setTXstepAttenuatorForBand(tx_band, tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes #399
+                    if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
                     else NetworkIO.SetTxAttenData(0);
 
-                    if (m_bAttontx && _mox)
-                        udRX1StepAttData.Value = value;
+                    //if (m_bAttontx && _mox) //[2.10.3.6]MW0LGE att_fixes
+                    //udRX1StepAttData.Value = value; //[2.10.3.6]MW0LGE att_fixes
+                    udTXStepAttData.Value = value;
                 }
                 _updatingTxAtt = false;
             }
@@ -10601,21 +10595,18 @@ namespace Thetis
                 rx1_step_att_present = value;
                 if (rx1_step_att_present)
                 {
-                    lblPreamp.Text = "S-ATT";
-                    udRX1StepAttData.BringToFront();
+                    udRX1StepAttData.Value = getRX1stepAttenuatorForBand(rx1_band); //MW0LGE [2.10.3.6] added
                     udRX1StepAttData_ValueChanged(this, EventArgs.Empty);
                 }
                 else
                 {
-                    lblPreamp.Text = "ATT";
-                    comboPreamp.BringToFront();
                     comboPreamp_SelectedIndexChanged(this, EventArgs.Empty);
 
                     if (alexpresent)
                         NetworkIO.SetAlexAtten(alex_atten); // normal up alex attenuator setting
                 }
 
-                handleAttCombosNuds();
+                updateAttNudsCombos();
 
                 if (!_mox)
                 {
@@ -10623,13 +10614,6 @@ namespace Thetis
                     UpdatePreamps();
                 }
                 UpdateRX1DisplayOffsets();
-
-                if(iscollapsed && !isexpanded)
-                {
-                    //[2.10.3.4]MW0LGE we need to move the meters to top, because in collasped mode the bring to fronts above
-                    //will cause the combo to be above everything, including meters.
-                    MeterManager.BringToFront();
-                }
             }
         }
 
@@ -10698,7 +10682,6 @@ namespace Thetis
                 }
 
                 if (!_mox)
-                    //rx1_step_attenuator_by_band[(int)rx1_band] = rx1_attenuator_data;
                     setRX1stepAttenuatorForBand(rx1_band, rx1_attenuator_data);
 
                 udRX1StepAttData.Value = rx1_attenuator_data;
@@ -10712,7 +10695,7 @@ namespace Thetis
                         if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX2AttenuatorData != rx1_attenuator_data)
                         {
                             _setFromOtherAttenuator = true;
-                            if (SetupForm.RX2EnableAtt != SetupForm.HermesEnableAttenuator) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator;
+                            if (SetupForm.RX2EnableAtt != SetupForm.RX1EnableAtt) SetupForm.RX2EnableAtt = SetupForm.RX1EnableAtt;
                             RX2AttenuatorData = rx1_attenuator_data;
                             _setFromOtherAttenuator = false;
                         }
@@ -10746,41 +10729,24 @@ namespace Thetis
                 {
                     if (rx2_step_att_present)
                     {
-                        lblRX2Preamp.Visible = true;
-                        udRX2StepAttData.Visible = true;
-                        lblRX2Preamp.Text = "S-ATT";
-                        udRX2StepAttData.BringToFront();
-                        //udRX2StepAttData.Value = rx2_step_attenuator_by_band[(int)rx2_band];
                         udRX2StepAttData.Value = getRX2stepAttenuatorForBand(rx2_band);
                         udRX2StepAttData_ValueChanged(this, EventArgs.Empty);
                     }
                     else
                     {
-                        lblRX2Preamp.Visible = true;
-                        lblRX2Preamp.Text = "ATT";
-                        comboRX2Preamp.Visible = true;
-                        comboRX2Preamp.BringToFront();
                         comboRX2Preamp_SelectedIndexChanged(this, EventArgs.Empty);
                     }
-
-                    handleAttCombosNuds();
-
-                    if (!_mox)
-                    {
-                        //update_preamp_mode = false;
-                        update_preamp = true;
-                        UpdatePreamps();
-                    }
-                    UpdateRX2DisplayOffsets();
-
-                    if (iscollapsed && !isexpanded)
-                    {
-                        //[2.10.3.4]MW0LGE we need to move the meters to top, because in collasped mode the bring to fronts above
-                        //will cause the combo to be above everything, including meters.
-                        MeterManager.BringToFront();
-                    }
-
                 }
+
+                updateAttNudsCombos();
+
+                if (!_mox)
+                {
+                    //update_preamp_mode = false;
+                    update_preamp = true;
+                    UpdatePreamps();
+                }
+                UpdateRX2DisplayOffsets();
             }
         }
 
@@ -10858,7 +10824,6 @@ namespace Thetis
                 }
 
                 if (!_mox)
-                    //rx2_step_attenuator_by_band[(int)rx2_band] = rx2_attenuator_data;
                     setRX2stepAttenuatorForBand(rx2_band, rx2_attenuator_data);
 
                 udRX2StepAttData.Value = rx2_attenuator_data;
@@ -10872,7 +10837,7 @@ namespace Thetis
                         if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX1AttenuatorData != rx2_attenuator_data)
                         {
                             _setFromOtherAttenuator = true;
-                            if (SetupForm.HermesEnableAttenuator != SetupForm.RX2EnableAtt) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;
+                            if (SetupForm.RX1EnableAtt != SetupForm.RX2EnableAtt) SetupForm.RX1EnableAtt = SetupForm.RX2EnableAtt;
                             RX1AttenuatorData = rx2_attenuator_data;
                             _setFromOtherAttenuator = false;
                         }
@@ -14640,7 +14605,7 @@ namespace Thetis
         {
             if (chkRxAnt.Checked)
             {
-                if (!Alex.trx_ant_not_same && !initializing)
+                if (!Alex.trx_ant_different && !initializing)
                 {
                     chkRxAnt.Checked = false;
                     return;
@@ -14653,7 +14618,7 @@ namespace Thetis
             {
                 Alex.TRxAnt = false;
                 chkRxAnt.Text = "Rx Ant";
-                if (Alex.trx_ant_not_same) chkRxAnt.ForeColor = Color.SpringGreen;
+                if (Alex.trx_ant_different) chkRxAnt.ForeColor = Color.SpringGreen;
                 else chkRxAnt.ForeColor = SystemColors.ControlLightLight;
             }
 
@@ -16806,7 +16771,6 @@ namespace Thetis
                 if (!initializing && rx1_preamp_mode > PreampMode.FIRST)
                 {
                     rx1_preamp_by_band[(int)old_band] = rx1_preamp_mode;
-                    //rx1_step_attenuator_by_band[(int)old_band] = rx1_attenuator_data;
                     setRX1stepAttenuatorForBand(old_band, rx1_attenuator_data);
                 }
 
@@ -16815,9 +16779,8 @@ namespace Thetis
                     // save values for old band
                     rx1_agcm_by_band[(int)old_band] = (AGCMode)comboAGC.SelectedIndex;
                     rx1_agct_by_band[(int)old_band] = ptbRF.Value;
-                    SetupForm.ATTOnTX = getTXstepAttenuatorForBand(value);
+                    SetupForm.ATTOnTX = getTXstepAttenuatorForBand(tx_band); //[2.10.3.6]MW0LGE att_fixes
                     RX1PreampMode = rx1_preamp_by_band[(int)value];
-                    //RX1AttenuatorData = rx1_step_attenuator_by_band[(int)value];
                     RX1AttenuatorData = getRX1stepAttenuatorForBand(value);
                     RX1AGCMode = rx1_agcm_by_band[(int)value];
                     RF = rx1_agct_by_band[(int)value];
@@ -16974,7 +16937,6 @@ namespace Thetis
                 if (!initializing && rx2_preamp_mode > PreampMode.FIRST)
                 {
                     rx2_preamp_by_band[(int)old_band] = rx2_preamp_mode;
-                    //rx2_step_attenuator_by_band[(int)old_band] = rx2_attenuator_data;
                     setRX2stepAttenuatorForBand(old_band, rx2_attenuator_data);
                 }
 
@@ -16985,7 +16947,6 @@ namespace Thetis
                     rx2_agct_by_band[(int)old_band] = ptbRX2RF.Value;
 
                     RX2PreampMode = rx2_preamp_by_band[(int)value];
-                    //RX2AttenuatorData = rx2_step_attenuator_by_band[(int)value];
                     RX2AttenuatorData = getRX2stepAttenuatorForBand(value);
                     RX2AGCMode = rx2_agcm_by_band[(int)value];
                     RX2RF = rx2_agct_by_band[(int)value];
@@ -18547,10 +18508,11 @@ namespace Thetis
             set
             {
                 m_bAttontx = value;
+                updateAttNudsCombos();
 
                 if (PowerOn)
                 {
-                    if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(rx1_band));
+                    if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
                     else NetworkIO.SetTxAttenData(0);
                 }
 
@@ -18848,7 +18810,7 @@ namespace Thetis
                     if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX2PreampMode != rx1_preamp_mode)
                     {
                         _setFromOtherAttenuator = true;
-                        if (SetupForm.RX2EnableAtt != SetupForm.HermesEnableAttenuator) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator;
+                        if (SetupForm.RX2EnableAtt != SetupForm.RX1EnableAtt) SetupForm.RX2EnableAtt = SetupForm.RX1EnableAtt;
                         RX2PreampMode = rx1_preamp_mode;
                         _setFromOtherAttenuator = false;
                     }
@@ -18957,7 +18919,7 @@ namespace Thetis
                     if (((nRX1ADCinUse == nRX2ADCinUse) || bRX1RX2diversity) && RX1PreampMode != rx2_preamp_mode)
                     {
                         _setFromOtherAttenuator = true;
-                        if (SetupForm.HermesEnableAttenuator != SetupForm.RX2EnableAtt) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;
+                        if (SetupForm.RX1EnableAtt != SetupForm.RX2EnableAtt) SetupForm.RX1EnableAtt = SetupForm.RX2EnableAtt;
                         RX1PreampMode = rx2_preamp_mode;
                         _setFromOtherAttenuator = false;
                     }
@@ -24680,8 +24642,8 @@ namespace Thetis
                 {
                     update_preamp_mutex = true;
 
-                    SetupForm.HermesEnableAttenuator = old_satt;
-                    SetupForm.HermesAttenuatorData = old_satt_data;
+                    SetupForm.RX1EnableAtt = old_satt;
+                    SetupForm.ATTOnRX1 = old_satt_data;
                     RX1PreampMode = preamp;
 
                     if (current_hpsdr_model == HPSDRModel.ANAN100D ||
@@ -24693,7 +24655,7 @@ namespace Thetis
                         current_hpsdr_model == HPSDRModel.ANAN_G2_1K)
                     {
                         SetupForm.RX2EnableAtt = old_rx2_satt;
-                        SetupForm.HermesAttenuatorDataRX2 = old_rx2_satt_data; //MW0LGE_21d atten
+                        SetupForm.ATTOnRX2 = old_rx2_satt_data; //MW0LGE_21d atten
                         RX2PreampMode = rx2_preamp;
                     }
                     update_preamp_mode = false;
@@ -24703,9 +24665,8 @@ namespace Thetis
 
                 if (update_preamp && !update_preamp_mutex)
                 {
-
                     old_satt = rx1_step_att_present;
-                    old_satt_data = SetupForm.HermesAttenuatorData;
+                    old_satt_data = SetupForm.ATTOnRX1;
                     preamp = RX1PreampMode;				// save current preamp mode
 
                     if (current_hpsdr_model == HPSDRModel.ANAN100D ||
@@ -24717,7 +24678,7 @@ namespace Thetis
                         current_hpsdr_model == HPSDRModel.ANAN_G2_1K)
                     {
                         old_rx2_satt = SetupForm.RX2EnableAtt;
-                        old_rx2_satt_data = SetupForm.HermesAttenuatorDataRX2;// MW0LGE_21d atten          rx2_attenuator_data;// RX2AttenuatorData;
+                        old_rx2_satt_data = SetupForm.ATTOnRX2;// MW0LGE_21d atten          rx2_attenuator_data;// RX2AttenuatorData;
                         rx2_preamp = RX2PreampMode;
                     }
                     update_preamp = false;
@@ -26375,7 +26336,7 @@ namespace Thetis
                 Thread.Sleep(100); // wait for hardware to settle before starting audio (possible sample rate change)
                 psform.ForcePS();
 
-                if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(rx1_band));
+                if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
                 else NetworkIO.SetTxAttenData(0);
 
                 enableAudioAmplfier(_bEnableAudioAmplifier); // MW0LGE_22b
@@ -28106,10 +28067,12 @@ namespace Thetis
             chkVFOLock.Enabled = !chkMOX.Checked; //MW0LGE_21d3
             chkVFOBLock.Enabled = !chkMOX.Checked; //MW0LGE_21d3
 
-            if (m_bAttontx)
-            {
-                comboPreamp.Enabled = !chkMOX.Checked;
-            }
+            //if (m_bAttontx) //[2.10.3.6]MW0LGE att_fixes
+            //{
+            //    comboPreamp.Enabled = !chkMOX.Checked;
+            //}
+            updateAttNudsCombos();
+
             SetupForm.MOX = chkMOX.Checked;
             ResetMultiMeterPeak();
             picSquelch.Invalidate();
@@ -28154,15 +28117,86 @@ namespace Thetis
             chkVFOLock.Enabled = !chkMOX.Checked; //MW0LGE_21d3
             chkVFOBLock.Enabled = !chkMOX.Checked; //MW0LGE_21d3
 
-            if (m_bAttontx)
-            {
-                comboPreamp.Enabled = !chkMOX.Checked;
-            }
+            //if (m_bAttontx) //[2.10.3.6]MW0LGE att_fixes
+            //{
+            //    comboPreamp.Enabled = !chkMOX.Checked;
+            //}
+            updateAttNudsCombos();
+
             SetupForm.MOX = chkMOX.Checked;
             ResetMultiMeterPeak();
             chkMOX.BackColor = SystemColors.Control;
 
             picNoiseGate.Invalidate();
+        }
+
+        private void updateAttNudsCombos()
+        {
+            if (rx1_step_att_present)
+                udRX1StepAttData.BringToFront();
+            else
+                comboPreamp.BringToFront();
+            if (rx2_step_att_present)
+                udRX2StepAttData.BringToFront();
+            else
+                comboRX2Preamp.BringToFront();
+
+            //update the nud and combos, for attenuators, both rx and tx
+            bool bShowOnMox = _mox && (isexpanded || (iscollapsed && !(showAndromedaTopControls || showAndromedaButtonBar)));
+            if (bShowOnMox)
+            {
+                if (VFOATX || (VFOBTX && !rx2_enabled))
+                {
+                    //if txing on rx1 (split or non-split), then the att combo and nud will be disabled for rx1
+                    comboPreamp.Enabled = false;
+                    udRX1StepAttData.Enabled = false;
+                    comboRX2Preamp.Enabled = true;
+                    udRX2StepAttData.Enabled = true;
+
+                    //move it to rx1
+                    udTXStepAttData.Location = udRX1StepAttData.Location;
+                    udTXStepAttData.Parent = udRX1StepAttData.Parent;
+                    udTXStepAttData.BringToFront();
+                    udTXStepAttData.Visible = m_bAttontx;
+                    lblPreamp.Text = m_bAttontx ? "Tx-ATT" : (rx1_step_att_present ? "S-ATT" : "ATT");
+                }
+                else if (VFOBTX && rx2_enabled)
+                {
+                    //if txing on rx2 then the att combo and nud will be disabled for rx2
+                    comboPreamp.Enabled = true;
+                    udRX1StepAttData.Enabled = true;
+                    comboRX2Preamp.Enabled = false;
+                    udRX2StepAttData.Enabled = false;
+
+                    //move it to rx2
+                    udTXStepAttData.Location = udRX2StepAttData.Location;
+                    udTXStepAttData.Parent = udRX2StepAttData.Parent;
+                    udTXStepAttData.BringToFront();
+                    udTXStepAttData.Visible = m_bAttontx;
+                    lblRX2Preamp.Text = m_bAttontx ? "Tx-ATT" : (rx2_step_att_present ? "S-ATT" : "ATT");
+                }
+                else
+                {
+                    // should not get here
+                }                
+            }
+            else
+            { //rx
+                comboPreamp.Enabled = true;
+                udRX1StepAttData.Enabled = true;
+                comboRX2Preamp.Enabled = rx2_preamp_present;
+                udRX2StepAttData.Enabled = rx2_preamp_present;
+                udTXStepAttData.Visible = false;
+                lblPreamp.Text = rx1_step_att_present ? "S-ATT" : "ATT";
+                lblRX2Preamp.Text = rx2_step_att_present ? "S-ATT" : (rx2_preamp_present ? "ATT" : "");
+            }
+
+            if (iscollapsed && !isexpanded)
+            {
+                //MW0LGE we need to move the meters to top, because in collasped mode the bring to fronts above
+                //will cause the combo to be above everything, including meters.
+                MeterManager.BringToFront();
+            }
         }
 
         private bool _mox = false;
@@ -28414,7 +28448,7 @@ namespace Thetis
                     if (current_hpsdr_model == HPSDRModel.HPSDR)
                     {
                         temp_mode = RX1PreampMode;
-                        SetupForm.HermesEnableAttenuator = false;
+                        SetupForm.RX1EnableAtt = false;
                         RX1PreampMode = PreampMode.HPSDR_OFF;			// set to -20dB
                         if (rx2_preamp_present)
                         {
@@ -28424,16 +28458,25 @@ namespace Thetis
                     }
                     else
                     {
+                        ////MW0LGE [2.9.0.7] added option to always apply 31 att from setup form when not in ps
+                        //if ((!chkFWCATUBypass.Checked && _forceATTwhenPSAoff) ||
+                        //                (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
+                        //                 radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) SetupForm.ATTOnTX = 31; // reset when PS is OFF or in CW mode
+
                         //MW0LGE [2.9.0.7] added option to always apply 31 att from setup form when not in ps
+                        int txAtt = getTXstepAttenuatorForBand(tx_band);
                         if ((!chkFWCATUBypass.Checked && _forceATTwhenPSAoff) ||
                                         (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
-                                         radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) SetupForm.ATTOnTX = 31; // reset when PS is OFF or in CW mode
+                                         radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) txAtt = 31; // reset when PS is OFF or in CW mode
 
-                        SetupForm.HermesAttenuatorData = getTXstepAttenuatorForBand(rx1_band);
-                        NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(rx1_band));
-                        SetupForm.HermesEnableAttenuator = true;
-                        comboRX2Preamp.Enabled = false;
-                        udRX2StepAttData.Enabled = false;
+                        SetupForm.ATTOnRX1 = getRX1stepAttenuatorForBand(rx1_band); //[2.10.3.6]MW0LGE att_fixes
+                        SetupForm.ATTOnTX = txAtt; //[2.10.3.6]MW0LGE att_fixes
+                        NetworkIO.SetTxAttenData(txAtt); //[2.10.3.6]MW0LGE att_fixes
+
+                        //SetupForm.RX1EnableAtt = true; //[2.10.3.6]MW0LGE att_fixes
+                        //comboRX2Preamp.Enabled = false; //[2.10.3.6]MW0LGE att_fixes
+                        //udRX2StepAttData.Enabled = false; //[2.10.3.6]MW0LGE att_fixes
+                        updateAttNudsCombos();
                     }
                 }
                 else NetworkIO.SetTxAttenData(0);
@@ -28506,8 +28549,9 @@ namespace Thetis
                     }
                     else
                     {
-                        comboRX2Preamp.Enabled = true;
-                        udRX2StepAttData.Enabled = true;
+                        //comboRX2Preamp.Enabled = true; //[2.10.3.6]MW0LGE att_fixes
+                        //udRX2StepAttData.Enabled = true; //[2.10.3.6]MW0LGE att_fixes
+                        updateAttNudsCombos();
 
                         update_preamp_mode = true;
                         update_preamp = true;
@@ -41141,12 +41185,10 @@ namespace Thetis
 
             RX2PreampMode = rx2_preamp_by_band[(int)rx2_band];
             comboRX2Preamp_SelectedIndexChanged(this, EventArgs.Empty);
-            //RX2AttenuatorData = rx2_step_attenuator_by_band[(int)rx2_band];
             RX2AttenuatorData = getRX2stepAttenuatorForBand(rx2_band);
 
             RX1PreampMode = rx1_preamp_by_band[(int)rx1_band];
             comboPreamp_SelectedIndexChanged(this, EventArgs.Empty);
-            //RX1AttenuatorData = rx1_step_attenuator_by_band[(int)rx1_band];
             RX1AttenuatorData = getRX1stepAttenuatorForBand(rx1_band);
         }
 
@@ -41781,37 +41823,6 @@ namespace Thetis
                 }
             }
         }
-        //
-        private void handleAttCombosNuds() //[2.10.3.4]MW0LGE called from functions that make these visble
-        {
-            if (!iscollapsed && isexpanded) return;
-
-            if (show_rx1)
-            {
-                comboRX2Preamp.Hide();
-                udRX2StepAttData.Hide();
-                comboPreamp.Show();
-                udRX1StepAttData.Show();
-            }
-            else if (show_rx2)
-            {
-                if (rx2_preamp_present)
-                {
-                    comboPreamp.Hide();
-                    udRX1StepAttData.Hide();
-                    comboRX2Preamp.Show();
-                    udRX2StepAttData.Show();
-                }
-                else
-                {
-                    comboRX2Preamp.Hide();
-                    udRX2StepAttData.Hide();
-                    comboPreamp.Show();
-                    udRX1StepAttData.Show();
-                }
-            }
-        }
-        //
 
         //
         // modified G8NJJ to add alternate top/button controls for Andromeda
@@ -43272,15 +43283,7 @@ namespace Thetis
         {
             if (_updatingRX1StepAttData) return;
             _updatingRX1StepAttData = true;
-            if (!IsSetupFormNull)
-            {
-                if (_mox)
-                {
-                    if (udRX1StepAttData.Value > 31) udRX1StepAttData.Value = 31;
-                    SetupForm.ATTOnTX = (int)udRX1StepAttData.Value;
-                }
-                SetupForm.HermesAttenuatorData = (int)udRX1StepAttData.Value;
-            }
+            if (!IsSetupFormNull) SetupForm.ATTOnRX1 = (int)udRX1StepAttData.Value; //[2.10.3.6]MW0LGE
             if (udRX1StepAttData.Focused) btnHidden.Focus();
             if (sliderForm != null) sliderForm.RX1Atten = (int)udRX1StepAttData.Value;
             lblAttenLabel.Text = udRX1StepAttData.Value.ToString() + " dB";
@@ -43293,15 +43296,7 @@ namespace Thetis
             if (_updatingRX2StepAttData) return;
             _updatingRX2StepAttData = true;
 
-            if (!IsSetupFormNull)
-            {
-                if (_mox && (RX2Enabled && VFOBTX))
-                {
-                    if (udRX2StepAttData.Value > 31) udRX2StepAttData.Value = 31;
-                    SetupForm.ATTOnTX = (int)udRX2StepAttData.Value;
-                }
-                SetupForm.HermesAttenuatorDataRX2 = (int)udRX2StepAttData.Value;
-            }
+            if (!IsSetupFormNull) SetupForm.ATTOnRX2 = (int)udRX2StepAttData.Value; //[2.10.3.6]MW0LGE
             if (udRX2StepAttData.Focused) btnHidden.Focus();
             if (sliderForm != null) sliderForm.RX2Atten = (int)udRX2StepAttData.Value;
             lblRX2AttenLabel.Text = udRX2StepAttData.Value.ToString() + " dB";
@@ -43310,19 +43305,19 @@ namespace Thetis
 
         private void lblPreamp_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (current_hpsdr_model != HPSDRModel.HPSDR)
+            if (current_hpsdr_model != HPSDRModel.HPSDR && !_mox)
             {
-                SetupForm.HermesEnableAttenuator = !SetupForm.HermesEnableAttenuator;
-                if (RX1RX2usingSameADC) SetupForm.RX2EnableAtt = SetupForm.HermesEnableAttenuator; //MW0LGE_22b
+                SetupForm.RX1EnableAtt = !SetupForm.RX1EnableAtt;
+                if (RX1RX2usingSameADC) SetupForm.RX2EnableAtt = SetupForm.RX1EnableAtt; //MW0LGE_22b
             }
         }
 
         private void lblRX2Preamp_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (current_hpsdr_model != HPSDRModel.HPSDR)
+            if (current_hpsdr_model != HPSDRModel.HPSDR && !_mox)
             {
                 SetupForm.RX2EnableAtt = !SetupForm.RX2EnableAtt;
-                if (RX1RX2usingSameADC) SetupForm.HermesEnableAttenuator = SetupForm.RX2EnableAtt;//MW0LGE_22b
+                if (RX1RX2usingSameADC) SetupForm.RX1EnableAtt = SetupForm.RX2EnableAtt;//MW0LGE_22b
             }
         }
 
@@ -43931,10 +43926,20 @@ namespace Thetis
 
         private void chkFWCATUBypass_CheckedChanged(object sender, EventArgs e)
         {
+            bool oldState = psform.AutoCalEnabled;
             psform.AutoCalEnabled = chkFWCATUBypass.Checked;
             AndromedaIndicatorCheck(EIndicatorActions.eINPuresignalEnabled, false, chkFWCATUBypass.Checked);
 
             infoBar.PSAEnabled = psform.AutoCalEnabled;
+
+            if (oldState && !psform.AutoCalEnabled) // was on, now off
+            {
+                //MW0LGE [2.10.3.6] PS in autocal might have enabled AttOnTX even though setup form option is disabled, fix this case
+                if (!IsSetupFormNull)
+                {
+                    if (!SetupForm.ATTOnTXChecked) ATTOnTX = false;
+                }
+            }
         }
 
         public bool PureSignalEnabled
@@ -47831,58 +47836,49 @@ namespace Thetis
         private int getRX1stepAttenuatorForBand(Band b)
         {
             if (b <= Band.FIRST || b >= Band.LAST) return 0;
-
             int nAtt = rx1_step_attenuator_by_band[(int)b];
-
             //Debug.Print("getRX1StepAttForBand " + b.ToString() + " " + nAtt.ToString());
-
             return nAtt;
         }
         private void setRX1stepAttenuatorForBand(Band b, int att)
         {
             if (b <= Band.FIRST || b >= Band.LAST) return;
-
             //Debug.Print("setRX1StepAttForBand " + b.ToString() + " " + att.ToString());
-
             rx1_step_attenuator_by_band[(int)b] = att;
         }
         private int getRX2stepAttenuatorForBand(Band b)
         {
             if (b <= Band.FIRST || b >= Band.LAST) return 0;
-
             int nAtt = rx2_step_attenuator_by_band[(int)b];
-
             //Debug.Print("getRX2StepAttForBand " + b.ToString() + " " + nAtt.ToString());
-
             return nAtt;
         }
         private void setRX2stepAttenuatorForBand(Band b, int att)
         {
             if (b <= Band.FIRST || b >= Band.LAST) return;
-
             //Debug.Print("setRX2StepAttForBand " + b.ToString() + " " + att.ToString());
-
             rx2_step_attenuator_by_band[(int)b] = att;
         }
         private int getTXstepAttenuatorForBand(Band b)
         {
             if (b <= Band.FIRST || b >= Band.LAST) return 31;
-
             int nAtt = tx_step_attenuator_by_band[(int)b];
-
             //Debug.Print("getTXStepAttForBand " + b.ToString() + " " + nAtt.ToString());
-
             return nAtt;
         }
         private void setTXstepAttenuatorForBand(Band b, int att)
         {
             if (b <= Band.FIRST || b >= Band.LAST) return;
-
             //Debug.Print("setTXStepAttForBand " + b.ToString() + " " + att.ToString());
-
             tx_step_attenuator_by_band[(int)b] = att;
         }
         #endregion
+
+        private void udTXStepAttData_ValueChanged(object sender, EventArgs e)
+        {
+            //always update it
+            SetupForm.ATTOnTX = (int)udTXStepAttData.Value;
+        }
     }
 
     public class DigiMode

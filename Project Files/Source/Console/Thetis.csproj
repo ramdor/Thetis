@@ -534,9 +534,6 @@
     <Compile Include="KE9N\scan.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="KE9N\stack.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="KE9N\swl.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -805,9 +802,6 @@
     <None Include="Resources\cpu.png" />
     <EmbeddedResource Include="Resources\picD2.png" />
     <EmbeddedResource Include="Resources\star.png" />
-    <EmbeddedResource Include="KE9N\stack.resx">
-      <DependentUpon>stack.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="KE9N\swl.resx">
       <DependentUpon>swl.cs</DependentUpon>
     </EmbeddedResource>

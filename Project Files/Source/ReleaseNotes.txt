@@ -4,6 +4,9 @@
 
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
+## v2.10.3.6 Change Log - WIP dev_5
+- [add] Output AI (kenwwood broadcast info) over cat1/2/3/4/tcpipcat options. (included in dev_4 but here for completeness)
+
 ## v2.10.3.6 Change Log - WIP dev_4
 - [add] CW Edge Length: This is currently only for the ANAN-G2. The ability to load CW edges into the firmware of the legacy ANAN products is not available. The minimum Edge Length is 15ms which, based upon testing, is required to meet the new ARRL Guidelines.  However, due to the edge shape, a 15ms total edge yields about 5ms in the range of 10% - 90% amplitude, i.e., the 15ms number is a bit misleading.
 - [add] New NR features: (1) the "Trained" gain method as described below, (2) an alternative Noise Power Estimation method called "NSTAT" which should have a faster response to changing noise levels, and (3) code added in the AE Filter that removes an annoying rumble that could occasionally occur.
