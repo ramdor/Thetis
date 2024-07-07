@@ -8273,7 +8273,7 @@ namespace Thetis
                 case CheckState.Indeterminate:
                     // G8NJJ Saturn has QSK capability in any version.
                     if (((console.CurrentHPSDRHardware == HPSDRHW.Orion || console.CurrentHPSDRHardware == HPSDRHW.OrionMKII) &&
-                        (NetworkIO.FWCodeVersion >= 17) && !Alex.trx_ant_not_same) || (console.CurrentHPSDRHardware == HPSDRHW.Saturn))
+                        (NetworkIO.FWCodeVersion >= 17) && !Alex.trx_ant_different) || (console.CurrentHPSDRHardware == HPSDRHW.Saturn))
                     {
                         console.BreakInEnabledState = chkCWBreakInEnabled.CheckState;
                         chkCWBreakInEnabled.Text = "QSK";

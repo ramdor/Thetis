@@ -64,7 +64,7 @@ namespace Thetis
         public static bool rx_out_override = false;
         public static bool TRxAnt = false;
 
-        public static bool trx_ant_not_same { set; get; }
+        public static bool trx_ant_different { set; get; }
 		
 		//
 		// SetAntennasTo1 causes RX, TX antennas to be set to 1
@@ -108,7 +108,7 @@ namespace Thetis
 		private bool AlexEnableIsStateSaved = false; 
 		private bool AlexEnableSavedState; 
 		
-		public static Band AntBandFromFreq() 
+		public static Band AntBandFromFreq(bool tx) 
 		{
 			Band result;
  
@@ -117,15 +117,25 @@ namespace Thetis
 			{ 
 				System.Console.WriteLine("no console"); 
 				return Band.LAST; 				
-			} 
+			}
 
-			double freq  = Console.getConsole().VFOAFreq;   //was = 0.0 Vk4xv Txvr fix.
+			//[2.10.3.6]MW0LGE
+			double freq;//  = Console.getConsole().VFOAFreq;   //was = 0.0 Vk4xv Txvr fix.
+			if (tx)
+			{
+				if (c.VFOATX)
+					freq = c.VFOAFreq;
+				else
+					freq = c.VFOBFreq;
+			}
+			else
+                freq = c.VFOAFreq;
 
             if (c.RX1XVTRIndex >= 0)
                 freq = c.XVTRForm.TranslateFreq(freq);
-            else freq = Console.getConsole().VFOAFreq;
+            //[2.10.3.6]MW0LGE else freq = Console.getConsole().VFOAFreq;
 
-			System.Console.WriteLine("Freq is: " + freq); 
+            System.Console.WriteLine("Freq is: " + freq); 
 
 			if ( freq >= 12.075 ) 
 			{ 
@@ -170,7 +180,9 @@ namespace Thetis
 					}
 				} 
 			}
-			return result; 
+
+            System.Console.WriteLine("Band is: " + result);
+            return result; 
 		}
 
         public static Band AntBandFromFreqB()
@@ -267,7 +279,7 @@ namespace Thetis
 
 			if ( idx < 0 || idx > 11 ) 
 			{ 
-				band = AntBandFromFreq(); 
+				band = AntBandFromFreq(tx); 
 				idx = (int)band - (int)Band.B160M; 
 				if ( idx < 0 || idx > 11 ) 
 				{ 
@@ -306,11 +318,7 @@ namespace Thetis
 
                 if (TRxAnt) trx_ant = TxAnt[idx];
                 else trx_ant = RxAnt[idx];
-				if (RxAnt[idx] != TxAnt[idx])
-				{
-					trx_ant_not_same = true;
-				}
-				else trx_ant_not_same = false;
+				trx_ant_different = RxAnt[idx] != TxAnt[idx];
             }
 
             if (rx_out_override && rx_out == 1)
@@ -345,7 +353,7 @@ namespace Thetis
 				m_nOld_rx_out != rx_out ||
 				m_bOld_tx != tx)
 			{
-                System.Console.WriteLine("Ant idx: " + idx); //MW0LGE [2.9.0.8] moved here
+                System.Console.WriteLine("Ant idx: " + idx + "(" + ((Band)idx + (int)Band.B160M).ToString() + ")"); //MW0LGE [2.9.0.8] moved here
                 NetworkIO.SetAntBits(rx_only_ant, trx_ant, tx_ant, rx_out, tx);
 				System.Console.WriteLine("Ant Rx Only {0} , TRx Ant {1}, Tx Ant {2}, Rx Out {3}, TX {4}", rx_only_ant.ToString(), trx_ant.ToString(), tx_ant.ToString(), rx_out.ToString(), tx.ToString());
 

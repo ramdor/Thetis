@@ -5144,7 +5144,8 @@ namespace Thetis
         public void SetBand(string mode, string filter, double freq, bool CTUN, int ZoomFactor, double CenterFreq)
         {
             //MW0LGE_21d
-            Band oldBandV2 = RX1Band;
+            //Band oldBandV2 = RX1Band;
+            Band oldBand = RX1Band;
             DSPMode oldMode = RX1DSPMode;
             Filter oldFilter = RX1Filter;
             double oldFreq = VFOAFreq;
@@ -5156,7 +5157,7 @@ namespace Thetis
 
             // These are needed for managing QSK when band changes also trigger mode changes.
             RX1_band_change = BandByFreq(freq, tx_xvtr_index, true, current_region, true);
-            Band oldBand = RX1Band;
+            //Band oldBand = RX1Band;
             qsk_band_changing = true;
 
             // Set mode, filter, and frequency according to passed parameters
@@ -5246,7 +5247,7 @@ namespace Thetis
             if (oldBand != RX1Band ||
                 oldFreq != VFOAFreq // or if the freq changes
                 )
-                SetBandChangeHanders?.Invoke(1, oldBandV2, RX1Band, oldMode, RX1DSPMode, oldFilter, RX1Filter, oldFreq, VFOAFreq,
+                SetBandChangeHanders?.Invoke(1, oldBand, RX1Band, oldMode, RX1DSPMode, oldFilter, RX1Filter, oldFreq, VFOAFreq,
                     oldCentreFreq, CentreFrequency, oldCtun, ClickTuneDisplay, oldZoomSlider, ptbDisplayZoom.Value);
         }
 
@@ -6688,6 +6689,7 @@ namespace Thetis
 
         public void SetAlexLPF(double freq, bool freqIsTX)
         {
+            Debug.Print("lpf : " + freq.ToString());
             if (!_mox && lpf_bypass)
             {
                 NetworkIO.SetAlexLPFBits(0x10, false, _mox); // 6m LPF
@@ -14629,7 +14631,7 @@ namespace Thetis
         {
             if (chkRxAnt.Checked)
             {
-                if (!Alex.trx_ant_not_same && !initializing)
+                if (!Alex.trx_ant_different && !initializing)
                 {
                     chkRxAnt.Checked = false;
                     return;
@@ -14642,7 +14644,7 @@ namespace Thetis
             {
                 Alex.TRxAnt = false;
                 chkRxAnt.Text = "Rx Ant";
-                if (Alex.trx_ant_not_same) chkRxAnt.ForeColor = Color.SpringGreen;
+                if (Alex.trx_ant_different) chkRxAnt.ForeColor = Color.SpringGreen;
                 else chkRxAnt.ForeColor = SystemColors.ControlLightLight;
             }
 
