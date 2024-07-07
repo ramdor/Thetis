@@ -10377,7 +10377,7 @@ namespace Thetis
                 tx_attenuator_data = value;
                 if (!initializing)
                 {
-                    setTXstepAttenuatorForBand(tx_band, tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes
+                    setTXstepAttenuatorForBand(tx_band, tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes #399
                     if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
                     else NetworkIO.SetTxAttenData(0);
 
