@@ -30,6 +30,10 @@
             this.udATTOnTX = new System.Windows.Forms.NumericUpDownTS();
             this.chkHFTRRelay = new System.Windows.Forms.CheckBoxTS();
             this.grpSWRProtectionControl = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS194 = new System.Windows.Forms.LabelTS();
+            this.udSwrProtectionLimit = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS193 = new System.Windows.Forms.LabelTS();
+            this.udTunePowerSwrIgnore = new System.Windows.Forms.NumericUpDownTS();
             this.chkSWRTuneProtection = new System.Windows.Forms.CheckBoxTS();
             this.chkSWRProtection = new System.Windows.Forms.CheckBoxTS();
             this.chkATTOnTX = new System.Windows.Forms.CheckBoxTS();
@@ -3582,6 +3586,8 @@
             tpAlexAntCtrl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udATTOnTX)).BeginInit();
             this.grpSWRProtectionControl.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udSwrProtectionLimit)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTunePowerSwrIgnore)).BeginInit();
             this.grpAlexAntCtrl.SuspendLayout();
             this.panelAlexTXAntControl.SuspendLayout();
             this.panel23.SuspendLayout();
@@ -4545,7 +4551,7 @@
             // 
             this.lblTXattBand.AutoSize = true;
             this.lblTXattBand.Image = null;
-            this.lblTXattBand.Location = new System.Drawing.Point(550, 162);
+            this.lblTXattBand.Location = new System.Drawing.Point(538, 162);
             this.lblTXattBand.Name = "lblTXattBand";
             this.lblTXattBand.Size = new System.Drawing.Size(31, 13);
             this.lblTXattBand.TabIndex = 22;
@@ -4556,7 +4562,7 @@
             this.chkForceATTwhenOutPowerChanges.Checked = true;
             this.chkForceATTwhenOutPowerChanges.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkForceATTwhenOutPowerChanges.Image = null;
-            this.chkForceATTwhenOutPowerChanges.Location = new System.Drawing.Point(477, 219);
+            this.chkForceATTwhenOutPowerChanges.Location = new System.Drawing.Point(465, 219);
             this.chkForceATTwhenOutPowerChanges.Name = "chkForceATTwhenOutPowerChanges";
             this.chkForceATTwhenOutPowerChanges.Size = new System.Drawing.Size(225, 31);
             this.chkForceATTwhenOutPowerChanges.TabIndex = 21;
@@ -4570,7 +4576,7 @@
             this.chkForceATTwhenPSAoff.Checked = true;
             this.chkForceATTwhenPSAoff.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkForceATTwhenPSAoff.Image = null;
-            this.chkForceATTwhenPSAoff.Location = new System.Drawing.Point(477, 188);
+            this.chkForceATTwhenPSAoff.Location = new System.Drawing.Point(465, 188);
             this.chkForceATTwhenPSAoff.Name = "chkForceATTwhenPSAoff";
             this.chkForceATTwhenPSAoff.Size = new System.Drawing.Size(225, 31);
             this.chkForceATTwhenPSAoff.TabIndex = 20;
@@ -4583,7 +4589,7 @@
             // 
             this.chkEnableXVTRHF.AutoSize = true;
             this.chkEnableXVTRHF.Image = null;
-            this.chkEnableXVTRHF.Location = new System.Drawing.Point(477, 356);
+            this.chkEnableXVTRHF.Location = new System.Drawing.Point(465, 356);
             this.chkEnableXVTRHF.Name = "chkEnableXVTRHF";
             this.chkEnableXVTRHF.Size = new System.Drawing.Size(108, 17);
             this.chkEnableXVTRHF.TabIndex = 19;
@@ -4598,7 +4604,7 @@
             this.chkBPF2Gnd.Checked = true;
             this.chkBPF2Gnd.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBPF2Gnd.Image = null;
-            this.chkBPF2Gnd.Location = new System.Drawing.Point(477, 336);
+            this.chkBPF2Gnd.Location = new System.Drawing.Point(465, 336);
             this.chkBPF2Gnd.Name = "chkBPF2Gnd";
             this.chkBPF2Gnd.Size = new System.Drawing.Size(105, 17);
             this.chkBPF2Gnd.TabIndex = 16;
@@ -4625,7 +4631,7 @@
             // 
             this.chkEXT2OutOnTx.AutoSize = true;
             this.chkEXT2OutOnTx.Image = null;
-            this.chkEXT2OutOnTx.Location = new System.Drawing.Point(477, 276);
+            this.chkEXT2OutOnTx.Location = new System.Drawing.Point(465, 276);
             this.chkEXT2OutOnTx.Name = "chkEXT2OutOnTx";
             this.chkEXT2OutOnTx.Size = new System.Drawing.Size(94, 17);
             this.chkEXT2OutOnTx.TabIndex = 13;
@@ -4638,7 +4644,7 @@
             // 
             this.chkEXT1OutOnTx.AutoSize = true;
             this.chkEXT1OutOnTx.Image = null;
-            this.chkEXT1OutOnTx.Location = new System.Drawing.Point(477, 296);
+            this.chkEXT1OutOnTx.Location = new System.Drawing.Point(465, 296);
             this.chkEXT1OutOnTx.Name = "chkEXT1OutOnTx";
             this.chkEXT1OutOnTx.Size = new System.Drawing.Size(94, 17);
             this.chkEXT1OutOnTx.TabIndex = 10;
@@ -4651,7 +4657,7 @@
             // 
             this.labelATTOnTX.AutoSize = true;
             this.labelATTOnTX.Image = null;
-            this.labelATTOnTX.Location = new System.Drawing.Point(469, 158);
+            this.labelATTOnTX.Location = new System.Drawing.Point(457, 158);
             this.labelATTOnTX.Name = "labelATTOnTX";
             this.labelATTOnTX.Size = new System.Drawing.Size(31, 13);
             this.labelATTOnTX.TabIndex = 9;
@@ -4665,7 +4671,7 @@
             0,
             0,
             0});
-            this.udATTOnTX.Location = new System.Drawing.Point(506, 156);
+            this.udATTOnTX.Location = new System.Drawing.Point(494, 156);
             this.udATTOnTX.Maximum = new decimal(new int[] {
             31,
             0,
@@ -4692,7 +4698,7 @@
             // 
             this.chkHFTRRelay.AutoSize = true;
             this.chkHFTRRelay.Image = null;
-            this.chkHFTRRelay.Location = new System.Drawing.Point(477, 316);
+            this.chkHFTRRelay.Location = new System.Drawing.Point(465, 316);
             this.chkHFTRRelay.Name = "chkHFTRRelay";
             this.chkHFTRRelay.Size = new System.Drawing.Size(95, 17);
             this.chkHFTRRelay.TabIndex = 7;
@@ -4703,14 +4709,97 @@
             // 
             // grpSWRProtectionControl
             // 
+            this.grpSWRProtectionControl.Controls.Add(this.labelTS194);
+            this.grpSWRProtectionControl.Controls.Add(this.udSwrProtectionLimit);
+            this.grpSWRProtectionControl.Controls.Add(this.labelTS193);
+            this.grpSWRProtectionControl.Controls.Add(this.udTunePowerSwrIgnore);
             this.grpSWRProtectionControl.Controls.Add(this.chkSWRTuneProtection);
             this.grpSWRProtectionControl.Controls.Add(this.chkSWRProtection);
-            this.grpSWRProtectionControl.Location = new System.Drawing.Point(453, 44);
+            this.grpSWRProtectionControl.Location = new System.Drawing.Point(441, 44);
             this.grpSWRProtectionControl.Name = "grpSWRProtectionControl";
-            this.grpSWRProtectionControl.Size = new System.Drawing.Size(143, 84);
+            this.grpSWRProtectionControl.Size = new System.Drawing.Size(261, 84);
             this.grpSWRProtectionControl.TabIndex = 5;
             this.grpSWRProtectionControl.TabStop = false;
             this.grpSWRProtectionControl.Text = "SWR Protection";
+            // 
+            // labelTS194
+            // 
+            this.labelTS194.AutoSize = true;
+            this.labelTS194.Image = null;
+            this.labelTS194.Location = new System.Drawing.Point(226, 23);
+            this.labelTS194.Name = "labelTS194";
+            this.labelTS194.Size = new System.Drawing.Size(16, 13);
+            this.labelTS194.TabIndex = 12;
+            this.labelTS194.Text = ":1";
+            // 
+            // udSwrProtectionLimit
+            // 
+            this.udSwrProtectionLimit.DecimalPlaces = 1;
+            this.udSwrProtectionLimit.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.udSwrProtectionLimit.Location = new System.Drawing.Point(173, 20);
+            this.udSwrProtectionLimit.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udSwrProtectionLimit.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udSwrProtectionLimit.Name = "udSwrProtectionLimit";
+            this.udSwrProtectionLimit.Size = new System.Drawing.Size(47, 20);
+            this.udSwrProtectionLimit.TabIndex = 11;
+            this.udSwrProtectionLimit.TinyStep = false;
+            this.udSwrProtectionLimit.Value = new decimal(new int[] {
+            20,
+            0,
+            0,
+            65536});
+            this.udSwrProtectionLimit.ValueChanged += new System.EventHandler(this.udSwrProtectionLimit_ValueChanged);
+            // 
+            // labelTS193
+            // 
+            this.labelTS193.AutoSize = true;
+            this.labelTS193.Image = null;
+            this.labelTS193.Location = new System.Drawing.Point(226, 49);
+            this.labelTS193.Name = "labelTS193";
+            this.labelTS193.Size = new System.Drawing.Size(18, 13);
+            this.labelTS193.TabIndex = 10;
+            this.labelTS193.Text = "W";
+            // 
+            // udTunePowerSwrIgnore
+            // 
+            this.udTunePowerSwrIgnore.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udTunePowerSwrIgnore.Location = new System.Drawing.Point(173, 46);
+            this.udTunePowerSwrIgnore.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.udTunePowerSwrIgnore.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udTunePowerSwrIgnore.Name = "udTunePowerSwrIgnore";
+            this.udTunePowerSwrIgnore.Size = new System.Drawing.Size(47, 20);
+            this.udTunePowerSwrIgnore.TabIndex = 9;
+            this.udTunePowerSwrIgnore.TinyStep = false;
+            this.udTunePowerSwrIgnore.Value = new decimal(new int[] {
+            35,
+            0,
+            0,
+            0});
+            this.udTunePowerSwrIgnore.ValueChanged += new System.EventHandler(this.udTunePowerSwrIgnore_ValueChanged);
             // 
             // chkSWRTuneProtection
             // 
@@ -4719,9 +4808,9 @@
             this.chkSWRTuneProtection.Image = null;
             this.chkSWRTuneProtection.Location = new System.Drawing.Point(24, 44);
             this.chkSWRTuneProtection.Name = "chkSWRTuneProtection";
-            this.chkSWRTuneProtection.Size = new System.Drawing.Size(116, 30);
+            this.chkSWRTuneProtection.Size = new System.Drawing.Size(155, 23);
             this.chkSWRTuneProtection.TabIndex = 4;
-            this.chkSWRTuneProtection.Text = "Disable on Tune Pwr <35W";
+            this.chkSWRTuneProtection.Text = "Ignore when Tune Pwr <";
             this.toolTip1.SetToolTip(this.chkSWRTuneProtection, "Disables SWR Protection during Tune.");
             this.chkSWRTuneProtection.UseVisualStyleBackColor = true;
             this.chkSWRTuneProtection.CheckedChanged += new System.EventHandler(this.chkSWRTuneProtection_CheckedChanged);
@@ -4734,9 +4823,9 @@
             this.chkSWRProtection.Image = null;
             this.chkSWRProtection.Location = new System.Drawing.Point(24, 21);
             this.chkSWRProtection.Name = "chkSWRProtection";
-            this.chkSWRProtection.Size = new System.Drawing.Size(110, 17);
+            this.chkSWRProtection.Size = new System.Drawing.Size(148, 17);
             this.chkSWRProtection.TabIndex = 3;
-            this.chkSWRProtection.Text = "Enable Protection";
+            this.chkSWRProtection.Text = "Enable Protection SWR >";
             this.toolTip1.SetToolTip(this.chkSWRProtection, "Disables SWR Protection.");
             this.chkSWRProtection.UseVisualStyleBackColor = true;
             this.chkSWRProtection.CheckedChanged += new System.EventHandler(this.chkSWRProtection_CheckedChanged);
@@ -4747,7 +4836,7 @@
             this.chkATTOnTX.Checked = true;
             this.chkATTOnTX.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkATTOnTX.Image = null;
-            this.chkATTOnTX.Location = new System.Drawing.Point(477, 134);
+            this.chkATTOnTX.Location = new System.Drawing.Point(465, 134);
             this.chkATTOnTX.Name = "chkATTOnTX";
             this.chkATTOnTX.Size = new System.Drawing.Size(77, 17);
             this.chkATTOnTX.TabIndex = 4;
@@ -4760,7 +4849,7 @@
             // 
             this.chkRxOutOnTx.AutoSize = true;
             this.chkRxOutOnTx.Image = null;
-            this.chkRxOutOnTx.Location = new System.Drawing.Point(477, 256);
+            this.chkRxOutOnTx.Location = new System.Drawing.Point(465, 256);
             this.chkRxOutOnTx.Name = "chkRxOutOnTx";
             this.chkRxOutOnTx.Size = new System.Drawing.Size(98, 17);
             this.chkRxOutOnTx.TabIndex = 2;
@@ -57004,6 +57093,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.udATTOnTX)).EndInit();
             this.grpSWRProtectionControl.ResumeLayout(false);
             this.grpSWRProtectionControl.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udSwrProtectionLimit)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTunePowerSwrIgnore)).EndInit();
             this.grpAlexAntCtrl.ResumeLayout(false);
             this.panelAlexTXAntControl.ResumeLayout(false);
             this.panel23.ResumeLayout(false);
@@ -61711,5 +61802,9 @@
         private LabelTS labelTS160;
         private RadioButtonTS radBelow144;
         private RadioButtonTS radBelow30;
+        private NumericUpDownTS udTunePowerSwrIgnore;
+        private LabelTS labelTS194;
+        private NumericUpDownTS udSwrProtectionLimit;
+        private LabelTS labelTS193;
     }
 }

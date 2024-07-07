@@ -24256,12 +24256,12 @@ namespace Thetis
         {
             while (chkPower.Checked)
             {
-                float rx1PreampOffset;
-                if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
-                else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
-
                 if (!_mox)
                 {
+                    float rx1PreampOffset;
+                    if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
+                    else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+
                     float num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH);
                     num = num +
                     rx1_meter_cal_offset +
@@ -24462,7 +24462,6 @@ namespace Thetis
                 }
                 await Task.Delay(1);
             }
-
         }
 
         private int last_dot = 0;
@@ -24861,13 +24860,15 @@ namespace Thetis
 
                     if ((alex_fwd <= 2.0f && alex_rev <= 2.0f) || swr < 1.0f) swr = 1.0f;
 
+                    //[2.10.3.6]MW0LGE modifications to use setup config for swr and tune ignore power. Implements #221 (https://github.com/ramdor/Thetis/issues/221)
                     if (alexpresent || apollopresent)
                     {
                         // in following 'if', K2UE recommends not checking open antenna for the 8000 model
                         // if (swrprotection && alex_fwd > 10.0f && (alex_fwd - alex_rev) < 1.0f)
                         //-W2PA Changed to allow 35w - some amplifier tuners need about 30w to reliably start working
-                        if (swrprotection && alex_fwd > 35.0f && (alex_fwd - alex_rev) < 1.0f
-                            && current_hpsdr_model != HPSDRModel.ANAN8000D) // open ant condition
+                        //if (swrprotection && alex_fwd > 35.0f && (alex_fwd - alex_rev) < 1.0f
+                        if (!chkTUN.Checked && (swrprotection && alex_fwd > 10.0f && (alex_fwd - alex_rev) < 1.0f //[2.10.3.6]MW0LGE ignored if tuning, and returned the 10.0f
+                            && current_hpsdr_model != HPSDRModel.ANAN8000D)) // open ant condition
                         {
                             swr = 50.0f;
                             NetworkIO.SWRProtect = 0.01f;
@@ -24888,11 +24889,44 @@ namespace Thetis
                         swr = 1.0f;
                         alex_fwd = 0;
                         alex_rev = 0;
-                    }
+                    }                    
 
                     if (chkTUN.Checked && disable_swr_on_tune && (alexpresent || apollopresent))
                     {
-                        if (alex_fwd >= 1.0f && alex_fwd <= 35.0f && ptbPWR.Value <= 70)
+                        int tunePowerSliderValue; // need to get the correct slider
+
+                        if (chk2TONE.Checked)
+                        {
+                            switch (TwoToneDrivePowerOrigin)
+                            {
+                                case DrivePowerSource.TUNE_SLIDER:
+                                    tunePowerSliderValue = ptbTune.Value;
+                                    break;
+                                case DrivePowerSource.DRIVE_SLIDER:
+                                    tunePowerSliderValue = ptbPWR.Value;
+                                    break;
+                                default:
+                                    tunePowerSliderValue = ptbPWR.Value;
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            switch (TuneDrivePowerOrigin)
+                            {
+                                case DrivePowerSource.TUNE_SLIDER:
+                                    tunePowerSliderValue = ptbTune.Value;
+                                    break;
+                                case DrivePowerSource.DRIVE_SLIDER:
+                                    tunePowerSliderValue = ptbPWR.Value;
+                                    break;
+                                default:
+                                    tunePowerSliderValue = ptbPWR.Value;
+                                    break;
+                            }
+                        }
+
+                        if (alex_fwd >= 1.0f && alex_fwd <= _tunePowerSwrIgnore && tunePowerSliderValue <= 70)
                         {
                             swr_pass = true;
                         }
@@ -24906,13 +24940,13 @@ namespace Thetis
                     if (current_hpsdr_model == HPSDRModel.ANAN8000D)        // K2UE idea:  try to determine if Hi-Z or Lo-Z load
                         alex_fwd_limit = 2.0f * (float)ptbPWR.Value;        //    by comparing alex_fwd with power setting
 
-                    if (swr > 2.0f && alex_fwd > alex_fwd_limit && swrprotection && !swr_pass)
+                    if (swr > _swrProtectionLimit && alex_fwd > alex_fwd_limit && swrprotection && !swr_pass)
                     {
                         high_swr_count++;
                         if (high_swr_count >= 4)
                         {
                             high_swr_count = 0;
-                            NetworkIO.SWRProtect = (float)(2.0f / (swr + 1.0f));
+                            NetworkIO.SWRProtect = (float)(_swrProtectionLimit / (swr + 1.0f));
                             HighSWR = true;
                         }
                     }
@@ -24931,7 +24965,11 @@ namespace Thetis
                         alex_swr = swr;
                 }
                 else if (high_swr) HighSWR = false;
-                await Task.Delay(1);
+
+                if(_mox)
+                    await Task.Delay(1);
+                else
+                    await Task.Delay(10);
             }
 
             alex_fwd = 0;
@@ -24941,7 +24979,19 @@ namespace Thetis
             alex_swr = 0;
             average_drivepwr = 0;
         }
-
+        
+        private float _swrProtectionLimit = 2.0f;
+        public float SwrProtectionLimit
+        {
+            get { return _swrProtectionLimit; }
+            set { _swrProtectionLimit = value; }
+        }
+        private float _tunePowerSwrIgnore = 35.0f;
+        public float TunePowerSwrIgnore
+        {
+            get { return _tunePowerSwrIgnore; }
+            set { _tunePowerSwrIgnore = value; }
+        }
         private double SWRScale(double ref_pow)
         {
             if (ref_pow < 19) return 1.0;
