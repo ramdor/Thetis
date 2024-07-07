@@ -26877,6 +26877,18 @@ namespace Thetis
             WDSP.SetRXAEMNRtrainZetaThresh(WDSP.id(2, 0), (double)udDSPNR2trainThreshRX2.Value);
             WDSP.SetRXAEMNRtrainZetaThresh(WDSP.id(2, 1), (double)udDSPNR2trainThreshRX2.Value);
         }
+
+        private void radBelow30_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radBelow30.Checked)
+                console.S9Frequency = 30.0;
+        }
+
+        private void radBelow144_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radBelow144.Checked)
+                console.S9Frequency = 144.0;
+        }
     }
 
     #region PADeviceInfo Helper Class

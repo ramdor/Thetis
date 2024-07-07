@@ -20803,7 +20803,7 @@ namespace Thetis
 
                         if (_UseSUnitsForPBNPPBSNR)
                         {
-                            sEstimated_passband_noise_power = Common.GetSMeterUnits(estimated_passband_noise_power, VFOAFreq >= 30).ToString("N1") + "su";
+                            sEstimated_passband_noise_power = Common.GetSMeterUnits(estimated_passband_noise_power, VFOAFreq >= S9Frequency).ToString("N1") + "su";
                             sEstimated_snr = (estimated_snr / 6f).ToString("N1") + "su";
                         }
                         else
@@ -20862,7 +20862,7 @@ namespace Thetis
 
                         if (_UseSUnitsForPBNPPBSNR)
                         {
-                            sEstimated_passband_noise_power = Common.GetSMeterUnits(estimated_passband_noise_power, VFOBFreq >= 30).ToString("N1") + "su";
+                            sEstimated_passband_noise_power = Common.GetSMeterUnits(estimated_passband_noise_power, VFOBFreq >= S9Frequency).ToString("N1") + "su";
                             sEstimated_snr = (estimated_snr / 6f).ToString("N1") + "sU";
                         }
                         else
@@ -21118,16 +21118,16 @@ namespace Thetis
             MeterRXMode rxMode;
             MeterTXMode txMode = chkTUN.Checked ? tune_meter_tx_mode : current_meter_tx_mode;
 
-            bool bAbove30;
+            bool bAboveS9Frequency;
             if (rx == 1)
             {
                 rxMode = current_meter_rx_mode;
-                bAbove30 = (VFOAFreq >= 30.0); //MW0LGE_21a
+                bAboveS9Frequency = (VFOAFreq >= S9Frequency); //MW0LGE_21a
             }
             else
             {
                 rxMode = rx2_meter_mode;
-                bAbove30 = (VFOBFreq >= 30.0); //MW0LGE_21a
+                bAboveS9Frequency = (VFOBFreq >= S9Frequency); //MW0LGE_21a
             }
 
             if (!_mox || rx == 2) // rx2 can not tx
@@ -21171,7 +21171,7 @@ namespace Thetis
                             g.DrawString("+" + (i * 20).ToString(), font7, high_brush, (float)((double)W * 0.5 + i * spacing - string_width * 3 - (double)i / 3 * 2), (float)((double)H - nStringOffsetY - string_height));
                         }
 
-                        if (bAbove30)
+                        if (bAboveS9Frequency)
                         {
                             if (num > -93.0) // high area
                             {
@@ -22525,7 +22525,7 @@ namespace Thetis
                             switch (m_eMeasureMode)
                             {
                                 case MultiMeterMeasureMode.SMeter:
-                                    output = Common.SMeterFromDBM(num, VFOAFreq >= 30);
+                                    output = Common.SMeterFromDBM(num, VFOAFreq >= S9Frequency);
                                     break;
                                 case MultiMeterMeasureMode.DBM:
                                     output = num.ToString(format) + " dBm";
@@ -22761,7 +22761,7 @@ namespace Thetis
                         switch (m_eMeasureMode)
                         {
                             case MultiMeterMeasureMode.SMeter:
-                                output = Common.SMeterFromDBM(num, VFOBFreq >= 30);
+                                output = Common.SMeterFromDBM(num, VFOBFreq >= S9Frequency);
                                 break;
                             case MultiMeterMeasureMode.DBM:
                                 output = num.ToString(format) + " dBm";
@@ -47878,6 +47878,16 @@ namespace Thetis
         {
             //always update it
             SetupForm.ATTOnTX = (int)udTXStepAttData.Value;
+        }
+
+        private double _s9Frequency = 30.0;
+        public double S9Frequency //[2.10.3.6]MW0LGE implements #418
+        {
+            get { return _s9Frequency; }
+            set {
+                _s9Frequency = value;
+                MeterManager.UpdateS9();
+            }
         }
     }
 
