@@ -41619,23 +41619,24 @@ namespace Thetis
 
             setupHiddenButton(grpVFOA); //MW0LGE_21a
 
-            if (rx1_step_att_present)
-            {
-                udRX1StepAttData.BringToFront();
-            }
-            else
-            {
-                comboPreamp.BringToFront();
-            }
+            //[2.10.3.6]MW0LGE now down below after the expanded flag change, as updateAttNudsCombos
+            //if (rx1_step_att_present)
+            //{
+            //    udRX1StepAttData.BringToFront();
+            //}
+            //else
+            //{
+            //    comboPreamp.BringToFront();
+            //}
 
-            if (rx2_step_att_present)
-            {
-                udRX2StepAttData.BringToFront();
-            }
-            else
-            {
-                comboRX2Preamp.BringToFront();
-            }
+            //if (rx2_step_att_present)
+            //{
+            //    udRX2StepAttData.BringToFront();
+            //}
+            //else
+            //{
+            //    comboRX2Preamp.BringToFront();
+            //}
 
             // G8NJJ
             comboDisplayMode.Parent = panelDisplay2;
@@ -41770,6 +41771,8 @@ namespace Thetis
 
             isexpanded = true;
             iscollapsed = false;
+
+            updateAttNudsCombos(); //[2.10.3.6]MW0LGE
 
             updateLegacyMeterControls(true);// [2.10.1.0] MW0LGE
 
