@@ -6737,7 +6737,7 @@ namespace Thetis
 
         public void SetAlexLPF(double freq, bool freqIsTX)
         {
-            Debug.Print("lpf : " + freq.ToString());
+            //Debug.Print("lpf : " + freq.ToString());
             if (!_mox && lpf_bypass)
             {
                 NetworkIO.SetAlexLPFBits(0x10, false, _mox); // 6m LPF
@@ -10653,21 +10653,18 @@ namespace Thetis
                 rx1_step_att_present = value;
                 if (rx1_step_att_present)
                 {
-                    lblPreamp.Text = "S-ATT";
-                    udRX1StepAttData.BringToFront();
+                    udRX1StepAttData.Value = getRX1stepAttenuatorForBand(rx1_band); //MW0LGE [2.10.3.6] added
                     udRX1StepAttData_ValueChanged(this, EventArgs.Empty);
                 }
                 else
                 {
-                    lblPreamp.Text = "ATT";
-                    comboPreamp.BringToFront();
                     comboPreamp_SelectedIndexChanged(this, EventArgs.Empty);
 
                     if (alexpresent)
                         NetworkIO.SetAlexAtten(alex_atten); // normal up alex attenuator setting
                 }
 
-                handleAttCombosNuds();
+                updateAttNudsCombos();
 
                 if (!_mox)
                 {
@@ -10811,23 +10808,15 @@ namespace Thetis
                 {
                     if (rx2_step_att_present)
                     {
-                        lblRX2Preamp.Visible = true;
-                        udRX2StepAttData.Visible = true;
-                        lblRX2Preamp.Text = "S-ATT";
-                        udRX2StepAttData.BringToFront();
                         udRX2StepAttData.Value = getRX2stepAttenuatorForBand(rx2_band);
                         udRX2StepAttData_ValueChanged(this, EventArgs.Empty);
                     }
                     else
                     {
-                        lblRX2Preamp.Visible = true;
-                        lblRX2Preamp.Text = "ATT";
-                        comboRX2Preamp.Visible = true;
-                        comboRX2Preamp.BringToFront();
                         comboRX2Preamp_SelectedIndexChanged(this, EventArgs.Empty);
                     }
 
-                    handleAttCombosNuds();
+                    updateAttNudsCombos();
 
                     if (!_mox)
                     {
@@ -10836,14 +10825,6 @@ namespace Thetis
                         UpdatePreamps();
                     }
                     UpdateRX2DisplayOffsets();
-
-                    if (iscollapsed && !isexpanded)
-                    {
-                        //[2.10.3.4]MW0LGE we need to move the meters to top, because in collasped mode the bring to fronts above
-                        //will cause the combo to be above everything, including meters.
-                        MeterManager.BringToFront();
-                    }
-
                 }
             }
         }
@@ -28974,8 +28955,18 @@ namespace Thetis
 
         private void updateAttNudsCombos()
         {
+            if (rx1_step_att_present)
+                udRX1StepAttData.BringToFront();
+            else
+                comboPreamp.BringToFront();
+            if (rx2_step_att_present)
+                udRX2StepAttData.BringToFront();
+            else
+                comboRX2Preamp.BringToFront();
+
             //update the nud and combos, for attenuators, both rx and tx
-            if (_mox)
+            bool bShowOnMox = _mox && (isexpanded || (iscollapsed && !(showAndromedaTopControls || showAndromedaButtonBar)));
+            if (bShowOnMox)
             {
                 if (VFOATX || (VFOBTX && !rx2_enabled))
                 {
@@ -29021,6 +29012,13 @@ namespace Thetis
                 udTXStepAttData.Visible = false;
                 lblPreamp.Text = rx1_step_att_present ? "S-ATT" : "ATT";
                 lblRX2Preamp.Text = rx2_step_att_present ? "S-ATT" : (rx2_preamp_present ? "ATT" : "");
+            }
+
+            if (iscollapsed && !isexpanded)
+            {
+                //MW0LGE we need to move the meters to top, because in collasped mode the bring to fronts above
+                //will cause the combo to be above everything, including meters.
+                MeterManager.BringToFront();
             }
         }
 
@@ -42788,39 +42786,6 @@ namespace Thetis
                 }
             }
         }
-        //
-        private void handleAttCombosNuds() //[2.10.3.4]MW0LGE called from functions that make these visble
-        {
-            if (!iscollapsed && isexpanded) return;
-
-            updateAttNudsCombos(); //MW0LGE [2.10.3.6] att_fix
-
-            //if (show_rx1)
-            //{
-            //    comboRX2Preamp.Hide();
-            //    udRX2StepAttData.Hide();
-            //    comboPreamp.Show();
-            //    udRX1StepAttData.Show();
-            //}
-            //else if (show_rx2)
-            //{
-            //    if (rx2_preamp_present)
-            //    {
-            //        comboPreamp.Hide();
-            //        udRX1StepAttData.Hide();
-            //        comboRX2Preamp.Show();
-            //        udRX2StepAttData.Show();
-            //    }
-            //    else
-            //    {
-            //        comboRX2Preamp.Hide();
-            //        udRX2StepAttData.Hide();
-            //        comboPreamp.Show();
-            //        udRX1StepAttData.Show();
-            //    }
-            //}
-        }
-        //
 
         //
         // modified G8NJJ to add alternate top/button controls for Andromeda
