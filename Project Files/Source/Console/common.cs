@@ -893,11 +893,11 @@ namespace Thetis
             //return uV (rms) from dBm (50 ohms)
             return Math.Sqrt(Math.Pow(10, dbm / 10) * 50 * 1e-3) * 1e6;
         }
-		public static string SMeterFromDBM(double dbm, bool bAbove30)
+		public static string SMeterFromDBM(double dbm, bool bAboveS9Frequency)
         {
             string sRet;
 
-            if (bAbove30)
+            if (bAboveS9Frequency)
             {
                 if (dbm <= -144.0f) sRet = "S 0";
                 else if (dbm > -144.0f & dbm <= -138.0f) sRet = "S 1";
@@ -941,18 +941,18 @@ namespace Thetis
             }
             return "    " + sRet;
         }
-        public static double GetSMeterUnits(double dbm, bool bAbove30)
+        public static double GetSMeterUnits(double dbm, bool bAboveS9Frequency)
         {
-            if (bAbove30)
+            if (bAboveS9Frequency)
                 return 9 + ((dbm + 93) / 6f); //MW0LGE_[2.9.0.7] fixed to 93
             else
                 return 9 + ((dbm + 73) / 6f);
         }
-        public static void SMeterFromDBM2(double dbm, bool bAbove30, out int S, out int over9dBm)
+        public static void SMeterFromDBM2(double dbm, bool bAboveS9Frequency, out int S, out int over9dBm)
         {
 			// version that returns via out parameters the S reading, and the dbm over reading
 
-            if (bAbove30)
+            if (bAboveS9Frequency)
             {
 				if (dbm <= -144.0f) { S = 0; over9dBm = 0; }
                 else if (dbm > -144.0f & dbm <= -138.0f) { S = 1; over9dBm = 0; }
