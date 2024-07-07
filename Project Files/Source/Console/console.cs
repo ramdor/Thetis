@@ -44317,7 +44317,7 @@ namespace Thetis
                 }
                 else
                 {
-                    SetupForm.HermesEnableAttenuator = !SetupForm.HermesEnableAttenuator;
+                    SetupForm.RX1EnableAtt = !SetupForm.RX1EnableAtt;
                 }
             }
             else if (current_hpsdr_model != HPSDRModel.HPSDR)
