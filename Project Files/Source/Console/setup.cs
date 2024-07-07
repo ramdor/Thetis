@@ -997,6 +997,8 @@ namespace Thetis
             chkAlex220BPHPF_CheckedChanged(this, e);
             chkAlex26BPHPF_CheckedChanged(this, e);
 
+            chkATTOnTX_CheckedChanged(this, e); //MW0LGE [2.10.3.6]
+
             //MW0LGE_21h to make G8NJJ_21h change in each function work
             chkBlockTxAnt2_CheckedChanged(this, e);
             chkBlockTxAnt3_CheckedChanged(this, e);
@@ -3509,7 +3511,7 @@ namespace Thetis
             }
         }
 
-        public bool HermesEnableAttenuator
+        public bool RX1EnableAtt
         {
             get
             {
@@ -3536,7 +3538,7 @@ namespace Thetis
             }
         }
 
-        public int HermesAttenuatorData
+        public int ATTOnRX1
         {
             get
             {
@@ -3545,10 +3547,16 @@ namespace Thetis
             }
             set
             {
-                if (udHermesStepAttenuatorData != null) udHermesStepAttenuatorData.Value = value;
+                if (udHermesStepAttenuatorData != null)
+                {
+                    if (udHermesStepAttenuatorData.Value == value)
+                        udHermesStepAttenuatorData_ValueChanged(this, EventArgs.Empty); //[2.10.3.6] no event will fire if the same, so force it
+                    else
+                        udHermesStepAttenuatorData.Value = value;
+                }
             }
         }
-        public int HermesAttenuatorDataRX2
+        public int ATTOnRX2
         {
             get
             {
@@ -3557,7 +3565,13 @@ namespace Thetis
             }
             set
             {
-                if (udHermesStepAttenuatorDataRX2 != null) udHermesStepAttenuatorDataRX2.Value = value;
+                if (udHermesStepAttenuatorDataRX2 != null)
+                {
+                    if (udHermesStepAttenuatorDataRX2.Value == value)
+                        udHermesStepAttenuatorDataRX2_ValueChanged(this, EventArgs.Empty); //[2.10.3.6]MW0LGE no event will fire if the same, so force it
+                    else
+                        udHermesStepAttenuatorDataRX2.Value = value;
+                }
             }
         }
         public bool RX2EnableAtt
@@ -3598,7 +3612,7 @@ namespace Thetis
                     }
 
                     lblTXattBand.Text = console.TXBand.ToString();
-                    if (udATTOnTX.Value == value) //[2.10.3.6]MW0LGE there will be no change event
+                    if (udATTOnTX.Value == value) //[2.10.3.6]MW0LGE no event will fire if the same, so force it
                         udATTOnTX_ValueChanged(this, EventArgs.Empty);
                     else
                         udATTOnTX.Value = value;
@@ -16870,13 +16884,9 @@ namespace Thetis
             if (initializing) return;
             console.radio.GetDSPRX(0, 1).RXADollyFreq1 = (double)udDSPRX1SubDollyF1.Value;
         }
-        //private bool _updatingATTTX = false;
         private void udATTOnTX_ValueChanged(object sender, EventArgs e)
         {
-            //if (_updatingATTTX) return;
-            //_updatingATTTX = true;
             console.TxAttenData = (int)udATTOnTX.Value;
-            //_updatingATTTX = false;
         }
 
         private void ud6mLNAGainOffset_ValueChanged(object sender, EventArgs e)
@@ -23703,6 +23713,7 @@ namespace Thetis
         private void OnTXBandChanged(Band oldBand, Band newBand)
         {
             setAdjustingBand(console.TXBand);
+            lblTXattBand.Text = newBand.ToString(); //[2.3.10.6]MW0LGE added (also in ATTOnTX)
         }
         private void setAdjustingBand(Band b)
         {
