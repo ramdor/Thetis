@@ -3715,7 +3715,7 @@ namespace Thetis
                     break;
 
                 case EButtonBarActions.eBBRXAntenna:               // RX antenna toggle
-                    if (Alex.trx_ant_not_same)
+                    if (Alex.trx_ant_different)
                         NewString = chkRxAnt.Text;
                     else
                         NewString = DefaultString + " (already = TX ant)";
