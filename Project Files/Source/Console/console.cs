@@ -24868,8 +24868,8 @@ namespace Thetis
                         // if (swrprotection && alex_fwd > 10.0f && (alex_fwd - alex_rev) < 1.0f)
                         //-W2PA Changed to allow 35w - some amplifier tuners need about 30w to reliably start working
                         //if (swrprotection && alex_fwd > 35.0f && (alex_fwd - alex_rev) < 1.0f
-                        if (swrprotection && ((alex_fwd > 10.0f) || (disable_swr_on_tune && (alex_fwd > _tunePowerSwrIgnore))) && (alex_fwd - alex_rev) < 1.0f
-                            && current_hpsdr_model != HPSDRModel.ANAN8000D) // open ant condition
+                        if (!chkTUN.Checked && (swrprotection && alex_fwd > 10.0f && (alex_fwd - alex_rev) < 1.0f //[2.10.3.6]MW0LGE ignored if tuning, and returned the 10.0f
+                            && current_hpsdr_model != HPSDRModel.ANAN8000D)) // open ant condition
                         {
                             swr = 50.0f;
                             NetworkIO.SWRProtect = 0.01f;
