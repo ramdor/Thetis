@@ -24256,12 +24256,12 @@ namespace Thetis
         {
             while (chkPower.Checked)
             {
-                float rx1PreampOffset;
-                if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
-                else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
-
                 if (!_mox)
                 {
+                    float rx1PreampOffset;
+                    if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
+                    else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+
                     float num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH);
                     num = num +
                     rx1_meter_cal_offset +
@@ -24462,7 +24462,6 @@ namespace Thetis
                 }
                 await Task.Delay(1);
             }
-
         }
 
         private int last_dot = 0;
@@ -24966,7 +24965,11 @@ namespace Thetis
                         alex_swr = swr;
                 }
                 else if (high_swr) HighSWR = false;
-                await Task.Delay(1);
+
+                if(_mox)
+                    await Task.Delay(1);
+                else
+                    await Task.Delay(10);
             }
 
             alex_fwd = 0;
