@@ -10614,13 +10614,6 @@ namespace Thetis
                     UpdatePreamps();
                 }
                 UpdateRX1DisplayOffsets();
-
-                if(iscollapsed && !isexpanded)
-                {
-                    //[2.10.3.4]MW0LGE we need to move the meters to top, because in collasped mode the bring to fronts above
-                    //will cause the combo to be above everything, including meters.
-                    MeterManager.BringToFront();
-                }
             }
         }
 
@@ -10743,17 +10736,17 @@ namespace Thetis
                     {
                         comboRX2Preamp_SelectedIndexChanged(this, EventArgs.Empty);
                     }
-
-                    updateAttNudsCombos();
-
-                    if (!_mox)
-                    {
-                        //update_preamp_mode = false;
-                        update_preamp = true;
-                        UpdatePreamps();
-                    }
-                    UpdateRX2DisplayOffsets();
                 }
+
+                updateAttNudsCombos();
+
+                if (!_mox)
+                {
+                    //update_preamp_mode = false;
+                    update_preamp = true;
+                    UpdatePreamps();
+                }
+                UpdateRX2DisplayOffsets();
             }
         }
 
