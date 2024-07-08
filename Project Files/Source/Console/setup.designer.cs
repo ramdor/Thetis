@@ -62679,7 +62679,6 @@
         private CheckBoxTS chkVisualNotch;
         private ButtonTS btnRX2PBsnr;
         private ButtonTS btnRX1PBsnr;
-        private LabelTS labelTS160;
         private ButtonTS btnResetNFShift;
         private GroupBoxTS grpMultiMeterHolder;
         private ButtonTS btnAddRX2Container;

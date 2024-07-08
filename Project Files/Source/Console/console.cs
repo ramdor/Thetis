@@ -631,34 +631,11 @@ namespace Thetis
 
             if (AppDataPath == "")
             {
-                string AppDataPathHL2;
-
                 AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                     + "\\OpenHPSDR\\Thetis\\";
                 if (Environment.Is64BitProcess)
                     AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                     + "\\OpenHPSDR\\Thetis-x64\\";
-
-                // MI0BOT: Migration of HL2 directory to standard Thetis
-
-                AppDataPathHL2 = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-                    + "\\OpenHPSDR\\Thetis-HL2\\";
-                if (Environment.Is64BitProcess)
-                    AppDataPathHL2 = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-                    + "\\OpenHPSDR\\Thetis-HL2-x64\\";
-
-                if (Directory.Exists(AppDataPathHL2.TrimEnd('\\')))
-                {
-                    if (Directory.Exists(AppDataPath.TrimEnd('\\')))
-                    {
-                        if (Directory.Exists(AppDataPath.TrimEnd('\\') + ".bak"))
-                            Directory.Delete(AppDataPath.TrimEnd('\\'));
-                        else
-                            Directory.Move(AppDataPath.TrimEnd('\\'), AppDataPath.TrimEnd('\\') + ".bak");
-                    }
-                    
-                    Directory.Move(AppDataPathHL2.TrimEnd('\\'), AppDataPath.TrimEnd('\\'));
-                }
             }
 
             foreach (string s in args)
