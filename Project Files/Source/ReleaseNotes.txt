@@ -5,10 +5,11 @@
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
 ## v2.10.3.6 Change Log - WIP dev_5
-- [add] Output AI (kenwwood broadcast info) over cat1/2/3/4/tcpipcat options. (included in dev_4 but here for completeness)
-- [add] option in setup for S9 @ -73 or -93 for 30MHz and 144MHz (Fixes #418)
-- [add] options added for SWR protection. Swr limits, and tune power
-- [fix] decouple of the rx1/rx2 attenuator preamp/s-att boxes from tx-att. (Fixes #399)
+- [add] output AI (kenwwood broadcast info) over cat1/2/3/4/tcpipcat options. (included in dev_4 but here for completeness)
+- [add] option in setup for S9 @ -73 or -93 for 30MHz and 144MHz (github #418)
+- [add] options added for SWR protection. Swr limits, and tune power (github #221)
+- [add] zzoa and zzoc cat commands have been added. zzoa - get/set the rx antenna based on rx1 band. zzoc - get/set the tx antenna based on tx band (github #385)
+- [fix] decouple of the rx1/rx2 attenuator preamp/s-att boxes from tx-att. New tx-att control, and bg colour settings in appearance (github #399)
 - [change] simplification improvements to db import
 
 ## v2.10.3.6 Change Log - WIP dev_4

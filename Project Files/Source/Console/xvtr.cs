@@ -47,6 +47,7 @@ namespace Thetis
 		private NumericUpDownTS[] power;
 		private CheckBoxTS[] xvtr_rf;
         private CheckBox[] disable_pa;
+        private ComboBoxTS[] rx_antennas;
 
 		private System.Windows.Forms.TextBoxTS txtBandButton0;
 		private System.Windows.Forms.TextBoxTS txtBandButton1;
@@ -254,7 +255,24 @@ namespace Thetis
         private CheckBoxTS chkDisablePA1;
         private CheckBoxTS chkDisablePA0;
         private LabelTS lblDisablePA;
-		private System.ComponentModel.Container components = null;
+        private LabelTS labelTS1;
+        private ComboBoxTS comboAnt0;
+        private ComboBoxTS comboAnt1;
+        private ComboBoxTS comboAnt2;
+        private ComboBoxTS comboAnt5;
+        private ComboBoxTS comboAnt4;
+        private ComboBoxTS comboAnt3;
+        private ComboBoxTS comboAnt11;
+        private ComboBoxTS comboAnt10;
+        private ComboBoxTS comboAnt9;
+        private ComboBoxTS comboAnt8;
+        private ComboBoxTS comboAnt7;
+        private ComboBoxTS comboAnt6;
+        private ComboBoxTS comboAnt15;
+        private ComboBoxTS comboAnt14;
+        private ComboBoxTS comboAnt13;
+        private ComboBoxTS comboAnt12;
+        private System.ComponentModel.Container components = null;
 
 		#endregion
 
@@ -318,6 +336,40 @@ namespace Thetis
 		private void InitializeComponent()
 		{
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(XVTRForm));
+            this.comboAnt15 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt14 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt13 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt12 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt11 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt10 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt9 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt8 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt7 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt6 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt5 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt4 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt3 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt2 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt1 = new System.Windows.Forms.ComboBoxTS();
+            this.comboAnt0 = new System.Windows.Forms.ComboBoxTS();
+            this.labelTS1 = new System.Windows.Forms.LabelTS();
+            this.chkDisablePA15 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA14 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA13 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA12 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA11 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA10 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA9 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA8 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA7 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA6 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA5 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA4 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA3 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA2 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA1 = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisablePA0 = new System.Windows.Forms.CheckBoxTS();
+            this.lblDisablePA = new System.Windows.Forms.LabelTS();
             this.chkAlexTRRelay = new System.Windows.Forms.CheckBoxTS();
             this.chkUseXVTRTUNPWR = new System.Windows.Forms.CheckBoxTS();
             this.udRXGain15 = new System.Windows.Forms.NumericUpDownTS();
@@ -507,23 +559,6 @@ namespace Thetis
             this.chkEnable0 = new System.Windows.Forms.CheckBoxTS();
             this.lblButtonText = new System.Windows.Forms.LabelTS();
             this.lblBandButton = new System.Windows.Forms.LabelTS();
-            this.chkDisablePA15 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA14 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA13 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA12 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA11 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA10 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA9 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA8 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA7 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA6 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA5 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA4 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA3 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA2 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA1 = new System.Windows.Forms.CheckBoxTS();
-            this.chkDisablePA0 = new System.Windows.Forms.CheckBoxTS();
-            this.lblDisablePA = new System.Windows.Forms.LabelTS();
             ((System.ComponentModel.ISupportInitialize)(this.udRXGain15)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRXGain14)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRXGain13)).BeginInit();
@@ -622,6 +657,456 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.udLOOffset0)).BeginInit();
             this.SuspendLayout();
             // 
+            // comboAnt15
+            // 
+            this.comboAnt15.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt15.Enabled = false;
+            this.comboAnt15.FormattingEnabled = true;
+            this.comboAnt15.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt15.Location = new System.Drawing.Point(842, 407);
+            this.comboAnt15.Name = "comboAnt15";
+            this.comboAnt15.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt15.TabIndex = 240;
+            this.comboAnt15.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt14
+            // 
+            this.comboAnt14.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt14.Enabled = false;
+            this.comboAnt14.FormattingEnabled = true;
+            this.comboAnt14.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt14.Location = new System.Drawing.Point(842, 382);
+            this.comboAnt14.Name = "comboAnt14";
+            this.comboAnt14.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt14.TabIndex = 239;
+            this.comboAnt14.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt13
+            // 
+            this.comboAnt13.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt13.Enabled = false;
+            this.comboAnt13.FormattingEnabled = true;
+            this.comboAnt13.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt13.Location = new System.Drawing.Point(842, 358);
+            this.comboAnt13.Name = "comboAnt13";
+            this.comboAnt13.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt13.TabIndex = 238;
+            this.comboAnt13.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt12
+            // 
+            this.comboAnt12.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt12.Enabled = false;
+            this.comboAnt12.FormattingEnabled = true;
+            this.comboAnt12.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt12.Location = new System.Drawing.Point(842, 332);
+            this.comboAnt12.Name = "comboAnt12";
+            this.comboAnt12.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt12.TabIndex = 237;
+            this.comboAnt12.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt11
+            // 
+            this.comboAnt11.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt11.Enabled = false;
+            this.comboAnt11.FormattingEnabled = true;
+            this.comboAnt11.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt11.Location = new System.Drawing.Point(842, 307);
+            this.comboAnt11.Name = "comboAnt11";
+            this.comboAnt11.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt11.TabIndex = 236;
+            this.comboAnt11.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt10
+            // 
+            this.comboAnt10.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt10.Enabled = false;
+            this.comboAnt10.FormattingEnabled = true;
+            this.comboAnt10.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt10.Location = new System.Drawing.Point(842, 283);
+            this.comboAnt10.Name = "comboAnt10";
+            this.comboAnt10.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt10.TabIndex = 235;
+            this.comboAnt10.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt9
+            // 
+            this.comboAnt9.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt9.Enabled = false;
+            this.comboAnt9.FormattingEnabled = true;
+            this.comboAnt9.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt9.Location = new System.Drawing.Point(842, 259);
+            this.comboAnt9.Name = "comboAnt9";
+            this.comboAnt9.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt9.TabIndex = 234;
+            this.comboAnt9.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt8
+            // 
+            this.comboAnt8.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt8.Enabled = false;
+            this.comboAnt8.FormattingEnabled = true;
+            this.comboAnt8.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt8.Location = new System.Drawing.Point(842, 235);
+            this.comboAnt8.Name = "comboAnt8";
+            this.comboAnt8.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt8.TabIndex = 233;
+            this.comboAnt8.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt7
+            // 
+            this.comboAnt7.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt7.Enabled = false;
+            this.comboAnt7.FormattingEnabled = true;
+            this.comboAnt7.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt7.Location = new System.Drawing.Point(842, 211);
+            this.comboAnt7.Name = "comboAnt7";
+            this.comboAnt7.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt7.TabIndex = 232;
+            this.comboAnt7.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt6
+            // 
+            this.comboAnt6.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt6.Enabled = false;
+            this.comboAnt6.FormattingEnabled = true;
+            this.comboAnt6.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt6.Location = new System.Drawing.Point(842, 187);
+            this.comboAnt6.Name = "comboAnt6";
+            this.comboAnt6.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt6.TabIndex = 231;
+            this.comboAnt6.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt5
+            // 
+            this.comboAnt5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt5.Enabled = false;
+            this.comboAnt5.FormattingEnabled = true;
+            this.comboAnt5.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt5.Location = new System.Drawing.Point(842, 163);
+            this.comboAnt5.Name = "comboAnt5";
+            this.comboAnt5.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt5.TabIndex = 230;
+            this.comboAnt5.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt4
+            // 
+            this.comboAnt4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt4.Enabled = false;
+            this.comboAnt4.FormattingEnabled = true;
+            this.comboAnt4.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt4.Location = new System.Drawing.Point(842, 139);
+            this.comboAnt4.Name = "comboAnt4";
+            this.comboAnt4.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt4.TabIndex = 229;
+            this.comboAnt4.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt3
+            // 
+            this.comboAnt3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt3.Enabled = false;
+            this.comboAnt3.FormattingEnabled = true;
+            this.comboAnt3.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt3.Location = new System.Drawing.Point(842, 115);
+            this.comboAnt3.Name = "comboAnt3";
+            this.comboAnt3.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt3.TabIndex = 228;
+            this.comboAnt3.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt2
+            // 
+            this.comboAnt2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt2.Enabled = false;
+            this.comboAnt2.FormattingEnabled = true;
+            this.comboAnt2.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt2.Location = new System.Drawing.Point(842, 91);
+            this.comboAnt2.Name = "comboAnt2";
+            this.comboAnt2.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt2.TabIndex = 227;
+            this.comboAnt2.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt1
+            // 
+            this.comboAnt1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt1.Enabled = false;
+            this.comboAnt1.FormattingEnabled = true;
+            this.comboAnt1.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt1.Location = new System.Drawing.Point(842, 67);
+            this.comboAnt1.Name = "comboAnt1";
+            this.comboAnt1.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt1.TabIndex = 226;
+            this.comboAnt1.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // comboAnt0
+            // 
+            this.comboAnt0.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboAnt0.Enabled = false;
+            this.comboAnt0.FormattingEnabled = true;
+            this.comboAnt0.Items.AddRange(new object[] {
+            "def",
+            "1",
+            "2",
+            "3"});
+            this.comboAnt0.Location = new System.Drawing.Point(842, 43);
+            this.comboAnt0.Name = "comboAnt0";
+            this.comboAnt0.Size = new System.Drawing.Size(52, 21);
+            this.comboAnt0.TabIndex = 225;
+            this.comboAnt0.SelectedIndexChanged += new System.EventHandler(this.comboAnt0_SelectedIndexChanged);
+            // 
+            // labelTS1
+            // 
+            this.labelTS1.Image = null;
+            this.labelTS1.Location = new System.Drawing.Point(856, 16);
+            this.labelTS1.Name = "labelTS1";
+            this.labelTS1.Size = new System.Drawing.Size(42, 31);
+            this.labelTS1.TabIndex = 224;
+            this.labelTS1.Text = "RX1 Ant";
+            // 
+            // chkDisablePA15
+            // 
+            this.chkDisablePA15.Checked = true;
+            this.chkDisablePA15.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA15.Enabled = false;
+            this.chkDisablePA15.Image = null;
+            this.chkDisablePA15.Location = new System.Drawing.Point(820, 408);
+            this.chkDisablePA15.Name = "chkDisablePA15";
+            this.chkDisablePA15.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA15.TabIndex = 223;
+            // 
+            // chkDisablePA14
+            // 
+            this.chkDisablePA14.Checked = true;
+            this.chkDisablePA14.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA14.Enabled = false;
+            this.chkDisablePA14.Image = null;
+            this.chkDisablePA14.Location = new System.Drawing.Point(820, 384);
+            this.chkDisablePA14.Name = "chkDisablePA14";
+            this.chkDisablePA14.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA14.TabIndex = 222;
+            // 
+            // chkDisablePA13
+            // 
+            this.chkDisablePA13.Checked = true;
+            this.chkDisablePA13.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA13.Enabled = false;
+            this.chkDisablePA13.Image = null;
+            this.chkDisablePA13.Location = new System.Drawing.Point(820, 360);
+            this.chkDisablePA13.Name = "chkDisablePA13";
+            this.chkDisablePA13.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA13.TabIndex = 220;
+            // 
+            // chkDisablePA12
+            // 
+            this.chkDisablePA12.Checked = true;
+            this.chkDisablePA12.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA12.Enabled = false;
+            this.chkDisablePA12.Image = null;
+            this.chkDisablePA12.Location = new System.Drawing.Point(820, 336);
+            this.chkDisablePA12.Name = "chkDisablePA12";
+            this.chkDisablePA12.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA12.TabIndex = 219;
+            // 
+            // chkDisablePA11
+            // 
+            this.chkDisablePA11.Checked = true;
+            this.chkDisablePA11.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA11.Enabled = false;
+            this.chkDisablePA11.Image = null;
+            this.chkDisablePA11.Location = new System.Drawing.Point(820, 312);
+            this.chkDisablePA11.Name = "chkDisablePA11";
+            this.chkDisablePA11.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA11.TabIndex = 218;
+            // 
+            // chkDisablePA10
+            // 
+            this.chkDisablePA10.Checked = true;
+            this.chkDisablePA10.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA10.Enabled = false;
+            this.chkDisablePA10.Image = null;
+            this.chkDisablePA10.Location = new System.Drawing.Point(820, 288);
+            this.chkDisablePA10.Name = "chkDisablePA10";
+            this.chkDisablePA10.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA10.TabIndex = 217;
+            // 
+            // chkDisablePA9
+            // 
+            this.chkDisablePA9.Checked = true;
+            this.chkDisablePA9.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA9.Enabled = false;
+            this.chkDisablePA9.Image = null;
+            this.chkDisablePA9.Location = new System.Drawing.Point(820, 264);
+            this.chkDisablePA9.Name = "chkDisablePA9";
+            this.chkDisablePA9.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA9.TabIndex = 216;
+            // 
+            // chkDisablePA8
+            // 
+            this.chkDisablePA8.Checked = true;
+            this.chkDisablePA8.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA8.Enabled = false;
+            this.chkDisablePA8.Image = null;
+            this.chkDisablePA8.Location = new System.Drawing.Point(820, 240);
+            this.chkDisablePA8.Name = "chkDisablePA8";
+            this.chkDisablePA8.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA8.TabIndex = 215;
+            // 
+            // chkDisablePA7
+            // 
+            this.chkDisablePA7.Checked = true;
+            this.chkDisablePA7.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA7.Enabled = false;
+            this.chkDisablePA7.Image = null;
+            this.chkDisablePA7.Location = new System.Drawing.Point(820, 216);
+            this.chkDisablePA7.Name = "chkDisablePA7";
+            this.chkDisablePA7.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA7.TabIndex = 214;
+            // 
+            // chkDisablePA6
+            // 
+            this.chkDisablePA6.Checked = true;
+            this.chkDisablePA6.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA6.Enabled = false;
+            this.chkDisablePA6.Image = null;
+            this.chkDisablePA6.Location = new System.Drawing.Point(820, 192);
+            this.chkDisablePA6.Name = "chkDisablePA6";
+            this.chkDisablePA6.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA6.TabIndex = 213;
+            // 
+            // chkDisablePA5
+            // 
+            this.chkDisablePA5.Checked = true;
+            this.chkDisablePA5.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA5.Enabled = false;
+            this.chkDisablePA5.Image = null;
+            this.chkDisablePA5.Location = new System.Drawing.Point(820, 168);
+            this.chkDisablePA5.Name = "chkDisablePA5";
+            this.chkDisablePA5.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA5.TabIndex = 212;
+            // 
+            // chkDisablePA4
+            // 
+            this.chkDisablePA4.Checked = true;
+            this.chkDisablePA4.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA4.Enabled = false;
+            this.chkDisablePA4.Image = null;
+            this.chkDisablePA4.Location = new System.Drawing.Point(820, 144);
+            this.chkDisablePA4.Name = "chkDisablePA4";
+            this.chkDisablePA4.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA4.TabIndex = 211;
+            // 
+            // chkDisablePA3
+            // 
+            this.chkDisablePA3.Checked = true;
+            this.chkDisablePA3.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA3.Enabled = false;
+            this.chkDisablePA3.Image = null;
+            this.chkDisablePA3.Location = new System.Drawing.Point(820, 120);
+            this.chkDisablePA3.Name = "chkDisablePA3";
+            this.chkDisablePA3.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA3.TabIndex = 210;
+            // 
+            // chkDisablePA2
+            // 
+            this.chkDisablePA2.Checked = true;
+            this.chkDisablePA2.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA2.Enabled = false;
+            this.chkDisablePA2.Image = null;
+            this.chkDisablePA2.Location = new System.Drawing.Point(820, 96);
+            this.chkDisablePA2.Name = "chkDisablePA2";
+            this.chkDisablePA2.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA2.TabIndex = 209;
+            // 
+            // chkDisablePA1
+            // 
+            this.chkDisablePA1.Checked = true;
+            this.chkDisablePA1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA1.Enabled = false;
+            this.chkDisablePA1.Image = null;
+            this.chkDisablePA1.Location = new System.Drawing.Point(820, 72);
+            this.chkDisablePA1.Name = "chkDisablePA1";
+            this.chkDisablePA1.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA1.TabIndex = 208;
+            // 
+            // chkDisablePA0
+            // 
+            this.chkDisablePA0.Checked = true;
+            this.chkDisablePA0.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisablePA0.Enabled = false;
+            this.chkDisablePA0.Image = null;
+            this.chkDisablePA0.Location = new System.Drawing.Point(820, 48);
+            this.chkDisablePA0.Name = "chkDisablePA0";
+            this.chkDisablePA0.Size = new System.Drawing.Size(16, 16);
+            this.chkDisablePA0.TabIndex = 207;
+            // 
+            // lblDisablePA
+            // 
+            this.lblDisablePA.Image = null;
+            this.lblDisablePA.Location = new System.Drawing.Point(812, 16);
+            this.lblDisablePA.Name = "lblDisablePA";
+            this.lblDisablePA.Size = new System.Drawing.Size(42, 32);
+            this.lblDisablePA.TabIndex = 221;
+            this.lblDisablePA.Text = "Disable PA";
+            // 
             // chkAlexTRRelay
             // 
             this.chkAlexTRRelay.AutoSize = true;
@@ -669,6 +1154,7 @@ namespace Thetis
             this.udRXGain15.Name = "udRXGain15";
             this.udRXGain15.Size = new System.Drawing.Size(56, 20);
             this.udRXGain15.TabIndex = 188;
+            this.udRXGain15.TinyStep = false;
             this.udRXGain15.Value = new decimal(new int[] {
             0,
             0,
@@ -699,6 +1185,7 @@ namespace Thetis
             this.udRXGain14.Name = "udRXGain14";
             this.udRXGain14.Size = new System.Drawing.Size(56, 20);
             this.udRXGain14.TabIndex = 176;
+            this.udRXGain14.TinyStep = false;
             this.udRXGain14.Value = new decimal(new int[] {
             0,
             0,
@@ -729,6 +1216,7 @@ namespace Thetis
             this.udRXGain13.Name = "udRXGain13";
             this.udRXGain13.Size = new System.Drawing.Size(56, 20);
             this.udRXGain13.TabIndex = 164;
+            this.udRXGain13.TinyStep = false;
             this.udRXGain13.Value = new decimal(new int[] {
             0,
             0,
@@ -759,6 +1247,7 @@ namespace Thetis
             this.udRXGain12.Name = "udRXGain12";
             this.udRXGain12.Size = new System.Drawing.Size(56, 20);
             this.udRXGain12.TabIndex = 152;
+            this.udRXGain12.TinyStep = false;
             this.udRXGain12.Value = new decimal(new int[] {
             0,
             0,
@@ -789,6 +1278,7 @@ namespace Thetis
             this.udRXGain11.Name = "udRXGain11";
             this.udRXGain11.Size = new System.Drawing.Size(56, 20);
             this.udRXGain11.TabIndex = 140;
+            this.udRXGain11.TinyStep = false;
             this.udRXGain11.Value = new decimal(new int[] {
             0,
             0,
@@ -819,6 +1309,7 @@ namespace Thetis
             this.udRXGain10.Name = "udRXGain10";
             this.udRXGain10.Size = new System.Drawing.Size(56, 20);
             this.udRXGain10.TabIndex = 128;
+            this.udRXGain10.TinyStep = false;
             this.udRXGain10.Value = new decimal(new int[] {
             0,
             0,
@@ -849,6 +1340,7 @@ namespace Thetis
             this.udRXGain9.Name = "udRXGain9";
             this.udRXGain9.Size = new System.Drawing.Size(56, 20);
             this.udRXGain9.TabIndex = 116;
+            this.udRXGain9.TinyStep = false;
             this.udRXGain9.Value = new decimal(new int[] {
             0,
             0,
@@ -879,6 +1371,7 @@ namespace Thetis
             this.udRXGain8.Name = "udRXGain8";
             this.udRXGain8.Size = new System.Drawing.Size(56, 20);
             this.udRXGain8.TabIndex = 104;
+            this.udRXGain8.TinyStep = false;
             this.udRXGain8.Value = new decimal(new int[] {
             0,
             0,
@@ -909,6 +1402,7 @@ namespace Thetis
             this.udRXGain7.Name = "udRXGain7";
             this.udRXGain7.Size = new System.Drawing.Size(56, 20);
             this.udRXGain7.TabIndex = 92;
+            this.udRXGain7.TinyStep = false;
             this.udRXGain7.Value = new decimal(new int[] {
             0,
             0,
@@ -939,6 +1433,7 @@ namespace Thetis
             this.udRXGain6.Name = "udRXGain6";
             this.udRXGain6.Size = new System.Drawing.Size(56, 20);
             this.udRXGain6.TabIndex = 80;
+            this.udRXGain6.TinyStep = false;
             this.udRXGain6.Value = new decimal(new int[] {
             0,
             0,
@@ -969,6 +1464,7 @@ namespace Thetis
             this.udRXGain5.Name = "udRXGain5";
             this.udRXGain5.Size = new System.Drawing.Size(56, 20);
             this.udRXGain5.TabIndex = 68;
+            this.udRXGain5.TinyStep = false;
             this.udRXGain5.Value = new decimal(new int[] {
             0,
             0,
@@ -999,6 +1495,7 @@ namespace Thetis
             this.udRXGain4.Name = "udRXGain4";
             this.udRXGain4.Size = new System.Drawing.Size(56, 20);
             this.udRXGain4.TabIndex = 56;
+            this.udRXGain4.TinyStep = false;
             this.udRXGain4.Value = new decimal(new int[] {
             0,
             0,
@@ -1029,6 +1526,7 @@ namespace Thetis
             this.udRXGain3.Name = "udRXGain3";
             this.udRXGain3.Size = new System.Drawing.Size(56, 20);
             this.udRXGain3.TabIndex = 44;
+            this.udRXGain3.TinyStep = false;
             this.udRXGain3.Value = new decimal(new int[] {
             0,
             0,
@@ -1059,6 +1557,7 @@ namespace Thetis
             this.udRXGain2.Name = "udRXGain2";
             this.udRXGain2.Size = new System.Drawing.Size(56, 20);
             this.udRXGain2.TabIndex = 32;
+            this.udRXGain2.TinyStep = false;
             this.udRXGain2.Value = new decimal(new int[] {
             0,
             0,
@@ -1089,6 +1588,7 @@ namespace Thetis
             this.udRXGain1.Name = "udRXGain1";
             this.udRXGain1.Size = new System.Drawing.Size(56, 20);
             this.udRXGain1.TabIndex = 20;
+            this.udRXGain1.TinyStep = false;
             this.udRXGain1.Value = new decimal(new int[] {
             0,
             0,
@@ -1119,6 +1619,7 @@ namespace Thetis
             this.udRXGain0.Name = "udRXGain0";
             this.udRXGain0.Size = new System.Drawing.Size(56, 20);
             this.udRXGain0.TabIndex = 8;
+            this.udRXGain0.TinyStep = false;
             this.udRXGain0.Value = new decimal(new int[] {
             0,
             0,
@@ -1358,6 +1859,7 @@ namespace Thetis
             this.udPower15.Name = "udPower15";
             this.udPower15.Size = new System.Drawing.Size(45, 20);
             this.udPower15.TabIndex = 190;
+            this.udPower15.TinyStep = false;
             this.udPower15.Value = new decimal(new int[] {
             100,
             0,
@@ -1387,6 +1889,7 @@ namespace Thetis
             this.udPower14.Name = "udPower14";
             this.udPower14.Size = new System.Drawing.Size(45, 20);
             this.udPower14.TabIndex = 178;
+            this.udPower14.TinyStep = false;
             this.udPower14.Value = new decimal(new int[] {
             100,
             0,
@@ -1416,6 +1919,7 @@ namespace Thetis
             this.udPower13.Name = "udPower13";
             this.udPower13.Size = new System.Drawing.Size(45, 20);
             this.udPower13.TabIndex = 166;
+            this.udPower13.TinyStep = false;
             this.udPower13.Value = new decimal(new int[] {
             100,
             0,
@@ -1445,6 +1949,7 @@ namespace Thetis
             this.udPower12.Name = "udPower12";
             this.udPower12.Size = new System.Drawing.Size(45, 20);
             this.udPower12.TabIndex = 154;
+            this.udPower12.TinyStep = false;
             this.udPower12.Value = new decimal(new int[] {
             100,
             0,
@@ -1474,6 +1979,7 @@ namespace Thetis
             this.udPower11.Name = "udPower11";
             this.udPower11.Size = new System.Drawing.Size(45, 20);
             this.udPower11.TabIndex = 142;
+            this.udPower11.TinyStep = false;
             this.udPower11.Value = new decimal(new int[] {
             100,
             0,
@@ -1503,6 +2009,7 @@ namespace Thetis
             this.udPower10.Name = "udPower10";
             this.udPower10.Size = new System.Drawing.Size(45, 20);
             this.udPower10.TabIndex = 130;
+            this.udPower10.TinyStep = false;
             this.udPower10.Value = new decimal(new int[] {
             100,
             0,
@@ -1532,6 +2039,7 @@ namespace Thetis
             this.udPower9.Name = "udPower9";
             this.udPower9.Size = new System.Drawing.Size(45, 20);
             this.udPower9.TabIndex = 118;
+            this.udPower9.TinyStep = false;
             this.udPower9.Value = new decimal(new int[] {
             100,
             0,
@@ -1561,6 +2069,7 @@ namespace Thetis
             this.udPower8.Name = "udPower8";
             this.udPower8.Size = new System.Drawing.Size(45, 20);
             this.udPower8.TabIndex = 106;
+            this.udPower8.TinyStep = false;
             this.udPower8.Value = new decimal(new int[] {
             100,
             0,
@@ -1590,6 +2099,7 @@ namespace Thetis
             this.udPower7.Name = "udPower7";
             this.udPower7.Size = new System.Drawing.Size(45, 20);
             this.udPower7.TabIndex = 94;
+            this.udPower7.TinyStep = false;
             this.udPower7.Value = new decimal(new int[] {
             100,
             0,
@@ -1619,6 +2129,7 @@ namespace Thetis
             this.udPower6.Name = "udPower6";
             this.udPower6.Size = new System.Drawing.Size(45, 20);
             this.udPower6.TabIndex = 82;
+            this.udPower6.TinyStep = false;
             this.udPower6.Value = new decimal(new int[] {
             100,
             0,
@@ -1648,6 +2159,7 @@ namespace Thetis
             this.udPower5.Name = "udPower5";
             this.udPower5.Size = new System.Drawing.Size(45, 20);
             this.udPower5.TabIndex = 70;
+            this.udPower5.TinyStep = false;
             this.udPower5.Value = new decimal(new int[] {
             100,
             0,
@@ -1677,6 +2189,7 @@ namespace Thetis
             this.udPower4.Name = "udPower4";
             this.udPower4.Size = new System.Drawing.Size(45, 20);
             this.udPower4.TabIndex = 58;
+            this.udPower4.TinyStep = false;
             this.udPower4.Value = new decimal(new int[] {
             100,
             0,
@@ -1706,6 +2219,7 @@ namespace Thetis
             this.udPower3.Name = "udPower3";
             this.udPower3.Size = new System.Drawing.Size(45, 20);
             this.udPower3.TabIndex = 46;
+            this.udPower3.TinyStep = false;
             this.udPower3.Value = new decimal(new int[] {
             100,
             0,
@@ -1735,6 +2249,7 @@ namespace Thetis
             this.udPower2.Name = "udPower2";
             this.udPower2.Size = new System.Drawing.Size(45, 20);
             this.udPower2.TabIndex = 34;
+            this.udPower2.TinyStep = false;
             this.udPower2.Value = new decimal(new int[] {
             100,
             0,
@@ -1764,6 +2279,7 @@ namespace Thetis
             this.udPower1.Name = "udPower1";
             this.udPower1.Size = new System.Drawing.Size(45, 20);
             this.udPower1.TabIndex = 22;
+            this.udPower1.TinyStep = false;
             this.udPower1.Value = new decimal(new int[] {
             100,
             0,
@@ -1793,6 +2309,7 @@ namespace Thetis
             this.udPower0.Name = "udPower0";
             this.udPower0.Size = new System.Drawing.Size(45, 20);
             this.udPower0.TabIndex = 10;
+            this.udPower0.TinyStep = false;
             this.udPower0.Value = new decimal(new int[] {
             100,
             0,
@@ -1832,6 +2349,7 @@ namespace Thetis
             this.udLOError15.Name = "udLOError15";
             this.udLOError15.Size = new System.Drawing.Size(56, 20);
             this.udLOError15.TabIndex = 185;
+            this.udLOError15.TinyStep = false;
             this.udLOError15.Value = new decimal(new int[] {
             0,
             0,
@@ -1861,6 +2379,7 @@ namespace Thetis
             this.udLOError14.Name = "udLOError14";
             this.udLOError14.Size = new System.Drawing.Size(56, 20);
             this.udLOError14.TabIndex = 173;
+            this.udLOError14.TinyStep = false;
             this.udLOError14.Value = new decimal(new int[] {
             0,
             0,
@@ -1890,6 +2409,7 @@ namespace Thetis
             this.udLOError13.Name = "udLOError13";
             this.udLOError13.Size = new System.Drawing.Size(56, 20);
             this.udLOError13.TabIndex = 161;
+            this.udLOError13.TinyStep = false;
             this.udLOError13.Value = new decimal(new int[] {
             0,
             0,
@@ -1919,6 +2439,7 @@ namespace Thetis
             this.udLOError12.Name = "udLOError12";
             this.udLOError12.Size = new System.Drawing.Size(56, 20);
             this.udLOError12.TabIndex = 149;
+            this.udLOError12.TinyStep = false;
             this.udLOError12.Value = new decimal(new int[] {
             0,
             0,
@@ -1948,6 +2469,7 @@ namespace Thetis
             this.udLOError11.Name = "udLOError11";
             this.udLOError11.Size = new System.Drawing.Size(56, 20);
             this.udLOError11.TabIndex = 137;
+            this.udLOError11.TinyStep = false;
             this.udLOError11.Value = new decimal(new int[] {
             0,
             0,
@@ -1977,6 +2499,7 @@ namespace Thetis
             this.udLOError10.Name = "udLOError10";
             this.udLOError10.Size = new System.Drawing.Size(56, 20);
             this.udLOError10.TabIndex = 125;
+            this.udLOError10.TinyStep = false;
             this.udLOError10.Value = new decimal(new int[] {
             0,
             0,
@@ -2006,6 +2529,7 @@ namespace Thetis
             this.udLOError9.Name = "udLOError9";
             this.udLOError9.Size = new System.Drawing.Size(56, 20);
             this.udLOError9.TabIndex = 113;
+            this.udLOError9.TinyStep = false;
             this.udLOError9.Value = new decimal(new int[] {
             0,
             0,
@@ -2035,6 +2559,7 @@ namespace Thetis
             this.udLOError8.Name = "udLOError8";
             this.udLOError8.Size = new System.Drawing.Size(56, 20);
             this.udLOError8.TabIndex = 101;
+            this.udLOError8.TinyStep = false;
             this.udLOError8.Value = new decimal(new int[] {
             0,
             0,
@@ -2064,6 +2589,7 @@ namespace Thetis
             this.udLOError7.Name = "udLOError7";
             this.udLOError7.Size = new System.Drawing.Size(56, 20);
             this.udLOError7.TabIndex = 89;
+            this.udLOError7.TinyStep = false;
             this.udLOError7.Value = new decimal(new int[] {
             0,
             0,
@@ -2093,6 +2619,7 @@ namespace Thetis
             this.udLOError6.Name = "udLOError6";
             this.udLOError6.Size = new System.Drawing.Size(56, 20);
             this.udLOError6.TabIndex = 77;
+            this.udLOError6.TinyStep = false;
             this.udLOError6.Value = new decimal(new int[] {
             0,
             0,
@@ -2122,6 +2649,7 @@ namespace Thetis
             this.udLOError5.Name = "udLOError5";
             this.udLOError5.Size = new System.Drawing.Size(56, 20);
             this.udLOError5.TabIndex = 65;
+            this.udLOError5.TinyStep = false;
             this.udLOError5.Value = new decimal(new int[] {
             0,
             0,
@@ -2151,6 +2679,7 @@ namespace Thetis
             this.udLOError4.Name = "udLOError4";
             this.udLOError4.Size = new System.Drawing.Size(56, 20);
             this.udLOError4.TabIndex = 53;
+            this.udLOError4.TinyStep = false;
             this.udLOError4.Value = new decimal(new int[] {
             0,
             0,
@@ -2180,6 +2709,7 @@ namespace Thetis
             this.udLOError3.Name = "udLOError3";
             this.udLOError3.Size = new System.Drawing.Size(56, 20);
             this.udLOError3.TabIndex = 41;
+            this.udLOError3.TinyStep = false;
             this.udLOError3.Value = new decimal(new int[] {
             0,
             0,
@@ -2209,6 +2739,7 @@ namespace Thetis
             this.udLOError2.Name = "udLOError2";
             this.udLOError2.Size = new System.Drawing.Size(56, 20);
             this.udLOError2.TabIndex = 29;
+            this.udLOError2.TinyStep = false;
             this.udLOError2.Value = new decimal(new int[] {
             0,
             0,
@@ -2238,6 +2769,7 @@ namespace Thetis
             this.udLOError1.Name = "udLOError1";
             this.udLOError1.Size = new System.Drawing.Size(56, 20);
             this.udLOError1.TabIndex = 17;
+            this.udLOError1.TinyStep = false;
             this.udLOError1.Value = new decimal(new int[] {
             0,
             0,
@@ -2267,6 +2799,7 @@ namespace Thetis
             this.udLOError0.Name = "udLOError0";
             this.udLOError0.Size = new System.Drawing.Size(56, 20);
             this.udLOError0.TabIndex = 5;
+            this.udLOError0.TinyStep = false;
             this.udLOError0.Value = new decimal(new int[] {
             0,
             0,
@@ -2458,6 +2991,7 @@ namespace Thetis
             this.udFreqEnd15.Name = "udFreqEnd15";
             this.udFreqEnd15.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd15.TabIndex = 187;
+            this.udFreqEnd15.TinyStep = false;
             this.udFreqEnd15.Value = new decimal(new int[] {
             0,
             0,
@@ -2487,6 +3021,7 @@ namespace Thetis
             this.udFreqEnd14.Name = "udFreqEnd14";
             this.udFreqEnd14.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd14.TabIndex = 175;
+            this.udFreqEnd14.TinyStep = false;
             this.udFreqEnd14.Value = new decimal(new int[] {
             0,
             0,
@@ -2516,6 +3051,7 @@ namespace Thetis
             this.udFreqEnd13.Name = "udFreqEnd13";
             this.udFreqEnd13.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd13.TabIndex = 163;
+            this.udFreqEnd13.TinyStep = false;
             this.udFreqEnd13.Value = new decimal(new int[] {
             0,
             0,
@@ -2545,6 +3081,7 @@ namespace Thetis
             this.udFreqEnd12.Name = "udFreqEnd12";
             this.udFreqEnd12.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd12.TabIndex = 151;
+            this.udFreqEnd12.TinyStep = false;
             this.udFreqEnd12.Value = new decimal(new int[] {
             0,
             0,
@@ -2574,6 +3111,7 @@ namespace Thetis
             this.udFreqEnd11.Name = "udFreqEnd11";
             this.udFreqEnd11.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd11.TabIndex = 139;
+            this.udFreqEnd11.TinyStep = false;
             this.udFreqEnd11.Value = new decimal(new int[] {
             0,
             0,
@@ -2603,6 +3141,7 @@ namespace Thetis
             this.udFreqEnd10.Name = "udFreqEnd10";
             this.udFreqEnd10.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd10.TabIndex = 127;
+            this.udFreqEnd10.TinyStep = false;
             this.udFreqEnd10.Value = new decimal(new int[] {
             0,
             0,
@@ -2632,6 +3171,7 @@ namespace Thetis
             this.udFreqEnd9.Name = "udFreqEnd9";
             this.udFreqEnd9.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd9.TabIndex = 115;
+            this.udFreqEnd9.TinyStep = false;
             this.udFreqEnd9.Value = new decimal(new int[] {
             0,
             0,
@@ -2661,6 +3201,7 @@ namespace Thetis
             this.udFreqEnd8.Name = "udFreqEnd8";
             this.udFreqEnd8.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd8.TabIndex = 103;
+            this.udFreqEnd8.TinyStep = false;
             this.udFreqEnd8.Value = new decimal(new int[] {
             0,
             0,
@@ -2690,6 +3231,7 @@ namespace Thetis
             this.udFreqEnd7.Name = "udFreqEnd7";
             this.udFreqEnd7.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd7.TabIndex = 91;
+            this.udFreqEnd7.TinyStep = false;
             this.udFreqEnd7.Value = new decimal(new int[] {
             0,
             0,
@@ -2719,6 +3261,7 @@ namespace Thetis
             this.udFreqEnd6.Name = "udFreqEnd6";
             this.udFreqEnd6.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd6.TabIndex = 79;
+            this.udFreqEnd6.TinyStep = false;
             this.udFreqEnd6.Value = new decimal(new int[] {
             0,
             0,
@@ -2748,6 +3291,7 @@ namespace Thetis
             this.udFreqEnd5.Name = "udFreqEnd5";
             this.udFreqEnd5.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd5.TabIndex = 67;
+            this.udFreqEnd5.TinyStep = false;
             this.udFreqEnd5.Value = new decimal(new int[] {
             0,
             0,
@@ -2777,6 +3321,7 @@ namespace Thetis
             this.udFreqEnd4.Name = "udFreqEnd4";
             this.udFreqEnd4.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd4.TabIndex = 55;
+            this.udFreqEnd4.TinyStep = false;
             this.udFreqEnd4.Value = new decimal(new int[] {
             0,
             0,
@@ -2806,6 +3351,7 @@ namespace Thetis
             this.udFreqEnd3.Name = "udFreqEnd3";
             this.udFreqEnd3.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd3.TabIndex = 43;
+            this.udFreqEnd3.TinyStep = false;
             this.udFreqEnd3.Value = new decimal(new int[] {
             0,
             0,
@@ -2835,6 +3381,7 @@ namespace Thetis
             this.udFreqEnd2.Name = "udFreqEnd2";
             this.udFreqEnd2.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd2.TabIndex = 31;
+            this.udFreqEnd2.TinyStep = false;
             this.udFreqEnd2.Value = new decimal(new int[] {
             0,
             0,
@@ -2864,6 +3411,7 @@ namespace Thetis
             this.udFreqEnd1.Name = "udFreqEnd1";
             this.udFreqEnd1.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd1.TabIndex = 19;
+            this.udFreqEnd1.TinyStep = false;
             this.udFreqEnd1.Value = new decimal(new int[] {
             0,
             0,
@@ -2893,6 +3441,7 @@ namespace Thetis
             this.udFreqEnd0.Name = "udFreqEnd0";
             this.udFreqEnd0.Size = new System.Drawing.Size(96, 20);
             this.udFreqEnd0.TabIndex = 7;
+            this.udFreqEnd0.TinyStep = false;
             this.udFreqEnd0.Value = new decimal(new int[] {
             0,
             0,
@@ -2931,6 +3480,7 @@ namespace Thetis
             this.udFreqBegin15.Name = "udFreqBegin15";
             this.udFreqBegin15.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin15.TabIndex = 186;
+            this.udFreqBegin15.TinyStep = false;
             this.udFreqBegin15.Value = new decimal(new int[] {
             0,
             0,
@@ -2960,6 +3510,7 @@ namespace Thetis
             this.udFreqBegin14.Name = "udFreqBegin14";
             this.udFreqBegin14.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin14.TabIndex = 174;
+            this.udFreqBegin14.TinyStep = false;
             this.udFreqBegin14.Value = new decimal(new int[] {
             0,
             0,
@@ -2989,6 +3540,7 @@ namespace Thetis
             this.udFreqBegin13.Name = "udFreqBegin13";
             this.udFreqBegin13.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin13.TabIndex = 162;
+            this.udFreqBegin13.TinyStep = false;
             this.udFreqBegin13.Value = new decimal(new int[] {
             0,
             0,
@@ -3018,6 +3570,7 @@ namespace Thetis
             this.udFreqBegin12.Name = "udFreqBegin12";
             this.udFreqBegin12.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin12.TabIndex = 150;
+            this.udFreqBegin12.TinyStep = false;
             this.udFreqBegin12.Value = new decimal(new int[] {
             0,
             0,
@@ -3047,6 +3600,7 @@ namespace Thetis
             this.udFreqBegin11.Name = "udFreqBegin11";
             this.udFreqBegin11.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin11.TabIndex = 138;
+            this.udFreqBegin11.TinyStep = false;
             this.udFreqBegin11.Value = new decimal(new int[] {
             0,
             0,
@@ -3076,6 +3630,7 @@ namespace Thetis
             this.udFreqBegin10.Name = "udFreqBegin10";
             this.udFreqBegin10.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin10.TabIndex = 126;
+            this.udFreqBegin10.TinyStep = false;
             this.udFreqBegin10.Value = new decimal(new int[] {
             0,
             0,
@@ -3105,6 +3660,7 @@ namespace Thetis
             this.udFreqBegin9.Name = "udFreqBegin9";
             this.udFreqBegin9.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin9.TabIndex = 114;
+            this.udFreqBegin9.TinyStep = false;
             this.udFreqBegin9.Value = new decimal(new int[] {
             0,
             0,
@@ -3134,6 +3690,7 @@ namespace Thetis
             this.udFreqBegin8.Name = "udFreqBegin8";
             this.udFreqBegin8.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin8.TabIndex = 102;
+            this.udFreqBegin8.TinyStep = false;
             this.udFreqBegin8.Value = new decimal(new int[] {
             0,
             0,
@@ -3163,6 +3720,7 @@ namespace Thetis
             this.udFreqBegin7.Name = "udFreqBegin7";
             this.udFreqBegin7.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin7.TabIndex = 90;
+            this.udFreqBegin7.TinyStep = false;
             this.udFreqBegin7.Value = new decimal(new int[] {
             0,
             0,
@@ -3192,6 +3750,7 @@ namespace Thetis
             this.udFreqBegin6.Name = "udFreqBegin6";
             this.udFreqBegin6.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin6.TabIndex = 78;
+            this.udFreqBegin6.TinyStep = false;
             this.udFreqBegin6.Value = new decimal(new int[] {
             0,
             0,
@@ -3221,6 +3780,7 @@ namespace Thetis
             this.udFreqBegin5.Name = "udFreqBegin5";
             this.udFreqBegin5.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin5.TabIndex = 66;
+            this.udFreqBegin5.TinyStep = false;
             this.udFreqBegin5.Value = new decimal(new int[] {
             0,
             0,
@@ -3250,6 +3810,7 @@ namespace Thetis
             this.udFreqBegin4.Name = "udFreqBegin4";
             this.udFreqBegin4.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin4.TabIndex = 54;
+            this.udFreqBegin4.TinyStep = false;
             this.udFreqBegin4.Value = new decimal(new int[] {
             0,
             0,
@@ -3279,6 +3840,7 @@ namespace Thetis
             this.udFreqBegin3.Name = "udFreqBegin3";
             this.udFreqBegin3.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin3.TabIndex = 42;
+            this.udFreqBegin3.TinyStep = false;
             this.udFreqBegin3.Value = new decimal(new int[] {
             0,
             0,
@@ -3308,6 +3870,7 @@ namespace Thetis
             this.udFreqBegin2.Name = "udFreqBegin2";
             this.udFreqBegin2.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin2.TabIndex = 30;
+            this.udFreqBegin2.TinyStep = false;
             this.udFreqBegin2.Value = new decimal(new int[] {
             0,
             0,
@@ -3337,6 +3900,7 @@ namespace Thetis
             this.udFreqBegin1.Name = "udFreqBegin1";
             this.udFreqBegin1.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin1.TabIndex = 18;
+            this.udFreqBegin1.TinyStep = false;
             this.udFreqBegin1.Value = new decimal(new int[] {
             0,
             0,
@@ -3366,6 +3930,7 @@ namespace Thetis
             this.udFreqBegin0.Name = "udFreqBegin0";
             this.udFreqBegin0.Size = new System.Drawing.Size(96, 20);
             this.udFreqBegin0.TabIndex = 6;
+            this.udFreqBegin0.TinyStep = false;
             this.udFreqBegin0.Value = new decimal(new int[] {
             0,
             0,
@@ -3404,6 +3969,7 @@ namespace Thetis
             this.udLOOffset15.Name = "udLOOffset15";
             this.udLOOffset15.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset15.TabIndex = 184;
+            this.udLOOffset15.TinyStep = false;
             this.udLOOffset15.Value = new decimal(new int[] {
             0,
             0,
@@ -3433,6 +3999,7 @@ namespace Thetis
             this.udLOOffset14.Name = "udLOOffset14";
             this.udLOOffset14.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset14.TabIndex = 172;
+            this.udLOOffset14.TinyStep = false;
             this.udLOOffset14.Value = new decimal(new int[] {
             0,
             0,
@@ -3462,6 +4029,7 @@ namespace Thetis
             this.udLOOffset13.Name = "udLOOffset13";
             this.udLOOffset13.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset13.TabIndex = 160;
+            this.udLOOffset13.TinyStep = false;
             this.udLOOffset13.Value = new decimal(new int[] {
             0,
             0,
@@ -3491,6 +4059,7 @@ namespace Thetis
             this.udLOOffset12.Name = "udLOOffset12";
             this.udLOOffset12.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset12.TabIndex = 148;
+            this.udLOOffset12.TinyStep = false;
             this.udLOOffset12.Value = new decimal(new int[] {
             0,
             0,
@@ -3520,6 +4089,7 @@ namespace Thetis
             this.udLOOffset11.Name = "udLOOffset11";
             this.udLOOffset11.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset11.TabIndex = 136;
+            this.udLOOffset11.TinyStep = false;
             this.udLOOffset11.Value = new decimal(new int[] {
             0,
             0,
@@ -3549,6 +4119,7 @@ namespace Thetis
             this.udLOOffset10.Name = "udLOOffset10";
             this.udLOOffset10.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset10.TabIndex = 124;
+            this.udLOOffset10.TinyStep = false;
             this.udLOOffset10.Value = new decimal(new int[] {
             0,
             0,
@@ -3578,6 +4149,7 @@ namespace Thetis
             this.udLOOffset9.Name = "udLOOffset9";
             this.udLOOffset9.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset9.TabIndex = 112;
+            this.udLOOffset9.TinyStep = false;
             this.udLOOffset9.Value = new decimal(new int[] {
             0,
             0,
@@ -3607,6 +4179,7 @@ namespace Thetis
             this.udLOOffset8.Name = "udLOOffset8";
             this.udLOOffset8.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset8.TabIndex = 100;
+            this.udLOOffset8.TinyStep = false;
             this.udLOOffset8.Value = new decimal(new int[] {
             0,
             0,
@@ -3636,6 +4209,7 @@ namespace Thetis
             this.udLOOffset7.Name = "udLOOffset7";
             this.udLOOffset7.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset7.TabIndex = 88;
+            this.udLOOffset7.TinyStep = false;
             this.udLOOffset7.Value = new decimal(new int[] {
             0,
             0,
@@ -3665,6 +4239,7 @@ namespace Thetis
             this.udLOOffset6.Name = "udLOOffset6";
             this.udLOOffset6.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset6.TabIndex = 76;
+            this.udLOOffset6.TinyStep = false;
             this.udLOOffset6.Value = new decimal(new int[] {
             0,
             0,
@@ -3694,6 +4269,7 @@ namespace Thetis
             this.udLOOffset5.Name = "udLOOffset5";
             this.udLOOffset5.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset5.TabIndex = 64;
+            this.udLOOffset5.TinyStep = false;
             this.udLOOffset5.Value = new decimal(new int[] {
             0,
             0,
@@ -3723,6 +4299,7 @@ namespace Thetis
             this.udLOOffset4.Name = "udLOOffset4";
             this.udLOOffset4.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset4.TabIndex = 52;
+            this.udLOOffset4.TinyStep = false;
             this.udLOOffset4.Value = new decimal(new int[] {
             0,
             0,
@@ -3752,6 +4329,7 @@ namespace Thetis
             this.udLOOffset3.Name = "udLOOffset3";
             this.udLOOffset3.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset3.TabIndex = 40;
+            this.udLOOffset3.TinyStep = false;
             this.udLOOffset3.Value = new decimal(new int[] {
             0,
             0,
@@ -3781,6 +4359,7 @@ namespace Thetis
             this.udLOOffset2.Name = "udLOOffset2";
             this.udLOOffset2.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset2.TabIndex = 28;
+            this.udLOOffset2.TinyStep = false;
             this.udLOOffset2.Value = new decimal(new int[] {
             0,
             0,
@@ -3810,6 +4389,7 @@ namespace Thetis
             this.udLOOffset1.Name = "udLOOffset1";
             this.udLOOffset1.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset1.TabIndex = 16;
+            this.udLOOffset1.TinyStep = false;
             this.udLOOffset1.Value = new decimal(new int[] {
             0,
             0,
@@ -3839,6 +4419,7 @@ namespace Thetis
             this.udLOOffset0.Name = "udLOOffset0";
             this.udLOOffset0.Size = new System.Drawing.Size(80, 20);
             this.udLOOffset0.TabIndex = 4;
+            this.udLOOffset0.TinyStep = false;
             this.udLOOffset0.Value = new decimal(new int[] {
             0,
             0,
@@ -4377,194 +4958,25 @@ namespace Thetis
             this.lblBandButton.TabIndex = 0;
             this.lblBandButton.Text = "Band Button";
             // 
-            // chkDisablePA15
-            // 
-            this.chkDisablePA15.Checked = true;
-            this.chkDisablePA15.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA15.Enabled = false;
-            this.chkDisablePA15.Image = null;
-            this.chkDisablePA15.Location = new System.Drawing.Point(820, 408);
-            this.chkDisablePA15.Name = "chkDisablePA15";
-            this.chkDisablePA15.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA15.TabIndex = 223;
-            // 
-            // chkDisablePA14
-            // 
-            this.chkDisablePA14.Checked = true;
-            this.chkDisablePA14.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA14.Enabled = false;
-            this.chkDisablePA14.Image = null;
-            this.chkDisablePA14.Location = new System.Drawing.Point(820, 384);
-            this.chkDisablePA14.Name = "chkDisablePA14";
-            this.chkDisablePA14.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA14.TabIndex = 222;
-            // 
-            // chkDisablePA13
-            // 
-            this.chkDisablePA13.Checked = true;
-            this.chkDisablePA13.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA13.Enabled = false;
-            this.chkDisablePA13.Image = null;
-            this.chkDisablePA13.Location = new System.Drawing.Point(820, 360);
-            this.chkDisablePA13.Name = "chkDisablePA13";
-            this.chkDisablePA13.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA13.TabIndex = 220;
-            // 
-            // chkDisablePA12
-            // 
-            this.chkDisablePA12.Checked = true;
-            this.chkDisablePA12.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA12.Enabled = false;
-            this.chkDisablePA12.Image = null;
-            this.chkDisablePA12.Location = new System.Drawing.Point(820, 336);
-            this.chkDisablePA12.Name = "chkDisablePA12";
-            this.chkDisablePA12.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA12.TabIndex = 219;
-            // 
-            // chkDisablePA11
-            // 
-            this.chkDisablePA11.Checked = true;
-            this.chkDisablePA11.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA11.Enabled = false;
-            this.chkDisablePA11.Image = null;
-            this.chkDisablePA11.Location = new System.Drawing.Point(820, 312);
-            this.chkDisablePA11.Name = "chkDisablePA11";
-            this.chkDisablePA11.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA11.TabIndex = 218;
-            // 
-            // chkDisablePA10
-            // 
-            this.chkDisablePA10.Checked = true;
-            this.chkDisablePA10.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA10.Enabled = false;
-            this.chkDisablePA10.Image = null;
-            this.chkDisablePA10.Location = new System.Drawing.Point(820, 288);
-            this.chkDisablePA10.Name = "chkDisablePA10";
-            this.chkDisablePA10.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA10.TabIndex = 217;
-            // 
-            // chkDisablePA9
-            // 
-            this.chkDisablePA9.Checked = true;
-            this.chkDisablePA9.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA9.Enabled = false;
-            this.chkDisablePA9.Image = null;
-            this.chkDisablePA9.Location = new System.Drawing.Point(820, 264);
-            this.chkDisablePA9.Name = "chkDisablePA9";
-            this.chkDisablePA9.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA9.TabIndex = 216;
-            // 
-            // chkDisablePA8
-            // 
-            this.chkDisablePA8.Checked = true;
-            this.chkDisablePA8.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA8.Enabled = false;
-            this.chkDisablePA8.Image = null;
-            this.chkDisablePA8.Location = new System.Drawing.Point(820, 240);
-            this.chkDisablePA8.Name = "chkDisablePA8";
-            this.chkDisablePA8.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA8.TabIndex = 215;
-            // 
-            // chkDisablePA7
-            // 
-            this.chkDisablePA7.Checked = true;
-            this.chkDisablePA7.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA7.Enabled = false;
-            this.chkDisablePA7.Image = null;
-            this.chkDisablePA7.Location = new System.Drawing.Point(820, 216);
-            this.chkDisablePA7.Name = "chkDisablePA7";
-            this.chkDisablePA7.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA7.TabIndex = 214;
-            // 
-            // chkDisablePA6
-            // 
-            this.chkDisablePA6.Checked = true;
-            this.chkDisablePA6.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA6.Enabled = false;
-            this.chkDisablePA6.Image = null;
-            this.chkDisablePA6.Location = new System.Drawing.Point(820, 192);
-            this.chkDisablePA6.Name = "chkDisablePA6";
-            this.chkDisablePA6.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA6.TabIndex = 213;
-            // 
-            // chkDisablePA5
-            // 
-            this.chkDisablePA5.Checked = true;
-            this.chkDisablePA5.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA5.Enabled = false;
-            this.chkDisablePA5.Image = null;
-            this.chkDisablePA5.Location = new System.Drawing.Point(820, 168);
-            this.chkDisablePA5.Name = "chkDisablePA5";
-            this.chkDisablePA5.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA5.TabIndex = 212;
-            // 
-            // chkDisablePA4
-            // 
-            this.chkDisablePA4.Checked = true;
-            this.chkDisablePA4.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA4.Enabled = false;
-            this.chkDisablePA4.Image = null;
-            this.chkDisablePA4.Location = new System.Drawing.Point(820, 144);
-            this.chkDisablePA4.Name = "chkDisablePA4";
-            this.chkDisablePA4.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA4.TabIndex = 211;
-            // 
-            // chkDisablePA3
-            // 
-            this.chkDisablePA3.Checked = true;
-            this.chkDisablePA3.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA3.Enabled = false;
-            this.chkDisablePA3.Image = null;
-            this.chkDisablePA3.Location = new System.Drawing.Point(820, 120);
-            this.chkDisablePA3.Name = "chkDisablePA3";
-            this.chkDisablePA3.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA3.TabIndex = 210;
-            // 
-            // chkDisablePA2
-            // 
-            this.chkDisablePA2.Checked = true;
-            this.chkDisablePA2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA2.Enabled = false;
-            this.chkDisablePA2.Image = null;
-            this.chkDisablePA2.Location = new System.Drawing.Point(820, 96);
-            this.chkDisablePA2.Name = "chkDisablePA2";
-            this.chkDisablePA2.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA2.TabIndex = 209;
-            // 
-            // chkDisablePA1
-            // 
-            this.chkDisablePA1.Checked = true;
-            this.chkDisablePA1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA1.Enabled = false;
-            this.chkDisablePA1.Image = null;
-            this.chkDisablePA1.Location = new System.Drawing.Point(820, 72);
-            this.chkDisablePA1.Name = "chkDisablePA1";
-            this.chkDisablePA1.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA1.TabIndex = 208;
-            // 
-            // chkDisablePA0
-            // 
-            this.chkDisablePA0.Checked = true;
-            this.chkDisablePA0.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisablePA0.Enabled = false;
-            this.chkDisablePA0.Image = null;
-            this.chkDisablePA0.Location = new System.Drawing.Point(820, 48);
-            this.chkDisablePA0.Name = "chkDisablePA0";
-            this.chkDisablePA0.Size = new System.Drawing.Size(16, 16);
-            this.chkDisablePA0.TabIndex = 207;
-            // 
-            // lblDisablePA
-            // 
-            this.lblDisablePA.Image = null;
-            this.lblDisablePA.Location = new System.Drawing.Point(812, 16);
-            this.lblDisablePA.Name = "lblDisablePA";
-            this.lblDisablePA.Size = new System.Drawing.Size(42, 32);
-            this.lblDisablePA.TabIndex = 221;
-            this.lblDisablePA.Text = "Disable PA";
-            // 
             // XVTRForm
             // 
-            this.ClientSize = new System.Drawing.Size(859, 454);
+            this.ClientSize = new System.Drawing.Size(904, 454);
+            this.Controls.Add(this.comboAnt15);
+            this.Controls.Add(this.comboAnt14);
+            this.Controls.Add(this.comboAnt13);
+            this.Controls.Add(this.comboAnt12);
+            this.Controls.Add(this.comboAnt11);
+            this.Controls.Add(this.comboAnt10);
+            this.Controls.Add(this.comboAnt9);
+            this.Controls.Add(this.comboAnt8);
+            this.Controls.Add(this.comboAnt7);
+            this.Controls.Add(this.comboAnt6);
+            this.Controls.Add(this.comboAnt5);
+            this.Controls.Add(this.comboAnt4);
+            this.Controls.Add(this.comboAnt3);
+            this.Controls.Add(this.comboAnt2);
+            this.Controls.Add(this.comboAnt1);
+            this.Controls.Add(this.comboAnt0);
             this.Controls.Add(this.chkDisablePA15);
             this.Controls.Add(this.chkDisablePA14);
             this.Controls.Add(this.chkDisablePA13);
@@ -4771,6 +5183,7 @@ namespace Thetis
             this.Controls.Add(this.chkEnable0);
             this.Controls.Add(this.lblButtonText);
             this.Controls.Add(this.lblBandButton);
+            this.Controls.Add(this.labelTS1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "XVTRForm";
             this.Text = "XVTR Setup";
@@ -4923,8 +5336,9 @@ namespace Thetis
 
 			return freq;
 		}
+        private bool _ignore_combo_events = false;
 
-		private void SetupControlArrays()
+        private void SetupControlArrays()
 		{
 			begin = new NumericUpDownTS[16];
 			begin[0] = udFreqBegin0;
@@ -5105,8 +5519,39 @@ namespace Thetis
             disable_pa[13] = chkDisablePA13;
             disable_pa[14] = chkDisablePA14;
             disable_pa[15] = chkDisablePA15;
-		}
 
+            rx_antennas = new ComboBoxTS[16];
+            rx_antennas[0] = comboAnt0;
+            rx_antennas[1] = comboAnt1;
+            rx_antennas[2] = comboAnt2;                
+            rx_antennas[3] = comboAnt3;
+            rx_antennas[4] = comboAnt4;
+            rx_antennas[5] = comboAnt5;
+            rx_antennas[6] = comboAnt6;
+            rx_antennas[7] = comboAnt7;
+            rx_antennas[8] = comboAnt8;
+            rx_antennas[9] = comboAnt9;
+            rx_antennas[10] = comboAnt10;
+            rx_antennas[11] = comboAnt11;
+            rx_antennas[12] = comboAnt12;
+            rx_antennas[13] = comboAnt13;
+            rx_antennas[14] = comboAnt14;
+            rx_antennas[15] = comboAnt15;
+
+            _ignore_combo_events = true;
+            //default the antennas to def, they will get updated when the form is restored
+            for (int i = 0; i < rx_antennas.Length; i++)
+                rx_antennas[i].SelectedIndex = 0;
+            _ignore_combo_events = false;
+        }
+
+        public int GetRXAntenna(int index)
+        {
+            if (index < 0 || index > rx_antennas.Length - 1) return 0;
+            if (rx_antennas[index].SelectedIndex == 0) return 0; // the def entry
+
+            return rx_antennas[index].SelectedIndex; // 1-3 antenna
+        }
 		public bool GetEnabled(int index)
 		{
 			return enabled[index].Checked;
@@ -5191,6 +5636,7 @@ namespace Thetis
 			udPower0.Enabled = b;
 			chkXVTRRF0.Enabled = b;
             chkDisablePA0.Enabled = b;
+            comboAnt0.Enabled = b;
 
 			console.SetVHFEnabled(0, b);
 		}
@@ -5208,8 +5654,9 @@ namespace Thetis
 			udPower1.Enabled = b;
 			chkXVTRRF1.Enabled = b;
             chkDisablePA1.Enabled = b;
+            comboAnt1.Enabled = b;
 
-			console.SetVHFEnabled(1, b);
+            console.SetVHFEnabled(1, b);
 		}
 
 		private void chkEnable2_CheckedChanged(object sender, System.EventArgs e)
@@ -5226,8 +5673,9 @@ namespace Thetis
 			udPower2.Enabled = b;
 			chkXVTRRF2.Enabled = b;
             chkDisablePA2.Enabled = b;
+            comboAnt2.Enabled = b;
 
-			console.SetVHFEnabled(2, b);
+            console.SetVHFEnabled(2, b);
 		}
 
 		private void chkEnable3_CheckedChanged(object sender, System.EventArgs e)
@@ -5244,8 +5692,9 @@ namespace Thetis
 			udPower3.Enabled = b;
 			chkXVTRRF3.Enabled = b;
             chkDisablePA3.Enabled = b;
+            comboAnt3.Enabled = b;
 
-			console.SetVHFEnabled(3, b);
+            console.SetVHFEnabled(3, b);
 		}
 
 		private void chkEnable4_CheckedChanged(object sender, System.EventArgs e)
@@ -5262,8 +5711,9 @@ namespace Thetis
 			udPower4.Enabled = b;
 			chkXVTRRF4.Enabled = b;
             chkDisablePA4.Enabled = b;
+            comboAnt4.Enabled = b;
 
-			console.SetVHFEnabled(4, b);
+            console.SetVHFEnabled(4, b);
 		}
 
 		private void chkEnable5_CheckedChanged(object sender, System.EventArgs e)
@@ -5280,8 +5730,9 @@ namespace Thetis
 			udPower5.Enabled = b;
 			chkXVTRRF5.Enabled = b;
             chkDisablePA5.Enabled = b;
+            comboAnt5.Enabled = b;
 
-			console.SetVHFEnabled(5, b);
+            console.SetVHFEnabled(5, b);
 		}
 
 		private void chkEnable6_CheckedChanged(object sender, System.EventArgs e)
@@ -5298,8 +5749,9 @@ namespace Thetis
 			udPower6.Enabled = b;
 			chkXVTRRF6.Enabled = b;
             chkDisablePA6.Enabled = b;
+            comboAnt6.Enabled = b;
 
-			console.SetVHFEnabled(6, b);
+            console.SetVHFEnabled(6, b);
 		}
 
 		private void chkEnable7_CheckedChanged(object sender, System.EventArgs e)
@@ -5316,8 +5768,9 @@ namespace Thetis
 			udPower7.Enabled = b;
 			chkXVTRRF7.Enabled = b;
             chkDisablePA7.Enabled = b;
+            comboAnt7.Enabled = b;
 
-			console.SetVHFEnabled(7, b);
+            console.SetVHFEnabled(7, b);
 		}
 
 		private void chkEnable8_CheckedChanged(object sender, System.EventArgs e)
@@ -5334,8 +5787,9 @@ namespace Thetis
 			udPower8.Enabled = b;
 			chkXVTRRF8.Enabled = b;
             chkDisablePA8.Enabled = b;
+            comboAnt8.Enabled = b;
 
-			console.SetVHFEnabled(8, b);
+            console.SetVHFEnabled(8, b);
 		}
 
 		private void chkEnable9_CheckedChanged(object sender, System.EventArgs e)
@@ -5352,8 +5806,9 @@ namespace Thetis
 			udPower9.Enabled = b;
 			chkXVTRRF9.Enabled = b;
             chkDisablePA9.Enabled = b;
+            comboAnt9.Enabled = b;
 
-			console.SetVHFEnabled(9, b);
+            console.SetVHFEnabled(9, b);
 		}
 
 		private void chkEnable10_CheckedChanged(object sender, System.EventArgs e)
@@ -5370,8 +5825,9 @@ namespace Thetis
 			udPower10.Enabled = b;
 			chkXVTRRF10.Enabled = b;
             chkDisablePA10.Enabled = b;
+            comboAnt10.Enabled = b;
 
-			console.SetVHFEnabled(10, b);
+            console.SetVHFEnabled(10, b);
 		}
 
 		private void chkEnable11_CheckedChanged(object sender, System.EventArgs e)
@@ -5388,8 +5844,9 @@ namespace Thetis
 			udPower11.Enabled = b;
 			chkXVTRRF11.Enabled = b;
             chkDisablePA11.Enabled = b;
+            comboAnt11.Enabled = b;
 
-			console.SetVHFEnabled(11, b);
+            console.SetVHFEnabled(11, b);
 		}
 
 		private void chkEnable12_CheckedChanged(object sender, System.EventArgs e)
@@ -5406,8 +5863,9 @@ namespace Thetis
 			udPower12.Enabled = b;
 			chkXVTRRF12.Enabled = b;
             chkDisablePA12.Enabled = b;
+            comboAnt2.Enabled = b;
 
-			console.SetVHFEnabled(12, b);
+            console.SetVHFEnabled(12, b);
 		}
 
 		private void chkEnable13_CheckedChanged(object sender, System.EventArgs e)
@@ -5424,8 +5882,9 @@ namespace Thetis
 			udPower13.Enabled = b;
 			chkXVTRRF13.Enabled = b;
             chkDisablePA13.Enabled = b;
+            comboAnt13.Enabled = b;
 
-			console.SetVHFEnabled(13, b);
+            console.SetVHFEnabled(13, b);
 		}
 
 		private void chkEnable14_CheckedChanged(object sender, System.EventArgs e)
@@ -5442,7 +5901,8 @@ namespace Thetis
 			udPower14.Enabled = b;
 			chkXVTRRF14.Enabled = b;
             chkDisablePA14.Enabled = b;
-		}
+            comboAnt14.Enabled = b;
+        }
 
 		private void chkEnable15_CheckedChanged(object sender, System.EventArgs e)
 		{
@@ -5458,7 +5918,8 @@ namespace Thetis
 			udPower15.Enabled = b;
 			chkXVTRRF15.Enabled = b;
             chkDisablePA15.Enabled = b;
-		}
+            comboAnt15.Enabled = b;
+        }
 
 		#endregion 
 
@@ -5547,6 +6008,16 @@ namespace Thetis
             console.SetPower((Band)((int)Band.VHF0 + index), (int)((NumericUpDownTS)sender).Value);
         }
 
+        private void comboAnt0_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_ignore_combo_events) return;
 
-	}
+            int index = int.Parse(((Control)sender).Name.Substring(8));
+            if (console.RX1XVTRIndex == index)
+            {
+                console.RX1XVTRIndex = -1; // force reset
+                console.VFOAFreq = console.VFOAFreq;
+            }
+        }
+    }
 }

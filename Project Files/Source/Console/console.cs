@@ -1746,6 +1746,8 @@ namespace Thetis
                 rx2_level_table[i][2] = -11.5f;
             }
 
+            setupModifyXVTRantennaArray();
+
             tune_power = 0;
             calibrating = false;
             //-W2PA Need this for DB import
@@ -11600,19 +11602,19 @@ namespace Thetis
             set { all_mode_mic_ptt = value; }
         }
 
-        private int last_rx1_xvtr_index = -1;			// index of last xvtr in use
-        public int LastRX1XVTRIndex
-        {
-            get { return last_rx1_xvtr_index; }
-            set { last_rx1_xvtr_index = value; }
-        }
+        //private int last_rx1_xvtr_index = -1;			// index of last xvtr in use
+        //public int LastRX1XVTRIndex
+        //{
+        //    get { return last_rx1_xvtr_index; }
+        //    set { last_rx1_xvtr_index = value; }
+        //}
 
-        private int last_rx2_xvtr_index = -1;			// index of last xvtr in use
-        public int LastRX2XVTRIndex
-        {
-            get { return last_rx2_xvtr_index; }
-            set { last_rx2_xvtr_index = value; }
-        }
+        //private int last_rx2_xvtr_index = -1;			// index of last xvtr in use
+        //public int LastRX2XVTRIndex
+        //{
+        //    get { return last_rx2_xvtr_index; }
+        //    set { last_rx2_xvtr_index = value; }
+        //}
 
         private int rx1_xvtr_index = -1;				// index of current xvtr in use
         public int RX1XVTRIndex
@@ -14593,8 +14595,8 @@ namespace Thetis
                 {
                     Alex.getAlex().UpdateAlexAntSelection(RX1Band, _mox, alex_ant_ctrl_enabled, false);
                 }
-
                 UpdateTRXAnt();
+
                 // QSK not allowed if rx and tx not on same antenna
                 if ((RX1DSPMode == DSPMode.CWL || RX1DSPMode == DSPMode.CWU) &&
                      (BreakInEnabledState == CheckState.Indeterminate)) chkQSK_CheckStateChanged(this, EventArgs.Empty);
@@ -27238,6 +27240,10 @@ namespace Thetis
                 psform.StopPSThread();
             }
 
+            shutdownLogStringToPath("Before undoXVTRantennaModify()");
+            undoXVTRantennaModify(0);
+            undoXVTRantennaModify(1);
+
             shutdownLogStringToPath("Before SaveState()");
             SaveState();
 
@@ -28026,7 +28032,8 @@ namespace Thetis
                 else
                 {
                     Alex.getAlex().UpdateAlexAntSelection(tx_band, _mox, alex_ant_ctrl_enabled, false);
-                }             
+                }
+                UpdateTRXAnt(); //HMMM
 
                 NetworkIO.SetTRXrelay(1);
                 if (cw_fw_keyer &&
@@ -28068,6 +28075,7 @@ namespace Thetis
                     if (!IsSetupFormNull) SetupForm.UpdateOCLedStrip(_mox, bits);
                 }
 
+                UpdateTRXAnt(); //HMMM
                 if (rx1_xvtr_index >= 0)
                 {
                     Alex.getAlex().UpdateAlexAntSelection(lo_band, _mox, alex_ant_ctrl_enabled, true);
@@ -30239,10 +30247,12 @@ namespace Thetis
                 UpdateTRXAnt();
                 if (rx1_xvtr_index >= 0)
                 {
+                    modifyXVTRantenna(0, freq, rx1_xvtr_index);
                     Alex.getAlex().UpdateAlexAntSelection(lo_band, _mox, alex_ant_ctrl_enabled, true);
                 }
                 else
                 {
+                    undoXVTRantennaModify(0);
                     Alex.getAlex().UpdateAlexAntSelection(RX1Band, _mox, alex_ant_ctrl_enabled, false);
                 }
                 UpdateTRXAnt();
@@ -30468,8 +30478,8 @@ namespace Thetis
                 txtVFOALSD.Visible = true;
             }
 
-            last_rx1_xvtr_index = rx1_xvtr_index;
-            last_tx_xvtr_index = tx_xvtr_index;
+            //last_rx1_xvtr_index = rx1_xvtr_index;
+            //last_tx_xvtr_index = tx_xvtr_index;
 
             WDSP.RXANBPSetTuneFrequency(WDSP.id(0, 0), (FWCDDSFreq + f_LO) * 1.0e6);
             WDSP.RXANBPSetTuneFrequency(WDSP.id(0, 1), (FWCDDSFreq + f_LO) * 1.0e6);
@@ -30482,6 +30492,60 @@ namespace Thetis
                     oldCentreFreq, CentreFrequency, oldCtun, ClickTuneDisplay, oldZoomSlider, ptbDisplayZoom.Value, radio.GetDSPRX(0, 0).RXOsc, 1);
         }
 
+        private Band[] _band_used_for_xvtr_modify;
+        private int[] _ant_before_xvtr_modify;
+        private void setupModifyXVTRantennaArray()
+        {
+            _band_used_for_xvtr_modify = new Band[2];
+            _ant_before_xvtr_modify = new int[2];
+
+            for (int rx = 0; rx < 2; rx++)
+            { 
+                _band_used_for_xvtr_modify[rx] = Band.LAST;
+                _ant_before_xvtr_modify[rx] = -1;
+            }
+        }
+        private void modifyXVTRantenna(int rx, double freq, int rx_xvtr_index)
+        {
+            if (rx < 0 || rx > 1) return;
+            if (rx_xvtr_index < 0 || rx_xvtr_index > 15) return;
+            // modify xvtr rx antenna
+            if (!IsSetupFormNull)
+            {
+                int required_ant = XVTRForm.GetRXAntenna(rx_xvtr_index);
+                if (required_ant >= 1 && required_ant <= 3)
+                {
+                    Band xvtr_rx_band = BandByFreq(XVTRForm.TranslateFreq(freq), -1, false, current_region, false);
+                    int xvtr_rx_band_ant = SetupForm.GetRXAntenna(xvtr_rx_band);
+                    if (required_ant != xvtr_rx_band_ant)
+                    {
+                        //Debug.Print("Change xvtr rx antenna to : " + required_ant.ToString());
+                        undoXVTRantennaModify(rx);
+                        xvtr_rx_band_ant = SetupForm.GetRXAntenna(xvtr_rx_band); // this needs to re-obtained as the undo above might adjust revert the antennas back
+                        _ant_before_xvtr_modify[rx] = xvtr_rx_band_ant;
+                        _band_used_for_xvtr_modify[rx] = xvtr_rx_band;
+                        SetupForm.SetRXAntenna(required_ant, xvtr_rx_band);
+                    }
+                }
+                else
+                {
+                    // return to default
+                    undoXVTRantennaModify(rx);
+                }
+            }
+        }
+        private void undoXVTRantennaModify(int rx)
+        {
+            if (rx < 0 || rx > 1) return;
+            if (_band_used_for_xvtr_modify[rx] != Band.LAST)
+            {
+                if (!IsSetupFormNull)
+                    SetupForm.SetRXAntenna(_ant_before_xvtr_modify[rx], _band_used_for_xvtr_modify[rx]);
+
+                _ant_before_xvtr_modify[rx] = -1;
+                _band_used_for_xvtr_modify[rx] = Band.LAST;
+            }
+        }
         private Band getTXBandWhenExtended(Band b)
         {
             if (!extended) return b;
@@ -31392,8 +31456,8 @@ namespace Thetis
                 txtVFOBMSD.Visible = true;
                 txtVFOBLSD.Visible = true;
             }
-            last_tx_xvtr_index = tx_xvtr_index;
-            last_rx2_xvtr_index = rx2_xvtr_index;
+            //last_tx_xvtr_index = tx_xvtr_index;
+            //last_rx2_xvtr_index = rx2_xvtr_index;
 
             if(RX2Enabled)
             {
