@@ -28033,7 +28033,7 @@ namespace Thetis
                 {
                     Alex.getAlex().UpdateAlexAntSelection(tx_band, _mox, alex_ant_ctrl_enabled, false);
                 }
-                UpdateTRXAnt(); //HMMM
+                UpdateTRXAnt(); //[2.3.10.6]MW0LGE added
 
                 NetworkIO.SetTRXrelay(1);
                 if (cw_fw_keyer &&
@@ -28075,7 +28075,7 @@ namespace Thetis
                     if (!IsSetupFormNull) SetupForm.UpdateOCLedStrip(_mox, bits);
                 }
 
-                UpdateTRXAnt(); //HMMM
+                UpdateTRXAnt(); //[2.3.10.6]MW0LGE added
                 if (rx1_xvtr_index >= 0)
                 {
                     Alex.getAlex().UpdateAlexAntSelection(lo_band, _mox, alex_ant_ctrl_enabled, true);
