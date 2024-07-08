@@ -16738,13 +16738,6 @@ namespace Thetis
             }
         }
 
-        private bool disable_swr_protection = false;
-        public bool DisableSWRProtection
-        {
-            get { return disable_swr_protection; }
-            set { disable_swr_protection = value; }
-        }
-
         private int previous_pwr = 50;
         public int PreviousPWR
         {

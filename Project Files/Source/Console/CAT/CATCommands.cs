@@ -4667,27 +4667,71 @@ namespace Thetis
                 return parser.Error1;
             }
         }
-        
-        //Sets or reads the RX1 antenna
-		public string ZZOA(string s)
-		{
-                parser.Verbose_Error_Code = 7;
-                return parser.Error1;
-		}
 
-		//Sets or reads the RX2 antenna (if RX2 installed)
-		public string ZZOB(string s)
+        //Sets or reads the RX1 antenna //[2.3.10.6]MW0LGE https://github.com/ramdor/Thetis/issues/385
+        public string ZZOA(string s)
+		{
+            int n = 0;
+
+            if (s != null && s != "")
+                n = Convert.ToInt32(s);
+            n = Math.Max(1, n);
+            n = Math.Min(3, n);
+
+            if (s.Length == parser.nSet)
+            {
+				if (console.SetupForm != null)
+					console.SetupForm.SetRXAntenna(n, console.RX1Band);
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+				if (console.SetupForm != null)
+					return console.SetupForm.GetRXAntenna(console.RX1Band).ToString();
+				else
+					return "";
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+
+        //Sets or reads the RX2 antenna (if RX2 installed)
+        public string ZZOB(string s)
 		{
              parser.Verbose_Error_Code = 7;
                 return parser.Error1;
 		}
 
-		//Sets or reads the TX antenna
-		public string ZZOC(string s)
+        //Sets or reads the TX antenna //[2.3.10.6]MW0LGE https://github.com/ramdor/Thetis/issues/385
+        public string ZZOC(string s)
 		{
-                parser.Verbose_Error_Code = 7;
+            int n = 0;
+
+            if (s != null && s != "")
+                n = Convert.ToInt32(s);
+            n = Math.Max(1, n);
+            n = Math.Min(3, n);
+
+            if (s.Length == parser.nSet)
+            {
+                if (console.SetupForm != null)
+                    console.SetupForm.SetTXAntenna(n, console.TXBand);
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                if (console.SetupForm != null)
+                    return console.SetupForm.GetTXAntenna(console.TXBand).ToString();
+                else
+                    return "";
+            }
+            else
+            {
                 return parser.Error1;
-		}
+            }
+        }
 
 		//Sets or reads the current Antenna Mode
 		public string ZZOD(string s)
@@ -4754,7 +4798,6 @@ namespace Thetis
             {
                 return parser.Error1;
             }
-
         }
 
         //Sets or reads the current repeater offset direction
