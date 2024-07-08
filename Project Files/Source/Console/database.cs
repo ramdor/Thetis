@@ -9765,54 +9765,37 @@ namespace Thetis
             bool bOldDBhasMultiMeterSettings = false;
             bool bOldDBhasPAProfiles = false;
 
-            foreach (DataTable oldTable in oldDB.Tables)
+            if (oldDB.Tables.Contains("Options"))
             {
-                if(oldTable.TableName == "Options")
-                {
-                    DataRow[] rows = oldDB.Tables[oldTable.TableName].Select("Key like '" + "meterContData_*" + "'");
+                    DataRow[] rows = oldDB.Tables["Options"].Select("Key like '" + "meterContData_*" + "'");
                     bOldDBhasMultiMeterSettings = (rows != null && rows.Length > 0);
 
-                    rows = oldDB.Tables[oldTable.TableName].Select("Key like '" + "PAProfile*" + "'");
+                    rows = oldDB.Tables["Options"].Select("Key like '" + "PAProfile*" + "'");
                     bOldDBhasPAProfiles = (rows != null && rows.Length > 0);
-
-                    break;
-                }
             }
-            //
 
-            // Start by merging any tables in the imported DB that don't come with a freshly reset database
-            foreach (DataTable oldTable in oldDB.Tables)
+            // deal with version number from db being imported
+            if (oldDB.Tables.Contains("State"))
             {
-                bool found = false;
-
-                if (oldTable.TableName == "State")
+                foreach (DataRow rw in oldDB.Tables["State"].Rows)
                 {
-                    //// test code using linq
-                    //DataRow tdr = oldTable.Rows.Cast<DataRow>().Where(key => key[0].ToString() == "VersionNumber").FirstOrDefault();
-                    //if(tdr != null) Debug.Print(Convert.ToString(tdr["Value"]));
-                    ////
-
-                    foreach (DataRow rw in oldTable.Rows)
+                    string thisKey = Convert.ToString(rw["Key"]);
+                    if (thisKey == "VersionNumber")
                     {
-                        string thisKey = Convert.ToString(rw["Key"]);
-                        if (thisKey == "VersionNumber")
-                        {
-                            _versionnumber = Convert.ToString(rw["Value"]);
-                            break;
-                        }
-                    }
-                }
-
-                foreach (DataTable existingTable in existingDB.Tables)
-                {
-                    if (existingTable.TableName == oldTable.TableName)
-                    {                       
-                        found = true;
+                        _versionnumber = Convert.ToString(rw["Value"]);
                         break;
                     }
                 }
-                if (!found) mergedDB.Merge(oldTable);
-            }            
+            }
+
+            // merge any table from the oldDB (being imported) that do not exist in the merged
+            foreach (DataTable oldTable in oldDB.Tables)
+            {
+                if(!existingDB.Tables.Contains(oldTable.TableName))
+                {
+                    mergedDB.Merge(oldTable);
+                }
+            }          
 
             foreach (DataTable table in existingDB.Tables)
             {                

@@ -894,8 +894,8 @@ namespace Thetis
         {
             _console = c;
             //_power = _console.PowerOn;
-            _rx1VHForAbove = _console.VFOAFreq >= 30;
-            _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= 30;
+            _rx1VHForAbove = _console.VFOAFreq >= _console.S9Frequency;
+            _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= _console.S9Frequency;
             _currentHPSDRmodel = _console.CurrentHPSDRModel;
             _apolloPresent = _console.ApolloPresent;
             _alexPresent = _console.AlexPresent;
@@ -919,6 +919,11 @@ namespace Thetis
             renderer.BackgroundColour = backColour;
 
             _DXrenderers.Add(sId, renderer);
+        }
+        public static void UpdateS9()
+        {
+            _rx1VHForAbove = _console.VFOAFreq >= _console.S9Frequency;
+            _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= _console.S9Frequency;
         }
         public static void RefreshAllImages()
         {
@@ -1242,7 +1247,8 @@ namespace Thetis
         }
         private static void OnVFOA(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
-            _rx1VHForAbove = newFreq >= 30;
+            if(rx == 1)
+                _rx1VHForAbove = newFreq >= _console.S9Frequency;
 
             lock (_metersLock)
             {
@@ -1257,7 +1263,9 @@ namespace Thetis
         }
         private static void OnVFOB(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
-            _rx2VHForAbove = _console.RX2Enabled && newFreq/*_console.VFOBFreq*/ >= 30;
+            //_rx2VHForAbove = _console.RX2Enabled && newFreq/*_console.VFOBFreq*/ >= 30;
+            if (rx == 2)
+                _rx2VHForAbove = _console.RX2Enabled && newFreq >= _console.S9Frequency;
 
             lock (_metersLock)
             {
@@ -1537,14 +1545,14 @@ namespace Thetis
                 return nWatts;
             }
         }
-        private static float dbmOffsetForAbove30(int rx)
+        private static float dbmOffsetForAboveS9Frequency(int rx)
         {
-            if (IsAbove30(rx))
+            if (IsAboveS9Frequency(rx))
                 return 20f;
             else
                 return 0f;
         }
-        private static bool IsAbove30(int rx)
+        private static bool IsAboveS9Frequency(int rx)
         {
             return (rx == 1 && _rx1VHForAbove) || (rx == 2 && _rx2VHForAbove);
         }
@@ -3442,7 +3450,7 @@ namespace Thetis
                 if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
                     value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
-                    if (IsAbove30(rx)) value -= 20;
+                    if (IsAboveS9Frequency(rx)) value -= 20;
                     return true;
                 }
                 value = 0;
@@ -3989,7 +3997,7 @@ namespace Thetis
                 if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
                     value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
-                    if (IsAbove30(rx)) value -= 20;
+                    if (IsAboveS9Frequency(rx)) value -= 20;
                     return true;
                 }
                 value = 0;
@@ -4252,7 +4260,7 @@ namespace Thetis
             }
             public override bool ZeroOut(out float value, int rx)
             {
-                if (IsAbove30(rx))
+                if (IsAboveS9Frequency(rx))
                     value = -153; //S0
                 else
                     value = -133; //S0
@@ -4514,7 +4522,7 @@ namespace Thetis
                 if(_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
                     value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
-                    if (IsAbove30(rx)) value -= 20;
+                    if (IsAboveS9Frequency(rx)) value -= 20;
                     return true;
                 }
                 value = 0;
@@ -4804,7 +4812,7 @@ namespace Thetis
                 cb.ScaleCalibration.Add(-13, new PointF(0.99f, 0)); // position for S9+60dB or above
                 cb.FontColour = System.Drawing.Color.Yellow;
                 cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
-                if (IsAbove30(_rx)) cb.Value -= 20;
+                if (IsAboveS9Frequency(_rx)) cb.Value -= 20;
                 cb.ZOrder = 2;
                 cb.HighPoint = cb.ScaleCalibration.OrderBy(p => p.Key).ElementAt(1).Value;
                 addMeterItem(cb);
@@ -5243,7 +5251,7 @@ namespace Thetis
                 me.ScaleCalibration.Add(-73f, new PointF(0.85f, 0));
                 me.ScaleCalibration.Add(-13f, new PointF(1f, 0));
                 me.Value = me.ScaleCalibration.OrderBy(p => p.Key).First().Key;
-                if (IsAbove30(_rx)) me.Value -= 20;
+                if (IsAboveS9Frequency(_rx)) me.Value -= 20;
                 addMeterItem(me);
 
                 clsImage img = new clsImage();
@@ -5316,7 +5324,7 @@ namespace Thetis
                 //ni.Value = -127f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
                 ni.Value = ni.ScaleCalibration.OrderBy(p => p.Key).First().Key;
-                if (IsAbove30(_rx)) ni.Value -= 20;
+                if (IsAboveS9Frequency(_rx)) ni.Value -= 20;
                 addMeterItem(ni);
 
                 //volts
@@ -8237,7 +8245,7 @@ namespace Thetis
                 set 
                 { 
                     _vfoA = value;
-                    if(_rx == 1) _rx1VHForAbove = _vfoA >= 30;
+                    if(_rx == 1) _rx1VHForAbove = _vfoA >= _console.S9Frequency;
                 }
             }
             public double VfoB
@@ -8246,7 +8254,7 @@ namespace Thetis
                 set 
                 { 
                     _vfoB = value;
-                    if (_rx == 2) _rx2VHForAbove = _vfoB >= 30;
+                    if (_rx == 2) _rx2VHForAbove = _vfoB >= _console.S9Frequency;
                 }
             }
             public double VfoSub
@@ -10846,7 +10854,7 @@ namespace Thetis
                     {
                         case clsBarItem.Units.S_UNTS:
                             if (cbi.ReadingSource != Reading.ESTIMATED_PBSNR)
-                                sText = Common.SMeterFromDBM(cbi.Value, MeterManager.IsAbove30(_rx)).Replace(" ", "");
+                                sText = Common.SMeterFromDBM(cbi.Value, MeterManager.IsAboveS9Frequency(_rx)).Replace(" ", "");
                             else
                                 sText = (cbi.Value / 6f).ToString("f1") + "su";
                             break;
@@ -10871,7 +10879,7 @@ namespace Thetis
                     {
                         case clsBarItem.Units.S_UNTS:
                             if (cbi.ReadingSource != Reading.ESTIMATED_PBSNR)
-                                sText = Common.SMeterFromDBM(cbi.MaxHistory, MeterManager.IsAbove30(_rx)).Replace(" ", "");
+                                sText = Common.SMeterFromDBM(cbi.MaxHistory, MeterManager.IsAboveS9Frequency(_rx)).Replace(" ", "");
                             else
                                 sText = (cbi.Value / 6f).ToString("f1") + "su";
                             break;
@@ -11310,7 +11318,7 @@ namespace Thetis
 
                 // s-reading
                 fontSizeEmScaled = (st.FontSize / 16f) * (w / 52f);
-                Common.SMeterFromDBM2(st.Value, MeterManager.IsAbove30(_rx), out int S, out int dBmOver);
+                Common.SMeterFromDBM2(st.Value, MeterManager.IsAboveS9Frequency(_rx), out int S, out int dBmOver);
                 string sText = "S " + S.ToString();
                 szTextSize = measureString(sText, st.FontFamily, st.FntStyle, fontSizeEmScaled);
                 SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x + (w * 0.5f) - (szTextSize.Width * 0.5f), y, szTextSize.Width, szTextSize.Height);
@@ -11335,7 +11343,7 @@ namespace Thetis
                 {
                     //peaks
                     fontSizeEmScaled = ((st.FontSize * 0.5f) / 16f) * (w / 52f);
-                    Common.SMeterFromDBM2(st.MaxHistory, MeterManager.IsAbove30(_rx), out S, out dBmOver);
+                    Common.SMeterFromDBM2(st.MaxHistory, MeterManager.IsAboveS9Frequency(_rx), out S, out dBmOver);
                     sText = "S " + S.ToString();
                     szTextSize = measureString(sText, st.FontFamily, st.FntStyle, fontSizeEmScaled);
                     txtrect = new SharpDX.RectangleF(x + (w * 0.5f) - (szTextSize.Width * 0.5f), y + (h * 0.62f), szTextSize.Width, szTextSize.Height);
@@ -11763,7 +11771,7 @@ namespace Thetis
 
                 // adjust for >= 30mhz
                 if (mi.ReadingSource == Reading.SIGNAL_STRENGTH || mi.ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
-                    value += MeterManager.dbmOffsetForAbove30(_rx);
+                    value += MeterManager.dbmOffsetForAboveS9Frequency(_rx);
 
                 // normalise to 100w
                 else if (mi.NormaliseTo100W)

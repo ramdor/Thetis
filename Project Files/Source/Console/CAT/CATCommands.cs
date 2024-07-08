@@ -905,8 +905,8 @@ namespace Thetis
 			}
 		}
 
-		// Reads the S Meter value
-		public string SM(string s)
+        // Reads the S Meter value  //TODO modify to consider console.S9Frequency
+        public string SM(string s)
 		{
 			int sm = 0;
 			double sx = 0.0;

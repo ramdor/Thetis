@@ -2424,6 +2424,7 @@ namespace Thetis
             chkShowTCISpots_CheckedChanged(this, EventArgs.Empty);
             chkSpotOwnCallAppearance_CheckedChanged(this, EventArgs.Empty);
 
+            //MIDI
             chkIgnore14bitMidiMessages_CheckedChanged(this, EventArgs.Empty);
             chkMidiControlIDincludesChannel_CheckedChanged(this, EventArgs.Empty);
             chkMidiControlIDincludesStatus_CheckedChanged(this, EventArgs.Empty);
@@ -2517,6 +2518,10 @@ namespace Thetis
             chkAutoPowerOn_CheckedChanged(this, e);
             nudPBsnrShiftRx1_ValueChanged(this, e);
             nudPBsnrShiftRx2_ValueChanged(this, e);
+
+            //
+            chkSWRProtection_CheckedChanged(this, e);
+            chkSWRTuneProtection_CheckedChanged(this, e);
         }
 
         public string[] GetTXProfileStrings()
@@ -15110,6 +15115,7 @@ namespace Thetis
         private void chkSWRProtection_CheckedChanged(object sender, EventArgs e)
         {
             console.SWRProtection = chkSWRProtection.Checked;
+            udSwrProtectionLimit.Enabled = chkSWRProtection.Checked;
         }
 
         public bool ATTOnTXChecked
@@ -15775,6 +15781,7 @@ namespace Thetis
         private void chkSWRTuneProtection_CheckedChanged(object sender, EventArgs e)
         {
             console.DisableSWRonTune = chkSWRTuneProtection.Checked;
+            udTunePowerSwrIgnore.Enabled = chkSWRTuneProtection.Checked;
         }
 
         private void tbDisplayFFTSize_Scroll(object sender, EventArgs e)
@@ -28066,6 +28073,28 @@ namespace Thetis
             if (initializing) return;
             WDSP.SetRXAEMNRtrainZetaThresh(WDSP.id(2, 0), (double)udDSPNR2trainThreshRX2.Value);
             WDSP.SetRXAEMNRtrainZetaThresh(WDSP.id(2, 1), (double)udDSPNR2trainThreshRX2.Value);
+        }
+
+        private void radBelow30_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radBelow30.Checked)
+                console.S9Frequency = 30.0;
+        }
+
+        private void radBelow144_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radBelow144.Checked)
+                console.S9Frequency = 144.0;
+        }
+
+        private void udSwrProtectionLimit_ValueChanged(object sender, EventArgs e)
+        {
+            console.SwrProtectionLimit = (float)udSwrProtectionLimit.Value;
+        }
+
+        private void udTunePowerSwrIgnore_ValueChanged(object sender, EventArgs e)
+        {
+            console.TunePowerSwrIgnore = (float)udTunePowerSwrIgnore.Value;
         }
     }
 

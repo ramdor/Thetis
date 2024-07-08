@@ -21067,7 +21067,7 @@ namespace Thetis
 
                         if (_UseSUnitsForPBNPPBSNR)
                         {
-                            sEstimated_passband_noise_power = Common.GetSMeterUnits(estimated_passband_noise_power, VFOAFreq >= 30).ToString("N1") + "su";
+                            sEstimated_passband_noise_power = Common.GetSMeterUnits(estimated_passband_noise_power, VFOAFreq >= S9Frequency).ToString("N1") + "su";
                             sEstimated_snr = (estimated_snr / 6f).ToString("N1") + "su";
                         }
                         else
@@ -21126,7 +21126,7 @@ namespace Thetis
 
                         if (_UseSUnitsForPBNPPBSNR)
                         {
-                            sEstimated_passband_noise_power = Common.GetSMeterUnits(estimated_passband_noise_power, VFOBFreq >= 30).ToString("N1") + "su";
+                            sEstimated_passband_noise_power = Common.GetSMeterUnits(estimated_passband_noise_power, VFOBFreq >= S9Frequency).ToString("N1") + "su";
                             sEstimated_snr = (estimated_snr / 6f).ToString("N1") + "sU";
                         }
                         else
@@ -21382,16 +21382,16 @@ namespace Thetis
             MeterRXMode rxMode;
             MeterTXMode txMode = chkTUN.Checked ? tune_meter_tx_mode : current_meter_tx_mode;
 
-            bool bAbove30;
+            bool bAboveS9Frequency;
             if (rx == 1)
             {
                 rxMode = current_meter_rx_mode;
-                bAbove30 = (VFOAFreq >= 30.0); //MW0LGE_21a
+                bAboveS9Frequency = (VFOAFreq >= S9Frequency); //MW0LGE_21a
             }
             else
             {
                 rxMode = rx2_meter_mode;
-                bAbove30 = (VFOBFreq >= 30.0); //MW0LGE_21a
+                bAboveS9Frequency = (VFOBFreq >= S9Frequency); //MW0LGE_21a
             }
 
             if (!_mox || rx == 2) // rx2 can not tx
@@ -21435,7 +21435,7 @@ namespace Thetis
                             g.DrawString("+" + (i * 20).ToString(), font7, high_brush, (float)((double)W * 0.5 + i * spacing - string_width * 3 - (double)i / 3 * 2), (float)((double)H - nStringOffsetY - string_height));
                         }
 
-                        if (bAbove30)
+                        if (bAboveS9Frequency)
                         {
                             if (num > -93.0) // high area
                             {
@@ -22793,7 +22793,7 @@ namespace Thetis
                             switch (m_eMeasureMode)
                             {
                                 case MultiMeterMeasureMode.SMeter:
-                                    output = Common.SMeterFromDBM(num, VFOAFreq >= 30);
+                                    output = Common.SMeterFromDBM(num, VFOAFreq >= S9Frequency);
                                     break;
                                 case MultiMeterMeasureMode.DBM:
                                     output = num.ToString(format) + " dBm";
@@ -23030,7 +23030,7 @@ namespace Thetis
                         switch (m_eMeasureMode)
                         {
                             case MultiMeterMeasureMode.SMeter:
-                                output = Common.SMeterFromDBM(num, VFOBFreq >= 30);
+                                output = Common.SMeterFromDBM(num, VFOBFreq >= S9Frequency);
                                 break;
                             case MultiMeterMeasureMode.DBM:
                                 output = num.ToString(format) + " dBm";
@@ -24619,12 +24619,12 @@ namespace Thetis
         {
             while (chkPower.Checked)
             {
-                float rx1PreampOffset;
-                if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
-                else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
-
                 if (!_mox)
                 {
+                    float rx1PreampOffset;
+                    if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
+                    else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+
                     float num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH);
                     num = num +
                     rx1_meter_cal_offset +
@@ -25146,7 +25146,6 @@ namespace Thetis
                 }
                 await Task.Delay(1);
             }
-
         }
 
         private int last_dot = 0;
@@ -25545,13 +25544,15 @@ namespace Thetis
 
                     if ((alex_fwd <= 2.0f && alex_rev <= 2.0f) || swr < 1.0f) swr = 1.0f;
 
+                    //[2.10.3.6]MW0LGE modifications to use setup config for swr and tune ignore power. Implements #221 (https://github.com/ramdor/Thetis/issues/221)
                     if (alexpresent || apollopresent)
                     {
                         // in following 'if', K2UE recommends not checking open antenna for the 8000 model
                         // if (swrprotection && alex_fwd > 10.0f && (alex_fwd - alex_rev) < 1.0f)
                         //-W2PA Changed to allow 35w - some amplifier tuners need about 30w to reliably start working
-                        if (swrprotection && alex_fwd > 35.0f && (alex_fwd - alex_rev) < 1.0f
-                            && current_hpsdr_model != HPSDRModel.ANAN8000D) // open ant condition
+                        //if (swrprotection && alex_fwd > 35.0f && (alex_fwd - alex_rev) < 1.0f
+                        if (!chkTUN.Checked && (swrprotection && alex_fwd > 10.0f && (alex_fwd - alex_rev) < 1.0f //[2.10.3.6]MW0LGE ignored if tuning, and returned the 10.0f
+                            && current_hpsdr_model != HPSDRModel.ANAN8000D)) // open ant condition
                         {
                             swr = 50.0f;
                             NetworkIO.SWRProtect = 0.01f;
@@ -25572,11 +25573,44 @@ namespace Thetis
                         swr = 1.0f;
                         alex_fwd = 0;
                         alex_rev = 0;
-                    }
+                    }                    
 
                     if (chkTUN.Checked && disable_swr_on_tune && (alexpresent || apollopresent))
                     {
-                        if (alex_fwd >= 1.0f && alex_fwd <= 35.0f && ptbPWR.Value <= 70)
+                        int tunePowerSliderValue; // need to get the correct slider
+
+                        if (chk2TONE.Checked)
+                        {
+                            switch (TwoToneDrivePowerOrigin)
+                            {
+                                case DrivePowerSource.TUNE_SLIDER:
+                                    tunePowerSliderValue = ptbTune.Value;
+                                    break;
+                                case DrivePowerSource.DRIVE_SLIDER:
+                                    tunePowerSliderValue = ptbPWR.Value;
+                                    break;
+                                default:
+                                    tunePowerSliderValue = ptbPWR.Value;
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            switch (TuneDrivePowerOrigin)
+                            {
+                                case DrivePowerSource.TUNE_SLIDER:
+                                    tunePowerSliderValue = ptbTune.Value;
+                                    break;
+                                case DrivePowerSource.DRIVE_SLIDER:
+                                    tunePowerSliderValue = ptbPWR.Value;
+                                    break;
+                                default:
+                                    tunePowerSliderValue = ptbPWR.Value;
+                                    break;
+                            }
+                        }
+
+                        if (alex_fwd >= 1.0f && alex_fwd <= _tunePowerSwrIgnore && tunePowerSliderValue <= 70)
                         {
                             swr_pass = true;
                         }
@@ -25590,13 +25624,13 @@ namespace Thetis
                     if (current_hpsdr_model == HPSDRModel.ANAN8000D)        // K2UE idea:  try to determine if Hi-Z or Lo-Z load
                         alex_fwd_limit = 2.0f * (float)ptbPWR.Value;        //    by comparing alex_fwd with power setting
 
-                    if (swr > 2.0f && alex_fwd > alex_fwd_limit && swrprotection && !swr_pass)
+                    if (swr > _swrProtectionLimit && alex_fwd > alex_fwd_limit && swrprotection && !swr_pass)
                     {
                         high_swr_count++;
                         if (high_swr_count >= 4)
                         {
                             high_swr_count = 0;
-                            NetworkIO.SWRProtect = (float)(2.0f / (swr + 1.0f));
+                            NetworkIO.SWRProtect = (float)(_swrProtectionLimit / (swr + 1.0f));
                             HighSWR = true;
                         }
                     }
@@ -25615,7 +25649,11 @@ namespace Thetis
                         alex_swr = swr;
                 }
                 else if (high_swr) HighSWR = false;
-                await Task.Delay(1);
+
+                if(_mox)
+                    await Task.Delay(1);
+                else
+                    await Task.Delay(10);
             }
 
             alex_fwd = 0;
@@ -25625,7 +25663,19 @@ namespace Thetis
             alex_swr = 0;
             average_drivepwr = 0;
         }
-
+        
+        private float _swrProtectionLimit = 2.0f;
+        public float SwrProtectionLimit
+        {
+            get { return _swrProtectionLimit; }
+            set { _swrProtectionLimit = value; }
+        }
+        private float _tunePowerSwrIgnore = 35.0f;
+        public float TunePowerSwrIgnore
+        {
+            get { return _tunePowerSwrIgnore; }
+            set { _tunePowerSwrIgnore = value; }
+        }
         private double SWRScale(double ref_pow)
         {
             if (ref_pow < 19) return 1.0;
@@ -42575,23 +42625,24 @@ namespace Thetis
 
             setupHiddenButton(grpVFOA); //MW0LGE_21a
 
-            if (rx1_step_att_present)
-            {
-                udRX1StepAttData.BringToFront();
-            }
-            else
-            {
-                comboPreamp.BringToFront();
-            }
+            //[2.10.3.6]MW0LGE now down below after the expanded flag change, as updateAttNudsCombos
+            //if (rx1_step_att_present)
+            //{
+            //    udRX1StepAttData.BringToFront();
+            //}
+            //else
+            //{
+            //    comboPreamp.BringToFront();
+            //}
 
-            if (rx2_step_att_present)
-            {
-                udRX2StepAttData.BringToFront();
-            }
-            else
-            {
-                comboRX2Preamp.BringToFront();
-            }
+            //if (rx2_step_att_present)
+            //{
+            //    udRX2StepAttData.BringToFront();
+            //}
+            //else
+            //{
+            //    comboRX2Preamp.BringToFront();
+            //}
 
             // G8NJJ
             comboDisplayMode.Parent = panelDisplay2;
@@ -42726,6 +42777,8 @@ namespace Thetis
 
             isexpanded = true;
             iscollapsed = false;
+
+            updateAttNudsCombos(); //[2.10.3.6]MW0LGE
 
             updateLegacyMeterControls(true);// [2.10.1.0] MW0LGE
 
@@ -48940,6 +48993,16 @@ namespace Thetis
         {
             //always update it
             SetupForm.ATTOnTX = (int)udTXStepAttData.Value;
+        }
+
+        private double _s9Frequency = 30.0;
+        public double S9Frequency //[2.10.3.6]MW0LGE implements #418
+        {
+            get { return _s9Frequency; }
+            set {
+                _s9Frequency = value;
+                MeterManager.UpdateS9();
+            }
         }
     }
 
