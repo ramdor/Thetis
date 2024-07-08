@@ -13492,6 +13492,53 @@ namespace Thetis
             console.AlexAntCtrlEnabled = true; // need side effect of prop set to push data down to C code 
         }
 
+        // get RX antenna in use for band
+        // this must also ignores ext input check boxes
+        public int GetRXAntenna(Band band)
+        {
+            int antInUse = 0; //0 none, 1-3 valid
+            if ((band >= Band.B160M) && (band <= Band.B6M))
+            {
+                int idx = (int)band - (int)Band.B160M;
+                int Btn;
+                // change to new radio button and clear all ext input checkboxes
+                RadioButtonTS[] buttons = AlexRxAntButtons[idx];
+                for (Btn = 0; Btn < 3; Btn++)
+                {
+                    if (buttons[Btn].Checked) antInUse = Btn + 1;
+                }
+            }
+            return antInUse;
+        }
+        // get TX antenna in use for band
+        public int GetTXAntenna(Band band)
+        {
+            int antInUse = 0; //0 none, 1-3 valid
+            if ((band >= Band.B160M) && (band <= Band.B6M))
+            {
+                int idx = (int)band - (int)Band.B160M;
+                int Btn;
+                RadioButtonTS[] buttons = AlexTxAntButtons[idx];
+                for (Btn = 0; Btn < 3; Btn++)
+                {
+                    if (buttons[Btn].Checked)
+                    {
+                        if(Btn == 1 && chkBlockTxAnt2.Checked)
+                        {
+                            antInUse = Btn + 1;
+                        }
+                        if (Btn == 2 && chkBlockTxAnt3.Checked)
+                        {
+                            antInUse = Btn + 1;
+                        }
+                        else
+                            antInUse = Btn + 1;
+                    }
+                }
+            }
+            return antInUse;
+        }
+
         // set RX antenna to new antenna 1-3
         // this must also cancel any ext input check boxes
         public void SetRXAntenna(int Antenna, Band band)

@@ -629,7 +629,7 @@ namespace Thetis
         }
 
         // set TX antenna to specified antenna (1=3) called by status bar handler
-        void SetNewTXAntenna(int Ant)
+        public void SetNewTXAntenna(int Ant)
         {
             if ((Ant >= 1) && (Ant <= 3))
             {
@@ -642,7 +642,7 @@ namespace Thetis
         }
 
         // set RX antenna to specified antenna (1=3) called by status bar handler
-        void SetNewRXAntenna(int Ant)
+        public void SetNewRXAntenna(int Ant)
         {
             if ((Ant >= 1) && (Ant <= 3))
             {
