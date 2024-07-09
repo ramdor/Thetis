@@ -23691,7 +23691,9 @@ namespace Thetis
             chkContainerBorder.Enabled = bEnableControls;
             chkContainerNoTitle.Enabled = bEnableControls;
             chkContainerEnable.Enabled = bEnableControls;
+            txtContainerNotes.Enabled = bEnableControls;            
             lblMMContainerBackground.Enabled = bEnableControls;
+            lblMMContainerNotes.Enabled = bEnableControls;
             lstMetersAvailable.Enabled = bEnableControls;
             lstMetersInUse.Enabled = bEnableControls;
             btnAddMeterItem.Enabled = bEnableControls;
@@ -23702,6 +23704,7 @@ namespace Thetis
             btnMeterCopySettings.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
             btnMeterPasteSettings.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
 
+            if (!bEnableControls) txtContainerNotes.Text = "";
             if (!bEnableControls) comboContainerSelect.Text = "";
 
             updateMeterLists();
@@ -23773,6 +23776,7 @@ namespace Thetis
             clrbtnContainerBackground.Color = MeterManager.GetContainerBackgroundColour(cci.ID);
             chkContainerNoTitle.Checked = MeterManager.ContainerNoTitleBar(cci.ID);
             chkContainerEnable.Checked = MeterManager.ContainerShow(cci.ID);
+            txtContainerNotes.Text = MeterManager.GetContainerNotes(cci.ID);
 
             updateMeterLists();
         }
@@ -23798,6 +23802,16 @@ namespace Thetis
             if (cci != null)
             {
                 MeterManager.EnableContainer(cci.ID, chkContainerEnable.Checked);
+            }
+        }
+        private void txtContainerNotes_TextChanged(object sender, EventArgs e)
+        {
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                string sTmp = MeterManager.GetContainerNotes(cci.ID);
+                if (txtContainerNotes.Text != sTmp)
+                    MeterManager.ContainerNotes(cci.ID, txtContainerNotes.Text);
             }
         }
         private void btnAddMeterItem_Click(object sender, EventArgs e)

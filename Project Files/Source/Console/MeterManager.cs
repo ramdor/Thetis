@@ -834,6 +834,29 @@ namespace Thetis
                 return uc.MeterEnabled;
             }
         }
+        public static void ContainerNotes(string sId, string notes)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return;
+                if (!_lstUCMeters.ContainsKey(sId)) return;
+                if (!_DXrenderers.ContainsKey(sId)) return;
+
+                ucMeter uc = _lstUCMeters[sId];
+                uc.Notes = notes;
+            }
+        }
+        public static string GetContainerNotes(string sId)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return "";
+                if (!_lstUCMeters.ContainsKey(sId)) return "";
+
+                ucMeter uc = _lstUCMeters[sId];
+                return uc.Notes;
+            }
+        }
         public static void ContainerBackgroundColour(string sId, System.Drawing.Color c)
         {
             lock (_metersLock)

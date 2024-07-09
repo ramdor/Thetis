@@ -40,6 +40,7 @@ namespace Thetis
             _border = true;
             _noTitleBar = false;
             _enabled = true;
+            _notes = "";
 
             this.Name = "UCMeter_" + _id;
 
@@ -53,6 +54,11 @@ namespace Thetis
             setTopBarButtons();
             setTitle();
             setupBorder();
+
+            btnAxis.BringToFront();
+            btnFloat.BringToFront();
+            btnPin.BringToFront();
+            btnSettings.BringToFront();
 
             btnAxis.Hide();
 
@@ -80,6 +86,7 @@ namespace Thetis
         private bool _border;
         private bool _noTitleBar;
         private bool _enabled;
+        private string _notes;
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Console Console
@@ -98,7 +105,7 @@ namespace Thetis
         public string ID
         {
             get { return _id; }
-            set { _id = value; }
+            set { _id = value.Replace("|",""); }
         }
         private void addDelegates()
         {
@@ -284,7 +291,17 @@ namespace Thetis
         private void setTitle()
         {
             string sPrefix = _mox ? "TX" : "RX";
-            lblRX.Text = sPrefix + _rx.ToString();
+            string sNotes = getFirstLineOrWholeString(_notes);
+            lblRX.Text = sPrefix + _rx.ToString() + (sNotes != "" ? " " + sNotes : "");
+        }
+        private string getFirstLineOrWholeString(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            string[] lines = input.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+            return lines[0];
         }
         private void setupBorder()
         {
@@ -483,6 +500,17 @@ namespace Thetis
                 _enabled = value;                
             }
         }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public string Notes
+        {
+            get { return _notes; }
+            set
+            {
+                _notes = value.Replace("|",""); // need to replace this as used in split parsing
+                setTitle();
+            }
+        }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public bool NoTitle
         {
             get { return _noTitleBar; }
@@ -587,7 +615,8 @@ namespace Thetis
                 UCBorder.ToString() + "|" +
                 Common.ColourToString(this.BackColor) + "|" +
                 NoTitle.ToString() + "|" +
-                MeterEnabled.ToString();
+                MeterEnabled.ToString() + "|" +
+                Notes;
         }
         public bool TryParse(string str)
         {
@@ -602,7 +631,7 @@ namespace Thetis
             if (str != "")
             {
                 string[] tmp = str.Split('|');
-                if(tmp.Length >= 13 && tmp.Length <= 15)
+                if(tmp.Length >= 13 && tmp.Length <= 16)
                 {
                     bOk = tmp[0] != "";
                     if (bOk) ID = tmp[0];
@@ -655,6 +684,11 @@ namespace Thetis
                     {
                         bOk = bool.TryParse(tmp[14], out enabled);
                         if (bOk) MeterEnabled = enabled;
+                    }
+
+                    if (bOk && tmp.Length > 15) // we also have the new for [2.10.3.6] notes
+                    {
+                        Notes = tmp[15];
                     }
                 }
             }
