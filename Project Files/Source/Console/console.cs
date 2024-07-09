@@ -2075,7 +2075,9 @@ namespace Thetis
                 infoBar.UpdateButtonState(ucInfoBar.ActionTypes.Leveler, SetupForm.TXLevelerOn, false);
                 infoBar.UpdateButtonState(ucInfoBar.ActionTypes.CFCeq, SetupForm.CFCPEQEnabled, false);
                 infoBar.UpdateButtonState(ucInfoBar.ActionTypes.ShowSpots, SetupForm.ShowTCISpots /*| other spots*/, false);
-                infoBar.UpdateButtonState(ucInfoBar.ActionTypes.DisplayFill, SetupForm.DisplayPanFill, true); // <- last one needs to be true
+                infoBar.UpdateButtonState(ucInfoBar.ActionTypes.DisplayFill, SetupForm.DisplayPanFill, false); // 
+                infoBar.UpdateButtonState(ucInfoBar.ActionTypes.Random, SetupForm.RandomOn, false); // DH1KLM for Red Pitaya
+                infoBar.UpdateButtonState(ucInfoBar.ActionTypes.Dither, SetupForm.DitherOn, true); // <- last one needs to be true // DH1KLM for Red Pitaya
             }
 
             // tooltips
@@ -7713,11 +7715,12 @@ namespace Thetis
                     {
                         if (diversity2)
                         {
-                            P1_DDCConfig =
+                            P1_DDCConfig = 2; // Pavel for Red Pitaya
                             DDCEnable = DDC0;
                             SyncEnable = DDC1;
                             Rate[0] = rx1_rate;
                             Rate[1] = rx1_rate;
+                            Rate[2] = rx1_rate; // Pavel for Red Pitaya
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
@@ -7726,6 +7729,8 @@ namespace Thetis
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
                             SyncEnable = 0;
+                            Rate[0] = rx1_rate; // Pavel for Red Pitaya
+                            Rate[1] = rx1_rate; // Pavel for Red Pitaya
                             Rate[2] = rx1_rate;
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
@@ -7738,6 +7743,8 @@ namespace Thetis
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
                             SyncEnable = 0;
+                            Rate[0] = rx1_rate; // Pavel for Red Pitaya
+                            Rate[1] = rx1_rate; // Pavel for Red Pitaya
                             Rate[2] = rx1_rate;
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
@@ -7771,6 +7778,7 @@ namespace Thetis
                             SyncEnable = DDC1;
                             Rate[0] = rx1_rate;
                             Rate[1] = rx1_rate;
+                            Rate[2] = rx1_rate; // Pavel for Red Pitaya
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
@@ -14464,8 +14472,7 @@ namespace Thetis
                         CurrentHPSDRHardware = HPSDRHW.OrionMKII;
                         break;
                     case HPSDRModel.ANAN_G2:
-                        //chkDX.Visible = true; //[2.10.3.6]MW0LGE stereo diversity set as invisible until re-implemented
-                        chkDX.Visible = false;
+                        chkDX.Visible = true;
                         rx2_preamp_present = true;
                         NetworkIO.SetRxADC(2);
                         NetworkIO.SetMKIIBPF(1);
@@ -46398,6 +46405,12 @@ namespace Thetis
                     break;
                 case ucInfoBar.ActionTypes.DisplayFill:
                     SetupForm.DisplayPanFill = e.ButtonState;
+                    break;
+                case ucInfoBar.ActionTypes.Random: // DH1KLM for Red Pitaya
+                    SetupForm.RandomOn = e.ButtonState;
+                    break;
+                case ucInfoBar.ActionTypes.Dither: // DH1KLM for Red Pitaya
+                    SetupForm.DitherOn = e.ButtonState;
                     break;
             }
         }

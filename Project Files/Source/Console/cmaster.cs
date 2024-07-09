@@ -347,7 +347,16 @@ namespace Thetis
         public static int PSrate
         {
             get { return ps_rate; }
-            set { ps_rate = value; }
+            set // Pavel for Red Pitaya
+            {
+                ps_rate = value; // Pavel for Red Pitaya
+
+                // get transmitter identifiers
+                int txinid = cmaster.inid(1, 0);        // stream id // Pavel for Red Pitaya
+                int txch = cmaster.chid(txinid, 0);     // wdsp channel // Pavel for Red Pitaya
+
+                puresignal.SetPSFeedbackRate(txch, ps_rate); // Pavel for Red Pitaya
+            }
         }
 
         public static RadioProtocol CurrentRadioProtocol { get; set; }

@@ -30,6 +30,8 @@ namespace Thetis
             CFC,
             CFCeq,
             Leveler,
+            Random, // DH1KLM for Red Pitaya
+            Dither, // DH1KLM for Red Pitaya
             LAST
         }
 
@@ -124,6 +126,10 @@ namespace Thetis
                             return "Spots";
                         case ActionTypes.DisplayFill:
                             return "Fill";
+                        case ActionTypes.Random: // RX2 Ant.4 // DH1KLM for Red Pitaya
+                            return "RX2A4";
+                        case ActionTypes.Dither: // RX2 Ant.5 // DH1KLM for Red Pitaya
+                            return "RX2A5";
 
                     }
                     return "?";
@@ -152,6 +158,10 @@ namespace Thetis
                             return "Show spots";
                         case ActionTypes.DisplayFill:
                             return "Fill the panadaptor";
+                        case ActionTypes.Random: // RX2 Ant.4
+                            return "Activate Antenna 4 on RX2 for Red Pitaya"; // DH1KLM for Red Pitaya
+                        case ActionTypes.Dither: // RX2 Ant.5
+                            return "Activate Antenna 5 on RX2 for Red Pitaya"; // DH1KLM for Red Pitaya
                     }
                     return "";
                 }

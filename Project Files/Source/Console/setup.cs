@@ -707,11 +707,11 @@ namespace Thetis
                 comboAudioSampleRate1.Items.Add(96000);
             if (!comboAudioSampleRate1.Items.Contains(192000))
                 comboAudioSampleRate1.Items.Add(192000);
+            if (!comboAudioSampleRate1.Items.Contains(384000)) // DH1KLM for Red Pitaya
+                comboAudioSampleRate1.Items.Add(384000); // DH1KLM for Red Pitaya
 
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
-            {
-                if (!comboAudioSampleRate1.Items.Contains(384000))
-                    comboAudioSampleRate1.Items.Add(384000);
+            {  // removed 384000 from here // DH1KLM for Red Pitaya     
                 if (!comboAudioSampleRate1.Items.Contains(768000))
                     comboAudioSampleRate1.Items.Add(768000);
                 if (!comboAudioSampleRate1.Items.Contains(1536000))
@@ -719,8 +719,8 @@ namespace Thetis
             }
             else
             {
-                if (comboAudioSampleRate1.Items.Contains(384000))
-                    comboAudioSampleRate1.Items.Remove(384000);
+                //if (comboAudioSampleRate1.Items.Contains(384000)) // DH1KLM for Red Pitaya
+                //    comboAudioSampleRate1.Items.Remove(384000); // DH1KLM for Red Pitaya
                 if (comboAudioSampleRate1.Items.Contains(768000))
                     comboAudioSampleRate1.Items.Remove(768000);
                 if (comboAudioSampleRate1.Items.Contains(1536000))
@@ -737,11 +737,11 @@ namespace Thetis
                 comboAudioSampleRateRX2.Items.Add(96000);
             if (!comboAudioSampleRateRX2.Items.Contains(192000))
                 comboAudioSampleRateRX2.Items.Add(192000);
+            if (!comboAudioSampleRateRX2.Items.Contains(384000)) // DH1KLM for Red Pitaya
+                comboAudioSampleRateRX2.Items.Add(384000); // DH1KLM for Red Pitaya
 
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
-            {
-                if (!comboAudioSampleRateRX2.Items.Contains(384000))
-                    comboAudioSampleRateRX2.Items.Add(384000);
+            {  // removed 384000 from here // DH1KLM for Red Pitaya         
                 if (!comboAudioSampleRateRX2.Items.Contains(768000))
                     comboAudioSampleRateRX2.Items.Add(768000);
                 if (!comboAudioSampleRateRX2.Items.Contains(1536000))
@@ -749,8 +749,6 @@ namespace Thetis
             }
             else
             {
-                if (comboAudioSampleRateRX2.Items.Contains(384000))
-                    comboAudioSampleRateRX2.Items.Remove(384000);
                 if (comboAudioSampleRateRX2.Items.Contains(768000))
                     comboAudioSampleRateRX2.Items.Remove(768000);
                 if (comboAudioSampleRateRX2.Items.Contains(1536000))
@@ -6718,6 +6716,9 @@ namespace Thetis
                         console.SampleRateRX1 = new_rate;
                         console.SampleRateRX2 = new_rate;
 
+                        // set PureSignal sample rate // Pavel
+                        cmaster.PSrate = new_rate; // Pavel
+
                         // set protocol_1 network software sample rate
                         NetworkIO.SetDDCRate(0, new_rate);
 
@@ -12605,6 +12606,7 @@ namespace Thetis
         {
             if (initializing) return;
             int v = chkMercDither.Checked ? 1 : 0;
+            console.SetupInfoBarButton(ucInfoBar.ActionTypes.Dither, chkMercDither.Checked); //DH1KLM for Red Pitaya
             NetworkIO.SetADCDither(v);
         }
 
@@ -12612,6 +12614,7 @@ namespace Thetis
         {
             if (initializing) return;
             int v = chkMercRandom.Checked ? 1 : 0;
+            console.SetupInfoBarButton(ucInfoBar.ActionTypes.Random, chkMercRandom.Checked); //DH1KLM for Red Pitaya
             NetworkIO.SetADCRandom(v);
         }
 
@@ -19650,7 +19653,9 @@ namespace Thetis
             DISPRX2_Tab,
             SpotTCI,
             OPTIONS2_Tab,
-            PA_Tab
+            PA_Tab,
+            FW1_Tab, // DH1KLM for Red Pitaya
+            FW2_Tab // DH1KLM for Red Pitaya
         }
         public void ShowSetupTab(SetupTab eTab)
         {
@@ -19742,6 +19747,14 @@ namespace Thetis
                 case SetupTab.PA_Tab:
                     TabSetup.SelectedIndex = 5; // pa
                     TabPowerAmplifier.SelectedIndex = 0; // gains
+                    break;
+                case SetupTab.FW1_Tab: // DH1KLM for Red Pitaya
+                    TabSetup.SelectedIndex = 0; // select General
+                    TabGeneral.SelectedIndex = 2; // select F/W
+                    break;
+                case SetupTab.FW2_Tab: // DH1KLM for Red Pitaya
+                    TabSetup.SelectedIndex = 0; // select General
+                    TabGeneral.SelectedIndex = 2; // select F/W
                     break;
             }
         }
@@ -21717,6 +21730,17 @@ namespace Thetis
         {
             get { return chkHideFeebackLevel.Checked; }
             set { chkHideFeebackLevel.Checked = value; }
+        }
+        public bool RandomOn // DH1KLM for Red Pitaya
+        {
+            get { return chkMercRandom.Checked; }
+            set { chkMercRandom.Checked = value; }
+        }
+
+        public bool DitherOn // DH1KLM for Red Pitaya
+        {
+            get { return chkMercDither.Checked; }
+            set { chkMercDither.Checked = value; }
         }
         public void SwapRedBlueChanged()
         {
