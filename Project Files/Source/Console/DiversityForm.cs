@@ -35,6 +35,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Timers;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Thetis
 {
@@ -118,6 +120,20 @@ namespace Thetis
         private ToolTip toolTip1;
         private CheckBoxTS chkNoAttLink;
         private CheckBoxTS chkVFOSync;
+        private GroupBoxTS groupBoxTS2;
+        private ButtonTS btnM8;
+        private ButtonTS btnM7;
+        private ButtonTS btnM6;
+        private ButtonTS btnM5;
+        private ButtonTS btnM4;
+        private ButtonTS btnM3;
+        private ButtonTS btnM2;
+        private ButtonTS btnM1;
+        private Label label1;
+        private TextBoxTS txtMemoryDataHidden;
+        private ButtonTS btnShiftDown10;
+        private ButtonTS btnShift90;
+        private ButtonTS btnShiftUp10;
         private IContainer components;
 
         public DiversityForm(Console c)
@@ -127,26 +143,38 @@ namespace Thetis
             //
             InitializeComponent();
             console = c;
-            udR1.Visible = false;
+            //udR1.Visible = false;
 
             udR1.Maximum = (decimal)m_dGainMulti; //MW0LGE_21f
             udR2.Maximum = (decimal)m_dGainMulti;
 
             chkVFOSync.Checked = console.VFOSync;
 
-            // labelTS2.Visible = false;
-            labelTS30.Visible = false;
-            labelTS40.Visible = false;
-            labelTS41.Visible = false;
-            label_d.Visible = false;
-            udAntSpacing.Visible = false;
-            labelDirection.Visible = false;
-            //            trackBarR1.Visible = false;
-            //            trackBarPhase1.Visible = false;
-            chkLockR.Visible = true;
+            //// labelTS2.Visible = false;
+            //labelTS30.Visible = false;
+            //labelTS40.Visible = false;
+            //labelTS41.Visible = false;
+            //label_d.Visible = false;
+            //udAntSpacing.Visible = false;
+            //labelDirection.Visible = false;
+            ////            trackBarR1.Visible = false;
+            ////            trackBarPhase1.Visible = false;
+            //chkLockR.Visible = true;
+
             Common.RestoreForm(this, "DiversityForm", false);
+
+            //[2.10.3.6]MW0LGE implement memories. A bit of a hack to store all this in a text box, but it is easy with the saveform/restoreform
+            try
+            {
+                _memories = DeserializeStringToObject<memorySettings[]>(txtMemoryDataHidden.Text);
+            }
+            catch
+            {
+                initMemories();
+            }
+
             //udFineNull.Value = 0;
-            groupBoxTS1.Visible = false;
+            //groupBoxTS1.Visible = false;
             EventArgs e = EventArgs.Empty;
             radRxSource1_CheckedChanged(this, e);
             radRxSource2_CheckedChanged(this, e);
@@ -188,11 +216,39 @@ namespace Thetis
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DiversityForm));
-            this.chkAuto = new System.Windows.Forms.CheckBox();
-            this.chkEnable = new System.Windows.Forms.CheckBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.picRadar = new System.Windows.Forms.PictureBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.groupBoxTS2 = new System.Windows.Forms.GroupBoxTS();
+            this.txtMemoryDataHidden = new System.Windows.Forms.TextBoxTS();
+            this.labelTS9 = new System.Windows.Forms.LabelTS();
+            this.udAngle0 = new System.Windows.Forms.NumericUpDownTS();
+            this.chkAuto = new System.Windows.Forms.CheckBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.labelDirection = new System.Windows.Forms.LabelTS();
+            this.udCalib = new System.Windows.Forms.NumericUpDownTS();
+            this.udAngle = new System.Windows.Forms.NumericUpDownTS();
+            this.chkEnable = new System.Windows.Forms.CheckBox();
+            this.groupBoxTS1 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS41 = new System.Windows.Forms.LabelTS();
+            this.labelTS30 = new System.Windows.Forms.LabelTS();
+            this.labelTS40 = new System.Windows.Forms.LabelTS();
+            this.label_d = new System.Windows.Forms.LabelTS();
+            this.udAntSpacing = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS5 = new System.Windows.Forms.LabelTS();
+            this.udR = new System.Windows.Forms.NumericUpDownTS();
             this.panelDivControls = new System.Windows.Forms.GroupBoxTS();
+            this.btnShiftDown10 = new System.Windows.Forms.ButtonTS();
+            this.btnShift90 = new System.Windows.Forms.ButtonTS();
+            this.btnShiftUp10 = new System.Windows.Forms.ButtonTS();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnM8 = new System.Windows.Forms.ButtonTS();
+            this.btnM7 = new System.Windows.Forms.ButtonTS();
+            this.btnM6 = new System.Windows.Forms.ButtonTS();
+            this.btnM5 = new System.Windows.Forms.ButtonTS();
+            this.btnM4 = new System.Windows.Forms.ButtonTS();
+            this.btnM3 = new System.Windows.Forms.ButtonTS();
+            this.btnM2 = new System.Windows.Forms.ButtonTS();
+            this.btnM1 = new System.Windows.Forms.ButtonTS();
             this.chkVFOSync = new System.Windows.Forms.CheckBoxTS();
             this.chkNoAttLink = new System.Windows.Forms.CheckBoxTS();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
@@ -219,21 +275,14 @@ namespace Thetis
             this.radioButtonMerc2 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonMerc1 = new System.Windows.Forms.RadioButtonTS();
             this.btnShiftUp45 = new System.Windows.Forms.ButtonTS();
-            this.groupBoxTS1 = new System.Windows.Forms.GroupBoxTS();
-            this.labelTS41 = new System.Windows.Forms.LabelTS();
-            this.labelTS30 = new System.Windows.Forms.LabelTS();
-            this.labelTS40 = new System.Windows.Forms.LabelTS();
-            this.label_d = new System.Windows.Forms.LabelTS();
-            this.udAntSpacing = new System.Windows.Forms.NumericUpDownTS();
-            this.udR = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS5 = new System.Windows.Forms.LabelTS();
-            this.udCalib = new System.Windows.Forms.NumericUpDownTS();
-            this.udAngle = new System.Windows.Forms.NumericUpDownTS();
-            this.labelDirection = new System.Windows.Forms.LabelTS();
-            this.labelTS9 = new System.Windows.Forms.LabelTS();
-            this.udAngle0 = new System.Windows.Forms.NumericUpDownTS();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.picRadar)).BeginInit();
+            this.groupBoxTS2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCalib)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAngle)).BeginInit();
+            this.groupBoxTS1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udAntSpacing)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udR)).BeginInit();
             this.panelDivControls.SuspendLayout();
             this.grpRxSource.SuspendLayout();
             this.groupBox_refMerc.SuspendLayout();
@@ -241,46 +290,7 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.udFineNull)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR1)).BeginInit();
-            this.groupBoxTS1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udAntSpacing)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udR)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udCalib)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAngle)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).BeginInit();
             this.SuspendLayout();
-            // 
-            // chkAuto
-            // 
-            this.chkAuto.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.chkAuto.Enabled = false;
-            this.chkAuto.Location = new System.Drawing.Point(323, 589);
-            this.chkAuto.Name = "chkAuto";
-            this.chkAuto.Size = new System.Drawing.Size(48, 24);
-            this.chkAuto.TabIndex = 1;
-            this.chkAuto.Text = "Auto";
-            this.chkAuto.Visible = false;
-            // 
-            // chkEnable
-            // 
-            this.chkEnable.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkEnable.Location = new System.Drawing.Point(256, 654);
-            this.chkEnable.Name = "chkEnable";
-            this.chkEnable.Size = new System.Drawing.Size(48, 24);
-            this.chkEnable.TabIndex = 48;
-            this.chkEnable.Text = "Enable";
-            this.chkEnable.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.chkEnable.Visible = false;
-            this.chkEnable.CheckedChanged += new System.EventHandler(this.chkEnable_CheckedChanged);
-            // 
-            // textBox1
-            // 
-            this.textBox1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(132, 589);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
-            this.textBox1.TabIndex = 4;
-            this.textBox1.Visible = false;
             // 
             // picRadar
             // 
@@ -288,9 +298,9 @@ namespace Thetis
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picRadar.BackColor = System.Drawing.SystemColors.Control;
-            this.picRadar.Location = new System.Drawing.Point(2, 266);
+            this.picRadar.Location = new System.Drawing.Point(4, 272);
             this.picRadar.Name = "picRadar";
-            this.picRadar.Size = new System.Drawing.Size(342, 343);
+            this.picRadar.Size = new System.Drawing.Size(449, 359);
             this.picRadar.TabIndex = 0;
             this.picRadar.TabStop = false;
             this.picRadar.Paint += new System.Windows.Forms.PaintEventHandler(this.picRadar_Paint);
@@ -298,9 +308,328 @@ namespace Thetis
             this.picRadar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picRadar_MouseMove);
             this.picRadar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picRadar_MouseUp);
             // 
+            // groupBoxTS2
+            // 
+            this.groupBoxTS2.Controls.Add(this.txtMemoryDataHidden);
+            this.groupBoxTS2.Controls.Add(this.labelTS9);
+            this.groupBoxTS2.Controls.Add(this.udAngle0);
+            this.groupBoxTS2.Controls.Add(this.chkAuto);
+            this.groupBoxTS2.Controls.Add(this.textBox1);
+            this.groupBoxTS2.Controls.Add(this.labelDirection);
+            this.groupBoxTS2.Controls.Add(this.udCalib);
+            this.groupBoxTS2.Controls.Add(this.udAngle);
+            this.groupBoxTS2.Controls.Add(this.chkEnable);
+            this.groupBoxTS2.Controls.Add(this.groupBoxTS1);
+            this.groupBoxTS2.Controls.Add(this.labelTS5);
+            this.groupBoxTS2.Controls.Add(this.udR);
+            this.groupBoxTS2.Location = new System.Drawing.Point(456, 3);
+            this.groupBoxTS2.Name = "groupBoxTS2";
+            this.groupBoxTS2.Size = new System.Drawing.Size(315, 256);
+            this.groupBoxTS2.TabIndex = 101;
+            this.groupBoxTS2.TabStop = false;
+            this.groupBoxTS2.Text = "hidden";
+            this.groupBoxTS2.Visible = false;
+            // 
+            // txtMemoryDataHidden
+            // 
+            this.txtMemoryDataHidden.Location = new System.Drawing.Point(10, 228);
+            this.txtMemoryDataHidden.Name = "txtMemoryDataHidden";
+            this.txtMemoryDataHidden.Size = new System.Drawing.Size(100, 20);
+            this.txtMemoryDataHidden.TabIndex = 107;
+            // 
+            // labelTS9
+            // 
+            this.labelTS9.AutoSize = true;
+            this.labelTS9.Image = null;
+            this.labelTS9.Location = new System.Drawing.Point(24, 21);
+            this.labelTS9.Name = "labelTS9";
+            this.labelTS9.Size = new System.Drawing.Size(76, 13);
+            this.labelTS9.TabIndex = 64;
+            this.labelTS9.Text = "Direction (deg)";
+            // 
+            // udAngle0
+            // 
+            this.udAngle0.BackColor = System.Drawing.Color.White;
+            this.udAngle0.DecimalPlaces = 1;
+            this.udAngle0.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.udAngle0.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.udAngle0.Location = new System.Drawing.Point(81, 43);
+            this.udAngle0.Maximum = new decimal(new int[] {
+            361,
+            0,
+            0,
+            0});
+            this.udAngle0.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
+            this.udAngle0.Name = "udAngle0";
+            this.udAngle0.Size = new System.Drawing.Size(74, 32);
+            this.udAngle0.TabIndex = 64;
+            this.udAngle0.TinyStep = false;
+            this.udAngle0.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udAngle0.ValueChanged += new System.EventHandler(this.udAngle0_ValueChanged);
+            // 
+            // chkAuto
+            // 
+            this.chkAuto.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.chkAuto.Enabled = false;
+            this.chkAuto.Location = new System.Drawing.Point(209, 164);
+            this.chkAuto.Name = "chkAuto";
+            this.chkAuto.Size = new System.Drawing.Size(48, 24);
+            this.chkAuto.TabIndex = 1;
+            this.chkAuto.Text = "Auto";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.textBox1.Enabled = false;
+            this.textBox1.Location = new System.Drawing.Point(194, 130);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 4;
+            // 
+            // labelDirection
+            // 
+            this.labelDirection.AutoSize = true;
+            this.labelDirection.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.labelDirection.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.labelDirection.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelDirection.Image = null;
+            this.labelDirection.Location = new System.Drawing.Point(10, 43);
+            this.labelDirection.Name = "labelDirection";
+            this.labelDirection.Size = new System.Drawing.Size(63, 33);
+            this.labelDirection.TabIndex = 65;
+            this.labelDirection.Text = "NW";
+            this.labelDirection.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // udCalib
+            // 
+            this.udCalib.DecimalPlaces = 3;
+            this.udCalib.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.udCalib.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udCalib.Location = new System.Drawing.Point(13, 189);
+            this.udCalib.Maximum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.udCalib.Minimum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            -2147483648});
+            this.udCalib.Name = "udCalib";
+            this.udCalib.Size = new System.Drawing.Size(60, 23);
+            this.udCalib.TabIndex = 60;
+            this.udCalib.TinyStep = false;
+            this.udCalib.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udCalib.ValueChanged += new System.EventHandler(this.udCalib_ValueChanged);
+            // 
+            // udAngle
+            // 
+            this.udAngle.DecimalPlaces = 3;
+            this.udAngle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.udAngle.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAngle.Location = new System.Drawing.Point(209, 87);
+            this.udAngle.Maximum = new decimal(new int[] {
+            65,
+            0,
+            0,
+            65536});
+            this.udAngle.Minimum = new decimal(new int[] {
+            65,
+            0,
+            0,
+            -2147418112});
+            this.udAngle.Name = "udAngle";
+            this.udAngle.Size = new System.Drawing.Size(60, 23);
+            this.udAngle.TabIndex = 6;
+            this.udAngle.TinyStep = false;
+            this.udAngle.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udAngle.ValueChanged += new System.EventHandler(this.udTheta_ValueChanged);
+            // 
+            // chkEnable
+            // 
+            this.chkEnable.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkEnable.Location = new System.Drawing.Point(221, 39);
+            this.chkEnable.Name = "chkEnable";
+            this.chkEnable.Size = new System.Drawing.Size(48, 24);
+            this.chkEnable.TabIndex = 48;
+            this.chkEnable.Text = "Enable";
+            this.chkEnable.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.chkEnable.CheckedChanged += new System.EventHandler(this.chkEnable_CheckedChanged);
+            // 
+            // groupBoxTS1
+            // 
+            this.groupBoxTS1.Controls.Add(this.labelTS41);
+            this.groupBoxTS1.Controls.Add(this.labelTS30);
+            this.groupBoxTS1.Controls.Add(this.labelTS40);
+            this.groupBoxTS1.Controls.Add(this.label_d);
+            this.groupBoxTS1.Controls.Add(this.udAntSpacing);
+            this.groupBoxTS1.Location = new System.Drawing.Point(10, 90);
+            this.groupBoxTS1.Name = "groupBoxTS1";
+            this.groupBoxTS1.Size = new System.Drawing.Size(142, 75);
+            this.groupBoxTS1.TabIndex = 100;
+            this.groupBoxTS1.TabStop = false;
+            this.groupBoxTS1.Text = "Antenna Spacing";
+            // 
+            // labelTS41
+            // 
+            this.labelTS41.AutoSize = true;
+            this.labelTS41.Image = null;
+            this.labelTS41.Location = new System.Drawing.Point(9, 30);
+            this.labelTS41.Name = "labelTS41";
+            this.labelTS41.Size = new System.Drawing.Size(55, 13);
+            this.labelTS41.TabIndex = 98;
+            this.labelTS41.Text = "D (meters)";
+            // 
+            // labelTS30
+            // 
+            this.labelTS30.AutoSize = true;
+            this.labelTS30.Font = new System.Drawing.Font("Symbol", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
+            this.labelTS30.Image = null;
+            this.labelTS30.Location = new System.Drawing.Point(29, 56);
+            this.labelTS30.Name = "labelTS30";
+            this.labelTS30.Size = new System.Drawing.Size(21, 13);
+            this.labelTS30.TabIndex = 87;
+            this.labelTS30.Text = "l =";
+            // 
+            // labelTS40
+            // 
+            this.labelTS40.AutoSize = true;
+            this.labelTS40.Image = null;
+            this.labelTS40.Location = new System.Drawing.Point(9, 56);
+            this.labelTS40.Name = "labelTS40";
+            this.labelTS40.Size = new System.Drawing.Size(23, 13);
+            this.labelTS40.TabIndex = 95;
+            this.labelTS40.Text = " D/";
+            // 
+            // label_d
+            // 
+            this.label_d.AutoSize = true;
+            this.label_d.BackColor = System.Drawing.Color.Transparent;
+            this.label_d.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label_d.Image = null;
+            this.label_d.Location = new System.Drawing.Point(52, 56);
+            this.label_d.Name = "label_d";
+            this.label_d.Size = new System.Drawing.Size(15, 15);
+            this.label_d.TabIndex = 96;
+            this.label_d.Text = "0";
+            // 
+            // udAntSpacing
+            // 
+            this.udAntSpacing.BackColor = System.Drawing.Color.White;
+            this.udAntSpacing.DecimalPlaces = 2;
+            this.udAntSpacing.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.udAntSpacing.ForeColor = System.Drawing.Color.Black;
+            this.udAntSpacing.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.udAntSpacing.Location = new System.Drawing.Point(66, 26);
+            this.udAntSpacing.Maximum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.udAntSpacing.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udAntSpacing.Name = "udAntSpacing";
+            this.udAntSpacing.Size = new System.Drawing.Size(60, 23);
+            this.udAntSpacing.TabIndex = 97;
+            this.udAntSpacing.TinyStep = false;
+            this.udAntSpacing.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udAntSpacing.ValueChanged += new System.EventHandler(this.udAntSpacing_ValueChanged_1);
+            // 
+            // labelTS5
+            // 
+            this.labelTS5.AutoSize = true;
+            this.labelTS5.Image = null;
+            this.labelTS5.Location = new System.Drawing.Point(10, 173);
+            this.labelTS5.Name = "labelTS5";
+            this.labelTS5.Size = new System.Drawing.Size(72, 13);
+            this.labelTS5.TabIndex = 61;
+            this.labelTS5.Text = "calib direction";
+            // 
+            // udR
+            // 
+            this.udR.DecimalPlaces = 3;
+            this.udR.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udR.Location = new System.Drawing.Point(122, 189);
+            this.udR.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udR.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udR.Name = "udR";
+            this.udR.Size = new System.Drawing.Size(56, 20);
+            this.udR.TabIndex = 5;
+            this.udR.TinyStep = false;
+            this.udR.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udR.ValueChanged += new System.EventHandler(this.udR_ValueChanged);
+            // 
             // panelDivControls
             // 
             this.panelDivControls.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.panelDivControls.Controls.Add(this.btnShiftDown10);
+            this.panelDivControls.Controls.Add(this.btnShift90);
+            this.panelDivControls.Controls.Add(this.btnShiftUp10);
+            this.panelDivControls.Controls.Add(this.label1);
+            this.panelDivControls.Controls.Add(this.btnM8);
+            this.panelDivControls.Controls.Add(this.btnM7);
+            this.panelDivControls.Controls.Add(this.btnM6);
+            this.panelDivControls.Controls.Add(this.btnM5);
+            this.panelDivControls.Controls.Add(this.btnM4);
+            this.panelDivControls.Controls.Add(this.btnM3);
+            this.panelDivControls.Controls.Add(this.btnM2);
+            this.panelDivControls.Controls.Add(this.btnM1);
             this.panelDivControls.Controls.Add(this.chkVFOSync);
             this.panelDivControls.Controls.Add(this.chkNoAttLink);
             this.panelDivControls.Controls.Add(this.chkAlwaysOnTop);
@@ -312,12 +641,176 @@ namespace Thetis
             this.panelDivControls.Controls.Add(this.groupBox_refMerc);
             this.panelDivControls.Controls.Add(this.btnShiftUp45);
             this.panelDivControls.ImeMode = System.Windows.Forms.ImeMode.AlphaFull;
-            this.panelDivControls.Location = new System.Drawing.Point(8, 3);
+            this.panelDivControls.Location = new System.Drawing.Point(10, 4);
             this.panelDivControls.Name = "panelDivControls";
-            this.panelDivControls.Size = new System.Drawing.Size(326, 257);
+            this.panelDivControls.Size = new System.Drawing.Size(352, 262);
             this.panelDivControls.TabIndex = 51;
             this.panelDivControls.TabStop = false;
             this.panelDivControls.Enter += new System.EventHandler(this.panelDivControls_Enter);
+            // 
+            // btnShiftDown10
+            // 
+            this.btnShiftDown10.BackColor = System.Drawing.Color.White;
+            this.btnShiftDown10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
+            this.btnShiftDown10.Image = null;
+            this.btnShiftDown10.Location = new System.Drawing.Point(47, 87);
+            this.btnShiftDown10.Name = "btnShiftDown10";
+            this.btnShiftDown10.Selectable = true;
+            this.btnShiftDown10.Size = new System.Drawing.Size(40, 26);
+            this.btnShiftDown10.TabIndex = 116;
+            this.btnShiftDown10.Text = "-10";
+            this.btnShiftDown10.UseVisualStyleBackColor = false;
+            this.btnShiftDown10.Click += new System.EventHandler(this.btnShiftDown10_Click);
+            // 
+            // btnShift90
+            // 
+            this.btnShift90.BackColor = System.Drawing.Color.White;
+            this.btnShift90.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
+            this.btnShift90.Image = null;
+            this.btnShift90.Location = new System.Drawing.Point(47, 57);
+            this.btnShift90.Name = "btnShift90";
+            this.btnShift90.Selectable = true;
+            this.btnShift90.Size = new System.Drawing.Size(40, 26);
+            this.btnShift90.TabIndex = 114;
+            this.btnShift90.Text = "90";
+            this.btnShift90.UseVisualStyleBackColor = false;
+            this.btnShift90.Click += new System.EventHandler(this.btnShift90_Click);
+            // 
+            // btnShiftUp10
+            // 
+            this.btnShiftUp10.BackColor = System.Drawing.Color.White;
+            this.btnShiftUp10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
+            this.btnShiftUp10.Image = null;
+            this.btnShiftUp10.Location = new System.Drawing.Point(47, 27);
+            this.btnShiftUp10.Name = "btnShiftUp10";
+            this.btnShiftUp10.Selectable = true;
+            this.btnShiftUp10.Size = new System.Drawing.Size(40, 26);
+            this.btnShiftUp10.TabIndex = 115;
+            this.btnShiftUp10.Text = "+10";
+            this.btnShiftUp10.UseVisualStyleBackColor = false;
+            this.btnShiftUp10.Click += new System.EventHandler(this.btnShiftUp10_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.label1.Location = new System.Drawing.Point(2, 240);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(89, 13);
+            this.label1.TabIndex = 113;
+            this.label1.Text = "shift click to store";
+            // 
+            // btnM8
+            // 
+            this.btnM8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM8.Image = null;
+            this.btnM8.Location = new System.Drawing.Point(51, 214);
+            this.btnM8.Name = "btnM8";
+            this.btnM8.Selectable = true;
+            this.btnM8.Size = new System.Drawing.Size(36, 23);
+            this.btnM8.TabIndex = 112;
+            this.btnM8.Text = "M8";
+            this.toolTip1.SetToolTip(this.btnM8, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM8.UseVisualStyleBackColor = true;
+            this.btnM8.Click += new System.EventHandler(this.btnM1_Click);
+            // 
+            // btnM7
+            // 
+            this.btnM7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM7.Image = null;
+            this.btnM7.Location = new System.Drawing.Point(6, 214);
+            this.btnM7.Name = "btnM7";
+            this.btnM7.Selectable = true;
+            this.btnM7.Size = new System.Drawing.Size(36, 23);
+            this.btnM7.TabIndex = 111;
+            this.btnM7.Text = "M7";
+            this.toolTip1.SetToolTip(this.btnM7, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM7.UseVisualStyleBackColor = true;
+            this.btnM7.Click += new System.EventHandler(this.btnM1_Click);
+            // 
+            // btnM6
+            // 
+            this.btnM6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM6.Image = null;
+            this.btnM6.Location = new System.Drawing.Point(51, 185);
+            this.btnM6.Name = "btnM6";
+            this.btnM6.Selectable = true;
+            this.btnM6.Size = new System.Drawing.Size(36, 23);
+            this.btnM6.TabIndex = 110;
+            this.btnM6.Text = "M6";
+            this.toolTip1.SetToolTip(this.btnM6, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM6.UseVisualStyleBackColor = true;
+            this.btnM6.Click += new System.EventHandler(this.btnM1_Click);
+            // 
+            // btnM5
+            // 
+            this.btnM5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM5.Image = null;
+            this.btnM5.Location = new System.Drawing.Point(6, 185);
+            this.btnM5.Name = "btnM5";
+            this.btnM5.Selectable = true;
+            this.btnM5.Size = new System.Drawing.Size(36, 23);
+            this.btnM5.TabIndex = 109;
+            this.btnM5.Text = "M5";
+            this.toolTip1.SetToolTip(this.btnM5, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM5.UseVisualStyleBackColor = true;
+            this.btnM5.Click += new System.EventHandler(this.btnM1_Click);
+            // 
+            // btnM4
+            // 
+            this.btnM4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM4.Image = null;
+            this.btnM4.Location = new System.Drawing.Point(51, 155);
+            this.btnM4.Name = "btnM4";
+            this.btnM4.Selectable = true;
+            this.btnM4.Size = new System.Drawing.Size(36, 23);
+            this.btnM4.TabIndex = 108;
+            this.btnM4.Text = "M4";
+            this.toolTip1.SetToolTip(this.btnM4, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM4.UseVisualStyleBackColor = true;
+            this.btnM4.Click += new System.EventHandler(this.btnM1_Click);
+            // 
+            // btnM3
+            // 
+            this.btnM3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM3.Image = null;
+            this.btnM3.Location = new System.Drawing.Point(6, 155);
+            this.btnM3.Name = "btnM3";
+            this.btnM3.Selectable = true;
+            this.btnM3.Size = new System.Drawing.Size(36, 23);
+            this.btnM3.TabIndex = 107;
+            this.btnM3.Text = "M3";
+            this.toolTip1.SetToolTip(this.btnM3, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM3.UseVisualStyleBackColor = true;
+            this.btnM3.Click += new System.EventHandler(this.btnM1_Click);
+            // 
+            // btnM2
+            // 
+            this.btnM2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM2.Image = null;
+            this.btnM2.Location = new System.Drawing.Point(51, 126);
+            this.btnM2.Name = "btnM2";
+            this.btnM2.Selectable = true;
+            this.btnM2.Size = new System.Drawing.Size(36, 23);
+            this.btnM2.TabIndex = 106;
+            this.btnM2.Text = "M2";
+            this.toolTip1.SetToolTip(this.btnM2, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM2.UseVisualStyleBackColor = true;
+            this.btnM2.Click += new System.EventHandler(this.btnM1_Click);
+            // 
+            // btnM1
+            // 
+            this.btnM1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM1.Image = null;
+            this.btnM1.Location = new System.Drawing.Point(6, 126);
+            this.btnM1.Name = "btnM1";
+            this.btnM1.Selectable = true;
+            this.btnM1.Size = new System.Drawing.Size(36, 23);
+            this.btnM1.TabIndex = 105;
+            this.btnM1.Text = "M1";
+            this.toolTip1.SetToolTip(this.btnM1, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM1.UseVisualStyleBackColor = true;
+            this.btnM1.Click += new System.EventHandler(this.btnM1_Click);
             // 
             // chkVFOSync
             // 
@@ -432,12 +925,12 @@ namespace Thetis
             // btnShiftDwn45
             // 
             this.btnShiftDwn45.BackColor = System.Drawing.Color.White;
-            this.btnShiftDwn45.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnShiftDwn45.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
             this.btnShiftDwn45.Image = null;
-            this.btnShiftDwn45.Location = new System.Drawing.Point(10, 87);
+            this.btnShiftDwn45.Location = new System.Drawing.Point(6, 87);
             this.btnShiftDwn45.Name = "btnShiftDwn45";
             this.btnShiftDwn45.Selectable = true;
-            this.btnShiftDwn45.Size = new System.Drawing.Size(46, 26);
+            this.btnShiftDwn45.Size = new System.Drawing.Size(40, 26);
             this.btnShiftDwn45.TabIndex = 62;
             this.btnShiftDwn45.Text = "-45";
             this.btnShiftDwn45.UseVisualStyleBackColor = false;
@@ -446,12 +939,12 @@ namespace Thetis
             // btnShift180
             // 
             this.btnShift180.BackColor = System.Drawing.Color.White;
-            this.btnShift180.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnShift180.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
             this.btnShift180.Image = null;
-            this.btnShift180.Location = new System.Drawing.Point(10, 57);
+            this.btnShift180.Location = new System.Drawing.Point(6, 57);
             this.btnShift180.Name = "btnShift180";
             this.btnShift180.Selectable = true;
-            this.btnShift180.Size = new System.Drawing.Size(46, 26);
+            this.btnShift180.Size = new System.Drawing.Size(40, 26);
             this.btnShift180.TabIndex = 57;
             this.btnShift180.Text = "180";
             this.btnShift180.UseVisualStyleBackColor = false;
@@ -461,7 +954,7 @@ namespace Thetis
             // 
             this.labelTS6.AutoSize = true;
             this.labelTS6.Image = null;
-            this.labelTS6.Location = new System.Drawing.Point(19, 11);
+            this.labelTS6.Location = new System.Drawing.Point(33, 14);
             this.labelTS6.Name = "labelTS6";
             this.labelTS6.Size = new System.Drawing.Size(26, 13);
             this.labelTS6.TabIndex = 54;
@@ -482,7 +975,7 @@ namespace Thetis
             this.groupBox_refMerc.Controls.Add(this.udR1);
             this.groupBox_refMerc.Controls.Add(this.radioButtonMerc2);
             this.groupBox_refMerc.Controls.Add(this.radioButtonMerc1);
-            this.groupBox_refMerc.Location = new System.Drawing.Point(61, 114);
+            this.groupBox_refMerc.Location = new System.Drawing.Point(93, 115);
             this.groupBox_refMerc.Name = "groupBox_refMerc";
             this.groupBox_refMerc.Size = new System.Drawing.Size(252, 140);
             this.groupBox_refMerc.TabIndex = 59;
@@ -728,289 +1221,24 @@ namespace Thetis
             // btnShiftUp45
             // 
             this.btnShiftUp45.BackColor = System.Drawing.Color.White;
-            this.btnShiftUp45.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnShiftUp45.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
             this.btnShiftUp45.Image = null;
-            this.btnShiftUp45.Location = new System.Drawing.Point(10, 27);
+            this.btnShiftUp45.Location = new System.Drawing.Point(6, 27);
             this.btnShiftUp45.Name = "btnShiftUp45";
             this.btnShiftUp45.Selectable = true;
-            this.btnShiftUp45.Size = new System.Drawing.Size(46, 26);
+            this.btnShiftUp45.Size = new System.Drawing.Size(40, 26);
             this.btnShiftUp45.TabIndex = 58;
             this.btnShiftUp45.Text = "+45";
             this.btnShiftUp45.UseVisualStyleBackColor = false;
             this.btnShiftUp45.Click += new System.EventHandler(this.btnShiftUp45_Click);
             // 
-            // groupBoxTS1
-            // 
-            this.groupBoxTS1.Controls.Add(this.labelTS41);
-            this.groupBoxTS1.Controls.Add(this.labelTS30);
-            this.groupBoxTS1.Controls.Add(this.labelTS40);
-            this.groupBoxTS1.Controls.Add(this.label_d);
-            this.groupBoxTS1.Controls.Add(this.udAntSpacing);
-            this.groupBoxTS1.Location = new System.Drawing.Point(337, 93);
-            this.groupBoxTS1.Name = "groupBoxTS1";
-            this.groupBoxTS1.Size = new System.Drawing.Size(142, 75);
-            this.groupBoxTS1.TabIndex = 100;
-            this.groupBoxTS1.TabStop = false;
-            this.groupBoxTS1.Text = "Antenna Spacing";
-            // 
-            // labelTS41
-            // 
-            this.labelTS41.AutoSize = true;
-            this.labelTS41.Image = null;
-            this.labelTS41.Location = new System.Drawing.Point(9, 30);
-            this.labelTS41.Name = "labelTS41";
-            this.labelTS41.Size = new System.Drawing.Size(55, 13);
-            this.labelTS41.TabIndex = 98;
-            this.labelTS41.Text = "D (meters)";
-            // 
-            // labelTS30
-            // 
-            this.labelTS30.AutoSize = true;
-            this.labelTS30.Font = new System.Drawing.Font("Symbol", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
-            this.labelTS30.Image = null;
-            this.labelTS30.Location = new System.Drawing.Point(29, 56);
-            this.labelTS30.Name = "labelTS30";
-            this.labelTS30.Size = new System.Drawing.Size(21, 13);
-            this.labelTS30.TabIndex = 87;
-            this.labelTS30.Text = "l =";
-            // 
-            // labelTS40
-            // 
-            this.labelTS40.AutoSize = true;
-            this.labelTS40.Image = null;
-            this.labelTS40.Location = new System.Drawing.Point(9, 56);
-            this.labelTS40.Name = "labelTS40";
-            this.labelTS40.Size = new System.Drawing.Size(23, 13);
-            this.labelTS40.TabIndex = 95;
-            this.labelTS40.Text = " D/";
-            this.labelTS40.Visible = false;
-            // 
-            // label_d
-            // 
-            this.label_d.AutoSize = true;
-            this.label_d.BackColor = System.Drawing.Color.Transparent;
-            this.label_d.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label_d.Image = null;
-            this.label_d.Location = new System.Drawing.Point(52, 56);
-            this.label_d.Name = "label_d";
-            this.label_d.Size = new System.Drawing.Size(15, 15);
-            this.label_d.TabIndex = 96;
-            this.label_d.Text = "0";
-            // 
-            // udAntSpacing
-            // 
-            this.udAntSpacing.BackColor = System.Drawing.Color.White;
-            this.udAntSpacing.DecimalPlaces = 2;
-            this.udAntSpacing.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.udAntSpacing.ForeColor = System.Drawing.Color.Black;
-            this.udAntSpacing.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.udAntSpacing.Location = new System.Drawing.Point(66, 26);
-            this.udAntSpacing.Maximum = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
-            this.udAntSpacing.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udAntSpacing.Name = "udAntSpacing";
-            this.udAntSpacing.Size = new System.Drawing.Size(60, 23);
-            this.udAntSpacing.TabIndex = 97;
-            this.udAntSpacing.TinyStep = false;
-            this.udAntSpacing.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udAntSpacing.ValueChanged += new System.EventHandler(this.udAntSpacing_ValueChanged_1);
-            // 
-            // udR
-            // 
-            this.udR.DecimalPlaces = 3;
-            this.udR.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udR.Location = new System.Drawing.Point(449, 192);
-            this.udR.Maximum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udR.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udR.Name = "udR";
-            this.udR.Size = new System.Drawing.Size(56, 20);
-            this.udR.TabIndex = 5;
-            this.udR.TinyStep = false;
-            this.udR.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udR.Visible = false;
-            this.udR.ValueChanged += new System.EventHandler(this.udR_ValueChanged);
-            // 
-            // labelTS5
-            // 
-            this.labelTS5.AutoSize = true;
-            this.labelTS5.Image = null;
-            this.labelTS5.Location = new System.Drawing.Point(337, 176);
-            this.labelTS5.Name = "labelTS5";
-            this.labelTS5.Size = new System.Drawing.Size(72, 13);
-            this.labelTS5.TabIndex = 61;
-            this.labelTS5.Text = "calib direction";
-            this.labelTS5.Visible = false;
-            // 
-            // udCalib
-            // 
-            this.udCalib.DecimalPlaces = 3;
-            this.udCalib.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.udCalib.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udCalib.Location = new System.Drawing.Point(340, 192);
-            this.udCalib.Maximum = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.udCalib.Minimum = new decimal(new int[] {
-            4,
-            0,
-            0,
-            -2147483648});
-            this.udCalib.Name = "udCalib";
-            this.udCalib.Size = new System.Drawing.Size(60, 23);
-            this.udCalib.TabIndex = 60;
-            this.udCalib.TinyStep = false;
-            this.udCalib.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udCalib.Visible = false;
-            this.udCalib.ValueChanged += new System.EventHandler(this.udCalib_ValueChanged);
-            // 
-            // udAngle
-            // 
-            this.udAngle.DecimalPlaces = 3;
-            this.udAngle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.udAngle.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAngle.Location = new System.Drawing.Point(275, 706);
-            this.udAngle.Maximum = new decimal(new int[] {
-            65,
-            0,
-            0,
-            65536});
-            this.udAngle.Minimum = new decimal(new int[] {
-            65,
-            0,
-            0,
-            -2147418112});
-            this.udAngle.Name = "udAngle";
-            this.udAngle.Size = new System.Drawing.Size(60, 23);
-            this.udAngle.TabIndex = 6;
-            this.udAngle.TinyStep = false;
-            this.udAngle.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udAngle.ValueChanged += new System.EventHandler(this.udTheta_ValueChanged);
-            // 
-            // labelDirection
-            // 
-            this.labelDirection.AutoSize = true;
-            this.labelDirection.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.labelDirection.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.labelDirection.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelDirection.Image = null;
-            this.labelDirection.Location = new System.Drawing.Point(337, 46);
-            this.labelDirection.Name = "labelDirection";
-            this.labelDirection.Size = new System.Drawing.Size(63, 33);
-            this.labelDirection.TabIndex = 65;
-            this.labelDirection.Text = "NW";
-            this.labelDirection.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.labelDirection.Visible = false;
-            // 
-            // labelTS9
-            // 
-            this.labelTS9.AutoSize = true;
-            this.labelTS9.Image = null;
-            this.labelTS9.Location = new System.Drawing.Point(351, 24);
-            this.labelTS9.Name = "labelTS9";
-            this.labelTS9.Size = new System.Drawing.Size(76, 13);
-            this.labelTS9.TabIndex = 64;
-            this.labelTS9.Text = "Direction (deg)";
-            this.labelTS9.Visible = false;
-            // 
-            // udAngle0
-            // 
-            this.udAngle0.BackColor = System.Drawing.Color.White;
-            this.udAngle0.DecimalPlaces = 1;
-            this.udAngle0.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.udAngle0.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.udAngle0.Location = new System.Drawing.Point(408, 46);
-            this.udAngle0.Maximum = new decimal(new int[] {
-            361,
-            0,
-            0,
-            0});
-            this.udAngle0.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            -2147483648});
-            this.udAngle0.Name = "udAngle0";
-            this.udAngle0.Size = new System.Drawing.Size(74, 32);
-            this.udAngle0.TabIndex = 64;
-            this.udAngle0.TinyStep = false;
-            this.udAngle0.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udAngle0.Visible = false;
-            this.udAngle0.ValueChanged += new System.EventHandler(this.udAngle0_ValueChanged);
-            // 
             // DiversityForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(344, 611);
+            this.ClientSize = new System.Drawing.Size(455, 633);
+            this.Controls.Add(this.groupBoxTS2);
             this.Controls.Add(this.picRadar);
             this.Controls.Add(this.panelDivControls);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.groupBoxTS1);
-            this.Controls.Add(this.chkAuto);
-            this.Controls.Add(this.udR);
-            this.Controls.Add(this.chkEnable);
-            this.Controls.Add(this.labelTS5);
-            this.Controls.Add(this.udCalib);
-            this.Controls.Add(this.udAngle);
-            this.Controls.Add(this.labelDirection);
-            this.Controls.Add(this.labelTS9);
-            this.Controls.Add(this.udAngle0);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(360, 500);
             this.Name = "DiversityForm";
@@ -1019,6 +1247,15 @@ namespace Thetis
             this.Load += new System.EventHandler(this.DiversityForm_Load);
             this.Resize += new System.EventHandler(this.DiversityForm_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.picRadar)).EndInit();
+            this.groupBoxTS2.ResumeLayout(false);
+            this.groupBoxTS2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCalib)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAngle)).EndInit();
+            this.groupBoxTS1.ResumeLayout(false);
+            this.groupBoxTS1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udAntSpacing)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udR)).EndInit();
             this.panelDivControls.ResumeLayout(false);
             this.panelDivControls.PerformLayout();
             this.grpRxSource.ResumeLayout(false);
@@ -1029,27 +1266,59 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.udFineNull)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udR1)).EndInit();
-            this.groupBoxTS1.ResumeLayout(false);
-            this.groupBoxTS1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udAntSpacing)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udR)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udCalib)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAngle)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
         #endregion
 
+        [Serializable]
+        private class memorySettings
+        {
+            public bool enabled = false;
+            public int receiverSource = 0; // 0 = 1+2, 1=1, 2=2
+            public bool rx1RefSource = true; // false is rx2
+            public double rx1Gain = 1.0f;
+            public double rx2Gain = 1.0f;
+            public double phase = 0.0f;
+            public bool lockPhase = false;
+            public bool lockGain = false;
+            public double gainMulti = 1.0f;
+            public double angle = 0.0f;
+            public double r = 0.0f;
+        }
+        public string SerializeObjectToString<T>(T obj)
+        {
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                BinaryFormatter binaryFormatter = new BinaryFormatter();
+                binaryFormatter.Serialize(memoryStream, obj);
+                return Convert.ToBase64String(memoryStream.ToArray());
+            }
+        }
 
+        public T DeserializeStringToObject<T>(string str)
+        {
+            byte[] bytes = Convert.FromBase64String(str);
+            using (MemoryStream memoryStream = new MemoryStream(bytes))
+            {
+                BinaryFormatter binaryFormatter = new BinaryFormatter();
+                return (T)binaryFormatter.Deserialize(memoryStream);
+            }
+        }
+        private memorySettings[] _memories = new memorySettings[8]; //0-7
+        private void initMemories()
+        {
+            for (int i = 0; i < _memories.Length; i++)
+            {
+                _memories[i] = new memorySettings();
+            }
+        }
+        private Font _font = new Font("Microsoft Sans Serif", 10.0f, FontStyle.Bold);
         private void picRadar_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
-            int i;
             Graphics g = e.Graphics;
             int size = Math.Min(picRadar.Width, picRadar.Height);
             Pen pen = new Pen(lineColor);
-            Pen pen2 = new Pen(Brushes.Yellow);
             Pen pen3 = new Pen(Brushes.White);
             // set a couple of graphics properties to make the
             // output image look nice
@@ -1062,54 +1331,94 @@ namespace Thetis
             // draw the outer ring (0° elevation)
             g.DrawEllipse(pen, 0, 0, size - 1, size - 1);
             // draw the inner ring (60° elevation)
-            //int interval = size / 3;
-            //g.DrawEllipse(pen, (size - interval) / 2, (size - interval) / 2, interval, interval);
-            // draw the middle ring (30° elevation)
-            //interval *= 2;
-            //g.DrawEllipse(pen, (size - interval) / 2, (size - interval) / 2, interval, interval);
             int interval = size / 2;
             // draw the middle ring 
             g.DrawEllipse(pen, (size - interval) / 2, (size - interval) / 2, interval, interval);
             // draw the x and y axis lines
             g.DrawLine(pen, new Point(0, (int)(size / 2)), new Point(size - 1, (int)(size / 2)));
             g.DrawLine(pen, new Point((int)(size / 2), 0), new Point((int)(size / 2), size - 1));
-            // calculate and draw the antenna sensitivity pattern
-            //double power_max = 0;
-            /*for (i = 0; i < 180; i++)
+
+            Point pp;
+            for (int i = 0; i < _memories.Length; i++)
             {
-                double theta_a = (double)i * 2 * Math.PI / 180;  //a point every 2 degrees around the compass
-                double power = CalcVrms(theta_a, -angle);
-                //Vrms = Vrms * 1.1 / 3; //* (size / 2) / 392;
-                //if (power > power_max) power_max = power;
-                //label_d.Visible = true;
-                //label_d.Text = Vrms_max.ToString();
-                //double test = 3 * power;
-                //if (i == 90) label_d.Text = test.ToString();
-                Point J = PolarToXY(power / 10, -theta_a);
-                g.FillEllipse(Brushes.LightBlue, J.X, J.Y, 3, 3);
+                if (_memories[i].enabled)
+                {
+                    pp = PolarToXY(_memories[i].r, -_memories[i].angle);
+                    g.FillEllipse(Brushes.Orange, pp.X - 4, pp.Y - 4, 8, 8);
+                    g.DrawString((i + 1).ToString(), _font, Brushes.Orange, new PointF(pp.X + 2, pp.Y + 2));
+                }
             }
-            */
-            //g.FillEllipse(Brushes.White, p.X - 6, p.Y - 6, 12, 12);
-            //g.DrawLine(pen2, new Point((int)(size / 2), (int)(size / 2)), new Point(p.X, p.Y));
-            /*            if (radioButtonMerc1.Checked == true)
-                        {
-                            g.FillEllipse(Brushes.White, p.X - 4, p.Y - 4, 8, 8);
-                            g.DrawLine(pen3, new Point((int)(size / 2), (int)(size / 2)), new Point(p.X, p.Y));
-                        }
-                        if (radioButtonMerc2.Checked == true)
-                        {
-                            g.FillEllipse(Brushes.White, p.X - 4, p.Y - 2, 8, 8);
-                            g.DrawLine(pen3, new Point((int)(size / 2), (int)(size / 2)), new Point(p.X, p.Y));
-                        }
-            */
-            Point pp = getControlHandlePoint(); // MW0LGE_21c
-            //g.FillEllipse(Brushes.White, p.X - 4, p.Y - 2, 8, 8);
-            //g.DrawLine(pen3, new Point((int)(size / 2), (int)(size / 2)), new Point(p.X, p.Y));
-            g.FillEllipse(Brushes.White, pp.X - 4, pp.Y - 2, 8, 8);
+
+            pp = getControlHandlePoint(); // MW0LGE_21c
+            g.FillEllipse(Brushes.White, pp.X - 4, pp.Y - 4, 8, 8);
             g.DrawLine(pen3, new Point((int)(size / 2), (int)(size / 2)), new Point(pp.X, pp.Y));
 
-            //g.FillEllipse(Brushes.Yellow, p.X - 4, p.Y - 4, 8, 8);
-            //g.DrawLine(pen2, new Point ((int) (size/2), (int) (size/2)), new Point(p.X, p.Y));
+            //code store
+            //int i;
+            //Graphics g = e.Graphics;
+            //int size = Math.Min(picRadar.Width, picRadar.Height);
+            //Pen pen = new Pen(lineColor);
+            //Pen pen2 = new Pen(Brushes.Yellow);
+            //Pen pen3 = new Pen(Brushes.White);
+            //// set a couple of graphics properties to make the
+            //// output image look nice
+            //g.CompositingQuality = CompositingQuality.HighQuality;
+            //g.InterpolationMode = InterpolationMode.Bicubic;
+            //g.SmoothingMode = SmoothingMode.AntiAlias;
+            //g.TextRenderingHint = TextRenderingHint.AntiAlias;
+            //// draw the background of the radar
+            //g.FillEllipse(new LinearGradientBrush(new Point((int)(size / 2), 0), new Point((int)(size / 2), size - 1), topColor, bottomColor), 0, 0, size - 1, size - 1);
+            //// draw the outer ring (0° elevation)
+            //g.DrawEllipse(pen, 0, 0, size - 1, size - 1);
+            //// draw the inner ring (60° elevation)
+            ////int interval = size / 3;
+            ////g.DrawEllipse(pen, (size - interval) / 2, (size - interval) / 2, interval, interval);
+            //// draw the middle ring (30° elevation)
+            ////interval *= 2;
+            ////g.DrawEllipse(pen, (size - interval) / 2, (size - interval) / 2, interval, interval);
+            //int interval = size / 2;
+            //// draw the middle ring 
+            //g.DrawEllipse(pen, (size - interval) / 2, (size - interval) / 2, interval, interval);
+            //// draw the x and y axis lines
+            //g.DrawLine(pen, new Point(0, (int)(size / 2)), new Point(size - 1, (int)(size / 2)));
+            //g.DrawLine(pen, new Point((int)(size / 2), 0), new Point((int)(size / 2), size - 1));
+            //// calculate and draw the antenna sensitivity pattern
+            ////double power_max = 0;
+            ///*for (i = 0; i < 180; i++)
+            //{
+            //    double theta_a = (double)i * 2 * Math.PI / 180;  //a point every 2 degrees around the compass
+            //    double power = CalcVrms(theta_a, -angle);
+            //    //Vrms = Vrms * 1.1 / 3; //* (size / 2) / 392;
+            //    //if (power > power_max) power_max = power;
+            //    //label_d.Visible = true;
+            //    //label_d.Text = Vrms_max.ToString();
+            //    //double test = 3 * power;
+            //    //if (i == 90) label_d.Text = test.ToString();
+            //    Point J = PolarToXY(power / 10, -theta_a);
+            //    g.FillEllipse(Brushes.LightBlue, J.X, J.Y, 3, 3);
+            //}
+            //*/
+            ////g.FillEllipse(Brushes.White, p.X - 6, p.Y - 6, 12, 12);
+            ////g.DrawLine(pen2, new Point((int)(size / 2), (int)(size / 2)), new Point(p.X, p.Y));
+            ///*            if (radioButtonMerc1.Checked == true)
+            //            {
+            //                g.FillEllipse(Brushes.White, p.X - 4, p.Y - 4, 8, 8);
+            //                g.DrawLine(pen3, new Point((int)(size / 2), (int)(size / 2)), new Point(p.X, p.Y));
+            //            }
+            //            if (radioButtonMerc2.Checked == true)
+            //            {
+            //                g.FillEllipse(Brushes.White, p.X - 4, p.Y - 2, 8, 8);
+            //                g.DrawLine(pen3, new Point((int)(size / 2), (int)(size / 2)), new Point(p.X, p.Y));
+            //            }
+            //*/
+            //Point pp = getControlHandlePoint(); // MW0LGE_21c
+            ////g.FillEllipse(Brushes.White, p.X - 4, p.Y - 2, 8, 8);
+            ////g.DrawLine(pen3, new Point((int)(size / 2), (int)(size / 2)), new Point(p.X, p.Y));
+            //g.FillEllipse(Brushes.White, pp.X - 4, pp.Y - 2, 8, 8);
+            //g.DrawLine(pen3, new Point((int)(size / 2), (int)(size / 2)), new Point(pp.X, pp.Y));
+
+            ////g.FillEllipse(Brushes.Yellow, p.X - 4, p.Y - 4, 8, 8);
+            ////g.DrawLine(pen2, new Point ((int) (size/2), (int) (size/2)), new Point(p.X, p.Y));
         }
 
         private Point getControlHandlePoint()
@@ -1379,90 +1688,95 @@ namespace Thetis
 
         private void DiversityForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            txtMemoryDataHidden.Text = SerializeObjectToString<memorySettings[]>(_memories);
+
             Common.SaveForm(this, "DiversityForm");
         }
 
         private void btnShiftUp45_Click(object sender, EventArgs e) //shifts -45 degrees wrt the compass angle
         {
-            double PI = Math.PI;
-            if (chkLockAngle.Checked) return;
-            if (udAngle.Value >= (decimal)0)
-            {
-                if (udAngle.Value >= (decimal)(3 * PI / 4))
-                {
-                    udAngle.Value = udAngle.Value - (decimal)(7 * PI / 4);
-                    udAngle0.Value = (decimal)ConvertAngleToAngle0((double)udAngle.Value);
-                    //udFineNull.Value = udAngle.Value;
-                    udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
-                    UpdateDiversity();
-                    return;
-                }
-                else
-                {
-                    udAngle.Value += (decimal)PI / 4;
-                    udAngle0.Value = (decimal)ConvertAngleToAngle0((double)udAngle.Value);
-                    //udFineNull.Value = udAngle.Value;
-                    udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
-                    UpdateDiversity();
-                    return;
-                }
-            }
-            else
-            { // angle is negative
-                udAngle.Value += (decimal)PI / 4;
-                udAngle0.Value = (decimal)ConvertAngleToAngle0((double)udAngle.Value);
-                //udFineNull.Value = udAngle.Value;
-                udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
-                UpdateDiversity();
-                return;
-            }
+            stepAngle(45);
+            //double PI = Math.PI;
+            //if (chkLockAngle.Checked) return;
+            //if (udAngle.Value >= (decimal)0)
+            //{
+            //    if (udAngle.Value >= (decimal)(3 * PI / 4))
+            //    {
+            //        udAngle.Value = udAngle.Value - (decimal)(7 * PI / 4);
+            //        udAngle0.Value = (decimal)ConvertAngleToAngle0((double)udAngle.Value);
+            //        //udFineNull.Value = udAngle.Value;
+            //        udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
+            //        UpdateDiversity();
+            //        return;
+            //    }
+            //    else
+            //    {
+            //        udAngle.Value += (decimal)PI / 4;
+            //        udAngle0.Value = (decimal)ConvertAngleToAngle0((double)udAngle.Value);
+            //        //udFineNull.Value = udAngle.Value;
+            //        udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
+            //        UpdateDiversity();
+            //        return;
+            //    }
+            //}
+            //else
+            //{ // angle is negative
+            //    udAngle.Value += (decimal)PI / 4;
+            //    udAngle0.Value = (decimal)ConvertAngleToAngle0((double)udAngle.Value);
+            //    //udFineNull.Value = udAngle.Value;
+            //    udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
+            //    UpdateDiversity();
+            //    return;
+            //}
         }
 
         private void btnShift180_Click(object sender, EventArgs e)
         {
-            double PI = Math.PI;
-            if (chkLockAngle.Checked) return;
-            if (udAngle.Value > (decimal)0) udAngle.Value -= (decimal)PI;
-            else udAngle.Value += (decimal)PI;
-            udAngle0.Value = (decimal)ConvertAngleToAngle0((double)udAngle.Value);
-            //udFineNull.Value = udAngle.Value;
-            udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
-            UpdateDiversity();
+            stepAngle(180);
+            //double PI = Math.PI;
+            //if (chkLockAngle.Checked) return;
+            //if (udAngle.Value > (decimal)0) udAngle.Value -= (decimal)PI;
+            //else udAngle.Value += (decimal)PI;
+            //udAngle0.Value = (decimal)ConvertAngleToAngle0((double)udAngle.Value);
+            ////udFineNull.Value = udAngle.Value;
+            //udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
+            //UpdateDiversity();
         }
         private void btnShiftDwn45_Click(object sender, EventArgs e) //shifts +45 degrees wrt compass angle
         {
-            double PI = Math.PI;
-            if (chkLockAngle.Checked) return;
-            if (udAngle.Value >= (decimal)0)
-            {
-                udAngle.Value = udAngle.Value - (decimal)(PI / 4);
-                udAngle0.Value = (decimal)ConvertAngleToAngle0((double)udAngle.Value);
-                //udFineNull.Value = udAngle.Value;
-                udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
-                UpdateDiversity();
-                return;
-            }
-            else
-            { // angle is negative
-                if (udAngle.Value <= -(decimal)(3 * PI / 4))
-                {
-                    udAngle.Value = udAngle.Value + (decimal)(7 * PI / 4);
-                    udAngle0.Value = (decimal)ConvertAngleToAngle0((double)udAngle.Value);
-                    //udFineNull.Value = udAngle.Value;
-                    udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
-                    UpdateDiversity();
-                    return;
-                }
-                else
-                {
-                    udAngle.Value -= (decimal)(PI / 4);
-                    udAngle0.Value = (decimal)ConvertAngleToAngle0((double)udAngle.Value);
-                    //udFineNull.Value = udAngle.Value;
-                    udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
-                    UpdateDiversity();
-                    return;
-                }
-            }
+            stepAngle(-45);
+            //double PI = Math.PI;
+            //if (chkLockAngle.Checked) return;
+            //if (udAngle.Value >= (decimal)0)
+            //{
+            //    udAngle.Value = udAngle.Value - (decimal)(PI / 4);
+            //    udAngle0.Value = (decimal)ConvertAngleToAngle0((double)udAngle.Value);
+            //    //udFineNull.Value = udAngle.Value;
+            //    udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
+            //    UpdateDiversity();
+            //    return;
+            //}
+            //else
+            //{ // angle is negative
+            //    if (udAngle.Value <= -(decimal)(3 * PI / 4))
+            //    {
+            //        udAngle.Value = udAngle.Value + (decimal)(7 * PI / 4);
+            //        udAngle0.Value = (decimal)ConvertAngleToAngle0((double)udAngle.Value);
+            //        //udFineNull.Value = udAngle.Value;
+            //        udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
+            //        UpdateDiversity();
+            //        return;
+            //    }
+            //    else
+            //    {
+            //        udAngle.Value -= (decimal)(PI / 4);
+            //        udAngle0.Value = (decimal)ConvertAngleToAngle0((double)udAngle.Value);
+            //        //udFineNull.Value = udAngle.Value;
+            //        udFineNull.Value = (decimal)(180 * (double)udAngle.Value / Math.PI); //degrees
+            //        UpdateDiversity();
+            //        return;
+            //    }
+            //}
         }
 
         private void radioButtonMerc1_CheckedChanged(object sender, EventArgs e)
@@ -2071,6 +2385,10 @@ namespace Thetis
 
         private void udGainMulti_ValueChanged(object sender, EventArgs e)
         {
+            m_dGainMulti = (double)Math.Round(udGainMulti.Value, 2);
+            udR1.Maximum = (decimal)m_dGainMulti;
+            udR2.Maximum = (decimal)m_dGainMulti;
+
             if (chkLockR.Checked)
             {
                 if(udGainMulti.Value != (decimal)m_dGainMulti) udGainMulti.Value = (decimal)m_dGainMulti;
@@ -2082,11 +2400,6 @@ namespace Thetis
 
             r1 /= m_dGainMulti; //norm
             r2 /= m_dGainMulti;
-
-            m_dGainMulti = (double)Math.Round(udGainMulti.Value, 2);
-
-            udR1.Maximum = (decimal)m_dGainMulti;
-            udR2.Maximum = (decimal)m_dGainMulti;
 
             if (radioButtonMerc1.Checked) // order matters, as udR is updated by each of them and we need the correct one last
             {
@@ -2130,6 +2443,109 @@ namespace Thetis
                     chkVFOSync.Checked = value;
 
             }
+        }
+
+        private void btnM1_Click(object sender, EventArgs e)
+        {
+            int index = int.Parse(((Control)sender).Name.Substring(4)) - 1;
+            if (Common.ShiftKeyDown)
+            {
+                //store
+                _memories[index].enabled = true;
+                _memories[index].gainMulti = (double)udGainMulti.Value;
+                _memories[index].receiverSource = radRxSourceRx1Rx2.Checked ? 0 : (radRxSource1.Checked ? 1 : 2);
+                _memories[index].rx1RefSource = radioButtonMerc1.Checked;
+                _memories[index].rx1Gain = (double)udR1.Value;
+                _memories[index].rx2Gain = (double)udR2.Value;
+                _memories[index].phase = (double)udFineNull.Value;
+                _memories[index].lockPhase = chkLockAngle.Checked;
+                _memories[index].lockGain = chkLockR.Checked;
+                _memories[index].angle = (double)udAngle.Value;
+                _memories[index].r = (double)udR.Value;
+                picRadar.Invalidate();
+            }
+            else if (Common.CtrlKeyDown)
+            {
+                _memories[index].enabled = false;
+                picRadar.Invalidate();
+            }
+            else if(_memories[index].enabled)
+            {
+                //recall
+                memorySettings ms = _memories[index];
+                if (ms != null)
+                {
+                    chkLockAngle.Checked = false; // need these to be unlocked so we can set values, then lock at end if needed
+                    chkLockR.Checked = false;
+                    udGainMulti.Value = (decimal)ms.gainMulti;
+                    switch (_memories[index].receiverSource)
+                    {
+                        case 0:
+                            radRxSourceRx1Rx2.Checked = true;
+                            break;
+                        case 1:
+                            radRxSource1.Checked = true;
+                            break;
+                        case 2:
+                            radRxSource2.Checked = true;
+                            break;
+                    }
+                    radioButtonMerc1.Checked = ms.rx1RefSource;
+                    radioButtonMerc2.Checked = !ms.rx1RefSource;
+                    udR1.Value = (decimal)ms.rx1Gain;
+                    udR2.Value = (decimal)ms.rx2Gain;
+                    udFineNull.Value = (decimal)ms.phase;
+                    chkLockAngle.Checked = ms.lockPhase;
+                    chkLockR.Checked = ms.lockGain;
+                    //udAngle.Value = (decimal)ms.angle; //not needed, calulated
+                    //udR.Value = (decimal)ms.r; //not needed, calulated
+
+                    UpdateDiversity();
+                }
+            }
+        }
+
+        private double NormalizeAngle(double angle)
+        {
+            double PI = Math.PI;
+
+            angle = angle % (2 * PI);
+            if (angle > PI)
+            {
+                angle -= 2 * PI;
+            }
+            else if (angle <= -PI)
+            {
+                angle += 2 * PI;
+            }
+            return angle;
+        }
+        private void stepAngle(double degrees)
+        {
+            double PI = Math.PI;
+            double radians = degrees * (PI / 180.0);
+            if (chkLockAngle.Checked) return;
+            double currentAngleRadians = (double)udAngle.Value;
+            currentAngleRadians += radians;
+            currentAngleRadians = NormalizeAngle(currentAngleRadians);
+            udAngle.Value = (decimal)currentAngleRadians;
+            udAngle0.Value = (decimal)ConvertAngleToAngle0(currentAngleRadians);
+            udFineNull.Value = (decimal)(180 * currentAngleRadians / Math.PI);
+            UpdateDiversity();
+        }
+        private void btnShiftUp10_Click(object sender, EventArgs e)
+        {
+            stepAngle(10);
+        }
+
+        private void btnShift90_Click(object sender, EventArgs e)
+        {
+            stepAngle(90);
+        }
+
+        private void btnShiftDown10_Click(object sender, EventArgs e)
+        {
+            stepAngle(-10);
         }
 
         //[2.10.3.5]MW0LGE old code, kept for reference

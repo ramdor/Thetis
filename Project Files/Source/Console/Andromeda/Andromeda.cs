@@ -455,6 +455,9 @@ namespace Thetis
             if ((CurrentBand < Band.B160M) || (CurrentBand > Band.B6M))
                 CurrentBand = AntennaBandFromFreq(true);
 
+            if (CurrentBand == _lastTxAriesAntennaBand) return; //[2.10.3.6]MW0LGE ignore it, as the same
+            _lastTxAriesAntennaBand = CurrentBand;
+
             int idx = (int)CurrentBand - (int)Band.B160M;
             if ((idx < ARIESANTARRAYSIZE) && (idx >= 0))
             {
@@ -512,6 +515,8 @@ namespace Thetis
 
         // show the RX antenna on the Andromeda screen
         // this is now displayed as 2 characters, so existing names have to be remapped
+        private Band _lastRxAriesAntennaBand = Band.FIRST;
+        private Band _lastTxAriesAntennaBand = Band.FIRST;
         private void DisplayAriesRXAntenna()
         {
             int Antenna;
@@ -522,6 +527,9 @@ namespace Thetis
             // see if we are in an amateur band; if not lookup using Alex function
             if ((CurrentBand < Band.B160M) || (CurrentBand > Band.B6M))
                 CurrentBand = AntennaBandFromFreq(false);
+
+            if (CurrentBand == _lastRxAriesAntennaBand) return; //[2.10.3.6]MW0LGE ignore it, as the same
+            _lastRxAriesAntennaBand = CurrentBand;
 
             // convert to int, 160m = index value 0
             int idx = (int)CurrentBand - (int)Band.B160M;

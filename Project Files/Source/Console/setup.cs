@@ -13615,6 +13615,7 @@ namespace Thetis
             if (nRX2ADCinUse == 0 && (console.RX2Enabled && console.RX2Band == band)) // also if adc0 for rx2 then we need to fast attack
                 Display.FastAttackNoiseFloorRX2 = true;
         }
+
         private void btnHPSDRFreqCalReset_Click(object sender, System.EventArgs e)
         {
             udHPSDRFreqCorrectFactor.Value = (decimal)1.0;
