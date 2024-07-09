@@ -3032,6 +3032,7 @@
             this.comboMeterType = new System.Windows.Forms.ComboBoxTS();
             this.tpAppearanceMeter2 = new System.Windows.Forms.TabPage();
             this.grpMultiMeterHolder = new System.Windows.Forms.GroupBoxTS();
+            this.lblMMContainerNotes = new System.Windows.Forms.LabelTS();
             this.txtContainerNotes = new System.Windows.Forms.TextBoxTS();
             this.chkContainerEnable = new System.Windows.Forms.CheckBoxTS();
             this.chkContainerNoTitle = new System.Windows.Forms.CheckBoxTS();
@@ -3577,7 +3578,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.lblMMContainerNotes = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -49206,6 +49206,17 @@
             this.grpMultiMeterHolder.TabIndex = 86;
             this.grpMultiMeterHolder.TabStop = false;
             // 
+            // lblMMContainerNotes
+            // 
+            this.lblMMContainerNotes.AutoSize = true;
+            this.lblMMContainerNotes.Image = null;
+            this.lblMMContainerNotes.Location = new System.Drawing.Point(163, 67);
+            this.lblMMContainerNotes.Name = "lblMMContainerNotes";
+            this.lblMMContainerNotes.Size = new System.Drawing.Size(38, 13);
+            this.lblMMContainerNotes.TabIndex = 107;
+            this.lblMMContainerNotes.Text = "Notes:";
+            this.lblMMContainerNotes.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // txtContainerNotes
             // 
             this.txtContainerNotes.Location = new System.Drawing.Point(166, 83);
@@ -50239,7 +50250,7 @@
             0,
             0});
             this.nudMeterItemUpdateRate.Minimum = new decimal(new int[] {
-            30,
+            15,
             0,
             0,
             0});
@@ -57078,17 +57089,6 @@
             this.radioButtonTS6.TabStop = true;
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
-            // 
-            // lblMMContainerNotes
-            // 
-            this.lblMMContainerNotes.AutoSize = true;
-            this.lblMMContainerNotes.Image = null;
-            this.lblMMContainerNotes.Location = new System.Drawing.Point(163, 67);
-            this.lblMMContainerNotes.Name = "lblMMContainerNotes";
-            this.lblMMContainerNotes.Size = new System.Drawing.Size(38, 13);
-            this.lblMMContainerNotes.TabIndex = 107;
-            this.lblMMContainerNotes.Text = "Notes:";
-            this.lblMMContainerNotes.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // Setup
             // 
