@@ -8162,6 +8162,25 @@ namespace Thetis
                 return parser.Error1;
             }
         }
+
+        public string ZZXA(string s)
+        {
+            if (console is null) return parser.Error1;
+
+            if (s.Length == parser.nSet && (s == "0" || s == "1"))
+            {
+                console.EnableAudioAmplifier = (s == "1");
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                return console.EnableAudioAmplifier ? "1" : "0";
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
         #endregion Extended CAT Methods ZZR-ZZZ
 
 

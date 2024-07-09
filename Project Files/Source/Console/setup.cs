@@ -21839,7 +21839,14 @@ namespace Thetis
         {
             console.EmulateExpertSDR3Protocol = chkEmulateExpertSDR3Protocol.Checked;
         }
-
+        public bool DisableAudioAmplifier
+        {
+            set
+            {
+                if(chkDisableRearSpeakerJacksAudioAmplifier.Checked != value)
+                    chkDisableRearSpeakerJacksAudioAmplifier.Checked = value;
+            }
+        }
         private void chkDisableRearSpeakerJacksAudioAmplifier_CheckedChanged(object sender, EventArgs e)
         {
             console.EnableAudioAmplifier = !chkDisableRearSpeakerJacksAudioAmplifier.Checked;
