@@ -48013,8 +48013,9 @@ namespace Thetis
                 MeterManager.UpdateS9();
             }
         }
-
+        #region AutoStartCode
         //autostart_code
+        //https://github.com/ramdor/Thetis/issues/286
         //store all this in a dictionary, much easier
         private Dictionary<string, bool> _auto_start_form_settings = new Dictionary<string, bool>();
         public void SetAutoFormStartSetting(string form, bool show)
@@ -48076,48 +48077,37 @@ namespace Thetis
 
             //setup
             if (!IsSetupFormNull && GetAutoFormStartSetting("setup")) setupToolStripMenuItem_Click(this, e);
-
             //memory
             if (GetAutoFormStartSetting("memory")) memoryToolStripMenuItem_Click(this, e);
-
             //wave
             if (GetAutoFormStartSetting("wave")) waveToolStripMenuItem_Click(this, e);
-
             //equlaliser
             if (GetAutoFormStartSetting("equaliser")) equalizerToolStripMenuItem_Click(this, e);
-
             //xvtr
             if (GetAutoFormStartSetting("xvtr")) xVTRsToolStripMenuItem_Click(this, e);
-
             //cwx            
             if (GetAutoFormStartSetting("cwx")) cWXToolStripMenuItem_Click(this, e);
-
             //linearity / psform + ampview
             if (psform != null)
             {
                 if (GetAutoFormStartSetting("linearity")) psform.ShowAtStartup_LinearityForm();
                 if (GetAutoFormStartSetting("ampview")) psform.ShowAtStartup_AmpViewForm();
             }
-
             //diversity
             if (GetAutoFormStartSetting("diversity")) eSCToolStripMenuItem_Click(this, e);
-
             //spot
             if (GetAutoFormStartSetting("spot")) spotterMenu_Click(this, e);
-
             //ra
             if (GetAutoFormStartSetting("ra")) RAtoolStripMenuItem_Click(this, e);
-
             //wb
             if (GetAutoFormStartSetting("wb")) wBToolStripMenuItem_Click(this, e);
-
             //finder
             if (GetAutoFormStartSetting("finder")) finderMenuItem_Click(this, e);
-
             //band stack
             if (GetAutoFormStartSetting("bandstack")) lblBandStack_Click(this, e);
         }
         //
+        #endregion
     }
 
     public class DigiMode
