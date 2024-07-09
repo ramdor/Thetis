@@ -505,6 +505,8 @@ namespace Midi2Cat.Data
         QuickPlayOnOff = 306,
         [CatCommandAttribute("Quick Rec Wave File", ControlType.Button, true)] // DH1KLM
         QuickRecOnOff = 307,
+        [CatCommandAttribute("Audio Amp On Off", ControlType.Button, true)] // [2.10.3.6]MW0LGE 
+        AudioAmpOnOff = 308,
         [CatCommandAttribute("Toggle Wheel to VFOA/VFOB ", ControlType.Button)]  //-W2PA Added a toggle between A/B for main wheel 
         ToggleVFOWheel = 700
     }

@@ -6315,6 +6315,28 @@ namespace Thetis
             }
             return CmdState.NoChange;
         }
+        public CmdState AudioAmpOnOff(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int audioAmpEnabled = Convert.ToInt16(commands.ZZXA(""));
+
+                if (audioAmpEnabled == 0)
+                {
+                    commands.ZZXA("1");
+                    return CmdState.On;
+                }
+                if (audioAmpEnabled == 1)
+                {
+                    commands.ZZXA("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
         #endregion
     }
 }
