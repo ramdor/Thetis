@@ -48332,20 +48332,24 @@ namespace Thetis
                 string processName = Path.GetFileNameWithoutExtension(file);
                 if (File.Exists(file) && (!SetupForm.AutoLaunchNoStartIfRunning || (SetupForm.AutoLaunchNoStartIfRunning && !IsProcessRunning(processName))))
                 {
-                    try
+                    string extension = Path.GetExtension(file).ToLower();
+                    if (extension == ".exe" || extension == ".cmd")
                     {
-                        ProcessStartInfo startInfo = new ProcessStartInfo(file)
+                        try
                         {
-                            UseShellExecute = true,
-                            CreateNoWindow = true,
-                            WorkingDirectory = Path.GetDirectoryName(file)
-                        };
+                            ProcessStartInfo startInfo = new ProcessStartInfo(file)
+                            {
+                                UseShellExecute = true,
+                                CreateNoWindow = true,
+                                WorkingDirectory = Path.GetDirectoryName(file)
+                            };
 
-                        Process p = Process.Start(startInfo);
-                        _started_processes.Add(p);
-                    }
-                    catch
-                    {
+                            Process p = Process.Start(startInfo);
+                            _started_processes.Add(p);
+                        }
+                        catch
+                        {
+                        }
                     }
                 }
             }
