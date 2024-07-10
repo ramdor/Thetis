@@ -408,6 +408,40 @@
             this.chkQSOTimerOnlyDuringMOX = new System.Windows.Forms.CheckBoxTS();
             this.chkQSOTimerEnabled = new System.Windows.Forms.CheckBoxTS();
             this.tpOptionsStartUp = new System.Windows.Forms.TabPage();
+            this.groupBoxTS37 = new System.Windows.Forms.GroupBoxTS();
+            this.chkAutoLaunchTryToClose = new System.Windows.Forms.CheckBoxTS();
+            this.chkAutoLaunchNoStartIfRunning = new System.Windows.Forms.CheckBoxTS();
+            this.grpAutoLaunchFiles = new System.Windows.Forms.GroupBoxTS();
+            this.btnAutoLaunchSelectFile_9 = new System.Windows.Forms.ButtonTS();
+            this.txtAutoLaunchFile_9 = new System.Windows.Forms.TextBoxTS();
+            this.chkAutoLaunch_9 = new System.Windows.Forms.CheckBoxTS();
+            this.btnAutoLaunchSelectFile_8 = new System.Windows.Forms.ButtonTS();
+            this.txtAutoLaunchFile_8 = new System.Windows.Forms.TextBoxTS();
+            this.chkAutoLaunch_8 = new System.Windows.Forms.CheckBoxTS();
+            this.btnAutoLaunchSelectFile_7 = new System.Windows.Forms.ButtonTS();
+            this.txtAutoLaunchFile_7 = new System.Windows.Forms.TextBoxTS();
+            this.chkAutoLaunch_7 = new System.Windows.Forms.CheckBoxTS();
+            this.btnAutoLaunchSelectFile_6 = new System.Windows.Forms.ButtonTS();
+            this.txtAutoLaunchFile_6 = new System.Windows.Forms.TextBoxTS();
+            this.chkAutoLaunch_6 = new System.Windows.Forms.CheckBoxTS();
+            this.btnAutoLaunchSelectFile_5 = new System.Windows.Forms.ButtonTS();
+            this.txtAutoLaunchFile_5 = new System.Windows.Forms.TextBoxTS();
+            this.chkAutoLaunch_5 = new System.Windows.Forms.CheckBoxTS();
+            this.btnAutoLaunchSelectFile_4 = new System.Windows.Forms.ButtonTS();
+            this.txtAutoLaunchFile_4 = new System.Windows.Forms.TextBoxTS();
+            this.chkAutoLaunch_4 = new System.Windows.Forms.CheckBoxTS();
+            this.btnAutoLaunchSelectFile_3 = new System.Windows.Forms.ButtonTS();
+            this.txtAutoLaunchFile_3 = new System.Windows.Forms.TextBoxTS();
+            this.chkAutoLaunch_3 = new System.Windows.Forms.CheckBoxTS();
+            this.btnAutoLaunchSelectFile_2 = new System.Windows.Forms.ButtonTS();
+            this.txtAutoLaunchFile_2 = new System.Windows.Forms.TextBoxTS();
+            this.chkAutoLaunch_2 = new System.Windows.Forms.CheckBoxTS();
+            this.btnAutoLaunchSelectFile_1 = new System.Windows.Forms.ButtonTS();
+            this.txtAutoLaunchFile_1 = new System.Windows.Forms.TextBoxTS();
+            this.chkAutoLaunch_1 = new System.Windows.Forms.CheckBoxTS();
+            this.btnAutoLaunchSelectFile_0 = new System.Windows.Forms.ButtonTS();
+            this.txtAutoLaunchFile_0 = new System.Windows.Forms.TextBoxTS();
+            this.chkAutoLaunch_0 = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS36 = new System.Windows.Forms.GroupBoxTS();
             this.chkShowFormStartup_bandstack = new System.Windows.Forms.CheckBoxTS();
             this.chkShowFormStartup_finder = new System.Windows.Forms.CheckBoxTS();
@@ -3714,6 +3748,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerSeconds)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerMinutes)).BeginInit();
             this.tpOptionsStartUp.SuspendLayout();
+            this.groupBoxTS37.SuspendLayout();
+            this.grpAutoLaunchFiles.SuspendLayout();
             this.groupBoxTS36.SuspendLayout();
             this.groupBoxTS35.SuspendLayout();
             this.tpGeneralCalibration.SuspendLayout();
@@ -10154,6 +10190,8 @@
             // tpOptionsStartUp
             // 
             this.tpOptionsStartUp.BackColor = System.Drawing.SystemColors.Control;
+            this.tpOptionsStartUp.Controls.Add(this.groupBoxTS37);
+            this.tpOptionsStartUp.Controls.Add(this.grpAutoLaunchFiles);
             this.tpOptionsStartUp.Controls.Add(this.groupBoxTS36);
             this.tpOptionsStartUp.Controls.Add(this.groupBoxTS35);
             this.tpOptionsStartUp.Location = new System.Drawing.Point(4, 22);
@@ -10161,6 +10199,391 @@
             this.tpOptionsStartUp.Size = new System.Drawing.Size(716, 384);
             this.tpOptionsStartUp.TabIndex = 2;
             this.tpOptionsStartUp.Text = "StartUp Options";
+            // 
+            // groupBoxTS37
+            // 
+            this.groupBoxTS37.Controls.Add(this.chkAutoLaunchTryToClose);
+            this.groupBoxTS37.Controls.Add(this.chkAutoLaunchNoStartIfRunning);
+            this.groupBoxTS37.Location = new System.Drawing.Point(422, 9);
+            this.groupBoxTS37.Name = "groupBoxTS37";
+            this.groupBoxTS37.Size = new System.Drawing.Size(285, 60);
+            this.groupBoxTS37.TabIndex = 37;
+            this.groupBoxTS37.TabStop = false;
+            this.groupBoxTS37.Text = "Options";
+            // 
+            // chkAutoLaunchTryToClose
+            // 
+            this.chkAutoLaunchTryToClose.AutoSize = true;
+            this.chkAutoLaunchTryToClose.Image = null;
+            this.chkAutoLaunchTryToClose.Location = new System.Drawing.Point(194, 26);
+            this.chkAutoLaunchTryToClose.Name = "chkAutoLaunchTryToClose";
+            this.chkAutoLaunchTryToClose.Size = new System.Drawing.Size(81, 17);
+            this.chkAutoLaunchTryToClose.TabIndex = 36;
+            this.chkAutoLaunchTryToClose.Text = "Try to close";
+            this.toolTip1.SetToolTip(this.chkAutoLaunchTryToClose, "Thetis will try to close everything it has opened at launch. This will be done on" +
+        " shutdown.");
+            this.chkAutoLaunchTryToClose.UseVisualStyleBackColor = true;
+            // 
+            // chkAutoLaunchNoStartIfRunning
+            // 
+            this.chkAutoLaunchNoStartIfRunning.AutoSize = true;
+            this.chkAutoLaunchNoStartIfRunning.Image = null;
+            this.chkAutoLaunchNoStartIfRunning.Location = new System.Drawing.Point(13, 26);
+            this.chkAutoLaunchNoStartIfRunning.Name = "chkAutoLaunchNoStartIfRunning";
+            this.chkAutoLaunchNoStartIfRunning.Size = new System.Drawing.Size(146, 17);
+            this.chkAutoLaunchNoStartIfRunning.TabIndex = 35;
+            this.chkAutoLaunchNoStartIfRunning.Text = "No start if already running";
+            this.toolTip1.SetToolTip(this.chkAutoLaunchNoStartIfRunning, "Program will not be launched if already found in the process list");
+            this.chkAutoLaunchNoStartIfRunning.UseVisualStyleBackColor = true;
+            // 
+            // grpAutoLaunchFiles
+            // 
+            this.grpAutoLaunchFiles.Controls.Add(this.btnAutoLaunchSelectFile_9);
+            this.grpAutoLaunchFiles.Controls.Add(this.txtAutoLaunchFile_9);
+            this.grpAutoLaunchFiles.Controls.Add(this.chkAutoLaunch_9);
+            this.grpAutoLaunchFiles.Controls.Add(this.btnAutoLaunchSelectFile_8);
+            this.grpAutoLaunchFiles.Controls.Add(this.txtAutoLaunchFile_8);
+            this.grpAutoLaunchFiles.Controls.Add(this.chkAutoLaunch_8);
+            this.grpAutoLaunchFiles.Controls.Add(this.btnAutoLaunchSelectFile_7);
+            this.grpAutoLaunchFiles.Controls.Add(this.txtAutoLaunchFile_7);
+            this.grpAutoLaunchFiles.Controls.Add(this.chkAutoLaunch_7);
+            this.grpAutoLaunchFiles.Controls.Add(this.btnAutoLaunchSelectFile_6);
+            this.grpAutoLaunchFiles.Controls.Add(this.txtAutoLaunchFile_6);
+            this.grpAutoLaunchFiles.Controls.Add(this.chkAutoLaunch_6);
+            this.grpAutoLaunchFiles.Controls.Add(this.btnAutoLaunchSelectFile_5);
+            this.grpAutoLaunchFiles.Controls.Add(this.txtAutoLaunchFile_5);
+            this.grpAutoLaunchFiles.Controls.Add(this.chkAutoLaunch_5);
+            this.grpAutoLaunchFiles.Controls.Add(this.btnAutoLaunchSelectFile_4);
+            this.grpAutoLaunchFiles.Controls.Add(this.txtAutoLaunchFile_4);
+            this.grpAutoLaunchFiles.Controls.Add(this.chkAutoLaunch_4);
+            this.grpAutoLaunchFiles.Controls.Add(this.btnAutoLaunchSelectFile_3);
+            this.grpAutoLaunchFiles.Controls.Add(this.txtAutoLaunchFile_3);
+            this.grpAutoLaunchFiles.Controls.Add(this.chkAutoLaunch_3);
+            this.grpAutoLaunchFiles.Controls.Add(this.btnAutoLaunchSelectFile_2);
+            this.grpAutoLaunchFiles.Controls.Add(this.txtAutoLaunchFile_2);
+            this.grpAutoLaunchFiles.Controls.Add(this.chkAutoLaunch_2);
+            this.grpAutoLaunchFiles.Controls.Add(this.btnAutoLaunchSelectFile_1);
+            this.grpAutoLaunchFiles.Controls.Add(this.txtAutoLaunchFile_1);
+            this.grpAutoLaunchFiles.Controls.Add(this.chkAutoLaunch_1);
+            this.grpAutoLaunchFiles.Controls.Add(this.btnAutoLaunchSelectFile_0);
+            this.grpAutoLaunchFiles.Controls.Add(this.txtAutoLaunchFile_0);
+            this.grpAutoLaunchFiles.Controls.Add(this.chkAutoLaunch_0);
+            this.grpAutoLaunchFiles.Location = new System.Drawing.Point(231, 75);
+            this.grpAutoLaunchFiles.Name = "grpAutoLaunchFiles";
+            this.grpAutoLaunchFiles.Size = new System.Drawing.Size(476, 298);
+            this.grpAutoLaunchFiles.TabIndex = 36;
+            this.grpAutoLaunchFiles.TabStop = false;
+            this.grpAutoLaunchFiles.Text = "Auto Launch At Start Up";
+            // 
+            // btnAutoLaunchSelectFile_9
+            // 
+            this.btnAutoLaunchSelectFile_9.Image = null;
+            this.btnAutoLaunchSelectFile_9.Location = new System.Drawing.Point(436, 254);
+            this.btnAutoLaunchSelectFile_9.Name = "btnAutoLaunchSelectFile_9";
+            this.btnAutoLaunchSelectFile_9.Selectable = true;
+            this.btnAutoLaunchSelectFile_9.Size = new System.Drawing.Size(33, 23);
+            this.btnAutoLaunchSelectFile_9.TabIndex = 29;
+            this.btnAutoLaunchSelectFile_9.Text = "...";
+            this.btnAutoLaunchSelectFile_9.UseVisualStyleBackColor = true;
+            this.btnAutoLaunchSelectFile_9.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
+            // 
+            // txtAutoLaunchFile_9
+            // 
+            this.txtAutoLaunchFile_9.Location = new System.Drawing.Point(35, 256);
+            this.txtAutoLaunchFile_9.Name = "txtAutoLaunchFile_9";
+            this.txtAutoLaunchFile_9.Size = new System.Drawing.Size(395, 20);
+            this.txtAutoLaunchFile_9.TabIndex = 28;
+            this.txtAutoLaunchFile_9.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
+            // 
+            // chkAutoLaunch_9
+            // 
+            this.chkAutoLaunch_9.AutoSize = true;
+            this.chkAutoLaunch_9.Image = null;
+            this.chkAutoLaunch_9.Location = new System.Drawing.Point(13, 259);
+            this.chkAutoLaunch_9.Name = "chkAutoLaunch_9";
+            this.chkAutoLaunch_9.Size = new System.Drawing.Size(15, 14);
+            this.chkAutoLaunch_9.TabIndex = 27;
+            this.chkAutoLaunch_9.UseVisualStyleBackColor = true;
+            this.chkAutoLaunch_9.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
+            // 
+            // btnAutoLaunchSelectFile_8
+            // 
+            this.btnAutoLaunchSelectFile_8.Image = null;
+            this.btnAutoLaunchSelectFile_8.Location = new System.Drawing.Point(436, 228);
+            this.btnAutoLaunchSelectFile_8.Name = "btnAutoLaunchSelectFile_8";
+            this.btnAutoLaunchSelectFile_8.Selectable = true;
+            this.btnAutoLaunchSelectFile_8.Size = new System.Drawing.Size(33, 23);
+            this.btnAutoLaunchSelectFile_8.TabIndex = 26;
+            this.btnAutoLaunchSelectFile_8.Text = "...";
+            this.btnAutoLaunchSelectFile_8.UseVisualStyleBackColor = true;
+            this.btnAutoLaunchSelectFile_8.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
+            // 
+            // txtAutoLaunchFile_8
+            // 
+            this.txtAutoLaunchFile_8.Location = new System.Drawing.Point(35, 230);
+            this.txtAutoLaunchFile_8.Name = "txtAutoLaunchFile_8";
+            this.txtAutoLaunchFile_8.Size = new System.Drawing.Size(395, 20);
+            this.txtAutoLaunchFile_8.TabIndex = 25;
+            this.txtAutoLaunchFile_8.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
+            // 
+            // chkAutoLaunch_8
+            // 
+            this.chkAutoLaunch_8.AutoSize = true;
+            this.chkAutoLaunch_8.Image = null;
+            this.chkAutoLaunch_8.Location = new System.Drawing.Point(13, 233);
+            this.chkAutoLaunch_8.Name = "chkAutoLaunch_8";
+            this.chkAutoLaunch_8.Size = new System.Drawing.Size(15, 14);
+            this.chkAutoLaunch_8.TabIndex = 24;
+            this.chkAutoLaunch_8.UseVisualStyleBackColor = true;
+            this.chkAutoLaunch_8.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
+            // 
+            // btnAutoLaunchSelectFile_7
+            // 
+            this.btnAutoLaunchSelectFile_7.Image = null;
+            this.btnAutoLaunchSelectFile_7.Location = new System.Drawing.Point(436, 202);
+            this.btnAutoLaunchSelectFile_7.Name = "btnAutoLaunchSelectFile_7";
+            this.btnAutoLaunchSelectFile_7.Selectable = true;
+            this.btnAutoLaunchSelectFile_7.Size = new System.Drawing.Size(33, 23);
+            this.btnAutoLaunchSelectFile_7.TabIndex = 23;
+            this.btnAutoLaunchSelectFile_7.Text = "...";
+            this.btnAutoLaunchSelectFile_7.UseVisualStyleBackColor = true;
+            this.btnAutoLaunchSelectFile_7.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
+            // 
+            // txtAutoLaunchFile_7
+            // 
+            this.txtAutoLaunchFile_7.Location = new System.Drawing.Point(35, 204);
+            this.txtAutoLaunchFile_7.Name = "txtAutoLaunchFile_7";
+            this.txtAutoLaunchFile_7.Size = new System.Drawing.Size(395, 20);
+            this.txtAutoLaunchFile_7.TabIndex = 22;
+            this.txtAutoLaunchFile_7.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
+            // 
+            // chkAutoLaunch_7
+            // 
+            this.chkAutoLaunch_7.AutoSize = true;
+            this.chkAutoLaunch_7.Image = null;
+            this.chkAutoLaunch_7.Location = new System.Drawing.Point(13, 207);
+            this.chkAutoLaunch_7.Name = "chkAutoLaunch_7";
+            this.chkAutoLaunch_7.Size = new System.Drawing.Size(15, 14);
+            this.chkAutoLaunch_7.TabIndex = 21;
+            this.chkAutoLaunch_7.UseVisualStyleBackColor = true;
+            this.chkAutoLaunch_7.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
+            // 
+            // btnAutoLaunchSelectFile_6
+            // 
+            this.btnAutoLaunchSelectFile_6.Image = null;
+            this.btnAutoLaunchSelectFile_6.Location = new System.Drawing.Point(436, 176);
+            this.btnAutoLaunchSelectFile_6.Name = "btnAutoLaunchSelectFile_6";
+            this.btnAutoLaunchSelectFile_6.Selectable = true;
+            this.btnAutoLaunchSelectFile_6.Size = new System.Drawing.Size(33, 23);
+            this.btnAutoLaunchSelectFile_6.TabIndex = 20;
+            this.btnAutoLaunchSelectFile_6.Text = "...";
+            this.btnAutoLaunchSelectFile_6.UseVisualStyleBackColor = true;
+            this.btnAutoLaunchSelectFile_6.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
+            // 
+            // txtAutoLaunchFile_6
+            // 
+            this.txtAutoLaunchFile_6.Location = new System.Drawing.Point(35, 178);
+            this.txtAutoLaunchFile_6.Name = "txtAutoLaunchFile_6";
+            this.txtAutoLaunchFile_6.Size = new System.Drawing.Size(395, 20);
+            this.txtAutoLaunchFile_6.TabIndex = 19;
+            this.txtAutoLaunchFile_6.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
+            // 
+            // chkAutoLaunch_6
+            // 
+            this.chkAutoLaunch_6.AutoSize = true;
+            this.chkAutoLaunch_6.Image = null;
+            this.chkAutoLaunch_6.Location = new System.Drawing.Point(13, 181);
+            this.chkAutoLaunch_6.Name = "chkAutoLaunch_6";
+            this.chkAutoLaunch_6.Size = new System.Drawing.Size(15, 14);
+            this.chkAutoLaunch_6.TabIndex = 18;
+            this.chkAutoLaunch_6.UseVisualStyleBackColor = true;
+            this.chkAutoLaunch_6.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
+            // 
+            // btnAutoLaunchSelectFile_5
+            // 
+            this.btnAutoLaunchSelectFile_5.Image = null;
+            this.btnAutoLaunchSelectFile_5.Location = new System.Drawing.Point(436, 150);
+            this.btnAutoLaunchSelectFile_5.Name = "btnAutoLaunchSelectFile_5";
+            this.btnAutoLaunchSelectFile_5.Selectable = true;
+            this.btnAutoLaunchSelectFile_5.Size = new System.Drawing.Size(33, 23);
+            this.btnAutoLaunchSelectFile_5.TabIndex = 17;
+            this.btnAutoLaunchSelectFile_5.Text = "...";
+            this.btnAutoLaunchSelectFile_5.UseVisualStyleBackColor = true;
+            this.btnAutoLaunchSelectFile_5.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
+            // 
+            // txtAutoLaunchFile_5
+            // 
+            this.txtAutoLaunchFile_5.Location = new System.Drawing.Point(35, 152);
+            this.txtAutoLaunchFile_5.Name = "txtAutoLaunchFile_5";
+            this.txtAutoLaunchFile_5.Size = new System.Drawing.Size(395, 20);
+            this.txtAutoLaunchFile_5.TabIndex = 16;
+            this.txtAutoLaunchFile_5.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
+            // 
+            // chkAutoLaunch_5
+            // 
+            this.chkAutoLaunch_5.AutoSize = true;
+            this.chkAutoLaunch_5.Image = null;
+            this.chkAutoLaunch_5.Location = new System.Drawing.Point(13, 155);
+            this.chkAutoLaunch_5.Name = "chkAutoLaunch_5";
+            this.chkAutoLaunch_5.Size = new System.Drawing.Size(15, 14);
+            this.chkAutoLaunch_5.TabIndex = 15;
+            this.chkAutoLaunch_5.UseVisualStyleBackColor = true;
+            this.chkAutoLaunch_5.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
+            // 
+            // btnAutoLaunchSelectFile_4
+            // 
+            this.btnAutoLaunchSelectFile_4.Image = null;
+            this.btnAutoLaunchSelectFile_4.Location = new System.Drawing.Point(436, 124);
+            this.btnAutoLaunchSelectFile_4.Name = "btnAutoLaunchSelectFile_4";
+            this.btnAutoLaunchSelectFile_4.Selectable = true;
+            this.btnAutoLaunchSelectFile_4.Size = new System.Drawing.Size(33, 23);
+            this.btnAutoLaunchSelectFile_4.TabIndex = 14;
+            this.btnAutoLaunchSelectFile_4.Text = "...";
+            this.btnAutoLaunchSelectFile_4.UseVisualStyleBackColor = true;
+            this.btnAutoLaunchSelectFile_4.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
+            // 
+            // txtAutoLaunchFile_4
+            // 
+            this.txtAutoLaunchFile_4.Location = new System.Drawing.Point(35, 126);
+            this.txtAutoLaunchFile_4.Name = "txtAutoLaunchFile_4";
+            this.txtAutoLaunchFile_4.Size = new System.Drawing.Size(395, 20);
+            this.txtAutoLaunchFile_4.TabIndex = 13;
+            this.txtAutoLaunchFile_4.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
+            // 
+            // chkAutoLaunch_4
+            // 
+            this.chkAutoLaunch_4.AutoSize = true;
+            this.chkAutoLaunch_4.Image = null;
+            this.chkAutoLaunch_4.Location = new System.Drawing.Point(13, 129);
+            this.chkAutoLaunch_4.Name = "chkAutoLaunch_4";
+            this.chkAutoLaunch_4.Size = new System.Drawing.Size(15, 14);
+            this.chkAutoLaunch_4.TabIndex = 12;
+            this.chkAutoLaunch_4.UseVisualStyleBackColor = true;
+            this.chkAutoLaunch_4.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
+            // 
+            // btnAutoLaunchSelectFile_3
+            // 
+            this.btnAutoLaunchSelectFile_3.Image = null;
+            this.btnAutoLaunchSelectFile_3.Location = new System.Drawing.Point(436, 98);
+            this.btnAutoLaunchSelectFile_3.Name = "btnAutoLaunchSelectFile_3";
+            this.btnAutoLaunchSelectFile_3.Selectable = true;
+            this.btnAutoLaunchSelectFile_3.Size = new System.Drawing.Size(33, 23);
+            this.btnAutoLaunchSelectFile_3.TabIndex = 11;
+            this.btnAutoLaunchSelectFile_3.Text = "...";
+            this.btnAutoLaunchSelectFile_3.UseVisualStyleBackColor = true;
+            this.btnAutoLaunchSelectFile_3.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
+            // 
+            // txtAutoLaunchFile_3
+            // 
+            this.txtAutoLaunchFile_3.Location = new System.Drawing.Point(35, 100);
+            this.txtAutoLaunchFile_3.Name = "txtAutoLaunchFile_3";
+            this.txtAutoLaunchFile_3.Size = new System.Drawing.Size(395, 20);
+            this.txtAutoLaunchFile_3.TabIndex = 10;
+            this.txtAutoLaunchFile_3.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
+            // 
+            // chkAutoLaunch_3
+            // 
+            this.chkAutoLaunch_3.AutoSize = true;
+            this.chkAutoLaunch_3.Image = null;
+            this.chkAutoLaunch_3.Location = new System.Drawing.Point(13, 103);
+            this.chkAutoLaunch_3.Name = "chkAutoLaunch_3";
+            this.chkAutoLaunch_3.Size = new System.Drawing.Size(15, 14);
+            this.chkAutoLaunch_3.TabIndex = 9;
+            this.chkAutoLaunch_3.UseVisualStyleBackColor = true;
+            this.chkAutoLaunch_3.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
+            // 
+            // btnAutoLaunchSelectFile_2
+            // 
+            this.btnAutoLaunchSelectFile_2.Image = null;
+            this.btnAutoLaunchSelectFile_2.Location = new System.Drawing.Point(436, 72);
+            this.btnAutoLaunchSelectFile_2.Name = "btnAutoLaunchSelectFile_2";
+            this.btnAutoLaunchSelectFile_2.Selectable = true;
+            this.btnAutoLaunchSelectFile_2.Size = new System.Drawing.Size(33, 23);
+            this.btnAutoLaunchSelectFile_2.TabIndex = 8;
+            this.btnAutoLaunchSelectFile_2.Text = "...";
+            this.btnAutoLaunchSelectFile_2.UseVisualStyleBackColor = true;
+            this.btnAutoLaunchSelectFile_2.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
+            // 
+            // txtAutoLaunchFile_2
+            // 
+            this.txtAutoLaunchFile_2.Location = new System.Drawing.Point(35, 74);
+            this.txtAutoLaunchFile_2.Name = "txtAutoLaunchFile_2";
+            this.txtAutoLaunchFile_2.Size = new System.Drawing.Size(395, 20);
+            this.txtAutoLaunchFile_2.TabIndex = 7;
+            this.txtAutoLaunchFile_2.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
+            // 
+            // chkAutoLaunch_2
+            // 
+            this.chkAutoLaunch_2.AutoSize = true;
+            this.chkAutoLaunch_2.Image = null;
+            this.chkAutoLaunch_2.Location = new System.Drawing.Point(13, 77);
+            this.chkAutoLaunch_2.Name = "chkAutoLaunch_2";
+            this.chkAutoLaunch_2.Size = new System.Drawing.Size(15, 14);
+            this.chkAutoLaunch_2.TabIndex = 6;
+            this.chkAutoLaunch_2.UseVisualStyleBackColor = true;
+            this.chkAutoLaunch_2.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
+            // 
+            // btnAutoLaunchSelectFile_1
+            // 
+            this.btnAutoLaunchSelectFile_1.Image = null;
+            this.btnAutoLaunchSelectFile_1.Location = new System.Drawing.Point(436, 46);
+            this.btnAutoLaunchSelectFile_1.Name = "btnAutoLaunchSelectFile_1";
+            this.btnAutoLaunchSelectFile_1.Selectable = true;
+            this.btnAutoLaunchSelectFile_1.Size = new System.Drawing.Size(33, 23);
+            this.btnAutoLaunchSelectFile_1.TabIndex = 5;
+            this.btnAutoLaunchSelectFile_1.Text = "...";
+            this.btnAutoLaunchSelectFile_1.UseVisualStyleBackColor = true;
+            this.btnAutoLaunchSelectFile_1.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
+            // 
+            // txtAutoLaunchFile_1
+            // 
+            this.txtAutoLaunchFile_1.Location = new System.Drawing.Point(35, 48);
+            this.txtAutoLaunchFile_1.Name = "txtAutoLaunchFile_1";
+            this.txtAutoLaunchFile_1.Size = new System.Drawing.Size(395, 20);
+            this.txtAutoLaunchFile_1.TabIndex = 4;
+            this.txtAutoLaunchFile_1.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
+            // 
+            // chkAutoLaunch_1
+            // 
+            this.chkAutoLaunch_1.AutoSize = true;
+            this.chkAutoLaunch_1.Image = null;
+            this.chkAutoLaunch_1.Location = new System.Drawing.Point(13, 51);
+            this.chkAutoLaunch_1.Name = "chkAutoLaunch_1";
+            this.chkAutoLaunch_1.Size = new System.Drawing.Size(15, 14);
+            this.chkAutoLaunch_1.TabIndex = 3;
+            this.chkAutoLaunch_1.UseVisualStyleBackColor = true;
+            this.chkAutoLaunch_1.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
+            // 
+            // btnAutoLaunchSelectFile_0
+            // 
+            this.btnAutoLaunchSelectFile_0.Image = null;
+            this.btnAutoLaunchSelectFile_0.Location = new System.Drawing.Point(436, 20);
+            this.btnAutoLaunchSelectFile_0.Name = "btnAutoLaunchSelectFile_0";
+            this.btnAutoLaunchSelectFile_0.Selectable = true;
+            this.btnAutoLaunchSelectFile_0.Size = new System.Drawing.Size(33, 23);
+            this.btnAutoLaunchSelectFile_0.TabIndex = 2;
+            this.btnAutoLaunchSelectFile_0.Text = "...";
+            this.btnAutoLaunchSelectFile_0.UseVisualStyleBackColor = true;
+            this.btnAutoLaunchSelectFile_0.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
+            // 
+            // txtAutoLaunchFile_0
+            // 
+            this.txtAutoLaunchFile_0.Location = new System.Drawing.Point(35, 22);
+            this.txtAutoLaunchFile_0.Name = "txtAutoLaunchFile_0";
+            this.txtAutoLaunchFile_0.Size = new System.Drawing.Size(395, 20);
+            this.txtAutoLaunchFile_0.TabIndex = 1;
+            this.txtAutoLaunchFile_0.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
+            // 
+            // chkAutoLaunch_0
+            // 
+            this.chkAutoLaunch_0.AutoSize = true;
+            this.chkAutoLaunch_0.Image = null;
+            this.chkAutoLaunch_0.Location = new System.Drawing.Point(13, 25);
+            this.chkAutoLaunch_0.Name = "chkAutoLaunch_0";
+            this.chkAutoLaunch_0.Size = new System.Drawing.Size(15, 14);
+            this.chkAutoLaunch_0.TabIndex = 0;
+            this.chkAutoLaunch_0.UseVisualStyleBackColor = true;
+            this.chkAutoLaunch_0.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
             // 
             // groupBoxTS36
             // 
@@ -57539,6 +57962,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerSeconds)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerMinutes)).EndInit();
             this.tpOptionsStartUp.ResumeLayout(false);
+            this.groupBoxTS37.ResumeLayout(false);
+            this.groupBoxTS37.PerformLayout();
+            this.grpAutoLaunchFiles.ResumeLayout(false);
+            this.grpAutoLaunchFiles.PerformLayout();
             this.groupBoxTS36.ResumeLayout(false);
             this.groupBoxTS36.PerformLayout();
             this.groupBoxTS35.ResumeLayout(false);
@@ -62153,5 +62580,39 @@
         private CheckBoxTS chkDisableHPFonPS;
         public RadioButtonTS radDHPFPSled;
         public RadioButtonTS radBPF1BPPSled;
+        private GroupBoxTS grpAutoLaunchFiles;
+        private ButtonTS btnAutoLaunchSelectFile_0;
+        private TextBoxTS txtAutoLaunchFile_0;
+        private CheckBoxTS chkAutoLaunch_0;
+        private ButtonTS btnAutoLaunchSelectFile_7;
+        private TextBoxTS txtAutoLaunchFile_7;
+        private CheckBoxTS chkAutoLaunch_7;
+        private ButtonTS btnAutoLaunchSelectFile_6;
+        private TextBoxTS txtAutoLaunchFile_6;
+        private CheckBoxTS chkAutoLaunch_6;
+        private ButtonTS btnAutoLaunchSelectFile_5;
+        private TextBoxTS txtAutoLaunchFile_5;
+        private CheckBoxTS chkAutoLaunch_5;
+        private ButtonTS btnAutoLaunchSelectFile_4;
+        private TextBoxTS txtAutoLaunchFile_4;
+        private CheckBoxTS chkAutoLaunch_4;
+        private ButtonTS btnAutoLaunchSelectFile_3;
+        private TextBoxTS txtAutoLaunchFile_3;
+        private CheckBoxTS chkAutoLaunch_3;
+        private ButtonTS btnAutoLaunchSelectFile_2;
+        private TextBoxTS txtAutoLaunchFile_2;
+        private CheckBoxTS chkAutoLaunch_2;
+        private ButtonTS btnAutoLaunchSelectFile_1;
+        private TextBoxTS txtAutoLaunchFile_1;
+        private CheckBoxTS chkAutoLaunch_1;
+        private ButtonTS btnAutoLaunchSelectFile_9;
+        private TextBoxTS txtAutoLaunchFile_9;
+        private CheckBoxTS chkAutoLaunch_9;
+        private ButtonTS btnAutoLaunchSelectFile_8;
+        private TextBoxTS txtAutoLaunchFile_8;
+        private CheckBoxTS chkAutoLaunch_8;
+        private GroupBoxTS groupBoxTS37;
+        private CheckBoxTS chkAutoLaunchTryToClose;
+        private CheckBoxTS chkAutoLaunchNoStartIfRunning;
     }
 }
