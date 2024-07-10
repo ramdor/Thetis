@@ -6476,10 +6476,11 @@ namespace Thetis
         {
             if (alexpresent && !initializing)
             {
-                if (_mox && (disable_hpf_on_tx || PureSignalEnabled))
+                if (_mox && (disable_hpf_on_tx || (disable_hpf_on_ps && PureSignalEnabled)))
                 {
                     NetworkIO.SetAlexHPFBits(0x20);
-                    SetupForm.BPF1BPTXled = true;
+                    SetupForm.BPF1BPTXled = disable_hpf_on_tx;
+                    SetupForm.radBPF1BPPSled.Checked = disable_hpf_on_ps && PureSignalEnabled;
                     return;
                 }
 
@@ -18234,7 +18235,17 @@ namespace Thetis
                 SetAlexHPF(freq);
             }
         }
-
+        private bool disable_hpf_on_ps = false;
+        public bool DisableHPFonPS
+        {
+            get { return disable_hpf_on_ps; }
+            set
+            {
+                disable_hpf_on_ps = value;
+                double freq = Double.Parse(txtVFOAFreq.Text);
+                SetAlexHPF(freq);
+            }
+        }
         private bool lpf_bypass = false;
         public bool LPFBypass
         {

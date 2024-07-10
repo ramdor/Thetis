@@ -952,6 +952,7 @@ namespace Thetis
             chkDisable6mLNAonTX_CheckedChanged(this, e);
             chkDisable6mLNAonRX_CheckedChanged(this, e);
             chkDisableHPFonTX_CheckedChanged(this, e);
+            chkDisableHPFonPS_CheckedChanged(this, e);
 
             chkLPFBypass_CheckedChanged(this, e);
 
@@ -5864,6 +5865,8 @@ namespace Thetis
                 labelAlex1FilterHPF.Text = "BPF1";
                 chkAlexHPFBypass.Text = "ByPass/55 MHz BPF";
                 chkDisableHPFonTX.Text = "BPF ByPass on TX";
+                chkDisableHPFonPS.Text = "BPF ByPass on PS";
+                chkDisableHPFonPS.Visible = true;
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = true;
                 lblRx26mLNA.Visible = true;
@@ -5882,6 +5885,7 @@ namespace Thetis
                 labelAlex1FilterHPF.Text = "HPF";
                 chkAlexHPFBypass.Text = "ByPass/55 MHz HPF";
                 chkDisableHPFonTX.Text = "HPF ByPass on TX";
+                chkDisableHPFonPS.Visible = false;
                 panelAlexRXXVRTControl.Visible = true;
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = false;
@@ -5928,7 +5932,8 @@ namespace Thetis
                 chkAlexHPFBypass.Location = new Point(140, 185);
                 chkDisableHPFonTX.Parent = panelAlex1HPFControl;
                 chkDisableHPFonTX.Location = new Point(140, 213);
-
+                chkDisableHPFonPS.Parent = panelAlex1HPFControl;
+                chkDisableHPFonPS.Location = new Point(140, 241);
             }
 
             if (console.CurrentHPSDRModel == HPSDRModel.HERMES) tpPennyCtrl.Text = "Hermes Ctrl";
@@ -16022,7 +16027,10 @@ namespace Thetis
         {
             get { return chkDisableHPFonTX.Checked; }
         }
-
+        public bool ChkDisableHPFOnPs
+        {
+            get { return chkDisableHPFonPS.Checked; }
+        }
         public bool RadRX1ADC1
         {
             get { return radDDC0ADC0.Checked; }
@@ -19350,6 +19358,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
+                    chkDisableHPFonPS.Parent = panelBPFControl;
+                    chkDisableHPFonPS.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -19408,6 +19418,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
+                    chkDisableHPFonPS.Parent = panelBPFControl;
+                    chkDisableHPFonPS.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -19467,6 +19479,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
+                    chkDisableHPFonPS.Parent = panelBPFControl;
+                    chkDisableHPFonPS.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -19524,6 +19538,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
+                    chkDisableHPFonPS.Parent = panelBPFControl;
+                    chkDisableHPFonPS.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -26995,6 +27011,14 @@ namespace Thetis
                     cc.Checked = console.GetAutoFormStartSetting(id);
                 }
             }
+        }
+
+        private void chkDisableHPFonPS_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.DisableHPFonPS = chkDisableHPFonPS.Checked;
+            if (console.path_Illustrator != null)
+                console.path_Illustrator.pi_Changed();
         }
     }
 

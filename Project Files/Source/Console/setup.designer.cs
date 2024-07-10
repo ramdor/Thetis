@@ -1393,6 +1393,7 @@
             this.udAlex160mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
             this.udAlex160mLPFStart = new System.Windows.Forms.NumericUpDownTS();
             this.panelAlex1HPFControl = new System.Windows.Forms.PanelTS();
+            this.chkDisableHPFonPS = new System.Windows.Forms.CheckBoxTS();
             this.labelTS321 = new System.Windows.Forms.LabelTS();
             this.chkDisable6mLNAonTX = new System.Windows.Forms.CheckBoxTS();
             this.chkDisable6mLNAonRX = new System.Windows.Forms.CheckBoxTS();
@@ -1414,6 +1415,7 @@
             this.udAlex13HPFEnd = new System.Windows.Forms.NumericUpDownTS();
             this.udAlex20HPFStart = new System.Windows.Forms.NumericUpDownTS();
             this.panelTS5 = new System.Windows.Forms.PanelTS();
+            this.radDHPFPSled = new System.Windows.Forms.RadioButtonTS();
             this.radDHPFTXled = new System.Windows.Forms.RadioButtonTS();
             this.radBPHPFled = new System.Windows.Forms.RadioButtonTS();
             this.rad1_5HPFled = new System.Windows.Forms.RadioButtonTS();
@@ -1452,6 +1454,7 @@
             this.ud13BPF1End = new System.Windows.Forms.NumericUpDownTS();
             this.ud20BPF1Start = new System.Windows.Forms.NumericUpDownTS();
             this.panelTS8 = new System.Windows.Forms.PanelTS();
+            this.radBPF1BPPSled = new System.Windows.Forms.RadioButtonTS();
             this.radBPF1BPTXled = new System.Windows.Forms.RadioButtonTS();
             this.radBPBPF1led = new System.Windows.Forms.RadioButtonTS();
             this.rad1_5BPF1led = new System.Windows.Forms.RadioButtonTS();
@@ -22862,6 +22865,7 @@
             // 
             this.panelAlex1HPFControl.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.panelAlex1HPFControl.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelAlex1HPFControl.Controls.Add(this.chkDisableHPFonPS);
             this.panelAlex1HPFControl.Controls.Add(this.labelTS321);
             this.panelAlex1HPFControl.Controls.Add(this.chkDisable6mLNAonTX);
             this.panelAlex1HPFControl.Controls.Add(this.chkDisable6mLNAonRX);
@@ -22896,8 +22900,21 @@
             this.panelAlex1HPFControl.Controls.Add(this.labelTS130);
             this.panelAlex1HPFControl.Location = new System.Drawing.Point(0, 3);
             this.panelAlex1HPFControl.Name = "panelAlex1HPFControl";
-            this.panelAlex1HPFControl.Size = new System.Drawing.Size(305, 254);
+            this.panelAlex1HPFControl.Size = new System.Drawing.Size(305, 269);
             this.panelAlex1HPFControl.TabIndex = 108;
+            // 
+            // chkDisableHPFonPS
+            // 
+            this.chkDisableHPFonPS.AutoSize = true;
+            this.chkDisableHPFonPS.Image = null;
+            this.chkDisableHPFonPS.Location = new System.Drawing.Point(140, 241);
+            this.chkDisableHPFonPS.Name = "chkDisableHPFonPS";
+            this.chkDisableHPFonPS.Size = new System.Drawing.Size(117, 17);
+            this.chkDisableHPFonPS.TabIndex = 112;
+            this.chkDisableHPFonPS.Text = "HPF ByPass on PS";
+            this.toolTip1.SetToolTip(this.chkDisableHPFonPS, "ByPasses HPF during PureSignal.");
+            this.chkDisableHPFonPS.UseVisualStyleBackColor = true;
+            this.chkDisableHPFonPS.CheckedChanged += new System.EventHandler(this.chkDisableHPFonPS_CheckedChanged);
             // 
             // labelTS321
             // 
@@ -23301,6 +23318,7 @@
             // 
             this.panelTS5.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.panelTS5.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelTS5.Controls.Add(this.radDHPFPSled);
             this.panelTS5.Controls.Add(this.radDHPFTXled);
             this.panelTS5.Controls.Add(this.radBPHPFled);
             this.panelTS5.Controls.Add(this.rad1_5HPFled);
@@ -23311,8 +23329,22 @@
             this.panelTS5.Controls.Add(this.rad6BPFled);
             this.panelTS5.Location = new System.Drawing.Point(273, 22);
             this.panelTS5.Name = "panelTS5";
-            this.panelTS5.Size = new System.Drawing.Size(21, 229);
+            this.panelTS5.Size = new System.Drawing.Size(21, 246);
             this.panelTS5.TabIndex = 85;
+            // 
+            // radDHPFPSled
+            // 
+            this.radDHPFPSled.AutoSize = true;
+            this.radDHPFPSled.BackColor = System.Drawing.SystemColors.Control;
+            this.radDHPFPSled.Enabled = false;
+            this.radDHPFPSled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.radDHPFPSled.Image = null;
+            this.radDHPFPSled.Location = new System.Drawing.Point(4, 221);
+            this.radDHPFPSled.Name = "radDHPFPSled";
+            this.radDHPFPSled.Size = new System.Drawing.Size(13, 12);
+            this.radDHPFPSled.TabIndex = 8;
+            this.radDHPFPSled.UseVisualStyleBackColor = false;
+            this.radDHPFPSled.Visible = false;
             // 
             // radDHPFTXled
             // 
@@ -23629,7 +23661,7 @@
             this.panelBPFControl.Controls.Add(this.labelBPF1);
             this.panelBPFControl.Location = new System.Drawing.Point(0, 3);
             this.panelBPFControl.Name = "panelBPFControl";
-            this.panelBPFControl.Size = new System.Drawing.Size(305, 254);
+            this.panelBPFControl.Size = new System.Drawing.Size(305, 269);
             this.panelBPFControl.TabIndex = 109;
             // 
             // labelTS116
@@ -23995,6 +24027,7 @@
             // 
             this.panelTS8.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.panelTS8.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelTS8.Controls.Add(this.radBPF1BPPSled);
             this.panelTS8.Controls.Add(this.radBPF1BPTXled);
             this.panelTS8.Controls.Add(this.radBPBPF1led);
             this.panelTS8.Controls.Add(this.rad1_5BPF1led);
@@ -24005,8 +24038,21 @@
             this.panelTS8.Controls.Add(this.rad6BPF1led);
             this.panelTS8.Location = new System.Drawing.Point(273, 22);
             this.panelTS8.Name = "panelTS8";
-            this.panelTS8.Size = new System.Drawing.Size(21, 229);
+            this.panelTS8.Size = new System.Drawing.Size(21, 246);
             this.panelTS8.TabIndex = 85;
+            // 
+            // radBPF1BPPSled
+            // 
+            this.radBPF1BPPSled.AutoSize = true;
+            this.radBPF1BPPSled.BackColor = System.Drawing.SystemColors.Control;
+            this.radBPF1BPPSled.Enabled = false;
+            this.radBPF1BPPSled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.radBPF1BPPSled.Image = null;
+            this.radBPF1BPPSled.Location = new System.Drawing.Point(4, 221);
+            this.radBPF1BPPSled.Name = "radBPF1BPPSled";
+            this.radBPF1BPPSled.Size = new System.Drawing.Size(13, 12);
+            this.radBPF1BPPSled.TabIndex = 9;
+            this.radBPF1BPPSled.UseVisualStyleBackColor = false;
             // 
             // radBPF1BPTXled
             // 
@@ -62104,5 +62150,8 @@
         private CheckBoxTS chkShowFormStartup_bandstack;
         private CheckBoxTS chkShowFormStartup_finder;
         private CheckBoxTS chkShowFormStartup_wb;
+        private CheckBoxTS chkDisableHPFonPS;
+        public RadioButtonTS radDHPFPSled;
+        public RadioButtonTS radBPF1BPPSled;
     }
 }
