@@ -48350,7 +48350,8 @@ namespace Thetis
                         ProcessStartInfo startInfo = new ProcessStartInfo(file)
                         {
                             UseShellExecute = true,
-                            CreateNoWindow = true
+                            CreateNoWindow = true,
+                            WorkingDirectory = Path.GetDirectoryName(file)
                         };
 
                         Process p = Process.Start(startInfo);
