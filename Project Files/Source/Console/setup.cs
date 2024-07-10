@@ -2481,6 +2481,9 @@ namespace Thetis
             nudPBsnrShiftRx1_ValueChanged(this, e);
             nudPBsnrShiftRx2_ValueChanged(this, e);
 
+            // auto start tab
+            updateAutoLaunchControls();
+
             //
             chkSWRProtection_CheckedChanged(this, e);
             chkSWRTuneProtection_CheckedChanged(this, e);
@@ -27019,6 +27022,78 @@ namespace Thetis
             console.DisableHPFonPS = chkDisableHPFonPS.Checked;
             if (console.path_Illustrator != null)
                 console.path_Illustrator.pi_Changed();
+        }
+
+        private void txtAutoLaunchFile_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAutoLaunchSelectFile_Click(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Executable files (*.exe)|*.exe|Batch files (*.cmd)|*.cmd|All files (*.*)|*.*";
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    ButtonTS bb = sender as ButtonTS;
+                    if (bb != null)
+                    {
+                        string id = bb.Name.Substring(bb.Name.IndexOf("_") + 1).ToLower();
+                        grpAutoLaunchFiles.Controls["txtAutoLaunchFile_" + id.ToString()].Text = openFileDialog.FileName;
+                    }
+                }
+            }
+        }
+
+        private void chkAutoLaunch_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            CheckBoxTS cc = sender as CheckBoxTS;
+            if (cc == null) return;
+            string id = cc.Name.Substring(cc.Name.IndexOf("_") + 1).ToLower();
+            //chkAutoLaunch_0
+            //txtAutoLaunchFile_0
+            //btnAutoLaunchSelectFile_0
+            grpAutoLaunchFiles.Controls["txtAutoLaunchFile_" + id.ToString()].Enabled = cc.Checked;
+            grpAutoLaunchFiles.Controls["btnAutoLaunchSelectFile_" + id.ToString()].Enabled = cc.Checked;
+        }
+        private void updateAutoLaunchControls()
+        {
+            bool old_init = initializing;
+            initializing = false; // need this as chkAutoLaunch_CheckedChanged is protected
+            for (int i = 0; i < 10; i++)
+            {
+                chkAutoLaunch_CheckedChanged(grpAutoLaunchFiles.Controls["chkAutoLaunch_" + i.ToString()], EventArgs.Empty);
+            }
+            initializing = old_init;
+        }
+        public string[] GetAutoLaunchFiles()
+        {
+            List<string> files = new List<string>();
+            for (int i = 0; i < 10; i++)
+            {
+                CheckBoxTS cc = grpAutoLaunchFiles.Controls["chkAutoLaunch_" + i.ToString()] as CheckBoxTS;
+                if (cc != null && cc.Checked)
+                {
+                    TextBoxTS ts = grpAutoLaunchFiles.Controls["txtAutoLaunchFile_" + i.ToString()] as TextBoxTS;
+                    if (ts != null)
+                    {
+                        files.Add(ts.Text);
+                    }
+                }
+            }
+            return files.ToArray();
+        }
+        public bool AutoLaunchNoStartIfRunning
+        {
+            get { return chkAutoLaunchNoStartIfRunning.Checked; }
+        }
+        public bool AutoLaunchTryToClose
+        {
+            get { return chkAutoLaunchTryToClose.Checked; }
         }
     }
 

@@ -60,7 +60,7 @@ namespace Thetis
     using System.Windows.Forms;
     using System.Xml.Linq;
     using System.Collections.Concurrent;
-
+    
     public partial class Console : Form
     {
         public const int MAX_FPS = 144;
@@ -1113,6 +1113,7 @@ namespace Thetis
 
                 //
                 handleShowOnStartWindowsForms();
+                handleLaunchOnStartUp();
                 //
 
                 //display render thread
@@ -27236,6 +27237,9 @@ namespace Thetis
                 _autoLoadFormTimerFormTimer.Stop();
             }
 
+            shutdownLogStringToPath("Before autoLaunchTryToClose()");
+            autoLaunchTryToClose();
+
             if (m_tcpTCIServer != null)
             {
                 shutdownLogStringToPath("Before m_tcpTCIServer.StopServer()");
@@ -48316,6 +48320,56 @@ namespace Thetis
                 case "wb": wBToolStripMenuItem_Click(this, e); break;
                 case "finder": finderMenuItem_Click(this, e); break;
                 case "bandstack": lblBandStack_Click(this, e); break;
+            }
+        }
+        private List<Process> _started_processes = new List<Process>();
+        private void handleLaunchOnStartUp()
+        {
+            if (IsSetupFormNull) return;
+            string[] files = SetupForm.GetAutoLaunchFiles();
+            foreach (string file in files)
+            {
+                string processName = Path.GetFileNameWithoutExtension(file);
+                if (File.Exists(file) && (!SetupForm.AutoLaunchNoStartIfRunning || (SetupForm.AutoLaunchNoStartIfRunning && !IsProcessRunning(processName))))
+                {
+                    try
+                    {
+                        ProcessStartInfo startInfo = new ProcessStartInfo(file)
+                        {
+                            UseShellExecute = true,
+                            CreateNoWindow = true
+                        };
+
+                        Process p = Process.Start(startInfo);
+                        _started_processes.Add(p);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+        }
+        private bool IsProcessRunning(string processName)
+        {
+            return Process.GetProcessesByName(processName).Length > 0;
+        }
+        [DllImport("user32.dll")]
+        private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        private const int WM_CLOSE = 0x0010;
+        private void autoLaunchTryToClose()
+        {
+            if (IsSetupFormNull) return;
+            if (!SetupForm.AutoLaunchTryToClose) return;
+
+            foreach (Process p in _started_processes)
+            {
+                try
+                {
+                    PostMessage(p.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                }
+                catch
+                {
+                }
             }
         }
         //
