@@ -26976,13 +26976,25 @@ namespace Thetis
 
         private void chkShowFormStartup_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             CheckBoxTS chk = sender as CheckBoxTS;
             if (chk == null) return;
 
             string id = chk.Name.Substring(chk.Name.IndexOf("_") + 1).ToLower();
 
             console.SetAutoFormStartSetting(id, chk.Checked);
-            Debug.Print(id);
+        }
+        public void UpdateAutoStartForms()
+        {
+            foreach(Control c in chkShowFormStartup_setup.Parent.Controls)
+            {
+                CheckBox cc = c as CheckBoxTS;
+                if(cc != null)
+                {
+                    string id = cc.Name.Substring(cc.Name.IndexOf("_") + 1).ToLower();
+                    cc.Checked = console.GetAutoFormStartSetting(id);
+                }
+            }
         }
     }
 

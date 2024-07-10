@@ -1111,7 +1111,9 @@ namespace Thetis
                 addStatusStripToolTipHandlers(); // improves #354
                 UpdateStatusBarStatusIcons(StatusBarIconGroup.All);
 
-                handleShowOnStartup();
+                //
+                handleShowOnStartWindowsForms();
+                //
 
                 //display render thread
 #if SNOWFALL
@@ -9222,8 +9224,19 @@ namespace Thetis
         {
             if (SpotForm == null || SpotForm.IsDisposed) SpotForm = new SpotControl(this);
 
-            SpotForm.Show();
-            SpotForm.Focus();
+            if (SpotForm.InvokeRequired)
+            {
+                SpotForm.Invoke(new MethodInvoker(() =>
+                {
+                    SpotForm.Show();
+                    SpotForm.Focus();
+                }));
+            }
+            else
+            {
+                SpotForm.Show();
+                SpotForm.Focus();
+            }
         }
 
         #endregion
@@ -27206,6 +27219,12 @@ namespace Thetis
             _frmShutDownForm.Show();
             Application.DoEvents();
 
+            if (_autoLoadFormTimerFormTimer != null)
+            {
+                shutdownLogStringToPath("Before _autoLoadFormTimerFormTimer.Stop()");
+                _autoLoadFormTimerFormTimer.Stop();
+            }
+
             if (m_tcpTCIServer != null)
             {
                 shutdownLogStringToPath("Before m_tcpTCIServer.StopServer()");
@@ -41141,32 +41160,79 @@ namespace Thetis
         {
             if (memoryForm == null || memoryForm.IsDisposed)
                 memoryForm = new MemoryForm(this);
-            memoryForm.Show();
-            memoryForm.Focus();
+            if (memoryForm.InvokeRequired)
+            {
+                memoryForm.Invoke(new MethodInvoker(() =>
+                {
+                    memoryForm.Show();
+                    memoryForm.Focus();
+                }));
+            }
+            else
+            {
+                memoryForm.Show();
+                memoryForm.Focus();
+            }
         }
 
         private void setupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SetupForm.Show();
-            SetupForm.Focus();
-            SetFocusMaster(false);
+            if (IsSetupFormNull) return;
+            if (SetupForm.InvokeRequired)
+            {
+                SetupForm.Invoke(new MethodInvoker(() =>
+                {
+                    SetupForm.Show();
+                    SetupForm.Focus();
+                    SetFocusMaster(false);
+                }));
+            }
+            else
+            {
+                SetupForm.Show();
+                SetupForm.Focus();
+                SetFocusMaster(false);
+            }
         }
 
         private void memoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (memoryForm == null || memoryForm.IsDisposed)
                 memoryForm = new MemoryForm(this);
-            memoryForm.Show();
-            memoryForm.Focus();
-            SetFocusMaster(false);
+            if (memoryForm.InvokeRequired)
+            {
+                memoryForm.Invoke(new MethodInvoker(() =>
+                {
+                    memoryForm.Show();
+                    memoryForm.Focus();
+                    SetFocusMaster(false);
+                }));
+            }
+            else
+            {
+                memoryForm.Show();
+                memoryForm.Focus();
+                SetFocusMaster(false);
+            }
         }
 
         private void waveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (WaveForm.IsDisposed)
                 WaveForm = new WaveControl(this);
-            WaveForm.Show();
-            WaveForm.Focus();
+            if (WaveForm.InvokeRequired)
+            {
+                WaveForm.Invoke(new MethodInvoker(() =>
+                {
+                    WaveForm.Show();
+                    WaveForm.Focus();
+                }));
+            }
+            else
+            {
+                WaveForm.Show();
+                WaveForm.Focus();
+            }
         }
 
         private void CollapseToolStripMenuItem_Click(object sender, EventArgs e)
@@ -41185,17 +41251,38 @@ namespace Thetis
         {
             if (EQForm == null || EQForm.IsDisposed)
                 EQForm = new EQForm(this);
-            EQForm.Show();
-            EQForm.Focus();
+            if (EQForm.InvokeRequired)
+            {
+                EQForm.Invoke(new MethodInvoker(() =>
+                {
+                    EQForm.Show();
+                    EQForm.Focus();
+                }));
+            }
+            else
+            {
+                EQForm.Show();
+                EQForm.Focus();
+            }
         }
 
         private void xVTRsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (XVTRForm == null || XVTRForm.IsDisposed)
                 XVTRForm = new XVTRForm(this);
-
-            XVTRForm.Show();
-            XVTRForm.Focus();
+            if (XVTRForm.InvokeRequired)
+            {
+                XVTRForm.Invoke(new MethodInvoker(() =>
+                {
+                    XVTRForm.Show();
+                    XVTRForm.Focus();
+                }));
+            }
+            else
+            {
+                XVTRForm.Show();
+                XVTRForm.Focus();
+            }
         }
 
         private void cWXToolStripMenuItem_Click(object sender, EventArgs e)
@@ -41232,9 +41319,19 @@ namespace Thetis
             }
 
             //	cw_key_mode = true;
-
-            CWXForm.Show();
-            CWXForm.Focus();
+            if (CWXForm.InvokeRequired)
+            {
+                CWXForm.Invoke(new MethodInvoker(() =>
+                {
+                    CWXForm.Show();
+                    CWXForm.Focus();
+                }));
+            }
+            else
+            {
+                CWXForm.Show();
+                CWXForm.Focus();
+            }
         }
 
         private String[] on_off_preamp_settings = { "0dB", "-20dB" };
@@ -43312,10 +43409,23 @@ namespace Thetis
             if (diversityForm == null || diversityForm.IsDisposed)
                 diversityForm = new DiversityForm(this);
 
-            diversityForm.Show();
-            diversityForm.Focus();
-            UpdateDiversityValues();
-            UpdateDiversityMenuItem();
+            if (diversityForm.InvokeRequired)
+            {
+                diversityForm.Invoke(new MethodInvoker(() =>
+                {
+                    diversityForm.Show();
+                    diversityForm.Focus();
+                    UpdateDiversityValues();
+                    UpdateDiversityMenuItem();
+                }));
+            }
+            else
+            {
+                diversityForm.Show();
+                diversityForm.Focus();
+                UpdateDiversityValues();
+                UpdateDiversityMenuItem();
+            }
         }
 
         private void ptbRX1AF_Scroll(object sender, EventArgs e)
@@ -43530,8 +43640,19 @@ namespace Thetis
         {
             if (raForm == null || raForm.IsDisposed)
                 raForm = new RAForm(this);
-            raForm.Show();
-            raForm.Focus();
+            if (raForm.InvokeRequired)
+            {
+                raForm.Invoke(new MethodInvoker(() =>
+                {
+                    raForm.Show();
+                    raForm.Focus();
+                }));
+            }
+            else
+            {
+                raForm.Show();
+                raForm.Focus();
+            }
         }
 
         private void SetDigiMode(int rx, DigiMode.DigiModeSettingState mode, bool bFromTXProfile = false)
@@ -43898,8 +44019,19 @@ namespace Thetis
         // ke9ns add open up bandstack window when you click on the bandstack index
         private void regBox1_Click(object sender, EventArgs e)
         {
-            btnHidden.Focus();
-            Invoke(new MethodInvoker(BandStack2Form.Show)); //MW0LGE_21d
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() =>
+                {
+                    btnHidden.Focus();
+                    BandStack2Form.Show();
+                }));
+            }
+            else
+            {
+                btnHidden.Focus();
+                BandStack2Form.Show();
+            }
         }// regBox1_Click
 
         //==============================================================
@@ -45032,8 +45164,19 @@ namespace Thetis
         private void lblBandStack_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d band stack 2
-            btnHidden.Focus();
-            Invoke(new MethodInvoker(BandStack2Form.Show));
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() =>
+                {
+                    btnHidden.Focus();
+                    BandStack2Form.Show();
+                }));
+            }
+            else
+            {
+                btnHidden.Focus();
+                BandStack2Form.Show();
+            }
         }
 
         //MW0LGE_21d3
@@ -47699,9 +47842,19 @@ namespace Thetis
         private void finderMenuItem_Click(object sender, EventArgs e)
         {
             if (_frmFinder == null) return; // InitContonsole creates this
-
-            _frmFinder.TopMost = true;
-            _frmFinder.Show();
+            if (_frmFinder.InvokeRequired)
+            {
+                _frmFinder.Invoke(new MethodInvoker(() =>
+                {
+                    _frmFinder.TopMost = true;
+                    _frmFinder.Show();
+                }));
+            }
+            else
+            {
+                _frmFinder.TopMost = true;
+                _frmFinder.Show();
+            }
         }
 
         private void setupCMasioStatusBar()
@@ -48070,41 +48223,89 @@ namespace Thetis
 
                 SetAutoFormStartSetting(sForm, bVal);
             }
+            if (!IsSetupFormNull) SetupForm.UpdateAutoStartForms();
         }
-        private void handleShowOnStartup()
+        Dictionary<string, bool> _autoFormLoadingDuplicate = new Dictionary<string, bool>();
+        private System.Windows.Forms.Timer _autoLoadFormTimerFormTimer; // need timer for UI thread issues
+        private void handleShowOnStartWindowsForms()
+        {
+            _autoFormLoadingDuplicate.Clear();
+            foreach(KeyValuePair<string, bool> kvp in _auto_start_form_settings)
+            {
+                _autoFormLoadingDuplicate.Add(kvp.Key, kvp.Value);
+            }
+            if (_autoFormLoadingDuplicate.Count > 0)
+            {
+                _autoLoadFormTimerFormTimer = new System.Windows.Forms.Timer();
+                _autoLoadFormTimerFormTimer.Tick += new EventHandler(OnOpenWindowsFormsTimerEvent);
+                _autoLoadFormTimerFormTimer.Interval = 250;
+                _autoLoadFormTimerFormTimer.Start();
+            }
+        }
+        private void OnOpenWindowsFormsTimerEvent(Object source, EventArgs e)
+        {
+            //slowly open each window, every 250ms
+            _autoLoadFormTimerFormTimer.Stop();
+            if (_autoFormLoadingDuplicate.Count == 0) return;
+            KeyValuePair<string, bool> kvp = _autoFormLoadingDuplicate.First();
+            string form = kvp.Key;
+            bool show = kvp.Value;
+            _autoFormLoadingDuplicate.Remove(form);
+            if(show) showOnStartup(form);
+            if (_autoFormLoadingDuplicate.Count > 0)
+                _autoLoadFormTimerFormTimer.Start();
+        }
+        private void showOnStartup(string form)
         {
             EventArgs e = EventArgs.Empty;
 
-            //setup
-            if (!IsSetupFormNull && GetAutoFormStartSetting("setup")) setupToolStripMenuItem_Click(this, e);
-            //memory
-            if (GetAutoFormStartSetting("memory")) memoryToolStripMenuItem_Click(this, e);
-            //wave
-            if (GetAutoFormStartSetting("wave")) waveToolStripMenuItem_Click(this, e);
-            //equlaliser
-            if (GetAutoFormStartSetting("equaliser")) equalizerToolStripMenuItem_Click(this, e);
-            //xvtr
-            if (GetAutoFormStartSetting("xvtr")) xVTRsToolStripMenuItem_Click(this, e);
-            //cwx            
-            if (GetAutoFormStartSetting("cwx")) cWXToolStripMenuItem_Click(this, e);
-            //linearity / psform + ampview
-            if (psform != null)
+            switch (form)
             {
-                if (GetAutoFormStartSetting("linearity")) psform.ShowAtStartup_LinearityForm();
-                if (GetAutoFormStartSetting("ampview")) psform.ShowAtStartup_AmpViewForm();
+                case "setup": setupToolStripMenuItem_Click(this, e); break;
+                case "memory": memoryToolStripMenuItem_Click(this, e); break;
+                case "wave": waveToolStripMenuItem_Click(this, e); break;
+                case "equaliser": equalizerToolStripMenuItem_Click(this, e); break;
+                case "xvtr": xVTRsToolStripMenuItem_Click(this, e); break;
+                case "cwx": cWXToolStripMenuItem_Click(this, e); break;
+                case "linearity":
+                    if (psform != null)
+                    {
+                        if (psform.InvokeRequired)
+                        {
+                            psform.Invoke(new MethodInvoker(() =>
+                            {
+                                psform.ShowAtStartup_LinearityForm();
+                            }));
+                        }
+                        else
+                        {
+                            psform.ShowAtStartup_LinearityForm();
+                        }
+                    }
+                    break;
+                case "ampview":
+                    if (psform != null)
+                    {
+                        if (psform.InvokeRequired)
+                        {
+                            psform.Invoke(new MethodInvoker(() =>
+                            {
+                                psform.ShowAtStartup_AmpViewForm();
+                            }));
+                        }
+                        else
+                        {
+                            psform.ShowAtStartup_AmpViewForm();
+                        }
+                    }
+                    break;
+                case "diversity": eSCToolStripMenuItem_Click(this, e); break;
+                case "spot": spotterMenu_Click(this, e); break;
+                case "ra": RAtoolStripMenuItem_Click(this, e); break;
+                case "wb": wBToolStripMenuItem_Click(this, e); break;
+                case "finder": finderMenuItem_Click(this, e); break;
+                case "bandstack": lblBandStack_Click(this, e); break;
             }
-            //diversity
-            if (GetAutoFormStartSetting("diversity")) eSCToolStripMenuItem_Click(this, e);
-            //spot
-            if (GetAutoFormStartSetting("spot")) spotterMenu_Click(this, e);
-            //ra
-            if (GetAutoFormStartSetting("ra")) RAtoolStripMenuItem_Click(this, e);
-            //wb
-            if (GetAutoFormStartSetting("wb")) wBToolStripMenuItem_Click(this, e);
-            //finder
-            if (GetAutoFormStartSetting("finder")) finderMenuItem_Click(this, e);
-            //band stack
-            if (GetAutoFormStartSetting("bandstack")) lblBandStack_Click(this, e);
         }
         //
         #endregion
