@@ -1293,9 +1293,7 @@ namespace Thetis
         }
         private void checkBoxCheckedChangeHandler(object sender, EventArgs e)
         {
-            if (initializing) return;
-            string sName = ((Control)sender).Name;
-            if (!m_lstUpdatedControls.Contains(sName)) m_lstUpdatedControls.Add(sName);
+
         }
         private void comboboxSelectedIndexChangeHandler(object sender, EventArgs e)
         {
@@ -26974,6 +26972,29 @@ namespace Thetis
         private void udTunePowerSwrIgnore_ValueChanged(object sender, EventArgs e)
         {
             console.TunePowerSwrIgnore = (float)udTunePowerSwrIgnore.Value;
+        }
+
+        private void chkShowFormStartup_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            CheckBoxTS chk = sender as CheckBoxTS;
+            if (chk == null) return;
+
+            string id = chk.Name.Substring(chk.Name.IndexOf("_") + 1).ToLower();
+
+            console.SetAutoFormStartSetting(id, chk.Checked);
+        }
+        public void UpdateAutoStartForms()
+        {
+            foreach(Control c in chkShowFormStartup_setup.Parent.Controls)
+            {
+                CheckBox cc = c as CheckBoxTS;
+                if(cc != null)
+                {
+                    string id = cc.Name.Substring(cc.Name.IndexOf("_") + 1).ToLower();
+                    cc.Checked = console.GetAutoFormStartSetting(id);
+                }
+            }
         }
     }
 

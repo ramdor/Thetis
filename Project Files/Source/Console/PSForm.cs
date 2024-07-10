@@ -825,19 +825,16 @@ namespace Thetis
 
             this.TopMost = _topmost; //MW0LGE
         }
-
-        public void HandleStartup()
+        public void ShowAtStartup_LinearityForm()
         {
-            if (chkShowOnStartup.Checked)
-            {
-                this.Opacity = 0f;
-                this.SetupForm();
-                this.Show();
-                Common.FadeIn(this);                
-            }
-
-            if (chkShowAmpViewOnStartup.Checked)
-                btnPSAmpView_Click(this, EventArgs.Empty);
+            this.Opacity = 0f;
+            this.SetupForm();
+            this.Show();
+            Common.FadeIn(this);
+        }
+        public void ShowAtStartup_AmpViewForm()
+        {
+            btnPSAmpView_Click(this, EventArgs.Empty);
         }
         #endregion
 
