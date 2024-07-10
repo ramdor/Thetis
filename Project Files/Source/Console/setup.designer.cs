@@ -346,6 +346,10 @@
             this.lblOptClickTuneDIGU = new System.Windows.Forms.LabelTS();
             this.udOptClickTuneOffsetDIGU = new System.Windows.Forms.NumericUpDownTS();
             this.tpOptions2 = new System.Windows.Forms.TabPage();
+            this.groupBoxTS34 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS160 = new System.Windows.Forms.LabelTS();
+            this.radBelow144 = new System.Windows.Forms.RadioButtonTS();
+            this.radBelow30 = new System.Windows.Forms.RadioButtonTS();
             this.groupBoxTS33 = new System.Windows.Forms.GroupBoxTS();
             this.lblRx2PBsnr = new System.Windows.Forms.LabelTS();
             this.lblRx1PBsnr = new System.Windows.Forms.LabelTS();
@@ -3052,10 +3056,6 @@
             this.clrbtnPeakText = new Thetis.ColorButton();
             this.lblPeakText = new System.Windows.Forms.LabelTS();
             this.tpAppearanceMeter = new System.Windows.Forms.TabPage();
-            this.groupBoxTS34 = new System.Windows.Forms.GroupBoxTS();
-            this.labelTS160 = new System.Windows.Forms.LabelTS();
-            this.radBelow144 = new System.Windows.Forms.RadioButtonTS();
-            this.radBelow30 = new System.Windows.Forms.RadioButtonTS();
             this.chkLegacyMeters = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS14 = new System.Windows.Forms.GroupBoxTS();
             this.tbSignalHistoryAlpha = new System.Windows.Forms.TrackBarTS();
@@ -3731,6 +3731,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGU)).BeginInit();
             this.tpOptions2.SuspendLayout();
+            this.groupBoxTS34.SuspendLayout();
             this.groupBoxTS33.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPBsnrShiftRx1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPBsnrShiftRx2)).BeginInit();
@@ -4430,7 +4431,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).BeginInit();
             this.grpDisplayPeakCursor.SuspendLayout();
             this.tpAppearanceMeter.SuspendLayout();
-            this.groupBoxTS34.SuspendLayout();
             this.groupBoxTS14.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbSignalHistoryAlpha)).BeginInit();
             this.grpMeterEdge.SuspendLayout();
@@ -9239,6 +9239,7 @@
             // tpOptions2
             // 
             this.tpOptions2.BackColor = System.Drawing.SystemColors.Control;
+            this.tpOptions2.Controls.Add(this.groupBoxTS34);
             this.tpOptions2.Controls.Add(this.groupBoxTS33);
             this.tpOptions2.Controls.Add(this.groupBoxTS32);
             this.tpOptions2.Controls.Add(this.chkCancelQSplitOnCatTCIsplit);
@@ -9254,6 +9255,56 @@
             this.tpOptions2.Size = new System.Drawing.Size(716, 384);
             this.tpOptions2.TabIndex = 1;
             this.tpOptions2.Text = "Options-2";
+            // 
+            // groupBoxTS34
+            // 
+            this.groupBoxTS34.Controls.Add(this.labelTS160);
+            this.groupBoxTS34.Controls.Add(this.radBelow144);
+            this.groupBoxTS34.Controls.Add(this.radBelow30);
+            this.groupBoxTS34.Location = new System.Drawing.Point(180, 244);
+            this.groupBoxTS34.Name = "groupBoxTS34";
+            this.groupBoxTS34.Size = new System.Drawing.Size(252, 120);
+            this.groupBoxTS34.TabIndex = 88;
+            this.groupBoxTS34.TabStop = false;
+            this.groupBoxTS34.Text = "IARU Tech Recommendation R.1";
+            // 
+            // labelTS160
+            // 
+            this.labelTS160.AutoSize = true;
+            this.labelTS160.Image = null;
+            this.labelTS160.Location = new System.Drawing.Point(14, 85);
+            this.labelTS160.Name = "labelTS160";
+            this.labelTS160.Size = new System.Drawing.Size(216, 13);
+            this.labelTS160.TabIndex = 2;
+            this.labelTS160.Text = "at or above these frequencies S9 is -93 dBm";
+            // 
+            // radBelow144
+            // 
+            this.radBelow144.AutoSize = true;
+            this.radBelow144.Image = null;
+            this.radBelow144.Location = new System.Drawing.Point(14, 54);
+            this.radBelow144.Name = "radBelow144";
+            this.radBelow144.Size = new System.Drawing.Size(165, 17);
+            this.radBelow144.TabIndex = 1;
+            this.radBelow144.Text = "Below 144MHz S9 is -73 dBm";
+            this.toolTip1.SetToolTip(this.radBelow144, "Below 144MHz, S9 will be -73 dBm");
+            this.radBelow144.UseVisualStyleBackColor = true;
+            this.radBelow144.CheckedChanged += new System.EventHandler(this.radBelow144_CheckedChanged);
+            // 
+            // radBelow30
+            // 
+            this.radBelow30.AutoSize = true;
+            this.radBelow30.Checked = true;
+            this.radBelow30.Image = null;
+            this.radBelow30.Location = new System.Drawing.Point(14, 31);
+            this.radBelow30.Name = "radBelow30";
+            this.radBelow30.Size = new System.Drawing.Size(159, 17);
+            this.radBelow30.TabIndex = 0;
+            this.radBelow30.TabStop = true;
+            this.radBelow30.Text = "Below 30MHz S9 is -73 dBm";
+            this.toolTip1.SetToolTip(this.radBelow30, "Below 30MHz, S9 will be -73 dBm");
+            this.radBelow30.UseVisualStyleBackColor = true;
+            this.radBelow30.CheckedChanged += new System.EventHandler(this.radBelow30_CheckedChanged);
             // 
             // groupBoxTS33
             // 
@@ -9897,9 +9948,9 @@
             this.groupBoxTS23.Controls.Add(this.chkIgnoreSeqErrors);
             this.groupBoxTS23.Controls.Add(this.chkHideFeebackLevel);
             this.groupBoxTS23.Controls.Add(this.chkSwapREDBluePSAColours);
-            this.groupBoxTS23.Location = new System.Drawing.Point(204, 8);
+            this.groupBoxTS23.Location = new System.Drawing.Point(180, 8);
             this.groupBoxTS23.Name = "groupBoxTS23";
-            this.groupBoxTS23.Size = new System.Drawing.Size(212, 132);
+            this.groupBoxTS23.Size = new System.Drawing.Size(252, 132);
             this.groupBoxTS23.TabIndex = 34;
             this.groupBoxTS23.TabStop = false;
             this.groupBoxTS23.Text = "Info Bar (below spectrum)";
@@ -9959,9 +10010,9 @@
             // groupBoxTS22
             // 
             this.groupBoxTS22.Controls.Add(this.chkUseOutlinedCross);
-            this.groupBoxTS22.Location = new System.Drawing.Point(204, 149);
+            this.groupBoxTS22.Location = new System.Drawing.Point(180, 149);
             this.groupBoxTS22.Name = "groupBoxTS22";
-            this.groupBoxTS22.Size = new System.Drawing.Size(212, 85);
+            this.groupBoxTS22.Size = new System.Drawing.Size(252, 85);
             this.groupBoxTS22.TabIndex = 12;
             this.groupBoxTS22.TabStop = false;
             this.groupBoxTS22.Text = "Other";
@@ -49472,7 +49523,6 @@
             // tpAppearanceMeter
             // 
             this.tpAppearanceMeter.BackColor = System.Drawing.SystemColors.Control;
-            this.tpAppearanceMeter.Controls.Add(this.groupBoxTS34);
             this.tpAppearanceMeter.Controls.Add(this.chkLegacyMeters);
             this.tpAppearanceMeter.Controls.Add(this.groupBoxTS14);
             this.tpAppearanceMeter.Controls.Add(this.labelTS2);
@@ -49488,56 +49538,6 @@
             this.tpAppearanceMeter.Size = new System.Drawing.Size(724, 410);
             this.tpAppearanceMeter.TabIndex = 2;
             this.tpAppearanceMeter.Text = "Meter";
-            // 
-            // groupBoxTS34
-            // 
-            this.groupBoxTS34.Controls.Add(this.labelTS160);
-            this.groupBoxTS34.Controls.Add(this.radBelow144);
-            this.groupBoxTS34.Controls.Add(this.radBelow30);
-            this.groupBoxTS34.Location = new System.Drawing.Point(349, 16);
-            this.groupBoxTS34.Name = "groupBoxTS34";
-            this.groupBoxTS34.Size = new System.Drawing.Size(367, 112);
-            this.groupBoxTS34.TabIndex = 88;
-            this.groupBoxTS34.TabStop = false;
-            this.groupBoxTS34.Text = "IARU Tech Recommendation R.1";
-            // 
-            // labelTS160
-            // 
-            this.labelTS160.AutoSize = true;
-            this.labelTS160.Image = null;
-            this.labelTS160.Location = new System.Drawing.Point(14, 85);
-            this.labelTS160.Name = "labelTS160";
-            this.labelTS160.Size = new System.Drawing.Size(216, 13);
-            this.labelTS160.TabIndex = 2;
-            this.labelTS160.Text = "at or above these frequencies S9 is -93 dBm";
-            // 
-            // radBelow144
-            // 
-            this.radBelow144.AutoSize = true;
-            this.radBelow144.Image = null;
-            this.radBelow144.Location = new System.Drawing.Point(14, 54);
-            this.radBelow144.Name = "radBelow144";
-            this.radBelow144.Size = new System.Drawing.Size(165, 17);
-            this.radBelow144.TabIndex = 1;
-            this.radBelow144.Text = "Below 144MHz S9 is -73 dBm";
-            this.toolTip1.SetToolTip(this.radBelow144, "Below 144MHz, S9 will be -73 dBm");
-            this.radBelow144.UseVisualStyleBackColor = true;
-            this.radBelow144.CheckedChanged += new System.EventHandler(this.radBelow144_CheckedChanged);
-            // 
-            // radBelow30
-            // 
-            this.radBelow30.AutoSize = true;
-            this.radBelow30.Checked = true;
-            this.radBelow30.Image = null;
-            this.radBelow30.Location = new System.Drawing.Point(14, 31);
-            this.radBelow30.Name = "radBelow30";
-            this.radBelow30.Size = new System.Drawing.Size(159, 17);
-            this.radBelow30.TabIndex = 0;
-            this.radBelow30.TabStop = true;
-            this.radBelow30.Text = "Below 30MHz S9 is -73 dBm";
-            this.toolTip1.SetToolTip(this.radBelow30, "Below 30MHz, S9 will be -73 dBm");
-            this.radBelow30.UseVisualStyleBackColor = true;
-            this.radBelow30.CheckedChanged += new System.EventHandler(this.radBelow30_CheckedChanged);
             // 
             // chkLegacyMeters
             // 
@@ -57938,6 +57938,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGU)).EndInit();
             this.tpOptions2.ResumeLayout(false);
             this.tpOptions2.PerformLayout();
+            this.groupBoxTS34.ResumeLayout(false);
+            this.groupBoxTS34.PerformLayout();
             this.groupBoxTS33.ResumeLayout(false);
             this.groupBoxTS33.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPBsnrShiftRx1)).EndInit();
@@ -58788,8 +58790,6 @@
             this.grpDisplayPeakCursor.PerformLayout();
             this.tpAppearanceMeter.ResumeLayout(false);
             this.tpAppearanceMeter.PerformLayout();
-            this.groupBoxTS34.ResumeLayout(false);
-            this.groupBoxTS34.PerformLayout();
             this.groupBoxTS14.ResumeLayout(false);
             this.groupBoxTS14.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbSignalHistoryAlpha)).EndInit();
