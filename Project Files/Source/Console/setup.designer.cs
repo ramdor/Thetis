@@ -346,6 +346,10 @@
             this.lblOptClickTuneDIGU = new System.Windows.Forms.LabelTS();
             this.udOptClickTuneOffsetDIGU = new System.Windows.Forms.NumericUpDownTS();
             this.tpOptions2 = new System.Windows.Forms.TabPage();
+            this.groupBoxTS34 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS160 = new System.Windows.Forms.LabelTS();
+            this.radBelow144 = new System.Windows.Forms.RadioButtonTS();
+            this.radBelow30 = new System.Windows.Forms.RadioButtonTS();
             this.groupBoxTS33 = new System.Windows.Forms.GroupBoxTS();
             this.lblRx2PBsnr = new System.Windows.Forms.LabelTS();
             this.lblRx1PBsnr = new System.Windows.Forms.LabelTS();
@@ -3052,10 +3056,6 @@
             this.clrbtnPeakText = new Thetis.ColorButton();
             this.lblPeakText = new System.Windows.Forms.LabelTS();
             this.tpAppearanceMeter = new System.Windows.Forms.TabPage();
-            this.groupBoxTS34 = new System.Windows.Forms.GroupBoxTS();
-            this.labelTS160 = new System.Windows.Forms.LabelTS();
-            this.radBelow144 = new System.Windows.Forms.RadioButtonTS();
-            this.radBelow30 = new System.Windows.Forms.RadioButtonTS();
             this.chkLegacyMeters = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS14 = new System.Windows.Forms.GroupBoxTS();
             this.tbSignalHistoryAlpha = new System.Windows.Forms.TrackBarTS();
@@ -3731,6 +3731,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGU)).BeginInit();
             this.tpOptions2.SuspendLayout();
+            this.groupBoxTS34.SuspendLayout();
             this.groupBoxTS33.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPBsnrShiftRx1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPBsnrShiftRx2)).BeginInit();
@@ -4430,7 +4431,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).BeginInit();
             this.grpDisplayPeakCursor.SuspendLayout();
             this.tpAppearanceMeter.SuspendLayout();
-            this.groupBoxTS34.SuspendLayout();
             this.groupBoxTS14.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbSignalHistoryAlpha)).BeginInit();
             this.grpMeterEdge.SuspendLayout();
@@ -9239,6 +9239,7 @@
             // tpOptions2
             // 
             this.tpOptions2.BackColor = System.Drawing.SystemColors.Control;
+            this.tpOptions2.Controls.Add(this.groupBoxTS34);
             this.tpOptions2.Controls.Add(this.groupBoxTS33);
             this.tpOptions2.Controls.Add(this.groupBoxTS32);
             this.tpOptions2.Controls.Add(this.chkCancelQSplitOnCatTCIsplit);
@@ -9254,6 +9255,56 @@
             this.tpOptions2.Size = new System.Drawing.Size(716, 384);
             this.tpOptions2.TabIndex = 1;
             this.tpOptions2.Text = "Options-2";
+            // 
+            // groupBoxTS34
+            // 
+            this.groupBoxTS34.Controls.Add(this.labelTS160);
+            this.groupBoxTS34.Controls.Add(this.radBelow144);
+            this.groupBoxTS34.Controls.Add(this.radBelow30);
+            this.groupBoxTS34.Location = new System.Drawing.Point(180, 244);
+            this.groupBoxTS34.Name = "groupBoxTS34";
+            this.groupBoxTS34.Size = new System.Drawing.Size(252, 120);
+            this.groupBoxTS34.TabIndex = 88;
+            this.groupBoxTS34.TabStop = false;
+            this.groupBoxTS34.Text = "IARU Tech Recommendation R.1";
+            // 
+            // labelTS160
+            // 
+            this.labelTS160.AutoSize = true;
+            this.labelTS160.Image = null;
+            this.labelTS160.Location = new System.Drawing.Point(14, 85);
+            this.labelTS160.Name = "labelTS160";
+            this.labelTS160.Size = new System.Drawing.Size(216, 13);
+            this.labelTS160.TabIndex = 2;
+            this.labelTS160.Text = "at or above these frequencies S9 is -93 dBm";
+            // 
+            // radBelow144
+            // 
+            this.radBelow144.AutoSize = true;
+            this.radBelow144.Image = null;
+            this.radBelow144.Location = new System.Drawing.Point(14, 54);
+            this.radBelow144.Name = "radBelow144";
+            this.radBelow144.Size = new System.Drawing.Size(165, 17);
+            this.radBelow144.TabIndex = 1;
+            this.radBelow144.Text = "Below 144MHz S9 is -73 dBm";
+            this.toolTip1.SetToolTip(this.radBelow144, "Below 144MHz, S9 will be -73 dBm");
+            this.radBelow144.UseVisualStyleBackColor = true;
+            this.radBelow144.CheckedChanged += new System.EventHandler(this.radBelow144_CheckedChanged);
+            // 
+            // radBelow30
+            // 
+            this.radBelow30.AutoSize = true;
+            this.radBelow30.Checked = true;
+            this.radBelow30.Image = null;
+            this.radBelow30.Location = new System.Drawing.Point(14, 31);
+            this.radBelow30.Name = "radBelow30";
+            this.radBelow30.Size = new System.Drawing.Size(159, 17);
+            this.radBelow30.TabIndex = 0;
+            this.radBelow30.TabStop = true;
+            this.radBelow30.Text = "Below 30MHz S9 is -73 dBm";
+            this.toolTip1.SetToolTip(this.radBelow30, "Below 30MHz, S9 will be -73 dBm");
+            this.radBelow30.UseVisualStyleBackColor = true;
+            this.radBelow30.CheckedChanged += new System.EventHandler(this.radBelow30_CheckedChanged);
             // 
             // groupBoxTS33
             // 
@@ -9897,9 +9948,9 @@
             this.groupBoxTS23.Controls.Add(this.chkIgnoreSeqErrors);
             this.groupBoxTS23.Controls.Add(this.chkHideFeebackLevel);
             this.groupBoxTS23.Controls.Add(this.chkSwapREDBluePSAColours);
-            this.groupBoxTS23.Location = new System.Drawing.Point(204, 8);
+            this.groupBoxTS23.Location = new System.Drawing.Point(180, 8);
             this.groupBoxTS23.Name = "groupBoxTS23";
-            this.groupBoxTS23.Size = new System.Drawing.Size(212, 132);
+            this.groupBoxTS23.Size = new System.Drawing.Size(252, 132);
             this.groupBoxTS23.TabIndex = 34;
             this.groupBoxTS23.TabStop = false;
             this.groupBoxTS23.Text = "Info Bar (below spectrum)";
@@ -9959,9 +10010,9 @@
             // groupBoxTS22
             // 
             this.groupBoxTS22.Controls.Add(this.chkUseOutlinedCross);
-            this.groupBoxTS22.Location = new System.Drawing.Point(204, 149);
+            this.groupBoxTS22.Location = new System.Drawing.Point(180, 149);
             this.groupBoxTS22.Name = "groupBoxTS22";
-            this.groupBoxTS22.Size = new System.Drawing.Size(212, 85);
+            this.groupBoxTS22.Size = new System.Drawing.Size(252, 85);
             this.groupBoxTS22.TabIndex = 12;
             this.groupBoxTS22.TabStop = false;
             this.groupBoxTS22.Text = "Other";
@@ -10284,6 +10335,7 @@
             this.btnAutoLaunchSelectFile_9.Size = new System.Drawing.Size(33, 23);
             this.btnAutoLaunchSelectFile_9.TabIndex = 29;
             this.btnAutoLaunchSelectFile_9.Text = "...";
+            this.toolTip1.SetToolTip(this.btnAutoLaunchSelectFile_9, "Select a file to be auto launched");
             this.btnAutoLaunchSelectFile_9.UseVisualStyleBackColor = true;
             this.btnAutoLaunchSelectFile_9.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
             // 
@@ -10293,6 +10345,7 @@
             this.txtAutoLaunchFile_9.Name = "txtAutoLaunchFile_9";
             this.txtAutoLaunchFile_9.Size = new System.Drawing.Size(395, 20);
             this.txtAutoLaunchFile_9.TabIndex = 28;
+            this.toolTip1.SetToolTip(this.txtAutoLaunchFile_9, "Filename + path");
             this.txtAutoLaunchFile_9.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
             // 
             // chkAutoLaunch_9
@@ -10303,6 +10356,7 @@
             this.chkAutoLaunch_9.Name = "chkAutoLaunch_9";
             this.chkAutoLaunch_9.Size = new System.Drawing.Size(15, 14);
             this.chkAutoLaunch_9.TabIndex = 27;
+            this.toolTip1.SetToolTip(this.chkAutoLaunch_9, "Enabled if checked");
             this.chkAutoLaunch_9.UseVisualStyleBackColor = true;
             this.chkAutoLaunch_9.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
             // 
@@ -10315,6 +10369,7 @@
             this.btnAutoLaunchSelectFile_8.Size = new System.Drawing.Size(33, 23);
             this.btnAutoLaunchSelectFile_8.TabIndex = 26;
             this.btnAutoLaunchSelectFile_8.Text = "...";
+            this.toolTip1.SetToolTip(this.btnAutoLaunchSelectFile_8, "Select a file to be auto launched");
             this.btnAutoLaunchSelectFile_8.UseVisualStyleBackColor = true;
             this.btnAutoLaunchSelectFile_8.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
             // 
@@ -10324,6 +10379,7 @@
             this.txtAutoLaunchFile_8.Name = "txtAutoLaunchFile_8";
             this.txtAutoLaunchFile_8.Size = new System.Drawing.Size(395, 20);
             this.txtAutoLaunchFile_8.TabIndex = 25;
+            this.toolTip1.SetToolTip(this.txtAutoLaunchFile_8, "Filename + path");
             this.txtAutoLaunchFile_8.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
             // 
             // chkAutoLaunch_8
@@ -10334,6 +10390,7 @@
             this.chkAutoLaunch_8.Name = "chkAutoLaunch_8";
             this.chkAutoLaunch_8.Size = new System.Drawing.Size(15, 14);
             this.chkAutoLaunch_8.TabIndex = 24;
+            this.toolTip1.SetToolTip(this.chkAutoLaunch_8, "Enabled if checked");
             this.chkAutoLaunch_8.UseVisualStyleBackColor = true;
             this.chkAutoLaunch_8.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
             // 
@@ -10346,6 +10403,7 @@
             this.btnAutoLaunchSelectFile_7.Size = new System.Drawing.Size(33, 23);
             this.btnAutoLaunchSelectFile_7.TabIndex = 23;
             this.btnAutoLaunchSelectFile_7.Text = "...";
+            this.toolTip1.SetToolTip(this.btnAutoLaunchSelectFile_7, "Select a file to be auto launched");
             this.btnAutoLaunchSelectFile_7.UseVisualStyleBackColor = true;
             this.btnAutoLaunchSelectFile_7.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
             // 
@@ -10355,6 +10413,7 @@
             this.txtAutoLaunchFile_7.Name = "txtAutoLaunchFile_7";
             this.txtAutoLaunchFile_7.Size = new System.Drawing.Size(395, 20);
             this.txtAutoLaunchFile_7.TabIndex = 22;
+            this.toolTip1.SetToolTip(this.txtAutoLaunchFile_7, "Filename + path");
             this.txtAutoLaunchFile_7.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
             // 
             // chkAutoLaunch_7
@@ -10365,6 +10424,7 @@
             this.chkAutoLaunch_7.Name = "chkAutoLaunch_7";
             this.chkAutoLaunch_7.Size = new System.Drawing.Size(15, 14);
             this.chkAutoLaunch_7.TabIndex = 21;
+            this.toolTip1.SetToolTip(this.chkAutoLaunch_7, "Enabled if checked");
             this.chkAutoLaunch_7.UseVisualStyleBackColor = true;
             this.chkAutoLaunch_7.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
             // 
@@ -10377,6 +10437,7 @@
             this.btnAutoLaunchSelectFile_6.Size = new System.Drawing.Size(33, 23);
             this.btnAutoLaunchSelectFile_6.TabIndex = 20;
             this.btnAutoLaunchSelectFile_6.Text = "...";
+            this.toolTip1.SetToolTip(this.btnAutoLaunchSelectFile_6, "Select a file to be auto launched");
             this.btnAutoLaunchSelectFile_6.UseVisualStyleBackColor = true;
             this.btnAutoLaunchSelectFile_6.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
             // 
@@ -10386,6 +10447,7 @@
             this.txtAutoLaunchFile_6.Name = "txtAutoLaunchFile_6";
             this.txtAutoLaunchFile_6.Size = new System.Drawing.Size(395, 20);
             this.txtAutoLaunchFile_6.TabIndex = 19;
+            this.toolTip1.SetToolTip(this.txtAutoLaunchFile_6, "Filename + path");
             this.txtAutoLaunchFile_6.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
             // 
             // chkAutoLaunch_6
@@ -10396,6 +10458,7 @@
             this.chkAutoLaunch_6.Name = "chkAutoLaunch_6";
             this.chkAutoLaunch_6.Size = new System.Drawing.Size(15, 14);
             this.chkAutoLaunch_6.TabIndex = 18;
+            this.toolTip1.SetToolTip(this.chkAutoLaunch_6, "Enabled if checked");
             this.chkAutoLaunch_6.UseVisualStyleBackColor = true;
             this.chkAutoLaunch_6.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
             // 
@@ -10408,6 +10471,7 @@
             this.btnAutoLaunchSelectFile_5.Size = new System.Drawing.Size(33, 23);
             this.btnAutoLaunchSelectFile_5.TabIndex = 17;
             this.btnAutoLaunchSelectFile_5.Text = "...";
+            this.toolTip1.SetToolTip(this.btnAutoLaunchSelectFile_5, "Select a file to be auto launched");
             this.btnAutoLaunchSelectFile_5.UseVisualStyleBackColor = true;
             this.btnAutoLaunchSelectFile_5.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
             // 
@@ -10417,6 +10481,7 @@
             this.txtAutoLaunchFile_5.Name = "txtAutoLaunchFile_5";
             this.txtAutoLaunchFile_5.Size = new System.Drawing.Size(395, 20);
             this.txtAutoLaunchFile_5.TabIndex = 16;
+            this.toolTip1.SetToolTip(this.txtAutoLaunchFile_5, "Filename + path");
             this.txtAutoLaunchFile_5.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
             // 
             // chkAutoLaunch_5
@@ -10427,6 +10492,7 @@
             this.chkAutoLaunch_5.Name = "chkAutoLaunch_5";
             this.chkAutoLaunch_5.Size = new System.Drawing.Size(15, 14);
             this.chkAutoLaunch_5.TabIndex = 15;
+            this.toolTip1.SetToolTip(this.chkAutoLaunch_5, "Enabled if checked");
             this.chkAutoLaunch_5.UseVisualStyleBackColor = true;
             this.chkAutoLaunch_5.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
             // 
@@ -10439,6 +10505,7 @@
             this.btnAutoLaunchSelectFile_4.Size = new System.Drawing.Size(33, 23);
             this.btnAutoLaunchSelectFile_4.TabIndex = 14;
             this.btnAutoLaunchSelectFile_4.Text = "...";
+            this.toolTip1.SetToolTip(this.btnAutoLaunchSelectFile_4, "Select a file to be auto launched");
             this.btnAutoLaunchSelectFile_4.UseVisualStyleBackColor = true;
             this.btnAutoLaunchSelectFile_4.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
             // 
@@ -10448,6 +10515,7 @@
             this.txtAutoLaunchFile_4.Name = "txtAutoLaunchFile_4";
             this.txtAutoLaunchFile_4.Size = new System.Drawing.Size(395, 20);
             this.txtAutoLaunchFile_4.TabIndex = 13;
+            this.toolTip1.SetToolTip(this.txtAutoLaunchFile_4, "Filename + path");
             this.txtAutoLaunchFile_4.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
             // 
             // chkAutoLaunch_4
@@ -10458,6 +10526,7 @@
             this.chkAutoLaunch_4.Name = "chkAutoLaunch_4";
             this.chkAutoLaunch_4.Size = new System.Drawing.Size(15, 14);
             this.chkAutoLaunch_4.TabIndex = 12;
+            this.toolTip1.SetToolTip(this.chkAutoLaunch_4, "Enabled if checked");
             this.chkAutoLaunch_4.UseVisualStyleBackColor = true;
             this.chkAutoLaunch_4.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
             // 
@@ -10470,6 +10539,7 @@
             this.btnAutoLaunchSelectFile_3.Size = new System.Drawing.Size(33, 23);
             this.btnAutoLaunchSelectFile_3.TabIndex = 11;
             this.btnAutoLaunchSelectFile_3.Text = "...";
+            this.toolTip1.SetToolTip(this.btnAutoLaunchSelectFile_3, "Select a file to be auto launched");
             this.btnAutoLaunchSelectFile_3.UseVisualStyleBackColor = true;
             this.btnAutoLaunchSelectFile_3.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
             // 
@@ -10479,6 +10549,7 @@
             this.txtAutoLaunchFile_3.Name = "txtAutoLaunchFile_3";
             this.txtAutoLaunchFile_3.Size = new System.Drawing.Size(395, 20);
             this.txtAutoLaunchFile_3.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.txtAutoLaunchFile_3, "Filename + path");
             this.txtAutoLaunchFile_3.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
             // 
             // chkAutoLaunch_3
@@ -10489,6 +10560,7 @@
             this.chkAutoLaunch_3.Name = "chkAutoLaunch_3";
             this.chkAutoLaunch_3.Size = new System.Drawing.Size(15, 14);
             this.chkAutoLaunch_3.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.chkAutoLaunch_3, "Enabled if checked");
             this.chkAutoLaunch_3.UseVisualStyleBackColor = true;
             this.chkAutoLaunch_3.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
             // 
@@ -10501,6 +10573,7 @@
             this.btnAutoLaunchSelectFile_2.Size = new System.Drawing.Size(33, 23);
             this.btnAutoLaunchSelectFile_2.TabIndex = 8;
             this.btnAutoLaunchSelectFile_2.Text = "...";
+            this.toolTip1.SetToolTip(this.btnAutoLaunchSelectFile_2, "Select a file to be auto launched");
             this.btnAutoLaunchSelectFile_2.UseVisualStyleBackColor = true;
             this.btnAutoLaunchSelectFile_2.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
             // 
@@ -10510,6 +10583,7 @@
             this.txtAutoLaunchFile_2.Name = "txtAutoLaunchFile_2";
             this.txtAutoLaunchFile_2.Size = new System.Drawing.Size(395, 20);
             this.txtAutoLaunchFile_2.TabIndex = 7;
+            this.toolTip1.SetToolTip(this.txtAutoLaunchFile_2, "Filename + path");
             this.txtAutoLaunchFile_2.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
             // 
             // chkAutoLaunch_2
@@ -10520,6 +10594,7 @@
             this.chkAutoLaunch_2.Name = "chkAutoLaunch_2";
             this.chkAutoLaunch_2.Size = new System.Drawing.Size(15, 14);
             this.chkAutoLaunch_2.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.chkAutoLaunch_2, "Enabled if checked");
             this.chkAutoLaunch_2.UseVisualStyleBackColor = true;
             this.chkAutoLaunch_2.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
             // 
@@ -10532,6 +10607,7 @@
             this.btnAutoLaunchSelectFile_1.Size = new System.Drawing.Size(33, 23);
             this.btnAutoLaunchSelectFile_1.TabIndex = 5;
             this.btnAutoLaunchSelectFile_1.Text = "...";
+            this.toolTip1.SetToolTip(this.btnAutoLaunchSelectFile_1, "Select a file to be auto launched");
             this.btnAutoLaunchSelectFile_1.UseVisualStyleBackColor = true;
             this.btnAutoLaunchSelectFile_1.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
             // 
@@ -10541,6 +10617,7 @@
             this.txtAutoLaunchFile_1.Name = "txtAutoLaunchFile_1";
             this.txtAutoLaunchFile_1.Size = new System.Drawing.Size(395, 20);
             this.txtAutoLaunchFile_1.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.txtAutoLaunchFile_1, "Filename + path");
             this.txtAutoLaunchFile_1.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
             // 
             // chkAutoLaunch_1
@@ -10551,6 +10628,7 @@
             this.chkAutoLaunch_1.Name = "chkAutoLaunch_1";
             this.chkAutoLaunch_1.Size = new System.Drawing.Size(15, 14);
             this.chkAutoLaunch_1.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.chkAutoLaunch_1, "Enabled if checked");
             this.chkAutoLaunch_1.UseVisualStyleBackColor = true;
             this.chkAutoLaunch_1.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
             // 
@@ -10563,6 +10641,7 @@
             this.btnAutoLaunchSelectFile_0.Size = new System.Drawing.Size(33, 23);
             this.btnAutoLaunchSelectFile_0.TabIndex = 2;
             this.btnAutoLaunchSelectFile_0.Text = "...";
+            this.toolTip1.SetToolTip(this.btnAutoLaunchSelectFile_0, "Select a file to be auto launched");
             this.btnAutoLaunchSelectFile_0.UseVisualStyleBackColor = true;
             this.btnAutoLaunchSelectFile_0.Click += new System.EventHandler(this.btnAutoLaunchSelectFile_Click);
             // 
@@ -10572,6 +10651,7 @@
             this.txtAutoLaunchFile_0.Name = "txtAutoLaunchFile_0";
             this.txtAutoLaunchFile_0.Size = new System.Drawing.Size(395, 20);
             this.txtAutoLaunchFile_0.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.txtAutoLaunchFile_0, "Filename + path");
             this.txtAutoLaunchFile_0.TextChanged += new System.EventHandler(this.txtAutoLaunchFile_TextChanged);
             // 
             // chkAutoLaunch_0
@@ -10582,6 +10662,7 @@
             this.chkAutoLaunch_0.Name = "chkAutoLaunch_0";
             this.chkAutoLaunch_0.Size = new System.Drawing.Size(15, 14);
             this.chkAutoLaunch_0.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.chkAutoLaunch_0, "Enabled if checked");
             this.chkAutoLaunch_0.UseVisualStyleBackColor = true;
             this.chkAutoLaunch_0.CheckedChanged += new System.EventHandler(this.chkAutoLaunch_CheckedChanged);
             // 
@@ -10617,7 +10698,7 @@
             this.chkShowFormStartup_bandstack.Size = new System.Drawing.Size(188, 17);
             this.chkShowFormStartup_bandstack.TabIndex = 49;
             this.chkShowFormStartup_bandstack.Text = "Show Bandstack Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_bandstack, "Attempt to power on at start up");
+            this.toolTip1.SetToolTip(this.chkShowFormStartup_bandstack, "Show this form at start up");
             this.chkShowFormStartup_bandstack.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_bandstack.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
@@ -10630,7 +10711,7 @@
             this.chkShowFormStartup_finder.Size = new System.Drawing.Size(166, 17);
             this.chkShowFormStartup_finder.TabIndex = 48;
             this.chkShowFormStartup_finder.Text = "Show Finder Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_finder, "Attempt to power on at start up");
+            this.toolTip1.SetToolTip(this.chkShowFormStartup_finder, "Show this form at start up");
             this.chkShowFormStartup_finder.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_finder.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
@@ -10643,7 +10724,7 @@
             this.chkShowFormStartup_wb.Size = new System.Drawing.Size(155, 17);
             this.chkShowFormStartup_wb.TabIndex = 47;
             this.chkShowFormStartup_wb.Text = "Show WB Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_wb, "Attempt to power on at start up");
+            this.toolTip1.SetToolTip(this.chkShowFormStartup_wb, "Show this form at start up");
             this.chkShowFormStartup_wb.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_wb.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
@@ -10656,7 +10737,7 @@
             this.chkShowFormStartup_ra.Size = new System.Drawing.Size(152, 17);
             this.chkShowFormStartup_ra.TabIndex = 46;
             this.chkShowFormStartup_ra.Text = "Show RA Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_ra, "Attempt to power on at start up");
+            this.toolTip1.SetToolTip(this.chkShowFormStartup_ra, "Show this form at start up");
             this.chkShowFormStartup_ra.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_ra.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
@@ -10669,7 +10750,7 @@
             this.chkShowFormStartup_spot.Size = new System.Drawing.Size(159, 17);
             this.chkShowFormStartup_spot.TabIndex = 45;
             this.chkShowFormStartup_spot.Text = "Show Spot Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_spot, "Attempt to power on at start up");
+            this.toolTip1.SetToolTip(this.chkShowFormStartup_spot, "Show this form at start up");
             this.chkShowFormStartup_spot.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_spot.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
@@ -10682,7 +10763,7 @@
             this.chkShowFormStartup_diversity.Size = new System.Drawing.Size(177, 17);
             this.chkShowFormStartup_diversity.TabIndex = 44;
             this.chkShowFormStartup_diversity.Text = "Show Diversity Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_diversity, "Attempt to power on at start up");
+            this.toolTip1.SetToolTip(this.chkShowFormStartup_diversity, "Show this form at start up");
             this.chkShowFormStartup_diversity.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_diversity.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
@@ -10695,7 +10776,7 @@
             this.chkShowFormStartup_cwx.Size = new System.Drawing.Size(162, 17);
             this.chkShowFormStartup_cwx.TabIndex = 43;
             this.chkShowFormStartup_cwx.Text = "Show CWX Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_cwx, "Attempt to power on at start up");
+            this.toolTip1.SetToolTip(this.chkShowFormStartup_cwx, "Show this form at start up");
             this.chkShowFormStartup_cwx.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_cwx.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
@@ -10708,7 +10789,7 @@
             this.chkShowFormStartup_xvtr.Size = new System.Drawing.Size(166, 17);
             this.chkShowFormStartup_xvtr.TabIndex = 42;
             this.chkShowFormStartup_xvtr.Text = "Show XVTR Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_xvtr, "Attempt to power on at start up");
+            this.toolTip1.SetToolTip(this.chkShowFormStartup_xvtr, "Show this form at start up");
             this.chkShowFormStartup_xvtr.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_xvtr.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
@@ -10721,7 +10802,7 @@
             this.chkShowFormStartup_equaliser.Size = new System.Drawing.Size(180, 17);
             this.chkShowFormStartup_equaliser.TabIndex = 41;
             this.chkShowFormStartup_equaliser.Text = "Show Equaliser Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_equaliser, "Attempt to power on at start up");
+            this.toolTip1.SetToolTip(this.chkShowFormStartup_equaliser, "Show this form at start up");
             this.chkShowFormStartup_equaliser.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_equaliser.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
@@ -10734,7 +10815,7 @@
             this.chkShowFormStartup_wave.Size = new System.Drawing.Size(166, 17);
             this.chkShowFormStartup_wave.TabIndex = 40;
             this.chkShowFormStartup_wave.Text = "Show Wave Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_wave, "Attempt to power on at start up");
+            this.toolTip1.SetToolTip(this.chkShowFormStartup_wave, "Show this form at start up");
             this.chkShowFormStartup_wave.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_wave.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
@@ -10747,7 +10828,7 @@
             this.chkShowFormStartup_memory.Size = new System.Drawing.Size(174, 17);
             this.chkShowFormStartup_memory.TabIndex = 39;
             this.chkShowFormStartup_memory.Text = "Show Memory Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_memory, "Attempt to power on at start up");
+            this.toolTip1.SetToolTip(this.chkShowFormStartup_memory, "Show this form at start up");
             this.chkShowFormStartup_memory.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_memory.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
@@ -10760,7 +10841,7 @@
             this.chkShowFormStartup_ampview.Size = new System.Drawing.Size(180, 17);
             this.chkShowFormStartup_ampview.TabIndex = 38;
             this.chkShowFormStartup_ampview.Text = "Show Ampview Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_ampview, "Attempt to power on at start up");
+            this.toolTip1.SetToolTip(this.chkShowFormStartup_ampview, "Show this form at start up");
             this.chkShowFormStartup_ampview.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_ampview.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
@@ -10773,7 +10854,7 @@
             this.chkShowFormStartup_linearity.Size = new System.Drawing.Size(170, 17);
             this.chkShowFormStartup_linearity.TabIndex = 37;
             this.chkShowFormStartup_linearity.Text = "Show Linarity Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_linearity, "Attempt to power on at start up");
+            this.toolTip1.SetToolTip(this.chkShowFormStartup_linearity, "Show this form at start up");
             this.chkShowFormStartup_linearity.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_linearity.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
@@ -10786,7 +10867,7 @@
             this.chkShowFormStartup_setup.Size = new System.Drawing.Size(165, 17);
             this.chkShowFormStartup_setup.TabIndex = 36;
             this.chkShowFormStartup_setup.Text = "Show Setup Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_setup, "Attempt to power on at start up");
+            this.toolTip1.SetToolTip(this.chkShowFormStartup_setup, "Show this form at start up");
             this.chkShowFormStartup_setup.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_setup.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
@@ -49472,7 +49553,6 @@
             // tpAppearanceMeter
             // 
             this.tpAppearanceMeter.BackColor = System.Drawing.SystemColors.Control;
-            this.tpAppearanceMeter.Controls.Add(this.groupBoxTS34);
             this.tpAppearanceMeter.Controls.Add(this.chkLegacyMeters);
             this.tpAppearanceMeter.Controls.Add(this.groupBoxTS14);
             this.tpAppearanceMeter.Controls.Add(this.labelTS2);
@@ -49488,56 +49568,6 @@
             this.tpAppearanceMeter.Size = new System.Drawing.Size(724, 410);
             this.tpAppearanceMeter.TabIndex = 2;
             this.tpAppearanceMeter.Text = "Meter";
-            // 
-            // groupBoxTS34
-            // 
-            this.groupBoxTS34.Controls.Add(this.labelTS160);
-            this.groupBoxTS34.Controls.Add(this.radBelow144);
-            this.groupBoxTS34.Controls.Add(this.radBelow30);
-            this.groupBoxTS34.Location = new System.Drawing.Point(349, 16);
-            this.groupBoxTS34.Name = "groupBoxTS34";
-            this.groupBoxTS34.Size = new System.Drawing.Size(367, 112);
-            this.groupBoxTS34.TabIndex = 88;
-            this.groupBoxTS34.TabStop = false;
-            this.groupBoxTS34.Text = "IARU Tech Recommendation R.1";
-            // 
-            // labelTS160
-            // 
-            this.labelTS160.AutoSize = true;
-            this.labelTS160.Image = null;
-            this.labelTS160.Location = new System.Drawing.Point(14, 85);
-            this.labelTS160.Name = "labelTS160";
-            this.labelTS160.Size = new System.Drawing.Size(216, 13);
-            this.labelTS160.TabIndex = 2;
-            this.labelTS160.Text = "at or above these frequencies S9 is -93 dBm";
-            // 
-            // radBelow144
-            // 
-            this.radBelow144.AutoSize = true;
-            this.radBelow144.Image = null;
-            this.radBelow144.Location = new System.Drawing.Point(14, 54);
-            this.radBelow144.Name = "radBelow144";
-            this.radBelow144.Size = new System.Drawing.Size(165, 17);
-            this.radBelow144.TabIndex = 1;
-            this.radBelow144.Text = "Below 144MHz S9 is -73 dBm";
-            this.toolTip1.SetToolTip(this.radBelow144, "Below 144MHz, S9 will be -73 dBm");
-            this.radBelow144.UseVisualStyleBackColor = true;
-            this.radBelow144.CheckedChanged += new System.EventHandler(this.radBelow144_CheckedChanged);
-            // 
-            // radBelow30
-            // 
-            this.radBelow30.AutoSize = true;
-            this.radBelow30.Checked = true;
-            this.radBelow30.Image = null;
-            this.radBelow30.Location = new System.Drawing.Point(14, 31);
-            this.radBelow30.Name = "radBelow30";
-            this.radBelow30.Size = new System.Drawing.Size(159, 17);
-            this.radBelow30.TabIndex = 0;
-            this.radBelow30.TabStop = true;
-            this.radBelow30.Text = "Below 30MHz S9 is -73 dBm";
-            this.toolTip1.SetToolTip(this.radBelow30, "Below 30MHz, S9 will be -73 dBm");
-            this.radBelow30.UseVisualStyleBackColor = true;
-            this.radBelow30.CheckedChanged += new System.EventHandler(this.radBelow30_CheckedChanged);
             // 
             // chkLegacyMeters
             // 
@@ -57938,6 +57968,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptClickTuneOffsetDIGU)).EndInit();
             this.tpOptions2.ResumeLayout(false);
             this.tpOptions2.PerformLayout();
+            this.groupBoxTS34.ResumeLayout(false);
+            this.groupBoxTS34.PerformLayout();
             this.groupBoxTS33.ResumeLayout(false);
             this.groupBoxTS33.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPBsnrShiftRx1)).EndInit();
@@ -58788,8 +58820,6 @@
             this.grpDisplayPeakCursor.PerformLayout();
             this.tpAppearanceMeter.ResumeLayout(false);
             this.tpAppearanceMeter.PerformLayout();
-            this.groupBoxTS34.ResumeLayout(false);
-            this.groupBoxTS34.PerformLayout();
             this.groupBoxTS14.ResumeLayout(false);
             this.groupBoxTS14.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbSignalHistoryAlpha)).EndInit();
