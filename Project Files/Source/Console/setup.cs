@@ -950,6 +950,7 @@ namespace Thetis
             chkDisable6mLNAonTX_CheckedChanged(this, e);
             chkDisable6mLNAonRX_CheckedChanged(this, e);
             chkDisableHPFonTX_CheckedChanged(this, e);
+            chkDisableHPFonPS_CheckedChanged(this, e);
 
             chkLPFBypass_CheckedChanged(this, e);
 
@@ -1291,9 +1292,7 @@ namespace Thetis
         }
         private void checkBoxCheckedChangeHandler(object sender, EventArgs e)
         {
-            if (initializing) return;
-            string sName = ((Control)sender).Name;
-            if (!m_lstUpdatedControls.Contains(sName)) m_lstUpdatedControls.Add(sName);
+
         }
         private void comboboxSelectedIndexChangeHandler(object sender, EventArgs e)
         {
@@ -5864,6 +5863,8 @@ namespace Thetis
                 labelAlex1FilterHPF.Text = "BPF1";
                 chkAlexHPFBypass.Text = "ByPass/55 MHz BPF";
                 chkDisableHPFonTX.Text = "BPF ByPass on TX";
+                chkDisableHPFonPS.Text = "BPF ByPass on PS";
+                chkDisableHPFonPS.Visible = true;
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = true;
                 lblRx26mLNA.Visible = true;
@@ -5882,6 +5883,7 @@ namespace Thetis
                 labelAlex1FilterHPF.Text = "HPF";
                 chkAlexHPFBypass.Text = "ByPass/55 MHz HPF";
                 chkDisableHPFonTX.Text = "HPF ByPass on TX";
+                chkDisableHPFonPS.Visible = false;
                 panelAlexRXXVRTControl.Visible = true;
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = false;
@@ -5928,7 +5930,8 @@ namespace Thetis
                 chkAlexHPFBypass.Location = new Point(140, 185);
                 chkDisableHPFonTX.Parent = panelAlex1HPFControl;
                 chkDisableHPFonTX.Location = new Point(140, 213);
-
+                chkDisableHPFonPS.Parent = panelAlex1HPFControl;
+                chkDisableHPFonPS.Location = new Point(140, 241);
             }
 
             if (console.CurrentHPSDRModel == HPSDRModel.HERMES) tpPennyCtrl.Text = "Hermes Ctrl";
@@ -16027,7 +16030,10 @@ namespace Thetis
         {
             get { return chkDisableHPFonTX.Checked; }
         }
-
+        public bool ChkDisableHPFOnPs
+        {
+            get { return chkDisableHPFonPS.Checked; }
+        }
         public bool RadRX1ADC1
         {
             get { return radDDC0ADC0.Checked; }
@@ -19355,6 +19361,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
+                    chkDisableHPFonPS.Parent = panelBPFControl;
+                    chkDisableHPFonPS.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -19413,6 +19421,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
+                    chkDisableHPFonPS.Parent = panelBPFControl;
+                    chkDisableHPFonPS.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -19472,6 +19482,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
+                    chkDisableHPFonPS.Parent = panelBPFControl;
+                    chkDisableHPFonPS.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -19529,6 +19541,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
+                    chkDisableHPFonPS.Parent = panelBPFControl;
+                    chkDisableHPFonPS.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -26998,6 +27012,37 @@ namespace Thetis
         private void udTunePowerSwrIgnore_ValueChanged(object sender, EventArgs e)
         {
             console.TunePowerSwrIgnore = (float)udTunePowerSwrIgnore.Value;
+        }
+
+        private void chkShowFormStartup_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            CheckBoxTS chk = sender as CheckBoxTS;
+            if (chk == null) return;
+
+            string id = chk.Name.Substring(chk.Name.IndexOf("_") + 1).ToLower();
+
+            console.SetAutoFormStartSetting(id, chk.Checked);
+        }
+        public void UpdateAutoStartForms()
+        {
+            foreach(Control c in chkShowFormStartup_setup.Parent.Controls)
+            {
+                CheckBox cc = c as CheckBoxTS;
+                if(cc != null)
+                {
+                    string id = cc.Name.Substring(cc.Name.IndexOf("_") + 1).ToLower();
+                    cc.Checked = console.GetAutoFormStartSetting(id);
+                }
+            }
+        }
+
+        private void chkDisableHPFonPS_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.DisableHPFonPS = chkDisableHPFonPS.Checked;
+            if (console.path_Illustrator != null)
+                console.path_Illustrator.pi_Changed();
         }
     }
 
