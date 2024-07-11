@@ -4,6 +4,9 @@
 
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
+## v2.10.3.6 Change Log - WIP dev_5b
+- [fix] small change to auto start exe code to fix issue with command line args
+
 ## v2.10.3.6 Change Log - WIP dev_5a
 - [add] support for command line arguments in the auto launch settings. It should now do something !
 - [add] warning message shown when the bypass of BPFs is ignored for PureSignal transmissions
