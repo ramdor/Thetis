@@ -48329,26 +48329,35 @@ namespace Thetis
             string[] files = SetupForm.GetAutoLaunchFiles();
             foreach (string file in files)
             {
-                string processName = Path.GetFileNameWithoutExtension(file);
-                if (File.Exists(file) && (!SetupForm.AutoLaunchNoStartIfRunning || (SetupForm.AutoLaunchNoStartIfRunning && !IsProcessRunning(processName))))
+                string lower = file.ToLower();
+                int extensionPos = lower.IndexOf(".exe");
+                if (extensionPos == -1) extensionPos = lower.IndexOf(".cmd");
+                if (extensionPos >= 0)
                 {
-                    string extension = Path.GetExtension(file).ToLower();
-                    if (extension == ".exe" || extension == ".cmd")
+                    string arguments = file.Substring(extensionPos + 4).Trim();
+                    string fileOnly = file.Substring(0, extensionPos + 4).Trim();
+                    string processName = Path.GetFileNameWithoutExtension(fileOnly);
+                    if (File.Exists(fileOnly) && (!SetupForm.AutoLaunchNoStartIfRunning || (SetupForm.AutoLaunchNoStartIfRunning && !IsProcessRunning(processName))))
                     {
-                        try
+                        string extension = Path.GetExtension(fileOnly).ToLower();
+                        if (extension == ".exe" || extension == ".cmd")
                         {
-                            ProcessStartInfo startInfo = new ProcessStartInfo(file)
+                            try
                             {
-                                UseShellExecute = true,
-                                CreateNoWindow = true,
-                                WorkingDirectory = Path.GetDirectoryName(file)
-                            };
+                                ProcessStartInfo startInfo = new ProcessStartInfo(file)
+                                {
+                                    UseShellExecute = true,
+                                    CreateNoWindow = true,
+                                    Arguments = arguments,
+                                    WorkingDirectory = Path.GetDirectoryName(file)
+                                };
 
-                            Process p = Process.Start(startInfo);
-                            _started_processes.Add(p);
-                        }
-                        catch
-                        {
+                                Process p = Process.Start(startInfo);
+                                _started_processes.Add(p);
+                            }
+                            catch
+                            {
+                            }
                         }
                     }
                 }
