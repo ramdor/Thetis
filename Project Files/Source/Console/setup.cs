@@ -27043,6 +27043,19 @@ namespace Thetis
         private void chkDisableHPFonPS_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            if (sender == chkDisableHPFonPS && !chkDisableHPFonPS.Checked)
+            {
+                //msg to ask if user wants to do this
+                DialogResult dr = MessageBox.Show("Including the BPFs during a PureSignal tranmission may produce passive Inter-Modulation Distortion in the inductors of the bandpass filters.\n\n" +
+                    "You will NOT be able to observe this degraded performance on the panadapter because PS is correcting to the distorted feedback and the panadapter is \"seeing\" that same distorted feedback. " +
+                    "It can only be observed with an external spectrum analyzer.\n\nPlease ensure you understand the implications of inlcuding the BPFs when transmitting a PureSignal based signal. It is not recommended.", "PureSignal Issue",
+                    MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+                if (dr == DialogResult.Cancel)
+                {
+                    chkDisableHPFonPS.Checked = true;
+                    return;
+                }
+            }
             console.DisableHPFonPS = chkDisableHPFonPS.Checked;
             if (console.path_Illustrator != null)
                 console.path_Illustrator.pi_Changed();

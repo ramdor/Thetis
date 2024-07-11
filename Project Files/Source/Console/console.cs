@@ -48342,26 +48342,50 @@ namespace Thetis
             string[] files = SetupForm.GetAutoLaunchFiles();
             foreach (string file in files)
             {
-                string processName = Path.GetFileNameWithoutExtension(file);
-                if (File.Exists(file) && (!SetupForm.AutoLaunchNoStartIfRunning || (SetupForm.AutoLaunchNoStartIfRunning && !IsProcessRunning(processName))))
-                {
-                    string extension = Path.GetExtension(file).ToLower();
-                    if (extension == ".exe" || extension == ".cmd")
-                    {
-                        try
-                        {
-                            ProcessStartInfo startInfo = new ProcessStartInfo(file)
-                            {
-                                UseShellExecute = true,
-                                CreateNoWindow = true,
-                                WorkingDirectory = Path.GetDirectoryName(file)
-                            };
+                string lower = file.ToLower();
+                int extensionPosExe = lower.IndexOf(".exe");
+                int extensionPosCmd = lower.IndexOf(".cmd");
 
-                            Process p = Process.Start(startInfo);
-                            _started_processes.Add(p);
-                        }
-                        catch
+                if (extensionPosExe >= 0 || extensionPosCmd >=0)
+                {
+                    int extensionPos;
+                    if (extensionPosExe >= 0 && extensionPosCmd < 0)
+                        extensionPos = extensionPosExe;
+                    else if (extensionPosCmd >= 0 && extensionPosExe < 0)
+                        extensionPos = extensionPosCmd;
+                    else
+                    {
+                        if (extensionPosExe < extensionPosCmd)
+                            extensionPos = extensionPosExe;
+                        else
+                            extensionPos = extensionPosCmd;
+                    }
+
+                    string arguments = file.Substring(extensionPos + 4).Trim();
+                    string fileOnly = file.Substring(0, extensionPos + 4).Trim();
+                    string processName = Path.GetFileNameWithoutExtension(fileOnly);
+                    if (File.Exists(fileOnly) && (!SetupForm.AutoLaunchNoStartIfRunning || (SetupForm.AutoLaunchNoStartIfRunning && !IsProcessRunning(processName))))
+                    {
+                        string extension = Path.GetExtension(fileOnly).ToLower();
+                        if (extension == ".exe" || extension == ".cmd")
                         {
+                            try
+                            {
+                                ProcessStartInfo startInfo = new ProcessStartInfo(fileOnly)
+                                {
+                                    //LoadUserProfile = true,
+                                    UseShellExecute = true,
+                                    CreateNoWindow = true,
+                                    Arguments = arguments,
+                                    WorkingDirectory = Path.GetDirectoryName(fileOnly)
+                                };
+
+                                Process p = Process.Start(startInfo);
+                                _started_processes.Add(p);
+                            }
+                            catch
+                            {
+                            }
                         }
                     }
                 }
