@@ -117,6 +117,7 @@ namespace Thetis
         //HISTORY,
         VFO_DISPLAY,
         CLOCK,
+        SPACER,
         //SPECTRUM,
         LAST
     }
@@ -183,6 +184,7 @@ namespace Thetis
             private bool _peakValue;
             private System.Drawing.Color _peakValueColour;
             private float _eyeScale;
+            private float _spacerPadding;
             private float _eyeBezelScale;
             private bool _average;
             private bool _darkMode;
@@ -240,7 +242,8 @@ namespace Thetis
                     _showSubMarker.ToString() + "|" +
                     _eyeBezelScale.ToString("f4") + "|" +
                     Common.ColourToString(_powerScaleColour) + "|" +
-                    _ignoreHistoryDuration.ToString();
+                    _ignoreHistoryDuration.ToString() + "|" +
+                    _spacerPadding.ToString("f4");
 
                 return sRet;
             }
@@ -297,7 +300,7 @@ namespace Thetis
                 }
 
                 // this is due to new versions requiring more and more settings
-                if(bOk && tmp.Length >= 33)
+                if (bOk && tmp.Length >= 33)
                 {
                     if (bOk) bOk = float.TryParse(tmp[32], out tmpFloat); if (bOk) { _eyeBezelScale = tmpFloat; }
                 }
@@ -309,7 +312,10 @@ namespace Thetis
                 {
                     if (bOk) bOk = int.TryParse(tmp[34], out tmpInt); if (bOk) { _ignoreHistoryDuration = tmpInt; }
                 }
-
+                if (tmp.Length >= 36) //[2.10.3.6]MW0LGE added for dev_6
+                {
+                    if (bOk) bOk = float.TryParse(tmp[35], out tmpFloat); if (bOk) { _spacerPadding = tmpFloat; }
+                }
                 return bOk;
             }
             public bool SubIndicators { get { return _hasSubIndicators; } set { _hasSubIndicators = value; } }
@@ -342,6 +348,7 @@ namespace Thetis
             public bool PeakValue { get { return _peakValue; } set { _peakValue = value; } }
             public System.Drawing.Color PeakValueColour { get { return _peakValueColour; } set { _peakValueColour = value; } }
             public float EyeScale { get { return _eyeScale; } set { _eyeScale = value; } }
+            public float SpacerPadding { get { return _spacerPadding; } set { _spacerPadding = value; } }
             public float EyeBezelScale { get { return _eyeBezelScale; } set { _eyeBezelScale = value; } }
             public bool Average { get { return _average; } set { _average = value; } }
             public bool DarkMode { get { return _darkMode; } set { _darkMode = value; } }
@@ -458,6 +465,7 @@ namespace Thetis
                 //case MeterType.HISTORY: return 2;
                 case MeterType.VFO_DISPLAY: return 2;
                 case MeterType.CLOCK: return 2;
+                case MeterType.SPACER: return 2;
                 //case MeterType.SPECTRUM: return 2;
             }
 
@@ -491,6 +499,7 @@ namespace Thetis
                 case MeterType.ANANMM: return "Anan Multi Meter";
                 case MeterType.CROSS: return "Cross Meter";
                 case MeterType.SWR: return "SWR";
+                case MeterType.SPACER: return "Spacer";
                 //case MeterType.HISTORY: return "History";
                 case MeterType.VFO_DISPLAY: return "Vfo Display";
                 case MeterType.CLOCK: return "Clock";
@@ -2062,7 +2071,7 @@ namespace Thetis
                                         {
                                             clsIGSettings igs = new clsIGSettings();
                                             bool bIGSok = igs.TryParse(meterIGSettings.First().Value);
-                                            if (bIGSok) m.ApplySettingsForMeterGroup(ig.MeterType, igs);
+                                            if (bIGSok) m.ApplySettingsForMeterGroup(ig.MeterType, igs, ig.Order);
                                         }
                                     }
                                 }
@@ -2135,7 +2144,7 @@ namespace Thetis
                                     }
                                 }
 
-                                clsIGSettings igs = m.GetSettingsForMeterGroup(ig.Value.MeterType);
+                                clsIGSettings igs = m.GetSettingsForMeterGroup(ig.Value.MeterType, ig.Value.Order);
                                 if (igs != null)
                                 {
                                     a.Add("meterIGSettings_" + ig.Value.ID, igs.ToString());
@@ -2267,7 +2276,8 @@ namespace Thetis
                 VFO_DISPLAY,
                 CLOCK,
                 SIGNAL_TEXT_DISPLAY,
-                FADE_COVER//,
+                FADE_COVER,
+                SPACER
                 //SPECTRUM
             }
 
@@ -2313,6 +2323,7 @@ namespace Thetis
 
             private int _fadeValue;
             private bool _disabled;
+            private bool _mox;
 
             public clsMeterItem()
             {
@@ -2349,6 +2360,12 @@ namespace Thetis
                 _updateStopwatch = new Stopwatch();
                 _fadeValue = 255;
                 _disabled = false;
+                _mox = false;
+            }
+            public bool MOX
+            {
+                get { return _mox; }
+                set { _mox = value; }
             }
             public int FadeValue //[2.10.1.0] MW0LGE used for on rx/tx fading
             {
@@ -3490,6 +3507,33 @@ namespace Thetis
                 }
                 value = 0;
                 return false;
+            }
+        }
+
+        internal class clsSpacerItem : clsMeterItem
+        {
+            private System.Drawing.Color _colour;
+            private System.Drawing.Color _colour2;
+
+            private Dictionary<float, PointF> _scaleCalibration;
+
+            public clsSpacerItem()
+            {
+                _colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                _colour2 = System.Drawing.Color.FromArgb(32, 32, 32);
+
+                ItemType = MeterItemType.SPACER;
+                ReadingSource = Reading.NONE;
+            }
+            public System.Drawing.Color Colour
+            {
+                get { return _colour; }
+                set { _colour = value; }
+            }
+            public System.Drawing.Color Colour2
+            {
+                get { return _colour2; }
+                set { _colour2 = value; }
             }
         }
 
@@ -4921,6 +4965,7 @@ namespace Thetis
                     //case MeterType.HISTORY: AddHistory(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.VFO_DISPLAY: AddVFODisplay(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.CLOCK: AddClock(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.SPACER: AddSpacer(nDelay, 0, out bBottom, 0.2f, restoreIg); break;
                     //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
@@ -5452,6 +5497,34 @@ namespace Thetis
                 clsFadeCover fc = getFadeCover(ig.ID);
                 if (fc != null) addMeterItem(fc);
                 
+                addMeterItem(ig);
+
+                return me.ID;
+            }
+            public string AddSpacer(int nMSupdate, float fTop, out float fBottom, float fSize, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsSpacerItem me = new clsSpacerItem();
+                me.ParentID = ig.ID;
+                me.Primary = true;
+                me.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
+                me.Size = new SizeF(1f, fSize);
+                me.ZOrder = 2;
+                addMeterItem(me);
+
+                fBottom = me.TopLeft.Y + me.Size.Height;
+
+                ig.TopLeft = me.TopLeft;
+                ig.Size = new SizeF(me.Size.Width, fBottom);
+                ig.MeterType = MeterType.SPACER;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
                 addMeterItem(ig);
 
                 return me.ID;
@@ -7252,7 +7325,7 @@ namespace Thetis
                     if (bRebuild) Rebuild();
                 }
             }
-            public void RemoveMeterType(MeterType mt, bool bRebuild = false)
+            public void RemoveMeterType(MeterType mt, int order, bool bRebuild = false)
             {
                 lock (_meterItemsLock)
                 {
@@ -7264,7 +7337,7 @@ namespace Thetis
                         RemoveDisplayGroup("ALL");
                         RemoveDisplayGroup("PWR/SWR");
                         RemoveDisplayGroup("Comp");
-                        RemoveDisplayGroup("ALC"); 
+                        RemoveDisplayGroup("ALC");
                         RemoveDisplayGroup("Volts/Amps");
                     }
                     //
@@ -7274,9 +7347,10 @@ namespace Thetis
                         int nOrder = -1;
 
                         clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null && ig.MeterType == mt) {
+                        if (ig != null && ig.MeterType == mt && ig.Order == order) {
                             nOrder = ig.Order;
                             removeMeterItem(ig.ID, false);
+                            if (mt == MeterType.SPACER) order = -999; // only remove the single spacer
                         }
 
                         if(nOrder >= 0)
@@ -7349,7 +7423,7 @@ namespace Thetis
                     return "";
                 }
             }
-            public void ApplySettingsForMeterGroup(MeterType mt, clsIGSettings igs)
+            public void ApplySettingsForMeterGroup(MeterType mt, clsIGSettings igs, int order = -1)
             {
                 lock (_meterItemsLock)
                 {
@@ -7361,10 +7435,52 @@ namespace Thetis
                     foreach (KeyValuePair<string, clsMeterItem> kvp in itemGroups)
                     {
                         clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null && ig.MeterType == mt)
+                        if (ig != null && ig.MeterType == mt && (order == -1 || ig.Order == order))
                         {
                             switch (mt)
                             {
+                                case MeterType.SPACER:
+                                    {
+                                        bRebuild = true; // alwayys cause a rebuild as we relocate the spacer each time
+
+                                        float padding = 0f;
+
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SPACER))
+                                        {
+                                            clsSpacerItem spacer = me.Value as clsSpacerItem;
+                                            if (spacer == null) continue;
+
+                                            spacer.FadeOnRx = igs.FadeOnRx;
+                                            spacer.FadeOnTx = igs.FadeOnTx;
+                                            spacer.Colour = igs.Colour;
+                                            spacer.Colour2 = igs.MarkerColour;
+
+                                            spacer.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                            spacer.Size = new SizeF(ig.Size.Width, igs.SpacerPadding);
+
+                                            padding += igs.SpacerPadding;
+                                        }
+                                        ig.Size = new SizeF(ig.Size.Width, padding + (_fPadY - (_fHeight * 0.75f)));
+                                        
+                                        // recalc bounds for fade overlay cover as these will change as spacer changes
+                                        System.Drawing.RectangleF eyeBounds = getBounds(ig.ID);
+                                        if (!eyeBounds.IsEmpty)
+                                        {
+                                            foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                            {
+                                                clsFadeCover fc = fcs.Value as clsFadeCover;
+                                                if (fc == null) continue;
+
+                                                fc.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                fc.Size = new SizeF(ig.Size.Width, igs.SpacerPadding);
+
+                                                fc.FadeOnRx = igs.FadeOnRx;
+                                                fc.FadeOnTx = igs.FadeOnTx;
+                                            }
+                                        }
+                                    }
+                                    break;
                                 case MeterType.MAGIC_EYE:
                                     {
                                         float fLargest = Math.Max(igs.EyeScale, igs.EyeBezelScale);
@@ -7803,7 +7919,7 @@ namespace Thetis
                     return;
                 }
             }
-            public clsIGSettings GetSettingsForMeterGroup(MeterType mt)
+            public clsIGSettings GetSettingsForMeterGroup(MeterType mt, int order = -1)
             {
                 lock (_meterItemsLock)
                 {
@@ -7813,11 +7929,34 @@ namespace Thetis
                     foreach (KeyValuePair<string, clsMeterItem> kvp in itemGroups)
                     {
                         clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null && ig.MeterType == mt)
+                        if (ig != null && ig.MeterType == mt && (order == -1 || order == ig.Order))
                         {
                             clsIGSettings igs = new clsIGSettings();
                             switch (mt)
                             {
+                                case MeterType.SPACER:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        //one image, and the me
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SPACER))
+                                        {
+                                            clsSpacerItem spacer = me.Value as clsSpacerItem;
+                                            if (spacer == null) continue; // skip
+
+                                            igs.Colour = spacer.Colour;
+                                            igs.MarkerColour = spacer.Colour2;
+                                            igs.SpacerPadding = spacer.Size.Height;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue; // skip
+
+                                            igs.FadeOnRx = fc.FadeOnRx;
+                                            igs.FadeOnTx = fc.FadeOnTx;
+                                        }
+                                    }
+                                    break;
                                 case MeterType.MAGIC_EYE:
                                     {
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
@@ -8170,23 +8309,25 @@ namespace Thetis
                     return null;
                 }
             }
-            public int GetOrderForMeterType(MeterType mt)
+            public List<int> GetOrderForMeterType(MeterType mt)
             {
                 lock (_meterItemsLock)
                 {
-                    if (_meterItems == null) return -1;
+                    List<int> orders = new List<int>();
+
+                    if (_meterItems == null) return orders;
 
                     Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
                     foreach (KeyValuePair<string, clsMeterItem> kvp in items)
                     {
                         clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null && ig.MeterType == mt) return ig.Order;
+                        if (ig != null && ig.MeterType == mt) orders.Add(ig.Order);
                     }
 
-                    return -1;
+                    return orders;
                 }
             }
-            public void SetOrderForMeterType(MeterType mt, int nOrder, bool bRebuild, bool bUp)
+            public void SetOrderForMeterType(MeterType mt, int nOrder, bool bRebuild, bool bUp, int order = -1)
             {
                 // only works for up/down 1 place
                 lock (_meterItemsLock)
@@ -8196,6 +8337,7 @@ namespace Thetis
                     if (nOrder < 0) nOrder = 0;
                     int nTmp = numberOfMeterGroups() - 1;
                     if (nOrder > nTmp) nOrder = nTmp;
+                    bool done = false;
 
                     Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
                     foreach (KeyValuePair<string, clsMeterItem> kvp in items)
@@ -8203,9 +8345,10 @@ namespace Thetis
                         clsItemGroup ig = kvp.Value as clsItemGroup;
                         if (ig != null)
                         {
-                            if (ig.MeterType == mt)
+                            if (ig.MeterType == mt && (order == -1 || ig.Order == order) && !done)
                             {
                                 ig.Order = nOrder;
+                                done = true;
                             }
                             else if (ig.Order == nOrder)
                             {
@@ -9715,6 +9858,9 @@ namespace Thetis
                                     case clsMeterItem.MeterItemType.MAGIC_EYE:
                                         renderEye(rect, mi, m);
                                         break;
+                                    case clsMeterItem.MeterItemType.SPACER:
+                                        renderSpacer(rect, mi, m);
+                                        break;
                                     //case clsMeterItem.MeterItemType.HISTORY:
                                     //    renderHistory(rect, mi, m);
                                     //    break;
@@ -9796,6 +9942,7 @@ namespace Thetis
                 if (!mi.Disabled && !mi.FadeOnRx && !m.MOX && mi.FadeValue == 255) return 255;
 
                 int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                updateInterval = Math.Min(updateInterval, 500);
                 // fade to take half a second
                 int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
                 int stepSize = (int)Math.Ceiling(207 / (float)steps_needed); // 255-48 = 207
@@ -10580,6 +10727,40 @@ namespace Thetis
                 geo = null;
                 Utilities.Dispose(ref sharpGeometry);
                 sharpGeometry = null;
+            }
+            private void renderSpacer(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsSpacerItem spacer = (clsSpacerItem)mi;
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
+                if (!do_cover_fade && (spacer.Colour != spacer.Colour2))
+                {
+                    if (m.MOX != mi.MOX)
+                    {
+                        mi.FadeValue = 48;
+                        mi.MOX = m.MOX;
+                    }
+                    else
+                    {
+                        int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                        updateInterval = Math.Min(updateInterval, 500);
+                        // fade to take half a second
+                        int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
+                        int stepSize = (int)Math.Ceiling(207 / (float)steps_needed); // 255-48 = 207
+
+                        mi.FadeValue += stepSize;
+                        if (mi.FadeValue > 255) mi.FadeValue = 255;
+                    }
+                }
+
+                SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
+
+                _renderTarget.FillRectangle(rectSC, getDXBrushForColour(m.MOX ? spacer.Colour2 : spacer.Colour, mi.FadeValue));
             }
             private void renderEye(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {

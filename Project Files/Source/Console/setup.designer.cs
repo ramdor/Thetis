@@ -1431,7 +1431,7 @@
             this.udAlex160mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
             this.udAlex160mLPFStart = new System.Windows.Forms.NumericUpDownTS();
             this.panelAlex1HPFControl = new System.Windows.Forms.PanelTS();
-            this.chkDisableHPFonPS = new System.Windows.Forms.CheckBoxTS();
+            this.chkDisableHPFonPSb = new System.Windows.Forms.CheckBoxTS();
             this.labelTS321 = new System.Windows.Forms.LabelTS();
             this.chkDisable6mLNAonTX = new System.Windows.Forms.CheckBoxTS();
             this.chkDisable6mLNAonRX = new System.Windows.Forms.CheckBoxTS();
@@ -2934,6 +2934,9 @@
             this.tpAppearance = new System.Windows.Forms.TabPage();
             this.tcAppearance = new System.Windows.Forms.TabControl();
             this.tpAppearanceGeneral = new System.Windows.Forms.TabPage();
+            this.groupBoxTS38 = new System.Windows.Forms.GroupBoxTS();
+            this.clrbtnTXAttenuationBackground = new Thetis.ColorButton();
+            this.labelTS195 = new System.Windows.Forms.LabelTS();
             this.groupBoxTS31 = new System.Windows.Forms.GroupBoxTS();
             this.chkEnableLEDFont = new System.Windows.Forms.CheckBoxTS();
             this.labelTS8 = new System.Windows.Forms.LabelTS();
@@ -3092,38 +3095,6 @@
             this.chkContainerNoTitle = new System.Windows.Forms.CheckBoxTS();
             this.btnMeterCopySettings = new System.Windows.Forms.ButtonTS();
             this.btnMeterPasteSettings = new System.Windows.Forms.ButtonTS();
-            this.grpMeterItemVfoDisplaySettings = new System.Windows.Forms.GroupBoxTS();
-            this.labelTS177 = new System.Windows.Forms.LabelTS();
-            this.labelTS176 = new System.Windows.Forms.LabelTS();
-            this.clrbtnMMVfoDisplayBackground = new Thetis.ColorButton();
-            this.labelTS175 = new System.Windows.Forms.LabelTS();
-            this.clrbtnMMVfoDisplayFrequency = new Thetis.ColorButton();
-            this.labelTS174 = new System.Windows.Forms.LabelTS();
-            this.clrbtnMMVfoDisplayBand = new Thetis.ColorButton();
-            this.labelTS173 = new System.Windows.Forms.LabelTS();
-            this.clrbtnMMVfoDisplayFilter = new Thetis.ColorButton();
-            this.labelTS172 = new System.Windows.Forms.LabelTS();
-            this.clrbtnMMVfoDisplayTx = new Thetis.ColorButton();
-            this.labelTS171 = new System.Windows.Forms.LabelTS();
-            this.clrbtnMMVfoDisplayRx = new Thetis.ColorButton();
-            this.labelTS170 = new System.Windows.Forms.LabelTS();
-            this.clrbtnMMVfoDisplaySplit = new Thetis.ColorButton();
-            this.labelTS163 = new System.Windows.Forms.LabelTS();
-            this.clrbtnMMVfoDisplaySplitBack = new Thetis.ColorButton();
-            this.labelTS166 = new System.Windows.Forms.LabelTS();
-            this.clrbtnMMVfoDisplayMode = new Thetis.ColorButton();
-            this.clrbtnMMVfoDisplayTitle = new Thetis.ColorButton();
-            this.grpMeterItemClockSettings = new System.Windows.Forms.GroupBoxTS();
-            this.lblMMClockBackground = new System.Windows.Forms.LabelTS();
-            this.clrbtnMMClockBackground = new Thetis.ColorButton();
-            this.labelTS164 = new System.Windows.Forms.LabelTS();
-            this.clrbtnMMDate = new Thetis.ColorButton();
-            this.labelTS162 = new System.Windows.Forms.LabelTS();
-            this.clrbtnMMTime = new Thetis.ColorButton();
-            this.clrbtnMMClockTitle = new Thetis.ColorButton();
-            this.chkMMClockTitle = new System.Windows.Forms.CheckBoxTS();
-            this.radMM24Clock = new System.Windows.Forms.RadioButtonTS();
-            this.radMM12Clock = new System.Windows.Forms.RadioButtonTS();
             this.lblMMContainerBackground = new System.Windows.Forms.LabelTS();
             this.clrbtnContainerBackground = new Thetis.ColorButton();
             this.chkContainerBorder = new System.Windows.Forms.CheckBoxTS();
@@ -3570,6 +3541,38 @@
             this.btnImpulse = new System.Windows.Forms.ButtonTS();
             this.grpTestAudioBalance = new System.Windows.Forms.GroupBoxTS();
             this.btnTestAudioBalStart = new System.Windows.Forms.ButtonTS();
+            this.grpMeterItemVfoDisplaySettings = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS177 = new System.Windows.Forms.LabelTS();
+            this.labelTS176 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMMVfoDisplayBackground = new Thetis.ColorButton();
+            this.labelTS175 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMMVfoDisplayFrequency = new Thetis.ColorButton();
+            this.labelTS174 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMMVfoDisplayBand = new Thetis.ColorButton();
+            this.labelTS173 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMMVfoDisplayFilter = new Thetis.ColorButton();
+            this.labelTS172 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMMVfoDisplayTx = new Thetis.ColorButton();
+            this.labelTS171 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMMVfoDisplayRx = new Thetis.ColorButton();
+            this.labelTS170 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMMVfoDisplaySplit = new Thetis.ColorButton();
+            this.labelTS163 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMMVfoDisplaySplitBack = new Thetis.ColorButton();
+            this.labelTS166 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMMVfoDisplayMode = new Thetis.ColorButton();
+            this.clrbtnMMVfoDisplayTitle = new Thetis.ColorButton();
+            this.grpMeterItemClockSettings = new System.Windows.Forms.GroupBoxTS();
+            this.lblMMClockBackground = new System.Windows.Forms.LabelTS();
+            this.clrbtnMMClockBackground = new Thetis.ColorButton();
+            this.labelTS164 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMMDate = new Thetis.ColorButton();
+            this.labelTS162 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMMTime = new Thetis.ColorButton();
+            this.clrbtnMMClockTitle = new Thetis.ColorButton();
+            this.chkMMClockTitle = new System.Windows.Forms.CheckBoxTS();
+            this.radMM24Clock = new System.Windows.Forms.RadioButtonTS();
+            this.radMM12Clock = new System.Windows.Forms.RadioButtonTS();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.lblTXProfileWarning = new System.Windows.Forms.LabelTS();
@@ -3580,6 +3583,9 @@
             this.btnCancel = new System.Windows.Forms.ButtonTS();
             this.btnOK = new System.Windows.Forms.ButtonTS();
             this.chkEnableRFEPATR = new System.Windows.Forms.CheckBoxTS();
+            this.clrbtnMeterItemHBackgroundSpacerRX = new Thetis.ColorButton();
+            this.nudMeterItemSpacerPadding = new System.Windows.Forms.NumericUpDownTS();
+            this.clrbtnMeterItemHBackgroundSpacerTX = new Thetis.ColorButton();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -3632,6 +3638,13 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.grpMeterItemSpacerSettings = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS199 = new System.Windows.Forms.LabelTS();
+            this.labelTS197 = new System.Windows.Forms.LabelTS();
+            this.labelTS196 = new System.Windows.Forms.LabelTS();
+            this.chkMeterItemFadeOnTxSpacer = new System.Windows.Forms.CheckBoxTS();
+            this.chkMeterItemFadeOnRxSpacer = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS198 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4405,6 +4418,7 @@
             this.tpAppearance.SuspendLayout();
             this.tcAppearance.SuspendLayout();
             this.tpAppearanceGeneral.SuspendLayout();
+            this.groupBoxTS38.SuspendLayout();
             this.groupBoxTS31.SuspendLayout();
             this.groupBoxTS12.SuspendLayout();
             this.grpAppSkins.SuspendLayout();
@@ -4438,8 +4452,6 @@
             this.grpAppearanceMeter.SuspendLayout();
             this.tpAppearanceMeter2.SuspendLayout();
             this.grpMultiMeterHolder.SuspendLayout();
-            this.grpMeterItemVfoDisplaySettings.SuspendLayout();
-            this.grpMeterItemClockSettings.SuspendLayout();
             this.grpMeterItemSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemIgnoreHistoryDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemEyeBezelScale)).BeginInit();
@@ -4546,6 +4558,9 @@
             this.grpImpulseTest.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udImpulseNum)).BeginInit();
             this.grpTestAudioBalance.SuspendLayout();
+            this.grpMeterItemVfoDisplaySettings.SuspendLayout();
+            this.grpMeterItemClockSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemSpacerPadding)).BeginInit();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -4580,6 +4595,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
+            this.grpMeterItemSpacerSettings.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -23369,7 +23385,7 @@
             // 
             this.panelAlex1HPFControl.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.panelAlex1HPFControl.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.panelAlex1HPFControl.Controls.Add(this.chkDisableHPFonPS);
+            this.panelAlex1HPFControl.Controls.Add(this.chkDisableHPFonPSb);
             this.panelAlex1HPFControl.Controls.Add(this.labelTS321);
             this.panelAlex1HPFControl.Controls.Add(this.chkDisable6mLNAonTX);
             this.panelAlex1HPFControl.Controls.Add(this.chkDisable6mLNAonRX);
@@ -23407,20 +23423,20 @@
             this.panelAlex1HPFControl.Size = new System.Drawing.Size(305, 269);
             this.panelAlex1HPFControl.TabIndex = 108;
             // 
-            // chkDisableHPFonPS
+            // chkDisableHPFonPSb
             // 
-            this.chkDisableHPFonPS.AutoSize = true;
-            this.chkDisableHPFonPS.Checked = true;
-            this.chkDisableHPFonPS.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisableHPFonPS.Image = null;
-            this.chkDisableHPFonPS.Location = new System.Drawing.Point(140, 241);
-            this.chkDisableHPFonPS.Name = "chkDisableHPFonPS";
-            this.chkDisableHPFonPS.Size = new System.Drawing.Size(117, 17);
-            this.chkDisableHPFonPS.TabIndex = 112;
-            this.chkDisableHPFonPS.Text = "HPF ByPass on PS";
-            this.toolTip1.SetToolTip(this.chkDisableHPFonPS, "ByPasses HPF during PureSignal.");
-            this.chkDisableHPFonPS.UseVisualStyleBackColor = true;
-            this.chkDisableHPFonPS.CheckedChanged += new System.EventHandler(this.chkDisableHPFonPS_CheckedChanged);
+            this.chkDisableHPFonPSb.AutoSize = true;
+            this.chkDisableHPFonPSb.Checked = true;
+            this.chkDisableHPFonPSb.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDisableHPFonPSb.Image = null;
+            this.chkDisableHPFonPSb.Location = new System.Drawing.Point(140, 241);
+            this.chkDisableHPFonPSb.Name = "chkDisableHPFonPSb";
+            this.chkDisableHPFonPSb.Size = new System.Drawing.Size(117, 17);
+            this.chkDisableHPFonPSb.TabIndex = 112;
+            this.chkDisableHPFonPSb.Text = "HPF ByPass on PS";
+            this.toolTip1.SetToolTip(this.chkDisableHPFonPSb, "ByPasses HPF during PureSignal.");
+            this.chkDisableHPFonPSb.UseVisualStyleBackColor = true;
+            this.chkDisableHPFonPSb.CheckedChanged += new System.EventHandler(this.chkDisableHPFonPS_CheckedChanged);
             // 
             // labelTS321
             // 
@@ -48006,6 +48022,7 @@
             // tpAppearanceGeneral
             // 
             this.tpAppearanceGeneral.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS38);
             this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS31);
             this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS12);
             this.tpAppearanceGeneral.Controls.Add(this.btnSkinExport);
@@ -48017,6 +48034,40 @@
             this.tpAppearanceGeneral.Size = new System.Drawing.Size(724, 410);
             this.tpAppearanceGeneral.TabIndex = 0;
             this.tpAppearanceGeneral.Text = "General";
+            // 
+            // groupBoxTS38
+            // 
+            this.groupBoxTS38.Controls.Add(this.clrbtnTXAttenuationBackground);
+            this.groupBoxTS38.Controls.Add(this.labelTS195);
+            this.groupBoxTS38.Location = new System.Drawing.Point(463, 261);
+            this.groupBoxTS38.Name = "groupBoxTS38";
+            this.groupBoxTS38.Size = new System.Drawing.Size(144, 70);
+            this.groupBoxTS38.TabIndex = 86;
+            this.groupBoxTS38.TabStop = false;
+            this.groupBoxTS38.Text = "TX attenuation";
+            // 
+            // clrbtnTXAttenuationBackground
+            // 
+            this.clrbtnTXAttenuationBackground.Automatic = "Automatic";
+            this.clrbtnTXAttenuationBackground.Color = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.clrbtnTXAttenuationBackground.Image = null;
+            this.clrbtnTXAttenuationBackground.Location = new System.Drawing.Point(86, 19);
+            this.clrbtnTXAttenuationBackground.MoreColors = "More Colors...";
+            this.clrbtnTXAttenuationBackground.Name = "clrbtnTXAttenuationBackground";
+            this.clrbtnTXAttenuationBackground.Selectable = true;
+            this.clrbtnTXAttenuationBackground.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnTXAttenuationBackground.TabIndex = 70;
+            this.clrbtnTXAttenuationBackground.Changed += new System.EventHandler(this.clrbtnTXAttenuationBackground_Changed);
+            // 
+            // labelTS195
+            // 
+            this.labelTS195.Image = null;
+            this.labelTS195.Location = new System.Drawing.Point(12, 20);
+            this.labelTS195.Name = "labelTS195";
+            this.labelTS195.Size = new System.Drawing.Size(72, 20);
+            this.labelTS195.TabIndex = 69;
+            this.labelTS195.Text = "Background:";
+            this.labelTS195.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // groupBoxTS31
             // 
@@ -49930,8 +49981,6 @@
             this.grpMultiMeterHolder.Controls.Add(this.chkContainerNoTitle);
             this.grpMultiMeterHolder.Controls.Add(this.btnMeterCopySettings);
             this.grpMultiMeterHolder.Controls.Add(this.btnMeterPasteSettings);
-            this.grpMultiMeterHolder.Controls.Add(this.grpMeterItemVfoDisplaySettings);
-            this.grpMultiMeterHolder.Controls.Add(this.grpMeterItemClockSettings);
             this.grpMultiMeterHolder.Controls.Add(this.lblMMContainerBackground);
             this.grpMultiMeterHolder.Controls.Add(this.clrbtnContainerBackground);
             this.grpMultiMeterHolder.Controls.Add(this.chkContainerBorder);
@@ -50025,437 +50074,6 @@
             this.toolTip1.SetToolTip(this.btnMeterPasteSettings, "Paste settings and colours into suitable meter item");
             this.btnMeterPasteSettings.UseVisualStyleBackColor = true;
             this.btnMeterPasteSettings.Click += new System.EventHandler(this.btnMeterPasteSettings_Click);
-            // 
-            // grpMeterItemVfoDisplaySettings
-            // 
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS177);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS176);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayBackground);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS175);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayFrequency);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS174);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayBand);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS173);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayFilter);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS172);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTx);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS171);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayRx);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS170);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplaySplit);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS163);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplaySplitBack);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS166);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayMode);
-            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTitle);
-            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(380, 385);
-            this.grpMeterItemVfoDisplaySettings.Name = "grpMeterItemVfoDisplaySettings";
-            this.grpMeterItemVfoDisplaySettings.Size = new System.Drawing.Size(323, 364);
-            this.grpMeterItemVfoDisplaySettings.TabIndex = 101;
-            this.grpMeterItemVfoDisplaySettings.TabStop = false;
-            this.grpMeterItemVfoDisplaySettings.Text = "VFO Display Settings";
-            this.grpMeterItemVfoDisplaySettings.Visible = false;
-            // 
-            // labelTS177
-            // 
-            this.labelTS177.AutoSize = true;
-            this.labelTS177.Image = null;
-            this.labelTS177.Location = new System.Drawing.Point(65, 64);
-            this.labelTS177.Name = "labelTS177";
-            this.labelTS177.Size = new System.Drawing.Size(32, 13);
-            this.labelTS177.TabIndex = 129;
-            this.labelTS177.Text = "Titles";
-            // 
-            // labelTS176
-            // 
-            this.labelTS176.AutoSize = true;
-            this.labelTS176.Image = null;
-            this.labelTS176.Location = new System.Drawing.Point(31, 35);
-            this.labelTS176.Name = "labelTS176";
-            this.labelTS176.Size = new System.Drawing.Size(68, 13);
-            this.labelTS176.TabIndex = 128;
-            this.labelTS176.Text = "Background:";
-            // 
-            // clrbtnMMVfoDisplayBackground
-            // 
-            this.clrbtnMMVfoDisplayBackground.Automatic = "Automatic";
-            this.clrbtnMMVfoDisplayBackground.Color = System.Drawing.Color.LimeGreen;
-            this.clrbtnMMVfoDisplayBackground.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnMMVfoDisplayBackground.Image = null;
-            this.clrbtnMMVfoDisplayBackground.Location = new System.Drawing.Point(105, 30);
-            this.clrbtnMMVfoDisplayBackground.MoreColors = "More Colors...";
-            this.clrbtnMMVfoDisplayBackground.Name = "clrbtnMMVfoDisplayBackground";
-            this.clrbtnMMVfoDisplayBackground.Selectable = true;
-            this.clrbtnMMVfoDisplayBackground.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMMVfoDisplayBackground.TabIndex = 127;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayBackground, "Background colour");
-            this.clrbtnMMVfoDisplayBackground.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayBackground_Changed);
-            // 
-            // labelTS175
-            // 
-            this.labelTS175.AutoSize = true;
-            this.labelTS175.Image = null;
-            this.labelTS175.Location = new System.Drawing.Point(40, 93);
-            this.labelTS175.Name = "labelTS175";
-            this.labelTS175.Size = new System.Drawing.Size(60, 13);
-            this.labelTS175.TabIndex = 126;
-            this.labelTS175.Text = "Frequency:";
-            // 
-            // clrbtnMMVfoDisplayFrequency
-            // 
-            this.clrbtnMMVfoDisplayFrequency.Automatic = "Automatic";
-            this.clrbtnMMVfoDisplayFrequency.Color = System.Drawing.Color.Yellow;
-            this.clrbtnMMVfoDisplayFrequency.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnMMVfoDisplayFrequency.Image = null;
-            this.clrbtnMMVfoDisplayFrequency.Location = new System.Drawing.Point(105, 88);
-            this.clrbtnMMVfoDisplayFrequency.MoreColors = "More Colors...";
-            this.clrbtnMMVfoDisplayFrequency.Name = "clrbtnMMVfoDisplayFrequency";
-            this.clrbtnMMVfoDisplayFrequency.Selectable = true;
-            this.clrbtnMMVfoDisplayFrequency.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMMVfoDisplayFrequency.TabIndex = 125;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayFrequency, "Frequency Colour");
-            this.clrbtnMMVfoDisplayFrequency.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayFrequency_Changed);
-            // 
-            // labelTS174
-            // 
-            this.labelTS174.AutoSize = true;
-            this.labelTS174.Image = null;
-            this.labelTS174.Location = new System.Drawing.Point(69, 264);
-            this.labelTS174.Name = "labelTS174";
-            this.labelTS174.Size = new System.Drawing.Size(35, 13);
-            this.labelTS174.TabIndex = 124;
-            this.labelTS174.Text = "Band:";
-            // 
-            // clrbtnMMVfoDisplayBand
-            // 
-            this.clrbtnMMVfoDisplayBand.Automatic = "Automatic";
-            this.clrbtnMMVfoDisplayBand.Color = System.Drawing.Color.Yellow;
-            this.clrbtnMMVfoDisplayBand.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnMMVfoDisplayBand.Image = null;
-            this.clrbtnMMVfoDisplayBand.Location = new System.Drawing.Point(105, 259);
-            this.clrbtnMMVfoDisplayBand.MoreColors = "More Colors...";
-            this.clrbtnMMVfoDisplayBand.Name = "clrbtnMMVfoDisplayBand";
-            this.clrbtnMMVfoDisplayBand.Selectable = true;
-            this.clrbtnMMVfoDisplayBand.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMMVfoDisplayBand.TabIndex = 123;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayBand, "Band colour");
-            this.clrbtnMMVfoDisplayBand.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayBand_Changed);
-            // 
-            // labelTS173
-            // 
-            this.labelTS173.AutoSize = true;
-            this.labelTS173.Image = null;
-            this.labelTS173.Location = new System.Drawing.Point(69, 235);
-            this.labelTS173.Name = "labelTS173";
-            this.labelTS173.Size = new System.Drawing.Size(32, 13);
-            this.labelTS173.TabIndex = 122;
-            this.labelTS173.Text = "Filter:";
-            // 
-            // clrbtnMMVfoDisplayFilter
-            // 
-            this.clrbtnMMVfoDisplayFilter.Automatic = "Automatic";
-            this.clrbtnMMVfoDisplayFilter.Color = System.Drawing.Color.Yellow;
-            this.clrbtnMMVfoDisplayFilter.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnMMVfoDisplayFilter.Image = null;
-            this.clrbtnMMVfoDisplayFilter.Location = new System.Drawing.Point(105, 230);
-            this.clrbtnMMVfoDisplayFilter.MoreColors = "More Colors...";
-            this.clrbtnMMVfoDisplayFilter.Name = "clrbtnMMVfoDisplayFilter";
-            this.clrbtnMMVfoDisplayFilter.Selectable = true;
-            this.clrbtnMMVfoDisplayFilter.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMMVfoDisplayFilter.TabIndex = 121;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayFilter, "Filter colour");
-            this.clrbtnMMVfoDisplayFilter.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayFilter_Changed);
-            // 
-            // labelTS172
-            // 
-            this.labelTS172.AutoSize = true;
-            this.labelTS172.Image = null;
-            this.labelTS172.Location = new System.Drawing.Point(73, 205);
-            this.labelTS172.Name = "labelTS172";
-            this.labelTS172.Size = new System.Drawing.Size(24, 13);
-            this.labelTS172.TabIndex = 120;
-            this.labelTS172.Text = "TX:";
-            // 
-            // clrbtnMMVfoDisplayTx
-            // 
-            this.clrbtnMMVfoDisplayTx.Automatic = "Automatic";
-            this.clrbtnMMVfoDisplayTx.Color = System.Drawing.Color.Yellow;
-            this.clrbtnMMVfoDisplayTx.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnMMVfoDisplayTx.Image = null;
-            this.clrbtnMMVfoDisplayTx.Location = new System.Drawing.Point(105, 200);
-            this.clrbtnMMVfoDisplayTx.MoreColors = "More Colors...";
-            this.clrbtnMMVfoDisplayTx.Name = "clrbtnMMVfoDisplayTx";
-            this.clrbtnMMVfoDisplayTx.Selectable = true;
-            this.clrbtnMMVfoDisplayTx.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMMVfoDisplayTx.TabIndex = 119;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayTx, "TX box colour");
-            this.clrbtnMMVfoDisplayTx.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayTx_Changed);
-            // 
-            // labelTS171
-            // 
-            this.labelTS171.AutoSize = true;
-            this.labelTS171.Image = null;
-            this.labelTS171.Location = new System.Drawing.Point(73, 176);
-            this.labelTS171.Name = "labelTS171";
-            this.labelTS171.Size = new System.Drawing.Size(25, 13);
-            this.labelTS171.TabIndex = 118;
-            this.labelTS171.Text = "RX:";
-            // 
-            // clrbtnMMVfoDisplayRx
-            // 
-            this.clrbtnMMVfoDisplayRx.Automatic = "Automatic";
-            this.clrbtnMMVfoDisplayRx.Color = System.Drawing.Color.Yellow;
-            this.clrbtnMMVfoDisplayRx.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnMMVfoDisplayRx.Image = null;
-            this.clrbtnMMVfoDisplayRx.Location = new System.Drawing.Point(105, 171);
-            this.clrbtnMMVfoDisplayRx.MoreColors = "More Colors...";
-            this.clrbtnMMVfoDisplayRx.Name = "clrbtnMMVfoDisplayRx";
-            this.clrbtnMMVfoDisplayRx.Selectable = true;
-            this.clrbtnMMVfoDisplayRx.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMMVfoDisplayRx.TabIndex = 117;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayRx, "RX box colour");
-            this.clrbtnMMVfoDisplayRx.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayRx_Changed);
-            // 
-            // labelTS170
-            // 
-            this.labelTS170.AutoSize = true;
-            this.labelTS170.Image = null;
-            this.labelTS170.Location = new System.Drawing.Point(169, 147);
-            this.labelTS170.Name = "labelTS170";
-            this.labelTS170.Size = new System.Drawing.Size(30, 13);
-            this.labelTS170.TabIndex = 116;
-            this.labelTS170.Text = "Split:";
-            // 
-            // clrbtnMMVfoDisplaySplit
-            // 
-            this.clrbtnMMVfoDisplaySplit.Automatic = "Automatic";
-            this.clrbtnMMVfoDisplaySplit.Color = System.Drawing.Color.Yellow;
-            this.clrbtnMMVfoDisplaySplit.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnMMVfoDisplaySplit.Image = null;
-            this.clrbtnMMVfoDisplaySplit.Location = new System.Drawing.Point(205, 142);
-            this.clrbtnMMVfoDisplaySplit.MoreColors = "More Colors...";
-            this.clrbtnMMVfoDisplaySplit.Name = "clrbtnMMVfoDisplaySplit";
-            this.clrbtnMMVfoDisplaySplit.Selectable = true;
-            this.clrbtnMMVfoDisplaySplit.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMMVfoDisplaySplit.TabIndex = 115;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplaySplit, "Split colour");
-            this.clrbtnMMVfoDisplaySplit.Changed += new System.EventHandler(this.clrbtnMMVfoDisplaySplit_Changed);
-            // 
-            // labelTS163
-            // 
-            this.labelTS163.AutoSize = true;
-            this.labelTS163.Image = null;
-            this.labelTS163.Location = new System.Drawing.Point(44, 147);
-            this.labelTS163.Name = "labelTS163";
-            this.labelTS163.Size = new System.Drawing.Size(58, 13);
-            this.labelTS163.TabIndex = 114;
-            this.labelTS163.Text = "Split Back:";
-            // 
-            // clrbtnMMVfoDisplaySplitBack
-            // 
-            this.clrbtnMMVfoDisplaySplitBack.Automatic = "Automatic";
-            this.clrbtnMMVfoDisplaySplitBack.Color = System.Drawing.Color.Yellow;
-            this.clrbtnMMVfoDisplaySplitBack.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnMMVfoDisplaySplitBack.Image = null;
-            this.clrbtnMMVfoDisplaySplitBack.Location = new System.Drawing.Point(105, 142);
-            this.clrbtnMMVfoDisplaySplitBack.MoreColors = "More Colors...";
-            this.clrbtnMMVfoDisplaySplitBack.Name = "clrbtnMMVfoDisplaySplitBack";
-            this.clrbtnMMVfoDisplaySplitBack.Selectable = true;
-            this.clrbtnMMVfoDisplaySplitBack.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMMVfoDisplaySplitBack.TabIndex = 113;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplaySplitBack, "Background of the split");
-            this.clrbtnMMVfoDisplaySplitBack.Changed += new System.EventHandler(this.clrbtnMMVfoDisplaySplitBack_Changed);
-            // 
-            // labelTS166
-            // 
-            this.labelTS166.AutoSize = true;
-            this.labelTS166.Image = null;
-            this.labelTS166.Location = new System.Drawing.Point(66, 123);
-            this.labelTS166.Name = "labelTS166";
-            this.labelTS166.Size = new System.Drawing.Size(37, 13);
-            this.labelTS166.TabIndex = 112;
-            this.labelTS166.Text = "Mode:";
-            // 
-            // clrbtnMMVfoDisplayMode
-            // 
-            this.clrbtnMMVfoDisplayMode.Automatic = "Automatic";
-            this.clrbtnMMVfoDisplayMode.Color = System.Drawing.Color.Yellow;
-            this.clrbtnMMVfoDisplayMode.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnMMVfoDisplayMode.Image = null;
-            this.clrbtnMMVfoDisplayMode.Location = new System.Drawing.Point(105, 118);
-            this.clrbtnMMVfoDisplayMode.MoreColors = "More Colors...";
-            this.clrbtnMMVfoDisplayMode.Name = "clrbtnMMVfoDisplayMode";
-            this.clrbtnMMVfoDisplayMode.Selectable = true;
-            this.clrbtnMMVfoDisplayMode.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMMVfoDisplayMode.TabIndex = 111;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayMode, "Mode colour");
-            this.clrbtnMMVfoDisplayMode.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayMode_Changed);
-            // 
-            // clrbtnMMVfoDisplayTitle
-            // 
-            this.clrbtnMMVfoDisplayTitle.Automatic = "Automatic";
-            this.clrbtnMMVfoDisplayTitle.Color = System.Drawing.Color.Yellow;
-            this.clrbtnMMVfoDisplayTitle.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnMMVfoDisplayTitle.Image = null;
-            this.clrbtnMMVfoDisplayTitle.Location = new System.Drawing.Point(105, 59);
-            this.clrbtnMMVfoDisplayTitle.MoreColors = "More Colors...";
-            this.clrbtnMMVfoDisplayTitle.Name = "clrbtnMMVfoDisplayTitle";
-            this.clrbtnMMVfoDisplayTitle.Selectable = true;
-            this.clrbtnMMVfoDisplayTitle.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMMVfoDisplayTitle.TabIndex = 110;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayTitle, "Titles colour");
-            this.clrbtnMMVfoDisplayTitle.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayTitle_Changed);
-            // 
-            // grpMeterItemClockSettings
-            // 
-            this.grpMeterItemClockSettings.Controls.Add(this.lblMMClockBackground);
-            this.grpMeterItemClockSettings.Controls.Add(this.clrbtnMMClockBackground);
-            this.grpMeterItemClockSettings.Controls.Add(this.labelTS164);
-            this.grpMeterItemClockSettings.Controls.Add(this.clrbtnMMDate);
-            this.grpMeterItemClockSettings.Controls.Add(this.labelTS162);
-            this.grpMeterItemClockSettings.Controls.Add(this.clrbtnMMTime);
-            this.grpMeterItemClockSettings.Controls.Add(this.clrbtnMMClockTitle);
-            this.grpMeterItemClockSettings.Controls.Add(this.chkMMClockTitle);
-            this.grpMeterItemClockSettings.Controls.Add(this.radMM24Clock);
-            this.grpMeterItemClockSettings.Controls.Add(this.radMM12Clock);
-            this.grpMeterItemClockSettings.Location = new System.Drawing.Point(371, 353);
-            this.grpMeterItemClockSettings.Name = "grpMeterItemClockSettings";
-            this.grpMeterItemClockSettings.Size = new System.Drawing.Size(323, 364);
-            this.grpMeterItemClockSettings.TabIndex = 100;
-            this.grpMeterItemClockSettings.TabStop = false;
-            this.grpMeterItemClockSettings.Text = "Clock Settings";
-            this.grpMeterItemClockSettings.Visible = false;
-            // 
-            // lblMMClockBackground
-            // 
-            this.lblMMClockBackground.AutoSize = true;
-            this.lblMMClockBackground.Image = null;
-            this.lblMMClockBackground.Location = new System.Drawing.Point(32, 58);
-            this.lblMMClockBackground.Name = "lblMMClockBackground";
-            this.lblMMClockBackground.Size = new System.Drawing.Size(68, 13);
-            this.lblMMClockBackground.TabIndex = 116;
-            this.lblMMClockBackground.Text = "Background:";
-            // 
-            // clrbtnMMClockBackground
-            // 
-            this.clrbtnMMClockBackground.Automatic = "Automatic";
-            this.clrbtnMMClockBackground.Color = System.Drawing.Color.LimeGreen;
-            this.clrbtnMMClockBackground.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnMMClockBackground.Image = null;
-            this.clrbtnMMClockBackground.Location = new System.Drawing.Point(106, 53);
-            this.clrbtnMMClockBackground.MoreColors = "More Colors...";
-            this.clrbtnMMClockBackground.Name = "clrbtnMMClockBackground";
-            this.clrbtnMMClockBackground.Selectable = true;
-            this.clrbtnMMClockBackground.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMMClockBackground.TabIndex = 115;
-            this.toolTip1.SetToolTip(this.clrbtnMMClockBackground, "Background colour");
-            this.clrbtnMMClockBackground.Changed += new System.EventHandler(this.clrbtnMMClockBackground_Changed);
-            // 
-            // labelTS164
-            // 
-            this.labelTS164.AutoSize = true;
-            this.labelTS164.Image = null;
-            this.labelTS164.Location = new System.Drawing.Point(66, 147);
-            this.labelTS164.Name = "labelTS164";
-            this.labelTS164.Size = new System.Drawing.Size(33, 13);
-            this.labelTS164.TabIndex = 114;
-            this.labelTS164.Text = "Date:";
-            // 
-            // clrbtnMMDate
-            // 
-            this.clrbtnMMDate.Automatic = "Automatic";
-            this.clrbtnMMDate.Color = System.Drawing.Color.Yellow;
-            this.clrbtnMMDate.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnMMDate.Image = null;
-            this.clrbtnMMDate.Location = new System.Drawing.Point(105, 142);
-            this.clrbtnMMDate.MoreColors = "More Colors...";
-            this.clrbtnMMDate.Name = "clrbtnMMDate";
-            this.clrbtnMMDate.Selectable = true;
-            this.clrbtnMMDate.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMMDate.TabIndex = 113;
-            this.toolTip1.SetToolTip(this.clrbtnMMDate, "Date colour");
-            this.clrbtnMMDate.Changed += new System.EventHandler(this.clrbtnMMDate_Changed);
-            // 
-            // labelTS162
-            // 
-            this.labelTS162.AutoSize = true;
-            this.labelTS162.Image = null;
-            this.labelTS162.Location = new System.Drawing.Point(66, 123);
-            this.labelTS162.Name = "labelTS162";
-            this.labelTS162.Size = new System.Drawing.Size(33, 13);
-            this.labelTS162.TabIndex = 112;
-            this.labelTS162.Text = "Time:";
-            // 
-            // clrbtnMMTime
-            // 
-            this.clrbtnMMTime.Automatic = "Automatic";
-            this.clrbtnMMTime.Color = System.Drawing.Color.Yellow;
-            this.clrbtnMMTime.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnMMTime.Image = null;
-            this.clrbtnMMTime.Location = new System.Drawing.Point(105, 118);
-            this.clrbtnMMTime.MoreColors = "More Colors...";
-            this.clrbtnMMTime.Name = "clrbtnMMTime";
-            this.clrbtnMMTime.Selectable = true;
-            this.clrbtnMMTime.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMMTime.TabIndex = 111;
-            this.toolTip1.SetToolTip(this.clrbtnMMTime, "Time");
-            this.clrbtnMMTime.Changed += new System.EventHandler(this.clrbtnMMTime_Changed);
-            // 
-            // clrbtnMMClockTitle
-            // 
-            this.clrbtnMMClockTitle.Automatic = "Automatic";
-            this.clrbtnMMClockTitle.Color = System.Drawing.Color.Yellow;
-            this.clrbtnMMClockTitle.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnMMClockTitle.Image = null;
-            this.clrbtnMMClockTitle.Location = new System.Drawing.Point(105, 86);
-            this.clrbtnMMClockTitle.MoreColors = "More Colors...";
-            this.clrbtnMMClockTitle.Name = "clrbtnMMClockTitle";
-            this.clrbtnMMClockTitle.Selectable = true;
-            this.clrbtnMMClockTitle.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMMClockTitle.TabIndex = 110;
-            this.toolTip1.SetToolTip(this.clrbtnMMClockTitle, "Meter title colour");
-            this.clrbtnMMClockTitle.Changed += new System.EventHandler(this.clrbtnMMClockTitle_Changed);
-            // 
-            // chkMMClockTitle
-            // 
-            this.chkMMClockTitle.AutoSize = true;
-            this.chkMMClockTitle.Image = null;
-            this.chkMMClockTitle.Location = new System.Drawing.Point(24, 89);
-            this.chkMMClockTitle.Name = "chkMMClockTitle";
-            this.chkMMClockTitle.Size = new System.Drawing.Size(76, 17);
-            this.chkMMClockTitle.TabIndex = 109;
-            this.chkMMClockTitle.Text = "Meter Title";
-            this.toolTip1.SetToolTip(this.chkMMClockTitle, "Show meter title");
-            this.chkMMClockTitle.UseVisualStyleBackColor = true;
-            this.chkMMClockTitle.CheckedChanged += new System.EventHandler(this.chkMMClockTitle_CheckedChanged);
-            // 
-            // radMM24Clock
-            // 
-            this.radMM24Clock.AutoSize = true;
-            this.radMM24Clock.Image = null;
-            this.radMM24Clock.Location = new System.Drawing.Point(192, 67);
-            this.radMM24Clock.Name = "radMM24Clock";
-            this.radMM24Clock.Size = new System.Drawing.Size(49, 17);
-            this.radMM24Clock.TabIndex = 1;
-            this.radMM24Clock.TabStop = true;
-            this.radMM24Clock.Text = "24 hr";
-            this.toolTip1.SetToolTip(this.radMM24Clock, "24 hr clock");
-            this.radMM24Clock.UseVisualStyleBackColor = true;
-            this.radMM24Clock.CheckedChanged += new System.EventHandler(this.radMM24Clock_CheckedChanged);
-            // 
-            // radMM12Clock
-            // 
-            this.radMM12Clock.AutoSize = true;
-            this.radMM12Clock.Image = null;
-            this.radMM12Clock.Location = new System.Drawing.Point(192, 48);
-            this.radMM12Clock.Name = "radMM12Clock";
-            this.radMM12Clock.Size = new System.Drawing.Size(49, 17);
-            this.radMM12Clock.TabIndex = 0;
-            this.radMM12Clock.TabStop = true;
-            this.radMM12Clock.Text = "12 hr";
-            this.toolTip1.SetToolTip(this.radMM12Clock, "12 hr clock");
-            this.radMM12Clock.UseVisualStyleBackColor = true;
-            this.radMM12Clock.CheckedChanged += new System.EventHandler(this.radMM12Clock_CheckedChanged);
             // 
             // lblMMContainerBackground
             // 
@@ -56646,6 +56264,437 @@
             this.btnTestAudioBalStart.TabIndex = 0;
             this.btnTestAudioBalStart.Text = "Start";
             // 
+            // grpMeterItemVfoDisplaySettings
+            // 
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS177);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS176);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayBackground);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS175);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayFrequency);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS174);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayBand);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS173);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayFilter);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS172);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTx);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS171);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayRx);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS170);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplaySplit);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS163);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplaySplitBack);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS166);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayMode);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTitle);
+            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(395, 675);
+            this.grpMeterItemVfoDisplaySettings.Name = "grpMeterItemVfoDisplaySettings";
+            this.grpMeterItemVfoDisplaySettings.Size = new System.Drawing.Size(323, 364);
+            this.grpMeterItemVfoDisplaySettings.TabIndex = 101;
+            this.grpMeterItemVfoDisplaySettings.TabStop = false;
+            this.grpMeterItemVfoDisplaySettings.Text = "VFO Display Settings";
+            this.grpMeterItemVfoDisplaySettings.Visible = false;
+            // 
+            // labelTS177
+            // 
+            this.labelTS177.AutoSize = true;
+            this.labelTS177.Image = null;
+            this.labelTS177.Location = new System.Drawing.Point(65, 64);
+            this.labelTS177.Name = "labelTS177";
+            this.labelTS177.Size = new System.Drawing.Size(32, 13);
+            this.labelTS177.TabIndex = 129;
+            this.labelTS177.Text = "Titles";
+            // 
+            // labelTS176
+            // 
+            this.labelTS176.AutoSize = true;
+            this.labelTS176.Image = null;
+            this.labelTS176.Location = new System.Drawing.Point(31, 35);
+            this.labelTS176.Name = "labelTS176";
+            this.labelTS176.Size = new System.Drawing.Size(68, 13);
+            this.labelTS176.TabIndex = 128;
+            this.labelTS176.Text = "Background:";
+            // 
+            // clrbtnMMVfoDisplayBackground
+            // 
+            this.clrbtnMMVfoDisplayBackground.Automatic = "Automatic";
+            this.clrbtnMMVfoDisplayBackground.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnMMVfoDisplayBackground.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMVfoDisplayBackground.Image = null;
+            this.clrbtnMMVfoDisplayBackground.Location = new System.Drawing.Point(105, 30);
+            this.clrbtnMMVfoDisplayBackground.MoreColors = "More Colors...";
+            this.clrbtnMMVfoDisplayBackground.Name = "clrbtnMMVfoDisplayBackground";
+            this.clrbtnMMVfoDisplayBackground.Selectable = true;
+            this.clrbtnMMVfoDisplayBackground.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMVfoDisplayBackground.TabIndex = 127;
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayBackground, "Background colour");
+            this.clrbtnMMVfoDisplayBackground.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayBackground_Changed);
+            // 
+            // labelTS175
+            // 
+            this.labelTS175.AutoSize = true;
+            this.labelTS175.Image = null;
+            this.labelTS175.Location = new System.Drawing.Point(40, 93);
+            this.labelTS175.Name = "labelTS175";
+            this.labelTS175.Size = new System.Drawing.Size(60, 13);
+            this.labelTS175.TabIndex = 126;
+            this.labelTS175.Text = "Frequency:";
+            // 
+            // clrbtnMMVfoDisplayFrequency
+            // 
+            this.clrbtnMMVfoDisplayFrequency.Automatic = "Automatic";
+            this.clrbtnMMVfoDisplayFrequency.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMMVfoDisplayFrequency.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMVfoDisplayFrequency.Image = null;
+            this.clrbtnMMVfoDisplayFrequency.Location = new System.Drawing.Point(105, 88);
+            this.clrbtnMMVfoDisplayFrequency.MoreColors = "More Colors...";
+            this.clrbtnMMVfoDisplayFrequency.Name = "clrbtnMMVfoDisplayFrequency";
+            this.clrbtnMMVfoDisplayFrequency.Selectable = true;
+            this.clrbtnMMVfoDisplayFrequency.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMVfoDisplayFrequency.TabIndex = 125;
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayFrequency, "Frequency Colour");
+            this.clrbtnMMVfoDisplayFrequency.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayFrequency_Changed);
+            // 
+            // labelTS174
+            // 
+            this.labelTS174.AutoSize = true;
+            this.labelTS174.Image = null;
+            this.labelTS174.Location = new System.Drawing.Point(69, 264);
+            this.labelTS174.Name = "labelTS174";
+            this.labelTS174.Size = new System.Drawing.Size(35, 13);
+            this.labelTS174.TabIndex = 124;
+            this.labelTS174.Text = "Band:";
+            // 
+            // clrbtnMMVfoDisplayBand
+            // 
+            this.clrbtnMMVfoDisplayBand.Automatic = "Automatic";
+            this.clrbtnMMVfoDisplayBand.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMMVfoDisplayBand.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMVfoDisplayBand.Image = null;
+            this.clrbtnMMVfoDisplayBand.Location = new System.Drawing.Point(105, 259);
+            this.clrbtnMMVfoDisplayBand.MoreColors = "More Colors...";
+            this.clrbtnMMVfoDisplayBand.Name = "clrbtnMMVfoDisplayBand";
+            this.clrbtnMMVfoDisplayBand.Selectable = true;
+            this.clrbtnMMVfoDisplayBand.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMVfoDisplayBand.TabIndex = 123;
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayBand, "Band colour");
+            this.clrbtnMMVfoDisplayBand.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayBand_Changed);
+            // 
+            // labelTS173
+            // 
+            this.labelTS173.AutoSize = true;
+            this.labelTS173.Image = null;
+            this.labelTS173.Location = new System.Drawing.Point(69, 235);
+            this.labelTS173.Name = "labelTS173";
+            this.labelTS173.Size = new System.Drawing.Size(32, 13);
+            this.labelTS173.TabIndex = 122;
+            this.labelTS173.Text = "Filter:";
+            // 
+            // clrbtnMMVfoDisplayFilter
+            // 
+            this.clrbtnMMVfoDisplayFilter.Automatic = "Automatic";
+            this.clrbtnMMVfoDisplayFilter.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMMVfoDisplayFilter.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMVfoDisplayFilter.Image = null;
+            this.clrbtnMMVfoDisplayFilter.Location = new System.Drawing.Point(105, 230);
+            this.clrbtnMMVfoDisplayFilter.MoreColors = "More Colors...";
+            this.clrbtnMMVfoDisplayFilter.Name = "clrbtnMMVfoDisplayFilter";
+            this.clrbtnMMVfoDisplayFilter.Selectable = true;
+            this.clrbtnMMVfoDisplayFilter.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMVfoDisplayFilter.TabIndex = 121;
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayFilter, "Filter colour");
+            this.clrbtnMMVfoDisplayFilter.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayFilter_Changed);
+            // 
+            // labelTS172
+            // 
+            this.labelTS172.AutoSize = true;
+            this.labelTS172.Image = null;
+            this.labelTS172.Location = new System.Drawing.Point(73, 205);
+            this.labelTS172.Name = "labelTS172";
+            this.labelTS172.Size = new System.Drawing.Size(24, 13);
+            this.labelTS172.TabIndex = 120;
+            this.labelTS172.Text = "TX:";
+            // 
+            // clrbtnMMVfoDisplayTx
+            // 
+            this.clrbtnMMVfoDisplayTx.Automatic = "Automatic";
+            this.clrbtnMMVfoDisplayTx.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMMVfoDisplayTx.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMVfoDisplayTx.Image = null;
+            this.clrbtnMMVfoDisplayTx.Location = new System.Drawing.Point(105, 200);
+            this.clrbtnMMVfoDisplayTx.MoreColors = "More Colors...";
+            this.clrbtnMMVfoDisplayTx.Name = "clrbtnMMVfoDisplayTx";
+            this.clrbtnMMVfoDisplayTx.Selectable = true;
+            this.clrbtnMMVfoDisplayTx.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMVfoDisplayTx.TabIndex = 119;
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayTx, "TX box colour");
+            this.clrbtnMMVfoDisplayTx.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayTx_Changed);
+            // 
+            // labelTS171
+            // 
+            this.labelTS171.AutoSize = true;
+            this.labelTS171.Image = null;
+            this.labelTS171.Location = new System.Drawing.Point(73, 176);
+            this.labelTS171.Name = "labelTS171";
+            this.labelTS171.Size = new System.Drawing.Size(25, 13);
+            this.labelTS171.TabIndex = 118;
+            this.labelTS171.Text = "RX:";
+            // 
+            // clrbtnMMVfoDisplayRx
+            // 
+            this.clrbtnMMVfoDisplayRx.Automatic = "Automatic";
+            this.clrbtnMMVfoDisplayRx.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMMVfoDisplayRx.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMVfoDisplayRx.Image = null;
+            this.clrbtnMMVfoDisplayRx.Location = new System.Drawing.Point(105, 171);
+            this.clrbtnMMVfoDisplayRx.MoreColors = "More Colors...";
+            this.clrbtnMMVfoDisplayRx.Name = "clrbtnMMVfoDisplayRx";
+            this.clrbtnMMVfoDisplayRx.Selectable = true;
+            this.clrbtnMMVfoDisplayRx.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMVfoDisplayRx.TabIndex = 117;
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayRx, "RX box colour");
+            this.clrbtnMMVfoDisplayRx.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayRx_Changed);
+            // 
+            // labelTS170
+            // 
+            this.labelTS170.AutoSize = true;
+            this.labelTS170.Image = null;
+            this.labelTS170.Location = new System.Drawing.Point(169, 147);
+            this.labelTS170.Name = "labelTS170";
+            this.labelTS170.Size = new System.Drawing.Size(30, 13);
+            this.labelTS170.TabIndex = 116;
+            this.labelTS170.Text = "Split:";
+            // 
+            // clrbtnMMVfoDisplaySplit
+            // 
+            this.clrbtnMMVfoDisplaySplit.Automatic = "Automatic";
+            this.clrbtnMMVfoDisplaySplit.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMMVfoDisplaySplit.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMVfoDisplaySplit.Image = null;
+            this.clrbtnMMVfoDisplaySplit.Location = new System.Drawing.Point(205, 142);
+            this.clrbtnMMVfoDisplaySplit.MoreColors = "More Colors...";
+            this.clrbtnMMVfoDisplaySplit.Name = "clrbtnMMVfoDisplaySplit";
+            this.clrbtnMMVfoDisplaySplit.Selectable = true;
+            this.clrbtnMMVfoDisplaySplit.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMVfoDisplaySplit.TabIndex = 115;
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplaySplit, "Split colour");
+            this.clrbtnMMVfoDisplaySplit.Changed += new System.EventHandler(this.clrbtnMMVfoDisplaySplit_Changed);
+            // 
+            // labelTS163
+            // 
+            this.labelTS163.AutoSize = true;
+            this.labelTS163.Image = null;
+            this.labelTS163.Location = new System.Drawing.Point(44, 147);
+            this.labelTS163.Name = "labelTS163";
+            this.labelTS163.Size = new System.Drawing.Size(58, 13);
+            this.labelTS163.TabIndex = 114;
+            this.labelTS163.Text = "Split Back:";
+            // 
+            // clrbtnMMVfoDisplaySplitBack
+            // 
+            this.clrbtnMMVfoDisplaySplitBack.Automatic = "Automatic";
+            this.clrbtnMMVfoDisplaySplitBack.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMMVfoDisplaySplitBack.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMVfoDisplaySplitBack.Image = null;
+            this.clrbtnMMVfoDisplaySplitBack.Location = new System.Drawing.Point(105, 142);
+            this.clrbtnMMVfoDisplaySplitBack.MoreColors = "More Colors...";
+            this.clrbtnMMVfoDisplaySplitBack.Name = "clrbtnMMVfoDisplaySplitBack";
+            this.clrbtnMMVfoDisplaySplitBack.Selectable = true;
+            this.clrbtnMMVfoDisplaySplitBack.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMVfoDisplaySplitBack.TabIndex = 113;
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplaySplitBack, "Background of the split");
+            this.clrbtnMMVfoDisplaySplitBack.Changed += new System.EventHandler(this.clrbtnMMVfoDisplaySplitBack_Changed);
+            // 
+            // labelTS166
+            // 
+            this.labelTS166.AutoSize = true;
+            this.labelTS166.Image = null;
+            this.labelTS166.Location = new System.Drawing.Point(66, 123);
+            this.labelTS166.Name = "labelTS166";
+            this.labelTS166.Size = new System.Drawing.Size(37, 13);
+            this.labelTS166.TabIndex = 112;
+            this.labelTS166.Text = "Mode:";
+            // 
+            // clrbtnMMVfoDisplayMode
+            // 
+            this.clrbtnMMVfoDisplayMode.Automatic = "Automatic";
+            this.clrbtnMMVfoDisplayMode.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMMVfoDisplayMode.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMVfoDisplayMode.Image = null;
+            this.clrbtnMMVfoDisplayMode.Location = new System.Drawing.Point(105, 118);
+            this.clrbtnMMVfoDisplayMode.MoreColors = "More Colors...";
+            this.clrbtnMMVfoDisplayMode.Name = "clrbtnMMVfoDisplayMode";
+            this.clrbtnMMVfoDisplayMode.Selectable = true;
+            this.clrbtnMMVfoDisplayMode.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMVfoDisplayMode.TabIndex = 111;
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayMode, "Mode colour");
+            this.clrbtnMMVfoDisplayMode.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayMode_Changed);
+            // 
+            // clrbtnMMVfoDisplayTitle
+            // 
+            this.clrbtnMMVfoDisplayTitle.Automatic = "Automatic";
+            this.clrbtnMMVfoDisplayTitle.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMMVfoDisplayTitle.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMVfoDisplayTitle.Image = null;
+            this.clrbtnMMVfoDisplayTitle.Location = new System.Drawing.Point(105, 59);
+            this.clrbtnMMVfoDisplayTitle.MoreColors = "More Colors...";
+            this.clrbtnMMVfoDisplayTitle.Name = "clrbtnMMVfoDisplayTitle";
+            this.clrbtnMMVfoDisplayTitle.Selectable = true;
+            this.clrbtnMMVfoDisplayTitle.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMVfoDisplayTitle.TabIndex = 110;
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayTitle, "Titles colour");
+            this.clrbtnMMVfoDisplayTitle.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayTitle_Changed);
+            // 
+            // grpMeterItemClockSettings
+            // 
+            this.grpMeterItemClockSettings.Controls.Add(this.lblMMClockBackground);
+            this.grpMeterItemClockSettings.Controls.Add(this.clrbtnMMClockBackground);
+            this.grpMeterItemClockSettings.Controls.Add(this.labelTS164);
+            this.grpMeterItemClockSettings.Controls.Add(this.clrbtnMMDate);
+            this.grpMeterItemClockSettings.Controls.Add(this.labelTS162);
+            this.grpMeterItemClockSettings.Controls.Add(this.clrbtnMMTime);
+            this.grpMeterItemClockSettings.Controls.Add(this.clrbtnMMClockTitle);
+            this.grpMeterItemClockSettings.Controls.Add(this.chkMMClockTitle);
+            this.grpMeterItemClockSettings.Controls.Add(this.radMM24Clock);
+            this.grpMeterItemClockSettings.Controls.Add(this.radMM12Clock);
+            this.grpMeterItemClockSettings.Location = new System.Drawing.Point(16, 675);
+            this.grpMeterItemClockSettings.Name = "grpMeterItemClockSettings";
+            this.grpMeterItemClockSettings.Size = new System.Drawing.Size(323, 364);
+            this.grpMeterItemClockSettings.TabIndex = 100;
+            this.grpMeterItemClockSettings.TabStop = false;
+            this.grpMeterItemClockSettings.Text = "Clock Settings";
+            this.grpMeterItemClockSettings.Visible = false;
+            // 
+            // lblMMClockBackground
+            // 
+            this.lblMMClockBackground.AutoSize = true;
+            this.lblMMClockBackground.Image = null;
+            this.lblMMClockBackground.Location = new System.Drawing.Point(32, 58);
+            this.lblMMClockBackground.Name = "lblMMClockBackground";
+            this.lblMMClockBackground.Size = new System.Drawing.Size(68, 13);
+            this.lblMMClockBackground.TabIndex = 116;
+            this.lblMMClockBackground.Text = "Background:";
+            // 
+            // clrbtnMMClockBackground
+            // 
+            this.clrbtnMMClockBackground.Automatic = "Automatic";
+            this.clrbtnMMClockBackground.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnMMClockBackground.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMClockBackground.Image = null;
+            this.clrbtnMMClockBackground.Location = new System.Drawing.Point(106, 53);
+            this.clrbtnMMClockBackground.MoreColors = "More Colors...";
+            this.clrbtnMMClockBackground.Name = "clrbtnMMClockBackground";
+            this.clrbtnMMClockBackground.Selectable = true;
+            this.clrbtnMMClockBackground.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMClockBackground.TabIndex = 115;
+            this.toolTip1.SetToolTip(this.clrbtnMMClockBackground, "Background colour");
+            this.clrbtnMMClockBackground.Changed += new System.EventHandler(this.clrbtnMMClockBackground_Changed);
+            // 
+            // labelTS164
+            // 
+            this.labelTS164.AutoSize = true;
+            this.labelTS164.Image = null;
+            this.labelTS164.Location = new System.Drawing.Point(66, 147);
+            this.labelTS164.Name = "labelTS164";
+            this.labelTS164.Size = new System.Drawing.Size(33, 13);
+            this.labelTS164.TabIndex = 114;
+            this.labelTS164.Text = "Date:";
+            // 
+            // clrbtnMMDate
+            // 
+            this.clrbtnMMDate.Automatic = "Automatic";
+            this.clrbtnMMDate.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMMDate.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMDate.Image = null;
+            this.clrbtnMMDate.Location = new System.Drawing.Point(105, 142);
+            this.clrbtnMMDate.MoreColors = "More Colors...";
+            this.clrbtnMMDate.Name = "clrbtnMMDate";
+            this.clrbtnMMDate.Selectable = true;
+            this.clrbtnMMDate.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMDate.TabIndex = 113;
+            this.toolTip1.SetToolTip(this.clrbtnMMDate, "Date colour");
+            this.clrbtnMMDate.Changed += new System.EventHandler(this.clrbtnMMDate_Changed);
+            // 
+            // labelTS162
+            // 
+            this.labelTS162.AutoSize = true;
+            this.labelTS162.Image = null;
+            this.labelTS162.Location = new System.Drawing.Point(66, 123);
+            this.labelTS162.Name = "labelTS162";
+            this.labelTS162.Size = new System.Drawing.Size(33, 13);
+            this.labelTS162.TabIndex = 112;
+            this.labelTS162.Text = "Time:";
+            // 
+            // clrbtnMMTime
+            // 
+            this.clrbtnMMTime.Automatic = "Automatic";
+            this.clrbtnMMTime.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMMTime.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMTime.Image = null;
+            this.clrbtnMMTime.Location = new System.Drawing.Point(105, 118);
+            this.clrbtnMMTime.MoreColors = "More Colors...";
+            this.clrbtnMMTime.Name = "clrbtnMMTime";
+            this.clrbtnMMTime.Selectable = true;
+            this.clrbtnMMTime.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMTime.TabIndex = 111;
+            this.toolTip1.SetToolTip(this.clrbtnMMTime, "Time");
+            this.clrbtnMMTime.Changed += new System.EventHandler(this.clrbtnMMTime_Changed);
+            // 
+            // clrbtnMMClockTitle
+            // 
+            this.clrbtnMMClockTitle.Automatic = "Automatic";
+            this.clrbtnMMClockTitle.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMMClockTitle.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMClockTitle.Image = null;
+            this.clrbtnMMClockTitle.Location = new System.Drawing.Point(105, 86);
+            this.clrbtnMMClockTitle.MoreColors = "More Colors...";
+            this.clrbtnMMClockTitle.Name = "clrbtnMMClockTitle";
+            this.clrbtnMMClockTitle.Selectable = true;
+            this.clrbtnMMClockTitle.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMClockTitle.TabIndex = 110;
+            this.toolTip1.SetToolTip(this.clrbtnMMClockTitle, "Meter title colour");
+            this.clrbtnMMClockTitle.Changed += new System.EventHandler(this.clrbtnMMClockTitle_Changed);
+            // 
+            // chkMMClockTitle
+            // 
+            this.chkMMClockTitle.AutoSize = true;
+            this.chkMMClockTitle.Image = null;
+            this.chkMMClockTitle.Location = new System.Drawing.Point(24, 89);
+            this.chkMMClockTitle.Name = "chkMMClockTitle";
+            this.chkMMClockTitle.Size = new System.Drawing.Size(76, 17);
+            this.chkMMClockTitle.TabIndex = 109;
+            this.chkMMClockTitle.Text = "Meter Title";
+            this.toolTip1.SetToolTip(this.chkMMClockTitle, "Show meter title");
+            this.chkMMClockTitle.UseVisualStyleBackColor = true;
+            this.chkMMClockTitle.CheckedChanged += new System.EventHandler(this.chkMMClockTitle_CheckedChanged);
+            // 
+            // radMM24Clock
+            // 
+            this.radMM24Clock.AutoSize = true;
+            this.radMM24Clock.Image = null;
+            this.radMM24Clock.Location = new System.Drawing.Point(192, 67);
+            this.radMM24Clock.Name = "radMM24Clock";
+            this.radMM24Clock.Size = new System.Drawing.Size(49, 17);
+            this.radMM24Clock.TabIndex = 1;
+            this.radMM24Clock.TabStop = true;
+            this.radMM24Clock.Text = "24 hr";
+            this.toolTip1.SetToolTip(this.radMM24Clock, "24 hr clock");
+            this.radMM24Clock.UseVisualStyleBackColor = true;
+            this.radMM24Clock.CheckedChanged += new System.EventHandler(this.radMM24Clock_CheckedChanged);
+            // 
+            // radMM12Clock
+            // 
+            this.radMM12Clock.AutoSize = true;
+            this.radMM12Clock.Image = null;
+            this.radMM12Clock.Location = new System.Drawing.Point(192, 48);
+            this.radMM12Clock.Name = "radMM12Clock";
+            this.radMM12Clock.Size = new System.Drawing.Size(49, 17);
+            this.radMM12Clock.TabIndex = 0;
+            this.radMM12Clock.TabStop = true;
+            this.radMM12Clock.Text = "12 hr";
+            this.toolTip1.SetToolTip(this.radMM12Clock, "12 hr clock");
+            this.radMM12Clock.UseVisualStyleBackColor = true;
+            this.radMM12Clock.CheckedChanged += new System.EventHandler(this.radMM12Clock_CheckedChanged);
+            // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
@@ -56751,6 +56800,67 @@
             this.toolTip1.SetToolTip(this.chkEnableRFEPATR, "Enabled the RFE PA TR line to toggle with MOX (for use with non-FLEX PA).");
             this.chkEnableRFEPATR.CheckedChanged += new System.EventHandler(this.chkEnableRFEPATR_CheckedChanged);
             // 
+            // clrbtnMeterItemHBackgroundSpacerRX
+            // 
+            this.clrbtnMeterItemHBackgroundSpacerRX.Automatic = "Automatic";
+            this.clrbtnMeterItemHBackgroundSpacerRX.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnMeterItemHBackgroundSpacerRX.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemHBackgroundSpacerRX.Image = null;
+            this.clrbtnMeterItemHBackgroundSpacerRX.Location = new System.Drawing.Point(103, 29);
+            this.clrbtnMeterItemHBackgroundSpacerRX.MoreColors = "More Colors...";
+            this.clrbtnMeterItemHBackgroundSpacerRX.Name = "clrbtnMeterItemHBackgroundSpacerRX";
+            this.clrbtnMeterItemHBackgroundSpacerRX.Selectable = true;
+            this.clrbtnMeterItemHBackgroundSpacerRX.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemHBackgroundSpacerRX.TabIndex = 129;
+            this.toolTip1.SetToolTip(this.clrbtnMeterItemHBackgroundSpacerRX, "Background colour");
+            this.clrbtnMeterItemHBackgroundSpacerRX.Changed += new System.EventHandler(this.clrbtnMeterItemHBackgroundSpacerRX_Changed);
+            // 
+            // nudMeterItemSpacerPadding
+            // 
+            this.nudMeterItemSpacerPadding.DecimalPlaces = 3;
+            this.nudMeterItemSpacerPadding.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudMeterItemSpacerPadding.Location = new System.Drawing.Point(102, 138);
+            this.nudMeterItemSpacerPadding.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudMeterItemSpacerPadding.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudMeterItemSpacerPadding.Name = "nudMeterItemSpacerPadding";
+            this.nudMeterItemSpacerPadding.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemSpacerPadding.TabIndex = 132;
+            this.nudMeterItemSpacerPadding.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudMeterItemSpacerPadding, "Size of the spacer. The number is a ratio with reference to the width.");
+            this.nudMeterItemSpacerPadding.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMeterItemSpacerPadding.ValueChanged += new System.EventHandler(this.nudMeterItemSpacerPadding_ValueChanged);
+            // 
+            // clrbtnMeterItemHBackgroundSpacerTX
+            // 
+            this.clrbtnMeterItemHBackgroundSpacerTX.Automatic = "Automatic";
+            this.clrbtnMeterItemHBackgroundSpacerTX.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnMeterItemHBackgroundSpacerTX.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemHBackgroundSpacerTX.Image = null;
+            this.clrbtnMeterItemHBackgroundSpacerTX.Location = new System.Drawing.Point(103, 58);
+            this.clrbtnMeterItemHBackgroundSpacerTX.MoreColors = "More Colors...";
+            this.clrbtnMeterItemHBackgroundSpacerTX.Name = "clrbtnMeterItemHBackgroundSpacerTX";
+            this.clrbtnMeterItemHBackgroundSpacerTX.Selectable = true;
+            this.clrbtnMeterItemHBackgroundSpacerTX.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemHBackgroundSpacerTX.TabIndex = 133;
+            this.toolTip1.SetToolTip(this.clrbtnMeterItemHBackgroundSpacerTX, "Background colour");
+            this.clrbtnMeterItemHBackgroundSpacerTX.Changed += new System.EventHandler(this.clrbtnMeterItemHBackgroundSpacerTX_Changed);
+            // 
             // saveFileDialog1
             // 
             this.saveFileDialog1.Filter = "Thetis Database Files (*.xml)|*.xml|All files|*.*";
@@ -56795,7 +56905,7 @@
             // txtboxTXProfileChangedReport
             // 
             this.txtboxTXProfileChangedReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
-            this.txtboxTXProfileChangedReport.Location = new System.Drawing.Point(234, 494);
+            this.txtboxTXProfileChangedReport.Location = new System.Drawing.Point(110, 489);
             this.txtboxTXProfileChangedReport.Multiline = true;
             this.txtboxTXProfileChangedReport.Name = "txtboxTXProfileChangedReport";
             this.txtboxTXProfileChangedReport.ReadOnly = true;
@@ -57837,18 +57947,105 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // grpMeterItemSpacerSettings
+            // 
+            this.grpMeterItemSpacerSettings.Controls.Add(this.labelTS199);
+            this.grpMeterItemSpacerSettings.Controls.Add(this.clrbtnMeterItemHBackgroundSpacerTX);
+            this.grpMeterItemSpacerSettings.Controls.Add(this.nudMeterItemSpacerPadding);
+            this.grpMeterItemSpacerSettings.Controls.Add(this.labelTS197);
+            this.grpMeterItemSpacerSettings.Controls.Add(this.labelTS196);
+            this.grpMeterItemSpacerSettings.Controls.Add(this.clrbtnMeterItemHBackgroundSpacerRX);
+            this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnTxSpacer);
+            this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnRxSpacer);
+            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(395, 531);
+            this.grpMeterItemSpacerSettings.Name = "grpMeterItemSpacerSettings";
+            this.grpMeterItemSpacerSettings.Size = new System.Drawing.Size(323, 168);
+            this.grpMeterItemSpacerSettings.TabIndex = 102;
+            this.grpMeterItemSpacerSettings.TabStop = false;
+            this.grpMeterItemSpacerSettings.Text = "Spacer";
+            // 
+            // labelTS199
+            // 
+            this.labelTS199.AutoSize = true;
+            this.labelTS199.Image = null;
+            this.labelTS199.Location = new System.Drawing.Point(14, 63);
+            this.labelTS199.Name = "labelTS199";
+            this.labelTS199.Size = new System.Drawing.Size(85, 13);
+            this.labelTS199.TabIndex = 134;
+            this.labelTS199.Text = "Background TX:";
+            // 
+            // labelTS197
+            // 
+            this.labelTS197.AutoSize = true;
+            this.labelTS197.Image = null;
+            this.labelTS197.Location = new System.Drawing.Point(10, 140);
+            this.labelTS197.Name = "labelTS197";
+            this.labelTS197.Size = new System.Drawing.Size(87, 13);
+            this.labelTS197.TabIndex = 131;
+            this.labelTS197.Text = "Vertical Padding:";
+            // 
+            // labelTS196
+            // 
+            this.labelTS196.AutoSize = true;
+            this.labelTS196.Image = null;
+            this.labelTS196.Location = new System.Drawing.Point(14, 34);
+            this.labelTS196.Name = "labelTS196";
+            this.labelTS196.Size = new System.Drawing.Size(86, 13);
+            this.labelTS196.TabIndex = 130;
+            this.labelTS196.Text = "Background RX:";
+            // 
+            // chkMeterItemFadeOnTxSpacer
+            // 
+            this.chkMeterItemFadeOnTxSpacer.AutoSize = true;
+            this.chkMeterItemFadeOnTxSpacer.Image = null;
+            this.chkMeterItemFadeOnTxSpacer.Location = new System.Drawing.Point(59, 112);
+            this.chkMeterItemFadeOnTxSpacer.Name = "chkMeterItemFadeOnTxSpacer";
+            this.chkMeterItemFadeOnTxSpacer.Size = new System.Drawing.Size(82, 17);
+            this.chkMeterItemFadeOnTxSpacer.TabIndex = 3;
+            this.chkMeterItemFadeOnTxSpacer.Text = "Fade on TX";
+            this.chkMeterItemFadeOnTxSpacer.UseVisualStyleBackColor = true;
+            this.chkMeterItemFadeOnTxSpacer.CheckedChanged += new System.EventHandler(this.chkMeterItemFadeOnTxSpacer_CheckedChanged);
+            // 
+            // chkMeterItemFadeOnRxSpacer
+            // 
+            this.chkMeterItemFadeOnRxSpacer.AutoSize = true;
+            this.chkMeterItemFadeOnRxSpacer.Image = null;
+            this.chkMeterItemFadeOnRxSpacer.Location = new System.Drawing.Point(59, 89);
+            this.chkMeterItemFadeOnRxSpacer.Name = "chkMeterItemFadeOnRxSpacer";
+            this.chkMeterItemFadeOnRxSpacer.Size = new System.Drawing.Size(83, 17);
+            this.chkMeterItemFadeOnRxSpacer.TabIndex = 2;
+            this.chkMeterItemFadeOnRxSpacer.Text = "Fade on RX";
+            this.chkMeterItemFadeOnRxSpacer.UseVisualStyleBackColor = true;
+            this.chkMeterItemFadeOnRxSpacer.CheckedChanged += new System.EventHandler(this.chkMeterItemFadeOnRxSpacer_CheckedChanged);
+            // 
+            // labelTS198
+            // 
+            this.labelTS198.AutoSize = true;
+            this.labelTS198.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS198.Image = null;
+            this.labelTS198.Location = new System.Drawing.Point(602, 515);
+            this.labelTS198.Name = "labelTS198";
+            this.labelTS198.Size = new System.Drawing.Size(333, 13);
+            this.labelTS198.TabIndex = 103;
+            this.labelTS198.Text = "NOTE: MIN SIZE OF FORM DEFINES SIZE AT RUNTIME";
+            this.labelTS198.Visible = false;
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(744, 510);
+            this.ClientSize = new System.Drawing.Size(984, 961);
+            this.Controls.Add(this.labelTS198);
+            this.Controls.Add(this.grpMeterItemSpacerSettings);
             this.Controls.Add(this.txtboxTXProfileChangedReport);
             this.Controls.Add(this.lblTXProfileWarning);
             this.Controls.Add(this.labelSavingLoading);
             this.Controls.Add(this.btnExportDB);
             this.Controls.Add(this.btnImportDB);
             this.Controls.Add(this.btnResetDB);
+            this.Controls.Add(this.grpMeterItemVfoDisplaySettings);
             this.Controls.Add(this.btnApply);
+            this.Controls.Add(this.grpMeterItemClockSettings);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.tcSetup);
@@ -57857,8 +58054,8 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(760, 549);
-            this.MinimumSize = new System.Drawing.Size(760, 549);
+            this.MaximumSize = new System.Drawing.Size(1000, 1000);
+            this.MinimumSize = new System.Drawing.Size(760, 550);
             this.Name = "Setup";
             this.Text = "Setup";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.Setup_Closing);
@@ -58787,6 +58984,7 @@
             this.tpAppearance.ResumeLayout(false);
             this.tcAppearance.ResumeLayout(false);
             this.tpAppearanceGeneral.ResumeLayout(false);
+            this.groupBoxTS38.ResumeLayout(false);
             this.groupBoxTS31.ResumeLayout(false);
             this.groupBoxTS31.PerformLayout();
             this.groupBoxTS12.ResumeLayout(false);
@@ -58833,10 +59031,6 @@
             this.tpAppearanceMeter2.ResumeLayout(false);
             this.grpMultiMeterHolder.ResumeLayout(false);
             this.grpMultiMeterHolder.PerformLayout();
-            this.grpMeterItemVfoDisplaySettings.ResumeLayout(false);
-            this.grpMeterItemVfoDisplaySettings.PerformLayout();
-            this.grpMeterItemClockSettings.ResumeLayout(false);
-            this.grpMeterItemClockSettings.PerformLayout();
             this.grpMeterItemSettings.ResumeLayout(false);
             this.grpMeterItemSettings.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemIgnoreHistoryDuration)).EndInit();
@@ -58974,6 +59168,11 @@
             this.grpImpulseTest.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udImpulseNum)).EndInit();
             this.grpTestAudioBalance.ResumeLayout(false);
+            this.grpMeterItemVfoDisplaySettings.ResumeLayout(false);
+            this.grpMeterItemVfoDisplaySettings.PerformLayout();
+            this.grpMeterItemClockSettings.ResumeLayout(false);
+            this.grpMeterItemClockSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemSpacerPadding)).EndInit();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();
@@ -59011,6 +59210,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
+            this.grpMeterItemSpacerSettings.ResumeLayout(false);
+            this.grpMeterItemSpacerSettings.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -62609,7 +62810,7 @@
         private CheckBoxTS chkShowFormStartup_bandstack;
         private CheckBoxTS chkShowFormStartup_finder;
         private CheckBoxTS chkShowFormStartup_wb;
-        private CheckBoxTS chkDisableHPFonPS;
+        private CheckBoxTS chkDisableHPFonPSb;
         public RadioButtonTS radDHPFPSled;
         public RadioButtonTS radBPF1BPPSled;
         private GroupBoxTS grpAutoLaunchFiles;
@@ -62646,5 +62847,18 @@
         private GroupBoxTS groupBoxTS37;
         private CheckBoxTS chkAutoLaunchTryToClose;
         private CheckBoxTS chkAutoLaunchNoStartIfRunning;
+        private GroupBoxTS groupBoxTS38;
+        private ColorButton clrbtnTXAttenuationBackground;
+        private LabelTS labelTS195;
+        private GroupBoxTS grpMeterItemSpacerSettings;
+        private LabelTS labelTS196;
+        private ColorButton clrbtnMeterItemHBackgroundSpacerRX;
+        private CheckBoxTS chkMeterItemFadeOnTxSpacer;
+        private CheckBoxTS chkMeterItemFadeOnRxSpacer;
+        private NumericUpDownTS nudMeterItemSpacerPadding;
+        private LabelTS labelTS197;
+        private LabelTS labelTS198;
+        private LabelTS labelTS199;
+        private ColorButton clrbtnMeterItemHBackgroundSpacerTX;
     }
 }
