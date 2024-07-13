@@ -12,6 +12,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] renamed the [HPF/BPF ByPass on PS] button in code so that a blanket default of ON will be applied everywhere to everyone. Change the setting if required
 - [fix] fixed issue at startup or where diversity form is initially shown where no gain is applied if the gain is locked. This would be noticeable with the 'control dot' being centred. Many other fixes in the diversity system
 - [fix] fixed issue where 'bad' characters in an autostarter path would cause a crash at start up
+- [fix] fixed issue where AGC gains would not be stored correctly and/or could be spread to other bands if different agc modes (slow/med/long etc) were configured for use on those bands
 
 ## v2.10.3.6 Change Log - WIP dev_5b
 - [fix] small change to auto start exe code to fix issue with command line args
