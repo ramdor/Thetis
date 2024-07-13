@@ -6699,7 +6699,7 @@ namespace Thetis
 
         public void SetAlexLPF(double freq, bool freqIsTX)
         {
-            //Debug.Print("lpf : " + freq.ToString());
+            //Debug.Print("lpf : " + freq.ToString() + " -- freq is tx : " + freqIsTX.ToString());
             if (!_mox && lpf_bypass)
             {
                 NetworkIO.SetAlexLPFBits(0x10, false, _mox); // 6m LPF
@@ -28884,7 +28884,7 @@ namespace Thetis
             {
                 if (tx)
                 {
-                    if (psstate || (!VFOATX && VFOBTX))
+                    if (PSState || (!VFOATX && VFOBTX))
                     {
                         txtVFOAFreq_LostFocus(this, EventArgs.Empty); //[2.10.1.0] MW0LGE added to fix issue when in spit single rx, rit/xit would not be applied correctly on mox
                         txtVFOBFreq_LostFocus(this, EventArgs.Empty);
@@ -28900,7 +28900,7 @@ namespace Thetis
             }
             else
             {
-                if (psstate)
+                if (PSState)
                 {
                     txtVFOAFreq_LostFocus(this, EventArgs.Empty);
                     txtVFOBFreq_LostFocus(this, EventArgs.Empty);
@@ -35281,7 +35281,7 @@ namespace Thetis
 
             txtVFOAFreq_LostFocus(this, EventArgs.Empty);
             ptbPWR_Scroll(this, EventArgs.Empty);
-            if (chkVFOSplit.Checked || full_duplex || psstate)
+            if (chkVFOSplit.Checked || full_duplex || PSState)
                 txtVFOBFreq_LostFocus(this, EventArgs.Empty);
 
             chkSquelch_CheckStateChanged(this, EventArgs.Empty);
@@ -40361,17 +40361,17 @@ namespace Thetis
             }
         }
 
-        public void EnableDup()
-        {
-            if (RX2PreampPresent || (!RX2PreampPresent && !PSState))//!psform.PSEnabled))
-                chkRX2SR.Visible = true;
-        }
+        //public void EnableDup()
+        //{
+        //    if (RX2PreampPresent || (!RX2PreampPresent && !PSState))//!psform.PSEnabled))
+        //        chkRX2SR.Visible = true;
+        //}
 
-        private void DisableDup()
-        {
-            chkRX2SR.Checked = false;
-            chkRX2SR.Visible = false;
-        }
+        //private void DisableDup()
+        //{
+        //    chkRX2SR.Checked = false;
+        //    chkRX2SR.Visible = false;
+        //}
 
         private void BroadcastVFOChange(string ndx)
         {
@@ -48336,48 +48336,48 @@ namespace Thetis
                 string lower = file.ToLower();
                 int extensionPosExe = lower.IndexOf(".exe");
                 int extensionPosCmd = lower.IndexOf(".cmd");
-
-                if (extensionPosExe >= 0 || extensionPosCmd >=0)
+                int extensionPosBat = lower.IndexOf(".bat");
+                int[] positions = { extensionPosExe, extensionPosCmd, extensionPosBat };
+                int extensionPos = int.MaxValue;
+                foreach (int pos in positions)
                 {
-                    int extensionPos;
-                    if (extensionPosExe >= 0 && extensionPosCmd < 0)
-                        extensionPos = extensionPosExe;
-                    else if (extensionPosCmd >= 0 && extensionPosExe < 0)
-                        extensionPos = extensionPosCmd;
-                    else
+                    if (pos != -1 && pos < extensionPos)
                     {
-                        if (extensionPosExe < extensionPosCmd)
-                            extensionPos = extensionPosExe;
-                        else
-                            extensionPos = extensionPosCmd;
+                        extensionPos = pos;
                     }
+                }
 
+                if (extensionPos != int.MaxValue)
+                {
                     string arguments = file.Substring(extensionPos + 4).Trim();
                     string fileOnly = file.Substring(0, extensionPos + 4).Trim();
-                    string processName = Path.GetFileNameWithoutExtension(fileOnly);
-                    if (File.Exists(fileOnly) && (!SetupForm.AutoLaunchNoStartIfRunning || (SetupForm.AutoLaunchNoStartIfRunning && !IsProcessRunning(processName))))
+                    if (File.Exists(fileOnly))
                     {
-                        string extension = Path.GetExtension(fileOnly).ToLower();
-                        if (extension == ".exe" || extension == ".cmd")
+                        try
                         {
-                            try
+                            string processName = Path.GetFileNameWithoutExtension(fileOnly);
+                            if (!SetupForm.AutoLaunchNoStartIfRunning || (SetupForm.AutoLaunchNoStartIfRunning && !IsProcessRunning(processName)))
                             {
-                                ProcessStartInfo startInfo = new ProcessStartInfo(fileOnly)
+                                string extension = Path.GetExtension(fileOnly).ToLower();
+                                if (extension == ".exe" || extension == ".cmd" || extension == ".bat")
                                 {
-                                    //LoadUserProfile = true,
-                                    UseShellExecute = true,
-                                    CreateNoWindow = true,
-                                    Arguments = arguments,
-                                    WorkingDirectory = Path.GetDirectoryName(fileOnly)
-                                };
+                                    ProcessStartInfo startInfo = new ProcessStartInfo(fileOnly)
+                                    {
+                                        //LoadUserProfile = true,
+                                        WindowStyle = ProcessWindowStyle.Hidden,
+                                        UseShellExecute = true,
+                                        CreateNoWindow = true,
+                                        Arguments = arguments,
+                                        WorkingDirectory = Path.GetDirectoryName(fileOnly)
+                                    };
 
-                                Process p = Process.Start(startInfo);
-                                _started_processes.Add(p);
-                            }
-                            catch
-                            {
+                                    Process p = Process.Start(startInfo);
+                                    _started_processes.Add(p);
+                                }
                             }
                         }
+                        catch
+                        { }
                     }
                 }
             }
