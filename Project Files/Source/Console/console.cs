@@ -10347,8 +10347,17 @@ namespace Thetis
                 if (!initializing)
                 {
                     setTXstepAttenuatorForBand(tx_band, tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes #399
-                    if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
-                    else NetworkIO.SetTxAttenData(0);
+                    if (m_bAttontx)
+                    {
+                        int txatt = getTXstepAttenuatorForBand(tx_band);
+                        NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
+                        Display.TXAttenuatorOffset = txatt; //[2.10.3.6]MW0LGE att_fixes
+                    }
+                    else
+                    {
+                        NetworkIO.SetTxAttenData(0);
+                        Display.TXAttenuatorOffset = 0;
+                    }
 
                     //if (m_bAttontx && _mox) //[2.10.3.6]MW0LGE att_fixes
                     //udRX1StepAttData.Value = value; //[2.10.3.6]MW0LGE att_fixes
@@ -18552,8 +18561,17 @@ namespace Thetis
 
                 if (PowerOn)
                 {
-                    if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
-                    else NetworkIO.SetTxAttenData(0);
+                    if (m_bAttontx)
+                    {
+                        int txatt = getTXstepAttenuatorForBand(tx_band);
+                        NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
+                        Display.TXAttenuatorOffset = txatt; //[2.10.3.6]MW0LGE att_fixes
+                    }
+                    else
+                    {
+                        NetworkIO.SetTxAttenData(0);
+                        Display.TXAttenuatorOffset = 0;
+                    }
                 }
 
             }
@@ -26426,8 +26444,17 @@ namespace Thetis
                 Thread.Sleep(100); // wait for hardware to settle before starting audio (possible sample rate change)
                 psform.ForcePS();
 
-                if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
-                else NetworkIO.SetTxAttenData(0);
+                if (m_bAttontx)
+                {
+                    int txatt = getTXstepAttenuatorForBand(tx_band);
+                    NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
+                    Display.TXAttenuatorOffset = txatt;
+                }
+                else
+                {
+                    NetworkIO.SetTxAttenData(0);
+                    Display.TXAttenuatorOffset = 0;
+                }
 
                 enableAudioAmplfier(); // MW0LGE_22b
 
@@ -28575,7 +28602,7 @@ namespace Thetis
                                          radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) txAtt = 31; // reset when PS is OFF or in CW mode
 
                         SetupForm.ATTOnRX1 = getRX1stepAttenuatorForBand(rx1_band); //[2.10.3.6]MW0LGE att_fixes
-                        SetupForm.ATTOnTX = txAtt; //[2.10.3.6]MW0LGE att_fixes
+                        SetupForm.ATTOnTX = txAtt; //[2.10.3.6]MW0LGE att_fixes NOTE: this will eventually call Display.TXAttenuatorOffset with the value
                         NetworkIO.SetTxAttenData(txAtt); //[2.10.3.6]MW0LGE att_fixes
 
                         //SetupForm.RX1EnableAtt = true; //[2.10.3.6]MW0LGE att_fixes
@@ -28584,7 +28611,11 @@ namespace Thetis
                         updateAttNudsCombos();
                     }
                 }
-                else NetworkIO.SetTxAttenData(0);
+                else
+                {
+                    NetworkIO.SetTxAttenData(0);
+                    Display.TXAttenuatorOffset = 0; //[2.10.3.6]MW0LGE att_fixes
+                }
 
                 UpdateAAudioMixerStates();
                 UpdateDDCs(rx2_enabled);
@@ -28663,7 +28694,11 @@ namespace Thetis
                         UpdatePreamps();
                     }
                 }
-                else NetworkIO.SetTxAttenData(0);
+                else
+                {
+                    NetworkIO.SetTxAttenData(0);
+                    Display.TXAttenuatorOffset = 0; //[2.10.3.6]MW0LGE att_fixes
+                }
             }
 
             if (!tx)
@@ -48178,7 +48213,9 @@ namespace Thetis
         private void udTXStepAttData_ValueChanged(object sender, EventArgs e)
         {
             //always update it
-            SetupForm.ATTOnTX = (int)udTXStepAttData.Value;
+            SetupForm.ATTOnTX = (int)udTXStepAttData.Value;            
+            UpdateRX1DisplayOffsets();
+            UpdateRX2DisplayOffsets();
         }
 
         private double _s9Frequency = 30.0;
