@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Globalization;
 
 //directX
 using SharpDX;
@@ -69,7 +70,7 @@ namespace Thetis
         VOLTS,
         AMPS,
         // special
-        EYE_PERCENT,
+        //EYE_PERCENT,
         //// private used in metermanager only
         //VFOA,
         //VFOB,
@@ -118,6 +119,7 @@ namespace Thetis
         VFO_DISPLAY,
         CLOCK,
         SPACER,
+        TEXT_OVERLAY,
         //SPECTRUM,
         LAST
     }
@@ -175,7 +177,8 @@ namespace Thetis
             private System.Drawing.Color _markerColour;
             private System.Drawing.Color _subMarkerColour;
             private clsBarItem.BarStyle _barStyle;
-            private string _text;
+            private string _text_1;
+            private string _text_2;
             private bool _fadeOnRx;
             private bool _fadeOnTx;
             private bool _showType;
@@ -185,8 +188,10 @@ namespace Thetis
             private System.Drawing.Color _peakValueColour;
             private float _eyeScale;
             private float _spacerPadding;
+            private bool _back_panel;
             private float _eyeBezelScale;
             private bool _average;
+            private string _text_overlay;
             private bool _darkMode;
             private float _maxPower;
             private System.Drawing.Color _powerScaleColour;
@@ -194,7 +199,13 @@ namespace Thetis
             private bool _showMarker;
             private bool _showSubMarker;
             private bool _hasSubIndicators;
-            private int _ignoreHistoryDuration;            
+            private int _ignoreHistoryDuration;
+            private string _font_family_1;
+            private FontStyle _font_style_1;
+            private float _font_size_1;
+            private string _font_family_2;
+            private FontStyle _font_style_2;
+            private float _font_size_2;
             public clsIGSettings()
             {
                 _hasSubIndicators = false;
@@ -204,6 +215,10 @@ namespace Thetis
                 _units = clsBarItem.Units.DBM;
                 _ignoreHistoryDuration = 2000;
                 _historyDuration = 50;
+                _text_1 = "";
+                _text_2 = "";
+                _font_family_1 = "";
+                _font_family_2 = "";
             }
 
             public override string ToString()
@@ -224,7 +239,7 @@ namespace Thetis
                     Common.ColourToString(_colour) + "|" +
                     Common.ColourToString(_markerColour) + "|" +
                     _barStyle.ToString() + "|" +
-                    _text + "|" + //handle pipe in string??? to do
+                    _text_1.Replace("|", "") + "|" +
                     _fadeOnRx.ToString() + "|" +
                     _fadeOnTx.ToString() + "|" +
                     _showType.ToString() + "|" +
@@ -243,7 +258,15 @@ namespace Thetis
                     _eyeBezelScale.ToString("f4") + "|" +
                     Common.ColourToString(_powerScaleColour) + "|" +
                     _ignoreHistoryDuration.ToString() + "|" +
-                    _spacerPadding.ToString("f4");
+                    _spacerPadding.ToString("f4") + "|" +
+                    _back_panel.ToString() + "|" +
+                    _text_2.Replace("|", "") + "|" +
+                    _font_family_1.Replace("|", "++><++") + "|" +
+                    _font_family_2.Replace("|", "++><++") + "|" +
+                    _font_style_1.ToString() + "|" +
+                    _font_style_2.ToString() + "|" +
+                    _font_size_1.ToString("f4") + "|" +
+                    _font_size_2.ToString("f4");
 
                 return sRet;
             }
@@ -256,6 +279,7 @@ namespace Thetis
                 System.Drawing.Color tmpColour = System.Drawing.Color.White;
                 bool tmpBool = false;
                 Reading tmpReading = Reading.NONE;
+                FontStyle tmpFontStyle = FontStyle.Regular;
                 clsBarItem.BarStyle tmpBarStyle = clsBarItem.BarStyle.None;
                 clsBarItem.Units tmpUnit = clsBarItem.Units.DBM;
 
@@ -281,7 +305,7 @@ namespace Thetis
                     if (bOk) tmpColour = Common.ColourFromString(tmp[13]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _colour = tmpColour; }
                     if (bOk) tmpColour = Common.ColourFromString(tmp[14]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _markerColour = tmpColour; }
                     if (bOk) bOk = Enum.TryParse<clsBarItem.BarStyle>(tmp[15], out tmpBarStyle); if (bOk) { _barStyle = tmpBarStyle; }
-                    if (bOk) _text = tmp[16];
+                    if (bOk) _text_1 = tmp[16].Replace("|", "");
                     if (bOk) bOk = bool.TryParse(tmp[17], out tmpBool); if (bOk) { _fadeOnRx = tmpBool; }
                     if (bOk) bOk = bool.TryParse(tmp[18], out tmpBool); if (bOk) { _fadeOnTx = tmpBool; }
                     if (bOk) bOk = bool.TryParse(tmp[19], out tmpBool); if (bOk) { _showType = tmpBool; }
@@ -312,9 +336,17 @@ namespace Thetis
                 {
                     if (bOk) bOk = int.TryParse(tmp[34], out tmpInt); if (bOk) { _ignoreHistoryDuration = tmpInt; }
                 }
-                if (tmp.Length >= 36) //[2.10.3.6]MW0LGE added for dev_6
+                if (tmp.Length >= 44) //[2.10.3.6]MW0LGE added for dev_6
                 {
                     if (bOk) bOk = float.TryParse(tmp[35], out tmpFloat); if (bOk) { _spacerPadding = tmpFloat; }
+                    if (bOk) bOk = bool.TryParse(tmp[36], out tmpBool); if (bOk) { _back_panel = tmpBool; }
+                    if (bOk) _text_2 = tmp[37].Replace("|", "");
+                    if (bOk) _font_family_1 = tmp[38].Replace("++><++", "|");
+                    if (bOk) _font_family_2 = tmp[39].Replace("++><++", "|");
+                    if (bOk) bOk = Enum.TryParse<FontStyle>(tmp[40], out tmpFontStyle); if (bOk) { _font_style_1 = tmpFontStyle; }
+                    if (bOk) bOk = Enum.TryParse<FontStyle>(tmp[41], out tmpFontStyle); if (bOk) { _font_style_2 = tmpFontStyle; }
+                    if (bOk) bOk = float.TryParse(tmp[42], out tmpFloat); if (bOk) { _font_size_1 = tmpFloat; }
+                    if (bOk) bOk = float.TryParse(tmp[43], out tmpFloat); if (bOk) { _font_size_2 = tmpFloat; }
                 }
                 return bOk;
             }
@@ -339,7 +371,8 @@ namespace Thetis
             public bool ShowMarker { get { return _showMarker; } set { _showMarker = value; } }
             public bool ShowSubMarker { get { return _showSubMarker; } set { _showSubMarker = value; } }
             public clsBarItem.BarStyle BarStyle { get { return _barStyle; } set { _barStyle = value; } }
-            public string Text { get { return _text; } set { _text = value; } }
+            public string Text1 { get { return _text_1.Replace("|", ""); } set { _text_1 = value.Replace("|", ""); } }
+            public string Text2 { get { return _text_2.Replace("|", ""); } set { _text_2 = value.Replace("|", ""); } }
             public bool FadeOnRx { get { return _fadeOnRx; } set { _fadeOnRx = value; } }
             public bool FadeOnTx { get { return _fadeOnTx; } set { _fadeOnTx = value; } }
             public bool ShowType { get { return _showType; } set { _showType = value; } }
@@ -349,13 +382,19 @@ namespace Thetis
             public System.Drawing.Color PeakValueColour { get { return _peakValueColour; } set { _peakValueColour = value; } }
             public float EyeScale { get { return _eyeScale; } set { _eyeScale = value; } }
             public float SpacerPadding { get { return _spacerPadding; } set { _spacerPadding = value; } }
+            public bool BackPanel { get { return _back_panel; } set { _back_panel = value; } }
             public float EyeBezelScale { get { return _eyeBezelScale; } set { _eyeBezelScale = value; } }
             public bool Average { get { return _average; } set { _average = value; } }
             public bool DarkMode { get { return _darkMode; } set { _darkMode = value; } }
             public float MaxPower { get { return _maxPower; } set { _maxPower = value; } }
             public System.Drawing.Color PowerScaleColour { get { return _powerScaleColour; } set { _powerScaleColour = value; } }
             public clsBarItem.Units Unit { get { return _units; } set { _units = value; } }
-
+            public string FontFamily1 { get { return _font_family_1.Replace("|", "++><++"); } set { _font_family_1 = value.Replace("++><++", "|"); } }
+            public string FontFamily2 { get { return _font_family_2.Replace("|", "++><++"); } set { _font_family_2 = value.Replace("++><++", "|"); } }
+            public FontStyle FontStyle1 { get { return _font_style_1; } set { _font_style_1 = value; } }
+            public FontStyle FontStyle2 { get { return _font_style_2; } set { _font_style_2 = value; } }
+            public float FontSize1 { get { return _font_size_1; } set { _font_size_1 = value; } }
+            public float FontSize2 { get { return _font_size_2; } set { _font_size_2 = value; } }
         }
         static MeterManager()
         {
@@ -466,7 +505,8 @@ namespace Thetis
                 case MeterType.VFO_DISPLAY: return 2;
                 case MeterType.CLOCK: return 2;
                 case MeterType.SPACER: return 2;
-                //case MeterType.SPECTRUM: return 2;
+                case MeterType.TEXT_OVERLAY: return 2;
+                    //case MeterType.SPECTRUM: return 2;
             }
 
             return 0;
@@ -500,6 +540,7 @@ namespace Thetis
                 case MeterType.CROSS: return "Cross Meter";
                 case MeterType.SWR: return "SWR";
                 case MeterType.SPACER: return "Spacer";
+                case MeterType.TEXT_OVERLAY: return "Text Overlay";
                 //case MeterType.HISTORY: return "History";
                 case MeterType.VFO_DISPLAY: return "Vfo Display";
                 case MeterType.CLOCK: return "Clock";
@@ -516,7 +557,7 @@ namespace Thetis
                 case Reading.AGC_AV: return "AGC Average";
                 case Reading.AGC_PK: return "AGC Peak";
                 case Reading.AGC_GAIN: return "AGC Gain";
-                case Reading.EYE_PERCENT: return "Magic Eye";
+                //case Reading.EYE_PERCENT: return "Magic Eye";
                 case Reading.ALC: return "ALC";
                 case Reading.ALC_G: return "ALC Compression";
                 case Reading.ALC_GROUP: return "ALC Group";
@@ -565,7 +606,7 @@ namespace Thetis
                 case Reading.AGC_PK: return "dB";
                 case Reading.AGC_AV: return "dB";
                 case Reading.AGC_GAIN: return "dB";
-                case Reading.EYE_PERCENT: return "?";
+                //case Reading.EYE_PERCENT: return "?";
                 case Reading.ALC: return "dB";
                 case Reading.ALC_G: return "dB";
                 case Reading.ALC_GROUP: return "dB";
@@ -933,7 +974,7 @@ namespace Thetis
             _alexPresent = _console.AlexPresent;
             _paPresent = _console.PAPresent;
             _transverterIndex = _console.TXXVTRIndex;
-
+            
             addDelegates();
 
             _meterThread = new Thread(new ThreadStart(UpdateMeters))
@@ -1641,7 +1682,7 @@ namespace Thetis
                     setReading(rx, Reading.AGC_PK, ref readings);
                     setReading(rx, Reading.AGC_AV, ref readings);
                     setReading(rx, Reading.AGC_GAIN, ref readings);
-                    setReading(rx, Reading.EYE_PERCENT, ref readings);
+                    //setReading(rx, Reading.EYE_PERCENT, ref readings);
 
                     setReading(rx, Reading.ESTIMATED_PBSNR, ref readings);
                 }
@@ -1787,6 +1828,7 @@ namespace Thetis
 
             if (_lstUCMeters == null || _lstUCMeters.Count == 0) return;
 
+            initAllConsoleData(); //[2.10.3.6]MW0LGE get all console info here, as everything will be at the correct state
             zeroAllMeters();
 
             lock (_metersLock)
@@ -2277,7 +2319,8 @@ namespace Thetis
                 CLOCK,
                 SIGNAL_TEXT_DISPLAY,
                 FADE_COVER,
-                SPACER
+                SPACER,
+                TEXT_OVERLAY
                 //SPECTRUM
             }
 
@@ -2325,7 +2368,7 @@ namespace Thetis
             private bool _disabled;
             private bool _mox;
 
-            public clsMeterItem()
+            public clsMeterItem(clsMeter owningMeter = null)
             {
                 // constructor
                 _sId = System.Guid.NewGuid().ToString();
@@ -3512,31 +3555,594 @@ namespace Thetis
 
         internal class clsSpacerItem : clsMeterItem
         {
-            private System.Drawing.Color _colour;
+            private System.Drawing.Color _colour1;
             private System.Drawing.Color _colour2;
-
-            private Dictionary<float, PointF> _scaleCalibration;
-
+            private float _padding;
             public clsSpacerItem()
             {
-                _colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                _colour1 = System.Drawing.Color.FromArgb(32, 32, 32);
                 _colour2 = System.Drawing.Color.FromArgb(32, 32, 32);
+
+                _padding = 0.1f;
 
                 ItemType = MeterItemType.SPACER;
                 ReadingSource = Reading.NONE;
+
+                UpdateInterval = 100;
             }
-            public System.Drawing.Color Colour
+            public System.Drawing.Color Colour1
             {
-                get { return _colour; }
-                set { _colour = value; }
+                get { return _colour1; }
+                set { _colour1 = value; }
             }
             public System.Drawing.Color Colour2
             {
                 get { return _colour2; }
                 set { _colour2 = value; }
             }
+            public float Padding
+            {
+                get { return _padding; }
+                set { _padding = value; }
+            }
         }
+        internal class clsTextOverlay : clsMeterItem
+        {
+            private System.Drawing.Color _text_colour1;
+            private System.Drawing.Color _text_colour2;
+            private System.Drawing.Color _text_back_colour1;
+            private System.Drawing.Color _text_back_colour2;
+            private System.Drawing.Color _back_colour;
+            private System.Drawing.Color _panel_back_colour1;
+            private System.Drawing.Color _panel_back_colour2;
+            private string _text_1;
+            private string _text_2;
+            //private int _newlines_1;
+            //private int _newlines_2;
+            private bool _show_text_back_colour1;
+            private bool _show_text_back_colour2;
+            private bool _show_back_panel;
+            private float _x_offset_1;
+            private float _y_offset_1;
+            private float _x_offset_2;
+            private float _y_offset_2;
+            private string _fontFamily_1;
+            private FontStyle _fontStyle_1;
+            private float _fontSize_1;
+            private string _fontFamily_2;
+            private FontStyle _fontStyle_2;
+            private float _fontSize_2;
+            private float _padding;
+            private Dictionary<Reading, float> _readings_values;
+            private Dictionary<string, string> _readings_text_strings;
+            private clsMeter _owningMeter;
+            private bool _ignore_measure_cache_1;
+            private bool _ignore_measure_cache_2;
 
+            public clsTextOverlay(clsMeter owningMeter)
+            {
+                _readings_values = new Dictionary<Reading, float>();
+                _readings_text_strings = new Dictionary<string, string>();
+                _text_colour1 = System.Drawing.Color.FromArgb(255, 255, 255);
+                _text_colour2 = System.Drawing.Color.FromArgb(255, 255, 255);
+                _text_back_colour1 = System.Drawing.Color.FromArgb(64, 64, 64);
+                _text_back_colour2 = System.Drawing.Color.FromArgb(64, 64, 64);
+                _panel_back_colour1 = System.Drawing.Color.FromArgb(32, 32, 32);
+                _panel_back_colour2 = System.Drawing.Color.FromArgb(32, 32, 32);
+                _text_1 = "";
+                _text_2 = "";
+                _show_text_back_colour1 = false;
+                _show_text_back_colour2 = false;
+                _show_back_panel = true;
+                _x_offset_1 = 0;
+                _y_offset_1 = 0;
+                _x_offset_2 = 0;
+                _y_offset_2 = 0;
+                ItemType = MeterItemType.TEXT_OVERLAY;
+                ReadingSource = Reading.NONE;
+                
+                _fontFamily_1 = "Trebuchet MS";
+                _fontStyle_1 = FontStyle.Regular;
+                _fontSize_1 = 18f;
+                _fontFamily_2 = "Trebuchet MS";
+                _fontStyle_2 = FontStyle.Regular;
+                _fontSize_2 = 18f;
+
+                _padding = 0.1f;
+
+                _ignore_measure_cache_1 = false;
+                _ignore_measure_cache_2 = false;
+
+                _owningMeter = owningMeter;
+
+                UpdateInterval = 100;
+            }
+            public System.Drawing.Color TextColour1
+            {
+                get { return _text_colour1; }
+                set { _text_colour1 = value; }
+            }
+            public System.Drawing.Color TextColour2
+            {
+                get { return _text_colour2; }
+                set { _text_colour2 = value; }
+            }
+            public System.Drawing.Color TextBackColour1
+            {
+                get { return _text_back_colour1; }
+                set { _text_back_colour1 = value; }
+            }
+            public System.Drawing.Color TextBackColour2
+            {
+                get { return _text_back_colour2; }
+                set { _text_back_colour2 = value; }
+            }
+            public string Text1
+            {
+                get { return _text_1.Replace("|", ""); }
+                set
+                {
+                    _ignore_measure_cache_1 = _text_1 != value;
+                    _text_1 = value.Replace("|", "");
+                    addReadings(_text_1);
+                }
+            }
+            public string Text2
+            {
+                get { return _text_2.Replace("|", ""); }
+                set 
+                {
+                    _ignore_measure_cache_2 = _text_2 != value;
+                    _text_2 = value.Replace("|", "");
+                    addReadings(_text_2);
+                }
+            }
+            //public int NewLines1
+            //{
+            //    get { return _newlines_1; }
+            //}
+            //public int NewLines2
+            //{
+            //    get { return _newlines_2; }
+            //}
+            public bool ShowTextBackColour1
+            {
+                get { return _show_text_back_colour1; }
+                set { _show_text_back_colour1 = value; }
+            }
+            public bool ShowTextBackColour2
+            {
+                get { return _show_text_back_colour2; }
+                set { _show_text_back_colour2 = value; }
+            }
+            public bool ShowBackPanel
+            {
+                get { return _show_back_panel; }
+                set { _show_back_panel = value; }
+            }
+            public System.Drawing.Color PanelBackColour1
+            {
+                get { return _panel_back_colour1; }
+                set { _panel_back_colour1 = value; }
+            }
+            public System.Drawing.Color PanelBackColour2
+            {
+                get { return _panel_back_colour2; }
+                set { _panel_back_colour2 = value; }
+            }
+            public float TextXOffset1
+            {
+                get { return _x_offset_1; }
+                set { _x_offset_1 = value; }
+            }
+            public float TextYOffset1
+            {
+                get { return _y_offset_1; }
+                set { _y_offset_1 = value; }
+            }
+            public float TextXOffset2
+            {
+                get { return _x_offset_2; }
+                set { _x_offset_2 = value; }
+            }
+            public float TextYOffset2
+            {
+                get { return _y_offset_2; }
+                set { _y_offset_2 = value; }
+            }
+            public string FontFamily1
+            {
+                get { return _fontFamily_1; }
+                set { _fontFamily_1 = value; }
+            }
+            public FontStyle Style1
+            {
+                get { return _fontStyle_1; }
+                set { _fontStyle_1 = value; }
+            }
+            public float FontSize1
+            {
+                get { return _fontSize_1; }
+                set { _fontSize_1 = value; }
+            }
+            public string FontFamily2
+            {
+                get { return _fontFamily_2; }
+                set { _fontFamily_2 = value; }
+            }
+            public FontStyle Style2
+            {
+                get { return _fontStyle_2; }
+                set { _fontStyle_2 = value; }
+            }
+            public float FontSize2
+            {
+                get { return _fontSize_2; }
+                set { _fontSize_2 = value; }
+            }
+            public float Padding
+            {
+                get { return _padding; }
+                set { _padding = value; }
+            }
+            public bool IgnoreMeasureCache1
+            {
+                get { return _ignore_measure_cache_1; }
+                set { _ignore_measure_cache_1 = value; }
+            }
+            public bool IgnoreMeasureCache2
+            {
+                get { return _ignore_measure_cache_2; }
+                set { _ignore_measure_cache_2 = value; }
+            }
+            private void getReading(int rx, Reading r, ref List<Reading> readingsUsed)
+            {
+                _readings_values[r] = MeterManager.getReading(rx, r);
+                // this reading has been used
+                if (!readingsUsed.Contains(r))
+                    readingsUsed.Add(r);
+            }
+            private string formatNumber(double number)
+            {
+                string numberString = number.ToString("F6", CultureInfo.InvariantCulture);
+                int decimalPointIndex = numberString.IndexOf('.');
+                if (decimalPointIndex != -1 && numberString.Length > decimalPointIndex + 3)
+                {
+                    numberString = numberString.Insert(decimalPointIndex + 4, ".");
+                }
+                return numberString;
+            }
+            public override void Update(int rx, ref List<Reading> readingsUsed)
+            {
+                DateTime now = DateTime.Now;
+                DateTime UTCnow = DateTime.UtcNow;
+                List<Reading> keys = _readings_values.Keys.ToList();
+                foreach (Reading key in keys)
+                {
+                    getReading(rx, key, ref readingsUsed);                    
+                }
+                List<string> keys_s = _readings_text_strings.Keys.ToList();
+                foreach (string key in keys_s)
+                {
+                    switch (key)
+                    {
+                        case "time_utc":
+                            _readings_text_strings[key] = UTCnow.ToString("HH:mm:ss");
+                            break;
+                        case "time_loc":
+                            _readings_text_strings[key] = now.ToString("HH:mm:ss");
+                            break;
+                        case "date_utc":
+                            _readings_text_strings[key] = UTCnow.ToString("ddd d MMM yyyy");
+                            break;
+                        case "date_loc":
+                            _readings_text_strings[key] = now.ToString("ddd d MMM yyyy");
+                            break;
+                        case "vfoa":
+                            if (rx == 1)
+                                _readings_text_strings[key] = formatNumber(_owningMeter.VfoA);
+                            else
+                                _readings_text_strings[key] = "";
+                            break;
+                        case "vfob":
+                            if (_owningMeter.RX2Enabled && rx == 1)
+                                _readings_text_strings[key] = ""; //formatNumber(0);
+                            else
+                                _readings_text_strings[key] = formatNumber(_owningMeter.VfoB);
+                            break;
+                        case "vfoasub":
+                            if (_owningMeter.VfoSub >= 0 && rx == 1 && _owningMeter.RX2Enabled && _owningMeter.Split) // when -999.999
+                                _readings_text_strings[key] = formatNumber(_owningMeter.VfoSub);
+                            else
+                                _readings_text_strings[key] = "";
+                            break;
+                        case "band_vfoa":
+                            _readings_text_strings[key] = BandStackManager.BandToString(_owningMeter.BandVfoA).ToLower();
+                            break;
+                        case "band_vfob":
+                            _readings_text_strings[key] = BandStackManager.BandToString(_owningMeter.BandVfoA).ToLower();
+                            break;
+                        case "band_vfoasub":
+                            _readings_text_strings[key] = BandStackManager.BandToString(_owningMeter.BandVfoASub).ToLower();
+                            break;
+                        case "mode_vfoa":
+                            _readings_text_strings[key] = _owningMeter.ModeVfoA.ToString();
+                            break;
+                        case "mode_vfob":
+                            _readings_text_strings[key] = _owningMeter.ModeVfoB.ToString();
+                            break;
+                        case "filter_vfoa":
+                            _readings_text_strings[key] = _owningMeter.FilterVfoA.ToString();
+                            break;
+                        case "filter_vfob":
+                            _readings_text_strings[key] = _owningMeter.FilterVfoB.ToString();
+                            break;
+                        case "filter_vfoa_name":
+                            _readings_text_strings[key] = _owningMeter.FilterVfoAName;
+                            break;
+                        case "filter_vfob_name":
+                            _readings_text_strings[key] = _owningMeter.FilterVfoBName;
+                            break;
+                        case "qso_time":
+                            _readings_text_strings[key] = formatElapsedTime(_owningMeter.QsoDurationSeconds);
+                            break;
+                        case "qso_time_short":
+                            _readings_text_strings[key] = formatElapsedTimeCompact(_owningMeter.QsoDurationSeconds);
+                            break;
+                    }
+                }
+            }
+            private string formatElapsedTimeCompact(long elapsedSeconds)
+            {
+                long seconds = elapsedSeconds % 60;
+                long minutes = (elapsedSeconds / 60) % 60;
+                long hours = (elapsedSeconds / 3600) % 24;
+                long days = (elapsedSeconds / 86400) % 365;
+                long years = elapsedSeconds / 31536000;
+
+                if (years > 0)
+                {
+                    return $"{years}yr {hours:D2}:{minutes:D2}:{seconds:D2}";
+                }
+                else if (days > 0)
+                {
+                    return $"{days}d {hours:D2}:{minutes:D2}:{seconds:D2}";
+                }
+                else
+                {
+                    return $"{hours:D2}:{minutes:D2}:{seconds:D2}";
+                }
+            }
+            private string formatElapsedTime(long elapsedSeconds)
+            {
+                long seconds = elapsedSeconds % 60;
+                long minutes = (elapsedSeconds / 60) % 60;
+                long hours = (elapsedSeconds / 3600) % 24;
+                long days = (elapsedSeconds / 86400) % 365;
+                long years = elapsedSeconds / 31536000;
+
+                if (years > 0)
+                {
+                    return $"{years} year{(years > 1 ? "s" : "")} {days} day{(days > 1 ? "s" : "")} {hours} hour{(hours > 1 ? "s" : "")}";
+                }
+                else if (days > 0)
+                {
+                    return $"{days} day{(days > 1 ? "s" : "")} {hours} hour{(hours > 1 ? "s" : "")} {minutes} minute{(minutes > 1 ? "s" : "")}";
+                }
+                else if (hours > 0)
+                {
+                    return $"{hours} hour{(hours > 1 ? "s" : "")} {minutes} minute{(minutes > 1 ? "s" : "")} {seconds} second{(seconds > 1 ? "s" : "")}";
+                }
+                else if (minutes > 0)
+                {
+                    return $"{minutes} minute{(minutes > 1 ? "s" : "")} {seconds} second{(seconds > 1 ? "s" : "")}";
+                }
+                else
+                {
+                    return $"{seconds} second{(seconds > 1 ? "s" : "")}";
+                }
+            }
+            public string ParsedText1
+            {
+                get
+                {
+                    string sTmp = _text_1;
+                    //for each of the values in the readings, try to find one to replace all occurances in _text_1
+                    foreach (KeyValuePair<Reading, float> reading in _readings_values)
+                    {
+                        sTmp = sTmp.Replace("%" + reading.Key.ToString().ToLower() + "%", reading.Value.ToString("f1"));
+                    }
+                    foreach (KeyValuePair<string, string> reading in _readings_text_strings)
+                    {
+                        sTmp = sTmp.Replace("%" + reading.Key + "%", reading.Value);
+                    }
+                    sTmp = sTmp.Replace("%nl%", "\n");
+                    //_newlines_1 = sTmp.Count(c => c == '\n');
+                    return sTmp;
+                }
+            }
+            public string ParsedText2
+            {
+                get
+                {
+                    string sTmp = _text_2;
+                    //for each of the values in the readings, try to find one to replace all occurances in _text_2
+                    foreach (KeyValuePair<Reading, float> reading in _readings_values)
+                    {
+                        sTmp = sTmp.Replace("%" + reading.Key.ToString().ToLower() + "%", reading.Value.ToString("f1"));
+                    }
+                    foreach (KeyValuePair<string, string> reading in _readings_text_strings)
+                    {
+                        sTmp = sTmp.Replace("%" + reading.Key + "%", reading.Value);
+                    }
+                    sTmp = sTmp.Replace("%nl%", "\n");
+                    //_newlines_2 = sTmp.Count(c => c == '\n');
+                    return sTmp;
+                }
+            }
+            private void addReadings(string text)
+            {
+                //add readings required from text1 and text2 if not already there
+                addReading(Reading.SWR, text);
+                addReading(Reading.SIGNAL_STRENGTH, text);
+                addReading(Reading.AVG_SIGNAL_STRENGTH, text);
+                addReading(Reading.PWR, text);
+                addReading(Reading.REVERSE_PWR, text);
+                addReading(Reading.MIC, text);
+                addReading(Reading.MIC_PK, text);
+                addReading(Reading.ADC_PK, text);
+                addReading(Reading.ADC_AV, text);
+                addReading(Reading.AGC_PK, text);
+                addReading(Reading.AGC_AV, text);
+                addReading(Reading.AGC_GAIN, text);
+                addReading(Reading.LEVELER, text);
+                addReading(Reading.LEVELER_PK, text);
+                addReading(Reading.LVL_G, text);
+                addReading(Reading.ALC, text);
+                addReading(Reading.ALC_PK, text);
+                addReading(Reading.ALC_G, text);
+                addReading(Reading.ALC_GROUP, text);
+                addReading(Reading.CFC_AV, text);
+                addReading(Reading.CFC_PK, text);
+                addReading(Reading.CFC_G, text);
+                addReading(Reading.COMP, text);
+                addReading(Reading.COMP_PK, text);
+                addReading(Reading.ESTIMATED_PBSNR, text);
+                addReading(Reading.VOLTS, text);
+                addReading(Reading.AMPS, text);
+
+                addReadingText("time_utc", text);
+                addReadingText("time_loc", text);
+                addReadingText("date_utc", text);
+                addReadingText("date_loc", text);
+                addReadingText("vfoa", text);
+                addReadingText("vfob", text);
+                addReadingText("vfoasub", text);
+                addReadingText("band_vfoa", text);
+                addReadingText("band_vfob", text);
+                addReadingText("band_vfoasub", text);
+                addReadingText("mode_vfoa", text);
+                addReadingText("mode_vfob", text);
+                addReadingText("filter_vfoa", text);
+                addReadingText("filter_vfob", text);
+                addReadingText("filter_vfoa_name", text);
+                addReadingText("filter_vfob_name", text);
+                addReadingText("qso_time", text);
+                addReadingText("qso_time_short", text);
+            }
+            private void addReading(Reading reading, string text)
+            {
+                if (!_readings_values.ContainsKey(reading) && text.Contains("%" + reading.ToString().ToLower() + "%")) _readings_values.Add(reading, 0f);
+            }
+            private void addReadingText(string reading, string text)
+            {
+                if (!_readings_text_strings.ContainsKey(reading) && text.Contains("%" + reading + "%")) _readings_text_strings.Add(reading, "");
+            }
+            public override bool ZeroOut(out float value, int rx)
+            {
+                value = 0;
+
+                foreach (KeyValuePair<Reading, float> reading in _readings_values)
+                {
+                    switch (reading.Key)
+                    {
+                        case Reading.SIGNAL_STRENGTH:
+                        case Reading.AVG_SIGNAL_STRENGTH:
+                            {
+                                if (IsAboveS9Frequency(rx))
+                                    value = -153; //S0
+                                else
+                                    value = -133; //S0
+                            }
+                            break;
+                        case Reading.ADC_PK:
+                        case Reading.ADC_AV:
+                            {
+                                value = -120.0f;
+                            }
+                            break;
+                        case Reading.AGC_AV:
+                        case Reading.AGC_PK:
+                            value = -125.0f;
+                            break;
+                        case Reading.AGC_GAIN:
+                            {
+                                value = -50.0f;
+                            }
+                            break;
+                        case Reading.MIC:
+                        case Reading.MIC_PK:
+                            {
+                                value = -120.0f;
+                            }
+                            break;
+                        case Reading.LEVELER:
+                        case Reading.LEVELER_PK:
+                            {
+                                value = -30.0f;
+                            }
+                            break;
+                        case Reading.LVL_G:
+                            {
+                                value = 0f;
+                            }
+                            break;
+                        case Reading.ALC:
+                        case Reading.ALC_PK:
+                            {
+                                value = -120.0f;
+                            }
+                            break;
+                        case Reading.ALC_G: //alc comp
+                            {
+                                value = 0f;
+                            }
+                            break;
+                        case Reading.ALC_GROUP:
+                            {
+                                value = -30.0f;
+                            }
+                            break;
+                        case Reading.CFC_AV:
+                        case Reading.CFC_PK:
+                            {
+                                value = -30.0f;
+                            }
+                            break;
+                        case Reading.CFC_G:
+                            {
+                                value = 0f;
+                            }
+                            break;
+                        case Reading.COMP:
+                        case Reading.COMP_PK:
+                            {
+                                value = -30.0f;
+                            }
+                            break;
+                        case Reading.PWR:
+                        case Reading.REVERSE_PWR:
+                            {
+                                value = 0f;
+                            }
+                            break;
+                        case Reading.SWR:
+                            {
+                                value = 1.0f;
+                            }
+                            break;
+                        case Reading.ESTIMATED_PBSNR:
+                            {
+                                value = 0f;
+                            }
+                            break;
+                    }
+                    MeterManager.setReadingForced(rx, reading.Key, value);
+                }
+
+                return false; // false as we do our own setReadingForced just above
+            }
+        }
         //internal class clsHistoryItem : clsMeterItem
         //{
         //    //public enum BarStyle
@@ -4907,6 +5513,8 @@ namespace Thetis
             private string _filterVfoBname;
             private bool _rx2Enabled;
             private bool _multiRxEnabled;
+            private DateTime _qso_start;
+            private DateTime _qso_end;
 
             private bool _txeqEnabled;
             private bool _levelerEnabled;
@@ -4965,7 +5573,8 @@ namespace Thetis
                     //case MeterType.HISTORY: AddHistory(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.VFO_DISPLAY: AddVFODisplay(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.CLOCK: AddClock(nDelay, 0, out bBottom, restoreIg); break;
-                    case MeterType.SPACER: AddSpacer(nDelay, 0, out bBottom, 0.2f, restoreIg); break;
+                    case MeterType.SPACER: AddSpacer(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
+                    case MeterType.TEXT_OVERLAY: AddTextOverlay(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
                     //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
@@ -5520,6 +6129,34 @@ namespace Thetis
                 ig.TopLeft = me.TopLeft;
                 ig.Size = new SizeF(me.Size.Width, fBottom);
                 ig.MeterType = MeterType.SPACER;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);
+
+                return me.ID;
+            }
+            public string AddTextOverlay(int nMSupdate, float fTop, out float fBottom, float fSize, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsTextOverlay me = new clsTextOverlay(this);
+                me.ParentID = ig.ID;
+                me.Primary = true;
+                me.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
+                me.Size = new SizeF(1f, fSize);
+                me.ZOrder = 999; // on top of everything
+                addMeterItem(me);
+
+                fBottom = me.TopLeft.Y + me.Size.Height;
+
+                ig.TopLeft = me.TopLeft;
+                ig.Size = new SizeF(me.Size.Width, fBottom);
+                ig.MeterType = MeterType.TEXT_OVERLAY;
                 ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
 
                 clsFadeCover fc = getFadeCover(ig.ID);
@@ -7212,6 +7849,8 @@ namespace Thetis
                 _filterVfoBname = "";
                 _rx2Enabled = false;
                 _multiRxEnabled = false;
+                _qso_start = DateTime.Now;
+                _qso_end = DateTime.Now;
 
                 _txeqEnabled = true;
                 _levelerEnabled = true;
@@ -7247,7 +7886,7 @@ namespace Thetis
                         if (bOk)
                         {
                             // //[2.10.1.0] MW0LGE only want to do this if value is lower than current reading
-                            float reading = getReading(RX, mi.ReadingSource);
+                            //float reading = getReading(RX, mi.ReadingSource);
                             //bool bUpdate = (value < reading) || (reading == -200f); // -200f is init or no value state
                             //if (bUpdate)
                             //{
@@ -7350,7 +7989,7 @@ namespace Thetis
                         if (ig != null && ig.MeterType == mt && ig.Order == order) {
                             nOrder = ig.Order;
                             removeMeterItem(ig.ID, false);
-                            if (mt == MeterType.SPACER) order = -999; // only remove the single spacer
+                            if (mt == MeterType.SPACER || mt == MeterType.TEXT_OVERLAY) order = -9999; // only remove the single
                         }
 
                         if(nOrder >= 0)
@@ -7439,6 +8078,80 @@ namespace Thetis
                         {
                             switch (mt)
                             {
+                                case MeterType.TEXT_OVERLAY:
+                                    {
+                                        bRebuild = true; // alwayys cause a rebuild as we relocate the text overlay each time
+
+                                        float padding = 0f;
+
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.TEXT_OVERLAY))
+                                        {
+                                            clsTextOverlay text_overlay = me.Value as clsTextOverlay;
+                                            if (text_overlay == null) continue;
+
+                                            text_overlay.FadeOnRx = igs.FadeOnRx;
+                                            text_overlay.FadeOnTx = igs.FadeOnTx;
+                                            text_overlay.TextColour1 = igs.Colour;
+                                            text_overlay.TextColour2 = igs.MarkerColour;
+                                            text_overlay.TextBackColour1 = igs.SubMarkerColour;
+                                            text_overlay.ShowTextBackColour1 = igs.ShowMarker;
+                                            text_overlay.TextBackColour2 = igs.PeakValueColour;
+                                            text_overlay.ShowTextBackColour2 = igs.ShowType;
+
+                                            text_overlay.PanelBackColour1 = igs.TitleColor;
+                                            text_overlay.PanelBackColour2 = igs.HistoryColor;
+                                            text_overlay.ShowBackPanel = igs.ShowSubMarker;
+
+                                            text_overlay.TextXOffset1 = igs.EyeScale;
+                                            text_overlay.TextYOffset1 = igs.EyeBezelScale;
+                                            text_overlay.TextXOffset2 = igs.AttackRatio;
+                                            text_overlay.TextYOffset2 = igs.DecayRatio;
+
+                                            text_overlay.Text1 = igs.Text1;
+                                            text_overlay.Text2 = igs.Text2;
+
+                                            text_overlay.FontFamily1 = igs.FontFamily1;
+                                            text_overlay.Style1 = igs.FontStyle1;
+                                            text_overlay.FontSize1 = igs.FontSize1;
+                                            text_overlay.FontFamily2 = igs.FontFamily2;
+                                            text_overlay.Style2 = igs.FontStyle2;
+                                            text_overlay.FontSize2 = igs.FontSize2;
+
+                                            text_overlay.Padding = igs.SpacerPadding;
+
+                                            if (igs.ShowSubMarker)
+                                            {
+                                                text_overlay.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                text_overlay.Size = new SizeF(ig.Size.Width, igs.SpacerPadding);
+                                                padding += igs.SpacerPadding;
+                                            }
+                                            else
+                                            {
+                                                text_overlay.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                text_overlay.Size = new SizeF(0, 0);
+                                            }
+                                        }
+                                        ig.Size = new SizeF(ig.Size.Width, padding == 0f ? 0 : padding + (_fPadY - (_fHeight * 0.75f)));
+
+                                        // recalc bounds for fade overlay cover as these will change as spacer changes
+                                        System.Drawing.RectangleF eyeBounds = getBounds(ig.ID);
+                                        if (!eyeBounds.IsEmpty)
+                                        {
+                                            foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                            {
+                                                clsFadeCover fc = fcs.Value as clsFadeCover;
+                                                if (fc == null) continue;
+
+                                                fc.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                fc.Size = new SizeF(ig.Size.Width, padding);
+
+                                                fc.FadeOnRx = igs.FadeOnRx;
+                                                fc.FadeOnTx = igs.FadeOnTx;
+                                            }
+                                        }
+                                    }
+                                    break;
                                 case MeterType.SPACER:
                                     {
                                         bRebuild = true; // alwayys cause a rebuild as we relocate the spacer each time
@@ -7453,9 +8166,10 @@ namespace Thetis
 
                                             spacer.FadeOnRx = igs.FadeOnRx;
                                             spacer.FadeOnTx = igs.FadeOnTx;
-                                            spacer.Colour = igs.Colour;
+                                            spacer.Colour1 = igs.Colour;
                                             spacer.Colour2 = igs.MarkerColour;
-
+                                            spacer.Padding = igs.SpacerPadding;
+                                            
                                             spacer.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
                                             spacer.Size = new SizeF(ig.Size.Width, igs.SpacerPadding);
 
@@ -7473,7 +8187,7 @@ namespace Thetis
                                                 if (fc == null) continue;
 
                                                 fc.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
-                                                fc.Size = new SizeF(ig.Size.Width, igs.SpacerPadding);
+                                                fc.Size = new SizeF(ig.Size.Width, padding);
 
                                                 fc.FadeOnRx = igs.FadeOnRx;
                                                 fc.FadeOnTx = igs.FadeOnTx;
@@ -7934,6 +8648,55 @@ namespace Thetis
                             clsIGSettings igs = new clsIGSettings();
                             switch (mt)
                             {
+                                case MeterType.TEXT_OVERLAY:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        //one image, and the me
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.TEXT_OVERLAY))
+                                        {
+                                            clsTextOverlay text_overlay = me.Value as clsTextOverlay;
+                                            if (text_overlay == null) continue; // skip
+
+                                            igs.FadeOnRx = text_overlay.FadeOnRx;
+                                            igs.FadeOnTx = text_overlay.FadeOnTx;
+                                            igs.Colour = text_overlay.TextColour1;
+                                            igs.MarkerColour = text_overlay.TextColour2;
+                                            igs.SubMarkerColour = text_overlay.TextBackColour1;
+                                            igs.ShowMarker = text_overlay.ShowTextBackColour1;
+                                            igs.PeakValueColour = text_overlay.TextBackColour2;
+                                            igs.ShowType = text_overlay.ShowTextBackColour2;
+
+                                            igs.TitleColor = text_overlay.PanelBackColour1;
+                                            igs.HistoryColor = text_overlay.PanelBackColour2;
+                                            igs.ShowSubMarker = text_overlay.ShowBackPanel;
+
+                                            igs.EyeScale = text_overlay.TextXOffset1;
+                                            igs.EyeBezelScale = text_overlay.TextYOffset1;
+                                            igs.AttackRatio = text_overlay.TextXOffset2;
+                                            igs.DecayRatio = text_overlay.TextYOffset2;
+
+                                            igs.Text1 = text_overlay.Text1;
+                                            igs.Text2 = text_overlay.Text2;
+
+                                            igs.FontFamily1 = text_overlay.FontFamily1;
+                                            igs.FontStyle1 = text_overlay.Style1;
+                                            igs.FontSize1 = text_overlay.FontSize1;
+                                            igs.FontFamily2 = text_overlay.FontFamily2;
+                                            igs.FontStyle2 = text_overlay.Style2;
+                                            igs.FontSize2 = text_overlay.FontSize2;
+
+                                            igs.SpacerPadding = text_overlay.Padding;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue; // skip
+
+                                            igs.FadeOnRx = fc.FadeOnRx;
+                                            igs.FadeOnTx = fc.FadeOnTx;
+                                        }
+                                    }
+                                    break;
                                 case MeterType.SPACER:
                                     {
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
@@ -7943,9 +8706,9 @@ namespace Thetis
                                             clsSpacerItem spacer = me.Value as clsSpacerItem;
                                             if (spacer == null) continue; // skip
 
-                                            igs.Colour = spacer.Colour;
+                                            igs.Colour = spacer.Colour1;
                                             igs.MarkerColour = spacer.Colour2;
-                                            igs.SpacerPadding = spacer.Size.Height;
+                                            igs.SpacerPadding = spacer.Padding;
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                         {
@@ -8552,7 +9315,26 @@ namespace Thetis
             public bool MOX
             {
                 get { return _mox; }
-                set { _mox = value; }
+                set 
+                {
+                    bool changed = _mox != value;
+                    _mox = value;
+                    if (changed)
+                    {
+                        if (_mox)
+                            _qso_start = DateTime.Now;
+                        else
+                            _qso_end = DateTime.Now;
+                    }
+                }
+            }
+            public long QsoDurationSeconds
+            {
+                get 
+                { 
+                    if (_mox) _qso_end = DateTime.Now;
+                    return (long)(_qso_end - _qso_start).TotalSeconds; 
+                }
             }
             public bool Split
             {
@@ -9811,6 +10593,7 @@ namespace Thetis
                         int nTmp = m.MOX ? m.QuickestTXUpdate : m.QuickestRXUpdate;
                         if (nTmp < nRedrawDelay) nRedrawDelay = nTmp;
 
+                        Dictionary<string, clsMeterItem> additionalDraws = new Dictionary<string, clsMeterItem>();
                         foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
                         {
                             clsMeterItem mi = mikvp.Value;
@@ -9818,7 +10601,7 @@ namespace Thetis
                             bool bRender = ((m.MOX && mi.OnlyWhenTX) || (!m.MOX && mi.OnlyWhenRX)) || (!mi.OnlyWhenTX && !mi.OnlyWhenRX);
 
                             if (bRender && ((m.DisplayGroup == 0 || mi.DisplayGroup == 0) || (mi.DisplayGroup == m.DisplayGroup)))
-                            {                                
+                            {
                                 float rw = m.XRatio;
                                 float rh = m.YRatio;
 
@@ -9833,8 +10616,8 @@ namespace Thetis
                                         clsMeterItem postDrawItem = renderHBar(rect, mi, m);
                                         if (postDrawItem != null)
                                             renderHBarMarkersOnly(rect, postDrawItem, m); // only draw the marker, this is so primary marker over the top of everything
-                                                                                         // reason for this is that zorder for bar_pk and bar_avg causes the avg marker
-                                                                                         // top be on top of the pk marker, which we dont want
+                                                                                          // reason for this is that zorder for bar_pk and bar_avg causes the avg marker
+                                                                                          // top be on top of the pk marker, which we dont want
                                         break;
                                     case clsMeterItem.MeterItemType.SOLID_COLOUR:
                                         renderSolidColour(rect, mi, m);
@@ -9861,6 +10644,10 @@ namespace Thetis
                                     case clsMeterItem.MeterItemType.SPACER:
                                         renderSpacer(rect, mi, m);
                                         break;
+                                    case clsMeterItem.MeterItemType.TEXT_OVERLAY:
+                                        renderTextOverlay(rect, mi, m, false);
+                                        additionalDraws.Add(mikvp.Key, mikvp.Value);
+                                        break;
                                     //case clsMeterItem.MeterItemType.HISTORY:
                                     //    renderHistory(rect, mi, m);
                                     //    break;
@@ -9885,11 +10672,27 @@ namespace Thetis
                                 }
                             }
                         }
+                        foreach (KeyValuePair<string, clsMeterItem> mikvp in additionalDraws)
+                        {
+                            clsMeterItem mi = mikvp.Value;
+
+                            float rw = m.XRatio;
+                            float rh = m.YRatio;
+
+                            SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
+
+                            switch (mi.ItemType)
+                            {
+                                case clsMeterItem.MeterItemType.TEXT_OVERLAY:
+                                    renderTextOverlay(rect, mi, m, true);
+                                    break;
+                            }
+                        }
                     }
                 }
                 return nRedrawDelay;
             }
-            private SizeF measureString(string sText, string sFontFamily, FontStyle style, float emSize)
+            private SizeF measureString(string sText, string sFontFamily, FontStyle style, float emSize, bool ignore_caching = false)
             {
                 if (!_bDXSetup) return SizeF.Empty;
 
@@ -9897,15 +10700,15 @@ namespace Thetis
 
                 emSize = (float)Math.Round(emSize, 2);                
 
-                string sKey = sText.Length + "_" + emSize.ToString("0.00");
+                string sKey = sFontFamily + "_" + style + "_" + sText.Length + "_" + emSize.ToString("0.00");
 
-                if (_stringMeasure.ContainsKey(sKey)) return _stringMeasure[sKey];
+                if (!ignore_caching && _stringMeasure.ContainsKey(sKey)) return _stringMeasure[sKey];
 
                 SharpDX.DirectWrite.FontWeight fontWeight = SharpDX.DirectWrite.FontWeight.Regular;
                 SharpDX.DirectWrite.FontStyle fontStyle = SharpDX.DirectWrite.FontStyle.Normal;
                 if (((int)style & (int)FontStyle.Bold) == (int)FontStyle.Bold) fontWeight = SharpDX.DirectWrite.FontWeight.Bold;
                 if (((int)style & (int)FontStyle.Italic) == (int)FontStyle.Italic) fontStyle = SharpDX.DirectWrite.FontStyle.Italic;
-
+                
                 // calculate how big the string would be @ emSize pt
                 SharpDX.DirectWrite.TextFormat tf = new SharpDX.DirectWrite.TextFormat(_fontFactory, sFontFamily, fontWeight, fontStyle, emSize);
                 tf.WordWrapping = SharpDX.DirectWrite.WordWrapping.NoWrap;
@@ -9921,15 +10724,31 @@ namespace Thetis
                 SizeF size = new SizeF(width, height);
 
                 //why these fudge factors? not sure, is it a font proportion issue?
-                size.Width *= 1.338f;
-                size.Height *= 1.1f;
+                size.Width *= 1.333333333f;//1.338f
+                size.Height *= 1.333333333f;//1.1f;
 
-                _stringMeasure.Add(sKey, size);
-                _stringMeasureKeys.Enqueue(sKey);
-                if (_stringMeasure.Count > 500)
+                bool bAdd = true;
+                if (ignore_caching)
                 {
-                    string oldKey = _stringMeasureKeys.Dequeue();
-                    _stringMeasure.Remove(oldKey);
+                    // try to update existing
+                    if(_stringMeasure.ContainsKey(sKey))
+                    {
+                        SizeF f = _stringMeasure[sKey];
+                        f.Width = size.Width;
+                        f.Height = size.Height;
+                        _stringMeasure[sKey] = f;
+                        bAdd = false;
+                    }
+                }
+                if (bAdd)
+                {
+                    _stringMeasure.Add(sKey, size);
+                    _stringMeasureKeys.Enqueue(sKey);
+                    if (_stringMeasure.Count > 500)
+                    {
+                        string oldKey = _stringMeasureKeys.Dequeue();
+                        _stringMeasure.Remove(oldKey);
+                    }
                 }
 
                 return size;
@@ -10728,6 +11547,77 @@ namespace Thetis
                 Utilities.Dispose(ref sharpGeometry);
                 sharpGeometry = null;
             }
+            private void renderTextOverlay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m, bool text)
+            {
+                clsTextOverlay text_overlay = (clsTextOverlay)mi;
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
+                if (!do_cover_fade && (text_overlay.PanelBackColour1 != text_overlay.PanelBackColour2))
+                {
+                    if (m.MOX != mi.MOX)
+                    {
+                        mi.FadeValue = 48;
+                        mi.MOX = m.MOX;
+                    }
+                    else
+                    {
+                        int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                        updateInterval = Math.Min(updateInterval, 500);
+                        // fade to take half a second
+                        int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
+                        int stepSize = (int)Math.Ceiling(207 / (float)steps_needed); // 255-48 = 207
+
+                        mi.FadeValue += stepSize;
+                        if (mi.FadeValue > 255) mi.FadeValue = 255;
+                    }
+                }
+
+                if (!text)
+                {
+                    if (text_overlay.ShowBackPanel)
+                    {
+                        SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
+                        _renderTarget.FillRectangle(rectSC, getDXBrushForColour(m.MOX ? text_overlay.PanelBackColour2 : text_overlay.PanelBackColour1, mi.FadeValue));
+                    }
+                }
+                else
+                {
+                    // Determine the text to measure and display
+                    string displayText = m.MOX ? text_overlay.ParsedText2 : text_overlay.ParsedText1;
+                    string fontFamily = m.MOX ? text_overlay.FontFamily2 : text_overlay.FontFamily1;
+                    float fontSize = m.MOX ? text_overlay.FontSize2 : text_overlay.FontSize1;
+                    fontSize *= 2.1f; // when a container is added, and not resized, 72 point font needs this fudge to get it to be 72 point
+                    FontStyle fontStyle = m.MOX ? text_overlay.Style2 : text_overlay.Style1;
+
+                    // Calculate the text position
+                    float textX = x + (m.MOX ? text_overlay.TextXOffset2 : text_overlay.TextXOffset1) * (targetWidth * m.XRatio);
+                    float textY = y + (m.MOX ? text_overlay.TextYOffset2 : text_overlay.TextYOffset1) * (targetWidth * m.YRatio);
+
+                    if ((text_overlay.ShowTextBackColour1 && !m.MOX) || (text_overlay.ShowTextBackColour2 && m.MOX))
+                    {
+                        // Measure the text dimensions
+                        float fontSizeEmScaled = (fontSize / 16f) * (rect.Width / 52f);
+                        SizeF textSize = measureString(displayText, fontFamily, fontStyle, fontSizeEmScaled, m.MOX ? text_overlay.IgnoreMeasureCache2 : text_overlay.IgnoreMeasureCache1);
+                        if (!m.MOX && text_overlay.IgnoreMeasureCache1) text_overlay.IgnoreMeasureCache1 = false;
+                        if (m.MOX && text_overlay.IgnoreMeasureCache2) text_overlay.IgnoreMeasureCache2 = false;
+
+                        //textSize.Height += (m.MOX ? text_overlay.NewLines2 : text_overlay.NewLines1) * ((0.0245f * (fontSize / 72.0f)) * (targetWidth * m.YRatio));
+                        //textSize.Height += 0.06f * (targetWidth * m.YRatio);
+
+                        // Draw the background rectangle for the text
+                        SharpDX.RectangleF textBackgroundRect = new SharpDX.RectangleF(textX, textY, textSize.Width, textSize.Height);
+                        _renderTarget.FillRectangle(textBackgroundRect, getDXBrushForColour(m.MOX ? text_overlay.TextBackColour2 : text_overlay.TextBackColour1, mi.FadeValue));
+                    }
+
+                    // Render the text
+                    plotText(displayText, textX, textY, h, rect.Width, fontSize, m.MOX ? text_overlay.TextColour2 : text_overlay.TextColour1, 255, fontFamily, fontStyle, false);
+                }
+            }
             private void renderSpacer(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsSpacerItem spacer = (clsSpacerItem)mi;
@@ -10738,7 +11628,7 @@ namespace Thetis
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
                 bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
-                if (!do_cover_fade && (spacer.Colour != spacer.Colour2))
+                if (!do_cover_fade && (spacer.Colour1 != spacer.Colour2))
                 {
                     if (m.MOX != mi.MOX)
                     {
@@ -10760,7 +11650,7 @@ namespace Thetis
 
                 SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
 
-                _renderTarget.FillRectangle(rectSC, getDXBrushForColour(m.MOX ? spacer.Colour2 : spacer.Colour, mi.FadeValue));
+                _renderTarget.FillRectangle(rectSC, getDXBrushForColour(m.MOX ? spacer.Colour2 : spacer.Colour1, mi.FadeValue));
             }
             private void renderEye(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {

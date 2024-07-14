@@ -6701,7 +6701,7 @@ namespace Thetis
 
         public void SetAlexLPF(double freq, bool freqIsTX)
         {
-            //Debug.Print("lpf : " + freq.ToString());
+            //Debug.Print("lpf : " + freq.ToString() + " -- freq is tx : " + freqIsTX.ToString());
             if (!_mox && lpf_bypass)
             {
                 NetworkIO.SetAlexLPFBits(0x10, false, _mox); // 6m LPF
@@ -10355,8 +10355,17 @@ namespace Thetis
                 if (!initializing)
                 {
                     setTXstepAttenuatorForBand(tx_band, tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes #399
-                    if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
-                    else NetworkIO.SetTxAttenData(0);
+                    if (m_bAttontx)
+                    {
+                        int txatt = getTXstepAttenuatorForBand(tx_band);
+                        NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
+                        Display.TXAttenuatorOffset = txatt; //[2.10.3.6]MW0LGE att_fixes
+                    }
+                    else
+                    {
+                        NetworkIO.SetTxAttenData(0);
+                        Display.TXAttenuatorOffset = 0;
+                    }
 
                     //if (m_bAttontx && _mox) //[2.10.3.6]MW0LGE att_fixes
                     //udRX1StepAttData.Value = value; //[2.10.3.6]MW0LGE att_fixes
@@ -16814,8 +16823,12 @@ namespace Thetis
                     SetupForm.ATTOnTX = getTXstepAttenuatorForBand(tx_band); //[2.10.3.6]MW0LGE att_fixes
                     RX1PreampMode = rx1_preamp_by_band[(int)value];
                     RX1AttenuatorData = getRX1stepAttenuatorForBand(value);
+                    //[2.10.3.6]MW0LGE this tmp is needed because RX1AGCMode causes an update to the setup form
+                    //with the current max value for AGC (depending on agcmode) if the agcmode selected index changes
+                    //which in turn sets RF again
+                    int tmp = rx1_agct_by_band[(int)value];
                     RX1AGCMode = rx1_agcm_by_band[(int)value];
-                    RF = rx1_agct_by_band[(int)value];
+                    RF = tmp;
 
                     //================================================================================           
                     // ke9ns ADD for use by scanner so it knows which band button your on currently
@@ -16980,8 +16993,9 @@ namespace Thetis
 
                     RX2PreampMode = rx2_preamp_by_band[(int)value];
                     RX2AttenuatorData = getRX2stepAttenuatorForBand(value);
+                    int tmp = rx2_agct_by_band[(int)value]; //[2.10.3.6]MW0LGE see comment in RX1Band
                     RX2AGCMode = rx2_agcm_by_band[(int)value];
-                    RX2RF = rx2_agct_by_band[(int)value];
+                    RX2RF = tmp;
 
                     if (bandPopupForm != null) bandPopupForm.RepopulateForm();
                     if (modePopupForm != null) modePopupForm.RepopulateForm();
@@ -18554,8 +18568,17 @@ namespace Thetis
 
                 if (PowerOn)
                 {
-                    if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
-                    else NetworkIO.SetTxAttenData(0);
+                    if (m_bAttontx)
+                    {
+                        int txatt = getTXstepAttenuatorForBand(tx_band);
+                        NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
+                        Display.TXAttenuatorOffset = txatt; //[2.10.3.6]MW0LGE att_fixes
+                    }
+                    else
+                    {
+                        NetworkIO.SetTxAttenData(0);
+                        Display.TXAttenuatorOffset = 0;
+                    }
                 }
 
             }
@@ -26428,8 +26451,17 @@ namespace Thetis
                 Thread.Sleep(100); // wait for hardware to settle before starting audio (possible sample rate change)
                 psform.ForcePS();
 
-                if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
-                else NetworkIO.SetTxAttenData(0);
+                if (m_bAttontx)
+                {
+                    int txatt = getTXstepAttenuatorForBand(tx_band);
+                    NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
+                    Display.TXAttenuatorOffset = txatt;
+                }
+                else
+                {
+                    NetworkIO.SetTxAttenData(0);
+                    Display.TXAttenuatorOffset = 0;
+                }
 
                 enableAudioAmplfier(); // MW0LGE_22b
 
@@ -28577,7 +28609,7 @@ namespace Thetis
                                          radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) txAtt = 31; // reset when PS is OFF or in CW mode
 
                         SetupForm.ATTOnRX1 = getRX1stepAttenuatorForBand(rx1_band); //[2.10.3.6]MW0LGE att_fixes
-                        SetupForm.ATTOnTX = txAtt; //[2.10.3.6]MW0LGE att_fixes
+                        SetupForm.ATTOnTX = txAtt; //[2.10.3.6]MW0LGE att_fixes NOTE: this will eventually call Display.TXAttenuatorOffset with the value
                         NetworkIO.SetTxAttenData(txAtt); //[2.10.3.6]MW0LGE att_fixes
 
                         //SetupForm.RX1EnableAtt = true; //[2.10.3.6]MW0LGE att_fixes
@@ -28586,7 +28618,11 @@ namespace Thetis
                         updateAttNudsCombos();
                     }
                 }
-                else NetworkIO.SetTxAttenData(0);
+                else
+                {
+                    NetworkIO.SetTxAttenData(0);
+                    Display.TXAttenuatorOffset = 0; //[2.10.3.6]MW0LGE att_fixes
+                }
 
                 UpdateAAudioMixerStates();
                 UpdateDDCs(rx2_enabled);
@@ -28665,7 +28701,11 @@ namespace Thetis
                         UpdatePreamps();
                     }
                 }
-                else NetworkIO.SetTxAttenData(0);
+                else
+                {
+                    NetworkIO.SetTxAttenData(0);
+                    Display.TXAttenuatorOffset = 0; //[2.10.3.6]MW0LGE att_fixes
+                }
             }
 
             if (!tx)
@@ -28891,7 +28931,7 @@ namespace Thetis
             {
                 if (tx)
                 {
-                    if (psstate || (!VFOATX && VFOBTX))
+                    if (PSState || (!VFOATX && VFOBTX))
                     {
                         txtVFOAFreq_LostFocus(this, EventArgs.Empty); //[2.10.1.0] MW0LGE added to fix issue when in spit single rx, rit/xit would not be applied correctly on mox
                         txtVFOBFreq_LostFocus(this, EventArgs.Empty);
@@ -28907,7 +28947,7 @@ namespace Thetis
             }
             else
             {
-                if (psstate)
+                if (PSState)
                 {
                     txtVFOAFreq_LostFocus(this, EventArgs.Empty);
                     txtVFOBFreq_LostFocus(this, EventArgs.Empty);
@@ -35288,7 +35328,7 @@ namespace Thetis
 
             txtVFOAFreq_LostFocus(this, EventArgs.Empty);
             ptbPWR_Scroll(this, EventArgs.Empty);
-            if (chkVFOSplit.Checked || full_duplex || psstate)
+            if (chkVFOSplit.Checked || full_duplex || PSState)
                 txtVFOBFreq_LostFocus(this, EventArgs.Empty);
 
             chkSquelch_CheckStateChanged(this, EventArgs.Empty);
@@ -40368,17 +40408,17 @@ namespace Thetis
             }
         }
 
-        public void EnableDup()
-        {
-            if (RX2PreampPresent || (!RX2PreampPresent && !PSState))//!psform.PSEnabled))
-                chkRX2SR.Visible = true;
-        }
+        //public void EnableDup()
+        //{
+        //    if (RX2PreampPresent || (!RX2PreampPresent && !PSState))//!psform.PSEnabled))
+        //        chkRX2SR.Visible = true;
+        //}
 
-        private void DisableDup()
-        {
-            chkRX2SR.Checked = false;
-            chkRX2SR.Visible = false;
-        }
+        //private void DisableDup()
+        //{
+        //    chkRX2SR.Checked = false;
+        //    chkRX2SR.Visible = false;
+        //}
 
         private void BroadcastVFOChange(string ndx)
         {
@@ -48186,7 +48226,9 @@ namespace Thetis
         private void udTXStepAttData_ValueChanged(object sender, EventArgs e)
         {
             //always update it
-            SetupForm.ATTOnTX = (int)udTXStepAttData.Value;
+            SetupForm.ATTOnTX = (int)udTXStepAttData.Value;            
+            UpdateRX1DisplayOffsets();
+            UpdateRX2DisplayOffsets();
         }
 
         private double _s9Frequency = 30.0;
@@ -48349,48 +48391,48 @@ namespace Thetis
                 string lower = file.ToLower();
                 int extensionPosExe = lower.IndexOf(".exe");
                 int extensionPosCmd = lower.IndexOf(".cmd");
-
-                if (extensionPosExe >= 0 || extensionPosCmd >=0)
+                int extensionPosBat = lower.IndexOf(".bat");
+                int[] positions = { extensionPosExe, extensionPosCmd, extensionPosBat };
+                int extensionPos = int.MaxValue;
+                foreach (int pos in positions)
                 {
-                    int extensionPos;
-                    if (extensionPosExe >= 0 && extensionPosCmd < 0)
-                        extensionPos = extensionPosExe;
-                    else if (extensionPosCmd >= 0 && extensionPosExe < 0)
-                        extensionPos = extensionPosCmd;
-                    else
+                    if (pos != -1 && pos < extensionPos)
                     {
-                        if (extensionPosExe < extensionPosCmd)
-                            extensionPos = extensionPosExe;
-                        else
-                            extensionPos = extensionPosCmd;
+                        extensionPos = pos;
                     }
+                }
 
+                if (extensionPos != int.MaxValue)
+                {
                     string arguments = file.Substring(extensionPos + 4).Trim();
                     string fileOnly = file.Substring(0, extensionPos + 4).Trim();
-                    string processName = Path.GetFileNameWithoutExtension(fileOnly);
-                    if (File.Exists(fileOnly) && (!SetupForm.AutoLaunchNoStartIfRunning || (SetupForm.AutoLaunchNoStartIfRunning && !IsProcessRunning(processName))))
+                    if (File.Exists(fileOnly))
                     {
-                        string extension = Path.GetExtension(fileOnly).ToLower();
-                        if (extension == ".exe" || extension == ".cmd")
+                        try
                         {
-                            try
+                            string processName = Path.GetFileNameWithoutExtension(fileOnly);
+                            if (!SetupForm.AutoLaunchNoStartIfRunning || (SetupForm.AutoLaunchNoStartIfRunning && !IsProcessRunning(processName)))
                             {
-                                ProcessStartInfo startInfo = new ProcessStartInfo(fileOnly)
+                                string extension = Path.GetExtension(fileOnly).ToLower();
+                                if (extension == ".exe" || extension == ".cmd" || extension == ".bat")
                                 {
-                                    //LoadUserProfile = true,
-                                    UseShellExecute = true,
-                                    CreateNoWindow = true,
-                                    Arguments = arguments,
-                                    WorkingDirectory = Path.GetDirectoryName(fileOnly)
-                                };
+                                    ProcessStartInfo startInfo = new ProcessStartInfo(fileOnly)
+                                    {
+                                        //LoadUserProfile = true,
+                                        WindowStyle = ProcessWindowStyle.Hidden,
+                                        UseShellExecute = true,
+                                        CreateNoWindow = true,
+                                        Arguments = arguments,
+                                        WorkingDirectory = Path.GetDirectoryName(fileOnly)
+                                    };
 
-                                Process p = Process.Start(startInfo);
-                                _started_processes.Add(p);
-                            }
-                            catch
-                            {
+                                    Process p = Process.Start(startInfo);
+                                    _started_processes.Add(p);
+                                }
                             }
                         }
+                        catch
+                        { }
                     }
                 }
             }

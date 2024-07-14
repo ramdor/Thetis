@@ -994,7 +994,12 @@ namespace Thetis
             get { return rx2_preamp_offset; }
             set { rx2_preamp_offset = value; }
         }
-
+        private static float tx_attenuator_offset = 0.0f;
+        public static float TXAttenuatorOffset
+        {
+            get { return tx_attenuator_offset; }
+            set { tx_attenuator_offset = value; }
+        }
         private static bool tx_display_cal_control = false;
         public static bool TXDisplayCalControl
         {
@@ -3869,6 +3874,7 @@ namespace Thetis
                 if (!local_mox || (local_mox && displayduplex))
                 {
                     fOffset += rx1_preamp_offset;
+                    if (local_mox && displayduplex) fOffset += tx_attenuator_offset; //[2.10.3.6]MW0LGE att_fix
                 }
 
                 return fOffset;
