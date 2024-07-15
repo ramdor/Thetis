@@ -443,6 +443,9 @@ namespace Thetis
             _meterThreadRunning = false;
 
             _openHPSDR_appdatapath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
+
+            _network_manager.StartListeningUDP("192.168.0.76", 12001, Guid.Empty);
+            _network_manager.StartListeningTCPIP("192.168.0.76", 9000, Guid.Empty);
         }
 
         //
@@ -3889,7 +3892,7 @@ namespace Thetis
                                 _readings_text_strings[key] = formatNumber(_owningMeter.VfoB);
                             break;
                         case "vfoasub":
-                            if (_owningMeter.VfoSub >= 0 && rx == 1 && _owningMeter.RX2Enabled && _owningMeter.Split) // when -999.999
+                            if (_owningMeter.VfoSub >= 0 && rx == 1 && _owningMeter.RX2Enabled && (_owningMeter.Split || _owningMeter.MultiRxEnabled)) // when -999.999
                                 _readings_text_strings[key] = formatNumber(_owningMeter.VfoSub);
                             else
                                 _readings_text_strings[key] = "";
