@@ -23,6 +23,23 @@ namespace Thetis
 
         private void btnSelect_Click(object sender, EventArgs e)
         {
+            if (comboAddresses.Text.Contains(":"))
+            {
+                string[] parts = comboAddresses.Text.Split(':');
+                if (parts.Length == 2)
+                {
+                    //port is defined
+                    int oldP = _port;
+                    _bPortOk = int.TryParse(parts[1], out _port);
+                    if (_bPortOk)
+                    {
+                        _ip = parts[0] + ":" + parts[1];
+                        return;
+                    }
+                    _port = oldP;
+                }
+            }
+
             if (_port != -1 && _bPortOk)
             {
                 _ip = comboAddresses.Text + ":" + _port.ToString();
@@ -47,6 +64,10 @@ namespace Thetis
         public string IP
         {
             get { return _ip; }
+        }
+        public int Port
+        {
+            get { return _port; }
         }
 
         public void Init(string sIPPort, bool addBroadcast = false)
