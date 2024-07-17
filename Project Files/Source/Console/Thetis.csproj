@@ -714,6 +714,8 @@
     <None Include="Resources\cat_tcp_status.png" />
     <None Include="Resources\cat_serial_status.png" />
     <None Include="Resources\tci_status.png" />
+    <None Include="Resources\trash_black.png" />
+    <None Include="Resources\trash.png" />
     <Content Include="thetis-icon.ico" />
     <None Include="Resources\thetis-logo1.png" />
     <None Include="Resources\cross_rl.cur" />

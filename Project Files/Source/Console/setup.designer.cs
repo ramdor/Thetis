@@ -2599,7 +2599,6 @@
             this.labelTS607 = new System.Windows.Forms.LabelTS();
             this.labelTS606 = new System.Windows.Forms.LabelTS();
             this.udCFCPicDBPerLine = new System.Windows.Forms.NumericUpDownTS();
-            this.picCFC = new System.Windows.Forms.PictureBox();
             this.lblCFCPEG = new System.Windows.Forms.LabelTS();
             this.lblCFCPEG15 = new System.Windows.Forms.LabelTS();
             this.lblCFCPEG0 = new System.Windows.Forms.LabelTS();
@@ -2654,6 +2653,7 @@
             this.tbCFC0 = new System.Windows.Forms.TrackBarTS();
             this.tbCFC1 = new System.Windows.Forms.TrackBarTS();
             this.tbCFC2 = new System.Windows.Forms.TrackBarTS();
+            this.picCFC = new System.Windows.Forms.PictureBox();
             this.tpTransmit = new System.Windows.Forms.TabPage();
             this.chkRecoverPAProfileFromTXProfile = new System.Windows.Forms.CheckBoxTS();
             this.chkHighlightTXProfileSaveItems = new System.Windows.Forms.CheckBoxTS();
@@ -3474,6 +3474,30 @@
             this.comboAndromedaCATPort = new System.Windows.Forms.ComboBoxTS();
             this.labelTSPort = new System.Windows.Forms.LabelTS();
             this.chkEnableAndromeda = new System.Windows.Forms.CheckBoxTS();
+            this.tpMultiMetersIO = new System.Windows.Forms.TabPage();
+            this.groupBoxTS40 = new System.Windows.Forms.GroupBoxTS();
+            this.groupBoxTS39 = new System.Windows.Forms.GroupBoxTS();
+            this.btnMMIO_network_delete = new System.Windows.Forms.ButtonTS();
+            this.pnlMMIO_network_container = new System.Windows.Forms.PanelTS();
+            this.pnlMMIO_network_rxdata = new System.Windows.Forms.PanelTS();
+            this.labelTS215 = new System.Windows.Forms.LabelTS();
+            this.chkMMIO_network_enabled = new System.Windows.Forms.CheckBoxTS();
+            this.pnlMMIO_network_listening = new System.Windows.Forms.PanelTS();
+            this.labelTS214 = new System.Windows.Forms.LabelTS();
+            this.labelTS213 = new System.Windows.Forms.LabelTS();
+            this.txtMMIO_network_4char = new System.Windows.Forms.TextBoxTS();
+            this.labelTS212 = new System.Windows.Forms.LabelTS();
+            this.btnMMIO_network_ip_port_ip4 = new System.Windows.Forms.ButtonTS();
+            this.txtMMIO_network_ip_port = new System.Windows.Forms.TextBoxTS();
+            this.labelTS211 = new System.Windows.Forms.LabelTS();
+            this.radMMIO_network_both = new System.Windows.Forms.RadioButtonTS();
+            this.radMMIO_network_out = new System.Windows.Forms.RadioButtonTS();
+            this.radMMIO_network_in = new System.Windows.Forms.RadioButtonTS();
+            this.labelTS210 = new System.Windows.Forms.LabelTS();
+            this.comboMMIO_network_format_in = new System.Windows.Forms.ComboBoxTS();
+            this.lstMMIO_network_list = new System.Windows.Forms.ListBox();
+            this.radMMIO_network_add_udp = new System.Windows.Forms.ButtonTS();
+            this.btnMMIO_network_add_tcpip = new System.Windows.Forms.ButtonTS();
             this.tpTests = new System.Windows.Forms.TabPage();
             this.groupBoxTS30 = new System.Windows.Forms.GroupBoxTS();
             this.btnShowSeqLog = new System.Windows.Forms.ButtonTS();
@@ -4304,7 +4328,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udSCFLowCut)).BeginInit();
             this.tpDSPCFC.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udCFCPicDBPerLine)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picCFC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbCFCPEQGAIN)).BeginInit();
             this.grpPhRot.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udPHROTStages)).BeginInit();
@@ -4340,6 +4363,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbCFC0)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbCFC1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbCFC2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picCFC)).BeginInit();
             this.tpTransmit.SuspendLayout();
             this.grpDSPSpeechProcessor.SuspendLayout();
             this.grpExtTXInhibit.SuspendLayout();
@@ -4564,6 +4588,9 @@
             this.tpAndromeda.SuspendLayout();
             this.grpAndrOptions.SuspendLayout();
             this.grpAndr.SuspendLayout();
+            this.tpMultiMetersIO.SuspendLayout();
+            this.groupBoxTS39.SuspendLayout();
+            this.pnlMMIO_network_container.SuspendLayout();
             this.tpTests.SuspendLayout();
             this.groupBoxTS30.SuspendLayout();
             this.grpBoxTS1.SuspendLayout();
@@ -42101,7 +42128,6 @@
             this.tpDSPCFC.Controls.Add(this.labelTS607);
             this.tpDSPCFC.Controls.Add(this.labelTS606);
             this.tpDSPCFC.Controls.Add(this.udCFCPicDBPerLine);
-            this.tpDSPCFC.Controls.Add(this.picCFC);
             this.tpDSPCFC.Controls.Add(this.lblCFCPEG);
             this.tpDSPCFC.Controls.Add(this.lblCFCPEG15);
             this.tpDSPCFC.Controls.Add(this.lblCFCPEG0);
@@ -42150,6 +42176,7 @@
             this.tpDSPCFC.Controls.Add(this.tbCFC0);
             this.tpDSPCFC.Controls.Add(this.tbCFC1);
             this.tpDSPCFC.Controls.Add(this.tbCFC2);
+            this.tpDSPCFC.Controls.Add(this.picCFC);
             this.tpDSPCFC.Location = new System.Drawing.Point(4, 22);
             this.tpDSPCFC.Name = "tpDSPCFC";
             this.tpDSPCFC.Padding = new System.Windows.Forms.Padding(3);
@@ -42205,17 +42232,6 @@
             0,
             0});
             this.udCFCPicDBPerLine.ValueChanged += new System.EventHandler(this.udCFCPicDBPerLine_ValueChanged);
-            // 
-            // picCFC
-            // 
-            this.picCFC.BackColor = System.Drawing.Color.Black;
-            this.picCFC.Location = new System.Drawing.Point(428, 73);
-            this.picCFC.Name = "picCFC";
-            this.picCFC.Size = new System.Drawing.Size(290, 129);
-            this.picCFC.TabIndex = 175;
-            this.picCFC.TabStop = false;
-            this.picCFC.Click += new System.EventHandler(this.picCFC_Click);
-            this.picCFC.Paint += new System.Windows.Forms.PaintEventHandler(this.picCFC_Paint);
             // 
             // lblCFCPEG
             // 
@@ -43088,6 +43104,17 @@
             this.tbCFC2.TabIndex = 127;
             this.tbCFC2.Value = 5;
             this.tbCFC2.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // picCFC
+            // 
+            this.picCFC.BackColor = System.Drawing.Color.Black;
+            this.picCFC.Location = new System.Drawing.Point(428, 73);
+            this.picCFC.Name = "picCFC";
+            this.picCFC.Size = new System.Drawing.Size(290, 129);
+            this.picCFC.TabIndex = 175;
+            this.picCFC.TabStop = false;
+            this.picCFC.Click += new System.EventHandler(this.picCFC_Click);
+            this.picCFC.Paint += new System.Windows.Forms.PaintEventHandler(this.picCFC_Paint);
             // 
             // tpTransmit
             // 
@@ -52742,6 +52769,7 @@
             this.tcCAT.Controls.Add(this.tpCAToptions);
             this.tcCAT.Controls.Add(this.tpUserInterface);
             this.tcCAT.Controls.Add(this.tpAndromeda);
+            this.tcCAT.Controls.Add(this.tpMultiMetersIO);
             this.tcCAT.Location = new System.Drawing.Point(0, 3);
             this.tcCAT.Name = "tcCAT";
             this.tcCAT.SelectedIndex = 0;
@@ -55147,6 +55175,297 @@
             this.chkEnableAndromeda.TabIndex = 1;
             this.chkEnableAndromeda.Text = "Enable Panel";
             this.chkEnableAndromeda.CheckedChanged += new System.EventHandler(this.ChkEnableAndromeda_CheckedChanged);
+            // 
+            // tpMultiMetersIO
+            // 
+            this.tpMultiMetersIO.BackColor = System.Drawing.SystemColors.Control;
+            this.tpMultiMetersIO.Controls.Add(this.groupBoxTS40);
+            this.tpMultiMetersIO.Controls.Add(this.groupBoxTS39);
+            this.tpMultiMetersIO.Location = new System.Drawing.Point(4, 22);
+            this.tpMultiMetersIO.Name = "tpMultiMetersIO";
+            this.tpMultiMetersIO.Size = new System.Drawing.Size(724, 407);
+            this.tpMultiMetersIO.TabIndex = 7;
+            this.tpMultiMetersIO.Text = "MultiMeters I/O";
+            // 
+            // groupBoxTS40
+            // 
+            this.groupBoxTS40.Location = new System.Drawing.Point(14, 237);
+            this.groupBoxTS40.Name = "groupBoxTS40";
+            this.groupBoxTS40.Size = new System.Drawing.Size(289, 122);
+            this.groupBoxTS40.TabIndex = 1;
+            this.groupBoxTS40.TabStop = false;
+            this.groupBoxTS40.Text = "Serial I/O";
+            // 
+            // groupBoxTS39
+            // 
+            this.groupBoxTS39.Controls.Add(this.btnMMIO_network_delete);
+            this.groupBoxTS39.Controls.Add(this.pnlMMIO_network_container);
+            this.groupBoxTS39.Controls.Add(this.lstMMIO_network_list);
+            this.groupBoxTS39.Controls.Add(this.radMMIO_network_add_udp);
+            this.groupBoxTS39.Controls.Add(this.btnMMIO_network_add_tcpip);
+            this.groupBoxTS39.Location = new System.Drawing.Point(14, 8);
+            this.groupBoxTS39.Name = "groupBoxTS39";
+            this.groupBoxTS39.Size = new System.Drawing.Size(590, 223);
+            this.groupBoxTS39.TabIndex = 0;
+            this.groupBoxTS39.TabStop = false;
+            this.groupBoxTS39.Text = "Network I/O";
+            // 
+            // btnMMIO_network_delete
+            // 
+            this.btnMMIO_network_delete.Image = global::Thetis.Properties.Resources.trash_black;
+            this.btnMMIO_network_delete.Location = new System.Drawing.Point(137, 159);
+            this.btnMMIO_network_delete.Name = "btnMMIO_network_delete";
+            this.btnMMIO_network_delete.Selectable = true;
+            this.btnMMIO_network_delete.Size = new System.Drawing.Size(29, 52);
+            this.btnMMIO_network_delete.TabIndex = 99;
+            this.btnMMIO_network_delete.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_delete.Click += new System.EventHandler(this.btnMMIO_network_delete_Click);
+            // 
+            // pnlMMIO_network_container
+            // 
+            this.pnlMMIO_network_container.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlMMIO_network_container.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlMMIO_network_container.Controls.Add(this.pnlMMIO_network_rxdata);
+            this.pnlMMIO_network_container.Controls.Add(this.labelTS215);
+            this.pnlMMIO_network_container.Controls.Add(this.chkMMIO_network_enabled);
+            this.pnlMMIO_network_container.Controls.Add(this.pnlMMIO_network_listening);
+            this.pnlMMIO_network_container.Controls.Add(this.labelTS214);
+            this.pnlMMIO_network_container.Controls.Add(this.labelTS213);
+            this.pnlMMIO_network_container.Controls.Add(this.txtMMIO_network_4char);
+            this.pnlMMIO_network_container.Controls.Add(this.labelTS212);
+            this.pnlMMIO_network_container.Controls.Add(this.btnMMIO_network_ip_port_ip4);
+            this.pnlMMIO_network_container.Controls.Add(this.txtMMIO_network_ip_port);
+            this.pnlMMIO_network_container.Controls.Add(this.labelTS211);
+            this.pnlMMIO_network_container.Controls.Add(this.radMMIO_network_both);
+            this.pnlMMIO_network_container.Controls.Add(this.radMMIO_network_out);
+            this.pnlMMIO_network_container.Controls.Add(this.radMMIO_network_in);
+            this.pnlMMIO_network_container.Controls.Add(this.labelTS210);
+            this.pnlMMIO_network_container.Controls.Add(this.comboMMIO_network_format_in);
+            this.pnlMMIO_network_container.Enabled = false;
+            this.pnlMMIO_network_container.Location = new System.Drawing.Point(172, 19);
+            this.pnlMMIO_network_container.Name = "pnlMMIO_network_container";
+            this.pnlMMIO_network_container.Size = new System.Drawing.Size(290, 192);
+            this.pnlMMIO_network_container.TabIndex = 98;
+            // 
+            // pnlMMIO_network_rxdata
+            // 
+            this.pnlMMIO_network_rxdata.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlMMIO_network_rxdata.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlMMIO_network_rxdata.BackColor = System.Drawing.Color.Gray;
+            this.pnlMMIO_network_rxdata.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pnlMMIO_network_rxdata.Location = new System.Drawing.Point(265, 13);
+            this.pnlMMIO_network_rxdata.Name = "pnlMMIO_network_rxdata";
+            this.pnlMMIO_network_rxdata.Size = new System.Drawing.Size(12, 12);
+            this.pnlMMIO_network_rxdata.TabIndex = 114;
+            // 
+            // labelTS215
+            // 
+            this.labelTS215.AutoSize = true;
+            this.labelTS215.Image = null;
+            this.labelTS215.Location = new System.Drawing.Point(217, 12);
+            this.labelTS215.Name = "labelTS215";
+            this.labelTS215.Size = new System.Drawing.Size(42, 13);
+            this.labelTS215.TabIndex = 113;
+            this.labelTS215.Text = "rx data:";
+            // 
+            // chkMMIO_network_enabled
+            // 
+            this.chkMMIO_network_enabled.AutoSize = true;
+            this.chkMMIO_network_enabled.Image = null;
+            this.chkMMIO_network_enabled.Location = new System.Drawing.Point(111, 12);
+            this.chkMMIO_network_enabled.Name = "chkMMIO_network_enabled";
+            this.chkMMIO_network_enabled.Size = new System.Drawing.Size(65, 17);
+            this.chkMMIO_network_enabled.TabIndex = 112;
+            this.chkMMIO_network_enabled.Text = "Enabled";
+            this.chkMMIO_network_enabled.UseVisualStyleBackColor = true;
+            this.chkMMIO_network_enabled.CheckedChanged += new System.EventHandler(this.chkMMIO_network_enabled_CheckedChanged);
+            // 
+            // pnlMMIO_network_listening
+            // 
+            this.pnlMMIO_network_listening.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlMMIO_network_listening.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlMMIO_network_listening.BackColor = System.Drawing.Color.Gray;
+            this.pnlMMIO_network_listening.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pnlMMIO_network_listening.Location = new System.Drawing.Point(71, 14);
+            this.pnlMMIO_network_listening.Name = "pnlMMIO_network_listening";
+            this.pnlMMIO_network_listening.Size = new System.Drawing.Size(12, 12);
+            this.pnlMMIO_network_listening.TabIndex = 111;
+            // 
+            // labelTS214
+            // 
+            this.labelTS214.AutoSize = true;
+            this.labelTS214.Image = null;
+            this.labelTS214.Location = new System.Drawing.Point(13, 13);
+            this.labelTS214.Name = "labelTS214";
+            this.labelTS214.Size = new System.Drawing.Size(52, 13);
+            this.labelTS214.TabIndex = 110;
+            this.labelTS214.Text = "Listening:";
+            // 
+            // labelTS213
+            // 
+            this.labelTS213.AutoSize = true;
+            this.labelTS213.Image = null;
+            this.labelTS213.Location = new System.Drawing.Point(13, 63);
+            this.labelTS213.Name = "labelTS213";
+            this.labelTS213.Size = new System.Drawing.Size(52, 13);
+            this.labelTS213.TabIndex = 109;
+            this.labelTS213.Text = "4Char ID:";
+            // 
+            // txtMMIO_network_4char
+            // 
+            this.txtMMIO_network_4char.Location = new System.Drawing.Point(71, 60);
+            this.txtMMIO_network_4char.MaxLength = 4;
+            this.txtMMIO_network_4char.Name = "txtMMIO_network_4char";
+            this.txtMMIO_network_4char.Size = new System.Drawing.Size(43, 20);
+            this.txtMMIO_network_4char.TabIndex = 108;
+            this.txtMMIO_network_4char.Text = "AGHJ";
+            this.toolTip1.SetToolTip(this.txtMMIO_network_4char, "The bind IP and the port that the server uses to listen on");
+            this.txtMMIO_network_4char.Click += new System.EventHandler(this.txtMMIO_network_4char_Click);
+            this.txtMMIO_network_4char.TextChanged += new System.EventHandler(this.txtMMIO_network_4char_TextChanged);
+            this.txtMMIO_network_4char.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtMMIO_network_4char_KeyPress);
+            // 
+            // labelTS212
+            // 
+            this.labelTS212.AutoSize = true;
+            this.labelTS212.Image = null;
+            this.labelTS212.Location = new System.Drawing.Point(2, 37);
+            this.labelTS212.Name = "labelTS212";
+            this.labelTS212.Size = new System.Drawing.Size(63, 13);
+            this.labelTS212.TabIndex = 107;
+            this.labelTS212.Text = "Bind IP:Port";
+            // 
+            // btnMMIO_network_ip_port_ip4
+            // 
+            this.btnMMIO_network_ip_port_ip4.Image = null;
+            this.btnMMIO_network_ip_port_ip4.Location = new System.Drawing.Point(199, 30);
+            this.btnMMIO_network_ip_port_ip4.Name = "btnMMIO_network_ip_port_ip4";
+            this.btnMMIO_network_ip_port_ip4.Selectable = true;
+            this.btnMMIO_network_ip_port_ip4.Size = new System.Drawing.Size(42, 26);
+            this.btnMMIO_network_ip_port_ip4.TabIndex = 106;
+            this.btnMMIO_network_ip_port_ip4.Text = "IPv4";
+            this.toolTip1.SetToolTip(this.btnMMIO_network_ip_port_ip4, "Show list if IPv4 addresses.");
+            this.btnMMIO_network_ip_port_ip4.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_ip_port_ip4.Click += new System.EventHandler(this.btnMMIO_network_ip_port_ip4_Click);
+            // 
+            // txtMMIO_network_ip_port
+            // 
+            this.txtMMIO_network_ip_port.Location = new System.Drawing.Point(71, 34);
+            this.txtMMIO_network_ip_port.Name = "txtMMIO_network_ip_port";
+            this.txtMMIO_network_ip_port.Size = new System.Drawing.Size(122, 20);
+            this.txtMMIO_network_ip_port.TabIndex = 104;
+            this.txtMMIO_network_ip_port.Text = "127.0.0.1:50001";
+            this.toolTip1.SetToolTip(this.txtMMIO_network_ip_port, "The bind IP and the port that the server uses to listen on");
+            this.txtMMIO_network_ip_port.Click += new System.EventHandler(this.txtMMIO_network_ip_port_Click);
+            this.txtMMIO_network_ip_port.TextChanged += new System.EventHandler(this.txtMMIO_network_ip_port_TextChanged);
+            this.txtMMIO_network_ip_port.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtMMIO_network_ip_port_KeyPress);
+            // 
+            // labelTS211
+            // 
+            this.labelTS211.AutoSize = true;
+            this.labelTS211.Image = null;
+            this.labelTS211.Location = new System.Drawing.Point(13, 92);
+            this.labelTS211.Name = "labelTS211";
+            this.labelTS211.Size = new System.Drawing.Size(52, 13);
+            this.labelTS211.TabIndex = 103;
+            this.labelTS211.Text = "Direction:";
+            // 
+            // radMMIO_network_both
+            // 
+            this.radMMIO_network_both.AutoSize = true;
+            this.radMMIO_network_both.Image = null;
+            this.radMMIO_network_both.Location = new System.Drawing.Point(159, 90);
+            this.radMMIO_network_both.Name = "radMMIO_network_both";
+            this.radMMIO_network_both.Size = new System.Drawing.Size(47, 17);
+            this.radMMIO_network_both.TabIndex = 102;
+            this.radMMIO_network_both.Text = "Both";
+            this.radMMIO_network_both.UseVisualStyleBackColor = true;
+            this.radMMIO_network_both.CheckedChanged += new System.EventHandler(this.radMMIO_network_both_CheckedChanged);
+            // 
+            // radMMIO_network_out
+            // 
+            this.radMMIO_network_out.AutoSize = true;
+            this.radMMIO_network_out.Image = null;
+            this.radMMIO_network_out.Location = new System.Drawing.Point(111, 90);
+            this.radMMIO_network_out.Name = "radMMIO_network_out";
+            this.radMMIO_network_out.Size = new System.Drawing.Size(42, 17);
+            this.radMMIO_network_out.TabIndex = 101;
+            this.radMMIO_network_out.Text = "Out";
+            this.radMMIO_network_out.UseVisualStyleBackColor = true;
+            this.radMMIO_network_out.CheckedChanged += new System.EventHandler(this.radMMIO_network_out_CheckedChanged);
+            // 
+            // radMMIO_network_in
+            // 
+            this.radMMIO_network_in.AutoSize = true;
+            this.radMMIO_network_in.Checked = true;
+            this.radMMIO_network_in.Image = null;
+            this.radMMIO_network_in.Location = new System.Drawing.Point(71, 90);
+            this.radMMIO_network_in.Name = "radMMIO_network_in";
+            this.radMMIO_network_in.Size = new System.Drawing.Size(34, 17);
+            this.radMMIO_network_in.TabIndex = 100;
+            this.radMMIO_network_in.TabStop = true;
+            this.radMMIO_network_in.Text = "In";
+            this.radMMIO_network_in.UseVisualStyleBackColor = true;
+            this.radMMIO_network_in.CheckedChanged += new System.EventHandler(this.radMMIO_network_in_CheckedChanged);
+            // 
+            // labelTS210
+            // 
+            this.labelTS210.AutoSize = true;
+            this.labelTS210.Image = null;
+            this.labelTS210.Location = new System.Drawing.Point(6, 116);
+            this.labelTS210.Name = "labelTS210";
+            this.labelTS210.Size = new System.Drawing.Size(59, 13);
+            this.labelTS210.TabIndex = 99;
+            this.labelTS210.Text = "Format (in):";
+            // 
+            // comboMMIO_network_format_in
+            // 
+            this.comboMMIO_network_format_in.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboMMIO_network_format_in.FormattingEnabled = true;
+            this.comboMMIO_network_format_in.Items.AddRange(new object[] {
+            "JSON",
+            "XML",
+            "RAW"});
+            this.comboMMIO_network_format_in.Location = new System.Drawing.Point(71, 113);
+            this.comboMMIO_network_format_in.Name = "comboMMIO_network_format_in";
+            this.comboMMIO_network_format_in.Size = new System.Drawing.Size(135, 21);
+            this.comboMMIO_network_format_in.TabIndex = 98;
+            this.comboMMIO_network_format_in.SelectedIndexChanged += new System.EventHandler(this.comboMMIO_network_format_in_SelectedIndexChanged);
+            // 
+            // lstMMIO_network_list
+            // 
+            this.lstMMIO_network_list.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.lstMMIO_network_list.FormattingEnabled = true;
+            this.lstMMIO_network_list.Location = new System.Drawing.Point(11, 19);
+            this.lstMMIO_network_list.Name = "lstMMIO_network_list";
+            this.lstMMIO_network_list.Size = new System.Drawing.Size(155, 134);
+            this.lstMMIO_network_list.TabIndex = 91;
+            this.lstMMIO_network_list.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lstMMIO_network_list_DrawItem);
+            this.lstMMIO_network_list.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.lstMMIO_network_list_MeasureItem);
+            this.lstMMIO_network_list.SelectedIndexChanged += new System.EventHandler(this.lstMMIO_network_list_SelectedIndexChanged);
+            // 
+            // radMMIO_network_add_udp
+            // 
+            this.radMMIO_network_add_udp.Image = null;
+            this.radMMIO_network_add_udp.Location = new System.Drawing.Point(11, 159);
+            this.radMMIO_network_add_udp.Name = "radMMIO_network_add_udp";
+            this.radMMIO_network_add_udp.Selectable = true;
+            this.radMMIO_network_add_udp.Size = new System.Drawing.Size(120, 23);
+            this.radMMIO_network_add_udp.TabIndex = 1;
+            this.radMMIO_network_add_udp.Text = "Add UDP Listener";
+            this.radMMIO_network_add_udp.UseVisualStyleBackColor = true;
+            this.radMMIO_network_add_udp.Click += new System.EventHandler(this.radMMIO_network_add_udp_Click);
+            // 
+            // btnMMIO_network_add_tcpip
+            // 
+            this.btnMMIO_network_add_tcpip.Image = null;
+            this.btnMMIO_network_add_tcpip.Location = new System.Drawing.Point(11, 188);
+            this.btnMMIO_network_add_tcpip.Name = "btnMMIO_network_add_tcpip";
+            this.btnMMIO_network_add_tcpip.Selectable = true;
+            this.btnMMIO_network_add_tcpip.Size = new System.Drawing.Size(120, 23);
+            this.btnMMIO_network_add_tcpip.TabIndex = 0;
+            this.btnMMIO_network_add_tcpip.Text = "Add TCP/IP Listener";
+            this.btnMMIO_network_add_tcpip.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_add_tcpip.Click += new System.EventHandler(this.btnMMIO_network_add_tcpip_Click);
             // 
             // tpTests
             // 
@@ -59410,7 +59729,6 @@
             this.tpDSPCFC.ResumeLayout(false);
             this.tpDSPCFC.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udCFCPicDBPerLine)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picCFC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbCFCPEQGAIN)).EndInit();
             this.grpPhRot.ResumeLayout(false);
             this.grpPhRot.PerformLayout();
@@ -59447,6 +59765,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbCFC0)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbCFC1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbCFC2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picCFC)).EndInit();
             this.tpTransmit.ResumeLayout(false);
             this.tpTransmit.PerformLayout();
             this.grpDSPSpeechProcessor.ResumeLayout(false);
@@ -59721,6 +60040,10 @@
             this.grpAndrOptions.PerformLayout();
             this.grpAndr.ResumeLayout(false);
             this.grpAndr.PerformLayout();
+            this.tpMultiMetersIO.ResumeLayout(false);
+            this.groupBoxTS39.ResumeLayout(false);
+            this.pnlMMIO_network_container.ResumeLayout(false);
+            this.pnlMMIO_network_container.PerformLayout();
             this.tpTests.ResumeLayout(false);
             this.groupBoxTS30.ResumeLayout(false);
             this.grpBoxTS1.ResumeLayout(false);
@@ -63493,5 +63816,29 @@
         private ColorButton clrbtnTextOverlay_TextBackColour2;
         private ColorButton clrbtnTextOverlay_TextBackColour1;
         private PictureBox pbTextOverlay_variables;
+        private TabPage tpMultiMetersIO;
+        private GroupBoxTS groupBoxTS40;
+        private GroupBoxTS groupBoxTS39;
+        private ButtonTS btnMMIO_network_add_tcpip;
+        private ListBox lstMMIO_network_list;
+        private ButtonTS radMMIO_network_add_udp;
+        private PanelTS pnlMMIO_network_container;
+        private LabelTS labelTS211;
+        private RadioButtonTS radMMIO_network_both;
+        private RadioButtonTS radMMIO_network_out;
+        private RadioButtonTS radMMIO_network_in;
+        private LabelTS labelTS210;
+        private ComboBoxTS comboMMIO_network_format_in;
+        private ButtonTS btnMMIO_network_delete;
+        private LabelTS labelTS213;
+        private TextBoxTS txtMMIO_network_4char;
+        private LabelTS labelTS212;
+        private ButtonTS btnMMIO_network_ip_port_ip4;
+        private TextBoxTS txtMMIO_network_ip_port;
+        private PanelTS pnlMMIO_network_listening;
+        private LabelTS labelTS214;
+        private CheckBoxTS chkMMIO_network_enabled;
+        private PanelTS pnlMMIO_network_rxdata;
+        private LabelTS labelTS215;
     }
 }

@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Security.Cryptography;
 
 //directX
 using SharpDX;
@@ -158,8 +159,6 @@ namespace Thetis
         private static Dictionary<string, System.Drawing.Bitmap> _pooledImages;
 
         private static string _openHPSDR_appdatapath;
-
-        private static NetworkManager _network_manager;
 
         //public static float[] _newSpectrumPassband;
         //public static float[] _currentSpectrumPassband;
@@ -406,10 +405,9 @@ namespace Thetis
         static MeterManager()
         {
             //
-            _network_manager = new NetworkManager();
-            _network_manager.ClientConnected += NetworkManager_ClientConnected;
-            _network_manager.ClientDisconnected += NetworkManager_ClientDisconnected;
-            _network_manager.ReceivedDataString += NetworkManager_ReceivedDataString;
+            MultiMeterIO.ClientConnected += MultiMeterIO_ClientConnected;
+            MultiMeterIO.ClientDisconnected += MultiMeterIO_ClientDisconnected;
+            MultiMeterIO.ReceivedDataString += MultiMeterIO_ReceivedDataString;
 
             // static constructor
             _rx1VHForAbove = false;
@@ -444,24 +442,24 @@ namespace Thetis
 
             _openHPSDR_appdatapath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
 
-            _network_manager.StartListeningUDP("192.168.0.76", 12001, Guid.Empty);
-            _network_manager.StartListeningTCPIP("192.168.0.76", 9000, Guid.Empty);
+            //MultiMeterIO.StartListeningUDP("127.0.0.1", 12001, Guid.Empty);
+            //MultiMeterIO.StartListeningTCPIP("127.0.0.1", 9000, Guid.Empty);
         }
 
         //
-        private static void NetworkManager_ClientConnected(Guid guid)
+        private static void MultiMeterIO_ClientConnected(Guid guid)
         {
             // Handle client connected event
             Debug.Print("connected : " + guid);
         }
 
-        private static void NetworkManager_ClientDisconnected(Guid guid)
+        private static void MultiMeterIO_ClientDisconnected(Guid guid)
         {
             // Handle client disconnected event
             Debug.Print("disconnected : " + guid);
         }
 
-        private static void NetworkManager_ReceivedDataString(Guid guid, string dataString)
+        private static void MultiMeterIO_ReceivedDataString(Guid guid, string dataString)
         {
             // Handle received data string event
             Debug.Print("Data : " + guid + " : [" + dataString + "]");
@@ -1124,9 +1122,7 @@ namespace Thetis
         }
         public static void Shutdown()
         {
-            //
-            _network_manager.StopListeners();
-            //
+            MultiMeterIO.StopListeners();
 
             removeDelegates();
 
@@ -13311,88 +13307,271 @@ namespace Thetis
         }        
         #endregion
     }
-    public class NetworkManager
+    public static class MultiMeterIO
     {
+        private const int DELAY = 100; // msec
+        public enum MMIODirection
+        {
+            IN = 0,
+            OUT = 1,
+            BOTH = 2
+        }
+        public enum MMIOFormat
+        {
+            JSON = 0,
+            XML = 1,
+            RAW = 2
+        }
+        public enum MMIOType
+        {
+            UDP = 0,
+            TCPIP = 1,
+            SERIAL = 2
+        }
+        public class clsMMIO
+        {
+            private Guid _guid;
+            private MMIODirection _direction;
+            private string _ip;
+            private int _port;
+            private MMIOFormat _format;
+            private MMIOType _type;
+            private bool _listener_running;
+            private string _four_char;
+            private bool _enabled;
+            private bool _listener_started;
+            public clsMMIO()
+            {
+                _enabled = true;
+                _guid = Guid.NewGuid();
+                _type = MMIOType.UDP;
+                _ip = "";
+                _port = 0;
+                _listener_running = false;
+                _four_char = FourChar(_ip, _port, _guid);
+            }
+            public clsMMIO(Guid guid, MMIOType type, string ip, int port, bool enabled)
+            {
+                _enabled = enabled;
+
+                if (guid == Guid.Empty)
+                    _guid = Guid.NewGuid();
+                else
+                    _guid = guid;
+
+                _type = type;
+                _ip = ip;
+                _port = port;
+                _listener_running = false;
+                _enabled = enabled;
+
+                _four_char = FourChar(_ip, _port, _guid);
+            }
+            public clsMMIO(MMIOType type, string ip, int port, bool enabled)
+            {
+                _enabled = enabled;
+                _guid = Guid.NewGuid();
+                _type = type;
+                _ip = ip;
+                _port = port;
+                _listener_running = false;
+                _enabled = enabled;
+
+                _four_char = FourChar(_ip, _port, _guid);
+            }
+            public Guid Guid
+            {
+                get { return _guid; }
+                set { 
+                    _guid = value;
+                    _four_char = FourChar(_ip, _port, _guid);
+                }
+            }
+            public MMIODirection Direction
+            {
+                get { return _direction; }
+                set { _direction = value; }
+            }
+            public string IP
+            {
+                get { return _ip; }
+                set { 
+                    _ip = value;
+                    _four_char = FourChar(_ip, _port, _guid);
+                }
+            }
+            public int Port
+            {
+                get { return _port; }
+                set { 
+                    _port = value;
+                    _four_char = FourChar(_ip, _port, _guid);
+                }
+            }
+            public MMIOFormat Format
+            {
+                get { return _format; }
+                set { _format = value; }
+            }
+            public MMIOType Type
+            {
+                get { return _type; }
+                set { _type = value; }
+            }
+            public bool ListenerRunning
+            {
+                get { return _listener_running; }
+                set { _listener_running = value; }
+            }
+            public bool ListenerStarted
+            {
+                get { return _listener_started; }
+                set { _listener_started = value; }
+            }
+            public string FourChar
+            {
+                get { return _four_char; }
+            }
+            public bool Enabled
+            {
+                get { return _enabled; }
+                set { _enabled = value; }
+            }
+            public bool StartListening()
+            {
+                bool ok = false;
+                switch(_type)
+                {
+                    case MMIOType.UDP:
+                        ok = MultiMeterIO.StartListeningUDP(this);
+                        break;
+                    case MMIOType.TCPIP:
+                        ok = MultiMeterIO.StartListeningTCPIP(this);
+                        break;
+                    case MMIOType.SERIAL:
+                        break;
+                }
+                return ok;
+            }
+            public void StopListening()
+            {
+                MultiMeterIO.StopListening(_guid);
+            }
+        }
         // Each startlisten will only accept a single TCP client for that IP/port combo.
         // UDP startlistens can have messages from multiple UDP clients.
-        public event Action<Guid> ClientConnected;
-        public event Action<Guid> ClientDisconnected;
-        public event Action<Guid, string> ReceivedDataString;
+        public static event Action<Guid> ClientConnected;
+        public static event Action<Guid> ClientDisconnected;
+        public static event Action<Guid, string> ReceivedDataString;
+        public static event Action<Guid, MMIOType, bool> Listener;
 
-        private readonly ConcurrentDictionary<Guid, TcpListener> _tcpListeners;
-        private readonly ConcurrentDictionary<Guid, UdpClient> _udpListeners;
-        private readonly ConcurrentDictionary<Guid, TcpClient> _tcpClients;
-        private readonly List<Task> _listenerTasks;
-        private readonly CancellationTokenSource _cancellationTokenSource;
+        private static readonly ConcurrentDictionary<Guid, TcpListener> _tcpListeners;
+        private static readonly ConcurrentDictionary<Guid, UdpClient> _udpListeners;
+        private static readonly ConcurrentDictionary<Guid, TcpClient> _tcpClients;
+        private static readonly List<Task> _listenerTasks;
+        //private static readonly CancellationTokenSource _cancellationTokenSource;
+        private static readonly ConcurrentDictionary<Guid, CancellationTokenSource> _cancellationTokenSource;
+        private static readonly ConcurrentDictionary<Guid, clsMMIO> _mmio_data;
+        private static readonly ConcurrentDictionary<Guid, Task> _guidToTask;
 
-        private readonly object _connectionLock = new object();
+        private static readonly object _connectionLock = new object();
 
-        public NetworkManager()
+        static MultiMeterIO()
         {
-            Debug.Print("NetworkManager Init");
+            Debug.Print("MultiMeterIO Init");
             _tcpListeners = new ConcurrentDictionary<Guid, TcpListener>();
             _udpListeners = new ConcurrentDictionary<Guid, UdpClient>();
             _tcpClients = new ConcurrentDictionary<Guid, TcpClient>();
             _listenerTasks = new List<Task>();
-            _cancellationTokenSource = new CancellationTokenSource();
+            //_cancellationTokenSource = new CancellationTokenSource();
+            _cancellationTokenSource = new ConcurrentDictionary<Guid, CancellationTokenSource>();
+            _mmio_data = new ConcurrentDictionary<Guid, clsMMIO>();
+            _guidToTask = new ConcurrentDictionary<Guid, Task>();
         }
-
-        public Guid StartListeningUDP(string ip, int port, Guid suppliedGuid)
+        public static ConcurrentDictionary<Guid, clsMMIO> Data
         {
-            Guid guid;
-            if (suppliedGuid == Guid.Empty)
-                guid = Guid.NewGuid();
-            else
-                guid = suppliedGuid;
-
+            get { return _mmio_data; }
+        }
+        public static bool StartListeningUDP(clsMMIO mmio)
+        {
+            if (mmio == null) return false;
+            if(mmio.Type != MMIOType.UDP) return false;
+            if (_udpListeners.ContainsKey(mmio.Guid)) return false;
+            
             try
             {
-                UdpClient udpClient = new UdpClient(new IPEndPoint(IPAddress.Parse(ip), port));
+                UdpClient udpClient = new UdpClient(new IPEndPoint(IPAddress.Parse(mmio.IP), mmio.Port));
                 //udpClient.Client.ReceiveTimeout = 1000;
                 udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
-                _udpListeners[guid] = udpClient;
+                _udpListeners[mmio.Guid] = udpClient;
 
-                _listenerTasks.Add(Task.Run(() => ListenForUdp(guid, udpClient, _cancellationTokenSource.Token)));
+                CancellationTokenSource cts = new CancellationTokenSource();
+                bool ok = _cancellationTokenSource.TryAdd(mmio.Guid, cts);
+                if (ok)
+                {
+                    Task listenerTask = Task.Run(() => ListenForUdp(mmio.Guid, udpClient, cts.Token));
+                    _listenerTasks.Add(listenerTask);
 
-                Debug.Print("NetworkManager UDP Listener started : " + guid.ToString());
+                    _guidToTask[mmio.Guid] = listenerTask;
+                    _mmio_data[mmio.Guid].ListenerStarted = true;
+
+                    Debug.Print("MultiMeterIO UDP Listener started : " + mmio.Guid.ToString());
+                }
+                else
+                {
+                    StopListening(mmio.Guid);
+                    return false;
+                }
             }
             catch
             {
-                StopListening(guid);
-                return Guid.Empty;
+                StopListening(mmio.Guid);
+                return false;
             }
 
-            return guid;
+            return true;
         }
 
-        public Guid StartListeningTCPIP(string ip, int port, Guid suppliedGuid)
+        public static bool StartListeningTCPIP(clsMMIO mmio)
         {
-            Guid guid;
-            if (suppliedGuid == Guid.Empty)
-                guid = Guid.NewGuid();
-            else
-                guid = suppliedGuid;
+            if (mmio == null) return false;
+            if (mmio.Type != MMIOType.TCPIP) return false;
+            if (_tcpListeners.ContainsKey(mmio.Guid)) return false;
 
             try
             {
-                TcpListener tcpListener = new TcpListener(IPAddress.Parse(ip), port);
-                _tcpListeners[guid] = tcpListener;
+                TcpListener tcpListener = new TcpListener(IPAddress.Parse(mmio.IP), mmio.Port);
+                _tcpListeners[mmio.Guid] = tcpListener;
                 tcpListener.Start();
 
-                _listenerTasks.Add(Task.Run(() => AcceptTcpClients(guid, tcpListener, _cancellationTokenSource.Token)));
+                CancellationTokenSource cts = new CancellationTokenSource();
+                bool ok = _cancellationTokenSource.TryAdd(mmio.Guid, cts);
+                if (ok)
+                {
+                    Task listenerTask = Task.Run(() => AcceptTcpClients(mmio.Guid, tcpListener, cts.Token));
+                    _listenerTasks.Add(listenerTask);
 
-                Debug.Print("NetworkManager TCP/IP Listener started : " + guid.ToString());
+                    _guidToTask[mmio.Guid] = listenerTask;
+                    _mmio_data[mmio.Guid].ListenerStarted = true;
+
+                    Debug.Print("MultiMeterIO TCP/IP Listener started : " + mmio.Guid.ToString());
+                }
+                else
+                {
+                    StopListening(mmio.Guid);
+                    return false;
+                }
             }
             catch
             {
-                StopListening(guid);
-                return Guid.Empty;
+                StopListening(mmio.Guid);
+                return false;
             }
 
-            return guid;
+            return true;
         }
 
-        public void StopListening(Guid guid)
+        public static async void StopListening(Guid guid)
         {
             TcpListener tcpListener;
             if (_tcpListeners.TryRemove(guid, out tcpListener))
@@ -13424,10 +13603,27 @@ namespace Thetis
                 catch { }
             }
 
-            Debug.Print("NetworkManager Stopped listening : " + guid.ToString());
+            if (_guidToTask.TryRemove(guid, out Task task))
+            {
+                try
+                {
+                    _cancellationTokenSource[guid].Cancel();
+                    if(!task.IsCompleted)
+                        task.Wait();
+                    task.Dispose();
+                }
+                catch { }
+            }
+            
+            _cancellationTokenSource.TryRemove(guid, out CancellationTokenSource cts);
+
+            if(_mmio_data.ContainsKey(guid))
+                _mmio_data[guid].ListenerStarted = false;
+
+            Debug.Print("MultiMeterIO Stopped listening : " + guid.ToString());
         }
 
-        public void SendDataString(Guid guid, string dataString)
+        public static void SendDataString(Guid guid, string dataString)
         {
             TcpClient tcpClient;
             if (_tcpClients.TryGetValue(guid, out tcpClient))
@@ -13445,12 +13641,14 @@ namespace Thetis
             }
         }
 
-        private async Task ListenForUdp(Guid guid, UdpClient udpClient, CancellationToken token)
+        private static async Task ListenForUdp(Guid guid, UdpClient udpClient, CancellationToken token)
         {
             try
             {
                 bool read = true;
                 Task<UdpReceiveResult> receiveTask = null;
+                _mmio_data[guid].ListenerRunning = true;
+                Listener?.Invoke(guid, MMIOType.UDP, true);
                 while (!token.IsCancellationRequested)
                 {
                     try
@@ -13460,7 +13658,7 @@ namespace Thetis
                             receiveTask = udpClient.ReceiveAsync();
                             read = false;
                         }
-                        Task delayTask = Task.Delay(TimeSpan.FromSeconds(1), token);
+                        Task delayTask = Task.Delay(TimeSpan.FromMilliseconds(DELAY), token);
                         Task completedTask = await Task.WhenAny(receiveTask, delayTask);
 
                         if (completedTask == receiveTask)
@@ -13496,12 +13694,22 @@ namespace Thetis
                 udpClient.Close();
             }
             catch { }
+
+            try
+            {
+                _mmio_data[guid].ListenerRunning = false;
+                Listener?.Invoke(guid, MMIOType.UDP, false);
+            }
+            catch { }
+            Debug.Print("u fin");
         }
 
-        private async Task AcceptTcpClients(Guid guid, TcpListener tcpListener, CancellationToken token)
+        private static async Task AcceptTcpClients(Guid guid, TcpListener tcpListener, CancellationToken token)
         {
             try
             {
+                _mmio_data[guid].ListenerRunning = true;
+                Listener?.Invoke(guid, MMIOType.TCPIP, true);
                 while (!token.IsCancellationRequested)
                 {
                     TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
@@ -13533,9 +13741,17 @@ namespace Thetis
             catch
             {
             }
+
+            try
+            {
+                _mmio_data[guid].ListenerRunning = false;
+                Listener?.Invoke(guid, MMIOType.TCPIP, false);
+            }
+            catch { }
+            Debug.Print("t fin");
         }
 
-        private async Task HandleTcpClient(Guid guid, TcpClient tcpClient, CancellationToken token)
+        private static async Task HandleTcpClient(Guid guid, TcpClient tcpClient, CancellationToken token)
         {
             NetworkStream stream = tcpClient.GetStream();
             byte[] buffer = new byte[4096 * 4];
@@ -13551,7 +13767,7 @@ namespace Thetis
                         readTask = stream.ReadAsync(buffer, 0, buffer.Length, token);
                         read = false;
                     }
-                    Task timeoutTask = Task.Delay(TimeSpan.FromSeconds(1), token); // Set a 1-second timeout
+                    Task timeoutTask = Task.Delay(TimeSpan.FromMilliseconds(DELAY), token); // Set a 1-second timeout
 
                     Task completedTask = await Task.WhenAny(readTask, timeoutTask);
 
@@ -13567,7 +13783,6 @@ namespace Thetis
                         else
                         {
                             tcpClient.Close();
-                            ClientDisconnected?.Invoke(guid);
                             break;
                         }
                     }
@@ -13589,51 +13804,223 @@ namespace Thetis
                 }
             }
         }
-        public void StopListeners()
+        public static void StopListeners()
         {
-            _cancellationTokenSource.Cancel();
-
-            foreach (KeyValuePair<Guid, TcpListener> tcpListenerPair in _tcpListeners)
+            List<Guid> to_remove = new List<Guid>();
+            foreach (KeyValuePair<Guid, clsMMIO> kvp in _mmio_data)
             {
-                tcpListenerPair.Value.Stop();
+                to_remove.Add(kvp.Key);
+            }
+            foreach (Guid g in to_remove)
+            {
+                StopListening(g);
             }
 
-            foreach (KeyValuePair<Guid, UdpClient> udpClientPair in _udpListeners)
-            {
-                udpClientPair.Value.Close();
-            }
-
-            foreach (KeyValuePair<Guid, TcpClient> tcpClientPair in _tcpClients)
-            {
-                tcpClientPair.Value.Close();
-            }
-
-            Debug.Print("NetworkManager stopping...");
+            Debug.Print("MultiMeterIO stopping...");
             try
             {
-                Task.WhenAll(_listenerTasks).Wait(6000);
-                Debug.Print("NetworkManager stopped.");
+                Task.WhenAll(_listenerTasks).Wait(DELAY + 100);
+                Debug.Print("MultiMeterIO stopped.");
             }
             catch
             {
-                Debug.Print("NetworkManager timed out when stopping.");
+                Debug.Print("MultiMeterIO timed out when stopping.");
             }
         }
-    }
-    // Extension method to add a timeout to a task
-    public static class TaskExtensions
-    {
-        public static async Task<T> WithTimeout<T>(this Task<T> task, TimeSpan timeout, CancellationToken token)
+        public static bool AlreadyListeningTCPIP(string ip, int port)
         {
-            Task delayTask = Task.Delay(timeout, token);
-
-            Task completedTask = await Task.WhenAny(task, delayTask);
-            if (completedTask == delayTask)
+            IPAddress ipAddress = IPAddress.Parse(ip);
+            foreach (TcpListener listener in _tcpListeners.Values)
             {
-                throw new TimeoutException();
+                if (((IPEndPoint)listener.LocalEndpoint).Address.Equals(ipAddress) &&
+                    ((IPEndPoint)listener.LocalEndpoint).Port == port)
+                {
+                    return true;
+                }
             }
+            return false;
+        }
+        public static bool AlreadyConfigured(string ip, int port, MMIOType type)
+        {
+            foreach (KeyValuePair<Guid, clsMMIO> kvp in _mmio_data)
+            {
+                clsMMIO mmio = kvp.Value;
+                if (mmio.IP.Equals(ip) &&
+                    mmio.Port == port && mmio.Type == type)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public static bool AlreadyListeningUDP(string ip, int port)
+        {
+            IPAddress ipAddress = IPAddress.Parse(ip);
+            foreach (UdpClient udpClient in _udpListeners.Values)
+            {
+                if (((IPEndPoint)udpClient.Client.LocalEndPoint).Address.Equals(ipAddress) &&
+                    ((IPEndPoint)udpClient.Client.LocalEndPoint).Port == port)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public static string FourChar(string ip, int port, Guid guid)
+        {
+            string input = $"{ip}:{port}:{guid}";
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
+                string base64Hash = Convert.ToBase64String(hashBytes);
+                return convertToFourChar(base64Hash);
+            }
+        }
 
-            return await task;
+        private static string convertToFourChar(string base64Hash)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            char[] result = new char[4];
+            int[] indices = new int[4];
+            for (int i = 0; i < base64Hash.Length; i++)
+            {
+                indices[i % 4] = (indices[i % 4] + base64Hash[i]) % chars.Length;
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                result[i] = chars[indices[i]];
+            }
+            return new string(result);
+        }
+
+        public static string GetSaveData()
+        {
+            string data = "";
+
+            data += _mmio_data.Count.ToString() + "|";
+            foreach (KeyValuePair<Guid, clsMMIO> kvp in _mmio_data)
+            {
+                clsMMIO mmio = kvp.Value;
+                data += mmio.Guid.ToString() + "|"; //1
+                data += mmio.Direction.ToString() + "|"; //2
+                data += mmio.IP + "|"; //3
+                data += mmio.Port.ToString() + "|"; //4
+                data += mmio.Format.ToString() + "|"; //5
+                data += mmio.Type.ToString() + "|"; //6
+                data += mmio.Enabled.ToString() + "|"; //7
+            }
+            data = data.Substring(0, data.Length - 1); // scrap trailing |
+            return data;
+        }
+
+        public static void RestoreSaveData(string data)
+        {
+            StopListeners(); //start new
+
+            string[] parts = data.Split('|');
+            if (parts.Length < 1) return;
+
+            bool ok;
+            int listeners;
+
+            ok = int.TryParse(parts[0], out listeners);
+            if (ok)
+            {
+                Guid guid;
+                MMIODirection direction = MMIODirection.BOTH;
+                MMIOFormat format = MMIOFormat.JSON;
+                MMIOType type = MMIOType.UDP;
+                int port = 0;
+                bool enabled = false;
+
+                for (int i = 0; i < listeners; i++)
+                {
+                    int idx = i * 7;
+                    clsMMIO mmio = new clsMMIO();
+                    ok = Guid.TryParse(parts[idx + 1], out guid);
+                    if (ok)
+                    {
+                        mmio.Guid = guid;
+                        ok = Enum.TryParse<MMIODirection>(parts[idx + 2], out direction);
+                    }
+                    if (ok)
+                    {
+                        mmio.Direction = direction;
+                        mmio.IP = parts[idx + 3];
+                        ok = int.TryParse(parts[idx + 4], out port);
+                    }
+                    if (ok)
+                    {
+                        mmio.Port = port;
+                        ok = Enum.TryParse<MMIOFormat>(parts[idx + 5], out format);
+                    }
+                    if (ok)
+                    {
+                        mmio.Format = format;
+                        ok = Enum.TryParse<MMIOType>(parts[idx + 6], out type);
+                    }
+                    if (ok)
+                    {
+                        mmio.Type = type;
+                        //if((parts.Length-1 / 7) >= (listeners * 7))
+                            ok = bool.TryParse(parts[idx + 7], out enabled);
+                    }
+                    if (ok)
+                    {
+                        //if ((parts.Length - 1 / 7) >= (listeners * 7))
+                        mmio.Enabled = enabled;
+                        ok = _mmio_data.TryAdd(guid, mmio);
+                        if (!ok)
+                        {
+                            StopListening(guid);
+                            return;
+                        }
+                    }
+                    if (ok && enabled)
+                    {
+                        mmio.StartListening();
+                    }
+                }
+            }
+        }
+        public static bool AddMMIO(clsMMIO mmio)
+        {
+            if (_mmio_data.ContainsKey(mmio.Guid)) return false;
+            if (mmio == null) return false;
+
+            bool ok = _mmio_data.TryAdd(mmio.Guid, mmio);
+            if (!ok)
+            {
+                StopListening(mmio.Guid);
+                return false;
+            }
+            return ok;
+        }
+        public static bool RemoveMMIO(Guid guid)
+        {
+            bool ok = false;
+            if (_mmio_data.ContainsKey(guid))
+            {
+                ok = _mmio_data.TryRemove(guid, out clsMMIO mmio);
+                if (ok) StopListening(guid);
+            }
+            return ok;
         }
     }
+    //// Extension method to add a timeout to a task
+    //public static class TaskExtensions
+    //{
+    //    public static async Task<T> WithTimeout<T>(this Task<T> task, TimeSpan timeout, CancellationToken token)
+    //    {
+    //        Task delayTask = Task.Delay(timeout, token);
+
+    //        Task completedTask = await Task.WhenAny(task, delayTask);
+    //        if (completedTask == delayTask)
+    //        {
+    //            throw new TimeoutException();
+    //        }
+
+    //        return await task;
+    //    }
+    //}
 }

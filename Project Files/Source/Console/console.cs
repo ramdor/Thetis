@@ -27357,9 +27357,6 @@ namespace Thetis
 
             cmaster.Hidewb(0);
 
-            shutdownLogStringToPath("Before MeterManager.Shutdown()");
-            MeterManager.Shutdown();
-
             shutdownLogStringToPath("Before Display.ShutdownDX2D()");
             m_bDisplayLoopRunning = false; // will cause the display loop to exit
             if (draw_display_thread != null && draw_display_thread.IsAlive) draw_display_thread.Join(1100); // added 1100, slightly longer than 1fps MW0LGE [2.9.0.7]
@@ -27397,6 +27394,9 @@ namespace Thetis
                 Debug.WriteLine("Saved!");
                 shutdownLogStringToPath("Leaving SetupForm save");
             }
+
+            shutdownLogStringToPath("Before MeterManager.Shutdown()"); //[2.10.3.6]MW0LGE moved from after hidewb so that listeners can save as part of setup
+            MeterManager.Shutdown();
 
             shutdownLogStringToPath("Before forms close");
             if (EQForm != null) EQForm.Close();
