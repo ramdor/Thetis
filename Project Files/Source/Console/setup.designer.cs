@@ -3772,6 +3772,7 @@
             this.lblTextOverlay_panelbackground = new System.Windows.Forms.LabelTS();
             this.chkTextOverlay_FadeOnTX = new System.Windows.Forms.CheckBoxTS();
             this.chkTextOverlay_FadeOnRX = new System.Windows.Forms.CheckBoxTS();
+            this.btnMMIO_network_copyvariable_clipboard = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -56310,6 +56311,7 @@
             // 
             this.pnlMMIO_network_container.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlMMIO_network_container.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlMMIO_network_container.Controls.Add(this.btnMMIO_network_copyvariable_clipboard);
             this.pnlMMIO_network_container.Controls.Add(this.btnMMIO_network_remove_variable);
             this.pnlMMIO_network_container.Controls.Add(this.lstMMIO_network_variables);
             this.pnlMMIO_network_container.Controls.Add(this.panelTS11);
@@ -60106,6 +60108,18 @@
             this.chkTextOverlay_FadeOnRX.Text = "Fade on RX";
             this.chkTextOverlay_FadeOnRX.UseVisualStyleBackColor = true;
             this.chkTextOverlay_FadeOnRX.CheckedChanged += new System.EventHandler(this.chkTextOverlay_FadeOnRX_CheckedChanged);
+            // 
+            // btnMMIO_network_copyvariable_clipboard
+            // 
+            this.btnMMIO_network_copyvariable_clipboard.Image = global::Thetis.Properties.Resources.copy;
+            this.btnMMIO_network_copyvariable_clipboard.Location = new System.Drawing.Point(288, 124);
+            this.btnMMIO_network_copyvariable_clipboard.Name = "btnMMIO_network_copyvariable_clipboard";
+            this.btnMMIO_network_copyvariable_clipboard.Selectable = true;
+            this.btnMMIO_network_copyvariable_clipboard.Size = new System.Drawing.Size(27, 27);
+            this.btnMMIO_network_copyvariable_clipboard.TabIndex = 120;
+            this.toolTip1.SetToolTip(this.btnMMIO_network_copyvariable_clipboard, "Copy to clipboard");
+            this.btnMMIO_network_copyvariable_clipboard.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_copyvariable_clipboard.Click += new System.EventHandler(this.btnMMIO_network_copyvariable_clipboard_Click);
             // 
             // Setup
             // 
@@ -65097,5 +65111,6 @@
         private ButtonTS btnMMIO_network_remove_variable;
         private ColumnHeader colVariables;
         private ColumnHeader colValues;
+        private ButtonTS btnMMIO_network_copyvariable_clipboard;
     }
 }
