@@ -309,6 +309,12 @@
     <Compile Include="Channel.cs" />
     <Compile Include="clsBandStackManager.cs" />
     <Compile Include="clsThetisSkinService.cs" />
+    <Compile Include="frmVariablePicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmVariablePicker.Designer.cs">
+      <DependentUpon>frmVariablePicker.cs</DependentUpon>
+    </Compile>
     <Compile Include="TimeOutTimerManager.cs" />
     <Compile Include="Firewall.cs" />
     <Compile Include="cmaster.cs" />
@@ -778,6 +784,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmSeqLog.resx">
       <DependentUpon>frmSeqLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmVariablePicker.resx">
+      <DependentUpon>frmVariablePicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ucMeter.resx">
       <DependentUpon>ucMeter.cs</DependentUpon>

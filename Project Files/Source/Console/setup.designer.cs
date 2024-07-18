@@ -3099,6 +3099,7 @@
             this.clrbtnContainerBackground = new Thetis.ColorButton();
             this.chkContainerBorder = new System.Windows.Forms.CheckBoxTS();
             this.grpMeterItemSettings = new System.Windows.Forms.GroupBoxTS();
+            this.btnMMIO_variable = new System.Windows.Forms.ButtonTS();
             this.nudMeterItemIgnoreHistoryDuration = new System.Windows.Forms.NumericUpDownTS();
             this.lblMMHistoryIgnore = new System.Windows.Forms.LabelTS();
             this.clrbtnMeterItemPowerScale = new Thetis.ColorButton();
@@ -3479,6 +3480,9 @@
             this.groupBoxTS39 = new System.Windows.Forms.GroupBoxTS();
             this.btnMMIO_network_delete = new System.Windows.Forms.ButtonTS();
             this.pnlMMIO_network_container = new System.Windows.Forms.PanelTS();
+            this.labelTS216 = new System.Windows.Forms.LabelTS();
+            this.comboMMIO_network_terminator_in = new System.Windows.Forms.ComboBoxTS();
+            this.btnMMIO_network_copyvariable_clipboard = new System.Windows.Forms.ButtonTS();
             this.btnMMIO_network_remove_variable = new System.Windows.Forms.ButtonTS();
             this.lstMMIO_network_variables = new System.Windows.Forms.ListView();
             this.colVariables = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -3712,7 +3716,7 @@
             this.lblTextOverlay_panelbackground = new System.Windows.Forms.LabelTS();
             this.chkTextOverlay_FadeOnTX = new System.Windows.Forms.CheckBoxTS();
             this.chkTextOverlay_FadeOnRX = new System.Windows.Forms.CheckBoxTS();
-            this.btnMMIO_network_copyvariable_clipboard = new System.Windows.Forms.ButtonTS();
+            this.btnMMIO_variable_2 = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -50194,6 +50198,8 @@
             // 
             // grpMeterItemSettings
             // 
+            this.grpMeterItemSettings.Controls.Add(this.btnMMIO_variable_2);
+            this.grpMeterItemSettings.Controls.Add(this.btnMMIO_variable);
             this.grpMeterItemSettings.Controls.Add(this.nudMeterItemIgnoreHistoryDuration);
             this.grpMeterItemSettings.Controls.Add(this.lblMMHistoryIgnore);
             this.grpMeterItemSettings.Controls.Add(this.clrbtnMeterItemPowerScale);
@@ -50250,6 +50256,19 @@
             this.grpMeterItemSettings.TabStop = false;
             this.grpMeterItemSettings.Text = "Settings";
             this.grpMeterItemSettings.Visible = false;
+            // 
+            // btnMMIO_variable
+            // 
+            this.btnMMIO_variable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMMIO_variable.Image = null;
+            this.btnMMIO_variable.Location = new System.Drawing.Point(247, 70);
+            this.btnMMIO_variable.Name = "btnMMIO_variable";
+            this.btnMMIO_variable.Selectable = true;
+            this.btnMMIO_variable.Size = new System.Drawing.Size(28, 28);
+            this.btnMMIO_variable.TabIndex = 128;
+            this.btnMMIO_variable.Text = "%";
+            this.btnMMIO_variable.UseVisualStyleBackColor = true;
+            this.btnMMIO_variable.Click += new System.EventHandler(this.btnMMIO_variable_Click);
             // 
             // nudMeterItemIgnoreHistoryDuration
             // 
@@ -50673,11 +50692,12 @@
             // labelTS168
             // 
             this.labelTS168.Image = null;
-            this.labelTS168.Location = new System.Drawing.Point(15, 47);
+            this.labelTS168.Location = new System.Drawing.Point(34, 47);
             this.labelTS168.Name = "labelTS168";
-            this.labelTS168.Size = new System.Drawing.Size(79, 16);
+            this.labelTS168.Size = new System.Drawing.Size(43, 16);
             this.labelTS168.TabIndex = 102;
             this.labelTS168.Text = "Attack:";
+            this.labelTS168.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // nudMeterItemUpdateRate
             // 
@@ -50712,11 +50732,12 @@
             // labelTS167
             // 
             this.labelTS167.Image = null;
-            this.labelTS167.Location = new System.Drawing.Point(15, 22);
+            this.labelTS167.Location = new System.Drawing.Point(6, 20);
             this.labelTS167.Name = "labelTS167";
-            this.labelTS167.Size = new System.Drawing.Size(79, 16);
+            this.labelTS167.Size = new System.Drawing.Size(71, 16);
             this.labelTS167.TabIndex = 100;
             this.labelTS167.Text = "Update (ms):";
+            this.labelTS167.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tbMeterItemHistoryAlpha
             // 
@@ -50891,7 +50912,7 @@
             // 
             this.lblMMHigh.AutoSize = true;
             this.lblMMHigh.Image = null;
-            this.lblMMHigh.Location = new System.Drawing.Point(184, 75);
+            this.lblMMHigh.Location = new System.Drawing.Point(142, 75);
             this.lblMMHigh.Name = "lblMMHigh";
             this.lblMMHigh.Size = new System.Drawing.Size(32, 13);
             this.lblMMHigh.TabIndex = 79;
@@ -50901,18 +50922,19 @@
             // 
             this.lblMMLow.AutoSize = true;
             this.lblMMLow.Image = null;
-            this.lblMMLow.Location = new System.Drawing.Point(15, 75);
+            this.lblMMLow.Location = new System.Drawing.Point(47, 75);
             this.lblMMLow.Name = "lblMMLow";
             this.lblMMLow.Size = new System.Drawing.Size(30, 13);
             this.lblMMLow.TabIndex = 78;
             this.lblMMLow.Text = "Low:";
+            this.lblMMLow.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // clrbtnMeterItemHigh
             // 
             this.clrbtnMeterItemHigh.Automatic = "Automatic";
             this.clrbtnMeterItemHigh.Color = System.Drawing.Color.Red;
             this.clrbtnMeterItemHigh.Image = null;
-            this.clrbtnMeterItemHigh.Location = new System.Drawing.Point(263, 70);
+            this.clrbtnMeterItemHigh.Location = new System.Drawing.Point(176, 70);
             this.clrbtnMeterItemHigh.MoreColors = "More Colors...";
             this.clrbtnMeterItemHigh.Name = "clrbtnMeterItemHigh";
             this.clrbtnMeterItemHigh.Selectable = true;
@@ -50926,7 +50948,7 @@
             this.clrbtnMeterItemLow.Automatic = "Automatic";
             this.clrbtnMeterItemLow.Color = System.Drawing.Color.White;
             this.clrbtnMeterItemLow.Image = null;
-            this.clrbtnMeterItemLow.Location = new System.Drawing.Point(99, 70);
+            this.clrbtnMeterItemLow.Location = new System.Drawing.Point(83, 70);
             this.clrbtnMeterItemLow.MoreColors = "More Colors...";
             this.clrbtnMeterItemLow.Name = "clrbtnMeterItemLow";
             this.clrbtnMeterItemLow.Selectable = true;
@@ -55233,6 +55255,8 @@
             // 
             this.pnlMMIO_network_container.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlMMIO_network_container.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlMMIO_network_container.Controls.Add(this.labelTS216);
+            this.pnlMMIO_network_container.Controls.Add(this.comboMMIO_network_terminator_in);
             this.pnlMMIO_network_container.Controls.Add(this.btnMMIO_network_copyvariable_clipboard);
             this.pnlMMIO_network_container.Controls.Add(this.btnMMIO_network_remove_variable);
             this.pnlMMIO_network_container.Controls.Add(this.lstMMIO_network_variables);
@@ -55260,6 +55284,44 @@
             this.pnlMMIO_network_container.Name = "pnlMMIO_network_container";
             this.pnlMMIO_network_container.Size = new System.Drawing.Size(516, 204);
             this.pnlMMIO_network_container.TabIndex = 98;
+            // 
+            // labelTS216
+            // 
+            this.labelTS216.AutoSize = true;
+            this.labelTS216.Image = null;
+            this.labelTS216.Location = new System.Drawing.Point(6, 145);
+            this.labelTS216.Name = "labelTS216";
+            this.labelTS216.Size = new System.Drawing.Size(77, 13);
+            this.labelTS216.TabIndex = 122;
+            this.labelTS216.Text = "Terminator (in):";
+            // 
+            // comboMMIO_network_terminator_in
+            // 
+            this.comboMMIO_network_terminator_in.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboMMIO_network_terminator_in.FormattingEnabled = true;
+            this.comboMMIO_network_terminator_in.Items.AddRange(new object[] {
+            "NONE",
+            "CR",
+            "LF",
+            "CRLF",
+            "CUSTOM"});
+            this.comboMMIO_network_terminator_in.Location = new System.Drawing.Point(89, 142);
+            this.comboMMIO_network_terminator_in.Name = "comboMMIO_network_terminator_in";
+            this.comboMMIO_network_terminator_in.Size = new System.Drawing.Size(117, 21);
+            this.comboMMIO_network_terminator_in.TabIndex = 121;
+            this.comboMMIO_network_terminator_in.SelectedIndexChanged += new System.EventHandler(this.comboMMIO_network_terminator_in_SelectedIndexChanged);
+            // 
+            // btnMMIO_network_copyvariable_clipboard
+            // 
+            this.btnMMIO_network_copyvariable_clipboard.Image = global::Thetis.Properties.Resources.copy;
+            this.btnMMIO_network_copyvariable_clipboard.Location = new System.Drawing.Point(288, 124);
+            this.btnMMIO_network_copyvariable_clipboard.Name = "btnMMIO_network_copyvariable_clipboard";
+            this.btnMMIO_network_copyvariable_clipboard.Selectable = true;
+            this.btnMMIO_network_copyvariable_clipboard.Size = new System.Drawing.Size(27, 27);
+            this.btnMMIO_network_copyvariable_clipboard.TabIndex = 120;
+            this.toolTip1.SetToolTip(this.btnMMIO_network_copyvariable_clipboard, "Copy to clipboard");
+            this.btnMMIO_network_copyvariable_clipboard.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_copyvariable_clipboard.Click += new System.EventHandler(this.btnMMIO_network_copyvariable_clipboard_Click);
             // 
             // btnMMIO_network_remove_variable
             // 
@@ -59021,17 +59083,18 @@
             this.chkTextOverlay_FadeOnRX.UseVisualStyleBackColor = true;
             this.chkTextOverlay_FadeOnRX.CheckedChanged += new System.EventHandler(this.chkTextOverlay_FadeOnRX_CheckedChanged);
             // 
-            // btnMMIO_network_copyvariable_clipboard
+            // btnMMIO_variable_2
             // 
-            this.btnMMIO_network_copyvariable_clipboard.Image = global::Thetis.Properties.Resources.copy;
-            this.btnMMIO_network_copyvariable_clipboard.Location = new System.Drawing.Point(288, 124);
-            this.btnMMIO_network_copyvariable_clipboard.Name = "btnMMIO_network_copyvariable_clipboard";
-            this.btnMMIO_network_copyvariable_clipboard.Selectable = true;
-            this.btnMMIO_network_copyvariable_clipboard.Size = new System.Drawing.Size(27, 27);
-            this.btnMMIO_network_copyvariable_clipboard.TabIndex = 120;
-            this.toolTip1.SetToolTip(this.btnMMIO_network_copyvariable_clipboard, "Copy to clipboard");
-            this.btnMMIO_network_copyvariable_clipboard.UseVisualStyleBackColor = true;
-            this.btnMMIO_network_copyvariable_clipboard.Click += new System.EventHandler(this.btnMMIO_network_copyvariable_clipboard_Click);
+            this.btnMMIO_variable_2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMMIO_variable_2.Image = null;
+            this.btnMMIO_variable_2.Location = new System.Drawing.Point(275, 70);
+            this.btnMMIO_variable_2.Name = "btnMMIO_variable_2";
+            this.btnMMIO_variable_2.Selectable = true;
+            this.btnMMIO_variable_2.Size = new System.Drawing.Size(28, 28);
+            this.btnMMIO_variable_2.TabIndex = 129;
+            this.btnMMIO_variable_2.Text = "%";
+            this.btnMMIO_variable_2.UseVisualStyleBackColor = true;
+            this.btnMMIO_variable_2.Click += new System.EventHandler(this.btnMMIO_variable_2_Click);
             // 
             // Setup
             // 
@@ -63944,5 +64007,9 @@
         private ColumnHeader colVariables;
         private ColumnHeader colValues;
         private ButtonTS btnMMIO_network_copyvariable_clipboard;
+        private ButtonTS btnMMIO_variable;
+        private LabelTS labelTS216;
+        private ComboBoxTS comboMMIO_network_terminator_in;
+        private ButtonTS btnMMIO_variable_2;
     }
 }

@@ -217,6 +217,10 @@ namespace Thetis
             private string _font_family_2;
             private FontStyle _font_style_2;
             private float _font_size_2;
+
+            private Guid[] _mmio_guid;
+            private string[] _mmio_variable;
+
             public clsIGSettings()
             {
                 _hasSubIndicators = false;
@@ -230,6 +234,15 @@ namespace Thetis
                 _text_2 = "";
                 _font_family_1 = "";
                 _font_family_2 = "";
+
+                _mmio_guid = new Guid[10];
+                _mmio_variable = new string[10];
+
+                for (int i = 0; i < _mmio_guid.Length; i++)
+                {
+                    _mmio_guid[i] = Guid.Empty;
+                    _mmio_variable[i] = "--DEFAULT--";
+                }
             }
 
             public override string ToString()
@@ -277,7 +290,16 @@ namespace Thetis
                     _font_style_1.ToString() + "|" +
                     _font_style_2.ToString() + "|" +
                     _font_size_1.ToString("f4") + "|" +
-                    _font_size_2.ToString("f4");
+                    _font_size_2.ToString("f4") + "|";
+
+                for (int i = 0; i < _mmio_guid.Length; i++)
+                {
+                    sRet += _mmio_guid[i].ToString() + "|";
+                    sRet += _mmio_variable[i] + "|";
+                }
+
+                //drop last |
+                sRet = sRet.Substring(0, sRet.Length - 1);
 
                 return sRet;
             }
@@ -293,6 +315,7 @@ namespace Thetis
                 FontStyle tmpFontStyle = FontStyle.Regular;
                 clsBarItem.BarStyle tmpBarStyle = clsBarItem.BarStyle.None;
                 clsBarItem.Units tmpUnit = clsBarItem.Units.DBM;
+                Guid tmpGuid = Guid.Empty;
 
                 bool bOk = false;
 
@@ -347,7 +370,7 @@ namespace Thetis
                 {
                     if (bOk) bOk = int.TryParse(tmp[34], out tmpInt); if (bOk) { _ignoreHistoryDuration = tmpInt; }
                 }
-                if (tmp.Length >= 44) //[2.10.3.6]MW0LGE added for dev_6
+                if (bOk && tmp.Length >= 44) //[2.10.3.6]MW0LGE added for dev_6
                 {
                     if (bOk) bOk = float.TryParse(tmp[35], out tmpFloat); if (bOk) { _spacerPadding = tmpFloat; }
                     if (bOk) bOk = bool.TryParse(tmp[36], out tmpBool); if (bOk) { _back_panel = tmpBool; }
@@ -358,6 +381,14 @@ namespace Thetis
                     if (bOk) bOk = Enum.TryParse<FontStyle>(tmp[41], out tmpFontStyle); if (bOk) { _font_style_2 = tmpFontStyle; }
                     if (bOk) bOk = float.TryParse(tmp[42], out tmpFloat); if (bOk) { _font_size_1 = tmpFloat; }
                     if (bOk) bOk = float.TryParse(tmp[43], out tmpFloat); if (bOk) { _font_size_2 = tmpFloat; }
+                }
+                if (bOk && tmp.Length >= 64)
+                {
+                    for (int i = 0; i < _mmio_guid.Length; i++) //44,45, 46,47, 48,49, 50,51, 52,53, 54,55, 56,57, 58,59, 60,61, 62,63
+                    {
+                        if (bOk) bOk = Guid.TryParse(tmp[44 + (i*2)], out tmpGuid); if (bOk) { _mmio_guid[i] = tmpGuid; }
+                        if (bOk) _mmio_variable[i] = tmp[45 + (i*2)];
+                    }
                 }
                 return bOk;
             }
@@ -406,6 +437,23 @@ namespace Thetis
             public FontStyle FontStyle2 { get { return _font_style_2; } set { _font_style_2 = value; } }
             public float FontSize1 { get { return _font_size_1; } set { _font_size_1 = value; } }
             public float FontSize2 { get { return _font_size_2; } set { _font_size_2 = value; } }
+
+            public Guid GetMMIOGuid(int index)
+            {
+                return _mmio_guid[index];
+            }
+            public void SetMMIOGuid(int index, Guid g)
+            {
+                _mmio_guid[index] = g;
+            }
+            public string GetMMIOVariable(int index)
+            {
+                return _mmio_variable[index];
+            }
+            public void SetMMIOVariable(int index, string variable)
+            {
+                _mmio_variable[index] = variable;
+            }
         }
         static MeterManager()
         {
@@ -2385,6 +2433,12 @@ namespace Thetis
             private bool _disabled;
             private bool _mox;
 
+            //private Guid[] _mmio_guid;
+            //private string[] _mmio_variable;
+            private Guid _mmio_guid;
+            private string _mmio_variable;
+            private int _mmio_variable_index;
+
             public clsMeterItem(clsMeter owningMeter = null)
             {
                 // constructor
@@ -2421,6 +2475,49 @@ namespace Thetis
                 _fadeValue = 255;
                 _disabled = false;
                 _mox = false;
+
+                //_mmio_guid = new Guid[10];
+                //_mmio_variable = new string[10];
+
+                //for (int i = 0; i < _mmio_guid.Length; i++)
+                //{
+                //    _mmio_guid[i] = Guid.Empty;
+                //    _mmio_variable[i] = "--DEFAULT--";
+                //}
+                _mmio_guid = Guid.Empty;
+                _mmio_variable = "--DEFAULT--";
+                _mmio_variable_index = -1;
+            }
+            //public Guid GetMMIOGuid(int index)
+            //{
+            //    return _mmio_guid[index];
+            //}
+            //public void SetMMIOGuid(int index, Guid g)
+            //{
+            //    _mmio_guid[index] = g;
+            //}
+            //public string GetMMIOVariable(int index)
+            //{
+            //    return _mmio_variable[index];
+            //}
+            //public void SetMMIOVariable(int index, string variable)
+            //{
+            //    _mmio_variable[index] = variable;
+            //}
+            public Guid MMIOGuid
+            {
+                get { return _mmio_guid; }
+                set { _mmio_guid = value; }
+            }
+            public string MMIOVariable
+            {
+                get { return _mmio_variable; }
+                set { _mmio_variable = value; }
+            }
+            public int MMIOVariableIndex
+            {
+                get { return _mmio_variable_index; }
+                set { _mmio_variable_index = value; }
             }
             public bool MOX
             {
@@ -3441,7 +3538,42 @@ namespace Thetis
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
                 // get latest reading
-                float reading = MeterManager.getReading(rx, ReadingSource);
+                //float reading = MeterManager.getReading(rx, ReadingSource);
+                bool use;
+                float reading;
+                if (MMIOGuid == Guid.Empty)
+                {
+                    reading = MeterManager.getReading(rx, ReadingSource);
+                    use = true;
+                }
+                else
+                {
+                    reading = 0;
+                    //if (MultiMeterIO.Data.ContainsKey(GetMMIOGuid(0)))
+                    if (MultiMeterIO.Data.ContainsKey(MMIOGuid))
+                    {
+                        //MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[GetMMIOGuid(0)];
+                        MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[MMIOGuid];
+
+                        //object val = mmio.GetVariable(GetMMIOVariable(0));
+                        object val = mmio.GetVariable(MMIOVariable);
+                        if (val is int)
+                        {
+                            int intVal = (int)val;
+                            reading = (float)intVal;
+                        }
+                        else if (val is float)
+                        {
+                            reading = (float)val;
+                        }
+                        else if (val is double)
+                        {
+                            double doubleVal = (double)val;
+                            reading = (float)doubleVal;
+                        }
+                    }
+                    use = false;
+                }
 
                 lock (_historyLock)
                 {
@@ -3464,9 +3596,12 @@ namespace Thetis
                     }
                 }
 
-                // this reading has been used
-                if (!readingsUsed.Contains(ReadingSource))
-                    readingsUsed.Add(ReadingSource);
+                if (use)
+                {
+                    // this reading has been used
+                    if (!readingsUsed.Contains(ReadingSource))
+                        readingsUsed.Add(ReadingSource);
+                }
             }
             public override bool ShowHistory
             {
@@ -3983,21 +4118,16 @@ namespace Thetis
                     foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
                     {
                         MultiMeterIO.clsMMIO mmio = mmios.Value;
-                        foreach (KeyValuePair<string, object> kvp in mmio.VariablesCloned())
+                        foreach (KeyValuePair<string, object> kvp in mmio.Variables())
                         {
-                            string tmp;
-                            if (kvp.Value is int)
-                                tmp = ((int)kvp.Value).ToString();
-                            else if (kvp.Value is double)
-                                tmp = ((double)kvp.Value).ToString("f1");
-                            else if (kvp.Value is float)
-                                tmp = ((float)kvp.Value).ToString("f1");
-                            else
-                                tmp = kvp.Value.ToString();
+                            object val = mmio.GetVariable(kvp.Key);
+
+                            string tmp = mmio.VariableValueType(val);
 
                             sTmp = sTmp.Replace("%" + kvp.Key.ToString() + "%", tmp);
                         }
                     }
+                    //
 
                     return sTmp;
                 }
@@ -4018,6 +4148,22 @@ namespace Thetis
                     }
                     sTmp = sTmp.Replace("%nl%", "\n");
                     //_newlines_2 = sTmp.Count(c => c == '\n');
+
+                    // MultiMeter IO
+                    foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
+                    {
+                        MultiMeterIO.clsMMIO mmio = mmios.Value;
+                        foreach (KeyValuePair<string, object> kvp in mmio.Variables())
+                        {
+                            object val = mmio.GetVariable(kvp.Key);
+
+                            string tmp = mmio.VariableValueType(val);
+
+                            sTmp = sTmp.Replace("%" + kvp.Key.ToString() + "%", tmp);
+                        }
+                    }
+                    //
+
                     return sTmp;
                 }
             }
@@ -4472,7 +4618,42 @@ namespace Thetis
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
                 // get latest reading
-                float reading = MeterManager.getReading(rx, ReadingSource);
+                float reading;
+                bool use;
+                //if (GetMMIOGuid(0) == Guid.Empty)// && GetMMIOVariable(0) == "-- DEFAULT --") 
+                if(MMIOGuid == Guid.Empty)
+                {
+                    reading = MeterManager.getReading(rx, ReadingSource);
+                    use = true;
+                }
+                else
+                {
+                    reading = 0;
+                    //if (MultiMeterIO.Data.ContainsKey(GetMMIOGuid(0)))
+                    if (MultiMeterIO.Data.ContainsKey(MMIOGuid))
+                    {
+                        //MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[GetMMIOGuid(0)];
+                        MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[MMIOGuid];
+
+                        //object val = mmio.GetVariable(GetMMIOVariable(0));
+                        object val = mmio.GetVariable(MMIOVariable);
+                        if (val is int)
+                        {
+                            int intVal = (int)val;
+                            reading = (float)intVal;
+                        }
+                        else if (val is float)
+                        {
+                            reading = (float)val;
+                        }
+                        else if (val is double)
+                        {
+                            double doubleVal = (double)val;
+                            reading = (float)doubleVal;
+                        }
+                    }
+                    use = false;
+                }
 
                 lock (_historyLock)
                 {
@@ -4495,9 +4676,12 @@ namespace Thetis
                     }
                 }
 
-                // this reading has been used
-                if (!readingsUsed.Contains(ReadingSource))
-                    readingsUsed.Add(ReadingSource);
+                if (use)
+                {
+                    // this reading has been used
+                    if (!readingsUsed.Contains(ReadingSource))
+                        readingsUsed.Add(ReadingSource);
+                }
             }
             public clsBarItem PostDrawItem
             {
@@ -5149,7 +5333,42 @@ namespace Thetis
             public override void Update(int rx, ref List<Reading> readingsUsed)
             {
                 // get latest reading
-                float reading = MeterManager.getReading(rx, ReadingSource);
+                //float reading = MeterManager.getReading(rx, ReadingSource);
+                bool use;
+                float reading;
+                if (MMIOGuid == Guid.Empty)
+                {
+                    reading = MeterManager.getReading(rx, ReadingSource);
+                    use = true;
+                }
+                else
+                {
+                    reading = 0;
+                    //if (MultiMeterIO.Data.ContainsKey(GetMMIOGuid(0)))
+                    if (MultiMeterIO.Data.ContainsKey(MMIOGuid))
+                    {
+                        //MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[GetMMIOGuid(0)];
+                        MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[MMIOGuid];
+
+                        //object val = mmio.GetVariable(GetMMIOVariable(0));
+                        object val = mmio.GetVariable(MMIOVariable);
+                        if (val is int)
+                        {
+                            int intVal = (int)val;
+                            reading = (float)intVal;
+                        }
+                        else if (val is float)
+                        {
+                            reading = (float)val;
+                        }
+                        else if (val is double)
+                        {
+                            double doubleVal = (double)val;
+                            reading = (float)doubleVal;
+                        }
+                    }
+                    use = false;
+                }
 
                 lock (_historyLock)
                 {
@@ -5172,9 +5391,12 @@ namespace Thetis
                     }
                 }
 
-                // this reading has been used
-                if (!readingsUsed.Contains(ReadingSource))
-                    readingsUsed.Add(ReadingSource);
+                if (use)
+                {
+                    // this reading has been used
+                    if (!readingsUsed.Contains(ReadingSource))
+                        readingsUsed.Add(ReadingSource);
+                }
             }
             public float StrokeWidth
             {
@@ -5555,6 +5777,43 @@ namespace Thetis
                     _meterItems.Add(mi.ID, mi);
                 }
             }
+            public int MeterVariables(MeterType meter)
+            {
+                switch (meter)
+                {
+                    case MeterType.SIGNAL_STRENGTH: return 1;
+                    case MeterType.AVG_SIGNAL_STRENGTH: return 1;
+                    case MeterType.SIGNAL_TEXT: return 1;
+                    case MeterType.ADC: return 2;
+                    case MeterType.AGC: return 2;
+                    case MeterType.AGC_GAIN: return 1;
+                    case MeterType.MIC: return 2;
+                    case MeterType.PWR: return 1;
+                    case MeterType.REVERSE_PWR: return 1;
+                    case MeterType.ALC: return 2;
+                    case MeterType.EQ: return 2;
+                    case MeterType.LEVELER: return 2;
+                    case MeterType.COMP: return 2;
+                    //case MeterType.CPDR: break;
+                    case MeterType.ALC_GAIN: return 1;
+                    case MeterType.ALC_GROUP: return 1;
+                    case MeterType.LEVELER_GAIN: return 1;
+                    case MeterType.CFC: return 2;
+                    case MeterType.CFC_GAIN: return 1;
+                    case MeterType.MAGIC_EYE: return 1;
+                    case MeterType.ESTIMATED_PBSNR: return 1;
+                    case MeterType.ANANMM: return 7;
+                    case MeterType.CROSS: return 2;
+                    case MeterType.SWR: return 1;
+                    //case MeterType.HISTORY: AddHistory(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.VFO_DISPLAY: return 0;
+                    case MeterType.CLOCK: return 0;
+                    case MeterType.SPACER: return 0;
+                    case MeterType.TEXT_OVERLAY: return 0;
+                    //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
+                }
+                return 0;
+            }
             public void AddMeter(MeterType meter, clsItemGroup restoreIg = null)
             {
                 //restoreIg is passed in when used by restoreSettings, so that the item group can be ordered
@@ -5648,6 +5907,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = reading;
+                cb.MMIOVariableIndex = 0;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.2f;
                 cb.UpdateInterval = nMSupdate;
@@ -5737,6 +5997,7 @@ namespace Thetis
                 cst.TopLeft = sc.TopLeft;
                 cst.Size = sc.Size;
                 cst.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
+                cst.MMIOVariableIndex = 0;
                 cst.AttackRatio = 0.8f;
                 cst.DecayRatio = 0.2f;
                 cst.UpdateInterval = nMSupdate;
@@ -5789,6 +6050,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.ADC_PK;
+                cb.MMIOVariableIndex = 0;
                 cb.AttackRatio = 0.2f;
                 cb.DecayRatio = 0.05f;
                 cb.UpdateInterval = nMSupdate;
@@ -5812,6 +6074,7 @@ namespace Thetis
                 cb2.TopLeft = cb.TopLeft;
                 cb2.Size = cb.Size;
                 cb2.ReadingSource = Reading.ADC_AV;
+                cb2.MMIOVariableIndex = 1;
                 cb2.ShowPeakValue = false;
                 cb2.AttackRatio = 0.2f;
                 cb2.DecayRatio = 0.05f;
@@ -5875,6 +6138,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.ESTIMATED_PBSNR;
+                cb.MMIOVariableIndex = 0;
                 cb.AttackRatio = 0.2f;
                 cb.DecayRatio = 0.05f;
                 cb.UpdateInterval = nMSupdate;
@@ -5945,6 +6209,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.AGC_GAIN;
+                cb.MMIOVariableIndex = 0;
                 cb.AttackRatio = 0.2f;
                 cb.DecayRatio = 0.05f;
                 cb.UpdateInterval = nMSupdate;
@@ -6006,6 +6271,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.AGC_PK;
+                cb.MMIOVariableIndex = 0;
                 cb.AttackRatio = 0.2f;
                 cb.DecayRatio = 0.05f;
                 cb.UpdateInterval = nMSupdate;
@@ -6029,6 +6295,7 @@ namespace Thetis
                 cb2.TopLeft = cb.TopLeft;
                 cb2.Size = cb.Size;
                 cb2.ReadingSource = Reading.AGC_AV;
+                cb2.MMIOVariableIndex = 1;
                 cb2.ShowPeakValue = false;
                 cb2.AttackRatio = 0.2f;
                 cb2.DecayRatio = 0.05f;
@@ -6094,6 +6361,7 @@ namespace Thetis
                 me.TopLeft = new PointF(0.5f - (fSize / 2f), fTop + _fPadY - (_fHeight * 0.75f));
                 me.Size = new SizeF(fSize, fSize);
                 me.ZOrder = 2;
+                me.MMIOVariableIndex = 0;
                 me.AttackRatio = 0.2f;
                 me.DecayRatio = 0.05f;
                 me.UpdateInterval = nMSupdate;
@@ -6199,6 +6467,7 @@ namespace Thetis
 
                 ni.OnlyWhenRX = true;
                 ni.ReadingSource = Reading.AVG_SIGNAL_STRENGTH;
+                ni.MMIOVariableIndex = 0;
                 ni.AttackRatio = 0.8f;//0.1f;
                 ni.DecayRatio = 0.2f;// 0.05f;
                 ni.UpdateInterval = nMSupdate;
@@ -6236,11 +6505,12 @@ namespace Thetis
                 addMeterItem(ni);
 
                 //volts
-                clsNeedleItem ni2 = new clsNeedleItem(); ;
+                clsNeedleItem ni2 = new clsNeedleItem();
                 ni2.ParentID = ig.ID;
                 ni2.TopLeft = ni.TopLeft;
                 ni2.Size = ni.Size;
                 ni2.ReadingSource = Reading.VOLTS;
+                ni2.MMIOVariableIndex = 1;
                 ni2.AttackRatio = 0.2f;
                 ni2.DecayRatio = 0.2f;
                 ni2.UpdateInterval = nMSupdate;
@@ -6268,6 +6538,7 @@ namespace Thetis
                 ni3.Size = ni.Size;
                 ni3.OnlyWhenTX = true;
                 ni3.ReadingSource = Reading.AMPS;
+                ni3.MMIOVariableIndex = 2;
                 ni3.AttackRatio = 0.2f;
                 ni3.DecayRatio = 0.2f;
                 ni3.UpdateInterval = nMSupdate;
@@ -6336,6 +6607,7 @@ namespace Thetis
                 ni4.OnlyWhenTX = true;
                 ni4.NormaliseTo100W = true;
                 ni4.ReadingSource = Reading.PWR;
+                ni4.MMIOVariableIndex = 3;
                 ni4.AttackRatio = 0.2f;//0.325f;
                 ni4.DecayRatio = 0.1f;//0.5f;
                 ni4.UpdateInterval = nMSupdate;
@@ -6398,6 +6670,7 @@ namespace Thetis
                 ni5.Size = ni.Size;
                 ni5.OnlyWhenTX = true;
                 ni5.ReadingSource = Reading.SWR;
+                ni5.MMIOVariableIndex = 4;
                 ni5.AttackRatio = 0.2f;//0.325f;
                 ni5.DecayRatio = 0.1f;//0.5f;
                 ni5.UpdateInterval = nMSupdate;
@@ -6429,6 +6702,7 @@ namespace Thetis
                 ni6.Size = ni.Size;
                 ni6.OnlyWhenTX = true;
                 ni6.ReadingSource = Reading.ALC_G; // alc_comp
+                ni6.MMIOVariableIndex = 5;
                 ni6.AttackRatio = 0.2f;//0.325f;
                 ni6.DecayRatio = 0.1f;//0.5f;
                 ni6.UpdateInterval = nMSupdate;
@@ -6460,6 +6734,7 @@ namespace Thetis
                 ni7.Size = ni.Size;
                 ni7.OnlyWhenTX = true;
                 ni7.ReadingSource = Reading.ALC_GROUP;
+                ni7.MMIOVariableIndex = 6;
                 ni7.AttackRatio = 0.2f;//0.325f;
                 ni7.DecayRatio = 0.1f;//0.5f;
                 ni7.UpdateInterval = nMSupdate;
@@ -6545,6 +6820,7 @@ namespace Thetis
                 ni.TopLeft = new PointF(0f, fTop + _fPadY - (_fHeight * 0.75f));
                 ni.Size = new SizeF(1f, 0.782f); // image x to y ratio
                 ni.ReadingSource = Reading.PWR;
+                ni.MMIOVariableIndex = 0;
                 ni.AttackRatio = 0.2f;
                 ni.DecayRatio = 0.1f;
                 ni.UpdateInterval = nMSupdate;
@@ -6614,6 +6890,7 @@ namespace Thetis
                 ni2.TopLeft = ni.TopLeft;
                 ni2.Size = ni.Size;
                 ni2.ReadingSource = Reading.REVERSE_PWR;
+                ni2.MMIOVariableIndex = 1;
                 ni2.AttackRatio = 0.2f;//0.325f;
                 ni2.DecayRatio = 0.1f;//0.5f;
                 ni2.UpdateInterval = nMSupdate;
@@ -6730,6 +7007,7 @@ namespace Thetis
                 cb2.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb2.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb2.ReadingSource = Reading.MIC_PK;
+                cb2.MMIOVariableIndex = 1;
                 cb2.AttackRatio = 0.8f;
                 cb2.DecayRatio = 0.1f;
                 cb2.UpdateInterval = nMSupdate;
@@ -6752,6 +7030,7 @@ namespace Thetis
                 cb.TopLeft = cb2.TopLeft;
                 cb.Size = cb2.Size;
                 cb.ReadingSource = Reading.MIC;
+                cb.MMIOVariableIndex = 0;
                 cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
@@ -6815,6 +7094,7 @@ namespace Thetis
                 cb2.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb2.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb2.ReadingSource = Reading.EQ_PK;
+                cb2.MMIOVariableIndex = 1;
                 cb2.AttackRatio = 0.8f;
                 cb2.DecayRatio = 0.1f;
                 cb2.UpdateInterval = nMSupdate;
@@ -6838,6 +7118,7 @@ namespace Thetis
                 cb.TopLeft = cb2.TopLeft;
                 cb.Size = cb2.Size;
                 cb.ReadingSource = Reading.EQ;
+                cb.MMIOVariableIndex = 0;
                 cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
@@ -6901,6 +7182,7 @@ namespace Thetis
                 cb2.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb2.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb2.ReadingSource = Reading.LEVELER_PK;
+                cb2.MMIOVariableIndex = 1;
                 cb2.AttackRatio = 0.8f;
                 cb2.DecayRatio = 0.1f;
                 cb2.UpdateInterval = nMSupdate;
@@ -6923,6 +7205,7 @@ namespace Thetis
                 cb.TopLeft = cb2.TopLeft;
                 cb.Size = cb2.Size;
                 cb.ReadingSource = Reading.LEVELER;
+                cb.MMIOVariableIndex = 0;
                 cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
@@ -6985,6 +7268,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.LVL_G;
+                cb.MMIOVariableIndex = 0;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
                 cb.UpdateInterval = nMSupdate;
@@ -7045,6 +7329,7 @@ namespace Thetis
                 cb2.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb2.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb2.ReadingSource = Reading.ALC_PK;
+                cb2.MMIOVariableIndex = 1;
                 cb2.AttackRatio = 0.8f;
                 cb2.DecayRatio = 0.1f;
                 cb2.UpdateInterval = nMSupdate;
@@ -7067,6 +7352,7 @@ namespace Thetis
                 cb.TopLeft = cb2.TopLeft;
                 cb.Size = cb2.Size;
                 cb.ReadingSource = Reading.ALC;
+                cb.MMIOVariableIndex = 0;
                 cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
@@ -7129,6 +7415,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.ALC_G;
+                cb.MMIOVariableIndex = 0;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
                 cb.UpdateInterval = nMSupdate;
@@ -7189,6 +7476,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.ALC_GROUP;
+                cb.MMIOVariableIndex = 0;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
                 cb.UpdateInterval = nMSupdate;
@@ -7249,6 +7537,7 @@ namespace Thetis
                 cb2.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb2.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb2.ReadingSource = Reading.CFC_PK;
+                cb2.MMIOVariableIndex = 1;
                 cb2.AttackRatio = 0.8f;
                 cb2.DecayRatio = 0.1f;
                 cb2.UpdateInterval = nMSupdate;
@@ -7271,6 +7560,7 @@ namespace Thetis
                 cb.TopLeft = cb2.TopLeft;
                 cb.Size = cb2.Size;
                 cb.ReadingSource = Reading.CFC_AV;
+                cb.MMIOVariableIndex = 0;
                 cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
@@ -7333,6 +7623,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.CFC_G;
+                cb.MMIOVariableIndex = 0;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
                 cb.UpdateInterval = nMSupdate;
@@ -7393,6 +7684,7 @@ namespace Thetis
                 cb2.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb2.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb2.ReadingSource = Reading.COMP_PK;
+                cb2.MMIOVariableIndex = 1;
                 cb2.AttackRatio = 0.8f;
                 cb2.DecayRatio = 0.1f;
                 cb2.UpdateInterval = nMSupdate;
@@ -7415,6 +7707,7 @@ namespace Thetis
                 cb.TopLeft = cb2.TopLeft;
                 cb.Size = cb2.Size;
                 cb.ReadingSource = Reading.COMP;
+                cb.MMIOVariableIndex = 0;
                 cb.ShowPeakValue = false;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
@@ -7485,6 +7778,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = reading;
+                cb.MMIOVariableIndex = 0;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
                 cb.UpdateInterval = nMSupdate;
@@ -7612,6 +7906,7 @@ namespace Thetis
                 cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
                 cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
                 cb.ReadingSource = Reading.SWR;
+                cb.MMIOVariableIndex = 0;
                 cb.AttackRatio = 0.8f;
                 cb.DecayRatio = 0.1f;
                 cb.UpdateInterval = nMSupdate;
@@ -8232,6 +8527,17 @@ namespace Thetis
                                             clsMagicEyeItem magicEye = me.Value as clsMagicEyeItem;
                                             if (magicEye == null) continue;
 
+                                            if (magicEye.MMIOVariableIndex != -1)
+                                            {
+                                                magicEye.MMIOGuid = igs.GetMMIOGuid(magicEye.MMIOVariableIndex);
+                                                magicEye.MMIOVariable = igs.GetMMIOVariable(magicEye.MMIOVariableIndex);
+                                            }
+                                            else
+                                            {
+                                                magicEye.MMIOGuid = Guid.Empty;
+                                                magicEye.MMIOVariable = "";
+                                            }
+
                                             magicEye.UpdateInterval = igs.UpdateInterval;
                                             magicEye.AttackRatio = igs.AttackRatio;
                                             magicEye.DecayRatio = igs.DecayRatio;
@@ -8295,6 +8601,20 @@ namespace Thetis
                                         {
                                             clsNeedleItem ni = needle.Value as clsNeedleItem;
                                             if (ni == null) continue;
+
+                                            if (mt == MeterType.CROSS) //TODO ananmm not done yet
+                                            {
+                                                if (ni.MMIOVariableIndex != -1)
+                                                {
+                                                    ni.MMIOGuid = igs.GetMMIOGuid(ni.MMIOVariableIndex);
+                                                    ni.MMIOVariable = igs.GetMMIOVariable(ni.MMIOVariableIndex);
+                                                }
+                                                else
+                                                {
+                                                    ni.MMIOGuid = Guid.Empty;
+                                                    ni.MMIOVariable = "";
+                                                }
+                                            }
 
                                             if (ni.Primary)
                                             {
@@ -8563,6 +8883,24 @@ namespace Thetis
                                             clsBarItem bi = hbar.Value as clsBarItem;
                                             if (bi == null) continue;
 
+                                            //
+                                            //for (int i = 0; i < 10; i++)
+                                            //{
+                                            //    bi.SetMMIOGuid(i, igs.GetMMIOGuid(i));
+                                            //    bi.SetMMIOVariable(i, igs.GetMMIOVariable(i));
+                                            //}
+                                            if (bi.MMIOVariableIndex != -1)
+                                            {
+                                                bi.MMIOGuid = igs.GetMMIOGuid(bi.MMIOVariableIndex);
+                                                bi.MMIOVariable = igs.GetMMIOVariable(bi.MMIOVariableIndex);
+                                            }
+                                            else
+                                            {
+                                                bi.MMIOGuid = Guid.Empty;
+                                                bi.MMIOVariable = "";
+                                            }
+                                            //
+
                                             if (bi.Primary)
                                             {
                                                 //primary bar, as has been added first
@@ -8747,6 +9085,12 @@ namespace Thetis
                                             clsMagicEyeItem magicEye = me.Value as clsMagicEyeItem;
                                             if (magicEye == null) continue; // skip the img
 
+                                            if (magicEye.MMIOVariableIndex != -1)
+                                            {
+                                                igs.SetMMIOGuid(magicEye.MMIOVariableIndex, magicEye.MMIOGuid);
+                                                igs.SetMMIOVariable(magicEye.MMIOVariableIndex, magicEye.MMIOVariable);
+                                            }
+
                                             igs.UpdateInterval = magicEye.UpdateInterval;
                                             igs.AttackRatio = magicEye.AttackRatio;
                                             igs.DecayRatio = magicEye.DecayRatio;
@@ -8794,6 +9138,15 @@ namespace Thetis
                                         {
                                             clsNeedleItem ni = needle.Value as clsNeedleItem;
                                             if (ni == null) continue; // skip the images
+
+                                            if (mt == MeterType.CROSS) //TODO ananmm not done yet
+                                            {
+                                                if (ni.MMIOVariableIndex != -1)
+                                                {
+                                                    igs.SetMMIOGuid(ni.MMIOVariableIndex, ni.MMIOGuid);
+                                                    igs.SetMMIOVariable(ni.MMIOVariableIndex, ni.MMIOVariable);
+                                                }
+                                            }
 
                                             if (ni.Primary)
                                             {
@@ -9013,7 +9366,20 @@ namespace Thetis
                                             clsBarItem bi = hbar.Value as clsBarItem;
                                             if (bi == null) continue;
 
-                                            if(bi.Primary)
+                                            //
+                                            //for (int i = 0; i < 10; i++)
+                                            //{
+                                            //    igs.SetMMIOGuid(i, bi.GetMMIOGuid(i));
+                                            //    igs.SetMMIOVariable(i, bi.GetMMIOVariable(i));
+                                            //}
+                                            if (bi.MMIOVariableIndex != -1)
+                                            {
+                                                igs.SetMMIOGuid(bi.MMIOVariableIndex, bi.MMIOGuid);
+                                                igs.SetMMIOVariable(bi.MMIOVariableIndex, bi.MMIOVariable);
+                                            }
+                                            //
+
+                                            if (bi.Primary)
                                             {
                                                 //primary bar, as has been added first
                                                 igs.UpdateInterval = bi.UpdateInterval;
@@ -13330,6 +13696,15 @@ namespace Thetis
             TCPIP = 1,
             SERIAL = 2
         }
+        public enum MMIOTerminator
+        {
+            NONE = 0,
+            CR = 1,
+            LF = 2,
+            CRLF = 3,
+            CUSTOM = 4,
+            LAST = 5
+        }
         public class clsMMIO
         {
             private Guid _guid;
@@ -13342,6 +13717,7 @@ namespace Thetis
             private string _four_char;
             private bool _enabled;
             private bool _listener_started;
+            private MMIOTerminator _terminator;
 
             private readonly ConcurrentDictionary<string, object> _io_variables;
             public clsMMIO()
@@ -13354,6 +13730,7 @@ namespace Thetis
                 _listener_running = false;
                 _format = MMIOFormat.JSON;
                 _direction = MMIODirection.IN;
+                _terminator = MMIOTerminator.NONE;
 
                 _io_variables = new ConcurrentDictionary<string, object>();
 
@@ -13374,6 +13751,7 @@ namespace Thetis
                 _listener_running = false;
                 _format = MMIOFormat.JSON;
                 _direction = MMIODirection.IN;
+                _terminator = MMIOTerminator.NONE;
 
                 _io_variables = new ConcurrentDictionary<string, object>();
 
@@ -13389,6 +13767,7 @@ namespace Thetis
                 _listener_running = false;
                 _format = MMIOFormat.JSON;
                 _direction = MMIODirection.IN;
+                _terminator = MMIOTerminator.NONE;
 
                 _io_variables = new ConcurrentDictionary<string, object>();
 
@@ -13427,6 +13806,11 @@ namespace Thetis
             {
                 get { return _format; }
                 set { _format = value; }
+            }
+            public MMIOTerminator Terminator
+            {
+                get { return _terminator; }
+                set { _terminator = value; }
             }
             public MMIOType Type
             {
@@ -13497,6 +13881,9 @@ namespace Thetis
             {
                 if (_io_variables.ContainsKey(key))
                 {
+                    object val = _io_variables[key];
+                    Type valueType = determineType(val.ToString());
+                    object covertedVal = convertToType(val.ToString(), valueType);
                     return _io_variables[key];
                 }
                 return false;
@@ -13505,19 +13892,19 @@ namespace Thetis
             {
                 return _io_variables;
             }
-            public ConcurrentDictionary<string, object> VariablesCloned()
-            {
-                object moo;
-                moo = (int)3;
-                object deepcopy = moo;
+            //public ConcurrentDictionary<string, object> VariablesCloned()
+            //{
+            //    object moo;
+            //    moo = (int)3;
+            //    object deepcopy = moo;
 
-                ConcurrentDictionary<string, object> copiedDictionary = new ConcurrentDictionary<string, object>();
-                foreach(KeyValuePair<string, object> kvp in _io_variables)
-                {
-                    copiedDictionary[kvp.Key] = deepCopy(kvp.Value);
-                }
-                return copiedDictionary;
-            }
+            //    ConcurrentDictionary<string, object> copiedDictionary = new ConcurrentDictionary<string, object>();
+            //    foreach(KeyValuePair<string, object> kvp in _io_variables)
+            //    {
+            //        copiedDictionary[kvp.Key] = deepCopy(kvp.Value);
+            //    }
+            //    return copiedDictionary;
+            //}
             public string VariableValueType(object obj)
             {
                 string tmp;
@@ -13744,6 +14131,7 @@ namespace Thetis
                 Task<UdpReceiveResult> receiveTask = null;
                 _mmio_data[guid].ListenerRunning = true;
                 Listener?.Invoke(guid, MMIOType.UDP, true);
+                string bufferConcat = "";
                 while (!token.IsCancellationRequested)
                 {
                     try
@@ -13762,7 +14150,43 @@ namespace Thetis
                         {
                             UdpReceiveResult result = await receiveTask;
                             string dataString = Encoding.UTF8.GetString(result.Buffer);
-                            if(inbound) ReceivedDataString?.Invoke(guid, dataString);
+
+
+                            if (inbound)
+                            {                                
+                                string term = "";
+                                switch(_mmio_data[guid].Terminator)
+                                {
+                                    case MMIOTerminator.NONE:
+                                        ReceivedDataString?.Invoke(guid, dataString);
+                                        bufferConcat = "";
+                                        break;
+                                    case MMIOTerminator.CR:
+                                        term = "\r";
+                                        break;
+                                    case MMIOTerminator.LF:
+                                        term = "\n";
+                                        break;
+                                    case MMIOTerminator.CRLF:
+                                        term = "\r\n";
+                                        break;
+                                    case MMIOTerminator.CUSTOM:
+                                        break;
+                                }
+                                if (term != "")
+                                {
+                                    bufferConcat += dataString;
+
+                                    int pos = bufferConcat.IndexOf(term);
+                                    while (pos > -1)
+                                    {
+                                        ReceivedDataString?.Invoke(guid, bufferConcat.Substring(0, pos));
+                                        bufferConcat = bufferConcat.Substring(pos + term.Length);
+                                        pos = bufferConcat.IndexOf(term);
+                                    }
+                                }
+                            }
+
                             read = true;
                         }
                         else
@@ -13857,6 +14281,7 @@ namespace Thetis
             {
                 Task<int> readTask = null;
                 bool read = true;
+                string bufferConcat = "";
                 while (!token.IsCancellationRequested && tcpClient.Connected)
                 {
                     bool inbound = _mmio_data[guid].Direction == MMIODirection.IN || _mmio_data[guid].Direction == MMIODirection.BOTH;
@@ -13876,8 +14301,43 @@ namespace Thetis
                         if (bytesRead > 0)
                         {
                             string dataString = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                            if (inbound) ReceivedDataString?.Invoke(guid, dataString);
-                            read = true;
+
+                            if (inbound)
+                            {
+                                string term = "";
+                                switch (_mmio_data[guid].Terminator)
+                                {
+                                    case MMIOTerminator.NONE:
+                                        ReceivedDataString?.Invoke(guid, dataString);
+                                        bufferConcat = "";
+                                        break;
+                                    case MMIOTerminator.CR:
+                                        term = "\r";
+                                        break;
+                                    case MMIOTerminator.LF:
+                                        term = "\n";
+                                        break;
+                                    case MMIOTerminator.CRLF:
+                                        term = "\r\n";
+                                        break;
+                                    case MMIOTerminator.CUSTOM:
+                                        break;
+                                }
+                                if (term != "")
+                                {
+                                    bufferConcat += dataString;
+
+                                    int pos = bufferConcat.IndexOf(term);
+                                    while (pos > -1)
+                                    {
+                                        ReceivedDataString?.Invoke(guid, bufferConcat.Substring(0, pos));
+                                        bufferConcat = bufferConcat.Substring(pos + term.Length);
+                                        pos = bufferConcat.IndexOf(term);
+                                    }
+                                }
+                            }
+
+                            read = true;                                
                         }
                         else
                         {
@@ -14007,6 +14467,7 @@ namespace Thetis
                 data += mmio.Format.ToString() + "|"; //5
                 data += mmio.Type.ToString() + "|"; //6
                 data += mmio.Enabled.ToString() + "|"; //7
+                data += mmio.Terminator.ToString() + "|"; //8
             }
             data = data.Substring(0, data.Length - 1); // scrap trailing |
             return data;
@@ -14029,12 +14490,14 @@ namespace Thetis
                 MMIODirection direction = MMIODirection.BOTH;
                 MMIOFormat format_in = MMIOFormat.JSON;
                 MMIOType type = MMIOType.UDP;
+                MMIOTerminator terminator_in = MMIOTerminator.NONE;
                 int port = 0;
                 bool enabled = false;
 
                 for (int i = 0; i < listeners; i++)
                 {
-                    int idx = i * 7;
+                    int idx = i * 8;
+
                     clsMMIO mmio = new clsMMIO();
                     ok = Guid.TryParse(parts[idx + 1], out guid);
                     if (ok)
@@ -14062,7 +14525,7 @@ namespace Thetis
                     {
                         mmio.Type = type;
                         //if((parts.Length-1 / 7) >= (listeners * 7))
-                            ok = bool.TryParse(parts[idx + 7], out enabled);
+                        ok = bool.TryParse(parts[idx + 7], out enabled);
                     }
                     if (ok)
                     {
@@ -14078,6 +14541,10 @@ namespace Thetis
                     if (ok && enabled)
                     {
                         mmio.StartListening();
+                    }
+                    if (ok)
+                    {
+                        ok = Enum.TryParse<MMIOTerminator>(parts[idx + 8], out terminator_in);
                     }
                 }
             }
@@ -14109,6 +14576,7 @@ namespace Thetis
         {
             char[] charsToTrim = { ' ', '\n', '\r', '\t' };
             dataString = dataString.Trim(charsToTrim);
+            if (dataString == "") return;
 
             //Debug.Print("Data : " + guid + " : [" + dataString + "]");
             if (!MultiMeterIO.Data.ContainsKey(guid)) return;
@@ -14162,15 +14630,22 @@ namespace Thetis
         }
         private static Type determineType(string value)
         {
-            if (int.TryParse(value, out _))
+            // Create culture info for European style numbers
+            CultureInfo europeanCulture = new CultureInfo("fr-FR");
+            NumberStyles numberStyle = NumberStyles.Float | NumberStyles.AllowThousands;
+
+            // Try parsing with InvariantCulture first
+            if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
             {
                 return typeof(int);
             }
-            else if (double.TryParse(value, out _))
+            else if (double.TryParse(value, numberStyle, CultureInfo.InvariantCulture, out _) ||
+                     double.TryParse(value, numberStyle, europeanCulture, out _))
             {
                 return typeof(double);
             }
-            else if (float.TryParse(value, out _))
+            else if (float.TryParse(value, numberStyle, CultureInfo.InvariantCulture, out _) ||
+                     float.TryParse(value, numberStyle, europeanCulture, out _))
             {
                 return typeof(float);
             }
@@ -14179,25 +14654,53 @@ namespace Thetis
                 return typeof(string);
             }
         }
+
         static object convertToType(string value, Type type)
         {
-            if (type == typeof(int))
+            // Create culture info for European style numbers
+            CultureInfo europeanCulture = new CultureInfo("fr-FR");
+            NumberStyles numberStyle = NumberStyles.Float | NumberStyles.AllowThousands;
+
+            try
             {
-                return int.Parse(value);
+                if (type == typeof(int))
+                {
+                    // Try parsing with InvariantCulture first, then europeanCulture
+                    if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int resultInt))
+                    {
+                        return resultInt;
+                    }
+                    return int.Parse(value, NumberStyles.Integer, europeanCulture);
+                }
+                else if (type == typeof(double))
+                {
+                    // Try parsing with InvariantCulture first, then europeanCulture
+                    if (double.TryParse(value, numberStyle, CultureInfo.InvariantCulture, out double resultDouble))
+                    {
+                        return resultDouble;
+                    }
+                    return double.Parse(value, numberStyle, europeanCulture);
+                }
+                else if (type == typeof(float))
+                {
+                    // Try parsing with InvariantCulture first, then europeanCulture
+                    if (float.TryParse(value, numberStyle, CultureInfo.InvariantCulture, out float resultFloat))
+                    {
+                        return resultFloat;
+                    }
+                    return float.Parse(value, numberStyle, europeanCulture);
+                }
+                else
+                {
+                    return value;
+                }
             }
-            else if (type == typeof(double))
-            {
-                return double.Parse(value);
-            }
-            else if (type == typeof(float))
-            {
-                return float.Parse(value);
-            }
-            else
+            catch (FormatException)
             {
                 return value;
             }
         }
+
         public static void parseJsonToken(JToken token, string currentPath, Dictionary<string, string> keyValuePairs)
         {
             if (token is JValue)
