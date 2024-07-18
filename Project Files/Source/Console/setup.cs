@@ -24278,10 +24278,13 @@ namespace Thetis
                 case 1:
                     btnMMIO_variable.Enabled = true;
                     btnMMIO_variable_2.Enabled = false;
+                    toolTip1.SetToolTip(btnMMIO_variable, m.MeterVariablesReading(mt, 0).ToString());
                     break;
                 case 2:
                     btnMMIO_variable.Enabled = true;
                     btnMMIO_variable_2.Enabled = true;
+                    toolTip1.SetToolTip(btnMMIO_variable, m.MeterVariablesReading(mt, 0).ToString());
+                    toolTip1.SetToolTip(btnMMIO_variable_2, m.MeterVariablesReading(mt, 1).ToString());
                     break;
                 case 7:
                     //todo? anan mm

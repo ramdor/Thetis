@@ -5777,6 +5777,43 @@ namespace Thetis
                     _meterItems.Add(mi.ID, mi);
                 }
             }
+            public Reading MeterVariablesReading(MeterType meter, int variable_index)
+            {
+                switch (meter)
+                {
+                    case MeterType.SIGNAL_STRENGTH: return Reading.SIGNAL_STRENGTH;
+                    case MeterType.AVG_SIGNAL_STRENGTH: return Reading.AVG_SIGNAL_STRENGTH;
+                    case MeterType.SIGNAL_TEXT: return Reading.SIGNAL_STRENGTH;
+                    case MeterType.ADC: return variable_index == 0 ? Reading.ADC_PK : Reading.ADC_AV;
+                    case MeterType.AGC: return variable_index == 0 ? Reading.AGC_PK : Reading.AGC_AV;
+                    case MeterType.AGC_GAIN: return Reading.AGC_GAIN;
+                    case MeterType.MIC: return variable_index == 0 ? Reading.MIC : Reading.MIC_PK;
+                    case MeterType.PWR: return Reading.PWR;
+                    case MeterType.REVERSE_PWR: return Reading.REVERSE_PWR;
+                    case MeterType.ALC: return variable_index == 0 ? Reading.ALC : Reading.ALC_PK;
+                    case MeterType.EQ: return variable_index == 0 ? Reading.EQ : Reading.EQ_PK;
+                    case MeterType.LEVELER: return variable_index == 0 ? Reading.LEVELER : Reading.LEVELER_PK;
+                    case MeterType.COMP: return variable_index == 0 ? Reading.COMP : Reading.COMP_PK;
+                    //case MeterType.CPDR: break;
+                    case MeterType.ALC_GAIN: return Reading.ALC_G;
+                    case MeterType.ALC_GROUP: return Reading.ALC_GROUP;
+                    case MeterType.LEVELER_GAIN: return Reading.LVL_G;
+                    case MeterType.CFC: return variable_index == 0 ? Reading.CFC_AV : Reading.CFC_PK;
+                    case MeterType.CFC_GAIN: return Reading.CFC_G;
+                    case MeterType.MAGIC_EYE: return Reading.SIGNAL_STRENGTH;
+                    case MeterType.ESTIMATED_PBSNR: return Reading.ESTIMATED_PBSNR;
+                    //TODO !!!case MeterType.ANANMM: return 7;
+                    case MeterType.CROSS: return variable_index == 0 ? Reading.PWR : Reading.REVERSE_PWR;
+                    case MeterType.SWR: return Reading.SWR;
+                    //case MeterType.HISTORY: AddHistory(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.VFO_DISPLAY: return Reading.NONE;
+                    case MeterType.CLOCK: return Reading.NONE;
+                    case MeterType.SPACER: return Reading.NONE;
+                    case MeterType.TEXT_OVERLAY: return Reading.NONE;
+                        //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
+                }
+                return Reading.NONE;
+            }
             public int MeterVariables(MeterType meter)
             {
                 switch (meter)
@@ -14468,6 +14505,13 @@ namespace Thetis
                 data += mmio.Type.ToString() + "|"; //6
                 data += mmio.Enabled.ToString() + "|"; //7
                 data += mmio.Terminator.ToString() + "|"; //8
+                data += mmio.Variables().Count.ToString() + "|"; //9
+
+                foreach(KeyValuePair<string, object> kvpvar in mmio.Variables())
+                {
+                    data += kvpvar.Key + "|";
+                    data += kvpvar.Value.ToString().Replace("|", "++><++") + "|";
+                }
             }
             data = data.Substring(0, data.Length - 1); // scrap trailing |
             return data;
@@ -14486,20 +14530,25 @@ namespace Thetis
             ok = int.TryParse(parts[0], out listeners);
             if (ok)
             {
-                Guid guid;
+                Guid guid = Guid.Empty;
                 MMIODirection direction = MMIODirection.BOTH;
                 MMIOFormat format_in = MMIOFormat.JSON;
                 MMIOType type = MMIOType.UDP;
                 MMIOTerminator terminator_in = MMIOTerminator.NONE;
                 int port = 0;
                 bool enabled = false;
+                int variables = 0;
+                string tmp;
+
+                int idx = 0;
 
                 for (int i = 0; i < listeners; i++)
                 {
-                    int idx = i * 8;
-
                     clsMMIO mmio = new clsMMIO();
-                    ok = Guid.TryParse(parts[idx + 1], out guid);
+                    if (ok)
+                    {
+                        ok = Guid.TryParse(parts[idx + 1], out guid);
+                    }
                     if (ok)
                     {
                         mmio.Guid = guid;
@@ -14524,13 +14573,28 @@ namespace Thetis
                     if (ok)
                     {
                         mmio.Type = type;
-                        //if((parts.Length-1 / 7) >= (listeners * 7))
                         ok = bool.TryParse(parts[idx + 7], out enabled);
                     }
                     if (ok)
                     {
-                        //if ((parts.Length - 1 / 7) >= (listeners * 7))
                         mmio.Enabled = enabled;
+                        ok = Enum.TryParse<MMIOTerminator>(parts[idx + 8], out terminator_in);
+                    }
+                    if(ok)
+                    {
+                        mmio.Terminator = terminator_in;
+                        // restore variables
+                        ok = int.TryParse(parts[idx + 9], out variables);
+                        if (ok)
+                        {
+                            for(int n = 0; n < variables; n++)
+                            {
+                                mmio.Variables().TryAdd(parts[idx + 10 + (n * 2)], parts[idx + 11 + (n * 2)].Replace("++><++", "|"));
+                            }
+                        }
+                    }
+                    if (ok)
+                    {
                         ok = _mmio_data.TryAdd(guid, mmio);
                         if (!ok)
                         {
@@ -14544,7 +14608,7 @@ namespace Thetis
                     }
                     if (ok)
                     {
-                        ok = Enum.TryParse<MMIOTerminator>(parts[idx + 8], out terminator_in);
+                        idx += 9 + (variables * 2);
                     }
                 }
             }
@@ -14665,30 +14729,27 @@ namespace Thetis
             {
                 if (type == typeof(int))
                 {
-                    // Try parsing with InvariantCulture first, then europeanCulture
-                    if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int resultInt))
+                    if (int.TryParse(value, NumberStyles.Integer, europeanCulture, out int resultInt))
                     {
                         return resultInt;
                     }
-                    return int.Parse(value, NumberStyles.Integer, europeanCulture);
+                    return int.Parse(value, NumberStyles.Integer, CultureInfo.InvariantCulture);
                 }
                 else if (type == typeof(double))
                 {
-                    // Try parsing with InvariantCulture first, then europeanCulture
-                    if (double.TryParse(value, numberStyle, CultureInfo.InvariantCulture, out double resultDouble))
+                    if (double.TryParse(value, numberStyle, europeanCulture, out double resultDouble))
                     {
                         return resultDouble;
                     }
-                    return double.Parse(value, numberStyle, europeanCulture);
+                    return double.Parse(value, numberStyle, CultureInfo.InvariantCulture);
                 }
                 else if (type == typeof(float))
                 {
-                    // Try parsing with InvariantCulture first, then europeanCulture
-                    if (float.TryParse(value, numberStyle, CultureInfo.InvariantCulture, out float resultFloat))
+                    if (float.TryParse(value, numberStyle, europeanCulture, out float resultFloat))
                     {
                         return resultFloat;
                     }
-                    return float.Parse(value, numberStyle, europeanCulture);
+                    return float.Parse(value, numberStyle, CultureInfo.InvariantCulture);
                 }
                 else
                 {
