@@ -28702,6 +28702,12 @@ namespace Thetis
         private void init_lstMMIO()
         {
             lstMMIO_network_list.Items.Clear();
+            comboMMIO_network_format_in.Items.Clear();
+
+            for(int i = (int)MultiMeterIO.MMIOFormat.JSON; i < (int)(int)MultiMeterIO.MMIOFormat.LAST; i++)
+            {
+                comboMMIO_network_format_in.Items.Add(((MultiMeterIO.MMIOFormat)i).ToString());
+            }
 
             _tmrRXupdate = new System.Timers.Timer(20);
             _tmrRXupdate.Elapsed += OnRxTimerTick;
@@ -28742,19 +28748,39 @@ namespace Thetis
         }
         private System.Timers.Timer _tmrRXupdate;
         private double _light_gray = 1f;
+        public void MultiMeterIOStopTimers()
+        {
+            if(_tmrRXupdate != null)
+            {
+                _tmrRXupdate.Stop();
+                _tmrRXupdate.Elapsed -= OnRxTimerTick;
+                _tmrRXupdate.Close();
+                _tmrRXupdate = null;
+            }
+        }
         private void OnRxTimerTick(object sender, ElapsedEventArgs e)
         {
-            _light_gray += 0.08;
-            if (_light_gray > 1f)
-                _light_gray = 1f;
+            try
+            {
+                _light_gray += 0.08;
+                if (_light_gray > 1f)
+                    _light_gray = 1f;
 
-            Color c = ColorInterpolator.InterpolateBetween(Color.Red, Color.LightGray, _light_gray);
-            pnlMMIO_network_rxdata.BackColor = c;
-    
-            if (_light_gray < 1f)
-                _tmrRXupdate.Start();
+                Color c = ColorInterpolator.InterpolateBetween(Color.Red, Color.LightGray, _light_gray);
+                pnlMMIO_network_rxdata.BackColor = c;
+
+                if (_light_gray < 1f && pnlMMIO_network_rxdata.Visible)
+                    _tmrRXupdate.Start();
+            }
+            catch { }
         }
         private void MultiMeterIO_ReceivedDataString(Guid guid, string dataString)
+        {
+            lstMMIO_network_list.BeginInvoke(new MethodInvoker(() => {
+                updateFromRecievedData(guid, dataString);
+            }));
+        }
+        private void updateFromRecievedData(Guid guid, string dataString)
         {
             if (!pnlMMIO_network_rxdata.Visible) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
@@ -28764,6 +28790,29 @@ namespace Thetis
             pnlMMIO_network_rxdata.BackColor = Color.Red;
             _light_gray = 0f;
             _tmrRXupdate.Start();
+
+            updateVariableList();
+        }
+        private void updateVariableList()
+        {
+            ListView.SelectedListViewItemCollection items = lstMMIO_network_variables.SelectedItems;
+            string selectedKey = items.Count == 1 ? items[0].Text : "";
+
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            lstMMIO_network_variables.Items.Clear();
+            btnMMIO_network_remove_variable.Enabled = items.Count > 0;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
+            MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];           
+            foreach (KeyValuePair<string, object> kvp in mmio.VariablesCloned())
+            {
+                ListViewItem lvi = lstMMIO_network_variables.Items.Add(kvp.Key);
+                lvi.SubItems.Add(mmio.VariableValueType(kvp.Value));
+
+                if(selectedKey != "" && kvp.Key == selectedKey)
+                    lvi.Selected = true;
+            }
         }
         private void lstMMIO_network_list_SelectedIndexChanged(object sender, EventArgs e)
         {            
@@ -28787,10 +28836,26 @@ namespace Thetis
             txtMMIO_network_4char.Text = mmio.FourChar;
             pnlMMIO_network_listening.BackColor = mmio.ListenerRunning ? Color.GreenYellow : Color.LightGray;
             pnlMMIO_network_rxdata.BackColor = Color.LightGray;
+            comboMMIO_network_format_in.SelectedIndex = (int)mmio.Format;
+
+            switch (mmio.Direction)
+            {
+                case MultiMeterIO.MMIODirection.IN:
+                    radMMIO_network_in.Checked = true;
+                    break;
+                case MultiMeterIO.MMIODirection.OUT:
+                    radMMIO_network_out.Checked = true;
+                    break;
+                case MultiMeterIO.MMIODirection.BOTH:
+                    radMMIO_network_both.Checked = true;
+                    break;
+            }
 
             _ignore_enable = true;
             chkMMIO_network_enabled.Checked = mmio.Enabled;
             _ignore_enable = false;
+
+            updateVariableList();
         }
         private void addEditListener(MultiMeterIO.MMIOType type, string existing_ip_port = "")
         {
@@ -28978,22 +29043,39 @@ namespace Thetis
 
         private void radMMIO_network_in_CheckedChanged(object sender, EventArgs e)
         {
-
+            if (!radMMIO_network_in.Checked) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+            MultiMeterIO.Data[mmioci.Guid].Direction = MultiMeterIO.MMIODirection.IN;
         }
 
         private void radMMIO_network_out_CheckedChanged(object sender, EventArgs e)
         {
-
+            if (!radMMIO_network_out.Checked) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+            MultiMeterIO.Data[mmioci.Guid].Direction = MultiMeterIO.MMIODirection.OUT;
         }
 
         private void radMMIO_network_both_CheckedChanged(object sender, EventArgs e)
         {
-
+            if (!radMMIO_network_both.Checked) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+            MultiMeterIO.Data[mmioci.Guid].Direction = MultiMeterIO.MMIODirection.BOTH;
         }
 
         private void comboMMIO_network_format_in_SelectedIndexChanged(object sender, EventArgs e)
         {
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
 
+            bool ok = Enum.TryParse<MultiMeterIO.MMIOFormat>(comboMMIO_network_format_in.Text, out MultiMeterIO.MMIOFormat fmt);
+
+            if(ok) MultiMeterIO.Data[mmioci.Guid].Format = fmt;
         }
         private class clsMultiMeterIOComboboxItem
         {
@@ -29118,6 +29200,43 @@ namespace Thetis
         private void txtMMIO_network_4char_KeyPress(object sender, KeyPressEventArgs e)
         {
             e.Handled = true;
+        }
+        private void btnMMIO_network_copy4char_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(txtMMIO_network_4char.Text);
+        }
+        private void btnMMIO_network_remove_variable_Click(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection items = lstMMIO_network_variables.SelectedItems;
+            if (items.Count <= 0 || items.Count > 1)
+            {
+                btnMMIO_network_remove_variable.Enabled = false;
+                return;
+            }
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
+            btnMMIO_network_remove_variable.Enabled = items.Count > 0;
+
+            string variable = items[0].Text;
+
+            MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
+
+            mmio.RemoveVariable(variable);
+            lstMMIO_network_variables.Items.Remove(items[0]);
+            updateVariableList();
+        }
+
+        private void lstMMIO_network_variables_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection items = lstMMIO_network_variables.SelectedItems;
+            if (items.Count <= 0 || items.Count > 1)
+            {
+                btnMMIO_network_remove_variable.Enabled = false;
+                return;
+            }
+            btnMMIO_network_remove_variable.Enabled = true;
         }
         #endregion
 
