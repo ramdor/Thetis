@@ -27612,6 +27612,7 @@ namespace Thetis
             if (mmioci == null) return;
             lstMMIO_network_variables.Items.Clear();
             btnMMIO_network_remove_variable.Enabled = items.Count > 0;
+            btnMMIO_network_copyvariable_clipboard.Enabled = items.Count > 0;
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];           
@@ -28021,6 +28022,7 @@ namespace Thetis
             if (items.Count <= 0 || items.Count > 1)
             {
                 btnMMIO_network_remove_variable.Enabled = false;
+                btnMMIO_network_copyvariable_clipboard.Enabled = false;
                 return;
             }
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
@@ -28028,6 +28030,7 @@ namespace Thetis
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             btnMMIO_network_remove_variable.Enabled = items.Count > 0;
+            btnMMIO_network_copyvariable_clipboard.Enabled = items.Count > 0;
 
             string variable = items[0].Text;
 
@@ -28044,10 +28047,21 @@ namespace Thetis
             if (items.Count <= 0 || items.Count > 1)
             {
                 btnMMIO_network_remove_variable.Enabled = false;
+                btnMMIO_network_copyvariable_clipboard.Enabled = false;
                 return;
             }
             btnMMIO_network_remove_variable.Enabled = true;
+            btnMMIO_network_copyvariable_clipboard.Enabled = true;
         }
+
+        private void btnMMIO_network_copyvariable_clipboard_Click(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection items = lstMMIO_network_variables.SelectedItems;
+            if (items.Count <= 0 || items.Count > 1) return;
+
+            Clipboard.SetText(items[0].Text);
+        }
+
         #endregion
 
 
