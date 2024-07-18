@@ -27392,6 +27392,8 @@ namespace Thetis
                 Debug.Write("done...");
                 SetupForm.SaveOptions();
                 Debug.WriteLine("Saved!");
+                shutdownLogStringToPath("Before MultiMeterIOStopTimers()");
+                SetupForm.MultiMeterIOStopTimers();
                 shutdownLogStringToPath("Leaving SetupForm save");
             }
 

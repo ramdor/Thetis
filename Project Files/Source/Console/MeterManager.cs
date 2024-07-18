@@ -14,6 +14,11 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Security.Cryptography;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Xml.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 //directX
 using SharpDX;
@@ -404,11 +409,6 @@ namespace Thetis
         }
         static MeterManager()
         {
-            //
-            MultiMeterIO.ClientConnected += MultiMeterIO_ClientConnected;
-            MultiMeterIO.ClientDisconnected += MultiMeterIO_ClientDisconnected;
-            MultiMeterIO.ReceivedDataString += MultiMeterIO_ReceivedDataString;
-
             // static constructor
             _rx1VHForAbove = false;
             _rx2VHForAbove = false;
@@ -445,26 +445,6 @@ namespace Thetis
             //MultiMeterIO.StartListeningUDP("127.0.0.1", 12001, Guid.Empty);
             //MultiMeterIO.StartListeningTCPIP("127.0.0.1", 9000, Guid.Empty);
         }
-
-        //
-        private static void MultiMeterIO_ClientConnected(Guid guid)
-        {
-            // Handle client connected event
-            Debug.Print("connected : " + guid);
-        }
-
-        private static void MultiMeterIO_ClientDisconnected(Guid guid)
-        {
-            // Handle client disconnected event
-            Debug.Print("disconnected : " + guid);
-        }
-
-        private static void MultiMeterIO_ReceivedDataString(Guid guid, string dataString)
-        {
-            // Handle received data string event
-            Debug.Print("Data : " + guid + " : [" + dataString + "]");
-        }
-        //
 
         //private static object _spectrumArrayLock = new object();
         //public static void ResizeSpectrum(int len)
@@ -3998,6 +3978,27 @@ namespace Thetis
                     }
                     sTmp = sTmp.Replace("%nl%", "\n");
                     //_newlines_1 = sTmp.Count(c => c == '\n');
+
+                    // MultiMeter IO
+                    foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
+                    {
+                        MultiMeterIO.clsMMIO mmio = mmios.Value;
+                        foreach (KeyValuePair<string, object> kvp in mmio.VariablesCloned())
+                        {
+                            string tmp;
+                            if (kvp.Value is int)
+                                tmp = ((int)kvp.Value).ToString();
+                            else if (kvp.Value is double)
+                                tmp = ((double)kvp.Value).ToString("f1");
+                            else if (kvp.Value is float)
+                                tmp = ((float)kvp.Value).ToString("f1");
+                            else
+                                tmp = kvp.Value.ToString();
+
+                            sTmp = sTmp.Replace("%" + kvp.Key.ToString() + "%", tmp);
+                        }
+                    }
+
                     return sTmp;
                 }
             }
@@ -13320,7 +13321,8 @@ namespace Thetis
         {
             JSON = 0,
             XML = 1,
-            RAW = 2
+            RAW = 2,
+            LAST = 3
         }
         public enum MMIOType
         {
@@ -13340,6 +13342,8 @@ namespace Thetis
             private string _four_char;
             private bool _enabled;
             private bool _listener_started;
+
+            private readonly ConcurrentDictionary<string, object> _io_variables;
             public clsMMIO()
             {
                 _enabled = true;
@@ -13348,6 +13352,11 @@ namespace Thetis
                 _ip = "";
                 _port = 0;
                 _listener_running = false;
+                _format = MMIOFormat.JSON;
+                _direction = MMIODirection.IN;
+
+                _io_variables = new ConcurrentDictionary<string, object>();
+
                 _four_char = FourChar(_ip, _port, _guid);
             }
             public clsMMIO(Guid guid, MMIOType type, string ip, int port, bool enabled)
@@ -13363,7 +13372,10 @@ namespace Thetis
                 _ip = ip;
                 _port = port;
                 _listener_running = false;
-                _enabled = enabled;
+                _format = MMIOFormat.JSON;
+                _direction = MMIODirection.IN;
+
+                _io_variables = new ConcurrentDictionary<string, object>();
 
                 _four_char = FourChar(_ip, _port, _guid);
             }
@@ -13375,7 +13387,10 @@ namespace Thetis
                 _ip = ip;
                 _port = port;
                 _listener_running = false;
-                _enabled = enabled;
+                _format = MMIOFormat.JSON;
+                _direction = MMIODirection.IN;
+
+                _io_variables = new ConcurrentDictionary<string, object>();
 
                 _four_char = FourChar(_ip, _port, _guid);
             }
@@ -13457,6 +13472,84 @@ namespace Thetis
             {
                 MultiMeterIO.StopListening(_guid);
             }
+            //public ConcurrentDictionary<string, object> IOVariables
+            //{
+            //    get
+            //    {
+            //        return _io_variables;
+            //    }
+            //}
+            public bool SetVariable(string key, object value)
+            {
+                bool ok;
+                if (_io_variables.ContainsKey(key))
+                {
+                    _io_variables[key] = value;
+                    ok = true;
+                }
+                else
+                {
+                    ok = _io_variables.TryAdd(key, value);
+                }
+                return ok;
+            }
+            public object GetVariable(string key)
+            {
+                if (_io_variables.ContainsKey(key))
+                {
+                    return _io_variables[key];
+                }
+                return false;
+            }
+            public ConcurrentDictionary<string, object> Variables()
+            {
+                return _io_variables;
+            }
+            public ConcurrentDictionary<string, object> VariablesCloned()
+            {
+                object moo;
+                moo = (int)3;
+                object deepcopy = moo;
+
+                ConcurrentDictionary<string, object> copiedDictionary = new ConcurrentDictionary<string, object>();
+                foreach(KeyValuePair<string, object> kvp in _io_variables)
+                {
+                    copiedDictionary[kvp.Key] = deepCopy(kvp.Value);
+                }
+                return copiedDictionary;
+            }
+            public string VariableValueType(object obj)
+            {
+                string tmp;
+                if (obj is int)
+                    tmp = ((int)obj).ToString();
+                else if (obj is double)
+                    tmp = ((double)obj).ToString("f1");
+                else if (obj is float)
+                    tmp = ((float)obj).ToString("f1");
+                else
+                    tmp = obj.ToString();
+                return tmp;
+            }
+            private static T deepCopy<T>(T obj)
+            {
+                if (ReferenceEquals(obj, null) || !typeof(T).IsSerializable)
+                {
+                    return default(T);
+                }
+
+                IFormatter formatter = new BinaryFormatter();
+                using (Stream stream = new MemoryStream())
+                {
+                    formatter.Serialize(stream, obj);
+                    stream.Seek(0, SeekOrigin.Begin);
+                    return (T)formatter.Deserialize(stream);
+                }
+            }
+            public void RemoveVariable(string key)
+            {
+                _io_variables.TryRemove(key, out _);
+            }
         }
         // Each startlisten will only accept a single TCP client for that IP/port combo.
         // UDP startlistens can have messages from multiple UDP clients.
@@ -13486,7 +13579,9 @@ namespace Thetis
             //_cancellationTokenSource = new CancellationTokenSource();
             _cancellationTokenSource = new ConcurrentDictionary<Guid, CancellationTokenSource>();
             _mmio_data = new ConcurrentDictionary<Guid, clsMMIO>();
-            _guidToTask = new ConcurrentDictionary<Guid, Task>();
+            _guidToTask = new ConcurrentDictionary<Guid, Task>();            
+
+            ReceivedDataString += MultiMeterIO_ReceivedDataString;
         }
         public static ConcurrentDictionary<Guid, clsMMIO> Data
         {
@@ -13609,7 +13704,7 @@ namespace Thetis
                 {
                     _cancellationTokenSource[guid].Cancel();
                     if(!task.IsCompleted)
-                        task.Wait();
+                        task.Wait(DELAY + 100);
                     task.Dispose();
                 }
                 catch { }
@@ -13653,6 +13748,8 @@ namespace Thetis
                 {
                     try
                     {
+                        bool inbound = _mmio_data[guid].Direction == MMIODirection.IN || _mmio_data[guid].Direction == MMIODirection.BOTH;
+
                         if (read)
                         {
                             receiveTask = udpClient.ReceiveAsync();
@@ -13665,7 +13762,7 @@ namespace Thetis
                         {
                             UdpReceiveResult result = await receiveTask;
                             string dataString = Encoding.UTF8.GetString(result.Buffer);
-                            ReceivedDataString?.Invoke(guid, dataString);
+                            if(inbound) ReceivedDataString?.Invoke(guid, dataString);
                             read = true;
                         }
                         else
@@ -13762,6 +13859,8 @@ namespace Thetis
                 bool read = true;
                 while (!token.IsCancellationRequested && tcpClient.Connected)
                 {
+                    bool inbound = _mmio_data[guid].Direction == MMIODirection.IN || _mmio_data[guid].Direction == MMIODirection.BOTH;
+
                     if (read)
                     {
                         readTask = stream.ReadAsync(buffer, 0, buffer.Length, token);
@@ -13777,7 +13876,7 @@ namespace Thetis
                         if (bytesRead > 0)
                         {
                             string dataString = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                            ReceivedDataString?.Invoke(guid, dataString);
+                            if (inbound) ReceivedDataString?.Invoke(guid, dataString);
                             read = true;
                         }
                         else
@@ -13827,19 +13926,19 @@ namespace Thetis
                 Debug.Print("MultiMeterIO timed out when stopping.");
             }
         }
-        public static bool AlreadyListeningTCPIP(string ip, int port)
-        {
-            IPAddress ipAddress = IPAddress.Parse(ip);
-            foreach (TcpListener listener in _tcpListeners.Values)
-            {
-                if (((IPEndPoint)listener.LocalEndpoint).Address.Equals(ipAddress) &&
-                    ((IPEndPoint)listener.LocalEndpoint).Port == port)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        //public static bool AlreadyListeningTCPIP(string ip, int port)
+        //{
+        //    IPAddress ipAddress = IPAddress.Parse(ip);
+        //    foreach (TcpListener listener in _tcpListeners.Values)
+        //    {
+        //        if (((IPEndPoint)listener.LocalEndpoint).Address.Equals(ipAddress) &&
+        //            ((IPEndPoint)listener.LocalEndpoint).Port == port)
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
         public static bool AlreadyConfigured(string ip, int port, MMIOType type)
         {
             foreach (KeyValuePair<Guid, clsMMIO> kvp in _mmio_data)
@@ -13853,19 +13952,19 @@ namespace Thetis
             }
             return false;
         }
-        public static bool AlreadyListeningUDP(string ip, int port)
-        {
-            IPAddress ipAddress = IPAddress.Parse(ip);
-            foreach (UdpClient udpClient in _udpListeners.Values)
-            {
-                if (((IPEndPoint)udpClient.Client.LocalEndPoint).Address.Equals(ipAddress) &&
-                    ((IPEndPoint)udpClient.Client.LocalEndPoint).Port == port)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        //public static bool AlreadyListeningUDP(string ip, int port)
+        //{
+        //    IPAddress ipAddress = IPAddress.Parse(ip);
+        //    foreach (UdpClient udpClient in _udpListeners.Values)
+        //    {
+        //        if (((IPEndPoint)udpClient.Client.LocalEndPoint).Address.Equals(ipAddress) &&
+        //            ((IPEndPoint)udpClient.Client.LocalEndPoint).Port == port)
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
         public static string FourChar(string ip, int port, Guid guid)
         {
             string input = $"{ip}:{port}:{guid}";
@@ -13928,7 +14027,7 @@ namespace Thetis
             {
                 Guid guid;
                 MMIODirection direction = MMIODirection.BOTH;
-                MMIOFormat format = MMIOFormat.JSON;
+                MMIOFormat format_in = MMIOFormat.JSON;
                 MMIOType type = MMIOType.UDP;
                 int port = 0;
                 bool enabled = false;
@@ -13952,11 +14051,11 @@ namespace Thetis
                     if (ok)
                     {
                         mmio.Port = port;
-                        ok = Enum.TryParse<MMIOFormat>(parts[idx + 5], out format);
+                        ok = Enum.TryParse<MMIOFormat>(parts[idx + 5], out format_in);
                     }
                     if (ok)
                     {
-                        mmio.Format = format;
+                        mmio.Format = format_in;
                         ok = Enum.TryParse<MMIOType>(parts[idx + 6], out type);
                     }
                     if (ok)
@@ -14005,6 +14104,142 @@ namespace Thetis
                 if (ok) StopListening(guid);
             }
             return ok;
+        }
+        private static void MultiMeterIO_ReceivedDataString(Guid guid, string dataString)
+        {
+            char[] charsToTrim = { ' ', '\n', '\r', '\t' };
+            dataString = dataString.Trim(charsToTrim);
+
+            //Debug.Print("Data : " + guid + " : [" + dataString + "]");
+            if (!MultiMeterIO.Data.ContainsKey(guid)) return;
+
+            MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[guid];
+            MultiMeterIO.MMIOFormat format = mmio.Format;
+            string fourChar = mmio.FourChar;
+
+            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+            switch (format)
+            {
+                case MultiMeterIO.MMIOFormat.JSON:
+                    try
+                    {
+                        JObject parsedJson = JObject.Parse(dataString);
+                        parseJsonToken(parsedJson, fourChar, keyValuePairs);
+                    }
+                    catch { }
+                    break;
+                case MultiMeterIO.MMIOFormat.XML:
+                    try
+                    {
+                        XElement parsedXml = XElement.Parse(dataString);
+                        parseXMLElement(parsedXml, fourChar, keyValuePairs);
+                    }
+                    catch { }
+                    break;
+                case MultiMeterIO.MMIOFormat.RAW:
+                    try
+                    {
+                        string[] split = dataString.Split(':');
+                        if(split.Length % 2 == 0)
+                        {
+                            for(int i = 0; i < split.Length; i += 2)
+                            {
+                                keyValuePairs.Add(fourChar + "." + split[i], split[i + 1]);
+                            }
+                        }
+                    }
+                    catch { }
+                    break;
+            }
+
+            foreach (KeyValuePair<string, string> kvp in keyValuePairs)
+            {
+                //Debug.Print($"key = {kvp.Key}    value = {kvp.Value}    type = {determineType(kvp.Value)}");
+                Type tpe = determineType(kvp.Value);
+                object typedValue = convertToType(kvp.Value, tpe);
+                mmio.SetVariable(kvp.Key, typedValue);
+            }
+        }
+        private static Type determineType(string value)
+        {
+            if (int.TryParse(value, out _))
+            {
+                return typeof(int);
+            }
+            else if (double.TryParse(value, out _))
+            {
+                return typeof(double);
+            }
+            else if (float.TryParse(value, out _))
+            {
+                return typeof(float);
+            }
+            else
+            {
+                return typeof(string);
+            }
+        }
+        static object convertToType(string value, Type type)
+        {
+            if (type == typeof(int))
+            {
+                return int.Parse(value);
+            }
+            else if (type == typeof(double))
+            {
+                return double.Parse(value);
+            }
+            else if (type == typeof(float))
+            {
+                return float.Parse(value);
+            }
+            else
+            {
+                return value;
+            }
+        }
+        public static void parseJsonToken(JToken token, string currentPath, Dictionary<string, string> keyValuePairs)
+        {
+            if (token is JValue)
+            {
+                JValue valueToken = (JValue)token;
+                keyValuePairs[currentPath] = valueToken.ToString();
+            }
+            else if (token is JObject)
+            {
+                JObject obj = (JObject)token;
+                foreach (JProperty property in obj.Properties())
+                {
+                    parseJsonToken(property.Value, $"{currentPath}.{property.Name}", keyValuePairs);
+                }
+            }
+            else if (token is JArray)
+            {
+                JArray array = (JArray)token;
+                for (int i = 0; i < array.Count; i++)
+                {
+                    parseJsonToken(array[i], $"{currentPath}[{i}]", keyValuePairs);
+                }
+            }
+        }
+        private static void parseXMLElement(XElement element, string currentPath, Dictionary<string, string> keyValuePairs)
+        {
+            foreach (XAttribute attribute in element.Attributes())
+            {
+                keyValuePairs[$"{currentPath}.{attribute.Name}"] = attribute.Value;
+            }
+
+            bool hasElements = false;
+            foreach (XElement childElement in element.Elements())
+            {
+                hasElements = true;
+                parseXMLElement(childElement, $"{currentPath}.{childElement.Name}", keyValuePairs);
+            }
+
+            if (!hasElements)
+            {
+                keyValuePairs[currentPath] = element.Value;
+            }
         }
     }
     //// Extension method to add a timeout to a task

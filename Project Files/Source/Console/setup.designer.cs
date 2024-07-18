@@ -3479,6 +3479,13 @@
             this.groupBoxTS39 = new System.Windows.Forms.GroupBoxTS();
             this.btnMMIO_network_delete = new System.Windows.Forms.ButtonTS();
             this.pnlMMIO_network_container = new System.Windows.Forms.PanelTS();
+            this.btnMMIO_network_remove_variable = new System.Windows.Forms.ButtonTS();
+            this.lstMMIO_network_variables = new System.Windows.Forms.ListView();
+            this.colVariables = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colValues = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.panelTS11 = new System.Windows.Forms.PanelTS();
+            this.labelTS217 = new System.Windows.Forms.LabelTS();
+            this.btnMMIO_network_copy4char = new System.Windows.Forms.ButtonTS();
             this.pnlMMIO_network_rxdata = new System.Windows.Forms.PanelTS();
             this.labelTS215 = new System.Windows.Forms.LabelTS();
             this.chkMMIO_network_enabled = new System.Windows.Forms.CheckBoxTS();
@@ -55189,7 +55196,7 @@
             // 
             // groupBoxTS40
             // 
-            this.groupBoxTS40.Location = new System.Drawing.Point(14, 237);
+            this.groupBoxTS40.Location = new System.Drawing.Point(14, 282);
             this.groupBoxTS40.Name = "groupBoxTS40";
             this.groupBoxTS40.Size = new System.Drawing.Size(289, 122);
             this.groupBoxTS40.TabIndex = 1;
@@ -55205,7 +55212,7 @@
             this.groupBoxTS39.Controls.Add(this.btnMMIO_network_add_tcpip);
             this.groupBoxTS39.Location = new System.Drawing.Point(14, 8);
             this.groupBoxTS39.Name = "groupBoxTS39";
-            this.groupBoxTS39.Size = new System.Drawing.Size(590, 223);
+            this.groupBoxTS39.Size = new System.Drawing.Size(698, 223);
             this.groupBoxTS39.TabIndex = 0;
             this.groupBoxTS39.TabStop = false;
             this.groupBoxTS39.Text = "Network I/O";
@@ -55225,6 +55232,11 @@
             // 
             this.pnlMMIO_network_container.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlMMIO_network_container.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlMMIO_network_container.Controls.Add(this.btnMMIO_network_remove_variable);
+            this.pnlMMIO_network_container.Controls.Add(this.lstMMIO_network_variables);
+            this.pnlMMIO_network_container.Controls.Add(this.panelTS11);
+            this.pnlMMIO_network_container.Controls.Add(this.labelTS217);
+            this.pnlMMIO_network_container.Controls.Add(this.btnMMIO_network_copy4char);
             this.pnlMMIO_network_container.Controls.Add(this.pnlMMIO_network_rxdata);
             this.pnlMMIO_network_container.Controls.Add(this.labelTS215);
             this.pnlMMIO_network_container.Controls.Add(this.chkMMIO_network_enabled);
@@ -55244,8 +55256,78 @@
             this.pnlMMIO_network_container.Enabled = false;
             this.pnlMMIO_network_container.Location = new System.Drawing.Point(172, 19);
             this.pnlMMIO_network_container.Name = "pnlMMIO_network_container";
-            this.pnlMMIO_network_container.Size = new System.Drawing.Size(290, 192);
+            this.pnlMMIO_network_container.Size = new System.Drawing.Size(516, 204);
             this.pnlMMIO_network_container.TabIndex = 98;
+            // 
+            // btnMMIO_network_remove_variable
+            // 
+            this.btnMMIO_network_remove_variable.Image = global::Thetis.Properties.Resources.trash_black;
+            this.btnMMIO_network_remove_variable.Location = new System.Drawing.Point(286, 157);
+            this.btnMMIO_network_remove_variable.Name = "btnMMIO_network_remove_variable";
+            this.btnMMIO_network_remove_variable.Selectable = true;
+            this.btnMMIO_network_remove_variable.Size = new System.Drawing.Size(29, 35);
+            this.btnMMIO_network_remove_variable.TabIndex = 119;
+            this.btnMMIO_network_remove_variable.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_remove_variable.Click += new System.EventHandler(this.btnMMIO_network_remove_variable_Click);
+            // 
+            // lstMMIO_network_variables
+            // 
+            this.lstMMIO_network_variables.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colVariables,
+            this.colValues});
+            this.lstMMIO_network_variables.FullRowSelect = true;
+            this.lstMMIO_network_variables.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lstMMIO_network_variables.HideSelection = false;
+            this.lstMMIO_network_variables.Location = new System.Drawing.Point(321, 14);
+            this.lstMMIO_network_variables.Name = "lstMMIO_network_variables";
+            this.lstMMIO_network_variables.Size = new System.Drawing.Size(184, 178);
+            this.lstMMIO_network_variables.TabIndex = 118;
+            this.lstMMIO_network_variables.UseCompatibleStateImageBehavior = false;
+            this.lstMMIO_network_variables.View = System.Windows.Forms.View.Details;
+            this.lstMMIO_network_variables.SelectedIndexChanged += new System.EventHandler(this.lstMMIO_network_variables_SelectedIndexChanged);
+            // 
+            // colVariables
+            // 
+            this.colVariables.Text = "Variables";
+            this.colVariables.Width = 100;
+            // 
+            // colValues
+            // 
+            this.colValues.Text = "Values";
+            this.colValues.Width = 80;
+            // 
+            // panelTS11
+            // 
+            this.panelTS11.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.panelTS11.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelTS11.BackColor = System.Drawing.Color.Gray;
+            this.panelTS11.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panelTS11.Location = new System.Drawing.Point(285, 13);
+            this.panelTS11.Name = "panelTS11";
+            this.panelTS11.Size = new System.Drawing.Size(12, 12);
+            this.panelTS11.TabIndex = 117;
+            // 
+            // labelTS217
+            // 
+            this.labelTS217.AutoSize = true;
+            this.labelTS217.Image = null;
+            this.labelTS217.Location = new System.Drawing.Point(237, 12);
+            this.labelTS217.Name = "labelTS217";
+            this.labelTS217.Size = new System.Drawing.Size(42, 13);
+            this.labelTS217.TabIndex = 116;
+            this.labelTS217.Text = "tx data:";
+            // 
+            // btnMMIO_network_copy4char
+            // 
+            this.btnMMIO_network_copy4char.Image = global::Thetis.Properties.Resources.copy;
+            this.btnMMIO_network_copy4char.Location = new System.Drawing.Point(117, 58);
+            this.btnMMIO_network_copy4char.Name = "btnMMIO_network_copy4char";
+            this.btnMMIO_network_copy4char.Selectable = true;
+            this.btnMMIO_network_copy4char.Size = new System.Drawing.Size(27, 27);
+            this.btnMMIO_network_copy4char.TabIndex = 115;
+            this.toolTip1.SetToolTip(this.btnMMIO_network_copy4char, "Copy to clipboard");
+            this.btnMMIO_network_copy4char.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_copy4char.Click += new System.EventHandler(this.btnMMIO_network_copy4char_Click);
             // 
             // pnlMMIO_network_rxdata
             // 
@@ -55253,7 +55335,7 @@
             this.pnlMMIO_network_rxdata.AutoScrollMinSize = new System.Drawing.Size(0, 0);
             this.pnlMMIO_network_rxdata.BackColor = System.Drawing.Color.Gray;
             this.pnlMMIO_network_rxdata.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pnlMMIO_network_rxdata.Location = new System.Drawing.Point(265, 13);
+            this.pnlMMIO_network_rxdata.Location = new System.Drawing.Point(212, 13);
             this.pnlMMIO_network_rxdata.Name = "pnlMMIO_network_rxdata";
             this.pnlMMIO_network_rxdata.Size = new System.Drawing.Size(12, 12);
             this.pnlMMIO_network_rxdata.TabIndex = 114;
@@ -55262,7 +55344,7 @@
             // 
             this.labelTS215.AutoSize = true;
             this.labelTS215.Image = null;
-            this.labelTS215.Location = new System.Drawing.Point(217, 12);
+            this.labelTS215.Location = new System.Drawing.Point(164, 12);
             this.labelTS215.Name = "labelTS215";
             this.labelTS215.Size = new System.Drawing.Size(42, 13);
             this.labelTS215.TabIndex = 113;
@@ -55272,7 +55354,7 @@
             // 
             this.chkMMIO_network_enabled.AutoSize = true;
             this.chkMMIO_network_enabled.Image = null;
-            this.chkMMIO_network_enabled.Location = new System.Drawing.Point(111, 12);
+            this.chkMMIO_network_enabled.Location = new System.Drawing.Point(89, 12);
             this.chkMMIO_network_enabled.Name = "chkMMIO_network_enabled";
             this.chkMMIO_network_enabled.Size = new System.Drawing.Size(65, 17);
             this.chkMMIO_network_enabled.TabIndex = 112;
@@ -63840,5 +63922,12 @@
         private CheckBoxTS chkMMIO_network_enabled;
         private PanelTS pnlMMIO_network_rxdata;
         private LabelTS labelTS215;
+        private ButtonTS btnMMIO_network_copy4char;
+        private PanelTS panelTS11;
+        private LabelTS labelTS217;
+        private ListView lstMMIO_network_variables;
+        private ButtonTS btnMMIO_network_remove_variable;
+        private ColumnHeader colVariables;
+        private ColumnHeader colValues;
     }
 }
