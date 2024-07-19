@@ -13755,7 +13755,7 @@ namespace Thetis
             private MMIOFormat _format_in;
             private MMIOFormat _format_out;
             private MMIOType _type;
-            private bool _listener_running;
+            private bool _listener_active;
             private string _four_char;
             private bool _enabled;
             private bool _listener_started;
@@ -13778,7 +13778,7 @@ namespace Thetis
                 _type = MMIOType.UDP;
                 _ip = "";
                 _port = 0;
-                _listener_running = false;
+                _listener_active = false;
                 _format_in = MMIOFormat.JSON;
                 _format_out = MMIOFormat.JSON;
                 _direction = MMIODirection.IN;
@@ -13869,10 +13869,10 @@ namespace Thetis
                 get { return _type; }
                 set { _type = value; }
             }
-            public bool ListenerRunning
+            public bool Active
             {
-                get { return _listener_running; }
-                set { _listener_running = value; }
+                get { return _listener_active; }
+                set { _listener_active = value; }
             }
             public bool ListenerStarted
             {
@@ -14213,7 +14213,7 @@ namespace Thetis
             {
                 bool read = true;
                 Task<UdpReceiveResult> receiveTask = null;
-                _mmio_data[guid].ListenerRunning = true;
+                _mmio_data[guid].Active = true;
                 Listener?.Invoke(guid, MMIOType.UDP, true);
                 string bufferConcat = "";
                 while (!token.IsCancellationRequested)
@@ -14305,7 +14305,7 @@ namespace Thetis
 
             try
             {
-                _mmio_data[guid].ListenerRunning = false;
+                _mmio_data[guid].Active = false;
                 Listener?.Invoke(guid, MMIOType.UDP, false);
             }
             catch { }
@@ -14316,7 +14316,7 @@ namespace Thetis
         {
             try
             {
-                _mmio_data[guid].ListenerRunning = true;
+                _mmio_data[guid].Active = true;
                 Listener?.Invoke(guid, MMIOType.TCPIP, true);
                 while (!token.IsCancellationRequested)
                 {
@@ -14352,7 +14352,7 @@ namespace Thetis
 
             try
             {
-                _mmio_data[guid].ListenerRunning = false;
+                _mmio_data[guid].Active = false;
                 Listener?.Invoke(guid, MMIOType.TCPIP, false);
             }
             catch { }

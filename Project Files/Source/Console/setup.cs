@@ -27549,6 +27549,9 @@ namespace Thetis
             lstMMIO_network_list.Items.Clear();
             comboMMIO_network_format_in.Items.Clear();
             comboMMIO_network_terminator_in.Items.Clear();
+            pnlMMIO_network_active.BackColor = Color.LightGray;
+            pnlMMIO_network_rxdata.BackColor = Color.LightGray;
+            pnlMMIO_network_txdata.BackColor = Color.LightGray;
 
             for(int i = (int)MultiMeterIO.MMIOFormat.JSON; i < (int)(int)MultiMeterIO.MMIOFormat.LAST; i++)
             {
@@ -27721,7 +27724,8 @@ namespace Thetis
             if (selected_index == -1)
             {
                 pnlMMIO_network_rxdata.BackColor = Color.LightGray;
-                pnlMMIO_network_listening.BackColor = Color.LightGray;
+                pnlMMIO_network_txdata.BackColor = Color.LightGray;
+                pnlMMIO_network_active.BackColor = Color.LightGray;
                 lstMMIO_network_variables.Items.Clear();
                 return;
             }
@@ -27737,8 +27741,9 @@ namespace Thetis
             txtMMIO_network_4char.Text = mmio.FourChar;
             _MMIO_ignore_change_events = false;
 
-            pnlMMIO_network_listening.BackColor = mmio.ListenerRunning ? Color.GreenYellow : Color.LightGray;
+            pnlMMIO_network_active.BackColor = mmio.Active ? Color.GreenYellow : Color.LightGray;
             pnlMMIO_network_rxdata.BackColor = Color.LightGray;
+            pnlMMIO_network_txdata.BackColor = Color.LightGray;
             comboMMIO_network_format_in.SelectedIndex = (int)mmio.FormatIn;
             comboMMIO_network_terminator_in.SelectedIndex = (int)mmio.TerminatorIn;
             comboMMIO_network_format_out.SelectedIndex = (int)mmio.FormatOut;
@@ -27767,7 +27772,7 @@ namespace Thetis
             _MMIO_ignore_change_events = false;
 
             updateVariableList();
-            updateFormats(mmio);
+            updateDirection(mmio);
             updateTerminators(mmio);
         }
         private void addEditListener(MultiMeterIO.MMIOType type, string existing_ip_port = "")
@@ -27965,7 +27970,7 @@ namespace Thetis
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             MultiMeterIO.Data[mmioci.Guid].Direction = MultiMeterIO.MMIODirection.IN;
-            updateFormats(MultiMeterIO.Data[mmioci.Guid]);
+            updateDirection(MultiMeterIO.Data[mmioci.Guid]);
             updateTerminators(MultiMeterIO.Data[mmioci.Guid]);
         }
 
@@ -27978,7 +27983,7 @@ namespace Thetis
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             MultiMeterIO.Data[mmioci.Guid].Direction = MultiMeterIO.MMIODirection.OUT;
-            updateFormats(MultiMeterIO.Data[mmioci.Guid]);
+            updateDirection(MultiMeterIO.Data[mmioci.Guid]);
             updateTerminators(MultiMeterIO.Data[mmioci.Guid]);
         }
 
@@ -27991,7 +27996,7 @@ namespace Thetis
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             MultiMeterIO.Data[mmioci.Guid].Direction = MultiMeterIO.MMIODirection.BOTH;
-            updateFormats(MultiMeterIO.Data[mmioci.Guid]);
+            updateDirection(MultiMeterIO.Data[mmioci.Guid]);
             updateTerminators(MultiMeterIO.Data[mmioci.Guid]);
         }
         private void updateTerminators(MultiMeterIO.clsMMIO mmio)
@@ -28001,7 +28006,7 @@ namespace Thetis
             txtMMIO_network_terminator_in_custom.Visible = mmio.TerminatorIn == MultiMeterIO.MMIOTerminator.CUSTOM && mmio.Direction != MultiMeterIO.MMIODirection.OUT;
             txtMMIO_network_terminator_out_custom.Visible = mmio.TerminatorOut == MultiMeterIO.MMIOTerminator.CUSTOM && mmio.Direction != MultiMeterIO.MMIODirection.IN;
         }
-        private void updateFormats(MultiMeterIO.clsMMIO mmio)
+        private void updateDirection(MultiMeterIO.clsMMIO mmio)
         {
             if (mmio == null) return;
             switch (mmio.Direction)
@@ -28016,6 +28021,12 @@ namespace Thetis
                     comboMMIO_network_terminator_in.Enabled = true;
                     lblMMIO_network_terminator_out.Enabled = false;
                     comboMMIO_network_terminator_out.Enabled = false;
+
+                    lblMMIO_network_rxdata.Enabled = true;
+                    pnlMMIO_network_rxdata.Enabled = true;
+
+                    lblMMIO_network_txdata.Enabled = false;
+                    pnlMMIO_network_txdata.Enabled = false;
                     break;
                 case MultiMeterIO.MMIODirection.OUT:
                     lblMMIO_network_format_in.Enabled = false;
@@ -28027,6 +28038,12 @@ namespace Thetis
                     comboMMIO_network_terminator_in.Enabled = false;
                     lblMMIO_network_terminator_out.Enabled = true;
                     comboMMIO_network_terminator_out.Enabled = true;
+
+                    lblMMIO_network_rxdata.Enabled = false;
+                    pnlMMIO_network_rxdata.Enabled = false;
+
+                    lblMMIO_network_txdata.Enabled = true;
+                    pnlMMIO_network_txdata.Enabled = true;
                     break;
                 case MultiMeterIO.MMIODirection.BOTH:
                     lblMMIO_network_format_in.Enabled = true;
@@ -28038,6 +28055,12 @@ namespace Thetis
                     comboMMIO_network_terminator_in.Enabled = true;
                     lblMMIO_network_terminator_out.Enabled = true;
                     comboMMIO_network_terminator_out.Enabled = true;
+
+                    lblMMIO_network_rxdata.Enabled = true;
+                    pnlMMIO_network_rxdata.Enabled = true;
+
+                    lblMMIO_network_txdata.Enabled = true;
+                    pnlMMIO_network_txdata.Enabled = true;
                     break;
             }
         }
