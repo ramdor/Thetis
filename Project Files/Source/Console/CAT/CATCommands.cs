@@ -1620,7 +1620,15 @@ namespace Thetis
         //Shuts down the console
         public string ZZBY()
         {
-            this.console.Close();
+			if (this.console.InvokeRequired) //[2.10.3.6]MW0LGE Fixes #460 - needed as Midi is from another thread
+			{
+                this.console.BeginInvoke(new MethodInvoker(() =>
+                {
+                    this.console.Close();
+                }));
+            }
+			else	
+				this.console.Close();
             return "";
         }
 

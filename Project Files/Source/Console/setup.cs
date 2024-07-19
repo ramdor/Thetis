@@ -28899,6 +28899,7 @@ namespace Thetis
             {
                 pnlMMIO_network_rxdata.BackColor = Color.LightGray;
                 pnlMMIO_network_listening.BackColor = Color.LightGray;
+                lstMMIO_network_variables.Items.Clear();
                 return;
             }
 
@@ -29367,7 +29368,7 @@ namespace Thetis
             frmVariablePicker f = new frmVariablePicker();
             f.Init(variable, igs.GetMMIOGuid(variable), igs.GetMMIOVariable(variable));
             DialogResult dr = f.ShowDialog(this);
-            if (dr == DialogResult.OK)
+            if (dr == DialogResult.OK || dr == DialogResult.Ignore)
             {
                 igs.SetMMIOGuid(variable, f.Guid);
                 igs.SetMMIOVariable(variable, f.Variable);
