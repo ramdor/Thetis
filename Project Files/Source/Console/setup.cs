@@ -1818,7 +1818,19 @@ namespace Thetis
 
                 if (a.ContainsKey("multimeter_io"))
                 {
-                    MultiMeterIO.RestoreSaveData(a["multimeter_io"]);
+                    bool ok = false;
+                    try
+                    {
+                        ok = MultiMeterIO.RestoreSaveData(a["multimeter_io"]);
+                    }
+                    catch
+                    {
+                    }
+                    if(!ok)
+                    {
+                        MessageBox.Show("There was an issue restoring the settings for MultiMeterIO. Existing settings will be lost.", "MultiMeterIO RestoreSaveData",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    }
                 }
             }
             //
@@ -28720,9 +28732,8 @@ namespace Thetis
         }
 
         #region MultiMeter IO
-
         // Code for the multimeter IO - MW0LGE [2.10.3.6]
-        private bool _ignore_enable = false;
+        private bool _MMIO_ignore_change_events = false;
         private void init_lstMMIO()
         {
             lstMMIO_network_list.Items.Clear();
@@ -28820,6 +28831,7 @@ namespace Thetis
         }
         private void MultiMeterIO_ReceivedDataString(Guid guid, string dataString)
         {
+            //if (initializing) return; //hmm
             try
             {
                 lstMMIO_network_list.BeginInvoke(new MethodInvoker(() =>
@@ -28891,7 +28903,8 @@ namespace Thetis
             lstMMIO_network_variables.Update();
         }
         private void lstMMIO_network_list_SelectedIndexChanged(object sender, EventArgs e)
-        {            
+        {
+            if (initializing) return;
             int selected_index = lstMMIO_network_list.SelectedIndex;
             pnlMMIO_network_container.Enabled = selected_index != -1;
             btnMMIO_network_delete.Enabled = selected_index != -1;
@@ -28909,12 +28922,22 @@ namespace Thetis
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
             MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
 
+            _MMIO_ignore_change_events = true;
             txtMMIO_network_ip_port.Text = mmio.IP + ":" + mmio.Port.ToString();
             txtMMIO_network_4char.Text = mmio.FourChar;
+            _MMIO_ignore_change_events = false;
+
             pnlMMIO_network_listening.BackColor = mmio.ListenerRunning ? Color.GreenYellow : Color.LightGray;
             pnlMMIO_network_rxdata.BackColor = Color.LightGray;
-            comboMMIO_network_format_in.SelectedIndex = (int)mmio.Format;
-            comboMMIO_network_terminator_in.SelectedIndex = (int)mmio.Terminator;
+            comboMMIO_network_format_in.SelectedIndex = (int)mmio.FormatIn;
+            comboMMIO_network_terminator_in.SelectedIndex = (int)mmio.TerminatorIn;
+            comboMMIO_network_format_out.SelectedIndex = (int)mmio.FormatOut;
+            comboMMIO_network_terminator_out.SelectedIndex = (int)mmio.TerminatorOut;
+
+            _MMIO_ignore_change_events = true;
+            txtMMIO_network_terminator_in_custom.Text = mmio.CustomTerminatorIn;
+            txtMMIO_network_terminator_out_custom.Text = mmio.CustomTerminatorOut;
+            _MMIO_ignore_change_events = false;
 
             switch (mmio.Direction)
             {
@@ -28929,11 +28952,13 @@ namespace Thetis
                     break;
             }
 
-            _ignore_enable = true;
+            _MMIO_ignore_change_events = true;
             chkMMIO_network_enabled.Checked = mmio.Enabled;
-            _ignore_enable = false;
+            _MMIO_ignore_change_events = false;
 
             updateVariableList();
+            updateFormats(mmio);
+            updateTerminators(mmio);
         }
         private void addEditListener(MultiMeterIO.MMIOType type, string existing_ip_port = "")
         {
@@ -29084,7 +29109,8 @@ namespace Thetis
 
         private void txtMMIO_network_ip_port_TextChanged(object sender, EventArgs e)
         {
-
+            if (initializing) return;
+            if (_MMIO_ignore_change_events) return;
         }
 
         private void txtMMIO_network_ip_port_Click(object sender, EventArgs e)
@@ -29116,44 +29142,104 @@ namespace Thetis
 
         private void txtMMIO_network_4char_TextChanged(object sender, EventArgs e)
         {
-
+            if (initializing) return;
+            if (_MMIO_ignore_change_events) return;
         }
 
         private void radMMIO_network_in_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             if (!radMMIO_network_in.Checked) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
             MultiMeterIO.Data[mmioci.Guid].Direction = MultiMeterIO.MMIODirection.IN;
+            updateFormats(MultiMeterIO.Data[mmioci.Guid]);
+            updateTerminators(MultiMeterIO.Data[mmioci.Guid]);
         }
 
         private void radMMIO_network_out_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             if (!radMMIO_network_out.Checked) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
             MultiMeterIO.Data[mmioci.Guid].Direction = MultiMeterIO.MMIODirection.OUT;
+            updateFormats(MultiMeterIO.Data[mmioci.Guid]);
+            updateTerminators(MultiMeterIO.Data[mmioci.Guid]);
         }
 
         private void radMMIO_network_both_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             if (!radMMIO_network_both.Checked) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
-            MultiMeterIO.Data[mmioci.Guid].Direction = MultiMeterIO.MMIODirection.BOTH;
-        }
 
+            MultiMeterIO.Data[mmioci.Guid].Direction = MultiMeterIO.MMIODirection.BOTH;
+            updateFormats(MultiMeterIO.Data[mmioci.Guid]);
+            updateTerminators(MultiMeterIO.Data[mmioci.Guid]);
+        }
+        private void updateTerminators(MultiMeterIO.clsMMIO mmio)
+        {
+            if (mmio == null) return;
+
+            txtMMIO_network_terminator_in_custom.Visible = mmio.TerminatorIn == MultiMeterIO.MMIOTerminator.CUSTOM && mmio.Direction != MultiMeterIO.MMIODirection.OUT;
+            txtMMIO_network_terminator_out_custom.Visible = mmio.TerminatorOut == MultiMeterIO.MMIOTerminator.CUSTOM && mmio.Direction != MultiMeterIO.MMIODirection.IN;
+        }
+        private void updateFormats(MultiMeterIO.clsMMIO mmio)
+        {
+            if (mmio == null) return;
+            switch (mmio.Direction)
+            {
+                case MultiMeterIO.MMIODirection.IN:
+                    lblMMIO_network_format_in.Enabled = true;
+                    comboMMIO_network_format_in.Enabled = true;
+                    lblMMIO_network_format_out.Enabled = false;
+                    comboMMIO_network_format_out.Enabled = false;
+
+                    lblMMIO_network_terminator_in.Enabled = true;
+                    comboMMIO_network_terminator_in.Enabled = true;
+                    lblMMIO_network_terminator_out.Enabled = false;
+                    comboMMIO_network_terminator_out.Enabled = false;
+                    break;
+                case MultiMeterIO.MMIODirection.OUT:
+                    lblMMIO_network_format_in.Enabled = false;
+                    comboMMIO_network_format_in.Enabled = false;
+                    lblMMIO_network_format_out.Enabled = true;
+                    comboMMIO_network_format_out.Enabled = true;
+
+                    lblMMIO_network_terminator_in.Enabled = false;
+                    comboMMIO_network_terminator_in.Enabled = false;
+                    lblMMIO_network_terminator_out.Enabled = true;
+                    comboMMIO_network_terminator_out.Enabled = true;
+                    break;
+                case MultiMeterIO.MMIODirection.BOTH:
+                    lblMMIO_network_format_in.Enabled = true;
+                    comboMMIO_network_format_in.Enabled = true;
+                    lblMMIO_network_format_out.Enabled = true;
+                    comboMMIO_network_format_out.Enabled = true;
+
+                    lblMMIO_network_terminator_in.Enabled = true;
+                    comboMMIO_network_terminator_in.Enabled = true;
+                    lblMMIO_network_terminator_out.Enabled = true;
+                    comboMMIO_network_terminator_out.Enabled = true;
+                    break;
+            }
+        }
         private void comboMMIO_network_format_in_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
 
             bool ok = Enum.TryParse<MultiMeterIO.MMIOFormat>(comboMMIO_network_format_in.Text, out MultiMeterIO.MMIOFormat fmt);
 
-            if(ok) MultiMeterIO.Data[mmioci.Guid].Format = fmt;
+            if(ok) MultiMeterIO.Data[mmioci.Guid].FormatIn = fmt;
         }
         private class clsMultiMeterIOComboboxItem
         {
@@ -29244,7 +29330,8 @@ namespace Thetis
 
         private void chkMMIO_network_enabled_CheckedChanged(object sender, EventArgs e)
         {
-            if (_ignore_enable) return;
+            if (initializing) return;
+            if (_MMIO_ignore_change_events) return;
             if (lstMMIO_network_list.SelectedIndex < 0) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
@@ -29261,9 +29348,9 @@ namespace Thetis
                 // stop
                 MultiMeterIO.StopListening(MultiMeterIO.Data[mmioci.Guid].Guid);
             }
-            _ignore_enable = true;
+            _MMIO_ignore_change_events = true;
             chkMMIO_network_enabled.Checked = MultiMeterIO.Data[mmioci.Guid].Enabled;
-            _ignore_enable = false;
+            _MMIO_ignore_change_events = false;
         }
         private void txtMMIO_network_ip_port_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -29310,6 +29397,7 @@ namespace Thetis
 
         private void lstMMIO_network_variables_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             ListView.SelectedListViewItemCollection items = lstMMIO_network_variables.SelectedItems;
             if (items.Count <= 0 || items.Count > 1)
             {
@@ -29335,15 +29423,18 @@ namespace Thetis
         }
         private void comboMMIO_network_terminator_in_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
 
             bool ok = Enum.TryParse<MultiMeterIO.MMIOTerminator>(comboMMIO_network_terminator_in.Text, out MultiMeterIO.MMIOTerminator term);
 
-            if (ok) MultiMeterIO.Data[mmioci.Guid].Terminator = term;
+            if (ok)
+            {
+                MultiMeterIO.Data[mmioci.Guid].TerminatorIn = term;
+                updateTerminators(MultiMeterIO.Data[mmioci.Guid]);
+            }
         }
-        #endregion
-
         private void btnMMIO_variable_2_Click(object sender, EventArgs e)
         {
             mmioSetupVariable(1);
@@ -29376,6 +29467,51 @@ namespace Thetis
                 m.ApplySettingsForMeterGroup(mt, igs, mtci.Order);
             }
         }
+
+        private void comboMMIO_network_terminator_out_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            bool ok = Enum.TryParse<MultiMeterIO.MMIOTerminator>(comboMMIO_network_terminator_out.Text, out MultiMeterIO.MMIOTerminator term);
+
+            if (ok)
+            {
+                MultiMeterIO.Data[mmioci.Guid].TerminatorOut = term;
+                updateTerminators(MultiMeterIO.Data[mmioci.Guid]);
+            }
+        }
+        private void comboMMIO_network_format_out_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            bool ok = Enum.TryParse<MultiMeterIO.MMIOFormat>(comboMMIO_network_format_out.Text, out MultiMeterIO.MMIOFormat fmt);
+
+            if (ok) MultiMeterIO.Data[mmioci.Guid].FormatOut = fmt;
+        }
+        private void txtMMIO_network_terminator_in_custom_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (_MMIO_ignore_change_events) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            MultiMeterIO.Data[mmioci.Guid].CustomTerminatorIn = txtMMIO_network_terminator_in_custom.Text;
+        }
+
+        private void txtMMIO_network_terminator_out_custom_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (_MMIO_ignore_change_events) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            MultiMeterIO.Data[mmioci.Guid].CustomTerminatorOut = txtMMIO_network_terminator_out_custom.Text;
+        }
+        #endregion
     }
 
     #region PADeviceInfo Helper Class
