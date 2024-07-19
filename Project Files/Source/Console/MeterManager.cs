@@ -13732,7 +13732,10 @@ namespace Thetis
         {
             UDP = 0,
             TCPIP = 1,
-            SERIAL = 2
+            SERIAL = 2,
+            UDP_CLIENT = 3,
+            TCPIP_CLIENT = 4,
+            REQUESTER = 5
         }
         public enum MMIOTerminator
         {
@@ -13749,16 +13752,26 @@ namespace Thetis
             private MMIODirection _direction;
             private string _ip;
             private int _port;
-            private MMIOFormat _format;
+            private MMIOFormat _format_in;
+            private MMIOFormat _format_out;
             private MMIOType _type;
             private bool _listener_running;
             private string _four_char;
             private bool _enabled;
             private bool _listener_started;
-            private MMIOTerminator _terminator;
+            private MMIOTerminator _terminator_in;
+            private MMIOTerminator _terminator_out;
+            private string _custom_terminator_in;
+            private string _custom_terminator_out;
+            private string _custom_terminator_parsed_in;
+            private string _custom_terminator_parsed_out;
 
-            private readonly ConcurrentDictionary<string, object> _io_variables;
+            private ConcurrentDictionary<string, object> _io_variables;
             public clsMMIO()
+            {
+                init();
+            }
+            private void init()
             {
                 _enabled = true;
                 _guid = Guid.NewGuid();
@@ -13766,9 +13779,15 @@ namespace Thetis
                 _ip = "";
                 _port = 0;
                 _listener_running = false;
-                _format = MMIOFormat.JSON;
+                _format_in = MMIOFormat.JSON;
+                _format_out = MMIOFormat.JSON;
                 _direction = MMIODirection.IN;
-                _terminator = MMIOTerminator.NONE;
+                _terminator_in = MMIOTerminator.NONE;
+                _terminator_out = MMIOTerminator.NONE;
+                _custom_terminator_in = "";
+                _custom_terminator_out = "";
+                _custom_terminator_parsed_in = "";
+                _custom_terminator_parsed_out = "";
 
                 _io_variables = new ConcurrentDictionary<string, object>();
 
@@ -13776,40 +13795,25 @@ namespace Thetis
             }
             public clsMMIO(Guid guid, MMIOType type, string ip, int port, bool enabled)
             {
-                _enabled = enabled;
+                init();
 
+                _enabled = enabled;
                 if (guid == Guid.Empty)
                     _guid = Guid.NewGuid();
                 else
                     _guid = guid;
-
                 _type = type;
                 _ip = ip;
                 _port = port;
-                _listener_running = false;
-                _format = MMIOFormat.JSON;
-                _direction = MMIODirection.IN;
-                _terminator = MMIOTerminator.NONE;
-
-                _io_variables = new ConcurrentDictionary<string, object>();
-
-                _four_char = FourChar(_ip, _port, _guid);
             }
             public clsMMIO(MMIOType type, string ip, int port, bool enabled)
             {
+                init();
+
                 _enabled = enabled;
-                _guid = Guid.NewGuid();
                 _type = type;
                 _ip = ip;
                 _port = port;
-                _listener_running = false;
-                _format = MMIOFormat.JSON;
-                _direction = MMIODirection.IN;
-                _terminator = MMIOTerminator.NONE;
-
-                _io_variables = new ConcurrentDictionary<string, object>();
-
-                _four_char = FourChar(_ip, _port, _guid);
             }
             public Guid Guid
             {
@@ -13840,15 +13844,25 @@ namespace Thetis
                     _four_char = FourChar(_ip, _port, _guid);
                 }
             }
-            public MMIOFormat Format
+            public MMIOFormat FormatIn
             {
-                get { return _format; }
-                set { _format = value; }
+                get { return _format_in; }
+                set { _format_in = value; }
             }
-            public MMIOTerminator Terminator
+            public MMIOFormat FormatOut
             {
-                get { return _terminator; }
-                set { _terminator = value; }
+                get { return _format_out; }
+                set { _format_out = value; }
+            }
+            public MMIOTerminator TerminatorIn
+            {
+                get { return _terminator_in; }
+                set { _terminator_in = value; }
+            }
+            public MMIOTerminator TerminatorOut
+            {
+                get { return _terminator_out; }
+                set { _terminator_out = value; }
             }
             public MMIOType Type
             {
@@ -13873,6 +13887,38 @@ namespace Thetis
             {
                 get { return _enabled; }
                 set { _enabled = value; }
+            }
+            public string CustomTerminatorParsedIn
+            {
+                get { return string.IsNullOrEmpty(_custom_terminator_parsed_in) ? "\0" : _custom_terminator_parsed_in; }
+            }
+            public string CustomTerminatorIn
+            {
+                get { return _custom_terminator_in; }
+                set
+                {
+                    _custom_terminator_in = value;
+
+                    _custom_terminator_parsed_in = _custom_terminator_in.Replace(@"\n", "\n"); // use @ so that it is a literal verbatim string
+                    _custom_terminator_parsed_in = _custom_terminator_parsed_in.Replace(@"\r", "\r");
+                    _custom_terminator_parsed_in = _custom_terminator_parsed_in.Replace(@"\0", "\0");
+                }
+            }
+            public string CustomTerminatorParsedOut
+            {
+                get { return string.IsNullOrEmpty(_custom_terminator_parsed_out) ? "\0" : _custom_terminator_parsed_out; }
+            }
+            public string CustomTerminatorOut
+            {
+                get { return _custom_terminator_out; }
+                set
+                {
+                    _custom_terminator_out = value;
+
+                    _custom_terminator_parsed_out = _custom_terminator_out.Replace(@"\n", "\n"); // use @ so that it is a literal verbatim string
+                    _custom_terminator_parsed_out = _custom_terminator_parsed_out.Replace(@"\r", "\r");
+                    _custom_terminator_parsed_out = _custom_terminator_parsed_out.Replace(@"\0", "\0");
+                }
             }
             public bool StartListening()
             {
@@ -14193,7 +14239,7 @@ namespace Thetis
                             if (inbound)
                             {                                
                                 string term = "";
-                                switch(_mmio_data[guid].Terminator)
+                                switch(_mmio_data[guid].TerminatorIn)
                                 {
                                     case MMIOTerminator.NONE:
                                         ReceivedDataString?.Invoke(guid, dataString);
@@ -14209,6 +14255,7 @@ namespace Thetis
                                         term = "\r\n";
                                         break;
                                     case MMIOTerminator.CUSTOM:
+                                        term = _mmio_data[guid].CustomTerminatorParsedIn;
                                         break;
                                 }
                                 if (term != "")
@@ -14222,6 +14269,8 @@ namespace Thetis
                                         bufferConcat = bufferConcat.Substring(pos + term.Length);
                                         pos = bufferConcat.IndexOf(term);
                                     }
+
+                                    if (bufferConcat.Length >= 4096 * 8) bufferConcat = bufferConcat.Substring(4096 * 4); // some limiter incase it is not being processed
                                 }
                             }
 
@@ -14343,7 +14392,7 @@ namespace Thetis
                             if (inbound)
                             {
                                 string term = "";
-                                switch (_mmio_data[guid].Terminator)
+                                switch (_mmio_data[guid].TerminatorIn)
                                 {
                                     case MMIOTerminator.NONE:
                                         ReceivedDataString?.Invoke(guid, dataString);
@@ -14359,6 +14408,7 @@ namespace Thetis
                                         term = "\r\n";
                                         break;
                                     case MMIOTerminator.CUSTOM:
+                                        term = _mmio_data[guid].CustomTerminatorParsedIn;
                                         break;
                                 }
                                 if (term != "")
@@ -14372,6 +14422,8 @@ namespace Thetis
                                         bufferConcat = bufferConcat.Substring(pos + term.Length);
                                         pos = bufferConcat.IndexOf(term);
                                     }
+
+                                    if (bufferConcat.Length >= 4096 * 8) bufferConcat = bufferConcat.Substring(4096 * 4); // some limiter incase it is not being processed
                                 }
                             }
 
@@ -14502,12 +14554,17 @@ namespace Thetis
                 data += mmio.Direction.ToString() + "|"; //2
                 data += mmio.IP + "|"; //3
                 data += mmio.Port.ToString() + "|"; //4
-                data += mmio.Format.ToString() + "|"; //5
+                data += mmio.FormatIn.ToString() + "|"; //5
                 data += mmio.Type.ToString() + "|"; //6
                 data += mmio.Enabled.ToString() + "|"; //7
-                data += mmio.Terminator.ToString() + "|"; //8
-                data += mmio.Variables().Count.ToString() + "|"; //9
+                data += mmio.TerminatorIn.ToString() + "|"; //8
+                data += mmio.FormatOut.ToString() + "|"; //9
+                data += mmio.TerminatorOut.ToString() + "|"; //10
+                data += mmio.CustomTerminatorIn + "|"; //11
+                data += mmio.CustomTerminatorOut + "|"; //12
 
+                // always last
+                data += mmio.Variables().Count.ToString() + "|"; //13
                 foreach(KeyValuePair<string, object> kvpvar in mmio.Variables())
                 {
                     data += kvpvar.Key + "|";
@@ -14518,12 +14575,12 @@ namespace Thetis
             return data;
         }
 
-        public static void RestoreSaveData(string data)
+        public static bool RestoreSaveData(string data)
         {
             StopListeners(); //start new
 
             string[] parts = data.Split('|');
-            if (parts.Length < 1) return;
+            if (parts.Length < 1) return true;
 
             bool ok;
             int listeners;
@@ -14534,12 +14591,15 @@ namespace Thetis
                 Guid guid = Guid.Empty;
                 MMIODirection direction = MMIODirection.BOTH;
                 MMIOFormat format_in = MMIOFormat.JSON;
+                MMIOFormat format_out = MMIOFormat.JSON;
                 MMIOType type = MMIOType.UDP;
                 MMIOTerminator terminator_in = MMIOTerminator.NONE;
+                MMIOTerminator terminator_out = MMIOTerminator.NONE;
                 int port = 0;
                 bool enabled = false;
                 int variables = 0;
                 string tmp;
+                int variable_count_index = 0;
 
                 int idx = 0;
 
@@ -14568,7 +14628,7 @@ namespace Thetis
                     }
                     if (ok)
                     {
-                        mmio.Format = format_in;
+                        mmio.FormatIn = format_in;
                         ok = Enum.TryParse<MMIOType>(parts[idx + 6], out type);
                     }
                     if (ok)
@@ -14581,16 +14641,33 @@ namespace Thetis
                         mmio.Enabled = enabled;
                         ok = Enum.TryParse<MMIOTerminator>(parts[idx + 8], out terminator_in);
                     }
-                    if(ok)
+                    if (ok)
                     {
-                        mmio.Terminator = terminator_in;
+                        mmio.TerminatorIn = terminator_in;
+                        ok = Enum.TryParse<MMIOFormat>(parts[idx + 9], out format_out);
+                    }
+                    if (ok)
+                    {
+                        mmio.FormatOut = format_out;
+                        ok = Enum.TryParse<MMIOTerminator>(parts[idx + 10], out terminator_out);
+                    }
+                    if (ok)
+                    {
+                        mmio.TerminatorOut = terminator_out;
+                        mmio.CustomTerminatorIn = parts[idx + 11];
+                        mmio.CustomTerminatorOut = parts[idx + 12];
+                    }
+                    if (ok)
+                    {
                         // restore variables
-                        ok = int.TryParse(parts[idx + 9], out variables);
+                        variable_count_index = 13; // this needs to be one larger than N in the [idx + N] above
+                        ok = int.TryParse(parts[idx + variable_count_index], out variables);
                         if (ok)
                         {
                             for(int n = 0; n < variables; n++)
                             {
-                                mmio.Variables().TryAdd(parts[idx + 10 + (n * 2)], parts[idx + 11 + (n * 2)].Replace("++><++", "|"));
+                                ok = mmio.Variables().TryAdd(parts[idx + (variable_count_index + 1) + (n * 2)], parts[idx + (variable_count_index + 2) + (n * 2)].Replace("++><++", "|"));
+                                if (!ok) break;
                             }
                         }
                     }
@@ -14600,7 +14677,7 @@ namespace Thetis
                         if (!ok)
                         {
                             StopListening(guid);
-                            return;
+                            return false;
                         }
                     }
                     if (ok && enabled)
@@ -14609,10 +14686,11 @@ namespace Thetis
                     }
                     if (ok)
                     {
-                        idx += 9 + (variables * 2);
+                        idx += variable_count_index + (variables * 2);
                     }
                 }
             }
+            return ok;
         }
         public static bool AddMMIO(clsMMIO mmio)
         {
@@ -14647,7 +14725,7 @@ namespace Thetis
             if (!MultiMeterIO.Data.ContainsKey(guid)) return;
 
             MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[guid];
-            MultiMeterIO.MMIOFormat format = mmio.Format;
+            MultiMeterIO.MMIOFormat format = mmio.FormatIn;
             string fourChar = mmio.FourChar;
 
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
