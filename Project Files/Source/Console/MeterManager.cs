@@ -8339,7 +8339,8 @@ namespace Thetis
                         if (ig != null && ig.MeterType == mt && ig.Order == order) {
                             nOrder = ig.Order;
                             removeMeterItem(ig.ID, false);
-                            if (mt == MeterType.SPACER || mt == MeterType.TEXT_OVERLAY) order = -9999; // only remove the single
+                            //if (mt == MeterType.SPACER || mt == MeterType.TEXT_OVERLAY) order = -9999; // only remove the single
+                            order = -9999; // prevents any more from being removed
                         }
 
                         if(nOrder >= 0)
@@ -13921,7 +13922,7 @@ namespace Thetis
                     object val = _io_variables[key];
                     Type valueType = determineType(val.ToString());
                     object covertedVal = convertToType(val.ToString(), valueType);
-                    return _io_variables[key];
+                    return covertedVal;
                 }
                 return false;
             }

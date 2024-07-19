@@ -31,6 +31,7 @@
             this.lstVariables = new System.Windows.Forms.ListBox();
             this.btnCancel = new System.Windows.Forms.ButtonTS();
             this.btnSelect = new System.Windows.Forms.ButtonTS();
+            this.btnDefault = new System.Windows.Forms.ButtonTS();
             this.SuspendLayout();
             // 
             // lstVariables
@@ -67,11 +68,25 @@
             this.btnSelect.UseVisualStyleBackColor = true;
             this.btnSelect.Click += new System.EventHandler(this.btnSelect_Click);
             // 
+            // btnDefault
+            // 
+            this.btnDefault.DialogResult = System.Windows.Forms.DialogResult.Ignore;
+            this.btnDefault.Image = null;
+            this.btnDefault.Location = new System.Drawing.Point(12, 308);
+            this.btnDefault.Name = "btnDefault";
+            this.btnDefault.Selectable = true;
+            this.btnDefault.Size = new System.Drawing.Size(52, 23);
+            this.btnDefault.TabIndex = 5;
+            this.btnDefault.Text = "Default";
+            this.btnDefault.UseVisualStyleBackColor = true;
+            this.btnDefault.Click += new System.EventHandler(this.btnDefault_Click);
+            // 
             // frmVariablePicker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(229, 338);
+            this.Controls.Add(this.btnDefault);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSelect);
             this.Controls.Add(this.lstVariables);
@@ -88,5 +103,6 @@
         private System.Windows.Forms.ListBox lstVariables;
         private System.Windows.Forms.ButtonTS btnCancel;
         private System.Windows.Forms.ButtonTS btnSelect;
+        private System.Windows.Forms.ButtonTS btnDefault;
     }
 }

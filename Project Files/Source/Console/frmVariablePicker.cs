@@ -63,7 +63,7 @@ namespace Thetis
             if (vli == null)
             {
                 _guid = Guid.Empty;
-                _variable = "";
+                _variable = "--DEFAULT--";
                 return;
             }
 
@@ -74,7 +74,7 @@ namespace Thetis
         private void btnCancel_Click(object sender, EventArgs e)
         {
             _guid = Guid.Empty;
-            _variable = "";
+            _variable = "--DEFAULT--";
         }
 
         public void Init(int variable, Guid g, string current)
@@ -100,6 +100,12 @@ namespace Thetis
             }
 
             lstVariables.SelectedIndex = selected;
+        }
+
+        private void btnDefault_Click(object sender, EventArgs e)
+        {
+            _guid = Guid.Empty;
+            _variable = "--DEFAULT--";
         }
     }
 }
