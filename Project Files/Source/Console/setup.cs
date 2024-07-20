@@ -77,6 +77,9 @@ namespace Thetis
         {
             InitializeComponent();
 
+            MaximumSize = MinimumSize;
+            Size = MinimumSize;
+
             console = c;
             this.Owner = c;
 
@@ -2367,6 +2370,8 @@ namespace Thetis
             chkLegacyMeters_CheckedChanged(this, e);
 
             chkJoinBandEdges_CheckedChanged(this, e);
+
+            clrbtnTXAttenuationBackground_Changed(this, e);
             //
 
             // RX2 tab
@@ -6049,8 +6054,8 @@ namespace Thetis
                 labelAlex1FilterHPF.Text = "BPF1";
                 chkAlexHPFBypass.Text = "ByPass/55 MHz BPF";
                 chkDisableHPFonTX.Text = "BPF ByPass on TX";
-                chkDisableHPFonPS.Text = "BPF ByPass on PS";
-                chkDisableHPFonPS.Visible = true;
+                chkDisableHPFonPSb.Text = "BPF ByPass on PS";
+                chkDisableHPFonPSb.Visible = true;
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = true;
                 lblRx26mLNA.Visible = true;
@@ -6077,7 +6082,7 @@ namespace Thetis
                 labelAlex1FilterHPF.Text = "HPF";
                 chkAlexHPFBypass.Text = "ByPass/55 MHz HPF";
                 chkDisableHPFonTX.Text = "HPF ByPass on TX";
-                chkDisableHPFonPS.Visible = false;
+                chkDisableHPFonPSb.Visible = false;
                 panelAlexRXXVRTControl.Visible = true;
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = false;
@@ -6127,8 +6132,8 @@ namespace Thetis
                 chkAlexHPFBypass.Location = new Point(140, 185);
                 chkDisableHPFonTX.Parent = panelAlex1HPFControl;
                 chkDisableHPFonTX.Location = new Point(140, 213);
-                chkDisableHPFonPS.Parent = panelAlex1HPFControl;
-                chkDisableHPFonPS.Location = new Point(140, 241);
+                chkDisableHPFonPSb.Parent = panelAlex1HPFControl;
+                chkDisableHPFonPSb.Location = new Point(140, 241);
             }
 
             if (console.CurrentHPSDRModel == HPSDRModel.HERMES) tpPennyCtrl.Text = "Hermes Ctrl";
@@ -16456,7 +16461,7 @@ namespace Thetis
         }
         public bool ChkDisableHPFOnPs
         {
-            get { return chkDisableHPFonPS.Checked; }
+            get { return chkDisableHPFonPSb.Checked; }
         }
         public bool RadRX1ADC1
         {
@@ -20054,8 +20059,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
-                    chkDisableHPFonPS.Parent = panelBPFControl;
-                    chkDisableHPFonPS.Location = new Point(140, 241);
+                    chkDisableHPFonPSb.Parent = panelBPFControl;
+                    chkDisableHPFonPSb.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -20114,8 +20119,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
-                    chkDisableHPFonPS.Parent = panelBPFControl;
-                    chkDisableHPFonPS.Location = new Point(140, 241);
+                    chkDisableHPFonPSb.Parent = panelBPFControl;
+                    chkDisableHPFonPSb.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -20175,8 +20180,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
-                    chkDisableHPFonPS.Parent = panelBPFControl;
-                    chkDisableHPFonPS.Location = new Point(140, 241);
+                    chkDisableHPFonPSb.Parent = panelBPFControl;
+                    chkDisableHPFonPSb.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -20234,8 +20239,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
-                    chkDisableHPFonPS.Parent = panelBPFControl;
-                    chkDisableHPFonPS.Location = new Point(140, 241);
+                    chkDisableHPFonPSb.Parent = panelBPFControl;
+                    chkDisableHPFonPSb.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -24827,7 +24832,7 @@ namespace Thetis
 
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return;
-
+            
             List<clsMeterTypeComboboxItem> inuse = new List<clsMeterTypeComboboxItem>();
             List<clsMeterTypeComboboxItem> notinuse = new List<clsMeterTypeComboboxItem>();
 
@@ -24837,15 +24842,25 @@ namespace Thetis
 
                 if (m.HasMeterType(mt))
                 {
-                    clsMeterTypeComboboxItem mtci = new clsMeterTypeComboboxItem(mt, m.GetOrderForMeterType(mt));
-                    inuse.Add(mtci);
+                    List<int> orders = m.GetOrderForMeterType(mt); // can be muliple orders
+                    foreach (int order in orders)
+                    {
+                        clsMeterTypeComboboxItem mtci = new clsMeterTypeComboboxItem(mt, order);
+                        inuse.Add(mtci);
+                    }
                 }
                 else
                 {
-                    clsMeterTypeComboboxItem mtci = new clsMeterTypeComboboxItem(mt, -1);
-                    notinuse.Add(mtci);
+                    if (mt != MeterType.SPACER)
+                    {
+                        clsMeterTypeComboboxItem mtci = new clsMeterTypeComboboxItem(mt, -1);
+                        notinuse.Add(mtci);
+                    }
                 }
             }
+            // add spacer here always to notinuse
+            clsMeterTypeComboboxItem mtci_sp = new clsMeterTypeComboboxItem(MeterType.SPACER, -1);
+            notinuse.Add(mtci_sp);
 
             foreach (clsMeterTypeComboboxItem mtci in notinuse)
             {
@@ -24970,7 +24985,7 @@ namespace Thetis
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return;
 
-            m.RemoveMeterType(mti.MeterType, true);
+            m.RemoveMeterType(mti.MeterType, mti.Order, true);
 
             updateMeterLists();
 
@@ -24988,7 +25003,7 @@ namespace Thetis
             int n = lstMetersInUse.SelectedIndex - 1;
             if (n < 0) return;
 
-            m.SetOrderForMeterType(mtci.MeterType, n, true, true);
+            m.SetOrderForMeterType(mtci.MeterType, n, true, true, mtci.Order);
 
             updateMeterLists();
 
@@ -25006,7 +25021,7 @@ namespace Thetis
             int n = lstMetersInUse.SelectedIndex + 1;
             if (n > lstMetersInUse.Items.Count - 1) return;
 
-            m.SetOrderForMeterType(mtci.MeterType, n, true, false);
+            m.SetOrderForMeterType(mtci.MeterType, n, true, false, mtci.Order);
 
             updateMeterLists();
 
@@ -25108,13 +25123,16 @@ namespace Thetis
             string mgID = meterItemGroupIDfromSelected();
             if (mgID == "") return null;
 
+            clsMeterTypeComboboxItem mtci = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
+            if (mtci == null) return null;
+
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return null;
 
             MeterType mt = meterItemGroupTypefromSelected();
             if (mt == MeterType.NONE) return null;
 
-            MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt);
+            MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
             if (igs == null) return null;
 
             if (mt == MeterType.SIGNAL_TEXT)
@@ -25157,6 +25175,14 @@ namespace Thetis
                 igs.MarkerColour = clrbtnMMTime.Color;
                 igs.SubMarkerColour = clrbtnMMDate.Color;
                 igs.ShowMarker = radMM24Clock.Checked; // use the show marker bool for this                
+            }
+            else if (mt == MeterType.SPACER)
+            {
+                igs.Colour = clrbtnMeterItemHBackgroundSpacerRX.Color;
+                igs.MarkerColour = clrbtnMeterItemHBackgroundSpacerTX.Color;
+                igs.FadeOnRx = chkMeterItemFadeOnRxSpacer.Checked;
+                igs.FadeOnTx = chkMeterItemFadeOnTxSpacer.Checked;
+                igs.SpacerPadding = (float)nudMeterItemSpacerPadding.Value;
             }
             else
             {
@@ -25204,7 +25230,7 @@ namespace Thetis
                 if (mt == MeterType.ANANMM || mt == MeterType.CROSS) igs.DarkMode = chkMeterItemDarkMode.Checked;
             }
 
-            m.ApplySettingsForMeterGroup(mt, igs);
+            m.ApplySettingsForMeterGroup(mt, igs, mtci.Order);
 
             return igs;
         }
@@ -25216,13 +25242,16 @@ namespace Thetis
             string mgID = meterItemGroupIDfromSelected();
             if (mgID == "") return;
 
+            clsMeterTypeComboboxItem mtci = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
+            if (mtci == null) return;
+
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return;
 
             MeterType mt = meterItemGroupTypefromSelected();
             if (mt == MeterType.NONE) return;
 
-            MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt);                
+            MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);                
             if (igs == null) return;
 
             _ignoreMeterItemChangeEvents = true;
@@ -25317,6 +25346,14 @@ namespace Thetis
                 radMM24Clock.Checked = igs.ShowMarker; // use the show marker bool for this
                 if(!radMM24Clock.Checked && !radMM12Clock.Checked) radMM12Clock.Checked = true;
                 updateTitleControlsClock();
+            }
+            else if (mt == MeterType.SPACER)
+            {
+                clrbtnMeterItemHBackgroundSpacerRX.Color = igs.Colour;
+                clrbtnMeterItemHBackgroundSpacerTX.Color = igs.MarkerColour;
+                chkMeterItemFadeOnRxSpacer.Checked = igs.FadeOnRx;
+                chkMeterItemFadeOnTxSpacer.Checked = igs.FadeOnTx;
+                nudMeterItemSpacerPadding.Value = (decimal)igs.SpacerPadding;
             }
             else
             {
@@ -25662,34 +25699,53 @@ namespace Thetis
         }
         private void setupMMSettingsGroupBoxes(MeterType mt)
         {
-            // grpMeterItemSettings is the x,y
+            // grpMeterItemSettings defines the x,y used by all
             Point loc = grpMeterItemSettings.Location;
 
             switch (mt)
             {
                 case MeterType.NONE:
-                    grpMeterItemSettings.Enabled = false;
-                    grpMeterItemSettings.Visible = true;                    
+                    grpMeterItemSettings.Parent = grpMultiMeterHolder;
+                    grpMeterItemSettings.Visible = true;
+
                     grpMeterItemClockSettings.Visible = false;
                     grpMeterItemVfoDisplaySettings.Visible = false;
+                    grpMeterItemSpacerSettings.Visible = false;
                     break;
                 case MeterType.VFO_DISPLAY:
+                    grpMeterItemVfoDisplaySettings.Parent = grpMultiMeterHolder;
                     grpMeterItemVfoDisplaySettings.Location = loc;
                     grpMeterItemVfoDisplaySettings.Visible = true;
+
                     grpMeterItemSettings.Visible = false;
                     grpMeterItemClockSettings.Visible = false;
+                    grpMeterItemSpacerSettings.Visible = false;
                     break;
                 case MeterType.CLOCK:
+                    grpMeterItemClockSettings.Parent = grpMultiMeterHolder;
                     grpMeterItemClockSettings.Location = loc;
                     grpMeterItemClockSettings.Visible = true;
+
                     grpMeterItemSettings.Visible = false;
+                    grpMeterItemVfoDisplaySettings.Visible = false;
+                    grpMeterItemSpacerSettings.Visible = false;
+                    break;
+                case MeterType.SPACER:
+                    grpMeterItemSpacerSettings.Parent = grpMultiMeterHolder;
+                    grpMeterItemSpacerSettings.Location = loc;
+                    grpMeterItemSpacerSettings.Visible = true;
+
+                    grpMeterItemSettings.Visible = false;
+                    grpMeterItemClockSettings.Visible = false;
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     break;
                 default:
-                    grpMeterItemSettings.Enabled = true;
+                    grpMeterItemSettings.Parent = grpMultiMeterHolder;
                     grpMeterItemSettings.Visible = true;
+
                     grpMeterItemClockSettings.Visible = false;
                     grpMeterItemVfoDisplaySettings.Visible = false;
+                    grpMeterItemSpacerSettings.Visible = false;
                     break;
             }
         }
@@ -25800,6 +25856,9 @@ namespace Thetis
 
         private void btnMeterCopySettings_Click(object sender, EventArgs e)
         {
+            clsMeterTypeComboboxItem mtci = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
+            if (mtci == null) return;
+
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return;
 
@@ -25807,7 +25866,7 @@ namespace Thetis
             if (mt == MeterType.NONE) return;
 
             // copy settings into igs
-            _itemGroupSettings = m.GetSettingsForMeterGroup(mt);
+            _itemGroupSettings = m.GetSettingsForMeterGroup(mt, mtci.Order);
             if (_itemGroupSettings != null)
                 _itemGroupSettingsMeterType = meterItemGroupTypefromSelected();
             else
@@ -25818,6 +25877,9 @@ namespace Thetis
         {
             if (_itemGroupSettings == null || _itemGroupSettingsMeterType == MeterType.NONE) return;
 
+            clsMeterTypeComboboxItem mtci = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
+            if (mtci == null) return;
+
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return;
 
@@ -25827,7 +25889,7 @@ namespace Thetis
             if (canPasteSettings())
             {
                 // ignore some things [2.10.1.0] MW0LGE - fixes issue where bar with change units is paste into new bar, and source bars have no sub indicator
-                MeterManager.clsIGSettings currentSettings = m.GetSettingsForMeterGroup(mt);
+                MeterManager.clsIGSettings currentSettings = m.GetSettingsForMeterGroup(mt, mtci.Order);
 
                 _itemGroupSettings.Unit = currentSettings.Unit;
 
@@ -25840,7 +25902,7 @@ namespace Thetis
                 }
                 //
 
-                m.ApplySettingsForMeterGroup(mt, _itemGroupSettings);
+                m.ApplySettingsForMeterGroup(mt, _itemGroupSettings, mtci.Order);
                 updateItemSettingsControlsForSelected();
             }
         }
@@ -28209,7 +28271,7 @@ namespace Thetis
         private void chkDisableHPFonPS_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            if (sender == chkDisableHPFonPS && !chkDisableHPFonPS.Checked)
+            if (sender == chkDisableHPFonPSb && !chkDisableHPFonPSb.Checked)
             {
                 //msg to ask if user wants to do this
                 DialogResult dr = MessageBox.Show("Including the BPFs during a PureSignal tranmission may produce passive Inter-Modulation Distortion in the inductors of the bandpass filters.\n\n" +
@@ -28218,11 +28280,11 @@ namespace Thetis
                     MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
                 if (dr == DialogResult.Cancel)
                 {
-                    chkDisableHPFonPS.Checked = true;
+                    chkDisableHPFonPSb.Checked = true;
                     return;
                 }
             }
-            console.DisableHPFonPS = chkDisableHPFonPS.Checked;
+            console.DisableHPFonPS = chkDisableHPFonPSb.Checked;
             if (console.path_Illustrator != null)
                 console.path_Illustrator.pi_Changed();
         }
@@ -28297,6 +28359,37 @@ namespace Thetis
         public bool AutoLaunchTryToClose
         {
             get { return chkAutoLaunchTryToClose.Checked; }
+        }
+
+        private void clrbtnTXAttenuationBackground_Changed(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.TxAttenuationBackgroundColour = Color.FromArgb(255, clrbtnTXAttenuationBackground.Color);
+        }
+
+        private void chkMeterItemFadeOnRxSpacer_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkMeterItemFadeOnTxSpacer_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMeterItemHBackgroundSpacerRX_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudMeterItemSpacerPadding_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMeterItemHBackgroundSpacerTX_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 

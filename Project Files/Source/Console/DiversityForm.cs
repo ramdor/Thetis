@@ -135,18 +135,19 @@ namespace Thetis
         private ButtonTS btnShift90;
         private ButtonTS btnShiftUp10;
         private IContainer components;
+        private bool _initalising;
 
         public DiversityForm(Console c)
         {
+            _initalising = true;
             //
             // Required for Windows Form Designer support
             //
             InitializeComponent();
             console = c;
-            //udR1.Visible = false;
 
-            udR1.Maximum = (decimal)m_dGainMulti; //MW0LGE_21f
-            udR2.Maximum = (decimal)m_dGainMulti;
+            udR1.Maximum = udGainMulti.Maximum; //[2.10.3.6]MW0LGE these need to be high so that restore form can recover values
+            udR2.Maximum = udGainMulti.Maximum; //this is reset by udGainMulti_ValueChanged below
 
             chkVFOSync.Checked = console.VFOSync;
 
@@ -161,7 +162,7 @@ namespace Thetis
             ////            trackBarPhase1.Visible = false;
             //chkLockR.Visible = true;
 
-            Common.RestoreForm(this, "DiversityForm", false);
+            Common.RestoreForm(this, "DiversityForm", true);
 
             //[2.10.3.6]MW0LGE implement memories. A bit of a hack to store all this in a text box, but it is easy with the saveform/restoreform
             try
@@ -172,23 +173,38 @@ namespace Thetis
             {
                 initMemories();
             }
-
+            _initalising = false;
             //udFineNull.Value = 0;
             //groupBoxTS1.Visible = false;
+            bool oldPhaseLock = chkLockAngle.Checked;
+            bool oldGainLock = chkLockR.Checked;
+            _initalising = true;
+            chkLockAngle.Checked = false;
+            chkLockR.Checked = false;
+            _initalising = false;
             EventArgs e = EventArgs.Empty;
+            udGainMulti_ValueChanged(this, e);
             radRxSource1_CheckedChanged(this, e);
             radRxSource2_CheckedChanged(this, e);
             radRxSourceRx1Rx2_CheckedChanged(this, e);
             radioButtonMerc1_CheckedChanged(this, e);
             radioButtonMerc2_CheckedChanged(this, e);
+
+            _initalising = true;
+            chkLockAngle.Checked = oldPhaseLock;
+            chkLockR.Checked = oldGainLock;
+            _initalising = false;
+            chkLockR_CheckedChanged(this, e);
+            chkLockAngle_CheckedChanged(this, e);
+
             WDSP.SetEXTDIVNr(0, 2);
             // console.Diversity2 = true;
+            UpdateDiversity();
             chkEnableDiversity_CheckedChanged(this, e);
             // create timer for autohide and attach callback
             AutoHideTimer = new System.Timers.Timer();
             AutoHideTimer.Elapsed += new ElapsedEventHandler(Callback);
-            AutoHideTimer.Enabled = false;
-
+            AutoHideTimer.Enabled = false;               
         }
 
         /// <summary>
@@ -300,7 +316,7 @@ namespace Thetis
             this.picRadar.BackColor = System.Drawing.SystemColors.Control;
             this.picRadar.Location = new System.Drawing.Point(4, 272);
             this.picRadar.Name = "picRadar";
-            this.picRadar.Size = new System.Drawing.Size(449, 359);
+            this.picRadar.Size = new System.Drawing.Size(338, 338);
             this.picRadar.TabIndex = 0;
             this.picRadar.TabStop = false;
             this.picRadar.Paint += new System.Windows.Forms.PaintEventHandler(this.picRadar_Paint);
@@ -322,7 +338,7 @@ namespace Thetis
             this.groupBoxTS2.Controls.Add(this.groupBoxTS1);
             this.groupBoxTS2.Controls.Add(this.labelTS5);
             this.groupBoxTS2.Controls.Add(this.udR);
-            this.groupBoxTS2.Location = new System.Drawing.Point(456, 3);
+            this.groupBoxTS2.Location = new System.Drawing.Point(396, 10);
             this.groupBoxTS2.Name = "groupBoxTS2";
             this.groupBoxTS2.Size = new System.Drawing.Size(315, 256);
             this.groupBoxTS2.TabIndex = 101;
@@ -712,7 +728,7 @@ namespace Thetis
             this.btnM8.Text = "M8";
             this.toolTip1.SetToolTip(this.btnM8, "Memory. Shift click to store. Ctrl click to remove.");
             this.btnM8.UseVisualStyleBackColor = true;
-            this.btnM8.Click += new System.EventHandler(this.btnM1_Click);
+            this.btnM8.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // btnM7
             // 
@@ -726,7 +742,7 @@ namespace Thetis
             this.btnM7.Text = "M7";
             this.toolTip1.SetToolTip(this.btnM7, "Memory. Shift click to store. Ctrl click to remove.");
             this.btnM7.UseVisualStyleBackColor = true;
-            this.btnM7.Click += new System.EventHandler(this.btnM1_Click);
+            this.btnM7.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // btnM6
             // 
@@ -740,7 +756,7 @@ namespace Thetis
             this.btnM6.Text = "M6";
             this.toolTip1.SetToolTip(this.btnM6, "Memory. Shift click to store. Ctrl click to remove.");
             this.btnM6.UseVisualStyleBackColor = true;
-            this.btnM6.Click += new System.EventHandler(this.btnM1_Click);
+            this.btnM6.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // btnM5
             // 
@@ -754,7 +770,7 @@ namespace Thetis
             this.btnM5.Text = "M5";
             this.toolTip1.SetToolTip(this.btnM5, "Memory. Shift click to store. Ctrl click to remove.");
             this.btnM5.UseVisualStyleBackColor = true;
-            this.btnM5.Click += new System.EventHandler(this.btnM1_Click);
+            this.btnM5.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // btnM4
             // 
@@ -768,7 +784,7 @@ namespace Thetis
             this.btnM4.Text = "M4";
             this.toolTip1.SetToolTip(this.btnM4, "Memory. Shift click to store. Ctrl click to remove.");
             this.btnM4.UseVisualStyleBackColor = true;
-            this.btnM4.Click += new System.EventHandler(this.btnM1_Click);
+            this.btnM4.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // btnM3
             // 
@@ -782,7 +798,7 @@ namespace Thetis
             this.btnM3.Text = "M3";
             this.toolTip1.SetToolTip(this.btnM3, "Memory. Shift click to store. Ctrl click to remove.");
             this.btnM3.UseVisualStyleBackColor = true;
-            this.btnM3.Click += new System.EventHandler(this.btnM1_Click);
+            this.btnM3.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // btnM2
             // 
@@ -796,7 +812,7 @@ namespace Thetis
             this.btnM2.Text = "M2";
             this.toolTip1.SetToolTip(this.btnM2, "Memory. Shift click to store. Ctrl click to remove.");
             this.btnM2.UseVisualStyleBackColor = true;
-            this.btnM2.Click += new System.EventHandler(this.btnM1_Click);
+            this.btnM2.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // btnM1
             // 
@@ -810,7 +826,7 @@ namespace Thetis
             this.btnM1.Text = "M1";
             this.toolTip1.SetToolTip(this.btnM1, "Memory. Shift click to store. Ctrl click to remove.");
             this.btnM1.UseVisualStyleBackColor = true;
-            this.btnM1.Click += new System.EventHandler(this.btnM1_Click);
+            this.btnM1.Click += new System.EventHandler(this.btnMemory_Click);
             // 
             // chkVFOSync
             // 
@@ -1235,7 +1251,7 @@ namespace Thetis
             // DiversityForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(455, 633);
+            this.ClientSize = new System.Drawing.Size(344, 612);
             this.Controls.Add(this.groupBoxTS2);
             this.Controls.Add(this.picRadar);
             this.Controls.Add(this.panelDivControls);
@@ -1456,6 +1472,7 @@ namespace Thetis
 
         private void picRadar_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
+            if(_initalising) return;
             // if(!mouse_down) return;
 
             int W = picRadar.Width;
@@ -1557,11 +1574,13 @@ namespace Thetis
 
         private void udR_ValueChanged(object sender, System.EventArgs e)
         {
+            if (_initalising) return;
             UpdateDiversity();
         }
 
         private void udTheta_ValueChanged(object sender, System.EventArgs e)
         {
+            if (_initalising) return;
             UpdateDiversity();
         }
 
@@ -1676,6 +1695,7 @@ namespace Thetis
 
         private void chkEnable_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (_initalising) return;
             if (chkEnable.Checked) chkEnable.BackColor = console.ButtonSelectedColor;
             else chkEnable.BackColor = SystemColors.Control;
             if (chkEnable.Checked)
@@ -1781,6 +1801,7 @@ namespace Thetis
 
         private void radioButtonMerc1_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
             if (radioButtonMerc1.Checked)
             {
                 udR1.Visible = false;
@@ -1804,6 +1825,7 @@ namespace Thetis
 
         private void radioButtonMerc2_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
             if (radioButtonMerc2.Checked)
             {
                 udR1.Visible = true;
@@ -1823,11 +1845,13 @@ namespace Thetis
 
         private void chkLockAngle_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
             locked_angle = (double)udAngle.Value;
         }
 
         private void chkLockR_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
             locked_r = (double)udR.Value;
         }
 
@@ -1843,6 +1867,9 @@ namespace Thetis
         private bool updateR2 = true;
         private void udR2_ValueChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
+            if (radioButtonMerc2.Checked) return; // uses R1 when ref is receiver 2
+
             //  if (radioButtonMerc1.Checked)
             // {
             if (chkLockR.Checked)
@@ -1910,6 +1937,9 @@ namespace Thetis
         private bool updateR1 = true;
         private void udR1_ValueChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
+            if (radioButtonMerc1.Checked) return; // uses R2 when ref is receiver 1
+
             //  if (radioButtonMerc2.Checked)
             //  {
             if (chkLockR.Checked)
@@ -2047,10 +2077,13 @@ namespace Thetis
             {
                 bool bOldLock = chkLockR.Checked; //[2.10.3.5]MW0LGE fixes #324
                 chkLockR.Checked = false;
-
+                
                 decimal v = Math.Min(value, udR1.Maximum);
                 v = Math.Max(v, udR1.Minimum); //MW0LGE_[2.9.0.7] not really needed as min is 0, belts/braces
+                _initalising = true;
                 udR1.Value = v;
+                _initalising = false;
+                udR1_ValueChanged(this, EventArgs.Empty);
 
                 chkLockR.Checked = bOldLock;
             }
@@ -2063,10 +2096,13 @@ namespace Thetis
             {
                 bool bOldLock = chkLockR.Checked; //[2.10.3.5]MW0LGE fixes #324
                 chkLockR.Checked = false;
-
+                
                 decimal v = Math.Min(value, udR2.Maximum);
                 v = Math.Max(v, udR2.Minimum); //MW0LGE_[2.9.0.7] not really needed as min is 0, belts/braces
+                _initalising = true;
                 udR2.Value = v;
+                _initalising = false;
+                udR2_ValueChanged(this, EventArgs.Empty);
 
                 chkLockR.Checked = bOldLock;
             }
@@ -2081,6 +2117,7 @@ namespace Thetis
                 chkLockAngle.Checked = false;
 
                 udFineNull.Value = value;
+                udFineNull_ValueChanged(this, EventArgs.Empty);
 
                 chkLockAngle.Checked = bOldLockAngle;
             }
@@ -2101,12 +2138,14 @@ namespace Thetis
 
         private void udCalib_ValueChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
             UpdateDiversity();
         }
 
 
         private void udAngle0_ValueChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
             if (udAngle0.Value >= 360) udAngle0.Value = (decimal)0;
             if (udAngle0.Value <= -1) udAngle0.Value = (decimal)359;
             //if (udAngle0.Value == 360) udAngle0.Value = (decimal)0;
@@ -2148,6 +2187,7 @@ namespace Thetis
 
         private void udAntSpacing_ValueChanged_1(object sender, EventArgs e)
         {
+            if (_initalising) return;
             udAngle.Value = (decimal)(ConvertAngle0ToAngle((double)udAngle0.Value));
             angle = (double)udAngle.Value;
             UpdateDiversity();
@@ -2199,6 +2239,7 @@ namespace Thetis
 
         private void chkCrossFire_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
             if (chkCrossFire.Checked) cross_fire = Math.PI;
             else
                 cross_fire = 0;
@@ -2209,6 +2250,7 @@ namespace Thetis
 
         private void udFineNull_ValueChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
             if (chkLockAngle.Checked)
             {
                 angle_A = locked_angle;
@@ -2289,6 +2331,7 @@ namespace Thetis
         }
         private void radRxSource1_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
             if (radRxSource1.Checked)
             // Audio.IQSource = 1;
             {
@@ -2300,6 +2343,7 @@ namespace Thetis
 
         private void radRxSource2_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
             if (radRxSource2.Checked)
             // Audio.IQSource = 2;
             {
@@ -2311,6 +2355,7 @@ namespace Thetis
 
         private void radRxSourceRx1Rx2_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
             if (radRxSourceRx1Rx2.Checked)
             // Audio.IQSource = 3;
             {
@@ -2322,6 +2367,7 @@ namespace Thetis
 
         private void chkEnableDiversity_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
             console.Diversity2 = chkEnableDiversity.Checked;
             if (chkEnableDiversity.Checked)
             {
@@ -2385,6 +2431,7 @@ namespace Thetis
 
         private void udGainMulti_ValueChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
             m_dGainMulti = (double)Math.Round(udGainMulti.Value, 2);
             udR1.Maximum = (decimal)m_dGainMulti;
             udR2.Maximum = (decimal)m_dGainMulti;
@@ -2403,14 +2450,18 @@ namespace Thetis
 
             if (radioButtonMerc1.Checked) // order matters, as udR is updated by each of them and we need the correct one last
             {
+                _initalising = true;
                 udR1.Value = (decimal)Math.Round((r1 * m_dGainMulti), 3);
                 udR2.Value = (decimal)Math.Round((r2 * m_dGainMulti), 3);
+                _initalising = false;
                 udR2_ValueChanged(this, EventArgs.Empty);
             }
             else if (radioButtonMerc2.Checked)
             {
+                _initalising = true;
                 udR2.Value = (decimal)Math.Round((r2 * m_dGainMulti), 3);
                 udR1.Value = (decimal)Math.Round((r1 * m_dGainMulti), 3);
+                _initalising = false;
                 udR1_ValueChanged(this, EventArgs.Empty);
             }
         }
@@ -2445,7 +2496,7 @@ namespace Thetis
             }
         }
 
-        private void btnM1_Click(object sender, EventArgs e)
+        private void btnMemory_Click(object sender, EventArgs e)
         {
             int index = int.Parse(((Control)sender).Name.Substring(4)) - 1;
             if (Common.ShiftKeyDown)
@@ -2477,7 +2528,10 @@ namespace Thetis
                 {
                     chkLockAngle.Checked = false; // need these to be unlocked so we can set values, then lock at end if needed
                     chkLockR.Checked = false;
-                    udGainMulti.Value = (decimal)ms.gainMulti;
+                    _initalising = true;
+                    udGainMulti.Value = (decimal)ms.gainMulti; // prevent anything from happening in the changed event
+                    _initalising = false;
+                    udGainMulti_ValueChanged(this, EventArgs.Empty); // call it here, to ensure it is done, even if numbers the same
                     switch (_memories[index].receiverSource)
                     {
                         case 0:
@@ -2495,12 +2549,12 @@ namespace Thetis
                     udR1.Value = (decimal)ms.rx1Gain;
                     udR2.Value = (decimal)ms.rx2Gain;
                     udFineNull.Value = (decimal)ms.phase;
-                    chkLockAngle.Checked = ms.lockPhase;
-                    chkLockR.Checked = ms.lockGain;
                     //udAngle.Value = (decimal)ms.angle; //not needed, calulated
                     //udR.Value = (decimal)ms.r; //not needed, calulated
-
                     UpdateDiversity();
+                    chkLockAngle.Checked = ms.lockPhase;
+                    chkLockR.Checked = ms.lockGain;
+
                 }
             }
         }
@@ -2546,6 +2600,11 @@ namespace Thetis
         private void btnShiftDown10_Click(object sender, EventArgs e)
         {
             stepAngle(-10);
+        }
+
+        private void udZoom_ValueChanged(object sender, EventArgs e)
+        {
+
         }
 
         //[2.10.3.5]MW0LGE old code, kept for reference

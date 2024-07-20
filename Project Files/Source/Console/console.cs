@@ -10366,6 +10366,10 @@ namespace Thetis
 
         }
 
+        public Color TxAttenuationBackgroundColour
+        {
+            set { udTXStepAttData.BackColor = value; }
+        }
         private int tx_attenuator_data = 31;
         private bool _updatingTxAtt = false;
         public int TxAttenData
