@@ -18705,7 +18705,6 @@ namespace Thetis
                         NetworkIO.SetTxAttenData(0);
                         Display.TXAttenuatorOffset = 0;
                     }
-                    }
                 }
             }
         }
