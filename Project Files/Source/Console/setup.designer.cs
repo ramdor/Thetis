@@ -24474,6 +24474,8 @@
             // chkDisableHPFonPS
             // 
             this.chkDisableHPFonPS.AutoSize = true;
+            this.chkDisableHPFonPS.Checked = true;
+            this.chkDisableHPFonPS.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisableHPFonPS.Image = null;
             this.chkDisableHPFonPS.Location = new System.Drawing.Point(140, 241);
             this.chkDisableHPFonPS.Name = "chkDisableHPFonPS";
