@@ -91,7 +91,7 @@ namespace Thetis
         {
             Splash.SetStatus("Setting up controls");
 
-            ThetisSkinService.Version = console.ProductVersion;            
+            ThetisSkinService.Version = console.ProductVersion;
 
             addDelegates();
 
@@ -671,7 +671,7 @@ namespace Thetis
         }
         private void OnTXInhibit(bool oldState, bool newState)
         {
-            if(TestIMD && newState) TestIMD = false; // return button state etc
+            if (TestIMD && newState) TestIMD = false; // return button state etc
 
             chkTestIMD.Enabled = !newState;
         }
@@ -1200,7 +1200,7 @@ namespace Thetis
             ArrayList a = Audio.GetPAInputDevices(host);
             foreach (PADeviceInfo p in a)
                 comboAudioInput2.Items.Add(p);
-            
+
             a = Audio.GetPAOutputDevices(host);
             foreach (PADeviceInfo p in a)
                 comboAudioOutput2.Items.Add(p);
@@ -1326,7 +1326,7 @@ namespace Thetis
             toRemove.Add("txtVAC2OldVarOut");
 
             // multimeter
-            foreach(Control c in grpMultiMeterHolder.Controls)
+            foreach (Control c in grpMultiMeterHolder.Controls)
             {
                 toRemove.Add(c.Name);
             }
@@ -1606,7 +1606,7 @@ namespace Thetis
                         radRadioProtocol2Select.Checked = true;
                         break;
                 }
-               
+
                 _oldSettings.Add("chkRadioProtocolSelect_checkstate");
             }
 
@@ -1826,7 +1826,7 @@ namespace Thetis
                     catch
                     {
                     }
-                    if(!ok)
+                    if (!ok)
                     {
                         MessageBox.Show("There was an issue restoring the settings for MultiMeterIO. Existing settings will be lost.", "MultiMeterIO RestoreSaveData",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
@@ -2478,7 +2478,7 @@ namespace Thetis
             radDSPRX1APFControls_CheckedChanged(this, e);
             radDSPRX1subAPFControls_CheckedChanged(this, e);
             radDSPRX2APFControls_CheckedChanged(this, e);
-            
+
             // dolly filter
             chkDSPRX1DollyEnable_CheckedChanged(this, e);
             chkDSPRX1DollySubEnable_CheckedChanged(this, e);
@@ -2874,7 +2874,7 @@ namespace Thetis
                 if (isTXProfileSettingDifferent<bool>(dr, "CFCEnabled", chkCFCEnable.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "CFCPostEqEnabled", chkCFCPeqEnable.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "CFCPhaseRotatorEnabled", chkPHROTEnable.Checked, out sReportOut)) sReport += sReportOut;
-                if (isTXProfileSettingDifferent<bool>(dr, "CFCPhaseReverseEnabled", chkPHROTReverse.Checked, out sReportOut)) sReport += sReportOut;                
+                if (isTXProfileSettingDifferent<bool>(dr, "CFCPhaseReverseEnabled", chkPHROTReverse.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<int>(dr, "CFCPhaseRotatorFreq", (int)udPhRotFreq.Value, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<int>(dr, "CFCPhaseRotatorStages", (int)udPHROTStages.Value, out sReportOut)) sReport += sReportOut;
                 int[] cfceq = CFCCOMPEQ;
@@ -2886,7 +2886,7 @@ namespace Thetis
                     if (isTXProfileSettingDifferent<int>(dr, "CFCPostEqGain" + (i - 12).ToString(), cfceq[i], out sReportOut)) sReport += sReportOut;
                 for (int i = 22; i < 32; i++)
                     if (isTXProfileSettingDifferent<int>(dr, "CFCEqFreq" + (i - 22).ToString(), cfceq[i], out sReportOut)) sReport += sReportOut;
-            }      
+            }
 
             return sReport;
         }
@@ -3084,7 +3084,7 @@ namespace Thetis
                 if (DB.ConvertFromDBVal<bool>(dr["CFCEnabled"]) != chkCFCEnable.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["CFCPostEqEnabled"]) != chkCFCPeqEnable.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["CFCPhaseRotatorEnabled"]) != chkPHROTEnable.Checked) return true;
-                if (DB.ConvertFromDBVal<bool>(dr["CFCPhaseReverseEnabled"]) != chkPHROTReverse.Checked) return true;                
+                if (DB.ConvertFromDBVal<bool>(dr["CFCPhaseReverseEnabled"]) != chkPHROTReverse.Checked) return true;
                 if (DB.ConvertFromDBVal<int>(dr["CFCPhaseRotatorFreq"]) != (int)udPhRotFreq.Value) return true;
                 if (DB.ConvertFromDBVal<int>(dr["CFCPhaseRotatorStages"]) != (int)udPHROTStages.Value) return true;
                 int[] cfceq = CFCCOMPEQ;
@@ -3100,7 +3100,7 @@ namespace Thetis
 
             return false;
         }
- 
+
         private void highlightTXProfileSaveItems(bool bHighlight)
         {
             if (initializing) return;
@@ -3432,7 +3432,7 @@ namespace Thetis
             dr["FM_RX_AFFilter_Low"] = (decimal)udFMLowCutRX.Value;
             dr["FM_RX_AFFilter_High"] = (decimal)udFMHighCutRX.Value;
             dr["FM_TX_AFFilter_Low"] = (decimal)udFMLowCutTX.Value;
-            dr["FM_TX_AFFilter_High"] = (decimal)udFMHighCutTX.Value; 
+            dr["FM_TX_AFFilter_High"] = (decimal)udFMHighCutTX.Value;
             dr["VAC1_Force_In"] = (bool)chkVAC1_Force2.Checked;  // note in is force2, and out is force
             dr["VAC1_Force_Out"] = (bool)chkVAC1_Force.Checked;
             dr["VAC2_Force_In"] = (bool)chkVAC2_Force2.Checked;
@@ -3710,7 +3710,7 @@ namespace Thetis
                     if (udATTOnTX.Value == value) //[2.10.3.6]MW0LGE no event will fire if the same, so force it
                         udATTOnTX_ValueChanged(this, EventArgs.Empty);
                     else
-                        udATTOnTX.Value = value;                    
+                        udATTOnTX.Value = value;
                 }
             }
         }
@@ -5875,7 +5875,7 @@ namespace Thetis
         {
             get { return tcPowerAmplifier; }
             set { tcPowerAmplifier = value; }
-        }        
+        }
         public TabControl TabGeneral
         {
             get { return tcGeneral; }
@@ -6645,7 +6645,7 @@ namespace Thetis
             }
 
             //[2.10.3]MW0LGE only enable if wasapi
-            if(comboAudioDriver2.SelectedIndex < PA19.PA_GetHostApiCount()) //[2.10.3.4]MW0LGE ignore the manually added HPSDR (PCM A/D)
+            if (comboAudioDriver2.SelectedIndex < PA19.PA_GetHostApiCount()) //[2.10.3.4]MW0LGE ignore the manually added HPSDR (PCM A/D)
             {
                 PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(new_driver);
                 bool bIsWASAPI = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
@@ -6740,7 +6740,7 @@ namespace Thetis
 
             int old_input = Audio.Input2;
             int new_input = ((PADeviceInfo)comboAudioInput2.SelectedItem).Index;
-            bool power = console.PowerOn;      
+            bool power = console.PowerOn;
 
             if (power && chkAudioEnableVAC.Checked && old_input != new_input)
             {
@@ -6763,7 +6763,7 @@ namespace Thetis
 
             int old_input = Audio.Input3;
             int new_input = ((PADeviceInfo)comboAudioInput3.SelectedItem).Index;
-            bool power = console.PowerOn;            
+            bool power = console.PowerOn;
 
             if (power && chkVAC2Enable.Checked && old_input != new_input)
             {
@@ -8771,7 +8771,7 @@ namespace Thetis
         {
             if (initializing) return;
             console.radio.GetDSPRX(1, 0).RXFixedAGC = (double)udDSPAGCRX2FixedGaindB.Value;
- 
+
             if (console.RX2AGCMode == AGCMode.FIXD)
                 console.RX2RF = (int)udDSPAGCRX2FixedGaindB.Value;
         }
@@ -8855,7 +8855,7 @@ namespace Thetis
 
             console.SetupInfoBarButton(ucInfoBar.ActionTypes.Leveler, chkDSPLevelerEnabled.Checked);
 
-            if(_oldLevelerState != chkDSPLevelerEnabled.Checked)
+            if (_oldLevelerState != chkDSPLevelerEnabled.Checked)
             {
                 console.LevelerChangedHandlers?.Invoke(_oldLevelerState, chkDSPLevelerEnabled.Checked);
                 _oldLevelerState = chkDSPLevelerEnabled.Checked;
@@ -9286,7 +9286,7 @@ namespace Thetis
             else
             {
                 updateTXProfileInDB(dr); //MW0LGE_21a remove duplication
-            }            
+            }
 
             if (!comboTXProfileName.Items.Contains(name))
             {
@@ -11086,7 +11086,7 @@ namespace Thetis
         }
         private void ApplyOptions()
         {
-            SaveOptions();        
+            SaveOptions();
             setButtonState(false, false);
         }
 
@@ -11150,7 +11150,7 @@ namespace Thetis
 
                 string sInc = "";
                 int n = 0;
-                while(File.Exists(archivePath + "Thetis_database_" + datetime + sInc + ".xml"))
+                while (File.Exists(archivePath + "Thetis_database_" + datetime + sInc + ".xml"))
                 {
                     sInc = "_" + n.ToString();
                     n++;
@@ -11721,7 +11721,7 @@ namespace Thetis
         private void chkCWKeyerMode_CheckedChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
-  
+
             if (chkCWKeyerMode.Checked)
                 NetworkIO.SetCWKeyerMode(1); // mode b
             else
@@ -12380,7 +12380,7 @@ namespace Thetis
             if (Directory.Exists(_skinPath + "\\" + comboAppSkin.Text))
             {
                 Skin.Restore(comboAppSkin.Text, _skinPath, console);
-                console.UpdateAndromedaSkins();                
+                console.UpdateAndromedaSkins();
             }
 
             console.CurrentSkin = comboAppSkin.Text;
@@ -12510,7 +12510,7 @@ namespace Thetis
 
             console.AlexPresent = chkAlexPresent.Checked;
             console.SetComboPreampForHPSDR();
-       
+
             udHermesStepAttenuatorData_ValueChanged(this, EventArgs.Empty);
         }
 
@@ -13617,7 +13617,7 @@ namespace Thetis
                 {
                     if (buttons[Btn].Checked)
                     {
-                        if(Btn == 1 && chkBlockTxAnt2.Checked)
+                        if (Btn == 1 && chkBlockTxAnt2.Checked)
                         {
                             antInUse = Btn + 1;
                         }
@@ -15566,7 +15566,7 @@ namespace Thetis
             }
         }
 
-        private bool _updatingRX1HermiesStepAttData = false;       
+        private bool _updatingRX1HermiesStepAttData = false;
         private void udHermesStepAttenuatorData_ValueChanged(object sender, EventArgs e)
         {
             if (_updatingRX1HermiesStepAttData) return;
@@ -15614,7 +15614,7 @@ namespace Thetis
         private bool _updatingRX2HermiesStepAttData = false;
         private void udHermesStepAttenuatorDataRX2_ValueChanged(object sender, EventArgs e)
         {
-            if(_updatingRX2HermiesStepAttData) return;
+            if (_updatingRX2HermiesStepAttData) return;
             _updatingRX2HermiesStepAttData = true;
             console.RX2AttenuatorData = (int)udHermesStepAttenuatorDataRX2.Value;
 
@@ -18099,7 +18099,7 @@ namespace Thetis
             //
             console.SetupInfoBarButton(ucInfoBar.ActionTypes.CFC, chkCFCEnable.Checked);
 
-            if(_oldCFCState != chkCFCEnable.Checked)
+            if (_oldCFCState != chkCFCEnable.Checked)
             {
                 console.CFCChangedHandlers?.Invoke(_oldCFCState, chkCFCEnable.Checked);
                 _oldCFCState = chkCFCEnable.Checked;
@@ -20341,8 +20341,8 @@ namespace Thetis
                 btnResetP1ADC_Click(this, EventArgs.Empty);
             }
 
-            if(_firstRadioModelChange || old_model != console.CurrentHPSDRModel)
-            { 
+            if (_firstRadioModelChange || old_model != console.CurrentHPSDRModel)
+            {
                 if (!initializing)
                 {
                     string sCurrentPAProfile = comboPAProfile.Text;
@@ -22288,7 +22288,7 @@ namespace Thetis
                 {
                     m_bShowingCFC = false;
                     picCFC.Invalidate();
-                } 
+                }
                 return;
             }
             else
@@ -22315,7 +22315,7 @@ namespace Thetis
             Graphics g = e.Graphics;
             g.Clear(Color.Black);
 
-            Point[] linePoints;            
+            Point[] linePoints;
             int height = picCFC.Height;
             float binsPerHz = 1025 / 48000f;
             int endFreqIndex = (int)((double)udCFC9.Value * binsPerHz);
@@ -22369,7 +22369,7 @@ namespace Thetis
             linePoints = new Point[10];
             for (int n = 0; n < 10; n++)
             {
-                switch(n)
+                switch (n)
                 {
                     case 0:
                         linePoints[n] = new Point((int)(((float)udCFC0.Value - fLow) * fHzPerPizel), height - (int)((pre + tbCFC0.Value) * scale));
@@ -23009,7 +23009,7 @@ namespace Thetis
         {
             set
             {
-                if(chkDisableRearSpeakerJacksAudioAmplifier.Checked != value)
+                if (chkDisableRearSpeakerJacksAudioAmplifier.Checked != value)
                     chkDisableRearSpeakerJacksAudioAmplifier.Checked = value;
             }
         }
@@ -23338,7 +23338,7 @@ namespace Thetis
             if (p == null) return;
 
             nudMaxPowerForBandPA.Value = (decimal)p.GetMaxPower(_adjustingBand);
- 
+
             updateMaxPowerCheckbox(p);
 
             console.UpdateDriveLabel(false, EventArgs.Empty);
@@ -24890,7 +24890,7 @@ namespace Thetis
             chkContainerBorder.Enabled = bEnableControls;
             chkContainerNoTitle.Enabled = bEnableControls;
             chkContainerEnable.Enabled = bEnableControls;
-            txtContainerNotes.Enabled = bEnableControls;            
+            txtContainerNotes.Enabled = bEnableControls;
             lblMMContainerBackground.Enabled = bEnableControls;
             lblMMContainerNotes.Enabled = bEnableControls;
             lstMetersAvailable.Enabled = bEnableControls;
@@ -24915,7 +24915,7 @@ namespace Thetis
 
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return;
-            
+
             List<clsMeterTypeComboboxItem> inuse = new List<clsMeterTypeComboboxItem>();
             List<clsMeterTypeComboboxItem> notinuse = new List<clsMeterTypeComboboxItem>();
 
@@ -24934,11 +24934,11 @@ namespace Thetis
                 }
                 //else
                 //{
-                    //if (mt != MeterType.SPACER && mt != MeterType.TEXT_OVERLAY)
-                    //{
-                        clsMeterTypeComboboxItem mtci2 = new clsMeterTypeComboboxItem(mt, -1);
-                        notinuse.Add(mtci2);
-                    //}
+                //if (mt != MeterType.SPACER && mt != MeterType.TEXT_OVERLAY)
+                //{
+                clsMeterTypeComboboxItem mtci2 = new clsMeterTypeComboboxItem(mt, -1);
+                notinuse.Add(mtci2);
+                //}
                 //}
             }
             //// add spacer and overlay here always to notinuse
@@ -25034,6 +25034,7 @@ namespace Thetis
             if (m == null) return;
 
             m.AddMeter(mti.MeterType);
+            m.ZeroOut(true, true);
             m.Rebuild();
             updateMeterLists();
 
@@ -25042,7 +25043,7 @@ namespace Thetis
 
         private void lstMetersAvailable_SelectedIndexChanged(object sender, EventArgs e)
         {
-            btnAddMeterItem.Enabled = lstMetersAvailable.SelectedIndex >= 0;            
+            btnAddMeterItem.Enabled = lstMetersAvailable.SelectedIndex >= 0;
         }
 
         private void lstMetersInUse_SelectedIndexChanged(object sender, EventArgs e)
@@ -25220,7 +25221,21 @@ namespace Thetis
             MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
             if (igs == null) return null;
 
-            if (mt == MeterType.SIGNAL_TEXT)
+            if (mt == MeterType.DATA_OUT)
+            {
+                Guid guid = MultiMeterIO.GuidfromFourChar(txtDataOutNode_4charID.Text);
+                if (guid != Guid.Empty)
+                {
+                    igs.SetMMIOGuid(0, guid);
+                    igs.UpdateInterval = (int)nudDataOutNode_sendinterval.Value;
+                }
+                else
+                {
+                    igs.SetMMIOGuid(0, Guid.Empty);
+                    igs.UpdateInterval = 500;
+                }
+            }
+            else if (mt == MeterType.SIGNAL_TEXT)
             {
                 igs.UpdateInterval = (int)nudMeterItemUpdateRate.Value;
                 igs.AttackRatio = (float)nudMeterItemAttackRate.Value;
@@ -25374,7 +25389,7 @@ namespace Thetis
             MeterType mt = meterItemGroupTypefromSelected();
             if (mt == MeterType.NONE) return;
 
-            MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);                
+            MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
             if (igs == null) return;
 
             _ignoreMeterItemChangeEvents = true;
@@ -25403,7 +25418,22 @@ namespace Thetis
                     break;
             }
 
-            if (mt == MeterType.SIGNAL_TEXT)
+            if (mt == MeterType.DATA_OUT)
+            {
+                Guid guid = igs.GetMMIOGuid(0);
+                if (MultiMeterIO.Data.ContainsKey(guid))
+                {
+                    MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[guid];
+                    txtDataOutNode_4charID.Text = mmio.FourChar;
+                    nudDataOutNode_sendinterval.Value = (decimal)igs.UpdateInterval;
+                }
+                else
+                {
+                    txtDataOutNode_4charID.Text = "";
+                    nudDataOutNode_sendinterval.Value = 500;
+                }
+            }
+            else if (mt == MeterType.SIGNAL_TEXT)
             {
                 nudMeterItemUpdateRate.Value = igs.UpdateInterval < nudMeterItemUpdateRate.Minimum ? nudMeterItemUpdateRate.Minimum : igs.UpdateInterval;
                 nudMeterItemAttackRate.Value = (decimal)igs.AttackRatio;
@@ -25491,7 +25521,7 @@ namespace Thetis
                 clrbtnMMTime.Color = igs.MarkerColour;
                 clrbtnMMDate.Color = igs.SubMarkerColour;
                 radMM24Clock.Checked = igs.ShowMarker; // use the show marker bool for this
-                if(!radMM24Clock.Checked && !radMM12Clock.Checked) radMM12Clock.Checked = true;
+                if (!radMM24Clock.Checked && !radMM12Clock.Checked) radMM12Clock.Checked = true;
                 updateTitleControlsClock();
             }
             else if (mt == MeterType.TEXT_OVERLAY)
@@ -25888,6 +25918,7 @@ namespace Thetis
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
                     break;
                 case MeterType.VFO_DISPLAY:
                     grpMeterItemVfoDisplaySettings.Parent = grpMultiMeterHolder;
@@ -25898,6 +25929,7 @@ namespace Thetis
                     grpMeterItemClockSettings.Visible = false;
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
                     break;
                 case MeterType.CLOCK:
                     grpMeterItemClockSettings.Parent = grpMultiMeterHolder;
@@ -25908,6 +25940,7 @@ namespace Thetis
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
                     break;
                 case MeterType.SPACER:
                     grpMeterItemSpacerSettings.Parent = grpMultiMeterHolder;
@@ -25918,6 +25951,7 @@ namespace Thetis
                     grpMeterItemClockSettings.Visible = false;
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     grpTextOverlay.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
                     break;
                 case MeterType.TEXT_OVERLAY:
                     grpTextOverlay.Parent = grpMultiMeterHolder;
@@ -25928,6 +25962,18 @@ namespace Thetis
                     grpMeterItemSettings.Visible = false;
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     grpMeterItemSpacerSettings.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
+                    break;
+                case MeterType.DATA_OUT:
+                    grpMeterItemDataOutNode.Parent = grpMultiMeterHolder;
+                    grpMeterItemDataOutNode.Location = loc;
+                    grpMeterItemDataOutNode.Visible = true;
+
+                    grpMeterItemSettings.Visible = false;
+                    grpMeterItemClockSettings.Visible = false;
+                    grpMeterItemVfoDisplaySettings.Visible = false;
+                    grpMeterItemSpacerSettings.Visible = false;
+                    grpTextOverlay.Visible = false;
                     break;
                 default:
                     grpMeterItemSettings.Parent = grpMultiMeterHolder;
@@ -25937,6 +25983,7 @@ namespace Thetis
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
                     break;
             }
         }
@@ -26084,7 +26131,7 @@ namespace Thetis
 
                 _itemGroupSettings.Unit = currentSettings.Unit;
 
-                if(!_itemGroupSettings.SubIndicators)
+                if (!_itemGroupSettings.SubIndicators)
                 {
                     // no sub indicators on the source, replace with current so we end up with no change on the paste
                     _itemGroupSettings.ShowSubMarker = currentSettings.ShowMarker;
@@ -26213,7 +26260,7 @@ namespace Thetis
         private void OnBCDBandChangeHandler(int rx, Band old_band, Band new_band)
         {
             if (initializing) return;
-            if(rx == 1) updateUsbBCDdevice(new_band);
+            if (rx == 1) updateUsbBCDdevice(new_band);
         }
         private void updateUsbBCDdevice(Band rx1band)
         {
@@ -26670,9 +26717,9 @@ namespace Thetis
             if (initializing) return;
 
             if (isSkinServerTabVisible())
-            {                
+            {
                 getSkinServers();
-            }         
+            }
             else
             {
                 hideAllSkinServerRelatedControls();
@@ -26761,7 +26808,7 @@ namespace Thetis
         }
         private void updateSelectedSkin()
         {
-            if(lstAvailableSkins.Items.Count == 0) return;
+            if (lstAvailableSkins.Items.Count == 0) return;
 
             chkReplaceCurrentMeterInSelectedSkin.Enabled = false;
 
@@ -26828,7 +26875,7 @@ namespace Thetis
             if (ss.Length >= 2 && ss.Length <= 4)
             {
                 bool bAllNums = true;
-                foreach(string s in ss)
+                foreach (string s in ss)
                 {
                     if (!int.TryParse(s, out int tmp))
                     {
@@ -26839,7 +26886,7 @@ namespace Thetis
                         }
                     }
                 }
-                if(bAllNums) return sVersion;
+                if (bAllNums) return sVersion;
             }
             return "?";
         }
@@ -26948,12 +26995,12 @@ namespace Thetis
                     Debug.Print(e.BytesDownloaded.ToString() + " - " + e.TotalBytes.ToString());
 
                     string sFile = getFileFromUrl(e.Url);
-                    if(sFile == "")
+                    if (sFile == "")
                         sFile = getFileFromUrl(e.FinalUri);
 
                     if (isSkinZipFile(e.Path, sFile, out bool bUsesFileInRoot, out bool bMeterFolderFound, e.BypassRootFolderCheck || e.IsMeterSkin))
-                    {                        
-                        string sOutputPath = "";                        
+                    {
+                        string sOutputPath = "";
 
                         if (bUsesFileInRoot || (e.BypassRootFolderCheck && !bMeterFolderFound))
                         {
@@ -27055,7 +27102,7 @@ namespace Thetis
                 }
                 else
                 {
-                    if(e.TotalBytes != -1)
+                    if (e.TotalBytes != -1)
                     {
                         if (!prgSkinDownload.Visible) prgSkinDownload.Visible = true;
 
@@ -27128,7 +27175,7 @@ namespace Thetis
 
                 ThetisSkin ts = lstAvailableSkins.Items[sel] as ThetisSkin;
                 if (ts == null) return;
-                
+
                 btnDownloadSkin.Text = "Cancel";
 
                 string tempFilePath = Path.GetTempFileName();
@@ -27174,7 +27221,7 @@ namespace Thetis
                                 string sReplacedWithMinus = sFilename.Replace(" ", "-");
                                 string sReplacedWithoutMinus = sFilename.Replace("-", " ");
 
-                                if (zipFile.Any(entry => (entry.FileName.StartsWith(sFilename + "/") || entry.FileName.StartsWith(sReplacedWithSpaces + "/") || 
+                                if (zipFile.Any(entry => (entry.FileName.StartsWith(sFilename + "/") || entry.FileName.StartsWith(sReplacedWithSpaces + "/") ||
                                     entry.FileName.StartsWith(sReplacedWithoutSpaces + "/") || entry.FileName.StartsWith(sReplacedWithMinus + "/") ||
                                     entry.FileName.StartsWith(sReplacedWithoutMinus + "/")
                                     ) && entry.IsDirectory))
@@ -27229,7 +27276,7 @@ namespace Thetis
 
                         entry.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
 
-                        if(sRootFolder == "")
+                        if (sRootFolder == "")
                         {
                             //get skin name from folder structure
                             int index = entry.FileName.IndexOf('/');
@@ -27260,7 +27307,7 @@ namespace Thetis
 
         private void btnRemoveSkin_Click(object sender, EventArgs e)
         {
-            if(comboAppSkin.SelectedIndex == -1 || comboAppSkin.Items.Count <= 1 || _skinPath == "")
+            if (comboAppSkin.SelectedIndex == -1 || comboAppSkin.Items.Count <= 1 || _skinPath == "")
             {
                 btnRemoveSkin.Enabled = comboAppSkin.Items.Count > 1; // some reason it was enabled
 
@@ -27278,13 +27325,13 @@ namespace Thetis
             MessageBoxButtons.YesNo,
             MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
 
-            if(dres == DialogResult.Yes)
+            if (dres == DialogResult.Yes)
             {
                 int nToSelect;
-                if(nSelected == comboAppSkin.Items.Count - 1)
+                if (nSelected == comboAppSkin.Items.Count - 1)
                 {
                     // selected last in the list, select previous
-                    nToSelect = nSelected -1;
+                    nToSelect = nSelected - 1;
                 }
                 else
                 {
@@ -27324,7 +27371,7 @@ namespace Thetis
         {
             try
             {
-                if(_skinPath != "")
+                if (_skinPath != "")
                     Process.Start("explorer.exe", _skinPath);
             }
             catch (Exception ex)
@@ -27418,7 +27465,7 @@ namespace Thetis
         {
             if (initializing) return;
 
-            if(sender == chkRecoverPAProfileFromTXProfile && chkRecoverPAProfileFromTXProfile.Checked)
+            if (sender == chkRecoverPAProfileFromTXProfile && chkRecoverPAProfileFromTXProfile.Checked)
             {
                 // manually clicked, warning
                 DialogResult dres = MessageBox.Show(
@@ -27517,7 +27564,7 @@ namespace Thetis
         {
             if (initializing) return;
             MidiDevice.BuildIDFromControlIDAndChannel = chkMidiControlIDincludesChannel.Checked;
-            MidiDevice.IncludeStatusInControlID  = chkMidiControlIDincludesChannel.Checked && chkMidiControlIDincludesStatus.Checked;
+            MidiDevice.IncludeStatusInControlID = chkMidiControlIDincludesChannel.Checked && chkMidiControlIDincludesStatus.Checked;
             chkMidiControlIDincludesStatus.Enabled = chkMidiControlIDincludesChannel.Checked;
         }
 
@@ -27590,7 +27637,7 @@ namespace Thetis
             if (initializing) return;
             //note: all 3 radio buttons for radio protocol call this on change
 
-            if(radRadioProtocol1Select.Checked)
+            if (radRadioProtocol1Select.Checked)
             {
                 RadioProtocolSelected = RadioProtocol.USB;
                 NetworkIO.RadioProtocolSelected = RadioProtocol.USB;
@@ -28416,13 +28463,13 @@ namespace Thetis
 
         private void radBelow30_CheckedChanged(object sender, EventArgs e)
         {
-            if(radBelow30.Checked)
+            if (radBelow30.Checked)
                 console.S9Frequency = 30.0;
         }
 
         private void radBelow144_CheckedChanged(object sender, EventArgs e)
         {
-            if(radBelow144.Checked)
+            if (radBelow144.Checked)
                 console.S9Frequency = 144.0;
         }
 
@@ -28448,10 +28495,10 @@ namespace Thetis
         }
         public void UpdateAutoStartForms()
         {
-            foreach(Control c in chkShowFormStartup_setup.Parent.Controls)
+            foreach (Control c in chkShowFormStartup_setup.Parent.Controls)
             {
                 CheckBox cc = c as CheckBoxTS;
-                if(cc != null)
+                if (cc != null)
                 {
                     string id = cc.Name.Substring(cc.Name.IndexOf("_") + 1).ToLower();
                     cc.Checked = console.GetAutoFormStartSetting(id);
@@ -28743,7 +28790,7 @@ namespace Thetis
             pnlMMIO_network_rxdata.BackColor = Color.LightGray;
             pnlMMIO_network_txdata.BackColor = Color.LightGray;
 
-            for(int i = (int)MultiMeterIO.MMIOFormat.JSON; i < (int)(int)MultiMeterIO.MMIOFormat.LAST; i++)
+            for (int i = (int)MultiMeterIO.MMIOFormat.JSON; i < (int)(int)MultiMeterIO.MMIOFormat.LAST; i++)
             {
                 comboMMIO_network_format_in.Items.Add(((MultiMeterIO.MMIOFormat)i).ToString());
             }
@@ -28756,13 +28803,18 @@ namespace Thetis
             _tmrRXupdate.Elapsed += OnRxTimerTick;
             _tmrRXupdate.AutoReset = false;
 
+            _tmrTXupdate = new System.Timers.Timer(20);
+            _tmrTXupdate.Elapsed += OnTxTimerTick;
+            _tmrTXupdate.AutoReset = false;
+
             MultiMeterIO.ClientConnected += MultiMeterIO_ClientConnected;
             MultiMeterIO.ClientDisconnected += MultiMeterIO_ClientDisconnected;
             MultiMeterIO.ReceivedDataString += MultiMeterIO_ReceivedDataString;
+            MultiMeterIO.TransmittedData += MultiMeterIO_TransmittedData;
             MultiMeterIO.Listener += MultiMeterIO_Listener;
 
             ConcurrentDictionary<Guid, MultiMeterIO.clsMMIO> data = MultiMeterIO.Data;
-            foreach(KeyValuePair<Guid, MultiMeterIO.clsMMIO> kvp in data)
+            foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> kvp in data)
             {
                 MultiMeterIO.clsMMIO mmio = kvp.Value;
                 clsMultiMeterIOComboboxItem mmioci = new clsMultiMeterIOComboboxItem(mmio.Guid, mmio.Type, mmio.IP, mmio.Port);
@@ -28805,30 +28857,55 @@ namespace Thetis
             catch { }
         }
         private System.Timers.Timer _tmrRXupdate;
-        private double _light_gray = 1f;
+        private System.Timers.Timer _tmrTXupdate;
+        private double _light_gray_rx = 1f;
+        private double _light_gray_tx = 1f;
         public void MultiMeterIOStopTimers()
         {
-            if(_tmrRXupdate != null)
+            if (_tmrRXupdate != null)
             {
                 _tmrRXupdate.Stop();
                 _tmrRXupdate.Elapsed -= OnRxTimerTick;
                 _tmrRXupdate.Close();
                 _tmrRXupdate = null;
             }
+            if (_tmrTXupdate != null)
+            {
+                _tmrTXupdate.Stop();
+                _tmrTXupdate.Elapsed -= OnTxTimerTick;
+                _tmrTXupdate.Close();
+                _tmrTXupdate = null;
+            }
         }
         private void OnRxTimerTick(object sender, ElapsedEventArgs e)
         {
             try
             {
-                _light_gray += 0.08;
-                if (_light_gray > 1f)
-                    _light_gray = 1f;
+                _light_gray_rx += 0.08;
+                if (_light_gray_rx > 1f)
+                    _light_gray_rx = 1f;
 
-                Color c = ColorInterpolator.InterpolateBetween(Color.Red, Color.LightGray, _light_gray);
+                Color c = ColorInterpolator.InterpolateBetween(Color.GreenYellow, Color.LightGray, _light_gray_rx);
                 pnlMMIO_network_rxdata.BackColor = c;
 
-                if (_light_gray < 1f && pnlMMIO_network_rxdata.Visible)
+                if (_light_gray_rx < 1f && pnlMMIO_network_rxdata.Visible)
                     _tmrRXupdate.Start();
+            }
+            catch { }
+        }
+        private void OnTxTimerTick(object sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                _light_gray_tx += 0.08;
+                if (_light_gray_tx > 1f)
+                    _light_gray_tx = 1f;
+
+                Color c = ColorInterpolator.InterpolateBetween(Color.Red, Color.LightGray, _light_gray_tx);
+                pnlMMIO_network_txdata.BackColor = c;
+
+                if (_light_gray_tx < 1f && pnlMMIO_network_txdata.Visible)
+                    _tmrTXupdate.Start();
             }
             catch { }
         }
@@ -28844,6 +28921,18 @@ namespace Thetis
             }
             catch { }
         }
+        private void MultiMeterIO_TransmittedData(Guid guid)
+        {
+            //if (initializing) return; //hmm
+            try
+            {
+                lstMMIO_network_list.BeginInvoke(new MethodInvoker(() =>
+                {
+                    updateFromTransmittedData(guid);
+                }));
+            }
+            catch { }
+        }
         private void updateFromRecievedData(Guid guid, string dataString)
         {
             if (!pnlMMIO_network_rxdata.Visible) return;
@@ -28851,11 +28940,22 @@ namespace Thetis
             if (mmioci == null) return;
             if (mmioci.Guid != guid) return;
 
-            pnlMMIO_network_rxdata.BackColor = Color.Red;
-            _light_gray = 0f;
+            pnlMMIO_network_rxdata.BackColor = Color.GreenYellow;
+            _light_gray_rx = 0f;
             _tmrRXupdate.Start();
 
             updateVariableList();
+        }
+        private void updateFromTransmittedData(Guid guid)
+        {
+            if (!pnlMMIO_network_rxdata.Visible) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            if (mmioci.Guid != guid) return;
+
+            pnlMMIO_network_txdata.BackColor = Color.Red;
+            _light_gray_tx = 0f;
+            _tmrTXupdate.Start();
         }
         private void updateVariableList()
         {
@@ -28874,11 +28974,11 @@ namespace Thetis
             lstMMIO_network_variables.SuspendLayout();
             // remove any from list that are now not in variables
             List<ListViewItem> to_remove = new List<ListViewItem>();
-            foreach(ListViewItem lvi in lstMMIO_network_variables.Items)
+            foreach (ListViewItem lvi in lstMMIO_network_variables.Items)
             {
                 if (!mmio.Variables().ContainsKey(lvi.Text)) to_remove.Add(lvi);
             }
-            foreach(ListViewItem lvi in to_remove)
+            foreach (ListViewItem lvi in to_remove)
             {
                 lstMMIO_network_variables.Items.Remove(lvi);
             }
@@ -28899,7 +28999,7 @@ namespace Thetis
                     lvi.SubItems[1].Text = mmio.VariableValueType(kvp.Value);      //[1] bizzar that it is index 1 for the added subitem               
                 }
 
-                if(selectedKey != "" && kvp.Key == selectedKey)
+                if (selectedKey != "" && kvp.Key == selectedKey)
                     lvi.Selected = true;
             }
             lstMMIO_network_variables.ResumeLayout();
@@ -28921,7 +29021,7 @@ namespace Thetis
             }
 
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
-            if(mmioci == null) return;
+            if (mmioci == null) return;
 
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
             MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
@@ -28938,6 +29038,8 @@ namespace Thetis
             comboMMIO_network_terminator_in.SelectedIndex = (int)mmio.TerminatorIn;
             comboMMIO_network_format_out.SelectedIndex = (int)mmio.FormatOut;
             comboMMIO_network_terminator_out.SelectedIndex = (int)mmio.TerminatorOut;
+
+            txtMMIO_network_udp_endpoint_ip_port.Text = mmio.UdpEndpointIP + ":" + mmio.UdpEndpointPort.ToString();
 
             _MMIO_ignore_change_events = true;
             txtMMIO_network_terminator_in_custom.Text = mmio.CustomTerminatorIn;
@@ -28970,10 +29072,10 @@ namespace Thetis
             string protocol = "";
             switch (type)
             {
-                case MultiMeterIO.MMIOType.UDP:
+                case MultiMeterIO.MMIOType.UDP_LISTENER:
                     protocol = "UDP";
                     break;
-                case MultiMeterIO.MMIOType.TCPIP:
+                case MultiMeterIO.MMIOType.TCPIP_LISTENER:
                     protocol = "TCP/IP";
                     break;
                 case MultiMeterIO.MMIOType.SERIAL:
@@ -28982,7 +29084,7 @@ namespace Thetis
 
             string ip_port;
             bool adding = existing_ip_port == null || existing_ip_port == "";
-            if (adding) 
+            if (adding)
                 ip_port = InputBox.Show("Add " + protocol + " Listener", "Please provide bind details:", "127.0.0.1:9000");
             else
                 ip_port = InputBox.Show("Edit " + protocol + " Listener", "Please edit bind details:", existing_ip_port);
@@ -29000,7 +29102,7 @@ namespace Thetis
                     if (!MultiMeterIO.AlreadyConfigured(ip, portInt, type))
                     {
                         MultiMeterIO.clsMMIO mmio;
-                        if (adding) 
+                        if (adding)
                         {
                             mmio = new MultiMeterIO.clsMMIO(type, ip, portInt, true);
                             MultiMeterIO.AddMMIO(mmio);
@@ -29093,19 +29195,19 @@ namespace Thetis
         }
         private void radMMIO_network_add_udp_Click(object sender, EventArgs e)
         {
-            addEditListener(MultiMeterIO.MMIOType.UDP);
+            addEditListener(MultiMeterIO.MMIOType.UDP_LISTENER);
         }
 
         private void btnMMIO_network_add_tcpip_Click(object sender, EventArgs e)
         {
-            addEditListener(MultiMeterIO.MMIOType.TCPIP);
+            addEditListener(MultiMeterIO.MMIOType.TCPIP_LISTENER);
         }
 
         private void btnMMIO_network_delete_Click(object sender, EventArgs e)
         {
             if (lstMMIO_network_list.SelectedIndex < 0) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
-            if(mmioci != null)
+            if (mmioci != null)
             {
                 MultiMeterIO.RemoveMMIO(mmioci.Guid);
                 lstMMIO_network_list.Items.Remove(mmioci);
@@ -29217,6 +29319,12 @@ namespace Thetis
 
                     lblMMIO_network_txdata.Enabled = false;
                     pnlMMIO_network_txdata.Enabled = false;
+
+                    lblMMIO_network_udp_endpoint_ip_port.Enabled = false;
+                    txtMMIO_network_udp_endpoint_ip_port.Enabled = false;
+                    btnMMIO_network_udp_endpoint_ip_port.Enabled = false;
+
+                    txtMMIO_network_udp_endpoint_ip_port.Text = "";
                     break;
                 case MultiMeterIO.MMIODirection.OUT:
                     lblMMIO_network_format_in.Enabled = false;
@@ -29234,6 +29342,12 @@ namespace Thetis
 
                     lblMMIO_network_txdata.Enabled = true;
                     pnlMMIO_network_txdata.Enabled = true;
+
+                    lblMMIO_network_udp_endpoint_ip_port.Enabled = mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER;
+                    txtMMIO_network_udp_endpoint_ip_port.Enabled = mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER;
+                    btnMMIO_network_udp_endpoint_ip_port.Enabled = mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER;
+
+                    txtMMIO_network_udp_endpoint_ip_port.Text = mmio.UdpEndpointIP + ":" + mmio.UdpEndpointPort.ToString();
                     break;
                 case MultiMeterIO.MMIODirection.BOTH:
                     lblMMIO_network_format_in.Enabled = true;
@@ -29251,6 +29365,12 @@ namespace Thetis
 
                     lblMMIO_network_txdata.Enabled = true;
                     pnlMMIO_network_txdata.Enabled = true;
+
+                    lblMMIO_network_udp_endpoint_ip_port.Enabled = mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER;
+                    txtMMIO_network_udp_endpoint_ip_port.Enabled = mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER;
+                    btnMMIO_network_udp_endpoint_ip_port.Enabled = mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER;
+
+                    txtMMIO_network_udp_endpoint_ip_port.Text = mmio.UdpEndpointIP + ":" + mmio.UdpEndpointPort.ToString();
                     break;
             }
         }
@@ -29262,7 +29382,7 @@ namespace Thetis
 
             bool ok = Enum.TryParse<MultiMeterIO.MMIOFormat>(comboMMIO_network_format_in.Text, out MultiMeterIO.MMIOFormat fmt);
 
-            if(ok) MultiMeterIO.Data[mmioci.Guid].FormatIn = fmt;
+            if (ok) MultiMeterIO.Data[mmioci.Guid].FormatIn = fmt;
         }
         private class clsMultiMeterIOComboboxItem
         {
@@ -29324,10 +29444,10 @@ namespace Thetis
                     Font small = new Font(e.Font.FontFamily, e.Font.Size * 0.8f, FontStyle.Regular);
                     switch (mmioci.Type)
                     {
-                        case MultiMeterIO.MMIOType.UDP:
+                        case MultiMeterIO.MMIOType.UDP_LISTENER:
                             type = "udp";
                             break;
-                        case MultiMeterIO.MMIOType.TCPIP:
+                        case MultiMeterIO.MMIOType.TCPIP_LISTENER:
                             type = "tcp/ip";
                             break;
                         case MultiMeterIO.MMIOType.SERIAL:
@@ -29535,6 +29655,90 @@ namespace Thetis
             MultiMeterIO.Data[mmioci.Guid].CustomTerminatorOut = txtMMIO_network_terminator_out_custom.Text;
         }
         #endregion
+
+        private void nudDataOutNode_sendinterval_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void txtDataOutNode_4charID_TextChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void btnMMIO_network_udp_endpoint_ip_port_Click(object sender, EventArgs e)
+        {
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+            MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
+
+            frmIPv4Picker f = new frmIPv4Picker();
+            f.Init(mmio.UdpEndpointIP + ":" + mmio.UdpEndpointPort.ToString());
+            DialogResult dr = f.ShowDialog(this);
+
+            if (dr == DialogResult.OK)
+            {
+                string sTmp = f.IP;
+                if (sTmp == "") sTmp = "127.0.0.1:9000";
+                setupUDPEndpoint(sTmp);
+            }
+        }
+        private void txtMMIO_network_udp_endpoint_ip_port_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+        }
+        private void setupUDPEndpoint(string existing_ip_port = "")
+        {
+            pnlMMIO_network_container.Focus();
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
+            string ip_port = InputBox.Show("Configure UDP Endpoint", "Provide UDP endpoint (outbound) details:", existing_ip_port);
+            if (ip_port == null || ip_port == "") return;
+
+            string[] parts = ip_port.Split(':');
+            if (parts.Length == 2)
+            {
+                string ip = parts[0];
+                string port = parts[1];
+
+                bool ok = int.TryParse(port, out int portInt);
+                if (ok)
+                {
+                    MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
+                    mmio.UdpEndpointIP = ip;
+                    mmio.UdpEndpointPort = portInt;
+                    txtMMIO_network_udp_endpoint_ip_port.Text = ip_port;
+                }
+                else
+                {
+                    MessageBox.Show("Incorrect port format. Please use the following format.\n\nIP:PORT\n\nExample: 127.0.0.1:9000",
+                        "Incorrect Format",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Incorrect port format. Please use the following format.\n\nIP:PORT\n\nExample: 127.0.0.1:9000",
+                    "Incorrect Format",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
+        }
+        private void txtMMIO_network_udp_endpoint_ip_port_Click(object sender, EventArgs e)
+        {
+            setupUDPEndpoint(txtMMIO_network_udp_endpoint_ip_port.Text);
+        }
+
+        private void txtMMIO_network_udp_endpoint_ip_port_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (_MMIO_ignore_change_events) return;
+        }
     }
 
     #region PADeviceInfo Helper Class
@@ -29594,7 +29798,5 @@ namespace Thetis
             }
         }
     }
-
     #endregion
-
 }
