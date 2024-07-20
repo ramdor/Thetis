@@ -1110,12 +1110,11 @@ namespace Thetis
                 // go for launch -- display forms, or user controls in thetis
                 MeterManager.FinishSetupAndDisplay();
 
-                //[2.10.3.4]MW0LGE startup stuff for linearity and ampview
-                if (psform != null) psform.HandleStartup();
-
                 //[2.10.3.5]MW0LGE setup all status icon items
                 addStatusStripToolTipHandlers(); // improves #354
                 UpdateStatusBarStatusIcons(StatusBarIconGroup.All);
+
+                handleShowOnStartup();
 
                 //display render thread
 #if SNOWFALL
@@ -3167,6 +3166,8 @@ namespace Thetis
             a.Add("infoBar_button2/" + ((int)infoBar.Button2Action).ToString());
             a.Add("infoBar_splitter_ratio/" + infoBar.SplitterRatio.ToString("f4")); //MW0LGE_21k9c changed format
 
+            a.Add("auto_start_forms/" + getAutoStartData()); //[2.10.3.6]MW0LGE
+
             a.Add("vfob_dsp_mode/" + ((int)vfob_dsp_mode).ToString());			// Save VFO B values 
             a.Add("vfob_filter/" + ((int)vfob_filter).ToString());
 
@@ -4035,7 +4036,10 @@ namespace Thetis
                         break;
                     case "infoBar_splitter_ratio":
                         infoBar.SplitterRatio = float.Parse(val);
-                        break;                   
+                        break;
+                    case "auto_start_forms":
+                        setAutoStartData(val); //[2.10.3.6]MW0LGE
+                        break;
                     case var nam when name.StartsWith("rx1_filters["):
                         start = name.IndexOf("[") + 1;
                         length = name.IndexOf("]") - start;
@@ -44244,6 +44248,7 @@ namespace Thetis
             diversityForm.Show();
             diversityForm.Focus();
             UpdateDiversityValues();
+            UpdateDiversityMenuItem();
         }
 
         private void ptbRX1AF_Scroll(object sender, EventArgs e)
@@ -49047,6 +49052,111 @@ namespace Thetis
                 MeterManager.UpdateS9();
             }
         }
+
+        //autostart_code
+        //store all this in a dictionary, much easier
+        private Dictionary<string, bool> _auto_start_form_settings = new Dictionary<string, bool>();
+        public void SetAutoFormStartSetting(string form, bool show)
+        {
+            string lowForm = form.ToLower();
+            if(!_auto_start_form_settings.ContainsKey(lowForm))
+            {
+                _auto_start_form_settings.Add(lowForm, show);
+            }
+            else
+            {
+                _auto_start_form_settings[lowForm] = show;
+            }
+        }
+        public bool GetAutoFormStartSetting(string form)
+        {
+            bool bRet;
+            string lowForm = form.ToLower();
+            if (_auto_start_form_settings.ContainsKey(lowForm))
+            {
+                bRet = _auto_start_form_settings[lowForm];
+            }
+            else
+            {
+                bRet = false;
+            }
+            return bRet;
+        }
+        private string getAutoStartData()
+        {
+            string sTmp = "";
+            foreach (KeyValuePair<string, bool> kvp in _auto_start_form_settings)
+            {
+                string sKey = kvp.Key;
+                bool bVal = kvp.Value;
+
+                sTmp += sKey + "|" + bVal.ToString().ToLower() + "|";
+            }
+            if (sTmp.EndsWith("|")) sTmp = sTmp.Substring(0, sTmp.Length - 1);
+            return sTmp.ToLower();
+        }
+        private void setAutoStartData(string data)
+        {
+            string[] sSplit = (data.ToLower()).Split('|');
+            if (sSplit.Length % 2 != 0) return;
+
+            //they are in pairs
+            for (int i = 0; i < sSplit.Length; i += 2)
+            {
+                string sForm = sSplit[i];
+                bool bVal = bool.Parse(sSplit[i + 1]);
+
+                SetAutoFormStartSetting(sForm, bVal);
+            }
+        }
+        private void handleShowOnStartup()
+        {
+            EventArgs e = EventArgs.Empty;
+
+            //setup
+            if (!IsSetupFormNull && GetAutoFormStartSetting("setup")) setupToolStripMenuItem_Click(this, e);
+
+            //memory
+            if (GetAutoFormStartSetting("memory")) memoryToolStripMenuItem_Click(this, e);
+
+            //wave
+            if (GetAutoFormStartSetting("wave")) waveToolStripMenuItem_Click(this, e);
+
+            //equlaliser
+            if (GetAutoFormStartSetting("equaliser")) equalizerToolStripMenuItem_Click(this, e);
+
+            //xvtr
+            if (GetAutoFormStartSetting("xvtr")) xVTRsToolStripMenuItem_Click(this, e);
+
+            //cwx            
+            if (GetAutoFormStartSetting("cwx")) cWXToolStripMenuItem_Click(this, e);
+
+            //linearity / psform + ampview
+            if (psform != null)
+            {
+                if (GetAutoFormStartSetting("linearity")) psform.ShowAtStartup_LinearityForm();
+                if (GetAutoFormStartSetting("ampview")) psform.ShowAtStartup_AmpViewForm();
+            }
+
+            //diversity
+            if (GetAutoFormStartSetting("diversity")) eSCToolStripMenuItem_Click(this, e);
+
+            //spot
+            if (GetAutoFormStartSetting("spot")) spotterMenu_Click(this, e);
+
+            //ra
+            if (GetAutoFormStartSetting("ra")) RAtoolStripMenuItem_Click(this, e);
+
+            //wb
+            if (GetAutoFormStartSetting("wb")) wBToolStripMenuItem_Click(this, e);
+
+            //finder
+            if (GetAutoFormStartSetting("finder")) finderMenuItem_Click(this, e);
+
+            //band stack
+            if (GetAutoFormStartSetting("bandstack")) lblBandStack_Click(this, e);
+        }
+        //
     }
 
     public class DigiMode

@@ -81,8 +81,6 @@
             this.udPSCalWait = new System.Windows.Forms.NumericUpDownTS();
             this.chkQuickAttenuate = new System.Windows.Forms.CheckBoxTS();
             this.chkAdvancedViewHidden = new System.Windows.Forms.CheckBoxTS();
-            this.chkShowOnStartup = new System.Windows.Forms.CheckBoxTS();
-            this.chkShowAmpViewOnStartup = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.udPSMoxDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPSPhnum)).BeginInit();
             this.grpPSInfo.SuspendLayout();
@@ -94,7 +92,7 @@
             this.chkPSOnTop.AutoSize = true;
             this.chkPSOnTop.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.chkPSOnTop.Image = null;
-            this.chkPSOnTop.Location = new System.Drawing.Point(399, 230);
+            this.chkPSOnTop.Location = new System.Drawing.Point(450, 276);
             this.chkPSOnTop.Name = "chkPSOnTop";
             this.chkPSOnTop.Size = new System.Drawing.Size(98, 17);
             this.chkPSOnTop.TabIndex = 48;
@@ -786,38 +784,12 @@
             this.chkAdvancedViewHidden.UseVisualStyleBackColor = false;
             this.chkAdvancedViewHidden.Visible = false;
             // 
-            // chkShowOnStartup
-            // 
-            this.chkShowOnStartup.AutoSize = true;
-            this.chkShowOnStartup.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.chkShowOnStartup.Image = null;
-            this.chkShowOnStartup.Location = new System.Drawing.Point(399, 253);
-            this.chkShowOnStartup.Name = "chkShowOnStartup";
-            this.chkShowOnStartup.Size = new System.Drawing.Size(103, 17);
-            this.chkShowOnStartup.TabIndex = 51;
-            this.chkShowOnStartup.Text = "Show on startup";
-            this.chkShowOnStartup.UseVisualStyleBackColor = true;
-            // 
-            // chkShowAmpViewOnStartup
-            // 
-            this.chkShowAmpViewOnStartup.AutoSize = true;
-            this.chkShowAmpViewOnStartup.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.chkShowAmpViewOnStartup.Image = null;
-            this.chkShowAmpViewOnStartup.Location = new System.Drawing.Point(399, 276);
-            this.chkShowAmpViewOnStartup.Name = "chkShowAmpViewOnStartup";
-            this.chkShowAmpViewOnStartup.Size = new System.Drawing.Size(150, 17);
-            this.chkShowAmpViewOnStartup.TabIndex = 52;
-            this.chkShowAmpViewOnStartup.Text = "Show AmpView on startup";
-            this.chkShowAmpViewOnStartup.UseVisualStyleBackColor = true;
-            // 
             // PSForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(560, 303);
-            this.Controls.Add(this.chkShowAmpViewOnStartup);
-            this.Controls.Add(this.chkShowOnStartup);
             this.Controls.Add(this.chkAdvancedViewHidden);
             this.Controls.Add(this.chkQuickAttenuate);
             this.Controls.Add(this.chkPSOnTop);
@@ -916,7 +888,5 @@
         private System.Windows.Forms.CheckBoxTS chkQuickAttenuate;
         private System.Windows.Forms.ButtonTS btnDefaultPeaks;
         private System.Windows.Forms.CheckBoxTS chkAdvancedViewHidden;
-        private System.Windows.Forms.CheckBoxTS chkShowOnStartup;
-        private System.Windows.Forms.CheckBoxTS chkShowAmpViewOnStartup;
     }
 }
