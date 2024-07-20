@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Globalization;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 
 //directX
 using SharpDX;
@@ -153,6 +158,8 @@ namespace Thetis
         private static Dictionary<string, System.Drawing.Bitmap> _pooledImages;
 
         private static string _openHPSDR_appdatapath;
+
+        private static NetworkManager _network_manager;
 
         //public static float[] _newSpectrumPassband;
         //public static float[] _currentSpectrumPassband;
@@ -398,6 +405,12 @@ namespace Thetis
         }
         static MeterManager()
         {
+            //
+            _network_manager = new NetworkManager();
+            _network_manager.ClientConnected += NetworkManager_ClientConnected;
+            _network_manager.ClientDisconnected += NetworkManager_ClientDisconnected;
+            _network_manager.ReceivedDataString += NetworkManager_ReceivedDataString;
+
             // static constructor
             _rx1VHForAbove = false;
             _rx2VHForAbove = false;
@@ -431,6 +444,27 @@ namespace Thetis
 
             _openHPSDR_appdatapath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
         }
+
+        //
+        private static void NetworkManager_ClientConnected(Guid guid)
+        {
+            // Handle client connected event
+            Debug.Print("connected : " + guid);
+        }
+
+        private static void NetworkManager_ClientDisconnected(Guid guid)
+        {
+            // Handle client disconnected event
+            Debug.Print("disconnected : " + guid);
+        }
+
+        private static void NetworkManager_ReceivedDataString(Guid guid, string dataString)
+        {
+            // Handle received data string event
+            Debug.Print("Data : " + guid + " : [" + dataString + "]");
+        }
+        //
+
         //private static object _spectrumArrayLock = new object();
         //public static void ResizeSpectrum(int len)
         //{
@@ -1087,6 +1121,10 @@ namespace Thetis
         }
         public static void Shutdown()
         {
+            //
+            _network_manager.StopListeners();
+            //
+
             removeDelegates();
 
             foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
@@ -3883,6 +3921,9 @@ namespace Thetis
                         case "filter_vfob_name":
                             _readings_text_strings[key] = _owningMeter.FilterVfoBName;
                             break;
+                        case "split":
+                            _readings_text_strings[key] = _owningMeter.Split ? "SPLIT" : "";
+                            break;
                         case "qso_time":
                             _readings_text_strings[key] = formatElapsedTime(_owningMeter.QsoDurationSeconds);
                             break;
@@ -4027,6 +4068,7 @@ namespace Thetis
                 addReadingText("filter_vfob", text);
                 addReadingText("filter_vfoa_name", text);
                 addReadingText("filter_vfob_name", text);
+                addReadingText("split", text);
                 addReadingText("qso_time", text);
                 addReadingText("qso_time_short", text);
             }
@@ -4048,93 +4090,69 @@ namespace Thetis
                     {
                         case Reading.SIGNAL_STRENGTH:
                         case Reading.AVG_SIGNAL_STRENGTH:
-                            {
-                                if (IsAboveS9Frequency(rx))
-                                    value = -153; //S0
-                                else
-                                    value = -133; //S0
-                            }
+                            if (IsAboveS9Frequency(rx))
+                                value = -153; //S0
+                            else
+                                value = -133; //S0
                             break;
                         case Reading.ADC_PK:
                         case Reading.ADC_AV:
-                            {
-                                value = -120.0f;
-                            }
+                            value = -120.0f;
                             break;
                         case Reading.AGC_AV:
                         case Reading.AGC_PK:
                             value = -125.0f;
                             break;
                         case Reading.AGC_GAIN:
-                            {
-                                value = -50.0f;
-                            }
+                            value = -50.0f;
                             break;
                         case Reading.MIC:
                         case Reading.MIC_PK:
-                            {
-                                value = -120.0f;
-                            }
+                            value = -120.0f;
                             break;
                         case Reading.LEVELER:
                         case Reading.LEVELER_PK:
-                            {
-                                value = -30.0f;
-                            }
+                            value = -30.0f;
                             break;
                         case Reading.LVL_G:
-                            {
-                                value = 0f;
-                            }
+                            value = 0f;
                             break;
                         case Reading.ALC:
                         case Reading.ALC_PK:
-                            {
-                                value = -120.0f;
-                            }
+                            value = -120.0f;
                             break;
                         case Reading.ALC_G: //alc comp
-                            {
-                                value = 0f;
-                            }
+                            value = 0f;
                             break;
                         case Reading.ALC_GROUP:
-                            {
-                                value = -30.0f;
-                            }
+                            value = -30.0f;
                             break;
                         case Reading.CFC_AV:
                         case Reading.CFC_PK:
-                            {
-                                value = -30.0f;
-                            }
+                            value = -30.0f;
                             break;
                         case Reading.CFC_G:
-                            {
-                                value = 0f;
-                            }
+                            value = 0f;
                             break;
                         case Reading.COMP:
                         case Reading.COMP_PK:
-                            {
-                                value = -30.0f;
-                            }
+                            value = -30.0f;
                             break;
                         case Reading.PWR:
                         case Reading.REVERSE_PWR:
-                            {
-                                value = 0f;
-                            }
+                            value = 0f;
                             break;
                         case Reading.SWR:
-                            {
-                                value = 1.0f;
-                            }
+                            value = 1.0f;
                             break;
                         case Reading.ESTIMATED_PBSNR:
-                            {
-                                value = 0f;
-                            }
+                            value = 0f;
+                            break;
+                        case Reading.VOLTS:
+                            value = 0f;
+                            break;
+                        case Reading.AMPS:
+                            value = 0f;
                             break;
                     }
                     MeterManager.setReadingForced(rx, reading.Key, value);
@@ -13289,5 +13307,330 @@ namespace Thetis
             //}
         }        
         #endregion
+    }
+    public class NetworkManager
+    {
+        // Each startlisten will only accept a single TCP client for that IP/port combo.
+        // UDP startlistens can have messages from multiple UDP clients.
+        public event Action<Guid> ClientConnected;
+        public event Action<Guid> ClientDisconnected;
+        public event Action<Guid, string> ReceivedDataString;
+
+        private readonly ConcurrentDictionary<Guid, TcpListener> _tcpListeners;
+        private readonly ConcurrentDictionary<Guid, UdpClient> _udpListeners;
+        private readonly ConcurrentDictionary<Guid, TcpClient> _tcpClients;
+        private readonly List<Task> _listenerTasks;
+        private readonly CancellationTokenSource _cancellationTokenSource;
+
+        private readonly object _connectionLock = new object();
+
+        public NetworkManager()
+        {
+            Debug.Print("NetworkManager Init");
+            _tcpListeners = new ConcurrentDictionary<Guid, TcpListener>();
+            _udpListeners = new ConcurrentDictionary<Guid, UdpClient>();
+            _tcpClients = new ConcurrentDictionary<Guid, TcpClient>();
+            _listenerTasks = new List<Task>();
+            _cancellationTokenSource = new CancellationTokenSource();
+        }
+
+        public Guid StartListeningUDP(string ip, int port, Guid suppliedGuid)
+        {
+            Guid guid;
+            if (suppliedGuid == Guid.Empty)
+                guid = Guid.NewGuid();
+            else
+                guid = suppliedGuid;
+
+            try
+            {
+                UdpClient udpClient = new UdpClient(new IPEndPoint(IPAddress.Parse(ip), port));
+                //udpClient.Client.ReceiveTimeout = 1000;
+                udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
+                _udpListeners[guid] = udpClient;
+
+                _listenerTasks.Add(Task.Run(() => ListenForUdp(guid, udpClient, _cancellationTokenSource.Token)));
+
+                Debug.Print("NetworkManager UDP Listener started : " + guid.ToString());
+            }
+            catch
+            {
+                StopListening(guid);
+                return Guid.Empty;
+            }
+
+            return guid;
+        }
+
+        public Guid StartListeningTCPIP(string ip, int port, Guid suppliedGuid)
+        {
+            Guid guid;
+            if (suppliedGuid == Guid.Empty)
+                guid = Guid.NewGuid();
+            else
+                guid = suppliedGuid;
+
+            try
+            {
+                TcpListener tcpListener = new TcpListener(IPAddress.Parse(ip), port);
+                _tcpListeners[guid] = tcpListener;
+                tcpListener.Start();
+
+                _listenerTasks.Add(Task.Run(() => AcceptTcpClients(guid, tcpListener, _cancellationTokenSource.Token)));
+
+                Debug.Print("NetworkManager TCP/IP Listener started : " + guid.ToString());
+            }
+            catch
+            {
+                StopListening(guid);
+                return Guid.Empty;
+            }
+
+            return guid;
+        }
+
+        public void StopListening(Guid guid)
+        {
+            TcpListener tcpListener;
+            if (_tcpListeners.TryRemove(guid, out tcpListener))
+            {
+                try
+                {
+                    tcpListener.Stop();
+                }
+                catch { }
+            }
+
+            UdpClient udpClient;
+            if (_udpListeners.TryRemove(guid, out udpClient))
+            {
+                try
+                {
+                    udpClient.Close();
+                }
+                catch { }
+            }
+
+            TcpClient tcpClient;
+            if (_tcpClients.TryRemove(guid, out tcpClient))
+            {
+                try
+                {
+                    tcpClient.Close();
+                }
+                catch { }
+            }
+
+            Debug.Print("NetworkManager Stopped listening : " + guid.ToString());
+        }
+
+        public void SendDataString(Guid guid, string dataString)
+        {
+            TcpClient tcpClient;
+            if (_tcpClients.TryGetValue(guid, out tcpClient))
+            {
+                try
+                {
+                    NetworkStream stream = tcpClient.GetStream();
+                    byte[] data = Encoding.UTF8.GetBytes(dataString);
+                    stream.Write(data, 0, data.Length);
+                }
+                catch
+                {
+                    StopListening(guid);
+                }
+            }
+        }
+
+        private async Task ListenForUdp(Guid guid, UdpClient udpClient, CancellationToken token)
+        {
+            try
+            {
+                bool read = true;
+                Task<UdpReceiveResult> receiveTask = null;
+                while (!token.IsCancellationRequested)
+                {
+                    try
+                    {
+                        if (read)
+                        {
+                            receiveTask = udpClient.ReceiveAsync();
+                            read = false;
+                        }
+                        Task delayTask = Task.Delay(TimeSpan.FromSeconds(1), token);
+                        Task completedTask = await Task.WhenAny(receiveTask, delayTask);
+
+                        if (completedTask == receiveTask)
+                        {
+                            UdpReceiveResult result = await receiveTask;
+                            string dataString = Encoding.UTF8.GetString(result.Buffer);
+                            ReceivedDataString?.Invoke(guid, dataString);
+                            read = true;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        break;
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+            catch
+            { }
+
+            try
+            {
+                udpClient.Close();
+            }
+            catch { }
+        }
+
+        private async Task AcceptTcpClients(Guid guid, TcpListener tcpListener, CancellationToken token)
+        {
+            try
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
+                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
+                    //tcpClient.ReceiveTimeout = 1000;
+
+                    lock (_connectionLock)
+                    {
+                        // check if there is already a connected client on this listener
+                        if (_tcpClients.ContainsKey(guid))
+                        {
+                            // Close the new connection attempt
+                            tcpClient.Close();
+                        }
+                        else
+                        {
+                            _tcpClients[guid] = tcpClient;
+                            ClientConnected?.Invoke(guid);
+
+                            _ = Task.Run(() => HandleTcpClient(guid, tcpClient, token));
+                        }
+                    }
+                }
+            }
+            catch (IOException ex) when (ex.InnerException is SocketException socketEx && socketEx.SocketErrorCode == SocketError.TimedOut)
+            {
+                // TCP receive timeout
+            }
+            catch
+            {
+            }
+        }
+
+        private async Task HandleTcpClient(Guid guid, TcpClient tcpClient, CancellationToken token)
+        {
+            NetworkStream stream = tcpClient.GetStream();
+            byte[] buffer = new byte[4096 * 4];
+
+            try
+            {
+                Task<int> readTask = null;
+                bool read = true;
+                while (!token.IsCancellationRequested && tcpClient.Connected)
+                {
+                    if (read)
+                    {
+                        readTask = stream.ReadAsync(buffer, 0, buffer.Length, token);
+                        read = false;
+                    }
+                    Task timeoutTask = Task.Delay(TimeSpan.FromSeconds(1), token); // Set a 1-second timeout
+
+                    Task completedTask = await Task.WhenAny(readTask, timeoutTask);
+
+                    if (completedTask == readTask)
+                    {
+                        int bytesRead = await readTask;
+                        if (bytesRead > 0)
+                        {
+                            string dataString = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                            ReceivedDataString?.Invoke(guid, dataString);
+                            read = true;
+                        }
+                        else
+                        {
+                            tcpClient.Close();
+                            ClientDisconnected?.Invoke(guid);
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+            catch
+            {
+            }
+            finally
+            {
+                lock (_connectionLock)
+                {
+                    _tcpClients.TryRemove(guid, out TcpClient _);
+                    ClientDisconnected?.Invoke(guid);
+                }
+            }
+        }
+        public void StopListeners()
+        {
+            _cancellationTokenSource.Cancel();
+
+            foreach (KeyValuePair<Guid, TcpListener> tcpListenerPair in _tcpListeners)
+            {
+                tcpListenerPair.Value.Stop();
+            }
+
+            foreach (KeyValuePair<Guid, UdpClient> udpClientPair in _udpListeners)
+            {
+                udpClientPair.Value.Close();
+            }
+
+            foreach (KeyValuePair<Guid, TcpClient> tcpClientPair in _tcpClients)
+            {
+                tcpClientPair.Value.Close();
+            }
+
+            Debug.Print("NetworkManager stopping...");
+            try
+            {
+                Task.WhenAll(_listenerTasks).Wait(6000);
+                Debug.Print("NetworkManager stopped.");
+            }
+            catch
+            {
+                Debug.Print("NetworkManager timed out when stopping.");
+            }
+        }
+    }
+    // Extension method to add a timeout to a task
+    public static class TaskExtensions
+    {
+        public static async Task<T> WithTimeout<T>(this Task<T> task, TimeSpan timeout, CancellationToken token)
+        {
+            Task delayTask = Task.Delay(timeout, token);
+
+            Task completedTask = await Task.WhenAny(task, delayTask);
+            if (completedTask == delayTask)
+            {
+                throw new TimeoutException();
+            }
+
+            return await task;
+        }
     }
 }

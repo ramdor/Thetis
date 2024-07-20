@@ -3657,6 +3657,7 @@
             this.clrbtnTextOverlay_TextBackColour2 = new Thetis.ColorButton();
             this.clrbtnTextOverlay_TextBackColour1 = new Thetis.ColorButton();
             this.clrbtnTextOverlay_PanelBackgroundTX = new Thetis.ColorButton();
+            this.pbTextOverlay_variables = new System.Windows.Forms.PictureBox();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -3740,7 +3741,6 @@
             this.lblTextOverlay_panelbackground = new System.Windows.Forms.LabelTS();
             this.chkTextOverlay_FadeOnTX = new System.Windows.Forms.CheckBoxTS();
             this.chkTextOverlay_FadeOnRX = new System.Windows.Forms.CheckBoxTS();
-            this.pbTextOverlay_variables = new System.Windows.Forms.PictureBox();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4679,6 +4679,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_RXyOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXyOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXxOffset)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).BeginInit();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -4715,7 +4716,6 @@
             this.panelTS4.SuspendLayout();
             this.grpMeterItemSpacerSettings.SuspendLayout();
             this.grpTextOverlay.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -58240,6 +58240,17 @@
             this.toolTip1.SetToolTip(this.clrbtnTextOverlay_PanelBackgroundTX, "Background colour");
             this.clrbtnTextOverlay_PanelBackgroundTX.Changed += new System.EventHandler(this.clrbtnTextOverlay_PanelBackgroundTX_Changed);
             // 
+            // pbTextOverlay_variables
+            // 
+            this.pbTextOverlay_variables.Image = ((System.Drawing.Image)(resources.GetObject("pbTextOverlay_variables.Image")));
+            this.pbTextOverlay_variables.Location = new System.Drawing.Point(297, 100);
+            this.pbTextOverlay_variables.Name = "pbTextOverlay_variables";
+            this.pbTextOverlay_variables.Size = new System.Drawing.Size(20, 20);
+            this.pbTextOverlay_variables.TabIndex = 164;
+            this.pbTextOverlay_variables.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbTextOverlay_variables, "Click for info");
+            this.pbTextOverlay_variables.Click += new System.EventHandler(this.pbTextOverlay_variables_Click);
+            // 
             // saveFileDialog1
             // 
             this.saveFileDialog1.Filter = "Thetis Database Files (*.xml)|*.xml|All files|*.*";
@@ -59352,6 +59363,7 @@
             this.grpMeterItemSpacerSettings.TabIndex = 102;
             this.grpMeterItemSpacerSettings.TabStop = false;
             this.grpMeterItemSpacerSettings.Text = "Spacer";
+            this.grpMeterItemSpacerSettings.Visible = false;
             // 
             // labelTS199
             // 
@@ -59412,7 +59424,7 @@
             this.labelTS198.AutoSize = true;
             this.labelTS198.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTS198.Image = null;
-            this.labelTS198.Location = new System.Drawing.Point(602, 515);
+            this.labelTS198.Location = new System.Drawing.Point(623, 537);
             this.labelTS198.Name = "labelTS198";
             this.labelTS198.Size = new System.Drawing.Size(333, 13);
             this.labelTS198.TabIndex = 103;
@@ -59456,12 +59468,13 @@
             this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_PanelBackground);
             this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnTX);
             this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnRX);
-            this.grpTextOverlay.Location = new System.Drawing.Point(445, 508);
+            this.grpTextOverlay.Location = new System.Drawing.Point(463, 561);
             this.grpTextOverlay.Name = "grpTextOverlay";
-            this.grpTextOverlay.Size = new System.Drawing.Size(323, 386);
+            this.grpTextOverlay.Size = new System.Drawing.Size(323, 362);
             this.grpTextOverlay.TabIndex = 104;
             this.grpTextOverlay.TabStop = false;
             this.grpTextOverlay.Text = "Text Overlay";
+            this.grpTextOverlay.Visible = false;
             // 
             // lblTextOverlay_panelbackgroundTX
             // 
@@ -59692,17 +59705,6 @@
             this.chkTextOverlay_FadeOnRX.Text = "Fade on RX";
             this.chkTextOverlay_FadeOnRX.UseVisualStyleBackColor = true;
             this.chkTextOverlay_FadeOnRX.CheckedChanged += new System.EventHandler(this.chkTextOverlay_FadeOnRX_CheckedChanged);
-            // 
-            // pbTextOverlay_variables
-            // 
-            this.pbTextOverlay_variables.Image = ((System.Drawing.Image)(resources.GetObject("pbTextOverlay_variables.Image")));
-            this.pbTextOverlay_variables.Location = new System.Drawing.Point(297, 100);
-            this.pbTextOverlay_variables.Name = "pbTextOverlay_variables";
-            this.pbTextOverlay_variables.Size = new System.Drawing.Size(20, 20);
-            this.pbTextOverlay_variables.TabIndex = 164;
-            this.pbTextOverlay_variables.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbTextOverlay_variables, "Click for info");
-            this.pbTextOverlay_variables.Click += new System.EventHandler(this.pbTextOverlay_variables_Click);
             // 
             // Setup
             // 
@@ -60873,6 +60875,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_RXyOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXyOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXxOffset)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).EndInit();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();
@@ -60914,7 +60917,6 @@
             this.grpMeterItemSpacerSettings.PerformLayout();
             this.grpTextOverlay.ResumeLayout(false);
             this.grpTextOverlay.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -212,6 +212,7 @@ namespace Thetis
             "%filter_vfob%" + System.Environment.NewLine +
             "%filter_vfoa_name%" + System.Environment.NewLine +
             "%filter_vfob_name%" + System.Environment.NewLine +
+            "%split%" + System.Environment.NewLine +
             "%qso_time%" + System.Environment.NewLine +
             "%qso_time_short%" + System.Environment.NewLine +
             "%volts%" + System.Environment.NewLine +
