@@ -3484,6 +3484,9 @@
             this.buttonTS1 = new System.Windows.Forms.ButtonTS();
             this.btnMMIO_network_delete = new System.Windows.Forms.ButtonTS();
             this.pnlMMIO_network_container = new System.Windows.Forms.PanelTS();
+            this.btnMMIO_network_udp_endpoint_ip_port = new System.Windows.Forms.ButtonTS();
+            this.lblMMIO_network_udp_endpoint_ip_port = new System.Windows.Forms.LabelTS();
+            this.txtMMIO_network_udp_endpoint_ip_port = new System.Windows.Forms.TextBoxTS();
             this.txtMMIO_network_terminator_out_custom = new System.Windows.Forms.TextBoxTS();
             this.txtMMIO_network_terminator_in_custom = new System.Windows.Forms.TextBoxTS();
             this.lblMMIO_network_terminator_out = new System.Windows.Forms.LabelTS();
@@ -3644,6 +3647,8 @@
             this.clrbtnTextOverlay_TextBackColour1 = new Thetis.ColorButton();
             this.clrbtnTextOverlay_PanelBackgroundTX = new Thetis.ColorButton();
             this.pbTextOverlay_variables = new System.Windows.Forms.PictureBox();
+            this.nudDataOutNode_sendinterval = new System.Windows.Forms.NumericUpDownTS();
+            this.txtDataOutNode_4charID = new System.Windows.Forms.TextBoxTS();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -3726,6 +3731,10 @@
             this.lblTextOverlay_panelbackground = new System.Windows.Forms.LabelTS();
             this.chkTextOverlay_FadeOnTX = new System.Windows.Forms.CheckBoxTS();
             this.chkTextOverlay_FadeOnRX = new System.Windows.Forms.CheckBoxTS();
+            this.grpMeterItemDataOutNode = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS210 = new System.Windows.Forms.LabelTS();
+            this.labelTS217 = new System.Windows.Forms.LabelTS();
+            this.labelTS215 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4651,6 +4660,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXyOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXxOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDataOutNode_sendinterval)).BeginInit();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -4687,6 +4697,7 @@
             this.panelTS4.SuspendLayout();
             this.grpMeterItemSpacerSettings.SuspendLayout();
             this.grpTextOverlay.SuspendLayout();
+            this.grpMeterItemDataOutNode.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -55319,6 +55330,9 @@
             // 
             this.pnlMMIO_network_container.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlMMIO_network_container.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlMMIO_network_container.Controls.Add(this.btnMMIO_network_udp_endpoint_ip_port);
+            this.pnlMMIO_network_container.Controls.Add(this.lblMMIO_network_udp_endpoint_ip_port);
+            this.pnlMMIO_network_container.Controls.Add(this.txtMMIO_network_udp_endpoint_ip_port);
             this.pnlMMIO_network_container.Controls.Add(this.txtMMIO_network_terminator_out_custom);
             this.pnlMMIO_network_container.Controls.Add(this.txtMMIO_network_terminator_in_custom);
             this.pnlMMIO_network_container.Controls.Add(this.lblMMIO_network_terminator_out);
@@ -55354,6 +55368,41 @@
             this.pnlMMIO_network_container.Name = "pnlMMIO_network_container";
             this.pnlMMIO_network_container.Size = new System.Drawing.Size(516, 364);
             this.pnlMMIO_network_container.TabIndex = 98;
+            // 
+            // btnMMIO_network_udp_endpoint_ip_port
+            // 
+            this.btnMMIO_network_udp_endpoint_ip_port.Image = null;
+            this.btnMMIO_network_udp_endpoint_ip_port.Location = new System.Drawing.Point(240, 256);
+            this.btnMMIO_network_udp_endpoint_ip_port.Name = "btnMMIO_network_udp_endpoint_ip_port";
+            this.btnMMIO_network_udp_endpoint_ip_port.Selectable = true;
+            this.btnMMIO_network_udp_endpoint_ip_port.Size = new System.Drawing.Size(42, 26);
+            this.btnMMIO_network_udp_endpoint_ip_port.TabIndex = 131;
+            this.btnMMIO_network_udp_endpoint_ip_port.Text = "IPv4";
+            this.toolTip1.SetToolTip(this.btnMMIO_network_udp_endpoint_ip_port, "Show list if IPv4 addresses.");
+            this.btnMMIO_network_udp_endpoint_ip_port.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_udp_endpoint_ip_port.Click += new System.EventHandler(this.btnMMIO_network_udp_endpoint_ip_port_Click);
+            // 
+            // lblMMIO_network_udp_endpoint_ip_port
+            // 
+            this.lblMMIO_network_udp_endpoint_ip_port.AutoSize = true;
+            this.lblMMIO_network_udp_endpoint_ip_port.Image = null;
+            this.lblMMIO_network_udp_endpoint_ip_port.Location = new System.Drawing.Point(2, 262);
+            this.lblMMIO_network_udp_endpoint_ip_port.Name = "lblMMIO_network_udp_endpoint_ip_port";
+            this.lblMMIO_network_udp_endpoint_ip_port.Size = new System.Drawing.Size(110, 13);
+            this.lblMMIO_network_udp_endpoint_ip_port.TabIndex = 130;
+            this.lblMMIO_network_udp_endpoint_ip_port.Text = "UDP Endpoint IP:Port";
+            // 
+            // txtMMIO_network_udp_endpoint_ip_port
+            // 
+            this.txtMMIO_network_udp_endpoint_ip_port.Location = new System.Drawing.Point(112, 258);
+            this.txtMMIO_network_udp_endpoint_ip_port.Name = "txtMMIO_network_udp_endpoint_ip_port";
+            this.txtMMIO_network_udp_endpoint_ip_port.Size = new System.Drawing.Size(122, 20);
+            this.txtMMIO_network_udp_endpoint_ip_port.TabIndex = 129;
+            this.txtMMIO_network_udp_endpoint_ip_port.Text = "127.0.0.1:50001";
+            this.toolTip1.SetToolTip(this.txtMMIO_network_udp_endpoint_ip_port, "The bind IP and the port that the server uses to listen on");
+            this.txtMMIO_network_udp_endpoint_ip_port.Click += new System.EventHandler(this.txtMMIO_network_udp_endpoint_ip_port_Click);
+            this.txtMMIO_network_udp_endpoint_ip_port.TextChanged += new System.EventHandler(this.txtMMIO_network_udp_endpoint_ip_port_TextChanged);
+            this.txtMMIO_network_udp_endpoint_ip_port.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtMMIO_network_udp_endpoint_ip_port_KeyPress);
             // 
             // txtMMIO_network_terminator_out_custom
             // 
@@ -55455,7 +55504,7 @@
             // btnMMIO_network_copyvariable_clipboard
             // 
             this.btnMMIO_network_copyvariable_clipboard.Image = global::Thetis.Properties.Resources.copy;
-            this.btnMMIO_network_copyvariable_clipboard.Location = new System.Drawing.Point(269, 271);
+            this.btnMMIO_network_copyvariable_clipboard.Location = new System.Drawing.Point(298, 274);
             this.btnMMIO_network_copyvariable_clipboard.Name = "btnMMIO_network_copyvariable_clipboard";
             this.btnMMIO_network_copyvariable_clipboard.Selectable = true;
             this.btnMMIO_network_copyvariable_clipboard.Size = new System.Drawing.Size(27, 35);
@@ -55483,9 +55532,9 @@
             this.lstMMIO_network_variables.FullRowSelect = true;
             this.lstMMIO_network_variables.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lstMMIO_network_variables.HideSelection = false;
-            this.lstMMIO_network_variables.Location = new System.Drawing.Point(269, 14);
+            this.lstMMIO_network_variables.Location = new System.Drawing.Point(298, 14);
             this.lstMMIO_network_variables.Name = "lstMMIO_network_variables";
-            this.lstMMIO_network_variables.Size = new System.Drawing.Size(236, 251);
+            this.lstMMIO_network_variables.Size = new System.Drawing.Size(207, 251);
             this.lstMMIO_network_variables.TabIndex = 118;
             this.lstMMIO_network_variables.UseCompatibleStateImageBehavior = false;
             this.lstMMIO_network_variables.View = System.Windows.Forms.View.Details;
@@ -57781,6 +57830,48 @@
             this.toolTip1.SetToolTip(this.pbTextOverlay_variables, "Click for info");
             this.pbTextOverlay_variables.Click += new System.EventHandler(this.pbTextOverlay_variables_Click);
             // 
+            // nudDataOutNode_sendinterval
+            // 
+            this.nudDataOutNode_sendinterval.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudDataOutNode_sendinterval.Location = new System.Drawing.Point(93, 22);
+            this.nudDataOutNode_sendinterval.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.nudDataOutNode_sendinterval.Minimum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.nudDataOutNode_sendinterval.Name = "nudDataOutNode_sendinterval";
+            this.nudDataOutNode_sendinterval.Size = new System.Drawing.Size(56, 20);
+            this.nudDataOutNode_sendinterval.TabIndex = 132;
+            this.nudDataOutNode_sendinterval.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudDataOutNode_sendinterval, "The interval that the data is sent.");
+            this.nudDataOutNode_sendinterval.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.nudDataOutNode_sendinterval.ValueChanged += new System.EventHandler(this.nudDataOutNode_sendinterval_ValueChanged);
+            // 
+            // txtDataOutNode_4charID
+            // 
+            this.txtDataOutNode_4charID.Location = new System.Drawing.Point(93, 48);
+            this.txtDataOutNode_4charID.MaxLength = 4;
+            this.txtDataOutNode_4charID.Name = "txtDataOutNode_4charID";
+            this.txtDataOutNode_4charID.Size = new System.Drawing.Size(43, 20);
+            this.txtDataOutNode_4charID.TabIndex = 136;
+            this.txtDataOutNode_4charID.Text = "AGHJ";
+            this.toolTip1.SetToolTip(this.txtDataOutNode_4charID, "The four character code used to reference which MultiMeterIO is to be used for th" +
+        "e output data.");
+            this.txtDataOutNode_4charID.TextChanged += new System.EventHandler(this.txtDataOutNode_4charID_TextChanged);
+            // 
             // saveFileDialog1
             // 
             this.saveFileDialog1.Filter = "Thetis Database Files (*.xml)|*.xml|All files|*.*";
@@ -58877,7 +58968,7 @@
             this.grpMeterItemSpacerSettings.Controls.Add(this.clrbtnMeterItemHBackgroundSpacerRX);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnTxSpacer);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnRxSpacer);
-            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(799, 701);
+            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(757, 822);
             this.grpMeterItemSpacerSettings.Name = "grpMeterItemSpacerSettings";
             this.grpMeterItemSpacerSettings.Size = new System.Drawing.Size(323, 168);
             this.grpMeterItemSpacerSettings.TabIndex = 102;
@@ -58988,7 +59079,7 @@
             this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_PanelBackground);
             this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnTX);
             this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnRX);
-            this.grpTextOverlay.Location = new System.Drawing.Point(463, 561);
+            this.grpTextOverlay.Location = new System.Drawing.Point(838, 52);
             this.grpTextOverlay.Name = "grpTextOverlay";
             this.grpTextOverlay.Size = new System.Drawing.Size(323, 362);
             this.grpTextOverlay.TabIndex = 104;
@@ -59226,11 +59317,57 @@
             this.chkTextOverlay_FadeOnRX.UseVisualStyleBackColor = true;
             this.chkTextOverlay_FadeOnRX.CheckedChanged += new System.EventHandler(this.chkTextOverlay_FadeOnRX_CheckedChanged);
             // 
+            // grpMeterItemDataOutNode
+            // 
+            this.grpMeterItemDataOutNode.Controls.Add(this.labelTS210);
+            this.grpMeterItemDataOutNode.Controls.Add(this.txtDataOutNode_4charID);
+            this.grpMeterItemDataOutNode.Controls.Add(this.labelTS217);
+            this.grpMeterItemDataOutNode.Controls.Add(this.nudDataOutNode_sendinterval);
+            this.grpMeterItemDataOutNode.Controls.Add(this.labelTS215);
+            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(561, 591);
+            this.grpMeterItemDataOutNode.Name = "grpMeterItemDataOutNode";
+            this.grpMeterItemDataOutNode.Size = new System.Drawing.Size(323, 168);
+            this.grpMeterItemDataOutNode.TabIndex = 105;
+            this.grpMeterItemDataOutNode.TabStop = false;
+            this.grpMeterItemDataOutNode.Text = "Data Out Node";
+            this.grpMeterItemDataOutNode.Visible = false;
+            // 
+            // labelTS210
+            // 
+            this.labelTS210.AutoSize = true;
+            this.labelTS210.Image = null;
+            this.labelTS210.Location = new System.Drawing.Point(35, 51);
+            this.labelTS210.Name = "labelTS210";
+            this.labelTS210.Size = new System.Drawing.Size(52, 13);
+            this.labelTS210.TabIndex = 137;
+            this.labelTS210.Text = "4Char ID:";
+            // 
+            // labelTS217
+            // 
+            this.labelTS217.AutoSize = true;
+            this.labelTS217.Image = null;
+            this.labelTS217.Location = new System.Drawing.Point(155, 24);
+            this.labelTS217.Name = "labelTS217";
+            this.labelTS217.Size = new System.Drawing.Size(20, 13);
+            this.labelTS217.TabIndex = 135;
+            this.labelTS217.Text = "ms";
+            // 
+            // labelTS215
+            // 
+            this.labelTS215.AutoSize = true;
+            this.labelTS215.Image = null;
+            this.labelTS215.Location = new System.Drawing.Point(14, 25);
+            this.labelTS215.Name = "labelTS215";
+            this.labelTS215.Size = new System.Drawing.Size(73, 13);
+            this.labelTS215.TabIndex = 131;
+            this.labelTS215.Text = "Send Interval:";
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(984, 961);
+            this.Controls.Add(this.grpMeterItemDataOutNode);
             this.Controls.Add(this.grpTextOverlay);
             this.Controls.Add(this.labelTS198);
             this.Controls.Add(this.grpMeterItemSpacerSettings);
@@ -60380,6 +60517,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXyOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXxOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDataOutNode_sendinterval)).EndInit();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();
@@ -60421,6 +60559,8 @@
             this.grpMeterItemSpacerSettings.PerformLayout();
             this.grpTextOverlay.ResumeLayout(false);
             this.grpTextOverlay.PerformLayout();
+            this.grpMeterItemDataOutNode.ResumeLayout(false);
+            this.grpMeterItemDataOutNode.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -64150,5 +64290,14 @@
         private ComboBoxTS comboMMIO_network_format_out;
         private TextBoxTS txtMMIO_network_terminator_out_custom;
         private TextBoxTS txtMMIO_network_terminator_in_custom;
+        private GroupBoxTS grpMeterItemDataOutNode;
+        private LabelTS labelTS210;
+        private TextBoxTS txtDataOutNode_4charID;
+        private LabelTS labelTS217;
+        private NumericUpDownTS nudDataOutNode_sendinterval;
+        private LabelTS labelTS215;
+        private ButtonTS btnMMIO_network_udp_endpoint_ip_port;
+        private LabelTS lblMMIO_network_udp_endpoint_ip_port;
+        private TextBoxTS txtMMIO_network_udp_endpoint_ip_port;
     }
 }

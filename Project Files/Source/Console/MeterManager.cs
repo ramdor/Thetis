@@ -131,6 +131,7 @@ namespace Thetis
         CLOCK,
         SPACER,
         TEXT_OVERLAY,
+        DATA_OUT,
         //SPECTRUM,
         LAST
     }
@@ -569,6 +570,7 @@ namespace Thetis
                 case MeterType.CLOCK: return 2;
                 case MeterType.SPACER: return 2;
                 case MeterType.TEXT_OVERLAY: return 2;
+                case MeterType.DATA_OUT: return 2;
                     //case MeterType.SPECTRUM: return 2;
             }
 
@@ -604,6 +606,7 @@ namespace Thetis
                 case MeterType.SWR: return "SWR";
                 case MeterType.SPACER: return "Spacer";
                 case MeterType.TEXT_OVERLAY: return "Text Overlay";
+                case MeterType.DATA_OUT: return "Data Out Node";
                 //case MeterType.HISTORY: return "History";
                 case MeterType.VFO_DISPLAY: return "Vfo Display";
                 case MeterType.CLOCK: return "Clock";
@@ -2385,7 +2388,8 @@ namespace Thetis
                 SIGNAL_TEXT_DISPLAY,
                 FADE_COVER,
                 SPACER,
-                TEXT_OVERLAY
+                TEXT_OVERLAY,
+                DATA_OUT
                 //SPECTRUM
             }
 
@@ -2688,7 +2692,7 @@ namespace Thetis
                     return (int)nDelay;
                 }
             }
-            public virtual void Update(int rx, ref List<Reading> readingsUsed)
+            public virtual void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, float> all_list_item_readings = null)
             {
                 // can be overriden by derived
 
@@ -3535,7 +3539,7 @@ namespace Thetis
                 DecayRatio = 0.2f;
                 StoreSettings = false;
             }           
-            public override void Update(int rx, ref List<Reading> readingsUsed)
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, float> all_list_item_readings = null)
             {
                 // get latest reading
                 //float reading = MeterManager.getReading(rx, ReadingSource);
@@ -3704,7 +3708,69 @@ namespace Thetis
                 return false;
             }
         }
+        internal class clsDataOut : clsMeterItem
+        {
+            private string _mmio_4char;
 
+            public clsDataOut()
+            {
+                _mmio_4char = "";
+
+                ItemType = MeterItemType.DATA_OUT;
+                ReadingSource = Reading.NONE;
+
+                UpdateInterval = 1000;
+            }
+            public string MMIOFourChar
+            {
+                get { return _mmio_4char; }
+                set { _mmio_4char = value; }
+            }
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, float> all_list_item_readings = null)
+            {
+                if (all_list_item_readings != null)
+                {
+                    if (MultiMeterIO.Data.ContainsKey(MMIOGuid))
+                    {
+                        MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[MMIOGuid];
+                        switch(mmio.FormatOut)
+                        {
+                            case MultiMeterIO.MMIOFormat.JSON:
+                                Dictionary<string, string> out_data_converted = new Dictionary<string, string>();
+                                foreach (KeyValuePair<Reading, float> kvp in all_list_item_readings)
+                                {
+                                    out_data_converted.Add(kvp.Key.ToString(), kvp.Value.ToString("f1"));
+                                }
+                                string jsonString = JsonConvert.SerializeObject(out_data_converted, Formatting.Indented);
+                                MultiMeterIO.SendDataMMIO(MMIOGuid, jsonString);
+                                break;
+                            case MultiMeterIO.MMIOFormat.XML:
+                                XElement root = new XElement("data");
+                                foreach (KeyValuePair<Reading, float> kvp in all_list_item_readings)
+                                {
+                                    XElement entry = new XElement(kvp.Key.ToString(),
+                                        new XElement("value", kvp.Value.ToString("f1"))
+                                    );
+                                    root.Add(entry);
+                                }
+                                MultiMeterIO.SendDataMMIO(MMIOGuid, root.ToString());
+                                break;
+                            case MultiMeterIO.MMIOFormat.RAW:
+                                string out_data = "RX:" + rx.ToString() + ":";
+                                foreach (KeyValuePair<Reading, float> kvp in all_list_item_readings)
+                                {
+                                    Reading r = kvp.Key;
+                                    float value = kvp.Value;
+                                    out_data += r.ToString() + ":";
+                                    out_data += value.ToString("f1") + ":";
+                                }
+                                MultiMeterIO.SendDataMMIO(MMIOGuid, out_data);
+                                break;
+                        }
+                    }
+                }
+            }
+        }
         internal class clsSpacerItem : clsMeterItem
         {
             private System.Drawing.Color _colour1;
@@ -3964,7 +4030,7 @@ namespace Thetis
                 }
                 return numberString;
             }
-            public override void Update(int rx, ref List<Reading> readingsUsed)
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, float> all_list_item_readings = null)
             {
                 DateTime now = DateTime.Now;
                 DateTime UTCnow = DateTime.UtcNow;
@@ -4615,7 +4681,7 @@ namespace Thetis
 
                 _postDrawItem = null; // used in render loop to cause another bar's marker to be re-drawn after this bar
             }            
-            public override void Update(int rx, ref List<Reading> readingsUsed)
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, float> all_list_item_readings = null)
             {
                 // get latest reading
                 float reading;
@@ -5054,7 +5120,7 @@ namespace Thetis
                 DecayRatio = 0.2f;
                 StoreSettings = false;
             }
-            public override void Update(int rx, ref List<Reading> readingsUsed)
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, float> all_list_item_readings = null)
             {
                 // get latest reading
                 float reading = MeterManager.getReading(rx, ReadingSource);
@@ -5330,7 +5396,7 @@ namespace Thetis
                 StoreSettings = false;
                 _peakNeedleFadeIn = 0;
             }           
-            public override void Update(int rx, ref List<Reading> readingsUsed)
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, float> all_list_item_readings = null)
             {
                 // get latest reading
                 //float reading = MeterManager.getReading(rx, ReadingSource);
@@ -5641,7 +5707,7 @@ namespace Thetis
                         break;
                 }
             }
-            public override void Update(int rx, ref List<Reading> readingsUsed)
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, float> all_list_item_readings = null)
             {
                 // get latest reading
                 float reading = MeterManager.getReading(rx, ReadingSource);
@@ -5810,6 +5876,7 @@ namespace Thetis
                     case MeterType.CLOCK: return Reading.NONE;
                     case MeterType.SPACER: return Reading.NONE;
                     case MeterType.TEXT_OVERLAY: return Reading.NONE;
+                    case MeterType.DATA_OUT: return Reading.NONE;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
                 return Reading.NONE;
@@ -5847,6 +5914,7 @@ namespace Thetis
                     case MeterType.CLOCK: return 0;
                     case MeterType.SPACER: return 0;
                     case MeterType.TEXT_OVERLAY: return 0;
+                    case MeterType.DATA_OUT: return 0;
                     //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
                 return 0;
@@ -5889,7 +5957,8 @@ namespace Thetis
                     case MeterType.CLOCK: AddClock(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.SPACER: AddSpacer(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
                     case MeterType.TEXT_OVERLAY: AddTextOverlay(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
-                    //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.DATA_OUT: AddDataOut(nDelay, 0, out bBottom, restoreIg); break;
+                        //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
                 // update state of items
@@ -6456,6 +6525,30 @@ namespace Thetis
 
                 clsFadeCover fc = getFadeCover(ig.ID);
                 if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);
+
+                return me.ID;
+            }
+            public string AddDataOut(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsDataOut me = new clsDataOut();
+                me.ParentID = ig.ID;
+                me.Primary = true;
+                me.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
+                me.Size = new SizeF(1f, 0);
+                addMeterItem(me);
+
+                fBottom = me.TopLeft.Y + me.Size.Height;
+
+                ig.TopLeft = me.TopLeft;
+                ig.Size = new SizeF(me.Size.Width, fBottom);
+                ig.MeterType = MeterType.DATA_OUT;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
 
                 addMeterItem(ig);
 
@@ -8503,6 +8596,20 @@ namespace Thetis
                                         }
                                     }
                                     break;
+                                case MeterType.DATA_OUT:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.DATA_OUT))
+                                        {
+                                            clsDataOut data_out = me.Value as clsDataOut;
+                                            if (data_out == null) continue;
+
+                                            data_out.MMIOGuid = igs.GetMMIOGuid(0);
+                                            data_out.UpdateInterval = igs.UpdateInterval;
+                                        }
+                                        ig.Size = new SizeF(ig.Size.Width, 0);
+                                    }
+                                    break;
                                 case MeterType.SPACER:
                                     {
                                         bRebuild = true; // alwayys cause a rebuild as we relocate the spacer each time
@@ -9089,6 +9196,20 @@ namespace Thetis
                                             igs.FadeOnRx = fc.FadeOnRx;
                                             igs.FadeOnTx = fc.FadeOnTx;
                                         }
+                                    }
+                                    break;
+                                case MeterType.DATA_OUT:
+                                    { 
+                                    Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        //one image, and the me
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.DATA_OUT))
+                                        {
+                                            clsDataOut data_out = me.Value as clsDataOut;
+                                            if (data_out == null) continue; // skip
+
+                                            igs.SetMMIOGuid(0, data_out.MMIOGuid);
+                                            igs.UpdateInterval = data_out.UpdateInterval;
+                                        }  
                                     }
                                     break;
                                 case MeterType.SPACER:
@@ -9909,12 +10030,49 @@ namespace Thetis
             {
                 lock (_meterItemsLock)
                 {
+                    //build dictionary of all readings
+                    Dictionary<Reading, float> all_readings = new Dictionary<Reading, float>();
+                    List<clsMeterItem> data_nodes = new List<clsMeterItem>();
+
                     // this is called for each meter from the meter manager thread
                     foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems)
                     {
                         // now we need to update each item in the meter
                         clsMeterItem mi = kvp.Value;
-                        if (mi.RequiresUpdate) mi.Update(_rx, ref readingsUsed);
+                        if (mi.RequiresUpdate)
+                        {
+                            if (mi.ItemType != clsMeterItem.MeterItemType.DATA_OUT)
+                            {
+                                mi.Update(_rx, ref readingsUsed);
+                            }
+                            else
+                            {
+                                data_nodes.Add(mi);
+                            }
+                        }
+                    }
+
+                    //copy all readings
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems)
+                    {
+                        clsMeterItem mi = kvp.Value;
+                        if (mi.ReadingSource != Reading.NONE && (mi.ItemType == clsMeterItem.MeterItemType.H_BAR || 
+                            mi.ItemType == clsMeterItem.MeterItemType.NEEDLE || mi.ItemType == clsMeterItem.MeterItemType.MAGIC_EYE))
+                        {
+                            if (all_readings.ContainsKey(mi.ReadingSource))
+                                all_readings[mi.ReadingSource] = mi.Value;
+                            else
+                                all_readings.Add(mi.ReadingSource, mi.Value);
+                        }
+                    }
+
+                    // now just the datanodes
+                    if (_rx == 1 || (_rx == 2 && _rx2Enabled))
+                    { 
+                        foreach (clsMeterItem midatanode in data_nodes)
+                        {
+                            midatanode.Update(_rx, ref readingsUsed, all_readings);
+                        }
                     }
                 }
             }
@@ -11070,6 +11228,8 @@ namespace Thetis
                                         renderTextOverlay(rect, mi, m, false);
                                         additionalDraws.Add(mikvp.Key, mikvp.Value);
                                         break;
+                                    case clsBarItem.MeterItemType.DATA_OUT:
+                                        break;
                                     //case clsMeterItem.MeterItemType.HISTORY:
                                     //    renderHistory(rect, mi, m);
                                     //    break;
@@ -12027,9 +12187,6 @@ namespace Thetis
                         SizeF textSize = measureString(displayText, fontFamily, fontStyle, fontSizeEmScaled, m.MOX ? text_overlay.IgnoreMeasureCache2 : text_overlay.IgnoreMeasureCache1);
                         if (!m.MOX && text_overlay.IgnoreMeasureCache1) text_overlay.IgnoreMeasureCache1 = false;
                         if (m.MOX && text_overlay.IgnoreMeasureCache2) text_overlay.IgnoreMeasureCache2 = false;
-
-                        //textSize.Height += (m.MOX ? text_overlay.NewLines2 : text_overlay.NewLines1) * ((0.0245f * (fontSize / 72.0f)) * (targetWidth * m.YRatio));
-                        //textSize.Height += 0.06f * (targetWidth * m.YRatio);
 
                         // Draw the background rectangle for the text
                         SharpDX.RectangleF textBackgroundRect = new SharpDX.RectangleF(textX, textY, textSize.Width, textSize.Height);
@@ -13730,8 +13887,8 @@ namespace Thetis
         }
         public enum MMIOType
         {
-            UDP = 0,
-            TCPIP = 1,
+            UDP_LISTENER = 0,
+            TCPIP_LISTENER = 1,
             SERIAL = 2,
             UDP_CLIENT = 3,
             TCPIP_CLIENT = 4,
@@ -13752,6 +13909,8 @@ namespace Thetis
             private MMIODirection _direction;
             private string _ip;
             private int _port;
+            private string _udp_endpoint_ip;
+            private int _udp_endpoint_port;
             private MMIOFormat _format_in;
             private MMIOFormat _format_out;
             private MMIOType _type;
@@ -13765,19 +13924,25 @@ namespace Thetis
             private string _custom_terminator_out;
             private string _custom_terminator_parsed_in;
             private string _custom_terminator_parsed_out;
+            private IPEndPoint _udp_endpoint;
 
             private ConcurrentDictionary<string, object> _io_variables;
+            private ConcurrentQueue<string> _outbound_queue;
             public clsMMIO()
             {
                 init();
+
+                _four_char = FourChar(_ip, _port, _guid);
             }
             private void init()
             {
                 _enabled = true;
                 _guid = Guid.NewGuid();
-                _type = MMIOType.UDP;
-                _ip = "";
-                _port = 0;
+                _type = MMIOType.UDP_LISTENER;
+                _ip = "127.0.0.1";
+                _port = 9000;
+                _udp_endpoint_ip = "127.0.0.1";
+                _udp_endpoint_port = 10000;
                 _listener_active = false;
                 _format_in = MMIOFormat.JSON;
                 _format_out = MMIOFormat.JSON;
@@ -13788,10 +13953,10 @@ namespace Thetis
                 _custom_terminator_out = "";
                 _custom_terminator_parsed_in = "";
                 _custom_terminator_parsed_out = "";
+                _udp_endpoint = null;
 
                 _io_variables = new ConcurrentDictionary<string, object>();
-
-                _four_char = FourChar(_ip, _port, _guid);
+                _outbound_queue = new ConcurrentQueue<string>();                
             }
             public clsMMIO(Guid guid, MMIOType type, string ip, int port, bool enabled)
             {
@@ -13805,6 +13970,8 @@ namespace Thetis
                 _type = type;
                 _ip = ip;
                 _port = port;
+
+                _four_char = FourChar(_ip, _port, _guid);
             }
             public clsMMIO(MMIOType type, string ip, int port, bool enabled)
             {
@@ -13814,6 +13981,8 @@ namespace Thetis
                 _type = type;
                 _ip = ip;
                 _port = port;
+
+                _four_char = FourChar(_ip, _port, _guid);
             }
             public Guid Guid
             {
@@ -13843,6 +14012,32 @@ namespace Thetis
                     _port = value;
                     _four_char = FourChar(_ip, _port, _guid);
                 }
+            }
+            public string UdpEndpointIP
+            {
+                get { return _udp_endpoint_ip; }
+                set
+                {
+                    _udp_endpoint_ip = value;
+                    _udp_endpoint = new IPEndPoint(IPAddress.Parse(_udp_endpoint_ip), _udp_endpoint_port);
+                }
+            }
+            public int UdpEndpointPort
+            {
+                get { return _udp_endpoint_port; }
+                set
+                {
+                    _udp_endpoint_port = value;
+                    _udp_endpoint = new IPEndPoint(IPAddress.Parse(_udp_endpoint_ip), _udp_endpoint_port);
+                }
+            }
+            public void RefreshUdpEndpoint()
+            {
+                _udp_endpoint = new IPEndPoint(IPAddress.Parse(_udp_endpoint_ip), _udp_endpoint_port);
+            }
+            public IPEndPoint UDPEndPoint
+            {
+                get { return _udp_endpoint; }
             }
             public MMIOFormat FormatIn
             {
@@ -13904,6 +14099,23 @@ namespace Thetis
                     _custom_terminator_parsed_in = _custom_terminator_parsed_in.Replace(@"\0", "\0");
                 }
             }
+            public void EnqueueOutbound(string data)
+            {
+                if (_direction == MMIODirection.IN) return;
+                _outbound_queue.Enqueue(data);
+            }
+            public string DequeueOutbound()
+            {
+                if (_direction == MMIODirection.IN) return "";
+
+                bool ok = _outbound_queue.TryDequeue(out string data);
+                if (ok) return data;
+                return "";
+            }
+            public bool OutboundQueueEmpty
+            {
+                get { return _outbound_queue.Count == 0; }
+            }
             public string CustomTerminatorParsedOut
             {
                 get { return string.IsNullOrEmpty(_custom_terminator_parsed_out) ? "\0" : _custom_terminator_parsed_out; }
@@ -13925,10 +14137,10 @@ namespace Thetis
                 bool ok = false;
                 switch(_type)
                 {
-                    case MMIOType.UDP:
+                    case MMIOType.UDP_LISTENER:
                         ok = MultiMeterIO.StartListeningUDP(this);
                         break;
-                    case MMIOType.TCPIP:
+                    case MMIOType.TCPIP_LISTENER:
                         ok = MultiMeterIO.StartListeningTCPIP(this);
                         break;
                     case MMIOType.SERIAL:
@@ -13940,13 +14152,6 @@ namespace Thetis
             {
                 MultiMeterIO.StopListening(_guid);
             }
-            //public ConcurrentDictionary<string, object> IOVariables
-            //{
-            //    get
-            //    {
-            //        return _io_variables;
-            //    }
-            //}
             public bool SetVariable(string key, object value)
             {
                 bool ok;
@@ -13976,19 +14181,6 @@ namespace Thetis
             {
                 return _io_variables;
             }
-            //public ConcurrentDictionary<string, object> VariablesCloned()
-            //{
-            //    object moo;
-            //    moo = (int)3;
-            //    object deepcopy = moo;
-
-            //    ConcurrentDictionary<string, object> copiedDictionary = new ConcurrentDictionary<string, object>();
-            //    foreach(KeyValuePair<string, object> kvp in _io_variables)
-            //    {
-            //        copiedDictionary[kvp.Key] = deepCopy(kvp.Value);
-            //    }
-            //    return copiedDictionary;
-            //}
             public string VariableValueType(object obj)
             {
                 string tmp;
@@ -14027,6 +14219,7 @@ namespace Thetis
         public static event Action<Guid> ClientConnected;
         public static event Action<Guid> ClientDisconnected;
         public static event Action<Guid, string> ReceivedDataString;
+        public static event Action<Guid> TransmittedData;
         public static event Action<Guid, MMIOType, bool> Listener;
 
         private static readonly ConcurrentDictionary<Guid, TcpListener> _tcpListeners;
@@ -14036,7 +14229,7 @@ namespace Thetis
         //private static readonly CancellationTokenSource _cancellationTokenSource;
         private static readonly ConcurrentDictionary<Guid, CancellationTokenSource> _cancellationTokenSource;
         private static readonly ConcurrentDictionary<Guid, clsMMIO> _mmio_data;
-        private static readonly ConcurrentDictionary<Guid, Task> _guidToTask;
+        private static readonly ConcurrentDictionary<Guid, Task> _guidToTask;       
 
         private static readonly object _connectionLock = new object();
 
@@ -14053,6 +14246,7 @@ namespace Thetis
             _guidToTask = new ConcurrentDictionary<Guid, Task>();            
 
             ReceivedDataString += MultiMeterIO_ReceivedDataString;
+            TransmittedData += MultiMeterIO_TransmittedData;
         }
         public static ConcurrentDictionary<Guid, clsMMIO> Data
         {
@@ -14061,7 +14255,7 @@ namespace Thetis
         public static bool StartListeningUDP(clsMMIO mmio)
         {
             if (mmio == null) return false;
-            if(mmio.Type != MMIOType.UDP) return false;
+            if(mmio.Type != MMIOType.UDP_LISTENER) return false;
             if (_udpListeners.ContainsKey(mmio.Guid)) return false;
             
             try
@@ -14097,11 +14291,10 @@ namespace Thetis
 
             return true;
         }
-
         public static bool StartListeningTCPIP(clsMMIO mmio)
         {
             if (mmio == null) return false;
-            if (mmio.Type != MMIOType.TCPIP) return false;
+            if (mmio.Type != MMIOType.TCPIP_LISTENER) return false;
             if (_tcpListeners.ContainsKey(mmio.Guid)) return false;
 
             try
@@ -14136,7 +14329,6 @@ namespace Thetis
 
             return true;
         }
-
         public static async void StopListening(Guid guid)
         {
             TcpListener tcpListener;
@@ -14188,97 +14380,140 @@ namespace Thetis
 
             Debug.Print("MultiMeterIO Stopped listening : " + guid.ToString());
         }
-
-        public static void SendDataString(Guid guid, string dataString)
-        {
-            TcpClient tcpClient;
-            if (_tcpClients.TryGetValue(guid, out tcpClient))
-            {
-                try
-                {
-                    NetworkStream stream = tcpClient.GetStream();
-                    byte[] data = Encoding.UTF8.GetBytes(dataString);
-                    stream.Write(data, 0, data.Length);
-                }
-                catch
-                {
-                    StopListening(guid);
-                }
-            }
-        }
-
         private static async Task ListenForUdp(Guid guid, UdpClient udpClient, CancellationToken token)
         {
+            UdpClient udpSenderClient = null;
             try
             {
                 bool read = true;
+                bool send = true;
                 Task<UdpReceiveResult> receiveTask = null;
+                Task<int> sendTask = null;
                 _mmio_data[guid].Active = true;
-                Listener?.Invoke(guid, MMIOType.UDP, true);
-                string bufferConcat = "";
+                Listener?.Invoke(guid, MMIOType.UDP_LISTENER, true);
+                string bufferConcat = "";                
                 while (!token.IsCancellationRequested)
                 {
                     try
                     {
                         bool inbound = _mmio_data[guid].Direction == MMIODirection.IN || _mmio_data[guid].Direction == MMIODirection.BOTH;
+                        bool outbound = _mmio_data[guid].Direction == MMIODirection.OUT || _mmio_data[guid].Direction == MMIODirection.BOTH;
 
-                        if (read)
+                        if (inbound)
                         {
-                            receiveTask = udpClient.ReceiveAsync();
-                            read = false;
-                        }
-                        Task delayTask = Task.Delay(TimeSpan.FromMilliseconds(DELAY), token);
-                        Task completedTask = await Task.WhenAny(receiveTask, delayTask);
+                            if (read)
+                            {
+                                receiveTask = udpClient.ReceiveAsync();
+                                read = false;
+                            }
+                            Task delayTask = Task.Delay(TimeSpan.FromMilliseconds(DELAY), token);
+                            Task completedTask = await Task.WhenAny(receiveTask, delayTask);
 
-                        if (completedTask == receiveTask)
-                        {
-                            UdpReceiveResult result = await receiveTask;
-                            string dataString = Encoding.UTF8.GetString(result.Buffer);
+                            if (completedTask == receiveTask)
+                            {
+                                UdpReceiveResult result = await receiveTask;
+                                string dataString = Encoding.UTF8.GetString(result.Buffer);
 
-
-                            if (inbound)
-                            {                                
-                                string term = "";
-                                switch(_mmio_data[guid].TerminatorIn)
+                                if (inbound)
                                 {
-                                    case MMIOTerminator.NONE:
-                                        ReceivedDataString?.Invoke(guid, dataString);
-                                        bufferConcat = "";
-                                        break;
-                                    case MMIOTerminator.CR:
-                                        term = "\r";
-                                        break;
-                                    case MMIOTerminator.LF:
-                                        term = "\n";
-                                        break;
-                                    case MMIOTerminator.CRLF:
-                                        term = "\r\n";
-                                        break;
-                                    case MMIOTerminator.CUSTOM:
-                                        term = _mmio_data[guid].CustomTerminatorParsedIn;
-                                        break;
-                                }
-                                if (term != "")
-                                {
-                                    bufferConcat += dataString;
-
-                                    int pos = bufferConcat.IndexOf(term);
-                                    while (pos > -1)
+                                    string term = "";
+                                    switch (_mmio_data[guid].TerminatorIn)
                                     {
-                                        ReceivedDataString?.Invoke(guid, bufferConcat.Substring(0, pos));
-                                        bufferConcat = bufferConcat.Substring(pos + term.Length);
-                                        pos = bufferConcat.IndexOf(term);
+                                        case MMIOTerminator.NONE:
+                                            ReceivedDataString?.Invoke(guid, dataString);
+                                            bufferConcat = "";
+                                            break;
+                                        case MMIOTerminator.CR:
+                                            term = "\r";
+                                            break;
+                                        case MMIOTerminator.LF:
+                                            term = "\n";
+                                            break;
+                                        case MMIOTerminator.CRLF:
+                                            term = "\r\n";
+                                            break;
+                                        case MMIOTerminator.CUSTOM:
+                                            term = _mmio_data[guid].CustomTerminatorParsedIn;
+                                            break;
                                     }
+                                    if (term != "")
+                                    {
+                                        bufferConcat += dataString;
 
-                                    if (bufferConcat.Length >= 4096 * 8) bufferConcat = bufferConcat.Substring(4096 * 4); // some limiter incase it is not being processed
+                                        int pos = bufferConcat.IndexOf(term);
+                                        while (pos > -1)
+                                        {
+                                            ReceivedDataString?.Invoke(guid, bufferConcat.Substring(0, pos));
+                                            bufferConcat = bufferConcat.Substring(pos + term.Length);
+                                            pos = bufferConcat.IndexOf(term);
+                                        }
+
+                                        if (bufferConcat.Length >= 4096 * 8) bufferConcat = bufferConcat.Substring(4096 * 4); // some limiter incase it is not being processed
+                                    }
+                                }
+
+                                read = true;
+                            }
+                        }
+                        if (outbound && _mmio_data[guid].UDPEndPoint != null)
+                        {
+                            if(udpSenderClient == null)
+                            {
+                                udpSenderClient = new UdpClient();
+                                udpSenderClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
+                            }
+                            if (!_mmio_data[guid].OutboundQueueEmpty)
+                            {                                    
+                                if (send)
+                                {
+                                    string outData = "";
+                                    int n = 0;
+                                    string termSend = "";
+                                    switch (_mmio_data[guid].TerminatorOut)
+                                    {
+                                        case MMIOTerminator.NONE:
+                                            termSend = "";
+                                            break;
+                                        case MMIOTerminator.CR:
+                                            termSend = "\r";
+                                            break;
+                                        case MMIOTerminator.LF:
+                                            termSend = "\n";
+                                            break;
+                                        case MMIOTerminator.CRLF:
+                                            termSend = "\r\n";
+                                            break;
+                                        case MMIOTerminator.CUSTOM:
+                                            termSend = _mmio_data[guid].CustomTerminatorParsedOut;
+                                            break;
+                                    }
+                                    while (!_mmio_data[guid].OutboundQueueEmpty)
+                                    {
+                                        outData += _mmio_data[guid].DequeueOutbound() + termSend;
+                                        n++;
+                                        if (n == 20) break;
+                                    }
+                                    Byte[] sendBytes = Encoding.ASCII.GetBytes(outData);
+                                    sendTask = udpSenderClient.SendAsync(sendBytes, sendBytes.Length, _mmio_data[guid].UDPEndPoint);
+                                    send = false;
+                                }
+                                Task delaySendTask = Task.Delay(TimeSpan.FromMilliseconds(DELAY), token);
+                                Task completedSendTask = await Task.WhenAny(sendTask, delaySendTask);
+                                if (completedSendTask == sendTask)
+                                {
+                                    TransmittedData?.Invoke(guid);
+                                    send = true;
                                 }
                             }
-
-                            read = true;
                         }
-                        else
+                        else if (udpSenderClient != null)
                         {
-                            continue;
+                            try
+                            {
+                                udpSenderClient.Close();
+                            }
+                            catch { }
+                            udpSenderClient = null;
                         }
                     }
                     catch (OperationCanceledException)
@@ -14302,11 +14537,19 @@ namespace Thetis
                 udpClient.Close();
             }
             catch { }
+            try
+            {
+                if (udpSenderClient != null)
+                {
+                    udpSenderClient.Close();
+                }
+            }
+            catch { }
 
             try
             {
                 _mmio_data[guid].Active = false;
-                Listener?.Invoke(guid, MMIOType.UDP, false);
+                Listener?.Invoke(guid, MMIOType.UDP_LISTENER, false);
             }
             catch { }
             Debug.Print("u fin");
@@ -14317,7 +14560,7 @@ namespace Thetis
             try
             {
                 _mmio_data[guid].Active = true;
-                Listener?.Invoke(guid, MMIOType.TCPIP, true);
+                Listener?.Invoke(guid, MMIOType.TCPIP_LISTENER, true);
                 while (!token.IsCancellationRequested)
                 {
                     TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
@@ -14353,7 +14596,7 @@ namespace Thetis
             try
             {
                 _mmio_data[guid].Active = false;
-                Listener?.Invoke(guid, MMIOType.TCPIP, false);
+                Listener?.Invoke(guid, MMIOType.TCPIP_LISTENER, false);
             }
             catch { }
             Debug.Print("t fin");
@@ -14367,77 +14610,125 @@ namespace Thetis
             try
             {
                 Task<int> readTask = null;
+                Task sendTask = null;
                 bool read = true;
+                bool send = true;
                 string bufferConcat = "";
                 while (!token.IsCancellationRequested && tcpClient.Connected)
                 {
                     bool inbound = _mmio_data[guid].Direction == MMIODirection.IN || _mmio_data[guid].Direction == MMIODirection.BOTH;
+                    bool outbound = _mmio_data[guid].Direction == MMIODirection.OUT || _mmio_data[guid].Direction == MMIODirection.BOTH;
 
-                    if (read)
+                    if (inbound)
                     {
-                        readTask = stream.ReadAsync(buffer, 0, buffer.Length, token);
-                        read = false;
-                    }
-                    Task timeoutTask = Task.Delay(TimeSpan.FromMilliseconds(DELAY), token); // Set a 1-second timeout
-
-                    Task completedTask = await Task.WhenAny(readTask, timeoutTask);
-
-                    if (completedTask == readTask)
-                    {
-                        int bytesRead = await readTask;
-                        if (bytesRead > 0)
+                        if (read)
                         {
-                            string dataString = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                            readTask = stream.ReadAsync(buffer, 0, buffer.Length, token);
+                            read = false;
+                        }
+                        Task timeoutTask = Task.Delay(TimeSpan.FromMilliseconds(DELAY), token); // Set a 1-second timeout
 
-                            if (inbound)
+                        Task completedTask = await Task.WhenAny(readTask, timeoutTask);
+
+                        if (completedTask == readTask)
+                        {
+                            int bytesRead = await readTask;
+                            if (bytesRead > 0)
                             {
-                                string term = "";
-                                switch (_mmio_data[guid].TerminatorIn)
+                                string dataString = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+                                if (inbound)
+                                {
+                                    string term = "";
+                                    switch (_mmio_data[guid].TerminatorIn)
+                                    {
+                                        case MMIOTerminator.NONE:
+                                            ReceivedDataString?.Invoke(guid, dataString);
+                                            bufferConcat = "";
+                                            break;
+                                        case MMIOTerminator.CR:
+                                            term = "\r";
+                                            break;
+                                        case MMIOTerminator.LF:
+                                            term = "\n";
+                                            break;
+                                        case MMIOTerminator.CRLF:
+                                            term = "\r\n";
+                                            break;
+                                        case MMIOTerminator.CUSTOM:
+                                            term = _mmio_data[guid].CustomTerminatorParsedIn;
+                                            break;
+                                    }
+                                    if (term != "")
+                                    {
+                                        bufferConcat += dataString;
+
+                                        int pos = bufferConcat.IndexOf(term);
+                                        while (pos > -1)
+                                        {
+                                            ReceivedDataString?.Invoke(guid, bufferConcat.Substring(0, pos));
+                                            bufferConcat = bufferConcat.Substring(pos + term.Length);
+                                            pos = bufferConcat.IndexOf(term);
+                                        }
+
+                                        if (bufferConcat.Length >= 4096 * 8) bufferConcat = bufferConcat.Substring(4096 * 4); // some limiter incase it is not being processed
+                                    }
+                                }
+
+                                read = true;
+                            }
+                            else
+                            {
+                                tcpClient.Close();
+                                break;
+                            }
+                        }
+                    }
+                    if (outbound)
+                    {
+                        if (!_mmio_data[guid].OutboundQueueEmpty)
+                        {
+                            if (send)
+                            {
+                                string outData = "";
+                                int n = 0;
+                                string termSend = "";
+                                switch (_mmio_data[guid].TerminatorOut)
                                 {
                                     case MMIOTerminator.NONE:
-                                        ReceivedDataString?.Invoke(guid, dataString);
-                                        bufferConcat = "";
+                                        termSend = "";
                                         break;
                                     case MMIOTerminator.CR:
-                                        term = "\r";
+                                        termSend = "\r";
                                         break;
                                     case MMIOTerminator.LF:
-                                        term = "\n";
+                                        termSend = "\n";
                                         break;
                                     case MMIOTerminator.CRLF:
-                                        term = "\r\n";
+                                        termSend = "\r\n";
                                         break;
                                     case MMIOTerminator.CUSTOM:
-                                        term = _mmio_data[guid].CustomTerminatorParsedIn;
+                                        termSend = _mmio_data[guid].CustomTerminatorParsedOut;
                                         break;
                                 }
-                                if (term != "")
+                                while (!_mmio_data[guid].OutboundQueueEmpty)
                                 {
-                                    bufferConcat += dataString;
-
-                                    int pos = bufferConcat.IndexOf(term);
-                                    while (pos > -1)
-                                    {
-                                        ReceivedDataString?.Invoke(guid, bufferConcat.Substring(0, pos));
-                                        bufferConcat = bufferConcat.Substring(pos + term.Length);
-                                        pos = bufferConcat.IndexOf(term);
-                                    }
-
-                                    if (bufferConcat.Length >= 4096 * 8) bufferConcat = bufferConcat.Substring(4096 * 4); // some limiter incase it is not being processed
+                                    outData += _mmio_data[guid].DequeueOutbound() + termSend;
+                                    n++;
+                                    if (n == 20) break;
                                 }
+                                Byte[] sendBytes = Encoding.ASCII.GetBytes(outData);
+                                sendTask = stream.WriteAsync(sendBytes, 0, sendBytes.Length);
+                                send = false;
                             }
-
-                            read = true;                                
+                            Task delaySendTask = Task.Delay(TimeSpan.FromMilliseconds(DELAY), token);
+                            Task completedSendTask = await Task.WhenAny(sendTask, delaySendTask);
+                            if (completedSendTask == sendTask)
+                            {
+                                TransmittedData?.Invoke(guid);
+                                send = true;
+                            }
                         }
-                        else
-                        {
-                            tcpClient.Close();
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        continue;
                     }
                 }
             }
@@ -14476,19 +14767,6 @@ namespace Thetis
                 Debug.Print("MultiMeterIO timed out when stopping.");
             }
         }
-        //public static bool AlreadyListeningTCPIP(string ip, int port)
-        //{
-        //    IPAddress ipAddress = IPAddress.Parse(ip);
-        //    foreach (TcpListener listener in _tcpListeners.Values)
-        //    {
-        //        if (((IPEndPoint)listener.LocalEndpoint).Address.Equals(ipAddress) &&
-        //            ((IPEndPoint)listener.LocalEndpoint).Port == port)
-        //        {
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
         public static bool AlreadyConfigured(string ip, int port, MMIOType type)
         {
             foreach (KeyValuePair<Guid, clsMMIO> kvp in _mmio_data)
@@ -14502,19 +14780,6 @@ namespace Thetis
             }
             return false;
         }
-        //public static bool AlreadyListeningUDP(string ip, int port)
-        //{
-        //    IPAddress ipAddress = IPAddress.Parse(ip);
-        //    foreach (UdpClient udpClient in _udpListeners.Values)
-        //    {
-        //        if (((IPEndPoint)udpClient.Client.LocalEndPoint).Address.Equals(ipAddress) &&
-        //            ((IPEndPoint)udpClient.Client.LocalEndPoint).Port == port)
-        //        {
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
         public static string FourChar(string ip, int port, Guid guid)
         {
             string input = $"{ip}:{port}:{guid}";
@@ -14562,9 +14827,11 @@ namespace Thetis
                 data += mmio.TerminatorOut.ToString() + "|"; //10
                 data += mmio.CustomTerminatorIn + "|"; //11
                 data += mmio.CustomTerminatorOut + "|"; //12
+                data += mmio.UdpEndpointIP + "|"; //13
+                data += mmio.UdpEndpointPort.ToString() + "|"; //14
 
                 // always last
-                data += mmio.Variables().Count.ToString() + "|"; //13
+                data += mmio.Variables().Count.ToString() + "|"; //15
                 foreach(KeyValuePair<string, object> kvpvar in mmio.Variables())
                 {
                     data += kvpvar.Key + "|";
@@ -14592,7 +14859,7 @@ namespace Thetis
                 MMIODirection direction = MMIODirection.BOTH;
                 MMIOFormat format_in = MMIOFormat.JSON;
                 MMIOFormat format_out = MMIOFormat.JSON;
-                MMIOType type = MMIOType.UDP;
+                MMIOType type = MMIOType.UDP_LISTENER;
                 MMIOTerminator terminator_in = MMIOTerminator.NONE;
                 MMIOTerminator terminator_out = MMIOTerminator.NONE;
                 int port = 0;
@@ -14600,6 +14867,7 @@ namespace Thetis
                 int variables = 0;
                 string tmp;
                 int variable_count_index = 0;
+                int udp_endpoint_port = 0;
 
                 int idx = 0;
 
@@ -14656,11 +14924,17 @@ namespace Thetis
                         mmio.TerminatorOut = terminator_out;
                         mmio.CustomTerminatorIn = parts[idx + 11];
                         mmio.CustomTerminatorOut = parts[idx + 12];
+                        mmio.UdpEndpointIP = parts[idx + 13];
+                        ok = int.TryParse(parts[idx + 14], out udp_endpoint_port);
+                    }
+                    if (ok)
+                    {
+                        mmio.UdpEndpointPort = udp_endpoint_port;
                     }
                     if (ok)
                     {
                         // restore variables
-                        variable_count_index = 13; // this needs to be one larger than N in the [idx + N] above
+                        variable_count_index = 15; // this needs to be one larger than N in the [idx + N] above
                         ok = int.TryParse(parts[idx + variable_count_index], out variables);
                         if (ok)
                         {
@@ -14714,6 +14988,27 @@ namespace Thetis
                 if (ok) StopListening(guid);
             }
             return ok;
+        }
+        public static void SendDataMMIO(Guid guid, string data)
+        {
+            if(_mmio_data.ContainsKey(guid))
+            {
+                clsMMIO mmio = _mmio_data[guid];
+                mmio.EnqueueOutbound(data);
+            }
+        }
+        public static Guid GuidfromFourChar(string fourChar)
+        {
+            foreach(KeyValuePair<Guid, clsMMIO> kvp in _mmio_data)
+            {
+                clsMMIO mmio = kvp.Value;
+                if(mmio.FourChar == fourChar) return mmio.Guid;
+            }
+            return Guid.Empty;
+        }
+        private static void MultiMeterIO_TransmittedData(Guid guid)
+        {
+
         }
         private static void MultiMeterIO_ReceivedDataString(Guid guid, string dataString)
         {
