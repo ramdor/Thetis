@@ -16934,8 +16934,12 @@ namespace Thetis
                     SetupForm.ATTOnTX = getTXstepAttenuatorForBand(tx_band); //[2.10.3.6]MW0LGE att_fixes
                     RX1PreampMode = rx1_preamp_by_band[(int)value];
                     RX1AttenuatorData = getRX1stepAttenuatorForBand(value);
+                    //[2.10.3.6]MW0LGE this tmp is needed because RX1AGCMode causes an update to the setup form
+                    //with the current max value for AGC (depending on agcmode) if the agcmode selected index changes
+                    //which in turn sets RF again
+                    int tmp = rx1_agct_by_band[(int)value];
                     RX1AGCMode = rx1_agcm_by_band[(int)value];
-                    RF = rx1_agct_by_band[(int)value];
+                    RF = tmp;
 
                     //================================================================================           
                     // ke9ns ADD for use by scanner so it knows which band button your on currently
@@ -17100,8 +17104,9 @@ namespace Thetis
 
                     RX2PreampMode = rx2_preamp_by_band[(int)value];
                     RX2AttenuatorData = getRX2stepAttenuatorForBand(value);
+                    int tmp = rx2_agct_by_band[(int)value]; //[2.10.3.6]MW0LGE see comment in RX1Band
                     RX2AGCMode = rx2_agcm_by_band[(int)value];
-                    RX2RF = rx2_agct_by_band[(int)value];
+                    RX2RF = tmp;
 
                     if (bandPopupForm != null) bandPopupForm.RepopulateForm();
                     if (modePopupForm != null) modePopupForm.RepopulateForm();

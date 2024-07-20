@@ -70,7 +70,7 @@ namespace Thetis
         VOLTS,
         AMPS,
         // special
-        EYE_PERCENT,
+        //EYE_PERCENT,
         //// private used in metermanager only
         //VFOA,
         //VFOB,
@@ -557,7 +557,7 @@ namespace Thetis
                 case Reading.AGC_AV: return "AGC Average";
                 case Reading.AGC_PK: return "AGC Peak";
                 case Reading.AGC_GAIN: return "AGC Gain";
-                case Reading.EYE_PERCENT: return "Magic Eye";
+                //case Reading.EYE_PERCENT: return "Magic Eye";
                 case Reading.ALC: return "ALC";
                 case Reading.ALC_G: return "ALC Compression";
                 case Reading.ALC_GROUP: return "ALC Group";
@@ -606,7 +606,7 @@ namespace Thetis
                 case Reading.AGC_PK: return "dB";
                 case Reading.AGC_AV: return "dB";
                 case Reading.AGC_GAIN: return "dB";
-                case Reading.EYE_PERCENT: return "?";
+                //case Reading.EYE_PERCENT: return "?";
                 case Reading.ALC: return "dB";
                 case Reading.ALC_G: return "dB";
                 case Reading.ALC_GROUP: return "dB";
@@ -1682,7 +1682,7 @@ namespace Thetis
                     setReading(rx, Reading.AGC_PK, ref readings);
                     setReading(rx, Reading.AGC_AV, ref readings);
                     setReading(rx, Reading.AGC_GAIN, ref readings);
-                    setReading(rx, Reading.EYE_PERCENT, ref readings);
+                    //setReading(rx, Reading.EYE_PERCENT, ref readings);
 
                     setReading(rx, Reading.ESTIMATED_PBSNR, ref readings);
                 }
@@ -3998,6 +3998,8 @@ namespace Thetis
                 addReading(Reading.COMP, text);
                 addReading(Reading.COMP_PK, text);
                 addReading(Reading.ESTIMATED_PBSNR, text);
+                addReading(Reading.VOLTS, text);
+                addReading(Reading.AMPS, text);
 
                 addReadingText("time_utc", text);
                 addReadingText("time_loc", text);

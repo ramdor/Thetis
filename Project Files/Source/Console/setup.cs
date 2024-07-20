@@ -195,7 +195,7 @@ namespace Thetis
             "%comp%" + System.Environment.NewLine +
             "%comp_pk%" + System.Environment.NewLine +
             "%estimated_pbsnr%" + System.Environment.NewLine +
-            "" + System.Environment.NewLine +
+            System.Environment.NewLine +
             "%time_utc%" + System.Environment.NewLine +
             "%time_loc%" + System.Environment.NewLine +
             "%date_utc%" + System.Environment.NewLine +
@@ -213,7 +213,9 @@ namespace Thetis
             "%filter_vfoa_name%" + System.Environment.NewLine +
             "%filter_vfob_name%" + System.Environment.NewLine +
             "%qso_time%" + System.Environment.NewLine +
-            "%qso_time_short%";
+            "%qso_time_short%" + System.Environment.NewLine +
+            "%volts%" + System.Environment.NewLine +
+            "%amps%";// + System.Environment.NewLine +
             toolTip1.SetToolTip(pbTextOverlay_variables, sTip);
 
             //MW0LGE_21h
