@@ -3645,6 +3645,18 @@
             this.clrbtnMeterItemHBackgroundSpacerRX = new Thetis.ColorButton();
             this.nudMeterItemSpacerPadding = new System.Windows.Forms.NumericUpDownTS();
             this.clrbtnMeterItemHBackgroundSpacerTX = new Thetis.ColorButton();
+            this.clrbtnTextOverlay_TextColour1 = new Thetis.ColorButton();
+            this.nudTextOverlay_PanelPadding = new System.Windows.Forms.NumericUpDownTS();
+            this.clrbtnTextOverlay_PanelBackground = new Thetis.ColorButton();
+            this.clrbtnTextOverlay_TextColour2 = new Thetis.ColorButton();
+            this.nudTextOverlay_RXxOffset = new System.Windows.Forms.NumericUpDownTS();
+            this.nudTextOverlay_RXyOffset = new System.Windows.Forms.NumericUpDownTS();
+            this.nudTextOverlay_TXyOffset = new System.Windows.Forms.NumericUpDownTS();
+            this.nudTextOverlay_TXxOffset = new System.Windows.Forms.NumericUpDownTS();
+            this.btnTextOverlay_copyoffsets = new System.Windows.Forms.ButtonTS();
+            this.clrbtnTextOverlay_TextBackColour2 = new Thetis.ColorButton();
+            this.clrbtnTextOverlay_TextBackColour1 = new Thetis.ColorButton();
+            this.clrbtnTextOverlay_PanelBackgroundTX = new Thetis.ColorButton();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -3705,6 +3717,30 @@
             this.chkMeterItemFadeOnTxSpacer = new System.Windows.Forms.CheckBoxTS();
             this.chkMeterItemFadeOnRxSpacer = new System.Windows.Forms.CheckBoxTS();
             this.labelTS198 = new System.Windows.Forms.LabelTS();
+            this.grpTextOverlay = new System.Windows.Forms.GroupBoxTS();
+            this.lblTextOverlay_panelbackgroundTX = new System.Windows.Forms.LabelTS();
+            this.labelTS202 = new System.Windows.Forms.LabelTS();
+            this.labelTS201 = new System.Windows.Forms.LabelTS();
+            this.chkTextOverlay_textback2 = new System.Windows.Forms.CheckBoxTS();
+            this.chkTextOverlay_textback1 = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS207 = new System.Windows.Forms.LabelTS();
+            this.labelTS208 = new System.Windows.Forms.LabelTS();
+            this.labelTS209 = new System.Windows.Forms.LabelTS();
+            this.labelTS206 = new System.Windows.Forms.LabelTS();
+            this.labelTS200 = new System.Windows.Forms.LabelTS();
+            this.labelTS205 = new System.Windows.Forms.LabelTS();
+            this.labelTS204 = new System.Windows.Forms.LabelTS();
+            this.btnTextOverlay_Font2 = new System.Windows.Forms.ButtonTS();
+            this.txtTextOverlay_TXText = new System.Windows.Forms.TextBoxTS();
+            this.labelTS203 = new System.Windows.Forms.LabelTS();
+            this.btnTextOverlay_Font1 = new System.Windows.Forms.ButtonTS();
+            this.txtTextOverlay_RXText = new System.Windows.Forms.TextBoxTS();
+            this.chkTextOverlay_ShowPanel = new System.Windows.Forms.CheckBoxTS();
+            this.lblTextOverlay_panelpadding = new System.Windows.Forms.LabelTS();
+            this.lblTextOverlay_panelbackground = new System.Windows.Forms.LabelTS();
+            this.chkTextOverlay_FadeOnTX = new System.Windows.Forms.CheckBoxTS();
+            this.chkTextOverlay_FadeOnRX = new System.Windows.Forms.CheckBoxTS();
+            this.pbTextOverlay_variables = new System.Windows.Forms.PictureBox();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4638,6 +4674,11 @@
             this.grpMeterItemVfoDisplaySettings.SuspendLayout();
             this.grpMeterItemClockSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemSpacerPadding)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_PanelPadding)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_RXxOffset)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_RXyOffset)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXyOffset)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXxOffset)).BeginInit();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -4673,6 +4714,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
             this.grpMeterItemSpacerSettings.SuspendLayout();
+            this.grpTextOverlay.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -57364,7 +57407,7 @@
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS166);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayMode);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTitle);
-            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(395, 675);
+            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(395, 817);
             this.grpMeterItemVfoDisplaySettings.Name = "grpMeterItemVfoDisplaySettings";
             this.grpMeterItemVfoDisplaySettings.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemVfoDisplaySettings.TabIndex = 101;
@@ -57938,6 +57981,264 @@
             this.clrbtnMeterItemHBackgroundSpacerTX.TabIndex = 133;
             this.toolTip1.SetToolTip(this.clrbtnMeterItemHBackgroundSpacerTX, "Background colour");
             this.clrbtnMeterItemHBackgroundSpacerTX.Changed += new System.EventHandler(this.clrbtnMeterItemHBackgroundSpacerTX_Changed);
+            // 
+            // clrbtnTextOverlay_TextColour1
+            // 
+            this.clrbtnTextOverlay_TextColour1.Automatic = "Automatic";
+            this.clrbtnTextOverlay_TextColour1.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnTextOverlay_TextColour1.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnTextOverlay_TextColour1.Image = null;
+            this.clrbtnTextOverlay_TextColour1.Location = new System.Drawing.Point(104, 183);
+            this.clrbtnTextOverlay_TextColour1.MoreColors = "More Colors...";
+            this.clrbtnTextOverlay_TextColour1.Name = "clrbtnTextOverlay_TextColour1";
+            this.clrbtnTextOverlay_TextColour1.Selectable = true;
+            this.clrbtnTextOverlay_TextColour1.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnTextOverlay_TextColour1.TabIndex = 133;
+            this.toolTip1.SetToolTip(this.clrbtnTextOverlay_TextColour1, "Background colour");
+            this.clrbtnTextOverlay_TextColour1.Changed += new System.EventHandler(this.clrbtnTextOverlay_TextColour1_Changed);
+            // 
+            // nudTextOverlay_PanelPadding
+            // 
+            this.nudTextOverlay_PanelPadding.DecimalPlaces = 3;
+            this.nudTextOverlay_PanelPadding.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudTextOverlay_PanelPadding.Location = new System.Drawing.Point(125, 100);
+            this.nudTextOverlay_PanelPadding.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudTextOverlay_PanelPadding.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudTextOverlay_PanelPadding.Name = "nudTextOverlay_PanelPadding";
+            this.nudTextOverlay_PanelPadding.Size = new System.Drawing.Size(56, 20);
+            this.nudTextOverlay_PanelPadding.TabIndex = 132;
+            this.nudTextOverlay_PanelPadding.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudTextOverlay_PanelPadding, "Size of the spacer. The number is a ratio with reference to the width.");
+            this.nudTextOverlay_PanelPadding.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudTextOverlay_PanelPadding.ValueChanged += new System.EventHandler(this.nudTextOverlay_PanelPadding_ValueChanged);
+            // 
+            // clrbtnTextOverlay_PanelBackground
+            // 
+            this.clrbtnTextOverlay_PanelBackground.Automatic = "Automatic";
+            this.clrbtnTextOverlay_PanelBackground.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnTextOverlay_PanelBackground.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnTextOverlay_PanelBackground.Image = null;
+            this.clrbtnTextOverlay_PanelBackground.Location = new System.Drawing.Point(141, 45);
+            this.clrbtnTextOverlay_PanelBackground.MoreColors = "More Colors...";
+            this.clrbtnTextOverlay_PanelBackground.Name = "clrbtnTextOverlay_PanelBackground";
+            this.clrbtnTextOverlay_PanelBackground.Selectable = true;
+            this.clrbtnTextOverlay_PanelBackground.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnTextOverlay_PanelBackground.TabIndex = 129;
+            this.toolTip1.SetToolTip(this.clrbtnTextOverlay_PanelBackground, "Background colour");
+            this.clrbtnTextOverlay_PanelBackground.Changed += new System.EventHandler(this.clrbtnTextOverlay_PanelBackground_Changed);
+            // 
+            // clrbtnTextOverlay_TextColour2
+            // 
+            this.clrbtnTextOverlay_TextColour2.Automatic = "Automatic";
+            this.clrbtnTextOverlay_TextColour2.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnTextOverlay_TextColour2.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnTextOverlay_TextColour2.Image = null;
+            this.clrbtnTextOverlay_TextColour2.Location = new System.Drawing.Point(104, 209);
+            this.clrbtnTextOverlay_TextColour2.MoreColors = "More Colors...";
+            this.clrbtnTextOverlay_TextColour2.Name = "clrbtnTextOverlay_TextColour2";
+            this.clrbtnTextOverlay_TextColour2.Selectable = true;
+            this.clrbtnTextOverlay_TextColour2.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnTextOverlay_TextColour2.TabIndex = 142;
+            this.toolTip1.SetToolTip(this.clrbtnTextOverlay_TextColour2, "Background colour");
+            this.clrbtnTextOverlay_TextColour2.Changed += new System.EventHandler(this.clrbtnTextOverlay_TextColour2_Changed);
+            // 
+            // nudTextOverlay_RXxOffset
+            // 
+            this.nudTextOverlay_RXxOffset.DecimalPlaces = 3;
+            this.nudTextOverlay_RXxOffset.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudTextOverlay_RXxOffset.Location = new System.Drawing.Point(101, 250);
+            this.nudTextOverlay_RXxOffset.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudTextOverlay_RXxOffset.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.nudTextOverlay_RXxOffset.Name = "nudTextOverlay_RXxOffset";
+            this.nudTextOverlay_RXxOffset.Size = new System.Drawing.Size(56, 20);
+            this.nudTextOverlay_RXxOffset.TabIndex = 143;
+            this.nudTextOverlay_RXxOffset.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudTextOverlay_RXxOffset, "Size of the spacer. The number is a ratio with reference to the width.");
+            this.nudTextOverlay_RXxOffset.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudTextOverlay_RXxOffset.ValueChanged += new System.EventHandler(this.nudTextOverlay_RXxOffset_ValueChanged);
+            // 
+            // nudTextOverlay_RXyOffset
+            // 
+            this.nudTextOverlay_RXyOffset.DecimalPlaces = 3;
+            this.nudTextOverlay_RXyOffset.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudTextOverlay_RXyOffset.Location = new System.Drawing.Point(101, 276);
+            this.nudTextOverlay_RXyOffset.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudTextOverlay_RXyOffset.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.nudTextOverlay_RXyOffset.Name = "nudTextOverlay_RXyOffset";
+            this.nudTextOverlay_RXyOffset.Size = new System.Drawing.Size(56, 20);
+            this.nudTextOverlay_RXyOffset.TabIndex = 147;
+            this.nudTextOverlay_RXyOffset.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudTextOverlay_RXyOffset, "Size of the spacer. The number is a ratio with reference to the width.");
+            this.nudTextOverlay_RXyOffset.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudTextOverlay_RXyOffset.ValueChanged += new System.EventHandler(this.nudTextOverlay_RXyOffset_ValueChanged);
+            // 
+            // nudTextOverlay_TXyOffset
+            // 
+            this.nudTextOverlay_TXyOffset.DecimalPlaces = 3;
+            this.nudTextOverlay_TXyOffset.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudTextOverlay_TXyOffset.Location = new System.Drawing.Point(101, 328);
+            this.nudTextOverlay_TXyOffset.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudTextOverlay_TXyOffset.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.nudTextOverlay_TXyOffset.Name = "nudTextOverlay_TXyOffset";
+            this.nudTextOverlay_TXyOffset.Size = new System.Drawing.Size(56, 20);
+            this.nudTextOverlay_TXyOffset.TabIndex = 152;
+            this.nudTextOverlay_TXyOffset.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudTextOverlay_TXyOffset, "Size of the spacer. The number is a ratio with reference to the width.");
+            this.nudTextOverlay_TXyOffset.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudTextOverlay_TXyOffset.ValueChanged += new System.EventHandler(this.nudTextOverlay_TXyOffset_ValueChanged);
+            // 
+            // nudTextOverlay_TXxOffset
+            // 
+            this.nudTextOverlay_TXxOffset.DecimalPlaces = 3;
+            this.nudTextOverlay_TXxOffset.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudTextOverlay_TXxOffset.Location = new System.Drawing.Point(101, 302);
+            this.nudTextOverlay_TXxOffset.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudTextOverlay_TXxOffset.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.nudTextOverlay_TXxOffset.Name = "nudTextOverlay_TXxOffset";
+            this.nudTextOverlay_TXxOffset.Size = new System.Drawing.Size(56, 20);
+            this.nudTextOverlay_TXxOffset.TabIndex = 150;
+            this.nudTextOverlay_TXxOffset.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudTextOverlay_TXxOffset, "Size of the spacer. The number is a ratio with reference to the width.");
+            this.nudTextOverlay_TXxOffset.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudTextOverlay_TXxOffset.ValueChanged += new System.EventHandler(this.nudTextOverlay_TXxOffset_ValueChanged);
+            // 
+            // btnTextOverlay_copyoffsets
+            // 
+            this.btnTextOverlay_copyoffsets.Image = null;
+            this.btnTextOverlay_copyoffsets.Location = new System.Drawing.Point(182, 313);
+            this.btnTextOverlay_copyoffsets.Name = "btnTextOverlay_copyoffsets";
+            this.btnTextOverlay_copyoffsets.Selectable = true;
+            this.btnTextOverlay_copyoffsets.Size = new System.Drawing.Size(33, 23);
+            this.btnTextOverlay_copyoffsets.TabIndex = 155;
+            this.btnTextOverlay_copyoffsets.Text = "=";
+            this.toolTip1.SetToolTip(this.btnTextOverlay_copyoffsets, "Copy the offset values from RX to TX");
+            this.btnTextOverlay_copyoffsets.UseVisualStyleBackColor = true;
+            this.btnTextOverlay_copyoffsets.Click += new System.EventHandler(this.btnTextOverlay_copyoffsets_Click);
+            // 
+            // clrbtnTextOverlay_TextBackColour2
+            // 
+            this.clrbtnTextOverlay_TextBackColour2.Automatic = "Automatic";
+            this.clrbtnTextOverlay_TextBackColour2.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnTextOverlay_TextBackColour2.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnTextOverlay_TextBackColour2.Image = null;
+            this.clrbtnTextOverlay_TextBackColour2.Location = new System.Drawing.Point(159, 209);
+            this.clrbtnTextOverlay_TextBackColour2.MoreColors = "More Colors...";
+            this.clrbtnTextOverlay_TextBackColour2.Name = "clrbtnTextOverlay_TextBackColour2";
+            this.clrbtnTextOverlay_TextBackColour2.Selectable = true;
+            this.clrbtnTextOverlay_TextBackColour2.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnTextOverlay_TextBackColour2.TabIndex = 157;
+            this.toolTip1.SetToolTip(this.clrbtnTextOverlay_TextBackColour2, "Background colour");
+            this.clrbtnTextOverlay_TextBackColour2.Changed += new System.EventHandler(this.clrbtnTextOverlay_TextBackColour2_Changed);
+            // 
+            // clrbtnTextOverlay_TextBackColour1
+            // 
+            this.clrbtnTextOverlay_TextBackColour1.Automatic = "Automatic";
+            this.clrbtnTextOverlay_TextBackColour1.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnTextOverlay_TextBackColour1.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnTextOverlay_TextBackColour1.Image = null;
+            this.clrbtnTextOverlay_TextBackColour1.Location = new System.Drawing.Point(159, 183);
+            this.clrbtnTextOverlay_TextBackColour1.MoreColors = "More Colors...";
+            this.clrbtnTextOverlay_TextBackColour1.Name = "clrbtnTextOverlay_TextBackColour1";
+            this.clrbtnTextOverlay_TextBackColour1.Selectable = true;
+            this.clrbtnTextOverlay_TextBackColour1.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnTextOverlay_TextBackColour1.TabIndex = 156;
+            this.toolTip1.SetToolTip(this.clrbtnTextOverlay_TextBackColour1, "Background colour");
+            this.clrbtnTextOverlay_TextBackColour1.Changed += new System.EventHandler(this.clrbtnTextOverlay_TextBackColour1_Changed);
+            // 
+            // clrbtnTextOverlay_PanelBackgroundTX
+            // 
+            this.clrbtnTextOverlay_PanelBackgroundTX.Automatic = "Automatic";
+            this.clrbtnTextOverlay_PanelBackgroundTX.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnTextOverlay_PanelBackgroundTX.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnTextOverlay_PanelBackgroundTX.Image = null;
+            this.clrbtnTextOverlay_PanelBackgroundTX.Location = new System.Drawing.Point(141, 70);
+            this.clrbtnTextOverlay_PanelBackgroundTX.MoreColors = "More Colors...";
+            this.clrbtnTextOverlay_PanelBackgroundTX.Name = "clrbtnTextOverlay_PanelBackgroundTX";
+            this.clrbtnTextOverlay_PanelBackgroundTX.Selectable = true;
+            this.clrbtnTextOverlay_PanelBackgroundTX.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnTextOverlay_PanelBackgroundTX.TabIndex = 162;
+            this.toolTip1.SetToolTip(this.clrbtnTextOverlay_PanelBackgroundTX, "Background colour");
+            this.clrbtnTextOverlay_PanelBackgroundTX.Changed += new System.EventHandler(this.clrbtnTextOverlay_PanelBackgroundTX_Changed);
             // 
             // saveFileDialog1
             // 
@@ -59045,7 +59346,7 @@
             this.grpMeterItemSpacerSettings.Controls.Add(this.clrbtnMeterItemHBackgroundSpacerRX);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnTxSpacer);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnRxSpacer);
-            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(395, 531);
+            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(799, 701);
             this.grpMeterItemSpacerSettings.Name = "grpMeterItemSpacerSettings";
             this.grpMeterItemSpacerSettings.Size = new System.Drawing.Size(323, 168);
             this.grpMeterItemSpacerSettings.TabIndex = 102;
@@ -59118,11 +59419,297 @@
             this.labelTS198.Text = "NOTE: MIN SIZE OF FORM DEFINES SIZE AT RUNTIME";
             this.labelTS198.Visible = false;
             // 
+            // grpTextOverlay
+            // 
+            this.grpTextOverlay.Controls.Add(this.pbTextOverlay_variables);
+            this.grpTextOverlay.Controls.Add(this.lblTextOverlay_panelbackgroundTX);
+            this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_PanelBackgroundTX);
+            this.grpTextOverlay.Controls.Add(this.labelTS202);
+            this.grpTextOverlay.Controls.Add(this.labelTS201);
+            this.grpTextOverlay.Controls.Add(this.chkTextOverlay_textback2);
+            this.grpTextOverlay.Controls.Add(this.chkTextOverlay_textback1);
+            this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_TextBackColour2);
+            this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_TextBackColour1);
+            this.grpTextOverlay.Controls.Add(this.btnTextOverlay_copyoffsets);
+            this.grpTextOverlay.Controls.Add(this.labelTS207);
+            this.grpTextOverlay.Controls.Add(this.labelTS208);
+            this.grpTextOverlay.Controls.Add(this.nudTextOverlay_TXyOffset);
+            this.grpTextOverlay.Controls.Add(this.labelTS209);
+            this.grpTextOverlay.Controls.Add(this.nudTextOverlay_TXxOffset);
+            this.grpTextOverlay.Controls.Add(this.labelTS206);
+            this.grpTextOverlay.Controls.Add(this.labelTS200);
+            this.grpTextOverlay.Controls.Add(this.nudTextOverlay_RXyOffset);
+            this.grpTextOverlay.Controls.Add(this.labelTS205);
+            this.grpTextOverlay.Controls.Add(this.nudTextOverlay_RXxOffset);
+            this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_TextColour2);
+            this.grpTextOverlay.Controls.Add(this.labelTS204);
+            this.grpTextOverlay.Controls.Add(this.btnTextOverlay_Font2);
+            this.grpTextOverlay.Controls.Add(this.txtTextOverlay_TXText);
+            this.grpTextOverlay.Controls.Add(this.labelTS203);
+            this.grpTextOverlay.Controls.Add(this.btnTextOverlay_Font1);
+            this.grpTextOverlay.Controls.Add(this.txtTextOverlay_RXText);
+            this.grpTextOverlay.Controls.Add(this.chkTextOverlay_ShowPanel);
+            this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_TextColour1);
+            this.grpTextOverlay.Controls.Add(this.nudTextOverlay_PanelPadding);
+            this.grpTextOverlay.Controls.Add(this.lblTextOverlay_panelpadding);
+            this.grpTextOverlay.Controls.Add(this.lblTextOverlay_panelbackground);
+            this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_PanelBackground);
+            this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnTX);
+            this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnRX);
+            this.grpTextOverlay.Location = new System.Drawing.Point(445, 508);
+            this.grpTextOverlay.Name = "grpTextOverlay";
+            this.grpTextOverlay.Size = new System.Drawing.Size(323, 386);
+            this.grpTextOverlay.TabIndex = 104;
+            this.grpTextOverlay.TabStop = false;
+            this.grpTextOverlay.Text = "Text Overlay";
+            // 
+            // lblTextOverlay_panelbackgroundTX
+            // 
+            this.lblTextOverlay_panelbackgroundTX.AutoSize = true;
+            this.lblTextOverlay_panelbackgroundTX.Image = null;
+            this.lblTextOverlay_panelbackgroundTX.Location = new System.Drawing.Point(50, 75);
+            this.lblTextOverlay_panelbackgroundTX.Name = "lblTextOverlay_panelbackgroundTX";
+            this.lblTextOverlay_panelbackgroundTX.Size = new System.Drawing.Size(85, 13);
+            this.lblTextOverlay_panelbackgroundTX.TabIndex = 163;
+            this.lblTextOverlay_panelbackgroundTX.Text = "TX Background:";
+            // 
+            // labelTS202
+            // 
+            this.labelTS202.AutoSize = true;
+            this.labelTS202.Image = null;
+            this.labelTS202.Location = new System.Drawing.Point(22, 214);
+            this.labelTS202.Name = "labelTS202";
+            this.labelTS202.Size = new System.Drawing.Size(24, 13);
+            this.labelTS202.TabIndex = 161;
+            this.labelTS202.Text = "TX:";
+            // 
+            // labelTS201
+            // 
+            this.labelTS201.AutoSize = true;
+            this.labelTS201.Image = null;
+            this.labelTS201.Location = new System.Drawing.Point(22, 188);
+            this.labelTS201.Name = "labelTS201";
+            this.labelTS201.Size = new System.Drawing.Size(25, 13);
+            this.labelTS201.TabIndex = 160;
+            this.labelTS201.Text = "RX:";
+            // 
+            // chkTextOverlay_textback2
+            // 
+            this.chkTextOverlay_textback2.AutoSize = true;
+            this.chkTextOverlay_textback2.Image = null;
+            this.chkTextOverlay_textback2.Location = new System.Drawing.Point(205, 213);
+            this.chkTextOverlay_textback2.Name = "chkTextOverlay_textback2";
+            this.chkTextOverlay_textback2.Size = new System.Drawing.Size(75, 17);
+            this.chkTextOverlay_textback2.TabIndex = 159;
+            this.chkTextOverlay_textback2.Text = "Text Back";
+            this.chkTextOverlay_textback2.UseVisualStyleBackColor = true;
+            this.chkTextOverlay_textback2.CheckedChanged += new System.EventHandler(this.chkTextOverlay_textback2_CheckedChanged);
+            // 
+            // chkTextOverlay_textback1
+            // 
+            this.chkTextOverlay_textback1.AutoSize = true;
+            this.chkTextOverlay_textback1.Image = null;
+            this.chkTextOverlay_textback1.Location = new System.Drawing.Point(205, 187);
+            this.chkTextOverlay_textback1.Name = "chkTextOverlay_textback1";
+            this.chkTextOverlay_textback1.Size = new System.Drawing.Size(75, 17);
+            this.chkTextOverlay_textback1.TabIndex = 158;
+            this.chkTextOverlay_textback1.Text = "Text Back";
+            this.chkTextOverlay_textback1.UseVisualStyleBackColor = true;
+            this.chkTextOverlay_textback1.CheckedChanged += new System.EventHandler(this.chkTextOverlay_textback1_CheckedChanged);
+            // 
+            // labelTS207
+            // 
+            this.labelTS207.AutoSize = true;
+            this.labelTS207.Image = null;
+            this.labelTS207.Location = new System.Drawing.Point(163, 330);
+            this.labelTS207.Name = "labelTS207";
+            this.labelTS207.Size = new System.Drawing.Size(12, 13);
+            this.labelTS207.TabIndex = 154;
+            this.labelTS207.Text = "y";
+            // 
+            // labelTS208
+            // 
+            this.labelTS208.AutoSize = true;
+            this.labelTS208.Image = null;
+            this.labelTS208.Location = new System.Drawing.Point(163, 304);
+            this.labelTS208.Name = "labelTS208";
+            this.labelTS208.Size = new System.Drawing.Size(12, 13);
+            this.labelTS208.TabIndex = 153;
+            this.labelTS208.Text = "x";
+            // 
+            // labelTS209
+            // 
+            this.labelTS209.AutoSize = true;
+            this.labelTS209.Image = null;
+            this.labelTS209.Location = new System.Drawing.Point(9, 304);
+            this.labelTS209.Name = "labelTS209";
+            this.labelTS209.Size = new System.Drawing.Size(84, 13);
+            this.labelTS209.TabIndex = 151;
+            this.labelTS209.Text = "TX Text Offsets:";
+            // 
+            // labelTS206
+            // 
+            this.labelTS206.AutoSize = true;
+            this.labelTS206.Image = null;
+            this.labelTS206.Location = new System.Drawing.Point(163, 278);
+            this.labelTS206.Name = "labelTS206";
+            this.labelTS206.Size = new System.Drawing.Size(12, 13);
+            this.labelTS206.TabIndex = 149;
+            this.labelTS206.Text = "y";
+            // 
+            // labelTS200
+            // 
+            this.labelTS200.AutoSize = true;
+            this.labelTS200.Image = null;
+            this.labelTS200.Location = new System.Drawing.Point(163, 252);
+            this.labelTS200.Name = "labelTS200";
+            this.labelTS200.Size = new System.Drawing.Size(12, 13);
+            this.labelTS200.TabIndex = 148;
+            this.labelTS200.Text = "x";
+            // 
+            // labelTS205
+            // 
+            this.labelTS205.AutoSize = true;
+            this.labelTS205.Image = null;
+            this.labelTS205.Location = new System.Drawing.Point(10, 252);
+            this.labelTS205.Name = "labelTS205";
+            this.labelTS205.Size = new System.Drawing.Size(85, 13);
+            this.labelTS205.TabIndex = 145;
+            this.labelTS205.Text = "RX Text Offsets:";
+            // 
+            // labelTS204
+            // 
+            this.labelTS204.AutoSize = true;
+            this.labelTS204.Image = null;
+            this.labelTS204.Location = new System.Drawing.Point(5, 159);
+            this.labelTS204.Name = "labelTS204";
+            this.labelTS204.Size = new System.Drawing.Size(48, 13);
+            this.labelTS204.TabIndex = 141;
+            this.labelTS204.Text = "TX Text:";
+            // 
+            // btnTextOverlay_Font2
+            // 
+            this.btnTextOverlay_Font2.Image = null;
+            this.btnTextOverlay_Font2.Location = new System.Drawing.Point(53, 209);
+            this.btnTextOverlay_Font2.Name = "btnTextOverlay_Font2";
+            this.btnTextOverlay_Font2.Selectable = true;
+            this.btnTextOverlay_Font2.Size = new System.Drawing.Size(49, 23);
+            this.btnTextOverlay_Font2.TabIndex = 140;
+            this.btnTextOverlay_Font2.Text = "Font";
+            this.btnTextOverlay_Font2.UseVisualStyleBackColor = true;
+            this.btnTextOverlay_Font2.Click += new System.EventHandler(this.btnTextOverlay_Font2_Click);
+            // 
+            // txtTextOverlay_TXText
+            // 
+            this.txtTextOverlay_TXText.Location = new System.Drawing.Point(53, 156);
+            this.txtTextOverlay_TXText.Name = "txtTextOverlay_TXText";
+            this.txtTextOverlay_TXText.Size = new System.Drawing.Size(264, 20);
+            this.txtTextOverlay_TXText.TabIndex = 139;
+            this.txtTextOverlay_TXText.TextChanged += new System.EventHandler(this.txtTextOverlay_TXText_TextChanged);
+            // 
+            // labelTS203
+            // 
+            this.labelTS203.AutoSize = true;
+            this.labelTS203.Image = null;
+            this.labelTS203.Location = new System.Drawing.Point(5, 133);
+            this.labelTS203.Name = "labelTS203";
+            this.labelTS203.Size = new System.Drawing.Size(49, 13);
+            this.labelTS203.TabIndex = 138;
+            this.labelTS203.Text = "RX Text:";
+            // 
+            // btnTextOverlay_Font1
+            // 
+            this.btnTextOverlay_Font1.Image = null;
+            this.btnTextOverlay_Font1.Location = new System.Drawing.Point(53, 183);
+            this.btnTextOverlay_Font1.Name = "btnTextOverlay_Font1";
+            this.btnTextOverlay_Font1.Selectable = true;
+            this.btnTextOverlay_Font1.Size = new System.Drawing.Size(49, 23);
+            this.btnTextOverlay_Font1.TabIndex = 137;
+            this.btnTextOverlay_Font1.Text = "Font";
+            this.btnTextOverlay_Font1.UseVisualStyleBackColor = true;
+            this.btnTextOverlay_Font1.Click += new System.EventHandler(this.btnTextOverlay_Font1_Click);
+            // 
+            // txtTextOverlay_RXText
+            // 
+            this.txtTextOverlay_RXText.Location = new System.Drawing.Point(53, 130);
+            this.txtTextOverlay_RXText.Name = "txtTextOverlay_RXText";
+            this.txtTextOverlay_RXText.Size = new System.Drawing.Size(264, 20);
+            this.txtTextOverlay_RXText.TabIndex = 136;
+            this.txtTextOverlay_RXText.TextChanged += new System.EventHandler(this.txtTextOverlay_RXText_TextChanged);
+            // 
+            // chkTextOverlay_ShowPanel
+            // 
+            this.chkTextOverlay_ShowPanel.AutoSize = true;
+            this.chkTextOverlay_ShowPanel.Image = null;
+            this.chkTextOverlay_ShowPanel.Location = new System.Drawing.Point(18, 30);
+            this.chkTextOverlay_ShowPanel.Name = "chkTextOverlay_ShowPanel";
+            this.chkTextOverlay_ShowPanel.Size = new System.Drawing.Size(83, 17);
+            this.chkTextOverlay_ShowPanel.TabIndex = 135;
+            this.chkTextOverlay_ShowPanel.Text = "Show Panel";
+            this.chkTextOverlay_ShowPanel.UseVisualStyleBackColor = true;
+            this.chkTextOverlay_ShowPanel.CheckedChanged += new System.EventHandler(this.chkTextOverlay_ShowPanel_CheckedChanged);
+            // 
+            // lblTextOverlay_panelpadding
+            // 
+            this.lblTextOverlay_panelpadding.AutoSize = true;
+            this.lblTextOverlay_panelpadding.Image = null;
+            this.lblTextOverlay_panelpadding.Location = new System.Drawing.Point(39, 102);
+            this.lblTextOverlay_panelpadding.Name = "lblTextOverlay_panelpadding";
+            this.lblTextOverlay_panelpadding.Size = new System.Drawing.Size(79, 13);
+            this.lblTextOverlay_panelpadding.TabIndex = 131;
+            this.lblTextOverlay_panelpadding.Text = "Panel Padding:";
+            // 
+            // lblTextOverlay_panelbackground
+            // 
+            this.lblTextOverlay_panelbackground.AutoSize = true;
+            this.lblTextOverlay_panelbackground.Image = null;
+            this.lblTextOverlay_panelbackground.Location = new System.Drawing.Point(49, 50);
+            this.lblTextOverlay_panelbackground.Name = "lblTextOverlay_panelbackground";
+            this.lblTextOverlay_panelbackground.Size = new System.Drawing.Size(86, 13);
+            this.lblTextOverlay_panelbackground.TabIndex = 130;
+            this.lblTextOverlay_panelbackground.Text = "RX Background:";
+            // 
+            // chkTextOverlay_FadeOnTX
+            // 
+            this.chkTextOverlay_FadeOnTX.AutoSize = true;
+            this.chkTextOverlay_FadeOnTX.Image = null;
+            this.chkTextOverlay_FadeOnTX.Location = new System.Drawing.Point(219, 53);
+            this.chkTextOverlay_FadeOnTX.Name = "chkTextOverlay_FadeOnTX";
+            this.chkTextOverlay_FadeOnTX.Size = new System.Drawing.Size(82, 17);
+            this.chkTextOverlay_FadeOnTX.TabIndex = 3;
+            this.chkTextOverlay_FadeOnTX.Text = "Fade on TX";
+            this.chkTextOverlay_FadeOnTX.UseVisualStyleBackColor = true;
+            this.chkTextOverlay_FadeOnTX.CheckedChanged += new System.EventHandler(this.chkTextOverlay_FadeOnTX_CheckedChanged);
+            // 
+            // chkTextOverlay_FadeOnRX
+            // 
+            this.chkTextOverlay_FadeOnRX.AutoSize = true;
+            this.chkTextOverlay_FadeOnRX.Image = null;
+            this.chkTextOverlay_FadeOnRX.Location = new System.Drawing.Point(219, 30);
+            this.chkTextOverlay_FadeOnRX.Name = "chkTextOverlay_FadeOnRX";
+            this.chkTextOverlay_FadeOnRX.Size = new System.Drawing.Size(83, 17);
+            this.chkTextOverlay_FadeOnRX.TabIndex = 2;
+            this.chkTextOverlay_FadeOnRX.Text = "Fade on RX";
+            this.chkTextOverlay_FadeOnRX.UseVisualStyleBackColor = true;
+            this.chkTextOverlay_FadeOnRX.CheckedChanged += new System.EventHandler(this.chkTextOverlay_FadeOnRX_CheckedChanged);
+            // 
+            // pbTextOverlay_variables
+            // 
+            this.pbTextOverlay_variables.Image = ((System.Drawing.Image)(resources.GetObject("pbTextOverlay_variables.Image")));
+            this.pbTextOverlay_variables.Location = new System.Drawing.Point(297, 100);
+            this.pbTextOverlay_variables.Name = "pbTextOverlay_variables";
+            this.pbTextOverlay_variables.Size = new System.Drawing.Size(20, 20);
+            this.pbTextOverlay_variables.TabIndex = 164;
+            this.pbTextOverlay_variables.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbTextOverlay_variables, "Click for info");
+            this.pbTextOverlay_variables.Click += new System.EventHandler(this.pbTextOverlay_variables_Click);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(984, 961);
+            this.Controls.Add(this.grpTextOverlay);
             this.Controls.Add(this.labelTS198);
             this.Controls.Add(this.grpMeterItemSpacerSettings);
             this.Controls.Add(this.txtboxTXProfileChangedReport);
@@ -60281,6 +60868,11 @@
             this.grpMeterItemClockSettings.ResumeLayout(false);
             this.grpMeterItemClockSettings.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemSpacerPadding)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_PanelPadding)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_RXxOffset)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_RXyOffset)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXyOffset)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXxOffset)).EndInit();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();
@@ -60320,6 +60912,9 @@
             this.panelTS4.PerformLayout();
             this.grpMeterItemSpacerSettings.ResumeLayout(false);
             this.grpMeterItemSpacerSettings.PerformLayout();
+            this.grpTextOverlay.ResumeLayout(false);
+            this.grpTextOverlay.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -64028,5 +64623,41 @@
         private LabelTS labelTS198;
         private LabelTS labelTS199;
         private ColorButton clrbtnMeterItemHBackgroundSpacerTX;
+        private GroupBoxTS grpTextOverlay;
+        private ColorButton clrbtnTextOverlay_TextColour1;
+        private NumericUpDownTS nudTextOverlay_PanelPadding;
+        private LabelTS lblTextOverlay_panelpadding;
+        private LabelTS lblTextOverlay_panelbackground;
+        private ColorButton clrbtnTextOverlay_PanelBackground;
+        private CheckBoxTS chkTextOverlay_FadeOnTX;
+        private CheckBoxTS chkTextOverlay_FadeOnRX;
+        private LabelTS labelTS204;
+        private ButtonTS btnTextOverlay_Font2;
+        private TextBoxTS txtTextOverlay_TXText;
+        private LabelTS labelTS203;
+        private ButtonTS btnTextOverlay_Font1;
+        private TextBoxTS txtTextOverlay_RXText;
+        private CheckBoxTS chkTextOverlay_ShowPanel;
+        private ColorButton clrbtnTextOverlay_TextColour2;
+        private LabelTS labelTS207;
+        private LabelTS labelTS208;
+        private NumericUpDownTS nudTextOverlay_TXyOffset;
+        private LabelTS labelTS209;
+        private NumericUpDownTS nudTextOverlay_TXxOffset;
+        private LabelTS labelTS206;
+        private LabelTS labelTS200;
+        private NumericUpDownTS nudTextOverlay_RXyOffset;
+        private LabelTS labelTS205;
+        private NumericUpDownTS nudTextOverlay_RXxOffset;
+        private ButtonTS btnTextOverlay_copyoffsets;
+        private LabelTS lblTextOverlay_panelbackgroundTX;
+        private ColorButton clrbtnTextOverlay_PanelBackgroundTX;
+        private LabelTS labelTS202;
+        private LabelTS labelTS201;
+        private CheckBoxTS chkTextOverlay_textback2;
+        private CheckBoxTS chkTextOverlay_textback1;
+        private ColorButton clrbtnTextOverlay_TextBackColour2;
+        private ColorButton clrbtnTextOverlay_TextBackColour1;
+        private PictureBox pbTextOverlay_variables;
     }
 }
