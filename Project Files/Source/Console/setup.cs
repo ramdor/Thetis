@@ -981,6 +981,7 @@ namespace Thetis
             chkDisable6mLNAonTX_CheckedChanged(this, e);
             chkDisable6mLNAonRX_CheckedChanged(this, e);
             chkDisableHPFonTX_CheckedChanged(this, e);
+            chkDisableHPFonPS_CheckedChanged(this, e);
 
             chkLPFBypass_CheckedChanged(this, e);
 
@@ -2516,6 +2517,9 @@ namespace Thetis
             chkAutoPowerOn_CheckedChanged(this, e);
             nudPBsnrShiftRx1_ValueChanged(this, e);
             nudPBsnrShiftRx2_ValueChanged(this, e);
+
+            // auto start tab
+            updateAutoLaunchControls();
 
             //
             chkSWRProtection_CheckedChanged(this, e);
@@ -6045,6 +6049,8 @@ namespace Thetis
                 labelAlex1FilterHPF.Text = "BPF1";
                 chkAlexHPFBypass.Text = "ByPass/55 MHz BPF";
                 chkDisableHPFonTX.Text = "BPF ByPass on TX";
+                chkDisableHPFonPS.Text = "BPF ByPass on PS";
+                chkDisableHPFonPS.Visible = true;
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = true;
                 lblRx26mLNA.Visible = true;
@@ -6071,6 +6077,7 @@ namespace Thetis
                 labelAlex1FilterHPF.Text = "HPF";
                 chkAlexHPFBypass.Text = "ByPass/55 MHz HPF";
                 chkDisableHPFonTX.Text = "HPF ByPass on TX";
+                chkDisableHPFonPS.Visible = false;
                 panelAlexRXXVRTControl.Visible = true;
                 labelAlexFilterActive.Location = new Point(275, 0);
                 ud6mRx2LNAGainOffset.Visible = false;
@@ -6120,7 +6127,8 @@ namespace Thetis
                 chkAlexHPFBypass.Location = new Point(140, 185);
                 chkDisableHPFonTX.Parent = panelAlex1HPFControl;
                 chkDisableHPFonTX.Location = new Point(140, 213);
-
+                chkDisableHPFonPS.Parent = panelAlex1HPFControl;
+                chkDisableHPFonPS.Location = new Point(140, 241);
             }
 
             if (console.CurrentHPSDRModel == HPSDRModel.HERMES) tpPennyCtrl.Text = "Hermes Ctrl";
@@ -16446,7 +16454,10 @@ namespace Thetis
         {
             get { return chkDisableHPFonTX.Checked; }
         }
-
+        public bool ChkDisableHPFOnPs
+        {
+            get { return chkDisableHPFonPS.Checked; }
+        }
         public bool RadRX1ADC1
         {
             get { return radDDC0ADC0.Checked; }
@@ -20043,6 +20054,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
+                    chkDisableHPFonPS.Parent = panelBPFControl;
+                    chkDisableHPFonPS.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -20101,6 +20114,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
+                    chkDisableHPFonPS.Parent = panelBPFControl;
+                    chkDisableHPFonPS.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -20160,6 +20175,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
+                    chkDisableHPFonPS.Parent = panelBPFControl;
+                    chkDisableHPFonPS.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -20217,6 +20234,8 @@ namespace Thetis
                     chkAlexHPFBypass.Location = new Point(140, 185);
                     chkDisableHPFonTX.Parent = panelBPFControl;
                     chkDisableHPFonTX.Location = new Point(140, 213);
+                    chkDisableHPFonPS.Parent = panelBPFControl;
+                    chkDisableHPFonPS.Location = new Point(140, 241);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -28166,13 +28185,105 @@ namespace Thetis
 
         private void chkShowFormStartup_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             CheckBoxTS chk = sender as CheckBoxTS;
             if (chk == null) return;
 
             string id = chk.Name.Substring(chk.Name.IndexOf("_") + 1).ToLower();
 
             console.SetAutoFormStartSetting(id, chk.Checked);
-            Debug.Print(id);
+        }
+        public void UpdateAutoStartForms()
+        {
+            foreach(Control c in chkShowFormStartup_setup.Parent.Controls)
+            {
+                CheckBox cc = c as CheckBoxTS;
+                if(cc != null)
+                {
+                    string id = cc.Name.Substring(cc.Name.IndexOf("_") + 1).ToLower();
+                    cc.Checked = console.GetAutoFormStartSetting(id);
+                }
+            }
+        }
+
+        private void chkDisableHPFonPS_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.DisableHPFonPS = chkDisableHPFonPS.Checked;
+            if (console.path_Illustrator != null)
+                console.path_Illustrator.pi_Changed();
+        }
+
+        private void txtAutoLaunchFile_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAutoLaunchSelectFile_Click(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Executable files (*.exe)|*.exe|Batch files (*.cmd)|*.cmd|All files (*.*)|*.*";
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    ButtonTS bb = sender as ButtonTS;
+                    if (bb != null)
+                    {
+                        string id = bb.Name.Substring(bb.Name.IndexOf("_") + 1).ToLower();
+                        grpAutoLaunchFiles.Controls["txtAutoLaunchFile_" + id.ToString()].Text = openFileDialog.FileName;
+                    }
+                }
+            }
+        }
+
+        private void chkAutoLaunch_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            CheckBoxTS cc = sender as CheckBoxTS;
+            if (cc == null) return;
+            string id = cc.Name.Substring(cc.Name.IndexOf("_") + 1).ToLower();
+            //chkAutoLaunch_0
+            //txtAutoLaunchFile_0
+            //btnAutoLaunchSelectFile_0
+            grpAutoLaunchFiles.Controls["txtAutoLaunchFile_" + id.ToString()].Enabled = cc.Checked;
+            grpAutoLaunchFiles.Controls["btnAutoLaunchSelectFile_" + id.ToString()].Enabled = cc.Checked;
+        }
+        private void updateAutoLaunchControls()
+        {
+            bool old_init = initializing;
+            initializing = false; // need this as chkAutoLaunch_CheckedChanged is protected
+            for (int i = 0; i < 10; i++)
+            {
+                chkAutoLaunch_CheckedChanged(grpAutoLaunchFiles.Controls["chkAutoLaunch_" + i.ToString()], EventArgs.Empty);
+            }
+            initializing = old_init;
+        }
+        public string[] GetAutoLaunchFiles()
+        {
+            List<string> files = new List<string>();
+            for (int i = 0; i < 10; i++)
+            {
+                CheckBoxTS cc = grpAutoLaunchFiles.Controls["chkAutoLaunch_" + i.ToString()] as CheckBoxTS;
+                if (cc != null && cc.Checked)
+                {
+                    TextBoxTS ts = grpAutoLaunchFiles.Controls["txtAutoLaunchFile_" + i.ToString()] as TextBoxTS;
+                    if (ts != null)
+                    {
+                        files.Add(ts.Text);
+                    }
+                }
+            }
+            return files.ToArray();
+        }
+        public bool AutoLaunchNoStartIfRunning
+        {
+            get { return chkAutoLaunchNoStartIfRunning.Checked; }
+        }
+        public bool AutoLaunchTryToClose
+        {
+            get { return chkAutoLaunchTryToClose.Checked; }
         }
     }
 
