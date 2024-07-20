@@ -1075,7 +1075,10 @@ void WriteMainLoop_HL2(char* bufp)
 					((prn->mic.mic_ptt & 1) << 6);
 				C2 = (prn->mic.line_in_gain & 0b00011111) | ((prn->puresignal_run & 1) << 6);
 				C3 = prn->user_dig_out & 0b00001111;
-				C4 = (prn->adc[0].rx_step_attn & 0b00111111) | 0b01000000;	// Larger range for the HL2 attenuator 
+				if (XmitBit)
+					C4 = (prn->adc[0].tx_step_attn & 0b00111111) | 0b01000000;	// Larger range for the HL2 attenuator 
+				else
+					C4 = (prn->adc[0].rx_step_attn & 0b00111111) | 0b01000000;	// Larger range for the HL2 attenuator 
 				break;
 
 			case 12: // Step ATT control 0x0b
