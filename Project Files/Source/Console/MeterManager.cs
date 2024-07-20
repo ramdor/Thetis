@@ -834,6 +834,29 @@ namespace Thetis
                 return uc.MeterEnabled;
             }
         }
+        public static void ContainerNotes(string sId, string notes)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return;
+                if (!_lstUCMeters.ContainsKey(sId)) return;
+                if (!_DXrenderers.ContainsKey(sId)) return;
+
+                ucMeter uc = _lstUCMeters[sId];
+                uc.Notes = notes;
+            }
+        }
+        public static string GetContainerNotes(string sId)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return "";
+                if (!_lstUCMeters.ContainsKey(sId)) return "";
+
+                ucMeter uc = _lstUCMeters[sId];
+                return uc.Notes;
+            }
+        }
         public static void ContainerBackgroundColour(string sId, System.Drawing.Color c)
         {
             lock (_metersLock)
@@ -924,6 +947,7 @@ namespace Thetis
         {
             _rx1VHForAbove = _console.VFOAFreq >= _console.S9Frequency;
             _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= _console.S9Frequency;
+            zeroAllMeters();
         }
         public static void RefreshAllImages()
         {
@@ -3450,7 +3474,18 @@ namespace Thetis
                 if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
                     value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
-                    if (IsAboveS9Frequency(rx)) value -= 20;
+                    switch (ReadingSource)
+                    {
+                        case Reading.SIGNAL_STRENGTH:
+                        case Reading.AVG_SIGNAL_STRENGTH:
+                            {
+                                if (IsAboveS9Frequency(rx))
+                                    value = -153; //S0
+                                else
+                                    value = -133; //S0
+                            }
+                            break;
+                    }
                     return true;
                 }
                 value = 0;
@@ -3997,7 +4032,99 @@ namespace Thetis
                 if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
                     value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
-                    if (IsAboveS9Frequency(rx)) value -= 20;
+                    switch (ReadingSource)
+                    {
+                        case Reading.SIGNAL_STRENGTH:
+                        case Reading.AVG_SIGNAL_STRENGTH:
+                            {
+                                if (IsAboveS9Frequency(rx))
+                                    value = -153; //S0
+                                else
+                                    value = -133; //S0
+                            }
+                            break;
+                        case Reading.ADC_PK:
+                        case Reading.ADC_AV:
+                            {
+                                value = -120.0f;
+                            }
+                            break;
+                        case Reading.AGC_AV:
+                        case Reading.AGC_PK:
+                            value = -125.0f;
+                            break;
+                        case Reading.AGC_GAIN:
+                            {
+                                value = -50.0f;
+                            }
+                            break;
+                        case Reading.MIC:
+                        case Reading.MIC_PK:
+                            {
+                                value = -120.0f;
+                            }
+                            break;
+                        case Reading.LEVELER:
+                        case Reading.LEVELER_PK:
+                            {
+                                value = -30.0f;
+                            }
+                            break;
+                        case Reading.LVL_G:
+                            {
+                                value = 0f;
+                            }
+                            break;
+                        case Reading.ALC:
+                        case Reading.ALC_PK:
+                            {
+                                value = -120.0f;
+                            }
+                            break;
+                        case Reading.ALC_G: //alc comp
+                            {
+                                value = 0f;
+                            }
+                            break;
+                        case Reading.ALC_GROUP:
+                            {
+                                value = -30.0f;
+                            }
+                            break;
+                        case Reading.CFC_AV:
+                        case Reading.CFC_PK:
+                            {
+                                value = -30.0f;
+                            }
+                            break;
+                        case Reading.CFC_G:
+                            {
+                                value = 0f;
+                            }
+                            break;
+                        case Reading.COMP:
+                        case Reading.COMP_PK:
+                            {
+                                value = -30.0f;
+                            }
+                            break;
+                        case Reading.PWR:
+                        case Reading.REVERSE_PWR:
+                            {
+                                value = 0f;
+                            }
+                            break;
+                        case Reading.SWR:
+                            {
+                                value = 1.0f;
+                            }
+                            break;
+                        case Reading.ESTIMATED_PBSNR:
+                            {
+                                value = 0f;
+                            }
+                            break;
+                    }                    
                     return true;
                 }
                 value = 0;
@@ -4260,11 +4387,21 @@ namespace Thetis
             }
             public override bool ZeroOut(out float value, int rx)
             {
-                if (IsAboveS9Frequency(rx))
-                    value = -153; //S0
-                else
-                    value = -133; //S0
-                return true;
+                switch (ReadingSource)
+                {
+                    case Reading.SIGNAL_STRENGTH:
+                    case Reading.AVG_SIGNAL_STRENGTH:
+                        {
+                            if (IsAboveS9Frequency(rx))
+                                value = -153; //S0
+                            else
+                                value = -133; //S0
+                            return true;
+                        }
+                        break;
+                }
+                value = 0;
+                return false;
             }
         }
         internal class clsNeedleItem : clsMeterItem
@@ -4522,7 +4659,50 @@ namespace Thetis
                 if(_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
                     value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
-                    if (IsAboveS9Frequency(rx)) value -= 20;
+                    switch (ReadingSource)
+                    {
+                        case Reading.SIGNAL_STRENGTH:
+                        case Reading.AVG_SIGNAL_STRENGTH:
+                            {
+                                if (IsAboveS9Frequency(rx))
+                                    value = -153; //S0
+                                else
+                                    value = -133; //S0
+
+                            }
+                            break;
+                        case Reading.PWR:
+                        case Reading.REVERSE_PWR:
+                            {
+                                value = 0f;
+                            }
+                            break;
+                        case Reading.VOLTS:
+                            {
+                                value = 10f;
+                            }
+                            break;
+                        case Reading.AMPS:
+                            {
+                                value = 10f;
+                            }
+                            break;
+                        case Reading.SWR:
+                            {
+                                value = 1.0f;
+                            }
+                            break;
+                        case Reading.ALC_G: //alc comp
+                            {
+                                value = 0f;
+                            }
+                            break;
+                        case Reading.ALC_GROUP:
+                            {
+                                value = -30.0f;
+                            }
+                            break;
+                    }
                     return true;
                 }
                 value = 0;
@@ -6993,11 +7173,13 @@ namespace Thetis
 
                         if (bOk)
                         {
-                            //[2.10.1.0] MW0LGE only want to do this if value is lower than current reading
+                            // //[2.10.1.0] MW0LGE only want to do this if value is lower than current reading
                             float reading = getReading(RX, mi.ReadingSource);
-                            bool bUpdate = (value < reading) || (reading == -200f); // -220f is init or no value state
-                            if (bRxReadings && bUpdate) setReadingForced(RX, mi.ReadingSource, value);
-                            if (bTxReadings && bUpdate) setReadingForced(RX, mi.ReadingSource, value);
+                            //bool bUpdate = (value < reading) || (reading == -200f); // -200f is init or no value state
+                            //if (bUpdate)
+                            //{
+                                if(bRxReadings || bTxReadings) setReadingForced(RX, mi.ReadingSource, value);
+                            //}
                         }
                     }
                 }

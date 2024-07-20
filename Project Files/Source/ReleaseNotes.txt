@@ -13,7 +13,9 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] 8 diversity memories. shift click to store, ctrl click to clear (github #263)
 - [add] zzxa cat command to get/set audio amplifier (rear speaker sockets). zzxa1; to enable, zzxa0; to disable (github #308)
 - [add] midi button command to toggle audio amplifier (rear speaker sockets) (github #308)
+- [add] notes field in multimeter container. They are also used in the titlebar of the containers (github #104)
 - [fix] decouple of the rx1/rx2 attenuator preamp/s-att boxes from tx-att. New tx-att control, and bg colour settings in appearance (github #399)
+- [fix] multimeters would sometimes not bottom to low values out when power off, and other rare occurrences. Now resolved
 - [change] simplification improvements to db import
 
 ## v2.10.3.6 Change Log - WIP dev_4
