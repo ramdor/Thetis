@@ -49489,10 +49489,11 @@ namespace Thetis
                                 string extension = Path.GetExtension(fileOnly).ToLower();
                                 if (extension == ".exe" || extension == ".cmd" || extension == ".bat")
                                 {
+                                    ProcessWindowStyle pws = extension == ".exe" ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden;
                                     ProcessStartInfo startInfo = new ProcessStartInfo(fileOnly)
                                     {
                                         //LoadUserProfile = true,
-                                        WindowStyle = ProcessWindowStyle.Hidden,
+                                        WindowStyle = pws,
                                         UseShellExecute = true,
                                         CreateNoWindow = true,
                                         Arguments = arguments,
