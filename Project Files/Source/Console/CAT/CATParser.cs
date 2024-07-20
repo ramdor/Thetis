@@ -1531,6 +1531,9 @@ namespace Thetis
                 case "ZZZO":
                     rtncmd = cmdlist.ZZZO(suffix);
                     break;
+                case "ZZXA":
+                    rtncmd = cmdlist.ZZXA(suffix);
+                    break;
             }
             if (!rtncmd.Contains(Error1))
             //rtncmd != Error1 && rtncmd != Error2 && rtncmd != Error3)

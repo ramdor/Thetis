@@ -27054,7 +27054,7 @@ namespace Thetis
                 if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
                 else NetworkIO.SetTxAttenData(0);
 
-                enableAudioAmplfier(_bEnableAudioAmplifier); // MW0LGE_22b
+                enableAudioAmplfier(); // MW0LGE_22b
 
                 if (!Audio.Start())   // starts JanusAudio running
                 {
@@ -47793,12 +47793,14 @@ namespace Thetis
             set
             {
                 _bEnableAudioAmplifier = value;
-                enableAudioAmplfier(_bEnableAudioAmplifier);
+                if (!IsSetupFormNull)
+                    SetupForm.DisableAudioAmplifier = !_bEnableAudioAmplifier;
+                enableAudioAmplfier();
             }
         }
-        private void enableAudioAmplfier(bool bEnable)
+        private void enableAudioAmplfier()
         {
-            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH &&
+            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH && //only protocol 2
                 (CurrentHPSDRModel == HPSDRModel.ANAN7000D || CurrentHPSDRModel == HPSDRModel.ANAN8000D
                 || CurrentHPSDRModel == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K))
             {
