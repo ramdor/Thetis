@@ -10383,16 +10383,21 @@ namespace Thetis
                 if (!initializing)
                 {
                     setTXstepAttenuatorForBand(tx_band, tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes #399
-
-                    if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 LNA has wider range
+                    if (m_bAttontx)
                     {
-                        if (m_bAttontx) NetworkIO.SetTxAttenData(32 - getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
-                        else NetworkIO.SetTxAttenData(0);
+                        int txatt = getTXstepAttenuatorForBand(tx_band);
+                        
+                        if (current_hpsdr_model == HPSDRModel.HERMESLITE) 
+                           NetworkIO.SetTxAttenData(32 - txatt); // MI0BOT: Greater range for HL2
+                        else
+                           NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
+                        
+                        Display.TXAttenuatorOffset = txatt; //[2.10.3.6]MW0LGE att_fixes
                     }
                     else
                     {
-                        if (m_bAttontx) NetworkIO.SetTxAttenData(32 - getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
-                        else NetworkIO.SetTxAttenData(0);
+                        NetworkIO.SetTxAttenData(0);
+                        Display.TXAttenuatorOffset = 0;
                     }
 
                     //if (m_bAttontx && _mox) //[2.10.3.6]MW0LGE att_fixes
@@ -18684,15 +18689,22 @@ namespace Thetis
 
                 if (PowerOn)
                 {
-                    if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 LNA has wider range
+                    if (m_bAttontx)
                     {
-                        if (m_bAttontx) NetworkIO.SetTxAttenData(32 - getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
-                        else NetworkIO.SetTxAttenData(0);
+                        int txatt = getTXstepAttenuatorForBand(tx_band);
+                        
+                        if (current_hpsdr_model == HPSDRModel.HERMESLITE) 
+                           NetworkIO.SetTxAttenData(32 - txatt); // MI0BOT: Greater range for HL2
+                        else
+                           NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
+
+                        Display.TXAttenuatorOffset = txatt; //[2.10.3.6]MW0LGE att_fixes
                     }
                     else
                     {
-                        if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
-                        else NetworkIO.SetTxAttenData(0);
+                        NetworkIO.SetTxAttenData(0);
+                        Display.TXAttenuatorOffset = 0;
+                    }
                     }
                 }
             }
@@ -27113,17 +27125,22 @@ namespace Thetis
                 Thread.Sleep(100); // wait for hardware to settle before starting audio (possible sample rate change)
                 psform.ForcePS();
 
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 LNA has wider range
+                if (m_bAttontx)
                 {
-                    if (m_bAttontx) NetworkIO.SetTxAttenData(32 - getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
-                    else NetworkIO.SetTxAttenData(0);
+                    int txatt = getTXstepAttenuatorForBand(tx_band);
+                    
+                    if (current_hpsdr_model == HPSDRModel.HERMESLITE) 
+                       NetworkIO.SetTxAttenData(32 - txatt); //MI0BOT: Greater range for HL2
+                    else
+                       NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
+
+                    Display.TXAttenuatorOffset = txatt;
                 }
                 else
                 {
-                    if (m_bAttontx) NetworkIO.SetTxAttenData(getTXstepAttenuatorForBand(tx_band)); //[2.10.3.6]MW0LGE att_fixes
-                    else NetworkIO.SetTxAttenData(0);
+                    NetworkIO.SetTxAttenData(0);
+                    Display.TXAttenuatorOffset = 0;
                 }
-
 
 
                 enableAudioAmplfier(); // MW0LGE_22b
@@ -29417,7 +29434,7 @@ namespace Thetis
                                          radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) txAtt = 31; // reset when PS is OFF or in CW mode
 
                         SetupForm.ATTOnRX1 = getRX1stepAttenuatorForBand(rx1_band); //[2.10.3.6]MW0LGE att_fixes
-                        SetupForm.ATTOnTX = txAtt; //[2.10.3.6]MW0LGE att_fixes
+                        SetupForm.ATTOnTX = txAtt; //[2.10.3.6]MW0LGE att_fixes NOTE: this will eventually call Display.TXAttenuatorOffset with the value
 
                         if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 LNA has wider range
                         {
@@ -29435,7 +29452,11 @@ namespace Thetis
                         updateAttNudsCombos();
                     }
                 }
-                else NetworkIO.SetTxAttenData(0);
+                else
+                {
+                    NetworkIO.SetTxAttenData(0);
+                    Display.TXAttenuatorOffset = 0; //[2.10.3.6]MW0LGE att_fixes
+                }
 
                 UpdateAAudioMixerStates();
                 UpdateDDCs(rx2_enabled);
@@ -29517,7 +29538,11 @@ namespace Thetis
                         UpdatePreamps();
                     }
                 }
-                else NetworkIO.SetTxAttenData(0);
+                else
+                {
+                    NetworkIO.SetTxAttenData(0);
+                    Display.TXAttenuatorOffset = 0; //[2.10.3.6]MW0LGE att_fixes
+                }
             }
 
             if (!tx)
@@ -49275,7 +49300,9 @@ namespace Thetis
         private void udTXStepAttData_ValueChanged(object sender, EventArgs e)
         {
             //always update it
-            SetupForm.ATTOnTX = (int)udTXStepAttData.Value;
+            SetupForm.ATTOnTX = (int)udTXStepAttData.Value;            
+            UpdateRX1DisplayOffsets();
+            UpdateRX2DisplayOffsets();
         }
 
         private double _s9Frequency = 30.0;

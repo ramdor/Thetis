@@ -3682,7 +3682,7 @@ namespace Thetis
                     if (udATTOnTX.Value == value) //[2.10.3.6]MW0LGE no event will fire if the same, so force it
                         udATTOnTX_ValueChanged(this, EventArgs.Empty);
                     else
-                        udATTOnTX.Value = value;
+                        udATTOnTX.Value = value;                    
                 }
             }
         }

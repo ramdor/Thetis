@@ -974,7 +974,7 @@ namespace Thetis
             _alexPresent = _console.AlexPresent;
             _paPresent = _console.PAPresent;
             _transverterIndex = _console.TXXVTRIndex;
-
+            
             addDelegates();
 
             _meterThread = new Thread(new ThreadStart(UpdateMeters))
@@ -1828,6 +1828,7 @@ namespace Thetis
 
             if (_lstUCMeters == null || _lstUCMeters.Count == 0) return;
 
+            initAllConsoleData(); //[2.10.3.6]MW0LGE get all console info here, as everything will be at the correct state
             zeroAllMeters();
 
             lock (_metersLock)
@@ -3596,8 +3597,8 @@ namespace Thetis
             private System.Drawing.Color _panel_back_colour2;
             private string _text_1;
             private string _text_2;
-            private int _newlines_1;
-            private int _newlines_2;
+            //private int _newlines_1;
+            //private int _newlines_2;
             private bool _show_text_back_colour1;
             private bool _show_text_back_colour2;
             private bool _show_back_panel;
@@ -3696,14 +3697,14 @@ namespace Thetis
                     addReadings(_text_2);
                 }
             }
-            public int NewLines1
-            {
-                get { return _newlines_1; }
-            }
-            public int NewLines2
-            {
-                get { return _newlines_2; }
-            }
+            //public int NewLines1
+            //{
+            //    get { return _newlines_1; }
+            //}
+            //public int NewLines2
+            //{
+            //    get { return _newlines_2; }
+            //}
             public bool ShowTextBackColour1
             {
                 get { return _show_text_back_colour1; }
@@ -3838,13 +3839,22 @@ namespace Thetis
                             _readings_text_strings[key] = now.ToString("ddd d MMM yyyy");
                             break;
                         case "vfoa":
-                            _readings_text_strings[key] = formatNumber(_owningMeter.VfoA);
+                            if (rx == 1)
+                                _readings_text_strings[key] = formatNumber(_owningMeter.VfoA);
+                            else
+                                _readings_text_strings[key] = "";
                             break;
                         case "vfob":
-                            _readings_text_strings[key] = formatNumber(_owningMeter.VfoB);
+                            if (_owningMeter.RX2Enabled && rx == 1)
+                                _readings_text_strings[key] = ""; //formatNumber(0);
+                            else
+                                _readings_text_strings[key] = formatNumber(_owningMeter.VfoB);
                             break;
                         case "vfoasub":
-                            _readings_text_strings[key] = formatNumber(_owningMeter.VfoSub);
+                            if (_owningMeter.VfoSub >= 0 && rx == 1 && _owningMeter.RX2Enabled && _owningMeter.Split) // when -999.999
+                                _readings_text_strings[key] = formatNumber(_owningMeter.VfoSub);
+                            else
+                                _readings_text_strings[key] = "";
                             break;
                         case "band_vfoa":
                             _readings_text_strings[key] = BandStackManager.BandToString(_owningMeter.BandVfoA).ToLower();
@@ -3947,7 +3957,7 @@ namespace Thetis
                         sTmp = sTmp.Replace("%" + reading.Key + "%", reading.Value);
                     }
                     sTmp = sTmp.Replace("%nl%", "\n");
-                    _newlines_1 = sTmp.Count(c => c == '\n');
+                    //_newlines_1 = sTmp.Count(c => c == '\n');
                     return sTmp;
                 }
             }
@@ -3966,7 +3976,7 @@ namespace Thetis
                         sTmp = sTmp.Replace("%" + reading.Key + "%", reading.Value);
                     }
                     sTmp = sTmp.Replace("%nl%", "\n");
-                    _newlines_2 = sTmp.Count(c => c == '\n');
+                    //_newlines_2 = sTmp.Count(c => c == '\n');
                     return sTmp;
                 }
             }
@@ -9306,12 +9316,16 @@ namespace Thetis
             {
                 get { return _mox; }
                 set 
-                { 
+                {
+                    bool changed = _mox != value;
                     _mox = value;
-                    if (_mox) 
-                        _qso_start = DateTime.Now;
-                    else
-                        _qso_end = DateTime.Now;
+                    if (changed)
+                    {
+                        if (_mox)
+                            _qso_start = DateTime.Now;
+                        else
+                            _qso_end = DateTime.Now;
+                    }
                 }
             }
             public long QsoDurationSeconds
@@ -10710,8 +10724,8 @@ namespace Thetis
                 SizeF size = new SizeF(width, height);
 
                 //why these fudge factors? not sure, is it a font proportion issue?
-                size.Width *= 1.338f;
-                size.Height *= 1.1f;
+                size.Width *= 1.333333333f;//1.338f
+                size.Height *= 1.333333333f;//1.1f;
 
                 bool bAdd = true;
                 if (ignore_caching)
@@ -11577,6 +11591,7 @@ namespace Thetis
                     string displayText = m.MOX ? text_overlay.ParsedText2 : text_overlay.ParsedText1;
                     string fontFamily = m.MOX ? text_overlay.FontFamily2 : text_overlay.FontFamily1;
                     float fontSize = m.MOX ? text_overlay.FontSize2 : text_overlay.FontSize1;
+                    fontSize *= 2.1f; // when a container is added, and not resized, 72 point font needs this fudge to get it to be 72 point
                     FontStyle fontStyle = m.MOX ? text_overlay.Style2 : text_overlay.Style1;
 
                     // Calculate the text position
@@ -11591,8 +11606,8 @@ namespace Thetis
                         if (!m.MOX && text_overlay.IgnoreMeasureCache1) text_overlay.IgnoreMeasureCache1 = false;
                         if (m.MOX && text_overlay.IgnoreMeasureCache2) text_overlay.IgnoreMeasureCache2 = false;
 
-                        textSize.Height += (m.MOX ? text_overlay.NewLines2 : text_overlay.NewLines1) * ((0.0245f * (fontSize / 72.0f)) * (targetWidth * m.YRatio));
-                        textSize.Height += 0.008f * (targetWidth * m.YRatio);
+                        //textSize.Height += (m.MOX ? text_overlay.NewLines2 : text_overlay.NewLines1) * ((0.0245f * (fontSize / 72.0f)) * (targetWidth * m.YRatio));
+                        //textSize.Height += 0.06f * (targetWidth * m.YRatio);
 
                         // Draw the background rectangle for the text
                         SharpDX.RectangleF textBackgroundRect = new SharpDX.RectangleF(textX, textY, textSize.Width, textSize.Height);
