@@ -230,22 +230,32 @@ namespace Thetis
             return;
         }
 
-
+        private int _old_rit = -100;
         public void RIT(int msg, MidiDevice device)
         {
             parser.nSet = 5;
             parser.nGet = 0;
 
-            if ((msg < 64) & (msg >= 0))
+            //if ((msg < 64) & (msg >= 0))
+            //{
+            //    int RITValue = (-1280 + (msg * 20));
+            //    commands.ZZRF(RITValue.ToString("0000"));
+            //}
+            //if ((msg >= 64) & (msg <= 127))
+            //{
+            //    int RITValue = ((msg - 64) * 20);
+            //    commands.ZZRF("+" + RITValue.ToString("0000"));
+            //}
+
+            //[2.10.3.6]MW0GE reimplemented
+            int mid = -64 + msg;
+            int rit = mid * (Common.ShiftKeyDown ? 4 : 20);
+            if (rit != _old_rit)
             {
-                int RITValue = (-1280 + (msg * 20));
-                commands.ZZRF(RITValue.ToString("0000"));
+                commands.ZZRF((rit >= 0 ? "+" : "") + rit.ToString("0000"));
+                _old_rit = rit;
             }
-            if ((msg >= 64) & (msg <= 127))
-            {
-                int RITValue = ((msg - 64) * 20);
-                commands.ZZRF("+" + RITValue.ToString("0000"));
-            }
+
             return;
         }
 
@@ -2843,6 +2853,7 @@ namespace Thetis
             }
         }
 
+        private int _old_mic_gain = -100;
         public void MicGain(int msg, MidiDevice device)
         {
             parser.nGet = 0;
@@ -2851,10 +2862,19 @@ namespace Thetis
 
             try
             {
-                double micgain = (msg / 1.82);
-                string a = micgain.ToString("000");
-                commands.ZZMG(micgain.ToString("000"));
-
+                //[2.10.3.6]MW0LGE changed
+                int min = console.MicGainMin;  //values in ZZMG cap to -50 and 70
+                int max = console.MicGainMax;
+                int range = max - min;
+                float ratio = msg / 127f;
+                int micgain = min + (int)(range * ratio);
+                if(micgain != _old_mic_gain)
+                {                    
+                    commands.ZZMG(micgain.ToString("000"));
+                    _old_mic_gain = micgain;
+                }                
+                //double micgain = (msg / 1.82);
+                //string a = micgain.ToString("000");
             }
             catch
             {
@@ -2878,7 +2898,7 @@ namespace Thetis
                 return;
             }
         }
-
+        private int _old_cpdr_level = -100;
         public void CPDRLevel(int msg, MidiDevice device)
         {
             parser.nSet = 0;
@@ -2886,13 +2906,21 @@ namespace Thetis
 
             try
             {
-                double cpdr = msg * 0.078;
-                commands.ZZCT(cpdr.ToString("00"));
-                return;
+                //[2.10.3.6]MW0LGE seriously 0.078?????? crazy
+                //double cpdr = msg * 0.078;
+                int min = console.CPDRMin;
+                int max = console.CPDRMax;
+                int range = max - min;
+                float ratio = msg / 127f;
+                int cpdr = min + (int)(range * ratio);
+                if (cpdr != _old_cpdr_level)
+                {
+                    commands.ZZCT(cpdr.ToString("00"));
+                    _old_cpdr_level = cpdr;
+                }
             }
             catch
             {
-                return;
             }
         }
 

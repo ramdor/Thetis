@@ -1871,7 +1871,7 @@ namespace Thetis
 
             // ***** THIS IS WHERE SETUP FORM IS CREATED
             _onlyOneSetupInstance = true; // make sure that we limit to one instance
-            SetupForm.StartPosition = FormStartPosition.Manual; // first use of singleton will create Setup form       INIT_SLOW
+            SetupForm.StartPosition = FormStartPosition.Manual; // *********** IMPORTANT   first use of singleton will create Setup form       INIT_SLOW
             _onlyOneSetupInstance = false;
 
             BuildTXProfileCombos(); // MW0LGE_21k9rc4b build them, so that GetState can apply the combobox text
@@ -12565,19 +12565,21 @@ namespace Thetis
             }
         }
 
-        public int CPDRVal
-        {
-            get
-            {
-                if (ptbCPDR != null) return ptbCPDR.Value;
-                else return -1;
-            }
-            set
-            {
-                if (ptbCPDR != null) ptbCPDR.Value = value;
-                ptbCPDR_Scroll(this, EventArgs.Empty);
-            }
-        }
+        //[2.10.3.6]MW0LGE who codes this junk. check for null, but dont bother looking in ptbCPDR_Scroll to see if it is done
+        //commenting as a dupe of existing code
+        //public int CPDRVal
+        //{
+        //    get
+        //    {
+        //        if (ptbCPDR != null) return ptbCPDR.Value;
+        //        else return -1;
+        //    }
+        //    set
+        //    {
+        //        if (ptbCPDR != null) ptbCPDR.Value = value;
+        //        ptbCPDR_Scroll(this, EventArgs.Empty);
+        //    }
+        //}
 
         public int NoiseGate
         {
@@ -15380,13 +15382,24 @@ namespace Thetis
                 chkCPDR.Checked = value;
             }
         }
-
+        public int CPDRMin
+        {
+            get { return ptbCPDR != null ? ptbCPDR.Minimum : 0; }
+        }
+        public int CPDRMax
+        {
+            get { return ptbCPDR != null ? ptbCPDR.Maximum : 0; }
+        }
         public int CPDRLevel
         {
-            get { return ptbCPDR.Value; }
+            get 
+            {
+                if (ptbCPDR == null) return -1;
+                return ptbCPDR.Value; 
+            }
             set
             {
-                if (IsSetupFormNull) return;
+                if (ptbCPDR == null) return;
                 ptbCPDR.Value = value;
                 ptbCPDR_Scroll(this, EventArgs.Empty);
             }

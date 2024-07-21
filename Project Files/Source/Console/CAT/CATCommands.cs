@@ -1891,18 +1891,18 @@ namespace Thetis
 
 			if(s != null && s != "")
 				n = Convert.ToInt32(s);
-			n = Math.Max(0, n);
-			n = Math.Min(20, n);
+			n = Math.Max(console.CPDRMin, n); //[2.10.3.6]MW0LGE was 0
+			n = Math.Min(console.CPDRMax, n); //was 20
 
-			if(s.Length == parser.nSet)
+            if (s.Length == parser.nSet)
 			{
-				console.CPDRVal = n;
+				console.CPDRLevel = n;
                 console.TitleBarEncoderString = "Comp Threshold = " + n + "dB";
 				return "";
 			}
 			else if(s.Length == parser.nGet)
 			{
-				return AddLeadingZeros((int) console.CPDRVal);
+				return AddLeadingZeros((int) console.CPDRLevel);
 			}
 			else
 			{
@@ -4102,7 +4102,7 @@ namespace Thetis
 				n = Math.Max(-50,n);
 			}
 
-			if(s.Length == parser.nSet)
+			if(s.Length == parser.nSet || s.Length == parser.nSet + 1) //[2.10.3.6]MW0LGE can also have -. Could have changed catsructs but not sure on cat msg formats from other sources other than midi so left with the +1
 			{
 				console.CATMIC = n;
                 console.TitleBarEncoderString = "Mic Gain = " + console.CATMIC + "dB";

@@ -2573,10 +2573,10 @@ namespace Thetis
                     break;
 
                 case EEncoderActions.eENCompanderThreshold:
-                    Value = CPDRVal;
+                    Value = CPDRLevel;
                     EncoderUpdate(Steps, ref Value, ptbCPDR.Minimum, ptbCPDR.Maximum);
                     ShowAndromedaSlider(Value, ptbCPDR.Minimum, ptbCPDR.Maximum, "COMP level");
-                    CPDRVal = Value;
+                    CPDRLevel = Value;
                     break;
 
                 // RIT - change in steps of 10Hz
