@@ -41,6 +41,7 @@ using System.Text.RegularExpressions;
 using System.Security.Principal;
 using System.Globalization;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace Thetis
 {
@@ -1151,6 +1152,30 @@ namespace Thetis
             n |= n >> 8;
             n |= n >> 16;
             return n - (n >> 1);
+        }
+
+        public static bool IsIpv4Valid(string ip, int port)
+        {
+            IPAddress address;
+            if (!IPAddress.TryParse(ip, out address))
+            {
+                return false; // IP address format is not valid
+            }
+            // Ensure the address is an IPv4 address
+            if (address.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork)
+            {
+                return false; // Not an IPv4 address
+            }
+            if (port < 1 || port > 65535)
+            {
+                return false; // Port number is out of range
+            }
+
+			// Check if x.x.x.x format, where x can be 0>255
+            string pattern = @"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+			if (!Regex.IsMatch(ip, pattern)) return false;
+
+            return true; // IP and port are valid
         }
     }
 }

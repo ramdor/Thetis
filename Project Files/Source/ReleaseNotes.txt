@@ -8,6 +8,9 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] MultiMeterIO - get external data - use it in the MultiMeter system. Watch video :
 - [change] can now have 20 multimeter containers
 - [change] multimeter meter items are not limited. You can have unlimited in use at a time in a single container
+- [change] midi micgain now is full range -40 to 10 (default mic gain)
+- [change] midi comp is now full range 0-20
+- [change] midi rit know, hold shift when turning for smaller change ~ -250 to 250
 
 ## v2.10.3.6 Change Log - WIP dev_6b
 - [fix] fixed issue with %vfoasub% showing at incorrect states
