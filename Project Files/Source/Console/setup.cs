@@ -35,6 +35,7 @@ namespace Thetis
 {
     using System;
     using System.Collections;
+    using System.Collections.Concurrent;
     using System.Data;
     using System.Diagnostics;
     using System.Drawing;
@@ -50,7 +51,8 @@ namespace Thetis
     using Ionic.Zip;
     using System.Drawing.Text;
     using System.Diagnostics.Eventing.Reader;
-
+    using System.Timers;
+    using System.Runtime.InteropServices;
     public partial class Setup : Form
     {
         private const string s_DEFAULT_GRADIENT = "9|1|0.000|-1509884160|1|0.339|-1493237760|1|0.234|-1509884160|1|0.294|-1493211648|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1493237760|";
@@ -89,7 +91,7 @@ namespace Thetis
         {
             Splash.SetStatus("Setting up controls");
 
-            ThetisSkinService.Version = console.ProductVersion;            
+            ThetisSkinService.Version = console.ProductVersion;
 
             addDelegates();
 
@@ -662,7 +664,7 @@ namespace Thetis
         }
         private void OnTXInhibit(bool oldState, bool newState)
         {
-            if(TestIMD && newState) TestIMD = false; // return button state etc
+            if (TestIMD && newState) TestIMD = false; // return button state etc
 
             chkTestIMD.Enabled = !newState;
         }
@@ -1169,7 +1171,7 @@ namespace Thetis
             ArrayList a = Audio.GetPAInputDevices(host);
             foreach (PADeviceInfo p in a)
                 comboAudioInput2.Items.Add(p);
-            
+
             a = Audio.GetPAOutputDevices(host);
             foreach (PADeviceInfo p in a)
                 comboAudioOutput2.Items.Add(p);
@@ -1295,7 +1297,7 @@ namespace Thetis
             toRemove.Add("txtVAC2OldVarOut");
 
             // multimeter
-            foreach(Control c in grpMultiMeterHolder.Controls)
+            foreach (Control c in grpMultiMeterHolder.Controls)
             {
                 toRemove.Add(c.Name);
             }
@@ -1521,6 +1523,8 @@ namespace Thetis
                                     MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
             //
+            a.Add("multimeter_io", MultiMeterIO.GetSaveData());
+            //
 
             // remove any outdated options from the DB MW0LGE_22b
             removeOutdatedOptions();
@@ -1573,7 +1577,7 @@ namespace Thetis
                         radRadioProtocol2Select.Checked = true;
                         break;
                 }
-               
+
                 _oldSettings.Add("chkRadioProtocolSelect_checkstate");
             }
 
@@ -1781,6 +1785,23 @@ namespace Thetis
                 {
                     MessageBox.Show("There was an issue restoring the settings for MultiMeter. Please remove all meters, re-add, and restart Thetis.", "MultiMeter RestoreSettings",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
+
+                if (a.ContainsKey("multimeter_io"))
+                {
+                    bool ok = false;
+                    try
+                    {
+                        ok = MultiMeterIO.RestoreSaveData(a["multimeter_io"]);
+                    }
+                    catch
+                    {
+                    }
+                    if (!ok)
+                    {
+                        MessageBox.Show("There was an issue restoring the settings for MultiMeterIO. Existing settings will be lost.", "MultiMeterIO RestoreSaveData",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    }
                 }
             }
             //
@@ -2399,6 +2420,9 @@ namespace Thetis
             chkJoinBandEdges_CheckedChanged(this, e);
 
             clrbtnTXAttenuationBackground_Changed(this, e);
+
+            lstMetersInUse_SelectedIndexChanged(this, e);
+            lstMMIO_network_list_SelectedIndexChanged(this, e);
             //
 
             // RX2 tab
@@ -2425,7 +2449,7 @@ namespace Thetis
             radDSPRX1APFControls_CheckedChanged(this, e);
             radDSPRX1subAPFControls_CheckedChanged(this, e);
             radDSPRX2APFControls_CheckedChanged(this, e);
-            
+
             // dolly filter
             chkDSPRX1DollyEnable_CheckedChanged(this, e);
             chkDSPRX1DollySubEnable_CheckedChanged(this, e);
@@ -2548,6 +2572,9 @@ namespace Thetis
             //
             chkSWRProtection_CheckedChanged(this, e);
             chkSWRTuneProtection_CheckedChanged(this, e);
+
+            //multimeter io tab
+            init_lstMMIO();
         }
 
         public string[] GetTXProfileStrings()
@@ -2810,7 +2837,7 @@ namespace Thetis
                 if (isTXProfileSettingDifferent<bool>(dr, "CFCEnabled", chkCFCEnable.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "CFCPostEqEnabled", chkCFCPeqEnable.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "CFCPhaseRotatorEnabled", chkPHROTEnable.Checked, out sReportOut)) sReport += sReportOut;
-                if (isTXProfileSettingDifferent<bool>(dr, "CFCPhaseReverseEnabled", chkPHROTReverse.Checked, out sReportOut)) sReport += sReportOut;                
+                if (isTXProfileSettingDifferent<bool>(dr, "CFCPhaseReverseEnabled", chkPHROTReverse.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<int>(dr, "CFCPhaseRotatorFreq", (int)udPhRotFreq.Value, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<int>(dr, "CFCPhaseRotatorStages", (int)udPHROTStages.Value, out sReportOut)) sReport += sReportOut;
                 int[] cfceq = CFCCOMPEQ;
@@ -2822,7 +2849,7 @@ namespace Thetis
                     if (isTXProfileSettingDifferent<int>(dr, "CFCPostEqGain" + (i - 12).ToString(), cfceq[i], out sReportOut)) sReport += sReportOut;
                 for (int i = 22; i < 32; i++)
                     if (isTXProfileSettingDifferent<int>(dr, "CFCEqFreq" + (i - 22).ToString(), cfceq[i], out sReportOut)) sReport += sReportOut;
-            }      
+            }
 
             return sReport;
         }
@@ -3020,7 +3047,7 @@ namespace Thetis
                 if (DB.ConvertFromDBVal<bool>(dr["CFCEnabled"]) != chkCFCEnable.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["CFCPostEqEnabled"]) != chkCFCPeqEnable.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["CFCPhaseRotatorEnabled"]) != chkPHROTEnable.Checked) return true;
-                if (DB.ConvertFromDBVal<bool>(dr["CFCPhaseReverseEnabled"]) != chkPHROTReverse.Checked) return true;                
+                if (DB.ConvertFromDBVal<bool>(dr["CFCPhaseReverseEnabled"]) != chkPHROTReverse.Checked) return true;
                 if (DB.ConvertFromDBVal<int>(dr["CFCPhaseRotatorFreq"]) != (int)udPhRotFreq.Value) return true;
                 if (DB.ConvertFromDBVal<int>(dr["CFCPhaseRotatorStages"]) != (int)udPHROTStages.Value) return true;
                 int[] cfceq = CFCCOMPEQ;
@@ -3036,7 +3063,7 @@ namespace Thetis
 
             return false;
         }
- 
+
         private void highlightTXProfileSaveItems(bool bHighlight)
         {
             if (initializing) return;
@@ -3368,7 +3395,7 @@ namespace Thetis
             dr["FM_RX_AFFilter_Low"] = (decimal)udFMLowCutRX.Value;
             dr["FM_RX_AFFilter_High"] = (decimal)udFMHighCutRX.Value;
             dr["FM_TX_AFFilter_Low"] = (decimal)udFMLowCutTX.Value;
-            dr["FM_TX_AFFilter_High"] = (decimal)udFMHighCutTX.Value; 
+            dr["FM_TX_AFFilter_High"] = (decimal)udFMHighCutTX.Value;
             dr["VAC1_Force_In"] = (bool)chkVAC1_Force2.Checked;  // note in is force2, and out is force
             dr["VAC1_Force_Out"] = (bool)chkVAC1_Force.Checked;
             dr["VAC2_Force_In"] = (bool)chkVAC2_Force2.Checked;
@@ -3623,7 +3650,7 @@ namespace Thetis
                     if (udATTOnTX.Value == value) //[2.10.3.6]MW0LGE no event will fire if the same, so force it
                         udATTOnTX_ValueChanged(this, EventArgs.Empty);
                     else
-                        udATTOnTX.Value = value;                    
+                        udATTOnTX.Value = value;
                 }
             }
         }
@@ -5757,7 +5784,7 @@ namespace Thetis
         {
             get { return tcPowerAmplifier; }
             set { tcPowerAmplifier = value; }
-        }        
+        }
         public TabControl TabGeneral
         {
             get { return tcGeneral; }
@@ -6423,7 +6450,7 @@ namespace Thetis
             }
 
             //[2.10.3]MW0LGE only enable if wasapi
-            if(comboAudioDriver2.SelectedIndex < PA19.PA_GetHostApiCount()) //[2.10.3.4]MW0LGE ignore the manually added HPSDR (PCM A/D)
+            if (comboAudioDriver2.SelectedIndex < PA19.PA_GetHostApiCount()) //[2.10.3.4]MW0LGE ignore the manually added HPSDR (PCM A/D)
             {
                 PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(new_driver);
                 bool bIsWASAPI = hostInfo.type == (int)PA19.PaHostApiTypeId.paWASAPI;
@@ -6518,7 +6545,7 @@ namespace Thetis
 
             int old_input = Audio.Input2;
             int new_input = ((PADeviceInfo)comboAudioInput2.SelectedItem).Index;
-            bool power = console.PowerOn;      
+            bool power = console.PowerOn;
 
             if (power && chkAudioEnableVAC.Checked && old_input != new_input)
             {
@@ -6541,7 +6568,7 @@ namespace Thetis
 
             int old_input = Audio.Input3;
             int new_input = ((PADeviceInfo)comboAudioInput3.SelectedItem).Index;
-            bool power = console.PowerOn;            
+            bool power = console.PowerOn;
 
             if (power && chkVAC2Enable.Checked && old_input != new_input)
             {
@@ -8548,7 +8575,7 @@ namespace Thetis
         {
             if (initializing) return;
             console.radio.GetDSPRX(1, 0).RXFixedAGC = (double)udDSPAGCRX2FixedGaindB.Value;
- 
+
             if (console.RX2AGCMode == AGCMode.FIXD)
                 console.RX2RF = (int)udDSPAGCRX2FixedGaindB.Value;
         }
@@ -8632,7 +8659,7 @@ namespace Thetis
 
             console.SetupInfoBarButton(ucInfoBar.ActionTypes.Leveler, chkDSPLevelerEnabled.Checked);
 
-            if(_oldLevelerState != chkDSPLevelerEnabled.Checked)
+            if (_oldLevelerState != chkDSPLevelerEnabled.Checked)
             {
                 console.LevelerChangedHandlers?.Invoke(_oldLevelerState, chkDSPLevelerEnabled.Checked);
                 _oldLevelerState = chkDSPLevelerEnabled.Checked;
@@ -9054,7 +9081,7 @@ namespace Thetis
             else
             {
                 updateTXProfileInDB(dr); //MW0LGE_21a remove duplication
-            }            
+            }
 
             if (!comboTXProfileName.Items.Contains(name))
             {
@@ -10839,7 +10866,7 @@ namespace Thetis
         }
         private void ApplyOptions()
         {
-            SaveOptions();        
+            SaveOptions();
             setButtonState(false, false);
         }
 
@@ -10903,7 +10930,7 @@ namespace Thetis
 
                 string sInc = "";
                 int n = 0;
-                while(File.Exists(archivePath + "Thetis_database_" + datetime + sInc + ".xml"))
+                while (File.Exists(archivePath + "Thetis_database_" + datetime + sInc + ".xml"))
                 {
                     sInc = "_" + n.ToString();
                     n++;
@@ -11474,7 +11501,7 @@ namespace Thetis
         private void chkCWKeyerMode_CheckedChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
-  
+
             if (chkCWKeyerMode.Checked)
                 NetworkIO.SetCWKeyerMode(1); // mode b
             else
@@ -12085,7 +12112,7 @@ namespace Thetis
             if (Directory.Exists(_skinPath + "\\" + comboAppSkin.Text))
             {
                 Skin.Restore(comboAppSkin.Text, _skinPath, console);
-                console.UpdateAndromedaSkins();                
+                console.UpdateAndromedaSkins();
             }
 
             console.CurrentSkin = comboAppSkin.Text;
@@ -12215,7 +12242,7 @@ namespace Thetis
 
             console.AlexPresent = chkAlexPresent.Checked;
             console.SetComboPreampForHPSDR();
-       
+
             udHermesStepAttenuatorData_ValueChanged(this, EventArgs.Empty);
         }
 
@@ -13306,7 +13333,7 @@ namespace Thetis
                 {
                     if (buttons[Btn].Checked)
                     {
-                        if(Btn == 1 && chkBlockTxAnt2.Checked)
+                        if (Btn == 1 && chkBlockTxAnt2.Checked)
                         {
                             antInUse = Btn + 1;
                         }
@@ -15178,7 +15205,7 @@ namespace Thetis
             }
         }
 
-        private bool _updatingRX1HermiesStepAttData = false;       
+        private bool _updatingRX1HermiesStepAttData = false;
         private void udHermesStepAttenuatorData_ValueChanged(object sender, EventArgs e)
         {
             if (_updatingRX1HermiesStepAttData) return;
@@ -15222,7 +15249,7 @@ namespace Thetis
         private bool _updatingRX2HermiesStepAttData = false;
         private void udHermesStepAttenuatorDataRX2_ValueChanged(object sender, EventArgs e)
         {
-            if(_updatingRX2HermiesStepAttData) return;
+            if (_updatingRX2HermiesStepAttData) return;
             _updatingRX2HermiesStepAttData = true;
             console.RX2AttenuatorData = (int)udHermesStepAttenuatorDataRX2.Value;
 
@@ -17648,7 +17675,7 @@ namespace Thetis
             //
             console.SetupInfoBarButton(ucInfoBar.ActionTypes.CFC, chkCFCEnable.Checked);
 
-            if(_oldCFCState != chkCFCEnable.Checked)
+            if (_oldCFCState != chkCFCEnable.Checked)
             {
                 console.CFCChangedHandlers?.Invoke(_oldCFCState, chkCFCEnable.Checked);
                 _oldCFCState = chkCFCEnable.Checked;
@@ -19621,8 +19648,8 @@ namespace Thetis
                 btnResetP1ADC_Click(this, EventArgs.Empty);
             }
 
-            if(_firstRadioModelChange || old_model != console.CurrentHPSDRModel)
-            { 
+            if (_firstRadioModelChange || old_model != console.CurrentHPSDRModel)
+            {
                 if (!initializing)
                 {
                     string sCurrentPAProfile = comboPAProfile.Text;
@@ -21200,7 +21227,7 @@ namespace Thetis
                 {
                     m_bShowingCFC = false;
                     picCFC.Invalidate();
-                } 
+                }
                 return;
             }
             else
@@ -21227,7 +21254,7 @@ namespace Thetis
             Graphics g = e.Graphics;
             g.Clear(Color.Black);
 
-            Point[] linePoints;            
+            Point[] linePoints;
             int height = picCFC.Height;
             float binsPerHz = 1025 / 48000f;
             int endFreqIndex = (int)((double)udCFC9.Value * binsPerHz);
@@ -21281,7 +21308,7 @@ namespace Thetis
             linePoints = new Point[10];
             for (int n = 0; n < 10; n++)
             {
-                switch(n)
+                switch (n)
                 {
                     case 0:
                         linePoints[n] = new Point((int)(((float)udCFC0.Value - fLow) * fHzPerPizel), height - (int)((pre + tbCFC0.Value) * scale));
@@ -21921,7 +21948,7 @@ namespace Thetis
         {
             set
             {
-                if(chkDisableRearSpeakerJacksAudioAmplifier.Checked != value)
+                if (chkDisableRearSpeakerJacksAudioAmplifier.Checked != value)
                     chkDisableRearSpeakerJacksAudioAmplifier.Checked = value;
             }
         }
@@ -22250,7 +22277,7 @@ namespace Thetis
             if (p == null) return;
 
             nudMaxPowerForBandPA.Value = (decimal)p.GetMaxPower(_adjustingBand);
- 
+
             updateMaxPowerCheckbox(p);
 
             console.UpdateDriveLabel(false, EventArgs.Empty);
@@ -23661,9 +23688,9 @@ namespace Thetis
         {
             console.PreventTXonDifferentBandToRXband = chkPreventTXonDifferentBandToRX.Checked;
         }
-        #region MulitMeter2
+        #region MultiMeter2
         // multimeter 2
-        private const int MAX_CONTAINERS = 10;
+        private const int MAX_CONTAINERS = 20;
 
         private class clsContainerComboboxItem
         {
@@ -23769,7 +23796,7 @@ namespace Thetis
             chkContainerBorder.Enabled = bEnableControls;
             chkContainerNoTitle.Enabled = bEnableControls;
             chkContainerEnable.Enabled = bEnableControls;
-            txtContainerNotes.Enabled = bEnableControls;            
+            txtContainerNotes.Enabled = bEnableControls;
             lblMMContainerBackground.Enabled = bEnableControls;
             lblMMContainerNotes.Enabled = bEnableControls;
             lstMetersAvailable.Enabled = bEnableControls;
@@ -23794,7 +23821,7 @@ namespace Thetis
 
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return;
-            
+
             List<clsMeterTypeComboboxItem> inuse = new List<clsMeterTypeComboboxItem>();
             List<clsMeterTypeComboboxItem> notinuse = new List<clsMeterTypeComboboxItem>();
 
@@ -23811,20 +23838,20 @@ namespace Thetis
                         inuse.Add(mtci);
                     }
                 }
-                else
-                {
-                    if (mt != MeterType.SPACER && mt != MeterType.TEXT_OVERLAY)
-                    {
-                        clsMeterTypeComboboxItem mtci = new clsMeterTypeComboboxItem(mt, -1);
-                        notinuse.Add(mtci);
-                    }
-                }
+                //else
+                //{
+                //if (mt != MeterType.SPACER && mt != MeterType.TEXT_OVERLAY)
+                //{
+                clsMeterTypeComboboxItem mtci2 = new clsMeterTypeComboboxItem(mt, -1);
+                notinuse.Add(mtci2);
+                //}
+                //}
             }
-            // add spacer and overlay here always to notinuse
-            clsMeterTypeComboboxItem mtci_tmp = new clsMeterTypeComboboxItem(MeterType.SPACER, -1);
-            notinuse.Add(mtci_tmp);
-            mtci_tmp = new clsMeterTypeComboboxItem(MeterType.TEXT_OVERLAY, -1);
-            notinuse.Add(mtci_tmp);
+            //// add spacer and overlay here always to notinuse
+            //clsMeterTypeComboboxItem mtci_tmp = new clsMeterTypeComboboxItem(MeterType.SPACER, -1);
+            //notinuse.Add(mtci_tmp);
+            //mtci_tmp = new clsMeterTypeComboboxItem(MeterType.TEXT_OVERLAY, -1);
+            //notinuse.Add(mtci_tmp);
 
             foreach (clsMeterTypeComboboxItem mtci in notinuse)
             {
@@ -23913,6 +23940,7 @@ namespace Thetis
             if (m == null) return;
 
             m.AddMeter(mti.MeterType);
+            m.ZeroOut(true, true);
             m.Rebuild();
             updateMeterLists();
 
@@ -23921,7 +23949,7 @@ namespace Thetis
 
         private void lstMetersAvailable_SelectedIndexChanged(object sender, EventArgs e)
         {
-            btnAddMeterItem.Enabled = lstMetersAvailable.SelectedIndex >= 0;            
+            btnAddMeterItem.Enabled = lstMetersAvailable.SelectedIndex >= 0;
         }
 
         private void lstMetersInUse_SelectedIndexChanged(object sender, EventArgs e)
@@ -24099,7 +24127,21 @@ namespace Thetis
             MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
             if (igs == null) return null;
 
-            if (mt == MeterType.SIGNAL_TEXT)
+            if (mt == MeterType.DATA_OUT)
+            {
+                Guid guid = MultiMeterIO.GuidfromFourChar(txtDataOutNode_4charID.Text);
+                if (guid != Guid.Empty)
+                {
+                    igs.SetMMIOGuid(0, guid);
+                    igs.UpdateInterval = (int)nudDataOutNode_sendinterval.Value;
+                }
+                else
+                {
+                    igs.SetMMIOGuid(0, Guid.Empty);
+                    igs.UpdateInterval = 500;
+                }
+            }
+            else if (mt == MeterType.SIGNAL_TEXT)
             {
                 igs.UpdateInterval = (int)nudMeterItemUpdateRate.Value;
                 igs.AttackRatio = (float)nudMeterItemAttackRate.Value;
@@ -24253,12 +24295,57 @@ namespace Thetis
             MeterType mt = meterItemGroupTypefromSelected();
             if (mt == MeterType.NONE) return;
 
-            MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);                
+            MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
             if (igs == null) return;
 
             _ignoreMeterItemChangeEvents = true;
 
-            if (mt == MeterType.SIGNAL_TEXT)
+            switch (m.MeterVariables(mt))
+            {
+                case 1:
+                    btnMMIO_variable.Enabled = true;
+                    btnMMIO_variable_2.Enabled = false;
+                    toolTip1.SetToolTip(btnMMIO_variable, m.MeterVariablesReading(mt, 0).ToString());
+                    pnlVariableInUse_1.Visible = variableInUse(0);
+                    pnlVariableInUse_2.Visible = false;
+                    break;
+                case 2:
+                    btnMMIO_variable.Enabled = true;
+                    btnMMIO_variable_2.Enabled = true;
+                    toolTip1.SetToolTip(btnMMIO_variable, m.MeterVariablesReading(mt, 0).ToString());
+                    toolTip1.SetToolTip(btnMMIO_variable_2, m.MeterVariablesReading(mt, 1).ToString());
+                    pnlVariableInUse_1.Visible = variableInUse(0);
+                    pnlVariableInUse_2.Visible = variableInUse(1);
+                    break;
+                case 7:
+                    //todo? anan mm
+                    btnMMIO_variable.Enabled = false;
+                    btnMMIO_variable_2.Enabled = false;
+                    pnlVariableInUse_1.Visible = false;
+                    pnlVariableInUse_2.Visible = false;
+                    break;
+                default:
+                    btnMMIO_variable.Enabled = false;
+                    btnMMIO_variable_2.Enabled = false;
+                    break;
+            }
+
+            if (mt == MeterType.DATA_OUT)
+            {
+                Guid guid = igs.GetMMIOGuid(0);
+                if (MultiMeterIO.Data.ContainsKey(guid))
+                {
+                    MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[guid];
+                    txtDataOutNode_4charID.Text = mmio.FourChar;
+                    nudDataOutNode_sendinterval.Value = (decimal)igs.UpdateInterval;
+                }
+                else
+                {
+                    txtDataOutNode_4charID.Text = "";
+                    nudDataOutNode_sendinterval.Value = 500;
+                }
+            }
+            else if (mt == MeterType.SIGNAL_TEXT)
             {
                 nudMeterItemUpdateRate.Value = igs.UpdateInterval < nudMeterItemUpdateRate.Minimum ? nudMeterItemUpdateRate.Minimum : igs.UpdateInterval;
                 nudMeterItemAttackRate.Value = (decimal)igs.AttackRatio;
@@ -24346,7 +24433,7 @@ namespace Thetis
                 clrbtnMMTime.Color = igs.MarkerColour;
                 clrbtnMMDate.Color = igs.SubMarkerColour;
                 radMM24Clock.Checked = igs.ShowMarker; // use the show marker bool for this
-                if(!radMM24Clock.Checked && !radMM12Clock.Checked) radMM12Clock.Checked = true;
+                if (!radMM24Clock.Checked && !radMM12Clock.Checked) radMM12Clock.Checked = true;
                 updateTitleControlsClock();
             }
             else if (mt == MeterType.TEXT_OVERLAY)
@@ -24738,13 +24825,12 @@ namespace Thetis
             switch (mt)
             {
                 case MeterType.NONE:
-                    grpMeterItemSettings.Parent = grpMultiMeterHolder;
-                    grpMeterItemSettings.Visible = true;
-
+                    grpMeterItemSettings.Visible = false;
                     grpMeterItemClockSettings.Visible = false;
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
                     break;
                 case MeterType.VFO_DISPLAY:
                     grpMeterItemVfoDisplaySettings.Parent = grpMultiMeterHolder;
@@ -24755,6 +24841,7 @@ namespace Thetis
                     grpMeterItemClockSettings.Visible = false;
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
                     break;
                 case MeterType.CLOCK:
                     grpMeterItemClockSettings.Parent = grpMultiMeterHolder;
@@ -24765,6 +24852,7 @@ namespace Thetis
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
                     break;
                 case MeterType.SPACER:
                     grpMeterItemSpacerSettings.Parent = grpMultiMeterHolder;
@@ -24775,6 +24863,7 @@ namespace Thetis
                     grpMeterItemClockSettings.Visible = false;
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     grpTextOverlay.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
                     break;
                 case MeterType.TEXT_OVERLAY:
                     grpTextOverlay.Parent = grpMultiMeterHolder;
@@ -24785,6 +24874,18 @@ namespace Thetis
                     grpMeterItemSettings.Visible = false;
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     grpMeterItemSpacerSettings.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
+                    break;
+                case MeterType.DATA_OUT:
+                    grpMeterItemDataOutNode.Parent = grpMultiMeterHolder;
+                    grpMeterItemDataOutNode.Location = loc;
+                    grpMeterItemDataOutNode.Visible = true;
+
+                    grpMeterItemSettings.Visible = false;
+                    grpMeterItemClockSettings.Visible = false;
+                    grpMeterItemVfoDisplaySettings.Visible = false;
+                    grpMeterItemSpacerSettings.Visible = false;
+                    grpTextOverlay.Visible = false;
                     break;
                 default:
                     grpMeterItemSettings.Parent = grpMultiMeterHolder;
@@ -24794,6 +24895,7 @@ namespace Thetis
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
                     break;
             }
         }
@@ -24941,7 +25043,7 @@ namespace Thetis
 
                 _itemGroupSettings.Unit = currentSettings.Unit;
 
-                if(!_itemGroupSettings.SubIndicators)
+                if (!_itemGroupSettings.SubIndicators)
                 {
                     // no sub indicators on the source, replace with current so we end up with no change on the paste
                     _itemGroupSettings.ShowSubMarker = currentSettings.ShowMarker;
@@ -25064,7 +25166,7 @@ namespace Thetis
         private void OnBCDBandChangeHandler(int rx, Band old_band, Band new_band)
         {
             if (initializing) return;
-            if(rx == 1) updateUsbBCDdevice(new_band);
+            if (rx == 1) updateUsbBCDdevice(new_band);
         }
         private void updateUsbBCDdevice(Band rx1band)
         {
@@ -25474,9 +25576,9 @@ namespace Thetis
             if (initializing) return;
 
             if (isSkinServerTabVisible())
-            {                
+            {
                 getSkinServers();
-            }         
+            }
             else
             {
                 hideAllSkinServerRelatedControls();
@@ -25565,7 +25667,7 @@ namespace Thetis
         }
         private void updateSelectedSkin()
         {
-            if(lstAvailableSkins.Items.Count == 0) return;
+            if (lstAvailableSkins.Items.Count == 0) return;
 
             chkReplaceCurrentMeterInSelectedSkin.Enabled = false;
 
@@ -25632,7 +25734,7 @@ namespace Thetis
             if (ss.Length >= 2 && ss.Length <= 4)
             {
                 bool bAllNums = true;
-                foreach(string s in ss)
+                foreach (string s in ss)
                 {
                     if (!int.TryParse(s, out int tmp))
                     {
@@ -25643,7 +25745,7 @@ namespace Thetis
                         }
                     }
                 }
-                if(bAllNums) return sVersion;
+                if (bAllNums) return sVersion;
             }
             return "?";
         }
@@ -25752,12 +25854,12 @@ namespace Thetis
                     Debug.Print(e.BytesDownloaded.ToString() + " - " + e.TotalBytes.ToString());
 
                     string sFile = getFileFromUrl(e.Url);
-                    if(sFile == "")
+                    if (sFile == "")
                         sFile = getFileFromUrl(e.FinalUri);
 
                     if (isSkinZipFile(e.Path, sFile, out bool bUsesFileInRoot, out bool bMeterFolderFound, e.BypassRootFolderCheck || e.IsMeterSkin))
-                    {                        
-                        string sOutputPath = "";                        
+                    {
+                        string sOutputPath = "";
 
                         if (bUsesFileInRoot || (e.BypassRootFolderCheck && !bMeterFolderFound))
                         {
@@ -25859,7 +25961,7 @@ namespace Thetis
                 }
                 else
                 {
-                    if(e.TotalBytes != -1)
+                    if (e.TotalBytes != -1)
                     {
                         if (!prgSkinDownload.Visible) prgSkinDownload.Visible = true;
 
@@ -25932,7 +26034,7 @@ namespace Thetis
 
                 ThetisSkin ts = lstAvailableSkins.Items[sel] as ThetisSkin;
                 if (ts == null) return;
-                
+
                 btnDownloadSkin.Text = "Cancel";
 
                 string tempFilePath = Path.GetTempFileName();
@@ -25978,7 +26080,7 @@ namespace Thetis
                                 string sReplacedWithMinus = sFilename.Replace(" ", "-");
                                 string sReplacedWithoutMinus = sFilename.Replace("-", " ");
 
-                                if (zipFile.Any(entry => (entry.FileName.StartsWith(sFilename + "/") || entry.FileName.StartsWith(sReplacedWithSpaces + "/") || 
+                                if (zipFile.Any(entry => (entry.FileName.StartsWith(sFilename + "/") || entry.FileName.StartsWith(sReplacedWithSpaces + "/") ||
                                     entry.FileName.StartsWith(sReplacedWithoutSpaces + "/") || entry.FileName.StartsWith(sReplacedWithMinus + "/") ||
                                     entry.FileName.StartsWith(sReplacedWithoutMinus + "/")
                                     ) && entry.IsDirectory))
@@ -26033,7 +26135,7 @@ namespace Thetis
 
                         entry.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
 
-                        if(sRootFolder == "")
+                        if (sRootFolder == "")
                         {
                             //get skin name from folder structure
                             int index = entry.FileName.IndexOf('/');
@@ -26064,7 +26166,7 @@ namespace Thetis
 
         private void btnRemoveSkin_Click(object sender, EventArgs e)
         {
-            if(comboAppSkin.SelectedIndex == -1 || comboAppSkin.Items.Count <= 1 || _skinPath == "")
+            if (comboAppSkin.SelectedIndex == -1 || comboAppSkin.Items.Count <= 1 || _skinPath == "")
             {
                 btnRemoveSkin.Enabled = comboAppSkin.Items.Count > 1; // some reason it was enabled
 
@@ -26082,13 +26184,13 @@ namespace Thetis
             MessageBoxButtons.YesNo,
             MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
 
-            if(dres == DialogResult.Yes)
+            if (dres == DialogResult.Yes)
             {
                 int nToSelect;
-                if(nSelected == comboAppSkin.Items.Count - 1)
+                if (nSelected == comboAppSkin.Items.Count - 1)
                 {
                     // selected last in the list, select previous
-                    nToSelect = nSelected -1;
+                    nToSelect = nSelected - 1;
                 }
                 else
                 {
@@ -26128,7 +26230,7 @@ namespace Thetis
         {
             try
             {
-                if(_skinPath != "")
+                if (_skinPath != "")
                     Process.Start("explorer.exe", _skinPath);
             }
             catch (Exception ex)
@@ -26222,7 +26324,7 @@ namespace Thetis
         {
             if (initializing) return;
 
-            if(sender == chkRecoverPAProfileFromTXProfile && chkRecoverPAProfileFromTXProfile.Checked)
+            if (sender == chkRecoverPAProfileFromTXProfile && chkRecoverPAProfileFromTXProfile.Checked)
             {
                 // manually clicked, warning
                 DialogResult dres = MessageBox.Show(
@@ -26321,7 +26423,7 @@ namespace Thetis
         {
             if (initializing) return;
             MidiDevice.BuildIDFromControlIDAndChannel = chkMidiControlIDincludesChannel.Checked;
-            MidiDevice.IncludeStatusInControlID  = chkMidiControlIDincludesChannel.Checked && chkMidiControlIDincludesStatus.Checked;
+            MidiDevice.IncludeStatusInControlID = chkMidiControlIDincludesChannel.Checked && chkMidiControlIDincludesStatus.Checked;
             chkMidiControlIDincludesStatus.Enabled = chkMidiControlIDincludesChannel.Checked;
         }
 
@@ -26394,7 +26496,7 @@ namespace Thetis
             if (initializing) return;
             //note: all 3 radio buttons for radio protocol call this on change
 
-            if(radRadioProtocol1Select.Checked)
+            if (radRadioProtocol1Select.Checked)
             {
                 RadioProtocolSelected = RadioProtocol.USB;
                 NetworkIO.RadioProtocolSelected = RadioProtocol.USB;
@@ -27177,13 +27279,13 @@ namespace Thetis
 
         private void radBelow30_CheckedChanged(object sender, EventArgs e)
         {
-            if(radBelow30.Checked)
+            if (radBelow30.Checked)
                 console.S9Frequency = 30.0;
         }
 
         private void radBelow144_CheckedChanged(object sender, EventArgs e)
         {
-            if(radBelow144.Checked)
+            if (radBelow144.Checked)
                 console.S9Frequency = 144.0;
         }
 
@@ -27209,10 +27311,10 @@ namespace Thetis
         }
         public void UpdateAutoStartForms()
         {
-            foreach(Control c in chkShowFormStartup_setup.Parent.Controls)
+            foreach (Control c in chkShowFormStartup_setup.Parent.Controls)
             {
                 CheckBox cc = c as CheckBoxTS;
-                if(cc != null)
+                if (cc != null)
                 {
                     string id = cc.Name.Substring(cc.Name.IndexOf("_") + 1).ToLower();
                     cc.Checked = console.GetAutoFormStartSetting(id);
@@ -27491,6 +27593,1185 @@ namespace Thetis
         {
             toolTip1.Show(toolTip1.GetToolTip(pbTextOverlay_variables), pbTextOverlay_variables, 10 * 1000);
         }
+
+        #region MultiMeter IO
+        // Code for the multimeter IO - MW0LGE [2.10.3.6]
+        private bool _MMIO_ignore_change_events = false;
+        private void init_lstMMIO()
+        {
+            lstMMIO_network_list.Items.Clear();
+            comboMMIO_network_format_in.Items.Clear();
+            comboMMIO_network_terminator_in.Items.Clear();
+            pnlMMIO_network_active.BackColor = Color.LightGray;
+            pnlMMIO_network_rxdata.BackColor = Color.LightGray;
+            pnlMMIO_network_txdata.BackColor = Color.LightGray;
+
+            for (int i = (int)MultiMeterIO.MMIOFormat.JSON; i < (int)(int)MultiMeterIO.MMIOFormat.LAST; i++)
+            {
+                comboMMIO_network_format_in.Items.Add(((MultiMeterIO.MMIOFormat)i).ToString());
+            }
+            for (int i = (int)MultiMeterIO.MMIOTerminator.NONE; i < (int)(int)MultiMeterIO.MMIOTerminator.LAST; i++)
+            {
+                comboMMIO_network_terminator_in.Items.Add(((MultiMeterIO.MMIOTerminator)i).ToString());
+            }
+
+            _tmrRXupdate = new System.Timers.Timer(20);
+            _tmrRXupdate.Elapsed += OnRxTimerTick;
+            _tmrRXupdate.AutoReset = false;
+
+            _tmrTXupdate = new System.Timers.Timer(20);
+            _tmrTXupdate.Elapsed += OnTxTimerTick;
+            _tmrTXupdate.AutoReset = false;
+
+            MultiMeterIO.ClientConnected += MultiMeterIO_ClientConnected;
+            MultiMeterIO.ClientDisconnected += MultiMeterIO_ClientDisconnected;
+            MultiMeterIO.ReceivedDataString += MultiMeterIO_ReceivedDataString;
+            MultiMeterIO.TransmittedData += MultiMeterIO_TransmittedData;
+            MultiMeterIO.ListenerRunning += MultiMeterIO_ListenerRunning;
+
+            ConcurrentDictionary<Guid, MultiMeterIO.clsMMIO> data = MultiMeterIO.Data;
+            foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> kvp in data)
+            {
+                MultiMeterIO.clsMMIO mmio = kvp.Value;
+                clsMultiMeterIOComboboxItem mmioci = new clsMultiMeterIOComboboxItem(mmio.Guid, mmio.Type, mmio.IP, mmio.Port, mmio.Direction, mmio.UdpEndpointIP, mmio.UdpEndpointPort);
+                int index = lstMMIO_network_list.Items.Add(mmioci);
+            }
+        }
+
+        private void MultiMeterIO_ListenerRunning(Guid guid, MultiMeterIO.MMIOType type, bool enabled)
+        {
+            if (initializing || !lstMMIO_network_list.IsHandleCreated) return;
+            try
+            {
+                lstMMIO_network_list.BeginInvoke(new MethodInvoker(() =>
+                {
+                    lstMMIO_network_list_SelectedIndexChanged(this, EventArgs.Empty);
+                }));
+            }
+            catch { }
+        }
+        private void MultiMeterIO_ClientConnected(Guid guid)
+        {
+            if (initializing || !lstMMIO_network_list.IsHandleCreated) return;
+            try
+            {
+                lstMMIO_network_list.BeginInvoke(new MethodInvoker(() =>
+                {
+                    lstMMIO_network_list_SelectedIndexChanged(this, EventArgs.Empty);
+                }));
+            }
+            catch { }
+        }
+
+        private void MultiMeterIO_ClientDisconnected(Guid guid)
+        {
+            if (initializing || !lstMMIO_network_list.IsHandleCreated) return;
+            try
+            {
+                lstMMIO_network_list.BeginInvoke(new MethodInvoker(() =>
+                {
+                    lstMMIO_network_list_SelectedIndexChanged(this, EventArgs.Empty);
+                }));
+            }
+            catch { }
+        }
+        private System.Timers.Timer _tmrRXupdate;
+        private System.Timers.Timer _tmrTXupdate;
+        private double _light_gray_rx = 1f;
+        private double _light_gray_tx = 1f;
+        public void MultiMeterIOStopTimers()
+        {
+            if (_tmrRXupdate != null)
+            {
+                _tmrRXupdate.Stop();
+                _tmrRXupdate.Elapsed -= OnRxTimerTick;
+                _tmrRXupdate.Close();
+                _tmrRXupdate = null;
+            }
+            if (_tmrTXupdate != null)
+            {
+                _tmrTXupdate.Stop();
+                _tmrTXupdate.Elapsed -= OnTxTimerTick;
+                _tmrTXupdate.Close();
+                _tmrTXupdate = null;
+            }
+        }
+        private void OnRxTimerTick(object sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                _light_gray_rx += 0.08;
+                if (_light_gray_rx > 1f)
+                    _light_gray_rx = 1f;
+
+                Color c = ColorInterpolator.InterpolateBetween(Color.LimeGreen, Color.LightGray, _light_gray_rx);
+                pnlMMIO_network_rxdata.BackColor = c;
+
+                if (_light_gray_rx < 1f && pnlMMIO_network_rxdata.Visible)
+                    _tmrRXupdate.Start();
+            }
+            catch { }
+        }
+        private void OnTxTimerTick(object sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                _light_gray_tx += 0.08;
+                if (_light_gray_tx > 1f)
+                    _light_gray_tx = 1f;
+
+                Color c = ColorInterpolator.InterpolateBetween(Color.Red, Color.LightGray, _light_gray_tx);
+                pnlMMIO_network_txdata.BackColor = c;
+
+                if (_light_gray_tx < 1f && pnlMMIO_network_txdata.Visible)
+                    _tmrTXupdate.Start();
+            }
+            catch { }
+        }
+        private void MultiMeterIO_ReceivedDataString(Guid guid, string dataString)
+        {
+            if (initializing || !lstMMIO_network_list.IsHandleCreated) return;
+            try
+            {
+                lstMMIO_network_list.BeginInvoke(new MethodInvoker(() =>
+                {
+                    updateFromRecievedData(guid, dataString);
+                }));
+            }
+            catch { }            
+        }
+        private void MultiMeterIO_TransmittedData(Guid guid)
+        {
+            if (initializing || !lstMMIO_network_list.IsHandleCreated) return;
+            try
+            {
+                lstMMIO_network_list.BeginInvoke(new MethodInvoker(() =>
+                {
+                    updateFromTransmittedData(guid);
+                }));
+            }
+            catch { }
+        }
+        private void updateFromRecievedData(Guid guid, string dataString)
+        {
+            if (!pnlMMIO_network_rxdata.Visible) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            if (mmioci.Guid != guid) return;
+
+            pnlMMIO_network_rxdata.BackColor = Color.LimeGreen;
+            _light_gray_rx = 0f;
+            _tmrRXupdate.Start();
+
+            updateVariableList();
+        }
+        private void updateFromTransmittedData(Guid guid)
+        {
+            if (!pnlMMIO_network_rxdata.Visible) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            if (mmioci.Guid != guid) return;
+
+            pnlMMIO_network_txdata.BackColor = Color.Red;
+            _light_gray_tx = 0f;
+            _tmrTXupdate.Start();
+        }
+        private void updateVariableList()
+        {
+            ListView.SelectedListViewItemCollection items = lstMMIO_network_variables.SelectedItems;
+            string selectedKey = items.Count == 1 ? items[0].Text : "";
+
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            //lstMMIO_network_variables.Items.Clear();
+            btnMMIO_network_remove_variable.Enabled = items.Count > 0;
+            btnMMIO_network_copyvariable_clipboard.Enabled = items.Count > 0;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
+            MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
+
+            lstMMIO_network_variables.SuspendLayout();
+            // remove any from list that are now not in variables
+            List<ListViewItem> to_remove = new List<ListViewItem>();
+            foreach (ListViewItem lvi in lstMMIO_network_variables.Items)
+            {
+                if (!mmio.Variables().ContainsKey(lvi.Text)) to_remove.Add(lvi);
+            }
+            foreach (ListViewItem lvi in to_remove)
+            {
+                lstMMIO_network_variables.Items.Remove(lvi);
+            }
+            to_remove.Clear();
+
+            //add/update list
+            foreach (KeyValuePair<string, object> kvp in mmio.Variables())
+            {
+                ListViewItem lvi;
+                if (!lstMMIO_network_variables.Items.ContainsKey(kvp.Key))
+                {
+                    lvi = lstMMIO_network_variables.Items.Add(kvp.Key, kvp.Key, null);
+                    lvi.SubItems.Add(mmio.VariableValueType(kvp.Value));
+                }
+                else
+                {
+                    lvi = lstMMIO_network_variables.Items[kvp.Key];
+                    lvi.SubItems[1].Text = mmio.VariableValueType(kvp.Value);      //[1] bizzar that it is index 1 for the added subitem               
+                }
+
+                if (selectedKey != "" && kvp.Key == selectedKey)
+                    lvi.Selected = true;
+            }
+            lstMMIO_network_variables.ResumeLayout();
+            lstMMIO_network_variables.Invalidate();
+            btnMMIO_network_remove_all_variables.Enabled = lstMMIO_network_variables.Items.Count > 0;
+        }
+        private void lstMMIO_network_list_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            int selected_index = lstMMIO_network_list.SelectedIndex;
+            pnlMMIO_network_container.Enabled = selected_index != -1;
+            btnMMIO_network_delete.Enabled = selected_index != -1;
+            if (selected_index == -1)
+            {
+                pnlMMIO_network_rxdata.BackColor = Color.LightGray;
+                pnlMMIO_network_txdata.BackColor = Color.LightGray;
+                pnlMMIO_network_active.BackColor = Color.LightGray;
+                lstMMIO_network_variables.Items.Clear();
+                return;
+            }
+
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+            MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
+
+            _MMIO_ignore_change_events = true;
+            txtMMIO_network_ip_port.Text = mmio.IP + ":" + mmio.Port.ToString();
+            txtMMIO_network_4char.Text = mmio.FourChar;
+            _MMIO_ignore_change_events = false;
+
+            pnlMMIO_network_active.BackColor = mmio.Active ? Color.LimeGreen : Color.LightGray;
+            pnlMMIO_network_rxdata.BackColor = Color.LightGray;
+            pnlMMIO_network_txdata.BackColor = Color.LightGray;
+            comboMMIO_network_format_in.SelectedIndex = (int)mmio.FormatIn;
+            comboMMIO_network_terminator_in.SelectedIndex = (int)mmio.TerminatorIn;
+            comboMMIO_network_format_out.SelectedIndex = (int)mmio.FormatOut;
+            comboMMIO_network_terminator_out.SelectedIndex = (int)mmio.TerminatorOut;
+
+            txtMMIO_network_udp_endpoint_ip_port.Text = mmio.UdpEndpointIP + ":" + mmio.UdpEndpointPort.ToString();
+
+            _MMIO_ignore_change_events = true;
+            txtMMIO_network_terminator_in_custom.Text = mmio.CustomTerminatorIn;
+            txtMMIO_network_terminator_out_custom.Text = mmio.CustomTerminatorOut;
+            _MMIO_ignore_change_events = false;
+
+            switch (mmio.Direction)
+            {
+                case MultiMeterIO.MMIODirection.IN:
+                    radMMIO_network_in.Checked = true;
+                    break;
+                case MultiMeterIO.MMIODirection.OUT:
+                    radMMIO_network_out.Checked = true;
+                    break;
+                case MultiMeterIO.MMIODirection.BOTH:
+                    radMMIO_network_both.Checked = true;
+                    break;
+            }
+
+            _MMIO_ignore_change_events = true;
+            chkMMIO_network_enabled.Checked = mmio.Enabled;
+            _MMIO_ignore_change_events = false;
+
+            updateVariableList();
+            updateDirection(mmio);
+            updateTerminators(mmio);
+        }
+        private void addEditListener(MultiMeterIO.MMIOType type, string existing_ip_port = "")
+        {
+            string protocol = "";
+            switch (type)
+            {
+                case MultiMeterIO.MMIOType.UDP_LISTENER:
+                    protocol = "UDP";
+                    break;
+                case MultiMeterIO.MMIOType.TCPIP_LISTENER:
+                    protocol = "TCP/IP";
+                    break;
+                case MultiMeterIO.MMIOType.SERIAL:
+                    return;
+            }
+
+            string ip_port;
+            bool adding = existing_ip_port == null || existing_ip_port == "";
+            if (adding)
+                ip_port = InputBox.Show("Add " + protocol + " Listener", "Please provide bind details:", "127.0.0.1:9000");
+            else
+                ip_port = InputBox.Show("Edit " + protocol + " Listener", "Please edit bind details:", existing_ip_port);
+            if (ip_port == null || ip_port == "") return;
+
+            string[] parts = ip_port.Split(':');
+            if (parts.Length == 2)
+            {
+                string ip = parts[0];
+                string port = parts[1];
+
+                bool ok = int.TryParse(port, out int portInt);
+                if (ok)
+                {
+                    if (ip + ":" + portInt.ToString() == existing_ip_port) return; // same as input, forget it
+
+                    if (!MultiMeterIO.AlreadyConfigured(ip, portInt, type))
+                    {
+                        MultiMeterIO.clsMMIO mmio;
+                        if (adding)
+                        {
+                            mmio = new MultiMeterIO.clsMMIO(type, ip, portInt, true);
+                            MultiMeterIO.AddMMIO(mmio);
+                        }
+                        else
+                        {
+                            //edit
+                            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+                            if (mmioci != null)
+                            {
+                                if (MultiMeterIO.Data.ContainsKey(mmioci.Guid))
+                                {
+                                    mmio = MultiMeterIO.Data[mmioci.Guid];
+                                    mmio.StopListening();
+                                    mmio.IP = ip;
+                                    mmio.Port = portInt;
+                                }
+                                else
+                                    return;
+                            }
+                            else
+                                return;
+                        }
+
+                        ok = mmio.StartListening();
+
+                        if (ok)
+                        {
+                            if (adding)
+                            {
+                                clsMultiMeterIOComboboxItem mmioci = new clsMultiMeterIOComboboxItem(mmio.Guid, type, ip, portInt, mmio.Direction, mmio.UdpEndpointIP, mmio.UdpEndpointPort);
+                                int index = lstMMIO_network_list.Items.Add(mmioci);
+                                lstMMIO_network_list.SelectedIndex = index;
+                            }
+                            else
+                            {
+                                clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+                                if (mmioci != null)
+                                {
+                                    mmioci.IP = ip;
+                                    mmioci.Port = portInt;
+                                    lstMMIO_network_list.Items[lstMMIO_network_list.SelectedIndex] = mmioci;
+                                }
+                                else
+                                    return;
+                            }
+                        }
+                        else
+                        {
+                            MultiMeterIO.RemoveMMIO(mmio.Guid);
+                            MessageBox.Show("There was a problem starting the " + protocol + " listener. Perhaps there is an ip:port conflict.",
+                            "Listener Start Problem",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        }
+                    }
+                    else
+                    {
+                        if (!adding)
+                        {
+                            MessageBox.Show("This IP:PORT combination already has a " + protocol + " listener.\n\nThe edited IP/Port needs to be to a combination that is not already in use.",
+                                "Duplicate Listener",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        }
+                        else
+                        {
+                            MessageBox.Show("This IP:PORT combination already has a " + protocol + " listener.",
+                                "Duplicate Listener",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Incorrect port format. Please use the following format.\n\nIP:PORT\n\nExample: 127.0.0.1:9000",
+                        "Incorrect Format",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Incorrect format. Please use the following format.\n\nIP:PORT\n\nExample: 127.0.0.1:9000",
+                    "Incorrect Format",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
+        }
+        private void radMMIO_network_add_udp_Click(object sender, EventArgs e)
+        {
+            addEditListener(MultiMeterIO.MMIOType.UDP_LISTENER);
+        }
+
+        private void btnMMIO_network_add_tcpip_Click(object sender, EventArgs e)
+        {
+            addEditListener(MultiMeterIO.MMIOType.TCPIP_LISTENER);
+        }
+
+        private void btnMMIO_network_delete_Click(object sender, EventArgs e)
+        {
+            if (lstMMIO_network_list.SelectedIndex < 0) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci != null)
+            {
+                MultiMeterIO.RemoveMMIO(mmioci.Guid);
+                lstMMIO_network_list.Items.Remove(mmioci);
+            }
+        }
+
+        private void txtMMIO_network_ip_port_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (_MMIO_ignore_change_events) return;
+        }
+
+        private void txtMMIO_network_ip_port_Click(object sender, EventArgs e)
+        {
+            pnlMMIO_network_container.Focus();
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
+            addEditListener(MultiMeterIO.Data[mmioci.Guid].Type, txtMMIO_network_ip_port.Text);
+        }
+
+        private void btnMMIO_network_ip_port_ip4_Click(object sender, EventArgs e)
+        {
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            frmIPv4Picker f = new frmIPv4Picker();
+            f.Init(mmioci.IP + ":" + mmioci.Port.ToString());
+            DialogResult dr = f.ShowDialog(this);
+
+            if (dr == DialogResult.OK)
+            {
+                string sTmp = f.IP;
+                if (sTmp == "") sTmp = "127.0.0.1:9000";
+                addEditListener(mmioci.Type, sTmp);
+            }
+        }
+
+        private void txtMMIO_network_4char_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (_MMIO_ignore_change_events) return;
+        }
+
+        private void radMMIO_network_in_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radMMIO_network_in.Checked) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
+            MultiMeterIO.Data[mmioci.Guid].Direction = MultiMeterIO.MMIODirection.IN;
+            mmioci.Direction = MultiMeterIO.MMIODirection.IN;
+
+            int i = lstMMIO_network_list.Items.IndexOf(mmioci);
+            adjustHeightOfMMIOcomboItem(i,itemHeight(mmioci));
+            lstMMIO_network_list.Invalidate();
+
+            updateDirection(MultiMeterIO.Data[mmioci.Guid]);
+            updateTerminators(MultiMeterIO.Data[mmioci.Guid]);
+        }
+        private const int LB_SETITEMHEIGHT = 0x01A0;
+
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+        private void adjustHeightOfMMIOcomboItem(int i, int height)
+        {
+            //to fix issue where MesureItem although called and updates the height does not result in the
+            //listbox item actually changing visually.
+            //https://stackoverflow.com/questions/28490543/windows-forms-listbox-with-ownerdrawvariable-bug
+            SendMessage((IntPtr)lstMMIO_network_list.Handle, LB_SETITEMHEIGHT, (IntPtr)i, (IntPtr)height);
+        }
+        private void radMMIO_network_out_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radMMIO_network_out.Checked) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
+            MultiMeterIO.Data[mmioci.Guid].Direction = MultiMeterIO.MMIODirection.OUT;
+            mmioci.Direction = MultiMeterIO.MMIODirection.OUT;
+
+            int i = lstMMIO_network_list.Items.IndexOf(mmioci);
+            adjustHeightOfMMIOcomboItem(i, itemHeight(mmioci));
+            lstMMIO_network_list.Invalidate();
+
+            updateDirection(MultiMeterIO.Data[mmioci.Guid]);
+            updateTerminators(MultiMeterIO.Data[mmioci.Guid]);
+        }
+
+        private void radMMIO_network_both_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radMMIO_network_both.Checked) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
+            MultiMeterIO.Data[mmioci.Guid].Direction = MultiMeterIO.MMIODirection.BOTH;
+            mmioci.Direction = MultiMeterIO.MMIODirection.BOTH;
+
+            int i = lstMMIO_network_list.Items.IndexOf(mmioci);
+            adjustHeightOfMMIOcomboItem(i, itemHeight(mmioci));
+            lstMMIO_network_list.Invalidate();
+
+            updateDirection(MultiMeterIO.Data[mmioci.Guid]);
+            updateTerminators(MultiMeterIO.Data[mmioci.Guid]);
+        }
+        private void updateTerminators(MultiMeterIO.clsMMIO mmio)
+        {
+            if (mmio == null) return;
+
+            txtMMIO_network_terminator_in_custom.Visible = mmio.TerminatorIn == MultiMeterIO.MMIOTerminator.CUSTOM && mmio.Direction != MultiMeterIO.MMIODirection.OUT;
+            txtMMIO_network_terminator_out_custom.Visible = mmio.TerminatorOut == MultiMeterIO.MMIOTerminator.CUSTOM && mmio.Direction != MultiMeterIO.MMIODirection.IN;
+        }
+        private void updateDirection(MultiMeterIO.clsMMIO mmio)
+        {
+            if (mmio == null) return;
+            switch (mmio.Direction)
+            {
+                case MultiMeterIO.MMIODirection.IN:
+                    lblMMIO_network_format_in.Enabled = true;
+                    comboMMIO_network_format_in.Enabled = true;
+                    lblMMIO_network_format_out.Enabled = false;
+                    comboMMIO_network_format_out.Enabled = false;
+
+                    lblMMIO_network_terminator_in.Enabled = true;
+                    comboMMIO_network_terminator_in.Enabled = true;
+                    lblMMIO_network_terminator_out.Enabled = false;
+                    comboMMIO_network_terminator_out.Enabled = false;
+
+                    lblMMIO_network_rxdata.Enabled = true;
+                    pnlMMIO_network_rxdata.Enabled = true;
+
+                    lblMMIO_network_txdata.Enabled = false;
+                    pnlMMIO_network_txdata.Enabled = false;
+
+                    lblMMIO_network_udp_endpoint_ip_port.Enabled = false;
+                    txtMMIO_network_udp_endpoint_ip_port.Enabled = false;
+                    btnMMIO_network_udp_endpoint_ip_port.Enabled = false;
+
+                    lblMMIO_network_ip_port.Enabled = true;
+                    txtMMIO_network_ip_port.Enabled = true;
+                    btnMMIO_network_ip_port_ip4.Enabled = true;
+
+                    txtMMIO_network_udp_endpoint_ip_port.Text = "";
+
+                    break;
+                case MultiMeterIO.MMIODirection.OUT:
+                    lblMMIO_network_format_in.Enabled = false;
+                    comboMMIO_network_format_in.Enabled = false;
+                    lblMMIO_network_format_out.Enabled = true;
+                    comboMMIO_network_format_out.Enabled = true;
+
+                    lblMMIO_network_terminator_in.Enabled = false;
+                    comboMMIO_network_terminator_in.Enabled = false;
+                    lblMMIO_network_terminator_out.Enabled = true;
+                    comboMMIO_network_terminator_out.Enabled = true;
+
+                    lblMMIO_network_rxdata.Enabled = false;
+                    pnlMMIO_network_rxdata.Enabled = false;
+
+                    lblMMIO_network_txdata.Enabled = true;
+                    pnlMMIO_network_txdata.Enabled = true;
+
+                    lblMMIO_network_udp_endpoint_ip_port.Enabled = mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER;
+                    txtMMIO_network_udp_endpoint_ip_port.Enabled = mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER;
+                    btnMMIO_network_udp_endpoint_ip_port.Enabled = mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER;
+
+                    if (mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER)
+                    {
+                        lblMMIO_network_ip_port.Enabled = false;
+                        txtMMIO_network_ip_port.Enabled = false;
+                        btnMMIO_network_ip_port_ip4.Enabled = false;
+
+                        txtMMIO_network_udp_endpoint_ip_port.Text = mmio.UdpEndpointIP + ":" + mmio.UdpEndpointPort.ToString();
+                    }
+                    else
+                    {
+                        lblMMIO_network_ip_port.Enabled = true;
+                        txtMMIO_network_ip_port.Enabled = true;
+                        btnMMIO_network_ip_port_ip4.Enabled = true;
+
+                        txtMMIO_network_udp_endpoint_ip_port.Text = "";
+                    }
+
+                    break;
+                case MultiMeterIO.MMIODirection.BOTH:
+                    lblMMIO_network_format_in.Enabled = true;
+                    comboMMIO_network_format_in.Enabled = true;
+                    lblMMIO_network_format_out.Enabled = true;
+                    comboMMIO_network_format_out.Enabled = true;
+
+                    lblMMIO_network_terminator_in.Enabled = true;
+                    comboMMIO_network_terminator_in.Enabled = true;
+                    lblMMIO_network_terminator_out.Enabled = true;
+                    comboMMIO_network_terminator_out.Enabled = true;
+
+                    lblMMIO_network_rxdata.Enabled = true;
+                    pnlMMIO_network_rxdata.Enabled = true;
+
+                    lblMMIO_network_txdata.Enabled = true;
+                    pnlMMIO_network_txdata.Enabled = true;
+
+                    lblMMIO_network_udp_endpoint_ip_port.Enabled = mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER;
+                    txtMMIO_network_udp_endpoint_ip_port.Enabled = mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER;
+                    btnMMIO_network_udp_endpoint_ip_port.Enabled = mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER;
+
+                    lblMMIO_network_ip_port.Enabled = true;
+                    txtMMIO_network_ip_port.Enabled = true;
+                    btnMMIO_network_ip_port_ip4.Enabled = true;
+
+                    if (mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER)
+                        txtMMIO_network_udp_endpoint_ip_port.Text = mmio.UdpEndpointIP + ":" + mmio.UdpEndpointPort.ToString();
+                    else
+                        txtMMIO_network_udp_endpoint_ip_port.Text = "";
+
+                    break;
+            }
+        }
+        private void comboMMIO_network_format_in_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            bool ok = Enum.TryParse<MultiMeterIO.MMIOFormat>(comboMMIO_network_format_in.Text, out MultiMeterIO.MMIOFormat fmt);
+
+            if (ok) MultiMeterIO.Data[mmioci.Guid].FormatIn = fmt;
+        }
+        private class clsMultiMeterIOComboboxItem
+        {
+            private Guid _guid;
+            private MultiMeterIO.MMIOType _type;
+            private string _ip;
+            private int _port;
+            private MultiMeterIO.MMIODirection _direction;
+            private string _udp_endpoint_ip;
+            private int _udp_endpoint_port;
+            public clsMultiMeterIOComboboxItem(Guid guid, MultiMeterIO.MMIOType type, string ip, int port, MultiMeterIO.MMIODirection direction, string udp_endpoint_ip, int udp_endpoint_port)
+            {
+                _guid = guid;
+                _type = type;
+                _ip = ip;
+                _port = port;
+                _direction = direction;
+                _udp_endpoint_ip = udp_endpoint_ip;
+                _udp_endpoint_port = udp_endpoint_port;
+            }
+            public Guid Guid
+            {
+                get { return _guid; }
+                set { _guid = value; }
+            }
+            public MultiMeterIO.MMIOType Type
+            {
+                get { return _type; }
+                set { _type = value; }
+            }
+            public string IP
+            {
+                get { return _ip; }
+                set { _ip = value; }
+            }
+            public int Port
+            {
+                get { return _port; }
+                set { _port = value; }
+            }
+            public string UDPEndpointIP
+            {
+                get { return _udp_endpoint_ip; }
+                set { _udp_endpoint_ip = value; }
+            }
+            public int UDPEndpointPort
+            {
+                get { return _udp_endpoint_port; }
+                set { _udp_endpoint_port = value; }
+            }
+            public MultiMeterIO.MMIODirection Direction
+            {
+                get { return _direction; }
+                set { _direction = value; }
+            }
+            public override string ToString()
+            {
+                return _ip + ":" + _port;
+            }
+        }
+        private void lstMMIO_network_list_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+            e.DrawBackground();
+
+            Graphics g = e.Graphics;
+
+            if (e.Index >= 0)
+            {
+                SolidBrush sbt;
+                if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+                    sbt = new SolidBrush(Color.White);
+                else
+                    sbt = new SolidBrush(Color.Black);
+
+                clsMultiMeterIOComboboxItem mmioci = (clsMultiMeterIOComboboxItem)((ListBox)sender).Items[e.Index];
+                if (mmioci != null)
+                {
+                    string type = "";
+                    Font small = new Font(e.Font.FontFamily, e.Font.Size * 0.8f, FontStyle.Regular);
+                    switch (mmioci.Type)
+                    {
+                        case MultiMeterIO.MMIOType.UDP_LISTENER:
+                            type = "udp";
+                            break;
+                        case MultiMeterIO.MMIOType.TCPIP_LISTENER:
+                            type = "tcp/ip";
+                            break;
+                        case MultiMeterIO.MMIOType.SERIAL:
+                            type = "serial";
+                            break;
+                    }
+                    g.DrawString(type, small, sbt, e.Bounds, StringFormat.GenericDefault);
+
+                    Rectangle rect2 = new Rectangle(30, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+                    g.DrawString(mmioci.Direction.ToString().ToLower(), small, sbt, rect2, StringFormat.GenericDefault);
+                    small.Dispose();
+
+                    int offset;
+                    Rectangle rect;
+                    if(mmioci.Type == MultiMeterIO.MMIOType.UDP_LISTENER && mmioci.Direction != MultiMeterIO.MMIODirection.IN)
+                    {
+                        offset = (int)(lstMMIO_network_list.Font.Height * 1.8f);
+                        rect = new Rectangle(e.Bounds.X, e.Bounds.Top + offset, e.Bounds.Width, e.Bounds.Height - offset);
+                        g.DrawString(mmioci.UDPEndpointIP + ":" + mmioci.UDPEndpointPort.ToString(), e.Font, sbt, rect, StringFormat.GenericDefault);
+
+                        if (mmioci.Direction == MultiMeterIO.MMIODirection.OUT)
+                        {
+                            sbt.Dispose();
+                            sbt = new SolidBrush(Color.Gray);
+                        }
+                    }
+                    
+                    offset = (int)(lstMMIO_network_list.Font.Height * 0.8f);
+                    rect = new Rectangle(e.Bounds.X, e.Bounds.Top + offset, e.Bounds.Width, e.Bounds.Height - offset);
+                    g.DrawString(((ListBox)sender).Items[e.Index].ToString(), e.Font, sbt, rect, StringFormat.GenericDefault);
+
+                    sbt.Dispose();
+                }
+
+                e.DrawFocusRectangle();
+            }
+        }
+        private int itemHeight(clsMultiMeterIOComboboxItem mmioci)
+        {
+            int ret = lstMMIO_network_list.Font.Height;
+            switch (mmioci.Type)
+            {
+                case MultiMeterIO.MMIOType.UDP_LISTENER:
+                    if (mmioci.Direction == MultiMeterIO.MMIODirection.IN)
+                    {
+                       ret = (int)(lstMMIO_network_list.Font.Height * 1.8f);
+                    }
+                    else
+                    {
+                        ret = (int)(lstMMIO_network_list.Font.Height * 2.8f);
+                    }
+                    break;
+                default:
+                    ret = (int)(lstMMIO_network_list.Font.Height * 1.8f);
+                    break;
+            }
+            return ret;
+        }
+        private void lstMMIO_network_list_MeasureItem(object sender, MeasureItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+            clsMultiMeterIOComboboxItem mmioci = (clsMultiMeterIOComboboxItem)((ListBox)sender).Items[e.Index];
+            int newHeight;
+            if(mmioci != null)
+                newHeight = itemHeight(mmioci);
+            else
+                newHeight = (int)(lstMMIO_network_list.Font.Height * 1.8f);
+
+            if(newHeight != e.ItemHeight)
+                e.ItemHeight = newHeight;
+        }
+
+        private void chkMMIO_network_enabled_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (_MMIO_ignore_change_events) return;
+            if (lstMMIO_network_list.SelectedIndex < 0) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            bool old_state = MultiMeterIO.Data[mmioci.Guid].Enabled;
+            MultiMeterIO.Data[mmioci.Guid].Enabled = !old_state;
+            if (!old_state)
+            {
+                // start
+                MultiMeterIO.Data[mmioci.Guid].StartListening();
+            }
+            else
+            {
+                // stop
+                MultiMeterIO.StopListening(MultiMeterIO.Data[mmioci.Guid].Guid);
+            }
+            _MMIO_ignore_change_events = true;
+            chkMMIO_network_enabled.Checked = MultiMeterIO.Data[mmioci.Guid].Enabled;
+            _MMIO_ignore_change_events = false;
+        }
+        private void txtMMIO_network_ip_port_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void txtMMIO_network_4char_Click(object sender, EventArgs e)
+        {
+            //pnlMMIO_network_container.Focus();
+        }
+
+        private void txtMMIO_network_4char_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+        }
+        private void btnMMIO_network_copy4char_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(txtMMIO_network_4char.Text);
+        }
+        private void btnMMIO_network_remove_variable_Click(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection items = lstMMIO_network_variables.SelectedItems;
+            if (items.Count <= 0 || items.Count > 1)
+            {
+                btnMMIO_network_remove_variable.Enabled = false;
+                btnMMIO_network_copyvariable_clipboard.Enabled = false;
+                return;
+            }
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
+            btnMMIO_network_remove_variable.Enabled = items.Count > 0;
+            btnMMIO_network_copyvariable_clipboard.Enabled = items.Count > 0;
+
+            string variable = items[0].Text;
+
+            MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
+
+            mmio.RemoveVariable(variable);
+            lstMMIO_network_variables.Items.Remove(items[0]);
+            updateVariableList();
+        }
+
+        private void lstMMIO_network_variables_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            ListView.SelectedListViewItemCollection items = lstMMIO_network_variables.SelectedItems;
+            if (items.Count <= 0 || items.Count > 1)
+            {
+                btnMMIO_network_remove_variable.Enabled = false;
+                btnMMIO_network_copyvariable_clipboard.Enabled = false;
+                return;
+            }
+            btnMMIO_network_remove_variable.Enabled = true;
+            btnMMIO_network_copyvariable_clipboard.Enabled = true;
+        }
+
+        private void btnMMIO_network_copyvariable_clipboard_Click(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection items = lstMMIO_network_variables.SelectedItems;
+            if (items.Count <= 0 || items.Count > 1) return;
+
+            Clipboard.SetText("%" + items[0].Text + "%");
+        }
+        private void btnMMIO_variable_Click(object sender, EventArgs e)
+        {
+            mmioSetupVariable(0);
+        }
+        private void comboMMIO_network_terminator_in_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            bool ok = Enum.TryParse<MultiMeterIO.MMIOTerminator>(comboMMIO_network_terminator_in.Text, out MultiMeterIO.MMIOTerminator term);
+
+            if (ok)
+            {
+                MultiMeterIO.Data[mmioci.Guid].TerminatorIn = term;
+                updateTerminators(MultiMeterIO.Data[mmioci.Guid]);
+            }
+        }
+        private void btnMMIO_variable_2_Click(object sender, EventArgs e)
+        {
+            mmioSetupVariable(1);
+        }
+        private bool variableInUse(int variable)
+        {
+            string mgID = meterItemGroupIDfromSelected();
+            if (mgID == "") return false;
+
+            clsMeterTypeComboboxItem mtci = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
+            if (mtci == null) return false;
+
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return false;
+
+            MeterType mt = meterItemGroupTypefromSelected();
+            if (mt == MeterType.NONE) return false;
+
+            MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
+            if (igs == null) return false;
+
+            return igs.GetMMIOVariable(variable) == "--DEFAULT--" ? false : true;
+        }
+        private void mmioSetupVariable(int variable)
+        {
+            string mgID = meterItemGroupIDfromSelected();
+            if (mgID == "") return;
+
+            clsMeterTypeComboboxItem mtci = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
+            if (mtci == null) return;
+
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return;
+
+            MeterType mt = meterItemGroupTypefromSelected();
+            if (mt == MeterType.NONE) return;
+
+            MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
+            if (igs == null) return;
+
+            frmVariablePicker f = new frmVariablePicker();
+            f.Init(variable, igs.GetMMIOGuid(variable), igs.GetMMIOVariable(variable));
+            DialogResult dr = f.ShowDialog(this);
+            if (dr == DialogResult.OK || dr == DialogResult.Ignore)
+            {
+                igs.SetMMIOGuid(variable, f.Guid);
+                igs.SetMMIOVariable(variable, f.Variable);
+
+                m.ApplySettingsForMeterGroup(mt, igs, mtci.Order);
+
+                switch (variable)
+                {
+                    case 0:
+                        pnlVariableInUse_1.Visible = variableInUse(0);
+                        break;
+                    case 1:
+                        pnlVariableInUse_2.Visible = variableInUse(1);
+                        break;
+                }                               
+            }
+        }
+
+        private void comboMMIO_network_terminator_out_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            bool ok = Enum.TryParse<MultiMeterIO.MMIOTerminator>(comboMMIO_network_terminator_out.Text, out MultiMeterIO.MMIOTerminator term);
+
+            if (ok)
+            {
+                MultiMeterIO.Data[mmioci.Guid].TerminatorOut = term;
+                updateTerminators(MultiMeterIO.Data[mmioci.Guid]);
+            }
+        }
+        private void comboMMIO_network_format_out_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            bool ok = Enum.TryParse<MultiMeterIO.MMIOFormat>(comboMMIO_network_format_out.Text, out MultiMeterIO.MMIOFormat fmt);
+
+            if (ok) MultiMeterIO.Data[mmioci.Guid].FormatOut = fmt;
+        }
+        private void txtMMIO_network_terminator_in_custom_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (_MMIO_ignore_change_events) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            MultiMeterIO.Data[mmioci.Guid].CustomTerminatorIn = txtMMIO_network_terminator_in_custom.Text;
+        }
+
+        private void txtMMIO_network_terminator_out_custom_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (_MMIO_ignore_change_events) return;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            MultiMeterIO.Data[mmioci.Guid].CustomTerminatorOut = txtMMIO_network_terminator_out_custom.Text;
+        }
+        #endregion
+
+        private void nudDataOutNode_sendinterval_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void txtDataOutNode_4charID_TextChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void btnMMIO_network_udp_endpoint_ip_port_Click(object sender, EventArgs e)
+        {
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+            MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
+
+            frmIPv4Picker f = new frmIPv4Picker();
+            f.Init(mmio.UdpEndpointIP + ":" + mmio.UdpEndpointPort.ToString());
+            DialogResult dr = f.ShowDialog(this);
+
+            if (dr == DialogResult.OK)
+            {
+                string sTmp = f.IP;
+                if (sTmp == "") sTmp = "127.0.0.1:9000";
+                setupUDPEndpoint(sTmp);
+            }
+        }
+        private void txtMMIO_network_udp_endpoint_ip_port_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+        }
+        private bool setUDPEndpoint()
+        {
+            bool ret_ok = false;
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return ret_ok;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return ret_ok;
+
+            string[] parts = txtMMIO_network_udp_endpoint_ip_port.Text.Split(':');
+            if (parts.Length == 2)
+            {
+                string ip = parts[0];
+                string port = parts[1];
+
+                bool ok = int.TryParse(port, out int portInt);
+                if (ok)
+                {
+                    MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
+                    mmio.UdpEndpointIP = ip;
+                    mmio.UdpEndpointPort = portInt;
+                    ret_ok = true;
+                }
+            }
+            return ret_ok;
+        }
+        private void setupUDPEndpoint(string existing_ip_port = "")
+        {
+            pnlMMIO_network_container.Focus();
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            string ip_port = InputBox.Show("Configure UDP Endpoint", "Provide UDP endpoint (outbound) details:", existing_ip_port);
+            if (ip_port == null || ip_port == "") return;
+
+            string[] parts = ip_port.Split(':');
+            if (parts.Length == 2)
+            {
+                if (int.TryParse(parts[1], out int intPort))
+                {
+                    if (Common.IsIpv4Valid(parts[0], intPort))
+                    {
+                        string oldIpPort = txtMMIO_network_udp_endpoint_ip_port.Text;
+                        _MMIO_ignore_change_events = true;
+                        txtMMIO_network_udp_endpoint_ip_port.Text = parts[0] + ":" + intPort.ToString();
+                        _MMIO_ignore_change_events = false;
+                        bool ok = setUDPEndpoint();
+                        if (ok)
+                        {
+                            mmioci.UDPEndpointIP = parts[0];
+                            mmioci.UDPEndpointPort = intPort;
+                            lstMMIO_network_list.Invalidate();
+                        }
+                        else
+                        {
+                            _MMIO_ignore_change_events = true;
+                            txtMMIO_network_udp_endpoint_ip_port.Text = oldIpPort;
+                            _MMIO_ignore_change_events = false;
+                            MessageBox.Show("Incorrect ip/port format. Please use the following format.\n\nIP:PORT\n\nExample: 127.0.0.1:9000",
+                                "Incorrect Format",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Incorrect ip/port format. Please use the following format.\n\nIP:PORT\n\nExample: 127.0.0.1:9000",
+                            "Incorrect Format",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Incorrect ip/port format. Please use the following format.\n\nIP:PORT\n\nExample: 127.0.0.1:9000",
+                        "Incorrect Format",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Incorrect ip/port format. Please use the following format.\n\nIP:PORT\n\nExample: 127.0.0.1:9000",
+                    "Incorrect Format",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
+        }
+        private void txtMMIO_network_udp_endpoint_ip_port_Click(object sender, EventArgs e)
+        {
+            setupUDPEndpoint(txtMMIO_network_udp_endpoint_ip_port.Text);
+        }
+
+        private void txtMMIO_network_udp_endpoint_ip_port_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (_MMIO_ignore_change_events) return;
+            setUDPEndpoint();
+        }
+
+        private void btnMMIO_network_remove_all_variables_Click(object sender, EventArgs e)
+        {
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
+            lstMMIO_network_variables.Items.Clear();
+            btnMMIO_network_remove_all_variables.Enabled = false;
+        }
     }
 
     #region PADeviceInfo Helper Class
@@ -27522,7 +28803,7 @@ namespace Thetis
             //[2.10.3.6]MW0LGE fixes #414, note might have issues when first running up, but should be ok after a profile save
             byte[] bytes = Encoding.Default.GetBytes(_Name);
             return Encoding.UTF8.GetString(bytes);
-        }
+        }       
     }
 
     #endregion
@@ -27550,7 +28831,5 @@ namespace Thetis
             }
         }
     }
-
     #endregion
-
 }

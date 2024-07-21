@@ -1381,14 +1381,15 @@ namespace Thetis
         } // thread SCHEDULER() 
 
      
-      //  private string wave_folder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\Thetis";
+        private string wave_folder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\Thetis";
 
         private void buttonTS1_Click(object sender, EventArgs e)
         {
-           // string argument = @"/root," + wave_folder;
+            //[2.10.3.6]MW0LGE uncommented so that the recording folder is shown. Fixes #457
+            string argument = @"/root," + wave_folder;
            // Debug.WriteLine("path===:" + wave_folder);
 
-          //  System.Diagnostics.Process.Start("explorer.exe", argument);
+            System.Diagnostics.Process.Start("explorer.exe", argument);
 
           //  Debug.WriteLine("WaveControl.scheduleName " + WaveControl.scheduleName);
           //  WaveToMP3(WaveControl.scheduleName, WaveControl.scheduleName1, 128);
@@ -1423,25 +1424,29 @@ namespace Thetis
             }
             Debug.WriteLine("DONE WITH MP3 CREATION" + WaveControl.scheduleName1);
 
-            try
-            {
-               
-                System.IO.File.Delete(WaveControl.scheduleName);
+            //[2.10.3.5]MW0LGE it looks like MP3 support has been removed and commented out, above, about 5 years ago.
+            //This used to remove the wav file after converting over to an MP3. This is now also commented so the recording
+            //is made available. Fixes #457
 
-                Debug.WriteLine("DEL the WAV FILE" + WaveControl.scheduleName);
+            //try
+            //{
+
+            //    System.IO.File.Delete(WaveControl.scheduleName);
+
+            //    Debug.WriteLine("DEL the WAV FILE" + WaveControl.scheduleName);
 
 
-            }
-            catch (Exception)
-            {
+            //}
+            //catch (Exception)
+            //{
 
-            }
+            //}
 
         } // MP3 conversion thread. ends when conversion from wav to mp3 is done.
 
 
-       //  MemoryStream ms = new MemoryStream();
-       // ke9ns add
+        //  MemoryStream ms = new MemoryStream();
+        // ke9ns add
         public static void ConvertWavStreamToMp3File(ref MemoryStream ms, string savetofilename)
         {
             //rewind to beginning of stream
