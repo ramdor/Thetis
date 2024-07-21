@@ -14289,21 +14289,21 @@ namespace Thetis
                     tmp = obj.ToString();
                 return tmp;
             }
-            private static T deepCopy<T>(T obj)
-            {
-                if (ReferenceEquals(obj, null) || !typeof(T).IsSerializable)
-                {
-                    return default(T);
-                }
+            //private static T deepCopy<T>(T obj)
+            //{
+            //    if (ReferenceEquals(obj, null) || !typeof(T).IsSerializable)
+            //    {
+            //        return default(T);
+            //    }
 
-                IFormatter formatter = new BinaryFormatter();
-                using (Stream stream = new MemoryStream())
-                {
-                    formatter.Serialize(stream, obj);
-                    stream.Seek(0, SeekOrigin.Begin);
-                    return (T)formatter.Deserialize(stream);
-                }
-            }
+            //    IFormatter formatter = new BinaryFormatter();
+            //    using (Stream stream = new MemoryStream())
+            //    {
+            //        formatter.Serialize(stream, obj);
+            //        stream.Seek(0, SeekOrigin.Begin);
+            //        return (T)formatter.Deserialize(stream);
+            //    }
+            //}
             public void RemoveVariable(string key)
             {
                 _io_variables.TryRemove(key, out _);
