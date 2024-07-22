@@ -210,6 +210,7 @@ namespace Thetis
             "%band_vfoasub%" + System.Environment.NewLine +
             "%mode_vfoa%" + System.Environment.NewLine +
             "%mode_vfob%" + System.Environment.NewLine +
+            "%subrx%" + System.Environment.NewLine +
             "%filter_vfoa%" + System.Environment.NewLine +
             "%filter_vfob%" + System.Environment.NewLine +
             "%filter_vfoa_name%" + System.Environment.NewLine +

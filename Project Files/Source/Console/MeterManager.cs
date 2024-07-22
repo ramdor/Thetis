@@ -109,6 +109,10 @@ namespace Thetis
         TX_BAND,
         VFOA_MODE,
         VFOB_MODE,
+        SPLIT,
+        RX2_ENABLED,
+        VFOB_TX,
+        SUB_RX,
         //
 
         LAST
@@ -4114,6 +4118,9 @@ namespace Thetis
                         case "mode_vfob":
                             _readings_text_strings[key] = _owningMeter.ModeVfoB.ToString();
                             break;
+                        case "subrx":
+                            _readings_text_strings[key] = _owningMeter.MultiRxEnabled ? "SubRX" : "";
+                            break;
                         case "filter_vfoa":
                             _readings_text_strings[key] = _owningMeter.FilterVfoA.ToString();
                             break;
@@ -4301,6 +4308,7 @@ namespace Thetis
                 addReadingText("band_vfoasub", text);
                 addReadingText("mode_vfoa", text);
                 addReadingText("mode_vfob", text);
+                addReadingText("subrx", text);
                 addReadingText("filter_vfoa", text);
                 addReadingText("filter_vfob", text);
                 addReadingText("filter_vfoa_name", text);
@@ -10139,16 +10147,21 @@ namespace Thetis
                             {
                                 addUpdateReading(ref all_readings, Reading.VFOA_FREQ, VfoA.ToString("f6"));
                                 addUpdateReading(ref all_readings, Reading.VFOB_FREQ, VfoB.ToString("f6"));
-                                addUpdateReading(ref all_readings, Reading.VFOSUBA_FREQ, VfoSub.ToString("f6"));
+                                bool vfoSub = RX == 1 && VfoSub >= 0 && RX2Enabled && (MultiRxEnabled || Split);
+                                if (vfoSub) addUpdateReading(ref all_readings, Reading.VFOSUBA_FREQ, VfoSub.ToString("f6"));
                                 addUpdateReading(ref all_readings, Reading.TX_FREQ, TXVFOb ? VfoB.ToString("f6") : VfoA.ToString("f6"));
-                                addUpdateReading(ref all_readings, Reading.VFOA_BAND, BandVfoA.ToString().ToLower());
-                                addUpdateReading(ref all_readings, Reading.VFOB_BAND, BandVfoB.ToString().ToLower());
-                                addUpdateReading(ref all_readings, Reading.VFOSUBA_BAND, BandVfoASub.ToString().ToLower());
+                                addUpdateReading(ref all_readings, Reading.VFOA_BAND, clearB(BandVfoA.ToString().ToLower()));
+                                addUpdateReading(ref all_readings, Reading.VFOB_BAND, clearB(BandVfoB.ToString().ToLower()));
+                                if (vfoSub) addUpdateReading(ref all_readings, Reading.VFOSUBA_BAND, clearB(BandVfoASub.ToString().ToLower()));
                                 addUpdateReading(ref all_readings, Reading.VFOA_FILTER_NAME, FilterVfoAName.ToLower());
                                 addUpdateReading(ref all_readings, Reading.VFOB_FILTER_NAME, FilterVfoBName.ToLower());
-                                addUpdateReading(ref all_readings, Reading.TX_BAND, TXVFOb ? BandVfoB.ToString().ToLower() : BandVfoA.ToString().ToLower());
-                                addUpdateReading(ref all_readings, Reading.VFOA_MODE, ModeVfoA);
-                                addUpdateReading(ref all_readings, Reading.VFOB_MODE, ModeVfoB);
+                                addUpdateReading(ref all_readings, Reading.TX_BAND, clearB(TXVFOb ? BandVfoB.ToString().ToLower() : BandVfoA.ToString().ToLower()));
+                                addUpdateReading(ref all_readings, Reading.VFOA_MODE, ModeVfoA.ToString().ToLower());
+                                addUpdateReading(ref all_readings, Reading.VFOB_MODE, ModeVfoB.ToString().ToLower());
+                                addUpdateReading(ref all_readings, Reading.SPLIT, Split.ToString().ToLower());
+                                addUpdateReading(ref all_readings, Reading.RX2_ENABLED, RX2Enabled.ToString().ToLower());
+                                addUpdateReading(ref all_readings, Reading.VFOB_TX, TXVFOb.ToString().ToLower());
+                                if (RX == 1) addUpdateReading(ref all_readings, Reading.SUB_RX, MultiRxEnabled.ToString().ToLower());
                             }
                         }
 
@@ -10162,6 +10175,11 @@ namespace Thetis
                         }
                     }
                 }
+            }
+            private string clearB(string b)
+            {
+                if (b.Left(1) == "b" || b.Left(1) == "B") return b.Substring(1);
+                return b;
             }
             public int DelayForUpdate()
             {
@@ -13040,7 +13058,7 @@ namespace Thetis
 
                 // frequency
                 plotText("VFO A", x + (w * 0.01f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
-                if(m.RX == 1 && m.RX2Enabled && (m.MultiRxEnabled || m.Split))
+                if(m.RX == 1 && m.RX2Enabled && (m.MultiRxEnabled || m.Split) && m.VfoSub >= 0) //[2.10.3.6]MW0LGE added m.vfosub >= 0
                 {
                     // vfoa sub
                     plotText("VFO Sub", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
