@@ -28968,6 +28968,16 @@ namespace Thetis
         {
             mmioSetupVariable(1);
         }
+
+        private void btnTextOverlay_copyfonts_Click(object sender, EventArgs e)
+        {
+            _textOverlayFont2 = new Font(_textOverlayFont1.FontFamily, _textOverlayFont1.Size, _textOverlayFont1.Style);
+            clrbtnTextOverlay_TextColour2.Color = clrbtnTextOverlay_TextColour1.Color;
+            clrbtnTextOverlay_TextBackColour2.Color = clrbtnTextOverlay_TextBackColour1.Color;
+            chkTextOverlay_textback2.Checked = chkTextOverlay_textback1.Checked;
+
+            updateMeterType();
+        }
     }
 
     #region PADeviceInfo Helper Class
