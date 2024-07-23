@@ -25222,7 +25222,24 @@ namespace Thetis
             MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
             if (igs == null) return null;
 
-            if (mt == MeterType.DATA_OUT)
+            if(mt == MeterType.ROTATOR)
+            {
+                igs.UpdateInterval = (int)nudMeterItemUpdateRateRotator.Value;
+                igs.Colour = Color.FromArgb(255, clrbtnMeterItemHBackgroundRotator.Color);
+                igs.TitleColor = clrbtnMeterItemRotatorArrow.Color;
+                igs.MarkerColour = clrbtnMeterItemRotatorLargeDot.Color;
+                igs.SubMarkerColour = clrbtnMeterItemRotatorSmallDot.Color;
+                igs.ShowMarker = chkMeterItemRotatorShowBeamWidth.Checked;
+                igs.LowColor = clrbtnMeterItemRotatorBeamWidth.Color;
+                igs.HighColor = clrbtnMeterItemRotatorText.Color;
+                igs.ShowHistory = chkMeterItemRotatorCardinals.Checked;
+                igs.ShowSubMarker = chkMeterItemRotatorElevation.Checked;
+                igs.FadeOnRx = chkMeterItemFadeOnRxRotator.Checked;
+                igs.FadeOnTx = chkMeterItemFadeOnTxRotator.Checked;
+                igs.DarkMode = chkMeterItemDarkModeRotator.Checked;
+                igs.AttackRatio = (float)nudMeterItemRotatorBeamWidth.Value;
+            }
+            else if (mt == MeterType.DATA_OUT)
             {
                 Guid guid = MultiMeterIO.GuidfromFourChar(txtDataOutNode_4charID.Text);
                 if (guid != Guid.Empty)
@@ -25395,37 +25412,95 @@ namespace Thetis
 
             _ignoreMeterItemChangeEvents = true;
 
-            switch (m.MeterVariables(mt))
+            if (mt != MeterType.ROTATOR && mt != MeterType.SIGNAL_TEXT && mt != MeterType.VFO_DISPLAY && mt != MeterType.CLOCK && 
+                mt != MeterType.TEXT_OVERLAY && mt != MeterType.SPACER)
             {
-                case 1:
-                    btnMMIO_variable.Enabled = true;
-                    btnMMIO_variable_2.Enabled = false;
-                    toolTip1.SetToolTip(btnMMIO_variable, m.MeterVariablesReading(mt, 0).ToString());
-                    pnlVariableInUse_1.Visible = variableInUse(0);
-                    pnlVariableInUse_2.Visible = false;
-                    break;
-                case 2:
-                    btnMMIO_variable.Enabled = true;
-                    btnMMIO_variable_2.Enabled = true;
-                    toolTip1.SetToolTip(btnMMIO_variable, m.MeterVariablesReading(mt, 0).ToString());
-                    toolTip1.SetToolTip(btnMMIO_variable_2, m.MeterVariablesReading(mt, 1).ToString());
-                    pnlVariableInUse_1.Visible = variableInUse(0);
-                    pnlVariableInUse_2.Visible = variableInUse(1);
-                    break;
-                case 7:
-                    //todo? anan mm
-                    btnMMIO_variable.Enabled = false;
-                    btnMMIO_variable_2.Enabled = false;
-                    pnlVariableInUse_1.Visible = false;
-                    pnlVariableInUse_2.Visible = false;
-                    break;
-                default:
-                    btnMMIO_variable.Enabled = false;
-                    btnMMIO_variable_2.Enabled = false;
-                    break;
+                switch (m.MeterVariables(mt))
+                {
+                    case 1:
+                        btnMMIO_variable.Enabled = true;
+                        btnMMIO_variable_2.Enabled = false;
+                        toolTip1.SetToolTip(btnMMIO_variable, m.MeterVariablesReading(mt, 0).ToString());
+                        pnlVariableInUse_1.Visible = variableInUse(0);
+                        pnlVariableInUse_2.Visible = false;
+                        break;
+                    case 2:
+                        btnMMIO_variable.Enabled = true;
+                        btnMMIO_variable_2.Enabled = true;
+                        toolTip1.SetToolTip(btnMMIO_variable, m.MeterVariablesReading(mt, 0).ToString());
+                        toolTip1.SetToolTip(btnMMIO_variable_2, m.MeterVariablesReading(mt, 1).ToString());
+                        pnlVariableInUse_1.Visible = variableInUse(0);
+                        pnlVariableInUse_2.Visible = variableInUse(1);
+                        break;
+                    case 7:
+                        //todo? anan mm
+                        btnMMIO_variable.Enabled = false;
+                        btnMMIO_variable_2.Enabled = false;
+                        pnlVariableInUse_1.Visible = false;
+                        pnlVariableInUse_2.Visible = false;
+                        break;
+                    default:
+                        btnMMIO_variable.Enabled = false;
+                        btnMMIO_variable_2.Enabled = false;
+                        pnlVariableInUse_1.Visible = false;
+                        pnlVariableInUse_2.Visible = false;
+                        break;
+                }
+            }
+            else if (mt == MeterType.ROTATOR)
+            {
+                switch (m.MeterVariables(mt))
+                {
+                    //case 1:
+                    //    btnMMIO_variable_rotator.Enabled = true;
+                    //    btnMMIO_variable_2_rotator.Enabled = false;
+                    //    toolTip1.SetToolTip(btnMMIO_variable, m.MeterVariablesReading(mt, 0).ToString());
+                    //    pnlVariableInUse_1_rotator.Visible = variableInUse(0);
+                    //    pnlVariableInUse_2_rotator.Visible = false;
+                    //    break;
+                    case 2:
+                        btnMMIO_variable_rotator.Enabled = true;
+                        btnMMIO_variable_2_rotator.Enabled = true;
+                        toolTip1.SetToolTip(btnMMIO_variable_rotator, m.MeterVariablesReading(mt, 0).ToString());
+                        toolTip1.SetToolTip(btnMMIO_variable_2_rotator, m.MeterVariablesReading(mt, 1).ToString());
+                        pnlVariableInUse_1_rotator.Visible = variableInUse(0);
+                        pnlVariableInUse_2_rotator.Visible = variableInUse(1);
+                        break;
+                    //case 7:
+                    //    //todo? anan mm
+                    //    btnMMIO_variable_rotator.Enabled = false;
+                    //    btnMMIO_variable_2_rotator.Enabled = false;
+                    //    pnlVariableInUse_1_rotator.Visible = false;
+                    //    pnlVariableInUse_2_rotator.Visible = false;
+                    //    break;
+                    //default:
+                    //    btnMMIO_variable_rotator.Enabled = false;
+                    //    btnMMIO_variable_2_rotator.Enabled = false;
+                    //    pnlVariableInUse_1_rotator.Visible = false;
+                    //    pnlVariableInUse_2_rotator.Visible = false;
+                    //    break;
+                }
             }
 
-            if (mt == MeterType.DATA_OUT)
+            if (mt == MeterType.ROTATOR)
+            {
+                nudMeterItemUpdateRateRotator.Value = igs.UpdateInterval;
+                clrbtnMeterItemHBackgroundRotator.Color = igs.Colour;
+                clrbtnMeterItemRotatorArrow.Color = igs.TitleColor;
+                clrbtnMeterItemRotatorLargeDot.Color = igs.MarkerColour;
+                clrbtnMeterItemRotatorSmallDot.Color = igs.SubMarkerColour;
+                chkMeterItemRotatorShowBeamWidth.Checked = igs.ShowMarker;
+                clrbtnMeterItemRotatorBeamWidth.Color = igs.LowColor;
+                clrbtnMeterItemRotatorText.Color = igs.HighColor;
+                chkMeterItemRotatorCardinals.Checked = igs.ShowHistory;
+                chkMeterItemRotatorElevation.Checked = igs.ShowSubMarker;
+                chkMeterItemFadeOnRxRotator.Checked = igs.FadeOnRx;
+                chkMeterItemFadeOnTxRotator.Checked = igs.FadeOnTx;
+                chkMeterItemDarkModeRotator.Checked = igs.DarkMode;
+                nudMeterItemRotatorBeamWidth.Value = (decimal)igs.AttackRatio;
+                updateShowBeamWidthControls();
+            }
+            else if (mt == MeterType.DATA_OUT)
             {
                 Guid guid = igs.GetMMIOGuid(0);
                 if (MultiMeterIO.Data.ContainsKey(guid))
@@ -25926,6 +26001,7 @@ namespace Thetis
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
+                    grpMeterItemRotator.Visible = false;
                     break;
                 case MeterType.VFO_DISPLAY:
                     grpMeterItemVfoDisplaySettings.Parent = grpMultiMeterHolder;
@@ -25937,6 +26013,7 @@ namespace Thetis
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
+                    grpMeterItemRotator.Visible = false;
                     break;
                 case MeterType.CLOCK:
                     grpMeterItemClockSettings.Parent = grpMultiMeterHolder;
@@ -25948,6 +26025,7 @@ namespace Thetis
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
+                    grpMeterItemRotator.Visible = false;
                     break;
                 case MeterType.SPACER:
                     grpMeterItemSpacerSettings.Parent = grpMultiMeterHolder;
@@ -25959,6 +26037,7 @@ namespace Thetis
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     grpTextOverlay.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
+                    grpMeterItemRotator.Visible = false;
                     break;
                 case MeterType.TEXT_OVERLAY:
                     grpTextOverlay.Parent = grpMultiMeterHolder;
@@ -25970,6 +26049,7 @@ namespace Thetis
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     grpMeterItemSpacerSettings.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
+                    grpMeterItemRotator.Visible = false;
                     break;
                 case MeterType.DATA_OUT:
                     grpMeterItemDataOutNode.Parent = grpMultiMeterHolder;
@@ -25981,6 +26061,19 @@ namespace Thetis
                     grpMeterItemVfoDisplaySettings.Visible = false;
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
+                    grpMeterItemRotator.Visible = false;
+                    break;
+                case MeterType.ROTATOR:
+                    grpMeterItemRotator.Parent = grpMultiMeterHolder;
+                    grpMeterItemRotator.Location = loc;
+                    grpMeterItemRotator.Visible = true;
+
+                    grpMeterItemSettings.Visible = false;
+                    grpMeterItemClockSettings.Visible = false;
+                    grpMeterItemVfoDisplaySettings.Visible = false;
+                    grpMeterItemSpacerSettings.Visible = false;
+                    grpTextOverlay.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
                     break;
                 default:
                     grpMeterItemSettings.Parent = grpMultiMeterHolder;
@@ -25991,6 +26084,7 @@ namespace Thetis
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
+                    grpMeterItemRotator.Visible = false;
                     break;
             }
         }
@@ -29767,15 +29861,30 @@ namespace Thetis
 
                 m.ApplySettingsForMeterGroup(mt, igs, mtci.Order);
 
-                switch (variable)
+                if (mt == MeterType.ROTATOR)
                 {
-                    case 0:
-                        pnlVariableInUse_1.Visible = variableInUse(0);
-                        break;
-                    case 1:
-                        pnlVariableInUse_2.Visible = variableInUse(1);
-                        break;
-                }                               
+                    switch (variable)
+                    {
+                        case 0:
+                            pnlVariableInUse_1_rotator.Visible = variableInUse(0);
+                            break;
+                        case 1:
+                            pnlVariableInUse_2_rotator.Visible = variableInUse(1);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (variable)
+                    {
+                        case 0:
+                            pnlVariableInUse_1.Visible = variableInUse(0);
+                            break;
+                        case 1:
+                            pnlVariableInUse_2.Visible = variableInUse(1);
+                            break;
+                    }
+                }
             }
         }
 
@@ -29822,18 +29931,6 @@ namespace Thetis
 
             MultiMeterIO.Data[mmioci.Guid].CustomTerminatorOut = txtMMIO_network_terminator_out_custom.Text;
         }
-        #endregion
-
-        private void nudDataOutNode_sendinterval_ValueChanged(object sender, EventArgs e)
-        {
-            updateMeterType();
-        }
-
-        private void txtDataOutNode_4charID_TextChanged(object sender, EventArgs e)
-        {
-            updateMeterType();
-        }
-
         private void btnMMIO_network_udp_endpoint_ip_port_Click(object sender, EventArgs e)
         {
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
@@ -29962,6 +30059,104 @@ namespace Thetis
 
             lstMMIO_network_variables.Items.Clear();
             btnMMIO_network_remove_all_variables.Enabled = false;
+        }
+        #endregion
+
+        private void nudDataOutNode_sendinterval_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void txtDataOutNode_4charID_TextChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }        
+
+        //rotator
+        private void chkMeterItemRotatorElevation_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkMeterItemRotatorCardinals_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkMeterItemFadeOnRxRotator_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkMeterItemFadeOnTxRotator_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkMeterItemDarkModeRotator_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudMeterItemUpdateRateRotator_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMeterItemHBackgroundRotator_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMeterItemRotatorArrow_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMeterItemRotatorLargeDot_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMeterItemRotatorSmallDot_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMeterItemRotatorBeamWidth_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkMeterItemRotatorShowBeamWidth_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+            updateShowBeamWidthControls();
+        }
+        private void updateShowBeamWidthControls()
+        {
+            bool en = chkMeterItemRotatorShowBeamWidth.Checked;
+            clrbtnMeterItemRotatorBeamWidth.Enabled = en;
+            nudMeterItemRotatorBeamWidth.Enabled = en;
+        }
+        private void nudMeterItemRotatorBeamWidth_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMeterItemRotatorText_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void btnMMIO_variable_rotator_Click(object sender, EventArgs e)
+        {
+            mmioSetupVariable(0);
+        }
+
+        private void btnMMIO_variable_2_rotator_Click(object sender, EventArgs e)
+        {
+            mmioSetupVariable(1);
         }
     }
 

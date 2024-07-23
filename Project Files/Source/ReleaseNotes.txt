@@ -5,7 +5,8 @@
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
 ## v2.10.3.6 Change Log - WIP dev_7
-- [add] MultiMeterIO - get external data - use it in the MultiMeter system. Watch video :
+- [add] MultiMeterIO - get external data - use it in the MultiMeter system. Watch video : https://youtu.be/oYRrm8YpD24
+- [add] new meter item, Rotator. Requires a data feed using the new Multi Meter io.
 - [change] can now have 20 multimeter containers
 - [change] multimeter meter items are not limited. You can have unlimited in use at a time in a single container
 - [change] midi micgain now is full range -40 to 10 (default mic gain)
@@ -15,7 +16,6 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 ## v2.10.3.6 Change Log - WIP dev_6b
 - [fix] fixed issue with %vfoasub% showing at incorrect states
 - [fix] fixed autostart process flag issue that caused DDUtil_v3 to start incorrectly
-
 
 ## v2.10.3.6 Change Log - WIP dev_6
 - [add] new MultiMeter spacer. Many can be added to pad things out. rx/tx colour and fade options
