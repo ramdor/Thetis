@@ -253,6 +253,7 @@
             this.chkFullDiscovery = new System.Windows.Forms.CheckBoxTS();
             this.grpFRSRegion = new System.Windows.Forms.GroupBoxTS();
             this.lblWarningRegionExtended = new System.Windows.Forms.LabelTS();
+            this.picWarningRegionExtended = new System.Windows.Forms.PictureBox();
             this.chkExtended = new System.Windows.Forms.CheckBoxTS();
             this.comboFRSRegion = new System.Windows.Forms.ComboBoxTS();
             this.grpGeneralModel = new System.Windows.Forms.GroupBoxTS();
@@ -400,6 +401,7 @@
             this.groupBoxTS15 = new System.Windows.Forms.GroupBoxTS();
             this.chkQSOTimerFlashTimerIfResetOnExpiry = new System.Windows.Forms.CheckBoxTS();
             this.chkQSOTimerResetOnExpiry = new System.Windows.Forms.CheckBoxTS();
+            this.btnQSOTimerPlaySelectedWAV = new System.Windows.Forms.ButtonTS();
             this.chkQSOTimerPlaySoundOnExpiry = new System.Windows.Forms.CheckBoxTS();
             this.lblQSOTimerSecs = new System.Windows.Forms.LabelTS();
             this.lblQSOTimerMins = new System.Windows.Forms.LabelTS();
@@ -1856,6 +1858,11 @@
             this.txtVAC1OldVarIn = new System.Windows.Forms.TextBoxTS();
             this.labelTS539 = new System.Windows.Forms.LabelTS();
             this.labelTS103 = new System.Windows.Forms.LabelTS();
+            this.pbVAC1FFAlphaInfo = new System.Windows.Forms.PictureBox();
+            this.pbVAC1FFMaxInfo = new System.Windows.Forms.PictureBox();
+            this.pbVAC1FFMinInfo = new System.Windows.Forms.PictureBox();
+            this.pbVAC1PropFeedbackMaxInfo = new System.Windows.Forms.PictureBox();
+            this.pbVAC1PropFeedbackMinInfo = new System.Windows.Forms.PictureBox();
             this.udVAC1FFMinOut = new System.Windows.Forms.NumericUpDownTS();
             this.udVAC1FFMinIn = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS102 = new System.Windows.Forms.LabelTS();
@@ -1876,6 +1883,8 @@
             this.labelTS533 = new System.Windows.Forms.LabelTS();
             this.udVAC1SlewTimeOut = new System.Windows.Forms.NumericUpDownTS();
             this.udVAC1FeedbackGainOut = new System.Windows.Forms.NumericUpDownTS();
+            this.pbVAC1SlewTimeInfo = new System.Windows.Forms.PictureBox();
+            this.pbVAC1FeedbackGainInfo = new System.Windows.Forms.PictureBox();
             this.btnVAC1AdvancedDefault = new System.Windows.Forms.ButtonTS();
             this.labelTS93 = new System.Windows.Forms.LabelTS();
             this.udVAC1SlewTimeIn = new System.Windows.Forms.NumericUpDownTS();
@@ -2141,6 +2150,9 @@
             this.lblWarningBufferType = new System.Windows.Forms.LabelTS();
             this.lblWarningFilterSize = new System.Windows.Forms.LabelTS();
             this.lblWarningBufferSize = new System.Windows.Forms.LabelTS();
+            this.pbWarningBufferType = new System.Windows.Forms.PictureBox();
+            this.pbWarningFilterSize = new System.Windows.Forms.PictureBox();
+            this.pbWarningBufferSize = new System.Windows.Forms.PictureBox();
             this.lblTimeToMakeDSPChange = new System.Windows.Forms.LabelTS();
             this.labelTS610 = new System.Windows.Forms.LabelTS();
             this.grpDSPFilterType = new System.Windows.Forms.GroupBoxTS();
@@ -2641,6 +2653,7 @@
             this.tbCFC0 = new System.Windows.Forms.TrackBarTS();
             this.tbCFC1 = new System.Windows.Forms.TrackBarTS();
             this.tbCFC2 = new System.Windows.Forms.TrackBarTS();
+            this.picCFC = new System.Windows.Forms.PictureBox();
             this.tpTransmit = new System.Windows.Forms.TabPage();
             this.chkRecoverPAProfileFromTXProfile = new System.Windows.Forms.CheckBoxTS();
             this.chkHighlightTXProfileSaveItems = new System.Windows.Forms.CheckBoxTS();
@@ -2699,6 +2712,7 @@
             this.tpPowerAmplifier = new System.Windows.Forms.TabPage();
             this.tcPowerAmplifier = new System.Windows.Forms.TabControl();
             this.tpGainByBand = new System.Windows.Forms.TabPage();
+            this.pbPAProfileWarning = new System.Windows.Forms.PictureBox();
             this.chkPANewCal = new System.Windows.Forms.CheckBoxTS();
             this.grpGainByBandPA = new System.Windows.Forms.GroupBoxTS();
             this.lblPAProfileWarning = new System.Windows.Forms.LabelTS();
@@ -3079,6 +3093,8 @@
             this.txtContainerNotes = new System.Windows.Forms.TextBoxTS();
             this.chkContainerEnable = new System.Windows.Forms.CheckBoxTS();
             this.chkContainerNoTitle = new System.Windows.Forms.CheckBoxTS();
+            this.btnMeterCopySettings = new System.Windows.Forms.ButtonTS();
+            this.btnMeterPasteSettings = new System.Windows.Forms.ButtonTS();
             this.lblMMContainerBackground = new System.Windows.Forms.LabelTS();
             this.clrbtnContainerBackground = new Thetis.ColorButton();
             this.chkContainerBorder = new System.Windows.Forms.CheckBoxTS();
@@ -3136,6 +3152,10 @@
             this.chkMeterItemFadeOnTx = new System.Windows.Forms.CheckBoxTS();
             this.chkMeterItemFadeOnRx = new System.Windows.Forms.CheckBoxTS();
             this.pnlVariableInUse_1 = new System.Windows.Forms.PanelTS();
+            this.btnMeterUp = new System.Windows.Forms.ButtonTS();
+            this.btnMeterDown = new System.Windows.Forms.ButtonTS();
+            this.btnRemoveMeterItem = new System.Windows.Forms.ButtonTS();
+            this.btnAddMeterItem = new System.Windows.Forms.ButtonTS();
             this.lstMetersInUse = new System.Windows.Forms.ListBox();
             this.lstMetersAvailable = new System.Windows.Forms.ListBox();
             this.chkContainerHighlight = new System.Windows.Forms.CheckBoxTS();
@@ -3202,7 +3222,9 @@
             this.prgSkinDownload = new Thetis.ucProgress();
             this.lstAvailableSkins = new System.Windows.Forms.ListBox();
             this.lblSkinMeters = new System.Windows.Forms.LabelTS();
+            this.picSkinThumbnail = new System.Windows.Forms.PictureBox();
             this.lblSkinDateReleased = new System.Windows.Forms.LabelTS();
+            this.btnDownloadSkin = new System.Windows.Forms.ButtonTS();
             this.lblSkinThetisVersion = new System.Windows.Forms.LabelTS();
             this.lblSkinVersion = new System.Windows.Forms.LabelTS();
             this.panelGetServerList = new System.Windows.Forms.PanelTS();
@@ -3461,7 +3483,9 @@
             this.buttonTS4 = new System.Windows.Forms.ButtonTS();
             this.buttonTS3 = new System.Windows.Forms.ButtonTS();
             this.buttonTS2 = new System.Windows.Forms.ButtonTS();
+            this.btnMMIO_network_delete = new System.Windows.Forms.ButtonTS();
             this.pnlMMIO_network_container = new System.Windows.Forms.PanelTS();
+            this.btnMMIO_network_remove_all_variables = new System.Windows.Forms.ButtonTS();
             this.btnMMIO_network_udp_endpoint_ip_port = new System.Windows.Forms.ButtonTS();
             this.lblMMIO_network_udp_endpoint_ip_port = new System.Windows.Forms.LabelTS();
             this.txtMMIO_network_udp_endpoint_ip_port = new System.Windows.Forms.TextBoxTS();
@@ -3473,11 +3497,14 @@
             this.comboMMIO_network_format_out = new System.Windows.Forms.ComboBoxTS();
             this.lblMMIO_network_terminator_in = new System.Windows.Forms.LabelTS();
             this.comboMMIO_network_terminator_in = new System.Windows.Forms.ComboBoxTS();
+            this.btnMMIO_network_copyvariable_clipboard = new System.Windows.Forms.ButtonTS();
+            this.btnMMIO_network_remove_variable = new System.Windows.Forms.ButtonTS();
             this.lstMMIO_network_variables = new System.Windows.Forms.ListView();
             this.colVariables = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colValues = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pnlMMIO_network_txdata = new System.Windows.Forms.PanelTS();
             this.lblMMIO_network_txdata = new System.Windows.Forms.LabelTS();
+            this.btnMMIO_network_copy4char = new System.Windows.Forms.ButtonTS();
             this.pnlMMIO_network_rxdata = new System.Windows.Forms.PanelTS();
             this.lblMMIO_network_rxdata = new System.Windows.Forms.LabelTS();
             this.chkMMIO_network_enabled = new System.Windows.Forms.CheckBoxTS();
@@ -3623,6 +3650,19 @@
             this.clrbtnTextOverlay_PanelBackgroundTX = new Thetis.ColorButton();
             this.nudDataOutNode_sendinterval = new System.Windows.Forms.NumericUpDownTS();
             this.txtDataOutNode_4charID = new System.Windows.Forms.TextBoxTS();
+            this.pbTextOverlay_variables = new System.Windows.Forms.PictureBox();
+            this.chkMeterItemRotatorShowBeamWidth = new System.Windows.Forms.CheckBoxTS();
+            this.clrbtnMeterItemRotatorBeamWidth = new Thetis.ColorButton();
+            this.nudMeterItemUpdateRateRotator = new System.Windows.Forms.NumericUpDownTS();
+            this.clrbtnMeterItemHBackgroundRotator = new Thetis.ColorButton();
+            this.clrbtnMeterItemRotatorSmallDot = new Thetis.ColorButton();
+            this.clrbtnMeterItemRotatorLargeDot = new Thetis.ColorButton();
+            this.clrbtnMeterItemRotatorArrow = new Thetis.ColorButton();
+            this.chkMeterItemRotatorElevation = new System.Windows.Forms.CheckBoxTS();
+            this.nudMeterItemRotatorBeamWidth = new System.Windows.Forms.NumericUpDownTS();
+            this.clrbtnMeterItemRotatorText = new Thetis.ColorButton();
+            this.chkMeterItemRotatorCardinals = new System.Windows.Forms.CheckBoxTS();
+            this.btnTextOverlay_copyfonts = new System.Windows.Forms.ButtonTS();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -3709,34 +3749,21 @@
             this.labelTS210 = new System.Windows.Forms.LabelTS();
             this.labelTS217 = new System.Windows.Forms.LabelTS();
             this.labelTS215 = new System.Windows.Forms.LabelTS();
-            this.pbTextOverlay_variables = new System.Windows.Forms.PictureBox();
-            this.picWarningRegionExtended = new System.Windows.Forms.PictureBox();
-            this.btnQSOTimerPlaySelectedWAV = new System.Windows.Forms.ButtonTS();
-            this.pbVAC1FFAlphaInfo = new System.Windows.Forms.PictureBox();
-            this.pbVAC1FFMaxInfo = new System.Windows.Forms.PictureBox();
-            this.pbVAC1FFMinInfo = new System.Windows.Forms.PictureBox();
-            this.pbVAC1PropFeedbackMaxInfo = new System.Windows.Forms.PictureBox();
-            this.pbVAC1PropFeedbackMinInfo = new System.Windows.Forms.PictureBox();
-            this.pbVAC1SlewTimeInfo = new System.Windows.Forms.PictureBox();
-            this.pbVAC1FeedbackGainInfo = new System.Windows.Forms.PictureBox();
-            this.pbWarningBufferType = new System.Windows.Forms.PictureBox();
-            this.pbWarningFilterSize = new System.Windows.Forms.PictureBox();
-            this.pbWarningBufferSize = new System.Windows.Forms.PictureBox();
-            this.picCFC = new System.Windows.Forms.PictureBox();
-            this.pbPAProfileWarning = new System.Windows.Forms.PictureBox();
-            this.btnMeterCopySettings = new System.Windows.Forms.ButtonTS();
-            this.btnMeterPasteSettings = new System.Windows.Forms.ButtonTS();
-            this.btnMeterUp = new System.Windows.Forms.ButtonTS();
-            this.btnMeterDown = new System.Windows.Forms.ButtonTS();
-            this.btnRemoveMeterItem = new System.Windows.Forms.ButtonTS();
-            this.btnAddMeterItem = new System.Windows.Forms.ButtonTS();
-            this.picSkinThumbnail = new System.Windows.Forms.PictureBox();
-            this.btnDownloadSkin = new System.Windows.Forms.ButtonTS();
-            this.btnMMIO_network_delete = new System.Windows.Forms.ButtonTS();
-            this.btnMMIO_network_remove_all_variables = new System.Windows.Forms.ButtonTS();
-            this.btnMMIO_network_copyvariable_clipboard = new System.Windows.Forms.ButtonTS();
-            this.btnMMIO_network_remove_variable = new System.Windows.Forms.ButtonTS();
-            this.btnMMIO_network_copy4char = new System.Windows.Forms.ButtonTS();
+            this.grpMeterItemRotator = new System.Windows.Forms.GroupBoxTS();
+            this.pnlVariableInUse_2_rotator = new System.Windows.Forms.PanelTS();
+            this.labelTS212 = new System.Windows.Forms.LabelTS();
+            this.btnMMIO_variable_2_rotator = new System.Windows.Forms.ButtonTS();
+            this.btnMMIO_variable_rotator = new System.Windows.Forms.ButtonTS();
+            this.labelTS218 = new System.Windows.Forms.LabelTS();
+            this.chkMeterItemDarkModeRotator = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS225 = new System.Windows.Forms.LabelTS();
+            this.labelTS227 = new System.Windows.Forms.LabelTS();
+            this.labelTS228 = new System.Windows.Forms.LabelTS();
+            this.labelTS229 = new System.Windows.Forms.LabelTS();
+            this.labelTS230 = new System.Windows.Forms.LabelTS();
+            this.chkMeterItemFadeOnTxRotator = new System.Windows.Forms.CheckBoxTS();
+            this.chkMeterItemFadeOnRxRotator = new System.Windows.Forms.CheckBoxTS();
+            this.pnlVariableInUse_1_rotator = new System.Windows.Forms.PanelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -3806,6 +3833,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udStaticIP2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udStaticIP1)).BeginInit();
             this.grpFRSRegion.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picWarningRegionExtended)).BeginInit();
             this.grpGeneralModel.SuspendLayout();
             this.grpMetisAddr.SuspendLayout();
             this.groupBoxHPSDRHW.SuspendLayout();
@@ -4072,6 +4100,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.udVAC2SlewTimeIn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC2FeedbackGainIn)).BeginInit();
             this.grpVAC1ResamplerAdvanced.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FFAlphaInfo)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FFMaxInfo)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FFMinInfo)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1PropFeedbackMaxInfo)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1PropFeedbackMinInfo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1FFMinOut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1FFMinIn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1PropMaxOut)).BeginInit();
@@ -4084,6 +4117,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1PropMinIn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1SlewTimeOut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1FeedbackGainOut)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1SlewTimeInfo)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FeedbackGainInfo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1SlewTimeIn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1FeedbackGainIn)).BeginInit();
             this.tpDisplay.SuspendLayout();
@@ -4173,6 +4208,9 @@
             this.tpDSP.SuspendLayout();
             this.tcDSP.SuspendLayout();
             this.tpDSPOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbWarningBufferType)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbWarningFilterSize)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbWarningBufferSize)).BeginInit();
             this.grpDSPFilterType.SuspendLayout();
             this.grpDSPFiltTypeFM.SuspendLayout();
             this.grpDSPFiltTypeDig.SuspendLayout();
@@ -4384,6 +4422,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbCFC0)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbCFC1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbCFC2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picCFC)).BeginInit();
             this.tpTransmit.SuspendLayout();
             this.grpDSPSpeechProcessor.SuspendLayout();
             this.grpExtTXInhibit.SuspendLayout();
@@ -4407,6 +4446,7 @@
             this.tpPowerAmplifier.SuspendLayout();
             this.tcPowerAmplifier.SuspendLayout();
             this.tpGainByBand.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbPAProfileWarning)).BeginInit();
             this.grpGainByBandPA.SuspendLayout();
             this.panelTS1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxPowerForBandPA)).BeginInit();
@@ -4559,6 +4599,7 @@
             this.panelSkinServerControls.SuspendLayout();
             this.gtpAvailableSkins.SuspendLayout();
             this.grpAuthorDetails.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picSkinThumbnail)).BeginInit();
             this.panelGetServerList.SuspendLayout();
             this.tpKeyboard.SuspendLayout();
             this.grpKBPTT.SuspendLayout();
@@ -4648,6 +4689,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXyOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXxOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDataOutNode_sendinterval)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemUpdateRateRotator)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemRotatorBeamWidth)).BeginInit();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -4685,21 +4729,7 @@
             this.grpMeterItemSpacerSettings.SuspendLayout();
             this.grpTextOverlay.SuspendLayout();
             this.grpMeterItemDataOutNode.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picWarningRegionExtended)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FFAlphaInfo)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FFMaxInfo)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FFMinInfo)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1PropFeedbackMaxInfo)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1PropFeedbackMinInfo)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1SlewTimeInfo)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FeedbackGainInfo)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbWarningBufferType)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbWarningFilterSize)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbWarningBufferSize)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picCFC)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbPAProfileWarning)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picSkinThumbnail)).BeginInit();
+            this.grpMeterItemRotator.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -8007,6 +8037,15 @@
             this.lblWarningRegionExtended.TabIndex = 38;
             this.lblWarningRegionExtended.Text = "Changing this setting will reset your band stack entries";
             // 
+            // picWarningRegionExtended
+            // 
+            this.picWarningRegionExtended.Image = global::Thetis.Properties.Resources.warning4;
+            this.picWarningRegionExtended.Location = new System.Drawing.Point(12, 75);
+            this.picWarningRegionExtended.Name = "picWarningRegionExtended";
+            this.picWarningRegionExtended.Size = new System.Drawing.Size(20, 20);
+            this.picWarningRegionExtended.TabIndex = 37;
+            this.picWarningRegionExtended.TabStop = false;
+            // 
             // chkExtended
             // 
             this.chkExtended.AutoSize = true;
@@ -10188,6 +10227,18 @@
             this.toolTip1.SetToolTip(this.chkQSOTimerResetOnExpiry, "The timer resets on expiry");
             this.chkQSOTimerResetOnExpiry.UseVisualStyleBackColor = true;
             this.chkQSOTimerResetOnExpiry.CheckedChanged += new System.EventHandler(this.chkQSOTimerResetOnExpiry_CheckedChanged);
+            // 
+            // btnQSOTimerPlaySelectedWAV
+            // 
+            this.btnQSOTimerPlaySelectedWAV.Image = global::Thetis.Properties.Resources.play;
+            this.btnQSOTimerPlaySelectedWAV.Location = new System.Drawing.Point(92, 138);
+            this.btnQSOTimerPlaySelectedWAV.Name = "btnQSOTimerPlaySelectedWAV";
+            this.btnQSOTimerPlaySelectedWAV.Selectable = true;
+            this.btnQSOTimerPlaySelectedWAV.Size = new System.Drawing.Size(24, 24);
+            this.btnQSOTimerPlaySelectedWAV.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.btnQSOTimerPlaySelectedWAV, "Test play of the sound you selected");
+            this.btnQSOTimerPlaySelectedWAV.UseVisualStyleBackColor = true;
+            this.btnQSOTimerPlaySelectedWAV.Click += new System.EventHandler(this.btnQSOTimerPlaySelectedWAV_Click);
             // 
             // chkQSOTimerPlaySoundOnExpiry
             // 
@@ -30318,6 +30369,61 @@
             this.labelTS103.TabIndex = 72;
             this.labelTS103.Text = "pow2";
             // 
+            // pbVAC1FFAlphaInfo
+            // 
+            this.pbVAC1FFAlphaInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FFAlphaInfo.Image")));
+            this.pbVAC1FFAlphaInfo.Location = new System.Drawing.Point(325, 197);
+            this.pbVAC1FFAlphaInfo.Name = "pbVAC1FFAlphaInfo";
+            this.pbVAC1FFAlphaInfo.Size = new System.Drawing.Size(20, 20);
+            this.pbVAC1FFAlphaInfo.TabIndex = 71;
+            this.pbVAC1FFAlphaInfo.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbVAC1FFAlphaInfo, "Click for info");
+            this.pbVAC1FFAlphaInfo.Click += new System.EventHandler(this.pbVAC1FFAlphaInfo_Click);
+            // 
+            // pbVAC1FFMaxInfo
+            // 
+            this.pbVAC1FFMaxInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FFMaxInfo.Image")));
+            this.pbVAC1FFMaxInfo.Location = new System.Drawing.Point(325, 173);
+            this.pbVAC1FFMaxInfo.Name = "pbVAC1FFMaxInfo";
+            this.pbVAC1FFMaxInfo.Size = new System.Drawing.Size(20, 20);
+            this.pbVAC1FFMaxInfo.TabIndex = 70;
+            this.pbVAC1FFMaxInfo.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbVAC1FFMaxInfo, "Click for info");
+            this.pbVAC1FFMaxInfo.Click += new System.EventHandler(this.pbVAC1FFMaxInfo_Click);
+            // 
+            // pbVAC1FFMinInfo
+            // 
+            this.pbVAC1FFMinInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FFMinInfo.Image")));
+            this.pbVAC1FFMinInfo.Location = new System.Drawing.Point(325, 147);
+            this.pbVAC1FFMinInfo.Name = "pbVAC1FFMinInfo";
+            this.pbVAC1FFMinInfo.Size = new System.Drawing.Size(20, 20);
+            this.pbVAC1FFMinInfo.TabIndex = 69;
+            this.pbVAC1FFMinInfo.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbVAC1FFMinInfo, "Click for info");
+            this.pbVAC1FFMinInfo.Click += new System.EventHandler(this.pbVAC1FFMinInfo_Click);
+            // 
+            // pbVAC1PropFeedbackMaxInfo
+            // 
+            this.pbVAC1PropFeedbackMaxInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1PropFeedbackMaxInfo.Image")));
+            this.pbVAC1PropFeedbackMaxInfo.Location = new System.Drawing.Point(326, 121);
+            this.pbVAC1PropFeedbackMaxInfo.Name = "pbVAC1PropFeedbackMaxInfo";
+            this.pbVAC1PropFeedbackMaxInfo.Size = new System.Drawing.Size(20, 20);
+            this.pbVAC1PropFeedbackMaxInfo.TabIndex = 68;
+            this.pbVAC1PropFeedbackMaxInfo.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbVAC1PropFeedbackMaxInfo, "Click for info");
+            this.pbVAC1PropFeedbackMaxInfo.Click += new System.EventHandler(this.pbVAC1PropFeedbackMaxInfo_Click);
+            // 
+            // pbVAC1PropFeedbackMinInfo
+            // 
+            this.pbVAC1PropFeedbackMinInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1PropFeedbackMinInfo.Image")));
+            this.pbVAC1PropFeedbackMinInfo.Location = new System.Drawing.Point(326, 95);
+            this.pbVAC1PropFeedbackMinInfo.Name = "pbVAC1PropFeedbackMinInfo";
+            this.pbVAC1PropFeedbackMinInfo.Size = new System.Drawing.Size(20, 20);
+            this.pbVAC1PropFeedbackMinInfo.TabIndex = 67;
+            this.pbVAC1PropFeedbackMinInfo.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbVAC1PropFeedbackMinInfo, "Click for info");
+            this.pbVAC1PropFeedbackMinInfo.Click += new System.EventHandler(this.pbVAC1PropFeedbackMinInfo_Click);
+            // 
             // udVAC1FFMinOut
             // 
             this.udVAC1FFMinOut.Increment = new decimal(new int[] {
@@ -30767,6 +30873,28 @@
             0,
             393216});
             this.udVAC1FeedbackGainOut.ValueChanged += new System.EventHandler(this.udVAC1FeedbackGainOut_ValueChanged);
+            // 
+            // pbVAC1SlewTimeInfo
+            // 
+            this.pbVAC1SlewTimeInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1SlewTimeInfo.Image")));
+            this.pbVAC1SlewTimeInfo.Location = new System.Drawing.Point(325, 69);
+            this.pbVAC1SlewTimeInfo.Name = "pbVAC1SlewTimeInfo";
+            this.pbVAC1SlewTimeInfo.Size = new System.Drawing.Size(20, 20);
+            this.pbVAC1SlewTimeInfo.TabIndex = 39;
+            this.pbVAC1SlewTimeInfo.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbVAC1SlewTimeInfo, "Click for info");
+            this.pbVAC1SlewTimeInfo.Click += new System.EventHandler(this.pbVAC1SlewTimeInfo_Click);
+            // 
+            // pbVAC1FeedbackGainInfo
+            // 
+            this.pbVAC1FeedbackGainInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FeedbackGainInfo.Image")));
+            this.pbVAC1FeedbackGainInfo.Location = new System.Drawing.Point(325, 43);
+            this.pbVAC1FeedbackGainInfo.Name = "pbVAC1FeedbackGainInfo";
+            this.pbVAC1FeedbackGainInfo.Size = new System.Drawing.Size(20, 20);
+            this.pbVAC1FeedbackGainInfo.TabIndex = 38;
+            this.pbVAC1FeedbackGainInfo.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbVAC1FeedbackGainInfo, "Click for info");
+            this.pbVAC1FeedbackGainInfo.Click += new System.EventHandler(this.pbVAC1FeedbackGainInfo_Click);
             // 
             // btnVAC1AdvancedDefault
             // 
@@ -34988,6 +35116,33 @@
             this.lblWarningBufferSize.Size = new System.Drawing.Size(115, 46);
             this.lblWarningBufferSize.TabIndex = 53;
             this.lblWarningBufferSize.Text = "Buffer sizes are different. Slow mode change is possible";
+            // 
+            // pbWarningBufferType
+            // 
+            this.pbWarningBufferType.Image = ((System.Drawing.Image)(resources.GetObject("pbWarningBufferType.Image")));
+            this.pbWarningBufferType.Location = new System.Drawing.Point(260, 334);
+            this.pbWarningBufferType.Name = "pbWarningBufferType";
+            this.pbWarningBufferType.Size = new System.Drawing.Size(20, 20);
+            this.pbWarningBufferType.TabIndex = 52;
+            this.pbWarningBufferType.TabStop = false;
+            // 
+            // pbWarningFilterSize
+            // 
+            this.pbWarningFilterSize.Image = ((System.Drawing.Image)(resources.GetObject("pbWarningFilterSize.Image")));
+            this.pbWarningFilterSize.Location = new System.Drawing.Point(142, 334);
+            this.pbWarningFilterSize.Name = "pbWarningFilterSize";
+            this.pbWarningFilterSize.Size = new System.Drawing.Size(20, 20);
+            this.pbWarningFilterSize.TabIndex = 51;
+            this.pbWarningFilterSize.TabStop = false;
+            // 
+            // pbWarningBufferSize
+            // 
+            this.pbWarningBufferSize.Image = ((System.Drawing.Image)(resources.GetObject("pbWarningBufferSize.Image")));
+            this.pbWarningBufferSize.Location = new System.Drawing.Point(16, 334);
+            this.pbWarningBufferSize.Name = "pbWarningBufferSize";
+            this.pbWarningBufferSize.Size = new System.Drawing.Size(20, 20);
+            this.pbWarningBufferSize.TabIndex = 50;
+            this.pbWarningBufferSize.TabStop = false;
             // 
             // lblTimeToMakeDSPChange
             // 
@@ -43014,6 +43169,17 @@
             this.tbCFC2.Value = 5;
             this.tbCFC2.Scroll += new System.EventHandler(this.setCFCProfile);
             // 
+            // picCFC
+            // 
+            this.picCFC.BackColor = System.Drawing.Color.Black;
+            this.picCFC.Location = new System.Drawing.Point(428, 73);
+            this.picCFC.Name = "picCFC";
+            this.picCFC.Size = new System.Drawing.Size(290, 129);
+            this.picCFC.TabIndex = 175;
+            this.picCFC.TabStop = false;
+            this.picCFC.Click += new System.EventHandler(this.picCFC_Click);
+            this.picCFC.Paint += new System.Windows.Forms.PaintEventHandler(this.picCFC_Paint);
+            // 
             // tpTransmit
             // 
             this.tpTransmit.Controls.Add(this.chkRecoverPAProfileFromTXProfile);
@@ -43904,6 +44070,15 @@
             this.tpGainByBand.Size = new System.Drawing.Size(724, 413);
             this.tpGainByBand.TabIndex = 0;
             this.tpGainByBand.Text = "PA Gain";
+            // 
+            // pbPAProfileWarning
+            // 
+            this.pbPAProfileWarning.Image = ((System.Drawing.Image)(resources.GetObject("pbPAProfileWarning.Image")));
+            this.pbPAProfileWarning.Location = new System.Drawing.Point(16, 338);
+            this.pbPAProfileWarning.Name = "pbPAProfileWarning";
+            this.pbPAProfileWarning.Size = new System.Drawing.Size(20, 20);
+            this.pbPAProfileWarning.TabIndex = 170;
+            this.pbPAProfileWarning.TabStop = false;
             // 
             // chkPANewCal
             // 
@@ -50010,6 +50185,30 @@
             this.chkContainerNoTitle.UseVisualStyleBackColor = true;
             this.chkContainerNoTitle.CheckedChanged += new System.EventHandler(this.chkContainerNoTitle_CheckedChanged);
             // 
+            // btnMeterCopySettings
+            // 
+            this.btnMeterCopySettings.Image = global::Thetis.Properties.Resources.pipette32border;
+            this.btnMeterCopySettings.Location = new System.Drawing.Point(336, 293);
+            this.btnMeterCopySettings.Name = "btnMeterCopySettings";
+            this.btnMeterCopySettings.Selectable = true;
+            this.btnMeterCopySettings.Size = new System.Drawing.Size(32, 32);
+            this.btnMeterCopySettings.TabIndex = 103;
+            this.toolTip1.SetToolTip(this.btnMeterCopySettings, "Copy settings and colours");
+            this.btnMeterCopySettings.UseVisualStyleBackColor = true;
+            this.btnMeterCopySettings.Click += new System.EventHandler(this.btnMeterCopySettings_Click);
+            // 
+            // btnMeterPasteSettings
+            // 
+            this.btnMeterPasteSettings.Image = global::Thetis.Properties.Resources.brush32border;
+            this.btnMeterPasteSettings.Location = new System.Drawing.Point(336, 340);
+            this.btnMeterPasteSettings.Name = "btnMeterPasteSettings";
+            this.btnMeterPasteSettings.Selectable = true;
+            this.btnMeterPasteSettings.Size = new System.Drawing.Size(32, 32);
+            this.btnMeterPasteSettings.TabIndex = 102;
+            this.toolTip1.SetToolTip(this.btnMeterPasteSettings, "Paste settings and colours into suitable meter item");
+            this.btnMeterPasteSettings.UseVisualStyleBackColor = true;
+            this.btnMeterPasteSettings.Click += new System.EventHandler(this.btnMeterPasteSettings_Click);
+            // 
             // lblMMContainerBackground
             // 
             this.lblMMContainerBackground.AutoSize = true;
@@ -50906,6 +51105,54 @@
             this.pnlVariableInUse_1.Size = new System.Drawing.Size(28, 6);
             this.pnlVariableInUse_1.TabIndex = 130;
             // 
+            // btnMeterUp
+            // 
+            this.btnMeterUp.Image = global::Thetis.Properties.Resources.arrow_up_black;
+            this.btnMeterUp.Location = new System.Drawing.Point(337, 147);
+            this.btnMeterUp.Name = "btnMeterUp";
+            this.btnMeterUp.Selectable = true;
+            this.btnMeterUp.Size = new System.Drawing.Size(32, 32);
+            this.btnMeterUp.TabIndex = 95;
+            this.toolTip1.SetToolTip(this.btnMeterUp, "Move item up");
+            this.btnMeterUp.UseVisualStyleBackColor = true;
+            this.btnMeterUp.Click += new System.EventHandler(this.btnMeterUp_Click);
+            // 
+            // btnMeterDown
+            // 
+            this.btnMeterDown.Image = global::Thetis.Properties.Resources.down_black;
+            this.btnMeterDown.Location = new System.Drawing.Point(337, 194);
+            this.btnMeterDown.Name = "btnMeterDown";
+            this.btnMeterDown.Selectable = true;
+            this.btnMeterDown.Size = new System.Drawing.Size(32, 32);
+            this.btnMeterDown.TabIndex = 94;
+            this.toolTip1.SetToolTip(this.btnMeterDown, "Move item down");
+            this.btnMeterDown.UseVisualStyleBackColor = true;
+            this.btnMeterDown.Click += new System.EventHandler(this.btnMeterDown_Click);
+            // 
+            // btnRemoveMeterItem
+            // 
+            this.btnRemoveMeterItem.Image = global::Thetis.Properties.Resources.arrow_left_black;
+            this.btnRemoveMeterItem.Location = new System.Drawing.Point(153, 194);
+            this.btnRemoveMeterItem.Name = "btnRemoveMeterItem";
+            this.btnRemoveMeterItem.Selectable = true;
+            this.btnRemoveMeterItem.Size = new System.Drawing.Size(32, 32);
+            this.btnRemoveMeterItem.TabIndex = 93;
+            this.toolTip1.SetToolTip(this.btnRemoveMeterItem, "Remove the item");
+            this.btnRemoveMeterItem.UseVisualStyleBackColor = true;
+            this.btnRemoveMeterItem.Click += new System.EventHandler(this.btnRemoveMeterItem_Click);
+            // 
+            // btnAddMeterItem
+            // 
+            this.btnAddMeterItem.Image = global::Thetis.Properties.Resources.arrow_right_black;
+            this.btnAddMeterItem.Location = new System.Drawing.Point(153, 147);
+            this.btnAddMeterItem.Name = "btnAddMeterItem";
+            this.btnAddMeterItem.Selectable = true;
+            this.btnAddMeterItem.Size = new System.Drawing.Size(32, 32);
+            this.btnAddMeterItem.TabIndex = 92;
+            this.toolTip1.SetToolTip(this.btnAddMeterItem, "Include the item");
+            this.btnAddMeterItem.UseVisualStyleBackColor = true;
+            this.btnAddMeterItem.Click += new System.EventHandler(this.btnAddMeterItem_Click);
+            // 
             // lstMetersInUse
             // 
             this.lstMetersInUse.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -51742,6 +51989,15 @@
             this.lblSkinMeters.TabIndex = 8;
             this.lblSkinMeters.Text = "lblSkinMeters";
             // 
+            // picSkinThumbnail
+            // 
+            this.picSkinThumbnail.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.picSkinThumbnail.Location = new System.Drawing.Point(199, 154);
+            this.picSkinThumbnail.Name = "picSkinThumbnail";
+            this.picSkinThumbnail.Size = new System.Drawing.Size(416, 234);
+            this.picSkinThumbnail.TabIndex = 7;
+            this.picSkinThumbnail.TabStop = false;
+            // 
             // lblSkinDateReleased
             // 
             this.lblSkinDateReleased.BackColor = System.Drawing.SystemColors.Control;
@@ -51751,6 +52007,21 @@
             this.lblSkinDateReleased.Size = new System.Drawing.Size(181, 13);
             this.lblSkinDateReleased.TabIndex = 5;
             this.lblSkinDateReleased.Text = "lblSkinDateReleased";
+            // 
+            // btnDownloadSkin
+            // 
+            this.btnDownloadSkin.Image = ((System.Drawing.Image)(resources.GetObject("btnDownloadSkin.Image")));
+            this.btnDownloadSkin.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btnDownloadSkin.Location = new System.Drawing.Point(621, 154);
+            this.btnDownloadSkin.Name = "btnDownloadSkin";
+            this.btnDownloadSkin.Padding = new System.Windows.Forms.Padding(0, 80, 0, 80);
+            this.btnDownloadSkin.Selectable = true;
+            this.btnDownloadSkin.Size = new System.Drawing.Size(75, 214);
+            this.btnDownloadSkin.TabIndex = 1;
+            this.btnDownloadSkin.Text = "Download";
+            this.btnDownloadSkin.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btnDownloadSkin.UseVisualStyleBackColor = true;
+            this.btnDownloadSkin.Click += new System.EventHandler(this.btnDownloadSkin_Click);
             // 
             // lblSkinThetisVersion
             // 
@@ -55085,6 +55356,17 @@
             this.buttonTS2.Text = "Add TCP/IP Client";
             this.buttonTS2.UseVisualStyleBackColor = true;
             // 
+            // btnMMIO_network_delete
+            // 
+            this.btnMMIO_network_delete.Image = global::Thetis.Properties.Resources.trash_black;
+            this.btnMMIO_network_delete.Location = new System.Drawing.Point(137, 159);
+            this.btnMMIO_network_delete.Name = "btnMMIO_network_delete";
+            this.btnMMIO_network_delete.Selectable = true;
+            this.btnMMIO_network_delete.Size = new System.Drawing.Size(29, 52);
+            this.btnMMIO_network_delete.TabIndex = 99;
+            this.btnMMIO_network_delete.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_delete.Click += new System.EventHandler(this.btnMMIO_network_delete_Click);
+            // 
             // pnlMMIO_network_container
             // 
             this.pnlMMIO_network_container.AutoScrollMargin = new System.Drawing.Size(0, 0);
@@ -55128,6 +55410,18 @@
             this.pnlMMIO_network_container.Name = "pnlMMIO_network_container";
             this.pnlMMIO_network_container.Size = new System.Drawing.Size(516, 364);
             this.pnlMMIO_network_container.TabIndex = 98;
+            // 
+            // btnMMIO_network_remove_all_variables
+            // 
+            this.btnMMIO_network_remove_all_variables.Image = global::Thetis.Properties.Resources.trash_bulge_black;
+            this.btnMMIO_network_remove_all_variables.Location = new System.Drawing.Point(441, 271);
+            this.btnMMIO_network_remove_all_variables.Name = "btnMMIO_network_remove_all_variables";
+            this.btnMMIO_network_remove_all_variables.Selectable = true;
+            this.btnMMIO_network_remove_all_variables.Size = new System.Drawing.Size(29, 35);
+            this.btnMMIO_network_remove_all_variables.TabIndex = 132;
+            this.toolTip1.SetToolTip(this.btnMMIO_network_remove_all_variables, "Remove all variables");
+            this.btnMMIO_network_remove_all_variables.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_remove_all_variables.Click += new System.EventHandler(this.btnMMIO_network_remove_all_variables_Click);
             // 
             // btnMMIO_network_udp_endpoint_ip_port
             // 
@@ -55261,6 +55555,30 @@
             this.comboMMIO_network_terminator_in.TabIndex = 121;
             this.comboMMIO_network_terminator_in.SelectedIndexChanged += new System.EventHandler(this.comboMMIO_network_terminator_in_SelectedIndexChanged);
             // 
+            // btnMMIO_network_copyvariable_clipboard
+            // 
+            this.btnMMIO_network_copyvariable_clipboard.Image = global::Thetis.Properties.Resources.copy;
+            this.btnMMIO_network_copyvariable_clipboard.Location = new System.Drawing.Point(298, 274);
+            this.btnMMIO_network_copyvariable_clipboard.Name = "btnMMIO_network_copyvariable_clipboard";
+            this.btnMMIO_network_copyvariable_clipboard.Selectable = true;
+            this.btnMMIO_network_copyvariable_clipboard.Size = new System.Drawing.Size(27, 35);
+            this.btnMMIO_network_copyvariable_clipboard.TabIndex = 120;
+            this.toolTip1.SetToolTip(this.btnMMIO_network_copyvariable_clipboard, "Copy to clipboard");
+            this.btnMMIO_network_copyvariable_clipboard.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_copyvariable_clipboard.Click += new System.EventHandler(this.btnMMIO_network_copyvariable_clipboard_Click);
+            // 
+            // btnMMIO_network_remove_variable
+            // 
+            this.btnMMIO_network_remove_variable.Image = global::Thetis.Properties.Resources.trash_black;
+            this.btnMMIO_network_remove_variable.Location = new System.Drawing.Point(476, 271);
+            this.btnMMIO_network_remove_variable.Name = "btnMMIO_network_remove_variable";
+            this.btnMMIO_network_remove_variable.Selectable = true;
+            this.btnMMIO_network_remove_variable.Size = new System.Drawing.Size(29, 35);
+            this.btnMMIO_network_remove_variable.TabIndex = 119;
+            this.toolTip1.SetToolTip(this.btnMMIO_network_remove_variable, "Remove selected variable");
+            this.btnMMIO_network_remove_variable.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_remove_variable.Click += new System.EventHandler(this.btnMMIO_network_remove_variable_Click);
+            // 
             // lstMMIO_network_variables
             // 
             this.lstMMIO_network_variables.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -55307,6 +55625,18 @@
             this.lblMMIO_network_txdata.Size = new System.Drawing.Size(42, 13);
             this.lblMMIO_network_txdata.TabIndex = 116;
             this.lblMMIO_network_txdata.Text = "tx data:";
+            // 
+            // btnMMIO_network_copy4char
+            // 
+            this.btnMMIO_network_copy4char.Image = global::Thetis.Properties.Resources.copy;
+            this.btnMMIO_network_copy4char.Location = new System.Drawing.Point(117, 85);
+            this.btnMMIO_network_copy4char.Name = "btnMMIO_network_copy4char";
+            this.btnMMIO_network_copy4char.Selectable = true;
+            this.btnMMIO_network_copy4char.Size = new System.Drawing.Size(27, 27);
+            this.btnMMIO_network_copy4char.TabIndex = 115;
+            this.toolTip1.SetToolTip(this.btnMMIO_network_copy4char, "Copy to clipboard");
+            this.btnMMIO_network_copy4char.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_copy4char.Click += new System.EventHandler(this.btnMMIO_network_copy4char_Click);
             // 
             // pnlMMIO_network_rxdata
             // 
@@ -56711,7 +57041,7 @@
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS166);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayMode);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTitle);
-            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(395, 817);
+            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(364, 762);
             this.grpMeterItemVfoDisplaySettings.Name = "grpMeterItemVfoDisplaySettings";
             this.grpMeterItemVfoDisplaySettings.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemVfoDisplaySettings.TabIndex = 101;
@@ -56981,7 +57311,7 @@
             this.grpMeterItemClockSettings.Controls.Add(this.chkMMClockTitle);
             this.grpMeterItemClockSettings.Controls.Add(this.radMM24Clock);
             this.grpMeterItemClockSettings.Controls.Add(this.radMM12Clock);
-            this.grpMeterItemClockSettings.Location = new System.Drawing.Point(16, 675);
+            this.grpMeterItemClockSettings.Location = new System.Drawing.Point(12, 639);
             this.grpMeterItemClockSettings.Name = "grpMeterItemClockSettings";
             this.grpMeterItemClockSettings.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemClockSettings.TabIndex = 100;
@@ -57585,6 +57915,218 @@
             this.toolTip1.SetToolTip(this.txtDataOutNode_4charID, "The four character code used to reference which MultiMeterIO is to be used for th" +
         "e output data.");
             this.txtDataOutNode_4charID.TextChanged += new System.EventHandler(this.txtDataOutNode_4charID_TextChanged);
+            // 
+            // pbTextOverlay_variables
+            // 
+            this.pbTextOverlay_variables.Image = ((System.Drawing.Image)(resources.GetObject("pbTextOverlay_variables.Image")));
+            this.pbTextOverlay_variables.Location = new System.Drawing.Point(297, 100);
+            this.pbTextOverlay_variables.Name = "pbTextOverlay_variables";
+            this.pbTextOverlay_variables.Size = new System.Drawing.Size(20, 20);
+            this.pbTextOverlay_variables.TabIndex = 164;
+            this.pbTextOverlay_variables.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbTextOverlay_variables, "Click for info");
+            this.pbTextOverlay_variables.Click += new System.EventHandler(this.pbTextOverlay_variables_Click);
+            // 
+            // chkMeterItemRotatorShowBeamWidth
+            // 
+            this.chkMeterItemRotatorShowBeamWidth.AutoSize = true;
+            this.chkMeterItemRotatorShowBeamWidth.Image = null;
+            this.chkMeterItemRotatorShowBeamWidth.Location = new System.Drawing.Point(129, 144);
+            this.chkMeterItemRotatorShowBeamWidth.Name = "chkMeterItemRotatorShowBeamWidth";
+            this.chkMeterItemRotatorShowBeamWidth.Size = new System.Drawing.Size(53, 17);
+            this.chkMeterItemRotatorShowBeamWidth.TabIndex = 122;
+            this.chkMeterItemRotatorShowBeamWidth.Text = "Show";
+            this.toolTip1.SetToolTip(this.chkMeterItemRotatorShowBeamWidth, "Show the 3dB beam width");
+            this.chkMeterItemRotatorShowBeamWidth.UseVisualStyleBackColor = true;
+            this.chkMeterItemRotatorShowBeamWidth.CheckedChanged += new System.EventHandler(this.chkMeterItemRotatorShowBeamWidth_CheckedChanged);
+            // 
+            // clrbtnMeterItemRotatorBeamWidth
+            // 
+            this.clrbtnMeterItemRotatorBeamWidth.Automatic = "Automatic";
+            this.clrbtnMeterItemRotatorBeamWidth.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMeterItemRotatorBeamWidth.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemRotatorBeamWidth.Image = null;
+            this.clrbtnMeterItemRotatorBeamWidth.Location = new System.Drawing.Point(83, 139);
+            this.clrbtnMeterItemRotatorBeamWidth.MoreColors = "More Colors...";
+            this.clrbtnMeterItemRotatorBeamWidth.Name = "clrbtnMeterItemRotatorBeamWidth";
+            this.clrbtnMeterItemRotatorBeamWidth.Selectable = true;
+            this.clrbtnMeterItemRotatorBeamWidth.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemRotatorBeamWidth.TabIndex = 120;
+            this.toolTip1.SetToolTip(this.clrbtnMeterItemRotatorBeamWidth, "Beam width colour");
+            this.clrbtnMeterItemRotatorBeamWidth.Changed += new System.EventHandler(this.clrbtnMeterItemRotatorBeamWidth_Changed);
+            // 
+            // nudMeterItemUpdateRateRotator
+            // 
+            this.nudMeterItemUpdateRateRotator.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMeterItemUpdateRateRotator.Location = new System.Drawing.Point(83, 20);
+            this.nudMeterItemUpdateRateRotator.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.nudMeterItemUpdateRateRotator.Minimum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.nudMeterItemUpdateRateRotator.Name = "nudMeterItemUpdateRateRotator";
+            this.nudMeterItemUpdateRateRotator.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemUpdateRateRotator.TabIndex = 101;
+            this.nudMeterItemUpdateRateRotator.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudMeterItemUpdateRateRotator, "Reading update and is related to screen update");
+            this.nudMeterItemUpdateRateRotator.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudMeterItemUpdateRateRotator.ValueChanged += new System.EventHandler(this.nudMeterItemUpdateRateRotator_ValueChanged);
+            // 
+            // clrbtnMeterItemHBackgroundRotator
+            // 
+            this.clrbtnMeterItemHBackgroundRotator.Automatic = "Automatic";
+            this.clrbtnMeterItemHBackgroundRotator.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnMeterItemHBackgroundRotator.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemHBackgroundRotator.Image = null;
+            this.clrbtnMeterItemHBackgroundRotator.Location = new System.Drawing.Point(263, 17);
+            this.clrbtnMeterItemHBackgroundRotator.MoreColors = "More Colors...";
+            this.clrbtnMeterItemHBackgroundRotator.Name = "clrbtnMeterItemHBackgroundRotator";
+            this.clrbtnMeterItemHBackgroundRotator.Selectable = true;
+            this.clrbtnMeterItemHBackgroundRotator.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemHBackgroundRotator.TabIndex = 92;
+            this.toolTip1.SetToolTip(this.clrbtnMeterItemHBackgroundRotator, "Background colour");
+            this.clrbtnMeterItemHBackgroundRotator.Changed += new System.EventHandler(this.clrbtnMeterItemHBackgroundRotator_Changed);
+            // 
+            // clrbtnMeterItemRotatorSmallDot
+            // 
+            this.clrbtnMeterItemRotatorSmallDot.Automatic = "Automatic";
+            this.clrbtnMeterItemRotatorSmallDot.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMeterItemRotatorSmallDot.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemRotatorSmallDot.Image = null;
+            this.clrbtnMeterItemRotatorSmallDot.Location = new System.Drawing.Point(83, 110);
+            this.clrbtnMeterItemRotatorSmallDot.MoreColors = "More Colors...";
+            this.clrbtnMeterItemRotatorSmallDot.Name = "clrbtnMeterItemRotatorSmallDot";
+            this.clrbtnMeterItemRotatorSmallDot.Selectable = true;
+            this.clrbtnMeterItemRotatorSmallDot.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemRotatorSmallDot.TabIndex = 80;
+            this.toolTip1.SetToolTip(this.clrbtnMeterItemRotatorSmallDot, "Small dot colour");
+            this.clrbtnMeterItemRotatorSmallDot.Changed += new System.EventHandler(this.clrbtnMeterItemRotatorSmallDot_Changed);
+            // 
+            // clrbtnMeterItemRotatorLargeDot
+            // 
+            this.clrbtnMeterItemRotatorLargeDot.Automatic = "Automatic";
+            this.clrbtnMeterItemRotatorLargeDot.Color = System.Drawing.Color.Red;
+            this.clrbtnMeterItemRotatorLargeDot.Image = null;
+            this.clrbtnMeterItemRotatorLargeDot.Location = new System.Drawing.Point(83, 81);
+            this.clrbtnMeterItemRotatorLargeDot.MoreColors = "More Colors...";
+            this.clrbtnMeterItemRotatorLargeDot.Name = "clrbtnMeterItemRotatorLargeDot";
+            this.clrbtnMeterItemRotatorLargeDot.Selectable = true;
+            this.clrbtnMeterItemRotatorLargeDot.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemRotatorLargeDot.TabIndex = 77;
+            this.toolTip1.SetToolTip(this.clrbtnMeterItemRotatorLargeDot, "Large dot colour");
+            this.clrbtnMeterItemRotatorLargeDot.Changed += new System.EventHandler(this.clrbtnMeterItemRotatorLargeDot_Changed);
+            // 
+            // clrbtnMeterItemRotatorArrow
+            // 
+            this.clrbtnMeterItemRotatorArrow.Automatic = "Automatic";
+            this.clrbtnMeterItemRotatorArrow.Color = System.Drawing.Color.White;
+            this.clrbtnMeterItemRotatorArrow.Image = null;
+            this.clrbtnMeterItemRotatorArrow.Location = new System.Drawing.Point(83, 52);
+            this.clrbtnMeterItemRotatorArrow.MoreColors = "More Colors...";
+            this.clrbtnMeterItemRotatorArrow.Name = "clrbtnMeterItemRotatorArrow";
+            this.clrbtnMeterItemRotatorArrow.Selectable = true;
+            this.clrbtnMeterItemRotatorArrow.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemRotatorArrow.TabIndex = 76;
+            this.toolTip1.SetToolTip(this.clrbtnMeterItemRotatorArrow, "The arrow/pointer colour");
+            this.clrbtnMeterItemRotatorArrow.Changed += new System.EventHandler(this.clrbtnMeterItemRotatorArrow_Changed);
+            // 
+            // chkMeterItemRotatorElevation
+            // 
+            this.chkMeterItemRotatorElevation.AutoSize = true;
+            this.chkMeterItemRotatorElevation.Image = null;
+            this.chkMeterItemRotatorElevation.Location = new System.Drawing.Point(51, 258);
+            this.chkMeterItemRotatorElevation.Name = "chkMeterItemRotatorElevation";
+            this.chkMeterItemRotatorElevation.Size = new System.Drawing.Size(70, 17);
+            this.chkMeterItemRotatorElevation.TabIndex = 4;
+            this.chkMeterItemRotatorElevation.Text = "Elevation";
+            this.toolTip1.SetToolTip(this.chkMeterItemRotatorElevation, "The rotator has elevation");
+            this.chkMeterItemRotatorElevation.UseVisualStyleBackColor = true;
+            this.chkMeterItemRotatorElevation.CheckedChanged += new System.EventHandler(this.chkMeterItemRotatorElevation_CheckedChanged);
+            // 
+            // nudMeterItemRotatorBeamWidth
+            // 
+            this.nudMeterItemRotatorBeamWidth.DecimalPlaces = 1;
+            this.nudMeterItemRotatorBeamWidth.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.nudMeterItemRotatorBeamWidth.Location = new System.Drawing.Point(83, 168);
+            this.nudMeterItemRotatorBeamWidth.Maximum = new decimal(new int[] {
+            180,
+            0,
+            0,
+            0});
+            this.nudMeterItemRotatorBeamWidth.Minimum = new decimal(new int[] {
+            180,
+            0,
+            0,
+            -2147483648});
+            this.nudMeterItemRotatorBeamWidth.Name = "nudMeterItemRotatorBeamWidth";
+            this.nudMeterItemRotatorBeamWidth.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemRotatorBeamWidth.TabIndex = 131;
+            this.nudMeterItemRotatorBeamWidth.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudMeterItemRotatorBeamWidth, "3dB beam width");
+            this.nudMeterItemRotatorBeamWidth.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudMeterItemRotatorBeamWidth.ValueChanged += new System.EventHandler(this.nudMeterItemRotatorBeamWidth_ValueChanged);
+            // 
+            // clrbtnMeterItemRotatorText
+            // 
+            this.clrbtnMeterItemRotatorText.Automatic = "Automatic";
+            this.clrbtnMeterItemRotatorText.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMeterItemRotatorText.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemRotatorText.Image = null;
+            this.clrbtnMeterItemRotatorText.Location = new System.Drawing.Point(83, 194);
+            this.clrbtnMeterItemRotatorText.MoreColors = "More Colors...";
+            this.clrbtnMeterItemRotatorText.Name = "clrbtnMeterItemRotatorText";
+            this.clrbtnMeterItemRotatorText.Selectable = true;
+            this.clrbtnMeterItemRotatorText.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemRotatorText.TabIndex = 132;
+            this.toolTip1.SetToolTip(this.clrbtnMeterItemRotatorText, "Text colour");
+            this.clrbtnMeterItemRotatorText.Changed += new System.EventHandler(this.clrbtnMeterItemRotatorText_Changed);
+            // 
+            // chkMeterItemRotatorCardinals
+            // 
+            this.chkMeterItemRotatorCardinals.AutoSize = true;
+            this.chkMeterItemRotatorCardinals.Image = null;
+            this.chkMeterItemRotatorCardinals.Location = new System.Drawing.Point(51, 235);
+            this.chkMeterItemRotatorCardinals.Name = "chkMeterItemRotatorCardinals";
+            this.chkMeterItemRotatorCardinals.Size = new System.Drawing.Size(69, 17);
+            this.chkMeterItemRotatorCardinals.TabIndex = 134;
+            this.chkMeterItemRotatorCardinals.Text = "Cardinals";
+            this.toolTip1.SetToolTip(this.chkMeterItemRotatorCardinals, "Show cardinals instead of degrees");
+            this.chkMeterItemRotatorCardinals.UseVisualStyleBackColor = true;
+            this.chkMeterItemRotatorCardinals.CheckedChanged += new System.EventHandler(this.chkMeterItemRotatorCardinals_CheckedChanged);
+            // 
+            // btnTextOverlay_copyfonts
+            // 
+            this.btnTextOverlay_copyfonts.Image = null;
+            this.btnTextOverlay_copyfonts.Location = new System.Drawing.Point(284, 196);
+            this.btnTextOverlay_copyfonts.Name = "btnTextOverlay_copyfonts";
+            this.btnTextOverlay_copyfonts.Selectable = true;
+            this.btnTextOverlay_copyfonts.Size = new System.Drawing.Size(33, 23);
+            this.btnTextOverlay_copyfonts.TabIndex = 165;
+            this.btnTextOverlay_copyfonts.Text = "=";
+            this.toolTip1.SetToolTip(this.btnTextOverlay_copyfonts, "Copy the font and colours from RX to TX");
+            this.btnTextOverlay_copyfonts.UseVisualStyleBackColor = true;
+            this.btnTextOverlay_copyfonts.Click += new System.EventHandler(this.btnTextOverlay_copyfonts_Click);
             // 
             // saveFileDialog1
             // 
@@ -58682,7 +59224,7 @@
             this.grpMeterItemSpacerSettings.Controls.Add(this.clrbtnMeterItemHBackgroundSpacerRX);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnTxSpacer);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnRxSpacer);
-            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(757, 822);
+            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(529, 786);
             this.grpMeterItemSpacerSettings.Name = "grpMeterItemSpacerSettings";
             this.grpMeterItemSpacerSettings.Size = new System.Drawing.Size(323, 168);
             this.grpMeterItemSpacerSettings.TabIndex = 102;
@@ -58758,6 +59300,7 @@
             // 
             // grpTextOverlay
             // 
+            this.grpTextOverlay.Controls.Add(this.btnTextOverlay_copyfonts);
             this.grpTextOverlay.Controls.Add(this.pbTextOverlay_variables);
             this.grpTextOverlay.Controls.Add(this.lblTextOverlay_panelbackgroundTX);
             this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_PanelBackgroundTX);
@@ -58793,7 +59336,7 @@
             this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_PanelBackground);
             this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnTX);
             this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnRX);
-            this.grpTextOverlay.Location = new System.Drawing.Point(838, 52);
+            this.grpTextOverlay.Location = new System.Drawing.Point(805, 34);
             this.grpTextOverlay.Name = "grpTextOverlay";
             this.grpTextOverlay.Size = new System.Drawing.Size(323, 362);
             this.grpTextOverlay.TabIndex = 104;
@@ -59038,7 +59581,7 @@
             this.grpMeterItemDataOutNode.Controls.Add(this.labelTS217);
             this.grpMeterItemDataOutNode.Controls.Add(this.nudDataOutNode_sendinterval);
             this.grpMeterItemDataOutNode.Controls.Add(this.labelTS215);
-            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(561, 591);
+            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(470, 574);
             this.grpMeterItemDataOutNode.Name = "grpMeterItemDataOutNode";
             this.grpMeterItemDataOutNode.Size = new System.Drawing.Size(323, 168);
             this.grpMeterItemDataOutNode.TabIndex = 105;
@@ -59076,324 +59619,202 @@
             this.labelTS215.TabIndex = 131;
             this.labelTS215.Text = "Send Interval:";
             // 
-            // pbTextOverlay_variables
+            // grpMeterItemRotator
             // 
-            this.pbTextOverlay_variables.Image = ((System.Drawing.Image)(resources.GetObject("pbTextOverlay_variables.Image")));
-            this.pbTextOverlay_variables.Location = new System.Drawing.Point(297, 100);
-            this.pbTextOverlay_variables.Name = "pbTextOverlay_variables";
-            this.pbTextOverlay_variables.Size = new System.Drawing.Size(20, 20);
-            this.pbTextOverlay_variables.TabIndex = 164;
-            this.pbTextOverlay_variables.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbTextOverlay_variables, "Click for info");
-            this.pbTextOverlay_variables.Click += new System.EventHandler(this.pbTextOverlay_variables_Click);
+            this.grpMeterItemRotator.Controls.Add(this.pnlVariableInUse_2_rotator);
+            this.grpMeterItemRotator.Controls.Add(this.chkMeterItemRotatorCardinals);
+            this.grpMeterItemRotator.Controls.Add(this.labelTS212);
+            this.grpMeterItemRotator.Controls.Add(this.clrbtnMeterItemRotatorText);
+            this.grpMeterItemRotator.Controls.Add(this.nudMeterItemRotatorBeamWidth);
+            this.grpMeterItemRotator.Controls.Add(this.btnMMIO_variable_2_rotator);
+            this.grpMeterItemRotator.Controls.Add(this.btnMMIO_variable_rotator);
+            this.grpMeterItemRotator.Controls.Add(this.chkMeterItemRotatorShowBeamWidth);
+            this.grpMeterItemRotator.Controls.Add(this.labelTS218);
+            this.grpMeterItemRotator.Controls.Add(this.clrbtnMeterItemRotatorBeamWidth);
+            this.grpMeterItemRotator.Controls.Add(this.chkMeterItemDarkModeRotator);
+            this.grpMeterItemRotator.Controls.Add(this.nudMeterItemUpdateRateRotator);
+            this.grpMeterItemRotator.Controls.Add(this.labelTS225);
+            this.grpMeterItemRotator.Controls.Add(this.labelTS227);
+            this.grpMeterItemRotator.Controls.Add(this.clrbtnMeterItemHBackgroundRotator);
+            this.grpMeterItemRotator.Controls.Add(this.labelTS228);
+            this.grpMeterItemRotator.Controls.Add(this.clrbtnMeterItemRotatorSmallDot);
+            this.grpMeterItemRotator.Controls.Add(this.labelTS229);
+            this.grpMeterItemRotator.Controls.Add(this.labelTS230);
+            this.grpMeterItemRotator.Controls.Add(this.clrbtnMeterItemRotatorLargeDot);
+            this.grpMeterItemRotator.Controls.Add(this.clrbtnMeterItemRotatorArrow);
+            this.grpMeterItemRotator.Controls.Add(this.chkMeterItemRotatorElevation);
+            this.grpMeterItemRotator.Controls.Add(this.chkMeterItemFadeOnTxRotator);
+            this.grpMeterItemRotator.Controls.Add(this.chkMeterItemFadeOnRxRotator);
+            this.grpMeterItemRotator.Controls.Add(this.pnlVariableInUse_1_rotator);
+            this.grpMeterItemRotator.Location = new System.Drawing.Point(799, 585);
+            this.grpMeterItemRotator.Name = "grpMeterItemRotator";
+            this.grpMeterItemRotator.Size = new System.Drawing.Size(323, 364);
+            this.grpMeterItemRotator.TabIndex = 106;
+            this.grpMeterItemRotator.TabStop = false;
+            this.grpMeterItemRotator.Text = "Rotator";
+            this.grpMeterItemRotator.Visible = false;
             // 
-            // picWarningRegionExtended
+            // pnlVariableInUse_2_rotator
             // 
-            this.picWarningRegionExtended.Image = global::Thetis.Properties.Resources.warning4;
-            this.picWarningRegionExtended.Location = new System.Drawing.Point(12, 75);
-            this.picWarningRegionExtended.Name = "picWarningRegionExtended";
-            this.picWarningRegionExtended.Size = new System.Drawing.Size(20, 20);
-            this.picWarningRegionExtended.TabIndex = 37;
-            this.picWarningRegionExtended.TabStop = false;
+            this.pnlVariableInUse_2_rotator.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlVariableInUse_2_rotator.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlVariableInUse_2_rotator.BackColor = System.Drawing.Color.Lime;
+            this.pnlVariableInUse_2_rotator.Location = new System.Drawing.Point(277, 97);
+            this.pnlVariableInUse_2_rotator.Name = "pnlVariableInUse_2_rotator";
+            this.pnlVariableInUse_2_rotator.Size = new System.Drawing.Size(28, 6);
+            this.pnlVariableInUse_2_rotator.TabIndex = 135;
             // 
-            // btnQSOTimerPlaySelectedWAV
+            // labelTS212
             // 
-            this.btnQSOTimerPlaySelectedWAV.Image = global::Thetis.Properties.Resources.play;
-            this.btnQSOTimerPlaySelectedWAV.Location = new System.Drawing.Point(92, 138);
-            this.btnQSOTimerPlaySelectedWAV.Name = "btnQSOTimerPlaySelectedWAV";
-            this.btnQSOTimerPlaySelectedWAV.Selectable = true;
-            this.btnQSOTimerPlaySelectedWAV.Size = new System.Drawing.Size(24, 24);
-            this.btnQSOTimerPlaySelectedWAV.TabIndex = 9;
-            this.toolTip1.SetToolTip(this.btnQSOTimerPlaySelectedWAV, "Test play of the sound you selected");
-            this.btnQSOTimerPlaySelectedWAV.UseVisualStyleBackColor = true;
-            this.btnQSOTimerPlaySelectedWAV.Click += new System.EventHandler(this.btnQSOTimerPlaySelectedWAV_Click);
+            this.labelTS212.AutoSize = true;
+            this.labelTS212.Image = null;
+            this.labelTS212.Location = new System.Drawing.Point(46, 199);
+            this.labelTS212.Name = "labelTS212";
+            this.labelTS212.Size = new System.Drawing.Size(31, 13);
+            this.labelTS212.TabIndex = 133;
+            this.labelTS212.Text = "Text:";
             // 
-            // pbVAC1FFAlphaInfo
+            // btnMMIO_variable_2_rotator
             // 
-            this.pbVAC1FFAlphaInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FFAlphaInfo.Image")));
-            this.pbVAC1FFAlphaInfo.Location = new System.Drawing.Point(325, 197);
-            this.pbVAC1FFAlphaInfo.Name = "pbVAC1FFAlphaInfo";
-            this.pbVAC1FFAlphaInfo.Size = new System.Drawing.Size(20, 20);
-            this.pbVAC1FFAlphaInfo.TabIndex = 71;
-            this.pbVAC1FFAlphaInfo.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbVAC1FFAlphaInfo, "Click for info");
-            this.pbVAC1FFAlphaInfo.Click += new System.EventHandler(this.pbVAC1FFAlphaInfo_Click);
+            this.btnMMIO_variable_2_rotator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMMIO_variable_2_rotator.Image = null;
+            this.btnMMIO_variable_2_rotator.Location = new System.Drawing.Point(277, 70);
+            this.btnMMIO_variable_2_rotator.Name = "btnMMIO_variable_2_rotator";
+            this.btnMMIO_variable_2_rotator.Selectable = true;
+            this.btnMMIO_variable_2_rotator.Size = new System.Drawing.Size(28, 28);
+            this.btnMMIO_variable_2_rotator.TabIndex = 129;
+            this.btnMMIO_variable_2_rotator.Text = "%";
+            this.btnMMIO_variable_2_rotator.UseVisualStyleBackColor = true;
+            this.btnMMIO_variable_2_rotator.Click += new System.EventHandler(this.btnMMIO_variable_2_rotator_Click);
             // 
-            // pbVAC1FFMaxInfo
+            // btnMMIO_variable_rotator
             // 
-            this.pbVAC1FFMaxInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FFMaxInfo.Image")));
-            this.pbVAC1FFMaxInfo.Location = new System.Drawing.Point(325, 173);
-            this.pbVAC1FFMaxInfo.Name = "pbVAC1FFMaxInfo";
-            this.pbVAC1FFMaxInfo.Size = new System.Drawing.Size(20, 20);
-            this.pbVAC1FFMaxInfo.TabIndex = 70;
-            this.pbVAC1FFMaxInfo.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbVAC1FFMaxInfo, "Click for info");
-            this.pbVAC1FFMaxInfo.Click += new System.EventHandler(this.pbVAC1FFMaxInfo_Click);
+            this.btnMMIO_variable_rotator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMMIO_variable_rotator.Image = null;
+            this.btnMMIO_variable_rotator.Location = new System.Drawing.Point(245, 70);
+            this.btnMMIO_variable_rotator.Name = "btnMMIO_variable_rotator";
+            this.btnMMIO_variable_rotator.Selectable = true;
+            this.btnMMIO_variable_rotator.Size = new System.Drawing.Size(28, 28);
+            this.btnMMIO_variable_rotator.TabIndex = 128;
+            this.btnMMIO_variable_rotator.Text = "%";
+            this.btnMMIO_variable_rotator.UseVisualStyleBackColor = true;
+            this.btnMMIO_variable_rotator.Click += new System.EventHandler(this.btnMMIO_variable_rotator_Click);
             // 
-            // pbVAC1FFMinInfo
+            // labelTS218
             // 
-            this.pbVAC1FFMinInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FFMinInfo.Image")));
-            this.pbVAC1FFMinInfo.Location = new System.Drawing.Point(325, 147);
-            this.pbVAC1FFMinInfo.Name = "pbVAC1FFMinInfo";
-            this.pbVAC1FFMinInfo.Size = new System.Drawing.Size(20, 20);
-            this.pbVAC1FFMinInfo.TabIndex = 69;
-            this.pbVAC1FFMinInfo.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbVAC1FFMinInfo, "Click for info");
-            this.pbVAC1FFMinInfo.Click += new System.EventHandler(this.pbVAC1FFMinInfo_Click);
+            this.labelTS218.AutoSize = true;
+            this.labelTS218.Image = null;
+            this.labelTS218.Location = new System.Drawing.Point(9, 144);
+            this.labelTS218.Name = "labelTS218";
+            this.labelTS218.Size = new System.Drawing.Size(68, 13);
+            this.labelTS218.TabIndex = 121;
+            this.labelTS218.Text = "Beam Width:";
             // 
-            // pbVAC1PropFeedbackMaxInfo
+            // chkMeterItemDarkModeRotator
             // 
-            this.pbVAC1PropFeedbackMaxInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1PropFeedbackMaxInfo.Image")));
-            this.pbVAC1PropFeedbackMaxInfo.Location = new System.Drawing.Point(326, 121);
-            this.pbVAC1PropFeedbackMaxInfo.Name = "pbVAC1PropFeedbackMaxInfo";
-            this.pbVAC1PropFeedbackMaxInfo.Size = new System.Drawing.Size(20, 20);
-            this.pbVAC1PropFeedbackMaxInfo.TabIndex = 68;
-            this.pbVAC1PropFeedbackMaxInfo.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbVAC1PropFeedbackMaxInfo, "Click for info");
-            this.pbVAC1PropFeedbackMaxInfo.Click += new System.EventHandler(this.pbVAC1PropFeedbackMaxInfo_Click);
+            this.chkMeterItemDarkModeRotator.AutoSize = true;
+            this.chkMeterItemDarkModeRotator.Image = null;
+            this.chkMeterItemDarkModeRotator.Location = new System.Drawing.Point(51, 332);
+            this.chkMeterItemDarkModeRotator.Name = "chkMeterItemDarkModeRotator";
+            this.chkMeterItemDarkModeRotator.Size = new System.Drawing.Size(79, 17);
+            this.chkMeterItemDarkModeRotator.TabIndex = 112;
+            this.chkMeterItemDarkModeRotator.Text = "Dark Mode";
+            this.chkMeterItemDarkModeRotator.UseVisualStyleBackColor = true;
+            this.chkMeterItemDarkModeRotator.CheckedChanged += new System.EventHandler(this.chkMeterItemDarkModeRotator_CheckedChanged);
             // 
-            // pbVAC1PropFeedbackMinInfo
+            // labelTS225
             // 
-            this.pbVAC1PropFeedbackMinInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1PropFeedbackMinInfo.Image")));
-            this.pbVAC1PropFeedbackMinInfo.Location = new System.Drawing.Point(326, 95);
-            this.pbVAC1PropFeedbackMinInfo.Name = "pbVAC1PropFeedbackMinInfo";
-            this.pbVAC1PropFeedbackMinInfo.Size = new System.Drawing.Size(20, 20);
-            this.pbVAC1PropFeedbackMinInfo.TabIndex = 67;
-            this.pbVAC1PropFeedbackMinInfo.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbVAC1PropFeedbackMinInfo, "Click for info");
-            this.pbVAC1PropFeedbackMinInfo.Click += new System.EventHandler(this.pbVAC1PropFeedbackMinInfo_Click);
+            this.labelTS225.Image = null;
+            this.labelTS225.Location = new System.Drawing.Point(6, 20);
+            this.labelTS225.Name = "labelTS225";
+            this.labelTS225.Size = new System.Drawing.Size(71, 16);
+            this.labelTS225.TabIndex = 100;
+            this.labelTS225.Text = "Update (ms):";
+            this.labelTS225.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // pbVAC1SlewTimeInfo
+            // labelTS227
             // 
-            this.pbVAC1SlewTimeInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1SlewTimeInfo.Image")));
-            this.pbVAC1SlewTimeInfo.Location = new System.Drawing.Point(325, 69);
-            this.pbVAC1SlewTimeInfo.Name = "pbVAC1SlewTimeInfo";
-            this.pbVAC1SlewTimeInfo.Size = new System.Drawing.Size(20, 20);
-            this.pbVAC1SlewTimeInfo.TabIndex = 39;
-            this.pbVAC1SlewTimeInfo.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbVAC1SlewTimeInfo, "Click for info");
-            this.pbVAC1SlewTimeInfo.Click += new System.EventHandler(this.pbVAC1SlewTimeInfo_Click);
+            this.labelTS227.AutoSize = true;
+            this.labelTS227.Image = null;
+            this.labelTS227.Location = new System.Drawing.Point(184, 22);
+            this.labelTS227.Name = "labelTS227";
+            this.labelTS227.Size = new System.Drawing.Size(68, 13);
+            this.labelTS227.TabIndex = 93;
+            this.labelTS227.Text = "Background:";
             // 
-            // pbVAC1FeedbackGainInfo
+            // labelTS228
             // 
-            this.pbVAC1FeedbackGainInfo.Image = ((System.Drawing.Image)(resources.GetObject("pbVAC1FeedbackGainInfo.Image")));
-            this.pbVAC1FeedbackGainInfo.Location = new System.Drawing.Point(325, 43);
-            this.pbVAC1FeedbackGainInfo.Name = "pbVAC1FeedbackGainInfo";
-            this.pbVAC1FeedbackGainInfo.Size = new System.Drawing.Size(20, 20);
-            this.pbVAC1FeedbackGainInfo.TabIndex = 38;
-            this.pbVAC1FeedbackGainInfo.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbVAC1FeedbackGainInfo, "Click for info");
-            this.pbVAC1FeedbackGainInfo.Click += new System.EventHandler(this.pbVAC1FeedbackGainInfo_Click);
+            this.labelTS228.AutoSize = true;
+            this.labelTS228.Image = null;
+            this.labelTS228.Location = new System.Drawing.Point(22, 115);
+            this.labelTS228.Name = "labelTS228";
+            this.labelTS228.Size = new System.Drawing.Size(55, 13);
+            this.labelTS228.TabIndex = 81;
+            this.labelTS228.Text = "Small Dot:";
             // 
-            // pbWarningBufferType
+            // labelTS229
             // 
-            this.pbWarningBufferType.Image = ((System.Drawing.Image)(resources.GetObject("pbWarningBufferType.Image")));
-            this.pbWarningBufferType.Location = new System.Drawing.Point(260, 334);
-            this.pbWarningBufferType.Name = "pbWarningBufferType";
-            this.pbWarningBufferType.Size = new System.Drawing.Size(20, 20);
-            this.pbWarningBufferType.TabIndex = 52;
-            this.pbWarningBufferType.TabStop = false;
+            this.labelTS229.AutoSize = true;
+            this.labelTS229.Image = null;
+            this.labelTS229.Location = new System.Drawing.Point(20, 86);
+            this.labelTS229.Name = "labelTS229";
+            this.labelTS229.Size = new System.Drawing.Size(57, 13);
+            this.labelTS229.TabIndex = 79;
+            this.labelTS229.Text = "Large Dot:";
             // 
-            // pbWarningFilterSize
+            // labelTS230
             // 
-            this.pbWarningFilterSize.Image = ((System.Drawing.Image)(resources.GetObject("pbWarningFilterSize.Image")));
-            this.pbWarningFilterSize.Location = new System.Drawing.Point(142, 334);
-            this.pbWarningFilterSize.Name = "pbWarningFilterSize";
-            this.pbWarningFilterSize.Size = new System.Drawing.Size(20, 20);
-            this.pbWarningFilterSize.TabIndex = 51;
-            this.pbWarningFilterSize.TabStop = false;
+            this.labelTS230.AutoSize = true;
+            this.labelTS230.Image = null;
+            this.labelTS230.Location = new System.Drawing.Point(40, 57);
+            this.labelTS230.Name = "labelTS230";
+            this.labelTS230.Size = new System.Drawing.Size(37, 13);
+            this.labelTS230.TabIndex = 78;
+            this.labelTS230.Text = "Arrow:";
+            this.labelTS230.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // pbWarningBufferSize
+            // chkMeterItemFadeOnTxRotator
             // 
-            this.pbWarningBufferSize.Image = ((System.Drawing.Image)(resources.GetObject("pbWarningBufferSize.Image")));
-            this.pbWarningBufferSize.Location = new System.Drawing.Point(16, 334);
-            this.pbWarningBufferSize.Name = "pbWarningBufferSize";
-            this.pbWarningBufferSize.Size = new System.Drawing.Size(20, 20);
-            this.pbWarningBufferSize.TabIndex = 50;
-            this.pbWarningBufferSize.TabStop = false;
+            this.chkMeterItemFadeOnTxRotator.AutoSize = true;
+            this.chkMeterItemFadeOnTxRotator.Image = null;
+            this.chkMeterItemFadeOnTxRotator.Location = new System.Drawing.Point(51, 305);
+            this.chkMeterItemFadeOnTxRotator.Name = "chkMeterItemFadeOnTxRotator";
+            this.chkMeterItemFadeOnTxRotator.Size = new System.Drawing.Size(82, 17);
+            this.chkMeterItemFadeOnTxRotator.TabIndex = 1;
+            this.chkMeterItemFadeOnTxRotator.Text = "Fade on TX";
+            this.chkMeterItemFadeOnTxRotator.UseVisualStyleBackColor = true;
+            this.chkMeterItemFadeOnTxRotator.CheckedChanged += new System.EventHandler(this.chkMeterItemFadeOnTxRotator_CheckedChanged);
             // 
-            // picCFC
+            // chkMeterItemFadeOnRxRotator
             // 
-            this.picCFC.BackColor = System.Drawing.Color.Black;
-            this.picCFC.Location = new System.Drawing.Point(428, 73);
-            this.picCFC.Name = "picCFC";
-            this.picCFC.Size = new System.Drawing.Size(290, 129);
-            this.picCFC.TabIndex = 175;
-            this.picCFC.TabStop = false;
-            this.picCFC.Click += new System.EventHandler(this.picCFC_Click);
-            this.picCFC.Paint += new System.Windows.Forms.PaintEventHandler(this.picCFC_Paint);
+            this.chkMeterItemFadeOnRxRotator.AutoSize = true;
+            this.chkMeterItemFadeOnRxRotator.Image = null;
+            this.chkMeterItemFadeOnRxRotator.Location = new System.Drawing.Point(51, 282);
+            this.chkMeterItemFadeOnRxRotator.Name = "chkMeterItemFadeOnRxRotator";
+            this.chkMeterItemFadeOnRxRotator.Size = new System.Drawing.Size(83, 17);
+            this.chkMeterItemFadeOnRxRotator.TabIndex = 0;
+            this.chkMeterItemFadeOnRxRotator.Text = "Fade on RX";
+            this.chkMeterItemFadeOnRxRotator.UseVisualStyleBackColor = true;
+            this.chkMeterItemFadeOnRxRotator.CheckedChanged += new System.EventHandler(this.chkMeterItemFadeOnRxRotator_CheckedChanged);
             // 
-            // pbPAProfileWarning
+            // pnlVariableInUse_1_rotator
             // 
-            this.pbPAProfileWarning.Image = ((System.Drawing.Image)(resources.GetObject("pbPAProfileWarning.Image")));
-            this.pbPAProfileWarning.Location = new System.Drawing.Point(16, 338);
-            this.pbPAProfileWarning.Name = "pbPAProfileWarning";
-            this.pbPAProfileWarning.Size = new System.Drawing.Size(20, 20);
-            this.pbPAProfileWarning.TabIndex = 170;
-            this.pbPAProfileWarning.TabStop = false;
-            // 
-            // btnMeterCopySettings
-            // 
-            this.btnMeterCopySettings.Image = global::Thetis.Properties.Resources.pipette32border;
-            this.btnMeterCopySettings.Location = new System.Drawing.Point(336, 293);
-            this.btnMeterCopySettings.Name = "btnMeterCopySettings";
-            this.btnMeterCopySettings.Selectable = true;
-            this.btnMeterCopySettings.Size = new System.Drawing.Size(32, 32);
-            this.btnMeterCopySettings.TabIndex = 103;
-            this.toolTip1.SetToolTip(this.btnMeterCopySettings, "Copy settings and colours");
-            this.btnMeterCopySettings.UseVisualStyleBackColor = true;
-            this.btnMeterCopySettings.Click += new System.EventHandler(this.btnMeterCopySettings_Click);
-            // 
-            // btnMeterPasteSettings
-            // 
-            this.btnMeterPasteSettings.Image = global::Thetis.Properties.Resources.brush32border;
-            this.btnMeterPasteSettings.Location = new System.Drawing.Point(336, 340);
-            this.btnMeterPasteSettings.Name = "btnMeterPasteSettings";
-            this.btnMeterPasteSettings.Selectable = true;
-            this.btnMeterPasteSettings.Size = new System.Drawing.Size(32, 32);
-            this.btnMeterPasteSettings.TabIndex = 102;
-            this.toolTip1.SetToolTip(this.btnMeterPasteSettings, "Paste settings and colours into suitable meter item");
-            this.btnMeterPasteSettings.UseVisualStyleBackColor = true;
-            this.btnMeterPasteSettings.Click += new System.EventHandler(this.btnMeterPasteSettings_Click);
-            // 
-            // btnMeterUp
-            // 
-            this.btnMeterUp.Image = global::Thetis.Properties.Resources.arrow_up_black;
-            this.btnMeterUp.Location = new System.Drawing.Point(337, 147);
-            this.btnMeterUp.Name = "btnMeterUp";
-            this.btnMeterUp.Selectable = true;
-            this.btnMeterUp.Size = new System.Drawing.Size(32, 32);
-            this.btnMeterUp.TabIndex = 95;
-            this.toolTip1.SetToolTip(this.btnMeterUp, "Move item up");
-            this.btnMeterUp.UseVisualStyleBackColor = true;
-            this.btnMeterUp.Click += new System.EventHandler(this.btnMeterUp_Click);
-            // 
-            // btnMeterDown
-            // 
-            this.btnMeterDown.Image = global::Thetis.Properties.Resources.down_black;
-            this.btnMeterDown.Location = new System.Drawing.Point(337, 194);
-            this.btnMeterDown.Name = "btnMeterDown";
-            this.btnMeterDown.Selectable = true;
-            this.btnMeterDown.Size = new System.Drawing.Size(32, 32);
-            this.btnMeterDown.TabIndex = 94;
-            this.toolTip1.SetToolTip(this.btnMeterDown, "Move item down");
-            this.btnMeterDown.UseVisualStyleBackColor = true;
-            this.btnMeterDown.Click += new System.EventHandler(this.btnMeterDown_Click);
-            // 
-            // btnRemoveMeterItem
-            // 
-            this.btnRemoveMeterItem.Image = global::Thetis.Properties.Resources.arrow_left_black;
-            this.btnRemoveMeterItem.Location = new System.Drawing.Point(153, 194);
-            this.btnRemoveMeterItem.Name = "btnRemoveMeterItem";
-            this.btnRemoveMeterItem.Selectable = true;
-            this.btnRemoveMeterItem.Size = new System.Drawing.Size(32, 32);
-            this.btnRemoveMeterItem.TabIndex = 93;
-            this.toolTip1.SetToolTip(this.btnRemoveMeterItem, "Remove the item");
-            this.btnRemoveMeterItem.UseVisualStyleBackColor = true;
-            this.btnRemoveMeterItem.Click += new System.EventHandler(this.btnRemoveMeterItem_Click);
-            // 
-            // btnAddMeterItem
-            // 
-            this.btnAddMeterItem.Image = global::Thetis.Properties.Resources.arrow_right_black;
-            this.btnAddMeterItem.Location = new System.Drawing.Point(153, 147);
-            this.btnAddMeterItem.Name = "btnAddMeterItem";
-            this.btnAddMeterItem.Selectable = true;
-            this.btnAddMeterItem.Size = new System.Drawing.Size(32, 32);
-            this.btnAddMeterItem.TabIndex = 92;
-            this.toolTip1.SetToolTip(this.btnAddMeterItem, "Include the item");
-            this.btnAddMeterItem.UseVisualStyleBackColor = true;
-            this.btnAddMeterItem.Click += new System.EventHandler(this.btnAddMeterItem_Click);
-            // 
-            // picSkinThumbnail
-            // 
-            this.picSkinThumbnail.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.picSkinThumbnail.Location = new System.Drawing.Point(199, 154);
-            this.picSkinThumbnail.Name = "picSkinThumbnail";
-            this.picSkinThumbnail.Size = new System.Drawing.Size(416, 234);
-            this.picSkinThumbnail.TabIndex = 7;
-            this.picSkinThumbnail.TabStop = false;
-            // 
-            // btnDownloadSkin
-            // 
-            this.btnDownloadSkin.Image = ((System.Drawing.Image)(resources.GetObject("btnDownloadSkin.Image")));
-            this.btnDownloadSkin.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnDownloadSkin.Location = new System.Drawing.Point(621, 154);
-            this.btnDownloadSkin.Name = "btnDownloadSkin";
-            this.btnDownloadSkin.Padding = new System.Windows.Forms.Padding(0, 80, 0, 80);
-            this.btnDownloadSkin.Selectable = true;
-            this.btnDownloadSkin.Size = new System.Drawing.Size(75, 214);
-            this.btnDownloadSkin.TabIndex = 1;
-            this.btnDownloadSkin.Text = "Download";
-            this.btnDownloadSkin.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.btnDownloadSkin.UseVisualStyleBackColor = true;
-            this.btnDownloadSkin.Click += new System.EventHandler(this.btnDownloadSkin_Click);
-            // 
-            // btnMMIO_network_delete
-            // 
-            this.btnMMIO_network_delete.Image = global::Thetis.Properties.Resources.trash_black;
-            this.btnMMIO_network_delete.Location = new System.Drawing.Point(137, 159);
-            this.btnMMIO_network_delete.Name = "btnMMIO_network_delete";
-            this.btnMMIO_network_delete.Selectable = true;
-            this.btnMMIO_network_delete.Size = new System.Drawing.Size(29, 52);
-            this.btnMMIO_network_delete.TabIndex = 99;
-            this.btnMMIO_network_delete.UseVisualStyleBackColor = true;
-            this.btnMMIO_network_delete.Click += new System.EventHandler(this.btnMMIO_network_delete_Click);
-            // 
-            // btnMMIO_network_remove_all_variables
-            // 
-            this.btnMMIO_network_remove_all_variables.Image = global::Thetis.Properties.Resources.trash_bulge_black;
-            this.btnMMIO_network_remove_all_variables.Location = new System.Drawing.Point(441, 271);
-            this.btnMMIO_network_remove_all_variables.Name = "btnMMIO_network_remove_all_variables";
-            this.btnMMIO_network_remove_all_variables.Selectable = true;
-            this.btnMMIO_network_remove_all_variables.Size = new System.Drawing.Size(29, 35);
-            this.btnMMIO_network_remove_all_variables.TabIndex = 132;
-            this.toolTip1.SetToolTip(this.btnMMIO_network_remove_all_variables, "Remove all variables");
-            this.btnMMIO_network_remove_all_variables.UseVisualStyleBackColor = true;
-            this.btnMMIO_network_remove_all_variables.Click += new System.EventHandler(this.btnMMIO_network_remove_all_variables_Click);
-            // 
-            // btnMMIO_network_copyvariable_clipboard
-            // 
-            this.btnMMIO_network_copyvariable_clipboard.Image = global::Thetis.Properties.Resources.copy;
-            this.btnMMIO_network_copyvariable_clipboard.Location = new System.Drawing.Point(298, 274);
-            this.btnMMIO_network_copyvariable_clipboard.Name = "btnMMIO_network_copyvariable_clipboard";
-            this.btnMMIO_network_copyvariable_clipboard.Selectable = true;
-            this.btnMMIO_network_copyvariable_clipboard.Size = new System.Drawing.Size(27, 35);
-            this.btnMMIO_network_copyvariable_clipboard.TabIndex = 120;
-            this.toolTip1.SetToolTip(this.btnMMIO_network_copyvariable_clipboard, "Copy to clipboard");
-            this.btnMMIO_network_copyvariable_clipboard.UseVisualStyleBackColor = true;
-            this.btnMMIO_network_copyvariable_clipboard.Click += new System.EventHandler(this.btnMMIO_network_copyvariable_clipboard_Click);
-            // 
-            // btnMMIO_network_remove_variable
-            // 
-            this.btnMMIO_network_remove_variable.Image = global::Thetis.Properties.Resources.trash_black;
-            this.btnMMIO_network_remove_variable.Location = new System.Drawing.Point(476, 271);
-            this.btnMMIO_network_remove_variable.Name = "btnMMIO_network_remove_variable";
-            this.btnMMIO_network_remove_variable.Selectable = true;
-            this.btnMMIO_network_remove_variable.Size = new System.Drawing.Size(29, 35);
-            this.btnMMIO_network_remove_variable.TabIndex = 119;
-            this.toolTip1.SetToolTip(this.btnMMIO_network_remove_variable, "Remove selected variable");
-            this.btnMMIO_network_remove_variable.UseVisualStyleBackColor = true;
-            this.btnMMIO_network_remove_variable.Click += new System.EventHandler(this.btnMMIO_network_remove_variable_Click);
-            // 
-            // btnMMIO_network_copy4char
-            // 
-            this.btnMMIO_network_copy4char.Image = global::Thetis.Properties.Resources.copy;
-            this.btnMMIO_network_copy4char.Location = new System.Drawing.Point(117, 85);
-            this.btnMMIO_network_copy4char.Name = "btnMMIO_network_copy4char";
-            this.btnMMIO_network_copy4char.Selectable = true;
-            this.btnMMIO_network_copy4char.Size = new System.Drawing.Size(27, 27);
-            this.btnMMIO_network_copy4char.TabIndex = 115;
-            this.toolTip1.SetToolTip(this.btnMMIO_network_copy4char, "Copy to clipboard");
-            this.btnMMIO_network_copy4char.UseVisualStyleBackColor = true;
-            this.btnMMIO_network_copy4char.Click += new System.EventHandler(this.btnMMIO_network_copy4char_Click);
+            this.pnlVariableInUse_1_rotator.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlVariableInUse_1_rotator.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlVariableInUse_1_rotator.BackColor = System.Drawing.Color.Lime;
+            this.pnlVariableInUse_1_rotator.Location = new System.Drawing.Point(245, 97);
+            this.pnlVariableInUse_1_rotator.Name = "pnlVariableInUse_1_rotator";
+            this.pnlVariableInUse_1_rotator.Size = new System.Drawing.Size(28, 6);
+            this.pnlVariableInUse_1_rotator.TabIndex = 130;
             // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(984, 961);
-            this.Controls.Add(this.grpMeterItemDataOutNode);
             this.Controls.Add(this.grpTextOverlay);
+            this.Controls.Add(this.grpMeterItemRotator);
+            this.Controls.Add(this.grpMeterItemDataOutNode);
             this.Controls.Add(this.labelTS198);
             this.Controls.Add(this.grpMeterItemSpacerSettings);
             this.Controls.Add(this.txtboxTXProfileChangedReport);
@@ -59401,8 +59822,8 @@
             this.Controls.Add(this.labelSavingLoading);
             this.Controls.Add(this.btnExportDB);
             this.Controls.Add(this.btnImportDB);
-            this.Controls.Add(this.btnResetDB);
             this.Controls.Add(this.grpMeterItemVfoDisplaySettings);
+            this.Controls.Add(this.btnResetDB);
             this.Controls.Add(this.btnApply);
             this.Controls.Add(this.grpMeterItemClockSettings);
             this.Controls.Add(this.btnCancel);
@@ -59487,6 +59908,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udStaticIP1)).EndInit();
             this.grpFRSRegion.ResumeLayout(false);
             this.grpFRSRegion.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picWarningRegionExtended)).EndInit();
             this.grpGeneralModel.ResumeLayout(false);
             this.grpMetisAddr.ResumeLayout(false);
             this.groupBoxHPSDRHW.ResumeLayout(false);
@@ -59831,6 +60253,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.udVAC2FeedbackGainIn)).EndInit();
             this.grpVAC1ResamplerAdvanced.ResumeLayout(false);
             this.grpVAC1ResamplerAdvanced.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FFAlphaInfo)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FFMaxInfo)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FFMinInfo)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1PropFeedbackMaxInfo)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1PropFeedbackMinInfo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1FFMinOut)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1FFMinIn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1PropMaxOut)).EndInit();
@@ -59843,6 +60270,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1PropMinIn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1SlewTimeOut)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1FeedbackGainOut)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1SlewTimeInfo)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FeedbackGainInfo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1SlewTimeIn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1FeedbackGainIn)).EndInit();
             this.tpDisplay.ResumeLayout(false);
@@ -59956,6 +60385,9 @@
             this.tcDSP.ResumeLayout(false);
             this.tpDSPOptions.ResumeLayout(false);
             this.tpDSPOptions.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbWarningBufferType)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbWarningFilterSize)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbWarningBufferSize)).EndInit();
             this.grpDSPFilterType.ResumeLayout(false);
             this.grpDSPFiltTypeFM.ResumeLayout(false);
             this.grpDSPFiltTypeDig.ResumeLayout(false);
@@ -60205,6 +60637,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbCFC0)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbCFC1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbCFC2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picCFC)).EndInit();
             this.tpTransmit.ResumeLayout(false);
             this.tpTransmit.PerformLayout();
             this.grpDSPSpeechProcessor.ResumeLayout(false);
@@ -60236,6 +60669,7 @@
             this.tcPowerAmplifier.ResumeLayout(false);
             this.tpGainByBand.ResumeLayout(false);
             this.tpGainByBand.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbPAProfileWarning)).EndInit();
             this.grpGainByBandPA.ResumeLayout(false);
             this.grpGainByBandPA.PerformLayout();
             this.panelTS1.ResumeLayout(false);
@@ -60411,6 +60845,7 @@
             this.gtpAvailableSkins.ResumeLayout(false);
             this.gtpAvailableSkins.PerformLayout();
             this.grpAuthorDetails.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picSkinThumbnail)).EndInit();
             this.panelGetServerList.ResumeLayout(false);
             this.panelGetServerList.PerformLayout();
             this.tpKeyboard.ResumeLayout(false);
@@ -60528,6 +60963,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXyOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTextOverlay_TXxOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDataOutNode_sendinterval)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemUpdateRateRotator)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemRotatorBeamWidth)).EndInit();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();
@@ -60571,21 +61009,8 @@
             this.grpTextOverlay.PerformLayout();
             this.grpMeterItemDataOutNode.ResumeLayout(false);
             this.grpMeterItemDataOutNode.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picWarningRegionExtended)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FFAlphaInfo)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FFMaxInfo)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FFMinInfo)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1PropFeedbackMaxInfo)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1PropFeedbackMinInfo)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1SlewTimeInfo)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FeedbackGainInfo)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbWarningBufferType)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbWarningFilterSize)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbWarningBufferSize)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picCFC)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbPAProfileWarning)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picSkinThumbnail)).EndInit();
+            this.grpMeterItemRotator.ResumeLayout(false);
+            this.grpMeterItemRotator.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -64326,5 +64751,32 @@
         private PanelTS pnlVariableInUse_1;
         private PanelTS pnlVariableInUse_2;
         private ButtonTS btnMMIO_network_remove_all_variables;
+        private GroupBoxTS grpMeterItemRotator;
+        private ButtonTS btnMMIO_variable_2_rotator;
+        private ButtonTS btnMMIO_variable_rotator;
+        private CheckBoxTS chkMeterItemRotatorShowBeamWidth;
+        private LabelTS labelTS218;
+        private ColorButton clrbtnMeterItemRotatorBeamWidth;
+        private CheckBoxTS chkMeterItemDarkModeRotator;
+        private NumericUpDownTS nudMeterItemUpdateRateRotator;
+        private LabelTS labelTS225;
+        private LabelTS labelTS227;
+        private ColorButton clrbtnMeterItemHBackgroundRotator;
+        private LabelTS labelTS228;
+        private ColorButton clrbtnMeterItemRotatorSmallDot;
+        private LabelTS labelTS229;
+        private LabelTS labelTS230;
+        private ColorButton clrbtnMeterItemRotatorLargeDot;
+        private ColorButton clrbtnMeterItemRotatorArrow;
+        private CheckBoxTS chkMeterItemRotatorElevation;
+        private CheckBoxTS chkMeterItemFadeOnTxRotator;
+        private CheckBoxTS chkMeterItemFadeOnRxRotator;
+        private PanelTS pnlVariableInUse_1_rotator;
+        private LabelTS labelTS212;
+        private ColorButton clrbtnMeterItemRotatorText;
+        private NumericUpDownTS nudMeterItemRotatorBeamWidth;
+        private CheckBoxTS chkMeterItemRotatorCardinals;
+        private PanelTS pnlVariableInUse_2_rotator;
+        private ButtonTS btnTextOverlay_copyfonts;
     }
 }
