@@ -80,6 +80,8 @@ namespace Thetis
         // volts/amps
         VOLTS,
         AMPS,
+        AZ,
+        ELE,
         // special
         //EYE_PERCENT,
         //// private used in metermanager only
@@ -155,6 +157,7 @@ namespace Thetis
         SPACER,
         TEXT_OVERLAY,
         DATA_OUT,
+        ROTATOR,
         //SPECTRUM,
         LAST
     }
@@ -591,6 +594,7 @@ namespace Thetis
                 case MeterType.SPACER: return 2;
                 case MeterType.TEXT_OVERLAY: return 2;
                 case MeterType.DATA_OUT: return 2;
+                case MeterType.ROTATOR: return 2;
                     //case MeterType.SPECTRUM: return 2;
             }
 
@@ -627,6 +631,7 @@ namespace Thetis
                 case MeterType.SPACER: return "Spacer";
                 case MeterType.TEXT_OVERLAY: return "Text Overlay";
                 case MeterType.DATA_OUT: return "Data Out Node";
+                case MeterType.ROTATOR: return "Rotator";
                 //case MeterType.HISTORY: return "History";
                 case MeterType.VFO_DISPLAY: return "Vfo Display";
                 case MeterType.CLOCK: return "Clock";
@@ -679,6 +684,8 @@ namespace Thetis
                 case Reading.SIGNAL_STRENGTH: return "Signal";
                 case Reading.SWR: return "SWR";
                 case Reading.VOLTS: return "Volts";
+                case Reading.AZ: return "Azimuth";
+                case Reading.ELE: return "Elevation";
             }
 
             return reading.ToString();
@@ -728,6 +735,8 @@ namespace Thetis
                 case Reading.SIGNAL_STRENGTH: return "dBm";
                 case Reading.SWR: return ":1";
                 case Reading.VOLTS: return "V";
+                case Reading.AZ: return "°";
+                case Reading.ELE: return "°";
             }
 
             return reading.ToString();
@@ -2409,7 +2418,8 @@ namespace Thetis
                 FADE_COVER,
                 SPACER,
                 TEXT_OVERLAY,
-                DATA_OUT
+                DATA_OUT,
+                ROTATOR
                 //SPECTRUM
             }
 
@@ -3526,6 +3536,205 @@ namespace Thetis
                 set { _darkMode = value; }
             }
         }
+        internal class clsRotatorItem : clsMeterItem
+        {
+            private string _fontFamily;
+            private FontStyle _fontStyle;
+            private float _fontSize;
+            private bool _showValue;
+            private bool _darkMode;
+
+            private readonly object _historyLock = new object();
+
+            private System.Drawing.Color _big_blob_colour;
+            private System.Drawing.Color _small_blob_colour;
+            private System.Drawing.Color _outer_text_colour;
+            private System.Drawing.Color _arrow_colour;
+            private System.Drawing.Color _beam_width_colour;
+            private System.Drawing.Color _background_colour;
+
+            private bool _show_elevation;
+            private bool _show_cardinals;
+            private bool _show_beam_width;
+            private float _beam_width;
+
+            public clsRotatorItem()
+            {
+                _fontFamily = "Trebuchet MS";
+                _fontStyle = FontStyle.Regular;
+                _fontSize = 18f;
+                _showValue = true;
+                _show_elevation = false;
+                _show_cardinals = false;
+                _show_beam_width = false;
+                _beam_width = 30f;
+                _darkMode = false;
+
+                _big_blob_colour = System.Drawing.Color.Red;
+                _small_blob_colour = System.Drawing.Color.White;
+                _outer_text_colour = System.Drawing.Color.FromArgb(255, 128, 128, 128);
+                _arrow_colour = System.Drawing.Color.White;
+                _beam_width_colour = System.Drawing.Color.FromArgb(255, 64, 64, 64);
+                _background_colour = System.Drawing.Color.FromArgb(32, 32, 32);
+
+                ItemType = MeterItemType.ROTATOR;
+                ReadingSource = Reading.AZ;
+                UpdateInterval = 1000;
+                StoreSettings = false;
+            }
+            public bool DarkMode
+            {
+                get { return _darkMode; }
+                set { _darkMode = value; }
+            }
+            public float BeamWidth
+            {
+                get { return _beam_width; }
+                set { _beam_width = value; }
+            }
+            public bool ShowElevation
+            {
+                get { return _show_elevation; }
+                set { _show_elevation = value; }
+            }
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
+            {
+                // get latest reading
+                float reading;
+                bool use;
+                //if (GetMMIOGuid(0) == Guid.Empty)// && GetMMIOVariable(0) == "-- DEFAULT --") 
+                if (MMIOGuid == Guid.Empty)
+                {
+                    reading = MeterManager.getReading(rx,ReadingSource);
+                    use = true;
+                }
+                else
+                {
+                    reading = 0;
+                    if (MultiMeterIO.Data.ContainsKey(MMIOGuid))
+                    {
+                        MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[MMIOGuid];
+
+                        object val = mmio.GetVariable(MMIOVariable);
+                        if (val is int)
+                        {
+                            int intVal = (int)val;
+                            reading = (float)intVal;
+                        }
+                        else if (val is float)
+                        {
+                            reading = (float)val;
+                        }
+                        else if (val is double)
+                        {
+                            double doubleVal = (double)val;
+                            reading = (float)doubleVal;
+                        }
+                    }
+                    use = false;
+                }
+
+                lock (_historyLock)
+                {
+                    if (ReadingSource == Reading.ELE)
+                    {
+                        if (reading < 0) reading = 0;
+                        if (reading > 90) reading = 90;
+                    }
+
+                    float normalizedValue = Value % 360;
+                    if (normalizedValue < 0) normalizedValue += 360;
+
+                    float normalizedReading = reading % 360;
+                    if (normalizedReading < 0) normalizedReading += 360;
+
+                    float difference = normalizedReading - normalizedValue;
+                    if (difference > 180)
+                        difference -= 360;
+                    else if (difference < -180)
+                        difference += 360;
+
+
+                    float adjustmentSpeed = 0.2f * Math.Abs(difference);
+
+                    if (Math.Abs(difference) < adjustmentSpeed)
+                        Value = reading;
+                    else
+                        Value += Math.Sign(difference) * adjustmentSpeed;
+
+                    Value = Value % 360;
+                    if (Value < 0) Value += 360;
+                }
+
+                if (use)
+                {
+                    // this reading has been used
+                    if (!readingsUsed.Contains(ReadingSource))
+                        readingsUsed.Add(ReadingSource);
+                }
+            }
+            public bool ShowValue
+            {
+                get { return _showValue; }
+                set { _showValue = value; }
+            }
+            public bool ShowCardinals
+            {
+                get { return _show_cardinals; }
+                set { _show_cardinals = value; }
+            }
+            public bool ShowBeamWidth
+            {
+                get { return _show_beam_width; }
+                set { _show_beam_width = value; }
+            }
+            public string FontFamily
+            {
+                get { return _fontFamily; }
+                set { _fontFamily = value; }
+            }
+            public FontStyle Style
+            {
+                get { return _fontStyle; }
+                set { _fontStyle = value; }
+            }
+            public System.Drawing.Color BigBlobColour
+            {
+                get { return _big_blob_colour; }
+                set { _big_blob_colour = value; }
+            }
+            public System.Drawing.Color SmallBlobColour
+            {
+                get { return _small_blob_colour; }
+                set { _small_blob_colour = value; }
+            }
+            public System.Drawing.Color OuterTextColour
+            {
+                get { return _outer_text_colour; }
+                set { _outer_text_colour = value; }
+            }
+            public System.Drawing.Color ArrowColour
+            {
+                get { return _arrow_colour; }
+                set { _arrow_colour = value; }
+            }
+            public System.Drawing.Color BeamWidthColour
+            {
+                get { return _beam_width_colour; }
+                set { _beam_width_colour = value; }
+            }
+            public float FontSize
+            {
+                get { return _fontSize; }
+                set { _fontSize = value; }
+            }
+
+            public override bool ZeroOut(out float value, int rx)
+            {
+                value = 0;
+                return true;
+            }
+        }
         internal class clsMagicEyeItem : clsMeterItem
         {
             private List<float> _history;
@@ -3533,7 +3742,7 @@ namespace Thetis
             private int _msIgnoreHistoryDuration;
             private bool _showHistory;
             private bool _showValue;
-            private object _historyLock = new object();
+            private readonly object _historyLock = new object();
             private System.Drawing.Color _colour;
             private int _nIgnoringNext;
 
@@ -4421,7 +4630,7 @@ namespace Thetis
         //    private bool _showHistory;
         //    //private bool _showValue;
         //    //private bool _showPeakValue;
-        //    private object _historyLock = new object();
+        //    private readonly object _historyLock = new object();
         //    //private BarStyle _style;
         //    //private System.Drawing.Color _colour;
         //    //private System.Drawing.Color _markerColour;
@@ -4652,7 +4861,7 @@ namespace Thetis
             private bool _showHistory;
             private bool _showValue;
             private bool _showPeakValue;
-            private object _historyLock = new object();
+            private readonly object _historyLock = new object();
             private BarStyle _style;
             private System.Drawing.Color _colour;
             private System.Drawing.Color _colourHigh;
@@ -5108,7 +5317,7 @@ namespace Thetis
             private int _msIgnoreHistoryDuration;
             private bool _showValue;
             private bool _showPeakValue;
-            private object _historyLock = new object();
+            private readonly object _historyLock = new object();
             private System.Drawing.Color _colour;
             private System.Drawing.Color _markerColour;
             private System.Drawing.Color _peakValueColour;
@@ -5379,7 +5588,7 @@ namespace Thetis
             private int _msHistoryDuration; //ms
             private int _msIgnoreHistoryDuration;
             private bool _showHistory;
-            private object _historyLock = new object();
+            private readonly object _historyLock = new object();
             private NeedleStyle _style;
             private PointF _needleOffset;
             private NeedlePlacement _placement;
@@ -5910,6 +6119,7 @@ namespace Thetis
                     case MeterType.SPACER: return Reading.NONE;
                     case MeterType.TEXT_OVERLAY: return Reading.NONE;
                     case MeterType.DATA_OUT: return Reading.NONE;
+                    case MeterType.ROTATOR: return variable_index == 0 ? Reading.AZ : Reading.ELE;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
                 return Reading.NONE;
@@ -5948,6 +6158,7 @@ namespace Thetis
                     case MeterType.SPACER: return 0;
                     case MeterType.TEXT_OVERLAY: return 0;
                     case MeterType.DATA_OUT: return 0;
+                    case MeterType.ROTATOR: return 2;
                     //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
                 return 0;
@@ -5991,6 +6202,7 @@ namespace Thetis
                     case MeterType.SPACER: AddSpacer(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
                     case MeterType.TEXT_OVERLAY: AddTextOverlay(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
                     case MeterType.DATA_OUT: AddDataOut(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.ROTATOR: AddRotator(nDelay, 0, out bBottom, 0.5f, restoreIg); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
@@ -6487,6 +6699,65 @@ namespace Thetis
                 addMeterItem(ig);
 
                 return cb.ID;
+            }
+            public string AddRotator(int nMSupdate, float fTop, out float fBottom, float fSize, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsRotatorItem ri = new clsRotatorItem();
+                ri.ParentID = ig.ID;
+                ri.Primary = true;
+                ri.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
+                ri.Size = new SizeF(1f, fSize);
+                ri.ZOrder = 3;
+                ri.MMIOVariableIndex = 0;
+                ri.ReadingSource = Reading.AZ;
+                ri.UpdateInterval = 100;
+                addMeterItem(ri);
+
+                //this is not renderd, but is used for ele data. Note primay = false
+                clsRotatorItem ri2 = new clsRotatorItem();
+                ri2.ParentID = ig.ID;
+                ri2.Primary = false;
+                ri2.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
+                ri2.Size = new SizeF(1f, fSize);
+                ri2.ZOrder = 3;
+                ri2.MMIOVariableIndex = 1;
+                ri2.ReadingSource = Reading.ELE;
+                ri2.UpdateInterval = 100;
+                addMeterItem(ri2);
+
+                clsImage img = new clsImage();
+                img.ParentID = ig.ID;
+                img.TopLeft = ri.TopLeft;
+                img.Size = ri.Size;
+                img.ZOrder = 2;
+                img.ImageName = "rotator-bg";
+                addMeterItem(img);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.ParentID = ig.ID;
+                sc.TopLeft = ri.TopLeft;
+                sc.Size = ri.Size;
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = ri.TopLeft.Y + ri.Size.Height;
+
+                ig.TopLeft = ri.TopLeft;
+                ig.Size = new SizeF(ri.Size.Width, fBottom);
+                ig.MeterType = MeterType.ROTATOR;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);
+
+                return ri.ID;
             }
             public string AddMagicEye(int nMSupdate, float fTop, out float fBottom, float fSize,  clsItemGroup restoreIg = null)
             {
@@ -8555,6 +8826,67 @@ namespace Thetis
                         {
                             switch (mt)
                             {
+                                case MeterType.ROTATOR:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        //one image, and the me
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR))
+                                        {
+                                            clsRotatorItem rotator = me.Value as clsRotatorItem;
+                                            if (rotator == null) continue; // skip
+
+                                            if (rotator.MMIOVariableIndex != -1)
+                                            {
+                                                rotator.MMIOGuid = igs.GetMMIOGuid(rotator.MMIOVariableIndex);
+                                                rotator.MMIOVariable = igs.GetMMIOVariable(rotator.MMIOVariableIndex);
+                                            }
+                                            else
+                                            {
+                                                rotator.MMIOGuid = Guid.Empty;
+                                                rotator.MMIOVariable = "--DEFAULT--";
+                                            }
+
+                                            rotator.UpdateInterval = igs.UpdateInterval;
+                                            rotator.ArrowColour = igs.TitleColor;
+                                            rotator.BigBlobColour = igs.MarkerColour;
+                                            rotator.SmallBlobColour = igs.SubMarkerColour;
+                                            rotator.ShowBeamWidth = igs.ShowMarker;
+                                            rotator.BeamWidthColour = igs.LowColor;
+                                            rotator.OuterTextColour = igs.HighColor;
+                                            rotator.ShowCardinals = igs.ShowHistory;
+                                            if (!rotator.Primary)
+                                                rotator.ShowElevation = igs.ShowSubMarker;
+                                            rotator.FadeOnRx = igs.FadeOnRx;
+                                            rotator.FadeOnTx = igs.FadeOnTx;
+                                            rotator.BeamWidth = igs.AttackRatio;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> img in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.IMAGE))
+                                        {
+                                            clsImage image = img.Value as clsImage;
+                                            if (image == null) continue;
+
+                                            image.FadeOnRx = igs.FadeOnRx;
+                                            image.FadeOnTx = igs.FadeOnTx;
+                                            image.DarkMode = igs.DarkMode;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
+                                        {
+                                            clsSolidColour solidColour = sc.Value as clsSolidColour;
+                                            if (solidColour == null) continue;
+
+                                            solidColour.FadeOnRx = igs.FadeOnRx;
+                                            solidColour.FadeOnTx = igs.FadeOnTx;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue;
+
+                                            fc.FadeOnRx = igs.FadeOnRx;
+                                            fc.FadeOnTx = igs.FadeOnTx;
+                                        }
+                                    }
+                                    break;
                                 case MeterType.TEXT_OVERLAY:
                                     {
                                         bRebuild = true; // alwayys cause a rebuild as we relocate the text overlay each time
@@ -8713,7 +9045,7 @@ namespace Thetis
                                             else
                                             {
                                                 magicEye.MMIOGuid = Guid.Empty;
-                                                magicEye.MMIOVariable = "";
+                                                magicEye.MMIOVariable = "--DEFAULT--";
                                             }
 
                                             magicEye.UpdateInterval = igs.UpdateInterval;
@@ -8790,7 +9122,7 @@ namespace Thetis
                                                 else
                                                 {
                                                     ni.MMIOGuid = Guid.Empty;
-                                                    ni.MMIOVariable = "";
+                                                    ni.MMIOVariable = "--DEFAULT--";
                                                 }
                                             }
 
@@ -9075,7 +9407,7 @@ namespace Thetis
                                             else
                                             {
                                                 bi.MMIOGuid = Guid.Empty;
-                                                bi.MMIOVariable = "";
+                                                bi.MMIOVariable = "--DEFAULT--";
                                             }
                                             //
 
@@ -9182,6 +9514,63 @@ namespace Thetis
                             clsIGSettings igs = new clsIGSettings();
                             switch (mt)
                             {
+                                case MeterType.ROTATOR:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        //one image, and the me
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR))
+                                        {
+                                            clsRotatorItem rotator = me.Value as clsRotatorItem;
+                                            if (rotator == null) continue; // skip
+
+                                            if (rotator.MMIOVariableIndex != -1)
+                                            {
+                                                igs.SetMMIOGuid(rotator.MMIOVariableIndex, rotator.MMIOGuid);
+                                                igs.SetMMIOVariable(rotator.MMIOVariableIndex, rotator.MMIOVariable);
+                                            }
+
+                                            if (rotator.Primary)
+                                            {
+                                                igs.UpdateInterval = rotator.UpdateInterval;
+                                                igs.TitleColor = rotator.ArrowColour;
+                                                igs.MarkerColour = rotator.BigBlobColour;
+                                                igs.SubMarkerColour = rotator.SmallBlobColour;
+                                                igs.ShowMarker = rotator.ShowBeamWidth;
+                                                igs.LowColor = rotator.BeamWidthColour;
+                                                igs.HighColor = rotator.OuterTextColour;
+                                                igs.ShowHistory = rotator.ShowCardinals;
+                                                //igs.ShowSubMarker = false;
+                                                igs.FadeOnRx = rotator.FadeOnRx;
+                                                igs.FadeOnTx = rotator.FadeOnTx;
+                                                igs.AttackRatio = rotator.BeamWidth;
+                                            }
+                                            else
+                                                igs.ShowSubMarker = rotator.ShowElevation;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
+                                        {
+                                            clsSolidColour solidcolor = sc.Value as clsSolidColour;
+                                            if (solidcolor == null) continue; // skip the sc
+
+                                            igs.Colour = solidcolor.Colour;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> img in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.IMAGE))
+                                        {
+                                            clsImage image = img.Value as clsImage;
+                                            if (image == null) continue; // skip
+
+                                            igs.DarkMode = image.DarkMode;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue; // skip
+
+                                            igs.FadeOnRx = fc.FadeOnRx;
+                                            igs.FadeOnTx = fc.FadeOnTx;
+                                        }
+                                    }
+                                    break;
                                 case MeterType.TEXT_OVERLAY:
                                     {
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
@@ -10486,7 +10875,7 @@ namespace Thetis
             }
             internal void LoadDXImages(string sDefaultPath, string sSkinPath)
             {
-                string[] imageFileNames = { "ananMM", "ananMM-bg", "ananMM-bg-tx", "cross-needle", "cross-needle-bg", "eye-bezel" };
+                string[] imageFileNames = { "ananMM", "ananMM-bg", "ananMM-bg-tx", "cross-needle", "cross-needle-bg", "eye-bezel", "rotator-bg" };
                 string[] imageFileNameParts = { "", "-small", "-large", "-dark", "-dark-small", "-dark-large" };
 
                 if (!_bDXSetup) return;
@@ -11333,7 +11722,10 @@ namespace Thetis
                                         renderTextOverlay(rect, mi, m, false);
                                         additionalDraws.Add(mikvp.Key, mikvp.Value);
                                         break;
-                                    case clsBarItem.MeterItemType.DATA_OUT:
+                                    case clsMeterItem.MeterItemType.DATA_OUT:
+                                        break;
+                                    case clsMeterItem.MeterItemType.ROTATOR:
+                                        renderRotator(rect, mi, m);
                                         break;
                                     //case clsMeterItem.MeterItemType.HISTORY:
                                     //    renderHistory(rect, mi, m);
@@ -12336,6 +12728,295 @@ namespace Thetis
 
                 _renderTarget.FillRectangle(rectSC, getDXBrushForColour(m.MOX ? spacer.Colour2 : spacer.Colour1, mi.FadeValue));
             }
+            private string convertDegreesToCardinal(float degrees)
+            {
+                string[] cardinals = new string[]
+                {
+                    "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+                    "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N"
+                };
+
+                float[] boundaries = new float[]
+                {
+                    0f, 11.25f, 33.75f, 56.25f, 78.75f, 101.25f, 123.75f, 146.25f,
+                    168.75f, 191.25f, 213.75f, 236.25f, 258.75f, 281.25f, 303.75f, 326.25f, 348.75f
+                };
+
+                degrees = degrees % 360;
+
+                for (int i = 0; i < boundaries.Length - 1; i++)
+                {
+                    if (degrees >= boundaries[i] && degrees < boundaries[i + 1])
+                    {
+                        return cardinals[i];
+                    }
+                }
+
+                return cardinals[0];
+            }
+            private void renderRotator(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsRotatorItem rotator = (clsRotatorItem)mi;
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                int nFade = 255;
+
+                //SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
+                //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Green));
+
+                float xShift = 2f * (w * 0.0125f);
+                Vector2 centre = new Vector2(xShift + x + h / 2f, y + h / 2f);
+                Vector2 pos = new Vector2(0, 0);
+                Vector2 pointer_tip = new Vector2(0, 0);
+                Ellipse elipse = new Ellipse(pos, h * 0.01f, h * 0.01f);
+
+                SharpDX.Direct2D1.Brush line_br = getDXBrushForColour(rotator.ArrowColour, nFade);
+                SharpDX.Direct2D1.Brush big_dot_br = getDXBrushForColour(rotator.BigBlobColour, nFade);
+                SharpDX.Direct2D1.Brush small_dot_br = getDXBrushForColour(rotator.SmallBlobColour, nFade);
+                SharpDX.Direct2D1.Brush beam_widh_br = getDXBrushForColour(rotator.BeamWidthColour, nFade);
+
+                float radius = (h * 0.8f) / 2f;
+                float radius_text = (h * 0.92f) / 2f;
+                float radius_inner_arrow = (h * 0.75f) / 2f;
+                float radius_tip_arrow = (h * 0.78f) / 2f;
+                float cx;
+                float cy;
+                float rad;
+
+                if (mi.Primary) // primary is AZ
+                {
+                    float degrees = Math.Abs(rotator.Value) % 360f;
+                    bool cardinals = rotator.ShowCardinals;
+                    bool show_beam_wdith = rotator.ShowBeamWidth;
+                    float beam_width = rotator.BeamWidth;
+                    if (cardinals)
+                    {
+                        // small dots
+                        for (int deg = 0; deg <= 350; deg += 10)
+                        {
+                            rad = (deg - 90) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                            cx = centre.X + radius * (float)Math.Cos(rad);
+                            cy = centre.Y + radius * (float)Math.Sin(rad);
+                            pos.X = cx; pos.Y = cy;
+                            elipse.Point.X = pos.X; elipse.Point.Y = pos.Y;
+                            if (deg % 45 != 0)
+                            {
+                                elipse.RadiusX = h * 0.005f; elipse.RadiusY = h * 0.005f;
+                                _renderTarget.FillEllipse(elipse, small_dot_br);
+                            }
+                        }
+                        // big dots and text
+                        for (int deg = 0; deg <= 315; deg += 45)
+                        {
+                            rad = (deg - 90) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                            cx = centre.X + radius * (float)Math.Cos(rad);
+                            cy = centre.Y + radius * (float)Math.Sin(rad);
+                            pos.X = cx; pos.Y = cy;
+                            elipse.Point.X = pos.X; elipse.Point.Y = pos.Y;
+                            if (deg % 45 == 0)
+                            {
+                                elipse.RadiusX = h * 0.015f; elipse.RadiusY = h * 0.015f;
+                                _renderTarget.FillEllipse(elipse, big_dot_br);
+
+                                string card = "";
+                                switch (deg)
+                                {
+                                    case 0:
+                                        card = "N";
+                                        break;
+                                    case 45:
+                                        card = "NE";
+                                        break;
+                                    case 90:
+                                        card = "E";
+                                        break;
+                                    case 135:
+                                        card = "SE";
+                                        break;
+                                    case 180:
+                                        card = "S";
+                                        break;
+                                    case 225:
+                                        card = "SW";
+                                        break;
+                                    case 270:
+                                        card = "W";
+                                        break;
+                                    case 315:
+                                        card = "NW";
+                                        break;
+                                }
+
+                                cx = centre.X + radius_text * (float)Math.Cos(rad);
+                                cy = centre.Y + radius_text * (float)Math.Sin(rad);
+                                plotText(card, cx, cy, h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true);
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        for (int deg = 0; deg <= 350; deg += 10)
+                        {
+                            rad = (deg - 90) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                            cx = centre.X + radius * (float)Math.Cos(rad);
+                            cy = centre.Y + radius * (float)Math.Sin(rad);
+                            pos.X = cx; pos.Y = cy;
+                            elipse.Point.X = pos.X; elipse.Point.Y = pos.Y;
+                            if (deg % 30 == 0)
+                            {
+                                elipse.RadiusX = h * 0.015f; elipse.RadiusY = h * 0.015f;
+                                _renderTarget.FillEllipse(elipse, big_dot_br);
+
+                                cx = centre.X + radius_text * (float)Math.Cos(rad);
+                                cy = centre.Y + radius_text * (float)Math.Sin(rad);
+                                plotText(deg.ToString(), cx, cy, h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true);
+                            }
+                            else
+                            {
+                                elipse.RadiusX = h * 0.005f; elipse.RadiusY = h * 0.005f;
+                                _renderTarget.FillEllipse(elipse, small_dot_br);
+                            }
+                        }
+                    }
+
+                    // beam wdith
+                    if (show_beam_wdith)
+                    {
+                        Vector2 arc_edge_1 = new Vector2(0, 0);
+                        Vector2 arc_edge_2 = new Vector2(0, 0);
+                        beam_width /= 2f;
+                        rad = (degrees - 90 - beam_width) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                        cx = centre.X + radius_tip_arrow * (float)Math.Cos(rad);
+                        cy = centre.Y + radius_tip_arrow * (float)Math.Sin(rad);
+                        arc_edge_1.X = cx; arc_edge_1.Y = cy;
+                        rad = (degrees - 90 + beam_width) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                        cx = centre.X + radius_tip_arrow * (float)Math.Cos(rad);
+                        cy = centre.Y + radius_tip_arrow * (float)Math.Sin(rad);
+                        arc_edge_2.X = cx; arc_edge_2.Y = cy;
+
+                        PathGeometry sharpGeometry = new PathGeometry(_renderTarget.Factory);
+
+                        GeometrySink geo = sharpGeometry.Open();
+                        geo.BeginFigure(new SharpDX.Vector2(centre.X, centre.Y), FigureBegin.Filled);
+
+                        geo.AddLine(new SharpDX.Vector2(arc_edge_1.X, arc_edge_1.Y));
+
+                        ArcSegment arcSegment = new ArcSegment();
+                        arcSegment.Point = new SharpDX.Vector2(arc_edge_2.X, arc_edge_2.Y);
+                        arcSegment.SweepDirection = SweepDirection.Clockwise;
+                        arcSegment.ArcSize = beam_width <= 90f ? ArcSize.Small : ArcSize.Large;
+                        arcSegment.Size = new Size2F(radius_tip_arrow, radius_tip_arrow);
+                        geo.AddArc(arcSegment);
+
+                        geo.EndFigure(FigureEnd.Closed); // adds the closing line
+                        geo.Close();
+
+                        _renderTarget.FillGeometry(sharpGeometry, beam_widh_br);
+                    }
+
+                    // arrow tip
+                    rad = (degrees - 90) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                    cx = centre.X + radius_tip_arrow * (float)Math.Cos(rad);
+                    cy = centre.Y + radius_tip_arrow * (float)Math.Sin(rad);
+                    pointer_tip.X = cx; pointer_tip.Y = cy;
+                    _renderTarget.DrawLine(centre, pointer_tip, line_br, h * 0.01f);
+
+                    // arrow side, offset 3 degrees, and inset
+                    rad = (degrees - 90 - 3) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                    cx = centre.X + radius_inner_arrow * (float)Math.Cos(rad);
+                    cy = centre.Y + radius_inner_arrow * (float)Math.Sin(rad);
+                    pos.X = cx; pos.Y = cy;
+                    _renderTarget.DrawLine(pointer_tip, pos, line_br, h * 0.01f);
+
+                    rad = (degrees - 90 + 3) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                    cx = centre.X + radius_inner_arrow * (float)Math.Cos(rad);
+                    cy = centre.Y + radius_inner_arrow * (float)Math.Sin(rad);
+                    pos.X = cx; pos.Y = cy;
+                    _renderTarget.DrawLine(pointer_tip, pos, line_br, h * 0.01f);
+                    //
+
+                    // az text
+                    cx = x + w * 0.75f;
+                    cy = y + h * 0.575f;
+                    plotText(convertDegreesToCardinal(degrees), cx, cy, h, rect.Width, rotator.FontSize * 2f, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false);
+                    plotText(" cardinal", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false);
+                    cy = y + h * 0.7f;
+                    plotText(degrees.ToString("f1") + "°", cx, cy, h, rect.Width, rotator.FontSize * 2f, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false);
+                    plotText("  azimuth", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false);
+
+
+                    //cx = w * 0.6f;
+                    //plotText("Cardinal", cx, cy, h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false);
+                    //cy = h * 1f;
+                    // plotText("Azimuth", cx, cy, h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false);
+                }
+
+                if (!mi.Primary) // !primary is elevation
+                {
+                    bool show_ele = rotator.ShowElevation;
+                    if (show_ele)
+                    {
+                        // ele
+                        centre.X = w - xShift - h / 2f;
+                        centre.Y = y + h / 2f;
+                        for (int deg = 0; deg <= 90; deg += 5)
+                        {
+                            rad = (deg - 90) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                            cx = centre.X + radius * (float)Math.Cos(rad);
+                            cy = centre.Y + radius * (float)Math.Sin(rad);
+                            pos.X = cx; pos.Y = cy;
+                            elipse.Point.X = pos.X; elipse.Point.Y = pos.Y;
+                            if (deg % 15 == 0)
+                            {
+                                elipse.RadiusX = h * 0.015f; elipse.RadiusY = h * 0.015f;
+                                _renderTarget.FillEllipse(elipse, big_dot_br);
+
+                                cx = centre.X + radius_text * (float)Math.Cos(rad);
+                                cy = centre.Y + radius_text * (float)Math.Sin(rad);
+                                plotText((90 - deg).ToString(), cx, cy, h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true);
+                            }
+                            else
+                            {
+                                elipse.RadiusX = h * 0.005f; elipse.RadiusY = h * 0.005f;
+                                _renderTarget.FillEllipse(elipse, small_dot_br);
+                            }
+                        }
+
+                        float degrees_ele = Math.Abs(rotator.Value) % 90f;
+                        // arrow tip
+                        rad = (-degrees_ele) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                        cx = centre.X + radius_tip_arrow * (float)Math.Cos(rad);
+                        cy = centre.Y + radius_tip_arrow * (float)Math.Sin(rad);
+                        pointer_tip.X = cx; pointer_tip.Y = cy;
+                        _renderTarget.DrawLine(centre, pointer_tip, line_br, h * 0.01f);
+
+                        // arrow side, offset 3 degrees, and inset
+                        rad = (-degrees_ele - 3) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                        cx = centre.X + radius_inner_arrow * (float)Math.Cos(rad);
+                        cy = centre.Y + radius_inner_arrow * (float)Math.Sin(rad);
+                        pos.X = cx; pos.Y = cy;
+                        _renderTarget.DrawLine(pointer_tip, pos, line_br, h * 0.01f);
+
+                        rad = (-degrees_ele + 3) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                        cx = centre.X + radius_inner_arrow * (float)Math.Cos(rad);
+                        cy = centre.Y + radius_inner_arrow * (float)Math.Sin(rad);
+                        pos.X = cx; pos.Y = cy;
+                        _renderTarget.DrawLine(pointer_tip, pos, line_br, h * 0.01f);
+                        //
+
+                        // ele text
+                        cx = x + w * 0.75f;
+                        cy = y + h * 0.825f;
+                        plotText(degrees_ele.ToString("f1") + "°", cx, cy, h, rect.Width, rotator.FontSize * 2f, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false);
+                        plotText("elevation", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false);
+                    }
+                }
+            }
             private void renderEye(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsMagicEyeItem magicEye = (clsMagicEyeItem)mi;
@@ -13015,7 +13696,7 @@ namespace Thetis
                 kHz = vfo.Substring(index + 1, 3);
                 hz = vfo.Substring(index + 4, 3);
             }
-            private void plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false)
+            private void plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false)
             {
                 float fontSizeEmScaled = (fTextSize / 16f) * (containerWidth / 52f);
                 SizeF szTextSize;
@@ -13025,7 +13706,14 @@ namespace Thetis
                 SharpDX.RectangleF txtrect;
                 if (!bAlignRight)
                 {
-                    txtrect = new SharpDX.RectangleF(x, y, szTextSize.Width, szTextSize.Height);
+                    if (bAlignCentre)
+                    {
+                        txtrect = new SharpDX.RectangleF(x - szTextSize.Width / 2f, y - szTextSize.Height / 2f, szTextSize.Width, szTextSize.Height);
+                    }
+                    else
+                    {
+                        txtrect = new SharpDX.RectangleF(x, y, szTextSize.Width, szTextSize.Height);
+                    }
                 }
                 else
                 {

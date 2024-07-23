@@ -141,88 +141,7 @@
   <metadata name="numericUpDownTS12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>302, 17</value>
-  </metadata>
-  <data name="chkPurgeBuffers.ToolTip" xml:space="preserve">
-    <value>On a mox transition there are times where you get a 'pulse' of energy in the display.
-This is not spurious RF but a side effect of the FFT bins and averages.
-This setting will reset the WDSP analyzer pixel/average buffers.
-They will take a time to 're-fill' and is determined by sample rate and bin size.</value>
-  </data>
-  <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Begin with all spinners set equal to their labelled value.
-For each spinner, from minimum to maximum, adjust the output power
-such that your CALIBRATED EXTERNAL METER is equal to the spinner
-value.  Record the values appearing in the Thetis 'Fwd Pwr' meter.
-After completing measurements for all spinners, enter your
-recorded values into the respective spinners.  DO NOT USE
-POWER EXCEEDING THE RATING OF YOUR RADIO!
-</value>
-  </data>
-  <data name="lgLinearGradientRX1.EncodedText" xml:space="preserve">
-    <value>OXwxfDAuMDAwfC0xNjc3NzIxNnwwfDEyNTAwMDAwMDAwMDAwMDAwMC4wMDB8LTE0NzM3NjMzfDB8MjUwMDAwMDAwMDAwMDAwMDAwLjAwMHwtMTI2OTgwNTB8MHwzNzUwMDAwMDAwMDAwMDAwMDAuMDAwfC0xMDY1ODQ2N3wwfDUwMDAwMDAwMDAwMDAwMDAwMC4wMDB8LTg2MTg4ODR8MHw2MjUwMDAwMDAwMDAwMDAwMDAuMDAwfC02NTc5MzAxfDB8NzUwMDAwMDAwMDAwMDAwMDAwLjAwMHwtNDUzOTcxOHwwfDg3NTAwMDAwMDAwMDAwMDAwMC4wMDB8LTI1MDAxMzV8MXwxMDAwMDAwMDAwMDAwMDAwMDAwLjAwMHwtMXw=</value>
-  </data>
-  <data name="chkReplaceCurrentMeterInSelectedSkin.ToolTip" xml:space="preserve">
-    <value>If this is checked, the downloaded meter skins
-will be added to the current selected skin. Unchecked
-and the default MultiMeter skins will be updated and
-only used if a selected skin does not provide its own.</value>
-  </data>
-  <data name="chkMidiControlIDincludesChannel.ToolTip" xml:space="preserve">
-    <value>Some devices use the same control ID for multiple buttons/knobs etc.
-Use this option to combine the midi channel value with the control id, this
-should then uniquely identify each control. Note: the control ID will now
-be made as follows : controlIDmapped = ((controlId &amp; 0xFF) &lt;&lt; 8) | (channel &amp; 0xFF)</value>
-  </data>
-  <data name="chkIgnore14bitMidiMessages.ToolTip" xml:space="preserve">
-    <value>Some devices also send messages that are used for 14 bit values.
-This causes issues for Thetis which can be seen when the midi capture
-is flickering when a knob is turned for example. Eventually 14 bit messages
-will be handled, but as a stop gap they can be ignored.</value>
-  </data>
-  <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>162, 17</value>
-  </metadata>
-  <data name="lblTXProfileWarning.ToolTip" xml:space="preserve">
-    <value>One or more settings have been changed that are
-only stored in a TX profile. This can include things
-like TX EQ, CFC, buffer sizes, VAC state (on/off) and
-many others. You need to save the TX profile so that
-these settings are stored. Use the Transmit-&gt;Profile Save
-button, or use the Auto Save TX Profile options on the
-Transmit tab</value>
-  </data>
-  <metadata name="saveFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>516, 17</value>
-  </metadata>
-  <metadata name="timer_VAC_Monitor.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>652, 17</value>
-  </metadata>
-  <metadata name="timer_LED_Mirror.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <metadata name="timer_RawInputMouseWheel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>810, 17</value>
-  </metadata>
-  <metadata name="tmrPLLLockChecker.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1018, 17</value>
-  </metadata>
-  <metadata name="tmrCFCOMPGain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1176, 17</value>
-  </metadata>
-  <metadata name="tmrCheckProfile.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1322, 17</value>
-  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="pbTextOverlay_variables.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE+V
-        joEJwzAQA71rx+oUHaQzuZwfkfdbsZuDI+CXRNqBXnzMKL7efVLvBE7YgapyFBy2tJNOVGdsGD/fPuCb
-        3+lE9WIKVDP1RjcmgiWQvfsjpBsTmxHhblk2boccLofboaxwN/xrSLib1BDYAAp3Q7oxEdiQcDdJNyYu
-        lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
-</value>
-  </data>
   <data name="pbVAC1FFAlphaInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE+V
@@ -279,6 +198,12 @@ Transmit tab</value>
         lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
 </value>
   </data>
+  <data name="chkPurgeBuffers.ToolTip" xml:space="preserve">
+    <value>On a mox transition there are times where you get a 'pulse' of energy in the display.
+This is not spurious RF but a side effect of the FFT bins and averages.
+This setting will reset the WDSP analyzer pixel/average buffers.
+They will take a time to 're-fill' and is determined by sample rate and bin size.</value>
+  </data>
   <data name="pbWarningBufferType.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWxJREFUOE+l
@@ -327,6 +252,25 @@ Transmit tab</value>
         xBfi75wAAAAASUVORK5CYII=
 </value>
   </data>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>Begin with all spinners set equal to their labelled value.
+For each spinner, from minimum to maximum, adjust the output power
+such that your CALIBRATED EXTERNAL METER is equal to the spinner
+value.  Record the values appearing in the Thetis 'Fwd Pwr' meter.
+After completing measurements for all spinners, enter your
+recorded values into the respective spinners.  DO NOT USE
+POWER EXCEEDING THE RATING OF YOUR RADIO!
+</value>
+  </data>
+  <data name="lgLinearGradientRX1.EncodedText" xml:space="preserve">
+    <value>OXwxfDAuMDAwfC0xNjc3NzIxNnwwfDEyNTAwMDAwMDAwMDAwMDAwMC4wMDB8LTE0NzM3NjMzfDB8MjUwMDAwMDAwMDAwMDAwMDAwLjAwMHwtMTI2OTgwNTB8MHwzNzUwMDAwMDAwMDAwMDAwMDAuMDAwfC0xMDY1ODQ2N3wwfDUwMDAwMDAwMDAwMDAwMDAwMC4wMDB8LTg2MTg4ODR8MHw2MjUwMDAwMDAwMDAwMDAwMDAuMDAwfC02NTc5MzAxfDB8NzUwMDAwMDAwMDAwMDAwMDAwLjAwMHwtNDUzOTcxOHwwfDg3NTAwMDAwMDAwMDAwMDAwMC4wMDB8LTI1MDAxMzV8MXwxMDAwMDAwMDAwMDAwMDAwMDAwLjAwMHwtMXw=</value>
+  </data>
+  <data name="chkReplaceCurrentMeterInSelectedSkin.ToolTip" xml:space="preserve">
+    <value>If this is checked, the downloaded meter skins
+will be added to the current selected skin. Unchecked
+and the default MultiMeter skins will be updated and
+only used if a selected skin does not provide its own.</value>
+  </data>
   <data name="btnDownloadSkin.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
@@ -342,6 +286,59 @@ Transmit tab</value>
         X2Aj4NZ79wh2Mf6UNhJytIqS5B20I3/Xm75I8AAAAABJRU5ErkJggg==
 </value>
   </data>
+  <data name="chkMidiControlIDincludesChannel.ToolTip" xml:space="preserve">
+    <value>Some devices use the same control ID for multiple buttons/knobs etc.
+Use this option to combine the midi channel value with the control id, this
+should then uniquely identify each control. Note: the control ID will now
+be made as follows : controlIDmapped = ((controlId &amp; 0xFF) &lt;&lt; 8) | (channel &amp; 0xFF)</value>
+  </data>
+  <data name="chkIgnore14bitMidiMessages.ToolTip" xml:space="preserve">
+    <value>Some devices also send messages that are used for 14 bit values.
+This causes issues for Thetis which can be seen when the midi capture
+is flickering when a knob is turned for example. Eventually 14 bit messages
+will be handled, but as a stop gap they can be ignored.</value>
+  </data>
+  <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>162, 17</value>
+  </metadata>
+  <data name="lblTXProfileWarning.ToolTip" xml:space="preserve">
+    <value>One or more settings have been changed that are
+only stored in a TX profile. This can include things
+like TX EQ, CFC, buffer sizes, VAC state (on/off) and
+many others. You need to save the TX profile so that
+these settings are stored. Use the Transmit-&gt;Profile Save
+button, or use the Auto Save TX Profile options on the
+Transmit tab</value>
+  </data>
+  <data name="pbTextOverlay_variables.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE+V
+        joEJwzAQA71rx+oUHaQzuZwfkfdbsZuDI+CXRNqBXnzMKL7efVLvBE7YgapyFBy2tJNOVGdsGD/fPuCb
+        3+lE9WIKVDP1RjcmgiWQvfsjpBsTmxHhblk2boccLofboaxwN/xrSLib1BDYAAp3Q7oxEdiQcDdJNyYu
+        lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <metadata name="saveFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>516, 17</value>
+  </metadata>
+  <metadata name="timer_VAC_Monitor.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>652, 17</value>
+  </metadata>
+  <metadata name="timer_LED_Mirror.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="timer_RawInputMouseWheel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>810, 17</value>
+  </metadata>
+  <metadata name="tmrPLLLockChecker.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1018, 17</value>
+  </metadata>
+  <metadata name="tmrCFCOMPGain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1176, 17</value>
+  </metadata>
+  <metadata name="tmrCheckProfile.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1322, 17</value>
+  </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>99</value>
   </metadata>
