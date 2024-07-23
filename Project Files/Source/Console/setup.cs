@@ -28573,13 +28573,13 @@ namespace Thetis
             btnMMIO_network_remove_variable.Enabled = items.Count > 0;
             btnMMIO_network_copyvariable_clipboard.Enabled = items.Count > 0;
 
-            string variable = items[0].Text;
-
             MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
-
-            mmio.RemoveVariable(variable);
-            lstMMIO_network_variables.Items.Remove(items[0]);
-            updateVariableList();
+            if (mmio != null)
+            {
+                mmio.RemoveVariable(items[0].Text);
+                lstMMIO_network_variables.Items.Remove(items[0]);
+                updateVariableList();
+            }
         }
 
         private void lstMMIO_network_variables_SelectedIndexChanged(object sender, EventArgs e)
@@ -28866,6 +28866,14 @@ namespace Thetis
         {
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+            MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
+
+            foreach (ListViewItem lvi in lstMMIO_network_variables.Items)
+            {
+                if (mmio.Variables().ContainsKey(lvi.Text)) mmio.RemoveVariable(lvi.Text);
+            }
 
             lstMMIO_network_variables.Items.Clear();
             btnMMIO_network_remove_all_variables.Enabled = false;
