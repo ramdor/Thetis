@@ -3721,6 +3721,7 @@
             this.nudMeterItemRotatorBeamWidth = new System.Windows.Forms.NumericUpDownTS();
             this.clrbtnMeterItemRotatorText = new Thetis.ColorButton();
             this.chkMeterItemRotatorCardinals = new System.Windows.Forms.CheckBoxTS();
+            this.btnTextOverlay_copyfonts = new System.Windows.Forms.ButtonTS();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -58118,7 +58119,7 @@
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS166);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayMode);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTitle);
-            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(41, 623);
+            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(364, 762);
             this.grpMeterItemVfoDisplaySettings.Name = "grpMeterItemVfoDisplaySettings";
             this.grpMeterItemVfoDisplaySettings.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemVfoDisplaySettings.TabIndex = 101;
@@ -59191,6 +59192,19 @@
             this.toolTip1.SetToolTip(this.chkMeterItemRotatorCardinals, "Show cardinals instead of degrees");
             this.chkMeterItemRotatorCardinals.UseVisualStyleBackColor = true;
             this.chkMeterItemRotatorCardinals.CheckedChanged += new System.EventHandler(this.chkMeterItemRotatorCardinals_CheckedChanged);
+            // 
+            // btnTextOverlay_copyfonts
+            // 
+            this.btnTextOverlay_copyfonts.Image = null;
+            this.btnTextOverlay_copyfonts.Location = new System.Drawing.Point(284, 196);
+            this.btnTextOverlay_copyfonts.Name = "btnTextOverlay_copyfonts";
+            this.btnTextOverlay_copyfonts.Selectable = true;
+            this.btnTextOverlay_copyfonts.Size = new System.Drawing.Size(33, 23);
+            this.btnTextOverlay_copyfonts.TabIndex = 165;
+            this.btnTextOverlay_copyfonts.Text = "=";
+            this.toolTip1.SetToolTip(this.btnTextOverlay_copyfonts, "Copy the font and colours from RX to TX");
+            this.btnTextOverlay_copyfonts.UseVisualStyleBackColor = true;
+            this.btnTextOverlay_copyfonts.Click += new System.EventHandler(this.btnTextOverlay_copyfonts_Click);
             // 
             // saveFileDialog1
             // 
@@ -60298,7 +60312,7 @@
             this.grpMeterItemSpacerSettings.Controls.Add(this.clrbtnMeterItemHBackgroundSpacerRX);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnTxSpacer);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnRxSpacer);
-            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(395, 835);
+            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(529, 786);
             this.grpMeterItemSpacerSettings.Name = "grpMeterItemSpacerSettings";
             this.grpMeterItemSpacerSettings.Size = new System.Drawing.Size(323, 168);
             this.grpMeterItemSpacerSettings.TabIndex = 102;
@@ -60374,6 +60388,7 @@
             // 
             // grpTextOverlay
             // 
+            this.grpTextOverlay.Controls.Add(this.btnTextOverlay_copyfonts);
             this.grpTextOverlay.Controls.Add(this.pbTextOverlay_variables);
             this.grpTextOverlay.Controls.Add(this.lblTextOverlay_panelbackgroundTX);
             this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_PanelBackgroundTX);
@@ -60409,7 +60424,7 @@
             this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_PanelBackground);
             this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnTX);
             this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnRX);
-            this.grpTextOverlay.Location = new System.Drawing.Point(838, 52);
+            this.grpTextOverlay.Location = new System.Drawing.Point(805, 34);
             this.grpTextOverlay.Name = "grpTextOverlay";
             this.grpTextOverlay.Size = new System.Drawing.Size(323, 362);
             this.grpTextOverlay.TabIndex = 104;
@@ -60654,7 +60669,7 @@
             this.grpMeterItemDataOutNode.Controls.Add(this.labelTS217);
             this.grpMeterItemDataOutNode.Controls.Add(this.nudDataOutNode_sendinterval);
             this.grpMeterItemDataOutNode.Controls.Add(this.labelTS215);
-            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(69, 596);
+            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(470, 574);
             this.grpMeterItemDataOutNode.Name = "grpMeterItemDataOutNode";
             this.grpMeterItemDataOutNode.Size = new System.Drawing.Size(323, 168);
             this.grpMeterItemDataOutNode.TabIndex = 105;
@@ -60719,7 +60734,7 @@
             this.grpMeterItemRotator.Controls.Add(this.chkMeterItemFadeOnTxRotator);
             this.grpMeterItemRotator.Controls.Add(this.chkMeterItemFadeOnRxRotator);
             this.grpMeterItemRotator.Controls.Add(this.pnlVariableInUse_1_rotator);
-            this.grpMeterItemRotator.Location = new System.Drawing.Point(585, 577);
+            this.grpMeterItemRotator.Location = new System.Drawing.Point(799, 585);
             this.grpMeterItemRotator.Name = "grpMeterItemRotator";
             this.grpMeterItemRotator.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemRotator.TabIndex = 106;
@@ -60885,9 +60900,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(984, 961);
+            this.Controls.Add(this.grpTextOverlay);
             this.Controls.Add(this.grpMeterItemRotator);
             this.Controls.Add(this.grpMeterItemDataOutNode);
-            this.Controls.Add(this.grpTextOverlay);
             this.Controls.Add(this.labelTS198);
             this.Controls.Add(this.grpMeterItemSpacerSettings);
             this.Controls.Add(this.txtboxTXProfileChangedReport);
@@ -60895,8 +60910,8 @@
             this.Controls.Add(this.labelSavingLoading);
             this.Controls.Add(this.btnExportDB);
             this.Controls.Add(this.btnImportDB);
-            this.Controls.Add(this.btnResetDB);
             this.Controls.Add(this.grpMeterItemVfoDisplaySettings);
+            this.Controls.Add(this.btnResetDB);
             this.Controls.Add(this.btnApply);
             this.Controls.Add(this.grpMeterItemClockSettings);
             this.Controls.Add(this.btnCancel);
@@ -65930,5 +65945,6 @@
         private NumericUpDownTS nudMeterItemRotatorBeamWidth;
         private CheckBoxTS chkMeterItemRotatorCardinals;
         private PanelTS pnlVariableInUse_2_rotator;
+        private ButtonTS btnTextOverlay_copyfonts;
     }
 }
