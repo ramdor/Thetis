@@ -3722,6 +3722,9 @@
             this.clrbtnMeterItemRotatorText = new Thetis.ColorButton();
             this.chkMeterItemRotatorCardinals = new System.Windows.Forms.CheckBoxTS();
             this.btnTextOverlay_copyfonts = new System.Windows.Forms.ButtonTS();
+            this.chkMeterItemRotatorAllowControl = new System.Windows.Forms.CheckBoxTS();
+            this.clrbtnMeterItemRotatorControlColour = new Thetis.ColorButton();
+            this.picMultiMeterRotatorControlInfo = new System.Windows.Forms.PictureBox();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -3810,6 +3813,11 @@
             this.labelTS217 = new System.Windows.Forms.LabelTS();
             this.labelTS215 = new System.Windows.Forms.LabelTS();
             this.grpMeterItemRotator = new System.Windows.Forms.GroupBoxTS();
+            this.bntMultiMeterItemRotator_default_pstRotator = new System.Windows.Forms.ButtonTS();
+            this.lblMeterItemRotatorELEcommand = new System.Windows.Forms.LabelTS();
+            this.lblMeterItemRotatorAZcommand = new System.Windows.Forms.LabelTS();
+            this.txtMeterItemRotatorELEcommand = new System.Windows.Forms.TextBoxTS();
+            this.txtMeterItemRotatorAZcommand = new System.Windows.Forms.TextBoxTS();
             this.pnlVariableInUse_2_rotator = new System.Windows.Forms.PanelTS();
             this.labelTS212 = new System.Windows.Forms.LabelTS();
             this.btnMMIO_variable_2_rotator = new System.Windows.Forms.ButtonTS();
@@ -3824,6 +3832,8 @@
             this.chkMeterItemFadeOnTxRotator = new System.Windows.Forms.CheckBoxTS();
             this.chkMeterItemFadeOnRxRotator = new System.Windows.Forms.CheckBoxTS();
             this.pnlVariableInUse_1_rotator = new System.Windows.Forms.PanelTS();
+            this.txtRotator_4charID = new System.Windows.Forms.TextBoxTS();
+            this.lblRotator_4charID = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4769,6 +4779,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemUpdateRateRotator)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemRotatorBeamWidth)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterRotatorControlInfo)).BeginInit();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -56543,6 +56554,7 @@
             this.txtMMIO_network_terminator_out_custom.Name = "txtMMIO_network_terminator_out_custom";
             this.txtMMIO_network_terminator_out_custom.Size = new System.Drawing.Size(43, 20);
             this.txtMMIO_network_terminator_out_custom.TabIndex = 128;
+            this.toolTip1.SetToolTip(this.txtMMIO_network_terminator_out_custom, "\\n - newline\r\n\\r - carriage return\r\n\\0 - null");
             this.txtMMIO_network_terminator_out_custom.TextChanged += new System.EventHandler(this.txtMMIO_network_terminator_out_custom_TextChanged);
             // 
             // txtMMIO_network_terminator_in_custom
@@ -56552,6 +56564,7 @@
             this.txtMMIO_network_terminator_in_custom.Name = "txtMMIO_network_terminator_in_custom";
             this.txtMMIO_network_terminator_in_custom.Size = new System.Drawing.Size(43, 20);
             this.txtMMIO_network_terminator_in_custom.TabIndex = 127;
+            this.toolTip1.SetToolTip(this.txtMMIO_network_terminator_in_custom, "\\n - newline\r\n\\r - carriage return\r\n\\0 - null");
             this.txtMMIO_network_terminator_in_custom.TextChanged += new System.EventHandler(this.txtMMIO_network_terminator_in_custom_TextChanged);
             // 
             // lblMMIO_network_terminator_out
@@ -58119,7 +58132,7 @@
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS166);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayMode);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTitle);
-            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(364, 762);
+            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(832, 32);
             this.grpMeterItemVfoDisplaySettings.Name = "grpMeterItemVfoDisplaySettings";
             this.grpMeterItemVfoDisplaySettings.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemVfoDisplaySettings.TabIndex = 101;
@@ -59125,7 +59138,7 @@
             // 
             this.chkMeterItemRotatorElevation.AutoSize = true;
             this.chkMeterItemRotatorElevation.Image = null;
-            this.chkMeterItemRotatorElevation.Location = new System.Drawing.Point(51, 258);
+            this.chkMeterItemRotatorElevation.Location = new System.Drawing.Point(23, 249);
             this.chkMeterItemRotatorElevation.Name = "chkMeterItemRotatorElevation";
             this.chkMeterItemRotatorElevation.Size = new System.Drawing.Size(70, 17);
             this.chkMeterItemRotatorElevation.TabIndex = 4;
@@ -59184,7 +59197,7 @@
             // 
             this.chkMeterItemRotatorCardinals.AutoSize = true;
             this.chkMeterItemRotatorCardinals.Image = null;
-            this.chkMeterItemRotatorCardinals.Location = new System.Drawing.Point(51, 235);
+            this.chkMeterItemRotatorCardinals.Location = new System.Drawing.Point(23, 226);
             this.chkMeterItemRotatorCardinals.Name = "chkMeterItemRotatorCardinals";
             this.chkMeterItemRotatorCardinals.Size = new System.Drawing.Size(69, 17);
             this.chkMeterItemRotatorCardinals.TabIndex = 134;
@@ -59205,6 +59218,44 @@
             this.toolTip1.SetToolTip(this.btnTextOverlay_copyfonts, "Copy the font and colours from RX to TX");
             this.btnTextOverlay_copyfonts.UseVisualStyleBackColor = true;
             this.btnTextOverlay_copyfonts.Click += new System.EventHandler(this.btnTextOverlay_copyfonts_Click);
+            // 
+            // chkMeterItemRotatorAllowControl
+            // 
+            this.chkMeterItemRotatorAllowControl.AutoSize = true;
+            this.chkMeterItemRotatorAllowControl.Image = null;
+            this.chkMeterItemRotatorAllowControl.Location = new System.Drawing.Point(23, 272);
+            this.chkMeterItemRotatorAllowControl.Name = "chkMeterItemRotatorAllowControl";
+            this.chkMeterItemRotatorAllowControl.Size = new System.Drawing.Size(86, 17);
+            this.chkMeterItemRotatorAllowControl.TabIndex = 136;
+            this.chkMeterItemRotatorAllowControl.Text = "Allow control";
+            this.toolTip1.SetToolTip(this.chkMeterItemRotatorAllowControl, "Allow rotator control. Click/hold/drag on the rotator");
+            this.chkMeterItemRotatorAllowControl.UseVisualStyleBackColor = true;
+            this.chkMeterItemRotatorAllowControl.CheckedChanged += new System.EventHandler(this.chkMeterItemRotatorAllowControl_CheckedChanged);
+            // 
+            // clrbtnMeterItemRotatorControlColour
+            // 
+            this.clrbtnMeterItemRotatorControlColour.Automatic = "Automatic";
+            this.clrbtnMeterItemRotatorControlColour.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMeterItemRotatorControlColour.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterItemRotatorControlColour.Image = null;
+            this.clrbtnMeterItemRotatorControlColour.Location = new System.Drawing.Point(110, 268);
+            this.clrbtnMeterItemRotatorControlColour.MoreColors = "More Colors...";
+            this.clrbtnMeterItemRotatorControlColour.Name = "clrbtnMeterItemRotatorControlColour";
+            this.clrbtnMeterItemRotatorControlColour.Selectable = true;
+            this.clrbtnMeterItemRotatorControlColour.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterItemRotatorControlColour.TabIndex = 137;
+            this.toolTip1.SetToolTip(this.clrbtnMeterItemRotatorControlColour, "Control arrow colour");
+            this.clrbtnMeterItemRotatorControlColour.Changed += new System.EventHandler(this.clrbtnMeterItemRotatorControlColour_Changed);
+            // 
+            // picMultiMeterRotatorControlInfo
+            // 
+            this.picMultiMeterRotatorControlInfo.Image = ((System.Drawing.Image)(resources.GetObject("picMultiMeterRotatorControlInfo.Image")));
+            this.picMultiMeterRotatorControlInfo.Location = new System.Drawing.Point(291, 241);
+            this.picMultiMeterRotatorControlInfo.Name = "picMultiMeterRotatorControlInfo";
+            this.picMultiMeterRotatorControlInfo.Size = new System.Drawing.Size(20, 20);
+            this.picMultiMeterRotatorControlInfo.TabIndex = 165;
+            this.picMultiMeterRotatorControlInfo.TabStop = false;
+            this.toolTip1.SetToolTip(this.picMultiMeterRotatorControlInfo, "%AZ%\r\n%ELE%");
             // 
             // saveFileDialog1
             // 
@@ -60312,7 +60363,7 @@
             this.grpMeterItemSpacerSettings.Controls.Add(this.clrbtnMeterItemHBackgroundSpacerRX);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnTxSpacer);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnRxSpacer);
-            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(529, 786);
+            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(832, 593);
             this.grpMeterItemSpacerSettings.Name = "grpMeterItemSpacerSettings";
             this.grpMeterItemSpacerSettings.Size = new System.Drawing.Size(323, 168);
             this.grpMeterItemSpacerSettings.TabIndex = 102;
@@ -60424,7 +60475,7 @@
             this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_PanelBackground);
             this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnTX);
             this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnRX);
-            this.grpTextOverlay.Location = new System.Drawing.Point(805, 34);
+            this.grpTextOverlay.Location = new System.Drawing.Point(47, 560);
             this.grpTextOverlay.Name = "grpTextOverlay";
             this.grpTextOverlay.Size = new System.Drawing.Size(323, 362);
             this.grpTextOverlay.TabIndex = 104;
@@ -60669,7 +60720,7 @@
             this.grpMeterItemDataOutNode.Controls.Add(this.labelTS217);
             this.grpMeterItemDataOutNode.Controls.Add(this.nudDataOutNode_sendinterval);
             this.grpMeterItemDataOutNode.Controls.Add(this.labelTS215);
-            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(470, 574);
+            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(382, 834);
             this.grpMeterItemDataOutNode.Name = "grpMeterItemDataOutNode";
             this.grpMeterItemDataOutNode.Size = new System.Drawing.Size(323, 168);
             this.grpMeterItemDataOutNode.TabIndex = 105;
@@ -60709,6 +60760,16 @@
             // 
             // grpMeterItemRotator
             // 
+            this.grpMeterItemRotator.Controls.Add(this.lblRotator_4charID);
+            this.grpMeterItemRotator.Controls.Add(this.txtRotator_4charID);
+            this.grpMeterItemRotator.Controls.Add(this.bntMultiMeterItemRotator_default_pstRotator);
+            this.grpMeterItemRotator.Controls.Add(this.picMultiMeterRotatorControlInfo);
+            this.grpMeterItemRotator.Controls.Add(this.lblMeterItemRotatorELEcommand);
+            this.grpMeterItemRotator.Controls.Add(this.lblMeterItemRotatorAZcommand);
+            this.grpMeterItemRotator.Controls.Add(this.txtMeterItemRotatorELEcommand);
+            this.grpMeterItemRotator.Controls.Add(this.txtMeterItemRotatorAZcommand);
+            this.grpMeterItemRotator.Controls.Add(this.clrbtnMeterItemRotatorControlColour);
+            this.grpMeterItemRotator.Controls.Add(this.chkMeterItemRotatorAllowControl);
             this.grpMeterItemRotator.Controls.Add(this.pnlVariableInUse_2_rotator);
             this.grpMeterItemRotator.Controls.Add(this.chkMeterItemRotatorCardinals);
             this.grpMeterItemRotator.Controls.Add(this.labelTS212);
@@ -60734,13 +60795,65 @@
             this.grpMeterItemRotator.Controls.Add(this.chkMeterItemFadeOnTxRotator);
             this.grpMeterItemRotator.Controls.Add(this.chkMeterItemFadeOnRxRotator);
             this.grpMeterItemRotator.Controls.Add(this.pnlVariableInUse_1_rotator);
-            this.grpMeterItemRotator.Location = new System.Drawing.Point(799, 585);
+            this.grpMeterItemRotator.Location = new System.Drawing.Point(497, 518);
             this.grpMeterItemRotator.Name = "grpMeterItemRotator";
             this.grpMeterItemRotator.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemRotator.TabIndex = 106;
             this.grpMeterItemRotator.TabStop = false;
             this.grpMeterItemRotator.Text = "Rotator";
             this.grpMeterItemRotator.Visible = false;
+            // 
+            // bntMultiMeterItemRotator_default_pstRotator
+            // 
+            this.bntMultiMeterItemRotator_default_pstRotator.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.bntMultiMeterItemRotator_default_pstRotator.Image = null;
+            this.bntMultiMeterItemRotator_default_pstRotator.Location = new System.Drawing.Point(222, 239);
+            this.bntMultiMeterItemRotator_default_pstRotator.Name = "bntMultiMeterItemRotator_default_pstRotator";
+            this.bntMultiMeterItemRotator_default_pstRotator.Selectable = true;
+            this.bntMultiMeterItemRotator_default_pstRotator.Size = new System.Drawing.Size(63, 23);
+            this.bntMultiMeterItemRotator_default_pstRotator.TabIndex = 166;
+            this.bntMultiMeterItemRotator_default_pstRotator.Text = "pstRotator";
+            this.toolTip1.SetToolTip(this.bntMultiMeterItemRotator_default_pstRotator, "Reset for PST Rotator");
+            this.bntMultiMeterItemRotator_default_pstRotator.UseVisualStyleBackColor = true;
+            this.bntMultiMeterItemRotator_default_pstRotator.Click += new System.EventHandler(this.bntMultiMeterItemRotator_default_pstRotator_Click);
+            // 
+            // lblMeterItemRotatorELEcommand
+            // 
+            this.lblMeterItemRotatorELEcommand.AutoSize = true;
+            this.lblMeterItemRotatorELEcommand.Image = null;
+            this.lblMeterItemRotatorELEcommand.Location = new System.Drawing.Point(5, 326);
+            this.lblMeterItemRotatorELEcommand.Name = "lblMeterItemRotatorELEcommand";
+            this.lblMeterItemRotatorELEcommand.Size = new System.Drawing.Size(30, 13);
+            this.lblMeterItemRotatorELEcommand.TabIndex = 141;
+            this.lblMeterItemRotatorELEcommand.Text = "ELE:";
+            // 
+            // lblMeterItemRotatorAZcommand
+            // 
+            this.lblMeterItemRotatorAZcommand.AutoSize = true;
+            this.lblMeterItemRotatorAZcommand.Image = null;
+            this.lblMeterItemRotatorAZcommand.Location = new System.Drawing.Point(11, 300);
+            this.lblMeterItemRotatorAZcommand.Name = "lblMeterItemRotatorAZcommand";
+            this.lblMeterItemRotatorAZcommand.Size = new System.Drawing.Size(24, 13);
+            this.lblMeterItemRotatorAZcommand.TabIndex = 140;
+            this.lblMeterItemRotatorAZcommand.Text = "AZ:";
+            // 
+            // txtMeterItemRotatorELEcommand
+            // 
+            this.txtMeterItemRotatorELEcommand.Location = new System.Drawing.Point(39, 323);
+            this.txtMeterItemRotatorELEcommand.Name = "txtMeterItemRotatorELEcommand";
+            this.txtMeterItemRotatorELEcommand.Size = new System.Drawing.Size(272, 20);
+            this.txtMeterItemRotatorELEcommand.TabIndex = 139;
+            this.toolTip1.SetToolTip(this.txtMeterItemRotatorELEcommand, "The ELE rotator string");
+            this.txtMeterItemRotatorELEcommand.TextChanged += new System.EventHandler(this.txtMeterItemRotatorELEcommand_TextChanged);
+            // 
+            // txtMeterItemRotatorAZcommand
+            // 
+            this.txtMeterItemRotatorAZcommand.Location = new System.Drawing.Point(39, 297);
+            this.txtMeterItemRotatorAZcommand.Name = "txtMeterItemRotatorAZcommand";
+            this.txtMeterItemRotatorAZcommand.Size = new System.Drawing.Size(272, 20);
+            this.txtMeterItemRotatorAZcommand.TabIndex = 138;
+            this.toolTip1.SetToolTip(this.txtMeterItemRotatorAZcommand, "The AZ rotator string");
+            this.txtMeterItemRotatorAZcommand.TextChanged += new System.EventHandler(this.txtMeterItemRotatorAZcommand_TextChanged);
             // 
             // pnlVariableInUse_2_rotator
             // 
@@ -60802,7 +60915,7 @@
             // 
             this.chkMeterItemDarkModeRotator.AutoSize = true;
             this.chkMeterItemDarkModeRotator.Image = null;
-            this.chkMeterItemDarkModeRotator.Location = new System.Drawing.Point(51, 332);
+            this.chkMeterItemDarkModeRotator.Location = new System.Drawing.Point(222, 178);
             this.chkMeterItemDarkModeRotator.Name = "chkMeterItemDarkModeRotator";
             this.chkMeterItemDarkModeRotator.Size = new System.Drawing.Size(79, 17);
             this.chkMeterItemDarkModeRotator.TabIndex = 112;
@@ -60865,7 +60978,7 @@
             // 
             this.chkMeterItemFadeOnTxRotator.AutoSize = true;
             this.chkMeterItemFadeOnTxRotator.Image = null;
-            this.chkMeterItemFadeOnTxRotator.Location = new System.Drawing.Point(51, 305);
+            this.chkMeterItemFadeOnTxRotator.Location = new System.Drawing.Point(222, 151);
             this.chkMeterItemFadeOnTxRotator.Name = "chkMeterItemFadeOnTxRotator";
             this.chkMeterItemFadeOnTxRotator.Size = new System.Drawing.Size(82, 17);
             this.chkMeterItemFadeOnTxRotator.TabIndex = 1;
@@ -60877,7 +60990,7 @@
             // 
             this.chkMeterItemFadeOnRxRotator.AutoSize = true;
             this.chkMeterItemFadeOnRxRotator.Image = null;
-            this.chkMeterItemFadeOnRxRotator.Location = new System.Drawing.Point(51, 282);
+            this.chkMeterItemFadeOnRxRotator.Location = new System.Drawing.Point(222, 128);
             this.chkMeterItemFadeOnRxRotator.Name = "chkMeterItemFadeOnRxRotator";
             this.chkMeterItemFadeOnRxRotator.Size = new System.Drawing.Size(83, 17);
             this.chkMeterItemFadeOnRxRotator.TabIndex = 0;
@@ -60894,6 +61007,28 @@
             this.pnlVariableInUse_1_rotator.Name = "pnlVariableInUse_1_rotator";
             this.pnlVariableInUse_1_rotator.Size = new System.Drawing.Size(28, 6);
             this.pnlVariableInUse_1_rotator.TabIndex = 130;
+            // 
+            // txtRotator_4charID
+            // 
+            this.txtRotator_4charID.Location = new System.Drawing.Point(268, 272);
+            this.txtRotator_4charID.MaxLength = 4;
+            this.txtRotator_4charID.Name = "txtRotator_4charID";
+            this.txtRotator_4charID.Size = new System.Drawing.Size(43, 20);
+            this.txtRotator_4charID.TabIndex = 167;
+            this.txtRotator_4charID.Text = "AGHJ";
+            this.toolTip1.SetToolTip(this.txtRotator_4charID, "The four character code used to reference which MultiMeterIO is to be used for th" +
+        "e output data.");
+            this.txtRotator_4charID.TextChanged += new System.EventHandler(this.txtRotator_4charID_TextChanged);
+            // 
+            // lblRotator_4charID
+            // 
+            this.lblRotator_4charID.AutoSize = true;
+            this.lblRotator_4charID.Image = null;
+            this.lblRotator_4charID.Location = new System.Drawing.Point(210, 275);
+            this.lblRotator_4charID.Name = "lblRotator_4charID";
+            this.lblRotator_4charID.Size = new System.Drawing.Size(52, 13);
+            this.lblRotator_4charID.TabIndex = 168;
+            this.lblRotator_4charID.Text = "4Char ID:";
             // 
             // Setup
             // 
@@ -62074,6 +62209,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemUpdateRateRotator)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemRotatorBeamWidth)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterRotatorControlInfo)).EndInit();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();
@@ -65946,5 +66082,15 @@
         private CheckBoxTS chkMeterItemRotatorCardinals;
         private PanelTS pnlVariableInUse_2_rotator;
         private ButtonTS btnTextOverlay_copyfonts;
+        private LabelTS lblMeterItemRotatorELEcommand;
+        private LabelTS lblMeterItemRotatorAZcommand;
+        private TextBoxTS txtMeterItemRotatorELEcommand;
+        private TextBoxTS txtMeterItemRotatorAZcommand;
+        private ColorButton clrbtnMeterItemRotatorControlColour;
+        private CheckBoxTS chkMeterItemRotatorAllowControl;
+        private PictureBox picMultiMeterRotatorControlInfo;
+        private ButtonTS bntMultiMeterItemRotator_default_pstRotator;
+        private LabelTS lblRotator_4charID;
+        private TextBoxTS txtRotator_4charID;
     }
 }
