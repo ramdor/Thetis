@@ -48460,6 +48460,7 @@ namespace Thetis
         [DllImport("user32.dll")]
         private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
         private const int WM_CLOSE = 0x0010;
+        private const int WM_QUIT = 0x0012;
         private void autoLaunchTryToClose()
         {
             if (IsSetupFormNull) return;
@@ -48469,7 +48470,18 @@ namespace Thetis
             {
                 try
                 {
-                    PostMessage(p.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                    PostMessage(p.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);                    
+                }
+                catch
+                {
+                }
+            }
+            Thread.Sleep(100);
+            foreach (Process p in _started_processes)
+            {
+                try
+                {
+                    PostMessage(p.MainWindowHandle, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
                 }
                 catch
                 {
