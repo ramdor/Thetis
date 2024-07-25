@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FileList Redist="Microsoft-WinFX-Runtime" >
+<File AssemblyName="PresentationFramework" Version="3.0.0.0" PublicKeyToken="31bf3856ad364e35" Culture="neutral" processorArchitecture="msil" InGAC="true" IsRedistRoot="true" />
+<File AssemblyName="WindowsBase" Version="3.0.0.0" PublicKeyToken="31bf3856ad364e35" Culture="neutral" processorArchitecture="msil" InGAC="true" IsRedistRoot="true" />
+<File AssemblyName="PresentationCore" Version="3.0.0.0" PublicKeyToken="31bf3856ad364e35" Culture="neutral" ProcessorArchitecture="x86" InGAC="true" IsRedistRoot="false" />
+<File AssemblyName="PresentationCore" Version="3.0.0.0" PublicKeyToken="31bf3856ad364e35" Culture="neutral" ProcessorArchitecture="amd64" InGAC="true" IsRedistRoot="false" />
+<File AssemblyName="PresentationUI" Version="3.0.0.0" PublicKeyToken="31bf3856ad364e35" Culture="neutral" processorArchitecture="msil" IsRedistRoot="false" />
+<File AssemblyName="ReachFramework" Version="3.0.0.0" PublicKeyToken="31bf3856ad364e35" Culture="neutral" processorArchitecture="msil" InGAC="true" IsRedistRoot="false" />
+<File AssemblyName="UIAutomationProvider" Version="3.0.0.0" PublicKeyToken="31bf3856ad364e35" Culture="neutral" processorArchitecture="msil" InGAC="true" IsRedistRoot="false" />
+<File AssemblyName="UIAutomationTypes" Version="3.0.0.0" PublicKeyToken="31bf3856ad364e35" Culture="neutral" processorArchitecture="msil" InGAC="true" IsRedistRoot="false" />
+<File AssemblyName="System.Printing" Version="3.0.0.0" PublicKeyToken="31bf3856ad364e35" Culture="neutral" ProcessorArchitecture="x86" InGAC="true" IsRedistRoot="false" />
+<File AssemblyName="System.Printing" Version="3.0.0.0" PublicKeyToken="31bf3856ad364e35" Culture="neutral" ProcessorArchitecture="amd64" InGAC="true" IsRedistRoot="false" />
+<File AssemblyName="PresentationFramework.Aero" Version="3.0.0.0" PublicKeyToken="31bf3856ad364e35" Culture="neutral" processorArchitecture="msil" InGAC="true" IsRedistRoot="false" />
+<File AssemblyName="PresentationFramework.Classic" Version="3.0.0.0" PublicKeyToken="31bf3856ad364e35" Culture="neutral" processorArchitecture="msil" InGAC="true" IsRedistRoot="false" />
+<File AssemblyName="PresentationFramework.Luna" Version="3.0.0.0" PublicKeyToken="31bf3856ad364e35" Culture="neutral" processorArchitecture="msil" InGAC="true" IsRedistRoot="false" />
+<File AssemblyName="PresentationFramework.Royale" Version="3.0.0.0" PublicKeyToken="31bf3856ad364e35" Culture="neutral" processorArchitecture="msil" InGAC="true" IsRedistRoot="false" />
+</FileList>

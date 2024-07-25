@@ -1324,7 +1324,6 @@ namespace Thetis
         // ======================================================
         // Main
         // ======================================================
-
         [STAThread]
         static void Main(string[] args)
         {
@@ -44748,7 +44747,14 @@ namespace Thetis
         private bool m_bQSOTimerResetOnExpiry = false;
         private bool m_bQSOTimerFlashing = false;
         private bool m_bQSOTimerFlashAfterAutoReset = false;
-
+        public bool QSOTimerFlashing
+        {
+            get { return m_bQSOTimerFlashing; }
+        }
+        public int QSOTimerSeconds
+        {
+            get { return m_nQSOTimerSeconds; }
+        }
         public bool QSOTimerFlashAfterAutoReset {
             get { return m_bQSOTimerFlashAfterAutoReset; }
             set { m_bQSOTimerFlashAfterAutoReset = value; }
