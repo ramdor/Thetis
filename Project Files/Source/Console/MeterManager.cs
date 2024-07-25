@@ -5,7 +5,6 @@ using System.Linq;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.IO;
@@ -17,8 +16,14 @@ using System.Security.Cryptography;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Xml.Linq;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
+//using System.Reflection;
+//using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+//using static System.Console;
+//using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 //directX
 using SharpDX;
@@ -158,8 +163,13 @@ namespace Thetis
         TEXT_OVERLAY,
         DATA_OUT,
         ROTATOR,
+        LED,
         //SPECTRUM,
         LAST
+    }
+    public class Globals
+    {
+        public Dictionary<string, object> Variables;
     }
     internal static class MeterManager
     {
@@ -192,10 +202,346 @@ namespace Thetis
 
         private static string _openHPSDR_appdatapath;
 
+        private static CustomReadings _custom_readings;
+
         //public static float[] _newSpectrumPassband;
         //public static float[] _currentSpectrumPassband;
         //private static bool _spectrumReady;
 
+        internal class CustomReadings
+        {
+            private ConcurrentDictionary<Reading, float> _readings_values;
+            private ConcurrentDictionary<string, object> _readings_text_objects;
+
+            public CustomReadings()
+            {
+                _readings_values = new ConcurrentDictionary<Reading, float>();
+                _readings_text_objects = new ConcurrentDictionary<string, object>();
+            }
+            private string formatNumber(double number)
+            {
+                string numberString = number.ToString("F6", CultureInfo.InvariantCulture);
+                int decimalPointIndex = numberString.IndexOf('.');
+                if (decimalPointIndex != -1 && numberString.Length > decimalPointIndex + 3)
+                {
+                    numberString = numberString.Insert(decimalPointIndex + 4, ".");
+                }
+                return numberString;
+            }
+            private string formatElapsedTimeCompact(long elapsedSeconds)
+            {
+                long seconds = elapsedSeconds % 60;
+                long minutes = (elapsedSeconds / 60) % 60;
+                long hours = (elapsedSeconds / 3600) % 24;
+                long days = (elapsedSeconds / 86400) % 365;
+                long years = elapsedSeconds / 31536000;
+
+                if (years > 0)
+                {
+                    return $"{years}yr {hours:D2}:{minutes:D2}:{seconds:D2}";
+                }
+                else if (days > 0)
+                {
+                    return $"{days}d {hours:D2}:{minutes:D2}:{seconds:D2}";
+                }
+                else
+                {
+                    return $"{hours:D2}:{minutes:D2}:{seconds:D2}";
+                }
+            }
+            private string formatElapsedTime(long elapsedSeconds)
+            {
+                long seconds = elapsedSeconds % 60;
+                long minutes = (elapsedSeconds / 60) % 60;
+                long hours = (elapsedSeconds / 3600) % 24;
+                long days = (elapsedSeconds / 86400) % 365;
+                long years = elapsedSeconds / 31536000;
+
+                if (years > 0)
+                {
+                    return $"{years} year{(years > 1 ? "s" : "")} {days} day{(days > 1 ? "s" : "")} {hours} hour{(hours > 1 ? "s" : "")}";
+                }
+                else if (days > 0)
+                {
+                    return $"{days} day{(days > 1 ? "s" : "")} {hours} hour{(hours > 1 ? "s" : "")} {minutes} minute{(minutes > 1 ? "s" : "")}";
+                }
+                else if (hours > 0)
+                {
+                    return $"{hours} hour{(hours > 1 ? "s" : "")} {minutes} minute{(minutes > 1 ? "s" : "")} {seconds} second{(seconds > 1 ? "s" : "")}";
+                }
+                else if (minutes > 0)
+                {
+                    return $"{minutes} minute{(minutes > 1 ? "s" : "")} {seconds} second{(seconds > 1 ? "s" : "")}";
+                }
+                else
+                {
+                    return $"{seconds} second{(seconds > 1 ? "s" : "")}";
+                }
+            }
+            public List<string> GetPlaceholders(string text)
+            {
+                List<string> result = new List<string>();
+                int length = text.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    if (text[i] == '%')
+                    {
+                        if (i + 1 < length) // Ensure there's at least one character after the current %
+                        {
+                            int end = text.IndexOf('%', i + 1);
+                            if (end != -1)
+                            {
+                                if (end - i > 1) // Ensure there's something between the %
+                                {
+                                    result.Add(text.Substring(i + 1, end - i - 1));
+                                }
+                                i = end;
+                            }
+                        }
+                    }
+                }
+                return result;
+            }
+            public void TakeReading(int rx, Reading reading)
+            {
+                if (_readings_values.ContainsKey(reading))
+                {
+                    _readings_values[reading] = getReading(rx, reading, true);
+                }
+            }
+            public bool IsCustomString(string custom)
+            {
+                bool bRet = false;
+                switch (custom)
+                {
+                    case "time_utc":
+                    case "time_loc":
+                    case "date_utc":
+                    case "date_loc":
+                    case "vfoa":
+                    case "vfob":
+                    case "vfoasub":
+                    case "vfoa_double":
+                    case "vfob_double":
+                    case "vfoasub_double":
+                    case "band_vfoa":
+                    case "band_vfob":
+                    case "band_vfoasub":
+                    case "mode_vfoa":
+                    case "mode_vfob":
+                    case "subrx":
+                    case "filter_vfoa":
+                    case "filter_vfob":
+                    case "filter_vfoa_name":
+                    case "filter_vfob_name":
+                    case "split":
+                    case "qso_time":
+                    case "qso_time_short":
+                    case "tb_qso_time":
+                    case "tb_qso_time_short":
+                        bRet = true;
+                        break;
+                }
+                return bRet;
+            }
+            public object GetReading(string reading, clsMeter owningMeter, int rx)
+            {
+                if (!IsCustomString(reading.ToLower()))
+                {
+                    bool ok = Enum.TryParse<Reading>(reading.ToUpper(), out Reading tmpReading);
+                    if (ok)
+                    {
+                        ok = _readings_values.TryGetValue(tmpReading, out float value);
+                        if (ok)
+                        {
+                            _readings[rx].UseReading(tmpReading);
+                            return value;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
+                    }
+                }
+
+                // additional string based custom readings such as time_utc etc, we can just update these
+                // as they are obtained
+                DateTime now = DateTime.Now;
+                DateTime UTCnow = DateTime.UtcNow;
+                string key = reading.ToLower();
+                switch (key)
+                {
+                    case "time_utc":
+                        _readings_text_objects[key] = UTCnow.ToString("HH:mm:ss");
+                        break;
+                    case "time_loc":
+                        _readings_text_objects[key] = now.ToString("HH:mm:ss");
+                        break;
+                    case "date_utc":
+                        _readings_text_objects[key] = UTCnow.ToString("ddd d MMM yyyy");
+                        break;
+                    case "date_loc":
+                        _readings_text_objects[key] = now.ToString("ddd d MMM yyyy");
+                        break;
+                    case "vfoa":
+                        if (rx == 1)
+                            _readings_text_objects[key] = formatNumber(owningMeter.VfoA);
+                        else
+                            _readings_text_objects[key] = "";
+                        break;
+                    case "vfob":
+                        if (owningMeter.RX2Enabled && rx == 1)
+                            _readings_text_objects[key] = "";
+                        else
+                            _readings_text_objects[key] = formatNumber(owningMeter.VfoB);
+                        break;
+                    case "vfoasub":
+                        if (owningMeter.VfoSub >= 0 && rx == 1 && owningMeter.RX2Enabled && (owningMeter.Split || owningMeter.MultiRxEnabled)) // when -999.999
+                            _readings_text_objects[key] = formatNumber(owningMeter.VfoSub);
+                        else
+                            _readings_text_objects[key] = "";
+                        break;
+                    case "vfoa_double":
+                        if (rx == 1)
+                            _readings_text_objects[key] = Math.Round(owningMeter.VfoA, 6);
+                        else
+                            _readings_text_objects[key] = "";
+                        break;
+                    case "vfob_double":
+                        if (owningMeter.RX2Enabled && rx == 1)
+                            _readings_text_objects[key] = "";
+                        else
+                            _readings_text_objects[key] = Math.Round(owningMeter.VfoB, 6);
+                        break;
+                    case "vfoasub_double":
+                        if (owningMeter.VfoSub >= 0 && rx == 1 && owningMeter.RX2Enabled && (owningMeter.Split || owningMeter.MultiRxEnabled)) // when -999.999
+                            _readings_text_objects[key] = Math.Round(owningMeter.VfoSub, 6);
+                        else
+                            _readings_text_objects[key] = "";
+                        break;
+                    case "band_vfoa":
+                        _readings_text_objects[key] = BandStackManager.BandToString(owningMeter.BandVfoA).ToLower();
+                        break;
+                    case "band_vfob":
+                        _readings_text_objects[key] = BandStackManager.BandToString(owningMeter.BandVfoA).ToLower();
+                        break;
+                    case "band_vfoasub":
+                        _readings_text_objects[key] = BandStackManager.BandToString(owningMeter.BandVfoASub).ToLower();
+                        break;
+                    case "mode_vfoa":
+                        _readings_text_objects[key] = owningMeter.ModeVfoA.ToString();
+                        break;
+                    case "mode_vfob":
+                        _readings_text_objects[key] = owningMeter.ModeVfoB.ToString();
+                        break;
+                    case "subrx":
+                        _readings_text_objects[key] = owningMeter.MultiRxEnabled ? "SubRX" : "";
+                        break;
+                    case "filter_vfoa":
+                        _readings_text_objects[key] = owningMeter.FilterVfoA.ToString();
+                        break;
+                    case "filter_vfob":
+                        _readings_text_objects[key] = owningMeter.FilterVfoB.ToString();
+                        break;
+                    case "filter_vfoa_name":
+                        _readings_text_objects[key] = owningMeter.FilterVfoAName;
+                        break;
+                    case "filter_vfob_name":
+                        _readings_text_objects[key] = owningMeter.FilterVfoBName;
+                        break;
+                    case "split":
+                        _readings_text_objects[key] = owningMeter.Split ? "SPLIT" : "";
+                        break;
+                    case "qso_time":
+                        _readings_text_objects[key] = formatElapsedTime(owningMeter.QsoDurationSeconds);
+                        break;
+                    case "qso_time_short":
+                        _readings_text_objects[key] = formatElapsedTimeCompact(owningMeter.QsoDurationSeconds);
+                        break;
+                    case "tb_qso_time":
+                        _readings_text_objects[key] = _console.QSOTimerEnabled ? formatElapsedTime(_console.QSOTimerSeconds) : "";
+                        break;
+                    case "tb_qso_time_short":
+                        _readings_text_objects[key] = _console.QSOTimerEnabled ? formatElapsedTimeCompact(_console.QSOTimerSeconds) : "";
+                        break;
+                }
+
+                if (_readings_text_objects.ContainsKey(key))
+                {
+                    bool ok = _readings_text_objects.TryGetValue(key, out object tmp);
+                    if (ok)
+                        return tmp;
+                    else
+                        return "";
+                }
+                return "";
+            }
+            public void UpdateReadings(string text)
+            {
+                //add readings required
+                addReading(Reading.SWR, text);
+                addReading(Reading.SIGNAL_STRENGTH, text);
+                addReading(Reading.AVG_SIGNAL_STRENGTH, text);
+                addReading(Reading.PWR, text);
+                addReading(Reading.REVERSE_PWR, text);
+                addReading(Reading.MIC, text);
+                addReading(Reading.MIC_PK, text);
+                addReading(Reading.ADC_PK, text);
+                addReading(Reading.ADC_AV, text);
+                addReading(Reading.AGC_PK, text);
+                addReading(Reading.AGC_AV, text);
+                addReading(Reading.AGC_GAIN, text);
+                addReading(Reading.LEVELER, text);
+                addReading(Reading.LEVELER_PK, text);
+                addReading(Reading.LVL_G, text);
+                addReading(Reading.ALC, text);
+                addReading(Reading.ALC_PK, text);
+                addReading(Reading.ALC_G, text);
+                addReading(Reading.ALC_GROUP, text);
+                addReading(Reading.CFC_AV, text);
+                addReading(Reading.CFC_PK, text);
+                addReading(Reading.CFC_G, text);
+                addReading(Reading.COMP, text);
+                addReading(Reading.COMP_PK, text);
+                addReading(Reading.ESTIMATED_PBSNR, text);
+                addReading(Reading.VOLTS, text);
+                addReading(Reading.AMPS, text);
+
+                addReadingText("time_utc", text);
+                addReadingText("time_loc", text);
+                addReadingText("date_utc", text);
+                addReadingText("date_loc", text);
+                addReadingText("vfoa", text);
+                addReadingText("vfob", text);
+                addReadingText("vfoasub", text);
+                addReadingText("vfoa_double", text);
+                addReadingText("vfob_double", text);
+                addReadingText("vfoasub_double", text);
+                addReadingText("band_vfoa", text);
+                addReadingText("band_vfob", text);
+                addReadingText("band_vfoasub", text);
+                addReadingText("mode_vfoa", text);
+                addReadingText("mode_vfob", text);
+                addReadingText("subrx", text);
+                addReadingText("filter_vfoa", text);
+                addReadingText("filter_vfob", text);
+                addReadingText("filter_vfoa_name", text);
+                addReadingText("filter_vfob_name", text);
+                addReadingText("split", text);
+                addReadingText("qso_time", text);
+                addReadingText("qso_time_short", text);
+                addReadingText("tb_qso_time", text);
+                addReadingText("tb_qso_time_short", text);
+            }
+            private void addReading(Reading reading, string text)
+            {
+                if (!_readings_values.ContainsKey(reading) && text.Contains("%" + reading.ToString().ToLower() + "%")) _readings_values.TryAdd(reading, 0f);
+            }
+            private void addReadingText(string reading, string text)
+            {
+                if (!_readings_text_objects.ContainsKey(reading) && text.Contains("%" + reading + "%")) _readings_text_objects.TryAdd(reading, "");
+            }
+        }
         public class clsIGSettings
         {
             private int _updateInterval;
@@ -484,6 +830,9 @@ namespace Thetis
         }
         static MeterManager()
         {
+            // readings used by varius meter items such as Text Overlay
+            _custom_readings = new CustomReadings();
+
             // static constructor
             _rx1VHForAbove = false;
             _rx2VHForAbove = false;
@@ -517,6 +866,87 @@ namespace Thetis
 
             _openHPSDR_appdatapath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
         }
+        public static CustomReadings ReadingsCustom
+        {
+            get { return _custom_readings; }
+        }
+        // zero reading
+        public static void ZeroReading(out float value, int rx, Reading reading)
+        {
+            value = 0;
+
+            switch (reading)
+            {
+                case Reading.SIGNAL_STRENGTH:
+                case Reading.AVG_SIGNAL_STRENGTH:
+                    if (IsAboveS9Frequency(rx))
+                        value = -153; //S0
+                    else
+                        value = -133; //S0
+                    break;
+                case Reading.ADC_PK:
+                case Reading.ADC_AV:
+                    value = -120.0f;
+                    break;
+                case Reading.AGC_AV:
+                case Reading.AGC_PK:
+                    value = -125.0f;
+                    break;
+                case Reading.AGC_GAIN:
+                    value = -50.0f;
+                    break;
+                case Reading.MIC:
+                case Reading.MIC_PK:
+                    value = -120.0f;
+                    break;
+                case Reading.LEVELER:
+                case Reading.LEVELER_PK:
+                    value = -30.0f;
+                    break;
+                case Reading.LVL_G:
+                    value = 0f;
+                    break;
+                case Reading.ALC:
+                case Reading.ALC_PK:
+                    value = -120.0f;
+                    break;
+                case Reading.ALC_G: //alc comp
+                    value = 0f;
+                    break;
+                case Reading.ALC_GROUP:
+                    value = -30.0f;
+                    break;
+                case Reading.CFC_AV:
+                case Reading.CFC_PK:
+                    value = -30.0f;
+                    break;
+                case Reading.CFC_G:
+                    value = 0f;
+                    break;
+                case Reading.COMP:
+                case Reading.COMP_PK:
+                    value = -30.0f;
+                    break;
+                case Reading.PWR:
+                case Reading.REVERSE_PWR:
+                    value = 0f;
+                    break;
+                case Reading.SWR:
+                    value = 1.0f;
+                    break;
+                case Reading.ESTIMATED_PBSNR:
+                    value = 0f;
+                    break;
+                case Reading.VOLTS:
+                    value = 0f;
+                    break;
+                case Reading.AMPS:
+                    value = 0f;
+                    break;
+            }
+            setReadingForced(rx, reading, value);
+        }
+        //
 
         //private static object _spectrumArrayLock = new object();
         //public static void ResizeSpectrum(int len)
@@ -595,6 +1025,7 @@ namespace Thetis
                 case MeterType.TEXT_OVERLAY: return 2;
                 case MeterType.DATA_OUT: return 2;
                 case MeterType.ROTATOR: return 2;
+                case MeterType.LED: return 2;
                     //case MeterType.SPECTRUM: return 2;
             }
 
@@ -630,6 +1061,7 @@ namespace Thetis
                 case MeterType.SWR: return "SWR";
                 case MeterType.SPACER: return "Spacer";
                 case MeterType.TEXT_OVERLAY: return "Text Overlay";
+                case MeterType.LED: return "Led Indicator";
                 case MeterType.DATA_OUT: return "Data Out Node";
                 case MeterType.ROTATOR: return "Rotator";
                 //case MeterType.HISTORY: return "History";
@@ -2419,7 +2851,8 @@ namespace Thetis
                 SPACER,
                 TEXT_OVERLAY,
                 DATA_OUT,
-                ROTATOR
+                ROTATOR,
+                LED
                 //SPECTRUM
             }
 
@@ -3695,7 +4128,7 @@ namespace Thetis
                 //if (GetMMIOGuid(0) == Guid.Empty)// && GetMMIOVariable(0) == "-- DEFAULT --") 
                 if (MMIOGuid == Guid.Empty)
                 {
-                    reading = MeterManager.getReading(rx,ReadingSource);
+                    reading = MeterManager.getReading(rx, ReadingSource);
                     use = true;
                 }
                 else
@@ -4010,18 +4443,19 @@ namespace Thetis
                 if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
                     value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
-                    switch (ReadingSource)
-                    {
-                        case Reading.SIGNAL_STRENGTH:
-                        case Reading.AVG_SIGNAL_STRENGTH:
-                            {
-                                if (IsAboveS9Frequency(rx))
-                                    value = -153; //S0
-                                else
-                                    value = -133; //S0
-                            }
-                            break;
-                    }
+                    //switch (ReadingSource)
+                    //{
+                    //    case Reading.SIGNAL_STRENGTH:
+                    //    case Reading.AVG_SIGNAL_STRENGTH:
+                            ZeroReading(out value, rx, ReadingSource);
+                    //        {
+                    //            if (IsAboveS9Frequency(rx))
+                    //                value = -153; //S0
+                    //            else
+                    //               value = -133; //S0
+                    //        }
+                    //        break;
+                    //}
                     return true;
                 }
                 value = 0;
@@ -4139,13 +4573,10 @@ namespace Thetis
             private System.Drawing.Color _text_colour2;
             private System.Drawing.Color _text_back_colour1;
             private System.Drawing.Color _text_back_colour2;
-            private System.Drawing.Color _back_colour;
             private System.Drawing.Color _panel_back_colour1;
             private System.Drawing.Color _panel_back_colour2;
             private string _text_1;
             private string _text_2;
-            //private int _newlines_1;
-            //private int _newlines_2;
             private bool _show_text_back_colour1;
             private bool _show_text_back_colour2;
             private bool _show_back_panel;
@@ -4160,16 +4591,23 @@ namespace Thetis
             private FontStyle _fontStyle_2;
             private float _fontSize_2;
             private float _padding;
-            private Dictionary<Reading, float> _readings_values;
-            private Dictionary<string, string> _readings_text_strings;
+
             private clsMeter _owningMeter;
             private bool _ignore_measure_cache_1;
             private bool _ignore_measure_cache_2;
-
+            private List<string> _list_placeholders_strings_1;
+            private List<string> _list_placeholders_strings_2;
+            private List<Reading> _list_placeholders_readings_1;
+            private List<Reading> _list_placeholders_readings_2;
+            private readonly object _list_placeholders_1_lock = new object();
+            private readonly object _list_placeholders_2_lock = new object();
             public clsTextOverlay(clsMeter owningMeter)
             {
-                _readings_values = new Dictionary<Reading, float>();
-                _readings_text_strings = new Dictionary<string, string>();
+                _list_placeholders_strings_1 = new List<string>();
+                _list_placeholders_strings_2 = new List<string>();
+                _list_placeholders_readings_1 = new List<Reading>();
+                _list_placeholders_readings_2 = new List<Reading>();
+
                 _text_colour1 = System.Drawing.Color.FromArgb(255, 255, 255);
                 _text_colour2 = System.Drawing.Color.FromArgb(255, 255, 255);
                 _text_back_colour1 = System.Drawing.Color.FromArgb(64, 64, 64);
@@ -4187,7 +4625,7 @@ namespace Thetis
                 _y_offset_2 = 0;
                 ItemType = MeterItemType.TEXT_OVERLAY;
                 ReadingSource = Reading.NONE;
-                
+
                 _fontFamily_1 = "Trebuchet MS";
                 _fontStyle_1 = FontStyle.Regular;
                 _fontSize_1 = 18f;
@@ -4231,7 +4669,23 @@ namespace Thetis
                 {
                     _ignore_measure_cache_1 = _text_1 != value;
                     _text_1 = value.Replace("|", "");
-                    addReadings(_text_1);
+                    ReadingsCustom.UpdateReadings(_text_1);
+                    lock (_list_placeholders_1_lock)
+                    {
+                        _list_placeholders_readings_1.Clear();
+                        _list_placeholders_strings_1.Clear();
+                        List<string> placeholders = ReadingsCustom.GetPlaceholders(_text_1);
+                        foreach (string placeholder in placeholders)
+                        {
+                            if (ReadingsCustom.IsCustomString(placeholder))
+                                _list_placeholders_strings_1.Add(placeholder);
+                            else
+                            {
+                                bool ok = Enum.TryParse<Reading>(placeholder.ToUpper(), out Reading tmpReading);
+                                if (ok) _list_placeholders_readings_1.Add(tmpReading);
+                            }
+                        }
+                    }
                 }
             }
             public string Text2
@@ -4241,17 +4695,25 @@ namespace Thetis
                 {
                     _ignore_measure_cache_2 = _text_2 != value;
                     _text_2 = value.Replace("|", "");
-                    addReadings(_text_2);
+                    ReadingsCustom.UpdateReadings(_text_2);
+                    lock (_list_placeholders_2_lock)
+                    {
+                        _list_placeholders_readings_2.Clear();
+                        _list_placeholders_strings_2.Clear();
+                        List<string> placeholders = ReadingsCustom.GetPlaceholders(_text_2);
+                        foreach(string placeholder in placeholders)
+                        {
+                            if (ReadingsCustom.IsCustomString(placeholder))
+                                _list_placeholders_strings_2.Add(placeholder);
+                            else
+                            {
+                                bool ok = Enum.TryParse<Reading>(placeholder.ToUpper(), out Reading tmpReading);
+                                if (ok) _list_placeholders_readings_2.Add(tmpReading);
+                            }
+                        }
+                    }
                 }
             }
-            //public int NewLines1
-            //{
-            //    get { return _newlines_1; }
-            //}
-            //public int NewLines2
-            //{
-            //    get { return _newlines_2; }
-            //}
             public bool ShowTextBackColour1
             {
                 get { return _show_text_back_colour1; }
@@ -4342,367 +4804,560 @@ namespace Thetis
                 get { return _ignore_measure_cache_2; }
                 set { _ignore_measure_cache_2 = value; }
             }
-            private void getReading(int rx, Reading r, ref List<Reading> readingsUsed)
-            {
-                _readings_values[r] = MeterManager.getReading(rx, r);
-                // this reading has been used
-                if (!readingsUsed.Contains(r))
-                    readingsUsed.Add(r);
-            }
-            private string formatNumber(double number)
-            {
-                string numberString = number.ToString("F6", CultureInfo.InvariantCulture);
-                int decimalPointIndex = numberString.IndexOf('.');
-                if (decimalPointIndex != -1 && numberString.Length > decimalPointIndex + 3)
-                {
-                    numberString = numberString.Insert(decimalPointIndex + 4, ".");
-                }
-                return numberString;
-            }
             public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
             {
-                DateTime now = DateTime.Now;
-                DateTime UTCnow = DateTime.UtcNow;
-                List<Reading> keys = _readings_values.Keys.ToList();
-                foreach (Reading key in keys)
+                lock (_list_placeholders_1_lock)
                 {
-                    getReading(rx, key, ref readingsUsed);                    
-                }
-                List<string> keys_s = _readings_text_strings.Keys.ToList();
-                foreach (string key in keys_s)
-                {
-                    switch (key)
+                    foreach(Reading reading in _list_placeholders_readings_1)
                     {
-                        case "time_utc":
-                            _readings_text_strings[key] = UTCnow.ToString("HH:mm:ss");
-                            break;
-                        case "time_loc":
-                            _readings_text_strings[key] = now.ToString("HH:mm:ss");
-                            break;
-                        case "date_utc":
-                            _readings_text_strings[key] = UTCnow.ToString("ddd d MMM yyyy");
-                            break;
-                        case "date_loc":
-                            _readings_text_strings[key] = now.ToString("ddd d MMM yyyy");
-                            break;
-                        case "vfoa":
-                            if (rx == 1)
-                                _readings_text_strings[key] = formatNumber(_owningMeter.VfoA);
-                            else
-                                _readings_text_strings[key] = "";
-                            break;
-                        case "vfob":
-                            if (_owningMeter.RX2Enabled && rx == 1)
-                                _readings_text_strings[key] = ""; //formatNumber(0);
-                            else
-                                _readings_text_strings[key] = formatNumber(_owningMeter.VfoB);
-                            break;
-                        case "vfoasub":
-                            if (_owningMeter.VfoSub >= 0 && rx == 1 && _owningMeter.RX2Enabled && (_owningMeter.Split || _owningMeter.MultiRxEnabled)) // when -999.999
-                                _readings_text_strings[key] = formatNumber(_owningMeter.VfoSub);
-                            else
-                                _readings_text_strings[key] = "";
-                            break;
-                        case "band_vfoa":
-                            _readings_text_strings[key] = BandStackManager.BandToString(_owningMeter.BandVfoA).ToLower();
-                            break;
-                        case "band_vfob":
-                            _readings_text_strings[key] = BandStackManager.BandToString(_owningMeter.BandVfoA).ToLower();
-                            break;
-                        case "band_vfoasub":
-                            _readings_text_strings[key] = BandStackManager.BandToString(_owningMeter.BandVfoASub).ToLower();
-                            break;
-                        case "mode_vfoa":
-                            _readings_text_strings[key] = _owningMeter.ModeVfoA.ToString();
-                            break;
-                        case "mode_vfob":
-                            _readings_text_strings[key] = _owningMeter.ModeVfoB.ToString();
-                            break;
-                        case "subrx":
-                            _readings_text_strings[key] = _owningMeter.MultiRxEnabled ? "SubRX" : "";
-                            break;
-                        case "filter_vfoa":
-                            _readings_text_strings[key] = _owningMeter.FilterVfoA.ToString();
-                            break;
-                        case "filter_vfob":
-                            _readings_text_strings[key] = _owningMeter.FilterVfoB.ToString();
-                            break;
-                        case "filter_vfoa_name":
-                            _readings_text_strings[key] = _owningMeter.FilterVfoAName;
-                            break;
-                        case "filter_vfob_name":
-                            _readings_text_strings[key] = _owningMeter.FilterVfoBName;
-                            break;
-                        case "split":
-                            _readings_text_strings[key] = _owningMeter.Split ? "SPLIT" : "";
-                            break;
-                        case "qso_time":
-                            _readings_text_strings[key] = formatElapsedTime(_owningMeter.QsoDurationSeconds);
-                            break;
-                        case "qso_time_short":
-                            _readings_text_strings[key] = formatElapsedTimeCompact(_owningMeter.QsoDurationSeconds);
-                            break;
+                        ReadingsCustom.TakeReading(rx, reading);
+
+                        //if (!readingsUsed.Contains(reading))
+                        //    readingsUsed.Add(reading);
+                    }
+                }
+                lock (_list_placeholders_2_lock)
+                {
+                    foreach (Reading reading in _list_placeholders_readings_2)
+                    {
+                        ReadingsCustom.TakeReading(rx, reading);
+
+                        //if (!readingsUsed.Contains(reading))
+                        //    readingsUsed.Add(reading);
                     }
                 }
             }
-            private string formatElapsedTimeCompact(long elapsedSeconds)
+            public string ParsedText1(int rx)
             {
-                long seconds = elapsedSeconds % 60;
-                long minutes = (elapsedSeconds / 60) % 60;
-                long hours = (elapsedSeconds / 3600) % 24;
-                long days = (elapsedSeconds / 86400) % 365;
-                long years = elapsedSeconds / 31536000;
+                string sTmp = _text_1;
 
-                if (years > 0)
+                lock (_list_placeholders_1_lock)
                 {
-                    return $"{years}yr {hours:D2}:{minutes:D2}:{seconds:D2}";
-                }
-                else if (days > 0)
-                {
-                    return $"{days}d {hours:D2}:{minutes:D2}:{seconds:D2}";
-                }
-                else
-                {
-                    return $"{hours:D2}:{minutes:D2}:{seconds:D2}";
-                }
-            }
-            private string formatElapsedTime(long elapsedSeconds)
-            {
-                long seconds = elapsedSeconds % 60;
-                long minutes = (elapsedSeconds / 60) % 60;
-                long hours = (elapsedSeconds / 3600) % 24;
-                long days = (elapsedSeconds / 86400) % 365;
-                long years = elapsedSeconds / 31536000;
-
-                if (years > 0)
-                {
-                    return $"{years} year{(years > 1 ? "s" : "")} {days} day{(days > 1 ? "s" : "")} {hours} hour{(hours > 1 ? "s" : "")}";
-                }
-                else if (days > 0)
-                {
-                    return $"{days} day{(days > 1 ? "s" : "")} {hours} hour{(hours > 1 ? "s" : "")} {minutes} minute{(minutes > 1 ? "s" : "")}";
-                }
-                else if (hours > 0)
-                {
-                    return $"{hours} hour{(hours > 1 ? "s" : "")} {minutes} minute{(minutes > 1 ? "s" : "")} {seconds} second{(seconds > 1 ? "s" : "")}";
-                }
-                else if (minutes > 0)
-                {
-                    return $"{minutes} minute{(minutes > 1 ? "s" : "")} {seconds} second{(seconds > 1 ? "s" : "")}";
-                }
-                else
-                {
-                    return $"{seconds} second{(seconds > 1 ? "s" : "")}";
-                }
-            }
-            public string ParsedText1
-            {
-                get
-                {
-                    string sTmp = _text_1;
-                    //for each of the values in the readings, try to find one to replace all occurances in _text_1
-                    foreach (KeyValuePair<Reading, float> reading in _readings_values)
+                    foreach (Reading r in _list_placeholders_readings_1)
                     {
-                        sTmp = sTmp.Replace("%" + reading.Key.ToString().ToLower() + "%", reading.Value.ToString("f1"));
+                        object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
+                        sTmp = sTmp.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("f1"));
                     }
-                    foreach (KeyValuePair<string, string> reading in _readings_text_strings)
+                    foreach (string placeholder in _list_placeholders_strings_1)
                     {
-                        sTmp = sTmp.Replace("%" + reading.Key + "%", reading.Value);
+                        object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
+                        if(reading is int)
+                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((int)reading).ToString());
+                        else if (reading is float)
+                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((float)reading).ToString("f1"));
+                        else if (reading is double)
+                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((double)reading).ToString("f6"));
+                        else if (reading is bool)
+                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((bool)reading).ToString());
+                        else
+                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", (string)reading);
                     }
-                    sTmp = sTmp.Replace("%nl%", "\n");
-                    //_newlines_1 = sTmp.Count(c => c == '\n');
-
-                    // MultiMeter IO
-                    foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
-                    {
-                        MultiMeterIO.clsMMIO mmio = mmios.Value;
-                        foreach (KeyValuePair<string, object> kvp in mmio.Variables())
-                        {
-                            object val = mmio.GetVariable(kvp.Key);
-
-                            string tmp = mmio.VariableValueType(val);
-
-                            sTmp = sTmp.Replace("%" + kvp.Key.ToString() + "%", tmp);
-                        }
-                    }
-                    //
-
-                    return sTmp;
                 }
-            }
-            public string ParsedText2
-            {
-                get
+
+                sTmp = sTmp.Replace("%nl%", "\n");
+
+                // MultiMeter IO
+                foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
                 {
-                    string sTmp = _text_2;
-                    //for each of the values in the readings, try to find one to replace all occurances in _text_2
-                    foreach (KeyValuePair<Reading, float> reading in _readings_values)
+                    MultiMeterIO.clsMMIO mmio = mmios.Value;
+                    foreach (KeyValuePair<string, object> kvp in mmio.Variables())
                     {
-                        sTmp = sTmp.Replace("%" + reading.Key.ToString().ToLower() + "%", reading.Value.ToString("f1"));
+                        object val = mmio.GetVariable(kvp.Key);
+
+                        string tmp = mmio.VariableValueType(val);
+
+                        sTmp = sTmp.Replace("%" + kvp.Key.ToString() + "%", tmp);
                     }
-                    foreach (KeyValuePair<string, string> reading in _readings_text_strings)
-                    {
-                        sTmp = sTmp.Replace("%" + reading.Key + "%", reading.Value);
-                    }
-                    sTmp = sTmp.Replace("%nl%", "\n");
-                    //_newlines_2 = sTmp.Count(c => c == '\n');
-
-                    // MultiMeter IO
-                    foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
-                    {
-                        MultiMeterIO.clsMMIO mmio = mmios.Value;
-                        foreach (KeyValuePair<string, object> kvp in mmio.Variables())
-                        {
-                            object val = mmio.GetVariable(kvp.Key);
-
-                            string tmp = mmio.VariableValueType(val);
-
-                            sTmp = sTmp.Replace("%" + kvp.Key.ToString() + "%", tmp);
-                        }
-                    }
-                    //
-
-                    return sTmp;
                 }
-            }
-            private void addReadings(string text)
-            {
-                //add readings required from text1 and text2 if not already there
-                addReading(Reading.SWR, text);
-                addReading(Reading.SIGNAL_STRENGTH, text);
-                addReading(Reading.AVG_SIGNAL_STRENGTH, text);
-                addReading(Reading.PWR, text);
-                addReading(Reading.REVERSE_PWR, text);
-                addReading(Reading.MIC, text);
-                addReading(Reading.MIC_PK, text);
-                addReading(Reading.ADC_PK, text);
-                addReading(Reading.ADC_AV, text);
-                addReading(Reading.AGC_PK, text);
-                addReading(Reading.AGC_AV, text);
-                addReading(Reading.AGC_GAIN, text);
-                addReading(Reading.LEVELER, text);
-                addReading(Reading.LEVELER_PK, text);
-                addReading(Reading.LVL_G, text);
-                addReading(Reading.ALC, text);
-                addReading(Reading.ALC_PK, text);
-                addReading(Reading.ALC_G, text);
-                addReading(Reading.ALC_GROUP, text);
-                addReading(Reading.CFC_AV, text);
-                addReading(Reading.CFC_PK, text);
-                addReading(Reading.CFC_G, text);
-                addReading(Reading.COMP, text);
-                addReading(Reading.COMP_PK, text);
-                addReading(Reading.ESTIMATED_PBSNR, text);
-                addReading(Reading.VOLTS, text);
-                addReading(Reading.AMPS, text);
+                //
 
-                addReadingText("time_utc", text);
-                addReadingText("time_loc", text);
-                addReadingText("date_utc", text);
-                addReadingText("date_loc", text);
-                addReadingText("vfoa", text);
-                addReadingText("vfob", text);
-                addReadingText("vfoasub", text);
-                addReadingText("band_vfoa", text);
-                addReadingText("band_vfob", text);
-                addReadingText("band_vfoasub", text);
-                addReadingText("mode_vfoa", text);
-                addReadingText("mode_vfob", text);
-                addReadingText("subrx", text);
-                addReadingText("filter_vfoa", text);
-                addReadingText("filter_vfob", text);
-                addReadingText("filter_vfoa_name", text);
-                addReadingText("filter_vfob_name", text);
-                addReadingText("split", text);
-                addReadingText("qso_time", text);
-                addReadingText("qso_time_short", text);
+                return sTmp;
             }
-            private void addReading(Reading reading, string text)
+            public string ParsedText2(int rx)
             {
-                if (!_readings_values.ContainsKey(reading) && text.Contains("%" + reading.ToString().ToLower() + "%")) _readings_values.Add(reading, 0f);
-            }
-            private void addReadingText(string reading, string text)
-            {
-                if (!_readings_text_strings.ContainsKey(reading) && text.Contains("%" + reading + "%")) _readings_text_strings.Add(reading, "");
+                string sTmp = _text_2;
+
+                lock (_list_placeholders_2_lock)
+                {
+                    foreach (Reading r in _list_placeholders_readings_2)
+                    {
+                        object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
+                        sTmp = sTmp.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("f1"));
+                    }
+                    foreach (string placeholder in _list_placeholders_strings_2)
+                    {
+                        object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
+                        if (reading is int)
+                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((int)reading).ToString());
+                        else if (reading is float)
+                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((float)reading).ToString("f1"));
+                        else if (reading is double)
+                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((double)reading).ToString("f6"));
+                        else if (reading is bool)
+                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((bool)reading).ToString());
+                        else
+                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", (string)reading);
+                    }
+                }
+
+                sTmp = sTmp.Replace("%nl%", "\n");
+
+                // MultiMeter IO
+                foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
+                {
+                    MultiMeterIO.clsMMIO mmio = mmios.Value;
+                    foreach (KeyValuePair<string, object> kvp in mmio.Variables())
+                    {
+                        object val = mmio.GetVariable(kvp.Key);
+
+                        string tmp = mmio.VariableValueType(val);
+
+                        sTmp = sTmp.Replace("%" + kvp.Key.ToString() + "%", tmp);
+                    }
+                }
+                //
+
+                return sTmp;
             }
             public override bool ZeroOut(out float value, int rx)
             {
                 value = 0;
-
-                foreach (KeyValuePair<Reading, float> reading in _readings_values)
+                lock (_list_placeholders_1_lock)
                 {
-                    switch (reading.Key)
+                    foreach(Reading reading in _list_placeholders_readings_1)
                     {
-                        case Reading.SIGNAL_STRENGTH:
-                        case Reading.AVG_SIGNAL_STRENGTH:
-                            if (IsAboveS9Frequency(rx))
-                                value = -153; //S0
-                            else
-                                value = -133; //S0
-                            break;
-                        case Reading.ADC_PK:
-                        case Reading.ADC_AV:
-                            value = -120.0f;
-                            break;
-                        case Reading.AGC_AV:
-                        case Reading.AGC_PK:
-                            value = -125.0f;
-                            break;
-                        case Reading.AGC_GAIN:
-                            value = -50.0f;
-                            break;
-                        case Reading.MIC:
-                        case Reading.MIC_PK:
-                            value = -120.0f;
-                            break;
-                        case Reading.LEVELER:
-                        case Reading.LEVELER_PK:
-                            value = -30.0f;
-                            break;
-                        case Reading.LVL_G:
-                            value = 0f;
-                            break;
-                        case Reading.ALC:
-                        case Reading.ALC_PK:
-                            value = -120.0f;
-                            break;
-                        case Reading.ALC_G: //alc comp
-                            value = 0f;
-                            break;
-                        case Reading.ALC_GROUP:
-                            value = -30.0f;
-                            break;
-                        case Reading.CFC_AV:
-                        case Reading.CFC_PK:
-                            value = -30.0f;
-                            break;
-                        case Reading.CFC_G:
-                            value = 0f;
-                            break;
-                        case Reading.COMP:
-                        case Reading.COMP_PK:
-                            value = -30.0f;
-                            break;
-                        case Reading.PWR:
-                        case Reading.REVERSE_PWR:
-                            value = 0f;
-                            break;
-                        case Reading.SWR:
-                            value = 1.0f;
-                            break;
-                        case Reading.ESTIMATED_PBSNR:
-                            value = 0f;
-                            break;
-                        case Reading.VOLTS:
-                            value = 0f;
-                            break;
-                        case Reading.AMPS:
-                            value = 0f;
-                            break;
+                        ZeroReading(out value, rx, reading);
+                        MeterManager.setReadingForced(rx, reading, value);
                     }
-                    MeterManager.setReadingForced(rx, reading.Key, value);
                 }
+                lock (_list_placeholders_2_lock)
+                {
+                    foreach (Reading reading in _list_placeholders_readings_2)
+                    {
+                        ZeroReading(out value, rx, reading);
+                        MeterManager.setReadingForced(rx, reading, value);
+                    }
+                }
+                return false; // false as we do our own setReadingForced just above
+            }
+        }
+        internal class clsLed : clsMeterItem
+        {
+            public enum Led_Shape
+            {
+                SQUARE = 0,
+                ROUND = 1,
+                TRIANGLE = 2
+            }
+            public enum Led_Style
+            {
+                FLAT = 0,
+                THREE_D = 1
+            }
+            private System.Drawing.Color _true_colour;
+            private System.Drawing.Color _false_colour;
+            private System.Drawing.Color _panel_back_colour_1;
+            private System.Drawing.Color _panel_back_colour_2;
+            private string _condition;            
+            private bool _show_back_panel;
+            private float _x_offset;
+            private float _y_offset;
+            private float _x_size;
+            private float _y_size;
+            private float _padding;
+            private clsMeter _owningMeter;
+            private Led_Shape _led_shape;
+            private Led_Style _led_style;
+            private bool _pulse;
+            private bool _result;
+            private bool _valid;
+            private List<string> _list_placeholders_strings;
+            private List<Reading> _list_placeholders_readings;
+            private readonly object _list_placeholders_lock = new object();
+            private Script _script;
+            private Dictionary<string, object> _subs;
+            private bool _busy = false;
+            private bool _error = false;
+            public clsLed(clsMeter owningMeter)
+            {
+                _list_placeholders_strings = new List<string>();
+                _list_placeholders_readings = new List<Reading>();
 
+                _true_colour = System.Drawing.Color.FromArgb(255, 255, 255);
+                _false_colour = System.Drawing.Color.FromArgb(192, 192, 192);
+                _panel_back_colour_1 = System.Drawing.Color.FromArgb(32, 32, 32);
+                _panel_back_colour_2 = System.Drawing.Color.FromArgb(32, 32, 32);
+                _show_back_panel = true;
+                _x_offset = 0.5f;
+                _y_offset = 0.05f;
+                _condition = "";
+                _x_size = 0.05f;
+                _y_size = 0.05f;
+                _padding = 0.1f;
+                _led_shape = Led_Shape.SQUARE;
+                _led_style = Led_Style.FLAT;
+                _pulse = false;
+                _result = false;
+                _valid = false;
+                _busy = false;
+                _error = false;
+
+                ItemType = MeterItemType.LED;
+                ReadingSource = Reading.NONE;
+
+                _owningMeter = owningMeter;
+
+                UpdateInterval = 250;
+
+                _script = null;
+                _subs = new Dictionary<string, object>();
+            }
+            //private string substituteVariables(string expression, Dictionary<string, object> variables)
+            //{
+            //    foreach (KeyValuePair<string, object> variable in variables)
+            //    {
+            //        string placeholder = $"{variable.Key}";
+            //        expression = expression.Replace(placeholder, variable.Value.ToString());
+            //    }
+            //    return expression;
+            //}
+            private bool validateExpression(string expression, Dictionary<string, object> variables)
+            {
+                string tmp = $"bool result = (bool)({expression});";
+                try
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(tmp);
+                    CSharpCompilation compilation = CSharpCompilation.Create("ExpressionValidation")
+                        .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
+                        //.AddReferences(MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location))
+                        //.AddReferences(MetadataReference.CreateFromFile(typeof(Console).Assembly.Location))
+                        .AddSyntaxTrees(syntaxTree);
+                    IEnumerable<Diagnostic> diagnostics = compilation.GetDiagnostics();
+                    foreach (Diagnostic diagnostic in diagnostics)
+                    {
+                        if (diagnostic.Severity == DiagnosticSeverity.Error)
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    //MessageBox.Show($"Exception: {ex.Message}");
+                    //MessageBox.Show($"String passed to Parse Text:\n{tmp}\n\nStack Trace: {ex.StackTrace}");
+                    return false;
+                }
+            }
+            private async System.Threading.Tasks.Task<bool> evaluateExpression()
+            {
+                if (!_valid || _script == null || _busy) return false;
+                _busy = true;
+                bool bRet = false;
+                try
+                {
+                    Globals globals = new Globals();
+                    globals.Variables = _subs;
+                    ScriptState ss = await _script.RunAsync(globals);
+                    if (ss.Variables.Length == 1)
+                    {
+                        ScriptVariable sv = ss.Variables[0];
+                        bRet = (bool)sv.Value;
+                        _error = false;
+                    }
+                    else
+                    {
+                        _valid = false;
+                        _error = true;
+                        _script = null;
+                    }
+                }
+                catch
+                {
+                    _valid = false;
+                    _script = null;
+                    _error = true;
+                }
+                _busy = false;
+                return bRet;
+            }
+            public bool ScriptError
+            {
+                get { return _error; }
+            }
+            public bool ScriptValid
+            {
+                get { return _valid; }
+            }
+            public bool ConditionResult
+            {
+                get { return _result; }
+            }
+            public System.Drawing.Color PanelBackColour1
+            {
+                get { return _panel_back_colour_1; }
+                set { _panel_back_colour_1 = value; }
+            }
+            public System.Drawing.Color PanelBackColour2
+            {
+                get { return _panel_back_colour_2; }
+                set { _panel_back_colour_2 = value; }
+            }
+            public bool Pulse
+            {
+                get { return _pulse; }
+                set { _pulse = value; }
+            }
+            public Led_Shape LedShape
+            {
+                get { return _led_shape; }
+                set { _led_shape = value; }
+            }
+            public Led_Style LedStyle
+            {
+                get { return _led_style; }
+                set { _led_style = value; }
+            }
+            public string Condition
+            {
+                get { return _condition; }
+                set {
+                    if (value == _condition) return;
+
+                    _condition = value.Replace("|", "");
+                    ReadingsCustom.UpdateReadings(_condition);
+                    lock (_list_placeholders_lock)
+                    {
+                        _list_placeholders_readings.Clear();
+                        _list_placeholders_strings.Clear();
+                        List<string> placeholders = ReadingsCustom.GetPlaceholders(_condition);
+                        foreach (string placeholder in placeholders)
+                        {
+                            if (ReadingsCustom.IsCustomString(placeholder))
+                                _list_placeholders_strings.Add(placeholder);
+                            else
+                            {
+                                bool ok = Enum.TryParse<Reading>(placeholder.ToUpper(), out Reading tmpReading);
+                                if (ok) _list_placeholders_readings.Add(tmpReading);
+                            }
+                        }
+
+                        //string expression = _condition;
+                        //foreach (Reading r in _list_placeholders_readings)
+                        //{
+                        //    object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, _owningMeter.RX);
+                        //    expression = expression.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("f1"));
+                        //}
+                        //foreach (string placeholder in _list_placeholders_strings)
+                        //{
+                        //    object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, _owningMeter.RX);
+                        //    expression = expression.Replace("%" + placeholder.ToLower() + "%", (string)reading);
+                        //}
+
+                        _subs.Clear();                        
+                        string expression = _condition;
+                        string script_expression = _condition;
+                        foreach (Reading r in _list_placeholders_readings)
+                        {
+                            object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, _owningMeter.RX);
+                            expression = expression.Replace("%" + r.ToString().ToLower() + "%", reading.ToString());
+                            script_expression = script_expression.Replace("%" + r.ToString().ToLower() + "%", "(float)Variables[\"" + r.ToString().ToLower() + "\"]");
+                            if (!_subs.ContainsKey(r.ToString().ToLower()))
+                                _subs.Add(r.ToString().ToLower(), reading);
+                        }
+                        foreach (string placeholder in _list_placeholders_strings)
+                        {
+                            object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, _owningMeter.RX);
+                            if (reading is int)
+                            {
+                                expression = expression.Replace("%" + placeholder.ToLower() + "%", "(int)(" + reading.ToString() + ")");
+                                script_expression = script_expression.Replace("%" + placeholder.ToLower() + "%", "(int)(Variables[\"" + placeholder.ToLower() + "\"])");
+                            }
+                            else if (reading is float)
+                            {
+                                expression = expression.Replace("%" + placeholder.ToLower() + "%", "(float)(" + reading.ToString() + ")");
+                                script_expression = script_expression.Replace("%" + placeholder.ToLower() + "%", "(float)(Variables[\"" + placeholder.ToLower() + "\"])");
+                            }
+                            else if (reading is double)
+                            {
+                                expression = expression.Replace("%" + placeholder.ToLower() + "%", "(double)(" + reading.ToString() + ")");
+                                script_expression = script_expression.Replace("%" + placeholder.ToLower() + "%", "(double)(Variables[\"" + placeholder.ToLower() + "\"])");
+                            }
+                            else if (reading is bool)
+                            {
+                                expression = expression.Replace("%" + placeholder.ToLower() + "%", "(bool)(" + reading.ToString().ToLower() + ")");
+                                script_expression = script_expression.Replace("%" + placeholder.ToLower() + "%", "(bool)(Variables[\"" + placeholder.ToLower() + "\"])");
+                            }
+                            else
+                            {
+                                expression = expression.Replace("%" + placeholder.ToLower() + "%", "(string)(\"" + reading.ToString() + "\")");
+                                script_expression = script_expression.Replace("%" + placeholder.ToLower() + "%", "(string)(Variables[\"" + placeholder.ToLower() + "\"])");
+                            }                            
+                            if (!_subs.ContainsKey(placeholder.ToLower()))
+                                _subs.Add(placeholder.ToLower(), reading);
+                        }
+
+                        // MultiMeter IO
+                        foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
+                        {
+                            MultiMeterIO.clsMMIO mmio = mmios.Value;
+                            foreach (KeyValuePair<string, object> kvp in mmio.Variables())
+                            {
+                                Type type;
+                                object val = mmio.GetVariable(kvp.Key);
+
+                                string tmp = mmio.VariableValueType(val);
+
+                                expression = expression.Replace("%" + kvp.Key + "%", tmp);
+
+                                if (script_expression.Contains("%" + kvp.Key + "%"))
+                                {
+                                    if (val is int)
+                                    {
+                                        script_expression = script_expression.Replace("%" + kvp.Key + "%", "(int)(Variables[\"" + kvp.Key + "\"])");
+                                        if (!_subs.ContainsKey(kvp.Key))
+                                            _subs.Add(kvp.Key, val);
+                                    }
+                                    else if (val is float)
+                                    {
+                                        script_expression = script_expression.Replace("%" + kvp.Key + "%", "(float)(Variables[\"" + kvp.Key + "\"])");
+                                        if (!_subs.ContainsKey(kvp.Key))
+                                            _subs.Add(kvp.Key, val);
+                                    }
+                                    else if (val is double)
+                                    {
+                                        script_expression = script_expression.Replace("%" + kvp.Key + "%", "(double)(Variables[\"" + kvp.Key + "\"])");
+                                        if (!_subs.ContainsKey(kvp.Key))
+                                            _subs.Add(kvp.Key, val);
+                                    }
+                                    else if (val is bool)
+                                    {
+                                        script_expression = script_expression.Replace("%" + kvp.Key + "%", "(bool)(Variables[\"" + kvp.Key + "\"])");
+                                        if (!_subs.ContainsKey(kvp.Key))
+                                            _subs.Add(kvp.Key, val);
+                                    }
+                                    else
+                                    {
+                                        script_expression = script_expression.Replace("%" + kvp.Key + "%", "(string)(Variables[\"" + kvp.Key + "\"])");
+                                        if (!_subs.ContainsKey(kvp.Key))
+                                            _subs.Add(kvp.Key, val);
+                                    }
+                                }
+                            }
+                        }
+                        //
+
+                        _valid = validateExpression(expression, _subs);
+                        if (_valid)
+                        {
+                            try
+                            {
+                                ScriptOptions options = ScriptOptions.Default.AddReferences(typeof(object).Assembly);
+                                _script = CSharpScript.Create($"bool result = (bool)({script_expression});", options, typeof(Globals));
+                                _script.Compile();
+                            }
+                            catch
+                            {
+                                _script = null;
+                                _valid = false;
+                            }
+                        }
+                    }                    
+                }
+            }
+            public float OffsetX
+            {
+                get { return _x_offset; }
+                set { _x_offset = value; }
+            }
+            public float OffsetY
+            {
+                get { return _y_offset; }
+                set { _y_offset = value; }
+            }
+            public float SizeX
+            {
+                get { return _x_size; }
+                set { _x_size = value; }
+            }
+            public float SizeY
+            {
+                get { return _y_size; }
+                set { _y_size = value; }
+            }
+            public System.Drawing.Color TrueColour
+            {
+                get { return _true_colour; }
+                set { _true_colour = value; }
+            }
+            public System.Drawing.Color FalseColour
+            {
+                get { return _false_colour; }
+                set { _false_colour = value; }
+            }
+            public bool ShowBackPanel
+            {
+                get { return _show_back_panel; }
+                set { _show_back_panel = value; }
+            }
+            public float Padding
+            {
+                get { return _padding; }
+                set { _padding = value; }
+            }
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
+            {
+                if (_valid && _script != null)
+                {
+                    lock (_list_placeholders_lock)
+                    {
+                        foreach (Reading r in _list_placeholders_readings)
+                        {
+                            if (_subs.ContainsKey(r.ToString().ToLower()))
+                            {
+                                ReadingsCustom.TakeReading(rx, r);
+                                object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
+                                _subs[r.ToString().ToLower()] = (float)reading;
+                            }
+                        }
+                        foreach (string placeholder in _list_placeholders_strings)
+                        {
+                            if (_subs.ContainsKey(placeholder.ToLower()))
+                            {
+                                object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
+                                _subs[placeholder.ToLower()] = reading;
+                            }
+                        }
+                    }
+
+                    // MultiMeter IO
+                    foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
+                    {
+                        MultiMeterIO.clsMMIO mmio = mmios.Value;
+                        foreach (KeyValuePair<string, object> kvp in mmio.Variables())
+                        {
+                            if (_subs.ContainsKey(kvp.Key))
+                            {
+                                _subs[kvp.Key] = mmio.GetVariable(kvp.Key);
+                            }
+                        }
+                    }
+                    //
+
+                    _result = evaluateExpression().Result;
+                }
+            }
+            public override bool ZeroOut(out float value, int rx)
+            {
+                value = 0;
+                lock (_list_placeholders_lock)
+                {
+                    foreach (Reading reading in _list_placeholders_readings)
+                    {
+                        ZeroReading(out value, rx, reading);
+                        MeterManager.setReadingForced(rx, reading, value);
+                    }
+                }
                 return false; // false as we do our own setReadingForced just above
             }
         }
@@ -4929,7 +5584,6 @@ namespace Thetis
         //        set { _fontSize = value; }
         //    }
         //}
-
         internal class clsBarItem : clsMeterItem
         {
             public enum Units
@@ -5283,99 +5937,100 @@ namespace Thetis
                 if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
                     value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
-                    switch (ReadingSource)
-                    {
-                        case Reading.SIGNAL_STRENGTH:
-                        case Reading.AVG_SIGNAL_STRENGTH:
-                            {
-                                if (IsAboveS9Frequency(rx))
-                                    value = -153; //S0
-                                else
-                                    value = -133; //S0
-                            }
-                            break;
-                        case Reading.ADC_PK:
-                        case Reading.ADC_AV:
-                            {
-                                value = -120.0f;
-                            }
-                            break;
-                        case Reading.AGC_AV:
-                        case Reading.AGC_PK:
-                            value = -125.0f;
-                            break;
-                        case Reading.AGC_GAIN:
-                            {
-                                value = -50.0f;
-                            }
-                            break;
-                        case Reading.MIC:
-                        case Reading.MIC_PK:
-                            {
-                                value = -120.0f;
-                            }
-                            break;
-                        case Reading.LEVELER:
-                        case Reading.LEVELER_PK:
-                            {
-                                value = -30.0f;
-                            }
-                            break;
-                        case Reading.LVL_G:
-                            {
-                                value = 0f;
-                            }
-                            break;
-                        case Reading.ALC:
-                        case Reading.ALC_PK:
-                            {
-                                value = -120.0f;
-                            }
-                            break;
-                        case Reading.ALC_G: //alc comp
-                            {
-                                value = 0f;
-                            }
-                            break;
-                        case Reading.ALC_GROUP:
-                            {
-                                value = -30.0f;
-                            }
-                            break;
-                        case Reading.CFC_AV:
-                        case Reading.CFC_PK:
-                            {
-                                value = -30.0f;
-                            }
-                            break;
-                        case Reading.CFC_G:
-                            {
-                                value = 0f;
-                            }
-                            break;
-                        case Reading.COMP:
-                        case Reading.COMP_PK:
-                            {
-                                value = -30.0f;
-                            }
-                            break;
-                        case Reading.PWR:
-                        case Reading.REVERSE_PWR:
-                            {
-                                value = 0f;
-                            }
-                            break;
-                        case Reading.SWR:
-                            {
-                                value = 1.0f;
-                            }
-                            break;
-                        case Reading.ESTIMATED_PBSNR:
-                            {
-                                value = 0f;
-                            }
-                            break;
-                    }                    
+                    ZeroReading(out value, rx, ReadingSource);
+                    //switch (ReadingSource)
+                    //{
+                    //    case Reading.SIGNAL_STRENGTH:
+                    //    case Reading.AVG_SIGNAL_STRENGTH:
+                    //        {
+                    //            if (IsAboveS9Frequency(rx))
+                    //                value = -153; //S0
+                    //            else
+                    //                value = -133; //S0
+                    //        }
+                    //        break;
+                    //    case Reading.ADC_PK:
+                    //    case Reading.ADC_AV:
+                    //        {
+                    //            value = -120.0f;
+                    //        }
+                    //        break;
+                    //    case Reading.AGC_AV:
+                    //    case Reading.AGC_PK:
+                    //        value = -125.0f;
+                    //        break;
+                    //    case Reading.AGC_GAIN:
+                    //        {
+                    //            value = -50.0f;
+                    //        }
+                    //        break;
+                    //    case Reading.MIC:
+                    //    case Reading.MIC_PK:
+                    //        {
+                    //            value = -120.0f;
+                    //        }
+                    //        break;
+                    //    case Reading.LEVELER:
+                    //    case Reading.LEVELER_PK:
+                    //        {
+                    //            value = -30.0f;
+                    //        }
+                    //        break;
+                    //    case Reading.LVL_G:
+                    //        {
+                    //            value = 0f;
+                    //        }
+                    //        break;
+                    //    case Reading.ALC:
+                    //    case Reading.ALC_PK:
+                    //        {
+                    //            value = -120.0f;
+                    //        }
+                    //        break;
+                    //    case Reading.ALC_G: //alc comp
+                    //        {
+                    //            value = 0f;
+                    //        }
+                    //        break;
+                    //    case Reading.ALC_GROUP:
+                    //        {
+                    //            value = -30.0f;
+                    //        }
+                    //        break;
+                    //    case Reading.CFC_AV:
+                    //    case Reading.CFC_PK:
+                    //        {
+                    //            value = -30.0f;
+                    //        }
+                    //        break;
+                    //    case Reading.CFC_G:
+                    //        {
+                    //            value = 0f;
+                    //        }
+                    //        break;
+                    //    case Reading.COMP:
+                    //    case Reading.COMP_PK:
+                    //        {
+                    //            value = -30.0f;
+                    //        }
+                    //        break;
+                    //    case Reading.PWR:
+                    //    case Reading.REVERSE_PWR:
+                    //        {
+                    //            value = 0f;
+                    //        }
+                    //        break;
+                    //    case Reading.SWR:
+                    //        {
+                    //            value = 1.0f;
+                    //        }
+                    //        break;
+                    //    case Reading.ESTIMATED_PBSNR:
+                    //        {
+                    //            value = 0f;
+                    //        }
+                    //        break;
+                    //}                    
                     return true;
                 }
                 value = 0;
@@ -5638,18 +6293,23 @@ namespace Thetis
             }
             public override bool ZeroOut(out float value, int rx)
             {
-                switch (ReadingSource)
+                //switch (ReadingSource)
+                //{
+                //    case Reading.SIGNAL_STRENGTH:
+                //    case Reading.AVG_SIGNAL_STRENGTH:
+                //        {
+                //            if (IsAboveS9Frequency(rx))
+                //                value = -153; //S0
+                //            else
+                //                value = -133; //S0
+                //            return true;
+                //        }
+                //        break;
+                //}
+                if (ReadingSource == Reading.SIGNAL_STRENGTH || ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
                 {
-                    case Reading.SIGNAL_STRENGTH:
-                    case Reading.AVG_SIGNAL_STRENGTH:
-                        {
-                            if (IsAboveS9Frequency(rx))
-                                value = -153; //S0
-                            else
-                                value = -133; //S0
-                            return true;
-                        }
-                        break;
+                    ZeroReading(out value, rx, ReadingSource);
+                    return true;
                 }
                 value = 0;
                 return false;
@@ -5948,50 +6608,51 @@ namespace Thetis
                 if(_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
                     value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
-                    switch (ReadingSource)
-                    {
-                        case Reading.SIGNAL_STRENGTH:
-                        case Reading.AVG_SIGNAL_STRENGTH:
-                            {
-                                if (IsAboveS9Frequency(rx))
-                                    value = -153; //S0
-                                else
-                                    value = -133; //S0
+                    ZeroReading(out value, rx, ReadingSource);
+                    //switch (ReadingSource)
+                    //{
+                    //    case Reading.SIGNAL_STRENGTH:
+                    //    case Reading.AVG_SIGNAL_STRENGTH:
+                    //        {
+                    //            if (IsAboveS9Frequency(rx))
+                    //                value = -153; //S0
+                    //            else
+                    //                value = -133; //S0
 
-                            }
-                            break;
-                        case Reading.PWR:
-                        case Reading.REVERSE_PWR:
-                            {
-                                value = 0f;
-                            }
-                            break;
-                        case Reading.VOLTS:
-                            {
-                                value = 10f;
-                            }
-                            break;
-                        case Reading.AMPS:
-                            {
-                                value = 10f;
-                            }
-                            break;
-                        case Reading.SWR:
-                            {
-                                value = 1.0f;
-                            }
-                            break;
-                        case Reading.ALC_G: //alc comp
-                            {
-                                value = 0f;
-                            }
-                            break;
-                        case Reading.ALC_GROUP:
-                            {
-                                value = -30.0f;
-                            }
-                            break;
-                    }
+                    //        }
+                    //        break;
+                    //    case Reading.PWR:
+                    //    case Reading.REVERSE_PWR:
+                    //        {
+                    //            value = 0f;
+                    //        }
+                    //        break;
+                    //    case Reading.VOLTS:
+                    //        {
+                    //            value = 10f;
+                    //        }
+                    //        break;
+                    //    case Reading.AMPS:
+                    //        {
+                    //            value = 10f;
+                    //        }
+                    //        break;
+                    //    case Reading.SWR:
+                    //        {
+                    //            value = 1.0f;
+                    //        }
+                    //        break;
+                    //    case Reading.ALC_G: //alc comp
+                    //        {
+                    //            value = 0f;
+                    //        }
+                    //        break;
+                    //    case Reading.ALC_GROUP:
+                    //        {
+                    //            value = -30.0f;
+                    //        }
+                    //        break;
+                    //}
                     return true;
                 }
                 value = 0;
@@ -6209,6 +6870,7 @@ namespace Thetis
                     case MeterType.CLOCK: return Reading.NONE;
                     case MeterType.SPACER: return Reading.NONE;
                     case MeterType.TEXT_OVERLAY: return Reading.NONE;
+                    case MeterType.LED: return Reading.NONE;
                     case MeterType.DATA_OUT: return Reading.NONE;
                     case MeterType.ROTATOR: return variable_index == 0 ? Reading.AZ : Reading.ELE;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
@@ -6248,6 +6910,7 @@ namespace Thetis
                     case MeterType.CLOCK: return 0;
                     case MeterType.SPACER: return 0;
                     case MeterType.TEXT_OVERLAY: return 0;
+                    case MeterType.LED: return 0;
                     case MeterType.DATA_OUT: return 0;
                     case MeterType.ROTATOR: return 2;
                     //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
@@ -6292,6 +6955,7 @@ namespace Thetis
                     case MeterType.CLOCK: AddClock(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.SPACER: AddSpacer(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
                     case MeterType.TEXT_OVERLAY: AddTextOverlay(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
+                    case MeterType.LED: AddLed(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
                     case MeterType.DATA_OUT: AddDataOut(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.ROTATOR: AddRotator(nDelay, 0, out bBottom, 0.5f, restoreIg); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
@@ -6977,6 +7641,34 @@ namespace Thetis
 
                 return me.ID;
             }
+            public string AddLed(int nMSupdate, float fTop, out float fBottom, float fSize, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsLed me = new clsLed(this);
+                me.ParentID = ig.ID;
+                me.Primary = true;
+                me.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
+                me.Size = new SizeF(1f, fSize);
+                me.ZOrder = 999; // on top of everything
+                addMeterItem(me);
+
+                fBottom = me.TopLeft.Y + me.Size.Height;
+
+                ig.TopLeft = me.TopLeft;
+                ig.Size = new SizeF(me.Size.Width, fBottom);
+                ig.MeterType = MeterType.LED;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);
+
+                return me.ID;
+            }
             public string AddAnanMM(int nMSupdate, float fTop, out float fBottom,  clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
@@ -7051,7 +7743,7 @@ namespace Thetis
                 ni2.ScaleCalibration.Add(10f, new PointF(0.559f, 0.756f));
                 ni2.ScaleCalibration.Add(12.5f, new PointF(0.605f, 0.772f));
                 ni2.ScaleCalibration.Add(15f, new PointF(0.665f, 0.784f));
-                ni2.Value = 10f;
+                ni2.Value = 0f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
                 ni2.Value = ni2.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 addMeterItem(ni2);
@@ -7088,7 +7780,7 @@ namespace Thetis
                 ni3.ScaleCalibration.Add(16f, new PointF(0.667f, 0.516f));
                 ni3.ScaleCalibration.Add(18f, new PointF(0.728f, 0.54f));
                 ni3.ScaleCalibration.Add(20f, new PointF(0.799f, 0.576f));
-                ni3.Value = 10f;
+                ni3.Value = 0f;
                 //MeterManager.setReading(rx, ni.ReadingSource, ni.Value);
                 ni3.Value = ni3.ScaleCalibration.OrderBy(p => p.Key).First().Key;
                 addMeterItem(ni3);
@@ -8985,6 +9677,68 @@ namespace Thetis
                                         }
                                     }
                                     break;
+                                case MeterType.LED:
+                                    {
+                                        bRebuild = true; // alwayys cause a rebuild as we relocate the text overlay each time
+
+                                        float padding = 0f;
+
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.LED))
+                                        {
+                                            clsLed led = me.Value as clsLed;
+                                            if (led == null) continue;
+
+                                            led.FadeOnRx = igs.FadeOnRx;
+                                            led.FadeOnTx = igs.FadeOnTx;
+                                            led.TrueColour = igs.Colour;
+                                            led.FalseColour = igs.MarkerColour;
+
+                                            led.PanelBackColour1 = igs.TitleColor;
+                                            led.PanelBackColour2 = igs.HistoryColor;
+                                            led.ShowBackPanel = igs.ShowSubMarker;
+
+                                            led.OffsetX = igs.EyeScale;
+                                            led.OffsetY = igs.EyeBezelScale;
+                                            led.SizeX = igs.AttackRatio;
+                                            led.SizeY = igs.DecayRatio;
+
+                                            led.Condition = igs.Text1;
+
+                                            led.Padding = igs.SpacerPadding;
+
+                                            if (igs.ShowSubMarker)
+                                            {
+                                                led.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                led.Size = new SizeF(ig.Size.Width, igs.SpacerPadding);
+                                                padding += igs.SpacerPadding;
+                                            }
+                                            else
+                                            {
+                                                led.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                led.Size = new SizeF(0, 0);
+                                            }
+                                        }
+                                        ig.Size = new SizeF(ig.Size.Width, padding == 0f ? 0 : padding + (_fPadY - (_fHeight * 0.75f)));
+
+                                        // recalc bounds for fade overlay cover as these will change as spacer changes
+                                        System.Drawing.RectangleF bounds = getBounds(ig.ID);
+                                        if (!bounds.IsEmpty)
+                                        {
+                                            foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                            {
+                                                clsFadeCover fc = fcs.Value as clsFadeCover;
+                                                if (fc == null) continue;
+
+                                                fc.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                fc.Size = new SizeF(ig.Size.Width, padding);
+
+                                                fc.FadeOnRx = igs.FadeOnRx;
+                                                fc.FadeOnTx = igs.FadeOnTx;
+                                            }
+                                        }
+                                    }
+                                    break;
                                 case MeterType.TEXT_OVERLAY:
                                     {
                                         bRebuild = true; // alwayys cause a rebuild as we relocate the text overlay each time
@@ -9042,8 +9796,8 @@ namespace Thetis
                                         ig.Size = new SizeF(ig.Size.Width, padding == 0f ? 0 : padding + (_fPadY - (_fHeight * 0.75f)));
 
                                         // recalc bounds for fade overlay cover as these will change as spacer changes
-                                        System.Drawing.RectangleF eyeBounds = getBounds(ig.ID);
-                                        if (!eyeBounds.IsEmpty)
+                                        System.Drawing.RectangleF bounds = getBounds(ig.ID);
+                                        if (!bounds.IsEmpty)
                                         {
                                             foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                             {
@@ -9664,6 +10418,46 @@ namespace Thetis
                                             if (image == null) continue; // skip
 
                                             igs.DarkMode = image.DarkMode;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue; // skip
+
+                                            igs.FadeOnRx = fc.FadeOnRx;
+                                            igs.FadeOnTx = fc.FadeOnTx;
+                                        }
+                                    }
+                                    break;
+                                case MeterType.LED:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        //one image, and the me
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.LED))
+                                        {
+                                            clsLed led = me.Value as clsLed;
+                                            if (led == null) continue; // skip
+
+                                            igs.FadeOnRx = led.FadeOnRx;
+                                            igs.FadeOnTx = led.FadeOnTx;
+                                            igs.Colour = led.TrueColour;
+                                            igs.MarkerColour = led.FalseColour;
+
+                                            igs.TitleColor = led.PanelBackColour1;
+                                            igs.HistoryColor = led.PanelBackColour2;
+                                            igs.ShowSubMarker = led.ShowBackPanel;
+
+                                            igs.EyeScale = led.OffsetX;
+                                            igs.EyeBezelScale = led.OffsetY;
+                                            igs.AttackRatio = led.SizeX;
+                                            igs.DecayRatio = led.SizeY;
+
+                                            igs.Text1 = led.Condition;
+
+                                            igs.SpacerPadding = led.Padding;
+
+                                            igs.ShowHistory = led.ScriptError;
+                                            igs.ShowType = led.ScriptValid;
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                         {
@@ -10544,6 +11338,7 @@ namespace Thetis
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.SIGNAL_TEXT_DISPLAY ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.SPACER ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.TEXT_OVERLAY ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.LED ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR
                                                                 //o.Value.ItemType == clsMeterItem.MeterItemType.SPECTRUM
                                                                 /*o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY*/) &&
@@ -11943,6 +12738,10 @@ namespace Thetis
                                         renderTextOverlay(rect, mi, m, false);
                                         additionalDraws.Add(mikvp.Key, mikvp.Value);
                                         break;
+                                    case clsMeterItem.MeterItemType.LED:
+                                        renderLed(rect, mi, m, false);
+                                        additionalDraws.Add(mikvp.Key, mikvp.Value);
+                                        break;
                                     case clsMeterItem.MeterItemType.DATA_OUT:
                                         break;
                                     case clsMeterItem.MeterItemType.ROTATOR:
@@ -11985,6 +12784,9 @@ namespace Thetis
                             {
                                 case clsMeterItem.MeterItemType.TEXT_OVERLAY:
                                     renderTextOverlay(rect, mi, m, true);
+                                    break;
+                                case clsMeterItem.MeterItemType.LED:
+                                    renderLed(rect, mi, m, true);
                                     break;
                             }
                         }
@@ -12847,6 +13649,55 @@ namespace Thetis
                 Utilities.Dispose(ref sharpGeometry);
                 sharpGeometry = null;
             }
+            private void renderLed(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m, bool draw_led)
+            {
+                clsLed led = (clsLed)mi;
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
+                if (!do_cover_fade && (led.PanelBackColour1 != led.PanelBackColour2))
+                {
+                    if (m.MOX != mi.MOX)
+                    {
+                        mi.FadeValue = 48;
+                        mi.MOX = m.MOX;
+                    }
+                    else
+                    {
+                        int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                        updateInterval = Math.Min(updateInterval, 500);
+                        // fade to take half a second
+                        int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
+                        int stepSize = (int)Math.Ceiling(207 / (float)steps_needed); // 255-48 = 207
+
+                        mi.FadeValue += stepSize;
+                        if (mi.FadeValue > 255) mi.FadeValue = 255;
+                    }
+                }
+
+                if (!draw_led)
+                {
+                    if (led.ShowBackPanel)
+                    {
+                        SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
+                        _renderTarget.FillRectangle(rectSC, getDXBrushForColour(m.MOX ? led.PanelBackColour2 : led.PanelBackColour1, mi.FadeValue));
+                    }
+                }
+                else
+                {
+                    float xSize = targetWidth * led.SizeX;
+                    float ySize = targetWidth * led.SizeY;
+                    float posX = x + led.OffsetX * (targetWidth * m.XRatio);
+                    float posY = y + led.OffsetY * (targetWidth * m.YRatio);
+                    SharpDX.RectangleF igrect = new SharpDX.RectangleF(posX - (xSize / 2f), posY - (ySize /2f), xSize, ySize);
+                    System.Drawing.Color c = led.ConditionResult ? led.TrueColour : led.FalseColour;
+                    _renderTarget.FillRectangle(igrect, getDXBrushForColour(c));
+                }
+            }
             private void renderTextOverlay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m, bool text)
             {
                 clsTextOverlay text_overlay = (clsTextOverlay)mi;
@@ -12888,7 +13739,7 @@ namespace Thetis
                 else
                 {
                     // Determine the text to measure and display
-                    string displayText = m.MOX ? text_overlay.ParsedText2 : text_overlay.ParsedText1;
+                    string displayText = m.MOX ? text_overlay.ParsedText2(_rx) : text_overlay.ParsedText1(_rx);
                     string fontFamily = m.MOX ? text_overlay.FontFamily2 : text_overlay.FontFamily1;
                     float fontSize = m.MOX ? text_overlay.FontSize2 : text_overlay.FontSize1;
                     fontSize *= 2.1f; // when a container is added, and not resized, 72 point font needs this fudge to get it to be 72 point
@@ -15363,8 +16214,20 @@ namespace Thetis
                 if (_io_variables.ContainsKey(key))
                 {
                     object val = _io_variables[key];
-                    Type valueType = determineType(val.ToString());
-                    object covertedVal = convertToType(val.ToString(), valueType);
+                    string sTmp;
+                    if (val is int)
+                        sTmp = val.ToString();
+                    else if (val is float)
+                        sTmp = ((float)val).ToString("f1");
+                    else if (val is double)
+                        sTmp = ((double)val).ToString("f1");
+                    else if (val is bool)
+                        sTmp = ((bool)val).ToString().ToLower();
+                    else
+                        sTmp = val.ToString();
+
+                    Type valueType = DetermineType(sTmp);
+                    object covertedVal = ConvertToType(val.ToString(), valueType);
                     return covertedVal;
                 }
                 return false;
@@ -15382,6 +16245,8 @@ namespace Thetis
                     tmp = ((float)obj).ToString("f1");
                 else if (obj is double)
                     tmp = ((double)obj).ToString("f1");
+                else if (obj is bool)
+                    tmp = ((bool)obj).ToString().ToLower();
                 else
                     tmp = obj.ToString();
                 return tmp;
@@ -16249,12 +17114,12 @@ namespace Thetis
             foreach (KeyValuePair<string, string> kvp in keyValuePairs)
             {
                 //Debug.Print($"key = {kvp.Key}    value = {kvp.Value}    type = {determineType(kvp.Value)}");
-                Type tpe = determineType(kvp.Value);
-                object typedValue = convertToType(kvp.Value, tpe);
+                Type tpe = DetermineType(kvp.Value);
+                object typedValue = ConvertToType(kvp.Value, tpe);
                 mmio.SetVariable(kvp.Key, typedValue);
             }
         }
-        private static Type determineType(string value)
+        public static Type DetermineType(string value)
         {
             // Create culture info for European style numbers
             CultureInfo europeanCulture = new CultureInfo("fr-FR");
@@ -16275,13 +17140,17 @@ namespace Thetis
             {
                 return typeof(double);
             }
+            else if (bool.TryParse(value, out _))
+            {
+                return typeof(bool);
+            }
             else
             {
                 return typeof(string);
             }
         }
 
-        static object convertToType(string value, Type type)
+        public static object ConvertToType(string value, Type type)
         {
             // Create culture info for European style numbers
             CultureInfo europeanCulture = new CultureInfo("fr-FR");
@@ -16312,6 +17181,14 @@ namespace Thetis
                         return resultDouble;
                     }
                     return double.Parse(value, numberStyle, CultureInfo.InvariantCulture);
+                }
+                else if (type == typeof(bool))
+                {
+                    if (bool.TryParse(value, out bool resultBool))
+                    {
+                        return resultBool;
+                    }
+                    return bool.Parse(value);
                 }
                 else
                 {

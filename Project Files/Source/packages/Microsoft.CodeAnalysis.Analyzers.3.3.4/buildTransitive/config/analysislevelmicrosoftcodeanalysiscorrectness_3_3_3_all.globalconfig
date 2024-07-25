@@ -1,0 +1,15 @@
+# NOTE: Requires **VS2019 16.7** or later
+
+# 'MicrosoftCodeAnalysisCorrectness' Rules from '3.3.3' release with 'All' analysis mode
+# Description: 'MicrosoftCodeAnalysisCorrectness' Rules with enabled-by-default state from '3.3.3' release with 'All' analysis mode. Rules that are first released in a version later than '3.3.3' are disabled.
+
+is_global = true
+
+global_level = -99
+
+
+# RS1035: Do not use APIs banned for analyzers
+dotnet_diagnostic.RS1035.severity = none
+
+# RS1036: Specify analyzer banned API enforcement setting
+dotnet_diagnostic.RS1036.severity = none
