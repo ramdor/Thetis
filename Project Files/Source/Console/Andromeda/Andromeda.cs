@@ -982,7 +982,20 @@ namespace Thetis
             eBBMultiEncoderButton,      // multifunction encoder button
             eBBShift,                   // SHIFT allows 2nd function for front panel buttons, for band entry
             eBBMNFAdd,                  // add a manual notch filter
-            eBBAntennaStep              // step to a different antenna
+            eBBAntennaStep,             // step to a different antenna
+            eBBBand160,                 // 160m band
+            eBBBand80,                  // 80m band
+            eBBBand60,                  // 60m band
+            eBBBand40,                  // 40m band
+            eBBBand30,                  // 30m band
+            eBBBand20,                  // 20m band
+            eBBBand17,                  // 17m band
+            eBBBand15,                  // 15m band
+            eBBBand12,                  // 12m band
+            eBBBand10,                  // 10m band
+            eBBBand6,                   // 6m band
+            eBBBandLFMF                 // LF/MF band
+
         }
 
         // G8NJJ: define the actons an Andromeda encoder can have
@@ -1043,6 +1056,20 @@ namespace Thetis
             eINDiversityEnabled,
             eINATUReady,
             eINShiftEnabled                         // button to enable front panel band entry
+        }
+
+
+        // property to set whether a G2 panel is attached; CAT via TCP/IP
+        private bool andromeda_g2_enabled;
+        public bool AndromedaG2Enabled
+        {
+            set
+            {
+                andromeda_g2_enabled = value;
+                toolStripStatusLabelAndromedaMulti.Visible = true;
+            }
+
+            get { return andromeda_g2_enabled; }
         }
 
 
@@ -1191,7 +1218,7 @@ namespace Thetis
             EncoderComboTable.Rows.Add(EEncoderActions.eENCWSpeed, "CW speed");
             EncoderComboTable.Rows.Add(EEncoderActions.eENSquelch, "RX squelch");
             EncoderComboTable.Rows.Add(EEncoderActions.eENDiversityGain, "RX diversity gain");
-            EncoderComboTable.Rows.Add(EEncoderActions.eENDiversityPhase, "RX diversite phase");
+            EncoderComboTable.Rows.Add(EEncoderActions.eENDiversityPhase, "RX diversity phase");
             EncoderComboTable.Rows.Add(EEncoderActions.eENCompanderThreshold, "TX compander threshold");
             EncoderComboTable.Rows.Add(EEncoderActions.eENRIT, "RIT");
             EncoderComboTable.Rows.Add(EEncoderActions.eENXIT, "XIT");
@@ -1352,11 +1379,22 @@ namespace Thetis
             ButtonComboTable.Rows.Add(EButtonBarActions.eBBATUOnOff, "Auto ATU on/off", "ATU");                // Auto ATU on/off
             ButtonComboTable.Rows.Add(EButtonBarActions.eBBMenuButton, "Menu Softkey Button", "Menu Key");              // menu button below screen
             ButtonComboTable.Rows.Add(EButtonBarActions.eBBMultiEncoderButton, "Multi Encoder pushbutton", "Multi button");      // multifunction encoder button
-            ButtonComboTable.Rows.Add(EButtonBarActions.eBBShift, "Band Shift front panel button", "band shift button");                     // SHIFT allows 2nd function for front panel buttons, for band entry
-            ButtonComboTable.Rows.Add(EButtonBarActions.eBBMNFAdd, "Add Manual Notch Filter", "Add MNF notch");                     // SHIFT allows 2nd function for front panel buttons, for band entry
-            ButtonComboTable.Rows.Add(EButtonBarActions.eBBAntennaStep, "Step RX/Tx antenna", "Step antenna");                     // SHIFT allows 2nd function for front panel buttons, for band entry
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBShift, "Band Shift front panel button", "band shift button");         // SHIFT allows 2nd function for front panel buttons, for band entry
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBMNFAdd, "Add Manual Notch Filter", "Add MNF notch");                  // add manual notch
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBAntennaStep, "Step RX/Tx antenna", "Step antenna");                   // step the selected antenna
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBBand160, "160m band", "160m band");                                   // select a band
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBBand80, "80m band", "80m band");                                      // select a band
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBBand60, "60m band", "60m band");                                      // select a band
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBBand40, "40m band", "40m band");                                      // select a band
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBBand30, "30m band", "30m band");                                      // select a band
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBBand20, "20m band", "20m band");                                      // select a band
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBBand17, "17m band", "17m band");                                      // select a band
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBBand15, "15m band", "15m band");                                      // select a band
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBBand12, "12m band", "12m band");                                      // select a band
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBBand10, "10m band", "10m band");                                      // select a band
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBBand6, "6m band", "6m band");                                         // select a band
+            ButtonComboTable.Rows.Add(EButtonBarActions.eBBBandLFMF, "LFMF band", "LFMF band");                                  // select a band
             ComboSet.Tables.Add(ButtonComboTable);
-
             // RX override values for pushbuttons
             DataTable PushbuttonRXOverrideTable = new DataTable("Pushbutton RX Override Strings");
             PushbuttonRXOverrideTable.Columns.Add("OvrId", typeof(int));          // front panel pushbutton number
@@ -1445,10 +1483,10 @@ namespace Thetis
             ButtonTable.Rows.Add(27, EButtonBarActions.eBBMenuButton, "", 17);
             ButtonTable.Rows.Add(28, EButtonBarActions.eBBMenuButton, "", 18);
             ButtonTable.Rows.Add(29, EButtonBarActions.eBBShift, "", 0);
-            ButtonTable.Rows.Add(30, EButtonBarActions.eBBModeSettingsForm, "", 0);
+            ButtonTable.Rows.Add(30, EButtonBarActions.eBBBandPlus, "", 0);
             ButtonTable.Rows.Add(31, EButtonBarActions.eBBModePlus, "", 0);
             ButtonTable.Rows.Add(32, EButtonBarActions.eBBFilterPlus, "", 0);
-            ButtonTable.Rows.Add(33, EButtonBarActions.eBBRX2OnOff, "", 0);
+            ButtonTable.Rows.Add(33, EButtonBarActions.eBBBandMinus, "", 0);
             ButtonTable.Rows.Add(34, EButtonBarActions.eBBModeMinus, "", 0);
             ButtonTable.Rows.Add(35, EButtonBarActions.eBBFilterMinus, "", 0);
             ButtonTable.Rows.Add(36, EButtonBarActions.eBBVFOAtoB, "", 0);
@@ -1482,7 +1520,7 @@ namespace Thetis
             EncoderTable.Rows.Add(7, EEncoderActions.eENDiversityGain, "", 0);    // 7A: diversity gain
             EncoderTable.Rows.Add(8, EEncoderActions.eENDiversityPhase, "", 0);  // 7B: diversity phase
             EncoderTable.Rows.Add(9, EEncoderActions.eENRIT, "", 0);                         // 9A: RIT
-            EncoderTable.Rows.Add(10, EEncoderActions.eENNoAction, "", 0);             // 9B: not assigned
+            EncoderTable.Rows.Add(10, EEncoderActions.eENXIT, "", 0);             // 9B: not assigned
             EncoderTable.Rows.Add(11, EEncoderActions.eENMulti, "", 0);            // 11A: multifunction
             EncoderTable.Rows.Add(12, EEncoderActions.eENDrive, "", 0);                    // 11B: drive
             EncoderTable.Rows.Add(13, EEncoderActions.eENNoAction, "", 0);
@@ -1639,6 +1677,271 @@ namespace Thetis
             AndromedaSet.Tables.Add(MenubarTable);
         }
 
+
+        // create a new G2 panel dataset from scratch, if one doesn't yet exist
+        // this is like a "factory reset" for the dataset if it can't be read from file
+        // create tables, and add initial data to them
+        private void MakeNewG2PanelDataset()
+        {
+            // this table holds settings for LED indicators
+            // (note indicators not yet used)
+            DataTable IndicatorTable = new DataTable("Indicators");
+            IndicatorTable.Columns.Add("Indicator Number", typeof(int));            // console indicator number
+            IndicatorTable.Columns.Add("Indicator Action", typeof(int));            // function indicated by it (from EIndicatorActions)
+            IndicatorTable.Columns.Add("Indicator Description", typeof(String));    // useful text?
+            IndicatorTable.Columns.Add("Indicator RX Selector", typeof(int));       // 0: insensitive to RX; 1: indicator uses show_RX1 setting; 2: for RX1; 3: for RX2
+            IndicatorTable.Rows.Add(1, (int)EIndicatorActions.eINMOX, "", 0);
+            IndicatorTable.Rows.Add(2, (int)EIndicatorActions.eINATUReady, "", 0);
+            IndicatorTable.Rows.Add(3, (int)EIndicatorActions.eINTune, "", 0);
+            IndicatorTable.Rows.Add(4, (int)EIndicatorActions.eINPuresignalEnabled, "", 0);
+            IndicatorTable.Rows.Add(5, (int)EIndicatorActions.eINDiversityEnabled, "", 0);
+            IndicatorTable.Rows.Add(6, (int)EIndicatorActions.eINShiftEnabled, "", 0);
+            IndicatorTable.Rows.Add(7, (int)EIndicatorActions.eINCTune, "", 1);      // pick up RX1 or 2
+            IndicatorTable.Rows.Add(8, (int)EIndicatorActions.eINRIT, "", 0);
+            IndicatorTable.Rows.Add(9, (int)EIndicatorActions.eINXIT, "", 0);
+            IndicatorTable.Rows.Add(10, (int)EIndicatorActions.eINVFOAB, "", 0);
+            IndicatorTable.Rows.Add(11, (int)EIndicatorActions.eINVFOLock, "", 0);
+            IndicatorTable.Rows.Add(12, (int)EIndicatorActions.eINNone, "", 0);
+            IndicatorTable.Rows.Add(13, (int)EIndicatorActions.eINNone, "", 0);
+            IndicatorTable.Rows.Add(14, (int)EIndicatorActions.eINNone, "", 0);
+            IndicatorTable.Rows.Add(15, (int)EIndicatorActions.eINNone, "", 0);
+            IndicatorTable.Rows.Add(16, (int)EIndicatorActions.eINNone, "", 0);
+            IndicatorTable.Rows.Add(17, (int)EIndicatorActions.eINNone, "", 0);
+            IndicatorTable.Rows.Add(18, (int)EIndicatorActions.eINNone, "", 0);
+            IndicatorTable.Rows.Add(19, (int)EIndicatorActions.eINNone, "", 0);
+            IndicatorTable.Rows.Add(20, (int)EIndicatorActions.eINNone, "", 0);
+
+            // this table holds settings for pushbuttons
+            // G2 includs the shifted actions as additional button numbers
+            DataTable ButtonTable = new DataTable("Pushbuttons");
+            ButtonTable.Columns.Add("Pushbutton Number", typeof(int));              // front panel pushbutton number
+            ButtonTable.Columns.Add("Pushbutton Action", typeof(int));              // action assigned to button (from EButtonBarActions)
+            ButtonTable.Columns.Add("Pushbutton Description", typeof(String));      // descriptive text
+            ButtonTable.Columns.Add("Pushbutton RX Selector", typeof(int));         // overrides softkey number or RX1/RX2 assignment (0: use A/B; 1: use RX1; 2: use RX2)
+            ButtonTable.Rows.Add(1, EButtonBarActions.eBBMuteOnOff, "", 2);             // encoder 1
+            ButtonTable.Rows.Add(2, EButtonBarActions.eBBMuteOnOff, "", 1);             // encoder 2
+            ButtonTable.Rows.Add(3, EButtonBarActions.eBBMultiEncoderButton, "", 0);    // encoder 3
+            ButtonTable.Rows.Add(4, EButtonBarActions.eBBNone, "", 0);                  // ATU button (no function yet)
+            ButtonTable.Rows.Add(5, EButtonBarActions.eBBPuresignal2Tone, "", 0);
+            ButtonTable.Rows.Add(6, EButtonBarActions.eBBTune, "", 0);
+            ButtonTable.Rows.Add(7, EButtonBarActions.eBBMOX, "", 0);
+            ButtonTable.Rows.Add(8, EButtonBarActions.eBBVFOCTUNEOnOff, "", 0);
+            ButtonTable.Rows.Add(9, EButtonBarActions.eBBVFOLockOnOff, "", 0);
+            ButtonTable.Rows.Add(10, EButtonBarActions.eBBToggleAB, "", 0);
+            ButtonTable.Rows.Add(11, EButtonBarActions.eBBRITXITToggle, "", 0);
+            ButtonTable.Rows.Add(12, EButtonBarActions.eBBClearRITXIT, "", 0);          // encoder 4
+            ButtonTable.Rows.Add(13, EButtonBarActions.eBBFilterReset, "", 0);          // encoder 5
+            ButtonTable.Rows.Add(14, EButtonBarActions.eBBModePlus, "", 0);
+            ButtonTable.Rows.Add(15, EButtonBarActions.eBBFilterPlus, "", 0);
+            ButtonTable.Rows.Add(16, EButtonBarActions.eBBBandPlus, "", 0);
+            ButtonTable.Rows.Add(17, EButtonBarActions.eBBModeMinus, "", 0);
+            ButtonTable.Rows.Add(18, EButtonBarActions.eBBFilterMinus, "", 0);
+            ButtonTable.Rows.Add(19, EButtonBarActions.eBBBandMinus, "", 0);
+            ButtonTable.Rows.Add(20, EButtonBarActions.eBBVFOAtoB, "", 0);
+            ButtonTable.Rows.Add(21, EButtonBarActions.eBBVFOBtoA, "", 0);
+            ButtonTable.Rows.Add(22, EButtonBarActions.eBBVFOSplit, "", 0);
+            ButtonTable.Rows.Add(23, EButtonBarActions.eBBNone, "", 0);
+            ButtonTable.Rows.Add(24, EButtonBarActions.eBBNone, "", 0);
+            ButtonTable.Rows.Add(25, EButtonBarActions.eBBNone, "", 0);
+            ButtonTable.Rows.Add(26, EButtonBarActions.eBBNone, "", 0);         // no assigned button
+            ButtonTable.Rows.Add(27, EButtonBarActions.eBBBand160, "", 0);
+            ButtonTable.Rows.Add(28, EButtonBarActions.eBBBand80, "", 0);
+            ButtonTable.Rows.Add(29, EButtonBarActions.eBBBand60, "", 0);
+            ButtonTable.Rows.Add(30, EButtonBarActions.eBBBand40, "", 0);
+            ButtonTable.Rows.Add(31, EButtonBarActions.eBBBand30, "", 0);
+            ButtonTable.Rows.Add(32, EButtonBarActions.eBBBand20, "", 0);
+            ButtonTable.Rows.Add(33, EButtonBarActions.eBBBand17, "", 0);
+            ButtonTable.Rows.Add(34, EButtonBarActions.eBBBand15, "", 0);
+            ButtonTable.Rows.Add(35, EButtonBarActions.eBBBand12, "", 0);
+            ButtonTable.Rows.Add(36, EButtonBarActions.eBBBand10, "", 0);
+            ButtonTable.Rows.Add(37, EButtonBarActions.eBBBand6, "", 0);
+            ButtonTable.Rows.Add(38, EButtonBarActions.eBBBandLFMF, "", 0);
+            ButtonTable.Rows.Add(39, EButtonBarActions.eBBNone, "", 0);         // band shift if used
+            ButtonTable.Rows.Add(40, EButtonBarActions.eBBNone, "", 0);         // mode shift if used
+            ButtonTable.Rows.Add(41, EButtonBarActions.eBBDiversityOnOff, "", 0);
+            ButtonTable.Rows.Add(42, EButtonBarActions.eBBNone, "", 0);
+            ButtonTable.Rows.Add(43, EButtonBarActions.eBBNone, "", 0);
+            ButtonTable.Rows.Add(44, EButtonBarActions.eBBNone, "", 0);
+            ButtonTable.Rows.Add(45, EButtonBarActions.eBBNone, "", 0);
+            ButtonTable.Rows.Add(46, EButtonBarActions.eBBNone, "", 0);
+            ButtonTable.Rows.Add(47, EButtonBarActions.eBBNone, "", 0);
+            ButtonTable.Rows.Add(48, EButtonBarActions.eBBNone, "", 0);
+            ButtonTable.Rows.Add(49, EButtonBarActions.eBBNone, "", 0);
+            ButtonTable.Rows.Add(50, EButtonBarActions.eBBNone, "", 0);
+            // this table holds settings for rotary encoders
+            DataTable EncoderTable = new DataTable("Encoders");
+            EncoderTable.Columns.Add("Encoder Number", typeof(int));                // front panel pushbutton number
+            EncoderTable.Columns.Add("Encoder Action", typeof(int));                // action assigned to button (from EEncoderActions)
+            EncoderTable.Columns.Add("Encoder Description", typeof(String));        // descriptive text
+            EncoderTable.Columns.Add("Encoder RX Selector", typeof(int));           // overrides softkey number or RX1/RX2 assignment (0: use A/B; 1: use RX1; 2: use RX2)
+            EncoderTable.Rows.Add(1, EEncoderActions.eENAFGain, "", 2);             // 1A: RX2 AF
+            EncoderTable.Rows.Add(2, EEncoderActions.eENAGCLevel, "", 2);           // 1B: RX2 AGC
+            EncoderTable.Rows.Add(3, EEncoderActions.eENAFGain, "", 1);             // 2A: RX1 AF
+            EncoderTable.Rows.Add(4, EEncoderActions.eENAGCLevel, "", 1);           // 2B: RX1 AGC
+            EncoderTable.Rows.Add(5, EEncoderActions.eENMulti, "", 0);              // 3A: multifunction
+            EncoderTable.Rows.Add(6, EEncoderActions.eENDrive, "", 0);              // 3B: drive
+            EncoderTable.Rows.Add(7, EEncoderActions.eENRIT, "", 0);                // 4A: RIT
+            EncoderTable.Rows.Add(8, EEncoderActions.eENXIT, "", 0);                // 4B: not assigned
+            EncoderTable.Rows.Add(9, EEncoderActions.eENFilterHigh, "", 0);         // 5A: filter high
+            EncoderTable.Rows.Add(10, EEncoderActions.eENFilterLow, "", 0);         // 5B: filter low
+            EncoderTable.Rows.Add(11, EEncoderActions.eENDiversityGain, "", 0);     // 6A: diversity gain
+            EncoderTable.Rows.Add(12, EEncoderActions.eENDiversityPhase, "", 0);    // 6B: diversity phase
+            EncoderTable.Rows.Add(13, EEncoderActions.eENNoAction, "", 0);
+            EncoderTable.Rows.Add(14, EEncoderActions.eENNoAction, "", 0);
+            EncoderTable.Rows.Add(15, EEncoderActions.eENNoAction, "", 0);
+            EncoderTable.Rows.Add(16, EEncoderActions.eENNoAction, "", 0);
+            EncoderTable.Rows.Add(17, EEncoderActions.eENNoAction, "", 0);
+            EncoderTable.Rows.Add(18, EEncoderActions.eENNoAction, "", 0);
+            EncoderTable.Rows.Add(19, EEncoderActions.eENNoAction, "", 0);
+            EncoderTable.Rows.Add(20, EEncoderActions.eENNoAction, "", 0);
+
+            // this table is all the allowed options for the multifunction encoder
+            DataTable MultiTable = new DataTable("Multifunction Settings");
+            MultiTable.Columns.Add("Multi Number", typeof(int));          // front panel pushbutton number
+            MultiTable.Columns.Add("Multi Action", typeof(int));          // action assigned to button (from EEncoderActions)
+            MultiTable.Columns.Add("Multi Description", typeof(String));   // descriptive text
+            MultiTable.Columns.Add("Multi RX Selector", typeof(int));     // overrides softkey number or RX1/RX2 assignment (0: use A/B; 1: use RX1; 2: use RX2)
+            MultiTable.Rows.Add(0, EEncoderActions.eENMasterGain, "Master AF Gain", 0);
+            MultiTable.Rows.Add(1, EEncoderActions.eENAFGain, "RX1 AF Gain", 1);
+            MultiTable.Rows.Add(2, EEncoderActions.eENAFGain, "RX2 AF Gain", 2);
+            MultiTable.Rows.Add(3, EEncoderActions.eENAFGain, "Sub-RX AF Gain", 3);
+            MultiTable.Rows.Add(4, EEncoderActions.eENAGCLevel, "RX1 AGC", 1);
+            MultiTable.Rows.Add(5, EEncoderActions.eENAGCLevel, "RX2 AGC", 2);
+            MultiTable.Rows.Add(6, EEncoderActions.eENStepAtten, "RX1 Step Atten", 1);
+            MultiTable.Rows.Add(7, EEncoderActions.eENStepAtten, "RX2 Step Atten", 2);
+            MultiTable.Rows.Add(8, EEncoderActions.eENFilterHigh, "RX1 Filter High Cut", 1);
+            MultiTable.Rows.Add(9, EEncoderActions.eENFilterLow, "RX1 Filter Low Cut", 1);
+
+            MultiTable.Rows.Add(10, EEncoderActions.eENFilterHigh, "RX2 Filter High Cut", 2);
+            MultiTable.Rows.Add(11, EEncoderActions.eENFilterLow, "RX2 Filter Low Cut", 2);
+            MultiTable.Rows.Add(12, EEncoderActions.eENSquelch, "RX1 Squelch", 1);
+            MultiTable.Rows.Add(13, EEncoderActions.eENSquelch, "RX2 Squelch", 2);
+            MultiTable.Rows.Add(14, EEncoderActions.eENDiversityGain, "Diversity Gain", 0);
+            MultiTable.Rows.Add(15, EEncoderActions.eENDiversityPhase, "Diversity Phase", 0);
+            MultiTable.Rows.Add(16, EEncoderActions.eENRIT, "RIT", 0);
+            MultiTable.Rows.Add(17, EEncoderActions.eENXIT, "XIT", 0);
+            MultiTable.Rows.Add(18, EEncoderActions.eENRITXIT, "RIT or XIT", 0);
+            MultiTable.Rows.Add(19, EEncoderActions.eENDrive, "TX Drive", 0);
+
+            MultiTable.Rows.Add(20, EEncoderActions.eENMicGain, "Mic Gain", 0);
+            MultiTable.Rows.Add(21, EEncoderActions.eENVFOATune, "VFO A Tune", 0);
+            MultiTable.Rows.Add(22, EEncoderActions.eENVFOBTune, "VFO B Tune", 0);
+            MultiTable.Rows.Add(23, EEncoderActions.eENVOXGain, "VOX Gain", 0);
+            MultiTable.Rows.Add(24, EEncoderActions.eENVOXHold, "VOX Hold", 0);
+            MultiTable.Rows.Add(25, EEncoderActions.eENCWSidetone, "CW sidetone pitch", 0);
+            MultiTable.Rows.Add(26, EEncoderActions.eENCWSpeed, "CW Speed", 0);
+            MultiTable.Rows.Add(27, EEncoderActions.eENCompanderThreshold, "COMP Gain", 0);
+            MultiTable.Rows.Add(28, EEncoderActions.eENDisplayPan, "Display Pan", 0);
+            MultiTable.Rows.Add(29, EEncoderActions.eENDisplayZoom, "Display Zoom", 0);
+
+            MultiTable.Rows.Add(30, EEncoderActions.eENStereoBalance, "RX1 Stereo Balance", 1);
+            MultiTable.Rows.Add(31, EEncoderActions.eENStereoBalance, "RX2 Stereo Balance", 2);
+            MultiTable.Rows.Add(32, EEncoderActions.eENStereoBalance, "Sub-RX Stereo Balance", 3);
+            MultiTable.Rows.Add(33, EEncoderActions.eENVACRX, "VAC1 RX Gain", 1);
+            MultiTable.Rows.Add(34, EEncoderActions.eENVACTX, "VAC1 TX Gain", 1);
+            MultiTable.Rows.Add(35, EEncoderActions.eENVACRX, "VAC2 RX Gain", 2);
+            MultiTable.Rows.Add(36, EEncoderActions.eENVACTX, "VAC2 TX Gain", 2);
+            MultiTable.Rows.Add(37, EEncoderActions.eENTuneStep, "VFO Tune Step", 0);
+
+            // this table describes the menu bar entries
+            DataTable MenubarTable = new DataTable("Menu Bar Settings");
+            MenubarTable.Columns.Add("Menu button Number", typeof(int));      // front panel pushbutton number
+            MenubarTable.Columns.Add("Menu Action", typeof(int));             // action assigned to button (from EButtonBarActions)
+            MenubarTable.Columns.Add("Menu Text", typeof(String));            // descriptive text
+            MenubarTable.Columns.Add("Menu RX Selector", typeof(int));        // overrides softkey number or RX1/RX2 assignment (0: use A/B; 1: use RX1; 2: use RX2)
+            MenubarTable.Columns.Add("Menu Number", typeof(int));             // softkey number to change menu to
+
+            // create the menus, in groups of 8
+            // menu 1 - quick access
+            MenubarTable.Rows.Add(0, EButtonBarActions.eBBMenu, "Quick Menu", 0, 2);             // numerical parameter only for "menu" entries - points to next
+            MenubarTable.Rows.Add(1, EButtonBarActions.eBBNR, "NR", 0, 0);
+            MenubarTable.Rows.Add(2, EButtonBarActions.eBBNB, "NB", 0, 0);
+            MenubarTable.Rows.Add(3, EButtonBarActions.eBBSNB, "SNB", 0, 0);
+            MenubarTable.Rows.Add(4, EButtonBarActions.eBBANF, "ANF", 0, 0);
+            MenubarTable.Rows.Add(5, EButtonBarActions.eBBAGCStep, "AGC Step", 0, 0);
+            MenubarTable.Rows.Add(6, EButtonBarActions.eBBAttenStep, "Atten Step", 0, 0);
+            MenubarTable.Rows.Add(7, EButtonBarActions.eBBAntennaStep, "change antenna", 0, 0);
+
+            // menu 2 - RX
+            MenubarTable.Rows.Add(8, EButtonBarActions.eBBMenu, "RX Menu", 0, 3);
+            MenubarTable.Rows.Add(9, EButtonBarActions.eBBDiversityOnOff, "Diversity", 0, 0);
+            MenubarTable.Rows.Add(10, EButtonBarActions.eBBDiversityForm, "Diversity Form", 0, 0);
+            MenubarTable.Rows.Add(11, EButtonBarActions.eBBSliderForm, "Gain Form", 0, 0);
+            MenubarTable.Rows.Add(12, EButtonBarActions.eBBFilterForm, "Filter Form", 0, 0);
+            MenubarTable.Rows.Add(13, EButtonBarActions.eBBMuteOnOff, "Mute", 0, 0);
+            MenubarTable.Rows.Add(14, EButtonBarActions.eBBRXAntenna, "RX Ant", 0, 0);
+            MenubarTable.Rows.Add(15, EButtonBarActions.eBBNone, "----", 0, 0);
+
+            // menu 3 - VFO
+            MenubarTable.Rows.Add(16, EButtonBarActions.eBBMenu, "VFO Menu", 0, 4);
+            MenubarTable.Rows.Add(17, EButtonBarActions.eBBBandForm, "Band Form", 0, 0);
+            MenubarTable.Rows.Add(18, EButtonBarActions.eBBModeForm, "Mode Form", 0, 0);
+            MenubarTable.Rows.Add(19, EButtonBarActions.eBBBandstackForm, "Bandstack Form", 0, 0);
+            MenubarTable.Rows.Add(20, EButtonBarActions.eBBVFOSwap, "Swap A <--> B", 0, 0);
+            MenubarTable.Rows.Add(21, EButtonBarActions.eBBVFOSettingForm, "Tune step Form", 0, 0);
+            MenubarTable.Rows.Add(22, EButtonBarActions.eBBBandstack, "Bandstack", 0, 0);
+            MenubarTable.Rows.Add(23, EButtonBarActions.eBBNone, "----", 0, 0);
+
+            // menu 4 - TX
+            MenubarTable.Rows.Add(24, EButtonBarActions.eBBMenu, "TX Menu", 0, 5);
+            MenubarTable.Rows.Add(25, EButtonBarActions.eBBModeSettingsForm, "Mode settings form", 0, 0);
+            MenubarTable.Rows.Add(26, EButtonBarActions.eBBPuresignalForm, "Puresignal Form", 0, 0);
+            MenubarTable.Rows.Add(27, EButtonBarActions.eBBPuresignalOnOff, "Puresignal select", 0, 0);
+            MenubarTable.Rows.Add(28, EButtonBarActions.eBBMOX, "MOX", 0, 0);
+            MenubarTable.Rows.Add(29, EButtonBarActions.eBBTune, "TUNE", 0, 0);
+            MenubarTable.Rows.Add(30, EButtonBarActions.eBBPuresignal2Tone, "PS 2 Tone test", 0, 0);
+            MenubarTable.Rows.Add(31, EButtonBarActions.eBBATUOnOff, "ATU", 0, 0);
+
+            // menu 5 - display
+            MenubarTable.Rows.Add(32, EButtonBarActions.eBBMenu, "Display Menu", 0, 6);
+            MenubarTable.Rows.Add(33, EButtonBarActions.eBBRXMeterStep, "RX Meter Mode Step", 0, 0);
+            MenubarTable.Rows.Add(34, EButtonBarActions.eBBTXMeterStep, "TX Meter mode step", 0, 0);
+            MenubarTable.Rows.Add(35, EButtonBarActions.eBBDisplayModeStep, "Display Mode Step", 0, 0);
+            MenubarTable.Rows.Add(36, EButtonBarActions.eBBCentreDisplay, "Centre Display", 0, 0);
+            MenubarTable.Rows.Add(37, EButtonBarActions.eBBDisplaySettingsForm, "Display Form", 0, 0);
+            MenubarTable.Rows.Add(38, EButtonBarActions.eBBZoomStep, "Zoom", 0, 0);
+            MenubarTable.Rows.Add(39, EButtonBarActions.eBBNone, "----", 0, 0);
+
+            // menu 6 - audio
+            MenubarTable.Rows.Add(40, EButtonBarActions.eBBMenu, "Audio Menu", 0, 7);
+            MenubarTable.Rows.Add(41, EButtonBarActions.eBBRecordAudio, "Quick Record Audio", 0, 0);
+            MenubarTable.Rows.Add(42, EButtonBarActions.eBBPlayAudio, "Quick Play Audio", 0, 0);
+            MenubarTable.Rows.Add(43, EButtonBarActions.eBBNone, "----", 0, 0);
+            MenubarTable.Rows.Add(44, EButtonBarActions.eBBAudioForm, "Audio rec/play Form", 0, 0);
+            MenubarTable.Rows.Add(45, EButtonBarActions.eBBVAC1OnOff, "VAC1", 0, 0);
+            MenubarTable.Rows.Add(46, EButtonBarActions.eBBVAC2OnOff, "VAC2", 0, 0);
+            MenubarTable.Rows.Add(47, EButtonBarActions.eBBNone, "----", 0, 0);
+
+            // menu 7 - setup
+            MenubarTable.Rows.Add(48, EButtonBarActions.eBBMenu, "Setup Menu", 0, 1);
+            MenubarTable.Rows.Add(49, EButtonBarActions.eBBDUP, "Duplex", 0, 0);
+            MenubarTable.Rows.Add(50, EButtonBarActions.eBBMON, "TX Monitor", 0, 0);
+            MenubarTable.Rows.Add(51, EButtonBarActions.eBBRX2OnOff, "RX2", 0, 0);
+            MenubarTable.Rows.Add(52, EButtonBarActions.eBBSubRXOnOff, "Sub RX", 0, 0);
+            MenubarTable.Rows.Add(53, EButtonBarActions.eBBEqualiserForm, "Equaliser Form", 0, 0);
+            MenubarTable.Rows.Add(54, EButtonBarActions.eBBSetupForm, "Setup Form", 0, 0);
+            MenubarTable.Rows.Add(55, EButtonBarActions.eBBMenu, "Extended Menu", 0, 8);
+
+            // menu 8 - extended / test
+            MenubarTable.Rows.Add(56, EButtonBarActions.eBBMenu, "Test Menu", 0, 1);
+            MenubarTable.Rows.Add(57, EButtonBarActions.eBBQuickSave, "Quick Save", 0, 0);
+            MenubarTable.Rows.Add(58, EButtonBarActions.eBBQuickRestore, "Quick Restore", 0, 0);
+            MenubarTable.Rows.Add(59, EButtonBarActions.eBBFilterPlus, "filter up", 0, 0);
+            MenubarTable.Rows.Add(60, EButtonBarActions.eBBFilterMinus, "filter down", 0, 0);
+            MenubarTable.Rows.Add(61, EButtonBarActions.eBBBandPlus, "Band up", 0, 0);
+            MenubarTable.Rows.Add(62, EButtonBarActions.eBBBandMinus, "Band down", 0, 0);
+            MenubarTable.Rows.Add(63, EButtonBarActions.eBBNone, "----", 0, 0);
+
+            // add the data tables to the dataset, and save it for next time
+            AndromedaSet.Tables.Add(IndicatorTable);
+            AndromedaSet.Tables.Add(ButtonTable);
+            AndromedaSet.Tables.Add(EncoderTable);
+            AndromedaSet.Tables.Add(MultiTable);
+            AndromedaSet.Tables.Add(MenubarTable);
+        }
+
+
+
         void SaveAndromedaDataset()
         {
             string Filename = AppDataPath + "andromedadata.xml";            // XML file for the settings
@@ -1652,6 +1955,15 @@ namespace Thetis
         {
             AndromedaSet.Tables.Clear();
             MakeNewAndromedaDataset();              // if no XML file, create dataset
+            SaveAndromedaDataset();         //  and save file
+            InitialiseAndromedaIndicators(true);
+        }
+
+
+        public void ResetG2PanelDataset()
+        {
+            AndromedaSet.Tables.Clear();
+            MakeNewG2PanelDataset();              // if no XML file, create dataset
             SaveAndromedaDataset();         //  and save file
             InitialiseAndromedaIndicators(true);
         }
@@ -1929,40 +2241,43 @@ namespace Thetis
             DataTable table = AndromedaSet.Tables["Encoders"];
             int RowCount = table.Rows.Count;
             // see if control editor form open. If it is, send encoder number to that
-            if (andromedaEditorForm != null)
+            if(AndromedaCATEnabled || AndromedaG2Enabled)
             {
-                if (andromedaEditorForm.AndromedaEditorVisible)
+                if (andromedaEditorForm != null)
                 {
-                    andromedaEditorForm.SetEncoderNumber(Encoder);
-                    UsedForSetup = true;
-                }
-            }
-            // if we didn't send it to the editor form:
-            // check the number range provided; lookup the encoder action from a table;
-            // if multifunction, either update the action assigned to multi or execute that function
-            // if the control editor form is open, pass the encoder number to it
-            if ((Encoder >= 0) && (Encoder < RowCount) && (!UsedForSetup))
-            {
-                Action = (EEncoderActions)table.Rows[Encoder]["Encoder Action"];
-                Override = (int)table.Rows[Encoder]["Encoder RX Selector"];
-                if (Action == EEncoderActions.eENMulti)                         // if multifunction
-                {
-                    DataTable multitable = AndromedaSet.Tables["Multifunction Settings"];
-                    int MultiCount = multitable.Rows.Count;
-                    if (AndromedaMultiEncoderState == true)                     // if encoder button pressed, update the assigned option
+                    if (andromedaEditorForm.AndromedaEditorVisible)
                     {
-                        EncoderUpdate(Steps, ref CurrentMultifunctionOption, 0, MultiCount - 1);      // update the selected option for multi
-                                                                                                      //                        TitleBarMultifunctionString = "   multifunction encoder = " + multitable.Rows[CurrentMultifunctionOption]["Multi Description"];
-                        toolStripStatusLabelAndromedaMulti.Text = multitable.Rows[CurrentMultifunctionOption]["Multi Description"].ToString();
-                    }
-                    else
-                    {
-                        Action = (EEncoderActions)multitable.Rows[CurrentMultifunctionOption]["Multi Action"];           // get the action multi is set to
-                        Override = (int)multitable.Rows[CurrentMultifunctionOption]["Multi RX Selector"];           // get the RX override that multi is set to
+                        andromedaEditorForm.SetEncoderNumber(Encoder);
+                        UsedForSetup = true;
                     }
                 }
-                if (Action != EEncoderActions.eENMulti)                         // if not multifunction, execute it
-                    ExecuteEncoderStep(Action, Steps, Override);
+                // if we didn't send it to the editor form:
+                // check the number range provided; lookup the encoder action from a table;
+                // if multifunction, either update the action assigned to multi or execute that function
+                // if the control editor form is open, pass the encoder number to it
+                if ((Encoder >= 0) && (Encoder < RowCount) && (!UsedForSetup))
+                {
+                    Action = (EEncoderActions)table.Rows[Encoder]["Encoder Action"];
+                    Override = (int)table.Rows[Encoder]["Encoder RX Selector"];
+                    if (Action == EEncoderActions.eENMulti)                         // if multifunction
+                    {
+                        DataTable multitable = AndromedaSet.Tables["Multifunction Settings"];
+                        int MultiCount = multitable.Rows.Count;
+                        if (AndromedaMultiEncoderState == true)                     // if encoder button pressed, update the assigned option
+                        {
+                            EncoderUpdate(Steps, ref CurrentMultifunctionOption, 0, MultiCount - 1);      // update the selected option for multi
+                                                                                                          //                        TitleBarMultifunctionString = "   multifunction encoder = " + multitable.Rows[CurrentMultifunctionOption]["Multi Description"];
+                            toolStripStatusLabelAndromedaMulti.Text = multitable.Rows[CurrentMultifunctionOption]["Multi Description"].ToString();
+                        }
+                        else
+                        {
+                            Action = (EEncoderActions)multitable.Rows[CurrentMultifunctionOption]["Multi Action"];           // get the action multi is set to
+                            Override = (int)multitable.Rows[CurrentMultifunctionOption]["Multi RX Selector"];           // get the RX override that multi is set to
+                        }
+                    }
+                    if (Action != EEncoderActions.eENMulti)                         // if not multifunction, execute it
+                        ExecuteEncoderStep(Action, Steps, Override);
+                }
             }
         }
 
@@ -1976,30 +2291,33 @@ namespace Thetis
         //
         public void HandleFrontPanelVFOEncoderStep(int Steps)
         {
-            if (!IsSetupFormNull)
-                if (SetupForm.AndromedaFastTune)
-                    Steps = CalculateFastTuneSteps(Steps);
-
-            if (show_rx1)
+            if(AndromedaG2Enabled || AndromedaCATEnabled)
             {
-                if (RX1DSPMode == DSPMode.FM)
-                {
-                    FMSteps += Steps;                       // add the new count
-                    Steps = FMSteps / VFMSTEPCOUNT;         // see if enough to move VFO
-                    FMSteps = FMSteps % VFMSTEPCOUNT;       // and keep the residue
-                }
-                VFOAFreq = CATVFOA + (double)Steps * TuneStepList[TuneStepIndex].StepHz * 10e-7;
-            }
+                if (!IsSetupFormNull)
+                    if (SetupForm.AndromedaFastTune)
+                        Steps = CalculateFastTuneSteps(Steps);
 
-            else
-            {
-                if (RX2DSPMode == DSPMode.FM)
+                if (show_rx1)
                 {
-                    FMSteps += Steps;                       // add the new count
-                    Steps = FMSteps / VFMSTEPCOUNT;         // see if enough to move VFO
-                    FMSteps = FMSteps % VFMSTEPCOUNT;       // and keep the residue
+                    if (RX1DSPMode == DSPMode.FM)
+                    {
+                        FMSteps += Steps;                       // add the new count
+                        Steps = FMSteps / VFMSTEPCOUNT;         // see if enough to move VFO
+                        FMSteps = FMSteps % VFMSTEPCOUNT;       // and keep the residue
+                    }
+                    VFOAFreq = CATVFOA + (double)Steps * TuneStepList[TuneStepIndex].StepHz * 10e-7;
                 }
-                VFOBFreq = CATVFOB + (double)Steps * TuneStepList[TuneStepIndex].StepHz * 10e-7;
+
+                else
+                {
+                    if (RX2DSPMode == DSPMode.FM)
+                    {
+                        FMSteps += Steps;                       // add the new count
+                        Steps = FMSteps / VFMSTEPCOUNT;         // see if enough to move VFO
+                        FMSteps = FMSteps % VFMSTEPCOUNT;       // and keep the residue
+                    }
+                    VFOBFreq = CATVFOB + (double)Steps * TuneStepList[TuneStepIndex].StepHz * 10e-7;
+                }
             }
         }
 
@@ -2068,131 +2386,149 @@ namespace Thetis
             int RowCount = table.Rows.Count;
             bool UsedForSetup = false;                                            // true if we passed pushbutton setting to the control editor form
 
-            // if the control editor form is open, pass the pushbutton number to it
-            if (andromedaEditorForm != null)
+            if(AndromedaG2Enabled || AndromedaCATEnabled)
             {
-                if (andromedaEditorForm.AndromedaEditorVisible)
+                // if the control editor form is open, pass the pushbutton number to it
+                if (andromedaEditorForm != null)
                 {
-                    andromedaEditorForm.SetPushbuttonNumber(Button);
-                    UsedForSetup = true;
-                }
-            }
-            if (!UsedForSetup)                  // if not sent to setup form, process normally
-            {
-                if ((Button >= 29) && (Button <= 40))               // if it's one of the buttons in 3x4 "band" grid
-                {
-                    // one of the band button group. If a long press- just do it
-                    if(LongPress)
+                    if (andromedaEditorForm.AndromedaEditorVisible)
                     {
-                        BtnAction = (EButtonBarActions)table.Rows[Button]["Pushbutton Action"];
-                        BtnParam = (int)table.Rows[Button]["Pushbutton RX Selector"];
-                        ExecuteButtonLongpress(BtnAction, BtnParam);       // implement the button action
+                        andromedaEditorForm.SetPushbuttonNumber(Button);
+                        UsedForSetup = true;
                     }
-                    else if (State)             // normal button press.
+                }
+                if (!UsedForSetup)                  // if not sent to setup form, process normally
+                {
+                    if(andromeda_g2_enabled)                // G2 buttons are handled differently; no shift etc
                     {
-                        if (AndromedaBandButtonsEnabled)        // perform the "band" function of the button
+                        if (LongPress)
                         {
-                            switch (Button)
-                            {
-                                case 29: BandName = "160m"; BandSelected = Band.B160M; break;
-                                case 30: BandName = "80m"; BandSelected = Band.B80M; break;
-                                case 31: BandName = "60m"; BandSelected = Band.B60M; break;
-                                case 32: BandName = "40m"; BandSelected = Band.B40M; break;
-                                case 33: BandName = "30m"; BandSelected = Band.B30M; break;
-                                case 34: BandName = "20m"; BandSelected = Band.B20M; break;
-                                case 35: BandName = "17m"; BandSelected = Band.B17M; break;
-                                case 36: BandName = "15m"; BandSelected = Band.B15M; break;
-                                case 37: BandName = "12m"; BandSelected = Band.B12M; break;
-                                case 38: BandName = "10m"; BandSelected = Band.B10M; break;
-                                case 39: BandName = "6m"; BandSelected = Band.B6M; break;
-                                case 40: BandName = "GEN"; BandSelected = Band.GEN; break;
-                            }
-                            // we have changed band, so setup the new band
-                            if (show_rx1)                           // set RX1 or 2 band
-                                SetCATBand(BandSelected);
-                            else
-                            {
-                                SetupRX2Band(BandName);
-                            }
+                            BtnAction = (EButtonBarActions)table.Rows[Button]["Pushbutton Action"];
+                            BtnParam = (int)table.Rows[Button]["Pushbutton RX Selector"];
+                            ExecuteButtonLongpress(BtnAction, BtnParam);       // implement the button action
                         }
-                        else                     // perform the non band function
+                        else if (State)             // normal button press.
                         {
                             BtnAction = (EButtonBarActions)table.Rows[Button]["Pushbutton Action"];
                             BtnParam = (int)table.Rows[Button]["Pushbutton RX Selector"];
                             ExecuteButtonAction(BtnAction, BtnParam);       // implement the button action
                         }
-// now decide if we need to release the "shift" action. If sticky, we don't change it.
-                        if(!AndromedaStickyShift)
-                        {
-                            if(AndromedaBandButtonIsDefault)
-                                AndromedaBandButtonsEnabled = true;          // cancel shift
-                            else
-                                AndromedaBandButtonsEnabled = false;          // cancel shift
-                            AndromedaIndicatorCheck(EIndicatorActions.eINShiftEnabled, false, AndromedaBandButtonsEnabled);
-                        }
                     }
-                }
-                // else - a button not in the band group
-                else if ((Button >= 0) && (Button < RowCount))           // check valid button range
-                {
-                    BtnAction = (EButtonBarActions)table.Rows[Button]["Pushbutton Action"];
-                    BtnParam = (int)table.Rows[Button]["Pushbutton RX Selector"];
-
-                    if ((BtnAction == EButtonBarActions.eBBMenuButton) && (State == true))     // if a menu softkey button press:
+                    else if ((Button >= 29) && (Button <= 40))               // if it's one of the buttons in 3x4 "band" grid
                     {
-                        switch (BtnParam)
+                        // one of the band button group. If a long press- just do it
+                        if(LongPress)
                         {
-                            case 0:                    // softkey 1
-                            case 11:
-                                btnAndrBar1_Click(null, null);
-                                break;
-
-                            case 1:                    // softkey 2
-                            case 12:
-                                btnAndrBar2_Click(null, null);
-                                break;
-
-                            case 2:                    // softkey 3
-                            case 13:
-                                btnAndrBar3_Click(null, null);
-                                break;
-
-                            case 3:                    // softkey 4
-                            case 14:
-                                btnAndrBar4_Click(null, null);
-                                break;
-
-                            case 4:                    // softkey 5
-                            case 15:
-                                btnAndrBar5_Click(null, null);
-                                break;
-
-                            case 5:                    // softkey 6
-                            case 16:
-                                btnAndrBar6_Click(null, null);
-                                break;
-
-                            case 6:                    // softkey 7
-                            case 17:
-                                btnAndrBar7_Click(null, null);
-                                break;
-
-                            case 7:                    // softkey 8
-                            case 18:
-                                btnAndrBar8_Click(null, null);
-                                break;
-                        }
-                    }
-                    // the button isn't in the band group or menu group
-                    else
-                    {
-                        if (State)                                     // ordinary press
-                            ExecuteButtonAction(BtnAction, BtnParam);       // implement the button action
-                        else if (LongPress)
+                            BtnAction = (EButtonBarActions)table.Rows[Button]["Pushbutton Action"];
+                            BtnParam = (int)table.Rows[Button]["Pushbutton RX Selector"];
                             ExecuteButtonLongpress(BtnAction, BtnParam);       // implement the button action
+                        }
+                        else if (State)             // normal button press.
+                        {
+                            if (AndromedaBandButtonsEnabled)        // perform the "band" function of the button
+                            {
+                                switch (Button)
+                                {
+                                    case 29: BandName = "160m"; BandSelected = Band.B160M; break;
+                                    case 30: BandName = "80m"; BandSelected = Band.B80M; break;
+                                    case 31: BandName = "60m"; BandSelected = Band.B60M; break;
+                                    case 32: BandName = "40m"; BandSelected = Band.B40M; break;
+                                    case 33: BandName = "30m"; BandSelected = Band.B30M; break;
+                                    case 34: BandName = "20m"; BandSelected = Band.B20M; break;
+                                    case 35: BandName = "17m"; BandSelected = Band.B17M; break;
+                                    case 36: BandName = "15m"; BandSelected = Band.B15M; break;
+                                    case 37: BandName = "12m"; BandSelected = Band.B12M; break;
+                                    case 38: BandName = "10m"; BandSelected = Band.B10M; break;
+                                    case 39: BandName = "6m"; BandSelected = Band.B6M; break;
+                                    case 40: BandName = "GEN"; BandSelected = Band.GEN; break;
+                                }
+                                // we have changed band, so setup the new band
+                                if (show_rx1)                           // set RX1 or 2 band
+                                    SetCATBand(BandSelected);
+                                else
+                                {
+                                    SetupRX2Band(BandName);
+                                }
+                            }
+                            else                     // perform the non band function
+                            {
+                                BtnAction = (EButtonBarActions)table.Rows[Button]["Pushbutton Action"];
+                                BtnParam = (int)table.Rows[Button]["Pushbutton RX Selector"];
+                                ExecuteButtonAction(BtnAction, BtnParam);       // implement the button action
+                            }
+    // now decide if we need to release the "shift" action. If sticky, we don't change it.
+                            if(!AndromedaStickyShift)
+                            {
+                                if(AndromedaBandButtonIsDefault)
+                                    AndromedaBandButtonsEnabled = true;          // cancel shift
+                                else
+                                    AndromedaBandButtonsEnabled = false;          // cancel shift
+                                AndromedaIndicatorCheck(EIndicatorActions.eINShiftEnabled, false, AndromedaBandButtonsEnabled);
+                            }
+                        }
                     }
-                }
-            }//if (!UsedForSetup)
+                    // else - a button not in the band group
+                    else if ((Button >= 0) && (Button < RowCount))           // check valid button range
+                    {
+                        BtnAction = (EButtonBarActions)table.Rows[Button]["Pushbutton Action"];
+                        BtnParam = (int)table.Rows[Button]["Pushbutton RX Selector"];
+
+                        if ((BtnAction == EButtonBarActions.eBBMenuButton) && (State == true))     // if a menu softkey button press:
+                        {
+                            switch (BtnParam)
+                            {
+                                case 0:                    // softkey 1
+                                case 11:
+                                    btnAndrBar1_Click(null, null);
+                                    break;
+
+                                case 1:                    // softkey 2
+                                case 12:
+                                    btnAndrBar2_Click(null, null);
+                                    break;
+
+                                case 2:                    // softkey 3
+                                case 13:
+                                    btnAndrBar3_Click(null, null);
+                                    break;
+
+                                case 3:                    // softkey 4
+                                case 14:
+                                    btnAndrBar4_Click(null, null);
+                                    break;
+
+                                case 4:                    // softkey 5
+                                case 15:
+                                    btnAndrBar5_Click(null, null);
+                                    break;
+
+                                case 5:                    // softkey 6
+                                case 16:
+                                    btnAndrBar6_Click(null, null);
+                                    break;
+
+                                case 6:                    // softkey 7
+                                case 17:
+                                    btnAndrBar7_Click(null, null);
+                                    break;
+
+                                case 7:                    // softkey 8
+                                case 18:
+                                    btnAndrBar8_Click(null, null);
+                                    break;
+                            }
+                        }
+                        // the button isn't in the band group or menu group
+                        else
+                        {
+                            if (State)                                     // ordinary press
+                                ExecuteButtonAction(BtnAction, BtnParam);       // implement the button action
+                            else if (LongPress)
+                                ExecuteButtonLongpress(BtnAction, BtnParam);       // implement the button action
+                        }
+                    }
+                }//if (!UsedForSetup)
+            }
         }
 
 
@@ -2225,6 +2561,20 @@ namespace Thetis
                     Result += "  s/w=" + SoftwareVersion;
                     if (!IsSetupFormNull)
                         SetupForm.GanymedeVersionNumber = Result;
+                    break;
+
+                case 4:                 // G2
+                    Result = "G2 panel: h/w=" + HardwareVersion;
+                    Result += "  s/w=" + SoftwareVersion;
+                    if (!IsSetupFormNull)
+                        SetupForm.AndromedaVersionNumber = Result;
+                    break;
+
+                case 5:                 // G2 V2
+                    Result = "G2V2 panel: h/w=" + HardwareVersion;
+                    Result += "  s/w=" + SoftwareVersion;
+                    if (!IsSetupFormNull)
+                        SetupForm.AndromedaVersionNumber = Result;
                     break;
 
             }
@@ -2811,10 +3161,10 @@ namespace Thetis
 
 
 
-        //
-        // execute a single button press action
-        // this can be invoked by a menu button press or front panel button press
-        private void ExecuteButtonAction(EButtonBarActions assignedAction, int OverrideRX)
+    //
+    // execute a single button press action
+    // this can be invoked by a menu button press or front panel button press
+    private void ExecuteButtonAction(EButtonBarActions assignedAction, int OverrideRX)
         {
             bool UseRX1;                                            // true if we should process actions for RX1
             if (OverrideRX == 0)          // no override
@@ -2828,6 +3178,91 @@ namespace Thetis
             {
                 case EButtonBarActions.eBBNone:
                     break;
+
+                case EButtonBarActions.eBBBand160:
+                    if (show_rx1)                           // set RX1 or 2 band
+                        SetCATBand(Band.B160M);
+                    else
+                        SetupRX2Band("160m");
+                    break;
+
+                case EButtonBarActions.eBBBand80:
+                    if (show_rx1)                           // set RX1 or 2 band
+                        SetCATBand(Band.B80M);
+                    else
+                        SetupRX2Band("80m");
+                    break;
+
+                case EButtonBarActions.eBBBand60:
+                    if (show_rx1)                           // set RX1 or 2 band
+                        SetCATBand(Band.B60M);
+                    else
+                        SetupRX2Band("60m");
+                    break;
+
+                case EButtonBarActions.eBBBand40:
+                    if (show_rx1)                           // set RX1 or 2 band
+                        SetCATBand(Band.B40M);
+                    else
+                        SetupRX2Band("40m");
+                    break;
+
+                case EButtonBarActions.eBBBand30:
+                    if (show_rx1)                           // set RX1 or 2 band
+                        SetCATBand(Band.B30M);
+                    else
+                        SetupRX2Band("30m");
+                    break;
+
+                case EButtonBarActions.eBBBand20:
+                    if (show_rx1)                           // set RX1 or 2 band
+                        SetCATBand(Band.B20M);
+                    else
+                        SetupRX2Band("20m");
+                    break;
+
+                case EButtonBarActions.eBBBand17:
+                    if (show_rx1)                           // set RX1 or 2 band
+                        SetCATBand(Band.B17M);
+                    else
+                        SetupRX2Band("17m");
+                    break;
+
+                case EButtonBarActions.eBBBand15:
+                    if (show_rx1)                           // set RX1 or 2 band
+                        SetCATBand(Band.B15M);
+                    else
+                        SetupRX2Band("15m");
+                    break;
+
+                case EButtonBarActions.eBBBand12:
+                    if (show_rx1)                           // set RX1 or 2 band
+                        SetCATBand(Band.B12M);
+                    else
+                        SetupRX2Band("12m");
+                    break;
+
+                case EButtonBarActions.eBBBand10:
+                    if (show_rx1)                           // set RX1 or 2 band
+                        SetCATBand(Band.B10M);
+                    else
+                        SetupRX2Band("10m");
+                    break;
+
+                case EButtonBarActions.eBBBand6:
+                    if (show_rx1)                           // set RX1 or 2 band
+                        SetCATBand(Band.B60M);
+                    else
+                        SetupRX2Band("6m");
+                    break;
+
+                case EButtonBarActions.eBBBandLFMF:
+                    if (show_rx1)                           // set RX1 or 2 band
+                        SetCATBand(Band.GEN);
+                    else
+                        SetupRX2Band("GEN");
+                    break;
+
 
                 case EButtonBarActions.eBBStartStop:               // start/stop the radio
                     chkPower.Checked = !chkPower.Checked;
@@ -3718,6 +4153,10 @@ namespace Thetis
             }
             return NewString;
         }
+
+
+
+
 
 
         //

@@ -468,7 +468,8 @@ namespace Thetis
                 else
                 {
                     chkEnableAndromeda.Checked = false;
-                    chkEnableAndromeda.Enabled = false;
+                    if(!chkAndrG2Panel.Checked)
+                        chkEnableAndromeda.Enabled = false;
                 }
             }
 
@@ -10012,10 +10013,12 @@ namespace Thetis
             console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
 
+        // reguire a valid COM port for Andromeda; not needed for G2 panel
         private void ChkEnableAndromeda_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
 
+            chkAndrG2Panel.Checked = false;
             if (comboAndromedaCATPort.Text == "" || !comboAndromedaCATPort.Text.StartsWith("COM"))
             {
                 if (chkEnableAndromeda.Focused)
@@ -10048,6 +10051,7 @@ namespace Thetis
                 try
                 {
                     console.AndromedaCATEnabled = true;
+                    chkAndrG2Panel.Enabled = false;
                 }
                 catch (Exception ex)
                 {
@@ -10080,8 +10084,8 @@ namespace Thetis
                     chkCATPTT_DTR.Checked = false;
                     comboCATPTTPort.Text = "None";
                 }
-
                 console.AndromedaCATEnabled = false;
+                chkAndrG2Panel.Enabled = true;
             }
 
         }
@@ -10315,7 +10319,8 @@ namespace Thetis
                         chkEnableAndromeda.Checked = false;
                 }
 
-                chkEnableAndromeda.Enabled = false;
+                if(!chkAndrG2Panel.Checked)
+                    chkEnableAndromeda.Enabled = false;
             }
             else chkEnableAndromeda.Enabled = true;
 
@@ -19910,6 +19915,21 @@ namespace Thetis
             }
         }
 
+        private void chkAndrG2Panel_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkAndrG2Panel.Checked)
+            {
+                chkEnableAndromeda.Checked = false;
+                chkEnableAndromeda.Enabled = false;
+                console.AndromedaG2Enabled = true;
+            }
+            else
+            {
+                chkEnableAndromeda.Enabled = true;
+                console.AndromedaG2Enabled = false;
+            }
+        }
+
         private void checkAriesStandalone_CheckedChanged(object sender, EventArgs e)
         {
             console.AriesStandalone = checkAriesStandalone.Checked;
@@ -19929,6 +19949,7 @@ namespace Thetis
         {
             console.AndromedaStickyMenus = chkAndrStickyMenus.Checked;
         }
+
 
         //private bool m_bIncludeOtherSampleRates = false;
         private void chkIncludeOtherSampleRates_CheckedChanged(object sender, EventArgs e)
@@ -28773,6 +28794,7 @@ namespace Thetis
             lstMMIO_network_variables.Items.Clear();
             btnMMIO_network_remove_all_variables.Enabled = false;
         }
+
     }
 
     #region PADeviceInfo Helper Class
