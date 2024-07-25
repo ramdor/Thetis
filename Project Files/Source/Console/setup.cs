@@ -24168,6 +24168,21 @@ namespace Thetis
                 igs.FadeOnTx = chkMeterItemFadeOnTxRotator.Checked;
                 igs.DarkMode = chkMeterItemDarkModeRotator.Checked;
                 igs.AttackRatio = (float)nudMeterItemRotatorBeamWidth.Value;
+
+                igs.ShowType = chkMeterItemRotatorAllowControl.Checked;
+                igs.HistoryColor = clrbtnMeterItemRotatorControlColour.Color;
+                igs.Text1 = txtMeterItemRotatorAZcommand.Text;
+                igs.Text2 = txtMeterItemRotatorELEcommand.Text;
+
+                Guid guid = MultiMeterIO.GuidfromFourChar(txtRotator_4charID.Text);
+                if (guid != Guid.Empty)
+                {
+                    igs.SetMMIOGuid(2, guid);
+                }
+                else
+                {
+                    igs.SetMMIOGuid(2, Guid.Empty);
+                }
             }
             else if (mt == MeterType.DATA_OUT)
             {
@@ -24429,6 +24444,23 @@ namespace Thetis
                 chkMeterItemDarkModeRotator.Checked = igs.DarkMode;
                 nudMeterItemRotatorBeamWidth.Value = (decimal)igs.AttackRatio;
                 updateShowBeamWidthControls();
+
+                chkMeterItemRotatorAllowControl.Checked = igs.ShowType;
+                clrbtnMeterItemRotatorControlColour.Color = igs.HistoryColor;
+                txtMeterItemRotatorAZcommand.Text = igs.Text1;
+                txtMeterItemRotatorELEcommand.Text = igs.Text2;
+                updateRotatorControlControls();
+
+                Guid guid = igs.GetMMIOGuid(2);
+                if (MultiMeterIO.Data.ContainsKey(guid))
+                {
+                    MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[guid];
+                    txtRotator_4charID.Text = mmio.FourChar;
+                }
+                else
+                {
+                    txtRotator_4charID.Text = "";
+                }
             }
             else if (mt == MeterType.DATA_OUT)
             {
@@ -29008,6 +29040,52 @@ namespace Thetis
             clrbtnTextOverlay_TextBackColour2.Color = clrbtnTextOverlay_TextBackColour1.Color;
             chkTextOverlay_textback2.Checked = chkTextOverlay_textback1.Checked;
 
+            updateMeterType();
+        }
+
+        private void chkMeterItemRotatorAllowControl_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+            updateRotatorControlControls();
+        }
+
+        private void clrbtnMeterItemRotatorControlColour_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void txtMeterItemRotatorAZcommand_TextChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void txtMeterItemRotatorELEcommand_TextChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+        private void updateRotatorControlControls()
+        {
+            bool en = chkMeterItemRotatorAllowControl.Checked;
+            clrbtnMeterItemRotatorControlColour.Enabled = en;
+            txtMeterItemRotatorAZcommand.Enabled = en;
+            txtMeterItemRotatorELEcommand.Enabled = en;
+            picMultiMeterRotatorControlInfo.Enabled = en;
+            lblMeterItemRotatorAZcommand.Enabled = en;
+            lblMeterItemRotatorELEcommand.Enabled = en;
+            picMultiMeterRotatorControlInfo.Enabled = en;
+            bntMultiMeterItemRotator_default_pstRotator.Enabled = en;
+            txtRotator_4charID.Enabled = en;
+            lblRotator_4charID.Enabled = en;
+        }
+
+        private void bntMultiMeterItemRotator_default_pstRotator_Click(object sender, EventArgs e)
+        {
+            txtMeterItemRotatorAZcommand.Text = "<PST><AZIMUTH>%AZ%</AZIMUTH></PST>";
+            txtMeterItemRotatorELEcommand.Text = "<PST><ELEVATION>%ELE%</ELEVATION></PST>";
+        }
+
+        private void txtRotator_4charID_TextChanged(object sender, EventArgs e)
+        {
             updateMeterType();
         }
     }
