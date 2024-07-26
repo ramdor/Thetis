@@ -1324,7 +1324,6 @@ namespace Thetis
         // ======================================================
         // Main
         // ======================================================
-
         [STAThread]
         static void Main(string[] args)
         {
@@ -16446,6 +16445,8 @@ namespace Thetis
             get { return cat_enabled; }
         }
 
+        // property set when An Andromeda panel is connected via a serial CAT port.
+        // NOT used for G2 panel accessed via TCP/IP
         private bool andromeda_cat_enabled;
         public bool AndromedaCATEnabled
         {
@@ -16477,7 +16478,11 @@ namespace Thetis
                         "Andromeda CAT Error",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                    if (!IsSetupFormNull) SetupForm.AndromedaCATEnabled = false;
+                    if (!IsSetupFormNull)
+                    {
+                        if (!andromeda_g2_enabled)
+                            SetupForm.AndromedaCATEnabled = false;
+                    }
                 }
             }
             get { return andromeda_cat_enabled; }
@@ -44755,7 +44760,14 @@ namespace Thetis
         private bool m_bQSOTimerResetOnExpiry = false;
         private bool m_bQSOTimerFlashing = false;
         private bool m_bQSOTimerFlashAfterAutoReset = false;
-
+        public bool QSOTimerFlashing
+        {
+            get { return m_bQSOTimerFlashing; }
+        }
+        public int QSOTimerSeconds
+        {
+            get { return m_nQSOTimerSeconds; }
+        }
         public bool QSOTimerFlashAfterAutoReset {
             get { return m_bQSOTimerFlashAfterAutoReset; }
             set { m_bQSOTimerFlashAfterAutoReset = value; }

@@ -3666,6 +3666,22 @@
             this.chkMeterItemRotatorAllowControl = new System.Windows.Forms.CheckBoxTS();
             this.clrbtnMeterItemRotatorControlColour = new Thetis.ColorButton();
             this.picMultiMeterRotatorControlInfo = new System.Windows.Forms.PictureBox();
+            this.bntMultiMeterItemRotator_default_pstRotator = new System.Windows.Forms.ButtonTS();
+            this.txtMeterItemRotatorELEcommand = new System.Windows.Forms.TextBoxTS();
+            this.txtMeterItemRotatorAZcommand = new System.Windows.Forms.TextBoxTS();
+            this.txtRotator_4charID = new System.Windows.Forms.TextBoxTS();
+            this.btnLedIndicator_copy_truefalse_colours = new System.Windows.Forms.ButtonTS();
+            this.pbLedIndicator_condition_tips = new System.Windows.Forms.PictureBox();
+            this.clrbtnLedIndiciator_PanelBackgroundTX = new Thetis.ColorButton();
+            this.clrbtnLedIndicator_false = new Thetis.ColorButton();
+            this.clrbtnLedIndicator_true = new Thetis.ColorButton();
+            this.btnLedIndicator_copy_sizex_to_y = new System.Windows.Forms.ButtonTS();
+            this.nudLedIndicator_ySize = new System.Windows.Forms.NumericUpDownTS();
+            this.nudLedIndicator_xSize = new System.Windows.Forms.NumericUpDownTS();
+            this.nudLedIndicator_yOffset = new System.Windows.Forms.NumericUpDownTS();
+            this.nudLedIndicator_xOffset = new System.Windows.Forms.NumericUpDownTS();
+            this.nudLedIndicator_PanelPadding = new System.Windows.Forms.NumericUpDownTS();
+            this.clrbtnLedIndicator_PanelBackground = new Thetis.ColorButton();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -3753,11 +3769,9 @@
             this.labelTS217 = new System.Windows.Forms.LabelTS();
             this.labelTS215 = new System.Windows.Forms.LabelTS();
             this.grpMeterItemRotator = new System.Windows.Forms.GroupBoxTS();
-            this.bntMultiMeterItemRotator_default_pstRotator = new System.Windows.Forms.ButtonTS();
+            this.lblRotator_4charID = new System.Windows.Forms.LabelTS();
             this.lblMeterItemRotatorELEcommand = new System.Windows.Forms.LabelTS();
             this.lblMeterItemRotatorAZcommand = new System.Windows.Forms.LabelTS();
-            this.txtMeterItemRotatorELEcommand = new System.Windows.Forms.TextBoxTS();
-            this.txtMeterItemRotatorAZcommand = new System.Windows.Forms.TextBoxTS();
             this.pnlVariableInUse_2_rotator = new System.Windows.Forms.PanelTS();
             this.labelTS212 = new System.Windows.Forms.LabelTS();
             this.btnMMIO_variable_2_rotator = new System.Windows.Forms.ButtonTS();
@@ -3772,8 +3786,26 @@
             this.chkMeterItemFadeOnTxRotator = new System.Windows.Forms.CheckBoxTS();
             this.chkMeterItemFadeOnRxRotator = new System.Windows.Forms.CheckBoxTS();
             this.pnlVariableInUse_1_rotator = new System.Windows.Forms.PanelTS();
-            this.txtRotator_4charID = new System.Windows.Forms.TextBoxTS();
-            this.lblRotator_4charID = new System.Windows.Forms.LabelTS();
+            this.grpLedIndiciator = new System.Windows.Forms.GroupBoxTS();
+            this.lblLed_Error = new System.Windows.Forms.LabelTS();
+            this.lblLed_Valid = new System.Windows.Forms.LabelTS();
+            this.lblLedIndicator_panelbackgroundTX = new System.Windows.Forms.LabelTS();
+            this.labelTS219 = new System.Windows.Forms.LabelTS();
+            this.labelTS220 = new System.Windows.Forms.LabelTS();
+            this.labelTS221 = new System.Windows.Forms.LabelTS();
+            this.labelTS222 = new System.Windows.Forms.LabelTS();
+            this.labelTS223 = new System.Windows.Forms.LabelTS();
+            this.labelTS224 = new System.Windows.Forms.LabelTS();
+            this.labelTS226 = new System.Windows.Forms.LabelTS();
+            this.labelTS231 = new System.Windows.Forms.LabelTS();
+            this.labelTS233 = new System.Windows.Forms.LabelTS();
+            this.txtLedIndicator_condition = new System.Windows.Forms.TextBoxTS();
+            this.chkLedIndicator_ShowPanel = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS234 = new System.Windows.Forms.LabelTS();
+            this.lblLedIndicator_panelbackground = new System.Windows.Forms.LabelTS();
+            this.chkLedIndicator_FadeOnTX = new System.Windows.Forms.CheckBoxTS();
+            this.chkLedIndicator_FadeOnRX = new System.Windows.Forms.CheckBoxTS();
+            this.chkAndrG2Panel = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4703,6 +4735,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemUpdateRateRotator)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemRotatorBeamWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterRotatorControlInfo)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbLedIndicator_condition_tips)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_ySize)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_xSize)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_yOffset)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_xOffset)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_PanelPadding)).BeginInit();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -4741,6 +4779,7 @@
             this.grpTextOverlay.SuspendLayout();
             this.grpMeterItemDataOutNode.SuspendLayout();
             this.grpMeterItemRotator.SuspendLayout();
+            this.grpLedIndiciator.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -55132,6 +55171,7 @@
             // 
             // grpAndrOptions
             // 
+            this.grpAndrOptions.Controls.Add(this.chkAndrG2Panel);
             this.grpAndrOptions.Controls.Add(this.chkAndrStickyMenus);
             this.grpAndrOptions.Controls.Add(this.chkAndrStickyShift);
             this.grpAndrOptions.Controls.Add(this.chkAndrBandBtnDefault);
@@ -55141,7 +55181,7 @@
             this.grpAndrOptions.Controls.Add(this.chkAndrGainAutoshow);
             this.grpAndrOptions.Location = new System.Drawing.Point(271, 8);
             this.grpAndrOptions.Name = "grpAndrOptions";
-            this.grpAndrOptions.Size = new System.Drawing.Size(244, 187);
+            this.grpAndrOptions.Size = new System.Drawing.Size(244, 216);
             this.grpAndrOptions.TabIndex = 107;
             this.grpAndrOptions.TabStop = false;
             this.grpAndrOptions.Text = "Andromeda Options";
@@ -58179,6 +58219,302 @@
             this.picMultiMeterRotatorControlInfo.TabStop = false;
             this.toolTip1.SetToolTip(this.picMultiMeterRotatorControlInfo, "%AZ%\r\n%ELE%");
             // 
+            // bntMultiMeterItemRotator_default_pstRotator
+            // 
+            this.bntMultiMeterItemRotator_default_pstRotator.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.bntMultiMeterItemRotator_default_pstRotator.Image = null;
+            this.bntMultiMeterItemRotator_default_pstRotator.Location = new System.Drawing.Point(222, 239);
+            this.bntMultiMeterItemRotator_default_pstRotator.Name = "bntMultiMeterItemRotator_default_pstRotator";
+            this.bntMultiMeterItemRotator_default_pstRotator.Selectable = true;
+            this.bntMultiMeterItemRotator_default_pstRotator.Size = new System.Drawing.Size(63, 23);
+            this.bntMultiMeterItemRotator_default_pstRotator.TabIndex = 166;
+            this.bntMultiMeterItemRotator_default_pstRotator.Text = "pstRotator";
+            this.toolTip1.SetToolTip(this.bntMultiMeterItemRotator_default_pstRotator, "Reset for PST Rotator");
+            this.bntMultiMeterItemRotator_default_pstRotator.UseVisualStyleBackColor = true;
+            this.bntMultiMeterItemRotator_default_pstRotator.Click += new System.EventHandler(this.bntMultiMeterItemRotator_default_pstRotator_Click);
+            // 
+            // txtMeterItemRotatorELEcommand
+            // 
+            this.txtMeterItemRotatorELEcommand.Location = new System.Drawing.Point(39, 323);
+            this.txtMeterItemRotatorELEcommand.Name = "txtMeterItemRotatorELEcommand";
+            this.txtMeterItemRotatorELEcommand.Size = new System.Drawing.Size(272, 20);
+            this.txtMeterItemRotatorELEcommand.TabIndex = 139;
+            this.toolTip1.SetToolTip(this.txtMeterItemRotatorELEcommand, "The ELE rotator string");
+            this.txtMeterItemRotatorELEcommand.TextChanged += new System.EventHandler(this.txtMeterItemRotatorELEcommand_TextChanged);
+            // 
+            // txtMeterItemRotatorAZcommand
+            // 
+            this.txtMeterItemRotatorAZcommand.Location = new System.Drawing.Point(39, 297);
+            this.txtMeterItemRotatorAZcommand.Name = "txtMeterItemRotatorAZcommand";
+            this.txtMeterItemRotatorAZcommand.Size = new System.Drawing.Size(272, 20);
+            this.txtMeterItemRotatorAZcommand.TabIndex = 138;
+            this.toolTip1.SetToolTip(this.txtMeterItemRotatorAZcommand, "The AZ rotator string");
+            this.txtMeterItemRotatorAZcommand.TextChanged += new System.EventHandler(this.txtMeterItemRotatorAZcommand_TextChanged);
+            // 
+            // txtRotator_4charID
+            // 
+            this.txtRotator_4charID.Location = new System.Drawing.Point(268, 272);
+            this.txtRotator_4charID.MaxLength = 4;
+            this.txtRotator_4charID.Name = "txtRotator_4charID";
+            this.txtRotator_4charID.Size = new System.Drawing.Size(43, 20);
+            this.txtRotator_4charID.TabIndex = 167;
+            this.txtRotator_4charID.Text = "AGHJ";
+            this.toolTip1.SetToolTip(this.txtRotator_4charID, "The four character code used to reference which MultiMeterIO is to be used for th" +
+        "e output data.");
+            this.txtRotator_4charID.TextChanged += new System.EventHandler(this.txtRotator_4charID_TextChanged);
+            // 
+            // btnLedIndicator_copy_truefalse_colours
+            // 
+            this.btnLedIndicator_copy_truefalse_colours.Image = null;
+            this.btnLedIndicator_copy_truefalse_colours.Location = new System.Drawing.Point(115, 171);
+            this.btnLedIndicator_copy_truefalse_colours.Name = "btnLedIndicator_copy_truefalse_colours";
+            this.btnLedIndicator_copy_truefalse_colours.Selectable = true;
+            this.btnLedIndicator_copy_truefalse_colours.Size = new System.Drawing.Size(33, 23);
+            this.btnLedIndicator_copy_truefalse_colours.TabIndex = 165;
+            this.btnLedIndicator_copy_truefalse_colours.Text = "=";
+            this.toolTip1.SetToolTip(this.btnLedIndicator_copy_truefalse_colours, "Copy the font and colours from RX to TX");
+            this.btnLedIndicator_copy_truefalse_colours.UseVisualStyleBackColor = true;
+            this.btnLedIndicator_copy_truefalse_colours.Click += new System.EventHandler(this.btnLedIndicator_copy_truefalse_colours_Click);
+            // 
+            // pbLedIndicator_condition_tips
+            // 
+            this.pbLedIndicator_condition_tips.Image = ((System.Drawing.Image)(resources.GetObject("pbLedIndicator_condition_tips.Image")));
+            this.pbLedIndicator_condition_tips.Location = new System.Drawing.Point(297, 100);
+            this.pbLedIndicator_condition_tips.Name = "pbLedIndicator_condition_tips";
+            this.pbLedIndicator_condition_tips.Size = new System.Drawing.Size(20, 20);
+            this.pbLedIndicator_condition_tips.TabIndex = 164;
+            this.pbLedIndicator_condition_tips.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbLedIndicator_condition_tips, "You can create code based conditions.\r\neg.\r\n%swr% > 1.5\r\n%varibale% == 2\r\n%variab" +
+        "le% == \"Hello\"\r\n%pwr% > 15\r\n%variable1% == %variable2%\r\n%pwr% <= 10");
+            // 
+            // clrbtnLedIndiciator_PanelBackgroundTX
+            // 
+            this.clrbtnLedIndiciator_PanelBackgroundTX.Automatic = "Automatic";
+            this.clrbtnLedIndiciator_PanelBackgroundTX.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnLedIndiciator_PanelBackgroundTX.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnLedIndiciator_PanelBackgroundTX.Image = null;
+            this.clrbtnLedIndiciator_PanelBackgroundTX.Location = new System.Drawing.Point(141, 70);
+            this.clrbtnLedIndiciator_PanelBackgroundTX.MoreColors = "More Colors...";
+            this.clrbtnLedIndiciator_PanelBackgroundTX.Name = "clrbtnLedIndiciator_PanelBackgroundTX";
+            this.clrbtnLedIndiciator_PanelBackgroundTX.Selectable = true;
+            this.clrbtnLedIndiciator_PanelBackgroundTX.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnLedIndiciator_PanelBackgroundTX.TabIndex = 162;
+            this.toolTip1.SetToolTip(this.clrbtnLedIndiciator_PanelBackgroundTX, "Background colour");
+            this.clrbtnLedIndiciator_PanelBackgroundTX.Changed += new System.EventHandler(this.clrbtnLedIndiciator_PanelBackgroundTX_Changed);
+            // 
+            // clrbtnLedIndicator_false
+            // 
+            this.clrbtnLedIndicator_false.Automatic = "Automatic";
+            this.clrbtnLedIndicator_false.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnLedIndicator_false.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnLedIndicator_false.Image = null;
+            this.clrbtnLedIndicator_false.Location = new System.Drawing.Point(65, 188);
+            this.clrbtnLedIndicator_false.MoreColors = "More Colors...";
+            this.clrbtnLedIndicator_false.Name = "clrbtnLedIndicator_false";
+            this.clrbtnLedIndicator_false.Selectable = true;
+            this.clrbtnLedIndicator_false.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnLedIndicator_false.TabIndex = 157;
+            this.toolTip1.SetToolTip(this.clrbtnLedIndicator_false, "Background colour");
+            this.clrbtnLedIndicator_false.Changed += new System.EventHandler(this.clrbtnLedIndicator_false_Changed);
+            // 
+            // clrbtnLedIndicator_true
+            // 
+            this.clrbtnLedIndicator_true.Automatic = "Automatic";
+            this.clrbtnLedIndicator_true.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnLedIndicator_true.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnLedIndicator_true.Image = null;
+            this.clrbtnLedIndicator_true.Location = new System.Drawing.Point(65, 162);
+            this.clrbtnLedIndicator_true.MoreColors = "More Colors...";
+            this.clrbtnLedIndicator_true.Name = "clrbtnLedIndicator_true";
+            this.clrbtnLedIndicator_true.Selectable = true;
+            this.clrbtnLedIndicator_true.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnLedIndicator_true.TabIndex = 156;
+            this.toolTip1.SetToolTip(this.clrbtnLedIndicator_true, "Background colour");
+            this.clrbtnLedIndicator_true.Changed += new System.EventHandler(this.clrbtnLedIndicator_true_Changed);
+            // 
+            // btnLedIndicator_copy_sizex_to_y
+            // 
+            this.btnLedIndicator_copy_sizex_to_y.Image = null;
+            this.btnLedIndicator_copy_sizex_to_y.Location = new System.Drawing.Point(182, 313);
+            this.btnLedIndicator_copy_sizex_to_y.Name = "btnLedIndicator_copy_sizex_to_y";
+            this.btnLedIndicator_copy_sizex_to_y.Selectable = true;
+            this.btnLedIndicator_copy_sizex_to_y.Size = new System.Drawing.Size(33, 23);
+            this.btnLedIndicator_copy_sizex_to_y.TabIndex = 155;
+            this.btnLedIndicator_copy_sizex_to_y.Text = "=";
+            this.toolTip1.SetToolTip(this.btnLedIndicator_copy_sizex_to_y, "Copy the offset values from RX to TX");
+            this.btnLedIndicator_copy_sizex_to_y.UseVisualStyleBackColor = true;
+            this.btnLedIndicator_copy_sizex_to_y.Click += new System.EventHandler(this.btnLedIndicator_copy_sizex_to_y_Click);
+            // 
+            // nudLedIndicator_ySize
+            // 
+            this.nudLedIndicator_ySize.DecimalPlaces = 3;
+            this.nudLedIndicator_ySize.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudLedIndicator_ySize.Location = new System.Drawing.Point(101, 328);
+            this.nudLedIndicator_ySize.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudLedIndicator_ySize.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.nudLedIndicator_ySize.Name = "nudLedIndicator_ySize";
+            this.nudLedIndicator_ySize.Size = new System.Drawing.Size(56, 20);
+            this.nudLedIndicator_ySize.TabIndex = 152;
+            this.nudLedIndicator_ySize.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudLedIndicator_ySize, "Size of the spacer. The number is a ratio with reference to the width.");
+            this.nudLedIndicator_ySize.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudLedIndicator_ySize.ValueChanged += new System.EventHandler(this.nudLedIndicator_ySize_ValueChanged);
+            // 
+            // nudLedIndicator_xSize
+            // 
+            this.nudLedIndicator_xSize.DecimalPlaces = 3;
+            this.nudLedIndicator_xSize.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudLedIndicator_xSize.Location = new System.Drawing.Point(101, 302);
+            this.nudLedIndicator_xSize.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudLedIndicator_xSize.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.nudLedIndicator_xSize.Name = "nudLedIndicator_xSize";
+            this.nudLedIndicator_xSize.Size = new System.Drawing.Size(56, 20);
+            this.nudLedIndicator_xSize.TabIndex = 150;
+            this.nudLedIndicator_xSize.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudLedIndicator_xSize, "Size of the spacer. The number is a ratio with reference to the width.");
+            this.nudLedIndicator_xSize.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudLedIndicator_xSize.ValueChanged += new System.EventHandler(this.nudLedIndicator_xSize_ValueChanged);
+            // 
+            // nudLedIndicator_yOffset
+            // 
+            this.nudLedIndicator_yOffset.DecimalPlaces = 3;
+            this.nudLedIndicator_yOffset.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudLedIndicator_yOffset.Location = new System.Drawing.Point(101, 276);
+            this.nudLedIndicator_yOffset.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudLedIndicator_yOffset.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.nudLedIndicator_yOffset.Name = "nudLedIndicator_yOffset";
+            this.nudLedIndicator_yOffset.Size = new System.Drawing.Size(56, 20);
+            this.nudLedIndicator_yOffset.TabIndex = 147;
+            this.nudLedIndicator_yOffset.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudLedIndicator_yOffset, "Size of the spacer. The number is a ratio with reference to the width.");
+            this.nudLedIndicator_yOffset.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudLedIndicator_yOffset.ValueChanged += new System.EventHandler(this.nudLedIndicator_yOffset_ValueChanged);
+            // 
+            // nudLedIndicator_xOffset
+            // 
+            this.nudLedIndicator_xOffset.DecimalPlaces = 3;
+            this.nudLedIndicator_xOffset.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudLedIndicator_xOffset.Location = new System.Drawing.Point(101, 250);
+            this.nudLedIndicator_xOffset.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudLedIndicator_xOffset.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.nudLedIndicator_xOffset.Name = "nudLedIndicator_xOffset";
+            this.nudLedIndicator_xOffset.Size = new System.Drawing.Size(56, 20);
+            this.nudLedIndicator_xOffset.TabIndex = 143;
+            this.nudLedIndicator_xOffset.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudLedIndicator_xOffset, "Size of the spacer. The number is a ratio with reference to the width.");
+            this.nudLedIndicator_xOffset.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudLedIndicator_xOffset.ValueChanged += new System.EventHandler(this.nudLedIndicator_xOffset_ValueChanged);
+            // 
+            // nudLedIndicator_PanelPadding
+            // 
+            this.nudLedIndicator_PanelPadding.DecimalPlaces = 3;
+            this.nudLedIndicator_PanelPadding.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudLedIndicator_PanelPadding.Location = new System.Drawing.Point(125, 100);
+            this.nudLedIndicator_PanelPadding.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudLedIndicator_PanelPadding.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudLedIndicator_PanelPadding.Name = "nudLedIndicator_PanelPadding";
+            this.nudLedIndicator_PanelPadding.Size = new System.Drawing.Size(56, 20);
+            this.nudLedIndicator_PanelPadding.TabIndex = 132;
+            this.nudLedIndicator_PanelPadding.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudLedIndicator_PanelPadding, "Size of the spacer. The number is a ratio with reference to the width.");
+            this.nudLedIndicator_PanelPadding.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudLedIndicator_PanelPadding.ValueChanged += new System.EventHandler(this.nudLedIndicator_PanelPadding_ValueChanged);
+            // 
+            // clrbtnLedIndicator_PanelBackground
+            // 
+            this.clrbtnLedIndicator_PanelBackground.Automatic = "Automatic";
+            this.clrbtnLedIndicator_PanelBackground.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnLedIndicator_PanelBackground.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnLedIndicator_PanelBackground.Image = null;
+            this.clrbtnLedIndicator_PanelBackground.Location = new System.Drawing.Point(141, 45);
+            this.clrbtnLedIndicator_PanelBackground.MoreColors = "More Colors...";
+            this.clrbtnLedIndicator_PanelBackground.Name = "clrbtnLedIndicator_PanelBackground";
+            this.clrbtnLedIndicator_PanelBackground.Selectable = true;
+            this.clrbtnLedIndicator_PanelBackground.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnLedIndicator_PanelBackground.TabIndex = 129;
+            this.toolTip1.SetToolTip(this.clrbtnLedIndicator_PanelBackground, "Background colour");
+            this.clrbtnLedIndicator_PanelBackground.Changed += new System.EventHandler(this.clrbtnLedIndicator_PanelBackground_Changed);
+            // 
             // saveFileDialog1
             // 
             this.saveFileDialog1.Filter = "Thetis Database Files (*.xml)|*.xml|All files|*.*";
@@ -59275,7 +59611,7 @@
             this.grpMeterItemSpacerSettings.Controls.Add(this.clrbtnMeterItemHBackgroundSpacerRX);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnTxSpacer);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnRxSpacer);
-            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(832, 593);
+            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(841, 402);
             this.grpMeterItemSpacerSettings.Name = "grpMeterItemSpacerSettings";
             this.grpMeterItemSpacerSettings.Size = new System.Drawing.Size(323, 168);
             this.grpMeterItemSpacerSettings.TabIndex = 102;
@@ -59707,7 +60043,7 @@
             this.grpMeterItemRotator.Controls.Add(this.chkMeterItemFadeOnTxRotator);
             this.grpMeterItemRotator.Controls.Add(this.chkMeterItemFadeOnRxRotator);
             this.grpMeterItemRotator.Controls.Add(this.pnlVariableInUse_1_rotator);
-            this.grpMeterItemRotator.Location = new System.Drawing.Point(497, 518);
+            this.grpMeterItemRotator.Location = new System.Drawing.Point(841, 590);
             this.grpMeterItemRotator.Name = "grpMeterItemRotator";
             this.grpMeterItemRotator.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemRotator.TabIndex = 106;
@@ -59715,19 +60051,15 @@
             this.grpMeterItemRotator.Text = "Rotator";
             this.grpMeterItemRotator.Visible = false;
             // 
-            // bntMultiMeterItemRotator_default_pstRotator
+            // lblRotator_4charID
             // 
-            this.bntMultiMeterItemRotator_default_pstRotator.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.bntMultiMeterItemRotator_default_pstRotator.Image = null;
-            this.bntMultiMeterItemRotator_default_pstRotator.Location = new System.Drawing.Point(222, 239);
-            this.bntMultiMeterItemRotator_default_pstRotator.Name = "bntMultiMeterItemRotator_default_pstRotator";
-            this.bntMultiMeterItemRotator_default_pstRotator.Selectable = true;
-            this.bntMultiMeterItemRotator_default_pstRotator.Size = new System.Drawing.Size(63, 23);
-            this.bntMultiMeterItemRotator_default_pstRotator.TabIndex = 166;
-            this.bntMultiMeterItemRotator_default_pstRotator.Text = "pstRotator";
-            this.toolTip1.SetToolTip(this.bntMultiMeterItemRotator_default_pstRotator, "Reset for PST Rotator");
-            this.bntMultiMeterItemRotator_default_pstRotator.UseVisualStyleBackColor = true;
-            this.bntMultiMeterItemRotator_default_pstRotator.Click += new System.EventHandler(this.bntMultiMeterItemRotator_default_pstRotator_Click);
+            this.lblRotator_4charID.AutoSize = true;
+            this.lblRotator_4charID.Image = null;
+            this.lblRotator_4charID.Location = new System.Drawing.Point(210, 275);
+            this.lblRotator_4charID.Name = "lblRotator_4charID";
+            this.lblRotator_4charID.Size = new System.Drawing.Size(52, 13);
+            this.lblRotator_4charID.TabIndex = 168;
+            this.lblRotator_4charID.Text = "4Char ID:";
             // 
             // lblMeterItemRotatorELEcommand
             // 
@@ -59748,24 +60080,6 @@
             this.lblMeterItemRotatorAZcommand.Size = new System.Drawing.Size(24, 13);
             this.lblMeterItemRotatorAZcommand.TabIndex = 140;
             this.lblMeterItemRotatorAZcommand.Text = "AZ:";
-            // 
-            // txtMeterItemRotatorELEcommand
-            // 
-            this.txtMeterItemRotatorELEcommand.Location = new System.Drawing.Point(39, 323);
-            this.txtMeterItemRotatorELEcommand.Name = "txtMeterItemRotatorELEcommand";
-            this.txtMeterItemRotatorELEcommand.Size = new System.Drawing.Size(272, 20);
-            this.txtMeterItemRotatorELEcommand.TabIndex = 139;
-            this.toolTip1.SetToolTip(this.txtMeterItemRotatorELEcommand, "The ELE rotator string");
-            this.txtMeterItemRotatorELEcommand.TextChanged += new System.EventHandler(this.txtMeterItemRotatorELEcommand_TextChanged);
-            // 
-            // txtMeterItemRotatorAZcommand
-            // 
-            this.txtMeterItemRotatorAZcommand.Location = new System.Drawing.Point(39, 297);
-            this.txtMeterItemRotatorAZcommand.Name = "txtMeterItemRotatorAZcommand";
-            this.txtMeterItemRotatorAZcommand.Size = new System.Drawing.Size(272, 20);
-            this.txtMeterItemRotatorAZcommand.TabIndex = 138;
-            this.toolTip1.SetToolTip(this.txtMeterItemRotatorAZcommand, "The AZ rotator string");
-            this.txtMeterItemRotatorAZcommand.TextChanged += new System.EventHandler(this.txtMeterItemRotatorAZcommand_TextChanged);
             // 
             // pnlVariableInUse_2_rotator
             // 
@@ -59920,37 +60234,254 @@
             this.pnlVariableInUse_1_rotator.Size = new System.Drawing.Size(28, 6);
             this.pnlVariableInUse_1_rotator.TabIndex = 130;
             // 
-            // txtRotator_4charID
+            // grpLedIndiciator
             // 
-            this.txtRotator_4charID.Location = new System.Drawing.Point(268, 272);
-            this.txtRotator_4charID.MaxLength = 4;
-            this.txtRotator_4charID.Name = "txtRotator_4charID";
-            this.txtRotator_4charID.Size = new System.Drawing.Size(43, 20);
-            this.txtRotator_4charID.TabIndex = 167;
-            this.txtRotator_4charID.Text = "AGHJ";
-            this.toolTip1.SetToolTip(this.txtRotator_4charID, "The four character code used to reference which MultiMeterIO is to be used for th" +
-        "e output data.");
-            this.txtRotator_4charID.TextChanged += new System.EventHandler(this.txtRotator_4charID_TextChanged);
+            this.grpLedIndiciator.Controls.Add(this.lblLed_Error);
+            this.grpLedIndiciator.Controls.Add(this.lblLed_Valid);
+            this.grpLedIndiciator.Controls.Add(this.btnLedIndicator_copy_truefalse_colours);
+            this.grpLedIndiciator.Controls.Add(this.pbLedIndicator_condition_tips);
+            this.grpLedIndiciator.Controls.Add(this.lblLedIndicator_panelbackgroundTX);
+            this.grpLedIndiciator.Controls.Add(this.clrbtnLedIndiciator_PanelBackgroundTX);
+            this.grpLedIndiciator.Controls.Add(this.labelTS219);
+            this.grpLedIndiciator.Controls.Add(this.labelTS220);
+            this.grpLedIndiciator.Controls.Add(this.clrbtnLedIndicator_false);
+            this.grpLedIndiciator.Controls.Add(this.clrbtnLedIndicator_true);
+            this.grpLedIndiciator.Controls.Add(this.btnLedIndicator_copy_sizex_to_y);
+            this.grpLedIndiciator.Controls.Add(this.labelTS221);
+            this.grpLedIndiciator.Controls.Add(this.labelTS222);
+            this.grpLedIndiciator.Controls.Add(this.nudLedIndicator_ySize);
+            this.grpLedIndiciator.Controls.Add(this.labelTS223);
+            this.grpLedIndiciator.Controls.Add(this.nudLedIndicator_xSize);
+            this.grpLedIndiciator.Controls.Add(this.labelTS224);
+            this.grpLedIndiciator.Controls.Add(this.labelTS226);
+            this.grpLedIndiciator.Controls.Add(this.nudLedIndicator_yOffset);
+            this.grpLedIndiciator.Controls.Add(this.labelTS231);
+            this.grpLedIndiciator.Controls.Add(this.nudLedIndicator_xOffset);
+            this.grpLedIndiciator.Controls.Add(this.labelTS233);
+            this.grpLedIndiciator.Controls.Add(this.txtLedIndicator_condition);
+            this.grpLedIndiciator.Controls.Add(this.chkLedIndicator_ShowPanel);
+            this.grpLedIndiciator.Controls.Add(this.nudLedIndicator_PanelPadding);
+            this.grpLedIndiciator.Controls.Add(this.labelTS234);
+            this.grpLedIndiciator.Controls.Add(this.lblLedIndicator_panelbackground);
+            this.grpLedIndiciator.Controls.Add(this.clrbtnLedIndicator_PanelBackground);
+            this.grpLedIndiciator.Controls.Add(this.chkLedIndicator_FadeOnTX);
+            this.grpLedIndiciator.Controls.Add(this.chkLedIndicator_FadeOnRX);
+            this.grpLedIndiciator.Location = new System.Drawing.Point(460, 534);
+            this.grpLedIndiciator.Name = "grpLedIndiciator";
+            this.grpLedIndiciator.Size = new System.Drawing.Size(323, 362);
+            this.grpLedIndiciator.TabIndex = 107;
+            this.grpLedIndiciator.TabStop = false;
+            this.grpLedIndiciator.Text = "Led Indiciator";
+            this.grpLedIndiciator.Visible = false;
             // 
-            // lblRotator_4charID
+            // lblLed_Error
             // 
-            this.lblRotator_4charID.AutoSize = true;
-            this.lblRotator_4charID.Image = null;
-            this.lblRotator_4charID.Location = new System.Drawing.Point(210, 275);
-            this.lblRotator_4charID.Name = "lblRotator_4charID";
-            this.lblRotator_4charID.Size = new System.Drawing.Size(52, 13);
-            this.lblRotator_4charID.TabIndex = 168;
-            this.lblRotator_4charID.Text = "4Char ID:";
+            this.lblLed_Error.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLed_Error.Image = null;
+            this.lblLed_Error.Location = new System.Drawing.Point(271, 174);
+            this.lblLed_Error.Name = "lblLed_Error";
+            this.lblLed_Error.Size = new System.Drawing.Size(46, 13);
+            this.lblLed_Error.TabIndex = 167;
+            this.lblLed_Error.Text = "error";
+            this.lblLed_Error.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // lblLed_Valid
+            // 
+            this.lblLed_Valid.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLed_Valid.Image = null;
+            this.lblLed_Valid.Location = new System.Drawing.Point(271, 159);
+            this.lblLed_Valid.Name = "lblLed_Valid";
+            this.lblLed_Valid.Size = new System.Drawing.Size(46, 15);
+            this.lblLed_Valid.TabIndex = 166;
+            this.lblLed_Valid.Text = "valid";
+            this.lblLed_Valid.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // lblLedIndicator_panelbackgroundTX
+            // 
+            this.lblLedIndicator_panelbackgroundTX.AutoSize = true;
+            this.lblLedIndicator_panelbackgroundTX.Image = null;
+            this.lblLedIndicator_panelbackgroundTX.Location = new System.Drawing.Point(50, 75);
+            this.lblLedIndicator_panelbackgroundTX.Name = "lblLedIndicator_panelbackgroundTX";
+            this.lblLedIndicator_panelbackgroundTX.Size = new System.Drawing.Size(85, 13);
+            this.lblLedIndicator_panelbackgroundTX.TabIndex = 163;
+            this.lblLedIndicator_panelbackgroundTX.Text = "TX Background:";
+            // 
+            // labelTS219
+            // 
+            this.labelTS219.AutoSize = true;
+            this.labelTS219.Image = null;
+            this.labelTS219.Location = new System.Drawing.Point(24, 193);
+            this.labelTS219.Name = "labelTS219";
+            this.labelTS219.Size = new System.Drawing.Size(35, 13);
+            this.labelTS219.TabIndex = 161;
+            this.labelTS219.Text = "False:";
+            // 
+            // labelTS220
+            // 
+            this.labelTS220.AutoSize = true;
+            this.labelTS220.Image = null;
+            this.labelTS220.Location = new System.Drawing.Point(27, 166);
+            this.labelTS220.Name = "labelTS220";
+            this.labelTS220.Size = new System.Drawing.Size(32, 13);
+            this.labelTS220.TabIndex = 160;
+            this.labelTS220.Text = "True:";
+            // 
+            // labelTS221
+            // 
+            this.labelTS221.AutoSize = true;
+            this.labelTS221.Image = null;
+            this.labelTS221.Location = new System.Drawing.Point(163, 330);
+            this.labelTS221.Name = "labelTS221";
+            this.labelTS221.Size = new System.Drawing.Size(12, 13);
+            this.labelTS221.TabIndex = 154;
+            this.labelTS221.Text = "y";
+            // 
+            // labelTS222
+            // 
+            this.labelTS222.AutoSize = true;
+            this.labelTS222.Image = null;
+            this.labelTS222.Location = new System.Drawing.Point(163, 304);
+            this.labelTS222.Name = "labelTS222";
+            this.labelTS222.Size = new System.Drawing.Size(12, 13);
+            this.labelTS222.TabIndex = 153;
+            this.labelTS222.Text = "x";
+            // 
+            // labelTS223
+            // 
+            this.labelTS223.AutoSize = true;
+            this.labelTS223.Image = null;
+            this.labelTS223.Location = new System.Drawing.Point(62, 304);
+            this.labelTS223.Name = "labelTS223";
+            this.labelTS223.Size = new System.Drawing.Size(30, 13);
+            this.labelTS223.TabIndex = 151;
+            this.labelTS223.Text = "Size:";
+            // 
+            // labelTS224
+            // 
+            this.labelTS224.AutoSize = true;
+            this.labelTS224.Image = null;
+            this.labelTS224.Location = new System.Drawing.Point(163, 278);
+            this.labelTS224.Name = "labelTS224";
+            this.labelTS224.Size = new System.Drawing.Size(12, 13);
+            this.labelTS224.TabIndex = 149;
+            this.labelTS224.Text = "y";
+            // 
+            // labelTS226
+            // 
+            this.labelTS226.AutoSize = true;
+            this.labelTS226.Image = null;
+            this.labelTS226.Location = new System.Drawing.Point(163, 252);
+            this.labelTS226.Name = "labelTS226";
+            this.labelTS226.Size = new System.Drawing.Size(12, 13);
+            this.labelTS226.TabIndex = 148;
+            this.labelTS226.Text = "x";
+            // 
+            // labelTS231
+            // 
+            this.labelTS231.AutoSize = true;
+            this.labelTS231.Image = null;
+            this.labelTS231.Location = new System.Drawing.Point(10, 252);
+            this.labelTS231.Name = "labelTS231";
+            this.labelTS231.Size = new System.Drawing.Size(83, 13);
+            this.labelTS231.TabIndex = 145;
+            this.labelTS231.Text = "Position Offsets:";
+            // 
+            // labelTS233
+            // 
+            this.labelTS233.AutoSize = true;
+            this.labelTS233.Image = null;
+            this.labelTS233.Location = new System.Drawing.Point(5, 133);
+            this.labelTS233.Name = "labelTS233";
+            this.labelTS233.Size = new System.Drawing.Size(54, 13);
+            this.labelTS233.TabIndex = 138;
+            this.labelTS233.Text = "Condition:";
+            // 
+            // txtLedIndicator_condition
+            // 
+            this.txtLedIndicator_condition.Location = new System.Drawing.Point(65, 130);
+            this.txtLedIndicator_condition.Name = "txtLedIndicator_condition";
+            this.txtLedIndicator_condition.Size = new System.Drawing.Size(252, 20);
+            this.txtLedIndicator_condition.TabIndex = 136;
+            this.txtLedIndicator_condition.TextChanged += new System.EventHandler(this.txtLedIndicator_condition_TextChanged);
+            // 
+            // chkLedIndicator_ShowPanel
+            // 
+            this.chkLedIndicator_ShowPanel.AutoSize = true;
+            this.chkLedIndicator_ShowPanel.Image = null;
+            this.chkLedIndicator_ShowPanel.Location = new System.Drawing.Point(18, 30);
+            this.chkLedIndicator_ShowPanel.Name = "chkLedIndicator_ShowPanel";
+            this.chkLedIndicator_ShowPanel.Size = new System.Drawing.Size(83, 17);
+            this.chkLedIndicator_ShowPanel.TabIndex = 135;
+            this.chkLedIndicator_ShowPanel.Text = "Show Panel";
+            this.chkLedIndicator_ShowPanel.UseVisualStyleBackColor = true;
+            this.chkLedIndicator_ShowPanel.CheckedChanged += new System.EventHandler(this.chkLedIndicator_ShowPanel_CheckedChanged);
+            // 
+            // labelTS234
+            // 
+            this.labelTS234.AutoSize = true;
+            this.labelTS234.Image = null;
+            this.labelTS234.Location = new System.Drawing.Point(39, 102);
+            this.labelTS234.Name = "labelTS234";
+            this.labelTS234.Size = new System.Drawing.Size(79, 13);
+            this.labelTS234.TabIndex = 131;
+            this.labelTS234.Text = "Panel Padding:";
+            // 
+            // lblLedIndicator_panelbackground
+            // 
+            this.lblLedIndicator_panelbackground.AutoSize = true;
+            this.lblLedIndicator_panelbackground.Image = null;
+            this.lblLedIndicator_panelbackground.Location = new System.Drawing.Point(49, 50);
+            this.lblLedIndicator_panelbackground.Name = "lblLedIndicator_panelbackground";
+            this.lblLedIndicator_panelbackground.Size = new System.Drawing.Size(86, 13);
+            this.lblLedIndicator_panelbackground.TabIndex = 130;
+            this.lblLedIndicator_panelbackground.Text = "RX Background:";
+            // 
+            // chkLedIndicator_FadeOnTX
+            // 
+            this.chkLedIndicator_FadeOnTX.AutoSize = true;
+            this.chkLedIndicator_FadeOnTX.Image = null;
+            this.chkLedIndicator_FadeOnTX.Location = new System.Drawing.Point(219, 53);
+            this.chkLedIndicator_FadeOnTX.Name = "chkLedIndicator_FadeOnTX";
+            this.chkLedIndicator_FadeOnTX.Size = new System.Drawing.Size(82, 17);
+            this.chkLedIndicator_FadeOnTX.TabIndex = 3;
+            this.chkLedIndicator_FadeOnTX.Text = "Fade on TX";
+            this.chkLedIndicator_FadeOnTX.UseVisualStyleBackColor = true;
+            this.chkLedIndicator_FadeOnTX.CheckedChanged += new System.EventHandler(this.chkLedIndicator_FadeOnTX_CheckedChanged);
+            // 
+            // chkLedIndicator_FadeOnRX
+            // 
+            this.chkLedIndicator_FadeOnRX.AutoSize = true;
+            this.chkLedIndicator_FadeOnRX.Image = null;
+            this.chkLedIndicator_FadeOnRX.Location = new System.Drawing.Point(219, 30);
+            this.chkLedIndicator_FadeOnRX.Name = "chkLedIndicator_FadeOnRX";
+            this.chkLedIndicator_FadeOnRX.Size = new System.Drawing.Size(83, 17);
+            this.chkLedIndicator_FadeOnRX.TabIndex = 2;
+            this.chkLedIndicator_FadeOnRX.Text = "Fade on RX";
+            this.chkLedIndicator_FadeOnRX.UseVisualStyleBackColor = true;
+            this.chkLedIndicator_FadeOnRX.CheckedChanged += new System.EventHandler(this.chkLedIndicator_FadeOnRX_CheckedChanged);
+            // 
+            // chkAndrG2Panel
+            // 
+            this.chkAndrG2Panel.AutoSize = true;
+            this.chkAndrG2Panel.Image = null;
+            this.chkAndrG2Panel.Location = new System.Drawing.Point(16, 177);
+            this.chkAndrG2Panel.Name = "chkAndrG2Panel";
+            this.chkAndrG2Panel.Size = new System.Drawing.Size(106, 17);
+            this.chkAndrG2Panel.TabIndex = 8;
+            this.chkAndrG2Panel.Text = "Enable G2 Panel";
+            this.chkAndrG2Panel.UseVisualStyleBackColor = true;
+            this.chkAndrG2Panel.CheckedChanged += new System.EventHandler(this.chkAndrG2Panel_CheckedChanged);
             // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(984, 961);
+            this.Controls.Add(this.labelTS198);
+            this.Controls.Add(this.grpLedIndiciator);
             this.Controls.Add(this.grpTextOverlay);
             this.Controls.Add(this.grpMeterItemRotator);
             this.Controls.Add(this.grpMeterItemDataOutNode);
-            this.Controls.Add(this.labelTS198);
             this.Controls.Add(this.grpMeterItemSpacerSettings);
             this.Controls.Add(this.txtboxTXProfileChangedReport);
             this.Controls.Add(this.lblTXProfileWarning);
@@ -61102,6 +61633,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemUpdateRateRotator)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemRotatorBeamWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterRotatorControlInfo)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbLedIndicator_condition_tips)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_ySize)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_xSize)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_yOffset)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_xOffset)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_PanelPadding)).EndInit();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();
@@ -61147,6 +61684,8 @@
             this.grpMeterItemDataOutNode.PerformLayout();
             this.grpMeterItemRotator.ResumeLayout(false);
             this.grpMeterItemRotator.PerformLayout();
+            this.grpLedIndiciator.ResumeLayout(false);
+            this.grpLedIndiciator.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -64924,5 +65463,37 @@
         private ButtonTS bntMultiMeterItemRotator_default_pstRotator;
         private LabelTS lblRotator_4charID;
         private TextBoxTS txtRotator_4charID;
+        private GroupBoxTS grpLedIndiciator;
+        private ButtonTS btnLedIndicator_copy_truefalse_colours;
+        private PictureBox pbLedIndicator_condition_tips;
+        private LabelTS lblLedIndicator_panelbackgroundTX;
+        private ColorButton clrbtnLedIndiciator_PanelBackgroundTX;
+        private LabelTS labelTS219;
+        private LabelTS labelTS220;
+        private ColorButton clrbtnLedIndicator_false;
+        private ColorButton clrbtnLedIndicator_true;
+        private ButtonTS btnLedIndicator_copy_sizex_to_y;
+        private LabelTS labelTS221;
+        private LabelTS labelTS222;
+        private NumericUpDownTS nudLedIndicator_ySize;
+        private LabelTS labelTS223;
+        private NumericUpDownTS nudLedIndicator_xSize;
+        private LabelTS labelTS224;
+        private LabelTS labelTS226;
+        private NumericUpDownTS nudLedIndicator_yOffset;
+        private LabelTS labelTS231;
+        private NumericUpDownTS nudLedIndicator_xOffset;
+        private LabelTS labelTS233;
+        private TextBoxTS txtLedIndicator_condition;
+        private CheckBoxTS chkLedIndicator_ShowPanel;
+        private NumericUpDownTS nudLedIndicator_PanelPadding;
+        private LabelTS labelTS234;
+        private LabelTS lblLedIndicator_panelbackground;
+        private ColorButton clrbtnLedIndicator_PanelBackground;
+        private CheckBoxTS chkLedIndicator_FadeOnTX;
+        private CheckBoxTS chkLedIndicator_FadeOnRX;
+        private LabelTS lblLed_Error;
+        private LabelTS lblLed_Valid;
+        private CheckBoxTS chkAndrG2Panel;
     }
 }

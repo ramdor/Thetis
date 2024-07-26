@@ -79,6 +79,9 @@ namespace Thetis
         {
             InitializeComponent();
 
+            //enable db on lstMMIO_network_variables
+            Common.DoubleBuffered(lstMMIO_network_variables, true);
+
             MaximumSize = MinimumSize;
             Size = MinimumSize;
 
@@ -205,6 +208,9 @@ namespace Thetis
             "%vfoa%" + System.Environment.NewLine +
             "%vfob%" + System.Environment.NewLine +
             "%vfoasub%" + System.Environment.NewLine +
+            "%vfoa_double%" + System.Environment.NewLine +
+            "%vfob_double%" + System.Environment.NewLine +
+            "%vfoasub_double%" + System.Environment.NewLine +
             "%band_vfoa%" + System.Environment.NewLine +
             "%band_vfob%" + System.Environment.NewLine +
             "%band_vfoasub%" + System.Environment.NewLine +
@@ -218,6 +224,8 @@ namespace Thetis
             "%split%" + System.Environment.NewLine +
             "%qso_time%" + System.Environment.NewLine +
             "%qso_time_short%" + System.Environment.NewLine +
+            "%tb_qso_time" + System.Environment.NewLine +
+            "%tb_qso_time_short%" + System.Environment.NewLine +
             "%volts%" + System.Environment.NewLine +
             "%amps%";// + System.Environment.NewLine +
             toolTip1.SetToolTip(pbTextOverlay_variables, sTip);
@@ -468,6 +476,7 @@ namespace Thetis
                 else
                 {
                     chkEnableAndromeda.Checked = false;
+                    if(!chkAndrG2Panel.Checked)
                     chkEnableAndromeda.Enabled = false;
                 }
             }
@@ -1780,12 +1789,6 @@ namespace Thetis
             //
             if (recoveryList == null) // MW0LGE [2.9.0.8] ignore if we hit cancel, not possible to undo multimeter changes at this time
             {
-                if (!MeterManager.RestoreSettings(ref a)) // pass this dictionary of settings to the meter manager to restore from
-                {
-                    MessageBox.Show("There was an issue restoring the settings for MultiMeter. Please remove all meters, re-add, and restart Thetis.", "MultiMeter RestoreSettings",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                }
-
                 if (a.ContainsKey("multimeter_io"))
                 {
                     bool ok = false;
@@ -1801,6 +1804,12 @@ namespace Thetis
                         MessageBox.Show("There was an issue restoring the settings for MultiMeterIO. Existing settings will be lost.", "MultiMeterIO RestoreSaveData",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                     }
+                }
+
+                if (!MeterManager.RestoreSettings(ref a)) // pass this dictionary of settings to the meter manager to restore from
+                {
+                    MessageBox.Show("There was an issue restoring the settings for MultiMeter. Please remove all meters, re-add, and restart Thetis.", "MultiMeter RestoreSettings",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
             }
             //
@@ -10013,10 +10022,12 @@ namespace Thetis
             console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
 
+        // reguire a valid COM port for Andromeda; not needed for G2 panel
         private void ChkEnableAndromeda_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
 
+            chkAndrG2Panel.Checked = false;
             if (comboAndromedaCATPort.Text == "" || !comboAndromedaCATPort.Text.StartsWith("COM"))
             {
                 if (chkEnableAndromeda.Focused)
@@ -10049,6 +10060,7 @@ namespace Thetis
                 try
                 {
                     console.AndromedaCATEnabled = true;
+                    chkAndrG2Panel.Enabled = false;
                 }
                 catch (Exception ex)
                 {
@@ -10083,6 +10095,7 @@ namespace Thetis
                 }
 
                 console.AndromedaCATEnabled = false;
+                chkAndrG2Panel.Enabled = true;
             }
 
         }
@@ -10316,6 +10329,7 @@ namespace Thetis
                         chkEnableAndromeda.Checked = false;
                 }
 
+                if(!chkAndrG2Panel.Checked)
                 chkEnableAndromeda.Enabled = false;
             }
             else chkEnableAndromeda.Enabled = true;
@@ -19923,6 +19937,11 @@ namespace Thetis
             }
         }
 
+        private void chkAndrG2Panel_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private void checkAriesStandalone_CheckedChanged(object sender, EventArgs e)
         {
             console.AriesStandalone = checkAriesStandalone.Checked;
@@ -24142,7 +24161,7 @@ namespace Thetis
 
             clsMeterTypeComboboxItem mtci = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
             if (mtci == null) return null;
-
+            
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return null;
 
@@ -24239,6 +24258,26 @@ namespace Thetis
                 igs.SubMarkerColour = clrbtnMMDate.Color;
                 igs.ShowMarker = radMM24Clock.Checked; // use the show marker bool for this                
             }
+            else if (mt == MeterType.LED)
+            {
+                igs.FadeOnRx = chkLedIndicator_FadeOnRX.Checked;
+                igs.FadeOnTx = chkLedIndicator_FadeOnTX.Checked;
+                igs.Colour = clrbtnLedIndicator_true.Color;
+                igs.MarkerColour = clrbtnLedIndicator_false.Color;
+
+                igs.TitleColor = clrbtnLedIndicator_PanelBackground.Color;
+                igs.HistoryColor = clrbtnLedIndiciator_PanelBackgroundTX.Color;
+                igs.ShowSubMarker = chkLedIndicator_ShowPanel.Checked;
+
+                igs.EyeScale = (float)nudLedIndicator_xOffset.Value;
+                igs.EyeBezelScale = (float)nudLedIndicator_yOffset.Value;
+                igs.AttackRatio = (float)nudLedIndicator_xSize.Value;
+                igs.DecayRatio = (float)nudLedIndicator_ySize.Value;
+
+                igs.Text1 = txtLedIndicator_condition.Text;
+
+                igs.SpacerPadding = (float)nudLedIndicator_PanelPadding.Value;
+            }
             else if (mt == MeterType.TEXT_OVERLAY)
             {
                 igs.FadeOnRx = chkTextOverlay_FadeOnRX.Checked;
@@ -24333,6 +24372,7 @@ namespace Thetis
 
             m.ApplySettingsForMeterGroup(mt, igs, mtci.Order);
 
+            updateLedValidControls();
             return igs;
         }
         private bool _ignoreMeterItemChangeEvents = false;
@@ -24568,6 +24608,26 @@ namespace Thetis
                 if (!radMM24Clock.Checked && !radMM12Clock.Checked) radMM12Clock.Checked = true;
                 updateTitleControlsClock();
             }
+            else if (mt == MeterType.LED)
+            {
+                chkLedIndicator_FadeOnRX.Checked = igs.FadeOnRx;
+                chkLedIndicator_FadeOnTX.Checked = igs.FadeOnTx;
+                clrbtnLedIndicator_true.Color = igs.Colour;
+                clrbtnLedIndicator_false.Color = igs.MarkerColour;
+
+                clrbtnLedIndicator_PanelBackground.Color = igs.TitleColor;
+                clrbtnLedIndiciator_PanelBackgroundTX.Color = igs.HistoryColor;
+                chkLedIndicator_ShowPanel.Checked = igs.ShowSubMarker;
+
+                nudLedIndicator_xOffset.Value = (decimal)igs.EyeScale;
+                nudLedIndicator_yOffset.Value = (decimal)igs.EyeBezelScale;
+                nudLedIndicator_xSize.Value = (decimal)igs.AttackRatio;
+                nudLedIndicator_ySize.Value = (decimal)igs.DecayRatio;
+
+                txtLedIndicator_condition.Text = igs.Text1;
+
+                nudLedIndicator_PanelPadding.Value = (decimal)igs.SpacerPadding;
+            }
             else if (mt == MeterType.TEXT_OVERLAY)
             {
                 chkTextOverlay_FadeOnRX.Checked = igs.FadeOnRx;
@@ -24714,6 +24774,7 @@ namespace Thetis
                 //
             }
 
+            updateLedValidControls();
             setupMMSettingsGroupBoxes(mt);
 
             _ignoreMeterItemChangeEvents = false;
@@ -24964,6 +25025,7 @@ namespace Thetis
                     grpTextOverlay.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
+                    grpLedIndiciator.Visible = false;
                     break;
                 case MeterType.VFO_DISPLAY:
                     grpMeterItemVfoDisplaySettings.Parent = grpMultiMeterHolder;
@@ -24976,6 +25038,7 @@ namespace Thetis
                     grpTextOverlay.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
+                    grpLedIndiciator.Visible = false;
                     break;
                 case MeterType.CLOCK:
                     grpMeterItemClockSettings.Parent = grpMultiMeterHolder;
@@ -24988,6 +25051,7 @@ namespace Thetis
                     grpTextOverlay.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
+                    grpLedIndiciator.Visible = false;
                     break;
                 case MeterType.SPACER:
                     grpMeterItemSpacerSettings.Parent = grpMultiMeterHolder;
@@ -25000,6 +25064,7 @@ namespace Thetis
                     grpTextOverlay.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
+                    grpLedIndiciator.Visible = false;
                     break;
                 case MeterType.TEXT_OVERLAY:
                     grpTextOverlay.Parent = grpMultiMeterHolder;
@@ -25012,6 +25077,7 @@ namespace Thetis
                     grpMeterItemSpacerSettings.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
+                    grpLedIndiciator.Visible = false;
                     break;
                 case MeterType.DATA_OUT:
                     grpMeterItemDataOutNode.Parent = grpMultiMeterHolder;
@@ -25024,6 +25090,7 @@ namespace Thetis
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
                     grpMeterItemRotator.Visible = false;
+                    grpLedIndiciator.Visible = false;
                     break;
                 case MeterType.ROTATOR:
                     grpMeterItemRotator.Parent = grpMultiMeterHolder;
@@ -25036,6 +25103,20 @@ namespace Thetis
                     grpMeterItemSpacerSettings.Visible = false;
                     grpTextOverlay.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
+                    grpLedIndiciator.Visible = false;
+                    break;
+                case MeterType.LED:
+                    grpLedIndiciator.Parent = grpMultiMeterHolder;
+                    grpLedIndiciator.Location = loc;
+                    grpLedIndiciator.Visible = true;
+
+                    grpMeterItemSettings.Visible = false;
+                    grpMeterItemClockSettings.Visible = false;
+                    grpMeterItemVfoDisplaySettings.Visible = false;
+                    grpMeterItemSpacerSettings.Visible = false;
+                    grpTextOverlay.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
+                    grpMeterItemRotator.Visible = false;
                     break;
                 default:
                     grpMeterItemSettings.Parent = grpMultiMeterHolder;
@@ -25047,6 +25128,7 @@ namespace Thetis
                     grpTextOverlay.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
+                    grpLedIndiciator.Visible = false;
                     break;
             }
         }
@@ -27599,7 +27681,6 @@ namespace Thetis
 
         private void chkTextOverlay_ShowPanel_CheckedChanged(object sender, EventArgs e)
         {
-            //hide show here
             updateTextOverlayPanelControls();
             updateMeterType();
         }
@@ -27607,11 +27688,12 @@ namespace Thetis
         {
             bool enabled = chkTextOverlay_ShowPanel.Checked;
             clrbtnTextOverlay_PanelBackground.Enabled = enabled;
-            clrbtnTextOverlay_PanelBackgroundTX.Enabled = enabled;
+            clrbtnTextOverlay_PanelBackgroundTX.Enabled = enabled;            
             nudTextOverlay_PanelPadding.Enabled = enabled;
             chkTextOverlay_FadeOnRX.Enabled = enabled;
             chkTextOverlay_FadeOnTX.Enabled = enabled;
             lblTextOverlay_panelbackground.Enabled = enabled;
+            lblTextOverlay_panelbackgroundTX.Enabled = enabled;
             lblTextOverlay_panelpadding.Enabled = enabled;
         }
         private void clrbtnTextOverlay_PanelBackground_Changed(object sender, EventArgs e)
@@ -27756,6 +27838,8 @@ namespace Thetis
             pnlMMIO_network_active.BackColor = Color.LightGray;
             pnlMMIO_network_rxdata.BackColor = Color.LightGray;
             pnlMMIO_network_txdata.BackColor = Color.LightGray;
+            _light_gray_tx = 1;
+            _light_gray_tx = 1;
 
             for (int i = (int)MultiMeterIO.MMIOFormat.JSON; i < (int)(int)MultiMeterIO.MMIOFormat.LAST; i++)
             {
@@ -27934,13 +28018,11 @@ namespace Thetis
 
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
-            //lstMMIO_network_variables.Items.Clear();
             btnMMIO_network_remove_variable.Enabled = items.Count > 0;
             btnMMIO_network_copyvariable_clipboard.Enabled = items.Count > 0;
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
-
             lstMMIO_network_variables.SuspendLayout();
             // remove any from list that are now not in variables
             List<ListViewItem> to_remove = new List<ListViewItem>();
@@ -27966,13 +28048,13 @@ namespace Thetis
                 else
                 {
                     lvi = lstMMIO_network_variables.Items[kvp.Key];
-                    lvi.SubItems[1].Text = mmio.VariableValueType(kvp.Value);      //[1] bizzar that it is index 1 for the added subitem               
+                    lvi.SubItems[1].Text = mmio.VariableValueType(kvp.Value);      //[1] bizzar that it is index 1 for the added subitem
                 }
 
                 if (selectedKey != "" && kvp.Key == selectedKey)
                     lvi.Selected = true;
             }
-            lstMMIO_network_variables.ResumeLayout();
+            lstMMIO_network_variables.ResumeLayout(false);
             lstMMIO_network_variables.Invalidate();
             btnMMIO_network_remove_all_variables.Enabled = lstMMIO_network_variables.Items.Count > 0;
         }
@@ -28005,6 +28087,8 @@ namespace Thetis
             pnlMMIO_network_active.BackColor = mmio.Active ? Color.LimeGreen : Color.LightGray;
             pnlMMIO_network_rxdata.BackColor = Color.LightGray;
             pnlMMIO_network_txdata.BackColor = Color.LightGray;
+            _light_gray_tx = 1;
+            _light_gray_tx = 1;
             comboMMIO_network_format_in.SelectedIndex = (int)mmio.FormatIn;
             comboMMIO_network_terminator_in.SelectedIndex = (int)mmio.TerminatorIn;
             comboMMIO_network_format_out.SelectedIndex = (int)mmio.FormatOut;
@@ -29087,6 +29171,117 @@ namespace Thetis
         private void txtRotator_4charID_TextChanged(object sender, EventArgs e)
         {
             updateMeterType();
+        }
+
+        private void chkLedIndicator_ShowPanel_CheckedChanged(object sender, EventArgs e)
+        {
+            updateLedIndicatorPanelControls();
+            updateMeterType();
+        }
+
+        private void clrbtnLedIndicator_PanelBackground_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnLedIndiciator_PanelBackgroundTX_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudLedIndicator_PanelPadding_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkLedIndicator_FadeOnRX_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkLedIndicator_FadeOnTX_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void txtLedIndicator_condition_TextChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnLedIndicator_true_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnLedIndicator_false_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void btnLedIndicator_copy_truefalse_colours_Click(object sender, EventArgs e)
+        {
+            clrbtnLedIndicator_false.Color = clrbtnLedIndicator_true.Color;
+        }
+
+        private void nudLedIndicator_xOffset_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudLedIndicator_yOffset_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudLedIndicator_xSize_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudLedIndicator_ySize_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void btnLedIndicator_copy_sizex_to_y_Click(object sender, EventArgs e)
+        {
+            nudLedIndicator_ySize.Value = nudLedIndicator_xSize.Value;
+        }
+        private void updateLedIndicatorPanelControls()
+        {
+            bool enabled = chkLedIndicator_ShowPanel.Checked;
+            clrbtnLedIndicator_PanelBackground.Enabled = enabled;
+            clrbtnLedIndiciator_PanelBackgroundTX.Enabled = enabled;
+            nudLedIndicator_PanelPadding.Enabled = enabled;
+            chkLedIndicator_FadeOnRX.Enabled = enabled;
+            chkLedIndicator_FadeOnTX.Enabled = enabled;
+            lblLedIndicator_panelbackground.Enabled = enabled;
+            lblLedIndicator_panelbackgroundTX.Enabled = enabled;
+            nudLedIndicator_PanelPadding.Enabled = enabled;
+        }
+        private void updateLedValidControls()
+        {
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return;
+
+            clsMeterTypeComboboxItem mtci = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
+            if (mtci == null) return;
+
+            MeterType mt = meterItemGroupTypefromSelected();
+            if (mt == MeterType.NONE) return;
+
+            if (mt == MeterType.LED)
+            {
+                MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
+                if (igs == null) return;
+
+                lblLed_Error.ForeColor = Color.Red;
+                lblLed_Error.Visible = igs.ShowHistory;
+                lblLed_Valid.Text = igs.ShowType ? "Valid" : "Invalid";
+                lblLed_Valid.ForeColor = igs.ShowType ? Color.LimeGreen : Color.Red;
+            }
+
         }
     }
 
