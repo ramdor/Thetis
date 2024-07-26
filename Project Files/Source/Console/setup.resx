@@ -326,6 +326,14 @@ Transmit tab</value>
         lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
 </value>
   </data>
+  <data name="pbLedIndicator_condition_tips.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE+V
+        joEJwzAQA71rx+oUHaQzuZwfkfdbsZuDI+CXRNqBXnzMKL7efVLvBE7YgapyFBy2tJNOVGdsGD/fPuCb
+        3+lE9WIKVDP1RjcmgiWQvfsjpBsTmxHhblk2boccLofboaxwN/xrSLib1BDYAAp3Q7oxEdiQcDdJNyYu
+        lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
+</value>
+  </data>
   <metadata name="saveFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>516, 17</value>
   </metadata>

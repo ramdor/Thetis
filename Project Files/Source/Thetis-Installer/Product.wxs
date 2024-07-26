@@ -322,6 +322,99 @@
               />
 		</Component>
 
+		<!-- 
+		Additional
+		-->
+		<Component Guid="*">
+			<File Id="System.Numerics.VectorsDLL"
+				  Source="$(var.FilesPath)System.Numerics.Vectors.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="System.Runtime.CompilerServices.UnsafeDLL"
+				  Source="$(var.FilesPath)System.Runtime.CompilerServices.Unsafe.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="System.Text.Encoding.CodePages"
+				  Source="$(var.FilesPath)System.Text.Encoding.CodePages.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="System.Threading.Tasks.Extensions"
+				  Source="$(var.FilesPath)System.Threading.Tasks.Extensions.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="System.ValueTuple"
+				  Source="$(var.FilesPath)System.ValueTuple.dll"
+				  KeyPath="yes"
+              />
+		</Component>		
+		<!-- 
+		Additional end
+		-->
+
+		<!-- 
+		Binding Redirects in Thetis.exe.config
+		-->
+		<Component Guid="*">
+			<File Id="Thetis.exe.config"
+				  Source="$(var.FilesPath)Thetis.exe.config"
+				  KeyPath="yes"
+              />
+		</Component>
+		<!-- 
+		End Thetis.exe.config
+		-->
+		
+		<!-- 
+		CodeAnalysis for Led/MultiMeter
+		-->
+		<Component Guid="*">
+			<File Id="Microsoft.CodeAnalysisDLL"
+				  Source="$(var.FilesPath)Microsoft.CodeAnalysis.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="Microsoft.CodeAnalysis.CSharpDLL"
+				  Source="$(var.FilesPath)Microsoft.CodeAnalysis.CSharp.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="Microsoft.CodeAnalysis.CSharp.Scripting"
+				  Source="$(var.FilesPath)Microsoft.CodeAnalysis.CSharp.Scripting.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="Microsoft.CodeAnalysis.ScriptingDLL"
+				  Source="$(var.FilesPath)Microsoft.CodeAnalysis.Scripting.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="System.Collections.ImmutableDLL"
+				  Source="$(var.FilesPath)System.Collections.Immutable.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="System.Reflection.MetadataDLL"
+				  Source="$(var.FilesPath)System.Reflection.Metadata.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<!-- 
+		End CodeAnalysis for Led/MultiMeter section
+		-->
+		
 		<Component Guid="*">
 			<File Id="System.MemoryDLL"
 				  Source="$(var.FilesPath)System.Memory.dll"
