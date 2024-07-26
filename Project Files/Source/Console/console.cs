@@ -16561,6 +16561,9 @@ namespace Thetis
             { return cat_to_vfo_b; }
         }
 
+        // property set when An Andromeda panel is connected via a serial CAT port.
+        // NOT used for G2 panel accessed via TCP/IP
+
         private bool andromeda_cat_enabled;
         public bool AndromedaCATEnabled
         {
@@ -16592,7 +16595,11 @@ namespace Thetis
                         "Andromeda CAT Error",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                    if (!IsSetupFormNull) SetupForm.AndromedaCATEnabled = false;
+                    if (!IsSetupFormNull)
+                    {
+                        if (!andromeda_g2_enabled)
+                            SetupForm.AndromedaCATEnabled = false;
+                    }
                 }
             }
             get { return andromeda_cat_enabled; }
