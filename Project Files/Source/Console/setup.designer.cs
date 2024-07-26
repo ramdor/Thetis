@@ -3805,6 +3805,7 @@
             this.lblLedIndicator_panelbackground = new System.Windows.Forms.LabelTS();
             this.chkLedIndicator_FadeOnTX = new System.Windows.Forms.CheckBoxTS();
             this.chkLedIndicator_FadeOnRX = new System.Windows.Forms.CheckBoxTS();
+            this.chkAndrG2Panel = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -55170,6 +55171,7 @@
             // 
             // grpAndrOptions
             // 
+            this.grpAndrOptions.Controls.Add(this.chkAndrG2Panel);
             this.grpAndrOptions.Controls.Add(this.chkAndrStickyMenus);
             this.grpAndrOptions.Controls.Add(this.chkAndrStickyShift);
             this.grpAndrOptions.Controls.Add(this.chkAndrBandBtnDefault);
@@ -55179,7 +55181,7 @@
             this.grpAndrOptions.Controls.Add(this.chkAndrGainAutoshow);
             this.grpAndrOptions.Location = new System.Drawing.Point(271, 8);
             this.grpAndrOptions.Name = "grpAndrOptions";
-            this.grpAndrOptions.Size = new System.Drawing.Size(244, 187);
+            this.grpAndrOptions.Size = new System.Drawing.Size(244, 216);
             this.grpAndrOptions.TabIndex = 107;
             this.grpAndrOptions.TabStop = false;
             this.grpAndrOptions.Text = "Andromeda Options";
@@ -60458,6 +60460,18 @@
             this.chkLedIndicator_FadeOnRX.UseVisualStyleBackColor = true;
             this.chkLedIndicator_FadeOnRX.CheckedChanged += new System.EventHandler(this.chkLedIndicator_FadeOnRX_CheckedChanged);
             // 
+            // chkAndrG2Panel
+            // 
+            this.chkAndrG2Panel.AutoSize = true;
+            this.chkAndrG2Panel.Image = null;
+            this.chkAndrG2Panel.Location = new System.Drawing.Point(16, 177);
+            this.chkAndrG2Panel.Name = "chkAndrG2Panel";
+            this.chkAndrG2Panel.Size = new System.Drawing.Size(106, 17);
+            this.chkAndrG2Panel.TabIndex = 8;
+            this.chkAndrG2Panel.Text = "Enable G2 Panel";
+            this.chkAndrG2Panel.UseVisualStyleBackColor = true;
+            this.chkAndrG2Panel.CheckedChanged += new System.EventHandler(this.chkAndrG2Panel_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -65480,5 +65494,6 @@
         private CheckBoxTS chkLedIndicator_FadeOnRX;
         private LabelTS lblLed_Error;
         private LabelTS lblLed_Valid;
+        private CheckBoxTS chkAndrG2Panel;
     }
 }

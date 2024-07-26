@@ -58,6 +58,7 @@ namespace Thetis
         private Button btnInsert;
         int NumMenuItems;                   // number of menu item records (this will be variable)
         private bool FormInitialised = false;
+        private Button btnG2Reset;
         private bool IsVisible = false;
 
         #endregion
@@ -106,6 +107,7 @@ namespace Thetis
             this.btnInsert = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
+            this.btnG2Reset = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.EncoderDataGridView)).BeginInit();
@@ -119,7 +121,7 @@ namespace Thetis
             // 
             // BtnClose
             // 
-            this.BtnClose.Location = new System.Drawing.Point(303, 348);
+            this.BtnClose.Location = new System.Drawing.Point(390, 348);
             this.BtnClose.Name = "BtnClose";
             this.BtnClose.Size = new System.Drawing.Size(98, 38);
             this.BtnClose.TabIndex = 0;
@@ -255,7 +257,7 @@ namespace Thetis
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(176, 348);
+            this.btnSave.Location = new System.Drawing.Point(273, 348);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(100, 38);
             this.btnSave.TabIndex = 2;
@@ -265,19 +267,30 @@ namespace Thetis
             // 
             // btnReset
             // 
-            this.btnReset.Location = new System.Drawing.Point(51, 348);
+            this.btnReset.Location = new System.Drawing.Point(33, 348);
             this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(96, 38);
+            this.btnReset.Size = new System.Drawing.Size(114, 38);
             this.btnReset.TabIndex = 3;
-            this.btnReset.Text = "Reset Data";
+            this.btnReset.Text = "Reset Andromeda Data";
             this.btnReset.UseVisualStyleBackColor = true;
             this.btnReset.Click += new System.EventHandler(this.BtnReset_Click);
+            // 
+            // btnG2Reset
+            // 
+            this.btnG2Reset.Location = new System.Drawing.Point(161, 348);
+            this.btnG2Reset.Name = "btnG2Reset";
+            this.btnG2Reset.Size = new System.Drawing.Size(96, 38);
+            this.btnG2Reset.TabIndex = 6;
+            this.btnG2Reset.Text = "Reset G2 Panel Data";
+            this.btnG2Reset.UseVisualStyleBackColor = true;
+            this.btnG2Reset.Click += new System.EventHandler(this.btnG2Reset_Click);
             // 
             // AndromedaEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(804, 392);
+            this.Controls.Add(this.btnG2Reset);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnReset);
             this.Controls.Add(this.btnInsert);
@@ -678,6 +691,12 @@ namespace Thetis
         private void AndromedaEditForm_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnG2Reset_Click(object sender, EventArgs e)
+        {
+            console.ResetG2PanelDataset();
+            AndromedaEditForm_Activated(null, null);
         }
     }
 }
