@@ -476,6 +476,7 @@ namespace Thetis
                 else
                 {
                     chkEnableAndromeda.Checked = false;
+                    if(!chkAndrG2Panel.Checked)
                     chkEnableAndromeda.Enabled = false;
                 }
             }
@@ -10020,10 +10021,12 @@ namespace Thetis
             console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
 
+        // reguire a valid COM port for Andromeda; not needed for G2 panel
         private void ChkEnableAndromeda_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
 
+            chkAndrG2Panel.Checked = false;
             if (comboAndromedaCATPort.Text == "" || !comboAndromedaCATPort.Text.StartsWith("COM"))
             {
                 if (chkEnableAndromeda.Focused)
@@ -10056,6 +10059,7 @@ namespace Thetis
                 try
                 {
                     console.AndromedaCATEnabled = true;
+                    chkAndrG2Panel.Enabled = false;
                 }
                 catch (Exception ex)
                 {
@@ -10090,6 +10094,7 @@ namespace Thetis
                 }
 
                 console.AndromedaCATEnabled = false;
+                chkAndrG2Panel.Enabled = true;
             }
 
         }
@@ -10323,6 +10328,7 @@ namespace Thetis
                         chkEnableAndromeda.Checked = false;
                 }
 
+                if(!chkAndrG2Panel.Checked)
                 chkEnableAndromeda.Enabled = false;
             }
             else chkEnableAndromeda.Enabled = true;
@@ -19916,6 +19922,11 @@ namespace Thetis
                     radP1DDC6ADC0.Checked = true;
                     break;
             }
+        }
+
+        private void chkAndrG2Panel_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
 
         private void checkAriesStandalone_CheckedChanged(object sender, EventArgs e)
