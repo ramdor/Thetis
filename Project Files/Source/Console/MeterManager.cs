@@ -9767,6 +9767,7 @@ namespace Thetis
 
                                             solidColour.FadeOnRx = igs.FadeOnRx;
                                             solidColour.FadeOnTx = igs.FadeOnTx;
+                                            solidColour.Colour = igs.Colour;
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                         {

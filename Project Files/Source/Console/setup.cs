@@ -81,8 +81,8 @@ namespace Thetis
 
             //enable db on lists to stop flicker
             Common.DoubleBuffered(lstMMIO_network_variables, true);
-            Common.DoubleBuffered(lstMetersAvailable, true);
             Common.DoubleBuffered(lstMetersInUse, true);
+            Common.DoubleBuffered(lstMetersAvailable, true);
 
             MaximumSize = MinimumSize;
             Size = MinimumSize;

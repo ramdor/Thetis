@@ -24335,6 +24335,7 @@ namespace Thetis
             {
                 if (!_mox)
                 {
+                    //TODO: who thought this a good idea to have in the sql thread? just to make sure? MW0LGE
                     float rx1PreampOffset;
                     if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
                     else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
@@ -24356,6 +24357,7 @@ namespace Thetis
         {
             while (chkPower.Checked && rx2_enabled)
             {
+                //TODO: who thought this a good idea to have in the sql2 thread? just to make sure? MW0LGE
                 float rx2PreampOffset;
                 if (rx2_step_att_present) rx2PreampOffset = (float)rx2_attenuator_data;
                 else rx2PreampOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
