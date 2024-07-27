@@ -20,6 +20,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using System.Xml;
+using System.Threading.Tasks;
+
 //using System.Reflection;
 //using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 //using static System.Console;
@@ -32,7 +35,6 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
-using System.Diagnostics.Eventing.Reader;
 
 namespace Thetis
 {
@@ -339,6 +341,12 @@ namespace Thetis
                     case "qso_time_short":
                     case "tb_qso_time":
                     case "tb_qso_time_short":
+                    case "mox":
+                    case "cfc":
+                    case "comp":
+                    case "lev":
+                    case "rx2":
+                    case "tx_eq":
                         bRet = true;
                         break;
                 }
@@ -450,7 +458,7 @@ namespace Thetis
                         _readings_text_objects[key] = owningMeter.FilterVfoBName;
                         break;
                     case "split":
-                        _readings_text_objects[key] = owningMeter.Split ? "SPLIT" : "";
+                        _readings_text_objects[key] = owningMeter.Split ? (owningMeter.QuickSplitEnabled ? "QSPLIT" : "SPLIT") : "";
                         break;
                     case "qso_time":
                         _readings_text_objects[key] = formatElapsedTime(owningMeter.QsoDurationSeconds);
@@ -463,6 +471,24 @@ namespace Thetis
                         break;
                     case "tb_qso_time_short":
                         _readings_text_objects[key] = _console.QSOTimerEnabled ? formatElapsedTimeCompact(_console.QSOTimerSeconds) : "";
+                        break;
+                    case "mox":
+                        _readings_text_objects[key] = owningMeter.MOX ? "MOX" : "";
+                        break;
+                    case "cfc":
+                        _readings_text_objects[key] = owningMeter.CFCEnabled ? "CFC" : "";
+                        break;
+                    case "comp":
+                        _readings_text_objects[key] = owningMeter.CompandEnabled ? "COMP" : "";
+                        break;
+                    case "lev":
+                        _readings_text_objects[key] = owningMeter.LevelerEnabled ? "LEVELER" : "";
+                        break;
+                    case "rx2":
+                        _readings_text_objects[key] = owningMeter.RX2Enabled ? "RX2 On" : "";
+                        break;
+                    case "tx_eq":
+                        _readings_text_objects[key] = owningMeter.TXEQEnabled ? "TXEQ" : "";
                         break;
                 }
 
@@ -532,6 +558,12 @@ namespace Thetis
                 addReadingText("qso_time_short", text);
                 addReadingText("tb_qso_time", text);
                 addReadingText("tb_qso_time_short", text);
+                addReadingText("mox", text);
+                addReadingText("cfc", text);
+                addReadingText("comp", text);
+                addReadingText("lev", text);
+                addReadingText("rx2", text);
+                addReadingText("tx_eq", text);
             }
             private void addReading(Reading reading, string text)
             {
@@ -4495,11 +4527,13 @@ namespace Thetis
                                 foreach (KeyValuePair<Reading, object> kvp in all_list_item_readings)
                                 {
                                     if(kvp.Value is float flt)
-                                        out_data_converted.Add(kvp.Key.ToString().ToLower(), flt.ToString("f1"));
+                                        out_data_converted.Add(kvp.Key.ToString().ToLower(), flt.ToString("0.0#####"));
+                                    if (kvp.Value is double dbl)
+                                        out_data_converted.Add(kvp.Key.ToString().ToLower(), dbl.ToString("0.0#####"));
                                     else if (kvp.Value is string strng)
                                         out_data_converted.Add(kvp.Key.ToString().ToLower(), strng);
                                 }
-                                string jsonString = JsonConvert.SerializeObject(out_data_converted, Formatting.Indented);
+                                string jsonString = JsonConvert.SerializeObject(out_data_converted, Newtonsoft.Json.Formatting.Indented);
                                 MultiMeterIO.SendDataMMIO(MMIOGuid, jsonString);
                                 break;
                             case MultiMeterIO.MMIOFormat.XML:
@@ -4509,7 +4543,9 @@ namespace Thetis
                                 foreach (KeyValuePair<Reading, object> kvp in all_list_item_readings)
                                 {
                                     if (kvp.Value is float flt)
-                                        entry = new XElement(kvp.Key.ToString().ToLower(), flt.ToString("f1"));
+                                        entry = new XElement(kvp.Key.ToString().ToLower(), flt.ToString("0.0#####"));
+                                    if (kvp.Value is double dbl)
+                                        entry = new XElement(kvp.Key.ToString().ToLower(), dbl.ToString("0.0#####"));
                                     else if (kvp.Value is string strng)
                                         entry = new XElement(kvp.Key.ToString().ToLower(), strng);
                                     root.Add(entry);
@@ -4523,7 +4559,9 @@ namespace Thetis
                                     Reading reading = kvp.Key;
                                     out_data += reading.ToString().ToLower() + ":";
                                     if (kvp.Value is float flt)
-                                        out_data += flt.ToString("f1") + ":";
+                                        out_data += flt.ToString("0.0#####") + ":";
+                                    if (kvp.Value is double dbl)
+                                        out_data += dbl.ToString("0.0#####") + ":";
                                     else if (kvp.Value is string strng)
                                         out_data += strng.Replace(":", "") + ":";
                                 }
@@ -4836,17 +4874,18 @@ namespace Thetis
                     foreach (Reading r in _list_placeholders_readings_1)
                     {
                         object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
-                        sTmp = sTmp.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("f1"));
+                        sTmp = sTmp.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("0.0#####"));
                     }
                     foreach (string placeholder in _list_placeholders_strings_1)
                     {
+                        string decFormat = placeholder.ToLower().Contains("_double") ? "f6" : "0.0#####";
                         object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
                         if(reading is int)
                             sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((int)reading).ToString());
                         else if (reading is float)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((float)reading).ToString("f1"));
+                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((float)reading).ToString(decFormat));
                         else if (reading is double)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((double)reading).ToString("f6"));
+                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((double)reading).ToString(decFormat));
                         else if (reading is bool)
                             sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((bool)reading).ToString());
                         else
@@ -4882,17 +4921,18 @@ namespace Thetis
                     foreach (Reading r in _list_placeholders_readings_2)
                     {
                         object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
-                        sTmp = sTmp.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("f1"));
+                        sTmp = sTmp.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("0.0#####"));
                     }
                     foreach (string placeholder in _list_placeholders_strings_2)
                     {
+                        string decFormat = placeholder.ToLower().Contains("_double") ? "f6" : "0.0#####";
                         object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
                         if (reading is int)
                             sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((int)reading).ToString());
                         else if (reading is float)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((float)reading).ToString("f1"));
+                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((float)reading).ToString(decFormat));
                         else if (reading is double)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((double)reading).ToString("f6"));
+                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((double)reading).ToString(decFormat));
                         else if (reading is bool)
                             sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((bool)reading).ToString());
                         else
@@ -4968,7 +5008,7 @@ namespace Thetis
             private clsMeter _owningMeter;
             private Led_Shape _led_shape;
             private Led_Style _led_style;
-            private bool _pulse;
+            private bool _old_result;
             private bool _result;
             private bool _valid;
             private List<string> _list_placeholders_strings;
@@ -4978,6 +5018,18 @@ namespace Thetis
             private Dictionary<string, object> _subs;
             private bool _busy = false;
             private bool _error = false;
+            CancellationTokenSource _cts;
+            private bool _forceRecompile;
+
+            private bool _blink;
+            private bool _pulsate;
+            private bool _pulsate_up;
+            private int _transition_fade;
+            private float _color_fade;
+            private int _blink_count;
+            private bool _show_false;
+            private bool _show_true;
+
             public clsLed(clsMeter owningMeter)
             {
                 _list_placeholders_strings = new List<string>();
@@ -4996,7 +5048,7 @@ namespace Thetis
                 _padding = 0.1f;
                 _led_shape = Led_Shape.SQUARE;
                 _led_style = Led_Style.FLAT;
-                _pulse = false;
+                _old_result = false;
                 _result = false;
                 _valid = false;
                 _busy = false;
@@ -5007,10 +5059,23 @@ namespace Thetis
 
                 _owningMeter = owningMeter;
 
-                UpdateInterval = 250;
+                UpdateInterval = 50;
 
+                _cts = null;
                 _script = null;
                 _subs = new Dictionary<string, object>();
+
+                _forceRecompile = false;
+
+                _pulsate_up = true;
+                _pulsate = false;
+                _blink = false;
+                _transition_fade = 0;
+                _color_fade = 0;
+                _blink_count = 0;
+
+                _show_true = true;
+                _show_false = true;
             }
             //private string substituteVariables(string expression, Dictionary<string, object> variables)
             //{
@@ -5049,7 +5114,7 @@ namespace Thetis
                     return false;
                 }
             }
-            private async System.Threading.Tasks.Task<bool> evaluateExpression()
+            private async System.Threading.Tasks.Task<bool> evaluateExpression(CancellationToken cancellationToken)
             {
                 if (!_valid || _script == null || _busy) return false;
                 _busy = true;
@@ -5058,7 +5123,7 @@ namespace Thetis
                 {
                     Globals globals = new Globals();
                     globals.Variables = _subs;
-                    ScriptState ss = await _script.RunAsync(globals);
+                    ScriptState ss = await _script.RunAsync(globals, cancellationToken);
                     if (ss.Variables.Length == 1)
                     {
                         ScriptVariable sv = ss.Variables[0];
@@ -5072,8 +5137,8 @@ namespace Thetis
                         _script = null;
                     }
                 }
-                catch
-                {
+                catch (Exception ex)
+                { 
                     _valid = false;
                     _script = null;
                     _error = true;
@@ -5093,6 +5158,10 @@ namespace Thetis
             {
                 get { return _result; }
             }
+            public bool OldConditionResult
+            {
+                get { return _old_result; }
+            }
             public System.Drawing.Color PanelBackColour1
             {
                 get { return _panel_back_colour_1; }
@@ -5103,10 +5172,15 @@ namespace Thetis
                 get { return _panel_back_colour_2; }
                 set { _panel_back_colour_2 = value; }
             }
-            public bool Pulse
+            public bool ShowTrue
             {
-                get { return _pulse; }
-                set { _pulse = value; }
+                get { return _show_true; }
+                set { _show_true = value; }
+            }
+            public bool ShowFalse
+            {
+                get { return _show_false; }
+                set { _show_false = value; }
             }
             public Led_Shape LedShape
             {
@@ -5122,9 +5196,11 @@ namespace Thetis
             {
                 get { return _condition; }
                 set {
-                    if (value == _condition) return;
+                    if (value == _condition && !_forceRecompile) return;
+                    _forceRecompile = false;
 
-                    _condition = value.Replace("|", "");
+                    //_condition = value.Replace("|", "");
+                    _condition = value;
                     ReadingsCustom.UpdateReadings(_condition);
                     lock (_list_placeholders_lock)
                     {
@@ -5142,18 +5218,6 @@ namespace Thetis
                             }
                         }
 
-                        //string expression = _condition;
-                        //foreach (Reading r in _list_placeholders_readings)
-                        //{
-                        //    object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, _owningMeter.RX);
-                        //    expression = expression.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("f1"));
-                        //}
-                        //foreach (string placeholder in _list_placeholders_strings)
-                        //{
-                        //    object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, _owningMeter.RX);
-                        //    expression = expression.Replace("%" + placeholder.ToLower() + "%", (string)reading);
-                        //}
-
                         _subs.Clear();                        
                         string expression = _condition;
                         string script_expression = _condition;
@@ -5168,31 +5232,20 @@ namespace Thetis
                         foreach (string placeholder in _list_placeholders_strings)
                         {
                             object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, _owningMeter.RX);
+                            string type;
                             if (reading is int)
-                            {
-                                expression = expression.Replace("%" + placeholder.ToLower() + "%", "(int)(" + reading.ToString() + ")");
-                                script_expression = script_expression.Replace("%" + placeholder.ToLower() + "%", "(int)(Variables[\"" + placeholder.ToLower() + "\"])");
-                            }
+                                type = "int";
                             else if (reading is float)
-                            {
-                                expression = expression.Replace("%" + placeholder.ToLower() + "%", "(float)(" + reading.ToString() + ")");
-                                script_expression = script_expression.Replace("%" + placeholder.ToLower() + "%", "(float)(Variables[\"" + placeholder.ToLower() + "\"])");
-                            }
+                                type = "float";
                             else if (reading is double)
-                            {
-                                expression = expression.Replace("%" + placeholder.ToLower() + "%", "(double)(" + reading.ToString() + ")");
-                                script_expression = script_expression.Replace("%" + placeholder.ToLower() + "%", "(double)(Variables[\"" + placeholder.ToLower() + "\"])");
-                            }
+                                type = "double";
                             else if (reading is bool)
-                            {
-                                expression = expression.Replace("%" + placeholder.ToLower() + "%", "(bool)(" + reading.ToString().ToLower() + ")");
-                                script_expression = script_expression.Replace("%" + placeholder.ToLower() + "%", "(bool)(Variables[\"" + placeholder.ToLower() + "\"])");
-                            }
+                                type = "bool";
                             else
-                            {
-                                expression = expression.Replace("%" + placeholder.ToLower() + "%", "(string)(\"" + reading.ToString() + "\")");
-                                script_expression = script_expression.Replace("%" + placeholder.ToLower() + "%", "(string)(Variables[\"" + placeholder.ToLower() + "\"])");
-                            }                            
+                                type = "string";
+                            expression = expression.Replace("%" + placeholder.ToLower() + "%", "(" + type + ")(\"" + reading.ToString() + "\")");
+                            script_expression = script_expression.Replace("%" + placeholder.ToLower() + "%", "(" + type + ")(Variables[\"" + placeholder.ToLower() + "\"])");
+
                             if (!_subs.ContainsKey(placeholder.ToLower()))
                                 _subs.Add(placeholder.ToLower(), reading);
                         }
@@ -5203,7 +5256,6 @@ namespace Thetis
                             MultiMeterIO.clsMMIO mmio = mmios.Value;
                             foreach (KeyValuePair<string, object> kvp in mmio.Variables())
                             {
-                                Type type;
                                 object val = mmio.GetVariable(kvp.Key);
 
                                 string tmp = mmio.VariableValueType(val);
@@ -5212,49 +5264,36 @@ namespace Thetis
 
                                 if (script_expression.Contains("%" + kvp.Key + "%"))
                                 {
+                                    string type;
                                     if (val is int)
-                                    {
-                                        script_expression = script_expression.Replace("%" + kvp.Key + "%", "(int)(Variables[\"" + kvp.Key + "\"])");
-                                        if (!_subs.ContainsKey(kvp.Key))
-                                            _subs.Add(kvp.Key, val);
-                                    }
+                                        type = "int";
                                     else if (val is float)
-                                    {
-                                        script_expression = script_expression.Replace("%" + kvp.Key + "%", "(float)(Variables[\"" + kvp.Key + "\"])");
-                                        if (!_subs.ContainsKey(kvp.Key))
-                                            _subs.Add(kvp.Key, val);
-                                    }
+                                        type = "float";
                                     else if (val is double)
-                                    {
-                                        script_expression = script_expression.Replace("%" + kvp.Key + "%", "(double)(Variables[\"" + kvp.Key + "\"])");
-                                        if (!_subs.ContainsKey(kvp.Key))
-                                            _subs.Add(kvp.Key, val);
-                                    }
+                                        type = "double";
                                     else if (val is bool)
-                                    {
-                                        script_expression = script_expression.Replace("%" + kvp.Key + "%", "(bool)(Variables[\"" + kvp.Key + "\"])");
-                                        if (!_subs.ContainsKey(kvp.Key))
-                                            _subs.Add(kvp.Key, val);
-                                    }
+                                        type = "bool";
                                     else
-                                    {
-                                        script_expression = script_expression.Replace("%" + kvp.Key + "%", "(string)(Variables[\"" + kvp.Key + "\"])");
-                                        if (!_subs.ContainsKey(kvp.Key))
-                                            _subs.Add(kvp.Key, val);
-                                    }
+                                        type = "string";
+
+                                    script_expression = script_expression.Replace("%" + kvp.Key + "%", "(" + type + ")(Variables[\"" + kvp.Key + "\"])");
+                                    if (!_subs.ContainsKey(kvp.Key))
+                                        _subs.Add(kvp.Key, val);
                                 }
                             }
                         }
                         //
 
-                        _valid = validateExpression(expression, _subs);
-                        if (_valid)
+                        bool okExp = validateExpression(expression, _subs);
+                        if (okExp)
                         {
                             try
                             {
                                 ScriptOptions options = ScriptOptions.Default.AddReferences(typeof(object).Assembly);
                                 _script = CSharpScript.Create($"bool result = (bool)({script_expression});", options, typeof(Globals));
                                 _script.Compile();
+
+                                _valid = true;
                             }
                             catch
                             {
@@ -5285,6 +5324,40 @@ namespace Thetis
                 get { return _y_size; }
                 set { _y_size = value; }
             }
+            public float ColorFade
+            {
+                get { return _color_fade; }
+                set {
+                    if (value < 0) value = 0;
+                    if (value > 1) value = 1;
+                    _color_fade = value; 
+                }
+            }
+            public int TransitionFade
+            {
+                get { return _transition_fade; }
+                set { _transition_fade = value; }
+            }
+            public bool Pulsate
+            {
+                get { return _pulsate; }
+                set { _pulsate = value; }
+            }
+            public bool PulsateUp
+            {
+                get { return _pulsate_up; }
+                set { _pulsate_up = value; }
+            }
+            public bool Blink
+            {
+                get { return _blink; }
+                set { _blink = value; }
+            }
+            public int BlinkCount
+            {
+                get { return _blink_count; }
+                set { _blink_count = value; }
+            }
             public System.Drawing.Color TrueColour
             {
                 get { return _true_colour; }
@@ -5309,6 +5382,8 @@ namespace Thetis
             {
                 if (_valid && _script != null)
                 {
+                    bool typesChanged = false;
+
                     lock (_list_placeholders_lock)
                     {
                         foreach (Reading r in _list_placeholders_readings)
@@ -5338,13 +5413,38 @@ namespace Thetis
                         {
                             if (_subs.ContainsKey(kvp.Key))
                             {
-                                _subs[kvp.Key] = mmio.GetVariable(kvp.Key);
+                                object var = mmio.GetVariable(kvp.Key);
+                                if(var.GetType() != _subs[kvp.Key].GetType())
+                                {
+                                    typesChanged = true;
+                                    break;
+                                }
+                                _subs[kvp.Key] = var;
                             }
                         }
                     }
                     //
 
-                    _result = evaluateExpression().Result;
+                    if(_cts != null)
+                    {
+                        _cts.Cancel();
+                        _cts.Dispose();
+                        _cts = null;
+                    }
+                    if (_busy) return;
+
+                    if (typesChanged)
+                    {
+                        Debug.Print(">>>> RECOMPILE");
+                        _forceRecompile = true;
+                        Condition = Condition; // force recompile
+                    }
+                    else
+                    {
+                        _cts = new CancellationTokenSource();
+                        _old_result = _result;
+                        _result = evaluateExpression(_cts.Token).Result;
+                    }
                 }
             }
             public override bool ZeroOut(out float value, int rx)
@@ -9707,6 +9807,24 @@ namespace Thetis
 
                                             led.Padding = igs.SpacerPadding;
 
+                                            led.ShowTrue = igs.PeakHold;
+                                            led.ShowFalse = igs.ShowMarker;
+                                            switch (igs.IgnoreHistoryDuration)
+                                            {
+                                                case 0:
+                                                    led.Blink = false;
+                                                    led.Pulsate = false;
+                                                    break;
+                                                case 1:
+                                                    led.Blink = true;
+                                                    led.Pulsate = false;
+                                                    break;
+                                                case 2:
+                                                    led.Blink = false;
+                                                    led.Pulsate = true;
+                                                    break;
+                                            }
+
                                             if (igs.ShowSubMarker)
                                             {
                                                 led.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
@@ -10458,6 +10576,15 @@ namespace Thetis
 
                                             igs.ShowHistory = led.ScriptError;
                                             igs.ShowType = led.ScriptValid;
+
+                                            igs.PeakHold = led.ShowTrue;
+                                            igs.ShowMarker = led.ShowFalse;
+                                            if (!led.Blink && !led.Pulsate)
+                                                igs.IgnoreHistoryDuration = 0;
+                                            else if (led.Blink && !led.Pulsate)
+                                                igs.IgnoreHistoryDuration = 1;
+                                            else if (!led.Blink && led.Pulsate)
+                                                igs.IgnoreHistoryDuration = 2;
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                         {
@@ -11674,6 +11801,7 @@ namespace Thetis
             private int _newTargetHeight;
             private bool _targetVisible;
             private bool _enabled;
+            private ColorInterpolator _color_interp;
 
             public DXRenderer(string sId, int rx, PictureBox target, Console c, clsMeter meter)
             {
@@ -13689,13 +13817,167 @@ namespace Thetis
                 }
                 else
                 {
+                    int intervalSpeed = 250;
+
+                    if (led.ConditionResult != led.OldConditionResult)
+                    {
+                        if (led.ConditionResult && led.Blink)
+                        {
+                            led.BlinkCount = 0;
+                            led.PulsateUp = true;
+                            intervalSpeed = 100;
+                            led.ColorFade = 0;
+                        }
+                    }
+
+                    if(led.Blink || led.Pulsate)
+                    {
+                        if (led.Blink)
+                        {
+                            if (led.ColorFade == 1)
+                            {
+                                if(led.BlinkCount < 2)
+                                {
+                                    led.PulsateUp = false;
+                                    led.BlinkCount++;
+                                    intervalSpeed = 100;
+                                }
+                                else
+                                {
+                                    led.ColorFade = 0;
+                                    led.PulsateUp = false;
+                                }
+                            }
+                            if (led.ColorFade == 0 && led.ConditionResult && led.BlinkCount < 2)
+                            {
+                                led.PulsateUp = true;
+                            }
+                        }
+                        else
+                        {
+                            if(led.ColorFade == 1)
+                                led.PulsateUp = false;
+                            if (led.ColorFade == 0 && led.ConditionResult)
+                                led.PulsateUp = true;
+                        }
+                    }
+                    else
+                    {
+                        if (led.ConditionResult)
+                        {
+                            led.PulsateUp = true;
+                        }
+                        else
+                        {
+                            led.PulsateUp = false;
+                        }
+                    }
+
+                    int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                    updateInterval = Math.Min(updateInterval, intervalSpeed);
+                    int steps_needed = (int)Math.Ceiling(intervalSpeed / (float)updateInterval);
+                    float stepSize = 1 / (float)steps_needed;
+
+                    System.Drawing.Color c;
+                    if (led.PulsateUp)
+                    {
+                        led.ColorFade += stepSize;
+                        c = ColorInterpolator.InterpolateBetween(led.FalseColour, led.TrueColour, led.ColorFade);
+                    }
+                    else
+                    {
+                        led.ColorFade -= stepSize;
+                        c = ColorInterpolator.InterpolateBetween(led.FalseColour, led.TrueColour, led.ColorFade);
+                    }
+
                     float xSize = targetWidth * led.SizeX;
                     float ySize = targetWidth * led.SizeY;
                     float posX = x + led.OffsetX * (targetWidth * m.XRatio);
                     float posY = y + led.OffsetY * (targetWidth * m.YRatio);
-                    SharpDX.RectangleF igrect = new SharpDX.RectangleF(posX - (xSize / 2f), posY - (ySize /2f), xSize, ySize);
-                    System.Drawing.Color c = led.ConditionResult ? led.TrueColour : led.FalseColour;
-                    _renderTarget.FillRectangle(igrect, getDXBrushForColour(c));
+                    SharpDX.RectangleF igrect = new SharpDX.RectangleF(posX - (xSize / 2f), posY - (ySize / 2f), xSize, ySize);
+
+                    _renderTarget.FillRectangle(igrect, getDXBrushForColour(c, 255));
+
+                    //System.Drawing.Color c;
+                    //if (led.ConditionResult != led.OldConditionResult)
+                    //{
+                    //    if (led.Blink && led.ConditionResult)
+                    //    {
+                    //        led.BlinkCount = 0;
+                    //        led.ColorFade = 0;
+                    //        led.PulsateUp = true;
+                    //    }
+                    //    else if (!led.Pulsate)
+                    //        led.ColorFade = 0;
+                    //}
+
+                    //int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                    //updateInterval = Math.Min(updateInterval, 250);
+                    //int steps_needed = (int)Math.Ceiling(250 / (float)updateInterval);
+                    //float stepSize = 1 / (float)steps_needed;
+
+                    //if (led.ConditionResult)
+                    //{
+                    //    if (led.Blink)                            
+                    //    {
+                    //        if (led.PulsateUp)
+                    //        {
+                    //            c = ColorInterpolator.InterpolateBetween(led.FalseColour, led.TrueColour, led.ColorFade);
+                    //            led.ColorFade += stepSize;
+                    //            if (led.ColorFade == 1)
+                    //            {
+                    //                led.BlinkCount++;
+                    //                if (led.BlinkCount < 4)
+                    //                {
+                    //                    led.ColorFade = 0;
+                    //                }
+                    //                else
+                    //                {
+                    //                    led.PulsateUp = false;
+                    //                    led.BlinkCount = 0;
+                    //                }
+                    //            }
+                    //        }       
+                    //        else
+                    //            c = ColorInterpolator.InterpolateBetween(led.TrueColour, led.FalseColour, led.ColorFade);
+                    //    }
+                    //    else if (led.Pulsate)
+                    //    {
+                    //        c = ColorInterpolator.InterpolateBetween(led.FalseColour, led.TrueColour, led.ColorFade);
+                    //        led.ColorFade += stepSize;
+                    //        if (led.ColorFade == 1)
+                    //            led.ColorFade = 0;
+                    //    }
+                    //    else
+                    //    {
+                    //        c = ColorInterpolator.InterpolateBetween(led.FalseColour, led.TrueColour, led.ColorFade);
+                    //        led.ColorFade += stepSize;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    if (led.Blink || led.Pulsate)
+                    //    {
+                    //        led.ColorFade = 1;
+                    //        c = ColorInterpolator.InterpolateBetween(led.TrueColour, led.FalseColour, led.ColorFade);
+                    //    }
+                    //    else
+                    //    {
+                    //        c = ColorInterpolator.InterpolateBetween(led.TrueColour, led.FalseColour, led.ColorFade);
+                    //        led.ColorFade += stepSize;
+                    //    }
+                    //}
+
+                    //if ((led.ShowTrue && led.ConditionResult) || (led.ShowFalse && !led.ConditionResult))
+                    //{
+                    //    float xSize = targetWidth * led.SizeX;
+                    //    float ySize = targetWidth * led.SizeY;
+                    //    float posX = x + led.OffsetX * (targetWidth * m.XRatio);
+                    //    float posY = y + led.OffsetY * (targetWidth * m.YRatio);
+                    //    SharpDX.RectangleF igrect = new SharpDX.RectangleF(posX - (xSize / 2f), posY - (ySize / 2f), xSize, ySize);
+
+                    //    _renderTarget.FillRectangle(igrect, getDXBrushForColour(c, 255));
+                    //}
                 }
             }
             private void renderTextOverlay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m, bool text)
@@ -16218,9 +16500,9 @@ namespace Thetis
                     if (val is int)
                         sTmp = val.ToString();
                     else if (val is float)
-                        sTmp = ((float)val).ToString("f1");
+                        sTmp = ((float)val).ToString("0.0#####");
                     else if (val is double)
-                        sTmp = ((double)val).ToString("f1");
+                        sTmp = ((double)val).ToString("0.0#####");
                     else if (val is bool)
                         sTmp = ((bool)val).ToString().ToLower();
                     else
@@ -16242,9 +16524,9 @@ namespace Thetis
                 if (obj is int)
                     tmp = ((int)obj).ToString();
                 else if (obj is float)
-                    tmp = ((float)obj).ToString("f1");
+                    tmp = ((float)obj).ToString("0.0#####");
                 else if (obj is double)
-                    tmp = ((double)obj).ToString("f1");
+                    tmp = ((double)obj).ToString("0.0#####");
                 else if (obj is bool)
                     tmp = ((bool)obj).ToString().ToLower();
                 else
@@ -16876,8 +17158,8 @@ namespace Thetis
                 data += mmio.TerminatorIn.ToString() + "|"; //8
                 data += mmio.FormatOut.ToString() + "|"; //9
                 data += mmio.TerminatorOut.ToString() + "|"; //10
-                data += mmio.CustomTerminatorIn + "|"; //11
-                data += mmio.CustomTerminatorOut + "|"; //12
+                data += mmio.CustomTerminatorIn.Replace("|", "++><++") + "|"; //11
+                data += mmio.CustomTerminatorOut.Replace("|", "++><++") + "|"; //12
                 data += mmio.UdpEndpointIP + "|"; //13
                 data += mmio.UdpEndpointPort.ToString() + "|"; //14
 
@@ -16886,7 +17168,22 @@ namespace Thetis
                 foreach(KeyValuePair<string, object> kvpvar in mmio.Variables())
                 {
                     data += kvpvar.Key + "|";
-                    data += kvpvar.Value.ToString().Replace("|", "++><++") + "|";
+
+                    string val;
+                    object valobj = kvpvar.Value;
+
+                    if (valobj is int)
+                        val = valobj.ToString();
+                    else if (valobj is float)
+                        val = ((float)valobj).ToString("0.0#####");
+                    else if (valobj is double)
+                        val = ((double)valobj).ToString("0.0#####");
+                    else if (valobj is bool)
+                        val = valobj.ToString().ToLower();
+                    else
+                        val = valobj.ToString().Replace("|", "++><++");
+
+                    data += val + "|";
                 }
             }
             data = data.Substring(0, data.Length - 1); // scrap trailing |
@@ -16972,8 +17269,8 @@ namespace Thetis
                     if (ok)
                     {
                         mmio.TerminatorOut = terminator_out;
-                        mmio.CustomTerminatorIn = parts[idx + 11];
-                        mmio.CustomTerminatorOut = parts[idx + 12];
+                        mmio.CustomTerminatorIn = parts[idx + 11].Replace("++><++", "|");
+                        mmio.CustomTerminatorOut = parts[idx + 12].Replace("++><++", "|");
                         mmio.UdpEndpointIP = parts[idx + 13];
                         ok = int.TryParse(parts[idx + 14], out udp_endpoint_port);
                     }
@@ -16990,7 +17287,10 @@ namespace Thetis
                         {
                             for(int n = 0; n < variables; n++)
                             {
-                                ok = mmio.Variables().TryAdd(parts[idx + (variable_count_index + 1) + (n * 2)], parts[idx + (variable_count_index + 2) + (n * 2)].Replace("++><++", "|"));
+                                string val = parts[idx + (variable_count_index + 2) + (n * 2)].Replace("++><++", "|");
+                                Type tpe = DetermineType(val);
+                                object typedValue = ConvertToType(val, tpe);
+                                ok = mmio.Variables().TryAdd(parts[idx + (variable_count_index + 1) + (n * 2)], typedValue);
                                 if (!ok) break;
                             }
                         }
@@ -17065,11 +17365,36 @@ namespace Thetis
         private static void MultiMeterIO_TransmittedData(Guid guid)
         {
         }
+        [DebuggerHidden]
+        public static bool IsValidXml(string xmlString)
+        {
+            try
+            {
+                XmlReaderSettings settings = new XmlReaderSettings();
+                settings.DtdProcessing = DtdProcessing.Parse;
+                settings.XmlResolver = null;
+                settings.ValidationType = ValidationType.None;
+
+                using (XmlReader reader = XmlReader.Create(new System.IO.StringReader(xmlString), settings))
+                {
+                    while (reader.Read())
+                    {
+                        // Simply reading the XML, if it's invalid, an exception will be thrown
+                    }
+                }
+
+                return true;
+            }
+            catch (XmlException)
+            {
+                return false;
+            }
+        }
         private static void MultiMeterIO_ReceivedDataString(Guid guid, string dataString)
         {
             char[] charsToTrim = { ' ', '\n', '\r', '\t', '\0' };
             dataString = dataString.Trim(charsToTrim);
-            if (dataString == "") return;
+            if (string.IsNullOrWhiteSpace(dataString)) return;
 
             //Debug.Print("Data : " + guid + " : [" + dataString + "]");
             if (!MultiMeterIO.Data.ContainsKey(guid)) return;
@@ -17092,8 +17417,11 @@ namespace Thetis
                 case MultiMeterIO.MMIOFormat.XML:
                     try
                     {
-                        XElement parsedXml = XElement.Parse(dataString);
-                        parseXMLElement(parsedXml, fourChar, keyValuePairs);
+                        if (IsValidXml(dataString))
+                        {
+                            XElement parsedXml = XElement.Parse(dataString);
+                            parseXMLElement(parsedXml, fourChar, keyValuePairs);
+                        }
                     }
                     catch { }
                     break;
@@ -17111,13 +17439,19 @@ namespace Thetis
                     break;
             }
 
-            foreach (KeyValuePair<string, string> kvp in keyValuePairs)
+            //foreach (KeyValuePair<string, string> kvp in keyValuePairs)
+            //{
+            //    //Debug.Print($"key = {kvp.Key}    value = {kvp.Value}    type = {determineType(kvp.Value)}");
+            //    Type tpe = DetermineType(kvp.Value);
+            //    object typedValue = ConvertToType(kvp.Value, tpe);
+            //    mmio.SetVariable(kvp.Key, typedValue);
+            //}
+            Parallel.ForEach(keyValuePairs, kvp =>
             {
-                //Debug.Print($"key = {kvp.Key}    value = {kvp.Value}    type = {determineType(kvp.Value)}");
                 Type tpe = DetermineType(kvp.Value);
                 object typedValue = ConvertToType(kvp.Value, tpe);
                 mmio.SetVariable(kvp.Key, typedValue);
-            }
+            });
         }
         public static Type DetermineType(string value)
         {

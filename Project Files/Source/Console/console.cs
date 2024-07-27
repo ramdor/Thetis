@@ -2189,7 +2189,7 @@ namespace Thetis
 
                     Debug.Print("Starting TCPIP CAT on " + m_sTCPIPCatAddress + ":" + m_nTCPIPCatPort.ToString());
                     m_tcpCATServer = new TCPIPcatServer(address, m_nTCPIPCatPort);
-
+                    
                     addTCPIPcatDelegates();
 
                     m_tcpCATServer.StartServer(this, m_bTCPIPcatWelcomeMessage);
@@ -48441,8 +48441,8 @@ namespace Thetis
                                         WorkingDirectory = Path.GetDirectoryName(fileOnly)
                                     };
 
-                                    Process p = Process.Start(startInfo);
-                                    _started_processes.Add(p);
+                                    Process p = Process.Start(startInfo);                                    
+                                    if(!p.HasExited) _started_processes.Add(p);
                                 }
                             }
                         }
@@ -48469,7 +48469,8 @@ namespace Thetis
             {
                 try
                 {
-                    PostMessage(p.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);                    
+                    if(!p.HasExited)
+                        PostMessage(p.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);                    
                 }
                 catch
                 {
@@ -48480,7 +48481,31 @@ namespace Thetis
             {
                 try
                 {
-                    PostMessage(p.MainWindowHandle, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+                    if (!p.HasExited)
+                        PostMessage(p.MainWindowHandle, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+                }
+                catch
+                {
+                }
+            }
+            Thread.Sleep(100);
+            foreach (Process p in _started_processes)
+            {
+                try
+                {
+                    if (!p.HasExited)
+                        p.CloseMainWindow();
+                }
+                catch
+                {
+                }
+            }
+            foreach (Process p in _started_processes)
+            {
+                try
+                {
+                    if (!p.HasExited)
+                        p.Close();
                 }
                 catch
                 {
