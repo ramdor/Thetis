@@ -25754,6 +25754,24 @@ namespace Thetis
                 txtLedIndicator_condition.Text = igs.Text1;
 
                 nudLedIndicator_PanelPadding.Value = (decimal)igs.SpacerPadding;
+
+                chkLed_show_true.Checked = igs.PeakHold;
+                chkLed_show_false.Checked = igs.ShowMarker;
+                switch(igs.IgnoreHistoryDuration)
+                {
+                    case 0:
+                        radLed_light_on_off.Checked = true;
+                        break;
+                    case 1:
+                        radLed_light_blink.Checked = true;
+                        break;
+                    case 2:
+                        radLed_light_pulsate.Checked = true;
+                        break;
+                }
+
+                updateLedIndicatorPanelControls();
+                updateLedValidControls();
             }
             else if (mt == MeterType.TEXT_OVERLAY)
             {
@@ -25900,8 +25918,7 @@ namespace Thetis
                 if (mt == MeterType.ANANMM || mt == MeterType.CROSS) chkMeterItemDarkMode.Checked = igs.DarkMode;
                 //
             }
-
-            updateLedValidControls();
+            
             setupMMSettingsGroupBoxes(mt);
 
             _ignoreMeterItemChangeEvents = false;
