@@ -553,6 +553,7 @@ namespace Thetis
         // ======================================================
         public Console(string[] args)
         {
+//#error version
             this.Opacity = 0f; // FadeIn below. Note: console form has 0% set in form designer
 
             Display.specready = false;
