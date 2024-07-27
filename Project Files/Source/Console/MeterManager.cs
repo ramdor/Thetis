@@ -317,9 +317,13 @@ namespace Thetis
                 switch (custom)
                 {
                     case "time_utc":
+                    case "time_utc_int":
                     case "time_loc":
+                    case "time_loc_int":
                     case "date_utc":
+                    case "date_utc_int":
                     case "date_loc":
+                    case "date_loc_int":
                     case "vfoa":
                     case "vfob":
                     case "vfoasub":
@@ -339,8 +343,10 @@ namespace Thetis
                     case "split":
                     case "qso_time":
                     case "qso_time_short":
+                    case "qso_time_int":
                     case "tb_qso_time":
                     case "tb_qso_time_short":
+                    case "tb_qso_time_int":
                     case "mox":
                     case "cfc":
                     case "comp":
@@ -390,6 +396,18 @@ namespace Thetis
                         break;
                     case "date_loc":
                         _readings_text_objects[key] = now.ToString("ddd d MMM yyyy");
+                        break;
+                    case "time_utc_int":
+                        _readings_text_objects[key] = (int)(UTCnow.Hour * 10000 + UTCnow.Minute * 100 + UTCnow.Second);
+                        break;
+                    case "time_loc_int":
+                        _readings_text_objects[key] = (int)(now.Hour * 10000 + now.Minute * 100 + now.Second);
+                        break;
+                    case "date_utc_int":
+                        _readings_text_objects[key] = (int)(UTCnow.Hour * 10000 + UTCnow.Minute * 100 + UTCnow.Second);
+                        break;
+                    case "date_loc_int":
+                        _readings_text_objects[key] = (int)(now.Hour * 10000 + now.Minute * 100 + now.Second);
                         break;
                     case "vfoa":
                         if (rx == 1)
@@ -472,6 +490,24 @@ namespace Thetis
                     case "tb_qso_time_short":
                         _readings_text_objects[key] = _console.QSOTimerEnabled ? formatElapsedTimeCompact(_console.QSOTimerSeconds) : "";
                         break;
+                    case "qso_time_int":
+                        {
+                            TimeSpan time = TimeSpan.FromSeconds(owningMeter.QsoDurationSeconds);
+                            int hours = time.Hours;
+                            int minutes = time.Minutes;
+                            int seconds = time.Seconds;
+                            _readings_text_objects[key] = (int)(hours * 10000 + minutes * 100 + seconds);
+                        }
+                        break;
+                    case "tb_qso_time_int":
+                        {
+                            TimeSpan time = TimeSpan.FromSeconds(_console.QSOTimerSeconds);
+                            int hours = time.Hours;
+                            int minutes = time.Minutes;
+                            int seconds = time.Seconds;
+                            _readings_text_objects[key] = (int)(hours * 10000 + minutes * 100 + seconds);
+                        }
+                        break;
                     case "mox":
                         _readings_text_objects[key] = owningMeter.MOX ? "MOX" : "";
                         break;
@@ -537,6 +573,10 @@ namespace Thetis
                 addReadingText("time_loc", text);
                 addReadingText("date_utc", text);
                 addReadingText("date_loc", text);
+                addReadingText("time_utc_int", text);
+                addReadingText("time_loc_int", text);
+                addReadingText("date_utc_int", text);
+                addReadingText("date_loc_int", text);
                 addReadingText("vfoa", text);
                 addReadingText("vfob", text);
                 addReadingText("vfoasub", text);
@@ -556,8 +596,10 @@ namespace Thetis
                 addReadingText("split", text);
                 addReadingText("qso_time", text);
                 addReadingText("qso_time_short", text);
+                addReadingText("qso_time_int", text);
                 addReadingText("tb_qso_time", text);
                 addReadingText("tb_qso_time_short", text);
+                addReadingText("tb_qso_time_int", text);
                 addReadingText("mox", text);
                 addReadingText("cfc", text);
                 addReadingText("comp", text);
@@ -5243,7 +5285,7 @@ namespace Thetis
                                 type = "bool";
                             else
                                 type = "string";
-                            expression = expression.Replace("%" + placeholder.ToLower() + "%", "(" + type + ")(\"" + reading.ToString() + "\")");
+                            expression = expression.Replace("%" + placeholder.ToLower() + "%", "(" + type + ")(" + (type == "string" ? "\"" : "") + reading.ToString() + (type == "string" ? "\"" : "") + ")");
                             script_expression = script_expression.Replace("%" + placeholder.ToLower() + "%", "(" + type + ")(Variables[\"" + placeholder.ToLower() + "\"])");
 
                             if (!_subs.ContainsKey(placeholder.ToLower()))

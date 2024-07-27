@@ -205,8 +205,12 @@ namespace Thetis
             System.Environment.NewLine +
             "%time_utc%" + System.Environment.NewLine +
             "%time_loc%" + System.Environment.NewLine +
+            "%time_utc_int%" + System.Environment.NewLine +
+            "%time_loc_int%" + System.Environment.NewLine +
             "%date_utc%" + System.Environment.NewLine +
             "%date_loc%" + System.Environment.NewLine +
+            "%date_utc_int%" + System.Environment.NewLine +
+            "%date_loc_int%" + System.Environment.NewLine +
             "%vfoa%" + System.Environment.NewLine +
             "%vfob%" + System.Environment.NewLine +
             "%vfoasub%" + System.Environment.NewLine +
@@ -226,8 +230,10 @@ namespace Thetis
             "%split%" + System.Environment.NewLine +
             "%qso_time%" + System.Environment.NewLine +
             "%qso_time_short%" + System.Environment.NewLine +
+            "%qso_time_int%" + System.Environment.NewLine +
             "%tb_qso_time" + System.Environment.NewLine +
             "%tb_qso_time_short%" + System.Environment.NewLine +
+            "%tb_qso_time_int%" + System.Environment.NewLine +
             "%volts%" + System.Environment.NewLine +
             "%amps%" + System.Environment.NewLine +
             "%mox%" + System.Environment.NewLine +
