@@ -79,8 +79,10 @@ namespace Thetis
         {
             InitializeComponent();
 
-            //enable db on lstMMIO_network_variables
+            //enable db on lists to stop flicker
             Common.DoubleBuffered(lstMMIO_network_variables, true);
+            Common.DoubleBuffered(lstMetersAvailable, true);
+            Common.DoubleBuffered(lstMetersInUse, true);
 
             MaximumSize = MinimumSize;
             Size = MinimumSize;
@@ -23843,8 +23845,14 @@ namespace Thetis
         }
         private void updateMeterLists()
         {
-            lstMetersAvailable.Items.Clear();
+            lstMetersInUse.BeginUpdate();
+            lstMetersAvailable.BeginUpdate();
+
+            //lstMetersInUse.SuspendLayout();
+            //lstMetersAvailable.SuspendLayout();
+
             lstMetersInUse.Items.Clear();
+            lstMetersAvailable.Items.Clear();
 
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return;
@@ -23891,6 +23899,15 @@ namespace Thetis
 
             lstMetersAvailable_SelectedIndexChanged(this, EventArgs.Empty);
             lstMetersInUse_SelectedIndexChanged(this, EventArgs.Empty);
+
+            //lstMetersInUse.ResumeLayout();
+            //lstMetersAvailable.ResumeLayout();
+
+            //lstMetersInUse.Invalidate();
+            //lstMetersAvailable.Invalidate();
+
+            lstMetersInUse.EndUpdate();
+            lstMetersAvailable.EndUpdate();
         }
 
         private void btnContainerDelete_Click(object sender, EventArgs e)

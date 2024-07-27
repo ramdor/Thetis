@@ -6891,7 +6891,8 @@ namespace Thetis
             private float _YRatio; // 0-1
 
             private Dictionary<string, clsMeterItem> _meterItems;
-            private Dictionary<string, clsMeterItem> _sortedMeterItemsForZOrder;
+            //private Dictionary<string, clsMeterItem> _sortedMeterItemsForZOrder;
+            private List<clsMeterItem> _sortedMeterItemsForZOrder;
             private int _displayGroup;
             private List<string> _displayGroups;
             private bool _mox;
@@ -7752,7 +7753,7 @@ namespace Thetis
                 me.Primary = true;
                 me.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
                 me.Size = new SizeF(1f, fSize);
-                me.ZOrder = 999; // on top of everything
+                me.ZOrder = 998; // on top of everything, but under text
                 addMeterItem(me);
 
                 fBottom = me.TopLeft.Y + me.Size.Height;
@@ -11265,7 +11266,8 @@ namespace Thetis
             {
                 lock (_meterItemsLock)
                 {
-                    _sortedMeterItemsForZOrder = _meterItems.OrderBy(o => o.Value.ZOrder).ToDictionary(x => x.Key, x => x.Value);
+                    //_sortedMeterItemsForZOrder = _meterItems.OrderBy(o => o.Value.ZOrder).ToDictionary(x => x.Key, x => x.Value);
+                    _sortedMeterItemsForZOrder = _meterItems.OrderBy(o => o.Value.ZOrder).Select(x => x.Value).ToList();
                 }
             }
             internal void MouseUp(System.Windows.Forms.MouseEventArgs e, clsMeter m, clsClickBox cb)
@@ -11615,7 +11617,8 @@ namespace Thetis
                     return nDelay;
                 }
             }
-            public Dictionary<string, clsMeterItem> SortedMeterItemsForZOrder
+            //public Dictionary<string, clsMeterItem> SortedMeterItemsForZOrder
+            public List<clsMeterItem> SortedMeterItemsForZOrder
             {
                 get {
                     lock (_meterItemsLock)
@@ -12657,9 +12660,10 @@ namespace Thetis
 
                             SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
 
-                            foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
+                            //foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
+                            foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
                             {
-                                clsMeterItem mi = mikvp.Value;
+                                //clsMeterItem mi = mikvp.Value;
                                 if (mi.ItemType == clsMeterItem.MeterItemType.ROTATOR)
                                 {
                                     clsRotatorItem rotator = (clsRotatorItem)mi;
@@ -12702,9 +12706,10 @@ namespace Thetis
 
                             SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
 
-                            foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
+                            //foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
+                            foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
                             {
-                                clsMeterItem mi = mikvp.Value;
+                                //clsMeterItem mi = mikvp.Value;
                                 if (mi.ItemType == clsMeterItem.MeterItemType.ROTATOR)
                                 {
                                     clsRotatorItem rotator = (clsRotatorItem)mi;
@@ -12750,9 +12755,10 @@ namespace Thetis
 
                             SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
 
-                            foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
+                            //foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
+                            foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
                             {
-                                clsMeterItem mi = mikvp.Value;
+                                //clsMeterItem mi = mikvp.Value;
                                 if (mi.ItemType == clsMeterItem.MeterItemType.CLICKBOX)
                                 {
                                     clsClickBox cb = (clsClickBox)mi;
@@ -12811,10 +12817,11 @@ namespace Thetis
                         int nTmp = m.MOX ? m.QuickestTXUpdate : m.QuickestRXUpdate;
                         if (nTmp < nRedrawDelay) nRedrawDelay = nTmp;
 
-                        Dictionary<string, clsMeterItem> additionalDraws = new Dictionary<string, clsMeterItem>();
-                        foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
+                        List<clsMeterItem> additionalDraws = new List<clsMeterItem>();
+                        //foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
+                        foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
                         {
-                            clsMeterItem mi = mikvp.Value;
+                            //clsMeterItem mi = mikvp.Value;
 
                             bool bRender = ((m.MOX && mi.OnlyWhenTX) || (!m.MOX && mi.OnlyWhenRX)) || (!mi.OnlyWhenTX && !mi.OnlyWhenRX);
 
@@ -12864,11 +12871,11 @@ namespace Thetis
                                         break;
                                     case clsMeterItem.MeterItemType.TEXT_OVERLAY:
                                         renderTextOverlay(rect, mi, m, false);
-                                        additionalDraws.Add(mikvp.Key, mikvp.Value);
+                                        additionalDraws.Add(mi);
                                         break;
                                     case clsMeterItem.MeterItemType.LED:
                                         renderLed(rect, mi, m, false);
-                                        additionalDraws.Add(mikvp.Key, mikvp.Value);
+                                        additionalDraws.Add(mi);
                                         break;
                                     case clsMeterItem.MeterItemType.DATA_OUT:
                                         break;
@@ -12899,9 +12906,10 @@ namespace Thetis
                                 }
                             }
                         }
-                        foreach (KeyValuePair<string, clsMeterItem> mikvp in additionalDraws)
+                        //foreach (KeyValuePair<string, clsMeterItem> mikvp in additionalDraws)
+                        foreach(clsMeterItem mi in additionalDraws)
                         {
-                            clsMeterItem mi = mikvp.Value;
+                            //clsMeterItem mi = mikvp.Value;
 
                             float rw = m.XRatio;
                             float rh = m.YRatio;
@@ -13830,13 +13838,13 @@ namespace Thetis
                         }
                     }
 
-                    if(led.Blink || led.Pulsate)
+                    if (led.Blink || led.Pulsate)
                     {
                         if (led.Blink)
                         {
                             if (led.ColorFade == 1)
                             {
-                                if(led.BlinkCount < 2)
+                                if (led.BlinkCount < 2)
                                 {
                                     led.PulsateUp = false;
                                     led.BlinkCount++;
@@ -13855,7 +13863,7 @@ namespace Thetis
                         }
                         else
                         {
-                            if(led.ColorFade == 1)
+                            if (led.ColorFade == 1)
                                 led.PulsateUp = false;
                             if (led.ColorFade == 0 && led.ConditionResult)
                                 led.PulsateUp = true;
@@ -13890,94 +13898,16 @@ namespace Thetis
                         c = ColorInterpolator.InterpolateBetween(led.FalseColour, led.TrueColour, led.ColorFade);
                     }
 
-                    float xSize = targetWidth * led.SizeX;
-                    float ySize = targetWidth * led.SizeY;
-                    float posX = x + led.OffsetX * (targetWidth * m.XRatio);
-                    float posY = y + led.OffsetY * (targetWidth * m.YRatio);
-                    SharpDX.RectangleF igrect = new SharpDX.RectangleF(posX - (xSize / 2f), posY - (ySize / 2f), xSize, ySize);
+                    if ((led.ShowTrue && led.ConditionResult) || (led.ShowFalse && !led.ConditionResult))
+                    { 
+                        float xSize = targetWidth * led.SizeX;
+                        float ySize = targetWidth * led.SizeY;
+                        float posX = x + led.OffsetX * (targetWidth * m.XRatio);
+                        float posY = y + led.OffsetY * (targetWidth * m.YRatio);
+                        SharpDX.RectangleF igrect = new SharpDX.RectangleF(posX - (xSize / 2f), posY - (ySize / 2f), xSize, ySize);
 
-                    _renderTarget.FillRectangle(igrect, getDXBrushForColour(c, 255));
-
-                    //System.Drawing.Color c;
-                    //if (led.ConditionResult != led.OldConditionResult)
-                    //{
-                    //    if (led.Blink && led.ConditionResult)
-                    //    {
-                    //        led.BlinkCount = 0;
-                    //        led.ColorFade = 0;
-                    //        led.PulsateUp = true;
-                    //    }
-                    //    else if (!led.Pulsate)
-                    //        led.ColorFade = 0;
-                    //}
-
-                    //int updateInterval = m.QuickestUpdateInterval(m.MOX);
-                    //updateInterval = Math.Min(updateInterval, 250);
-                    //int steps_needed = (int)Math.Ceiling(250 / (float)updateInterval);
-                    //float stepSize = 1 / (float)steps_needed;
-
-                    //if (led.ConditionResult)
-                    //{
-                    //    if (led.Blink)                            
-                    //    {
-                    //        if (led.PulsateUp)
-                    //        {
-                    //            c = ColorInterpolator.InterpolateBetween(led.FalseColour, led.TrueColour, led.ColorFade);
-                    //            led.ColorFade += stepSize;
-                    //            if (led.ColorFade == 1)
-                    //            {
-                    //                led.BlinkCount++;
-                    //                if (led.BlinkCount < 4)
-                    //                {
-                    //                    led.ColorFade = 0;
-                    //                }
-                    //                else
-                    //                {
-                    //                    led.PulsateUp = false;
-                    //                    led.BlinkCount = 0;
-                    //                }
-                    //            }
-                    //        }       
-                    //        else
-                    //            c = ColorInterpolator.InterpolateBetween(led.TrueColour, led.FalseColour, led.ColorFade);
-                    //    }
-                    //    else if (led.Pulsate)
-                    //    {
-                    //        c = ColorInterpolator.InterpolateBetween(led.FalseColour, led.TrueColour, led.ColorFade);
-                    //        led.ColorFade += stepSize;
-                    //        if (led.ColorFade == 1)
-                    //            led.ColorFade = 0;
-                    //    }
-                    //    else
-                    //    {
-                    //        c = ColorInterpolator.InterpolateBetween(led.FalseColour, led.TrueColour, led.ColorFade);
-                    //        led.ColorFade += stepSize;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    if (led.Blink || led.Pulsate)
-                    //    {
-                    //        led.ColorFade = 1;
-                    //        c = ColorInterpolator.InterpolateBetween(led.TrueColour, led.FalseColour, led.ColorFade);
-                    //    }
-                    //    else
-                    //    {
-                    //        c = ColorInterpolator.InterpolateBetween(led.TrueColour, led.FalseColour, led.ColorFade);
-                    //        led.ColorFade += stepSize;
-                    //    }
-                    //}
-
-                    //if ((led.ShowTrue && led.ConditionResult) || (led.ShowFalse && !led.ConditionResult))
-                    //{
-                    //    float xSize = targetWidth * led.SizeX;
-                    //    float ySize = targetWidth * led.SizeY;
-                    //    float posX = x + led.OffsetX * (targetWidth * m.XRatio);
-                    //    float posY = y + led.OffsetY * (targetWidth * m.YRatio);
-                    //    SharpDX.RectangleF igrect = new SharpDX.RectangleF(posX - (xSize / 2f), posY - (ySize / 2f), xSize, ySize);
-
-                    //    _renderTarget.FillRectangle(igrect, getDXBrushForColour(c, 255));
-                    //}
+                        _renderTarget.FillRectangle(igrect, getDXBrushForColour(c, 255));
+                    }
                 }
             }
             private void renderTextOverlay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m, bool text)
