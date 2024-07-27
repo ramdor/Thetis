@@ -79,8 +79,10 @@ namespace Thetis
         {
             InitializeComponent();
 
-            //enable db on lstMMIO_network_variables
+            //enable db on lists to stop flicker
             Common.DoubleBuffered(lstMMIO_network_variables, true);
+            Common.DoubleBuffered(lstMetersInUse, true);
+            Common.DoubleBuffered(lstMetersAvailable, true);
 
             MaximumSize = MinimumSize;
             Size = MinimumSize;
@@ -203,8 +205,12 @@ namespace Thetis
             System.Environment.NewLine +
             "%time_utc%" + System.Environment.NewLine +
             "%time_loc%" + System.Environment.NewLine +
+            "%time_utc_int%" + System.Environment.NewLine +
+            "%time_loc_int%" + System.Environment.NewLine +
             "%date_utc%" + System.Environment.NewLine +
             "%date_loc%" + System.Environment.NewLine +
+            "%date_utc_int%" + System.Environment.NewLine +
+            "%date_loc_int%" + System.Environment.NewLine +
             "%vfoa%" + System.Environment.NewLine +
             "%vfob%" + System.Environment.NewLine +
             "%vfoasub%" + System.Environment.NewLine +
@@ -224,10 +230,19 @@ namespace Thetis
             "%split%" + System.Environment.NewLine +
             "%qso_time%" + System.Environment.NewLine +
             "%qso_time_short%" + System.Environment.NewLine +
+            "%qso_time_int%" + System.Environment.NewLine +
             "%tb_qso_time" + System.Environment.NewLine +
             "%tb_qso_time_short%" + System.Environment.NewLine +
+            "%tb_qso_time_int%" + System.Environment.NewLine +
             "%volts%" + System.Environment.NewLine +
-            "%amps%";// + System.Environment.NewLine +
+            "%amps%" + System.Environment.NewLine +
+            "%mox%" + System.Environment.NewLine +
+            "%cfc%" + System.Environment.NewLine +
+            "%comp%" + System.Environment.NewLine +
+            "%lev%" + System.Environment.NewLine +
+            "%rx2%" + System.Environment.NewLine +
+            "%tx_eq%";// + System.Environment.NewLine +
+
             toolTip1.SetToolTip(pbTextOverlay_variables, sTip);
 
             //MW0LGE_21h
@@ -24947,8 +24962,14 @@ namespace Thetis
         }
         private void updateMeterLists()
         {
-            lstMetersAvailable.Items.Clear();
+            lstMetersInUse.BeginUpdate();
+            lstMetersAvailable.BeginUpdate();
+
+            //lstMetersInUse.SuspendLayout();
+            //lstMetersAvailable.SuspendLayout();
+
             lstMetersInUse.Items.Clear();
+            lstMetersAvailable.Items.Clear();
 
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return;
@@ -24995,6 +25016,15 @@ namespace Thetis
 
             lstMetersAvailable_SelectedIndexChanged(this, EventArgs.Empty);
             lstMetersInUse_SelectedIndexChanged(this, EventArgs.Empty);
+
+            //lstMetersInUse.ResumeLayout();
+            //lstMetersAvailable.ResumeLayout();
+
+            //lstMetersInUse.Invalidate();
+            //lstMetersAvailable.Invalidate();
+
+            lstMetersInUse.EndUpdate();
+            lstMetersAvailable.EndUpdate();
         }
 
         private void btnContainerDelete_Click(object sender, EventArgs e)
@@ -25364,6 +25394,16 @@ namespace Thetis
                 igs.Text1 = txtLedIndicator_condition.Text;
 
                 igs.SpacerPadding = (float)nudLedIndicator_PanelPadding.Value;
+
+                igs.PeakHold = chkLed_show_true.Checked;
+                igs.ShowMarker = chkLed_show_false.Checked;
+                if (radLed_light_on_off.Checked)
+                    igs.IgnoreHistoryDuration = 0;
+                else if (radLed_light_blink.Checked)
+                    igs.IgnoreHistoryDuration = 1;
+                else if (radLed_light_pulsate.Checked)
+                    igs.IgnoreHistoryDuration = 2;
+                // also showhistory + showtype are return states for valid/error
             }
             else if (mt == MeterType.TEXT_OVERLAY)
             {
@@ -29222,16 +29262,30 @@ namespace Thetis
             //add/update list
             foreach (KeyValuePair<string, object> kvp in mmio.Variables())
             {
+                string type;
+                if (kvp.Value is int)
+                    type = "int";
+                else if (kvp.Value is float)
+                    type = "float";
+                else if (kvp.Value is double)
+                    type = "double";
+                else if (kvp.Value is bool)
+                    type = "bool";
+                else
+                    type = "string";
+
                 ListViewItem lvi;
                 if (!lstMMIO_network_variables.Items.ContainsKey(kvp.Key))
                 {
                     lvi = lstMMIO_network_variables.Items.Add(kvp.Key, kvp.Key, null);
                     lvi.SubItems.Add(mmio.VariableValueType(kvp.Value));
+                    lvi.SubItems.Add(type);
                 }
                 else
                 {
                     lvi = lstMMIO_network_variables.Items[kvp.Key];
                     lvi.SubItems[1].Text = mmio.VariableValueType(kvp.Value);      //[1] bizzar that it is index 1 for the added subitem
+                    lvi.SubItems[2].Text = type;
                 }
 
                 if (selectedKey != "" && kvp.Key == selectedKey)
@@ -30465,6 +30519,34 @@ namespace Thetis
                 lblLed_Valid.ForeColor = igs.ShowType ? Color.LimeGreen : Color.Red;
             }
 
+        }
+
+        private void chkLed_show_true_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkLed_show_false_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void radLed_light_on_off_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radLed_light_on_off.Checked)
+                updateMeterType();
+        }
+
+        private void radLed_light_blink_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radLed_light_blink.Checked)
+                updateMeterType();
+        }
+
+        private void radLed_light_pulsate_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radLed_light_pulsate.Checked)
+                updateMeterType();
         }
     }
 

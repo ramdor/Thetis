@@ -3523,6 +3523,7 @@
             this.comboFocusMasterMode = new System.Windows.Forms.ComboBoxTS();
             this.tpAndromeda = new System.Windows.Forms.TabPage();
             this.grpAndrOptions = new System.Windows.Forms.GroupBoxTS();
+            this.chkAndrG2Panel = new System.Windows.Forms.CheckBoxTS();
             this.chkAndrStickyMenus = new System.Windows.Forms.CheckBoxTS();
             this.chkAndrStickyShift = new System.Windows.Forms.CheckBoxTS();
             this.chkAndrBandBtnDefault = new System.Windows.Forms.CheckBoxTS();
@@ -3561,6 +3562,7 @@
             this.lstMMIO_network_variables = new System.Windows.Forms.ListView();
             this.colVariables = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colValues = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pnlMMIO_network_txdata = new System.Windows.Forms.PanelTS();
             this.lblMMIO_network_txdata = new System.Windows.Forms.LabelTS();
             this.btnMMIO_network_copy4char = new System.Windows.Forms.ButtonTS();
@@ -3865,7 +3867,11 @@
             this.lblLedIndicator_panelbackground = new System.Windows.Forms.LabelTS();
             this.chkLedIndicator_FadeOnTX = new System.Windows.Forms.CheckBoxTS();
             this.chkLedIndicator_FadeOnRX = new System.Windows.Forms.CheckBoxTS();
-            this.chkAndrG2Panel = new System.Windows.Forms.CheckBoxTS();
+            this.chkLed_show_false = new System.Windows.Forms.CheckBoxTS();
+            this.chkLed_show_true = new System.Windows.Forms.CheckBoxTS();
+            this.radLed_light_on_off = new System.Windows.Forms.RadioButtonTS();
+            this.radLed_light_blink = new System.Windows.Forms.RadioButtonTS();
+            this.radLed_light_pulsate = new System.Windows.Forms.RadioButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -56264,6 +56270,18 @@
             this.grpAndrOptions.TabStop = false;
             this.grpAndrOptions.Text = "Andromeda Options";
             // 
+            // chkAndrG2Panel
+            // 
+            this.chkAndrG2Panel.AutoSize = true;
+            this.chkAndrG2Panel.Image = null;
+            this.chkAndrG2Panel.Location = new System.Drawing.Point(16, 177);
+            this.chkAndrG2Panel.Name = "chkAndrG2Panel";
+            this.chkAndrG2Panel.Size = new System.Drawing.Size(106, 17);
+            this.chkAndrG2Panel.TabIndex = 8;
+            this.chkAndrG2Panel.Text = "Enable G2 Panel";
+            this.chkAndrG2Panel.UseVisualStyleBackColor = true;
+            this.chkAndrG2Panel.CheckedChanged += new System.EventHandler(this.chkAndrG2Panel_CheckedChanged);
+            // 
             // chkAndrStickyMenus
             // 
             this.chkAndrStickyMenus.AutoSize = true;
@@ -56537,13 +56555,13 @@
             this.pnlMMIO_network_container.Enabled = false;
             this.pnlMMIO_network_container.Location = new System.Drawing.Point(172, 19);
             this.pnlMMIO_network_container.Name = "pnlMMIO_network_container";
-            this.pnlMMIO_network_container.Size = new System.Drawing.Size(516, 364);
+            this.pnlMMIO_network_container.Size = new System.Drawing.Size(521, 364);
             this.pnlMMIO_network_container.TabIndex = 98;
             // 
             // btnMMIO_network_remove_all_variables
             // 
             this.btnMMIO_network_remove_all_variables.Image = global::Thetis.Properties.Resources.trash_bulge_black;
-            this.btnMMIO_network_remove_all_variables.Location = new System.Drawing.Point(441, 271);
+            this.btnMMIO_network_remove_all_variables.Location = new System.Drawing.Point(453, 281);
             this.btnMMIO_network_remove_all_variables.Name = "btnMMIO_network_remove_all_variables";
             this.btnMMIO_network_remove_all_variables.Selectable = true;
             this.btnMMIO_network_remove_all_variables.Size = new System.Drawing.Size(29, 35);
@@ -56689,7 +56707,7 @@
             // btnMMIO_network_copyvariable_clipboard
             // 
             this.btnMMIO_network_copyvariable_clipboard.Image = global::Thetis.Properties.Resources.copy;
-            this.btnMMIO_network_copyvariable_clipboard.Location = new System.Drawing.Point(298, 274);
+            this.btnMMIO_network_copyvariable_clipboard.Location = new System.Drawing.Point(288, 281);
             this.btnMMIO_network_copyvariable_clipboard.Name = "btnMMIO_network_copyvariable_clipboard";
             this.btnMMIO_network_copyvariable_clipboard.Selectable = true;
             this.btnMMIO_network_copyvariable_clipboard.Size = new System.Drawing.Size(27, 35);
@@ -56701,7 +56719,7 @@
             // btnMMIO_network_remove_variable
             // 
             this.btnMMIO_network_remove_variable.Image = global::Thetis.Properties.Resources.trash_black;
-            this.btnMMIO_network_remove_variable.Location = new System.Drawing.Point(476, 271);
+            this.btnMMIO_network_remove_variable.Location = new System.Drawing.Point(488, 281);
             this.btnMMIO_network_remove_variable.Name = "btnMMIO_network_remove_variable";
             this.btnMMIO_network_remove_variable.Selectable = true;
             this.btnMMIO_network_remove_variable.Size = new System.Drawing.Size(29, 35);
@@ -56714,13 +56732,14 @@
             // 
             this.lstMMIO_network_variables.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colVariables,
-            this.colValues});
+            this.colValues,
+            this.colType});
             this.lstMMIO_network_variables.FullRowSelect = true;
             this.lstMMIO_network_variables.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lstMMIO_network_variables.HideSelection = false;
-            this.lstMMIO_network_variables.Location = new System.Drawing.Point(298, 14);
+            this.lstMMIO_network_variables.Location = new System.Drawing.Point(288, 14);
             this.lstMMIO_network_variables.Name = "lstMMIO_network_variables";
-            this.lstMMIO_network_variables.Size = new System.Drawing.Size(207, 251);
+            this.lstMMIO_network_variables.Size = new System.Drawing.Size(229, 261);
             this.lstMMIO_network_variables.TabIndex = 118;
             this.lstMMIO_network_variables.UseCompatibleStateImageBehavior = false;
             this.lstMMIO_network_variables.View = System.Windows.Forms.View.Details;
@@ -56735,6 +56754,10 @@
             // 
             this.colValues.Text = "Values";
             this.colValues.Width = 80;
+            // 
+            // colType
+            // 
+            this.colType.Text = "Type";
             // 
             // pnlMMIO_network_txdata
             // 
@@ -61324,6 +61347,11 @@
             // 
             // grpLedIndiciator
             // 
+            this.grpLedIndiciator.Controls.Add(this.radLed_light_pulsate);
+            this.grpLedIndiciator.Controls.Add(this.radLed_light_blink);
+            this.grpLedIndiciator.Controls.Add(this.radLed_light_on_off);
+            this.grpLedIndiciator.Controls.Add(this.chkLed_show_false);
+            this.grpLedIndiciator.Controls.Add(this.chkLed_show_true);
             this.grpLedIndiciator.Controls.Add(this.lblLed_Error);
             this.grpLedIndiciator.Controls.Add(this.lblLed_Valid);
             this.grpLedIndiciator.Controls.Add(this.btnLedIndicator_copy_truefalse_colours);
@@ -61548,17 +61576,68 @@
             this.chkLedIndicator_FadeOnRX.UseVisualStyleBackColor = true;
             this.chkLedIndicator_FadeOnRX.CheckedChanged += new System.EventHandler(this.chkLedIndicator_FadeOnRX_CheckedChanged);
             // 
-            // chkAndrG2Panel
+            // chkLed_show_false
             // 
-            this.chkAndrG2Panel.AutoSize = true;
-            this.chkAndrG2Panel.Image = null;
-            this.chkAndrG2Panel.Location = new System.Drawing.Point(16, 177);
-            this.chkAndrG2Panel.Name = "chkAndrG2Panel";
-            this.chkAndrG2Panel.Size = new System.Drawing.Size(106, 17);
-            this.chkAndrG2Panel.TabIndex = 8;
-            this.chkAndrG2Panel.Text = "Enable G2 Panel";
-            this.chkAndrG2Panel.UseVisualStyleBackColor = true;
-            this.chkAndrG2Panel.CheckedChanged += new System.EventHandler(this.chkAndrG2Panel_CheckedChanged);
+            this.chkLed_show_false.AutoSize = true;
+            this.chkLed_show_false.Image = null;
+            this.chkLed_show_false.Location = new System.Drawing.Point(154, 189);
+            this.chkLed_show_false.Name = "chkLed_show_false";
+            this.chkLed_show_false.Size = new System.Drawing.Size(53, 17);
+            this.chkLed_show_false.TabIndex = 169;
+            this.chkLed_show_false.Text = "Show";
+            this.chkLed_show_false.UseVisualStyleBackColor = true;
+            this.chkLed_show_false.CheckedChanged += new System.EventHandler(this.chkLed_show_false_CheckedChanged);
+            // 
+            // chkLed_show_true
+            // 
+            this.chkLed_show_true.AutoSize = true;
+            this.chkLed_show_true.Image = null;
+            this.chkLed_show_true.Location = new System.Drawing.Point(154, 166);
+            this.chkLed_show_true.Name = "chkLed_show_true";
+            this.chkLed_show_true.Size = new System.Drawing.Size(53, 17);
+            this.chkLed_show_true.TabIndex = 168;
+            this.chkLed_show_true.Text = "Show";
+            this.chkLed_show_true.UseVisualStyleBackColor = true;
+            this.chkLed_show_true.CheckedChanged += new System.EventHandler(this.chkLed_show_true_CheckedChanged);
+            // 
+            // radLed_light_on_off
+            // 
+            this.radLed_light_on_off.AutoSize = true;
+            this.radLed_light_on_off.Image = null;
+            this.radLed_light_on_off.Location = new System.Drawing.Point(219, 197);
+            this.radLed_light_on_off.Name = "radLed_light_on_off";
+            this.radLed_light_on_off.Size = new System.Drawing.Size(58, 17);
+            this.radLed_light_on_off.TabIndex = 170;
+            this.radLed_light_on_off.TabStop = true;
+            this.radLed_light_on_off.Text = "On/Off";
+            this.radLed_light_on_off.UseVisualStyleBackColor = true;
+            this.radLed_light_on_off.CheckedChanged += new System.EventHandler(this.radLed_light_on_off_CheckedChanged);
+            // 
+            // radLed_light_blink
+            // 
+            this.radLed_light_blink.AutoSize = true;
+            this.radLed_light_blink.Image = null;
+            this.radLed_light_blink.Location = new System.Drawing.Point(219, 220);
+            this.radLed_light_blink.Name = "radLed_light_blink";
+            this.radLed_light_blink.Size = new System.Drawing.Size(48, 17);
+            this.radLed_light_blink.TabIndex = 171;
+            this.radLed_light_blink.TabStop = true;
+            this.radLed_light_blink.Text = "Blink";
+            this.radLed_light_blink.UseVisualStyleBackColor = true;
+            this.radLed_light_blink.CheckedChanged += new System.EventHandler(this.radLed_light_blink_CheckedChanged);
+            // 
+            // radLed_light_pulsate
+            // 
+            this.radLed_light_pulsate.AutoSize = true;
+            this.radLed_light_pulsate.Image = null;
+            this.radLed_light_pulsate.Location = new System.Drawing.Point(219, 243);
+            this.radLed_light_pulsate.Name = "radLed_light_pulsate";
+            this.radLed_light_pulsate.Size = new System.Drawing.Size(60, 17);
+            this.radLed_light_pulsate.TabIndex = 172;
+            this.radLed_light_pulsate.TabStop = true;
+            this.radLed_light_pulsate.Text = "Pulsate";
+            this.radLed_light_pulsate.UseVisualStyleBackColor = true;
+            this.radLed_light_pulsate.CheckedChanged += new System.EventHandler(this.radLed_light_pulsate_CheckedChanged);
             // 
             // Setup
             // 
@@ -66665,5 +66744,11 @@
         private LabelTS lblLed_Error;
         private LabelTS lblLed_Valid;
         private CheckBoxTS chkAndrG2Panel;
+        private ColumnHeader colType;
+        private CheckBoxTS chkLed_show_false;
+        private CheckBoxTS chkLed_show_true;
+        private RadioButtonTS radLed_light_pulsate;
+        private RadioButtonTS radLed_light_blink;
+        private RadioButtonTS radLed_light_on_off;
     }
 }

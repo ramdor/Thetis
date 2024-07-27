@@ -834,7 +834,7 @@ namespace Thetis
 		public static void DoubleBuffered(Control c, bool bEnabled)
         {
 			// MW0LGE_[2.9.0.6]
-			// not all controls (such as panels) have double buffered method
+			// not all controls (such as panels) have double buffered property
 			// try to use reflection, so we can keep the base panel
 			try
 			{

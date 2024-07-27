@@ -556,6 +556,7 @@ namespace Thetis
         // ======================================================
         public Console(string[] args)
         {
+//#error version
             this.Opacity = 0f; // FadeIn below. Note: console form has 0% set in form designer
 
             Display.specready = false;
@@ -2214,7 +2215,7 @@ namespace Thetis
 
                     Debug.Print("Starting TCPIP CAT on " + m_sTCPIPCatAddress + ":" + m_nTCPIPCatPort.ToString());
                     m_tcpCATServer = new TCPIPcatServer(address, m_nTCPIPCatPort);
-
+                    
                     addTCPIPcatDelegates();
 
                     m_tcpCATServer.StartServer(this, m_bTCPIPcatWelcomeMessage);
@@ -24685,6 +24686,7 @@ namespace Thetis
             {
                 if (!_mox)
                 {
+                    //TODO: who thought this a good idea to have in the sql thread? just to make sure? MW0LGE
                     float rx1PreampOffset;
                     if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
                     else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
@@ -24706,6 +24708,7 @@ namespace Thetis
         {
             while (chkPower.Checked && rx2_enabled)
             {
+                //TODO: who thought this a good idea to have in the sql2 thread? just to make sure? MW0LGE
                 float rx2PreampOffset;
                 if (rx2_step_att_present) rx2PreampOffset = (float)rx2_attenuator_data;
                 else rx2PreampOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
@@ -49528,8 +49531,8 @@ namespace Thetis
                                         WorkingDirectory = Path.GetDirectoryName(fileOnly)
                                     };
 
-                                    Process p = Process.Start(startInfo);
-                                    _started_processes.Add(p);
+                                    Process p = Process.Start(startInfo);                                    
+                                    if(!p.HasExited) _started_processes.Add(p);
                                 }
                             }
                         }
@@ -49556,7 +49559,8 @@ namespace Thetis
             {
                 try
                 {
-                    PostMessage(p.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);                    
+                    if(!p.HasExited)
+                        PostMessage(p.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);                    
                 }
                 catch
                 {
@@ -49567,7 +49571,31 @@ namespace Thetis
             {
                 try
                 {
-                    PostMessage(p.MainWindowHandle, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+                    if (!p.HasExited)
+                        PostMessage(p.MainWindowHandle, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+                }
+                catch
+                {
+                }
+            }
+            Thread.Sleep(100);
+            foreach (Process p in _started_processes)
+            {
+                try
+                {
+                    if (!p.HasExited)
+                        p.CloseMainWindow();
+                }
+                catch
+                {
+                }
+            }
+            foreach (Process p in _started_processes)
+            {
+                try
+                {
+                    if (!p.HasExited)
+                        p.Close();
                 }
                 catch
                 {
