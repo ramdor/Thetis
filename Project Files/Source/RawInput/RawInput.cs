@@ -87,16 +87,16 @@ namespace RawInput_dll
             _filter = null;
         }
 
-        public RawInput(IntPtr parentHandle, bool captureOnlyInForeground, string id = "")
+        public RawInput(IntPtr parentHandle, bool captureOnlyInForegroundMouse, bool captureOnlyInForegroundKeyboard, string id = "")
         {
             _id = id;
 
             AssignHandle(parentHandle);
 
-            _keyboardDriver = new RawKeyboard(parentHandle, captureOnlyInForeground);
+            _keyboardDriver = new RawKeyboard(parentHandle, captureOnlyInForegroundKeyboard);
             _keyboardDriver.EnumerateDevices(id);
 
-            _mouseDriver = new RawMouse(parentHandle, captureOnlyInForeground);
+            _mouseDriver = new RawMouse(parentHandle, captureOnlyInForegroundMouse);
             _mouseDriver.EnumerateDevices(id);
 
             _devNotifyHandle = RegisterForDeviceNotifications(parentHandle);

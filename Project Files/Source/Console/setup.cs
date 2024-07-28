@@ -23851,8 +23851,8 @@ namespace Thetis
         }
         private void updateMeterLists()
         {
-            lstMetersInUse.BeginUpdate();
-            lstMetersAvailable.BeginUpdate();
+            //lstMetersInUse.BeginUpdate();
+            //lstMetersAvailable.BeginUpdate();
 
             //lstMetersInUse.SuspendLayout();
             //lstMetersAvailable.SuspendLayout();
@@ -23912,8 +23912,8 @@ namespace Thetis
             //lstMetersInUse.Invalidate();
             //lstMetersAvailable.Invalidate();
 
-            lstMetersInUse.EndUpdate();
-            lstMetersAvailable.EndUpdate();
+            //lstMetersInUse.EndUpdate();
+            //lstMetersAvailable.EndUpdate();
         }
 
         private void btnContainerDelete_Click(object sender, EventArgs e)

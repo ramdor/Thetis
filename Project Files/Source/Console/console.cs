@@ -44430,7 +44430,7 @@ namespace Thetis
                 m_objRawinput = null;
             }
 
-            m_objRawinput = new RawInput(this.Handle, !m_bGlobalListenForMouseWheel);
+            m_objRawinput = new RawInput(this.Handle, !m_bGlobalListenForMouseWheel, false);
 
             m_objRawinput.AddMessageFilter();
 
@@ -44438,6 +44438,7 @@ namespace Thetis
 
             m_objRawinput.MouseMoved += OnMouseWheelChanged;
             m_objRawinput.DevicesChanged += OnDevicesChanged;
+            m_objRawinput.KeyPressed += OnKeyPressedRaw; //[2.10.3.6]MW0LGE now send to MeterManager
         }
 
         private void updateRawInputDevices()
@@ -44527,7 +44528,14 @@ namespace Thetis
         {
             updateRawInputDevices();
         }
-
+        private void OnKeyPressedRaw(object sender, RawInputEventArg e)
+        {
+            // sent to meter manager, so that it can detect presses in the VfoDisplay with no focus
+            if (e.KeyPressEvent.KeyPressState == "MAKE")
+                MeterManager.GlobalKeyDown((Keys)e.KeyPressEvent.VKey);
+            else
+                MeterManager.GlobalKeyUp((Keys)e.KeyPressEvent.VKey);
+        }
         private void OnMouseWheelChanged(object sender, RawInputEventArg e)
         {
             if (!m_bAlsoUseSpecificMouseWheel) return; // ignore because we are not also using a specific mouse wheel

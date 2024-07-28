@@ -1596,11 +1596,6 @@ namespace Thetis
 
             _DXrenderers.Add(sId, renderer);
         }
-        private static void setKeyHook(string sId, IntPtr handle)
-        {
-            if (!_DXrenderers.ContainsKey(sId)) return;
-            _DXrenderers[sId].SetKeyCapture(handle, sId);
-        }
         public static void UpdateS9()
         {
             _rx1VHForAbove = _console.VFOAFreq >= _console.S9Frequency;
@@ -2385,6 +2380,28 @@ namespace Thetis
                 return _meters.ContainsKey(sId);
             }
         }
+        public static void GlobalKeyDown(Keys keycode)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> kvp in _meters)
+                {
+                    clsMeter m = kvp.Value;
+                    m.KeyDown(keycode);
+                }
+            }
+        }
+        public static void GlobalKeyUp(Keys keycode)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> kvp in _meters)
+                {
+                    clsMeter m = kvp.Value;
+                    m.KeyUp(keycode);
+                }
+            }
+        }
         public static void AddMeterContainer(ucMeter ucM, bool bFromRestore = false)
         {
             if (_console == null) return;
@@ -2405,7 +2422,7 @@ namespace Thetis
                 // meter items
                 clsMeter meter = new clsMeter(ucM.RX, ucM.Name, 1f, 1f);
                 meter.ID = ucM.ID;
-                meter.Enabled = bEnabled;
+                meter.Enabled = bEnabled;                
 
                 // a renderer
                 addRenderer(ucM.ID, ucM.RX, ucM.DisplayContainer, meter, ucM.BackColor);
@@ -2593,8 +2610,6 @@ namespace Thetis
 
             if (!_finishedSetup) return;
             m.Show();
-
-            setKeyHook(m.ID, m.Parent.Handle);
         }
         private static void setMeterFloating(ucMeter m, frmMeterDisplay frm)
         {
@@ -2613,8 +2628,6 @@ namespace Thetis
             frm.Opacity = 0f;
             frm.Show();
             Common.FadeIn(frm, 100);
-
-            setKeyHook(m.ID, m.Parent.Handle);
         }
         private static void OnRX2EnabledChanged(bool enabled)
         {
@@ -3384,6 +3397,10 @@ namespace Thetis
                 set { _mouse_entered = value; }
             }
             public virtual void KeyDown(Keys keycode)
+            {
+
+            }
+            public virtual void KeyUp(Keys keycode)
             {
 
             }
@@ -9848,6 +9865,28 @@ namespace Thetis
                     }
                 }
             }
+            public void KeyDown(Keys keycode)
+            {
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                    {
+                        clsMeterItem mi = mis.Value;
+                        mi.KeyDown(keycode);
+                    }
+                }
+            }
+            public void KeyUp(Keys keycode)
+            {
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                    {
+                        clsMeterItem mi = mis.Value;
+                        mi.KeyUp(keycode);
+                    }
+                }
+            }
             public bool TryParse(string str)
             {
                 bool bOk = false;
@@ -12130,7 +12169,6 @@ namespace Thetis
             private bool _targetVisible;
             private bool _enabled;
             private ColorInterpolator _color_interp;
-            private RawInput _raw_input;
 
             public DXRenderer(string sId, int rx, PictureBox target, Console c, clsMeter meter)
             {
@@ -12184,19 +12222,6 @@ namespace Thetis
                 _displayTarget.VisibleChanged += target_VisibleChanged;
                 _displayTarget.MouseLeave += OnMouseLeave;
                 _displayTarget.MouseEnter += OnMouseEnter;
-            }
-            public void SetKeyCapture(IntPtr handle, string id)
-            {
-                if (_raw_input != null)
-                {
-                    _raw_input.KeyPressed -= OnKeyPressed;
-                    _raw_input.RemoveMessageFilter();
-                    _raw_input = null;
-                }
-
-                _raw_input = new RawInput(handle, false, id);
-                _raw_input.AddMessageFilter();
-                _raw_input.KeyPressed += OnKeyPressed;
             }
             public void RunDisplay()
             {
@@ -12552,13 +12577,6 @@ namespace Thetis
                     _displayTarget.MouseLeave -= OnMouseLeave;
                     _displayTarget.MouseEnter -= OnMouseEnter;
                     _displayTarget.VisibleChanged -= target_VisibleChanged;
-
-                    if (_raw_input != null)
-                    {
-                        _raw_input.KeyPressed -= OnKeyPressed;
-                        _raw_input.RemoveMessageFilter();
-                        _raw_input = null;
-                    }
                 }
 
                 if (!_bDXSetup) return;
@@ -13207,6 +13225,10 @@ namespace Thetis
             }
             private void OnKeyPressed(object sender, RawInputEventArg e)
             {
+                if (e.KeyPressEvent.KeyPressState == "BREAK") return;
+
+                Debug.Print(e.KeyPressEvent.VKey.ToString() + " -- " + e.KeyPressEvent.ID);
+
                 lock (_metersLock)
                 {
                     string sId = e.KeyPressEvent.ID;
