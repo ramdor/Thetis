@@ -18,7 +18,7 @@ namespace RawInput_dll
         public uint buttons;
         public ushort buttonFlags;
         public short buttonData;  // should be ushort, but cast into short because of -ve mouse wheel delta
-
+        public string ID;
         public string Source
         {
             get { return _source; }

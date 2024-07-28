@@ -46,7 +46,7 @@ namespace RawInput_dll
             else { /*m_bPreviouslyRegistered = true;*/ }
 		}
 
-		public void EnumerateDevices()
+		public void EnumerateDevices(string id)
 		{
 			lock (_padLock)
 			{
@@ -60,7 +60,8 @@ namespace RawInput_dll
 					DeviceHandle = IntPtr.Zero,
 					DeviceType = Win32.GetDeviceType(DeviceType.RimTypekeyboard),
 					Name = "Fake Mouse",
-					Source = mouseNumber++.ToString(CultureInfo.InvariantCulture)
+					Source = mouseNumber++.ToString(CultureInfo.InvariantCulture),
+					ID = id
 				};
 
 				_deviceList.Add(globalDevice.DeviceHandle, globalDevice);
@@ -99,8 +100,9 @@ namespace RawInput_dll
 								DeviceHandle = rid.hDevice,
 								DeviceType = Win32.GetDeviceType(rid.dwType),
 								Name = deviceDesc,
-								Source = mouseNumber++.ToString(CultureInfo.InvariantCulture)
-							};
+								Source = mouseNumber++.ToString(CultureInfo.InvariantCulture),
+                                ID = id
+                            };
 						   
 							if (!_deviceList.ContainsKey(rid.hDevice))
 							{
