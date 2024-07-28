@@ -44430,7 +44430,7 @@ namespace Thetis
                 m_objRawinput = null;
             }
 
-            m_objRawinput = new RawInput(this.Handle, !m_bGlobalListenForMouseWheel);
+            m_objRawinput = new RawInput(this.Handle, !m_bGlobalListenForMouseWheel, false);
 
             m_objRawinput.AddMessageFilter();
 
@@ -44438,6 +44438,7 @@ namespace Thetis
 
             m_objRawinput.MouseMoved += OnMouseWheelChanged;
             m_objRawinput.DevicesChanged += OnDevicesChanged;
+            m_objRawinput.KeyPressed += OnKeyPressedRaw; //[2.10.3.6]MW0LGE now send to MeterManager
         }
 
         private void updateRawInputDevices()
@@ -44527,7 +44528,14 @@ namespace Thetis
         {
             updateRawInputDevices();
         }
-
+        private void OnKeyPressedRaw(object sender, RawInputEventArg e)
+        {
+            // sent to meter manager, so that it can detect presses in the VfoDisplay with no focus
+            if (e.KeyPressEvent.KeyPressState == "MAKE")
+                MeterManager.GlobalKeyDown((Keys)e.KeyPressEvent.VKey);
+            else
+                MeterManager.GlobalKeyUp((Keys)e.KeyPressEvent.VKey);
+        }
         private void OnMouseWheelChanged(object sender, RawInputEventArg e)
         {
             if (!m_bAlsoUseSpecificMouseWheel) return; // ignore because we are not also using a specific mouse wheel
@@ -48445,7 +48453,8 @@ namespace Thetis
                                     };
 
                                     Process p = Process.Start(startInfo);                                    
-                                    if(!p.HasExited) _started_processes.Add(p);
+                                    //if(!p.HasExited) 
+                                        _started_processes.Add(p);
                                 }
                             }
                         }
@@ -48463,16 +48472,18 @@ namespace Thetis
         private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
         private const int WM_CLOSE = 0x0010;
         private const int WM_QUIT = 0x0012;
+        //[DebuggerHidden]
         private void autoLaunchTryToClose()
         {
             if (IsSetupFormNull) return;
             if (!SetupForm.AutoLaunchTryToClose) return;
 
+            //commented if(!p.HasExited) as not sure state is 100% accurate. Try/catch will handle any issue
             foreach (Process p in _started_processes)
             {
                 try
                 {
-                    if(!p.HasExited)
+                    //if(!p.HasExited)
                         PostMessage(p.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);                    
                 }
                 catch
@@ -48484,7 +48495,7 @@ namespace Thetis
             {
                 try
                 {
-                    if (!p.HasExited)
+                    //if (!p.HasExited)
                         PostMessage(p.MainWindowHandle, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
                 }
                 catch
@@ -48496,7 +48507,7 @@ namespace Thetis
             {
                 try
                 {
-                    if (!p.HasExited)
+                    //if (!p.HasExited)
                         p.CloseMainWindow();
                 }
                 catch
@@ -48507,7 +48518,7 @@ namespace Thetis
             {
                 try
                 {
-                    if (!p.HasExited)
+                    //if (!p.HasExited)
                         p.Close();
                 }
                 catch

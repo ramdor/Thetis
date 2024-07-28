@@ -13,6 +13,7 @@ namespace RawInput_dll
         public string VKeyName;         // Virtual Key Name. Corrected for L/R keys(i.e. LSHIFT/RSHIFT) and Zoom
         public uint Message;            // WM_KEYDOWN or WM_KEYUP        
         public string KeyPressState;    // MAKE or BREAK
+        public string ID;
 
         public string Source
         {
