@@ -3653,6 +3653,8 @@
             this.grpTestAudioBalance = new System.Windows.Forms.GroupBoxTS();
             this.btnTestAudioBalStart = new System.Windows.Forms.ButtonTS();
             this.grpMeterItemVfoDisplaySettings = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS216 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMMVfoDigitHighlight = new Thetis.ColorButton();
             this.labelTS177 = new System.Windows.Forms.LabelTS();
             this.labelTS176 = new System.Windows.Forms.LabelTS();
             this.clrbtnMMVfoDisplayBackground = new Thetis.ColorButton();
@@ -3849,6 +3851,11 @@
             this.chkMeterItemFadeOnRxRotator = new System.Windows.Forms.CheckBoxTS();
             this.pnlVariableInUse_1_rotator = new System.Windows.Forms.PanelTS();
             this.grpLedIndiciator = new System.Windows.Forms.GroupBoxTS();
+            this.radLed_light_pulsate = new System.Windows.Forms.RadioButtonTS();
+            this.radLed_light_blink = new System.Windows.Forms.RadioButtonTS();
+            this.radLed_light_on_off = new System.Windows.Forms.RadioButtonTS();
+            this.chkLed_show_false = new System.Windows.Forms.CheckBoxTS();
+            this.chkLed_show_true = new System.Windows.Forms.CheckBoxTS();
             this.lblLed_Error = new System.Windows.Forms.LabelTS();
             this.lblLed_Valid = new System.Windows.Forms.LabelTS();
             this.lblLedIndicator_panelbackgroundTX = new System.Windows.Forms.LabelTS();
@@ -3867,11 +3874,6 @@
             this.lblLedIndicator_panelbackground = new System.Windows.Forms.LabelTS();
             this.chkLedIndicator_FadeOnTX = new System.Windows.Forms.CheckBoxTS();
             this.chkLedIndicator_FadeOnRX = new System.Windows.Forms.CheckBoxTS();
-            this.chkLed_show_false = new System.Windows.Forms.CheckBoxTS();
-            this.chkLed_show_true = new System.Windows.Forms.CheckBoxTS();
-            this.radLed_light_on_off = new System.Windows.Forms.RadioButtonTS();
-            this.radLed_light_blink = new System.Windows.Forms.RadioButtonTS();
-            this.radLed_light_pulsate = new System.Windows.Forms.RadioButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -58175,6 +58177,8 @@
             // 
             // grpMeterItemVfoDisplaySettings
             // 
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS216);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDigitHighlight);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS177);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS176);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayBackground);
@@ -58195,13 +58199,38 @@
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS166);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayMode);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTitle);
-            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(832, 32);
+            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(1149, 41);
             this.grpMeterItemVfoDisplaySettings.Name = "grpMeterItemVfoDisplaySettings";
             this.grpMeterItemVfoDisplaySettings.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemVfoDisplaySettings.TabIndex = 101;
             this.grpMeterItemVfoDisplaySettings.TabStop = false;
             this.grpMeterItemVfoDisplaySettings.Text = "VFO Display Settings";
             this.grpMeterItemVfoDisplaySettings.Visible = false;
+            // 
+            // labelTS216
+            // 
+            this.labelTS216.AutoSize = true;
+            this.labelTS216.Image = null;
+            this.labelTS216.Location = new System.Drawing.Point(9, 293);
+            this.labelTS216.Name = "labelTS216";
+            this.labelTS216.Size = new System.Drawing.Size(94, 13);
+            this.labelTS216.TabIndex = 131;
+            this.labelTS216.Text = "Vfo Digit Highlight:";
+            // 
+            // clrbtnMMVfoDigitHighlight
+            // 
+            this.clrbtnMMVfoDigitHighlight.Automatic = "Automatic";
+            this.clrbtnMMVfoDigitHighlight.Color = System.Drawing.SystemColors.ControlLight;
+            this.clrbtnMMVfoDigitHighlight.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMVfoDigitHighlight.Image = null;
+            this.clrbtnMMVfoDigitHighlight.Location = new System.Drawing.Point(105, 288);
+            this.clrbtnMMVfoDigitHighlight.MoreColors = "More Colors...";
+            this.clrbtnMMVfoDigitHighlight.Name = "clrbtnMMVfoDigitHighlight";
+            this.clrbtnMMVfoDigitHighlight.Selectable = true;
+            this.clrbtnMMVfoDigitHighlight.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMVfoDigitHighlight.TabIndex = 130;
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDigitHighlight, "Band colour");
+            this.clrbtnMMVfoDigitHighlight.Changed += new System.EventHandler(this.clrbtnMMVfoDigitHighlight_Changed);
             // 
             // labelTS177
             // 
@@ -58465,7 +58494,7 @@
             this.grpMeterItemClockSettings.Controls.Add(this.chkMMClockTitle);
             this.grpMeterItemClockSettings.Controls.Add(this.radMM24Clock);
             this.grpMeterItemClockSettings.Controls.Add(this.radMM12Clock);
-            this.grpMeterItemClockSettings.Location = new System.Drawing.Point(12, 639);
+            this.grpMeterItemClockSettings.Location = new System.Drawing.Point(790, 665);
             this.grpMeterItemClockSettings.Name = "grpMeterItemClockSettings";
             this.grpMeterItemClockSettings.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemClockSettings.TabIndex = 100;
@@ -59660,7 +59689,7 @@
             // txtboxTXProfileChangedReport
             // 
             this.txtboxTXProfileChangedReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
-            this.txtboxTXProfileChangedReport.Location = new System.Drawing.Point(110, 489);
+            this.txtboxTXProfileChangedReport.Location = new System.Drawing.Point(1149, 805);
             this.txtboxTXProfileChangedReport.Multiline = true;
             this.txtboxTXProfileChangedReport.Name = "txtboxTXProfileChangedReport";
             this.txtboxTXProfileChangedReport.ReadOnly = true;
@@ -60722,7 +60751,7 @@
             this.grpMeterItemSpacerSettings.Controls.Add(this.clrbtnMeterItemHBackgroundSpacerRX);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnTxSpacer);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnRxSpacer);
-            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(841, 402);
+            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(809, 41);
             this.grpMeterItemSpacerSettings.Name = "grpMeterItemSpacerSettings";
             this.grpMeterItemSpacerSettings.Size = new System.Drawing.Size(323, 168);
             this.grpMeterItemSpacerSettings.TabIndex = 102;
@@ -60789,7 +60818,7 @@
             this.labelTS198.AutoSize = true;
             this.labelTS198.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTS198.Image = null;
-            this.labelTS198.Location = new System.Drawing.Point(623, 537);
+            this.labelTS198.Location = new System.Drawing.Point(787, 241);
             this.labelTS198.Name = "labelTS198";
             this.labelTS198.Size = new System.Drawing.Size(333, 13);
             this.labelTS198.TabIndex = 103;
@@ -61079,7 +61108,7 @@
             this.grpMeterItemDataOutNode.Controls.Add(this.labelTS217);
             this.grpMeterItemDataOutNode.Controls.Add(this.nudDataOutNode_sendinterval);
             this.grpMeterItemDataOutNode.Controls.Add(this.labelTS215);
-            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(382, 834);
+            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(411, 543);
             this.grpMeterItemDataOutNode.Name = "grpMeterItemDataOutNode";
             this.grpMeterItemDataOutNode.Size = new System.Drawing.Size(323, 168);
             this.grpMeterItemDataOutNode.TabIndex = 105;
@@ -61154,7 +61183,7 @@
             this.grpMeterItemRotator.Controls.Add(this.chkMeterItemFadeOnTxRotator);
             this.grpMeterItemRotator.Controls.Add(this.chkMeterItemFadeOnRxRotator);
             this.grpMeterItemRotator.Controls.Add(this.pnlVariableInUse_1_rotator);
-            this.grpMeterItemRotator.Location = new System.Drawing.Point(841, 590);
+            this.grpMeterItemRotator.Location = new System.Drawing.Point(1149, 416);
             this.grpMeterItemRotator.Name = "grpMeterItemRotator";
             this.grpMeterItemRotator.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemRotator.TabIndex = 106;
@@ -61382,13 +61411,76 @@
             this.grpLedIndiciator.Controls.Add(this.clrbtnLedIndicator_PanelBackground);
             this.grpLedIndiciator.Controls.Add(this.chkLedIndicator_FadeOnTX);
             this.grpLedIndiciator.Controls.Add(this.chkLedIndicator_FadeOnRX);
-            this.grpLedIndiciator.Location = new System.Drawing.Point(460, 534);
+            this.grpLedIndiciator.Location = new System.Drawing.Point(790, 291);
             this.grpLedIndiciator.Name = "grpLedIndiciator";
             this.grpLedIndiciator.Size = new System.Drawing.Size(323, 362);
             this.grpLedIndiciator.TabIndex = 107;
             this.grpLedIndiciator.TabStop = false;
             this.grpLedIndiciator.Text = "Led Indiciator";
             this.grpLedIndiciator.Visible = false;
+            // 
+            // radLed_light_pulsate
+            // 
+            this.radLed_light_pulsate.AutoSize = true;
+            this.radLed_light_pulsate.Image = null;
+            this.radLed_light_pulsate.Location = new System.Drawing.Point(219, 243);
+            this.radLed_light_pulsate.Name = "radLed_light_pulsate";
+            this.radLed_light_pulsate.Size = new System.Drawing.Size(60, 17);
+            this.radLed_light_pulsate.TabIndex = 172;
+            this.radLed_light_pulsate.TabStop = true;
+            this.radLed_light_pulsate.Text = "Pulsate";
+            this.radLed_light_pulsate.UseVisualStyleBackColor = true;
+            this.radLed_light_pulsate.CheckedChanged += new System.EventHandler(this.radLed_light_pulsate_CheckedChanged);
+            // 
+            // radLed_light_blink
+            // 
+            this.radLed_light_blink.AutoSize = true;
+            this.radLed_light_blink.Image = null;
+            this.radLed_light_blink.Location = new System.Drawing.Point(219, 220);
+            this.radLed_light_blink.Name = "radLed_light_blink";
+            this.radLed_light_blink.Size = new System.Drawing.Size(48, 17);
+            this.radLed_light_blink.TabIndex = 171;
+            this.radLed_light_blink.TabStop = true;
+            this.radLed_light_blink.Text = "Blink";
+            this.radLed_light_blink.UseVisualStyleBackColor = true;
+            this.radLed_light_blink.CheckedChanged += new System.EventHandler(this.radLed_light_blink_CheckedChanged);
+            // 
+            // radLed_light_on_off
+            // 
+            this.radLed_light_on_off.AutoSize = true;
+            this.radLed_light_on_off.Image = null;
+            this.radLed_light_on_off.Location = new System.Drawing.Point(219, 197);
+            this.radLed_light_on_off.Name = "radLed_light_on_off";
+            this.radLed_light_on_off.Size = new System.Drawing.Size(58, 17);
+            this.radLed_light_on_off.TabIndex = 170;
+            this.radLed_light_on_off.TabStop = true;
+            this.radLed_light_on_off.Text = "On/Off";
+            this.radLed_light_on_off.UseVisualStyleBackColor = true;
+            this.radLed_light_on_off.CheckedChanged += new System.EventHandler(this.radLed_light_on_off_CheckedChanged);
+            // 
+            // chkLed_show_false
+            // 
+            this.chkLed_show_false.AutoSize = true;
+            this.chkLed_show_false.Image = null;
+            this.chkLed_show_false.Location = new System.Drawing.Point(154, 189);
+            this.chkLed_show_false.Name = "chkLed_show_false";
+            this.chkLed_show_false.Size = new System.Drawing.Size(53, 17);
+            this.chkLed_show_false.TabIndex = 169;
+            this.chkLed_show_false.Text = "Show";
+            this.chkLed_show_false.UseVisualStyleBackColor = true;
+            this.chkLed_show_false.CheckedChanged += new System.EventHandler(this.chkLed_show_false_CheckedChanged);
+            // 
+            // chkLed_show_true
+            // 
+            this.chkLed_show_true.AutoSize = true;
+            this.chkLed_show_true.Image = null;
+            this.chkLed_show_true.Location = new System.Drawing.Point(154, 166);
+            this.chkLed_show_true.Name = "chkLed_show_true";
+            this.chkLed_show_true.Size = new System.Drawing.Size(53, 17);
+            this.chkLed_show_true.TabIndex = 168;
+            this.chkLed_show_true.Text = "Show";
+            this.chkLed_show_true.UseVisualStyleBackColor = true;
+            this.chkLed_show_true.CheckedChanged += new System.EventHandler(this.chkLed_show_true_CheckedChanged);
             // 
             // lblLed_Error
             // 
@@ -61576,74 +61668,11 @@
             this.chkLedIndicator_FadeOnRX.UseVisualStyleBackColor = true;
             this.chkLedIndicator_FadeOnRX.CheckedChanged += new System.EventHandler(this.chkLedIndicator_FadeOnRX_CheckedChanged);
             // 
-            // chkLed_show_false
-            // 
-            this.chkLed_show_false.AutoSize = true;
-            this.chkLed_show_false.Image = null;
-            this.chkLed_show_false.Location = new System.Drawing.Point(154, 189);
-            this.chkLed_show_false.Name = "chkLed_show_false";
-            this.chkLed_show_false.Size = new System.Drawing.Size(53, 17);
-            this.chkLed_show_false.TabIndex = 169;
-            this.chkLed_show_false.Text = "Show";
-            this.chkLed_show_false.UseVisualStyleBackColor = true;
-            this.chkLed_show_false.CheckedChanged += new System.EventHandler(this.chkLed_show_false_CheckedChanged);
-            // 
-            // chkLed_show_true
-            // 
-            this.chkLed_show_true.AutoSize = true;
-            this.chkLed_show_true.Image = null;
-            this.chkLed_show_true.Location = new System.Drawing.Point(154, 166);
-            this.chkLed_show_true.Name = "chkLed_show_true";
-            this.chkLed_show_true.Size = new System.Drawing.Size(53, 17);
-            this.chkLed_show_true.TabIndex = 168;
-            this.chkLed_show_true.Text = "Show";
-            this.chkLed_show_true.UseVisualStyleBackColor = true;
-            this.chkLed_show_true.CheckedChanged += new System.EventHandler(this.chkLed_show_true_CheckedChanged);
-            // 
-            // radLed_light_on_off
-            // 
-            this.radLed_light_on_off.AutoSize = true;
-            this.radLed_light_on_off.Image = null;
-            this.radLed_light_on_off.Location = new System.Drawing.Point(219, 197);
-            this.radLed_light_on_off.Name = "radLed_light_on_off";
-            this.radLed_light_on_off.Size = new System.Drawing.Size(58, 17);
-            this.radLed_light_on_off.TabIndex = 170;
-            this.radLed_light_on_off.TabStop = true;
-            this.radLed_light_on_off.Text = "On/Off";
-            this.radLed_light_on_off.UseVisualStyleBackColor = true;
-            this.radLed_light_on_off.CheckedChanged += new System.EventHandler(this.radLed_light_on_off_CheckedChanged);
-            // 
-            // radLed_light_blink
-            // 
-            this.radLed_light_blink.AutoSize = true;
-            this.radLed_light_blink.Image = null;
-            this.radLed_light_blink.Location = new System.Drawing.Point(219, 220);
-            this.radLed_light_blink.Name = "radLed_light_blink";
-            this.radLed_light_blink.Size = new System.Drawing.Size(48, 17);
-            this.radLed_light_blink.TabIndex = 171;
-            this.radLed_light_blink.TabStop = true;
-            this.radLed_light_blink.Text = "Blink";
-            this.radLed_light_blink.UseVisualStyleBackColor = true;
-            this.radLed_light_blink.CheckedChanged += new System.EventHandler(this.radLed_light_blink_CheckedChanged);
-            // 
-            // radLed_light_pulsate
-            // 
-            this.radLed_light_pulsate.AutoSize = true;
-            this.radLed_light_pulsate.Image = null;
-            this.radLed_light_pulsate.Location = new System.Drawing.Point(219, 243);
-            this.radLed_light_pulsate.Name = "radLed_light_pulsate";
-            this.radLed_light_pulsate.Size = new System.Drawing.Size(60, 17);
-            this.radLed_light_pulsate.TabIndex = 172;
-            this.radLed_light_pulsate.TabStop = true;
-            this.radLed_light_pulsate.Text = "Pulsate";
-            this.radLed_light_pulsate.UseVisualStyleBackColor = true;
-            this.radLed_light_pulsate.CheckedChanged += new System.EventHandler(this.radLed_light_pulsate_CheckedChanged);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(984, 961);
+            this.ClientSize = new System.Drawing.Size(1484, 961);
             this.Controls.Add(this.grpMeterItemRotator);
             this.Controls.Add(this.grpMeterItemDataOutNode);
             this.Controls.Add(this.labelTS198);
@@ -61669,7 +61698,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(1000, 1000);
+            this.MaximumSize = new System.Drawing.Size(1500, 1000);
             this.MinimumSize = new System.Drawing.Size(760, 550);
             this.Name = "Setup";
             this.Text = "Setup";
@@ -66750,5 +66779,7 @@
         private RadioButtonTS radLed_light_pulsate;
         private RadioButtonTS radLed_light_blink;
         private RadioButtonTS radLed_light_on_off;
+        private LabelTS labelTS216;
+        private ColorButton clrbtnMMVfoDigitHighlight;
     }
 }

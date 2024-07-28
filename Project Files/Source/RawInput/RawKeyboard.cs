@@ -46,7 +46,7 @@ namespace RawInput_dll
             else { /*(m_bPreviouslyRegistered = true;*/ }
 		}
 
-		public void EnumerateDevices()
+		public void EnumerateDevices(string id)
 		{
 			lock (_padLock)
 			{
@@ -60,7 +60,8 @@ namespace RawInput_dll
 					DeviceHandle = IntPtr.Zero,
 					DeviceType = Win32.GetDeviceType(DeviceType.RimTypekeyboard),
 					Name = "Fake Keyboard. Some keys (ZOOM, MUTE, VOLUMEUP, VOLUMEDOWN) are sent to rawinput with a handle of zero.",
-					Source = keyboardNumber++.ToString(CultureInfo.InvariantCulture)
+					Source = keyboardNumber++.ToString(CultureInfo.InvariantCulture),
+					ID = id
 				};
 
 				_deviceList.Add(globalDevice.DeviceHandle, globalDevice);
@@ -99,7 +100,8 @@ namespace RawInput_dll
 								DeviceHandle = rid.hDevice,
 								DeviceType = Win32.GetDeviceType(rid.dwType),
 								Name = deviceDesc,
-								Source = keyboardNumber++.ToString(CultureInfo.InvariantCulture)
+								Source = keyboardNumber++.ToString(CultureInfo.InvariantCulture),
+								ID = id
 							};
 						   
 							if (!_deviceList.ContainsKey(rid.hDevice))
@@ -151,7 +153,7 @@ namespace RawInput_dll
 			var isE0BitSet = ((flags & Win32.RI_KEY_E0) != 0);
 
 			KeyPressEvent keyPressEvent;
-
+			
 			if (_deviceList.ContainsKey(_rawBuffer.header.hDevice))
 			{
 				lock (_padLock)
