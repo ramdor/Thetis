@@ -22,6 +22,8 @@ namespace RawInput_dll
         private RawKeyboard _keyboardDriver;
         private RawMouse _mouseDriver;
 
+        private string _id;
+
         readonly IntPtr _devNotifyHandle;
         static readonly Guid DeviceInterfaceHid = new Guid("4D1E55B2-F16F-11CF-88CB-001111000030");
         private PreMessageFilter _filter;
@@ -85,15 +87,17 @@ namespace RawInput_dll
             _filter = null;
         }
 
-        public RawInput(IntPtr parentHandle, bool captureOnlyInForeground)
+        public RawInput(IntPtr parentHandle, bool captureOnlyInForeground, string id = "")
         {
+            _id = id;
+
             AssignHandle(parentHandle);
 
             _keyboardDriver = new RawKeyboard(parentHandle, captureOnlyInForeground);
-            _keyboardDriver.EnumerateDevices();
+            _keyboardDriver.EnumerateDevices(id);
 
             _mouseDriver = new RawMouse(parentHandle, captureOnlyInForeground);
-            _mouseDriver.EnumerateDevices();
+            _mouseDriver.EnumerateDevices(id);
 
             _devNotifyHandle = RegisterForDeviceNotifications(parentHandle);
         }
@@ -147,8 +151,8 @@ namespace RawInput_dll
                         if ((((int)message.WParam) & 0x0007) == 0x0007)
                         {
                             Debug.WriteLine("USB Device Arrival / Removal");
-                            _keyboardDriver.EnumerateDevices();
-                            _mouseDriver.EnumerateDevices();
+                            _keyboardDriver.EnumerateDevices(_id);
+                            _mouseDriver.EnumerateDevices(_id);
 
                             if (DevicesChanged != null)
                             {

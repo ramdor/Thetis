@@ -24254,6 +24254,7 @@ namespace Thetis
                 igs.PeakHoldMarkerColor = clrbtnMMVfoDisplayTx.Color;
                 igs.HistoryColor = clrbtnMMVfoDisplayFilter.Color;
                 igs.SegmentedSolidLowColour = clrbtnMMVfoDisplayBand.Color;
+                igs.PowerScaleColour = clrbtnMMVfoDigitHighlight.Color;
             }
             else if (mt == MeterType.CLOCK)
             {
@@ -24414,7 +24415,7 @@ namespace Thetis
             _ignoreMeterItemChangeEvents = true;
 
             if (mt != MeterType.ROTATOR && mt != MeterType.SIGNAL_TEXT && mt != MeterType.VFO_DISPLAY && mt != MeterType.CLOCK && 
-                mt != MeterType.TEXT_OVERLAY && mt != MeterType.SPACER)
+                mt != MeterType.TEXT_OVERLAY && mt != MeterType.SPACER && mt != MeterType.LED)
             {
                 switch (m.MeterVariables(mt))
                 {
@@ -24612,6 +24613,7 @@ namespace Thetis
                 clrbtnMMVfoDisplayTx.Color = igs.PeakHoldMarkerColor;
                 clrbtnMMVfoDisplayFilter.Color = igs.HistoryColor;
                 clrbtnMMVfoDisplayBand.Color = igs.SegmentedSolidLowColour;
+                clrbtnMMVfoDigitHighlight.Color = igs.PowerScaleColour;
             }
             else if (mt == MeterType.CLOCK)
             {
@@ -29357,6 +29359,11 @@ namespace Thetis
         {
             if(radLed_light_pulsate.Checked)
                 updateMeterType();
+        }
+
+        private void clrbtnMMVfoDigitHighlight_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 
