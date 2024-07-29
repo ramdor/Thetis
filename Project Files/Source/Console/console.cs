@@ -41066,13 +41066,14 @@ namespace Thetis
             }
         }
 
-        public void SetupRX2Band(Band b)
+        public void SetupRX2Band(Band b, bool frequency_only = false)
         {
             string sBand = BandToString(b);
-            SetupRX2Band(sBand);
+            SetupRX2Band(sBand, frequency_only);
         }
-        public void SetupRX2Band(string sBand)
+        public void SetupRX2Band(string sBand, bool frequency_only = false)
         {
+            //[2.10.3.6]MW0LGE added frequency_only so that it can be used as a way to select a band for rx1, vfob, in the vfo display system
             //MW0LGE_21d BandStack2 ineresting... applies to rx2
             BandStackFilter bsf = BandStackManager.GetFilter(BandStackManager.StringToBand(sBand));
             if (bsf != null)
@@ -41088,8 +41089,11 @@ namespace Thetis
 
                 if (bse != null)
                 {
-                    RX2DSPMode = bse.Mode;
-                    RX2Filter = bse.Filter;
+                    if (!frequency_only)
+                    {
+                        RX2DSPMode = bse.Mode;
+                        RX2Filter = bse.Filter;
+                    }
                     VFOBFreq = bse.Frequency;
                 }
             }
