@@ -155,9 +155,9 @@ namespace Thetis
         private SquelchState rx2_squelch_state = SquelchState.OFF;
         private SquelchState rx2_fm_squelch_state = SquelchState.OFF;
 
-        private bool whatisVHF = false;
-        private bool whatisHF = true;
-        private bool whatisGEN = false;
+        private bool _bands_VHF_selected = false;
+        private bool _bands_HF_selected = true;
+        private bool _bands_GEN_selected = false;
         private bool iscollapsed = false;
         private bool isexpanded = true;
         private bool resetForAutoMerge = false;
@@ -3120,9 +3120,9 @@ namespace Thetis
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
-            a.Add("panelBandHF.Visible/" + whatisHF);
-            a.Add("panelBandVHF.Visible/" + whatisVHF);
-            a.Add("panelBandGEN.Visible/" + whatisGEN);
+            a.Add("panelBandHF.Visible/" + _bands_HF_selected);
+            a.Add("panelBandVHF.Visible/" + _bands_VHF_selected);
+            a.Add("panelBandGEN.Visible/" + _bands_GEN_selected);
             a.Add("iscollapsed/" + iscollapsed);
             a.Add("isexpanded/" + isexpanded);
             a.Add("diversity/" + diversity2);
@@ -3345,22 +3345,34 @@ namespace Thetis
                         rx2_meter_cal_offset = float.Parse(val);
                         break;
                     case "panelBandHF.Visible": //added by w3sz
-                        whatisHF = bool.Parse(val); //added by w3sz
-                        panelBandHF.Visible = whatisHF; //added by w3sz
-                        if (whatisHF) //added by w3sz
-                            btnBandHF_Click(btnBandHF, EventArgs.Empty); //added by w3sz
+                        //_bands_HF_selected = bool.Parse(val); //added by w3sz
+                        //panelBandHF.Visible = _bands_HF_selected; //added by w3sz
+                        //if (_bands_HF_selected) //added by w3sz
+                        //    btnBandHF_Click(btnBandHF, EventArgs.Empty); //added by w3sz
+                        {
+                            bool selected = bool.Parse(val); //[2.10.3.6]MW0LGE
+                            BandHFSelected = selected;
+                        }
                         break; //added by w3sz
                     case "panelBandVHF.Visible": //added by w3sz
-                        whatisVHF = bool.Parse(val); //added by w3sz
-                        panelBandVHF.Visible = whatisVHF; //added by w3sz
-                        if (whatisVHF) //added by w3sz
-                            btnBandVHF_Click(btnBandVHF, EventArgs.Empty); //added by w3sz
+                        //_bands_VHF_selected = bool.Parse(val); //added by w3sz
+                        //panelBandVHF.Visible = _bands_VHF_selected; //added by w3sz
+                        //if (_bands_VHF_selected) //added by w3sz
+                        //    btnBandVHF_Click(btnBandVHF, EventArgs.Empty); //added by w3sz
+                        {
+                            bool selected = bool.Parse(val); //[2.10.3.6]MW0LGE
+                            BandVHFSelected = selected;
+                        }
                         break;  //added by w3sz
                     case "panelBandGEN.Visible":
-                        whatisGEN = bool.Parse(val);
-                        panelBandGEN.Visible = whatisGEN;
-                        if (whatisGEN)
-                            btnBandGEN_Click(radBandGEN, EventArgs.Empty);
+                        //_bands_GEN_selected = bool.Parse(val);
+                        //panelBandGEN.Visible = _bands_GEN_selected;
+                        //if (_bands_GEN_selected)
+                        //    btnBandGEN_Click(radBandGEN, EventArgs.Empty);
+                        {
+                            bool selected = bool.Parse(val); //[2.10.3.6]MW0LGE
+                            BandGENSelected = selected;
+                        }
                         break;  //added by w3sz
                     case "iscollapsed":  //added by w3sz
                         iscollapsed = bool.Parse(val);    //added by w3sz
@@ -5734,9 +5746,7 @@ namespace Thetis
             {
                 if (updatePanelsForVFOA)
                 {
-                    panelBandGEN.Visible = false;
-                    panelBandHF.Visible = false;
-                    panelBandVHF.Visible = true; // ke9ns add keep VHF panel open when VHF button selected
+                    setBandPanelVisible(false, false, true);
                 }
                 return (Band)(Band.VHF0 + xvtr_index);
             }
@@ -5745,9 +5755,7 @@ namespace Thetis
             if (!BandStackManager.Ready)
             {
                 // ready when it has been assigned a region/extended flag
-                panelBandGEN.Visible = true;
-                panelBandVHF.Visible = false;
-                panelBandHF.Visible = false;
+                setBandPanelVisible(true, false, false);
                 return Band.GEN;
             }
 
@@ -5761,24 +5769,16 @@ namespace Thetis
                 switch (bfd.bandType)
                 {
                     case BandType.GEN:
-                        panelBandGEN.Visible = true;
-                        panelBandHF.Visible = false;
-                        panelBandVHF.Visible = false;
+                        setBandPanelVisible(true, false, false);
                         break;
                     case BandType.HF:
-                        panelBandHF.Visible = true;
-                        panelBandGEN.Visible = false;
-                        panelBandVHF.Visible = false;
+                        setBandPanelVisible(false, true, false);
                         break;
                     case BandType.VHF:
-                        panelBandVHF.Visible = true;
-                        panelBandGEN.Visible = false;
-                        panelBandHF.Visible = false;
+                        setBandPanelVisible(false, false, true);
                         break;
                     default:
-                        panelBandGEN.Visible = true;   //!(iscollapsed && showAndromedaButtonBar);//
-                        panelBandHF.Visible = false;
-                        panelBandVHF.Visible = false;
+                        setBandPanelVisible(true, false, false);   //!(iscollapsed && showAndromedaButtonBar);//
                         break;
                 }
             }
@@ -5814,13 +5814,11 @@ namespace Thetis
 
             if (rx1_xvtr_index >= 0)
             {
-                panelBandHF.Visible = false;
-                panelBandGEN.Visible = false;
-                panelBandVHF.Visible = true;
+                setBandPanelVisible(false, false, true);
             }
             else
             {
-                panelBandVHF.Visible = false;
+                setBandPanelVisible(BandGENSelected, BandHFSelected, false);
             }
         }
 
@@ -6873,7 +6871,7 @@ namespace Thetis
         {
             get
             {
-                if (panelBandHF.Visible)
+                if (BandHFSelected)
                     return 0;
                 else
                     return 1;
@@ -6893,9 +6891,9 @@ namespace Thetis
         {
             get
             {
-                if (whatisGEN)
+                if (_bands_GEN_selected)
                     return 2;
-                else if (whatisVHF)
+                else if (_bands_VHF_selected)
                     return 1;
                 else
                     return 0;
@@ -7005,9 +7003,7 @@ namespace Thetis
                     radBandGEN_Click(this, EventArgs.Empty);
                     break;
             }
-            if (bandPopupForm != null) bandPopupForm.RepopulateForm();
-            if (modePopupForm != null) modePopupForm.RepopulateForm();
-            if (filterPopupForm != null) filterPopupForm.RepopulateForm();
+            repopulateForms();
         }
 
 
@@ -7026,7 +7022,10 @@ namespace Thetis
         {
             return vhf_text[index].Text;
         }
-
+        public bool GetVHFEnabled(int index)
+        {
+            return vhf_text[index].Enabled;
+        }
 
         private bool m_bLimitFiltersToSidebands = false;    //MW0LGE_21k9
         public bool LimitFiltersToSideBands
@@ -17009,9 +17008,7 @@ namespace Thetis
                     RX2AGCMode = rx2_agcm_by_band[(int)value];
                     RX2RF = tmp;
 
-                    if (bandPopupForm != null) bandPopupForm.RepopulateForm();
-                    if (modePopupForm != null) modePopupForm.RepopulateForm();
-                    if (filterPopupForm != null) filterPopupForm.RepopulateForm();
+                    repopulateForms();
 
                     //MW0LGE_21b
                     if (old_band != rx2_band)
@@ -29232,16 +29229,44 @@ namespace Thetis
                 lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;
             AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, false, chkVFOBLock.Checked);
         }
+        private void repopulateForms()
+        {
+            if (bandPopupForm != null) bandPopupForm.RepopulateForm();
+            if (modePopupForm != null) modePopupForm.RepopulateForm();
+            if (filterPopupForm != null) filterPopupForm.RepopulateForm();
+        }
+        private void setBandPanelVisible(bool gen, bool hf, bool vhf)
+        {
+            //[2.10.3.6]MW0LGE reimplemented all this including repopulateForms
+            // can only be one true, should have an enum.. todo
+            if (gen)
+            {
+                hf = false;
+                vhf = false;
+            }
+            else if(hf)
+            {
+                gen = false;
+                vhf = false;
+            }
+            else if (vhf)
+            {
+                gen = false;
+                hf = false;
+            }
+            //
 
+            panelBandGEN.Visible = gen;
+            panelBandHF.Visible = hf;
+            panelBandVHF.Visible = vhf;
+
+            _bands_GEN_selected = gen;
+            _bands_HF_selected = hf;
+            _bands_VHF_selected = vhf;
+        }
         private void btnBandVHF_Click(object sender, System.EventArgs e)
         {
-            panelBandVHF.Visible = true;
-            panelBandHF.Visible = false;
-            panelBandGEN.Visible = false; // ke9ns add
-
-            whatisVHF = true;
-            whatisHF = false;
-            whatisGEN = false;
+            setBandPanelVisible(false, false, true);
 
             //MW0LGE_22b re-instated this. It is such a bad way to get the band bars to redraw, but no desire to rework compressed view
             if (collapsedDisplay)
@@ -29249,20 +29274,12 @@ namespace Thetis
 
             lblRX1MuteVFOA.SendToBack();
             lblRX1APF.SendToBack();
-            if (bandPopupForm != null) bandPopupForm.RepopulateForm();
-            if (modePopupForm != null) modePopupForm.RepopulateForm();
-            if (filterPopupForm != null) filterPopupForm.RepopulateForm();
+            repopulateForms();
         }
 
         private void btnBandHF_Click(object sender, System.EventArgs e)
         {
-            panelBandVHF.Visible = false;
-            panelBandGEN.Visible = false; // ke9ns add
-            panelBandHF.Visible = true;
-
-            whatisVHF = false;
-            whatisHF = true;
-            whatisGEN = false;
+            setBandPanelVisible(false, true, false);
 
             //MW0LGE_22b re-instated this. It is such a bad way to get the band bars to redraw, but no desire to rework compressed view
             if (collapsedDisplay)
@@ -29270,20 +29287,12 @@ namespace Thetis
 
             lblRX1MuteVFOA.BringToFront();
             lblRX1APF.BringToFront();
-            if (bandPopupForm != null) bandPopupForm.RepopulateForm();
-            if (modePopupForm != null) modePopupForm.RepopulateForm();
-            if (filterPopupForm != null) filterPopupForm.RepopulateForm();
+            repopulateForms();
         }
 
         private void btnBandGEN_Click(object sender, EventArgs e) // ke9ns add hf screen click on GEN button
         {
-            panelBandGEN.Visible = true; // ke9ns add
-            panelBandVHF.Visible = false;
-            panelBandHF.Visible = false;
-
-            whatisVHF = false;
-            whatisHF = false;
-            whatisGEN = true;
+            setBandPanelVisible(true, false, false);
 
             //MW0LGE_22b re-instated this. It is such a bad way to get the band bars to redraw, but no desire to rework compressed view
             if (collapsedDisplay)
@@ -29291,11 +29300,40 @@ namespace Thetis
 
             lblRX1MuteVFOA.SendToBack();
             lblRX1APF.SendToBack();
-            if (bandPopupForm != null) bandPopupForm.RepopulateForm();
-            if (modePopupForm != null) modePopupForm.RepopulateForm();
-            if (filterPopupForm != null) filterPopupForm.RepopulateForm();
+            repopulateForms();
         }
-
+        //
+        public bool BandGENSelected
+        {
+            get { return _bands_GEN_selected; }
+            set
+            {
+                _bands_GEN_selected = value;
+                if (_bands_GEN_selected)
+                    btnBandGEN_Click(this, EventArgs.Empty);
+            }
+        }
+        public bool BandHFSelected
+        {
+            get { return _bands_HF_selected; }
+            set
+            {
+                _bands_HF_selected = value;
+                if (_bands_HF_selected)
+                    btnBandHF_Click(this, EventArgs.Empty);
+            }
+        }
+        public bool BandVHFSelected
+        {
+            get { return _bands_VHF_selected; }
+            set
+            {
+                _bands_VHF_selected = value;
+                if (_bands_VHF_selected)
+                    btnBandVHF_Click(this, EventArgs.Empty);
+            }
+        }
+        //
         private void udFilterLow_LostFocus(object sender, EventArgs e)
         {
             udFilterLow_ValueChanged(sender, e);
@@ -41728,11 +41766,11 @@ namespace Thetis
             panelMode.Show();
             panelBandHF.Show();
 
-            if (this.panelBandVHF.Visible)
+            if (BandVHFSelected)
             {
                 btnBandVHF_Click(btnBandVHF, EventArgs.Empty);
             }
-            else if (this.panelBandGEN.Visible)
+            else if (BandGENSelected)
             {
                 btnBandGEN_Click(radBandGEN, EventArgs.Empty);
             }
@@ -42220,12 +42258,12 @@ namespace Thetis
        
             panelFilter.Hide();
 
-            if (panelBandHF.Visible)
+            if (BandHFSelected)
             {
                 panelBandVHF.Hide();
                 panelBandGEN.Hide();
             }
-            else if (panelBandVHF.Visible)
+            else if (BandVHFSelected)
             {
                 panelBandHF.Hide();
                 panelBandGEN.Hide();
@@ -42570,11 +42608,11 @@ namespace Thetis
             else if (this.m_bShowBandControls)
             {
                 panelButtonBar.Hide();
-                if (whatisVHF)
+                if (_bands_VHF_selected)
                 {
                     panelBandVHF.Show();
                 }
-                else if (whatisHF)
+                else if (_bands_HF_selected)
                 {
                     panelBandHF.Show();
                 }
@@ -42926,7 +42964,7 @@ namespace Thetis
                     lblRX2Band.Location = new Point(5, top);
                     comboRX2Band.Location = new Point(lblRX2Band.Location.X + lblRX2Band.Width + 5, top);
 
-                    if (panelBandVHF.Visible || (whatisVHF && initializing)) //MW0LGE_21a NOTE: visible state is only true IF the FORM is shown. During INIT the Form is still hidden
+                    if (BandVHFSelected)//panelBandVHF.Visible || (_bands_VHF_selected && initializing)) //MW0LGE_21a NOTE: visible state is only true IF the FORM is shown. During INIT the Form is still hidden
                                                                              //
                     {
                         panelBandVHF.Location = new Point(this.ClientSize.Width / 2 - radBandVHF0.Width * 7 + 100, top);
@@ -42948,7 +42986,7 @@ namespace Thetis
                         btnBandHF.Location = new Point(radBandVHF13.Location.X + radBandVHF13.Width, 0);
                         top = panelBandVHF.Location.Y + panelBandVHF.Height;
                     }
-                    else if (panelBandHF.Visible || (whatisHF && initializing)) //MW0LGE_21a NOTE: visible state is only true IF the FORM is shown. During INIT the Form is still hidden
+                    else if (BandHFSelected)//panelBandHF.Visible || (_bands_HF_selected && initializing)) //MW0LGE_21a NOTE: visible state is only true IF the FORM is shown. During INIT the Form is still hidden
                     {
                         panelBandHF.Location = new Point(this.ClientSize.Width / 2 - radBand160.Width * 7 + 100, top);
                         panelBandHF.Size = new Size(radBand160.Width * 15, radBand160.Height);
@@ -43479,9 +43517,7 @@ namespace Thetis
             bandtoolStripMenuItem12.Checked = radBandWWV.Checked;
             bandtoolStripMenuItem13.Checked = radBandGEN.Checked;
 
-            if (bandPopupForm != null) bandPopupForm.RepopulateForm();
-            if (modePopupForm != null) modePopupForm.RepopulateForm();
-            if (filterPopupForm != null) filterPopupForm.RepopulateForm();
+            repopulateForms();
         }
 
         private void eSCToolStripMenuItem_Click(object sender, EventArgs e)
@@ -45880,7 +45916,7 @@ namespace Thetis
         private void OnBandBeforeChangeHandler(int rx, Band band)
         {
             if (m_bSetBandRunning) return;
-            if (rx != 1) return;
+            if (rx != 1) return; // only used for RX1, RX2 uses SetupRX2Band
             if (!BandStackManager.Ready) return;
 
             #region BS_CodeStore
