@@ -57135,9 +57135,9 @@
             this.labelTS216.Image = null;
             this.labelTS216.Location = new System.Drawing.Point(9, 293);
             this.labelTS216.Name = "labelTS216";
-            this.labelTS216.Size = new System.Drawing.Size(94, 13);
+            this.labelTS216.Size = new System.Drawing.Size(67, 13);
             this.labelTS216.TabIndex = 131;
-            this.labelTS216.Text = "Vfo Digit Highlight:";
+            this.labelTS216.Text = "VfoHighlight:";
             // 
             // clrbtnMMVfoDigitHighlight
             // 
@@ -57151,7 +57151,7 @@
             this.clrbtnMMVfoDigitHighlight.Selectable = true;
             this.clrbtnMMVfoDigitHighlight.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMMVfoDigitHighlight.TabIndex = 130;
-            this.toolTip1.SetToolTip(this.clrbtnMMVfoDigitHighlight, "Band colour");
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDigitHighlight, "Any highlights from the mouse will be in this colour");
             this.clrbtnMMVfoDigitHighlight.Changed += new System.EventHandler(this.clrbtnMMVfoDigitHighlight_Changed);
             // 
             // labelTS177

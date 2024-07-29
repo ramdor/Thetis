@@ -36,6 +36,7 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
 using RawInput_dll;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Thetis
 {
@@ -3623,6 +3624,23 @@ namespace Thetis
                 VHF,
                 HF,
                 SWL,
+                MODE,
+                FILTER
+            }
+            public enum DSPModeForModeDisplay
+            {
+                LSB = 0,
+                USB,
+                DSB,
+                CWL,
+                CWU,
+                FM,
+                AM,
+                SAM,
+                DIGL,
+                DIGU,
+                SPEC,
+                DRM
             }
             private renderState _render_state_vfoA;
             private renderState _render_state_vfoB;
@@ -3789,7 +3807,7 @@ namespace Thetis
             public override void KeyDown(Keys keycode)
             {
                 if (!MouseEntered) return;
-                //if (!_adjust_enabled) return;
+                if ((int)_adjust_step == 0) return;
 
                 if ((keycode >= Keys.D0 && keycode <= Keys.D9) ||
                     (keycode >= Keys.NumPad0 && keycode <= Keys.NumPad9))
@@ -3946,17 +3964,128 @@ namespace Thetis
                             else
                                 _render_state_vfoA_change_time = DateTime.Now;
                         }
-                        break;                    
+                        break;
+                    case buttonState.MODE:
+                        if (_mouse_over_vfoB)
+                        {
+                            if (setMode(true))
+                                VFOBRenderState = renderState.VFO;
+                            else
+                                _render_state_vfoB_change_time = DateTime.Now;
+                        }
+                        else
+                        {
+                            if (setMode(false))
+                                VFOARenderState = renderState.VFO;
+                            else
+                                _render_state_vfoA_change_time = DateTime.Now;
+                        }
+                        break;
+                    case buttonState.FILTER:
+                        if (_mouse_over_vfoB)
+                        {
+                            if (setFilter(true))
+                                VFOBRenderState = renderState.VFO;
+                            else
+                                _render_state_vfoB_change_time = DateTime.Now;
+                        }
+                        else
+                        {
+                            if (setFilter(false))
+                                VFOARenderState = renderState.VFO;
+                            else
+                                _render_state_vfoA_change_time = DateTime.Now;
+                        }
+                        break;
                 }
 
                 //base.MouseClick(e);
+            }
+            private bool setFilter(bool vfoB)
+            {
+                if (vfoB)
+                {
+                    int f = _button_grid_index_vfoB;
+                    if (f < 0) return true;
+                    Filter fltr = (Filter)((int)Filter.F1 + f);
+
+                    if (_owningmeter.RX2Enabled)
+                    {
+                        // special for rx2 as only F1-F7 + VAR1 + VAR2, so, 0,1,2,3,4,5,6,7,8
+                        if (f > 8) return true;
+                        if(f > 6)
+                        {
+                            f += 3;
+                            fltr = (Filter)((int)Filter.F1 + f);
+                        }
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.RX2Filter = fltr;
+                        }));
+                    }
+                    else
+                    {
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.RX1Filter = fltr;
+                        }));
+                    }
+                }
+                else
+                {
+                    int f = _button_grid_index_vfoA;
+                    if (f < 0) return true;
+                    Filter fltr = (Filter)((int)Filter.F1 + f);
+
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.RX1Filter = fltr;
+                    }));
+                }
+                return true;
+            }
+            private bool setMode(bool vfoB)
+            {
+                if (vfoB)
+                {
+                    int m = _button_grid_index_vfoB;
+                    if (m < 0) return true;
+                    DSPModeForModeDisplay dm = (DSPModeForModeDisplay)((int)DSPModeForModeDisplay.LSB + m);
+                    Enum.TryParse<DSPMode>(dm.ToString(), out DSPMode dspMode);
+
+                    if (_owningmeter.RX2Enabled)
+                    {
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.RX2DSPMode = dspMode;
+                        }));
+                    }
+                    else
+                    {
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.RX1DSPMode = dspMode;
+                        }));
+                    }
+                }
+                else
+                {
+                    int m = _button_grid_index_vfoA;
+                    if (m < 0) return true;
+                    DSPModeForModeDisplay dm = (DSPModeForModeDisplay)((int)DSPModeForModeDisplay.LSB + m);
+                    Enum.TryParse<DSPMode>(dm.ToString(), out DSPMode dspMode);
+
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.RX1DSPMode = dspMode;
+                    }));
+                }
+                return true;
             }
             private bool setBand(bool vfoB)
             {
                 if (vfoB)
                 {
-                    // can't do much if rx2 is not shown
-                    if (!_owningmeter.RX2Enabled) return true;
                     int b = _button_grid_index_vfoB;
                     if (b < 0) return true;
                     Band band;
@@ -3982,13 +4111,15 @@ namespace Thetis
                                 setBandPanel(false, false, true); // VHF
                                 return false;
                             }
-                            //if (b == 11) // WWV
                             if (b == 13)
                             {
                                 setBandPanel(true, false, false); // GEN(SWL)
                                 return false;
                             }
-                            return true;
+                            if (b == 12) // WWV
+                                band = Band.WWV;
+                            else
+                                return true;
                         }
                         band = (Band)((int)Band.B160M + b);
                     }
@@ -4009,7 +4140,7 @@ namespace Thetis
                         return true;
                     _console.BeginInvoke(new MethodInvoker(() =>
                     {
-                        _console.SetupRX2Band(band);
+                        _console.SetupRX2Band(band, !_owningmeter.RX2Enabled); // we tell setuprx2band that we only want to change freq for vfob if only rx1
                     }));
                 }
                 else
@@ -4039,13 +4170,15 @@ namespace Thetis
                                 setBandPanel(false, false, true); // VHF
                                 return false;
                             }
-                            //if (b == 11) // WWV
                             if (b == 13)
                             {
                                 setBandPanel(true, false, false); // GEN(SWL)
                                 return false;
                             }
-                            return true;
+                            if (b == 12) // WWV
+                                band = Band.WWV;
+                            else
+                                return true;
                         }
                         band = (Band)((int)Band.B160M + b);
                     }
@@ -16037,13 +16170,20 @@ namespace Thetis
                 kHz = vfo.Substring(index + 1, 3);
                 hz = vfo.Substring(index + 4, 3);
             }
-            private void plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false)
+            private void plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fit_size = 0, bool ignore_cache = false)
             {
                 float fontSizeEmScaled = (fTextSize / 16f) * (containerWidth / 52f);
                 SizeF szTextSize;
 
-                szTextSize = measureString(sText, sFontFamily, style, fontSizeEmScaled);
-
+                szTextSize = measureString(sText, sFontFamily, style, fontSizeEmScaled, ignore_cache);
+                if(fit_size > 0 && szTextSize.Width > fit_size)
+                {
+                    // need to shrink the size by some ratio?
+                    float ratio = fit_size / szTextSize.Width;
+                    fTextSize *= ratio;
+                    fontSizeEmScaled = (fTextSize / 16f) * (containerWidth / 52f);
+                    szTextSize = measureString(sText, sFontFamily, style, fontSizeEmScaled, ignore_cache);
+                }
                 SharpDX.RectangleF txtrect;
                 if (!bAlignRight)
                 {
@@ -16062,8 +16202,9 @@ namespace Thetis
                     txtrect = new SharpDX.RectangleF(x - szTextSize.Width, y, szTextSize.Width, szTextSize.Height);
                 }
                 _renderTarget.DrawText(sText, getDXTextFormatForFont(sFontFamily, fontSizeEmScaled, style), txtrect, getDXBrushForColour(c, nFade));
+                //_renderTarget.DrawRectangle(txtrect, getDXBrushForColour(System.Drawing.Color.Red));
             }
-            private void highlightBandBox(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, int bx, int by, float gap, clsMeter m, float shift)
+            private void highlightBox(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, int bx, int by, float gap, clsMeter m, float shift)
             {
                 SharpDX.RectangleF rct;
                 float wB = gap;
@@ -16072,7 +16213,7 @@ namespace Thetis
                 float yB = y + (by * hB);
 
                 rct = new SharpDX.RectangleF(xB, yB, wB, hB);
-                _renderTarget.FillRectangle(rct, getDXBrushForColour(System.Drawing.Color.FromArgb(128,128,128)));
+                _renderTarget.FillRectangle(rct, getDXBrushForColour(vfo.DigitHighlightColour));
             }
             private clsVfoDisplay.buttonState drawBand(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, clsMeter m, float shift)
             {
@@ -16100,7 +16241,7 @@ namespace Thetis
                     {
                         nx = (int)(8 * mx);
                         ny = (int)(2 * my);
-                        highlightBandBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                        highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
                         button_grid_index = (ny * 8) + nx;
                         if (shift != 0)
                             button_state = clsVfoDisplay.buttonState.BAND;
@@ -16149,11 +16290,11 @@ namespace Thetis
 
                     if (shift < 0.5f)
                     {
-                        if (m.BandVfoA == (Band)i) highlightBandBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                        if (m.BandVfoA == (Band)i) highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
                     }
                     else
                     {
-                        if (m.BandVfoB == (Band)i) highlightBandBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                        if (m.BandVfoB == (Band)i) highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
                     }
 
                     if (vhf)
@@ -16180,7 +16321,7 @@ namespace Thetis
 
                     t_xB = xB + (gap / 2f) + (nx * gap);
                     t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
-                    plotText(band, t_xB, t_yB, h, rect.Width, 20f, band_colour, 255, vfo.FontFamily, vfo.Style, false, true);
+                    plotText(band, t_xB, t_yB, h, rect.Width, 20f, band_colour, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                     nx++;
                     if (nx > 7)
                     {
@@ -16193,17 +16334,214 @@ namespace Thetis
                 t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
                 if (_console.BandHFSelected)
                 {
-                    plotText("VHF", t_xB, t_yB, h, rect.Width, 16f, System.Drawing.Color.Yellow, 255, vfo.FontFamily, vfo.Style, false, true);
+                    plotText("VHF", t_xB, t_yB, h, rect.Width, 16f, System.Drawing.Color.Yellow, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                     nx++;
                     t_xB = xB + (gap / 2f) + (nx * gap);
-                    plotText("WWV", t_xB, t_yB, h, rect.Width, 14f, BandStackManager.BandToColour(Band.WWV), 255, vfo.FontFamily, vfo.Style, false, true);
+                    plotText("WWV", t_xB, t_yB, h, rect.Width, 14f, BandStackManager.BandToColour(Band.WWV), 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                     nx++;
                     t_xB = xB + (gap / 2f) + (nx * gap);
-                    plotText("SWL", t_xB, t_yB, h, rect.Width, 16f, System.Drawing.Color.Orange, 255, vfo.FontFamily, vfo.Style, false, true);
+                    plotText("SWL", t_xB, t_yB, h, rect.Width, 16f, System.Drawing.Color.Orange, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                 }
                 else if (_console.BandGENSelected || _console.BandVHFSelected)
                 {
-                    plotText("HF", t_xB, t_yB, h, rect.Width, 16f, System.Drawing.Color.Red, 255, vfo.FontFamily, vfo.Style, false, true);
+                    plotText("HF", t_xB, t_yB, h, rect.Width, 16f, System.Drawing.Color.Red, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                }
+
+                //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+
+                if (shift != 0)
+                    vfo.ButtonGridIndexVFOb = button_grid_index;
+                else
+                    vfo.ButtonGridIndexVFOa = button_grid_index;
+
+                return button_state;
+            }
+            private clsVfoDisplay.buttonState drawMode(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, clsMeter m, float shift)
+            {
+                // draw grid
+                SharpDX.Direct2D1.Brush lineBrush = getDXBrushForColour(System.Drawing.Color.White, 255);
+                SharpDX.RectangleF rct;
+                float xB = 0;
+                float yB = y;
+                float wB = x + w * 0.47f;
+                float hB = h;
+                float gap = wB / 6f;
+                int nx = 0;
+                int ny = 0;
+                float mx = 0;
+                float my = 0;
+                clsVfoDisplay.buttonState button_state = clsVfoDisplay.buttonState.NONE;
+                int button_grid_index = -1;
+
+                if (vfo.MouseEntered)
+                {
+                    mx = (vfo.MouseMovePoint.X - x) / w;
+                    my = (vfo.MouseMovePoint.Y - y) / h;
+                    mx = (mx - shift) / (wB / w);
+                    if (mx >= 0 && mx <= 1 && my >= 0 && my <= 1)
+                    {
+                        nx = (int)(6 * mx);
+                        ny = (int)(2 * my);
+                        highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                        button_grid_index = (ny * 6) + nx;
+                        if (shift != 0)
+                            button_state = clsVfoDisplay.buttonState.MODE;
+                        else
+                            button_state = clsVfoDisplay.buttonState.MODE;
+                    }
+                }
+
+                xB = x + (w * shift);
+                rct = new SharpDX.RectangleF(xB, yB, wB, hB);
+                _renderTarget.DrawRectangle(rct, lineBrush);
+                _renderTarget.DrawLine(new RawVector2(xB, yB + hB / 2f), new RawVector2(xB + wB, yB + hB / 2f), lineBrush);
+                for (int i = 1; i < 6; i++)
+                {
+                    _renderTarget.DrawLine(new RawVector2(xB + (gap * i), y), new RawVector2(xB + (gap * i), y + h), lineBrush);
+                }
+
+                nx = 0;
+                ny = 0;
+                float t_xB;
+                float t_yB;
+                clsVfoDisplay.DSPModeForModeDisplay start = clsVfoDisplay.DSPModeForModeDisplay.LSB;
+                clsVfoDisplay.DSPModeForModeDisplay end = clsVfoDisplay.DSPModeForModeDisplay.DRM;
+                System.Drawing.Color mode_colour;
+                string mode;
+                for (int i = (int)start; i <= (int)end; i++)
+                {
+                    clsVfoDisplay.DSPModeForModeDisplay mde = (clsVfoDisplay.DSPModeForModeDisplay)i;
+                    string modeString = mde.ToString();
+                    Enum.TryParse<DSPMode>(modeString, out DSPMode dsp_mode);                    
+                    if (shift < 0.5f)
+                    {
+                        if (m.ModeVfoA == dsp_mode) highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                    }
+                    else
+                    {
+                        if (m.ModeVfoB == dsp_mode) highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                    }
+
+                    mode = mde.ToString();
+                    mode_colour = System.Drawing.Color.White;
+
+                    t_xB = xB + (gap / 2f) + (nx * gap);
+                    t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
+                    plotText(mode, t_xB, t_yB, h, rect.Width, 18f, mode_colour, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                    nx++;
+                    if (nx > 5)
+                    {
+                        nx = 0;
+                        ny += 1;
+                    }
+                }
+
+                //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+
+                if (shift != 0)
+                    vfo.ButtonGridIndexVFOb = button_grid_index;
+                else
+                    vfo.ButtonGridIndexVFOa = button_grid_index;
+
+                return button_state;
+            }
+            private clsVfoDisplay.buttonState drawFilter(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, clsMeter m, float shift)
+            {
+                // draw grid
+                SharpDX.Direct2D1.Brush lineBrush = getDXBrushForColour(System.Drawing.Color.White, 255);
+                SharpDX.RectangleF rct;
+                float xB = 0;
+                float yB = y;
+                float wB = x + w * 0.47f;
+                float hB = h;
+                float gap = wB / 6f;
+                int nx = 0;
+                int ny = 0;
+                float mx = 0;
+                float my = 0;
+                clsVfoDisplay.buttonState button_state = clsVfoDisplay.buttonState.NONE;
+                int button_grid_index = -1;
+
+                if (vfo.MouseEntered)
+                {
+                    mx = (vfo.MouseMovePoint.X - x) / w;
+                    my = (vfo.MouseMovePoint.Y - y) / h;
+                    mx = (mx - shift) / (wB / w);
+                    if (mx >= 0 && mx <= 1 && my >= 0 && my <= 1)
+                    {
+                        nx = (int)(6 * mx);
+                        ny = (int)(2 * my);
+                        highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                        button_grid_index = (ny * 6) + nx;
+                        if (shift != 0)
+                            button_state = clsVfoDisplay.buttonState.FILTER;
+                        else
+                            button_state = clsVfoDisplay.buttonState.FILTER;
+                    }
+                }
+
+                xB = x + (w * shift);
+                rct = new SharpDX.RectangleF(xB, yB, wB, hB);
+                _renderTarget.DrawRectangle(rct, lineBrush);
+                _renderTarget.DrawLine(new RawVector2(xB, yB + hB / 2f), new RawVector2(xB + wB, yB + hB / 2f), lineBrush);
+                for (int i = 1; i < 6; i++)
+                {
+                    _renderTarget.DrawLine(new RawVector2(xB + (gap * i), y), new RawVector2(xB + (gap * i), y + h), lineBrush);
+                }
+
+                nx = 0;
+                ny = 0;
+                float t_xB;
+                float t_yB;
+                Filter start = Filter.F1;
+                Filter end;
+                if (shift < 0.5f)
+                    end = Filter.VAR2;
+                else
+                {
+                    if (m.RX2Enabled)
+                        end = Filter.F7;
+                    else
+                        end = Filter.VAR2;
+                }
+                System.Drawing.Color filter_colour;
+                string filter;
+                for (int i = (int)start; i <= (int)end; i++)
+                {
+                    Filter fltr = (Filter)i;
+                    if (shift < 0.5f)
+                    {
+                        if (m.FilterVfoA == fltr) highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                        filter = _console.rx1_filters[(int)m.ModeVfoA].GetName(fltr);
+                    }
+                    else
+                    {
+                        if (m.FilterVfoB == fltr) highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                        if(m.RX2Enabled)
+                            filter = _console.rx2_filters[(int)m.ModeVfoB].GetName(fltr);
+                        else
+                            filter = _console.rx1_filters[(int)m.ModeVfoA].GetName(fltr); // uses RX1
+                    }
+                    if (string.IsNullOrEmpty(filter)) filter = fltr.ToString();
+
+                    filter_colour = System.Drawing.Color.White;
+
+                    t_xB = xB + (gap / 2f) + (nx * gap);
+                    t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
+                    plotText(filter, t_xB, t_yB, h, rect.Width, 16f, filter_colour, 255, vfo.FontFamily, vfo.Style, false, true, gap, true);
+                    nx++;
+                    if (nx > 5)
+                    {
+                        nx = 0;
+                        ny += 1;
+                    }
+                    // to add the VAR1/2 to rx2
+                    if(m.RX2Enabled && shift >= 0.5f && i == (int)Filter.F7)
+                    {
+                        start = Filter.VAR1;
+                        end = Filter.VAR2;
+                        i = (int)Filter.F10; // as i gets incremented and moved to VAR1
+                    }
                 }
 
                 //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
@@ -16288,6 +16626,48 @@ namespace Thetis
                             right = false;
                         }
                     }
+                    // mode
+                    if (my >= 0.530 && my <= 0.860 && (((mx >= 0.008 && mx <= 0.078) & left) || ((mx >= 0.008 + shift && mx <= 0.078 + shift) & right)))
+                    {
+                        xB = 0.008f + shift;
+                        yB = 0.530f;
+                        wB = 0.078f - 0.008f;
+                        hB = 0.860f - 0.530f;
+
+                        button_back_box = true;
+
+                        if (left)
+                        {
+                            button_state_vfoA = clsVfoDisplay.buttonState.MODE_SCREEN;
+                            left = false;
+                        }
+                        if (right)
+                        {
+                            button_state_vfoB = clsVfoDisplay.buttonState.MODE_SCREEN;
+                            right = false;
+                        }
+                    }
+                    // filter
+                    if (my >= 0.555 && my <= 0.870 && (((mx >= 0.250 && mx <= 0.332) & left) || ((mx >= 0.250 + shift && mx <= 0.332 + shift) & right)))
+                    {
+                        xB = 0.250f + shift;
+                        yB = 0.555f;
+                        wB = 0.332f - 0.250f;
+                        hB = 0.870f - 0.555f;
+
+                        button_back_box = true;
+
+                        if (left)
+                        {
+                            button_state_vfoA = clsVfoDisplay.buttonState.FILTER_SCREEN;
+                            left = false;
+                        }
+                        if (right)
+                        {
+                            button_state_vfoB = clsVfoDisplay.buttonState.FILTER_SCREEN;
+                            right = false;
+                        }
+                    }
 
                     // large numbers
                     if (my >= 0.100 && my <= 0.500)
@@ -16356,6 +16736,22 @@ namespace Thetis
                 if (vfo.VFOBRenderState == clsVfoDisplay.renderState.BAND)
                 {
                     button_state_vfoB = drawBand(x, y, w, h, rect, vfo, m, 0.510f);
+                }
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.MODE)
+                {
+                    button_state_vfoA = drawMode(x, y, w, h, rect, vfo, m, 0);
+                }
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.MODE)
+                {
+                    button_state_vfoB = drawMode(x, y, w, h, rect, vfo, m, 0.510f);
+                }
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.FILTER)
+                {
+                    button_state_vfoA = drawFilter(x, y, w, h, rect, vfo, m, 0);
+                }
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.FILTER)
+                {
+                    button_state_vfoB = drawFilter(x, y, w, h, rect, vfo, m, 0.510f);
                 }
 
                 if (draw_box && mouse_over_good)
@@ -16552,10 +16948,10 @@ namespace Thetis
                     plotText(tmpVfoBFilterName, rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, vfo.FilterColour, nVfoBFade, vfo.FontFamily, vfo.Style);
                 }
 
-                //if (vfo.MouseEntered)
-                //{
-                //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
-                //}
+                if (vfo.MouseEntered)
+                {
+                    plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                }
 
                 //plotText($"a render state = {vfo.VFOARenderState}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
                 //plotText($"b render state = {vfo.VFOBRenderState}", x, y + 20, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
