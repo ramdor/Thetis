@@ -3008,7 +3008,7 @@ namespace Thetis
             private PointF _mouseUpPoint;
             private PointF _mouseMovePoint;
             private bool _mouse_entered;
-            private bool _mouseDown;
+            private bool _mouseButtonDown;
             private MouseButtons _mouseButton;
 
             public clsMeterItem(clsMeter owningMeter = null)
@@ -3064,7 +3064,7 @@ namespace Thetis
                 _mouseUpPoint = new PointF(0, 0);
                 _mouseMovePoint = new PointF(0, 0);
                 _mouse_entered = false;
-                _mouseDown = false;
+                _mouseButtonDown = false;
                 _mouseButton = MouseButtons.None;
             }
             //public Guid GetMMIOGuid(int index)
@@ -3366,15 +3366,27 @@ namespace Thetis
             }
 
             // mouse
+            public virtual void MouseClick(MouseEventArgs e)
+            {
+
+            }
+            public virtual void MouseDown(MouseEventArgs e)
+            {
+
+            }
+            public virtual void MouseUp(MouseEventArgs e)
+            {
+
+            }
             public virtual MouseButtons MouseButton
             {
                 get { return _mouseButton; }
                 set { _mouseButton = value; }
             }
-            public virtual bool MouseDown
+            public virtual bool MouseButtonDown
             {
-                get { return _mouseDown; }
-                set { _mouseDown = value; }
+                get { return _mouseButtonDown; }
+                set { _mouseButtonDown = value; }
             }
             public virtual PointF MouseDownPoint
             {
@@ -3592,6 +3604,29 @@ namespace Thetis
         }
         internal class clsVfoDisplay : clsMeterItem
         {
+            public enum renderState
+            {
+                VFO = 0,
+                BAND,
+                MODE,
+                FILTER,
+            }
+            public enum buttonState
+            {   
+                NONE = 0,
+                VFO_SCREEN,
+                BAND_SCREEN,
+                FILTER_SCREEN,
+                MODE_SCREEN,
+                VFO,
+                BAND,
+                VHF,
+                HF,
+                SWL,
+            }
+            private renderState _render_state_vfoA;
+            private renderState _render_state_vfoB;
+
             private System.Drawing.Color _colour;
             private string _fontFamily;
             private FontStyle _fontStyle;
@@ -3611,9 +3646,15 @@ namespace Thetis
             private System.Drawing.Color _digitHighlightColour;
 
             private double _adjust_step;
-            private bool _adjust_enabled;
-            private bool _adjust_vfoB;
+            //private bool _adjust_enabled;
+            private bool _mouse_over_vfoB;
             private clsMeter _owningmeter;
+            private DateTime _render_state_vfoA_change_time;
+            private DateTime _render_state_vfoB_change_time;
+            private buttonState _render_button_vfoA;
+            private buttonState _render_button_vfoB;
+            private int _button_grid_index_vfoA;
+            private int _button_grid_index_vfoB;
 
             public clsVfoDisplay(clsMeter owningmeter)
             {
@@ -3632,14 +3673,23 @@ namespace Thetis
                 _bandColour = System.Drawing.Color.White;
                 _digitHighlightColour = System.Drawing.Color.FromArgb(128, 128, 128);
                 _adjust_step = 0;
-                _adjust_enabled = false;
+                //_adjust_enabled = false;
                 _owningmeter = owningmeter;
-                _adjust_vfoB = false;
+                _mouse_over_vfoB = false;
 
                 ItemType = MeterItemType.VFO_DISPLAY;
                 _colour = System.Drawing.Color.White;
                 StoreSettings = false;
                 UpdateInterval = 50; // fixed
+
+                _render_state_vfoA = renderState.VFO;
+                _render_state_vfoB = renderState.VFO;
+                _render_state_vfoA_change_time = DateTime.Now;
+                _render_state_vfoB_change_time = DateTime.Now;
+                _render_button_vfoA = buttonState.VFO_SCREEN;
+                _render_button_vfoB = buttonState.VFO_SCREEN;
+                _button_grid_index_vfoA = -1;
+                _button_grid_index_vfoB = -1;
             }
             private double getVfo()
             {
@@ -3648,7 +3698,7 @@ namespace Thetis
                 {
                     //vfoA
                     //vfoB
-                    if (!_adjust_vfoB)
+                    if (!_mouse_over_vfoB)
                         ret = _owningmeter.VfoA;
                     else
                         ret = _owningmeter.VfoB;
@@ -3657,7 +3707,7 @@ namespace Thetis
                 {
                     //vfoA
                     //no vfoB   if split / subrx then it becomes subvfo
-                    if (!_adjust_vfoB)
+                    if (!_mouse_over_vfoB)
                         ret = _owningmeter.VfoA;
                     else
                     {
@@ -3669,7 +3719,7 @@ namespace Thetis
                 {
                     //no vfoA
                     //vfoB
-                    if (_adjust_vfoB)
+                    if (_mouse_over_vfoB)
                         ret = _owningmeter.VfoB;
                 }
                 return ret;
@@ -3680,7 +3730,7 @@ namespace Thetis
                 {
                     //vfoA
                     //vfoB
-                    if (!_adjust_vfoB)
+                    if (!_mouse_over_vfoB)
                         _console.VFOAFreq = value;
                     else
                         _console.VFOBFreq = value;
@@ -3689,7 +3739,7 @@ namespace Thetis
                 {
                     //vfoA
                     //no vfoB   if split / subrx then it becomes subvfo
-                    if (!_adjust_vfoB)
+                    if (!_mouse_over_vfoB)
                         _console.VFOAFreq = value;
                     else
                     {
@@ -3701,7 +3751,7 @@ namespace Thetis
                 {
                     //no vfoA
                     //vfoB
-                    if (_adjust_vfoB)
+                    if (_mouse_over_vfoB)
                         _console.VFOBFreq = value;
                 }
             }
@@ -3711,7 +3761,7 @@ namespace Thetis
                 {
                     //vfoA
                     //vfoB
-                    if (!_adjust_vfoB)
+                    if (!_mouse_over_vfoB)
                         _console.VFOAFreq += adjustment;
                     else
                         _console.VFOBFreq += adjustment;
@@ -3720,7 +3770,7 @@ namespace Thetis
                 {
                     //vfoA
                     //no vfoB   if split / subrx then it becomes subvfo
-                    if (!_adjust_vfoB)
+                    if (!_mouse_over_vfoB)
                         _console.VFOAFreq += adjustment;
                     else
                     {
@@ -3732,14 +3782,14 @@ namespace Thetis
                 {
                     //no vfoA
                     //vfoB
-                    if (_adjust_vfoB)
+                    if (_mouse_over_vfoB)
                         _console.VFOBFreq += adjustment;
                 }
             }
             public override void KeyDown(Keys keycode)
             {
                 if (!MouseEntered) return;
-                if (!_adjust_enabled) return;
+                //if (!_adjust_enabled) return;
 
                 if ((keycode >= Keys.D0 && keycode <= Keys.D9) ||
                     (keycode >= Keys.NumPad0 && keycode <= Keys.NumPad9))
@@ -3784,7 +3834,7 @@ namespace Thetis
             public override void MouseWheel(int number_of_moves)
             {
                 if (!MouseEntered) return;
-                if (!_adjust_enabled) return;
+                //if (!_adjust_enabled) return;
 
                 int sign = Math.Sign(number_of_moves);
 
@@ -3793,50 +3843,323 @@ namespace Thetis
                     adjustVfo(sign * _adjust_step * 1e-6);
                 }));                
             }
-            public override bool MouseDown
-            {
-                get
-                {
-                    return base.MouseDown;
-                }
-                set
-                {
-                    if (!MouseEntered) return;
-                    if (value)
-                    {
-                        if (MouseButton == MouseButtons.Left)
-                        {
-                            _console.BeginInvoke(new MethodInvoker(() =>
-                            {
-                                adjustVfo(_adjust_step * 1e-6);
-                            }));                            
-                        }
-                        else if (MouseButton == MouseButtons.Right)
-                        {
-                            _console.BeginInvoke(new MethodInvoker(() =>
-                            {
-                                adjustVfo(-_adjust_step * 1e-6);
-                            }));                            
-                        }
-                    }
+            //public override bool MouseButtonDown
+            //{
+            //    get
+            //    {
+            //        return base.MouseButtonDown;
+            //    }
+            //    set
+            //    {
+            //        if (!MouseEntered) return;
+            //        if (base.MouseButtonDown == value) return; // ignore same state
 
-                    base.MouseDown = value;
+            //        if (value && _adjust_enabled)
+            //        {
+            //            if (MouseButton == MouseButtons.Left)
+            //            {
+            //                _console.BeginInvoke(new MethodInvoker(() =>
+            //                {
+            //                    adjustVfo(_adjust_step * 1e-6);
+            //                }));                            
+            //            }
+            //            else if (MouseButton == MouseButtons.Right)
+            //            {
+            //                _console.BeginInvoke(new MethodInvoker(() =>
+            //                {
+            //                    adjustVfo(-_adjust_step * 1e-6);
+            //                }));                            
+            //            }
+            //        }
+
+            //        base.MouseButtonDown = value;
+            //    }
+            //}
+            public override void MouseUp(MouseEventArgs e)
+            {
+                if (!MouseEntered) return;
+                switch (_mouse_over_vfoB ? _render_button_vfoB : _render_button_vfoA) // in mouse up, as dont get mouseclicks when we mash the button
+                {
+                    case buttonState.VFO:
+                        {
+                            if (e.Button == MouseButtons.Left)
+                            {
+                                _console.BeginInvoke(new MethodInvoker(() =>
+                                {
+                                    adjustVfo(_adjust_step * 1e-6);
+                                }));
+                            }
+                            else if (e.Button == MouseButtons.Right)
+                            {
+                                _console.BeginInvoke(new MethodInvoker(() =>
+                                {
+                                    adjustVfo(-_adjust_step * 1e-6);
+                                }));
+                            }
+                        }
+                        break;
                 }
+            }
+            public override void MouseClick(MouseEventArgs e)
+            {
+                if (!MouseEntered) return;
+
+                switch (_mouse_over_vfoB ? _render_button_vfoB : _render_button_vfoA)
+                {
+                    case buttonState.BAND_SCREEN:
+                        if(_mouse_over_vfoB)
+                            VFOBRenderState = renderState.BAND;
+                        else
+                            VFOARenderState = renderState.BAND;
+                        break;
+                    case buttonState.VFO_SCREEN:
+                        if (_mouse_over_vfoB)
+                            VFOBRenderState = renderState.VFO;
+                        else
+                            VFOARenderState = renderState.VFO;
+                        break;
+                    case buttonState.FILTER_SCREEN:
+                        if (_mouse_over_vfoB)
+                            VFOBRenderState = renderState.FILTER;
+                        else
+                            VFOARenderState = renderState.FILTER;
+                        break;
+                    case buttonState.MODE_SCREEN:
+                        if (_mouse_over_vfoB)
+                            VFOBRenderState = renderState.MODE;
+                        else
+                            VFOARenderState = renderState.MODE;
+                        break;
+                    //////////
+                    case buttonState.BAND:
+                        if (_mouse_over_vfoB) 
+                        {
+                            if (setBand(true))
+                                VFOBRenderState = renderState.VFO;
+                            else
+                                _render_state_vfoB_change_time = DateTime.Now;
+                        }
+                        else
+                        {
+                            if (setBand(false))
+                                VFOARenderState = renderState.VFO;
+                            else
+                                _render_state_vfoA_change_time = DateTime.Now;
+                        }
+                        break;                    
+                }
+
+                //base.MouseClick(e);
+            }
+            private bool setBand(bool vfoB)
+            {
+                if (vfoB)
+                {
+                    // can't do much if rx2 is not shown
+                    if (!_owningmeter.RX2Enabled) return true;
+                    int b = _button_grid_index_vfoB;
+                    if (b < 0) return true;
+                    Band band;
+                    if (_console.BandGENSelected)
+                    {
+                        if(b > (int)Band.B11M - (int)Band.B120M)
+                        {
+                            if (b == 13)
+                            {
+                                setBandPanel(false, true, false); // HF
+                                return false;
+                            }
+                            return true;
+                        }
+                        band = (Band)((int)Band.B120M + b);
+                    }
+                    else if (_console.BandHFSelected)
+                    {
+                        if (b > (int)Band.B6M - (int)Band.B160M)
+                        {
+                            if (b == 11)
+                            {
+                                setBandPanel(false, false, true); // VHF
+                                return false;
+                            }
+                            //if (b == 11) // WWV
+                            if (b == 13)
+                            {
+                                setBandPanel(true, false, false); // GEN(SWL)
+                                return false;
+                            }
+                            return true;
+                        }
+                        band = (Band)((int)Band.B160M + b);
+                    }
+                    else if (_console.BandVHFSelected)
+                    {
+                        if (b > (int)Band.VHF13 - (int)Band.VHF0)
+                        {
+                            if (b == 14)
+                            {
+                                setBandPanel(false, true, false); // HF
+                                return false;
+                            }
+                            return true;
+                        }
+                        band = (Band)((int)Band.VHF0 + b);
+                    }
+                    else
+                        return true;
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.SetupRX2Band(band);
+                    }));
+                }
+                else
+                {
+                    int b = _button_grid_index_vfoA;
+                    if (b < 0) return true;
+                    Band band;
+                    if (_console.BandGENSelected)
+                    {
+                        if (b > (int)Band.B11M - (int)Band.B120M)
+                        {
+                            if (b == 13)
+                            {
+                                setBandPanel(false, true, false); // HF
+                                return false;
+                            }
+                            return true;
+                        }
+                        band = (Band)((int)Band.B120M + b);
+                    }
+                    else if (_console.BandHFSelected)
+                    {
+                        if (b > (int)Band.B6M - (int)Band.B160M)
+                        {
+                            if (b == 11)
+                            {
+                                setBandPanel(false, false, true); // VHF
+                                return false;
+                            }
+                            //if (b == 11) // WWV
+                            if (b == 13)
+                            {
+                                setBandPanel(true, false, false); // GEN(SWL)
+                                return false;
+                            }
+                            return true;
+                        }
+                        band = (Band)((int)Band.B160M + b);
+                    }
+                    else if (_console.BandVHFSelected)
+                    {
+                        if (b > (int)Band.VHF13 - (int)Band.VHF0)
+                        {
+                            if (b == 14)
+                            {
+                                setBandPanel(false, true, false); // HF
+                                return false;
+                            }
+                            return true;
+                        }
+
+                        band = (Band)((int)Band.VHF0 + b);
+                    }
+                    else
+                        return true;
+
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.BandPreChangeHandlers?.Invoke(1, band);
+                    }));
+                }
+                return true;
+            }
+            private void setBandPanel(bool gen, bool hf, bool vhf)
+            {
+                if (gen)
+                {
+                    hf = false;
+                    vhf = false;
+                }
+                else if (hf)
+                {
+                    gen = false;
+                    vhf = false;
+                }
+                else if (vhf)
+                {
+                    gen = false;
+                    hf = false;
+                }
+                _console.BeginInvoke(new MethodInvoker(() =>
+                {
+                    if (gen)
+                        _console.BandGENSelected = true;
+                    else if (hf)
+                        _console.BandHFSelected = true;
+                    else if (vhf)
+                        _console.BandVHFSelected = true;
+                }));
+            }
+            public int ButtonGridIndexVFOa
+            {
+                get { return _button_grid_index_vfoA; }
+                set { _button_grid_index_vfoA = value; }
+            }
+            public int ButtonGridIndexVFOb
+            {
+                get { return _button_grid_index_vfoB; }
+                set { _button_grid_index_vfoB = value; }
             }
             public double AdjustStep
             {
                 get { return _adjust_step; }
                 set { _adjust_step = value; }
             }
-            public bool VfoAdjustEnabled
+            //public bool VfoAdjustEnabled
+            //{
+            //    get { return _adjust_enabled; }
+            //    set { _adjust_enabled = value; }
+            //}
+            public bool MouseOverVfoB
             {
-                get { return _adjust_enabled; }
-                set { _adjust_enabled = value; }
+                get { return _mouse_over_vfoB; }
+                set { _mouse_over_vfoB = value; }
             }
-            public bool AdjustVfoB
+            public renderState VFOARenderState
             {
-                get { return _adjust_vfoB; }
-                set { _adjust_vfoB = value; }
+                get 
+                {
+                    if (_render_state_vfoA != renderState.VFO && (DateTime.Now - _render_state_vfoA_change_time).Seconds > 5) VFOARenderState = renderState.VFO;
+                    return _render_state_vfoA; 
+                }
+                set 
+                {
+                    if (_render_state_vfoA != value) _render_state_vfoA_change_time = DateTime.Now;
+                    _render_state_vfoA = value; 
+                }
+            }
+            public renderState VFOBRenderState
+            {
+                get
+                {
+                    if (_render_state_vfoB != renderState.VFO && (DateTime.Now - _render_state_vfoB_change_time).Seconds > 5) VFOBRenderState = renderState.VFO;
+                    return _render_state_vfoB; 
+                }
+                set 
+                {
+                    if (_render_state_vfoB != value) _render_state_vfoB_change_time = DateTime.Now;
+                    _render_state_vfoB = value; 
+                }
+            }
+            public buttonState VFOAButtonState
+            {
+                get { return _render_button_vfoA; }
+                set { _render_button_vfoA = value; }
+            }
+            public buttonState VFOBButtonState
+            {
+                get { return _render_button_vfoB; }
+                set { _render_button_vfoB = value; }
             }
             public System.Drawing.Color FrequencyColour
             {
@@ -12222,6 +12545,8 @@ namespace Thetis
                 _displayTarget.VisibleChanged += target_VisibleChanged;
                 _displayTarget.MouseLeave += OnMouseLeave;
                 _displayTarget.MouseEnter += OnMouseEnter;
+                _displayTarget.Click += OnClick;
+                _displayTarget.MouseClick += OnMouseClick;
             }
             public void RunDisplay()
             {
@@ -12577,6 +12902,8 @@ namespace Thetis
                     _displayTarget.MouseLeave -= OnMouseLeave;
                     _displayTarget.MouseEnter -= OnMouseEnter;
                     _displayTarget.VisibleChanged -= target_VisibleChanged;
+                    _displayTarget.Click -= OnClick;
+                    _displayTarget.MouseClick -= OnMouseClick;
                 }
 
                 if (!_bDXSetup) return;
@@ -13072,31 +13399,24 @@ namespace Thetis
 
                             SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
 
-                            //foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
                             foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
                             {
-                                //clsMeterItem mi = mikvp.Value;
-                                //if (mi.ItemType == clsMeterItem.MeterItemType.ROTATOR || mi.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY)
-                                //{
-                                    //clsRotatorItem rotator = (clsRotatorItem)mi;
+                                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                                float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                                    float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
-                                    float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
-                                    float w = rect.Width * (mi.Size.Width / m.XRatio);
-                                    float h = rect.Height * (mi.Size.Height / m.YRatio);
+                                SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
 
-                                    SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
-
-                                    if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
-                                    {
-                                        mi.MouseMovePoint = new PointF(e.X, e.Y);
-                                        mi.MouseEntered = true;
-                                    }
-                                    else
-                                    {
-                                        mi.MouseEntered = false;
-                                    }
-                                //}
+                                if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
+                                {
+                                    mi.MouseMovePoint = new PointF(e.X, e.Y);
+                                    mi.MouseEntered = true;
+                                }
+                                else
+                                {
+                                    mi.MouseEntered = false;
+                                }
                             }
                         }
                     }
@@ -13128,14 +13448,8 @@ namespace Thetis
 
                             SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
 
-                            //foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
                             foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
                             {
-                                //clsMeterItem mi = mikvp.Value;
-                                //if (mi.ItemType == clsMeterItem.MeterItemType.ROTATOR || mi.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY)
-                                //{
-                                //clsRotatorItem rotator = (clsRotatorItem)mi;
-
                                 float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
                                 float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                                 float w = rect.Width * (mi.Size.Width / m.XRatio);
@@ -13153,7 +13467,6 @@ namespace Thetis
                                 {
                                     mi.MouseEntered = false;
                                 }
-                                //}
                             }
                         }
                     }
@@ -13163,6 +13476,64 @@ namespace Thetis
                         handledEventArgs.Handled = true;
                     }
                 }
+            }
+            private void OnMouseClick(object sender, MouseEventArgs e)
+            {
+                lock (_metersLock)
+                {
+                    PictureBox pb = sender as PictureBox;
+                    if (pb == null) return;
+                    string sId = pb.Tag.ToString();
+                    if (!_meters.ContainsKey(sId)) return;
+
+                    clsMeter m = _meters[sId];
+
+                    lock (m._meterItemsLock)
+                    {
+                        if (m.SortedMeterItemsForZOrder != null)
+                        {
+                            float tw = targetWidth - 1f;// 0.5f;
+                            float rw = m.XRatio;
+                            float rh = m.YRatio;
+
+                            SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
+
+                            foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
+                            {
+                                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                                SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
+
+                                if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
+                                {
+                                    mi.MouseEntered = true;
+                                    mi.MouseButton = e.Button;
+                                    mi.MouseDownPoint = new PointF(e.X, e.Y);
+                                    mi.MouseButtonDown = true;
+                                    mi.MouseClick(e);
+                                }
+                                else
+                                {
+                                    mi.MouseEntered = false;
+                                    mi.MouseButtonDown = false;
+                                    mi.MouseClick(e);
+                                }
+                            }
+                        }
+                    }
+                    HandledMouseEventArgs handledEventArgs = e as HandledMouseEventArgs;
+                    if (handledEventArgs != null)
+                    {
+                        handledEventArgs.Handled = true;
+                    }
+                }
+            }
+            private void OnClick(object sender, System.EventArgs e)
+            {
+                
             }
             private void OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
             {
@@ -13185,34 +13556,29 @@ namespace Thetis
 
                             SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
 
-                            //foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
                             foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
                             {
-                                //clsMeterItem mi = mikvp.Value;
-                                //if (mi.ItemType == clsMeterItem.MeterItemType.ROTATOR || mi.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY)
-                                //{
-                                    //clsRotatorItem rotator = (clsRotatorItem)mi;
+                                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                                float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                                    float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
-                                    float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
-                                    float w = rect.Width * (mi.Size.Width / m.XRatio);
-                                    float h = rect.Height * (mi.Size.Height / m.YRatio);
+                                SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
 
-                                    SharpDX.RectangleF clickRect = new SharpDX.RectangleF(x, y, w, h);
-
-                                    if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
-                                    {
-                                        mi.MouseEntered = true;
-                                        mi.MouseButton = e.Button;
-                                        mi.MouseDownPoint = new PointF(e.X, e.Y);
-                                        mi.MouseDown = true;
-                                    }
-                                    else
-                                    { 
-                                        mi.MouseEntered = false;
-                                        mi.MouseDown = false;
-                                    }
-                                //}
+                                if (clickRect.Contains(new SharpDX.Point(e.X, e.Y)))
+                                {
+                                    mi.MouseEntered = true;
+                                    mi.MouseButton = e.Button;
+                                    mi.MouseDownPoint = new PointF(e.X, e.Y);
+                                    mi.MouseButtonDown = true;
+                                    mi.MouseDown(e);
+                                }
+                                else
+                                { 
+                                    mi.MouseEntered = false;
+                                    mi.MouseButtonDown = false;
+                                    mi.MouseDown(e);
+                                }
                             }
                         }
                     }
@@ -13269,10 +13635,8 @@ namespace Thetis
 
                             SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
 
-                            //foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
                             foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
                             {
-                                //clsMeterItem mi = mikvp.Value;
                                 if (mi.ItemType == clsMeterItem.MeterItemType.CLICKBOX)
                                 {
                                     clsClickBox cb = (clsClickBox)mi;
@@ -13292,10 +13656,8 @@ namespace Thetis
                                         }
                                     }
                                 }
-                                else //if (mi.ItemType == clsMeterItem.MeterItemType.ROTATOR || mi.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY)
-                                {
-                                    //clsRotatorItem rotator = (clsRotatorItem)mi;
-
+                                else
+                                {                                  
                                     float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
                                     float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                                     float w = rect.Width * (mi.Size.Width / m.XRatio);
@@ -13307,10 +13669,14 @@ namespace Thetis
                                     {
                                         mi.MouseButton = e.Button;
                                         mi.MouseUpPoint = new PointF(e.X, e.Y);
-                                        mi.MouseDown = false;
+                                        mi.MouseButtonDown = false;
+                                        mi.MouseUp(e);
                                     }
                                     else
-                                        mi.MouseDown = false;
+                                    {
+                                        mi.MouseButtonDown = false;
+                                        mi.MouseUp(e);
+                                    }
                                 }
                             }
                         }
@@ -13322,6 +13688,7 @@ namespace Thetis
                     }
                 }
             }
+
             //            
             private int drawMeters()
             {
@@ -14841,7 +15208,7 @@ namespace Thetis
                     if (rotator.Primary)
                     {
                         //360
-                        if (rotator.MouseDown && rotator.MouseEntered)
+                        if (rotator.MouseButtonDown && rotator.MouseEntered)
                         {
                             if (!_rotator_was_dragging && _dragging_old_update_rate == -1)
                             {
@@ -14900,7 +15267,7 @@ namespace Thetis
                     else
                     {
                         //ele
-                        if (rotator.MouseDown && rotator.ShowElevation && rotator.MouseEntered)
+                        if (rotator.MouseButtonDown && rotator.ShowElevation && rotator.MouseEntered)
                         {
                             if (!_rotator_was_dragging && _dragging_old_update_rate == -1)
                             {
@@ -14961,7 +15328,7 @@ namespace Thetis
                         }
                     }
 
-                    if (!rotator.MouseDown && _rotator_was_dragging && _dragging_rotator_degrees >= 0)
+                    if (!rotator.MouseButtonDown && _rotator_was_dragging && _dragging_rotator_degrees >= 0)
                     {
                         _rotator_was_dragging = false;
 
@@ -15696,6 +16063,158 @@ namespace Thetis
                 }
                 _renderTarget.DrawText(sText, getDXTextFormatForFont(sFontFamily, fontSizeEmScaled, style), txtrect, getDXBrushForColour(c, nFade));
             }
+            private void highlightBandBox(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, int bx, int by, float gap, clsMeter m, float shift)
+            {
+                SharpDX.RectangleF rct;
+                float wB = gap;
+                float hB = h / 2f;
+                float xB = x + (w * shift) + (bx * gap);
+                float yB = y + (by * hB);
+
+                rct = new SharpDX.RectangleF(xB, yB, wB, hB);
+                _renderTarget.FillRectangle(rct, getDXBrushForColour(System.Drawing.Color.FromArgb(128,128,128)));
+            }
+            private clsVfoDisplay.buttonState drawBand(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, clsMeter m, float shift)
+            {
+                // draw grid
+                SharpDX.Direct2D1.Brush lineBrush = getDXBrushForColour(System.Drawing.Color.White, 255);
+                SharpDX.RectangleF rct;
+                float xB = 0;
+                float yB = y;
+                float wB = x + w * 0.47f;
+                float hB = h;
+                float gap = wB / 8f;
+                int nx = 0;
+                int ny = 0;
+                float mx = 0;
+                float my = 0;
+                clsVfoDisplay.buttonState button_state = clsVfoDisplay.buttonState.NONE;
+                int button_grid_index = -1;
+
+                if (vfo.MouseEntered)
+                {
+                    mx = (vfo.MouseMovePoint.X - x) / w;
+                    my = (vfo.MouseMovePoint.Y - y) / h;
+                    mx = (mx - shift) / (wB / w);
+                    if (mx >= 0 && mx <= 1 && my >= 0 && my <= 1)
+                    {
+                        nx = (int)(8 * mx);
+                        ny = (int)(2 * my);
+                        highlightBandBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                        button_grid_index = (ny * 8) + nx;
+                        if (shift != 0)
+                            button_state = clsVfoDisplay.buttonState.BAND;
+                        else
+                            button_state = clsVfoDisplay.buttonState.BAND;
+                    }
+                }
+
+                xB = x + (w * shift);
+                rct = new SharpDX.RectangleF(xB, yB, wB, hB);
+                _renderTarget.DrawRectangle(rct, lineBrush);
+                _renderTarget.DrawLine(new RawVector2(xB, yB + hB / 2f), new RawVector2(xB + wB, yB + hB / 2f), lineBrush);
+                for (int i = 1; i < 8; i++)
+                {
+                    _renderTarget.DrawLine(new RawVector2(xB + (gap * i), y), new RawVector2(xB + (gap * i), y + h), lineBrush);
+                }
+
+                nx = 0;
+                ny = 0;
+                float t_xB;
+                float t_yB;
+                Band start = Band.FIRST;
+                Band end = Band.LAST;
+                bool vhf = false;
+                if (_console.BandHFSelected)
+                {
+                    start = Band.B160M;
+                    end = Band.B6M;
+                }
+                else if (_console.BandVHFSelected)
+                {
+                    start = Band.VHF0;
+                    end = Band.VHF13;
+                    vhf = true;
+                }
+                else if (_console.BandGENSelected)
+                {
+                    start = Band.B120M;
+                    end = Band.B11M;
+                }
+                System.Drawing.Color band_colour;
+                string band;
+                for (int i = (int)start; i <= (int)end; i++)
+                {
+                    Band b = (Band)i;
+
+                    if (shift < 0.5f)
+                    {
+                        if (m.BandVfoA == (Band)i) highlightBandBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                    }
+                    else
+                    {
+                        if (m.BandVfoB == (Band)i) highlightBandBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                    }
+
+                    if (vhf)
+                    {
+                        int idx = (ny * 8) + nx;
+                        if (_console.GetVHFEnabled(idx))
+                            band_colour = BandStackManager.BandToColour(b);
+                        else
+                            band_colour = System.Drawing.Color.FromArgb(64, 64, 64);
+                        
+                        band = _console.GetVHFText(idx).Left(3);
+                        if (string.IsNullOrEmpty(band))
+                        {
+                            band = BandStackManager.BandToString(b);
+                            band = band.Substring(3);
+                        }
+                    }
+                    else
+                    {                        
+                        band = BandStackManager.BandToString(b);
+                        band = band.Left(band.Length - 1);
+                        band_colour = BandStackManager.BandToColour(b);
+                    }
+
+                    t_xB = xB + (gap / 2f) + (nx * gap);
+                    t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
+                    plotText(band, t_xB, t_yB, h, rect.Width, 20f, band_colour, 255, vfo.FontFamily, vfo.Style, false, true);
+                    nx++;
+                    if (nx > 7)
+                    {
+                        nx = 0;
+                        ny += 1;
+                    }
+                }
+
+                t_xB = xB + (gap / 2f) + (nx * gap);
+                t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
+                if (_console.BandHFSelected)
+                {
+                    plotText("VHF", t_xB, t_yB, h, rect.Width, 16f, System.Drawing.Color.Yellow, 255, vfo.FontFamily, vfo.Style, false, true);
+                    nx++;
+                    t_xB = xB + (gap / 2f) + (nx * gap);
+                    plotText("WWV", t_xB, t_yB, h, rect.Width, 14f, BandStackManager.BandToColour(Band.WWV), 255, vfo.FontFamily, vfo.Style, false, true);
+                    nx++;
+                    t_xB = xB + (gap / 2f) + (nx * gap);
+                    plotText("SWL", t_xB, t_yB, h, rect.Width, 16f, System.Drawing.Color.Orange, 255, vfo.FontFamily, vfo.Style, false, true);
+                }
+                else if (_console.BandGENSelected || _console.BandVHFSelected)
+                {
+                    plotText("HF", t_xB, t_yB, h, rect.Width, 16f, System.Drawing.Color.Red, 255, vfo.FontFamily, vfo.Style, false, true);
+                }
+
+                //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+
+                if (shift != 0)
+                    vfo.ButtonGridIndexVFOb = button_grid_index;
+                else
+                    vfo.ButtonGridIndexVFOa = button_grid_index;
+
+                return button_state;
+            }
             private void renderVfoDisplay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsVfoDisplay vfo = (clsVfoDisplay)mi;
@@ -15720,23 +16239,55 @@ namespace Thetis
 
                 //mouse wheel boxes
                 bool draw_box = false;
+                bool button_back_box = false;
                 double step = 0;
                 float shift = 0;
                 float xB = 0;
                 float yB = 0;
                 float wB = 0;
                 float hB = 0;
+                float mx = 0;
+                float my = 0;
+                SharpDX.RectangleF rct;
+                bool mouse_over_good = false;
+
+                clsVfoDisplay.buttonState button_state_vfoA = clsVfoDisplay.buttonState.NONE;
+                clsVfoDisplay.buttonState button_state_vfoB = clsVfoDisplay.buttonState.NONE;
+
                 if (vfo.MouseEntered)
                 {
-                    float mx = (mi.MouseMovePoint.X - x) / w;
-                    float my = (mi.MouseMovePoint.Y - y) / h;
+                    mx = (vfo.MouseMovePoint.X - x) / w;
+                    my = (vfo.MouseMovePoint.Y - y) / h;
                     float box_size = 0;
                     int boxes = -1;
                     int box = -1;
                     float tx = -1;
                     shift = mx >= 0.5f ? 0.510f : 0; //vfoA to B shift
-                    bool left = (shift == 0) && (m.RX == 1);
-                    bool right = (shift != 0) && ((m.RX == 1 && (!m.RX2Enabled || (m.Split || m.MultiRxEnabled))) || (m.RX == 2));
+                    mouse_over_good = true;
+                    bool left = vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && (shift == 0) && (m.RX == 1);
+                    bool right = vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO && (shift != 0) && ((m.RX == 1 && (!m.RX2Enabled || (m.Split || m.MultiRxEnabled))) || (m.RX == 2));
+
+                    // band
+                    if (my >= 0.555 && my <= 0.870 && (((mx >= 0.333 && mx <= 0.480) & left) || ((mx >= 0.333 + shift && mx <= 0.480 + shift) & right)))
+                    {
+                        xB = 0.333f + shift;
+                        yB = 0.555f;
+                        wB = 0.480f - 0.333f;
+                        hB = 0.870f - 0.555f;
+
+                        button_back_box = true;
+
+                        if (left)
+                        {
+                            button_state_vfoA = clsVfoDisplay.buttonState.BAND_SCREEN;
+                            left = false;
+                        }
+                        if (right)
+                        {
+                            button_state_vfoB = clsVfoDisplay.buttonState.BAND_SCREEN;
+                            right = false;
+                        }
+                    }
 
                     // large numbers
                     if (my >= 0.100 && my <= 0.500)
@@ -15754,7 +16305,7 @@ namespace Thetis
                             wB = box_size;
                             step = 1000000 * (int)Math.Pow(10, ((boxes - 1) - box));
 
-                            string t = (shift > 0 ? m.VfoB : m.VfoA).ToString("F6", CultureInfo.InvariantCulture);
+                            string t = (shift >= 0.5f ? m.VfoB : m.VfoA).ToString("F6", CultureInfo.InvariantCulture);
                             string[] parts = t.Split('.');
                             draw_box = ((boxes - 1) - box) <= parts[0].Length - 1;
                         }
@@ -15793,44 +16344,77 @@ namespace Thetis
                         }
                     }
 
+                    vfo.MouseOverVfoB = shift != 0;
+
                     //plotText($"{mx.ToString("f3")},{my.ToString("f3")} -- boxes:{boxes} box:{box}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                }                
+
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.BAND)
+                {
+                    button_state_vfoA = drawBand(x, y, w, h, rect, vfo, m, 0);
+                }
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.BAND)
+                {
+                    button_state_vfoB = drawBand(x, y, w, h, rect, vfo, m, 0.510f);
                 }
 
-                if (draw_box)
+                if (draw_box && mouse_over_good)
                 {
-                    vfo.AdjustVfoB = shift > 0;
                     vfo.AdjustStep = step;
-                    vfo.VfoAdjustEnabled = true;                   
-
-                    SharpDX.RectangleF rctB = new SharpDX.RectangleF(x + (w * xB), y + (h * yB), w * wB, h * hB);
-                    _renderTarget.FillRectangle(rctB, getDXBrushForColour(vfo.DigitHighlightColour));
-
-                    //plotText($"{xB} {yB} {wB} {hB} {step}", x, y + 40, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                    //vfo.VfoAdjustEnabled = true;
+                    if (vfo.MouseOverVfoB)
+                        button_state_vfoB = clsVfoDisplay.buttonState.VFO;
+                    else
+                        button_state_vfoA = clsVfoDisplay.buttonState.VFO;
                 }
                 else
                 {
-                    if (vfo.VfoAdjustEnabled)
-                    {
-                        vfo.AdjustVfoB = false;
-                        vfo.VfoAdjustEnabled = false;
-                        vfo.AdjustStep = 0;
-                    }
+                    //vfo.VfoAdjustEnabled = false;
+                    vfo.AdjustStep = 0;
+                }
+
+                if (draw_box || button_back_box)
+                {
+                    SharpDX.RectangleF rctB = new SharpDX.RectangleF(x + (w * xB), y + (h * yB), w * wB, h * hB);
+                    _renderTarget.FillRectangle(rctB, getDXBrushForColour(vfo.DigitHighlightColour));
+                }
+
+                // set the button state
+                if (mouse_over_good)
+                {
+                    if (vfo.MouseOverVfoB)
+                        vfo.VFOBButtonState = button_state_vfoB;
+                    else
+                        vfo.VFOAButtonState = button_state_vfoA;
                 }
 
                 // frequency
-                plotText("VFO A", x + (w * 0.01f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
-                if(m.RX == 1 && m.RX2Enabled && (m.MultiRxEnabled || m.Split) && m.VfoSub >= 0) //[2.10.3.6]MW0LGE added m.vfosub >= 0
+                string MHz;
+                string kHz;
+                string hz;
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO)
                 {
-                    // vfoa sub
-                    plotText("VFO Sub", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                    plotText("VFO A", x + (w * 0.01f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
                 }
-                else
-                    plotText("VFO B", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
 
-                getParts(m.VfoA, out string MHz, out string kHz, out string hz);
-                string sVfoA = MHz + "." + kHz;// + "." + hz;
-                plotText(sVfoA, x + (w * 0.415f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
-                plotText(hz, x + (w * 0.48f), y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO)
+                {
+                    if (m.RX == 1 && m.RX2Enabled && (m.MultiRxEnabled || m.Split) && m.VfoSub >= 0) //[2.10.3.6]MW0LGE added m.vfosub >= 0
+                    {
+                        // vfoa sub
+                        plotText("VFO Sub", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                    }
+                    else
+                        plotText("VFO B", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                }
+
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO) 
+                { 
+                    getParts(m.VfoA, out MHz, out kHz, out hz);
+                    string sVfoA = MHz + "." + kHz;// + "." + hz;
+                    plotText(sVfoA, x + (w * 0.415f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(hz, x + (w * 0.48f), y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                }
 
                 double tmpVfoB;
                 Band tmpVfoBBand;
@@ -15852,41 +16436,62 @@ namespace Thetis
                     tmpVfoBFilterName = m.FilterVfoBName;
                 }
 
-                getParts(tmpVfoB, out MHz, out kHz, out hz);
-                string sVfoB = MHz + "." + kHz;// + "." + hz;
-                plotText(sVfoB, x + (w * 0.925f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
-                plotText(hz, x + (w * 0.99f), y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO)
+                {
+                    getParts(tmpVfoB, out MHz, out kHz, out hz);
+                    string sVfoB = MHz + "." + kHz;// + "." + hz;
+                    plotText(sVfoB, x + (w * 0.925f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(hz, x + (w * 0.99f), y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+                }
 
-                // mode
-                plotText(m.ModeVfoA.ToString(), x + (w * 0.01f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, vfo.ModeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
-                plotText(tmpVfoBMode.ToString(), x + (w * 0.52f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, vfo.ModeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO)
+                {
+                    // mode VFOA
+                    plotText(m.ModeVfoA.ToString(), x + (w * 0.01f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, vfo.ModeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                }
 
-                //band
-                //System.Drawing.Color bandColor = BandStackManager.BandToColour(m.BandVfoA);
-                string sBand = BandStackManager.BandToString(m.BandVfoA);
-                if (sBand.EndsWith("M")) sBand = sBand.ToLower();
-                plotText(sBand + " band", x + (w * 0.48f), y + (h * 0.54f), h, rect.Width, vfo.FontSize * 1f, vfo.BandColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO)
+                {
+                    // mode VFOB
+                    plotText(tmpVfoBMode.ToString(), x + (w * 0.52f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, vfo.ModeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                }
 
-                //bandColor = BandStackManager.BandToColour(tmpVfoBBand);
-                sBand = BandStackManager.BandToString(tmpVfoBBand);
-                if (sBand.EndsWith("M")) sBand = sBand.ToLower();
-                plotText(sBand + " band", x + (w * 0.99f), y + (h * 0.54f), h, rect.Width, vfo.FontSize * 1f, vfo.BandColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+                string sBand;
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO)
+                {
+                    //band VFOA
+                    //System.Drawing.Color bandColor = BandStackManager.BandToColour(m.BandVfoA);
+                    sBand = BandStackManager.BandToString(m.BandVfoA);
+                    if (sBand.EndsWith("M")) sBand = sBand.ToLower();
+                    plotText(sBand + " band", x + (w * 0.48f), y + (h * 0.54f), h, rect.Width, vfo.FontSize * 1f, vfo.BandColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                }
 
-                //split only on vfoA
-                SharpDX.RectangleF rectSplit = new SharpDX.RectangleF(x + (w * 0.1f), y + (h * 0.03f), w * 0.1f, h * 0.4f);
-                _renderTarget.FillRectangle(rectSplit, getDXBrushForColour(vfo.SplitBackColour, nVfoAFade));
-                System.Drawing.Color splitColor = m.Split ? vfo.SplitColour : System.Drawing.Color.Black;
-                plotText(m.QuickSplitEnabled ? "QSPLT" : "SPLIT", rectSplit.X + (w * (m.QuickSplitEnabled ? 0.01f : 0.015f)), rectSplit.Y, h, rect.Width, vfo.FontSize * 1f, splitColor, nVfoAFade, vfo.FontFamily, vfo.Style);
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO)
+                {
+                    //band VFOB
+                    sBand = BandStackManager.BandToString(tmpVfoBBand);
+                    if (sBand.EndsWith("M")) sBand = sBand.ToLower();
+                    plotText(sBand + " band", x + (w * 0.99f), y + (h * 0.54f), h, rect.Width, vfo.FontSize * 1f, vfo.BandColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+                }
+
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO)
+                {
+                    //split only on VFOA
+                    SharpDX.RectangleF rectSplit = new SharpDX.RectangleF(x + (w * 0.1f), y + (h * 0.03f), w * 0.1f, h * 0.4f);
+                    _renderTarget.FillRectangle(rectSplit, getDXBrushForColour(vfo.SplitBackColour, nVfoAFade));
+                    System.Drawing.Color splitColor = m.Split ? vfo.SplitColour : System.Drawing.Color.Black;
+                    plotText(m.QuickSplitEnabled ? "QSPLT" : "SPLIT", rectSplit.X + (w * (m.QuickSplitEnabled ? 0.01f : 0.015f)), rectSplit.Y, h, rect.Width, vfo.FontSize * 1f, splitColor, nVfoAFade, vfo.FontFamily, vfo.Style);
+                }
 
                 //-- tx/rx state
                 bool bCanVfoATx = m.RX == 1 && !m.TXVFOb && !m.Split;
                 bool bCanVfoBTx = ((m.TXVFOb && m.RX == 1 && !m.RX2Enabled) || (m.TXVFOb && m.RX == 2 && m.RX2Enabled) || (m.Split && m.RX == 1));
 
-                bool bRxA = !m.MOX && m.RX == 1;
-                bool bTxA = m.MOX && bCanVfoATx;
+                bool bRxVFOA = !m.MOX && m.RX == 1;
+                bool bTxVFOA = m.MOX && bCanVfoATx;
 
-                bool bRxB = !m.MOX && (m.MultiRxEnabled || (m.RX2Enabled && m.RX == 2));
-                bool bTxB = m.MOX && bCanVfoBTx;
+                bool bRxVFOB = !m.MOX && (m.MultiRxEnabled || (m.RX2Enabled && m.RX == 2));
+                bool bTxVFOB = m.MOX && bCanVfoBTx;
 
                
                 // tx/rx box colours
@@ -15895,42 +16500,68 @@ namespace Thetis
                 System.Drawing.Color cDimerRx = System.Drawing.Color.FromArgb((int)(cRx.R * 0.3f), (int)(cRx.G * 0.3f), (int)(cRx.B * 0.3f));
                 System.Drawing.Color cTx = vfo.TxColour;
                 System.Drawing.Color cDimTx = System.Drawing.Color.FromArgb((int)(cTx.R * 0.6f), (int)(cTx.G * 0.6f), (int)(cTx.B * 0.6f));
-                System.Drawing.Color cDimerTx = System.Drawing.Color.FromArgb((int)(cTx.R * 0.3f), (int)(cTx.G * 0.3f), (int)(cTx.B * 0.3f));
+                System.Drawing.Color cDimerTx = System.Drawing.Color.FromArgb((int)(cTx.R * 0.3f), (int)(cTx.G * 0.3f), (int)(cTx.B * 0.3f));                
+                System.Drawing.Color boxColour;
+                System.Drawing.Color txtColour;
 
-                //rx box vfoA
-                SharpDX.RectangleF rct = new SharpDX.RectangleF(x + (w * 0.1f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
-                System.Drawing.Color boxColour = bRxA ? cDimRx : cDimerRx;
-                _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoAFade));
-                System.Drawing.Color txtColour = bRxA ? cRx : System.Drawing.Color.Black;
-                plotText("RX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO)
+                {
+                    //rx box VFOA
+                    rct = new SharpDX.RectangleF(x + (w * 0.1f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
+                    boxColour = bRxVFOA ? cDimRx : cDimerRx;
+                    _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoAFade));
+                    txtColour = bRxVFOA ? cRx : System.Drawing.Color.Black;
+                    plotText("RX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);
 
-                //tx box vfoA
-                rct = new SharpDX.RectangleF(x + (w * 0.152f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
-                boxColour = bCanVfoATx ? cDimTx : cDimerTx;
-                _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoAFade));
-                txtColour = bTxA ? cTx : System.Drawing.Color.Black;
-                plotText("TX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);                
+                    //tx box VFOA
+                    rct = new SharpDX.RectangleF(x + (w * 0.152f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
+                    boxColour = bCanVfoATx ? cDimTx : cDimerTx;
+                    _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoAFade));
+                    txtColour = bTxVFOA ? cTx : System.Drawing.Color.Black;
+                    plotText("TX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                }
 
-                //rx box vfoB
-                rct = new SharpDX.RectangleF(x + (w * 0.1f) + (w * 0.52f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
-                boxColour = bRxB ? cDimRx : cDimerRx;
-                _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoBFade));
-                txtColour = bRxB ? cRx : System.Drawing.Color.Black;
-                plotText("RX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO)
+                {
+                    //rx box VFOB
+                    rct = new SharpDX.RectangleF(x + (w * 0.1f) + (w * 0.52f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
+                    boxColour = bRxVFOB ? cDimRx : cDimerRx;
+                    _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoBFade));
+                    txtColour = bRxVFOB ? cRx : System.Drawing.Color.Black;
+                    plotText("RX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoBFade, vfo.FontFamily, vfo.Style);
 
-                //tx box vfoB
-                rct = new SharpDX.RectangleF(x + (w * 0.152f) + (w * 0.52f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
-                boxColour = bCanVfoBTx ? cDimTx : cDimerTx;
-                _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoBFade));
-                txtColour = bTxB ? cTx : System.Drawing.Color.Black;
-                plotText("TX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                    //tx box VFOB
+                    rct = new SharpDX.RectangleF(x + (w * 0.152f) + (w * 0.52f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
+                    boxColour = bCanVfoBTx ? cDimTx : cDimerTx;
+                    _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoBFade));
+                    txtColour = bTxVFOB ? cTx : System.Drawing.Color.Black;
+                    plotText("TX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                }
 
-                //filter
-                rct = new SharpDX.RectangleF(x + (w * 0.25f), y + (h * 0.54f), w * 0.048f, h * 0.4f);
-                plotText(m.FilterVfoAName, rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, vfo.FilterColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO)
+                {
+                    //filter VFOA
+                    rct = new SharpDX.RectangleF(x + (w * 0.25f), y + (h * 0.54f), w * 0.048f, h * 0.4f);
+                    plotText(m.FilterVfoAName, rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, vfo.FilterColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                }
 
-                rct = new SharpDX.RectangleF(x + (w * 0.25f) + (w * 0.52f), y + (h * 0.54f), w * 0.048f, h * 0.4f);
-                plotText(tmpVfoBFilterName, rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, vfo.FilterColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO)
+                {
+                    //filter VFOB
+                    rct = new SharpDX.RectangleF(x + (w * 0.25f) + (w * 0.52f), y + (h * 0.54f), w * 0.048f, h * 0.4f);
+                    plotText(tmpVfoBFilterName, rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, vfo.FilterColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                }
+
+                //if (vfo.MouseEntered)
+                //{
+                //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                //}
+
+                //plotText($"a render state = {vfo.VFOARenderState}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                //plotText($"b render state = {vfo.VFOBRenderState}", x, y + 20, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+
+                //plotText($"a button state = {vfo.VFOAButtonState}", x, y + 40, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                //plotText($"b button state = {vfo.VFOBButtonState}", x, y + 60, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
             }
             private void renderClock(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
