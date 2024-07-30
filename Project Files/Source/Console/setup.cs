@@ -1548,7 +1548,7 @@ namespace Thetis
                                     MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
             //
-            a.Add("multimeter_io", MultiMeterIO.GetSaveData());
+            a.Add("multimeter_io2", MultiMeterIO.GetSaveData());
             //
 
             // remove any outdated options from the DB MW0LGE_22b
@@ -1605,6 +1605,9 @@ namespace Thetis
 
                 _oldSettings.Add("chkRadioProtocolSelect_checkstate");
             }
+
+            if (getDict.ContainsKey("multimeter_io"))
+                _oldSettings.Add("multimeter_io");
 
             handleOldPAGainSettings(ref getDict);
         }
@@ -1807,9 +1810,20 @@ namespace Thetis
             //
             if (recoveryList == null) // MW0LGE [2.9.0.8] ignore if we hit cancel, not possible to undo multimeter changes at this time
             {
-                if (a.ContainsKey("multimeter_io"))
+                bool ok = false;
+                if (a.ContainsKey("multimeter_io2"))
                 {
-                    bool ok = false;
+                    //try version2 first                    
+                    try
+                    {
+                        ok = MultiMeterIO.RestoreSaveData2(a["multimeter_io2"]);
+                    }
+                    catch
+                    {
+                    }
+                }
+                else if (a.ContainsKey("multimeter_io"))
+                {
                     try
                     {
                         ok = MultiMeterIO.RestoreSaveData(a["multimeter_io"]);
@@ -1817,11 +1831,11 @@ namespace Thetis
                     catch
                     {
                     }
-                    if (!ok)
-                    {
-                        MessageBox.Show("There was an issue restoring the settings for MultiMeterIO. Existing settings will be lost.", "MultiMeterIO RestoreSaveData",
-                            MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                    }
+                }
+                if (!ok)
+                {
+                    MessageBox.Show("There was an issue restoring the settings for MultiMeterIO. Existing settings will be lost.", "MultiMeterIO RestoreSaveData",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
 
                 if (!MeterManager.RestoreSettings(ref a)) // pass this dictionary of settings to the meter manager to restore from
