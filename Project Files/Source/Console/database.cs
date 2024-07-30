@@ -9516,7 +9516,7 @@ namespace Thetis
             purgeTableEntries("Options", "meterContData_*");
             purgeTableEntries("Options", "meterData_*");
             purgeTableEntries("Options", "meterIGData_*");
-            purgeTableEntries("Options", "meterIGSettings_*");
+            purgeTableEntries("Options", "meterIGSettings_*"); // will scrap v1 and v2
 
             if (formGuids != null)
             {
