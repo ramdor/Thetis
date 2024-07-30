@@ -5935,33 +5935,36 @@ namespace Thetis
             public string ParsedText1(int rx)
             {
                 string sTmp = _text_1;
+                string lower;
 
                 lock (_list_placeholders_1_lock)
                 {
                     foreach (Reading r in _list_placeholders_readings_1)
                     {
-                        if (sTmp.IndexOf("%" + r.ToString().ToLower() + "%") >= 0)
+                        lower = "%" + r.ToString().ToLower() + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
                         {
                             object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
-                            sTmp = sTmp.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("0.0#####"));
+                            sTmp = sTmp.Replace(lower, ((float)reading).ToString("0.0#####"));
                         }
                     }
                     foreach (string placeholder in _list_placeholders_strings_1)
                     {
-                        if (sTmp.IndexOf("%" + placeholder.ToLower() + "%") >= 0)
+                        lower = "%" + placeholder.ToLower() + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
                         {
                             string decFormat = placeholder.IndexOf("_double", StringComparison.OrdinalIgnoreCase) >= 0 ? "f6" : "0.0#####";
                             object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
                             if (reading is int)
-                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((int)reading).ToString());
+                                sTmp = sTmp.Replace(lower, ((int)reading).ToString());
                             else if (reading is float)
-                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((float)reading).ToString(decFormat));
+                                sTmp = sTmp.Replace(lower, ((float)reading).ToString(decFormat));
                             else if (reading is double)
-                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((double)reading).ToString(decFormat));
+                                sTmp = sTmp.Replace(lower, ((double)reading).ToString(decFormat));
                             else if (reading is bool)
-                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((bool)reading).ToString());
+                                sTmp = sTmp.Replace(lower, ((bool)reading).ToString());
                             else
-                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", (string)reading);
+                                sTmp = sTmp.Replace(lower, (string)reading);
                         }
                     }
                 }
@@ -5975,13 +5978,14 @@ namespace Thetis
                     MultiMeterIO.clsMMIO mmio = mmios.Value;
                     foreach (KeyValuePair<string, object> kvp in mmio.Variables())
                     {
-                        if (sTmp.IndexOf("%" + kvp.Key + "%") >= 0)
+                        lower = "%" + kvp.Key + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
                         {
                             object val = mmio.GetVariable(kvp.Key);
 
                             string tmp = mmio.VariableValueType(val);
 
-                            sTmp = sTmp.Replace("%" + kvp.Key + "%", tmp);
+                            sTmp = sTmp.Replace(lower, tmp);
                         }
                     }
                 }
@@ -5992,33 +5996,36 @@ namespace Thetis
             public string ParsedText2(int rx)
             {
                 string sTmp = _text_2;
+                string lower;
 
                 lock (_list_placeholders_2_lock)
                 {
                     foreach (Reading r in _list_placeholders_readings_2)
                     {
-                        if (sTmp.IndexOf("%" + r.ToString().ToLower() + "%") >= 0)
+                        lower = "%" + r.ToString().ToLower() + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
                         {
                             object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
-                            sTmp = sTmp.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("0.0#####"));
+                            sTmp = sTmp.Replace(lower, ((float)reading).ToString("0.0#####"));
                         }
                     }
                     foreach (string placeholder in _list_placeholders_strings_2)
                     {
-                        if (sTmp.IndexOf("%" + placeholder.ToLower() + "%") >= 0)
+                        lower = "%" + placeholder.ToLower() + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
                         {
                             string decFormat = placeholder.ToLower().Contains("_double") ? "f6" : "0.0#####";
                             object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
                             if (reading is int)
-                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((int)reading).ToString());
+                                sTmp = sTmp.Replace(lower, ((int)reading).ToString());
                             else if (reading is float)
-                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((float)reading).ToString(decFormat));
+                                sTmp = sTmp.Replace(lower, ((float)reading).ToString(decFormat));
                             else if (reading is double)
-                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((double)reading).ToString(decFormat));
+                                sTmp = sTmp.Replace(lower, ((double)reading).ToString(decFormat));
                             else if (reading is bool)
-                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((bool)reading).ToString());
+                                sTmp = sTmp.Replace(lower, ((bool)reading).ToString());
                             else
-                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", (string)reading);
+                                sTmp = sTmp.Replace(lower, (string)reading);
                         }
                     }
                 }
@@ -6032,13 +6039,14 @@ namespace Thetis
                     MultiMeterIO.clsMMIO mmio = mmios.Value;
                     foreach (KeyValuePair<string, object> kvp in mmio.Variables())
                     {
-                        if (sTmp.IndexOf("%" + kvp.Key + "%") >= 0)
+                        lower = "%" + kvp.Key + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
                         {
                             object val = mmio.GetVariable(kvp.Key);
 
                             string tmp = mmio.VariableValueType(val);
 
-                            sTmp = sTmp.Replace("%" + kvp.Key + "%", tmp);
+                            sTmp = sTmp.Replace(lower, tmp);
                         }
                     }
                 }
