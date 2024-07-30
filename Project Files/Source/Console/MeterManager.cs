@@ -5940,27 +5940,34 @@ namespace Thetis
                 {
                     foreach (Reading r in _list_placeholders_readings_1)
                     {
-                        object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
-                        sTmp = sTmp.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("0.0#####"));
+                        if (sTmp.IndexOf("%" + r.ToString().ToLower() + "%") >= 0)
+                        {
+                            object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
+                            sTmp = sTmp.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("0.0#####"));
+                        }
                     }
                     foreach (string placeholder in _list_placeholders_strings_1)
                     {
-                        string decFormat = placeholder.ToLower().Contains("_double") ? "f6" : "0.0#####";
-                        object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
-                        if(reading is int)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((int)reading).ToString());
-                        else if (reading is float)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((float)reading).ToString(decFormat));
-                        else if (reading is double)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((double)reading).ToString(decFormat));
-                        else if (reading is bool)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((bool)reading).ToString());
-                        else
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", (string)reading);
+                        if (sTmp.IndexOf("%" + placeholder.ToLower() + "%") >= 0)
+                        {
+                            string decFormat = placeholder.IndexOf("_double", StringComparison.OrdinalIgnoreCase) >= 0 ? "f6" : "0.0#####";
+                            object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
+                            if (reading is int)
+                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((int)reading).ToString());
+                            else if (reading is float)
+                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((float)reading).ToString(decFormat));
+                            else if (reading is double)
+                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((double)reading).ToString(decFormat));
+                            else if (reading is bool)
+                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((bool)reading).ToString());
+                            else
+                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", (string)reading);
+                        }
                     }
                 }
 
-                sTmp = sTmp.Replace("%nl%", "\n");
+                if (sTmp.IndexOf("%nl%") >= 0)
+                    sTmp = sTmp.Replace("%nl%", "\n");
 
                 // MultiMeter IO
                 foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
@@ -5968,11 +5975,14 @@ namespace Thetis
                     MultiMeterIO.clsMMIO mmio = mmios.Value;
                     foreach (KeyValuePair<string, object> kvp in mmio.Variables())
                     {
-                        object val = mmio.GetVariable(kvp.Key);
+                        if (sTmp.IndexOf("%" + kvp.Key + "%") >= 0)
+                        {
+                            object val = mmio.GetVariable(kvp.Key);
 
-                        string tmp = mmio.VariableValueType(val);
+                            string tmp = mmio.VariableValueType(val);
 
-                        sTmp = sTmp.Replace("%" + kvp.Key.ToString() + "%", tmp);
+                            sTmp = sTmp.Replace("%" + kvp.Key + "%", tmp);
+                        }
                     }
                 }
                 //
@@ -5987,27 +5997,34 @@ namespace Thetis
                 {
                     foreach (Reading r in _list_placeholders_readings_2)
                     {
-                        object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
-                        sTmp = sTmp.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("0.0#####"));
+                        if (sTmp.IndexOf("%" + r.ToString().ToLower() + "%") >= 0)
+                        {
+                            object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
+                            sTmp = sTmp.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("0.0#####"));
+                        }
                     }
                     foreach (string placeholder in _list_placeholders_strings_2)
                     {
-                        string decFormat = placeholder.ToLower().Contains("_double") ? "f6" : "0.0#####";
-                        object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
-                        if (reading is int)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((int)reading).ToString());
-                        else if (reading is float)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((float)reading).ToString(decFormat));
-                        else if (reading is double)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((double)reading).ToString(decFormat));
-                        else if (reading is bool)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((bool)reading).ToString());
-                        else
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", (string)reading);
+                        if (sTmp.IndexOf("%" + placeholder.ToLower() + "%") >= 0)
+                        {
+                            string decFormat = placeholder.ToLower().Contains("_double") ? "f6" : "0.0#####";
+                            object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
+                            if (reading is int)
+                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((int)reading).ToString());
+                            else if (reading is float)
+                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((float)reading).ToString(decFormat));
+                            else if (reading is double)
+                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((double)reading).ToString(decFormat));
+                            else if (reading is bool)
+                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((bool)reading).ToString());
+                            else
+                                sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", (string)reading);
+                        }
                     }
                 }
 
-                sTmp = sTmp.Replace("%nl%", "\n");
+                if (sTmp.IndexOf("%nl%") >= 0)
+                    sTmp = sTmp.Replace("%nl%", "\n");
 
                 // MultiMeter IO
                 foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
@@ -6015,11 +6032,14 @@ namespace Thetis
                     MultiMeterIO.clsMMIO mmio = mmios.Value;
                     foreach (KeyValuePair<string, object> kvp in mmio.Variables())
                     {
-                        object val = mmio.GetVariable(kvp.Key);
+                        if (sTmp.IndexOf("%" + kvp.Key + "%") >= 0)
+                        {
+                            object val = mmio.GetVariable(kvp.Key);
 
-                        string tmp = mmio.VariableValueType(val);
+                            string tmp = mmio.VariableValueType(val);
 
-                        sTmp = sTmp.Replace("%" + kvp.Key.ToString() + "%", tmp);
+                            sTmp = sTmp.Replace("%" + kvp.Key + "%", tmp);
+                        }
                     }
                 }
                 //
@@ -6327,8 +6347,6 @@ namespace Thetis
 
                                 string tmp = mmio.VariableValueType(val);
 
-                                expression = expression.Replace("%" + kvp.Key + "%", tmp);
-
                                 if (script_expression.Contains("%" + kvp.Key + "%"))
                                 {
                                     string type;
@@ -6342,6 +6360,8 @@ namespace Thetis
                                         type = "bool";
                                     else
                                         type = "string";
+
+                                    expression = expression.Replace("%" + kvp.Key + "%", (type == "string" ? "\"" : "") + tmp + (type == "string" ? "\"" : ""));
 
                                     script_expression = script_expression.Replace("%" + kvp.Key + "%", "(" + type + ")(Variables[\"" + kvp.Key + "\"])");
                                     if (!_subs.ContainsKey(kvp.Key))

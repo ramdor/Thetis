@@ -1183,6 +1183,7 @@ namespace Thetis
         }
 
         //
+        [DebuggerHidden]
         private static bool isColor(string value, out Color color)
         {
             try
@@ -1205,7 +1206,6 @@ namespace Thetis
             color = default;
             return false;
         }
-
         public static Type DetermineType(string value)
         {
             // Create culture info for European style numbers
