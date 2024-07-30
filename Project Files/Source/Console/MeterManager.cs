@@ -41,6 +41,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace Thetis
 {
     // this enum is similar to MeterRXMode & MeterTXMode
+    [Serializable]
     public enum Reading
     {
         NONE = -1,
@@ -621,6 +622,9 @@ namespace Thetis
         public class clsIGSettings
         {
             // TODO change all these unique settings to a Dictionary collection   _settings = new Dictionary<string, object>
+            private ConcurrentDictionary<string, object> _settings;
+            //
+
             private int _updateInterval;
             private float _decay;
             private float _attack;
@@ -673,6 +677,10 @@ namespace Thetis
 
             public clsIGSettings()
             {
+                //
+                _settings = new ConcurrentDictionary<string, object>();
+                //
+
                 _hasSubIndicators = false;
                 _readingSource = Reading.NONE;
                 _barStyle = clsBarItem.BarStyle.None;
@@ -693,6 +701,137 @@ namespace Thetis
                     _mmio_guid[i] = Guid.Empty;
                     _mmio_variable[i] = "--DEFAULT--";
                 }
+            }
+
+            public void SetSetting(string setting, object value)
+            {
+                if (_settings.ContainsKey(setting))
+                    _settings[setting] = value;
+                else
+                    _settings.TryAdd(setting, value);
+            }
+            public object GetSetting(string setting, Type type)
+            {
+                if (_settings.ContainsKey(setting))
+                    return _settings[setting];
+                else
+                {
+                    if (type == typeof(int))
+                        return (int)0;
+                    else if (type == typeof(float))
+                        return (float)0;
+                    else if (type == typeof(double))
+                        return (double)0;
+                    else if (type == typeof(bool))
+                        return (bool)false;
+                    else if (type == typeof(System.Drawing.Color))
+                        return System.Drawing.Color.Gray;
+                    else if (type == typeof(Guid))
+                        return Guid.Empty;
+                    else if (type == typeof(Reading))
+                        return Reading.NONE;
+                    else if (type == typeof(clsBarItem.BarStyle))
+                        return clsBarItem.BarStyle.None;
+                    else if (type == typeof(clsBarItem.Units))
+                        return clsBarItem.Units.DBM;
+                    else if (type == typeof(FontStyle))
+                        return FontStyle.Regular;
+                    else
+                        return "";
+                }
+            }
+            public string ToString2()
+            {
+                try
+                {
+                    return "1|" + Common.SerializeToBase64<ConcurrentDictionary<string, object>>(_settings); // 1| signifies version 1 of the serialize for future proofing
+                }
+                catch
+                {
+                    return "";
+                }
+                //string ret = "";
+
+                //foreach(KeyValuePair<string, object> pair in _settings)
+                //{
+                //    object val = pair.Value;
+
+                //    ret += pair.Key + "|";
+
+                //    ret += val.GetType().AssemblyQualifiedName + "|";
+
+                //    if (val is int i)
+                //    {
+                //        ret += i.ToString() + "|";
+                //    }
+                //    else if (val is System.Drawing.Color clr)
+                //    {
+                //        ret += ColorTranslator.ToHtml(clr) + "|";
+                //    }
+                //    else if (val is float flt)
+                //    {
+                //        ret += flt.ToString("f2") + "|";
+                //    }
+                //    else if (val is double dbl)
+                //    {
+                //        ret += dbl.ToString("f4") + "|";
+                //    }
+                //    else if (val is bool bl)
+                //    {
+                //        ret += bl.ToString().ToLower() + "|";
+                //    }
+                //    else
+                //    {
+                //        ret += (val.ToString()).Replace("|", "_+>>++<<+_") + "|";
+                //    }
+                //}
+
+                //if (!string.IsNullOrEmpty(ret))
+                //{
+                //    //drop last |
+                //    ret = ret.Substring(0, ret.Length - 1);
+                //}
+
+                //return ret;
+            }
+            public bool TryParse2(string str)
+            {
+                try
+                {
+                    string[] parts = str.Split('|');
+                    if (parts.Length != 2) return false;
+
+                    if (parts[0] == "1") // 1 signifies version 1 of the serialize for future proofing
+                        _settings = Common.DeserializeFromBase64<ConcurrentDictionary<string, object>>(parts[1]);
+
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+
+                //bool ok = true;
+
+                //string[] settings = str.Split('|');
+                //if (settings.Length < 3 && settings.Length % 3 != 0) ok = false;
+
+                //if(ok)
+                //{
+                //    for (int i = 0; i < settings.Length; i += 3) 
+                //    { 
+                //        string setting = settings[i];
+                //        string type = settings[i + 1];
+                //        string val = settings[i + 2];
+
+                //        Type tpe = Type.GetType(type);
+                //        object typedValue = Common.ConvertToType(val, tpe);
+
+                //        SetSetting(setting, typedValue);
+                //    }
+                //}
+
+                //return ok;
             }
 
             public override string ToString()
@@ -748,8 +887,11 @@ namespace Thetis
                     sRet += _mmio_variable[i] + "|";
                 }
 
-                //drop last |
-                sRet = sRet.Substring(0, sRet.Length - 1);
+                if (!string.IsNullOrEmpty(sRet))
+                {
+                    //drop last |
+                    sRet = sRet.Substring(0, sRet.Length - 1);
+                }
 
                 return sRet;
             }
@@ -840,70 +982,188 @@ namespace Thetis
                         if (bOk) _mmio_variable[i] = tmp[45 + (i*2)];
                     }
                 }
+
+                //
+                SetSetting("_updateInterval", _updateInterval);
+                SetSetting("_decay", _decay);
+                SetSetting("_attack", _attack);
+                SetSetting("_historyDuration", _historyDuration);
+                SetSetting("_shadow", _shadow);
+                SetSetting("_showHistory", _showHistory);
+                SetSetting("_historyColor", _historyColor);
+                SetSetting("_peakHold", _peakHold);
+                SetSetting("_peakHoldMarkerColor", _peakHoldMarkerColor);
+                SetSetting("_lowColor", _lowColor);
+                SetSetting("_highColor", _highColor);
+                SetSetting("_titleColor", _titleColor);
+                SetSetting("_readingSource", _readingSource);
+                SetSetting("_colour", _colour);
+                SetSetting("_markerColour", _markerColour);
+                SetSetting("_barStyle", _barStyle);
+                SetSetting("_text_1", _text_1);
+                SetSetting("_fadeOnRx", _fadeOnRx);
+                SetSetting("_fadeOnTx", _fadeOnTx);
+                SetSetting("_showType", _showType);
+                SetSetting("_segmentedSolidLowColour", _segmentedSolidLowColour);
+                SetSetting("_peakValue", _peakValue);
+                SetSetting("_peakValueColour", _peakValueColour);
+                SetSetting("_eyeScale", _eyeScale);
+                SetSetting("_average", _average);
+                SetSetting("_darkMode", _darkMode);
+                SetSetting("_maxPower", _maxPower);
+                SetSetting("_units", _units);
+                SetSetting("_segmentedSolidHighColour", _segmentedSolidHighColour);
+                SetSetting("_showMarker", _showMarker);
+                SetSetting("_subMarkerColour", _subMarkerColour);
+                SetSetting("_showSubMarker", _showSubMarker);
+
+                SetSetting("_eyeBezelScale", _eyeBezelScale);
+                SetSetting("_powerScaleColour", _powerScaleColour);
+                SetSetting("_ignoreHistoryDuration", _ignoreHistoryDuration);
+                SetSetting("_spacerPadding", _spacerPadding);
+                SetSetting("_back_panel", _back_panel);
+                SetSetting("_text_2", _text_2);
+                SetSetting("_font_family_1", _font_family_1);
+                SetSetting("_font_family_2", _font_family_2);
+                SetSetting("_font_style_1", _font_style_1);
+                SetSetting("_font_style_2", _font_style_2);
+                SetSetting("_font_size_1", _font_size_1);
+                SetSetting("_font_size_2", _font_size_2);
+
+                for (int i = 0; i < _mmio_guid.Length; i++)
+                {
+                    SetMMIOGuid(i, _mmio_guid[i]);
+                    SetMMIOVariable(i, _mmio_variable[i]);
+                }
+                //
+
                 return bOk;
             }
-            public bool SubIndicators { get { return _hasSubIndicators; } set { _hasSubIndicators = value; } }
-            public int UpdateInterval { get { return _updateInterval; } set { _updateInterval = value; } }
-            public float DecayRatio { get { return _decay; } set { _decay = value; } }
-            public float AttackRatio { get { return _attack; } set { _attack = value; } }
-            public int HistoryDuration { get { return _historyDuration; } set { _historyDuration = value; } }
-            public int IgnoreHistoryDuration { get { return _ignoreHistoryDuration; } set { _ignoreHistoryDuration = value; } }
-            public bool Shadow { get { return _shadow; } set { _shadow = value; } }
-            public bool ShowHistory { get { return _showHistory; } set { _showHistory = value; } }
-            public System.Drawing.Color HistoryColor { get { return _historyColor; } set { _historyColor = value; } }
-            public bool PeakHold { get { return _peakHold; } set { _peakHold = value; } }
-            public System.Drawing.Color PeakHoldMarkerColor { get { return _peakHoldMarkerColor; } set { _peakHoldMarkerColor = value; } }
-            public System.Drawing.Color LowColor { get { return _lowColor; } set { _lowColor = value; } }
-            public System.Drawing.Color HighColor { get { return _highColor; } set { _highColor = value; } }
-            public System.Drawing.Color TitleColor { get { return _titleColor; } set { _titleColor = value; } }
-            public Reading ReadingSource { get { return _readingSource; } set { _readingSource = value; } }
-            public System.Drawing.Color Colour { get { return _colour; } set { _colour = value; } }
-            public System.Drawing.Color MarkerColour { get { return _markerColour; } set { _markerColour = value; } }
-            public System.Drawing.Color SubMarkerColour { get { return _subMarkerColour; } set { _subMarkerColour = value; } }
-            public bool ShowMarker { get { return _showMarker; } set { _showMarker = value; } }
-            public bool ShowSubMarker { get { return _showSubMarker; } set { _showSubMarker = value; } }
-            public clsBarItem.BarStyle BarStyle { get { return _barStyle; } set { _barStyle = value; } }
-            public string Text1 { get { return _text_1.Replace("|", ""); } set { _text_1 = value.Replace("|", ""); } }
-            public string Text2 { get { return _text_2.Replace("|", ""); } set { _text_2 = value.Replace("|", ""); } }
-            public bool FadeOnRx { get { return _fadeOnRx; } set { _fadeOnRx = value; } }
-            public bool FadeOnTx { get { return _fadeOnTx; } set { _fadeOnTx = value; } }
-            public bool ShowType { get { return _showType; } set { _showType = value; } }
-            public System.Drawing.Color SegmentedSolidLowColour { get { return _segmentedSolidLowColour; } set { _segmentedSolidLowColour = value; } }
-            public System.Drawing.Color SegmentedSolidHighColour { get { return _segmentedSolidHighColour; } set { _segmentedSolidHighColour = value; } }
-            public bool PeakValue { get { return _peakValue; } set { _peakValue = value; } }
-            public System.Drawing.Color PeakValueColour { get { return _peakValueColour; } set { _peakValueColour = value; } }
-            public float EyeScale { get { return _eyeScale; } set { _eyeScale = value; } }
-            public float SpacerPadding { get { return _spacerPadding; } set { _spacerPadding = value; } }
-            public bool BackPanel { get { return _back_panel; } set { _back_panel = value; } }
-            public float EyeBezelScale { get { return _eyeBezelScale; } set { _eyeBezelScale = value; } }
-            public bool Average { get { return _average; } set { _average = value; } }
-            public bool DarkMode { get { return _darkMode; } set { _darkMode = value; } }
-            public float MaxPower { get { return _maxPower; } set { _maxPower = value; } }
-            public System.Drawing.Color PowerScaleColour { get { return _powerScaleColour; } set { _powerScaleColour = value; } }
-            public clsBarItem.Units Unit { get { return _units; } set { _units = value; } }
-            public string FontFamily1 { get { return _font_family_1.Replace("|", "++><++"); } set { _font_family_1 = value.Replace("++><++", "|"); } }
-            public string FontFamily2 { get { return _font_family_2.Replace("|", "++><++"); } set { _font_family_2 = value.Replace("++><++", "|"); } }
-            public FontStyle FontStyle1 { get { return _font_style_1; } set { _font_style_1 = value; } }
-            public FontStyle FontStyle2 { get { return _font_style_2; } set { _font_style_2 = value; } }
-            public float FontSize1 { get { return _font_size_1; } set { _font_size_1 = value; } }
-            public float FontSize2 { get { return _font_size_2; } set { _font_size_2 = value; } }
+            public bool SubIndicators { get { return (bool)GetSetting("_hasSubIndicators", typeof(bool)); } set { SetSetting("_hasSubIndicators", value); } }
+            public int UpdateInterval { get { return (int)GetSetting("_updateInterval", typeof(int)); } set { SetSetting("_updateInterval", value); } }
+            public float DecayRatio { get { return (float)GetSetting("_decay", typeof(float)); } set { SetSetting("_decay", value); } }
+            public float AttackRatio { get { return (float)GetSetting("_attack", typeof(float)); } set { SetSetting("_attack", value); } }
+            public int HistoryDuration { get { return (int)GetSetting("_historyDuration", typeof(int)); } set { SetSetting("_historyDuration", value); } }
+            public int IgnoreHistoryDuration { get { return (int)GetSetting("_ignoreHistoryDuration", typeof(int)); } set { SetSetting("_ignoreHistoryDuration", value); } }
+            public bool Shadow { get { return (bool)GetSetting("_shadow", typeof(bool)); } set { SetSetting("_shadow", value); } }
+            public bool ShowHistory { get { return (bool)GetSetting("_showHistory", typeof(bool)); } set { SetSetting("_showHistory", value); } }
+            public System.Drawing.Color HistoryColor { get { return (System.Drawing.Color)GetSetting("_historyColor", typeof(System.Drawing.Color)); } set { SetSetting("_historyColor", value); } }
+            public bool PeakHold { get { return (bool)GetSetting("_peakHold", typeof(bool)); } set { SetSetting("_peakHold", value); } }
+            public System.Drawing.Color PeakHoldMarkerColor { get { return (System.Drawing.Color)GetSetting("_peakHoldMarkerColor", typeof(System.Drawing.Color)); } set { SetSetting("_peakHoldMarkerColor", value); } }
+            public System.Drawing.Color LowColor { get { return (System.Drawing.Color)GetSetting("_lowColor", typeof(System.Drawing.Color)); } set { SetSetting("_lowColor", value); } }
+            public System.Drawing.Color HighColor { get { return (System.Drawing.Color)GetSetting("_highColor", typeof(System.Drawing.Color)); } set { SetSetting("_highColor", value); } }
+            public System.Drawing.Color TitleColor { get { return (System.Drawing.Color)GetSetting("_titleColor", typeof(System.Drawing.Color)); } set { SetSetting("_titleColor", value); } }
+            public Reading ReadingSource { get { return (Reading)GetSetting("_readingSource", typeof(Reading)); } set { SetSetting("_readingSource", value); } }
+            public System.Drawing.Color Colour { get { return (System.Drawing.Color)GetSetting("_colour", typeof(System.Drawing.Color)); } set { SetSetting("_colour", value); } }
+            public System.Drawing.Color MarkerColour { get { return (System.Drawing.Color)GetSetting("_markerColour", typeof(System.Drawing.Color)); } set { SetSetting("_markerColour", value); } }
+            public System.Drawing.Color SubMarkerColour { get { return (System.Drawing.Color)GetSetting("_subMarkerColour", typeof(System.Drawing.Color)); } set { SetSetting("_subMarkerColour", value); } }
+            public bool ShowMarker { get { return (bool)GetSetting("_showMarker", typeof(bool)); } set { SetSetting("_showMarker", value); } }
+            public bool ShowSubMarker { get { return (bool)GetSetting("_showSubMarker", typeof(bool)); } set { SetSetting("_showSubMarker", value); } }
+            public clsBarItem.BarStyle BarStyle { get { return (clsBarItem.BarStyle)GetSetting("_barStyle", typeof(clsBarItem.BarStyle)); } set { SetSetting("_barStyle", value); } }
+            public string Text1 { get { return ((string)GetSetting("_text_1", typeof(string))).Replace("|", ""); } set { SetSetting("_text_1", value.Replace("|", "")); } }
+            public string Text2 { get { return ((string)GetSetting("_text_2", typeof(string))).Replace("|", ""); } set { SetSetting("_text_2", value.Replace("|", "")); } }
+            public bool FadeOnRx { get { return (bool)GetSetting("_fadeOnRx", typeof(bool)); } set { SetSetting("_fadeOnRx", value); } }
+            public bool FadeOnTx { get { return (bool)GetSetting("_fadeOnTx", typeof(bool)); } set { SetSetting("_fadeOnTx", value); } }
+            public bool ShowType { get { return (bool)GetSetting("_showType", typeof(bool)); } set { SetSetting("_showType", value); } }
+            public System.Drawing.Color SegmentedSolidLowColour { get { return (System.Drawing.Color)GetSetting("_segmentedSolidLowColour", typeof(System.Drawing.Color)); } set { SetSetting("_segmentedSolidLowColour", value); } }
+            public System.Drawing.Color SegmentedSolidHighColour { get { return (System.Drawing.Color)GetSetting("_segmentedSolidHighColour", typeof(System.Drawing.Color)); } set { SetSetting("_segmentedSolidHighColour", value); } }
+            public bool PeakValue { get { return (bool)GetSetting("_peakValue", typeof(bool)); } set { SetSetting("_peakValue", value); } }
+            public System.Drawing.Color PeakValueColour { get { return (System.Drawing.Color)GetSetting("_peakValueColour", typeof(System.Drawing.Color)); } set { SetSetting("_peakValueColour", value); } }
+            public float EyeScale { get { return (float)GetSetting("_eyeScale", typeof(float)); } set { SetSetting("_eyeScale", value); } }
+            public float SpacerPadding { get { return (float)GetSetting("_spacerPadding", typeof(float)); } set { SetSetting("_spacerPadding", value); } }
+            public bool BackPanel { get { return (bool)GetSetting("_back_panel", typeof(bool)); } set { SetSetting("_back_panel", value); } }
+            public float EyeBezelScale { get { return (float)GetSetting("_eyeBezelScale", typeof(float)); } set { SetSetting("_eyeBezelScale", value); } }
+            public bool Average { get { return (bool)GetSetting("_average", typeof(bool)); } set { SetSetting("_average", value); } }
+            public bool DarkMode { get { return (bool)GetSetting("_darkMode", typeof(bool)); } set { SetSetting("_darkMode", value); } }
+            public float MaxPower { get { return (float)GetSetting("_maxPower", typeof(float)); } set { SetSetting("_maxPower", value); } }
+            public System.Drawing.Color PowerScaleColour { get { return (System.Drawing.Color)GetSetting("_powerScaleColour", typeof(System.Drawing.Color)); } set { SetSetting("_powerScaleColour", value); } }
+            public clsBarItem.Units Unit { get { return (clsBarItem.Units)GetSetting("_units", typeof(clsBarItem.Units)); } set { SetSetting("_units", value); } }
+            public string FontFamily1 { get { return ((string)GetSetting("_font_family_1", typeof(string))).Replace("|", "++><++"); } set { SetSetting("_font_family_1", value.Replace("++><++", "|")); } }
+            public string FontFamily2 { get { return ((string)GetSetting("_font_family_2", typeof(string))).Replace("|", "++><++"); } set { SetSetting("_font_family_2", value.Replace("++><++", "|")); } }
+            public FontStyle FontStyle1 { get { return (FontStyle)GetSetting("_font_style_1", typeof(FontStyle)); } set { SetSetting("_font_style_1", value); } }
+            public FontStyle FontStyle2 { get { return (FontStyle)GetSetting("_font_style_2", typeof(FontStyle)); } set { SetSetting("_font_style_2", value); } }
+            public float FontSize1 { get { return (float)GetSetting("_font_size_1", typeof(float)); } set { SetSetting("_font_size_1", value); } }
+            public float FontSize2 { get { return (float)GetSetting("_font_size_2", typeof(float)); } set { SetSetting("_font_size_2", value); } }
+
+
+            //public bool SubIndicators { get { return _hasSubIndicators; } set { _hasSubIndicators = value; } }
+            //public int UpdateInterval { get { return _updateInterval; } set { _updateInterval = value; } }
+            //public float DecayRatio { get { return _decay; } set { _decay = value; } }
+            //public float AttackRatio { get { return _attack; } set { _attack = value; } }
+            //public int HistoryDuration { get { return _historyDuration; } set { _historyDuration = value; } }
+            //public int IgnoreHistoryDuration { get { return _ignoreHistoryDuration; } set { _ignoreHistoryDuration = value; } }
+            //public bool Shadow { get { return _shadow; } set { _shadow = value; } }
+            //public bool ShowHistory { get { return _showHistory; } set { _showHistory = value; } }
+            //public System.Drawing.Color HistoryColor { get { return _historyColor; } set { _historyColor = value; } }
+            //public bool PeakHold { get { return _peakHold; } set { _peakHold = value; } }
+            //public System.Drawing.Color PeakHoldMarkerColor { get { return _peakHoldMarkerColor; } set { _peakHoldMarkerColor = value; } }
+            //public System.Drawing.Color LowColor { get { return _lowColor; } set { _lowColor = value; } }
+            //public System.Drawing.Color HighColor { get { return _highColor; } set { _highColor = value; } }
+            //public System.Drawing.Color TitleColor { get { return _titleColor; } set { _titleColor = value; } }
+            //public Reading ReadingSource { get { return _readingSource; } set { _readingSource = value; } }
+            //public System.Drawing.Color Colour { get { return _colour; } set { _colour = value; } }
+            //public System.Drawing.Color MarkerColour { get { return _markerColour; } set { _markerColour = value; } }
+            //public System.Drawing.Color SubMarkerColour { get { return _subMarkerColour; } set { _subMarkerColour = value; } }
+            //public bool ShowMarker { get { return _showMarker; } set { _showMarker = value; } }
+            //public bool ShowSubMarker { get { return _showSubMarker; } set { _showSubMarker = value; } }
+            //public clsBarItem.BarStyle BarStyle { get { return _barStyle; } set { _barStyle = value; } }
+            //public string Text1 { get { return _text_1.Replace("|", ""); } set { _text_1 = value.Replace("|", ""); } }
+            //public string Text2 { get { return _text_2.Replace("|", ""); } set { _text_2 = value.Replace("|", ""); } }
+            //public bool FadeOnRx { get { return _fadeOnRx; } set { _fadeOnRx = value; } }
+            //public bool FadeOnTx { get { return _fadeOnTx; } set { _fadeOnTx = value; } }
+            //public bool ShowType { get { return _showType; } set { _showType = value; } }
+            //public System.Drawing.Color SegmentedSolidLowColour { get { return _segmentedSolidLowColour; } set { _segmentedSolidLowColour = value; } }
+            //public System.Drawing.Color SegmentedSolidHighColour { get { return _segmentedSolidHighColour; } set { _segmentedSolidHighColour = value; } }
+            //public bool PeakValue { get { return _peakValue; } set { _peakValue = value; } }
+            //public System.Drawing.Color PeakValueColour { get { return _peakValueColour; } set { _peakValueColour = value; } }
+            //public float EyeScale { get { return _eyeScale; } set { _eyeScale = value; } }
+            //public float SpacerPadding { get { return _spacerPadding; } set { _spacerPadding = value; } }
+            //public bool BackPanel { get { return _back_panel; } set { _back_panel = value; } }
+            //public float EyeBezelScale { get { return _eyeBezelScale; } set { _eyeBezelScale = value; } }
+            //public bool Average { get { return _average; } set { _average = value; } }
+            //public bool DarkMode { get { return _darkMode; } set { _darkMode = value; } }
+            //public float MaxPower { get { return _maxPower; } set { _maxPower = value; } }
+            //public System.Drawing.Color PowerScaleColour { get { return _powerScaleColour; } set { _powerScaleColour = value; } }
+            //public clsBarItem.Units Unit { get { return _units; } set { _units = value; } }
+            //public string FontFamily1 { get { return _font_family_1.Replace("|", "++><++"); } set { _font_family_1 = value.Replace("++><++", "|"); } }
+            //public string FontFamily2 { get { return _font_family_2.Replace("|", "++><++"); } set { _font_family_2 = value.Replace("++><++", "|"); } }
+            //public FontStyle FontStyle1 { get { return _font_style_1; } set { _font_style_1 = value; } }
+            //public FontStyle FontStyle2 { get { return _font_style_2; } set { _font_style_2 = value; } }
+            //public float FontSize1 { get { return _font_size_1; } set { _font_size_1 = value; } }
+            //public float FontSize2 { get { return _font_size_2; } set { _font_size_2 = value; } }
 
             public Guid GetMMIOGuid(int index)
             {
-                return _mmio_guid[index];
+                return (Guid)GetSetting($"_mmio_guid_{index}", typeof(Guid));
             }
             public void SetMMIOGuid(int index, Guid g)
             {
-                _mmio_guid[index] = g;
+                SetSetting($"_mmio_guid_{index}", g);
             }
             public string GetMMIOVariable(int index)
             {
-                return _mmio_variable[index];
+                return (string)GetSetting($"_mmio_variable_{index}", typeof(string));
             }
             public void SetMMIOVariable(int index, string variable)
             {
-                _mmio_variable[index] = variable;
+                SetSetting($"_mmio_variable_{index}", variable);
             }
+            //public Guid GetMMIOGuid(int index)
+            //{
+            //    return _mmio_guid[index];
+            //}
+            //public void SetMMIOGuid(int index, Guid g)
+            //{
+            //    _mmio_guid[index] = g;
+            //}
+            //public string GetMMIOVariable(int index)
+            //{
+            //    return _mmio_variable[index];
+            //}
+            //public void SetMMIOVariable(int index, string variable)
+            //{
+            //    _mmio_variable[index] = variable;
+            //}
         }
         static MeterManager()
         {
@@ -2736,12 +2996,24 @@ namespace Thetis
                                         m.AddMeter(ig.MeterType, ig);
 
                                         //and the settings
-                                        IEnumerable<KeyValuePair<string, string>> meterIGSettings = settings.Where(o => o.Key.StartsWith("meterIGSettings_" + ig.ID));
+                                        //let us check if version 2 and use that
+                                        IEnumerable<KeyValuePair<string, string>> meterIGSettings;
+                                        meterIGSettings = settings.Where(o => o.Key.StartsWith("meterIGSettings_2_" + ig.ID));
                                         if (meterIGSettings != null && meterIGSettings.Count() == 1)
                                         {
                                             clsIGSettings igs = new clsIGSettings();
-                                            bool bIGSok = igs.TryParse(meterIGSettings.First().Value);
+                                            bool bIGSok = igs.TryParse2(meterIGSettings.First().Value);
                                             if (bIGSok) m.ApplySettingsForMeterGroup(ig.MeterType, igs, ig.Order);
+                                        }
+                                        else
+                                        {
+                                            meterIGSettings = settings.Where(o => o.Key.StartsWith("meterIGSettings_" + ig.ID) && !o.Key.StartsWith("meterIGSettings_2_"));
+                                            if (meterIGSettings != null && meterIGSettings.Count() == 1)
+                                            {
+                                                clsIGSettings igs = new clsIGSettings();
+                                                bool bIGSok = igs.TryParse(meterIGSettings.First().Value);
+                                                if (bIGSok) m.ApplySettingsForMeterGroup(ig.MeterType, igs, ig.Order);
+                                            }
                                         }
                                     }
                                 }
@@ -2817,7 +3089,8 @@ namespace Thetis
                                 clsIGSettings igs = m.GetSettingsForMeterGroup(ig.Value.MeterType, ig.Value.Order);
                                 if (igs != null)
                                 {
-                                    a.Add("meterIGSettings_" + ig.Value.ID, igs.ToString());
+                                    //a.Add("meterIGSettings_" + ig.Value.ID, igs.ToString()); //[2.10.3.6]MW0LGE not used
+                                    a.Add("meterIGSettings_2_" + ig.Value.ID, igs.ToString2());
                                 }
                             }
                         }
@@ -5662,32 +5935,42 @@ namespace Thetis
             public string ParsedText1(int rx)
             {
                 string sTmp = _text_1;
+                string lower;
 
                 lock (_list_placeholders_1_lock)
                 {
                     foreach (Reading r in _list_placeholders_readings_1)
                     {
-                        object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
-                        sTmp = sTmp.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("0.0#####"));
+                        lower = "%" + r.ToString().ToLower() + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
+                        {
+                            object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
+                            sTmp = sTmp.Replace(lower, ((float)reading).ToString("0.0#####"));
+                        }
                     }
                     foreach (string placeholder in _list_placeholders_strings_1)
                     {
-                        string decFormat = placeholder.ToLower().Contains("_double") ? "f6" : "0.0#####";
-                        object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
-                        if(reading is int)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((int)reading).ToString());
-                        else if (reading is float)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((float)reading).ToString(decFormat));
-                        else if (reading is double)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((double)reading).ToString(decFormat));
-                        else if (reading is bool)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((bool)reading).ToString());
-                        else
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", (string)reading);
+                        lower = "%" + placeholder.ToLower() + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
+                        {
+                            string decFormat = placeholder.IndexOf("_double", StringComparison.OrdinalIgnoreCase) >= 0 ? "f6" : "0.0#####";
+                            object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
+                            if (reading is int)
+                                sTmp = sTmp.Replace(lower, ((int)reading).ToString());
+                            else if (reading is float)
+                                sTmp = sTmp.Replace(lower, ((float)reading).ToString(decFormat));
+                            else if (reading is double)
+                                sTmp = sTmp.Replace(lower, ((double)reading).ToString(decFormat));
+                            else if (reading is bool)
+                                sTmp = sTmp.Replace(lower, ((bool)reading).ToString());
+                            else
+                                sTmp = sTmp.Replace(lower, (string)reading);
+                        }
                     }
                 }
 
-                sTmp = sTmp.Replace("%nl%", "\n");
+                if (sTmp.IndexOf("%nl%") >= 0)
+                    sTmp = sTmp.Replace("%nl%", "\n");
 
                 // MultiMeter IO
                 foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
@@ -5695,11 +5978,15 @@ namespace Thetis
                     MultiMeterIO.clsMMIO mmio = mmios.Value;
                     foreach (KeyValuePair<string, object> kvp in mmio.Variables())
                     {
-                        object val = mmio.GetVariable(kvp.Key);
+                        lower = "%" + kvp.Key + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
+                        {
+                            object val = mmio.GetVariable(kvp.Key);
 
-                        string tmp = mmio.VariableValueType(val);
+                            string tmp = mmio.VariableValueType(val);
 
-                        sTmp = sTmp.Replace("%" + kvp.Key.ToString() + "%", tmp);
+                            sTmp = sTmp.Replace(lower, tmp);
+                        }
                     }
                 }
                 //
@@ -5709,32 +5996,42 @@ namespace Thetis
             public string ParsedText2(int rx)
             {
                 string sTmp = _text_2;
+                string lower;
 
                 lock (_list_placeholders_2_lock)
                 {
                     foreach (Reading r in _list_placeholders_readings_2)
                     {
-                        object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
-                        sTmp = sTmp.Replace("%" + r.ToString().ToLower() + "%", ((float)reading).ToString("0.0#####"));
+                        lower = "%" + r.ToString().ToLower() + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
+                        {
+                            object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
+                            sTmp = sTmp.Replace(lower, ((float)reading).ToString("0.0#####"));
+                        }
                     }
                     foreach (string placeholder in _list_placeholders_strings_2)
                     {
-                        string decFormat = placeholder.ToLower().Contains("_double") ? "f6" : "0.0#####";
-                        object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
-                        if (reading is int)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((int)reading).ToString());
-                        else if (reading is float)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((float)reading).ToString(decFormat));
-                        else if (reading is double)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((double)reading).ToString(decFormat));
-                        else if (reading is bool)
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", ((bool)reading).ToString());
-                        else
-                            sTmp = sTmp.Replace("%" + placeholder.ToLower() + "%", (string)reading);
+                        lower = "%" + placeholder.ToLower() + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
+                        {
+                            string decFormat = placeholder.ToLower().Contains("_double") ? "f6" : "0.0#####";
+                            object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
+                            if (reading is int)
+                                sTmp = sTmp.Replace(lower, ((int)reading).ToString());
+                            else if (reading is float)
+                                sTmp = sTmp.Replace(lower, ((float)reading).ToString(decFormat));
+                            else if (reading is double)
+                                sTmp = sTmp.Replace(lower, ((double)reading).ToString(decFormat));
+                            else if (reading is bool)
+                                sTmp = sTmp.Replace(lower, ((bool)reading).ToString());
+                            else
+                                sTmp = sTmp.Replace(lower, (string)reading);
+                        }
                     }
                 }
 
-                sTmp = sTmp.Replace("%nl%", "\n");
+                if (sTmp.IndexOf("%nl%") >= 0)
+                    sTmp = sTmp.Replace("%nl%", "\n");
 
                 // MultiMeter IO
                 foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
@@ -5742,11 +6039,15 @@ namespace Thetis
                     MultiMeterIO.clsMMIO mmio = mmios.Value;
                     foreach (KeyValuePair<string, object> kvp in mmio.Variables())
                     {
-                        object val = mmio.GetVariable(kvp.Key);
+                        lower = "%" + kvp.Key + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
+                        {
+                            object val = mmio.GetVariable(kvp.Key);
 
-                        string tmp = mmio.VariableValueType(val);
+                            string tmp = mmio.VariableValueType(val);
 
-                        sTmp = sTmp.Replace("%" + kvp.Key.ToString() + "%", tmp);
+                            sTmp = sTmp.Replace(lower, tmp);
+                        }
                     }
                 }
                 //
@@ -6015,11 +6316,16 @@ namespace Thetis
                         _subs.Clear();                        
                         string expression = _condition;
                         string script_expression = _condition;
+                        string lower;
                         foreach (Reading r in _list_placeholders_readings)
                         {
                             object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, _owningMeter.RX);
-                            expression = expression.Replace("%" + r.ToString().ToLower() + "%", reading.ToString());
-                            script_expression = script_expression.Replace("%" + r.ToString().ToLower() + "%", "(float)Variables[\"" + r.ToString().ToLower() + "\"]");
+                            lower = "%" + r.ToString().ToLower() + "%";
+                            if (expression.IndexOf(lower) >= 0)
+                                expression = expression.Replace(lower, reading.ToString());
+                            if (script_expression.IndexOf(lower) >= 0)
+                                script_expression = script_expression.Replace(lower, "(float)Variables[\"" + r.ToString().ToLower() + "\"]");
+
                             if (!_subs.ContainsKey(r.ToString().ToLower()))
                                 _subs.Add(r.ToString().ToLower(), reading);
                         }
@@ -6037,8 +6343,12 @@ namespace Thetis
                                 type = "bool";
                             else
                                 type = "string";
-                            expression = expression.Replace("%" + placeholder.ToLower() + "%", "(" + type + ")(" + (type == "string" ? "\"" : "") + reading.ToString() + (type == "string" ? "\"" : "") + ")");
-                            script_expression = script_expression.Replace("%" + placeholder.ToLower() + "%", "(" + type + ")(Variables[\"" + placeholder.ToLower() + "\"])");
+
+                            lower = "%" + placeholder.ToLower() + "%";
+                            if (expression.IndexOf(lower) >= 0)
+                                expression = expression.Replace(lower, "(" + type + ")(" + (type == "string" ? "\"" : "") + reading.ToString() + (type == "string" ? "\"" : "") + ")");
+                            if (script_expression.IndexOf(lower) >= 0)
+                                script_expression = script_expression.Replace(lower, "(" + type + ")(Variables[\"" + placeholder.ToLower() + "\"])");
 
                             if (!_subs.ContainsKey(placeholder.ToLower()))
                                 _subs.Add(placeholder.ToLower(), reading);
@@ -6053,10 +6363,8 @@ namespace Thetis
                                 object val = mmio.GetVariable(kvp.Key);
 
                                 string tmp = mmio.VariableValueType(val);
-
-                                expression = expression.Replace("%" + kvp.Key + "%", tmp);
-
-                                if (script_expression.Contains("%" + kvp.Key + "%"))
+                                lower = "%" + kvp.Key + "%";
+                                if (script_expression.IndexOf(lower) >= 0)
                                 {
                                     string type;
                                     if (val is int)
@@ -6070,7 +6378,11 @@ namespace Thetis
                                     else
                                         type = "string";
 
-                                    script_expression = script_expression.Replace("%" + kvp.Key + "%", "(" + type + ")(Variables[\"" + kvp.Key + "\"])");
+                                    if (expression.IndexOf(lower) >= 0)
+                                        expression = expression.Replace(lower, (type == "string" ? "\"" : "") + tmp + (type == "string" ? "\"" : ""));
+                                    if (script_expression.IndexOf(lower) >= 0)
+                                        script_expression = script_expression.Replace(lower, "(" + type + ")(Variables[\"" + kvp.Key + "\"])");
+
                                     if (!_subs.ContainsKey(kvp.Key))
                                         _subs.Add(kvp.Key, val);
                                 }
@@ -6480,12 +6792,14 @@ namespace Thetis
         //}
         internal class clsBarItem : clsMeterItem
         {
+            [Serializable]
             public enum Units
             {
                 DBM = 0,
                 S_UNTS,
                 U_V
             }
+            [Serializable]
             public enum BarStyle
             {
                 None = 0,
@@ -11328,13 +11642,13 @@ namespace Thetis
                                                 igs.LowColor = rotator.BeamWidthColour;
                                                 igs.HighColor = rotator.OuterTextColour;
                                                 igs.ShowHistory = rotator.ShowCardinals;
-                                                //igs.ShowSubMarker = false;
                                                 igs.FadeOnRx = rotator.FadeOnRx;
                                                 igs.FadeOnTx = rotator.FadeOnTx;
                                                 igs.AttackRatio = rotator.BeamWidth;
                                             }
                                             else
                                                 igs.ShowSubMarker = rotator.ShowElevation;
+
                                             igs.ShowType = rotator.AllowControl;
                                             igs.HistoryColor = rotator.ControlColour;
                                             igs.Text1 = rotator.AZControlString;
@@ -15165,7 +15479,7 @@ namespace Thetis
 
                                 cx = centre.X + radius_text * (float)Math.Cos(rad);
                                 cy = centre.Y + radius_text * (float)Math.Sin(rad);
-                                plotText(card, cx, cy, h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true);
+                                plotText(card, cx, cy, h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, false);
                             }
                         }
 
@@ -15186,7 +15500,7 @@ namespace Thetis
 
                                 cx = centre.X + radius_text * (float)Math.Cos(rad);
                                 cy = centre.Y + radius_text * (float)Math.Sin(rad);
-                                plotText(deg.ToString(), cx, cy, h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true);
+                                plotText(deg.ToString(), cx, cy, h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, false);
                             }
                             else
                             {
@@ -15289,7 +15603,7 @@ namespace Thetis
 
                                 cx = centre.X + radius_text * (float)Math.Cos(rad);
                                 cy = centre.Y + radius_text * (float)Math.Sin(rad);
-                                plotText((90 - deg).ToString(), cx, cy, h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true);
+                                plotText((90 - deg).ToString(), cx, cy, h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, false);
                             }
                             else
                             {
@@ -18082,8 +18396,8 @@ namespace Thetis
                     else
                         sTmp = val.ToString();
 
-                    Type valueType = DetermineType(sTmp);
-                    object covertedVal = ConvertToType(val.ToString(), valueType);
+                    Type valueType = Common.DetermineType(sTmp);
+                    object covertedVal = Common.ConvertToType(val.ToString(), valueType);
                     return covertedVal;
                 }
                 return false;
@@ -18862,8 +19176,8 @@ namespace Thetis
                             for(int n = 0; n < variables; n++)
                             {
                                 string val = parts[idx + (variable_count_index + 2) + (n * 2)].Replace("++><++", "|");
-                                Type tpe = DetermineType(val);
-                                object typedValue = ConvertToType(val, tpe);
+                                Type tpe = Common.DetermineType(val);
+                                object typedValue = Common.ConvertToType(val, tpe);
                                 ok = mmio.Variables().TryAdd(parts[idx + (variable_count_index + 1) + (n * 2)], typedValue);
                                 if (!ok) break;
                             }
@@ -19022,93 +19336,11 @@ namespace Thetis
             //}
             Parallel.ForEach(keyValuePairs, kvp =>
             {
-                Type tpe = DetermineType(kvp.Value);
-                object typedValue = ConvertToType(kvp.Value, tpe);
+                Type tpe = Common.DetermineType(kvp.Value);
+                object typedValue = Common.ConvertToType(kvp.Value, tpe);
                 mmio.SetVariable(kvp.Key, typedValue);
             });
         }
-        public static Type DetermineType(string value)
-        {
-            // Create culture info for European style numbers
-            CultureInfo europeanCulture = new CultureInfo("fr-FR");
-            NumberStyles numberStyle = NumberStyles.Float | NumberStyles.AllowThousands;
-
-            // Try parsing with InvariantCulture first
-            if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
-            {
-                return typeof(int);
-            }
-            else if (float.TryParse(value, numberStyle, CultureInfo.InvariantCulture, out _) ||
-                     float.TryParse(value, numberStyle, europeanCulture, out _))
-            {
-                return typeof(float);
-            }
-            else if (double.TryParse(value, numberStyle, CultureInfo.InvariantCulture, out _) ||
-                     double.TryParse(value, numberStyle, europeanCulture, out _))
-            {
-                return typeof(double);
-            }
-            else if (bool.TryParse(value, out _))
-            {
-                return typeof(bool);
-            }
-            else
-            {
-                return typeof(string);
-            }
-        }
-
-        public static object ConvertToType(string value, Type type)
-        {
-            // Create culture info for European style numbers
-            CultureInfo europeanCulture = new CultureInfo("fr-FR");
-            NumberStyles numberStyle = NumberStyles.Float | NumberStyles.AllowThousands;
-
-            try
-            {
-                if (type == typeof(int))
-                {
-                    if (int.TryParse(value, NumberStyles.Integer, europeanCulture, out int resultInt))
-                    {
-                        return resultInt;
-                    }
-                    return int.Parse(value, NumberStyles.Integer, CultureInfo.InvariantCulture);
-                }
-                else if (type == typeof(float))
-                {
-                    if (float.TryParse(value, numberStyle, europeanCulture, out float resultFloat))
-                    {
-                        return resultFloat;
-                    }
-                    return float.Parse(value, numberStyle, CultureInfo.InvariantCulture);
-                }
-                else if (type == typeof(double))
-                {
-                    if (double.TryParse(value, numberStyle, europeanCulture, out double resultDouble))
-                    {
-                        return resultDouble;
-                    }
-                    return double.Parse(value, numberStyle, CultureInfo.InvariantCulture);
-                }
-                else if (type == typeof(bool))
-                {
-                    if (bool.TryParse(value, out bool resultBool))
-                    {
-                        return resultBool;
-                    }
-                    return bool.Parse(value);
-                }
-                else
-                {
-                    return value;
-                }
-            }
-            catch (FormatException)
-            {
-                return value;
-            }
-        }
-
         public static void parseJsonToken(JToken token, string currentPath, Dictionary<string, string> keyValuePairs)
         {
             if (token is JValue)

@@ -1744,7 +1744,8 @@ namespace Thetis
                     else if (name.StartsWith("meterContData_") ||
                         name.StartsWith("meterData_") ||
                         name.StartsWith("meterIGData_") ||
-                        name.StartsWith("meterIGSettings_"))
+                        name.StartsWith("meterIGSettings_") ||
+                        name.StartsWith("meterIGSettings_2_")) // need _2_ as the above will eventually be remoed from the db
                     {
                         // ignore, done later
                     }
@@ -19954,7 +19955,17 @@ namespace Thetis
 
         private void chkAndrG2Panel_CheckedChanged(object sender, EventArgs e)
         {
-
+            if (chkAndrG2Panel.Checked)
+            {
+                chkEnableAndromeda.Checked = false;
+                chkEnableAndromeda.Enabled = false;
+                console.AndromedaG2Enabled = true;
+            }
+            else
+            {
+                chkEnableAndromeda.Enabled = true;
+                console.AndromedaG2Enabled = false;
+            }
         }
 
         private void checkAriesStandalone_CheckedChanged(object sender, EventArgs e)
