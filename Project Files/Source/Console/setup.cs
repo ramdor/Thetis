@@ -1747,7 +1747,7 @@ namespace Thetis
                         name.StartsWith("meterData_") ||
                         name.StartsWith("meterIGData_") ||
                         name.StartsWith("meterIGSettings_") ||
-                        name.StartsWith("meterIGSettings_2_"))
+                        name.StartsWith("meterIGSettings_2_")) // need _2_ as the above will eventually be remoed from the db
                     {
                         // ignore, done later
                     }
