@@ -6308,11 +6308,16 @@ namespace Thetis
                         _subs.Clear();                        
                         string expression = _condition;
                         string script_expression = _condition;
+                        string lower;
                         foreach (Reading r in _list_placeholders_readings)
                         {
                             object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, _owningMeter.RX);
-                            expression = expression.Replace("%" + r.ToString().ToLower() + "%", reading.ToString());
-                            script_expression = script_expression.Replace("%" + r.ToString().ToLower() + "%", "(float)Variables[\"" + r.ToString().ToLower() + "\"]");
+                            lower = "%" + r.ToString().ToLower() + "%";
+                            if (expression.IndexOf(lower) >= 0)
+                                expression = expression.Replace(lower, reading.ToString());
+                            if (script_expression.IndexOf(lower) >= 0)
+                                script_expression = script_expression.Replace(lower, "(float)Variables[\"" + r.ToString().ToLower() + "\"]");
+
                             if (!_subs.ContainsKey(r.ToString().ToLower()))
                                 _subs.Add(r.ToString().ToLower(), reading);
                         }
@@ -6330,8 +6335,12 @@ namespace Thetis
                                 type = "bool";
                             else
                                 type = "string";
-                            expression = expression.Replace("%" + placeholder.ToLower() + "%", "(" + type + ")(" + (type == "string" ? "\"" : "") + reading.ToString() + (type == "string" ? "\"" : "") + ")");
-                            script_expression = script_expression.Replace("%" + placeholder.ToLower() + "%", "(" + type + ")(Variables[\"" + placeholder.ToLower() + "\"])");
+
+                            lower = "%" + placeholder.ToLower() + "%";
+                            if (expression.IndexOf(lower) >= 0)
+                                expression = expression.Replace(lower, "(" + type + ")(" + (type == "string" ? "\"" : "") + reading.ToString() + (type == "string" ? "\"" : "") + ")");
+                            if (script_expression.IndexOf(lower) >= 0)
+                                script_expression = script_expression.Replace(lower, "(" + type + ")(Variables[\"" + placeholder.ToLower() + "\"])");
 
                             if (!_subs.ContainsKey(placeholder.ToLower()))
                                 _subs.Add(placeholder.ToLower(), reading);
@@ -6346,8 +6355,8 @@ namespace Thetis
                                 object val = mmio.GetVariable(kvp.Key);
 
                                 string tmp = mmio.VariableValueType(val);
-
-                                if (script_expression.Contains("%" + kvp.Key + "%"))
+                                lower = "%" + kvp.Key + "%";
+                                if (script_expression.IndexOf(lower) >= 0)
                                 {
                                     string type;
                                     if (val is int)
@@ -6361,9 +6370,11 @@ namespace Thetis
                                     else
                                         type = "string";
 
-                                    expression = expression.Replace("%" + kvp.Key + "%", (type == "string" ? "\"" : "") + tmp + (type == "string" ? "\"" : ""));
+                                    if (expression.IndexOf(lower) >= 0)
+                                        expression = expression.Replace(lower, (type == "string" ? "\"" : "") + tmp + (type == "string" ? "\"" : ""));
+                                    if (script_expression.IndexOf(lower) >= 0)
+                                        script_expression = script_expression.Replace(lower, "(" + type + ")(Variables[\"" + kvp.Key + "\"])");
 
-                                    script_expression = script_expression.Replace("%" + kvp.Key + "%", "(" + type + ")(Variables[\"" + kvp.Key + "\"])");
                                     if (!_subs.ContainsKey(kvp.Key))
                                         _subs.Add(kvp.Key, val);
                                 }
