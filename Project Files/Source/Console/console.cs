@@ -15351,8 +15351,8 @@ namespace Thetis
             lock (m_objCatParseLocker)
             {
                 sRet = m_objTCPIPCatParser.Get(msg);
-            }
-            return sRet;
+                return sRet;
+            }            
         }
 
         public bool _bSendLimitedPowerLevels = false;

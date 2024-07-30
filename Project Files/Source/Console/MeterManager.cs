@@ -22,6 +22,7 @@ using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using System.Xml;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 //using System.Reflection;
 //using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -18077,12 +18078,14 @@ namespace Thetis
     public static class MultiMeterIO
     {
         private const int DELAY = 100; // msec
+        [Serializable]
         public enum MMIODirection
         {
             IN = 0,
             OUT = 1,
             BOTH = 2
         }
+        [Serializable]
         public enum MMIOFormat
         {
             JSON = 0,
@@ -18090,6 +18093,7 @@ namespace Thetis
             RAW = 2,
             LAST = 3
         }
+        [Serializable]
         public enum MMIOType
         {
             UDP_LISTENER = 0,
@@ -18098,6 +18102,7 @@ namespace Thetis
             TCPIP_CLIENT = 3,
             REQUESTER = 4
         }
+        [Serializable]
         public enum MMIOTerminator
         {
             NONE = 0,
@@ -18107,6 +18112,7 @@ namespace Thetis
             CUSTOM = 4,
             LAST = 5
         }
+        [Serializable]
         public class clsMMIO
         {
             private Guid _guid;
@@ -18396,11 +18402,77 @@ namespace Thetis
                     else
                         sTmp = val.ToString();
 
-                    Type valueType = Common.DetermineType(sTmp);
-                    object covertedVal = Common.ConvertToType(val.ToString(), valueType);
+                    Type valueType = DetermineType(sTmp);
+                    object covertedVal = ConvertToType(val.ToString(), valueType);
                     return covertedVal;
                 }
                 return false;
+            }
+            public Type DetermineType(string value)
+            {
+                // Create culture info for European style numbers
+                CultureInfo europeanCulture = new CultureInfo("fr-FR");
+                NumberStyles numberStyle = NumberStyles.Float | NumberStyles.AllowThousands;
+
+                // Try parsing with InvariantCulture first
+                if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _) ||
+                         int.TryParse(value, numberStyle, europeanCulture, out _))
+                {
+                    return typeof(int);
+                }
+                else if (float.TryParse(value, numberStyle, CultureInfo.InvariantCulture, out _) ||
+                         float.TryParse(value, numberStyle, europeanCulture, out _))
+                {
+                    return typeof(float);
+                }
+                else if (double.TryParse(value, numberStyle, CultureInfo.InvariantCulture, out _) ||
+                         double.TryParse(value, numberStyle, europeanCulture, out _))
+                {
+                    return typeof(double);
+                }
+                else if (bool.TryParse(value, out _))
+                {
+                    return typeof(bool);
+                }
+                else
+                {
+                    return typeof(string);
+                }
+            }
+
+            public object ConvertToType(string value, Type type)
+            {
+                CultureInfo europeanCulture = new CultureInfo("fr-FR");
+                CultureInfo invariantCulture = CultureInfo.InvariantCulture;
+
+                try
+                {
+                    TypeConverter converter = TypeDescriptor.GetConverter(type);
+                    try
+                    {
+                        return converter.ConvertFromString(null, invariantCulture, value);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            return converter.ConvertFromString(null, CultureInfo.CurrentCulture, value);
+                        }
+                        catch
+                        {
+                            return converter.ConvertFromString(null, europeanCulture, value);
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    if (type.IsEnum)
+                    {
+                        return Enum.Parse(type, value);
+                    }
+
+                    throw new ArgumentException("Cannot convert the string to the specified type.", nameof(value));
+                }
             }
             public ConcurrentDictionary<string, object> Variables()
             {
@@ -18883,7 +18955,7 @@ namespace Thetis
 
         private static ConcurrentDictionary<Guid, UdpListener> _udp_listeners;
         private static ConcurrentDictionary<Guid, TcpListener> _tcpip_listeners;
-        private static readonly ConcurrentDictionary<Guid, clsMMIO> _mmio_data;
+        private static ConcurrentDictionary<Guid, clsMMIO> _mmio_data;
 
         private static readonly object _connectionLock = new object();
 
@@ -19030,54 +19102,74 @@ namespace Thetis
 
         public static string GetSaveData()
         {
-            string data = "";
+            //1 for version 1
+            return "1|" + Common.SerializeToBase64<ConcurrentDictionary<Guid, clsMMIO>>(_mmio_data);
 
-            data += _mmio_data.Count.ToString() + "|";
-            foreach (KeyValuePair<Guid, clsMMIO> kvp in _mmio_data)
-            {
-                clsMMIO mmio = kvp.Value;
-                data += mmio.Guid.ToString() + "|"; //1
-                data += mmio.Direction.ToString() + "|"; //2
-                data += mmio.IP + "|"; //3
-                data += mmio.Port.ToString() + "|"; //4
-                data += mmio.FormatIn.ToString() + "|"; //5
-                data += mmio.Type.ToString() + "|"; //6
-                data += mmio.Enabled.ToString() + "|"; //7
-                data += mmio.TerminatorIn.ToString() + "|"; //8
-                data += mmio.FormatOut.ToString() + "|"; //9
-                data += mmio.TerminatorOut.ToString() + "|"; //10
-                data += mmio.CustomTerminatorIn.Replace("|", "++><++") + "|"; //11
-                data += mmio.CustomTerminatorOut.Replace("|", "++><++") + "|"; //12
-                data += mmio.UdpEndpointIP + "|"; //13
-                data += mmio.UdpEndpointPort.ToString() + "|"; //14
+            //string data = "";
 
-                // always last
-                data += mmio.Variables().Count.ToString() + "|"; //15
-                foreach(KeyValuePair<string, object> kvpvar in mmio.Variables())
-                {
-                    data += kvpvar.Key + "|";
+            //data += _mmio_data.Count.ToString() + "|";
+            //foreach (KeyValuePair<Guid, clsMMIO> kvp in _mmio_data)
+            //{
+            //    clsMMIO mmio = kvp.Value;
+            //    data += mmio.Guid.ToString() + "|"; //1
+            //    data += mmio.Direction.ToString() + "|"; //2
+            //    data += mmio.IP + "|"; //3
+            //    data += mmio.Port.ToString() + "|"; //4
+            //    data += mmio.FormatIn.ToString() + "|"; //5
+            //    data += mmio.Type.ToString() + "|"; //6
+            //    data += mmio.Enabled.ToString() + "|"; //7
+            //    data += mmio.TerminatorIn.ToString() + "|"; //8
+            //    data += mmio.FormatOut.ToString() + "|"; //9
+            //    data += mmio.TerminatorOut.ToString() + "|"; //10
+            //    data += mmio.CustomTerminatorIn.Replace("|", "++><++") + "|"; //11
+            //    data += mmio.CustomTerminatorOut.Replace("|", "++><++") + "|"; //12
+            //    data += mmio.UdpEndpointIP + "|"; //13
+            //    data += mmio.UdpEndpointPort.ToString() + "|"; //14
 
-                    string val;
-                    object valobj = kvpvar.Value;
+            //    // always last
+            //    data += mmio.Variables().Count.ToString() + "|"; //15
+            //    foreach(KeyValuePair<string, object> kvpvar in mmio.Variables())
+            //    {
+            //        data += kvpvar.Key + "|";
 
-                    if (valobj is int)
-                        val = valobj.ToString();
-                    else if (valobj is float)
-                        val = ((float)valobj).ToString("0.0#####");
-                    else if (valobj is double)
-                        val = ((double)valobj).ToString("0.0#####");
-                    else if (valobj is bool)
-                        val = valobj.ToString().ToLower();
-                    else
-                        val = valobj.ToString().Replace("|", "++><++");
+            //        string val;
+            //        object valobj = kvpvar.Value;
 
-                    data += val + "|";
-                }
-            }
-            data = data.Substring(0, data.Length - 1); // scrap trailing |
-            return data;
+            //        if (valobj is int)
+            //            val = valobj.ToString();
+            //        else if (valobj is float)
+            //            val = ((float)valobj).ToString("0.0#####");
+            //        else if (valobj is double)
+            //            val = ((double)valobj).ToString("0.0#####");
+            //        else if (valobj is bool)
+            //            val = valobj.ToString().ToLower();
+            //        else
+            //            val = valobj.ToString().Replace("|", "++><++");
+
+            //        data += val + "|";
+            //    }
+            //}
+            //data = data.Substring(0, data.Length - 1); // scrap trailing |
+
+            //return data;
         }
+        public static bool RestoreSaveData2(string data)
+        {
+            try
+            {
+                string[] parts = data.Split('|');
+                if (parts.Length != 2) return false;
 
+                if (parts[0] == "1") // 1 signifies version 1 of the serialize for future proofing
+                    _mmio_data = Common.DeserializeFromBase64<ConcurrentDictionary<Guid, clsMMIO>>(parts[1]);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
         public static bool RestoreSaveData(string data)
         {
             StopListeners(); //start new
@@ -19176,8 +19268,8 @@ namespace Thetis
                             for(int n = 0; n < variables; n++)
                             {
                                 string val = parts[idx + (variable_count_index + 2) + (n * 2)].Replace("++><++", "|");
-                                Type tpe = Common.DetermineType(val);
-                                object typedValue = Common.ConvertToType(val, tpe);
+                                Type tpe = mmio.DetermineType(val);
+                                object typedValue = mmio.ConvertToType(val, tpe);
                                 ok = mmio.Variables().TryAdd(parts[idx + (variable_count_index + 1) + (n * 2)], typedValue);
                                 if (!ok) break;
                             }
@@ -19336,8 +19428,8 @@ namespace Thetis
             //}
             Parallel.ForEach(keyValuePairs, kvp =>
             {
-                Type tpe = Common.DetermineType(kvp.Value);
-                object typedValue = Common.ConvertToType(kvp.Value, tpe);
+                Type tpe = mmio.DetermineType(kvp.Value);
+                object typedValue = mmio.ConvertToType(kvp.Value, tpe);
                 mmio.SetVariable(kvp.Key, typedValue);
             });
         }
