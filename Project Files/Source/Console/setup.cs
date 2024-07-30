@@ -19941,7 +19941,17 @@ namespace Thetis
 
         private void chkAndrG2Panel_CheckedChanged(object sender, EventArgs e)
         {
-
+            if (chkAndrG2Panel.Checked)
+            {
+                chkEnableAndromeda.Checked = false;
+                chkEnableAndromeda.Enabled = false;
+                console.AndromedaG2Enabled = true;
+            }
+            else
+            {
+                chkEnableAndromeda.Enabled = true;
+                console.AndromedaG2Enabled = false;
+            }
         }
 
         private void checkAriesStandalone_CheckedChanged(object sender, EventArgs e)
