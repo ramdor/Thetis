@@ -1746,7 +1746,8 @@ namespace Thetis
                     else if (name.StartsWith("meterContData_") ||
                         name.StartsWith("meterData_") ||
                         name.StartsWith("meterIGData_") ||
-                        name.StartsWith("meterIGSettings_"))
+                        name.StartsWith("meterIGSettings_") ||
+                        name.StartsWith("meterIGSettings_2_"))
                     {
                         // ignore, done later
                     }
