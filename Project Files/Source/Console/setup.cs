@@ -1810,7 +1810,7 @@ namespace Thetis
             //
             if (recoveryList == null) // MW0LGE [2.9.0.8] ignore if we hit cancel, not possible to undo multimeter changes at this time
             {
-                bool ok = false;
+                bool ok = true;
                 if (a.ContainsKey("multimeter_io2"))
                 {
                     //try version2 first                    
@@ -1820,6 +1820,7 @@ namespace Thetis
                     }
                     catch
                     {
+                        ok = false;
                     }
                 }
                 else if (a.ContainsKey("multimeter_io"))
@@ -1830,6 +1831,7 @@ namespace Thetis
                     }
                     catch
                     {
+                        ok = false;
                     }
                 }
                 if (!ok)
@@ -25364,18 +25366,24 @@ namespace Thetis
             // only allow paste into matching
             if (mt == MeterType.MAGIC_EYE || mt == MeterType.CROSS ||
                 mt == MeterType.ANANMM || mt == MeterType.SIGNAL_TEXT ||
+                mt == MeterType.SPACER || mt == MeterType.TEXT_OVERLAY ||
+                mt == MeterType.LED || mt == MeterType.ROTATOR ||
                 mt == MeterType.VFO_DISPLAY || mt == MeterType.CLOCK)
             {
                 bPaste = _itemGroupSettingsMeterType == mt;
             }
             else if (_itemGroupSettingsMeterType == MeterType.MAGIC_EYE || _itemGroupSettingsMeterType == MeterType.CROSS ||
                 _itemGroupSettingsMeterType == MeterType.ANANMM || _itemGroupSettingsMeterType == MeterType.SIGNAL_TEXT ||
+                _itemGroupSettingsMeterType == MeterType.SPACER || _itemGroupSettingsMeterType == MeterType.TEXT_OVERLAY ||
+                _itemGroupSettingsMeterType == MeterType.LED || mt == MeterType.ROTATOR ||
                 _itemGroupSettingsMeterType == MeterType.VFO_DISPLAY || _itemGroupSettingsMeterType == MeterType.CLOCK)
             {
                 bPaste = mt == _itemGroupSettingsMeterType;
             }
             else
+            {
                 bPaste = true;
+            }
 
             return bPaste;
         }
@@ -27922,13 +27930,21 @@ namespace Thetis
             MultiMeterIO.ClientDisconnected += MultiMeterIO_ClientDisconnected;
             MultiMeterIO.ReceivedDataString += MultiMeterIO_ReceivedDataString;
             MultiMeterIO.TransmittedData += MultiMeterIO_TransmittedData;
-            MultiMeterIO.ListenerRunning += MultiMeterIO_ListenerRunning;
+            MultiMeterIO.ConnectorRunning += MultiMeterIO_ListenerRunning;
 
             ConcurrentDictionary<Guid, MultiMeterIO.clsMMIO> data = MultiMeterIO.Data;
             foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> kvp in data)
             {
                 MultiMeterIO.clsMMIO mmio = kvp.Value;
-                clsMultiMeterIOComboboxItem mmioci = new clsMultiMeterIOComboboxItem(mmio.Guid, mmio.Type, mmio.IP, mmio.Port, mmio.Direction, mmio.UdpEndpointIP, mmio.UdpEndpointPort);
+                clsMultiMeterIOComboboxItem mmioci;
+                if (mmio.Type == MultiMeterIO.MMIOType.SERIAL)
+                {
+                    mmioci = new clsMultiMeterIOComboboxItem(mmio.Guid, mmio.Type, mmio.ComPort, mmio.Direction);
+                }
+                else
+                {
+                    mmioci = new clsMultiMeterIOComboboxItem(mmio.Guid, mmio.Type, mmio.IP, mmio.Port, mmio.Direction, mmio.UdpEndpointIP, mmio.UdpEndpointPort);
+                }
                 int index = lstMMIO_network_list.Items.Add(mmioci);
             }
         }
@@ -28154,7 +28170,14 @@ namespace Thetis
             MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
 
             _MMIO_ignore_change_events = true;
-            txtMMIO_network_ip_port.Text = mmio.IP + ":" + mmio.Port.ToString();
+            if (mmio.Type == MultiMeterIO.MMIOType.SERIAL)
+            {
+                txtMMIO_network_ip_port.Text = mmio.ComPort;
+            }
+            else
+            {
+                txtMMIO_network_ip_port.Text = mmio.IP + ":" + mmio.Port.ToString();
+            }
             txtMMIO_network_4char.Text = mmio.FourChar;
             _MMIO_ignore_change_events = false;
 
@@ -28196,142 +28219,275 @@ namespace Thetis
             updateDirection(mmio);
             updateTerminators(mmio);
         }
-        private void addEditListener(MultiMeterIO.MMIOType type, string existing_ip_port = "")
+        private void showSerialPortPicker(MultiMeterIO.MMIOType type, string existsing_com_port, int baud_rate, int data_bits, StopBits stop_bits, Parity parity)
         {
-            string protocol = "";
-            switch (type)
-            {
-                case MultiMeterIO.MMIOType.UDP_LISTENER:
-                    protocol = "UDP";
-                    break;
-                case MultiMeterIO.MMIOType.TCPIP_LISTENER:
-                    protocol = "TCP/IP";
-                    break;
-                case MultiMeterIO.MMIOType.SERIAL:
-                    return;
-            }
+            bool adding = string.IsNullOrEmpty(existsing_com_port);
+            bool stoppedConnection = false;
 
-            string ip_port;
-            bool adding = existing_ip_port == null || existing_ip_port == "";
+            //MultiMeterIO.clsMMIO mmio;
+            //mmio = new MultiMeterIO.clsMMIO(MultiMeterIO.MMIOType.SERIAL, "com3", 38000, 8, StopBits.One, Parity.None, true);
+            //MultiMeterIO.AddMMIO(mmio);
+
+            //bool ok = mmio.StartConnection();
+
+            //clsMultiMeterIOComboboxItem mmioci = new clsMultiMeterIOComboboxItem(mmio.Guid, MultiMeterIO.MMIOType.SERIAL, mmio.ComPort, mmio.Direction);
+            //int index = lstMMIO_network_list.Items.Add(mmioci);
+            //lstMMIO_network_list.SelectedIndex = index;
+
+            frmSerialPortPicker sp = new frmSerialPortPicker();
+            sp.ComPort = existsing_com_port;
             if (adding)
-                ip_port = InputBox.Show("Add " + protocol + " Listener", "Please provide bind details:", "127.0.0.1:9000");
-            else
-                ip_port = InputBox.Show("Edit " + protocol + " Listener", "Please edit bind details:", existing_ip_port);
-            if (ip_port == null || ip_port == "") return;
-
-            string[] parts = ip_port.Split(':');
-            if (parts.Length == 2)
             {
-                string ip = parts[0];
-                string port = parts[1];
-
-                bool ok = int.TryParse(port, out int portInt);
-                if (ok)
+                sp.BaudRate = 9600;
+                sp.DataBits = 8;
+                sp.StopBits  = StopBits.One;
+                sp.Parity = Parity.None;
+            }
+            else
+            {
+                sp.BaudRate = baud_rate;
+                sp.DataBits = data_bits;
+                sp.StopBits = stop_bits;
+                sp.Parity = parity;
+            }
+            // if edit, shut down com port
+            if (!adding)
+            {
+                clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+                if (mmioci != null)
                 {
-                    if (ip + ":" + portInt.ToString() == existing_ip_port) return; // same as input, forget it
-
-                    if (!MultiMeterIO.AlreadyConfigured(ip, portInt, type))
+                    if (MultiMeterIO.Data.ContainsKey(mmioci.Guid))
                     {
-                        MultiMeterIO.clsMMIO mmio;
-                        if (adding)
+                        MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
+                        mmio.StopConnection();
+                        stoppedConnection = true;
+                    }
+                }
+            }
+            //
+            sp.Init();
+            DialogResult dr = sp.ShowDialog();
+            if(dr == DialogResult.OK)
+            {
+                bool ok = false;
+                MultiMeterIO.clsMMIO mmio = null;
+                if (adding)
+                {
+                    mmio = new MultiMeterIO.clsMMIO(MultiMeterIO.MMIOType.SERIAL, sp.ComPort, sp.BaudRate, sp.DataBits, sp.StopBits, sp.Parity, true);
+                    MultiMeterIO.AddMMIO(mmio);
+                    ok = mmio.StartConnection();
+                }
+                else
+                {
+                    clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+                    if (mmioci != null)
+                    {
+                        if (MultiMeterIO.Data.ContainsKey(mmioci.Guid))
                         {
-                            mmio = new MultiMeterIO.clsMMIO(type, ip, portInt, true);
-                            MultiMeterIO.AddMMIO(mmio);
+                            mmio = MultiMeterIO.Data[mmioci.Guid];
+                            mmio.StopConnection();
+                            mmio.ComPort = sp.ComPort;
+                            mmio.BaudRate = sp.BaudRate;
+                            mmio.DataBits = sp.DataBits;
+                            mmio.StopBits = sp.StopBits;
+                            mmio.Parity = sp.Parity;
+                            ok = mmio.StartConnection();
+                            stoppedConnection = false;
                         }
-                        else
-                        {
-                            //edit
-                            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
-                            if (mmioci != null)
-                            {
-                                if (MultiMeterIO.Data.ContainsKey(mmioci.Guid))
-                                {
-                                    mmio = MultiMeterIO.Data[mmioci.Guid];
-                                    mmio.StopListening();
-                                    mmio.IP = ip;
-                                    mmio.Port = portInt;
-                                }
-                                else
-                                    return;
-                            }
-                            else
-                                return;
-                        }
-
-                        ok = mmio.StartListening();
-
-                        if (ok)
-                        {
-                            if (adding)
-                            {
-                                clsMultiMeterIOComboboxItem mmioci = new clsMultiMeterIOComboboxItem(mmio.Guid, type, ip, portInt, mmio.Direction, mmio.UdpEndpointIP, mmio.UdpEndpointPort);
-                                int index = lstMMIO_network_list.Items.Add(mmioci);
-                                lstMMIO_network_list.SelectedIndex = index;
-                            }
-                            else
-                            {
-                                clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
-                                if (mmioci != null)
-                                {
-                                    mmioci.IP = ip;
-                                    mmioci.Port = portInt;
-                                    lstMMIO_network_list.Items[lstMMIO_network_list.SelectedIndex] = mmioci;
-                                }
-                                else
-                                    return;
-                            }
-                        }
-                        else
-                        {
-                            MultiMeterIO.RemoveMMIO(mmio.Guid);
-                            MessageBox.Show("There was a problem starting the " + protocol + " listener. Perhaps there is an ip:port conflict.",
-                            "Listener Start Problem",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                        }
+                    }
+                }
+                if (ok && mmio != null)
+                {
+                    if (adding)
+                    {
+                        clsMultiMeterIOComboboxItem mmioci = new clsMultiMeterIOComboboxItem(mmio.Guid, type, mmio.ComPort, mmio.Direction);
+                        int index = lstMMIO_network_list.Items.Add(mmioci);
+                        lstMMIO_network_list.SelectedIndex = index;
                     }
                     else
                     {
-                        if (!adding)
+                        clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+                        if (mmioci != null)
                         {
-                            MessageBox.Show("This IP:PORT combination already has a " + protocol + " listener.\n\nThe edited IP/Port needs to be to a combination that is not already in use.",
-                                "Duplicate Listener",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                        }
-                        else
-                        {
-                            MessageBox.Show("This IP:PORT combination already has a " + protocol + " listener.",
-                                "Duplicate Listener",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                            mmioci.ComPort = mmio.ComPort;
+                            lstMMIO_network_list.Items[lstMMIO_network_list.SelectedIndex] = mmioci;
                         }
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Incorrect port format. Please use the following format.\n\nIP:PORT\n\nExample: 127.0.0.1:9000",
+                    MultiMeterIO.RemoveMMIO(mmio.Guid);
+                    MessageBox.Show("There was a problem starting the serial port connector.",
+                    "Serial Start Problem",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
+            }
+            if (stoppedConnection)
+            {
+                clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+                if (mmioci != null)
+                {
+                    if (MultiMeterIO.Data.ContainsKey(mmioci.Guid))
+                    {
+                        MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
+                        mmio.StartConnection();
+                    }
+                }
+            }
+        }
+        private void addEditConnector(MultiMeterIO.MMIOType type, string existing_ip_port = "", string existsing_com_port = "", int baud_rate = 0, int data_bits = 0, StopBits stop_bits = StopBits.One, Parity parity = Parity.None)
+        {
+            string protocol = "";
+            string bind = "";
+            switch (type)
+            {
+                case MultiMeterIO.MMIOType.UDP_LISTENER:
+                    protocol = "UDP Listener";
+                    bind = "bind";
+                    break;
+                case MultiMeterIO.MMIOType.TCPIP_LISTENER:
+                    protocol = "TCP/IP Listener";
+                    bind = "bind";
+                    break;
+                case MultiMeterIO.MMIOType.TCPIP_CLIENT:
+                    protocol = "TCP/IP Client";
+                    bind = "destination";
+                    break;
+                case MultiMeterIO.MMIOType.SERIAL:
+                    protocol = "SERIAL";
+                    bind = "";
+                    break;
+            }
+
+            if (type == MultiMeterIO.MMIOType.SERIAL)
+            {
+                showSerialPortPicker(type, existsing_com_port, baud_rate, data_bits, stop_bits, parity);
+            }
+            else
+            {
+                string ip_port;
+                bool adding = string.IsNullOrEmpty(existing_ip_port);
+                if (adding)
+                    ip_port = InputBox.Show("Add " + protocol, "Please provide " + bind + " details:", "127.0.0.1:9000");
+                else
+                    ip_port = InputBox.Show("Edit " + protocol, "Please edit " + bind + " details:", existing_ip_port);
+                if (ip_port == null || ip_port == "") return;
+
+                string[] parts = ip_port.Split(':');
+                if (parts.Length == 2)
+                {
+                    string ip = parts[0];
+                    string port = parts[1];
+
+                    bool ok = int.TryParse(port, out int portInt);
+                    if (ok)
+                    {
+                        if (ip + ":" + portInt.ToString() == existing_ip_port) return; // same as input, forget it
+
+                        if (!MultiMeterIO.AlreadyConfigured(ip, portInt, type))
+                        {
+                            MultiMeterIO.clsMMIO mmio;
+                            if (adding)
+                            {
+                                mmio = new MultiMeterIO.clsMMIO(type, ip, portInt, true);
+                                MultiMeterIO.AddMMIO(mmio);
+                            }
+                            else
+                            {
+                                //edit
+                                clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+                                if (mmioci != null)
+                                {
+                                    if (MultiMeterIO.Data.ContainsKey(mmioci.Guid))
+                                    {
+                                        mmio = MultiMeterIO.Data[mmioci.Guid];
+                                        mmio.StopConnection();
+                                        mmio.IP = ip;
+                                        mmio.Port = portInt;
+                                    }
+                                    else
+                                        return;
+                                }
+                                else
+                                    return;
+                            }
+
+                            ok = mmio.StartConnection();
+
+                            if (ok)
+                            {
+                                if (adding)
+                                {
+                                    clsMultiMeterIOComboboxItem mmioci = new clsMultiMeterIOComboboxItem(mmio.Guid, type, ip, portInt, mmio.Direction, mmio.UdpEndpointIP, mmio.UdpEndpointPort);
+                                    int index = lstMMIO_network_list.Items.Add(mmioci);
+                                    lstMMIO_network_list.SelectedIndex = index;
+                                }
+                                else
+                                {
+                                    clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+                                    if (mmioci != null)
+                                    {
+                                        mmioci.IP = ip;
+                                        mmioci.Port = portInt;
+                                        lstMMIO_network_list.Items[lstMMIO_network_list.SelectedIndex] = mmioci;
+                                    }
+                                    else
+                                        return;
+                                }
+                            }
+                            else
+                            {
+                                MultiMeterIO.RemoveMMIO(mmio.Guid);
+                                MessageBox.Show("There was a problem starting the " + protocol + ". Perhaps there is an ip:port conflict.",
+                                "Listener Start Problem",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                            }
+                        }
+                        else
+                        {
+                            if (!adding)
+                            {
+                                MessageBox.Show("This IP:PORT combination already has a " + protocol + ".\n\nThe edited IP/Port needs to be to a combination that is not already in use.",
+                                    "Duplicate Listener",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                            }
+                            else
+                            {
+                                MessageBox.Show("This IP:PORT combination already has a " + protocol + ".",
+                                    "Duplicate Listener",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Incorrect port format. Please use the following format.\n\nIP:PORT\n\nExample: 127.0.0.1:9000",
+                            "Incorrect Format",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Incorrect format. Please use the following format.\n\nIP:PORT\n\nExample: 127.0.0.1:9000",
                         "Incorrect Format",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
             }
-            else
-            {
-                MessageBox.Show("Incorrect format. Please use the following format.\n\nIP:PORT\n\nExample: 127.0.0.1:9000",
-                    "Incorrect Format",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-            }
         }
         private void radMMIO_network_add_udp_Click(object sender, EventArgs e)
         {
-            addEditListener(MultiMeterIO.MMIOType.UDP_LISTENER);
+            addEditConnector(MultiMeterIO.MMIOType.UDP_LISTENER);
         }
 
         private void btnMMIO_network_add_tcpip_Click(object sender, EventArgs e)
         {
-            addEditListener(MultiMeterIO.MMIOType.TCPIP_LISTENER);
+            addEditConnector(MultiMeterIO.MMIOType.TCPIP_LISTENER);
         }
 
         private void btnMMIO_network_delete_Click(object sender, EventArgs e)
@@ -28358,7 +28514,16 @@ namespace Thetis
             if (mmioci == null) return;
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
-            addEditListener(MultiMeterIO.Data[mmioci.Guid].Type, txtMMIO_network_ip_port.Text);
+            MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
+
+            if (mmio.Type == MultiMeterIO.MMIOType.SERIAL)
+            {
+                addEditConnector(mmio.Type, "", txtMMIO_network_ip_port.Text, mmio.BaudRate, mmio.DataBits, mmio.StopBits, mmio.Parity);
+            }
+            else
+            {
+                addEditConnector(mmio.Type, txtMMIO_network_ip_port.Text);
+            }
         }
 
         private void btnMMIO_network_ip_port_ip4_Click(object sender, EventArgs e)
@@ -28374,7 +28539,7 @@ namespace Thetis
             {
                 string sTmp = f.IP;
                 if (sTmp == "") sTmp = "127.0.0.1:9000";
-                addEditListener(mmioci.Type, sTmp);
+                addEditConnector(mmioci.Type, sTmp);
             }
         }
 
@@ -28460,6 +28625,23 @@ namespace Thetis
         private void updateDirection(MultiMeterIO.clsMMIO mmio)
         {
             if (mmio == null) return;
+            if (mmio.Type == MultiMeterIO.MMIOType.SERIAL)
+            { 
+                lblMMIO_network_ip_port.Text = "Com Port:";
+                btnMMIO_network_ip_port_ip4.Visible = false;
+            }
+            else
+            {
+                if (mmio.Type == MultiMeterIO.MMIOType.TCPIP_CLIENT)
+                {
+                    lblMMIO_network_ip_port.Text = "Destination:";
+                }
+                else
+                {
+                    lblMMIO_network_ip_port.Text = "Bind IP:Port";
+                }
+                btnMMIO_network_ip_port_ip4.Visible = true;
+            }
             switch (mmio.Direction)
             {
                 case MultiMeterIO.MMIODirection.IN:
@@ -28581,6 +28763,8 @@ namespace Thetis
             private MultiMeterIO.MMIODirection _direction;
             private string _udp_endpoint_ip;
             private int _udp_endpoint_port;
+            private string _com_port;
+            
             public clsMultiMeterIOComboboxItem(Guid guid, MultiMeterIO.MMIOType type, string ip, int port, MultiMeterIO.MMIODirection direction, string udp_endpoint_ip, int udp_endpoint_port)
             {
                 _guid = guid;
@@ -28590,6 +28774,18 @@ namespace Thetis
                 _direction = direction;
                 _udp_endpoint_ip = udp_endpoint_ip;
                 _udp_endpoint_port = udp_endpoint_port;
+                _com_port = "";
+            }
+            public clsMultiMeterIOComboboxItem(Guid guid, MultiMeterIO.MMIOType type, string com_port, MultiMeterIO.MMIODirection direction)
+            {
+                _guid = guid;
+                _type = type;
+                _ip = "";
+                _port = 0;
+                _direction = direction;
+                _udp_endpoint_ip = "";
+                _udp_endpoint_port = 0;
+                _com_port = com_port;
             }
             public Guid Guid
             {
@@ -28600,6 +28796,11 @@ namespace Thetis
             {
                 get { return _type; }
                 set { _type = value; }
+            }
+            public string ComPort
+            {
+                get { return _com_port; }
+                set { _com_port = value; }
             }
             public string IP
             {
@@ -28628,7 +28829,14 @@ namespace Thetis
             }
             public override string ToString()
             {
-                return _ip + ":" + _port;
+                if (_type == MultiMeterIO.MMIOType.SERIAL)
+                {
+                    return _com_port;
+                }
+                else
+                {
+                    return _ip + ":" + _port;
+                }
             }
         }
         private void lstMMIO_network_list_DrawItem(object sender, DrawItemEventArgs e)
@@ -28659,34 +28867,48 @@ namespace Thetis
                         case MultiMeterIO.MMIOType.TCPIP_LISTENER:
                             type = "tcp/ip";
                             break;
+                        case MultiMeterIO.MMIOType.TCPIP_CLIENT:
+                            type = "tcp/ip client";
+                            break;
                         case MultiMeterIO.MMIOType.SERIAL:
                             type = "serial";
                             break;
                     }
                     g.DrawString(type, small, sbt, e.Bounds, StringFormat.GenericDefault);
 
-                    Rectangle rect2 = new Rectangle(30, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
-                    g.DrawString(mmioci.Direction.ToString().ToLower(), small, sbt, rect2, StringFormat.GenericDefault);
-                    small.Dispose();
-
                     int offset;
                     Rectangle rect;
-                    if(mmioci.Type == MultiMeterIO.MMIOType.UDP_LISTENER && mmioci.Direction != MultiMeterIO.MMIODirection.IN)
-                    {
-                        offset = (int)(lstMMIO_network_list.Font.Height * 1.8f);
-                        rect = new Rectangle(e.Bounds.X, e.Bounds.Top + offset, e.Bounds.Width, e.Bounds.Height - offset);
-                        g.DrawString(mmioci.UDPEndpointIP + ":" + mmioci.UDPEndpointPort.ToString(), e.Font, sbt, rect, StringFormat.GenericDefault);
 
-                        if (mmioci.Direction == MultiMeterIO.MMIODirection.OUT)
-                        {
-                            sbt.Dispose();
-                            sbt = new SolidBrush(Color.Gray);
-                        }
-                    }
+                    //in/out/both
+                    Rectangle rect2 = new Rectangle(60, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+                    g.DrawString(mmioci.Direction.ToString().ToLower(), small, sbt, rect2, StringFormat.GenericDefault);
+                    small.Dispose();
                     
-                    offset = (int)(lstMMIO_network_list.Font.Height * 0.8f);
-                    rect = new Rectangle(e.Bounds.X, e.Bounds.Top + offset, e.Bounds.Width, e.Bounds.Height - offset);
-                    g.DrawString(((ListBox)sender).Items[e.Index].ToString(), e.Font, sbt, rect, StringFormat.GenericDefault);
+                    if (mmioci.Type == MultiMeterIO.MMIOType.SERIAL)
+                    {
+                        offset = (int)(lstMMIO_network_list.Font.Height * 0.8f);
+                        rect = new Rectangle(e.Bounds.X, e.Bounds.Top + offset, e.Bounds.Width, e.Bounds.Height - offset);
+                        g.DrawString(((ListBox)sender).Items[e.Index].ToString(), e.Font, sbt, rect, StringFormat.GenericDefault);
+                    }
+                    else
+                    {                       
+                        if (mmioci.Type == MultiMeterIO.MMIOType.UDP_LISTENER && mmioci.Direction != MultiMeterIO.MMIODirection.IN)
+                        {
+                            offset = (int)(lstMMIO_network_list.Font.Height * 1.8f);
+                            rect = new Rectangle(e.Bounds.X, e.Bounds.Top + offset, e.Bounds.Width, e.Bounds.Height - offset);
+                            g.DrawString(mmioci.UDPEndpointIP + ":" + mmioci.UDPEndpointPort.ToString(), e.Font, sbt, rect, StringFormat.GenericDefault);
+
+                            if (mmioci.Direction == MultiMeterIO.MMIODirection.OUT)
+                            {
+                                sbt.Dispose();
+                                sbt = new SolidBrush(Color.Gray);
+                            }
+                        }
+
+                        offset = (int)(lstMMIO_network_list.Font.Height * 0.8f);
+                        rect = new Rectangle(e.Bounds.X, e.Bounds.Top + offset, e.Bounds.Width, e.Bounds.Height - offset);
+                        g.DrawString(((ListBox)sender).Items[e.Index].ToString(), e.Font, sbt, rect, StringFormat.GenericDefault);
+                    }
 
                     sbt.Dispose();
                 }
@@ -28742,12 +28964,12 @@ namespace Thetis
             if (!old_state)
             {
                 // start
-                MultiMeterIO.Data[mmioci.Guid].StartListening();
+                MultiMeterIO.Data[mmioci.Guid].StartConnection();
             }
             else
             {
                 // stop
-                MultiMeterIO.StopListening(MultiMeterIO.Data[mmioci.Guid].Guid);
+                MultiMeterIO.StopConnection(MultiMeterIO.Data[mmioci.Guid].Guid);
             }
             _MMIO_ignore_change_events = true;
             chkMMIO_network_enabled.Checked = MultiMeterIO.Data[mmioci.Guid].Enabled;
@@ -29092,6 +29314,10 @@ namespace Thetis
             lstMMIO_network_variables.Items.Clear();
             btnMMIO_network_remove_all_variables.Enabled = false;
         }
+        private void btnMMIO_network_add_tcpip_client_Click(object sender, EventArgs e)
+        {
+            addEditConnector(MultiMeterIO.MMIOType.TCPIP_CLIENT);
+        }
         #endregion
 
         private void nudDataOutNode_sendinterval_ValueChanged(object sender, EventArgs e)
@@ -29389,6 +29615,11 @@ namespace Thetis
         private void clrbtnMMVfoDigitHighlight_Changed(object sender, EventArgs e)
         {
             updateMeterType();
+        }
+
+        private void btnMMIO_network_add_serial_Click(object sender, EventArgs e)
+        {
+            addEditConnector(MultiMeterIO.MMIOType.SERIAL);
         }
     }
 

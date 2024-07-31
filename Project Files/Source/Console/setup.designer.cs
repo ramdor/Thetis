@@ -3481,9 +3481,9 @@
             this.chkEnableAndromeda = new System.Windows.Forms.CheckBoxTS();
             this.tpMultiMetersIO = new System.Windows.Forms.TabPage();
             this.groupBoxTS39 = new System.Windows.Forms.GroupBoxTS();
-            this.buttonTS4 = new System.Windows.Forms.ButtonTS();
+            this.btnMMIO_network_add_serial = new System.Windows.Forms.ButtonTS();
             this.buttonTS3 = new System.Windows.Forms.ButtonTS();
-            this.buttonTS2 = new System.Windows.Forms.ButtonTS();
+            this.btnMMIO_network_add_tcpip_client = new System.Windows.Forms.ButtonTS();
             this.btnMMIO_network_delete = new System.Windows.Forms.ButtonTS();
             this.pnlMMIO_network_container = new System.Windows.Forms.PanelTS();
             this.btnMMIO_network_remove_all_variables = new System.Windows.Forms.ButtonTS();
@@ -55376,9 +55376,9 @@
             // 
             // groupBoxTS39
             // 
-            this.groupBoxTS39.Controls.Add(this.buttonTS4);
+            this.groupBoxTS39.Controls.Add(this.btnMMIO_network_add_serial);
             this.groupBoxTS39.Controls.Add(this.buttonTS3);
-            this.groupBoxTS39.Controls.Add(this.buttonTS2);
+            this.groupBoxTS39.Controls.Add(this.btnMMIO_network_add_tcpip_client);
             this.groupBoxTS39.Controls.Add(this.btnMMIO_network_delete);
             this.groupBoxTS39.Controls.Add(this.pnlMMIO_network_container);
             this.groupBoxTS39.Controls.Add(this.lstMMIO_network_list);
@@ -55391,17 +55391,17 @@
             this.groupBoxTS39.TabStop = false;
             this.groupBoxTS39.Text = "I/O";
             // 
-            // buttonTS4
+            // btnMMIO_network_add_serial
             // 
-            this.buttonTS4.Enabled = false;
-            this.buttonTS4.Image = null;
-            this.buttonTS4.Location = new System.Drawing.Point(11, 275);
-            this.buttonTS4.Name = "buttonTS4";
-            this.buttonTS4.Selectable = true;
-            this.buttonTS4.Size = new System.Drawing.Size(120, 23);
-            this.buttonTS4.TabIndex = 103;
-            this.buttonTS4.Text = "Add Serial";
-            this.buttonTS4.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_add_serial.Image = null;
+            this.btnMMIO_network_add_serial.Location = new System.Drawing.Point(11, 275);
+            this.btnMMIO_network_add_serial.Name = "btnMMIO_network_add_serial";
+            this.btnMMIO_network_add_serial.Selectable = true;
+            this.btnMMIO_network_add_serial.Size = new System.Drawing.Size(120, 23);
+            this.btnMMIO_network_add_serial.TabIndex = 103;
+            this.btnMMIO_network_add_serial.Text = "Add Serial";
+            this.btnMMIO_network_add_serial.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_add_serial.Click += new System.EventHandler(this.btnMMIO_network_add_serial_Click);
             // 
             // buttonTS3
             // 
@@ -55415,17 +55415,17 @@
             this.buttonTS3.Text = "Add Requester";
             this.buttonTS3.UseVisualStyleBackColor = true;
             // 
-            // buttonTS2
+            // btnMMIO_network_add_tcpip_client
             // 
-            this.buttonTS2.Enabled = false;
-            this.buttonTS2.Image = null;
-            this.buttonTS2.Location = new System.Drawing.Point(11, 217);
-            this.buttonTS2.Name = "buttonTS2";
-            this.buttonTS2.Selectable = true;
-            this.buttonTS2.Size = new System.Drawing.Size(120, 23);
-            this.buttonTS2.TabIndex = 101;
-            this.buttonTS2.Text = "Add TCP/IP Client";
-            this.buttonTS2.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_add_tcpip_client.Image = null;
+            this.btnMMIO_network_add_tcpip_client.Location = new System.Drawing.Point(11, 217);
+            this.btnMMIO_network_add_tcpip_client.Name = "btnMMIO_network_add_tcpip_client";
+            this.btnMMIO_network_add_tcpip_client.Selectable = true;
+            this.btnMMIO_network_add_tcpip_client.Size = new System.Drawing.Size(120, 23);
+            this.btnMMIO_network_add_tcpip_client.TabIndex = 101;
+            this.btnMMIO_network_add_tcpip_client.Text = "Add TCP/IP Client";
+            this.btnMMIO_network_add_tcpip_client.UseVisualStyleBackColor = true;
+            this.btnMMIO_network_add_tcpip_client.Click += new System.EventHandler(this.btnMMIO_network_add_tcpip_client_Click);
             // 
             // btnMMIO_network_delete
             // 
@@ -65513,9 +65513,9 @@
         private LabelTS lblMMIO_network_terminator_in;
         private ComboBoxTS comboMMIO_network_terminator_in;
         private ButtonTS btnMMIO_variable_2;
-        private ButtonTS buttonTS4;
+        private ButtonTS btnMMIO_network_add_serial;
         private ButtonTS buttonTS3;
-        private ButtonTS buttonTS2;
+        private ButtonTS btnMMIO_network_add_tcpip_client;
         private LabelTS lblMMIO_network_terminator_out;
         private ComboBoxTS comboMMIO_network_terminator_out;
         private LabelTS lblMMIO_network_format_out;
