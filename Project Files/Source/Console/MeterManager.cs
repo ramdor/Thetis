@@ -19346,6 +19346,8 @@ namespace Thetis
                 _stopBits = stopBits;
                 _parity = parity;
                 _serialPort = new SerialPort(comPort, baudRate, parity, dataBits, stopBits);
+                _serialPort.ReadTimeout = 1000;
+                _serialPort.WriteTimeout = 1000;
             }
 
             public void Start()

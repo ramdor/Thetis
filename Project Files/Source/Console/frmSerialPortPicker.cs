@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
+using System.Threading;
 
 namespace Thetis
 {
@@ -128,7 +129,10 @@ namespace Thetis
             {
                 using (SerialPort port = new SerialPort(portName, baudRate))
                 {
+                    port.ReadTimeout = 100;
+                    port.WriteTimeout = 100;
                     port.Open();
+                    Thread.Sleep(100);
                     port.Close();
                 }
                 return true;
@@ -145,8 +149,11 @@ namespace Thetis
             {
                 using (SerialPort port = new SerialPort(portName, baudRate))
                 {
+                    port.ReadTimeout = 100;
+                    port.WriteTimeout = 100;
                     port.DataBits = dataBits;
                     port.Open();
+                    Thread.Sleep(100);
                     port.Close();
                 }
                 return true;
@@ -163,9 +170,12 @@ namespace Thetis
             {
                 using (SerialPort port = new SerialPort(portName, baudRate))
                 {
+                    port.ReadTimeout = 100;
+                    port.WriteTimeout = 100;
                     port.DataBits = dataBits;
                     port.StopBits = stopBits;
                     port.Open();
+                    Thread.Sleep(100);
                     port.Close();
                 }
                 return true;
@@ -182,10 +192,13 @@ namespace Thetis
             {
                 using (SerialPort port = new SerialPort(portName, baudRate))
                 {
+                    port.ReadTimeout = 100;
+                    port.WriteTimeout = 100;
                     port.DataBits = dataBits;
                     port.StopBits = stopBits;
                     port.Parity = parity;
                     port.Open();
+                    Thread.Sleep(100);
                     port.Close();
                 }
                 return true;
@@ -201,7 +214,10 @@ namespace Thetis
             {
                 using (SerialPort port = new SerialPort(portName))
                 {
+                    port.ReadTimeout = 100;
+                    port.WriteTimeout = 100;
                     port.Open();
+                    Thread.Sleep(100);
                     port.Close();
                 }
                 return true;

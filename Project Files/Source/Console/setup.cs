@@ -28267,7 +28267,7 @@ namespace Thetis
             //
             sp.Init();
             DialogResult dr = sp.ShowDialog();
-            if(dr == DialogResult.OK)
+            if (dr == DialogResult.OK)
             {
                 bool ok = false;
                 MultiMeterIO.clsMMIO mmio = null;
