@@ -28347,7 +28347,7 @@ namespace Thetis
                     bind = "bind";
                     break;
                 case MultiMeterIO.MMIOType.TCPIP_LISTENER:
-                    protocol = "TCP/IP Listener";
+                    protocol = "TCP/IP Server";
                     bind = "bind";
                     break;
                 case MultiMeterIO.MMIOType.TCPIP_CLIENT:
@@ -28865,7 +28865,7 @@ namespace Thetis
                             type = "udp";
                             break;
                         case MultiMeterIO.MMIOType.TCPIP_LISTENER:
-                            type = "tcp/ip";
+                            type = "tcp/ip server";
                             break;
                         case MultiMeterIO.MMIOType.TCPIP_CLIENT:
                             type = "tcp/ip client";

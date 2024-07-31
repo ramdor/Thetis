@@ -5,7 +5,7 @@
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
 ## v2.10.3.6 Change Log - WIP dev_8 (ongoing)
-- [add] Led Indicator meter item - use variables in c# style code to provide a Boolean expression for the indicator  eg  %swr% > 2.0    or    %split% == "SPLIT"
+- [add] Led Indicator meter item - use variables in c# style code to provide a Boolean expression for the indicator  eg  %swr% > 2.0  or  %split% == "SPLIT"
 - [add] Added enable G2 panel; not enabled if Andromeda panel enabled and vice versa Added button actions for band selection - G8NJJ
 - [add] ability to create default G2 settings - G8NJJ
 - [add] band selector on the vfo display in multimeters. Just click the band text.
@@ -15,8 +15,6 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] TCPip client and serial connectors added to MultiMeter I/O
 - [fix] comp meter when used in rx2 shows the correct rx1 values
 - [change] Button actions processed more simply when G2 enabled (no shift action etc) - G8NJJ
-
-
 
 ## v2.10.3.6 Change Log - WIP dev_7
 - [add] MultiMeterIO - get external data - use it in the MultiMeter system. Watch video : https://youtu.be/oYRrm8YpD24
