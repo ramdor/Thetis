@@ -333,6 +333,12 @@
     <Compile Include="Channel.cs" />
     <Compile Include="clsBandStackManager.cs" />
     <Compile Include="clsThetisSkinService.cs" />
+    <Compile Include="frmSerialPortPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSerialPortPicker.Designer.cs">
+      <DependentUpon>frmSerialPortPicker.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmVariablePicker.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -809,6 +815,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmSeqLog.resx">
       <DependentUpon>frmSeqLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSerialPortPicker.resx">
+      <DependentUpon>frmSerialPortPicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmVariablePicker.resx">
       <DependentUpon>frmVariablePicker.cs</DependentUpon>
