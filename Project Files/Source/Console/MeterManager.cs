@@ -4841,11 +4841,6 @@ namespace Thetis
                 _ig = ig;
                 _width_scale = 1f;
                 _size = 0.1f;
-
-                //URL = "https://www.hamqsl.com/solarn0nbh.php";
-                //URL = "https://www.hamqsl.com/solarmuf.php";
-                //URL = "http://194.116.8.136:82/cgi-bin/faststream.jpg?framestep=3&rand=735781";
-                //URL = "http://80.75.112.38:9080/axis-cgi/mjpg/video.cgi";
             }
             public override void Removing()
             {

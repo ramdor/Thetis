@@ -60705,6 +60705,7 @@
             this.comboWebImage_HamQsl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboWebImage_HamQsl.FormattingEnabled = true;
             this.comboWebImage_HamQsl.Items.AddRange(new object[] {
+            "select one",
             "Layout 1 - sun",
             "Layout 2 - sun",
             "Layout 3",

@@ -25208,6 +25208,7 @@ namespace Thetis
                     grpWebImage.Parent = grpMultiMeterHolder;
                     grpWebImage.Location = loc;
                     grpWebImage.Visible = true;
+                    comboWebImage_HamQsl.SelectedIndex = 0;
 
                     grpMeterItemSettings.Visible = false;
                     grpMeterItemClockSettings.Visible = false;
@@ -29695,6 +29696,7 @@ namespace Thetis
         {
             if (initializing) return;
             if (comboWebImage_HamQsl.SelectedIndex == -1) return;
+            if (comboWebImage_HamQsl.SelectedIndex == 0) return;
 
             string[] urls =
             {
@@ -29722,8 +29724,10 @@ namespace Thetis
                 "https://www.hamqsl.com/moonglobe.php",
                 "https://www.hamqsl.com/solarsystem.php"
             };
-            txtWebImage_url.Text = urls[comboWebImage_HamQsl.SelectedIndex];
-            comboWebImage_HamQsl.SelectedIndex = -1;
+
+            txtWebImage_url.Text = urls[comboWebImage_HamQsl.SelectedIndex - 1];
+
+            comboWebImage_HamQsl.SelectedIndex = 0;
         }
     }
 
