@@ -3243,7 +3243,13 @@ namespace Thetis
 
                 _lstMeterDisplayForms.Remove(sId);
                 _lstUCMeters.Remove(sId);
-                _meters.Remove(sId);
+
+                if (_meters.ContainsKey(sId))
+                {
+                    clsMeter m = _meters[sId];
+                    m.RemoveAllMeterTypes();
+                    _meters.Remove(sId);
+                }
             }
         }
         #endregion
@@ -11155,6 +11161,25 @@ namespace Thetis
                                 if (tmpIg != null && tmpIg.Order > nOrder)
                                     tmpIg.Order--;
                             }
+                        }
+                    }
+
+                    if (bRebuild) Rebuild();
+                }
+            }
+            public void RemoveAllMeterTypes(bool bRebuild = false)
+            {
+                lock (_meterItemsLock)
+                {
+                    if (_meterItems == null) return;
+
+                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    {
+                        clsItemGroup ig = kvp.Value as clsItemGroup;
+                        if (ig != null)
+                        {
+                            removeMeterItem(ig.ID, false);
                         }
                     }
 
