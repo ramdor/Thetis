@@ -63,6 +63,7 @@
 
     <Feature Id="ProductFeature" Title="Thetis" Level="1" ConfigurableDirectory="INSTALLFOLDER">
       <ComponentGroupRef Id="ProductComponents" />
+	  <ComponentGroupRef Id="SkiaSharpComponents" />
       <ComponentRef Id="StartMenuShortcut" />
       <ComponentRef Id="DesktopShortcut" />
     </Feature>
@@ -119,7 +120,14 @@
       <Directory Id="$(var.PlatformProgramFilesFolder)">
         <Directory Id="HPSDRFolder" Name="OpenHPSDR">
           <Directory Id="INSTALLFOLDER" Name="Thetis">
-          </Directory>
+			  <?if $(var.Platform) = x64 ?>
+			  <Directory Id="SKIASHARP_INSTALLFOLDERx64" Name="x64">
+			  </Directory>
+			  <?else ?>
+			  <Directory Id="SKIASHARP_INSTALLFOLDERx86" Name="x86">
+			  </Directory>
+			  <?endif ?>
+		  </Directory>
         </Directory>
       </Directory>
 
@@ -205,7 +213,27 @@
 		  
 	  </Component>
     </DirectoryRef>
-       
+
+	  <?if $(var.Platform) = x64 ?>
+	  <ComponentGroup Id="SkiaSharpComponents" Directory="SKIASHARP_INSTALLFOLDERx64">
+		  <Component Guid="*">
+			  <File Id="SkiaSharpDLL"
+					Source="$(var.FilesPath)\x64\libSkiaSharp.dll"
+					KeyPath="yes"
+              />
+		  </Component>
+	  </ComponentGroup>
+	  <?else ?>
+	  <ComponentGroup Id="SkiaSharpComponents" Directory="SKIASHARP_INSTALLFOLDERx86">
+		  <Component Guid="*">
+			  <File Id="SkiaSharpDLL"
+					Source="$(var.FilesPath)\x86\libSkiaSharp.dll"
+					KeyPath="yes"
+              />
+		  </Component>
+	  </ComponentGroup>
+	  <?endif ?>
+	  
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       
       <Component Id="fwException" Guid="*" Transitive="yes">
@@ -354,7 +382,26 @@
 				  Source="$(var.FilesPath)System.ValueTuple.dll"
 				  KeyPath="yes"
               />
-		</Component>		
+		</Component>
+
+		<Component Guid="*">
+			<File Id="HtmlAgilityPack"
+				  Source="$(var.FilesPath)HtmlAgilityPack.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="SkiaSharp"
+				  Source="$(var.FilesPath)SkiaSharp.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="System.Drawing.Common"
+				  Source="$(var.FilesPath)System.Drawing.Common.dll"
+				  KeyPath="yes"
+              />
+		</Component>
 		<!-- 
 		Additional end
 		-->

@@ -3686,6 +3686,8 @@
             this.nudLedIndicator_xOffset = new System.Windows.Forms.NumericUpDownTS();
             this.nudLedIndicator_PanelPadding = new System.Windows.Forms.NumericUpDownTS();
             this.clrbtnLedIndicator_PanelBackground = new Thetis.ColorButton();
+            this.nudWebImage_width_scale = new System.Windows.Forms.NumericUpDownTS();
+            this.nudWebImage_update_interval = new System.Windows.Forms.NumericUpDownTS();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -3814,6 +3816,16 @@
             this.lblLedIndicator_panelbackground = new System.Windows.Forms.LabelTS();
             this.chkLedIndicator_FadeOnTX = new System.Windows.Forms.CheckBoxTS();
             this.chkLedIndicator_FadeOnRX = new System.Windows.Forms.CheckBoxTS();
+            this.grpWebImage = new System.Windows.Forms.GroupBoxTS();
+            this.groupBoxTS40 = new System.Windows.Forms.GroupBoxTS();
+            this.btnWebImage_hamqsl_donate = new System.Windows.Forms.ButtonTS();
+            this.comboWebImage_HamQsl = new System.Windows.Forms.ComboBoxTS();
+            this.labelTS236 = new System.Windows.Forms.LabelTS();
+            this.txtWebImage_url = new System.Windows.Forms.TextBoxTS();
+            this.labelTS232 = new System.Windows.Forms.LabelTS();
+            this.labelTS235 = new System.Windows.Forms.LabelTS();
+            this.chkWebImage_fade_tx = new System.Windows.Forms.CheckBoxTS();
+            this.chkWebImage_fade_rx = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4749,6 +4761,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_yOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_xOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_PanelPadding)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWebImage_width_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWebImage_update_interval)).BeginInit();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -4788,6 +4802,8 @@
             this.grpMeterItemDataOutNode.SuspendLayout();
             this.grpMeterItemRotator.SuspendLayout();
             this.grpLedIndiciator.SuspendLayout();
+            this.grpWebImage.SuspendLayout();
+            this.groupBoxTS40.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -58567,6 +58583,67 @@
             this.toolTip1.SetToolTip(this.clrbtnLedIndicator_PanelBackground, "Background colour");
             this.clrbtnLedIndicator_PanelBackground.Changed += new System.EventHandler(this.clrbtnLedIndicator_PanelBackground_Changed);
             // 
+            // nudWebImage_width_scale
+            // 
+            this.nudWebImage_width_scale.DecimalPlaces = 3;
+            this.nudWebImage_width_scale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudWebImage_width_scale.Location = new System.Drawing.Point(95, 28);
+            this.nudWebImage_width_scale.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudWebImage_width_scale.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudWebImage_width_scale.Name = "nudWebImage_width_scale";
+            this.nudWebImage_width_scale.Size = new System.Drawing.Size(56, 20);
+            this.nudWebImage_width_scale.TabIndex = 132;
+            this.nudWebImage_width_scale.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudWebImage_width_scale, "Width scale. 1.0 will fill the container width");
+            this.nudWebImage_width_scale.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudWebImage_width_scale.ValueChanged += new System.EventHandler(this.nudWebImage_width_scale_ValueChanged);
+            // 
+            // nudWebImage_update_interval
+            // 
+            this.nudWebImage_update_interval.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudWebImage_update_interval.Location = new System.Drawing.Point(95, 54);
+            this.nudWebImage_update_interval.Maximum = new decimal(new int[] {
+            7200,
+            0,
+            0,
+            0});
+            this.nudWebImage_update_interval.Minimum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.nudWebImage_update_interval.Name = "nudWebImage_update_interval";
+            this.nudWebImage_update_interval.Size = new System.Drawing.Size(56, 20);
+            this.nudWebImage_update_interval.TabIndex = 134;
+            this.nudWebImage_update_interval.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudWebImage_update_interval, "Frequency to grab the web image");
+            this.nudWebImage_update_interval.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.nudWebImage_update_interval.ValueChanged += new System.EventHandler(this.nudWebImage_update_interval_ValueChanged);
+            // 
             // saveFileDialog1
             // 
             this.saveFileDialog1.Filter = "Thetis Database Files (*.xml)|*.xml|All files|*.*";
@@ -60020,7 +60097,7 @@
             this.grpMeterItemDataOutNode.Controls.Add(this.labelTS217);
             this.grpMeterItemDataOutNode.Controls.Add(this.nudDataOutNode_sendinterval);
             this.grpMeterItemDataOutNode.Controls.Add(this.labelTS215);
-            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(411, 543);
+            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(405, 864);
             this.grpMeterItemDataOutNode.Name = "grpMeterItemDataOutNode";
             this.grpMeterItemDataOutNode.Size = new System.Drawing.Size(323, 168);
             this.grpMeterItemDataOutNode.TabIndex = 105;
@@ -60580,11 +60657,151 @@
             this.chkLedIndicator_FadeOnRX.UseVisualStyleBackColor = true;
             this.chkLedIndicator_FadeOnRX.CheckedChanged += new System.EventHandler(this.chkLedIndicator_FadeOnRX_CheckedChanged);
             // 
+            // grpWebImage
+            // 
+            this.grpWebImage.Controls.Add(this.groupBoxTS40);
+            this.grpWebImage.Controls.Add(this.labelTS236);
+            this.grpWebImage.Controls.Add(this.txtWebImage_url);
+            this.grpWebImage.Controls.Add(this.nudWebImage_update_interval);
+            this.grpWebImage.Controls.Add(this.labelTS232);
+            this.grpWebImage.Controls.Add(this.nudWebImage_width_scale);
+            this.grpWebImage.Controls.Add(this.labelTS235);
+            this.grpWebImage.Controls.Add(this.chkWebImage_fade_tx);
+            this.grpWebImage.Controls.Add(this.chkWebImage_fade_rx);
+            this.grpWebImage.Location = new System.Drawing.Point(409, 544);
+            this.grpWebImage.Name = "grpWebImage";
+            this.grpWebImage.Size = new System.Drawing.Size(323, 307);
+            this.grpWebImage.TabIndex = 108;
+            this.grpWebImage.TabStop = false;
+            this.grpWebImage.Text = "Web Image";
+            this.grpWebImage.Visible = false;
+            // 
+            // groupBoxTS40
+            // 
+            this.groupBoxTS40.Controls.Add(this.btnWebImage_hamqsl_donate);
+            this.groupBoxTS40.Controls.Add(this.comboWebImage_HamQsl);
+            this.groupBoxTS40.Location = new System.Drawing.Point(16, 121);
+            this.groupBoxTS40.Name = "groupBoxTS40";
+            this.groupBoxTS40.Size = new System.Drawing.Size(293, 58);
+            this.groupBoxTS40.TabIndex = 141;
+            this.groupBoxTS40.TabStop = false;
+            this.groupBoxTS40.Text = "hamqsl.com";
+            // 
+            // btnWebImage_hamqsl_donate
+            // 
+            this.btnWebImage_hamqsl_donate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
+            this.btnWebImage_hamqsl_donate.Image = null;
+            this.btnWebImage_hamqsl_donate.Location = new System.Drawing.Point(208, 18);
+            this.btnWebImage_hamqsl_donate.Name = "btnWebImage_hamqsl_donate";
+            this.btnWebImage_hamqsl_donate.Selectable = true;
+            this.btnWebImage_hamqsl_donate.Size = new System.Drawing.Size(75, 24);
+            this.btnWebImage_hamqsl_donate.TabIndex = 1;
+            this.btnWebImage_hamqsl_donate.Text = "Donate";
+            this.btnWebImage_hamqsl_donate.UseVisualStyleBackColor = false;
+            this.btnWebImage_hamqsl_donate.Click += new System.EventHandler(this.btnWebImage_hamqsl_donate_Click);
+            // 
+            // comboWebImage_HamQsl
+            // 
+            this.comboWebImage_HamQsl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboWebImage_HamQsl.FormattingEnabled = true;
+            this.comboWebImage_HamQsl.Items.AddRange(new object[] {
+            "Layout 1 - sun",
+            "Layout 2 - sun",
+            "Layout 3",
+            "Layout 4",
+            "Layout 5",
+            "Layout 6",
+            "Layout 7",
+            "Layout 8",
+            "Layout 9",
+            "Layout 10 - sun",
+            "Layout 11 - sun",
+            "Layout 12",
+            "Layout 13",
+            "Layout 14 - sun",
+            "Layout 15",
+            "Layout 16 - sun",
+            "Layout 17 - graphs",
+            "Layout 18 - graphs",
+            "Greyline 1",
+            "Greyline 2",
+            "Earth 1",
+            "Earth 2",
+            "Planets"});
+            this.comboWebImage_HamQsl.Location = new System.Drawing.Point(12, 21);
+            this.comboWebImage_HamQsl.Name = "comboWebImage_HamQsl";
+            this.comboWebImage_HamQsl.Size = new System.Drawing.Size(190, 21);
+            this.comboWebImage_HamQsl.TabIndex = 0;
+            this.comboWebImage_HamQsl.SelectedIndexChanged += new System.EventHandler(this.comboWebImage_HamQsl_SelectedIndexChanged);
+            // 
+            // labelTS236
+            // 
+            this.labelTS236.AutoSize = true;
+            this.labelTS236.Image = null;
+            this.labelTS236.Location = new System.Drawing.Point(18, 87);
+            this.labelTS236.Name = "labelTS236";
+            this.labelTS236.Size = new System.Drawing.Size(23, 13);
+            this.labelTS236.TabIndex = 140;
+            this.labelTS236.Text = "Url:";
+            // 
+            // txtWebImage_url
+            // 
+            this.txtWebImage_url.Location = new System.Drawing.Point(47, 84);
+            this.txtWebImage_url.Name = "txtWebImage_url";
+            this.txtWebImage_url.Size = new System.Drawing.Size(267, 20);
+            this.txtWebImage_url.TabIndex = 139;
+            this.txtWebImage_url.TextChanged += new System.EventHandler(this.txtWebImage_url_TextChanged);
+            // 
+            // labelTS232
+            // 
+            this.labelTS232.Image = null;
+            this.labelTS232.Location = new System.Drawing.Point(18, 54);
+            this.labelTS232.Name = "labelTS232";
+            this.labelTS232.Size = new System.Drawing.Size(71, 16);
+            this.labelTS232.TabIndex = 133;
+            this.labelTS232.Text = "Update (s):";
+            this.labelTS232.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // labelTS235
+            // 
+            this.labelTS235.AutoSize = true;
+            this.labelTS235.Image = null;
+            this.labelTS235.Location = new System.Drawing.Point(21, 30);
+            this.labelTS235.Name = "labelTS235";
+            this.labelTS235.Size = new System.Drawing.Size(68, 13);
+            this.labelTS235.TabIndex = 131;
+            this.labelTS235.Text = "Width Scale:";
+            // 
+            // chkWebImage_fade_tx
+            // 
+            this.chkWebImage_fade_tx.AutoSize = true;
+            this.chkWebImage_fade_tx.Image = null;
+            this.chkWebImage_fade_tx.Location = new System.Drawing.Point(227, 46);
+            this.chkWebImage_fade_tx.Name = "chkWebImage_fade_tx";
+            this.chkWebImage_fade_tx.Size = new System.Drawing.Size(82, 17);
+            this.chkWebImage_fade_tx.TabIndex = 3;
+            this.chkWebImage_fade_tx.Text = "Fade on TX";
+            this.chkWebImage_fade_tx.UseVisualStyleBackColor = true;
+            this.chkWebImage_fade_tx.CheckedChanged += new System.EventHandler(this.chkWebImage_fade_tx_CheckedChanged);
+            // 
+            // chkWebImage_fade_rx
+            // 
+            this.chkWebImage_fade_rx.AutoSize = true;
+            this.chkWebImage_fade_rx.Image = null;
+            this.chkWebImage_fade_rx.Location = new System.Drawing.Point(227, 23);
+            this.chkWebImage_fade_rx.Name = "chkWebImage_fade_rx";
+            this.chkWebImage_fade_rx.Size = new System.Drawing.Size(83, 17);
+            this.chkWebImage_fade_rx.TabIndex = 2;
+            this.chkWebImage_fade_rx.Text = "Fade on RX";
+            this.chkWebImage_fade_rx.UseVisualStyleBackColor = true;
+            this.chkWebImage_fade_rx.CheckedChanged += new System.EventHandler(this.chkWebImage_fade_rx_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1484, 961);
+            this.Controls.Add(this.grpWebImage);
             this.Controls.Add(this.labelTS198);
             this.Controls.Add(this.grpLedIndiciator);
             this.Controls.Add(this.grpTextOverlay);
@@ -61747,6 +61964,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_yOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_xOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_PanelPadding)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWebImage_width_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWebImage_update_interval)).EndInit();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();
@@ -61794,6 +62013,9 @@
             this.grpMeterItemRotator.PerformLayout();
             this.grpLedIndiciator.ResumeLayout(false);
             this.grpLedIndiciator.PerformLayout();
+            this.grpWebImage.ResumeLayout(false);
+            this.grpWebImage.PerformLayout();
+            this.groupBoxTS40.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -65611,5 +65833,17 @@
         private RadioButtonTS radLed_light_on_off;
         private LabelTS labelTS216;
         private ColorButton clrbtnMMVfoDigitHighlight;
+        private GroupBoxTS grpWebImage;
+        private NumericUpDownTS nudWebImage_update_interval;
+        private LabelTS labelTS232;
+        private NumericUpDownTS nudWebImage_width_scale;
+        private LabelTS labelTS235;
+        private CheckBoxTS chkWebImage_fade_tx;
+        private CheckBoxTS chkWebImage_fade_rx;
+        private LabelTS labelTS236;
+        private TextBoxTS txtWebImage_url;
+        private GroupBoxTS groupBoxTS40;
+        private ButtonTS btnWebImage_hamqsl_donate;
+        private ComboBoxTS comboWebImage_HamQsl;
     }
 }
