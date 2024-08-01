@@ -3886,6 +3886,7 @@
             this.labelTS235 = new System.Windows.Forms.LabelTS();
             this.chkWebImage_fade_tx = new System.Windows.Forms.CheckBoxTS();
             this.chkWebImage_fade_rx = new System.Windows.Forms.CheckBoxTS();
+            this.lblWebImage_state = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -61747,6 +61748,7 @@
             // 
             // grpWebImage
             // 
+            this.grpWebImage.Controls.Add(this.lblWebImage_state);
             this.grpWebImage.Controls.Add(this.groupBoxTS40);
             this.grpWebImage.Controls.Add(this.labelTS236);
             this.grpWebImage.Controls.Add(this.txtWebImage_url);
@@ -61884,6 +61886,16 @@
             this.chkWebImage_fade_rx.Text = "Fade on RX";
             this.chkWebImage_fade_rx.UseVisualStyleBackColor = true;
             this.chkWebImage_fade_rx.CheckedChanged += new System.EventHandler(this.chkWebImage_fade_rx_CheckedChanged);
+            // 
+            // lblWebImage_state
+            // 
+            this.lblWebImage_state.Image = null;
+            this.lblWebImage_state.Location = new System.Drawing.Point(220, 108);
+            this.lblWebImage_state.Name = "lblWebImage_state";
+            this.lblWebImage_state.Size = new System.Drawing.Size(93, 13);
+            this.lblWebImage_state.TabIndex = 142;
+            this.lblWebImage_state.Text = "state";
+            this.lblWebImage_state.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // Setup
             // 
@@ -67015,5 +67027,6 @@
         private GroupBoxTS groupBoxTS40;
         private ButtonTS btnWebImage_hamqsl_donate;
         private ComboBoxTS comboWebImage_HamQsl;
+        private LabelTS lblWebImage_state;
     }
 }

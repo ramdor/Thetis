@@ -1,4 +1,5 @@
-﻿using System;
+﻿//MW0LGE 2024
+using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -24,11 +25,6 @@ using System.Xml;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.IO.Ports;
-
-//using System.Reflection;
-//using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-//using static System.Console;
-//using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 //directX
 using SharpDX;
@@ -4827,6 +4823,7 @@ namespace Thetis
             private clsItemGroup _ig;
             private float _width_scale;
             private float _size;
+            private ImageFetcher.State _state;
 
             public clsWebImage(clsMeter owningMeter, clsItemGroup ig)
             {
@@ -4848,12 +4845,14 @@ namespace Thetis
                 _width_scale = 1f;
                 _size = 0.1f;
                 UpdateInterval = 100;
+                _state = ImageFetcher.State.IDLE;
             }
             public override void Removing()
             {
                 if(_image_fetcher_guid != Guid.Empty)
                 {
                     MeterManager.ImgFetch.ImagesObtained -= OnImage;
+                    MeterManager.ImgFetch.StateChanged -= OnState;
                     MeterManager.ImgFetch.StopFetching(_image_fetcher_guid);
                 }
 
@@ -4923,24 +4922,65 @@ namespace Thetis
                     if(value != _url && _image_fetcher_guid != Guid.Empty)
                     {
                         MeterManager.ImgFetch.ImagesObtained -= OnImage;
-                        _image_fetcher_guid = Guid.Empty;
+                        MeterManager.ImgFetch.StateChanged -= OnState;
                         MeterManager.ImgFetch.StopFetching(_image_fetcher_guid);
+                        _image_fetcher_guid = Guid.Empty;
                     }
                     //
-                    if (!Common.IsValidUri(value)) return;
+                    bool isFile = false;
+                    string sPath = "";
+                    if (!Common.IsValidUri(value))
+                    {
+                        // check if it is a file
+                        if(value.ToLower().IndexOf("file://") >= 0)
+                        {
+                            try
+                            {
+                                Uri file = new Uri(value);
+                                // does this path exist?
+                                if (!File.Exists(file.LocalPath)) return;
+                                isFile = true;
+                                sPath = file.LocalPath;
+                            }
+                            catch 
+                            {
+                                return;
+                            }
+                        }
+                        else
+                            return;
+                    }
                     //
                     _url = value;
+                    string url = isFile ? sPath : _url;
                     try
                     {
+                        MeterManager.ImgFetch.StateChanged += OnState;
                         MeterManager.ImgFetch.ImagesObtained += OnImage;
-                        _image_fetcher_guid = MeterManager.ImgFetch.RegisterURL(_url, _secs_interval, 1);
+                        _image_fetcher_guid = MeterManager.ImgFetch.RegisterURL(url, _secs_interval, 1, isFile);
                     }
                     catch
                     {
                         MeterManager.ImgFetch.ImagesObtained -= OnImage;
+                        MeterManager.ImgFetch.StateChanged -= OnState;
                         _image_fetcher_guid = Guid.Empty;
                     }
                 }
+            }
+            private void OnState(object sender, ImageFetcher.StateEventArgs e)
+            {
+                if (e.Guid != _image_fetcher_guid) return;
+
+                _state = e.WebImageState;
+                //Debug.Print(_state.ToString());
+                if (!_console.IsSetupFormNull)
+                {
+                    _console.SetupForm.SetWebImageState(ParentID, _state);
+                }
+            }
+            public ImageFetcher.State WebImageState
+            {
+                get { return _state; }
             }
             private void OnImage(object sender, Guid guid)
             {
@@ -8317,7 +8357,7 @@ namespace Thetis
 
             private int _quickestRXUpdate;
             private int _quickestTXUpdate;
-            internal Object _meterItemsLock = new Object();
+            internal readonly object _meterItemsLock = new object();
 
             private void addMeterItem(clsMeterItem mi)
             {
@@ -11236,7 +11276,7 @@ namespace Thetis
                     }
                 }
             }
-            public string MeterGroupID(MeterType mt)
+            public string MeterGroupID(MeterType mt, int order = -1)
             {
                 lock (_meterItemsLock)
                 {
@@ -11246,7 +11286,7 @@ namespace Thetis
                     foreach (KeyValuePair<string, clsMeterItem> kvp in items)
                     {
                         clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null && ig.MeterType == mt) return ig.ID;
+                        if (ig != null && ig.MeterType == mt && (order == -1 || ig.Order == order)) return ig.ID;
                     }
 
                     return "";
@@ -12277,7 +12317,8 @@ namespace Thetis
                                             igs.FadeOnTx = webimg.FadeOnTx;
                                             igs.Text1 = webimg.URL;
                                             igs.UpdateInterval = webimg.SecondsInterval;
-                                            igs.EyeScale = webimg.WidthScale; 
+                                            igs.EyeScale = webimg.WidthScale;
+                                            igs.HistoryDuration = (int)webimg.WebImageState;
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                         {
