@@ -40,6 +40,7 @@ using SharpDX.Mathematics.Interop;
 using RawInput_dll;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Diagnostics.Contracts;
+using System.Security.Policy;
 
 namespace Thetis
 {
@@ -176,6 +177,7 @@ namespace Thetis
         DATA_OUT,
         ROTATOR,
         LED,
+        WEB_IMAGE,
         //SPECTRUM,
         LAST
     }
@@ -215,6 +217,8 @@ namespace Thetis
         private static string _openHPSDR_appdatapath;
 
         private static CustomReadings _custom_readings;
+
+        private static ImageFetcher _image_fetcher;
 
         //public static float[] _newSpectrumPassband;
         //public static float[] _currentSpectrumPassband;
@@ -1177,6 +1181,9 @@ namespace Thetis
             // readings used by varius meter items such as Text Overlay
             _custom_readings = new CustomReadings();
 
+            // image fetcher
+            _image_fetcher = new ImageFetcher();
+
             // static constructor
             _rx1VHForAbove = false;
             _rx2VHForAbove = false;
@@ -1209,6 +1216,10 @@ namespace Thetis
             _meterThreadRunning = false;
 
             _openHPSDR_appdatapath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
+        }
+        public static ImageFetcher ImgFetch
+        {
+            get { return _image_fetcher; }
         }
         public static CustomReadings ReadingsCustom
         {
@@ -1378,6 +1389,7 @@ namespace Thetis
                 case MeterType.DATA_OUT: return 2;
                 case MeterType.ROTATOR: return 2;
                 case MeterType.LED: return 2;
+                case MeterType.WEB_IMAGE: return 2;
                     //case MeterType.SPECTRUM: return 2;
             }
 
@@ -1414,6 +1426,7 @@ namespace Thetis
                 case MeterType.SPACER: return "Spacer";
                 case MeterType.TEXT_OVERLAY: return "Text Overlay";
                 case MeterType.LED: return "Led Indicator";
+                case MeterType.WEB_IMAGE: return "Web Image";
                 case MeterType.DATA_OUT: return "Data Out Node";
                 case MeterType.ROTATOR: return "Rotator";
                 //case MeterType.HISTORY: return "History";
@@ -1667,6 +1680,22 @@ namespace Thetis
             {
                 if (_pooledStreamData == null) return false;
                 return _pooledStreamData.ContainsKey(sKey);
+            }
+        }
+        internal static void RemoveStreamData(string sKey)
+        {
+            lock (_imageLock)
+            {
+                if (_pooledStreamData == null) return;
+                if (_pooledStreamData.ContainsKey(sKey))
+                {
+                    DataStream ds = _pooledStreamData[sKey];
+                    
+                    Utilities.Dispose(ref ds);
+                    ds = null;
+
+                    _pooledStreamData.Remove(sKey);
+                }
             }
         }
         public static void ContainerBorder(string sId, bool border)
@@ -1966,6 +1995,9 @@ namespace Thetis
         }
         public static void Shutdown()
         {
+            if (_image_fetcher != null)
+                _image_fetcher.Shutdown();                
+                
             MultiMeterIO.StopConnections();
 
             removeDelegates();
@@ -3211,7 +3243,13 @@ namespace Thetis
 
                 _lstMeterDisplayForms.Remove(sId);
                 _lstUCMeters.Remove(sId);
-                _meters.Remove(sId);
+
+                if (_meters.ContainsKey(sId))
+                {
+                    clsMeter m = _meters[sId];
+                    m.RemoveAllMeterTypes();
+                    _meters.Remove(sId);
+                }
             }
         }
         #endregion
@@ -3242,7 +3280,8 @@ namespace Thetis
                 TEXT_OVERLAY,
                 DATA_OUT,
                 ROTATOR,
-                LED
+                LED,
+                WEB_IMAGE
                 //SPECTRUM
             }
 
@@ -3713,6 +3752,10 @@ namespace Thetis
 
             }
             //
+            public virtual void Removing()
+            {
+
+            }
         }
         //
         internal class clsItemGroup : clsMeterItem
@@ -4767,6 +4810,222 @@ namespace Thetis
 
             //    return sRet;
             //}
+        }
+        internal class clsWebImage : clsMeterItem
+        {
+            private PointF _clipTopLeft;
+            private SizeF _clipSize;
+            private bool _clipped;
+            private bool _darkMode;
+            private Guid _image_fetcher_guid;
+            private Guid _bitmap_guid;
+            private string _url;
+            private int _secs_interval;
+            private System.Drawing.Bitmap _bitmap;
+            private clsMeter _owningMeter;
+            private readonly object _bitmap_lock = new object();
+            private clsItemGroup _ig;
+            private float _width_scale;
+            private float _size;
+
+            public clsWebImage(clsMeter owningMeter, clsItemGroup ig)
+            {
+                _owningMeter = owningMeter;
+
+                ItemType = MeterItemType.WEB_IMAGE;
+
+                _clipTopLeft = new PointF(0f, 0f);
+                _clipSize = new SizeF(1f, 1f);
+                _clipped = false;
+                _darkMode = false;
+                StoreSettings = false;
+                _image_fetcher_guid = Guid.Empty;
+                _bitmap_guid = Guid.Empty;
+                _bitmap = null;
+                _url = "";
+                _secs_interval = 120;
+                _ig = ig;
+                _width_scale = 1f;
+                _size = 0.1f;
+                UpdateInterval = 100;
+            }
+            public override void Removing()
+            {
+                if(_image_fetcher_guid != Guid.Empty)
+                {
+                    MeterManager.ImgFetch.ImagesObtained -= OnImage;
+                    MeterManager.ImgFetch.StopFetching(_image_fetcher_guid);
+                }
+
+                string key = "";
+                lock (_bitmap_lock)
+                {
+                    if (_bitmap != null)
+                    {                        
+                        _bitmap.Dispose();
+                        key = "webimg_" + _image_fetcher_guid.ToString();
+                    }
+
+                    if(!string.IsNullOrEmpty(key)) MeterManager.RemoveStreamData(key);
+                }
+            }
+
+            public System.Drawing.Bitmap Bitmap
+            {
+                get 
+                {
+                    lock (_bitmap_lock)
+                    {
+                        return _bitmap;
+                    }
+                }
+            }
+            public int SecondsInterval
+            {
+                get { return _secs_interval; }
+                set 
+                { 
+                    _secs_interval = value; 
+
+                    // change the related image fetcher if one exists
+                    if(_image_fetcher_guid != Guid.Empty)
+                    {
+                        MeterManager.ImgFetch.UpdateInterval(_image_fetcher_guid, _secs_interval);
+                    }
+                }
+            }
+            public Guid BitmapGuid
+            {
+                get                 
+                {
+                    lock (_bitmap_lock)
+                    {
+                        return _bitmap_guid;
+                    }
+                }
+            }
+            public Guid FetcherGuid
+            {
+                get
+                {
+                    lock (_bitmap_lock)
+                    {
+                        return _image_fetcher_guid;
+                    }
+                }
+            }
+            public string URL
+            {
+                get { return _url; }
+                set
+                {
+                    if (value == _url) return;
+                    if(value != _url && _image_fetcher_guid != Guid.Empty)
+                    {
+                        MeterManager.ImgFetch.ImagesObtained -= OnImage;
+                        _image_fetcher_guid = Guid.Empty;
+                        MeterManager.ImgFetch.StopFetching(_image_fetcher_guid);
+                    }
+                    //
+                    if (!Common.IsValidUri(value)) return;
+                    //
+                    _url = value;
+                    try
+                    {
+                        MeterManager.ImgFetch.ImagesObtained += OnImage;
+                        _image_fetcher_guid = MeterManager.ImgFetch.RegisterURL(_url, _secs_interval, 1);
+                    }
+                    catch
+                    {
+                        MeterManager.ImgFetch.ImagesObtained -= OnImage;
+                        _image_fetcher_guid = Guid.Empty;
+                    }
+                }
+            }
+            private void OnImage(object sender, Guid guid)
+            {
+                if (guid != _image_fetcher_guid) return;
+
+                lock (_bitmap_lock)
+                {
+                    List<System.Drawing.Image> imgs = MeterManager.ImgFetch.LatestImages(guid);
+                    if (imgs.Count == 1)
+                    {
+                        Debug.Print(">>>>>>> ONE IMAGE <<<<<<<<");
+
+                        if (_bitmap != null)
+                            _bitmap.Dispose();
+
+                        try
+                        {
+                            _bitmap_guid = Guid.NewGuid();
+                            _bitmap = new System.Drawing.Bitmap(imgs[0]);
+                        }
+                        catch
+                        {
+                            _bitmap_guid = Guid.Empty;
+                            _bitmap = null;
+                        }
+
+                        if (_bitmap != null)
+                        {
+                            _size = (_bitmap.Height / (float)_bitmap.Width) * _width_scale;
+                        }
+                    }
+                }
+
+                if (_size >= 0 && this.Size.Height != _size)
+                {
+                    this.Size = new SizeF(/*1f*/ _width_scale, _size);
+
+                    if (_ig != null)
+                    {
+                        float fPadY = 0.05f;
+                        float fHeight = 0.05f;
+                        _ig.Size = new SizeF(_ig.Size.Width, _size + (fPadY - (fHeight * 0.75f)));
+                        _owningMeter.Rebuild();
+                    }
+                }
+            }
+            public float ScaleSize
+            {
+                get { return _size; }
+            }
+            public float WidthScale
+            {
+                get { return _width_scale; }
+                set 
+                { 
+                    _width_scale = value;
+                    lock (_bitmap_lock)
+                    {
+                        if (_bitmap != null)
+                        {
+                            _size = (_bitmap.Height / (float)_bitmap.Width) * _width_scale;
+                        }
+                    }
+                }
+            }
+            public PointF ClipTopLeft
+            {
+                get { return _clipTopLeft; }
+                set { _clipTopLeft = value; }
+            }
+            public SizeF ClipSize
+            {
+                get { return _clipSize; }
+                set { _clipSize = value; }
+            }
+            public bool Clipped
+            {
+                get { return _clipped; }
+                set { _clipped = value; }
+            }
+            public bool DarkMode
+            {
+                get { return _darkMode; }
+                set { _darkMode = value; }
+            }
         }
         internal class clsImage : clsMeterItem
         {
@@ -8102,6 +8361,7 @@ namespace Thetis
                     case MeterType.SPACER: return Reading.NONE;
                     case MeterType.TEXT_OVERLAY: return Reading.NONE;
                     case MeterType.LED: return Reading.NONE;
+                    case MeterType.WEB_IMAGE: return Reading.NONE;
                     case MeterType.DATA_OUT: return Reading.NONE;
                     case MeterType.ROTATOR: return variable_index == 0 ? Reading.AZ : Reading.ELE;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
@@ -8142,6 +8402,7 @@ namespace Thetis
                     case MeterType.SPACER: return 0;
                     case MeterType.TEXT_OVERLAY: return 0;
                     case MeterType.LED: return 0;
+                    case MeterType.WEB_IMAGE: return 0;
                     case MeterType.DATA_OUT: return 0;
                     case MeterType.ROTATOR: return 2;
                     //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
@@ -8187,6 +8448,7 @@ namespace Thetis
                     case MeterType.SPACER: AddSpacer(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
                     case MeterType.TEXT_OVERLAY: AddTextOverlay(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
                     case MeterType.LED: AddLed(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
+                    case MeterType.WEB_IMAGE: AddWebImage(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
                     case MeterType.DATA_OUT: AddDataOut(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.ROTATOR: AddRotator(nDelay, 0, out bBottom, 0.5f, restoreIg); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
@@ -8811,6 +9073,35 @@ namespace Thetis
                 ig.TopLeft = me.TopLeft;
                 ig.Size = new SizeF(me.Size.Width, fBottom);
                 ig.MeterType = MeterType.SPACER;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);
+
+                return me.ID;
+            }
+
+            public string AddWebImage(int nMSupdate, float fTop, out float fBottom, float fSize, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsWebImage me = new clsWebImage(this, ig);
+                me.ParentID = ig.ID;
+                me.Primary = true;
+                me.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
+                me.Size = new SizeF(1f, fSize);
+                me.ZOrder = 2;
+                addMeterItem(me);
+
+                fBottom = me.TopLeft.Y + me.Size.Height;
+
+                ig.TopLeft = me.TopLeft;
+                ig.Size = new SizeF(me.Size.Width, fBottom);
+                ig.MeterType = MeterType.WEB_IMAGE;
                 ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
 
                 clsFadeCover fc = getFadeCover(ig.ID);
@@ -10826,10 +11117,19 @@ namespace Thetis
                     Dictionary<string, clsMeterItem> items = itemsFromID(sId);
                     if (items == null || items.Count == 0) return;
 
+                    List<string> toRemove = new List<string>();
                     foreach (KeyValuePair<string, clsMeterItem> kvp in items)
                     {
-                        _meterItems.Remove(kvp.Value.ID);
+                        toRemove.Add(kvp.Value.ID);
                     }
+                    items.Clear();
+
+                    foreach (string id in toRemove)
+                    {
+                        _meterItems[id].Removing();
+                        _meterItems.Remove(id);
+                    }
+                    toRemove.Clear();
 
                     if (bRebuild) Rebuild();
                 }
@@ -10871,6 +11171,25 @@ namespace Thetis
                                 if (tmpIg != null && tmpIg.Order > nOrder)
                                     tmpIg.Order--;
                             }
+                        }
+                    }
+
+                    if (bRebuild) Rebuild();
+                }
+            }
+            public void RemoveAllMeterTypes(bool bRebuild = false)
+            {
+                lock (_meterItemsLock)
+                {
+                    if (_meterItems == null) return;
+
+                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    {
+                        clsItemGroup ig = kvp.Value as clsItemGroup;
+                        if (ig != null)
+                        {
+                            removeMeterItem(ig.ID, false);
                         }
                     }
 
@@ -10949,6 +11268,50 @@ namespace Thetis
                         {
                             switch (mt)
                             {
+                                case MeterType.WEB_IMAGE:
+                                    {
+                                        bRebuild = true; // alwayys cause a rebuild
+
+                                        float padding = 0f;
+
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.WEB_IMAGE))
+                                        {
+                                            clsWebImage webimg = me.Value as clsWebImage;
+                                            if (webimg == null) continue;
+
+                                            webimg.FadeOnRx = igs.FadeOnRx;
+                                            webimg.FadeOnTx = igs.FadeOnTx;
+                                            webimg.URL = igs.Text1;
+                                            webimg.SecondsInterval = igs.UpdateInterval;
+                                            webimg.WidthScale = igs.EyeScale;
+
+                                            //webimg.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                            webimg.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f), _fPadY - (_fHeight * 0.75f));
+                                            webimg.Size = new SizeF(/*ig.Size.Width*/ igs.EyeScale, webimg.ScaleSize/*ig.Size.Height * igs.EyeScale*//*igs.SpacerPadding*/);
+
+                                            padding += webimg.ScaleSize;// ig.Size.Height * igs.EyeScale;//igs.SpacerPadding;
+                                        }
+                                        ig.Size = new SizeF(ig.Size.Width, padding + (_fPadY - (_fHeight * 0.75f)));
+
+                                        // recalc bounds for fade overlay cover as these will change as spacer changes
+                                        System.Drawing.RectangleF eyeBounds = getBounds(ig.ID);
+                                        if (!eyeBounds.IsEmpty)
+                                        {
+                                            foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                            {
+                                                clsFadeCover fc = fcs.Value as clsFadeCover;
+                                                if (fc == null) continue;
+
+                                                fc.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                fc.Size = new SizeF(ig.Size.Width, padding);
+
+                                                fc.FadeOnRx = igs.FadeOnRx;
+                                                fc.FadeOnTx = igs.FadeOnTx;
+                                            }
+                                        }
+                                    }
+                                    break;
                                 case MeterType.ROTATOR:
                                     {
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
@@ -11901,6 +12264,31 @@ namespace Thetis
                                         }  
                                     }
                                     break;
+                                case MeterType.WEB_IMAGE:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        //one image, and the me
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.WEB_IMAGE))
+                                        {
+                                            clsWebImage webimg = me.Value as clsWebImage;
+                                            if (webimg == null) continue; // skip
+
+                                            igs.FadeOnRx = webimg.FadeOnRx;
+                                            igs.FadeOnTx = webimg.FadeOnTx;
+                                            igs.Text1 = webimg.URL;
+                                            igs.UpdateInterval = webimg.SecondsInterval;
+                                            igs.EyeScale = webimg.WidthScale; 
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue; // skip
+
+                                            igs.FadeOnRx = fc.FadeOnRx;
+                                            igs.FadeOnTx = fc.FadeOnTx;
+                                        }
+                                    }
+                                    break;
                                 case MeterType.SPACER:
                                     {
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
@@ -12444,6 +12832,27 @@ namespace Thetis
                     return fBottom;
                 }
             }
+            //public clsItemGroup GetItemGroup(string id, bool checkParent = false)
+            //{
+            //    lock (_meterItemsLock)
+            //    {
+            //        Dictionary<string, clsMeterItem> meterItems;
+            //        if (checkParent)
+            //        {
+            //            meterItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP && (o.Value.ID == id || o.Value.ParentID == id)).ToDictionary(x => x.Key, x => x.Value);
+            //        }
+            //        else
+            //        {
+            //            meterItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP && o.Value.ID == id).ToDictionary(x => x.Key, x => x.Value);
+            //        }
+
+            //        if (meterItems.Count == 1)
+            //        {
+            //            return (clsItemGroup)meterItems.First().Value;
+            //        }
+            //        return null;
+            //    }
+            //}
             public int QuickestRXUpdate
             {
                 get { return _quickestRXUpdate; }
@@ -12454,15 +12863,17 @@ namespace Thetis
             }
             internal Dictionary<string, clsItemGroup> getMeterGroups()
             {
-                Dictionary<string, clsMeterItem> meterItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                Dictionary<string, clsItemGroup> groupItems = new Dictionary<string, clsItemGroup>();
-
-                foreach (KeyValuePair<string, clsMeterItem> kvp in meterItems)
+                lock (_meterItemsLock)
                 {
-                    groupItems.Add(kvp.Value.ID, (clsItemGroup)kvp.Value);
-                }
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    Dictionary<string, clsItemGroup> groupItems = new Dictionary<string, clsItemGroup>();
 
-                return groupItems;
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in meterItems)
+                    {
+                        groupItems.Add(kvp.Value.ID, (clsItemGroup)kvp.Value);
+                    }
+                    return groupItems;
+                }                
             }
             public void UpdateIntervals()
             {
@@ -12710,6 +13121,7 @@ namespace Thetis
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.SPACER ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.TEXT_OVERLAY ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.LED ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.WEB_IMAGE ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR
                                                                 //o.Value.ItemType == clsMeterItem.MeterItemType.SPECTRUM
                                                                 /*o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY*/) &&
@@ -14312,6 +14724,9 @@ namespace Thetis
                                     case clsMeterItem.MeterItemType.SPACER:
                                         renderSpacer(rect, mi, m);
                                         break;
+                                    case clsMeterItem.MeterItemType.WEB_IMAGE:
+                                        renderWebImage(rect, mi, m);
+                                        break;
                                     case clsMeterItem.MeterItemType.TEXT_OVERLAY:
                                         renderTextOverlay(rect, mi, m, false);
                                         additionalDraws.Add(mi);
@@ -15456,6 +15871,98 @@ namespace Thetis
                 SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
 
                 _renderTarget.FillRectangle(rectSC, getDXBrushForColour(m.MOX ? spacer.Colour2 : spacer.Colour1, mi.FadeValue));
+            }
+            private void renderWebImage(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsWebImage webimg = (clsWebImage)mi;
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
+                if (!do_cover_fade)
+                {
+                    if (m.MOX != mi.MOX)
+                    {
+                        mi.FadeValue = 48;
+                        mi.MOX = m.MOX;
+                    }
+                    else
+                    {
+                        int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                        updateInterval = Math.Min(updateInterval, 500);
+                        // fade to take half a second
+                        int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
+                        int stepSize = (int)Math.Ceiling(207 / (float)steps_needed); // 255-48 = 207
+
+                        mi.FadeValue += stepSize;
+                        if (mi.FadeValue > 255) mi.FadeValue = 255;
+                    }
+                }
+
+                SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
+
+                if(webimg.Bitmap != null)
+                {
+                    string key = "webimg_" + webimg.FetcherGuid.ToString();
+
+                    if (!_images.ContainsKey(key))
+                    {
+                        // convert + add
+                        try
+                        {
+                            SharpDX.Direct2D1.Bitmap img = bitmapFromSystemBitmap(_renderTarget, webimg.Bitmap, key);
+                            img.Tag = webimg.BitmapGuid;
+                            _images.Add(key, img);
+                        }
+                        catch { }
+                    }
+                    else
+                    {
+                        // has image changed from the one we put in _images
+                        SharpDX.Direct2D1.Bitmap b = _images[key];
+                        if((Guid)b.Tag != webimg.BitmapGuid)
+                        {
+                            // new image, need to remove _image, and the stream cache, and re-add
+                            _images[key].Dispose();
+                            _images.Remove(key);
+                            //
+
+                            //remove from stream cache
+                            RemoveStreamData(key);
+                            //
+
+                            // convert + add
+                            try
+                            {
+                                SharpDX.Direct2D1.Bitmap img = bitmapFromSystemBitmap(_renderTarget, webimg.Bitmap, key);
+                                img.Tag = webimg.BitmapGuid;
+                                _images.Add(key, img);
+                            }
+                            catch { }
+                        }
+                    }
+
+                    if (_images.ContainsKey(key))
+                    {
+                        SharpDX.RectangleF imgRect = new SharpDX.RectangleF(x, y, w, h);
+
+                        SharpDX.Direct2D1.Bitmap b = _images[key];
+
+                        // maintain aspect ratio, the clip removes anything outside the rect
+                        float im_w = b.Size.Width;
+                        float im_h = b.Size.Height;
+
+                        if (w > h)
+                            imgRect.Height = imgRect.Width * (im_h / im_w);
+                        else
+                            imgRect.Width = imgRect.Height * (im_w / im_h);
+
+                        _renderTarget.DrawBitmap(b, imgRect, 1f, BitmapInterpolationMode.Linear);
+                    }
+                }
             }
             private string convertDegreesToCardinal(float degrees)
             {

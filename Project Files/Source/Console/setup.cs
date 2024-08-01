@@ -23752,7 +23752,7 @@ namespace Thetis
         }
         #region MultiMeter2
         // multimeter 2
-        private const int MAX_CONTAINERS = 20;
+        private const int MAX_CONTAINERS = 50;
 
         private class clsContainerComboboxItem
         {
@@ -24204,7 +24204,15 @@ namespace Thetis
             MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
             if (igs == null) return null;
 
-            if(mt == MeterType.ROTATOR)
+            if (mt == MeterType.WEB_IMAGE)
+            {
+                igs.UpdateInterval = (int)nudWebImage_update_interval.Value;
+                igs.EyeScale = (float)nudWebImage_width_scale.Value;
+                igs.FadeOnRx = chkWebImage_fade_rx.Checked;
+                igs.FadeOnTx = chkWebImage_fade_tx.Checked;
+                igs.Text1 = txtWebImage_url.Text;
+            }
+            else if(mt == MeterType.ROTATOR)
             {
                 igs.UpdateInterval = (int)nudMeterItemUpdateRateRotator.Value;
                 igs.Colour = Color.FromArgb(255, clrbtnMeterItemHBackgroundRotator.Color);
@@ -24511,7 +24519,15 @@ namespace Thetis
                 }
             }
 
-            if (mt == MeterType.ROTATOR)
+            if(mt == MeterType.WEB_IMAGE)
+            {
+                nudWebImage_update_interval.Value = igs.UpdateInterval;
+                nudWebImage_width_scale.Value = (decimal)igs.EyeScale;
+                chkWebImage_fade_rx.Checked = igs.FadeOnRx;
+                chkWebImage_fade_tx.Checked = igs.FadeOnTx;
+                txtWebImage_url.Text = igs.Text1;
+            }
+            else if (mt == MeterType.ROTATOR)
             {
                 nudMeterItemUpdateRateRotator.Value = igs.UpdateInterval;
                 clrbtnMeterItemHBackgroundRotator.Color = igs.Colour;
@@ -25088,6 +25104,7 @@ namespace Thetis
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
+                    grpWebImage.Visible = false;
                     break;
                 case MeterType.VFO_DISPLAY:
                     grpMeterItemVfoDisplaySettings.Parent = grpMultiMeterHolder;
@@ -25101,6 +25118,7 @@ namespace Thetis
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
+                    grpWebImage.Visible = false;
                     break;
                 case MeterType.CLOCK:
                     grpMeterItemClockSettings.Parent = grpMultiMeterHolder;
@@ -25114,6 +25132,7 @@ namespace Thetis
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
+                    grpWebImage.Visible = false;
                     break;
                 case MeterType.SPACER:
                     grpMeterItemSpacerSettings.Parent = grpMultiMeterHolder;
@@ -25127,6 +25146,7 @@ namespace Thetis
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
+                    grpWebImage.Visible = false;
                     break;
                 case MeterType.TEXT_OVERLAY:
                     grpTextOverlay.Parent = grpMultiMeterHolder;
@@ -25140,6 +25160,7 @@ namespace Thetis
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
+                    grpWebImage.Visible = false;
                     break;
                 case MeterType.DATA_OUT:
                     grpMeterItemDataOutNode.Parent = grpMultiMeterHolder;
@@ -25153,6 +25174,7 @@ namespace Thetis
                     grpTextOverlay.Visible = false;
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
+                    grpWebImage.Visible = false;
                     break;
                 case MeterType.ROTATOR:
                     grpMeterItemRotator.Parent = grpMultiMeterHolder;
@@ -25166,6 +25188,7 @@ namespace Thetis
                     grpTextOverlay.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
                     grpLedIndiciator.Visible = false;
+                    grpWebImage.Visible = false;
                     break;
                 case MeterType.LED:
                     grpLedIndiciator.Parent = grpMultiMeterHolder;
@@ -25179,6 +25202,22 @@ namespace Thetis
                     grpTextOverlay.Visible = false;
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
+                    grpWebImage.Visible = false;
+                    break;
+                case MeterType.WEB_IMAGE:
+                    grpWebImage.Parent = grpMultiMeterHolder;
+                    grpWebImage.Location = loc;
+                    grpWebImage.Visible = true;
+                    comboWebImage_HamQsl.SelectedIndex = 0;
+
+                    grpMeterItemSettings.Visible = false;
+                    grpMeterItemClockSettings.Visible = false;
+                    grpMeterItemVfoDisplaySettings.Visible = false;
+                    grpMeterItemSpacerSettings.Visible = false;
+                    grpTextOverlay.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
+                    grpMeterItemRotator.Visible = false;
+                    grpLedIndiciator.Visible = false;
                     break;
                 default:
                     grpMeterItemSettings.Parent = grpMultiMeterHolder;
@@ -25191,6 +25230,7 @@ namespace Thetis
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
+                    grpWebImage.Visible = false;
                     break;
             }
         }
@@ -29620,6 +29660,85 @@ namespace Thetis
         private void btnMMIO_network_add_serial_Click(object sender, EventArgs e)
         {
             addEditConnector(MultiMeterIO.MMIOType.SERIAL);
+        }
+
+        private void txtWebImage_url_TextChanged(object sender, EventArgs e)
+        {
+            if(txtWebImage_url.Text.Contains("www.hamqsl.com", StringComparison.InvariantCultureIgnoreCase))
+            {
+                // lock and set the update interval
+                nudWebImage_update_interval.Enabled = false;
+                _ignoreMeterItemChangeEvents = true;
+                nudWebImage_update_interval.Value = (decimal)600;
+                _ignoreMeterItemChangeEvents = false;
+            }
+            else
+                nudWebImage_update_interval.Enabled = true;
+
+            updateMeterType();
+        }
+
+        private void nudWebImage_width_scale_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudWebImage_update_interval_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkWebImage_fade_rx_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkWebImage_fade_tx_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void btnWebImage_hamqsl_donate_Click(object sender, EventArgs e)
+        {
+            Common.OpenUri("https://www.hamqsl.com/donate.html");
+        }
+
+        private void comboWebImage_HamQsl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (comboWebImage_HamQsl.SelectedIndex == -1) return;
+            if (comboWebImage_HamQsl.SelectedIndex == 0) return;
+
+            string[] hamqsl_urls =
+            {
+                "https://www.hamqsl.com/solarn0nbh.php",
+                "https://www.hamqsl.com/solarpic.php",
+                "https://www.hamqsl.com/solarvhf.php",
+                "https://www.hamqsl.com/solar.php",
+                "https://www.hamqsl.com/solarsmall.php",
+                "https://www.hamqsl.com/solarbrief.php",
+                "https://www.hamqsl.com/solarbc.php",
+                "https://www.hamqsl.com/solar100sc.php",
+                "https://www.hamqsl.com/solar2.php",
+                "https://www.hamqsl.com/solarpich.php",
+                "https://www.hamqsl.com/solar101pic.php",
+                "https://www.hamqsl.com/solar101vhf.php",
+                "https://www.hamqsl.com/solar101vhfper.php",
+                "https://www.hamqsl.com/solar101vhfpic.php",
+                "https://www.hamqsl.com/solar101sc.php",
+                "https://www.hamqsl.com/solarsun.php",
+                "https://www.hamqsl.com/solargraph.php",
+                "https://www.hamqsl.com/marston.php",
+                "https://www.hamqsl.com/solarmuf.php",
+                "https://www.hamqsl.com/solarmap.php",
+                "https://www.hamqsl.com/solarglobe.php",
+                "https://www.hamqsl.com/moonglobe.php",
+                "https://www.hamqsl.com/solarsystem.php"
+            };
+
+        txtWebImage_url.Text = hamqsl_urls[comboWebImage_HamQsl.SelectedIndex - 1];
+
+            comboWebImage_HamQsl.SelectedIndex = 0;
         }
     }
 
