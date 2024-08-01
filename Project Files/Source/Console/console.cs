@@ -1137,7 +1137,7 @@ namespace Thetis
                     draw_display_thread.Start();
                 }
                 _pause_DisplayThread = false;
-
+                
                 // test spectrum
                 //if (_spectrum_thread == null || !_spectrum_thread.IsAlive)
                 //{
