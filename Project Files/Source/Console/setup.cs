@@ -23752,7 +23752,7 @@ namespace Thetis
         }
         #region MultiMeter2
         // multimeter 2
-        private const int MAX_CONTAINERS = 20;
+        private const int MAX_CONTAINERS = 50;
 
         private class clsContainerComboboxItem
         {
@@ -29664,6 +29664,17 @@ namespace Thetis
 
         private void txtWebImage_url_TextChanged(object sender, EventArgs e)
         {
+            if(txtWebImage_url.Text.Contains("www.hamqsl.com", StringComparison.InvariantCultureIgnoreCase))
+            {
+                // lock and set the update interval
+                nudWebImage_update_interval.Enabled = false;
+                _ignoreMeterItemChangeEvents = true;
+                nudWebImage_update_interval.Value = (decimal)600;
+                _ignoreMeterItemChangeEvents = false;
+            }
+            else
+                nudWebImage_update_interval.Enabled = true;
+
             updateMeterType();
         }
 
@@ -29698,7 +29709,7 @@ namespace Thetis
             if (comboWebImage_HamQsl.SelectedIndex == -1) return;
             if (comboWebImage_HamQsl.SelectedIndex == 0) return;
 
-            string[] urls =
+            string[] hamqsl_urls =
             {
                 "https://www.hamqsl.com/solarn0nbh.php",
                 "https://www.hamqsl.com/solarpic.php",
@@ -29725,7 +29736,7 @@ namespace Thetis
                 "https://www.hamqsl.com/solarsystem.php"
             };
 
-            txtWebImage_url.Text = urls[comboWebImage_HamQsl.SelectedIndex - 1];
+        txtWebImage_url.Text = hamqsl_urls[comboWebImage_HamQsl.SelectedIndex - 1];
 
             comboWebImage_HamQsl.SelectedIndex = 0;
         }

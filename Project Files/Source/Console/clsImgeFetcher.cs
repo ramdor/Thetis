@@ -19,6 +19,7 @@ namespace Thetis
         private readonly ConcurrentDictionary<Guid, ImageStore> _image_stores;
         private readonly ConcurrentDictionary<Guid, Thread> _threads;
         private readonly ConcurrentDictionary<Guid, ManualResetEvent> _reset_events;
+        private readonly ConcurrentDictionary<Guid, int> _timeouts;
 
         public event EventHandler<Guid> ImagesObtained;
 
@@ -27,6 +28,7 @@ namespace Thetis
             _image_stores = new ConcurrentDictionary<Guid, ImageStore>();
             _threads = new ConcurrentDictionary<Guid, Thread>();
             _reset_events = new ConcurrentDictionary<Guid, ManualResetEvent>();
+            _timeouts = new ConcurrentDictionary<Guid, int>();
         }        
 
         public Guid RegisterURL(string url, int timeout_secs, int image_limit)
@@ -34,11 +36,12 @@ namespace Thetis
             Guid id = Guid.NewGuid();
             ImageStore store = new ImageStore(image_limit);
             ManualResetEvent reset_event = new ManualResetEvent(false);
-            Thread thread = new Thread(() => fetch_images(url, timeout_secs, store, reset_event, id));
+            Thread thread = new Thread(() => fetch_images(url, store, reset_event, id));
 
             if (_image_stores.TryAdd(id, store) &&
                 _threads.TryAdd(id, thread) &&
-                _reset_events.TryAdd(id, reset_event))
+                _reset_events.TryAdd(id, reset_event) && 
+                _timeouts.TryAdd(id, timeout_secs))
             {
                 thread.Start();
                 return id;
@@ -62,7 +65,18 @@ namespace Thetis
                 return new List<Image>();
             }
         }
-
+        public void UpdateInterval(Guid id, int interval)
+        {
+            if (_timeouts.TryGetValue(id, out int current))
+            {
+                if (current != interval)
+                {
+                    _timeouts[id] = interval;
+                    if (_reset_events.TryGetValue(id, out ManualResetEvent reset_event))
+                        reset_event.Set();  // Signal the thread
+                }
+            }
+        }
         private void clearAllImages()
         {
             Debug.Print("!!!!!!! CLEAR ALL IMAGES");
@@ -111,13 +125,15 @@ namespace Thetis
             Debug.Print("!!!!!!! SHUTDOWN COMPLETE");
         }
 
-        private void fetch_images(string url, int timeout_secs, ImageStore store, ManualResetEvent reset_event, Guid id)
+        private void fetch_images(string url, ImageStore store, ManualResetEvent reset_event, Guid id)
         {
             try
             {
+                int timeout = _timeouts[id];
+                reset_event.Reset();
                 while (true)
                 {
-                    bool imagesAdded = false;
+                    bool imagesAdded = false;                    
                     try
                     {
                         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -218,10 +234,18 @@ namespace Thetis
                         OnImagesObtained(id);
                     }
 
-                    // Wait for the interval or stop signal
-                    if (reset_event.WaitOne(timeout_secs * 1000)) // Convert seconds to milliseconds
+                    // Wait for the interval or stop signal                    
+                    if (reset_event.WaitOne(timeout * 1000)) // Convert seconds to milliseconds
                     {
-                        break;  // Exit the loop if signaled to stop
+                        //check if _timeout is the same, if so break. It will be different if we have signaled
+                        //due to timeout change
+                        if (_timeouts[id] == timeout)
+                            break;  // Exit the loop if signaled to stop
+                        else
+                        {
+                            timeout = _timeouts[id];
+                            reset_event.Reset();
+                        }
                     }
                 }
             }

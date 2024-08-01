@@ -4847,6 +4847,7 @@ namespace Thetis
                 _ig = ig;
                 _width_scale = 1f;
                 _size = 0.1f;
+                UpdateInterval = 100;
             }
             public override void Removing()
             {
@@ -4882,7 +4883,16 @@ namespace Thetis
             public int SecondsInterval
             {
                 get { return _secs_interval; }
-                set { _secs_interval = value; }
+                set 
+                { 
+                    _secs_interval = value; 
+
+                    // change the related image fetcher if one exists
+                    if(_image_fetcher_guid != Guid.Empty)
+                    {
+                        MeterManager.ImgFetch.UpdateInterval(_image_fetcher_guid, _secs_interval);
+                    }
+                }
             }
             public Guid BitmapGuid
             {
