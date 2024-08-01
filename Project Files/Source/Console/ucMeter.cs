@@ -40,6 +40,7 @@ namespace Thetis
             _border = true;
             _noTitleBar = false;
             _enabled = true;
+            _container_minimises = true;
             _notes = "";
 
             this.Name = "UCMeter_" + _id;
@@ -86,6 +87,7 @@ namespace Thetis
         private bool _border;
         private bool _noTitleBar;
         private bool _enabled;
+        private bool _container_minimises;
         private string _notes;
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
@@ -501,6 +503,15 @@ namespace Thetis
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public bool ContainerMinimises
+        {
+            get { return _container_minimises; }
+            set
+            {
+                _container_minimises = value;
+            }
+        }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public string Notes
         {
             get { return _notes; }
@@ -616,7 +627,8 @@ namespace Thetis
                 Common.ColourToString(this.BackColor) + "|" +
                 NoTitle.ToString() + "|" +
                 MeterEnabled.ToString() + "|" +
-                Notes;
+                Notes + "|" +
+                ContainerMinimises.ToString().ToLower();
         }
         public bool TryParse(string str)
         {
@@ -627,11 +639,12 @@ namespace Thetis
             bool border = false;
             bool noTitleBar = false;
             bool enabled = true;
+            bool minimises = true;
 
             if (str != "")
             {
                 string[] tmp = str.Split('|');
-                if(tmp.Length >= 13 && tmp.Length <= 16)
+                if(tmp.Length >= 13 && tmp.Length <= 17)
                 {
                     bOk = tmp[0] != "";
                     if (bOk) ID = tmp[0];
@@ -689,6 +702,12 @@ namespace Thetis
                     if (bOk && tmp.Length > 15) // we also have the new for [2.10.3.6] notes
                     {
                         Notes = tmp[15];
+                    }
+
+                    if (bOk && tmp.Length > 16) // we also have the new for [2.10.3.6]
+                    {
+                        if (bOk) bOk = bool.TryParse(tmp[16], out minimises);
+                        if (bOk) ContainerMinimises = minimises;
                     }
                 }
             }

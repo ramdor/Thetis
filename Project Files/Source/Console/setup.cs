@@ -23858,6 +23858,7 @@ namespace Thetis
             chkContainerBorder.Enabled = bEnableControls;
             chkContainerNoTitle.Enabled = bEnableControls;
             chkContainerEnable.Enabled = bEnableControls;
+            chkContainerMinimises.Enabled = bEnableControls;
             txtContainerNotes.Enabled = bEnableControls;
             lblMMContainerBackground.Enabled = bEnableControls;
             lblMMContainerNotes.Enabled = bEnableControls;
@@ -23970,6 +23971,7 @@ namespace Thetis
             clrbtnContainerBackground.Color = MeterManager.GetContainerBackgroundColour(cci.ID);
             chkContainerNoTitle.Checked = MeterManager.ContainerNoTitleBar(cci.ID);
             chkContainerEnable.Checked = MeterManager.ContainerShow(cci.ID);
+            chkContainerMinimises.Checked = MeterManager.ContainerMinimises(cci.ID);
             txtContainerNotes.Text = MeterManager.GetContainerNotes(cci.ID);
 
             updateMeterLists();
@@ -29795,6 +29797,15 @@ namespace Thetis
                 this?.Invoke(new Action(() => updateWebImageState(state, true, id)));
             else
                 updateWebImageState(state, true, id);
+        }
+
+        private void chkContainerMinimises_CheckedChanged(object sender, EventArgs e)
+        {
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.ContainerMinimises(cci.ID, chkContainerMinimises.Checked);
+            }
         }
     }
 
