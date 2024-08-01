@@ -34,9 +34,6 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
 using RawInput_dll;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Diagnostics.Contracts;
-using System.Security.Policy;
 
 namespace Thetis
 {
@@ -19127,32 +19124,36 @@ namespace Thetis
                 CultureInfo europeanCulture = new CultureInfo("fr-FR");
                 NumberStyles numberStyle = NumberStyles.Float | NumberStyles.AllowThousands;
 
-                // Try parsing with InvariantCulture first
+                // Try parsing as an integer
                 if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _) ||
-                         int.TryParse(value, numberStyle, europeanCulture, out _))
+                    int.TryParse(value, NumberStyles.Integer, europeanCulture, out _))
                 {
                     return typeof(int);
                 }
+                // Try parsing as a float
                 else if (float.TryParse(value, numberStyle, CultureInfo.InvariantCulture, out _) ||
                          float.TryParse(value, numberStyle, europeanCulture, out _))
                 {
                     return typeof(float);
                 }
+                // Try parsing as a double
                 else if (double.TryParse(value, numberStyle, CultureInfo.InvariantCulture, out _) ||
                          double.TryParse(value, numberStyle, europeanCulture, out _))
                 {
                     return typeof(double);
                 }
+                // Try parsing as a boolean
                 else if (bool.TryParse(value, out _))
                 {
                     return typeof(bool);
                 }
+                // Default to string
                 else
                 {
                     return typeof(string);
                 }
             }
-
+            [DebuggerHidden]
             public object ConvertToType(string value, Type type)
             {
                 CultureInfo europeanCulture = new CultureInfo("fr-FR");
@@ -19764,8 +19765,7 @@ namespace Thetis
                                 {
                                     IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
                                     byte[] data = _udpClient.Receive(ref remoteEndPoint);
-                                    string receivedData = Encoding.UTF8.GetString(data);
-                                    ReceivedDataString?.Invoke(_guid, receivedData);
+                                    string receivedData = Encoding.UTF8.GetString(data);                                    
                                     sleep = false;
                                     string term = "";
                                     switch (_mmio_data[_guid].TerminatorIn)
@@ -20628,7 +20628,7 @@ namespace Thetis
                 return false;
             }
         }
-        [DebuggerHidden]
+        //[DebuggerHidden]
         private static void MultiMeterIO_ReceivedDataString(Guid guid, string dataString)
         {
             char[] charsToTrim = { ' ', '\n', '\r', '\t', '\0' };
