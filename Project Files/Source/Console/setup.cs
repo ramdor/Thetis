@@ -1874,23 +1874,6 @@ namespace Thetis
                     MessageBox.Show("There was an issue restoring the settings for MultiMeter. Please remove all meters, re-add, and restart Thetis.", "MultiMeter RestoreSettings",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
-
-                if (a.ContainsKey("multimeter_io"))
-                {
-                    bool ok = false;
-                    try
-                    {
-                        ok = MultiMeterIO.RestoreSaveData(a["multimeter_io"]);
-                    }
-                    catch
-                    {
-                    }
-                    if (!ok)
-                    {
-                        MessageBox.Show("There was an issue restoring the settings for MultiMeterIO. Existing settings will be lost.", "MultiMeterIO RestoreSaveData",
-                            MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                    }
-                }
             }
             //
 
