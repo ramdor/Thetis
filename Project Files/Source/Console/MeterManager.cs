@@ -1712,6 +1712,27 @@ namespace Thetis
                 uc.NoTitle = noTitle;
             }
         }
+        public static void ContainerMinimises(string sId, bool minimises)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return;
+                if (!_lstUCMeters.ContainsKey(sId)) return;
+
+                ucMeter uc = _lstUCMeters[sId];
+
+                if (_lstMeterDisplayForms.ContainsKey(uc.ID))
+                {
+                    frmMeterDisplay f = _lstMeterDisplayForms[uc.ID];
+
+                    if(minimises != uc.ContainerMinimises)
+                    {
+                        uc.ContainerMinimises = minimises;
+                        f.ContainerMinimises = minimises;
+                    }
+                }
+            }
+        }
         public static void EnableContainer(string sId, bool enabled)
         {
             lock (_metersLock)
@@ -1726,6 +1747,7 @@ namespace Thetis
                 if (enabled != bOldState && _lstMeterDisplayForms.ContainsKey(uc.ID))
                 {
                     frmMeterDisplay f = _lstMeterDisplayForms[uc.ID];
+                    f.FormEnabled = enabled;
 
                     if (uc.Floating)
                     {
@@ -1783,6 +1805,17 @@ namespace Thetis
 
                 ucMeter uc = _lstUCMeters[sId];
                 return uc.MeterEnabled;
+            }
+        }
+        public static bool ContainerMinimises(string sId)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return false;
+                if (!_lstUCMeters.ContainsKey(sId)) return false;
+
+                ucMeter uc = _lstUCMeters[sId];
+                return uc.ContainerMinimises;
             }
         }
         public static void ContainerNotes(string sId, string notes)

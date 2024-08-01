@@ -217,7 +217,7 @@
 	  <?if $(var.Platform) = x64 ?>
 	  <ComponentGroup Id="SkiaSharpComponents" Directory="SKIASHARP_INSTALLFOLDERx64">
 		  <Component Guid="*">
-			  <File Id="SkiaSharpDLL"
+			  <File Id="SkiaSharpLibDLL"
 					Source="$(var.FilesPath)\x64\libSkiaSharp.dll"
 					KeyPath="yes"
               />
@@ -226,7 +226,7 @@
 	  <?else ?>
 	  <ComponentGroup Id="SkiaSharpComponents" Directory="SKIASHARP_INSTALLFOLDERx86">
 		  <Component Guid="*">
-			  <File Id="SkiaSharpDLL"
+			  <File Id="SkiaSharpLibDLL"
 					Source="$(var.FilesPath)\x86\libSkiaSharp.dll"
 					KeyPath="yes"
               />
@@ -366,39 +366,51 @@
               />
 		</Component>
 		<Component Guid="*">
-			<File Id="System.Text.Encoding.CodePages"
+			<File Id="System.Text.Encoding.CodePagesDLL"
 				  Source="$(var.FilesPath)System.Text.Encoding.CodePages.dll"
 				  KeyPath="yes"
               />
 		</Component>
 		<Component Guid="*">
-			<File Id="System.Threading.Tasks.Extensions"
+			<File Id="System.Threading.Tasks.ExtensionsDLL"
 				  Source="$(var.FilesPath)System.Threading.Tasks.Extensions.dll"
 				  KeyPath="yes"
               />
 		</Component>
 		<Component Guid="*">
-			<File Id="System.ValueTuple"
+			<File Id="System.ValueTupleDLL"
 				  Source="$(var.FilesPath)System.ValueTuple.dll"
 				  KeyPath="yes"
               />
 		</Component>
 
 		<Component Guid="*">
-			<File Id="HtmlAgilityPack"
+			<File Id="HtmlAgilityPackDLL"
 				  Source="$(var.FilesPath)HtmlAgilityPack.dll"
 				  KeyPath="yes"
               />
 		</Component>
 		<Component Guid="*">
-			<File Id="SkiaSharp"
+			<File Id="SkiaSharpDLL"
 				  Source="$(var.FilesPath)SkiaSharp.dll"
 				  KeyPath="yes"
               />
 		</Component>
 		<Component Guid="*">
-			<File Id="System.Drawing.Common"
+			<File Id="System.Drawing.CommonDLL"
 				  Source="$(var.FilesPath)System.Drawing.Common.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="ExCSSDLL"
+				  Source="$(var.FilesPath)ExCSS.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="SvgDLL"
+				  Source="$(var.FilesPath)Svg.dll"
 				  KeyPath="yes"
               />
 		</Component>

@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Net.Cache;
 using SkiaSharp;
+using Svg;
 
 namespace Thetis
 {
@@ -171,7 +172,21 @@ namespace Thetis
 
                             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                             {
-                                if (response.ContentType.StartsWith("text/html", StringComparison.OrdinalIgnoreCase))
+                                string content_type = response.ContentType;
+                                if (string.IsNullOrEmpty(content_type))
+                                {
+                                    // have a guess based on url
+                                    if (url.EndsWith(".html"))
+                                        content_type = "text/html";
+                                    else if (url.EndsWith(".jpg") || url.EndsWith(".gif") || url.EndsWith(".png") || 
+                                        url.EndsWith(".webp") || url.EndsWith(".jpeg") || url.EndsWith(".bmp") || url.EndsWith(".tif") ||
+                                        url.EndsWith(".tiff"))
+                                        content_type = "image";
+                                    else if (url.EndsWith(".svgz") || url.EndsWith(".svg"))
+                                        content_type = "image/svg+xml";
+                                }
+
+                                if (content_type.StartsWith("text/html", StringComparison.OrdinalIgnoreCase))
                                 {
                                     StateChanged?.Invoke(this, new StateEventArgs(id, State.GATHERING_IMAGES));
                                     using (Stream stream = response.GetResponseStream())
@@ -204,7 +219,20 @@ namespace Thetis
                                         }
                                     }
                                 }
-                                else if (response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase))
+                                else if (content_type.StartsWith("image/svg+xml", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    StateChanged?.Invoke(this, new StateEventArgs(id, State.GATHERING_IMAGES));
+                                    using (Stream responseStream = response.GetResponseStream())
+                                    {
+                                        using (MemoryStream memoryStream = new MemoryStream())
+                                        {
+                                            responseStream.CopyTo(memoryStream);
+                                            byte[] svgData = memoryStream.ToArray();
+                                            ProcessSvgImage(svgData, store, ref imagesAdded, id);
+                                        }
+                                    }
+                                }
+                                else if (content_type.StartsWith("image", StringComparison.OrdinalIgnoreCase))
                                 {
                                     StateChanged?.Invoke(this, new StateEventArgs(id, State.GATHERING_IMAGES));
                                     using (Stream responseStream = response.GetResponseStream())
@@ -251,7 +279,7 @@ namespace Thetis
                                         }
                                     }
                                 }
-                                else if (response.ContentType.StartsWith("multipart/x-mixed-replace", StringComparison.OrdinalIgnoreCase))
+                                else if (content_type.StartsWith("multipart/x-mixed-replace", StringComparison.OrdinalIgnoreCase))
                                 {
                                     string boundary = getBoundary(response.ContentType);
                                     if (boundary != null)
@@ -432,7 +460,41 @@ namespace Thetis
             }
             Debug.Print("!!!!!!! ENDED MULTIPART");
         }
+        // Method to check if the image data is SVG
+        private bool IsSvgImage(byte[] imageData)
+        {
+            string content = Encoding.UTF8.GetString(imageData);
+            return content.Contains("<svg") && content.Contains("</svg>");
+        }
 
+        // Method to process SVG images
+        private void ProcessSvgImage(byte[] svgData, ImageStore store, ref bool imagesAdded, Guid id)
+        {
+            try
+            {
+                // Convert SVG to a raster image
+                using (MemoryStream stream = new MemoryStream(svgData))
+                {
+                    SvgDocument svgDocument = SvgDocument.Open<SvgDocument>(stream);
+                    using (Bitmap bitmap = svgDocument.Draw())
+                    {
+                        using (MemoryStream imageStream = new MemoryStream())
+                        {
+                            bitmap.Save(imageStream, System.Drawing.Imaging.ImageFormat.Png);
+                            imageStream.Position = 0;
+                            Image image = Image.FromStream(imageStream);
+                            store.AddImage(image);
+                            imagesAdded = true;
+                            StateChanged?.Invoke(this, new StateEventArgs(id, State.OK));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                StateChanged?.Invoke(this, new StateEventArgs(id, State.ERROR_IMAGE_CONVERSION_PROBLEM));
+            }
+        }
         private int findBoundary(byte[] content, int start, byte[] boundary)
         {
             for (int i = start; i <= content.Length - boundary.Length; i++)
