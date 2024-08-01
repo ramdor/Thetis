@@ -5191,16 +5191,19 @@ namespace Thetis
                     MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[DataOutMMIOGuid];
                     if (mmio == null) return;
 
+                    string data;
                     if (dragging_rotator_ele)
                     {
-                        string data = _control_string_ELE.Replace("%ELE%", ((int)dragging_rotator_degrees).ToString());
-                        mmio.EnqueueOutbound(data);
+                        data = _control_string_ELE.Replace("%ELE%", ((int)dragging_rotator_degrees).ToString("00"));                        
                     }
                     else
                     {
-                        string data = _control_string_AZ.Replace("%AZ%", ((int)dragging_rotator_degrees).ToString());
-                        mmio.EnqueueOutbound(data);
+                        data = _control_string_AZ.Replace("%AZ%", ((int)dragging_rotator_degrees).ToString("000"));
                     }
+                    data = data.Replace(@"\n", "\n"); // use @ so that it is a literal verbatim string
+                    data = data.Replace(@"\r", "\r");
+                    data = data.Replace(@"\0", "\0");
+                    mmio.EnqueueOutbound(data);
                 }
             }
             //public bool MouseDown
@@ -18942,7 +18945,7 @@ namespace Thetis
                 _type = type;
                 _ip = ip;
                 _port = port;
-                _tcpClient = new TcpClient();
+                //_tcpClient = new TcpClient();
             }
 
             public void Start()
@@ -18967,168 +18970,188 @@ namespace Thetis
 
             private void Connect()
             {
-                try
+                bool reconnect = true;
+                while (_isRunning && reconnect)
                 {
-                    _tcpClient.Connect(_ip, _port);
-                    _networkStream = _tcpClient.GetStream();
-
-                    DateTime lastTimeActive = DateTime.Now;
-                    string bufferConcat = "";
-
-                    while (_isRunning)
+                    try
                     {
-                        if (!_tcpClient.Connected)
-                        {
-                            break;
-                        }
+                        reconnect = false;
+                        _tcpClient = new TcpClient();
+                        _tcpClient.Connect(_ip, _port);
+                        _networkStream = _tcpClient.GetStream();
 
-                        bool sleep = true;
-                        bool inbound = _mmio_data[_guid].Direction == MMIODirection.IN || _mmio_data[_guid].Direction == MMIODirection.BOTH;
-                        bool outbound = _mmio_data[_guid].Direction == MMIODirection.OUT || _mmio_data[_guid].Direction == MMIODirection.BOTH;
+                        DateTime lastTimeActive = DateTime.Now;
+                        string bufferConcat = "";
 
-                        if (inbound)
+                        while (_isRunning)
                         {
-                            try
+                            if (!_tcpClient.Connected)
                             {
-                                if (_networkStream.DataAvailable)
+                                break;
+                            }
+
+                            bool sleep = true;
+                            bool inbound = _mmio_data[_guid].Direction == MMIODirection.IN || _mmio_data[_guid].Direction == MMIODirection.BOTH;
+                            bool outbound = _mmio_data[_guid].Direction == MMIODirection.OUT || _mmio_data[_guid].Direction == MMIODirection.BOTH;
+
+                            if (inbound)
+                            {
+                                try
                                 {
-                                    byte[] buffer = new byte[1024];
-                                    int bytesRead = _networkStream.Read(buffer, 0, buffer.Length);
-                                    if (bytesRead > 0)
+                                    if (_networkStream.DataAvailable)
+                                    {
+                                        byte[] buffer = new byte[1024];
+                                        int bytesRead = _networkStream.Read(buffer, 0, buffer.Length);
+                                        if (bytesRead > 0)
+                                        {
+                                            lastTimeActive = DateTime.Now;
+                                            string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                                            sleep = false;
+                                            string term = "";
+                                            switch (_mmio_data[_guid].TerminatorIn)
+                                            {
+                                                case MMIOTerminator.NONE:
+                                                    term = "";
+                                                    break;
+                                                case MMIOTerminator.CR:
+                                                    term = "\r";
+                                                    break;
+                                                case MMIOTerminator.LF:
+                                                    term = "\n";
+                                                    break;
+                                                case MMIOTerminator.CRLF:
+                                                    term = "\r\n";
+                                                    break;
+                                                case MMIOTerminator.CUSTOM:
+                                                    term = _mmio_data[_guid].CustomTerminatorParsedIn;
+                                                    break;
+                                            }
+                                            bufferConcat += receivedData;
+                                            if (string.IsNullOrEmpty(term))
+                                            {
+                                                ReceivedDataString?.Invoke(_guid, bufferConcat);
+                                                bufferConcat = "";
+                                            }
+                                            else
+                                            {
+                                                //int pos = receivedData.IndexOf(term);
+                                                int pos = bufferConcat.IndexOf(term);
+                                                while (pos > -1)
+                                                {
+                                                    ReceivedDataString?.Invoke(_guid, bufferConcat.Substring(0, pos));
+                                                    bufferConcat = bufferConcat.Substring(pos + term.Length);
+                                                    pos = bufferConcat.IndexOf(term);
+                                                }
+                                            }
+
+                                            if (bufferConcat.Length >= 4096 * 8) bufferConcat = bufferConcat.Substring(4096 * 4);
+                                        }
+                                    }
+                                }
+                                catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
+                                {
+                                    if (_tcpClient != null && !_tcpClient.Connected)
+                                        reconnect = true;
+
+                                    break;
+                                }
+                            }
+                            if (outbound)
+                            {
+                                if (!_mmio_data[_guid].OutboundQueueEmpty)
+                                {
+                                    string outData = "";
+                                    int n = 0;
+                                    string termSend = "";
+                                    switch (_mmio_data[_guid].TerminatorOut)
+                                    {
+                                        case MMIOTerminator.NONE:
+                                            termSend = "";
+                                            break;
+                                        case MMIOTerminator.CR:
+                                            termSend = "\r";
+                                            break;
+                                        case MMIOTerminator.LF:
+                                            termSend = "\n";
+                                            break;
+                                        case MMIOTerminator.CRLF:
+                                            termSend = "\r\n";
+                                            break;
+                                        case MMIOTerminator.CUSTOM:
+                                            termSend = _mmio_data[_guid].CustomTerminatorParsedOut;
+                                            break;
+                                    }
+                                    while (!_mmio_data[_guid].OutboundQueueEmpty)
+                                    {
+                                        outData += _mmio_data[_guid].DequeueOutbound() + termSend;
+                                        n++;
+                                        if (n == 20) break;
+                                    }
+                                    if (outData.Length > 0)
                                     {
                                         lastTimeActive = DateTime.Now;
-                                        string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                                         sleep = false;
-                                        string term = "";
-                                        switch (_mmio_data[_guid].TerminatorIn)
-                                        {
-                                            case MMIOTerminator.NONE:
-                                                term = "";
-                                                break;
-                                            case MMIOTerminator.CR:
-                                                term = "\r";
-                                                break;
-                                            case MMIOTerminator.LF:
-                                                term = "\n";
-                                                break;
-                                            case MMIOTerminator.CRLF:
-                                                term = "\r\n";
-                                                break;
-                                            case MMIOTerminator.CUSTOM:
-                                                term = _mmio_data[_guid].CustomTerminatorParsedIn;
-                                                break;
-                                        }
-                                        bufferConcat += receivedData;
-                                        if (string.IsNullOrEmpty(term))
-                                        {
-                                            ReceivedDataString?.Invoke(_guid, bufferConcat);
-                                            bufferConcat = "";
-                                        }
-                                        else
-                                        {
-                                            //int pos = receivedData.IndexOf(term);
-                                            int pos = bufferConcat.IndexOf(term);
-                                            while (pos > -1)
-                                            {
-                                                ReceivedDataString?.Invoke(_guid, bufferConcat.Substring(0, pos));
-                                                bufferConcat = bufferConcat.Substring(pos + term.Length);
-                                                pos = bufferConcat.IndexOf(term);
-                                            }
-                                        }
 
-                                        if (bufferConcat.Length >= 4096 * 8) bufferConcat = bufferConcat.Substring(4096 * 4);
+                                        Byte[] sendBytes = Encoding.ASCII.GetBytes(outData);
+                                        try
+                                        {
+                                            _networkStream.Write(sendBytes, 0, sendBytes.Length);
+                                            TransmittedData?.Invoke(_guid);
+                                        }
+                                        catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
+                                        {
+                                            if (_tcpClient != null && !_tcpClient.Connected)
+                                                reconnect = true;
+
+                                            break;
+                                        }
                                     }
                                 }
                             }
-                            catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
+
+                            if ((DateTime.Now - lastTimeActive).TotalMilliseconds > 5000 && _tcpClient.Connected)
                             {
-                                break;
-                            }
-                        }
-                        if (outbound)
-                        {
-                            if (!_mmio_data[_guid].OutboundQueueEmpty)
-                            {
-                                string outData = "";
-                                int n = 0;
-                                string termSend = "";
-                                switch (_mmio_data[_guid].TerminatorOut)
+                                Byte[] sendBytes = Encoding.ASCII.GetBytes("\0");
+                                try
                                 {
-                                    case MMIOTerminator.NONE:
-                                        termSend = "";
-                                        break;
-                                    case MMIOTerminator.CR:
-                                        termSend = "\r";
-                                        break;
-                                    case MMIOTerminator.LF:
-                                        termSend = "\n";
-                                        break;
-                                    case MMIOTerminator.CRLF:
-                                        termSend = "\r\n";
-                                        break;
-                                    case MMIOTerminator.CUSTOM:
-                                        termSend = _mmio_data[_guid].CustomTerminatorParsedOut;
-                                        break;
-                                }
-                                while (!_mmio_data[_guid].OutboundQueueEmpty)
-                                {
-                                    outData += _mmio_data[_guid].DequeueOutbound() + termSend;
-                                    n++;
-                                    if (n == 20) break;
-                                }
-                                if (outData.Length > 0)
-                                {
+                                    _networkStream.Write(sendBytes, 0, sendBytes.Length);
                                     lastTimeActive = DateTime.Now;
-                                    sleep = false;
+                                }
+                                catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
+                                {
+                                    if (_tcpClient != null && !_tcpClient.Connected)
+                                        reconnect = true;
 
-                                    Byte[] sendBytes = Encoding.ASCII.GetBytes(outData);
-                                    try
-                                    {
-                                        _networkStream.Write(sendBytes, 0, sendBytes.Length);
-                                        TransmittedData?.Invoke(_guid);
-                                    }
-                                    catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
-                                    {
-                                        break;
-                                    }
+                                    break;
                                 }
                             }
-                        }
 
-                        if ((DateTime.Now - lastTimeActive).TotalMilliseconds > 5000 && _tcpClient.Connected)
-                        {
-                            Byte[] sendBytes = Encoding.ASCII.GetBytes("\0");
-                            try
-                            {
-                                _networkStream.Write(sendBytes, 0, sendBytes.Length);
-                                lastTimeActive = DateTime.Now;
-                            }
-                            catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
-                            {
-                                break;
-                            }
+                            if (sleep)
+                                Thread.Sleep(50);
+                            else
+                                Thread.Sleep(1);
                         }
-
-                        if (sleep)
-                            Thread.Sleep(50);
-                        else
-                            Thread.Sleep(1);
                     }
-                }
-                catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
-                {
-                    // Handle connection issues
-                }
-                catch (Exception ex)
-                {
-                    Debug.Print($">>>>>>   Exception in client {_guid}: {ex.Message}");
-                }
-                finally
-                {
-                    if (_tcpClient != null)
+                    catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                     {
-                        _tcpClient.Close();
+                        if (_tcpClient != null && !_tcpClient.Connected)
+                            reconnect = true;
                     }
+                    catch (Exception ex)
+                    {
+                        if (_tcpClient != null && !_tcpClient.Connected)
+                            reconnect = true;
+                    }
+                    finally
+                    {
+                        if (_tcpClient != null)
+                        {
+                            _tcpClient.Close();
+                        }
+                    }
+
+                    if (reconnect)
+                        Thread.Sleep(100);
                 }
             }
         }
