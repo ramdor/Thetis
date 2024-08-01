@@ -11276,7 +11276,7 @@ namespace Thetis
                     }
                 }
             }
-            public string MeterGroupID(MeterType mt)
+            public string MeterGroupID(MeterType mt, int order = -1)
             {
                 lock (_meterItemsLock)
                 {
@@ -11286,7 +11286,7 @@ namespace Thetis
                     foreach (KeyValuePair<string, clsMeterItem> kvp in items)
                     {
                         clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null && ig.MeterType == mt) return ig.ID;
+                        if (ig != null && ig.MeterType == mt && (order == -1 || ig.Order == order)) return ig.ID;
                     }
 
                     return "";
