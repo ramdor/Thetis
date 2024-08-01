@@ -17,12 +17,37 @@ namespace Thetis
 {
     public class ImageFetcher
     {
+        public enum State
+        {
+            OK = 0,
+            ERROR_NO_SUITABLE_IMAGE,
+            ERROR_URL_ISSUE,
+            ERROR_IMAGE_CONVERSION_PROBLEM,
+            WAITING,
+            GATHERING_IMAGES,
+
+            IDLE = 99
+        }
+
         private readonly ConcurrentDictionary<Guid, ImageStore> _image_stores;
         private readonly ConcurrentDictionary<Guid, Thread> _threads;
         private readonly ConcurrentDictionary<Guid, ManualResetEvent> _reset_events;
         private readonly ConcurrentDictionary<Guid, int> _timeouts;
 
+        public class StateEventArgs : EventArgs
+        {
+            public Guid Guid { get; }
+            public State WebImageState { get; }
+
+            public StateEventArgs(Guid guid, State state)
+            {
+                Guid = guid;
+                WebImageState = state;
+            }
+        }
+
         public event EventHandler<Guid> ImagesObtained;
+        public event EventHandler<StateEventArgs> StateChanged;
 
         public ImageFetcher()
         {
@@ -32,12 +57,12 @@ namespace Thetis
             _timeouts = new ConcurrentDictionary<Guid, int>();
         }        
 
-        public Guid RegisterURL(string url, int timeout_secs, int image_limit)
+        public Guid RegisterURL(string url, int timeout_secs, int image_limit, bool file)
         {
             Guid id = Guid.NewGuid();
             ImageStore store = new ImageStore(image_limit);
             ManualResetEvent reset_event = new ManualResetEvent(false);
-            Thread thread = new Thread(() => fetch_images(url, store, reset_event, id));
+            Thread thread = new Thread(() => fetch_images(url, store, reset_event, id, file));
 
             if (_image_stores.TryAdd(id, store) &&
                 _threads.TryAdd(id, thread) &&
@@ -102,7 +127,7 @@ namespace Thetis
         }
         public void StopFetching(Guid id)
         {
-            Debug.Print("!!!!!!! STOPFETCHING :" + id.ToString());
+            Debug.Print("!!!!!!! STOPFETCHING : " + id.ToString());
             if (_reset_events.TryGetValue(id, out ManualResetEvent reset_event))
             {
                 reset_event.Set();  // Signal the thread to stop
@@ -126,7 +151,7 @@ namespace Thetis
             Debug.Print("!!!!!!! SHUTDOWN COMPLETE");
         }
 
-        private void fetch_images(string url, ImageStore store, ManualResetEvent reset_event, Guid id)
+        private void fetch_images(string url, ImageStore store, ManualResetEvent reset_event, Guid id, bool file)
         {
             try
             {
@@ -137,97 +162,149 @@ namespace Thetis
                     bool imagesAdded = false;                    
                     try
                     {
-                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                        request.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
-
-                        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                        StateChanged?.Invoke(this, new StateEventArgs(id, State.IDLE));
+                        if (!file)
                         {
-                            if (response.ContentType.StartsWith("text/html", StringComparison.OrdinalIgnoreCase))
+                            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                            request.Timeout = 2000;
+                            request.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
+
+                            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                             {
-                                using (Stream stream = response.GetResponseStream())
-                                using (StreamReader reader = new StreamReader(stream))
+                                if (response.ContentType.StartsWith("text/html", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    string html = reader.ReadToEnd();
-                                    List<string> imageUrls = ExtractImageUrls(html, url);
-
-                                    foreach (string imageUrl in imageUrls)
+                                    StateChanged?.Invoke(this, new StateEventArgs(id, State.GATHERING_IMAGES));
+                                    using (Stream stream = response.GetResponseStream())
+                                    using (StreamReader reader = new StreamReader(stream))
                                     {
-                                        try
+                                        string html = reader.ReadToEnd();
+                                        List<string> imageUrls = ExtractImageUrls(html, url);
+
+                                        foreach (string imageUrl in imageUrls)
                                         {
-                                            using (WebClient webClient = new WebClient())
+                                            try
                                             {
-                                                byte[] imageData = webClient.DownloadData(imageUrl);
-                                                using (MemoryStream imageStream = new MemoryStream(imageData))
+                                                using (WebClient webClient = new WebClient())
                                                 {
-                                                    Image image = Image.FromStream(imageStream);
-                                                    bool full = store.AddImage(image);
-                                                    imagesAdded = true;
-                                                    if (full) break;
-                                                }
-                                            }
-                                        }
-                                        catch
-                                        {
-                                        }
-                                    }
-                                }
-                            }
-                            else if (response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase))
-                            {
-                                using (Stream responseStream = response.GetResponseStream())
-                                {
-                                    // Copy the response stream to a MemoryStream
-                                    using (MemoryStream memoryStream = new MemoryStream())
-                                    {
-                                        responseStream.CopyTo(memoryStream);
-
-                                        // Reset the position of the MemoryStream
-                                        memoryStream.Position = 0;
-
-                                        // Attempt to decode with SkiaSharp
-                                        SKBitmap skBitmap = SKBitmap.Decode(memoryStream);
-
-                                        if (skBitmap != null)
-                                        {
-                                            // Convert SKBitmap to System.Drawing.Image
-                                            using (SKImage skImage = SKImage.FromBitmap(skBitmap))
-                                            using (SKData skData = skImage.Encode(SKEncodedImageFormat.Png, 100))
-                                            {
-                                                byte[] imageData = skData.ToArray();
-
-                                                using (MemoryStream ms = new MemoryStream(imageData))
-                                                {
-                                                    try
+                                                    byte[] imageData = webClient.DownloadData(imageUrl);
+                                                    using (MemoryStream imageStream = new MemoryStream(imageData))
                                                     {
-                                                        Image image = Image.FromStream(ms);
-                                                        store.AddImage(image);
+                                                        Image image = Image.FromStream(imageStream);
+                                                        bool full = store.AddImage(image);
                                                         imagesAdded = true;
-                                                    }
-                                                    catch (Exception ex)
-                                                    {
+                                                        if (full) break;
+                                                        StateChanged?.Invoke(this, new StateEventArgs(id, State.OK));
                                                     }
                                                 }
                                             }
-                                        }
-                                        else
-                                        {
+                                            catch
+                                            {
+                                                StateChanged?.Invoke(this, new StateEventArgs(id, State.ERROR_IMAGE_CONVERSION_PROBLEM));
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            else if (response.ContentType.StartsWith("multipart/x-mixed-replace", StringComparison.OrdinalIgnoreCase))
-                            {
-                                string boundary = getBoundary(response.ContentType);
-                                if (boundary != null)
+                                else if (response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    ProcessMultipartContent(response.GetResponseStream(), boundary, store, ref imagesAdded, reset_event);
+                                    StateChanged?.Invoke(this, new StateEventArgs(id, State.GATHERING_IMAGES));
+                                    using (Stream responseStream = response.GetResponseStream())
+                                    {
+                                        // Copy the response stream to a MemoryStream
+                                        using (MemoryStream memoryStream = new MemoryStream())
+                                        {
+                                            responseStream.CopyTo(memoryStream);
+
+                                            // Reset the position of the MemoryStream
+                                            memoryStream.Position = 0;
+
+                                            // Attempt to decode with SkiaSharp
+                                            SKBitmap skBitmap = SKBitmap.Decode(memoryStream);
+
+                                            if (skBitmap != null)
+                                            {
+                                                // Convert SKBitmap to System.Drawing.Image
+                                                using (SKImage skImage = SKImage.FromBitmap(skBitmap))
+                                                using (SKData skData = skImage.Encode(SKEncodedImageFormat.Png, 100))
+                                                {
+                                                    byte[] imageData = skData.ToArray();
+
+                                                    using (MemoryStream ms = new MemoryStream(imageData))
+                                                    {
+                                                        try
+                                                        {
+                                                            Image image = Image.FromStream(ms);
+                                                            store.AddImage(image);
+                                                            imagesAdded = true;
+                                                            StateChanged?.Invoke(this, new StateEventArgs(id, State.OK));
+                                                        }
+                                                        catch (Exception ex)
+                                                        {
+                                                            StateChanged?.Invoke(this, new StateEventArgs(id, State.ERROR_IMAGE_CONVERSION_PROBLEM));
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                StateChanged?.Invoke(this, new StateEventArgs(id, State.ERROR_IMAGE_CONVERSION_PROBLEM));
+                                            }
+                                        }
+                                    }
                                 }
+                                else if (response.ContentType.StartsWith("multipart/x-mixed-replace", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    string boundary = getBoundary(response.ContentType);
+                                    if (boundary != null)
+                                    {
+                                        ProcessMultipartContent(response.GetResponseStream(), boundary, store, ref imagesAdded, reset_event, id);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // file
+                            if(File.Exists(url))
+                            {
+                                SKBitmap skBitmap = SKBitmap.Decode(url);
+                                if(skBitmap != null)
+                                {
+                                    using (SKImage skImage = SKImage.FromBitmap(skBitmap))
+                                    using (SKData skData = skImage.Encode(SKEncodedImageFormat.Png, 100))
+                                    {
+                                        byte[] imageData = skData.ToArray();
+
+                                        using (MemoryStream ms = new MemoryStream(imageData))
+                                        {
+                                            try
+                                            {
+                                                Image image = Image.FromStream(ms);
+                                                store.AddImage(image);
+                                                imagesAdded = true;
+                                                StateChanged?.Invoke(this, new StateEventArgs(id, State.OK));
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                StateChanged?.Invoke(this, new StateEventArgs(id, State.ERROR_IMAGE_CONVERSION_PROBLEM));
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    StateChanged?.Invoke(this, new StateEventArgs(id, State.ERROR_IMAGE_CONVERSION_PROBLEM));
+                                }
+                            }
+                            else
+                            {
+                                StateChanged?.Invoke(this, new StateEventArgs(id, State.ERROR_URL_ISSUE));
                             }
                         }
                     }
                     catch
                     {
                         // Handle exceptions (e.g., network errors)
+                        StateChanged?.Invoke(this, new StateEventArgs(id, State.ERROR_URL_ISSUE));
                     }
 
                     if (imagesAdded)
@@ -235,7 +312,8 @@ namespace Thetis
                         OnImagesObtained(id);
                     }
 
-                    // Wait for the interval or stop signal                    
+                    // Wait for the interval or stop signal
+                    StateChanged?.Invoke(this, new StateEventArgs(id, State.WAITING));
                     if (reset_event.WaitOne(timeout * 1000)) // Convert seconds to milliseconds
                     {
                         //check if _timeout is the same, if so break. It will be different if we have signaled
@@ -252,11 +330,12 @@ namespace Thetis
             }
             finally
             {
+                StateChanged?.Invoke(this, new StateEventArgs(id, State.IDLE));
                 cleanupResources(id);
             }
             Debug.Print("!!!!!!! ENDED");
-        }
-        private void ProcessMultipartContent(Stream stream, string boundary, ImageStore store, ref bool imagesAdded, ManualResetEvent reset_event)
+        }        
+        private void ProcessMultipartContent(Stream stream, string boundary, ImageStore store, ref bool imagesAdded, ManualResetEvent reset_event, Guid id)
         {
             byte[] boundaryBytes = Encoding.UTF8.GetBytes("--" + boundary);
             byte[] buffer = new byte[8192];
@@ -265,6 +344,8 @@ namespace Thetis
             int boundaryLength = boundaryBytes.Length;
             MemoryStream contentStream = new MemoryStream();
             bool running = true;
+
+            StateChanged?.Invoke(this, new StateEventArgs(id, State.GATHERING_IMAGES));
 
             while (running && (bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
             {
@@ -322,7 +403,7 @@ namespace Thetis
                                 Image image = Image.FromStream(imageStream, true, true);
                                 bool full = store.AddImage(image);
                                 imagesAdded = true;
-                                
+                                StateChanged?.Invoke(this, new StateEventArgs(id, State.OK));
                                 if (full)
                                 {
                                     running = false;
@@ -333,6 +414,7 @@ namespace Thetis
                         catch (Exception ex)
                         {
                             //Debug.Print("Exception: " + ex.Message);
+                            StateChanged?.Invoke(this, new StateEventArgs(id, State.ERROR_IMAGE_CONVERSION_PROBLEM));
                             running = false;
                             break;
                         }

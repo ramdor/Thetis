@@ -24550,6 +24550,7 @@ namespace Thetis
                 chkWebImage_fade_rx.Checked = igs.FadeOnRx;
                 chkWebImage_fade_tx.Checked = igs.FadeOnTx;
                 txtWebImage_url.Text = igs.Text1;
+                updateWebImageState((ImageFetcher.State)igs.HistoryDuration);
             }
             else if (mt == MeterType.ROTATOR)
             {
@@ -29760,9 +29761,61 @@ namespace Thetis
                 "https://www.hamqsl.com/solarsystem.php"
             };
 
-        txtWebImage_url.Text = hamqsl_urls[comboWebImage_HamQsl.SelectedIndex - 1];
+            txtWebImage_url.Text = hamqsl_urls[comboWebImage_HamQsl.SelectedIndex - 1];
 
             comboWebImage_HamQsl.SelectedIndex = 0;
+        }
+        private void updateWebImageState(ImageFetcher.State state)
+        {
+            string txt;
+
+            switch (state)
+            {
+                case ImageFetcher.State.IDLE:
+                    txt = "idle";
+                    break;
+                case ImageFetcher.State.OK:
+                    txt = "ok";
+                    break;
+                case ImageFetcher.State.ERROR_URL_ISSUE:
+                    txt = "url issue";
+                    break;
+                case ImageFetcher.State.ERROR_IMAGE_CONVERSION_PROBLEM:
+                    txt = "bad image";
+                    break;
+                case ImageFetcher.State.ERROR_NO_SUITABLE_IMAGE:
+                    txt = "no image";
+                    break;
+                case ImageFetcher.State.WAITING:
+                    txt = "waiting";
+                    break;
+                case ImageFetcher.State.GATHERING_IMAGES:
+                    txt = "gathering";
+                    break;
+                default:
+                    txt = "";
+                    break;
+            }
+            if (lblWebImage_state.InvokeRequired)
+                lblWebImage_state?.Invoke(new Action(() => lblWebImage_state.Text = txt));
+            else
+                lblWebImage_state.Text = txt;
+        }
+        public void SetWebImageState(string id, ImageFetcher.State state)
+        {
+            if (initializing) return;
+            if (lstMetersInUse == null) return;
+            if (!lstMetersInUse.Visible) return;
+
+            string mgID = meterItemGroupIDfromSelected();
+            if (mgID == "") return;
+            if (mgID != id) return;
+
+            MeterType mt = meterItemGroupTypefromSelected();
+            if (mt == MeterType.NONE) return;
+            if (mt != MeterType.WEB_IMAGE) return;
+
+            updateWebImageState(state);
         }
     }
 
