@@ -16,6 +16,8 @@ namespace Thetis
         private Console _console;
         private int _rx;
         private string _id;
+        private bool _container_minimises = true;
+        private bool _is_enabled = true;
 
         public frmMeterDisplay(Console c, int rx)
         {
@@ -25,7 +27,26 @@ namespace Thetis
             _console = c;
             _rx = rx;
 
+            _console.WindowStateChangedHandlers += OnWindowStateChanged;
+
             setTitle();
+        }
+        public bool FormEnabled
+        {
+            get { return _is_enabled; }
+            set { _is_enabled = value; }
+        }
+        public bool ContainerMinimises
+        {
+            get { return _container_minimises; }
+            set { _container_minimises = value; }
+        }
+        private void OnWindowStateChanged(FormWindowState state)
+        {
+            if (_container_minimises && state == FormWindowState.Minimized)
+                this.Hide();
+            else
+                if(_is_enabled) this.Show();
         }
         private void setTitle()
         {
@@ -58,6 +79,9 @@ namespace Thetis
 
         public void TakeOwner(ucMeter m)
         {
+            _container_minimises = m.ContainerMinimises;
+            _is_enabled = m.MeterEnabled;
+
             m.Parent = this;
             m.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
             m.Location = new Point(0, 0);            

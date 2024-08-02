@@ -3877,6 +3877,7 @@
             this.chkLedIndicator_FadeOnTX = new System.Windows.Forms.CheckBoxTS();
             this.chkLedIndicator_FadeOnRX = new System.Windows.Forms.CheckBoxTS();
             this.grpWebImage = new System.Windows.Forms.GroupBoxTS();
+            this.lblWebImage_state = new System.Windows.Forms.LabelTS();
             this.groupBoxTS40 = new System.Windows.Forms.GroupBoxTS();
             this.btnWebImage_hamqsl_donate = new System.Windows.Forms.ButtonTS();
             this.comboWebImage_HamQsl = new System.Windows.Forms.ComboBoxTS();
@@ -3886,7 +3887,7 @@
             this.labelTS235 = new System.Windows.Forms.LabelTS();
             this.chkWebImage_fade_tx = new System.Windows.Forms.CheckBoxTS();
             this.chkWebImage_fade_rx = new System.Windows.Forms.CheckBoxTS();
-            this.lblWebImage_state = new System.Windows.Forms.LabelTS();
+            this.chkContainerMinimises = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -51248,6 +51249,7 @@
             // 
             // grpMultiMeterHolder
             // 
+            this.grpMultiMeterHolder.Controls.Add(this.chkContainerMinimises);
             this.grpMultiMeterHolder.Controls.Add(this.lblMMContainerNotes);
             this.grpMultiMeterHolder.Controls.Add(this.txtContainerNotes);
             this.grpMultiMeterHolder.Controls.Add(this.chkContainerEnable);
@@ -61766,6 +61768,16 @@
             this.grpWebImage.Text = "Web Image";
             this.grpWebImage.Visible = false;
             // 
+            // lblWebImage_state
+            // 
+            this.lblWebImage_state.Image = null;
+            this.lblWebImage_state.Location = new System.Drawing.Point(220, 108);
+            this.lblWebImage_state.Name = "lblWebImage_state";
+            this.lblWebImage_state.Size = new System.Drawing.Size(93, 13);
+            this.lblWebImage_state.TabIndex = 142;
+            this.lblWebImage_state.Text = "state";
+            this.lblWebImage_state.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // groupBoxTS40
             // 
             this.groupBoxTS40.Controls.Add(this.btnWebImage_hamqsl_donate);
@@ -61887,15 +61899,19 @@
             this.chkWebImage_fade_rx.UseVisualStyleBackColor = true;
             this.chkWebImage_fade_rx.CheckedChanged += new System.EventHandler(this.chkWebImage_fade_rx_CheckedChanged);
             // 
-            // lblWebImage_state
+            // chkContainerMinimises
             // 
-            this.lblWebImage_state.Image = null;
-            this.lblWebImage_state.Location = new System.Drawing.Point(220, 108);
-            this.lblWebImage_state.Name = "lblWebImage_state";
-            this.lblWebImage_state.Size = new System.Drawing.Size(93, 13);
-            this.lblWebImage_state.TabIndex = 142;
-            this.lblWebImage_state.Text = "state";
-            this.lblWebImage_state.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.chkContainerMinimises.AutoSize = true;
+            this.chkContainerMinimises.Image = null;
+            this.chkContainerMinimises.Location = new System.Drawing.Point(302, 122);
+            this.chkContainerMinimises.Name = "chkContainerMinimises";
+            this.chkContainerMinimises.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkContainerMinimises.Size = new System.Drawing.Size(66, 17);
+            this.chkContainerMinimises.TabIndex = 108;
+            this.chkContainerMinimises.Text = "Minimise";
+            this.toolTip1.SetToolTip(this.chkContainerMinimises, "Container will minimise if main window is minimised");
+            this.chkContainerMinimises.UseVisualStyleBackColor = true;
+            this.chkContainerMinimises.CheckedChanged += new System.EventHandler(this.chkContainerMinimises_CheckedChanged);
             // 
             // Setup
             // 
@@ -67028,5 +67044,6 @@
         private ButtonTS btnWebImage_hamqsl_donate;
         private ComboBoxTS comboWebImage_HamQsl;
         private LabelTS lblWebImage_state;
+        private CheckBoxTS chkContainerMinimises;
     }
 }
