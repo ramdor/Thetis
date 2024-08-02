@@ -24249,11 +24249,20 @@ namespace Thetis
                 igs.LowColor = clrbtnMeterItemRotatorBeamWidth.Color;
                 igs.HighColor = clrbtnMeterItemRotatorText.Color;
                 igs.ShowHistory = chkMeterItemRotatorCardinals.Checked;
-                igs.ShowSubMarker = chkMeterItemRotatorElevation.Checked;
                 igs.FadeOnRx = chkMeterItemFadeOnRxRotator.Checked;
                 igs.FadeOnTx = chkMeterItemFadeOnTxRotator.Checked;
                 igs.DarkMode = chkMeterItemDarkModeRotator.Checked;
                 igs.AttackRatio = (float)nudMeterItemRotatorBeamWidth.Value;
+                igs.EyeScale = (float)nudMeterItemRotator_padding.Value;
+
+                //
+                if (radMeterItemRotator_show_az.Checked)
+                    igs.HistoryDuration = (int)MeterManager.clsRotatorItem.RotatorMode.AZ;
+                else if (radMeterItemRotator_show_ele.Checked)
+                    igs.HistoryDuration = (int)MeterManager.clsRotatorItem.RotatorMode.ELE;
+                else if (radMeterItemRotator_show_both.Checked)
+                    igs.HistoryDuration = (int)MeterManager.clsRotatorItem.RotatorMode.BOTH;
+                //
 
                 igs.ShowType = chkMeterItemRotatorAllowControl.Checked;
                 igs.HistoryColor = clrbtnMeterItemRotatorControlColour.Color;
@@ -24565,11 +24574,11 @@ namespace Thetis
                 clrbtnMeterItemRotatorBeamWidth.Color = igs.LowColor;
                 clrbtnMeterItemRotatorText.Color = igs.HighColor;
                 chkMeterItemRotatorCardinals.Checked = igs.ShowHistory;
-                chkMeterItemRotatorElevation.Checked = igs.ShowSubMarker;
                 chkMeterItemFadeOnRxRotator.Checked = igs.FadeOnRx;
                 chkMeterItemFadeOnTxRotator.Checked = igs.FadeOnTx;
                 chkMeterItemDarkModeRotator.Checked = igs.DarkMode;
                 nudMeterItemRotatorBeamWidth.Value = (decimal)igs.AttackRatio;
+                nudMeterItemRotator_padding.Value = (decimal)igs.EyeScale;
                 updateShowBeamWidthControls();
 
                 chkMeterItemRotatorAllowControl.Checked = igs.ShowType;
@@ -24577,6 +24586,23 @@ namespace Thetis
                 txtMeterItemRotatorAZcommand.Text = igs.Text1;
                 txtMeterItemRotatorELEcommand.Text = igs.Text2;
                 updateRotatorControlControls();
+
+                //
+                switch ((MeterManager.clsRotatorItem.RotatorMode)igs.HistoryDuration)
+                {
+                    case MeterManager.clsRotatorItem.RotatorMode.AZ:
+                        radMeterItemRotator_show_az.Checked = true;
+                        break;
+                    case MeterManager.clsRotatorItem.RotatorMode.ELE:
+                        radMeterItemRotator_show_ele.Checked = true;
+                        break;
+                    case MeterManager.clsRotatorItem.RotatorMode.BOTH:
+                        radMeterItemRotator_show_both.Checked = true;
+                        break;
+                    default:
+                        break;
+                }
+                //
 
                 Guid guid = igs.GetMMIOGuid(2);
                 if (MultiMeterIO.Data.ContainsKey(guid))
@@ -28227,6 +28253,7 @@ namespace Thetis
                 pnlMMIO_network_txdata.BackColor = Color.LightGray;
                 pnlMMIO_network_active.BackColor = Color.LightGray;
                 lstMMIO_network_variables.Items.Clear();
+                picMutliMeterIO_udp_out_warning.Visible = false;
                 return;
             }
 
@@ -28737,6 +28764,7 @@ namespace Thetis
                     btnMMIO_network_ip_port_ip4.Enabled = true;
 
                     txtMMIO_network_udp_endpoint_ip_port.Text = "";
+                    picMutliMeterIO_udp_out_warning.Visible = false;
 
                     break;
                 case MultiMeterIO.MMIODirection.OUT:
@@ -28765,6 +28793,7 @@ namespace Thetis
                         lblMMIO_network_ip_port.Enabled = false;
                         txtMMIO_network_ip_port.Enabled = false;
                         btnMMIO_network_ip_port_ip4.Enabled = false;
+                        picMutliMeterIO_udp_out_warning.Visible = true;
 
                         txtMMIO_network_udp_endpoint_ip_port.Text = mmio.UdpEndpointIP + ":" + mmio.UdpEndpointPort.ToString();
                     }
@@ -28773,6 +28802,7 @@ namespace Thetis
                         lblMMIO_network_ip_port.Enabled = true;
                         txtMMIO_network_ip_port.Enabled = true;
                         btnMMIO_network_ip_port_ip4.Enabled = true;
+                        picMutliMeterIO_udp_out_warning.Visible = false;
 
                         txtMMIO_network_udp_endpoint_ip_port.Text = "";
                     }
@@ -28802,6 +28832,7 @@ namespace Thetis
                     lblMMIO_network_ip_port.Enabled = true;
                     txtMMIO_network_ip_port.Enabled = true;
                     btnMMIO_network_ip_port_ip4.Enabled = true;
+                    picMutliMeterIO_udp_out_warning.Visible = false;
 
                     if (mmio.Type == MultiMeterIO.MMIOType.UDP_LISTENER)
                         txtMMIO_network_udp_endpoint_ip_port.Text = mmio.UdpEndpointIP + ":" + mmio.UdpEndpointPort.ToString();
@@ -29398,11 +29429,6 @@ namespace Thetis
         }        
 
         //rotator
-        private void chkMeterItemRotatorElevation_CheckedChanged(object sender, EventArgs e)
-        {
-            updateMeterType();
-        }
-
         private void chkMeterItemRotatorCardinals_CheckedChanged(object sender, EventArgs e)
         {
             updateMeterType();
@@ -29483,7 +29509,6 @@ namespace Thetis
         {
             mmioSetupVariable(1);
         }
-
         private void btnTextOverlay_copyfonts_Click(object sender, EventArgs e)
         {
             _textOverlayFont2 = new Font(_textOverlayFont1.FontFamily, _textOverlayFont1.Size, _textOverlayFont1.Style);
@@ -29830,6 +29855,39 @@ namespace Thetis
             {
                 MeterManager.ContainerMinimises(cci.ID, chkContainerMinimises.Checked);
             }
+        }
+
+        private void radMeterItemRotator_show_az_CheckedChanged(object sender, EventArgs e)
+        {
+            // only do the checked state for rad controls, as all the others in the group will fire as well
+            if (radMeterItemRotator_show_az.Checked)
+            {
+                updateMeterType();
+                nudMeterItemRotator_padding.Enabled = true;
+            }
+        }
+
+        private void radMeterItemRotator_show_ele_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radMeterItemRotator_show_ele.Checked)
+            {
+                updateMeterType();
+                nudMeterItemRotator_padding.Enabled = true;
+            }
+        }
+
+        private void radMeterItemRotator_show_both_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radMeterItemRotator_show_both.Checked)
+            {
+                updateMeterType();
+                nudMeterItemRotator_padding.Enabled = false;
+            }
+        }
+
+        private void nudMeterItemRotator_padding_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 

@@ -298,6 +298,18 @@ This causes issues for Thetis which can be seen when the midi capture
 is flickering when a knob is turned for example. Eventually 14 bit messages
 will be handled, but as a stop gap they can be ignored.</value>
   </data>
+  <data name="picMutliMeterIO_udp_out_warning.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWxJREFUOE+l
+        kc0rRGEYxU/ZMJmUSNL4D2wViWyVHRt/AQsrC7NQ1orMAluLUXaWSmahuT4ym/mgcd0hauxoPnzEdbnX
+        e9479M7tZsY49aun85zzdHsvflN0DdA1bAjWOTes5D5wn4RFODek8CyQjUP7MPBOxByn9ycFWoBUDCik
+        UXau4BDO9LirS8FAE0YG5NeULANmdAXO5hIczsIrcsdMTQ2L4PUxQqUMbvklwpJwfjxDnjtmako/aIZx
+        CNvOwfYeosfd3jYwMdop874a6pe/e8zU8cyi9xDhjpmd1ZDs+MqItePmBOZ3iXR1uKgeM8wO9rVVmop6
+        uuUDh1+yKKil6Sk4MwLVY0Zk5yNzvZW2otwRkE+gqBaIeBeJ179LoMxOlZYXgQsNW58GLG8h2Ori9Zll
+        h90fne4CDym8esNErKseW4UddqUmx+XbZKxLvPmFIwsufjt2RDfNGzyCp3P/YD2wyxs8xOGfwPkC0OWy
+        xBfi75wAAAAASUVORK5CYII=
+</value>
+  </data>
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>162, 17</value>
   </metadata>

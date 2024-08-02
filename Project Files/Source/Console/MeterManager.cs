@@ -5417,11 +5417,18 @@ namespace Thetis
         }
         internal class clsRotatorItem : clsMeterItem
         {
+            public enum RotatorMode
+            {
+                AZ = 0,
+                ELE = 1,
+                BOTH = 2
+            }
             private string _fontFamily;
             private FontStyle _fontStyle;
             private float _fontSize;
             private bool _showValue;
             private bool _darkMode;
+            private RotatorMode _rotator_mode;
 
             private Guid _data_out_mmio_guid;
 
@@ -5444,10 +5451,11 @@ namespace Thetis
             private System.Drawing.Color _background_colour;
             private System.Drawing.Color _control_colour;
 
-            private bool _show_elevation;
+            //private bool _show_elevation;
             private bool _show_cardinals;
             private bool _show_beam_width;
             private float _beam_width;
+            private float _padding;
 
             public clsRotatorItem()
             {
@@ -5455,11 +5463,13 @@ namespace Thetis
                 _fontStyle = FontStyle.Regular;
                 _fontSize = 18f;
                 _showValue = true;
-                _show_elevation = false;
+                //_show_elevation = false;
                 _show_cardinals = false;
                 _show_beam_width = false;
                 _beam_width = 30f;
                 _darkMode = false;
+                _rotator_mode = RotatorMode.BOTH;
+                _padding = 0.5f;
 
                 _data_out_mmio_guid = Guid.Empty;
 
@@ -5484,6 +5494,11 @@ namespace Thetis
                 ReadingSource = Reading.AZ;
                 UpdateInterval = 1000;
                 StoreSettings = false;
+            }
+            public RotatorMode ViewMode
+            {
+                get { return _rotator_mode; }
+                set { _rotator_mode = value; }
             }
             public Guid DataOutMMIOGuid
             {
@@ -5555,6 +5570,14 @@ namespace Thetis
             //    get { return _mouseMovePoint; }
             //    set { _mouseMovePoint = value; }
             //}
+            public float Padding
+            {
+                get { return _padding; }
+                set {
+                    if (value < 0.001f) value = 0.001f;
+                    _padding = value; 
+                }
+            }
             public bool DarkMode
             {
                 get { return _darkMode; }
@@ -5565,11 +5588,11 @@ namespace Thetis
                 get { return _beam_width; }
                 set { _beam_width = value; }
             }
-            public bool ShowElevation
-            {
-                get { return _show_elevation; }
-                set { _show_elevation = value; }
-            }
+            //public bool ShowElevation
+            //{
+            //    get { return _show_elevation; }
+            //    set { _show_elevation = value; }
+            //}
             public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
             {
                 // get latest reading
@@ -8520,7 +8543,7 @@ namespace Thetis
                     case MeterType.LED: AddLed(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
                     case MeterType.WEB_IMAGE: AddWebImage(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
                     case MeterType.DATA_OUT: AddDataOut(nDelay, 0, out bBottom, restoreIg); break;
-                    case MeterType.ROTATOR: AddRotator(nDelay, 0, out bBottom, 0.5f, restoreIg); break;
+                    case MeterType.ROTATOR: AddRotator(nDelay, 0, out bBottom, restoreIg); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
@@ -9018,13 +9041,21 @@ namespace Thetis
 
                 return cb.ID;
             }
-            public string AddRotator(int nMSupdate, float fTop, out float fBottom, float fSize, clsItemGroup restoreIg = null)
+            public string AddRotator(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
                 if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
+                float fSize = 1f;
+
+                //az
                 clsRotatorItem ri = new clsRotatorItem();
+                if (ri.ViewMode == clsRotatorItem.RotatorMode.BOTH)// use constructor value
+                    fSize = 0.5f;
+                else
+                    fSize = 1f;
+                ri.Padding = fSize;
                 ri.ParentID = ig.ID;
                 ri.Primary = true;
                 ri.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
@@ -9033,10 +9064,11 @@ namespace Thetis
                 ri.MMIOVariableIndex = 0;
                 ri.ReadingSource = Reading.AZ;
                 ri.UpdateInterval = 100;
-                addMeterItem(ri);
+                addMeterItem(ri);                                   
 
-                //this is not renderd, but is used for ele data. Note primay = false
+                //ele
                 clsRotatorItem ri2 = new clsRotatorItem();
+                ri2.Padding = fSize;
                 ri2.ParentID = ig.ID;
                 ri2.Primary = false;
                 ri2.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
@@ -11384,6 +11416,9 @@ namespace Thetis
                                     break;
                                 case MeterType.ROTATOR:
                                     {
+                                        bRebuild = true;
+                                        float padding = 0f;
+
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
                                         //one image, and the me
                                         foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR))
@@ -11410,23 +11445,38 @@ namespace Thetis
                                             rotator.BeamWidthColour = igs.LowColor;
                                             rotator.OuterTextColour = igs.HighColor;
                                             rotator.ShowCardinals = igs.ShowHistory;
-                                            if (!rotator.Primary)
-                                                rotator.ShowElevation = igs.ShowSubMarker;
+                                            rotator.ViewMode = (clsRotatorItem.RotatorMode)igs.HistoryDuration;
                                             rotator.FadeOnRx = igs.FadeOnRx;
                                             rotator.FadeOnTx = igs.FadeOnTx;
                                             rotator.BeamWidth = igs.AttackRatio;
-
+                                            rotator.Padding = igs.EyeScale;
                                             rotator.AllowControl = igs.ShowType;
                                             rotator.ControlColour = igs.HistoryColor;
                                             rotator.AZControlString = igs.Text1;
                                             rotator.ELEControlString = igs.Text2;
-
                                             rotator.DataOutMMIOGuid = igs.GetMMIOGuid(2);
+
+                                            if (rotator.ViewMode == clsRotatorItem.RotatorMode.BOTH)
+                                            {
+                                                padding = 0.5f;
+                                                rotator.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
+                                                rotator.Size = new SizeF(1f, padding);
+                                            }
+                                            else
+                                            {
+                                                padding = rotator.Padding;
+                                                rotator.TopLeft = new PointF(0.5f - (padding / 2f), _fPadY - (_fHeight * 0.75f));
+                                                rotator.Size = new SizeF(padding, padding);
+                                            }
                                         }
+                                        ig.Size = new SizeF(ig.Size.Width, padding + (_fPadY - (_fHeight * 0.75f)));
                                         foreach (KeyValuePair<string, clsMeterItem> img in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.IMAGE))
                                         {
                                             clsImage image = img.Value as clsImage;
                                             if (image == null) continue;
+
+                                            image.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                            image.Size = new SizeF(ig.Size.Width, padding);
 
                                             image.FadeOnRx = igs.FadeOnRx;
                                             image.FadeOnTx = igs.FadeOnTx;
@@ -11437,6 +11487,9 @@ namespace Thetis
                                             clsSolidColour solidColour = sc.Value as clsSolidColour;
                                             if (solidColour == null) continue;
 
+                                            solidColour.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                            solidColour.Size = new SizeF(ig.Size.Width, padding);
+
                                             solidColour.FadeOnRx = igs.FadeOnRx;
                                             solidColour.FadeOnTx = igs.FadeOnTx;
                                             solidColour.Colour = igs.Colour;
@@ -11445,6 +11498,9 @@ namespace Thetis
                                         {
                                             clsFadeCover fc = fcs.Value as clsFadeCover;
                                             if (fc == null) continue;
+
+                                            fc.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                            fc.Size = new SizeF(ig.Size.Width, padding);
 
                                             fc.FadeOnRx = igs.FadeOnRx;
                                             fc.FadeOnTx = igs.FadeOnTx;
@@ -12187,16 +12243,14 @@ namespace Thetis
                                                 igs.FadeOnRx = rotator.FadeOnRx;
                                                 igs.FadeOnTx = rotator.FadeOnTx;
                                                 igs.AttackRatio = rotator.BeamWidth;
+                                                igs.EyeScale = rotator.Padding;
+                                                igs.HistoryDuration = (int)rotator.ViewMode;
+                                                igs.SetMMIOGuid(2, rotator.DataOutMMIOGuid);
+                                                igs.ShowType = rotator.AllowControl;
+                                                igs.HistoryColor = rotator.ControlColour;
+                                                igs.Text1 = rotator.AZControlString;
+                                                igs.Text2 = rotator.ELEControlString;
                                             }
-                                            else
-                                                igs.ShowSubMarker = rotator.ShowElevation;
-
-                                            igs.ShowType = rotator.AllowControl;
-                                            igs.HistoryColor = rotator.ControlColour;
-                                            igs.Text1 = rotator.AZControlString;
-                                            igs.Text2 = rotator.ELEControlString;
-
-                                            igs.SetMMIOGuid(2, rotator.DataOutMMIOGuid);
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
                                         {
@@ -16082,28 +16136,33 @@ namespace Thetis
                 //SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Green));
 
-                float xShift = 2f * (w * 0.0125f);
-                Vector2 centre = new Vector2(xShift + x + h / 2f, y + h / 2f);
-                Vector2 pos = new Vector2(0, 0);
-                Vector2 pointer_tip = new Vector2(0, 0);
-                Ellipse elipse = new Ellipse(pos, h * 0.01f, h * 0.01f);
-
                 SharpDX.Direct2D1.Brush line_br = getDXBrushForColour(rotator.ArrowColour, nFade);
                 SharpDX.Direct2D1.Brush big_dot_br = getDXBrushForColour(rotator.BigBlobColour, nFade);
                 SharpDX.Direct2D1.Brush small_dot_br = getDXBrushForColour(rotator.SmallBlobColour, nFade);
-                SharpDX.Direct2D1.Brush beam_widh_br = getDXBrushForColour(rotator.BeamWidthColour, nFade);                
+                SharpDX.Direct2D1.Brush beam_widh_br = getDXBrushForColour(rotator.BeamWidthColour, nFade);
 
-                float radius = (h * 0.8f) / 2f;
-                float radius_text = (h * 0.92f) / 2f;
-                float radius_inner_arrow = (h * 0.75f) / 2f;
-                float radius_tip_arrow = (h * 0.78f) / 2f;
-                float radius_tip_arrow_extra = (h * 0.98f) / 2f; // to include the numbers when clicking to move the rotator
-                float cx;
-                float cy;
-                float rad;
+                float xShift = rotator.ViewMode == clsRotatorItem.RotatorMode.BOTH ? 2f * (w * 0.0125f) : 0;
 
-                if (mi.Primary) // primary is AZ
+                if (rotator.Primary)
                 {
+                    if (rotator.ViewMode == clsRotatorItem.RotatorMode.ELE) return; // az is not drawn
+
+                    Vector2 centre = new Vector2(xShift + x + h / 2f, y + h / 2f);
+                    Vector2 pos = new Vector2(0, 0);
+                    Vector2 pointer_tip = new Vector2(0, 0);
+                    Ellipse elipse = new Ellipse(pos, h * 0.01f, h * 0.01f);
+
+                    float radius = (h * 0.8f) / 2f;
+                    float radius_text = (h * 0.92f) / 2f;
+                    float radius_inner_arrow = (h * 0.75f) / 2f;
+                    float radius_tip_arrow = (h * 0.78f) / 2f;
+                    float radius_tip_arrow_extra = (h * 0.98f) / 2f; // to include the numbers when clicking to move the rotator
+                    float cx;
+                    float cy;
+                    float rad;
+                    float text_scale = rotator.ViewMode == clsRotatorItem.RotatorMode.AZ ? 1.5f : 1f;
+                    text_scale *= rotator.Padding;
+
                     float degrees_az = Math.Abs(rotator.Value) % 360f;
                     bool cardinals = rotator.ShowCardinals;
                     bool show_beam_wdith = rotator.ShowBeamWidth;
@@ -16168,7 +16227,7 @@ namespace Thetis
 
                                 cx = centre.X + radius_text * (float)Math.Cos(rad);
                                 cy = centre.Y + radius_text * (float)Math.Sin(rad);
-                                plotText(card, cx, cy, h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, false);
+                                plotText(card, cx, cy, h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, true);
                             }
                         }
 
@@ -16189,7 +16248,7 @@ namespace Thetis
 
                                 cx = centre.X + radius_text * (float)Math.Cos(rad);
                                 cy = centre.Y + radius_text * (float)Math.Sin(rad);
-                                plotText(deg.ToString(), cx, cy, h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, false);
+                                plotText(deg.ToString(), cx, cy, h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, true);
                             }
                             else
                             {
@@ -16256,103 +16315,45 @@ namespace Thetis
                     //
 
                     // az text
-                    cx = x + w * 0.75f;
-                    cy = y + h * 0.575f;
-                    plotText(convertDegreesToCardinal(degrees_az), cx, cy, h, rect.Width, rotator.FontSize * 2f, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false);
-                    plotText(" cardinal", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false);
-                    cy = y + h * 0.7f;
-                    plotText(degrees_az.ToString("f1") + "°", cx, cy, h, rect.Width, rotator.FontSize * 2f, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false);
-                    plotText("  azimuth", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false);
-
-                    if (degrees_az >= _rotator_az_angle_deg - 3 && degrees_az <= _rotator_az_angle_deg + 3)
+                    if (rotator.ViewMode == clsRotatorItem.RotatorMode.BOTH)
                     {
-                        _rotator_az_angle_deg = -999;
-                    }
-                }
-
-                if (!mi.Primary) // !primary is elevation
-                {
-                    bool show_ele = rotator.ShowElevation;
-                    if (show_ele)
-                    {
-                        // ele
-                        centre.X = w - xShift - h / 2f;
-                        centre.Y = y + h / 2f;
-                        for (int deg = 0; deg <= 90; deg += 5)
-                        {
-                            rad = (deg - 90) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
-                            cx = centre.X + radius * (float)Math.Cos(rad);
-                            cy = centre.Y + radius * (float)Math.Sin(rad);
-                            pos.X = cx; pos.Y = cy;
-                            elipse.Point.X = pos.X; elipse.Point.Y = pos.Y;
-                            if (deg % 15 == 0)
-                            {
-                                elipse.RadiusX = h * 0.015f; elipse.RadiusY = h * 0.015f;
-                                _renderTarget.FillEllipse(elipse, big_dot_br);
-
-                                cx = centre.X + radius_text * (float)Math.Cos(rad);
-                                cy = centre.Y + radius_text * (float)Math.Sin(rad);
-                                plotText((90 - deg).ToString(), cx, cy, h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, false);
-                            }
-                            else
-                            {
-                                elipse.RadiusX = h * 0.005f; elipse.RadiusY = h * 0.005f;
-                                _renderTarget.FillEllipse(elipse, small_dot_br);
-                            }
-                        }
-
-                        float degrees_ele = Math.Abs(rotator.Value) % 90f;
-                        // arrow tip
-                        rad = (-degrees_ele) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
-                        cx = centre.X + radius_tip_arrow * (float)Math.Cos(rad);
-                        cy = centre.Y + radius_tip_arrow * (float)Math.Sin(rad);
-                        pointer_tip.X = cx; pointer_tip.Y = cy;
-                        _renderTarget.DrawLine(centre, pointer_tip, line_br, h * 0.01f);
-
-                        // arrow side, offset 3 degrees, and inset
-                        rad = (-degrees_ele - 3) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
-                        cx = centre.X + radius_inner_arrow * (float)Math.Cos(rad);
-                        cy = centre.Y + radius_inner_arrow * (float)Math.Sin(rad);
-                        pos.X = cx; pos.Y = cy;
-                        _renderTarget.DrawLine(pointer_tip, pos, line_br, h * 0.01f);
-
-                        rad = (-degrees_ele + 3) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
-                        cx = centre.X + radius_inner_arrow * (float)Math.Cos(rad);
-                        cy = centre.Y + radius_inner_arrow * (float)Math.Sin(rad);
-                        pos.X = cx; pos.Y = cy;
-                        _renderTarget.DrawLine(pointer_tip, pos, line_br, h * 0.01f);
-                        //
-
-                        // ele text
                         cx = x + w * 0.75f;
-                        cy = y + h * 0.825f;
-                        plotText(degrees_ele.ToString("f1") + "°", cx, cy, h, rect.Width, rotator.FontSize * 2f, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false);
-                        plotText("elevation", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false);
-
-                        if (degrees_ele >= _rotator_ele_angle_deg -3 && degrees_ele <= _rotator_ele_angle_deg + 3)
-                        {
-                            _rotator_ele_angle_deg = -999;
-                        }
+                        cy = y + h * 0.575f;
+                        plotText(convertDegreesToCardinal(degrees_az), cx, cy, h, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
+                        plotText(" cardinal", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
+                        cy = y + h * 0.7f;
+                        plotText(degrees_az.ToString("f1") + "°", cx, cy, h, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
+                        plotText("  azimuth", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
                     }
-                }
-
-                if (rotator.AllowControl)
-                {
-                    float temp_degrees = 0;
-                    SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, nFade);
-                    //move rotator
-                    if (rotator.Primary)
+                    else
                     {
-                        //360
+                        cx = x + w * 0.5f;
+                        cy = y + h * 0.525f;
+                        plotText(convertDegreesToCardinal(degrees_az), cx, cy, h, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
+                        plotText(" cardinal", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
+                        cy = y + h * 0.65f;
+                        plotText(degrees_az.ToString("f1") + "°", cx, cy, h, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
+                        plotText("  azimuth", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
+                    }
+
+                    // check if arrow at desination
+                    if (degrees_az >= _rotator_az_angle_deg - 3 && degrees_az <= _rotator_az_angle_deg + 3)
+                        _rotator_az_angle_deg = -999;
+
+                    if (rotator.AllowControl)
+                    {
                         if (rotator.MouseButtonDown && rotator.MouseEntered)
                         {
+                            float temp_degrees = 0;
+                            SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, nFade);
+
                             if (!_rotator_was_dragging && _dragging_old_update_rate == -1)
                             {
                                 _dragging_old_update_rate = rotator.UpdateInterval;
                                 rotator.UpdateInterval = 16;
                                 m.UpdateIntervals();
-                            }      
-                            
+                            }
+
                             // find outer edge
                             rad = (temp_degrees - 90) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
                             cx = centre.X + radius_tip_arrow_extra * (float)Math.Cos(rad);
@@ -16388,8 +16389,9 @@ namespace Thetis
                             }
                         }
 
-                        if(_rotator_az_angle_deg != -999)
+                        if (_rotator_az_angle_deg != -999)
                         {
+                            SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, nFade);
                             //draw to angle
                             //set to -999 when pointer gets close
 
@@ -16400,11 +16402,114 @@ namespace Thetis
                             _renderTarget.DrawLine(centre, new Vector2(cx, cy), rotator_control_br, h * 0.01f);
                         }
                     }
+                }
+                else
+                {
+                    if (rotator.ViewMode == clsRotatorItem.RotatorMode.AZ) return; // ele is not drawn
+
+                    Vector2 centre = new Vector2(0, 0);// = new Vector2(xShift + x + h / 2f, y + h / 2f);
+                    Vector2 pos = new Vector2(0, 0);
+                    Vector2 pointer_tip = new Vector2(0, 0);
+                    Ellipse elipse = new Ellipse(pos, h * 0.01f, h * 0.01f);
+
+                    float radius = (h * 0.8f) / 2f;
+                    float radius_text = (h * 0.92f) / 2f;
+                    float radius_inner_arrow = (h * 0.75f) / 2f;
+                    float radius_tip_arrow = (h * 0.78f) / 2f;
+                    float radius_tip_arrow_extra = (h * 0.98f) / 2f; // to include the numbers when clicking to move the rotator
+                    float cx;
+                    float cy;
+                    float rad;
+                    float text_scale = rotator.ViewMode == clsRotatorItem.RotatorMode.ELE ? 1.5f : 1f;
+                    text_scale *= rotator.Padding;
+
+                    if (rotator.ViewMode == clsRotatorItem.RotatorMode.ELE)
+                    {
+                        radius = h * 0.84f;
+                        radius_text = (h * 0.90f);
+                        radius_inner_arrow = (h * 0.75f);
+                        radius_tip_arrow = (h * 0.78f);
+                        radius_tip_arrow_extra = (h * 0.98f);
+                        centre.X = x + (h / 2f) - (radius / 2f);
+                        centre.Y = y + h - (4f * (w * 0.0125f));
+                    }
                     else
                     {
-                        //ele
-                        if (rotator.MouseButtonDown && rotator.ShowElevation && rotator.MouseEntered)
+                        centre.X = w - xShift - h / 2f;
+                        centre.Y = y + h / 2f;
+                    }
+
+                    for (int deg = 0; deg <= 90; deg += 5)
+                    {
+                        rad = (deg - 90) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                        cx = centre.X + radius * (float)Math.Cos(rad);
+                        cy = centre.Y + radius * (float)Math.Sin(rad);
+                        pos.X = cx; pos.Y = cy;
+                        elipse.Point.X = pos.X; elipse.Point.Y = pos.Y;
+                        if (deg % 15 == 0)
                         {
+                            elipse.RadiusX = h * 0.015f; elipse.RadiusY = h * 0.015f;
+                            _renderTarget.FillEllipse(elipse, big_dot_br);
+
+                            cx = centre.X + radius_text * (float)Math.Cos(rad);
+                            cy = centre.Y + radius_text * (float)Math.Sin(rad);
+                            plotText((90 - deg).ToString(), cx, cy, h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, false);
+                        }
+                        else
+                        {
+                            elipse.RadiusX = h * 0.005f; elipse.RadiusY = h * 0.005f;
+                            _renderTarget.FillEllipse(elipse, small_dot_br);
+                        }
+                    }
+
+                    float degrees_ele = Math.Abs(rotator.Value) % 90f;
+                    // arrow tip
+                    rad = (-degrees_ele) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                    cx = centre.X + radius_tip_arrow * (float)Math.Cos(rad);
+                    cy = centre.Y + radius_tip_arrow * (float)Math.Sin(rad);
+                    pointer_tip.X = cx; pointer_tip.Y = cy;
+                    _renderTarget.DrawLine(centre, pointer_tip, line_br, h * 0.01f);
+
+                    // arrow side, offset 3 degrees, and inset
+                    rad = (-degrees_ele - 3) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                    cx = centre.X + radius_inner_arrow * (float)Math.Cos(rad);
+                    cy = centre.Y + radius_inner_arrow * (float)Math.Sin(rad);
+                    pos.X = cx; pos.Y = cy;
+                    _renderTarget.DrawLine(pointer_tip, pos, line_br, h * 0.01f);
+
+                    rad = (-degrees_ele + 3) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                    cx = centre.X + radius_inner_arrow * (float)Math.Cos(rad);
+                    cy = centre.Y + radius_inner_arrow * (float)Math.Sin(rad);
+                    pos.X = cx; pos.Y = cy;
+                    _renderTarget.DrawLine(pointer_tip, pos, line_br, h * 0.01f);
+                    //
+
+                    // ele text
+                    if (rotator.ViewMode == clsRotatorItem.RotatorMode.ELE)
+                    {
+                        cx = x + w * 0.4f;
+                        cy = y + h * 0.75f;
+                        plotText(degrees_ele.ToString("f1") + "°", cx, cy, h, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
+                        plotText("elevation", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
+                    }
+                    else
+                    {
+                        cx = x + w * 0.75f;
+                        cy = y + h * 0.825f;
+                        plotText(degrees_ele.ToString("f1") + "°", cx, cy, h, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
+                        plotText("elevation", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
+                    }
+
+                    // check if arrow at desination
+                    if (degrees_ele >= _rotator_ele_angle_deg - 3 && degrees_ele <= _rotator_ele_angle_deg + 3)
+                        _rotator_ele_angle_deg = -999;
+
+                    if (rotator.AllowControl)
+                    {
+                        if (rotator.MouseButtonDown && rotator.MouseEntered)
+                        {
+                            float temp_degrees = 0;
+                            SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, nFade);
                             if (!_rotator_was_dragging && _dragging_old_update_rate == -1)
                             {
                                 _dragging_old_update_rate = rotator.UpdateInterval;
@@ -16453,6 +16558,7 @@ namespace Thetis
 
                         if (_rotator_ele_angle_deg != -999)
                         {
+                            SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, nFade);
                             //draw to angle
                             //set to -999 when pointer gets close
 
@@ -16463,29 +16569,25 @@ namespace Thetis
                             _renderTarget.DrawLine(centre, new Vector2(cx, cy), rotator_control_br, h * 0.01f);
                         }
                     }
-
-                    if (!rotator.MouseButtonDown && _rotator_was_dragging && _dragging_rotator_degrees >= 0)
-                    {
-                        _rotator_was_dragging = false;
-
-                        if (_dragging_rotator_ele)
-                            _rotator_ele_angle_deg = _dragging_rotator_degrees;
-                        else
-                            _rotator_az_angle_deg = _dragging_rotator_degrees;
-
-                        rotator.SendRotatorMessage(_dragging_rotator_ele, _dragging_rotator_degrees);
-
-                        _dragging_rotator_ele = false;
-                        _dragging_rotator_degrees = -1;
-                        rotator.UpdateInterval = _dragging_old_update_rate;
-                        _dragging_old_update_rate = -1;
-                        m.UpdateIntervals();
-                    }
                 }
-                else
+
+                //send rotator message
+                if (rotator.AllowControl && !rotator.MouseButtonDown && _rotator_was_dragging && _dragging_rotator_degrees >= 0)
                 {
-                    if (_rotator_az_angle_deg != -999) _rotator_az_angle_deg = -999;
-                    if (_rotator_ele_angle_deg != -999) _rotator_ele_angle_deg = -999;
+                    _rotator_was_dragging = false;
+
+                    if (_dragging_rotator_ele)
+                        _rotator_ele_angle_deg = _dragging_rotator_degrees;
+                    else
+                        _rotator_az_angle_deg = _dragging_rotator_degrees;
+
+                    rotator.SendRotatorMessage(_dragging_rotator_ele, _dragging_rotator_degrees);
+
+                    _dragging_rotator_ele = false;
+                    _dragging_rotator_degrees = -1;
+                    rotator.UpdateInterval = _dragging_old_update_rate;
+                    _dragging_old_update_rate = -1;
+                    m.UpdateIntervals();
                 }
             }
             private float calculateDistance(PointF point1, PointF point2)
