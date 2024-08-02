@@ -60,7 +60,7 @@ namespace Thetis
     using System.Windows.Forms;
     using System.Xml.Linq;
     using System.Collections.Concurrent;
-    
+
     public partial class Console : Form
     {
         public const int MAX_FPS = 144;
@@ -40192,8 +40192,14 @@ namespace Thetis
         SizeF base_size = new SizeF(0, 0);
         bool dpi_resize_done = false;
 
+        private FormWindowState _old_window_state = FormWindowState.Normal;
         private void Console_Resize(object sender, System.EventArgs e)
         {
+            if(this.WindowState != _old_window_state)
+            {               
+                WindowStateChangedHandlers?.Invoke(this.WindowState);
+                _old_window_state = this.WindowState;
+            }
             updateResolutionStatusBarText();
 
             if (this.WindowState == FormWindowState.Minimized)
@@ -45453,6 +45459,8 @@ namespace Thetis
 
         public delegate void QuickSplitChanged(bool oldState, bool newState);
 
+        public delegate void WindowStateChanged(FormWindowState state);
+
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
         public BandChanged BandChangeHandlers;
@@ -45507,6 +45515,8 @@ namespace Thetis
         public CompandChanged CompandChangedHandlers;
 
         public QuickSplitChanged QuickSplitChangedHandlers;
+
+        public WindowStateChanged WindowStateChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected

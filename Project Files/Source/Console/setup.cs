@@ -23882,6 +23882,7 @@ namespace Thetis
             chkContainerBorder.Enabled = bEnableControls;
             chkContainerNoTitle.Enabled = bEnableControls;
             chkContainerEnable.Enabled = bEnableControls;
+            chkContainerMinimises.Enabled = bEnableControls;
             txtContainerNotes.Enabled = bEnableControls;
             lblMMContainerBackground.Enabled = bEnableControls;
             lblMMContainerNotes.Enabled = bEnableControls;
@@ -23994,6 +23995,7 @@ namespace Thetis
             clrbtnContainerBackground.Color = MeterManager.GetContainerBackgroundColour(cci.ID);
             chkContainerNoTitle.Checked = MeterManager.ContainerNoTitleBar(cci.ID);
             chkContainerEnable.Checked = MeterManager.ContainerShow(cci.ID);
+            chkContainerMinimises.Checked = MeterManager.ContainerMinimises(cci.ID);
             txtContainerNotes.Text = MeterManager.GetContainerNotes(cci.ID);
 
             updateMeterLists();
@@ -24188,7 +24190,7 @@ namespace Thetis
             if (mtci == null) return "";
             if (!m.HasMeterType(mtci.MeterType)) return "";
 
-            return m.MeterGroupID(mtci.MeterType);
+            return m.MeterGroupID(mtci.MeterType, mtci.Order);
         }
         private MeterType meterItemGroupTypefromSelected()
         {
@@ -29765,8 +29767,19 @@ namespace Thetis
 
             comboWebImage_HamQsl.SelectedIndex = 0;
         }
-        private void updateWebImageState(ImageFetcher.State state)
+        private void updateWebImageState(ImageFetcher.State state, bool checkSelected = false, string id = "")
         {
+            if (checkSelected)
+            {
+                string mgID = meterItemGroupIDfromSelected();
+                if (mgID == "") return;
+                if (mgID != id) return;
+
+                MeterType mt = meterItemGroupTypefromSelected();
+                if (mt == MeterType.NONE) return;
+                if (mt != MeterType.WEB_IMAGE) return;
+            }
+
             string txt;
 
             switch (state)
@@ -29796,10 +29809,7 @@ namespace Thetis
                     txt = "";
                     break;
             }
-            if (lblWebImage_state.InvokeRequired)
-                lblWebImage_state?.Invoke(new Action(() => lblWebImage_state.Text = txt));
-            else
-                lblWebImage_state.Text = txt;
+            lblWebImage_state.Text = txt;
         }
         public void SetWebImageState(string id, ImageFetcher.State state)
         {
@@ -29807,15 +29817,19 @@ namespace Thetis
             if (lstMetersInUse == null) return;
             if (!lstMetersInUse.Visible) return;
 
-            string mgID = meterItemGroupIDfromSelected();
-            if (mgID == "") return;
-            if (mgID != id) return;
+            if (this.InvokeRequired)
+                this?.Invoke(new Action(() => updateWebImageState(state, true, id)));
+            else
+                updateWebImageState(state, true, id);
+        }
 
-            MeterType mt = meterItemGroupTypefromSelected();
-            if (mt == MeterType.NONE) return;
-            if (mt != MeterType.WEB_IMAGE) return;
-
-            updateWebImageState(state);
+        private void chkContainerMinimises_CheckedChanged(object sender, EventArgs e)
+        {
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.ContainerMinimises(cci.ID, chkContainerMinimises.Checked);
+            }
         }
     }
 
