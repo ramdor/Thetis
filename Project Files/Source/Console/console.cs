@@ -48507,7 +48507,7 @@ namespace Thetis
                                         UseShellExecute = true,
                                         CreateNoWindow = true,
                                         Arguments = arguments,
-                                        WorkingDirectory = Path.GetDirectoryName(fileOnly)
+                                        WorkingDirectory = Path.GetDirectoryName(fileOnly)                                        
                                     };
 
                                     Process p = Process.Start(startInfo);                                    
@@ -48522,15 +48522,35 @@ namespace Thetis
                 }
             }
         }
+
         private bool IsProcessRunning(string processName)
         {
             return Process.GetProcessesByName(processName).Length > 0;
         }
+        private static List<IntPtr> FindAllWindowHandlesByProcessId(int processId)
+        {
+            List<IntPtr> handles = new List<IntPtr>();
+            EnumWindows((hWnd, lParam) =>
+            {
+                GetWindowThreadProcessId(hWnd, out uint windowProcessId);
+                if (windowProcessId == processId)
+                    handles.Add(hWnd);
+                return true;
+            }, IntPtr.Zero);
+            return handles;
+        }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
         [DllImport("user32.dll")]
         private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
         private const int WM_CLOSE = 0x0010;
         private const int WM_QUIT = 0x0012;
-        //[DebuggerHidden]
+        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
         private void autoLaunchTryToClose()
         {
             if (IsSetupFormNull) return;
@@ -48541,46 +48561,90 @@ namespace Thetis
             {
                 try
                 {
-                    //if(!p.HasExited)
-                        PostMessage(p.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);                    
+                    PostMessage(p.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);                    
                 }
                 catch
                 {
                 }
             }
-            Thread.Sleep(100);
+            if (_started_processes.Count > 0) Thread.Sleep(50);
             foreach (Process p in _started_processes)
             {
                 try
                 {
-                    //if (!p.HasExited)
-                        PostMessage(p.MainWindowHandle, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+                    PostMessage(p.MainWindowHandle, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
                 }
                 catch
                 {
                 }
             }
-            Thread.Sleep(100);
+            if (_started_processes.Count > 0) Thread.Sleep(50);
+
             foreach (Process p in _started_processes)
             {
                 try
                 {
-                    //if (!p.HasExited)
-                        p.CloseMainWindow();
+                    List<IntPtr> handles = FindAllWindowHandlesByProcessId(p.Id);
+                    foreach (IntPtr handle in handles)
+                    {
+                        try
+                        {
+                            PostMessage(handle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                        }
+                        catch { }
+                    }
                 }
                 catch
                 {
                 }
             }
+            if (_started_processes.Count > 0) Thread.Sleep(50);
             foreach (Process p in _started_processes)
             {
                 try
                 {
-                    //if (!p.HasExited)
-                        p.Close();
+                    List<IntPtr> handles = FindAllWindowHandlesByProcessId(p.Id);
+                    foreach (IntPtr handle in handles)
+                    {
+                        try
+                        {
+                            PostMessage(handle, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+                        }
+                        catch { }
+                    }
                 }
                 catch
                 {
+                }
+            }
+            if (_started_processes.Count > 0) Thread.Sleep(50);
+            foreach (Process p in _started_processes)
+            {
+                try
+                {
+                    p.CloseMainWindow();
+                }
+                catch
+                {
+                }
+            }
+            if (_started_processes.Count > 0) Thread.Sleep(50);
+            foreach (Process p in _started_processes)
+            {
+                try
+                {
+                    p.Close();
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    try
+                    {
+                        p.Dispose();
+                    }
+                    catch { }
                 }
             }
         }
