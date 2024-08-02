@@ -5570,6 +5570,22 @@ namespace Thetis
             //    get { return _mouseMovePoint; }
             //    set { _mouseMovePoint = value; }
             //}
+            public string ImageName
+            {
+                get
+                {
+                    switch(_rotator_mode)
+                    {
+                        case RotatorMode.AZ:
+                            return "rotator_az-bg";
+                        case RotatorMode.ELE:
+                            return "rotator_ele-bg";
+                        case RotatorMode.BOTH:
+                            return "rotator_both-bg";
+                    }
+                    return "";
+                }
+            }
             public float Padding
             {
                 get { return _padding; }
@@ -9055,6 +9071,7 @@ namespace Thetis
                     fSize = 0.5f;
                 else
                     fSize = 1f;
+
                 ri.Padding = fSize;
                 ri.ParentID = ig.ID;
                 ri.Primary = true;
@@ -9081,10 +9098,21 @@ namespace Thetis
 
                 clsImage img = new clsImage();
                 img.ParentID = ig.ID;
-                img.TopLeft = ri.TopLeft;
-                img.Size = ri.Size;
+                //img.TopLeft = ri.TopLeft;
+                //img.Size = ri.Size;
+                if (ri.ViewMode == clsRotatorItem.RotatorMode.BOTH)
+                {
+                    img.TopLeft = new PointF(0.5f - (fSize / 2f), _fPadY - (_fHeight * 0.75f)/* + ((fSize - fSize) * 0.5f)*/);
+                    img.Size = new SizeF(fSize, fSize);
+                }
+                else
+                {
+                    img.TopLeft = new PointF(0.5f - (fSize / 2f), _fPadY - (_fHeight * 0.75f)/* + ((fSize - fSize) * 0.5f)*/);
+                    img.Size = new SizeF(fSize, fSize);
+                }
+                //
                 img.ZOrder = 2;
-                img.ImageName = "rotator-bg";
+                img.ImageName = ri.ImageName;
                 addMeterItem(img);
 
                 clsSolidColour sc = new clsSolidColour();
@@ -11418,7 +11446,7 @@ namespace Thetis
                                     {
                                         bRebuild = true;
                                         float padding = 0f;
-
+                                        string imageName = "";
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
                                         //one image, and the me
                                         foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR))
@@ -11455,6 +11483,7 @@ namespace Thetis
                                             rotator.AZControlString = igs.Text1;
                                             rotator.ELEControlString = igs.Text2;
                                             rotator.DataOutMMIOGuid = igs.GetMMIOGuid(2);
+                                            imageName = rotator.ImageName;
 
                                             if (rotator.ViewMode == clsRotatorItem.RotatorMode.BOTH)
                                             {
@@ -11475,9 +11504,20 @@ namespace Thetis
                                             clsImage image = img.Value as clsImage;
                                             if (image == null) continue;
 
-                                            image.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
-                                            image.Size = new SizeF(ig.Size.Width, padding);
+                                            if ((clsRotatorItem.RotatorMode)igs.HistoryDuration == clsRotatorItem.RotatorMode.BOTH)
+                                            {
+                                                image.TopLeft = new PointF(0.5f - (0.5f / 2f), _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
+                                                image.Size = new SizeF(0.5f, 0.5f);
+                                                //image.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                //image.Size = new SizeF(ig.Size.Width, padding);
+                                            }
+                                            else
+                                            {
+                                                image.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f), _fPadY - (_fHeight * 0.75f) /*+ ((igs.EyeScale - igs.EyeScale) * 0.5f)*/);
+                                                image.Size = new SizeF(igs.EyeScale, igs.EyeScale);
+                                            }
 
+                                            image.ImageName = imageName;
                                             image.FadeOnRx = igs.FadeOnRx;
                                             image.FadeOnTx = igs.FadeOnTx;
                                             image.DarkMode = igs.DarkMode;
@@ -13684,10 +13724,12 @@ namespace Thetis
             {
                 lock (_DXlock)
                 {
-                    List<string> keysWithTrueTag = _images.Where(pair => (bool)pair.Value.Tag)
-                        .Select(pair => pair.Key).ToList();
+                    List<string> keysWithBoolTag = _images
+                                .Where(pair => pair.Value.Tag is bool)  // note: we need is bool because we also store GUID in here for webimage
+                                .Select(pair => pair.Key)
+                                .ToList();
 
-                    foreach(string sKey in keysWithTrueTag)
+                    foreach (string sKey in keysWithBoolTag)
                     {
                         RemoveDXImage(sKey);
                     }
@@ -13695,7 +13737,7 @@ namespace Thetis
             }
             internal void LoadDXImages(string sDefaultPath, string sSkinPath)
             {
-                string[] imageFileNames = { "ananMM", "ananMM-bg", "ananMM-bg-tx", "cross-needle", "cross-needle-bg", "eye-bezel", "rotator-bg" };
+                string[] imageFileNames = { "ananMM", "ananMM-bg", "ananMM-bg-tx", "cross-needle", "cross-needle-bg", "eye-bezel", "rotator_az-bg", "rotator_ele-bg", "rotator_both-bg" };
                 string[] imageFileNameParts = { "", "-small", "-large", "-dark", "-dark-small", "-dark-large" };
 
                 if (!_bDXSetup) return;
@@ -13760,7 +13802,7 @@ namespace Thetis
                             if (bmp != null)
                             {
                                 SharpDX.Direct2D1.Bitmap img = bitmapFromSystemBitmap(_renderTarget, bmp, sID);
-                                img.Tag = isSkinImage;
+                                img.Tag = isSkinImage; // bool for a skin image, note we also use this as a guid for web image
                                 _images.Add(sID, img);
                             }
                         }
@@ -16039,7 +16081,7 @@ namespace Thetis
                         try
                         {
                             SharpDX.Direct2D1.Bitmap img = bitmapFromSystemBitmap(_renderTarget, webimg.Bitmap, key);
-                            img.Tag = webimg.BitmapGuid;
+                            img.Tag = webimg.BitmapGuid; // guid for web image, we also use this as a bool for skin image
                             _images.Add(key, img);
                         }
                         catch { }
@@ -16063,7 +16105,7 @@ namespace Thetis
                             try
                             {
                                 SharpDX.Direct2D1.Bitmap img = bitmapFromSystemBitmap(_renderTarget, webimg.Bitmap, key);
-                                img.Tag = webimg.BitmapGuid;
+                                img.Tag = webimg.BitmapGuid; // guid for web image, we also use this as a bool for skin image
                                 _images.Add(key, img);
                             }
                             catch { }

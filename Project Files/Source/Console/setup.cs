@@ -25238,6 +25238,7 @@ namespace Thetis
                     grpWebImage.Location = loc;
                     grpWebImage.Visible = true;
                     comboWebImage_HamQsl.SelectedIndex = 0;
+                    comboWebImage_BsdWorld.SelectedIndex = 0;
 
                     grpMeterItemSettings.Visible = false;
                     grpMeterItemClockSettings.Visible = false;
@@ -29692,7 +29693,9 @@ namespace Thetis
 
         private void txtWebImage_url_TextChanged(object sender, EventArgs e)
         {
-            if(txtWebImage_url.Text.Contains("www.hamqsl.com", StringComparison.InvariantCultureIgnoreCase))
+            if(txtWebImage_url.Text.Contains("hamqsl.com", StringComparison.InvariantCultureIgnoreCase) ||
+                txtWebImage_url.Text.Contains("bsdworld.org", StringComparison.InvariantCultureIgnoreCase)
+                )
             {
                 // lock and set the update interval
                 nudWebImage_update_interval.Enabled = false;
@@ -29737,7 +29740,7 @@ namespace Thetis
             if (comboWebImage_HamQsl.SelectedIndex == -1) return;
             if (comboWebImage_HamQsl.SelectedIndex == 0) return;
 
-            string[] hamqsl_urls =
+            string[] urls =
             {
                 "https://www.hamqsl.com/solarn0nbh.php",
                 "https://www.hamqsl.com/solarpic.php",
@@ -29764,7 +29767,7 @@ namespace Thetis
                 "https://www.hamqsl.com/solarsystem.php"
             };
 
-            txtWebImage_url.Text = hamqsl_urls[comboWebImage_HamQsl.SelectedIndex - 1];
+            txtWebImage_url.Text = urls[comboWebImage_HamQsl.SelectedIndex - 1];
 
             comboWebImage_HamQsl.SelectedIndex = 0;
         }
@@ -29864,6 +29867,51 @@ namespace Thetis
         private void nudMeterItemRotator_padding_ValueChanged(object sender, EventArgs e)
         {
             updateMeterType();
+        }
+
+        private void comboWebImage_BsdWorld_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (comboWebImage_BsdWorld.SelectedIndex == -1) return;
+            if (comboWebImage_BsdWorld.SelectedIndex == 0) return;
+
+            string[] urls =
+            {
+                "https://bsdworld.org/DXCC/continent/NA/latest.webp",
+                "https://bsdworld.org/DXCC/cqzone/3/latest.webp",
+                "https://bsdworld.org/DXCC/cqzone/4/latest.webp",
+                "https://bsdworld.org/DXCC/cqzone/5/latest.webp",
+                "https://bsdworld.org/DXCC/continent/EU/tn_latest.webp",
+                "https://bsdworld.org/DXCC/cqzone/14/latest.webp",
+                "https://bsdworld.org/DXCC/cqzone/15/latest.webp",
+                "https://bsdworld.org/DXCC/cqzone/16/latest.webp",
+                "https://bsdworld.org/DXCC/cqzone/20/latest.webp",
+                "https://bsdworld.org/DXCC/continent/OC/tn_latest.webp",
+                "https://bsdworld.org/DXCC/continent/AS/tn_latest.webp",
+                "https://bsdworld.org/DXCC/continent/SA/tn_latest.webp",
+                "https://bsdworld.org/DXCC/continent/AF/tn_latest.webp",
+                "https://bsdworld.org/aindex.svgz",
+                "https://bsdworld.org/pkindex.svgz",
+                "https://bsdworld.org/pki-forecast.svgz",
+                "https://bsdworld.org/flux.svgz",
+                "https://bsdworld.org/outlook.svgz",
+                "https://bsdworld.org/solarwind.svgz",
+                "https://bsdworld.org/ssn.svgz",
+                "https://bsdworld.org/ssnhist.svgz",
+                "https://bsdworld.org/eisn.svgz",
+                "https://bsdworld.org/proton_flux.svgz",
+                "https://bsdworld.org/xray_flux.svgz",
+                "https://bsdworld.org/d-rap/latest.svgz"
+            };
+
+            txtWebImage_url.Text = urls[comboWebImage_BsdWorld.SelectedIndex - 1];
+
+            comboWebImage_BsdWorld.SelectedIndex = 0;
+        }
+
+        private void btnWebImage_bsdworld_visit_Click(object sender, EventArgs e)
+        {
+            Common.OpenUri("https://bsdworld.org/");
         }
     }
 
