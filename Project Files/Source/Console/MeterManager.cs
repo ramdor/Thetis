@@ -18773,29 +18773,54 @@ namespace Thetis
                 {
                     System.Drawing.Rectangle sourceArea = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
 
-                    // Transform pixels from BGRA to RGBA
+                    // Transform pixels from ARGB to RGBA
                     DataStream tempStream = new DataStream(bitmap.Height * stride, true, true);
 
                     // Lock System.Drawing.Bitmap
                     System.Drawing.Imaging.BitmapData bitmapData = bitmap.LockBits(sourceArea, System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
 
                     // Convert all pixels 
-                    for (int y = 0; y < bitmap.Height; y++)
-                    {
-                        int offset = bitmapData.Stride * y;
-                        for (int x = 0; x < bitmap.Width; x++)
-                        {
-                            byte B = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                            byte G = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                            byte R = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                            byte A = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                            //int rgba = R | (G << 8) | (B << 16) | (A << 24); //MW0LGE_21k9
-                            //tempStream.Write(rgba);
-                            int bgra = B | (G << 8) | (R << 16) | (A << 24);
-                            tempStream.Write(bgra);
-                        }
+                    IntPtr first_pixel = bitmapData.Scan0;
+                    int bitmapData_stride = bitmapData.Stride;
 
-                    }
+                    //for (int y = 0; y < bitmap.Height; y++)
+                    //{
+                    //    int offset = bitmapData_stride * y;
+                    //    for (int x = 0; x < bitmap.Width; x++)
+                    //    {
+                    //        byte B = Marshal.ReadByte(first_pixel, offset++);
+                    //        byte G = Marshal.ReadByte(first_pixel, offset++);
+                    //        byte R = Marshal.ReadByte(first_pixel, offset++);
+                    //        byte A = Marshal.ReadByte(first_pixel, offset++);
+                    //        //int rgba = R | (G << 8) | (B << 16) | (A << 24); //MW0LGE_21k9
+                    //        //tempStream.Write(rgba);
+                    //        int bgra = B | (G << 8) | (R << 16) | (A << 24);
+                    //        tempStream.Write<int>(bgra);
+                    //    }
+                    //}
+
+                    // --
+                    // Parallel conversion of rows
+                    int h = bitmap.Height;
+                    int w = bitmap.Width;
+                    int[] data = new int[h * w];
+
+                    Parallel.For(0, h, y =>
+                    {
+                        int offset = bitmapData_stride * y;
+                        for (int x = 0; x < w; x++)
+                        {
+                            byte B = Marshal.ReadByte(first_pixel, offset++);
+                            byte G = Marshal.ReadByte(first_pixel, offset++);
+                            byte R = Marshal.ReadByte(first_pixel, offset++);
+                            byte A = Marshal.ReadByte(first_pixel, offset++);
+                            data[(y * w) + x] = B | (G << 8) | (R << 16) | (A << 24);
+                        }
+                    });
+
+                    tempStream.WriteRange<int>(data);
+                    // --
+
                     bitmap.UnlockBits(bitmapData);
 
                     tempStream.Position = 0;
