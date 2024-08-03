@@ -50654,7 +50654,7 @@
             65536});
             this.nudMeterItemsPowerLimit.Location = new System.Drawing.Point(207, 334);
             this.nudMeterItemsPowerLimit.Maximum = new decimal(new int[] {
-            2500,
+            5000,
             0,
             0,
             0});
@@ -60789,7 +60789,7 @@
             this.groupBoxTS41.Size = new System.Drawing.Size(293, 44);
             this.groupBoxTS41.TabIndex = 143;
             this.groupBoxTS41.TabStop = false;
-            this.groupBoxTS41.Text = "bsdworld.com";
+            this.groupBoxTS41.Text = "bsdworld.org";
             // 
             // btnWebImage_bsdworld_visit
             // 
@@ -60808,33 +60808,6 @@
             // 
             this.comboWebImage_BsdWorld.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboWebImage_BsdWorld.FormattingEnabled = true;
-            this.comboWebImage_BsdWorld.Items.AddRange(new object[] {
-            "select one",
-            "NA Propagation All",
-            "NA Propagation Zone 3",
-            "NA Propagation Zone 4",
-            "NA Propagation Zone 5",
-            "EU All",
-            "EU Zone 14",
-            "EU Zone 15",
-            "EU Zone 16",
-            "EU Zone 20",
-            "OC Propagation All",
-            "AS Propagation All",
-            "SA  Propagation All",
-            "AF  Propagation All",
-            "A-Index",
-            "PK Index",
-            "PK Predictions",
-            "Flux",
-            "Outlook",
-            "Solar Wind",
-            "SSN",
-            "SSN History",
-            "EISN",
-            "Proton Flux",
-            "X-Ray Flux",
-            "D-Layer"});
             this.comboWebImage_BsdWorld.Location = new System.Drawing.Point(12, 15);
             this.comboWebImage_BsdWorld.Name = "comboWebImage_BsdWorld";
             this.comboWebImage_BsdWorld.Size = new System.Drawing.Size(190, 21);
@@ -60879,31 +60852,6 @@
             // 
             this.comboWebImage_HamQsl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboWebImage_HamQsl.FormattingEnabled = true;
-            this.comboWebImage_HamQsl.Items.AddRange(new object[] {
-            "select one",
-            "Layout 1 - sun",
-            "Layout 2 - sun",
-            "Layout 3",
-            "Layout 4",
-            "Layout 5",
-            "Layout 6",
-            "Layout 7",
-            "Layout 8",
-            "Layout 9",
-            "Layout 10 - sun",
-            "Layout 11 - sun",
-            "Layout 12",
-            "Layout 13",
-            "Layout 14 - sun",
-            "Layout 15",
-            "Layout 16 - sun",
-            "Layout 17 - graphs",
-            "Layout 18 - graphs",
-            "Greyline 1",
-            "Greyline 2",
-            "Earth 1",
-            "Earth 2",
-            "Planets"});
             this.comboWebImage_HamQsl.Location = new System.Drawing.Point(12, 15);
             this.comboWebImage_HamQsl.Name = "comboWebImage_HamQsl";
             this.comboWebImage_HamQsl.Size = new System.Drawing.Size(190, 21);

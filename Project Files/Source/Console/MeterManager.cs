@@ -16173,15 +16173,13 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                int nFade = 255;
-
                 //SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Green));
 
-                SharpDX.Direct2D1.Brush line_br = getDXBrushForColour(rotator.ArrowColour, nFade);
-                SharpDX.Direct2D1.Brush big_dot_br = getDXBrushForColour(rotator.BigBlobColour, nFade);
-                SharpDX.Direct2D1.Brush small_dot_br = getDXBrushForColour(rotator.SmallBlobColour, nFade);
-                SharpDX.Direct2D1.Brush beam_widh_br = getDXBrushForColour(rotator.BeamWidthColour, nFade);
+                SharpDX.Direct2D1.Brush line_br = getDXBrushForColour(rotator.ArrowColour, 255);
+                SharpDX.Direct2D1.Brush big_dot_br = getDXBrushForColour(rotator.BigBlobColour, 255);
+                SharpDX.Direct2D1.Brush small_dot_br = getDXBrushForColour(rotator.SmallBlobColour, 255);
+                SharpDX.Direct2D1.Brush beam_widh_br = getDXBrushForColour(rotator.BeamWidthColour, 192);
 
                 float xShift = rotator.ViewMode == clsRotatorItem.RotatorMode.BOTH ? 2f * (w * 0.0125f) : 0;
 
@@ -16203,7 +16201,7 @@ namespace Thetis
                     float cy;
                     float rad;
                     float text_scale = rotator.ViewMode == clsRotatorItem.RotatorMode.AZ ? 1.5f : 1f;
-                    text_scale *= rotator.Padding;
+                    text_scale *= rotator.ViewMode == clsRotatorItem.RotatorMode.BOTH ? 1f : rotator.Padding;
 
                     float degrees_az = Math.Abs(rotator.Value) % 360f;
                     bool cardinals = rotator.ShowCardinals;
@@ -16387,7 +16385,7 @@ namespace Thetis
                         if (rotator.MouseButtonDown && rotator.MouseEntered)
                         {
                             float temp_degrees = 0;
-                            SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, nFade);
+                            SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, 255);
 
                             if (!_rotator_was_dragging && _dragging_old_update_rate == -1)
                             {
@@ -16433,7 +16431,7 @@ namespace Thetis
 
                         if (_rotator_az_angle_deg != -999)
                         {
-                            SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, nFade);
+                            SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, 255);
                             //draw to angle
                             //set to -999 when pointer gets close
 
@@ -16463,7 +16461,7 @@ namespace Thetis
                     float cy;
                     float rad;
                     float text_scale = rotator.ViewMode == clsRotatorItem.RotatorMode.ELE ? 1.5f : 1f;
-                    text_scale *= rotator.Padding;
+                    text_scale *= rotator.ViewMode == clsRotatorItem.RotatorMode.BOTH ? 1f : rotator.Padding;
 
                     if (rotator.ViewMode == clsRotatorItem.RotatorMode.ELE)
                     {
@@ -16551,7 +16549,7 @@ namespace Thetis
                         if (rotator.MouseButtonDown && rotator.MouseEntered)
                         {
                             float temp_degrees = 0;
-                            SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, nFade);
+                            SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, 255);
                             if (!_rotator_was_dragging && _dragging_old_update_rate == -1)
                             {
                                 _dragging_old_update_rate = rotator.UpdateInterval;
@@ -16600,7 +16598,7 @@ namespace Thetis
 
                         if (_rotator_ele_angle_deg != -999)
                         {
-                            SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, nFade);
+                            SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, 255);
                             //draw to angle
                             //set to -999 when pointer gets close
 
@@ -18773,29 +18771,54 @@ namespace Thetis
                 {
                     System.Drawing.Rectangle sourceArea = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
 
-                    // Transform pixels from BGRA to RGBA
+                    // Transform pixels from ARGB to RGBA
                     DataStream tempStream = new DataStream(bitmap.Height * stride, true, true);
 
                     // Lock System.Drawing.Bitmap
                     System.Drawing.Imaging.BitmapData bitmapData = bitmap.LockBits(sourceArea, System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
 
                     // Convert all pixels 
-                    for (int y = 0; y < bitmap.Height; y++)
-                    {
-                        int offset = bitmapData.Stride * y;
-                        for (int x = 0; x < bitmap.Width; x++)
-                        {
-                            byte B = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                            byte G = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                            byte R = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                            byte A = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                            //int rgba = R | (G << 8) | (B << 16) | (A << 24); //MW0LGE_21k9
-                            //tempStream.Write(rgba);
-                            int bgra = B | (G << 8) | (R << 16) | (A << 24);
-                            tempStream.Write(bgra);
-                        }
+                    IntPtr first_pixel = bitmapData.Scan0;
+                    int bitmapData_stride = bitmapData.Stride;
 
-                    }
+                    //for (int y = 0; y < bitmap.Height; y++)
+                    //{
+                    //    int offset = bitmapData_stride * y;
+                    //    for (int x = 0; x < bitmap.Width; x++)
+                    //    {
+                    //        byte B = Marshal.ReadByte(first_pixel, offset++);
+                    //        byte G = Marshal.ReadByte(first_pixel, offset++);
+                    //        byte R = Marshal.ReadByte(first_pixel, offset++);
+                    //        byte A = Marshal.ReadByte(first_pixel, offset++);
+                    //        //int rgba = R | (G << 8) | (B << 16) | (A << 24); //MW0LGE_21k9
+                    //        //tempStream.Write(rgba);
+                    //        int bgra = B | (G << 8) | (R << 16) | (A << 24);
+                    //        tempStream.Write<int>(bgra);
+                    //    }
+                    //}
+
+                    // --
+                    // Parallel conversion of rows
+                    int h = bitmap.Height;
+                    int w = bitmap.Width;
+                    int[] data = new int[h * w];
+
+                    Parallel.For(0, h, y =>
+                    {
+                        int offset = bitmapData_stride * y;
+                        for (int x = 0; x < w; x++)
+                        {
+                            byte B = Marshal.ReadByte(first_pixel, offset++);
+                            byte G = Marshal.ReadByte(first_pixel, offset++);
+                            byte R = Marshal.ReadByte(first_pixel, offset++);
+                            byte A = Marshal.ReadByte(first_pixel, offset++);
+                            data[(y * w) + x] = B | (G << 8) | (R << 16) | (A << 24);
+                        }
+                    });
+
+                    tempStream.WriteRange<int>(data);
+                    // --
+
                     bitmap.UnlockBits(bitmapData);
 
                     tempStream.Position = 0;

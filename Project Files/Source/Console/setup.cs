@@ -48,9 +48,8 @@ namespace Thetis
     using RawInput_dll;
     using System.Net;
     using System.Threading.Tasks;
-    using Ionic.Zip;
-    using System.Drawing.Text;
-    using System.Diagnostics.Eventing.Reader;
+    //using Ionic.Zip;
+    using System.IO.Compression;
     using System.Timers;
     using System.Runtime.InteropServices;
     public partial class Setup : Form
@@ -156,6 +155,11 @@ namespace Thetis
             chkGridControl.Checked = true;
             chkDisplayPanFill.Checked = true;
             showRegionBandstackWarning(false);
+            //
+
+            // init the WebImage links
+            setup_comboWebImage_HamQsl();
+            setup_comboWebImage_BsdWorld();
             //
 
             SetupDSPWarnings(false, false, false, false, false, false); // hide everything
@@ -25924,22 +25928,48 @@ namespace Thetis
                     if (File.Exists(zipFilePath))
                         File.Delete(zipFilePath);
 
-                    using (ZipFile zip = new ZipFile())
+                    // Create the zip file
+                    using (FileStream zipToOpen = new FileStream(zipFilePath, FileMode.Create))
                     {
-                        foreach (string fileName in filesToZip)
+                        using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                         {
-                            string filePath = Path.Combine(sourceDirectory, fileName);
-
-                            if (File.Exists(filePath))
+                            // Add each file to the zip
+                            foreach (string fileName in filesToZip)
                             {
-                                zip.AddFile(filePath, "");
+                                string filePath = Path.Combine(sourceDirectory, fileName);
+
+                                if (File.Exists(filePath))
+                                {
+                                    archive.CreateEntryFromFile(filePath, fileName);
+                                }
+                            }
+                            System.IO.Compression.
+                            // Add the version.txt entry
+                            ZipArchiveEntry versionEntry = archive.CreateEntry("version.txt");
+
+                            using (StreamWriter writer = new StreamWriter(versionEntry.Open()))
+                            {
+                                writer.Write(version);
                             }
                         }
-
-                        zip.AddEntry("version.txt", version);
-
-                        zip.Save(zipFilePath);
                     }
+                    //DotNetZip - depricated
+                    //using (ZipFile zip = new ZipFile())
+                    //{
+                    //    foreach (string fileName in filesToZip)
+                    //    {
+                    //        string filePath = Path.Combine(sourceDirectory, fileName);
+
+                    //        if (File.Exists(filePath))
+                    //        {
+                    //            zip.AddFile(filePath, "");
+                    //        }
+                    //    }
+
+                    //    zip.AddEntry("version.txt", version);
+
+                    //    zip.Save(zipFilePath);
+                    //}
                 }
                 catch (Exception ex)
                 {
@@ -26444,7 +26474,6 @@ namespace Thetis
 
             updateSelectedSkin();
         }
-
         private bool isSkinZipFile(string filePath, string sFilename, out bool usesFilenameInRoot, out bool isMeterSkin, bool bypassRootFolderCheck)
         {
             bool bOk = false;
@@ -26453,9 +26482,10 @@ namespace Thetis
 
             try
             {
-                using (ZipFile zipFile = ZipFile.Read(filePath))
+                using (ZipArchive zipFile = ZipFile.OpenRead(filePath))
                 {
-                    if (zipFile.Any(entry => entry.FileName.StartsWith("Meters" + "/") && entry.IsDirectory))
+                    // Check if there is a directory entry starting with "Meters/"
+                    if (zipFile.Entries.Any(entry => entry.FullName.StartsWith("Meters/") && entry.FullName.EndsWith("/")))
                     {
                         bOk = true;
                         isMeterSkin = true;
@@ -26465,20 +26495,27 @@ namespace Thetis
                     {
                         if (!bypassRootFolderCheck)
                         {
-                            if (!bOk && zipFile.Any(entry => entry.FileName.StartsWith("Skins" + "/") && entry.IsDirectory))
-                                bOk = true;
-
-                            if (!bOk && sFilename != "")
+                            // Check for "Skins/" directory
+                            if (!bOk && zipFile.Entries.Any(entry => entry.FullName.StartsWith("Skins/") && entry.FullName.EndsWith("/")))
                             {
+                                bOk = true;
+                            }
+
+                            if (!bOk && !string.IsNullOrEmpty(sFilename))
+                            {
+                                // Different filename checks
                                 string sReplacedWithSpaces = sFilename.Replace("_", " ");
                                 string sReplacedWithoutSpaces = sFilename.Replace(" ", "_");
                                 string sReplacedWithMinus = sFilename.Replace(" ", "-");
                                 string sReplacedWithoutMinus = sFilename.Replace("-", " ");
 
-                                if (zipFile.Any(entry => (entry.FileName.StartsWith(sFilename + "/") || entry.FileName.StartsWith(sReplacedWithSpaces + "/") ||
-                                    entry.FileName.StartsWith(sReplacedWithoutSpaces + "/") || entry.FileName.StartsWith(sReplacedWithMinus + "/") ||
-                                    entry.FileName.StartsWith(sReplacedWithoutMinus + "/")
-                                    ) && entry.IsDirectory))
+                                if (zipFile.Entries.Any(entry =>
+                                    (entry.FullName.StartsWith(sFilename + "/") ||
+                                     entry.FullName.StartsWith(sReplacedWithSpaces + "/") ||
+                                     entry.FullName.StartsWith(sReplacedWithoutSpaces + "/") ||
+                                     entry.FullName.StartsWith(sReplacedWithMinus + "/") ||
+                                     entry.FullName.StartsWith(sReplacedWithoutMinus + "/")) &&
+                                     entry.FullName.EndsWith("/")))
                                 {
                                     usesFilenameInRoot = true;
                                     bOk = true;
@@ -26486,26 +26523,95 @@ namespace Thetis
                             }
                         }
                         else
+                        {
                             bOk = true;
+                        }
                     }
                 }
             }
-            catch (Ionic.Zip.BadReadException)
+            catch (InvalidDataException)
             {
+                // Handle invalid ZIP file
             }
             catch (Exception ex)
             {
+                // Handle other exceptions
             }
 
             return bOk;
         }
+        //dotnetzip depricated
+        //private bool isSkinZipFile(string filePath, string sFilename, out bool usesFilenameInRoot, out bool isMeterSkin, bool bypassRootFolderCheck)
+        //{
+        //    bool bOk = false;
+        //    usesFilenameInRoot = false;
+        //    isMeterSkin = false;
+
+        //    try
+        //    {
+        //        using (ZipFile zipFile = ZipFile.Read(filePath))
+        //        {
+        //            if (zipFile.Any(entry => entry.FileName.StartsWith("Meters" + "/") && entry.IsDirectory))
+        //            {
+        //                bOk = true;
+        //                isMeterSkin = true;
+        //            }
+
+        //            if (!bOk)
+        //            {
+        //                if (!bypassRootFolderCheck)
+        //                {
+        //                    if (!bOk && zipFile.Any(entry => entry.FileName.StartsWith("Skins" + "/") && entry.IsDirectory))
+        //                        bOk = true;
+
+        //                    if (!bOk && sFilename != "")
+        //                    {
+        //                        string sReplacedWithSpaces = sFilename.Replace("_", " ");
+        //                        string sReplacedWithoutSpaces = sFilename.Replace(" ", "_");
+        //                        string sReplacedWithMinus = sFilename.Replace(" ", "-");
+        //                        string sReplacedWithoutMinus = sFilename.Replace("-", " ");
+
+        //                        if (zipFile.Any(entry => (entry.FileName.StartsWith(sFilename + "/") || entry.FileName.StartsWith(sReplacedWithSpaces + "/") ||
+        //                            entry.FileName.StartsWith(sReplacedWithoutSpaces + "/") || entry.FileName.StartsWith(sReplacedWithMinus + "/") ||
+        //                            entry.FileName.StartsWith(sReplacedWithoutMinus + "/")
+        //                            ) && entry.IsDirectory))
+        //                        {
+        //                            usesFilenameInRoot = true;
+        //                            bOk = true;
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                    bOk = true;
+        //            }
+        //        }
+        //    }
+        //    catch (Ionic.Zip.BadReadException)
+        //    {
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //    }
+
+        //    return bOk;
+        //}
+
         private bool doesFolderExistInZip(string zipFilePath, string folderName)
         {
-            using (ZipFile zipFile = ZipFile.Read(zipFilePath))
+            using (ZipArchive zipArchive = ZipFile.OpenRead(zipFilePath))
             {
-                return zipFile.Any(entry => entry.FileName.StartsWith(folderName + "/") && entry.IsDirectory);
+                return zipArchive.Entries.Any(entry =>
+                    entry.FullName.StartsWith(folderName + "/") && entry.FullName.EndsWith("/"));
             }
         }
+        //depricated dotnetzip
+        //private bool doesFolderExistInZip(string zipFilePath, string folderName)
+        //{
+        //    using (ZipFile zipFile = ZipFile.Read(zipFilePath))
+        //    {
+        //        return zipFile.Any(entry => entry.FileName.StartsWith(folderName + "/") && entry.IsDirectory);
+        //    }
+        //}
 
         private static string extractPngFilesFromZip(string sourceZipFilePath, string outputPath)
         {
@@ -26515,26 +26621,28 @@ namespace Thetis
                 sourceZipFilePath = sourceZipFilePath.Replace('/', '\\');
                 outputPath = outputPath.Replace('/', '\\');
 
-                using (ZipFile zip = ZipFile.Read(sourceZipFilePath))
+                using (ZipArchive zip = ZipFile.OpenRead(sourceZipFilePath))
                 {
-                    foreach (ZipEntry entry in zip.Where(e => e.FileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
+                    foreach (ZipArchiveEntry entry in zip.Entries.Where(e => e.FullName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
                     {
-                        string entryPath = Path.Combine(outputPath, entry.FileName.Replace('/', '\\'));
+                        // Normalize the entry path for file system usage
+                        string entryPath = Path.Combine(outputPath, entry.FullName.Replace('/', '\\'));
 
                         // Create the directory structure if it doesn't exist
                         Directory.CreateDirectory(Path.GetDirectoryName(entryPath));
 
-                        // if there is a file remove it
+                        // If a file exists at the target path, delete it
                         if (File.Exists(entryPath))
                             File.Delete(entryPath);
 
-                        entry.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
+                        // Extract the entry
+                        entry.ExtractToFile(entryPath, true); // true to overwrite existing files
 
                         if (sRootFolder == "")
                         {
-                            //get skin name from folder structure
-                            int index = entry.FileName.IndexOf('/');
-                            if (index > 0) sRootFolder = entry.FileName.Substring(0, index);
+                            // Get the root folder name from the entry's path
+                            int index = entry.FullName.IndexOf('/');
+                            if (index > 0) sRootFolder = entry.FullName.Substring(0, index);
                         }
                     }
                 }
@@ -26542,13 +26650,56 @@ namespace Thetis
             catch (Exception ex)
             {
                 MessageBox.Show(
-                        "There was an issue extracting the .png file(s) from the download.\n\nSome/all of the images may be missing. The error is as follows :\n\n" + ex.ToString(),
-                        "Skin download issue",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    "There was an issue extracting the .png file(s) from the download.\n\nSome/all of the images may be missing. The error is as follows :\n\n" + ex.ToString(),
+                    "Skin download issue",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
             }
             return sRootFolder;
         }
+        //depricated dotnetzip
+        //private static string extractPngFilesFromZip(string sourceZipFilePath, string outputPath)
+        //{
+        //    string sRootFolder = "";
+        //    try
+        //    {
+        //        sourceZipFilePath = sourceZipFilePath.Replace('/', '\\');
+        //        outputPath = outputPath.Replace('/', '\\');
+
+        //        using (ZipFile zip = ZipFile.Read(sourceZipFilePath))
+        //        {
+        //            foreach (ZipEntry entry in zip.Where(e => e.FileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
+        //            {
+        //                string entryPath = Path.Combine(outputPath, entry.FileName.Replace('/', '\\'));
+
+        //                // Create the directory structure if it doesn't exist
+        //                Directory.CreateDirectory(Path.GetDirectoryName(entryPath));
+
+        //                // if there is a file remove it
+        //                if (File.Exists(entryPath))
+        //                    File.Delete(entryPath);
+
+        //                entry.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
+
+        //                if (sRootFolder == "")
+        //                {
+        //                    //get skin name from folder structure
+        //                    int index = entry.FileName.IndexOf('/');
+        //                    if (index > 0) sRootFolder = entry.FileName.Substring(0, index);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(
+        //                "There was an issue extracting the .png file(s) from the download.\n\nSome/all of the images may be missing. The error is as follows :\n\n" + ex.ToString(),
+        //                "Skin download issue",
+        //                MessageBoxButtons.OK,
+        //                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+        //    }
+        //    return sRootFolder;
+        //}
 
         private bool bIgnoreSkinServerListUpdate = false;
         private void comboSkinServerList_SelectedIndexChanged(object sender, EventArgs e)
@@ -29757,41 +29908,32 @@ namespace Thetis
         {
             Common.OpenUri("https://www.hamqsl.com/donate.html");
         }
-
+        private void setup_comboWebImage_HamQsl()
+        {
+            comboWebImage_HamQsl.Items.Clear();
+            for(int i = 0; i < _hamqsl_urls.Length; i++)
+            {
+                KeyValuePair<string, string> kvp = _hamqsl_urls[i];
+                comboWebImage_HamQsl.Items.Add(kvp.Key);
+            }
+        }
+        private void setup_comboWebImage_BsdWorld()
+        {
+            comboWebImage_BsdWorld.Items.Clear();
+            for (int i = 0; i < _bsdworld_urls.Length; i++)
+            {
+                KeyValuePair<string, string> kvp = _bsdworld_urls[i];
+                comboWebImage_BsdWorld.Items.Add(kvp.Key);
+            }
+        }
         private void comboWebImage_HamQsl_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return;
             if (comboWebImage_HamQsl.SelectedIndex == -1) return;
             if (comboWebImage_HamQsl.SelectedIndex == 0) return;
 
-            string[] urls =
-            {
-                "https://www.hamqsl.com/solarn0nbh.php",
-                "https://www.hamqsl.com/solarpic.php",
-                "https://www.hamqsl.com/solarvhf.php",
-                "https://www.hamqsl.com/solar.php",
-                "https://www.hamqsl.com/solarsmall.php",
-                "https://www.hamqsl.com/solarbrief.php",
-                "https://www.hamqsl.com/solarbc.php",
-                "https://www.hamqsl.com/solar100sc.php",
-                "https://www.hamqsl.com/solar2.php",
-                "https://www.hamqsl.com/solarpich.php",
-                "https://www.hamqsl.com/solar101pic.php",
-                "https://www.hamqsl.com/solar101vhf.php",
-                "https://www.hamqsl.com/solar101vhfper.php",
-                "https://www.hamqsl.com/solar101vhfpic.php",
-                "https://www.hamqsl.com/solar101sc.php",
-                "https://www.hamqsl.com/solarsun.php",
-                "https://www.hamqsl.com/solargraph.php",
-                "https://www.hamqsl.com/marston.php",
-                "https://www.hamqsl.com/solarmuf.php",
-                "https://www.hamqsl.com/solarmap.php",
-                "https://www.hamqsl.com/solarglobe.php",
-                "https://www.hamqsl.com/moonglobe.php",
-                "https://www.hamqsl.com/solarsystem.php"
-            };
-
-            txtWebImage_url.Text = urls[comboWebImage_HamQsl.SelectedIndex - 1];
+            KeyValuePair<string, string> kvp = _hamqsl_urls[comboWebImage_HamQsl.SelectedIndex];
+            txtWebImage_url.Text = kvp.Value;
 
             comboWebImage_HamQsl.SelectedIndex = 0;
         }
@@ -29893,49 +30035,79 @@ namespace Thetis
             updateMeterType();
         }
 
+        KeyValuePair<string, string>[] _hamqsl_urls =
+{
+            new KeyValuePair<string, string>("select one", ""),
+            new KeyValuePair<string, string>("Layout 1 - sun", "https://www.hamqsl.com/solarn0nbh.php"),
+            new KeyValuePair<string, string>("Layout 2 - sun", "https://www.hamqsl.com/solarpic.php"),
+            new KeyValuePair<string, string>("Layout 3", "https://www.hamqsl.com/solarvhf.php"),
+            new KeyValuePair<string, string>("Layout 4", "https://www.hamqsl.com/solar.php"),
+            new KeyValuePair<string, string>("Layout 5", "https://www.hamqsl.com/solarsmall.php"),
+            new KeyValuePair<string, string>("Layout 6", "https://www.hamqsl.com/solarbrief.php"),
+            new KeyValuePair<string, string>("Layout 7", "https://www.hamqsl.com/solarbc.php"),
+            new KeyValuePair<string, string>("Layout 8", "https://www.hamqsl.com/solar100sc.php"),
+            new KeyValuePair<string, string>("Layout 9", "https://www.hamqsl.com/solar2.php"),
+            new KeyValuePair<string, string>("Layout 10 - sun", "https://www.hamqsl.com/solarpich.php"),
+            new KeyValuePair<string, string>("Layout 11 - sun", "https://www.hamqsl.com/solar101pic.php"),
+            new KeyValuePair<string, string>("Layout 12", "https://www.hamqsl.com/solar101vhf.php"),
+            new KeyValuePair<string, string>("Layout 13", "https://www.hamqsl.com/solar101vhfper.php"),
+            new KeyValuePair<string, string>("Layout 14 - sun", "https://www.hamqsl.com/solar101vhfpic.php"),
+            new KeyValuePair<string, string>("Layout 15", "https://www.hamqsl.com/solar101sc.php"),
+            new KeyValuePair<string, string>("Layout 16 - sun", "https://www.hamqsl.com/solarsun.php"),
+            new KeyValuePair<string, string>("Layout 17 - graphs", "https://www.hamqsl.com/solargraph.php"),
+            new KeyValuePair<string, string>("Layout 18 - graphs", "https://www.hamqsl.com/marston.php"),
+            new KeyValuePair<string, string>("Greyline 1", "https://www.hamqsl.com/solarmuf.php"),
+            new KeyValuePair<string, string>("Greyline 2", "https://www.hamqsl.com/solarmap.php"),
+            new KeyValuePair<string, string>("Earth 1", "https://www.hamqsl.com/solarglobe.php"),
+            new KeyValuePair<string, string>("Earth 2", "https://www.hamqsl.com/moonglobe.php"),
+            new KeyValuePair<string, string>("Planets", "https://www.hamqsl.com/solarsystem.php"),
+        };
+
+        private KeyValuePair<string, string>[] _bsdworld_urls =
+{
+            new KeyValuePair<string, string>("select one", ""),
+            new KeyValuePair<string, string>("NA Propagation All", "https://bsdworld.org/DXCC/continent/NA/latest.webp"),
+            new KeyValuePair<string, string>("NA Propagation Zone 3", "https://bsdworld.org/DXCC/cqzone/3/latest.webp"),
+            new KeyValuePair<string, string>("NA Propagation Zone 4", "https://bsdworld.org/DXCC/cqzone/4/latest.webp"),
+            new KeyValuePair<string, string>("NA Propagation Zone 5", "https://bsdworld.org/DXCC/cqzone/5/latest.webp"),
+            new KeyValuePair<string, string>("EU All", "https://bsdworld.org/DXCC/continent/EU/tn_latest.webp"),
+            new KeyValuePair<string, string>("EU Zone 14", "https://bsdworld.org/DXCC/cqzone/14/latest.webp"),
+            new KeyValuePair<string, string>("EU Zone 15", "https://bsdworld.org/DXCC/cqzone/15/latest.webp"),
+            new KeyValuePair<string, string>("EU Zone 16", "https://bsdworld.org/DXCC/cqzone/16/latest.webp"),
+            new KeyValuePair<string, string>("EU Zone 20", "https://bsdworld.org/DXCC/cqzone/20/latest.webp"),
+            new KeyValuePair<string, string>("OC Propagation All", "https://bsdworld.org/DXCC/continent/OC/tn_latest.webp"),
+            new KeyValuePair<string, string>("AS Propagation All", "https://bsdworld.org/DXCC/continent/AS/tn_latest.webp"),
+            new KeyValuePair<string, string>("SA Propagation All", "https://bsdworld.org/DXCC/continent/SA/tn_latest.webp"),
+            new KeyValuePair<string, string>("AF Propagation All", "https://bsdworld.org/DXCC/continent/AF/tn_latest.webp"),
+            new KeyValuePair<string, string>("A-Index", "https://bsdworld.org/aindex.svgz"),
+            new KeyValuePair<string, string>("PK Index", "https://bsdworld.org/pkindex.svgz"),
+            new KeyValuePair<string, string>("PK Predictions", "https://bsdworld.org/pki-forecast.svgz"),
+            new KeyValuePair<string, string>("Flux", "https://bsdworld.org/flux.svgz"),
+            new KeyValuePair<string, string>("Outlook", "https://bsdworld.org/outlook.svgz"),
+            new KeyValuePair<string, string>("Solar Wind", "https://bsdworld.org/solarwind.svgz"),
+            new KeyValuePair<string, string>("SSN", "https://bsdworld.org/ssn.svgz"),
+            new KeyValuePair<string, string>("SSN History", "https://bsdworld.org/ssnhist.svgz"),
+            new KeyValuePair<string, string>("EISN", "https://bsdworld.org/eisn.svgz"),
+            new KeyValuePair<string, string>("Proton Flux", "https://bsdworld.org/proton_flux.svgz"),
+            new KeyValuePair<string, string>("X-Ray Flux", "https://bsdworld.org/xray_flux.svgz"),
+            new KeyValuePair<string, string>("D-Layer", "https://bsdworld.org/d-rap/latest.svgz"),
+        };
+
         private void comboWebImage_BsdWorld_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return;
             if (comboWebImage_BsdWorld.SelectedIndex == -1) return;
             if (comboWebImage_BsdWorld.SelectedIndex == 0) return;
 
-            string[] urls =
-            {
-                "https://bsdworld.org/DXCC/continent/NA/latest.webp",
-                "https://bsdworld.org/DXCC/cqzone/3/latest.webp",
-                "https://bsdworld.org/DXCC/cqzone/4/latest.webp",
-                "https://bsdworld.org/DXCC/cqzone/5/latest.webp",
-                "https://bsdworld.org/DXCC/continent/EU/tn_latest.webp",
-                "https://bsdworld.org/DXCC/cqzone/14/latest.webp",
-                "https://bsdworld.org/DXCC/cqzone/15/latest.webp",
-                "https://bsdworld.org/DXCC/cqzone/16/latest.webp",
-                "https://bsdworld.org/DXCC/cqzone/20/latest.webp",
-                "https://bsdworld.org/DXCC/continent/OC/tn_latest.webp",
-                "https://bsdworld.org/DXCC/continent/AS/tn_latest.webp",
-                "https://bsdworld.org/DXCC/continent/SA/tn_latest.webp",
-                "https://bsdworld.org/DXCC/continent/AF/tn_latest.webp",
-                "https://bsdworld.org/aindex.svgz",
-                "https://bsdworld.org/pkindex.svgz",
-                "https://bsdworld.org/pki-forecast.svgz",
-                "https://bsdworld.org/flux.svgz",
-                "https://bsdworld.org/outlook.svgz",
-                "https://bsdworld.org/solarwind.svgz",
-                "https://bsdworld.org/ssn.svgz",
-                "https://bsdworld.org/ssnhist.svgz",
-                "https://bsdworld.org/eisn.svgz",
-                "https://bsdworld.org/proton_flux.svgz",
-                "https://bsdworld.org/xray_flux.svgz",
-                "https://bsdworld.org/d-rap/latest.svgz"
-            };
-
-            txtWebImage_url.Text = urls[comboWebImage_BsdWorld.SelectedIndex - 1];
+            KeyValuePair<string, string> kvp = _bsdworld_urls[comboWebImage_BsdWorld.SelectedIndex];
+            txtWebImage_url.Text = kvp.Value;
 
             comboWebImage_BsdWorld.SelectedIndex = 0;
         }
 
         private void btnWebImage_bsdworld_visit_Click(object sender, EventArgs e)
         {
-            Common.OpenUri("https://bsdworld.org/");
+            Common.OpenUri("https://bsdworld.org/help.html");
         }
     }
 
