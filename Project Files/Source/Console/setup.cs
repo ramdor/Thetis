@@ -160,6 +160,8 @@ namespace Thetis
             // init the WebImage links
             setup_comboWebImage_HamQsl();
             setup_comboWebImage_BsdWorld();
+            setup_comboWebImage_nasa();
+            setup_comboWebImage_noaa();
             //
 
             SetupDSPWarnings(false, false, false, false, false, false); // hide everything
@@ -25267,6 +25269,8 @@ namespace Thetis
                     grpWebImage.Visible = true;
                     comboWebImage_HamQsl.SelectedIndex = 0;
                     comboWebImage_BsdWorld.SelectedIndex = 0;
+                    comboWebImage_nasa.SelectedIndex = 0;
+                    comboWebImage_noaa.SelectedIndex = 0;
 
                     grpMeterItemSettings.Visible = false;
                     grpMeterItemClockSettings.Visible = false;
@@ -29869,7 +29873,10 @@ namespace Thetis
         private void txtWebImage_url_TextChanged(object sender, EventArgs e)
         {
             if(txtWebImage_url.Text.Contains("hamqsl.com", StringComparison.InvariantCultureIgnoreCase) ||
-                txtWebImage_url.Text.Contains("bsdworld.org", StringComparison.InvariantCultureIgnoreCase)
+                txtWebImage_url.Text.Contains("bsdworld.org", StringComparison.InvariantCultureIgnoreCase) ||
+                txtWebImage_url.Text.Contains("nascom.nasa.gov", StringComparison.InvariantCultureIgnoreCase) ||
+                txtWebImage_url.Text.Contains("swpc.noaa.gov", StringComparison.InvariantCultureIgnoreCase) ||
+                txtWebImage_url.Text.Contains("kc2g.com", StringComparison.InvariantCultureIgnoreCase)                
                 )
             {
                 // lock and set the update interval
@@ -29908,6 +29915,7 @@ namespace Thetis
         {
             Common.OpenUri("https://www.hamqsl.com/donate.html");
         }
+        //
         private void setup_comboWebImage_HamQsl()
         {
             comboWebImage_HamQsl.Items.Clear();
@@ -29926,6 +29934,25 @@ namespace Thetis
                 comboWebImage_BsdWorld.Items.Add(kvp.Key);
             }
         }
+        private void setup_comboWebImage_nasa()
+        {
+            comboWebImage_nasa.Items.Clear();
+            for (int i = 0; i < _nasa_urls.Length; i++)
+            {
+                KeyValuePair<string, string> kvp = _nasa_urls[i];
+                comboWebImage_nasa.Items.Add(kvp.Key);
+            }
+        }
+        private void setup_comboWebImage_noaa()
+        {
+            comboWebImage_noaa.Items.Clear();
+            for (int i = 0; i < _noaa_urls.Length; i++)
+            {
+                KeyValuePair<string, string> kvp = _noaa_urls[i];
+                comboWebImage_noaa.Items.Add(kvp.Key);
+            }
+        }
+        //
         private void comboWebImage_HamQsl_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return;
@@ -30070,11 +30097,11 @@ namespace Thetis
             new KeyValuePair<string, string>("NA Propagation Zone 3", "https://bsdworld.org/DXCC/cqzone/3/latest.webp"),
             new KeyValuePair<string, string>("NA Propagation Zone 4", "https://bsdworld.org/DXCC/cqzone/4/latest.webp"),
             new KeyValuePair<string, string>("NA Propagation Zone 5", "https://bsdworld.org/DXCC/cqzone/5/latest.webp"),
-            new KeyValuePair<string, string>("EU All", "https://bsdworld.org/DXCC/continent/EU/tn_latest.webp"),
-            new KeyValuePair<string, string>("EU Zone 14", "https://bsdworld.org/DXCC/cqzone/14/latest.webp"),
-            new KeyValuePair<string, string>("EU Zone 15", "https://bsdworld.org/DXCC/cqzone/15/latest.webp"),
-            new KeyValuePair<string, string>("EU Zone 16", "https://bsdworld.org/DXCC/cqzone/16/latest.webp"),
-            new KeyValuePair<string, string>("EU Zone 20", "https://bsdworld.org/DXCC/cqzone/20/latest.webp"),
+            new KeyValuePair<string, string>("EU Propagation All", "https://bsdworld.org/DXCC/continent/EU/tn_latest.webp"),
+            new KeyValuePair<string, string>("EU Propagation Zone 14", "https://bsdworld.org/DXCC/cqzone/14/latest.webp"),
+            new KeyValuePair<string, string>("EU Propagation Zone 15", "https://bsdworld.org/DXCC/cqzone/15/latest.webp"),
+            new KeyValuePair<string, string>("EU Propagation Zone 16", "https://bsdworld.org/DXCC/cqzone/16/latest.webp"),
+            new KeyValuePair<string, string>("EU Propagation Zone 20", "https://bsdworld.org/DXCC/cqzone/20/latest.webp"),
             new KeyValuePair<string, string>("OC Propagation All", "https://bsdworld.org/DXCC/continent/OC/tn_latest.webp"),
             new KeyValuePair<string, string>("AS Propagation All", "https://bsdworld.org/DXCC/continent/AS/tn_latest.webp"),
             new KeyValuePair<string, string>("SA Propagation All", "https://bsdworld.org/DXCC/continent/SA/tn_latest.webp"),
@@ -30093,6 +30120,27 @@ namespace Thetis
             new KeyValuePair<string, string>("D-Layer", "https://bsdworld.org/d-rap/latest.svgz"),
         };
 
+        private KeyValuePair<string, string>[] _nasa_urls =
+        {
+            new KeyValuePair<string, string>("select one", ""),
+            new KeyValuePair<string, string>("SOHO EIT 171", "https://soho.nascom.nasa.gov/data/realtime/eit_171/512/latest.jpg"),
+            new KeyValuePair<string, string>("SOHO EIT 195", "https://soho.nascom.nasa.gov/data/realtime/eit_195/512/latest.jpg"),
+            new KeyValuePair<string, string>("SOHO EIT 284", "https://soho.nascom.nasa.gov/data/realtime/eit_284/512/latest.jpg"),
+            new KeyValuePair<string, string>("SOHO EIT 304", "https://soho.nascom.nasa.gov/data/realtime/eit_304/512/latest.jpg"),
+            new KeyValuePair<string, string>("SOHO SDO/HMI Continuum", "https://soho.nascom.nasa.gov/data/realtime/hmi_igr/512/latest.jpg"),
+            new KeyValuePair<string, string>("SOHO SDO/HMI Magnetogram", "https://soho.nascom.nasa.gov/data/realtime/hmi_mag/512/latest.jpg"),
+            new KeyValuePair<string, string>("SOHO LASCO C2", "https://soho.nascom.nasa.gov/data/realtime/c2/512/latest.jpg"),
+            new KeyValuePair<string, string>("SOHO LASCO C3", "https://soho.nascom.nasa.gov/data/realtime/c3/512/latest.jpg")
+        };
+        private KeyValuePair<string, string>[] _noaa_urls =
+        {
+            new KeyValuePair<string, string>("select one", ""),
+            new KeyValuePair<string, string>("Northern Aurora Latest", "https://services.swpc.noaa.gov/images/animations/ovation/north/latest.jpg"),
+            new KeyValuePair<string, string>("Southern Aurora Latest", "https://services.swpc.noaa.gov/images/animations/ovation/south/latest.jpg"),
+            new KeyValuePair<string, string>("Northern Aurora Forecast", "https://services.swpc.noaa.gov/images/aurora-forecast-northern-hemisphere.jpg"),
+            new KeyValuePair<string, string>("Southern Aurora Forecast", "https://services.swpc.noaa.gov/images/aurora-forecast-southern-hemisphere.jpg")
+        };
+
         private void comboWebImage_BsdWorld_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return;
@@ -30108,6 +30156,30 @@ namespace Thetis
         private void btnWebImage_bsdworld_visit_Click(object sender, EventArgs e)
         {
             Common.OpenUri("https://bsdworld.org/help.html");
+        }
+
+        private void comboWebImage_nasa_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (comboWebImage_nasa.SelectedIndex == -1) return;
+            if (comboWebImage_nasa.SelectedIndex == 0) return;
+
+            KeyValuePair<string, string> kvp = _nasa_urls[comboWebImage_nasa.SelectedIndex];
+            txtWebImage_url.Text = kvp.Value;
+
+            comboWebImage_nasa.SelectedIndex = 0;
+        }
+
+        private void comboWebImage_noaa_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (comboWebImage_noaa.SelectedIndex == -1) return;
+            if (comboWebImage_noaa.SelectedIndex == 0) return;
+
+            KeyValuePair<string, string> kvp = _noaa_urls[comboWebImage_noaa.SelectedIndex];
+            txtWebImage_url.Text = kvp.Value;
+
+            comboWebImage_noaa.SelectedIndex = 0;
         }
     }
 

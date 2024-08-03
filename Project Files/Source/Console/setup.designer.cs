@@ -3822,9 +3822,15 @@
             this.chkLedIndicator_FadeOnTX = new System.Windows.Forms.CheckBoxTS();
             this.chkLedIndicator_FadeOnRX = new System.Windows.Forms.CheckBoxTS();
             this.grpWebImage = new System.Windows.Forms.GroupBoxTS();
+            this.groupBoxTS42 = new System.Windows.Forms.GroupBoxTS();
+            this.buttonTS1 = new System.Windows.Forms.ButtonTS();
+            this.comboWebImage_noaa = new System.Windows.Forms.ComboBoxTS();
             this.groupBoxTS41 = new System.Windows.Forms.GroupBoxTS();
             this.btnWebImage_bsdworld_visit = new System.Windows.Forms.ButtonTS();
             this.comboWebImage_BsdWorld = new System.Windows.Forms.ComboBoxTS();
+            this.groupBoxTS43 = new System.Windows.Forms.GroupBoxTS();
+            this.buttonTS2 = new System.Windows.Forms.ButtonTS();
+            this.comboWebImage_nasa = new System.Windows.Forms.ComboBoxTS();
             this.lblWebImage_state = new System.Windows.Forms.LabelTS();
             this.groupBoxTS40 = new System.Windows.Forms.GroupBoxTS();
             this.btnWebImage_hamqsl_donate = new System.Windows.Forms.ButtonTS();
@@ -4814,7 +4820,9 @@
             this.grpMeterItemRotator.SuspendLayout();
             this.grpLedIndiciator.SuspendLayout();
             this.grpWebImage.SuspendLayout();
+            this.groupBoxTS42.SuspendLayout();
             this.groupBoxTS41.SuspendLayout();
+            this.groupBoxTS43.SuspendLayout();
             this.groupBoxTS40.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60761,7 +60769,9 @@
             // 
             // grpWebImage
             // 
+            this.grpWebImage.Controls.Add(this.groupBoxTS42);
             this.grpWebImage.Controls.Add(this.groupBoxTS41);
+            this.grpWebImage.Controls.Add(this.groupBoxTS43);
             this.grpWebImage.Controls.Add(this.lblWebImage_state);
             this.grpWebImage.Controls.Add(this.groupBoxTS40);
             this.grpWebImage.Controls.Add(this.labelTS236);
@@ -60772,19 +60782,53 @@
             this.grpWebImage.Controls.Add(this.labelTS235);
             this.grpWebImage.Controls.Add(this.chkWebImage_fade_tx);
             this.grpWebImage.Controls.Add(this.chkWebImage_fade_rx);
-            this.grpWebImage.Location = new System.Drawing.Point(409, 544);
+            this.grpWebImage.Location = new System.Drawing.Point(405, 472);
             this.grpWebImage.Name = "grpWebImage";
-            this.grpWebImage.Size = new System.Drawing.Size(323, 307);
+            this.grpWebImage.Size = new System.Drawing.Size(323, 358);
             this.grpWebImage.TabIndex = 108;
             this.grpWebImage.TabStop = false;
             this.grpWebImage.Text = "Web Image";
             this.grpWebImage.Visible = false;
             // 
+            // groupBoxTS42
+            // 
+            this.groupBoxTS42.Controls.Add(this.buttonTS1);
+            this.groupBoxTS42.Controls.Add(this.comboWebImage_noaa);
+            this.groupBoxTS42.Location = new System.Drawing.Point(16, 253);
+            this.groupBoxTS42.Name = "groupBoxTS42";
+            this.groupBoxTS42.Size = new System.Drawing.Size(293, 44);
+            this.groupBoxTS42.TabIndex = 145;
+            this.groupBoxTS42.TabStop = false;
+            this.groupBoxTS42.Text = "noaa";
+            // 
+            // buttonTS1
+            // 
+            this.buttonTS1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
+            this.buttonTS1.Image = null;
+            this.buttonTS1.Location = new System.Drawing.Point(208, 12);
+            this.buttonTS1.Name = "buttonTS1";
+            this.buttonTS1.Selectable = true;
+            this.buttonTS1.Size = new System.Drawing.Size(75, 24);
+            this.buttonTS1.TabIndex = 1;
+            this.buttonTS1.Text = "Visit";
+            this.buttonTS1.UseVisualStyleBackColor = false;
+            this.buttonTS1.Visible = false;
+            // 
+            // comboWebImage_noaa
+            // 
+            this.comboWebImage_noaa.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboWebImage_noaa.FormattingEnabled = true;
+            this.comboWebImage_noaa.Location = new System.Drawing.Point(12, 15);
+            this.comboWebImage_noaa.Name = "comboWebImage_noaa";
+            this.comboWebImage_noaa.Size = new System.Drawing.Size(190, 21);
+            this.comboWebImage_noaa.TabIndex = 0;
+            this.comboWebImage_noaa.SelectedIndexChanged += new System.EventHandler(this.comboWebImage_noaa_SelectedIndexChanged);
+            // 
             // groupBoxTS41
             // 
             this.groupBoxTS41.Controls.Add(this.btnWebImage_bsdworld_visit);
             this.groupBoxTS41.Controls.Add(this.comboWebImage_BsdWorld);
-            this.groupBoxTS41.Location = new System.Drawing.Point(16, 171);
+            this.groupBoxTS41.Location = new System.Drawing.Point(16, 165);
             this.groupBoxTS41.Name = "groupBoxTS41";
             this.groupBoxTS41.Size = new System.Drawing.Size(293, 44);
             this.groupBoxTS41.TabIndex = 143;
@@ -60813,6 +60857,40 @@
             this.comboWebImage_BsdWorld.Size = new System.Drawing.Size(190, 21);
             this.comboWebImage_BsdWorld.TabIndex = 0;
             this.comboWebImage_BsdWorld.SelectedIndexChanged += new System.EventHandler(this.comboWebImage_BsdWorld_SelectedIndexChanged);
+            // 
+            // groupBoxTS43
+            // 
+            this.groupBoxTS43.Controls.Add(this.buttonTS2);
+            this.groupBoxTS43.Controls.Add(this.comboWebImage_nasa);
+            this.groupBoxTS43.Location = new System.Drawing.Point(16, 209);
+            this.groupBoxTS43.Name = "groupBoxTS43";
+            this.groupBoxTS43.Size = new System.Drawing.Size(293, 44);
+            this.groupBoxTS43.TabIndex = 144;
+            this.groupBoxTS43.TabStop = false;
+            this.groupBoxTS43.Text = "nasa";
+            // 
+            // buttonTS2
+            // 
+            this.buttonTS2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
+            this.buttonTS2.Image = null;
+            this.buttonTS2.Location = new System.Drawing.Point(208, 12);
+            this.buttonTS2.Name = "buttonTS2";
+            this.buttonTS2.Selectable = true;
+            this.buttonTS2.Size = new System.Drawing.Size(75, 24);
+            this.buttonTS2.TabIndex = 1;
+            this.buttonTS2.Text = "Visit";
+            this.buttonTS2.UseVisualStyleBackColor = false;
+            this.buttonTS2.Visible = false;
+            // 
+            // comboWebImage_nasa
+            // 
+            this.comboWebImage_nasa.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboWebImage_nasa.FormattingEnabled = true;
+            this.comboWebImage_nasa.Location = new System.Drawing.Point(12, 15);
+            this.comboWebImage_nasa.Name = "comboWebImage_nasa";
+            this.comboWebImage_nasa.Size = new System.Drawing.Size(190, 21);
+            this.comboWebImage_nasa.TabIndex = 0;
+            this.comboWebImage_nasa.SelectedIndexChanged += new System.EventHandler(this.comboWebImage_nasa_SelectedIndexChanged);
             // 
             // lblWebImage_state
             // 
@@ -62141,7 +62219,9 @@
             this.grpLedIndiciator.PerformLayout();
             this.grpWebImage.ResumeLayout(false);
             this.grpWebImage.PerformLayout();
+            this.groupBoxTS42.ResumeLayout(false);
             this.groupBoxTS41.ResumeLayout(false);
+            this.groupBoxTS43.ResumeLayout(false);
             this.groupBoxTS40.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -65981,5 +66061,11 @@
         private GroupBoxTS groupBoxTS41;
         private ButtonTS btnWebImage_bsdworld_visit;
         private ComboBoxTS comboWebImage_BsdWorld;
+        private GroupBoxTS groupBoxTS42;
+        private ButtonTS buttonTS1;
+        private ComboBoxTS comboWebImage_noaa;
+        private GroupBoxTS groupBoxTS43;
+        private ButtonTS buttonTS2;
+        private ComboBoxTS comboWebImage_nasa;
     }
 }
