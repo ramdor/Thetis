@@ -415,6 +415,20 @@
               />
 		</Component>
 		<!-- 
+		<Component Guid="*">
+			<File Id="System.IO.CompressionDLL"
+				  Source="$(var.FilesPath)System.IO.Compression.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="System.IO.Compression.ZipFileDLL"
+				  Source="$(var.FilesPath)System.IO.Compression.ZipFile.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		-->
+		<!-- 
 		Additional end
 		-->
 

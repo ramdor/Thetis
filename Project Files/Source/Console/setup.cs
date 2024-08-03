@@ -48,9 +48,8 @@ namespace Thetis
     using RawInput_dll;
     using System.Net;
     using System.Threading.Tasks;
-    using Ionic.Zip;
-    using System.Drawing.Text;
-    using System.Diagnostics.Eventing.Reader;
+    //using Ionic.Zip;
+    using System.IO.Compression;
     using System.Timers;
     using System.Runtime.InteropServices;
     public partial class Setup : Form
@@ -25905,22 +25904,48 @@ namespace Thetis
                     if (File.Exists(zipFilePath))
                         File.Delete(zipFilePath);
 
-                    using (ZipFile zip = new ZipFile())
+                    // Create the zip file
+                    using (FileStream zipToOpen = new FileStream(zipFilePath, FileMode.Create))
                     {
-                        foreach (string fileName in filesToZip)
+                        using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                         {
-                            string filePath = Path.Combine(sourceDirectory, fileName);
-
-                            if (File.Exists(filePath))
+                            // Add each file to the zip
+                            foreach (string fileName in filesToZip)
                             {
-                                zip.AddFile(filePath, "");
+                                string filePath = Path.Combine(sourceDirectory, fileName);
+
+                                if (File.Exists(filePath))
+                                {
+                                    archive.CreateEntryFromFile(filePath, fileName);
+                                }
+                            }
+                            System.IO.Compression.
+                            // Add the version.txt entry
+                            ZipArchiveEntry versionEntry = archive.CreateEntry("version.txt");
+
+                            using (StreamWriter writer = new StreamWriter(versionEntry.Open()))
+                            {
+                                writer.Write(version);
                             }
                         }
-
-                        zip.AddEntry("version.txt", version);
-
-                        zip.Save(zipFilePath);
                     }
+                    //DotNetZip - depricated
+                    //using (ZipFile zip = new ZipFile())
+                    //{
+                    //    foreach (string fileName in filesToZip)
+                    //    {
+                    //        string filePath = Path.Combine(sourceDirectory, fileName);
+
+                    //        if (File.Exists(filePath))
+                    //        {
+                    //            zip.AddFile(filePath, "");
+                    //        }
+                    //    }
+
+                    //    zip.AddEntry("version.txt", version);
+
+                    //    zip.Save(zipFilePath);
+                    //}
                 }
                 catch (Exception ex)
                 {
@@ -26425,7 +26450,6 @@ namespace Thetis
 
             updateSelectedSkin();
         }
-
         private bool isSkinZipFile(string filePath, string sFilename, out bool usesFilenameInRoot, out bool isMeterSkin, bool bypassRootFolderCheck)
         {
             bool bOk = false;
@@ -26434,9 +26458,10 @@ namespace Thetis
 
             try
             {
-                using (ZipFile zipFile = ZipFile.Read(filePath))
+                using (ZipArchive zipFile = ZipFile.OpenRead(filePath))
                 {
-                    if (zipFile.Any(entry => entry.FileName.StartsWith("Meters" + "/") && entry.IsDirectory))
+                    // Check if there is a directory entry starting with "Meters/"
+                    if (zipFile.Entries.Any(entry => entry.FullName.StartsWith("Meters/") && entry.FullName.EndsWith("/")))
                     {
                         bOk = true;
                         isMeterSkin = true;
@@ -26446,20 +26471,27 @@ namespace Thetis
                     {
                         if (!bypassRootFolderCheck)
                         {
-                            if (!bOk && zipFile.Any(entry => entry.FileName.StartsWith("Skins" + "/") && entry.IsDirectory))
-                                bOk = true;
-
-                            if (!bOk && sFilename != "")
+                            // Check for "Skins/" directory
+                            if (!bOk && zipFile.Entries.Any(entry => entry.FullName.StartsWith("Skins/") && entry.FullName.EndsWith("/")))
                             {
+                                bOk = true;
+                            }
+
+                            if (!bOk && !string.IsNullOrEmpty(sFilename))
+                            {
+                                // Different filename checks
                                 string sReplacedWithSpaces = sFilename.Replace("_", " ");
                                 string sReplacedWithoutSpaces = sFilename.Replace(" ", "_");
                                 string sReplacedWithMinus = sFilename.Replace(" ", "-");
                                 string sReplacedWithoutMinus = sFilename.Replace("-", " ");
 
-                                if (zipFile.Any(entry => (entry.FileName.StartsWith(sFilename + "/") || entry.FileName.StartsWith(sReplacedWithSpaces + "/") ||
-                                    entry.FileName.StartsWith(sReplacedWithoutSpaces + "/") || entry.FileName.StartsWith(sReplacedWithMinus + "/") ||
-                                    entry.FileName.StartsWith(sReplacedWithoutMinus + "/")
-                                    ) && entry.IsDirectory))
+                                if (zipFile.Entries.Any(entry =>
+                                    (entry.FullName.StartsWith(sFilename + "/") ||
+                                     entry.FullName.StartsWith(sReplacedWithSpaces + "/") ||
+                                     entry.FullName.StartsWith(sReplacedWithoutSpaces + "/") ||
+                                     entry.FullName.StartsWith(sReplacedWithMinus + "/") ||
+                                     entry.FullName.StartsWith(sReplacedWithoutMinus + "/")) &&
+                                     entry.FullName.EndsWith("/")))
                                 {
                                     usesFilenameInRoot = true;
                                     bOk = true;
@@ -26467,26 +26499,95 @@ namespace Thetis
                             }
                         }
                         else
+                        {
                             bOk = true;
+                        }
                     }
                 }
             }
-            catch (Ionic.Zip.BadReadException)
+            catch (InvalidDataException)
             {
+                // Handle invalid ZIP file
             }
             catch (Exception ex)
             {
+                // Handle other exceptions
             }
 
             return bOk;
         }
+        //dotnetzip depricated
+        //private bool isSkinZipFile(string filePath, string sFilename, out bool usesFilenameInRoot, out bool isMeterSkin, bool bypassRootFolderCheck)
+        //{
+        //    bool bOk = false;
+        //    usesFilenameInRoot = false;
+        //    isMeterSkin = false;
+
+        //    try
+        //    {
+        //        using (ZipFile zipFile = ZipFile.Read(filePath))
+        //        {
+        //            if (zipFile.Any(entry => entry.FileName.StartsWith("Meters" + "/") && entry.IsDirectory))
+        //            {
+        //                bOk = true;
+        //                isMeterSkin = true;
+        //            }
+
+        //            if (!bOk)
+        //            {
+        //                if (!bypassRootFolderCheck)
+        //                {
+        //                    if (!bOk && zipFile.Any(entry => entry.FileName.StartsWith("Skins" + "/") && entry.IsDirectory))
+        //                        bOk = true;
+
+        //                    if (!bOk && sFilename != "")
+        //                    {
+        //                        string sReplacedWithSpaces = sFilename.Replace("_", " ");
+        //                        string sReplacedWithoutSpaces = sFilename.Replace(" ", "_");
+        //                        string sReplacedWithMinus = sFilename.Replace(" ", "-");
+        //                        string sReplacedWithoutMinus = sFilename.Replace("-", " ");
+
+        //                        if (zipFile.Any(entry => (entry.FileName.StartsWith(sFilename + "/") || entry.FileName.StartsWith(sReplacedWithSpaces + "/") ||
+        //                            entry.FileName.StartsWith(sReplacedWithoutSpaces + "/") || entry.FileName.StartsWith(sReplacedWithMinus + "/") ||
+        //                            entry.FileName.StartsWith(sReplacedWithoutMinus + "/")
+        //                            ) && entry.IsDirectory))
+        //                        {
+        //                            usesFilenameInRoot = true;
+        //                            bOk = true;
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                    bOk = true;
+        //            }
+        //        }
+        //    }
+        //    catch (Ionic.Zip.BadReadException)
+        //    {
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //    }
+
+        //    return bOk;
+        //}
+
         private bool doesFolderExistInZip(string zipFilePath, string folderName)
         {
-            using (ZipFile zipFile = ZipFile.Read(zipFilePath))
+            using (ZipArchive zipArchive = ZipFile.OpenRead(zipFilePath))
             {
-                return zipFile.Any(entry => entry.FileName.StartsWith(folderName + "/") && entry.IsDirectory);
+                return zipArchive.Entries.Any(entry =>
+                    entry.FullName.StartsWith(folderName + "/") && entry.FullName.EndsWith("/"));
             }
         }
+        //depricated dotnetzip
+        //private bool doesFolderExistInZip(string zipFilePath, string folderName)
+        //{
+        //    using (ZipFile zipFile = ZipFile.Read(zipFilePath))
+        //    {
+        //        return zipFile.Any(entry => entry.FileName.StartsWith(folderName + "/") && entry.IsDirectory);
+        //    }
+        //}
 
         private static string extractPngFilesFromZip(string sourceZipFilePath, string outputPath)
         {
@@ -26496,26 +26597,28 @@ namespace Thetis
                 sourceZipFilePath = sourceZipFilePath.Replace('/', '\\');
                 outputPath = outputPath.Replace('/', '\\');
 
-                using (ZipFile zip = ZipFile.Read(sourceZipFilePath))
+                using (ZipArchive zip = ZipFile.OpenRead(sourceZipFilePath))
                 {
-                    foreach (ZipEntry entry in zip.Where(e => e.FileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
+                    foreach (ZipArchiveEntry entry in zip.Entries.Where(e => e.FullName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
                     {
-                        string entryPath = Path.Combine(outputPath, entry.FileName.Replace('/', '\\'));
+                        // Normalize the entry path for file system usage
+                        string entryPath = Path.Combine(outputPath, entry.FullName.Replace('/', '\\'));
 
                         // Create the directory structure if it doesn't exist
                         Directory.CreateDirectory(Path.GetDirectoryName(entryPath));
 
-                        // if there is a file remove it
+                        // If a file exists at the target path, delete it
                         if (File.Exists(entryPath))
                             File.Delete(entryPath);
 
-                        entry.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
+                        // Extract the entry
+                        entry.ExtractToFile(entryPath, true); // true to overwrite existing files
 
                         if (sRootFolder == "")
                         {
-                            //get skin name from folder structure
-                            int index = entry.FileName.IndexOf('/');
-                            if (index > 0) sRootFolder = entry.FileName.Substring(0, index);
+                            // Get the root folder name from the entry's path
+                            int index = entry.FullName.IndexOf('/');
+                            if (index > 0) sRootFolder = entry.FullName.Substring(0, index);
                         }
                     }
                 }
@@ -26523,13 +26626,56 @@ namespace Thetis
             catch (Exception ex)
             {
                 MessageBox.Show(
-                        "There was an issue extracting the .png file(s) from the download.\n\nSome/all of the images may be missing. The error is as follows :\n\n" + ex.ToString(),
-                        "Skin download issue",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    "There was an issue extracting the .png file(s) from the download.\n\nSome/all of the images may be missing. The error is as follows :\n\n" + ex.ToString(),
+                    "Skin download issue",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
             }
             return sRootFolder;
         }
+        //depricated dotnetzip
+        //private static string extractPngFilesFromZip(string sourceZipFilePath, string outputPath)
+        //{
+        //    string sRootFolder = "";
+        //    try
+        //    {
+        //        sourceZipFilePath = sourceZipFilePath.Replace('/', '\\');
+        //        outputPath = outputPath.Replace('/', '\\');
+
+        //        using (ZipFile zip = ZipFile.Read(sourceZipFilePath))
+        //        {
+        //            foreach (ZipEntry entry in zip.Where(e => e.FileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
+        //            {
+        //                string entryPath = Path.Combine(outputPath, entry.FileName.Replace('/', '\\'));
+
+        //                // Create the directory structure if it doesn't exist
+        //                Directory.CreateDirectory(Path.GetDirectoryName(entryPath));
+
+        //                // if there is a file remove it
+        //                if (File.Exists(entryPath))
+        //                    File.Delete(entryPath);
+
+        //                entry.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
+
+        //                if (sRootFolder == "")
+        //                {
+        //                    //get skin name from folder structure
+        //                    int index = entry.FileName.IndexOf('/');
+        //                    if (index > 0) sRootFolder = entry.FileName.Substring(0, index);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(
+        //                "There was an issue extracting the .png file(s) from the download.\n\nSome/all of the images may be missing. The error is as follows :\n\n" + ex.ToString(),
+        //                "Skin download issue",
+        //                MessageBoxButtons.OK,
+        //                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+        //    }
+        //    return sRootFolder;
+        //}
 
         private bool bIgnoreSkinServerListUpdate = false;
         private void comboSkinServerList_SelectedIndexChanged(object sender, EventArgs e)
