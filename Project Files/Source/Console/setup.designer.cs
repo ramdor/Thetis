@@ -50654,7 +50654,7 @@
             65536});
             this.nudMeterItemsPowerLimit.Location = new System.Drawing.Point(207, 334);
             this.nudMeterItemsPowerLimit.Maximum = new decimal(new int[] {
-            2500,
+            5000,
             0,
             0,
             0});
@@ -60789,7 +60789,7 @@
             this.groupBoxTS41.Size = new System.Drawing.Size(293, 44);
             this.groupBoxTS41.TabIndex = 143;
             this.groupBoxTS41.TabStop = false;
-            this.groupBoxTS41.Text = "bsdworld.com";
+            this.groupBoxTS41.Text = "bsdworld.org";
             // 
             // btnWebImage_bsdworld_visit
             // 
