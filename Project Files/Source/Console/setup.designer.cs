@@ -3487,6 +3487,7 @@
             this.btnMMIO_network_add_tcpip_client = new System.Windows.Forms.ButtonTS();
             this.btnMMIO_network_delete = new System.Windows.Forms.ButtonTS();
             this.pnlMMIO_network_container = new System.Windows.Forms.PanelTS();
+            this.picMutliMeterIO_udp_out_warning = new System.Windows.Forms.PictureBox();
             this.btnMMIO_network_remove_all_variables = new System.Windows.Forms.ButtonTS();
             this.btnMMIO_network_udp_endpoint_ip_port = new System.Windows.Forms.ButtonTS();
             this.lblMMIO_network_udp_endpoint_ip_port = new System.Windows.Forms.LabelTS();
@@ -3821,6 +3822,9 @@
             this.chkLedIndicator_FadeOnTX = new System.Windows.Forms.CheckBoxTS();
             this.chkLedIndicator_FadeOnRX = new System.Windows.Forms.CheckBoxTS();
             this.grpWebImage = new System.Windows.Forms.GroupBoxTS();
+            this.groupBoxTS41 = new System.Windows.Forms.GroupBoxTS();
+            this.btnWebImage_bsdworld_visit = new System.Windows.Forms.ButtonTS();
+            this.comboWebImage_BsdWorld = new System.Windows.Forms.ComboBoxTS();
             this.lblWebImage_state = new System.Windows.Forms.LabelTS();
             this.groupBoxTS40 = new System.Windows.Forms.GroupBoxTS();
             this.btnWebImage_hamqsl_donate = new System.Windows.Forms.ButtonTS();
@@ -3831,7 +3835,6 @@
             this.labelTS235 = new System.Windows.Forms.LabelTS();
             this.chkWebImage_fade_tx = new System.Windows.Forms.CheckBoxTS();
             this.chkWebImage_fade_rx = new System.Windows.Forms.CheckBoxTS();
-            this.picMutliMeterIO_udp_out_warning = new System.Windows.Forms.PictureBox();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4718,6 +4721,7 @@
             this.tpMultiMetersIO.SuspendLayout();
             this.groupBoxTS39.SuspendLayout();
             this.pnlMMIO_network_container.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picMutliMeterIO_udp_out_warning)).BeginInit();
             this.tpTests.SuspendLayout();
             this.groupBoxTS30.SuspendLayout();
             this.grpBoxTS1.SuspendLayout();
@@ -4810,8 +4814,8 @@
             this.grpMeterItemRotator.SuspendLayout();
             this.grpLedIndiciator.SuspendLayout();
             this.grpWebImage.SuspendLayout();
+            this.groupBoxTS41.SuspendLayout();
             this.groupBoxTS40.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picMutliMeterIO_udp_out_warning)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -55522,6 +55526,17 @@
             this.pnlMMIO_network_container.Size = new System.Drawing.Size(521, 364);
             this.pnlMMIO_network_container.TabIndex = 98;
             // 
+            // picMutliMeterIO_udp_out_warning
+            // 
+            this.picMutliMeterIO_udp_out_warning.Image = ((System.Drawing.Image)(resources.GetObject("picMutliMeterIO_udp_out_warning.Image")));
+            this.picMutliMeterIO_udp_out_warning.Location = new System.Drawing.Point(214, 117);
+            this.picMutliMeterIO_udp_out_warning.Name = "picMutliMeterIO_udp_out_warning";
+            this.picMutliMeterIO_udp_out_warning.Size = new System.Drawing.Size(20, 20);
+            this.picMutliMeterIO_udp_out_warning.TabIndex = 133;
+            this.picMutliMeterIO_udp_out_warning.TabStop = false;
+            this.toolTip1.SetToolTip(this.picMutliMeterIO_udp_out_warning, "Even though this UDP Listener is set to OUT only, it still has an idle listner on" +
+        " the Bind IP Port.");
+            // 
             // btnMMIO_network_remove_all_variables
             // 
             this.btnMMIO_network_remove_all_variables.Image = global::Thetis.Properties.Resources.trash_bulge_black;
@@ -60746,6 +60761,7 @@
             // 
             // grpWebImage
             // 
+            this.grpWebImage.Controls.Add(this.groupBoxTS41);
             this.grpWebImage.Controls.Add(this.lblWebImage_state);
             this.grpWebImage.Controls.Add(this.groupBoxTS40);
             this.grpWebImage.Controls.Add(this.labelTS236);
@@ -60764,6 +60780,67 @@
             this.grpWebImage.Text = "Web Image";
             this.grpWebImage.Visible = false;
             // 
+            // groupBoxTS41
+            // 
+            this.groupBoxTS41.Controls.Add(this.btnWebImage_bsdworld_visit);
+            this.groupBoxTS41.Controls.Add(this.comboWebImage_BsdWorld);
+            this.groupBoxTS41.Location = new System.Drawing.Point(16, 171);
+            this.groupBoxTS41.Name = "groupBoxTS41";
+            this.groupBoxTS41.Size = new System.Drawing.Size(293, 44);
+            this.groupBoxTS41.TabIndex = 143;
+            this.groupBoxTS41.TabStop = false;
+            this.groupBoxTS41.Text = "bsdworld.com";
+            // 
+            // btnWebImage_bsdworld_visit
+            // 
+            this.btnWebImage_bsdworld_visit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
+            this.btnWebImage_bsdworld_visit.Image = null;
+            this.btnWebImage_bsdworld_visit.Location = new System.Drawing.Point(208, 12);
+            this.btnWebImage_bsdworld_visit.Name = "btnWebImage_bsdworld_visit";
+            this.btnWebImage_bsdworld_visit.Selectable = true;
+            this.btnWebImage_bsdworld_visit.Size = new System.Drawing.Size(75, 24);
+            this.btnWebImage_bsdworld_visit.TabIndex = 1;
+            this.btnWebImage_bsdworld_visit.Text = "Visit";
+            this.btnWebImage_bsdworld_visit.UseVisualStyleBackColor = false;
+            this.btnWebImage_bsdworld_visit.Click += new System.EventHandler(this.btnWebImage_bsdworld_visit_Click);
+            // 
+            // comboWebImage_BsdWorld
+            // 
+            this.comboWebImage_BsdWorld.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboWebImage_BsdWorld.FormattingEnabled = true;
+            this.comboWebImage_BsdWorld.Items.AddRange(new object[] {
+            "select one",
+            "NA Propagation All",
+            "NA Propagation Zone 3",
+            "NA Propagation Zone 4",
+            "NA Propagation Zone 5",
+            "EU All",
+            "EU Zone 14",
+            "EU Zone 15",
+            "EU Zone 16",
+            "EU Zone 20",
+            "OC Propagation All",
+            "AS Propagation All",
+            "SA  Propagation All",
+            "AF  Propagation All",
+            "A-Index",
+            "PK Index",
+            "PK Predictions",
+            "Flux",
+            "Outlook",
+            "Solar Wind",
+            "SSN",
+            "SSN History",
+            "EISN",
+            "Proton Flux",
+            "X-Ray Flux",
+            "D-Layer"});
+            this.comboWebImage_BsdWorld.Location = new System.Drawing.Point(12, 15);
+            this.comboWebImage_BsdWorld.Name = "comboWebImage_BsdWorld";
+            this.comboWebImage_BsdWorld.Size = new System.Drawing.Size(190, 21);
+            this.comboWebImage_BsdWorld.TabIndex = 0;
+            this.comboWebImage_BsdWorld.SelectedIndexChanged += new System.EventHandler(this.comboWebImage_BsdWorld_SelectedIndexChanged);
+            // 
             // lblWebImage_state
             // 
             this.lblWebImage_state.Image = null;
@@ -60780,7 +60857,7 @@
             this.groupBoxTS40.Controls.Add(this.comboWebImage_HamQsl);
             this.groupBoxTS40.Location = new System.Drawing.Point(16, 121);
             this.groupBoxTS40.Name = "groupBoxTS40";
-            this.groupBoxTS40.Size = new System.Drawing.Size(293, 58);
+            this.groupBoxTS40.Size = new System.Drawing.Size(293, 44);
             this.groupBoxTS40.TabIndex = 141;
             this.groupBoxTS40.TabStop = false;
             this.groupBoxTS40.Text = "hamqsl.com";
@@ -60789,7 +60866,7 @@
             // 
             this.btnWebImage_hamqsl_donate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
             this.btnWebImage_hamqsl_donate.Image = null;
-            this.btnWebImage_hamqsl_donate.Location = new System.Drawing.Point(208, 18);
+            this.btnWebImage_hamqsl_donate.Location = new System.Drawing.Point(208, 12);
             this.btnWebImage_hamqsl_donate.Name = "btnWebImage_hamqsl_donate";
             this.btnWebImage_hamqsl_donate.Selectable = true;
             this.btnWebImage_hamqsl_donate.Size = new System.Drawing.Size(75, 24);
@@ -60827,7 +60904,7 @@
             "Earth 1",
             "Earth 2",
             "Planets"});
-            this.comboWebImage_HamQsl.Location = new System.Drawing.Point(12, 21);
+            this.comboWebImage_HamQsl.Location = new System.Drawing.Point(12, 15);
             this.comboWebImage_HamQsl.Name = "comboWebImage_HamQsl";
             this.comboWebImage_HamQsl.Size = new System.Drawing.Size(190, 21);
             this.comboWebImage_HamQsl.TabIndex = 0;
@@ -60894,17 +60971,6 @@
             this.chkWebImage_fade_rx.Text = "Fade on RX";
             this.chkWebImage_fade_rx.UseVisualStyleBackColor = true;
             this.chkWebImage_fade_rx.CheckedChanged += new System.EventHandler(this.chkWebImage_fade_rx_CheckedChanged);
-            // 
-            // picMutliMeterIO_udp_out_warning
-            // 
-            this.picMutliMeterIO_udp_out_warning.Image = ((System.Drawing.Image)(resources.GetObject("picMutliMeterIO_udp_out_warning.Image")));
-            this.picMutliMeterIO_udp_out_warning.Location = new System.Drawing.Point(214, 117);
-            this.picMutliMeterIO_udp_out_warning.Name = "picMutliMeterIO_udp_out_warning";
-            this.picMutliMeterIO_udp_out_warning.Size = new System.Drawing.Size(20, 20);
-            this.picMutliMeterIO_udp_out_warning.TabIndex = 133;
-            this.picMutliMeterIO_udp_out_warning.TabStop = false;
-            this.toolTip1.SetToolTip(this.picMutliMeterIO_udp_out_warning, "Even though this UDP Listener is set to OUT only, it still has an idle listner on" +
-        " the Bind IP Port.");
             // 
             // Setup
             // 
@@ -62017,6 +62083,7 @@
             this.groupBoxTS39.ResumeLayout(false);
             this.pnlMMIO_network_container.ResumeLayout(false);
             this.pnlMMIO_network_container.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picMutliMeterIO_udp_out_warning)).EndInit();
             this.tpTests.ResumeLayout(false);
             this.groupBoxTS30.ResumeLayout(false);
             this.grpBoxTS1.ResumeLayout(false);
@@ -62126,8 +62193,8 @@
             this.grpLedIndiciator.PerformLayout();
             this.grpWebImage.ResumeLayout(false);
             this.grpWebImage.PerformLayout();
+            this.groupBoxTS41.ResumeLayout(false);
             this.groupBoxTS40.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picMutliMeterIO_udp_out_warning)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -65963,5 +66030,8 @@
         private RadioButtonTS radMeterItemRotator_show_az;
         private NumericUpDownTS nudMeterItemRotator_padding;
         private PictureBox picMutliMeterIO_udp_out_warning;
+        private GroupBoxTS groupBoxTS41;
+        private ButtonTS btnWebImage_bsdworld_visit;
+        private ComboBoxTS comboWebImage_BsdWorld;
     }
 }
