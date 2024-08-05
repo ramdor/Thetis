@@ -267,9 +267,16 @@ namespace Thetis
 			{ 
 				NetworkIO.SetAntBits(0, 0, 0, 0, false); 
 				return;
-			}            
+			}
 
-			int rx_only_ant;	// Holds the current receive only port based on the current band selected  
+            Console c = Console.getConsole();
+
+            if (c == null)
+            {
+                System.Console.WriteLine("no console");
+            }
+
+            int rx_only_ant;	// Holds the current receive only port based on the current band selected  
 			int trx_ant; 
 			int tx_ant; 
 			int rx_out;			// Flag to identify if one of the rx only ports should be used while transmitting		
@@ -307,8 +314,21 @@ namespace Thetis
                 rx_only_ant = RxOnlyAnt[idx];
                 if (xvtr)
                 {
-                    if (rx_only_ant >= 3) rx_only_ant = 3;
-                    else rx_only_ant = 0;
+					if (c.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+					{
+                        int xvtrAnt = c.XVTRForm.GetRXAntenna(c.RX1XVTRIndex);
+
+						if (xvtrAnt == 4 ||		// MI0BOT: Alt RX has been requested or TX and Rx are not the same
+                           TRxAnt == false)
+							rx_only_ant = 1;
+						else
+							rx_only_ant = 0;
+                    }
+					else
+					{
+						if (rx_only_ant >= 3) rx_only_ant = 3;
+						else rx_only_ant = 0;
+					}
                 }
                 else
                 {
@@ -321,8 +341,8 @@ namespace Thetis
                 else trx_ant = RxAnt[idx];
 
                 if ((RxAnt[idx] != TxAnt[idx]) ||
-					(0 != rx_only_ant && Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE))  // MI0BOT: Antenna not the same is valid
-                {                                                                                           //         for receive only aerial as well
+					(0 != rx_only_ant && c.CurrentHPSDRModel == HPSDRModel.HERMESLITE))  // MI0BOT: Antenna not the same is valid
+                {                                                                        //         for receive only aerial as well
                     trx_ant_different = true;
 				}
 				else
@@ -356,10 +376,10 @@ namespace Thetis
             //    Thread.Sleep(10);
             //}
 
-            if (TRxAnt && Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+            if (TRxAnt && c.CurrentHPSDRModel == HPSDRModel.HERMESLITE && !xvtr)
             {
                 // MI0BOT: Transmit antenna is being used for reception in split aerial operation
-                //         so switch of the rx only aerial
+                //         so switch of the rx only aerial but not with transverter operation
 
                 rx_only_ant = 0;    
             }
@@ -375,8 +395,8 @@ namespace Thetis
                 NetworkIO.SetAntBits(rx_only_ant, trx_ant, tx_ant, rx_out, tx);
 				System.Console.WriteLine("Ant Rx Only {0} , TRx Ant {1}, Tx Ant {2}, Rx Out {3}, TX {4}", rx_only_ant.ToString(), trx_ant.ToString(), tx_ant.ToString(), rx_out.ToString(), tx.ToString());
 
-                if (Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE)
-					Console.getConsole().SetIOBoardAerialPorts(rx_only_ant, trx_ant - 1, tx_ant - 1, tx);   // MI0BOT: Sets the aerial controls on the I/O board 
+                if (c.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+					c.SetIOBoardAerialPorts(rx_only_ant, trx_ant - 1, tx_ant - 1, tx);   // MI0BOT: Sets the aerial controls on the I/O board 
 
 				//store old
 				m_nOld_rx_only_ant = rx_only_ant;

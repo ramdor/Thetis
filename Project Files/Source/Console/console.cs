@@ -24739,7 +24739,15 @@ namespace Thetis
             }
         }
 
-        public void SetIOBoardAerialPorts(int rx_only_ant, int rx_ant, int tx_ant, bool tx)
+        public void SetIOBoardAerialPorts(int rx_only_ant, int rx_ant, int tx_ant, bool tx) // MI0BOT: Control I/O Board's aerial capabilities 
+        {
+            SetIOBoardAerialPorts(rx_only_ant);
+
+            IOBoardAerialPorts = (byte) (rx_ant & 0x0f);
+            IOBoardAerialPorts |= (byte) (tx_ant << 4);
+        }
+
+        public void SetIOBoardAerialPorts(int rx_only_ant) // MI0BOT: Control I/O Board's Alt Rx aerial facility
         {
             switch (rx_only_ant)
             {
@@ -24752,9 +24760,6 @@ namespace Thetis
                     IOBoardAerialMode = 0;
                     break;
             }
-
-            IOBoardAerialPorts = (byte) (rx_ant & 0x0f);
-            IOBoardAerialPorts |= (byte) (tx_ant << 4);
         }
 
         private byte IOBoardAerialMode = 0;
@@ -31523,29 +31528,43 @@ namespace Thetis
             if (!IsSetupFormNull)
             {
                 int required_ant = XVTRForm.GetRXAntenna(rx_xvtr_index);
-                if (required_ant >= 1 && required_ant <= 3)
+
+                if (CurrentHPSDRHardware == HPSDRHW.HermesLite &&
+                    required_ant == 4)                              // MI0BOT: HL2, setting for Alt Rx, so assume we must have an I/O Board
                 {
-                    Band xvtr_rx_band = BandByFreq(XVTRForm.TranslateFreq(freq), -1, false, current_region, false);
-                    int xvtr_rx_band_ant = SetupForm.GetRXAntenna(xvtr_rx_band);
-                    if (required_ant != xvtr_rx_band_ant)
-                    {
-                        //Debug.Print("Change xvtr rx antenna to : " + required_ant.ToString());
-                        undoXVTRantennaModify(rx);
-                        xvtr_rx_band_ant = SetupForm.GetRXAntenna(xvtr_rx_band); // this needs to re-obtained as the undo above might adjust revert the antennas back
-                        _ant_before_xvtr_modify[rx] = xvtr_rx_band_ant;
-                        _band_used_for_xvtr_modify[rx] = xvtr_rx_band;
-                        SetupForm.SetRXAntenna(required_ant, xvtr_rx_band);
-                    }
+                    chkRxAnt.Enabled = false;   // MI0BOT: It doesn't make sense to have a abilty to switch Alt Rx, so disable
+                    SetIOBoardAerialPorts(1);   // MI0BOT: Switch to Alt Rx
                 }
                 else
                 {
-                    // return to default
-                    undoXVTRantennaModify(rx);
+                    chkRxAnt.Enabled = true;
+
+                    if (required_ant >= 1 && required_ant <= 3)
+                    {
+                        Band xvtr_rx_band = BandByFreq(XVTRForm.TranslateFreq(freq), -1, false, current_region, false);
+                        int xvtr_rx_band_ant = SetupForm.GetRXAntenna(xvtr_rx_band);
+                        if (required_ant != xvtr_rx_band_ant)
+                        {
+                            //Debug.Print("Change xvtr rx antenna to : " + required_ant.ToString());
+                            undoXVTRantennaModify(rx);
+                            xvtr_rx_band_ant = SetupForm.GetRXAntenna(xvtr_rx_band); // this needs to re-obtained as the undo above might adjust revert the antennas back
+                            _ant_before_xvtr_modify[rx] = xvtr_rx_band_ant;
+                            _band_used_for_xvtr_modify[rx] = xvtr_rx_band;
+                            SetupForm.SetRXAntenna(required_ant, xvtr_rx_band);
+                        }
+                    }
+                    else
+                    {
+                        // return to default
+                        undoXVTRantennaModify(rx);
+                    }
                 }
             }
         }
         private void undoXVTRantennaModify(int rx)
         {
+            chkRxAnt.Enabled = true;    // MI0BOT: Re-enable Alt Rx 
+
             if (rx < 0 || rx > 1) return;
             if (_band_used_for_xvtr_modify[rx] != Band.LAST)
             {

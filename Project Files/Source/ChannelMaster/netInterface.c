@@ -581,6 +581,9 @@ void DisablePA(int bit)
 {
 	if (prn->tx[0].pa != bit) 
 	{
+		if (prn->discovery.BoardType == HermesLite)
+			EnableApolloTuner(!bit);	// MI0BOT: This call used on HL2 to enable/disable PA
+
 		prn->tx[0].pa = bit;		
 		if (listenSock != INVALID_SOCKET)
 			CmdGeneral();
