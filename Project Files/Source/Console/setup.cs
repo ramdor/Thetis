@@ -30114,7 +30114,9 @@ namespace Thetis
             new KeyValuePair<string, string>("Northern Aurora Latest", "https://services.swpc.noaa.gov/images/animations/ovation/north/latest.jpg"),
             new KeyValuePair<string, string>("Southern Aurora Latest", "https://services.swpc.noaa.gov/images/animations/ovation/south/latest.jpg"),
             new KeyValuePair<string, string>("Northern Aurora Forecast", "https://services.swpc.noaa.gov/images/aurora-forecast-northern-hemisphere.jpg"),
-            new KeyValuePair<string, string>("Southern Aurora Forecast", "https://services.swpc.noaa.gov/images/aurora-forecast-southern-hemisphere.jpg")
+            new KeyValuePair<string, string>("Southern Aurora Forecast", "https://services.swpc.noaa.gov/images/aurora-forecast-southern-hemisphere.jpg"),
+            new KeyValuePair<string, string>("SWX Solar Overiew", "https://services.swpc.noaa.gov/images/swx-overview-large.gif"),
+            new KeyValuePair<string, string>("K Indicies", "https://services.swpc.noaa.gov/images/station-k-index.png")
         };
 
         private void comboWebImage_BsdWorld_SelectedIndexChanged(object sender, EventArgs e)

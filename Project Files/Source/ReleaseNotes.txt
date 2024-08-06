@@ -4,7 +4,10 @@
 
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
-## v2.10.3.6 Change Log - WIP dev_8 (ongoing)
+## v2.10.3.6 Change Log - WIP dev_8b
+- [fix] rx att + tx att was being used in dup display, leading to incorrect display. Fixed
+
+## v2.10.3.6 Change Log - WIP dev_8
 - [add] Led Indicator meter item - use variables in c# style code to provide a Boolean expression for the indicator  eg  %swr% > 2.0  or  %split% == "SPLIT"
 - [add] Added enable G2 panel; not enabled if Andromeda panel enabled and vice versa Added button actions for band selection - G8NJJ
 - [add] ability to create default G2 settings - G8NJJ

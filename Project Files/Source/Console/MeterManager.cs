@@ -6499,7 +6499,7 @@ namespace Thetis
             private List<Reading> _list_placeholders_readings;
             private readonly object _list_placeholders_lock = new object();
             private Script _script;
-            private Dictionary<string, object> _subs;
+            private Dictionary<string, object> _variable_substitutions;
             private bool _busy = false;
             private bool _error = false;
             CancellationTokenSource _cts;
@@ -6547,7 +6547,7 @@ namespace Thetis
 
                 _cts = null;
                 _script = null;
-                _subs = new Dictionary<string, object>();
+                _variable_substitutions = new Dictionary<string, object>();
 
                 _forceRecompile = false;
 
@@ -6606,7 +6606,7 @@ namespace Thetis
                 try
                 {
                     Globals globals = new Globals();
-                    globals.Variables = _subs;
+                    globals.Variables = _variable_substitutions;
                     ScriptState ss = await _script.RunAsync(globals, cancellationToken);
                     if (ss.Variables.Length == 1)
                     {
@@ -6702,7 +6702,7 @@ namespace Thetis
                             }
                         }
 
-                        _subs.Clear();                        
+                        _variable_substitutions.Clear();                        
                         string expression = _condition;
                         string script_expression = _condition;
                         string lower;
@@ -6715,8 +6715,8 @@ namespace Thetis
                             if (script_expression.IndexOf(lower) >= 0)
                                 script_expression = script_expression.Replace(lower, "(float)Variables[\"" + r.ToString().ToLower() + "\"]");
 
-                            if (!_subs.ContainsKey(r.ToString().ToLower()))
-                                _subs.Add(r.ToString().ToLower(), reading);
+                            if (!_variable_substitutions.ContainsKey(r.ToString().ToLower()))
+                                _variable_substitutions.Add(r.ToString().ToLower(), reading);
                         }
                         foreach (string placeholder in _list_placeholders_strings)
                         {
@@ -6739,8 +6739,8 @@ namespace Thetis
                             if (script_expression.IndexOf(lower) >= 0)
                                 script_expression = script_expression.Replace(lower, "(" + type + ")(Variables[\"" + placeholder.ToLower() + "\"])");
 
-                            if (!_subs.ContainsKey(placeholder.ToLower()))
-                                _subs.Add(placeholder.ToLower(), reading);
+                            if (!_variable_substitutions.ContainsKey(placeholder.ToLower()))
+                                _variable_substitutions.Add(placeholder.ToLower(), reading);
                         }
 
                         // MultiMeter IO
@@ -6772,14 +6772,14 @@ namespace Thetis
                                     if (script_expression.IndexOf(lower) >= 0)
                                         script_expression = script_expression.Replace(lower, "(" + type + ")(Variables[\"" + kvp.Key + "\"])");
 
-                                    if (!_subs.ContainsKey(kvp.Key))
-                                        _subs.Add(kvp.Key, val);
+                                    if (!_variable_substitutions.ContainsKey(kvp.Key))
+                                        _variable_substitutions.Add(kvp.Key, val);
                                 }
                             }
                         }
                         //
 
-                        bool okExp = validateExpression(expression, _subs);
+                        bool okExp = validateExpression(expression, _variable_substitutions);
                         if (okExp)
                         {
                             try
@@ -6881,40 +6881,42 @@ namespace Thetis
 
                     lock (_list_placeholders_lock)
                     {
+                        // regular readings
                         foreach (Reading r in _list_placeholders_readings)
                         {
-                            if (_subs.ContainsKey(r.ToString().ToLower()))
+                            if (_variable_substitutions.ContainsKey(r.ToString().ToLower()))
                             {
                                 ReadingsCustom.TakeReading(rx, r);
                                 object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
-                                _subs[r.ToString().ToLower()] = (float)reading;
+                                _variable_substitutions[r.ToString().ToLower()] = (float)reading;
                             }
                         }
+                        // readings with string as ID
                         foreach (string placeholder in _list_placeholders_strings)
                         {
-                            if (_subs.ContainsKey(placeholder.ToLower()))
+                            if (_variable_substitutions.ContainsKey(placeholder.ToLower()))
                             {
                                 object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
-                                _subs[placeholder.ToLower()] = reading;
+                                _variable_substitutions[placeholder.ToLower()] = reading;
                             }
                         }
                     }
 
-                    // MultiMeter IO
+                    // MultiMeter IO readings
                     foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
                     {
                         MultiMeterIO.clsMMIO mmio = mmios.Value;
                         foreach (KeyValuePair<string, object> kvp in mmio.Variables())
                         {
-                            if (_subs.ContainsKey(kvp.Key))
+                            if (_variable_substitutions.ContainsKey(kvp.Key))
                             {
                                 object var = mmio.GetVariable(kvp.Key);
-                                if(var.GetType() != _subs[kvp.Key].GetType())
+                                if(var.GetType() != _variable_substitutions[kvp.Key].GetType())
                                 {
                                     typesChanged = true;
                                     break;
                                 }
-                                _subs[kvp.Key] = var;
+                                _variable_substitutions[kvp.Key] = var;
                             }
                         }
                     }

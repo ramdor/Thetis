@@ -9189,48 +9189,18 @@ namespace Thetis
 
         public static void WriteDB()
         {
-            //MW0LGE_[2.9.0.7]
-            //    try
-            //    {
-            //    ds.WriteXml(file_name, XmlWriteMode.WriteSchema);
-            //}
-            //    catch (Exception ex)
-            //    {
-            //        MessageBox.Show("A database write to file operation failed.  " +
-            //            "The exception error was:\n\n" + ex.Message,
-            //            "ERROR: Database Write Error",
-            //            MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    }
             WriteDB(file_name, ds);
         }
 
         //-W2PA Write the database to a specific file
         public static bool WriteDB(string fn)
         {
-            //// if (!File.Exists(fn)) return false;
-
-            //MW0LGE_[2.9.0.7]
-            // try
-            // {
-            //     ds.WriteXml(fn, XmlWriteMode.WriteSchema);
-            // }
-            // catch (Exception ex)
-            // {
-            //     MessageBox.Show("A database write to file operation failed.  " +
-            //         "The exception error was:\n\n" + ex.Message,
-            //         "ERROR: Database Write Error",
-            //         MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //     return false;
-            // }
-            // return true;
             return WriteDB(fn, ds);
         }
 
         //-W2PA Write specific dataset to a file 
         public static bool WriteDB(string fn, DataSet dsIN)
         {
-            // if (!File.Exists(fn)) return false;
-
             try
             {
                 dsIN.WriteXml(fn, XmlWriteMode.WriteSchema);
@@ -9245,12 +9215,6 @@ namespace Thetis
             }
             return true;
         }
-
-        //MW0LGE_[2.9.0.7]
-        //public static bool WriteCurrentDB(string fn)
-        //{
-        //    return WriteDB(fn, ds);
-        //}
 
         public static void Exit()
         {

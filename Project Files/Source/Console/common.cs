@@ -1206,5 +1206,16 @@ namespace Thetis
             }
         }
         //
+        public static bool HasArg(string[] args, string arg)
+        {
+            if (args == null || args.Length < 1 || string.IsNullOrEmpty(arg)) return false;
+
+            //return args[0].Contains(arg, StringComparison.OrdinalIgnoreCase);
+            foreach (string s in args)
+            {
+                if (s.Contains(arg, StringComparison.OrdinalIgnoreCase)) return true;
+            }
+            return false;
+        }
     }
 }
