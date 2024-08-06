@@ -577,7 +577,7 @@ namespace Thetis
             Thread.CurrentThread.CurrentUICulture = ci;
             //
 
-            if(hasArg(args, "-help"))
+            if(Common.HasArg(args, "-help"))
             {
                 showHelpInfo();
 
@@ -585,7 +585,7 @@ namespace Thetis
                 Environment.Exit(0);
                 return;
             }
-            m_bLogShutdown = hasArg(args, "-logshutdown");
+            m_bLogShutdown = Common.HasArg(args, "-logshutdown");
 
             // check versions of DLL/etc
             if (!checkVersions())
@@ -639,6 +639,7 @@ namespace Thetis
                     + "\\OpenHPSDR\\Thetis-x64\\";
             }
 
+#region DATABASE
             foreach (string s in args)
             {
                 if (s.StartsWith("-dbfilename:"))
@@ -805,8 +806,8 @@ namespace Thetis
                     }
 
                 }
-
             }
+#endregion DATABASE
 
             Splash.ShowSplashScreen();							// Start splash screen
 
@@ -1158,7 +1159,7 @@ namespace Thetis
                 //
 
                 //autostart
-                bool bAutoStart = hasArg(args, "-autostart") || m_bAutoPowerOn;
+                bool bAutoStart = Common.HasArg(args, "-autostart") || m_bAutoPowerOn;
                 if (bAutoStart)
                 {
                     autoStartTimer = new System.Timers.Timer(2000);
@@ -49361,13 +49362,6 @@ namespace Thetis
             }
         }
         #endregion
-
-        private bool hasArg(string[] args, string arg)
-        {
-            if (args == null || args.Length < 1 || string.IsNullOrEmpty(arg)) return false;
-
-            return args[0].Contains(arg, StringComparison.OrdinalIgnoreCase);
-        }
 
         #region StepAttenuator data
         //[2.10.3.6]MW0LGE moved all this to functions to make it easier to diagnose issues

@@ -358,6 +358,12 @@
     <Compile Include="clsBandStackManager.cs" />
     <Compile Include="clsImgeFetcher.cs" />
     <Compile Include="clsThetisSkinService.cs" />
+    <Compile Include="frmDBMan.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmDBMan.Designer.cs">
+      <DependentUpon>frmDBMan.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmSerialPortPicker.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -810,6 +816,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Andromeda\FilterButtonsPopup.resx">
       <DependentUpon>FilterButtonsPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmDBMan.resx">
+      <DependentUpon>frmDBMan.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmFinder.resx">
       <DependentUpon>frmFinder.cs</DependentUpon>
