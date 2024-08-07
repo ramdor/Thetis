@@ -3862,7 +3862,11 @@ namespace Thetis
                 if (local_mox)
                 {
                     fOffset = tx_display_cal_offset;
-                    if (displayduplex) fOffset += rx1_display_cal_offset; //[2.10.1.0] MW0LGE fix issue #137
+                    if (displayduplex)
+                    {
+                        fOffset += rx1_display_cal_offset; //[2.10.1.0] MW0LGE fix issue #137
+                        fOffset += tx_attenuator_offset; //[2.10.3.6]MW0LGE att_fix // change fixes #482
+                    }
                 }
                 else if (_mox && _tx_on_vfob && !displayduplex)
                 {
@@ -3871,11 +3875,7 @@ namespace Thetis
                 }
                 else fOffset = rx1_display_cal_offset;
 
-                if (!local_mox || (local_mox && displayduplex))
-                {
-                    fOffset += rx1_preamp_offset;
-                    if (local_mox && displayduplex) fOffset += tx_attenuator_offset; //[2.10.3.6]MW0LGE att_fix
-                }
+                if (!local_mox) fOffset += rx1_preamp_offset;
 
                 return fOffset;
             }
@@ -3888,13 +3888,14 @@ namespace Thetis
                 bool local_mox = localMox(2);
                 bool displayduplex = isRxDuplex(2);
 
-                if (local_mox) fOffset = tx_display_cal_offset;
+                if (local_mox)
+                {
+                    fOffset = tx_display_cal_offset;
+                    //tx offset in dup would go here
+                }
                 else fOffset = rx2_display_cal_offset;
 
-                if (!local_mox || (local_mox && displayduplex))
-                {
-                    fOffset += rx2_preamp_offset;
-                }
+                if (!local_mox) fOffset += rx2_preamp_offset;
 
                 return fOffset;
             }
