@@ -24,6 +24,9 @@
 //    4616 W. Howard Lane  Suite 1-150
 //    Austin, TX 78728
 //    USA
+//
+//=================================================================
+// Continual modifications Copyright (C) 2019-2024 Richard Samphire (MW0LGE)
 //=================================================================
 
 using System;
@@ -34,7 +37,7 @@ namespace Thetis
 {
     class TitleBar
     {
-        public const string BUILD_NAME = "dev_8b";
+        public const string BUILD_NAME = "dev_9_wip";
         public static string GetString(bool bWithFirmware = true)
         {
             string sRevision = "." + Common.GetRevision();
