@@ -1349,6 +1349,13 @@ namespace Thetis
             }
             //
 
+            // multimeter io // fixes #485
+            foreach (Control c in pnlMMIO_network_container.Controls)
+            {
+                toRemove.Add(c.Name);
+            }
+            //
+
             foreach (string sControlName in toRemove)
             {
                 if (m_lstUpdatedControls.Contains(sControlName)) m_lstUpdatedControls.Remove(sControlName);
