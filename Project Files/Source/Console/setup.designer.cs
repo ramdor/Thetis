@@ -60782,7 +60782,7 @@
             this.grpWebImage.Controls.Add(this.labelTS235);
             this.grpWebImage.Controls.Add(this.chkWebImage_fade_tx);
             this.grpWebImage.Controls.Add(this.chkWebImage_fade_rx);
-            this.grpWebImage.Location = new System.Drawing.Point(405, 472);
+            this.grpWebImage.Location = new System.Drawing.Point(411, 560);
             this.grpWebImage.Name = "grpWebImage";
             this.grpWebImage.Size = new System.Drawing.Size(323, 358);
             this.grpWebImage.TabIndex = 108;
