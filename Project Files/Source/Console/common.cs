@@ -24,6 +24,9 @@
 //    4616 W. Howard Lane  Suite 1-150
 //    Austin, TX 78728
 //    USA
+//
+//=================================================================
+// Continual modifications Copyright (C) 2019-2024 Richard Samphire (MW0LGE)
 //=================================================================
 
 using System;
@@ -570,57 +573,97 @@ namespace Thetis
 		public static void ForceFormOnScreen(Form f)
 		{
             Screen[] screens = Screen.AllScreens;
-			bool on_screen = false;
 
-			int left = 0, right = 0, top = 0, bottom = 0;
+            if (screens.Length == 0)
+            {
+                f.Location = new Point(0, 0);
+                return;
+            }
 
-			for(int i=0; i<screens.Length; i++)
-			{
-				if(screens[i].Bounds.Left < left)
-					left = screens[i].Bounds.Left;
+            int left = int.MaxValue, top = int.MaxValue;
+            int right = int.MinValue, bottom = int.MinValue;
 
-				if(screens[i].Bounds.Top < top)
-					top = screens[i].Bounds.Top;
+            foreach (Screen screen in screens)
+            {
+                if (screen.Bounds.Left < left)
+                    left = screen.Bounds.Left;
+                if (screen.Bounds.Top < top)
+                    top = screen.Bounds.Top;
+                if (screen.Bounds.Right > right)
+                    right = screen.Bounds.Right;
+                if (screen.Bounds.Bottom > bottom)
+                    bottom = screen.Bounds.Bottom;
+            }
 
-				if(screens[i].Bounds.Bottom > bottom)
-					bottom = screens[i].Bounds.Bottom;
+            bool onScreen = f.Left >= left &&
+                            f.Top >= top &&
+                            f.Right <= right &&
+                            f.Bottom <= bottom;
 
-				if(screens[i].Bounds.Right > right)
-					right = screens[i].Bounds.Right;
-			}
+            if (!onScreen)
+            {
+                if (f.Left < left)
+                    f.Left = left;
+                if (f.Top < top)
+                    f.Top = top;
+                if (f.Right > right)
+                    f.Left = right - f.Width;
+                if (f.Bottom > bottom)
+                    f.Top = bottom - f.Height;
+            }
 
-			//MW0LGE_21d >= and <= all over
-			if(f.Left >= left &&
-				f.Top >= top &&
-				f.Right <= right &&
-				f.Bottom <= bottom)
-            	on_screen = true;				
+            //         Screen[] screens = Screen.AllScreens;
+            //bool on_screen = false;
 
-			if(!on_screen)
-			{
-				//f.Location = new Point(0, 0);
+            //int left = 0, right = 0, top = 0, bottom = 0;
 
-				if(f.Left < left)
-					f.Left = left;
+            //for(int i=0; i<screens.Length; i++)
+            //{
+            //	if(screens[i].Bounds.Left < left)
+            //		left = screens[i].Bounds.Left;
 
-				if(f.Top < top)
-					f.Top = top;
+            //	if(screens[i].Bounds.Top < top)
+            //		top = screens[i].Bounds.Top;
 
-				if(f.Bottom > bottom)
-				{
-					if((f.Top - (f.Bottom-bottom)) >= top)
-						f.Top -= (f.Bottom-bottom);
-					else f.Top = 0;
-				}
+            //	if(screens[i].Bounds.Bottom > bottom)
+            //		bottom = screens[i].Bounds.Bottom;
 
-				if(f.Right > right)
-				{
-					if((f.Left - (f.Right-right)) >= left)
-						f.Left -= (f.Right-right);
-					else f.Left = 0;
-				}
-			}
-		}
+            //	if(screens[i].Bounds.Right > right)
+            //		right = screens[i].Bounds.Right;
+            //}
+
+            ////MW0LGE_21d >= and <= all over
+            //if(f.Left >= left &&
+            //	f.Top >= top &&
+            //	f.Right <= right &&
+            //	f.Bottom <= bottom)
+            //         	on_screen = true;				
+
+            //if(!on_screen)
+            //{
+            //	//f.Location = new Point(0, 0);
+
+            //	if(f.Left < left)
+            //		f.Left = left;
+
+            //	if(f.Top < top)
+            //		f.Top = top;
+
+            //	if(f.Bottom > bottom)
+            //	{
+            //		if((f.Top - (f.Bottom-bottom)) >= top)
+            //			f.Top -= (f.Bottom-bottom);
+            //		else f.Top = 0;
+            //	}
+
+            //	if(f.Right > right)
+            //	{
+            //		if((f.Left - (f.Right-right)) >= left)
+            //			f.Left -= (f.Right-right);
+            //		else f.Left = 0;
+            //	}
+            //}
+        }
 
 		public static void TabControlInsert(TabControl tc, TabPage tp, int index)
 		{

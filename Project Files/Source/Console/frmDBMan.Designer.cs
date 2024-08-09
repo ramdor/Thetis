@@ -333,7 +333,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmDBMan";
-            this.Text = "Dataabase Manager";
+            this.Text = "Database Manager";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
