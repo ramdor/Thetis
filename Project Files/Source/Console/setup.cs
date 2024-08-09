@@ -25,6 +25,9 @@
 //    8900 Marybank Dr.
 //    Austin, TX 78750
 //    USA
+//
+//=================================================================
+// Continual modifications Copyright (C) 2019-2024 Richard Samphire (MW0LGE)
 //=================================================================
 
 using System.Collections.Generic;

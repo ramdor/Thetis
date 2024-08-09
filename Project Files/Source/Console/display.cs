@@ -25,10 +25,12 @@
 //    8900 Marybank Dr.
 //    Austin, TX 78750
 //    USA
-//=================================================================
 //
+//=================================================================
 // Waterfall AGC Modifications Copyright (C) 2013 Phil Harman (VK6APH)
-// MW0LGE all transitions to directX
+// Transitions to directX and continual modifications Copyright (C) 2020-2024 Richard Samphire (MW0LGE)
+//=================================================================
+
 
 using System.Linq;
 
@@ -2145,30 +2147,30 @@ namespace Thetis
             set { rx2_waterfall_low_threshold = value; }
         }
 
-        private static float display_line_width = 1.0F;
+        private static float _display_line_width = 1.0F;
         public static float DisplayLineWidth
         {
-            get { return display_line_width; }
+            get { return _display_line_width; }
             set
             {
                 lock (_objDX2Lock)
                 {
-                    display_line_width = value;
-                    data_line_pen.Width = display_line_width;
+                    _display_line_width = value;
+                    data_line_pen.Width = _display_line_width;
                 }
             }
         }
 
-        private static float tx_display_line_width = 1.0F;
+        private static float _tx_display_line_width = 1.0F;
         public static float TXDisplayLineWidth
         {
-            get { return tx_display_line_width; }
+            get { return _tx_display_line_width; }
             set
             {
                 lock (_objDX2Lock)
                 {
-                    tx_display_line_width = value;
-                    tx_data_line_pen.Width = tx_display_line_width;
+                    _tx_display_line_width = value;
+                    tx_data_line_pen.Width = _tx_display_line_width;
                 }
             }
         }
@@ -4054,12 +4056,14 @@ namespace Thetis
             SharpDX.Direct2D1.Brush lineBrush;
             SharpDX.Direct2D1.Brush fillBrush;
             SharpDX.Direct2D1.Brush fillPeaksBrush;
+            float line_width;
 
             if (local_mox)
             {
                 lineBrush = m_bDX2_tx_data_line_pen_brush;
                 fillBrush = m_bDX2_tx_data_line_fpen_brush;
                 fillPeaksBrush = m_bDX2_dataPeaks_fill_fpen_brush; //todo
+                line_width = _tx_display_line_width;
             }
             else
             {
@@ -4074,6 +4078,7 @@ namespace Thetis
                     fillBrush = m_bUseLinearGradient ? m_brushLGDataFillRX2 : m_bDX2_data_fill_fpen_brush;
                 }
                 fillPeaksBrush = m_bDX2_dataPeaks_fill_fpen_brush;
+                line_width = _display_line_width;
             }
 
             float dbmToPixel = H / (float)yRange;
@@ -4261,7 +4266,7 @@ namespace Thetis
                             }
                             else
                             {
-                                _d2dRenderTarget.DrawLine(oldSpectralPeakPoint, spectralPeakPoint, fillPeaksBrush, display_line_width);
+                                _d2dRenderTarget.DrawLine(oldSpectralPeakPoint, spectralPeakPoint, fillPeaksBrush, line_width);
                                 oldSpectralPeakPoint = spectralPeakPoint;
                             }
 
@@ -4284,13 +4289,13 @@ namespace Thetis
                     }
                     else if (bIgnoringPoints)
                     {
-                        _d2dRenderTarget.DrawLine(previousPoint, lastIgnoredPoint, lineBrush, display_line_width);
+                        _d2dRenderTarget.DrawLine(previousPoint, lastIgnoredPoint, lineBrush, line_width);
                         previousPoint = lastIgnoredPoint;
                         bIgnoringPoints = false;
                     }
                     if (bIncludeLinePoint)
                     {
-                        _d2dRenderTarget.DrawLine(previousPoint, point, lineBrush, display_line_width);
+                        _d2dRenderTarget.DrawLine(previousPoint, point, lineBrush, line_width);
                         previousPoint = point;
                     }
                 }

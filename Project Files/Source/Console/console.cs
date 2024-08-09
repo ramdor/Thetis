@@ -26,12 +26,14 @@
 //    8900 Marybank Dr.
 //    Austin, TX 78750
 //    USA
+//
 //=================================================================
 // Modifications to support the Behringer Midi controllers
 // by Chris Codella, W2PA, May 2017.  Indicated by //-W2PA comment lines. 
 // Modifications for using the new database import function.  W2PA, 29 May 2017
 // Support QSK, possible with Protocol-2 firmware v1.7 (Orion-MkI and Orion-MkII), and later.  W2PA, 5 April 2019 
-// Modfied heavily from 2019-2022 by Richard Samphire MW0LGE - changes tagged
+// Modfied heavily - Copyright (C) 2019-2024 Richard Samphire (MW0LGE)
+//=================================================================
 
 using Midi2Cat.Data; //-W2PA Necessary for Behringer MIDI changes
 
