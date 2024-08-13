@@ -160,6 +160,9 @@
   <data name="grabbing" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\grabbing.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Data-Up-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Data-Up-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="santa" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\3-santa-moving-snow.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -202,11 +205,11 @@
   <data name="zap" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zap.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="trash" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\trash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="pipette32border" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pipette32border.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="swissk" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\swissk.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="trash_black" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\trash_black.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -304,6 +307,9 @@
   <data name="gear" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\gear.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Data-Refresh-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Data-Refresh-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="s_meter_collins3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\s-meter-collins3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -325,8 +331,8 @@
   <data name="swissli" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swissli.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="RXAnt" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\rx_ant3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="swissk" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\swissk.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="dockIcon_dock" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\dockIcon_dock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -334,11 +340,14 @@
   <data name="tci_status" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\tci_status.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\down.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="RXAnt" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\rx_ant3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Data-Add-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Data-Add-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\down.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\stop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -357,6 +366,9 @@
   </data>
   <data name="swisscbo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swisscbo.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Data-refresh-WF-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Data-refresh-WF-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="info" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\info.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -394,8 +406,8 @@
   <data name="download" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\download1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="trash" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\trash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Archive-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Archive-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="cat_tcp_status" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\cat_tcp_status.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -409,7 +421,7 @@
   <data name="down_black" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\down_black.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Archive-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Archive-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Data-Down-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Data-Down-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

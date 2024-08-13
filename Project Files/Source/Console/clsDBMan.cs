@@ -10,6 +10,7 @@ using Newtonsoft.Json.Converters;
 using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
+using System.Threading;
 
 namespace Thetis
 {
@@ -25,7 +26,7 @@ namespace Thetis
                 ActiveDB_File = "";
             }
         }
-        public class DabataseInfo
+        public class DatabaseInfo
         {
             public Guid GUID { get; set; }
             public string FullPath { get; set; }
@@ -37,11 +38,13 @@ namespace Thetis
             public DateTime CreationTime { get; set; }
             public string VersionString {  get; set; }
             public string VersionNumber { get; set; }
+            public bool BackupOnStartup {  get; set; }
+            public bool BackupOnShutdown {  get; set; }
 
             [JsonConverter(typeof(StringEnumConverter))] //this will turn the enum (int) to a string
             public HPSDRModel Model { get; set; }
 
-            public DabataseInfo()
+            public DatabaseInfo()
             {
                 GUID = Guid.Empty;
                 FullPath = "";
@@ -55,7 +58,17 @@ namespace Thetis
                 CreationTime = DateTime.Now;
                 VersionString = "unknown";
                 VersionNumber = "unknown";
+                //
+                BackupOnStartup = false;
+                BackupOnShutdown = false;
             }
+        }
+        public class BackupFileInfo
+        {
+            public string FullFilePath { get; set; }
+            public DateTime DateTimeOfBackup { get; set; }
+            public long SecondsSinceEpoch { get; set; }
+            public TimeSpan AgeSinceBackedUp { get; set; }
         }
 
         private static frmDBMan _frm_dbman;
@@ -63,20 +76,21 @@ namespace Thetis
         private static string _db_data_path;
         private static DBSettings _dbman_settings;
         private static bool _ignore_written;
-
+        private static string _unique_instance_id;
         static DBMan()
         {
             _ignore_written = false;
             _dbman_settings = null;
             _app_data_path = "";
             _db_data_path = "";
+            _unique_instance_id = "";
             _frm_dbman = new frmDBMan();
         }
 
         public static void ShowDBMan()
         {
-            Dictionary<Guid, DabataseInfo> dbs = getAvailableDBs();
-            _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID);
+            Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
+            _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, Guid.Empty);
 
             _frm_dbman.Restore();
             _frm_dbman.ShowDialog();
@@ -96,7 +110,8 @@ namespace Thetis
 
         public static bool LoadDB(string[] args)
         {
-            //string db_filname = "";
+            _dbman_settings = null;
+
             foreach (string s in args)
             {
                 if (s.StartsWith("-dbfilename:"))
@@ -105,22 +120,41 @@ namespace Thetis
                         "Please use -dbid: to provide the Database Manager with a unique ID to use for this instance.\n" +
                         "You can import your existing database using the Database Manager.",
                         "Database Manager",
-                        MessageBoxButtons.YesNo,
+                        MessageBoxButtons.OK,
                         MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                     break;
                 }
                 if (s.StartsWith("-dbid:"))
                 {
-                    string id = s.Trim().Substring(s.Trim().IndexOf(":") + 1);
-
+                    _unique_instance_id = s.Trim().Substring(s.Trim().IndexOf(":") + 1) + "_";
                 }
             }
 
+            //
+            bool new_db = false;
+            if (Keyboard.IsKeyDown(Keys.LShiftKey) || Keyboard.IsKeyDown(Keys.RShiftKey))
+            {
+                Thread.Sleep(500); // ensure this is intentional
+                if (Keyboard.IsKeyDown(Keys.LShiftKey) || Keyboard.IsKeyDown(Keys.RShiftKey))
+                {
+                    DialogResult dr = MessageBox.Show(
+                         "The database reset function has been triggered. Would you like to use a fresh new database?\n\n" +
+                         "Your existing database will be untouched, and a new one will be used.\n\n" +
+                         "It will have the description 'Default' in the Database Manager.",
+                         "New Database?",
+                         MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+
+                    if (dr == DialogResult.Yes)
+                        new_db = true;
+                }
+            }
+            //
+
             bool ok = false;
 
-            Dictionary<Guid, DabataseInfo> dbs = getAvailableDBs();
+            Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
 
-            if (dbs.Count == 0)
+            if (dbs.Count == 0 || new_db)
             {
                 // no dbs, likely due to fresh install, and/or first use of this new db manager
                 ok = createNewDB(true, true);
@@ -137,19 +171,93 @@ namespace Thetis
                 _dbman_settings = getActiveDB();
                 if (_dbman_settings != null)
                 {
-                    _dbman_settings.ActiveDB_File = _dbman_settings.ActiveDB_File;
-                    _dbman_settings.ActiveDB_GUID = _dbman_settings.ActiveDB_GUID;
+                    //check this exists, if not?
+                    if (!File.Exists(_dbman_settings.ActiveDB_File))
+                    {
+                        DialogResult dr = MessageBox.Show("The last active Database could not be located. Using a blank new one.",
+                        "Database Manager Issue",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
-                    DB.FileName = _dbman_settings.ActiveDB_File;
-                    _ignore_written = true;
-                    ok = DB.Init();
-                    _ignore_written = false;
+                        ok = createNewDB(true, true);
+                        if (ok)
+                        {
+                            dbs = getAvailableDBs();
+                            ok = dbs.Count > 0;
+                        }
+                    }
+
+                    if (ok)
+                    {
+                        //check for backup at startup
+                        try
+                        {
+                            string json_file = _db_data_path + _dbman_settings.ActiveDB_GUID.ToString() + "\\dbman.json";
+                            if (File.Exists(json_file))
+                            {
+                                string jsonString = File.ReadAllText(json_file);
+                                DatabaseInfo di = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
+                                if (di.BackupOnStartup)
+                                    TakeBackup(Guid.Empty);
+                            }
+                        }
+                        catch { }
+                        //
+
+                        DB.FileName = _dbman_settings.ActiveDB_File;
+                        _ignore_written = true;
+                        ok = DB.Init();
+                        _ignore_written = false;
+                    }
                 }
                 else
                     ok = false;
             }
+            
+            if (!ok)
+            {
+                // try to move to broken folder
+                if (_dbman_settings != null) 
+                    moveToBroken(_dbman_settings.ActiveDB_GUID);
+            }
 
             return ok;
+        }
+        private static void moveToBroken(Guid guid)
+        {
+            try
+            {
+                string db_folder = _db_data_path + guid.ToString();
+                string dest_folder = _db_data_path + "broken";
+
+                if (Directory.Exists(db_folder))
+                {
+                    if (!Directory.Exists(dest_folder))
+                        Directory.CreateDirectory(dest_folder);
+
+                    dest_folder += "\\" + guid.ToString();
+                    Directory.Move(db_folder, dest_folder);
+                }
+            }
+            catch { }
+        }
+        public static void Shutdown()
+        {
+            if (_dbman_settings == null) return;
+
+            //check for backup at shutdown
+            try
+            {
+                string json_file = _db_data_path + _dbman_settings.ActiveDB_GUID.ToString() + "\\dbman.json";
+                if (File.Exists(json_file))
+                {
+                    string jsonString = File.ReadAllText(json_file);
+                    DatabaseInfo di = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
+                    if (di.BackupOnShutdown)
+                        TakeBackup(Guid.Empty);
+                }
+            }
+            catch { }
         }
         public static void DBWritten()
         {
@@ -164,7 +272,7 @@ namespace Thetis
             {
                 // read current settings
                 string jsonString = File.ReadAllText(json_file);
-                DabataseInfo di = JsonConvert.DeserializeObject<DabataseInfo>(jsonString);
+                DatabaseInfo di = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
 
                 // get db values
                 Dictionary<string, string> options = DB.GetVarsDictionary("Options");
@@ -238,7 +346,7 @@ namespace Thetis
                 Dictionary<string, string> options = DB.GetVarsDictionary("Options");
 
                 // add the new dbman.json
-                DabataseInfo di = new DabataseInfo();
+                DatabaseInfo di = new DatabaseInfo();
                 di.GUID = guid;
                 di.FullPath = db_folder;
                 di.Description = string.IsNullOrEmpty(description) ? "Default" : description;
@@ -263,6 +371,7 @@ namespace Thetis
                 {
                     //need to make this active
                     ok = makeDBActive(guid);
+                    _dbman_settings = getActiveDB();
                 }
             }
 
@@ -282,7 +391,7 @@ namespace Thetis
             DBSettings dbs = null;
             try
             {
-                string dbman_settings_file = _db_data_path + "dbman_settings.json";
+                string dbman_settings_file = _db_data_path + _unique_instance_id + "dbman_settings.json";
                 if (File.Exists(dbman_settings_file))
                 {
                     string jsonString = File.ReadAllText(dbman_settings_file);
@@ -314,7 +423,7 @@ namespace Thetis
                     string jsonString = JsonConvert.SerializeObject(dbs, Formatting.Indented);
                     try
                     {
-                        string dbman_settings_file = _db_data_path + "dbman_settings.json";
+                        string dbman_settings_file = _db_data_path + _unique_instance_id + "dbman_settings.json";
                         File.WriteAllText(dbman_settings_file, jsonString);
                     }
                     catch (Exception ex)
@@ -346,10 +455,21 @@ namespace Thetis
                 return "";
             }
         }
-        private static Dictionary<Guid, DabataseInfo> getAvailableDBs()
+        private static Dictionary<Guid, DatabaseInfo> getAvailableDBs()
         {
             // find all active databases
-            Dictionary<Guid, DabataseInfo> foldersInfo = new Dictionary<Guid, DabataseInfo>();
+            List<Guid> toJunk = new List<Guid>();
+            Dictionary<Guid, DatabaseInfo> foldersInfo = new Dictionary<Guid, DatabaseInfo>();
+
+            //check if we have a good dbman_settings.json, if not, return empty
+            //will cause a new empty db to be made
+            string db_man_settings_path = _db_data_path + _unique_instance_id + "dbman_settings.json";
+            if (!File.Exists(db_man_settings_path)) return foldersInfo;
+
+            // get all the active dbs from any .json file. We wont add any of these
+            // folders if they are active with exception of ourself
+            List<Guid> active_dbs = getAllActiveDBGUIDs(_db_data_path);
+
             try
             {
                 string[] directories = Directory.GetDirectories(_db_data_path);
@@ -360,6 +480,8 @@ namespace Thetis
                     // check that the folder is a vaild guid
                     if (Guid.TryParse(folderName, out Guid folderGuid))
                     {
+                        if (active_dbs.Contains(folderGuid)) continue; // skip this one as in use by another instance
+
                         DirectoryInfo folderInfo = new DirectoryInfo(directory);
 
                         //get info from database.xml
@@ -384,23 +506,34 @@ namespace Thetis
                         string version_number = "unknown";
                         string desc = "";
                         HPSDRModel model = HPSDRModel.FIRST;
+                        bool backup_on_startup = false;
+                        bool backup_on_shutdown = false;
                         try
                         {
                             string dbman_json = directory + "\\dbman.json";
                             if (File.Exists(dbman_json))
                             {
                                 string jsonString = File.ReadAllText(dbman_json);
-                                DabataseInfo db_info_json = JsonConvert.DeserializeObject<DabataseInfo>(jsonString);
+                                DatabaseInfo db_info_json = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
+
+                                if (db_info_json.GUID != folderGuid)
+                                {
+                                    toJunk.Add(folderGuid);
+                                    continue; // skip as, guids do not match, folder renamed? json edited?
+                                }
+
                                 desc = db_info_json.Description;
                                 model = db_info_json.Model;
                                 version = db_info_json.VersionString;
                                 version_number = db_info_json.VersionNumber;
+                                backup_on_startup = db_info_json.BackupOnStartup;
+                                backup_on_shutdown = db_info_json.BackupOnShutdown;
                             }
                         }
                         catch { continue; }
 
                         //add info to the dict
-                        DabataseInfo folderInfoObject = new DabataseInfo
+                        DatabaseInfo folderInfoObject = new DatabaseInfo
                         {
                             GUID = folderGuid,
                             FullPath = folderInfo.FullName,
@@ -412,7 +545,10 @@ namespace Thetis
                             Model = model,
                             LastChanged = last_change_time,
                             CreationTime = creation_time,
-                            VersionString = version
+                            VersionString = version,
+                            VersionNumber = version_number,
+                            BackupOnStartup = backup_on_startup,
+                            BackupOnShutdown = backup_on_shutdown
                         };
                         foldersInfo.Add(folderGuid, folderInfoObject);
                     }
@@ -421,11 +557,48 @@ namespace Thetis
             catch (Exception ex)
             {
                 Debug.Print($"An error occurred: {ex.Message}");
-            }            
+            }  
+            
+            foreach(Guid guid in toJunk)
+            {
+                moveToBroken(guid);
+            }
 
             return foldersInfo;
         }
+        private static List<Guid> getAllActiveDBGUIDs(string path)
+        {
+            List<Guid> activeDbGuids = new List<Guid>();
 
+            if (!string.IsNullOrEmpty(_unique_instance_id))
+            {
+                try
+                {
+                    string[] dbmanSettingsFiles = Directory.GetFiles(path, "*dbman_settings.json", SearchOption.TopDirectoryOnly);
+                    string us = _unique_instance_id + "dbman_settings.json";
+
+                    foreach (string file in dbmanSettingsFiles)
+                    {
+                        // ignore us
+                        if (file.IndexOf(us) != -1) continue;
+
+                        try
+                        {
+                            string jsonString = File.ReadAllText(file);
+                            DBSettings dbSettings = JsonConvert.DeserializeObject<DBSettings>(jsonString);
+                            if (dbSettings != null && dbSettings.ActiveDB_GUID != Guid.Empty)
+                            {
+                                activeDbGuids.Add(dbSettings.ActiveDB_GUID);
+                            }
+                        }
+                        catch { }
+                    }
+                }
+                catch { }
+            }
+
+            return activeDbGuids;
+        }
         private static long calculateFolderSize(DirectoryInfo directoryInfo)
         {
             long totalSize = 0;
@@ -486,8 +659,50 @@ namespace Thetis
 
             createNewDB(false, false, desc);
 
-            Dictionary<Guid, DabataseInfo> dbs = getAvailableDBs();
-            _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID);
+            Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
+            _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, Guid.Empty);
+        }
+        public static void BackupOnStartUpToggle(Guid guid)
+        {
+            string dbman_json = _db_data_path + guid.ToString() + "\\dbman.json";
+            if (File.Exists(dbman_json))
+            {
+                try
+                {
+                    string jsonString = File.ReadAllText(dbman_json);
+                    DatabaseInfo db_info_json = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
+                    //toggle
+                    db_info_json.BackupOnStartup = !db_info_json.BackupOnStartup;
+
+                    jsonString = JsonConvert.SerializeObject(db_info_json, Formatting.Indented);
+                    File.WriteAllText(dbman_json, jsonString);
+
+                    Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
+                    _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, guid);
+                }
+                catch { }
+            }
+        }
+        public static void BackupOnShutDownToggle(Guid guid)
+        {
+            string dbman_json = _db_data_path + guid.ToString() + "\\dbman.json";
+            if (File.Exists(dbman_json))
+            {
+                try
+                {
+                    string jsonString = File.ReadAllText(dbman_json);
+                    DatabaseInfo db_info_json = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
+                    //toggle
+                    db_info_json.BackupOnShutdown = !db_info_json.BackupOnShutdown;
+
+                    jsonString = JsonConvert.SerializeObject(db_info_json, Formatting.Indented);
+                    File.WriteAllText(dbman_json, jsonString);
+
+                    Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
+                    _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, guid);
+                }
+                catch { }
+            }
         }
         public static void RemoveDB(Guid guid)
         {
@@ -499,16 +714,16 @@ namespace Thetis
             if (File.Exists(dbman_json))
             {
                 string jsonString = File.ReadAllText(dbman_json);
-                DabataseInfo db_info_json = JsonConvert.DeserializeObject<DabataseInfo>(jsonString);
+                DatabaseInfo db_info_json = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
                 if (desc == db_info_json.Description)
                 {
                     try
                     {
-                        Directory.Delete(db_info_json.FullPath, true);
+                        Directory.Delete(_db_data_path + guid.ToString(), true);
                         ok = true;
 
-                        Dictionary<Guid, DabataseInfo> dbs = getAvailableDBs();
-                        _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID);
+                        Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
+                        _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, Guid.Empty);
                     }
                     catch { }
                 }
@@ -543,7 +758,7 @@ namespace Thetis
                     if (File.Exists(dbman_json))
                     {
                         string jsonString = File.ReadAllText(dbman_json);
-                        DabataseInfo db_info_json = JsonConvert.DeserializeObject<DabataseInfo>(jsonString);
+                        DatabaseInfo db_info_json = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
 
                         db_info_json.GUID = new_guid;
                         db_info_json.FullPath = dest_folder;
@@ -560,8 +775,8 @@ namespace Thetis
 
                 if (ok)
                 {
-                    Dictionary<Guid, DabataseInfo> dbs = getAvailableDBs();
-                    _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID);
+                    Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
+                    _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, Guid.Empty);
                 }
             }
 
@@ -605,7 +820,19 @@ namespace Thetis
                 return false;
             }
         }
+        public static void SelectedAvailable(Guid guid)
+        {
+            if(guid == Guid.Empty)
+            {
+                List<BackupFileInfo> empty_backups = new List<BackupFileInfo>();
+                _frm_dbman.InitBackups(empty_backups);
+                return;
+            }
 
+            string backup_path = _db_data_path + guid.ToString() + "\\backups";
+            List<BackupFileInfo> backups = getOrderedBackupFiles(backup_path);
+            _frm_dbman.InitBackups(backups);
+        }
         public static bool TakeBackup(Guid highlighted)
         {
             if (_dbman_settings == null) return false;
@@ -637,6 +864,37 @@ namespace Thetis
         }
         private static void getBackups(Guid guid)
         {
+            string backup_path = _db_data_path + guid.ToString() + "\\backups";
+            List<BackupFileInfo> backups = getOrderedBackupFiles(backup_path);
+            _frm_dbman.InitBackups(backups);
+        }
+        private static List<BackupFileInfo> getOrderedBackupFiles(string backupFolderPath)
+        {
+            List<BackupFileInfo> backupFiles = new List<BackupFileInfo>();
+            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            foreach (string filePath in Directory.GetFiles(backupFolderPath, "database_backup_*.xml"))
+            {
+                string fileName = Path.GetFileNameWithoutExtension(filePath);
+                string[] parts = fileName.Split('_');
+
+                if (parts.Length >= 3 && long.TryParse(parts[2], out long secondsSinceEpoch)) // 3 as database_backup_342423432.xml  could also be database_backup_342423432_1.xml
+                {
+                    DateTime backupDateTimeUtc = epoch.AddSeconds(secondsSinceEpoch);
+                    DateTime backupDateTimeLocal = backupDateTimeUtc.ToLocalTime();
+                    TimeSpan age = DateTime.UtcNow - backupDateTimeUtc;
+
+                    backupFiles.Add(new BackupFileInfo
+                    {
+                        FullFilePath = filePath,
+                        DateTimeOfBackup = backupDateTimeLocal,
+                        SecondsSinceEpoch = secondsSinceEpoch,
+                        AgeSinceBackedUp = age
+                    });
+                }
+            }
+
+            return backupFiles.OrderByDescending(f => f.SecondsSinceEpoch).ToList();
         }
         private static string createUniqueFilename(string directoryPath)
         {
@@ -654,6 +912,120 @@ namespace Thetis
             }
 
             return fullPath;
+        }
+        public static void RemoveBackupDB(string file_path)
+        {
+            DialogResult dr = MessageBox.Show("Do you want to remove this backup?",
+            "Remove Backup",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+
+            if (dr == DialogResult.Yes && File.Exists(file_path))
+            {
+                try
+                {
+                    File.Delete(file_path);
+                }
+                catch { }
+            }
+        }
+        public static void MakeBackupAvailable(string file_path)
+        {
+            if (File.Exists(file_path))
+            {
+                string desc = InputBox.Show("Make Database Available", "Please enter a description for the database.", "");
+                if (string.IsNullOrEmpty(desc)) return;
+
+                try
+                {
+                    // make new guid folder + backup folder
+                    Guid guid = Guid.NewGuid();
+                    string db_folder = _db_data_path + guid.ToString();
+                    string db_folder_backups = _db_data_path + guid.ToString() + "\\backups";
+                    string db_file = db_folder + "\\database.xml";
+                    string json_file = db_folder + "\\dbman.json";
+
+                    if (!Directory.Exists(db_folder))
+                        Directory.CreateDirectory(db_folder);
+
+                    if (!Directory.Exists(db_folder_backups))
+                        Directory.CreateDirectory(db_folder_backups);
+
+                    // copy over xml
+                    File.Copy(file_path, db_file, true);
+
+                    // obtain db imfo
+                    HPSDRModel model = HPSDRModel.HERMES;
+                    string version = "unknown";
+                    string version_number = "unknown";
+
+                    _ignore_written = true;
+                    // write and store existing
+                    string old_db_filename = "";
+                    if (!string.IsNullOrEmpty(DB.FileName))
+                    {
+                        DB.WriteDB();
+                        old_db_filename = DB.FileName;
+                    }
+
+                    // read db to get some basic info
+                    DB.FileName = db_file;
+                    bool ok = DB.Init();
+                    _ignore_written = false;
+
+                    // get db values
+                    Dictionary<string, string> options = DB.GetVarsDictionary("Options");
+                    if (options.ContainsKey("comboRadioModel"))
+                        model = Common.StringModelToEnum(options["comboRadioModel"]);
+                    else
+                        model = HPSDRModel.HERMES;
+
+                    version = DB.VersionString;
+                    version_number = DB.VersionNumber;
+
+                    // restore DB
+                    if (!string.IsNullOrEmpty(old_db_filename))
+                    {
+                        _ignore_written = true;
+                        DB.FileName = old_db_filename;
+                        DB.Init();
+                        _ignore_written = false;
+                    }
+
+                    // setup database info json
+                    DirectoryInfo folderInfo = new DirectoryInfo(db_folder);
+                    FileInfo fi = new FileInfo(db_file);
+                    DatabaseInfo di = new DatabaseInfo
+                    {
+                        GUID = guid,
+                        FullPath = folderInfo.FullName,
+                        FolderCreationTime = folderInfo.CreationTime,
+                        TotalContentsSize = calculateFolderSize(folderInfo),
+                        //
+                        Size = fi.Length,
+                        Description = desc,
+                        Model = model,
+                        LastChanged = fi.LastWriteTime,
+                        CreationTime = fi.CreationTime,
+                        VersionString = version,
+                        VersionNumber = version_number
+                    };
+
+                    //write
+                    string jsonString = JsonConvert.SerializeObject(di, Formatting.Indented);
+                    try
+                    {
+                        File.WriteAllText(json_file, jsonString);
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+
+                    Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
+                    _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, Guid.Empty);
+                }
+                catch { }
+            }
         }
     }
 }

@@ -791,6 +791,10 @@
     <None Include="Resources\Data-Delete-32.png" />
     <None Include="Resources\Data-Replace-32.png" />
     <None Include="Resources\Archive-32.png" />
+    <None Include="Resources\Data-refresh-WF-32.png" />
+    <None Include="Resources\Data-Refresh-32.png" />
+    <None Include="Resources\Data-Up-32.png" />
+    <None Include="Resources\Data-Down-32.png" />
     <Content Include="thetis-icon.ico" />
     <None Include="Resources\thetis-logo1.png" />
     <None Include="Resources\cross_rl.cur" />

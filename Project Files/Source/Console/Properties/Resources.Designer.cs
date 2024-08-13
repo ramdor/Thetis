@@ -293,9 +293,49 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Data_Down_32 {
+            get {
+                object obj = ResourceManager.GetObject("Data-Down-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Data_Refresh_32 {
+            get {
+                object obj = ResourceManager.GetObject("Data-Refresh-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Data_refresh_WF_32 {
+            get {
+                object obj = ResourceManager.GetObject("Data-refresh-WF-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Data_Replace_32 {
             get {
                 object obj = ResourceManager.GetObject("Data-Replace-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Data_Up_32 {
+            get {
+                object obj = ResourceManager.GetObject("Data-Up-32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

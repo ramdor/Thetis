@@ -32,6 +32,7 @@
             System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "test",
             "sub1"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("test");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmDBMan));
             this.lstActiveDBs = new System.Windows.Forms.ListView();
             this.colDesc = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -42,23 +43,22 @@
             this.colBackupOnStartup = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colBackupOnShutdown = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colFolder = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.listView2 = new System.Windows.Forms.ListView();
-            this.numericUpDownTS1 = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS2 = new System.Windows.Forms.LabelTS();
-            this.radioButtonTS2 = new System.Windows.Forms.RadioButtonTS();
-            this.radioButtonTS1 = new System.Windows.Forms.RadioButtonTS();
-            this.labelTS1 = new System.Windows.Forms.LabelTS();
-            this.buttonTS7 = new System.Windows.Forms.ButtonTS();
-            this.buttonTS6 = new System.Windows.Forms.ButtonTS();
-            this.buttonTS5 = new System.Windows.Forms.ButtonTS();
-            this.buttonTS4 = new System.Windows.Forms.ButtonTS();
+            this.lstBackups = new System.Windows.Forms.ListView();
+            this.colTimeDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colBackupAge = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colBackupFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnDuplicateBD = new System.Windows.Forms.ButtonTS();
+            this.labelTS2 = new System.Windows.Forms.LabelTS();
+            this.labelTS1 = new System.Windows.Forms.LabelTS();
+            this.btnDuplicateDB = new System.Windows.Forms.ButtonTS();
             this.btnMakeActive = new System.Windows.Forms.ButtonTS();
+            this.btnMakeBackupAvailable = new System.Windows.Forms.ButtonTS();
+            this.btnRemoveBackup = new System.Windows.Forms.ButtonTS();
+            this.btnBackupOnShutdown = new System.Windows.Forms.ButtonTS();
+            this.btnBackupOnStart = new System.Windows.Forms.ButtonTS();
             this.btnTakeBackupNow = new System.Windows.Forms.ButtonTS();
             this.btnRemoveDB = new System.Windows.Forms.ButtonTS();
             this.btnNewDB = new System.Windows.Forms.ButtonTS();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS1)).BeginInit();
             this.SuspendLayout();
             // 
             // lstActiveDBs
@@ -127,46 +127,41 @@
             // 
             this.colFolder.Text = "Folder";
             // 
-            // listView2
+            // lstBackups
             // 
-            this.listView2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.lstBackups.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.listView2.HideSelection = false;
-            this.listView2.Location = new System.Drawing.Point(12, 382);
-            this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(524, 207);
-            this.listView2.TabIndex = 8;
-            this.listView2.UseCompatibleStateImageBehavior = false;
+            this.lstBackups.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colTimeDate,
+            this.colBackupAge,
+            this.colBackupFilename});
+            this.lstBackups.FullRowSelect = true;
+            this.lstBackups.GridLines = true;
+            this.lstBackups.HideSelection = false;
+            this.lstBackups.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem2});
+            this.lstBackups.Location = new System.Drawing.Point(12, 382);
+            this.lstBackups.MultiSelect = false;
+            this.lstBackups.Name = "lstBackups";
+            this.lstBackups.ShowItemToolTips = true;
+            this.lstBackups.Size = new System.Drawing.Size(524, 207);
+            this.lstBackups.TabIndex = 8;
+            this.lstBackups.UseCompatibleStateImageBehavior = false;
+            this.lstBackups.View = System.Windows.Forms.View.Details;
+            this.lstBackups.SelectedIndexChanged += new System.EventHandler(this.lstBackups_SelectedIndexChanged);
             // 
-            // numericUpDownTS1
+            // colTimeDate
             // 
-            this.numericUpDownTS1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownTS1.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDownTS1.Location = new System.Drawing.Point(559, 520);
-            this.numericUpDownTS1.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.numericUpDownTS1.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDownTS1.Name = "numericUpDownTS1";
-            this.numericUpDownTS1.Size = new System.Drawing.Size(61, 20);
-            this.numericUpDownTS1.TabIndex = 13;
-            this.numericUpDownTS1.TinyStep = false;
-            this.numericUpDownTS1.Value = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
+            this.colTimeDate.Text = "TimeDate";
+            // 
+            // colBackupAge
+            // 
+            this.colBackupAge.Text = "Age";
+            // 
+            // colBackupFilename
+            // 
+            this.colBackupFilename.Text = "Filename";
             // 
             // labelTS2
             // 
@@ -178,32 +173,6 @@
             this.labelTS2.TabIndex = 12;
             this.labelTS2.Text = "Available Databases";
             // 
-            // radioButtonTS2
-            // 
-            this.radioButtonTS2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.radioButtonTS2.AutoSize = true;
-            this.radioButtonTS2.Image = null;
-            this.radioButtonTS2.Location = new System.Drawing.Point(542, 474);
-            this.radioButtonTS2.Name = "radioButtonTS2";
-            this.radioButtonTS2.Size = new System.Drawing.Size(113, 17);
-            this.radioButtonTS2.TabIndex = 11;
-            this.radioButtonTS2.TabStop = true;
-            this.radioButtonTS2.Text = "Unlimited Backups";
-            this.radioButtonTS2.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonTS1
-            // 
-            this.radioButtonTS1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.radioButtonTS1.AutoSize = true;
-            this.radioButtonTS1.Image = null;
-            this.radioButtonTS1.Location = new System.Drawing.Point(542, 497);
-            this.radioButtonTS1.Name = "radioButtonTS1";
-            this.radioButtonTS1.Size = new System.Drawing.Size(100, 17);
-            this.radioButtonTS1.TabIndex = 10;
-            this.radioButtonTS1.TabStop = true;
-            this.radioButtonTS1.Text = "Max # Backups";
-            this.radioButtonTS1.UseVisualStyleBackColor = true;
-            // 
             // labelTS1
             // 
             this.labelTS1.AutoSize = true;
@@ -214,66 +183,18 @@
             this.labelTS1.TabIndex = 9;
             this.labelTS1.Text = "Database Backups";
             // 
-            // buttonTS7
+            // btnDuplicateDB
             // 
-            this.buttonTS7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonTS7.Image = null;
-            this.buttonTS7.Location = new System.Drawing.Point(542, 382);
-            this.buttonTS7.Name = "buttonTS7";
-            this.buttonTS7.Selectable = true;
-            this.buttonTS7.Size = new System.Drawing.Size(150, 40);
-            this.buttonTS7.TabIndex = 6;
-            this.buttonTS7.Text = "Make Backup Available";
-            this.buttonTS7.UseVisualStyleBackColor = true;
-            // 
-            // buttonTS6
-            // 
-            this.buttonTS6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonTS6.Image = null;
-            this.buttonTS6.Location = new System.Drawing.Point(542, 428);
-            this.buttonTS6.Name = "buttonTS6";
-            this.buttonTS6.Selectable = true;
-            this.buttonTS6.Size = new System.Drawing.Size(150, 40);
-            this.buttonTS6.TabIndex = 5;
-            this.buttonTS6.Text = "Remove Backup";
-            this.buttonTS6.UseVisualStyleBackColor = true;
-            // 
-            // buttonTS5
-            // 
-            this.buttonTS5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonTS5.Image = null;
-            this.buttonTS5.Location = new System.Drawing.Point(542, 316);
-            this.buttonTS5.Name = "buttonTS5";
-            this.buttonTS5.Selectable = true;
-            this.buttonTS5.Size = new System.Drawing.Size(150, 40);
-            this.buttonTS5.TabIndex = 4;
-            this.buttonTS5.Text = "Backup On Shut-Down";
-            this.buttonTS5.UseVisualStyleBackColor = true;
-            // 
-            // buttonTS4
-            // 
-            this.buttonTS4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonTS4.Image = null;
-            this.buttonTS4.Location = new System.Drawing.Point(542, 270);
-            this.buttonTS4.Name = "buttonTS4";
-            this.buttonTS4.Selectable = true;
-            this.buttonTS4.Size = new System.Drawing.Size(150, 40);
-            this.buttonTS4.TabIndex = 3;
-            this.buttonTS4.Text = "Backup On Start-Up";
-            this.buttonTS4.UseVisualStyleBackColor = true;
-            // 
-            // btnDuplicateBD
-            // 
-            this.btnDuplicateBD.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDuplicateBD.Image = global::Thetis.Properties.Resources.Data_Copy_32;
-            this.btnDuplicateBD.Location = new System.Drawing.Point(638, 70);
-            this.btnDuplicateBD.Name = "btnDuplicateBD";
-            this.btnDuplicateBD.Selectable = true;
-            this.btnDuplicateBD.Size = new System.Drawing.Size(42, 42);
-            this.btnDuplicateBD.TabIndex = 21;
-            this.toolTip1.SetToolTip(this.btnDuplicateBD, "Duplicate Database");
-            this.btnDuplicateBD.UseVisualStyleBackColor = true;
-            this.btnDuplicateBD.Click += new System.EventHandler(this.btnDuplicateBD_Click);
+            this.btnDuplicateDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDuplicateDB.Image = global::Thetis.Properties.Resources.Data_Copy_32;
+            this.btnDuplicateDB.Location = new System.Drawing.Point(638, 70);
+            this.btnDuplicateDB.Name = "btnDuplicateDB";
+            this.btnDuplicateDB.Selectable = true;
+            this.btnDuplicateDB.Size = new System.Drawing.Size(42, 42);
+            this.btnDuplicateDB.TabIndex = 21;
+            this.toolTip1.SetToolTip(this.btnDuplicateDB, "Duplicate Database");
+            this.btnDuplicateDB.UseVisualStyleBackColor = true;
+            this.btnDuplicateDB.Click += new System.EventHandler(this.btnDuplicateBD_Click);
             // 
             // btnMakeActive
             // 
@@ -288,16 +209,68 @@
             this.btnMakeActive.UseVisualStyleBackColor = true;
             this.btnMakeActive.Click += new System.EventHandler(this.btnMakeActive_Click);
             // 
+            // btnMakeBackupAvailable
+            // 
+            this.btnMakeBackupAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnMakeBackupAvailable.Image = global::Thetis.Properties.Resources.Data_Refresh_32;
+            this.btnMakeBackupAvailable.Location = new System.Drawing.Point(542, 382);
+            this.btnMakeBackupAvailable.Name = "btnMakeBackupAvailable";
+            this.btnMakeBackupAvailable.Selectable = true;
+            this.btnMakeBackupAvailable.Size = new System.Drawing.Size(42, 42);
+            this.btnMakeBackupAvailable.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.btnMakeBackupAvailable, "Make Backup Available");
+            this.btnMakeBackupAvailable.UseVisualStyleBackColor = true;
+            this.btnMakeBackupAvailable.Click += new System.EventHandler(this.btnMakeBackupAvailable_Click);
+            // 
+            // btnRemoveBackup
+            // 
+            this.btnRemoveBackup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRemoveBackup.Image = global::Thetis.Properties.Resources.Data_Delete_32;
+            this.btnRemoveBackup.Location = new System.Drawing.Point(542, 430);
+            this.btnRemoveBackup.Name = "btnRemoveBackup";
+            this.btnRemoveBackup.Selectable = true;
+            this.btnRemoveBackup.Size = new System.Drawing.Size(42, 42);
+            this.btnRemoveBackup.TabIndex = 5;
+            this.toolTip1.SetToolTip(this.btnRemoveBackup, "Remove Backup");
+            this.btnRemoveBackup.UseVisualStyleBackColor = true;
+            this.btnRemoveBackup.Click += new System.EventHandler(this.btnRemoveBackup_Click);
+            // 
+            // btnBackupOnShutdown
+            // 
+            this.btnBackupOnShutdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBackupOnShutdown.Image = global::Thetis.Properties.Resources.Data_Down_32;
+            this.btnBackupOnShutdown.Location = new System.Drawing.Point(590, 200);
+            this.btnBackupOnShutdown.Name = "btnBackupOnShutdown";
+            this.btnBackupOnShutdown.Selectable = true;
+            this.btnBackupOnShutdown.Size = new System.Drawing.Size(42, 42);
+            this.btnBackupOnShutdown.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.btnBackupOnShutdown, "Backup On Shut-Down");
+            this.btnBackupOnShutdown.UseVisualStyleBackColor = true;
+            this.btnBackupOnShutdown.Click += new System.EventHandler(this.btnBackupOnShutdown_Click);
+            // 
+            // btnBackupOnStart
+            // 
+            this.btnBackupOnStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBackupOnStart.Image = global::Thetis.Properties.Resources.Data_Up_32;
+            this.btnBackupOnStart.Location = new System.Drawing.Point(542, 200);
+            this.btnBackupOnStart.Name = "btnBackupOnStart";
+            this.btnBackupOnStart.Selectable = true;
+            this.btnBackupOnStart.Size = new System.Drawing.Size(42, 42);
+            this.btnBackupOnStart.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnBackupOnStart, "Backup On Start-Up");
+            this.btnBackupOnStart.UseVisualStyleBackColor = true;
+            this.btnBackupOnStart.Click += new System.EventHandler(this.btnBackupOnStart_Click);
+            // 
             // btnTakeBackupNow
             // 
             this.btnTakeBackupNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnTakeBackupNow.Image = global::Thetis.Properties.Resources.Archive_32;
-            this.btnTakeBackupNow.Location = new System.Drawing.Point(542, 152);
+            this.btnTakeBackupNow.Location = new System.Drawing.Point(542, 134);
             this.btnTakeBackupNow.Name = "btnTakeBackupNow";
             this.btnTakeBackupNow.Selectable = true;
             this.btnTakeBackupNow.Size = new System.Drawing.Size(42, 42);
             this.btnTakeBackupNow.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.btnTakeBackupNow, "Take Backup Now");
+            this.toolTip1.SetToolTip(this.btnTakeBackupNow, "Take Backup Now of the active database");
             this.btnTakeBackupNow.UseVisualStyleBackColor = true;
             this.btnTakeBackupNow.Click += new System.EventHandler(this.btnTakeBackupNow_Click);
             // 
@@ -333,19 +306,16 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(704, 601);
-            this.Controls.Add(this.btnDuplicateBD);
+            this.Controls.Add(this.btnDuplicateDB);
             this.Controls.Add(this.btnMakeActive);
-            this.Controls.Add(this.numericUpDownTS1);
             this.Controls.Add(this.labelTS2);
-            this.Controls.Add(this.radioButtonTS2);
-            this.Controls.Add(this.radioButtonTS1);
             this.Controls.Add(this.labelTS1);
-            this.Controls.Add(this.listView2);
+            this.Controls.Add(this.lstBackups);
             this.Controls.Add(this.lstActiveDBs);
-            this.Controls.Add(this.buttonTS7);
-            this.Controls.Add(this.buttonTS6);
-            this.Controls.Add(this.buttonTS5);
-            this.Controls.Add(this.buttonTS4);
+            this.Controls.Add(this.btnMakeBackupAvailable);
+            this.Controls.Add(this.btnRemoveBackup);
+            this.Controls.Add(this.btnBackupOnShutdown);
+            this.Controls.Add(this.btnBackupOnStart);
             this.Controls.Add(this.btnTakeBackupNow);
             this.Controls.Add(this.btnRemoveDB);
             this.Controls.Add(this.btnNewDB);
@@ -357,7 +327,6 @@
             this.Text = "Database Manager";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmDBMan_FormClosing);
             this.Shown += new System.EventHandler(this.frmDBMan_Shown);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -368,19 +337,16 @@
         private System.Windows.Forms.ButtonTS btnNewDB;
         private System.Windows.Forms.ButtonTS btnRemoveDB;
         private System.Windows.Forms.ButtonTS btnTakeBackupNow;
-        private System.Windows.Forms.ButtonTS buttonTS4;
-        private System.Windows.Forms.ButtonTS buttonTS5;
-        private System.Windows.Forms.ButtonTS buttonTS6;
-        private System.Windows.Forms.ButtonTS buttonTS7;
+        private System.Windows.Forms.ButtonTS btnBackupOnStart;
+        private System.Windows.Forms.ButtonTS btnBackupOnShutdown;
+        private System.Windows.Forms.ButtonTS btnRemoveBackup;
+        private System.Windows.Forms.ButtonTS btnMakeBackupAvailable;
         private System.Windows.Forms.ListView lstActiveDBs;
-        private System.Windows.Forms.ListView listView2;
+        private System.Windows.Forms.ListView lstBackups;
         private System.Windows.Forms.LabelTS labelTS1;
-        private System.Windows.Forms.RadioButtonTS radioButtonTS1;
-        private System.Windows.Forms.RadioButtonTS radioButtonTS2;
         private System.Windows.Forms.LabelTS labelTS2;
-        private System.Windows.Forms.NumericUpDownTS numericUpDownTS1;
         private System.Windows.Forms.ButtonTS btnMakeActive;
-        private System.Windows.Forms.ButtonTS btnDuplicateBD;
+        private System.Windows.Forms.ButtonTS btnDuplicateDB;
         private System.Windows.Forms.ColumnHeader colDesc;
         private System.Windows.Forms.ColumnHeader colChanged;
         private System.Windows.Forms.ColumnHeader colAge;
@@ -390,5 +356,8 @@
         private System.Windows.Forms.ColumnHeader colBackupOnStartup;
         private System.Windows.Forms.ColumnHeader colBackupOnShutdown;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ColumnHeader colTimeDate;
+        private System.Windows.Forms.ColumnHeader colBackupAge;
+        private System.Windows.Forms.ColumnHeader colBackupFilename;
     }
 }

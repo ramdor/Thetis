@@ -40,25 +40,56 @@ namespace Thetis
     public partial class frmDBMan : Form
     {
         private bool _allow_check_change;
+        private bool _ignore_lstActiveDBs_selectectedindexchanged;
 
         public frmDBMan()
         {
-            InitializeComponent();
             _allow_check_change = true;
+            _ignore_lstActiveDBs_selectectedindexchanged = false;
+            InitializeComponent();
         }
         public void Restore()
         {
             Common.RestoreForm(this, "DBManForm", true);
         }
-        internal void InitAvailableDBs(Dictionary<Guid, DBMan.DabataseInfo> dbs, Guid active_guid)
+        internal void InitBackups(List<DBMan.BackupFileInfo> backups)
+        {
+            lstBackups.Items.Clear();
+            foreach(DBMan.BackupFileInfo backup in backups)
+            {
+                ListViewItem lvi = new ListViewItem(backup.DateTimeOfBackup.ToString("G"));
+
+                TimeSpan difference = DateTime.Now - backup.DateTimeOfBackup;
+                string age;
+                if (difference.Days > 0)
+                    age = $"{difference.Days}d {difference.Hours.ToString("00")}:{difference.Minutes.ToString("00")}:{difference.Seconds.ToString("00")}";
+                else
+                    age = $"{difference.Hours.ToString("00")}:{difference.Minutes.ToString("00")}:{difference.Seconds.ToString("00")}";
+                lvi.SubItems.Add(age);
+                lvi.SubItems.Add(backup.FullFilePath);
+
+                lvi.Tag = backup.FullFilePath;
+
+                lstBackups.Items.Add(lvi);
+            }
+            lstBackups.ColumnWidthChanging -= lstBackups_ColumnWidthChanging;
+            foreach (ColumnHeader column in lstBackups.Columns)
+                column.Width = -2;
+            lstBackups.ColumnWidthChanging += lstBackups_ColumnWidthChanging;
+
+            lstBackups_SelectedIndexChanged(this, EventArgs.Empty);
+        }
+        internal void InitAvailableDBs(Dictionary<Guid, DBMan.DatabaseInfo> dbs, Guid active_guid, Guid reselect_guid)
         {
             bool old_allow_check = _allow_check_change;
             _allow_check_change = true;
 
+            _ignore_lstActiveDBs_selectectedindexchanged = true;
+
             lstActiveDBs.Items.Clear();
-            foreach (KeyValuePair<Guid, DBMan.DabataseInfo> kvp in dbs)
+            foreach (KeyValuePair<Guid, DBMan.DatabaseInfo> kvp in dbs)
             {
-                DBMan.DabataseInfo dbi = kvp.Value;
+                DBMan.DatabaseInfo dbi = kvp.Value;
 
                 ListViewItem lvi = new ListViewItem(dbi.Description);
 
@@ -76,14 +107,24 @@ namespace Thetis
 
                 lvi.SubItems.Add(age);
                 lvi.SubItems.Add(getReadableFileSize(dbi.Size));
-                lvi.SubItems.Add("no");
-                lvi.SubItems.Add("no");
+                lvi.SubItems.Add(dbi.BackupOnStartup ? "yes" : "no");
+                lvi.SubItems.Add(dbi.BackupOnShutdown ? "yes" : "no");
                 lvi.SubItems.Add(dbi.FullPath);
 
                 lvi.Tag = dbi.GUID.ToString();
 
-                lstActiveDBs.Items.Add(lvi);
+                if (reselect_guid != Guid.Empty && dbi.GUID == reselect_guid) lvi.Selected = true;
+
+                lstActiveDBs.Items.Add(lvi);                
             }
+
+            lstActiveDBs.ColumnWidthChanging -= lstActiveDBs_ColumnWidthChanging;
+            foreach (ColumnHeader column in lstActiveDBs.Columns)
+                column.Width = -2;
+            lstActiveDBs.ColumnWidthChanging += lstActiveDBs_ColumnWidthChanging;
+
+            _ignore_lstActiveDBs_selectectedindexchanged = false;
+
             lstActiveDBs_SelectedIndexChanged(this, EventArgs.Empty);
             _allow_check_change = old_allow_check;
         }
@@ -163,15 +204,18 @@ namespace Thetis
             Guid guid = new Guid(lvi.Tag.ToString());
 
             DBMan.RemoveDB(guid);
-        }
-
+        }        
         private void lstActiveDBs_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_ignore_lstActiveDBs_selectectedindexchanged) return;
+
             bool enabled = lstActiveDBs.SelectedItems.Count != 0;
 
             btnNewDB.Enabled = true;
             btnTakeBackupNow.Enabled = true;
-            btnDuplicateBD.Enabled = enabled;
+            btnDuplicateDB.Enabled = enabled;
+            btnBackupOnStart.Enabled = enabled;
+            btnBackupOnShutdown.Enabled = enabled;
 
             //force disable if on current active
             if (lstActiveDBs.SelectedItems.Count == 1 && lstActiveDBs.SelectedItems[0].Checked)
@@ -179,6 +223,15 @@ namespace Thetis
 
             btnMakeActive.Enabled = enabled;
             btnRemoveDB.Enabled = enabled;
+
+            Guid selected = Guid.Empty;
+            if (lstActiveDBs.SelectedItems.Count == 1)
+            {
+                ListViewItem lvi = lstActiveDBs.SelectedItems[0];
+                selected = new Guid(lvi.Tag.ToString());
+            }
+
+            DBMan.SelectedAvailable(selected);
         }
 
         private void btnTakeBackupNow_Click(object sender, EventArgs e)
@@ -189,8 +242,78 @@ namespace Thetis
                 ListViewItem lvi = lstActiveDBs.SelectedItems[0];
                 highlighted = new Guid(lvi.Tag.ToString());
             }
-
+            //send highlight guid so that we can refresh the lst if it is our active db, as the backup is for the active
             DBMan.TakeBackup(highlighted);
+        }
+
+        private void lstBackups_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            bool enabled = lstBackups.SelectedItems.Count != 0;
+
+            btnMakeBackupAvailable.Enabled = enabled;
+            btnRemoveBackup.Enabled = enabled;
+        }
+
+        private void btnMakeBackupAvailable_Click(object sender, EventArgs e)
+        {
+            if (lstBackups.SelectedItems.Count != 1) return;
+
+            ListViewItem lvi = lstBackups.SelectedItems[0];
+
+            string file_path = lvi.Tag.ToString();
+
+            DBMan.MakeBackupAvailable(file_path);
+        }
+
+        private void btnRemoveBackup_Click(object sender, EventArgs e)
+        {
+            if (lstBackups.SelectedItems.Count != 1) return;
+
+            ListViewItem lvi = lstBackups.SelectedItems[0];
+            string file_path = lvi.Tag.ToString();
+            DBMan.RemoveBackupDB(file_path);
+
+            if (lstActiveDBs.SelectedItems.Count != 1) return;
+            lvi = lstActiveDBs.SelectedItems[0];
+            Guid guid = new Guid(lvi.Tag.ToString());
+
+            DBMan.SelectedAvailable(guid);
+        }
+
+        //
+        private void lstActiveDBs_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
+        {
+            // Cancel the event to prevent the column from being resized
+            e.NewWidth = lstActiveDBs.Columns[e.ColumnIndex].Width;
+            e.Cancel = true;
+        }
+        private void lstBackups_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
+        {
+            // Cancel the event to prevent the column from being resized
+            e.NewWidth = lstBackups.Columns[e.ColumnIndex].Width;
+            e.Cancel = true;
+        }
+
+        private void btnBackupOnStart_Click(object sender, EventArgs e)
+        {
+            if (lstActiveDBs.SelectedItems.Count != 1) return;
+
+            ListViewItem lvi = lstActiveDBs.SelectedItems[0];
+
+            Guid guid = new Guid(lvi.Tag.ToString());
+
+            DBMan.BackupOnStartUpToggle(guid);
+        }
+
+        private void btnBackupOnShutdown_Click(object sender, EventArgs e)
+        {
+            if (lstActiveDBs.SelectedItems.Count != 1) return;
+
+            ListViewItem lvi = lstActiveDBs.SelectedItems[0];
+
+            Guid guid = new Guid(lvi.Tag.ToString());
+
+            DBMan.BackupOnShutDownToggle(guid);
         }
     }
 }

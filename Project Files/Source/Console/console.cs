@@ -905,11 +905,12 @@ namespace Thetis
             bool ok = DBMan.LoadDB(args);
             if (!ok)
             {
-                //issue loading any form of db
-                MessageBox.Show("There was an issue loading the database.", "Database Issue", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                // move db to a broken folder?
+                MessageBox.Show("There was an issue loading the database. The database has been moved to [DB\\broken].", "Database Issue", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
-                //_exitConsoleInDispose = false;
+                _exitConsoleInDispose = false;
                 Environment.Exit(1);
+                return;
             }
 
             Splash.SetStatus("Initializing Hardware");			// Set progress point
@@ -2625,6 +2626,9 @@ namespace Thetis
 
             shutdownLogStringToPath("Before DB.Exit()");
             DB.Exit();					// close and save database
+
+            shutdownLogStringToPath("Before DBMan.Shutdown()");
+            DBMan.Shutdown();
 
             shutdownLogStringToPath("Before NetworkIO.DestroyRNet()");
             NetworkIO.DestroyRNet();
