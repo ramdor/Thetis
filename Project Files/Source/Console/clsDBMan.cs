@@ -570,32 +570,30 @@ namespace Thetis
         {
             List<Guid> activeDbGuids = new List<Guid>();
 
-            if (!string.IsNullOrEmpty(_unique_instance_id))
+            try
             {
-                try
+                string[] dbmanSettingsFiles = Directory.GetFiles(path, "*dbman_settings.json", SearchOption.TopDirectoryOnly);
+                string us = _unique_instance_id + "dbman_settings.json";
+
+                foreach (string file in dbmanSettingsFiles)
                 {
-                    string[] dbmanSettingsFiles = Directory.GetFiles(path, "*dbman_settings.json", SearchOption.TopDirectoryOnly);
-                    string us = _unique_instance_id + "dbman_settings.json";
+                    // ignore us
+                    string fileName = Path.GetFileName(file);
+                    if (fileName == us) continue;
 
-                    foreach (string file in dbmanSettingsFiles)
+                    try
                     {
-                        // ignore us
-                        if (file.IndexOf(us) != -1) continue;
-
-                        try
+                        string jsonString = File.ReadAllText(file);
+                        DBSettings dbSettings = JsonConvert.DeserializeObject<DBSettings>(jsonString);
+                        if (dbSettings != null && dbSettings.ActiveDB_GUID != Guid.Empty)
                         {
-                            string jsonString = File.ReadAllText(file);
-                            DBSettings dbSettings = JsonConvert.DeserializeObject<DBSettings>(jsonString);
-                            if (dbSettings != null && dbSettings.ActiveDB_GUID != Guid.Empty)
-                            {
-                                activeDbGuids.Add(dbSettings.ActiveDB_GUID);
-                            }
+                            activeDbGuids.Add(dbSettings.ActiveDB_GUID);
                         }
-                        catch { }
                     }
+                    catch { }
                 }
-                catch { }
             }
+            catch { }
 
             return activeDbGuids;
         }
