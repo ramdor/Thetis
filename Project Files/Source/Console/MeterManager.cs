@@ -234,6 +234,9 @@ namespace Thetis
 
         private static string _openHPSDR_appdatapath;
 
+        private static string _current_skin = "IK3VIG Special"; // matches selectSkin() fn in setup.cs
+        private static string _current_skin_path = "";
+
         private static CustomReadings _custom_readings;
 
         private static ImageFetcher _image_fetcher;
@@ -1925,6 +1928,7 @@ namespace Thetis
         public static void Init(Console c)
         {
             _console = c;
+            _image_fetcher.Version = c.ProductVersion;
             //_power = _console.PowerOn;
             _rx1VHForAbove = _console.VFOAFreq >= _console.S9Frequency;
             _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= _console.S9Frequency;
@@ -2013,20 +2017,20 @@ namespace Thetis
                 RunRendererDisplay(kvp.Key);
             }
         }
-        private static string _current_skin = "IK3VIG Special"; // matches selectSkin() fn in setup.cs
-        private static string _current_skin_path = "";
-        public static string CurrentSkinPath
-        {
-            get { return _current_skin_path; }
-        }
+        //public static string CurrentSkinPath
+        //{
+        //    get { return _current_skin_path; }
+        //}
         public static bool AlwaysUpdateSkin { get; set; }
         public static string CurrentSkin
         {
             get { return _current_skin; }
             set
             {
-                _current_skin_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
-                    "\\OpenHPSDR\\Skins\\" + value;
+                
+                //_current_skin_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
+                //    "\\OpenHPSDR\\Skins\\" + value;
+                _current_skin_path = _openHPSDR_appdatapath + "\\Skins\\" + value;
 
                 if (value != _current_skin || AlwaysUpdateSkin)
                 {

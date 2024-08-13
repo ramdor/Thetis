@@ -1571,8 +1571,8 @@ namespace Thetis
             removeOutdatedOptions();
 
             DB.SaveVarsDictionary("Options", ref a, true);
-            //DB.WriteCurrentDB(console.DBFileName);//MW0LGE_[2.9.0.7]
-            DB.WriteDB(console.DBFileName);
+
+            DB.WriteDB();//DB console.DBFileName);
 
             _savingOptions = false;
         }
@@ -10984,9 +10984,10 @@ namespace Thetis
             // Archive old database file write a new one.
             if (success)
             {
+                string db_filename = DB.FileName; //DB
                 string archivePath = console.AppDataPath + "DB_Archive\\";
                 if (!Directory.Exists(archivePath)) Directory.CreateDirectory(archivePath);
-                string justFileName = console.DBFileName.Substring(console.DBFileName.LastIndexOf("\\") + 1);
+                string justFileName = db_filename.Substring(db_filename.LastIndexOf("\\") + 1);
                 string datetime = Common.DateTimeStringForFile();//DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
 
                 // MW0LGE [2.9.0.8] issue if you do multiple imports in same minute, this will fail, we could add seconds, but let us increment counter
@@ -10998,12 +10999,12 @@ namespace Thetis
                     sInc = "_" + n.ToString();
                     n++;
                 }
-                File.Copy(console.DBFileName, archivePath + "Thetis_database_" + datetime + sInc + ".xml");
+                File.Copy(db_filename, archivePath + "Thetis_database_" + datetime + sInc + ".xml");
                 //
 
-                File.Delete(console.DBFileName);
+                File.Delete(db_filename);
 
-                DB.WriteDB(console.DBFileName);
+                DB.WriteDB();//DB console.DBFileName);
                 mergingdb = true;
             }
 
@@ -11887,7 +11888,8 @@ namespace Thetis
 
             if (dr == DialogResult.No) return;
 
-            console.reset_db = true;
+            //DB
+            //console.ResetDB = true;
             console.Close();
         }
 
@@ -19117,37 +19119,6 @@ namespace Thetis
             if (initializing) return;
             console.QSOTimerFlashAfterAutoReset = chkQSOTimerFlashTimerIfResetOnExpiry.Checked;
         }
-
-        private HPSDRModel stringModelToEnum(string sModel)
-        {
-            switch (sModel.ToUpper())
-            {
-                case "HERMES":
-                    return HPSDRModel.HERMES;
-                case "ANAN-10":
-                    return HPSDRModel.ANAN10;
-                case "ANAN-10E":
-                    return HPSDRModel.ANAN10E;
-                case "ANAN-100":
-                    return HPSDRModel.ANAN100;
-                case "ANAN-100B":
-                    return HPSDRModel.ANAN100B;
-                case "ANAN-100D":
-                    return HPSDRModel.ANAN100D;
-                case "ANAN-200D":
-                    return HPSDRModel.ANAN200D;
-                case "ANAN-7000DLE":
-                    return HPSDRModel.ANAN7000D;
-                case "ANAN-8000DLE":
-                    return HPSDRModel.ANAN8000D;
-                case "ANAN-G2":
-                    return HPSDRModel.ANAN_G2;
-                case "ANAN-G2-1K":
-                    return HPSDRModel.ANAN_G2_1K;
-            }
-
-            return HPSDRModel.FIRST;
-        }
         private bool _firstRadioModelChange = true;
         private void comboRadioModel_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -19157,13 +19128,13 @@ namespace Thetis
 
             HPSDRModel old_model;
             if (_firstRadioModelChange) // unset state // [2.10.1.0] MW0LGE
-                old_model = stringModelToEnum(comboRadioModel.Text);
+                old_model = Common.StringModelToEnum(comboRadioModel.Text);
             else
                 old_model = console.CurrentHPSDRModel;
 
             comboAudioSampleRateRX2.Enabled = true;
 
-            switch (stringModelToEnum(comboRadioModel.Text))
+            switch (Common.StringModelToEnum(comboRadioModel.Text))
             {
                 case HPSDRModel.HERMES:
                     console.CurrentHPSDRModel = HPSDRModel.HERMES;

@@ -47,25 +47,26 @@ namespace Thetis
         /// <summary>
         /// the complete filename of the datbase file to use including the full path
         /// </summary>
-        private static string file_name = "";
+        private static string _file_name = "";
         public static string FileName
         {
-            set { file_name = value; }
+            get {  return _file_name; }
+            set { _file_name = value; }
         }
 
-        private static bool importedDS = false;
+        private static bool _importedDS = false;
 
-        private static string version_nr = "";
+        private static string _version_nr = "";
         public static string VersionNumber
         {
-            set { version_nr = value; }
-            get { return version_nr; }
+            set { _version_nr = value; }
+            get { return _version_nr; }
         }
-        private static string version_str = "";
+        private static string _version_str = "";
         public static string VersionString
         {
-            set { version_str = value; }
-            get { return version_str; }
+            set { _version_str = value; }
+            get { return _version_str; }
         }
 
         #endregion
@@ -9153,11 +9154,11 @@ namespace Thetis
         {
             ds = new DataSet("Data");
             
-            if (File.Exists(file_name))
+            if (File.Exists(_file_name))
             {
                 try
                 {
-                    ds.ReadXml(file_name);
+                    ds.ReadXml(_file_name);
                 }
                 catch
                 {
@@ -9189,7 +9190,7 @@ namespace Thetis
 
         public static void WriteDB()
         {
-            WriteDB(file_name, ds);
+            WriteDB(_file_name, ds);
         }
 
         //-W2PA Write the database to a specific file
@@ -9204,6 +9205,7 @@ namespace Thetis
             try
             {
                 dsIN.WriteXml(fn, XmlWriteMode.WriteSchema);
+                DBMan.DBWritten();
             }
             catch (Exception ex)
             {
@@ -9218,9 +9220,9 @@ namespace Thetis
 
         public static void Exit()
         {
-            if (!importedDS) //-W2PA Only update if not just imported.
+            if (!_importedDS) //-W2PA Only update if not just imported.
             WriteDB();
-            else importedDS = false;
+            else _importedDS = false;
             ds = null;
         }
 
@@ -9682,7 +9684,7 @@ namespace Thetis
 
             string _versionnumber = "";
 
-            importedDS = false;
+            _importedDS = false;
             if (!File.Exists(filename)) return false;
 
             bool DBdebug = false;  // Set =true to write various versions of the xml file during testing
@@ -10225,7 +10227,7 @@ namespace Thetis
             }
 
             WriteImportLog(logFN, "\nImport succeeded.\n");
-            importedDS = manualImport;  // Prevents overwriting the new database file on next exit // [2.10.1.0] MW0LGE added flag manualImport so that db version update
+            _importedDS = manualImport;  // Prevents overwriting the new database file on next exit // [2.10.1.0] MW0LGE added flag manualImport so that db version update
                                         // will allow saving when the final restart has completed
             return true;
         }

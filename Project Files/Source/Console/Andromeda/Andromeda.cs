@@ -3813,7 +3813,8 @@ namespace Thetis
                     if (IsSetupFormNull)
                         //SetupForm = new Setup(this);
                         //Invoke(new MethodInvoker(SetupForm.Show));
-                        setupToolStripMenuItem_Click(this, EventArgs.Empty);
+                        //setupToolStripMenuItem_Click(this, EventArgs.Empty);
+                        setupToolStripMenuItem1_Click(this, EventArgs.Empty);
                     break;
 
                 case EButtonBarActions.eBBATUOnOff:                  // Auto ATU on/off

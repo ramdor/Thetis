@@ -63,6 +63,16 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Archive_32 {
+            get {
+                object obj = ResourceManager.GetObject("Archive-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap arrow_bottomleft {
             get {
                 object obj = ResourceManager.GetObject("arrow_bottomleft", resourceCulture);
@@ -247,6 +257,46 @@ namespace Thetis.Properties {
             get {
                 object obj = ResourceManager.GetObject("cross_rl", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Data_Add_32 {
+            get {
+                object obj = ResourceManager.GetObject("Data-Add-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Data_Copy_32 {
+            get {
+                object obj = ResourceManager.GetObject("Data-Copy-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Data_Delete_32 {
+            get {
+                object obj = ResourceManager.GetObject("Data-Delete-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Data_Replace_32 {
+            get {
+                object obj = ResourceManager.GetObject("Data-Replace-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

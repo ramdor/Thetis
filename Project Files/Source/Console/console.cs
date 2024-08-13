@@ -164,7 +164,7 @@ namespace Thetis
         private bool isexpanded = true;
         private bool resetForAutoMerge = false;
 
-        private bool run_setup_wizard = false;
+        //private bool _run_setup_wizard = false; //DB 
 
         private RadioButtonTS[] vhf_text;
 
@@ -520,6 +520,8 @@ namespace Thetis
 
         private frmReleaseNotes _frmReleaseNotes;
 
+        private bool _restart;
+
         public CWX CWXForm
         {
             // implemented so that the creation of the form happens in a single place
@@ -602,6 +604,8 @@ namespace Thetis
             }
             //
 
+            string app_data_path = "";
+
             foreach (string s in args)
             {
                 if (s.StartsWith("-datapath:"))
@@ -610,7 +614,7 @@ namespace Thetis
                     if (path.EndsWith("\"")) path = path.Substring(0, path.Length - 1);
                     if (!path.EndsWith("\\")) path += "\\";
                     if (Directory.Exists(path))
-                        AppDataPath = path;
+                        app_data_path = path;
                     else
                     {
                         DialogResult dr = MessageBox.Show("-datapath: command line option found, but the folder specified was not found.\n" +
@@ -623,190 +627,198 @@ namespace Thetis
                         if (dr == DialogResult.Yes)
                         {
                             Directory.CreateDirectory(path);
-                            AppDataPath = path;
+                            app_data_path = path;
                         }
                     }
                 }
             }
 
-            if (AppDataPath == "")
+            if (app_data_path == "")
             {
-                AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-                    + "\\OpenHPSDR\\Thetis\\";
                 if (Environment.Is64BitProcess)
-                    AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                    app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                     + "\\OpenHPSDR\\Thetis-x64\\";
+                else
+                    app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                        + "\\OpenHPSDR\\Thetis\\";
             }
-
-#region DATABASE
-            foreach (string s in args)
-            {
-                if (s.StartsWith("-dbfilename:"))
-                {
-                    string path = s.Trim().Substring(s.Trim().IndexOf(":") + 1);
-                    if (File.Exists(path))
-                    {
-                        DBFileName = path;
-                    }
-                    else
-                    {
-                        DialogResult dr = MessageBox.Show("-dbfilename: command line option found, but the file specified was not found.\n" +
-                            "Would you like to create this file?  If not, the default database will be used.\n\n" +
-                            "(" + path + ")",
-                            "Command Line Option: Create File?",
-                            MessageBoxButtons.YesNo,
-                            MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-
-                        if (dr == DialogResult.Yes)
-                            DBFileName = path;
-                    }
-                }
-            }
-
 
 #if(DEBUG)
-            AppDataPath += "Debug\\";
+            app_data_path += "Debug\\";
 #endif
+
+            AppDataPath = app_data_path;
+            //AppDataPath has been set at this point
+
             if (!Directory.Exists(AppDataPath))
                 Directory.CreateDirectory(AppDataPath);
 
-            if (db_file_name == "")
-                DBFileName = AppDataPath + "database.xml";
+//#region DATABASE
+//            foreach (string s in args)
+//            {
+//                if (s.StartsWith("-dbfilename:"))
+//                {
+//                    string path = s.Trim().Substring(s.Trim().IndexOf(":") + 1);
+//                    if (File.Exists(path))
+//                    {
+//                        //DB DBFileName = path;
+//                        DB.FileName = path;
+//                    }
+//                    else
+//                    {
+//                        DialogResult dr = MessageBox.Show("-dbfilename: command line option found, but the file specified was not found.\n" +
+//                            "Would you like to create this file?  If not, the default database will be used.\n\n" +
+//                            "(" + path + ")",
+//                            "Command Line Option: Create File?",
+//                            MessageBoxButtons.YesNo,
+//                            MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
-            string autoMergeFileName = AppDataPath + "databaseToMerge.xml"; //-W2PA A legacy database candidate for automatic merging
+//                        if (dr == DialogResult.Yes)
+//                            //DB DBFileName = path;
+//                            DB.FileName = path;
+//                    }
+//                }
+//            }
 
-            if (File.Exists(db_file_name))
-            {
-                if (Keyboard.IsKeyDown(Keys.LShiftKey) || Keyboard.IsKeyDown(Keys.RShiftKey))
-                {
-                    Thread.Sleep(500); // ensure this is intentional
-                    if (Keyboard.IsKeyDown(Keys.LShiftKey) || Keyboard.IsKeyDown(Keys.RShiftKey))
-                    {
-                        DialogResult dr = MessageBox.Show(
-                             "The database reset function has been triggered.  Would you like to reset your database?\n\n" +
-                             "If so, a copy of the current database will be placed in the DB_Archive folder with\n" +
-                             "a date and time stamp in the file name, before creating a brand new\n" +
-                             "database for active use.",
-                             "Reset Database?",
-                             MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+//            //DB if (_db_file_name == "")
+//            //DB DBFileName = AppDataPath + "database.xml";
+//            if(DB.FileName == "")
+//                DB.FileName = AppDataPath + "database.xml";
 
-                        if (dr == DialogResult.Yes)
-                        {
-                            string datetime = Common.DateTimeStringForFile();
+//            string autoMergeFileName = AppDataPath + "databaseToMerge.xml"; //-W2PA A legacy database candidate for automatic merging
 
-                            string file = db_file_name.Substring(db_file_name.LastIndexOf("\\") + 1);
-                            file = file.Substring(0, file.Length - 4);
-                            if (!Directory.Exists(AppDataPath + "DB_Archive\\"))
-                                Directory.CreateDirectory(AppDataPath + "DB_Archive\\");
+//            if (File.Exists(DB.FileName))
+//            {
+//                if (Keyboard.IsKeyDown(Keys.LShiftKey) || Keyboard.IsKeyDown(Keys.RShiftKey))
+//                {
+//                    Thread.Sleep(500); // ensure this is intentional
+//                    if (Keyboard.IsKeyDown(Keys.LShiftKey) || Keyboard.IsKeyDown(Keys.RShiftKey))
+//                    {
+//                        DialogResult dr = MessageBox.Show(
+//                             "The database reset function has been triggered.  Would you like to reset your database?\n\n" +
+//                             "If so, a copy of the current database will be placed in the DB_Archive folder with\n" +
+//                             "a date and time stamp in the file name, before creating a brand new\n" +
+//                             "database for active use.",
+//                             "Reset Database?",
+//                             MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
-                            File.Copy(db_file_name, AppDataPath + "DB_Archive\\Thetis_" + file + "_" + datetime + ".xml", true);
-                            File.Delete(db_file_name);
-                            Thread.Sleep(100);
-                        }
-                    }
-                }
+//                        if (dr == DialogResult.Yes)
+//                        {
+//                            string datetime = Common.DateTimeStringForFile();
 
-                if (File.Exists(db_file_name))
-                {
-                    if (!DB.Init()) // Init throws an exception on reading XML files that are too corrupted for DataSet.ReadXml to handle.
-                    {
-                        string datetime = Common.DateTimeStringForFile();//DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
+//                            string file = DB.FileName.Substring(DB.FileName.LastIndexOf("\\") + 1);
+//                            file = file.Substring(0, file.Length - 4);
+//                            if (!Directory.Exists(AppDataPath + "DB_Archive\\"))
+//                                Directory.CreateDirectory(AppDataPath + "DB_Archive\\");
 
-                        string file = db_file_name.Substring(db_file_name.LastIndexOf("\\") + 1);
-                        file = file.Substring(0, file.Length - 4);
-                        if (!Directory.Exists(AppDataPath + "DB_Archive\\"))
-                            Directory.CreateDirectory(AppDataPath + "DB_Archive\\");
+//                            File.Copy(DB.FileName, AppDataPath + "DB_Archive\\Thetis_" + file + "_" + datetime + ".xml", true);
+//                            File.Delete(DB.FileName);
+//                            Thread.Sleep(100);
+//                        }
+//                    }
+//                }
 
-                        File.Copy(db_file_name, AppDataPath + "DB_Archive\\Thetis_" + file + "_" + datetime + ".xml", true);
-                        File.Delete(db_file_name);
-                        MessageBox.Show("The database file could not be read. It has been copied to the DB_Archive folder\n\n"
-                                    + "Current database has been reset and initialized.  After the reset, "
-                                    + "you can try importing another working database file using Setup - Import Database.", "Database Read Failure",
-                                     MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                    }
-                    else
-                    {
-                        string DBVersion = "";
-                        string version = Common.GetVerNum();
-                        Dictionary<string, string> d = DB.GetVarsDictionary("State");
-                        if (d.ContainsKey("VersionNumber"))
-                            DBVersion = d["VersionNumber"];
-                        else
-                            DBVersion = "unknownVersion"; // oh dear
+//                if (File.Exists(DB.FileName))
+//                {
+//                    if (!DB.Init()) // Init throws an exception on reading XML files that are too corrupted for DataSet.ReadXml to handle.
+//                    {
+//                        string datetime = Common.DateTimeStringForFile();//DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
 
-                        //MW0LGE_21a
-                        //check for modifier keys, and force db update if CTRL held, much like reset above
-                        bool bForcedUpdate = !File.Exists(autoMergeFileName) && (Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey));
-                        if (bForcedUpdate)
-                        {
-                            Thread.Sleep(500); // ensure this is intentional
-                            bForcedUpdate = (Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey));
-                            if (bForcedUpdate)
-                            {
-                                DialogResult dr = MessageBox.Show("Forced update CTRL key detected. Do you want to do this?", "Forced Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
-                                if (dr == DialogResult.No) bForcedUpdate = false;
-                            }
-                        }
-                        //
+//                        string file = DB.FileName.Substring(DB.FileName.LastIndexOf("\\") + 1);
+//                        file = file.Substring(0, file.Length - 4);
+//                        if (!Directory.Exists(AppDataPath + "DB_Archive\\"))
+//                            Directory.CreateDirectory(AppDataPath + "DB_Archive\\");
 
-                        if (bForcedUpdate || (DBVersion != "" && DBVersion != version) || File.Exists(autoMergeFileName)) // Back-level DB detected
-                        {
-                            //-W2PA Automatically reset, shut down, and import the old database file if possible
+//                        File.Copy(DB.FileName, AppDataPath + "DB_Archive\\Thetis_" + file + "_" + datetime + ".xml", true);
+//                        File.Delete(DB.FileName);
+//                        MessageBox.Show("The database file could not be read. It has been copied to the DB_Archive folder\n\n"
+//                                    + "Current database has been reset and initialized.  After the reset, "
+//                                    + "you can try importing another working database file using Setup - Import Database.", "Database Read Failure",
+//                                     MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+//                    }
+//                    else
+//                    {
+//                        string DBVersion = "";
+//                        string version = Common.GetVerNum();
+//                        Dictionary<string, string> d = DB.GetVarsDictionary("State");
+//                        if (d.ContainsKey("VersionNumber"))
+//                            DBVersion = d["VersionNumber"];
+//                        else
+//                            DBVersion = "unknownVersion"; // oh dear
 
-                            if (File.Exists(autoMergeFileName)) // We have already reset and are ready for trying a merge
-                            {
-                                //-W2PA Import carefully, allowing use of DB files created by previous versions so as to retain settings and options   
-                                if (DB.ImportAndMergeDatabase(autoMergeFileName, AppDataPath, false))
-                                {
-                                    string versionName = TitleBar.GetString(false);
-                                    versionName = versionName.Remove(versionName.LastIndexOf("("));  // strip off date                                    
-                                    File.Delete(autoMergeFileName);
-                                    DB.WriteDB(db_file_name);
-                                    DB.Init();
-                                    MessageBox.Show("Your database from a different version was imported successfully into a new one.\n\n"
-                                        + versionName + " will now start.", "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+//                        //MW0LGE_21a
+//                        //check for modifier keys, and force db update if CTRL held, much like reset above
+//                        bool bForcedUpdate = !File.Exists(autoMergeFileName) && (Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey));
+//                        if (bForcedUpdate)
+//                        {
+//                            Thread.Sleep(500); // ensure this is intentional
+//                            bForcedUpdate = (Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey));
+//                            if (bForcedUpdate)
+//                            {
+//                                DialogResult dr = MessageBox.Show("Forced update CTRL key detected. Do you want to do this?", "Forced Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+//                                if (dr == DialogResult.No) bForcedUpdate = false;
+//                            }
+//                        }
+//                        //
 
-                                    bShowReleaseNotes = true;
-                                }
-                                else
-                                {
-                                    File.Delete(db_file_name);
-                                    File.Delete(autoMergeFileName);
-                                    Thread.Sleep(100);
-                                    MessageBox.Show("A previous version database file could not be imported. It has been copied to the DB_Archive folder\n\n. "
-                                        + "The current database has been reset and initialized.\n"
-                                        + "You can try importing another working database file using Setup - Import Database.", "Database Import Failure",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                                }
-                                resetForAutoMerge = false;
-                            }
-                            else  // Not yet ready for trying an automatic merge - get set up for it
-                            {
-                                // Archive the old database file and reset database
-                                // string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                                string datetime = Common.DateTimeStringForFile();//DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
+//                        if (bForcedUpdate || (DBVersion != "" && DBVersion != version) || File.Exists(autoMergeFileName)) // Back-level DB detected
+//                        {
+//                            //-W2PA Automatically reset, shut down, and import the old database file if possible
 
-                                string file = db_file_name.Substring(db_file_name.LastIndexOf("\\") + 1);
-                                file = file.Substring(0, file.Length - 4);
-                                if (!Directory.Exists(AppDataPath + "DB_Archive\\"))
-                                    Directory.CreateDirectory(AppDataPath + "DB_Archive\\");
-                                File.Copy(db_file_name, AppDataPath + "DB_Archive\\Thetis_" + file + "_" + datetime + ".xml", true);
-                                File.Copy(db_file_name, autoMergeFileName, true); // After reset and restart, this will be a flag to attempt to merge
-                                File.Delete(db_file_name);
-                                resetForAutoMerge = true;  // a flag to main()
+//                            if (File.Exists(autoMergeFileName)) // We have already reset and are ready for trying a merge
+//                            {
+//                                //-W2PA Import carefully, allowing use of DB files created by previous versions so as to retain settings and options   
+//                                if (DB.ImportAndMergeDatabase(autoMergeFileName, AppDataPath, false))
+//                                {
+//                                    string versionName = TitleBar.GetString(false);
+//                                    versionName = versionName.Remove(versionName.LastIndexOf("("));  // strip off date                                    
+//                                    File.Delete(autoMergeFileName);
+//                                    DB.WriteDB();//DB _db_file_name);
+//                                    DB.Init();
+//                                    MessageBox.Show("Your database from a different version was imported successfully into a new one.\n\n"
+//                                        + versionName + " will now start.", "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
-                                string sForced = bForcedUpdate ? "CTRL KEY Forced Update : " : "";
-                                MessageBox.Show(sForced + "Your database file is from a different version.\nMerging it into a new database will now be attempted.\n\n"
-                                    + "First your old database will be saved in DB_Archive folder,\nand a database reset will happen.\n\n"
-                                    + "Please RE-START when the reset finishes.", "Note", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                            }
+//                                    bShowReleaseNotes = true;
+//                                }
+//                                else
+//                                {
+//                                    File.Delete(DB.FileName);
+//                                    File.Delete(autoMergeFileName);
+//                                    Thread.Sleep(100);
+//                                    MessageBox.Show("A previous version database file could not be imported. It has been copied to the DB_Archive folder\n\n. "
+//                                        + "The current database has been reset and initialized.\n"
+//                                        + "You can try importing another working database file using Setup - Import Database.", "Database Import Failure",
+//                                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+//                                }
+//                                resetForAutoMerge = false;
+//                            }
+//                            else  // Not yet ready for trying an automatic merge - get set up for it
+//                            {
+//                                // Archive the old database file and reset database
+//                                // string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+//                                string datetime = Common.DateTimeStringForFile();//DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
 
-                        }
-                    }
+//                                string file = DB.FileName.Substring(DB.FileName.LastIndexOf("\\") + 1);
+//                                file = file.Substring(0, file.Length - 4);
+//                                if (!Directory.Exists(AppDataPath + "DB_Archive\\"))
+//                                    Directory.CreateDirectory(AppDataPath + "DB_Archive\\");
+//                                File.Copy(DB.FileName, AppDataPath + "DB_Archive\\Thetis_" + file + "_" + datetime + ".xml", true);
+//                                File.Copy(DB.FileName, autoMergeFileName, true); // After reset and restart, this will be a flag to attempt to merge
+//                                File.Delete(DB.FileName);
+//                                resetForAutoMerge = true;  // a flag to main()
 
-                }
-            }
-#endregion DATABASE
+//                                string sForced = bForcedUpdate ? "CTRL KEY Forced Update : " : "";
+//                                MessageBox.Show(sForced + "Your database file is from a different version.\nMerging it into a new database will now be attempted.\n\n"
+//                                    + "First your old database will be saved in DB_Archive folder,\nand a database reset will happen.\n\n"
+//                                    + "Please RE-START when the reset finishes.", "Note", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+//                            }
+
+//                        }
+//                    }
+
+//                }
+//            }
+//#endregion DATABASE
 
             Splash.ShowSplashScreen();							// Start splash screen
 
@@ -889,13 +901,23 @@ namespace Thetis
             MinimumSize = this.Size;
 
             Splash.SetStatus("Initializing Database");			// Set progress point
-            DB.Init();											// Initialize the database
+            //DB.Init();											// Initialize the database
+            bool ok = DBMan.LoadDB(args);
+            if (!ok)
+            {
+                //issue loading any form of db
+                MessageBox.Show("There was an issue loading the database.", "Database Issue", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                //_exitConsoleInDispose = false;
+                Environment.Exit(1);
+            }
 
             Splash.SetStatus("Initializing Hardware");			// Set progress point
             InitCTCSS();
 
+            //TODO !!!!!!!!!!!!!!
             bool RX2Enabled = false;
-            if (File.Exists(db_file_name))
+            if (File.Exists(DB.FileName))
             {
                 Dictionary<string, string> d = DB.GetVarsDictionary("State");
 
@@ -904,6 +926,7 @@ namespace Thetis
                 else
                     RX2Enabled = false;
             }
+            //END_TODO !!!!!!!!!!!!!!
 
             Splash.SetStatus("Initializing Radio");				// Set progress point
             radio = new Radio(AppDataPath);					    // Initialize the Radio processor   INIT_SLOW
@@ -932,22 +955,16 @@ namespace Thetis
             expandedSize = new Size(this.Width, this.Height);
 
             Init60mChannels();
-            LoadLEDFont();
-
-            TimeOutTimerManager.Initialise(this);
+            LoadLEDFont();            
 
             Splash.SetStatus("Loading Settings");				// Set progress point
 
+            TimeOutTimerManager.Initialise(this);
+
             InitConsole();                                      // Initialize all forms and main variables  INIT_SLOW
 
-            //[2.10.3.4]MW0LGE shutdown log remove - remove at some point
-            try
-            {
-                if (File.Exists(AppDataPath + "\\shutdown_log.txt"))
-                    File.Delete(AppDataPath + "\\shutdown_log.txt");
-            }
-            catch { }
-            //
+            //[2.10.3.4]MW0LGE shutdown log remove
+            removeShutdownLog();
 
             addDelegates();
 
@@ -963,15 +980,16 @@ namespace Thetis
             // update titlebar
             this.Text = BasicTitleBar;//TitleBar.GetString(); //MW0LGE_21b
 
-            //-W2PA Need to do this if first time during database import process
-            if (run_setup_wizard)
-            {
-                ArrayList a = new ArrayList { "SetupWizard/1" };
-                DB.SaveVars("State", ref a, true);
+            //DB 
+            ////-W2PA Need to do this if first time during database import process
+            //if (_run_setup_wizard)
+            //{
+            //    ArrayList a = new ArrayList { "SetupWizard/1" };
+            //    DB.SaveVars("State", ref a, true);
 
-                SetupForm.SaveOptions();
-                SaveState();
-            }
+            //    SetupForm.SaveOptions();
+            //    SaveState();
+            //}
 
             initializing = false;
 
@@ -1191,6 +1209,7 @@ namespace Thetis
                     if (IsSetupFormNull)
                     {
                         Debug.Assert(_onlyOneSetupInstance); // this should not happen, ever !  // G7KLJ's idea/implementation
+                        _onlyOneSetupInstance = false;
                         Debug.Print("New setup form - should happen only once");
                         m_frmSetupForm = new Setup(this);
                         m_frmSetupForm.AfterConstructor(); // G7KLJ's idea/implementation
@@ -1281,15 +1300,19 @@ namespace Thetis
                 ToggleFocusMasterTimer();
         }
 
-        public bool reset_db = false;
+        //DB
+        //private bool _reset_db = false;
+        //public bool ResetDB
+        //{
+        //    get { return _reset_db; }
+        //    set { _reset_db = value; }
+        //}
         protected override void Dispose(bool disposing)
         {
             shutdownLogStringToPath("Inside Console Dispose()");
 
             if (_exitConsoleInDispose) // ignore this if the incorrect dlls are found. We wont have used anything
-            {               
                 ExitConsole();
-            }
 
             if (_frmShutDownForm != null)
             {
@@ -1324,6 +1347,11 @@ namespace Thetis
         {
             Debug.WriteLine((e.ExceptionObject as Exception).Message);
             Common.LogException(e.ExceptionObject as Exception);
+        }
+        public bool Restart
+        {
+            get { return _restart; }
+            set { _restart = value; }
         }
         // ======================================================
         // Main
@@ -1378,6 +1406,7 @@ namespace Thetis
 #endif
             }
 
+            bool restart = false;
             try
             {
                 {
@@ -1428,12 +1457,14 @@ namespace Thetis
                 }
                 else
                 {
-                    theConsole = new Console(args);
-                    if (theConsole.resetForAutoMerge)
+                    _theConsole = new Console(args);
+                    if (_theConsole.resetForAutoMerge)
                     {
                         Application.Exit();
                     }
-                    else Application.Run(theConsole);
+                    else Application.Run(_theConsole);
+
+                    restart = _theConsole.Restart;
                 }
             }
             catch (Exception ex)
@@ -1456,6 +1487,12 @@ namespace Thetis
                         MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
                 Application.Exit();
+            }
+
+            if(restart)
+            {
+                Application.Restart();
+                //System.Diagnostics.Process.Start(Application.ExecutablePath);
             }
         }
 
@@ -1755,8 +1792,9 @@ namespace Thetis
 
             tune_power = 0;
             calibrating = false;
+
             //-W2PA Need this for DB import
-            run_setup_wizard = true;
+            //DB _run_setup_wizard = true;
 
             // get culture specific decimal separator
             separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
@@ -1871,8 +1909,7 @@ namespace Thetis
 
             // ***** THIS IS WHERE SETUP FORM IS CREATED
             _onlyOneSetupInstance = true; // make sure that we limit to one instance
-            SetupForm.StartPosition = FormStartPosition.Manual; // *********** IMPORTANT   first use of singleton will create Setup form       INIT_SLOW
-            _onlyOneSetupInstance = false;
+            SetupForm.StartPosition = FormStartPosition.Manual; // *********** IMPORTANT   first use of singleton will create Setup form       INIT_SLOW            
 
             BuildTXProfileCombos(); // MW0LGE_21k9rc4b build them, so that GetState can apply the combobox text
 
@@ -2600,23 +2637,23 @@ namespace Thetis
             Win32.TimeEndPeriod(1); // return to previous timing precision
             Thread.Sleep(100);
 
+            //DB
+            //if (_reset_db)
+            //{
+            //    shutdownLogStringToPath("Inside reset_db");
 
-            if (reset_db)
-            {
-                shutdownLogStringToPath("Inside reset_db");
+            //    string datetime = Common.DateTimeStringForFile();//DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
 
-                string datetime = Common.DateTimeStringForFile();//DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
+            //    string file = DB.FileName.Substring(DB.FileName.LastIndexOf("\\") + 1);
+            //    file = file.Substring(0, file.Length - 4);
+            //    if (!Directory.Exists(AppDataPath + "DB_Archive\\"))
+            //        Directory.CreateDirectory(AppDataPath + "DB_Archive\\");
 
-                string file = db_file_name.Substring(db_file_name.LastIndexOf("\\") + 1);
-                file = file.Substring(0, file.Length - 4);
-                if (!Directory.Exists(AppDataPath + "DB_Archive\\"))
-                    Directory.CreateDirectory(AppDataPath + "DB_Archive\\");
+            //    File.Copy(DB.FileName, AppDataPath + "DB_Archive\\Thetis_" + file + "_" + datetime + ".xml");
+            //    File.Delete(DB.FileName);
 
-                File.Copy(db_file_name, AppDataPath + "DB_Archive\\Thetis_" + file + "_" + datetime + ".xml");
-                File.Delete(db_file_name);
-
-                shutdownLogStringToPath("Leaving reset_db");
-            }
+            //    shutdownLogStringToPath("Leaving reset_db");
+            //}
 
             shutdownLogStringToPath("Leaving ExitConsole()");
         }
@@ -3477,10 +3514,10 @@ namespace Thetis
                     case "CPU_ShowSystem":
                         m_bShowSystemCPUUsage = bool.Parse(val);
                         break;
-                    case "SetupWizard":
-                        if (val == "1")
-                            run_setup_wizard = false;
-                        break;
+                    //case "SetupWizard": //DB 
+                    //    if (val == "1")
+                    //        _run_setup_wizard = false;
+                    //    break;
                     case "saved_rx_only":
                         saved_rx_only = bool.Parse(val);
                         break;
@@ -6278,6 +6315,18 @@ namespace Thetis
         {
             // find all open Thetis processes
             Process[] p = Process.GetProcessesByName("Thetis");
+            if(p.Length > 1)
+            {
+                int tries = 0;
+                while(tries < 10 && p.Length > 1)
+                {
+                    Thread.Sleep(100);
+                    tries++;
+
+                    p = Process.GetProcessesByName("Thetis");
+                }
+            }
+
             if (p.Length > 1)
             {
                 DialogResult dr = MessageBox.Show("There are other Thetis instances running.\n" +
@@ -11361,27 +11410,30 @@ namespace Thetis
 
         }
 
-        private string db_file_name = "";
-        public string DBFileName
-        {
-            get { return db_file_name; }
-            set
-            {
-                if (initializing) // ignore changes here after init is complete per design
-                {
-                    db_file_name = value;
-                    DB.FileName = value;
-                }
-            }
-        }
+        //private string _db_file_name = "";
+        //public string DBFileName
+        //{
+        //    get { return _db_file_name; }
+        //    set
+        //    {
+        //        if (initializing) // ignore changes here after init is complete per design
+        //        {
+        //            _db_file_name = value;
+        //            DB.FileName = value;
+        //        }
+        //    }
+        //}
 
-        private string app_data_path = "";
+        private string _app_data_path = "";
         public string AppDataPath
         {
-            get { return app_data_path; }
+            get { return _app_data_path; }
             set
             {
-                app_data_path = value;
+                _app_data_path = value;
+
+                // set paths of other components
+                DBMan.AppDataPath = value;
                 Skin.AppDataPath = value;
                 MemoryList.AppDataPath = value;
                 DXMemList.AppDataPath = value;
@@ -27482,10 +27534,16 @@ namespace Thetis
                     w.WriteLine(entry);
                 }
             }
-            catch
+            catch { }
+        }
+        private void removeShutdownLog()
+        {
+            try
             {
-
+                if (File.Exists(AppDataPath + "\\shutdown_log.txt"))
+                    File.Delete(AppDataPath + "\\shutdown_log.txt");
             }
+            catch { }
         }
         private void comboPreamp_SelectedIndexChanged(object sender, System.EventArgs e)
         {
@@ -30349,12 +30407,11 @@ namespace Thetis
             string bandInfo;
             double db_freq = freq;
             if (RX1IsIn60m() && current_region == FRSRegion.US) db_freq -= ModeFreqOffset(rx1_dsp_mode);
-            bool transmit_allowed = DB.BandText(db_freq, out bandInfo);
-            if (!transmit_allowed)
-            {
+
+            if (!DB.BandText(db_freq, out bandInfo))
                 txtVFOABand.BackColor = out_of_band_color;
-            }
-            else txtVFOABand.BackColor = band_background_color;
+            else
+                txtVFOABand.BackColor = band_background_color;
 
             if (!(rx2_enabled && (chkEnableMultiRX.Checked || chkVFOSplit.Checked)))
                 txtVFOABand.Text = bandInfo;
@@ -30849,8 +30906,6 @@ namespace Thetis
             }
             saved_vfoa_sub_freq = freq;
 
-            string bandInfo;
-            bool transmit_allowed = DB.BandText(freq, out bandInfo);
             if (!CheckValidTXFreq(current_region, freq, radio.GetDSPTX(0).CurrentDSPMode, chkTUN.Checked))
             {
                 if (chkVFOSplit.Checked && _mox && !extended)
@@ -31337,12 +31392,11 @@ namespace Thetis
                     db_freq -= ModeFreqOffset(rx1_dsp_mode);
             }
 
-            bool transmit = DB.BandText(db_freq, out bandInfo);
-            if (transmit == false)
-            {
+            if (!DB.BandText(db_freq, out bandInfo))
                 txtVFOBBand.BackColor = Color.DimGray;
-            }
-            else txtVFOBBand.BackColor = band_background_color;
+            else 
+                txtVFOBBand.BackColor = band_background_color;
+
             txtVFOBBand.Text = bandInfo;
 
             Band lo_band = Band.FIRST;
@@ -31351,7 +31405,7 @@ namespace Thetis
             if (chkPower.Checked)
             {
                 lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, false, current_region, false);
-                lo_banda = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, false);  //SHOULD this be true MW0LGE? CHECK MW0LGE_21j
+                lo_banda = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, false);
 
                 if (penny_ext_ctrl_enabled) //MW0LGE_21k
                 {
@@ -37765,11 +37819,11 @@ namespace Thetis
             }
         }
 
-        private static Console theConsole = null;
+        private static Console _theConsole = null;
 
         public static Console getConsole()
         {
-            return theConsole;
+            return _theConsole;
         }
 
         protected override void WndProc(ref Message m)
@@ -41310,22 +41364,24 @@ namespace Thetis
 
         private void setupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (IsSetupFormNull) return;
-            if (SetupForm.InvokeRequired)
-            {
-                SetupForm.Invoke(new MethodInvoker(() =>
-                {
-                    SetupForm.Show();
-                    SetupForm.Focus();
-                    SetFocusMaster(false);
-                }));
-            }
-            else
-            {
-                SetupForm.Show();
-                SetupForm.Focus();
-                SetFocusMaster(false);
-            }
+            //[2.10.3.6]MW0LGE now in submenu ... setupToolStripMenuItem1_Click
+
+            //if (IsSetupFormNull) return;
+            //if (SetupForm.InvokeRequired)
+            //{
+            //    SetupForm.Invoke(new MethodInvoker(() =>
+            //    {
+            //        SetupForm.Show();
+            //        SetupForm.Focus();
+            //        SetFocusMaster(false);
+            //    }));
+            //}
+            //else
+            //{
+            //    SetupForm.Show();
+            //    SetupForm.Focus();
+            //    SetFocusMaster(false);
+            //}
         }
 
         private void memoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -48414,7 +48470,7 @@ namespace Thetis
 
             switch (form)
             {
-                case "setup": setupToolStripMenuItem_Click(this, e); break;
+                case "setup": /*setupToolStripMenuItem_Click(this, e);*/ setupToolStripMenuItem1_Click(this, EventArgs.Empty); break;
                 case "memory": memoryToolStripMenuItem_Click(this, e); break;
                 case "wave": waveToolStripMenuItem_Click(this, e); break;
                 case "equaliser": equalizerToolStripMenuItem_Click(this, e); break;
@@ -48646,6 +48702,53 @@ namespace Thetis
         }
         //
         #endregion
+
+        private void databaseManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (IsSetupFormNull) return;
+
+            if (!SetupForm.Visible)
+            {
+                if (!PowerOn)
+                {
+                    DBMan.ShowDBMan();
+                }
+                else
+                {
+                    DialogResult dr = MessageBox.Show("The Database Manager can not be used whilst the radio is powered on. Please turn it off and try again.",
+                    "Database Manager Issue",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
+            }
+            else
+            {
+                DialogResult dr = MessageBox.Show("The Database Manager can not be used whilst the Setup window is shown. Please close it and try again.",
+                "Database Manager Issue",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
+        }
+
+        private void setupToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (IsSetupFormNull) return;
+            if (SetupForm.InvokeRequired)
+            {
+                SetupForm.Invoke(new MethodInvoker(() =>
+                {
+                    SetupForm.Show();
+                    SetupForm.Focus();
+                    SetFocusMaster(false);
+                }));
+            }
+            else
+            {
+                SetupForm.Show();
+                SetupForm.Focus();
+                SetFocusMaster(false);
+            }
+        }
     }
 
     public class DigiMode
