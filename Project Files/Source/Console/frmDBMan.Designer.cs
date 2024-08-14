@@ -246,7 +246,7 @@
             this.btnMakeBackupAvailable.Selectable = true;
             this.btnMakeBackupAvailable.Size = new System.Drawing.Size(42, 42);
             this.btnMakeBackupAvailable.TabIndex = 6;
-            this.toolTip1.SetToolTip(this.btnMakeBackupAvailable, "Make the select backup available");
+            this.toolTip1.SetToolTip(this.btnMakeBackupAvailable, "Make the selected backup available");
             this.btnMakeBackupAvailable.UseVisualStyleBackColor = true;
             this.btnMakeBackupAvailable.Click += new System.EventHandler(this.btnMakeBackupAvailable_Click);
             // 
