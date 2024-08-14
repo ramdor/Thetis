@@ -795,6 +795,9 @@
     <None Include="Resources\Data-Refresh-32.png" />
     <None Include="Resources\Data-Up-32.png" />
     <None Include="Resources\Data-Down-32.png" />
+    <None Include="Resources\Data-Import-32.png" />
+    <None Include="Resources\Data-Export-32.png" />
+    <None Include="Resources\Data-Edit-32.png" />
     <Content Include="thetis-icon.ico" />
     <None Include="Resources\thetis-logo1.png" />
     <None Include="Resources\cross_rl.cur" />

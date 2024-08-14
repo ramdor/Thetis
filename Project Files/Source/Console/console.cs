@@ -905,7 +905,6 @@ namespace Thetis
             bool ok = DBMan.LoadDB(args);
             if (!ok)
             {
-                // move db to a broken folder?
                 MessageBox.Show("There was an issue loading the database. The database has been moved to [DB\\broken].", "Database Issue", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
                 _exitConsoleInDispose = false;
@@ -2667,6 +2666,9 @@ namespace Thetis
             // Automatically saves all control settings to the database in the tab
             // pages on this form of the following types: CheckBox, ComboBox,
             // NumericUpDown, RadioButton, TextBox, and TrackBar (slider)
+
+            if (DB.Merged) return; // prevent saving as we want to ignore everything
+
             string s;
 
             if (current_breakin_mode == BreakIn.QSK) QSKEnabled = false; // Just to save the non-qsk settings, but leaving the button alone

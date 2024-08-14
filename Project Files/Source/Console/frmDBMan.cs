@@ -34,6 +34,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace Thetis
 {
@@ -77,6 +78,8 @@ namespace Thetis
                 column.Width = -2;
             lstBackups.ColumnWidthChanging += lstBackups_ColumnWidthChanging;
 
+            lstBackups.Enabled = lstBackups.Items.Count > 0;
+
             lstBackups_SelectedIndexChanged(this, EventArgs.Empty);
         }
         internal void InitAvailableDBs(Dictionary<Guid, DBMan.DatabaseInfo> dbs, Guid active_guid, Guid reselect_guid)
@@ -109,6 +112,7 @@ namespace Thetis
                 lvi.SubItems.Add(getReadableFileSize(dbi.Size));
                 lvi.SubItems.Add(dbi.BackupOnStartup ? "yes" : "no");
                 lvi.SubItems.Add(dbi.BackupOnShutdown ? "yes" : "no");
+                lvi.SubItems.Add(dbi.VersionNumber);
                 lvi.SubItems.Add(dbi.FullPath);
 
                 lvi.Tag = dbi.GUID.ToString();
@@ -213,6 +217,10 @@ namespace Thetis
 
             btnNewDB.Enabled = true;
             btnTakeBackupNow.Enabled = true;
+            btnImport.Enabled = true;
+
+            btnRename.Enabled = enabled;
+            btnExport.Enabled = enabled;
             btnDuplicateDB.Enabled = enabled;
             btnBackupOnStart.Enabled = enabled;
             btnBackupOnShutdown.Enabled = enabled;
@@ -314,6 +322,40 @@ namespace Thetis
             Guid guid = new Guid(lvi.Tag.ToString());
 
             DBMan.BackupOnShutDownToggle(guid);
+        }
+
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            Guid highlighted = Guid.Empty;
+            if (lstActiveDBs.SelectedItems.Count == 1)
+            {
+                ListViewItem lvi = lstActiveDBs.SelectedItems[0];
+                highlighted = new Guid(lvi.Tag.ToString());
+            }
+            //send highlight guid so that we can refresh the lst if it is our active db, as the backup is for the active
+            DBMan.Import();
+        }
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            if (lstActiveDBs.SelectedItems.Count != 1) return;
+
+            ListViewItem lvi = lstActiveDBs.SelectedItems[0];
+
+            Guid guid = new Guid(lvi.Tag.ToString());
+
+            DBMan.Export(guid);
+        }
+
+        private void btnRename_Click(object sender, EventArgs e)
+        {
+            if (lstActiveDBs.SelectedItems.Count != 1) return;
+
+            ListViewItem lvi = lstActiveDBs.SelectedItems[0];
+
+            Guid guid = new Guid(lvi.Tag.ToString());
+
+            DBMan.Rename(guid);
         }
     }
 }

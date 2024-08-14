@@ -11,6 +11,8 @@ using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.Threading;
+using System.Xml;
+using System.Runtime.InteropServices;
 
 namespace Thetis
 {
@@ -89,6 +91,8 @@ namespace Thetis
 
         public static void ShowDBMan()
         {
+            if (_dbman_settings == null) return;
+
             Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
             _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, Guid.Empty);
 
@@ -151,6 +155,7 @@ namespace Thetis
             //
 
             bool ok = false;
+            bool made_new = false;
 
             Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
 
@@ -160,6 +165,7 @@ namespace Thetis
                 ok = createNewDB(true, true);
                 if (ok)
                 {
+                    made_new = true;
                     dbs = getAvailableDBs();
                     ok = dbs.Count > 0;
                 }
@@ -172,16 +178,18 @@ namespace Thetis
                 if (_dbman_settings != null)
                 {
                     //check this exists, if not?
-                    if (!File.Exists(_dbman_settings.ActiveDB_File))
+                    string db_xml_file = _db_data_path + _dbman_settings.ActiveDB_GUID.ToString() + "\\database.xml";
+                    if (!File.Exists(db_xml_file))
                     {
                         DialogResult dr = MessageBox.Show("The last active Database could not be located. Using a blank new one.",
                         "Database Manager Issue",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
-                        ok = createNewDB(true, true);
+                        ok = createNewDB(false, true);
                         if (ok)
                         {
+                            made_new = true;
                             dbs = getAvailableDBs();
                             ok = dbs.Count > 0;
                         }
@@ -204,10 +212,13 @@ namespace Thetis
                         catch { }
                         //
 
-                        DB.FileName = _dbman_settings.ActiveDB_File;
+                        DB.FileName = db_xml_file;
                         _ignore_written = true;
                         ok = DB.Init();
                         _ignore_written = false;
+
+                        //check version
+                        if(ok) checkVersion(made_new);
                     }
                 }
                 else
@@ -222,6 +233,56 @@ namespace Thetis
             }
 
             return ok;
+        }
+        private static void checkVersion(bool made_new)
+        {
+            string version;
+            Dictionary<string, string> vals = DB.GetVarsDictionary("State");
+            if (vals.ContainsKey("VersionNumber"))
+                version = vals["VersionNumber"];
+            else
+                version = "? version";
+
+            if (made_new || Common.GetVerNum() == version) return; // same version, dont need to do anything
+
+            DialogResult dr = MessageBox.Show("This version [" + Common.GetVerNum() + "] of Thetis requires your database [" + version + "] to be updated.\n\n" +
+                "A new updated database will be created, and your old database merged into it. It will be made active.",
+                "Database Manager",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+            Guid guid_original = _dbman_settings == null ? Guid.Empty : _dbman_settings.ActiveDB_GUID;
+
+            // need to create new fresh db
+            string orginal_db_filename_xml = DB.FileName;
+            bool ok = createNewDB(false, true);
+
+            if (ok) {
+                // then import the one we were using into that new fresh one we just created
+                // we need to ignore merged flag so that we can contine to use and save everyting to this database
+                ok = DB.ImportAndMergeDatabase2(orginal_db_filename_xml, out string log, true);
+            }
+
+            if (ok)
+            {
+                DBWritten(); // update json to reflect the merged info, like model etc
+
+                // not sure we want to do this
+                //// then delete the orginal
+                //RemoveDB(guid_original, true);
+
+                dr = MessageBox.Show("The database update was completed sucessfully.",
+                    "Database Manager",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
+            else
+            {
+                dr = MessageBox.Show("The database update did not complete.",
+                    "Database Manager",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
         }
         private static void moveToBroken(Guid guid)
         {
@@ -294,7 +355,7 @@ namespace Thetis
                 di.LastChanged = fi.LastWriteTime;
 
                 //write the updated version
-                jsonString = JsonConvert.SerializeObject(di, Formatting.Indented);
+                jsonString = JsonConvert.SerializeObject(di, Newtonsoft.Json.Formatting.Indented);
                 try
                 {
                     File.WriteAllText(json_file, jsonString);
@@ -304,7 +365,7 @@ namespace Thetis
                 }
             }
         }
-        private static bool createNewDB(bool check_for_original = false, bool make_active = false, string description = "")
+        private static bool createNewDB(bool check_for_old_db = false, bool make_active = false, string description = "")
         {
             bool ok = true;
 
@@ -316,7 +377,7 @@ namespace Thetis
             string source_db = _app_data_path + "database.xml";
             string dest_db = db_folder + "\\database.xml";
 
-            if (check_for_original && File.Exists(source_db))
+            if (check_for_old_db && File.Exists(source_db))
             {
                 // move old db to new system               
                 File.Move(source_db, dest_db);
@@ -332,8 +393,9 @@ namespace Thetis
             string old_db_filename = "";
             if (!string.IsNullOrEmpty(DB.FileName))
             {
-                DB.WriteDB();
                 old_db_filename = DB.FileName;
+                //DB.WriteDB();
+                DB.Exit();
             }
 
             // read db to get some basic info
@@ -357,7 +419,7 @@ namespace Thetis
                 di.VersionString = DB.VersionString;
                 di.VersionNumber = DB.VersionNumber;
                 
-                string jsonString = JsonConvert.SerializeObject(di, Formatting.Indented);
+                string jsonString = JsonConvert.SerializeObject(di, Newtonsoft.Json.Formatting.Indented);
                 try
                 {
                     File.WriteAllText(db_folder + "\\dbman.json", jsonString);
@@ -417,10 +479,10 @@ namespace Thetis
                 {
                     DBSettings dbs = new DBSettings();
                     dbs.ActiveDB_GUID = guid;
-                    dbs.ActiveDB_File = db_filename;
+                    dbs.ActiveDB_File = guid.ToString() + "\\database.xml";
 
                     //write json
-                    string jsonString = JsonConvert.SerializeObject(dbs, Formatting.Indented);
+                    string jsonString = JsonConvert.SerializeObject(dbs, Newtonsoft.Json.Formatting.Indented);
                     try
                     {
                         string dbman_settings_file = _db_data_path + _unique_instance_id + "dbman_settings.json";
@@ -564,7 +626,12 @@ namespace Thetis
                 moveToBroken(guid);
             }
 
-            return foldersInfo;
+            IOrderedEnumerable<KeyValuePair<Guid, DatabaseInfo>> sortedEntries = foldersInfo
+                .OrderByDescending(entry => entry.Value.LastChanged);
+            Dictionary<Guid, DatabaseInfo> sortedDictionary = sortedEntries
+                .ToDictionary(entry => entry.Key, entry => entry.Value);
+
+            return sortedDictionary;
         }
         private static List<Guid> getAllActiveDBGUIDs(string path)
         {
@@ -652,6 +719,8 @@ namespace Thetis
         }
         public static void NewDB()
         {
+            if (_dbman_settings == null) return;
+
             string desc = InputBox.Show("Database Description", "Please provide a description for this new database.", "");
             if (string.IsNullOrEmpty(desc)) return;
 
@@ -662,6 +731,8 @@ namespace Thetis
         }
         public static void BackupOnStartUpToggle(Guid guid)
         {
+            if (_dbman_settings == null) return;
+
             string dbman_json = _db_data_path + guid.ToString() + "\\dbman.json";
             if (File.Exists(dbman_json))
             {
@@ -672,7 +743,7 @@ namespace Thetis
                     //toggle
                     db_info_json.BackupOnStartup = !db_info_json.BackupOnStartup;
 
-                    jsonString = JsonConvert.SerializeObject(db_info_json, Formatting.Indented);
+                    jsonString = JsonConvert.SerializeObject(db_info_json, Newtonsoft.Json.Formatting.Indented);
                     File.WriteAllText(dbman_json, jsonString);
 
                     Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
@@ -683,6 +754,8 @@ namespace Thetis
         }
         public static void BackupOnShutDownToggle(Guid guid)
         {
+            if (_dbman_settings == null) return;
+
             string dbman_json = _db_data_path + guid.ToString() + "\\dbman.json";
             if (File.Exists(dbman_json))
             {
@@ -693,7 +766,7 @@ namespace Thetis
                     //toggle
                     db_info_json.BackupOnShutdown = !db_info_json.BackupOnShutdown;
 
-                    jsonString = JsonConvert.SerializeObject(db_info_json, Formatting.Indented);
+                    jsonString = JsonConvert.SerializeObject(db_info_json, Newtonsoft.Json.Formatting.Indented);
                     File.WriteAllText(dbman_json, jsonString);
 
                     Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
@@ -702,10 +775,16 @@ namespace Thetis
                 catch { }
             }
         }
-        public static void RemoveDB(Guid guid)
+        public static void RemoveDB(Guid guid, bool force = false)
         {
-            string desc = InputBox.Show("Database Removal", "Please enter the matching description to remove this database.", "");
-            if (string.IsNullOrEmpty(desc)) return;
+            if (_dbman_settings == null) return;
+
+            string desc = "";
+            if (!force)
+            {
+                desc = InputBox.Show("Database Removal", "Please enter the matching description to remove this database.", "");
+                if (string.IsNullOrEmpty(desc)) return;
+            }
 
             bool ok = false;
             string dbman_json = _db_data_path + guid.ToString() + "\\dbman.json";
@@ -713,7 +792,7 @@ namespace Thetis
             {
                 string jsonString = File.ReadAllText(dbman_json);
                 DatabaseInfo db_info_json = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
-                if (desc == db_info_json.Description)
+                if (force || (desc == db_info_json.Description))
                 {
                     try
                     {
@@ -738,6 +817,8 @@ namespace Thetis
         }
         public static void DuplicateDB(Guid guid)
         {
+            if (_dbman_settings == null) return;
+
             string desc = InputBox.Show("Database Duplication", "Please enter a description for the duplicate.", "");
             if (string.IsNullOrEmpty(desc)) return;
 
@@ -765,7 +846,7 @@ namespace Thetis
                         db_info_json.Description = desc;
                         db_info_json.LastChanged = DateTime.Now;
 
-                        jsonString = JsonConvert.SerializeObject(db_info_json, Formatting.Indented);
+                        jsonString = JsonConvert.SerializeObject(db_info_json, Newtonsoft.Json.Formatting.Indented);
                         File.WriteAllText(dbman_json, jsonString);
                     }
                 }
@@ -867,8 +948,9 @@ namespace Thetis
             _frm_dbman.InitBackups(backups);
         }
         private static List<BackupFileInfo> getOrderedBackupFiles(string backupFolderPath)
-        {
+        {            
             List<BackupFileInfo> backupFiles = new List<BackupFileInfo>();
+            if (!Directory.Exists(backupFolderPath)) return backupFiles;
             DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
             foreach (string filePath in Directory.GetFiles(backupFolderPath, "database_backup_*.xml"))
@@ -927,8 +1009,144 @@ namespace Thetis
                 catch { }
             }
         }
+        public static void Import() 
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "XML files (*.xml)|*.xml";
+            openFileDialog.Title = "Select an XML file";
+            openFileDialog.Multiselect = false;
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filename = openFileDialog.FileName;
+                if (Path.GetExtension(filename).Equals(".xml", StringComparison.OrdinalIgnoreCase))
+                {
+                    bool ok;
+                    try
+                    {
+                        XmlDocument xmlDocument = new XmlDocument();
+                        xmlDocument.Load(filename);
+                        ok = true;
+                    }
+                    catch
+                    {
+                        ok = false;
+                    }
+                    if (ok)
+                    {
+                        ok = DB.ImportAndMergeDatabase2(filename, out string log, false);
+                        if (ok)
+                        {
+                            DialogResult dr = MessageBox.Show("The database was imported sucessfully. Thetis will now restart.",
+                            "Database Manager",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                            _frm_dbman.Hide();
+
+                            Console.getConsole().Restart = true;
+                            Console.getConsole().Close();
+                        }
+                        else
+                        {
+                            DialogResult dr = MessageBox.Show("There was a problem importing the database.",
+                            "Database Manager",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        }
+                    }
+                }
+            }
+        }
+        public static void Rename(Guid guid)
+        {
+            if (_dbman_settings == null) return;
+
+            string db_path = _db_data_path + guid.ToString();
+            string dbman_json = db_path + "\\dbman.json";
+            if (!File.Exists(dbman_json)) return;
+
+            try
+            {
+                string jsonString = File.ReadAllText(dbman_json);
+                DatabaseInfo db_info_json = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
+
+                string desc = InputBox.Show("Database Change Description", "Please edit the description.", db_info_json.Description);
+                if (string.IsNullOrEmpty(desc) || desc == db_info_json.Description) return;
+
+                db_info_json.Description = desc;
+
+                //write the updated version
+                jsonString = JsonConvert.SerializeObject(db_info_json, Newtonsoft.Json.Formatting.Indented);
+                File.WriteAllText(dbman_json, jsonString);
+
+                Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
+                _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, guid);
+            }
+            catch { }
+        }
+        public static void Export(Guid guid)
+        {
+            string db_path = _db_data_path + guid.ToString();
+            string dbman_json = db_path + "\\dbman.json";
+            if (File.Exists(dbman_json))
+            {
+                string jsonString = File.ReadAllText(dbman_json);
+                DatabaseInfo db_info_json = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
+                string desc = db_info_json.Description;
+                string datetime = Common.DateTimeStringForFile();
+                string save_file = $"Thetis_database_export_{desc}_{datetime}.xml";
+
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "XML files (*.xml)|*.xml|All files (*.*)|*.*",
+                    DefaultExt = "xml",
+                    FileName = save_file,
+                    Title = "Save XML File"
+                };
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string filename = saveFileDialog.FileName;
+                    bool overwrite = false;
+                    if (File.Exists(filename))
+                    {
+                        DialogResult dr = MessageBox.Show("File already exists. Do you want to overwrite it ?",
+                        "Database Manager",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+                        overwrite = dr == DialogResult.Yes;
+                    }
+                    
+                    if (guid == _dbman_settings.ActiveDB_GUID)
+                    {
+                        try
+                        {
+                            if (overwrite)
+                                File.Delete(filename);
+                            bool ok = DB.WriteDB(filename);
+                        }
+                        catch { }
+                    }
+                    else
+                    {
+                        if (!File.Exists(filename) || overwrite)
+                        {
+                            try
+                            {
+                                File.Copy(db_path + "\\database.xml", filename, overwrite);
+                            }
+                            catch { }
+                        }
+                    }
+                }
+            }
+        }
+
         public static void MakeBackupAvailable(string file_path)
         {
+            if (_dbman_settings == null) return;
+
             if (File.Exists(file_path))
             {
                 string desc = InputBox.Show("Make Database Available", "Please enter a description for the database.", "");
@@ -962,8 +1180,9 @@ namespace Thetis
                     string old_db_filename = "";
                     if (!string.IsNullOrEmpty(DB.FileName))
                     {
-                        DB.WriteDB();
                         old_db_filename = DB.FileName;
+                        //DB.WriteDB();
+                        DB.Exit();
                     }
 
                     // read db to get some basic info
@@ -1010,7 +1229,7 @@ namespace Thetis
                     };
 
                     //write
-                    string jsonString = JsonConvert.SerializeObject(di, Formatting.Indented);
+                    string jsonString = JsonConvert.SerializeObject(di, Newtonsoft.Json.Formatting.Indented);
                     try
                     {
                         File.WriteAllText(json_file, jsonString);

@@ -57649,6 +57649,7 @@
             this.btnExportDB.TabIndex = 22;
             this.btnExportDB.Text = "Export Database...";
             this.toolTip1.SetToolTip(this.btnExportDB, "Export the current Thetis Database to the location of your choice.");
+            this.btnExportDB.Visible = false;
             this.btnExportDB.Click += new System.EventHandler(this.btnExportDB_Click);
             // 
             // btnImportDB
@@ -57661,6 +57662,7 @@
             this.btnImportDB.TabIndex = 21;
             this.btnImportDB.Text = "Import Database...";
             this.toolTip1.SetToolTip(this.btnImportDB, "Import a database file, or partial database file such as an exported TX Profile");
+            this.btnImportDB.Visible = false;
             this.btnImportDB.Click += new System.EventHandler(this.btnImportDB_Click);
             // 
             // btnResetDB
@@ -57674,6 +57676,7 @@
             this.btnResetDB.Text = "Reset Database";
             this.toolTip1.SetToolTip(this.btnResetDB, "Copies the current database to the desktop and resets to the defaults (after rest" +
         "arting)");
+            this.btnResetDB.Visible = false;
             this.btnResetDB.Click += new System.EventHandler(this.btnResetDB_Click);
             // 
             // btnApply

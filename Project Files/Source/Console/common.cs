@@ -1087,10 +1087,11 @@ namespace Thetis
 			DateTime now = DateTime.Now;
             string sDate = now.ToString(ci.DateTimeFormat.ShortDatePattern, ci) + "_" + now.ToString(ci.DateTimeFormat.ShortTimePattern, ci);
 
-            sDate = sDate.Replace("/", "-");
-            sDate = sDate.Replace(":", ".");
+            sDate = sDate.Replace("/", "_");
+            sDate = sDate.Replace(":", "_");
+            sDate = sDate.Replace(".", "_");
 
-			// replace any non valid filename chars with _
+            // replace any non valid filename chars with _
             string sRet = string.Join("_", sDate.Split(Path.GetInvalidFileNameChars()));
 
 			return sRet;
