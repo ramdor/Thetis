@@ -1120,36 +1120,29 @@ namespace Thetis
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     string filename = saveFileDialog.FileName;
-                    bool overwrite = false;
-                    if (File.Exists(filename))
+
+                    try
                     {
-                        DialogResult dr = MessageBox.Show("File already exists. Do you want to overwrite it ?",
-                        "Database Manager",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
-                        overwrite = dr == DialogResult.Yes;
+                        if (File.Exists(filename))
+                            File.Delete(filename);
                     }
-                    
+                    catch { }
+
                     if (guid == _dbman_settings.ActiveDB_GUID)
                     {
                         try
                         {
-                            if (overwrite)
-                                File.Delete(filename);
                             bool ok = DB.WriteDB(filename);
                         }
                         catch { }
                     }
                     else
                     {
-                        if (!File.Exists(filename) || overwrite)
+                        try
                         {
-                            try
-                            {
-                                File.Copy(db_path + "\\database.xml", filename, overwrite);
-                            }
-                            catch { }
+                            File.Copy(db_path + "\\database.xml", filename);
                         }
+                        catch { }
                     }
                 }
             }
