@@ -9146,8 +9146,10 @@ namespace Thetis
                 //img.Size = ri.Size;
                 if (ri.ViewMode == clsRotatorItem.RotatorMode.BOTH)
                 {
-                    img.TopLeft = new PointF(0.5f - (fSize / 2f), _fPadY - (_fHeight * 0.75f)/* + ((fSize - fSize) * 0.5f)*/);
-                    img.Size = new SizeF(fSize, fSize);
+                    //img.TopLeft = new PointF(0.5f - (fSize / 2f), _fPadY - (_fHeight * 0.75f)/* + ((fSize - fSize) * 0.5f)*/);
+                    //img.Size = new SizeF(fSize, fSize);
+                    img.TopLeft = new PointF(0, _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
+                    img.Size = new SizeF(1f, 0.5f);
                 }
                 else
                 {

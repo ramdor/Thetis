@@ -906,7 +906,7 @@ namespace Thetis
             bool ok = DBMan.LoadDB(args, out string broken_folder);
             if (!ok)
             {
-                MessageBox.Show($"There was an issue loading the database. The database has been moved to [{AppDataPath}\\DB\\broken\\{broken_folder}].", "Database Issue", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                MessageBox.Show($"There was an issue loading the database. The database has been moved to [{AppDataPath}DB\\broken\\{broken_folder}].", "Database Issue", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
                 _exitConsoleInDispose = false;
                 Environment.Exit(1);
