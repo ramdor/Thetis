@@ -1106,13 +1106,15 @@ namespace Thetis
                 string desc = db_info_json.Description;
                 string datetime = Common.DateTimeStringForFile();
                 string save_file = $"Thetis_database_export_{desc}_{datetime}.xml";
+                string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
                 SaveFileDialog saveFileDialog = new SaveFileDialog
                 {
                     Filter = "XML files (*.xml)|*.xml|All files (*.*)|*.*",
                     DefaultExt = "xml",
                     FileName = save_file,
-                    Title = "Save XML File"
+                    Title = "Export Database",
+                    InitialDirectory = myDocumentsPath
                 };
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)

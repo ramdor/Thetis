@@ -25886,7 +25886,12 @@ namespace Thetis
         {
             try
             {
-                Process.Start("explorer.exe", console.AppDataPath);
+                string fullpath = DB.FileName;
+                string directoryPath = Path.GetDirectoryName(fullpath);
+                if (Directory.Exists(directoryPath))
+                {
+                    Process.Start("explorer.exe", directoryPath);
+                }
             }
             catch (Exception ex)
             {
@@ -25895,7 +25900,7 @@ namespace Thetis
 
         private void buildZipFile(string version, string sourceDirectory)
         {
-            string[] filesToZip = { "database.xml", "ErrorLog.txt", "VALog.txt", "ImportLog.txt" };
+            string[] filesToZip = { "ErrorLog.txt", "VALog.txt" };
             string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -25930,7 +25935,15 @@ namespace Thetis
                                     archive.CreateEntryFromFile(filePath, fileName);
                                 }
                             }
-                            System.IO.Compression.
+
+                            // and now the db
+                            string fullpath = DB.FileName;
+                            if (File.Exists(fullpath))
+                            {
+                                string file_name = Path.GetFileName(fullpath);
+                                archive.CreateEntryFromFile(fullpath, file_name);
+                            }
+
                             // Add the version.txt entry
                             ZipArchiveEntry versionEntry = archive.CreateEntry("version.txt");
 

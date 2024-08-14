@@ -7353,8 +7353,7 @@
             this.btnZipDebugInfo.Size = new System.Drawing.Size(111, 53);
             this.btnZipDebugInfo.TabIndex = 121;
             this.btnZipDebugInfo.Text = "Zip database.xml\r\nand log files";
-            this.toolTip1.SetToolTip(this.btnZipDebugInfo, "Make a zip file containing the database.xml, ErrorLog.txt, VALog.txt, ImportLog.t" +
-        "xt");
+            this.toolTip1.SetToolTip(this.btnZipDebugInfo, "Make a zip file containing the database.xml, ErrorLog.txt, VALog.txt");
             this.btnZipDebugInfo.UseVisualStyleBackColor = true;
             this.btnZipDebugInfo.Click += new System.EventHandler(this.btnZipDebug_Click);
             // 

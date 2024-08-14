@@ -2788,9 +2788,7 @@ namespace Thetis
 
             a.Remove("udRX1StepAttData/" + udRX1StepAttData.Value.ToString());
             a.Remove("udRX2StepAttData/" + udRX2StepAttData.Value.ToString());
-            a.Remove("udTXStepAttData/" + udTXStepAttData.Value.ToString()); //[2.3.6.10]MW0LGE
-
-            string ver_num = Common.GetVerNum();
+            a.Remove("udTXStepAttData/" + udTXStepAttData.Value.ToString()); //[2.3.6.10]MW0LGE            
 
             a.Add("last_radio_protocol/" + Audio.LastRadioProtocol.ToString()); // MW0LGE [2.9.0.8] used incase protocol changes from last time. Used in audio.cs tp reset PS feedback level
             a.Add("last_radio_hardware/" + Audio.LastRadioHardware.ToString()); // as above, but hardware related
@@ -3235,6 +3233,7 @@ namespace Thetis
             a.Add("saved_rx_only/" + saved_rx_only.ToString());
             a.Add("mon_recall/" + mon_recall.ToString());
 
+            string ver_num = Common.GetVerNum();
             a.Add("Version/" + this.Text);		// save the current version
             a.Add("VersionNumber/" + ver_num);      // Thetis version number in a.b.c format
             // a.Add("RadioType/" + CurrentModel);     // radio model string (ex. FLEX1500)
