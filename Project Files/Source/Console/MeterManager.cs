@@ -688,7 +688,6 @@ namespace Thetis
             private bool _back_panel;
             private float _eyeBezelScale;
             private bool _average;
-            private string _text_overlay;
             private bool _darkMode;
             private float _maxPower;
             private System.Drawing.Color _powerScaleColour;
@@ -5469,6 +5468,7 @@ namespace Thetis
             private bool _alow_control;
             private string _control_string_AZ;
             private string _control_string_ELE;
+            private string _control_string_STOP;
 
             private readonly object _historyLock = new object();
 
@@ -5518,6 +5518,7 @@ namespace Thetis
                 _alow_control = false;
                 _control_string_AZ = "<PST><AZIMUTH>%AZ%</AZIMUTH></PST>";
                 _control_string_ELE = "<PST><ELEVATION>%ELE%</ELEVATION></PST>";
+                _control_string_STOP = "<PST><STOP>1</STOP></PST>";
 
                 ItemType = MeterItemType.ROTATOR;
                 ReadingSource = Reading.AZ;
@@ -5549,12 +5550,17 @@ namespace Thetis
                 get { return _control_string_AZ; }
                 set { _control_string_AZ = value; }
             }
+            public string STOPControlString
+            {
+                get { return _control_string_STOP; }
+                set { _control_string_STOP = value; }
+            }
             public string ELEControlString
             {
                 get { return _control_string_ELE; }
                 set { _control_string_ELE = value; }
             }
-            public void SendRotatorMessage(bool dragging_rotator_ele, float dragging_rotator_degrees)
+            public void SendRotatorMessage(bool dragging_rotator_ele, float dragging_rotator_degrees, bool stop)
             {
                 if (DataOutMMIOGuid == Guid.Empty) return;
                 if (!_alow_control) return;
@@ -5565,13 +5571,20 @@ namespace Thetis
                     if (mmio == null) return;
 
                     string data;
-                    if (dragging_rotator_ele)
+                    if (stop)
                     {
-                        data = _control_string_ELE.Replace("%ELE%", ((int)dragging_rotator_degrees).ToString("00"));                        
+                        data = _control_string_STOP;
                     }
                     else
                     {
-                        data = _control_string_AZ.Replace("%AZ%", ((int)dragging_rotator_degrees).ToString("000"));
+                        if (dragging_rotator_ele)
+                        {
+                            data = _control_string_ELE.Replace("%ELE%", ((int)dragging_rotator_degrees).ToString("00"));
+                        }
+                        else
+                        {
+                            data = _control_string_AZ.Replace("%AZ%", ((int)dragging_rotator_degrees).ToString("000"));
+                        }
                     }
                     data = data.Replace(@"\n", "\n"); // use @ so that it is a literal verbatim string
                     data = data.Replace(@"\r", "\r");
@@ -11513,6 +11526,7 @@ namespace Thetis
                                             rotator.ControlColour = igs.HistoryColor;
                                             rotator.AZControlString = igs.Text1;
                                             rotator.ELEControlString = igs.Text2;
+                                            rotator.STOPControlString = igs.FontFamily1;
                                             rotator.DataOutMMIOGuid = igs.GetMMIOGuid(2);
                                             imageName = rotator.ImageName;
 
@@ -11537,8 +11551,12 @@ namespace Thetis
 
                                             if ((clsRotatorItem.RotatorMode)igs.HistoryDuration == clsRotatorItem.RotatorMode.BOTH)
                                             {
-                                                image.TopLeft = new PointF(0.5f - (0.5f / 2f), _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
-                                                image.Size = new SizeF(0.5f, 0.5f);
+                                                //image.TopLeft = new PointF(0.5f - (0.5f / 2f), _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
+                                                //image.Size = new SizeF(0.5f, 0.5f);
+
+                                                image.TopLeft = new PointF(0, _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
+                                                image.Size = new SizeF(1f, 0.5f);
+
                                                 //image.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
                                                 //image.Size = new SizeF(ig.Size.Width, padding);
                                             }
@@ -12321,6 +12339,7 @@ namespace Thetis
                                                 igs.HistoryColor = rotator.ControlColour;
                                                 igs.Text1 = rotator.AZControlString;
                                                 igs.Text2 = rotator.ELEControlString;
+                                                igs.FontFamily1 = rotator.STOPControlString;
                                             }
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
@@ -16213,6 +16232,8 @@ namespace Thetis
                 SharpDX.Direct2D1.Brush beam_widh_br = getDXBrushForColour(rotator.BeamWidthColour, 192);
 
                 float xShift = rotator.ViewMode == clsRotatorItem.RotatorMode.BOTH ? 2f * (w * 0.0125f) : 0;
+                bool send_stop = false;
+                float radius_stop_circle = rotator.ViewMode == clsRotatorItem.RotatorMode.ELE ? (h * 0.09f) / 2f : (h * 0.15f) / 2f; // to include the numbers when clicking to move the rotator
 
                 if (rotator.Primary)
                 {
@@ -16413,50 +16434,74 @@ namespace Thetis
 
                     if (rotator.AllowControl)
                     {
-                        if (rotator.MouseButtonDown && rotator.MouseEntered)
+                        bool stop_drawn = false;
+                        if (rotator.MouseEntered)
                         {
-                            float temp_degrees = 0;
-                            SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, 255);
-
-                            if (!_rotator_was_dragging && _dragging_old_update_rate == -1)
-                            {
-                                _dragging_old_update_rate = rotator.UpdateInterval;
-                                rotator.UpdateInterval = 16;
-                                m.UpdateIntervals();
-                            }
-
-                            // find outer edge
-                            rad = (temp_degrees - 90) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
-                            cx = centre.X + radius_tip_arrow_extra * (float)Math.Cos(rad);
-                            cy = centre.Y + radius_tip_arrow_extra * (float)Math.Sin(rad);
+                            // draw red circle at centre for stop command                            
+                            cx = centre.X + radius_stop_circle * (float)Math.Cos(rad);
+                            cy = centre.Y + radius_stop_circle * (float)Math.Sin(rad);
                             float dist = calculateDistance(new PointF(centre.X, centre.Y), new PointF(cx, cy));
-                            float distToMouse = calculateDistance(new PointF(centre.X, centre.Y), rotator.MouseDownPoint);
-
-                            if (distToMouse <= dist)
+                            float distToMouse = calculateDistance(new PointF(centre.X, centre.Y), rotator.MouseMovePoint);
+                            if(distToMouse <= dist)
                             {
                                 elipse.Point.X = centre.X;
                                 elipse.Point.Y = centre.Y;
-                                elipse.RadiusX = h * 0.015f; elipse.RadiusY = h * 0.015f;
-                                _renderTarget.FillEllipse(elipse, big_dot_br);
+                                elipse.RadiusX = radius_stop_circle; elipse.RadiusY = radius_stop_circle;
+                                _renderTarget.FillEllipse(elipse, getDXBrushForColour(System.Drawing.Color.Red));
+                                stop_drawn = true;
 
-                                //get the angle through the mouse using atan2, radians
-                                float deltaX = rotator.MouseMovePoint.X - centre.X;
-                                float deltaY = rotator.MouseMovePoint.Y - centre.Y;
-                                rad = (float)Math.Atan2(deltaY, deltaX);
-                                cx = centre.X + radius_tip_arrow * (float)Math.Cos(rad);
-                                cy = centre.Y + radius_tip_arrow * (float)Math.Sin(rad);
-
-                                _renderTarget.DrawLine(centre, new Vector2(cx, cy), rotator_control_br, h * 0.01f);
-
-                                temp_degrees = rad * (180.0f / (float)Math.PI); // the angle we need to send
-                                temp_degrees = (temp_degrees + 90) % 360;
-                                if (temp_degrees < 0)
+                                if (rotator.MouseButtonDown)
                                 {
-                                    temp_degrees += 360;
+                                    send_stop = true;
+                                    _rotator_az_angle_deg = -999;
                                 }
-                                _dragging_rotator_degrees = temp_degrees;
-                                _dragging_rotator_ele = false;
-                                _rotator_was_dragging = true;
+                            }
+
+                            if (!stop_drawn && rotator.MouseButtonDown)
+                            {
+                                float temp_degrees = 0;
+                                SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, 255);
+
+                                if (!_rotator_was_dragging && _dragging_old_update_rate == -1)
+                                {
+                                    _dragging_old_update_rate = rotator.UpdateInterval;
+                                    rotator.UpdateInterval = 16;
+                                    m.UpdateIntervals();
+                                }
+
+                                // find outer edge
+                                rad = (temp_degrees - 90) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                                cx = centre.X + radius_tip_arrow_extra * (float)Math.Cos(rad);
+                                cy = centre.Y + radius_tip_arrow_extra * (float)Math.Sin(rad);
+                                dist = calculateDistance(new PointF(centre.X, centre.Y), new PointF(cx, cy));
+                                distToMouse = calculateDistance(new PointF(centre.X, centre.Y), rotator.MouseDownPoint);
+
+                                if (distToMouse <= dist)
+                                {
+                                    elipse.Point.X = centre.X;
+                                    elipse.Point.Y = centre.Y;
+                                    elipse.RadiusX = h * 0.015f; elipse.RadiusY = h * 0.015f;
+                                    _renderTarget.FillEllipse(elipse, big_dot_br);
+
+                                    //get the angle through the mouse using atan2, radians
+                                    float deltaX = rotator.MouseMovePoint.X - centre.X;
+                                    float deltaY = rotator.MouseMovePoint.Y - centre.Y;
+                                    rad = (float)Math.Atan2(deltaY, deltaX);
+                                    cx = centre.X + radius_tip_arrow * (float)Math.Cos(rad);
+                                    cy = centre.Y + radius_tip_arrow * (float)Math.Sin(rad);
+
+                                    _renderTarget.DrawLine(centre, new Vector2(cx, cy), rotator_control_br, h * 0.01f);
+
+                                    temp_degrees = rad * (180.0f / (float)Math.PI); // the angle we need to send
+                                    temp_degrees = (temp_degrees + 90) % 360;
+                                    if (temp_degrees < 0)
+                                    {
+                                        temp_degrees += 360;
+                                    }
+                                    _dragging_rotator_degrees = temp_degrees;
+                                    _dragging_rotator_ele = false;
+                                    _rotator_was_dragging = true;
+                                }
                             }
                         }
 
@@ -16471,6 +16516,14 @@ namespace Thetis
                             cy = centre.Y + radius_tip_arrow * (float)Math.Sin(rad);
 
                             _renderTarget.DrawLine(centre, new Vector2(cx, cy), rotator_control_br, h * 0.01f);
+
+                            if (stop_drawn) //draw over the top again
+                            {
+                                elipse.Point.X = centre.X;
+                                elipse.Point.Y = centre.Y;
+                                elipse.RadiusX = radius_stop_circle; elipse.RadiusY = radius_stop_circle;
+                                _renderTarget.FillEllipse(elipse, getDXBrushForColour(System.Drawing.Color.Red));
+                            }
                         }
                     }
                 }
@@ -16577,53 +16630,78 @@ namespace Thetis
 
                     if (rotator.AllowControl)
                     {
-                        if (rotator.MouseButtonDown && rotator.MouseEntered)
+                        bool stop_drawn = false;
+                        if (rotator.MouseEntered)
                         {
-                            float temp_degrees = 0;
-                            SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, 255);
-                            if (!_rotator_was_dragging && _dragging_old_update_rate == -1)
-                            {
-                                _dragging_old_update_rate = rotator.UpdateInterval;
-                                rotator.UpdateInterval = 16;
-                                m.UpdateIntervals();
-                            }
-                            //find outer edge
-                            temp_degrees = 0;
-                            rad = (temp_degrees - 90) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
-                            cx = centre.X + radius_tip_arrow_extra * (float)Math.Cos(rad);
-                            cy = centre.Y + radius_tip_arrow_extra * (float)Math.Sin(rad);
+                            // draw red circle at pointer origin for stop command                            
+                            cx = centre.X + radius_stop_circle * (float)Math.Cos(rad);
+                            cy = centre.Y + radius_stop_circle * (float)Math.Sin(rad);
                             float dist = calculateDistance(new PointF(centre.X, centre.Y), new PointF(cx, cy));
-                            float distToMouse = calculateDistance(new PointF(centre.X, centre.Y), rotator.MouseDownPoint);
-
-                            float deltaX = rotator.MouseMovePoint.X - centre.X;
-                            float deltaY = rotator.MouseMovePoint.Y - centre.Y;
-                            rad = (float)Math.Atan2(deltaY, deltaX);
-                            temp_degrees = -rad * (180.0f / (float)Math.PI);
-
-                            if (distToMouse <= dist && ((temp_degrees >= 0 && temp_degrees <= 90) || _showing_rotator_ele_drag))
+                            float distToMouse = calculateDistance(new PointF(centre.X, centre.Y), rotator.MouseMovePoint);
+                            if (distToMouse <= dist)
                             {
-                                //get the angle through the mouse using atan2, radians
-                                if (temp_degrees > 90) temp_degrees = 90;
-                                if (temp_degrees < 0) temp_degrees = 0;
-
-                                rad = rad = temp_degrees * -((float)Math.PI / 180.0f);
-                                cx = centre.X + radius_tip_arrow * (float)Math.Cos(rad);
-                                cy = centre.Y + radius_tip_arrow * (float)Math.Sin(rad);
-
                                 elipse.Point.X = centre.X;
                                 elipse.Point.Y = centre.Y;
-                                elipse.RadiusX = h * 0.015f; elipse.RadiusY = h * 0.015f;
-                                _renderTarget.FillEllipse(elipse, big_dot_br);
+                                elipse.RadiusX = radius_stop_circle; elipse.RadiusY = radius_stop_circle;
+                                _renderTarget.FillEllipse(elipse, getDXBrushForColour(System.Drawing.Color.Red));
+                                stop_drawn = true;
 
-                                _renderTarget.DrawLine(centre, new Vector2(cx, cy), rotator_control_br, h * 0.01f);
-
-                                _showing_rotator_ele_drag = true;
-                                _dragging_rotator_degrees = temp_degrees;
-                                _dragging_rotator_ele = true;
-                                _rotator_was_dragging = true;
+                                if (rotator.MouseButtonDown)
+                                {
+                                    send_stop = true;
+                                    _rotator_ele_angle_deg = -999;
+                                }
                             }
-                            else
-                                _showing_rotator_ele_drag = false;
+
+                            if (!stop_drawn && rotator.MouseButtonDown)
+                            {
+                                float temp_degrees = 0;
+                                SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, 255);
+                                if (!_rotator_was_dragging && _dragging_old_update_rate == -1)
+                                {
+                                    _dragging_old_update_rate = rotator.UpdateInterval;
+                                    rotator.UpdateInterval = 16;
+                                    m.UpdateIntervals();
+                                }
+                                //find outer edge
+                                temp_degrees = 0;
+                                rad = (temp_degrees - 90) * (float)Math.PI / 180.0f; // Convert degrees to radians, and -90 to top
+                                cx = centre.X + radius_tip_arrow_extra * (float)Math.Cos(rad);
+                                cy = centre.Y + radius_tip_arrow_extra * (float)Math.Sin(rad);
+                                dist = calculateDistance(new PointF(centre.X, centre.Y), new PointF(cx, cy));
+                                distToMouse = calculateDistance(new PointF(centre.X, centre.Y), rotator.MouseDownPoint);
+
+                                float deltaX = rotator.MouseMovePoint.X - centre.X;
+                                float deltaY = rotator.MouseMovePoint.Y - centre.Y;
+                                rad = (float)Math.Atan2(deltaY, deltaX);
+                                temp_degrees = -rad * (180.0f / (float)Math.PI);
+
+                                if (distToMouse <= dist && ((temp_degrees >= 0 && temp_degrees <= 90) || _showing_rotator_ele_drag))
+                                {
+                                    //get the angle through the mouse using atan2, radians
+                                    if (temp_degrees > 90) temp_degrees = 90;
+                                    if (temp_degrees < 0) temp_degrees = 0;
+
+                                    rad = rad = temp_degrees * -((float)Math.PI / 180.0f);
+                                    cx = centre.X + radius_tip_arrow * (float)Math.Cos(rad);
+                                    cy = centre.Y + radius_tip_arrow * (float)Math.Sin(rad);
+
+                                    elipse.Point.X = centre.X;
+                                    elipse.Point.Y = centre.Y;
+                                    elipse.RadiusX = h * 0.015f; elipse.RadiusY = h * 0.015f;
+                                    _renderTarget.FillEllipse(elipse, big_dot_br);
+
+                                    _renderTarget.DrawLine(centre, new Vector2(cx, cy), rotator_control_br, h * 0.01f);
+
+                                    _showing_rotator_ele_drag = true;
+                                    _dragging_rotator_degrees = temp_degrees;
+                                    _dragging_rotator_ele = true;
+                                    _rotator_was_dragging = true;
+                                }
+                                else
+                                    _showing_rotator_ele_drag = false;
+                            }
+                            else if (_showing_rotator_ele_drag) _showing_rotator_ele_drag = false;
                         }
                         else if (_showing_rotator_ele_drag) _showing_rotator_ele_drag = false;
 
@@ -16638,11 +16716,19 @@ namespace Thetis
                             cy = centre.Y + radius_tip_arrow * (float)Math.Sin(rad);
 
                             _renderTarget.DrawLine(centre, new Vector2(cx, cy), rotator_control_br, h * 0.01f);
+
+                            if(stop_drawn) // draw over the top again
+                            {
+                                elipse.Point.X = centre.X;
+                                elipse.Point.Y = centre.Y;
+                                elipse.RadiusX = radius_stop_circle; elipse.RadiusY = radius_stop_circle;
+                                _renderTarget.FillEllipse(elipse, getDXBrushForColour(System.Drawing.Color.Red));
+                            }
                         }
                     }
                 }
 
-                //send rotator message
+                //send rotator position message
                 if (rotator.AllowControl && !rotator.MouseButtonDown && _rotator_was_dragging && _dragging_rotator_degrees >= 0)
                 {
                     _rotator_was_dragging = false;
@@ -16652,13 +16738,17 @@ namespace Thetis
                     else
                         _rotator_az_angle_deg = _dragging_rotator_degrees;
 
-                    rotator.SendRotatorMessage(_dragging_rotator_ele, _dragging_rotator_degrees);
+                    rotator.SendRotatorMessage(_dragging_rotator_ele, _dragging_rotator_degrees, send_stop);
 
                     _dragging_rotator_ele = false;
                     _dragging_rotator_degrees = -1;
                     rotator.UpdateInterval = _dragging_old_update_rate;
                     _dragging_old_update_rate = -1;
                     m.UpdateIntervals();
+                }
+                if(rotator.AllowControl && send_stop)
+                {
+                    rotator.SendRotatorMessage(false, -1, true);
                 }
             }
             private float calculateDistance(PointF point1, PointF point2)

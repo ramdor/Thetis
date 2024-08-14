@@ -24257,6 +24257,7 @@ namespace Thetis
                 igs.HistoryColor = clrbtnMeterItemRotatorControlColour.Color;
                 igs.Text1 = txtMeterItemRotatorAZcommand.Text;
                 igs.Text2 = txtMeterItemRotatorELEcommand.Text;
+                igs.FontFamily1 = txtMeterItemRotatorSTOPcommand.Text;
 
                 Guid guid = MultiMeterIO.GuidfromFourChar(txtRotator_4charID.Text);
                 if (guid != Guid.Empty)
@@ -24574,6 +24575,7 @@ namespace Thetis
                 clrbtnMeterItemRotatorControlColour.Color = igs.HistoryColor;
                 txtMeterItemRotatorAZcommand.Text = igs.Text1;
                 txtMeterItemRotatorELEcommand.Text = igs.Text2;
+                txtMeterItemRotatorSTOPcommand.Text = igs.FontFamily1;
                 updateRotatorControlControls();
 
                 //
@@ -29700,6 +29702,7 @@ namespace Thetis
             clrbtnMeterItemRotatorControlColour.Enabled = en;
             txtMeterItemRotatorAZcommand.Enabled = en;
             txtMeterItemRotatorELEcommand.Enabled = en;
+            txtMeterItemRotatorSTOPcommand.Enabled = en;
             picMultiMeterRotatorControlInfo.Enabled = en;
             lblMeterItemRotatorAZcommand.Enabled = en;
             lblMeterItemRotatorELEcommand.Enabled = en;
@@ -29713,6 +29716,7 @@ namespace Thetis
         {
             txtMeterItemRotatorAZcommand.Text = "<PST><AZIMUTH>%AZ%</AZIMUTH></PST>";
             txtMeterItemRotatorELEcommand.Text = "<PST><ELEVATION>%ELE%</ELEVATION></PST>";
+            txtMeterItemRotatorSTOPcommand.Text = "<PST><STOP>1</STOP></PST>";
         }
 
         private void txtRotator_4charID_TextChanged(object sender, EventArgs e)
@@ -30181,6 +30185,11 @@ namespace Thetis
             txtWebImage_url.Text = kvp.Value;
 
             comboWebImage_noaa.SelectedIndex = 0;
+        }
+
+        private void txtMeterItemRotatorSTOPcommand_TextChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 

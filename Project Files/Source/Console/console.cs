@@ -901,11 +901,12 @@ namespace Thetis
             MinimumSize = this.Size;
 
             Splash.SetStatus("Initializing Database");			// Set progress point
-            //DB.Init();											// Initialize the database
-            bool ok = DBMan.LoadDB(args);
+            //DB //DB.Init();											// Initialize the database
+
+            bool ok = DBMan.LoadDB(args, out string broken_folder);
             if (!ok)
             {
-                MessageBox.Show("There was an issue loading the database. The database has been moved to [DB\\broken].", "Database Issue", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                MessageBox.Show($"There was an issue loading the database. The database has been moved to [{AppDataPath}\\DB\\broken\\{broken_folder}].", "Database Issue", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
                 _exitConsoleInDispose = false;
                 Environment.Exit(1);

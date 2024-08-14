@@ -3693,6 +3693,7 @@
             this.radMeterItemRotator_show_ele = new System.Windows.Forms.RadioButtonTS();
             this.radMeterItemRotator_show_both = new System.Windows.Forms.RadioButtonTS();
             this.nudMeterItemRotator_padding = new System.Windows.Forms.NumericUpDownTS();
+            this.txtMeterItemRotatorSTOPcommand = new System.Windows.Forms.TextBoxTS();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -3780,6 +3781,7 @@
             this.labelTS217 = new System.Windows.Forms.LabelTS();
             this.labelTS215 = new System.Windows.Forms.LabelTS();
             this.grpMeterItemRotator = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS237 = new System.Windows.Forms.LabelTS();
             this.lblRotator_4charID = new System.Windows.Forms.LabelTS();
             this.lblMeterItemRotatorELEcommand = new System.Windows.Forms.LabelTS();
             this.lblMeterItemRotatorAZcommand = new System.Windows.Forms.LabelTS();
@@ -58753,6 +58755,15 @@
             0});
             this.nudMeterItemRotator_padding.ValueChanged += new System.EventHandler(this.nudMeterItemRotator_padding_ValueChanged);
             // 
+            // txtMeterItemRotatorSTOPcommand
+            // 
+            this.txtMeterItemRotatorSTOPcommand.Location = new System.Drawing.Point(50, 349);
+            this.txtMeterItemRotatorSTOPcommand.Name = "txtMeterItemRotatorSTOPcommand";
+            this.txtMeterItemRotatorSTOPcommand.Size = new System.Drawing.Size(261, 20);
+            this.txtMeterItemRotatorSTOPcommand.TabIndex = 173;
+            this.toolTip1.SetToolTip(this.txtMeterItemRotatorSTOPcommand, "The ELE rotator string");
+            this.txtMeterItemRotatorSTOPcommand.TextChanged += new System.EventHandler(this.txtMeterItemRotatorSTOPcommand_TextChanged);
+            // 
             // saveFileDialog1
             // 
             this.saveFileDialog1.Filter = "Thetis Database Files (*.xml)|*.xml|All files|*.*";
@@ -60246,6 +60257,8 @@
             // 
             // grpMeterItemRotator
             // 
+            this.grpMeterItemRotator.Controls.Add(this.labelTS237);
+            this.grpMeterItemRotator.Controls.Add(this.txtMeterItemRotatorSTOPcommand);
             this.grpMeterItemRotator.Controls.Add(this.nudMeterItemRotator_padding);
             this.grpMeterItemRotator.Controls.Add(this.radMeterItemRotator_show_both);
             this.grpMeterItemRotator.Controls.Add(this.radMeterItemRotator_show_ele);
@@ -60286,11 +60299,21 @@
             this.grpMeterItemRotator.Controls.Add(this.pnlVariableInUse_1_rotator);
             this.grpMeterItemRotator.Location = new System.Drawing.Point(1149, 416);
             this.grpMeterItemRotator.Name = "grpMeterItemRotator";
-            this.grpMeterItemRotator.Size = new System.Drawing.Size(323, 364);
+            this.grpMeterItemRotator.Size = new System.Drawing.Size(323, 376);
             this.grpMeterItemRotator.TabIndex = 106;
             this.grpMeterItemRotator.TabStop = false;
             this.grpMeterItemRotator.Text = "Rotator";
             this.grpMeterItemRotator.Visible = false;
+            // 
+            // labelTS237
+            // 
+            this.labelTS237.AutoSize = true;
+            this.labelTS237.Image = null;
+            this.labelTS237.Location = new System.Drawing.Point(5, 352);
+            this.labelTS237.Name = "labelTS237";
+            this.labelTS237.Size = new System.Drawing.Size(39, 13);
+            this.labelTS237.TabIndex = 174;
+            this.labelTS237.Text = "STOP:";
             // 
             // lblRotator_4charID
             // 
@@ -66069,5 +66092,7 @@
         private GroupBoxTS groupBoxTS43;
         private ButtonTS buttonTS2;
         private ComboBoxTS comboWebImage_nasa;
+        private LabelTS labelTS237;
+        private TextBoxTS txtMeterItemRotatorSTOPcommand;
     }
 }

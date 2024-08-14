@@ -112,9 +112,10 @@ namespace Thetis
             }
         }
 
-        public static bool LoadDB(string[] args)
+        public static bool LoadDB(string[] args, out string broken_folder)
         {
             _dbman_settings = null;
+            broken_folder = "";
 
             foreach (string s in args)
             {
@@ -228,8 +229,11 @@ namespace Thetis
             if (!ok)
             {
                 // try to move to broken folder
-                if (_dbman_settings != null) 
+                if (_dbman_settings != null)
+                {
+                    broken_folder = _dbman_settings.ActiveDB_GUID.ToString();
                     moveToBroken(_dbman_settings.ActiveDB_GUID);
+                }
             }
 
             return ok;
@@ -1064,6 +1068,13 @@ namespace Thetis
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                         }
+                    }
+                    else
+                    {
+                        DialogResult dr = MessageBox.Show("There was a problem importing the database. The xml file seems to be corrupt.",
+                        "Database Manager",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                     }
                 }
             }
