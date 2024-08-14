@@ -737,6 +737,8 @@
             this.toolStripNotchVeryDeep = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.setupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setupToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.databaseManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.memoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.waveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1128,8 +1130,6 @@
             this.ptbRX2Squelch = new Thetis.PrettyTrackBar();
             this.picSquelch = new System.Windows.Forms.PictureBox();
             this.ptbSquelch = new Thetis.PrettyTrackBar();
-            this.setupToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterLow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLow)).BeginInit();
@@ -4127,6 +4127,17 @@
             this.setupToolStripMenuItem.Name = "setupToolStripMenuItem";
             resources.ApplyResources(this.setupToolStripMenuItem, "setupToolStripMenuItem");
             this.setupToolStripMenuItem.Click += new System.EventHandler(this.setupToolStripMenuItem_Click);
+            // 
+            // setupToolStripMenuItem1
+            // 
+            this.setupToolStripMenuItem1.Name = "setupToolStripMenuItem1";
+            resources.ApplyResources(this.setupToolStripMenuItem1, "setupToolStripMenuItem1");
+            this.setupToolStripMenuItem1.Click += new System.EventHandler(this.setupToolStripMenuItem1_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
             // 
             // databaseManagerToolStripMenuItem
             // 
@@ -7502,17 +7513,6 @@
             this.ptbSquelch.TabStop = false;
             this.ptbSquelch.Value = 0;
             this.ptbSquelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbSquelch_Scroll);
-            // 
-            // setupToolStripMenuItem1
-            // 
-            this.setupToolStripMenuItem1.Name = "setupToolStripMenuItem1";
-            resources.ApplyResources(this.setupToolStripMenuItem1, "setupToolStripMenuItem1");
-            this.setupToolStripMenuItem1.Click += new System.EventHandler(this.setupToolStripMenuItem1_Click);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
             // 
             // Console
             // 

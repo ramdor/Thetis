@@ -379,8 +379,18 @@ namespace Thetis
 
             if (check_for_old_db && File.Exists(source_db))
             {
-                // move old db to new system               
-                File.Move(source_db, dest_db);
+                // copy old db to new system, and then rename
+                File.Copy(source_db, dest_db, true);
+
+                string source_db_renamed = _app_data_path + "old_database.xml";
+                int counter = 1;
+                while (File.Exists(source_db_renamed))
+                {
+                    source_db_renamed = Path.Combine(_app_data_path, $"old{counter}_database.xml");
+                    counter++;
+                }
+
+                File.Move(source_db, source_db_renamed);
             }
             else
             {
