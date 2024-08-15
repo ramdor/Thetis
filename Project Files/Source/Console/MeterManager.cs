@@ -5131,7 +5131,10 @@ namespace Thetis
             private PointF _clipTopLeft;
             private SizeF _clipSize;
             private bool _clipped;
+            private bool _clipped_ellipse;
             private bool _darkMode;
+            private PointF _clipEllipseCentre;
+            private SizeF _clipEllipseRadius;
             public clsImage()
             {
                 ItemType = MeterItemType.IMAGE;
@@ -5140,6 +5143,7 @@ namespace Thetis
                 _clipTopLeft = new PointF(0f, 0f);
                 _clipSize = new SizeF(1f, 1f);
                 _clipped = false;
+                _clipped_ellipse = false;
                 _darkMode = false;
                 StoreSettings = false;
             }
@@ -5165,6 +5169,21 @@ namespace Thetis
             {
                 get { return _clipped; }
                 set { _clipped = value; }
+            }
+            public PointF ClipEllipseCentre
+            {
+                get { return _clipEllipseCentre; }
+                set { _clipEllipseCentre = value; }
+            }
+            public SizeF ClipEllipseRadius
+            {
+                get { return _clipEllipseRadius; }
+                set { _clipEllipseRadius = value; }
+            }
+            public bool ClippedEllipse
+            {
+                get { return _clipped_ellipse; }
+                set { _clipped_ellipse = value; }
             }
             public bool DarkMode
             {
@@ -5624,6 +5643,19 @@ namespace Thetis
                             return "rotator_ele-bg";
                         case RotatorMode.BOTH:
                             return "rotator_both-bg";
+                    }
+                    return "";
+                }
+            }
+            public string MapName
+            {
+                get
+                {
+                    switch (_rotator_mode)
+                    {
+                        case RotatorMode.AZ:
+                        case RotatorMode.BOTH:
+                            return "rotator_map-bg";
                     }
                     return "";
                 }
@@ -9121,7 +9153,7 @@ namespace Thetis
                 ri.Primary = true;
                 ri.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
                 ri.Size = new SizeF(1f, fSize);
-                ri.ZOrder = 3;
+                ri.ZOrder = 4;
                 ri.MMIOVariableIndex = 0;
                 ri.ReadingSource = Reading.AZ;
                 ri.UpdateInterval = 100;
@@ -9134,12 +9166,13 @@ namespace Thetis
                 ri2.Primary = false;
                 ri2.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
                 ri2.Size = new SizeF(1f, fSize);
-                ri2.ZOrder = 3;
+                ri2.ZOrder = 4;
                 ri2.MMIOVariableIndex = 1;
                 ri2.ReadingSource = Reading.ELE;
                 ri2.UpdateInterval = 100;
                 addMeterItem(ri2);
 
+                //grid
                 clsImage img = new clsImage();
                 img.ParentID = ig.ID;
                 //img.TopLeft = ri.TopLeft;
@@ -9157,8 +9190,28 @@ namespace Thetis
                     img.Size = new SizeF(fSize, fSize);
                 }
                 //
-                img.ZOrder = 2;
+                img.ZOrder = 3;
                 img.ImageName = ri.ImageName;
+                addMeterItem(img);
+
+                //map
+                img = new clsImage();
+                img.ParentID = ig.ID;
+                if (ri.ViewMode == clsRotatorItem.RotatorMode.BOTH)
+                {
+                    img.TopLeft = new PointF(0.085f, _fPadY - (_fHeight * 0.75f) + 0.06f);
+                    img.Size = new SizeF(0.38f, 0.38f);
+                }
+                else
+                {
+                    img.TopLeft = new PointF(0.5f - (fSize / 2f) + (0.12f * fSize), _fPadY - (_fHeight * 0.75f) + (0.12f * fSize));
+                    img.Size = new SizeF(0.76f, 0.76f);
+                }
+                img.ImageName = ri.MapName;
+                img.ZOrder = 2;
+                img.ClippedEllipse = true;
+                img.ClipEllipseCentre = new PointF(0.5f, 0.5f);
+                img.ClipEllipseRadius = new SizeF(0.5f, 0.5f);
                 addMeterItem(img);
 
                 clsSolidColour sc = new clsSolidColour();
@@ -11493,6 +11546,7 @@ namespace Thetis
                                         bRebuild = true;
                                         float padding = 0f;
                                         string imageName = "";
+                                        string mapName = "";
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
                                         //one image, and the me
                                         foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR))
@@ -11531,6 +11585,7 @@ namespace Thetis
                                             rotator.STOPControlString = igs.FontFamily1;
                                             rotator.DataOutMMIOGuid = igs.GetMMIOGuid(2);
                                             imageName = rotator.ImageName;
+                                            mapName = rotator.MapName;
 
                                             if (rotator.ViewMode == clsRotatorItem.RotatorMode.BOTH)
                                             {
@@ -11551,27 +11606,50 @@ namespace Thetis
                                             clsImage image = img.Value as clsImage;
                                             if (image == null) continue;
 
-                                            if ((clsRotatorItem.RotatorMode)igs.HistoryDuration == clsRotatorItem.RotatorMode.BOTH)
+                                            if (image.ZOrder == 3) //grid
                                             {
-                                                //image.TopLeft = new PointF(0.5f - (0.5f / 2f), _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
-                                                //image.Size = new SizeF(0.5f, 0.5f);
+                                                if ((clsRotatorItem.RotatorMode)igs.HistoryDuration == clsRotatorItem.RotatorMode.BOTH)
+                                                {
+                                                    //image.TopLeft = new PointF(0.5f - (0.5f / 2f), _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
+                                                    //image.Size = new SizeF(0.5f, 0.5f);
 
-                                                image.TopLeft = new PointF(0, _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
-                                                image.Size = new SizeF(1f, 0.5f);
+                                                    image.TopLeft = new PointF(0, _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
+                                                    image.Size = new SizeF(1f, 0.5f);
 
-                                                //image.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
-                                                //image.Size = new SizeF(ig.Size.Width, padding);
+                                                    //image.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                    //image.Size = new SizeF(ig.Size.Width, padding);
+                                                }
+                                                else
+                                                {
+                                                    image.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f), _fPadY - (_fHeight * 0.75f) /*+ ((igs.EyeScale - igs.EyeScale) * 0.5f)*/);
+                                                    image.Size = new SizeF(igs.EyeScale, igs.EyeScale);
+                                                }
+
+                                                image.ImageName = imageName;
+                                                image.FadeOnRx = igs.FadeOnRx;
+                                                image.FadeOnTx = igs.FadeOnTx;
+                                                image.DarkMode = igs.DarkMode;
                                             }
-                                            else
+                                            else if(image.ZOrder == 2) // map
                                             {
-                                                image.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f), _fPadY - (_fHeight * 0.75f) /*+ ((igs.EyeScale - igs.EyeScale) * 0.5f)*/);
-                                                image.Size = new SizeF(igs.EyeScale, igs.EyeScale);
+                                                if ((clsRotatorItem.RotatorMode)igs.HistoryDuration == clsRotatorItem.RotatorMode.BOTH)
+                                                {
+                                                    image.TopLeft = new PointF(0.085f, _fPadY - (_fHeight * 0.75f) + 0.06f);
+                                                    image.Size = new SizeF(0.38f, 0.38f);
+                                                }
+                                                else
+                                                {
+                                                    image.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f) + (0.12f * igs.EyeScale), _fPadY - (_fHeight * 0.75f) + (0.12f * igs.EyeScale));
+                                                    image.Size = new SizeF(igs.EyeScale * 0.76f, igs.EyeScale * 0.76f);
+                                                }
+                                                image.ClippedEllipse = true;
+                                                image.ClipEllipseCentre = new PointF(0.5f, 0.5f);
+                                                image.ClipEllipseRadius = new SizeF(0.5f, 0.5f);
+                                                image.ImageName = mapName;
+                                                image.FadeOnRx = igs.FadeOnRx;
+                                                image.FadeOnTx = igs.FadeOnTx;
+                                                image.DarkMode = igs.DarkMode;
                                             }
-
-                                            image.ImageName = imageName;
-                                            image.FadeOnRx = igs.FadeOnRx;
-                                            image.FadeOnTx = igs.FadeOnTx;
-                                            image.DarkMode = igs.DarkMode;
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
                                         {
@@ -13789,7 +13867,7 @@ namespace Thetis
             }
             internal void LoadDXImages(string sDefaultPath, string sSkinPath)
             {
-                string[] imageFileNames = { "ananMM", "ananMM-bg", "ananMM-bg-tx", "cross-needle", "cross-needle-bg", "eye-bezel", "rotator_az-bg", "rotator_ele-bg", "rotator_both-bg" };
+                string[] imageFileNames = { "ananMM", "ananMM-bg", "ananMM-bg-tx", "cross-needle", "cross-needle-bg", "eye-bezel", "rotator_az-bg", "rotator_ele-bg", "rotator_both-bg", "rotator_map-bg" };
                 string[] imageFileNameParts = { "", "-small", "-large", "-dark", "-dark-small", "-dark-large" };
 
                 if (!_bDXSetup) return;
@@ -14013,7 +14091,7 @@ namespace Thetis
                         SampleDescription = new SampleDescription(1, 0), // no multi sampling (1 sample), no antialiasing
                         SwapEffect = swapEffect,
                         Usage = Usage.RenderTargetOutput,// | Usage.BackBuffer,  // dont need usage.backbuffer as it is implied
-                        Flags = SwapChainFlags.None                        
+                        Flags = SwapChainFlags.None,
                     };
 
                     _factory1.MakeWindowAssociation(_displayTarget.Handle, WindowAssociationFlags.IgnoreAll);
@@ -14024,7 +14102,7 @@ namespace Thetis
                     
                     _surface = _swapChain1.GetBackBuffer<Surface>(0);
 
-                    RenderTargetProperties rtp = new RenderTargetProperties(new SharpDX.Direct2D1.PixelFormat(_swapChain.Description.ModeDescription.Format, _ALPHA_MODE));                    
+                    RenderTargetProperties rtp = new RenderTargetProperties(new SharpDX.Direct2D1.PixelFormat(_swapChain.Description.ModeDescription.Format, _ALPHA_MODE));
                     _renderTarget = new RenderTarget(_factory, _surface, rtp);
 
                     if (debug == DeviceCreationFlags.Debug)
@@ -18440,6 +18518,7 @@ namespace Thetis
                 int nFade = 255;
 
                 string sImage = img.ImageName;
+                if (string.IsNullOrEmpty(sImage)) return;
 
                 //string sKey = sImage;// + "-" + MeterManager.CurrentPowerRating.ToString();
                 //if (MeterManager.ContainsBitmap(sKey)) sImage = sKey; // with power rating
@@ -18475,6 +18554,34 @@ namespace Thetis
 
                     if (_images.ContainsKey(sImage))
                     {
+                        Ellipse ellipse;
+                        Layer layer = null;
+                        EllipseGeometry ellipseGeometry = null;
+
+                        if (img.ClippedEllipse)
+                        {
+                            try
+                            {
+                                ellipse = new Ellipse(new RawVector2(x + (img.ClipEllipseCentre.X * w), y + (img.ClipEllipseCentre.Y * h)), img.ClipEllipseRadius.Width * w, img.ClipEllipseRadius.Height * h);
+                                ellipseGeometry = new EllipseGeometry(_renderTarget.Factory, ellipse);
+                                Geometry[] geometries = new Geometry[] { ellipseGeometry };
+                                layer = new Layer(_renderTarget);
+                                LayerParameters layerParameters = new LayerParameters
+                                {
+                                    //ContentBounds = new RawRectangleF(float.NegativeInfinity, float.NegativeInfinity, float.PositiveInfinity, float.PositiveInfinity),
+                                    ContentBounds = imgRect,
+                                    GeometricMask = ellipseGeometry,
+                                    MaskAntialiasMode = AntialiasMode.PerPrimitive,
+                                    Opacity = 1.0f,
+                                    OpacityBrush = null,
+                                    LayerOptions = LayerOptions.None,
+                                    MaskTransform = _renderTarget.Transform
+                                };
+                                _renderTarget.PushLayer(ref layerParameters, layer);
+                            }
+                            catch { }
+                        }
+
                         SharpDX.Direct2D1.Bitmap b = _images[sImage];
 
                         // maintain aspect ratio, the clip removes anything outside the rect
@@ -18487,6 +18594,25 @@ namespace Thetis
                             imgRect.Width = imgRect.Height * (im_w / im_h);
 
                         _renderTarget.DrawBitmap(b, imgRect, nFade / 255f, BitmapInterpolationMode.Linear);//, sourceRect);
+
+                        if (img.ClippedEllipse)
+                        {
+                            try
+                            {
+                                _renderTarget.PopLayer();
+                            }
+                            catch { }
+                            try
+                            {
+                                Utilities.Dispose(ref ellipseGeometry);
+                            }
+                            catch { }
+                            try
+                            {
+                                Utilities.Dispose(ref layer);
+                            }
+                            catch { }
+                        }
                     }
 
                     _renderTarget.PopAxisAlignedClip();
