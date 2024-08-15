@@ -10785,7 +10785,7 @@ namespace Thetis
                 {
                     if (oldTable.TableName.StartsWith("MeterDisplay_"))
                     {
-                        if(!mergedDB.Tables.Contains(oldTable.TableName))
+                        if (!mergedDB.Tables.Contains(oldTable.TableName))
                             mergedDB.Merge(oldTable);
                     }
                 }

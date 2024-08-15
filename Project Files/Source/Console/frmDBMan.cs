@@ -257,6 +257,8 @@ namespace Thetis
         private void lstBackups_SelectedIndexChanged(object sender, EventArgs e)
         {
             btnMakeBackupAvailable.Enabled = lstBackups.SelectedItems.Count == 1;
+            btnExportBackup.Enabled = lstBackups.SelectedItems.Count == 1;
+
             btnRemoveBackup.Enabled = lstBackups.SelectedItems.Count > 0;
         }
 
@@ -357,6 +359,15 @@ namespace Thetis
             Guid guid = new Guid(lvi.Tag.ToString());
 
             DBMan.Rename(guid);
+        }
+
+        private void btnExportBackup_Click(object sender, EventArgs e)
+        {
+            if (lstBackups.SelectedItems.Count != 1) return;
+
+            ListViewItem lvi = lstBackups.SelectedItems[0];
+
+            DBMan.ExportBackup(lvi.Tag.ToString());
         }
     }
 }

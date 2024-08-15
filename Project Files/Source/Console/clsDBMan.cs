@@ -1186,7 +1186,42 @@ namespace Thetis
                 }
             }
         }
+        public static void ExportBackup(string path)
+        {
+            if (File.Exists(path))
+            {
+                string datetime = Common.DateTimeStringForFile();
+                string save_file = $"Thetis_database_export_backup_{datetime}.xml";
+                string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "XML files (*.xml)|*.xml|All files (*.*)|*.*",
+                    DefaultExt = "xml",
+                    FileName = save_file,
+                    Title = "Export Database",
+                    InitialDirectory = myDocumentsPath
+                };
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string filename = saveFileDialog.FileName;
+
+                    try
+                    {
+                        if (File.Exists(filename))
+                            File.Delete(filename);
+                    }
+                    catch { }
+
+                    try
+                    {
+                        File.Copy(path, filename);
+                    }
+                    catch { }
+                }
+            }
+        }
         public static void MakeBackupAvailable(string file_path)
         {
             if (_dbman_settings == null) return;
