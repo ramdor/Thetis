@@ -256,10 +256,8 @@ namespace Thetis
 
         private void lstBackups_SelectedIndexChanged(object sender, EventArgs e)
         {
-            bool enabled = lstBackups.SelectedItems.Count != 0;
-
-            btnMakeBackupAvailable.Enabled = enabled;
-            btnRemoveBackup.Enabled = enabled;
+            btnMakeBackupAvailable.Enabled = lstBackups.SelectedItems.Count == 1;
+            btnRemoveBackup.Enabled = lstBackups.SelectedItems.Count > 0;
         }
 
         private void btnMakeBackupAvailable_Click(object sender, EventArgs e)
@@ -275,14 +273,17 @@ namespace Thetis
 
         private void btnRemoveBackup_Click(object sender, EventArgs e)
         {
-            if (lstBackups.SelectedItems.Count != 1) return;
+            if (lstBackups.SelectedItems.Count < 1) return;
 
-            ListViewItem lvi = lstBackups.SelectedItems[0];
-            string file_path = lvi.Tag.ToString();
-            DBMan.RemoveBackupDB(file_path);
+            List<string> file_paths = new List<string>();
+            foreach(ListViewItem item in lstBackups.SelectedItems)
+            {
+                file_paths.Add(item.Tag.ToString());
+            }
+            DBMan.RemoveBackupDB(file_paths);
 
             if (lstActiveDBs.SelectedItems.Count != 1) return;
-            lvi = lstActiveDBs.SelectedItems[0];
+            ListViewItem lvi = lstActiveDBs.SelectedItems[0];
             Guid guid = new Guid(lvi.Tag.ToString());
 
             DBMan.SelectedAvailable(guid);

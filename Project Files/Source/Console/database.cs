@@ -252,6 +252,8 @@ namespace Thetis
         }
         public static void SaveBandStack2Filter(BandStackFilter bsf)
         {
+            if (_merged) return; // we just merged, dont want to change anything
+
             DataTable t;
             DataRow dr;
             DataRow[] rows;
@@ -9570,6 +9572,8 @@ namespace Thetis
         }
         public static void SaveVarsDictionary(string tableName, ref Dictionary<string,string> dict, bool bSaveEmptyValues = true)
         {
+            if (_merged) return; // we just merged, dont want to change anything
+
             //[2.10.1.0] MW0LGE added bSaveEmptyValues. All entries need to be in the database even if empty, because
             //on a DB upgrade the database starts off empty, and without these added into the newdb they wont merge from the oldDb
 
@@ -9610,6 +9614,8 @@ namespace Thetis
         }
         public static void SaveVars(string tableName, ref ArrayList list, bool bSaveEmptyValues = true)
         {
+            if (_merged) return; // we just merged, dont want to change anything
+
             //[2.10.1.0] MW0LGE added bSaveEmptyValues. All entries need to be in the database even if empty, because
             //on a DB upgrade the database starts off empty, and without these added into the newdb they wont merge from the oldDb
 

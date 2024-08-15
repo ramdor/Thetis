@@ -135,7 +135,7 @@ namespace Thetis
                 }
             }
 
-            //
+            // shift key reset
             bool new_db = false;
             if (Keyboard.IsKeyDown(Keys.LShiftKey) || Keyboard.IsKeyDown(Keys.RShiftKey))
             {
@@ -147,13 +147,29 @@ namespace Thetis
                          "Your existing database will be untouched, and a new one will be used.\n\n" +
                          "It will have the description 'Default' in the Database Manager.",
                          "New Database?",
-                         MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+                         MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
 
                     if (dr == DialogResult.Yes)
                         new_db = true;
                 }
             }
-            //
+            // ctrl key upgrade
+            bool force_update = false;
+            if (Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey))
+            {
+                Thread.Sleep(500); // ensure this is intentional
+                if (Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey))
+                {
+                    DialogResult dr = MessageBox.Show(
+                         "The database force update has been triggered. Do you want to do this?\n\n",                         
+                         "Force Update Database?",
+                         MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+
+                    if (dr == DialogResult.Yes)
+                        force_update = true;
+                }
+            }
+
 
             bool ok = false;
             bool made_new = false;
@@ -219,7 +235,7 @@ namespace Thetis
                         _ignore_written = false;
 
                         //check version
-                        if(ok) checkVersion(made_new);
+                        if(ok) checkVersion(made_new, force_update);
                     }
                 }
                 else
@@ -238,7 +254,7 @@ namespace Thetis
 
             return ok;
         }
-        private static void checkVersion(bool made_new)
+        private static void checkVersion(bool made_new, bool force_upgrade = false)
         {
             string version;
             Dictionary<string, string> vals = DB.GetVarsDictionary("State");
@@ -247,9 +263,12 @@ namespace Thetis
             else
                 version = "? version";
 
-            if (made_new || Common.GetVerNum() == version) return; // same version, dont need to do anything
+            if (made_new) return;
+            if (!force_upgrade && Common.GetVerNum() == version) return; // same version, dont need to do anything
 
-            DialogResult dr = MessageBox.Show("This version [" + Common.GetVerNum() + "] of Thetis requires your database [" + version + "] to be updated.\n\n" +
+            string force_info = force_upgrade ? "CTRL Key force DB update. " : "";
+            
+            DialogResult dr = MessageBox.Show(force_info + "This version [" + Common.GetVerNum() + "] of Thetis requires your database [" + version + "] to be updated.\n\n" +
                 "A new updated database will be created, and your old database merged into it. It will be made active.",
                 "Database Manager",
                 MessageBoxButtons.OK,
@@ -1007,20 +1026,29 @@ namespace Thetis
 
             return fullPath;
         }
-        public static void RemoveBackupDB(string file_path)
+        public static void RemoveBackupDB(List<string> file_paths)
         {
-            DialogResult dr = MessageBox.Show("Do you want to remove this backup?",
+            if(file_paths.Count < 1) return;
+
+            string msg = file_paths.Count == 1 ? "Do you want to remove this backup?" : $"Do you want to remove these {file_paths.Count} backups?";
+            DialogResult dr = MessageBox.Show(msg,
             "Remove Backup",
             MessageBoxButtons.YesNo,
             MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
 
-            if (dr == DialogResult.Yes && File.Exists(file_path))
+            if (dr == DialogResult.Yes)
             {
-                try
+                foreach (string file_path in file_paths)
                 {
-                    File.Delete(file_path);
+                    if (File.Exists(file_path))
+                    {
+                        try
+                        {
+                            File.Delete(file_path);
+                        }
+                        catch { }
+                    }
                 }
-                catch { }
             }
         }
         public static void Import() 

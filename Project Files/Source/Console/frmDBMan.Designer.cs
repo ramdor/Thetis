@@ -151,7 +151,6 @@
             this.lstBackups.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem2});
             this.lstBackups.Location = new System.Drawing.Point(12, 382);
-            this.lstBackups.MultiSelect = false;
             this.lstBackups.Name = "lstBackups";
             this.lstBackups.ShowItemToolTips = true;
             this.lstBackups.Size = new System.Drawing.Size(524, 207);
