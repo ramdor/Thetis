@@ -162,7 +162,7 @@ namespace Thetis
         private bool _bands_GEN_selected = false;
         private bool iscollapsed = false;
         private bool isexpanded = true;
-        private bool resetForAutoMerge = false;
+        //DB private bool resetForAutoMerge = false;
 
         //private bool _run_setup_wizard = false; //DB 
 
@@ -1029,8 +1029,8 @@ namespace Thetis
             }
             CpuUsage(); //[2.10.1.0] MW0LGE initial call to setup check marks in status bar as a minimum
 
-            if (!resetForAutoMerge)
-            {
+            //DB if (!resetForAutoMerge)
+            //{
                 Splash.SetStatus("Processing Finder Info");
                 // obtain finder info before splash closes
                 //-- setup finder search data
@@ -1042,7 +1042,7 @@ namespace Thetis
                 _frmFinder.GatherSearchData(psform, null);
                 _frmFinder.WriteXmlFinderFile(AppDataPath); // note: this will only happen if not already there
                 //
-            }
+            //}
 
             Splash.SetStatus("Finished");
 
@@ -1051,12 +1051,13 @@ namespace Thetis
 
             Common.FadeIn(this);
 
-            if (resetForAutoMerge)
-            {
-                MessageBox.Show("Please RE-START now.", "Note", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-            }
-            else
-            {
+            //DB 
+            //if (resetForAutoMerge)
+            //{
+            //    MessageBox.Show("Please RE-START now.", "Note", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            //}
+            //else
+            //{
                 // fix flicker with panels/groups MW0LGE_[2.9.0.6]
                 Common.DoubleBuffered(grpMultimeter, true);
                 //
@@ -1086,6 +1087,7 @@ namespace Thetis
                 BandStackFilter bsf = BandStackManager.GetFilter(RX1Band, false);
                 if (bsf != null)
                 {
+                    bsf.GenerateFilteredList(true);
                     bsf.SelectInitial(); // sets up the filter to obey the mode of operation, be it current, preset or last used
 
                     //change VFOA to entry in the current band filter
@@ -1185,7 +1187,7 @@ namespace Thetis
                     autoStartTimer.AutoReset = false;
                     autoStartTimer.Start();
                 }
-            }
+            //}
         }
         private void initialisePortAudio()
         {
@@ -1459,11 +1461,13 @@ namespace Thetis
                 else
                 {
                     _theConsole = new Console(args);
-                    if (_theConsole.resetForAutoMerge)
-                    {
-                        Application.Exit();
-                    }
-                    else Application.Run(_theConsole);
+                    //DB 
+                    //if (_theConsole.resetForAutoMerge)
+                    //{
+                    //    Application.Exit();
+                    //}
+                    //else Application.Run(_theConsole);
+                    Application.Run(_theConsole);
 
                     restart = _theConsole.Restart;
                 }
@@ -45968,7 +45972,7 @@ namespace Thetis
         {
             if (m_bSetBandRunning) return;
             if (!BandStackManager.Ready) return;
-
+            
             bool bRet = false;
             if (updateLastVisited)
             {

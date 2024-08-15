@@ -547,6 +547,9 @@ namespace Thetis
                 bsf.ReturnMode = (BandStackFilter.FilterReturnMode)dr["FilterReturnMode"];
                 bsf.ReturnGUID = ConvertFromDBVal<string>(dr["SpecificReturnGUID"]);
 
+                bsf.IndexOfCurrent = (int)dr["CurrentSelectedIndex"];
+                //bsf.GuidOfCurrent = dr["CurrentSelectedGUID"];
+
                 bsf.LastVisited.GUID = ConvertFromDBVal<string>(dr["LastVisitedGUID"]);
                 bsf.LastVisited.Description = ConvertFromDBVal<string>(dr["LastVisitedDescription"]);
                 bsf.LastVisited.Locked = (bool)dr["LastVisitedLocked"];
@@ -10376,7 +10379,7 @@ namespace Thetis
                     case "BandStack2FilterModes":
                     case "BandStack2FilterSubModes":
                     case "BandStack2FilterBands":
-                        //case "BandStack2HiddenEntries": // not used yet
+                    //case "BandStack2HiddenEntries": // not used yet
                         tempMergedTable.Clear();
                         foreach (DataTable t in oldDB.Tables)
                         {
