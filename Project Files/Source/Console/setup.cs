@@ -1476,12 +1476,16 @@ namespace Thetis
         {
             // Automatically saves all control settings to the database in the tab
             // pages on this form of the following types: CheckBoxTS, ComboBoxTS,
-            // NumericUpDownTS, RadioButtonTS, TextBox, and TrackBar (slider)         
-            if (mergingdb)
-            {
-                mergingdb = false;
-                return;
-            }
+            // NumericUpDownTS, RadioButtonTS, TextBox, and TrackBar (slider)
+
+            //DB
+            //if (mergingdb)
+            //{
+            //    mergingdb = false;
+            //    return;
+            //}
+            if (DB.Merged) return; // prevent saving options as we want to ignore everything
+
             _savingOptions = true;
 
             //MW0LGE_21a moved to dictionary to use same code as get options
@@ -1571,8 +1575,8 @@ namespace Thetis
             removeOutdatedOptions();
 
             DB.SaveVarsDictionary("Options", ref a, true);
-            //DB.WriteCurrentDB(console.DBFileName);//MW0LGE_[2.9.0.7]
-            DB.WriteDB(console.DBFileName);
+
+            DB.WriteDB();//DB console.DBFileName);
 
             _savingOptions = false;
         }
@@ -10946,69 +10950,74 @@ namespace Thetis
         }
 
         private void btnImportDB_Click(object sender, System.EventArgs e)
-        {
-            string path = console.AppDataPath;
-            path = path.Substring(0, path.LastIndexOf("\\"));
-            openFileDialog1.InitialDirectory = path;
-            //MW0LGE_[2.9.0.7] changes
-            DialogResult dr = openFileDialog1.ShowDialog();
-            if (dr == System.Windows.Forms.DialogResult.OK)
-            {
-                bool ok = CompleteImport();
-                if (ok) console.Close();  // Save everything 
-            }
+        {            
+            return;
+
+            //DB
+            //string path = console.AppDataPath;
+            //path = path.Substring(0, path.LastIndexOf("\\"));
+            //openFileDialog1.InitialDirectory = path;
+            ////MW0LGE_[2.9.0.7] changes
+            //DialogResult dr = openFileDialog1.ShowDialog();
+            //if (dr == System.Windows.Forms.DialogResult.OK)
+            //{
+            //    bool ok = CompleteImport();
+            //    if (ok) console.Close();  // Save everything 
+            //}
         }
 
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
         }
 
-        private bool mergingdb = false;
-        private bool CompleteImport()
-        {
-            //-W2PA Import more carefully, allowing DBs created by previous versions to retain settings and options
-            //MW0LGE_[2.9.0.7] changed structure slightly
-            bool success = DB.ImportAndMergeDatabase(openFileDialog1.FileName, console.AppDataPath, true);
+        //DB
+        //private bool mergingdb = false;
+        //private bool CompleteImport()
+        //{
+        //    //-W2PA Import more carefully, allowing DBs created by previous versions to retain settings and options
+        //    //MW0LGE_[2.9.0.7] changed structure slightly
+        //    bool success = DB.ImportAndMergeDatabase(openFileDialog1.FileName, console.AppDataPath, true);
 
-            if (success)
-                MessageBox.Show("Database Imported Successfully. Thetis will now close.\n\nPlease RE-START.",
-                            "DB Import",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-            else
-                MessageBox.Show("Database could not be imported. Previous database has been kept.",
-                            "DB Import",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+        //    if (success)
+        //        MessageBox.Show("Database Imported Successfully. Thetis will now close.\n\nPlease RE-START.",
+        //                    "DB Import",
+        //                    MessageBoxButtons.OK,
+        //                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+        //    else
+        //        MessageBox.Show("Database could not be imported. Previous database has been kept.",
+        //                    "DB Import",
+        //                    MessageBoxButtons.OK,
+        //                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
-            // Archive old database file write a new one.
-            if (success)
-            {
-                string archivePath = console.AppDataPath + "DB_Archive\\";
-                if (!Directory.Exists(archivePath)) Directory.CreateDirectory(archivePath);
-                string justFileName = console.DBFileName.Substring(console.DBFileName.LastIndexOf("\\") + 1);
-                string datetime = Common.DateTimeStringForFile();//DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
+        //    // Archive old database file write a new one.
+        //    if (success)
+        //    {
+        //        string db_filename = DB.FileName; //DB
+        //        string archivePath = console.AppDataPath + "DB_Archive\\";
+        //        if (!Directory.Exists(archivePath)) Directory.CreateDirectory(archivePath);
+        //        string justFileName = db_filename.Substring(db_filename.LastIndexOf("\\") + 1);
+        //        string datetime = Common.DateTimeStringForFile();//DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
 
-                // MW0LGE [2.9.0.8] issue if you do multiple imports in same minute, this will fail, we could add seconds, but let us increment counter
+        //        // MW0LGE [2.9.0.8] issue if you do multiple imports in same minute, this will fail, we could add seconds, but let us increment counter
 
-                string sInc = "";
-                int n = 0;
-                while (File.Exists(archivePath + "Thetis_database_" + datetime + sInc + ".xml"))
-                {
-                    sInc = "_" + n.ToString();
-                    n++;
-                }
-                File.Copy(console.DBFileName, archivePath + "Thetis_database_" + datetime + sInc + ".xml");
-                //
+        //        string sInc = "";
+        //        int n = 0;
+        //        while (File.Exists(archivePath + "Thetis_database_" + datetime + sInc + ".xml"))
+        //        {
+        //            sInc = "_" + n.ToString();
+        //            n++;
+        //        }
+        //        File.Copy(db_filename, archivePath + "Thetis_database_" + datetime + sInc + ".xml");
+        //        //
 
-                File.Delete(console.DBFileName);
+        //        File.Delete(db_filename);
 
-                DB.WriteDB(console.DBFileName);
-                mergingdb = true;
-            }
+        //        DB.WriteDB();//DB console.DBFileName);
+        //        mergingdb = true;
+        //    }
 
-            return success;
-        }
+        //    return success;
+        //}
 
         #endregion
 
@@ -11877,18 +11886,21 @@ namespace Thetis
 
         private void btnResetDB_Click(object sender, System.EventArgs e)
         {
-            DialogResult dr = MessageBox.Show("This will close the program, make a copy of the current\n" +
-                "database to the DB_Archive folder and reset the active database\n" +
-                "the next time Thetis is launched.\n\n" +
-                "Are you sure you want to reset the database?",
-                "Reset Database?",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
+            return;
 
-            if (dr == DialogResult.No) return;
+            //DB
+            //DialogResult dr = MessageBox.Show("This will close the program, make a copy of the current\n" +
+            //    "database to the DB_Archive folder and reset the active database\n" +
+            //    "the next time Thetis is launched.\n\n" +
+            //    "Are you sure you want to reset the database?",
+            //    "Reset Database?",
+            //    MessageBoxButtons.YesNo,
+            //    MessageBoxIcon.Warning);
 
-            console.reset_db = true;
-            console.Close();
+            //if (dr == DialogResult.No) return;
+
+            //console.ResetDB = true;
+            //console.Close();
         }
 
         private void chkDisplayMeterShowDecimal_CheckedChanged(object sender, System.EventArgs e)
@@ -12097,6 +12109,20 @@ namespace Thetis
             }
 
             DataSet exDS = DB.ds.Clone();
+
+            //[2.10.3.6]MW0LGE drop all non important table schema
+            List<string> table_names = new List<string>();
+            foreach (DataTable dt in exDS.Tables) 
+            {
+                if(dt.TableName != "TxProfile")
+                    table_names.Add(dt.TableName);
+            }
+            foreach(string table_name in table_names)
+            {
+                exDS.Tables.Remove(table_name);
+            }
+            //
+
             DataTable pTable = pTable = DB.ds.Tables["TxProfile"].Clone();
             pTable.ImportRow(exportRow);
             exDS.Merge(pTable);
@@ -12257,11 +12283,13 @@ namespace Thetis
 
         private void btnExportDB_Click(object sender, EventArgs e)
         {
-            string path = console.AppDataPath;
-            path = path.Substring(0, path.LastIndexOf("\\"));
-            string datetime = Common.DateTimeStringForFile();
-            saveFileDialog1.FileName = path + "\\Thetis_database_export_" + datetime + ".xml";
-            saveFileDialog1.ShowDialog();
+            return;
+            //DB
+            //string path = console.AppDataPath;
+            //path = path.Substring(0, path.LastIndexOf("\\"));
+            //string datetime = Common.DateTimeStringForFile();
+            //saveFileDialog1.FileName = path + "\\Thetis_database_export_" + datetime + ".xml";
+            //saveFileDialog1.ShowDialog();
         }
 
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
@@ -19117,37 +19145,6 @@ namespace Thetis
             if (initializing) return;
             console.QSOTimerFlashAfterAutoReset = chkQSOTimerFlashTimerIfResetOnExpiry.Checked;
         }
-
-        private HPSDRModel stringModelToEnum(string sModel)
-        {
-            switch (sModel.ToUpper())
-            {
-                case "HERMES":
-                    return HPSDRModel.HERMES;
-                case "ANAN-10":
-                    return HPSDRModel.ANAN10;
-                case "ANAN-10E":
-                    return HPSDRModel.ANAN10E;
-                case "ANAN-100":
-                    return HPSDRModel.ANAN100;
-                case "ANAN-100B":
-                    return HPSDRModel.ANAN100B;
-                case "ANAN-100D":
-                    return HPSDRModel.ANAN100D;
-                case "ANAN-200D":
-                    return HPSDRModel.ANAN200D;
-                case "ANAN-7000DLE":
-                    return HPSDRModel.ANAN7000D;
-                case "ANAN-8000DLE":
-                    return HPSDRModel.ANAN8000D;
-                case "ANAN-G2":
-                    return HPSDRModel.ANAN_G2;
-                case "ANAN-G2-1K":
-                    return HPSDRModel.ANAN_G2_1K;
-            }
-
-            return HPSDRModel.FIRST;
-        }
         private bool _firstRadioModelChange = true;
         private void comboRadioModel_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -19157,13 +19154,13 @@ namespace Thetis
 
             HPSDRModel old_model;
             if (_firstRadioModelChange) // unset state // [2.10.1.0] MW0LGE
-                old_model = stringModelToEnum(comboRadioModel.Text);
+                old_model = Common.StringModelToEnum(comboRadioModel.Text);
             else
                 old_model = console.CurrentHPSDRModel;
 
             comboAudioSampleRateRX2.Enabled = true;
 
-            switch (stringModelToEnum(comboRadioModel.Text))
+            switch (Common.StringModelToEnum(comboRadioModel.Text))
             {
                 case HPSDRModel.HERMES:
                     console.CurrentHPSDRModel = HPSDRModel.HERMES;
@@ -24260,6 +24257,7 @@ namespace Thetis
                 igs.HistoryColor = clrbtnMeterItemRotatorControlColour.Color;
                 igs.Text1 = txtMeterItemRotatorAZcommand.Text;
                 igs.Text2 = txtMeterItemRotatorELEcommand.Text;
+                igs.FontFamily1 = txtMeterItemRotatorSTOPcommand.Text;
 
                 Guid guid = MultiMeterIO.GuidfromFourChar(txtRotator_4charID.Text);
                 if (guid != Guid.Empty)
@@ -24577,6 +24575,7 @@ namespace Thetis
                 clrbtnMeterItemRotatorControlColour.Color = igs.HistoryColor;
                 txtMeterItemRotatorAZcommand.Text = igs.Text1;
                 txtMeterItemRotatorELEcommand.Text = igs.Text2;
+                txtMeterItemRotatorSTOPcommand.Text = igs.FontFamily1;
                 updateRotatorControlControls();
 
                 //
@@ -25889,7 +25888,12 @@ namespace Thetis
         {
             try
             {
-                Process.Start("explorer.exe", console.AppDataPath);
+                string fullpath = DB.FileName;
+                string directoryPath = Path.GetDirectoryName(fullpath);
+                if (Directory.Exists(directoryPath))
+                {
+                    Process.Start("explorer.exe", directoryPath);
+                }
             }
             catch (Exception ex)
             {
@@ -25898,7 +25902,7 @@ namespace Thetis
 
         private void buildZipFile(string version, string sourceDirectory)
         {
-            string[] filesToZip = { "database.xml", "ErrorLog.txt", "VALog.txt", "ImportLog.txt" };
+            string[] filesToZip = { "ErrorLog.txt", "VALog.txt" };
             string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -25933,7 +25937,15 @@ namespace Thetis
                                     archive.CreateEntryFromFile(filePath, fileName);
                                 }
                             }
-                            System.IO.Compression.
+
+                            // and now the db
+                            string fullpath = DB.FileName;
+                            if (File.Exists(fullpath))
+                            {
+                                string file_name = Path.GetFileName(fullpath);
+                                archive.CreateEntryFromFile(fullpath, file_name);
+                            }
+
                             // Add the version.txt entry
                             ZipArchiveEntry versionEntry = archive.CreateEntry("version.txt");
 
@@ -29690,6 +29702,7 @@ namespace Thetis
             clrbtnMeterItemRotatorControlColour.Enabled = en;
             txtMeterItemRotatorAZcommand.Enabled = en;
             txtMeterItemRotatorELEcommand.Enabled = en;
+            txtMeterItemRotatorSTOPcommand.Enabled = en;
             picMultiMeterRotatorControlInfo.Enabled = en;
             lblMeterItemRotatorAZcommand.Enabled = en;
             lblMeterItemRotatorELEcommand.Enabled = en;
@@ -29703,6 +29716,7 @@ namespace Thetis
         {
             txtMeterItemRotatorAZcommand.Text = "<PST><AZIMUTH>%AZ%</AZIMUTH></PST>";
             txtMeterItemRotatorELEcommand.Text = "<PST><ELEVATION>%ELE%</ELEVATION></PST>";
+            txtMeterItemRotatorSTOPcommand.Text = "<PST><STOP>1</STOP></PST>";
         }
 
         private void txtRotator_4charID_TextChanged(object sender, EventArgs e)
@@ -30171,6 +30185,11 @@ namespace Thetis
             txtWebImage_url.Text = kvp.Value;
 
             comboWebImage_noaa.SelectedIndex = 0;
+        }
+
+        private void txtMeterItemRotatorSTOPcommand_TextChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 

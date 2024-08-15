@@ -60,6 +60,8 @@ namespace Thetis
         private readonly ConcurrentDictionary<Guid, ManualResetEvent> _reset_events;
         private readonly ConcurrentDictionary<Guid, int> _timeouts;
 
+        private string _version;
+
         public class StateEventArgs : EventArgs
         {
             public Guid Guid { get; }
@@ -77,6 +79,7 @@ namespace Thetis
 
         public ImageFetcher()
         {
+            _version = "";
             _image_stores = new ConcurrentDictionary<Guid, ImageStore>();
             _threads = new ConcurrentDictionary<Guid, Thread>();
             _reset_events = new ConcurrentDictionary<Guid, ManualResetEvent>();
@@ -176,7 +179,11 @@ namespace Thetis
             }
             Debug.Print("!!!!!!! SHUTDOWN COMPLETE");
         }
-
+        public string Version
+        {
+            get { return _version; }
+            set { _version = value; }
+        }
         private void fetch_images(string url, ImageStore store, ManualResetEvent reset_event, Guid id, bool file)
         {
             try
@@ -191,7 +198,18 @@ namespace Thetis
                         StateChanged?.Invoke(this, new StateEventArgs(id, State.IDLE));
                         if (!file)
                         {
-                            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                            string unique_url = url;
+                            //TODO: add option to disable
+                            //string request_id = Guid.NewGuid().ToString();
+
+                            //if (url.Contains("?"))
+                            //    unique_url = $"{url}&thetis_id={request_id}";
+                            //else
+                            //    unique_url = $"{url}?thetis_id={request_id}";
+
+                            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(unique_url);
+                            request.UserAgent = "Thetis v" + _version;                            
+
                             request.Timeout = 2000;
                             request.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
 

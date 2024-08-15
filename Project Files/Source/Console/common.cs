@@ -270,6 +270,8 @@ namespace Thetis
         
         public static void SaveForm(Form form, string tablename)
 		{
+            if (DB.ds == null) return;
+
 			ArrayList a = new ArrayList();
 			ArrayList temp = new ArrayList();
 
@@ -318,7 +320,9 @@ namespace Thetis
 
 		public static void RestoreForm(Form form, string tablename, bool restore_size)
 		{
-			ArrayList temp = new ArrayList();		// list of all first level controls
+            if (DB.ds == null) return;
+
+            ArrayList temp = new ArrayList();		// list of all first level controls
 			ControlList(form, ref temp);
 
 			//ArrayList checkbox_list = new ArrayList();
@@ -1083,10 +1087,11 @@ namespace Thetis
 			DateTime now = DateTime.Now;
             string sDate = now.ToString(ci.DateTimeFormat.ShortDatePattern, ci) + "_" + now.ToString(ci.DateTimeFormat.ShortTimePattern, ci);
 
-            sDate = sDate.Replace("/", "-");
-            sDate = sDate.Replace(":", ".");
+            sDate = sDate.Replace("/", "_");
+            sDate = sDate.Replace(":", "_");
+            sDate = sDate.Replace(".", "_");
 
-			// replace any non valid filename chars with _
+            // replace any non valid filename chars with _
             string sRet = string.Join("_", sDate.Split(Path.GetInvalidFileNameChars()));
 
 			return sRet;
@@ -1259,6 +1264,37 @@ namespace Thetis
                 if (s.Contains(arg, StringComparison.OrdinalIgnoreCase)) return true;
             }
             return false;
+        }
+
+        public static HPSDRModel StringModelToEnum(string sModel)
+        {
+            switch (sModel.ToUpper())
+            {
+                case "HERMES":
+                    return HPSDRModel.HERMES;
+                case "ANAN-10":
+                    return HPSDRModel.ANAN10;
+                case "ANAN-10E":
+                    return HPSDRModel.ANAN10E;
+                case "ANAN-100":
+                    return HPSDRModel.ANAN100;
+                case "ANAN-100B":
+                    return HPSDRModel.ANAN100B;
+                case "ANAN-100D":
+                    return HPSDRModel.ANAN100D;
+                case "ANAN-200D":
+                    return HPSDRModel.ANAN200D;
+                case "ANAN-7000DLE":
+                    return HPSDRModel.ANAN7000D;
+                case "ANAN-8000DLE":
+                    return HPSDRModel.ANAN8000D;
+                case "ANAN-G2":
+                    return HPSDRModel.ANAN_G2;
+                case "ANAN-G2-1K":
+                    return HPSDRModel.ANAN_G2_1K;
+            }
+
+            return HPSDRModel.FIRST;
         }
     }
 }
