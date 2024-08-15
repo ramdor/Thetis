@@ -10399,7 +10399,7 @@ namespace Thetis
                         }
                         else
                         {
-                            // import the old rows, as this existingDB shouldn't have any
+                            // import the old rows, as this mergedDB shouldn't have any
                             // there is no DB initalisation for BandStack2
                             // BandStackManager will add any that are missing
                             foreach (DataRow dr in tempTable.Rows)
