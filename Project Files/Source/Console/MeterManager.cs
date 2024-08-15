@@ -5628,6 +5628,19 @@ namespace Thetis
                     return "";
                 }
             }
+            public string MapName
+            {
+                get
+                {
+                    switch (_rotator_mode)
+                    {
+                        case RotatorMode.AZ:
+                        case RotatorMode.BOTH:
+                            return "rotator_map-bg";
+                    }
+                    return "";
+                }
+            }
             public float Padding
             {
                 get { return _padding; }
@@ -9121,7 +9134,7 @@ namespace Thetis
                 ri.Primary = true;
                 ri.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
                 ri.Size = new SizeF(1f, fSize);
-                ri.ZOrder = 3;
+                ri.ZOrder = 4;
                 ri.MMIOVariableIndex = 0;
                 ri.ReadingSource = Reading.AZ;
                 ri.UpdateInterval = 100;
@@ -9134,12 +9147,13 @@ namespace Thetis
                 ri2.Primary = false;
                 ri2.TopLeft = new PointF(0f, _fPadY - (_fHeight * 0.75f));
                 ri2.Size = new SizeF(1f, fSize);
-                ri2.ZOrder = 3;
+                ri2.ZOrder = 4;
                 ri2.MMIOVariableIndex = 1;
                 ri2.ReadingSource = Reading.ELE;
                 ri2.UpdateInterval = 100;
                 addMeterItem(ri2);
 
+                //grid
                 clsImage img = new clsImage();
                 img.ParentID = ig.ID;
                 //img.TopLeft = ri.TopLeft;
@@ -9157,8 +9171,25 @@ namespace Thetis
                     img.Size = new SizeF(fSize, fSize);
                 }
                 //
-                img.ZOrder = 2;
+                img.ZOrder = 3;
                 img.ImageName = ri.ImageName;
+                addMeterItem(img);
+
+                //map
+                img = new clsImage();
+                img.ParentID = ig.ID;
+                if (ri.ViewMode == clsRotatorItem.RotatorMode.BOTH)
+                {
+                    img.TopLeft = new PointF(0.085f, _fPadY - (_fHeight * 0.75f) + 0.06f);
+                    img.Size = new SizeF(0.38f, 0.38f);
+                }
+                else
+                {
+                    img.TopLeft = new PointF(0.5f - (fSize / 2f) + (0.12f * fSize), _fPadY - (_fHeight * 0.75f) + (0.12f * fSize));
+                    img.Size = new SizeF(0.76f, 0.76f);
+                }
+                img.ImageName = ri.MapName;
+                img.ZOrder = 2;
                 addMeterItem(img);
 
                 clsSolidColour sc = new clsSolidColour();
@@ -11493,6 +11524,7 @@ namespace Thetis
                                         bRebuild = true;
                                         float padding = 0f;
                                         string imageName = "";
+                                        string mapName = "";
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
                                         //one image, and the me
                                         foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR))
@@ -11531,6 +11563,7 @@ namespace Thetis
                                             rotator.STOPControlString = igs.FontFamily1;
                                             rotator.DataOutMMIOGuid = igs.GetMMIOGuid(2);
                                             imageName = rotator.ImageName;
+                                            mapName = rotator.MapName;
 
                                             if (rotator.ViewMode == clsRotatorItem.RotatorMode.BOTH)
                                             {
@@ -11551,27 +11584,48 @@ namespace Thetis
                                             clsImage image = img.Value as clsImage;
                                             if (image == null) continue;
 
-                                            if ((clsRotatorItem.RotatorMode)igs.HistoryDuration == clsRotatorItem.RotatorMode.BOTH)
+                                            if (image.ZOrder == 3) //grid
                                             {
-                                                //image.TopLeft = new PointF(0.5f - (0.5f / 2f), _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
-                                                //image.Size = new SizeF(0.5f, 0.5f);
+                                                if ((clsRotatorItem.RotatorMode)igs.HistoryDuration == clsRotatorItem.RotatorMode.BOTH)
+                                                {
+                                                    //image.TopLeft = new PointF(0.5f - (0.5f / 2f), _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
+                                                    //image.Size = new SizeF(0.5f, 0.5f);
 
-                                                image.TopLeft = new PointF(0, _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
-                                                image.Size = new SizeF(1f, 0.5f);
+                                                    image.TopLeft = new PointF(0, _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
+                                                    image.Size = new SizeF(1f, 0.5f);
 
-                                                //image.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
-                                                //image.Size = new SizeF(ig.Size.Width, padding);
+                                                    //image.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                    //image.Size = new SizeF(ig.Size.Width, padding);
+                                                }
+                                                else
+                                                {
+                                                    image.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f), _fPadY - (_fHeight * 0.75f) /*+ ((igs.EyeScale - igs.EyeScale) * 0.5f)*/);
+                                                    image.Size = new SizeF(igs.EyeScale, igs.EyeScale);
+                                                }
+
+                                                image.ImageName = imageName;
+                                                image.FadeOnRx = igs.FadeOnRx;
+                                                image.FadeOnTx = igs.FadeOnTx;
+                                                image.DarkMode = igs.DarkMode;
                                             }
-                                            else
+                                            else if(image.ZOrder == 2) // map
                                             {
-                                                image.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f), _fPadY - (_fHeight * 0.75f) /*+ ((igs.EyeScale - igs.EyeScale) * 0.5f)*/);
-                                                image.Size = new SizeF(igs.EyeScale, igs.EyeScale);
-                                            }
+                                                if ((clsRotatorItem.RotatorMode)igs.HistoryDuration == clsRotatorItem.RotatorMode.BOTH)
+                                                {
+                                                    image.TopLeft = new PointF(0.085f, _fPadY - (_fHeight * 0.75f) + 0.06f);
+                                                    image.Size = new SizeF(0.38f, 0.38f);
+                                                }
+                                                else
+                                                {
+                                                    image.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f) + (0.12f * igs.EyeScale), _fPadY - (_fHeight * 0.75f) + (0.12f * igs.EyeScale));
+                                                    image.Size = new SizeF(igs.EyeScale * 0.76f, igs.EyeScale * 0.76f);
+                                                }
 
-                                            image.ImageName = imageName;
-                                            image.FadeOnRx = igs.FadeOnRx;
-                                            image.FadeOnTx = igs.FadeOnTx;
-                                            image.DarkMode = igs.DarkMode;
+                                                image.ImageName = mapName;
+                                                image.FadeOnRx = igs.FadeOnRx;
+                                                image.FadeOnTx = igs.FadeOnTx;
+                                                image.DarkMode = igs.DarkMode;
+                                            }
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
                                         {
@@ -13789,7 +13843,7 @@ namespace Thetis
             }
             internal void LoadDXImages(string sDefaultPath, string sSkinPath)
             {
-                string[] imageFileNames = { "ananMM", "ananMM-bg", "ananMM-bg-tx", "cross-needle", "cross-needle-bg", "eye-bezel", "rotator_az-bg", "rotator_ele-bg", "rotator_both-bg" };
+                string[] imageFileNames = { "ananMM", "ananMM-bg", "ananMM-bg-tx", "cross-needle", "cross-needle-bg", "eye-bezel", "rotator_az-bg", "rotator_ele-bg", "rotator_both-bg", "rotator_map-bg" };
                 string[] imageFileNameParts = { "", "-small", "-large", "-dark", "-dark-small", "-dark-large" };
 
                 if (!_bDXSetup) return;
@@ -18440,6 +18494,7 @@ namespace Thetis
                 int nFade = 255;
 
                 string sImage = img.ImageName;
+                if (string.IsNullOrEmpty(sImage)) return;
 
                 //string sKey = sImage;// + "-" + MeterManager.CurrentPowerRating.ToString();
                 //if (MeterManager.ContainsBitmap(sKey)) sImage = sKey; // with power rating
