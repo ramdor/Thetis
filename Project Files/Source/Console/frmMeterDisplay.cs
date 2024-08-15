@@ -99,7 +99,6 @@ namespace Thetis
                 this.Hide();
                 e.Cancel = true;
             }
-
             Common.SaveForm(this, "MeterDisplay_" + _id);
         }
 
