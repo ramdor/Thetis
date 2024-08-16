@@ -53,9 +53,6 @@ namespace Thetis
             get {  return _file_name; }
             set { _file_name = value; }
         }
-
-        //DB private static bool _importedDS = false;
-
         private static string _version_nr = "";
         public static string VersionNumber
         {
@@ -9235,9 +9232,7 @@ namespace Thetis
 
         public static void Exit()
         {
-            //DB if (!_importedDS) //-W2PA Only update if not just imported.
             WriteDB();
-            //DB else _importedDS = false;
             ds = null;
         }
 
@@ -9694,6 +9689,7 @@ namespace Thetis
             return list;
         }
 
+        #region code store of old ImportAndMergeDatabase
         ////-W2PA New version of ImportDatabase to merge an old database or partly corruped one with a new default one
         //public static bool ImportAndMergeDatabase(string filename, string appDataPath, bool manualImport)
         //{
@@ -10250,14 +10246,20 @@ namespace Thetis
         //                                // will allow saving when the final restart has completed
         //    return true;
         //}
-        //
+        #endregion
+
         private static bool _merged = false;
         public static bool Merged
         {
+            //This is used by Console.SaveState and SetupForm.SaveOptions functions so that after a merge settings are not re-read
+            //from setup form and consol. This prevents the values that have just been merged from being over-written during
+            //the shutdown
             get { return _merged; }
         }
-        public static bool ImportAndMergeDatabase2(string filename, out string log, bool ignore_merged)
+        public static bool ImportAndMergeDatabase(string filename, out string log, bool ignore_merged)
         {
+            //[2.10.3.6]MW0LGE modified for new DB manager system
+
             //oldDB is the db that is being imported
             //existingDB is the db that is currently in use / loaded
             //mergedDB is the db that is built up from the existingDB and the oldDB
