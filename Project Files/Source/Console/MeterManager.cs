@@ -9197,21 +9197,23 @@ namespace Thetis
                 //map
                 img = new clsImage();
                 img.ParentID = ig.ID;
+                PointF centre_tmp;
                 if (ri.ViewMode == clsRotatorItem.RotatorMode.BOTH)
                 {
-                    img.TopLeft = new PointF(0.085f, _fPadY - (_fHeight * 0.75f) + 0.06f);
-                    img.Size = new SizeF(0.38f, 0.38f);
+                    centre_tmp = new PointF(0.085f + (0.38f / 2f), _fPadY - (_fHeight * 0.75f) + 0.06f + (0.38f / 2f)); // precalc from existing setup
+                    img.Size = new SizeF(0.405f, 0.405f);                    
                 }
                 else
                 {
-                    img.TopLeft = new PointF(0.5f - (fSize / 2f) + (0.12f * fSize), _fPadY - (_fHeight * 0.75f) + (0.12f * fSize));
-                    img.Size = new SizeF(0.76f, 0.76f);
+                    centre_tmp = new PointF(0.5f - (fSize / 2f) + (0.12f * fSize) + (fSize * 0.76f / 2f), _fPadY - (_fHeight * 0.75f) + (0.12f * fSize) + (fSize * 0.76f / 2f)); // precalc from existing setup
+                    img.Size = new SizeF(0.81f, 0.81f);
                 }
+                img.TopLeft = new PointF(centre_tmp.X - (img.Size.Width / 2f), centre_tmp.Y - (img.Size.Height / 2f));
                 img.ImageName = ri.MapName;
                 img.ZOrder = 2;
                 img.ClippedEllipse = true;
                 img.ClipEllipseCentre = new PointF(0.5f, 0.5f);
-                img.ClipEllipseRadius = new SizeF(0.5f, 0.5f);
+                img.ClipEllipseRadius = new SizeF(0.47f, 0.47f);
                 addMeterItem(img);
 
                 clsSolidColour sc = new clsSolidColour();
@@ -11610,18 +11612,12 @@ namespace Thetis
                                             {
                                                 if ((clsRotatorItem.RotatorMode)igs.HistoryDuration == clsRotatorItem.RotatorMode.BOTH)
                                                 {
-                                                    //image.TopLeft = new PointF(0.5f - (0.5f / 2f), _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
-                                                    //image.Size = new SizeF(0.5f, 0.5f);
-
-                                                    image.TopLeft = new PointF(0, _fPadY - (_fHeight * 0.75f) /*+ ((0.5f - 0.5f) * 0.5f)*/);
+                                                    image.TopLeft = new PointF(0, _fPadY - (_fHeight * 0.75f));
                                                     image.Size = new SizeF(1f, 0.5f);
-
-                                                    //image.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
-                                                    //image.Size = new SizeF(ig.Size.Width, padding);
                                                 }
                                                 else
                                                 {
-                                                    image.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f), _fPadY - (_fHeight * 0.75f) /*+ ((igs.EyeScale - igs.EyeScale) * 0.5f)*/);
+                                                    image.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f), _fPadY - (_fHeight * 0.75f));
                                                     image.Size = new SizeF(igs.EyeScale, igs.EyeScale);
                                                 }
 
@@ -11632,19 +11628,22 @@ namespace Thetis
                                             }
                                             else if(image.ZOrder == 2) // map
                                             {
+                                                PointF centre_tmp;
                                                 if ((clsRotatorItem.RotatorMode)igs.HistoryDuration == clsRotatorItem.RotatorMode.BOTH)
                                                 {
-                                                    image.TopLeft = new PointF(0.085f, _fPadY - (_fHeight * 0.75f) + 0.06f);
-                                                    image.Size = new SizeF(0.38f, 0.38f);
+                                                    centre_tmp = new PointF(0.085f + (0.38f / 2f), _fPadY - (_fHeight * 0.75f) + 0.06f + (0.38f / 2f)); // precalc from existing setup
+                                                    image.Size = new SizeF(0.405f, 0.405f);
                                                 }
                                                 else
                                                 {
-                                                    image.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f) + (0.12f * igs.EyeScale), _fPadY - (_fHeight * 0.75f) + (0.12f * igs.EyeScale));
-                                                    image.Size = new SizeF(igs.EyeScale * 0.76f, igs.EyeScale * 0.76f);
+                                                    centre_tmp = new PointF(0.5f - (igs.EyeScale / 2f) + (0.12f * igs.EyeScale) + (igs.EyeScale * 0.76f / 2f), _fPadY - (_fHeight * 0.75f) + (0.12f * igs.EyeScale) + (igs.EyeScale * 0.76f / 2f)); // precalc from existing setup
+                                                    image.Size = new SizeF(igs.EyeScale * 0.81f, igs.EyeScale * 0.81f);
                                                 }
+                                                image.TopLeft = new PointF(centre_tmp.X - (image.Size.Width / 2f), centre_tmp.Y - (image.Size.Height / 2f));
+
                                                 image.ClippedEllipse = true;
                                                 image.ClipEllipseCentre = new PointF(0.5f, 0.5f);
-                                                image.ClipEllipseRadius = new SizeF(0.5f, 0.5f);
+                                                image.ClipEllipseRadius = new SizeF(0.47f, 0.47f);
                                                 image.ImageName = mapName;
                                                 image.FadeOnRx = igs.FadeOnRx;
                                                 image.FadeOnTx = igs.FadeOnTx;
@@ -13869,7 +13868,7 @@ namespace Thetis
             {
                 string[] imageFileNames = { "ananMM", "ananMM-bg", "ananMM-bg-tx", "cross-needle", "cross-needle-bg", "eye-bezel", "rotator_az-bg", "rotator_ele-bg", "rotator_both-bg", "rotator_map-bg" };
                 string[] imageFileNameParts = { "", "-small", "-large", "-dark", "-dark-small", "-dark-large" };
-
+                string[] image_extensions = { ".png", ".jpg", ".jpeg", ".bmp" };
                 if (!_bDXSetup) return;
                 
                 lock (_DXlock)
@@ -13884,22 +13883,29 @@ namespace Thetis
                             string sDefaultFileName = sDefaultPath + "\\Meters\\" + imageFileNames[n];
                             for (int i = 0; i < imageFileNameParts.Length; i++)
                             {
-                                if (File.Exists(sSkinFileName + imageFileNameParts[i] + ".png"))
+                                for (int nn = 0; nn < image_extensions.Length; nn++)
                                 {
-                                    string sRemove = imageFileNames[n] + imageFileNameParts[i];
-                                    //remove it
-                                    if (_images.ContainsKey(sRemove))
+                                    string image_filname = imageFileNameParts[i] + image_extensions[nn];
+                                    if (File.Exists(sSkinFileName + image_filname))
                                     {
-                                        RemoveImageCacheData(sRemove);
-                                        RemoveDXImage(sRemove);
-                                    }
+                                        // skin
+                                        string sRemove = imageFileNames[n] + imageFileNameParts[i];
+                                        //remove it
+                                        if (_images.ContainsKey(sRemove))
+                                        {
+                                            RemoveImageCacheData(sRemove);
+                                            RemoveDXImage(sRemove);
+                                        }
 
-                                    loadImage(sSkinFileName + imageFileNameParts[i] + ".png", true);
+                                        loadImage(sSkinFileName + image_filname, true);
+                                        break;
+                                    }
+                                    else if (File.Exists(sDefaultFileName + image_filname))
+                                    {
+                                        loadImage(sDefaultFileName + image_filname, false);
+                                        break;
+                                    }
                                 }
-                                else
-                                {
-                                    loadImage(sDefaultFileName + imageFileNameParts[i] + ".png", false);
-                                }                                    
                             }
                         }
                     }

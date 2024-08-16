@@ -26532,7 +26532,10 @@ namespace Thetis
 
                 using (ZipArchive zip = ZipFile.OpenRead(sourceZipFilePath))
                 {
-                    foreach (ZipArchiveEntry entry in zip.Entries.Where(e => e.FullName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
+                    foreach (ZipArchiveEntry entry in zip.Entries.Where(e => e.FullName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+                                                                             e.FullName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                                                                             e.FullName.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+                                                                             e.FullName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase)))
                     {
                         // Normalize the entry path for file system usage
                         string entryPath = Path.Combine(outputPath, entry.FullName.Replace('/', '\\'));
