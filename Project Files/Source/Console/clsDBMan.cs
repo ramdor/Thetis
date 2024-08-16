@@ -154,7 +154,7 @@ namespace Thetis
                 }
             }
             // ctrl key upgrade
-            bool force_update = false;
+            bool ctrl_key_force_update = false;
             if (Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey))
             {
                 Thread.Sleep(500); // ensure this is intentional
@@ -166,23 +166,23 @@ namespace Thetis
                          MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
 
                     if (dr == DialogResult.Yes)
-                        force_update = true;
+                        ctrl_key_force_update = true;
                 }
             }
 
-
             bool ok = false;
             bool made_new = false;
+            bool old_db_found = false;
 
             Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
 
             if (dbs.Count == 0 || new_db)
             {
                 // no dbs, likely due to fresh install, and/or first use of this new db manager
-                ok = createNewDB(true, true);
+                ok = createNewDB(true, true, out old_db_found);
                 if (ok)
                 {
-                    made_new = true;
+                    if(!old_db_found) made_new = true;
                     dbs = getAvailableDBs();
                     ok = dbs.Count > 0;
                 }
@@ -203,7 +203,7 @@ namespace Thetis
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
-                        ok = createNewDB(false, true);
+                        ok = createNewDB(false, true, out bool _);
                         if (ok)
                         {
                             made_new = true;
@@ -235,7 +235,7 @@ namespace Thetis
                         _ignore_written = false;
 
                         //check version
-                        if(ok) checkVersion(made_new, force_update);
+                        if(ok) checkVersion(made_new, ctrl_key_force_update);
                     }
                 }
                 else
@@ -278,7 +278,7 @@ namespace Thetis
 
             // need to create new fresh db
             string orginal_db_filename_xml = DB.FileName;
-            bool ok = createNewDB(false, true);
+            bool ok = createNewDB(false, true, out bool _);
 
             if (ok) {
                 // then import the one we were using into that new fresh one we just created
@@ -393,11 +393,13 @@ namespace Thetis
                 }
             }
         }
-        private static bool createNewDB(bool check_for_old_db = false, bool make_active = false, string description = "")
+        private static bool createNewDB(bool check_for_old_db, bool make_active, out bool old_db_found, string description = "")
         {
             bool ok = true;
 
             string db_folder = createNewDBFolder(out Guid guid);
+
+            old_db_found = false;
 
             ok = !string.IsNullOrEmpty(db_folder);
             if (!ok) return false;
@@ -418,7 +420,10 @@ namespace Thetis
                     counter++;
                 }
 
+                //rename to old
                 File.Move(source_db, source_db_renamed);
+
+                old_db_found = true;
             }
             else
             {
@@ -781,7 +786,7 @@ namespace Thetis
             string desc = InputBox.Show("Database Description", "Please provide a description for this new database.", "");
             if (string.IsNullOrEmpty(desc)) return;
 
-            createNewDB(false, false, desc);
+            createNewDB(false, false, out bool _, desc);
 
             Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
             _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, Guid.Empty);

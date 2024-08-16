@@ -41,6 +41,8 @@ namespace Thetis
             _allow_check_change = true;
             _ignore_lstActiveDBs_selectectedindexchanged = false;
             InitializeComponent();
+
+            this.Text = $"Database Manager  [v{Common.GetVerNum()}]";
         }
         public void Restore()
         {
@@ -64,6 +66,36 @@ namespace Thetis
                 CultureInfo.CurrentCulture = originalCulture;
             }
         }
+        private string formatTimeSpanWithYears(TimeSpan difference)
+        {
+            int totalDays = difference.Days;
+            int years = totalDays / 365;
+            int days = totalDays % 365;
+
+            string age;
+
+            if (years > 0)
+            {
+                if (days > 0)
+                {
+                    age = $"{years}y {days}d {difference.Hours.ToString("00")}:{difference.Minutes.ToString("00")}:{difference.Seconds.ToString("00")}";
+                }
+                else
+                {
+                    age = $"{years}y {difference.Hours.ToString("00")}:{difference.Minutes.ToString("00")}:{difference.Seconds.ToString("00")}";
+                }
+            }
+            else if (days > 0)
+            {
+                age = $"{days}d {difference.Hours.ToString("00")}:{difference.Minutes.ToString("00")}:{difference.Seconds.ToString("00")}";
+            }
+            else
+            {
+                age = $"{difference.Hours.ToString("00")}:{difference.Minutes.ToString("00")}:{difference.Seconds.ToString("00")}";
+            }
+
+            return age;
+        }
         internal void InitBackups(List<DBMan.BackupFileInfo> backups)
         {
             lstBackups.Items.Clear();
@@ -72,11 +104,9 @@ namespace Thetis
                 ListViewItem lvi = new ListViewItem(localDateTimeFormat(backup.DateTimeOfBackup));
 
                 TimeSpan difference = DateTime.Now - backup.DateTimeOfBackup;
-                string age;
-                if (difference.Days > 0)
-                    age = $"{difference.Days}d {difference.Hours.ToString("00")}:{difference.Minutes.ToString("00")}:{difference.Seconds.ToString("00")}";
-                else
-                    age = $"{difference.Hours.ToString("00")}:{difference.Minutes.ToString("00")}:{difference.Seconds.ToString("00")}";
+
+                string age = formatTimeSpanWithYears(difference);
+
                 lvi.SubItems.Add(age);
                 lvi.SubItems.Add(backup.FullFilePath);
 
@@ -113,11 +143,8 @@ namespace Thetis
                 lvi.SubItems.Add(localDateTimeFormat(dbi.LastChanged));
 
                 TimeSpan difference = DateTime.Now - dbi.CreationTime;
-                string age;
-                if(difference.Days > 0)
-                    age = $"{difference.Days}d {difference.Hours.ToString("00")}:{difference.Minutes.ToString("00")}:{difference.Seconds.ToString("00")}";
-                else
-                    age = $"{difference.Hours.ToString("00")}:{difference.Minutes.ToString("00")}:{difference.Seconds.ToString("00")}";
+
+                string age = formatTimeSpanWithYears(difference);
 
                 lvi.SubItems.Add(age);
                 lvi.SubItems.Add(getReadableFileSize(dbi.Size));
