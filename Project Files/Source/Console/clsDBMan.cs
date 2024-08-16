@@ -663,10 +663,30 @@ namespace Thetis
                 moveToBroken(guid);
             }
 
+            // if we have an active db remove it
+            DatabaseInfo activeDB = null;
+            if (_dbman_settings != null)
+            {
+                if (foldersInfo.ContainsKey(_dbman_settings.ActiveDB_GUID))
+                {
+                    activeDB = foldersInfo[_dbman_settings.ActiveDB_GUID];
+                    foldersInfo.Remove(_dbman_settings.ActiveDB_GUID);
+                }
+            }
+
+            // order the list
             IOrderedEnumerable<KeyValuePair<Guid, DatabaseInfo>> sortedEntries = foldersInfo
                 .OrderByDescending(entry => entry.Value.LastChanged);
             Dictionary<Guid, DatabaseInfo> sortedDictionary = sortedEntries
                 .ToDictionary(entry => entry.Key, entry => entry.Value);
+
+            // prepend the active so that it is always at top, irrespective of last changed
+            if (activeDB != null)
+            {
+                sortedDictionary = sortedDictionary
+                    .Prepend(new KeyValuePair<Guid, DatabaseInfo>(activeDB.GUID, activeDB))
+                    .ToDictionary(entry => entry.Key, entry => entry.Value);
+            }
 
             return sortedDictionary;
         }
@@ -1140,6 +1160,23 @@ namespace Thetis
 
                 Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
                 _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, guid);
+            }
+            catch { }
+        }
+        public static void OpenFolder(Guid guid)
+        {
+            if (guid == Guid.Empty && _dbman_settings != null )
+                guid = _dbman_settings.ActiveDB_GUID;
+
+            if (guid == Guid.Empty) return;
+
+            string folder_path = _db_data_path + guid.ToString();
+            try
+            {
+                if (Directory.Exists(folder_path))
+                {
+                    Process.Start("explorer.exe", folder_path);
+                }
             }
             catch { }
         }

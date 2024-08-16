@@ -221,6 +221,7 @@ namespace Thetis
 
             btnRename.Enabled = enabled;
             btnExport.Enabled = enabled;
+            btnOpenFolder.Enabled = enabled;
             btnDuplicateDB.Enabled = enabled;
             btnBackupOnStart.Enabled = enabled;
             btnBackupOnShutdown.Enabled = enabled;
@@ -368,6 +369,17 @@ namespace Thetis
             ListViewItem lvi = lstBackups.SelectedItems[0];
 
             DBMan.ExportBackup(lvi.Tag.ToString());
+        }
+
+        private void btnOpenFolder_Click(object sender, EventArgs e)
+        {
+            if (lstActiveDBs.SelectedItems.Count != 1) return;
+
+            ListViewItem lvi = lstActiveDBs.SelectedItems[0];
+
+            Guid guid = new Guid(lvi.Tag.ToString());
+
+            DBMan.OpenFolder(guid);
         }
     }
 }

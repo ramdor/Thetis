@@ -25792,23 +25792,6 @@ namespace Thetis
         {
             buildZipFile(console.ProductVersion + "\n" + console.BasicTitleBar, console.AppDataPath);
         }
-
-        private void btnOpenDBFolder_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string fullpath = DB.FileName;
-                string directoryPath = Path.GetDirectoryName(fullpath);
-                if (Directory.Exists(directoryPath))
-                {
-                    Process.Start("explorer.exe", directoryPath);
-                }
-            }
-            catch (Exception ex)
-            {
-            }
-        }
-
         private void buildZipFile(string version, string sourceDirectory)
         {
             string[] filesToZip = { "ErrorLog.txt", "VALog.txt" };
