@@ -26,15 +26,8 @@ mw0lge@grange-lane.co.uk
 */
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
+using System.Globalization;
 
 namespace Thetis
 {
@@ -53,12 +46,30 @@ namespace Thetis
         {
             Common.RestoreForm(this, "DBManForm", true);
         }
+        private string localDateTimeFormat(DateTime dateTime)
+        {
+            CultureInfo originalCulture = CultureInfo.CurrentCulture;
+            try
+            {
+                CultureInfo localCulture = CultureInfo.InstalledUICulture;
+                string formattedDateTime = dateTime.ToString("G", localCulture);
+                return formattedDateTime;
+            }
+            catch
+            {
+                return dateTime.ToString("G");
+            }
+            finally
+            {
+                CultureInfo.CurrentCulture = originalCulture;
+            }
+        }
         internal void InitBackups(List<DBMan.BackupFileInfo> backups)
         {
             lstBackups.Items.Clear();
             foreach(DBMan.BackupFileInfo backup in backups)
             {
-                ListViewItem lvi = new ListViewItem(backup.DateTimeOfBackup.ToString("G"));
+                ListViewItem lvi = new ListViewItem(localDateTimeFormat(backup.DateTimeOfBackup));
 
                 TimeSpan difference = DateTime.Now - backup.DateTimeOfBackup;
                 string age;
@@ -99,7 +110,7 @@ namespace Thetis
                 lvi.Checked = dbi.GUID == active_guid;
 
                 lvi.SubItems.Add(dbi.Model.ToString());
-                lvi.SubItems.Add(dbi.LastChanged.ToString("G"));
+                lvi.SubItems.Add(localDateTimeFormat(dbi.LastChanged));
 
                 TimeSpan difference = DateTime.Now - dbi.CreationTime;
                 string age;
