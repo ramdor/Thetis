@@ -3840,6 +3840,7 @@
             this.labelTS235 = new System.Windows.Forms.LabelTS();
             this.chkWebImage_fade_tx = new System.Windows.Forms.CheckBoxTS();
             this.chkWebImage_fade_rx = new System.Windows.Forms.CheckBoxTS();
+            this.chkWebImage_bypass_cache = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -60751,6 +60752,7 @@
             // 
             // grpWebImage
             // 
+            this.grpWebImage.Controls.Add(this.chkWebImage_bypass_cache);
             this.grpWebImage.Controls.Add(this.groupBoxTS42);
             this.grpWebImage.Controls.Add(this.groupBoxTS41);
             this.grpWebImage.Controls.Add(this.groupBoxTS43);
@@ -60960,7 +60962,7 @@
             // 
             this.chkWebImage_fade_tx.AutoSize = true;
             this.chkWebImage_fade_tx.Image = null;
-            this.chkWebImage_fade_tx.Location = new System.Drawing.Point(227, 46);
+            this.chkWebImage_fade_tx.Location = new System.Drawing.Point(221, 40);
             this.chkWebImage_fade_tx.Name = "chkWebImage_fade_tx";
             this.chkWebImage_fade_tx.Size = new System.Drawing.Size(82, 17);
             this.chkWebImage_fade_tx.TabIndex = 3;
@@ -60972,13 +60974,27 @@
             // 
             this.chkWebImage_fade_rx.AutoSize = true;
             this.chkWebImage_fade_rx.Image = null;
-            this.chkWebImage_fade_rx.Location = new System.Drawing.Point(227, 23);
+            this.chkWebImage_fade_rx.Location = new System.Drawing.Point(221, 17);
             this.chkWebImage_fade_rx.Name = "chkWebImage_fade_rx";
             this.chkWebImage_fade_rx.Size = new System.Drawing.Size(83, 17);
             this.chkWebImage_fade_rx.TabIndex = 2;
             this.chkWebImage_fade_rx.Text = "Fade on RX";
             this.chkWebImage_fade_rx.UseVisualStyleBackColor = true;
             this.chkWebImage_fade_rx.CheckedChanged += new System.EventHandler(this.chkWebImage_fade_rx_CheckedChanged);
+            // 
+            // chkWebImage_bypass_cache
+            // 
+            this.chkWebImage_bypass_cache.AutoSize = true;
+            this.chkWebImage_bypass_cache.Image = null;
+            this.chkWebImage_bypass_cache.Location = new System.Drawing.Point(221, 63);
+            this.chkWebImage_bypass_cache.Name = "chkWebImage_bypass_cache";
+            this.chkWebImage_bypass_cache.Size = new System.Drawing.Size(94, 17);
+            this.chkWebImage_bypass_cache.TabIndex = 146;
+            this.chkWebImage_bypass_cache.Text = "Bypass Cache";
+            this.toolTip1.SetToolTip(this.chkWebImage_bypass_cache, "Append a unique id to the url each request, bypassing most servers caching polici" +
+        "es");
+            this.chkWebImage_bypass_cache.UseVisualStyleBackColor = true;
+            this.chkWebImage_bypass_cache.CheckedChanged += new System.EventHandler(this.chkWebImage_bypass_cache_CheckedChanged);
             // 
             // Setup
             // 
@@ -66045,5 +66061,6 @@
         private ComboBoxTS comboWebImage_nasa;
         private LabelTS labelTS237;
         private TextBoxTS txtMeterItemRotatorSTOPcommand;
+        private CheckBoxTS chkWebImage_bypass_cache;
     }
 }

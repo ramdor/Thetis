@@ -4875,6 +4875,7 @@ namespace Thetis
             private Guid _bitmap_guid;
             private string _url;
             private int _secs_interval;
+            private bool _bypass_cache;
             private System.Drawing.Bitmap _bitmap;
             private clsMeter _owningMeter;
             private readonly object _bitmap_lock = new object();
@@ -4899,6 +4900,7 @@ namespace Thetis
                 _bitmap = null;
                 _url = "";
                 _secs_interval = 120;
+                _bypass_cache = false;
                 _ig = ig;
                 _width_scale = 1f;
                 _size = 0.1f;
@@ -4948,6 +4950,18 @@ namespace Thetis
                     if(_image_fetcher_guid != Guid.Empty)
                     {
                         MeterManager.ImgFetch.UpdateInterval(_image_fetcher_guid, _secs_interval);
+                    }
+                }
+            }public bool BypassCache
+            {
+                get { return _bypass_cache; }
+                set
+                {
+                    _bypass_cache = value;
+
+                    if (_image_fetcher_guid != Guid.Empty)
+                    {
+                        MeterManager.ImgFetch.UpdateBypassCache(_image_fetcher_guid, _bypass_cache);
                     }
                 }
             }
@@ -5015,7 +5029,7 @@ namespace Thetis
                     {
                         MeterManager.ImgFetch.StateChanged += OnState;
                         MeterManager.ImgFetch.ImagesObtained += OnImage;
-                        _image_fetcher_guid = MeterManager.ImgFetch.RegisterURL(url, _secs_interval, 1, isFile);
+                        _image_fetcher_guid = MeterManager.ImgFetch.RegisterURL(url, _secs_interval, 1, isFile, _bypass_cache);
                     }
                     catch
                     {
@@ -11515,6 +11529,7 @@ namespace Thetis
                                             webimg.FadeOnTx = igs.FadeOnTx;
                                             webimg.URL = igs.Text1;
                                             webimg.SecondsInterval = igs.UpdateInterval;
+                                            webimg.BypassCache = igs.DarkMode;
                                             webimg.WidthScale = igs.EyeScale;
 
                                             //webimg.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
@@ -12570,6 +12585,7 @@ namespace Thetis
                                             igs.FadeOnTx = webimg.FadeOnTx;
                                             igs.Text1 = webimg.URL;
                                             igs.UpdateInterval = webimg.SecondsInterval;
+                                            igs.DarkMode = webimg.BypassCache;
                                             igs.EyeScale = webimg.WidthScale;
                                             igs.HistoryDuration = (int)webimg.WebImageState;
                                         }
