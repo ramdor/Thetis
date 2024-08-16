@@ -283,7 +283,12 @@ namespace Thetis
             if (ok) {
                 // then import the one we were using into that new fresh one we just created
                 // we need to ignore merged flag so that we can contine to use and save everyting to this database
-                ok = DB.ImportAndMergeDatabase2(orginal_db_filename_xml, out string log, true);
+                ok = DB.ImportAndMergeDatabase(orginal_db_filename_xml, out string log, true);
+                try
+                {
+                    File.WriteAllText(_app_data_path + "ImportLog_dbupdate.txt", log);
+                }
+                catch { }
             }
 
             if (ok)
@@ -427,7 +432,6 @@ namespace Thetis
             if (!string.IsNullOrEmpty(DB.FileName))
             {
                 old_db_filename = DB.FileName;
-                //DB.WriteDB();
                 DB.Exit();
             }
 
@@ -1076,7 +1080,12 @@ namespace Thetis
                     }
                     if (ok)
                     {
-                        ok = DB.ImportAndMergeDatabase2(filename, out string log, false);
+                        ok = DB.ImportAndMergeDatabase(filename, out string log, false);
+                        try
+                        {
+                            File.WriteAllText(_app_data_path + "ImportLog.txt", log);
+                        }
+                        catch { }
                         if (ok)
                         {
                             DialogResult dr = MessageBox.Show("The database was imported sucessfully. Thetis will now restart.",
@@ -1260,7 +1269,6 @@ namespace Thetis
                     if (!string.IsNullOrEmpty(DB.FileName))
                     {
                         old_db_filename = DB.FileName;
-                        //DB.WriteDB();
                         DB.Exit();
                     }
 

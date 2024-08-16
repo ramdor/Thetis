@@ -3632,9 +3632,6 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.lblTXProfileWarning = new System.Windows.Forms.LabelTS();
-            this.btnExportDB = new System.Windows.Forms.ButtonTS();
-            this.btnImportDB = new System.Windows.Forms.ButtonTS();
-            this.btnResetDB = new System.Windows.Forms.ButtonTS();
             this.btnApply = new System.Windows.Forms.ButtonTS();
             this.btnCancel = new System.Windows.Forms.ButtonTS();
             this.btnOK = new System.Windows.Forms.ButtonTS();
@@ -57640,46 +57637,6 @@
             this.lblTXProfileWarning.Visible = false;
             this.lblTXProfileWarning.Click += new System.EventHandler(this.lblTXProfileWarning_Click);
             // 
-            // btnExportDB
-            // 
-            this.btnExportDB.Image = null;
-            this.btnExportDB.Location = new System.Drawing.Point(224, 476);
-            this.btnExportDB.Name = "btnExportDB";
-            this.btnExportDB.Selectable = true;
-            this.btnExportDB.Size = new System.Drawing.Size(112, 23);
-            this.btnExportDB.TabIndex = 22;
-            this.btnExportDB.Text = "Export Database...";
-            this.toolTip1.SetToolTip(this.btnExportDB, "Export the current Thetis Database to the location of your choice.");
-            this.btnExportDB.Visible = false;
-            this.btnExportDB.Click += new System.EventHandler(this.btnExportDB_Click);
-            // 
-            // btnImportDB
-            // 
-            this.btnImportDB.Image = null;
-            this.btnImportDB.Location = new System.Drawing.Point(108, 476);
-            this.btnImportDB.Name = "btnImportDB";
-            this.btnImportDB.Selectable = true;
-            this.btnImportDB.Size = new System.Drawing.Size(112, 23);
-            this.btnImportDB.TabIndex = 21;
-            this.btnImportDB.Text = "Import Database...";
-            this.toolTip1.SetToolTip(this.btnImportDB, "Import a database file, or partial database file such as an exported TX Profile");
-            this.btnImportDB.Visible = false;
-            this.btnImportDB.Click += new System.EventHandler(this.btnImportDB_Click);
-            // 
-            // btnResetDB
-            // 
-            this.btnResetDB.Image = null;
-            this.btnResetDB.Location = new System.Drawing.Point(8, 476);
-            this.btnResetDB.Name = "btnResetDB";
-            this.btnResetDB.Selectable = true;
-            this.btnResetDB.Size = new System.Drawing.Size(96, 23);
-            this.btnResetDB.TabIndex = 20;
-            this.btnResetDB.Text = "Reset Database";
-            this.toolTip1.SetToolTip(this.btnResetDB, "Copies the current database to the desktop and resets to the defaults (after rest" +
-        "arting)");
-            this.btnResetDB.Visible = false;
-            this.btnResetDB.Click += new System.EventHandler(this.btnResetDB_Click);
-            // 
             // btnApply
             // 
             this.btnApply.Image = null;
@@ -58230,10 +58187,10 @@
             0,
             0});
             this.nudMeterItemRotatorBeamWidth.Minimum = new decimal(new int[] {
-            180,
             0,
             0,
-            -2147483648});
+            0,
+            0});
             this.nudMeterItemRotatorBeamWidth.Name = "nudMeterItemRotatorBeamWidth";
             this.nudMeterItemRotatorBeamWidth.Size = new System.Drawing.Size(56, 20);
             this.nudMeterItemRotatorBeamWidth.TabIndex = 131;
@@ -61038,10 +60995,7 @@
             this.Controls.Add(this.txtboxTXProfileChangedReport);
             this.Controls.Add(this.lblTXProfileWarning);
             this.Controls.Add(this.labelSavingLoading);
-            this.Controls.Add(this.btnExportDB);
-            this.Controls.Add(this.btnImportDB);
             this.Controls.Add(this.grpMeterItemVfoDisplaySettings);
-            this.Controls.Add(this.btnResetDB);
             this.Controls.Add(this.btnApply);
             this.Controls.Add(this.grpMeterItemClockSettings);
             this.Controls.Add(this.btnCancel);
@@ -62366,7 +62320,6 @@
         private LabelTS lblBandLight;
         private LabelTS lblBandDark;
         private LabelTS lblPeakText;
-        private ButtonTS btnImportDB;
         private OpenFileDialog openFileDialog1;
         private TabPage tpTests;
         private TabPage tpPowerAmplifier;
@@ -62617,7 +62570,6 @@
         private Thetis.ColorButton clrbtnGenBackground;
         private ComboBoxTS comboTXTUNMeter;
         private LabelTS lblTXTUNMeter;
-        private ButtonTS btnResetDB;
         private CheckBoxTS chkDisplayMeterShowDecimal;
         private GroupBoxTS grpRTTYOffset;
         private CheckBoxTS chkRTTYOffsetEnableA;
@@ -62645,7 +62597,6 @@
         private TrackBarTS tbRX1FilterAlpha;
         private TrackBarTS tbMultiRXFilterAlpha;
         private CheckBoxTS chkWheelTuneVFOB;
-        private ButtonTS btnExportDB;
         private SaveFileDialog saveFileDialog1;
         private CheckBoxTS chkAlexPresent;
         private CheckBoxTS chkPennyPresent;
