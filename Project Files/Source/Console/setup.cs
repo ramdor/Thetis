@@ -25319,6 +25319,13 @@ namespace Thetis
                 igs.HistoryColor = clrbtnMMVfoDisplayFilter.Color;
                 igs.SegmentedSolidLowColour = clrbtnMMVfoDisplayBand.Color;
                 igs.PowerScaleColour = clrbtnMMVfoDigitHighlight.Color;
+
+                if (radMultiMeter_vfo_display_both.Checked)
+                    igs.HistoryDuration = (int)MeterManager.clsVfoDisplay.VFODisplayMode.VFO_BOTH;
+                else if (radMultiMeter_vfo_display_vfoa.Checked)
+                    igs.HistoryDuration = (int)MeterManager.clsVfoDisplay.VFODisplayMode.VFO_A;
+                else if (radMultiMeter_vfo_display_vfob.Checked)
+                    igs.HistoryDuration = (int)MeterManager.clsVfoDisplay.VFODisplayMode.VFO_B;
             }
             else if (mt == MeterType.CLOCK)
             {
@@ -25706,6 +25713,19 @@ namespace Thetis
                 clrbtnMMVfoDisplayFilter.Color = igs.HistoryColor;
                 clrbtnMMVfoDisplayBand.Color = igs.SegmentedSolidLowColour;
                 clrbtnMMVfoDigitHighlight.Color = igs.PowerScaleColour;
+
+                switch ((MeterManager.clsVfoDisplay.VFODisplayMode)igs.HistoryDuration)
+                {
+                    case MeterManager.clsVfoDisplay.VFODisplayMode.VFO_BOTH:
+                        radMultiMeter_vfo_display_both.Checked = true;
+                        break;
+                    case MeterManager.clsVfoDisplay.VFODisplayMode.VFO_A:
+                        radMultiMeter_vfo_display_vfoa.Checked = true;
+                        break;
+                    case MeterManager.clsVfoDisplay.VFODisplayMode.VFO_B:
+                        radMultiMeter_vfo_display_vfob.Checked = true;
+                        break;
+                }
             }
             else if (mt == MeterType.CLOCK)
             {
@@ -31292,6 +31312,24 @@ namespace Thetis
 
         private void chkWebImage_bypass_cache_CheckedChanged(object sender, EventArgs e)
         {
+            updateMeterType();
+        }
+
+        private void radMultiMeter_vfo_display_both_CheckedChanged(object sender, EventArgs e)
+        {
+            if(!radMultiMeter_vfo_display_both.Checked) return;
+            updateMeterType();
+        }
+
+        private void radMultiMeter_vfo_display_vfoa_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!radMultiMeter_vfo_display_vfoa.Checked) return;
+            updateMeterType();
+        }
+
+        private void radMultiMeter_vfo_display_vfob_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!radMultiMeter_vfo_display_vfob.Checked) return;
             updateMeterType();
         }
     }

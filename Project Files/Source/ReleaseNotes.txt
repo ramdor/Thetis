@@ -4,10 +4,13 @@
 
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
+## Join us on Discord : https://discord.gg/6fHCRKnDc9
+
 ## v2.10.3.6 Change Log - WIP dev_9
-- [add] rotator can now be stopped. Hover mouse over arrow pivot point to see red circle. Click in circle and STOP will be sent. Reset the pstRotator commands if you have already added a rotator
+- [add] total re-work of database management. There is now a database manager. See video : https://youtu.be/pwe3bd-tkGY
+- [add] rotator can now be stopped. Hover mouse over arrow pivot point to see red circle. Click in circle and STOP will be sent. Note: reset the pstRotator commands if you are already using before this update
 - [add] cache bypass option to web image meter item
-- [change] re-implementation of database management. See following video for demo :
+- [add] you can now select VFOA, VFOB or BOTH in the multimeter vfo control
 
 ## v2.10.3.6 Change Log - WIP dev_8b
 - [fix] rx att + tx att was being used in dup display, leading to incorrect display. Fixed
