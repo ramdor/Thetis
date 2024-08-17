@@ -24157,6 +24157,7 @@ namespace Thetis
                 igs.FadeOnRx = chkWebImage_fade_rx.Checked;
                 igs.FadeOnTx = chkWebImage_fade_tx.Checked;
                 igs.Text1 = txtWebImage_url.Text;
+                igs.DarkMode = chkWebImage_bypass_cache.Checked;
             }
             else if(mt == MeterType.ROTATOR)
             {
@@ -24482,6 +24483,7 @@ namespace Thetis
                 chkWebImage_fade_rx.Checked = igs.FadeOnRx;
                 chkWebImage_fade_tx.Checked = igs.FadeOnTx;
                 txtWebImage_url.Text = igs.Text1;
+                chkWebImage_bypass_cache.Checked = igs.DarkMode;
                 updateWebImageState((ImageFetcher.State)igs.HistoryDuration);
             }
             else if (mt == MeterType.ROTATOR)
@@ -25814,23 +25816,6 @@ namespace Thetis
         {
             buildZipFile(console.ProductVersion + "\n" + console.BasicTitleBar, console.AppDataPath);
         }
-
-        private void btnOpenDBFolder_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string fullpath = DB.FileName;
-                string directoryPath = Path.GetDirectoryName(fullpath);
-                if (Directory.Exists(directoryPath))
-                {
-                    Process.Start("explorer.exe", directoryPath);
-                }
-            }
-            catch (Exception ex)
-            {
-            }
-        }
-
         private void buildZipFile(string version, string sourceDirectory)
         {
             string[] filesToZip = { "ErrorLog.txt", "VALog.txt" };
@@ -26556,7 +26541,10 @@ namespace Thetis
 
                 using (ZipArchive zip = ZipFile.OpenRead(sourceZipFilePath))
                 {
-                    foreach (ZipArchiveEntry entry in zip.Entries.Where(e => e.FullName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
+                    foreach (ZipArchiveEntry entry in zip.Entries.Where(e => e.FullName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+                                                                             e.FullName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                                                                             e.FullName.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+                                                                             e.FullName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase)))
                     {
                         // Normalize the entry path for file system usage
                         string entryPath = Path.Combine(outputPath, entry.FullName.Replace('/', '\\'));
@@ -29806,11 +29794,11 @@ namespace Thetis
 
         private void txtWebImage_url_TextChanged(object sender, EventArgs e)
         {
-            if(txtWebImage_url.Text.Contains("hamqsl.com", StringComparison.InvariantCultureIgnoreCase) ||
+            if (txtWebImage_url.Text.Contains("hamqsl.com", StringComparison.InvariantCultureIgnoreCase) ||
                 txtWebImage_url.Text.Contains("bsdworld.org", StringComparison.InvariantCultureIgnoreCase) ||
                 txtWebImage_url.Text.Contains("nascom.nasa.gov", StringComparison.InvariantCultureIgnoreCase) ||
                 txtWebImage_url.Text.Contains("swpc.noaa.gov", StringComparison.InvariantCultureIgnoreCase) ||
-                txtWebImage_url.Text.Contains("kc2g.com", StringComparison.InvariantCultureIgnoreCase)                
+                txtWebImage_url.Text.Contains("kc2g.com", StringComparison.InvariantCultureIgnoreCase)
                 )
             {
                 // lock and set the update interval
@@ -29818,9 +29806,20 @@ namespace Thetis
                 _ignoreMeterItemChangeEvents = true;
                 nudWebImage_update_interval.Value = (decimal)600;
                 _ignoreMeterItemChangeEvents = false;
+
+                // lock and set the bypass cache
+                chkWebImage_bypass_cache.Enabled = false;
+                _ignoreMeterItemChangeEvents = true;
+                chkWebImage_bypass_cache.Checked = false;
+                _ignoreMeterItemChangeEvents = false;
             }
             else
-                nudWebImage_update_interval.Enabled = true;
+            {
+                if(!nudWebImage_update_interval.Enabled)
+                    nudWebImage_update_interval.Enabled = true;
+                if(!chkWebImage_bypass_cache.Enabled)
+                    chkWebImage_bypass_cache.Enabled = true;
+            }
 
             updateMeterType();
         }
@@ -30119,6 +30118,11 @@ namespace Thetis
         }
 
         private void txtMeterItemRotatorSTOPcommand_TextChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkWebImage_bypass_cache_CheckedChanged(object sender, EventArgs e)
         {
             updateMeterType();
         }

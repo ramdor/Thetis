@@ -9171,19 +9171,34 @@ namespace Thetis
 
             VerifyTables();
 
-            CheckBandTextValid();
-
-            VersionNumber = Common.GetVerNum();
-            VersionString = TitleBar.GetString(false);
+            CheckBandTextValid();                       
 
             //as a minimum add the version info to a new fresh db
+            bool changed = false;
             Dictionary<string, string> d = GetVarsDictionary("State");
             if (!d.ContainsKey("Version"))
+            {
+                VersionString = TitleBar.GetString(false);
                 d.Add("Version", VersionString);
+                changed = true;
+            }
+            else
+            {
+                VersionString = ConvertFromDBVal<string>(d["Version"]);
+            }
             if (!d.ContainsKey("VersionNumber"))
+            {
+                VersionNumber = Common.GetVerNum();
                 d.Add("VersionNumber", VersionNumber);
-            SaveVarsDictionary("State", ref d, true);
-            //
+                changed = true;
+            }
+            else
+            {
+                VersionNumber = ConvertFromDBVal<string>(d["VersionNumber"]);
+            }
+
+            if(changed)
+                SaveVarsDictionary("State", ref d, true);
 
             return true;
         }

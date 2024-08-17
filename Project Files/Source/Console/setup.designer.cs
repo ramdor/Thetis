@@ -208,7 +208,6 @@
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
             this.btnReleaseNotes = new System.Windows.Forms.ButtonTS();
-            this.btnOpenDBFolder = new System.Windows.Forms.ButtonTS();
             this.lblTimeout = new System.Windows.Forms.LabelTS();
             this.lblShowTimeoutText = new System.Windows.Forms.LabelTS();
             this.btnZipDebugInfo = new System.Windows.Forms.ButtonTS();
@@ -3691,6 +3690,7 @@
             this.radMeterItemRotator_show_both = new System.Windows.Forms.RadioButtonTS();
             this.nudMeterItemRotator_padding = new System.Windows.Forms.NumericUpDownTS();
             this.txtMeterItemRotatorSTOPcommand = new System.Windows.Forms.TextBoxTS();
+            this.chkWebImage_bypass_cache = new System.Windows.Forms.CheckBoxTS();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -7280,7 +7280,6 @@
             // 
             this.tpGeneralHardware.BackColor = System.Drawing.SystemColors.Control;
             this.tpGeneralHardware.Controls.Add(this.btnReleaseNotes);
-            this.tpGeneralHardware.Controls.Add(this.btnOpenDBFolder);
             this.tpGeneralHardware.Controls.Add(this.lblTimeout);
             this.tpGeneralHardware.Controls.Add(this.lblShowTimeoutText);
             this.tpGeneralHardware.Controls.Add(this.btnZipDebugInfo);
@@ -7310,19 +7309,6 @@
             this.toolTip1.SetToolTip(this.btnReleaseNotes, "Show the release notes for this version");
             this.btnReleaseNotes.UseVisualStyleBackColor = true;
             this.btnReleaseNotes.Click += new System.EventHandler(this.btnReleaseNotes_Click);
-            // 
-            // btnOpenDBFolder
-            // 
-            this.btnOpenDBFolder.Image = null;
-            this.btnOpenDBFolder.Location = new System.Drawing.Point(129, 310);
-            this.btnOpenDBFolder.Name = "btnOpenDBFolder";
-            this.btnOpenDBFolder.Selectable = true;
-            this.btnOpenDBFolder.Size = new System.Drawing.Size(111, 53);
-            this.btnOpenDBFolder.TabIndex = 122;
-            this.btnOpenDBFolder.Text = "Open DB folder";
-            this.toolTip1.SetToolTip(this.btnOpenDBFolder, "Open the folder containing the database");
-            this.btnOpenDBFolder.UseVisualStyleBackColor = true;
-            this.btnOpenDBFolder.Click += new System.EventHandler(this.btnOpenDBFolder_Click);
             // 
             // lblTimeout
             // 
@@ -58721,6 +58707,20 @@
             this.toolTip1.SetToolTip(this.txtMeterItemRotatorSTOPcommand, "The ELE rotator string");
             this.txtMeterItemRotatorSTOPcommand.TextChanged += new System.EventHandler(this.txtMeterItemRotatorSTOPcommand_TextChanged);
             // 
+            // chkWebImage_bypass_cache
+            // 
+            this.chkWebImage_bypass_cache.AutoSize = true;
+            this.chkWebImage_bypass_cache.Image = null;
+            this.chkWebImage_bypass_cache.Location = new System.Drawing.Point(221, 63);
+            this.chkWebImage_bypass_cache.Name = "chkWebImage_bypass_cache";
+            this.chkWebImage_bypass_cache.Size = new System.Drawing.Size(94, 17);
+            this.chkWebImage_bypass_cache.TabIndex = 146;
+            this.chkWebImage_bypass_cache.Text = "Bypass Cache";
+            this.toolTip1.SetToolTip(this.chkWebImage_bypass_cache, "Append a unique id to the url each request, bypassing most servers caching polici" +
+        "es");
+            this.chkWebImage_bypass_cache.UseVisualStyleBackColor = true;
+            this.chkWebImage_bypass_cache.CheckedChanged += new System.EventHandler(this.chkWebImage_bypass_cache_CheckedChanged);
+            // 
             // saveFileDialog1
             // 
             this.saveFileDialog1.Filter = "Thetis Database Files (*.xml)|*.xml|All files|*.*";
@@ -60751,6 +60751,7 @@
             // 
             // grpWebImage
             // 
+            this.grpWebImage.Controls.Add(this.chkWebImage_bypass_cache);
             this.grpWebImage.Controls.Add(this.groupBoxTS42);
             this.grpWebImage.Controls.Add(this.groupBoxTS41);
             this.grpWebImage.Controls.Add(this.groupBoxTS43);
@@ -60960,7 +60961,7 @@
             // 
             this.chkWebImage_fade_tx.AutoSize = true;
             this.chkWebImage_fade_tx.Image = null;
-            this.chkWebImage_fade_tx.Location = new System.Drawing.Point(227, 46);
+            this.chkWebImage_fade_tx.Location = new System.Drawing.Point(221, 40);
             this.chkWebImage_fade_tx.Name = "chkWebImage_fade_tx";
             this.chkWebImage_fade_tx.Size = new System.Drawing.Size(82, 17);
             this.chkWebImage_fade_tx.TabIndex = 3;
@@ -60972,7 +60973,7 @@
             // 
             this.chkWebImage_fade_rx.AutoSize = true;
             this.chkWebImage_fade_rx.Image = null;
-            this.chkWebImage_fade_rx.Location = new System.Drawing.Point(227, 23);
+            this.chkWebImage_fade_rx.Location = new System.Drawing.Point(221, 17);
             this.chkWebImage_fade_rx.Name = "chkWebImage_fade_rx";
             this.chkWebImage_fade_rx.Size = new System.Drawing.Size(83, 17);
             this.chkWebImage_fade_rx.TabIndex = 2;
@@ -65660,7 +65661,6 @@
         private CheckBoxTS chkAutoModeSwitchCWReturn;
         private ButtonTS btnZipDebugInfo;
         private GroupBoxTS groupBoxTS30;
-        private ButtonTS btnOpenDBFolder;
         private CheckBoxTS chkLogVoltsAmps;
         private CheckBoxTS chkLinkIfCtrlHeld;
         private TabPage tpSkinServers;
@@ -66045,5 +66045,6 @@
         private ComboBoxTS comboWebImage_nasa;
         private LabelTS labelTS237;
         private TextBoxTS txtMeterItemRotatorSTOPcommand;
+        private CheckBoxTS chkWebImage_bypass_cache;
     }
 }
