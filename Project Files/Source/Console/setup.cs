@@ -659,13 +659,6 @@ namespace Thetis
 
             //MW0LGE_21h
             updateNetworkThrottleCheckBox();
-
-            // MI0BOT: Make sure the correct stuff is enabled
-            if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
-            {
-                chkEnableStaticIP_CheckedChanged(this, EventArgs.Empty);
-                chkHL2PsSync_CheckedChanged(this, EventArgs.Empty);
-            }
         }
         private bool _bAddedDelegates = false;
         private void addDelegates()
@@ -1068,6 +1061,17 @@ namespace Thetis
         public void PerformDelayedInitalistion()
         {
             EventArgs e = EventArgs.Empty;
+
+            // MI0BOT: Make sure the correct stuff is enabled
+            if (HPSDRHW.HermesLite == Audio.LastRadioHardware ||
+                HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)     // MI0BOT: Changes for HL2 only having a 16 step output attenuator 
+            {
+                udATTOnTX.Minimum = -28;
+                udHermesStepAttenuatorData.Minimum = -28;
+                udHermesStepAttenuatorDataRX2.Minimum = -28;
+                chkEnableStaticIP_CheckedChanged(this, EventArgs.Empty);
+                chkHL2PsSync_CheckedChanged(this, EventArgs.Empty);
+            }
 
             chkDisable6mLNAonTX_CheckedChanged(this, e);
             chkDisable6mLNAonRX_CheckedChanged(this, e);
@@ -19569,8 +19573,6 @@ namespace Thetis
             if (initializing) return;
             console.QSOTimerFlashAfterAutoReset = chkQSOTimerFlashTimerIfResetOnExpiry.Checked;
         }
-                case "HERMES LITE":
-                    return HPSDRModel.HERMESLITE;           // MI0BOT: HL2
         private bool _firstRadioModelChange = true;
         private void comboRadioModel_SelectedIndexChanged(object sender, EventArgs e)
         {

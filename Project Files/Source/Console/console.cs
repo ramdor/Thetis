@@ -1944,9 +1944,14 @@ namespace Thetis
             ptbPWR.Value = 100;
             btnDisplayPanCenter_Click(this, EventArgs.Empty);
 
-            if (CurrentHPSDRModel == HPSDRModel.HERMESLITE) // MI0BOT: Changes for HL2 only having a 16 step output attenuator 
+            comboFMCTCSS.Text = "100.0";
+
+            GetState(); // recall saved state
+
+            if (HPSDRHW.HermesLite == Audio.LastRadioHardware ||
+                HPSDRModel.HERMESLITE == CurrentHPSDRModel)     // MI0BOT: Need an early indication of hardware type due to HL2 rx attenuator can be negative  
             {
-                ptbPWR.Maximum = 90;
+                ptbPWR.Maximum = 90;        // MI0BOT: Changes for HL2 only having a 16 step output attenuator 
                 ptbPWR.Value = 0;
                 ptbPWR.LargeChange = 6;
                 ptbPWR.SmallChange = 6;
@@ -1954,7 +1959,6 @@ namespace Thetis
                 ptbTune.Value = 0;
                 ptbTune.LargeChange = 3;
                 ptbTune.SmallChange = 3;
-
 
                 // MI0BOT: Changes for HL2 having a greater range of LNA 
                 udRX1StepAttData.Minimum = -28;
@@ -1965,10 +1969,6 @@ namespace Thetis
                 udRX2StepAttData.Enabled = false;
                 lblRX2Preamp.Enabled = false;
             }
-
-            comboFMCTCSS.Text = "100.0";
-
-            GetState(); // recall saved state
 
             UpdateTXProfile(SetupForm.TXProfile); // now update the combos
 
