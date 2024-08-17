@@ -4118,7 +4118,23 @@ namespace Thetis
             public VFODisplayMode VFODispMode
             {
                 get { return _vfo_display_mode; }
-                set { _vfo_display_mode = value; }
+                set 
+                { 
+                    _vfo_display_mode = value;
+                    switch (_vfo_display_mode)
+                    {
+                        case VFODisplayMode.VFO_BOTH:
+                            VFOARenderState = renderState.VFO;
+                            VFOBRenderState = renderState.VFO;
+                            break;
+                        case VFODisplayMode.VFO_A:
+                            VFOBRenderState = renderState.VFO;
+                            break;
+                        case VFODisplayMode.VFO_B:
+                            VFOARenderState = renderState.VFO;
+                            break;
+                    }
+                }
             }
             private double getVfo()
             {
