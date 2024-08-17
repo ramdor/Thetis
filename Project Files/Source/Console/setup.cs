@@ -1511,12 +1511,6 @@ namespace Thetis
             // pages on this form of the following types: CheckBoxTS, ComboBoxTS,
             // NumericUpDownTS, RadioButtonTS, TextBox, and TrackBar (slider)
 
-            //DB
-            //if (mergingdb)
-            //{
-            //    mergingdb = false;
-            //    return;
-            //}
             if (DB.Merged) return; // prevent saving options as we want to ignore everything
 
             _savingOptions = true;
@@ -1609,7 +1603,7 @@ namespace Thetis
 
             DB.SaveVarsDictionary("Options", ref a, true);
 
-            DB.WriteDB();//DB console.DBFileName);
+            DB.WriteDB();
 
             _savingOptions = false;
         }
@@ -11033,8 +11027,6 @@ namespace Thetis
             btnOK.Enabled = bEnabled;
             btnApply.Enabled = bEnabled;
             btnCancel.Enabled = bEnabled;
-            btnResetDB.Enabled = bEnabled;
-            btnImportDB.Enabled = bEnabled;
             comboFRSRegion.Enabled = bEnabled;
             comboTXProfileName.Enabled = bEnabled;
             btnTXProfileSave.Enabled = bEnabled;
@@ -11175,74 +11167,11 @@ namespace Thetis
 
         private void btnImportDB_Click(object sender, System.EventArgs e)
         {            
-            return;
-
-            //DB
-            //string path = console.AppDataPath;
-            //path = path.Substring(0, path.LastIndexOf("\\"));
-            //openFileDialog1.InitialDirectory = path;
-            ////MW0LGE_[2.9.0.7] changes
-            //DialogResult dr = openFileDialog1.ShowDialog();
-            //if (dr == System.Windows.Forms.DialogResult.OK)
-            //{
-            //    bool ok = CompleteImport();
-            //    if (ok) console.Close();  // Save everything 
-            //}
         }
 
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
         }
-
-        //DB
-        //private bool mergingdb = false;
-        //private bool CompleteImport()
-        //{
-        //    //-W2PA Import more carefully, allowing DBs created by previous versions to retain settings and options
-        //    //MW0LGE_[2.9.0.7] changed structure slightly
-        //    bool success = DB.ImportAndMergeDatabase(openFileDialog1.FileName, console.AppDataPath, true);
-
-        //    if (success)
-        //        MessageBox.Show("Database Imported Successfully. Thetis will now close.\n\nPlease RE-START.",
-        //                    "DB Import",
-        //                    MessageBoxButtons.OK,
-        //                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-        //    else
-        //        MessageBox.Show("Database could not be imported. Previous database has been kept.",
-        //                    "DB Import",
-        //                    MessageBoxButtons.OK,
-        //                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-
-        //    // Archive old database file write a new one.
-        //    if (success)
-        //    {
-        //        string db_filename = DB.FileName; //DB
-        //        string archivePath = console.AppDataPath + "DB_Archive\\";
-        //        if (!Directory.Exists(archivePath)) Directory.CreateDirectory(archivePath);
-        //        string justFileName = db_filename.Substring(db_filename.LastIndexOf("\\") + 1);
-        //        string datetime = Common.DateTimeStringForFile();//DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(":", ".");
-
-        //        // MW0LGE [2.9.0.8] issue if you do multiple imports in same minute, this will fail, we could add seconds, but let us increment counter
-
-        //        string sInc = "";
-        //        int n = 0;
-        //        while (File.Exists(archivePath + "Thetis_database_" + datetime + sInc + ".xml"))
-        //        {
-        //            sInc = "_" + n.ToString();
-        //            n++;
-        //        }
-        //        File.Copy(db_filename, archivePath + "Thetis_database_" + datetime + sInc + ".xml");
-        //        //
-
-        //        File.Delete(db_filename);
-
-        //        DB.WriteDB();//DB console.DBFileName);
-        //        mergingdb = true;
-        //    }
-
-        //    return success;
-        //}
-
         #endregion
 
         private bool shift_key = false;
@@ -12158,21 +12087,6 @@ namespace Thetis
 
         private void btnResetDB_Click(object sender, System.EventArgs e)
         {
-            return;
-
-            //DB
-            //DialogResult dr = MessageBox.Show("This will close the program, make a copy of the current\n" +
-            //    "database to the DB_Archive folder and reset the active database\n" +
-            //    "the next time Thetis is launched.\n\n" +
-            //    "Are you sure you want to reset the database?",
-            //    "Reset Database?",
-            //    MessageBoxButtons.YesNo,
-            //    MessageBoxIcon.Warning);
-
-            //if (dr == DialogResult.No) return;
-
-            //console.ResetDB = true;
-            //console.Close();
         }
 
         private void chkDisplayMeterShowDecimal_CheckedChanged(object sender, System.EventArgs e)
@@ -12555,13 +12469,6 @@ namespace Thetis
 
         private void btnExportDB_Click(object sender, EventArgs e)
         {
-            return;
-            //DB
-            //string path = console.AppDataPath;
-            //path = path.Substring(0, path.LastIndexOf("\\"));
-            //string datetime = Common.DateTimeStringForFile();
-            //saveFileDialog1.FileName = path + "\\Thetis_database_export_" + datetime + ".xml";
-            //saveFileDialog1.ShowDialog();
         }
 
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
@@ -25322,6 +25229,7 @@ namespace Thetis
                 igs.FadeOnRx = chkWebImage_fade_rx.Checked;
                 igs.FadeOnTx = chkWebImage_fade_tx.Checked;
                 igs.Text1 = txtWebImage_url.Text;
+                igs.DarkMode = chkWebImage_bypass_cache.Checked;
             }
             else if(mt == MeterType.ROTATOR)
             {
@@ -25647,6 +25555,7 @@ namespace Thetis
                 chkWebImage_fade_rx.Checked = igs.FadeOnRx;
                 chkWebImage_fade_tx.Checked = igs.FadeOnTx;
                 txtWebImage_url.Text = igs.Text1;
+                chkWebImage_bypass_cache.Checked = igs.DarkMode;
                 updateWebImageState((ImageFetcher.State)igs.HistoryDuration);
             }
             else if (mt == MeterType.ROTATOR)
@@ -27032,23 +26941,6 @@ namespace Thetis
         {
             buildZipFile(console.ProductVersion + "\n" + console.BasicTitleBar, console.AppDataPath);
         }
-
-        private void btnOpenDBFolder_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string fullpath = DB.FileName;
-                string directoryPath = Path.GetDirectoryName(fullpath);
-                if (Directory.Exists(directoryPath))
-                {
-                    Process.Start("explorer.exe", directoryPath);
-                }
-            }
-            catch (Exception ex)
-            {
-            }
-        }
-
         private void buildZipFile(string version, string sourceDirectory)
         {
             string[] filesToZip = { "ErrorLog.txt", "VALog.txt" };
@@ -27774,7 +27666,10 @@ namespace Thetis
 
                 using (ZipArchive zip = ZipFile.OpenRead(sourceZipFilePath))
                 {
-                    foreach (ZipArchiveEntry entry in zip.Entries.Where(e => e.FullName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
+                    foreach (ZipArchiveEntry entry in zip.Entries.Where(e => e.FullName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+                                                                             e.FullName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                                                                             e.FullName.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+                                                                             e.FullName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase)))
                     {
                         // Normalize the entry path for file system usage
                         string entryPath = Path.Combine(outputPath, entry.FullName.Replace('/', '\\'));
@@ -31067,11 +30962,11 @@ namespace Thetis
 
         private void txtWebImage_url_TextChanged(object sender, EventArgs e)
         {
-            if(txtWebImage_url.Text.Contains("hamqsl.com", StringComparison.InvariantCultureIgnoreCase) ||
+            if (txtWebImage_url.Text.Contains("hamqsl.com", StringComparison.InvariantCultureIgnoreCase) ||
                 txtWebImage_url.Text.Contains("bsdworld.org", StringComparison.InvariantCultureIgnoreCase) ||
                 txtWebImage_url.Text.Contains("nascom.nasa.gov", StringComparison.InvariantCultureIgnoreCase) ||
                 txtWebImage_url.Text.Contains("swpc.noaa.gov", StringComparison.InvariantCultureIgnoreCase) ||
-                txtWebImage_url.Text.Contains("kc2g.com", StringComparison.InvariantCultureIgnoreCase)                
+                txtWebImage_url.Text.Contains("kc2g.com", StringComparison.InvariantCultureIgnoreCase)
                 )
             {
                 // lock and set the update interval
@@ -31079,9 +30974,20 @@ namespace Thetis
                 _ignoreMeterItemChangeEvents = true;
                 nudWebImage_update_interval.Value = (decimal)600;
                 _ignoreMeterItemChangeEvents = false;
+
+                // lock and set the bypass cache
+                chkWebImage_bypass_cache.Enabled = false;
+                _ignoreMeterItemChangeEvents = true;
+                chkWebImage_bypass_cache.Checked = false;
+                _ignoreMeterItemChangeEvents = false;
             }
             else
-                nudWebImage_update_interval.Enabled = true;
+            {
+                if(!nudWebImage_update_interval.Enabled)
+                    nudWebImage_update_interval.Enabled = true;
+                if(!chkWebImage_bypass_cache.Enabled)
+                    chkWebImage_bypass_cache.Enabled = true;
+            }
 
             updateMeterType();
         }
@@ -31380,6 +31286,11 @@ namespace Thetis
         }
 
         private void txtMeterItemRotatorSTOPcommand_TextChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkWebImage_bypass_cache_CheckedChanged(object sender, EventArgs e)
         {
             updateMeterType();
         }

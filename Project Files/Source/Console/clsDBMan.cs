@@ -154,7 +154,7 @@ namespace Thetis
                 }
             }
             // ctrl key upgrade
-            bool force_update = false;
+            bool ctrl_key_force_update = false;
             if (Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey))
             {
                 Thread.Sleep(500); // ensure this is intentional
@@ -166,23 +166,23 @@ namespace Thetis
                          MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
 
                     if (dr == DialogResult.Yes)
-                        force_update = true;
+                        ctrl_key_force_update = true;
                 }
             }
 
-
             bool ok = false;
             bool made_new = false;
+            bool old_db_found = false;
 
             Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
 
             if (dbs.Count == 0 || new_db)
             {
                 // no dbs, likely due to fresh install, and/or first use of this new db manager
-                ok = createNewDB(true, true);
+                ok = createNewDB(true, true, out old_db_found);
                 if (ok)
                 {
-                    made_new = true;
+                    if(!old_db_found) made_new = true;
                     dbs = getAvailableDBs();
                     ok = dbs.Count > 0;
                 }
@@ -203,7 +203,7 @@ namespace Thetis
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
-                        ok = createNewDB(false, true);
+                        ok = createNewDB(false, true, out bool _);
                         if (ok)
                         {
                             made_new = true;
@@ -235,7 +235,7 @@ namespace Thetis
                         _ignore_written = false;
 
                         //check version
-                        if(ok) checkVersion(made_new, force_update);
+                        if(ok) checkVersion(made_new, ctrl_key_force_update);
                     }
                 }
                 else
@@ -278,12 +278,17 @@ namespace Thetis
 
             // need to create new fresh db
             string orginal_db_filename_xml = DB.FileName;
-            bool ok = createNewDB(false, true);
+            bool ok = createNewDB(false, true, out bool _);
 
             if (ok) {
                 // then import the one we were using into that new fresh one we just created
                 // we need to ignore merged flag so that we can contine to use and save everyting to this database
-                ok = DB.ImportAndMergeDatabase2(orginal_db_filename_xml, out string log, true);
+                ok = DB.ImportAndMergeDatabase(orginal_db_filename_xml, out string log, true);
+                try
+                {
+                    File.WriteAllText(_app_data_path + "ImportLog_dbupdate.txt", log);
+                }
+                catch { }
             }
 
             if (ok)
@@ -388,11 +393,13 @@ namespace Thetis
                 }
             }
         }
-        private static bool createNewDB(bool check_for_old_db = false, bool make_active = false, string description = "")
+        private static bool createNewDB(bool check_for_old_db, bool make_active, out bool old_db_found, string description = "")
         {
             bool ok = true;
 
             string db_folder = createNewDBFolder(out Guid guid);
+
+            old_db_found = false;
 
             ok = !string.IsNullOrEmpty(db_folder);
             if (!ok) return false;
@@ -413,7 +420,10 @@ namespace Thetis
                     counter++;
                 }
 
+                //rename to old
                 File.Move(source_db, source_db_renamed);
+
+                old_db_found = true;
             }
             else
             {
@@ -427,7 +437,6 @@ namespace Thetis
             if (!string.IsNullOrEmpty(DB.FileName))
             {
                 old_db_filename = DB.FileName;
-                //DB.WriteDB();
                 DB.Exit();
             }
 
@@ -659,10 +668,30 @@ namespace Thetis
                 moveToBroken(guid);
             }
 
+            // if we have an active db remove it
+            DatabaseInfo activeDB = null;
+            if (_dbman_settings != null)
+            {
+                if (foldersInfo.ContainsKey(_dbman_settings.ActiveDB_GUID))
+                {
+                    activeDB = foldersInfo[_dbman_settings.ActiveDB_GUID];
+                    foldersInfo.Remove(_dbman_settings.ActiveDB_GUID);
+                }
+            }
+
+            // order the list
             IOrderedEnumerable<KeyValuePair<Guid, DatabaseInfo>> sortedEntries = foldersInfo
                 .OrderByDescending(entry => entry.Value.LastChanged);
             Dictionary<Guid, DatabaseInfo> sortedDictionary = sortedEntries
                 .ToDictionary(entry => entry.Key, entry => entry.Value);
+
+            // prepend the active so that it is always at top, irrespective of last changed
+            if (activeDB != null)
+            {
+                sortedDictionary = sortedDictionary
+                    .Prepend(new KeyValuePair<Guid, DatabaseInfo>(activeDB.GUID, activeDB))
+                    .ToDictionary(entry => entry.Key, entry => entry.Value);
+            }
 
             return sortedDictionary;
         }
@@ -757,7 +786,7 @@ namespace Thetis
             string desc = InputBox.Show("Database Description", "Please provide a description for this new database.", "");
             if (string.IsNullOrEmpty(desc)) return;
 
-            createNewDB(false, false, desc);
+            createNewDB(false, false, out bool _, desc);
 
             Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
             _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, Guid.Empty);
@@ -1076,7 +1105,12 @@ namespace Thetis
                     }
                     if (ok)
                     {
-                        ok = DB.ImportAndMergeDatabase2(filename, out string log, false);
+                        ok = DB.ImportAndMergeDatabase(filename, out string log, false);
+                        try
+                        {
+                            File.WriteAllText(_app_data_path + "ImportLog.txt", log);
+                        }
+                        catch { }
                         if (ok)
                         {
                             DialogResult dr = MessageBox.Show("The database was imported sucessfully. Thetis will now restart.",
@@ -1131,6 +1165,23 @@ namespace Thetis
 
                 Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
                 _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, guid);
+            }
+            catch { }
+        }
+        public static void OpenFolder(Guid guid)
+        {
+            if (guid == Guid.Empty && _dbman_settings != null )
+                guid = _dbman_settings.ActiveDB_GUID;
+
+            if (guid == Guid.Empty) return;
+
+            string folder_path = _db_data_path + guid.ToString();
+            try
+            {
+                if (Directory.Exists(folder_path))
+                {
+                    Process.Start("explorer.exe", folder_path);
+                }
             }
             catch { }
         }
@@ -1260,7 +1311,6 @@ namespace Thetis
                     if (!string.IsNullOrEmpty(DB.FileName))
                     {
                         old_db_filename = DB.FileName;
-                        //DB.WriteDB();
                         DB.Exit();
                     }
 
