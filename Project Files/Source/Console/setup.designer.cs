@@ -3840,6 +3840,9 @@
             this.labelTS235 = new System.Windows.Forms.LabelTS();
             this.chkWebImage_fade_tx = new System.Windows.Forms.CheckBoxTS();
             this.chkWebImage_fade_rx = new System.Windows.Forms.CheckBoxTS();
+            this.radMultiMeter_vfo_display_both = new System.Windows.Forms.RadioButtonTS();
+            this.radMultiMeter_vfo_display_vfoa = new System.Windows.Forms.RadioButtonTS();
+            this.radMultiMeter_vfo_display_vfob = new System.Windows.Forms.RadioButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -57146,6 +57149,9 @@
             // 
             // grpMeterItemVfoDisplaySettings
             // 
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.radMultiMeter_vfo_display_vfob);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.radMultiMeter_vfo_display_vfoa);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.radMultiMeter_vfo_display_both);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS216);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDigitHighlight);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS177);
@@ -60980,6 +60986,45 @@
             this.chkWebImage_fade_rx.Text = "Fade on RX";
             this.chkWebImage_fade_rx.UseVisualStyleBackColor = true;
             this.chkWebImage_fade_rx.CheckedChanged += new System.EventHandler(this.chkWebImage_fade_rx_CheckedChanged);
+            // 
+            // radMultiMeter_vfo_display_both
+            // 
+            this.radMultiMeter_vfo_display_both.AutoSize = true;
+            this.radMultiMeter_vfo_display_both.Image = null;
+            this.radMultiMeter_vfo_display_both.Location = new System.Drawing.Point(105, 323);
+            this.radMultiMeter_vfo_display_both.Name = "radMultiMeter_vfo_display_both";
+            this.radMultiMeter_vfo_display_both.Size = new System.Drawing.Size(47, 17);
+            this.radMultiMeter_vfo_display_both.TabIndex = 132;
+            this.radMultiMeter_vfo_display_both.TabStop = true;
+            this.radMultiMeter_vfo_display_both.Text = "Both";
+            this.radMultiMeter_vfo_display_both.UseVisualStyleBackColor = true;
+            this.radMultiMeter_vfo_display_both.CheckedChanged += new System.EventHandler(this.radMultiMeter_vfo_display_both_CheckedChanged);
+            // 
+            // radMultiMeter_vfo_display_vfoa
+            // 
+            this.radMultiMeter_vfo_display_vfoa.AutoSize = true;
+            this.radMultiMeter_vfo_display_vfoa.Image = null;
+            this.radMultiMeter_vfo_display_vfoa.Location = new System.Drawing.Point(158, 323);
+            this.radMultiMeter_vfo_display_vfoa.Name = "radMultiMeter_vfo_display_vfoa";
+            this.radMultiMeter_vfo_display_vfoa.Size = new System.Drawing.Size(56, 17);
+            this.radMultiMeter_vfo_display_vfoa.TabIndex = 133;
+            this.radMultiMeter_vfo_display_vfoa.TabStop = true;
+            this.radMultiMeter_vfo_display_vfoa.Text = "VFO A";
+            this.radMultiMeter_vfo_display_vfoa.UseVisualStyleBackColor = true;
+            this.radMultiMeter_vfo_display_vfoa.CheckedChanged += new System.EventHandler(this.radMultiMeter_vfo_display_vfoa_CheckedChanged);
+            // 
+            // radMultiMeter_vfo_display_vfob
+            // 
+            this.radMultiMeter_vfo_display_vfob.AutoSize = true;
+            this.radMultiMeter_vfo_display_vfob.Image = null;
+            this.radMultiMeter_vfo_display_vfob.Location = new System.Drawing.Point(220, 323);
+            this.radMultiMeter_vfo_display_vfob.Name = "radMultiMeter_vfo_display_vfob";
+            this.radMultiMeter_vfo_display_vfob.Size = new System.Drawing.Size(56, 17);
+            this.radMultiMeter_vfo_display_vfob.TabIndex = 134;
+            this.radMultiMeter_vfo_display_vfob.TabStop = true;
+            this.radMultiMeter_vfo_display_vfob.Text = "VFO B";
+            this.radMultiMeter_vfo_display_vfob.UseVisualStyleBackColor = true;
+            this.radMultiMeter_vfo_display_vfob.CheckedChanged += new System.EventHandler(this.radMultiMeter_vfo_display_vfob_CheckedChanged);
             // 
             // Setup
             // 
@@ -66046,5 +66091,8 @@
         private LabelTS labelTS237;
         private TextBoxTS txtMeterItemRotatorSTOPcommand;
         private CheckBoxTS chkWebImage_bypass_cache;
+        private RadioButtonTS radMultiMeter_vfo_display_vfob;
+        private RadioButtonTS radMultiMeter_vfo_display_vfoa;
+        private RadioButtonTS radMultiMeter_vfo_display_both;
     }
 }
