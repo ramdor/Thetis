@@ -24873,6 +24873,7 @@ namespace Thetis
             clrbtnContainerBackground.Enabled = bEnableControls;
             chkContainerBorder.Enabled = bEnableControls;
             chkContainerNoTitle.Enabled = bEnableControls;
+            chkMultiMeter_auto_container_height.Enabled = bEnableControls;
             chkContainerEnable.Enabled = bEnableControls;
             chkContainerMinimises.Enabled = bEnableControls;
             txtContainerNotes.Enabled = bEnableControls;
@@ -24989,6 +24990,7 @@ namespace Thetis
             chkContainerEnable.Checked = MeterManager.ContainerShow(cci.ID);
             chkContainerMinimises.Checked = MeterManager.ContainerMinimises(cci.ID);
             txtContainerNotes.Text = MeterManager.GetContainerNotes(cci.ID);
+            chkMultiMeter_auto_container_height.Checked = MeterManager.ContainerAutoHeight(cci.ID);
 
             updateMeterLists();
         }
@@ -31338,7 +31340,7 @@ namespace Thetis
             clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
             if (cci != null)
             {
-                MeterManager.EnableAutoContainerHeight(cci.ID, chkMultiMeter_auto_container_height.Checked);
+                MeterManager.AutoContainerHeight(cci.ID, chkMultiMeter_auto_container_height.Checked);
             }
         }
     }

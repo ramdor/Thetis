@@ -692,7 +692,8 @@ namespace Thetis
                 NoTitle.ToString() + "|" +
                 MeterEnabled.ToString() + "|" +
                 Notes + "|" +
-                ContainerMinimises.ToString().ToLower();
+                ContainerMinimises.ToString().ToLower() + "|" +
+                AutoHeight.ToString().ToLower();
         }
         public bool TryParse(string str)
         {
@@ -704,11 +705,12 @@ namespace Thetis
             bool noTitleBar = false;
             bool enabled = true;
             bool minimises = true;
+            bool auto_height = false;
 
             if (str != "")
             {
                 string[] tmp = str.Split('|');
-                if(tmp.Length >= 13 && tmp.Length <= 17)
+                if(tmp.Length >= 13 && tmp.Length <= 18)
                 {
                     bOk = tmp[0] != "";
                     if (bOk) ID = tmp[0];
@@ -772,6 +774,12 @@ namespace Thetis
                     {
                         if (bOk) bOk = bool.TryParse(tmp[16], out minimises);
                         if (bOk) ContainerMinimises = minimises;
+                    }
+
+                    if(bOk && tmp.Length > 17) // also auto height for [2.10.3.6]
+                    {
+                        bOk = bool.TryParse(tmp[17], out auto_height);
+                        if (bOk) AutoHeight = auto_height;
                     }
                 }
             }
