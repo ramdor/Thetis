@@ -208,7 +208,21 @@ namespace Thetis
                         {
                             made_new = true;
                             dbs = getAvailableDBs();
-                            ok = dbs.Count > 0;
+                            ok = dbs.Count > 0;// just a check to make sure at leas one exists
+                            if (ok)
+                            {
+                                if (_dbman_settings != null)
+                                {
+                                    db_xml_file = _db_data_path + _dbman_settings.ActiveDB_GUID + "\\database.xml";
+                                    try
+                                    {
+                                        ok = File.Exists(db_xml_file);
+                                    }
+                                    catch { ok = false; }
+                                }
+                                else
+                                    ok = false;
+                            }
                         }
                     }
 
