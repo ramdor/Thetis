@@ -1739,7 +1739,7 @@ namespace Thetis
                 uc.NoTitle = noTitle;
             }
         }
-        public static void EnableAutoContainerHeight(string sId, bool auto_height)
+        public static void AutoContainerHeight(string sId, bool auto_height)
         {
             lock (_metersLock)
             {
@@ -1843,6 +1843,17 @@ namespace Thetis
 
                 ucMeter uc = _lstUCMeters[sId];
                 return uc.NoTitle;
+            }
+        }
+        public static bool ContainerAutoHeight(string sId)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return false;
+                if (!_lstUCMeters.ContainsKey(sId)) return false;
+
+                ucMeter uc = _lstUCMeters[sId];
+                return uc.AutoHeight;
             }
         }
         public static bool ContainerShow(string sId)
