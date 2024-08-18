@@ -1739,6 +1739,28 @@ namespace Thetis
                 uc.NoTitle = noTitle;
             }
         }
+        public static void EnableAutoContainerHeight(string sId, bool auto_height)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return;
+                if (!_lstUCMeters.ContainsKey(sId)) return;
+
+                ucMeter uc = _lstUCMeters[sId];
+                uc.AutoHeight = auto_height;
+            }
+        }
+        public static void SetContainerHeight(string sId, int height)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return;
+                if (!_lstUCMeters.ContainsKey(sId)) return;
+
+                ucMeter uc = _lstUCMeters[sId];
+                uc.ChangeHeight(height);
+            }
+        }
         public static void ContainerMinimises(string sId, bool minimises)
         {
             lock (_metersLock)
@@ -14404,6 +14426,7 @@ namespace Thetis
 
                     while (_dxDisplayThreadRunning)
                     {
+                        int height = int.MinValue;
                         int nSleepTime = int.MaxValue;
 
                         objStopWatch.Reset();
@@ -14435,7 +14458,7 @@ namespace Thetis
                                 // background for entire form/area?
                                 _renderTarget.Clear(_backColour);
 
-                                nSleepTime = drawMeters();
+                                nSleepTime = drawMeters(out height);
                                 if (nSleepTime > 250) nSleepTime = 250; // sleep max of 250ms for some sensible redraw
                                                                         // maxint can be returned if no meteritem entries
 
@@ -14492,6 +14515,9 @@ namespace Thetis
                         {
                             Thread.Sleep(250); // if not visible, sleep for quarter second
                         }
+
+                        if(height > int.MinValue)
+                            MeterManager.SetContainerHeight(_meter.ID, height);
                     }
                 }
                 catch (Exception e)
@@ -15063,10 +15089,12 @@ namespace Thetis
             }
 
             //            
-            private int drawMeters()
+            private int drawMeters(out int height)
             {
                 int nRedrawDelay = int.MaxValue;
                 clsMeter m = _meter;
+
+                height = 32; // min parent of ucMeter from ucMeter.cs
 
                 lock (m._meterItemsLock)
                 {
@@ -15091,6 +15119,11 @@ namespace Thetis
                                 float rh = m.YRatio;
 
                                 SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
+
+                                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                                float h = rect.Height * ((mi.Size.Height / m.YRatio) + (0.02f / m.YRatio));
+
+                                if ((int)(y + h) > height) height = (int)(y + h);
 
                                 switch (mi.ItemType)
                                 {

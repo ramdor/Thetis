@@ -31332,6 +31332,15 @@ namespace Thetis
             if (!radMultiMeter_vfo_display_vfob.Checked) return;
             updateMeterType();
         }
+
+        private void chkMultiMeter_auto_container_height_CheckedChanged(object sender, EventArgs e)
+        {
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.EnableAutoContainerHeight(cci.ID, chkMultiMeter_auto_container_height.Checked);
+            }
+        }
     }
 
     #region PADeviceInfo Helper Class
