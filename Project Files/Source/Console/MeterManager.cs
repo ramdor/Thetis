@@ -15105,7 +15105,7 @@ namespace Thetis
                 int nRedrawDelay = int.MaxValue;
                 clsMeter m = _meter;
 
-                height = 32; // min parent of ucMeter from ucMeter.cs
+                height = 32; // min height, taken from frmMeterDisplay
 
                 lock (m._meterItemsLock)
                 {
@@ -15131,10 +15131,13 @@ namespace Thetis
 
                                 SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
 
-                                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
-                                float h = rect.Height * ((mi.Size.Height / m.YRatio) + (0.02f / m.YRatio));
+                                if (mi.ItemType != clsMeterItem.MeterItemType.ITEM_GROUP)
+                                {
+                                    float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                                    float h = rect.Height * ((mi.Size.Height / m.YRatio) + (mi.Size.Height > 0f ? (0.02f / m.YRatio) : 0f));
 
-                                if ((int)(y + h) > height) height = (int)(y + h);
+                                    if ((int)(y + h) > height) height = (int)(y + h);
+                                }
 
                                 switch (mi.ItemType)
                                 {

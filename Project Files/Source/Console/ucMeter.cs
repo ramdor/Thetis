@@ -61,7 +61,7 @@ namespace Thetis
             picContainer.Location = new Point(0, 0);
             picContainer.Size = new Size(Size.Width, Size.Height);
 
-            _height = Size.Height;
+            _height = 32;
             _autoHeight = false;
 
             _console = null;

@@ -2672,6 +2672,9 @@ namespace Thetis
 
             //multimeter io tab
             init_lstMMIO();
+
+            //multimeter tab
+            comboContainerSelect_SelectedIndexChanged(this, e);
         }
 
         public string[] GetTXProfileStrings()
@@ -24976,6 +24979,8 @@ namespace Thetis
 
         private void comboContainerSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
+
             clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
             if (cci == null) return;
 
@@ -24997,6 +25002,7 @@ namespace Thetis
 
         private void chkContainerHighlight_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             if (chkContainerHighlight.Checked)
             {
                 clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
@@ -25012,6 +25018,7 @@ namespace Thetis
         }
         private void chkContainerEnable_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
             if (cci != null)
             {
@@ -25020,6 +25027,7 @@ namespace Thetis
         }
         private void txtContainerNotes_TextChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
             if (cci != null)
             {
@@ -25046,11 +25054,14 @@ namespace Thetis
 
         private void lstMetersAvailable_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             btnAddMeterItem.Enabled = lstMetersAvailable.SelectedIndex >= 0;
         }
 
         private void lstMetersInUse_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
+
             bool bEnabled = lstMetersInUse.SelectedIndex >= 0;
 
             if (bEnabled)
@@ -26106,6 +26117,7 @@ namespace Thetis
 
         private void chkContainerBorder_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
             if (cci != null)
             {
@@ -26115,6 +26127,7 @@ namespace Thetis
 
         private void clrbtnContainerBackground_Changed(object sender, EventArgs e)
         {
+            if (initializing) return;
             clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
             if (cci != null)
             {
@@ -26933,6 +26946,7 @@ namespace Thetis
 
         private void chkContainerNoTitle_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
             if (cci != null)
             {
@@ -31019,6 +31033,7 @@ namespace Thetis
 
         private void chkContainerMinimises_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
             if (cci != null)
             {
@@ -31211,6 +31226,7 @@ namespace Thetis
 
         private void chkMultiMeter_auto_container_height_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
             if (cci != null)
             {
