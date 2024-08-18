@@ -323,6 +323,16 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Data_Import_2_32 {
+            get {
+                object obj = ResourceManager.GetObject("Data-Import-2-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Data_Import_32 {
             get {
                 object obj = ResourceManager.GetObject("Data-Import-32", resourceCulture);
