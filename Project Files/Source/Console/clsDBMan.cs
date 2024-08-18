@@ -1368,13 +1368,13 @@ namespace Thetis
                         MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                     }
                 }
-            }
-            else
-            {
-                DialogResult dr = MessageBox.Show("The database file needs a .xml file extension.",
-                "Database Manager",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                else
+                {
+                    DialogResult dr = MessageBox.Show("The database file needs a .xml file extension.",
+                    "Database Manager",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
             }
         }
         public static void Rename(Guid guid)
