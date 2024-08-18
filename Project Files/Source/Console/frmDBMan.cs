@@ -276,6 +276,15 @@ namespace Thetis
             {
                 ListViewItem lvi = lstActiveDBs.SelectedItems[0];
                 selected = new Guid(lvi.Tag.ToString());
+
+                string selected_active = "";
+                selected_active = lvi.Checked ? selected_active = "currently ACTIVE" : "SELECTED available";
+
+                lblDabaseBackups_active_selected.Text = $"Database Backups for {selected_active} database";
+            }
+            else
+            {
+                lblDabaseBackups_active_selected.Text = "Database Backups for currently ACTIVE database";
             }
 
             DBMan.SelectedAvailable(selected);
@@ -323,9 +332,12 @@ namespace Thetis
             }
             DBMan.RemoveBackupDB(file_paths);
 
-            if (lstActiveDBs.SelectedItems.Count != 1) return;
-            ListViewItem lvi = lstActiveDBs.SelectedItems[0];
-            Guid guid = new Guid(lvi.Tag.ToString());
+            Guid guid = Guid.Empty;
+            if (lstActiveDBs.SelectedItems.Count == 1)
+            {
+                ListViewItem lvi = lstActiveDBs.SelectedItems[0];
+                guid = new Guid(lvi.Tag.ToString());
+            }
 
             DBMan.SelectedAvailable(guid);
         }
@@ -368,13 +380,6 @@ namespace Thetis
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            Guid highlighted = Guid.Empty;
-            if (lstActiveDBs.SelectedItems.Count == 1)
-            {
-                ListViewItem lvi = lstActiveDBs.SelectedItems[0];
-                highlighted = new Guid(lvi.Tag.ToString());
-            }
-            //send highlight guid so that we can refresh the lst if it is our active db, as the backup is for the active
             DBMan.Import();
         }
 
@@ -418,6 +423,18 @@ namespace Thetis
             Guid guid = new Guid(lvi.Tag.ToString());
 
             DBMan.OpenFolder(guid);
+        }
+
+        private void btnImport_to_available_list_Click(object sender, EventArgs e)
+        {
+            Guid highlighted = Guid.Empty;
+            if (lstActiveDBs.SelectedItems.Count == 1)
+            {
+                ListViewItem lvi = lstActiveDBs.SelectedItems[0];
+                highlighted = new Guid(lvi.Tag.ToString());
+            }
+            //send highlight guid so that we can refresh the lst if it is our active db, as the backup is for the active
+            DBMan.ImportAsAvailable(highlighted);
         }
     }
 }
