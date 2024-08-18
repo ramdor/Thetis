@@ -1739,6 +1739,28 @@ namespace Thetis
                 uc.NoTitle = noTitle;
             }
         }
+        public static void AutoContainerHeight(string sId, bool auto_height)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return;
+                if (!_lstUCMeters.ContainsKey(sId)) return;
+
+                ucMeter uc = _lstUCMeters[sId];
+                uc.AutoHeight = auto_height;
+            }
+        }
+        public static void SetContainerHeight(string sId, int height)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return;
+                if (!_lstUCMeters.ContainsKey(sId)) return;
+
+                ucMeter uc = _lstUCMeters[sId];
+                uc.ChangeHeight(height);
+            }
+        }
         public static void ContainerMinimises(string sId, bool minimises)
         {
             lock (_metersLock)
@@ -1821,6 +1843,17 @@ namespace Thetis
 
                 ucMeter uc = _lstUCMeters[sId];
                 return uc.NoTitle;
+            }
+        }
+        public static bool ContainerAutoHeight(string sId)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return false;
+                if (!_lstUCMeters.ContainsKey(sId)) return false;
+
+                ucMeter uc = _lstUCMeters[sId];
+                return uc.AutoHeight;
             }
         }
         public static bool ContainerShow(string sId)
@@ -3396,6 +3429,8 @@ namespace Thetis
             private bool _mouseButtonDown;
             private MouseButtons _mouseButton;
 
+            private bool _visible;
+
             public clsMeterItem(clsMeter owningMeter = null)
             {
                 // constructor
@@ -3432,6 +3467,7 @@ namespace Thetis
                 _fadeValue = 255;
                 _disabled = false;
                 _mox = false;
+                _visible = true;
 
                 //_mmio_guid = new Guid[10];
                 //_mmio_variable = new string[10];
@@ -3468,6 +3504,11 @@ namespace Thetis
             //{
             //    _mmio_variable[index] = variable;
             //}
+            public bool Visible
+            {
+                get { return _visible; }
+                set { _visible = value; }
+            }
             public Guid MMIOGuid
             {
                 get { return _mmio_guid; }
@@ -4030,8 +4071,16 @@ namespace Thetis
                 SPEC,
                 DRM
             }
+            public enum VFODisplayMode
+            {
+                VFO_BOTH = 0,
+                VFO_A = 1,
+                VFO_B = 2
+            }
             private renderState _render_state_vfoA;
             private renderState _render_state_vfoB;
+
+            private VFODisplayMode _vfo_display_mode;
 
             private System.Drawing.Color _colour;
             private string _fontFamily;
@@ -4096,6 +4145,29 @@ namespace Thetis
                 _render_button_vfoB = buttonState.VFO_SCREEN;
                 _button_grid_index_vfoA = -1;
                 _button_grid_index_vfoB = -1;
+
+                _vfo_display_mode = VFODisplayMode.VFO_BOTH;
+            }
+            public VFODisplayMode VFODispMode
+            {
+                get { return _vfo_display_mode; }
+                set 
+                { 
+                    _vfo_display_mode = value;
+                    switch (_vfo_display_mode)
+                    {
+                        case VFODisplayMode.VFO_BOTH:
+                            VFOARenderState = renderState.VFO;
+                            VFOBRenderState = renderState.VFO;
+                            break;
+                        case VFODisplayMode.VFO_A:
+                            VFOBRenderState = renderState.VFO;
+                            break;
+                        case VFODisplayMode.VFO_B:
+                            VFOARenderState = renderState.VFO;
+                            break;
+                    }
+                }
             }
             private double getVfo()
             {
@@ -11034,27 +11106,44 @@ namespace Thetis
                 if (restoreIg != null) ig.ID = restoreIg.ID;
                 ig.ParentID = ID;
 
+                clsVfoDisplay vfo = new clsVfoDisplay(this);
+                float height_multi = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH ? 1f : 2f;
+
                 clsSolidColour sc = new clsSolidColour();
                 sc.ParentID = ig.ID;
                 sc.TopLeft = new PointF(_fPadX, fTop + _fPadY - _fHeight * 0.75f);
-                sc.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), _fHeight + _fHeight * 0.75f);
+                if(vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH)
+                    sc.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), _fHeight + _fHeight * 0.75f);
+                else
+                    sc.Size = new SizeF(1f - _fPadX * 2f, (_fHeight + _fHeight * 0.75f) * height_multi);
+                    
                 sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
                 sc.ZOrder = 1;
+                sc.Primary = true;
                 addMeterItem(sc);
 
                 clsSolidColour sc2 = new clsSolidColour();
-                sc2.ParentID = ig.ID;
-                sc2.TopLeft = new PointF(0.5f + (_fPadX * 0.5f), fTop + _fPadY - _fHeight * 0.75f);
-                sc2.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), _fHeight + _fHeight * 0.75f);
+                sc2.ParentID = ig.ID;                
+                if (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH)
+                {
+                    sc2.TopLeft = new PointF(0.5f + (_fPadX * 0.5f), fTop + _fPadY - _fHeight * 0.75f);
+                    sc2.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), _fHeight + _fHeight * 0.75f);
+                }
+                else
+                {
+                    sc2.TopLeft = new PointF(_fPadX, fTop + _fPadY - _fHeight * 0.75f);
+                    sc2.Size = new SizeF(1f - _fPadX * 2f, (_fHeight + _fHeight * 0.75f) * height_multi);
+                }
                 sc2.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
                 sc2.ZOrder = 1;
+                sc2.Visible = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH;
+                sc2.Primary = false;
                 addMeterItem(sc2);
 
                 //
-                clsVfoDisplay vfo = new clsVfoDisplay(this);
                 vfo.ParentID = ig.ID;
                 vfo.TopLeft = sc.TopLeft;
-                vfo.Size = new SizeF(1f - _fPadX * 2f, _fHeight + _fHeight * 0.75f);
+                vfo.Size = new SizeF(1f - _fPadX * 2f, (_fHeight + _fHeight * 0.75f) * height_multi);
                 //vfo.UpdateInterval = nMSupdate;  //Fixed by constructor, should not be changed by user
                 //vfo.Primary = true;
                 vfo.ZOrder = 2;
@@ -11064,12 +11153,12 @@ namespace Thetis
                 fBottom = sc.TopLeft.Y + sc.Size.Height;
 
                 ig.TopLeft = sc.TopLeft;
-                ig.Size = new SizeF(sc.Size.Width + sc2.Size.Width + _fPadX, fBottom);
+                ig.Size = new SizeF(sc.Size.Width + (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH ? sc2.Size.Width : 0f) + _fPadX, fBottom);
                 ig.MeterType = MeterType.VFO_DISPLAY;
                 ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
 
-                clsFadeCover fc = getFadeCover(ig.ID);
-                if (fc != null) addMeterItem(fc);
+                //clsFadeCover fc = getFadeCover(ig.ID);
+                //if (fc != null) addMeterItem(fc);
                 
                 addMeterItem(ig);
 
@@ -12152,16 +12241,8 @@ namespace Thetis
                                 case MeterType.VFO_DISPLAY:
                                     {
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
-
-                                        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
-                                        {
-                                            clsSolidColour solidColor = sc.Value as clsSolidColour;
-                                            if (solidColor == null) continue;
-
-                                            solidColor.FadeOnRx = igs.FadeOnRx;
-                                            solidColor.FadeOnTx = igs.FadeOnTx;
-                                            solidColor.Colour = igs.Colour;
-                                        }
+                                        bRebuild = true;
+                                        bool both = false;
                                         foreach (KeyValuePair<string, clsMeterItem> vfos in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY))
                                         {
                                             clsVfoDisplay vfo = vfos.Value as clsVfoDisplay;
@@ -12181,6 +12262,42 @@ namespace Thetis
                                             vfo.FilterColour = igs.HistoryColor;
                                             vfo.BandColour = igs.SegmentedSolidLowColour;
                                             vfo.DigitHighlightColour = igs.PowerScaleColour;
+
+                                            vfo.VFODispMode = (clsVfoDisplay.VFODisplayMode)igs.HistoryDuration;
+                                            if (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH) both = true;
+
+                                            if(both)
+                                                vfo.Size = new SizeF(1f - _fPadX * 2f, (_fHeight + _fHeight * 0.75f));
+                                            else
+                                                vfo.Size = new SizeF(1f - _fPadX * 2f, (_fHeight + _fHeight * 0.75f) * 2f);                                            
+                                        }
+                                        
+                                        foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
+                                        {
+                                            clsSolidColour solidColor = sc.Value as clsSolidColour;
+                                            if (solidColor == null) continue;
+
+                                            solidColor.FadeOnRx = igs.FadeOnRx;
+                                            solidColor.FadeOnTx = igs.FadeOnTx;
+                                            solidColor.Colour = igs.Colour;
+
+                                            if (!solidColor.Primary)
+                                            {
+                                                solidColor.Visible = (clsVfoDisplay.VFODisplayMode)igs.HistoryDuration == clsVfoDisplay.VFODisplayMode.VFO_BOTH;
+
+                                                if(both)
+                                                    solidColor.TopLeft = new PointF(0.5f + (_fPadX * 0.5f), /*fTop +*/ _fPadY - _fHeight * 0.75f);
+                                                else
+                                                    solidColor.TopLeft = new PointF(_fPadX, /*fTop +*/ _fPadY - _fHeight * 0.75f);
+                                            }
+
+                                            if (both)
+                                                solidColor.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), _fHeight + _fHeight * 0.75f);
+                                            else
+                                                solidColor.Size = new SizeF(1f - _fPadX * 2f, (_fHeight + _fHeight * 0.75f) * 2f);
+
+                                            if (solidColor.Primary)
+                                                ig.Size = new SizeF(solidColor.Size.Width + (both ? solidColor.Size.Width : 0f) + _fPadX, solidColor.TopLeft.Y + solidColor.Size.Height);
                                         }
                                     }
                                     break;
@@ -12785,6 +12902,8 @@ namespace Thetis
                                             igs.HistoryColor = vfo.FilterColour;
                                             igs.SegmentedSolidLowColour = vfo.BandColour;
                                             igs.PowerScaleColour = vfo.DigitHighlightColour;
+
+                                            igs.HistoryDuration = (int)vfo.VFODispMode;
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
                                         {
@@ -14318,6 +14437,7 @@ namespace Thetis
 
                     while (_dxDisplayThreadRunning)
                     {
+                        int height = int.MinValue;
                         int nSleepTime = int.MaxValue;
 
                         objStopWatch.Reset();
@@ -14349,7 +14469,7 @@ namespace Thetis
                                 // background for entire form/area?
                                 _renderTarget.Clear(_backColour);
 
-                                nSleepTime = drawMeters();
+                                nSleepTime = drawMeters(out height);
                                 if (nSleepTime > 250) nSleepTime = 250; // sleep max of 250ms for some sensible redraw
                                                                         // maxint can be returned if no meteritem entries
 
@@ -14406,6 +14526,9 @@ namespace Thetis
                         {
                             Thread.Sleep(250); // if not visible, sleep for quarter second
                         }
+
+                        if(height > int.MinValue)
+                            MeterManager.SetContainerHeight(_meter.ID, height);
                     }
                 }
                 catch (Exception e)
@@ -14977,10 +15100,12 @@ namespace Thetis
             }
 
             //            
-            private int drawMeters()
+            private int drawMeters(out int height)
             {
                 int nRedrawDelay = int.MaxValue;
                 clsMeter m = _meter;
+
+                height = 32; // min parent of ucMeter from ucMeter.cs
 
                 lock (m._meterItemsLock)
                 {
@@ -15005,6 +15130,11 @@ namespace Thetis
                                 float rh = m.YRatio;
 
                                 SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
+
+                                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                                float h = rect.Height * ((mi.Size.Height / m.YRatio) + (0.02f / m.YRatio));
+
+                                if ((int)(y + h) > height) height = (int)(y + h);
 
                                 switch (mi.ItemType)
                                 {
@@ -17498,6 +17628,7 @@ namespace Thetis
             private void renderSolidColour(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsSolidColour sc = (clsSolidColour)mi;
+                if (!sc.Visible) return;
 
                 float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
                 float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
@@ -17583,14 +17714,16 @@ namespace Thetis
                 rct = new SharpDX.RectangleF(xB, yB, wB, hB);
                 _renderTarget.FillRectangle(rct, getDXBrushForColour(vfo.DigitHighlightColour));
             }
-            private clsVfoDisplay.buttonState drawBand(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, clsMeter m, float shift)
+            private clsVfoDisplay.buttonState drawBand(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, clsMeter m, float shift, float x_multy)
             {
+                bool vfoB = shift != 0 || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B;
+
                 // draw grid
                 SharpDX.Direct2D1.Brush lineBrush = getDXBrushForColour(System.Drawing.Color.White, 255);
                 SharpDX.RectangleF rct;
                 float xB = 0;
                 float yB = y;
-                float wB = x + w * 0.47f;
+                float wB = x + w * 0.47f * x_multy;
                 float hB = h;
                 float gap = wB / 8f;
                 int nx = 0;
@@ -17611,10 +17744,7 @@ namespace Thetis
                         ny = (int)(2 * my);
                         highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
                         button_grid_index = (ny * 8) + nx;
-                        if (shift != 0)
-                            button_state = clsVfoDisplay.buttonState.BAND;
-                        else
-                            button_state = clsVfoDisplay.buttonState.BAND;
+                        button_state = clsVfoDisplay.buttonState.BAND;
                     }
                 }
 
@@ -17656,7 +17786,7 @@ namespace Thetis
                 {
                     Band b = (Band)i;
 
-                    if (shift < 0.5f)
+                    if (!vfoB)
                     {
                         if (m.BandVfoA == (Band)i) highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
                     }
@@ -17689,7 +17819,7 @@ namespace Thetis
 
                     t_xB = xB + (gap / 2f) + (nx * gap);
                     t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
-                    plotText(band, t_xB, t_yB, h, rect.Width, 20f, band_colour, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                    plotText(band, t_xB, t_yB, h, rect.Width * x_multy, 20f, band_colour, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                     nx++;
                     if (nx > 7)
                     {
@@ -17702,36 +17832,38 @@ namespace Thetis
                 t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
                 if (_console.BandHFSelected)
                 {
-                    plotText("VHF", t_xB, t_yB, h, rect.Width, 16f, System.Drawing.Color.Yellow, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                    plotText("VHF", t_xB, t_yB, h, rect.Width * x_multy, 16f, System.Drawing.Color.Yellow, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                     nx++;
                     t_xB = xB + (gap / 2f) + (nx * gap);
-                    plotText("WWV", t_xB, t_yB, h, rect.Width, 14f, BandStackManager.BandToColour(Band.WWV), 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                    plotText("WWV", t_xB, t_yB, h, rect.Width * x_multy, 14f, BandStackManager.BandToColour(Band.WWV), 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                     nx++;
                     t_xB = xB + (gap / 2f) + (nx * gap);
-                    plotText("SWL", t_xB, t_yB, h, rect.Width, 16f, System.Drawing.Color.Orange, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                    plotText("SWL", t_xB, t_yB, h, rect.Width * x_multy, 16f, System.Drawing.Color.Orange, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                 }
                 else if (_console.BandGENSelected || _console.BandVHFSelected)
                 {
-                    plotText("HF", t_xB, t_yB, h, rect.Width, 16f, System.Drawing.Color.Red, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                    plotText("HF", t_xB, t_yB, h, rect.Width * x_multy, 16f, System.Drawing.Color.Red, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                 }
 
                 //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
 
-                if (shift != 0)
+                if (vfoB)
                     vfo.ButtonGridIndexVFOb = button_grid_index;
                 else
                     vfo.ButtonGridIndexVFOa = button_grid_index;
 
                 return button_state;
             }
-            private clsVfoDisplay.buttonState drawMode(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, clsMeter m, float shift)
+            private clsVfoDisplay.buttonState drawMode(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, clsMeter m, float shift, float x_multy)
             {
+                bool vfoB = shift != 0 || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B;
+
                 // draw grid
                 SharpDX.Direct2D1.Brush lineBrush = getDXBrushForColour(System.Drawing.Color.White, 255);
                 SharpDX.RectangleF rct;
                 float xB = 0;
                 float yB = y;
-                float wB = x + w * 0.47f;
+                float wB = x + w * 0.47f * x_multy;
                 float hB = h;
                 float gap = wB / 6f;
                 int nx = 0;
@@ -17752,10 +17884,7 @@ namespace Thetis
                         ny = (int)(2 * my);
                         highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
                         button_grid_index = (ny * 6) + nx;
-                        if (shift != 0)
-                            button_state = clsVfoDisplay.buttonState.MODE;
-                        else
-                            button_state = clsVfoDisplay.buttonState.MODE;
+                        button_state = clsVfoDisplay.buttonState.MODE;
                     }
                 }
 
@@ -17781,7 +17910,7 @@ namespace Thetis
                     clsVfoDisplay.DSPModeForModeDisplay mde = (clsVfoDisplay.DSPModeForModeDisplay)i;
                     string modeString = mde.ToString();
                     Enum.TryParse<DSPMode>(modeString, out DSPMode dsp_mode);                    
-                    if (shift < 0.5f)
+                    if (!vfoB)
                     {
                         if (m.ModeVfoA == dsp_mode) highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
                     }
@@ -17795,7 +17924,7 @@ namespace Thetis
 
                     t_xB = xB + (gap / 2f) + (nx * gap);
                     t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
-                    plotText(mode, t_xB, t_yB, h, rect.Width, 18f, mode_colour, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                    plotText(mode, t_xB, t_yB, h, rect.Width * x_multy, 18f, mode_colour, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                     nx++;
                     if (nx > 5)
                     {
@@ -17806,21 +17935,23 @@ namespace Thetis
 
                 //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
 
-                if (shift != 0)
+                if (vfoB)
                     vfo.ButtonGridIndexVFOb = button_grid_index;
                 else
                     vfo.ButtonGridIndexVFOa = button_grid_index;
 
                 return button_state;
             }
-            private clsVfoDisplay.buttonState drawFilter(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, clsMeter m, float shift)
+            private clsVfoDisplay.buttonState drawFilter(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, clsMeter m, float shift, float x_multy)
             {
+                bool vfoB = shift != 0 || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B;
+
                 // draw grid
                 SharpDX.Direct2D1.Brush lineBrush = getDXBrushForColour(System.Drawing.Color.White, 255);
                 SharpDX.RectangleF rct;
                 float xB = 0;
                 float yB = y;
-                float wB = x + w * 0.47f;
+                float wB = x + w * 0.47f * x_multy;
                 float hB = h;
                 float gap = wB / 6f;
                 int nx = 0;
@@ -17841,10 +17972,7 @@ namespace Thetis
                         ny = (int)(2 * my);
                         highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
                         button_grid_index = (ny * 6) + nx;
-                        if (shift != 0)
-                            button_state = clsVfoDisplay.buttonState.FILTER;
-                        else
-                            button_state = clsVfoDisplay.buttonState.FILTER;
+                        button_state = clsVfoDisplay.buttonState.FILTER;
                     }
                 }
 
@@ -17863,7 +17991,7 @@ namespace Thetis
                 float t_yB;
                 Filter start = Filter.F1;
                 Filter end;
-                if (shift < 0.5f)
+                if (!vfoB)
                     end = Filter.VAR2;
                 else
                 {
@@ -17877,7 +18005,7 @@ namespace Thetis
                 for (int i = (int)start; i <= (int)end; i++)
                 {
                     Filter fltr = (Filter)i;
-                    if (shift < 0.5f)
+                    if (!vfoB)
                     {
                         if (m.FilterVfoA == fltr) highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
                         filter = _console.rx1_filters[(int)m.ModeVfoA].GetName(fltr);
@@ -17896,7 +18024,7 @@ namespace Thetis
 
                     t_xB = xB + (gap / 2f) + (nx * gap);
                     t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
-                    plotText(filter, t_xB, t_yB, h, rect.Width, 16f, filter_colour, 255, vfo.FontFamily, vfo.Style, false, true, gap, true);
+                    plotText(filter, t_xB, t_yB, h, rect.Width * x_multy, 16f, filter_colour, 255, vfo.FontFamily, vfo.Style, false, true, gap, true);
                     nx++;
                     if (nx > 5)
                     {
@@ -17904,7 +18032,7 @@ namespace Thetis
                         ny += 1;
                     }
                     // to add the VAR1/2 to rx2
-                    if(m.RX2Enabled && shift >= 0.5f && i == (int)Filter.F7)
+                    if(m.RX2Enabled && vfoB && i == (int)Filter.F7)
                     {
                         start = Filter.VAR1;
                         end = Filter.VAR2;
@@ -17914,7 +18042,7 @@ namespace Thetis
 
                 //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
 
-                if (shift != 0)
+                if (vfoB)
                     vfo.ButtonGridIndexVFOb = button_grid_index;
                 else
                     vfo.ButtonGridIndexVFOa = button_grid_index;
@@ -17924,6 +18052,11 @@ namespace Thetis
             private void renderVfoDisplay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsVfoDisplay vfo = (clsVfoDisplay)mi;
+
+                float x_shift = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B ? 0.51f : 0f;
+                float x_multy = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH ? 1f : 2.07f; // 0.07 to take into consideration the gap that was between a + b
+                bool disp_a = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_A || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH;
+                bool disp_b = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH;
 
                 float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
                 float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
@@ -17964,14 +18097,16 @@ namespace Thetis
                 {
                     mx = (vfo.MouseMovePoint.X - x) / w;
                     my = (vfo.MouseMovePoint.Y - y) / h;
+                    mx /= x_multy;
+
                     float box_size = 0;
                     int boxes = -1;
                     int box = -1;
                     float tx = -1;
-                    shift = mx >= 0.5f ? 0.510f : 0; //vfoA to B shift
+                    shift = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH && mx >= 0.5f ? 0.510f : 0; //vfoA to B shift
                     mouse_over_good = true;
-                    bool left = vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && (shift == 0) && (m.RX == 1);
-                    bool right = vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO && (shift != 0) && ((m.RX == 1 && (!m.RX2Enabled || (m.Split || m.MultiRxEnabled))) || (m.RX == 2));
+                    bool left = (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_A) && vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && (shift == 0) && (m.RX == 1);
+                    bool right = (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B) && vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO && (shift != 0 || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B) && ((m.RX == 1 && (!m.RX2Enabled || (m.Split || m.MultiRxEnabled))) || (m.RX == 2));
 
                     // band
                     if (my >= 0.555 && my <= 0.870 && (((mx >= 0.333 && mx <= 0.480) & left) || ((mx >= 0.333 + shift && mx <= 0.480 + shift) & right)))
@@ -18092,34 +18227,35 @@ namespace Thetis
                         }
                     }
 
-                    vfo.MouseOverVfoB = shift != 0;
+                    vfo.MouseOverVfoB = shift != 0 || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B;
 
                     //plotText($"{mx.ToString("f3")},{my.ToString("f3")} -- boxes:{boxes} box:{box}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
-                }                
+                }
 
+                float render_state_shift_vfo_b = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH ? 0.510f : 0f;
                 if (vfo.VFOARenderState == clsVfoDisplay.renderState.BAND)
                 {
-                    button_state_vfoA = drawBand(x, y, w, h, rect, vfo, m, 0);
+                    button_state_vfoA = drawBand(x, y, w, h, rect, vfo, m, 0, x_multy);
                 }
                 if (vfo.VFOBRenderState == clsVfoDisplay.renderState.BAND)
                 {
-                    button_state_vfoB = drawBand(x, y, w, h, rect, vfo, m, 0.510f);
+                    button_state_vfoB = drawBand(x, y, w, h, rect, vfo, m, render_state_shift_vfo_b, x_multy);
                 }
                 if (vfo.VFOARenderState == clsVfoDisplay.renderState.MODE)
                 {
-                    button_state_vfoA = drawMode(x, y, w, h, rect, vfo, m, 0);
+                    button_state_vfoA = drawMode(x, y, w, h, rect, vfo, m, 0, x_multy);
                 }
                 if (vfo.VFOBRenderState == clsVfoDisplay.renderState.MODE)
                 {
-                    button_state_vfoB = drawMode(x, y, w, h, rect, vfo, m, 0.510f);
+                    button_state_vfoB = drawMode(x, y, w, h, rect, vfo, m, render_state_shift_vfo_b, x_multy);
                 }
                 if (vfo.VFOARenderState == clsVfoDisplay.renderState.FILTER)
                 {
-                    button_state_vfoA = drawFilter(x, y, w, h, rect, vfo, m, 0);
+                    button_state_vfoA = drawFilter(x, y, w, h, rect, vfo, m, 0, x_multy);
                 }
                 if (vfo.VFOBRenderState == clsVfoDisplay.renderState.FILTER)
                 {
-                    button_state_vfoB = drawFilter(x, y, w, h, rect, vfo, m, 0.510f);
+                    button_state_vfoB = drawFilter(x, y, w, h, rect, vfo, m, render_state_shift_vfo_b, x_multy);
                 }
 
                 if (draw_box && mouse_over_good)
@@ -18139,7 +18275,7 @@ namespace Thetis
 
                 if (draw_box || button_back_box)
                 {
-                    SharpDX.RectangleF rctB = new SharpDX.RectangleF(x + (w * xB), y + (h * yB), w * wB, h * hB);
+                    SharpDX.RectangleF rctB = new SharpDX.RectangleF(x + (w * xB) * x_multy, y + (h * yB), w * wB * x_multy, h * hB);
                     _renderTarget.FillRectangle(rctB, getDXBrushForColour(vfo.DigitHighlightColour));
                 }
 
@@ -18152,32 +18288,35 @@ namespace Thetis
                         vfo.VFOAButtonState = button_state_vfoA;
                 }
 
+                // plotting the normal display
+                rect.Width *= x_multy;                
+
                 // frequency
                 string MHz;
                 string kHz;
                 string hz;
-                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO)
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && disp_a)
                 {
-                    plotText("VFO A", x + (w * 0.01f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                    plotText("VFO A", x + (w * 0.01f) * x_multy, y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
                 }
 
-                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO)
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO && disp_b)
                 {
                     if (m.RX == 1 && m.RX2Enabled && (m.MultiRxEnabled || m.Split) && m.VfoSub >= 0) //[2.10.3.6]MW0LGE added m.vfosub >= 0
                     {
                         // vfoa sub
-                        plotText("VFO Sub", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                        plotText("VFO Sub", x + (w * (0.52f - x_shift)) * x_multy, y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
                     }
                     else
-                        plotText("VFO B", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                        plotText("VFO B", x + (w * (0.52f - x_shift)) * x_multy, y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
                 }
 
-                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO) 
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && disp_a) 
                 { 
                     getParts(m.VfoA, out MHz, out kHz, out hz);
                     string sVfoA = MHz + "." + kHz;// + "." + hz;
-                    plotText(sVfoA, x + (w * 0.415f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
-                    plotText(hz, x + (w * 0.48f), y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(sVfoA, x + (w * 0.415f) * x_multy, y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(hz, x + (w * 0.48f) * x_multy, y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
                 }
 
                 double tmpVfoB;
@@ -18200,52 +18339,56 @@ namespace Thetis
                     tmpVfoBFilterName = m.FilterVfoBName;
                 }
 
-                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO)
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO && disp_b)
                 {
+                    // hz VFOB
                     getParts(tmpVfoB, out MHz, out kHz, out hz);
                     string sVfoB = MHz + "." + kHz;// + "." + hz;
-                    plotText(sVfoB, x + (w * 0.925f), y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
-                    plotText(hz, x + (w * 0.99f), y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(sVfoB, x + (w * (0.925f - x_shift)) * x_multy, y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(hz, x + (w * (0.99f - x_shift)) * x_multy, y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
                 }
 
-                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO)
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && disp_a)
                 {
                     // mode VFOA
-                    plotText(m.ModeVfoA.ToString(), x + (w * 0.01f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, vfo.ModeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                    plotText(m.ModeVfoA.ToString(), x + (w * 0.01f) * x_multy, y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, vfo.ModeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
                 }
 
-                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO)
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO && disp_b)
                 {
                     // mode VFOB
-                    plotText(tmpVfoBMode.ToString(), x + (w * 0.52f), y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, vfo.ModeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                    plotText(tmpVfoBMode.ToString(), x + (w * (0.52f - x_shift)) * x_multy, y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, vfo.ModeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
                 }
 
                 string sBand;
-                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO)
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && disp_a)
                 {
                     //band VFOA
                     //System.Drawing.Color bandColor = BandStackManager.BandToColour(m.BandVfoA);
                     sBand = BandStackManager.BandToString(m.BandVfoA);
                     if (sBand.EndsWith("M")) sBand = sBand.ToLower();
-                    plotText(sBand + " band", x + (w * 0.48f), y + (h * 0.54f), h, rect.Width, vfo.FontSize * 1f, vfo.BandColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(sBand + " band", x + (w * 0.48f) * x_multy, y + (h * 0.54f), h, rect.Width, vfo.FontSize * 1f, vfo.BandColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
                 }
 
-                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO)
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO && disp_b)
                 {
                     //band VFOB
                     sBand = BandStackManager.BandToString(tmpVfoBBand);
                     if (sBand.EndsWith("M")) sBand = sBand.ToLower();
-                    plotText(sBand + " band", x + (w * 0.99f), y + (h * 0.54f), h, rect.Width, vfo.FontSize * 1f, vfo.BandColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(sBand + " band", x + (w * (0.99f - x_shift)) * x_multy, y + (h * 0.54f), h, rect.Width, vfo.FontSize * 1f, vfo.BandColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
                 }
-
-                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO)
+                
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && disp_a)
                 {
                     //split only on VFOA
-                    SharpDX.RectangleF rectSplit = new SharpDX.RectangleF(x + (w * 0.1f), y + (h * 0.03f), w * 0.1f, h * 0.4f);
+                    SharpDX.RectangleF rectSplit = new SharpDX.RectangleF(x + (w * 0.1f) * x_multy, y + (h * 0.03f), w * 0.1f * x_multy, h * 0.4f);
                     _renderTarget.FillRectangle(rectSplit, getDXBrushForColour(vfo.SplitBackColour, nVfoAFade));
                     System.Drawing.Color splitColor = m.Split ? vfo.SplitColour : System.Drawing.Color.Black;
-                    plotText(m.QuickSplitEnabled ? "QSPLT" : "SPLIT", rectSplit.X + (w * (m.QuickSplitEnabled ? 0.01f : 0.015f)), rectSplit.Y, h, rect.Width, vfo.FontSize * 1f, splitColor, nVfoAFade, vfo.FontFamily, vfo.Style);
+                    plotText(m.QuickSplitEnabled ? "QSPLT" : "SPLIT", rectSplit.X + (w * (m.QuickSplitEnabled ? 0.01f : 0.015f)) * x_multy, rectSplit.Y, h, rect.Width, vfo.FontSize * 1f, splitColor, nVfoAFade, vfo.FontFamily, vfo.Style);
                 }
+
+                // shift additional 0.01
+                x_shift = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B ? 0.52f : 0f;
 
                 //-- tx/rx state
                 bool bCanVfoATx = m.RX == 1 && !m.TXVFOb && !m.Split;
@@ -18257,7 +18400,6 @@ namespace Thetis
                 bool bRxVFOB = !m.MOX && (m.MultiRxEnabled || (m.RX2Enabled && m.RX == 2));
                 bool bTxVFOB = m.MOX && bCanVfoBTx;
 
-               
                 // tx/rx box colours
                 System.Drawing.Color cRx = vfo.RxColour;
                 System.Drawing.Color cDimRx = System.Drawing.Color.FromArgb((int)(cRx.R * 0.6f), (int)(cRx.G * 0.6f), (int)(cRx.B * 0.6f));
@@ -18268,52 +18410,52 @@ namespace Thetis
                 System.Drawing.Color boxColour;
                 System.Drawing.Color txtColour;
 
-                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO)
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && disp_a)
                 {
                     //rx box VFOA
-                    rct = new SharpDX.RectangleF(x + (w * 0.1f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
+                    rct = new SharpDX.RectangleF(x + (w * 0.1f) * x_multy, y + (h * 0.52f), w * 0.048f * x_multy, h * 0.4f);
                     boxColour = bRxVFOA ? cDimRx : cDimerRx;
                     _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoAFade));
                     txtColour = bRxVFOA ? cRx : System.Drawing.Color.Black;
-                    plotText("RX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                    plotText("RX", rct.X + (w * 0.005f) * x_multy, rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);
 
                     //tx box VFOA
-                    rct = new SharpDX.RectangleF(x + (w * 0.152f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
+                    rct = new SharpDX.RectangleF(x + (w * 0.152f) * x_multy, y + (h * 0.52f), w * 0.048f * x_multy, h * 0.4f);
                     boxColour = bCanVfoATx ? cDimTx : cDimerTx;
                     _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoAFade));
                     txtColour = bTxVFOA ? cTx : System.Drawing.Color.Black;
-                    plotText("TX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                    plotText("TX", rct.X + (w * 0.005f) * x_multy, rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);
                 }
 
-                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO)
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO && disp_b)
                 {
                     //rx box VFOB
-                    rct = new SharpDX.RectangleF(x + (w * 0.1f) + (w * 0.52f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
+                    rct = new SharpDX.RectangleF(x + (w * 0.1f) * x_multy + (w * (0.52f - x_shift)) * x_multy, y + (h * 0.52f), w * 0.048f * x_multy, h * 0.4f);
                     boxColour = bRxVFOB ? cDimRx : cDimerRx;
                     _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoBFade));
                     txtColour = bRxVFOB ? cRx : System.Drawing.Color.Black;
-                    plotText("RX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                    plotText("RX", rct.X + (w * 0.005f) * x_multy, rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoBFade, vfo.FontFamily, vfo.Style);
 
                     //tx box VFOB
-                    rct = new SharpDX.RectangleF(x + (w * 0.152f) + (w * 0.52f), y + (h * 0.52f), w * 0.048f, h * 0.4f);
+                    rct = new SharpDX.RectangleF(x + (w * 0.152f) * x_multy + (w * (0.52f - x_shift)) * x_multy, y + (h * 0.52f), w * 0.048f * x_multy, h * 0.4f);
                     boxColour = bCanVfoBTx ? cDimTx : cDimerTx;
                     _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoBFade));
                     txtColour = bTxVFOB ? cTx : System.Drawing.Color.Black;
-                    plotText("TX", rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                    plotText("TX", rct.X + (w * 0.005f) * x_multy, rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoBFade, vfo.FontFamily, vfo.Style);
                 }
 
-                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO)
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && disp_a)
                 {
                     //filter VFOA
-                    rct = new SharpDX.RectangleF(x + (w * 0.25f), y + (h * 0.54f), w * 0.048f, h * 0.4f);
-                    plotText(m.FilterVfoAName, rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, vfo.FilterColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                    rct = new SharpDX.RectangleF(x + (w * 0.25f) * x_multy, y + (h * 0.54f), w * 0.048f, h * 0.4f);
+                    plotText(m.FilterVfoAName, rct.X + (w * 0.005f) * x_multy, rct.Y, h, rect.Width, vfo.FontSize * 1f, vfo.FilterColour, nVfoAFade, vfo.FontFamily, vfo.Style);
                 }
 
-                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO)
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO && disp_b)
                 {
                     //filter VFOB
-                    rct = new SharpDX.RectangleF(x + (w * 0.25f) + (w * 0.52f), y + (h * 0.54f), w * 0.048f, h * 0.4f);
-                    plotText(tmpVfoBFilterName, rct.X + (w * 0.005f), rct.Y, h, rect.Width, vfo.FontSize * 1f, vfo.FilterColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                    rct = new SharpDX.RectangleF(x + (w * 0.25f) * x_multy + (w * (0.52f - x_shift)) * x_multy, y + (h * 0.54f), w * 0.048f * x_multy, h * 0.4f);
+                    plotText(tmpVfoBFilterName, rct.X + (w * 0.005f) * x_multy, rct.Y, h, rect.Width, vfo.FontSize * 1f, vfo.FilterColour, nVfoBFade, vfo.FontFamily, vfo.Style);
                 }
 
                 //if (vfo.MouseEntered)

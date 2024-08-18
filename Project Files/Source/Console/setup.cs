@@ -23801,6 +23801,7 @@ namespace Thetis
             clrbtnContainerBackground.Enabled = bEnableControls;
             chkContainerBorder.Enabled = bEnableControls;
             chkContainerNoTitle.Enabled = bEnableControls;
+            chkMultiMeter_auto_container_height.Enabled = bEnableControls;
             chkContainerEnable.Enabled = bEnableControls;
             chkContainerMinimises.Enabled = bEnableControls;
             txtContainerNotes.Enabled = bEnableControls;
@@ -23917,6 +23918,7 @@ namespace Thetis
             chkContainerEnable.Checked = MeterManager.ContainerShow(cci.ID);
             chkContainerMinimises.Checked = MeterManager.ContainerMinimises(cci.ID);
             txtContainerNotes.Text = MeterManager.GetContainerNotes(cci.ID);
+            chkMultiMeter_auto_container_height.Checked = MeterManager.ContainerAutoHeight(cci.ID);
 
             updateMeterLists();
         }
@@ -24247,6 +24249,13 @@ namespace Thetis
                 igs.HistoryColor = clrbtnMMVfoDisplayFilter.Color;
                 igs.SegmentedSolidLowColour = clrbtnMMVfoDisplayBand.Color;
                 igs.PowerScaleColour = clrbtnMMVfoDigitHighlight.Color;
+
+                if (radMultiMeter_vfo_display_both.Checked)
+                    igs.HistoryDuration = (int)MeterManager.clsVfoDisplay.VFODisplayMode.VFO_BOTH;
+                else if (radMultiMeter_vfo_display_vfoa.Checked)
+                    igs.HistoryDuration = (int)MeterManager.clsVfoDisplay.VFODisplayMode.VFO_A;
+                else if (radMultiMeter_vfo_display_vfob.Checked)
+                    igs.HistoryDuration = (int)MeterManager.clsVfoDisplay.VFODisplayMode.VFO_B;
             }
             else if (mt == MeterType.CLOCK)
             {
@@ -24634,6 +24643,19 @@ namespace Thetis
                 clrbtnMMVfoDisplayFilter.Color = igs.HistoryColor;
                 clrbtnMMVfoDisplayBand.Color = igs.SegmentedSolidLowColour;
                 clrbtnMMVfoDigitHighlight.Color = igs.PowerScaleColour;
+
+                switch ((MeterManager.clsVfoDisplay.VFODisplayMode)igs.HistoryDuration)
+                {
+                    case MeterManager.clsVfoDisplay.VFODisplayMode.VFO_BOTH:
+                        radMultiMeter_vfo_display_both.Checked = true;
+                        break;
+                    case MeterManager.clsVfoDisplay.VFODisplayMode.VFO_A:
+                        radMultiMeter_vfo_display_vfoa.Checked = true;
+                        break;
+                    case MeterManager.clsVfoDisplay.VFODisplayMode.VFO_B:
+                        radMultiMeter_vfo_display_vfob.Checked = true;
+                        break;
+                }
             }
             else if (mt == MeterType.CLOCK)
             {
@@ -25871,23 +25893,6 @@ namespace Thetis
                             }
                         }
                     }
-                    //DotNetZip - depricated
-                    //using (ZipFile zip = new ZipFile())
-                    //{
-                    //    foreach (string fileName in filesToZip)
-                    //    {
-                    //        string filePath = Path.Combine(sourceDirectory, fileName);
-
-                    //        if (File.Exists(filePath))
-                    //        {
-                    //            zip.AddFile(filePath, "");
-                    //        }
-                    //    }
-
-                    //    zip.AddEntry("version.txt", version);
-
-                    //    zip.Save(zipFilePath);
-                    //}
                 }
                 catch (Exception ex)
                 {
@@ -26458,62 +26463,6 @@ namespace Thetis
 
             return bOk;
         }
-        //dotnetzip depricated
-        //private bool isSkinZipFile(string filePath, string sFilename, out bool usesFilenameInRoot, out bool isMeterSkin, bool bypassRootFolderCheck)
-        //{
-        //    bool bOk = false;
-        //    usesFilenameInRoot = false;
-        //    isMeterSkin = false;
-
-        //    try
-        //    {
-        //        using (ZipFile zipFile = ZipFile.Read(filePath))
-        //        {
-        //            if (zipFile.Any(entry => entry.FileName.StartsWith("Meters" + "/") && entry.IsDirectory))
-        //            {
-        //                bOk = true;
-        //                isMeterSkin = true;
-        //            }
-
-        //            if (!bOk)
-        //            {
-        //                if (!bypassRootFolderCheck)
-        //                {
-        //                    if (!bOk && zipFile.Any(entry => entry.FileName.StartsWith("Skins" + "/") && entry.IsDirectory))
-        //                        bOk = true;
-
-        //                    if (!bOk && sFilename != "")
-        //                    {
-        //                        string sReplacedWithSpaces = sFilename.Replace("_", " ");
-        //                        string sReplacedWithoutSpaces = sFilename.Replace(" ", "_");
-        //                        string sReplacedWithMinus = sFilename.Replace(" ", "-");
-        //                        string sReplacedWithoutMinus = sFilename.Replace("-", " ");
-
-        //                        if (zipFile.Any(entry => (entry.FileName.StartsWith(sFilename + "/") || entry.FileName.StartsWith(sReplacedWithSpaces + "/") ||
-        //                            entry.FileName.StartsWith(sReplacedWithoutSpaces + "/") || entry.FileName.StartsWith(sReplacedWithMinus + "/") ||
-        //                            entry.FileName.StartsWith(sReplacedWithoutMinus + "/")
-        //                            ) && entry.IsDirectory))
-        //                        {
-        //                            usesFilenameInRoot = true;
-        //                            bOk = true;
-        //                        }
-        //                    }
-        //                }
-        //                else
-        //                    bOk = true;
-        //            }
-        //        }
-        //    }
-        //    catch (Ionic.Zip.BadReadException)
-        //    {
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //    }
-
-        //    return bOk;
-        //}
-
         private bool doesFolderExistInZip(string zipFilePath, string folderName)
         {
             using (ZipArchive zipArchive = ZipFile.OpenRead(zipFilePath))
@@ -26522,15 +26471,6 @@ namespace Thetis
                     entry.FullName.StartsWith(folderName + "/") && entry.FullName.EndsWith("/"));
             }
         }
-        //depricated dotnetzip
-        //private bool doesFolderExistInZip(string zipFilePath, string folderName)
-        //{
-        //    using (ZipFile zipFile = ZipFile.Read(zipFilePath))
-        //    {
-        //        return zipFile.Any(entry => entry.FileName.StartsWith(folderName + "/") && entry.IsDirectory);
-        //    }
-        //}
-
         private static string extractPngFilesFromZip(string sourceZipFilePath, string outputPath)
         {
             string sRootFolder = "";
@@ -26578,50 +26518,6 @@ namespace Thetis
             }
             return sRootFolder;
         }
-        //depricated dotnetzip
-        //private static string extractPngFilesFromZip(string sourceZipFilePath, string outputPath)
-        //{
-        //    string sRootFolder = "";
-        //    try
-        //    {
-        //        sourceZipFilePath = sourceZipFilePath.Replace('/', '\\');
-        //        outputPath = outputPath.Replace('/', '\\');
-
-        //        using (ZipFile zip = ZipFile.Read(sourceZipFilePath))
-        //        {
-        //            foreach (ZipEntry entry in zip.Where(e => e.FileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
-        //            {
-        //                string entryPath = Path.Combine(outputPath, entry.FileName.Replace('/', '\\'));
-
-        //                // Create the directory structure if it doesn't exist
-        //                Directory.CreateDirectory(Path.GetDirectoryName(entryPath));
-
-        //                // if there is a file remove it
-        //                if (File.Exists(entryPath))
-        //                    File.Delete(entryPath);
-
-        //                entry.Extract(outputPath, ExtractExistingFileAction.OverwriteSilently);
-
-        //                if (sRootFolder == "")
-        //                {
-        //                    //get skin name from folder structure
-        //                    int index = entry.FileName.IndexOf('/');
-        //                    if (index > 0) sRootFolder = entry.FileName.Substring(0, index);
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show(
-        //                "There was an issue extracting the .png file(s) from the download.\n\nSome/all of the images may be missing. The error is as follows :\n\n" + ex.ToString(),
-        //                "Skin download issue",
-        //                MessageBoxButtons.OK,
-        //                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-        //    }
-        //    return sRootFolder;
-        //}
-
         private bool bIgnoreSkinServerListUpdate = false;
         private void comboSkinServerList_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -30125,6 +30021,33 @@ namespace Thetis
         private void chkWebImage_bypass_cache_CheckedChanged(object sender, EventArgs e)
         {
             updateMeterType();
+        }
+
+        private void radMultiMeter_vfo_display_both_CheckedChanged(object sender, EventArgs e)
+        {
+            if(!radMultiMeter_vfo_display_both.Checked) return;
+            updateMeterType();
+        }
+
+        private void radMultiMeter_vfo_display_vfoa_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!radMultiMeter_vfo_display_vfoa.Checked) return;
+            updateMeterType();
+        }
+
+        private void radMultiMeter_vfo_display_vfob_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!radMultiMeter_vfo_display_vfob.Checked) return;
+            updateMeterType();
+        }
+
+        private void chkMultiMeter_auto_container_height_CheckedChanged(object sender, EventArgs e)
+        {
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.AutoContainerHeight(cci.ID, chkMultiMeter_auto_container_height.Checked);
+            }
         }
     }
 

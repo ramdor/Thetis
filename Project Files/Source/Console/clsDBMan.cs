@@ -136,7 +136,7 @@ namespace Thetis
             }
 
             // shift key reset
-            bool new_db = false;
+            bool new_db_from_reset = false;
             if (Keyboard.IsKeyDown(Keys.LShiftKey) || Keyboard.IsKeyDown(Keys.RShiftKey))
             {
                 Thread.Sleep(500); // ensure this is intentional
@@ -150,12 +150,12 @@ namespace Thetis
                          MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
 
                     if (dr == DialogResult.Yes)
-                        new_db = true;
+                        new_db_from_reset = true;
                 }
             }
             // ctrl key upgrade
             bool ctrl_key_force_update = false;
-            if (Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey))
+            if (!new_db_from_reset && (Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey)))
             {
                 Thread.Sleep(500); // ensure this is intentional
                 if (Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey))
@@ -176,7 +176,7 @@ namespace Thetis
 
             Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
 
-            if (dbs.Count == 0 || new_db)
+            if (dbs.Count == 0 || new_db_from_reset)
             {
                 // no dbs, likely due to fresh install, and/or first use of this new db manager
                 ok = createNewDB(true, true, out old_db_found);
@@ -208,7 +208,21 @@ namespace Thetis
                         {
                             made_new = true;
                             dbs = getAvailableDBs();
-                            ok = dbs.Count > 0;
+                            ok = dbs.Count > 0;// just a check to make sure at leas one exists
+                            if (ok)
+                            {
+                                if (_dbman_settings != null)
+                                {
+                                    db_xml_file = _db_data_path + _dbman_settings.ActiveDB_GUID + "\\database.xml";
+                                    try
+                                    {
+                                        ok = File.Exists(db_xml_file);
+                                    }
+                                    catch { ok = false; }
+                                }
+                                else
+                                    ok = false;
+                            }
                         }
                     }
 

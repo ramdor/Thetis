@@ -61,6 +61,9 @@ namespace Thetis
             picContainer.Location = new Point(0, 0);
             picContainer.Size = new Size(Size.Width, Size.Height);
 
+            _height = Size.Height;
+            _autoHeight = false;
+
             _console = null;
             _id = System.Guid.NewGuid().ToString();
             _border = true;
@@ -115,6 +118,8 @@ namespace Thetis
         private bool _enabled;
         private bool _container_minimises;
         private string _notes;
+        private int _height;
+        private bool _autoHeight;
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Console Console
@@ -226,8 +231,25 @@ namespace Thetis
         {
             _clientPos = Point.Empty;
             _resizing = false;
-        }
 
+            forceResize();
+        }
+        private void forceResize()
+        {
+            if (_autoHeight && this.Size.Height != _height)
+                resize(this.Size.Width, _height);
+            else
+                resize(this.Size.Width, this.Size.Height);
+        }
+        public void ChangeHeight(int height)
+        {
+            if (_resizing) return;
+            if (!_autoHeight) return;
+            if(_height == height) return;
+
+            _height = height;
+            forceResize();
+        }
         private void pbGrab_MouseMove(object sender, MouseEventArgs e)
         {
             if (_resizing)
@@ -239,20 +261,26 @@ namespace Thetis
 
                 int x = _size.Width + dX;
                 int y = _size.Height + dY;
-                if (x < 100) x = 100; // these match max size of parent when floating
-                if (y < 32) y = 32;
+                resize(x, y);
+            }
+        }
+        private void resize(int x, int y)
+        {
+            if(Parent == null) return;
 
-                if (_floating)
-                {
-                    Parent.Size = new Size(x, y);
-                }
-                else
-                {
-                    if (this.Left + x > Parent.ClientSize.Width) x = Parent.ClientSize.Width - this.Left;
-                    if (this.Top + y > Parent.ClientSize.Height) y = Parent.ClientSize.Height - this.Top;
+            if (x < 100) x = 100; // these match max size of parent when floating
+            if (y < 32) y = 32;
 
-                    this.Size = new Size(x, y);
-                }
+            if (_floating)
+            {
+                Parent.Size = new Size(x, y);
+            }
+            else
+            {
+                if (this.Left + x > Parent.ClientSize.Width) x = Parent.ClientSize.Width - this.Left;
+                if (this.Top + y > Parent.ClientSize.Height) y = Parent.ClientSize.Height - this.Top;
+
+                this.Size = new Size(x, y);
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
@@ -556,6 +584,16 @@ namespace Thetis
                 _noTitleBar = value;
             }
         }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public bool AutoHeight
+        {
+            get { return _autoHeight; }
+            set
+            {
+                _autoHeight = value;
+                if (_autoHeight && !_resizing) forceResize();
+            }
+        }
         private void btnAxis_Click(object sender, EventArgs e)
         {
             MouseEventArgs me = (MouseEventArgs)e;
@@ -654,7 +692,8 @@ namespace Thetis
                 NoTitle.ToString() + "|" +
                 MeterEnabled.ToString() + "|" +
                 Notes + "|" +
-                ContainerMinimises.ToString().ToLower();
+                ContainerMinimises.ToString().ToLower() + "|" +
+                AutoHeight.ToString().ToLower();
         }
         public bool TryParse(string str)
         {
@@ -666,11 +705,12 @@ namespace Thetis
             bool noTitleBar = false;
             bool enabled = true;
             bool minimises = true;
+            bool auto_height = false;
 
             if (str != "")
             {
                 string[] tmp = str.Split('|');
-                if(tmp.Length >= 13 && tmp.Length <= 17)
+                if(tmp.Length >= 13 && tmp.Length <= 18)
                 {
                     bOk = tmp[0] != "";
                     if (bOk) ID = tmp[0];
@@ -734,6 +774,12 @@ namespace Thetis
                     {
                         if (bOk) bOk = bool.TryParse(tmp[16], out minimises);
                         if (bOk) ContainerMinimises = minimises;
+                    }
+
+                    if(bOk && tmp.Length > 17) // also auto height for [2.10.3.6]
+                    {
+                        bOk = bool.TryParse(tmp[17], out auto_height);
+                        if (bOk) AutoHeight = auto_height;
                     }
                 }
             }
