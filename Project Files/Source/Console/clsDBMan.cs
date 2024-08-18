@@ -855,6 +855,16 @@ namespace Thetis
         {
             if (_dbman_settings == null) return;
 
+            bool key_force = Common.ShiftKeyDown;// && Common.CtrlKeyDown;
+            if (key_force)
+            {
+                DialogResult dr = MessageBox.Show("Force delete detected. Are you sure?",
+                "Database Manager Issue",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+                if (dr == DialogResult.Yes)
+                    force = true;
+            }
             string desc = "";
             if (!force)
             {
@@ -882,6 +892,22 @@ namespace Thetis
                 }
                 else
                     ok = true; // just to bypass the error
+            }
+            else if(key_force)
+            {
+                if (Directory.Exists(_db_data_path + guid.ToString()))
+                {
+                    // just delete it
+                    try
+                    {
+                        Directory.Delete(_db_data_path + guid.ToString(), true);
+                        ok = true;
+
+                        Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
+                        _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, Guid.Empty);
+                    }
+                    catch { }
+                }
             }
             if (!ok)
             {
@@ -979,9 +1005,16 @@ namespace Thetis
         {
             if(guid == Guid.Empty)
             {
-                List<BackupFileInfo> empty_backups = new List<BackupFileInfo>();
-                _frm_dbman.InitBackups(empty_backups);
-                return;
+                if (_dbman_settings != null)
+                {
+                    guid = _dbman_settings.ActiveDB_GUID;
+                }
+                else
+                {
+                    List<BackupFileInfo> empty_backups = new List<BackupFileInfo>();
+                    _frm_dbman.InitBackups(empty_backups);
+                    return;
+                }
             }
 
             string backup_path = _db_data_path + guid.ToString() + "\\backups";
@@ -1010,10 +1043,10 @@ namespace Thetis
             }
             catch { }
 
-            if (ok && highlighted != Guid.Empty & guid == highlighted)
-            {
-                getBackups(guid);
-            }
+            if (highlighted != Guid.Empty)
+                guid = highlighted;
+
+            getBackups(guid);
 
             return ok;
         }
@@ -1139,7 +1172,7 @@ namespace Thetis
                         }
                         else
                         {
-                            DialogResult dr = MessageBox.Show("There was a problem importing the database.",
+                            DialogResult dr = MessageBox.Show("There was a problem importing the database. The database file seems to be corrupt.",
                             "Database Manager",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
@@ -1152,6 +1185,195 @@ namespace Thetis
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                     }
+                }
+                else
+                {
+                    DialogResult dr = MessageBox.Show("The database file needs a .xml file extension.",
+                    "Database Manager",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
+            }
+        }
+        public static void ImportAsAvailable(Guid selected)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "XML files (*.xml)|*.xml";
+            openFileDialog.Title = "Select an XML file";
+            openFileDialog.Multiselect = false;
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filename = openFileDialog.FileName;
+                if (Path.GetExtension(filename).Equals(".xml", StringComparison.OrdinalIgnoreCase))
+                {
+                    bool ok;
+                    try
+                    {
+                        XmlDocument xmlDocument = new XmlDocument();
+                        xmlDocument.Load(filename);
+                        ok = true;
+                    }
+                    catch
+                    {
+                        ok = false;
+                    }
+                    if (ok)
+                    {
+                        string desc = InputBox.Show("Database Duplication", "Please enter a description for the imported database.", "");
+                        if (string.IsNullOrEmpty(desc)) return;
+
+                        // get some basic info from the db that is being imported
+                        _ignore_written = true;
+                        // write and store existing
+                        string old_db_filename = "";
+                        if (!string.IsNullOrEmpty(DB.FileName))
+                        {
+                            old_db_filename = DB.FileName;
+                            DB.Exit();
+                        }
+                        // read db to get some basic info
+                        DB.FileName = filename;
+                        ok = DB.Init();
+                        _ignore_written = false;
+
+                        HPSDRModel model = HPSDRModel.HERMES;
+                        string version = "";
+                        string version_number = "";
+                        if (ok)
+                        {
+                            // get db values
+                            Dictionary<string, string> options = DB.GetVarsDictionary("Options");
+                            if (options.ContainsKey("comboRadioModel"))
+                                model = Common.StringModelToEnum(options["comboRadioModel"]);
+                            else
+                                model = HPSDRModel.HERMES;
+
+                            version = DB.VersionString;
+                            version_number = DB.VersionNumber;
+                        }
+
+                        // restore DB
+                        if (!string.IsNullOrEmpty(old_db_filename))
+                        {
+                            _ignore_written = true;
+                            DB.FileName = old_db_filename;
+                            DB.Init();
+                            _ignore_written = false;
+                        }
+
+                        if (ok)
+                        {
+                            string dest_file = "";
+                            string path = createNewDBFolder(out Guid guid);
+                            ok = !string.IsNullOrEmpty(path);
+                            if (ok)
+                            {
+                                //copy
+                                try
+                                {
+                                    dest_file = path + "\\database.xml";
+                                    File.Copy(filename, dest_file);
+                                    ok = File.Exists(dest_file);
+                                }
+                                catch
+                                {
+                                    ok = false;
+                                }
+
+                                if (ok)
+                                {
+                                    // create new json file
+                                    DirectoryInfo folderInfo = new DirectoryInfo(path);
+                                    FileInfo fileInfo = new FileInfo(dest_file);
+
+                                    DatabaseInfo di = new DatabaseInfo
+                                    {
+                                        GUID = guid,
+                                        FullPath = path,
+                                        FolderCreationTime = DateTime.Now,
+                                        TotalContentsSize = calculateFolderSize(folderInfo),
+                                        //
+                                        Size = fileInfo.Length,
+                                        Description = desc,
+                                        Model = model,
+                                        LastChanged = fileInfo.LastWriteTime,
+                                        CreationTime = fileInfo.CreationTime,
+                                        VersionString = version,
+                                        VersionNumber = version_number,
+                                        BackupOnStartup = false,
+                                        BackupOnShutdown = false
+                                    };
+
+                                    //write the updated version
+                                    string json_file = path + "\\dbman.json";
+                                    string jsonString = JsonConvert.SerializeObject(di, Newtonsoft.Json.Formatting.Indented);
+                                    try
+                                    {
+                                        File.WriteAllText(json_file, jsonString);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        ok = false;
+                                        DialogResult dr = MessageBox.Show("There was a problem write the database info. Unable to copy the source database file.",
+                                        "Database Manager",
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                                    }
+                                    if (ok)
+                                    {
+                                        Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
+                                        _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, Guid.Empty);
+                                    }
+                                }
+                                else
+                                {
+                                    DialogResult dr = MessageBox.Show("There was a problem importing the database. Unable to copy the source database file.",
+                                    "Database Manager",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                                }
+
+                                //DialogResult dr = MessageBox.Show("The database was imported sucessfully. Thetis will now restart.",
+                                //"Database Manager",
+                                //MessageBoxButtons.OK,
+                                //MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                                //_frm_dbman.Hide();
+
+                                //Console.getConsole().Restart = true;
+                                //Console.getConsole().Close();
+                            }
+                            else
+                            {
+                                DialogResult dr = MessageBox.Show("There was a problem importing the database.",
+                                "Database Manager",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                            }
+                        }
+                        else
+                        {
+                            DialogResult dr = MessageBox.Show("There was a problem importing the database. The database file seems to be corrupt.",
+                            "Database Manager",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        }
+                    }
+                    else
+                    {
+                        DialogResult dr = MessageBox.Show("There was a problem importing the database. The xml file seems to be corrupt.",
+                        "Database Manager",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    }
+                }
+                else
+                {
+                    DialogResult dr = MessageBox.Show("The database file needs a .xml file extension.",
+                    "Database Manager",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
             }
         }
