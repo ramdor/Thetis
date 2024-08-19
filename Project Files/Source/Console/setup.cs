@@ -26264,7 +26264,7 @@ namespace Thetis
                         {
                             Cursor c = Cursor.Current;
                             Cursor.Current = Cursors.WaitCursor;
-                            sRootFolder = extractPngFilesFromZip(e.Path, sOutputPath);
+                            sRootFolder = extractImagesFilesFromZip(e.Path, sOutputPath);
                             Cursor.Current = c;
                         }
                         else
@@ -26485,7 +26485,7 @@ namespace Thetis
                     entry.FullName.StartsWith(folderName + "/") && entry.FullName.EndsWith("/"));
             }
         }
-        private static string extractPngFilesFromZip(string sourceZipFilePath, string outputPath)
+        private static string extractImagesFilesFromZip(string sourceZipFilePath, string outputPath)
         {
             string sRootFolder = "";
             try
@@ -26502,13 +26502,22 @@ namespace Thetis
                     {
                         // Normalize the entry path for file system usage
                         string entryPath = Path.Combine(outputPath, entry.FullName.Replace('/', '\\'));
+                        string fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(entryPath);
 
                         // Create the directory structure if it doesn't exist
                         Directory.CreateDirectory(Path.GetDirectoryName(entryPath));
 
-                        // If a file exists at the target path, delete it
-                        if (File.Exists(entryPath))
-                            File.Delete(entryPath);
+                        // remove any .* files that match
+                        string[] filesToDelete = Directory.GetFiles(outputPath, fileNameWithoutExtension + ".*");
+                        // Delete each found file
+                        foreach (string file in filesToDelete)
+                        {
+                            try
+                            {
+                                File.Delete(file);
+                            }
+                            catch { }
+                        }
 
                         // Extract the entry
                         entry.ExtractToFile(entryPath, true); // true to overwrite existing files
