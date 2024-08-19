@@ -14999,31 +14999,31 @@ namespace Thetis
                     }
                 }
             }
-            private void OnKeyPressed(object sender, RawInputEventArg e)
-            {
-                if (e.KeyPressEvent.KeyPressState == "BREAK") return;
+            //private void OnKeyPressed(object sender, RawInputEventArg e)
+            //{
+            //    if (e.KeyPressEvent.KeyPressState == "BREAK") return;
 
-                Debug.Print(e.KeyPressEvent.VKey.ToString() + " -- " + e.KeyPressEvent.ID);
+            //    Debug.Print(e.KeyPressEvent.VKey.ToString() + " -- " + e.KeyPressEvent.ID);
 
-                lock (_metersLock)
-                {
-                    string sId = e.KeyPressEvent.ID;
-                    if (!_meters.ContainsKey(sId)) return;
+            //    lock (_metersLock)
+            //    {
+            //        string sId = e.KeyPressEvent.ID;
+            //        if (!_meters.ContainsKey(sId)) return;
 
-                    clsMeter m = _meters[sId];
+            //        clsMeter m = _meters[sId];
 
-                    lock (m._meterItemsLock)
-                    {
-                        if (m.SortedMeterItemsForZOrder != null)
-                        {
-                            foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
-                            {
-                                mi.KeyDown((Keys)e.KeyPressEvent.VKey);
-                            }
-                        }
-                    }
-                }
-            }
+            //        lock (m._meterItemsLock)
+            //        {
+            //            if (m.SortedMeterItemsForZOrder != null)
+            //            {
+            //                foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
+            //                {
+            //                    mi.KeyDown((Keys)e.KeyPressEvent.VKey);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
             private void OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
             {
                 lock (_metersLock)
