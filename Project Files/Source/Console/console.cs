@@ -508,6 +508,7 @@ namespace Thetis
         private Thread multimeter2_thread_rx1;
         private Thread multimeter2_thread_rx2;
         private bool _onlyOneSetupInstance; // used by setup to ensure only one instance created
+        private bool _onlyOneCWXInstance;
 
         private bool _portAudioInitalising = false;
         private bool _portAudioIssue = false;
@@ -525,6 +526,8 @@ namespace Thetis
             get {
                 if (m_frmCWXForm == null || m_frmCWXForm.IsDisposed)
                 {
+                    Debug.Assert(_onlyOneCWXInstance);
+                    _onlyOneCWXInstance = false;
                     m_frmCWXForm = new CWX(this);
                     m_frmCWXForm.StopEverything(chkPower.Checked); //[2.10.3]MW0LGE
                 }
@@ -1685,6 +1688,8 @@ namespace Thetis
 
             //[2.10.3.1]MW0LGE make sure it is created on this thread, as the following serial
             //devices could cause it to be created on another thread
+            m_frmCWXForm = null;
+            _onlyOneCWXInstance = true;
             CWX tmp = CWXForm;
             //--
 
@@ -44418,14 +44423,43 @@ namespace Thetis
         {
             updateRawInputDevices();
         }
+
+        private ConcurrentDictionary<Keys, bool> _keyPressed = new ConcurrentDictionary<Keys, bool>();
         private void OnKeyPressedRaw(object sender, RawInputEventArg e)
         {
-            // sent to meter manager, so that it can detect presses in the VfoDisplay with no focus
-            if (e.KeyPressEvent.KeyPressState == "MAKE")
-                MeterManager.GlobalKeyDown((Keys)e.KeyPressEvent.VKey);
+            bool keyState = e.KeyPressEvent.KeyPressState.Equals("MAKE", StringComparison.OrdinalIgnoreCase);
+            Keys key = (Keys)e.KeyPressEvent.VKey;
+
+            if (keyState) // make is push to make
+            {
+                bool available = _keyPressed.TryGetValue(key, out bool current_state);
+
+                if (!current_state)
+                {
+                    // sent to meter manager, so that it can detect presses in the VfoDisplay with no focus
+                    MeterManager.GlobalKeyDown((Keys)e.KeyPressEvent.VKey);
+
+                    //CWXForm
+                    if (m_frmCWXForm != null) CWXForm.GlobalKeyDown((Keys)e.KeyPressEvent.VKey);
+
+                    if(!available) _keyPressed.TryAdd(key, true);
+                }
+            }
             else
-                MeterManager.GlobalKeyUp((Keys)e.KeyPressEvent.VKey);
+            {
+                _keyPressed.TryRemove(key, out bool current_state);
+
+                if (current_state) // was pressed
+                {
+                    // sent to meter manager, so that it can detect presses in the VfoDisplay with no focus
+                    MeterManager.GlobalKeyUp((Keys)e.KeyPressEvent.VKey); // break is other state
+
+                    //CWXForm
+                    if (m_frmCWXForm != null) CWXForm.GlobalKeyUp((Keys)e.KeyPressEvent.VKey);
+                }
+            }
         }
+
         private void OnMouseWheelChanged(object sender, RawInputEventArg e)
         {
             if (!m_bAlsoUseSpecificMouseWheel) return; // ignore because we are not also using a specific mouse wheel
