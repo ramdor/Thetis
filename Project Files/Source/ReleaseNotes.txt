@@ -12,6 +12,8 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] cache bypass option to web image meter item
 - [add] you can now select VFOA, VFOB or BOTH in the multimeter vfo control
 - [add] auto height options for multimeter containers
+- [add] cwx form does now not need focus to act on F1-F12 etc. Uncheck focus to enable this in the cwx form
+- [add] rotator can now have a map. Check out OE3IDE's skin server pages.
 
 ## v2.10.3.6 Change Log - WIP dev_8b
 - [fix] rx att + tx att was being used in dup display, leading to incorrect display. Fixed
