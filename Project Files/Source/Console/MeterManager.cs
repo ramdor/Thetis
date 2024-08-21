@@ -203,6 +203,12 @@ namespace Thetis
         //SPECTRUM,
         LAST
     }
+    public enum BandGroups
+    {
+        GEN = 0,
+        HF,
+        VHF
+    }
     public class Globals
     {
         public Dictionary<string, object> Variables;
@@ -2477,6 +2483,20 @@ namespace Thetis
                     m.CompandEnabled = _console.CPDR;
 
                     m.QuickSplitEnabled = _console.GetQuickSplitEnabled;
+
+                    if (rx == 1)
+                    {
+                        if (_console.BandGENSelected)
+                            m.BandGroup = BandGroups.GEN;
+                        if (_console.BandHFSelected)
+                            m.BandGroup = BandGroups.HF;
+                        if (_console.BandVHFSelected)
+                            m.BandGroup = BandGroups.VHF;
+                    }
+                    else if(rx == 2)
+                    {
+                        m.BandGroup = m.GetBandGroupFromBand(_console.RX2Band);
+                    }
                 }
             }
         }
@@ -3386,44 +3406,6 @@ namespace Thetis
         #region clsMeterItem
         public class clsMeterItem
         {
-            internal static class MeterHelpers
-            {
-                static MeterHelpers()
-                {
-                }
-
-                public static void SetBandPanel(Console c, int rx ,bool gen, bool hf, bool vhf)
-                {
-                    if (c == null) return;
-                    if (rx > 1) return; // this does not happen for rx 2
-
-                    if (gen)
-                    {
-                        hf = false;
-                        vhf = false;
-                    }
-                    else if (hf)
-                    {
-                        gen = false;
-                        vhf = false;
-                    }
-                    else if (vhf)
-                    {
-                        gen = false;
-                        hf = false;
-                    }
-                    _console.BeginInvoke(new MethodInvoker(() =>
-                    {
-                        if (gen && !c.BandGENSelected)
-                            c.BandGENSelected = true;
-                        else if (hf && !c.BandHFSelected)
-                            c.BandHFSelected = true;
-                        else if (vhf && !c.BandVHFSelected)
-                            c.BandVHFSelected = true;
-                    }));
-                }
-            }
-
             public enum MeterItemType
             {
                 BASE = 0,
@@ -4116,13 +4098,7 @@ namespace Thetis
         }
         internal class clsBandButtonBox : clsButtonBox
         {
-            public enum Bands
-            {
-                GEN = 0,
-                HF,
-                VHF
-            }
-            private Bands _button_bands;
+            private BandGroups _button_bands;
             private Band _band;
             clsMeter _owningmeter;
 
@@ -4130,8 +4106,31 @@ namespace Thetis
             {
                 _owningmeter = owningmeter;
 
-                _button_bands = Bands.GEN;
-                _band = Band.FIRST;
+                if (_owningmeter.RX == 1)
+                {
+                    _band = _owningmeter.BandVfoA;
+                    //use panels
+                    if(_console != null)
+                    {
+                        if (_console.BandGENSelected)
+                            _button_bands = BandGroups.GEN;
+                        else if (_console.BandHFSelected)
+                            _button_bands = BandGroups.HF;
+                        else if (_console.BandVHFSelected)
+                            _button_bands = BandGroups.VHF;
+                        else
+                            _button_bands = _owningmeter.GetBandGroupFromBand(_band);
+                    }
+                    else
+                    {
+                        _button_bands = _owningmeter.GetBandGroupFromBand(_band);
+                    }
+                } 
+                else if (_owningmeter.RX == 2)
+                {
+                    _band = _owningmeter.BandVfoB;
+                    _button_bands = _owningmeter.GetBandGroupFromBand(_band);
+                }                
 
                 ItemType = MeterItemType.BAND_BUTTONS;
 
@@ -4139,73 +4138,18 @@ namespace Thetis
 
                 setupButtons();
             }
-            private Bands getBandsFromBand(Band b)
-            {
-                RadioButtonTS r;
-
-                switch (b)
-                {
-                    case Band.B160M:
-                    case Band.B80M:
-                    case Band.B60M:
-                    case Band.B40M:
-                    case Band.B30M:
-                    case Band.B20M:
-                    case Band.B17M:
-                    case Band.B15M:
-                    case Band.B12M:
-                    case Band.B10M:
-                    case Band.B6M:
-                    case Band.B2M:
-                        return Bands.HF;
-                    case Band.WWV:
-                        return Bands.HF;
-                    case Band.BLMF:
-                    case Band.B120M:
-                    case Band.B90M:
-                    case Band.B61M:
-                    case Band.B49M:
-                    case Band.B41M:
-                    case Band.B31M:
-                    case Band.B25M:
-                    case Band.B22M:
-                    case Band.B19M:
-                    case Band.B16M:
-                    case Band.B14M:
-                    case Band.B13M:
-                    case Band.B11M:
-                        return Bands.GEN;
-                    case Band.VHF0:
-                    case Band.VHF1:
-                    case Band.VHF2:
-                    case Band.VHF3:
-                    case Band.VHF4:
-                    case Band.VHF5:
-                    case Band.VHF6:
-                    case Band.VHF7:
-                    case Band.VHF8:
-                    case Band.VHF9:
-                    case Band.VHF10:
-                    case Band.VHF11:
-                    case Band.VHF12:
-                    case Band.VHF13:
-                        return Bands.VHF;
-                    default:
-                        return Bands.GEN;
-                }
-            }
             public void BandsChanged(bool gen, bool hf, bool vhf)
             {
                 if (gen)
-                    ButtonBands = Bands.GEN;
+                    ButtonBands = BandGroups.GEN;
                 else if (hf)
-                    ButtonBands = Bands.HF;
+                    ButtonBands = BandGroups.HF;
                 else if (vhf)
-                    ButtonBands = Bands.VHF;
+                    ButtonBands = BandGroups.VHF;
             }
             public void VHFUpdate(int index, bool enabled, string text)
             {
-                if (_button_bands != Bands.VHF) return;
+                if (_button_bands != BandGroups.VHF) return;
                 if (index < 0 || index > 14) return;
 
                 SetEnabled(index, enabled);
@@ -4223,13 +4167,13 @@ namespace Thetis
                 Band old = _band;
                 _band = b;
 
-                Bands bands = getBandsFromBand(_band);
-                Bands old_bands = getBandsFromBand(old);
+                BandGroups bands = _owningmeter.GetBandGroupFromBand(_band);
+                BandGroups old_bands = _owningmeter.GetBandGroupFromBand(old);
 
                 if (bands != old_bands)
                 {
                     _force_button_bands_update = true; // as will have been set already by the panel change in console
-                    ButtonBands = getBandsFromBand(b);
+                    ButtonBands = _owningmeter.GetBandGroupFromBand(b);
                     _force_button_bands_update = false;
                 }
                 else
@@ -4239,15 +4183,15 @@ namespace Thetis
                     int old_index = -1;
                     switch (_button_bands)
                     {
-                        case Bands.GEN:
+                        case BandGroups.GEN:
                             index = (int)_band - (int)Band.BLMF;
                             old_index = (int)old - (int)Band.BLMF;
                             break;
-                        case Bands.HF:
+                        case BandGroups.HF:
                             index = (int)_band - (int)Band.B160M;
                             old_index = (int)old - (int)Band.B160M;
                             break;
-                        case Bands.VHF:
+                        case BandGroups.VHF:
                             index = (int)_band - (int)Band.VHF0;
                             old_index = (int)old - (int)Band.VHF0;
                             break;
@@ -4265,12 +4209,12 @@ namespace Thetis
                 set { _force_button_bands_update = value; }
             }
             private bool _force_button_bands_update = false;
-            public Bands ButtonBands
+            public BandGroups ButtonBands
             {
                 get { return _button_bands; }
                 set 
                 {
-                    Bands old = _button_bands;
+                    BandGroups old = _button_bands;
                     _button_bands = value;
 
                     if(old != _button_bands || _force_button_bands_update)
@@ -4284,7 +4228,7 @@ namespace Thetis
                 System.Drawing.Color text_color = System.Drawing.Color.White;
                 switch (_button_bands)
                 {
-                    case clsBandButtonBox.Bands.GEN:
+                    case BandGroups.GEN:
                         start_band = (int)Band.BLMF;
                         end_band = (int)Band.B11M;
                         text_color = System.Drawing.Color.Yellow;
@@ -4297,7 +4241,7 @@ namespace Thetis
                         SetHoverColour(14, System.Drawing.Color.LightGray);
                         SetOn(14, false);
                         break;
-                    case clsBandButtonBox.Bands.HF:
+                    case BandGroups.HF:
                         start_band = (int)Band.B160M;
                         end_band = (int)Band.B6M;
                         text_color = BandStackManager.BandToColour(Band.B160M);
@@ -4328,7 +4272,7 @@ namespace Thetis
                         SetHoverColour(14, System.Drawing.Color.LightGray);
                         SetOn(14, false);
                         break;
-                    case clsBandButtonBox.Bands.VHF:
+                    case BandGroups.VHF:
                         start_band = (int)Band.VHF0;
                         end_band = (int)Band.VHF13;
                         text_color = BandStackManager.BandToColour(Band.VHF0);
@@ -4357,7 +4301,7 @@ namespace Thetis
                         string band_text = "";
                         Band b = (Band)(start_band + i);
 
-                        if (_button_bands == Bands.VHF)
+                        if (_button_bands == BandGroups.VHF)
                         {
                             SetEnabled(i, _console.GetVHFEnabled(i));
 
@@ -4393,7 +4337,7 @@ namespace Thetis
                         SetFontStyle(i, FontStyle.Regular);
 
                         SetUseIndicator(i, true);
-                        SetIndicatorWidth(i, 0.01f);
+                        SetIndicatorWidth(i, 0.04f);
 
                         SetOnColour(i, System.Drawing.Color.CornflowerBlue);
                         SetOffColour(i, System.Drawing.Color.Black);
@@ -4426,45 +4370,45 @@ namespace Thetis
                 Band b = Band.FIRST;
                 switch (ButtonBands)
                 {
-                    case Bands.GEN:
+                    case BandGroups.GEN:
                         {
                             if (index == 14) // HF button
                             {
-                                ButtonBands = Bands.HF;
-                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, true, false);
+                                ButtonBands = BandGroups.HF;
+                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false);
                                 return;
                             }
                             b = (Band)((int)Band.BLMF + index);
                             if (index > 13) return;
                             break;
                         }
-                    case Bands.HF:
+                    case BandGroups.HF:
                         {
                             switch (index)
                             {
                                 case 12: //VHF
-                                    ButtonBands = Bands.VHF;
-                                    MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, false, true);
+                                    ButtonBands = BandGroups.VHF;
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, false, true);
                                     return;
                                 case 13: //WVV
                                     setBand(Band.WWV);
                                     // dont need to set band panel, as will happen due to band change
                                     return;
                                 case 14: //SWL
-                                    ButtonBands = Bands.GEN;
-                                    MeterHelpers.SetBandPanel(_console, _owningmeter.RX, true, false, false);
+                                    ButtonBands = BandGroups.GEN;
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, true, false, false);
                                     return;
                             }
                             if (index > 10) return;
                             b = (Band)((int)Band.B160M + index);
                             break;
                         }
-                    case Bands.VHF:
+                    case BandGroups.VHF:
                         {
                             if (index == 14) // HF button
                             {
-                                ButtonBands = Bands.HF;
-                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, true, false);
+                                ButtonBands = BandGroups.HF;
+                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false);
                                 return;
                             }
                             if (index > 13) return;
@@ -5265,7 +5209,7 @@ namespace Thetis
                         {
                             if (b == 13)
                             {
-                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
                                 return false;
                             }
                             return true;
@@ -5278,12 +5222,12 @@ namespace Thetis
                         {
                             if (b == 11)
                             {
-                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, false, true); // VHF
+                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, false, true); // VHF
                                 return false;
                             }
                             if (b == 13)
                             {
-                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, true, false, false); // GEN(SWL)
+                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, true, false, false); // GEN(SWL)
                                 return false;
                             }
                             if (b == 12) // WWV
@@ -5299,7 +5243,7 @@ namespace Thetis
                         {
                             if (b == 14)
                             {
-                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
                                 return false;
                             }
                             return true;
@@ -5325,7 +5269,7 @@ namespace Thetis
                         {
                             if (b == 13)
                             {
-                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
                                 return false;
                             }
                             return true;
@@ -5338,12 +5282,12 @@ namespace Thetis
                         {
                             if (b == 11)
                             {
-                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, false, true); // VHF
+                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, false, true); // VHF
                                 return false;
                             }
                             if (b == 13)
                             {
-                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, true, false, false); // GEN(SWL)
+                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, true, false, false); // GEN(SWL)
                                 return false;
                             }
                             if (b == 12) // WWV
@@ -5359,7 +5303,7 @@ namespace Thetis
                         {
                             if (b == 14)
                             {
-                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
                                 return false;
                             }
                             return true;
@@ -9272,6 +9216,9 @@ namespace Thetis
 
             private int _quickestRXUpdate;
             private int _quickestTXUpdate;
+
+            private BandGroups _band_group;
+
             internal readonly object _meterItemsLock = new object();
 
             private void addMeterItem(clsMeterItem mi)
@@ -11799,15 +11746,14 @@ namespace Thetis
                 bb.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
                 bb.Size = new SizeF(1f - _fPadX * 2f, 1f);
 
-                bb.Buttons = 15;
                 bb.Columns = 3;
                 bb.UpdateInterval = 50;
-                bb.Margin = 0.005f;// 0.01f;
-                bb.Radius = 0.005f;// 0.01f;
+                bb.Margin = 0.006f;// 0.01f;
+                bb.Radius = 0.05f;// 0.01f;
                 bb.HeightRatio = 0.5f;
-                bb.Border = 0.004f;
-                bb.ForceUpdate = true; // allow an update, even though gen will be already set in the constructor
-                bb.ButtonBands = clsBandButtonBox.Bands.GEN;
+                bb.Border = 0.01f;
+                bb.ForceUpdate = true;
+                bb.ButtonBands = bb.ButtonBands; //cause update to size
                 bb.ForceUpdate = false;
                 addMeterItem(bb);
 
@@ -12068,6 +12014,93 @@ namespace Thetis
                 _sortedMeterItemsForZOrder = null; // only after setupSortedZOrder is called
                 _displayGroups = new List<string>();
                 _displayGroup = 0;
+
+                _band_group = BandGroups.GEN;
+            }
+            public BandGroups GetBandGroupFromBand(Band b)
+            {
+                RadioButtonTS r;
+
+                switch (b)
+                {
+                    case Band.B160M:
+                    case Band.B80M:
+                    case Band.B60M:
+                    case Band.B40M:
+                    case Band.B30M:
+                    case Band.B20M:
+                    case Band.B17M:
+                    case Band.B15M:
+                    case Band.B12M:
+                    case Band.B10M:
+                    case Band.B6M:
+                    case Band.B2M:
+                        return BandGroups.HF;
+                    case Band.WWV:
+                        return BandGroups.HF;
+                    case Band.BLMF:
+                    case Band.B120M:
+                    case Band.B90M:
+                    case Band.B61M:
+                    case Band.B49M:
+                    case Band.B41M:
+                    case Band.B31M:
+                    case Band.B25M:
+                    case Band.B22M:
+                    case Band.B19M:
+                    case Band.B16M:
+                    case Band.B14M:
+                    case Band.B13M:
+                    case Band.B11M:
+                        return BandGroups.GEN;
+                    case Band.VHF0:
+                    case Band.VHF1:
+                    case Band.VHF2:
+                    case Band.VHF3:
+                    case Band.VHF4:
+                    case Band.VHF5:
+                    case Band.VHF6:
+                    case Band.VHF7:
+                    case Band.VHF8:
+                    case Band.VHF9:
+                    case Band.VHF10:
+                    case Band.VHF11:
+                    case Band.VHF12:
+                    case Band.VHF13:
+                        return BandGroups.VHF;
+                    default:
+                        return BandGroups.GEN;
+                }
+            }
+            public void SetBandPanel(Console c, int rx, bool gen, bool hf, bool vhf)
+            {
+                if (c == null) return;
+                if (rx > 1) return; // this does not happen for rx 2
+
+                if (gen)
+                {
+                    hf = false;
+                    vhf = false;
+                }
+                else if (hf)
+                {
+                    gen = false;
+                    vhf = false;
+                }
+                else if (vhf)
+                {
+                    gen = false;
+                    hf = false;
+                }
+                _console.BeginInvoke(new MethodInvoker(() =>
+                {
+                    if (gen && !c.BandGENSelected)
+                        c.BandGENSelected = true;
+                    else if (hf && !c.BandHFSelected)
+                        c.BandHFSelected = true;
+                    else if (vhf && !c.BandVHFSelected)
+                        c.BandVHFSelected = true;
+                }));
             }
             public void UpdateBandButtons(Band newBand)
             {
@@ -14292,6 +14325,11 @@ namespace Thetis
             {
                 get { return _quickSplitEnabled; }
                 set { _quickSplitEnabled = value; }
+            }
+            public BandGroups BandGroup
+            {
+                get { return _band_group; }
+                set { _band_group = value; }
             }
             public float PadX { get { return _fPadX; } set { _fPadX = value; } }
             public float PadY { get { return _fPadY; } set { _fPadY = value; } }
