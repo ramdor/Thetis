@@ -59,6 +59,9 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
 using RawInput_dll;
+using System.Drawing.Text;
+using System.Security.Policy;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Thetis
 {
@@ -196,6 +199,7 @@ namespace Thetis
         ROTATOR,
         LED,
         WEB_IMAGE,
+        BAND_BUTTONS,
         //SPECTRUM,
         LAST
     }
@@ -1410,6 +1414,7 @@ namespace Thetis
                 case MeterType.ROTATOR: return 2;
                 case MeterType.LED: return 2;
                 case MeterType.WEB_IMAGE: return 2;
+                case MeterType.BAND_BUTTONS: return 2;
                     //case MeterType.SPECTRUM: return 2;
             }
 
@@ -1447,6 +1452,7 @@ namespace Thetis
                 case MeterType.TEXT_OVERLAY: return "Text Overlay";
                 case MeterType.LED: return "Led Indicator";
                 case MeterType.WEB_IMAGE: return "Web Image";
+                case MeterType.BAND_BUTTONS: return "Band Buttons";
                 case MeterType.DATA_OUT: return "Data Out Node";
                 case MeterType.ROTATOR: return "Rotator";
                 //case MeterType.HISTORY: return "History";
@@ -2154,6 +2160,9 @@ namespace Thetis
 
             _console.QuickSplitChangedHandlers += OnQuickSplitChanged;
 
+            _console.BandPanelChangeHandlers += OnBandPanelChanged;
+            _console.VHFChangedHandlers += OnVHFChanged;
+
             _delegatesAdded = true;
         }
         private static void removeDelegates()
@@ -2191,6 +2200,9 @@ namespace Thetis
             _console.CompandChangedHandlers -= OnCompandChanged;
 
             _console.QuickSplitChangedHandlers -= OnQuickSplitChanged;
+
+            _console.BandPanelChangeHandlers -= OnBandPanelChanged;
+            _console.VHFChangedHandlers -= OnVHFChanged;
 
             foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
@@ -2277,6 +2289,34 @@ namespace Thetis
                     }
                 }
             }
+        }       
+        private static void OnVHFChanged(int idx, bool old_state, bool new_state, string old_text, string new_text)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+
+                    m.UpdateVHF(idx, new_state, new_text);
+
+                    m.ZeroOut(true, false);
+                }
+            }
+        }
+        private static void OnBandPanelChanged(int rx, bool gen, bool hf, bool vhf)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
+
+                    m.UpdateBands(gen, hf, vhf);
+
+                    m.ZeroOut(true, false);
+                }
+            }
         }
         private static void OnBandChange(int rx, Band oldBand, Band newBand)
         {
@@ -2290,6 +2330,9 @@ namespace Thetis
                         m.BandVfoA = newBand;
                     else
                         m.BandVfoB = newBand;
+
+                    if(oldBand != newBand)
+                        m.UpdateBandButtons(newBand);
 
                     m.ZeroOut(true, false);
                 }
@@ -2987,7 +3030,7 @@ namespace Thetis
                 if (newLocation.Y + m.Height > _console.Height) newLocation.Y = _console.Height - m.Height;
                 if (newLocation.X < 0) newLocation.X = 0;
                 if (newLocation.Y < 0) newLocation.Y = 0;
-
+                
                 m.Location = newLocation;
             }
         }
@@ -3339,10 +3382,48 @@ namespace Thetis
                 }
             }
         }
-        #endregion
+        #endregion       
         #region clsMeterItem
         public class clsMeterItem
         {
+            internal static class MeterHelpers
+            {
+                static MeterHelpers()
+                {
+                }
+
+                public static void SetBandPanel(Console c, int rx ,bool gen, bool hf, bool vhf)
+                {
+                    if (c == null) return;
+                    if (rx > 1) return; // this does not happen for rx 2
+
+                    if (gen)
+                    {
+                        hf = false;
+                        vhf = false;
+                    }
+                    else if (hf)
+                    {
+                        gen = false;
+                        vhf = false;
+                    }
+                    else if (vhf)
+                    {
+                        gen = false;
+                        hf = false;
+                    }
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        if (gen && !c.BandGENSelected)
+                            c.BandGENSelected = true;
+                        else if (hf && !c.BandHFSelected)
+                            c.BandHFSelected = true;
+                        else if (vhf && !c.BandVHFSelected)
+                            c.BandVHFSelected = true;
+                    }));
+                }
+            }
+
             public enum MeterItemType
             {
                 BASE = 0,
@@ -3368,7 +3449,8 @@ namespace Thetis
                 DATA_OUT,
                 ROTATOR,
                 LED,
-                WEB_IMAGE
+                WEB_IMAGE,
+                BAND_BUTTONS
                 //SPECTRUM
             }
 
@@ -4032,6 +4114,634 @@ namespace Thetis
                 ZOrder = int.MaxValue;
             }
         }
+        internal class clsBandButtonBox : clsButtonBox
+        {
+            public enum Bands
+            {
+                GEN = 0,
+                HF,
+                VHF
+            }
+            private Bands _button_bands;
+            private Band _band;
+            clsMeter _owningmeter;
+
+            public clsBandButtonBox(clsMeter owningmeter)
+            {
+                _owningmeter = owningmeter;
+
+                _button_bands = Bands.GEN;
+                _band = Band.FIRST;
+
+                ItemType = MeterItemType.BAND_BUTTONS;
+
+                Buttons = 15;
+
+                setupButtons();
+            }
+            private Bands getBandsFromBand(Band b)
+            {
+                RadioButtonTS r;
+
+                switch (b)
+                {
+                    case Band.B160M:
+                    case Band.B80M:
+                    case Band.B60M:
+                    case Band.B40M:
+                    case Band.B30M:
+                    case Band.B20M:
+                    case Band.B17M:
+                    case Band.B15M:
+                    case Band.B12M:
+                    case Band.B10M:
+                    case Band.B6M:
+                    case Band.B2M:
+                        return Bands.HF;
+                    case Band.WWV:
+                        return Bands.HF;
+                    case Band.BLMF:
+                    case Band.B120M:
+                    case Band.B90M:
+                    case Band.B61M:
+                    case Band.B49M:
+                    case Band.B41M:
+                    case Band.B31M:
+                    case Band.B25M:
+                    case Band.B22M:
+                    case Band.B19M:
+                    case Band.B16M:
+                    case Band.B14M:
+                    case Band.B13M:
+                    case Band.B11M:
+                        return Bands.GEN;
+                    case Band.VHF0:
+                    case Band.VHF1:
+                    case Band.VHF2:
+                    case Band.VHF3:
+                    case Band.VHF4:
+                    case Band.VHF5:
+                    case Band.VHF6:
+                    case Band.VHF7:
+                    case Band.VHF8:
+                    case Band.VHF9:
+                    case Band.VHF10:
+                    case Band.VHF11:
+                    case Band.VHF12:
+                    case Band.VHF13:
+                        return Bands.VHF;
+                    default:
+                        return Bands.GEN;
+                }
+            }
+            public void BandsChanged(bool gen, bool hf, bool vhf)
+            {
+                if (gen)
+                    ButtonBands = Bands.GEN;
+                else if (hf)
+                    ButtonBands = Bands.HF;
+                else if (vhf)
+                    ButtonBands = Bands.VHF;
+            }
+            public void VHFUpdate(int index, bool enabled, string text)
+            {
+                if (_button_bands != Bands.VHF) return;
+                if (index < 0 || index > 14) return;
+
+                SetEnabled(index, enabled);
+
+                System.Drawing.Color text_color = BandStackManager.BandToColour(Band.VHF0);
+                if (enabled)
+                    SetFontColour(index, text_color);
+                else
+                    SetFontColour(index, System.Drawing.Color.FromArgb(255, (int)(text_color.R * 0.3f), (int)(text_color.G * 0.3f), (int)(text_color.B * 0.3f)));
+
+                SetText(index, text);
+            }
+            public void BandChanged(Band b)
+            {
+                Band old = _band;
+                _band = b;
+
+                Bands bands = getBandsFromBand(_band);
+                Bands old_bands = getBandsFromBand(old);
+
+                if (bands != old_bands)
+                {
+                    _force_button_bands_update = true; // as will have been set already by the panel change in console
+                    ButtonBands = getBandsFromBand(b);
+                    _force_button_bands_update = false;
+                }
+                else
+                {
+                    // just set the band
+                    int index = -1;
+                    int old_index = -1;
+                    switch (_button_bands)
+                    {
+                        case Bands.GEN:
+                            index = (int)_band - (int)Band.BLMF;
+                            old_index = (int)old - (int)Band.BLMF;
+                            break;
+                        case Bands.HF:
+                            index = (int)_band - (int)Band.B160M;
+                            old_index = (int)old - (int)Band.B160M;
+                            break;
+                        case Bands.VHF:
+                            index = (int)_band - (int)Band.VHF0;
+                            old_index = (int)old - (int)Band.VHF0;
+                            break;
+                    }
+                    if(index != -1 && old_index != -1)
+                    {
+                        SetOn(old_index, false);
+                        SetOn(index, true);
+                    }
+                }
+            }
+            public bool ForceUpdate
+            {
+                get { return _force_button_bands_update; }
+                set { _force_button_bands_update = value; }
+            }
+            private bool _force_button_bands_update = false;
+            public Bands ButtonBands
+            {
+                get { return _button_bands; }
+                set 
+                {
+                    Bands old = _button_bands;
+                    _button_bands = value;
+
+                    if(old != _button_bands || _force_button_bands_update)
+                        setupButtons();
+                }
+            }
+            private void setupButtons()
+            {
+                int start_band = 0;
+                int end_band = 0;
+                System.Drawing.Color text_color = System.Drawing.Color.White;
+                switch (_button_bands)
+                {
+                    case clsBandButtonBox.Bands.GEN:
+                        start_band = (int)Band.BLMF;
+                        end_band = (int)Band.B11M;
+                        text_color = System.Drawing.Color.Yellow;
+
+                        SetText(14, "HF");
+                        SetFontColour(14, System.Drawing.Color.Red);
+                        SetFontFamily(14, "Trebuchet MS");
+                        SetFontSize(14, 18f);
+                        SetFontStyle(14, FontStyle.Regular);
+                        SetHoverColour(14, System.Drawing.Color.LightGray);
+                        SetOn(14, false);
+                        break;
+                    case clsBandButtonBox.Bands.HF:
+                        start_band = (int)Band.B160M;
+                        end_band = (int)Band.B6M;
+                        text_color = BandStackManager.BandToColour(Band.B160M);
+
+                        SetText(11, "");
+
+                        SetText(12, "VHF");
+                        SetFontColour(12, BandStackManager.BandToColour(Band.VHF0));
+                        SetFontFamily(12, "Trebuchet MS");
+                        SetFontSize(12, 18f);
+                        SetFontStyle(12, FontStyle.Regular);
+                        SetHoverColour(12, System.Drawing.Color.LightGray);
+                        SetOn(12, false);
+
+                        SetText(13, "WWV");
+                        SetFontColour(13, System.Drawing.Color.LightGreen);
+                        SetFontFamily(13, "Trebuchet MS");
+                        SetFontSize(13, 18f);
+                        SetFontStyle(13, FontStyle.Regular);
+                        SetHoverColour(13, System.Drawing.Color.LightGray);
+                        SetOn(13, false);
+
+                        SetText(14, "SWL");
+                        SetFontColour(14, BandStackManager.BandToColour(Band.B120M));
+                        SetFontFamily(14, "Trebuchet MS");
+                        SetFontSize(14, 18f);
+                        SetFontStyle(14, FontStyle.Regular);
+                        SetHoverColour(14, System.Drawing.Color.LightGray);
+                        SetOn(14, false);
+                        break;
+                    case clsBandButtonBox.Bands.VHF:
+                        start_band = (int)Band.VHF0;
+                        end_band = (int)Band.VHF13;
+                        text_color = BandStackManager.BandToColour(Band.VHF0);
+
+                        SetText(14, "HF");
+                        SetFontColour(14, System.Drawing.Color.Red);
+                        SetFontFamily(14, "Trebuchet MS");
+                        SetFontSize(14, 18f);
+                        SetFontStyle(14, FontStyle.Regular);
+                        SetHoverColour(14, System.Drawing.Color.LightGray);
+                        SetOn(14, false);
+                        break;
+                }
+
+                int bands = end_band - start_band + 1;
+                
+                for (int i = 0; i < Buttons; i++)
+                {
+                    SetEnabled(i, true);
+
+                    SetBorderColour(i, System.Drawing.Color.White);
+                    SetFillColour(i, System.Drawing.Color.Black);
+
+                    if(i < bands)
+                    {
+                        string band_text = "";
+                        Band b = (Band)(start_band + i);
+
+                        if (_button_bands == Bands.VHF)
+                        {
+                            SetEnabled(i, _console.GetVHFEnabled(i));
+
+                            band_text = _console.GetVHFText(i).Left(3);
+                            if (string.IsNullOrEmpty(band_text))
+                            {
+                                band_text = BandStackManager.BandToString(b);
+                                band_text = band_text.Substring(3);
+                            }
+                        }
+                        else
+                        {
+                            if (b == Band.BLMF)
+                            {
+                                band_text = "L/MW";
+                            }
+                            else
+                            {
+                                band_text = BandStackManager.BandToString(b);
+                                band_text = band_text.Left(band_text.Length - 1);
+                            }
+                        }
+
+                        SetText(i, band_text);
+
+                        if (GetEnabled(i))
+                            SetFontColour(i, text_color);
+                        else
+                            SetFontColour(i, System.Drawing.Color.FromArgb(255, (int)(text_color.R * 0.3f), (int)(text_color.G * 0.3f), (int)(text_color.B * 0.3f)));
+
+                        SetFontFamily(i, "Trebuchet MS");
+                        SetFontSize(i, 18f);
+                        SetFontStyle(i, FontStyle.Regular);
+
+                        SetUseIndicator(i, true);
+                        SetIndicatorWidth(i, 0.01f);
+
+                        SetOnColour(i, System.Drawing.Color.CornflowerBlue);
+                        SetOffColour(i, System.Drawing.Color.Black);
+
+                        SetHoverColour(i, System.Drawing.Color.LightGray);
+
+                        SetOn(i, b == _band);
+                    }
+                }
+
+                int rows = Buttons / Columns;
+                int overflow = Buttons % Columns;
+                if (overflow > 0) rows++;
+
+                float button_width = ((1f - (0.02f * 2f)) / (float)Columns) - Margin - Border;
+                float button_height = button_width * HeightRatio;
+
+                //button_width += Margin + Border;
+                button_height += Margin + Border;
+
+                float height = button_height * (float)rows;
+
+                Size = new SizeF(Size.Width, height);
+            }
+            public override void MouseUp(MouseEventArgs e)
+            {
+                int index = base.ButtonIndex;
+                if (index == -1) return;
+
+                Band b = Band.FIRST;
+                switch (ButtonBands)
+                {
+                    case Bands.GEN:
+                        {
+                            if (index == 14) // HF button
+                            {
+                                ButtonBands = Bands.HF;
+                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, true, false);
+                                return;
+                            }
+                            b = (Band)((int)Band.BLMF + index);
+                            if (index > 13) return;
+                            break;
+                        }
+                    case Bands.HF:
+                        {
+                            switch (index)
+                            {
+                                case 12: //VHF
+                                    ButtonBands = Bands.VHF;
+                                    MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, false, true);
+                                    return;
+                                case 13: //WVV
+                                    setBand(Band.WWV);
+                                    // dont need to set band panel, as will happen due to band change
+                                    return;
+                                case 14: //SWL
+                                    ButtonBands = Bands.GEN;
+                                    MeterHelpers.SetBandPanel(_console, _owningmeter.RX, true, false, false);
+                                    return;
+                            }
+                            if (index > 10) return;
+                            b = (Band)((int)Band.B160M + index);
+                            break;
+                        }
+                    case Bands.VHF:
+                        {
+                            if (index == 14) // HF button
+                            {
+                                ButtonBands = Bands.HF;
+                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, true, false);
+                                return;
+                            }
+                            if (index > 13) return;
+                            b = (Band)((int)Band.VHF0 + index);
+                            break;
+                        }
+                }
+
+                setBand(b);
+            }
+            private void setBand(Band b)
+            {
+                if (b == Band.FIRST) return;
+
+                if (_owningmeter.RX == 1)
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.BandPreChangeHandlers?.Invoke(1, b);
+                    }));
+                }
+                else if(_owningmeter.RX == 2)
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.SetupRX2Band(b, false);
+                    }));
+                }
+            }
+        }
+
+        internal class clsButtonBox : clsMeterItem
+        {
+            private int _number_of_buttons;
+            private int _columns;
+            private float _margin;
+            private float _border_width;
+            private float _radius;
+            private float _height_ratio; // 0 to 1.0
+
+            private System.Drawing.Color[] _fill_colour;
+            private System.Drawing.Color[] _hover_colour;
+            private System.Drawing.Color[] _border_colour;
+
+            private bool[] _use_indicator;
+            private float[] _indicator_width;
+
+            private System.Drawing.Color[] _on_colour;
+            private System.Drawing.Color[] _off_colour;
+            private bool[] _on;
+
+            private string[] _fontFamily;
+            private FontStyle[] _fontStyle;
+            private float[] _fontSize;
+            private System.Drawing.Color[] _font_colour;
+
+            private string[] _text;
+
+            private bool[] _enabled;
+
+            private int _button_index;
+
+            public clsButtonBox()
+            {
+                _number_of_buttons = 1;
+                _columns = 1;
+                _margin = 0;
+                _border_width = 1;
+                _radius = 0;
+                _height_ratio = 1;
+                _button_index = -1;
+
+                setupArrays();
+            }
+            private void setupArrays()
+            {
+                _fill_colour = new System.Drawing.Color[_number_of_buttons];
+                _hover_colour = new System.Drawing.Color[_number_of_buttons];
+                _border_colour = new System.Drawing.Color[_number_of_buttons];
+
+                _use_indicator = new bool[_number_of_buttons];
+                _indicator_width = new float[_number_of_buttons];
+
+                _on_colour = new System.Drawing.Color[_number_of_buttons];
+                _off_colour = new System.Drawing.Color[_number_of_buttons];
+                _on = new bool[_number_of_buttons];
+
+                _fontFamily = new string[_number_of_buttons];
+                _fontStyle = new FontStyle[_number_of_buttons];
+                _fontSize = new float[_number_of_buttons];
+                _font_colour = new System.Drawing.Color[_number_of_buttons];
+
+                _text = new string[_number_of_buttons];
+
+                _enabled = new bool[_number_of_buttons];
+            }
+            public int ButtonIndex
+            {
+                get { return _button_index; }
+                set { _button_index = value; }
+            }
+            public int Buttons
+            {
+                get { return _number_of_buttons; }
+                set 
+                { 
+                    _number_of_buttons = value;
+                    setupArrays();
+                }
+            }
+            public int Columns
+            {
+                get { return _columns; }
+                set { _columns = value; }
+            }
+            public float Margin
+            {
+                get { return _margin; }
+                set { _margin = value; }
+            }
+            public float Border
+            {
+                get { return _border_width; }
+                set { _border_width = value; }
+            }
+            public float Radius
+            {
+                get { return _radius; }
+                set { _radius = value; }
+            }
+            public float HeightRatio
+            {
+                get { return _height_ratio; }
+                set { _height_ratio = value; }
+            }
+            public void SetFillColour(int button, System.Drawing.Color colour)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _fill_colour[button] = colour;
+            }
+            public System.Drawing.Color GetFillColour(int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return System.Drawing.Color.Empty;
+                return _fill_colour[button];
+            }
+            public void SetHoverColour(int button, System.Drawing.Color colour)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _hover_colour[button] = colour;
+            }
+            public System.Drawing.Color GetHoverColour(int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return System.Drawing.Color.Empty;
+                return _hover_colour[button];
+            }
+            public void SetBorderColour(int button, System.Drawing.Color colour)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _border_colour[button] = colour;
+            }
+            public System.Drawing.Color GetBorderColour(int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return System.Drawing.Color.Empty;
+                return _border_colour[button];
+            }
+            public void SetUseIndicator(int button, bool use)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _use_indicator[button] = use;
+            }
+            public bool GetUseIndicator(int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return false;
+                return _use_indicator[button];
+            }
+            public void SetOn(int button, bool on)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _on[button] = on;
+            }
+            public bool GetOn(int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return false;
+                return _on[button];
+            }
+            public void SetIndicatorWidth(int button, float width)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _indicator_width[button] = width;
+            }
+            public float GetIndicatorWidth(int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return 0;
+                return _indicator_width[button];
+            }
+            public void SetOnColour(int button, System.Drawing.Color colour)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _on_colour[button] = colour;
+            }
+            public System.Drawing.Color GetOnColour(int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return System.Drawing.Color.Empty;
+                return _on_colour[button];
+            }
+            public void SetOffColour(int button, System.Drawing.Color colour)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _off_colour[button] = colour;
+            }
+            public System.Drawing.Color GetOffColour(int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return System.Drawing.Color.Empty;
+                return _off_colour[button];
+            }
+            public void SetFontFamily(int button, string font_family)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _fontFamily[button] = font_family;
+            }
+            public string GetFontFamily(int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return "";
+                return _fontFamily[button];
+            }
+            public void SetFontStyle(int button, FontStyle font_style)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _fontStyle[button] = font_style;
+            }
+            public FontStyle GetFontStyle(int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return FontStyle.Regular;
+                return _fontStyle[button];
+            }
+            public void SetFontSize(int button, float size)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _fontSize[button] = size;
+            }
+            public float GetFontSize(int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return 0;
+                return _fontSize[button];
+            }
+            public void SetFontColour(int button, System.Drawing.Color colour)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _font_colour[button] = colour;
+            }
+            public System.Drawing.Color GetFontColour(int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return System.Drawing.Color.Empty;
+                return _font_colour[button];
+            }
+            public void SetText(int button, string text)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _text[button] = text;
+            }
+            public string Getext(int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return "";
+                return _text[button];
+            }
+            public void SetEnabled(int button, bool enabled)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _enabled[button] = enabled;
+            }
+            public bool GetEnabled(int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return false;
+                return _enabled[button];
+            }
+        }
+
         internal class clsVfoDisplay : clsMeterItem
         {
             public enum renderState
@@ -4555,7 +5265,7 @@ namespace Thetis
                         {
                             if (b == 13)
                             {
-                                setBandPanel(false, true, false); // HF
+                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
                                 return false;
                             }
                             return true;
@@ -4568,12 +5278,12 @@ namespace Thetis
                         {
                             if (b == 11)
                             {
-                                setBandPanel(false, false, true); // VHF
+                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, false, true); // VHF
                                 return false;
                             }
                             if (b == 13)
                             {
-                                setBandPanel(true, false, false); // GEN(SWL)
+                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, true, false, false); // GEN(SWL)
                                 return false;
                             }
                             if (b == 12) // WWV
@@ -4589,7 +5299,7 @@ namespace Thetis
                         {
                             if (b == 14)
                             {
-                                setBandPanel(false, true, false); // HF
+                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
                                 return false;
                             }
                             return true;
@@ -4598,6 +5308,7 @@ namespace Thetis
                     }
                     else
                         return true;
+
                     _console.BeginInvoke(new MethodInvoker(() =>
                     {
                         _console.SetupRX2Band(band, !_owningmeter.RX2Enabled); // we tell setuprx2band that we only want to change freq for vfob if only rx1
@@ -4614,7 +5325,7 @@ namespace Thetis
                         {
                             if (b == 13)
                             {
-                                setBandPanel(false, true, false); // HF
+                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
                                 return false;
                             }
                             return true;
@@ -4627,12 +5338,12 @@ namespace Thetis
                         {
                             if (b == 11)
                             {
-                                setBandPanel(false, false, true); // VHF
+                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, false, true); // VHF
                                 return false;
                             }
                             if (b == 13)
                             {
-                                setBandPanel(true, false, false); // GEN(SWL)
+                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, true, false, false); // GEN(SWL)
                                 return false;
                             }
                             if (b == 12) // WWV
@@ -4648,7 +5359,7 @@ namespace Thetis
                         {
                             if (b == 14)
                             {
-                                setBandPanel(false, true, false); // HF
+                                MeterHelpers.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
                                 return false;
                             }
                             return true;
@@ -4665,33 +5376,6 @@ namespace Thetis
                     }));
                 }
                 return true;
-            }
-            private void setBandPanel(bool gen, bool hf, bool vhf)
-            {
-                if (gen)
-                {
-                    hf = false;
-                    vhf = false;
-                }
-                else if (hf)
-                {
-                    gen = false;
-                    vhf = false;
-                }
-                else if (vhf)
-                {
-                    gen = false;
-                    hf = false;
-                }
-                _console.BeginInvoke(new MethodInvoker(() =>
-                {
-                    if (gen)
-                        _console.BandGENSelected = true;
-                    else if (hf)
-                        _console.BandHFSelected = true;
-                    else if (vhf)
-                        _console.BandVHFSelected = true;
-                }));
             }
             public int ButtonGridIndexVFOa
             {
@@ -8633,6 +9317,7 @@ namespace Thetis
                     case MeterType.TEXT_OVERLAY: return Reading.NONE;
                     case MeterType.LED: return Reading.NONE;
                     case MeterType.WEB_IMAGE: return Reading.NONE;
+                    case MeterType.BAND_BUTTONS: return Reading.NONE;
                     case MeterType.DATA_OUT: return Reading.NONE;
                     case MeterType.ROTATOR: return variable_index == 0 ? Reading.AZ : Reading.ELE;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
@@ -8676,6 +9361,7 @@ namespace Thetis
                     case MeterType.WEB_IMAGE: return 0;
                     case MeterType.DATA_OUT: return 0;
                     case MeterType.ROTATOR: return 2;
+                    case MeterType.BAND_BUTTONS: return 0;
                     //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
                 return 0;
@@ -8722,6 +9408,7 @@ namespace Thetis
                     case MeterType.WEB_IMAGE: AddWebImage(nDelay, 0, out bBottom, 0.1f, restoreIg); break;
                     case MeterType.DATA_OUT: AddDataOut(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.ROTATOR: AddRotator(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.BAND_BUTTONS: AddBandButtons(nDelay, 0, out bBottom, restoreIg); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
@@ -11100,6 +11787,44 @@ namespace Thetis
 
                 return cb.ID;
             }
+            public string AddBandButtons(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBandButtonBox bb = new clsBandButtonBox(this);
+                bb.ParentID = ig.ID;
+
+                bb.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
+                bb.Size = new SizeF(1f - _fPadX * 2f, 1f);
+
+                bb.Buttons = 15;
+                bb.Columns = 3;
+                bb.UpdateInterval = 50;
+                bb.Margin = 0.005f;// 0.01f;
+                bb.Radius = 0.005f;// 0.01f;
+                bb.HeightRatio = 0.5f;
+                bb.Border = 0.004f;
+                bb.ForceUpdate = true; // allow an update, even though gen will be already set in the constructor
+                bb.ButtonBands = clsBandButtonBox.Bands.GEN;
+                bb.ForceUpdate = false;
+                addMeterItem(bb);
+
+                fBottom = bb.TopLeft.Y + bb.Size.Height;
+
+                ig.TopLeft = bb.TopLeft;
+                ig.Size = new SizeF(bb.Size.Width, fBottom);
+                ig.MeterType = MeterType.BAND_BUTTONS;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);
+
+                return bb.ID;
+            }
             public string AddVFODisplay(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
@@ -11343,6 +12068,51 @@ namespace Thetis
                 _sortedMeterItemsForZOrder = null; // only after setupSortedZOrder is called
                 _displayGroups = new List<string>();
                 _displayGroup = 0;
+            }
+            public void UpdateBandButtons(Band newBand)
+            {
+                if (_console == null) return;
+
+                //1 = rx1
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS))
+                    {
+                        clsBandButtonBox mi = (clsBandButtonBox)mis.Value;
+
+                        mi.BandChanged(newBand);
+                    }
+                }
+            }
+            public void UpdateBands(bool gen, bool hf, bool vhf)
+            {
+                if (_console == null) return;
+
+                //1 = rx1
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS))
+                    {
+                        clsBandButtonBox mi = (clsBandButtonBox)mis.Value;
+
+                        mi.BandsChanged(gen, hf, vhf);
+                    }
+                }
+            }
+            public void UpdateVHF(int idx, bool enabled, string text)
+            {
+                if (_console == null) return;
+
+                //1 = rx1
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS))
+                    {
+                        clsBandButtonBox mi = (clsBandButtonBox)mis.Value;
+
+                        mi.VHFUpdate(idx, enabled, text);
+                    }
+                }
             }
             public void ZeroOut(bool bRxReadings, bool bTxReadings)
             {
@@ -13551,6 +14321,7 @@ namespace Thetis
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.TEXT_OVERLAY ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.LED ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.WEB_IMAGE ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR
                                                                 //o.Value.ItemType == clsMeterItem.MeterItemType.SPECTRUM
                                                                 /*o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY*/) &&
@@ -15206,6 +15977,9 @@ namespace Thetis
                                         break;
                                     case clsMeterItem.MeterItemType.SIGNAL_TEXT_DISPLAY:
                                         renderSignalTextDisplay(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.BAND_BUTTONS:
+                                        renderBandButtons(rect, mi, m);
                                         break;
                                     //case clsMeterItem.MeterItemType.SPECTRUM:
                                     //    renderSpectrum(rect, mi, m);
@@ -17672,20 +18446,50 @@ namespace Thetis
                 kHz = vfo.Substring(index + 1, 3);
                 hz = vfo.Substring(index + 4, 3);
             }
-            private void plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fit_size = 0, bool ignore_cache = false)
+            private void plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fit_size_width = 0, bool ignore_cache = false, float fit_size_height = 0)
             {
+                if (string.IsNullOrEmpty(sText)) return;
+
                 float fontSizeEmScaled = (fTextSize / 16f) * (containerWidth / 52f);
                 SizeF szTextSize;
 
+                float ratio_w = 1f;
+                float ratio_h = 1f;
+                float ratio = 1f;
                 szTextSize = measureString(sText, sFontFamily, style, fontSizeEmScaled, ignore_cache);
-                if(fit_size > 0 && szTextSize.Width > fit_size)
+                if (fit_size_width > 0)
                 {
-                    // need to shrink the size by some ratio?
-                    float ratio = fit_size / szTextSize.Width;
+                    // need to adjust the size by some ratio?
+                    ratio_w = fit_size_width / szTextSize.Width;
+                }
+                if (fit_size_height > 0)
+                {
+                    // need to adjust the size by some ratio?
+                    ratio_h = fit_size_height / szTextSize.Height;
+                }
+
+                if ((Math.Abs(1f - ratio_w)) > (Math.Abs(1f - ratio_h)))
+                {
+                    if(szTextSize.Height * ratio_w <= fit_size_height)
+                        ratio = ratio_w;
+                    else
+                        ratio = ratio_h;
+                }
+                else
+                {
+                    if (szTextSize.Width * ratio_h <= fit_size_width)
+                        ratio = ratio_h;
+                    else
+                        ratio = ratio_w;
+                }
+
+                if (ratio != 1f) {
                     fTextSize *= ratio;
                     fontSizeEmScaled = (fTextSize / 16f) * (containerWidth / 52f);
                     szTextSize = measureString(sText, sFontFamily, style, fontSizeEmScaled, ignore_cache);
                 }
+
+
                 SharpDX.RectangleF txtrect;
                 if (!bAlignRight)
                 {
@@ -18051,6 +18855,125 @@ namespace Thetis
                     vfo.ButtonGridIndexVFOa = button_grid_index;
 
                 return button_state;
+            }
+            private SharpDX.RectangleF shrinkRectangle(SharpDX.RectangleF original, float ratio)
+            {
+                float newWidth = original.Width * ratio;
+                float newHeight = original.Height * ratio;
+
+                float offsetX = (original.Width - newWidth) / 2f;
+                float offsetY = (original.Height - newHeight) / 2f;
+
+                SharpDX.RectangleF shrunkRectangle = new SharpDX.RectangleF(
+                    original.X + offsetX,
+                    original.Y + offsetY,
+                    newWidth,
+                    newHeight
+                );
+
+                return shrunkRectangle;
+            }
+            private void renderBandButtons(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsBandButtonBox bb = (clsBandButtonBox)mi;
+                if (bb.Columns <= 0) return;
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                //SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
+                //_renderTarget.FillRectangle(rectSC, getDXBrushForColour(System.Drawing.Color.Green));
+
+                int rows = bb.Buttons / bb.Columns;
+                int overflow = bb.Buttons % bb.Columns;
+                if (overflow > 0) rows++;
+                int buttons_per_row = bb.Columns;
+                
+                float expand = bb.Margin * w; //expand so that last margin is not shown
+                float border = bb.Border * w;
+                float half_border = border / 2f;
+                float radius = bb.Radius * w;
+                float margin = bb.Margin * w;
+                float button_width = ((w + expand) / (float)bb.Columns) - margin - border;
+                float button_height = ((h + expand) / (float)rows) - margin - border;
+
+                button_width += margin + border;
+                button_height += margin + border;
+
+                int highlighted_index = -1;
+                int button_index = 0;
+
+                PointF mouse = new PointF(-1, -1);
+                if (bb.MouseEntered)
+                {
+                    mouse.X = bb.MouseMovePoint.X / w;
+                    mouse.Y = bb.MouseMovePoint.Y / h;
+                }
+
+                for(int row  = 0; row < rows; row++)
+                {
+                    for (int col = 0; col < buttons_per_row; col++)
+                    {
+                        float xP = x + half_border + (button_width * col);
+                        float yP = y + half_border + (button_height * row);
+
+                        SharpDX.RectangleF rectBB = new SharpDX.RectangleF(xP, yP, button_width - margin - border, button_height - margin - border);
+
+                        RoundedRectangle rr = new RoundedRectangle
+                        {
+                            Rect = rectBB,
+                            RadiusX = radius,
+                            RadiusY = radius
+                        };
+
+                        _renderTarget.FillRoundedRectangle(rr, getDXBrushForColour(bb.GetFillColour(button_index)));
+                        if (!bb.GetUseIndicator(button_index) && bb.GetOn(button_index))
+                        {
+                            _renderTarget.FillRoundedRectangle(rr, getDXBrushForColour(bb.GetOnColour(button_index), 255));
+                        }
+
+                        if (bb.MouseEntered && rectBB.Contains((float)bb.MouseMovePoint.X, (float)bb.MouseMovePoint.Y))
+                        {
+                            _renderTarget.FillRoundedRectangle(rr, getDXBrushForColour(bb.GetHoverColour(button_index), 192));
+                            highlighted_index = button_index;
+                        }
+
+                        _renderTarget.DrawRoundedRectangle(rr, getDXBrushForColour(bb.GetBorderColour(button_index)), bb.Border * w * bb.HeightRatio);
+
+                        if (bb.GetUseIndicator(button_index))
+                        {
+                            rr.Rect = shrinkRectangle(rectBB, 0.85f);
+                            if (bb.GetOn(button_index))
+                                _renderTarget.DrawRoundedRectangle(rr, getDXBrushForColour(bb.GetOnColour(button_index)), bb.GetIndicatorWidth(button_index) * w * bb.HeightRatio);
+                            else
+                                _renderTarget.DrawRoundedRectangle(rr, getDXBrushForColour(bb.GetOffColour(button_index)), bb.GetIndicatorWidth(button_index) * w * bb.HeightRatio);
+                        }
+
+                        string text = bb.Getext(button_index);
+                        if (!string.IsNullOrEmpty(text))
+                        {
+                            float cx = rectBB.Left + (rectBB.Width / 2f);
+                            float cy = rectBB.Top + (rectBB.Height / 2f);
+                            plotText(bb.Getext(button_index), cx, cy, h, rect.Width, bb.GetFontSize(button_index), bb.GetFontColour(button_index), 255, bb.GetFontFamily(button_index), bb.GetFontStyle(button_index), false, true, button_width * 0.8f, true, button_height * 0.8f);
+                        }
+
+                        button_index++;
+                        if (button_index > bb.Buttons) break;
+                    }
+                    if (button_index > bb.Buttons) break;
+                }
+
+                if (bb.MouseEntered)
+                {
+                    //plotText($"{mouse.ToString()}", 0, 0, h, w, 30f, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular);
+                    bb.ButtonIndex = highlighted_index;
+                }
+                else if(bb.ButtonIndex != -1)
+                {
+                    bb.ButtonIndex = -1;
+                }
             }
             private void renderVfoDisplay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {

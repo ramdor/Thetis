@@ -90,10 +90,19 @@ namespace Thetis
         }
         public class BackupFileInfo
         {
+            [JsonIgnore]
             public string FullFilePath { get; set; }
+            [JsonIgnore]
             public DateTime DateTimeOfBackup { get; set; }
+            [JsonIgnore]
             public long SecondsSinceEpoch { get; set; }
+            [JsonIgnore]
             public TimeSpan AgeSinceBackedUp { get; set; }
+            public string Description { get; set; }
+            public BackupFileInfo()
+            {
+                Description = "Default";
+            }
         }
 
         private static frmDBMan _frm_dbman;
@@ -260,7 +269,7 @@ namespace Thetis
                                 string jsonString = File.ReadAllText(json_file);
                                 DatabaseInfo di = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
                                 if (di.BackupOnStartup)
-                                    TakeBackup(Guid.Empty);
+                                    TakeBackup(Guid.Empty, "Startup");
                             }
                         }
                         catch { }
@@ -380,7 +389,7 @@ namespace Thetis
                     string jsonString = File.ReadAllText(json_file);
                     DatabaseInfo di = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
                     if (di.BackupOnShutdown)
-                        TakeBackup(Guid.Empty);
+                        TakeBackup(Guid.Empty, "Shutdown");
                 }
             }
             catch { }
@@ -1044,24 +1053,53 @@ namespace Thetis
             List<BackupFileInfo> backups = getOrderedBackupFiles(backup_path);
             _frm_dbman.InitBackups(backups);
         }
-        public static bool TakeBackup(Guid highlighted)
+        public static bool TakeBackup(Guid highlighted, string description = "")
         {
             if (_dbman_settings == null) return false;
+
+            string desc;
+            if (string.IsNullOrEmpty(description))
+            {
+                desc = InputBox.Show("Database Backup", "Please enter a description for the backup.", "");
+                if (string.IsNullOrEmpty(desc)) return false;
+            }
+            else
+                desc = description;
 
             bool ok = false;
             Guid guid = _dbman_settings.ActiveDB_GUID;
 
             try
             {
-                // TODO: backup limits
+                // TODO: backup limits GFS
+                string backup_filename = "";
                 string db_filename_xml = _db_data_path + guid.ToString() + "\\database.xml";
                 if (File.Exists(db_filename_xml))
                 {
                     string backup_directory = _db_data_path + guid.ToString() + "\\backups";
-                    string backup_filename = createUniqueFilename(backup_directory);
+                    backup_filename = createUniqueFilename(backup_directory);
 
                     File.Copy(db_filename_xml, backup_filename, true);
                     ok = true;
+                }
+                if (ok)
+                {
+                    //copied ok, make json to store desc
+                    //same as backup_filename, but with .json extension instead
+                    BackupFileInfo bfi = new BackupFileInfo()
+                    {
+                        Description = desc
+                    };
+                    string jsonFilePath = System.IO.Path.ChangeExtension(backup_filename, ".json");
+                    string jsonString = JsonConvert.SerializeObject(bfi, Newtonsoft.Json.Formatting.Indented);
+                    try
+                    {
+                        File.WriteAllText(jsonFilePath, jsonString);
+                    }
+                    catch
+                    {
+                        ok = false;
+                    }
                 }
             }
             catch { }
@@ -1087,23 +1125,36 @@ namespace Thetis
 
             foreach (string filePath in Directory.GetFiles(backupFolderPath, "database_backup_*.xml"))
             {
-                string fileName = Path.GetFileNameWithoutExtension(filePath);
-                string[] parts = fileName.Split('_');
-
-                if (parts.Length >= 3 && long.TryParse(parts[2], out long secondsSinceEpoch)) // 3 as database_backup_342423432.xml  could also be database_backup_342423432_1.xml
+                try
                 {
-                    DateTime backupDateTimeUtc = epoch.AddSeconds(secondsSinceEpoch);
-                    DateTime backupDateTimeLocal = backupDateTimeUtc.ToLocalTime();
-                    TimeSpan age = DateTime.UtcNow - backupDateTimeUtc;
+                    string fileName = Path.GetFileNameWithoutExtension(filePath);
+                    string[] parts = fileName.Split('_');
 
-                    backupFiles.Add(new BackupFileInfo
+                    if (parts.Length >= 3 && long.TryParse(parts[2], out long secondsSinceEpoch)) // 3 as database_backup_342423432.xml  could also be database_backup_342423432_1.xml
                     {
-                        FullFilePath = filePath,
-                        DateTimeOfBackup = backupDateTimeLocal,
-                        SecondsSinceEpoch = secondsSinceEpoch,
-                        AgeSinceBackedUp = age
-                    });
+                        DateTime backupDateTimeUtc = epoch.AddSeconds(secondsSinceEpoch);
+                        DateTime backupDateTimeLocal = backupDateTimeUtc.ToLocalTime();
+                        TimeSpan age = DateTime.UtcNow - backupDateTimeUtc;
+
+                        string jsonFilePath = System.IO.Path.ChangeExtension(filePath, ".json");
+                        string desc = "Default";
+                        if (File.Exists(jsonFilePath))
+                        {
+                            string jsonString = File.ReadAllText(jsonFilePath);
+                            BackupFileInfo backup_info_json = JsonConvert.DeserializeObject<BackupFileInfo>(jsonString);
+                            desc = backup_info_json.Description;
+                        }
+                        backupFiles.Add(new BackupFileInfo
+                        {
+                            FullFilePath = filePath,
+                            DateTimeOfBackup = backupDateTimeLocal,
+                            SecondsSinceEpoch = secondsSinceEpoch,
+                            AgeSinceBackedUp = age,
+                            Description = desc
+                        });
+                    }
                 }
+                catch { }
             }
 
             return backupFiles.OrderByDescending(f => f.SecondsSinceEpoch).ToList();
@@ -1140,6 +1191,15 @@ namespace Thetis
                 foreach (string file_path in file_paths)
                 {
                     if (File.Exists(file_path))
+                    {
+                        try
+                        {
+                            File.Delete(file_path);
+                        }
+                        catch { }
+                    }
+                    string jsonFilePath = System.IO.Path.ChangeExtension(file_path, ".json");
+                    if (File.Exists(jsonFilePath))
                     {
                         try
                         {
@@ -1243,7 +1303,7 @@ namespace Thetis
                     }
                     if (ok)
                     {
-                        string desc = InputBox.Show("Database Duplication", "Please enter a description for the imported database.", "");
+                        string desc = InputBox.Show("Database Import", "Please enter a description for the imported database.", "");
                         if (string.IsNullOrEmpty(desc)) return;
 
                         // get some basic info from the db that is being imported
@@ -1496,12 +1556,17 @@ namespace Thetis
                 }
             }
         }
-        public static void ExportBackup(string path)
+        public static void ExportBackup(string desc, string path)
         {
             if (File.Exists(path))
             {
                 string datetime = Common.DateTimeStringForFile();
-                string save_file = $"Thetis_database_export_backup_{datetime}.xml";
+                string save_file;
+                if(string.IsNullOrEmpty(desc))
+                    save_file = $"Thetis_database_export_backup_{datetime}.xml";
+                else
+                    save_file = $"Thetis_database_export_backup_{desc}_{datetime}.xml";
+
                 string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
                 SaveFileDialog saveFileDialog = new SaveFileDialog
@@ -1523,7 +1588,6 @@ namespace Thetis
                             File.Delete(filename);
                     }
                     catch { }
-
                     try
                     {
                         File.Copy(path, filename);

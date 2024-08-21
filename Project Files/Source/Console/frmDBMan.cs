@@ -102,12 +102,11 @@ namespace Thetis
             lstBackups.Items.Clear();
             foreach(DBMan.BackupFileInfo backup in backups)
             {
-                ListViewItem lvi = new ListViewItem(localDateTimeFormat(backup.DateTimeOfBackup));
+                ListViewItem lvi = new ListViewItem(backup.Description);
 
+                lvi.SubItems.Add(localDateTimeFormat(backup.DateTimeOfBackup));
                 TimeSpan difference = DateTime.Now - backup.DateTimeOfBackup;
-
                 string age = formatTimeSpanWithYears(difference);
-
                 lvi.SubItems.Add(age);
                 lvi.SubItems.Add(backup.FullFilePath);
 
@@ -412,7 +411,7 @@ namespace Thetis
 
             ListViewItem lvi = lstBackups.SelectedItems[0];
 
-            DBMan.ExportBackup(lvi.Tag.ToString());
+            DBMan.ExportBackup(lvi.Text, lvi.Tag.ToString());
         }
 
         private void btnOpenFolder_Click(object sender, EventArgs e)
