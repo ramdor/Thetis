@@ -36348,7 +36348,6 @@ namespace Thetis
         public void SetRX1Filter(Filter new_filter)
         {
             if (rx1_dsp_mode == DSPMode.FIRST || rx1_dsp_mode == DSPMode.LAST) return;
-            if (rx1_filter == new_filter) return; //[2.10.3.6]MW0LGE pointless doing it again if already set) return;
 
             Filter oldFilter = rx1_filter; //MW0LGE_21d
             int oldLow, oldHigh;
@@ -40017,7 +40016,6 @@ namespace Thetis
         public void SetRX2Filter(Filter new_filter)
         {
             if (rx2_dsp_mode == DSPMode.FIRST || rx2_dsp_mode == DSPMode.LAST) return;
-            if (rx2_filter == new_filter) return; //[2.10.3.6]MW0LGE pointless doing it again if already set) return;
 
             Filter oldFilter = rx2_filter; //MW0LGE_21d
 
