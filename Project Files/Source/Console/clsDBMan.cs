@@ -829,7 +829,7 @@ namespace Thetis
         {
             if (_dbman_settings == null) return;
 
-            string desc = InputBox.Show("Database Description", "Please provide a description for this new database.", "");
+            string desc = InputBox.Show("Database Description", "Please provide a description for this new database.", "", true);
             if (string.IsNullOrEmpty(desc)) return;
 
             createNewDB(false, false, out bool _, desc);
@@ -900,7 +900,7 @@ namespace Thetis
             string desc = "";
             if (!force)
             {
-                desc = InputBox.Show("Database Removal", "Please enter the matching description to remove this database.", "");
+                desc = InputBox.Show("Database Removal", "Please enter the matching description to remove this database.", "", true);
                 if (string.IsNullOrEmpty(desc)) return;
             }
 
@@ -953,7 +953,7 @@ namespace Thetis
         {
             if (_dbman_settings == null) return;
 
-            string desc = InputBox.Show("Database Duplication", "Please enter a description for the duplicate.", "");
+            string desc = InputBox.Show("Database Duplication", "Please enter a description for the duplicate.", "", true);
             if (string.IsNullOrEmpty(desc)) return;
 
             // make new folder with new guid
@@ -1060,7 +1060,7 @@ namespace Thetis
             string desc;
             if (string.IsNullOrEmpty(description))
             {
-                desc = InputBox.Show("Database Backup", "Please enter a description for the backup.", "");
+                desc = InputBox.Show("Database Backup", "Please enter a description for the backup.", "", true);
                 if (string.IsNullOrEmpty(desc)) return false;
             }
             else
@@ -1303,7 +1303,7 @@ namespace Thetis
                     }
                     if (ok)
                     {
-                        string desc = InputBox.Show("Database Import", "Please enter a description for the imported database.", "");
+                        string desc = InputBox.Show("Database Import", "Please enter a description for the imported database.", "", true);
                         if (string.IsNullOrEmpty(desc)) return;
 
                         // get some basic info from the db that is being imported
@@ -1473,7 +1473,7 @@ namespace Thetis
                 string jsonString = File.ReadAllText(dbman_json);
                 DatabaseInfo db_info_json = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
 
-                string desc = InputBox.Show("Database Change Description", "Please edit the description.", db_info_json.Description);
+                string desc = InputBox.Show("Database Change Description", "Please edit the description.", db_info_json.Description, true);
                 if (string.IsNullOrEmpty(desc) || desc == db_info_json.Description) return;
 
                 db_info_json.Description = desc;
@@ -1507,7 +1507,7 @@ namespace Thetis
                 else
                     tmp_desc = "Default";
 
-                string desc = InputBox.Show("Database Change Description", "Please edit the description.", tmp_desc);
+                string desc = InputBox.Show("Database Change Description", "Please edit the description.", tmp_desc, true);
                 if (string.IsNullOrEmpty(desc) || desc == tmp_desc) return;
 
                 backup_info_json = new BackupFileInfo();
@@ -1652,7 +1652,7 @@ namespace Thetis
 
             if (File.Exists(file_path))
             {
-                string desc = InputBox.Show("Make Database Available", "Please enter a description for the database.", "");
+                string desc = InputBox.Show("Make Database Available", "Please enter a description for the database.", "", true);
                 if (string.IsNullOrEmpty(desc)) return;
 
                 try
