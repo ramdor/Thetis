@@ -2656,7 +2656,7 @@ namespace Thetis
         public void GetTxProfiles()
         {
             comboTXProfileName.Items.Clear();
-            foreach (DataRow dr in DB.ds.Tables["TxProfile"].Rows)
+            foreach (DataRow dr in DB.ds.Tables["TXProfile"].Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
@@ -2718,7 +2718,7 @@ namespace Thetis
             if (drToCheck == null)
             {
                 // check everything in the TX profile
-                DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+                DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
                 if (rows.Length != 1)
                     return "";
@@ -2920,7 +2920,7 @@ namespace Thetis
             if (drToCheck == null)
             {
                 // check everything in the TX profile
-                DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+                DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
                 if (rows.Length != 1)
                     return false;
@@ -3504,7 +3504,7 @@ namespace Thetis
 
             DataRow dr = null;
 
-            foreach (DataRow dd in from DataRow d in DB.ds.Tables["TxProfile"].Rows where (string)d["Name"] == name select d)
+            foreach (DataRow dd in from DataRow d in DB.ds.Tables["TXProfile"].Rows where (string)d["Name"] == name select d)
             {
                 dr = dd;
                 break;
@@ -8811,7 +8811,7 @@ namespace Thetis
             // NOTE: make sure you update checkTXProfileChanged2, if anything is added/removed
             //
 
-            DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + sProfileName.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + sProfileName.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
             if (rows.Length != 1)
             {
@@ -9117,7 +9117,7 @@ namespace Thetis
                 if (result == DialogResult.No)
                     return;
 
-                foreach (DataRow dd in from DataRow d in DB.ds.Tables["TxProfile"].Rows where (string)d["Name"] == name select d)
+                foreach (DataRow dd in from DataRow d in DB.ds.Tables["TXProfile"].Rows where (string)d["Name"] == name select d)
                 {
                     dr = dd;
                     break;
@@ -9125,7 +9125,7 @@ namespace Thetis
             }
             else
             {
-                dr = DB.ds.Tables["TxProfile"].NewRow();
+                dr = DB.ds.Tables["TXProfile"].NewRow();
                 dr["Name"] = name;
             }
 
@@ -9144,7 +9144,7 @@ namespace Thetis
 
             if (!comboTXProfileName.Items.Contains(name))
             {
-                DB.ds.Tables["TxProfile"].Rows.Add(dr);
+                DB.ds.Tables["TXProfile"].Rows.Add(dr);
                 comboTXProfileName.Items.Add(name);
                 comboTXProfileName.Text = name;
             }
@@ -9166,7 +9166,7 @@ namespace Thetis
 
             profile_deleted = true;
 
-            DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + comboTXProfileName.Text.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + comboTXProfileName.Text.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
             if (rows.Length == 1)
                 rows[0].Delete();
@@ -11960,7 +11960,7 @@ namespace Thetis
                 if (result == DialogResult.No)
                     return;
 
-                foreach (DataRow d in DB.ds.Tables["TxProfile"].Rows)
+                foreach (DataRow d in DB.ds.Tables["TXProfile"].Rows)
                 {
                     if ((string)d["Name"] == name)
                     {
@@ -11971,7 +11971,7 @@ namespace Thetis
             }
             else
             {
-                dr = DB.ds.Tables["TxProfile"].NewRow();
+                dr = DB.ds.Tables["TXProfile"].NewRow();
                 dr["Name"] = name;
             }
 
@@ -11980,7 +11980,7 @@ namespace Thetis
 
             if (!comboTXProfileName.Items.Contains(name))
             {
-                DB.ds.Tables["TxProfile"].Rows.Add(dr);
+                DB.ds.Tables["TXProfile"].Rows.Add(dr);
                 comboTXProfileName.Items.Add(name);
                 comboTXProfileName.Text = name;
             }
@@ -12010,7 +12010,7 @@ namespace Thetis
             }
             fileName = tempFN + ".xml";
 
-            DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
             DataRow exportRow = null;
             if (rows.Length > 0)
             {
@@ -12031,7 +12031,7 @@ namespace Thetis
             List<string> table_names = new List<string>();
             foreach (DataTable dt in exDS.Tables) 
             {
-                if(dt.TableName != "TxProfile")
+                if(dt.TableName != "TXProfile")
                     table_names.Add(dt.TableName);
             }
             foreach(string table_name in table_names)
@@ -12040,7 +12040,7 @@ namespace Thetis
             }
             //
 
-            DataTable pTable = pTable = DB.ds.Tables["TxProfile"].Clone();
+            DataTable pTable = pTable = DB.ds.Tables["TXProfile"].Clone();
             pTable.ImportRow(exportRow);
             exDS.Merge(pTable);
 
@@ -24139,7 +24139,36 @@ namespace Thetis
             MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
             if (igs == null) return null;
 
-            if (mt == MeterType.WEB_IMAGE)
+            if(mt == MeterType.BAND_BUTTONS)
+            {
+                igs.SetSetting<int>("bandbuttons_columns", (int)nudBandButtons_columns.Value);
+                igs.SetSetting<float>("bandbuttons_border", (float)nudBandButtons_border.Value);
+                igs.SetSetting<float>("bandbuttons_margin", (float)nudBandButtons_margin.Value);
+                igs.SetSetting<float>("bandbuttons_radius", (float)nudBandButtons_radius.Value);
+                igs.SetSetting<float>("bandbuttons_height_ratio", (float)nudBandButtons_height_ratio.Value);
+
+                igs.SetSetting<bool>("bandbuttons_use_indicator", chkBandButtons_use_indicator.Checked);
+                igs.SetSetting<float>("bandbuttons_indicator_border", (float)nudBandButtons_indicator_border.Value);
+                igs.SetSetting<System.Drawing.Color>("bandbuttons_on_colour", clrbtnBandButtons_indicator_on.Color);
+                igs.SetSetting<System.Drawing.Color>("bandbuttons_off_colour", clrbtnBandButtons_indicator_off.Color);
+
+                igs.SetSetting<System.Drawing.Color>("bandbuttons_fill_colour", clrbtnBandButtons_fill.Color);
+                igs.SetSetting<System.Drawing.Color>("bandbuttons_hover_colour", clrbtnBandButtons_hover.Color);
+                igs.SetSetting<System.Drawing.Color>("bandbuttons_border_colour", clrbtnBandButtons_border.Color);
+
+                igs.SetSetting<bool>("bandbuttons_use_off_colour", chkBandButtons_band_inactive_use.Checked);
+
+                if (_bandButtons_font != null)
+                {
+                    igs.FontFamily1 = _bandButtons_font.FontFamily.Name;
+                    igs.FontStyle1 = _bandButtons_font.Style;
+                    //igs.FontSize1 = _bandButtons_font.Size; size not used
+                }
+
+                igs.FadeOnRx = chkBandButtons_fade_rx.Checked;
+                igs.FadeOnTx = chkBandButtons_fade_tx.Checked;
+            }
+            else if (mt == MeterType.WEB_IMAGE)
             {
                 igs.UpdateInterval = (int)nudWebImage_update_interval.Value;
                 igs.EyeScale = (float)nudWebImage_width_scale.Value;
@@ -24472,7 +24501,32 @@ namespace Thetis
                 }
             }
 
-            if(mt == MeterType.WEB_IMAGE)
+            if(mt == MeterType.BAND_BUTTONS)
+            {
+                nudBandButtons_columns.Value = igs.GetSetting<int>("bandbuttons_columns", true, 1, 15, 3);
+                nudBandButtons_border.Value = (decimal)igs.GetSetting<float>("bandbuttons_border", true, 0f, 1f, 0.05f);
+                nudBandButtons_margin.Value = (decimal)igs.GetSetting<float>("bandbuttons_margin", true, 0f, 1f, 0f);
+                nudBandButtons_radius.Value = (decimal)igs.GetSetting<float>("bandbuttons_radius", true, 0f, 1f, 0f);
+                nudBandButtons_height_ratio.Value = (decimal)igs.GetSetting<float>("bandbuttons_height_ratio", true, 0.01f, 2f, 0.5f);
+
+                chkBandButtons_use_indicator.Checked = igs.GetSetting<bool>("bandbuttons_use_indicator", false, false, false, false);
+                nudBandButtons_indicator_border.Value = (decimal)igs.GetSetting<float>("bandbuttons_indicator_border", true, 0f, 1f, 0.05f);
+                clrbtnBandButtons_indicator_on.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_on_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.CornflowerBlue);
+                clrbtnBandButtons_indicator_off.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_off_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LightGray);
+
+                clrbtnBandButtons_fill.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_fill_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Black);
+                clrbtnBandButtons_hover.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_hover_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LightGray);
+                clrbtnBandButtons_border.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_border_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
+
+                chkBandButtons_band_inactive_use.Checked = igs.GetSetting<bool>("bandbuttons_use_off_colour", false, false, false, false);
+
+                _bandButtons_font = new Font(igs.FontFamily1, igs.FontSize1, igs.FontStyle1);
+                chkBandButtons_fade_rx.Checked = igs.FadeOnRx;
+                chkBandButtons_fade_tx.Checked = igs.FadeOnTx;
+
+                updateBandButtonIndicatorControls();
+            }
+            else if (mt == MeterType.WEB_IMAGE)
             {
                 nudWebImage_update_interval.Value = igs.UpdateInterval;
                 nudWebImage_width_scale.Value = (decimal)igs.EyeScale;
@@ -25093,6 +25147,7 @@ namespace Thetis
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
                     grpWebImage.Visible = false;
+                    grpBandButtons.Visible = false;
                     break;
                 case MeterType.VFO_DISPLAY:
                     grpMeterItemVfoDisplaySettings.Parent = grpMultiMeterHolder;
@@ -25107,6 +25162,7 @@ namespace Thetis
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
                     grpWebImage.Visible = false;
+                    grpBandButtons.Visible = false;
                     break;
                 case MeterType.CLOCK:
                     grpMeterItemClockSettings.Parent = grpMultiMeterHolder;
@@ -25121,6 +25177,7 @@ namespace Thetis
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
                     grpWebImage.Visible = false;
+                    grpBandButtons.Visible = false;
                     break;
                 case MeterType.SPACER:
                     grpMeterItemSpacerSettings.Parent = grpMultiMeterHolder;
@@ -25135,6 +25192,7 @@ namespace Thetis
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
                     grpWebImage.Visible = false;
+                    grpBandButtons.Visible = false;
                     break;
                 case MeterType.TEXT_OVERLAY:
                     grpTextOverlay.Parent = grpMultiMeterHolder;
@@ -25149,6 +25207,7 @@ namespace Thetis
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
                     grpWebImage.Visible = false;
+                    grpBandButtons.Visible = false;
                     break;
                 case MeterType.DATA_OUT:
                     grpMeterItemDataOutNode.Parent = grpMultiMeterHolder;
@@ -25163,6 +25222,7 @@ namespace Thetis
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
                     grpWebImage.Visible = false;
+                    grpBandButtons.Visible = false;
                     break;
                 case MeterType.ROTATOR:
                     grpMeterItemRotator.Parent = grpMultiMeterHolder;
@@ -25177,6 +25237,7 @@ namespace Thetis
                     grpMeterItemDataOutNode.Visible = false;
                     grpLedIndiciator.Visible = false;
                     grpWebImage.Visible = false;
+                    grpBandButtons.Visible = false;
                     break;
                 case MeterType.LED:
                     grpLedIndiciator.Parent = grpMultiMeterHolder;
@@ -25191,6 +25252,7 @@ namespace Thetis
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
                     grpWebImage.Visible = false;
+                    grpBandButtons.Visible = false;
                     break;
                 case MeterType.WEB_IMAGE:
                     grpWebImage.Parent = grpMultiMeterHolder;
@@ -25209,6 +25271,22 @@ namespace Thetis
                     grpMeterItemDataOutNode.Visible = false;
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
+                    grpBandButtons.Visible = false;
+                    break;
+                case MeterType.BAND_BUTTONS:
+                    grpBandButtons.Parent = grpMultiMeterHolder;
+                    grpBandButtons.Location = loc;
+                    grpBandButtons.Visible = true;
+
+                    grpMeterItemSettings.Visible = false;
+                    grpMeterItemClockSettings.Visible = false;
+                    grpMeterItemVfoDisplaySettings.Visible = false;
+                    grpMeterItemSpacerSettings.Visible = false;
+                    grpTextOverlay.Visible = false;
+                    grpMeterItemDataOutNode.Visible = false;
+                    grpMeterItemRotator.Visible = false;
+                    grpWebImage.Visible = false;
+                    grpLedIndiciator.Visible = false;
                     break;
                 default:
                     grpMeterItemSettings.Parent = grpMultiMeterHolder;
@@ -25222,6 +25300,7 @@ namespace Thetis
                     grpMeterItemRotator.Visible = false;
                     grpLedIndiciator.Visible = false;
                     grpWebImage.Visible = false;
+                    grpBandButtons.Visible = false;
                     break;
             }
         }
@@ -30048,6 +30127,100 @@ namespace Thetis
             if (cci != null)
             {
                 MeterManager.AutoContainerHeight(cci.ID, chkMultiMeter_auto_container_height.Checked);
+            }
+        }
+
+        private void nudBandButtons_columns_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudBandButtons_border_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudBandButtons_margin_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudBandButtons_radius_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudBandButtons_height_ratio_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkBandButtons_use_indicator_CheckedChanged(object sender, EventArgs e)
+        {
+            updateBandButtonIndicatorControls();
+            updateMeterType();
+        }
+
+        private void nudBandButtons_indicator_border_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+        private void updateBandButtonIndicatorControls()
+        {
+            if (initializing) return;
+            bool enable = chkBandButtons_use_indicator.Checked;
+            lblBandButtons_indicator_border.Enabled = enable;
+            nudBandButtons_indicator_border.Enabled = enable;
+        }
+        private void clrbtnBandButtons_indicator_on_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+        private void clrbtnBandButtons_indicator_off_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnBandButtons_border_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnBandButtons_fill_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnBandButtons_hover_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkBandButtons_band_inactive_use_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkBandButtons_fade_rx_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkBandButtons_fade_tx_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+        private Font _bandButtons_font = null;
+        private void btnBandButtons_font_Click(object sender, EventArgs e)
+        {
+            using (FontDialog fontDialog = new FontDialog())
+            {
+                fontDialog.Font = _bandButtons_font;
+                if (fontDialog.ShowDialog() == DialogResult.OK)
+                {
+                    _bandButtons_font = fontDialog.Font;
+                    updateMeterType();
+                }
             }
         }
     }

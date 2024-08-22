@@ -1296,5 +1296,27 @@ namespace Thetis
 
             return HPSDRModel.FIRST;
         }
+        public static int GetLuminance(Color c)
+        {
+            //https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
+            //return (int)(0.2126 * (float)c.R + 0.7152 * (float)c.G + 0.0722 * (float)c.B);
+            int r = rGBtoLin(c.R);
+            int g = rGBtoLin(c.G);
+            int b = rGBtoLin(c.B);
+            return (r + r + b + g + g + g) / 6; //(fast)
+        }
+        private static int rGBtoLin(int col)
+        {
+            float colorChannel = col / 255f;
+
+            if (colorChannel <= 0.04045)
+            {
+                return (int)((colorChannel / 12.92) * 255f);
+            }
+            else
+            {
+                return (int)(Math.Pow(((colorChannel + 0.055) / 1.055), 2.4) * 255f);
+            }
+        }
     }
 }
