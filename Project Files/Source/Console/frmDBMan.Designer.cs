@@ -45,12 +45,12 @@
             this.colVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colFolder = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lstBackups = new System.Windows.Forms.ListView();
+            this.colDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colTimeDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colBackupAge = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colBackupFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.labelTS4 = new System.Windows.Forms.LabelTS();
-            this.labelTS3 = new System.Windows.Forms.LabelTS();
+            this.btnRenameBackup = new System.Windows.Forms.ButtonTS();
             this.btnImport_to_available_list = new System.Windows.Forms.ButtonTS();
             this.btnOpenFolder = new System.Windows.Forms.ButtonTS();
             this.btnExportBackup = new System.Windows.Forms.ButtonTS();
@@ -59,8 +59,6 @@
             this.btnImport = new System.Windows.Forms.ButtonTS();
             this.btnDuplicateDB = new System.Windows.Forms.ButtonTS();
             this.btnMakeActive = new System.Windows.Forms.ButtonTS();
-            this.labelTS2 = new System.Windows.Forms.LabelTS();
-            this.lblDabaseBackups_active_selected = new System.Windows.Forms.LabelTS();
             this.btnMakeBackupAvailable = new System.Windows.Forms.ButtonTS();
             this.btnRemoveBackup = new System.Windows.Forms.ButtonTS();
             this.btnBackupOnShutdown = new System.Windows.Forms.ButtonTS();
@@ -68,7 +66,10 @@
             this.btnTakeBackupNow = new System.Windows.Forms.ButtonTS();
             this.btnRemoveDB = new System.Windows.Forms.ButtonTS();
             this.btnNewDB = new System.Windows.Forms.ButtonTS();
-            this.colDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.labelTS4 = new System.Windows.Forms.LabelTS();
+            this.labelTS3 = new System.Windows.Forms.LabelTS();
+            this.labelTS2 = new System.Windows.Forms.LabelTS();
+            this.lblDabaseBackups_active_selected = new System.Windows.Forms.LabelTS();
             this.SuspendLayout();
             // 
             // lstActiveDBs
@@ -166,6 +167,11 @@
             this.lstBackups.View = System.Windows.Forms.View.Details;
             this.lstBackups.SelectedIndexChanged += new System.EventHandler(this.lstBackups_SelectedIndexChanged);
             // 
+            // colDescription
+            // 
+            this.colDescription.Text = "Description";
+            this.colDescription.Width = 90;
+            // 
             // colTimeDate
             // 
             this.colTimeDate.Text = "TimeDate";
@@ -178,27 +184,18 @@
             // 
             this.colBackupFilename.Text = "Filename";
             // 
-            // labelTS4
+            // btnRenameBackup
             // 
-            this.labelTS4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelTS4.AutoSize = true;
-            this.labelTS4.Image = null;
-            this.labelTS4.Location = new System.Drawing.Point(542, 250);
-            this.labelTS4.Name = "labelTS4";
-            this.labelTS4.Size = new System.Drawing.Size(130, 13);
-            this.labelTS4.TabIndex = 29;
-            this.labelTS4.Text = "apply to currently selected";
-            // 
-            // labelTS3
-            // 
-            this.labelTS3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelTS3.AutoSize = true;
-            this.labelTS3.Image = null;
-            this.labelTS3.Location = new System.Drawing.Point(542, 176);
-            this.labelTS3.Name = "labelTS3";
-            this.labelTS3.Size = new System.Drawing.Size(119, 13);
-            this.labelTS3.TabIndex = 28;
-            this.labelTS3.Text = "apply to currently active";
+            this.btnRenameBackup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRenameBackup.Image = global::Thetis.Properties.Resources.Data_Edit_32;
+            this.btnRenameBackup.Location = new System.Drawing.Point(542, 478);
+            this.btnRenameBackup.Name = "btnRenameBackup";
+            this.btnRenameBackup.Selectable = true;
+            this.btnRenameBackup.Size = new System.Drawing.Size(42, 42);
+            this.btnRenameBackup.TabIndex = 30;
+            this.toolTip1.SetToolTip(this.btnRenameBackup, "Change description for the selected database backup");
+            this.btnRenameBackup.UseVisualStyleBackColor = true;
+            this.btnRenameBackup.Click += new System.EventHandler(this.btnRenameBackup_Click);
             // 
             // btnImport_to_available_list
             // 
@@ -304,26 +301,6 @@
             this.btnMakeActive.UseVisualStyleBackColor = true;
             this.btnMakeActive.Click += new System.EventHandler(this.btnMakeActive_Click);
             // 
-            // labelTS2
-            // 
-            this.labelTS2.AutoSize = true;
-            this.labelTS2.Image = null;
-            this.labelTS2.Location = new System.Drawing.Point(12, 6);
-            this.labelTS2.Name = "labelTS2";
-            this.labelTS2.Size = new System.Drawing.Size(104, 13);
-            this.labelTS2.TabIndex = 12;
-            this.labelTS2.Text = "Available Databases";
-            // 
-            // lblDabaseBackups_active_selected
-            // 
-            this.lblDabaseBackups_active_selected.AutoSize = true;
-            this.lblDabaseBackups_active_selected.Image = null;
-            this.lblDabaseBackups_active_selected.Location = new System.Drawing.Point(12, 366);
-            this.lblDabaseBackups_active_selected.Name = "lblDabaseBackups_active_selected";
-            this.lblDabaseBackups_active_selected.Size = new System.Drawing.Size(98, 13);
-            this.lblDabaseBackups_active_selected.TabIndex = 9;
-            this.lblDabaseBackups_active_selected.Text = "Database Backups";
-            // 
             // btnMakeBackupAvailable
             // 
             this.btnMakeBackupAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -341,7 +318,7 @@
             // 
             this.btnRemoveBackup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRemoveBackup.Image = global::Thetis.Properties.Resources.Data_Delete_32;
-            this.btnRemoveBackup.Location = new System.Drawing.Point(542, 478);
+            this.btnRemoveBackup.Location = new System.Drawing.Point(542, 526);
             this.btnRemoveBackup.Name = "btnRemoveBackup";
             this.btnRemoveBackup.Selectable = true;
             this.btnRemoveBackup.Size = new System.Drawing.Size(42, 42);
@@ -415,10 +392,47 @@
             this.btnNewDB.UseVisualStyleBackColor = true;
             this.btnNewDB.Click += new System.EventHandler(this.btnNewDB_Click);
             // 
-            // colDescription
+            // labelTS4
             // 
-            this.colDescription.Text = "Description";
-            this.colDescription.Width = 90;
+            this.labelTS4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelTS4.AutoSize = true;
+            this.labelTS4.Image = null;
+            this.labelTS4.Location = new System.Drawing.Point(542, 250);
+            this.labelTS4.Name = "labelTS4";
+            this.labelTS4.Size = new System.Drawing.Size(130, 13);
+            this.labelTS4.TabIndex = 29;
+            this.labelTS4.Text = "apply to currently selected";
+            // 
+            // labelTS3
+            // 
+            this.labelTS3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelTS3.AutoSize = true;
+            this.labelTS3.Image = null;
+            this.labelTS3.Location = new System.Drawing.Point(542, 176);
+            this.labelTS3.Name = "labelTS3";
+            this.labelTS3.Size = new System.Drawing.Size(119, 13);
+            this.labelTS3.TabIndex = 28;
+            this.labelTS3.Text = "apply to currently active";
+            // 
+            // labelTS2
+            // 
+            this.labelTS2.AutoSize = true;
+            this.labelTS2.Image = null;
+            this.labelTS2.Location = new System.Drawing.Point(12, 6);
+            this.labelTS2.Name = "labelTS2";
+            this.labelTS2.Size = new System.Drawing.Size(104, 13);
+            this.labelTS2.TabIndex = 12;
+            this.labelTS2.Text = "Available Databases";
+            // 
+            // lblDabaseBackups_active_selected
+            // 
+            this.lblDabaseBackups_active_selected.AutoSize = true;
+            this.lblDabaseBackups_active_selected.Image = null;
+            this.lblDabaseBackups_active_selected.Location = new System.Drawing.Point(12, 366);
+            this.lblDabaseBackups_active_selected.Name = "lblDabaseBackups_active_selected";
+            this.lblDabaseBackups_active_selected.Size = new System.Drawing.Size(98, 13);
+            this.lblDabaseBackups_active_selected.TabIndex = 9;
+            this.lblDabaseBackups_active_selected.Text = "Database Backups";
             // 
             // frmDBMan
             // 
@@ -426,6 +440,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(704, 601);
+            this.Controls.Add(this.btnRenameBackup);
             this.Controls.Add(this.labelTS4);
             this.Controls.Add(this.labelTS3);
             this.Controls.Add(this.btnImport_to_available_list);
@@ -453,6 +468,7 @@
             this.MinimumSize = new System.Drawing.Size(720, 640);
             this.Name = "frmDBMan";
             this.Text = "Database Manager";
+            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmDBMan_FormClosing);
             this.Shown += new System.EventHandler(this.frmDBMan_Shown);
             this.ResumeLayout(false);
@@ -497,5 +513,6 @@
         private System.Windows.Forms.LabelTS labelTS3;
         private System.Windows.Forms.LabelTS labelTS4;
         private System.Windows.Forms.ColumnHeader colDescription;
+        private System.Windows.Forms.ButtonTS btnRenameBackup;
     }
 }

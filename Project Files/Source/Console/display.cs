@@ -9436,7 +9436,7 @@ namespace Thetis
             {
                 sDisplayString = getCallsignString(spot);
 
-                int nLuminance = getLuminance(spot.colour);
+                int nLuminance = Common.GetLuminance(spot.colour);
                 spotColour = getDXBrushForColour(spot.colour, 255);
                 textBrush = nLuminance <= 128 ? whiteBrush : blackBrush;
 
@@ -9455,7 +9455,7 @@ namespace Thetis
             {
                 sDisplayString = getCallsignString(highLightedSpot);
 
-                int nLuminance = getLuminance(highLightedSpot.colour);
+                int nLuminance = Common.GetLuminance(highLightedSpot.colour);
                 spotColour = getDXBrushForColour(highLightedSpot.colour, 255);
                 textBrush = nLuminance <= 128 ? whiteBrush : blackBrush;
 
@@ -9484,28 +9484,6 @@ namespace Thetis
                     drawRectangleDX2D(getDXBrushForColour(Color.Black), additionalTextRect, 2);
                     drawStringDX2D(highLightedSpot.additionalText, fontDX2d_font10, getDXBrushForColour(Color.Black), additionalTextRect.X + 2, additionalTextRect.Y + 2);
                 }
-            }
-        }
-        private static int getLuminance(Color c)
-        {
-            //https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
-            //return (int)(0.2126 * (float)c.R + 0.7152 * (float)c.G + 0.0722 * (float)c.B);
-            int r = rGBtoLin(c.R);
-            int g = rGBtoLin(c.G);
-            int b = rGBtoLin(c.B);
-            return (r + r + b + g + g + g) / 6; //(fast)
-        }
-        private static int rGBtoLin(int col)
-        {
-            float colorChannel = col / 255f;
-
-            if (colorChannel <= 0.04045)
-            {
-                return (int)((colorChannel / 12.92) * 255f);
-            }
-            else
-            {
-                return (int)(Math.Pow(((colorChannel + 0.055) / 1.055), 2.4) * 255f);
             }
         }
         private static void clearAllDynamicBrushes()

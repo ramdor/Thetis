@@ -306,8 +306,9 @@ namespace Thetis
         {
             btnMakeBackupAvailable.Enabled = lstBackups.SelectedItems.Count == 1;
             btnExportBackup.Enabled = lstBackups.SelectedItems.Count == 1;
+            btnRenameBackup.Enabled = lstBackups.SelectedItems.Count == 1;
 
-            btnRemoveBackup.Enabled = lstBackups.SelectedItems.Count > 0;
+            btnRemoveBackup.Enabled = lstBackups.SelectedItems.Count > 0;            
         }
 
         private void btnMakeBackupAvailable_Click(object sender, EventArgs e)
@@ -435,6 +436,22 @@ namespace Thetis
             }
             //send highlight guid so that we can refresh the lst if it is our active db, as the backup is for the active
             DBMan.ImportAsAvailable(highlighted);
+        }
+
+        private void btnRenameBackup_Click(object sender, EventArgs e)
+        {
+            if (lstBackups.SelectedItems.Count != 1) return;
+
+            Guid highlighted = Guid.Empty;
+            ListViewItem lvi;
+            if (lstActiveDBs.SelectedItems.Count == 1)
+            {
+                lvi = lstActiveDBs.SelectedItems[0];
+                highlighted = new Guid(lvi.Tag.ToString());
+            }
+
+            lvi = lstBackups.SelectedItems[0];
+            DBMan.RenameBackup(highlighted, lvi.Tag.ToString());
         }
     }
 }

@@ -1487,6 +1487,56 @@ namespace Thetis
             }
             catch { }
         }
+        public static void RenameBackup(Guid guid, string file_path)
+        {
+            string jsonFilePath = System.IO.Path.ChangeExtension(file_path, ".json");
+            bool file_to_read = File.Exists(jsonFilePath);
+
+            try
+            {
+                string tmp_desc;
+                BackupFileInfo backup_info_json;
+                string jsonString;
+
+                if (file_to_read)
+                {
+                    jsonString = File.ReadAllText(jsonFilePath);
+                    backup_info_json = JsonConvert.DeserializeObject<BackupFileInfo>(jsonString);
+                    tmp_desc = backup_info_json.Description;
+                }
+                else
+                    tmp_desc = "Default";
+
+                string desc = InputBox.Show("Database Change Description", "Please edit the description.", tmp_desc);
+                if (string.IsNullOrEmpty(desc) || desc == tmp_desc) return;
+
+                backup_info_json = new BackupFileInfo();
+                backup_info_json.Description = desc;
+
+                //write the updated version
+                jsonString = JsonConvert.SerializeObject(backup_info_json, Newtonsoft.Json.Formatting.Indented);
+                File.WriteAllText(jsonFilePath, jsonString);
+
+                if (guid == Guid.Empty)
+                {
+                    if (_dbman_settings != null)
+                    {
+                        guid = _dbman_settings.ActiveDB_GUID;
+                    }
+                    else
+                    {
+                        List<BackupFileInfo> empty_backups = new List<BackupFileInfo>();
+                        _frm_dbman.InitBackups(empty_backups);
+                        return;
+                    }
+                }
+
+                string backup_path = _db_data_path + guid + "\\backups";
+                List<BackupFileInfo> backups = getOrderedBackupFiles(backup_path);
+                _frm_dbman.InitBackups(backups);
+            }
+            catch { }
+        }
         public static void OpenFolder(Guid guid)
         {
             if (guid == Guid.Empty && _dbman_settings != null )

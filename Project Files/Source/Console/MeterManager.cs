@@ -751,6 +751,13 @@ namespace Thetis
                 else
                     _settings.TryAdd(setting, value);
             }
+            public void SetSetting<T>(string setting, T value)
+            {
+                if (_settings.ContainsKey(setting))
+                    _settings[setting] = value;
+                else
+                    _settings.TryAdd(setting, value);
+            }
             public object GetSetting(string setting, Type type)
             {
                 if (_settings.ContainsKey(setting))
@@ -780,6 +787,25 @@ namespace Thetis
                     else
                         return "";
                 }
+            }
+            public T GetSetting<T>(string setting, bool validate = false, T min = default(T), T max = default(T), T defaultValue = default(T))
+            {
+                T value;
+
+                if (_settings.ContainsKey(setting))
+                    value = (T)_settings[setting];
+                else
+                    value = defaultValue;
+
+                if (validate && Comparer<T>.Default.Compare(min, max) != 0)
+                {
+                    if (Comparer<T>.Default.Compare(value, min) < 0)
+                        return min;
+                    if (Comparer<T>.Default.Compare(value, max) > 0)
+                        return max;
+                }
+
+                return value;
             }
             public string ToString2()
             {
@@ -3058,6 +3084,7 @@ namespace Thetis
         {
             if (_console == null) return;
 
+            frm.Floating = false;
             frm.Hide();
             m.Hide();
             m.Parent = _console;
@@ -3080,6 +3107,7 @@ namespace Thetis
 
             m.Hide();
             frm.TakeOwner(m);
+            frm.Floating = true;
             m.Floating = true;
 
             if (m.RX == 2 && !_console.RX2Enabled) return;
@@ -4152,15 +4180,15 @@ namespace Thetis
                 if (_button_bands != BandGroups.VHF) return;
                 if (index < 0 || index > 14) return;
 
-                SetEnabled(index, enabled);
+                SetEnabled(1, index, enabled);
 
                 System.Drawing.Color text_color = BandStackManager.BandToColour(Band.VHF0);
                 if (enabled)
-                    SetFontColour(index, text_color);
+                    SetFontColour(1, index, text_color);
                 else
-                    SetFontColour(index, System.Drawing.Color.FromArgb(255, (int)(text_color.R * 0.3f), (int)(text_color.G * 0.3f), (int)(text_color.B * 0.3f)));
+                    SetFontColour(1, index, System.Drawing.Color.FromArgb(255, (int)(text_color.R * 0.3f), (int)(text_color.G * 0.3f), (int)(text_color.B * 0.3f)));
 
-                SetText(index, text);
+                SetText(1, index, text);
             }
             public void BandChanged(Band b)
             {
@@ -4198,8 +4226,8 @@ namespace Thetis
                     }
                     if(index != -1 && old_index != -1)
                     {
-                        SetOn(old_index, false);
-                        SetOn(index, true);
+                        SetOn(1, old_index, false);
+                        SetOn(1, index, true);
                     }
                 }
             }
@@ -4223,6 +4251,29 @@ namespace Thetis
             }
             private void setupButtons()
             {
+                // copy from 0 to 1
+                for (int i = 0;i< Buttons; i++)
+                {
+                    SetText(1, i, GetText(0, i));
+                    SetFontColour(1, i, GetFontColour(0, i));
+                    SetFontFamily(1, i, GetFontFamily(0, i));
+                    SetFontSize(1, i, GetFontSize(0, i));
+                    SetFontStyle(1, i, GetFontStyle(0, i));                    
+                    SetUseIndicator(1, i, GetUseIndicator(0, i));
+                    SetOnColour(1, i, GetOnColour(0, i));
+                    SetOffColour(1, i, GetOffColour(0, i));
+                    SetIndicatorWidth(1, i, GetIndicatorWidth(0, i));
+                    SetEnabled(1, i, true);
+                    SetOn(1, i, false);
+
+                    SetFillColour(1, i, GetFillColour(0, i));
+                    SetHoverColour(1, i, GetHoverColour(0, i));
+                    SetBorderColour(1, i, GetBorderColour(0, i));
+
+                    SetUseOffColour(1, i, GetUseOffColour(0, i));
+                }
+                //
+
                 int start_band = 0;
                 int end_band = 0;
                 System.Drawing.Color text_color = System.Drawing.Color.White;
@@ -4233,57 +4284,53 @@ namespace Thetis
                         end_band = (int)Band.B11M;
                         text_color = System.Drawing.Color.Yellow;
 
-                        SetText(14, "HF");
-                        SetFontColour(14, System.Drawing.Color.Red);
-                        SetFontFamily(14, "Trebuchet MS");
-                        SetFontSize(14, 18f);
-                        SetFontStyle(14, FontStyle.Regular);
-                        SetHoverColour(14, System.Drawing.Color.LightGray);
-                        SetOn(14, false);
+                        SetText(1, 14, "HF");
+                        SetFontColour(1, 14, System.Drawing.Color.Red);
+                        SetUseIndicator(1, 14, false);
+                        SetUseOffColour(1, 14, false);
+                        SetOn(1, 14, false);
                         break;
                     case BandGroups.HF:
                         start_band = (int)Band.B160M;
                         end_band = (int)Band.B6M;
                         text_color = BandStackManager.BandToColour(Band.B160M);
 
-                        SetText(11, "");
+                        SetText(1, 11, "");
+                        SetHoverColour(1, 11, System.Drawing.Color.Transparent);
+                        SetUseIndicator(1, 12, false);                        
+                        SetOn(1, 11, false);
+                        SetUseOffColour(1, 11, false);
+                        //SetBorderColour(1, 11, System.Drawing.Color.Transparent);
+                        //SetFillColour(1, 11, System.Drawing.Color.Transparent);
 
-                        SetText(12, "VHF");
-                        SetFontColour(12, BandStackManager.BandToColour(Band.VHF0));
-                        SetFontFamily(12, "Trebuchet MS");
-                        SetFontSize(12, 18f);
-                        SetFontStyle(12, FontStyle.Regular);
-                        SetHoverColour(12, System.Drawing.Color.LightGray);
-                        SetOn(12, false);
+                        SetText(1, 12, "VHF");
+                        SetFontColour(1, 12, BandStackManager.BandToColour(Band.VHF0));
+                        SetUseIndicator(1, 12, false);
+                        SetOn(1, 12, false);
+                        SetUseOffColour(1, 12, false);
 
-                        SetText(13, "WWV");
-                        SetFontColour(13, System.Drawing.Color.LightGreen);
-                        SetFontFamily(13, "Trebuchet MS");
-                        SetFontSize(13, 18f);
-                        SetFontStyle(13, FontStyle.Regular);
-                        SetHoverColour(13, System.Drawing.Color.LightGray);
-                        SetOn(13, false);
+                        SetText(1, 13, "WWV");
+                        SetFontColour(1, 13, System.Drawing.Color.LightGreen);
+                        SetUseIndicator(1, 13, false);
+                        SetOn(1, 13, false);
+                        SetUseOffColour(1, 13, false);
 
-                        SetText(14, "SWL");
-                        SetFontColour(14, BandStackManager.BandToColour(Band.B120M));
-                        SetFontFamily(14, "Trebuchet MS");
-                        SetFontSize(14, 18f);
-                        SetFontStyle(14, FontStyle.Regular);
-                        SetHoverColour(14, System.Drawing.Color.LightGray);
-                        SetOn(14, false);
+                        SetText(1, 14, "SWL");
+                        SetFontColour(1, 14, BandStackManager.BandToColour(Band.B120M));
+                        SetUseIndicator(1, 14, false);
+                        SetOn(1, 14, false);
+                        SetUseOffColour(1, 14, false);
                         break;
                     case BandGroups.VHF:
                         start_band = (int)Band.VHF0;
                         end_band = (int)Band.VHF13;
                         text_color = BandStackManager.BandToColour(Band.VHF0);
 
-                        SetText(14, "HF");
-                        SetFontColour(14, System.Drawing.Color.Red);
-                        SetFontFamily(14, "Trebuchet MS");
-                        SetFontSize(14, 18f);
-                        SetFontStyle(14, FontStyle.Regular);
-                        SetHoverColour(14, System.Drawing.Color.LightGray);
-                        SetOn(14, false);
+                        SetText(1, 14, "HF");
+                        SetFontColour(1, 14, System.Drawing.Color.Red);
+                        SetUseIndicator(1, 14, false);
+                        SetOn(1, 14, false);
+                        SetUseOffColour(1, 14, false);
                         break;
                 }
 
@@ -4291,10 +4338,7 @@ namespace Thetis
                 
                 for (int i = 0; i < Buttons; i++)
                 {
-                    SetEnabled(i, true);
-
-                    SetBorderColour(i, System.Drawing.Color.White);
-                    SetFillColour(i, System.Drawing.Color.Black);
+                    SetEnabled(1, i, true);
 
                     if(i < bands)
                     {
@@ -4303,7 +4347,7 @@ namespace Thetis
 
                         if (_button_bands == BandGroups.VHF)
                         {
-                            SetEnabled(i, _console.GetVHFEnabled(i));
+                            SetEnabled(1, i, _console.GetVHFEnabled(i));
 
                             band_text = _console.GetVHFText(i).Left(3);
                             if (string.IsNullOrEmpty(band_text))
@@ -4325,26 +4369,16 @@ namespace Thetis
                             }
                         }
 
-                        SetText(i, band_text);
+                        SetText(1, i, band_text);
 
-                        if (GetEnabled(i))
-                            SetFontColour(i, text_color);
+                        if (GetEnabled(1, i))
+                            SetFontColour(1, i, text_color);
                         else
-                            SetFontColour(i, System.Drawing.Color.FromArgb(255, (int)(text_color.R * 0.3f), (int)(text_color.G * 0.3f), (int)(text_color.B * 0.3f)));
+                            SetFontColour(1, i, System.Drawing.Color.FromArgb(255, (int)(text_color.R * 0.3f), (int)(text_color.G * 0.3f), (int)(text_color.B * 0.3f)));
 
-                        SetFontFamily(i, "Trebuchet MS");
-                        SetFontSize(i, 18f);
-                        SetFontStyle(i, FontStyle.Regular);
+                        SetFontSize(1, i, 18f);
 
-                        SetUseIndicator(i, true);
-                        SetIndicatorWidth(i, 0.04f);
-
-                        SetOnColour(i, System.Drawing.Color.CornflowerBlue);
-                        SetOffColour(i, System.Drawing.Color.Black);
-
-                        SetHoverColour(i, System.Drawing.Color.LightGray);
-
-                        SetOn(i, b == _band);
+                        SetOn(1, i, b == _band);
                     }
                 }
 
@@ -4352,11 +4386,9 @@ namespace Thetis
                 int overflow = Buttons % Columns;
                 if (overflow > 0) rows++;
 
+                float half_border = Border / 2f;
                 float button_width = ((1f - (0.02f * 2f)) / (float)Columns) - Margin - Border;
-                float button_height = button_width * HeightRatio;
-
-                //button_width += Margin + Border;
-                button_height += Margin + Border;
+                float button_height = ((1f - (0.02f * 2f)) / (float)Columns) * HeightRatio;//button_width * HeightRatio;
 
                 float height = button_height * (float)rows;
 
@@ -4438,6 +4470,52 @@ namespace Thetis
                     }));
                 }
             }
+
+            public override int Columns
+            {
+                get { return base.Columns; }
+                set
+                {
+                    base.Columns = value;
+                    setupButtons();
+                }
+            }
+            public override float Border
+            {
+                get { return base.Border; }
+                set
+                {
+                    base.Border = value;
+                    setupButtons();
+                }
+            }
+            public override float Margin
+            {
+                get { return base.Margin; }
+                set
+                {
+                    base.Margin = value;
+                    setupButtons();
+                }
+            }
+            public override float Radius
+            {
+                get { return base.Radius; }
+                set
+                {
+                    base.Radius = value;
+                    setupButtons();
+                }
+            }
+            public override float HeightRatio
+            {
+                get { return base.HeightRatio; }
+                set
+                {
+                    base.HeightRatio = value;
+                    setupButtons();
+                }
+            }
         }
 
         internal class clsButtonBox : clsMeterItem
@@ -4449,25 +4527,26 @@ namespace Thetis
             private float _radius;
             private float _height_ratio; // 0 to 1.0
 
-            private System.Drawing.Color[] _fill_colour;
-            private System.Drawing.Color[] _hover_colour;
-            private System.Drawing.Color[] _border_colour;
+            private System.Drawing.Color[][] _fill_colour;
+            private System.Drawing.Color[][] _hover_colour;
+            private System.Drawing.Color[][] _border_colour;
 
-            private bool[] _use_indicator;
-            private float[] _indicator_width;
+            private bool[][] _use_off_colour;
+            private bool[][] _use_indicator;
+            private float[][] _indicator_width;
 
-            private System.Drawing.Color[] _on_colour;
-            private System.Drawing.Color[] _off_colour;
-            private bool[] _on;
+            private System.Drawing.Color[][] _on_colour;
+            private System.Drawing.Color[][] _off_colour;
+            private bool[][] _on;
 
-            private string[] _fontFamily;
-            private FontStyle[] _fontStyle;
-            private float[] _fontSize;
-            private System.Drawing.Color[] _font_colour;
+            private string[][] _fontFamily;
+            private FontStyle[][] _fontStyle;
+            private float[][] _fontSize;
+            private System.Drawing.Color[][] _font_colour;
 
-            private string[] _text;
+            private string[][] _text;
 
-            private bool[] _enabled;
+            private bool[][] _enabled;
 
             private int _button_index;
 
@@ -4476,34 +4555,84 @@ namespace Thetis
                 _number_of_buttons = 1;
                 _columns = 1;
                 _margin = 0;
-                _border_width = 1;
+                _border_width = 0.005f;
                 _radius = 0;
                 _height_ratio = 1;
                 _button_index = -1;
+
+                UpdateInterval = 50;
 
                 setupArrays();
             }
             private void setupArrays()
             {
-                _fill_colour = new System.Drawing.Color[_number_of_buttons];
-                _hover_colour = new System.Drawing.Color[_number_of_buttons];
-                _border_colour = new System.Drawing.Color[_number_of_buttons];
+                _fill_colour = new System.Drawing.Color[2][];
+                _hover_colour = new System.Drawing.Color[2][];
+                _border_colour = new System.Drawing.Color[2][];
 
-                _use_indicator = new bool[_number_of_buttons];
-                _indicator_width = new float[_number_of_buttons];
+                _use_off_colour = new bool[2][];
+                _use_indicator = new bool[2][];
+                _indicator_width = new float[2][];
 
-                _on_colour = new System.Drawing.Color[_number_of_buttons];
-                _off_colour = new System.Drawing.Color[_number_of_buttons];
-                _on = new bool[_number_of_buttons];
+                _on_colour = new System.Drawing.Color[2][];
+                _off_colour = new System.Drawing.Color[2][];
+                _on = new bool[2][];
 
-                _fontFamily = new string[_number_of_buttons];
-                _fontStyle = new FontStyle[_number_of_buttons];
-                _fontSize = new float[_number_of_buttons];
-                _font_colour = new System.Drawing.Color[_number_of_buttons];
+                _fontFamily = new string[2][];
+                _fontStyle = new FontStyle[2][];
+                _fontSize = new float[2][];
+                _font_colour = new System.Drawing.Color[2][];
 
-                _text = new string[_number_of_buttons];
+                _text = new string[2][];
 
-                _enabled = new bool[_number_of_buttons];
+                _enabled = new bool[2][];
+                // 0 is settings, 1 is active
+                for (int n = 0; n < 2; n++)
+                {
+                    _fill_colour[n] = new System.Drawing.Color[_number_of_buttons];
+                    _hover_colour[n] = new System.Drawing.Color[_number_of_buttons];
+                    _border_colour[n] = new System.Drawing.Color[_number_of_buttons];
+
+                    _use_off_colour[n] = new bool[_number_of_buttons];
+                    _use_indicator[n] = new bool[_number_of_buttons];
+                    _indicator_width[n] = new float[_number_of_buttons];
+
+                    _on_colour[n] = new System.Drawing.Color[_number_of_buttons];
+                    _off_colour[n] = new System.Drawing.Color[_number_of_buttons];
+                    _on[n] = new bool[_number_of_buttons];
+
+                    _fontFamily[n] = new string[_number_of_buttons];
+                    _fontStyle[n] = new FontStyle[_number_of_buttons];
+                    _fontSize[n] = new float[_number_of_buttons];
+                    _font_colour[n] = new System.Drawing.Color[_number_of_buttons];
+
+                    _text[n] = new string[_number_of_buttons];
+
+                    _enabled[n] = new bool[_number_of_buttons];
+
+                    for (int b = 0; b < _number_of_buttons; b++) {
+                        _fill_colour[n][b] = System.Drawing.Color.Black;
+                        _hover_colour[n][b] = System.Drawing.Color.LightGray;
+                        _border_colour[n][b] = System.Drawing.Color.White;
+
+                        _use_off_colour[n][b] = false;
+                        _use_indicator[n][b] = false;
+                        _indicator_width[n][b] = 0.005f;
+
+                        _on_colour[n][b] = System.Drawing.Color.CornflowerBlue;
+                        _off_colour[n][b] = System.Drawing.Color.Black;
+                        _on[n][b] = false;
+
+                        _fontFamily[n][b] = "Trebuchet MS";
+                        _fontStyle[n][b] = FontStyle.Regular;
+                        _fontSize[n][b] = 18f;
+                        _font_colour[n][b] = System.Drawing.Color.White;
+
+                        _text[n][b] = "";
+
+                        _enabled[n][b] = true;
+                    }
+                }
             }
             public int ButtonIndex
             {
@@ -4519,170 +4648,180 @@ namespace Thetis
                     setupArrays();
                 }
             }
-            public int Columns
+            public virtual int Columns
             {
                 get { return _columns; }
                 set { _columns = value; }
             }
-            public float Margin
+            public virtual float Margin
             {
                 get { return _margin; }
                 set { _margin = value; }
             }
-            public float Border
+            public virtual float Border
             {
                 get { return _border_width; }
                 set { _border_width = value; }
             }
-            public float Radius
+            public virtual float Radius
             {
                 get { return _radius; }
                 set { _radius = value; }
             }
-            public float HeightRatio
+            public virtual float HeightRatio
             {
                 get { return _height_ratio; }
                 set { _height_ratio = value; }
             }
-            public void SetFillColour(int button, System.Drawing.Color colour)
+            public void SetFillColour(int bank, int button, System.Drawing.Color colour)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
-                _fill_colour[button] = colour;
+                _fill_colour[bank][button] = colour;
             }
-            public System.Drawing.Color GetFillColour(int button)
+            public System.Drawing.Color GetFillColour(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return System.Drawing.Color.Empty;
-                return _fill_colour[button];
+                return _fill_colour[bank][button];
             }
-            public void SetHoverColour(int button, System.Drawing.Color colour)
+            public void SetHoverColour(int bank, int button, System.Drawing.Color colour)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
-                _hover_colour[button] = colour;
+                _hover_colour[bank][button] = colour;
             }
-            public System.Drawing.Color GetHoverColour(int button)
+            public System.Drawing.Color GetHoverColour(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return System.Drawing.Color.Empty;
-                return _hover_colour[button];
+                return _hover_colour[bank][button];
             }
-            public void SetBorderColour(int button, System.Drawing.Color colour)
+            public void SetBorderColour(int bank, int button, System.Drawing.Color colour)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
-                _border_colour[button] = colour;
+                _border_colour[bank][button] = colour;
             }
-            public System.Drawing.Color GetBorderColour(int button)
+            public System.Drawing.Color GetBorderColour(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return System.Drawing.Color.Empty;
-                return _border_colour[button];
+                return _border_colour[bank][button];
             }
-            public void SetUseIndicator(int button, bool use)
+            public void SetUseOffColour(int bank, int button, bool use)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
-                _use_indicator[button] = use;
+                _use_off_colour[bank][button] = use;
             }
-            public bool GetUseIndicator(int button)
+            public bool GetUseOffColour(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return false;
-                return _use_indicator[button];
+                return _use_off_colour[bank][button];
             }
-            public void SetOn(int button, bool on)
+            public void SetUseIndicator(int bank, int button, bool use)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
-                _on[button] = on;
+                _use_indicator[bank][button] = use;
             }
-            public bool GetOn(int button)
+            public bool GetUseIndicator(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return false;
-                return _on[button];
+                return _use_indicator[bank][button];
             }
-            public void SetIndicatorWidth(int button, float width)
+            public void SetOn(int bank, int button, bool on)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
-                _indicator_width[button] = width;
+                _on[bank][button] = on;
             }
-            public float GetIndicatorWidth(int button)
+            public bool GetOn(int bank, int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return false;
+                return _on[bank][button];
+            }
+            public void SetIndicatorWidth(int bank, int button, float width)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _indicator_width[bank][button] = width;
+            }
+            public float GetIndicatorWidth(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return 0;
-                return _indicator_width[button];
+                return _indicator_width[bank][button];
             }
-            public void SetOnColour(int button, System.Drawing.Color colour)
+            public void SetOnColour(int bank, int button, System.Drawing.Color colour)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
-                _on_colour[button] = colour;
+                _on_colour[bank][button] = colour;
             }
-            public System.Drawing.Color GetOnColour(int button)
+            public System.Drawing.Color GetOnColour(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return System.Drawing.Color.Empty;
-                return _on_colour[button];
+                return _on_colour[bank][button];
             }
-            public void SetOffColour(int button, System.Drawing.Color colour)
+            public void SetOffColour(int bank, int button, System.Drawing.Color colour)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
-                _off_colour[button] = colour;
+                _off_colour[bank][button] = colour;
             }
-            public System.Drawing.Color GetOffColour(int button)
+            public System.Drawing.Color GetOffColour(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return System.Drawing.Color.Empty;
-                return _off_colour[button];
+                return _off_colour[bank][button];
             }
-            public void SetFontFamily(int button, string font_family)
+            public void SetFontFamily(int bank, int button, string font_family)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
-                _fontFamily[button] = font_family;
+                _fontFamily[bank][button] = font_family;
             }
-            public string GetFontFamily(int button)
+            public string GetFontFamily(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return "";
-                return _fontFamily[button];
+                return _fontFamily[bank][button];
             }
-            public void SetFontStyle(int button, FontStyle font_style)
+            public void SetFontStyle(int bank, int button, FontStyle font_style)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
-                _fontStyle[button] = font_style;
+                _fontStyle[bank][button] = font_style;
             }
-            public FontStyle GetFontStyle(int button)
+            public FontStyle GetFontStyle(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return FontStyle.Regular;
-                return _fontStyle[button];
+                return _fontStyle[bank][button];
             }
-            public void SetFontSize(int button, float size)
+            public void SetFontSize(int bank, int button, float size)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
-                _fontSize[button] = size;
+                _fontSize[bank][button] = size;
             }
-            public float GetFontSize(int button)
+            public float GetFontSize(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return 0;
-                return _fontSize[button];
+                return _fontSize[bank][button];
             }
-            public void SetFontColour(int button, System.Drawing.Color colour)
+            public void SetFontColour(int bank, int button, System.Drawing.Color colour)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
-                _font_colour[button] = colour;
+                _font_colour[bank][button] = colour;
             }
-            public System.Drawing.Color GetFontColour(int button)
+            public System.Drawing.Color GetFontColour(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return System.Drawing.Color.Empty;
-                return _font_colour[button];
+                return _font_colour[bank][button];
             }
-            public void SetText(int button, string text)
+            public void SetText(int bank, int button, string text)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
-                _text[button] = text;
+                _text[bank][button] = text;
             }
-            public string Getext(int button)
+            public string GetText(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return "";
-                return _text[button];
+                return _text[bank][button];
             }
-            public void SetEnabled(int button, bool enabled)
+            public void SetEnabled(int bank, int button, bool enabled)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
-                _enabled[button] = enabled;
+                _enabled[bank][button] = enabled;
             }
-            public bool GetEnabled(int button)
+            public bool GetEnabled(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return false;
-                return _enabled[button];
+                return _enabled[bank][button];
             }
         }
 
@@ -11746,12 +11885,12 @@ namespace Thetis
                 bb.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
                 bb.Size = new SizeF(1f - _fPadX * 2f, 1f);
 
-                bb.Columns = 3;
-                bb.UpdateInterval = 50;
-                bb.Margin = 0.006f;// 0.01f;
-                bb.Radius = 0.05f;// 0.01f;
+                bb.ZOrder = 1;
+                bb.Columns = 3;                
+                bb.Margin = 0.005f;
+                bb.Radius = 0.01f;
                 bb.HeightRatio = 0.5f;
-                bb.Border = 0.01f;
+                bb.Border = 0.005f;
                 bb.ForceUpdate = true;
                 bb.ButtonBands = bb.ButtonBands; //cause update to size
                 bb.ForceUpdate = false;
@@ -12405,6 +12544,74 @@ namespace Thetis
                         {
                             switch (mt)
                             {
+                                case MeterType.BAND_BUTTONS:
+                                    {
+                                        bRebuild = true;
+
+                                        float height = 1f;
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS))
+                                        {
+                                            clsBandButtonBox bb = me.Value as clsBandButtonBox;
+                                            if (bb == null) continue;
+
+                                            bb.ForceUpdate = true;
+                                            bool use_indiciator = igs.GetSetting<bool>("bandbuttons_use_indicator", false, false, false, false);
+                                            float indiciator_width = igs.GetSetting<float>("bandbuttons_indicator_border", true, 0, 1f, 05f) / 10f;
+                                            System.Drawing.Color on_colour = igs.GetSetting("bandbuttons_on_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
+                                            System.Drawing.Color off_colour = igs.GetSetting("bandbuttons_off_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
+
+                                            System.Drawing.Color fill_colour = igs.GetSetting("bandbuttons_fill_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
+                                            System.Drawing.Color hover_colour = igs.GetSetting("bandbuttons_hover_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LightGray);
+                                            System.Drawing.Color border_colour = igs.GetSetting("bandbuttons_border_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
+
+                                            bool use_off_colour = igs.GetSetting<bool>("bandbuttons_use_off_colour", false, false, false, false);
+
+                                            for (int button = 0; button < bb.Buttons; button++)
+                                            {
+                                                bb.SetUseIndicator(0, button, use_indiciator);
+                                                bb.SetIndicatorWidth(0, button, indiciator_width);
+                                                bb.SetOnColour(0, button, on_colour);
+                                                bb.SetOffColour(0, button, off_colour);
+                                                bb.SetFillColour(0, button, fill_colour);
+                                                bb.SetHoverColour(0, button, hover_colour);
+                                                bb.SetBorderColour(0, button, border_colour);
+                                                bb.SetUseOffColour(0, button, use_off_colour);
+                                                bb.SetFontFamily(0, button, igs.FontFamily1);
+                                                bb.SetFontStyle(0, button, igs.FontStyle1);
+                                            }
+                                            bb.Columns = igs.GetSetting<int>("bandbuttons_columns", true, 1, 15, 3);
+                                            bb.Border = igs.GetSetting<float>("bandbuttons_border", true, 0.01f, 1f, 0.05f) / 10f;
+                                            bb.Margin = igs.GetSetting<float>("bandbuttons_margin", true, 0f, 1f, 0f) / 10f;
+                                            bb.Radius = igs.GetSetting<float>("bandbuttons_radius", true, 0f, 1f, 0f) / 10f;
+                                            bb.HeightRatio = igs.GetSetting<float>("bandbuttons_height_ratio", true, 0.01f, 2f, 0.5f);
+                                            bb.ForceUpdate = false;
+
+                                            bb.FadeOnRx = igs.FadeOnRx;
+                                            bb.FadeOnTx = igs.FadeOnTx;
+
+                                            height = bb.Size.Height;
+                                        }
+                                        ig.Size = new SizeF(ig.Size.Width, height + (_fPadY - (_fHeight * 0.75f)));
+
+                                        // recalc bounds for fade overlay cover as these will change as bb changes
+                                        System.Drawing.RectangleF bounds = getBounds(ig.ID);
+                                        if (!bounds.IsEmpty)
+                                        {
+                                            foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                            {
+                                                clsFadeCover fc = fcs.Value as clsFadeCover;
+                                                if (fc == null) continue;
+
+                                                fc.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                fc.Size = new SizeF(ig.Size.Width, height);
+
+                                                fc.FadeOnRx = igs.FadeOnRx;
+                                                fc.FadeOnTx = igs.FadeOnTx;
+                                            }
+                                        }
+                                    }
+                                    break;
                                 case MeterType.WEB_IMAGE:
                                     {
                                         bRebuild = true; // alwayys cause a rebuild
@@ -12473,7 +12680,7 @@ namespace Thetis
                                                 rotator.MMIOGuid = Guid.Empty;
                                                 rotator.MMIOVariable = "--DEFAULT--";
                                             }
-
+                                            
                                             rotator.UpdateInterval = igs.UpdateInterval;
                                             rotator.ArrowColour = igs.TitleColor;
                                             rotator.BigBlobColour = igs.MarkerColour;
@@ -13318,6 +13525,38 @@ namespace Thetis
                             clsIGSettings igs = new clsIGSettings();
                             switch (mt)
                             {
+                                case MeterType.BAND_BUTTONS:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        //one image, and the me
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS))
+                                        {
+                                            clsBandButtonBox bb = me.Value as clsBandButtonBox;
+                                            if (bb == null) continue; // skip
+
+                                            igs.SetSetting<bool>("bandbuttons_use_indicator", bb.GetUseIndicator(0, 0));
+                                            igs.SetSetting<float>("bandbuttons_indicator_border", bb.GetIndicatorWidth(0, 0) * 10f);
+                                            igs.SetSetting<System.Drawing.Color>("bandbuttons_on_colour", bb.GetOnColour(0, 0));
+                                            igs.SetSetting<System.Drawing.Color>("bandbuttons_off_colour", bb.GetOffColour(0, 0));
+
+                                            igs.SetSetting<System.Drawing.Color>("bandbuttons_fill_colour", bb.GetFillColour(0, 0));
+                                            igs.SetSetting<System.Drawing.Color>("bandbuttons_hover_colour", bb.GetHoverColour(0, 0));
+                                            igs.SetSetting<System.Drawing.Color>("bandbuttons_border_colour", bb.GetBorderColour(0, 0));
+
+                                            igs.SetSetting<int>("bandbuttons_columns", bb.Columns);
+                                            igs.SetSetting<float>("bandbuttons_border", bb.Border * 10f);
+                                            igs.SetSetting<float>("bandbuttons_margin", bb.Margin * 10f);
+                                            igs.SetSetting<float>("bandbuttons_radius", bb.Radius * 10f);
+                                            igs.SetSetting<float>("bandbuttons_height_ratio", bb.HeightRatio);
+
+                                            igs.SetSetting<bool>("bandbuttons_use_off_colour", bb.GetUseOffColour(0, 0));
+
+                                            igs.FontFamily1 = bb.GetFontFamily(0, 0);
+                                            igs.FontSize1 = bb.GetFontSize(0, 0);
+                                            igs.FontStyle1 = bb.GetFontStyle(0, 0);
+                                        }
+                                    }
+                                    break;
                                 case MeterType.ROTATOR:
                                     {
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
@@ -15454,6 +15693,7 @@ namespace Thetis
             private SharpDX.Direct2D1.Brush getDXBrushForColour(System.Drawing.Color c, int replaceAlpha = -1)
             {
                 if (!_bDXSetup) return null;
+                if (c == System.Drawing.Color.Transparent) replaceAlpha = 0;
 
                 System.Drawing.Color newC;
                 if (replaceAlpha >= 0 && replaceAlpha <= 255)
@@ -18894,10 +19134,15 @@ namespace Thetis
 
                 return button_state;
             }
-            private SharpDX.RectangleF shrinkRectangle(SharpDX.RectangleF original, float ratio)
+            private SharpDX.RectangleF shrinkRectangle(SharpDX.RectangleF original, float ratio, float absolute = 0f)
             {
                 float newWidth = original.Width * ratio;
                 float newHeight = original.Height * ratio;
+
+                newWidth -= absolute;
+                newHeight -= absolute;
+                if (newWidth < 0) newWidth = 0;
+                if (newHeight < 0) newHeight = 0;
 
                 float offsetX = (original.Width - newWidth) / 2f;
                 float offsetY = (original.Height - newHeight) / 2f;
@@ -18910,6 +19155,20 @@ namespace Thetis
                 );
 
                 return shrunkRectangle;
+            }
+            private void drawRoundedRectangle(RoundedRectangle rr, SharpDX.Direct2D1.Brush b, float stroke)
+            {
+                if(rr.RadiusX>0 || rr.RadiusY>0)
+                    _renderTarget.DrawRoundedRectangle(rr, b, stroke);
+                else
+                    _renderTarget.DrawRectangle(rr.Rect, b, stroke);
+            }
+            private void fillRoundedRectangle(RoundedRectangle rr, SharpDX.Direct2D1.Brush b)
+            {
+                if (rr.RadiusX > 0 || rr.RadiusY > 0)
+                    _renderTarget.FillRoundedRectangle(rr, b);
+                else
+                    _renderTarget.FillRectangle(rr.Rect, b);
             }
             private void renderBandButtons(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
@@ -18928,12 +19187,13 @@ namespace Thetis
                 int overflow = bb.Buttons % bb.Columns;
                 if (overflow > 0) rows++;
                 int buttons_per_row = bb.Columns;
-                
-                float expand = bb.Margin * w; //expand so that last margin is not shown
-                float border = bb.Border * w;
+
+                float wh = w >= h ? w : h; // base margin/border/radius scales on largest
+                float border = bb.Border * wh;
                 float half_border = border / 2f;
-                float radius = bb.Radius * w;
-                float margin = bb.Margin * w;
+                float radius = bb.Radius * wh;
+                float margin = bb.Margin * wh;
+                float expand = (bb.Margin * wh) - half_border; //expand so that last margin is not shown
                 float button_width = ((w + expand) / (float)bb.Columns) - margin - border;
                 float button_height = ((h + expand) / (float)rows) - margin - border;
 
@@ -18954,10 +19214,11 @@ namespace Thetis
                 {
                     for (int col = 0; col < buttons_per_row; col++)
                     {
+                        bool indicator = bb.GetUseIndicator(1, button_index);
                         float xP = x + half_border + (button_width * col);
                         float yP = y + half_border + (button_height * row);
 
-                        SharpDX.RectangleF rectBB = new SharpDX.RectangleF(xP, yP, button_width - margin - border, button_height - margin - border);
+                        SharpDX.RectangleF rectBB = new SharpDX.RectangleF(xP, yP, button_width - margin - half_border, button_height - margin - half_border);
 
                         RoundedRectangle rr = new RoundedRectangle
                         {
@@ -18966,41 +19227,110 @@ namespace Thetis
                             RadiusY = radius
                         };
 
-                        _renderTarget.FillRoundedRectangle(rr, getDXBrushForColour(bb.GetFillColour(button_index)));
-                        if (!bb.GetUseIndicator(button_index) && bb.GetOn(button_index))
+                        // luminance
+                        System.Drawing.Color bg_colour = bb.GetFillColour(1, button_index);
+                        System.Drawing.Color text_colour = bb.GetFontColour(1, button_index);
+                        System.Drawing.Color hover_colour = bb.GetHoverColour(1, button_index);
+                        System.Drawing.Color on_colour = bb.GetOnColour(1, button_index);
+                        System.Drawing.Color off_colour = bb.GetOffColour(1, button_index);
+
+                        bool on = bb.GetOn(1, button_index);
+                        System.Drawing.Color actual_bg;
+                        if (!indicator)
                         {
-                            _renderTarget.FillRoundedRectangle(rr, getDXBrushForColour(bb.GetOnColour(button_index), 255));
+                            if (on)
+                                actual_bg = on_colour;
+                            else
+                            {
+                                if (bb.GetUseOffColour(1, button_index))
+                                    actual_bg = off_colour;
+                                else
+                                    actual_bg = bg_colour;
+                            }
+                        }
+                        else
+                            actual_bg = bg_colour;
+
+                        text_colour = adjustTextColourForContrast(text_colour, actual_bg);
+                        //int luminance_bg = Common.GetLuminance(actual_bg);
+                        //int luminance_text = Common.GetLuminance(text_colour);
+                        //int diff = Common.GetLuminance(text_colour) - luminance_bg;
+
+                        //if (Math.Abs(luminance_bg - luminance_text) < 32)
+                        //{
+                        //    text_colour = System.Drawing.Color.FromArgb(text_colour.A, 255 - text_colour.R, 255 - text_colour.G, 255 - text_colour.B);
+                        //    int diff = Common.GetLuminance(text_colour) - luminance_bg;
+                        //    if(Math.Abs(diff) < 128)
+                        //    {
+                        //        if (luminance_bg > 128)
+                        //            text_colour = System.Drawing.Color.Black;
+                        //        else
+                        //            text_colour = System.Drawing.Color.White;
+                        //    }
+                        //}
+
+                        // fill
+                        fillRoundedRectangle(rr, getDXBrushForColour(bg_colour));
+
+                        //indicator disabled
+                        if (!indicator)
+                        {
+                            if (on)
+                                fillRoundedRectangle(rr, getDXBrushForColour(bb.GetOnColour(1, button_index), 255));
+                            else
+                            {
+                                if(bb.GetUseOffColour(1, button_index))
+                                    fillRoundedRectangle(rr, getDXBrushForColour(bb.GetOffColour(1, button_index), 255));
+                            }
                         }
 
+                        // mouse highlight
                         if (bb.MouseEntered && rectBB.Contains((float)bb.MouseMovePoint.X, (float)bb.MouseMovePoint.Y))
                         {
-                            _renderTarget.FillRoundedRectangle(rr, getDXBrushForColour(bb.GetHoverColour(button_index), 192));
+                            fillRoundedRectangle(rr, getDXBrushForColour(hover_colour, 192));
                             highlighted_index = button_index;
                         }
 
-                        _renderTarget.DrawRoundedRectangle(rr, getDXBrushForColour(bb.GetBorderColour(button_index)), bb.Border * w * bb.HeightRatio);
+                        //border
+                        drawRoundedRectangle(rr, getDXBrushForColour(bb.GetBorderColour(1, button_index)), bb.Border * w);
 
-                        if (bb.GetUseIndicator(button_index))
+                        //indicator
+                        float indicator_width = 0;
+                        float size_modifier = 0.9f;
+                        if (indicator)
                         {
-                            rr.Rect = shrinkRectangle(rectBB, 0.85f);
-                            if (bb.GetOn(button_index))
-                                _renderTarget.DrawRoundedRectangle(rr, getDXBrushForColour(bb.GetOnColour(button_index)), bb.GetIndicatorWidth(button_index) * w * bb.HeightRatio);
+                            size_modifier = 1f;
+                            indicator_width = bb.GetIndicatorWidth(1, button_index) * wh;
+                            rr.Rect = shrinkRectangle(rectBB, 1f, (0.02f * w) + border + indicator_width);
+                            if (bb.GetOn(1, button_index))
+                                drawRoundedRectangle(rr, getDXBrushForColour(bb.GetOnColour(1, button_index)), indicator_width);
                             else
-                                _renderTarget.DrawRoundedRectangle(rr, getDXBrushForColour(bb.GetOffColour(button_index)), bb.GetIndicatorWidth(button_index) * w * bb.HeightRatio);
+                            {
+                                if (bb.GetUseOffColour(1, button_index))
+                                {
+                                    if(highlighted_index != button_index)
+                                        drawRoundedRectangle(rr, getDXBrushForColour(bb.GetOffColour(1, button_index)), indicator_width);
+                                }
+                            }
                         }
 
-                        string text = bb.Getext(button_index);
+                        //text
+                        string text = bb.GetText(1, button_index);
                         if (!string.IsNullOrEmpty(text))
                         {
+                            rectBB = shrinkRectangle(rectBB, 1f, border + (indicator_width * 2f));
                             float cx = rectBB.Left + (rectBB.Width / 2f);
                             float cy = rectBB.Top + (rectBB.Height / 2f);
-                            plotText(bb.Getext(button_index), cx, cy, h, rect.Width, bb.GetFontSize(button_index), bb.GetFontColour(button_index), 255, bb.GetFontFamily(button_index), bb.GetFontStyle(button_index), false, true, button_width * 0.8f, true, button_height * 0.8f);
+                            if (rectBB.Width > 0 && rectBB.Height > 0)
+                            {
+                                plotText(bb.GetText(1, button_index), cx, cy, h, rect.Width, bb.GetFontSize(1, button_index), text_colour, 255, bb.GetFontFamily(1, button_index), bb.GetFontStyle(1, button_index), false, true, rectBB.Width * size_modifier, true, rectBB.Height * size_modifier);
+                            }
                         }
 
                         button_index++;
-                        if (button_index > bb.Buttons) break;
+                        if (button_index >= bb.Buttons) break;
                     }
-                    if (button_index > bb.Buttons) break;
+                    if (button_index >= bb.Buttons) break;
                 }
 
                 if (bb.MouseEntered)
@@ -19013,6 +19343,43 @@ namespace Thetis
                     bb.ButtonIndex = -1;
                 }
             }
+            private System.Drawing.Color adjustTextColourForContrast(System.Drawing.Color textColor, System.Drawing.Color backgroundColor)
+            {
+                double backgroundLuminance = Common.GetLuminance(backgroundColor);
+                double textLuminance = Common.GetLuminance(textColor);
+
+                double contrastRatio = calculateContrastRatio(backgroundLuminance, textLuminance);
+
+                if (contrastRatio < 2)
+                {
+                    //return backgroundLuminance > 0.5 ? System.Drawing.Color.Black : System.Drawing.Color.White;
+                    return backgroundLuminance > 0.5 ? ControlPaint.Dark(textColor) : ControlPaint.Light(textColor);
+                }
+                
+                return textColor;
+            }
+
+            //private double calculateLuminance(System.Drawing.Color color)
+            //{
+            //    double r = color.R / 255.0;
+            //    double g = color.G / 255.0;
+            //    double b = color.B / 255.0;
+
+            //    r = (r <= 0.03928) ? r / 12.92 : Math.Pow((r + 0.055) / 1.055, 2.4);
+            //    g = (g <= 0.03928) ? g / 12.92 : Math.Pow((g + 0.055) / 1.055, 2.4);
+            //    b = (b <= 0.03928) ? b / 12.92 : Math.Pow((b + 0.055) / 1.055, 2.4);
+
+            //    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            //}
+
+            private double calculateContrastRatio(double luminance1, double luminance2)
+            {
+                double lighter = Math.Max(luminance1, luminance2);
+                double darker = Math.Min(luminance1, luminance2);
+
+                return (lighter + 0.05) / (darker + 0.05);
+            }
+
             private void renderVfoDisplay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsVfoDisplay vfo = (clsVfoDisplay)mi;
