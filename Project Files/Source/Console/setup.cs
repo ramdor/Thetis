@@ -2656,7 +2656,7 @@ namespace Thetis
         public void GetTxProfiles()
         {
             comboTXProfileName.Items.Clear();
-            foreach (DataRow dr in DB.ds.Tables["TxProfile"].Rows)
+            foreach (DataRow dr in DB.ds.Tables["TXProfile"].Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
@@ -2718,7 +2718,7 @@ namespace Thetis
             if (drToCheck == null)
             {
                 // check everything in the TX profile
-                DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+                DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
                 if (rows.Length != 1)
                     return "";
@@ -2920,7 +2920,7 @@ namespace Thetis
             if (drToCheck == null)
             {
                 // check everything in the TX profile
-                DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+                DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
                 if (rows.Length != 1)
                     return false;
@@ -3504,7 +3504,7 @@ namespace Thetis
 
             DataRow dr = null;
 
-            foreach (DataRow dd in from DataRow d in DB.ds.Tables["TxProfile"].Rows where (string)d["Name"] == name select d)
+            foreach (DataRow dd in from DataRow d in DB.ds.Tables["TXProfile"].Rows where (string)d["Name"] == name select d)
             {
                 dr = dd;
                 break;
@@ -8811,7 +8811,7 @@ namespace Thetis
             // NOTE: make sure you update checkTXProfileChanged2, if anything is added/removed
             //
 
-            DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + sProfileName.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + sProfileName.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
             if (rows.Length != 1)
             {
@@ -9117,7 +9117,7 @@ namespace Thetis
                 if (result == DialogResult.No)
                     return;
 
-                foreach (DataRow dd in from DataRow d in DB.ds.Tables["TxProfile"].Rows where (string)d["Name"] == name select d)
+                foreach (DataRow dd in from DataRow d in DB.ds.Tables["TXProfile"].Rows where (string)d["Name"] == name select d)
                 {
                     dr = dd;
                     break;
@@ -9125,7 +9125,7 @@ namespace Thetis
             }
             else
             {
-                dr = DB.ds.Tables["TxProfile"].NewRow();
+                dr = DB.ds.Tables["TXProfile"].NewRow();
                 dr["Name"] = name;
             }
 
@@ -9144,7 +9144,7 @@ namespace Thetis
 
             if (!comboTXProfileName.Items.Contains(name))
             {
-                DB.ds.Tables["TxProfile"].Rows.Add(dr);
+                DB.ds.Tables["TXProfile"].Rows.Add(dr);
                 comboTXProfileName.Items.Add(name);
                 comboTXProfileName.Text = name;
             }
@@ -9166,7 +9166,7 @@ namespace Thetis
 
             profile_deleted = true;
 
-            DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + comboTXProfileName.Text.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + comboTXProfileName.Text.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
             if (rows.Length == 1)
                 rows[0].Delete();
@@ -11960,7 +11960,7 @@ namespace Thetis
                 if (result == DialogResult.No)
                     return;
 
-                foreach (DataRow d in DB.ds.Tables["TxProfile"].Rows)
+                foreach (DataRow d in DB.ds.Tables["TXProfile"].Rows)
                 {
                     if ((string)d["Name"] == name)
                     {
@@ -11971,7 +11971,7 @@ namespace Thetis
             }
             else
             {
-                dr = DB.ds.Tables["TxProfile"].NewRow();
+                dr = DB.ds.Tables["TXProfile"].NewRow();
                 dr["Name"] = name;
             }
 
@@ -11980,7 +11980,7 @@ namespace Thetis
 
             if (!comboTXProfileName.Items.Contains(name))
             {
-                DB.ds.Tables["TxProfile"].Rows.Add(dr);
+                DB.ds.Tables["TXProfile"].Rows.Add(dr);
                 comboTXProfileName.Items.Add(name);
                 comboTXProfileName.Text = name;
             }
@@ -12010,7 +12010,7 @@ namespace Thetis
             }
             fileName = tempFN + ".xml";
 
-            DataRow[] rows = DB.ds.Tables["TxProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
             DataRow exportRow = null;
             if (rows.Length > 0)
             {
@@ -12031,7 +12031,7 @@ namespace Thetis
             List<string> table_names = new List<string>();
             foreach (DataTable dt in exDS.Tables) 
             {
-                if(dt.TableName != "TxProfile")
+                if(dt.TableName != "TXProfile")
                     table_names.Add(dt.TableName);
             }
             foreach(string table_name in table_names)
@@ -12040,7 +12040,7 @@ namespace Thetis
             }
             //
 
-            DataTable pTable = pTable = DB.ds.Tables["TxProfile"].Clone();
+            DataTable pTable = pTable = DB.ds.Tables["TXProfile"].Clone();
             pTable.ImportRow(exportRow);
             exDS.Merge(pTable);
 
