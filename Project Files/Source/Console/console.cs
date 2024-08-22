@@ -5651,7 +5651,6 @@ namespace Thetis
 
         private void SetRX1Band(Band b)
         {
-            if (rx1_band == b) return; //[2.10.3.6]MW0LGE pointless doing it again if already set
             if (disable_split_on_bandchange)
             {
                 if (RX1Band != b && !tuning)
@@ -5684,7 +5683,6 @@ namespace Thetis
 
         private void SetRX2Band(Band b)
         {
-            if (rx2_band == b) return; //[2.10.3.6]MW0LGE pointless doing it again if already set
             Band old_band = rx2_band;
             RX2Band = b;
             if (old_band != b)
@@ -5697,7 +5695,6 @@ namespace Thetis
 
         private void SetTXBand(Band b, bool bIngoreBandChange = false)
         {
-            if (tx_band == b) return; //[2.10.3.6]MW0LGE pointless doing it again if already set
             if (disable_split_on_bandchange && !bIngoreBandChange) //[2.10.3.6]MW0LGE might need to ignore this is we are using extended and band is moved to a hamband
             {
                 if (TXBand != b && !tuning)
@@ -17268,7 +17265,6 @@ namespace Thetis
             get { return rx1_dsp_mode; }
             set
             {
-                if (rx1_dsp_mode == value) return; //[2.10.3.6]MW0LGE pointless doing it again if already set
                 RadioButtonTS r = null;
                 switch (value)
                 {
@@ -17322,7 +17318,6 @@ namespace Thetis
             get { return rx2_dsp_mode; }
             set
             {
-                if (rx2_dsp_mode == value) return; //[2.10.3.6]MW0LGE pointless doing it again if already set
                 RadioButtonTS r = null;
                 switch (value)
                 {
@@ -35564,7 +35559,6 @@ namespace Thetis
         private void SetRX1Mode(DSPMode new_mode)
         {
             if (new_mode == DSPMode.FIRST || new_mode == DSPMode.LAST) return;
-            if (rx1_dsp_mode == new_mode) return; //[2.10.3.6]MW0LGE pointless doing it again if already set) return;
 
             //MW0LGE_21d
             Band oldBand = RX1Band;
@@ -39328,7 +39322,6 @@ namespace Thetis
         private void SetRX2Mode(DSPMode new_mode)
         {
             if (new_mode == DSPMode.FIRST || new_mode == DSPMode.LAST) return;
-            if (rx2_dsp_mode == new_mode) return; //[2.10.3.6]MW0LGE pointless doing it again if already set) return;
 
             Band oldBand = RX2Band; //MW0LGE_21d
             DSPMode old_mode = rx2_dsp_mode;
