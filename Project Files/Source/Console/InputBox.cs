@@ -142,10 +142,11 @@ namespace Thetis
 
 		#region Misc Routines
 
-		public static string Show(string title, string label, string textbox)
+		public static string Show(string title, string label, string textbox, bool to_top = false)
 		{
 			InputBox box = new InputBox();
-			box.Text = title;
+			box.TopMost = to_top;
+            box.Text = title;
 			box.label.Text = label;
 			box.textbox.Text = textbox;
 

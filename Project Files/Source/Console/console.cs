@@ -5030,7 +5030,8 @@ namespace Thetis
             qsk_band_changing = true;
 
             // Set mode, filter, and frequency according to passed parameters
-            RX1DSPMode = (DSPMode)Enum.Parse(typeof(DSPMode), mode, true);
+
+            //RX1DSPMode = (DSPMode)Enum.Parse(typeof(DSPMode), mode, true); //[2.10.3.6]MW0LGE done after frequency change
 
             ClickTuneDisplay = false;                               // Set CTUN off to restore center frequency - G3OQD
             chkFWCATU.Checked = ClickTuneDisplay;
@@ -5047,15 +5048,25 @@ namespace Thetis
                 VFOAFreq = CentreFrequency;
             }
 
+            //[2.10.3.6]MW0LGE moved after mode
+            //if (rx1_dsp_mode != DSPMode.DRM &&
+            //    rx1_dsp_mode != DSPMode.SPEC)
+            //{
+            //    RX1Filter = (Filter)Enum.Parse(typeof(Filter), filter, true);
+            //}
+
+            ClickTuneDisplay = CTUN;
+            chkFWCATU.Checked = ClickTuneDisplay;
+            VFOAFreq = freq;                                       // Restore actual receive frequency after CTUN status restored - G3OQD         
+
+            //[2.10.3.6]MW0LGE set the mode after frequency
+            RX1DSPMode = (DSPMode)Enum.Parse(typeof(DSPMode), mode, true);
+
             if (rx1_dsp_mode != DSPMode.DRM &&
                 rx1_dsp_mode != DSPMode.SPEC)
             {
                 RX1Filter = (Filter)Enum.Parse(typeof(Filter), filter, true);
             }
-
-            ClickTuneDisplay = CTUN;
-            chkFWCATU.Checked = ClickTuneDisplay;
-            VFOAFreq = freq;                                       // Restore actual receive frequency after CTUN status restored - G3OQD         
 
             // Continuation of QSK-related band/mode-change management - see also QSKEnabled()
             qsk_band_changing = false;
@@ -5640,6 +5651,7 @@ namespace Thetis
 
         private void SetRX1Band(Band b)
         {
+            if (rx1_band == b) return; //[2.10.3.6]MW0LGE pointless doing it again if already set
             if (disable_split_on_bandchange)
             {
                 if (RX1Band != b && !tuning)
@@ -5672,6 +5684,7 @@ namespace Thetis
 
         private void SetRX2Band(Band b)
         {
+            if (rx2_band == b) return; //[2.10.3.6]MW0LGE pointless doing it again if already set
             Band old_band = rx2_band;
             RX2Band = b;
             if (old_band != b)
@@ -5684,6 +5697,7 @@ namespace Thetis
 
         private void SetTXBand(Band b, bool bIngoreBandChange = false)
         {
+            if (tx_band == b) return; //[2.10.3.6]MW0LGE pointless doing it again if already set
             if (disable_split_on_bandchange && !bIngoreBandChange) //[2.10.3.6]MW0LGE might need to ignore this is we are using extended and band is moved to a hamband
             {
                 if (TXBand != b && !tuning)
@@ -6870,12 +6884,16 @@ namespace Thetis
 
         public void SetVHFText(int index, string text)
         {
+            string old_text = vhf_text[index].Text;
             vhf_text[index].Text = text;
+            if (old_text != text) VHFChangedHandlers?.Invoke(index, vhf_text[index].Enabled, vhf_text[index].Enabled, old_text, vhf_text[index].Text);
         }
 
         public void SetVHFEnabled(int index, bool b)
         {
+            bool old_state = vhf_text[index].Enabled;
             vhf_text[index].Enabled = b;
+            if (old_state != b) VHFChangedHandlers?.Invoke(index, old_state, b, vhf_text[index].Text, vhf_text[index].Text);
         }
 
         // G8NJJ added to allow labelling of buttons in popup form
@@ -17250,6 +17268,7 @@ namespace Thetis
             get { return rx1_dsp_mode; }
             set
             {
+                if (rx1_dsp_mode == value) return; //[2.10.3.6]MW0LGE pointless doing it again if already set
                 RadioButtonTS r = null;
                 switch (value)
                 {
@@ -17303,6 +17322,7 @@ namespace Thetis
             get { return rx2_dsp_mode; }
             set
             {
+                if (rx2_dsp_mode == value) return; //[2.10.3.6]MW0LGE pointless doing it again if already set
                 RadioButtonTS r = null;
                 switch (value)
                 {
@@ -29969,9 +29989,16 @@ namespace Thetis
             panelBandHF.Visible = hf;
             panelBandVHF.Visible = vhf;
 
+            bool old_gen = _bands_GEN_selected;
+            bool old_hf = _bands_HF_selected;
+            bool old_vhf = _bands_VHF_selected;
+
             _bands_GEN_selected = gen;
             _bands_HF_selected = hf;
             _bands_VHF_selected = vhf;
+
+            if(old_gen != _bands_GEN_selected || old_hf != _bands_HF_selected || old_vhf != _bands_VHF_selected)
+                BandPanelChangeHandlers?.Invoke(1, _bands_GEN_selected, _bands_HF_selected, _bands_VHF_selected);
         }
         private void btnBandVHF_Click(object sender, System.EventArgs e)
         {
@@ -35537,6 +35564,7 @@ namespace Thetis
         private void SetRX1Mode(DSPMode new_mode)
         {
             if (new_mode == DSPMode.FIRST || new_mode == DSPMode.LAST) return;
+            if (rx1_dsp_mode == new_mode) return; //[2.10.3.6]MW0LGE pointless doing it again if already set) return;
 
             //MW0LGE_21d
             Band oldBand = RX1Band;
@@ -36320,6 +36348,7 @@ namespace Thetis
         public void SetRX1Filter(Filter new_filter)
         {
             if (rx1_dsp_mode == DSPMode.FIRST || rx1_dsp_mode == DSPMode.LAST) return;
+            if (rx1_filter == new_filter) return; //[2.10.3.6]MW0LGE pointless doing it again if already set) return;
 
             Filter oldFilter = rx1_filter; //MW0LGE_21d
             int oldLow, oldHigh;
@@ -39299,9 +39328,10 @@ namespace Thetis
 
         private void SetRX2Mode(DSPMode new_mode)
         {
-            Band oldBand = RX2Band; //MW0LGE_21d
-
             if (new_mode == DSPMode.FIRST || new_mode == DSPMode.LAST) return;
+            if (rx2_dsp_mode == new_mode) return; //[2.10.3.6]MW0LGE pointless doing it again if already set) return;
+
+            Band oldBand = RX2Band; //MW0LGE_21d
             DSPMode old_mode = rx2_dsp_mode;
 
             WDSP.SetChannelState(WDSP.id(2, 0), 0, 1);              // turn OFF the DSP channel
@@ -39987,6 +40017,7 @@ namespace Thetis
         public void SetRX2Filter(Filter new_filter)
         {
             if (rx2_dsp_mode == DSPMode.FIRST || rx2_dsp_mode == DSPMode.LAST) return;
+            if (rx2_filter == new_filter) return; //[2.10.3.6]MW0LGE pointless doing it again if already set) return;
 
             Filter oldFilter = rx2_filter; //MW0LGE_21d
 
@@ -46346,6 +46377,9 @@ namespace Thetis
 
         public delegate void WindowStateChanged(FormWindowState state);
 
+        public delegate void BandPanelChanged(int rx, bool gen, bool hf, bool vhf);
+        public delegate void VHFChanged(int idx, bool old_state, bool new_state, string old_text, string new_text);
+
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
         public BandChanged BandChangeHandlers;
@@ -46402,6 +46436,9 @@ namespace Thetis
         public QuickSplitChanged QuickSplitChangedHandlers;
 
         public WindowStateChanged WindowStateChangedHandlers;
+
+        public BandPanelChanged BandPanelChangeHandlers;
+        public VHFChanged VHFChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected

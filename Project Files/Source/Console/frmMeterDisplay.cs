@@ -44,6 +44,7 @@ namespace Thetis
         private string _id;
         private bool _container_minimises = true;
         private bool _is_enabled = true;
+        private bool _floating = false;
 
         public frmMeterDisplay(Console c, int rx)
         {
@@ -56,6 +57,11 @@ namespace Thetis
             _console.WindowStateChangedHandlers += OnWindowStateChanged;
 
             setTitle();
+        }
+        public bool Floating
+        {
+            get { return _floating; }
+            set { _floating = value; }
         }
         public bool FormEnabled
         {
@@ -72,7 +78,7 @@ namespace Thetis
             if (_container_minimises && state == FormWindowState.Minimized)
                 this.Hide();
             else
-                if(_is_enabled) this.Show();
+                if(_is_enabled && _floating) this.Show();
         }
         private void setTitle()
         {
