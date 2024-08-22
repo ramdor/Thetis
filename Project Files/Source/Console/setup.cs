@@ -24139,24 +24139,24 @@ namespace Thetis
             MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
             if (igs == null) return null;
 
-            if(mt == MeterType.BAND_BUTTONS)
+            if(mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS)
             {
-                igs.SetSetting<int>("bandbuttons_columns", (int)nudBandButtons_columns.Value);
-                igs.SetSetting<float>("bandbuttons_border", (float)nudBandButtons_border.Value);
-                igs.SetSetting<float>("bandbuttons_margin", (float)nudBandButtons_margin.Value);
-                igs.SetSetting<float>("bandbuttons_radius", (float)nudBandButtons_radius.Value);
-                igs.SetSetting<float>("bandbuttons_height_ratio", (float)nudBandButtons_height_ratio.Value);
+                igs.SetSetting<int>("buttonbox_columns", (int)nudBandButtons_columns.Value);
+                igs.SetSetting<float>("buttonbox_border", (float)nudBandButtons_border.Value);
+                igs.SetSetting<float>("buttonbox_margin", (float)nudBandButtons_margin.Value);
+                igs.SetSetting<float>("buttonbox_radius", (float)nudBandButtons_radius.Value);
+                igs.SetSetting<float>("buttonbox_height_ratio", (float)nudBandButtons_height_ratio.Value);
 
-                igs.SetSetting<bool>("bandbuttons_use_indicator", chkBandButtons_use_indicator.Checked);
-                igs.SetSetting<float>("bandbuttons_indicator_border", (float)nudBandButtons_indicator_border.Value);
-                igs.SetSetting<System.Drawing.Color>("bandbuttons_on_colour", clrbtnBandButtons_indicator_on.Color);
-                igs.SetSetting<System.Drawing.Color>("bandbuttons_off_colour", clrbtnBandButtons_indicator_off.Color);
+                igs.SetSetting<bool>("buttonbox_use_indicator", chkBandButtons_use_indicator.Checked);
+                igs.SetSetting<float>("buttonbox_indicator_border", (float)nudBandButtons_indicator_border.Value);
+                igs.SetSetting<System.Drawing.Color>("buttonbox_on_colour", clrbtnBandButtons_indicator_on.Color);
+                igs.SetSetting<System.Drawing.Color>("buttonbox_off_colour", clrbtnBandButtons_indicator_off.Color);
 
-                igs.SetSetting<System.Drawing.Color>("bandbuttons_fill_colour", clrbtnBandButtons_fill.Color);
-                igs.SetSetting<System.Drawing.Color>("bandbuttons_hover_colour", clrbtnBandButtons_hover.Color);
-                igs.SetSetting<System.Drawing.Color>("bandbuttons_border_colour", clrbtnBandButtons_border.Color);
+                igs.SetSetting<System.Drawing.Color>("buttonbox_fill_colour", clrbtnBandButtons_fill.Color);
+                igs.SetSetting<System.Drawing.Color>("buttonbox_hover_colour", clrbtnBandButtons_hover.Color);
+                igs.SetSetting<System.Drawing.Color>("buttonbox_border_colour", clrbtnBandButtons_border.Color);
 
-                igs.SetSetting<bool>("bandbuttons_use_off_colour", chkBandButtons_band_inactive_use.Checked);
+                igs.SetSetting<bool>("buttonbox_use_off_colour", chkBandButtons_band_inactive_use.Checked);
 
                 if (_bandButtons_font != null)
                 {
@@ -24501,24 +24501,38 @@ namespace Thetis
                 }
             }
 
-            if(mt == MeterType.BAND_BUTTONS)
+            if(mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS)
             {
-                nudBandButtons_columns.Value = igs.GetSetting<int>("bandbuttons_columns", true, 1, 15, 3);
-                nudBandButtons_border.Value = (decimal)igs.GetSetting<float>("bandbuttons_border", true, 0f, 1f, 0.05f);
-                nudBandButtons_margin.Value = (decimal)igs.GetSetting<float>("bandbuttons_margin", true, 0f, 1f, 0f);
-                nudBandButtons_radius.Value = (decimal)igs.GetSetting<float>("bandbuttons_radius", true, 0f, 1f, 0f);
-                nudBandButtons_height_ratio.Value = (decimal)igs.GetSetting<float>("bandbuttons_height_ratio", true, 0.01f, 2f, 0.5f);
+                int columns = 1;
+                switch (mt)
+                {
+                    case MeterType.BAND_BUTTONS:
+                        columns = igs.GetSetting<int>("buttonbox_columns", true, 1, 15, 15);
+                        if (nudBandButtons_columns.Value > 15) nudBandButtons_columns.Value = 15;
+                        if (nudBandButtons_columns.Maximum != 15) nudBandButtons_columns.Maximum = 15;
+                        break;
+                    case MeterType.MODE_BUTTONS:
+                        columns = igs.GetSetting<int>("buttonbox_columns", true, 1, 12, 12);
+                        if (nudBandButtons_columns.Value > 12) nudBandButtons_columns.Value = 12;
+                        if (nudBandButtons_columns.Maximum != 12) nudBandButtons_columns.Maximum = 12;
+                        break;
+                }
+                nudBandButtons_columns.Value = columns;
+                nudBandButtons_border.Value = (decimal)igs.GetSetting<float>("buttonbox_border", true, 0f, 1f, 0.05f);
+                nudBandButtons_margin.Value = (decimal)igs.GetSetting<float>("buttonbox_margin", true, 0f, 1f, 0f);
+                nudBandButtons_radius.Value = (decimal)igs.GetSetting<float>("buttonbox_radius", true, 0f, 1f, 0f);
+                nudBandButtons_height_ratio.Value = (decimal)igs.GetSetting<float>("buttonbox_height_ratio", true, 0.01f, 2f, 0.5f);
 
-                chkBandButtons_use_indicator.Checked = igs.GetSetting<bool>("bandbuttons_use_indicator", false, false, false, false);
-                nudBandButtons_indicator_border.Value = (decimal)igs.GetSetting<float>("bandbuttons_indicator_border", true, 0f, 1f, 0.05f);
-                clrbtnBandButtons_indicator_on.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_on_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.CornflowerBlue);
-                clrbtnBandButtons_indicator_off.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_off_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LightGray);
+                chkBandButtons_use_indicator.Checked = igs.GetSetting<bool>("buttonbox_use_indicator", false, false, false, false);
+                nudBandButtons_indicator_border.Value = (decimal)igs.GetSetting<float>("buttonbox_indicator_border", true, 0f, 1f, 0.05f);
+                clrbtnBandButtons_indicator_on.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_on_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.CornflowerBlue);
+                clrbtnBandButtons_indicator_off.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_off_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LightGray);
 
-                clrbtnBandButtons_fill.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_fill_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Black);
-                clrbtnBandButtons_hover.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_hover_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LightGray);
-                clrbtnBandButtons_border.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_border_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
+                clrbtnBandButtons_fill.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_fill_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Black);
+                clrbtnBandButtons_hover.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_hover_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LightGray);
+                clrbtnBandButtons_border.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_border_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
 
-                chkBandButtons_band_inactive_use.Checked = igs.GetSetting<bool>("bandbuttons_use_off_colour", false, false, false, false);
+                chkBandButtons_band_inactive_use.Checked = igs.GetSetting<bool>("buttonbox_use_off_colour", false, false, false, false);
 
                 _bandButtons_font = new Font(igs.FontFamily1, igs.FontSize1, igs.FontStyle1);
                 chkBandButtons_fade_rx.Checked = igs.FadeOnRx;
@@ -25273,6 +25287,7 @@ namespace Thetis
                     grpLedIndiciator.Visible = false;
                     grpBandButtons.Visible = false;
                     break;
+                case MeterType.MODE_BUTTONS:
                 case MeterType.BAND_BUTTONS:
                     grpBandButtons.Parent = grpMultiMeterHolder;
                     grpBandButtons.Location = loc;
@@ -30222,6 +30237,10 @@ namespace Thetis
                     updateMeterType();
                 }
             }
+        }
+
+        private void clrbtnButtonBox_bg_colour_Changed(object sender, EventArgs e)
+        {
         }
     }
 

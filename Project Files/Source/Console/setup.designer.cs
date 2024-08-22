@@ -61384,7 +61384,7 @@
             this.grpBandButtons.Size = new System.Drawing.Size(323, 362);
             this.grpBandButtons.TabIndex = 109;
             this.grpBandButtons.TabStop = false;
-            this.grpBandButtons.Text = "Band Buttons";
+            this.grpBandButtons.Text = "Button Box";
             this.grpBandButtons.Visible = false;
             // 
             // chkBandButtons_band_inactive_use
@@ -61436,22 +61436,22 @@
             // 
             this.labelTS243.AutoSize = true;
             this.labelTS243.Image = null;
-            this.labelTS243.Location = new System.Drawing.Point(25, 255);
+            this.labelTS243.Location = new System.Drawing.Point(53, 255);
             this.labelTS243.Name = "labelTS243";
-            this.labelTS243.Size = new System.Drawing.Size(76, 13);
+            this.labelTS243.Size = new System.Drawing.Size(48, 13);
             this.labelTS243.TabIndex = 150;
-            this.labelTS243.Text = "Band Inactive:";
+            this.labelTS243.Text = "Inactive:";
             this.labelTS243.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelTS242
             // 
             this.labelTS242.AutoSize = true;
             this.labelTS242.Image = null;
-            this.labelTS242.Location = new System.Drawing.Point(33, 226);
+            this.labelTS242.Location = new System.Drawing.Point(61, 226);
             this.labelTS242.Name = "labelTS242";
-            this.labelTS242.Size = new System.Drawing.Size(68, 13);
+            this.labelTS242.Size = new System.Drawing.Size(40, 13);
             this.labelTS242.TabIndex = 148;
-            this.labelTS242.Text = "Band Active:";
+            this.labelTS242.Text = "Active:";
             this.labelTS242.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // lblBandButtons_indicator_border
@@ -61512,7 +61512,7 @@
             // btnBandButtons_font
             // 
             this.btnBandButtons_font.Image = null;
-            this.btnBandButtons_font.Location = new System.Drawing.Point(219, 97);
+            this.btnBandButtons_font.Location = new System.Drawing.Point(209, 131);
             this.btnBandButtons_font.Name = "btnBandButtons_font";
             this.btnBandButtons_font.Selectable = true;
             this.btnBandButtons_font.Size = new System.Drawing.Size(49, 23);
@@ -61536,7 +61536,7 @@
             // 
             this.chkBandButtons_fade_tx.AutoSize = true;
             this.chkBandButtons_fade_tx.Image = null;
-            this.chkBandButtons_fade_tx.Location = new System.Drawing.Point(219, 53);
+            this.chkBandButtons_fade_tx.Location = new System.Drawing.Point(209, 81);
             this.chkBandButtons_fade_tx.Name = "chkBandButtons_fade_tx";
             this.chkBandButtons_fade_tx.Size = new System.Drawing.Size(82, 17);
             this.chkBandButtons_fade_tx.TabIndex = 3;
@@ -61548,7 +61548,7 @@
             // 
             this.chkBandButtons_fade_rx.AutoSize = true;
             this.chkBandButtons_fade_rx.Image = null;
-            this.chkBandButtons_fade_rx.Location = new System.Drawing.Point(219, 30);
+            this.chkBandButtons_fade_rx.Location = new System.Drawing.Point(209, 58);
             this.chkBandButtons_fade_rx.Name = "chkBandButtons_fade_rx";
             this.chkBandButtons_fade_rx.Size = new System.Drawing.Size(83, 17);
             this.chkBandButtons_fade_rx.TabIndex = 2;
