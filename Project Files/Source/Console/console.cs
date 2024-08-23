@@ -48652,7 +48652,6 @@ namespace Thetis
                 BandStack2Form.InitBandStackFilter(bsf, true);
             }
 
-            Common.ForceFormOnScreen(BandStack2Form);
             BandStack2Form.Show(true, MousePosition);
         }
         private void showBandStack()

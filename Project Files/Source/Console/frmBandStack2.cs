@@ -371,7 +371,10 @@ namespace Thetis
             this.BringToFront();
 
             if (_is_popup)
+            {
                 this.Location = popup_location ?? Point.Empty;
+                Common.ForceFormOnScreen(this);
+            }
             else
                 this.Location = _location;                
 
