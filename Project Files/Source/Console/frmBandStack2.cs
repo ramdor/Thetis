@@ -64,6 +64,9 @@ namespace Thetis
         public HideOnSelect ShowInSpectrumHandlers;
 
         private BandStackFilter m_bsf;
+
+        private bool _is_popup;
+        private Point _location;
         private bool m_bIgnoreIndexChanged; // ignore select index change when updating the list with initbandstack filter or the update selected
 
         public frmBandStack2()
@@ -72,7 +75,8 @@ namespace Thetis
         }
 
         public void InitForm()
-        {
+        {            
+            _is_popup = false;
             m_bIgnoreIndexChanged = false;
             bandStackListBox.Items.Clear();
 
@@ -87,6 +91,8 @@ namespace Thetis
             btnUpdateEntry.Enabled = false;
 
             Common.ForceFormOnScreen(this);
+
+            _location = this.Location;
         }
 
         public void InitBandStackFilter(BandStackFilter bsf, bool select = true)
@@ -348,6 +354,8 @@ namespace Thetis
         {
             this.Hide();
             Store();
+
+            _is_popup = false;
         }
 
         private void frmBandStack2_FormClosing(object sender, FormClosingEventArgs e)
@@ -355,17 +363,24 @@ namespace Thetis
             e.Cancel = true;
             HideClose();
         }
-
-        public new void Show()
+        public new void Show(bool is_popup = false, Point? popup_location = null)
         { // shadow of show
+            _is_popup = is_popup;
+
             InitBandStackFilter(m_bsf, true);
             this.BringToFront();
+
+            if (_is_popup)
+                this.Location = popup_location ?? Point.Empty;
+            else
+                this.Location = _location;                
 
             base.Show();
         }
         public void Store()
         {
-            Common.SaveForm(this, "BandStack2Form");
+            if(!_is_popup)
+                Common.SaveForm(this, "BandStack2Form");
         }
 
         private void btnUpdateEntry_Click(object sender, EventArgs e)
@@ -401,6 +416,10 @@ namespace Thetis
             }
         }
 
+        private void frmBandStack2_LocationChanged(object sender, EventArgs e)
+        {
+            if (!_is_popup) _location = this.Location;
+        }
     }
     #region BandStackListBox
     //based on

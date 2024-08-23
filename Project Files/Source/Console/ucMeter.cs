@@ -26,6 +26,7 @@ mw0lge@grange-lane.co.uk
 */
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -124,7 +125,7 @@ namespace Thetis
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Console Console
         {
-            set 
+            set
             {
                 _console = value;
                 if (_console == null) return;
@@ -138,7 +139,7 @@ namespace Thetis
         public string ID
         {
             get { return _id; }
-            set { _id = value.Replace("|",""); }
+            set { _id = value.Replace("|", ""); }
         }
         private void addDelegates()
         {
@@ -245,10 +246,26 @@ namespace Thetis
         {
             if (_resizing) return;
             if (!_autoHeight) return;
-            if(_height == height) return;
 
-            _height = height;
-            forceResize();
+            if (_floating)
+            {
+                if (this.Parent != null)
+                {
+                    if (this.Parent.Size.Height != height)
+                    {
+                        _height = height;
+                        forceResize();
+                    }
+                }
+            }
+            else
+            {
+                if (this.Size.Height != height)
+                {
+                    _height = height;
+                    forceResize();
+                }
+            }
         }
         private void pbGrab_MouseMove(object sender, MouseEventArgs e)
         {
@@ -274,6 +291,7 @@ namespace Thetis
             if (_floating)
             {
                 Parent.Size = new Size(x, y);
+                Parent.PerformLayout();
             }
             else
             {
@@ -281,6 +299,7 @@ namespace Thetis
                 if (this.Top + y > Parent.ClientSize.Height) y = Parent.ClientSize.Height - this.Top;
 
                 this.Size = new Size(x, y);
+                this.PerformLayout();
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
@@ -312,6 +331,7 @@ namespace Thetis
             this.Location = _dockedLocation;
             //this.Location = new Point(_dockedLocation.X + _delta.X, _dockedLocation.Y + _delta.Y);
             this.Size = _dockedSize;
+            this.PerformLayout();
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public bool Floating

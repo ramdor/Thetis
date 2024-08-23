@@ -4331,6 +4331,18 @@ namespace Thetis
                 int index = base.ButtonIndex;
                 if (index == -1) return;
 
+                if(e.Button == MouseButtons.Right)
+                {
+                    if (_console != null)
+                    {
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.PopupFilterContextMenu(e);
+                        }));
+                    }                        
+                    return;
+                }
+
                 if (_owningmeter.RX == 2 && index > (int)Filter.F7)
                     index += (int)Filter.VAR1 - (int)Filter.F7 - 1;
 
@@ -4904,6 +4916,18 @@ namespace Thetis
                             b = (Band)((int)Band.VHF0 + index);
                             break;
                         }
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    if (_console != null)
+                    {
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.PopupBandstack(_owningmeter.RX, b);
+                        }));
+                    }
+                    return;
                 }
 
                 setBand(b);
@@ -16252,7 +16276,7 @@ namespace Thetis
                             Thread.Sleep(250); // if not visible, sleep for quarter second
                         }
 
-                        if(height > int.MinValue)
+                        if (height != int.MinValue)
                             MeterManager.SetContainerHeight(_meter.ID, height);
                     }
                 }
