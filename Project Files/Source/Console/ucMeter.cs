@@ -237,21 +237,53 @@ namespace Thetis
         }
         private void forceResize()
         {
-            if (_autoHeight && this.Size.Height != _height)
-                resize(this.Size.Width, _height);
+            if (_autoHeight)
+            {
+                if(_floating)
+                {
+                    if (this.Parent != null)
+                    {
+                        if (this.Parent.ClientSize.Height != _height)
+                        {
+                            resize(this.Parent.ClientSize.Width, _height);
+                        }
+                    }
+                }
+                else
+                {
+                    if (this.Size.Height != _height)
+                        resize(this.Size.Width, _height);
+                }
+            }
             else
-                resize(this.Size.Width, this.Size.Height);
+            {
+                if (_floating)
+                {
+                    if (this.Parent != null)
+                    {
+                        resize(this.Parent.ClientSize.Width, this.Parent.ClientSize.Height);
+                    }
+                }
+                else
+                    resize(this.Size.Width, this.Size.Height);
+            }
         }
         public void ChangeHeight(int height)
         {
-            if (_resizing) return;
             if (!_autoHeight) return;
+            if (_resizing) return;
 
             if (_floating)
             {
                 if (this.Parent != null)
                 {
-                    if (this.Parent.Size.Height != height)
+                    int screenHeight = Screen.FromControl(this.Parent).WorkingArea.Height;
+                    if(screenHeight < height)
+                        this.Parent.Location = new Point(this.Parent.Location.X, 0);
+
+                    height = Math.Min(height, screenHeight);
+
+                    if (this.Parent.ClientSize.Height != height)
                     {
                         _height = height;
                         forceResize();
@@ -290,8 +322,9 @@ namespace Thetis
 
             if (_floating)
             {
-                Parent.Size = new Size(x, y);
+                Parent.ClientSize = new Size(x, y);
                 Parent.PerformLayout();
+                (bool was_relocated, bool was_shrunk) = Common.ForceFormOnScreen((Form)this.Parent, true);
             }
             else
             {
