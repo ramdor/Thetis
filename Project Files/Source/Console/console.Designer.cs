@@ -7519,6 +7519,7 @@
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.Controls.Add(this.panelDisplay);
             this.Controls.Add(this.lblPAProfile);
             this.Controls.Add(this.nudPwrTemp2);
             this.Controls.Add(this.nudPwrTemp);
@@ -7551,7 +7552,6 @@
             this.Controls.Add(this.grpVFOA);
             this.Controls.Add(this.picSquelch);
             this.Controls.Add(this.grpVFOB);
-            this.Controls.Add(this.panelDisplay);
             this.Controls.Add(this.chkSquelch);
             this.Controls.Add(this.panelPower);
             this.Controls.Add(this.panelMode);

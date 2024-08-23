@@ -358,6 +358,7 @@
     <Compile Include="clsBandStackManager.cs" />
     <Compile Include="clsDBMan.cs" />
     <Compile Include="clsImgeFetcher.cs" />
+    <Compile Include="clsLegacyItemController.cs" />
     <Compile Include="clsThetisSkinService.cs" />
     <Compile Include="frmDBMan.cs">
       <SubType>Form</SubType>
