@@ -2675,6 +2675,12 @@ namespace Thetis
 
             //multimeter tab
             comboContainerSelect_SelectedIndexChanged(this, e);
+
+            //legacy item tab
+            chkLegacyItems_band_CheckedChanged(this, e);
+            chkLegacyItems_mode_CheckedChanged(this, e);
+            chkLegacyItems_filter_CheckedChanged(this, e);
+            chkLegacyItems_expand_spectral_CheckedChanged(this, e);
         }
 
         public string[] GetTXProfileStrings()
@@ -25235,24 +25241,26 @@ namespace Thetis
             MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
             if (igs == null) return null;
 
-            if(mt == MeterType.BAND_BUTTONS)
+            if(mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS)
             {
-                igs.SetSetting<int>("bandbuttons_columns", (int)nudBandButtons_columns.Value);
-                igs.SetSetting<float>("bandbuttons_border", (float)nudBandButtons_border.Value);
-                igs.SetSetting<float>("bandbuttons_margin", (float)nudBandButtons_margin.Value);
-                igs.SetSetting<float>("bandbuttons_radius", (float)nudBandButtons_radius.Value);
-                igs.SetSetting<float>("bandbuttons_height_ratio", (float)nudBandButtons_height_ratio.Value);
+                igs.SetSetting<int>("buttonbox_columns", (int)nudBandButtons_columns.Value);
+                igs.SetSetting<float>("buttonbox_border", (float)nudBandButtons_border.Value);
+                igs.SetSetting<float>("buttonbox_margin", (float)nudBandButtons_margin.Value);
+                igs.SetSetting<float>("buttonbox_radius", (float)nudBandButtons_radius.Value);
+                igs.SetSetting<float>("buttonbox_height_ratio", (float)nudBandButtons_height_ratio.Value);
 
-                igs.SetSetting<bool>("bandbuttons_use_indicator", chkBandButtons_use_indicator.Checked);
-                igs.SetSetting<float>("bandbuttons_indicator_border", (float)nudBandButtons_indicator_border.Value);
-                igs.SetSetting<System.Drawing.Color>("bandbuttons_on_colour", clrbtnBandButtons_indicator_on.Color);
-                igs.SetSetting<System.Drawing.Color>("bandbuttons_off_colour", clrbtnBandButtons_indicator_off.Color);
+                igs.SetSetting<bool>("buttonbox_use_indicator", chkBandButtons_use_indicator.Checked);
+                igs.SetSetting<float>("buttonbox_indicator_border", (float)nudBandButtons_indicator_border.Value);
+                igs.SetSetting<System.Drawing.Color>("buttonbox_on_colour", clrbtnBandButtons_indicator_on.Color);
+                igs.SetSetting<System.Drawing.Color>("buttonbox_off_colour", clrbtnBandButtons_indicator_off.Color);
 
-                igs.SetSetting<System.Drawing.Color>("bandbuttons_fill_colour", clrbtnBandButtons_fill.Color);
-                igs.SetSetting<System.Drawing.Color>("bandbuttons_hover_colour", clrbtnBandButtons_hover.Color);
-                igs.SetSetting<System.Drawing.Color>("bandbuttons_border_colour", clrbtnBandButtons_border.Color);
+                igs.SetSetting<System.Drawing.Color>("buttonbox_fill_colour", clrbtnBandButtons_fill.Color);
+                igs.SetSetting<System.Drawing.Color>("buttonbox_hover_colour", clrbtnBandButtons_hover.Color);
+                igs.SetSetting<System.Drawing.Color>("buttonbox_border_colour", clrbtnBandButtons_border.Color);
 
-                igs.SetSetting<bool>("bandbuttons_use_off_colour", chkBandButtons_band_inactive_use.Checked);
+                igs.SetSetting<bool>("buttonbox_use_off_colour", chkBandButtons_band_inactive_use.Checked);
+
+                igs.SetSetting<MeterManager.clsButtonBox.IndicatorType>("buttonbox_indicator_type", (MeterManager.clsButtonBox.IndicatorType)((int)nudBandButtons_indicator_style.Value));
 
                 if (_bandButtons_font != null)
                 {
@@ -25314,6 +25322,8 @@ namespace Thetis
                 {
                     igs.SetMMIOGuid(2, Guid.Empty);
                 }
+
+                igs.SetSetting<float>("rotator_beamwidth_alpha", (float)nudMeterItemRotatorBeamWidth_alpha.Value);
             }
             else if (mt == MeterType.DATA_OUT)
             {
@@ -25528,7 +25538,9 @@ namespace Thetis
             _ignoreMeterItemChangeEvents = true;
 
             if (mt != MeterType.ROTATOR && mt != MeterType.SIGNAL_TEXT && mt != MeterType.VFO_DISPLAY && mt != MeterType.CLOCK && 
-                mt != MeterType.TEXT_OVERLAY && mt != MeterType.SPACER && mt != MeterType.LED)
+                mt != MeterType.TEXT_OVERLAY && mt != MeterType.SPACER && mt != MeterType.LED &&
+                mt != MeterType.BAND_BUTTONS && mt != MeterType.MODE_BUTTONS && mt != MeterType.FILTER_BUTTONS
+                )
             {
                 switch (m.MeterVariables(mt))
                 {
@@ -25564,15 +25576,9 @@ namespace Thetis
             }
             else if (mt == MeterType.ROTATOR)
             {
+                // unique controls for rotator as own setting grp
                 switch (m.MeterVariables(mt))
                 {
-                    //case 1:
-                    //    btnMMIO_variable_rotator.Enabled = true;
-                    //    btnMMIO_variable_2_rotator.Enabled = false;
-                    //    toolTip1.SetToolTip(btnMMIO_variable, m.MeterVariablesReading(mt, 0).ToString());
-                    //    pnlVariableInUse_1_rotator.Visible = variableInUse(0);
-                    //    pnlVariableInUse_2_rotator.Visible = false;
-                    //    break;
                     case 2:
                         btnMMIO_variable_rotator.Enabled = true;
                         btnMMIO_variable_2_rotator.Enabled = true;
@@ -25581,40 +25587,49 @@ namespace Thetis
                         pnlVariableInUse_1_rotator.Visible = variableInUse(0);
                         pnlVariableInUse_2_rotator.Visible = variableInUse(1);
                         break;
-                    //case 7:
-                    //    //todo? anan mm
-                    //    btnMMIO_variable_rotator.Enabled = false;
-                    //    btnMMIO_variable_2_rotator.Enabled = false;
-                    //    pnlVariableInUse_1_rotator.Visible = false;
-                    //    pnlVariableInUse_2_rotator.Visible = false;
-                    //    break;
-                    //default:
-                    //    btnMMIO_variable_rotator.Enabled = false;
-                    //    btnMMIO_variable_2_rotator.Enabled = false;
-                    //    pnlVariableInUse_1_rotator.Visible = false;
-                    //    pnlVariableInUse_2_rotator.Visible = false;
-                    //    break;
                 }
             }
 
-            if(mt == MeterType.BAND_BUTTONS)
+            if(mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS)
             {
-                nudBandButtons_columns.Value = igs.GetSetting<int>("bandbuttons_columns", true, 1, 15, 3);
-                nudBandButtons_border.Value = (decimal)igs.GetSetting<float>("bandbuttons_border", true, 0f, 1f, 0.05f);
-                nudBandButtons_margin.Value = (decimal)igs.GetSetting<float>("bandbuttons_margin", true, 0f, 1f, 0f);
-                nudBandButtons_radius.Value = (decimal)igs.GetSetting<float>("bandbuttons_radius", true, 0f, 1f, 0f);
-                nudBandButtons_height_ratio.Value = (decimal)igs.GetSetting<float>("bandbuttons_height_ratio", true, 0.01f, 2f, 0.5f);
+                int columns = 1;
+                switch (mt)
+                {
+                    case MeterType.BAND_BUTTONS:
+                        columns = igs.GetSetting<int>("buttonbox_columns", true, 1, 15, 15);
+                        if (nudBandButtons_columns.Value > 15) nudBandButtons_columns.Value = 15;
+                        if (nudBandButtons_columns.Maximum != 15) nudBandButtons_columns.Maximum = 15;
+                        break;
+                    case MeterType.MODE_BUTTONS:
+                        columns = igs.GetSetting<int>("buttonbox_columns", true, 1, 12, 12);
+                        if (nudBandButtons_columns.Value > 12) nudBandButtons_columns.Value = 12;
+                        if (nudBandButtons_columns.Maximum != 12) nudBandButtons_columns.Maximum = 12;
+                        break;
+                    case MeterType.FILTER_BUTTONS:
+                        int max_buttons = m.RX == 1 ? 12 : 9; // rx2 only has 9 filter buttons
+                        columns = igs.GetSetting<int>("buttonbox_columns", true, 1, max_buttons, max_buttons);
+                        if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
+                        if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
+                        break;
+                }
+                nudBandButtons_columns.Value = columns;
+                nudBandButtons_border.Value = (decimal)igs.GetSetting<float>("buttonbox_border", true, 0f, 1f, 0.05f);
+                nudBandButtons_margin.Value = (decimal)igs.GetSetting<float>("buttonbox_margin", true, 0f, 1f, 0f);
+                nudBandButtons_radius.Value = (decimal)igs.GetSetting<float>("buttonbox_radius", true, 0f, 2f, 0f);
+                nudBandButtons_height_ratio.Value = (decimal)igs.GetSetting<float>("buttonbox_height_ratio", true, 0.01f, 2f, 0.5f);
 
-                chkBandButtons_use_indicator.Checked = igs.GetSetting<bool>("bandbuttons_use_indicator", false, false, false, false);
-                nudBandButtons_indicator_border.Value = (decimal)igs.GetSetting<float>("bandbuttons_indicator_border", true, 0f, 1f, 0.05f);
-                clrbtnBandButtons_indicator_on.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_on_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.CornflowerBlue);
-                clrbtnBandButtons_indicator_off.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_off_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LightGray);
+                chkBandButtons_use_indicator.Checked = igs.GetSetting<bool>("buttonbox_use_indicator", false, false, false, false);
+                nudBandButtons_indicator_border.Value = (decimal)igs.GetSetting<float>("buttonbox_indicator_border", true, 0f, 1f, 0.05f);
+                clrbtnBandButtons_indicator_on.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_on_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.CornflowerBlue);
+                clrbtnBandButtons_indicator_off.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_off_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LightGray);
 
-                clrbtnBandButtons_fill.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_fill_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Black);
-                clrbtnBandButtons_hover.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_hover_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LightGray);
-                clrbtnBandButtons_border.Color = igs.GetSetting<System.Drawing.Color>("bandbuttons_border_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
+                clrbtnBandButtons_fill.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_fill_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Black);
+                clrbtnBandButtons_hover.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_hover_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LightGray);
+                clrbtnBandButtons_border.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_border_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
 
-                chkBandButtons_band_inactive_use.Checked = igs.GetSetting<bool>("bandbuttons_use_off_colour", false, false, false, false);
+                chkBandButtons_band_inactive_use.Checked = igs.GetSetting<bool>("buttonbox_use_off_colour", false, false, false, false);
+
+                nudBandButtons_indicator_style.Value = (decimal)((int)igs.GetSetting<MeterManager.clsButtonBox.IndicatorType>("buttonbox_indicator_type", true, MeterManager.clsButtonBox.IndicatorType.RING, MeterManager.clsButtonBox.IndicatorType.LAST, MeterManager.clsButtonBox.IndicatorType.RING));
 
                 _bandButtons_font = new Font(igs.FontFamily1, igs.FontSize1, igs.FontStyle1);
                 chkBandButtons_fade_rx.Checked = igs.FadeOnRx;
@@ -25684,6 +25699,8 @@ namespace Thetis
                 {
                     txtRotator_4charID.Text = "";
                 }
+
+                nudMeterItemRotatorBeamWidth_alpha.Value = (decimal)igs.GetSetting<float>("rotator_beamwidth_alpha", true, 0, 1f, 0.6f);
             }
             else if (mt == MeterType.DATA_OUT)
             {
@@ -26369,6 +26386,8 @@ namespace Thetis
                     grpLedIndiciator.Visible = false;
                     grpBandButtons.Visible = false;
                     break;
+                case MeterType.FILTER_BUTTONS:
+                case MeterType.MODE_BUTTONS:
                 case MeterType.BAND_BUTTONS:
                     grpBandButtons.Parent = grpMultiMeterHolder;
                     grpBandButtons.Location = loc;
@@ -30730,7 +30749,10 @@ namespace Thetis
         {
             bool en = chkMeterItemRotatorShowBeamWidth.Checked;
             clrbtnMeterItemRotatorBeamWidth.Enabled = en;
+            lblMeterItemRotatorBeamWidth_degrees.Enabled = en;
             nudMeterItemRotatorBeamWidth.Enabled = en;
+            lblMeterItemRotatorBeamWidth_alpha.Enabled = en;
+            nudMeterItemRotatorBeamWidth_alpha.Enabled = en;
         }
         private void nudMeterItemRotatorBeamWidth_ValueChanged(object sender, EventArgs e)
         {
@@ -31363,6 +31385,8 @@ namespace Thetis
             bool enable = chkBandButtons_use_indicator.Checked;
             lblBandButtons_indicator_border.Enabled = enable;
             nudBandButtons_indicator_border.Enabled = enable;
+            lblBandButtons_indicator_style.Enabled = enable;
+            nudBandButtons_indicator_style.Enabled = enable;
         }
         private void clrbtnBandButtons_indicator_on_Changed(object sender, EventArgs e)
         {
@@ -31414,6 +31438,40 @@ namespace Thetis
                     updateMeterType();
                 }
             }
+        }
+
+        private void nudBandButtons_indicator_style_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudMeterItemRotatorBeamWidth_alpha_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkLegacyItems_band_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            LegacyItemController.HideBands = chkLegacyItems_band.Checked;
+        }
+
+        private void chkLegacyItems_mode_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            LegacyItemController.HideModes = chkLegacyItems_mode.Checked;
+        }
+
+        private void chkLegacyItems_filter_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            LegacyItemController.HideFilters = chkLegacyItems_filter.Checked;
+        }
+
+        private void chkLegacyItems_expand_spectral_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            LegacyItemController.ExpandSpectrumToRight = chkLegacyItems_expand_spectral.Checked;
         }
     }
 

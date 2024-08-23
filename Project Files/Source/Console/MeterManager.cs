@@ -200,6 +200,8 @@ namespace Thetis
         LED,
         WEB_IMAGE,
         BAND_BUTTONS,
+        MODE_BUTTONS,
+        FILTER_BUTTONS,
         //SPECTRUM,
         LAST
     }
@@ -1447,6 +1449,8 @@ namespace Thetis
                 case MeterType.LED: return 2;
                 case MeterType.WEB_IMAGE: return 2;
                 case MeterType.BAND_BUTTONS: return 2;
+                case MeterType.MODE_BUTTONS: return 2;
+                case MeterType.FILTER_BUTTONS: return 2;
                     //case MeterType.SPECTRUM: return 2;
             }
 
@@ -1485,6 +1489,8 @@ namespace Thetis
                 case MeterType.LED: return "Led Indicator";
                 case MeterType.WEB_IMAGE: return "Web Image";
                 case MeterType.BAND_BUTTONS: return "Band Buttons";
+                case MeterType.MODE_BUTTONS: return "Mode Buttons";
+                case MeterType.FILTER_BUTTONS: return "Filter Buttons";
                 case MeterType.DATA_OUT: return "Data Out Node";
                 case MeterType.ROTATOR: return "Rotator";
                 //case MeterType.HISTORY: return "History";
@@ -2194,6 +2200,7 @@ namespace Thetis
 
             _console.BandPanelChangeHandlers += OnBandPanelChanged;
             _console.VHFChangedHandlers += OnVHFChanged;
+            _console.FilterNameChangedHandlers += OnFilterNameChanged;
 
             _delegatesAdded = true;
         }
@@ -2235,6 +2242,7 @@ namespace Thetis
 
             _console.BandPanelChangeHandlers -= OnBandPanelChanged;
             _console.VHFChangedHandlers -= OnVHFChanged;
+            _console.FilterNameChangedHandlers -= OnFilterNameChanged;
 
             foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
@@ -2259,6 +2267,28 @@ namespace Thetis
                 }
             }
         }
+        private static void OnFilterNameChanged(int rx, Filter f, string old_name, string new_name)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
+
+                    if (rx == 1)
+                    {
+                        m.FilterVfoAName = new_name;
+                    }
+                    else
+                    {
+                        m.FilterVfoBName = new_name;
+                    }
+
+                    if (old_name != new_name)
+                        m.UpdateFilterNameButtons(f, new_name);
+                }
+            }
+        }
         private static void OnFilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high, string sName)
         {
             lock (_metersLock)
@@ -2272,6 +2302,9 @@ namespace Thetis
 
                     m.FilterVfoAName = sName;
                     m.FilterVfoBName = sName;
+
+                    if (oldFilter != newFilter)
+                        m.UpdateFilterButtons(newFilter);
                 }
             }
         }
@@ -2318,6 +2351,12 @@ namespace Thetis
                     else
                     {
                         m.ModeVfoB = newMode;
+                    }
+
+                    if (oldMode != newMode)
+                    {
+                        m.UpdateModeButtons(newMode);
+                        m.InitFilterButtons();
                     }
                 }
             }
@@ -2523,6 +2562,9 @@ namespace Thetis
                     {
                         m.BandGroup = m.GetBandGroupFromBand(_console.RX2Band);
                     }
+
+                    // update any filter meter items and setupbuttons to update filter text
+                    m.InitFilterButtons();
                 }
             }
         }
@@ -2543,6 +2585,34 @@ namespace Thetis
                         _console.RX2Filter == Filter.FIRST || _console.RX2Filter == Filter.LAST) return "";
 
                     return _console.rx2_filters[(int)_console.RX2DSPMode].GetName(_console.RX2Filter);
+                }
+                else
+                {
+                    return "";
+                }
+            }
+            catch
+            {
+                return "";
+            }
+        }
+        private static string getFilterName(int rx, Filter f)
+        {
+            try
+            {
+                if (rx == 1)
+                {
+                    if (_console.RX1DSPMode == DSPMode.FIRST || _console.RX1DSPMode == DSPMode.LAST ||
+                        _console.RX1Filter == Filter.FIRST || _console.RX1Filter == Filter.LAST) return f.ToString();
+
+                    return _console.rx1_filters[(int)_console.RX1DSPMode].GetName(f);
+                }
+                else if (rx == 2)
+                {
+                    if (_console.RX2DSPMode == DSPMode.FIRST || _console.RX2DSPMode == DSPMode.LAST ||
+                        _console.RX2Filter == Filter.FIRST || _console.RX2Filter == Filter.LAST) return f.ToString();
+
+                    return _console.rx2_filters[(int)_console.RX2DSPMode].GetName(f);
                 }
                 else
                 {
@@ -3460,7 +3530,9 @@ namespace Thetis
                 ROTATOR,
                 LED,
                 WEB_IMAGE,
-                BAND_BUTTONS
+                BAND_BUTTONS,
+                MODE_BUTTONS,
+                FILTER_BUTTONS
                 //SPECTRUM
             }
 
@@ -4124,6 +4196,389 @@ namespace Thetis
                 ZOrder = int.MaxValue;
             }
         }
+        internal class clsFilterButtonBox : clsButtonBox
+        {
+            private Filter _filter;
+            clsMeter _owningmeter;
+
+            public clsFilterButtonBox(clsMeter owningmeter)
+            {
+                _owningmeter = owningmeter;
+
+                if (_owningmeter.RX == 1)
+                {
+                    _filter = _owningmeter.FilterVfoA;
+                    Buttons = 12;
+                }
+                else if (_owningmeter.RX == 2)
+                {
+                    _filter = _owningmeter.FilterVfoB;
+                    Buttons = 9;
+                }
+
+                ItemType = MeterItemType.FILTER_BUTTONS;                
+
+                setupButtons();
+            }
+            public void FilterChanged(Filter f)
+            {
+                Filter old = _filter;
+                _filter = f;
+
+                // just set the mode
+                int index = (int)_filter - (int)Filter.F1;
+                int old_index = (int)old - (int)Filter.F1;
+
+                if(_owningmeter.RX == 2)
+                {
+                    // only 9 filters, so adjust indexes
+                    index -= index > (int)Filter.F7 ? (int)Filter.VAR1 - (int)Filter.F7 - 1 : 0;
+                    old_index -= old_index > (int)Filter.F7 ? (int)Filter.VAR1 - (int)Filter.F7 - 1 : 0;
+                }
+
+                SetOn(1, old_index, false);
+                SetOn(1, index, true);
+            }
+            public void InitFilterButtons()
+            {
+                setupButtons();
+            }
+            public void FilterNameChanged(Filter f, string new_name)
+            {
+                // just set the mode
+                int index = (int)f - (int)Filter.F1;
+
+                if (_owningmeter.RX == 2)
+                {
+                    // only 9 filters, so adjust indexes
+                    index -= index > (int)Filter.F7 ? (int)Filter.VAR1 - (int)Filter.F7 - 1 : 0;
+                }
+
+                SetText(1, index, new_name);
+            }
+            private void setupButtons()
+            {
+                // copy from 0 to 1. 0 is settings bank, 1 is where renderer reads from
+                for (int i = 0; i < Buttons; i++)
+                {
+                    SetText(1, i, GetText(0, i));
+                    SetFontColour(1, i, GetFontColour(0, i));
+                    SetFontFamily(1, i, GetFontFamily(0, i));
+                    SetFontSize(1, i, GetFontSize(0, i));
+                    SetFontStyle(1, i, GetFontStyle(0, i));
+                    SetUseIndicator(1, i, GetUseIndicator(0, i));
+                    SetOnColour(1, i, GetOnColour(0, i));
+                    SetOffColour(1, i, GetOffColour(0, i));
+                    SetIndicatorWidth(1, i, GetIndicatorWidth(0, i));
+                    SetEnabled(1, i, true);
+                    SetOn(1, i, false);
+
+                    SetFillColour(1, i, GetFillColour(0, i));
+                    SetHoverColour(1, i, GetHoverColour(0, i));
+                    SetBorderColour(1, i, GetBorderColour(0, i));
+
+                    SetUseOffColour(1, i, GetUseOffColour(0, i));
+
+                    SetIndiciatorType(1, i, GetIndiciatorType(0, i));
+                }
+                //
+
+                int start_filter = (int)Filter.F1;
+                int end_filter = (int)Filter.VAR2;
+                System.Drawing.Color text_color = System.Drawing.Color.White;
+
+                int filters = end_filter - start_filter + 1;
+                int offset = 0;
+                for (int i = 0; i < Buttons; i++)
+                {
+                    SetEnabled(1, i, true);
+
+                    if (i < filters)
+                    {
+                        Filter f = (Filter)(start_filter + i + offset);
+                        string filter_text = getFilterName(_owningmeter.RX, f);
+
+                        SetText(1, i, filter_text);
+
+                        if (GetEnabled(1, i))
+                            SetFontColour(1, i, text_color);
+                        else
+                            SetFontColour(1, i, System.Drawing.Color.FromArgb(255, (int)(text_color.R * 0.3f), (int)(text_color.G * 0.3f), (int)(text_color.B * 0.3f)));
+
+                        SetFontSize(1, i, 18f);
+
+                        SetOn(1, i, f == _filter);
+
+                        if (_owningmeter.RX == 2 && f == Filter.F7)
+                            offset = (int)Filter.VAR1 - (int)Filter.F7 - 1; // jump to var1, -1 as i gets incremented, as only 9 filters for rx2
+                    }
+                }
+
+                int rows = Buttons / Columns;
+                int overflow = Buttons % Columns;
+                if (overflow > 0) rows++;
+
+                float half_border = Border / 2f;
+                float button_width = ((1f - (0.02f * 2f)) / (float)Columns) - Margin - Border;
+                float button_height = ((1f - (0.02f * 2f)) / (float)Columns) * HeightRatio;
+
+                float height = button_height * (float)rows;
+
+                Size = new SizeF(Size.Width, height);
+            }
+            public override void MouseUp(MouseEventArgs e)
+            {
+                int index = base.ButtonIndex;
+                if (index == -1) return;
+
+                if (_owningmeter.RX == 2 && index > (int)Filter.F7)
+                    index += (int)Filter.VAR1 - (int)Filter.F7 - 1;
+
+                Filter f = (Filter)((int)Filter.F1 + index);
+
+                setFilter(f);
+            }
+            private void setFilter(Filter f)
+            {
+                //note rx2 only has 9 filters
+                if (f == Filter.FIRST) return;
+
+                if (_owningmeter.RX == 2)
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.RX2Filter = f;
+                    }));
+                }
+                else
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.RX1Filter = f;
+                    }));
+                }
+            }
+
+            public override int Columns
+            {
+                get { return base.Columns; }
+                set
+                {
+                    base.Columns = value;
+                    setupButtons();
+                }
+            }
+            public override float Border
+            {
+                get { return base.Border; }
+                set
+                {
+                    base.Border = value;
+                    setupButtons();
+                }
+            }
+            public override float Margin
+            {
+                get { return base.Margin; }
+                set
+                {
+                    base.Margin = value;
+                    setupButtons();
+                }
+            }
+            public override float Radius
+            {
+                get { return base.Radius; }
+                set
+                {
+                    base.Radius = value;
+                    setupButtons();
+                }
+            }
+            public override float HeightRatio
+            {
+                get { return base.HeightRatio; }
+                set
+                {
+                    base.HeightRatio = value;
+                    setupButtons();
+                }
+            }
+        }
+        internal class clsModeButtonBox : clsButtonBox
+        {
+            private DSPMode _mode;
+            clsMeter _owningmeter;
+
+            public clsModeButtonBox(clsMeter owningmeter)
+            {
+                _owningmeter = owningmeter;
+
+                if (_owningmeter.RX == 1)
+                    _mode = _owningmeter.ModeVfoA;
+                else if (_owningmeter.RX == 2)
+                    _mode = _owningmeter.ModeVfoB;
+
+                ItemType = MeterItemType.MODE_BUTTONS;
+
+                Buttons = 12;
+
+                setupButtons();
+            }
+            public void ModeChanged(DSPMode m)
+            {
+                DSPMode old = _mode;
+                _mode = m;
+
+                // just set the mode
+                int index = (int)_mode - (int)DSPMode.LSB;
+                int old_index = (int)old - (int)DSPMode.LSB;
+
+                SetOn(1, old_index, false);
+                SetOn(1, index, true);
+            }
+            private void setupButtons()
+            {
+                // copy from 0 to 1. 0 is settings bank, 1 is where renderer reads from
+                for (int i = 0; i < Buttons; i++)
+                {
+                    SetText(1, i, GetText(0, i));
+                    SetFontColour(1, i, GetFontColour(0, i));
+                    SetFontFamily(1, i, GetFontFamily(0, i));
+                    SetFontSize(1, i, GetFontSize(0, i));
+                    SetFontStyle(1, i, GetFontStyle(0, i));
+                    SetUseIndicator(1, i, GetUseIndicator(0, i));
+                    SetOnColour(1, i, GetOnColour(0, i));
+                    SetOffColour(1, i, GetOffColour(0, i));
+                    SetIndicatorWidth(1, i, GetIndicatorWidth(0, i));
+                    SetEnabled(1, i, true);
+                    SetOn(1, i, false);
+
+                    SetFillColour(1, i, GetFillColour(0, i));
+                    SetHoverColour(1, i, GetHoverColour(0, i));
+                    SetBorderColour(1, i, GetBorderColour(0, i));
+
+                    SetUseOffColour(1, i, GetUseOffColour(0, i));
+
+                    SetIndiciatorType(1, i, GetIndiciatorType(0, i));
+                }
+                //
+
+                int start_mode = (int)DSPMode.LSB;
+                int end_mode = (int)DSPMode.DRM;
+                System.Drawing.Color text_color = System.Drawing.Color.White;
+
+                int modes = end_mode - start_mode + 1;
+
+                for (int i = 0; i < Buttons; i++)
+                {
+                    SetEnabled(1, i, true);
+
+                    if (i < modes)
+                    {
+                        DSPMode b = (DSPMode)(start_mode + i);
+                        string mode_text = b.ToString();
+
+                        SetText(1, i, mode_text);
+
+                        if (GetEnabled(1, i))
+                            SetFontColour(1, i, text_color);
+                        else
+                            SetFontColour(1, i, System.Drawing.Color.FromArgb(255, (int)(text_color.R * 0.3f), (int)(text_color.G * 0.3f), (int)(text_color.B * 0.3f)));
+
+                        SetFontSize(1, i, 18f);
+
+                        SetOn(1, i, b == _mode);
+                    }
+                }
+
+                int rows = Buttons / Columns;
+                int overflow = Buttons % Columns;
+                if (overflow > 0) rows++;
+
+                float half_border = Border / 2f;
+                float button_width = ((1f - (0.02f * 2f)) / (float)Columns) - Margin - Border;
+                float button_height = ((1f - (0.02f * 2f)) / (float)Columns) * HeightRatio;
+
+                float height = button_height * (float)rows;
+
+                Size = new SizeF(Size.Width, height);
+            }
+            public override void MouseUp(MouseEventArgs e)
+            {
+                int index = base.ButtonIndex;
+                if (index == -1) return;
+
+                DSPMode m = (DSPMode)((int)DSPMode.LSB + index);                
+
+                setMode(m);
+            }
+            private void setMode(DSPMode m)
+            {
+                if (m == DSPMode.FIRST) return;
+
+                if (_owningmeter.RX == 2)
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.RX2DSPMode = m;
+                    }));
+                }
+                else
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.RX1DSPMode = m;
+                    }));
+                }
+            }
+
+            public override int Columns
+            {
+                get { return base.Columns; }
+                set
+                {
+                    base.Columns = value;
+                    setupButtons();
+                }
+            }
+            public override float Border
+            {
+                get { return base.Border; }
+                set
+                {
+                    base.Border = value;
+                    setupButtons();
+                }
+            }
+            public override float Margin
+            {
+                get { return base.Margin; }
+                set
+                {
+                    base.Margin = value;
+                    setupButtons();
+                }
+            }
+            public override float Radius
+            {
+                get { return base.Radius; }
+                set
+                {
+                    base.Radius = value;
+                    setupButtons();
+                }
+            }
+            public override float HeightRatio
+            {
+                get { return base.HeightRatio; }
+                set
+                {
+                    base.HeightRatio = value;
+                    setupButtons();
+                }
+            }
+        }
         internal class clsBandButtonBox : clsButtonBox
         {
             private BandGroups _button_bands;
@@ -4251,8 +4706,8 @@ namespace Thetis
             }
             private void setupButtons()
             {
-                // copy from 0 to 1
-                for (int i = 0;i< Buttons; i++)
+                // copy from 0 to 1. 0 is settings bank, 1 is where renderer reads from
+                for (int i = 0; i < Buttons; i++)
                 {
                     SetText(1, i, GetText(0, i));
                     SetFontColour(1, i, GetFontColour(0, i));
@@ -4271,6 +4726,8 @@ namespace Thetis
                     SetBorderColour(1, i, GetBorderColour(0, i));
 
                     SetUseOffColour(1, i, GetUseOffColour(0, i));
+
+                    SetIndiciatorType(1, i, GetIndiciatorType(0, i));
                 }
                 //
 
@@ -4388,7 +4845,7 @@ namespace Thetis
 
                 float half_border = Border / 2f;
                 float button_width = ((1f - (0.02f * 2f)) / (float)Columns) - Margin - Border;
-                float button_height = ((1f - (0.02f * 2f)) / (float)Columns) * HeightRatio;//button_width * HeightRatio;
+                float button_height = ((1f - (0.02f * 2f)) / (float)Columns) * HeightRatio;
 
                 float height = button_height * (float)rows;
 
@@ -4520,6 +4977,24 @@ namespace Thetis
 
         internal class clsButtonBox : clsMeterItem
         {
+            public enum IndicatorType
+            {
+                RING = 0,
+                BAR_LEFT,
+                BAR_RIGHT,
+                BAR_BOTTOM,
+                BAR_TOP,
+                DOT_LEFT,
+                DOT_RIGHT,
+                DOT_BOTTOM,
+                DOT_TOP,
+                DOT_TOP_LEFT,
+                DOT_TOP_RIGHT,
+                DOT_BOTTOM_LEFT,
+                DOT_BOTTOM_RIGHT,
+
+                LAST = 99
+            }
             private int _number_of_buttons;
             private int _columns;
             private float _margin;
@@ -4547,6 +5022,8 @@ namespace Thetis
             private string[][] _text;
 
             private bool[][] _enabled;
+
+            private IndicatorType[][] _indicator_type;
 
             private int _button_index;
 
@@ -4586,6 +5063,9 @@ namespace Thetis
                 _text = new string[2][];
 
                 _enabled = new bool[2][];
+
+                _indicator_type = new IndicatorType[2][];
+
                 // 0 is settings, 1 is active
                 for (int n = 0; n < 2; n++)
                 {
@@ -4610,6 +5090,8 @@ namespace Thetis
 
                     _enabled[n] = new bool[_number_of_buttons];
 
+                    _indicator_type[n] = new IndicatorType[_number_of_buttons];
+
                     for (int b = 0; b < _number_of_buttons; b++) {
                         _fill_colour[n][b] = System.Drawing.Color.Black;
                         _hover_colour[n][b] = System.Drawing.Color.LightGray;
@@ -4631,6 +5113,8 @@ namespace Thetis
                         _text[n][b] = "";
 
                         _enabled[n][b] = true;
+
+                        _indicator_type[n][b] = IndicatorType.RING;
                     }
                 }
             }
@@ -4822,6 +5306,16 @@ namespace Thetis
             {
                 if (button < 0 || button >= _number_of_buttons) return false;
                 return _enabled[bank][button];
+            }
+            public void SetIndiciatorType(int bank, int button, IndicatorType type)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _indicator_type[bank][button] = type;
+            }
+            public IndicatorType GetIndiciatorType(int bank, int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return IndicatorType.RING;
+                return _indicator_type[bank][button];
             }
         }
 
@@ -6356,6 +6850,7 @@ namespace Thetis
             private bool _show_cardinals;
             private bool _show_beam_width;
             private float _beam_width;
+            private float _beam_width_alpha;
             private float _padding;
 
             public clsRotatorItem()
@@ -6368,6 +6863,7 @@ namespace Thetis
                 _show_cardinals = false;
                 _show_beam_width = false;
                 _beam_width = 30f;
+                _beam_width_alpha = 0.6f;
                 _darkMode = false;
                 _rotator_mode = RotatorMode.BOTH;
                 _padding = 0.5f;
@@ -6530,6 +7026,11 @@ namespace Thetis
             {
                 get { return _beam_width; }
                 set { _beam_width = value; }
+            }
+            public float BeamWidthAlpha
+            {
+                get { return _beam_width_alpha; }
+                set { _beam_width_alpha = value; }
             }
             //public bool ShowElevation
             //{
@@ -9404,6 +9905,8 @@ namespace Thetis
                     case MeterType.LED: return Reading.NONE;
                     case MeterType.WEB_IMAGE: return Reading.NONE;
                     case MeterType.BAND_BUTTONS: return Reading.NONE;
+                    case MeterType.MODE_BUTTONS: return Reading.NONE;
+                    case MeterType.FILTER_BUTTONS: return Reading.NONE;
                     case MeterType.DATA_OUT: return Reading.NONE;
                     case MeterType.ROTATOR: return variable_index == 0 ? Reading.AZ : Reading.ELE;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
@@ -9448,7 +9951,9 @@ namespace Thetis
                     case MeterType.DATA_OUT: return 0;
                     case MeterType.ROTATOR: return 2;
                     case MeterType.BAND_BUTTONS: return 0;
-                    //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.MODE_BUTTONS: return 0;
+                    case MeterType.FILTER_BUTTONS: return 0;
+                        //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
                 return 0;
             }
@@ -9495,6 +10000,8 @@ namespace Thetis
                     case MeterType.DATA_OUT: AddDataOut(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.ROTATOR: AddRotator(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.BAND_BUTTONS: AddBandButtons(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.MODE_BUTTONS: AddModeButtons(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.FILTER_BUTTONS: AddFilterButtons(nDelay, 0, out bBottom, restoreIg); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
@@ -11910,6 +12417,74 @@ namespace Thetis
 
                 return bb.ID;
             }
+            public string AddModeButtons(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsModeButtonBox bb = new clsModeButtonBox(this);
+                bb.ParentID = ig.ID;
+
+                bb.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
+                bb.Size = new SizeF(1f - _fPadX * 2f, 1f);
+
+                bb.ZOrder = 1;
+                bb.Columns = 3;
+                bb.Margin = 0.005f;
+                bb.Radius = 0.01f;
+                bb.HeightRatio = 0.5f;
+                bb.Border = 0.005f;
+                addMeterItem(bb);
+
+                fBottom = bb.TopLeft.Y + bb.Size.Height;
+
+                ig.TopLeft = bb.TopLeft;
+                ig.Size = new SizeF(bb.Size.Width, fBottom);
+                ig.MeterType = MeterType.MODE_BUTTONS;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);
+
+                return bb.ID;
+            }
+            public string AddFilterButtons(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsFilterButtonBox bb = new clsFilterButtonBox(this);
+                bb.ParentID = ig.ID;
+
+                bb.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
+                bb.Size = new SizeF(1f - _fPadX * 2f, 1f);
+
+                bb.ZOrder = 1;
+                bb.Columns = 3;
+                bb.Margin = 0.005f;
+                bb.Radius = 0.01f;
+                bb.HeightRatio = 0.5f;
+                bb.Border = 0.005f;
+                addMeterItem(bb);
+
+                fBottom = bb.TopLeft.Y + bb.Size.Height;
+
+                ig.TopLeft = bb.TopLeft;
+                ig.Size = new SizeF(bb.Size.Width, fBottom);
+                ig.MeterType = MeterType.FILTER_BUTTONS;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);
+
+                return bb.ID;
+            }
             public string AddVFODisplay(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
@@ -12241,11 +12816,66 @@ namespace Thetis
                         c.BandVHFSelected = true;
                 }));
             }
+            public void UpdateFilterButtons(Filter newFilter)
+            {
+                if (_console == null) return;
+
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS))
+                    {
+                        clsFilterButtonBox mi = (clsFilterButtonBox)mis.Value;
+
+                        mi.FilterChanged(newFilter);
+                    }
+                }
+            }
+            public void InitFilterButtons()
+            {
+                if (_console == null) return;
+
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS))
+                    {
+                        clsFilterButtonBox mi = (clsFilterButtonBox)mis.Value;
+
+                        mi.InitFilterButtons();
+                    }
+                }
+            }
+            public void UpdateFilterNameButtons(Filter f, string new_name)
+            {
+                if (_console == null) return;
+
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS))
+                    {
+                        clsFilterButtonBox mi = (clsFilterButtonBox)mis.Value;
+
+                        mi.FilterNameChanged(f, new_name);
+                    }
+                }
+            }
+            public void UpdateModeButtons(DSPMode newMode)
+            {
+                if (_console == null) return;
+
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.MODE_BUTTONS))
+                    {
+                        clsModeButtonBox mi = (clsModeButtonBox)mis.Value;
+
+                        mi.ModeChanged(newMode);
+                    }
+                }
+            }
             public void UpdateBandButtons(Band newBand)
             {
                 if (_console == null) return;
 
-                //1 = rx1
                 lock (_meterItemsLock)
                 {
                     foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS))
@@ -12260,7 +12890,6 @@ namespace Thetis
             {
                 if (_console == null) return;
 
-                //1 = rx1
                 lock (_meterItemsLock)
                 {
                     foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS))
@@ -12544,28 +13173,49 @@ namespace Thetis
                         {
                             switch (mt)
                             {
+                                case MeterType.FILTER_BUTTONS:
+                                case MeterType.MODE_BUTTONS:
                                 case MeterType.BAND_BUTTONS:
                                     {
                                         bRebuild = true;
 
                                         float height = 1f;
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
-                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS))
+                                        clsMeterItem.MeterItemType mit = clsMeterItem.MeterItemType.BASE;
+                                        switch (mt)
                                         {
-                                            clsBandButtonBox bb = me.Value as clsBandButtonBox;
+                                            case MeterType.FILTER_BUTTONS:
+                                                mit = clsMeterItem.MeterItemType.FILTER_BUTTONS;
+                                                break;
+                                            case MeterType.MODE_BUTTONS:
+                                                mit = clsMeterItem.MeterItemType.MODE_BUTTONS;
+                                                break;
+                                            case MeterType.BAND_BUTTONS:
+                                                mit = clsMeterItem.MeterItemType.BAND_BUTTONS;
+                                                break;
+                                        }
+                                        if (mit == clsMeterItem.MeterItemType.BASE) continue; // skip
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == mit))
+                                        {
+                                            clsButtonBox bb = me.Value as clsButtonBox;
                                             if (bb == null) continue;
 
-                                            bb.ForceUpdate = true;
-                                            bool use_indiciator = igs.GetSetting<bool>("bandbuttons_use_indicator", false, false, false, false);
-                                            float indiciator_width = igs.GetSetting<float>("bandbuttons_indicator_border", true, 0, 1f, 05f) / 10f;
-                                            System.Drawing.Color on_colour = igs.GetSetting("bandbuttons_on_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
-                                            System.Drawing.Color off_colour = igs.GetSetting("bandbuttons_off_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
+                                            clsBandButtonBox bbb = bb as clsBandButtonBox;
+                                            if (bbb != null)
+                                                bbb.ForceUpdate = true;
 
-                                            System.Drawing.Color fill_colour = igs.GetSetting("bandbuttons_fill_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
-                                            System.Drawing.Color hover_colour = igs.GetSetting("bandbuttons_hover_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LightGray);
-                                            System.Drawing.Color border_colour = igs.GetSetting("bandbuttons_border_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
+                                            bool use_indiciator = igs.GetSetting<bool>("buttonbox_use_indicator", false, false, false, false);
+                                            float indiciator_width = igs.GetSetting<float>("buttonbox_indicator_border", true, 0, 1f, 05f) / 10f;
+                                            System.Drawing.Color on_colour = igs.GetSetting("buttonbox_on_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
+                                            System.Drawing.Color off_colour = igs.GetSetting("buttonbox_off_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
 
-                                            bool use_off_colour = igs.GetSetting<bool>("bandbuttons_use_off_colour", false, false, false, false);
+                                            System.Drawing.Color fill_colour = igs.GetSetting("buttonbox_fill_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
+                                            System.Drawing.Color hover_colour = igs.GetSetting("buttonbox_hover_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LightGray);
+                                            System.Drawing.Color border_colour = igs.GetSetting("buttonbox_border_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
+
+                                            bool use_off_colour = igs.GetSetting<bool>("buttonbox_use_off_colour", false, false, false, false);
+
+                                            clsButtonBox.IndicatorType indiciator_type = igs.GetSetting<clsButtonBox.IndicatorType>("buttonbox_indicator_type", true, clsButtonBox.IndicatorType.RING, clsButtonBox.IndicatorType.LAST, clsButtonBox.IndicatorType.RING);
 
                                             for (int button = 0; button < bb.Buttons; button++)
                                             {
@@ -12579,13 +13229,16 @@ namespace Thetis
                                                 bb.SetUseOffColour(0, button, use_off_colour);
                                                 bb.SetFontFamily(0, button, igs.FontFamily1);
                                                 bb.SetFontStyle(0, button, igs.FontStyle1);
+                                                bb.SetIndiciatorType(0, button, indiciator_type);
                                             }
-                                            bb.Columns = igs.GetSetting<int>("bandbuttons_columns", true, 1, 15, 3);
-                                            bb.Border = igs.GetSetting<float>("bandbuttons_border", true, 0.01f, 1f, 0.05f) / 10f;
-                                            bb.Margin = igs.GetSetting<float>("bandbuttons_margin", true, 0f, 1f, 0f) / 10f;
-                                            bb.Radius = igs.GetSetting<float>("bandbuttons_radius", true, 0f, 1f, 0f) / 10f;
-                                            bb.HeightRatio = igs.GetSetting<float>("bandbuttons_height_ratio", true, 0.01f, 2f, 0.5f);
-                                            bb.ForceUpdate = false;
+                                            bb.Columns = igs.GetSetting<int>("buttonbox_columns", true, 1, 15, 3);
+                                            bb.Border = igs.GetSetting<float>("buttonbox_border", true, 01f, 1f, 0.05f) / 10f;
+                                            bb.Margin = igs.GetSetting<float>("buttonbox_margin", true, 0f, 1f, 0f) / 10f;
+                                            bb.Radius = igs.GetSetting<float>("buttonbox_radius", true, 0f, 2f, 0f) / 10f;
+                                            bb.HeightRatio = igs.GetSetting<float>("buttonbox_height_ratio", true, 0.01f, 2f, 0.5f);
+
+                                            if (bbb != null)
+                                                bbb.ForceUpdate = false;
 
                                             bb.FadeOnRx = igs.FadeOnRx;
                                             bb.FadeOnTx = igs.FadeOnTx;
@@ -12700,9 +13353,9 @@ namespace Thetis
                                             rotator.ELEControlString = igs.Text2;
                                             rotator.STOPControlString = igs.FontFamily1;
                                             rotator.DataOutMMIOGuid = igs.GetMMIOGuid(2);
+                                            rotator.BeamWidthAlpha = igs.GetSetting<float>("rotator_beamwidth_alpha", true, 0, 1f, 0.6f);
                                             imageName = rotator.ImageName;
                                             mapName = rotator.MapName;
-
                                             if (rotator.ViewMode == clsRotatorItem.RotatorMode.BOTH)
                                             {
                                                 padding = 0.5f;
@@ -13525,31 +14178,52 @@ namespace Thetis
                             clsIGSettings igs = new clsIGSettings();
                             switch (mt)
                             {
+                                case MeterType.FILTER_BUTTONS:
+                                case MeterType.MODE_BUTTONS:
                                 case MeterType.BAND_BUTTONS:
                                     {
+                                        clsMeterItem.MeterItemType mit = clsMeterItem.MeterItemType.BASE;
+                                        switch (mt)
+                                        {
+                                            case MeterType.FILTER_BUTTONS:
+                                                mit = clsMeterItem.MeterItemType.FILTER_BUTTONS;
+                                                break;
+                                            case MeterType.MODE_BUTTONS:
+                                                mit = clsMeterItem.MeterItemType.MODE_BUTTONS;
+                                                break;
+                                            case MeterType.BAND_BUTTONS:
+                                                mit = clsMeterItem.MeterItemType.BAND_BUTTONS;
+                                                break;
+                                        }
+                                        if (mit == clsMeterItem.MeterItemType.BASE) continue; // skip
+
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
                                         //one image, and the me
-                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS))
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == mit))
                                         {
-                                            clsBandButtonBox bb = me.Value as clsBandButtonBox;
+                                            clsButtonBox bb = me.Value as clsButtonBox;
                                             if (bb == null) continue; // skip
 
-                                            igs.SetSetting<bool>("bandbuttons_use_indicator", bb.GetUseIndicator(0, 0));
-                                            igs.SetSetting<float>("bandbuttons_indicator_border", bb.GetIndicatorWidth(0, 0) * 10f);
-                                            igs.SetSetting<System.Drawing.Color>("bandbuttons_on_colour", bb.GetOnColour(0, 0));
-                                            igs.SetSetting<System.Drawing.Color>("bandbuttons_off_colour", bb.GetOffColour(0, 0));
+                                            // just use button 0 as all are the same for these buttonboxes
 
-                                            igs.SetSetting<System.Drawing.Color>("bandbuttons_fill_colour", bb.GetFillColour(0, 0));
-                                            igs.SetSetting<System.Drawing.Color>("bandbuttons_hover_colour", bb.GetHoverColour(0, 0));
-                                            igs.SetSetting<System.Drawing.Color>("bandbuttons_border_colour", bb.GetBorderColour(0, 0));
+                                            igs.SetSetting<bool>("buttonbox_use_indicator", bb.GetUseIndicator(0, 0));
+                                            igs.SetSetting<float>("buttonbox_indicator_border", bb.GetIndicatorWidth(0, 0) * 10f);
+                                            igs.SetSetting<System.Drawing.Color>("buttonbox_on_colour", bb.GetOnColour(0, 0));
+                                            igs.SetSetting<System.Drawing.Color>("buttonbox_off_colour", bb.GetOffColour(0, 0));
 
-                                            igs.SetSetting<int>("bandbuttons_columns", bb.Columns);
-                                            igs.SetSetting<float>("bandbuttons_border", bb.Border * 10f);
-                                            igs.SetSetting<float>("bandbuttons_margin", bb.Margin * 10f);
-                                            igs.SetSetting<float>("bandbuttons_radius", bb.Radius * 10f);
-                                            igs.SetSetting<float>("bandbuttons_height_ratio", bb.HeightRatio);
+                                            igs.SetSetting<System.Drawing.Color>("buttonbox_fill_colour", bb.GetFillColour(0, 0));
+                                            igs.SetSetting<System.Drawing.Color>("buttonbox_hover_colour", bb.GetHoverColour(0, 0));
+                                            igs.SetSetting<System.Drawing.Color>("buttonbox_border_colour", bb.GetBorderColour(0, 0));
 
-                                            igs.SetSetting<bool>("bandbuttons_use_off_colour", bb.GetUseOffColour(0, 0));
+                                            igs.SetSetting<int>("buttonbox_columns", bb.Columns);
+                                            igs.SetSetting<float>("buttonbox_border", bb.Border * 10f);
+                                            igs.SetSetting<float>("buttonbox_margin", bb.Margin * 10f);
+                                            igs.SetSetting<float>("buttonbox_radius", bb.Radius * 10f);
+                                            igs.SetSetting<float>("buttonbox_height_ratio", bb.HeightRatio);
+
+                                            igs.SetSetting<bool>("buttonbox_use_off_colour", bb.GetUseOffColour(0, 0));
+
+                                            igs.SetSetting<clsButtonBox.IndicatorType>("buttonbox_indicator_type", bb.GetIndiciatorType(0, 0));
 
                                             igs.FontFamily1 = bb.GetFontFamily(0, 0);
                                             igs.FontSize1 = bb.GetFontSize(0, 0);
@@ -13593,6 +14267,7 @@ namespace Thetis
                                                 igs.Text1 = rotator.AZControlString;
                                                 igs.Text2 = rotator.ELEControlString;
                                                 igs.FontFamily1 = rotator.STOPControlString;
+                                                igs.SetSetting<float>("rotator_beamwidth_alpha", rotator.BeamWidthAlpha);
                                             }
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
@@ -14599,6 +15274,8 @@ namespace Thetis
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.LED ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.WEB_IMAGE ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.MODE_BUTTONS ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR
                                                                 //o.Value.ItemType == clsMeterItem.MeterItemType.SPECTRUM
                                                                 /*o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY*/) &&
@@ -16256,9 +16933,11 @@ namespace Thetis
                                     case clsMeterItem.MeterItemType.SIGNAL_TEXT_DISPLAY:
                                         renderSignalTextDisplay(rect, mi, m);
                                         break;
+                                    case clsMeterItem.MeterItemType.FILTER_BUTTONS:
+                                    case clsMeterItem.MeterItemType.MODE_BUTTONS:
                                     case clsMeterItem.MeterItemType.BAND_BUTTONS:
-                                        renderBandButtons(rect, mi, m);
-                                        break;
+                                        renderButtonBox(rect, mi, m);
+                                        break;                                    
                                     //case clsMeterItem.MeterItemType.SPECTRUM:
                                     //    renderSpectrum(rect, mi, m);
                                     //    break;
@@ -17516,7 +18195,7 @@ namespace Thetis
                 SharpDX.Direct2D1.Brush line_br = getDXBrushForColour(rotator.ArrowColour, 255);
                 SharpDX.Direct2D1.Brush big_dot_br = getDXBrushForColour(rotator.BigBlobColour, 255);
                 SharpDX.Direct2D1.Brush small_dot_br = getDXBrushForColour(rotator.SmallBlobColour, 255);
-                SharpDX.Direct2D1.Brush beam_widh_br = getDXBrushForColour(rotator.BeamWidthColour, 192);
+                SharpDX.Direct2D1.Brush beam_widh_br = getDXBrushForColour(rotator.BeamWidthColour, (int)(255 * rotator.BeamWidthAlpha));
 
                 float xShift = rotator.ViewMode == clsRotatorItem.RotatorMode.BOTH ? 2f * (w * 0.0125f) : 0;
                 bool send_stop = false;
@@ -17544,7 +18223,7 @@ namespace Thetis
 
                     float degrees_az = Math.Abs(rotator.Value) % 360f;
                     bool cardinals = rotator.ShowCardinals;
-                    bool show_beam_wdith = rotator.ShowBeamWidth;
+                    bool show_beam_width = rotator.ShowBeamWidth;
                     float beam_width = rotator.BeamWidth;
                     if (cardinals)
                     {
@@ -17637,8 +18316,8 @@ namespace Thetis
                         }
                     }
 
-                    // beam wdith
-                    if (show_beam_wdith)
+                    // beam width
+                    if (show_beam_width)
                     {
                         Vector2 arc_edge_1 = new Vector2(0, 0);
                         Vector2 arc_edge_2 = new Vector2(0, 0);
@@ -19170,9 +19849,9 @@ namespace Thetis
                 else
                     _renderTarget.FillRectangle(rr.Rect, b);
             }
-            private void renderBandButtons(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            private void renderButtonBox(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
-                clsBandButtonBox bb = (clsBandButtonBox)mi;
+                clsButtonBox bb = mi as clsButtonBox;
                 if (bb.Columns <= 0) return;
 
                 float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
@@ -19252,22 +19931,6 @@ namespace Thetis
                             actual_bg = bg_colour;
 
                         text_colour = adjustTextColourForContrast(text_colour, actual_bg);
-                        //int luminance_bg = Common.GetLuminance(actual_bg);
-                        //int luminance_text = Common.GetLuminance(text_colour);
-                        //int diff = Common.GetLuminance(text_colour) - luminance_bg;
-
-                        //if (Math.Abs(luminance_bg - luminance_text) < 32)
-                        //{
-                        //    text_colour = System.Drawing.Color.FromArgb(text_colour.A, 255 - text_colour.R, 255 - text_colour.G, 255 - text_colour.B);
-                        //    int diff = Common.GetLuminance(text_colour) - luminance_bg;
-                        //    if(Math.Abs(diff) < 128)
-                        //    {
-                        //        if (luminance_bg > 128)
-                        //            text_colour = System.Drawing.Color.Black;
-                        //        else
-                        //            text_colour = System.Drawing.Color.White;
-                        //    }
-                        //}
 
                         // fill
                         fillRoundedRectangle(rr, getDXBrushForColour(bg_colour));
@@ -19295,21 +19958,159 @@ namespace Thetis
                         drawRoundedRectangle(rr, getDXBrushForColour(bb.GetBorderColour(1, button_index)), bb.Border * w);
 
                         //indicator
-                        float indicator_width = 0;
-                        float size_modifier = 0.9f;
+                        SharpDX.RectangleF indicator_adjust = new SharpDX.RectangleF(0, 0, 0, 0);
+                        float text_size_modifier = 0.9f; // text gets shrunk slightly if no indicator ring is in use
                         if (indicator)
-                        {
-                            size_modifier = 1f;
-                            indicator_width = bb.GetIndicatorWidth(1, button_index) * wh;
-                            rr.Rect = shrinkRectangle(rectBB, 1f, (0.02f * w) + border + indicator_width);
-                            if (bb.GetOn(1, button_index))
-                                drawRoundedRectangle(rr, getDXBrushForColour(bb.GetOnColour(1, button_index)), indicator_width);
+                        {                                                        
+                            System.Drawing.Color indicator_colour = System.Drawing.Color.Transparent;
+                            bool indicator_draw = false;
+
+                            if(bb.GetOn(1, button_index))
+                            {
+                                indicator_colour = bb.GetOnColour(1, button_index);
+                                indicator_draw = true;
+                            }
                             else
                             {
                                 if (bb.GetUseOffColour(1, button_index))
                                 {
-                                    if(highlighted_index != button_index)
-                                        drawRoundedRectangle(rr, getDXBrushForColour(bb.GetOffColour(1, button_index)), indicator_width);
+                                    //if (highlighted_index != button_index)
+                                    //{
+                                        indicator_colour = bb.GetOffColour(1, button_index);
+                                        indicator_draw = true;
+                                    //}
+                                }
+                            }
+
+                            if (indicator_draw)
+                            {
+                                float indicator_width = bb.GetIndicatorWidth(1, button_index) * wh;
+                                float indicator_shrink;
+                                switch (bb.GetIndiciatorType(1, button_index))
+                                {
+                                    case clsButtonBox.IndicatorType.BAR_LEFT:
+                                        text_size_modifier = 0.9f;
+                                        indicator_shrink = (0.015f * wh);
+                                        _renderTarget.DrawLine(new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Top + indicator_shrink + (radius * 0.45f)), new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Bottom - indicator_shrink - (radius * 0.45f)), getDXBrushForColour(indicator_colour), indicator_width);
+                                        indicator_adjust.Left = indicator_width + (indicator_shrink * 1.5f);
+                                        indicator_adjust.Right = indicator_width;
+                                        break;
+                                    case clsButtonBox.IndicatorType.BAR_RIGHT:
+                                        text_size_modifier = 0.9f;
+                                        indicator_shrink = (0.015f * wh);
+                                        _renderTarget.DrawLine(new RawVector2(rectBB.Right - indicator_shrink - (indicator_width / 2f), rectBB.Top + indicator_shrink + (radius * 0.45f)), new RawVector2(rectBB.Right - indicator_shrink - (indicator_width / 2f), rectBB.Bottom - indicator_shrink - (radius * 0.45f)), getDXBrushForColour(indicator_colour), indicator_width);
+                                        indicator_adjust.Left = indicator_width;
+                                        indicator_adjust.Right = indicator_width + (indicator_shrink * 1.5f);
+                                        break;
+                                    case clsButtonBox.IndicatorType.BAR_TOP:
+                                        text_size_modifier = 0.9f;
+                                        indicator_shrink = (0.01f * wh);
+                                        _renderTarget.DrawLine(new RawVector2(rectBB.Left + (indicator_shrink * 2f) + (radius * 0.45f), rectBB.Top + indicator_shrink + (indicator_width / 2f)), new RawVector2(rectBB.Right - (indicator_shrink * 2f) - (radius * 0.45f), rectBB.Top + indicator_shrink + (indicator_width / 2f)), getDXBrushForColour(indicator_colour), indicator_width);
+                                        indicator_adjust.Top = indicator_width;
+                                        break;
+                                    case clsButtonBox.IndicatorType.BAR_BOTTOM:
+                                        text_size_modifier = 0.9f;
+                                        indicator_shrink = (0.01f * wh);
+                                        _renderTarget.DrawLine(new RawVector2(rectBB.Left + (indicator_shrink * 2f) + (radius * 0.45f), rectBB.Bottom - indicator_shrink - (indicator_width / 2f)), new RawVector2(rectBB.Right - (indicator_shrink * 2f) - (radius * 0.45f), rectBB.Bottom - indicator_shrink - (indicator_width / 2f)), getDXBrushForColour(indicator_colour), indicator_width);
+                                        indicator_adjust.Bottom = indicator_width;
+                                        break;
+                                    case clsButtonBox.IndicatorType.DOT_LEFT:
+                                        {
+                                            float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            text_size_modifier = 1f;
+                                            indicator_shrink = (0.01f * wh);
+                                            Ellipse dot = new Ellipse(new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Top + ((rectBB.Bottom - rectBB.Top) / 2f)), rad, rad);
+                                            _renderTarget.FillEllipse(dot, getDXBrushForColour(indicator_colour));
+                                            indicator_adjust.Left = (indicator_width * 1.1f) + (indicator_shrink * 1.5f);
+                                            indicator_adjust.Right = indicator_shrink + radius * 0.45f;
+                                        }
+                                        break;
+                                    case clsButtonBox.IndicatorType.DOT_RIGHT:
+                                        {
+                                            float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            text_size_modifier = 1f;
+                                            indicator_shrink = (0.01f * wh);
+                                            Ellipse dot = new Ellipse(new RawVector2(rectBB.Right - indicator_shrink - (indicator_width / 2f), rectBB.Top + ((rectBB.Bottom - rectBB.Top) / 2f)), rad, rad);
+                                            _renderTarget.FillEllipse(dot, getDXBrushForColour(indicator_colour));
+                                            indicator_adjust.Left = indicator_shrink + radius * 0.45f;
+                                            indicator_adjust.Right = (indicator_width * 1.1f) + (indicator_shrink * 1.5f);                                            
+                                        }
+                                        break;
+                                    case clsButtonBox.IndicatorType.DOT_TOP:
+                                        {
+                                            float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            text_size_modifier = 1f;
+                                            indicator_shrink = (0.01f * wh);
+                                            Ellipse dot = new Ellipse(new RawVector2(rectBB.Left + (rectBB.Right - rectBB.Left) / 2f, rectBB.Top + indicator_shrink + (indicator_width / 2f)), rad, rad);
+                                            _renderTarget.FillEllipse(dot, getDXBrushForColour(indicator_colour));
+                                            indicator_adjust.Top = (indicator_width * 0.8f) + (indicator_shrink * 1.5f);
+                                        }
+                                        break;
+                                    case clsButtonBox.IndicatorType.DOT_BOTTOM:
+                                        {
+                                            float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            text_size_modifier = 1f;
+                                            indicator_shrink = (0.01f * wh);
+                                            Ellipse dot = new Ellipse(new RawVector2(rectBB.Left + (rectBB.Right - rectBB.Left) / 2f, rectBB.Bottom - indicator_shrink - (indicator_width / 2f)), rad, rad);
+                                            _renderTarget.FillEllipse(dot, getDXBrushForColour(indicator_colour));
+                                            indicator_adjust.Bottom = (indicator_width * 0.8f) + (indicator_shrink * 1.5f);
+                                        }
+                                        break;
+                                    case clsButtonBox.IndicatorType.DOT_TOP_LEFT:
+                                        {
+                                            float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            text_size_modifier = 1f;
+                                            indicator_shrink = (0.01f * wh);
+                                            Ellipse dot = new Ellipse(new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Top + indicator_shrink + (indicator_width / 2f)), rad, rad);
+                                            _renderTarget.FillEllipse(dot, getDXBrushForColour(indicator_colour));
+                                            indicator_adjust.Left = indicator_width + (indicator_shrink * 1.25f);
+                                            indicator_adjust.Right = indicator_shrink + radius * 0.45f;
+                                        }
+                                        break;
+                                    case clsButtonBox.IndicatorType.DOT_BOTTOM_LEFT:
+                                        {
+                                            float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            text_size_modifier = 1f;
+                                            indicator_shrink = (0.01f * wh);
+                                            Ellipse dot = new Ellipse(new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Bottom - indicator_shrink - (indicator_width / 2f)), rad, rad);
+                                            _renderTarget.FillEllipse(dot, getDXBrushForColour(indicator_colour));
+                                            indicator_adjust.Left = indicator_width + (indicator_shrink * 1.25f);
+                                            indicator_adjust.Right = indicator_shrink + radius * 0.45f;
+                                        }
+                                        break;
+                                    case clsButtonBox.IndicatorType.DOT_TOP_RIGHT:
+                                        {
+                                            float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            text_size_modifier = 1f;
+                                            indicator_shrink = (0.01f * wh);
+                                            Ellipse dot = new Ellipse(new RawVector2(rectBB.Right - indicator_shrink - (indicator_width / 2f), rectBB.Top + indicator_shrink + (indicator_width / 2f)), rad, rad);
+                                            _renderTarget.FillEllipse(dot, getDXBrushForColour(indicator_colour));
+                                            indicator_adjust.Left = indicator_shrink + radius * 0.45f;
+                                            indicator_adjust.Right = indicator_width + (indicator_shrink * 1.25f);
+                                        }
+                                        break;
+                                    case clsButtonBox.IndicatorType.DOT_BOTTOM_RIGHT:
+                                        {
+                                            float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            text_size_modifier = 1f;
+                                            indicator_shrink = (0.01f * wh);
+                                            Ellipse dot = new Ellipse(new RawVector2(rectBB.Right - indicator_shrink - (indicator_width / 2f), rectBB.Bottom - indicator_shrink - (indicator_width / 2f)), rad, rad);
+                                            _renderTarget.FillEllipse(dot, getDXBrushForColour(indicator_colour));
+                                            indicator_adjust.Left = indicator_shrink + radius * 0.45f;
+                                            indicator_adjust.Right = indicator_width + (indicator_shrink * 1.25f);
+                                        }
+                                        break;
+                                    case clsButtonBox.IndicatorType.RING:
+                                    default:
+                                        text_size_modifier = 0.85f;
+                                        indicator_shrink = (0.02f * wh) + border + indicator_width;
+                                        rr.Rect = shrinkRectangle(rectBB, 1f, indicator_shrink);
+                                        drawRoundedRectangle(rr, getDXBrushForColour(indicator_colour), indicator_width);
+                                        indicator_adjust.Top = indicator_width;
+                                        indicator_adjust.Left = indicator_width;
+                                        indicator_adjust.Right = indicator_width;
+                                        indicator_adjust.Bottom = indicator_width;
+                                        break;
                                 }
                             }
                         }
@@ -19318,12 +20119,16 @@ namespace Thetis
                         string text = bb.GetText(1, button_index);
                         if (!string.IsNullOrEmpty(text))
                         {
-                            rectBB = shrinkRectangle(rectBB, 1f, border + (indicator_width * 2f));
+                            //rectBB = shrinkRectangle(rectBB, 1f, border + (indicator_width * 2f));
+                            rectBB.Top += indicator_adjust.Top;
+                            rectBB.Left += indicator_adjust.Left;
+                            rectBB.Right -= indicator_adjust.Right;
+                            rectBB.Bottom -= indicator_adjust.Bottom;
                             float cx = rectBB.Left + (rectBB.Width / 2f);
                             float cy = rectBB.Top + (rectBB.Height / 2f);
                             if (rectBB.Width > 0 && rectBB.Height > 0)
                             {
-                                plotText(bb.GetText(1, button_index), cx, cy, h, rect.Width, bb.GetFontSize(1, button_index), text_colour, 255, bb.GetFontFamily(1, button_index), bb.GetFontStyle(1, button_index), false, true, rectBB.Width * size_modifier, true, rectBB.Height * size_modifier);
+                                plotText(bb.GetText(1, button_index), cx, cy, h, rect.Width, bb.GetFontSize(1, button_index), text_colour, 255, bb.GetFontFamily(1, button_index), bb.GetFontStyle(1, button_index), false, true, rectBB.Width * text_size_modifier, true, rectBB.Height * text_size_modifier);
                             }
                         }
 

@@ -163,8 +163,8 @@ namespace Thetis
         private bool _bands_VHF_selected = false;
         private bool _bands_HF_selected = true;
         private bool _bands_GEN_selected = false;
-        private bool iscollapsed = false;
-        private bool isexpanded = true;
+        private bool _iscollapsed = false;
+        private bool _isexpanded = true;
 
         private RadioButtonTS[] vhf_text;
 
@@ -751,6 +751,8 @@ namespace Thetis
             Splash.SetStatus("Initializing Hardware");			// Set progress point
             InitCTCSS();
 
+            LegacyItemController.Init(this);
+
             //TODO !!!!!!!!!!!!!!
             bool RX2Enabled = false;
             if (File.Exists(DB.FileName))
@@ -798,6 +800,8 @@ namespace Thetis
             TimeOutTimerManager.Initialise(this);
 
             InitConsole();                                      // Initialize all forms and main variables  INIT_SLOW
+
+            LegacyItemController.Update();
 
             //[2.10.3.4]MW0LGE shutdown log remove
             removeShutdownLog();
@@ -1323,7 +1327,7 @@ namespace Thetis
             set
             {
                 TitleBarMultifunction = value;
-                if (iscollapsed)
+                if (_iscollapsed)
                     this.Text = getTitleWithFWVersion() + TitleBarMultifunction + "    " + TitleBarEncoder;
                 else
                     this.Text = getTitleWithFWVersion() + TitleBarMultifunction;
@@ -1335,7 +1339,7 @@ namespace Thetis
             set
             {
                 TitleBarEncoder = value;
-                if (iscollapsed)
+                if (_iscollapsed)
                     this.Text = getTitleWithFWVersion() + TitleBarMultifunction + "    " + TitleBarEncoder;
             }
         }
@@ -1362,7 +1366,7 @@ namespace Thetis
         private string m_sCustomTitle = "";
         public string BasicTitleBar {
             get {
-                if (iscollapsed) return this.Text = getTitleWithFWVersion() + TitleBarMultifunction;
+                if (_iscollapsed) return this.Text = getTitleWithFWVersion() + TitleBarMultifunction;
                 if (!m_sCustomTitle.Equals("")) return getTitleWithFWVersion() + "   --   " + m_sCustomTitle;
                 return getTitleWithFWVersion();
             }
@@ -2974,8 +2978,8 @@ namespace Thetis
             a.Add("panelBandHF.Visible/" + _bands_HF_selected);
             a.Add("panelBandVHF.Visible/" + _bands_VHF_selected);
             a.Add("panelBandGEN.Visible/" + _bands_GEN_selected);
-            a.Add("iscollapsed/" + iscollapsed);
-            a.Add("isexpanded/" + isexpanded);
+            a.Add("iscollapsed/" + _iscollapsed);
+            a.Add("isexpanded/" + _isexpanded);
             a.Add("diversity/" + diversity2);
 
             for (int i = (int)PreampMode.FIRST + 1; i < (int)PreampMode.LAST; i++)
@@ -3227,21 +3231,21 @@ namespace Thetis
                         }
                         break;  //added by w3sz
                     case "iscollapsed":  //added by w3sz
-                        iscollapsed = bool.Parse(val);    //added by w3sz
-                        if (iscollapsed)   //added by w3sz
+                        _iscollapsed = bool.Parse(val);    //added by w3sz
+                        if (_iscollapsed)   //added by w3sz
                         {
                             bNeedUpdate = true;
-                            iscollapsed = true;
-                            isexpanded = false;
+                            _iscollapsed = true;
+                            _isexpanded = false;
                         }
                         break; //added by w3sz
                     case "isexpanded":  //added by w3sz
-                        isexpanded = bool.Parse(val);    //added by w3sz
-                        if (isexpanded)   //added by w3sz
+                        _isexpanded = bool.Parse(val);    //added by w3sz
+                        if (_isexpanded)   //added by w3sz
                         {
                             bNeedUpdate = true;
-                            isexpanded = true;
-                            iscollapsed = false;
+                            _isexpanded = true;
+                            _iscollapsed = false;
                         }
                         break; //added by w3sz
                     case "diversity":
@@ -3276,7 +3280,7 @@ namespace Thetis
                         if (dpi <= 96)
                         {
                             int tmp = int.Parse(val);
-                            if (isexpanded) this.expandedSize.Width = tmp;
+                            if (_isexpanded) this.expandedSize.Width = tmp;
                             bNeedUpdate = true;
                             szConsoleSize.Width = tmp;
                         }
@@ -3285,7 +3289,7 @@ namespace Thetis
                         if (dpi <= 96)
                         {
                             int tmp = int.Parse(val);
-                            if (isexpanded) this.expandedSize.Height = tmp;
+                            if (_isexpanded) this.expandedSize.Height = tmp;
                             bNeedUpdate = true;
                             szConsoleSize.Height = tmp;
                         }
@@ -4281,7 +4285,7 @@ namespace Thetis
                 this.Size = szConsoleSize;
                 this.Location = pConsoleLocation;
 
-                if (iscollapsed)
+                if (_iscollapsed)
                 {
                     this.CollapseDisplay(false);
                 }
@@ -7112,7 +7116,7 @@ namespace Thetis
             m_nHighOutRX2 = high;
         }
 
-        public void UpdateRX1FilterNames(Filter f)
+        public void UpdateRX1FilterNames(Filter f, string old_name, string new_name)
         {
             switch (f)
             {
@@ -7156,6 +7160,8 @@ namespace Thetis
 
             if (f == rx1_filter)
                 panelFilter.Text = "Filter - " + rx1_filters[(int)rx1_dsp_mode].GetName(f);
+
+            if (old_name != new_name) FilterNameChangedHandlers?.Invoke(1, f, old_name, new_name);
         }
 
         public void UpdateRX1FilterPresetLow(int val)
@@ -7168,7 +7174,7 @@ namespace Thetis
             UpdateRX1Filters((int)udFilterLow.Value, val);
         }
 
-        public void UpdateRX2FilterNames(Filter f)
+        public void UpdateRX2FilterNames(Filter f, string old_name, string new_name)
         {
             switch (f)
             {
@@ -7203,6 +7209,8 @@ namespace Thetis
 
             if (f == rx2_filter)
                 panelRX2Filter.Text = "RX2 Filter - " + rx2_filters[(int)rx2_dsp_mode].GetName(f);
+
+            if (old_name != new_name) FilterNameChangedHandlers?.Invoke(2, f, old_name, new_name);
         }
 
         public void UpdateRX2FilterPresetLow(int val)
@@ -28968,7 +28976,7 @@ namespace Thetis
                 comboRX2Preamp.BringToFront();
 
             //update the nud and combos, for attenuators, both rx and tx
-            bool bShowOnMox = _mox && (isexpanded || (iscollapsed && !(showAndromedaTopControls || showAndromedaButtonBar)));
+            bool bShowOnMox = _mox && (_isexpanded || (_iscollapsed && !(showAndromedaTopControls || showAndromedaButtonBar)));
             if (bShowOnMox)
             {
                 if (VFOATX || (VFOBTX && !rx2_enabled))
@@ -29039,7 +29047,7 @@ namespace Thetis
                 lblRX2Preamp.Text = rx2_step_att_present ? "S-ATT" : (rx2_preamp_present ? "ATT" : "");
             }
 
-            if (iscollapsed && !isexpanded)
+            if (_iscollapsed && !_isexpanded)
             {
                 //MW0LGE we need to move the meters to top, because in collasped mode the bring to fronts above
                 //will cause the combo to be above everything, including meters.
@@ -29959,6 +29967,44 @@ namespace Thetis
             if (modePopupForm != null) modePopupForm.RepopulateForm();
             if (filterPopupForm != null) filterPopupForm.RepopulateForm();
         }
+        public void BandPanelVisible()
+        {
+            setBandPanelVisible(_bands_GEN_selected, _bands_HF_selected, _bands_VHF_selected);
+        }
+        public void ModePanelVisible(bool visible)
+        {
+            panelMode.Visible = visible;
+        }
+        public void FilterPanelVisible(bool visible)
+        {
+            // at the moment, can only hide controls, as have not implemented the sliders in the meter control
+            radFilter1.Visible = visible;
+            radFilter2.Visible = visible;
+            radFilter3.Visible = visible;
+            radFilter4.Visible = visible;
+            radFilter5.Visible = visible;
+            radFilter6.Visible = visible;
+            radFilter7.Visible = visible;
+            radFilter8.Visible = visible;
+            radFilter9.Visible = visible;
+            radFilter10.Visible = visible;
+            radFilterVar1.Visible = visible;
+            radFilterVar2.Visible = visible;
+        }
+        public void ExtendPanelDisplaySize(bool expand)
+        {
+            if(IsCollapsedView && !IsExpandedView) // to be sure to be sure
+            {
+                //do nothing
+            }
+            else if (IsExpandedView && !IsCollapsedView)
+            {                
+                if(expand)
+                    panelDisplay.Size = new Size(this.ClientSize.Width - gr_display_basis.X - 8, gr_display_size_basis.Height + v_delta);
+                else
+                    panelDisplay.Size = new Size(gr_display_size_basis.Width + h_delta, gr_display_size_basis.Height + v_delta);
+            }
+        }
         private void setBandPanelVisible(bool gen, bool hf, bool vhf)
         {
             //[2.10.3.6]MW0LGE reimplemented all this including repopulateForms
@@ -29980,9 +30026,9 @@ namespace Thetis
             }
             //
 
-            panelBandGEN.Visible = gen;
-            panelBandHF.Visible = hf;
-            panelBandVHF.Visible = vhf;
+            panelBandGEN.Visible = gen && !LegacyItemController.HideBands;
+            panelBandHF.Visible = hf && !LegacyItemController.HideBands;
+            panelBandVHF.Visible = vhf && !LegacyItemController.HideBands;
 
             bool old_gen = _bands_GEN_selected;
             bool old_hf = _bands_HF_selected;
@@ -37045,16 +37091,16 @@ namespace Thetis
         }
 
         //-W2PA Remember the width when the Width slider last hit the image limit.  Used by ptbFilterWidth_Scroll.
-        private int var1WdithAtLimit = 0;
+        private int _var1WidthAtLimit = 0;
         private int Var1WidthAtLimit
         {
             get
             {
-                return var1WdithAtLimit;
+                return _var1WidthAtLimit;
             }
             set
             {
-                var1WdithAtLimit = value;
+                _var1WidthAtLimit = value;
             }
         }
 
@@ -38682,7 +38728,11 @@ namespace Thetis
                     picMultiMeterDigital.Size = new Size(grpMultimeter.Size.Width - (gr_multi_meter_size_basis.Width - pic_multi_meter_size_basis.Width), pic_multi_meter_size_basis.Height);
                     //
 
-                    panelDisplay.Size = new Size(gr_display_size_basis.Width + h_delta, gr_display_size_basis.Height + v_delta);
+                    //panelDisplay.Size = new Size(gr_display_size_basis.Width + h_delta, gr_display_size_basis.Height + v_delta);
+                    if (LegacyItemController.ExpandSpectrumToRight)
+                        panelDisplay.Size = new Size(this.ClientSize.Width - gr_display_basis.X - 8, gr_display_size_basis.Height + v_delta);
+                    else
+                        panelDisplay.Size = new Size(gr_display_size_basis.Width + h_delta, gr_display_size_basis.Height + v_delta);
 
                     panelDisplay2.Location = new Point(gr_display2_basis.X + (h_delta / 2), gr_display2_basis.Y + v_delta);
                     panelDSP.Location = new Point(gr_dsp_basis.X + (h_delta / 2), gr_dsp_basis.Y + v_delta);
@@ -42856,7 +42906,11 @@ namespace Thetis
             comboRX2DisplayMode.Show();
 
             panelDisplay.Location = gr_display_basis;
-            panelDisplay.Size = new Size(gr_display_size_basis.Width + h_delta, gr_display_size_basis.Height + v_delta);
+
+            if (LegacyItemController.ExpandSpectrumToRight)
+                panelDisplay.Size = new Size(this.ClientSize.Width - gr_display_basis.X - 8, gr_display_size_basis.Height + v_delta);
+            else
+                panelDisplay.Size = new Size(gr_display_size_basis.Width + h_delta, gr_display_size_basis.Height + v_delta);
 
             panelDisplay2.Location = new Point(gr_display2_basis.X + (h_delta / 2), gr_display2_basis.Y + v_delta);
             panelDSP.Location = new Point(gr_dsp_basis.X + (h_delta / 2), gr_dsp_basis.Y + v_delta);
@@ -42978,8 +43032,8 @@ namespace Thetis
                 _modeDependentSettingsFormAutoClosedWhenExpanded = false;
             //
 
-            isexpanded = true;
-            iscollapsed = false;
+            _isexpanded = true;
+            _iscollapsed = false;
 
             updateAttNudsCombos(); //[2.10.3.6]MW0LGE
 
@@ -42987,6 +43041,8 @@ namespace Thetis
 
             SelectModeDependentPanel(); //MW0LGE [2.9.0.7] moved here
             setPAProfileLabelPos(); //[2.10.1.0] MW0LGE
+
+            LegacyItemController.Update();
 
             if (bSuspendDraw) ResumeDrawing(this);
 
@@ -42997,13 +43053,13 @@ namespace Thetis
             int x = -1;
             int y = -1;
 
-            if (!iscollapsed && isexpanded)
+            if (!_iscollapsed && _isexpanded)
             {
                 // use panelModeSpecificPhone even though might not be shown, it is still repositioned
                 x = panelModeSpecificPhone.Left + 4;
                 y = panelModeSpecificPhone.Bottom - lblPAProfile.Height - 6;
             }
-            else if (iscollapsed && !isexpanded)
+            else if (_iscollapsed && !_isexpanded)
             {
                 if (showAndromedaTopControls || m_bShowTopControls)
                 {
@@ -43042,6 +43098,8 @@ namespace Thetis
         //
         public void CollapseDisplay(bool bSuspendDraw = true)
         {
+            LegacyItemController.Update();
+
             if (bSuspendDraw) SuspendDrawing(this);
 
             // Save expanded display size
@@ -43529,8 +43587,8 @@ namespace Thetis
 
             RepositionControlsForCollapsedlDisplay();
 
-            iscollapsed = true;
-            isexpanded = false;
+            _iscollapsed = true;
+            _isexpanded = false;
 
             SelectModeDependentPanel(); //MW0LGE [2.9.0.7] moved here
             setPAProfileLabelPos(); //[2.10.1.0] MW0LGE
@@ -45326,7 +45384,7 @@ namespace Thetis
             set {
                 m_bShowSmallModeFilterOnVFOs = value;
 
-                if (isexpanded)
+                if (_isexpanded)
                 {
                     if (m_bShowSmallModeFilterOnVFOs)
                     {
@@ -46370,6 +46428,7 @@ namespace Thetis
 
         public delegate void BandPanelChanged(int rx, bool gen, bool hf, bool vhf);
         public delegate void VHFChanged(int idx, bool old_state, bool new_state, string old_text, string new_text);
+        public delegate void FilterNameChanged(int rx, Filter f, string old_name, string new_name);
 
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
@@ -46430,6 +46489,7 @@ namespace Thetis
 
         public BandPanelChanged BandPanelChangeHandlers;
         public VHFChanged VHFChangedHandlers;
+        public FilterNameChanged FilterNameChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
@@ -48874,6 +48934,14 @@ namespace Thetis
             if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.PA_Tab);
         }
 
+        public bool IsExpandedView
+        {
+            get { return _isexpanded; }
+        }
+        public bool IsCollapsedView
+        {
+            get { return _iscollapsed; }
+        }
         private bool _useLegacyMeters = true;
         public bool UseLegacyMeters
         {
@@ -48888,7 +48956,9 @@ namespace Thetis
                     setupLegacyMeterThreads(2);
                 }
 
-                updateLegacyMeterControls(isexpanded && !iscollapsed);
+                updateLegacyMeterControls(_isexpanded && !_iscollapsed);
+
+                LegacyItemController.HideMeters = !_useLegacyMeters;
             }
         }
         private void updateLegacyMeterControls(bool expanded)

@@ -699,17 +699,18 @@ namespace Thetis
 
 		private void txtName_LostFocus(object sender, System.EventArgs e)
 		{
-			preset[(int)dsp_mode].SetName(current_filter, txtName.Text);
+			string old_name = preset[(int)dsp_mode].GetName(current_filter);
+            preset[(int)dsp_mode].SetName(current_filter, txtName.Text);
 			GetFilterInfo();
 			if(!rx2)
 			{
 				if(console.RX1DSPMode == dsp_mode)
-					console.UpdateRX1FilterNames(current_filter);
+					console.UpdateRX1FilterNames(current_filter, old_name, txtName.Text);
 			}
 			else
 			{
 				if(console.RX2DSPMode == dsp_mode)
-					console.UpdateRX2FilterNames(current_filter);
+					console.UpdateRX2FilterNames(current_filter, old_name, txtName.Text);
 			}
 
 			switch(current_filter)
