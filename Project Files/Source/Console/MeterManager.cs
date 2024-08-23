@@ -4912,13 +4912,13 @@ namespace Thetis
                                 _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false);
                                 return;
                             }
-                            if (index > 13) return;
+                            if (index > 13 || !base.GetEnabled(1, index)) return;
                             b = (Band)((int)Band.VHF0 + index);
                             break;
                         }
                 }
 
-                if (e.Button == MouseButtons.Right)
+                if (e.Button == MouseButtons.Right && base.GetEnabled(1, index))
                 {
                     if (_console != null)
                     {
