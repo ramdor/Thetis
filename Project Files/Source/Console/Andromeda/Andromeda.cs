@@ -3940,7 +3940,7 @@ namespace Thetis
             // MW0LGE [2.10.1.0]
             bool bHaveModeDependentForm = modeDependentSettingsForm != null && !modeDependentSettingsForm.IsDisposed;
 
-            if (iscollapsed && !isexpanded)
+            if (_iscollapsed && !_isexpanded)
             {
                 // MW0LGE [2.9.0.7] in collapsed view, hide them all
                 //https://github.com/ramdor/Thetis-2.9.0/issues/90
