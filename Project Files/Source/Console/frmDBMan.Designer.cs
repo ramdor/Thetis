@@ -45,10 +45,12 @@
             this.colVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colFolder = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lstBackups = new System.Windows.Forms.ListView();
+            this.colDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colTimeDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colBackupAge = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colBackupFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnRenameBackup = new System.Windows.Forms.ButtonTS();
             this.btnImport_to_available_list = new System.Windows.Forms.ButtonTS();
             this.btnOpenFolder = new System.Windows.Forms.ButtonTS();
             this.btnExportBackup = new System.Windows.Forms.ButtonTS();
@@ -147,6 +149,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lstBackups.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colDescription,
             this.colTimeDate,
             this.colBackupAge,
             this.colBackupFilename});
@@ -164,6 +167,11 @@
             this.lstBackups.View = System.Windows.Forms.View.Details;
             this.lstBackups.SelectedIndexChanged += new System.EventHandler(this.lstBackups_SelectedIndexChanged);
             // 
+            // colDescription
+            // 
+            this.colDescription.Text = "Description";
+            this.colDescription.Width = 90;
+            // 
             // colTimeDate
             // 
             this.colTimeDate.Text = "TimeDate";
@@ -175,6 +183,19 @@
             // colBackupFilename
             // 
             this.colBackupFilename.Text = "Filename";
+            // 
+            // btnRenameBackup
+            // 
+            this.btnRenameBackup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRenameBackup.Image = global::Thetis.Properties.Resources.Data_Edit_32;
+            this.btnRenameBackup.Location = new System.Drawing.Point(542, 478);
+            this.btnRenameBackup.Name = "btnRenameBackup";
+            this.btnRenameBackup.Selectable = true;
+            this.btnRenameBackup.Size = new System.Drawing.Size(42, 42);
+            this.btnRenameBackup.TabIndex = 30;
+            this.toolTip1.SetToolTip(this.btnRenameBackup, "Change description for the selected database backup");
+            this.btnRenameBackup.UseVisualStyleBackColor = true;
+            this.btnRenameBackup.Click += new System.EventHandler(this.btnRenameBackup_Click);
             // 
             // btnImport_to_available_list
             // 
@@ -297,7 +318,7 @@
             // 
             this.btnRemoveBackup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRemoveBackup.Image = global::Thetis.Properties.Resources.Data_Delete_32;
-            this.btnRemoveBackup.Location = new System.Drawing.Point(542, 478);
+            this.btnRemoveBackup.Location = new System.Drawing.Point(542, 526);
             this.btnRemoveBackup.Name = "btnRemoveBackup";
             this.btnRemoveBackup.Selectable = true;
             this.btnRemoveBackup.Size = new System.Drawing.Size(42, 42);
@@ -419,6 +440,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(704, 601);
+            this.Controls.Add(this.btnRenameBackup);
             this.Controls.Add(this.labelTS4);
             this.Controls.Add(this.labelTS3);
             this.Controls.Add(this.btnImport_to_available_list);
@@ -446,6 +468,7 @@
             this.MinimumSize = new System.Drawing.Size(720, 640);
             this.Name = "frmDBMan";
             this.Text = "Database Manager";
+            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmDBMan_FormClosing);
             this.Shown += new System.EventHandler(this.frmDBMan_Shown);
             this.ResumeLayout(false);
@@ -489,5 +512,7 @@
         private System.Windows.Forms.ButtonTS btnImport_to_available_list;
         private System.Windows.Forms.LabelTS labelTS3;
         private System.Windows.Forms.LabelTS labelTS4;
+        private System.Windows.Forms.ColumnHeader colDescription;
+        private System.Windows.Forms.ButtonTS btnRenameBackup;
     }
 }

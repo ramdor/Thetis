@@ -35,6 +35,7 @@ using System.Windows.Forms;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Diagnostics;
 
 namespace Thetis
 {
@@ -10275,9 +10276,9 @@ namespace Thetis
         {
             //[2.10.3.6]MW0LGE modified for new DB manager system
 
-            //oldDB is the db that is being imported
-            //existingDB is the db that is currently in use / loaded
-            //mergedDB is the db that is built up from the existingDB and the oldDB
+            //being_importedDB is the db that is being imported
+            //current_inuseDB is the db that is currently in use / loaded
+            //newDB is the db that is built up from the combination of current_inuseDB and the being_importedDB
 
             _merged = false;
             string versionnumber = "";
@@ -10286,13 +10287,13 @@ namespace Thetis
             if (!File.Exists(filename)) return false;
 
             // Make a copy of the existing DB
-            DataSet existingDB = ds.Copy();
+            DataSet current_inuseDB = ds.Copy();
 
             // Read in DB to be imported and merged 
-            DataSet oldDB = new DataSet();
+            DataSet being_importedDB = new DataSet();
             try
             {
-                oldDB.ReadXml(filename);
+                being_importedDB.ReadXml(filename);
             }
             catch (Exception)
             {
@@ -10301,14 +10302,14 @@ namespace Thetis
             log += "Read <" + filename + ">\n\n";
 
             // Check that imported DB has basic validity
-            string validationProblems = ValidateImportedDatabase(oldDB);
+            string validationProblems = ValidateImportedDatabase(being_importedDB);
             if (validationProblems != "")
             {
                 log += validationProblems;
                 return false;
             }
 
-            DataSet mergedDB = ds.Clone(); // Adopt the new DB schema
+            DataSet newDB = ds.Clone(); // Adopt the new DB schema
 
             List<string> foundNotches = new List<string>();
 
@@ -10317,19 +10318,19 @@ namespace Thetis
             bool bOldDBhasMultiMeterSettings = false;
             bool bOldDBhasPAProfiles = false;
 
-            if (oldDB.Tables.Contains("Options"))
+            if (being_importedDB.Tables.Contains("Options"))
             {
-                DataRow[] rows = oldDB.Tables["Options"].Select("Key like '" + "meterContData_*" + "'");
+                DataRow[] rows = being_importedDB.Tables["Options"].Select("Key like '" + "meterContData_*" + "'");
                 bOldDBhasMultiMeterSettings = (rows != null && rows.Length > 0);
 
-                rows = oldDB.Tables["Options"].Select("Key like '" + "PAProfile*" + "'");
+                rows = being_importedDB.Tables["Options"].Select("Key like '" + "PAProfile*" + "'");
                 bOldDBhasPAProfiles = (rows != null && rows.Length > 0);
             }
 
             // deal with version number from db being imported
-            if (oldDB.Tables.Contains("State"))
+            if (being_importedDB.Tables.Contains("State"))
             {
-                foreach (DataRow rw in oldDB.Tables["State"].Rows)
+                foreach (DataRow rw in being_importedDB.Tables["State"].Rows)
                 {
                     string thisKey = Convert.ToString(rw["Key"]);
                     if (thisKey == "VersionNumber")
@@ -10341,22 +10342,22 @@ namespace Thetis
             }
 
             // merge any table from the oldDB (being imported) that do not exist in the merged
-            foreach (DataTable oldTable in oldDB.Tables)
+            foreach (DataTable oldTable in being_importedDB.Tables)
             {
-                if (!existingDB.Tables.Contains(oldTable.TableName))
+                if (!current_inuseDB.Tables.Contains(oldTable.TableName))
                 {
-                    mergedDB.Merge(oldTable);
+                    newDB.Merge(oldTable);
                 }
             }
 
-            foreach (DataTable existingDB_table in existingDB.Tables)
+            foreach (DataTable current_inuseDB_table in current_inuseDB.Tables)
             {
-                DataTableCollection oldDBtables = oldDB.Tables;
+                DataTableCollection oldDBtables = being_importedDB.Tables;
                 bool foundTable = false;
-                DataTable tempMergedTable = existingDB_table.Clone();
-                DataTable tempTable = existingDB_table.Clone();
-
-                switch (existingDB_table.TableName)
+                DataTable tempMergedTable = current_inuseDB_table.Clone();
+                DataTable tempTable = current_inuseDB_table.Clone();
+               
+                switch (current_inuseDB_table.TableName)
                 {
                     //------Uncomment this section to allow importing BandText rows from old db, and also comment out duplicate case below
                     //case "BandText":
@@ -10398,9 +10399,9 @@ namespace Thetis
                     case "BandStack2FilterBands":
                     //case "BandStack2HiddenEntries": // not used yet
                         tempMergedTable.Clear();
-                        foreach (DataTable t in oldDB.Tables)
+                        foreach (DataTable t in being_importedDB.Tables)
                         {
-                            if (t.TableName == existingDB_table.TableName)
+                            if (t.TableName == current_inuseDB_table.TableName)
                             {
                                 tempTable = t.Copy();
                                 foundTable = true;
@@ -10410,8 +10411,8 @@ namespace Thetis
                         if (!foundTable)
                         {
                             // No corresponding table found in old database - must be new, so retain it as-is
-                            mergedDB.Merge(existingDB_table);
-                            log += "New table not found in imported database: " + existingDB_table.TableName + "\n";
+                            newDB.Merge(current_inuseDB_table);
+                            log += "New table not found in imported database: " + current_inuseDB_table.TableName + "\n";
                             break;
                         }
                         else
@@ -10426,10 +10427,10 @@ namespace Thetis
 
                             //import any from old band stack system into bandstack2entries if coming from older db and we havent added them into the merged table already
                             //if ((String.Compare(_versionnumber, "2.8.12") < 0) && table.TableName == "BandStack2Entries")
-                            if ((Common.CompareVersions(versionnumber, "2.8.12") < 0) && existingDB_table.TableName == "BandStack2Entries")
+                            if ((Common.CompareVersions(versionnumber, "2.8.12") < 0) && current_inuseDB_table.TableName == "BandStack2Entries")
                             {
                                 foundTable = false;
-                                foreach (DataTable t in oldDB.Tables)
+                                foreach (DataTable t in being_importedDB.Tables)
                                 {
                                     if (t.TableName == "BandStack")
                                     {
@@ -10488,8 +10489,8 @@ namespace Thetis
                                 }
                             }
 
-                            mergedDB.Merge(tempMergedTable);
-                            log += "Imported table <" + existingDB_table.TableName + "> into database.\n";
+                            newDB.Merge(tempMergedTable);
+                            log += "Imported table <" + current_inuseDB_table.TableName + "> into database.\n";
                         }
 
                         break;
@@ -10497,17 +10498,17 @@ namespace Thetis
                     case "BandText":
                     case "GroupList":
                     case "Memory":
-                        mergedDB.Merge(existingDB_table); // don't overwrite current tables for these cases
-                        log += "Did not import table <" + existingDB_table.TableName + "> into database.\n";
+                        newDB.Merge(current_inuseDB_table); // don't overwrite current tables for these cases
+                        log += "Did not import table <" + current_inuseDB_table.TableName + "> into database.\n";
                         break;
 
                     case "TXProfile":
                         // Get table of same name in oldDB   
-                        DataTable tempOldTable = oldDB.Tables["TXProfile"].Clone();
+                        DataTable tempOldTable = being_importedDB.Tables["TXProfile"].Clone();
                         tempMergedTable.Clear();
-                        foreach (DataTable t in oldDB.Tables)
+                        foreach (DataTable t in being_importedDB.Tables)
                         {
-                            if (t.TableName == existingDB_table.TableName)
+                            if (t.TableName == current_inuseDB_table.TableName)
                             {
                                 tempOldTable = t.Copy();
                                 foundTable = true;
@@ -10520,11 +10521,11 @@ namespace Thetis
                         //tempMergedTable.Merge(tempTable,false,MissingSchemaAction.Add);
                         DataTable tT = ExpandOldTxProfileTable(tempOldTable);
                         if (tT != null) tempMergedTable.Merge(tT);
-                        else { tempMergedTable.Merge(existingDB_table); break; } // No default model exists so reject the old TXProfiles
+                        else { tempMergedTable.Merge(current_inuseDB_table); break; } // No default model exists so reject the old TXProfiles
 
                         // For each row of existingDB, if there is matching key in oldDB, 
                         // keep that entry, else import new existing one into tempMergedTable.
-                        foreach (DataRow row in existingDB_table.Rows)
+                        foreach (DataRow row in current_inuseDB_table.Rows)
                         {
                             string selector = "Name = '" + row["Name"] + "'";
                             DataRow[] foundRow = tempMergedTable.Select(selector);
@@ -10532,13 +10533,13 @@ namespace Thetis
                         }
 
                         // Copy tempTable into mergedDB 
-                        mergedDB.Merge(tempMergedTable);
-                        log += "Imported table <" + existingDB_table.TableName + "> into database.\n";
+                        newDB.Merge(tempMergedTable);
+                        log += "Imported table <" + current_inuseDB_table.TableName + "> into database.\n";
                         break;
 
                     case "TXProfileDef":
-                        mergedDB.Merge(existingDB_table); // don't overwrite current table of defaults
-                        log += "Did not import table <" + existingDB_table.TableName + "> into database.\n";
+                        newDB.Merge(current_inuseDB_table); // don't overwrite current table of defaults
+                        log += "Did not import table <" + current_inuseDB_table.TableName + "> into database.\n";
                         break;
 
                     // These tables all have Key/Value pairs so can all be processed the same way
@@ -10550,12 +10551,14 @@ namespace Thetis
                     case "AmpView":
                     case "PureSignal":
                     case "BandStack2Form":
+                    case "DBManForm":
+                    case string mds when mds.StartsWith("MeterDisplay_"):
                         // Get table of same name in oldDB     
                         tempTable.Clear();
                         tempMergedTable.Clear();
-                        foreach (DataTable t in oldDB.Tables)
+                        foreach (DataTable t in being_importedDB.Tables)
                         {
-                            if (t.TableName == existingDB_table.TableName)
+                            if (t.TableName == current_inuseDB_table.TableName)
                             {
                                 tempTable = t.Copy();
                                 foundTable = true;
@@ -10566,15 +10569,15 @@ namespace Thetis
                         if (!foundTable)
                         {
                             // No corresponding table found in old database - must be new, so retain it as-is
-                            mergedDB.Merge(existingDB_table);
-                            log += "New table not found in imported database: " + existingDB_table.TableName + "\n";
+                            newDB.Merge(current_inuseDB_table);
+                            log += "New table not found in imported database: " + current_inuseDB_table.TableName + "\n";
                             break;
                         }
 
                         // For each row of existingDB table, if there is matching key in corresponding oldDB table, 
                         // copy that entry, else take the existing one, into tempMergedTable.                        
 
-                        foreach (DataRow row in existingDB_table.Rows)
+                        foreach (DataRow row in current_inuseDB_table.Rows)
                         {
                             string thisKey = Convert.ToString(row["Key"]);
 
@@ -10644,7 +10647,7 @@ namespace Thetis
                                 thisKey.StartsWith("meterContData_") ||
                                 thisKey.StartsWith("meterData_") ||
                                 thisKey.StartsWith("meterIGData_") ||
-                                thisKey.StartsWith("meterIGSettings_")))
+                                thisKey.StartsWith("meterIGSettings_"))) // this will cover meterIGSettings_2_ which is now used
                             {
                                 // add these in, as they are the ones in the existingDB, need to add the ones from the oldDB
                                 // below if not already in tempMergedTable
@@ -10739,9 +10742,9 @@ namespace Thetis
                         }
 
                         //[2.10.3]MW0LGE merge from old, any notches, fixes #236
-                        if (tempTable.TableName == "State" && oldDB.Tables.Contains("State"))
+                        if (tempTable.TableName == "State" && being_importedDB.Tables.Contains("State"))
                         {
-                            DataTable stateTable = oldDB.Tables["State"];
+                            DataTable stateTable = being_importedDB.Tables["State"];
                             DataRow[] rows = stateTable.Select("Key like '" + "mnotchdb*" + "'");
                             if (rows != null)
                             {
@@ -10787,13 +10790,13 @@ namespace Thetis
                         //
 
                         // Merge in the assembled temp table into mergedDB 
-                        mergedDB.Merge(tempMergedTable);
-                        log += "Imported table <" + existingDB_table.TableName + "> into database.\n";
+                        newDB.Merge(tempMergedTable);
+                        log += "Imported table <" + current_inuseDB_table.TableName + "> into database.\n";
                         break;
 
                     default:
                         // Unrecognized table
-                        log += "Unrecognized table: " + existingDB_table.TableName + "\n";
+                        log += "Unrecognized table: " + current_inuseDB_table.TableName + "\n";
                         break;
                 }
             }
@@ -10801,19 +10804,19 @@ namespace Thetis
             if (bOldDBhasMultiMeterSettings)
             {
                 //merge forms pos from oldDB, only if not in mergedDB as tempMergedTable has already been merged
-                foreach (DataTable oldTable in oldDB.Tables)
+                foreach (DataTable oldTable in being_importedDB.Tables)
                 {
                     if (oldTable.TableName.StartsWith("MeterDisplay_"))
                     {
-                        if (!mergedDB.Tables.Contains(oldTable.TableName))
-                            mergedDB.Merge(oldTable);
+                        if (!newDB.Tables.Contains(oldTable.TableName))
+                            newDB.Merge(oldTable);
                     }
                 }
             }
 
             // If we've gotten this far, activate the newly merged DB
             if (!ignore_merged) _merged = true;
-            ds = mergedDB.Copy();
+            ds = newDB.Copy();
 
             log += "\nImport succeeded.\n";
 

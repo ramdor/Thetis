@@ -3058,7 +3058,6 @@
             this.clrbtnPeakText = new Thetis.ColorButton();
             this.lblPeakText = new System.Windows.Forms.LabelTS();
             this.tpAppearanceMeter = new System.Windows.Forms.TabPage();
-            this.chkLegacyMeters = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS14 = new System.Windows.Forms.GroupBoxTS();
             this.tbSignalHistoryAlpha = new System.Windows.Forms.TrackBarTS();
             this.clrbtnSignalHistoryColour = new Thetis.ColorButton();
@@ -3088,6 +3087,7 @@
             this.comboMeterType = new System.Windows.Forms.ComboBoxTS();
             this.tpAppearanceMeter2 = new System.Windows.Forms.TabPage();
             this.grpMultiMeterHolder = new System.Windows.Forms.GroupBoxTS();
+            this.chkMultiMeter_auto_container_height = new System.Windows.Forms.CheckBoxTS();
             this.chkContainerMinimises = new System.Windows.Forms.CheckBoxTS();
             this.lblMMContainerNotes = new System.Windows.Forms.LabelTS();
             this.txtContainerNotes = new System.Windows.Forms.TextBoxTS();
@@ -3229,6 +3229,13 @@
             this.lblSkinVersion = new System.Windows.Forms.LabelTS();
             this.panelGetServerList = new System.Windows.Forms.PanelTS();
             this.lblSkinServersInfo = new System.Windows.Forms.LabelTS();
+            this.tpLegacyItems = new System.Windows.Forms.TabPage();
+            this.groupBoxTS44 = new System.Windows.Forms.GroupBoxTS();
+            this.chkLegacyItems_expand_spectral = new System.Windows.Forms.CheckBoxTS();
+            this.chkLegacyItems_filter = new System.Windows.Forms.CheckBoxTS();
+            this.chkLegacyItems_mode = new System.Windows.Forms.CheckBoxTS();
+            this.chkLegacyItems_band = new System.Windows.Forms.CheckBoxTS();
+            this.chkLegacyMeters = new System.Windows.Forms.CheckBoxTS();
             this.tpKeyboard = new System.Windows.Forms.TabPage();
             this.grpKBPTT = new System.Windows.Forms.GroupBoxTS();
             this.labelTS389 = new System.Windows.Forms.LabelTS();
@@ -3694,6 +3701,20 @@
             this.nudMeterItemRotator_padding = new System.Windows.Forms.NumericUpDownTS();
             this.txtMeterItemRotatorSTOPcommand = new System.Windows.Forms.TextBoxTS();
             this.chkWebImage_bypass_cache = new System.Windows.Forms.CheckBoxTS();
+            this.nudBandButtons_columns = new System.Windows.Forms.NumericUpDownTS();
+            this.clrbtnBandButtons_indicator_on = new Thetis.ColorButton();
+            this.nudBandButtons_border = new System.Windows.Forms.NumericUpDownTS();
+            this.nudBandButtons_margin = new System.Windows.Forms.NumericUpDownTS();
+            this.nudBandButtons_radius = new System.Windows.Forms.NumericUpDownTS();
+            this.nudBandButtons_height_ratio = new System.Windows.Forms.NumericUpDownTS();
+            this.nudBandButtons_indicator_border = new System.Windows.Forms.NumericUpDownTS();
+            this.chkBandButtons_use_indicator = new System.Windows.Forms.CheckBoxTS();
+            this.clrbtnBandButtons_indicator_off = new Thetis.ColorButton();
+            this.clrbtnBandButtons_border = new Thetis.ColorButton();
+            this.clrbtnBandButtons_fill = new Thetis.ColorButton();
+            this.clrbtnBandButtons_hover = new Thetis.ColorButton();
+            this.nudBandButtons_indicator_style = new System.Windows.Forms.NumericUpDownTS();
+            this.nudMeterItemRotatorBeamWidth_alpha = new System.Windows.Forms.NumericUpDownTS();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -3781,6 +3802,8 @@
             this.labelTS217 = new System.Windows.Forms.LabelTS();
             this.labelTS215 = new System.Windows.Forms.LabelTS();
             this.grpMeterItemRotator = new System.Windows.Forms.GroupBoxTS();
+            this.lblMeterItemRotatorBeamWidth_alpha = new System.Windows.Forms.LabelTS();
+            this.lblMeterItemRotatorBeamWidth_degrees = new System.Windows.Forms.LabelTS();
             this.labelTS237 = new System.Windows.Forms.LabelTS();
             this.lblRotator_4charID = new System.Windows.Forms.LabelTS();
             this.lblMeterItemRotatorELEcommand = new System.Windows.Forms.LabelTS();
@@ -3843,7 +3866,23 @@
             this.labelTS235 = new System.Windows.Forms.LabelTS();
             this.chkWebImage_fade_tx = new System.Windows.Forms.CheckBoxTS();
             this.chkWebImage_fade_rx = new System.Windows.Forms.CheckBoxTS();
-            this.chkMultiMeter_auto_container_height = new System.Windows.Forms.CheckBoxTS();
+            this.grpBandButtons = new System.Windows.Forms.GroupBoxTS();
+            this.lblBandButtons_indicator_style = new System.Windows.Forms.LabelTS();
+            this.chkBandButtons_band_inactive_use = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS246 = new System.Windows.Forms.LabelTS();
+            this.labelTS245 = new System.Windows.Forms.LabelTS();
+            this.labelTS244 = new System.Windows.Forms.LabelTS();
+            this.labelTS243 = new System.Windows.Forms.LabelTS();
+            this.labelTS242 = new System.Windows.Forms.LabelTS();
+            this.lblBandButtons_indicator_border = new System.Windows.Forms.LabelTS();
+            this.labelTS241 = new System.Windows.Forms.LabelTS();
+            this.labelTS240 = new System.Windows.Forms.LabelTS();
+            this.labelTS239 = new System.Windows.Forms.LabelTS();
+            this.labelTS238 = new System.Windows.Forms.LabelTS();
+            this.btnBandButtons_font = new System.Windows.Forms.ButtonTS();
+            this.labelTS249 = new System.Windows.Forms.LabelTS();
+            this.chkBandButtons_fade_tx = new System.Windows.Forms.CheckBoxTS();
+            this.chkBandButtons_fade_rx = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4681,6 +4720,8 @@
             this.grpAuthorDetails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSkinThumbnail)).BeginInit();
             this.panelGetServerList.SuspendLayout();
+            this.tpLegacyItems.SuspendLayout();
+            this.groupBoxTS44.SuspendLayout();
             this.tpKeyboard.SuspendLayout();
             this.grpKBPTT.SuspendLayout();
             this.grpBoxSpaceBarPTT.SuspendLayout();
@@ -4783,6 +4824,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudWebImage_width_scale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWebImage_update_interval)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemRotator_padding)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBandButtons_columns)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBandButtons_border)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBandButtons_margin)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBandButtons_radius)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBandButtons_height_ratio)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBandButtons_indicator_border)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBandButtons_indicator_style)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemRotatorBeamWidth_alpha)).BeginInit();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -4827,6 +4876,7 @@
             this.groupBoxTS41.SuspendLayout();
             this.groupBoxTS43.SuspendLayout();
             this.groupBoxTS40.SuspendLayout();
+            this.grpBandButtons.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -48228,6 +48278,7 @@
             this.tcAppearance.Controls.Add(this.tcAppearanceTXDisplay);
             this.tcAppearance.Controls.Add(this.tpAppearanceCollapsible);
             this.tcAppearance.Controls.Add(this.tpSkinServers);
+            this.tcAppearance.Controls.Add(this.tpLegacyItems);
             this.tcAppearance.Location = new System.Drawing.Point(0, 0);
             this.tcAppearance.Name = "tcAppearance";
             this.tcAppearance.SelectedIndex = 0;
@@ -49822,7 +49873,6 @@
             // tpAppearanceMeter
             // 
             this.tpAppearanceMeter.BackColor = System.Drawing.SystemColors.Control;
-            this.tpAppearanceMeter.Controls.Add(this.chkLegacyMeters);
             this.tpAppearanceMeter.Controls.Add(this.groupBoxTS14);
             this.tpAppearanceMeter.Controls.Add(this.labelTS2);
             this.tpAppearanceMeter.Controls.Add(this.clrbtnMeterDigBackground);
@@ -49837,21 +49887,6 @@
             this.tpAppearanceMeter.Size = new System.Drawing.Size(724, 410);
             this.tpAppearanceMeter.TabIndex = 2;
             this.tpAppearanceMeter.Text = "Meter";
-            // 
-            // chkLegacyMeters
-            // 
-            this.chkLegacyMeters.AutoSize = true;
-            this.chkLegacyMeters.Checked = true;
-            this.chkLegacyMeters.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkLegacyMeters.Image = null;
-            this.chkLegacyMeters.Location = new System.Drawing.Point(19, 8);
-            this.chkLegacyMeters.Name = "chkLegacyMeters";
-            this.chkLegacyMeters.Size = new System.Drawing.Size(113, 17);
-            this.chkLegacyMeters.TabIndex = 86;
-            this.chkLegacyMeters.Text = "Use legacy meters";
-            this.toolTip1.SetToolTip(this.chkLegacyMeters, "Show or hide the legacy meters");
-            this.chkLegacyMeters.UseVisualStyleBackColor = true;
-            this.chkLegacyMeters.CheckedChanged += new System.EventHandler(this.chkLegacyMeters_CheckedChanged);
             // 
             // groupBoxTS14
             // 
@@ -49905,7 +49940,7 @@
             // labelTS2
             // 
             this.labelTS2.Image = null;
-            this.labelTS2.Location = new System.Drawing.Point(16, 88);
+            this.labelTS2.Location = new System.Drawing.Point(16, 65);
             this.labelTS2.Name = "labelTS2";
             this.labelTS2.Size = new System.Drawing.Size(72, 32);
             this.labelTS2.TabIndex = 83;
@@ -49916,7 +49951,7 @@
             this.clrbtnMeterDigBackground.Automatic = "Automatic";
             this.clrbtnMeterDigBackground.Color = System.Drawing.Color.Black;
             this.clrbtnMeterDigBackground.Image = null;
-            this.clrbtnMeterDigBackground.Location = new System.Drawing.Point(99, 91);
+            this.clrbtnMeterDigBackground.Location = new System.Drawing.Point(99, 68);
             this.clrbtnMeterDigBackground.MoreColors = "More Colors...";
             this.clrbtnMeterDigBackground.Name = "clrbtnMeterDigBackground";
             this.clrbtnMeterDigBackground.Selectable = true;
@@ -49928,7 +49963,7 @@
             // 
             this.lblMeterDigitalText.AutoSize = true;
             this.lblMeterDigitalText.Image = null;
-            this.lblMeterDigitalText.Location = new System.Drawing.Point(16, 69);
+            this.lblMeterDigitalText.Location = new System.Drawing.Point(16, 46);
             this.lblMeterDigitalText.Name = "lblMeterDigitalText";
             this.lblMeterDigitalText.Size = new System.Drawing.Size(63, 13);
             this.lblMeterDigitalText.TabIndex = 81;
@@ -49939,7 +49974,7 @@
             this.clrbtnMeterDigText.Automatic = "Automatic";
             this.clrbtnMeterDigText.Color = System.Drawing.Color.Yellow;
             this.clrbtnMeterDigText.Image = null;
-            this.clrbtnMeterDigText.Location = new System.Drawing.Point(99, 64);
+            this.clrbtnMeterDigText.Location = new System.Drawing.Point(99, 41);
             this.clrbtnMeterDigText.MoreColors = "More Colors...";
             this.clrbtnMeterDigText.Name = "clrbtnMeterDigText";
             this.clrbtnMeterDigText.Selectable = true;
@@ -50159,7 +50194,7 @@
             // 
             this.lblMeterType.AutoSize = true;
             this.lblMeterType.Image = null;
-            this.lblMeterType.Location = new System.Drawing.Point(16, 42);
+            this.lblMeterType.Location = new System.Drawing.Point(16, 19);
             this.lblMeterType.Name = "lblMeterType";
             this.lblMeterType.Size = new System.Drawing.Size(64, 13);
             this.lblMeterType.TabIndex = 79;
@@ -50172,7 +50207,7 @@
             this.comboMeterType.Items.AddRange(new object[] {
             "Original",
             "Edge"});
-            this.comboMeterType.Location = new System.Drawing.Point(99, 39);
+            this.comboMeterType.Location = new System.Drawing.Point(99, 16);
             this.comboMeterType.Name = "comboMeterType";
             this.comboMeterType.Size = new System.Drawing.Size(80, 21);
             this.comboMeterType.TabIndex = 78;
@@ -50219,6 +50254,20 @@
             this.grpMultiMeterHolder.Size = new System.Drawing.Size(703, 395);
             this.grpMultiMeterHolder.TabIndex = 86;
             this.grpMultiMeterHolder.TabStop = false;
+            // 
+            // chkMultiMeter_auto_container_height
+            // 
+            this.chkMultiMeter_auto_container_height.AutoSize = true;
+            this.chkMultiMeter_auto_container_height.Image = null;
+            this.chkMultiMeter_auto_container_height.Location = new System.Drawing.Point(7, 122);
+            this.chkMultiMeter_auto_container_height.Name = "chkMultiMeter_auto_container_height";
+            this.chkMultiMeter_auto_container_height.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkMultiMeter_auto_container_height.Size = new System.Drawing.Size(80, 17);
+            this.chkMultiMeter_auto_container_height.TabIndex = 109;
+            this.chkMultiMeter_auto_container_height.Text = "Auto height";
+            this.toolTip1.SetToolTip(this.chkMultiMeter_auto_container_height, "Automatically adjust height of container to fit");
+            this.chkMultiMeter_auto_container_height.UseVisualStyleBackColor = true;
+            this.chkMultiMeter_auto_container_height.CheckedChanged += new System.EventHandler(this.chkMultiMeter_auto_container_height_CheckedChanged);
             // 
             // chkContainerMinimises
             // 
@@ -52162,6 +52211,93 @@
             this.lblSkinServersInfo.TabIndex = 0;
             this.lblSkinServersInfo.Text = "Obtaining skin server list from Github.\r\nPlease wait...";
             this.lblSkinServersInfo.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // tpLegacyItems
+            // 
+            this.tpLegacyItems.BackColor = System.Drawing.SystemColors.Control;
+            this.tpLegacyItems.Controls.Add(this.groupBoxTS44);
+            this.tpLegacyItems.Location = new System.Drawing.Point(4, 22);
+            this.tpLegacyItems.Name = "tpLegacyItems";
+            this.tpLegacyItems.Size = new System.Drawing.Size(724, 410);
+            this.tpLegacyItems.TabIndex = 7;
+            this.tpLegacyItems.Text = "Legacy Items";
+            // 
+            // groupBoxTS44
+            // 
+            this.groupBoxTS44.Controls.Add(this.chkLegacyItems_expand_spectral);
+            this.groupBoxTS44.Controls.Add(this.chkLegacyItems_filter);
+            this.groupBoxTS44.Controls.Add(this.chkLegacyItems_mode);
+            this.groupBoxTS44.Controls.Add(this.chkLegacyItems_band);
+            this.groupBoxTS44.Controls.Add(this.chkLegacyMeters);
+            this.groupBoxTS44.Location = new System.Drawing.Point(21, 16);
+            this.groupBoxTS44.Name = "groupBoxTS44";
+            this.groupBoxTS44.Size = new System.Drawing.Size(457, 193);
+            this.groupBoxTS44.TabIndex = 0;
+            this.groupBoxTS44.TabStop = false;
+            this.groupBoxTS44.Text = "Expanded Console UI";
+            // 
+            // chkLegacyItems_expand_spectral
+            // 
+            this.chkLegacyItems_expand_spectral.AutoSize = true;
+            this.chkLegacyItems_expand_spectral.Image = null;
+            this.chkLegacyItems_expand_spectral.Location = new System.Drawing.Point(19, 136);
+            this.chkLegacyItems_expand_spectral.Name = "chkLegacyItems_expand_spectral";
+            this.chkLegacyItems_expand_spectral.Size = new System.Drawing.Size(185, 17);
+            this.chkLegacyItems_expand_spectral.TabIndex = 90;
+            this.chkLegacyItems_expand_spectral.Text = "Expamd spectral area to right side";
+            this.chkLegacyItems_expand_spectral.UseVisualStyleBackColor = true;
+            this.chkLegacyItems_expand_spectral.CheckedChanged += new System.EventHandler(this.chkLegacyItems_expand_spectral_CheckedChanged);
+            // 
+            // chkLegacyItems_filter
+            // 
+            this.chkLegacyItems_filter.AutoSize = true;
+            this.chkLegacyItems_filter.Image = null;
+            this.chkLegacyItems_filter.Location = new System.Drawing.Point(19, 98);
+            this.chkLegacyItems_filter.Name = "chkLegacyItems_filter";
+            this.chkLegacyItems_filter.Size = new System.Drawing.Size(123, 17);
+            this.chkLegacyItems_filter.TabIndex = 89;
+            this.chkLegacyItems_filter.Text = "Hide filter button grid";
+            this.chkLegacyItems_filter.UseVisualStyleBackColor = true;
+            this.chkLegacyItems_filter.CheckedChanged += new System.EventHandler(this.chkLegacyItems_filter_CheckedChanged);
+            // 
+            // chkLegacyItems_mode
+            // 
+            this.chkLegacyItems_mode.AutoSize = true;
+            this.chkLegacyItems_mode.Image = null;
+            this.chkLegacyItems_mode.Location = new System.Drawing.Point(19, 75);
+            this.chkLegacyItems_mode.Name = "chkLegacyItems_mode";
+            this.chkLegacyItems_mode.Size = new System.Drawing.Size(130, 17);
+            this.chkLegacyItems_mode.TabIndex = 88;
+            this.chkLegacyItems_mode.Text = "Hide mode button grid";
+            this.chkLegacyItems_mode.UseVisualStyleBackColor = true;
+            this.chkLegacyItems_mode.CheckedChanged += new System.EventHandler(this.chkLegacyItems_mode_CheckedChanged);
+            // 
+            // chkLegacyItems_band
+            // 
+            this.chkLegacyItems_band.AutoSize = true;
+            this.chkLegacyItems_band.Image = null;
+            this.chkLegacyItems_band.Location = new System.Drawing.Point(19, 52);
+            this.chkLegacyItems_band.Name = "chkLegacyItems_band";
+            this.chkLegacyItems_band.Size = new System.Drawing.Size(128, 17);
+            this.chkLegacyItems_band.TabIndex = 87;
+            this.chkLegacyItems_band.Text = "Hide band button grid";
+            this.chkLegacyItems_band.UseVisualStyleBackColor = true;
+            this.chkLegacyItems_band.CheckedChanged += new System.EventHandler(this.chkLegacyItems_band_CheckedChanged);
+            // 
+            // chkLegacyMeters
+            // 
+            this.chkLegacyMeters.AutoSize = true;
+            this.chkLegacyMeters.Checked = true;
+            this.chkLegacyMeters.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkLegacyMeters.Image = null;
+            this.chkLegacyMeters.Location = new System.Drawing.Point(19, 29);
+            this.chkLegacyMeters.Name = "chkLegacyMeters";
+            this.chkLegacyMeters.Size = new System.Drawing.Size(113, 17);
+            this.chkLegacyMeters.TabIndex = 86;
+            this.chkLegacyMeters.Text = "Use legacy meters";
+            this.toolTip1.SetToolTip(this.chkLegacyMeters, "Show or hide the legacy meters");
+            this.chkLegacyMeters.UseVisualStyleBackColor = true;
+            this.chkLegacyMeters.CheckedChanged += new System.EventHandler(this.chkLegacyMeters_CheckedChanged);
             // 
             // tpKeyboard
             // 
@@ -57176,7 +57312,7 @@
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS166);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayMode);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTitle);
-            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(1149, 41);
+            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(1549, 20);
             this.grpMeterItemVfoDisplaySettings.Name = "grpMeterItemVfoDisplaySettings";
             this.grpMeterItemVfoDisplaySettings.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemVfoDisplaySettings.TabIndex = 101;
@@ -57510,7 +57646,7 @@
             this.grpMeterItemClockSettings.Controls.Add(this.chkMMClockTitle);
             this.grpMeterItemClockSettings.Controls.Add(this.radMM24Clock);
             this.grpMeterItemClockSettings.Controls.Add(this.radMM12Clock);
-            this.grpMeterItemClockSettings.Location = new System.Drawing.Point(790, 665);
+            this.grpMeterItemClockSettings.Location = new System.Drawing.Point(1276, 124);
             this.grpMeterItemClockSettings.Name = "grpMeterItemClockSettings";
             this.grpMeterItemClockSettings.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemClockSettings.TabIndex = 100;
@@ -58213,7 +58349,7 @@
             0,
             0,
             131072});
-            this.nudMeterItemRotatorBeamWidth.Location = new System.Drawing.Point(83, 168);
+            this.nudMeterItemRotatorBeamWidth.Location = new System.Drawing.Point(83, 167);
             this.nudMeterItemRotatorBeamWidth.Maximum = new decimal(new int[] {
             180,
             0,
@@ -58768,6 +58904,340 @@
             this.chkWebImage_bypass_cache.UseVisualStyleBackColor = true;
             this.chkWebImage_bypass_cache.CheckedChanged += new System.EventHandler(this.chkWebImage_bypass_cache_CheckedChanged);
             // 
+            // nudBandButtons_columns
+            // 
+            this.nudBandButtons_columns.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBandButtons_columns.Location = new System.Drawing.Point(78, 27);
+            this.nudBandButtons_columns.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.nudBandButtons_columns.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBandButtons_columns.Name = "nudBandButtons_columns";
+            this.nudBandButtons_columns.Size = new System.Drawing.Size(56, 20);
+            this.nudBandButtons_columns.TabIndex = 132;
+            this.nudBandButtons_columns.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudBandButtons_columns, "Number of button columns");
+            this.nudBandButtons_columns.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBandButtons_columns.ValueChanged += new System.EventHandler(this.nudBandButtons_columns_ValueChanged);
+            // 
+            // clrbtnBandButtons_indicator_on
+            // 
+            this.clrbtnBandButtons_indicator_on.Automatic = "Automatic";
+            this.clrbtnBandButtons_indicator_on.Color = System.Drawing.Color.CornflowerBlue;
+            this.clrbtnBandButtons_indicator_on.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnBandButtons_indicator_on.Image = null;
+            this.clrbtnBandButtons_indicator_on.Location = new System.Drawing.Point(107, 221);
+            this.clrbtnBandButtons_indicator_on.MoreColors = "More Colors...";
+            this.clrbtnBandButtons_indicator_on.Name = "clrbtnBandButtons_indicator_on";
+            this.clrbtnBandButtons_indicator_on.Selectable = true;
+            this.clrbtnBandButtons_indicator_on.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnBandButtons_indicator_on.TabIndex = 129;
+            this.toolTip1.SetToolTip(this.clrbtnBandButtons_indicator_on, "Active colour");
+            this.clrbtnBandButtons_indicator_on.Changed += new System.EventHandler(this.clrbtnBandButtons_indicator_on_Changed);
+            // 
+            // nudBandButtons_border
+            // 
+            this.nudBandButtons_border.DecimalPlaces = 2;
+            this.nudBandButtons_border.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudBandButtons_border.Location = new System.Drawing.Point(78, 53);
+            this.nudBandButtons_border.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBandButtons_border.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudBandButtons_border.Name = "nudBandButtons_border";
+            this.nudBandButtons_border.Size = new System.Drawing.Size(56, 20);
+            this.nudBandButtons_border.TabIndex = 139;
+            this.nudBandButtons_border.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudBandButtons_border, "Border size");
+            this.nudBandButtons_border.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBandButtons_border.ValueChanged += new System.EventHandler(this.nudBandButtons_border_ValueChanged);
+            // 
+            // nudBandButtons_margin
+            // 
+            this.nudBandButtons_margin.DecimalPlaces = 2;
+            this.nudBandButtons_margin.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudBandButtons_margin.Location = new System.Drawing.Point(78, 79);
+            this.nudBandButtons_margin.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBandButtons_margin.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudBandButtons_margin.Name = "nudBandButtons_margin";
+            this.nudBandButtons_margin.Size = new System.Drawing.Size(56, 20);
+            this.nudBandButtons_margin.TabIndex = 141;
+            this.nudBandButtons_margin.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudBandButtons_margin, "Margin size");
+            this.nudBandButtons_margin.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBandButtons_margin.ValueChanged += new System.EventHandler(this.nudBandButtons_margin_ValueChanged);
+            // 
+            // nudBandButtons_radius
+            // 
+            this.nudBandButtons_radius.DecimalPlaces = 2;
+            this.nudBandButtons_radius.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudBandButtons_radius.Location = new System.Drawing.Point(78, 105);
+            this.nudBandButtons_radius.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudBandButtons_radius.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudBandButtons_radius.Name = "nudBandButtons_radius";
+            this.nudBandButtons_radius.Size = new System.Drawing.Size(56, 20);
+            this.nudBandButtons_radius.TabIndex = 143;
+            this.nudBandButtons_radius.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudBandButtons_radius, "Radius corner size");
+            this.nudBandButtons_radius.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBandButtons_radius.ValueChanged += new System.EventHandler(this.nudBandButtons_radius_ValueChanged);
+            // 
+            // nudBandButtons_height_ratio
+            // 
+            this.nudBandButtons_height_ratio.DecimalPlaces = 2;
+            this.nudBandButtons_height_ratio.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudBandButtons_height_ratio.Location = new System.Drawing.Point(78, 131);
+            this.nudBandButtons_height_ratio.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudBandButtons_height_ratio.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudBandButtons_height_ratio.Name = "nudBandButtons_height_ratio";
+            this.nudBandButtons_height_ratio.Size = new System.Drawing.Size(56, 20);
+            this.nudBandButtons_height_ratio.TabIndex = 145;
+            this.nudBandButtons_height_ratio.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudBandButtons_height_ratio, "Ratio of height to width");
+            this.nudBandButtons_height_ratio.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBandButtons_height_ratio.ValueChanged += new System.EventHandler(this.nudBandButtons_height_ratio_ValueChanged);
+            // 
+            // nudBandButtons_indicator_border
+            // 
+            this.nudBandButtons_indicator_border.DecimalPlaces = 2;
+            this.nudBandButtons_indicator_border.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudBandButtons_indicator_border.Location = new System.Drawing.Point(91, 186);
+            this.nudBandButtons_indicator_border.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBandButtons_indicator_border.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudBandButtons_indicator_border.Name = "nudBandButtons_indicator_border";
+            this.nudBandButtons_indicator_border.Size = new System.Drawing.Size(56, 20);
+            this.nudBandButtons_indicator_border.TabIndex = 147;
+            this.nudBandButtons_indicator_border.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudBandButtons_indicator_border, "Border size of indicator ring");
+            this.nudBandButtons_indicator_border.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBandButtons_indicator_border.ValueChanged += new System.EventHandler(this.nudBandButtons_indicator_border_ValueChanged);
+            // 
+            // chkBandButtons_use_indicator
+            // 
+            this.chkBandButtons_use_indicator.AutoSize = true;
+            this.chkBandButtons_use_indicator.Image = null;
+            this.chkBandButtons_use_indicator.Location = new System.Drawing.Point(25, 166);
+            this.chkBandButtons_use_indicator.Name = "chkBandButtons_use_indicator";
+            this.chkBandButtons_use_indicator.Size = new System.Drawing.Size(91, 17);
+            this.chkBandButtons_use_indicator.TabIndex = 135;
+            this.chkBandButtons_use_indicator.Text = "Use Indiciator";
+            this.toolTip1.SetToolTip(this.chkBandButtons_use_indicator, "Use a ring indicator to show active");
+            this.chkBandButtons_use_indicator.UseVisualStyleBackColor = true;
+            this.chkBandButtons_use_indicator.CheckedChanged += new System.EventHandler(this.chkBandButtons_use_indicator_CheckedChanged);
+            // 
+            // clrbtnBandButtons_indicator_off
+            // 
+            this.clrbtnBandButtons_indicator_off.Automatic = "Automatic";
+            this.clrbtnBandButtons_indicator_off.Color = System.Drawing.Color.LightGray;
+            this.clrbtnBandButtons_indicator_off.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnBandButtons_indicator_off.Image = null;
+            this.clrbtnBandButtons_indicator_off.Location = new System.Drawing.Point(107, 250);
+            this.clrbtnBandButtons_indicator_off.MoreColors = "More Colors...";
+            this.clrbtnBandButtons_indicator_off.Name = "clrbtnBandButtons_indicator_off";
+            this.clrbtnBandButtons_indicator_off.Selectable = true;
+            this.clrbtnBandButtons_indicator_off.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnBandButtons_indicator_off.TabIndex = 149;
+            this.toolTip1.SetToolTip(this.clrbtnBandButtons_indicator_off, "Inactive colour");
+            this.clrbtnBandButtons_indicator_off.Changed += new System.EventHandler(this.clrbtnBandButtons_indicator_off_Changed);
+            // 
+            // clrbtnBandButtons_border
+            // 
+            this.clrbtnBandButtons_border.Automatic = "Automatic";
+            this.clrbtnBandButtons_border.Color = System.Drawing.Color.White;
+            this.clrbtnBandButtons_border.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnBandButtons_border.Image = null;
+            this.clrbtnBandButtons_border.Location = new System.Drawing.Point(107, 279);
+            this.clrbtnBandButtons_border.MoreColors = "More Colors...";
+            this.clrbtnBandButtons_border.Name = "clrbtnBandButtons_border";
+            this.clrbtnBandButtons_border.Selectable = true;
+            this.clrbtnBandButtons_border.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnBandButtons_border.TabIndex = 151;
+            this.toolTip1.SetToolTip(this.clrbtnBandButtons_border, "Active colour");
+            this.clrbtnBandButtons_border.Changed += new System.EventHandler(this.clrbtnBandButtons_border_Changed);
+            // 
+            // clrbtnBandButtons_fill
+            // 
+            this.clrbtnBandButtons_fill.Automatic = "Automatic";
+            this.clrbtnBandButtons_fill.Color = System.Drawing.Color.Black;
+            this.clrbtnBandButtons_fill.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnBandButtons_fill.Image = null;
+            this.clrbtnBandButtons_fill.Location = new System.Drawing.Point(107, 308);
+            this.clrbtnBandButtons_fill.MoreColors = "More Colors...";
+            this.clrbtnBandButtons_fill.Name = "clrbtnBandButtons_fill";
+            this.clrbtnBandButtons_fill.Selectable = true;
+            this.clrbtnBandButtons_fill.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnBandButtons_fill.TabIndex = 153;
+            this.toolTip1.SetToolTip(this.clrbtnBandButtons_fill, "Active colour");
+            this.clrbtnBandButtons_fill.Changed += new System.EventHandler(this.clrbtnBandButtons_fill_Changed);
+            // 
+            // clrbtnBandButtons_hover
+            // 
+            this.clrbtnBandButtons_hover.Automatic = "Automatic";
+            this.clrbtnBandButtons_hover.Color = System.Drawing.Color.LightGray;
+            this.clrbtnBandButtons_hover.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnBandButtons_hover.Image = null;
+            this.clrbtnBandButtons_hover.Location = new System.Drawing.Point(107, 337);
+            this.clrbtnBandButtons_hover.MoreColors = "More Colors...";
+            this.clrbtnBandButtons_hover.Name = "clrbtnBandButtons_hover";
+            this.clrbtnBandButtons_hover.Selectable = true;
+            this.clrbtnBandButtons_hover.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnBandButtons_hover.TabIndex = 155;
+            this.toolTip1.SetToolTip(this.clrbtnBandButtons_hover, "Active colour");
+            this.clrbtnBandButtons_hover.Changed += new System.EventHandler(this.clrbtnBandButtons_hover_Changed);
+            // 
+            // nudBandButtons_indicator_style
+            // 
+            this.nudBandButtons_indicator_style.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBandButtons_indicator_style.Location = new System.Drawing.Point(202, 186);
+            this.nudBandButtons_indicator_style.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+            this.nudBandButtons_indicator_style.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudBandButtons_indicator_style.Name = "nudBandButtons_indicator_style";
+            this.nudBandButtons_indicator_style.Size = new System.Drawing.Size(56, 20);
+            this.nudBandButtons_indicator_style.TabIndex = 158;
+            this.nudBandButtons_indicator_style.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudBandButtons_indicator_style, "Border size of indicator ring");
+            this.nudBandButtons_indicator_style.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBandButtons_indicator_style.ValueChanged += new System.EventHandler(this.nudBandButtons_indicator_style_ValueChanged);
+            // 
+            // nudMeterItemRotatorBeamWidth_alpha
+            // 
+            this.nudMeterItemRotatorBeamWidth_alpha.DecimalPlaces = 2;
+            this.nudMeterItemRotatorBeamWidth_alpha.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudMeterItemRotatorBeamWidth_alpha.Location = new System.Drawing.Point(196, 167);
+            this.nudMeterItemRotatorBeamWidth_alpha.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMeterItemRotatorBeamWidth_alpha.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudMeterItemRotatorBeamWidth_alpha.Name = "nudMeterItemRotatorBeamWidth_alpha";
+            this.nudMeterItemRotatorBeamWidth_alpha.Size = new System.Drawing.Size(56, 20);
+            this.nudMeterItemRotatorBeamWidth_alpha.TabIndex = 175;
+            this.nudMeterItemRotatorBeamWidth_alpha.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudMeterItemRotatorBeamWidth_alpha, "3dB beam width");
+            this.nudMeterItemRotatorBeamWidth_alpha.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudMeterItemRotatorBeamWidth_alpha.ValueChanged += new System.EventHandler(this.nudMeterItemRotatorBeamWidth_alpha_ValueChanged);
+            // 
             // saveFileDialog1
             // 
             this.saveFileDialog1.Filter = "Thetis Database Files (*.xml)|*.xml|All files|*.*";
@@ -58812,7 +59282,7 @@
             // txtboxTXProfileChangedReport
             // 
             this.txtboxTXProfileChangedReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
-            this.txtboxTXProfileChangedReport.Location = new System.Drawing.Point(1149, 805);
+            this.txtboxTXProfileChangedReport.Location = new System.Drawing.Point(8, 503);
             this.txtboxTXProfileChangedReport.Multiline = true;
             this.txtboxTXProfileChangedReport.Name = "txtboxTXProfileChangedReport";
             this.txtboxTXProfileChangedReport.ReadOnly = true;
@@ -59864,7 +60334,7 @@
             this.grpMeterItemSpacerSettings.Controls.Add(this.clrbtnMeterItemHBackgroundSpacerRX);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnTxSpacer);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnRxSpacer);
-            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(809, 41);
+            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(1480, 39);
             this.grpMeterItemSpacerSettings.Name = "grpMeterItemSpacerSettings";
             this.grpMeterItemSpacerSettings.Size = new System.Drawing.Size(323, 168);
             this.grpMeterItemSpacerSettings.TabIndex = 102;
@@ -59931,7 +60401,7 @@
             this.labelTS198.AutoSize = true;
             this.labelTS198.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTS198.Image = null;
-            this.labelTS198.Location = new System.Drawing.Point(787, 241);
+            this.labelTS198.Location = new System.Drawing.Point(841, 50);
             this.labelTS198.Name = "labelTS198";
             this.labelTS198.Size = new System.Drawing.Size(333, 13);
             this.labelTS198.TabIndex = 103;
@@ -59976,7 +60446,7 @@
             this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_PanelBackground);
             this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnTX);
             this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnRX);
-            this.grpTextOverlay.Location = new System.Drawing.Point(47, 560);
+            this.grpTextOverlay.Location = new System.Drawing.Point(1149, 188);
             this.grpTextOverlay.Name = "grpTextOverlay";
             this.grpTextOverlay.Size = new System.Drawing.Size(323, 362);
             this.grpTextOverlay.TabIndex = 104;
@@ -60221,7 +60691,7 @@
             this.grpMeterItemDataOutNode.Controls.Add(this.labelTS217);
             this.grpMeterItemDataOutNode.Controls.Add(this.nudDataOutNode_sendinterval);
             this.grpMeterItemDataOutNode.Controls.Add(this.labelTS215);
-            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(405, 864);
+            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(1074, 223);
             this.grpMeterItemDataOutNode.Name = "grpMeterItemDataOutNode";
             this.grpMeterItemDataOutNode.Size = new System.Drawing.Size(323, 168);
             this.grpMeterItemDataOutNode.TabIndex = 105;
@@ -60261,6 +60731,9 @@
             // 
             // grpMeterItemRotator
             // 
+            this.grpMeterItemRotator.Controls.Add(this.lblMeterItemRotatorBeamWidth_alpha);
+            this.grpMeterItemRotator.Controls.Add(this.lblMeterItemRotatorBeamWidth_degrees);
+            this.grpMeterItemRotator.Controls.Add(this.nudMeterItemRotatorBeamWidth_alpha);
             this.grpMeterItemRotator.Controls.Add(this.labelTS237);
             this.grpMeterItemRotator.Controls.Add(this.txtMeterItemRotatorSTOPcommand);
             this.grpMeterItemRotator.Controls.Add(this.nudMeterItemRotator_padding);
@@ -60301,13 +60774,33 @@
             this.grpMeterItemRotator.Controls.Add(this.chkMeterItemFadeOnTxRotator);
             this.grpMeterItemRotator.Controls.Add(this.chkMeterItemFadeOnRxRotator);
             this.grpMeterItemRotator.Controls.Add(this.pnlVariableInUse_1_rotator);
-            this.grpMeterItemRotator.Location = new System.Drawing.Point(1149, 416);
+            this.grpMeterItemRotator.Location = new System.Drawing.Point(417, 564);
             this.grpMeterItemRotator.Name = "grpMeterItemRotator";
             this.grpMeterItemRotator.Size = new System.Drawing.Size(323, 376);
             this.grpMeterItemRotator.TabIndex = 106;
             this.grpMeterItemRotator.TabStop = false;
             this.grpMeterItemRotator.Text = "Rotator";
             this.grpMeterItemRotator.Visible = false;
+            // 
+            // lblMeterItemRotatorBeamWidth_alpha
+            // 
+            this.lblMeterItemRotatorBeamWidth_alpha.AutoSize = true;
+            this.lblMeterItemRotatorBeamWidth_alpha.Image = null;
+            this.lblMeterItemRotatorBeamWidth_alpha.Location = new System.Drawing.Point(153, 169);
+            this.lblMeterItemRotatorBeamWidth_alpha.Name = "lblMeterItemRotatorBeamWidth_alpha";
+            this.lblMeterItemRotatorBeamWidth_alpha.Size = new System.Drawing.Size(37, 13);
+            this.lblMeterItemRotatorBeamWidth_alpha.TabIndex = 177;
+            this.lblMeterItemRotatorBeamWidth_alpha.Text = "Alpha:";
+            // 
+            // lblMeterItemRotatorBeamWidth_degrees
+            // 
+            this.lblMeterItemRotatorBeamWidth_degrees.AutoSize = true;
+            this.lblMeterItemRotatorBeamWidth_degrees.Image = null;
+            this.lblMeterItemRotatorBeamWidth_degrees.Location = new System.Drawing.Point(27, 169);
+            this.lblMeterItemRotatorBeamWidth_degrees.Name = "lblMeterItemRotatorBeamWidth_degrees";
+            this.lblMeterItemRotatorBeamWidth_degrees.Size = new System.Drawing.Size(50, 13);
+            this.lblMeterItemRotatorBeamWidth_degrees.TabIndex = 176;
+            this.lblMeterItemRotatorBeamWidth_degrees.Text = "Degrees:";
             // 
             // labelTS237
             // 
@@ -60354,7 +60847,7 @@
             this.pnlVariableInUse_2_rotator.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlVariableInUse_2_rotator.AutoScrollMinSize = new System.Drawing.Size(0, 0);
             this.pnlVariableInUse_2_rotator.BackColor = System.Drawing.Color.Lime;
-            this.pnlVariableInUse_2_rotator.Location = new System.Drawing.Point(277, 97);
+            this.pnlVariableInUse_2_rotator.Location = new System.Drawing.Point(275, 73);
             this.pnlVariableInUse_2_rotator.Name = "pnlVariableInUse_2_rotator";
             this.pnlVariableInUse_2_rotator.Size = new System.Drawing.Size(28, 6);
             this.pnlVariableInUse_2_rotator.TabIndex = 135;
@@ -60373,7 +60866,7 @@
             // 
             this.btnMMIO_variable_2_rotator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnMMIO_variable_2_rotator.Image = null;
-            this.btnMMIO_variable_2_rotator.Location = new System.Drawing.Point(277, 70);
+            this.btnMMIO_variable_2_rotator.Location = new System.Drawing.Point(275, 46);
             this.btnMMIO_variable_2_rotator.Name = "btnMMIO_variable_2_rotator";
             this.btnMMIO_variable_2_rotator.Selectable = true;
             this.btnMMIO_variable_2_rotator.Size = new System.Drawing.Size(28, 28);
@@ -60386,7 +60879,7 @@
             // 
             this.btnMMIO_variable_rotator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnMMIO_variable_rotator.Image = null;
-            this.btnMMIO_variable_rotator.Location = new System.Drawing.Point(245, 70);
+            this.btnMMIO_variable_rotator.Location = new System.Drawing.Point(243, 46);
             this.btnMMIO_variable_rotator.Name = "btnMMIO_variable_rotator";
             this.btnMMIO_variable_rotator.Selectable = true;
             this.btnMMIO_variable_rotator.Size = new System.Drawing.Size(28, 28);
@@ -60409,7 +60902,7 @@
             // 
             this.chkMeterItemDarkModeRotator.AutoSize = true;
             this.chkMeterItemDarkModeRotator.Image = null;
-            this.chkMeterItemDarkModeRotator.Location = new System.Drawing.Point(222, 178);
+            this.chkMeterItemDarkModeRotator.Location = new System.Drawing.Point(220, 137);
             this.chkMeterItemDarkModeRotator.Name = "chkMeterItemDarkModeRotator";
             this.chkMeterItemDarkModeRotator.Size = new System.Drawing.Size(79, 17);
             this.chkMeterItemDarkModeRotator.TabIndex = 112;
@@ -60472,7 +60965,7 @@
             // 
             this.chkMeterItemFadeOnTxRotator.AutoSize = true;
             this.chkMeterItemFadeOnTxRotator.Image = null;
-            this.chkMeterItemFadeOnTxRotator.Location = new System.Drawing.Point(222, 151);
+            this.chkMeterItemFadeOnTxRotator.Location = new System.Drawing.Point(220, 110);
             this.chkMeterItemFadeOnTxRotator.Name = "chkMeterItemFadeOnTxRotator";
             this.chkMeterItemFadeOnTxRotator.Size = new System.Drawing.Size(82, 17);
             this.chkMeterItemFadeOnTxRotator.TabIndex = 1;
@@ -60484,7 +60977,7 @@
             // 
             this.chkMeterItemFadeOnRxRotator.AutoSize = true;
             this.chkMeterItemFadeOnRxRotator.Image = null;
-            this.chkMeterItemFadeOnRxRotator.Location = new System.Drawing.Point(222, 128);
+            this.chkMeterItemFadeOnRxRotator.Location = new System.Drawing.Point(220, 87);
             this.chkMeterItemFadeOnRxRotator.Name = "chkMeterItemFadeOnRxRotator";
             this.chkMeterItemFadeOnRxRotator.Size = new System.Drawing.Size(83, 17);
             this.chkMeterItemFadeOnRxRotator.TabIndex = 0;
@@ -60497,7 +60990,7 @@
             this.pnlVariableInUse_1_rotator.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlVariableInUse_1_rotator.AutoScrollMinSize = new System.Drawing.Size(0, 0);
             this.pnlVariableInUse_1_rotator.BackColor = System.Drawing.Color.Lime;
-            this.pnlVariableInUse_1_rotator.Location = new System.Drawing.Point(245, 97);
+            this.pnlVariableInUse_1_rotator.Location = new System.Drawing.Point(243, 73);
             this.pnlVariableInUse_1_rotator.Name = "pnlVariableInUse_1_rotator";
             this.pnlVariableInUse_1_rotator.Size = new System.Drawing.Size(28, 6);
             this.pnlVariableInUse_1_rotator.TabIndex = 130;
@@ -60539,7 +61032,7 @@
             this.grpLedIndiciator.Controls.Add(this.clrbtnLedIndicator_PanelBackground);
             this.grpLedIndiciator.Controls.Add(this.chkLedIndicator_FadeOnTX);
             this.grpLedIndiciator.Controls.Add(this.chkLedIndicator_FadeOnRX);
-            this.grpLedIndiciator.Location = new System.Drawing.Point(790, 291);
+            this.grpLedIndiciator.Location = new System.Drawing.Point(1412, 71);
             this.grpLedIndiciator.Name = "grpLedIndiciator";
             this.grpLedIndiciator.Size = new System.Drawing.Size(323, 362);
             this.grpLedIndiciator.TabIndex = 107;
@@ -60812,7 +61305,7 @@
             this.grpWebImage.Controls.Add(this.labelTS235);
             this.grpWebImage.Controls.Add(this.chkWebImage_fade_tx);
             this.grpWebImage.Controls.Add(this.chkWebImage_fade_rx);
-            this.grpWebImage.Location = new System.Drawing.Point(411, 560);
+            this.grpWebImage.Location = new System.Drawing.Point(1210, 160);
             this.grpWebImage.Name = "grpWebImage";
             this.grpWebImage.Size = new System.Drawing.Size(323, 358);
             this.grpWebImage.TabIndex = 108;
@@ -61028,25 +61521,231 @@
             this.chkWebImage_fade_rx.UseVisualStyleBackColor = true;
             this.chkWebImage_fade_rx.CheckedChanged += new System.EventHandler(this.chkWebImage_fade_rx_CheckedChanged);
             // 
-            // chkMultiMeter_auto_container_height
+            // grpBandButtons
             // 
-            this.chkMultiMeter_auto_container_height.AutoSize = true;
-            this.chkMultiMeter_auto_container_height.Image = null;
-            this.chkMultiMeter_auto_container_height.Location = new System.Drawing.Point(7, 122);
-            this.chkMultiMeter_auto_container_height.Name = "chkMultiMeter_auto_container_height";
-            this.chkMultiMeter_auto_container_height.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.chkMultiMeter_auto_container_height.Size = new System.Drawing.Size(80, 17);
-            this.chkMultiMeter_auto_container_height.TabIndex = 109;
-            this.chkMultiMeter_auto_container_height.Text = "Auto height";
-            this.toolTip1.SetToolTip(this.chkMultiMeter_auto_container_height, "Automatically adjust height of container to fit");
-            this.chkMultiMeter_auto_container_height.UseVisualStyleBackColor = true;
-            this.chkMultiMeter_auto_container_height.CheckedChanged += new System.EventHandler(this.chkMultiMeter_auto_container_height_CheckedChanged);
+            this.grpBandButtons.Controls.Add(this.lblBandButtons_indicator_style);
+            this.grpBandButtons.Controls.Add(this.nudBandButtons_indicator_style);
+            this.grpBandButtons.Controls.Add(this.chkBandButtons_band_inactive_use);
+            this.grpBandButtons.Controls.Add(this.labelTS246);
+            this.grpBandButtons.Controls.Add(this.clrbtnBandButtons_hover);
+            this.grpBandButtons.Controls.Add(this.labelTS245);
+            this.grpBandButtons.Controls.Add(this.clrbtnBandButtons_fill);
+            this.grpBandButtons.Controls.Add(this.labelTS244);
+            this.grpBandButtons.Controls.Add(this.clrbtnBandButtons_border);
+            this.grpBandButtons.Controls.Add(this.labelTS243);
+            this.grpBandButtons.Controls.Add(this.clrbtnBandButtons_indicator_off);
+            this.grpBandButtons.Controls.Add(this.labelTS242);
+            this.grpBandButtons.Controls.Add(this.nudBandButtons_indicator_border);
+            this.grpBandButtons.Controls.Add(this.lblBandButtons_indicator_border);
+            this.grpBandButtons.Controls.Add(this.nudBandButtons_height_ratio);
+            this.grpBandButtons.Controls.Add(this.labelTS241);
+            this.grpBandButtons.Controls.Add(this.nudBandButtons_radius);
+            this.grpBandButtons.Controls.Add(this.labelTS240);
+            this.grpBandButtons.Controls.Add(this.nudBandButtons_margin);
+            this.grpBandButtons.Controls.Add(this.labelTS239);
+            this.grpBandButtons.Controls.Add(this.nudBandButtons_border);
+            this.grpBandButtons.Controls.Add(this.labelTS238);
+            this.grpBandButtons.Controls.Add(this.btnBandButtons_font);
+            this.grpBandButtons.Controls.Add(this.chkBandButtons_use_indicator);
+            this.grpBandButtons.Controls.Add(this.nudBandButtons_columns);
+            this.grpBandButtons.Controls.Add(this.labelTS249);
+            this.grpBandButtons.Controls.Add(this.clrbtnBandButtons_indicator_on);
+            this.grpBandButtons.Controls.Add(this.chkBandButtons_fade_tx);
+            this.grpBandButtons.Controls.Add(this.chkBandButtons_fade_rx);
+            this.grpBandButtons.Location = new System.Drawing.Point(781, 609);
+            this.grpBandButtons.Name = "grpBandButtons";
+            this.grpBandButtons.Size = new System.Drawing.Size(323, 362);
+            this.grpBandButtons.TabIndex = 109;
+            this.grpBandButtons.TabStop = false;
+            this.grpBandButtons.Text = "Button Box";
+            this.grpBandButtons.Visible = false;
+            // 
+            // lblBandButtons_indicator_style
+            // 
+            this.lblBandButtons_indicator_style.AutoSize = true;
+            this.lblBandButtons_indicator_style.Image = null;
+            this.lblBandButtons_indicator_style.Location = new System.Drawing.Point(163, 188);
+            this.lblBandButtons_indicator_style.Name = "lblBandButtons_indicator_style";
+            this.lblBandButtons_indicator_style.Size = new System.Drawing.Size(33, 13);
+            this.lblBandButtons_indicator_style.TabIndex = 159;
+            this.lblBandButtons_indicator_style.Text = "Style:";
+            this.lblBandButtons_indicator_style.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // chkBandButtons_band_inactive_use
+            // 
+            this.chkBandButtons_band_inactive_use.AutoSize = true;
+            this.chkBandButtons_band_inactive_use.Image = null;
+            this.chkBandButtons_band_inactive_use.Location = new System.Drawing.Point(153, 254);
+            this.chkBandButtons_band_inactive_use.Name = "chkBandButtons_band_inactive_use";
+            this.chkBandButtons_band_inactive_use.Size = new System.Drawing.Size(45, 17);
+            this.chkBandButtons_band_inactive_use.TabIndex = 157;
+            this.chkBandButtons_band_inactive_use.Text = "Use";
+            this.chkBandButtons_band_inactive_use.UseVisualStyleBackColor = true;
+            this.chkBandButtons_band_inactive_use.CheckedChanged += new System.EventHandler(this.chkBandButtons_band_inactive_use_CheckedChanged);
+            // 
+            // labelTS246
+            // 
+            this.labelTS246.AutoSize = true;
+            this.labelTS246.Image = null;
+            this.labelTS246.Location = new System.Drawing.Point(62, 342);
+            this.labelTS246.Name = "labelTS246";
+            this.labelTS246.Size = new System.Drawing.Size(39, 13);
+            this.labelTS246.TabIndex = 156;
+            this.labelTS246.Text = "Hover:";
+            this.labelTS246.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS245
+            // 
+            this.labelTS245.AutoSize = true;
+            this.labelTS245.Image = null;
+            this.labelTS245.Location = new System.Drawing.Point(79, 313);
+            this.labelTS245.Name = "labelTS245";
+            this.labelTS245.Size = new System.Drawing.Size(22, 13);
+            this.labelTS245.TabIndex = 154;
+            this.labelTS245.Text = "Fill:";
+            this.labelTS245.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS244
+            // 
+            this.labelTS244.AutoSize = true;
+            this.labelTS244.Image = null;
+            this.labelTS244.Location = new System.Drawing.Point(60, 284);
+            this.labelTS244.Name = "labelTS244";
+            this.labelTS244.Size = new System.Drawing.Size(41, 13);
+            this.labelTS244.TabIndex = 152;
+            this.labelTS244.Text = "Border:";
+            this.labelTS244.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS243
+            // 
+            this.labelTS243.AutoSize = true;
+            this.labelTS243.Image = null;
+            this.labelTS243.Location = new System.Drawing.Point(53, 255);
+            this.labelTS243.Name = "labelTS243";
+            this.labelTS243.Size = new System.Drawing.Size(48, 13);
+            this.labelTS243.TabIndex = 150;
+            this.labelTS243.Text = "Inactive:";
+            this.labelTS243.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS242
+            // 
+            this.labelTS242.AutoSize = true;
+            this.labelTS242.Image = null;
+            this.labelTS242.Location = new System.Drawing.Point(61, 226);
+            this.labelTS242.Name = "labelTS242";
+            this.labelTS242.Size = new System.Drawing.Size(40, 13);
+            this.labelTS242.TabIndex = 148;
+            this.labelTS242.Text = "Active:";
+            this.labelTS242.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // lblBandButtons_indicator_border
+            // 
+            this.lblBandButtons_indicator_border.AutoSize = true;
+            this.lblBandButtons_indicator_border.Image = null;
+            this.lblBandButtons_indicator_border.Location = new System.Drawing.Point(44, 188);
+            this.lblBandButtons_indicator_border.Name = "lblBandButtons_indicator_border";
+            this.lblBandButtons_indicator_border.Size = new System.Drawing.Size(41, 13);
+            this.lblBandButtons_indicator_border.TabIndex = 146;
+            this.lblBandButtons_indicator_border.Text = "Border:";
+            this.lblBandButtons_indicator_border.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS241
+            // 
+            this.labelTS241.AutoSize = true;
+            this.labelTS241.Image = null;
+            this.labelTS241.Location = new System.Drawing.Point(3, 133);
+            this.labelTS241.Name = "labelTS241";
+            this.labelTS241.Size = new System.Drawing.Size(69, 13);
+            this.labelTS241.TabIndex = 144;
+            this.labelTS241.Text = "Height Ratio:";
+            this.labelTS241.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS240
+            // 
+            this.labelTS240.AutoSize = true;
+            this.labelTS240.Image = null;
+            this.labelTS240.Location = new System.Drawing.Point(31, 107);
+            this.labelTS240.Name = "labelTS240";
+            this.labelTS240.Size = new System.Drawing.Size(43, 13);
+            this.labelTS240.TabIndex = 142;
+            this.labelTS240.Text = "Radius:";
+            this.labelTS240.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS239
+            // 
+            this.labelTS239.AutoSize = true;
+            this.labelTS239.Image = null;
+            this.labelTS239.Location = new System.Drawing.Point(31, 81);
+            this.labelTS239.Name = "labelTS239";
+            this.labelTS239.Size = new System.Drawing.Size(42, 13);
+            this.labelTS239.TabIndex = 140;
+            this.labelTS239.Text = "Margin:";
+            this.labelTS239.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS238
+            // 
+            this.labelTS238.AutoSize = true;
+            this.labelTS238.Image = null;
+            this.labelTS238.Location = new System.Drawing.Point(31, 55);
+            this.labelTS238.Name = "labelTS238";
+            this.labelTS238.Size = new System.Drawing.Size(41, 13);
+            this.labelTS238.TabIndex = 138;
+            this.labelTS238.Text = "Border:";
+            this.labelTS238.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // btnBandButtons_font
+            // 
+            this.btnBandButtons_font.Image = null;
+            this.btnBandButtons_font.Location = new System.Drawing.Point(209, 131);
+            this.btnBandButtons_font.Name = "btnBandButtons_font";
+            this.btnBandButtons_font.Selectable = true;
+            this.btnBandButtons_font.Size = new System.Drawing.Size(49, 23);
+            this.btnBandButtons_font.TabIndex = 137;
+            this.btnBandButtons_font.Text = "Font";
+            this.btnBandButtons_font.UseVisualStyleBackColor = true;
+            this.btnBandButtons_font.Click += new System.EventHandler(this.btnBandButtons_font_Click);
+            // 
+            // labelTS249
+            // 
+            this.labelTS249.AutoSize = true;
+            this.labelTS249.Image = null;
+            this.labelTS249.Location = new System.Drawing.Point(22, 29);
+            this.labelTS249.Name = "labelTS249";
+            this.labelTS249.Size = new System.Drawing.Size(50, 13);
+            this.labelTS249.TabIndex = 131;
+            this.labelTS249.Text = "Columns:";
+            this.labelTS249.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // chkBandButtons_fade_tx
+            // 
+            this.chkBandButtons_fade_tx.AutoSize = true;
+            this.chkBandButtons_fade_tx.Image = null;
+            this.chkBandButtons_fade_tx.Location = new System.Drawing.Point(209, 81);
+            this.chkBandButtons_fade_tx.Name = "chkBandButtons_fade_tx";
+            this.chkBandButtons_fade_tx.Size = new System.Drawing.Size(82, 17);
+            this.chkBandButtons_fade_tx.TabIndex = 3;
+            this.chkBandButtons_fade_tx.Text = "Fade on TX";
+            this.chkBandButtons_fade_tx.UseVisualStyleBackColor = true;
+            this.chkBandButtons_fade_tx.CheckedChanged += new System.EventHandler(this.chkBandButtons_fade_tx_CheckedChanged);
+            // 
+            // chkBandButtons_fade_rx
+            // 
+            this.chkBandButtons_fade_rx.AutoSize = true;
+            this.chkBandButtons_fade_rx.Image = null;
+            this.chkBandButtons_fade_rx.Location = new System.Drawing.Point(209, 58);
+            this.chkBandButtons_fade_rx.Name = "chkBandButtons_fade_rx";
+            this.chkBandButtons_fade_rx.Size = new System.Drawing.Size(83, 17);
+            this.chkBandButtons_fade_rx.TabIndex = 2;
+            this.chkBandButtons_fade_rx.Text = "Fade on RX";
+            this.chkBandButtons_fade_rx.UseVisualStyleBackColor = true;
+            this.chkBandButtons_fade_rx.CheckedChanged += new System.EventHandler(this.chkBandButtons_fade_rx_CheckedChanged);
             // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1484, 961);
+            this.ClientSize = new System.Drawing.Size(1884, 1581);
+            this.Controls.Add(this.grpBandButtons);
             this.Controls.Add(this.grpWebImage);
             this.Controls.Add(this.labelTS198);
             this.Controls.Add(this.grpLedIndiciator);
@@ -61068,7 +61767,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(1500, 1000);
+            this.MaximumSize = new System.Drawing.Size(1900, 1900);
             this.MinimumSize = new System.Drawing.Size(760, 550);
             this.Name = "Setup";
             this.Text = "Setup";
@@ -62082,6 +62781,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.picSkinThumbnail)).EndInit();
             this.panelGetServerList.ResumeLayout(false);
             this.panelGetServerList.PerformLayout();
+            this.tpLegacyItems.ResumeLayout(false);
+            this.groupBoxTS44.ResumeLayout(false);
+            this.groupBoxTS44.PerformLayout();
             this.tpKeyboard.ResumeLayout(false);
             this.grpKBPTT.ResumeLayout(false);
             this.grpBoxSpaceBarPTT.ResumeLayout(false);
@@ -62211,6 +62913,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudWebImage_width_scale)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWebImage_update_interval)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemRotator_padding)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBandButtons_columns)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBandButtons_border)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBandButtons_margin)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBandButtons_radius)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBandButtons_height_ratio)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBandButtons_indicator_border)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBandButtons_indicator_style)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMeterItemRotatorBeamWidth_alpha)).EndInit();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();
@@ -62264,6 +62974,8 @@
             this.groupBoxTS41.ResumeLayout(false);
             this.groupBoxTS43.ResumeLayout(false);
             this.groupBoxTS40.ResumeLayout(false);
+            this.grpBandButtons.ResumeLayout(false);
+            this.grpBandButtons.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -66111,5 +66823,44 @@
         private RadioButtonTS radMultiMeter_vfo_display_vfoa;
         private RadioButtonTS radMultiMeter_vfo_display_both;
         private CheckBoxTS chkMultiMeter_auto_container_height;
+        private GroupBoxTS grpBandButtons;
+        private CheckBoxTS chkBandButtons_use_indicator;
+        private NumericUpDownTS nudBandButtons_columns;
+        private LabelTS labelTS249;
+        private ColorButton clrbtnBandButtons_indicator_on;
+        private CheckBoxTS chkBandButtons_fade_tx;
+        private CheckBoxTS chkBandButtons_fade_rx;
+        private ButtonTS btnBandButtons_font;
+        private NumericUpDownTS nudBandButtons_border;
+        private LabelTS labelTS238;
+        private NumericUpDownTS nudBandButtons_height_ratio;
+        private LabelTS labelTS241;
+        private NumericUpDownTS nudBandButtons_radius;
+        private LabelTS labelTS240;
+        private NumericUpDownTS nudBandButtons_margin;
+        private LabelTS labelTS239;
+        private NumericUpDownTS nudBandButtons_indicator_border;
+        private LabelTS lblBandButtons_indicator_border;
+        private LabelTS labelTS243;
+        private ColorButton clrbtnBandButtons_indicator_off;
+        private LabelTS labelTS242;
+        private LabelTS labelTS244;
+        private ColorButton clrbtnBandButtons_border;
+        private LabelTS labelTS245;
+        private ColorButton clrbtnBandButtons_fill;
+        private LabelTS labelTS246;
+        private ColorButton clrbtnBandButtons_hover;
+        private CheckBoxTS chkBandButtons_band_inactive_use;
+        private LabelTS lblBandButtons_indicator_style;
+        private NumericUpDownTS nudBandButtons_indicator_style;
+        private NumericUpDownTS nudMeterItemRotatorBeamWidth_alpha;
+        private LabelTS lblMeterItemRotatorBeamWidth_alpha;
+        private LabelTS lblMeterItemRotatorBeamWidth_degrees;
+        private TabPage tpLegacyItems;
+        private GroupBoxTS groupBoxTS44;
+        private CheckBoxTS chkLegacyItems_expand_spectral;
+        private CheckBoxTS chkLegacyItems_filter;
+        private CheckBoxTS chkLegacyItems_mode;
+        private CheckBoxTS chkLegacyItems_band;
     }
 }
