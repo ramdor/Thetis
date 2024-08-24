@@ -4283,34 +4283,50 @@ namespace Thetis
                 }
                 //
 
-                int start_filter = (int)Filter.F1;
-                int end_filter = (int)Filter.VAR2;
-                System.Drawing.Color text_color = System.Drawing.Color.White;
-
-                int filters = end_filter - start_filter + 1;
-                int offset = 0;
-                for (int i = 0; i < Buttons; i++)
+                bool update = true;
+                if(_console != null)
                 {
-                    SetEnabled(1, i, true);
-
-                    if (i < filters)
+                    if(_owningmeter.RX == 1)
                     {
-                        Filter f = (Filter)(start_filter + i + offset);
-                        string filter_text = getFilterName(_owningmeter.RX, f);
+                        if (_console.RX1DSPMode == DSPMode.FM || _console.RX1DSPMode == DSPMode.DRM || _console.RX1DSPMode == DSPMode.SPEC) update = false;
+                    }
+                    else if(_owningmeter.RX == 2)
+                    {
+                        if (_console.RX2DSPMode == DSPMode.FM || _console.RX2DSPMode == DSPMode.DRM || _console.RX2DSPMode == DSPMode.SPEC) update = false;
+                    }
+                }
 
-                        SetText(1, i, filter_text);
+                if (update)
+                {
+                    int start_filter = (int)Filter.F1;
+                    int end_filter = (int)Filter.VAR2;
+                    System.Drawing.Color text_color = System.Drawing.Color.White;
 
-                        if (GetEnabled(1, i))
-                            SetFontColour(1, i, text_color);
-                        else
-                            SetFontColour(1, i, System.Drawing.Color.FromArgb(255, (int)(text_color.R * 0.3f), (int)(text_color.G * 0.3f), (int)(text_color.B * 0.3f)));
+                    int filters = end_filter - start_filter + 1;
+                    int offset = 0;
+                    for (int i = 0; i < Buttons; i++)
+                    {
+                        SetEnabled(1, i, true);
 
-                        SetFontSize(1, i, 18f);
+                        if (i < filters)
+                        {
+                            Filter f = (Filter)(start_filter + i + offset);
+                            string filter_text = getFilterName(_owningmeter.RX, f);
 
-                        SetOn(1, i, f == _filter);
+                            SetText(1, i, filter_text);
 
-                        if (_owningmeter.RX == 2 && f == Filter.F7)
-                            offset = (int)Filter.VAR1 - (int)Filter.F7 - 1; // jump to var1, -1 as i gets incremented, as only 9 filters for rx2
+                            if (GetEnabled(1, i))
+                                SetFontColour(1, i, text_color);
+                            else
+                                SetFontColour(1, i, System.Drawing.Color.FromArgb(255, (int)(text_color.R * 0.3f), (int)(text_color.G * 0.3f), (int)(text_color.B * 0.3f)));
+
+                            SetFontSize(1, i, 18f);
+
+                            SetOn(1, i, f == _filter);
+
+                            if (_owningmeter.RX == 2 && f == Filter.F7)
+                                offset = (int)Filter.VAR1 - (int)Filter.F7 - 1; // jump to var1, -1 as i gets incremented, as only 9 filters for rx2
+                        }
                     }
                 }
 

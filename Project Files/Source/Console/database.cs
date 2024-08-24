@@ -10552,6 +10552,7 @@ namespace Thetis
                     case "PureSignal":
                     case "BandStack2Form":
                     case "DBManForm":
+                    case "FilterForm":
                     case string mds when mds.StartsWith("MeterDisplay_"):
                         // Get table of same name in oldDB     
                         tempTable.Clear();
