@@ -24166,6 +24166,10 @@ namespace Thetis
 
                 igs.SetSetting<MeterManager.clsButtonBox.IndicatorType>("buttonbox_indicator_type", (MeterManager.clsButtonBox.IndicatorType)((int)nudBandButtons_indicator_style.Value));
 
+                igs.SetSetting<float>("buttonbox_font_scale", (float)nudButtonBox_font_scale.Value);
+                igs.SetSetting<float>("buttonbox_font_shift_x", (float)nudButtonBox_font_x_shift.Value);
+                igs.SetSetting<float>("buttonbox_font_shift_y", (float)nudButtonBox_font_y_shift.Value);
+
                 if (_bandButtons_font != null)
                 {
                     igs.FontFamily1 = _bandButtons_font.FontFamily.Name;
@@ -24534,6 +24538,10 @@ namespace Thetis
                 chkBandButtons_band_inactive_use.Checked = igs.GetSetting<bool>("buttonbox_use_off_colour", false, false, false, false);
 
                 nudBandButtons_indicator_style.Value = (decimal)((int)igs.GetSetting<MeterManager.clsButtonBox.IndicatorType>("buttonbox_indicator_type", true, MeterManager.clsButtonBox.IndicatorType.RING, MeterManager.clsButtonBox.IndicatorType.LAST, MeterManager.clsButtonBox.IndicatorType.RING));
+
+                nudButtonBox_font_scale.Value = (decimal)igs.GetSetting<float>("buttonbox_font_scale", true, 0.01f, 2f, 1f);
+                nudButtonBox_font_x_shift.Value = (decimal)igs.GetSetting<float>("buttonbox_font_shift_x", true, -0.25f, 0.25f, 0f);
+                nudButtonBox_font_y_shift.Value = (decimal)igs.GetSetting<float>("buttonbox_font_shift_y", true, -0.25f, 0.25f, 0f);
 
                 _bandButtons_font = new Font(igs.FontFamily1, igs.FontSize1, igs.FontStyle1);
                 chkBandButtons_fade_rx.Checked = igs.FadeOnRx;
@@ -30280,6 +30288,21 @@ namespace Thetis
         {
             if (initializing) return;
             LegacyItemController.ExpandSpectrumToRight = chkLegacyItems_expand_spectral.Checked;
+        }
+
+        private void nudButtonBox_font_scale_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudButtonBox_font_x_shift_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudButtonBox_font_y_shift_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 

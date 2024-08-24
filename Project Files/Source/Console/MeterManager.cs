@@ -3006,6 +3006,19 @@ namespace Thetis
                 }
             }
         }
+        public static bool IsOnTop(string sId)
+        {
+            bool top;
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return false;
+                if (!_lstUCMeters.ContainsKey(sId)) return false;
+
+                ucMeter uc = _lstUCMeters[sId];
+                top = uc.IsTopMost;
+            }
+            return top;
+        }
         public static void FinishSetupAndDisplay()
         {
             _finishedSetup = true;
@@ -4940,7 +4953,7 @@ namespace Thetis
                     {
                         _console.BeginInvoke(new MethodInvoker(() =>
                         {
-                            _console.PopupBandstack(_owningmeter.RX, b);
+                            _console.PopupBandstack(_owningmeter.RX, b, MeterManager.IsOnTop(_owningmeter.ID));
                         }));
                     }
                     return;
@@ -5042,6 +5055,10 @@ namespace Thetis
             private float _radius;
             private float _height_ratio; // 0 to 1.0
 
+            private float _font_scale;
+            private float _font_shift_x;
+            private float _font_shift_y;
+
             private System.Drawing.Color[][] _fill_colour;
             private System.Drawing.Color[][] _hover_colour;
             private System.Drawing.Color[][] _border_colour;
@@ -5077,6 +5094,10 @@ namespace Thetis
                 _height_ratio = 1;
                 _button_index = -1;
 
+                _font_scale = 1f;
+                _font_shift_x = 0f;
+                _font_shift_y = 0f;
+            
                 UpdateInterval = 50;
 
                 setupArrays();
@@ -5157,6 +5178,21 @@ namespace Thetis
                         _indicator_type[n][b] = IndicatorType.RING;
                     }
                 }
+            }
+            public float FontScale
+            {
+                get { return _font_scale; }
+                set { _font_scale = value; }
+            }
+            public float FontShiftX
+            {
+                get { return _font_shift_x; }
+                set { _font_shift_x = value; }
+            }
+            public float FontShiftY
+            {
+                get { return _font_shift_y; }
+                set { _font_shift_y = value; }
             }
             public int ButtonIndex
             {
@@ -13277,6 +13313,10 @@ namespace Thetis
                                             bb.Radius = igs.GetSetting<float>("buttonbox_radius", true, 0f, 2f, 0f) / 10f;
                                             bb.HeightRatio = igs.GetSetting<float>("buttonbox_height_ratio", true, 0.01f, 2f, 0.5f);
 
+                                            bb.FontScale = igs.GetSetting<float>("buttonbox_font_scale", true, 0.01f, 2f, 1f);
+                                            bb.FontShiftX = igs.GetSetting<float>("buttonbox_font_shift_x", true, -0.25f, 0.25f, 0f);
+                                            bb.FontShiftY = igs.GetSetting<float>("buttonbox_font_shift_y", true, -0.25f, 0.25f, 0f);
+
                                             if (bbb != null)
                                                 bbb.ForceUpdate = false;
 
@@ -14264,6 +14304,10 @@ namespace Thetis
                                             igs.SetSetting<bool>("buttonbox_use_off_colour", bb.GetUseOffColour(0, 0));
 
                                             igs.SetSetting<clsButtonBox.IndicatorType>("buttonbox_indicator_type", bb.GetIndiciatorType(0, 0));
+
+                                            igs.SetSetting<float>("buttonbox_font_scale", bb.FontScale);
+                                            igs.SetSetting<float>("buttonbox_font_size_x", bb.FontShiftX);
+                                            igs.SetSetting<float>("buttonbox_font_size_y", bb.FontShiftY);
 
                                             igs.FontFamily1 = bb.GetFontFamily(0, 0);
                                             igs.FontSize1 = bb.GetFontSize(0, 0);
@@ -19889,6 +19933,18 @@ namespace Thetis
                 else
                     _renderTarget.FillRectangle(rr.Rect, b);
             }
+            private void drawSafeLine(RawVector2 start, RawVector2 end, SharpDX.Direct2D1.Brush b, float width)
+            {
+                float start_x = start.X;
+                float start_y = start.Y;
+                float end_x = end.X;
+                float end_y = end.Y;
+
+                if (end.X < start_x) end.X = start.X;
+                if (end.Y < start_y) end.Y = start.Y;
+
+                _renderTarget.DrawLine(new RawVector2(start_x, start_y), new RawVector2(end_x, end_y), b, width);
+            }
             private void renderButtonBox(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsButtonBox bb = mi as clsButtonBox;
@@ -20031,32 +20087,33 @@ namespace Thetis
                                     case clsButtonBox.IndicatorType.BAR_LEFT:
                                         text_size_modifier = 0.9f;
                                         indicator_shrink = (0.015f * wh);
-                                        _renderTarget.DrawLine(new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Top + indicator_shrink + (radius * 0.45f)), new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Bottom - indicator_shrink - (radius * 0.45f)), getDXBrushForColour(indicator_colour), indicator_width);
-                                        indicator_adjust.Left = indicator_width + (indicator_shrink * 1.5f);
-                                        indicator_adjust.Right = indicator_width;
+                                        drawSafeLine(new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Top + indicator_shrink + (radius * 0.45f)), new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Bottom - indicator_shrink - (radius * 0.45f)), getDXBrushForColour(indicator_colour), indicator_width);
+                                        //indicator_adjust.Left = indicator_width + (indicator_shrink * 1.5f);
+                                        indicator_adjust.Left = indicator_width;
                                         break;
                                     case clsButtonBox.IndicatorType.BAR_RIGHT:
                                         text_size_modifier = 0.9f;
                                         indicator_shrink = (0.015f * wh);
-                                        _renderTarget.DrawLine(new RawVector2(rectBB.Right - indicator_shrink - (indicator_width / 2f), rectBB.Top + indicator_shrink + (radius * 0.45f)), new RawVector2(rectBB.Right - indicator_shrink - (indicator_width / 2f), rectBB.Bottom - indicator_shrink - (radius * 0.45f)), getDXBrushForColour(indicator_colour), indicator_width);
-                                        indicator_adjust.Left = indicator_width;
-                                        indicator_adjust.Right = indicator_width + (indicator_shrink * 1.5f);
+                                        drawSafeLine(new RawVector2(rectBB.Right - indicator_shrink - (indicator_width / 2f), rectBB.Top + indicator_shrink + (radius * 0.45f)), new RawVector2(rectBB.Right - indicator_shrink - (indicator_width / 2f), rectBB.Bottom - indicator_shrink - (radius * 0.45f)), getDXBrushForColour(indicator_colour), indicator_width);
+                                        indicator_adjust.Right = indicator_width;
+                                        //indicator_adjust.Right = indicator_width + (indicator_shrink * 1.5f);
                                         break;
                                     case clsButtonBox.IndicatorType.BAR_TOP:
                                         text_size_modifier = 0.9f;
                                         indicator_shrink = (0.01f * wh);
-                                        _renderTarget.DrawLine(new RawVector2(rectBB.Left + (indicator_shrink * 2f) + (radius * 0.45f), rectBB.Top + indicator_shrink + (indicator_width / 2f)), new RawVector2(rectBB.Right - (indicator_shrink * 2f) - (radius * 0.45f), rectBB.Top + indicator_shrink + (indicator_width / 2f)), getDXBrushForColour(indicator_colour), indicator_width);
+                                        drawSafeLine(new RawVector2(rectBB.Left + (indicator_shrink * 2f) + (radius * 0.45f), rectBB.Top + indicator_shrink + (indicator_width / 2f)), new RawVector2(rectBB.Right - (indicator_shrink * 2f) - (radius * 0.45f), rectBB.Top + indicator_shrink + (indicator_width / 2f)), getDXBrushForColour(indicator_colour), indicator_width);
                                         indicator_adjust.Top = indicator_width;
                                         break;
                                     case clsButtonBox.IndicatorType.BAR_BOTTOM:
                                         text_size_modifier = 0.9f;
                                         indicator_shrink = (0.01f * wh);
-                                        _renderTarget.DrawLine(new RawVector2(rectBB.Left + (indicator_shrink * 2f) + (radius * 0.45f), rectBB.Bottom - indicator_shrink - (indicator_width / 2f)), new RawVector2(rectBB.Right - (indicator_shrink * 2f) - (radius * 0.45f), rectBB.Bottom - indicator_shrink - (indicator_width / 2f)), getDXBrushForColour(indicator_colour), indicator_width);
+                                        drawSafeLine(new RawVector2(rectBB.Left + (indicator_shrink * 2f) + (radius * 0.45f), rectBB.Bottom - indicator_shrink - (indicator_width / 2f)), new RawVector2(rectBB.Right - (indicator_shrink * 2f) - (radius * 0.45f), rectBB.Bottom - indicator_shrink - (indicator_width / 2f)), getDXBrushForColour(indicator_colour), indicator_width);
                                         indicator_adjust.Bottom = indicator_width;
                                         break;
                                     case clsButtonBox.IndicatorType.DOT_LEFT:
                                         {
                                             float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            rad = Math.Max(0f, rad);
                                             text_size_modifier = 1f;
                                             indicator_shrink = (0.01f * wh);
                                             Ellipse dot = new Ellipse(new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Top + ((rectBB.Bottom - rectBB.Top) / 2f)), rad, rad);
@@ -20068,6 +20125,7 @@ namespace Thetis
                                     case clsButtonBox.IndicatorType.DOT_RIGHT:
                                         {
                                             float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            rad = Math.Max(0f, rad);
                                             text_size_modifier = 1f;
                                             indicator_shrink = (0.01f * wh);
                                             Ellipse dot = new Ellipse(new RawVector2(rectBB.Right - indicator_shrink - (indicator_width / 2f), rectBB.Top + ((rectBB.Bottom - rectBB.Top) / 2f)), rad, rad);
@@ -20079,6 +20137,7 @@ namespace Thetis
                                     case clsButtonBox.IndicatorType.DOT_TOP:
                                         {
                                             float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            rad = Math.Max(0f, rad);
                                             text_size_modifier = 1f;
                                             indicator_shrink = (0.01f * wh);
                                             Ellipse dot = new Ellipse(new RawVector2(rectBB.Left + (rectBB.Right - rectBB.Left) / 2f, rectBB.Top + indicator_shrink + (indicator_width / 2f)), rad, rad);
@@ -20089,6 +20148,7 @@ namespace Thetis
                                     case clsButtonBox.IndicatorType.DOT_BOTTOM:
                                         {
                                             float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            rad = Math.Max(0f, rad);
                                             text_size_modifier = 1f;
                                             indicator_shrink = (0.01f * wh);
                                             Ellipse dot = new Ellipse(new RawVector2(rectBB.Left + (rectBB.Right - rectBB.Left) / 2f, rectBB.Bottom - indicator_shrink - (indicator_width / 2f)), rad, rad);
@@ -20099,6 +20159,7 @@ namespace Thetis
                                     case clsButtonBox.IndicatorType.DOT_TOP_LEFT:
                                         {
                                             float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            rad = Math.Max(0f, rad);
                                             text_size_modifier = 1f;
                                             indicator_shrink = (0.01f * wh);
                                             Ellipse dot = new Ellipse(new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Top + indicator_shrink + (indicator_width / 2f)), rad, rad);
@@ -20110,6 +20171,7 @@ namespace Thetis
                                     case clsButtonBox.IndicatorType.DOT_BOTTOM_LEFT:
                                         {
                                             float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            rad = Math.Max(0f, rad);
                                             text_size_modifier = 1f;
                                             indicator_shrink = (0.01f * wh);
                                             Ellipse dot = new Ellipse(new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Bottom - indicator_shrink - (indicator_width / 2f)), rad, rad);
@@ -20121,6 +20183,7 @@ namespace Thetis
                                     case clsButtonBox.IndicatorType.DOT_TOP_RIGHT:
                                         {
                                             float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            rad = Math.Max(0f, rad);
                                             text_size_modifier = 1f;
                                             indicator_shrink = (0.01f * wh);
                                             Ellipse dot = new Ellipse(new RawVector2(rectBB.Right - indicator_shrink - (indicator_width / 2f), rectBB.Top + indicator_shrink + (indicator_width / 2f)), rad, rad);
@@ -20132,6 +20195,7 @@ namespace Thetis
                                     case clsButtonBox.IndicatorType.DOT_BOTTOM_RIGHT:
                                         {
                                             float rad = Math.Min((indicator_width / 2f) - (radius * 0.2f), ((rectBB.Bottom - rectBB.Top) / 2f) * 0.9f);
+                                            rad = Math.Max(0f, rad);
                                             text_size_modifier = 1f;
                                             indicator_shrink = (0.01f * wh);
                                             Ellipse dot = new Ellipse(new RawVector2(rectBB.Right - indicator_shrink - (indicator_width / 2f), rectBB.Bottom - indicator_shrink - (indicator_width / 2f)), rad, rad);
@@ -20168,7 +20232,7 @@ namespace Thetis
                             float cy = rectBB.Top + (rectBB.Height / 2f);
                             if (rectBB.Width > 0 && rectBB.Height > 0)
                             {
-                                plotText(bb.GetText(1, button_index), cx, cy, h, rect.Width, bb.GetFontSize(1, button_index), text_colour, 255, bb.GetFontFamily(1, button_index), bb.GetFontStyle(1, button_index), false, true, rectBB.Width * text_size_modifier, true, rectBB.Height * text_size_modifier);
+                                plotText(bb.GetText(1, button_index), cx + (bb.FontShiftX * wh / (float)(buttons_per_row * 2f)), cy + (bb.FontShiftY * wh / (float)(buttons_per_row * 2f)), h, rect.Width, bb.GetFontSize(1, button_index), text_colour, 255, bb.GetFontFamily(1, button_index), bb.GetFontStyle(1, button_index), false, true, rectBB.Width * text_size_modifier * bb.FontScale, true, rectBB.Height * text_size_modifier * bb.FontScale);
                             }
                         }
 
