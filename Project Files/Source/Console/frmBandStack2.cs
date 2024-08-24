@@ -66,6 +66,7 @@ namespace Thetis
         private BandStackFilter m_bsf;
 
         private bool _is_popup;
+        private bool _is_popup_on_top;
         private Point _location;
         private bool m_bIgnoreIndexChanged; // ignore select index change when updating the list with initbandstack filter or the update selected
 
@@ -77,6 +78,7 @@ namespace Thetis
         public void InitForm()
         {            
             _is_popup = false;
+            _is_popup_on_top = false;
             m_bIgnoreIndexChanged = false;
             bandStackListBox.Items.Clear();
 
@@ -355,7 +357,11 @@ namespace Thetis
             this.Hide();
             Store();
 
+            if (_is_popup && _is_popup_on_top && !chkAlwaysOnTop.Checked)
+                this.TopMost = false;
+
             _is_popup = false;
+            _is_popup_on_top = false;
         }
 
         private void frmBandStack2_FormClosing(object sender, FormClosingEventArgs e)
@@ -363,15 +369,17 @@ namespace Thetis
             e.Cancel = true;
             HideClose();
         }
-        public new void Show(bool is_popup = false, Point? popup_location = null)
+        public new void Show(bool is_popup = false, Point? popup_location = null, bool on_top = false)
         { // shadow of show
             _is_popup = is_popup;
-
+            _is_popup_on_top = on_top;
             InitBandStackFilter(m_bsf, true);
             this.BringToFront();
 
             if (_is_popup)
             {
+                if(on_top)
+                    this.TopMost = true;
                 this.Location = popup_location ?? Point.Empty;
                 Common.ForceFormOnScreen(this);
             }

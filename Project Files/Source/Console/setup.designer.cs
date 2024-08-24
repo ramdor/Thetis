@@ -3943,6 +3943,12 @@
             this.labelTS249 = new System.Windows.Forms.LabelTS();
             this.chkBandButtons_fade_tx = new System.Windows.Forms.CheckBoxTS();
             this.chkBandButtons_fade_rx = new System.Windows.Forms.CheckBoxTS();
+            this.nudButtonBox_font_x_shift = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS247 = new System.Windows.Forms.LabelTS();
+            this.nudButtonBox_font_scale = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS248 = new System.Windows.Forms.LabelTS();
+            this.labelTS250 = new System.Windows.Forms.LabelTS();
+            this.nudButtonBox_font_y_shift = new System.Windows.Forms.NumericUpDownTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4954,6 +4960,9 @@
             this.groupBoxTS43.SuspendLayout();
             this.groupBoxTS40.SuspendLayout();
             this.grpBandButtons.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudButtonBox_font_x_shift)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudButtonBox_font_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudButtonBox_font_y_shift)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -62611,6 +62620,12 @@
             // 
             // grpBandButtons
             // 
+            this.grpBandButtons.Controls.Add(this.nudButtonBox_font_y_shift);
+            this.grpBandButtons.Controls.Add(this.labelTS250);
+            this.grpBandButtons.Controls.Add(this.nudButtonBox_font_x_shift);
+            this.grpBandButtons.Controls.Add(this.labelTS247);
+            this.grpBandButtons.Controls.Add(this.nudButtonBox_font_scale);
+            this.grpBandButtons.Controls.Add(this.labelTS248);
             this.grpBandButtons.Controls.Add(this.lblBandButtons_indicator_style);
             this.grpBandButtons.Controls.Add(this.nudBandButtons_indicator_style);
             this.grpBandButtons.Controls.Add(this.chkBandButtons_band_inactive_use);
@@ -62784,10 +62799,10 @@
             // btnBandButtons_font
             // 
             this.btnBandButtons_font.Image = null;
-            this.btnBandButtons_font.Location = new System.Drawing.Point(209, 131);
+            this.btnBandButtons_font.Location = new System.Drawing.Point(241, 73);
             this.btnBandButtons_font.Name = "btnBandButtons_font";
             this.btnBandButtons_font.Selectable = true;
-            this.btnBandButtons_font.Size = new System.Drawing.Size(49, 23);
+            this.btnBandButtons_font.Size = new System.Drawing.Size(56, 23);
             this.btnBandButtons_font.TabIndex = 137;
             this.btnBandButtons_font.Text = "Font";
             this.btnBandButtons_font.UseVisualStyleBackColor = true;
@@ -62808,7 +62823,7 @@
             // 
             this.chkBandButtons_fade_tx.AutoSize = true;
             this.chkBandButtons_fade_tx.Image = null;
-            this.chkBandButtons_fade_tx.Location = new System.Drawing.Point(209, 81);
+            this.chkBandButtons_fade_tx.Location = new System.Drawing.Point(216, 48);
             this.chkBandButtons_fade_tx.Name = "chkBandButtons_fade_tx";
             this.chkBandButtons_fade_tx.Size = new System.Drawing.Size(82, 17);
             this.chkBandButtons_fade_tx.TabIndex = 3;
@@ -62820,13 +62835,139 @@
             // 
             this.chkBandButtons_fade_rx.AutoSize = true;
             this.chkBandButtons_fade_rx.Image = null;
-            this.chkBandButtons_fade_rx.Location = new System.Drawing.Point(209, 58);
+            this.chkBandButtons_fade_rx.Location = new System.Drawing.Point(215, 25);
             this.chkBandButtons_fade_rx.Name = "chkBandButtons_fade_rx";
             this.chkBandButtons_fade_rx.Size = new System.Drawing.Size(83, 17);
             this.chkBandButtons_fade_rx.TabIndex = 2;
             this.chkBandButtons_fade_rx.Text = "Fade on RX";
             this.chkBandButtons_fade_rx.UseVisualStyleBackColor = true;
             this.chkBandButtons_fade_rx.CheckedChanged += new System.EventHandler(this.chkBandButtons_fade_rx_CheckedChanged);
+            // 
+            // nudButtonBox_font_x_shift
+            // 
+            this.nudButtonBox_font_x_shift.DecimalPlaces = 2;
+            this.nudButtonBox_font_x_shift.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudButtonBox_font_x_shift.Location = new System.Drawing.Point(241, 128);
+            this.nudButtonBox_font_x_shift.Maximum = new decimal(new int[] {
+            25,
+            0,
+            0,
+            131072});
+            this.nudButtonBox_font_x_shift.Minimum = new decimal(new int[] {
+            25,
+            0,
+            0,
+            -2147352576});
+            this.nudButtonBox_font_x_shift.Name = "nudButtonBox_font_x_shift";
+            this.nudButtonBox_font_x_shift.Size = new System.Drawing.Size(56, 20);
+            this.nudButtonBox_font_x_shift.TabIndex = 163;
+            this.nudButtonBox_font_x_shift.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudButtonBox_font_x_shift, "Font x shift");
+            this.nudButtonBox_font_x_shift.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudButtonBox_font_x_shift.ValueChanged += new System.EventHandler(this.nudButtonBox_font_x_shift_ValueChanged);
+            // 
+            // labelTS247
+            // 
+            this.labelTS247.AutoSize = true;
+            this.labelTS247.Image = null;
+            this.labelTS247.Location = new System.Drawing.Point(194, 159);
+            this.labelTS247.Name = "labelTS247";
+            this.labelTS247.Size = new System.Drawing.Size(41, 13);
+            this.labelTS247.TabIndex = 162;
+            this.labelTS247.Text = "Shift Y:";
+            this.labelTS247.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // nudButtonBox_font_scale
+            // 
+            this.nudButtonBox_font_scale.DecimalPlaces = 2;
+            this.nudButtonBox_font_scale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudButtonBox_font_scale.Location = new System.Drawing.Point(241, 102);
+            this.nudButtonBox_font_scale.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudButtonBox_font_scale.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudButtonBox_font_scale.Name = "nudButtonBox_font_scale";
+            this.nudButtonBox_font_scale.Size = new System.Drawing.Size(56, 20);
+            this.nudButtonBox_font_scale.TabIndex = 161;
+            this.nudButtonBox_font_scale.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudButtonBox_font_scale, "Font scale adjustment");
+            this.nudButtonBox_font_scale.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudButtonBox_font_scale.ValueChanged += new System.EventHandler(this.nudButtonBox_font_scale_ValueChanged);
+            // 
+            // labelTS248
+            // 
+            this.labelTS248.AutoSize = true;
+            this.labelTS248.Image = null;
+            this.labelTS248.Location = new System.Drawing.Point(194, 104);
+            this.labelTS248.Name = "labelTS248";
+            this.labelTS248.Size = new System.Drawing.Size(37, 13);
+            this.labelTS248.TabIndex = 160;
+            this.labelTS248.Text = "Scale:";
+            this.labelTS248.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS250
+            // 
+            this.labelTS250.AutoSize = true;
+            this.labelTS250.Image = null;
+            this.labelTS250.Location = new System.Drawing.Point(194, 130);
+            this.labelTS250.Name = "labelTS250";
+            this.labelTS250.Size = new System.Drawing.Size(41, 13);
+            this.labelTS250.TabIndex = 164;
+            this.labelTS250.Text = "Shift X:";
+            this.labelTS250.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // nudButtonBox_font_y_shift
+            // 
+            this.nudButtonBox_font_y_shift.DecimalPlaces = 2;
+            this.nudButtonBox_font_y_shift.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudButtonBox_font_y_shift.Location = new System.Drawing.Point(241, 154);
+            this.nudButtonBox_font_y_shift.Maximum = new decimal(new int[] {
+            25,
+            0,
+            0,
+            131072});
+            this.nudButtonBox_font_y_shift.Minimum = new decimal(new int[] {
+            25,
+            0,
+            0,
+            -2147352576});
+            this.nudButtonBox_font_y_shift.Name = "nudButtonBox_font_y_shift";
+            this.nudButtonBox_font_y_shift.Size = new System.Drawing.Size(56, 20);
+            this.nudButtonBox_font_y_shift.TabIndex = 165;
+            this.nudButtonBox_font_y_shift.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudButtonBox_font_y_shift, "Ratio of height to width");
+            this.nudButtonBox_font_y_shift.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudButtonBox_font_y_shift.ValueChanged += new System.EventHandler(this.nudButtonBox_font_y_shift_ValueChanged);
             // 
             // Setup
             // 
@@ -64085,6 +64226,9 @@
             this.groupBoxTS40.ResumeLayout(false);
             this.grpBandButtons.ResumeLayout(false);
             this.grpBandButtons.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudButtonBox_font_x_shift)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudButtonBox_font_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudButtonBox_font_y_shift)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -68031,5 +68175,11 @@
         private CheckBoxTS chkLegacyItems_filter;
         private CheckBoxTS chkLegacyItems_mode;
         private CheckBoxTS chkLegacyItems_band;
+        private NumericUpDownTS nudButtonBox_font_y_shift;
+        private LabelTS labelTS250;
+        private NumericUpDownTS nudButtonBox_font_x_shift;
+        private LabelTS labelTS247;
+        private NumericUpDownTS nudButtonBox_font_scale;
+        private LabelTS labelTS248;
     }
 }

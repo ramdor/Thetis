@@ -49746,7 +49746,7 @@ namespace Thetis
         {
             contextMenuStripFilterRX1.Show(MousePosition);
         }
-        public void PopupBandstack(int rx, Band b)
+        public void PopupBandstack(int rx, Band b, bool is_on_top)
         {
             if (rx == 2) return;  // no bandstack for rx2 yet
 
@@ -49758,7 +49758,7 @@ namespace Thetis
                 BandStack2Form.InitBandStackFilter(bsf, true);
             }
 
-            BandStack2Form.Show(true, MousePosition);
+            BandStack2Form.Show(true, MousePosition, is_on_top);
         }
         private void showBandStack()
         {

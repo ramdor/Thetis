@@ -726,6 +726,19 @@ namespace Thetis
                 }
             }
         }
+        public bool IsTopMost
+        {
+            get
+            {
+                frmMeterDisplay md = this.Parent as frmMeterDisplay;
+                if (md != null)
+                {
+                    return md.TopMost;
+                }
+                else
+                    return false;
+            }
+        }
         public override string ToString()
         {
             return
