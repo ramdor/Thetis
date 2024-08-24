@@ -1272,7 +1272,7 @@ namespace Thetis
 
                     Application.Run(_theConsole);
 
-                    restart = _theConsole.Restart;
+                    restart = _theConsole.Restart && !Common.ShiftKeyDown;
                 }
             }
             catch (Exception ex)
@@ -45090,19 +45090,7 @@ namespace Thetis
         // ke9ns add open up bandstack window when you click on the bandstack index
         private void regBox1_Click(object sender, EventArgs e)
         {
-            if (InvokeRequired)
-            {
-                Invoke(new MethodInvoker(() =>
-                {
-                    btnHidden.Focus();
-                    BandStack2Form.Show();
-                }));
-            }
-            else
-            {
-                btnHidden.Focus();
-                BandStack2Form.Show();
-            }
+            showBandStack();
         }// regBox1_Click
 
         //==============================================================
@@ -46279,19 +46267,7 @@ namespace Thetis
         private void lblBandStack_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d band stack 2
-            if (InvokeRequired)
-            {
-                Invoke(new MethodInvoker(() =>
-                {
-                    btnHidden.Focus();
-                    BandStack2Form.Show();
-                }));
-            }
-            else
-            {
-                btnHidden.Focus();
-                BandStack2Form.Show();
-            }
+            showBandStack();
         }
 
         //MW0LGE_21d3
@@ -49763,6 +49739,50 @@ namespace Thetis
                 SetupForm.Show();
                 SetupForm.Focus();
                 SetFocusMaster(false);
+            }
+        }
+
+        public void PopupFilterContextMenu(MouseEventArgs e)
+        {
+            contextMenuStripFilterRX1.Show(MousePosition);
+        }
+        public void PopupBandstack(int rx, Band b)
+        {
+            if (rx == 2) return;  // no bandstack for rx2 yet
+
+            // used by multimeters
+            BandStackFilter bsf = BandStackManager.GetFilter(b);
+
+            if (bsf != null)
+            {
+                BandStack2Form.InitBandStackFilter(bsf, true);
+            }
+
+            BandStack2Form.Show(true, MousePosition);
+        }
+        private void showBandStack()
+        {
+            // for console to use, so that we will always use rx1 band the stack for vfoa band
+            BandStackFilter bsf = BandStackManager.GetFilter(RX1Band);
+
+            if (bsf != null)
+            {
+                BandStack2Form.InitBandStackFilter(bsf, true);
+                updateStackNumberDisplay(bsf);
+            }
+
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() =>
+                {
+                    btnHidden.Focus();
+                    BandStack2Form.Show();
+                }));
+            }
+            else
+            {
+                btnHidden.Focus();
+                BandStack2Form.Show();
             }
         }
     }

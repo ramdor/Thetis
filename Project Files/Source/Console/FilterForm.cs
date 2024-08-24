@@ -27,6 +27,7 @@
 //=================================================================
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -93,6 +94,7 @@ namespace Thetis
 				radFilter9.Enabled = false;
 				radFilter10.Enabled = false;
 			}
+			Common.RestoreForm(this, "FilterForm", false);
 		}
 
 		/// <summary>
@@ -499,6 +501,7 @@ namespace Thetis
             this.MaximizeBox = false;
             this.Name = "FilterForm";
             this.Text = "Filter Setup";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FilterForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.udLow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udHigh)).EndInit();
             this.groupBox1.ResumeLayout(false);
@@ -927,7 +930,10 @@ namespace Thetis
 			}
 			
 		}
-		
-		#endregion		
-	}
+        private void FilterForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Common.SaveForm(this, "FilterForm");
+        }
+        #endregion
+    }
 }
