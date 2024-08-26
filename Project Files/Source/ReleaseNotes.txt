@@ -17,6 +17,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] new button box meter controls for bands, modes and filters
 - [add] rotator can now have the beam width alpha adjusted
 - [add] right click a band in a band button box, and it will bandstack for that band
+- [add] antenna switch box meter item
 - [change] importing a db with meter containers will no longer clear existing ones, they will be added if possible
 - [change] filter setup form now stores/recalls location
 - [fix] import of container locations now works when importing a database

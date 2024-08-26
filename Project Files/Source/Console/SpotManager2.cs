@@ -36,6 +36,8 @@ namespace Thetis
 {
     internal static class SpotManager2
     {
+        const int MAX_RX = 2;
+
         private static List<smSpot> _spots = new List<smSpot>();
         private static Object _objLock = new Object();
         private static int _lifeTime = 60;
@@ -170,7 +172,7 @@ namespace Thetis
         }
 
         public static void AddSpot(string callsign, DSPMode mode, long frequencyHz, Color colour, string additionalText, string spotter = "")
-        {
+        {           
             smSpot spot = new smSpot()
             {
                 callsign = callsign.ToUpper().Trim(),
@@ -190,15 +192,13 @@ namespace Thetis
             if (spot.spotter.Length > 20)
                 spot.spotter = spot.spotter.Substring(0, 20);
             if (spot.additionalText.Length > 30)
-                spot.additionalText = spot.additionalText.Substring(0, 30);
+                spot.additionalText = spot.additionalText.Substring(0, 30);            
 
-            const int maxRX = 2;
+            spot.Highlight = new bool[MAX_RX];
+            spot.BoundingBoxInPixels = new Rectangle[MAX_RX];
+            spot.Visible = new bool[MAX_RX];
 
-            spot.Highlight = new bool[maxRX];
-            spot.BoundingBoxInPixels = new Rectangle[maxRX];
-            spot.Visible = new bool[maxRX];
-
-            for (int rx = 0; rx < maxRX; rx++)
+            for (int rx = 0; rx < MAX_RX; rx++)
             {
                 spot.Highlight[rx] = false;
                 spot.BoundingBoxInPixels[rx] = new Rectangle(-1, -1, 0, 0);

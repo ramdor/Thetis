@@ -1177,6 +1177,18 @@ namespace Thetis
                     return BandType.GEN;
             }
         }
+        public static BandType GetBandTypeForFrequency(double frequency)
+        {
+            BandType ret = BandType.GEN;
+            if (m_frequencyData == null || m_frequencyData.Count == 0) return ret;
+
+            List<BandFrequencyData> bfd_for_freq = m_frequencyData.Where(bfd => (bfd.lowOnly == true && bfd.low == frequency) 
+                                    || (bfd.lowOnly == false && (frequency >= bfd.low && frequency < bfd.high))).ToList();
+
+            if (bfd_for_freq.Count > 0) return bfd_for_freq.First().bandType;
+
+            return ret;
+        }
         private static List<BandFrequencyData> frequencyData(FRSRegion region)
         {
             if (m_bExtended) region = FRSRegion.Extended;

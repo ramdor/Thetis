@@ -202,6 +202,7 @@ namespace Thetis
         BAND_BUTTONS,
         MODE_BUTTONS,
         FILTER_BUTTONS,
+        ANTENNA_BUTTONS,
         //SPECTRUM,
         LAST
     }
@@ -209,7 +210,8 @@ namespace Thetis
     {
         GEN = 0,
         HF,
-        VHF
+        VHF,
+        LAST = 99
     }
     public class Globals
     {
@@ -252,6 +254,12 @@ namespace Thetis
         private static CustomReadings _custom_readings;
 
         private static ImageFetcher _image_fetcher;
+
+        private static bool[][] _rx_ant = null;
+        private static bool[][] _tx_ant = null;
+        private static bool[][] _rx_ant_aux = null;
+        private static bool[] _ant_no_tx;
+        private static string[] _ant_aux_names;
 
         //public static float[] _newSpectrumPassband;
         //public static float[] _currentSpectrumPassband;
@@ -1451,6 +1459,7 @@ namespace Thetis
                 case MeterType.BAND_BUTTONS: return 2;
                 case MeterType.MODE_BUTTONS: return 2;
                 case MeterType.FILTER_BUTTONS: return 2;
+                case MeterType.ANTENNA_BUTTONS: return 2;
                     //case MeterType.SPECTRUM: return 2;
             }
 
@@ -1491,6 +1500,7 @@ namespace Thetis
                 case MeterType.BAND_BUTTONS: return "Band Buttons";
                 case MeterType.MODE_BUTTONS: return "Mode Buttons";
                 case MeterType.FILTER_BUTTONS: return "Filter Buttons";
+                case MeterType.ANTENNA_BUTTONS: return "Antenna Buttons";
                 case MeterType.DATA_OUT: return "Data Out Node";
                 case MeterType.ROTATOR: return "Rotator";
                 //case MeterType.HISTORY: return "History";
@@ -1802,7 +1812,14 @@ namespace Thetis
                 if (!_lstUCMeters.ContainsKey(sId)) return;
 
                 ucMeter uc = _lstUCMeters[sId];
-                uc.ChangeHeight(height);
+
+                if (uc.IsHandleCreated)
+                {
+                    uc.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        uc.ChangeHeight(height);
+                    }));
+                }
             }
         }
         public static void ContainerMinimises(string sId, bool minimises)
@@ -2001,6 +2018,65 @@ namespace Thetis
             }
             _pooledImages.Clear();
         }
+        public static void SetAntennaAuxText(string n1, string n2, string n3)
+        {
+            if (n1 != _ant_aux_names[0] || n2 != _ant_aux_names[1] || n3 != _ant_aux_names[2])
+            {
+                _ant_aux_names[0] = n1;
+                _ant_aux_names[1] = n2;
+                _ant_aux_names[2] = n3;
+                updateAntennaMeters();
+            }
+        }
+        private static void initAntennaArrays()
+        {
+            // similar to setup.cs InitAlexAntTables() but own local copy of the state, updated by the delegates
+            _ant_no_tx = new bool[3];
+            _ant_aux_names = new string[3];
+            _ant_no_tx[0] = false; // always
+            _ant_no_tx[1] = false;
+            _ant_no_tx[2] = false;
+
+            _rx_ant_aux = new[] { new bool[]  { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false }
+                                                     };
+
+
+            _rx_ant = new[] { new bool[]  { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false }
+                                                     };
+
+            _tx_ant = new[] { new bool[]  { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false },
+                                                            new bool[] { false, false, false }
+                                                     };
+        }
         public static void Init(Console c)
         {
             _console = c;
@@ -2013,7 +2089,8 @@ namespace Thetis
             _alexPresent = _console.AlexPresent;
             _paPresent = _console.PAPresent;
             _transverterIndex = _console.TXXVTRIndex;
-            
+
+            initAntennaArrays();
             addDelegates();
 
             _meterThread = new Thread(new ThreadStart(UpdateMeters))
@@ -2202,6 +2279,14 @@ namespace Thetis
             _console.VHFChangedHandlers += OnVHFChanged;
             _console.FilterNameChangedHandlers += OnFilterNameChanged;
 
+            _console.AntennaRXChangedHandlers += OnAntennaRXChanged;
+            _console.AntennaTXChangedHandlers += OnAntennaTXChanged;
+            _console.AntennaAuxChangedHandlers += OnAntennaAuxChanged;
+            _console.AntennaDoNotTXHandlers += OnAntennaDoNotTX;
+            _console.AntennaRxTxHandlers += OnAntennaRxTx;
+
+            _console.TXFrequncyChangedHandlers += OnTXFrequencyChanged;
+
             _delegatesAdded = true;
         }
         private static void removeDelegates()
@@ -2244,12 +2329,197 @@ namespace Thetis
             _console.VHFChangedHandlers -= OnVHFChanged;
             _console.FilterNameChangedHandlers -= OnFilterNameChanged;
 
+            _console.AntennaRXChangedHandlers -= OnAntennaRXChanged;
+            _console.AntennaTXChangedHandlers -= OnAntennaTXChanged;
+            _console.AntennaAuxChangedHandlers -= OnAntennaAuxChanged;
+            _console.AntennaDoNotTXHandlers -= OnAntennaDoNotTX;
+            _console.AntennaRxTxHandlers -= OnAntennaRxTx;
+
+            _console.TXFrequncyChangedHandlers -= OnTXFrequencyChanged;
+
             foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
                 kvp.Value.RemoveDelegates();
             }
 
             _delegatesAdded = false;
+        }
+        private static readonly object _antenna_lock = new object();
+        private static void updateAntennaMeters()
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+                    m.UpdateAntennas(Band.FIRST, Band.FIRST, -1, -1);
+                }
+            }
+        }
+        private static void OnTXFrequencyChanged(double old_frequency, double new_frequency, Band old_band, Band new_band)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+                    m.UpdateAntennas(Band.FIRST, new_band, -1, new_frequency);
+                }
+            }
+        }
+        private static void OnAntennaRXChanged(Band b, int antenna, bool old_state, bool new_state)
+        {
+            if ((int)b < (int)Band.B160M || (int)b > (int)Band.B6M) return;
+            if (antenna < 0 || antenna > 2) return;
+            //Debug.Print($"====> RX Antenna Changed : band={b.ToString()} button={antenna.ToString()} from={old_state} to={new_state}");
+            lock (_antenna_lock)
+            {
+                _rx_ant[(int)b - (int)Band.B160M][antenna] = new_state;
+            }
+            if (old_state != new_state)
+                updateAntennaMeters();
+        }
+        private static void OnAntennaTXChanged(Band b, int antenna, bool old_state, bool new_state)
+        {
+            if ((int)b < (int)Band.B160M || (int)b > (int)Band.B6M) return;
+            if (antenna < 0 || antenna > 2) return;
+            //Debug.Print($"====> TX Antenna Changed : band={b.ToString()} button={antenna.ToString()} from={old_state} to={new_state}");
+            lock (_antenna_lock)
+            {
+                _tx_ant[(int)b - (int)Band.B160M][antenna] = new_state;
+            }
+            if (old_state != new_state)
+                updateAntennaMeters();
+        }
+        private static void OnAntennaAuxChanged(Band b, int antenna, bool old_state, bool new_state, string button_text)
+        {
+            if ((int)b < (int)Band.B160M || (int)b > (int)Band.B6M) return;
+            if (antenna < 0 || antenna > 2) return;
+            //Debug.Print($"====> Ant Aux Changed : band={b.ToString()} button={antenna.ToString()} from={old_state} to={new_state} buttontext={button_text}");
+            lock (_antenna_lock)
+            {
+                _rx_ant_aux[(int)b - (int)Band.B160M][antenna] = new_state;
+            }
+            if (old_state != new_state)
+                updateAntennaMeters();
+        }
+        private static void OnAntennaDoNotTX(int antenna, bool old_state, bool new_state)
+        {
+            if (antenna < 0 || antenna > 2) return;
+            //Debug.Print($"====> AntDotNotTX Changed : button={antenna.ToString()} from={old_state} to={new_state}");
+            lock (_antenna_lock)
+            {
+                _ant_no_tx[antenna] = new_state;
+            }
+            if (old_state != new_state)
+                updateAntennaMeters();
+        }
+        private static void OnAntennaRxTx(bool old_state, bool new_state)
+        {
+            lock (_metersLock)
+            {
+                if (old_state != new_state)
+                {
+                    foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                    {
+                        clsMeter m = ms.Value;
+                        m.UpdateAntennas(Band.FIRST, Band.FIRST, -1, -1, new_state ? 2 : 1);
+                    }
+                }
+            }
+
+            if (old_state != new_state)
+                updateAntennaMeters();
+        }
+        public static bool GetNoTX(int antenna)
+        {
+            if (antenna < 0 || antenna > 2) return false;
+            lock (_antenna_lock)
+            {
+                return _ant_no_tx[antenna];
+            }
+        }
+        public static bool GetRXAntState(Band b, int antenna)
+        {
+            if ((int)b < (int)Band.B160M || (int)b > (int)Band.B6M) return false;
+            if (antenna < 0 || antenna > 2) return false;
+            lock (_antenna_lock)
+            {                
+                return _rx_ant[(int)b - (int)Band.B160M][antenna];
+            }
+        }
+        public static bool GetTXAntState(Band b, int antenna)
+        {
+            if ((int)b < (int)Band.B160M || (int)b > (int)Band.B6M) return false;
+            if (antenna < 0 || antenna > 2) return false;
+            lock (_antenna_lock)
+            {
+                return _tx_ant[(int)b - (int)Band.B160M][antenna];
+            }
+        }
+        public static bool GetRXAuxState(Band b, int antenna)
+        {
+            if ((int)b < (int)Band.B160M || (int)b > (int)Band.B6M) return false;
+            if (antenna < 0 || antenna > 2) return false;
+            lock (_antenna_lock)
+            {
+                return _rx_ant_aux[(int)b - (int)Band.B160M][antenna];
+            }
+        }
+        public static string GetRXAuxName(int antenna)
+        {
+            if (antenna < 0 || antenna > 2) return "";
+            lock (_antenna_lock)
+            {
+                return _ant_aux_names[antenna];
+            }
+        }
+        public static bool GetTXEnabled(int antenna)
+        {
+            if (antenna < 0 || antenna > 2) return false;
+            lock (_antenna_lock)
+            {
+                return _ant_no_tx[antenna];
+            }
+        }
+        public static int GetRXAnt(Band b, bool xvtr)
+        {
+            if ((int)b < (int)Band.B160M || (int)b > (int)Band.B6M) return -2;
+            // 0-2 ant ports, 3=byp, 4=ext1, 5=xvtr
+            int band_idx = (int)b - (int)Band.B160M;
+            if (xvtr)
+            {
+                if (_rx_ant_aux[band_idx][2])
+                {
+                    return 5; //xvtr
+                }
+            }
+            else
+            {
+                if (_rx_ant_aux[band_idx][0])
+                {
+                    return 3; //bypass
+                }
+                else if (_rx_ant_aux[band_idx][1])
+                {
+                    return 4; //xvtr
+                }
+            }
+            for (int n = 0; n < 3; n++)
+            {
+                if (_rx_ant[band_idx][n]) return n;
+            }
+            return -1;
+        }
+        public static int GetTXAnt(Band b)
+        {
+            if ((int)b < (int)Band.B160M || (int)b > (int)Band.B6M) return -2;
+            // 0-2 ant ports
+            for (int n = 0; n < 3; n++)
+            {
+                if (_tx_ant[(int)b - (int)Band.B160M][n]) return n;
+            }
+            return -1;
         }
         private static void OnSplitChanged(int rx, bool oldSplit, bool newSplit)
         {
@@ -2324,6 +2594,14 @@ namespace Thetis
 
         private static void OnTXBandChanged(Band oldBand, Band newBand)
         {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+                    m.UpdateAntennas(Band.FIRST, newBand, -1, -1);
+                }
+            }
         }
         private static void OnVFOTXChanged(bool vfoB, bool oldState, bool newState)
         {
@@ -2333,6 +2611,9 @@ namespace Thetis
                 {
                     clsMeter m = ms.Value;
                     m.TXVFOb = vfoB && newState;
+
+                    if(oldState != newState)
+                        m.UpdateAntennas(Band.FIRST, Band.FIRST, -1, -1);
                 }
             }
         }
@@ -2389,7 +2670,7 @@ namespace Thetis
                 }
             }
         }
-        private static void OnBandChange(int rx, Band oldBand, Band newBand)
+        private static void bandUpdate(int rx, Band old_band, Band new_band, bool update_button_boxes = false, bool update_band = true)
         {
             lock (_metersLock)
             {
@@ -2397,21 +2678,37 @@ namespace Thetis
                 {
                     clsMeter m = ms.Value;
 
-                    if (rx == 1)
-                        m.BandVfoA = newBand;
-                    else
-                        m.BandVfoB = newBand;
+                    if (update_band)
+                    {
+                        if (rx == 1)
+                            m.BandVfoA = new_band;
+                        else
+                            m.BandVfoB = new_band;
 
-                    if(oldBand != newBand)
-                        m.UpdateBandButtons(newBand);
+                        m.UpdateBandButtons(old_band, new_band);
 
-                    m.ZeroOut(true, false);
+                        m.ZeroOut(true, false);
+                    }
+                }
+
+                // every meter
+                if (update_button_boxes && old_band != new_band)
+                {
+                    foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                    {
+                        clsMeter m = ms.Value;                        
+                        m.UpdateAntennas(new_band, Band.FIRST, -1, -1);
+                    }
                 }
             }
         }
+        private static void OnBandChange(int rx, Band oldBand, Band newBand)
+        {
+            bandUpdate(rx, oldBand, newBand, true);
+        }
         private static void OnPreBandChange(int rx, Band currentBand)
         {
-            OnBandChange(rx, currentBand, currentBand);
+            bandUpdate(rx, currentBand, currentBand);
         }
         private static void OnTransverterIndexChanged(int oldIndex, int newIndex)
         {
@@ -2447,7 +2744,17 @@ namespace Thetis
                     m.ModeVfoA = newMode;
                     m.BandVfoA = newBand;
                 }
+
+                if (oldFreq != newFreq) // do all meters, as same data for all
+                {
+                    foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                    {
+                        clsMeter m = ms.Value;
+                        m.UpdateAntennas(newBand, Band.FIRST, newFreq, -1);
+                    }
+                }
             }
+            bandUpdate(rx, oldBand, newBand, true, false);
         }
         private static void OnVFOB(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
@@ -2465,6 +2772,7 @@ namespace Thetis
                     m.BandVfoB = newBand;
                 }
             }
+            bandUpdate(rx, oldBand, newBand, true, false);
         }
         public static void OnVFOASub(Band oldBand, Band newBand, DSPMode newMode, Filter newFilter, double oldFreq, double newFreq, double newCentreF, bool newCTUN, int newZoomSlider, double offset, int rx)
         {
@@ -2498,7 +2806,66 @@ namespace Thetis
             {
                 initConsoleData(rx);
             }
+        }
+        private static void initConsoleData(clsMeter m)
+        {
+            m.MOX = _console.MOX;
+            m.Split = _console.VFOSplit;
+            m.TXVFOb = _console.VFOBTX;
+            m.RX2Enabled = _console.RX2Enabled;
+            m.MultiRxEnabled = _console.chkEnableMultiRX.Checked;
 
+            m.VfoA = _console.VFOAFreq;
+            m.ModeVfoA = _console.RX1DSPMode;
+            m.BandVfoA = _console.RX1Band;
+            m.FilterVfoA = _console.RX1Filter;
+            m.FilterVfoAName = getFilterName(1);// _console.rx1_filters[(int)_console.RX1DSPMode].GetName(_console.RX1Filter);
+
+            m.VfoB = _console.VFOBFreq;
+
+            m.VfoSub = _console.VFOASubFreq;
+
+            if (!_console.RX2Enabled)
+            {
+                // same as rx1 unless rx2 enabled
+                m.ModeVfoB = _console.RX1DSPMode;
+                m.BandVfoB = _console.RX1BandForVFOB();//_console.RX1Band;
+                m.FilterVfoB = _console.RX1Filter;
+                m.FilterVfoBName = getFilterName(1);//_console.rx1_filters[(int)_console.RX1DSPMode].GetName(_console.RX1Filter);
+            }
+            else
+            {
+                m.ModeVfoB = _console.RX2DSPMode;
+                m.BandVfoB = _console.RX2Band;
+                m.FilterVfoB = _console.RX2Filter;
+                m.FilterVfoBName = getFilterName(2);//_console.rx2_filters[(int)_console.RX2DSPMode].GetName(_console.RX2Filter);
+            }
+
+            m.TXEQEnabled = _console.TXEQ;
+            m.LevelerEnabled = !_console.IsSetupFormNull && _console.SetupForm.TXLevelerOn;
+            m.CFCEnabled = _console.CFCEnabled;
+            m.CompandEnabled = _console.CPDR;
+
+            m.QuickSplitEnabled = _console.GetQuickSplitEnabled;
+
+            if (m.RX == 1)
+            {
+                if (_console.BandGENSelected)
+                    m.BandGroup = BandGroups.GEN;
+                if (_console.BandHFSelected)
+                    m.BandGroup = BandGroups.HF;
+                if (_console.BandVHFSelected)
+                    m.BandGroup = BandGroups.VHF;
+            }
+            else if (m.RX == 2)
+            {
+                m.BandGroup = m.GetBandGroupFromBand(_console.RX2Band);
+            }
+
+            m.UpdateAntennas(_console.RX1Band, _console.TXBand, _console.VFOAFreq, _console.TXFreq);
+
+            // update any filter meter items and setupbuttons to update filter text
+            m.InitFilterButtons();
         }
         private static void initConsoleData(int rx)
         {
@@ -2510,61 +2877,7 @@ namespace Thetis
                 {
                     clsMeter m = mkvp.Value;
 
-                    m.MOX = _console.MOX;
-                    m.Split = _console.VFOSplit;
-                    m.TXVFOb = _console.VFOBTX;
-                    m.RX2Enabled = _console.RX2Enabled;
-                    m.MultiRxEnabled = _console.chkEnableMultiRX.Checked;
-
-                    m.VfoA = _console.VFOAFreq;
-                    m.ModeVfoA = _console.RX1DSPMode;
-                    m.BandVfoA = _console.RX1Band;
-                    m.FilterVfoA = _console.RX1Filter;
-                    m.FilterVfoAName = getFilterName(1);// _console.rx1_filters[(int)_console.RX1DSPMode].GetName(_console.RX1Filter);
-                    
-                    m.VfoB = _console.VFOBFreq;
-
-                    m.VfoSub = _console.VFOASubFreq;
-
-                    if (!_console.RX2Enabled)
-                    {
-                        // same as rx1 unless rx2 enabled
-                        m.ModeVfoB = _console.RX1DSPMode;
-                        m.BandVfoB = _console.GetRX1BandForVFOb();//_console.RX1Band;
-                        m.FilterVfoB = _console.RX1Filter;
-                        m.FilterVfoBName = getFilterName(1);//_console.rx1_filters[(int)_console.RX1DSPMode].GetName(_console.RX1Filter);
-                    }
-                    else
-                    {
-                        m.ModeVfoB = _console.RX2DSPMode;
-                        m.BandVfoB = _console.RX2Band;
-                        m.FilterVfoB = _console.RX2Filter;
-                        m.FilterVfoBName = getFilterName(2);//_console.rx2_filters[(int)_console.RX2DSPMode].GetName(_console.RX2Filter);
-                    }
-
-                    m.TXEQEnabled = _console.TXEQ;
-                    m.LevelerEnabled = !_console.IsSetupFormNull && _console.SetupForm.TXLevelerOn;
-                    m.CFCEnabled = _console.CFCEnabled;
-                    m.CompandEnabled = _console.CPDR;
-
-                    m.QuickSplitEnabled = _console.GetQuickSplitEnabled;
-
-                    if (rx == 1)
-                    {
-                        if (_console.BandGENSelected)
-                            m.BandGroup = BandGroups.GEN;
-                        if (_console.BandHFSelected)
-                            m.BandGroup = BandGroups.HF;
-                        if (_console.BandVHFSelected)
-                            m.BandGroup = BandGroups.VHF;
-                    }
-                    else if(rx == 2)
-                    {
-                        m.BandGroup = m.GetBandGroupFromBand(_console.RX2Band);
-                    }
-
-                    // update any filter meter items and setupbuttons to update filter text
-                    m.InitFilterButtons();
+                    initConsoleData(m);
                 }
             }
         }
@@ -2975,6 +3288,14 @@ namespace Thetis
                 // float form
                 frmMeterDisplay f = new frmMeterDisplay(_console, ucM.RX);
                 f.ID = ucM.ID;
+
+                // if we are recoving, we need to apply the form size to the user control
+                // size, and in turn this define the target size for the dx renderer.
+                // If we don't do this there will be a few frames where the target size is incorrect and the height calculated
+                // will be from the default container size of 400x200.
+                // Note: f.ID above causes the form sizes to be reloaded from the db
+                if(ucM.Floating && bFromRestore)
+                    ucM.Size = new Size(f.Size.Width, f.Size.Height);
 
                 // meter items
                 clsMeter meter = new clsMeter(ucM.RX, ucM.Name, 1f, 1f);
@@ -3545,7 +3866,8 @@ namespace Thetis
                 WEB_IMAGE,
                 BAND_BUTTONS,
                 MODE_BUTTONS,
-                FILTER_BUTTONS
+                FILTER_BUTTONS,
+                ANTENNA_BUTTONS
                 //SPECTRUM
             }
 
@@ -4271,6 +4593,8 @@ namespace Thetis
             }
             private void setupButtons()
             {
+                if (!RebuildButtons) return;
+
                 // copy from 0 to 1. 0 is settings bank, 1 is where renderer reads from
                 for (int i = 0; i < Buttons; i++)
                 {
@@ -4284,6 +4608,7 @@ namespace Thetis
                     SetOffColour(1, i, GetOffColour(0, i));
                     SetIndicatorWidth(1, i, GetIndicatorWidth(0, i));
                     SetEnabled(1, i, true);
+                    SetVisible(1, i, true);
                     SetOn(1, i, false);
 
                     SetFillColour(1, i, GetFillColour(0, i));
@@ -4292,7 +4617,7 @@ namespace Thetis
 
                     SetUseOffColour(1, i, GetUseOffColour(0, i));
 
-                    SetIndiciatorType(1, i, GetIndiciatorType(0, i));
+                    SetIndicatorType(1, i, GetIndicatorType(0, i));
                 }
                 //
 
@@ -4319,8 +4644,6 @@ namespace Thetis
                     int offset = 0;
                     for (int i = 0; i < Buttons; i++)
                     {
-                        SetEnabled(1, i, true);
-
                         if (i < filters)
                         {
                             Filter f = (Filter)(start_filter + i + offset);
@@ -4446,6 +4769,357 @@ namespace Thetis
                 }
             }
         }
+        internal class clsAntennaButtonBox : clsButtonBox
+        {
+            private clsMeter _owningmeter;
+            private Band _rx1_band;
+            private Band _tx_band;
+            private double _vfoa_freq;
+            private double _tx_freq;
+            private System.Threading.Timer _timer;
+            private readonly object _timerLock = new object();
+            private int _button_bits;
+            private bool _rxtx_swap;
+            private clsItemGroup _ig;
+            public clsAntennaButtonBox(clsMeter owningmeter, clsItemGroup ig)
+            {
+                _owningmeter = owningmeter;
+                _rx1_band = Band.FIRST;
+                _tx_band = Band.FIRST;
+                _vfoa_freq = -1;
+                _tx_freq = -1;
+                _rxtx_swap = false;
+                _ig = ig;
+
+                ItemType = MeterItemType.ANTENNA_BUTTONS;
+
+                base.Buttons = 10;
+                VisibleBits = (1 << 10) - 1; //1023, 10 bits
+            }
+            public override int VisibleBits
+            {
+                get
+                {
+                    return _button_bits;
+                }
+                set
+                {
+                    _button_bits = value;
+                    for (int n = 0; n < Buttons; n++)
+                    {
+                        SetVisible(0, n, (_button_bits & (1 << n)) != 0);
+                    }
+                    setupButtons();
+                }
+            }
+            private void setupButtons()
+            {
+                if (!RebuildButtons) return;
+
+                if (_rx1_band == Band.FIRST || _tx_band == Band.FIRST) return;
+
+                // copy from 0 to 1. 0 is settings bank, 1 is where renderer reads from
+                for (int i = 0; i < Buttons; i++)
+                {
+                    SetText(1, i, GetText(0, i));
+                    SetFontColour(1, i, GetFontColour(0, i));
+                    SetFontFamily(1, i, GetFontFamily(0, i));
+                    SetFontSize(1, i, GetFontSize(0, i));
+                    SetFontStyle(1, i, GetFontStyle(0, i));
+                    SetUseIndicator(1, i, GetUseIndicator(0, i));
+                    SetOnColour(1, i, GetOnColour(0, i));
+                    SetOffColour(1, i, GetOffColour(0, i));
+                    SetIndicatorWidth(1, i, GetIndicatorWidth(0, i));
+                    SetEnabled(1, i, true);
+                    SetVisible(1, i, GetVisible(0, i));
+                    SetOn(1, i, false);
+
+                    SetFillColour(1, i, GetFillColour(0, i));
+                    SetHoverColour(1, i, GetHoverColour(0, i));
+                    SetBorderColour(1, i, GetBorderColour(0, i));
+
+                    SetUseOffColour(1, i, GetUseOffColour(0, i));
+
+                    SetIndicatorType(1, i, GetIndicatorType(0, i));
+                }
+
+                Band rx_band;
+                Band tx_band;
+
+                rx_band = _rx1_band;
+                tx_band = _tx_band;
+                
+                bool using_xvtr = ((int)rx_band >= (int)Band.VHF0 && (int)rx_band <= (int)Band.VHF13);
+                bool is_xvtr_rx = false;
+                if (using_xvtr)
+                {
+                    rx_band = _console.GetTransverterTranslatedRXBand(_vfoa_freq);
+                    is_xvtr_rx = GetRXAuxState(rx_band, 2);
+
+                    tx_band = _console.GetTransverterTranslatedRXBand(_tx_freq);
+                }
+                bool using_byp_ext1 = !using_xvtr && (GetRXAuxState(rx_band, 0) || GetRXAuxState(rx_band, 1));
+
+                SetText(1, 0, "Rx 1");
+                SetFontColour(1, 0, System.Drawing.Color.LimeGreen);
+                if (!using_byp_ext1 && !is_xvtr_rx) SetOn(1, 0, MeterManager.GetRXAntState(rx_band, 0));
+
+                SetText(1, 1, "Rx 2");
+                SetFontColour(1, 1, System.Drawing.Color.LimeGreen);
+                if (!using_byp_ext1 && !is_xvtr_rx) SetOn(1, 1, MeterManager.GetRXAntState(rx_band, 1));
+
+                SetText(1, 2, "Rx 3");
+                SetFontColour(1, 2, System.Drawing.Color.LimeGreen);
+                if (!using_byp_ext1 && !is_xvtr_rx) SetOn(1, 2, MeterManager.GetRXAntState(rx_band, 2));
+
+
+                SetText(1, 3, formatAux(MeterManager.GetRXAuxName(0)));
+                SetFontColour(1, 3, System.Drawing.Color.Orange);
+                if (!is_xvtr_rx && using_byp_ext1) SetOn(1, 3, MeterManager.GetRXAuxState(rx_band, 0));
+
+                SetText(1, 4, formatAux(MeterManager.GetRXAuxName(1)));
+                SetFontColour(1, 4, System.Drawing.Color.Orange);
+                if (!is_xvtr_rx && using_byp_ext1) SetOn(1, 4, MeterManager.GetRXAuxState(rx_band, 1));
+
+                SetText(1, 5, formatAux(MeterManager.GetRXAuxName(2)));
+                SetFontColour(1, 5, System.Drawing.Color.Orange);
+                if(!using_byp_ext1 && using_xvtr) SetOn(1, 5, MeterManager.GetRXAuxState(rx_band, 2));
+
+                int rx_ant = MeterManager.GetRXAnt(rx_band, using_xvtr);
+                int tx_ant = MeterManager.GetTXAnt(tx_band);
+                int rx_ant_on_tx_band = MeterManager.GetRXAnt(tx_band, false);
+
+                SetText(1, 6, "Tx 1");
+                if (rx_ant_on_tx_band == 0 && GetNoTX(0))
+                {
+                    SetFontColour(1, 6, System.Drawing.Color.Gray);
+                }
+                else
+                {
+                    SetFontColour(1, 6, System.Drawing.Color.Red);
+                    SetOn(1, 6, MeterManager.GetTXAntState(tx_band, 0));
+                }                
+
+                SetText(1, 7, "Tx 2");
+                if (rx_ant_on_tx_band == 1 && GetNoTX(1))
+                {
+                    SetFontColour(1, 7, System.Drawing.Color.Gray);
+                }
+                else
+                {
+                    SetFontColour(1, 7, System.Drawing.Color.Red);
+                    SetOn(1, 7, MeterManager.GetTXAntState(tx_band, 1));
+                }                
+
+                SetText(1, 8, "Tx 3");
+                if (rx_ant_on_tx_band == 2 && GetNoTX(2))
+                {
+                    SetFontColour(1, 8, System.Drawing.Color.Gray);
+                }
+                else
+                {
+                    SetFontColour(1, 8, System.Drawing.Color.Red);
+                    SetOn(1, 8, MeterManager.GetTXAntState(tx_band, 2));
+                }               
+                               
+                if(rx_ant == tx_ant || using_xvtr || GetNoTX(tx_ant) || (rx_ant > 4))
+                {
+                    SetText(1, 9, "Rx Ant");
+                    SetFontColour(1, 9, System.Drawing.Color.Gray);
+                }
+                else
+                {
+                    if (_rxtx_swap)
+                    {
+                        SetText(1, 9, "Tx Ant");
+                        SetOn(1, 9, true);
+                        SetFontColour(1, 9, System.Drawing.Color.Yellow);
+                    }
+                    else
+                    {
+                        SetText(1, 9, "Rx Ant");
+                        SetOn(1, 9, false);
+                        SetFontColour(1, 9, System.Drawing.Color.LimeGreen);
+                    }
+                }
+                //
+
+                int total_buttons = 0;
+                for (int i = 0; i < Buttons; i++)
+                {
+                    if (GetVisible(1, i)) total_buttons++;
+                }
+
+                int rows = total_buttons / Columns;
+                int overflow = total_buttons % Columns;
+                if (overflow > 0) rows++;
+
+                float half_border = Border / 2f;
+                float button_width = ((1f - (0.02f * 2f)) / (float)Columns) - Margin - Border;
+                float button_height = ((1f - (0.02f * 2f)) / (float)Columns) * HeightRatio;
+
+                float height = button_height * (float)rows;
+
+                Size = new SizeF(Size.Width, height);
+
+                float fPadY = 0.05f;
+                float fHeight = 0.05f;
+                _ig.Size = new SizeF(_ig.Size.Width, height + (fPadY - (fHeight * 0.75f)));
+                _owningmeter.Rebuild();
+            }
+            private string formatAux(string name)
+            {
+                string tmp = name.ToLower();
+                tmp = char.ToUpper(tmp[0]) + tmp.Substring(1);
+                if (tmp == "Byps") tmp = "Bypass";
+                return tmp;
+            }
+            public void AntennasChanged(Band rx1_band, Band tx_band, double vfoa_freq, double tx_freq, int rxtx_swap)
+            {
+                bool valid = false;
+                valid = (rx1_band >= Band.B160M && rx1_band <= Band.B6M) || (rx1_band >= Band.VHF0 && rx1_band <= Band.VHF13) ||
+                    (tx_band >= Band.B160M && tx_band <= Band.B6M) || (tx_band >= Band.VHF0 && tx_band <= Band.VHF13) ||
+                    (rx1_band == Band.FIRST && tx_band == Band.FIRST && vfoa_freq == -1 && tx_freq == -1);
+
+                if (valid)
+                {
+                    if (rx1_band != Band.FIRST && rx1_band != _rx1_band)
+                    {
+                        _rx1_band = rx1_band;
+                    }
+                    if (tx_band != Band.FIRST && tx_band != _tx_band)
+                    {
+                        _tx_band = tx_band;
+                    }
+                    if (vfoa_freq > -1 && vfoa_freq != _vfoa_freq)
+                    {
+                        _vfoa_freq = vfoa_freq;
+                    }
+                    if (tx_freq > -1 && tx_freq != _tx_freq)
+                    {
+                        _tx_freq = tx_freq;
+                    }
+                    int rxtx_s = _rxtx_swap ? 2 : 1;
+                    if (rxtx_swap > 0 && rxtx_swap != rxtx_s)
+                    {
+                        _rxtx_swap = rxtx_swap == 2 ? true : false;
+                    }
+                }
+
+                // the above can happen very fast, but only after it stops happening for 250ms, then call the setupbuttons()
+                lock (_timerLock)
+                {
+                    if (_timer == null)
+                        _timer = new System.Threading.Timer(_ => setupButtons(), null, 250, Timeout.Infinite);
+                    else
+                        _timer.Change(100, Timeout.Infinite);
+                }
+            }
+            public override void MouseUp(MouseEventArgs e)
+            {
+                if (_console == null) return;
+                if (_console.IsSetupFormNull) return;
+
+                int index = base.ButtonIndex;
+                if (index == -1) return;
+
+                if (index >= 0 && index <= 2)
+                    setRXAntenna(index, _rx1_band);
+
+                if (index >= 3 && index <= 4) // ignore xvtr for now
+                    setAuxAntenna(index, _rx1_band, index == 3, index == 4, index == 5);
+
+                if (index >= 6 && index <= 8)
+                    setTXAntenna(index - 6, _rx1_band);
+
+                if (index == 9)
+                    toggleTxRxAnt();
+            }
+            private void toggleTxRxAnt()
+            {
+                if (_console == null) return;
+                if (_console.IsSetupFormNull) return;
+                _console.BeginInvoke(new MethodInvoker(() =>
+                {
+                    _console.ToggleRxTxAnt();
+                }));
+            }
+            private void setRXAntenna(int antenna, Band b)
+            {
+                if (_console == null) return;
+                if (_console.IsSetupFormNull) return;
+
+                _console.BeginInvoke(new MethodInvoker(() =>
+                {
+                    _console.SetupForm.SetRXAntenna(antenna + 1, b);
+                }));
+            }
+            private void setAuxAntenna(int antenna, Band b, bool byp, bool ext1, bool xvtr)
+            {
+                if (_console == null) return;
+                if (_console.IsSetupFormNull) return;
+
+                _console.BeginInvoke(new MethodInvoker(() =>
+                {
+                    _console.SetupForm.SetAuxAntenna(antenna + 1, b, byp, ext1);
+                }));
+            }
+            private void setTXAntenna(int antenna, Band b)
+            {
+                if (_console == null) return;
+                if (_console.IsSetupFormNull) return;
+
+                _console.BeginInvoke(new MethodInvoker(() =>
+                {
+                    _console.SetupForm.SetTXAntenna(antenna + 1, b);
+                }));
+            }
+            public override int Columns
+            {
+                get { return base.Columns; }
+                set
+                {
+                    base.Columns = value;
+                    setupButtons();
+                }
+            }
+            public override float Border
+            {
+                get { return base.Border; }
+                set
+                {
+                    base.Border = value;
+                    setupButtons();
+                }
+            }
+            public override float Margin
+            {
+                get { return base.Margin; }
+                set
+                {
+                    base.Margin = value;
+                    setupButtons();
+                }
+            }
+            public override float Radius
+            {
+                get { return base.Radius; }
+                set
+                {
+                    base.Radius = value;
+                    setupButtons();
+                }
+            }
+            public override float HeightRatio
+            {
+                get { return base.HeightRatio; }
+                set
+                {
+                    base.HeightRatio = value;
+                    setupButtons();
+                }
+            }
+        }
         internal class clsModeButtonBox : clsButtonBox
         {
             private DSPMode _mode;
@@ -4480,6 +5154,8 @@ namespace Thetis
             }
             private void setupButtons()
             {
+                if (!RebuildButtons) return;
+
                 // copy from 0 to 1. 0 is settings bank, 1 is where renderer reads from
                 for (int i = 0; i < Buttons; i++)
                 {
@@ -4493,6 +5169,7 @@ namespace Thetis
                     SetOffColour(1, i, GetOffColour(0, i));
                     SetIndicatorWidth(1, i, GetIndicatorWidth(0, i));
                     SetEnabled(1, i, true);
+                    SetVisible(1, i, true);
                     SetOn(1, i, false);
 
                     SetFillColour(1, i, GetFillColour(0, i));
@@ -4501,7 +5178,7 @@ namespace Thetis
 
                     SetUseOffColour(1, i, GetUseOffColour(0, i));
 
-                    SetIndiciatorType(1, i, GetIndiciatorType(0, i));
+                    SetIndicatorType(1, i, GetIndicatorType(0, i));
                 }
                 //
 
@@ -4513,8 +5190,6 @@ namespace Thetis
 
                 for (int i = 0; i < Buttons; i++)
                 {
-                    SetEnabled(1, i, true);
-
                     if (i < modes)
                     {
                         DSPMode b = (DSPMode)(start_mode + i);
@@ -4624,6 +5299,7 @@ namespace Thetis
         {
             private BandGroups _button_bands;
             private Band _band;
+            private bool _force_update;
             clsMeter _owningmeter;
 
             public clsBandButtonBox(clsMeter owningmeter)
@@ -4654,7 +5330,9 @@ namespace Thetis
                 {
                     _band = _owningmeter.BandVfoB;
                     _button_bands = _owningmeter.GetBandGroupFromBand(_band);
-                }                
+                }
+
+                _force_update = false;
 
                 ItemType = MeterItemType.BAND_BUTTONS;
 
@@ -4686,19 +5364,19 @@ namespace Thetis
 
                 SetText(1, index, text);
             }
-            public void BandChanged(Band b)
+            public void BandChanged(Band oldBand, Band newBand)
             {
                 Band old = _band;
-                _band = b;
+                _band = newBand;
 
                 BandGroups bands = _owningmeter.GetBandGroupFromBand(_band);
                 BandGroups old_bands = _owningmeter.GetBandGroupFromBand(old);
 
                 if (bands != old_bands)
                 {
-                    _force_button_bands_update = true; // as will have been set already by the panel change in console
-                    ButtonBands = _owningmeter.GetBandGroupFromBand(b);
-                    _force_button_bands_update = false;
+                    _force_update = true;
+                    ButtonBands = _owningmeter.GetBandGroupFromBand(newBand);
+                    _force_update = false;
                 }
                 else
                 {
@@ -4727,12 +5405,6 @@ namespace Thetis
                     }
                 }
             }
-            public bool ForceUpdate
-            {
-                get { return _force_button_bands_update; }
-                set { _force_button_bands_update = value; }
-            }
-            private bool _force_button_bands_update = false;
             public BandGroups ButtonBands
             {
                 get { return _button_bands; }
@@ -4741,12 +5413,14 @@ namespace Thetis
                     BandGroups old = _button_bands;
                     _button_bands = value;
 
-                    if(old != _button_bands || _force_button_bands_update)
+                    if(old != _button_bands || _force_update)
                         setupButtons();
                 }
             }
             private void setupButtons()
             {
+                if (!RebuildButtons) return;
+
                 // copy from 0 to 1. 0 is settings bank, 1 is where renderer reads from
                 for (int i = 0; i < Buttons; i++)
                 {
@@ -4760,6 +5434,7 @@ namespace Thetis
                     SetOffColour(1, i, GetOffColour(0, i));
                     SetIndicatorWidth(1, i, GetIndicatorWidth(0, i));
                     SetEnabled(1, i, true);
+                    SetVisible(1, i, true);
                     SetOn(1, i, false);
 
                     SetFillColour(1, i, GetFillColour(0, i));
@@ -4768,7 +5443,7 @@ namespace Thetis
 
                     SetUseOffColour(1, i, GetUseOffColour(0, i));
 
-                    SetIndiciatorType(1, i, GetIndiciatorType(0, i));
+                    SetIndicatorType(1, i, GetIndicatorType(0, i));
                 }
                 //
 
@@ -4836,8 +5511,6 @@ namespace Thetis
                 
                 for (int i = 0; i < Buttons; i++)
                 {
-                    SetEnabled(1, i, true);
-
                     if(i < bands)
                     {
                         string band_text = "";
@@ -5082,7 +5755,10 @@ namespace Thetis
 
             private IndicatorType[][] _indicator_type;
 
+            private bool[][] _visible;
+
             private int _button_index;
+            private bool _rebuild_buttons;
 
             public clsButtonBox()
             {
@@ -5097,7 +5773,9 @@ namespace Thetis
                 _font_scale = 1f;
                 _font_shift_x = 0f;
                 _font_shift_y = 0f;
-            
+
+                _rebuild_buttons = true;
+
                 UpdateInterval = 50;
 
                 setupArrays();
@@ -5124,6 +5802,7 @@ namespace Thetis
                 _text = new string[2][];
 
                 _enabled = new bool[2][];
+                _visible = new bool[2][];
 
                 _indicator_type = new IndicatorType[2][];
 
@@ -5150,6 +5829,7 @@ namespace Thetis
                     _text[n] = new string[_number_of_buttons];
 
                     _enabled[n] = new bool[_number_of_buttons];
+                    _visible[n] = new bool[_number_of_buttons];
 
                     _indicator_type[n] = new IndicatorType[_number_of_buttons];
 
@@ -5174,10 +5854,16 @@ namespace Thetis
                         _text[n][b] = "";
 
                         _enabled[n][b] = true;
+                        _visible[n][b] = true;
 
                         _indicator_type[n][b] = IndicatorType.RING;
                     }
                 }
+            }
+            public bool RebuildButtons
+            {
+                get { return _rebuild_buttons; }
+                set { _rebuild_buttons = value; }
             }
             public float FontScale
             {
@@ -5207,6 +5893,11 @@ namespace Thetis
                     _number_of_buttons = value;
                     setupArrays();
                 }
+            }
+            public virtual int VisibleBits
+            {
+                get { return int.MaxValue; }
+                set { }
             }
             public virtual int Columns
             {
@@ -5383,12 +6074,22 @@ namespace Thetis
                 if (button < 0 || button >= _number_of_buttons) return false;
                 return _enabled[bank][button];
             }
-            public void SetIndiciatorType(int bank, int button, IndicatorType type)
+            public void SetVisible(int bank, int button, bool enabled)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _visible[bank][button] = enabled;
+            }
+            public bool GetVisible(int bank, int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return false;
+                return _visible[bank][button];
+            }
+            public void SetIndicatorType(int bank, int button, IndicatorType type)
             {
                 if (button < 0 || button >= _number_of_buttons) return;
                 _indicator_type[bank][button] = type;
             }
-            public IndicatorType GetIndiciatorType(int bank, int button)
+            public IndicatorType GetIndicatorType(int bank, int button)
             {
                 if (button < 0 || button >= _number_of_buttons) return IndicatorType.RING;
                 return _indicator_type[bank][button];
@@ -7675,7 +8376,7 @@ namespace Thetis
                         List<string> placeholders = ReadingsCustom.GetPlaceholders(_text_1);
                         foreach (string placeholder in placeholders)
                         {
-                            if (ReadingsCustom.IsCustomString(placeholder))
+                            if (ReadingsCustom.IsCustomString(placeholder) || placeholder.StartsWith("precis="))
                                 _list_placeholders_strings_1.Add(placeholder);
                             else
                             {
@@ -7701,7 +8402,7 @@ namespace Thetis
                         List<string> placeholders = ReadingsCustom.GetPlaceholders(_text_2);
                         foreach(string placeholder in placeholders)
                         {
-                            if (ReadingsCustom.IsCustomString(placeholder))
+                            if (ReadingsCustom.IsCustomString(placeholder) || placeholder.StartsWith("precis="))
                                 _list_placeholders_strings_2.Add(placeholder);
                             else
                             {
@@ -7832,21 +8533,36 @@ namespace Thetis
 
                 lock (_list_placeholders_1_lock)
                 {
-                    foreach (Reading r in _list_placeholders_readings_1)
-                    {
-                        lower = "%" + r.ToString().ToLower() + "%";
-                        if (sTmp.IndexOf(lower) >= 0)
-                        {
-                            object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
-                            sTmp = sTmp.Replace(lower, ((float)reading).ToString("0.0#####"));
-                        }
-                    }
+                    string precision_format = "f6";
+                    bool precis_found = false;
                     foreach (string placeholder in _list_placeholders_strings_1)
                     {
                         lower = "%" + placeholder.ToLower() + "%";
                         if (sTmp.IndexOf(lower) >= 0)
                         {
-                            string decFormat = placeholder.IndexOf("_double", StringComparison.OrdinalIgnoreCase) >= 0 ? "f6" : "0.0#####";
+                            if(lower.IndexOf("%precis=") >= 0)
+                            {
+                                sTmp = sTmp.Replace(lower, "");
+                                if (!precis_found)
+                                {
+                                    int startIndex = lower.IndexOf('=') + 1;
+                                    int endIndex = lower.Length - 1;
+                                    string numberString = lower.Substring(startIndex, endIndex - startIndex);
+                                    if (numberString.Length > 0)
+                                    {
+                                        bool ok = int.TryParse(numberString, out int precis);
+                                        if (ok)
+                                        {
+                                            if (precis > 10) precis = 10;
+                                            if (precis < 0) precis = 0;
+                                            precision_format = $"f{precis}";
+                                            precis_found = true;
+                                            continue;
+                                        }
+                                    }
+                                }
+                            }
+                            string decFormat = placeholder.IndexOf("_double", StringComparison.OrdinalIgnoreCase) >= 0 ? precision_format : (precis_found ? precision_format : "0.0#####");
                             object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
                             if (reading is int)
                                 sTmp = sTmp.Replace(lower, ((int)reading).ToString());
@@ -7858,6 +8574,15 @@ namespace Thetis
                                 sTmp = sTmp.Replace(lower, ((bool)reading).ToString());
                             else
                                 sTmp = sTmp.Replace(lower, (string)reading);
+                        }
+                    }
+                    foreach (Reading r in _list_placeholders_readings_1)
+                    {
+                        lower = "%" + r.ToString().ToLower() + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
+                        {
+                            object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
+                            sTmp = sTmp.Replace(lower, ((float)reading).ToString(precis_found ? precision_format : "0.0#####"));
                         }
                     }
                 }
@@ -7893,21 +8618,37 @@ namespace Thetis
 
                 lock (_list_placeholders_2_lock)
                 {
-                    foreach (Reading r in _list_placeholders_readings_2)
-                    {
-                        lower = "%" + r.ToString().ToLower() + "%";
-                        if (sTmp.IndexOf(lower) >= 0)
-                        {
-                            object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
-                            sTmp = sTmp.Replace(lower, ((float)reading).ToString("0.0#####"));
-                        }
-                    }
+                    string precision_format = "f6";
+                    bool precis_found = false;
                     foreach (string placeholder in _list_placeholders_strings_2)
                     {
                         lower = "%" + placeholder.ToLower() + "%";
                         if (sTmp.IndexOf(lower) >= 0)
                         {
-                            string decFormat = placeholder.ToLower().Contains("_double") ? "f6" : "0.0#####";
+                            if (lower.IndexOf("%precis=") >= 0)
+                            {
+                                sTmp = sTmp.Replace(lower, "");
+                                if (!precis_found)
+                                {
+                                    int startIndex = lower.IndexOf('=') + 1;
+                                    int endIndex = lower.Length - 1;
+                                    string numberString = lower.Substring(startIndex, endIndex - startIndex);
+                                    if (numberString.Length > 0)
+                                    {
+                                        bool ok = int.TryParse(numberString, out int precis);
+                                        if (ok)
+                                        {
+                                            if (precis > 10) precis = 10;
+                                            if (precis < 0) precis = 0;
+                                            precision_format = $"f{precis}";
+                                            precis_found = true;
+                                            continue;
+                                        }
+                                    }
+                                }
+                            }
+
+                            string decFormat = placeholder.IndexOf("_double", StringComparison.OrdinalIgnoreCase) >= 0 ? precision_format : (precis_found ? precision_format : "0.0#####"); 
                             object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
                             if (reading is int)
                                 sTmp = sTmp.Replace(lower, ((int)reading).ToString());
@@ -7919,6 +8660,15 @@ namespace Thetis
                                 sTmp = sTmp.Replace(lower, ((bool)reading).ToString());
                             else
                                 sTmp = sTmp.Replace(lower, (string)reading);
+                        }
+                    }
+                    foreach (Reading r in _list_placeholders_readings_2)
+                    {
+                        lower = "%" + r.ToString().ToLower() + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
+                        {
+                            object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
+                            sTmp = sTmp.Replace(lower, ((float)reading).ToString(precis_found ? precision_format : "0.0#####"));
                         }
                     }
                 }
@@ -9983,6 +10733,7 @@ namespace Thetis
                     case MeterType.BAND_BUTTONS: return Reading.NONE;
                     case MeterType.MODE_BUTTONS: return Reading.NONE;
                     case MeterType.FILTER_BUTTONS: return Reading.NONE;
+                    case MeterType.ANTENNA_BUTTONS: return Reading.NONE;
                     case MeterType.DATA_OUT: return Reading.NONE;
                     case MeterType.ROTATOR: return variable_index == 0 ? Reading.AZ : Reading.ELE;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
@@ -10029,6 +10780,7 @@ namespace Thetis
                     case MeterType.BAND_BUTTONS: return 0;
                     case MeterType.MODE_BUTTONS: return 0;
                     case MeterType.FILTER_BUTTONS: return 0;
+                    case MeterType.ANTENNA_BUTTONS: return 0;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
                 return 0;
@@ -10078,8 +10830,13 @@ namespace Thetis
                     case MeterType.BAND_BUTTONS: AddBandButtons(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.MODE_BUTTONS: AddModeButtons(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.FILTER_BUTTONS: AddFilterButtons(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.ANTENNA_BUTTONS: AddAntennaButtons(nDelay, 0, out bBottom, restoreIg); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
+
+                // update the console data for the meter if we are not recovering
+                if(restoreIg == null)
+                    initConsoleData(this);
 
                 // update state of items
                 switch (meter)
@@ -10590,6 +11347,7 @@ namespace Thetis
                 else
                     fSize = 1f;
 
+                //az
                 ri.Padding = fSize;
                 ri.ParentID = ig.ID;
                 ri.Primary = true;
@@ -12474,9 +13232,6 @@ namespace Thetis
                 bb.Radius = 0.01f;
                 bb.HeightRatio = 0.5f;
                 bb.Border = 0.005f;
-                bb.ForceUpdate = true;
-                bb.ButtonBands = bb.ButtonBands; //cause update to size
-                bb.ForceUpdate = false;
                 addMeterItem(bb);
 
                 fBottom = bb.TopLeft.Y + bb.Size.Height;
@@ -12558,6 +13313,40 @@ namespace Thetis
                 if (fc != null) addMeterItem(fc);
 
                 addMeterItem(ig);
+
+                return bb.ID;
+            }
+            public string AddAntennaButtons(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsAntennaButtonBox bb = new clsAntennaButtonBox(this, ig);
+                bb.ParentID = ig.ID;
+
+                bb.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
+                bb.Size = new SizeF(1f - _fPadX * 2f, 1f);
+
+                bb.ZOrder = 1;
+                bb.Columns = 3;
+                bb.Margin = 0.005f;
+                bb.Radius = 0.01f;
+                bb.HeightRatio = 0.5f;
+                bb.Border = 0.005f;
+                addMeterItem(bb);
+
+                fBottom = bb.TopLeft.Y + bb.Size.Height;
+
+                ig.TopLeft = bb.TopLeft;
+                ig.Size = new SizeF(bb.Size.Width, fBottom);
+                ig.MeterType = MeterType.ANTENNA_BUTTONS;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);            
 
                 return bb.ID;
             }
@@ -12948,7 +13737,7 @@ namespace Thetis
                     }
                 }
             }
-            public void UpdateBandButtons(Band newBand)
+            public void UpdateBandButtons(Band oldBand, Band newBand)
             {
                 if (_console == null) return;
 
@@ -12958,7 +13747,21 @@ namespace Thetis
                     {
                         clsBandButtonBox mi = (clsBandButtonBox)mis.Value;
 
-                        mi.BandChanged(newBand);
+                        mi.BandChanged(oldBand, newBand);
+                    }
+                }
+            }
+            public void UpdateAntennas(Band rx1_band, Band tx_band, double vfoa_freq, double tx_freq, int rxtx_swap = 0)
+            {
+                if (_console == null) return;
+
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.ANTENNA_BUTTONS))
+                    {
+                        clsAntennaButtonBox mi = (clsAntennaButtonBox)mis.Value;
+
+                        mi.AntennasChanged(rx1_band, tx_band, vfoa_freq, tx_freq, rxtx_swap);
                     }
                 }
             }
@@ -13249,6 +14052,7 @@ namespace Thetis
                         {
                             switch (mt)
                             {
+                                case MeterType.ANTENNA_BUTTONS:
                                 case MeterType.FILTER_BUTTONS:
                                 case MeterType.MODE_BUTTONS:
                                 case MeterType.BAND_BUTTONS:
@@ -13260,6 +14064,9 @@ namespace Thetis
                                         clsMeterItem.MeterItemType mit = clsMeterItem.MeterItemType.BASE;
                                         switch (mt)
                                         {
+                                            case MeterType.ANTENNA_BUTTONS:
+                                                mit = clsMeterItem.MeterItemType.ANTENNA_BUTTONS;
+                                                break;
                                             case MeterType.FILTER_BUTTONS:
                                                 mit = clsMeterItem.MeterItemType.FILTER_BUTTONS;
                                                 break;
@@ -13276,12 +14083,10 @@ namespace Thetis
                                             clsButtonBox bb = me.Value as clsButtonBox;
                                             if (bb == null) continue;
 
-                                            clsBandButtonBox bbb = bb as clsBandButtonBox;
-                                            if (bbb != null)
-                                                bbb.ForceUpdate = true;
+                                            bb.RebuildButtons = false;
 
-                                            bool use_indiciator = igs.GetSetting<bool>("buttonbox_use_indicator", false, false, false, false);
-                                            float indiciator_width = igs.GetSetting<float>("buttonbox_indicator_border", true, 0, 1f, 05f) / 10f;
+                                            bool use_indicator = igs.GetSetting<bool>("buttonbox_use_indicator", false, false, false, false);
+                                            float indicator_width = igs.GetSetting<float>("buttonbox_indicator_border", true, 0, 1f, 05f) / 10f;
                                             System.Drawing.Color on_colour = igs.GetSetting("buttonbox_on_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
                                             System.Drawing.Color off_colour = igs.GetSetting("buttonbox_off_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
 
@@ -13291,12 +14096,12 @@ namespace Thetis
 
                                             bool use_off_colour = igs.GetSetting<bool>("buttonbox_use_off_colour", false, false, false, false);
 
-                                            clsButtonBox.IndicatorType indiciator_type = igs.GetSetting<clsButtonBox.IndicatorType>("buttonbox_indicator_type", true, clsButtonBox.IndicatorType.RING, clsButtonBox.IndicatorType.LAST, clsButtonBox.IndicatorType.RING);
+                                            clsButtonBox.IndicatorType indicator_type = igs.GetSetting<clsButtonBox.IndicatorType>("buttonbox_indicator_type", true, clsButtonBox.IndicatorType.RING, clsButtonBox.IndicatorType.LAST, clsButtonBox.IndicatorType.RING);
 
                                             for (int button = 0; button < bb.Buttons; button++)
                                             {
-                                                bb.SetUseIndicator(0, button, use_indiciator);
-                                                bb.SetIndicatorWidth(0, button, indiciator_width);
+                                                bb.SetUseIndicator(0, button, use_indicator);
+                                                bb.SetIndicatorWidth(0, button, indicator_width);
                                                 bb.SetOnColour(0, button, on_colour);
                                                 bb.SetOffColour(0, button, off_colour);
                                                 bb.SetFillColour(0, button, fill_colour);
@@ -13305,8 +14110,9 @@ namespace Thetis
                                                 bb.SetUseOffColour(0, button, use_off_colour);
                                                 bb.SetFontFamily(0, button, igs.FontFamily1);
                                                 bb.SetFontStyle(0, button, igs.FontStyle1);
-                                                bb.SetIndiciatorType(0, button, indiciator_type);
+                                                bb.SetIndicatorType(0, button, indicator_type);
                                             }
+
                                             bb.Columns = igs.GetSetting<int>("buttonbox_columns", true, 1, 15, 3);
                                             bb.Border = igs.GetSetting<float>("buttonbox_border", true, 01f, 1f, 0.05f) / 10f;
                                             bb.Margin = igs.GetSetting<float>("buttonbox_margin", true, 0f, 1f, 0f) / 10f;
@@ -13317,11 +14123,27 @@ namespace Thetis
                                             bb.FontShiftX = igs.GetSetting<float>("buttonbox_font_shift_x", true, -0.25f, 0.25f, 0f);
                                             bb.FontShiftY = igs.GetSetting<float>("buttonbox_font_shift_y", true, -0.25f, 0.25f, 0f);
 
-                                            if (bbb != null)
-                                                bbb.ForceUpdate = false;
+                                            if (mt == MeterType.ANTENNA_BUTTONS)
+                                            {
+                                                int bits = 0;
+                                                if (igs.GetSetting<bool>("buttonbox_rx1", false, false, false, true)) bits |= 1 << 0; // RX1
+                                                if (igs.GetSetting<bool>("buttonbox_rx2", false, false, false, true)) bits |= 1 << 1; // RX2
+                                                if (igs.GetSetting<bool>("buttonbox_rx3", false, false, false, true)) bits |= 1 << 2; // RX3
+                                                if (igs.GetSetting<bool>("buttonbox_byp", false, false, false, true)) bits |= 1 << 3; // BYP
+                                                if (igs.GetSetting<bool>("buttonbox_ext1", false, false, false, true)) bits |= 1 << 4; // EXT1
+                                                if (igs.GetSetting<bool>("buttonbox_xvtr", false, false, false, true)) bits |= 1 << 5; // XVTR
+                                                if (igs.GetSetting<bool>("buttonbox_tx1", false, false, false, true)) bits |= 1 << 6; // TX1
+                                                if (igs.GetSetting<bool>("buttonbox_tx2", false, false, false, true)) bits |= 1 << 7; // TX2
+                                                if (igs.GetSetting<bool>("buttonbox_tx3", false, false, false, true)) bits |= 1 << 8; // TX3
+                                                if (igs.GetSetting<bool>("buttonbox_rxtxant", false, false, false, true)) bits |= 1 << 9; // RXTXANT
+                                                bb.VisibleBits = bits;
+                                            }
 
                                             bb.FadeOnRx = igs.FadeOnRx;
                                             bb.FadeOnTx = igs.FadeOnTx;
+
+                                            bb.RebuildButtons = true;
+                                            bb.Columns = bb.Columns; // just to force a rebuild
 
                                             height = bb.Size.Height;
                                         }
@@ -14258,6 +15080,7 @@ namespace Thetis
                             clsIGSettings igs = new clsIGSettings();
                             switch (mt)
                             {
+                                case MeterType.ANTENNA_BUTTONS:
                                 case MeterType.FILTER_BUTTONS:
                                 case MeterType.MODE_BUTTONS:
                                 case MeterType.BAND_BUTTONS:
@@ -14265,6 +15088,9 @@ namespace Thetis
                                         clsMeterItem.MeterItemType mit = clsMeterItem.MeterItemType.BASE;
                                         switch (mt)
                                         {
+                                            case MeterType.ANTENNA_BUTTONS:
+                                                mit = clsMeterItem.MeterItemType.ANTENNA_BUTTONS;
+                                                break;
                                             case MeterType.FILTER_BUTTONS:
                                                 mit = clsMeterItem.MeterItemType.FILTER_BUTTONS;
                                                 break;
@@ -14303,11 +15129,26 @@ namespace Thetis
 
                                             igs.SetSetting<bool>("buttonbox_use_off_colour", bb.GetUseOffColour(0, 0));
 
-                                            igs.SetSetting<clsButtonBox.IndicatorType>("buttonbox_indicator_type", bb.GetIndiciatorType(0, 0));
+                                            igs.SetSetting<clsButtonBox.IndicatorType>("buttonbox_indicator_type", bb.GetIndicatorType(0, 0));
 
                                             igs.SetSetting<float>("buttonbox_font_scale", bb.FontScale);
                                             igs.SetSetting<float>("buttonbox_font_size_x", bb.FontShiftX);
                                             igs.SetSetting<float>("buttonbox_font_size_y", bb.FontShiftY);
+
+                                            if (mt == MeterType.ANTENNA_BUTTONS)
+                                            {
+                                                int bits = bb.VisibleBits;
+                                                igs.SetSetting<bool>("buttonbox_rx1", (bits & (1 << 0)) != 0);
+                                                igs.SetSetting<bool>("buttonbox_rx2", (bits & (1 << 1)) != 0);
+                                                igs.SetSetting<bool>("buttonbox_rx3", (bits & (1 << 2)) != 0);
+                                                igs.SetSetting<bool>("buttonbox_byp", (bits & (1 << 3)) != 0);
+                                                igs.SetSetting<bool>("buttonbox_ext1", (bits & (1 << 4)) != 0);
+                                                igs.SetSetting<bool>("buttonbox_xvtr", (bits & (1 << 5)) != 0);
+                                                igs.SetSetting<bool>("buttonbox_tx1", (bits & (1 << 6)) != 0);
+                                                igs.SetSetting<bool>("buttonbox_tx2", (bits & (1 << 7)) != 0);
+                                                igs.SetSetting<bool>("buttonbox_tx3", (bits & (1 << 8)) != 0);
+                                                igs.SetSetting<bool>("buttonbox_rxtxant", (bits & (1 << 9)) != 0);
+                                            }
 
                                             igs.FontFamily1 = bb.GetFontFamily(0, 0);
                                             igs.FontSize1 = bb.GetFontSize(0, 0);
@@ -15360,6 +16201,7 @@ namespace Thetis
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.MODE_BUTTONS ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.ANTENNA_BUTTONS ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR
                                                                 //o.Value.ItemType == clsMeterItem.MeterItemType.SPECTRUM
                                                                 /*o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY*/) &&
@@ -16941,12 +17783,19 @@ namespace Thetis
 
                                 SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
 
-                                if (mi.ItemType != clsMeterItem.MeterItemType.ITEM_GROUP)
+                                if (mi.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP)
                                 {
                                     float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
-                                    float h = rect.Height * ((mi.Size.Height / m.YRatio) + (mi.Size.Height > 0f ? (0.02f / m.YRatio) : 0f));
+                                    float h = rect.Height * (mi.Size.Height / m.YRatio);/// + (mi.Size.Height > 0f ? (0.02f / m.YRatio) : 0f));
 
-                                    if ((int)(y + h) > height) height = (int)(y + h);
+                                    //float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                                    float w = rect.Width * (mi.Size.Width / m.XRatio);
+
+                                    float pad = ((0.05f - (0.05f * 0.75f)) * 2f) * w;
+                                    int hh = (int)(y + h + pad);
+                                    if (hh > height) height = hh;
+
+                                    //_renderTarget.DrawRectangle(new RawRectangleF(x, y, x + w - 1, y + h -1), getDXBrushForColour(System.Drawing.Color.Red), 2f);
                                 }
 
                                 switch (mi.ItemType)
@@ -17017,6 +17866,7 @@ namespace Thetis
                                     case clsMeterItem.MeterItemType.SIGNAL_TEXT_DISPLAY:
                                         renderSignalTextDisplay(rect, mi, m);
                                         break;
+                                    case clsMeterItem.MeterItemType.ANTENNA_BUTTONS:
                                     case clsMeterItem.MeterItemType.FILTER_BUTTONS:
                                     case clsMeterItem.MeterItemType.MODE_BUTTONS:
                                     case clsMeterItem.MeterItemType.BAND_BUTTONS:
@@ -19957,11 +20807,21 @@ namespace Thetis
 
                 //SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.FillRectangle(rectSC, getDXBrushForColour(System.Drawing.Color.Green));
+                int total_buttons = 0;
+                for(int i = 0; i < bb.Buttons; i++)
+                {
+                    if (bb.GetVisible(1, i)) total_buttons++;
+                }
+                if (total_buttons == 0) return; // nothing visible
 
-                int rows = bb.Buttons / bb.Columns;
-                int overflow = bb.Buttons % bb.Columns;
+                int rows = total_buttons / bb.Columns;
+                int overflow = total_buttons % bb.Columns;
                 if (overflow > 0) rows++;
                 int buttons_per_row = bb.Columns;
+                //int rows = bb.Buttons / bb.Columns;
+                //int overflow = bb.Buttons % bb.Columns;
+                //if (overflow > 0) rows++;
+                //int buttons_per_row = bb.Columns;
 
                 float wh = w >= h ? w : h; // base margin/border/radius scales on largest
                 float border = bb.Border * wh;
@@ -19987,8 +20847,16 @@ namespace Thetis
 
                 for(int row  = 0; row < rows; row++)
                 {
-                    for (int col = 0; col < buttons_per_row; col++)
+                    int col = 0;
+                    while(col < buttons_per_row)
                     {
+                        if (!bb.GetVisible(1, button_index))
+                        {
+                            button_index++;
+                            if (button_index >= bb.Buttons) break;
+                            continue; // skip an invisible button
+                        }
+
                         bool indicator = bb.GetUseIndicator(1, button_index);
                         float xP = x + half_border + (button_width * col);
                         float yP = y + half_border + (button_height * row);
@@ -20082,7 +20950,7 @@ namespace Thetis
                             {
                                 float indicator_width = bb.GetIndicatorWidth(1, button_index) * wh;
                                 float indicator_shrink;
-                                switch (bb.GetIndiciatorType(1, button_index))
+                                switch (bb.GetIndicatorType(1, button_index))
                                 {
                                     case clsButtonBox.IndicatorType.BAR_LEFT:
                                         text_size_modifier = 0.9f;
@@ -20236,6 +21104,7 @@ namespace Thetis
                             }
                         }
 
+                        col++;
                         button_index++;
                         if (button_index >= bb.Buttons) break;
                     }

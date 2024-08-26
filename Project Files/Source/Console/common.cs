@@ -574,8 +574,8 @@ namespace Thetis
 			ForceFormOnScreen(form);
 		}
 
-		public static (bool resized, bool shrunk) ForceFormOnScreen(Form f, bool shrink_to_fit = false)
-		{
+        public static (bool resized, bool relocated) ForceFormOnScreen(Form f, bool shrink_to_fit = false, bool keep_on_screen = false)
+        {
             bool resized = false;
             bool relocated = false;
             Screen[] screens = Screen.AllScreens;
@@ -586,64 +586,187 @@ namespace Thetis
                 return (false, false);
             }
 
-            int left = int.MaxValue, top = int.MaxValue;
-            int right = int.MinValue, bottom = int.MinValue;
-
-            foreach (Screen screen in screens)
+            if (keep_on_screen)
             {
-                if (screen.Bounds.Left < left)
-                    left = screen.Bounds.Left;
-                if (screen.Bounds.Top < top)
-                    top = screen.Bounds.Top;
-                if (screen.Bounds.Right > right)
-                    right = screen.Bounds.Right;
-                if (screen.Bounds.Bottom > bottom)
-                    bottom = screen.Bounds.Bottom;
-            }
+                // Find the screen where the mouse cursor is currently located
+                Screen screen = Screen.FromPoint(Cursor.Position);
+                Rectangle screenBounds = screen.WorkingArea;
 
-            bool onScreen = f.Left >= left &&
-                            f.Top >= top &&
-                            f.Right <= right &&
-                            f.Bottom <= bottom;
-
-            if (!onScreen)
-            {
-                if (f.Left < left)
-                    f.Left = left;
-                if (f.Top < top)
-                    f.Top = top;
-                if (f.Right > right)
-                    f.Left = right - f.Width;
-                if (f.Bottom > bottom)
-                    f.Top = bottom - f.Height;
-
-                relocated = true;
-            }
-
-            if (shrink_to_fit)
-            {
-                int formWidth = f.Width;
-                int formHeight = f.Height;
-
-                if (f.Width > right - left)
+                // Ensure the form is within the screen's bounds
+                if (f.Left < screenBounds.Left)
                 {
-                    formWidth = right - left;
-                    resized = true;
+                    f.Left = screenBounds.Left;
+                    relocated = true;
+                }
+                if (f.Top < screenBounds.Top)
+                {
+                    f.Top = screenBounds.Top;
+                    relocated = true;
+                }
+                if (f.Right > screenBounds.Right)
+                {
+                    f.Left = screenBounds.Right - f.Width;
+                    relocated = true;
+                }
+                if (f.Bottom > screenBounds.Bottom)
+                {
+                    f.Top = screenBounds.Bottom - f.Height;
+                    relocated = true;
                 }
 
-                if (f.Height > bottom - top)
+                // Shrink the form to fit within the screen's bounds
+                if (shrink_to_fit)
                 {
-                    formHeight = bottom - top;
-                    resized = true;
+                    int formWidth = f.Width;
+                    int formHeight = f.Height;
+
+                    if (f.Width > screenBounds.Width)
+                    {
+                        formWidth = screenBounds.Width;
+                        resized = true;
+                    }
+
+                    if (f.Height > screenBounds.Height)
+                    {
+                        formHeight = screenBounds.Height;
+                        resized = true;
+                    }
+
+                    f.Size = new Size(formWidth, formHeight);
+                }
+            }
+            else
+            {
+                // Calculate the full virtual screen area
+                int left = int.MaxValue, top = int.MaxValue;
+                int right = int.MinValue, bottom = int.MinValue;
+
+                foreach (Screen screen in screens)
+                {
+                    if (screen.Bounds.Left < left)
+                        left = screen.Bounds.Left;
+                    if (screen.Bounds.Top < top)
+                        top = screen.Bounds.Top;
+                    if (screen.Bounds.Right > right)
+                        right = screen.Bounds.Right;
+                    if (screen.Bounds.Bottom > bottom)
+                        bottom = screen.Bounds.Bottom;
                 }
 
-                f.Size = new Size(formWidth, formHeight);
+                bool onScreen = f.Left >= left &&
+                                f.Top >= top &&
+                                f.Right <= right &&
+                                f.Bottom <= bottom;
+
+                if (!onScreen)
+                {
+                    if (f.Left < left)
+                        f.Left = left;
+                    if (f.Top < top)
+                        f.Top = top;
+                    if (f.Right > right)
+                        f.Left = right - f.Width;
+                    if (f.Bottom > bottom)
+                        f.Top = bottom - f.Height;
+
+                    relocated = true;
+                }
+
+                if (shrink_to_fit)
+                {
+                    int formWidth = f.Width;
+                    int formHeight = f.Height;
+
+                    if (f.Width > right - left)
+                    {
+                        formWidth = right - left;
+                        resized = true;
+                    }
+
+                    if (f.Height > bottom - top)
+                    {
+                        formHeight = bottom - top;
+                        resized = true;
+                    }
+
+                    f.Size = new Size(formWidth, formHeight);
+                }
             }
 
             return (relocated, resized);
         }
 
-		public static void TabControlInsert(TabControl tc, TabPage tp, int index)
+
+        //public static (bool resized, bool shrunk) ForceFormOnScreen(Form f, bool shrink_to_fit = false)
+        //{
+        //          bool resized = false;
+        //          bool relocated = false;
+        //          Screen[] screens = Screen.AllScreens;
+
+        //          if (screens.Length == 0)
+        //          {
+        //              f.Location = new Point(0, 0);
+        //              return (false, false);
+        //          }
+
+        //          int left = int.MaxValue, top = int.MaxValue;
+        //          int right = int.MinValue, bottom = int.MinValue;
+
+        //          foreach (Screen screen in screens)
+        //          {
+        //              if (screen.Bounds.Left < left)
+        //                  left = screen.Bounds.Left;
+        //              if (screen.Bounds.Top < top)
+        //                  top = screen.Bounds.Top;
+        //              if (screen.Bounds.Right > right)
+        //                  right = screen.Bounds.Right;
+        //              if (screen.Bounds.Bottom > bottom)
+        //                  bottom = screen.Bounds.Bottom;
+        //          }
+
+        //          bool onScreen = f.Left >= left &&
+        //                          f.Top >= top &&
+        //                          f.Right <= right &&
+        //                          f.Bottom <= bottom;
+
+        //          if (!onScreen)
+        //          {
+        //              if (f.Left < left)
+        //                  f.Left = left;
+        //              if (f.Top < top)
+        //                  f.Top = top;
+        //              if (f.Right > right)
+        //                  f.Left = right - f.Width;
+        //              if (f.Bottom > bottom)
+        //                  f.Top = bottom - f.Height;
+
+        //              relocated = true;
+        //          }
+
+        //          if (shrink_to_fit)
+        //          {
+        //              int formWidth = f.Width;
+        //              int formHeight = f.Height;
+
+        //              if (f.Width > right - left)
+        //              {
+        //                  formWidth = right - left;
+        //                  resized = true;
+        //              }
+
+        //              if (f.Height > bottom - top)
+        //              {
+        //                  formHeight = bottom - top;
+        //                  resized = true;
+        //              }
+
+        //              f.Size = new Size(formWidth, formHeight);
+        //          }
+
+        //          return (relocated, resized);
+        //      }
+
+        public static void TabControlInsert(TabControl tc, TabPage tp, int index)
 		{
 			tc.SuspendLayout();
 			// temp storage to rearrange tabs
