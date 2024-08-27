@@ -2047,6 +2047,9 @@ namespace Thetis
             _ant_no_tx[0] = false; // always
             _ant_no_tx[1] = false;
             _ant_no_tx[2] = false;
+            _ant_aux_names[0] = "";
+            _ant_aux_names[1] = "";
+            _ant_aux_names[2] = "";
 
             _rx_ant_aux = new[] { new bool[]  { false, false, false },
                                                             new bool[] { false, false, false },
@@ -2603,14 +2606,14 @@ namespace Thetis
             }
         }
 
-        private static void OnTXBandChanged(Band oldBand, Band newBand)
+        private static void OnTXBandChanged(Band oldBand, Band newBand, double tx_frequency)
         {
             lock (_metersLock)
             {
                 foreach (KeyValuePair<string, clsMeter> ms in _meters)
                 {
                     clsMeter m = ms.Value;
-                    m.AntennasChanged(Band.FIRST, newBand, -1, -1);
+                    m.AntennasChanged(Band.FIRST, newBand, -1, tx_frequency);
                 }
             }
         }
@@ -4991,6 +4994,7 @@ namespace Thetis
             }
             private string formatAux(string name)
             {
+                if (name.Length < 2) return "";
                 string tmp = name.ToLower();
                 tmp = char.ToUpper(tmp[0]) + tmp.Substring(1);
                 if (tmp == "Byps") tmp = "Bypass";
@@ -4999,10 +5003,23 @@ namespace Thetis
             public void AntennasChanged(Band rx1_band, Band tx_band, double vfoa_freq, double tx_freq, int rxtx_swap)
             {
                 bool valid = false;
-                valid = (rx1_band >= Band.B160M && rx1_band <= Band.B6M) || (rx1_band >= Band.VHF0 && rx1_band <= Band.VHF13) ||
-                    (tx_band >= Band.B160M && tx_band <= Band.B6M) || (tx_band >= Band.VHF0 && tx_band <= Band.VHF13) ||
-                    (rx1_band == Band.FIRST && tx_band == Band.FIRST && vfoa_freq == -1 && tx_freq == -1)
+
+                bool valid_rx = (rx1_band >= Band.B160M && rx1_band <= Band.B6M) || (rx1_band >= Band.VHF0 && rx1_band <= Band.VHF13);
+                bool valid_tx = (tx_band >= Band.B160M && tx_band <= Band.B6M) || (tx_band >= Band.VHF0 && tx_band <= Band.VHF13);
+
+                valid = valid_rx || valid_tx || (rx1_band == Band.FIRST && tx_band == Band.FIRST && vfoa_freq == -1 && tx_freq == -1)
                     || rx1_band == Band.WWV;
+
+                if (!valid_rx && vfoa_freq != -1)
+                {
+                    rx1_band = Alex.AntBandFromFreq(vfoa_freq);
+                    valid = true;
+                }
+                if (!valid_tx && tx_freq != -1)
+                {
+                    tx_band = Alex.AntBandFromFreq(tx_freq);
+                    valid = true;
+                }
 
                 if (valid)
                 {
@@ -6182,6 +6199,7 @@ namespace Thetis
             private System.Drawing.Color _typeColor;
 
             private System.Drawing.Color _frequencyColour;
+            private System.Drawing.Color _frequencyColourSmall;
             private System.Drawing.Color _modeColour;
             private System.Drawing.Color _splitBackColour;
             private System.Drawing.Color _splitColour;
@@ -6213,6 +6231,7 @@ namespace Thetis
                 _showType = true;
                 _typeColor = System.Drawing.Color.Gray;
                 _frequencyColour = System.Drawing.Color.Orange;
+                _frequencyColourSmall = System.Drawing.Color.Orange;
                 _modeColour = System.Drawing.Color.Gray;
                 _splitBackColour = System.Drawing.Color.FromArgb(64, 64, 64);
                 _splitColour = System.Drawing.Color.Orange;
@@ -6881,6 +6900,11 @@ namespace Thetis
             {
                 get { return _frequencyColour; }
                 set { _frequencyColour = value; }
+            }
+            public System.Drawing.Color FrequencyColourSmall
+            {
+                get { return _frequencyColourSmall; }
+                set { _frequencyColourSmall = value; }
             }
             public System.Drawing.Color ModeColour
             {
@@ -14926,6 +14950,7 @@ namespace Thetis
 
                                             vfo.ShowBandText = igs.GetSetting<bool>("vfo_showbandtext", false, false, false, false);
                                             vfo.BandTextColour = igs.GetSetting<System.Drawing.Color>("vfo_showbandtext_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
+                                            vfo.FrequencyColourSmall = igs.GetSetting<System.Drawing.Color>("vfo_frequency_small_numbers_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Orange);
 
                                             if (vfo.ShowBandText) pad = 0.03f;
 
@@ -15657,6 +15682,7 @@ namespace Thetis
 
                                             igs.SetSetting<bool>("vfo_showbandtext", vfo.ShowBandText);
                                             igs.SetSetting<System.Drawing.Color>("vfo_showbandtext_colour", vfo.BandTextColour);
+                                            igs.SetSetting<System.Drawing.Color>("vfo_frequency_small_numbers_colour", vfo.FrequencyColourSmall);
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
                                         {
@@ -21616,7 +21642,7 @@ namespace Thetis
                     getParts(m.VfoA, out MHz, out kHz, out hz);
                     string sVfoA = MHz + "." + kHz;// + "." + hz;
                     plotText(sVfoA, x + (w * 0.415f) * x_multy, y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
-                    plotText(hz, x + (w * 0.48f) * x_multy, y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(hz, x + (w * 0.48f) * x_multy, y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColourSmall, nVfoAFade, vfo.FontFamily, vfo.Style, true);
                 }
 
                 double tmpVfoB;
@@ -21645,7 +21671,7 @@ namespace Thetis
                     getParts(tmpVfoB, out MHz, out kHz, out hz);
                     string sVfoB = MHz + "." + kHz;// + "." + hz;
                     plotText(sVfoB, x + (w * (0.925f - x_shift)) * x_multy, y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
-                    plotText(hz, x + (w * (0.99f - x_shift)) * x_multy, y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(hz, x + (w * (0.99f - x_shift)) * x_multy, y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColourSmall, nVfoBFade, vfo.FontFamily, vfo.Style, true);
                 }
 
                 if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && disp_a)

@@ -16984,7 +16984,7 @@ namespace Thetis
                 }
                 DisplayAriesTXAntenna();
 
-                if (tx_band != old_band) TXBandChangeHandlers?.Invoke(old_band, tx_band); //MW0LGE_22b
+                if (tx_band != old_band) TXBandChangeHandlers?.Invoke(old_band, tx_band, TXFreq); //MW0LGE_22b
             }
         }
 
@@ -45463,7 +45463,7 @@ namespace Thetis
         public delegate void MultiRxChanged(bool newState, bool oldState, double vfoASubFrequency, Band band, bool rx2Enabled);
 
         public delegate void VFOTXChanged(bool vfoB, bool oldState, bool newState);
-        public delegate void TXBandChanged(Band oldBand, Band newBand);
+        public delegate void TXBandChanged(Band oldBand, Band newBand, double tx_frequency);
 
         public delegate void TCPIPcatClientConnected();
         public delegate void TCPIPcatClientDisconnected();

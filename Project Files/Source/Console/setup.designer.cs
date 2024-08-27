@@ -3231,6 +3231,8 @@
             this.lblSkinServersInfo = new System.Windows.Forms.LabelTS();
             this.tpLegacyItems = new System.Windows.Forms.TabPage();
             this.groupBoxTS44 = new System.Windows.Forms.GroupBoxTS();
+            this.chkLegacyItems_expand_spectral_top = new System.Windows.Forms.CheckBoxTS();
+            this.chkLegacyItems_vfosync = new System.Windows.Forms.CheckBoxTS();
             this.chkLegacyItems_vfob = new System.Windows.Forms.CheckBoxTS();
             this.chkLegacyItems_vfoa = new System.Windows.Forms.CheckBoxTS();
             this.chkLegacyItems_expand_spectral = new System.Windows.Forms.CheckBoxTS();
@@ -3604,6 +3606,8 @@
             this.grpTestAudioBalance = new System.Windows.Forms.GroupBoxTS();
             this.btnTestAudioBalStart = new System.Windows.Forms.ButtonTS();
             this.grpMeterItemVfoDisplaySettings = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS251 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMMVfoDisplayFrequency_small = new Thetis.ColorButton();
             this.clrbtnMultiMeter_vfo_show_bandtext = new Thetis.ColorButton();
             this.chkMultiMeter_vfo_show_bandtext = new System.Windows.Forms.CheckBoxTS();
             this.radMultiMeter_vfo_display_vfob = new System.Windows.Forms.RadioButtonTS();
@@ -3904,8 +3908,7 @@
             this.labelTS249 = new System.Windows.Forms.LabelTS();
             this.chkBandButtons_fade_tx = new System.Windows.Forms.CheckBoxTS();
             this.chkBandButtons_fade_rx = new System.Windows.Forms.CheckBoxTS();
-            this.chkLegacyItems_vfosync = new System.Windows.Forms.CheckBoxTS();
-            this.chkLegacyItems_expand_spectral_top = new System.Windows.Forms.CheckBoxTS();
+            this.btnVFOCopyColourFromMainNumbers = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -52207,6 +52210,30 @@
             this.groupBoxTS44.TabStop = false;
             this.groupBoxTS44.Text = "Expanded Console UI";
             // 
+            // chkLegacyItems_expand_spectral_top
+            // 
+            this.chkLegacyItems_expand_spectral_top.AutoSize = true;
+            this.chkLegacyItems_expand_spectral_top.Image = null;
+            this.chkLegacyItems_expand_spectral_top.Location = new System.Drawing.Point(19, 159);
+            this.chkLegacyItems_expand_spectral_top.Name = "chkLegacyItems_expand_spectral_top";
+            this.chkLegacyItems_expand_spectral_top.Size = new System.Drawing.Size(158, 17);
+            this.chkLegacyItems_expand_spectral_top.TabIndex = 94;
+            this.chkLegacyItems_expand_spectral_top.Text = "Expamd spectral area to top";
+            this.chkLegacyItems_expand_spectral_top.UseVisualStyleBackColor = true;
+            this.chkLegacyItems_expand_spectral_top.CheckedChanged += new System.EventHandler(this.chkLegacyItems_expand_spectral_top_CheckedChanged);
+            // 
+            // chkLegacyItems_vfosync
+            // 
+            this.chkLegacyItems_vfosync.AutoSize = true;
+            this.chkLegacyItems_vfosync.Image = null;
+            this.chkLegacyItems_vfosync.Location = new System.Drawing.Point(240, 75);
+            this.chkLegacyItems_vfosync.Name = "chkLegacyItems_vfosync";
+            this.chkLegacyItems_vfosync.Size = new System.Drawing.Size(215, 17);
+            this.chkLegacyItems_vfosync.TabIndex = 93;
+            this.chkLegacyItems_vfosync.Text = "Hide VFOSync box (no replacement yet)";
+            this.chkLegacyItems_vfosync.UseVisualStyleBackColor = true;
+            this.chkLegacyItems_vfosync.CheckedChanged += new System.EventHandler(this.chkLegacyItems_vfosync_CheckedChanged);
+            // 
             // chkLegacyItems_vfob
             // 
             this.chkLegacyItems_vfob.AutoSize = true;
@@ -57282,6 +57309,9 @@
             // 
             // grpMeterItemVfoDisplaySettings
             // 
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.btnVFOCopyColourFromMainNumbers);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS251);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayFrequency_small);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMultiMeter_vfo_show_bandtext);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.chkMultiMeter_vfo_show_bandtext);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.radMultiMeter_vfo_display_vfob);
@@ -57309,7 +57339,7 @@
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS166);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayMode);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTitle);
-            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(1389, 68);
+            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(755, 151);
             this.grpMeterItemVfoDisplaySettings.Name = "grpMeterItemVfoDisplaySettings";
             this.grpMeterItemVfoDisplaySettings.Size = new System.Drawing.Size(323, 364);
             this.grpMeterItemVfoDisplaySettings.TabIndex = 101;
@@ -57317,13 +57347,38 @@
             this.grpMeterItemVfoDisplaySettings.Text = "VFO Display Settings";
             this.grpMeterItemVfoDisplaySettings.Visible = false;
             // 
+            // labelTS251
+            // 
+            this.labelTS251.AutoSize = true;
+            this.labelTS251.Image = null;
+            this.labelTS251.Location = new System.Drawing.Point(170, 93);
+            this.labelTS251.Name = "labelTS251";
+            this.labelTS251.Size = new System.Drawing.Size(52, 13);
+            this.labelTS251.TabIndex = 138;
+            this.labelTS251.Text = "Small #\'s:";
+            // 
+            // clrbtnMMVfoDisplayFrequency_small
+            // 
+            this.clrbtnMMVfoDisplayFrequency_small.Automatic = "Automatic";
+            this.clrbtnMMVfoDisplayFrequency_small.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMMVfoDisplayFrequency_small.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMMVfoDisplayFrequency_small.Image = null;
+            this.clrbtnMMVfoDisplayFrequency_small.Location = new System.Drawing.Point(228, 88);
+            this.clrbtnMMVfoDisplayFrequency_small.MoreColors = "More Colors...";
+            this.clrbtnMMVfoDisplayFrequency_small.Name = "clrbtnMMVfoDisplayFrequency_small";
+            this.clrbtnMMVfoDisplayFrequency_small.Selectable = true;
+            this.clrbtnMMVfoDisplayFrequency_small.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMMVfoDisplayFrequency_small.TabIndex = 137;
+            this.toolTip1.SetToolTip(this.clrbtnMMVfoDisplayFrequency_small, "Frequency Colour");
+            this.clrbtnMMVfoDisplayFrequency_small.Changed += new System.EventHandler(this.clrbtnMMVfoDisplayFrequency_small_Changed);
+            // 
             // clrbtnMultiMeter_vfo_show_bandtext
             // 
             this.clrbtnMultiMeter_vfo_show_bandtext.Automatic = "Automatic";
             this.clrbtnMultiMeter_vfo_show_bandtext.Color = System.Drawing.Color.Yellow;
             this.clrbtnMultiMeter_vfo_show_bandtext.ForeColor = System.Drawing.Color.Black;
             this.clrbtnMultiMeter_vfo_show_bandtext.Image = null;
-            this.clrbtnMultiMeter_vfo_show_bandtext.Location = new System.Drawing.Point(191, 208);
+            this.clrbtnMultiMeter_vfo_show_bandtext.Location = new System.Drawing.Point(205, 220);
             this.clrbtnMultiMeter_vfo_show_bandtext.MoreColors = "More Colors...";
             this.clrbtnMultiMeter_vfo_show_bandtext.Name = "clrbtnMultiMeter_vfo_show_bandtext";
             this.clrbtnMultiMeter_vfo_show_bandtext.Selectable = true;
@@ -57336,7 +57391,7 @@
             // 
             this.chkMultiMeter_vfo_show_bandtext.AutoSize = true;
             this.chkMultiMeter_vfo_show_bandtext.Image = null;
-            this.chkMultiMeter_vfo_show_bandtext.Location = new System.Drawing.Point(172, 188);
+            this.chkMultiMeter_vfo_show_bandtext.Location = new System.Drawing.Point(186, 200);
             this.chkMultiMeter_vfo_show_bandtext.Name = "chkMultiMeter_vfo_show_bandtext";
             this.chkMultiMeter_vfo_show_bandtext.Size = new System.Drawing.Size(105, 17);
             this.chkMultiMeter_vfo_show_bandtext.TabIndex = 135;
@@ -62036,29 +62091,18 @@
             this.chkBandButtons_fade_rx.UseVisualStyleBackColor = true;
             this.chkBandButtons_fade_rx.CheckedChanged += new System.EventHandler(this.chkBandButtons_fade_rx_CheckedChanged);
             // 
-            // chkLegacyItems_vfosync
+            // btnVFOCopyColourFromMainNumbers
             // 
-            this.chkLegacyItems_vfosync.AutoSize = true;
-            this.chkLegacyItems_vfosync.Image = null;
-            this.chkLegacyItems_vfosync.Location = new System.Drawing.Point(240, 75);
-            this.chkLegacyItems_vfosync.Name = "chkLegacyItems_vfosync";
-            this.chkLegacyItems_vfosync.Size = new System.Drawing.Size(215, 17);
-            this.chkLegacyItems_vfosync.TabIndex = 93;
-            this.chkLegacyItems_vfosync.Text = "Hide VFOSync box (no replacement yet)";
-            this.chkLegacyItems_vfosync.UseVisualStyleBackColor = true;
-            this.chkLegacyItems_vfosync.CheckedChanged += new System.EventHandler(this.chkLegacyItems_vfosync_CheckedChanged);
-            // 
-            // chkLegacyItems_expand_spectral_top
-            // 
-            this.chkLegacyItems_expand_spectral_top.AutoSize = true;
-            this.chkLegacyItems_expand_spectral_top.Image = null;
-            this.chkLegacyItems_expand_spectral_top.Location = new System.Drawing.Point(19, 159);
-            this.chkLegacyItems_expand_spectral_top.Name = "chkLegacyItems_expand_spectral_top";
-            this.chkLegacyItems_expand_spectral_top.Size = new System.Drawing.Size(158, 17);
-            this.chkLegacyItems_expand_spectral_top.TabIndex = 94;
-            this.chkLegacyItems_expand_spectral_top.Text = "Expamd spectral area to top";
-            this.chkLegacyItems_expand_spectral_top.UseVisualStyleBackColor = true;
-            this.chkLegacyItems_expand_spectral_top.CheckedChanged += new System.EventHandler(this.chkLegacyItems_expand_spectral_top_CheckedChanged);
+            this.btnVFOCopyColourFromMainNumbers.Image = null;
+            this.btnVFOCopyColourFromMainNumbers.Location = new System.Drawing.Point(274, 88);
+            this.btnVFOCopyColourFromMainNumbers.Name = "btnVFOCopyColourFromMainNumbers";
+            this.btnVFOCopyColourFromMainNumbers.Selectable = true;
+            this.btnVFOCopyColourFromMainNumbers.Size = new System.Drawing.Size(25, 23);
+            this.btnVFOCopyColourFromMainNumbers.TabIndex = 139;
+            this.btnVFOCopyColourFromMainNumbers.Text = "=";
+            this.toolTip1.SetToolTip(this.btnVFOCopyColourFromMainNumbers, "Copy the colour from the main #\'s");
+            this.btnVFOCopyColourFromMainNumbers.UseVisualStyleBackColor = true;
+            this.btnVFOCopyColourFromMainNumbers.Click += new System.EventHandler(this.btnVFOCopyColourFromMainNumbers_Click);
             // 
             // Setup
             // 
@@ -67210,5 +67254,8 @@
         private CheckBoxTS chkLegacyItems_vfoa;
         private CheckBoxTS chkLegacyItems_expand_spectral_top;
         private CheckBoxTS chkLegacyItems_vfosync;
+        private LabelTS labelTS251;
+        private ColorButton clrbtnMMVfoDisplayFrequency_small;
+        private ButtonTS btnVFOCopyColourFromMainNumbers;
     }
 }

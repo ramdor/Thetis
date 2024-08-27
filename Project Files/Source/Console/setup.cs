@@ -13395,6 +13395,11 @@ namespace Thetis
             console.AlexAntCtrlEnabled = true; // need side effect of prop set to push data down to C code 
 
             // changed notification
+            updateChangedAntAlexButton(is_xmit, idx, band);
+            //
+        }
+        private void updateChangedAntAlexButton(bool is_xmit, int idx, Band band)
+        {
             for (int n = 0; n < 3; n++)
             {
                 if (is_xmit)
@@ -13418,7 +13423,6 @@ namespace Thetis
                     }
                 }
             }
-            //
         }
 
         // get RX antenna in use for band
@@ -22956,7 +22960,7 @@ namespace Thetis
             else
                 enabledAllPAnuds(true);
         }
-        private void OnTXBandChanged(Band oldBand, Band newBand)
+        private void OnTXBandChanged(Band oldBand, Band newBand, double tx_frequency)
         {
             setAdjustingBand(console.TXBand);
             lblTXattBand.Text = newBand.ToString(); //[2.3.10.6]MW0LGE added (also in ATTOnTX)
@@ -24449,6 +24453,7 @@ namespace Thetis
 
                 igs.SetSetting<bool>("vfo_showbandtext", chkMultiMeter_vfo_show_bandtext.Checked);
                 igs.SetSetting<System.Drawing.Color>("vfo_showbandtext_colour", clrbtnMultiMeter_vfo_show_bandtext.Color);
+                igs.SetSetting<System.Drawing.Color>("vfo_frequency_small_numbers_colour", clrbtnMMVfoDisplayFrequency_small.Color);
 
                 if (radMultiMeter_vfo_display_both.Checked)
                     igs.HistoryDuration = (int)MeterManager.clsVfoDisplay.VFODisplayMode.VFO_BOTH;
@@ -24900,6 +24905,7 @@ namespace Thetis
 
                 chkMultiMeter_vfo_show_bandtext.Checked = igs.GetSetting<bool>("vfo_showbandtext", false, false, false, false);
                 clrbtnMultiMeter_vfo_show_bandtext.Color = igs.GetSetting<System.Drawing.Color>("vfo_showbandtext_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
+                clrbtnMMVfoDisplayFrequency_small.Color = igs.GetSetting<System.Drawing.Color>("vfo_frequency_small_numbers_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Orange);
 
                 switch ((MeterManager.clsVfoDisplay.VFODisplayMode)igs.HistoryDuration)
                 {
@@ -30527,6 +30533,16 @@ namespace Thetis
         {
             if (initializing) return;
             LegacyItemController.HideVFOSync = chkLegacyItems_vfosync.Checked;
+        }
+
+        private void clrbtnMMVfoDisplayFrequency_small_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void btnVFOCopyColourFromMainNumbers_Click(object sender, EventArgs e)
+        {
+            clrbtnMMVfoDisplayFrequency_small.Color = clrbtnMMVfoDisplayFrequency.Color;
         }
     }
 
