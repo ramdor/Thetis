@@ -18,6 +18,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] rotator can now have the beam width alpha adjusted
 - [add] right click a band in a band button box, and it will bandstack for that band
 - [add] antenna switch box meter item
+- [add] %precis=N% can be used on text overlay so specify precision for any floating point variable on that line. %precis=2%%signal_strength%  will show -73.49 for example
 - [add] small digits colour for vfo item
 - [add] new legacy items tab in setup->Appearance->Legacy Items
 - [add] vfo meter item can now show band text
