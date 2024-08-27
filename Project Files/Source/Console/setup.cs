@@ -24290,6 +24290,13 @@ namespace Thetis
 
             if(mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS)
             {
+                if (mt == MeterType.ANTENNA_BUTTONS)
+                {
+                    int max_buttons = getTotalColumnsNeededForAntennaButtons();
+                    if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
+                    if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
+                }
+
                 igs.SetSetting<int>("buttonbox_columns", (int)nudBandButtons_columns.Value);
                 igs.SetSetting<float>("buttonbox_border", (float)nudBandButtons_border.Value);
                 igs.SetSetting<float>("buttonbox_margin", (float)nudBandButtons_margin.Value);
@@ -24655,6 +24662,7 @@ namespace Thetis
             if(mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS)
             {
                 int columns = 1;
+                int max_buttons = 1;
                 switch (mt)
                 {
                     case MeterType.BAND_BUTTONS:
@@ -24668,15 +24676,16 @@ namespace Thetis
                         if (nudBandButtons_columns.Maximum != 12) nudBandButtons_columns.Maximum = 12;
                         break;
                     case MeterType.FILTER_BUTTONS:
-                        int max_buttons = m.RX == 1 ? 12 : 9; // rx2 only has 9 filter buttons
+                        max_buttons = m.RX == 1 ? 12 : 9; // rx2 only has 9 filter buttons
                         columns = igs.GetSetting<int>("buttonbox_columns", true, 1, max_buttons, max_buttons);
                         if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
                         if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
                         break;
                     case MeterType.ANTENNA_BUTTONS:
+                        max_buttons = getTotalColumnsNeededForAntennaButtons();
                         columns = igs.GetSetting<int>("buttonbox_columns", true, 1, 10, 10);
-                        if (nudBandButtons_columns.Value > 10) nudBandButtons_columns.Value = 10;
-                        if (nudBandButtons_columns.Maximum != 10) nudBandButtons_columns.Maximum = 10;
+                        if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
+                        if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
                         break;
                 }
                 nudBandButtons_columns.Value = columns;
@@ -30447,6 +30456,23 @@ namespace Thetis
         private void chkButtonBox_antenna_rxtxant_CheckedChanged(object sender, EventArgs e)
         {
             updateMeterType();
+        }
+        private int getTotalColumnsNeededForAntennaButtons()
+        {
+            int enable_count = 0;
+            if (chkButtonBox_antenna_rx1.Checked) enable_count++;
+            if (chkButtonBox_antenna_rx2.Checked) enable_count++;
+            if (chkButtonBox_antenna_rx3.Checked) enable_count++;
+            if (chkButtonBox_antenna_tx1.Checked) enable_count++;
+            if (chkButtonBox_antenna_tx2.Checked) enable_count++;
+            if (chkButtonBox_antenna_tx3.Checked) enable_count++;
+            if (chkButtonBox_antenna_byp.Checked) enable_count++;
+            if (chkButtonBox_antenna_ext1.Checked) enable_count++;
+            if (chkButtonBox_antenna_xvtr.Checked) enable_count++;
+            if (chkButtonBox_antenna_rxtxant.Checked) enable_count++;
+            if (enable_count == 0) enable_count = 1;
+
+            return enable_count;
         }
     }
 

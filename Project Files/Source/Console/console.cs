@@ -6893,14 +6893,14 @@ namespace Thetis
         {
             string old_text = vhf_text[index].Text;
             vhf_text[index].Text = text;
-            if (old_text != text) VHFChangedHandlers?.Invoke(index, vhf_text[index].Enabled, vhf_text[index].Enabled, old_text, vhf_text[index].Text);
+            if (old_text != text) VHFDetailsChangedHandlers?.Invoke(index, vhf_text[index].Enabled, vhf_text[index].Enabled, old_text, vhf_text[index].Text);
         }
 
         public void SetVHFEnabled(int index, bool b)
         {
             bool old_state = vhf_text[index].Enabled;
             vhf_text[index].Enabled = b;
-            if (old_state != b) VHFChangedHandlers?.Invoke(index, old_state, b, vhf_text[index].Text, vhf_text[index].Text);
+            if (old_state != b) VHFDetailsChangedHandlers?.Invoke(index, old_state, b, vhf_text[index].Text, vhf_text[index].Text);
         }
 
         // G8NJJ added to allow labelling of buttons in popup form
@@ -45517,7 +45517,7 @@ namespace Thetis
         public WindowStateChanged WindowStateChangedHandlers;
 
         public BandPanelChanged BandPanelChangeHandlers;
-        public VHFChanged VHFChangedHandlers;
+        public VHFChanged VHFDetailsChangedHandlers;
         public FilterNameChanged FilterNameChangedHandlers;
 
         public AntennaRXChanged AntennaRXChangedHandlers;
