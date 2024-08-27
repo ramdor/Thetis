@@ -818,7 +818,7 @@ namespace Thetis
                 else
                     value = defaultValue;
 
-                if (validate && Comparer<T>.Default.Compare(min, max) != 0)
+                if (validate)// && Comparer<T>.Default.Compare(min, max) != 0)
                 {
                     if (Comparer<T>.Default.Compare(value, min) < 0)
                         return min;
@@ -14208,7 +14208,7 @@ namespace Thetis
                                             }
 
                                             bb.Columns = igs.GetSetting<int>("buttonbox_columns", true, 1, 15, 3);
-                                            bb.Border = igs.GetSetting<float>("buttonbox_border", true, 01f, 1f, 0.05f) / 10f;
+                                            bb.Border = igs.GetSetting<float>("buttonbox_border", true, 0.01f, 1f, 0.05f) / 10f;
                                             bb.Margin = igs.GetSetting<float>("buttonbox_margin", true, 0f, 1f, 0f) / 10f;
                                             bb.Radius = igs.GetSetting<float>("buttonbox_radius", true, 0f, 2f, 0f) / 10f;
                                             bb.HeightRatio = igs.GetSetting<float>("buttonbox_height_ratio", true, 0.01f, 2f, 0.5f);
@@ -21771,7 +21771,7 @@ namespace Thetis
                     if (disp_b)
                     {
                         rct = new SharpDX.RectangleF(x + (w * 0.250f) * x_multy + (w * (0.51f - x_shift + x_shift_offset)) * x_multy, y + (bt_h * 0.85f), w * 0.08f, bt_h * 0.03f);
-                        plotText(m.VFOBBandText, rct.X, rct.Y, bt_h, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoAFade, vfo.FontFamily, vfo.Style, false, true);
+                        plotText(m.VFOBBandText, rct.X, rct.Y, bt_h, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoBFade, vfo.FontFamily, vfo.Style, false, true);
                     }
                 }
                 //
